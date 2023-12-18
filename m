@@ -1,248 +1,154 @@
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408215A867;
-	Mon, 18 Dec 2023 17:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF22125C8;
+	Mon, 18 Dec 2023 17:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="O3nU+MhF"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 05D241BF20C;
-	Mon, 18 Dec 2023 17:14:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1702919668;
+	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="QZq2hHey"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Sv6MX6LDzz9sp7;
+	Mon, 18 Dec 2023 18:32:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+	s=MBO0001; t=1702920728;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rGUQ0PPw3NupX3jbGErYbksj1KqufEvG3Oz6qzWp1UQ=;
-	b=O3nU+MhFLiK5Sk1WmywsrvTWgTs+6TwF1zEW5MbX8jsnhrVLEi6C3IxZj2QkN/ZdwgwQJ1
-	pUw+bk5in6GS4Wf69jKYblPXteoUlgZMGc1Dr9H9U/9un0qXT543bo88VSL8yP/rLkDIUC
-	qK7pGXA5imSjmKAPSQ5qvEzdTlZBgiz/926oqZpES7XWz5OtwzJ0zwgknPHQrS0znJs5Ko
-	vO6pzM3dyFVnve8CMIFNo2kI0fG/4JXKOLPr82j6hmPGVt5s6+VibYH+Re9/f+w7pf+Wak
-	457Ay8sE8K4816R8mFmNVz4RK19dovIbr46yYbpnSBVHOu8HbRnI8t77Ulutuw==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Mon, 18 Dec 2023 18:14:20 +0100
-Subject: [PATCH 5/5] MIPS: mobileye: eyeq5: add OLB clocks controller node
- & pinmux nodes
+	bh=+vve0NiBqF/ep9e79zQnM4N2qRMtt/LCYu4PuzewmJ0=;
+	b=QZq2hHeyxhgZWBwpbBlpRX5VLY/977BHVX6kCqLDDjCUMrNBHnvN7SIPIneOtBnKlkjMmC
+	iL89+dK142E8S9UB7gyrpj/QdCIratTBdOK61d5RGJogDWj7BcgsfioU/ZG0efG3gOxI2J
+	WLIEovlqlukfGthr9hjkicgKNe/JuVFvIZIe0ykW47p4XXTlhjVff6bjOnAsW8L5Q3fl7k
+	RMQ2eDrZcOYd/fiXy+waNgXtKFFWs858qVZ29wnY2wSo5SgFZYvg9Ldw8420NCTrakhywn
+	x3/XY/u2ZqDgfjA2u/pizqRWIC1RqlVAYAdqBwM0EVYpcvGKp1uVgIu3+0uMRw==
+References: <20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev>
+ <20231218-pinephone-pll-fixes-v1-1-e238b6ed6dc1@oltmanns.dev>
+From: Frank Oltmanns <frank@oltmanns.dev>
+To: Frank Oltmanns <frank@oltmanns.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Guido
+ =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, Purism Kernel Team
+ <kernel@puri.sm>, Ondrej
+ Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>, Jessica
+ Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 1/5] clk: sunxi-ng: nkm: Support constraints on m/n
+ ratio and parent rate
+Date: Mon, 18 Dec 2023 18:26:51 +0100
+In-reply-to: <20231218-pinephone-pll-fixes-v1-1-e238b6ed6dc1@oltmanns.dev>
+Message-ID: <8734vz1kok.fsf@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20231218-mbly-clk-v1-5-44ce54108f06@bootlin.com>
-References: <20231218-mbly-clk-v1-0-44ce54108f06@bootlin.com>
-In-Reply-To: <20231218-mbly-clk-v1-0-44ce54108f06@bootlin.com>
-To: Gregory CLEMENT <gregory.clement@bootlin.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.12.4
-X-GND-Sasl: theo.lebrun@bootlin.com
+Content-Type: text/plain
 
-We both add the PLL controller (read-only PLLs) node inside the OLB
-memory region and add pinmux function nodes.
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- .../{eyeq5-fixed-clocks.dtsi => eyeq5-clocks.dtsi} | 56 +++++++---------------
- arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  9 +++-
- 2 files changed, 25 insertions(+), 40 deletions(-)
+On 2023-12-18 at 14:35:19 +0100, Frank Oltmanns <frank@oltmanns.dev> wrote:
+> The Allwinner A64 manual lists the following constraints for the
+> PLL-MIPI clock:
+>  - M/N >= 3
+>  - (PLL_VIDEO0)/M >= 24MHz
+>
+> The PLL-MIPI clock is implemented as ccu_nkm. Therefore, add support for
+> these constraints.
+>
+> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> ---
+>  drivers/clk/sunxi-ng/ccu_nkm.c | 23 +++++++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu_nkm.h |  8 ++++++++
+>  2 files changed, 31 insertions(+)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+> index eed64547ad42..2af5c1ebd527 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> @@ -16,6 +16,20 @@ struct _ccu_nkm {
+>  	unsigned long	m, min_m, max_m;
+>  };
+>
+> +static bool ccu_nkm_is_valid_rate(struct ccu_common *common, unsigned long parent,
+> +				  unsigned long n, unsigned long m)
+> +{
+> +	struct ccu_nkm *nkm = container_of(common, struct ccu_nkm, common);
+> +
+> +	if (nkm->max_mn_ratio && (m > nkm->max_mn_ratio * n))
+> +		return false;
+> +
+> +	if (nkm->parent_wo_nk && (parent < nkm->parent_wo_nk * m))
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+>  static unsigned long ccu_nkm_find_best_with_parent_adj(struct ccu_common *common,
+>  						       struct clk_hw *parent_hw,
+>  						       unsigned long *parent, unsigned long rate,
+> @@ -32,6 +46,9 @@ static unsigned long ccu_nkm_find_best_with_parent_adj(struct ccu_common *common
+>
+>  				tmp_parent = clk_hw_round_rate(parent_hw, rate * _m / (_n * _k));
+>
+> +				if (!ccu_nkm_is_valid_rate(common, tmp_parent, _n, _m))
+> +					continue;
+> +
+>  				tmp_rate = tmp_parent * _n * _k / _m;
+>
+>  				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate) ||
+> @@ -65,6 +82,12 @@ static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+>  	for (_k = nkm->min_k; _k <= nkm->max_k; _k++) {
+>  		for (_n = nkm->min_n; _n <= nkm->max_n; _n++) {
+>  			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
+> +				if ((common->reg == 0x040) && (_m > 3 * _n))
+> +					break;
+> +
+> +				if ((common->reg == 0x040) && (parent < 24000000 * _m))
+> +					continue;
+> +
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5-fixed-clocks.dtsi b/arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi
-similarity index 88%
-rename from arch/mips/boot/dts/mobileye/eyeq5-fixed-clocks.dtsi
-rename to arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi
-index 78f5533a95c6..d024e6968396 100644
---- a/arch/mips/boot/dts/mobileye/eyeq5-fixed-clocks.dtsi
-+++ b/arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi
-@@ -3,42 +3,20 @@
-  * Copyright 2023 Mobileye Vision Technologies Ltd.
-  */
- 
--/ {
--	/* Fixed clock */
--	pll_cpu: pll-cpu {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <1500000000>;
--	};
-+#include <dt-bindings/clock/mobileye,eyeq5-clk.h>
- 
--	pll_vdi: pll-vdi {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <1280000000>;
--	};
--
--	pll_per: pll-per {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <2000000000>;
--	};
--
--	pll_ddr0: pll-ddr0 {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <1857210000>;
--	};
--
--	pll_ddr1: pll-ddr1 {
-+/ {
-+/* Fixed clock */
-+	xtal: xtal {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
--		clock-frequency = <1857210000>;
-+		clock-frequency = <30000000>;
- 	};
- 
- /* PLL_CPU derivatives */
- 	occ_cpu: occ-cpu {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_cpu>;
-+		clocks = <&clocks EQ5C_PLL_CPU>;
- 		#clock-cells = <0>;
- 		clock-div = <1>;
- 		clock-mult = <1>;
-@@ -101,7 +79,7 @@ mem_clk: mem-clk {
- 	};
- 	occ_isram: occ-isram {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_cpu>;
-+		clocks = <&clocks EQ5C_PLL_CPU>;
- 		#clock-cells = <0>;
- 		clock-div = <2>;
- 		clock-mult = <1>;
-@@ -115,7 +93,7 @@ isram_clk: isram-clk { /* gate ClkRstGen_isram */
- 	};
- 	occ_dbu: occ-dbu {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_cpu>;
-+		clocks = <&clocks EQ5C_PLL_CPU>;
- 		#clock-cells = <0>;
- 		clock-div = <10>;
- 		clock-mult = <1>;
-@@ -130,7 +108,7 @@ si_dbu_tp_pclk: si-dbu-tp-pclk { /* gate ClkRstGen_dbu */
- /* PLL_VDI derivatives */
- 	occ_vdi: occ-vdi {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_vdi>;
-+		clocks = <&clocks EQ5C_PLL_VDI>;
- 		#clock-cells = <0>;
- 		clock-div = <2>;
- 		clock-mult = <1>;
-@@ -144,7 +122,7 @@ vdi_clk: vdi-clk { /* gate ClkRstGen_vdi */
- 	};
- 	occ_can_ser: occ-can-ser {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_vdi>;
-+		clocks = <&clocks EQ5C_PLL_VDI>;
- 		#clock-cells = <0>;
- 		clock-div = <16>;
- 		clock-mult = <1>;
-@@ -158,7 +136,7 @@ can_ser_clk: can-ser-clk { /* gate ClkRstGen_can_ser */
- 	};
- 	i2c_ser_clk: i2c-ser-clk {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_vdi>;
-+		clocks = <&clocks EQ5C_PLL_VDI>;
- 		#clock-cells = <0>;
- 		clock-div = <20>;
- 		clock-mult = <1>;
-@@ -166,7 +144,7 @@ i2c_ser_clk: i2c-ser-clk {
- /* PLL_PER derivatives */
- 	occ_periph: occ-periph {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_per>;
-+		clocks = <&clocks EQ5C_PLL_PER>;
- 		#clock-cells = <0>;
- 		clock-div = <16>;
- 		clock-mult = <1>;
-@@ -225,7 +203,7 @@ gpio_clk: gpio-clk {
- 	};
- 	emmc_sys_clk: emmc-sys-clk {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_per>;
-+		clocks = <&clocks EQ5C_PLL_PER>;
- 		#clock-cells = <0>;
- 		clock-div = <10>;
- 		clock-mult = <1>;
-@@ -233,7 +211,7 @@ emmc_sys_clk: emmc-sys-clk {
- 	};
- 	ccf_ctrl_clk: ccf-ctrl-clk {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_per>;
-+		clocks = <&clocks EQ5C_PLL_PER>;
- 		#clock-cells = <0>;
- 		clock-div = <4>;
- 		clock-mult = <1>;
-@@ -241,7 +219,7 @@ ccf_ctrl_clk: ccf-ctrl-clk {
- 	};
- 	occ_mjpeg_core: occ-mjpeg-core {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_per>;
-+		clocks = <&clocks EQ5C_PLL_PER>;
- 		#clock-cells = <0>;
- 		clock-div = <2>;
- 		clock-mult = <1>;
-@@ -265,7 +243,7 @@ mjpeg_core_clk: mjpeg-core-clk { /* gate ClkRstGen_mjpeg_gen */
- 	};
- 	fcmu_a_clk: fcmu-a-clk {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_per>;
-+		clocks = <&clocks EQ5C_PLL_PER>;
- 		#clock-cells = <0>;
- 		clock-div = <20>;
- 		clock-mult = <1>;
-@@ -273,7 +251,7 @@ fcmu_a_clk: fcmu-a-clk {
- 	};
- 	occ_pci_sys: occ-pci-sys {
- 		compatible = "fixed-factor-clock";
--		clocks = <&pll_per>;
-+		clocks = <&clocks EQ5C_PLL_PER>;
- 		#clock-cells = <0>;
- 		clock-div = <8>;
- 		clock-mult = <1>;
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-index d32da8fabe5a..76ec650631db 100644
---- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-+++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-@@ -7,7 +7,7 @@
- 
- /memreserve/ 0x40000000 0xc0000000; /* DDR32 */
- 
--#include "eyeq5-fixed-clocks.dtsi"
-+#include "eyeq5-clocks.dtsi"
- 
- / {
- 	#address-cells = <2>;
-@@ -76,6 +76,13 @@ olb: olb@e00000 {
- 			compatible = "mobileye,eyeq5-olb", "syscon", "simple-mfd";
- 			reg = <0 0xe00000 0x0 0x400>;
- 			reg-io-width = <4>;
+This, of course, is rubbish and should be this instead:
++				if (!ccu_nkm_is_valid_rate(common, parent, _n, _m))
++					continue;
 +
-+			clocks: clocks {
-+				compatible = "mobileye,eyeq5-clk";
-+				#clock-cells = <1>;
-+				clocks = <&xtal>;
-+				clock-names = "ref";
-+			};
- 		};
- 
- 		gic: interrupt-controller@140000 {
 
--- 
-2.43.0
+I'll submit a V2 after receiving some feedback.
 
+>  				unsigned long tmp_rate;
+>
+>  				tmp_rate = parent * _n * _k / _m;
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
+> index 6601defb3f38..d3d3eaf55faf 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
+> @@ -16,6 +16,12 @@
+>   * struct ccu_nkm - Definition of an N-K-M clock
+>   *
+>   * Clocks based on the formula parent * N * K / M
+> + *
+> + * @max_mn_ratio:	Maximum value for M / N.
+> + * @parent_wo_nk:	The minimum rate the parent must provide after applying the divisor,
+> + *			but without applying the multipliers, i.e. the contstraint
+> + *			   (parent rate)/M >= parent_wo_nk
+> + *			must be fulfilled.
+>   */
+>  struct ccu_nkm {
+>  	u32			enable;
+> @@ -27,6 +33,8 @@ struct ccu_nkm {
+>  	struct ccu_mux_internal	mux;
+>
+>  	unsigned int		fixed_post_div;
+> +	unsigned long		max_mn_ratio;
+> +	unsigned long           parent_wo_nk;
+>
+>  	struct ccu_common	common;
+>  };
