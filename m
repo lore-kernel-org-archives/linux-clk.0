@@ -1,75 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3031396E4;
-	Mon, 18 Dec 2023 12:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="He0q7LYx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D74E1C433C7;
-	Mon, 18 Dec 2023 12:47:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702903649;
-	bh=yfdKqtgUNhva9eueXhUO7jCdMI5f55TNeHU8zKTb9Kw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=He0q7LYxzIFuzFAivtX9aZFhTdfO7mtdZwtknDWQt2zidrJXxixEgbv18O3aKT0NR
-	 RGtg4Kqflb3w1vK7rKE0yIPMUT1lWCqN+KIGqDimdDGRqg3w6z1iPuFe5BEukWTZiG
-	 krWSsYMiQYRUgO/d3r92hcEtY1C/9qPvwon/IydIXV78sfNbnH/YkdD5+5foVvWBao
-	 DEoFpQVyA9TN8J7Pf5xR5WJoE62UBHChhOR+RjoJSN3H0KEncECPpceCU391y6dvSs
-	 qncUG4dyg/j+xrsszhHs6s25q5T9gVAUF3+Kox6eCe+n3dh1DxXhaOw/PZEE0Ca+ZO
-	 D3sR8kXut+E2w==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Weihao Li <cn.liweihao@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sasha Levin <sashal@kernel.org>,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 1/6] clk: rockchip: rk3128: Fix HCLK_OTG gate register
-Date: Mon, 18 Dec 2023 07:47:18 -0500
-Message-ID: <20231218124725.1382738-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E6474E26
+	for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 13:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rFDFe-0000yN-MX; Mon, 18 Dec 2023 14:01:42 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rFDFd-00Ghrj-UA; Mon, 18 Dec 2023 14:01:41 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rFDFd-005IgU-Kh; Mon, 18 Dec 2023 14:01:41 +0100
+Date: Mon, 18 Dec 2023 14:01:41 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Russell King <linux@armlinux.org.uk>, linux-pwm@vger.kernel.org, 
+	Sean Anderson <sean.anderson@seco.com>, Thierry Reding <thierry.reding@gmail.com>, kernel@pengutronix.de, 
+	Michal Simek <michal.simek@amd.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Maxime Ripard <mripard@kernel.org>
+Subject: Re: [PATCH 1/2] clk: Add a devm variant of clk_rate_exclusive_get()
+Message-ID: <3fhgutm42b6sy6gdydcvflnsjuc2ozjetjbeyoxjvnl2t5q7za@4og2x6gqz5y2>
+References: <cover.1702403904.git.u.kleine-koenig@pengutronix.de>
+ <744a6371f94fe96f527eea6e52a600914e6fb6b5.1702403904.git.u.kleine-koenig@pengutronix.de>
+ <5391068cdc86b6117920d31a524d934b.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.14.333
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3rnggtg3wisreb74"
+Content-Disposition: inline
+In-Reply-To: <5391068cdc86b6117920d31a524d934b.sboyd@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-From: Weihao Li <cn.liweihao@gmail.com>
 
-[ Upstream commit c6c5a5580dcb6631aa6369dabe12ef3ce784d1d2 ]
+--3rnggtg3wisreb74
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The HCLK_OTG gate control is in CRU_CLKGATE5_CON, not CRU_CLKGATE3_CON.
+[Cc +=3D Maxime]
 
-Signed-off-by: Weihao Li <cn.liweihao@gmail.com>
-Link: https://lore.kernel.org/r/20231031111816.8777-1-cn.liweihao@gmail.com
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/rockchip/clk-rk3128.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hello Stephen,
 
-diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
-index 5970a50671b9a..83c7eb18321f4 100644
---- a/drivers/clk/rockchip/clk-rk3128.c
-+++ b/drivers/clk/rockchip/clk-rk3128.c
-@@ -497,7 +497,7 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
- 	GATE(HCLK_I2S_2CH, "hclk_i2s_2ch", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
- 	GATE(0, "hclk_usb_peri", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(9), 13, GFLAGS),
- 	GATE(HCLK_HOST2, "hclk_host2", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 3, GFLAGS),
--	GATE(HCLK_OTG, "hclk_otg", "hclk_peri", 0, RK2928_CLKGATE_CON(3), 13, GFLAGS),
-+	GATE(HCLK_OTG, "hclk_otg", "hclk_peri", 0, RK2928_CLKGATE_CON(5), 13, GFLAGS),
- 	GATE(0, "hclk_peri_ahb", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(9), 14, GFLAGS),
- 	GATE(HCLK_SPDIF, "hclk_spdif", "hclk_peri", 0, RK2928_CLKGATE_CON(10), 9, GFLAGS),
- 	GATE(HCLK_TSP, "hclk_tsp", "hclk_peri", 0, RK2928_CLKGATE_CON(10), 12, GFLAGS),
--- 
-2.43.0
+On Sun, Dec 17, 2023 at 04:17:41PM -0800, Stephen Boyd wrote:
+> Quoting Uwe Kleine-K=F6nig (2023-12-12 10:09:42)
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index af2011c2a93b..78249ca2341c 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -937,6 +937,21 @@ void clk_rate_exclusive_get(struct clk *clk)
+> >  }
+> >  EXPORT_SYMBOL_GPL(clk_rate_exclusive_get);
+> > =20
+> > +static void devm_clk_rate_exclusive_put(void *data)
+> > +{
+> > +       struct clk *clk =3D data;
+> > +
+> > +       clk_rate_exclusive_put(clk);
+> > +}
+> > +
+> > +int devm_clk_rate_exclusive_get(struct device *dev, struct clk *clk)
+> > +{
+> > +       clk_rate_exclusive_get(clk);
+>=20
+> It seems the other thread wants this to return an error value.
 
+The status quo is that clk_rate_exclusive_get() always returns zero.
+Some users do error handling (which is dead code until Maxime reworks
+the call that it might return something non-zero), others just call it
+without checking.
+
+If you don't require to add something like:
+
+	ret =3D clk_rate_exclusive_get(clk);
+	if (ret)
+		return ret;
+
+where we currently have just
+
+	clk_rate_exclusive_get(clk);
+
+the patch can just be applied (using git am -3) not even hitting a merge
+conflict without that other series.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--3rnggtg3wisreb74
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmWAQrQACgkQj4D7WH0S
+/k4ciQf/bx+ktF4gQ2yImbs9v+bJkuvbEpmBeKUZ6D0MDv8PrBwZFFKeRrzktdYQ
+5eCujDLMVI1s1GQTAnLTNL/049NAdj/XEU0t4tCzEK92guttASVgW1virlGbLq2G
+yn44JbmPpmwCZgBfp8IvrqE3OLtflatbuwqpfzr9PNkvz+eXBQ4+FYmzGE3jJXYm
+8wT6NM6RyT9f64+bNMZ8+DNX+X0GPa0MRXPa2CpGs4rajnMISvxpTr26MFJ/LEl/
+SgLJkEtebx5VUDUP+PijfJZ8rCA5R/OzjqlpDsgJdu6kx+MOSsccqWBAd+o/YhN5
+lKhdcO48PpW0eKqlyUAd1uSrZNxE+A==
+=A0ib
+-----END PGP SIGNATURE-----
+
+--3rnggtg3wisreb74--
