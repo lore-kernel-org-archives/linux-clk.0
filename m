@@ -1,22 +1,22 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373327AE75;
-	Mon, 18 Dec 2023 12:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D95C80587;
+	Mon, 18 Dec 2023 12:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJGJ4n1G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B887BC433C8;
-	Mon, 18 Dec 2023 12:46:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3AOJ6ip"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EDBAC433C7;
+	Mon, 18 Dec 2023 12:46:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702903598;
+	s=k20201202; t=1702903619;
 	bh=hhH0S1d1h1iP5cEliJA43vXsxR1kP/uHQeuebebGyQE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=GJGJ4n1GahTgV8b8C2C5ReWcyWpkYhiLH7sWdHgijiAKwYT+4FW/S7A+euKxLFaau
-	 Y/Nkcn0x4rHE3PlvHQp+v7oWQARp/e5ZjBVtfDUHu+HHBVdUd5UtAuqJ7dorN7qzxZ
-	 V1dz2D6k/laRnVF8IDsZWncupB5cTVkZe5CrHP5VT0JDi2tpTFpvZ7ojUDTId2F3Z+
-	 kv/GXiz0MxhFXQK4GJ2pcRpr0jDc1vZbXyP4NwGbaahGhDkEa09L5ZqWTBfedWB1QB
-	 MuteuivID80BNEx4xANRcdIVEWT7cIDM9A+pEHH6SDSF3Nxmg79CEjf6WHz2pFPEVp
-	 2usr5BeJvijnw==
+	b=W3AOJ6ipq22EP8pj7M5/sT+8PuAbW4JBPUQn7ksOMC6LkRyXguEDUhXK7NPwbNOBP
+	 1a6jk3gKak3vldv9jBLBoxtNlMvNS6HiSeRK2VRyHeownOHyss1rS6j4/RepEnA2lL
+	 WMMND+i6U7Bf1IbAYVfT4Kxt6svXfP7D/E2jhvHGdhNBH0ORHWYQOV8i92maOlqSjS
+	 qJfiXbXatVAoF1T3SZlZLrGG49QJmIWW4iC5bvRNopjipmWaAUvLTlehvaBPn2Qbj6
+	 aOHSuN3A5RlujYQeOIX8tqLzstxIZspADiE+wy+Gs+mU2gkoAg3COLnvZrunB7w+br
+	 vH1oouZ2z7g7A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -28,9 +28,9 @@ Cc: Weihao Li <cn.liweihao@gmail.com>,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.10 1/8] clk: rockchip: rk3128: Fix HCLK_OTG gate register
-Date: Mon, 18 Dec 2023 07:46:22 -0500
-Message-ID: <20231218124635.1381482-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 1/7] clk: rockchip: rk3128: Fix HCLK_OTG gate register
+Date: Mon, 18 Dec 2023 07:46:46 -0500
+Message-ID: <20231218124656.1381949-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.204
+X-stable-base: Linux 5.4.264
 Content-Transfer-Encoding: 8bit
 
 From: Weihao Li <cn.liweihao@gmail.com>
