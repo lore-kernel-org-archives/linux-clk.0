@@ -1,31 +1,31 @@
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E6F2C841;
-	Mon, 18 Dec 2023 11:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506F11C6AD;
+	Mon, 18 Dec 2023 11:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NnoaSKie"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QZ+3xWuH"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1702899835;
-	bh=+AE8FG87JjGXQZ7aKx+tpmHcDvNM6DDRUxk5MZqAb4U=;
+	s=mail; t=1702900104;
+	bh=cGR57+CiG5a+3zirrKt+CQiAa44aj9FUBj5+rhcA9VM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NnoaSKieHR6swMS1aHrusYDqLIPoqpaqKP+0jC7/bOhu9uyCuIBbR7GbjLOTqnVFQ
-	 aofCGeAjJ4cerVlSp1kZIzTq3bqOY0m+r49v5ciHgqgMaU5T6cU4vZbLZG4vXANCbv
-	 zuSyGf1s3hLfzDH5RWG9MP/vR06o1sHfa11g1uWVzclCVDk0a3F4hQgZhBx416FP3f
-	 OL9eePgwTzMG11Djscu2MGXa5b2LVFdYhFoA757KG6Ink9K5ft8lu/cm6CSkRraR8x
-	 aJFsfpEgK3Lr/z3MHNYgU1KRhR1N55mIB4UMHLrQrKHmqq4PRcinmK5BZCvn2yRC3H
-	 OxPAyW3dxhFkA==
+	b=QZ+3xWuH+hzguRihJ5wfmGV6IBQ4oy3RSHlbf/lRB2c+dNBkK6gAFqaUQ6BHgsYTP
+	 B71E+s4hEd5cGoywoTQOe1kbaeb2ZZuJRNEKc7xVtBI27NWEjkyIprI5ph/sYpBynk
+	 56SgJde7fgS+77iBGFoeFNn7K5bG3pw6727TJnyesSfgPpImLp45fRHI5h4eRxU/zG
+	 F6znNG4DSGdyhKHM9Wol9Wj3ctEOWFnE/hDUofqYmpfQZzBPAc2CgfOhUgo5hgl4nV
+	 RdaygF1EqXYMma/47DjheC66X6nCo4j7osbBxylPw3DRkgwlk6LH5UVhMd1Ip2MxKc
+	 st6Q66gdTlKSA==
 Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 696FF37814A3;
-	Mon, 18 Dec 2023 11:43:53 +0000 (UTC)
-Message-ID: <b65393f1-1c36-40e5-96f6-1e7f978cc185@collabora.com>
-Date: Mon, 18 Dec 2023 13:43:52 +0200
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1609037814A3;
+	Mon, 18 Dec 2023 11:48:22 +0000 (UTC)
+Message-ID: <11f7fbee-4795-4d5f-a5f8-901bc17683eb@collabora.com>
+Date: Mon, 18 Dec 2023 13:48:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -33,10 +33,11 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/9] riscv: dts: starfive: visionfive-v1: Setup
- ethernet phy
+Subject: Re: [PATCH v3 5/9] riscv: dts: starfive: jh7100-common: Setup pinmux
+ and enable gmac
 Content-Language: en-US
-To: Andrew Lunn <andrew@lunn.ch>
+To: Conor Dooley <conor@kernel.org>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Cc: "David S. Miller" <davem@davemloft.net>,
  Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
  Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
@@ -55,34 +56,50 @@ Cc: "David S. Miller" <davem@davemloft.net>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com
 References: <20231215204050.2296404-1-cristian.ciocaltea@collabora.com>
- <20231215204050.2296404-7-cristian.ciocaltea@collabora.com>
- <f8f9d454-6155-4b1c-b4b2-daf98267be14@lunn.ch>
+ <20231215204050.2296404-6-cristian.ciocaltea@collabora.com>
+ <CAJM55Z-bg0EGPaLHtxcu2AzqN59zfuiT0eE7oCShrx7dG_QK1g@mail.gmail.com>
+ <20231217-rippling-galleria-904152e41f95@spud>
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <f8f9d454-6155-4b1c-b4b2-daf98267be14@lunn.ch>
+In-Reply-To: <20231217-rippling-galleria-904152e41f95@spud>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/17/23 19:55, Andrew Lunn wrote:
-> On Fri, Dec 15, 2023 at 10:40:45PM +0200, Cristian Ciocaltea wrote:
->> The StarFive VisionFive V1 SBC uses a Motorcomm YT8521 PHY supporting
->> RGMII-ID, but requires manual adjustment of the RX internal delay to
->> work properly.
+On 12/17/23 23:03, Conor Dooley wrote:
+> On Sat, Dec 16, 2023 at 11:38:53AM -0800, Emil Renner Berthing wrote:
+>> Cristian Ciocaltea wrote:
+>>> Add pinmux configuration for DWMAC found on the JH7100 based boards and
+>>> enable the related DT node, providing a basic PHY configuration.
+>>>
+>>> Co-developed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+>>> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>>> ---
+>>>  .../boot/dts/starfive/jh7100-common.dtsi      | 85 +++++++++++++++++++
+>>>  1 file changed, 85 insertions(+)
+>>>
+>>> diff --git a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
+>>> index 42fb61c36068..5cafe8f5c2e7 100644
+>>> --- a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
+>>> +++ b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
+>>> @@ -72,7 +72,92 @@ wifi_pwrseq: wifi-pwrseq {
+>>>  	};
+>>>  };
+>>>
+>>> +&gmac {
+>>> +	pinctrl-names = "default";
+>>> +	pinctrl-0 = <&gmac_pins>;
+>>> +	phy-mode = "rgmii-id";
+>>> +	phy-handle = <&phy>;
 >>
->> The default RX delay provided by the driver is 1.95 ns, which proves to
->> be too high. Applying a 50% reduction seems to mitigate the issue.
->>
->> Also note this adjustment is not necessary on BeagleV Starlight SBC,
->> which uses a Microchip PHY.  Hence, there is no indication of a
->> miss-behaviour on the GMAC side, but most likely the issue stems from
->> the Motorcomm PHY.
+>> I'm not sure if it's a generic policy or not, but I don't really like adding a
+>> reference to a non-existant node here. I'd move this property to the board
+>> files where the phy node is actually defined.
 > 
-> I suggest you make a similar comment in the .dts file, just to explain
-> the odd setting.
+> FWIW, I don't like the reference-in-the-wrong-place thing either.
 
-Sure, will do, we need a v4 anyway.
+Yeah, as I already mentioned this was unintentional, will fix in v4.
 
 Thanks,
 Cristian
