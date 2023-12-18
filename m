@@ -1,105 +1,92 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506F11C6AD;
-	Mon, 18 Dec 2023 11:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9D73714B
+	for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 11:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QZ+3xWuH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1702900104;
-	bh=cGR57+CiG5a+3zirrKt+CQiAa44aj9FUBj5+rhcA9VM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QZ+3xWuH+hzguRihJ5wfmGV6IBQ4oy3RSHlbf/lRB2c+dNBkK6gAFqaUQ6BHgsYTP
-	 B71E+s4hEd5cGoywoTQOe1kbaeb2ZZuJRNEKc7xVtBI27NWEjkyIprI5ph/sYpBynk
-	 56SgJde7fgS+77iBGFoeFNn7K5bG3pw6727TJnyesSfgPpImLp45fRHI5h4eRxU/zG
-	 F6znNG4DSGdyhKHM9Wol9Wj3ctEOWFnE/hDUofqYmpfQZzBPAc2CgfOhUgo5hgl4nV
-	 RdaygF1EqXYMma/47DjheC66X6nCo4j7osbBxylPw3DRkgwlk6LH5UVhMd1Ip2MxKc
-	 st6Q66gdTlKSA==
-Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1609037814A3;
-	Mon, 18 Dec 2023 11:48:22 +0000 (UTC)
-Message-ID: <11f7fbee-4795-4d5f-a5f8-901bc17683eb@collabora.com>
-Date: Mon, 18 Dec 2023 13:48:21 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C80ZJkxi"
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-5cd870422c8so255868a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 03:49:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702900147; x=1703504947; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WFiECuxQKf4bQHzOWrQB9O9iOx/6SZrLhJKr/Z2J67E=;
+        b=C80ZJkxiwR9Zm0ZsEKM8BmKcnvSLYCkhtK1dQvnDmoi9wbVvIeHxftsgmgH0afTE7u
+         tv86Bo8M8rIqdWJYLKfhlF5aJeO4RaxULPRK75GlvL7OpGIe7LDthzkcV6e73mekVU+K
+         eG0YxNCQ7FYoSsNsMCb41ntmlKlvGjbHxQM/W0tDIxGbG/wYPKt380CkOa1ZGzZkJu6P
+         yqa73Vg7lgWCGGbwj8f3fEOTg8Y8lEhhERQSkXuIB6xlzRlXrXNec9PpvtVmP9U7r6LO
+         EqEawO8Cry1p56dNMBPbO31C9vlWGCiOn/NA7T4Lid2Pi+4cJCeM0Q3VGXhWAqyPgGuw
+         pBLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702900147; x=1703504947;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WFiECuxQKf4bQHzOWrQB9O9iOx/6SZrLhJKr/Z2J67E=;
+        b=JoaRv8Sa56QKhqXP1Va3KdLkTSWZfLVQXKpP5Nt6v/Z5WAx+jhGLuvwv1Qi8KhHqTq
+         OpHBYWTwvdNco+01VpSuZoQ/fw3CLD9sNA7h+whQyG0IoyH6YcH7BGMSpx9uVkpGDbAK
+         FWCLWXOi+YTDxI3nVd4F1UrQQubXs8juzqU0Tz6VAW7Q9jqpo6jYm5EofdKdHEflTUSH
+         DEK/gP4zEtSuH1bNPqDwH83moiu60nm7rYsHVKvZ7EUIXbRZ/4EkpujxhX0vqBsYtu+E
+         2tKtIGW2Dj4Jb9AWNwR31pXn8w7outW41OzvOOXFMTGqgyWu0+T8TW2VpVbybjpihP4R
+         u0HQ==
+X-Gm-Message-State: AOJu0YwXVyvMXg2jC4Q2nrDsMHc1bEVv3hBksRkcwYpa8xYVWzz+KrXz
+	dNdjPQDMmBy/j3HaxY79DeoM
+X-Google-Smtp-Source: AGHT+IFNm7vnn6dj9ZJCS5JUQjewTTJwImMcXsK4yzYDnO65BIHPMtdEVIr3bR2Db4u/3gv4EFWJDQ==
+X-Received: by 2002:a05:6a20:3d81:b0:190:c314:35f8 with SMTP id s1-20020a056a203d8100b00190c31435f8mr7847690pzi.46.1702900147590;
+        Mon, 18 Dec 2023 03:49:07 -0800 (PST)
+Received: from thinkpad ([117.207.27.21])
+        by smtp.gmail.com with ESMTPSA id ha9-20020a17090af3c900b0028b8bb9e5cbsm1526025pjb.25.2023.12.18.03.49.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Dec 2023 03:49:07 -0800 (PST)
+Date: Mon, 18 Dec 2023 17:18:58 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
+	sboyd@kernel.org, mturquette@baylibre.com,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 01/16] dt-bindings: phy: qmp-ufs: Fix PHY clocks
+Message-ID: <20231218114858.GA2900@thinkpad>
+References: <20231214091101.45713-1-manivannan.sadhasivam@linaro.org>
+ <20231214091101.45713-2-manivannan.sadhasivam@linaro.org>
+ <20231214172051.GA611674-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/9] riscv: dts: starfive: jh7100-common: Setup pinmux
- and enable gmac
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
- Samin Guo <samin.guo@starfivetech.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Hal Feng <hal.feng@starfivetech.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-References: <20231215204050.2296404-1-cristian.ciocaltea@collabora.com>
- <20231215204050.2296404-6-cristian.ciocaltea@collabora.com>
- <CAJM55Z-bg0EGPaLHtxcu2AzqN59zfuiT0eE7oCShrx7dG_QK1g@mail.gmail.com>
- <20231217-rippling-galleria-904152e41f95@spud>
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20231217-rippling-galleria-904152e41f95@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231214172051.GA611674-robh@kernel.org>
 
-On 12/17/23 23:03, Conor Dooley wrote:
-> On Sat, Dec 16, 2023 at 11:38:53AM -0800, Emil Renner Berthing wrote:
->> Cristian Ciocaltea wrote:
->>> Add pinmux configuration for DWMAC found on the JH7100 based boards and
->>> enable the related DT node, providing a basic PHY configuration.
->>>
->>> Co-developed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
->>> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
->>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->>> ---
->>>  .../boot/dts/starfive/jh7100-common.dtsi      | 85 +++++++++++++++++++
->>>  1 file changed, 85 insertions(+)
->>>
->>> diff --git a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
->>> index 42fb61c36068..5cafe8f5c2e7 100644
->>> --- a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
->>> +++ b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
->>> @@ -72,7 +72,92 @@ wifi_pwrseq: wifi-pwrseq {
->>>  	};
->>>  };
->>>
->>> +&gmac {
->>> +	pinctrl-names = "default";
->>> +	pinctrl-0 = <&gmac_pins>;
->>> +	phy-mode = "rgmii-id";
->>> +	phy-handle = <&phy>;
->>
->> I'm not sure if it's a generic policy or not, but I don't really like adding a
->> reference to a non-existant node here. I'd move this property to the board
->> files where the phy node is actually defined.
+On Thu, Dec 14, 2023 at 11:20:51AM -0600, Rob Herring wrote:
+> On Thu, Dec 14, 2023 at 02:40:46PM +0530, Manivannan Sadhasivam wrote:
+> > All QMP UFS PHYs except MSM8996 require 3 clocks:
+> > 
+> > * ref - 19.2MHz reference clock from RPMh
+> > * ref_aux - Auxiliary reference clock from GCC
+> > * qref - QREF clock from GCC or TCSR (since SM8550)
+> > 
+> > MSM8996 only requires 'ref' and 'qref' clocks. Hence, fix the binding to
+> > reflect the actual clock topology.
 > 
-> FWIW, I don't like the reference-in-the-wrong-place thing either.
+> Breaking the ABI is okay because...? Please explain in the commit msg.
+> 
 
-Yeah, as I already mentioned this was unintentional, will fix in v4.
+I will update the commit message in v2.
 
-Thanks,
-Cristian
+- Mani
+
+> Rob
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
