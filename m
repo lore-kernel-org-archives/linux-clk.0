@@ -1,148 +1,184 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C6A74E0C
-	for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 16:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C091E486;
+	Mon, 18 Dec 2023 16:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T1jGvhhF"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a2369d9b04aso70797366b.1
-        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 08:02:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702915364; x=1703520164; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7vqnaVfXUc3+Cw3ab8YklVZAFoD7TS2H8et3g6n/n1M=;
-        b=T1jGvhhFYMLI01YBjJiXWfbpFy+l/hCvjCQyspUxwGoQqV2yBVUyFl931zZNuxQk2l
-         4qos0t0OO0O2YLKXm+YKz1xT2vr8ySTQ1tW8VRqDG1AVoJAKy27PLToAXUreprJvbNvO
-         kik/DfDnSSdkpSMZwce0Qvt62V6UAKFXXbUiW/cLLfAaNfK9MaWjBEY4RVP0lCHdgZEF
-         j/l7nBfK2qQt6s2ok34zre2deoCG2wOcEl7fB/9HUYRWxjbAaxH50SgowiVuGpcvm8hL
-         G+yLJcEkbMGf3Gxg7L0ZejRoneqyqHJQ0Lvlnf0zzm/gHXhFw35aPqxiWNGUSq7hYcIT
-         ZxxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702915364; x=1703520164;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7vqnaVfXUc3+Cw3ab8YklVZAFoD7TS2H8et3g6n/n1M=;
-        b=lRpagqkKmYeT5+EmLNeAAv2MTTvGYctqU5IZkvfVB9/5j9eSpWvBQQsKAUBFoWNs8Z
-         cLsm57F053IAER9mlULwuVjdhgo79XBlXTjXChiN9sg5/Ifg2Xz65wnUqfQL/eKdBzGk
-         1qHzsxBnfhrjCrTP8HpuXqg4Hu8JdSp2KprwOgdV6vDHOovKHEqA8mHI1R3Qbh5r3fRI
-         o+gCltuBfZGFqy98IbtTaV4uLrHQgVXYYt1M7wjEPloK3OXcw7QfzmQVmIdk5/lNhM4T
-         mKeGZAVTc/8coTo62JDGfx5I73MgAH+q5Tjia1G1yKrapQ03Ae6NTrI3ZRGhDOIeZPUD
-         H8Cw==
-X-Gm-Message-State: AOJu0YwZU+lanj8yRtvLqLn2A3koYRVTvT3ZI2lJDJNqMXnYPG95NRrV
-	IofcJG7+mrCXCljAJZvYcP0+Wg==
-X-Google-Smtp-Source: AGHT+IGNnRKVBXAyleisarX/8QiSexrXfrpnMlqCDzp/Inh+l4LMc8nVvkgqQc+KX35OdfJEHdb1Dw==
-X-Received: by 2002:a17:906:5c:b0:a23:660:ec5c with SMTP id 28-20020a170906005c00b00a230660ec5cmr3564518ejg.40.1702915363917;
-        Mon, 18 Dec 2023 08:02:43 -0800 (PST)
-Received: from [10.167.154.1] (178235179137.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.137])
-        by smtp.gmail.com with ESMTPSA id ts7-20020a170907c5c700b00a1dd58874b8sm14260693ejc.119.2023.12.18.08.02.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 08:02:43 -0800 (PST)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Mon, 18 Dec 2023 17:02:13 +0100
-Subject: [PATCH 12/12] arm64: dts: qcom: sm8550: Update idle state time
- requirements
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Sy8DltGQ"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BIFOOuJ003249;
+	Mon, 18 Dec 2023 16:36:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=IHfTQFFYLuLy3cTDmFjjPBUfltLSx/Aj2CKesx6gsbk=; b=Sy
+	8DltGQFUuEQbss79u3fqU0GdSLM2yPD1nMqRfPA7b+DJZ4OjGqoOQYhvdFn1yT2B
+	KsqL94sBLP+XoBdxHpO+CPwQycBZPqKAlaEaenrp/nmbkPxwyGSNexwHHU8CVDLf
+	C1Mq/d+r/zI/lax6eqHKeYtlk/dhJ5I2UyF2Me/tLMeJJmlXmHkN/cbqOj1Div2F
+	mGPZPDb0X6ntkx+rYIZ9H/TZVOS3t8itOiRShcQaXeFx3r1Vrb1yLvW5KQOAt8fb
+	myZRlrGr3AzYlGnMrGusidwvmU+0YLJ9WunEHnumzCcIVBhPvTg+KYZ3tzuAG3eS
+	SDkioQkBOkl5fewVJAWw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3v2gw0sdgu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Dec 2023 16:36:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BIGYhZF004722
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Dec 2023 16:36:13 GMT
+Received: from [10.218.45.181] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 18 Dec
+ 2023 08:35:42 -0800
+Message-ID: <62f0c623-3819-f6be-115f-6b471ab79a58@quicinc.com>
+Date: Mon, 18 Dec 2023 22:05:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231218-topic-8550_fixes-v1-12-ce1272d77540@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH 10/12] arm64: dts: qcom: sm8550: Switch UFS from
+ opp-table-hz to opp-v2
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>, Abel Vesa
+	<abel.vesa@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona
+	<quic_jkona@quicinc.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        "Rob
+ Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Sai
+ Prakash Ranjan" <quic_saipraka@quicinc.com>
+CC: Marijn Suijten <marijn.suijten@somainline.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
 References: <20231218-topic-8550_fixes-v1-0-ce1272d77540@linaro.org>
-In-Reply-To: <20231218-topic-8550_fixes-v1-0-ce1272d77540@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Georgi Djakov <djakov@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
- Jagadeesh Kona <quic_jkona@quicinc.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Sai Prakash Ranjan <quic_saipraka@quicinc.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1702915332; l=2164;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=9Z88FW0hsRmPlBm1BVUnqIFZHzLISLnQdKvDWpIJwf4=;
- b=ppRSM6dTlJsxBT50Gv31qfqBnfv3jlmcUCdVlaNY6XDUuq5HjF8k9Ls7YTXHH1MkJHv57Sstg
- PWmaijmoN+VBlj0oEm+XgddIIkdtdoLL2e+n8pKTbtpIlbzHcxdZSUG
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+ <20231218-topic-8550_fixes-v1-10-ce1272d77540@linaro.org>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <20231218-topic-8550_fixes-v1-10-ce1272d77540@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: aGzfgsGo_ofvxbl9o9p8Z-YLf-qIgeU8
+X-Proofpoint-ORIG-GUID: aGzfgsGo_ofvxbl9o9p8Z-YLf-qIgeU8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-09_02,2023-12-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ mlxscore=0 adultscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxlogscore=999 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2311290000 definitions=main-2312180122
 
-The idle state entry/exit/residency times differ from what shipped on
-production devices, mostly being overly optimistic in entry times and
-overly pessimistic in minimal residency times. Align them with
-downstream sources.
 
-Fixes: ffc50b2d3828 ("arm64: dts: qcom: Add base SM8550 dtsi")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8550.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index 5143a08c4867..6a192fb41f84 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -285,9 +285,9 @@ LITTLE_CPU_SLEEP_0: cpu-sleep-0-0 {
- 				compatible = "arm,idle-state";
- 				idle-state-name = "silver-rail-power-collapse";
- 				arm,psci-suspend-param = <0x40000004>;
--				entry-latency-us = <800>;
-+				entry-latency-us = <550>;
- 				exit-latency-us = <750>;
--				min-residency-us = <4090>;
-+				min-residency-us = <6700>;
- 				local-timer-stop;
- 			};
- 
-@@ -296,8 +296,8 @@ BIG_CPU_SLEEP_0: cpu-sleep-1-0 {
- 				idle-state-name = "gold-rail-power-collapse";
- 				arm,psci-suspend-param = <0x40000004>;
- 				entry-latency-us = <600>;
--				exit-latency-us = <1550>;
--				min-residency-us = <4791>;
-+				exit-latency-us = <1300>;
-+				min-residency-us = <8136>;
- 				local-timer-stop;
- 			};
- 
-@@ -316,17 +316,17 @@ domain-idle-states {
- 			CLUSTER_SLEEP_0: cluster-sleep-0 {
- 				compatible = "domain-idle-state";
- 				arm,psci-suspend-param = <0x41000044>;
--				entry-latency-us = <1050>;
--				exit-latency-us = <2500>;
--				min-residency-us = <5309>;
-+				entry-latency-us = <750>;
-+				exit-latency-us = <2350>;
-+				min-residency-us = <9144>;
- 			};
- 
- 			CLUSTER_SLEEP_1: cluster-sleep-1 {
- 				compatible = "domain-idle-state";
- 				arm,psci-suspend-param = <0x4100c344>;
--				entry-latency-us = <2700>;
--				exit-latency-us = <3500>;
--				min-residency-us = <13959>;
-+				entry-latency-us = <2800>;
-+				exit-latency-us = <4400>;
-+				min-residency-us = <10150>;
- 			};
- 		};
- 	};
+On 12/18/2023 9:32 PM, Konrad Dybcio wrote:
+> Now that the non-legacy form of OPP is supported within the UFS driver,
+> go ahead and switch to it, adding support for more intermediate freq/power
+> states.
+> 
+> In doing so, add the CX RPMhPD under GCC to make sure at least some of
+> the power state requirements are *actually* propagated up the stack.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 50 +++++++++++++++++++++++++++++-------
+>   1 file changed, 41 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> index d707d15cea5b..d6edd54f3ad3 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> @@ -1930,6 +1930,7 @@ ufs_mem_hc: ufs@1d84000 {
+>   			iommus = <&apps_smmu 0x60 0x0>;
+>   			dma-coherent;
+>   
+> +			operating-points-v2 = <&ufs_opp_table>;
+>   			interconnects = <&aggre1_noc MASTER_UFS_MEM 0 &mc_virt SLAVE_EBI1 0>,
+>   					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_UFS_MEM_CFG 0>;
+>   
+> @@ -1950,18 +1951,49 @@ ufs_mem_hc: ufs@1d84000 {
+>   				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
+>   				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>,
+>   				 <&gcc GCC_UFS_PHY_RX_SYMBOL_1_CLK>;
+> -			freq-table-hz =
+> -				<75000000 300000000>,
+> -				<0 0>,
+> -				<0 0>,
+> -				<75000000 300000000>,
+> -				<100000000 403000000>,
+> -				<0 0>,
+> -				<0 0>,
+> -				<0 0>;
+>   			qcom,ice = <&ice>;
+>   
+>   			status = "disabled";
+> +
+> +			ufs_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
+> +
+> +				opp-75000000 {
+> +					opp-hz = /bits/ 64 <75000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <75000000>,
+> +						 /bits/ 64 <100000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>;
+> +					required-opps = <&rpmhpd_opp_low_svs>;
+> +				};
+> +
+> +				opp-150000000 {
+> +					opp-hz = /bits/ 64 <150000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <150000000>,
+> +						 /bits/ 64 <100000000> > +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>;
+> +					required-opps = <&rpmhpd_opp_svs>;
+> +				};
+> +
+> +				opp-300000000 {
+> +					opp-hz = /bits/ 64 <300000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <300000000>,
+> +						 /bits/ 64 <100000000>,
+Hi Konrad,
 
--- 
-2.43.0
+This entry is for ICE clock ? Shouldn't the entry be 403000000 ?
+Same for svs as well ?
 
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>;
+> +					required-opps = <&rpmhpd_opp_nom>;
+> +				};
+> +			};
+>   		};
+>   
+>   		ice: crypto@1d88000 {
+> 
+
+Regards,
+Nitin
