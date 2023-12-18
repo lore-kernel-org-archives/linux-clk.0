@@ -1,139 +1,254 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2024.outbound.protection.outlook.com [40.92.102.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB258E549
-	for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 07:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22F1125A1;
+	Mon, 18 Dec 2023 09:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e14Wj4ez"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2c9f559b82cso25928781fa.0
-        for <linux-clk@vger.kernel.org>; Sun, 17 Dec 2023 23:49:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702885739; x=1703490539; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NqTCkFMsMgR8QnA3IJw5oIx3MCAU6l6YcH6Ao6GT0Gw=;
-        b=e14Wj4ezaGeYGQaUcS75mIBiqvWF0nS6Q8jIWgARC4hBytn1yqW2lK1HWgFXCZEOGm
-         uWFPjIT7aWrNPRieK3NRSX2x4Y2zGJmkIEYYXe0ISf5xLlCLdMmwJAgng7Mftv16wdPq
-         d8ClUjPh7TPFEupij7kT+t9Un1CLTsr0pIpiHEyrxOyg8KEddz+BM+f5v9jaI7K5SMDX
-         P+mqQ/0eO/uH1VfptgfhLeraqWCA3MlT6FpaME1Mf1g852PEMTh1s1XI+mYrY50G8fck
-         HSwPY3ea2D1eCi/XNtFL/FWqaZ6Psw+s29LIjnPa6I2zuJj2ihgTOiGSmVUuigPTVQ1b
-         lRBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702885739; x=1703490539;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NqTCkFMsMgR8QnA3IJw5oIx3MCAU6l6YcH6Ao6GT0Gw=;
-        b=G+gx9pkXvw4mLuNl03tw/GommvlwTy0i0UOFDOYrMHJYOjmj1YOdUWghwXhq2vWNai
-         jnS5v+ORVUI+UZv9nDA0ZnDfkjuJ7a0T4s+Or9qAYiyoLaXo4zORu+nyiYTNjYMYnVJV
-         /DoUU+wkBgZibjSWTc1FJDKw8lkQGkHvmIoZwFC7+apZiOGskLcgNhHtJn1uQl6oumL8
-         Y45yy7TCmBWfwwuOpkP8b2dHM4y/jSsj1Z4MORzMBVxvfVt0kzemJhzGMQrO1euFpUkN
-         o20IqDlRRTmZ1836qXLqolp8vifC9yqKPQ/6FXibvrecprxTV9O4fzjvh564XmhQ5HcP
-         OCeQ==
-X-Gm-Message-State: AOJu0YzgNhEu3CwGXIgExoi/+W9aT7TC8vzAA3up2mkYiRz795J81Oks
-	UhaSeSopjpKJvL4Vs9Eyd4NH+A==
-X-Google-Smtp-Source: AGHT+IGhGwPrG8mhzLJQAWuXHXzB7PI44dF9QaGJfxwob73oBj+c1J1/3NYxKsLcYzYHNAb97ODF/g==
-X-Received: by 2002:a2e:9403:0:b0:2c9:ea79:ac4d with SMTP id i3-20020a2e9403000000b002c9ea79ac4dmr6630596ljh.76.1702885738799;
-        Sun, 17 Dec 2023 23:48:58 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id n2-20020a05640205c200b0055122551f98sm7775846edx.6.2023.12.17.23.48.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Dec 2023 23:48:57 -0800 (PST)
-Message-ID: <8dbb703f-f40c-49b6-8a8c-094ce1ac7ccb@linaro.org>
-Date: Mon, 18 Dec 2023 08:48:54 +0100
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="p3PmU5y1"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Kz6jeoWW9+EAJ2w9UaDUhI2gLbCOMmCNBdAzjh9bzMMPQjvvdTFSpF2F8K1rBU1kjdjzIl3FTnKzLWHV1FrJOn76MFZKeRqzxDt/PuWodKcpiazGPsTmuk1qx62xcos34S2nmBSz0li3J10PW4qMsLTJDGTus+xzrDceSqB6mIUvVMLCbMuNd91hQ7reJxkMeoAetgp0jvid2t6PkjbR3l0hEXyv27zGu7DkpORUoSy/3GhfrRAzjYFam1X3LmpdRBt8+h7yoSojQC81RRIBr7727+ucW2GobXvo6gnnOEcMZpeH50b9aNJF6kKLVPNu43j+O60kOR0yFhQecrLZYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GdsLKFZllj5am9ey8Y6lQBE5tT85FrHO+rNiYLQapho=;
+ b=JfK/v63CiUObiEEI817nGLgOi9wkz21yTOO8UarX03k2aKxGSVHyU3ZFhnaE1Os75FF+WwEb4mSQz/CTUlsFY2fCaRzHchaXX//nnYM+t1wse+mvBTAdSfWmUTgTM/fArPI70f3YQCRnIzrGZSUhF/uZIOQ5I7+oD+QTpI7Boxaz/8NR2eTUAdDJsoz5TKqsBFHcb8c694lHUbcQa7hWjWHdVLP0TGhdqwRtveGzu6UO1kAQnEqdC3uJvY6e6ZvVnrNsshFO5QTPqh7WTy8Q0jp+RKAh3pvV4TgdgsPJ8tfFzEAJabaH0zo9s1dQhJgYCInDTtp0p/sL6WAM8rrK3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GdsLKFZllj5am9ey8Y6lQBE5tT85FrHO+rNiYLQapho=;
+ b=p3PmU5y1NrK+VXLue0+2R9uhRvL4ysK4k6BlNTJxrHOJdiDR14RX0HrIliBHVPwP6GNxllIlHdJIx0Vtlrj1+I/FGbUugz3l+jODWOy6J2wsGw7v/fXEYbre7ro6NrPDhrnci+Wk9qvkn2GNcDQfKuGq3LrB96cjx3tL1kU3N0fFCHgT9Ip7LL/YEo3KemVlfOC4P8+iGPBziuJ5kMYm2lEyD9NEVTRochyLOK7OP4TsuySOQjl3CUHEO0FOPrVy0P2ZUa+ev2MJ0E5Bvne6dW5MC1jsPMWlvpYudwVHFnpvUuDcH1bxv6Wz5ya/OCwWc4PPCrj/7PfklIRZjGWaxg==
+Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:ab::5) by
+ PN3P287MB1480.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:194::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7091.37; Mon, 18 Dec 2023 09:01:57 +0000
+Received: from MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ ([fe80::b1a7:eee7:e903:9ef3]) by MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ ([fe80::b1a7:eee7:e903:9ef3%7]) with mapi id 15.20.7091.034; Mon, 18 Dec 2023
+ 09:01:57 +0000
+Message-ID:
+ <MA0P287MB0332B44AC5FC2A6FE831686EFE90A@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
+Date: Mon, 18 Dec 2023 17:01:50 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/4] clk: sophgo: Add SG2042 clock generator driver
+To: Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor.dooley@microchip.com>
+Cc: Conor Dooley <conor@kernel.org>, Chen Wang <unicornxw@gmail.com>,
+ aou@eecs.berkeley.edu, chao.wei@sophgo.com,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com,
+ robh+dt@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, guoren@kernel.org,
+ jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
+References: <cover.1701997033.git.unicorn_wang@outlook.com>
+ <d1aa4f76f360ebd7b790a4786641f1b0188dbba8.1701997033.git.unicorn_wang@outlook.com>
+ <20231208-opposite-stand-fc92fbaaed9c@spud>
+ <MA0P287MB0332A937E4DF0044594B19CCFE8EA@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM>
+ <20231212-unnerving-rule-1052a5b7253e@wendy>
+ <1b4b88035d7524ad3d6de7c6084e3f07.sboyd@kernel.org>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <1b4b88035d7524ad3d6de7c6084e3f07.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [2NE3vRZQQOA1lCqdJ0JFY+eSdyJQK9zk]
+X-ClientProxiedBy: TYCP286CA0173.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c6::16) To MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:ab::5)
+X-Microsoft-Original-Message-ID:
+ <2102cca8-c880-4f31-a8e9-568b31318455@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/5] dt-bindings: clock: mediatek: add clock
- controllers of MT7988
-Content-Language: en-US
-To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Sabrina Dubroca
- <sd@queasysnail.net>, Chen-Yu Tsai <wenst@chromium.org>,
- "Garmin.Chang" <Garmin.Chang@mediatek.com>, Sam Shih
- <sam.shih@mediatek.com>, Frank Wunderlich <frank-w@public-files.de>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org
-References: <27f99db432e9ccc804cc5b6501d7d17d72cae879.1702849494.git.daniel@makrotopia.org>
- <07e76a544ce4392bcb88e34d5480e99bb7994618.1702849494.git.daniel@makrotopia.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <07e76a544ce4392bcb88e34d5480e99bb7994618.1702849494.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB0332:EE_|PN3P287MB1480:EE_
+X-MS-Office365-Filtering-Correlation-Id: feab4b92-16ee-435c-8dae-08dbffa7fc87
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	n5jVcb+1EjRW74EcbLiyztbGMZNYm+TNyNePN32h5FWzk+7114LjeiCtQPFzr/Prww8ktWjy7aw4BSumBuJcavCrwzDeKsIvRoZ53hbZAYNWkUQQbJe9qBMjmRD6og+7OmVB/xoNG9v/NcMbrILcmWJmAq1PAH2v97de2h2/0Y721quskF1IRlI3qHVFiwrvDG384FNkC+FroX1kDmwW/mOOycGMdDUCeSPZsYlShUhuYZPk/7Gu4D8LdfwkdK6n4KUnDuGfXtr41CuEBS5XDm7jseIPfSS4Bgogor/9vWW/EEAy14Vwbrtt632HqeARfdK5jvN9uqy1KYZV2W8lZLgVvaiLs45oIXawNEPE5NwQxza2A3P3+1xrFI6Ua3y8icOzANZi4ztgniYqcl+W4HP2tWUOokNUVn2fad/Cd3Dz0Sk5p2vH04G9l5XiIvYVmsP+enFPHRbkAHIM4GYflieXeu6QlYtY1taOwpeZPSXyEjPmFEzcpHBa11brlu752kav97W59wAbR9vxs8kdZx6sfw/FpFCdfNilVPTbec4PZDw1UVRRf9ifonOgnKJ6
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SGoyTlc0SUtuQ2lubFQyVnRUS3puTUdDakljanRLNTgxdGJoTHhQL1R1azFT?=
+ =?utf-8?B?c1BaYlN2MVhZM3Q2R0pvU3hpTVJrQkxEanBUT2c5VGpLUE1IOXZzbXQybVlu?=
+ =?utf-8?B?VkpiQ0ZLWnQzcHdzRHdWQTErVzdDTGZOOEZXa0tDOTRGaTZOMExNS2NPMS9Y?=
+ =?utf-8?B?UDFPMzBwL2hxRjM1WGgzSWVZVGVnRk5kdnBqa3NjQXVjb0pPSzZwSWhKU0pK?=
+ =?utf-8?B?TFM3Y0phWGRxY2dsTHBvdk8vblplb24vYTRJSnVUbWJDVTc4c201VWhpRERn?=
+ =?utf-8?B?NjM3Q2phUVlGSklxUTQ2Tmpyam4rUzAwSkdCMjdYWDdBUEU5Uy9wZ1c5M0Vw?=
+ =?utf-8?B?OTVYUWxPNFhXcnd5LzlIdC9NMzloNm1Wb1R2bmNjdko4Um8wYmx4bnRUemQ4?=
+ =?utf-8?B?YXBGTlNLanlQaXdpVUFtWllRcUZNeFFXbW8rVmJhdmdodnBNR3pxUmNYaFZE?=
+ =?utf-8?B?Nzc0ZDBIb25KS1V1SlluOW9uVEZEZnRJbFgrQmRwTU5QZ0ZGbVp0NXBoZ2tP?=
+ =?utf-8?B?YnVMSlg4SXRhSEVWMHVIUlB0TThTVmNPOTQ0VnRWbHc3T0xlcHJKdjdoWkVM?=
+ =?utf-8?B?QkdJSVJ4QSt4SnovSCtRcHJHbnhNbzc3c0RkNDk1Z0lLZStXV1EwbnE4cmFY?=
+ =?utf-8?B?NHA0a0dnT0wrTnAwclhtN1Q4ZEFTY3cvV1Qzbi9nM2s0aDZFVFBYVllXUVZz?=
+ =?utf-8?B?QnNSa2RYM3JzbDBnV3ZHS2lqZFRjeGhsZzk0YzZ0b1I4Nks1OUhxY2dGUXJC?=
+ =?utf-8?B?UllKZGNoYm1kNit3UlJBVFFNeHZ4bGZ2Yy9aSG94TTFBVGZobFZyMWpybkZB?=
+ =?utf-8?B?KzRhbkpMeWZHMmYzRDZPamNia2VCUGZ6eVk4SVFmTEttY1JoZVpidWpLV0xD?=
+ =?utf-8?B?aE1yblFmMWttRXBVQ2Jyc1Erd3AyamJNRHhLaVI2Um84QmliblV1QzU3L1ZC?=
+ =?utf-8?B?Ui9TWTBRN2JtOFViOEUzc21jbE5rVHd1eTdOenF5enM1c1FSSmowS3FkbDRI?=
+ =?utf-8?B?dmhrQU9jdFdhR1dVNnNxZUM2TDQ5WmU5ZE84Y0ZmcjVoOW9UbTdOU0REN3Ey?=
+ =?utf-8?B?aXh5NDk0dmZPVmxOS0Fwb0pjdVc5b2p6WXV1UERzZDdjY280NFhNTlNLSEEy?=
+ =?utf-8?B?T0RXY1k2ZW92UEd6STZJN1VuU2U0SkRqK2FIdHVzS3VyN0hFVW5wZ2p0aGU2?=
+ =?utf-8?B?K240R0ZLd0RGRVcvY0VVbW5BMTA0Qm01aWdIaGk5L2t0VzlxaE15d0JibnF5?=
+ =?utf-8?B?K3MyWWtrYjd2WlRUS1JlNDc0OWJEVDZRY1BkNkFFZzV6akxJTDY3UWVJa2c5?=
+ =?utf-8?B?T0c4N1cwUzROM0V1MjhTbVdCTE9uZ1h6S0JmNkdwVExnTkU1SWtyeVZ2Q1Uy?=
+ =?utf-8?B?TS9GdlJGeVpINnB2dno2M2kwRTF4Z2Noa0tnRk5Yb1VSblRMbndjYTBsMEVH?=
+ =?utf-8?B?ZmpqZWlJVnVSbHQ2MzFsbGZrak1qaEpVZkFGcUlmR1lDb3kvenVPZ21td3Zm?=
+ =?utf-8?B?YStNQUpZTFovdlNmU1pCM3R1akFEWklWVlh3a1ZaQ2wyaWluK0dLK3pSdzRQ?=
+ =?utf-8?B?dy9qVnI0dFJMQVo2eU1XdXBKTzlxTXdhazBBejBtYmp5OU9RT3NmZ2NoYy9j?=
+ =?utf-8?Q?gUjgbs5vDxSbAV+8xb5qAVI90MC2aGq3wccMloxrOWNg=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: feab4b92-16ee-435c-8dae-08dbffa7fc87
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0332.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Dec 2023 09:01:56.9898
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1480
 
-On 17/12/2023 22:49, Daniel Golle wrote:
-> Add various clock controllers found in the MT7988 SoC to existing
-> bindings (if applicable) and add files for the new ethwarp, mcusys
-> and xfi-pll clock controllers not previously present in any SoC.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
-> v7:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 2023/12/14 8:15, Stephen Boyd wrote:
+> Quoting Conor Dooley (2023-12-12 00:37:39)
+>> On Tue, Dec 12, 2023 at 10:22:28AM +0800, Chen Wang wrote:
+>>
+>>> On 2023/12/9 0:47, Conor Dooley wrote:
+>>>> On Fri, Dec 08, 2023 at 09:14:32AM +0800, Chen Wang wrote:
+>>>>> +#define ENCODE_PLL_CTRL(fbdiv, p1, p2, refdiv) \
+>>>>> + (((fbdiv & 0xfff) << 16) | ((p2 & 0x7) << 12) | ((p1 & 0x7) << 8) | (refdiv & 0x3f))
+>>>> IMO this should be a function not a macro.
+>>> Would like to listen why it should be a function instead of a macro? Any
+>>> experiences you can share with me?
+>> Readability. A function, which could be inlined allows you to break this
+>> up and make it easier to read.
+>>
+>>>>> +/*
+>>>>> + * Based on input rate/prate/fbdiv/refdiv, look up the postdiv1_2 table
+>>>>> + * to get the closest postdiiv combination.
+>>>>> + * @rate: FOUTPOSTDIV
+>>>>> + * @prate: parent rate, i.e. FREF
+>>>>> + * @fbdiv: FBDIV
+>>>>> + * @refdiv: REFDIV
+>>>>> + * @postdiv1: POSTDIV1, output
+>>>>> + * @postdiv2: POSTDIV2, output
+>>>>> + * See TRM:
+>>>>> + * FOUTPOSTDIV = FREF * FBDIV / REFDIV / (POSTDIV1 * POSTDIV2)
+>>>>> + * So we get following formula to get POSTDIV1 and POSTDIV2:
+>>>>> + * POSTDIV = (prate/REFDIV) x FBDIV/rate
+>>>>> + * above POSTDIV = POSTDIV1*POSTDIV2
+>>>>> + */
+>>>>> +static int __sg2042_pll_get_postdiv_1_2(
+>>>>> + unsigned long rate,
+>>>>> + unsigned long prate,
+>>>>> + unsigned int fbdiv,
+>>>>> + unsigned int refdiv,
+>>>>> + unsigned int *postdiv1,
+>>>>> + unsigned int *postdiv2)
+>>>> This is not the coding style btw.
+>>> Agree, will fix this.
+>>>>> +{
+>>>>> + int index = 0;
+>>>>> + int ret = 0;
+>>>>> + u64 tmp0;
+>>>>> +
+>>>>> + /* prate/REFDIV and result save to tmp0 */
+>>>>> + tmp0 = prate;
+>>>>> + do_div(tmp0, refdiv);
+>>>>> +
+>>>>> + /* ((prate/REFDIV) x FBDIV) and result save to tmp0 */
+>>>>> + tmp0 *= fbdiv;
+>>>>> +
+>>>>> + /* ((prate/REFDIV) x FBDIV)/rate and result save to tmp0 */
+>>>>> + do_div(tmp0, rate);
+>>>>> +
+>>>>> + /* tmp0 is POSTDIV1*POSTDIV2, now we calculate div1 and div2 value */
+>>>>> + if (tmp0 <= 7) {
+>>>>> +         /* (div1 * div2) <= 7, no need to use array search */
+>>>>> +         *postdiv1 = tmp0;
+>>>>> +         *postdiv2 = 1;
+> why not return 0 here?
+>
+>>>>> + } else {
+> And then de-indent this?
+>
+>>>>> +         /* (div1 * div2) > 7, use array search */
+>>>>> +         for (index = 0; index < ARRAY_SIZE(postdiv1_2); index++) {
+>>>>> +                 if (tmp0 > postdiv1_2[index][POSTDIV_RESULT_INDEX]) {
+>>>>> +                         continue;
+>>>>> +                 } else {
+>>>>> +                         /* found it */
+>>>>> +                         break;
+> This can also return?
+>
+>>>>> +                 }
+>>>>> +         }
+>>>>> +         if (index < ARRAY_SIZE(postdiv1_2)) {
+> And this condition can be removed.
+>
+>>>>> +                 *postdiv1 = postdiv1_2[index][1];
+>>>>> +                 *postdiv2 = postdiv1_2[index][0];
+>>>>> +         } else {
+> This can be the default after the loop.
+>
+>>>>> +                 pr_debug("%s can not find in postdiv array!\n", __func__);
+>>>>> +                 ret = -EINVAL;
+>
+>   /* tmp0 is POSTDIV1*POSTDIV2, now we calculate div1 and div2 value */
+>   if (tmp0 <= 7) {
+>           /* (div1 * div2) <= 7, no need to use array search */
+>           *postdiv1 = tmp0;
+>           *postdiv2 = 1;
+> 	 return 0;
+>   }
+>
+>   /* (div1 * div2) > 7, use array search */
+>   for (index = 0; index < ARRAY_SIZE(postdiv1_2); index++) {
+> 	 if (tmp0 > postdiv1_2[index][POSTDIV_RESULT_INDEX]) {
+> 		 continue;
+> 	 } else {
+> 		 *postdiv1 = postdiv1_2[index][1];
+> 		 *postdiv2 = postdiv1_2[index][0];
+> 		 return 0;
+> 	 }
+>   }
+>   pr_debug("%s can not find in postdiv array!\n", __func__);
+>   return -EINVAL;
+Thanks, Stephen, I will improve this.
+>>>> Reading this function it makes me wonder if (and I am far from the best
+>>>> person to comment, someone like Stephen is vastly more qualified) you
+>>>> should model this as several "stages", each implemented by the
+>>>> "standard" clocks - like clk_divider etc. The code here is quite
+>>>> complicated IMO as it seems to be trying to implement several stages of
+>>>> division in one go.
+>>> The objective of __sg2042_pll_get_postdiv_1_2() is straightforward: based on
+>>> the formula defined by the TRM, with input rate/prate/fbdiv/refdiv, we can
+>>> get the possiblle combination of POSTDIV1 and POSTDIV2 by looking up the
+>>> table of postdiv1_2. We will later use it to setup the clock register.
+>>>
+>>> Though the codes looks a bit complicated, but accually it is calculate with
+>>> the formula : POSTDIV = (prate/REFDIV) x FBDIV/rate, I just separate it into
+>>> several steps to make it easy to understand, I have listed the formula in
+>>> the comment on top of the function.
+>> I understand what you are doing, I did something similar myself
+>> previously. My suggestion/question was about using the "standard" types
+>> of clock that the core provides to represent as many of the clocks in
+>> this driver as is feasible.
+> I would not twist the code to conform with the basic clk types. If
+> possible it would be good to use the helpers for these things, but I
+> wouldn't split up a clk that is a complex divider with multiple stages
+> of division into the basic types just to make it fit. I say this because
+> every clk takes more effort to maintain in the clk tree, it has a name,
+> pointers, etc. If you can keep that self contained and logically it is
+> really one clk, then go for it.
 
-Best regards,
-Krzysztof
+Thanks, I will double check if we can reuse "standard" types of clock as 
+much as possible, or just keep current way.
+
 
