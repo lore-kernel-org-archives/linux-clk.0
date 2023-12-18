@@ -1,171 +1,161 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18EE740A3
-	for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 21:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F7474E26;
+	Mon, 18 Dec 2023 21:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YPytoR8U"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ca02def690so43677001fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 13:32:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702935120; x=1703539920; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BSXNxdoZhofQ5RCoswX0f1+//hwvnN3EjdXTFtoy2HI=;
-        b=YPytoR8UoXXL5CGUcl3dfCdIiBvwg6cv8N9QJ1ZrnuxwfYhVI+fQCxLtSjas1k3fMa
-         dQSj5awbalo7vQ+36AI1X8F5cFYniL39UP1LqmBtfa2LV0yvMIHXsOOAm1jOu3H81FhM
-         FaRlOAA65obniearn1MSBnImUrhJM7rGMnia5ABUqfkbVdty9TK/Hwn0nkVlVEmwmrFh
-         P3Y5iW3pqbOYxMb1RT6LqECTLm7b382KNKOh87nHTw6cit8j4VYO1OtNIbLk7N0nEwQA
-         7XWp7Ts8E8S+b1bMvEO/m1FA7hSAerod1ude64Cuv/cddqnfcoakG82l9aGFQq3pLsN5
-         UTkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702935120; x=1703539920;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BSXNxdoZhofQ5RCoswX0f1+//hwvnN3EjdXTFtoy2HI=;
-        b=XWwlZP4nPuHFEojp+EWvBJjg7rxv/CGiyuVfajkROyIg8NkMnYp3R9XhOqi+Wj4L4x
-         C4pvaAteSIYrwcAqQ2reavv37GLDhln+s2E8Lt6U7GcksDMQEzNrcFRqZIWdOrHkYFjW
-         nLq5USe/LHXtA4Do6ipXwhHjwesv1Gj1sUx0dWNCXprvX9EGbbcLI1EcClGzrHwc4sD7
-         kjGD/RT9JWy6irRQH7b7Lsnc4XIxgRgtOD0ROjAT8nsSc27KUwHyvm/Sn4/bl5POSaVU
-         3MiAhK51ZTnHr+bXz7+LmhPw45GXRPDIdzVK4kb6s1kpqqCn6gqAN0VUx9Ks09m4d9KJ
-         IoKQ==
-X-Gm-Message-State: AOJu0YwKptPhmkagFOmWrOEk2lp95yQOkfY/LfrHMXW1yo8LybdeQWR5
-	jNbdK/F8a5nPH/1HHoUU/yKowg==
-X-Google-Smtp-Source: AGHT+IGb9L/7IjmEK6JBuwbQuFPw/cgebNIiMG+aI27+Ezg3cWXCBXy+3+3B2cUOYWuEJ4oyHG7dOg==
-X-Received: by 2002:a05:651c:2009:b0:2cc:63e4:884c with SMTP id s9-20020a05651c200900b002cc63e4884cmr1666186ljo.50.1702935119890;
-        Mon, 18 Dec 2023 13:31:59 -0800 (PST)
-Received: from [172.30.205.119] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id w22-20020a2e9bd6000000b002cc710614besm507393ljj.0.2023.12.18.13.31.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Dec 2023 13:31:59 -0800 (PST)
-Message-ID: <15d2bd66-29f3-435b-8494-d82ec4036413@linaro.org>
-Date: Mon, 18 Dec 2023 22:31:57 +0100
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="p+aImHeE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1702935893;
+	bh=NQEqY143VYksNlhopFxm06zXb51908qalsqGZ+XLVDk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p+aImHeEY5V+Cbui7K8BYs+kBMnVl/sTXwGrZhOyJw/mgNK5ZiNtbwSu+qD7D9UAh
+	 px9Kcdbgbf8dJYAsr7m7zd2EVGz7SkIDQ9ybOoXUwBRApdhZcgzMNhKe3BXV9t8Wck
+	 QqbQy0EMV5SQqjcxyDSp99ThORRlsJvCSTMhDwAx92Wb/AJT0cmOznPYxc950ka3MC
+	 zyGHQO/MgXYP2X8Mu2jeVUDYwAPwBrgf0Yp8Ow81JwXD3REjenpYlk+Rh7g3SKTMNp
+	 h4Ayn9b3uNQyWrOtll2uO/5kXeLBkiOZVNBMjmKfb6I97vNeKnsi+9D64R7594USvT
+	 SRXDoE83XhsFA==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2F6A8378146E;
+	Mon, 18 Dec 2023 21:44:53 +0000 (UTC)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Samin Guo <samin.guo@starfivetech.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH v4 0/9] Enable networking support for StarFive JH7100 SoC
+Date: Mon, 18 Dec 2023 23:44:40 +0200
+Message-ID: <20231218214451.2345691-1-cristian.ciocaltea@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/12] arm64: dts: qcom: sm8550: Switch UFS from
- opp-table-hz to opp-v2
-To: Nitin Rawat <quic_nitirawa@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>, Georgi Djakov <djakov@kernel.org>,
- Abel Vesa <abel.vesa@linaro.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Sai Prakash Ranjan <quic_saipraka@quicinc.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20231218-topic-8550_fixes-v1-0-ce1272d77540@linaro.org>
- <20231218-topic-8550_fixes-v1-10-ce1272d77540@linaro.org>
- <62f0c623-3819-f6be-115f-6b471ab79a58@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <62f0c623-3819-f6be-115f-6b471ab79a58@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+This patch series adds ethernet support for the StarFive JH7100 SoC and makes it
+available for the StarFive VisionFive V1 and BeagleV Starlight boards, although
+I could only validate on the former SBC.  Thank you Emil and Geert for helping
+with tests on BeagleV!
 
+The work is heavily based on the reference implementation [1] and depends on the
+SiFive Composable Cache controller and non-coherent DMA support provided by Emil
+via [2] and [3].
 
-On 12/18/23 17:35, Nitin Rawat wrote:
-> 
-> 
-> On 12/18/2023 9:32 PM, Konrad Dybcio wrote:
->> Now that the non-legacy form of OPP is supported within the UFS driver,
->> go ahead and switch to it, adding support for more intermediate freq/power
->> states.
->>
->> In doing so, add the CX RPMhPD under GCC to make sure at least some of
->> the power state requirements are *actually* propagated up the stack.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
->>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 50 +++++++++++++++++++++++++++++-------
->>   1 file changed, 41 insertions(+), 9 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
->> index d707d15cea5b..d6edd54f3ad3 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
->> @@ -1930,6 +1930,7 @@ ufs_mem_hc: ufs@1d84000 {
->>               iommus = <&apps_smmu 0x60 0x0>;
->>               dma-coherent;
->> +            operating-points-v2 = <&ufs_opp_table>;
->>               interconnects = <&aggre1_noc MASTER_UFS_MEM 0 &mc_virt SLAVE_EBI1 0>,
->>                       <&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_UFS_MEM_CFG 0>;
->> @@ -1950,18 +1951,49 @@ ufs_mem_hc: ufs@1d84000 {
->>                    <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
->>                    <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>,
->>                    <&gcc GCC_UFS_PHY_RX_SYMBOL_1_CLK>;
->> -            freq-table-hz =
->> -                <75000000 300000000>,
->> -                <0 0>,
->> -                <0 0>,
->> -                <75000000 300000000>,
->> -                <100000000 403000000>,
->> -                <0 0>,
->> -                <0 0>,
->> -                <0 0>;
->>               qcom,ice = <&ice>;
->>               status = "disabled";
->> +
->> +            ufs_opp_table: opp-table {
->> +                compatible = "operating-points-v2";
->> +
->> +                opp-75000000 {
->> +                    opp-hz = /bits/ 64 <75000000>,
->> +                         /bits/ 64 <0>,
->> +                         /bits/ 64 <0>,
->> +                         /bits/ 64 <75000000>,
->> +                         /bits/ 64 <100000000>,
->> +                         /bits/ 64 <0>,
->> +                         /bits/ 64 <0>,
->> +                         /bits/ 64 <0>;
->> +                    required-opps = <&rpmhpd_opp_low_svs>;
->> +                };
->> +
->> +                opp-150000000 {
->> +                    opp-hz = /bits/ 64 <150000000>,
->> +                         /bits/ 64 <0>,
->> +                         /bits/ 64 <0>,
->> +                         /bits/ 64 <150000000>,
->> +                         /bits/ 64 <100000000> > +                         /bits/ 64 <0>,
->> +                         /bits/ 64 <0>,
->> +                         /bits/ 64 <0>;
->> +                    required-opps = <&rpmhpd_opp_svs>;
->> +                };
->> +
->> +                opp-300000000 {
->> +                    opp-hz = /bits/ 64 <300000000>,
->> +                         /bits/ 64 <0>,
->> +                         /bits/ 64 <0>,
->> +                         /bits/ 64 <300000000>,
->> +                         /bits/ 64 <100000000>,
-> Hi Konrad,
-> 
-> This entry is for ICE clock ? Shouldn't the entry be 403000000 ?
-> Same for svs as well ?
-Hi Nitin,
+*Update*: as of next-20231214, all dependencies have been merged.
 
-this entry is for the TCSR_UFS_PAD_CLKREF_EN/"ref_clk" clock,
-which doesn't support ratesetting, so it should probably be 0
-(or its actual value if we know it - I assumed it was 100 MHz
-as it was there before).
+[1] https://github.com/starfive-tech/linux/commits/visionfive
+[2] https://lore.kernel.org/all/CAJM55Z_pdoGxRXbmBgJ5GbVWyeM1N6+LHihbNdT26Oo_qA5VYA@mail.gmail.com/
+[3] https://lore.kernel.org/all/20231130151932.729708-1-emil.renner.berthing@canonical.com/
 
-The ICE clock is handled separately by the crypto@1d88000 node.
+Changes in v4:
+ - Restricted double usage of 'ahb' reset name in PATCH 2 (Jessica, Samuel)
+ - Moved phy reference from PATCH 5 to both PATCH 6 & 7 where the node is
+   actually defined (Emil, Conor)
+ - Drop unnecessary gpio include in PATCH 6; also added a DTS comment describing
+   the rational behind RX internal delay adjustment (Andrew)
+ - v3:
+   https://lore.kernel.org/lkml/20231215204050.2296404-1-cristian.ciocaltea@collabora.com/
 
-Thinking about it again, the original submission probably included
-the ICE clock within the UFS node and when TCSRCC was created,
-somebody might have omitted the wrong rate value.
+Changes in v3:
+ - Rebased series onto next-20231214 and dropped the ccache & DMA coherency
+   related patches (v2 06-08/12) handled by Emil via [3]
+ - Squashed PATCH v2 01/12 into PATCH v3 2/9, per Krzysztof's review
+ - Dropped incorrect PATCH v2 02/12
+ - Incorporated Emil's feedback; also added his Co-developed-by on all dts
+   patches
+ - Documented the need of adjusting RX internal delay in PATCH v3 8/9, per
+   Andrew's request
+ - Added clock fixes from Emil (PATCH v3 8-9/9) required to support 10/100Mb
+   link speeds
+ - v2:
+   https://lore.kernel.org/lkml/20231029042712.520010-1-cristian.ciocaltea@collabora.com/
 
-Konrad
+Changes in v2:
+ - Dropped ccache PATCH 01-05 reworked by Emil via [2]
+ - Dropped already applied PATCH 06/12
+ - Added PATCH v2 01 to prepare snps-dwmac binding for JH7100 support
+ - Added PATCH v2 02-03 to provide some jh7110-dwmac binding optimizations
+ - Handled JH7110 conflicting work in PATCH 07 via PATCH v2 04
+ - Reworked PATCH 8 via PATCH v2 05, adding JH7100 quirk and dropped
+   starfive,gtxclk-dlychain DT property; also fixed register naming
+ - Added PATCH v2 08 providing DMA coherency related DT changes
+ - Updated PATCH 9 commit msg:
+   s/OF_DMA_DEFAULT_COHERENT/ARCH_DMA_DEFAULT_COHERENT/
+ - Replaced 'uncached-offset' property with 'sifive,cache-ops' in PATCH 10/12
+   and dropped 'sideband' reg
+ - Add new patch providing coherent DMA memory pool (PATCH v2 10)
+ - Updated PATCH 11/12 according to the stmmac glue layer changes in upstream
+ - Split PATCH 12/12 into PATCH v2 10-12 to handle individual gmac setup of
+   VisionFive v1 and BeagleV boards as they use different PHYs; also switched
+   phy-mode from "rgmii-tx" to "rgmii-id" (requires a reduction of
+   rx-internal-delay-ps by ~50%)
+ - Rebased series onto next-20231024
+ - v1:
+   https://lore.kernel.org/lkml/20230211031821.976408-1-cristian.ciocaltea@collabora.com/
+
+Cristian Ciocaltea (7):
+  dt-bindings: net: starfive,jh7110-dwmac: Drop redundant reset
+    description
+  dt-bindings: net: starfive,jh7110-dwmac: Add JH7100 SoC compatible
+  net: stmmac: dwmac-starfive: Add support for JH7100 SoC
+  riscv: dts: starfive: jh7100: Add sysmain and gmac DT nodes
+  riscv: dts: starfive: jh7100-common: Setup pinmux and enable gmac
+  riscv: dts: starfive: visionfive-v1: Setup ethernet phy
+  riscv: dts: starfive: beaglev-starlight: Setup phy reset gpio
+
+Emil Renner Berthing (2):
+  clk: starfive: Add flags argument to JH71X0__MUX macro
+  clk: starfive: jh7100: Add CLK_SET_RATE_PARENT to gmac_tx
+
+ .../devicetree/bindings/net/snps,dwmac.yaml   | 11 ++-
+ .../bindings/net/starfive,jh7110-dwmac.yaml   | 75 ++++++++++++-----
+ .../dts/starfive/jh7100-beaglev-starlight.dts | 11 +++
+ .../boot/dts/starfive/jh7100-common.dtsi      | 84 +++++++++++++++++++
+ .../jh7100-starfive-visionfive-v1.dts         | 22 ++++-
+ arch/riscv/boot/dts/starfive/jh7100.dtsi      | 36 ++++++++
+ .../clk/starfive/clk-starfive-jh7100-audio.c  |  2 +-
+ drivers/clk/starfive/clk-starfive-jh7100.c    | 32 +++----
+ .../clk/starfive/clk-starfive-jh7110-aon.c    |  6 +-
+ .../clk/starfive/clk-starfive-jh7110-isp.c    |  2 +-
+ .../clk/starfive/clk-starfive-jh7110-sys.c    | 26 +++---
+ drivers/clk/starfive/clk-starfive-jh71x0.h    |  4 +-
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  6 +-
+ .../ethernet/stmicro/stmmac/dwmac-starfive.c  | 32 ++++++-
+ 14 files changed, 280 insertions(+), 69 deletions(-)
+
+-- 
+2.43.0
+
