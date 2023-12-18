@@ -1,22 +1,22 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2D373473;
-	Mon, 18 Dec 2023 12:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373327AE75;
+	Mon, 18 Dec 2023 12:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vs746Q0S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBFAFC433CA;
-	Mon, 18 Dec 2023 12:45:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJGJ4n1G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B887BC433C8;
+	Mon, 18 Dec 2023 12:46:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702903559;
-	bh=XvYnOA+in5yAmnoh4pfmxu/13fVJ3JQ4auQotg/2IuU=;
+	s=k20201202; t=1702903598;
+	bh=hhH0S1d1h1iP5cEliJA43vXsxR1kP/uHQeuebebGyQE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Vs746Q0SDsKOpKKCMSSbXJDwqCnrsZmfv+vApMMI5HFJLP6JJwqfQX9SnbiK7dMRY
-	 s5zPAkpmj40h8gXselHNgLKCCXUcMIVWJ6ViF92qHF+w1Y2MUAjp5DCdqVxKOmmpaS
-	 jynhasLIZlk83CML1UOnaZY3Alt9HUKSmp+Es2mQUf33DbnK6Gg/33eMr9oDsqSubq
-	 8sk0+OdhrLcW7O7v/xOSg+Q3IyIkpe2bf7Z8/2mx0oNU2IU/G75pocnwvDDMrjUwjN
-	 NevPTkuYQpGHXTvSzuBuBDnW3krcU6Tg0rs7gDpB5+ayoU4veb5X/bWM1pBfzf3hi4
-	 MYHSiDIXRGdEQ==
+	b=GJGJ4n1GahTgV8b8C2C5ReWcyWpkYhiLH7sWdHgijiAKwYT+4FW/S7A+euKxLFaau
+	 Y/Nkcn0x4rHE3PlvHQp+v7oWQARp/e5ZjBVtfDUHu+HHBVdUd5UtAuqJ7dorN7qzxZ
+	 V1dz2D6k/laRnVF8IDsZWncupB5cTVkZe5CrHP5VT0JDi2tpTFpvZ7ojUDTId2F3Z+
+	 kv/GXiz0MxhFXQK4GJ2pcRpr0jDc1vZbXyP4NwGbaahGhDkEa09L5ZqWTBfedWB1QB
+	 MuteuivID80BNEx4xANRcdIVEWT7cIDM9A+pEHH6SDSF3Nxmg79CEjf6WHz2pFPEVp
+	 2usr5BeJvijnw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -28,9 +28,9 @@ Cc: Weihao Li <cn.liweihao@gmail.com>,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.15 01/13] clk: rockchip: rk3128: Fix HCLK_OTG gate register
-Date: Mon, 18 Dec 2023 07:45:34 -0500
-Message-ID: <20231218124557.1380724-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 1/8] clk: rockchip: rk3128: Fix HCLK_OTG gate register
+Date: Mon, 18 Dec 2023 07:46:22 -0500
+Message-ID: <20231218124635.1381482-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.143
+X-stable-base: Linux 5.10.204
 Content-Transfer-Encoding: 8bit
 
 From: Weihao Li <cn.liweihao@gmail.com>
@@ -58,10 +58,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
-index aa53797dbfc14..7782785a86e69 100644
+index 4b1122e98e167..ddfe1c402e80b 100644
 --- a/drivers/clk/rockchip/clk-rk3128.c
 +++ b/drivers/clk/rockchip/clk-rk3128.c
-@@ -490,7 +490,7 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+@@ -489,7 +489,7 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
  	GATE(HCLK_I2S_2CH, "hclk_i2s_2ch", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
  	GATE(0, "hclk_usb_peri", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(9), 13, GFLAGS),
  	GATE(HCLK_HOST2, "hclk_host2", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 3, GFLAGS),
