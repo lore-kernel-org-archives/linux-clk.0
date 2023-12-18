@@ -1,91 +1,98 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED6C134DF
-	for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 10:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD06A4D5BD;
+	Mon, 18 Dec 2023 11:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aqKKm6Rq"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a2366012348so18796866b.0
-        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 02:16:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702894586; x=1703499386; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6T4R9okteCkjAhT9eyRdC/jbk1c6KtuDD/NaJ+LcB1s=;
-        b=aqKKm6Rqq8AP1UhsVlg4K0AaN30so0Zd1LW30XR+FlqwCzhCA4W0NuCaau9K4rmKfH
-         KXc7mgb7W9I5v61ejxV+MWkawJao1O6V5ZaEvk9PwU3Yc/LeiIyonZjkKn36pNRPWrat
-         azYaP+1DP5G1JDjKDl4FmCwZB/OR+CTc8+zd3Btm6AiHeuUugA8Z7srzru3mj156yOmQ
-         6nDjLrKfOiiYamV+Dy/h1I4Mpaq4tku1xVvoDNGMTTWFou64mcDa1WccB2+3zbYB8mBh
-         bdssQaVFOs90G1aPTlh7axh6kayrsJP3kG2UPXibJAweZBMZp1UAqy+lNp3Xtf++CQr8
-         M/1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702894586; x=1703499386;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6T4R9okteCkjAhT9eyRdC/jbk1c6KtuDD/NaJ+LcB1s=;
-        b=F+0DicdgAClY4cCO8ZzYeapWzscUGHjyyYxEmI9s4jPuKd8UozG/RAWvFplR9aSmDi
-         YCzNxRCHdLg5zCDOzIXAICn2IrJRo+Zr0D2MRZ+bCEWmPdW2fRwY4trol8XM5rBek6vQ
-         ZTA/DTYo5XBTllzLpviU9WFUHnDinteF4u40XXDWaCgfZ2fu3uJc4DPhaxaqHkFnXeOF
-         0uZan4xiLsjQJQuGHUrf5IpCfzBBeYabhMZuN8q9RA3w/7T0xODfKxmrldhPYEoym5Su
-         OeXMY6AmwxMhx7avp7TAZM6bH5zGPDArHUDMf+i///grAfWXxgicYthiKSwa0pl2NopW
-         wE7g==
-X-Gm-Message-State: AOJu0Yyjjhvkwjofap4GX6vwMPd3PRX7xgM8Pme1jWubS2ZEl92WPj43
-	S2C9YR8vgjFbROmSdZsiSwlocg==
-X-Google-Smtp-Source: AGHT+IHC5w0LaR0hZtZGoebFzWjvqDk4jLHPlKNUseyRe6YfHh7xV+cN4HpsENl4UBR0EZTA8NFZ8Q==
-X-Received: by 2002:a17:906:54f:b0:a23:5bfc:edf6 with SMTP id k15-20020a170906054f00b00a235bfcedf6mr531086eja.73.1702894586619;
-        Mon, 18 Dec 2023 02:16:26 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id tb21-20020a1709078b9500b009ad89697c86sm14131552ejc.144.2023.12.18.02.16.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 02:16:25 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20231218101225.27637-1-lukas.bulwahn@gmail.com>
-References: <20231218101225.27637-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in GOOGLE TENSOR SoC
- SUPPORT
-Message-Id: <170289458489.40214.4044639674573718307.b4-ty@linaro.org>
-Date: Mon, 18 Dec 2023 11:16:24 +0100
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="olpcJOvX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1702899716;
+	bh=Ay7Tt9dce00P1AFvH+VR0Quwph8t7Z1Zn8abP+bDKl8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=olpcJOvXtTBBpVcYE8PqF5uNLFcLGnlrd77Yy4U2M1CVK1OMCU44ovp8ox0ABd+vx
+	 vMMIhpPKRjVYneLkb/RvRi7d4oSroIqe2BjDHoHmIw7nn6GftbYRPI/M/z5ce+U1Ax
+	 Xjff2yIbY3xKiaYY9fcWh7LjjHnDZPqbswmEj2DvPmFUBoLeqwQvBZaPBfs9rzAc0I
+	 349sA3zHVM5n127CwidQ+I2ZWhl4UpVTusm8MpYA//tJrf50cwyXU1NSx6rkRG4hhi
+	 9F77N0ItNtAnDrl7xx1QDhAZsFIdKxvgmdmQxMGqqKHZv7I9w2FZ/Ps3gPOjIvAivu
+	 CLedaHr2oRvJg==
+Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 84CA537814A3;
+	Mon, 18 Dec 2023 11:41:54 +0000 (UTC)
+Message-ID: <cb18617d-e34a-4c3e-a37a-1b051587f8b5@collabora.com>
+Date: Mon, 18 Dec 2023 13:41:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/9] riscv: dts: starfive: jh7100-common: Setup pinmux
+ and enable gmac
+Content-Language: en-US
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
+ Samin Guo <samin.guo@starfivetech.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Hal Feng <hal.feng@starfivetech.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+References: <20231215204050.2296404-1-cristian.ciocaltea@collabora.com>
+ <20231215204050.2296404-6-cristian.ciocaltea@collabora.com>
+ <CAJM55Z-bg0EGPaLHtxcu2AzqN59zfuiT0eE7oCShrx7dG_QK1g@mail.gmail.com>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <CAJM55Z-bg0EGPaLHtxcu2AzqN59zfuiT0eE7oCShrx7dG_QK1g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.4
 
-
-On Mon, 18 Dec 2023 11:12:25 +0100, Lukas Bulwahn wrote:
-> Commit 0a910f160638 ("dt-bindings: clock: Add Google gs101 clock
-> management unit bindings") adds the file google,gs101.h in
-> include/dt-bindings/clock/. However, commit 9d71df3e6eb7 ("MAINTAINERS:
-> add entry for Google Tensor SoC") wrongly refers to the file
-> google,clk-gs101.h in that directory.
+On 12/16/23 21:38, Emil Renner Berthing wrote:
+> Cristian Ciocaltea wrote:
+>> Add pinmux configuration for DWMAC found on the JH7100 based boards and
+>> enable the related DT node, providing a basic PHY configuration.
+>>
+>> Co-developed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+>> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>  .../boot/dts/starfive/jh7100-common.dtsi      | 85 +++++++++++++++++++
+>>  1 file changed, 85 insertions(+)
+>>
+>> diff --git a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
+>> index 42fb61c36068..5cafe8f5c2e7 100644
+>> --- a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
+>> +++ b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
+>> @@ -72,7 +72,92 @@ wifi_pwrseq: wifi-pwrseq {
+>>  	};
+>>  };
+>>
+>> +&gmac {
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&gmac_pins>;
+>> +	phy-mode = "rgmii-id";
+>> +	phy-handle = <&phy>;
 > 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> [...]
+> I'm not sure if it's a generic policy or not, but I don't really like adding a
+> reference to a non-existant node here. I'd move this property to the board
+> files where the phy node is actually defined.
 
-Applied, thanks!
-
-[1/1] MAINTAINERS: adjust file entry in GOOGLE TENSOR SoC SUPPORT
-      https://git.kernel.org/krzk/linux/c/d0da0de31e1d50ff905eb8f095628eea666f8c67
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Totally agree, I simply went too far while dropping duplicated code and
+didn't realize the mistake.  Thanks for noticing!
