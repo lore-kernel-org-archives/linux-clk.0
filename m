@@ -1,122 +1,105 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2B73788D;
-	Mon, 18 Dec 2023 13:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E1E37888;
+	Mon, 18 Dec 2023 14:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="Fl4x0IcJ"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Sv16y72qnz9snW;
-	Mon, 18 Dec 2023 14:35:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-	s=MBO0001; t=1702906555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=tos2FwQlFwhzvaXEQTYM8a4T8bK+EoPuJg3G1O90NAc=;
-	b=Fl4x0IcJYh9uwO1wNscgM7PXzen4xdJv0zkHkRoA8bMKdQpP9Yb4evGFvDqNTzWSXpg8kp
-	l4LY/6hwrN3hBJNUTRQqM/2+1saX9qBfPA7U/CqG/RzepxnjiAEzE0ONFvQ7Gy3PMOm39+
-	sXEyC8LMThAkARo0YuQw/AopJy0RtFyIoIdN0P0+rg/1nuUdhrsPAeAf89ghDCLPhLnkVR
-	1CJtSGYpb2O818tAGiEnSEP+RdtGUHXbtnRAv3FTh/84jFw5VH6+HKVUSZ1wqCXDDkh4+0
-	AYmfaLpT2t9iU0jnqeBMHHnabnNgFoUwKCsYuyejIy15q1gpb8KnFPTVHl+gzw==
-From: Frank Oltmanns <frank@oltmanns.dev>
-Subject: [PATCH 0/5] Pinephone video out fixes (flipping between two
- frames)
-Date: Mon, 18 Dec 2023 14:35:18 +0100
-Message-Id: <20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSbBcYtI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30277C433C8;
+	Mon, 18 Dec 2023 14:59:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702911568;
+	bh=+s1PxLoBbDNRFaBMX1KOfgXL4tbGv/n20FEjafyPq/w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mSbBcYtIEC/E7RqBQIzkCxec5TKgazZsWXYPY9+enwlKZ6OrEtXBMl8SgdPgJxfni
+	 krjGAU88aSHxxRA9x2MosUdLH2JQEF3QyLCBsR4LT//axdCB2DPmzwqsq8FQ9OuVrQ
+	 9FLgC5B75iasJpQCBSSE/PM26xfwWhdbZy81d6LhGHghtD+3r8iDWC07xhx6g+gh4p
+	 h1ttAeppZzSTCNU8XIlDlD1c8K//wMRQYcfd1poIbVGlHSBJGByodmP+Xa7zynYPx7
+	 dKgH4hQkK0Ik3hIiPZyIbjUigosGJhLSxyisitYnEJ+EFf1Yf/bmYq+R7HPmtThshI
+	 dXPcLYPG7K52A==
+Date: Mon, 18 Dec 2023 14:59:20 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Samin Guo <samin.guo@starfivetech.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-riscv <linux-riscv@lists.infradead.org>,
+	linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v3 2/9] dt-bindings: net: starfive,jh7110-dwmac: Add
+ JH7100 SoC compatible
+Message-ID: <20231218-snowcap-charter-f8c75312eaa9@spud>
+References: <20231215204050.2296404-1-cristian.ciocaltea@collabora.com>
+ <20231215204050.2296404-3-cristian.ciocaltea@collabora.com>
+ <A7C96942-07CB-40FD-AAAA-4A8947DEE7CA@jrtc27.com>
+ <65fd52f1-6861-42b0-9148-266766d054b1@sifive.com>
+ <6c62e3b2-acde-4580-9b67-56683289e45e@collabora.com>
+ <20231217-spray-livestock-a59d630b751e@spud>
+ <fa4b9c1d-6033-4b35-b03c-e03419edb5dc@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJZKgGUC/x3LQQqAIBBG4avErBtIDYquEi1Cf2sgVBQikO6et
- Px4vEoFWVBo6Spl3FIkhgbVd2TPPRxgcc2kB22UVjMnCUhnDOB0XezlQeHBWucd9GQwUjtTxh/
- auG7v+wHb/Xl3ZQAAAA==
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
- Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, Frank Oltmanns <frank@oltmanns.dev>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2183; i=frank@oltmanns.dev;
- h=from:subject:message-id; bh=olgN/dTexxSci4bqC/SYnH4Qe3D2ahceKuSWI8wI15w=;
- b=owEB7QES/pANAwAIAZppogiUStPHAcsmYgBlgEq04Zmk0Dn4zmQRslaV0ONyjY0uQhR1xoFlA
- vkMMXKgseaJAbMEAAEIAB0WIQQC/SV7f5DmuaVET5aaaaIIlErTxwUCZYBKtAAKCRCaaaIIlErT
- xypkC/4vBt6X+ZMcmFfqSZYPKcB1uMlq3fPUGuL3OQ8RVbGGg1oMRwBjyD2inb3eaSeHLBuhwwu
- uhjngKAE/R2HUtZnnj/0DLJpJ0p2a/tkDgybA6PZQ3y0hfLgMOb5/fv/aRErnxghSnNEFbcUDMB
- d8C+xiFEougioK35GpWb8LNb3QRdXm0W9+CTdjjVxv50Csy8RI1SeBGwnz1zMtMTZN5RlgeWFG2
- 1GQU2wQABJEDqbdXg1Lr95BGKVgh3I1K2s5PkvqTBuEOzlfB0yJ6skd+ntb0D0hZqAwIK9WcjUT
- f/wzbaGMBrShGb6mVtsX2so96vQr8avsXamOb5XO13XTmN6v1QAfoDeXpiYXMYlnf8iPRurj6jk
- rEzFf6/XrcOUP48rybQOyYCkVw3Ga+TyXTtBN54NWIo8w28TuHGfFs4JtOW93SHQuViDmkDtZqf
- ARyJ0gEOu59hLRUxYwcPmVf+A5toFaw/UyUJx1lZZ6k5RHoQZwL6H4YtVnHtOA2gxOHzk=
-X-Developer-Key: i=frank@oltmanns.dev; a=openpgp;
- fpr=02FD257B7F90E6B9A5444F969A69A208944AD3C7
-X-Rspamd-Queue-Id: 4Sv16y72qnz9snW
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xehaJyWNZIrFr2oM"
+Content-Disposition: inline
+In-Reply-To: <fa4b9c1d-6033-4b35-b03c-e03419edb5dc@collabora.com>
 
-On some pinephones the video output sometimes freezes (flips between two
-frames) [1]. It seems to be that the reason for this behaviour is that
-PLL-MIPI and PLL-VIDEO0 are operating outside there specified limits.
 
-The changes I propose in this patch series consists of two major parts:
-  1. sunxi-ng: Adhere to the following constraints given in the
-     Allwinner A64 Manual:
-      a. PLL-MIPI:
-          * M/N >= 3
-          * (PLL_VIDEO0)/M >= 24MHz
-      b. PLL-VIDEO0:
-          * 8 <= N/M <= 25
+--xehaJyWNZIrFr2oM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  2. Choose a higher clock rate for the ST7703 based XDB599 panel, so
-     that the panel functions with the Allwinner A64 SOC. PLL-MIPI
-     must run between 500 MHz and 1.4 GHz. As PLL-MIPI runs at 6 times
-     the panel's clock rate, we need its clock to be at least 83.333
-     MHz.
 
-So far, I've tested the patches only on my pinephone. Before the patches
-it would freeze at least every other day. With the patches it has not
-shown this behavior in over a week.
+> > Won't this also relax the naming for all devices that allow a single
+> > reset, but expect the stmmaceth one? I'm not sure that that actually
+> > matters, I think the consumer bindings have constraints themselves.
+>=20
+> Before commit 843f603762a5 ("dt-bindings: net: snps,dwmac: Add 'ahb'
+> reset/reset-name"), the 'stmmaceth' was the only possible option, hence
+> there was no need for any constraints on the consumer bindings.  But
+> afterwards it was allowed to use both resets, hence I think the bindings
+> should have been updated at that time by adding 'maxItems: 1' to prevent
+> using the 2nd reset.
+>=20
+> I could fix this in a separate series, if it's not something mandatory
+> to be handled here.
 
-I very much appreciate your feedback!
+If it is not introduced by this series, I don't see why it could not be
+handled separately if needed.
 
-[1] https://gitlab.com/postmarketOS/pmaports/-/issues/805
+--xehaJyWNZIrFr2oM
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
----
-Frank Oltmanns (5):
-      clk: sunxi-ng: nkm: Support constraints on m/n ratio and parent rate
-      clk: sunxi-ng: a64: Add constraints on PLL-MIPI's n/m ratio and parent rate
-      clk: sunxi-ng: nm: Support constraints on n/m ratio and parent rate
-      clk: sunxi-ng: a64: Add constraints on PLL-VIDEO0's n/m ratio
-      drm/panel: st7703: Drive XBD599 panel at higher clock rate
+-----BEGIN PGP SIGNATURE-----
 
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c         | 10 ++++++--
- drivers/clk/sunxi-ng/ccu_nkm.c                | 23 ++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_nkm.h                |  8 +++++++
- drivers/clk/sunxi-ng/ccu_nm.c                 | 21 +++++++++++++++--
- drivers/clk/sunxi-ng/ccu_nm.h                 | 34 +++++++++++++++++++++++++--
- drivers/gpu/drm/panel/panel-sitronix-st7703.c | 14 +++++------
- 6 files changed, 97 insertions(+), 13 deletions(-)
----
-base-commit: d0ac5722dae5f4302bb4ef6df10d0afa718df80b
-change-id: 20231218-pinephone-pll-fixes-0ccdfde273e4
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZYBeSAAKCRB4tDGHoIJi
+0kaHAQDOEcbXi7+qAEGh2DmnasVoZMuRlaf7aM8UbL0TedMfrAEAz4ujNDzOgg49
+iA4wb0r9fYms/C/CCKtbwb34l7U9Wg8=
+=8B0i
+-----END PGP SIGNATURE-----
 
-Best regards,
--- 
-Frank Oltmanns <frank@oltmanns.dev>
-
+--xehaJyWNZIrFr2oM--
