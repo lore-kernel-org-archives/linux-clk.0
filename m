@@ -1,29 +1,29 @@
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A6B4FF6D;
-	Mon, 18 Dec 2023 17:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8144237E;
+	Mon, 18 Dec 2023 17:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PiouGzl+"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8B6F21BF20A;
-	Mon, 18 Dec 2023 17:14:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MVk80s1w"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8289C1BF209;
+	Mon, 18 Dec 2023 17:14:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1702919664;
+	t=1702919666;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Lyt0fUA8qXAG186dpljc51Fb9nMcLd2wX7HB0Boh4IU=;
-	b=PiouGzl+MlgeZJG+Yp04/ynO3QZiEcefHG1cCb7Sy+fmU3VIBZgzYLBlJTf+rcA2PF0M1E
-	XmAgnL9Oq7v4a1GdTzLycAyg+sycBOHCAkhgzVWsAOyRi0T5FGlc/W//k8wqYKgoyF0RUt
-	SEz1ev8RaHhBnfzVkm7tD49rxO6oQUiyHq6ecOjbBgeDjwG9Pm/lm4PC8LH+zi6hRuohyH
-	PBlO1o/to+3ABoboosI+ed2UYAw4pSoIkLogbVMR+so4n8oZ55jkp9yoEWOYhngWSemPId
-	5q/PQmomsstB+AW8ZtxQUNjACkL69IiS31G2WmgF/QE0WkGJiwQDNCuJfIx87A==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ahVSmLR6iTDswYEVK643yMqHt0HqBdSL9hiXEU1xdC8=;
+	b=MVk80s1wI3podiIZQs9nkEv4UUsu3EcRpWDQHVCYfcI9zGt5GHineoZD6d/rCp89z1wll6
+	Ap2LwHKoNMR4cHOSVK0Yj16YJwchvkKEKxIUKRujOr6Y4dM1LfD3HWtj1jXuXGkcmw82kW
+	MlBeluHLAIV86aXCkGWIRX74GTAHA8ESjWXJxJTQgzuS0OXf5NlyzsTvbnUBRXo2F5pih3
+	8y8W3Nm7dLOV4eMx5iFwl8YnyJXYJ6+H7gxONrN69HV9EX+VLDeZVT3DioZRIWAuxipItY
+	CDwbZdgNfVzzBmdymSpU49Q0mixjWF+6SEPXtCbmFQDSEdZqb2yVOUnPB6aIRg==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: [PATCH 0/5] Add support for Mobileye EyeQ5 clock controller
-Date: Mon, 18 Dec 2023 18:14:15 +0100
-Message-Id: <20231218-mbly-clk-v1-0-44ce54108f06@bootlin.com>
+Date: Mon, 18 Dec 2023 18:14:17 +0100
+Subject: [PATCH 2/5] dt-bindings: clock: mobileye,eyeq5-clk: add bindings
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -32,10 +32,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAOh9gGUC/3WMQQ6CMBREr0K6tqafChRW3sOwoO1HfgRqWkIkh
- LtbcGFcuJjFm8y8lQX0hIFVyco8zhTIjRHglDDTNeMdOdnILBWphBg+6H7hpn9wVRjMTHqBVig
- W50+PLb0O1a2O3FGYnF8O8wx7+5GAFF/JDFxwlesWoCwsSLxq56aexrNxw279c9ESRWZzXWpsf
- i71tm1vTkSGx9UAAAA=
+Message-Id: <20231218-mbly-clk-v1-2-44ce54108f06@bootlin.com>
+References: <20231218-mbly-clk-v1-0-44ce54108f06@bootlin.com>
+In-Reply-To: <20231218-mbly-clk-v1-0-44ce54108f06@bootlin.com>
 To: Gregory CLEMENT <gregory.clement@bootlin.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
@@ -51,57 +50,150 @@ Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
 X-Mailer: b4 0.12.4
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-Hi,
-
-We replace fixed clocks as declared in the initial platform support
-series [1] by read-only clocks exposed by the clock driver implemented
-here. Write-ability is supported by the hardware but not implemented,
-it could be added later-on if the need appears.
-
-We expose ten PLLs that derive directly from the main crystal. Also, a divider
-clock is exposed as a child clock of one of the PLLs.
-
-The platform devicetree has many more clock nodes but those are
-fixed-factors that are not hardware controllable; we therefore do not
-deal with them.
-
-This series starts with a fix for a fixed-rate clock registering macro that is
-broken. We are the first upstream users which explains why we found the typo.
-
-We end our patch series by adding the clock controller node to the
-platform devicetree & by replacing hardcoded devicetree clocks by the
-ones exposed by this driver. The controller driver addition is split in
-two commits to simplify reviewing.
-
-[1]: https://lore.kernel.org/lkml/20231212163459.1923041-1-gregory.clement@bootlin.com/
-
-Have a nice day,
-Théo Lebrun
+Add DT schema bindings for the EyeQ5 clock controller driver.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
-Théo Lebrun (5):
-      clk: fixed-rate: fix clk_hw_register_fixed_rate_with_accuracy_parent_hw
-      dt-bindings: clock: mobileye,eyeq5-clk: add bindings
-      clk: eyeq5: add controller
-      clk: eyeq5: add OSPI table-based divider clock
-      MIPS: mobileye: eyeq5: add OLB clocks controller node & pinmux nodes
+ .../bindings/clock/mobileye,eyeq5-clk.yaml         | 83 ++++++++++++++++++++++
+ MAINTAINERS                                        |  2 +
+ include/dt-bindings/clock/mobileye,eyeq5-clk.h     | 22 ++++++
+ 3 files changed, 107 insertions(+)
 
- .../bindings/clock/mobileye,eyeq5-clk.yaml         |  83 +++++
- MAINTAINERS                                        |   3 +
- .../{eyeq5-fixed-clocks.dtsi => eyeq5-clocks.dtsi} |  56 +---
- arch/mips/boot/dts/mobileye/eyeq5.dtsi             |   9 +-
- drivers/clk/Kconfig                                |  11 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-eyeq5.c                            | 346 +++++++++++++++++++++
- include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  22 ++
- include/linux/clk-provider.h                       |   4 +-
- 9 files changed, 493 insertions(+), 42 deletions(-)
----
-base-commit: 0bb6b85cadabf93a754df740bd1b6c56ef41ac2c
-change-id: 20231023-mbly-clk-87ce5c241f08
+diff --git a/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml b/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml
+new file mode 100644
+index 000000000000..d56482a06bf1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/mobileye,eyeq5-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Mobileye EyeQ5 clock controller
++
++description:
++  The EyeQ5 clock controller handles 10 read-only PLLs derived from the main
++  crystal clock. It also exposes one divider clock, a child of one of the PLLs.
++  It is custom to this platform, its registers live in a shared region called
++  OLB.
++
++maintainers:
++  - Grégory Clement <gregory.clement@bootlin.com>
++  - Théo Lebrun <theo.lebrun@bootlin.com>
++  - Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
++
++properties:
++  $nodename:
++    pattern: "^clocks$"
++    description:
++      We have no unique address, we rely on OLB.
++
++  compatible:
++    const: mobileye,eyeq5-clk
++
++  "#clock-cells":
++    const: 1
++
++  clocks:
++    maxItems: 1
++    description:
++      Input parent clock to all PLLs. Expected to be the main crystal.
++
++  clock-names:
++    items:
++      - const: ref
++
++  mobileye,olb:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      A phandle to the OLB syscon. This is a fallback to using the parent as
++      syscon node.
++
++required:
++  - compatible
++  - "#clock-cells"
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    olb@e00000 {
++      compatible = "mobileye,eyeq5-olb", "syscon", "simple-mfd";
++      reg = <0xe00000 0x400>;
++      reg-io-width = <4>;
++
++      clocks {
++        compatible = "mobileye,eyeq5-clk";
++        #clock-cells = <1>;
++        clocks = <&xtal>;
++        clock-names = "ref";
++      };
++    };
++
++  - |
++    olb: olb@e00000 {
++      compatible = "mobileye,eyeq5-olb", "syscon", "simple-mfd";
++      reg = <0xe00000 0x400>;
++      reg-io-width = <4>;
++    };
++
++    clocks {
++      compatible = "mobileye,eyeq5-clk";
++      mobileye,olb = <&olb>;
++      #clock-cells = <1>;
++      clocks = <&xtal>;
++      clock-names = "ref";
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4a7bd6b40d74..7f04fa760a4d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14552,10 +14552,12 @@ M:	Gregory CLEMENT <gregory.clement@bootlin.com>
+ M:	Théo Lebrun <theo.lebrun@bootlin.com>
+ L:	linux-mips@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml
+ F:	Documentation/devicetree/bindings/mips/mobileye.yaml
+ F:	arch/mips/boot/dts/mobileye/
+ F:	arch/mips/configs/generic/board-eyeq5.config
+ F:	arch/mips/generic/board-epm5.its.S
++F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
+ F:	include/dt-bindings/soc/mobileye,eyeq5.h
+ 
+ MODULE SUPPORT
+diff --git a/include/dt-bindings/clock/mobileye,eyeq5-clk.h b/include/dt-bindings/clock/mobileye,eyeq5-clk.h
+new file mode 100644
+index 000000000000..7aa974354bb6
+--- /dev/null
++++ b/include/dt-bindings/clock/mobileye,eyeq5-clk.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2023 Mobileye Vision Technologies Ltd.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_MOBILEYE_EYEQ5_CLK_H
++#define _DT_BINDINGS_CLOCK_MOBILEYE_EYEQ5_CLK_H
++
++#define EQ5C_PLL_CPU	0
++#define EQ5C_PLL_VMP	1
++#define EQ5C_PLL_PMA	2
++#define EQ5C_PLL_VDI	3
++#define EQ5C_PLL_DDR0	4
++#define EQ5C_PLL_PCI	5
++#define EQ5C_PLL_PER	6
++#define EQ5C_PLL_PMAC	7
++#define EQ5C_PLL_MPC	8
++#define EQ5C_PLL_DDR1	9
++
++#define EQ5C_DIV_OSPI	10
++
++#endif
 
-Best regards,
 -- 
-Théo Lebrun <theo.lebrun@bootlin.com>
+2.43.0
 
