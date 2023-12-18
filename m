@@ -1,47 +1,47 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71954D5B6
-	for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 12:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99614EB4B
+	for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 12:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vOVWuzTr"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-5bdb0be3591so2423719a12.2
-        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 04:07:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ODfaBI6M"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1d3b5f9860bso2496095ad.3
+        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 04:08:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702901275; x=1703506075; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702901281; x=1703506081; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KzU01i6st7Fo+4S1d9zRuY0iUyHKgjsO1CA7YDVBW60=;
-        b=vOVWuzTritXUOfvOKyVa2zJh4vZhwx4VilwZ+e1up7KVE5kcYKHbQ0Qlowh+iEjCEw
-         jIkrjDi6cWHkYwttClEsLhuJEuXGQV//yVJaHfVui4V5fMcA2BsXA2jX1KDlUHKnvISh
-         hI/zP3n1Y22wn5Gk7dwL7CtYXNEz20dYsEmNK5iwhK6DDfR2u7j0gEhY9dw7d7Teic3t
-         YCJQ8XUTlwQZR06FNODVcWvdLpBCRBLvDXBypgAFVgx19lfeKG4awYLEzKEUJgfGIXAj
-         WZBiGjxMjhd8mTwZBwx/vjs7VyhP6Ts+xe6LbluwX+JG+GxhbKg+YH7yqsNglAcucHld
-         uhEg==
+        bh=E7tHzmERAQbZImeje4EMokx1gYyccc/9b3w+T8ZyCDU=;
+        b=ODfaBI6MdLWnZLQs2IFwNd7Z0Q32q1lBgzbLy00zhyEN79d3+wWBGzd442us10TE7+
+         haxuduk5aK2zemnoFdjag9PBaF81QoZvR1PedVD5yT2wd0Uq2sk878+m95ccLG25wga+
+         4pyQDron9VA9POvLCCW+QQGQM1OWQ307mRl/jDe/YDPpDUvNycLIdteRky8AZSR7xZLB
+         OgAbnc4tHEj34Y+rjfLV1QvVsa3IgEwrEA7wZ3r3ix0JK1VV9kfW1LVliiiJzYhoMvHg
+         sPDF8g4VFTlNvVvnX/ZTs7Jktln8OfpFdVZauHjubfFgyT/szJ0lfMvGKcesAhNP7FPp
+         gWZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702901275; x=1703506075;
+        d=1e100.net; s=20230601; t=1702901281; x=1703506081;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KzU01i6st7Fo+4S1d9zRuY0iUyHKgjsO1CA7YDVBW60=;
-        b=Uf+Jtr2JbGgZcBpFnQVxHXiJ1kCmDQzxWt40p9lUwDweiBM2Qsw+bxeCbp717HJZw+
-         kGo83djBwiNTEkaDUXaaElW/RcHJCzwEYtzFUjkB9W4U1yq0RKonumsZQA59BULkzNNl
-         Dsguh/ybqibd0b+82wq1irK0EYfoNx6IyK4wyZ3t2fqkL2crw6RfKontjGHr6ayFty2L
-         9QeZQFSyNL7wQEj2/GjYKM6fNsCNXoAHYJyRiEWo/aPEua2FNCwvOvV2Ck0B1Z1HGsWx
-         KyNriRqPbRJ+hsfyxnWa66xK/eVYDiQ98Y0CwjXIdLAvTH5TGVwOZi9JJB9IAAOxzoD4
-         30gg==
-X-Gm-Message-State: AOJu0YzXmfs5/XsnxkhWmvY3tmO9yEO//+SjVr0fEHxli2EMcifkODgO
-	smb+TdsAg0xe+7jUw0BDizF3
-X-Google-Smtp-Source: AGHT+IGpYOV/SJS+GqznnUdK0MyAkEm3zZZSxOs9irbVbbQ1gkqu08h5/o5UYUypquxsVeUHv6aoQg==
-X-Received: by 2002:a17:902:d54c:b0:1d3:3952:8885 with SMTP id z12-20020a170902d54c00b001d339528885mr13518743plf.11.1702901275224;
-        Mon, 18 Dec 2023 04:07:55 -0800 (PST)
+        bh=E7tHzmERAQbZImeje4EMokx1gYyccc/9b3w+T8ZyCDU=;
+        b=w/dAvPyFIZCxzG1pf8OgpRnOo7CflgiGKyvKFuEvqFK9Rv89M+vuAbW5X8xlAKhVm1
+         vAw2COAV1Yn0tyBP+NbnWr+mJPAC5xH5jDE13iW13yRDaaT0oTdXFhVREj21E8ZHg+2J
+         ajcokTvIkI/tjJKILJZyCyMA2LuCWIagTiNIfiwQtBvINpHQJi70eIb2ht2vtWzvjlG7
+         mAKsW6zvN15/3v76KV+E7dZsneJ1El9d/7satuUm2pBQ3aMe68tmSVWrY0if8f+QDCjc
+         e9t//l9lWBEIZAYaMi/e3NZrdrqiQTu7rSwGzutQilVX03vGrkrqJZ28zjK44GPIhNnJ
+         S3BA==
+X-Gm-Message-State: AOJu0Yw9k+tVXSG4nm3XzUDbPeBobqpQ+z3K+ZFtviuK9iZB1zVebZlN
+	35rFm0KKTmFRk4VVCy0C+5fp
+X-Google-Smtp-Source: AGHT+IFpmFbwrX35pR8JXljDwh59BiNAQY5Eow8L0IqGWR6FSSBRUPbJHpRKtOzNMeLuiWR9vuMXoQ==
+X-Received: by 2002:a17:902:ced2:b0:1d3:6408:211a with SMTP id d18-20020a170902ced200b001d36408211amr4518454plg.129.1702901281187;
+        Mon, 18 Dec 2023 04:08:01 -0800 (PST)
 Received: from localhost.localdomain ([117.207.27.21])
-        by smtp.gmail.com with ESMTPSA id j18-20020a170902c3d200b001d368c778dasm1285709plj.235.2023.12.18.04.07.49
+        by smtp.gmail.com with ESMTPSA id j18-20020a170902c3d200b001d368c778dasm1285709plj.235.2023.12.18.04.07.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 04:07:54 -0800 (PST)
+        Mon, 18 Dec 2023 04:08:00 -0800 (PST)
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: andersson@kernel.org,
 	konrad.dybcio@linaro.org,
@@ -58,9 +58,9 @@ Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	quic_cang@quicinc.com,
 	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 05/16] arm64: dts: qcom: msm8996: Fix UFS PHY clocks
-Date: Mon, 18 Dec 2023 17:37:01 +0530
-Message-Id: <20231218120712.16438-6-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 06/16] arm64: dts: qcom: msm8998: Fix UFS PHY clocks
+Date: Mon, 18 Dec 2023 17:37:02 +0530
+Message-Id: <20231218120712.16438-7-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231218120712.16438-1-manivannan.sadhasivam@linaro.org>
 References: <20231218120712.16438-1-manivannan.sadhasivam@linaro.org>
@@ -72,32 +72,41 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-QMP PHY used in MSM8996 requires 2 clocks:
+QMP PHY used in MSM8998 requires 3 clocks:
 
 * ref - 19.2MHz reference clock from RPM
+* ref_aux - Auxiliary reference clock from GCC
 * qref - QREF clock from GCC
 
-Fixes: 27520210e881 ("arm64: dts: qcom: msm8996: Use generic QMP driver for UFS")
+Fixes: cd3dbe2a4e6c ("arm64: dts: qcom: msm8998: Add UFS nodes")
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/qcom/msm8998.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 6ba9da9e6a8b..b235f1d651aa 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -2105,8 +2105,8 @@ ufsphy: phy@627000 {
- 			#size-cells = <1>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index b6a3e6afaefd..d4c55e2b0043 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -1051,12 +1051,12 @@ ufsphy: phy@1da7000 {
+ 			status = "disabled";
  			ranges;
  
--			clocks = <&gcc GCC_UFS_CLKREF_CLK>;
--			clock-names = "ref";
-+			clocks = <&rpmcc RPM_SMD_LN_BB_CLK>, <&gcc GCC_UFS_CLKREF_CLK>;
-+			clock-names = "ref", "qref";
+-			clock-names =
+-				"ref",
+-				"ref_aux";
+-			clocks =
+-				<&gcc GCC_UFS_CLKREF_CLK>,
+-				<&gcc GCC_UFS_PHY_AUX_CLK>;
++			clocks = <&rpmcc RPM_SMD_LN_BB_CLK1>,
++				 <&gcc GCC_UFS_PHY_AUX_CLK>,
++				 <&gcc GCC_UFS_CLKREF_CLK>;
++			clock-names = "ref",
++				      "ref_aux",
++				      "qref";
  
- 			resets = <&ufshc 0>;
  			reset-names = "ufsphy";
+ 			resets = <&ufshc 0>;
 -- 
 2.25.1
 
