@@ -1,129 +1,68 @@
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A6D37151;
-	Tue, 19 Dec 2023 17:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD8E225D9;
+	Tue, 19 Dec 2023 17:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+vn4rWn"
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-35d74cf427cso18921545ab.1;
-        Tue, 19 Dec 2023 09:04:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703005476; x=1703610276; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R3vdGyZ+giFIRD6X/bv1+u6PRAF0RuL1pLhWZ53wREY=;
-        b=M+vn4rWnYkTg/9veDuZy7T7E/XFLosmgJwflwp42cT68peKJ2Oxan0yP27HaWNeBn/
-         htHZanxHsGXSo3WQmElN768pWKqsTFa/ruBZYNLR9SuJ8HxCXII7SYykwdXdv8UdMmpL
-         +Q6xBnqiTmXKQErq84Hc8ZgrPBB+J6HiMHLKTSWnDa6/nUfAZQu7vCcw475T63AO1tUi
-         sxFP7vShVu8ijF6X3Wu+/LwfvpApjKG1OCONM40wDasI9ymjeDDm1FGUg0wtusbjGC78
-         nOa3EBOAPQy27iC08IgeZFmsMte7qECM690R5sZxQAoQ5RY1dklJJhLO2sHljRt3C81E
-         Nt8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703005476; x=1703610276;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R3vdGyZ+giFIRD6X/bv1+u6PRAF0RuL1pLhWZ53wREY=;
-        b=wbvnwLQbbQ5dwBy/3E+xyMzn/HGCAe7Q1k0vUEwN2GqRJ4qdZNriC2lQO5qdQK0jGX
-         Aa0R4vx1ANRV4AcdDZ7eoRQlYrrV4PLQykL5h7dCVXmU0NlR+v8GEfQCXEmQZHwsYm+f
-         eBT9pAOr9VRINxO5STMwOcJTI5wrxzzR3E7qCdlllaswOzCTBOHsk0fypMTEdllXSSv5
-         R2xgEo9chaclA5FfeSRVYau6Jrwya9qvUsKsjgUaGa/z2r73bK81nxSwBXVz2VyPhG1k
-         EuCVBqs2o9fb0mak5Xp37YE4k0qyjniQrrKsY3chMtGH3IHODiDzAwkl+jZSDWUbgcUc
-         b4cA==
-X-Gm-Message-State: AOJu0YyDiw3pCqaCrrXITRYkYEIgYyIv77yFJwIzKFl2/yxVV5RqXObP
-	ZoolBURHJs22pc2xjDdFr50=
-X-Google-Smtp-Source: AGHT+IHTnWFbi3tnLUi55hj74IPei992iitC3hJxS75IRffKP/GDwsXkYn/gQjSWJRug8oGL8oZx1Q==
-X-Received: by 2002:a05:6e02:20e3:b0:35f:c6d4:5d59 with SMTP id q3-20020a056e0220e300b0035fc6d45d59mr273364ilv.43.1703005475772;
-        Tue, 19 Dec 2023 09:04:35 -0800 (PST)
-Received: from jernej-laptop.localnet (82-149-12-148.dynamic.telemach.net. [82.149.12.148])
-        by smtp.gmail.com with ESMTPSA id w1-20020a056e021a6100b0035161817c37sm7488495ilv.1.2023.12.19.09.04.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Dec 2023 09:04:35 -0800 (PST)
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
- Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Frank Oltmanns <frank@oltmanns.dev>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Frank Oltmanns <frank@oltmanns.dev>
-Subject:
- Re: [PATCH 5/5] drm/panel: st7703: Drive XBD599 panel at higher clock rate
-Date: Tue, 19 Dec 2023 18:04:29 +0100
-Message-ID: <10386431.nUPlyArG6x@jernej-laptop>
-In-Reply-To: <20231218-pinephone-pll-fixes-v1-5-e238b6ed6dc1@oltmanns.dev>
-References:
- <20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev>
- <20231218-pinephone-pll-fixes-v1-5-e238b6ed6dc1@oltmanns.dev>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJKVGSni"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B44BC433C8;
+	Tue, 19 Dec 2023 17:28:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703006900;
+	bh=LwFlemhDXsQTCT6yty5YjRZREbcZauYYlCKVORoaexg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OJKVGSniX51TQl0CIvTUnJe/j7dUF0DOmBUMiVvIKXuZWEHvY4rnDXDaku6eJpaPg
+	 q0sXvdfTOqEBBvmTC1957UCiN7MGiyL+qCpvUw8HdU8jwfd7x4NIg9qpmFp7cKaSq2
+	 eHlfr4+C7EFFKTU37Jlv4aR3a9E1m9QyiatiLhD2iPEcOAUb7BxaTs6RF6FXzEk79i
+	 YorgjIi+9O1HRbyPalfibn+3HXqnZ6RF17bF+WvqcFu2PfcG3GhDB9dQWOIzDKxLUf
+	 Ga1a47sNG9diJWJkCzmeI4CDM1H6kyXaaN2e9X7kmYr8DoX6qN3nXZRw4mfjw/XbuH
+	 vuV/PszECjttQ==
+Date: Tue, 19 Dec 2023 11:28:17 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Georgi Djakov <djakov@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sai Prakash Ranjan <quic_saipraka@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 01/12] interconnect: qcom: sm8550: Remove bogus per-RSC
+ BCMs and nodes
+Message-ID: <27rpxy5s5zo62o5waihq7phd67pn3hezag4xmpb3stc6x4r4bo@jysfz46pzkag>
+References: <20231218-topic-8550_fixes-v1-0-ce1272d77540@linaro.org>
+ <20231218-topic-8550_fixes-v1-1-ce1272d77540@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231218-topic-8550_fixes-v1-1-ce1272d77540@linaro.org>
 
-Dne ponedeljek, 18. december 2023 ob 14:35:23 CET je Frank Oltmanns napisal(a):
-> This panel is used in the pinephone that runs on a Allwinner A64 SOC.
-> Acoording to it's datasheet, the SOC requires PLL-MIPI to run at more
-> than 500 MHz.
+On Mon, Dec 18, 2023 at 05:02:02PM +0100, Konrad Dybcio wrote:
+> The downstream kernel has infrastructure for passing votes from different
+> interconnect nodes onto different RPMh RSCs. This neither implemented, not
+> is going to be implemented upstream (in favor of a different solution
+> using ICC tags through the same node).
 > 
-> Therefore, change [hv]sync_(start|end) so that we reach a clock rate
-> that is high enough to drive PLL-MIPI within its limits.
+> Unfortunately, as it happens, meaningless (in the upstream context) parts
+> of the vendor driver were copied, ending up causing havoc - since all
+> "per-RSC" (in quotes because they all point to the main APPS one) BCMs
+> defined within the driver overwrite the value in RPMh on every
+> aggregation.
 > 
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-
-I'm not too sure about this patch. I see that PLL_MIPI doesn't have set
-minimum frequency limit in clock driver. If you add it, clock framework
-should find rate that is high enough and divisible with target rate.
-
-Best regards,
-Jernej  
-
-> ---
->  drivers/gpu/drm/panel/panel-sitronix-st7703.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> To both avoid keeping bogus code around and possibly introducing
+> impossible-to-track-down bugs (busses shutting down for no reason), get
+> rid of the duplicated BCMs and their associated ICC nodes.
 > 
-> diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7703.c b/drivers/gpu/drm/panel/panel-sitronix-st7703.c
-> index b55bafd1a8be..6886fd7f765e 100644
-> --- a/drivers/gpu/drm/panel/panel-sitronix-st7703.c
-> +++ b/drivers/gpu/drm/panel/panel-sitronix-st7703.c
-> @@ -320,14 +320,14 @@ static int xbd599_init_sequence(struct st7703 *ctx)
->  
->  static const struct drm_display_mode xbd599_mode = {
->  	.hdisplay    = 720,
-> -	.hsync_start = 720 + 40,
-> -	.hsync_end   = 720 + 40 + 40,
-> -	.htotal	     = 720 + 40 + 40 + 40,
-> +	.hsync_start = 720 + 65,
-> +	.hsync_end   = 720 + 65 + 65,
-> +	.htotal      = 720 + 65 + 65 + 65,
->  	.vdisplay    = 1440,
-> -	.vsync_start = 1440 + 18,
-> -	.vsync_end   = 1440 + 18 + 10,
-> -	.vtotal	     = 1440 + 18 + 10 + 17,
-> -	.clock	     = 69000,
-> +	.vsync_start = 1440 + 30,
-> +	.vsync_end   = 1440 + 30 + 22,
-> +	.vtotal	     = 1440 + 30 + 22 + 29,
-> +	.clock	     = (720 + 65 + 65 + 65) * (1440 + 30 + 22 + 29) * 60 / 1000,
->  	.flags	     = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
->  	.width_mm    = 68,
->  	.height_mm   = 136,
-> 
-> 
+> Fixes: e6f0d6a30f73 ("interconnect: qcom: Add SM8550 interconnect provider driver")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-
-
+Regards,
+Bjorn
