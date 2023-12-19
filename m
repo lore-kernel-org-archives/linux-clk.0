@@ -1,49 +1,49 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E8F881E
-	for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 07:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A626112B71
+	for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 07:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ngbu+k1q"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-553a65b6ad4so89666a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 23:24:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="goKoy4dY"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-50e4a637958so228949e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 23:27:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702970695; x=1703575495; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702970878; x=1703575678; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UlhGozfg7dmxL6emSh7I25mqheijAutqkIGD6E3t8e0=;
-        b=Ngbu+k1qT7SNnMNpVuElrCkHYXkgQd9G+puHuCBrNFasfjgqdVEj98VYksBdwEvdXb
-         yl4F9pe8a6Qqr0xhQMkAMTgvyIxziy7D/8xO3hMDXAPtr+bArgFYCblggMB3jUCY4khM
-         JWd7X0tmUU9uWlpq5h6TfgtG0H7o2lF7GNeXZ9t0VUbdCyvc+oyET1RyreTfljUzop/U
-         jjjl/qXMyonJMsp5MeKsS8JY8DuEHwOxCeUPyTOQJKI0sMW1y2E6/w2KYT5ZytwYnv5H
-         /+p+8vgULhay6pN15U9akhVj2eaXIGADzMaobGpey0KxMv+ZGmOtojy7wVPXQdpO7G7V
-         dt+g==
+        bh=lvWIf0CQ/cgMabzqPPlHJt1XhA+c+iZSGf9XR6mFGBE=;
+        b=goKoy4dYlzFNjRyBGZSsOdsy/U6biUUeJdj495KyEQoWcb6BHSJNYgUW+RxiSyTG4D
+         rVJmnd2HUEBLjyEE6gUJomoIsIG8/l4Fszp8CWoE8MzoTieRXNGplyoLJmbAr9kMODF5
+         JMRdwzUreV1xTq219/fe9uHakegYVy7e4umvQLGMZL0B3+DrSYXb7e35vh5qkOCVMjCa
+         HpfdKRfe6lrYCv7mb0PnA86vqlOZN1/f9UklajKDFE8Ty/uWm20fnF6e92sMw/NI944l
+         5YB0UiqRc1kEOXR4iJJpa3o40X3dGNNrHjgZ9K53CyMP4DUJRixq/cPcA7ssMuq4MaQ7
+         RhcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702970695; x=1703575495;
+        d=1e100.net; s=20230601; t=1702970878; x=1703575678;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UlhGozfg7dmxL6emSh7I25mqheijAutqkIGD6E3t8e0=;
-        b=VbBZkWV2KwaWfI7XMHS+U9058uIzsHhtB6QB1f9TvmGquFfbsGQERLUIjXah+KMoyx
-         cgrugUZsVpYmwsZ2zvOEkaQIsg6CuMarYpHHe9VN2iTG3tKCff/RHmJNpA0jaWYBX7fI
-         HcQHhip9edzFzSYxHY8m9jk6sKHxAMXUksqbnNauPgsq/t00WCgPztsE7holXtiNXhdV
-         1L4EH49uO+QZPF7U3x7JNwy062uauXr3vYQCjYv2pZBpM2JOKM5e8yHO7wsPzLGgufEK
-         zNR932wLDNpmRYxgi2oWmcj81+pBDbs9IQ2yq+6rPg6jlQu7Gv6VZH52iFw268UQMEYe
-         qeAw==
-X-Gm-Message-State: AOJu0YwY0XdA4UffPlJs41jF3t7CsoRyt4FxA0VSdqhiZ7gQXtlgB/Ne
-	NaAev8bXv5qLOeqU6OpW4yS40g==
-X-Google-Smtp-Source: AGHT+IGJrB1GS5Ds3Q//fBV9ifKcGRVUKGPJGkcEg6RUjoC9qIuQy8apORhMr/6zGO/JfJuDOCXC8A==
-X-Received: by 2002:a50:c011:0:b0:551:9caa:fac6 with SMTP id r17-20020a50c011000000b005519caafac6mr7563009edb.45.1702970695406;
-        Mon, 18 Dec 2023 23:24:55 -0800 (PST)
+        bh=lvWIf0CQ/cgMabzqPPlHJt1XhA+c+iZSGf9XR6mFGBE=;
+        b=QutTy+vdXI3x+MuxNV02YdqgIwvRQuJzsNp9OMI+iX8aaNpO8s5BX6E4xJSX4SfqNs
+         i3AoVlbEEtQQEv31IWa1MGUH98OPL0UMz2Q3XReVwW7qwThhPwbSpMGkIhUXTQ5hWOgN
+         voAFpNY3JhUG5Ye2CDw5XjFe78NA98Q9uCmbGtPYaxtycwdCURPLzJkWQygMeyLLS7dH
+         gdG5PQrFaD+3sze63z6K068AiKeU/VzhKiGDchM4iRxPVWhbhitNi+ZDdWJ5K486uYG3
+         Va6ExOF/GBHixCQVKyuxtUg1SWnCdo0P2cr0V4UxSTaxWA3ZbHOYEwGlEEt8LhwKVWU+
+         IRGg==
+X-Gm-Message-State: AOJu0YwTy4JJBGSt1poFs8gsNrAt76QktQPzPZ4/0DI30w2elQ3nv3Qw
+	pfLcjnFyeN4bbA2kX94liaEI4g==
+X-Google-Smtp-Source: AGHT+IHBPh2OnN6ES/+jvJyqwqKnqtFVybB5hAR7/WGC8WuHd0SdyVsM/YIIUCsnqn5VnvmiZa06qw==
+X-Received: by 2002:ac2:4313:0:b0:50e:37b6:79c with SMTP id l19-20020ac24313000000b0050e37b6079cmr784138lfh.17.1702970877580;
+        Mon, 18 Dec 2023 23:27:57 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id x9-20020aa7cd89000000b0055289f60e3bsm4634626edv.79.2023.12.18.23.24.52
+        by smtp.gmail.com with ESMTPSA id tz4-20020a170907c78400b00a1aad4d92dbsm14894814ejc.123.2023.12.18.23.27.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Dec 2023 23:24:54 -0800 (PST)
-Message-ID: <92eb5f85-1241-429c-aca9-7a6a17f19ae5@linaro.org>
-Date: Tue, 19 Dec 2023 08:24:51 +0100
+        Mon, 18 Dec 2023 23:27:56 -0800 (PST)
+Message-ID: <c9225053-78f8-40b7-9453-dc3dabe44500@linaro.org>
+Date: Tue, 19 Dec 2023 08:27:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,8 +51,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/9] dt-bindings: net: starfive,jh7110-dwmac: Drop
- redundant reset description
+Subject: Re: [PATCH v4 2/9] dt-bindings: net: starfive,jh7110-dwmac: Add
+ JH7100 SoC compatible
 Content-Language: en-US
 To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
@@ -75,7 +75,7 @@ Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
  linux-arm-kernel@lists.infradead.org, kernel@collabora.com
 References: <20231218214451.2345691-1-cristian.ciocaltea@collabora.com>
- <20231218214451.2345691-2-cristian.ciocaltea@collabora.com>
+ <20231218214451.2345691-3-cristian.ciocaltea@collabora.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -121,35 +121,87 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231218214451.2345691-2-cristian.ciocaltea@collabora.com>
+In-Reply-To: <20231218214451.2345691-3-cristian.ciocaltea@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 18/12/2023 22:44, Cristian Ciocaltea wrote:
-> The reset description items are already provided by the referenced
-> snps,dwmac.yaml schema, hence replace them with the necessary
-> {min,max}Items.
+> The Synopsys DesignWare MAC found on StarFive JH7100 SoC is mostly
+> similar to the newer JH7110, but it requires only two interrupts and a
+> single reset line, which is 'ahb' instead of the commonly used
+> 'stmmaceth'.
 > 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  .../devicetree/bindings/net/starfive,jh7110-dwmac.yaml       | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml b/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
-> index 5e7cfbbebce6..d90cb82c1424 100644
-> --- a/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
-> @@ -55,9 +55,8 @@ properties:
->      maxItems: 3
+
+>    reg:
+> @@ -145,9 +146,13 @@ properties:
 >  
->    resets:
+>    reset-names:
+>      minItems: 1
 > -    items:
-> -      - description: MAC Reset signal.
-> -      - description: AHB Reset signal.
-> +    minItems: 2
+> -      - const: stmmaceth
+> -      - const: ahb
 > +    maxItems: 2
 
-Why changing only resets, but not reset-names?
+min and maxItems should not be needed here.
+
+> +    oneOf:
+> +      - items:
+> +          - enum: [stmmaceth, ahb]
+> +      - items:
+> +          - const: stmmaceth
+> +          - const: ahb
+>  
+>    power-domains:
+>      maxItems: 1
+> diff --git a/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml b/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
+> index d90cb82c1424..f5f0bff5be0f 100644
+> --- a/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
+> @@ -16,16 +16,20 @@ select:
+>      compatible:
+>        contains:
+>          enum:
+> +          - starfive,jh7100-dwmac
+>            - starfive,jh7110-dwmac
+>    required:
+>      - compatible
+>  
+>  properties:
+>    compatible:
+> -    items:
+> -      - enum:
+> -          - starfive,jh7110-dwmac
+> -      - const: snps,dwmac-5.20
+> +    oneOf:
+> +      - items:
+> +          - const: starfive,jh7100-dwmac
+> +          - const: snps,dwmac
+> +      - items:
+> +          - const: starfive,jh7110-dwmac
+> +          - const: snps,dwmac-5.20
+>  
+>    reg:
+>      maxItems: 1
+> @@ -46,23 +50,6 @@ properties:
+>        - const: tx
+>        - const: gtx
+>  
+> -  interrupts:
+> -    minItems: 3
+> -    maxItems: 3
+> -
+> -  interrupt-names:
+> -    minItems: 3
+> -    maxItems: 3
+> -
+> -  resets:
+> -    minItems: 2
+> -    maxItems: 2
+
+What is the point of your previous patch if you immediately remove it?
+It is a no-op. Just mention in this commit msg, that both resets and
+reset-names are coming from snps,dwmac so they can be removed from
+top-level entirely.
 
 Best regards,
 Krzysztof
