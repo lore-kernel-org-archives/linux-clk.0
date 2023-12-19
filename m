@@ -1,49 +1,49 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A626112B71
-	for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 07:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8A5125B5
+	for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 07:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="goKoy4dY"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-50e4a637958so228949e87.2
-        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 23:27:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zXhV8Awq"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-50e33fe3856so2679896e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 18 Dec 2023 23:38:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702970878; x=1703575678; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702971493; x=1703576293; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=lvWIf0CQ/cgMabzqPPlHJt1XhA+c+iZSGf9XR6mFGBE=;
-        b=goKoy4dYlzFNjRyBGZSsOdsy/U6biUUeJdj495KyEQoWcb6BHSJNYgUW+RxiSyTG4D
-         rVJmnd2HUEBLjyEE6gUJomoIsIG8/l4Fszp8CWoE8MzoTieRXNGplyoLJmbAr9kMODF5
-         JMRdwzUreV1xTq219/fe9uHakegYVy7e4umvQLGMZL0B3+DrSYXb7e35vh5qkOCVMjCa
-         HpfdKRfe6lrYCv7mb0PnA86vqlOZN1/f9UklajKDFE8Ty/uWm20fnF6e92sMw/NI944l
-         5YB0UiqRc1kEOXR4iJJpa3o40X3dGNNrHjgZ9K53CyMP4DUJRixq/cPcA7ssMuq4MaQ7
-         RhcQ==
+        bh=xminXgCBuj1Jpf20jWnFqmozJPH56EUn0oky68BU8xw=;
+        b=zXhV8AwqxI+Rjri54VoaRvBaFkoihmmNyx6NwiHwQBLaoNoE8NVynv0Qch100eq/UV
+         n+GkE6igXEzeAFqVy0qRRnIjQq4it0wv6RO3voiOB8eEJkEn9kjTw9eWv3Sro0sJj7KH
+         iUqX/r2qmly7Xqk/bEO8CD/ueRBWrABN9/h6w9V1AchZh+UHH4JN1T6WcDO2h5I+GUj3
+         JCvlquPmhhNpQ+z6JMyd+FkDg8Zx7HTKT1W1YnkxTfstuHwrpptQt9woZYQ0pVcUIAsh
+         7QHsIGpC1Nf8cVx/x03nyQkwYMEYxG8HNzk8c0DnYKEeG/B9rb0R5fQTkEfxvb/JPkHk
+         jC3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702970878; x=1703575678;
+        d=1e100.net; s=20230601; t=1702971493; x=1703576293;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lvWIf0CQ/cgMabzqPPlHJt1XhA+c+iZSGf9XR6mFGBE=;
-        b=QutTy+vdXI3x+MuxNV02YdqgIwvRQuJzsNp9OMI+iX8aaNpO8s5BX6E4xJSX4SfqNs
-         i3AoVlbEEtQQEv31IWa1MGUH98OPL0UMz2Q3XReVwW7qwThhPwbSpMGkIhUXTQ5hWOgN
-         voAFpNY3JhUG5Ye2CDw5XjFe78NA98Q9uCmbGtPYaxtycwdCURPLzJkWQygMeyLLS7dH
-         gdG5PQrFaD+3sze63z6K068AiKeU/VzhKiGDchM4iRxPVWhbhitNi+ZDdWJ5K486uYG3
-         Va6ExOF/GBHixCQVKyuxtUg1SWnCdo0P2cr0V4UxSTaxWA3ZbHOYEwGlEEt8LhwKVWU+
-         IRGg==
-X-Gm-Message-State: AOJu0YwTy4JJBGSt1poFs8gsNrAt76QktQPzPZ4/0DI30w2elQ3nv3Qw
-	pfLcjnFyeN4bbA2kX94liaEI4g==
-X-Google-Smtp-Source: AGHT+IHBPh2OnN6ES/+jvJyqwqKnqtFVybB5hAR7/WGC8WuHd0SdyVsM/YIIUCsnqn5VnvmiZa06qw==
-X-Received: by 2002:ac2:4313:0:b0:50e:37b6:79c with SMTP id l19-20020ac24313000000b0050e37b6079cmr784138lfh.17.1702970877580;
-        Mon, 18 Dec 2023 23:27:57 -0800 (PST)
+        bh=xminXgCBuj1Jpf20jWnFqmozJPH56EUn0oky68BU8xw=;
+        b=gfpr/TdMVJ8LuoGO+C4gKa7gMTOydy+25sxFkp2Nl+1jlUUpa5i9ivA65PHybrDMQk
+         56xo030+DLvb+ujs8c/+6uOhPM0JTcsImSgBL/WBJaalK/y8YAlQcorrfMXYAltPS6pj
+         egIQEa6s+GAeKqdMUOJSqX0FECKW2xZrFFY++Lt4ABEOPlMh8xuFV0jrni6/CT7EUIdu
+         UR1gXF0iTY0m7aZKmf5H9ApzNGkXQQMSnA4L59PfOYc7gB++mZE+9opGVJDclRnpQW3r
+         W70LFRvWeeV00zXlHZ6JNwK5W+I1rXpBlwMAnQSU61uPBnWeCBZeVzK/oDzm0eMzBK3M
+         IXnw==
+X-Gm-Message-State: AOJu0Ywt/W77YOY7mi4PiKGf+QDzt+XS5qemZamzz8kXQylA43zf9qXf
+	qJr3rM72VFgrxzPE/SyJ6F4N6g==
+X-Google-Smtp-Source: AGHT+IEwCi6TuXgBXmQCr4t3MJg1QkQhNwWnewugfUeqrY5kscNstXB/rrHGtBazygdrQxPq5qsgbQ==
+X-Received: by 2002:a05:6512:220f:b0:50e:44a8:6628 with SMTP id h15-20020a056512220f00b0050e44a86628mr270964lfu.103.1702971493230;
+        Mon, 18 Dec 2023 23:38:13 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id tz4-20020a170907c78400b00a1aad4d92dbsm14894814ejc.123.2023.12.18.23.27.54
+        by smtp.gmail.com with ESMTPSA id x9-20020aa7cd89000000b0055289f60e3bsm4644445edv.79.2023.12.18.23.38.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Dec 2023 23:27:56 -0800 (PST)
-Message-ID: <c9225053-78f8-40b7-9453-dc3dabe44500@linaro.org>
-Date: Tue, 19 Dec 2023 08:27:53 +0100
+        Mon, 18 Dec 2023 23:38:12 -0800 (PST)
+Message-ID: <2fb31811-b277-4f19-aaac-dc5ce9e99c34@linaro.org>
+Date: Tue, 19 Dec 2023 08:38:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,31 +51,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/9] dt-bindings: net: starfive,jh7110-dwmac: Add
- JH7100 SoC compatible
+Subject: Re: [PATCH 2/5] dt-bindings: clock: mobileye,eyeq5-clk: add bindings
 Content-Language: en-US
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
- Samin Guo <samin.guo@starfivetech.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Hal Feng <hal.feng@starfivetech.com>,
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-References: <20231218214451.2345691-1-cristian.ciocaltea@collabora.com>
- <20231218214451.2345691-3-cristian.ciocaltea@collabora.com>
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+References: <20231218-mbly-clk-v1-0-44ce54108f06@bootlin.com>
+ <20231218-mbly-clk-v1-2-44ce54108f06@bootlin.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -121,87 +112,121 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231218214451.2345691-3-cristian.ciocaltea@collabora.com>
+In-Reply-To: <20231218-mbly-clk-v1-2-44ce54108f06@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/12/2023 22:44, Cristian Ciocaltea wrote:
-> The Synopsys DesignWare MAC found on StarFive JH7100 SoC is mostly
-> similar to the newer JH7110, but it requires only two interrupts and a
-> single reset line, which is 'ahb' instead of the commonly used
-> 'stmmaceth'.
+On 18/12/2023 18:14, Théo Lebrun wrote:
+> Add DT schema bindings for the EyeQ5 clock controller driver.
 > 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  .../bindings/clock/mobileye,eyeq5-clk.yaml         | 83 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  2 +
+>  include/dt-bindings/clock/mobileye,eyeq5-clk.h     | 22 ++++++
+>  3 files changed, 107 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml b/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml
+> new file mode 100644
+> index 000000000000..d56482a06bf1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml
+> @@ -0,0 +1,83 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/mobileye,eyeq5-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mobileye EyeQ5 clock controller
+> +
+> +description:
+> +  The EyeQ5 clock controller handles 10 read-only PLLs derived from the main
+> +  crystal clock. It also exposes one divider clock, a child of one of the PLLs.
+> +  It is custom to this platform, its registers live in a shared region called
+> +  OLB.
+> +
+> +maintainers:
+> +  - Grégory Clement <gregory.clement@bootlin.com>
+> +  - Théo Lebrun <theo.lebrun@bootlin.com>
+> +  - Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^clocks$"
 
->    reg:
-> @@ -145,9 +146,13 @@ properties:
->  
->    reset-names:
->      minItems: 1
-> -    items:
-> -      - const: stmmaceth
-> -      - const: ahb
-> +    maxItems: 2
+No, that's not correct pattern.
 
-min and maxItems should not be needed here.
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
 
-> +    oneOf:
-> +      - items:
-> +          - enum: [stmmaceth, ahb]
-> +      - items:
-> +          - const: stmmaceth
-> +          - const: ahb
->  
->    power-domains:
->      maxItems: 1
-> diff --git a/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml b/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
-> index d90cb82c1424..f5f0bff5be0f 100644
-> --- a/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
-> @@ -16,16 +16,20 @@ select:
->      compatible:
->        contains:
->          enum:
-> +          - starfive,jh7100-dwmac
->            - starfive,jh7110-dwmac
->    required:
->      - compatible
->  
->  properties:
->    compatible:
-> -    items:
-> -      - enum:
-> -          - starfive,jh7110-dwmac
-> -      - const: snps,dwmac-5.20
-> +    oneOf:
-> +      - items:
-> +          - const: starfive,jh7100-dwmac
-> +          - const: snps,dwmac
-> +      - items:
-> +          - const: starfive,jh7110-dwmac
-> +          - const: snps,dwmac-5.20
->  
->    reg:
->      maxItems: 1
-> @@ -46,23 +50,6 @@ properties:
->        - const: tx
->        - const: gtx
->  
-> -  interrupts:
-> -    minItems: 3
-> -    maxItems: 3
-> -
-> -  interrupt-names:
-> -    minItems: 3
-> -    maxItems: 3
-> -
-> -  resets:
-> -    minItems: 2
-> -    maxItems: 2
 
-What is the point of your previous patch if you immediately remove it?
-It is a no-op. Just mention in this commit msg, that both resets and
-reset-names are coming from snps,dwmac so they can be removed from
-top-level entirely.
+> +    description:
+> +      We have no unique address, we rely on OLB.
+
+No.
+
+I explained why in pinctrl patchset.
+
+> +
+> +  compatible:
+> +    const: mobileye,eyeq5-clk
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description:
+> +      Input parent clock to all PLLs. Expected to be the main crystal.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ref
+> +
+> +  mobileye,olb:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      A phandle to the OLB syscon. This is a fallback to using the parent as
+> +      syscon node.
+
+Drop.
+
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    olb@e00000 {
+> +      compatible = "mobileye,eyeq5-olb", "syscon", "simple-mfd";
+
+Drop, not related.
+
+> +      reg = <0xe00000 0x400>;
+> +      reg-io-width = <4>;
+> +
+> +      clocks {
+> +        compatible = "mobileye,eyeq5-clk";
+> +        #clock-cells = <1>;
+> +        clocks = <&xtal>;
+> +        clock-names = "ref";
+> +      };
+> +    };
+> +
+> +  - |
+> +    olb: olb@e00000 {
+> +      compatible = "mobileye,eyeq5-olb", "syscon", "simple-mfd";
+
+Drop, even less related. Still no explanation why you represent the same
+hardware in two different ways.
+
 
 Best regards,
 Krzysztof
