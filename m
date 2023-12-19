@@ -1,24 +1,24 @@
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920DF125B1;
-	Tue, 19 Dec 2023 09:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C34134A5;
+	Tue, 19 Dec 2023 09:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Isxg0mGQ"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Aib2dAWd"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Kp2ztNtcVx8XCuG+qC0xBUhfHysW0jp5KEROJFGE1lo=; b=Isxg0mGQOnGl6uXuWTHsjcBdJL
-	tIhs9clfT7rN0FByPLChS3pAbF6wXQW8T6J0P3xnyxiE3DC4yjk4fRrddUIdcFKmAOd9Df9hyRUDR
-	36COzrVzKeQFhIbhEscPyRjbYyajNc9hnVT6QM4rmDInxMG7OuTaPHLHzDklHG0gsjaA=;
+	bh=NaVoyHBOPnWMz3U2dVERj24bGOi/9TpvB2fUFZ/7poc=; b=Aib2dAWdlQ30bEKJtn/M6iGV5w
+	QY+fVX6rQ8Fxsmk+bMdr8o8K8I1ehKD0+nqxC8JlGCBaVwPU7xT0Tx+Ms+GUwUT9ls9NHj98GPjTc
+	6uuYQxLmaJXMZ3QRXHIS/rd+WO/plt8D1lA7w1Z8FfMoNM3wM2BZ5o/fES9KphH8RVuw=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1rFW0L-003JlS-Az; Tue, 19 Dec 2023 10:03:09 +0100
-Date: Tue, 19 Dec 2023 10:03:09 +0100
+	id 1rFW1T-003Jme-Fe; Tue, 19 Dec 2023 10:04:19 +0100
+Date: Tue, 19 Dec 2023 10:04:19 +0100
 From: Andrew Lunn <andrew@lunn.ch>
 To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 Cc: "David S. Miller" <davem@davemloft.net>,
@@ -44,9 +44,11 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
 	linux-stm32@st-md-mailman.stormreply.com,
 	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH v4 0/9] Enable networking support for StarFive JH7100 SoC
-Message-ID: <a37d2df9-e593-476f-bfef-d9abaf063daa@lunn.ch>
+Subject: Re: [PATCH v4 3/9] net: stmmac: dwmac-starfive: Add support for
+ JH7100 SoC
+Message-ID: <051463f6-3268-415e-bedc-6f35707a97f9@lunn.ch>
 References: <20231218214451.2345691-1-cristian.ciocaltea@collabora.com>
+ <20231218214451.2345691-4-cristian.ciocaltea@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,17 +57,18 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231218214451.2345691-1-cristian.ciocaltea@collabora.com>
+In-Reply-To: <20231218214451.2345691-4-cristian.ciocaltea@collabora.com>
 
-On Mon, Dec 18, 2023 at 11:44:40PM +0200, Cristian Ciocaltea wrote:
-> This patch series adds ethernet support for the StarFive JH7100 SoC and makes it
-> available for the StarFive VisionFive V1 and BeagleV Starlight boards, although
-> I could only validate on the former SBC.  Thank you Emil and Geert for helping
-> with tests on BeagleV!
+On Mon, Dec 18, 2023 at 11:44:43PM +0200, Cristian Ciocaltea wrote:
+> Add a missing quirk to enable support for the StarFive JH7100 SoC.
+> 
+> Additionally, for greater flexibility in operation, allow using the
+> rgmii-rxid and rgmii-txid phy modes.
+> 
+> Co-developed-by: Emil Renner Berthing <kernel@esmil.dk>
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
-You will need to split this into patch sets per subsystem. The changes
-to the stmmac driver can then go via netdev, and the rest via each
-subsystem maintainer. It should then all meet in linux-next and work
-there.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-	Andrew
+    Andrew
