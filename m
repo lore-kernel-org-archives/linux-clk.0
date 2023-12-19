@@ -1,153 +1,92 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C482E31A61
-	for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 17:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5E942051
+	for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 18:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Q/2bEyvg"
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 326263F2BD
-	for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 17:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1703007598;
-	bh=5lC8up460sffE6lEtHTKhMldznfJD/U8bnCN2AOssbw=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=Q/2bEyvgF5s94CKiZDa8SvGYclCMz/j2EuXkk4C6Z7l2OdvFVUNAUuGiNH8D+rlEz
-	 2xAg9ZS4kFFfYMIvnZ/NoV8VYK+ddmyONWjvkvAZoORR3fsCflka4T+el4uqvOnUxA
-	 5vU/Bip0Pu7zpIw9jBQWkFXtP5oOnwNso4N8nlagWVXj0OZQZz21G6FP4HjQW1M0wa
-	 v7zCC+xVZi6uHMb4m0SiIGsV4Uw8KVGQorSQGvjUMxVFVeqbQq35yyyW0b6NcUynUG
-	 TYMvumnuc6V0cbHC3WRRonV4BSvVH0kM4oc58RmyL0ocf+OkChadFnTguPLAkQ379K
-	 rpgRCw+0lCn5A==
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-42582386297so69247991cf.3
-        for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 09:39:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tk+nTnlF"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40d12b56a38so40401255e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 10:55:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1703012137; x=1703616937; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uztvwy/XDlnBSNFvqBS9U2QaM7AjgbLOyuRvg2DsiFw=;
+        b=tk+nTnlFfxX08Hh9PkKMpdT2lNMV/Yy36+YvRja5WaGFXM+r07/BnhI6v9aoaev7Bk
+         M0pS3KFSxc0mblumBRtTBNiL/fwhULpeDsHV6nsSXw5WawS9DmvlqhBthkAlQ5DLAbAa
+         3cSDvRFYknxeGyjW1TB7sov6sTz1aGWpXmA193XZtI6zX4FImANZBryy8CY0yC2Dhunw
+         +f74jVUB0TO3st+3US6Lfc6jD2G6+kgdM2O/WSvYPnIoWIcqWNTLUrS51HYyaOA+y260
+         A0B0jM3iFdIFtnSAV35ykjpCIph291qoRuVK4hlNm38xZpI2r2q37IKjnedANYzomcJt
+         hCSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703007595; x=1703612395;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5lC8up460sffE6lEtHTKhMldznfJD/U8bnCN2AOssbw=;
-        b=CUZyTpRczmy/zJ91GYnVAyvKQ1y6M82dozlpjyFNQQ6rH52OTp4n4ZY8EMo+T8yXHp
-         z4vjqYaFKmMPWYQvvi8u/cdlBHSgGrME1us7j0BXOxCEyFR+9+igVKG55xzXzmrd46zq
-         yLYWT52p6892rm62rxk+VMDzjV2ffobxq+QeP78wKeJ+zl22NkI8ynsnksbgKLxoCgU1
-         7Pw349GRWYjZ8I2FzP6PjwAnhIvEkHq/ChANjA4gj4HbWREuAF2tjIyXpYIdj8TprH+d
-         mdUYD9rBswxoCbmXsSj8gFEOKfQ4Gnge73C103HsUfIz1/vfEglvOxAqBJd9oHq5iB4z
-         /32Q==
-X-Gm-Message-State: AOJu0Yxxb1ZJUlQZ09TgYDedVP6TwqOkSBIM2m4iak1mYg1AZSlnc40l
-	TzX9KEfHJCo1klRTj33ySluIt/UAz7Lfj6Sh9d/8dywWaTjAfn0Uw7rX7ia+rcvlVLa1ryvf6me
-	IFk7aIll6PS8rpi8p9RjWpK4Ebd66ZQ4sJqEDDCI6v/8EhpJnTbuTXA==
-X-Received: by 2002:a05:622a:19a9:b0:425:a117:90ec with SMTP id u41-20020a05622a19a900b00425a11790ecmr23114937qtc.66.1703007595448;
-        Tue, 19 Dec 2023 09:39:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHDTi89p4XgTEJbjNfwK+23dRywS9hQShScl1IpS3D4x4FXvIT3lk//qypTp5LCDwvH0SoDqu6Meoi8IDWfUkI=
-X-Received: by 2002:a05:622a:19a9:b0:425:a117:90ec with SMTP id
- u41-20020a05622a19a900b00425a11790ecmr23114920qtc.66.1703007595184; Tue, 19
- Dec 2023 09:39:55 -0800 (PST)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 19 Dec 2023 12:39:54 -0500
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <d35d3cf480064c69b1125ba07d615446@EXMBX066.cuchost.com>
-References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
- <20231206115000.295825-7-jeeheng.sia@starfivetech.com> <CAJM55Z_VgBGvCPuvwmQahMcMfuWKnOKpZ9bBbbhei_Teu5Apeg@mail.gmail.com>
- <9ae86c6786bc4ac7b93c971ba00084a6@EXMBX066.cuchost.com> <CAJM55Z9GVFGuwqe=zLXQvBwDfVSz4eA2EXDd4sqWVCKJF2J+fg@mail.gmail.com>
- <d35d3cf480064c69b1125ba07d615446@EXMBX066.cuchost.com>
+        d=1e100.net; s=20230601; t=1703012137; x=1703616937;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uztvwy/XDlnBSNFvqBS9U2QaM7AjgbLOyuRvg2DsiFw=;
+        b=qXGWD/woGqYQJd+KpxKCNvWXEt1N7gioZgl7nFyNvwogcxLVoK4UKyHbMJuv7m55hL
+         bGp9Hzcp5r54P/OUW9AcXDQYwB+YCJcPJfEMirgJBv35LbPsohXlm4Tzg9wkhEv827JH
+         A8iRaZ785B3PVWM+hdHRXNv+DEkgY0lgHu2Hf361it256GP0B+C8opS3d4HPpN+1BBOI
+         n2XkQsgw9U0Sz9LLdD6Mf0hCStIGlyCImbkla+P74QeI5CfBjOdX9O17V5SX79tRFlaB
+         LGwQ7xPv5Dot1Y2yKaL9TPZEqR6vWH8tVWu09LRKmegfaPc1MasNqhZk0rUSxCWDn7ou
+         8wfg==
+X-Gm-Message-State: AOJu0Yy1J8bkSaqyFdgzg3To3b51n3uCTT3YyEseoX+n8N9b61VHEbRZ
+	4QPErU96yPGqXghYIQM75HLeSw==
+X-Google-Smtp-Source: AGHT+IE67AXZ5TO7t33MTp7YxhfurK/K7AVTWL7i+Xbinu8RXRx+PhcHi7HSbQjlYNkRWX3YsEIqfw==
+X-Received: by 2002:a05:600c:8506:b0:40d:312f:c444 with SMTP id gw6-20020a05600c850600b0040d312fc444mr52697wmb.348.1703012136775;
+        Tue, 19 Dec 2023 10:55:36 -0800 (PST)
+Received: from [10.167.154.1] (178235179206.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.206])
+        by smtp.gmail.com with ESMTPSA id i11-20020a170906250b00b00a233a4c4a30sm3782036ejb.90.2023.12.19.10.55.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Dec 2023 10:55:36 -0800 (PST)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 0/2] 8650 PLL config updates
+Date: Tue, 19 Dec 2023 19:55:31 +0100
+Message-Id: <20231219-topic-8650_clks-v1-0-5672bfa0eb05@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Tue, 19 Dec 2023 12:39:54 -0500
-Message-ID: <CAJM55Z_XZVBKr05X4QeCeDO_iMZh-FbKsikcNsDPK7iKuVEodw@mail.gmail.com>
-Subject: RE: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock generator driver
-To: JeeHeng Sia <jeeheng.sia@starfivetech.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, "kernel@esmil.dk" <kernel@esmil.dk>, 
-	"conor@kernel.org" <conor@kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
-	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	Hal Feng <hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Leyfoon Tan <leyfoon.tan@starfivetech.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACPngWUC/x2NUQqDMBAFryL73QWTqmivUqQkcdWlIUpWS0G8u
+ 4tfj3kwzAFCmUngVRyQ6cfCS1IwjwLC7NJEyIMy2NI+jTUdbsvKAdumLj8hfgWpqqmrnE7rQS3
+ vhNBnl8KsXtpj1HPNNPL/zrz787wASelPEnYAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1703012135; l=573;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=HxwLXDMBT6bR2E+sq2a+zW47p3mK/OitVRZEuWIf000=;
+ b=zX/xm/pu49kzAdBKe6qE0j8vztOPZq0Cx1qx99mYp/pDD/p4hCfGRn82sc6dD8EMoZbon0E4o
+ LkPdhuMJmBrAsQfS44ciOad7HqndqVSK2JeTexy21TumUFF/untFwXb
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-JeeHeng Sia wrote:
->
->
-> > -----Original Message-----
-> > From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > Sent: Wednesday, December 13, 2023 7:57 PM
-> > To: JeeHeng Sia <jeeheng.sia@starfivetech.com>; Emil Renner Berthing <emil.renner.berthing@canonical.com>; kernel@esmil.dk;
-> > conor@kernel.org; robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org; paul.walmsley@sifive.com; palmer@dabbelt.com;
-> > aou@eecs.berkeley.edu; mturquette@baylibre.com; sboyd@kernel.org; p.zabel@pengutronix.de; Hal Feng
-> > <hal.feng@starfivetech.com>; Xingyu Wu <xingyu.wu@starfivetech.com>
-> > Cc: linux-riscv@lists.infradead.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-clk@vger.kernel.org; Leyfoon Tan
-> > <leyfoon.tan@starfivetech.com>
-> > Subject: RE: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock generator driver
-> >
-> > JeeHeng Sia wrote:
-> > > > -----Original Message-----
-> > > > From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > > > Sent: Saturday, December 9, 2023 12:25 AM
-> > > > To: JeeHeng Sia <jeeheng.sia@starfivetech.com>; kernel@esmil.dk; conor@kernel.org; robh+dt@kernel.org;
-> > > > krzysztof.kozlowski+dt@linaro.org; paul.walmsley@sifive.com; palmer@dabbelt.com; aou@eecs.berkeley.edu;
-> > > > mturquette@baylibre.com; sboyd@kernel.org; p.zabel@pengutronix.de; emil.renner.berthing@canonical.com; Hal Feng
-> > > > <hal.feng@starfivetech.com>; Xingyu Wu <xingyu.wu@starfivetech.com>
-> > > > Cc: linux-riscv@lists.infradead.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-clk@vger.kernel.org; Leyfoon
-> > Tan
-> > > > <leyfoon.tan@starfivetech.com>
-> > > > Subject: Re: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock generator driver
-> > > >
-> > > > Sia Jee Heng wrote:
-> > > > > Add support for JH8100 System clock generator.
-> > > > >
-> > > > > Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
-> > > > > Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
-> > > > > ---
-> > > > >  MAINTAINERS                                   |   8 +
-> > > > >  drivers/clk/starfive/Kconfig                  |   9 +
-> > > > >  drivers/clk/starfive/Makefile                 |   1 +
-> > > > >  drivers/clk/starfive/clk-starfive-common.h    |   9 +-
-> > > > >  drivers/clk/starfive/jh8100/Makefile          |   3 +
-> > > > >  .../clk/starfive/jh8100/clk-starfive-jh8100.h |  11 +
-> > > > >  drivers/clk/starfive/jh8100/clk-sys.c         | 455 ++++++++++++++++++
-> > > > >  7 files changed, 495 insertions(+), 1 deletion(-)
-> > > > >  create mode 100644 drivers/clk/starfive/jh8100/Makefile
-> > > > >  create mode 100644 drivers/clk/starfive/jh8100/clk-starfive-jh8100.h
-> > > > >  create mode 100644 drivers/clk/starfive/jh8100/clk-sys.c
-> > ...
-> > > > > diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
-> > > > > index 012f7ee83f8e..6cb3ce823330 100644
-> > > > > --- a/drivers/clk/starfive/Makefile
-> > > > > +++ b/drivers/clk/starfive/Makefile
-> > > > > @@ -10,3 +10,4 @@ obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)	+= clk-starfive-jh7110-aon.o
-> > > > >  obj-$(CONFIG_CLK_STARFIVE_JH7110_STG)	+= clk-starfive-jh7110-stg.o
-> > > > >  obj-$(CONFIG_CLK_STARFIVE_JH7110_ISP)	+= clk-starfive-jh7110-isp.o
-> > > > >  obj-$(CONFIG_CLK_STARFIVE_JH7110_VOUT)	+= clk-starfive-jh7110-vout.o
-> > > > > +obj-$(CONFIG_CLK_STARFIVE_JH8100_SYS)	+= jh8100/
-> > > >
-> > > > I don't really see why do you need a special subdirectory for the JH8100? The
-> > > > JH7110 drivers do fine without it.
-> > > Each subfolder can represent a different platform, making it easier to
-> > > locate and maintain platform-specific code. Since the code is expected
-> > > to grow in the future, let's start organizing it in a folder-based structure
-> > > for easier maintenance at a later stage.
-> >
-> > Yes, but that's not what you're doing here. You're making just one of the 3
-> > almost identical drivers be different for no good reason.
-> I will restructure it for the other 2 platforms.
+Some TEST_CTL values were missing, add them.
 
-That would be less bad, but you still haven't explained why you need to move
-everything around like that:
-https://lore.kernel.org/linux-riscv/CAJM55Z_3Mty2LftPVkQC1wbwtGeznMMAk9mAjH_GoNuL7CKtaQ@mail.gmail.com/
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (2):
+      clk: qcom: gpucc-sm8650: Add test_ctl parameters to PLL config
+      clk: qcom: dispcc-sm8650: Add test_ctl parameters to PLL config
 
-I don't think just "too many files" is a very good argument here. Just look at
-drivers/clk/sunxi
+ drivers/clk/qcom/dispcc-sm8650.c | 8 ++++++++
+ drivers/clk/qcom/gpucc-sm8650.c  | 2 ++
+ 2 files changed, 10 insertions(+)
+---
+base-commit: aa4db8324c4d0e67aa4670356df4e9fae14b4d37
+change-id: 20231219-topic-8650_clks-e45e94ae458b
 
-/Emil
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
