@@ -1,109 +1,191 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2D0BE5B;
-	Wed, 20 Dec 2023 03:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A44917732;
+	Wed, 20 Dec 2023 07:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hgY1pU0k"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BK1T3c9015055;
-	Wed, 20 Dec 2023 03:56:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=m6SgXRhJwFhAQ6dv55GNTd9UQkjE3XpPXZe3APKf5F0=; b=hg
-	Y1pU0k9iBQEm0Xy9TOm3m6gXii8sSIkjtddyWgqcqAbd7a4eDGTbXsbSRr/Abe/z
-	JVxpjTFuE5LGuoWljxmzOpVx3+ICVDl2z+WtSAQiiFxKi9ZeJmsjP4VRYNUnfU4e
-	h9BjLrMI7cyCLzmTyv/C3hCdgllaTzlE9stDqIdr3NmwicuywIHj24SGQcN0KjF7
-	Rz+xqzaHvjp5w5hFV2OQnfh1WgL6TZ8epn9jfC27d/z15wDRwgM4T+PnSmTc18Ho
-	d669Ous9UHoC2pOiuuoYcNstRSzOVBdBAvuRpUAv9PSTOgkujIzUhvr6aeLbhUNH
-	jFvGu7W/y9PCVXhuU4og==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3v3fa3h4w1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Dec 2023 03:56:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BK3uFk4028816
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Dec 2023 03:56:15 GMT
-Received: from [10.253.12.246] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 19 Dec
- 2023 19:56:11 -0800
-Message-ID: <24dcff81-7b19-4301-a69f-1242c1a352b6@quicinc.com>
-Date: Wed, 20 Dec 2023 11:56:09 +0800
+	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="MDcUmSB4"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Sw4R8464Sz9spg;
+	Wed, 20 Dec 2023 08:08:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+	s=MBO0001; t=1703056116;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LpZoNtkkDCmi/GIcUCtUwUBihXR4v8Tro3usQTKcxlk=;
+	b=MDcUmSB4S9LKW4ZTc+NtSRMKxUEdcUnY0wn6l44qvlbFTTroJ8WZz5Qv8ECcVX6DcWjZEB
+	jQ3/re3xsmLKWlT56zs7kSvnpxqaGqUyTpFPXRYcHlxzWtOpgwLi842VLkgNnvurZyx3u/
+	pU8yvY2kHZV45dGMVHz4hRINvsyVJ0sWMFDjlDz9We995sS9ko94Wzrbqf0Zguf4yeuezP
+	Dp+RlKPjalQPUv2yalY2J3y9A07U/nS5YMDRzud4jdtIzGnBAI065q5SH+W7caLMt6wG06
+	yZODhREY6WZtsf7PhjmuFdeVjEA7uEAzTtE1kr3gkp/S35umgtp6o59UeK4Dkg==
+References: <20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev>
+ <20231218-pinephone-pll-fixes-v1-1-e238b6ed6dc1@oltmanns.dev>
+ <5736273.DvuYhMxLoT@jernej-laptop>
+From: Frank Oltmanns <frank@oltmanns.dev>
+To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
+ <samuel@sholland.org>, Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>,
+ Purism Kernel Team
+ <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 1/5] clk: sunxi-ng: nkm: Support constraints on m/n
+ ratio and parent rate
+Date: Wed, 20 Dec 2023 07:58:07 +0100
+In-reply-to: <5736273.DvuYhMxLoT@jernej-laptop>
+Message-ID: <87msu59wrc.fsf@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/16] arm64: dts: qcom: sm8550: Fix UFS PHY clocks
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
-        <sboyd@kernel.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20231218120712.16438-1-manivannan.sadhasivam@linaro.org>
- <20231218120712.16438-17-manivannan.sadhasivam@linaro.org>
-Content-Language: en-US
-From: Can Guo <quic_cang@quicinc.com>
-In-Reply-To: <20231218120712.16438-17-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: LEg498F1SXOE7mQ0_qfpKh5KE5Nak2I5
-X-Proofpoint-ORIG-GUID: LEg498F1SXOE7mQ0_qfpKh5KE5Nak2I5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-09_02,2023-12-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- phishscore=0 spamscore=0 suspectscore=0 mlxlogscore=830 impostorscore=0
- clxscore=1011 adultscore=0 mlxscore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2311290000 definitions=main-2312200023
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jernej!
 
+On 2023-12-19 at 17:46:08 +0100, Jernej =C5=A0krabec <jernej.skrabec@gmail.=
+com> wrote:
+> Hi Frank!
+>
+> Dne ponedeljek, 18. december 2023 ob 14:35:19 CET je Frank Oltmanns napis=
+al(a):
+>> The Allwinner A64 manual lists the following constraints for the
+>> PLL-MIPI clock:
+>>  - M/N >=3D 3
+>
+> This should be "<=3D"
 
-On 12/18/2023 8:07 PM, Manivannan Sadhasivam wrote:
-> QMP PHY used in SM8550 requires 3 clocks:
-> 
-> * ref - 19.2MHz reference clock from RPMh
-> * ref_aux - Auxiliary reference clock from GCC
-> * qref - QREF clock from TCSR
-> 
-> Fixes: 35cf1aaab169 ("arm64: dts: qcom: sm8550: Add UFS host controller and phy nodes")
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->   arch/arm64/boot/dts/qcom/sm8550.dtsi | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-> index baa8540868a4..386ffd0d72c4 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-> @@ -1891,9 +1891,12 @@ crypto: crypto@1dfa000 {
->   		ufs_mem_phy: phy@1d80000 {
->   			compatible = "qcom,sm8550-qmp-ufs-phy";
->   			reg = <0x0 0x01d80000 0x0 0x2000>;
-> -			clocks = <&tcsr TCSR_UFS_CLKREF_EN>,
-> -				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
-> -			clock-names = "ref", "ref_aux";
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
-> +				 <&tcsr TCSR_UFS_CLKREF_EN>;
-> +			clock-names = "ref",
-> +				      "ref_aux",
-> +				      "qref";
->   
->   			power-domains = <&gcc UFS_MEM_PHY_GDSC>;
->   
-Reviewed-by: Can Guo <quic_cang@quicinc.com>
+Yes, good catch! I will fix it in V2.
+
+>
+>>  - (PLL_VIDEO0)/M >=3D 24MHz
+>>
+>> The PLL-MIPI clock is implemented as ccu_nkm. Therefore, add support for
+>> these constraints.
+>>
+>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu_nkm.c | 23 +++++++++++++++++++++++
+>>  drivers/clk/sunxi-ng/ccu_nkm.h |  8 ++++++++
+>>  2 files changed, 31 insertions(+)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_n=
+km.c
+>> index eed64547ad42..2af5c1ebd527 100644
+>> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+>> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+>> @@ -16,6 +16,20 @@ struct _ccu_nkm {
+>>  	unsigned long	m, min_m, max_m;
+>>  };
+>>
+>> +static bool ccu_nkm_is_valid_rate(struct ccu_common *common, unsigned l=
+ong parent,
+>> +				  unsigned long n, unsigned long m)
+>> +{
+>> +	struct ccu_nkm *nkm =3D container_of(common, struct ccu_nkm, common);
+>> +
+>> +	if (nkm->max_mn_ratio && (m > nkm->max_mn_ratio * n))
+>> +		return false;
+>> +
+>> +	if (nkm->parent_wo_nk && (parent < nkm->parent_wo_nk * m))
+>> +		return false;
+>> +
+>> +	return true;
+>> +}
+>> +
+>>  static unsigned long ccu_nkm_find_best_with_parent_adj(struct ccu_commo=
+n *common,
+>>  						       struct clk_hw *parent_hw,
+>>  						       unsigned long *parent, unsigned long rate,
+>> @@ -32,6 +46,9 @@ static unsigned long ccu_nkm_find_best_with_parent_adj=
+(struct ccu_common *common
+>>
+>>  				tmp_parent =3D clk_hw_round_rate(parent_hw, rate * _m / (_n * _k));
+>>
+>> +				if (!ccu_nkm_is_valid_rate(common, tmp_parent, _n, _m))
+>> +					continue;
+>> +
+>>  				tmp_rate =3D tmp_parent * _n * _k / _m;
+>>
+>>  				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate) ||
+>> @@ -65,6 +82,12 @@ static unsigned long ccu_nkm_find_best(unsigned long =
+parent, unsigned long rate,
+>>  	for (_k =3D nkm->min_k; _k <=3D nkm->max_k; _k++) {
+>>  		for (_n =3D nkm->min_n; _n <=3D nkm->max_n; _n++) {
+>>  			for (_m =3D nkm->min_m; _m <=3D nkm->max_m; _m++) {
+>> +				if ((common->reg =3D=3D 0x040) && (_m > 3 * _n))
+>> +					break;
+>> +
+>> +				if ((common->reg =3D=3D 0x040) && (parent < 24000000 * _m))
+>> +					continue;
+>> +
+>
+> You already figured this part.
+>
+>>  				unsigned long tmp_rate;
+>>
+>>  				tmp_rate =3D parent * _n * _k / _m;
+>> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_n=
+km.h
+>> index 6601defb3f38..d3d3eaf55faf 100644
+>> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
+>> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
+>> @@ -16,6 +16,12 @@
+>>   * struct ccu_nkm - Definition of an N-K-M clock
+>>   *
+>>   * Clocks based on the formula parent * N * K / M
+>> + *
+>> + * @max_mn_ratio:	Maximum value for M / N.
+>> + * @parent_wo_nk:	The minimum rate the parent must provide after applyi=
+ng the divisor,
+>> + *			but without applying the multipliers, i.e. the contstraint
+>> + *			   (parent rate)/M >=3D parent_wo_nk
+>> + *			must be fulfilled.
+>>   */
+>>  struct ccu_nkm {
+>>  	u32			enable;
+>> @@ -27,6 +33,8 @@ struct ccu_nkm {
+>>  	struct ccu_mux_internal	mux;
+>>
+>>  	unsigned int		fixed_post_div;
+>> +	unsigned long		max_mn_ratio;
+>> +	unsigned long           parent_wo_nk;
+>
+> What about max_m_n_ratio and max_parent_m_ratio, to be consistent? This
+> should also allow to simplify description.
+
+Jernej, thank you so much! This is brilliant! I was racking my brain for
+a good name but failed. Now, that I see your proposal, I don't know why
+I hadn't come up with it. It's the obvious choice.
+
+I'd say with the new names we should be able to get rid of the comments
+describing the new struct members (also in ccu_nm.h). What are your
+thoughts on that?
+
+Best regards,
+  Frank
+
+>
+> Best regards,
+> Jernej
+>
+>>
+>>  	struct ccu_common	common;
+>>  };
+>>
+>>
