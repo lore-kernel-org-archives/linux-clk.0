@@ -1,101 +1,224 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C303D97C;
-	Wed, 20 Dec 2023 15:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34D43E467;
+	Wed, 20 Dec 2023 15:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCw+5ell"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EE9AC433C7;
-	Wed, 20 Dec 2023 15:07:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703084849;
-	bh=kACt6JPwQ+PLYX1KQgu28kI8/nyjpMv45tRZJd9+l7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DCw+5ellmPNzc61PMLmMU/3BjZEVNcOiISGxPqdr/ezcQta5cBV58BKxAlV+z+Lz7
-	 1bk+sikrY9MlZ6Pb4+8aUmAxtRZX8vLRVGt+Tj5DNTgk7XpfrjhnuneBJung+E3FZU
-	 gBnsmtyy4laJbKIm0ddIs5Gr8a9v7ku7zotbvLqnLeNCgqFzQYX8PKV58Ej0Ddu723
-	 K4mYGawJXeSX0tl8JzObh0EA4nsK6Y/G1gq6LlevUa+ycZMJrVS7nnR8HBuupZbFDZ
-	 UeITrTKePywo+Uf4UbN1GdZoeamSYZgshm0J5HMj9STcEYcvMBpGritQ47m9g54yF/
-	 kGCNorloXBAUA==
-Received: (nullmailer pid 226316 invoked by uid 1000);
-	Wed, 20 Dec 2023 15:07:26 -0000
-Date: Wed, 20 Dec 2023 09:07:26 -0600
-From: Rob Herring <robh@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: peter.griffin@linaro.org, krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org, alim.akhtar@samsung.com, gregkh@linuxfoundation.org, jirislaby@kernel.org, catalin.marinas@arm.com, will@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com, arnd@arndb.de, semen.protsenko@linaro.org, andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 02/13] dt-bindings: clock: google,gs101-clock: add PERIC0
- clock management unit
-Message-ID: <20231220150726.GA223267-robh@kernel.org>
-References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
- <20231214105243.3707730-3-tudor.ambarus@linaro.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+2d/xGt"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-40d2764c0f2so23556905e9.2;
+        Wed, 20 Dec 2023 07:10:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1703084999; x=1703689799; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NpNq0mGAO/ID0JEaLZ8hDs6wkvqKfsMQXHlt+mgq8b8=;
+        b=c+2d/xGt5H4IzSF90vSZc8bO4z4Oab0WtiSPbGbSTqkBWUXa/Ca22bBFjn8rVm6EXt
+         17/8uzb4qKmZlTxLDLcXi/PjqHQW8jfDi+ef8WxRslFf+02U/o1lHNnDrup5UMp7K3vQ
+         RhKGrTs0ei1IjdeXg0b/AsLYhJ3IJdLQIZUkuEAqJ/yW7RyaL3aMoUD8RYaYxfJ9Ajad
+         0eo/xGWOO2fjDrqTA6X7c/IzZvGxSlWa2sEr9rhNRheOpnBUd7/vFQ7xLvKBU6nV83Tk
+         psaAx4DaQw0+mGry+2HvbOj42Dg6DHcoPl2vc0aLHIIBDirQIu9luvOD2MYZ4Mv5EW86
+         vp5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703084999; x=1703689799;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NpNq0mGAO/ID0JEaLZ8hDs6wkvqKfsMQXHlt+mgq8b8=;
+        b=XuJKipsHhekMu2zfC73R2DchM9Prlb6D+iSX/Z4LCYCoCupRzXJeg+MLSSL+Q4WNzB
+         jgar+EcFVY3a2VW6dNe+lrEhO6RiEykMXt2PsYlX05sNYAbgfoBMikYG9aiFg01zU6S0
+         rw2LVIgev10Ft+p/tqQPFE+6ZGai7VPfkPDBIADazUoLQ5O36S6rl7Vsd8pdQZocZN5L
+         s0le+hfkhyQOzKyK7lhC+jd4pz3SBuPxMpSjdJ09GWIs6c3rbZ1b3y41PTx71ZqSPxuH
+         S7KV57fR6MbjsVXcWyW7tbLzAqA5Gmat6cpNmDwn+BaTgjNXFPRMjJLY+IXQ01ZYyZDx
+         d7Rg==
+X-Gm-Message-State: AOJu0YxkaOCDxTB8tUSk2UV/cIP79jXwP9zqbyd2sYoDrxGRmUAP84zF
+	N/cfmzTYpbcn2Cqw389Nudo=
+X-Google-Smtp-Source: AGHT+IErSAIMtKMfbJ6ITLfsl9Oe7KWcu4MMxZlvFn1ZUPhaJ21o+kfiDGYLYtG+Y4FMDqDLYBgDbg==
+X-Received: by 2002:a05:600c:b43:b0:40b:5e1f:6fe0 with SMTP id k3-20020a05600c0b4300b0040b5e1f6fe0mr9713821wmr.53.1703084998936;
+        Wed, 20 Dec 2023 07:09:58 -0800 (PST)
+Received: from jernej-laptop.localnet (82-149-12-148.dynamic.telemach.net. [82.149.12.148])
+        by smtp.gmail.com with ESMTPSA id z5-20020a05600c0a0500b0040d1a925beesm7917351wmp.3.2023.12.20.07.09.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Dec 2023 07:09:58 -0800 (PST)
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Frank Oltmanns <frank@oltmanns.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>,
+ Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
+ Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Subject:
+ Re: [PATCH 1/5] clk: sunxi-ng: nkm: Support constraints on m/n ratio and
+ parent rate
+Date: Wed, 20 Dec 2023 16:09:55 +0100
+Message-ID: <23332183.6Emhk5qWAg@jernej-laptop>
+In-Reply-To: <87msu59wrc.fsf@oltmanns.dev>
+References:
+ <20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev>
+ <5736273.DvuYhMxLoT@jernej-laptop> <87msu59wrc.fsf@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231214105243.3707730-3-tudor.ambarus@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 14, 2023 at 10:52:32AM +0000, Tudor Ambarus wrote:
-> Add dt-schema documentation for the Connectivity Peripheral 0 (PERIC0)
-> clock management unit.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  .../bindings/clock/google,gs101-clock.yaml    | 25 +++++-
->  include/dt-bindings/clock/google,gs101.h      | 86 +++++++++++++++++++
->  2 files changed, 109 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-> index 3eebc03a309b..ba54c13c55bc 100644
-> --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-> @@ -30,14 +30,15 @@ properties:
->        - google,gs101-cmu-top
->        - google,gs101-cmu-apm
->        - google,gs101-cmu-misc
-> +      - google,gs101-cmu-peric0
->  
->    clocks:
->      minItems: 1
-> -    maxItems: 2
-> +    maxItems: 3
->  
->    clock-names:
->      minItems: 1
-> -    maxItems: 2
-> +    maxItems: 3
->  
->    "#clock-cells":
->      const: 1
-> @@ -88,6 +89,26 @@ allOf:
->              - const: dout_cmu_misc_bus
->              - const: dout_cmu_misc_sss
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: google,gs101-cmu-peric0
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (24.576 MHz)
-> +            - description: Connectivity Peripheral 0 bus clock (from CMU_TOP)
-> +            - description: Connectivity Peripheral 0 IP clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: dout_cmu_peric0_bus
-> +            - const: dout_cmu_peric0_ip
+Dne sreda, 20. december 2023 ob 07:58:07 CET je Frank Oltmanns napisal(a):
+> Hi Jernej!
+>=20
+> On 2023-12-19 at 17:46:08 +0100, Jernej =C5=A0krabec <jernej.skrabec@gmai=
+l.com> wrote:
+> > Hi Frank!
+> >
+> > Dne ponedeljek, 18. december 2023 ob 14:35:19 CET je Frank Oltmanns nap=
+isal(a):
+> >> The Allwinner A64 manual lists the following constraints for the
+> >> PLL-MIPI clock:
+> >>  - M/N >=3D 3
+> >
+> > This should be "<=3D"
+>=20
+> Yes, good catch! I will fix it in V2.
+>=20
+> >
+> >>  - (PLL_VIDEO0)/M >=3D 24MHz
+> >>
+> >> The PLL-MIPI clock is implemented as ccu_nkm. Therefore, add support f=
+or
+> >> these constraints.
+> >>
+> >> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> >> ---
+> >>  drivers/clk/sunxi-ng/ccu_nkm.c | 23 +++++++++++++++++++++++
+> >>  drivers/clk/sunxi-ng/ccu_nkm.h |  8 ++++++++
+> >>  2 files changed, 31 insertions(+)
+> >>
+> >> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu=
+_nkm.c
+> >> index eed64547ad42..2af5c1ebd527 100644
+> >> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> >> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> >> @@ -16,6 +16,20 @@ struct _ccu_nkm {
+> >>  	unsigned long	m, min_m, max_m;
+> >>  };
+> >>
+> >> +static bool ccu_nkm_is_valid_rate(struct ccu_common *common, unsigned=
+ long parent,
+> >> +				  unsigned long n, unsigned long m)
+> >> +{
+> >> +	struct ccu_nkm *nkm =3D container_of(common, struct ccu_nkm, common);
+> >> +
+> >> +	if (nkm->max_mn_ratio && (m > nkm->max_mn_ratio * n))
+> >> +		return false;
+> >> +
+> >> +	if (nkm->parent_wo_nk && (parent < nkm->parent_wo_nk * m))
+> >> +		return false;
+> >> +
+> >> +	return true;
+> >> +}
+> >> +
+> >>  static unsigned long ccu_nkm_find_best_with_parent_adj(struct ccu_com=
+mon *common,
+> >>  						       struct clk_hw *parent_hw,
+> >>  						       unsigned long *parent, unsigned long rate,
+> >> @@ -32,6 +46,9 @@ static unsigned long ccu_nkm_find_best_with_parent_a=
+dj(struct ccu_common *common
+> >>
+> >>  				tmp_parent =3D clk_hw_round_rate(parent_hw, rate * _m / (_n * _k)=
+);
+> >>
+> >> +				if (!ccu_nkm_is_valid_rate(common, tmp_parent, _n, _m))
+> >> +					continue;
+> >> +
+> >>  				tmp_rate =3D tmp_parent * _n * _k / _m;
+> >>
+> >>  				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate) ||
+> >> @@ -65,6 +82,12 @@ static unsigned long ccu_nkm_find_best(unsigned lon=
+g parent, unsigned long rate,
+> >>  	for (_k =3D nkm->min_k; _k <=3D nkm->max_k; _k++) {
+> >>  		for (_n =3D nkm->min_n; _n <=3D nkm->max_n; _n++) {
+> >>  			for (_m =3D nkm->min_m; _m <=3D nkm->max_m; _m++) {
+> >> +				if ((common->reg =3D=3D 0x040) && (_m > 3 * _n))
+> >> +					break;
+> >> +
+> >> +				if ((common->reg =3D=3D 0x040) && (parent < 24000000 * _m))
+> >> +					continue;
+> >> +
+> >
+> > You already figured this part.
+> >
+> >>  				unsigned long tmp_rate;
+> >>
+> >>  				tmp_rate =3D parent * _n * _k / _m;
+> >> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu=
+_nkm.h
+> >> index 6601defb3f38..d3d3eaf55faf 100644
+> >> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
+> >> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
+> >> @@ -16,6 +16,12 @@
+> >>   * struct ccu_nkm - Definition of an N-K-M clock
+> >>   *
+> >>   * Clocks based on the formula parent * N * K / M
+> >> + *
+> >> + * @max_mn_ratio:	Maximum value for M / N.
+> >> + * @parent_wo_nk:	The minimum rate the parent must provide after appl=
+ying the divisor,
+> >> + *			but without applying the multipliers, i.e. the contstraint
+> >> + *			   (parent rate)/M >=3D parent_wo_nk
+> >> + *			must be fulfilled.
+> >>   */
+> >>  struct ccu_nkm {
+> >>  	u32			enable;
+> >> @@ -27,6 +33,8 @@ struct ccu_nkm {
+> >>  	struct ccu_mux_internal	mux;
+> >>
+> >>  	unsigned int		fixed_post_div;
+> >> +	unsigned long		max_mn_ratio;
+> >> +	unsigned long           parent_wo_nk;
+> >
+> > What about max_m_n_ratio and max_parent_m_ratio, to be consistent? This
+> > should also allow to simplify description.
+>=20
+> Jernej, thank you so much! This is brilliant! I was racking my brain for
+> a good name but failed. Now, that I see your proposal, I don't know why
+> I hadn't come up with it. It's the obvious choice.
+>=20
+> I'd say with the new names we should be able to get rid of the comments
+> describing the new struct members (also in ccu_nm.h). What are your
+> thoughts on that?
 
-'bus' and 'ip' are sufficient because naming is local to the module. The 
-same is true on 'dout_cmu_misc_bus'. As that has not made a release, 
-please fix all of them.
+Ah, I missed that only new ones are documented. Yeah, you can skip it.
 
-Rob
+Best regards,
+Jernej
+
+>=20
+> Best regards,
+>   Frank
+>=20
+> >
+> > Best regards,
+> > Jernej
+> >
+> >>
+> >>  	struct ccu_common	common;
+> >>  };
+> >>
+> >>
+>=20
+
+
+
+
