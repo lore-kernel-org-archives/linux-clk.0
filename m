@@ -1,50 +1,51 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CF0FBF9
-	for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 00:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFB915E9D
+	for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 00:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pOh7AODM"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-50e18689828so5865332e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 16:31:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HOrV1ih9"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-553338313a0so3909162a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 16:31:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703032268; x=1703637068; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1703032270; x=1703637070; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TfCS7EJc5WZz01BXUAh+J5+ayBuQvlNbLl5dADuNIr0=;
-        b=pOh7AODMGoY42p0RN24IMurN0jDQCW+zcaLxrf8IMsQ0C4GuhEWbab2wFeW7rJjWnH
-         IX0y4wwrifQ8bk6flhwf3g1W90lvOKV52XVbhdGZdbwZMpqCMit4uot6m8167iuR031d
-         aEozp/thYAF8Jfs+IQkLoalB1dehgs9/WE8q8FixP++yjktPN4uoYgx4+0yaOc5KIOSf
-         cQzUHECIRmm08jNSayPbOKlvNUnSNPaaF5zKzT34OamHst0UanQ8b5ce2jkXIfw43npl
-         LD2ok+qWVDZppG4sdwNmR2mabn/BBJB+Ve9RmH6yleyJ5ydHlkiqtO0PQjoFc/pJCDy7
-         oFMg==
+        bh=6bclp0Hvt3h5T6yWsz22aXRzxu9eyz+jU/N7/vaj7d4=;
+        b=HOrV1ih920hs+lc1g/KLk5vzGaGILEgZRiioos5lhsUK2Ola9xdTTe9cbq3uIamki0
+         1GeG5mu2o9tFuYHVtWujVeJElLPPobFVtaxFYn5bRyVO8SesfRksx59rrds7mufEuFfo
+         TmWWUbfwyfI+qiDajdxm4n5DekDyVFoqlqfgHxw1j9Cdx20yo5lLohTHDlj5kgs0lfkO
+         Tyv3SrUcJgcsEKd6UKqT3h4BE0akM+nGJ01ZX2sqxKVj8AYO8YhBN4ymZT+aewjqiMJX
+         rFcc+0OszaFX8MOjyeGUsVv5JfVmV5qjt+PeT2TqqePKH2AISqFEzx7gIViK4AgCxEmq
+         +J1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703032268; x=1703637068;
+        d=1e100.net; s=20230601; t=1703032270; x=1703637070;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TfCS7EJc5WZz01BXUAh+J5+ayBuQvlNbLl5dADuNIr0=;
-        b=jqq9qcuXmGfmaBar3mVESwmNYYBeO78G843SdTORDQjX+PGs6v28ykNvlDcDlLKgdC
-         kBXfx7Worf0UscKSxhc4sWgzPMmFF3Y/aXDhSPw45RjB3QBXzVKdIDXUuzpP8zMB+oa/
-         xiAmGs29E2N93jIfPE4chugPkaBWVE83Oci3AW3Zl3rqQH3xyIYW0OdKOrWT3eEryLxP
-         JsdKyrIrq4P9gfwTXF6HeXT2CF3BSxtUEUUEf+jitg4NMq7KjdaLQM5wbBpUyyl7DgI5
-         6YEarJwVC9sRYGNztUIUHYH63v3zV0MgA4dVMS/Mh5xfM6PS7n9ReYA+TFCem7XRHi93
-         HV0g==
-X-Gm-Message-State: AOJu0Yzd0BT4X73fiQ1yxeb8yYSDL0W3F1BHp4xHzUvKMjyHj4q4sTWX
-	GgL9lKkn3EFPAUeLUOGb4BSqVg==
-X-Google-Smtp-Source: AGHT+IHXC6FMovvxJBXiv8yrpTzXVwJqDNlBO+ts8BrJKkAQlRIspcW8EP8tipoL2uIvAg0KM21e7Q==
-X-Received: by 2002:a05:6512:b1e:b0:50e:357b:9917 with SMTP id w30-20020a0565120b1e00b0050e357b9917mr2662783lfu.106.1703032268260;
-        Tue, 19 Dec 2023 16:31:08 -0800 (PST)
+        bh=6bclp0Hvt3h5T6yWsz22aXRzxu9eyz+jU/N7/vaj7d4=;
+        b=WnA0jVGXFRqS30YZX5fYjVI9bjkJGKtHA7HNzRGsVM/pE5HrZL6EzJsmcnjNOdrmWm
+         Sv8eA6OjuTPbQXlOUWCFHN65Bxn5p07P4keLLPDSupmJmmfwMUia75xH5LwBJ81hBA+o
+         xF4XYRmsGkdLtvy3I5Um4OMIqK6jl9r+E9X2YWO8Xn/K7QNEfJfMGF5gwu8MeXuyPjTB
+         ZJ1hPzX2qpkP+iTbOlsPwL7wlieFpTrm9wu4NWQymwQuCaWHgKXiRvCdk5jORu1kjwsR
+         X4i43lEja3FF3ZIBSbq8811989qHrDTbaxsVNGuzJ6xS2ofN1GiOM+aSobm/WPlBoI+0
+         MhgQ==
+X-Gm-Message-State: AOJu0YyZKNehpLVyFnVMJbnFJBFMQfto+p448diPdhNkZSs+mylJRCBK
+	khKhVTKSUjTRVOcW5ADTnn2T0A==
+X-Google-Smtp-Source: AGHT+IEEgafRKE0kEoehINcPwmLDFY7DiuIVsYzVFPHrqDAY+Mj1nwy4Sr1QS+qWhnZqbgxEZL2PEQ==
+X-Received: by 2002:a50:8adc:0:b0:552:886a:3c58 with SMTP id k28-20020a508adc000000b00552886a3c58mr4887428edk.73.1703032270117;
+        Tue, 19 Dec 2023 16:31:10 -0800 (PST)
 Received: from [10.167.154.1] (178235179206.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.206])
-        by smtp.gmail.com with ESMTPSA id k16-20020a056402049000b00552d03a17acsm4824397edv.61.2023.12.19.16.31.06
+        by smtp.gmail.com with ESMTPSA id k16-20020a056402049000b00552d03a17acsm4824397edv.61.2023.12.19.16.31.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Dec 2023 16:31:07 -0800 (PST)
+        Tue, 19 Dec 2023 16:31:09 -0800 (PST)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Wed, 20 Dec 2023 01:30:50 +0100
-Subject: [PATCH v3 09/15] clk: qcom: gcc-sm6115: Add runtime PM
+Date: Wed, 20 Dec 2023 01:30:51 +0100
+Subject: [PATCH v3 10/15] clk: qcom: gcc-qcm2290: Unregister critical
+ clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,7 +54,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230717-topic-branch_aon_cleanup-v3-9-3e31bce9c626@linaro.org>
+Message-Id: <20230717-topic-branch_aon_cleanup-v3-10-3e31bce9c626@linaro.org>
 References: <20230717-topic-branch_aon_cleanup-v3-0-3e31bce9c626@linaro.org>
 In-Reply-To: <20230717-topic-branch_aon_cleanup-v3-0-3e31bce9c626@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>, 
@@ -66,79 +67,209 @@ Cc: Marijn Suijten <marijn.suijten@somainline.org>,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1703032250; l=2112;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1703032250; l=6677;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=qGB7J3P0DJtbWo81wrMojy7eEnHmPOy4px200OELZEk=;
- b=Bb5Fj+0i6to7ZWc6udyT+Vs2btJJfq0/XcYI/9UOInkU0QDfwgSVlOq39MQ0o6ZrG3Py/cSKc
- yo7S4xA7oCoAO3o5K3VlpqNhFOOKbhxHuNcpIdgRecMqRKHHMNgz82K
+ bh=nn0LC7H4vb9zFC8A4lyuYszLgrYiCKJo2IvSN0ROhzw=;
+ b=Ek+4z9CBWYjxS5aglhvTpTdOJZUzEqGbA4dJEy3JlxFEMh+eIZwe2MIoFa37z620amo4lrZnC
+ hYHoxmUqRATDcy8e5Z1x9wc3acGPLVFEUoHwT+uNb4cIavcIXLtq+8l
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-The GCC block on SM6115 is powered by the VDD_CX rail. We need to ensure
-that CX is enabled to prevent unwanted power collapse and that the
-reference is dropped when unused so that the system can enter a
-firmware-managed lower power state.
+Some clocks need to be always-on, but we don't really do anything
+with them, other than calling enable() once and telling Linux they're
+enabled.
 
-Enable runtime PM to keep the power flowing only when necessary.
+Unregister them to save a couple of bytes and, perhaps more
+importantly, allow for runtime suspend of the clock controller device,
+as CLK_IS_CRITICAL prevents the latter.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/qcom/gcc-sm6115.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/gcc-qcm2290.c | 105 +++--------------------------------------
+ 1 file changed, 7 insertions(+), 98 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-sm6115.c b/drivers/clk/qcom/gcc-sm6115.c
-index 87a2bfe222a3..3e0a3fd09718 100644
---- a/drivers/clk/qcom/gcc-sm6115.c
-+++ b/drivers/clk/qcom/gcc-sm6115.c
-@@ -9,6 +9,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/clk-provider.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/reset-controller.h>
+diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
+index 48995e50c6bd..cc1dd5fc6d32 100644
+--- a/drivers/clk/qcom/gcc-qcm2290.c
++++ b/drivers/clk/qcom/gcc-qcm2290.c
+@@ -1397,36 +1397,6 @@ static struct clk_branch gcc_cam_throttle_rt_clk = {
+ 	},
+ };
  
-@@ -3384,14 +3385,26 @@ static int gcc_sm6115_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	int ret;
+-static struct clk_branch gcc_camera_ahb_clk = {
+-	.halt_reg = 0x17008,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.hwcg_reg = 0x17008,
+-	.hwcg_bit = 1,
+-	.clkr = {
+-		.enable_reg = 0x17008,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gcc_camera_ahb_clk",
+-			.flags = CLK_IS_CRITICAL,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch gcc_camera_xo_clk = {
+-	.halt_reg = 0x17028,
+-	.halt_check = BRANCH_HALT,
+-	.clkr = {
+-		.enable_reg = 0x17028,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gcc_camera_xo_clk",
+-			.flags = CLK_IS_CRITICAL,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch gcc_camss_axi_clk = {
+ 	.halt_reg = 0x58044,
+ 	.halt_check = BRANCH_HALT,
+@@ -1825,22 +1795,6 @@ static struct clk_branch gcc_cfg_noc_usb3_prim_axi_clk = {
+ 	},
+ };
  
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
- 	regmap = qcom_cc_map(pdev, &gcc_sm6115_desc);
--	if (IS_ERR(regmap))
-+	if (IS_ERR(regmap)) {
-+		pm_runtime_put(&pdev->dev);
- 		return PTR_ERR(regmap);
-+	}
+-static struct clk_branch gcc_disp_ahb_clk = {
+-	.halt_reg = 0x1700c,
+-	.halt_check = BRANCH_HALT,
+-	.hwcg_reg = 0x1700c,
+-	.hwcg_bit = 1,
+-	.clkr = {
+-		.enable_reg = 0x1700c,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gcc_disp_ahb_clk",
+-			.flags = CLK_IS_CRITICAL,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_regmap_div gcc_disp_gpll0_clk_src = {
+ 	.reg = 0x17058,
+ 	.shift = 0,
+@@ -1899,20 +1853,6 @@ static struct clk_branch gcc_disp_throttle_core_clk = {
+ 	},
+ };
  
- 	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
- 			ARRAY_SIZE(gcc_dfs_clocks));
--	if (ret)
-+	if (ret) {
-+		pm_runtime_put(&pdev->dev);
- 		return ret;
-+	}
+-static struct clk_branch gcc_disp_xo_clk = {
+-	.halt_reg = 0x1702c,
+-	.halt_check = BRANCH_HALT,
+-	.clkr = {
+-		.enable_reg = 0x1702c,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gcc_disp_xo_clk",
+-			.flags = CLK_IS_CRITICAL,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch gcc_gp1_clk = {
+ 	.halt_reg = 0x4d000,
+ 	.halt_check = BRANCH_HALT,
+@@ -1964,22 +1904,6 @@ static struct clk_branch gcc_gp3_clk = {
+ 	},
+ };
  
+-static struct clk_branch gcc_gpu_cfg_ahb_clk = {
+-	.halt_reg = 0x36004,
+-	.halt_check = BRANCH_HALT,
+-	.hwcg_reg = 0x36004,
+-	.hwcg_bit = 1,
+-	.clkr = {
+-		.enable_reg = 0x36004,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gcc_gpu_cfg_ahb_clk",
+-			.flags = CLK_IS_CRITICAL,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch gcc_gpu_gpll0_clk_src = {
+ 	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+@@ -2439,22 +2363,6 @@ static struct clk_branch gcc_sdcc2_apps_clk = {
+ 	},
+ };
+ 
+-static struct clk_branch gcc_sys_noc_cpuss_ahb_clk = {
+-	.halt_reg = 0x2b06c,
+-	.halt_check = BRANCH_HALT_VOTED,
+-	.hwcg_reg = 0x2b06c,
+-	.hwcg_bit = 1,
+-	.clkr = {
+-		.enable_reg = 0x79004,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gcc_sys_noc_cpuss_ahb_clk",
+-			.flags = CLK_IS_CRITICAL,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch gcc_sys_noc_usb3_prim_axi_clk = {
+ 	.halt_reg = 0x1a080,
+ 	.halt_check = BRANCH_HALT,
+@@ -2774,8 +2682,6 @@ static struct clk_regmap *gcc_qcm2290_clocks[] = {
+ 	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
+ 	[GCC_CAM_THROTTLE_NRT_CLK] = &gcc_cam_throttle_nrt_clk.clkr,
+ 	[GCC_CAM_THROTTLE_RT_CLK] = &gcc_cam_throttle_rt_clk.clkr,
+-	[GCC_CAMERA_AHB_CLK] = &gcc_camera_ahb_clk.clkr,
+-	[GCC_CAMERA_XO_CLK] = &gcc_camera_xo_clk.clkr,
+ 	[GCC_CAMSS_AXI_CLK] = &gcc_camss_axi_clk.clkr,
+ 	[GCC_CAMSS_AXI_CLK_SRC] = &gcc_camss_axi_clk_src.clkr,
+ 	[GCC_CAMSS_CAMNOC_ATB_CLK] = &gcc_camss_camnoc_atb_clk.clkr,
+@@ -2816,19 +2722,16 @@ static struct clk_regmap *gcc_qcm2290_clocks[] = {
+ 	[GCC_CAMSS_TOP_AHB_CLK] = &gcc_camss_top_ahb_clk.clkr,
+ 	[GCC_CAMSS_TOP_AHB_CLK_SRC] = &gcc_camss_top_ahb_clk_src.clkr,
+ 	[GCC_CFG_NOC_USB3_PRIM_AXI_CLK] = &gcc_cfg_noc_usb3_prim_axi_clk.clkr,
+-	[GCC_DISP_AHB_CLK] = &gcc_disp_ahb_clk.clkr,
+ 	[GCC_DISP_GPLL0_CLK_SRC] = &gcc_disp_gpll0_clk_src.clkr,
+ 	[GCC_DISP_GPLL0_DIV_CLK_SRC] = &gcc_disp_gpll0_div_clk_src.clkr,
+ 	[GCC_DISP_HF_AXI_CLK] = &gcc_disp_hf_axi_clk.clkr,
+ 	[GCC_DISP_THROTTLE_CORE_CLK] = &gcc_disp_throttle_core_clk.clkr,
+-	[GCC_DISP_XO_CLK] = &gcc_disp_xo_clk.clkr,
+ 	[GCC_GP1_CLK] = &gcc_gp1_clk.clkr,
+ 	[GCC_GP1_CLK_SRC] = &gcc_gp1_clk_src.clkr,
+ 	[GCC_GP2_CLK] = &gcc_gp2_clk.clkr,
+ 	[GCC_GP2_CLK_SRC] = &gcc_gp2_clk_src.clkr,
+ 	[GCC_GP3_CLK] = &gcc_gp3_clk.clkr,
+ 	[GCC_GP3_CLK_SRC] = &gcc_gp3_clk_src.clkr,
+-	[GCC_GPU_CFG_AHB_CLK] = &gcc_gpu_cfg_ahb_clk.clkr,
+ 	[GCC_GPU_GPLL0_CLK_SRC] = &gcc_gpu_gpll0_clk_src.clkr,
+ 	[GCC_GPU_GPLL0_DIV_CLK_SRC] = &gcc_gpu_gpll0_div_clk_src.clkr,
+ 	[GCC_GPU_IREF_CLK] = &gcc_gpu_iref_clk.clkr,
+@@ -2869,7 +2772,6 @@ static struct clk_regmap *gcc_qcm2290_clocks[] = {
+ 	[GCC_SDCC2_AHB_CLK] = &gcc_sdcc2_ahb_clk.clkr,
+ 	[GCC_SDCC2_APPS_CLK] = &gcc_sdcc2_apps_clk.clkr,
+ 	[GCC_SDCC2_APPS_CLK_SRC] = &gcc_sdcc2_apps_clk_src.clkr,
+-	[GCC_SYS_NOC_CPUSS_AHB_CLK] = &gcc_sys_noc_cpuss_ahb_clk.clkr,
+ 	[GCC_SYS_NOC_USB3_PRIM_AXI_CLK] = &gcc_sys_noc_usb3_prim_axi_clk.clkr,
+ 	[GCC_USB30_PRIM_MASTER_CLK] = &gcc_usb30_prim_master_clk.clkr,
+ 	[GCC_USB30_PRIM_MASTER_CLK_SRC] = &gcc_usb30_prim_master_clk_src.clkr,
+@@ -2994,6 +2896,13 @@ static int gcc_qcm2290_probe(struct platform_device *pdev)
  	clk_alpha_pll_configure(&gpll8, regmap, &gpll8_config);
  	clk_alpha_pll_configure(&gpll9, regmap, &gpll9_config);
-@@ -3406,7 +3419,10 @@ static int gcc_sm6115_probe(struct platform_device *pdev)
- 	qcom_branch_set_clk_en(regmap, 0x36004); /* GCC_GPU_CFG_AHB_CLK */
- 	qcom_branch_set_clk_en(regmap, 0x2b06c); /* GCC_SYS_NOC_CPUSS_AHB_CLK */
  
--	return qcom_cc_really_probe(pdev, &gcc_sm6115_desc, regmap);
-+	ret = qcom_cc_really_probe(pdev, &gcc_sm6115_desc, regmap);
-+	pm_runtime_put(&pdev->dev);
++	qcom_branch_set_clk_en(regmap, 0x17008); /* GCC_CAMERA_AHB_CLK */
++	qcom_branch_set_clk_en(regmap, 0x17028); /* GCC_CAMERA_XO_CLK */
++	qcom_branch_set_clk_en(regmap, 0x1700c); /* GCC_DISP_AHB_CLK */
++	qcom_branch_set_clk_en(regmap, 0x1702c); /* GCC_DISP_XO_CLK */
++	qcom_branch_set_clk_en(regmap, 0x36004); /* GCC_GPU_CFG_AHB_CLK */
++	qcom_branch_set_clk_en(regmap, 0x2b06c); /* GCC_SYS_NOC_CPUSS_AHB_CLK */
 +
-+	return ret;
+ 	return qcom_cc_really_probe(pdev, &gcc_qcm2290_desc, regmap);
  }
  
- static struct platform_driver gcc_sm6115_driver = {
 
 -- 
 2.43.0
