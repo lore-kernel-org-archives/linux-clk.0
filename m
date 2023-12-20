@@ -1,49 +1,49 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3CB22308
-	for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 12:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522B622320
+	for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 12:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YvQWosS+"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-55114c073b8so7053263a12.1
-        for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 04:16:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iGQ7C2NF"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a22deb95d21so659943966b.3
+        for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 04:27:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703074615; x=1703679415; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1703075219; x=1703680019; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=WJkVBfoxiqD1PlLE/3Y0GVSjWqb1nX3LX/NzhLRh3Cg=;
-        b=YvQWosS+a1pLj4fJlHjZuDyqfcmBf9zOTTCc1dT0hEZI7ZHI1gft5W+MK3Vz7+pncK
-         +gDUmIxo5MjhV1THYFt/h+U7Q3aXXTJoEVUu7INdMzGA7DscSsLByKGqTvafDBQG91Ks
-         hK0mIDVsBO4vL74p2gAeJgeduLH0gTLmKmvnBILf4XWLF8PMYxOE4/seb7yOuzqqS2qq
-         A5GEqRnfGHMV2qlGA+KdoOcW96KKsECJs6WkdtgvlBj2WEGYXIoT7+BwhXgqdBppAhEF
-         mJ5q2+B7trS0sguODcXDkXoRxcR6nF4LikvDLP6JBKYrBcQwPXl4g8DCe5i8M2Aaxm9o
-         Prcw==
+        bh=KdTntqA4E8fmXm6DC/Td1H0iHS/ntQJeHXjSnVaiiyY=;
+        b=iGQ7C2NFOmeaA3OWkuDDXVPaKYqDuuEc8lDNv/MGeC08Lk94KvJw33ilXzXcexTJEz
+         jnSAKSwKeeC2HbDEOJAM7skUokda1AxpPaacB9xT54c8ntdeQ7s6DdBqQjT8oD9YB4ip
+         JZtBskaxPVLUmCL1zXyM4DuwlVXpsNvWmY3OpjX7kyp4uuXHUEmDWRLFf0rD6G/WRrPV
+         f31NwcjkNANnTHuv0SLhRXnVBV5vRiQwakMYySz+Iq593gUiLIgfzm+jlFOIj/VbKgqn
+         KU7yZ9BGBMpjjcmKmiMdB/YHp/vr4JdGc1sAj5eZ6SSLdwrEELotyI0uFF8+u7Moyyk9
+         qIpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703074615; x=1703679415;
+        d=1e100.net; s=20230601; t=1703075219; x=1703680019;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WJkVBfoxiqD1PlLE/3Y0GVSjWqb1nX3LX/NzhLRh3Cg=;
-        b=ajEz3ubfJso1KiWZm7jyO60UI5J2yLw1Q4Ek5Vq4DwbQTZ1kVEejpX6CbLsCrSKqi5
-         LHUl375ReGv/nEEllkc9OGsKKGWdTOo5pCz+pG7Jf9YP1qHG2DxjBYAEx+1Xnvshtmu0
-         XA5KEN3t6qivCdG0ArvO6HOxIOxc+G4ho6RNnw03Y1ntqYhUS4nQNjjIUzkTkGuqdUXa
-         V3caeqzv9zTsjr8Vc5XvO/j2k2S73a711yABzpzGzg44YCAPO/TMDNagpJXDHnsDqgCT
-         7VuGMyrVTGiyCw4NavY3FkNeTWvpLTamVzSGdBznnG2TD2Hz4oESLm4BfQUwHswo5Wdo
-         WDdA==
-X-Gm-Message-State: AOJu0YwGcu4A6i5M0Zc4cH7wnCqC7r4U5FOiONgq32P69Qa3JucKAEg8
-	s5szqEm/tkyjTYeNeddTbTPKkA==
-X-Google-Smtp-Source: AGHT+IFFTuhLgBZZKdbxw5Sp6toPpZ9bSkrJeFFdwbJwxdcpjwEmHJsRoUzchw9mqzzZfSQvnc5DEg==
-X-Received: by 2002:a17:906:1c9:b0:a26:9924:cb1f with SMTP id 9-20020a17090601c900b00a269924cb1fmr182461ejj.141.1703074615239;
-        Wed, 20 Dec 2023 04:16:55 -0800 (PST)
+        bh=KdTntqA4E8fmXm6DC/Td1H0iHS/ntQJeHXjSnVaiiyY=;
+        b=a+JrDZ4QYbpbhNMJQWHNitChRMNBBwBueXYtpQ++F8pALLMRtSSoSnwUDQaUx3lhV7
+         p1cmyDVuS4FphOK/QjKLUQkfnwJ3qGmSKItdmZjpyhRV50k/xYPuv34w+537Sk8EaRWa
+         b4YAIWKtLGtsmBrFYHwp38FdRlj//8vlxTODxt4L/EbJGkUGzDuPgQx9p15SkleI4ddW
+         r6mQn24VLCq/fMo+9HyB8X40V77ILmK4/OqHuYGPVhqXRhHCWYV2YHOJf6AzGh5inuvL
+         Kn/L8a5I+Ul9hC5+NALU+dhGm7+KuRUOgRY05vMootrEAxm9dKtL3jDuejJXrhQlXwaK
+         lFuA==
+X-Gm-Message-State: AOJu0Yy+J1DDa5JWo+jj6n12V6SK0dzbQpp7wzFizDiDia6/ZuzfI01h
+	f9Vtc7P6y05PVMKCpAzzNog/Xg==
+X-Google-Smtp-Source: AGHT+IH7yATORlafVvzEIL2P6XMo4+LuCvTfRqEpoxkFRPba/eruYTDzLiRUKRevXJIuXf0Q2wfIWw==
+X-Received: by 2002:a17:906:181:b0:9ff:7164:c20a with SMTP id 1-20020a170906018100b009ff7164c20amr8735885ejb.21.1703075219491;
+        Wed, 20 Dec 2023 04:26:59 -0800 (PST)
 Received: from [192.168.199.59] (178235179206.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.206])
-        by smtp.gmail.com with ESMTPSA id tg9-20020a1709078dc900b00a22f4736312sm10030738ejc.129.2023.12.20.04.16.53
+        by smtp.gmail.com with ESMTPSA id tg9-20020a1709078dc900b00a22f4736312sm10039569ejc.129.2023.12.20.04.26.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Dec 2023 04:16:54 -0800 (PST)
-Message-ID: <9ebf0185-db0f-4395-b587-66fdb65e7921@linaro.org>
-Date: Wed, 20 Dec 2023 13:16:52 +0100
+        Wed, 20 Dec 2023 04:26:58 -0800 (PST)
+Message-ID: <0cbdb9fb-9ad6-46c4-9d20-b0a766ab2629@linaro.org>
+Date: Wed, 20 Dec 2023 13:26:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/15] clk: qcom: Use qcom_branch_set_clk_en()
+Subject: Re: [PATCH v3 04/15] clk: qcom: gcc-sm6375: Add runtime PM
 Content-Language: en-US
 To: Johan Hovold <johan@kernel.org>
 Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
@@ -61,11 +61,10 @@ Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>,
  Marijn Suijten <marijn.suijten@somainline.org>,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 References: <20230717-topic-branch_aon_cleanup-v3-0-3e31bce9c626@linaro.org>
- <20230717-topic-branch_aon_cleanup-v3-2-3e31bce9c626@linaro.org>
- <ZYKk6ohfkHpSIJN7@hovoldconsulting.com>
+ <20230717-topic-branch_aon_cleanup-v3-4-3e31bce9c626@linaro.org>
+ <ZYKzU4FFCc9lnE-p@hovoldconsulting.com>
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -102,36 +101,54 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <ZYKk6ohfkHpSIJN7@hovoldconsulting.com>
+In-Reply-To: <ZYKzU4FFCc9lnE-p@hovoldconsulting.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20.12.2023 09:25, Johan Hovold wrote:
-> On Wed, Dec 20, 2023 at 01:30:43AM +0100, Konrad Dybcio wrote:
->> Instead of magically poking at the bit0 of branch clocks' CBCR, use
->> the newly introduced helper.
+On 20.12.2023 10:26, Johan Hovold wrote:
+> On Wed, Dec 20, 2023 at 01:30:45AM +0100, Konrad Dybcio wrote:
+>> The GCC block on SM6375 is powered by the VDD_CX rail. We need to ensure
+>> that CX is enabled to prevent unwanted power collapse 
+> 
+> As I pointed out earlier, this bit of the commit message is incorrect
+> and misleading as the power domain will never be disabled until you
+> enable runtime PM as part of this very patch:
+> 
+> 	https://lore.kernel.org/all/ZLaSpFFBzP_Yz5yY@hovoldconsulting.com/
+> 
+> Specifically, genpd will not power off CX (at runtime) while the driver
+> is bound when runtime PM is left disabled.
+OK I only now see what you really meant.
+
+What this bit says is true, but it may be confusing within the context
+of this patch.
+
+The CX domain must be turned on [for the SoC to function], however this
+patch does not solve the issue of it being powered down [like you've said
+just binding the PD will keep it always-active for RPM-disabled devices].
+It complements this process, by allowing it to shut down when unnecessary.
+
+
+> 
+>> and that the
+>> reference is dropped when unused so that the system can enter a
+>> firmware-managed lower power state.
 >>
->> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> Enable runtime PM to keep the power flowing only when necessary.
 > 
->> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
->> index bfb77931e868..1ba78990b9f4 100644
->> --- a/drivers/clk/qcom/gcc-sc8280xp.c
->> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
->> @@ -7543,21 +7543,15 @@ static int gcc_sc8280xp_probe(struct platform_device *pdev)
->>  		goto err_put_rpm;
->>  	}
->>  
->> -	/*
->> -	 * Keep the clocks always-ON
-> 
-> I think you should keep this part of the comment in some form
-> throughout, for example:
-> 
-> 	/* Keep some clocks always on */
-> 	qcom_branch_set_clk_en(...);
-> 	...
-That's a good idea, it may not be entirely obvious for first-time
-readers. I'll include this.
+> The rest is correct.
+Let me try to reword this and see if you like it:
+
+
+The GCC block on SM6375 is powered by the VDD_CX rail. The Device Tree
+description of this dependency lets Linux keep the rail online to prevent
+power outages. It is however undesirable to keep it enabled at all times,
+as that consumes additional power.
+
+Moreover, failing to drop the "enabled" vote prevents firmware-managed,
+SoC-wide power collapse in suspend, which leads to even more wasted power.
+
+Enable runtime PM to keep the power flowing only when necessary.
 
 Konrad
+
