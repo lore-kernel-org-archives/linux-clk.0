@@ -1,172 +1,109 @@
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A273ABE4C;
-	Wed, 20 Dec 2023 01:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-	by fd01.gateway.ufhost.com (Postfix) with ESMTP id 1B9EC8008;
-	Wed, 20 Dec 2023 09:39:58 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 20 Dec
- 2023 09:39:58 +0800
-Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 20 Dec
- 2023 09:39:36 +0800
-Received: from EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f]) by
- EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f%17]) with mapi id
- 15.00.1497.044; Wed, 20 Dec 2023 09:39:36 +0800
-From: JeeHeng Sia <jeeheng.sia@starfivetech.com>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	"kernel@esmil.dk" <kernel@esmil.dk>, "conor@kernel.org" <conor@kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com"
-	<palmer@dabbelt.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "Hal
- Feng" <hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
-CC: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Leyfoon Tan
-	<leyfoon.tan@starfivetech.com>
-Subject: RE: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock generator
- driver
-Thread-Topic: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock
- generator driver
-Thread-Index: AQHaKDp8qa+gHWDJHkGDh0MGWRuwVrCfD58AgAXCtdCAAc4FgIAK2SJw
-Date: Wed, 20 Dec 2023 01:39:36 +0000
-Message-ID: <07a8ac42184f440fae1b0d13db4e43cc@EXMBX066.cuchost.com>
-References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
- <20231206115000.295825-7-jeeheng.sia@starfivetech.com>
- <CAJM55Z_VgBGvCPuvwmQahMcMfuWKnOKpZ9bBbbhei_Teu5Apeg@mail.gmail.com>
- <9ae86c6786bc4ac7b93c971ba00084a6@EXMBX066.cuchost.com>
- <CAJM55Z9GVFGuwqe=zLXQvBwDfVSz4eA2EXDd4sqWVCKJF2J+fg@mail.gmail.com>
-In-Reply-To: <CAJM55Z9GVFGuwqe=zLXQvBwDfVSz4eA2EXDd4sqWVCKJF2J+fg@mail.gmail.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-transport-fromentityheader: Hosted
-x-yovoleruleagent: yovoleflag
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2D0BE5B;
+	Wed, 20 Dec 2023 03:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hgY1pU0k"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BK1T3c9015055;
+	Wed, 20 Dec 2023 03:56:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=m6SgXRhJwFhAQ6dv55GNTd9UQkjE3XpPXZe3APKf5F0=; b=hg
+	Y1pU0k9iBQEm0Xy9TOm3m6gXii8sSIkjtddyWgqcqAbd7a4eDGTbXsbSRr/Abe/z
+	JVxpjTFuE5LGuoWljxmzOpVx3+ICVDl2z+WtSAQiiFxKi9ZeJmsjP4VRYNUnfU4e
+	h9BjLrMI7cyCLzmTyv/C3hCdgllaTzlE9stDqIdr3NmwicuywIHj24SGQcN0KjF7
+	Rz+xqzaHvjp5w5hFV2OQnfh1WgL6TZ8epn9jfC27d/z15wDRwgM4T+PnSmTc18Ho
+	d669Ous9UHoC2pOiuuoYcNstRSzOVBdBAvuRpUAv9PSTOgkujIzUhvr6aeLbhUNH
+	jFvGu7W/y9PCVXhuU4og==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3v3fa3h4w1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Dec 2023 03:56:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BK3uFk4028816
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Dec 2023 03:56:15 GMT
+Received: from [10.253.12.246] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 19 Dec
+ 2023 19:56:11 -0800
+Message-ID: <24dcff81-7b19-4301-a69f-1242c1a352b6@quicinc.com>
+Date: Wed, 20 Dec 2023 11:56:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/16] arm64: dts: qcom: sm8550: Fix UFS PHY clocks
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
+        <sboyd@kernel.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20231218120712.16438-1-manivannan.sadhasivam@linaro.org>
+ <20231218120712.16438-17-manivannan.sadhasivam@linaro.org>
+Content-Language: en-US
+From: Can Guo <quic_cang@quicinc.com>
+In-Reply-To: <20231218120712.16438-17-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: LEg498F1SXOE7mQ0_qfpKh5KE5Nak2I5
+X-Proofpoint-ORIG-GUID: LEg498F1SXOE7mQ0_qfpKh5KE5Nak2I5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-09_02,2023-12-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ phishscore=0 spamscore=0 suspectscore=0 mlxlogscore=830 impostorscore=0
+ clxscore=1011 adultscore=0 mlxscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2311290000 definitions=main-2312200023
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRW1pbCBSZW5uZXIgQmVy
-dGhpbmcgPGVtaWwucmVubmVyLmJlcnRoaW5nQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IFdlZG5l
-c2RheSwgRGVjZW1iZXIgMTMsIDIwMjMgNzo1NyBQTQ0KPiBUbzogSmVlSGVuZyBTaWEgPGplZWhl
-bmcuc2lhQHN0YXJmaXZldGVjaC5jb20+OyBFbWlsIFJlbm5lciBCZXJ0aGluZyA8ZW1pbC5yZW5u
-ZXIuYmVydGhpbmdAY2Fub25pY2FsLmNvbT47IGtlcm5lbEBlc21pbC5kazsNCj4gY29ub3JAa2Vy
-bmVsLm9yZzsgcm9iaCtkdEBrZXJuZWwub3JnOyBrcnp5c3p0b2Yua296bG93c2tpK2R0QGxpbmFy
-by5vcmc7IHBhdWwud2FsbXNsZXlAc2lmaXZlLmNvbTsgcGFsbWVyQGRhYmJlbHQuY29tOw0KPiBh
-b3VAZWVjcy5iZXJrZWxleS5lZHU7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzYm95ZEBrZXJu
-ZWwub3JnOyBwLnphYmVsQHBlbmd1dHJvbml4LmRlOyBIYWwgRmVuZw0KPiA8aGFsLmZlbmdAc3Rh
-cmZpdmV0ZWNoLmNvbT47IFhpbmd5dSBXdSA8eGluZ3l1Lnd1QHN0YXJmaXZldGVjaC5jb20+DQo+
-IENjOiBsaW51eC1yaXNjdkBsaXN0cy5pbmZyYWRlYWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtY2xrQHZnZXIua2Vy
-bmVsLm9yZzsgTGV5Zm9vbiBUYW4NCj4gPGxleWZvb24udGFuQHN0YXJmaXZldGVjaC5jb20+DQo+
-IFN1YmplY3Q6IFJFOiBbUEFUQ0ggdjEgMDYvMTZdIGNsazogc3RhcmZpdmU6IEFkZCBKSDgxMDAg
-U3lzdGVtIGNsb2NrIGdlbmVyYXRvciBkcml2ZXINCj4gDQo+IEplZUhlbmcgU2lhIHdyb3RlOg0K
-PiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IEVtaWwgUmVubmVy
-IEJlcnRoaW5nIDxlbWlsLnJlbm5lci5iZXJ0aGluZ0BjYW5vbmljYWwuY29tPg0KPiA+ID4gU2Vu
-dDogU2F0dXJkYXksIERlY2VtYmVyIDksIDIwMjMgMTI6MjUgQU0NCj4gPiA+IFRvOiBKZWVIZW5n
-IFNpYSA8amVlaGVuZy5zaWFAc3RhcmZpdmV0ZWNoLmNvbT47IGtlcm5lbEBlc21pbC5kazsgY29u
-b3JAa2VybmVsLm9yZzsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiA+ID4ga3J6eXN6dG9mLmtvemxv
-d3NraStkdEBsaW5hcm8ub3JnOyBwYXVsLndhbG1zbGV5QHNpZml2ZS5jb207IHBhbG1lckBkYWJi
-ZWx0LmNvbTsgYW91QGVlY3MuYmVya2VsZXkuZWR1Ow0KPiA+ID4gbXR1cnF1ZXR0ZUBiYXlsaWJy
-ZS5jb207IHNib3lkQGtlcm5lbC5vcmc7IHAuemFiZWxAcGVuZ3V0cm9uaXguZGU7IGVtaWwucmVu
-bmVyLmJlcnRoaW5nQGNhbm9uaWNhbC5jb207IEhhbCBGZW5nDQo+ID4gPiA8aGFsLmZlbmdAc3Rh
-cmZpdmV0ZWNoLmNvbT47IFhpbmd5dSBXdSA8eGluZ3l1Lnd1QHN0YXJmaXZldGVjaC5jb20+DQo+
-ID4gPiBDYzogbGludXgtcmlzY3ZAbGlzdHMuaW5mcmFkZWFkLm9yZzsgZGV2aWNldHJlZUB2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWNsa0B2Z2Vy
-Lmtlcm5lbC5vcmc7IExleWZvb24NCj4gVGFuDQo+ID4gPiA8bGV5Zm9vbi50YW5Ac3RhcmZpdmV0
-ZWNoLmNvbT4NCj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjEgMDYvMTZdIGNsazogc3RhcmZp
-dmU6IEFkZCBKSDgxMDAgU3lzdGVtIGNsb2NrIGdlbmVyYXRvciBkcml2ZXINCj4gPiA+DQo+ID4g
-PiBTaWEgSmVlIEhlbmcgd3JvdGU6DQo+ID4gPiA+IEFkZCBzdXBwb3J0IGZvciBKSDgxMDAgU3lz
-dGVtIGNsb2NrIGdlbmVyYXRvci4NCj4gPiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogU2lh
-IEplZSBIZW5nIDxqZWVoZW5nLnNpYUBzdGFyZml2ZXRlY2guY29tPg0KPiA+ID4gPiBSZXZpZXdl
-ZC1ieTogTGV5IEZvb24gVGFuIDxsZXlmb29uLnRhbkBzdGFyZml2ZXRlY2guY29tPg0KPiA+ID4g
-PiAtLS0NCj4gPiA+ID4gIE1BSU5UQUlORVJTICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICB8ICAgOCArDQo+ID4gPiA+ICBkcml2ZXJzL2Nsay9zdGFyZml2ZS9LY29uZmlnICAgICAg
-ICAgICAgICAgICAgfCAgIDkgKw0KPiA+ID4gPiAgZHJpdmVycy9jbGsvc3RhcmZpdmUvTWFrZWZp
-bGUgICAgICAgICAgICAgICAgIHwgICAxICsNCj4gPiA+ID4gIGRyaXZlcnMvY2xrL3N0YXJmaXZl
-L2Nsay1zdGFyZml2ZS1jb21tb24uaCAgICB8ICAgOSArLQ0KPiA+ID4gPiAgZHJpdmVycy9jbGsv
-c3RhcmZpdmUvamg4MTAwL01ha2VmaWxlICAgICAgICAgIHwgICAzICsNCj4gPiA+ID4gIC4uLi9j
-bGsvc3RhcmZpdmUvamg4MTAwL2Nsay1zdGFyZml2ZS1qaDgxMDAuaCB8ICAxMSArDQo+ID4gPiA+
-ICBkcml2ZXJzL2Nsay9zdGFyZml2ZS9qaDgxMDAvY2xrLXN5cy5jICAgICAgICAgfCA0NTUgKysr
-KysrKysrKysrKysrKysrDQo+ID4gPiA+ICA3IGZpbGVzIGNoYW5nZWQsIDQ5NSBpbnNlcnRpb25z
-KCspLCAxIGRlbGV0aW9uKC0pDQo+ID4gPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9j
-bGsvc3RhcmZpdmUvamg4MTAwL01ha2VmaWxlDQo+ID4gPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQg
-ZHJpdmVycy9jbGsvc3RhcmZpdmUvamg4MTAwL2Nsay1zdGFyZml2ZS1qaDgxMDAuaA0KPiA+ID4g
-PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL3N0YXJmaXZlL2poODEwMC9jbGstc3lz
-LmMNCj4gLi4uDQo+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9zdGFyZml2ZS9NYWtl
-ZmlsZSBiL2RyaXZlcnMvY2xrL3N0YXJmaXZlL01ha2VmaWxlDQo+ID4gPiA+IGluZGV4IDAxMmY3
-ZWU4M2Y4ZS4uNmNiM2NlODIzMzMwIDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9kcml2ZXJzL2Nsay9z
-dGFyZml2ZS9NYWtlZmlsZQ0KPiA+ID4gPiArKysgYi9kcml2ZXJzL2Nsay9zdGFyZml2ZS9NYWtl
-ZmlsZQ0KPiA+ID4gPiBAQCAtMTAsMyArMTAsNCBAQCBvYmotJChDT05GSUdfQ0xLX1NUQVJGSVZF
-X0pINzExMF9BT04pCSs9IGNsay1zdGFyZml2ZS1qaDcxMTAtYW9uLm8NCj4gPiA+ID4gIG9iai0k
-KENPTkZJR19DTEtfU1RBUkZJVkVfSkg3MTEwX1NURykJKz0gY2xrLXN0YXJmaXZlLWpoNzExMC1z
-dGcubw0KPiA+ID4gPiAgb2JqLSQoQ09ORklHX0NMS19TVEFSRklWRV9KSDcxMTBfSVNQKQkrPSBj
-bGstc3RhcmZpdmUtamg3MTEwLWlzcC5vDQo+ID4gPiA+ICBvYmotJChDT05GSUdfQ0xLX1NUQVJG
-SVZFX0pINzExMF9WT1VUKQkrPSBjbGstc3RhcmZpdmUtamg3MTEwLXZvdXQubw0KPiA+ID4gPiAr
-b2JqLSQoQ09ORklHX0NMS19TVEFSRklWRV9KSDgxMDBfU1lTKQkrPSBqaDgxMDAvDQo+ID4gPg0K
-PiA+ID4gSSBkb24ndCByZWFsbHkgc2VlIHdoeSBkbyB5b3UgbmVlZCBhIHNwZWNpYWwgc3ViZGly
-ZWN0b3J5IGZvciB0aGUgSkg4MTAwPyBUaGUNCj4gPiA+IEpINzExMCBkcml2ZXJzIGRvIGZpbmUg
-d2l0aG91dCBpdC4NCj4gPiBFYWNoIHN1YmZvbGRlciBjYW4gcmVwcmVzZW50IGEgZGlmZmVyZW50
-IHBsYXRmb3JtLCBtYWtpbmcgaXQgZWFzaWVyIHRvDQo+ID4gbG9jYXRlIGFuZCBtYWludGFpbiBw
-bGF0Zm9ybS1zcGVjaWZpYyBjb2RlLiBTaW5jZSB0aGUgY29kZSBpcyBleHBlY3RlZA0KPiA+IHRv
-IGdyb3cgaW4gdGhlIGZ1dHVyZSwgbGV0J3Mgc3RhcnQgb3JnYW5pemluZyBpdCBpbiBhIGZvbGRl
-ci1iYXNlZCBzdHJ1Y3R1cmUNCj4gPiBmb3IgZWFzaWVyIG1haW50ZW5hbmNlIGF0IGEgbGF0ZXIg
-c3RhZ2UuDQo+IA0KPiBZZXMsIGJ1dCB0aGF0J3Mgbm90IHdoYXQgeW91J3JlIGRvaW5nIGhlcmUu
-IFlvdSdyZSBtYWtpbmcganVzdCBvbmUgb2YgdGhlIDMNCj4gYWxtb3N0IGlkZW50aWNhbCBkcml2
-ZXJzIGJlIGRpZmZlcmVudCBmb3Igbm8gZ29vZCByZWFzb24uDQo+IA0KPiA+ID4gPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9jbGsvc3RhcmZpdmUvY2xrLXN0YXJmaXZlLWNvbW1vbi5oIGIvZHJpdmVy
-cy9jbGsvc3RhcmZpdmUvY2xrLXN0YXJmaXZlLWNvbW1vbi5oDQo+ID4gPiA+IGluZGV4IGZlZDQ1
-MzExMzYwYy4uZWMzMGFmMDY1OGNmIDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9kcml2ZXJzL2Nsay9z
-dGFyZml2ZS9jbGstc3RhcmZpdmUtY29tbW9uLmgNCj4gPiA+ID4gKysrIGIvZHJpdmVycy9jbGsv
-c3RhcmZpdmUvY2xrLXN0YXJmaXZlLWNvbW1vbi5oDQo+ID4gPiA+IEBAIC0xMDMsNiArMTAzLDEz
-IEBAIHN0cnVjdCBzdGFyZml2ZV9jbGtfZGF0YSB7DQo+ID4gPiA+ICAJLnBhcmVudHMgPSB7IFsw
-XSA9IF9wYXJlbnQgfSwJCQkJCQlcDQo+ID4gPiA+ICB9DQo+ID4gPiA+DQo+ID4gPiA+ICsjZGVm
-aW5lIFNUQVJGSVZFX0dJTlYoX2lkeCwgX25hbWUsIF9mbGFncywgX3BhcmVudClbX2lkeF0gPSB7
-CQkJXA0KPiA+ID4gPiArCS5uYW1lID0gX25hbWUsCQkJCQkJCQlcDQo+ID4gPiA+ICsJLmZsYWdz
-ID0gX2ZsYWdzLAkJCQkJCQlcDQo+ID4gPiA+ICsJLm1heCA9IFNUQVJGSVZFX0NMS19FTkFCTEUg
-fCBTVEFSRklWRV9DTEtfSU5WRVJULAkJCVwNCj4gPiA+ID4gKwkucGFyZW50cyA9IHsgWzBdID0g
-X3BhcmVudCB9LAkJCQkJCVwNCj4gPiA+ID4gK30NCj4gPiA+ID4gKw0KPiA+ID4gPiAgc3RydWN0
-IHN0YXJmaXZlX2NsayB7DQo+ID4gPiA+ICAJc3RydWN0IGNsa19odyBodzsNCj4gPiA+ID4gIAl1
-bnNpZ25lZCBpbnQgaWR4Ow0KPiA+ID4gPiBAQCAtMTE0LDcgKzEyMSw3IEBAIHN0cnVjdCBzdGFy
-Zml2ZV9jbGtfcHJpdiB7DQo+ID4gPiA+ICAJc3BpbmxvY2tfdCBybXdfbG9jazsNCj4gPiA+ID4g
-IAlzdHJ1Y3QgZGV2aWNlICpkZXY7DQo+ID4gPiA+ICAJdm9pZCBfX2lvbWVtICpiYXNlOw0KPiA+
-ID4gPiAtCXN0cnVjdCBjbGtfaHcgKnBsbFszXTsNCj4gPiA+ID4gKwlzdHJ1Y3QgY2xrX2h3ICpw
-bGxbOF07DQo+ID4gPg0KPiA+ID4gVGhlc2UgZXh0cmEgc2xvdHMgYXJlIGp1c3QgdXNlZCBmb3Ig
-Zml4ZWQgZmFjdG9yIGR1bW15IFBMTHMgcmlnaHQgbm93LCBzaW1pbGFyDQo+ID4gPiB0byBob3cg
-dGhlIEpINzExMCBmaXJzdCB1c2VkIHRoZW0gYW5kIGxhdGVyIGhhZCB0byByZXdvcmsgZHJpdmVy
-cyBhbmQgZGV2aWNlDQo+ID4gPiB0cmVlcyBmb3IgdGhlIHByb3BlciBQTEwgZHJpdmVyLg0KPiA+
-IFllcywgaXRzIGludGVudGlvbiBpcyBzaW1pbGFyIHRvIEpIODEwMC4gV2Ugd2lsbCBzdWJtaXQg
-b3RoZXIgY2xvY2sNCj4gPiBkb21haW5zIGFuZCBQTEwgYXQgbGF0ZXIgc3RhZ2UgYnV0IG5vdCBz
-byBzb29uLg0KPiA+ID4NCj4gPiA+IFRoaXMgdGltZSBhcm91bmQgSSdkIG11Y2ggcmF0aGVyIHlv
-dSB3b3JrIG9uIGdldHRpbmcgdGhlIFBMTCBkcml2ZXIgaW4gZmlyc3QsDQo+ID4gPiBzbyB3ZSBk
-b24ndCBuZWVkIGFsbCB0aGF0IGNodXJuLg0KPiA+IEkgYW0gc29ycnkgYnV0IHdlIHN0YXJ0ZWQg
-ZGV2ZWxvcG1lbnQgb24gRlBHQS4gVW5mb3J0dW5hdGVseSwgdGhlIFBMTCBkcml2ZXINCj4gPiBh
-bmQgb3RoZXIgZG9tYWlucyBhcmUgcGxhbm5lZCB0byBiZSBmaW5pc2hlZCBhdCBhIGxhdGVyIHN0
-YWdlLiBJIGhhdmUgdHJpZWQNCj4gPiB0byBtaW5pbWl6ZSB0aGUgY2h1cm4gYXMgbXVjaCBhcyBw
-b3NzaWJsZS4NCj4gDQo+IEl0J3MgYXdlc29tZSB0aGF0IHlvdSdyZSBiZWdpbm5pbmcgdXBzdHJl
-YW1pbmcgZWFybHksIGJ1dCBpZiB5b3UgZG9uJ3QgaGF2ZQ0KPiB0aGlzIGluIHNpbGljb24geWV0
-LCBob3cgZG8geW91IGV2ZW4ga25vdyB0aGF0IHRoaXMgZHJpdmVyIHdvcmtzPw0KPiANCj4gSWYg
-eW91J3JlIGp1c3QgdXNpbmcgdGhpcyBmb3IgdGVzdGluZyBvbiBGUEdBcyB5b3UgY2FuIGNyZWF0
-ZSBkdW1teSBmaXhlZA0KPiBjbG9ja3MgaW4gdGhlIGRldmljZSB0cmVlIGZvciB0aGUgUExMcyB0
-aGF0IHRoaXMgZHJpdmVyIGNhbiBjb25zdW1lLiAgVGhlbg0KPiBsYXRlciB3aGVuIHlvdSBoYXZl
-IGEgUExMIGRyaXZlciB5b3UgY2FuIHJlcGxhY2UgdGhvc2UgZml4ZWQgY2xvY2tzIHdpdGggdGhl
-DQo+IG91dHB1dCBvZiB0aGF0IGRyaXZlci4NClRoZSBQTEwgZml4ZWQgY2xvY2tzIHdlcmUgY3Jl
-YXRlZCBpbiB0aGUgQyBjb2RlLiBJIGludGVycHJldCB0aGlzIG1lc3NhZ2UNCmFzIGEgc3VnZ2Vz
-dGlvbiB0byBjcmVhdGUgYSBQTEwgZml4ZWQgY2xvY2sgaW4gdGhlIERUPw0KPiANCj4gL0VtaWwN
-Cg==
+
+
+On 12/18/2023 8:07 PM, Manivannan Sadhasivam wrote:
+> QMP PHY used in SM8550 requires 3 clocks:
+> 
+> * ref - 19.2MHz reference clock from RPMh
+> * ref_aux - Auxiliary reference clock from GCC
+> * qref - QREF clock from TCSR
+> 
+> Fixes: 35cf1aaab169 ("arm64: dts: qcom: sm8550: Add UFS host controller and phy nodes")
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> index baa8540868a4..386ffd0d72c4 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> @@ -1891,9 +1891,12 @@ crypto: crypto@1dfa000 {
+>   		ufs_mem_phy: phy@1d80000 {
+>   			compatible = "qcom,sm8550-qmp-ufs-phy";
+>   			reg = <0x0 0x01d80000 0x0 0x2000>;
+> -			clocks = <&tcsr TCSR_UFS_CLKREF_EN>,
+> -				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
+> -			clock-names = "ref", "ref_aux";
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
+> +				 <&tcsr TCSR_UFS_CLKREF_EN>;
+> +			clock-names = "ref",
+> +				      "ref_aux",
+> +				      "qref";
+>   
+>   			power-domains = <&gcc UFS_MEM_PHY_GDSC>;
+>   
+Reviewed-by: Can Guo <quic_cang@quicinc.com>
