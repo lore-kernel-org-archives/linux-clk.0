@@ -1,78 +1,179 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519E8405C9;
-	Tue, 19 Dec 2023 23:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E8F20FE
+	for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 00:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jTcpaZ+Y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1703028293;
-	bh=0H9ehYGDEdnphMZ75tPLSnXZQxKc5VOLCkI5wkvGLH4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jTcpaZ+Yy3VPneJdShj3+IU+iSxLYi8XUujVYc4ra/3JxhiBBebLwBwOrVOlzmsne
-	 ZxsmasMv5n5/0nho2EMtFbRrpRFY5wQKULc/uQMFUjG02YxdHsRNUBkWvXRl7sxnt4
-	 H7gh8GOAU/gZQ3eVRndDjxDNaobU4IfFh5URi/uF4Mr5KjLB9bwkch2lUoS1pyLR0i
-	 ++B3gK7cSy0VDRFLfa8clfLipJHWnL+zUv7Eb6skQ1zW0UzdfLrdmvH+oFFH2lullW
-	 XHVITRVH2zvhp4Yvb/0o9fA0LP9Dc4Jt4rus5se7OwEgTW+xf/mzwCfz0HldPYDoPG
-	 MlaqjEOY7RNRg==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6293637814AA;
-	Tue, 19 Dec 2023 23:24:53 +0000 (UTC)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jacob Keller <jacob.e.keller@intel.com>
-Subject: [PATCH 2/2] clk: starfive: jh7100: Add CLK_SET_RATE_PARENT to gmac_tx
-Date: Wed, 20 Dec 2023 01:24:40 +0200
-Message-ID: <20231219232442.2460166-3-cristian.ciocaltea@collabora.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20231219232442.2460166-1-cristian.ciocaltea@collabora.com>
-References: <20231219232442.2460166-1-cristian.ciocaltea@collabora.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nhVvrj4O"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-50e281b149aso4656954e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 19 Dec 2023 16:30:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1703032252; x=1703637052; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mWZvCxitZuGixzKuEq3TIl4LD0lytvrrFKs/eeQVctM=;
+        b=nhVvrj4OBtbpKfJMlEyXCbmjR3jkqWIKomhxSBhtkWE2CQof7kJr97E2niBrP5AxUy
+         1d6af0oWrEJFYXnBZBj0utiNYQ6h2ZNSJ6kBI9R8XXyg7zYOPE+77AHFFJGrO1bj+76m
+         BoRJa0u5AyzBlHFacOB62PavCgioofhN4GrJuAkU+5tuZPdE/lFRKdbditFOPcrn/mMv
+         yTKA2Auktqqbay3yCgoM4ET0PSVtZS0k0CbOJ2vGlHQxAW/DvbqxtKLyRsol68ZLIe5Y
+         PlHqdkZ3tyte6B8NikP9F0f+KojtgfnsOLhPKVYZfyiOjT+QDvIxRfC5rYqg6P/+eeDc
+         LY6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703032252; x=1703637052;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mWZvCxitZuGixzKuEq3TIl4LD0lytvrrFKs/eeQVctM=;
+        b=E3JjWElodhT+bjmzF4j5zRkVg5lOKvug3bG5D7A/WEXH/yTjCWGwSZGo6DneTGa1Xf
+         oZbiB2bNxi2kTLX2/I/XD13n8dPxPjVM2G9pPO3oXRJ/CVWdGC/BD+bBYKZOsBsVpqIK
+         k2TIJOahxlEpabcVZpn0OcJVxBLn2INcfiTKNp2q8nmyENIYAClhSEfuwHnsIRbTZYX+
+         kUUrtjK9tUaYxybjt1boNbZsMwkN67DHZqfUjWxTSHRYo7m0zvhCaTa1PrMribGRnwwL
+         r3DVb5ciPPohxSwA1IaLz7DVol9M4vfGXejrURbudFAS5r2Wqe6akjx12rlhTfMypgYC
+         bKSw==
+X-Gm-Message-State: AOJu0YzG9fvvUJmnJCd824lln0Za/I1g4ZOFv4CjVeXX2NKoV+mRE9hI
+	okIrf67d1DmsNY/3x8OT8M0r0g==
+X-Google-Smtp-Source: AGHT+IGvuuqQ6CZNter5M4MFcL7ofl2/ybStrzPNyOZhDeuRUxCyN2bNpEA+fgT8CcCcVxbW8V9itw==
+X-Received: by 2002:a05:6512:3d90:b0:50e:38ff:d9e2 with SMTP id k16-20020a0565123d9000b0050e38ffd9e2mr2473150lfv.32.1703032252285;
+        Tue, 19 Dec 2023 16:30:52 -0800 (PST)
+Received: from [10.167.154.1] (178235179206.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.206])
+        by smtp.gmail.com with ESMTPSA id k16-20020a056402049000b00552d03a17acsm4824397edv.61.2023.12.19.16.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Dec 2023 16:30:51 -0800 (PST)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH v3 00/15] Unregister critical branch clocks + some RPM
+Date: Wed, 20 Dec 2023 01:30:41 +0100
+Message-Id: <20230717-topic-branch_aon_cleanup-v3-0-3e31bce9c626@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALE1gmUC/42NzQ6DIBAGX6XhXBr+CranvkfTGMRFSQwYUNLG+
+ O5F00tvHufL7syCEkQHCd1PC4qQXXLBF+DnEzK99h1g1xZGjDBOFFV4CqMzuInam77WwddmAO3
+ nEcubkoZyC4oaVN4bneB3VwR+HoYyjhGse++956tw79IU4mfPZ7qtB0qZYoKZUpVomdLCisfgv
+ I7hEmKHNmtmR01sM+lrxYUkYJn8M63r+gVEK473IAEAAA==
+To: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Johan Hovold <johan+linaro@kernel.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1703032249; l=4596;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=TOhUcZQV9pL6H0IYh/H/hiMLY+tqB9v/ZY20JeDivt0=;
+ b=XreHTluc+J6PWRiZWAkckyzExqA5QYvxffRmYmTZr71esThReM+XO9BjyqYjw96eW6ueQNoSK
+ fyn35Aqry4wC7X5SHWqEXQoiUlen3BLA155GhzScg2AxeAM8tVJHn5i
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+On Qualcomm SoCs, certain branch clocks either need to be always-on, or
+should be if you're interested in touching some part of the hardware.
 
-This is needed by the dwmac-starfive ethernet driver to set the clock
-for 1000, 100 and 10 Mbps links properly.
+Using CLK_IS_CRITICAL for this purpose sounds like a genius idea,
+however that messes with the runtime pm handling - if a clock is
+marked as such, the clock controller device will never enter the
+"suspended" state, leaving the associated resources online, which in
+turn breaks SoC-wide suspend.
 
-Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+This series aims to solve that on a couple SoCs that I could test the
+changes on and it sprinkles some runtime pm enablement atop these drivers.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/starfive/clk-starfive-jh7100.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+- Rebase (next-20231219)
+- Fix up a copypaste mistake in "gcc-sm6375: Unregister critical clocks" (bod)
+- Pick up tags
+- Link to v2: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v2-0-2a583460ef26@linaro.org
 
-diff --git a/drivers/clk/starfive/clk-starfive-jh7100.c b/drivers/clk/starfive/clk-starfive-jh7100.c
-index d3b260c01d5c..03f6f26a15d8 100644
---- a/drivers/clk/starfive/clk-starfive-jh7100.c
-+++ b/drivers/clk/starfive/clk-starfive-jh7100.c
-@@ -200,7 +200,7 @@ static const struct jh71x0_clk_data jh7100_clk_data[] __initconst = {
- 	JH71X0_GDIV(JH7100_CLK_GMAC_GTX, "gmac_gtxclk", 0, 255, JH7100_CLK_GMAC_ROOT_DIV),
- 	JH71X0_GDIV(JH7100_CLK_GMAC_RMII_TX, "gmac_rmii_txclk", 0, 8, JH7100_CLK_GMAC_RMII_REF),
- 	JH71X0_GDIV(JH7100_CLK_GMAC_RMII_RX, "gmac_rmii_rxclk", 0, 8, JH7100_CLK_GMAC_RMII_REF),
--	JH71X0__MUX(JH7100_CLK_GMAC_TX, "gmac_tx", 0, 3,
-+	JH71X0__MUX(JH7100_CLK_GMAC_TX, "gmac_tx", CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT, 3,
- 		    JH7100_CLK_GMAC_GTX,
- 		    JH7100_CLK_GMAC_TX_INV,
- 		    JH7100_CLK_GMAC_RMII_TX),
+Changes in v2:
+- Rebase
+- Pick up tags
+- Fix up missing pm_runtime_put in SM6375 GCC (Johan)
+- Clarify the commit message of "Add runtime PM" commits (Johan)
+- "GPU_CCC" -> "GPU_CC" (oops)
+- Rebase atop next-20231129
+  - Also fix up camcc-sm8550 & gcc-sm4450
+  - Unify and clean up the comment style
+  - Fix missing comments in gcc-sc7180..
+  - Drop Johan's ack from "clk: qcom: Use qcom_branch_set_clk_en()"
+- Improve 6115 dt patch commit message (Bjorn)
+- Link to v1: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org
+
+---
+Konrad Dybcio (15):
+      clk: qcom: branch: Add a helper for setting the enable bit
+      clk: qcom: Use qcom_branch_set_clk_en()
+      clk: qcom: gcc-sm6375: Unregister critical clocks
+      clk: qcom: gcc-sm6375: Add runtime PM
+      clk: qcom: gpucc-sm6375: Unregister critical clocks
+      clk: qcom: gpucc-sm6115: Unregister critical clocks
+      clk: qcom: gpucc-sm6115: Add runtime PM
+      clk: qcom: gcc-sm6115: Unregister critical clocks
+      clk: qcom: gcc-sm6115: Add runtime PM
+      clk: qcom: gcc-qcm2290: Unregister critical clocks
+      clk: qcom: gcc-qcm2290: Add runtime PM
+      arm64: dts: qcom: sm6375: Add VDD_CX to GCC
+      arm64: dts: qcom: qcm2290: Add VDD_CX to GCC
+      arm64: dts: qcom: sm6115: Add VDD_CX to GCC
+      arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CC
+
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi |   1 +
+ arch/arm64/boot/dts/qcom/sm6115.dtsi  |   3 +
+ arch/arm64/boot/dts/qcom/sm6375.dtsi  |   1 +
+ drivers/clk/qcom/camcc-sm8550.c       |   9 +--
+ drivers/clk/qcom/clk-branch.h         |   7 ++
+ drivers/clk/qcom/dispcc-qcm2290.c     |   3 +-
+ drivers/clk/qcom/dispcc-sc7280.c      |   6 +-
+ drivers/clk/qcom/dispcc-sc8280xp.c    |   3 +-
+ drivers/clk/qcom/dispcc-sm6115.c      |   3 +-
+ drivers/clk/qcom/dispcc-sm8250.c      |   3 +-
+ drivers/clk/qcom/dispcc-sm8450.c      |   6 +-
+ drivers/clk/qcom/dispcc-sm8550.c      |   6 +-
+ drivers/clk/qcom/gcc-qcm2290.c        | 127 ++++++-----------------------
+ drivers/clk/qcom/gcc-sa8775p.c        |  24 +++---
+ drivers/clk/qcom/gcc-sc7180.c         |  21 ++---
+ drivers/clk/qcom/gcc-sc7280.c         |  19 ++---
+ drivers/clk/qcom/gcc-sc8180x.c        |  27 +++----
+ drivers/clk/qcom/gcc-sc8280xp.c       |  24 +++---
+ drivers/clk/qcom/gcc-sdx55.c          |  11 +--
+ drivers/clk/qcom/gcc-sdx65.c          |  12 +--
+ drivers/clk/qcom/gcc-sdx75.c          |   9 +--
+ drivers/clk/qcom/gcc-sm4450.c         |  27 ++-----
+ drivers/clk/qcom/gcc-sm6115.c         | 145 +++++++---------------------------
+ drivers/clk/qcom/gcc-sm6375.c         | 126 +++++++----------------------
+ drivers/clk/qcom/gcc-sm7150.c         |  22 ++----
+ drivers/clk/qcom/gcc-sm8250.c         |  18 ++---
+ drivers/clk/qcom/gcc-sm8350.c         |  19 ++---
+ drivers/clk/qcom/gcc-sm8450.c         |  20 ++---
+ drivers/clk/qcom/gcc-sm8550.c         |  20 ++---
+ drivers/clk/qcom/gpucc-sc7280.c       |   8 +-
+ drivers/clk/qcom/gpucc-sc8280xp.c     |   8 +-
+ drivers/clk/qcom/gpucc-sm6115.c       |  52 +++++-------
+ drivers/clk/qcom/gpucc-sm6375.c       |  33 +-------
+ drivers/clk/qcom/gpucc-sm8550.c       |   9 +--
+ drivers/clk/qcom/lpasscorecc-sc7180.c |   6 +-
+ drivers/clk/qcom/videocc-sm8250.c     |   5 +-
+ drivers/clk/qcom/videocc-sm8350.c     |   9 +--
+ drivers/clk/qcom/videocc-sm8450.c     |  12 +--
+ drivers/clk/qcom/videocc-sm8550.c     |  12 +--
+ 39 files changed, 236 insertions(+), 640 deletions(-)
+---
+base-commit: aa4db8324c4d0e67aa4670356df4e9fae14b4d37
+change-id: 20230717-topic-branch_aon_cleanup-6976c13fe71c
+
+Best regards,
 -- 
-2.43.0
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
