@@ -1,89 +1,70 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0AB1DA33
-	for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 09:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21091DA33;
+	Wed, 20 Dec 2023 09:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dWDIA76n"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40c3ca9472dso62119645e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 01:26:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703064376; x=1703669176; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BIOiLB2Y5VwtBzbNpxoHadPRDJwG7P92r7UB8wqZ8Cs=;
-        b=dWDIA76nD8aBMDoWBf9kpSlflG2CVdOUga5uSIeVg4E4DxGCuRCLU2+HUnU8CHuoBF
-         fj5zVgJB+0T+SEKJ/uuF+IorrFbeVcNmeAQYN7ynFctjAnrn7IOWyX5K59dA9GO/MJ3j
-         p1EFToab0csWUW+0ePqdYxOvRPhc7RiPjHtUsBMUls8jQXVmV6Mv9djKvPVz6EqvQJ2I
-         nm9s8/B2Vc1PrPT1oiVZGHW5KgMtUGDj1FkYXbR08typ5NcN6c0M9blyocbXanPCFt4W
-         o9iwfS6jK0r5k6Q9Nwj55rDfLxfTHcJxRoVGtvzAynlol833rvQr7vfWkHs95zBCCSzA
-         A8kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703064376; x=1703669176;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BIOiLB2Y5VwtBzbNpxoHadPRDJwG7P92r7UB8wqZ8Cs=;
-        b=WxXHoG7s35qvH7gCx0ZLritlsof0DpKIJ8Wpst+8jgha8u53vcaAR5/IqXS0v1A5XL
-         nq46/Hv5OxkBE3YhmfHA4kXZDKSTA8t7scnD6ml9lP/JX4KcTD06LE95BJga7Zig8LGJ
-         vlKsKoSf05mkcwoEZc56NQ9JkVIxCZEtbGPS6WtOUIyrp98jOxHxONf6jZ31x8Eoel8t
-         hCP8svislvVtm66c5mpBuhsx617q4MqynbQG3zXS8CohLAF/2yFjrIMc/o9P/v9EMCpj
-         QyIXFEzEKx0tXLI8mLDQ2DJ3iYts6RWu5g074FaEMjaivWKGdyOpNGbtD4n2G0f00E6b
-         aP5g==
-X-Gm-Message-State: AOJu0YwGYLGZ8xD6bqrgJByR5UBSjch+mue9QWxYQxKFvio19nSNe3Gq
-	iy5nM1Uu0eyQ3Rg6uAdvqoprfA==
-X-Google-Smtp-Source: AGHT+IH2UZnhz/+iuiPscZaqVvx3IdUZnuq981UUJucK5IVx+E2gFoh5sqs9GkAqczWA/NbCfYh0bg==
-X-Received: by 2002:a05:600c:829:b0:40b:5e21:c5aa with SMTP id k41-20020a05600c082900b0040b5e21c5aamr6462070wmp.120.1703064375951;
-        Wed, 20 Dec 2023 01:26:15 -0800 (PST)
-Received: from hackbox.lan ([79.115.23.25])
-        by smtp.gmail.com with ESMTPSA id f13-20020a05600c4e8d00b0040c4535f1a2sm6340087wmq.39.2023.12.20.01.26.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Dec 2023 01:26:15 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0+sG3HK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A486C433C8;
+	Wed, 20 Dec 2023 09:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703064406;
+	bh=j222JJR/D8hXfjZV0XkzJEjLU8itQUo0kwMu0IT0jyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H0+sG3HKttzfQQ6tBgwUGrqhtUgzp4AWDqD/SE022vHvySXzgL4lNOcklYpx5S3S0
+	 lMaP3YoqiJIdk6awQJOmLbKjbv65rNp+P3nwzF/FSlKxm/tyhsPYv/3P/nhzu5hlv3
+	 Papeuj9WTYboalFcurYUPC4bLm900nuZg+4yeuxcoNQIFnYILOaYk7X1gzeiQmAimK
+	 KBl6Zhl01iEHpO267Dm2yxL+IHUI2aJLhPRQNmalIs+bjNjjnHwUi8A7yIsz1iVYnv
+	 GoVYQWp+gjCx9eOU1YEz6tCtfyMOhpROsKbZBy1tNVWBlVkOcDBy63FWxD/OpNl5uN
+	 FWODUjDgdLJjg==
+Received: from johan by xi.lan with local (Exim 4.96.2)
+	(envelope-from <johan@kernel.org>)
+	id 1rFsqh-0001A0-0v;
+	Wed, 20 Dec 2023 10:26:44 +0100
+Date: Wed, 20 Dec 2023 10:26:43 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	"Oliver F . Brown" <oliver.brown@oss.nxp.com>,
-	Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>
-Subject: Re: [PATCH 1/1] clk: imx: clk-imx8qxp: fix LVDS bypass, pixel and phy clocks
-Date: Wed, 20 Dec 2023 11:26:11 +0200
-Message-Id: <170306434511.107637.11193901614064155915.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231218122407.2757175-1-alexander.stein@ew.tq-group.com>
-References: <20231218122407.2757175-1-alexander.stein@ew.tq-group.com>
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 04/15] clk: qcom: gcc-sm6375: Add runtime PM
+Message-ID: <ZYKzU4FFCc9lnE-p@hovoldconsulting.com>
+References: <20230717-topic-branch_aon_cleanup-v3-0-3e31bce9c626@linaro.org>
+ <20230717-topic-branch_aon_cleanup-v3-4-3e31bce9c626@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230717-topic-branch_aon_cleanup-v3-4-3e31bce9c626@linaro.org>
 
+On Wed, Dec 20, 2023 at 01:30:45AM +0100, Konrad Dybcio wrote:
+> The GCC block on SM6375 is powered by the VDD_CX rail. We need to ensure
+> that CX is enabled to prevent unwanted power collapse 
 
-On Mon, 18 Dec 2023 13:24:07 +0100, Alexander Stein wrote:
-> To be compatibel with SCU firmware based on 1.15 a different clock
-> routing for LVDS is needed.
+As I pointed out earlier, this bit of the commit message is incorrect
+and misleading as the power domain will never be disabled until you
+enable runtime PM as part of this very patch:
+
+	https://lore.kernel.org/all/ZLaSpFFBzP_Yz5yY@hovoldconsulting.com/
+
+Specifically, genpd will not power off CX (at runtime) while the driver
+is bound when runtime PM is left disabled.
+
+> and that the
+> reference is dropped when unused so that the system can enter a
+> firmware-managed lower power state.
 > 
-> 
+> Enable runtime PM to keep the power flowing only when necessary.
 
-Applied, thanks!
+The rest is correct.
 
-[1/1] clk: imx: clk-imx8qxp: fix LVDS bypass, pixel and phy clocks
-      commit: 18e17b2a160382475a7e3211ce0acfb0dfbee633
-
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+Johan
