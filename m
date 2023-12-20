@@ -1,33 +1,33 @@
 Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A44917732;
-	Wed, 20 Dec 2023 07:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22DF168D5;
+	Wed, 20 Dec 2023 07:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="MDcUmSB4"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="aqewHPPW"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Sw4R8464Sz9spg;
-	Wed, 20 Dec 2023 08:08:36 +0100 (CET)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Sw4YS2tHnz9sp6;
+	Wed, 20 Dec 2023 08:14:04 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-	s=MBO0001; t=1703056116;
+	s=MBO0001; t=1703056444;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LpZoNtkkDCmi/GIcUCtUwUBihXR4v8Tro3usQTKcxlk=;
-	b=MDcUmSB4S9LKW4ZTc+NtSRMKxUEdcUnY0wn6l44qvlbFTTroJ8WZz5Qv8ECcVX6DcWjZEB
-	jQ3/re3xsmLKWlT56zs7kSvnpxqaGqUyTpFPXRYcHlxzWtOpgwLi842VLkgNnvurZyx3u/
-	pU8yvY2kHZV45dGMVHz4hRINvsyVJ0sWMFDjlDz9We995sS9ko94Wzrbqf0Zguf4yeuezP
-	Dp+RlKPjalQPUv2yalY2J3y9A07U/nS5YMDRzud4jdtIzGnBAI065q5SH+W7caLMt6wG06
-	yZODhREY6WZtsf7PhjmuFdeVjEA7uEAzTtE1kr3gkp/S35umgtp6o59UeK4Dkg==
+	bh=5JWAYPuW2w1S4QldNPnKh0l/fjpe1uHU+1lOR2wMdU0=;
+	b=aqewHPPWceld/vN8dMOtuujW1lrzIuiuwJzKUDlrCm/5bgQUqYB3yB3wupaAbprIDdvT3S
+	E0Z4gggq86mbLA9q8ui0llGLXNLQ47UXkdP9lx3NOVL0/k/J9PPq2Q5d+p58OsnUZoADD1
+	s5FlKWcrSAR0b6vJMSPqWd/Ne/RLgf/FdJyB9G+h9CrsLz1FwWTIGxt+x7kQnTQekWAVBw
+	z5+ACiE/uFS20YhQPE2IsU6qq1kBInaD5p1wvFr+QVkbU5K0FIqhlPAK88oVeTaakhkHaZ
+	bKquYn0TEz46x3Kf3Dwt0d/v03zuyUVCqkL4QucIBwA+dpgdra82zMhkl7P4tg==
 References: <20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev>
- <20231218-pinephone-pll-fixes-v1-1-e238b6ed6dc1@oltmanns.dev>
- <5736273.DvuYhMxLoT@jernej-laptop>
+ <20231218-pinephone-pll-fixes-v1-4-e238b6ed6dc1@oltmanns.dev>
+ <13411739.uLZWGnKmhe@jernej-laptop>
 From: Frank Oltmanns <frank@oltmanns.dev>
 To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -42,11 +42,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  Daniel Vetter <daniel@ffwll.ch>, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
  linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 1/5] clk: sunxi-ng: nkm: Support constraints on m/n
- ratio and parent rate
-Date: Wed, 20 Dec 2023 07:58:07 +0100
-In-reply-to: <5736273.DvuYhMxLoT@jernej-laptop>
-Message-ID: <87msu59wrc.fsf@oltmanns.dev>
+Subject: Re: [PATCH 4/5] clk: sunxi-ng: a64: Add constraints on PLL-VIDEO0's
+ n/m ratio
+Date: Wed, 20 Dec 2023 08:09:28 +0100
+In-reply-to: <13411739.uLZWGnKmhe@jernej-laptop>
+Message-ID: <87il4t9wi1.fsf@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,136 +56,72 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jernej!
 
-On 2023-12-19 at 17:46:08 +0100, Jernej =C5=A0krabec <jernej.skrabec@gmail.=
+On 2023-12-19 at 17:54:19 +0100, Jernej =C5=A0krabec <jernej.skrabec@gmail.=
 com> wrote:
-> Hi Frank!
->
-> Dne ponedeljek, 18. december 2023 ob 14:35:19 CET je Frank Oltmanns napis=
+> Dne ponedeljek, 18. december 2023 ob 14:35:22 CET je Frank Oltmanns napis=
 al(a):
->> The Allwinner A64 manual lists the following constraints for the
->> PLL-MIPI clock:
->>  - M/N >=3D 3
->
-> This should be "<=3D"
-
-Yes, good catch! I will fix it in V2.
-
->
->>  - (PLL_VIDEO0)/M >=3D 24MHz
+>> The Allwinner A64 manual lists the following constraint for the
+>> PLL-VIDEO0 clock: 8 <=3D N/M <=3D 25
 >>
->> The PLL-MIPI clock is implemented as ccu_nkm. Therefore, add support for
->> these constraints.
+>> Use this constraint.
 >>
 >> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
 >> ---
->>  drivers/clk/sunxi-ng/ccu_nkm.c | 23 +++++++++++++++++++++++
->>  drivers/clk/sunxi-ng/ccu_nkm.h |  8 ++++++++
->>  2 files changed, 31 insertions(+)
+>>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 8 ++++++--
+>>  1 file changed, 6 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_n=
-km.c
->> index eed64547ad42..2af5c1ebd527 100644
->> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
->> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
->> @@ -16,6 +16,20 @@ struct _ccu_nkm {
->>  	unsigned long	m, min_m, max_m;
->>  };
+>> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-n=
+g/ccu-sun50i-a64.c
+>> index c034ac027d1c..75d839da446c 100644
+>> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> @@ -68,7 +68,8 @@ static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_=
+clk, "pll-audio-base",
+>>  				       BIT(28),	/* lock */
+>>  				       CLK_SET_RATE_UNGATE);
 >>
->> +static bool ccu_nkm_is_valid_rate(struct ccu_common *common, unsigned l=
-ong parent,
->> +				  unsigned long n, unsigned long m)
->> +{
->> +	struct ccu_nkm *nkm =3D container_of(common, struct ccu_nkm, common);
->> +
->> +	if (nkm->max_mn_ratio && (m > nkm->max_mn_ratio * n))
->> +		return false;
->> +
->> +	if (nkm->parent_wo_nk && (parent < nkm->parent_wo_nk * m))
->> +		return false;
->> +
->> +	return true;
->> +}
->> +
->>  static unsigned long ccu_nkm_find_best_with_parent_adj(struct ccu_commo=
-n *common,
->>  						       struct clk_hw *parent_hw,
->>  						       unsigned long *parent, unsigned long rate,
->> @@ -32,6 +46,9 @@ static unsigned long ccu_nkm_find_best_with_parent_adj=
-(struct ccu_common *common
->>
->>  				tmp_parent =3D clk_hw_round_rate(parent_hw, rate * _m / (_n * _k));
->>
->> +				if (!ccu_nkm_is_valid_rate(common, tmp_parent, _n, _m))
->> +					continue;
->> +
->>  				tmp_rate =3D tmp_parent * _n * _k / _m;
->>
->>  				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate) ||
->> @@ -65,6 +82,12 @@ static unsigned long ccu_nkm_find_best(unsigned long =
-parent, unsigned long rate,
->>  	for (_k =3D nkm->min_k; _k <=3D nkm->max_k; _k++) {
->>  		for (_n =3D nkm->min_n; _n <=3D nkm->max_n; _n++) {
->>  			for (_m =3D nkm->min_m; _m <=3D nkm->max_m; _m++) {
->> +				if ((common->reg =3D=3D 0x040) && (_m > 3 * _n))
->> +					break;
->> +
->> +				if ((common->reg =3D=3D 0x040) && (parent < 24000000 * _m))
->> +					continue;
->> +
+>> -static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_CLOSEST(pll_video0_clk,=
+ "pll-video0",
+>> +static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_FEAT_NM_RATIO(pll_video=
+0_clk,
+>> +						"pll-video0",
+>>  						"osc24M", 0x010,
+>>  						192000000,	/* Minimum rate */
+>>  						1008000000,	/* Maximum rate */
+>> @@ -80,7 +81,10 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_CLOSE=
+ST(pll_video0_clk, "pll-vid
+>>  						297000000,	/* frac rate 1 */
+>>  						BIT(31),	/* gate */
+>>  						BIT(28),	/* lock */
+>> -						CLK_SET_RATE_UNGATE);
+>> +						CLK_SET_RATE_UNGATE,
+>> +						CCU_FEATURE_FRACTIONAL |
+>> +						CCU_FEATURE_CLOSEST_RATE,
 >
-> You already figured this part.
->
->>  				unsigned long tmp_rate;
->>
->>  				tmp_rate =3D parent * _n * _k / _m;
->> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_n=
-km.h
->> index 6601defb3f38..d3d3eaf55faf 100644
->> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
->> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
->> @@ -16,6 +16,12 @@
->>   * struct ccu_nkm - Definition of an N-K-M clock
->>   *
->>   * Clocks based on the formula parent * N * K / M
->> + *
->> + * @max_mn_ratio:	Maximum value for M / N.
->> + * @parent_wo_nk:	The minimum rate the parent must provide after applyi=
-ng the divisor,
->> + *			but without applying the multipliers, i.e. the contstraint
->> + *			   (parent rate)/M >=3D parent_wo_nk
->> + *			must be fulfilled.
->>   */
->>  struct ccu_nkm {
->>  	u32			enable;
->> @@ -27,6 +33,8 @@ struct ccu_nkm {
->>  	struct ccu_mux_internal	mux;
->>
->>  	unsigned int		fixed_post_div;
->> +	unsigned long		max_mn_ratio;
->> +	unsigned long           parent_wo_nk;
->
-> What about max_m_n_ratio and max_parent_m_ratio, to be consistent? This
-> should also allow to simplify description.
+> Above flags are unrelated change, put them in new patch if needed.
 
-Jernej, thank you so much! This is brilliant! I was racking my brain for
-a good name but failed. Now, that I see your proposal, I don't know why
-I hadn't come up with it. It's the obvious choice.
+You might notice that I am using a new macro for initializing the
+pll_video0_clk struct:
+New: SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_FEAT_NM_RATIO
+Old: SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_CLOSEST
 
-I'd say with the new names we should be able to get rid of the comments
-describing the new struct members (also in ccu_nm.h). What are your
-thoughts on that?
+Setting the two CCU_FEATURE flags is part of the old initialization
+macro.
 
-Best regards,
+I'll add SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_NM_RATIO_CLOSEST which
+hopefully resolves the confusion.
+
+Thanks,
   Frank
 
 >
 > Best regards,
 > Jernej
 >
+>> +						8, 25);		/* min/max nm ratio */
 >>
->>  	struct ccu_common	common;
->>  };
+>>  static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+>>  					"osc24M", 0x018,
 >>
 >>
