@@ -1,195 +1,207 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A100E25550
-	for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 13:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9803F2575E
+	for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 13:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="TCAa6qic"
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D0F5F3F337
-	for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 13:07:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1703077659;
-	bh=r0CdQOvCJT9PWx3Toc+lT3OhGIYfIqGUNbKWq1eVXYI=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=TCAa6qicb+3v71ugpp9XM6w+0IAsDWjZZb673vE5lom/+U4D3hq7Ei3OtBNqF5KmP
-	 1dGq+uDoGo6et5zy3gph09A5RbdmWHM8l9QkfOIzFyiny0e6FPMLTOorIOAqPYOig4
-	 fvJHAmV8r2b0ZZarN/brH+Kai6gffvVtIxg9mcv6TiioOCeeeamG1UckbPwAoQ/n8m
-	 cbdfHHuMRP4rO3seAHu5FQrJZdavMcyU/3mv48ws31MDXX+HM1PmnGxC8L5Dm6qr3b
-	 5axaQKlCWrzB8ucZRbyS7RMBN0WYmSQS2gY5PDrb/l53/UN3bphfcZlVgSoIaPkiu+
-	 2a/14UYqmotxA==
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-425b4c1b67cso91567751cf.2
-        for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 05:07:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xwe2KHft"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-553338313a0so4562102a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 05:13:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1703077996; x=1703682796; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8mjIzJV3RjJIW1MF2AtC1v/u605iygjkoFeiioUS6Nc=;
+        b=xwe2KHft0OobQJd8mlvsEvmcjjQ4MbvE5mxXAefZ0YmXuPOaZufbeyhMy7YvoUkDZH
+         qie4gmhKxLgUR2R5X0WEky7yjatE8UsPmujyAnNRmkBV873al+i1Zv4tUw4M7gzP+BE5
+         NIvkMjXZl7LgMH370zQxfV7La+/FTv+e//dbaUJ57q/d9/46Mmt+xCbxZlZxHEB5aKIQ
+         eTSXNHHc5Awrgq1apOb+C3hR7loXVQzELwSosCmpv4vAE9K27H1Q9fnq5OQLAaClBiax
+         8KSA6l4TZVUFBMOKMAjJ5Tb5aNcINLrCZKhp+sQkz+/i1lebpt6ahvNzQmf79k4aqYcT
+         jqbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703077658; x=1703682458;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r0CdQOvCJT9PWx3Toc+lT3OhGIYfIqGUNbKWq1eVXYI=;
-        b=MCW0cEUGdYH5kFmnHgvVMq3rQlXo+WCjsADMHKk1pVA0zRDe+Ox92SCe32w5HUOgC6
-         B96lqbPbC5Sr9LMvepWm7NK4/fm2H0M7FukOGfGzxHiV8oCO9YJ3Z8i2Iolmu5GCRYqK
-         dERoFUPW0HNGoEIpuYCBvwLA//6ylOrEuJL7f02sX9vkOWrLA2JTqU4lh2SvQAeNxvp2
-         3zCUJ7gYLl4ZG/pfDBskjBetNvVN5GFQsDcFVxweiDMbcDQE0uQ7H/UxWeztPmbHyJuP
-         tqRLoaFoA+b1Tat/DZh0eNDMpm/EZGQUrUwcFe+UMAmijPgyMaRel6eZ+wGrKSvBEKuq
-         7k/w==
-X-Gm-Message-State: AOJu0YzStlPLnW27oZ1gCOuyd8zS+fMgRhMuw38xCJgQGH0ZP39k3MAb
-	/2DSshDKyrtjKbVGX+qx1R5yb94tuoQ9L/dKFTWKiyY0r5YRo+OBTH1XmhKAaxRg4buWNnzIi8h
-	IVHX6A+B4TsK95MuoDrQrZ8R6w5NDivlkFj+NlhjmuRp1Xa7lm+gxXQ==
-X-Received: by 2002:a05:622a:151:b0:425:4043:41bb with SMTP id v17-20020a05622a015100b00425404341bbmr28425851qtw.103.1703077658762;
-        Wed, 20 Dec 2023 05:07:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEJQWo5S6Twjiqv7hVGH8pnzTy4jLVodY7mu7HWHHthSbK44x6228egaTi7uxjO35ZP2F5Yea0g4Py2XxfPUWM=
-X-Received: by 2002:a05:622a:151:b0:425:4043:41bb with SMTP id
- v17-20020a05622a015100b00425404341bbmr28425841qtw.103.1703077658527; Wed, 20
- Dec 2023 05:07:38 -0800 (PST)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 20 Dec 2023 05:07:38 -0800
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <07a8ac42184f440fae1b0d13db4e43cc@EXMBX066.cuchost.com>
-References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
- <20231206115000.295825-7-jeeheng.sia@starfivetech.com> <CAJM55Z_VgBGvCPuvwmQahMcMfuWKnOKpZ9bBbbhei_Teu5Apeg@mail.gmail.com>
- <9ae86c6786bc4ac7b93c971ba00084a6@EXMBX066.cuchost.com> <CAJM55Z9GVFGuwqe=zLXQvBwDfVSz4eA2EXDd4sqWVCKJF2J+fg@mail.gmail.com>
- <07a8ac42184f440fae1b0d13db4e43cc@EXMBX066.cuchost.com>
+        d=1e100.net; s=20230601; t=1703077996; x=1703682796;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8mjIzJV3RjJIW1MF2AtC1v/u605iygjkoFeiioUS6Nc=;
+        b=jM9zAd6AlobQQSrjrLQHJlQQcVI+IZ8SpLeoQ/vKj95LUczoF+l5+B2XFCbv88JMmV
+         j5KnPp8XT/3GxBMd6Hq8W5HoCX4Dc8xrvbuEJ4B3iiK3kGFVkXBeV9u2k5yFs57N8y9g
+         D4KfrIaKKQPQmcnJuJAbOJ0T7wj8QwT8/Hb149KUpc5sFSSnRN+BeiGpyDdDsI7O20Rj
+         YXEDgXGaaWqISyGSm8EfunKmgEsxuoN9iVdonub/kLsci4mFnnFBD1oaGIjKWLhNIC4h
+         xPfyC4Z3hJowLVTrUD/dlBFKuhhnmmVb+2eqWr1Q3tNxcu6/CGh/RLi5E9jdJ61SKIJg
+         pzew==
+X-Gm-Message-State: AOJu0YwSPL9m5zEiCRpEAE2IvspuvoivW72B0QXYY6ArSorkT/8hjlcU
+	5UCwLWFoocaSBm2CC0FZbWagOQ==
+X-Google-Smtp-Source: AGHT+IGbACnOOkpYqWxzz+CMsamhPRFNnZfrA10KciebDMBRwUY47VXZFQhLRFYVcrA2DcX98Ud3+w==
+X-Received: by 2002:a50:b402:0:b0:553:9fbc:11ef with SMTP id b2-20020a50b402000000b005539fbc11efmr1220009edh.56.1703077995815;
+        Wed, 20 Dec 2023 05:13:15 -0800 (PST)
+Received: from [192.168.199.59] (178235179206.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.206])
+        by smtp.gmail.com with ESMTPSA id f19-20020a056402195300b005537b00132asm2390633edz.91.2023.12.20.05.13.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Dec 2023 05:13:15 -0800 (PST)
+Message-ID: <5e1bbb3a-547a-40a0-975b-81802ac036b5@linaro.org>
+Date: Wed, 20 Dec 2023 14:13:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Wed, 20 Dec 2023 05:07:38 -0800
-Message-ID: <CAJM55Z9w3PdZMFNhTviBvu-2HE7CXdTVpLvgyecArvs=qa_J=A@mail.gmail.com>
-Subject: RE: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock generator driver
-To: JeeHeng Sia <jeeheng.sia@starfivetech.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, "kernel@esmil.dk" <kernel@esmil.dk>, 
-	"conor@kernel.org" <conor@kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
-	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	Hal Feng <hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Leyfoon Tan <leyfoon.tan@starfivetech.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/15] clk: qcom: gcc-sm6375: Add runtime PM
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20230717-topic-branch_aon_cleanup-v3-0-3e31bce9c626@linaro.org>
+ <20230717-topic-branch_aon_cleanup-v3-4-3e31bce9c626@linaro.org>
+ <ZYKzU4FFCc9lnE-p@hovoldconsulting.com>
+ <0cbdb9fb-9ad6-46c4-9d20-b0a766ab2629@linaro.org>
+ <ZYLij93-n1-OWpIp@hovoldconsulting.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <ZYLij93-n1-OWpIp@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-JeeHeng Sia wrote:
->
->
-> > -----Original Message-----
-> > From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > Sent: Wednesday, December 13, 2023 7:57 PM
-> > To: JeeHeng Sia <jeeheng.sia@starfivetech.com>; Emil Renner Berthing <emil.renner.berthing@canonical.com>; kernel@esmil.dk;
-> > conor@kernel.org; robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org; paul.walmsley@sifive.com; palmer@dabbelt.com;
-> > aou@eecs.berkeley.edu; mturquette@baylibre.com; sboyd@kernel.org; p.zabel@pengutronix.de; Hal Feng
-> > <hal.feng@starfivetech.com>; Xingyu Wu <xingyu.wu@starfivetech.com>
-> > Cc: linux-riscv@lists.infradead.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-clk@vger.kernel.org; Leyfoon Tan
-> > <leyfoon.tan@starfivetech.com>
-> > Subject: RE: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock generator driver
-> >
-> > JeeHeng Sia wrote:
-> > > > -----Original Message-----
-> > > > From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > > > Sent: Saturday, December 9, 2023 12:25 AM
-> > > > To: JeeHeng Sia <jeeheng.sia@starfivetech.com>; kernel@esmil.dk; conor@kernel.org; robh+dt@kernel.org;
-> > > > krzysztof.kozlowski+dt@linaro.org; paul.walmsley@sifive.com; palmer@dabbelt.com; aou@eecs.berkeley.edu;
-> > > > mturquette@baylibre.com; sboyd@kernel.org; p.zabel@pengutronix.de; emil.renner.berthing@canonical.com; Hal Feng
-> > > > <hal.feng@starfivetech.com>; Xingyu Wu <xingyu.wu@starfivetech.com>
-> > > > Cc: linux-riscv@lists.infradead.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-clk@vger.kernel.org; Leyfoon
-> > Tan
-> > > > <leyfoon.tan@starfivetech.com>
-> > > > Subject: Re: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock generator driver
-> > > >
-> > > > Sia Jee Heng wrote:
-> > > > > Add support for JH8100 System clock generator.
-> > > > >
-> > > > > Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
-> > > > > Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
-> > > > > ---
-> > > > >  MAINTAINERS                                   |   8 +
-> > > > >  drivers/clk/starfive/Kconfig                  |   9 +
-> > > > >  drivers/clk/starfive/Makefile                 |   1 +
-> > > > >  drivers/clk/starfive/clk-starfive-common.h    |   9 +-
-> > > > >  drivers/clk/starfive/jh8100/Makefile          |   3 +
-> > > > >  .../clk/starfive/jh8100/clk-starfive-jh8100.h |  11 +
-> > > > >  drivers/clk/starfive/jh8100/clk-sys.c         | 455 ++++++++++++++++++
-> > > > >  7 files changed, 495 insertions(+), 1 deletion(-)
-> > > > >  create mode 100644 drivers/clk/starfive/jh8100/Makefile
-> > > > >  create mode 100644 drivers/clk/starfive/jh8100/clk-starfive-jh8100.h
-> > > > >  create mode 100644 drivers/clk/starfive/jh8100/clk-sys.c
-> > ...
-> > > > > diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
-> > > > > index 012f7ee83f8e..6cb3ce823330 100644
-> > > > > --- a/drivers/clk/starfive/Makefile
-> > > > > +++ b/drivers/clk/starfive/Makefile
-> > > > > @@ -10,3 +10,4 @@ obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)	+= clk-starfive-jh7110-aon.o
-> > > > >  obj-$(CONFIG_CLK_STARFIVE_JH7110_STG)	+= clk-starfive-jh7110-stg.o
-> > > > >  obj-$(CONFIG_CLK_STARFIVE_JH7110_ISP)	+= clk-starfive-jh7110-isp.o
-> > > > >  obj-$(CONFIG_CLK_STARFIVE_JH7110_VOUT)	+= clk-starfive-jh7110-vout.o
-> > > > > +obj-$(CONFIG_CLK_STARFIVE_JH8100_SYS)	+= jh8100/
-> > > >
-> > > > I don't really see why do you need a special subdirectory for the JH8100? The
-> > > > JH7110 drivers do fine without it.
-> > > Each subfolder can represent a different platform, making it easier to
-> > > locate and maintain platform-specific code. Since the code is expected
-> > > to grow in the future, let's start organizing it in a folder-based structure
-> > > for easier maintenance at a later stage.
-> >
-> > Yes, but that's not what you're doing here. You're making just one of the 3
-> > almost identical drivers be different for no good reason.
-> >
-> > > > > diff --git a/drivers/clk/starfive/clk-starfive-common.h b/drivers/clk/starfive/clk-starfive-common.h
-> > > > > index fed45311360c..ec30af0658cf 100644
-> > > > > --- a/drivers/clk/starfive/clk-starfive-common.h
-> > > > > +++ b/drivers/clk/starfive/clk-starfive-common.h
-> > > > > @@ -103,6 +103,13 @@ struct starfive_clk_data {
-> > > > >  	.parents = { [0] = _parent },						\
-> > > > >  }
-> > > > >
-> > > > > +#define STARFIVE_GINV(_idx, _name, _flags, _parent)[_idx] = {			\
-> > > > > +	.name = _name,								\
-> > > > > +	.flags = _flags,							\
-> > > > > +	.max = STARFIVE_CLK_ENABLE | STARFIVE_CLK_INVERT,			\
-> > > > > +	.parents = { [0] = _parent },						\
-> > > > > +}
-> > > > > +
-> > > > >  struct starfive_clk {
-> > > > >  	struct clk_hw hw;
-> > > > >  	unsigned int idx;
-> > > > > @@ -114,7 +121,7 @@ struct starfive_clk_priv {
-> > > > >  	spinlock_t rmw_lock;
-> > > > >  	struct device *dev;
-> > > > >  	void __iomem *base;
-> > > > > -	struct clk_hw *pll[3];
-> > > > > +	struct clk_hw *pll[8];
-> > > >
-> > > > These extra slots are just used for fixed factor dummy PLLs right now, similar
-> > > > to how the JH7110 first used them and later had to rework drivers and device
-> > > > trees for the proper PLL driver.
-> > > Yes, its intention is similar to JH8100. We will submit other clock
-> > > domains and PLL at later stage but not so soon.
-> > > >
-> > > > This time around I'd much rather you work on getting the PLL driver in first,
-> > > > so we don't need all that churn.
-> > > I am sorry but we started development on FPGA. Unfortunately, the PLL driver
-> > > and other domains are planned to be finished at a later stage. I have tried
-> > > to minimize the churn as much as possible.
-> >
-> > It's awesome that you're beginning upstreaming early, but if you don't have
-> > this in silicon yet, how do you even know that this driver works?
-> >
-> > If you're just using this for testing on FPGAs you can create dummy fixed
-> > clocks in the device tree for the PLLs that this driver can consume.  Then
-> > later when you have a PLL driver you can replace those fixed clocks with the
-> > output of that driver.
-> The PLL fixed clocks were created in the C code. I interpret this message
-> as a suggestion to create a PLL fixed clock in the DT?
+On 20.12.2023 13:48, Johan Hovold wrote:
+> On Wed, Dec 20, 2023 at 01:26:55PM +0100, Konrad Dybcio wrote:
+>> On 20.12.2023 10:26, Johan Hovold wrote:
+>>> On Wed, Dec 20, 2023 at 01:30:45AM +0100, Konrad Dybcio wrote:
+>>>> The GCC block on SM6375 is powered by the VDD_CX rail. We need to ensure
+>>>> that CX is enabled to prevent unwanted power collapse 
+>>>
+>>> As I pointed out earlier, this bit of the commit message is incorrect
+>>> and misleading as the power domain will never be disabled until you
+>>> enable runtime PM as part of this very patch:
+>>>
+>>> 	https://lore.kernel.org/all/ZLaSpFFBzP_Yz5yY@hovoldconsulting.com/
+>>>
+>>> Specifically, genpd will not power off CX (at runtime) while the driver
+>>> is bound when runtime PM is left disabled.
+> 
+>> OK I only now see what you really meant.
+>>
+>> What this bit says is true, but it may be confusing within the context
+>> of this patch.
+> 
+> I'd say it's misleading since it suggests that something can currently
+> cause an "unwanted power collapse" which is not the case.
+> 
+>> The CX domain must be turned on [for the SoC to function], however this
+>> patch does not solve the issue of it being powered down [like you've said
+>> just binding the PD will keep it always-active for RPM-disabled devices].
+>> It complements this process, by allowing it to shut down when unnecessary.
+> 
+> Right, so just skip the misleading bits about "unwanted power collapse".
+> 
+>>>> and that the
+>>>> reference is dropped when unused so that the system can enter a
+>>>> firmware-managed lower power state.
+>>>>
+>>>> Enable runtime PM to keep the power flowing only when necessary.
+>>>
+>>> The rest is correct.
+> 
+>> Let me try to reword this and see if you like it:
+>>
+>>
+>> The GCC block on SM6375 is powered by the VDD_CX rail. The Device Tree
+>> description of this dependency lets Linux keep the rail online to prevent
+>> power outages. It is however undesirable to keep it enabled at all times,
+>> as that consumes additional power.
+> 
+> I'd skip or rephrase the second sentence myself.
+>  
+>> Moreover, failing to drop the "enabled" vote prevents firmware-managed,
+>> SoC-wide power collapse in suspend, which leads to even more wasted power.
+> 
+> However if this is what you meant by "firmware-managed lower power
+> state" then this is not correct either. genpd will still power off the
+> power domain during system suspend, regardless of whether a driver
+> implements runtime PM.
+Hm, right, I'm confusing runtime and system suspend in this message..
 
-Yes, then you don't need to change the clock driver and its bindings but just
-need to update the clock references to the PLL driver once you have that.
+> 
+>> Enable runtime PM to keep the power flowing only when necessary.
+> 
+> So I'm starting to question whether we need this at all. AFAIK CX is
+> never going to be disabled at runtime and this patch is not needed to
+> disable CX during system suspend.
+After a bit of reconsideration, I think it would still be useful in
+rare circumstances, i.e. when all of the peripherals are runtime
+suspended, but at least one consumer that doesn't depend on GCC isn't
+(some remote procs, venus on some platforms).
 
-/Emil
+Remoteprocs actually directly tap into RPM/RPMh themselves, so that
+may not be necessary, but with Venus I'm not sure.. Then again, running
+Venus without e.g. GCC-dependent storage seems counter-intuitive.
+
+Then I suppose adding RPM to GCC may not be necessary after all (at
+least on platforms that don't use any different collapsible power
+domains).. As opposed to disp/gpu/whatever_cc which usually come with
+either a different domain, or a hefty required-opp and aren't required
+to be on 24/7
+
+
+One last concern I have is, AFAICU currently CX is assumed by Linux
+to be the parent domain of all GDSCs within GCC (which is not true,
+but that's a separate topic). Can the PM core cope with properly
+dropping CX votes that are propagated up the chain?
+
+i.e. take this excerpt from sc8280xp.dtsi:
+
+// usb_0: usb@a6f8800
+power-domains = <&gcc USB30_PRIM_GDSC>;
+required-opps = <&rpmhpd_opp_nom>;
+
+will runtime suspending USB drop the NOM (val = 256) vote from CX
+if runtime PM is disabled for GCC? I may be totally mixing up
+genpd, OPP and RPM, but to my defense it's not particularly hard
+to do so :D
+
+Konrad
