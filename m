@@ -1,110 +1,100 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DEA74087
-	for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 13:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDE46519F
+	for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 13:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BSZBy9TH"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-5e7409797a1so8575997b3.0
-        for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 05:19:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sy3gvo9/"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40d3ae326f6so8080895e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 05:26:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703164740; x=1703769540; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=b8ug5EaGKVW0WhoWSS1hJEcFQ3IAHX23XrOOVlYG8qg=;
-        b=BSZBy9THCuKLT8vq5r2/WWdjY93OvKcEpLIa8oDGQOdl6SH8iFts7TLvhgYUz6+5oA
-         l0tl9TVdOUI08+3sgmApfHIVBlhvotlUhIgQj0B8l78QxLRU+jtzHl3anLuFi1YzVM7B
-         TezxYtFRVtFqN/nfsElRbCujuZ9EK6iGF7MVim9kCECAQ8w3ATLRkqJSRyZmbPNRZgp/
-         ykjwIAwEE5ws6imDgmGOj3K9LwUQ1NFJ713SE4n1OU685mUUUG1O4ssMcCL5ML5UYL7X
-         0Dk5nwa/60/THi2MbvrgKVErJ27TzqcaHHTe1HDzKEb0zgAn6Hu370hbkJWzYYeUknqP
-         ufkQ==
+        d=linaro.org; s=google; t=1703165209; x=1703770009; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SMPrASf3ODXGRhZpHsz7iXMp47vCIZq5ovBAGA4a71o=;
+        b=Sy3gvo9/EHraSGUSEoHDLjQGleobDL/EEQrRYLNwytsCliPxT/AOws7pt0nItHBBE3
+         dYKM0gGlg/bdIgj8nQzkPHndkgyRhsl13vTFA3idLFIsq/BiPvmrq3tVtnBFIahHxBWQ
+         B7opeDt/gzfDb6t/pQc07Ex9pdCGYxvYta1XGf9mHdXrlmqz9j2C/U2XprjDP1utuFJ/
+         +kPSantktg5HsO+YAVWYph9jMonlnCWVvB99heChfqc342XTXpOf8Mfxv69YB6z9HIx4
+         7BWqTETMb75ZWEUpbXsNV8RwZwEAm1WhmSO2e34jKeU7nv4qFYmCYmVbZQ2XWTi6H9QS
+         8Xjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703164740; x=1703769540;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1703165209; x=1703770009;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=b8ug5EaGKVW0WhoWSS1hJEcFQ3IAHX23XrOOVlYG8qg=;
-        b=KGsx4ebM65CElhZTO5Kk6CJu0YVMbE1asWdV4D1wJDxwNJzLT7yTSIuTEPWvQK5Ly3
-         8f9Uu0w72vZmjvbTUvQ4ktHcrSOh2lg7+1btLvJB53ybe6y7uRW2qUiY0uC8Duc9Nd+I
-         Orx2dEA+dD2PkrIzD4IeVozr35hjbrLYElfYg0An4KxtWe1EJRQScoZdg6FsTRSXztTt
-         klCVOu413JxOIviA/6qI6/DRorC6zX+baW9uMv+H5CboacEOkA2cKLeY1x/fSOJYV0UY
-         Z1BgTfgUrHNgIbH4+NYRoT1/Wucyban0r4ZMVxwmDL7/PdRqwLmwHTAD00eO74faauYg
-         oSSA==
-X-Gm-Message-State: AOJu0YwvFnaT8E08cssqxtuZfPpSP6IKSfXgBD0WA43wECu4EVbO0htN
-	BMSIHDJ+WyZIpFXYrdIK193BjfcxVuw9I3quyF2z0g==
-X-Google-Smtp-Source: AGHT+IFYBNlcgadWJtdLtAt234udD6Wwy4RWkjN5vQLR0MWREb+y+GVLkn1MUL0aiMRNq32Ibz3tPDqplZCKm1XH2kE=
-X-Received: by 2002:a81:9111:0:b0:5d7:5964:9c01 with SMTP id
- i17-20020a819111000000b005d759649c01mr1122176ywg.26.1703164740359; Thu, 21
- Dec 2023 05:19:00 -0800 (PST)
+        bh=SMPrASf3ODXGRhZpHsz7iXMp47vCIZq5ovBAGA4a71o=;
+        b=s3k13vT0fk+3SP3AeQTb8HNYfAatIAl7MsqULHFZV0DxaPGAc8boyDaTIgC+BSqn9h
+         qfIQ7T3SBjAcwcqAFNAyxKMvyPOR+jMDIRIXtpV9Ytzaj/fKs+feXcmefHUx7hnQn6Gp
+         biQ7zXghyi+Bi0R6kY2jSNRynFJZCS7hqLjtOO6QJBEI+wAVdpNk5i4737D4SAIptBKM
+         xbT/nJpnEw5D/U9pXT5VdSxqUetKALYM3e3ZL3qGc3Gw3/BY3e7GVHfjvMvVFp7mb2Nw
+         Yx+nyKaxE3T3qCSGdBtWn/g5gU4l0ThtrcPzqpi9iTP82ex1sxgEi54+PEfME/cSPhfS
+         NWbA==
+X-Gm-Message-State: AOJu0YzftO5j9dQLxygV3fxb/3x05s6V6jx4tBkKxBKEuNchxEaSVxGL
+	2/6R3yycQ/BWo5robl/DrTM7EQ==
+X-Google-Smtp-Source: AGHT+IEeghN5G3QXjl0IENGXHhTPSRqw9N5h3DGK3ORdaEBST8xwxARBbpDbhVI/iDBFrRNCqI6lNg==
+X-Received: by 2002:a05:600c:3d16:b0:40d:1748:d0b7 with SMTP id bh22-20020a05600c3d1600b0040d1748d0b7mr763385wmb.101.1703165209533;
+        Thu, 21 Dec 2023 05:26:49 -0800 (PST)
+Received: from hackbox.lan ([79.115.23.25])
+        by smtp.gmail.com with ESMTPSA id u4-20020a05600c138400b0040c03c3289bsm3338756wmf.37.2023.12.21.05.26.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Dec 2023 05:26:49 -0800 (PST)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: NXP Linux Team <linux-imx@nxp.com>,
+	linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.8
+Date: Thu, 21 Dec 2023 15:26:34 +0200
+Message-Id: <20231221132634.3008144-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231220-sa8295p-gpu-v1-0-d8cdf2257f97@quicinc.com>
- <20231220-sa8295p-gpu-v1-2-d8cdf2257f97@quicinc.com> <8d206362-7d80-46dc-8474-871fc53abc20@linaro.org>
- <CAA8EJpoEqKv_rWB8468WJzxqPA5w7u_zmGJJ0oKWAyaB9-f0eQ@mail.gmail.com> <35845077-7839-41bf-9eca-82f8b0be29ec@linaro.org>
-In-Reply-To: <35845077-7839-41bf-9eca-82f8b0be29ec@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 21 Dec 2023 15:18:49 +0200
-Message-ID: <CAA8EJppr0+=JxzXP1e9uP=8mGwCwWyi4wTYkM0ORm1Uf+2FPMA@mail.gmail.com>
-Subject: Re: [PATCH 2/8] clk: qcom: gdsc: Enable supply reglator in GPU GX handler
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <quic_bjorande@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Johan Hovold <johan+linaro@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 21 Dec 2023 at 15:16, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> On 21.12.2023 14:04, Dmitry Baryshkov wrote:
-> > On Thu, 21 Dec 2023 at 15:01, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
-> >>
-> >> On 21.12.2023 04:50, Bjorn Andersson wrote:
-> >>> The GX GDSC is modelled to aid the GMU in powering down the GPU in the
-> >>> event that the GPU crashes, so that it can be restarted again. But in
-> >>> the event that the power-domain is supplied through a dedicated
-> >>> regulator (in contrast to being a subdomin of another power-domain),
-> >>> something needs to turn that regulator on, both to make sure things are
-> >>> powered and to match the operation in gdsc_disable().
-> >>>
-> >>> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> >>> ---
-> >>>  drivers/clk/qcom/gdsc.c | 8 +++++++-
-> >>>  1 file changed, 7 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> >>> index 5358e28122ab..d1139c895503 100644
-> >>> --- a/drivers/clk/qcom/gdsc.c
-> >>> +++ b/drivers/clk/qcom/gdsc.c
-> >>> @@ -557,7 +557,13 @@ void gdsc_unregister(struct gdsc_desc *desc)
-> >>>   */
-> >>>  int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
-> >> I suppose the name is confusing now..
-> >>
-> >> But at the same time I can't come up with anything that's less than
-> >> like 6 words..
-> >
-> > gdsc_gx_enable() ;-)
-> except not really only gx and not really enable :(
->
-> gdsc_shared_enable would probably be closer to our current
-> nomenclature..
+The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
 
-gdsc_dummy_gx_enable*(
+  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
 
-Or gdsc_dummy_gmu_gx_enable(). Still less than 6 words. I'm trying my best!
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.8
 
--- 
-With best wishes
-Dmitry
+for you to fetch changes up to f52f00069888e410cec718792b3e314624f209ea:
+
+  clk: imx: pll14xx: change naming of fvco to fout (2023-12-21 15:00:00 +0200)
+
+----------------------------------------------------------------
+i.MX clocks changes for 6.8
+
+- Document bindings for i.MX93 ANATOP clock driver
+- Free clk_node in SCU driver for resource with different owner
+- Update the LVDS clocks to be compatible with SCU firmware 1.15
+- Fix the name of the fvco in pll14xx by renaming it to fout
+
+----------------------------------------------------------------
+Alexander Stein (1):
+      clk: imx: clk-imx8qxp: fix LVDS bypass, pixel and phy clocks
+
+Kuan-Wei Chiu (1):
+      clk: imx: scu: Fix memory leak in __imx_clk_gpr_scu()
+
+Peng Fan (1):
+      dt-bindings: clock: support i.MX93 ANATOP clock module
+
+Shengjiu Wang (1):
+      clk: imx: pll14xx: change naming of fvco to fout
+
+ .../bindings/clock/fsl,imx93-anatop.yaml           | 42 ++++++++++++++++++++++
+ drivers/clk/imx/clk-imx8qxp.c                      | 24 ++++++++++---
+ drivers/clk/imx/clk-pll14xx.c                      | 23 ++++++------
+ drivers/clk/imx/clk-scu.c                          |  4 ++-
+ 4 files changed, 77 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx93-anatop.yaml
