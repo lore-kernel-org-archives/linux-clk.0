@@ -1,92 +1,129 @@
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2085.outbound.protection.outlook.com [40.107.21.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F420920EA;
-	Thu, 21 Dec 2023 00:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-	by fd01.gateway.ufhost.com (Postfix) with ESMTP id 1B8027FDC;
-	Thu, 21 Dec 2023 08:45:41 +0800 (CST)
-Received: from EXMBX168.cuchost.com (172.16.6.78) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 21 Dec
- 2023 08:45:41 +0800
-Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX168.cuchost.com
- (172.16.6.78) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 21 Dec
- 2023 08:45:40 +0800
-Received: from EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f]) by
- EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f%17]) with mapi id
- 15.00.1497.044; Thu, 21 Dec 2023 08:45:40 +0800
-From: JeeHeng Sia <jeeheng.sia@starfivetech.com>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	"kernel@esmil.dk" <kernel@esmil.dk>, "conor@kernel.org" <conor@kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com"
-	<palmer@dabbelt.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "Hal
- Feng" <hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
-CC: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Leyfoon Tan
-	<leyfoon.tan@starfivetech.com>
-Subject: RE: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock generator
- driver
-Thread-Topic: [PATCH v1 06/16] clk: starfive: Add JH8100 System clock
- generator driver
-Thread-Index: AQHaKDp8qa+gHWDJHkGDh0MGWRuwVrCfD58AgAXCtdCAAc4FgIAK2SJwgAA69gCAAUjdgA==
-Date: Thu, 21 Dec 2023 00:45:40 +0000
-Message-ID: <442fd023a8bf43dfbb4991ac3eafbc05@EXMBX066.cuchost.com>
-References: <20231206115000.295825-1-jeeheng.sia@starfivetech.com>
- <20231206115000.295825-7-jeeheng.sia@starfivetech.com>
- <CAJM55Z_VgBGvCPuvwmQahMcMfuWKnOKpZ9bBbbhei_Teu5Apeg@mail.gmail.com>
- <9ae86c6786bc4ac7b93c971ba00084a6@EXMBX066.cuchost.com>
- <CAJM55Z9GVFGuwqe=zLXQvBwDfVSz4eA2EXDd4sqWVCKJF2J+fg@mail.gmail.com>
- <07a8ac42184f440fae1b0d13db4e43cc@EXMBX066.cuchost.com>
- <CAJM55Z9w3PdZMFNhTviBvu-2HE7CXdTVpLvgyecArvs=qa_J=A@mail.gmail.com>
-In-Reply-To: <CAJM55Z9w3PdZMFNhTviBvu-2HE7CXdTVpLvgyecArvs=qa_J=A@mail.gmail.com>
-Accept-Language: en-US, zh-CN
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1888817D9;
+	Thu, 21 Dec 2023 02:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="oA2lBVgR"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fGUIVCXjonmci0DAQl8SzjjXIJbSuYwrXUpNpAhQaancN4vG3Nevu5s3Wi8DpuuAY9cpmLGBXxq7ZXS9gadmOAQ1iAVNoXRY7rNsVsB1ZPsxTgxYmxkmrePjRFPRy6vYHq2RF/KUjXyCqPf/jLlX0A5mpbvVbCGBLa653xwJJg/XQsATjvC2svLjzh7X18/EZyy2IG6KRpdfAucm0VWaC1+rOb9mnOss80juqqI2+zY+he7blHE8DSFNKcakeh8koZTblwTC8Pg/YsOyE1vXsm5b7gOun2j9vc5L0B9AzlcKEGAYTLOgBs/ImE4aMnnqJ7WmEPsnLXTKWgqnNpxFQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GbFbbl8+tomK/oqOJUI/5s15qA4dfPiFr9d9i2QgQFc=;
+ b=Yf9Kfwh2OzY5BE8cig4vWA1V0gX9gMpulm5ltpFcrXi0bThjJtkySFURuhJFBuWdHXQnPOYqaGvQUIU9nAUnrCj6Ds/h9p7IulwHlEdVwsDSVKGtZrdy47Ip44YzysMiedFDr8wrqPwTNdkNh+6XiA/eWM7QEC1Hi7yEXIX5KesEt6/hM7OPp2oevFLcVCj/Zzqcsp4HEf0nIy/nKqYWz9BJeZlq46nIKUHjbbEZADSc0n9b/CKvvzmorGR3pYpk9aJyhsY0NTnIZPlCKpdXCoLv6z2GGrZWL9dJkG06D4yok9jrCoO+oSOamVBm/i0n6TEBFOCt6lEJu2pA6woSGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GbFbbl8+tomK/oqOJUI/5s15qA4dfPiFr9d9i2QgQFc=;
+ b=oA2lBVgRVMFzomYcf3mwRbZ/2/scPnZ70s1QwE8yu96eybenrf9ZZbdPfmFxHMsSqgvRDC4AWokbbJxPzRoXepgDytWxAtDXT+PQbPHc1JTsxPZYy6zIUdNe5gzWtFpflbVt33GMafl/r2ydzZ0+R1bezOQhFVVvYU8dkhlfEg4=
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by PR3PR04MB7449.eurprd04.prod.outlook.com (2603:10a6:102:86::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7113.20; Thu, 21 Dec
+ 2023 02:05:09 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::ff06:bbb2:c068:5fb3]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::ff06:bbb2:c068:5fb3%7]) with mapi id 15.20.7091.034; Thu, 21 Dec 2023
+ 02:05:08 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: "S.J. Wang" <shengjiu.wang@nxp.com>, "abelvesa@kernel.org"
+	<abelvesa@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, "shawnguo@kernel.org"
+	<shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com"
+	<festevam@gmail.com>, dl-linux-imx <linux-imx@nxp.com>,
+	"shengjiu.wang@gmail.com" <shengjiu.wang@gmail.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] clk: imx: pll14xx: change naming of fvco to fout
+Thread-Topic: [PATCH] clk: imx: pll14xx: change naming of fvco to fout
+Thread-Index: AQHaMzWy4uVAMs5zxUKHLot9Sv4Ov7Cy/azg
+Date: Thu, 21 Dec 2023 02:05:08 +0000
+Message-ID:
+ <DU0PR04MB94174727ED9DA25B57FB5EA88895A@DU0PR04MB9417.eurprd04.prod.outlook.com>
+References: <1703068389-6130-1-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <1703068389-6130-1-git-send-email-shengjiu.wang@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
-x-ms-exchange-transport-fromentityheader: Hosted
-x-yovoleruleagent: yovoleflag
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|PR3PR04MB7449:EE_
+x-ms-office365-filtering-correlation-id: c93a39eb-05c2-426f-1b08-08dc01c9421c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ 38VcFgIWpOiapVU7X7y3klFOhdFZgCTOPQnqQnK5/IGhxsnpBtAfhjPBQtlStilQ1fJVDWPsE47CHXBB6E5NouXr6aQX0TQub6NvEL1Zh87jA5LQZLhQItEu0vN/HSnCuJLdXc7Oy+hWrr6Ggwkj8Weg+Gwm9RyIEtVENa3SpIxgK6sS53oj+GuM2Ftrj9L4IAgD6bBIJBTv7CtW+lG5KvrVZttS4/EADvTLsUJYsSVN8/ZSnhkXo21wx4tKeFW7vS5wmSKlzD3u/Zqcb/FUnCvohjgJ1cOBlEp+q5ZRctvXLnzsCtVuns1Z9Qjc4c4/voKP3SZj87bcfrnQT01mYZhODI4VoPXCCXT6voIcbVF2so519w9UIzDa1SY5Ns3HSc+Fvv2Tv+4mqN7x14AzeJkyIbWhVF/IGzfyoY/QhNReA3t6wiDqG0XjnFt73wEK2JecZjQgzCjxjurywQv4b4fud9Ay0sFDXqKlC+XQWM5KJVSk4ei8aAB0/0xH+OJH73rNMZAtCqj+eecVwoiCqvtMHstAdDN0jy4HkKKaoeZrJ85E+flmXeqQTFHn5VLPxNXzfyJKMoqVXjiSaTx33Obx44iffDwjpi4ptFC0E/uw8OTape6ijp85I9V0gjeedGGQqgEcYb/l2kFNQAsLsw==
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(376002)(346002)(366004)(396003)(136003)(230922051799003)(1800799012)(64100799003)(186009)(451199024)(55016003)(26005)(9686003)(7696005)(6506007)(71200400001)(558084003)(86362001)(33656002)(921008)(38070700009)(38100700002)(5660300002)(7416002)(83380400001)(4326008)(8936002)(8676002)(41300700001)(52536014)(44832011)(122000001)(66476007)(66446008)(64756008)(54906003)(66946007)(66556008)(110136005)(76116006)(2906002)(316002)(478600001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?pqO6Kl3bh3GTuGmBjYKqxyLvlhsME2EdDpNiOQ/9Hbk+YlACkkvnPIjGcKC3?=
+ =?us-ascii?Q?uLgf2NskbX1JYzWnpuCjPQb/GxuOUdxYVOPkT5MWdkJXyLv7j18Ti8ouWJj3?=
+ =?us-ascii?Q?n1TI11VfLFXeHf3+G4+yyF6/m4FTGf1Ki7Ai/VhhSDmDf+E+OE7BDK6FR8F2?=
+ =?us-ascii?Q?lAhQ+HBiZAFBmnjMQHSrMaT+yClYIvifszmBEuuYgC5tL3/VNoYkGIuopRD2?=
+ =?us-ascii?Q?0GzOjRRNGopBYnGCNFgmJM1ZS2DUrChEkeWiYB3MRPov3wcaIGR+LjgKnvya?=
+ =?us-ascii?Q?fvOxo9MZnZ/nl3ZyaLiBHpydxe+JJb1c3p2QjjTCTbY248iDV4A8jV5xN4le?=
+ =?us-ascii?Q?FbzMKvOHxw0TtUY/zH+f+ASiYytEtobCz6RbXtrYtct2wYucbIWxkmAB3RaJ?=
+ =?us-ascii?Q?GbYBBg/Eg6EW108n9ZedyAeE9CqXO5Q5io2gBFkMA5TtguvvyKUWNUu+MaMn?=
+ =?us-ascii?Q?3t75TPrQ4iPuoex9yOFG4w2D3DoVqZmXUNDbYae53jYBPvEmfWiA5/II8FNY?=
+ =?us-ascii?Q?gOdWrlRYhvb5GAuGeo02yXM3kSzuwkt1nlpB6OZ7yl+wuIp4WDg0K/GL2dPx?=
+ =?us-ascii?Q?D+jGwOzQB6QJkc9QRdKF8ZPwiUvVH3CIa0s1hycfQzwjm0o0l2B/6KmEK3y3?=
+ =?us-ascii?Q?xrNw2fJMEF+Ln6ociBFWqyKZ/5eRUiGI7dr2QvhyZSRaBPdskEacgCjbHXfH?=
+ =?us-ascii?Q?fkI2ygkOoMNgnXtizKe38IqigYDpw1msdXs9FuwiHoKpdIEHbE1z89gflERs?=
+ =?us-ascii?Q?GmWF3rPYhAqd3aRyEeWfuZpVGSt5vtNGaxtqSscMU8NoeakV/urzeQw+jKfY?=
+ =?us-ascii?Q?3kJSY8tFCrQszlyd61Z9oVrtke3UbOqmBK0zua8DN9PhxvBFatvUJiPZNr8Y?=
+ =?us-ascii?Q?Db1elye0QjpdvN1MpLcyBsONto+cWZML2Ff6yr+sAvu+kq6rEb5M/oO+472V?=
+ =?us-ascii?Q?hL6A4HLi7LXI11J9Us90Vj5rlAXctYAyQT+svCMd1CEiMg4ds7bvHUvsBw6d?=
+ =?us-ascii?Q?PtdfKEhi0WGQEuv34igvxAjNtR+w68nlFp7+DRyJHMB59TUQ+ZE5bmYg6MTk?=
+ =?us-ascii?Q?nQfRSGZ7kJh9u+Nw6XaRHPBr+gYl+Ju+USE/jVDuDXzPlcXxkkRhz4KSwJRC?=
+ =?us-ascii?Q?254R29Y/Iwju8yS3GjYjkxf7dP71hfzBz0xIPEGRC6MB2/KpSSWe7ZDP6mio?=
+ =?us-ascii?Q?qWYk+St2nlq8GOHMb/kUJSOYzfYKlLgnhPPbWo6aFVLqS5+9sSsx/gmj9MxM?=
+ =?us-ascii?Q?7x5rSLu+E1ahrQn8JEZtArU8lKjIfWDJvy8wCHgX5RlRb9lXCnuSTHvdoHhb?=
+ =?us-ascii?Q?Z/gW0Cgm64Qy/3HgQXBu0RfDcnnLq7HS3ueDSPsVw4WKlDdqlUPcx/DGXYzO?=
+ =?us-ascii?Q?ijZ4bT+iQXiipl68uSAjUIGsn2pcOnKRFipdFU76kBHFQDzGLJASlfnTU374?=
+ =?us-ascii?Q?BTdOKyJeTt2EcpNDgG4umy25EZ3ZKHRovYtQT18KvtxyFhHZytiPWihKWMt/?=
+ =?us-ascii?Q?O8KOAtLyBJDdYTkC3ovi61uo3KBEVRt4OyVo0fTESdM0cN/KbVENi1NwjJqt?=
+ =?us-ascii?Q?z/n4SLzLzsYI3jzwiVI=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c93a39eb-05c2-426f-1b08-08dc01c9421c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Dec 2023 02:05:08.8761
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tdUmvayl7zKu9wNAckPi1asYSF42B1iE7YrXKMiYdoGulapZTGJ+6ZNrUnO4A6+TG/rQQ2xz9gjuhp1jxUzMuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7449
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRW1pbCBSZW5uZXIgQmVy
-dGhpbmcgPGVtaWwucmVubmVyLmJlcnRoaW5nQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IFdlZG5l
-c2RheSwgRGVjZW1iZXIgMjAsIDIwMjMgOTowOCBQTQ0KPiBUbzogSmVlSGVuZyBTaWEgPGplZWhl
-bmcuc2lhQHN0YXJmaXZldGVjaC5jb20+OyBFbWlsIFJlbm5lciBCZXJ0aGluZyA8ZW1pbC5yZW5u
-ZXIuYmVydGhpbmdAY2Fub25pY2FsLmNvbT47IGtlcm5lbEBlc21pbC5kazsNCj4gY29ub3JAa2Vy
-bmVsLm9yZzsgcm9iaCtkdEBrZXJuZWwub3JnOyBrcnp5c3p0b2Yua296bG93c2tpK2R0QGxpbmFy
-by5vcmc7IHBhdWwud2FsbXNsZXlAc2lmaXZlLmNvbTsgcGFsbWVyQGRhYmJlbHQuY29tOw0KPiBh
-b3VAZWVjcy5iZXJrZWxleS5lZHU7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzYm95ZEBrZXJu
-ZWwub3JnOyBwLnphYmVsQHBlbmd1dHJvbml4LmRlOyBIYWwgRmVuZw0KPiA8aGFsLmZlbmdAc3Rh
-cmZpdmV0ZWNoLmNvbT47IFhpbmd5dSBXdSA8eGluZ3l1Lnd1QHN0YXJmaXZldGVjaC5jb20+DQo+
-IENjOiBsaW51eC1yaXNjdkBsaXN0cy5pbmZyYWRlYWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtY2xrQHZnZXIua2Vy
-bmVsLm9yZzsgTGV5Zm9vbiBUYW4NCj4gPGxleWZvb24udGFuQHN0YXJmaXZldGVjaC5jb20+DQo+
-IFN1YmplY3Q6IFJFOiBbUEFUQ0ggdjEgMDYvMTZdIGNsazogc3RhcmZpdmU6IEFkZCBKSDgxMDAg
-U3lzdGVtIGNsb2NrIGdlbmVyYXRvciBkcml2ZXINCj4gDQo+IEplZUhlbmcgU2lhIHdyb3RlOg0K
-Wy4uLl0NCj4gPiA+DQo+ID4gPiBJZiB5b3UncmUganVzdCB1c2luZyB0aGlzIGZvciB0ZXN0aW5n
-IG9uIEZQR0FzIHlvdSBjYW4gY3JlYXRlIGR1bW15IGZpeGVkDQo+ID4gPiBjbG9ja3MgaW4gdGhl
-IGRldmljZSB0cmVlIGZvciB0aGUgUExMcyB0aGF0IHRoaXMgZHJpdmVyIGNhbiBjb25zdW1lLiAg
-VGhlbg0KPiA+ID4gbGF0ZXIgd2hlbiB5b3UgaGF2ZSBhIFBMTCBkcml2ZXIgeW91IGNhbiByZXBs
-YWNlIHRob3NlIGZpeGVkIGNsb2NrcyB3aXRoIHRoZQ0KPiA+ID4gb3V0cHV0IG9mIHRoYXQgZHJp
-dmVyLg0KPiA+IFRoZSBQTEwgZml4ZWQgY2xvY2tzIHdlcmUgY3JlYXRlZCBpbiB0aGUgQyBjb2Rl
-LiBJIGludGVycHJldCB0aGlzIG1lc3NhZ2UNCj4gPiBhcyBhIHN1Z2dlc3Rpb24gdG8gY3JlYXRl
-IGEgUExMIGZpeGVkIGNsb2NrIGluIHRoZSBEVD8NCj4gDQo+IFllcywgdGhlbiB5b3UgZG9uJ3Qg
-bmVlZCB0byBjaGFuZ2UgdGhlIGNsb2NrIGRyaXZlciBhbmQgaXRzIGJpbmRpbmdzIGJ1dCBqdXN0
-DQo+IG5lZWQgdG8gdXBkYXRlIHRoZSBjbG9jayByZWZlcmVuY2VzIHRvIHRoZSBQTEwgZHJpdmVy
-IG9uY2UgeW91IGhhdmUgdGhhdC4NCk9rLg0KPiANCj4gL0VtaWwNCg==
+> Subject: [PATCH] clk: imx: pll14xx: change naming of fvco to fout
+>=20
+> pll14xx_calc_rate() output the fout clock not the fvco clock The relation=
+ of
+> fvco and fout is:
+> 	fout =3D fvco / (1 << sdiv)
+>=20
+> So use correct naming for the clock.
+>=20
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
