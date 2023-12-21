@@ -1,100 +1,240 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDE46519F
-	for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 13:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A5736083;
+	Thu, 21 Dec 2023 13:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sy3gvo9/"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40d3ae326f6so8080895e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 05:26:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DgyhVxt3"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5d226f51f71so8682277b3.3;
+        Thu, 21 Dec 2023 05:43:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703165209; x=1703770009; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SMPrASf3ODXGRhZpHsz7iXMp47vCIZq5ovBAGA4a71o=;
-        b=Sy3gvo9/EHraSGUSEoHDLjQGleobDL/EEQrRYLNwytsCliPxT/AOws7pt0nItHBBE3
-         dYKM0gGlg/bdIgj8nQzkPHndkgyRhsl13vTFA3idLFIsq/BiPvmrq3tVtnBFIahHxBWQ
-         B7opeDt/gzfDb6t/pQc07Ex9pdCGYxvYta1XGf9mHdXrlmqz9j2C/U2XprjDP1utuFJ/
-         +kPSantktg5HsO+YAVWYph9jMonlnCWVvB99heChfqc342XTXpOf8Mfxv69YB6z9HIx4
-         7BWqTETMb75ZWEUpbXsNV8RwZwEAm1WhmSO2e34jKeU7nv4qFYmCYmVbZQ2XWTi6H9QS
-         8Xjg==
+        d=gmail.com; s=20230601; t=1703166211; x=1703771011; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rfYk2PbsAR6XkUVnp+faUk+Wc6BaNwbjiQpy58miDmQ=;
+        b=DgyhVxt37Z9fnoKokd1aJYMI9zXBgvAXJ8jcbqUBR6TOzJsc7kV2pSPviIz1k7hjF+
+         eCqDCwByFseZDD9fe/athdD5r4ysMRvygK3KWa3fxwMepX8+C/CyqS5PbC+VR0KuSMPP
+         4eFVvWOiw6UgoN2E8CBIU0N4/Gi6n6o/U7U9TsSPPx4VJPaszstuvgPQWE6cmbJQux3C
+         NknvSoKk8UWb2VSAg/PxlKiOpz8QmhGoOq+bMAYByoApKdw5Mc1r0reFVVBrxm3ijQg3
+         M12ifB2I8YcLBd1ioXn5S/I9xoMQj4+4QQXWcgbFUxYVzuc/E4ULVICHaqp8dOCzrXrp
+         Ptmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703165209; x=1703770009;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1703166211; x=1703771011;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SMPrASf3ODXGRhZpHsz7iXMp47vCIZq5ovBAGA4a71o=;
-        b=s3k13vT0fk+3SP3AeQTb8HNYfAatIAl7MsqULHFZV0DxaPGAc8boyDaTIgC+BSqn9h
-         qfIQ7T3SBjAcwcqAFNAyxKMvyPOR+jMDIRIXtpV9Ytzaj/fKs+feXcmefHUx7hnQn6Gp
-         biQ7zXghyi+Bi0R6kY2jSNRynFJZCS7hqLjtOO6QJBEI+wAVdpNk5i4737D4SAIptBKM
-         xbT/nJpnEw5D/U9pXT5VdSxqUetKALYM3e3ZL3qGc3Gw3/BY3e7GVHfjvMvVFp7mb2Nw
-         Yx+nyKaxE3T3qCSGdBtWn/g5gU4l0ThtrcPzqpi9iTP82ex1sxgEi54+PEfME/cSPhfS
-         NWbA==
-X-Gm-Message-State: AOJu0YzftO5j9dQLxygV3fxb/3x05s6V6jx4tBkKxBKEuNchxEaSVxGL
-	2/6R3yycQ/BWo5robl/DrTM7EQ==
-X-Google-Smtp-Source: AGHT+IEeghN5G3QXjl0IENGXHhTPSRqw9N5h3DGK3ORdaEBST8xwxARBbpDbhVI/iDBFrRNCqI6lNg==
-X-Received: by 2002:a05:600c:3d16:b0:40d:1748:d0b7 with SMTP id bh22-20020a05600c3d1600b0040d1748d0b7mr763385wmb.101.1703165209533;
-        Thu, 21 Dec 2023 05:26:49 -0800 (PST)
-Received: from hackbox.lan ([79.115.23.25])
-        by smtp.gmail.com with ESMTPSA id u4-20020a05600c138400b0040c03c3289bsm3338756wmf.37.2023.12.21.05.26.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Dec 2023 05:26:49 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: NXP Linux Team <linux-imx@nxp.com>,
-	linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] clk: imx: Updates for v6.8
-Date: Thu, 21 Dec 2023 15:26:34 +0200
-Message-Id: <20231221132634.3008144-1-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        bh=rfYk2PbsAR6XkUVnp+faUk+Wc6BaNwbjiQpy58miDmQ=;
+        b=TfkpzmNZu0qbkjIvKi6YoAjHe4+MOPQ5l6pX+UYMfDr2tExuZc4j74OyrwA+5+1WEu
+         1n3BoA4+oncNAedcptG5idCr6GGmw2Z8UIBH/RKbOJSKlvNAXgFIfpVzwT49eqZr417b
+         Us4Z1rYywNRz2slYCq/+uwv3Hb64pgF3cpeubxYTyWDZcx78JfJq2RHfAE67vHkviEHE
+         6Qw+b3bMqEo5IV43I6tVgPR2wGwD3NA/buXaVlqWBMGodEvwgyb+aECR60UhcFV4uVXy
+         xMPYAr47DYxB6oafxQWi/Xn71y7jaqNlGi3LOOyFp/P60t2SA7D6/Cjg+3DmEJ0tWkfM
+         3tlQ==
+X-Gm-Message-State: AOJu0YwaXMDCKia1yuX8T/UsI+no/6nvypLqTTo2qI+M07v0Cpzbjqxt
+	EhPhoQ3JaSAVnAfcgp4zH76dmflROMHrbPXuKyc=
+X-Google-Smtp-Source: AGHT+IEisUylWKTPxMtPd7GzMVMg817akVIJdXa3vlzhqH53i4gueNhmmidqStzwVmMFp0eYtYRq7NVu0exvWaK+xDg=
+X-Received: by 2002:a05:690c:2b8d:b0:5e9:d166:2438 with SMTP id
+ en13-20020a05690c2b8d00b005e9d1662438mr122149ywb.86.1703166211485; Thu, 21
+ Dec 2023 05:43:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231218170404.910153-1-tmaimon77@gmail.com> <7c322ab2ab59b434429ce471c148c026.sboyd@kernel.org>
+In-Reply-To: <7c322ab2ab59b434429ce471c148c026.sboyd@kernel.org>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Thu, 21 Dec 2023 15:43:20 +0200
+Message-ID: <CAP6Zq1gYJTRw9=w6cP3KXX2jg3SPk2KBqNrbcs9NoOs2JeUnAg@mail.gmail.com>
+Subject: Re: [PATCH RESEND v21] clk: npcm8xx: add clock controller
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: avifishman70@gmail.com, benjaminfair@google.com, joel@jms.id.au, 
+	mturquette@baylibre.com, tali.perry1@gmail.com, venture@google.com, 
+	yuenn@google.com, openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
+Hi Stephen,
 
-  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
+Thanks for your comments
 
-are available in the Git repository at:
+On Thu, 21 Dec 2023 at 00:09, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Tomer Maimon (2023-12-18 09:04:04)
+> > diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
+> > new file mode 100644
+> > index 000000000000..e6c5111cc255
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-npcm8xx.c
+> > @@ -0,0 +1,552 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Nuvoton NPCM8xx Clock Generator
+> > + * All the clocks are initialized by the bootloader, so this driver allows only
+> > + * reading of current settings directly from the hardware.
+> > + *
+> > + * Copyright (C) 2020 Nuvoton Technologies
+> > + * Author: Tomer Maimon <tomer.maimon@nuvoton.com>
+> > + */
+> > +
+> > +#define pr_fmt(fmt) "npcm8xx_clk: " fmt
+> > +
+> > +#include <linux/bitfield.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/err.h>
+> > +#include <linux/io.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/regmap.h>
+> [...]
+> > +#define NPCM8XX_CLK_S_CLKOUT      "clkout"
+> > +#define NPCM8XX_CLK_S_PRE_ADC     "pre adc"
+> > +#define NPCM8XX_CLK_S_UART        "uart"
+> > +#define NPCM8XX_CLK_S_UART2       "uart2"
+> > +#define NPCM8XX_CLK_S_TIMER       "timer"
+> > +#define NPCM8XX_CLK_S_MMC         "mmc"
+> > +#define NPCM8XX_CLK_S_SDHC        "sdhc"
+> > +#define NPCM8XX_CLK_S_ADC         "adc"
+> > +#define NPCM8XX_CLK_S_GFX         "gfx0_gfx1_mem"
+> > +#define NPCM8XX_CLK_S_USBIF       "serial_usbif"
+> > +#define NPCM8XX_CLK_S_USB_HOST    "usb_host"
+> > +#define NPCM8XX_CLK_S_USB_BRIDGE  "usb_bridge"
+> > +#define NPCM8XX_CLK_S_PCI         "pci"
+> > +#define NPCM8XX_CLK_S_TH          "th"
+> > +#define NPCM8XX_CLK_S_ATB         "atb"
+> > +#define NPCM8XX_CLK_S_PRE_CLK     "pre_clk"
+> > +#define NPCM8XX_CLK_S_RG         "rg"
+> > +#define NPCM8XX_CLK_S_RCP        "rcp"
+> > +
+> > +static struct clk_hw hw_pll1_div2, hw_pll2_div2, hw_gfx_div2, hw_pre_clk;
+> > +static struct npcm8xx_clk_pll_data npcm8xx_pll_clks[] = {
+> > +       { NPCM8XX_CLK_S_PLL0, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON0, 0 },
+>
+> This is a new driver, so please stop using .name in clk_parent_data
+> structures.
+A few versions ago you suggested defining the reference clock in the
+device tree,Can I use .fw_name since the reference clock in the device
+tree
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.8
+        refclk: refclk-25mhz {
+                compatible = "fixed-clock";
+                clock-output-names = "refclk";
+                clock-frequency = <25000000>;
+                #clock-cells = <0>;
+        };
 
-for you to fetch changes up to f52f00069888e410cec718792b3e314624f209ea:
+        clk: clock-controller@f0801000 {
+                 compatible = "nuvoton,npcm845-clk";
+                 nuvoton,sysclk = <&rst>;
+                 #clock-cells = <1>;
+                 clocks = <&refclk>;
+                 clock-names = "refclk";
+         };
 
-  clk: imx: pll14xx: change naming of fvco to fout (2023-12-21 15:00:00 +0200)
+I will make sure to add refclk-25mhz to NPCM8xx device tree.
+>
+> > +       { NPCM8XX_CLK_S_PLL1, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON1, 0 },
+> > +       { NPCM8XX_CLK_S_PLL2, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON2, 0 },
+> > +       { NPCM8XX_CLK_S_PLL_GFX, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCONG, 0 },
+> > +};
+> > +
+> > +static const u32 cpuck_mux_table[] = { 0, 1, 2, 7 };
+> > +static const struct clk_parent_data cpuck_mux_parents[] = {
+> > +       { .hw = &npcm8xx_pll_clks[0].hw },
+> > +       { .hw = &npcm8xx_pll_clks[1].hw },
+> > +       { .index = 0 },
+>
+> This requires a binding update. As of today, there isn't a 'clocks'
+> property for the nuvoton,npcm845-clk binding.
+Can I use fw_name = NPCM8XX_CLK_S_REFCLK instead of  .index = 0 in
+that way, I will not need to modify nuvoton,npcm845-clk binding.
+>
+> > +       { .hw = &npcm8xx_pll_clks[2].hw }
+> > +};
+> > +
+> > +static const u32 pixcksel_mux_table[] = { 0, 2 };
+> > +static const struct clk_parent_data pixcksel_mux_parents[] = {
+> > +       { .hw = &npcm8xx_pll_clks[3].hw },
+> > +       { .index = 0 }
+> > +};
+> > +
+> [...]
+> > +
+> > +/* configurable dividers: */
+> > +static struct npcm8xx_clk_div_data npcm8xx_divs[] = {
+> > +       { NPCM8XX_CLKDIV1, 28, 3, NPCM8XX_CLK_S_ADC, &npcm8xx_pre_divs[0].hw, CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_ADC },
+> > +       { NPCM8XX_CLKDIV1, 16, 5, NPCM8XX_CLK_S_UART, &npcm8xx_muxes[3].hw, 0, 0, NPCM8XX_CLK_UART },
+> > +       { NPCM8XX_CLKDIV1, 11, 5, NPCM8XX_CLK_S_MMC, &npcm8xx_muxes[2].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_MMC },
+> > +       { NPCM8XX_CLKDIV1, 6, 5, NPCM8XX_CLK_S_SPI3, &npcm8xx_pre_divs[1].hw, 0, 0, NPCM8XX_CLK_SPI3 },
+> > +       { NPCM8XX_CLKDIV1, 2, 4, NPCM8XX_CLK_S_PCI, &npcm8xx_muxes[7].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_PCI },
+> > +
+> > +       { NPCM8XX_CLKDIV2, 30, 2, NPCM8XX_CLK_S_APB4, &npcm8xx_pre_divs[1].hw, CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB4 },
+> > +       { NPCM8XX_CLKDIV2, 28, 2, NPCM8XX_CLK_S_APB3, &npcm8xx_pre_divs[1].hw, CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB3 },
+> > +       { NPCM8XX_CLKDIV2, 26, 2, NPCM8XX_CLK_S_APB2, &npcm8xx_pre_divs[1].hw, CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB2 },
+> > +       { NPCM8XX_CLKDIV2, 24, 2, NPCM8XX_CLK_S_APB1, &npcm8xx_pre_divs[1].hw, CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB1 },
+> > +       { NPCM8XX_CLKDIV2, 22, 2, NPCM8XX_CLK_S_APB5, &npcm8xx_pre_divs[1].hw, CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB5 },
+> > +       { NPCM8XX_CLKDIV2, 16, 5, NPCM8XX_CLK_S_CLKOUT, &npcm8xx_muxes[8].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_CLKOUT },
+> > +       { NPCM8XX_CLKDIV2, 13, 3, NPCM8XX_CLK_S_GFX, &npcm8xx_muxes[7].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_GFX },
+> > +       { NPCM8XX_CLKDIV2, 8, 5, NPCM8XX_CLK_S_USB_BRIDGE, &npcm8xx_muxes[4].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SU },
+>
+> Just put the string where there are any macros that are used once
+> please.
+O.K.
+>
+> > +       { NPCM8XX_CLKDIV2, 4, 4, NPCM8XX_CLK_S_USB_HOST, &npcm8xx_muxes[4].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SU48 },
+> > +       { NPCM8XX_CLKDIV2, 0, 4, NPCM8XX_CLK_S_SDHC, &npcm8xx_muxes[2].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SDHC },
+> > +
+> > +       { NPCM8XX_CLKDIV3, 16, 8, NPCM8XX_CLK_S_SPI1, &npcm8xx_pre_divs[1].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SPI1 },
+> > +       { NPCM8XX_CLKDIV3, 11, 5, NPCM8XX_CLK_S_UART2, &npcm8xx_muxes[3].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_UART2 },
+> > +       { NPCM8XX_CLKDIV3, 6, 5, NPCM8XX_CLK_S_SPI0, &npcm8xx_pre_divs[1].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SPI0 },
+> > +       { NPCM8XX_CLKDIV3, 1, 5, NPCM8XX_CLK_S_SPIX, &npcm8xx_pre_divs[1].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SPIX },
+> > +
+> > +       { NPCM8XX_CLKDIV4, 28, 4, NPCM8XX_CLK_S_RG, &npcm8xx_muxes[11].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_RG },
+> > +       { NPCM8XX_CLKDIV4, 12, 4, NPCM8XX_CLK_S_RCP, &npcm8xx_muxes[12].hw, CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_RCP },
+> > +
+> > +       { NPCM8XX_THRTL_CNT, 0, 2, NPCM8XX_CLK_S_TH, &npcm8xx_muxes[0].hw, CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_TH },
+> > +};
+> > +
+> [...]
+> > +
+> > +static int npcm8xx_clk_probe(struct platform_device *pdev)
+> > +{
+> > +       struct clk_hw_onecell_data *npcm8xx_clk_data;
+> > +       struct device_node *np = pdev->dev.of_node;
+> > +       struct device *dev = &pdev->dev;
+> > +       struct regmap *clk_regmap;
+> > +       struct clk_hw *hw;
+> > +       unsigned int i;
+> > +
+> > +       npcm8xx_clk_data = devm_kzalloc(dev, struct_size(npcm8xx_clk_data, hws,
+> > +                                                        NPCM8XX_NUM_CLOCKS),
+> > +                                       GFP_KERNEL);
+> > +       if (!npcm8xx_clk_data)
+> > +               return -ENOMEM;
+> > +
+> > +       clk_regmap = syscon_regmap_lookup_by_phandle(np, "nuvoton,sysclk");
+>
+> I don't see this as part of the binding either. Please update the
+> binding.
+O.K.
+>
+> > +       if (IS_ERR(clk_regmap)) {
+> > +               dev_err(&pdev->dev, "Failed to find nuvoton,sysclk\n");
+> > +               return PTR_ERR(clk_regmap);
+> > +       }
+> > +
+> > +       npcm8xx_clk_data->num = NPCM8XX_NUM_CLOCKS;
+> > +
+> > +       for (i = 0; i < NPCM8XX_NUM_CLOCKS; i++)
+> > +               npcm8xx_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+> > +
+> > +       /* Register plls */
 
-----------------------------------------------------------------
-i.MX clocks changes for 6.8
+Best regards,
 
-- Document bindings for i.MX93 ANATOP clock driver
-- Free clk_node in SCU driver for resource with different owner
-- Update the LVDS clocks to be compatible with SCU firmware 1.15
-- Fix the name of the fvco in pll14xx by renaming it to fout
-
-----------------------------------------------------------------
-Alexander Stein (1):
-      clk: imx: clk-imx8qxp: fix LVDS bypass, pixel and phy clocks
-
-Kuan-Wei Chiu (1):
-      clk: imx: scu: Fix memory leak in __imx_clk_gpr_scu()
-
-Peng Fan (1):
-      dt-bindings: clock: support i.MX93 ANATOP clock module
-
-Shengjiu Wang (1):
-      clk: imx: pll14xx: change naming of fvco to fout
-
- .../bindings/clock/fsl,imx93-anatop.yaml           | 42 ++++++++++++++++++++++
- drivers/clk/imx/clk-imx8qxp.c                      | 24 ++++++++++---
- drivers/clk/imx/clk-pll14xx.c                      | 23 ++++++------
- drivers/clk/imx/clk-scu.c                          |  4 ++-
- 4 files changed, 77 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx93-anatop.yaml
+Tomer
