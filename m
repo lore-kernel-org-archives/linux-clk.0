@@ -1,23 +1,23 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102098C18;
-	Thu, 21 Dec 2023 04:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E042B654;
+	Thu, 21 Dec 2023 05:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxyFw2L2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 740A6C433C8;
-	Thu, 21 Dec 2023 04:58:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTzpHbY0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5465BC433C7;
+	Thu, 21 Dec 2023 05:02:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703134699;
-	bh=Y7Unia0MjNq+xhf/SdLTJJEFwi9X+AFo3gAm06VmdUg=;
+	s=k20201202; t=1703134930;
+	bh=zntg2Srs2s2c96faHqg2OXqoNhfSS5jKTqCwm/IUeKs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=PxyFw2L2iNUVJDzrI9VTkR9HhM5eCtfp2BT4lZrs1fnvEIImg/gjyB6xjjz/yUlRH
-	 kmA6C8Z8254W2usVvRjg+tii8pqDFZLcG22/41Em1eK8FQCHASjyiuJtisaudxFi6H
-	 nIzODL3DWKdPXRIFhmB0jQ0VWYf8WLJuuSq+G1kRSjuHCGaQOGP+hEjUJ3G4e+Fii0
-	 u/3bZm3JnAQUcX/k8ay839dsQZTtcLEISWmMSnHtiGMJPFfSuZvWN8MHI/F//XpWbq
-	 u4Dh1HHr+adP6d/bolTLU/vuoWK3CioN8cUNyrwRIWQ540q5f9//kFmBNUhsQTLfFH
-	 VbT7LcPPQBJug==
-Message-ID: <ad35ba42d316a51626a031c4d7d3485c.sboyd@kernel.org>
+	b=OTzpHbY065f7WY5n+aAc9rAgTRq09cwEnMU6bKWP0FDhxFLRW2UMo7i8sx5gKqZzf
+	 OsrNJFlBJD+iBXI7A+n8TZDtr9D02FiRTSGjo81K3AxExQAHwgsSNBpVnD2aju7Sq9
+	 P4uF9JNAbEhZYOYthQiWY7unydXBRs8g2S2p0Y51yqD6J/DI1s3gBtufJ5LA8PDnie
+	 fp40kyyaDjCD0YsBpicFna3ZnrAmSzeThrGpFR3Nzup14CPKkVNhN+hPMKp74EulPr
+	 jUBJ1bLGbDtrvZKU6foRT+wjLlOQATmKV0dINhEsgJpFpy8GUSl9s9oKN9j47IYCua
+	 A4KXqu65/atNw==
+Message-ID: <057db34aae21f78ca68ca0cc2930c97f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -26,25 +26,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <IA1PR20MB49535E448097F6FFC1218C39BB90A@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB495354167CE560FC18E28DC5BB90A@IA1PR20MB4953.namprd20.prod.outlook.com> <IA1PR20MB49535E448097F6FFC1218C39BB90A@IA1PR20MB4953.namprd20.prod.outlook.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: clock: sophgo: Add clock controller of CV1800 series SoC
+In-Reply-To: <20231215115914.11588-3-zhifeng.tang@unisoc.com>
+References: <20231215115914.11588-1-zhifeng.tang@unisoc.com> <20231215115914.11588-3-zhifeng.tang@unisoc.com>
+Subject: Re: [PATCH V3 2/3] clk: sprd: Add reset controller driver for ums512
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Liu Gui <kenneth.liu@sophgo.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Jingbao Qiu <qiujingbao.dlmu@gmail.com>, dlan@gentoo.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Albert Ou <aou@eecs.berkeley.edu>, Chao Wei <chao.wei@sophgo.com>, Chen Wang <unicorn_wang@outlook.com>, Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh+dt@kernel.org>
-Date: Wed, 20 Dec 2023 20:58:17 -0800
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Zhifeng Tang <zhifeng.tang23@gmail.com>, Wenming Wu <wenming.wu@unisoc.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Orson Zhai <orsonzhai@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Zhifeng Tang <zhifeng.tang@unisoc.com>
+Date: Wed, 20 Dec 2023 21:02:07 -0800
 User-Agent: alot/0.10
 
-Quoting Inochi Amaoto (2023-12-17 20:04:03)
-> Add definition for the clock controller of the CV1800 series SoC.
+Quoting Zhifeng Tang (2023-12-15 03:59:13)
+> From: "zhifeng.tang" <zhifeng.tang@unisoc.com>
 >=20
-> For CV181X, it has a clock that CV180X does not have. To avoid misuse,
-> also add a compatible string to identify CV181X series SoC.
->=20
-> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
-> Link: https://github.com/milkv-duo/duo-files/blob/main/hardware/CV1800B/C=
-V1800B-CV1801B-Preliminary-Datasheet-full-en.pdf
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> Add reset controller driver for ums512,The reset register has
+> the same base address as the gate register.
 
-Applied to clk-next
+This looks largely self contained. Can you make this an auxiliary device
+and put the driver into drivers/reset/? Then we can logically review it
+by reset drivers and possibly find commonality across other reset
+devices.
