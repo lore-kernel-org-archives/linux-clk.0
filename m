@@ -1,105 +1,141 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C259ED310
-	for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 07:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D60DC2C6
+	for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 07:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tO0NeL63"
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5e3338663b2so4859077b3.2
-        for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 23:10:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K2fjoXIZ"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3333b46f26aso390812f8f.1
+        for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 23:20:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703142640; x=1703747440; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WHrUuj/exnxtqW6ATNiyZLpsPQWVa7uaSIxTrPoZquM=;
-        b=tO0NeL63IdYPXPxX0pV68W+rwjfNWyVIWgBqth4Y9W2+KjFZIVmO0PyEkQKiI8rDrM
-         UsXRnTwZ0HvtPz5RhE8hgIGZ3REE8YKZnU1UXJF3+oZhkHr0P/hBZMXsH3Wa2mRnlURO
-         0EmKLXiccwiS+XC8Ji8smAgL0k+fK6pSGbski5OyAqf/on4jyGdGStXE2p1v7i8wSMYU
-         +w/e6PVV6yevFjJbbyu8fwbmnvGaoKttDTXF1Q+ye5KYGEN8RfeaQNLGYgsa4258Ip6T
-         9Od9bmV/gPKJRQm9tW+PGfdaZccg5RHeiYh1cmDgmVnuLz7HbvU8uKOmSLWCOeR21wSw
-         HO6g==
+        d=linaro.org; s=google; t=1703143238; x=1703748038; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GKgaUl17rtgLH3n5Nekpmxk62rNTTUXnQZ16qpZCttA=;
+        b=K2fjoXIZY8+9Mb+HnansQ8TclG5/mU+IypXhIHjQ6TeyiEBqk5leQy7pWHIuwxYnsv
+         sL4eyaBzs/JaPymTqDv2SMebwuLTYTeFkzOdr4PwsCIcltu1FL6zlHrAUkcZ0ZdJaXsd
+         5D/cjK8I4yrzpwcXUs9Zt2njub5qnRbFq6Yl1TcAN4C1JtJnOTZH4d1zdZJxWvl1Myno
+         P9Fnb5rYK/onQ6Yg5P3hjzMH8uMQfh2q6tUA98qGilRHgECpeIGV14m9kxk6f2MbgWgI
+         hKnlMCDx3zLzumTqMeMGjdPxjX32FT3+znu55rwj3XU8WGniWjb8O+KpHo9mW4HdCXbK
+         uGQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703142640; x=1703747440;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WHrUuj/exnxtqW6ATNiyZLpsPQWVa7uaSIxTrPoZquM=;
-        b=D22o9FBhAZ3Sl+9v9aBzDfW+KkN6NEPle6MbZtiTQvvm8nNSxHiyDJ4ye+d//ZVr6L
-         8F3zNUiJuvEqX+qrU8vVmRg92VUR6HteqNFeDu3cT4G2L/OOgOkP4Xy/qAeN73uKaHOX
-         jdhCvRanN7/mkkZJ5fecNpWZOQ5xdyfaY3gfACqk3/F3H6N9mILxHWuRUmkOqrD6WQOQ
-         5ugKKlmCn36/7yz+MXc5fY2RmY+Qp/snyflST2wsYrLNjhtS3bV7wLYuaFvQJjbrjVf1
-         XxbbKRUfs/+XEHlmvKstFGKYgjqXbQcEccjKFtgZViiwgES/DmT2creV1lqS9g2Mdgp3
-         xw4g==
-X-Gm-Message-State: AOJu0YzuPG+CSVe6kk+PDTBBgwBfbK3LQcoudbGiBEQc3427+QPPaMdJ
-	21f87nqI2q+PxxxyXLJ2qInv0Si/mjax3AiHG13r8A==
-X-Google-Smtp-Source: AGHT+IGRR27RkAophues2zxqhga4xK/qpUWevFXi9jLY9oKVDFwq/l8z/fjbSH4UxmtcklXyorPamjQRQZdQ3pww8kM=
-X-Received: by 2002:a81:bb46:0:b0:5e7:83a7:4e4 with SMTP id
- a6-20020a81bb46000000b005e783a704e4mr848083ywl.74.1703142639759; Wed, 20 Dec
- 2023 23:10:39 -0800 (PST)
+        d=1e100.net; s=20230601; t=1703143238; x=1703748038;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GKgaUl17rtgLH3n5Nekpmxk62rNTTUXnQZ16qpZCttA=;
+        b=R+Gs4uaP3ubqlWJ2wau186P9IT4sh9PgG1MfC+lf1ExrRrbt8b3hmdWcWa5M1DejT/
+         IjjniBrx8Gyhk74vj4AT64iXiSGEmCg8D5BvvbeuIEQTsoa1JhIT50r0th3TpO9BOozZ
+         lf9qK+cGdru1qQPF0CUifnaWtiJQCj1cUQOXKvPJ4FHEs5r07ybXaUx/rzZMH3gxtkd8
+         pyvLrgUGCcPthEwyg7Xx05v1cNWyRsOhITVv5ArU6+hcSDnEtpIwgBQwtMU0w1B2qG95
+         xuyAMvd/JqMAujZhOpni56ficiyOuJ1c3TojNNkwO9VKe+ryuroj7Aqzw8yRCTZVMOKa
+         qrwA==
+X-Gm-Message-State: AOJu0Yw3tJUbQioMSeMeFS6rGemyJoHACF8Yg15Ar1MzBXVIvAfmoerh
+	fSFkOykaKkqksrqErG3wO2Ws6g==
+X-Google-Smtp-Source: AGHT+IFwrccjq4OlxK7GpmI32IQnSqqd4iZqJH5Arxx9LuH27eRxzL6EpPLkfL0R+/1RZBQgSya6rA==
+X-Received: by 2002:a5d:5918:0:b0:336:8af1:5127 with SMTP id v24-20020a5d5918000000b003368af15127mr161271wrd.97.1703143238648;
+        Wed, 20 Dec 2023 23:20:38 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id w9-20020a5d6809000000b00336768f52fesm1310663wru.63.2023.12.20.23.20.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Dec 2023 23:20:38 -0800 (PST)
+Message-ID: <173b06ab-2518-49ee-a67f-85256bc5b6a7@linaro.org>
+Date: Thu, 21 Dec 2023 07:20:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231220-sa8295p-gpu-v1-0-d8cdf2257f97@quicinc.com>
- <20231220-sa8295p-gpu-v1-1-d8cdf2257f97@quicinc.com> <CAA8EJprRjRJsV5hPR6mzjgucKa8UEthJd-y573aYJH0P8QRWqw@mail.gmail.com>
-In-Reply-To: <CAA8EJprRjRJsV5hPR6mzjgucKa8UEthJd-y573aYJH0P8QRWqw@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 21 Dec 2023 09:10:28 +0200
-Message-ID: <CAA8EJpqgcOJHUFHtrTEE0T+jtQqdv3RGm-eTuVVa0ama_eFssQ@mail.gmail.com>
-Subject: Re: [PATCH 1/8] dt-bindings: clock: qcom: Allow VDD_GFX supply to GX
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Johan Hovold <johan+linaro@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/13] dt-bindings: clock: google,gs101-clock: add PERIC0
+ clock management unit
+To: Rob Herring <robh@kernel.org>
+Cc: peter.griffin@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
+ andi.shyti@kernel.org, alim.akhtar@samsung.com, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+ s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com,
+ arnd@arndb.de, semen.protsenko@linaro.org, andre.draszik@linaro.org,
+ saravanak@google.com, willmcvicker@google.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
+ <20231214105243.3707730-3-tudor.ambarus@linaro.org>
+ <20231220150726.GA223267-robh@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20231220150726.GA223267-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 21 Dec 2023 at 09:03, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
+
+
+On 12/20/23 15:07, Rob Herring wrote:
+> On Thu, Dec 14, 2023 at 10:52:32AM +0000, Tudor Ambarus wrote:
+>> Add dt-schema documentation for the Connectivity Peripheral 0 (PERIC0)
+>> clock management unit.
+>>
+>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> ---
+>>  .../bindings/clock/google,gs101-clock.yaml    | 25 +++++-
+>>  include/dt-bindings/clock/google,gs101.h      | 86 +++++++++++++++++++
+>>  2 files changed, 109 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>> index 3eebc03a309b..ba54c13c55bc 100644
+>> --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>> @@ -30,14 +30,15 @@ properties:
+>>        - google,gs101-cmu-top
+>>        - google,gs101-cmu-apm
+>>        - google,gs101-cmu-misc
+>> +      - google,gs101-cmu-peric0
+>>  
+>>    clocks:
+>>      minItems: 1
+>> -    maxItems: 2
+>> +    maxItems: 3
+>>  
+>>    clock-names:
+>>      minItems: 1
+>> -    maxItems: 2
+>> +    maxItems: 3
+>>  
+>>    "#clock-cells":
+>>      const: 1
+>> @@ -88,6 +89,26 @@ allOf:
+>>              - const: dout_cmu_misc_bus
+>>              - const: dout_cmu_misc_sss
+>>  
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: google,gs101-cmu-peric0
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (24.576 MHz)
+>> +            - description: Connectivity Peripheral 0 bus clock (from CMU_TOP)
+>> +            - description: Connectivity Peripheral 0 IP clock (from CMU_TOP)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +            - const: dout_cmu_peric0_bus
+>> +            - const: dout_cmu_peric0_ip
+> 
+> 'bus' and 'ip' are sufficient because naming is local to the module. The 
+> same is true on 'dout_cmu_misc_bus'. As that has not made a release, 
+> please fix all of them.
 >
-> On Thu, 21 Dec 2023 at 05:51, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
-> >
-> > In some designs the SoC's VDD_GFX pads are supplied by an external
-> > regulator, rather than a power-domain. Allow this to be described in the
-> > GPU clock controller binding.
-> >
-> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> > ---
-> >  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > index f369fa34e00c..013ef78d2b31 100644
-> > --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > @@ -53,6 +53,9 @@ properties:
-> >    power-domains:
-> >      maxItems: 1
-> >
-> > +  vdd-gfx-supply:
-> > +    description: Regulator supply for the VDD_GFX pads
-> > +
-> >    '#clock-cells':
-> >      const: 1
->
-> I think it might be good to restrict this property to a particular
-> platform (via if:not:properties:compatible:contains
-> then:properties:vdd-gfx-supply:false).
 
-After reading the last patches in the series, there is another
-suggestion. Maybe we should explicitly say that there should be either
-power-domains or vdd-gfx-supply, but not both.
-
-
--- 
-With best wishes
-Dmitry
+Ok, will fix them shortly. Thanks, Rob!
