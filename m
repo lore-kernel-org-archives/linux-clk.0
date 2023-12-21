@@ -1,56 +1,55 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3D511735
-	for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 07:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7414CC2C6
+	for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 07:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XYHsmNPu"
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5e76948cda7so4852947b3.3
-        for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 23:06:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PY7vT8jZ"
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-5e778e484dbso5590217b3.0
+        for <linux-clk@vger.kernel.org>; Wed, 20 Dec 2023 23:08:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703142413; x=1703747213; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1703142483; x=1703747283; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QNHYVgnLPt/LzJzhIcgZKNBcgN77jkKMYOnDB6Gfkds=;
-        b=XYHsmNPue9gGZ8BoP3Q30jWC0VwtrjYNYpNjPPAjeZE1EFiJcZUANDHL7udzKEmBWj
-         g7R2qRbVBK9qw63VsCoJtfDhmbs5FrdIb3qq1EXJzUyJKynmAsd+yjl+BwidQbT0dwe3
-         xGqyxPbYjwCHbyyojuoAtOzYqx0dtYpQ1ERHgF0h0w2Fn62nSfyjvyYxI0kMK0XB8Jrs
-         C9XIHp/7Y/rHLJ+I0wFQWDKrPI3axxoxUhjpNdevZ6jNYvZqRqJhw2Ijb3ESMrNpTMPA
-         RryxIo4ziW7RbGEjybJzGX/0zMYtIWGiWWpoJJqEqNzDBykaNtsVAgy39dJPNpvWIpXa
-         sipQ==
+        bh=x3mqWSg4PAag/N8HBMk+GPM7NiqUuxDSinfcR+EyoZg=;
+        b=PY7vT8jZP3nkYNsSaZr+1CtHZHTrAPvNAr8kHQKXpZLxFWykaWFxaCKscuXveJmzMV
+         KpziNfR0yUSvW7CK4Z2r/y36JDiiWVIrs55BRK6Q+3ezQBM/LOb50mU0PGkbqm7jTS6p
+         7MYG1KI+jb7bKv/0IMCKD8Kid2pzBMK4EzrlSAmrX0HyAK2RRHGFYvBRoZCNSLI3cQsI
+         fx0gpJ0/5u2hAr4IxGWS2/AiSGUaWB22RGtztsYZvnObgc41o0C3XR9ra9ydKdkgGCg8
+         5Fo9TrSVp8DCE6M4IXAzsFMNX6wbZM9C/aezuMy+ilIad444lFzy/x9f19spYMmz+6ly
+         hiig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703142413; x=1703747213;
+        d=1e100.net; s=20230601; t=1703142483; x=1703747283;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QNHYVgnLPt/LzJzhIcgZKNBcgN77jkKMYOnDB6Gfkds=;
-        b=SJO6mvslyiLqFzjxWKq5Q3rz7VD+o7mz7d2dpsxLqZFCxYC8kGZrpQOhgs+cCSAiYS
-         az9VlXormDr7YuPs1e/zdMQK1TZk7uyUouJftrXEaMtsfpsKQ8efpXNkxwbs9FyiWWrB
-         mfMC6ImcgiXuZ6zc88cexblEJmQk38CDyJuW5hOCOOji+23shJ1aHjJ44YpOh68r8Qhi
-         xdI9Ujz3ELx05LVavlx5CblgmQzVKW2r0VOzG7Bg+msvxKNtcPff01ewWGTwlxDgtg5D
-         4C5agDRITyMYEK5PLEugnnOkeH07MnPwf29Hguvaj0jF7yzuiwpKnaEcNuEOM0Sg6/eu
-         f2+Q==
-X-Gm-Message-State: AOJu0Ywj1TY6XqB3hlFxqOSgcXB34FsUzkDtBlN4TQcAZa45iZLTyFN6
-	yQe8rcI3afPedFISyTJvroahAmGs99VCUW9tEcjQXw==
-X-Google-Smtp-Source: AGHT+IGls0CL2Xf8mP1d+9lcPShutUPwkHMcMXXFqg50GFAV25XfU9SjO9Ug8vc9D/t/O+CnmSHm674c4KTzwGoSch8=
-X-Received: by 2002:a81:6d0f:0:b0:5c9:8183:6ab7 with SMTP id
- i15-20020a816d0f000000b005c981836ab7mr857894ywc.0.1703142412886; Wed, 20 Dec
- 2023 23:06:52 -0800 (PST)
+        bh=x3mqWSg4PAag/N8HBMk+GPM7NiqUuxDSinfcR+EyoZg=;
+        b=o0IOVxf2LSSHhyq+ksMhTKIJUULPE0N8n4iYJmRS+DRRA3POYjhaFRpsEu1L5OkxMn
+         GhfX5nVkCHaijRXU3Yis1uAoVO/L8Xj8npndjbSWDxEj7bxWqJ/SrBFU5LkQ9l4yCBrS
+         BxUfwCpmGxK1VedpKGiSKm4iXjmjRdG4SYoj+bgim4jSr2skZNULV8+NISKPCzE6S9Dj
+         HRxGD7QKkyLlDOtVPb4EtLqO1wi0pgDxEVw7PwNNA6MHfgkl23qaJ735XacbHZzqdFua
+         9266f/TElPN0xa9H7vG01NpUnqRJ0egnQhvSvp0ntWdAe/KlWF/xoiQI0JASymIvXVl9
+         AOOg==
+X-Gm-Message-State: AOJu0YzpbKyg2Gr+VPrLl8nb+pze1b3Z9B15fALgf0IZFGNrapC2bE77
+	2CUBd51xLoeZZ+2+iz3EArDwaXS3ZFGXzmQFZazgSw==
+X-Google-Smtp-Source: AGHT+IEy0v0j3VMzWFJEqCyweVJbc+4811KR4XpQHk1zdeDXZP1XX8jNHrM0RyvmA9HQo1q0RhUDGFVGgq/WrXEKAH4=
+X-Received: by 2002:a81:9215:0:b0:5d7:1940:dd71 with SMTP id
+ j21-20020a819215000000b005d71940dd71mr851157ywg.71.1703142483496; Wed, 20 Dec
+ 2023 23:08:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231220-sa8295p-gpu-v1-0-d8cdf2257f97@quicinc.com> <20231220-sa8295p-gpu-v1-5-d8cdf2257f97@quicinc.com>
-In-Reply-To: <20231220-sa8295p-gpu-v1-5-d8cdf2257f97@quicinc.com>
+References: <20231220-sa8295p-gpu-v1-0-d8cdf2257f97@quicinc.com> <20231220-sa8295p-gpu-v1-6-d8cdf2257f97@quicinc.com>
+In-Reply-To: <20231220-sa8295p-gpu-v1-6-d8cdf2257f97@quicinc.com>
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 21 Dec 2023 09:06:42 +0200
-Message-ID: <CAA8EJpqU4On=jpjk0-KkXMmwVhzLddJchQzy=LmJHnChjNpmSQ@mail.gmail.com>
-Subject: Re: [PATCH 5/8] arm64: dts: qcom: sa8540p: Drop gfx.lvl as
- power-domain for gpucc
+Date: Thu, 21 Dec 2023 09:07:52 +0200
+Message-ID: <CAA8EJprUobs=EJWTMK5=U-=5rU_L0RWRgjFjBZZX1mQWMiW4_w@mail.gmail.com>
+Subject: Re: [PATCH 6/8] arm64: dts: qcom: sa8295p-adp: add max20411
 To: Bjorn Andersson <quic_bjorande@quicinc.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
@@ -63,42 +62,87 @@ Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.
 	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 21 Dec 2023 at 05:51, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
+On Thu, 21 Dec 2023 at 05:52, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
 >
-> The SA8295P and SA8540P uses an external regulator (max20411), and
-> gfx.lvl is not provided by rpmh. Drop the power-domains property of the
-> gpucc node to reflect this.
+> From: Bjorn Andersson <andersson@kernel.org>
 >
-> Fixes: eec51ab2fd6f ("arm64: dts: qcom: sc8280xp: Add GPU related nodes")
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> The SA8295P ADP has a MAX20411 LDO regulator on I2C 12, supplying the
+> VDD_GFX pads. Enable the bus and add the maxim,max20411 device on the
+> bus.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  arch/arm64/boot/dts/qcom/sa8540p.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+>  arch/arm64/boot/dts/qcom/sa8295p-adp.dts | 40 ++++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
 >
-> diff --git a/arch/arm64/boot/dts/qcom/sa8540p.dtsi b/arch/arm64/boot/dts/qcom/sa8540p.dtsi
-> index 96b2c59ad02b..b604404ebf64 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8540p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8540p.dtsi
-> @@ -168,6 +168,8 @@ opp-2592000000 {
+> diff --git a/arch/arm64/boot/dts/qcom/sa8295p-adp.dts b/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
+> index fd253942e5e5..e16406c9c19d 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
+> @@ -266,6 +266,26 @@ &dispcc1 {
+>         status = "okay";
 >  };
 >
->  &gpucc {
-> +       /delete-property/ power-domains;
-
-Nit: maybe this deserves a comment.
-
+> +&i2c12 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&qup1_i2c4_state>;
 > +
->         status = "disabled";
+> +       status = "okay";
+> +
+> +       vdd_gfx: regulator@39 {
+> +               compatible = "maxim,max20411";
+> +               reg = <0x39>;
+> +
+> +               regulator-min-microvolt = <800000>;
+> +               regulator-max-microvolt = <968750>;
+> +
+> +               enable-gpios = <&pmm8540a_gpios 2 GPIO_ACTIVE_HIGH>;
+> +
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&max20411_en>;
+> +       };
+> +};
+> +
+>  &mdss0 {
+>         status = "okay";
+>  };
+> @@ -476,6 +496,10 @@ &pcie4_phy {
+>         status = "okay";
 >  };
 >
->
-> --
-> 2.25.1
->
->
+> +&qup1 {
+> +       status = "okay";
+> +};
+> +
+>  &qup2 {
+>         status = "okay";
+>  };
+> @@ -728,4 +752,20 @@ wake-n-pins {
+>                         bias-pull-up;
+>                 };
+>         };
+> +
+> +       qup1_i2c4_state: qup1-i2c4-state {
+> +               pins = "gpio0", "gpio1";
+> +               function = "qup12";
+> +
+> +               drive-strength = <2>;
+> +               bias-pull-up;
+> +       };
+> +};
+> +
+> +&pmm8540a_gpios {
+
+I think pmm8540a_gpios comes before tlmm in the dictionary order.
+Other than that LGTM
+
+> +       max20411_en: max20411-en-state {
+> +               pins = "gpio2";
+> +               function = "normal";
+> +               output-enable;
+> +       };
+>  };
+
 
 
 -- 
