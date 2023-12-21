@@ -1,101 +1,294 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0F75026B
-	for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 09:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3116DD0C;
+	Thu, 21 Dec 2023 10:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vNWEGEMx"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40d2376db79so4185885e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 01:00:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703149252; x=1703754052; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d5nr7Rmvu09+Hcflla+PbyH0bXs0avlsmc8OnLSB4Wc=;
-        b=vNWEGEMxpzO82eedsGV6G/idadYCJ5dCuvzGGoNrtihjqw4llKO3aHSaDqNwDhrUF5
-         Q89WqaBxkIJsEmIbMmSF8M0QIg7+rUT0o+qcUXh5zWDkKXw2okCSDDgjpG5jeRqtssft
-         rzh9mNVNuxOnMxjNiEISlDYGnJ56BAuAijuNqyrdAqpPgz1zzZJb+6CqEXrOhBqkDekW
-         0c74lUV/010LYGPLnwqY4ipF9CZeGNHyi6LMePYyRAjE2xUp4qm1r2egoEjJVS1MTevA
-         SByLCXv/iOqicl8svaJRghIi0sCG6OFcHw6hxCr8mZk3KYGNX2+7yw9Rz1xNYkDCbQlU
-         SVzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703149252; x=1703754052;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d5nr7Rmvu09+Hcflla+PbyH0bXs0avlsmc8OnLSB4Wc=;
-        b=KAdRyaFAh5BzJwMEfIyyEc5rDYcCQzPDHRKB+wwZBZVTFOAIzxCMSEWLDQx4Qw9iY0
-         VtanTTDd/5a+2yPCPAKvVIWjx/MogwebhDSC3Sv2nWz1LeiOZqvnxP8F4faFdIXn3rkN
-         WaMnwh4yyz6xqItcAwJYiSlZY4XgAsNVgYMKPLBHHAHVoST/Gsu2tEYdL/X6Zeveog5H
-         v+ZfMgxal8tDjz1/yqmg30txxkalvtP10HI5CcIJ+hGWMYJLUZg0K9jCIW1hcT5Mssjw
-         xFqUH2y2/J6Wj4A9YRvhMuksq3f5mrGnoHRmeLymfTFfhln5efJIB4z72HxN0cz88IHf
-         ag7w==
-X-Gm-Message-State: AOJu0Yy5AGkwekWChN6QrU0E4VFOofg7dWDjmPEIBIlZz74KJVUT5lyB
-	ncT0TPk3yVXeL+kDCMw1R4nUug==
-X-Google-Smtp-Source: AGHT+IHywzh7DivXZneCaq8VgYrlLxr2g0sHamkEZ9qmg8KKcEOnIX+t64+M6+wHLY+TrxYv9pKMMQ==
-X-Received: by 2002:adf:ce11:0:b0:336:85e3:717d with SMTP id p17-20020adfce11000000b0033685e3717dmr426090wrn.122.1703149251898;
-        Thu, 21 Dec 2023 01:00:51 -0800 (PST)
-Received: from ta2.c.googlers.com.com (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
-        by smtp.gmail.com with ESMTPSA id o10-20020adfeaca000000b0033677a4e0d6sm1523900wrn.13.2023.12.21.01.00.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Dec 2023 01:00:51 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: peter.griffin@linaro.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org
-Cc: conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	alim.akhtar@samsung.com,
-	semen.protsenko@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH 2/2] arm64: dts: exynos: gs101: comply with the new cmu_misc clock names
-Date: Thu, 21 Dec 2023 09:00:46 +0000
-Message-ID: <20231221090046.1486195-2-tudor.ambarus@linaro.org>
-X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
-In-Reply-To: <20231221090046.1486195-1-tudor.ambarus@linaro.org>
-References: <20231221090046.1486195-1-tudor.ambarus@linaro.org>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Z1imS8EF"
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 3BLAIA5j023361;
+	Thu, 21 Dec 2023 11:31:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=99YJf+8k0EOTgNd7hulokQbW66/Zhks58YSOFbxIzr4=; b=Z1
+	imS8EF3InYuxiSY/kECbMDOBUaFdAj9OnLX08a45a+Davt7scl4IJKmjKDxnESQK
+	kRuRGydvWcZEnY5rIIOqdRhkJEZUAQJrHAOakmLO/dXGHApOtasrpse71OlUG70a
+	GriChM/6p+fL4svvq/cvDCssFRKUxBQWwAy4a2mUXyrV0qu7N8pdaEo4M2MtEsZb
+	1B2XZutX4AyWnmTItSFp/dVyJZ7nbM7iySTJxEcQiwZBsYSbpuWnQ1JMcoC1eNR4
+	Q2xLPgj5Edq8ZbJ1kJLAAp/RxYEi066K57jPTQf2tJIbRflC4kLt2aY0MrSEJGhX
+	hl6lOeknqyk2/LU5k0UQ==
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3v3q8104mr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Dec 2023 11:31:56 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0FEFD100053;
+	Thu, 21 Dec 2023 11:31:55 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EDF9524551B;
+	Thu, 21 Dec 2023 11:31:54 +0100 (CET)
+Received: from [10.201.21.240] (10.201.21.240) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 21 Dec
+ 2023 11:31:54 +0100
+Message-ID: <21f758cb-ae25-4d74-905c-0d4820f00070@foss.st.com>
+Date: Thu, 21 Dec 2023 11:31:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/2] clk: stm32: introduce clocks for STM32MP257
+ platform
+Content-Language: en-US
+To: Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20231219130909.265091-1-gabriel.fernandez@foss.st.com>
+ <20231219130909.265091-2-gabriel.fernandez@foss.st.com>
+ <c98539f99030f174583d7ee36802b4b9.sboyd@kernel.org>
+From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+In-Reply-To: <c98539f99030f174583d7ee36802b4b9.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-21_04,2023-12-20_01,2023-05-22_02
 
-The cmu_misc clock-names were renamed to just "bus" and "sss" because
-naming is local to the module, so cmu_misc is implied. As the bindings
-and the device tree have not made a release yet, comply with the
-renamed clocks.
 
-Suggested-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 12/20/23 23:16, Stephen Boyd wrote:
+> Quoting gabriel.fernandez@foss.st.com (2023-12-19 05:09:08)
+>> diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk-stm32mp25.c
+>> new file mode 100644
+>> index 000000000000..313e022c6142
+>> --- /dev/null
+>> +++ b/drivers/clk/stm32/clk-stm32mp25.c
+>> @@ -0,0 +1,1826 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
+>> + * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/platform_device.h>
+>> +
+>> +#include "clk-stm32-core.h"
+>> +#include "reset-stm32.h"
+>> +#include "stm32mp25_rcc.h"
+>> +
+>> +#include <dt-bindings/clock/st,stm32mp25-rcc.h>
+>> +#include <dt-bindings/reset/st,stm32mp25-rcc.h>
+>> +
+>> +static const struct clk_parent_data adc12_src[] = {
+>> +       { .name = "ck_flexgen_46" },
+> This is a new driver. Don't use .name here. Instead use .index or .hw
+> and if that can't work then use .fw_name.
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index 9747cb3fa03a..d838e3a7af6e 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -289,7 +289,7 @@ cmu_misc: clock-controller@10010000 {
- 			#clock-cells = <1>;
- 			clocks = <&cmu_top CLK_DOUT_CMU_MISC_BUS>,
- 				 <&cmu_top CLK_DOUT_CMU_MISC_SSS>;
--			clock-names = "dout_cmu_misc_bus", "dout_cmu_misc_sss";
-+			clock-names = "bus", "sss";
- 		};
- 
- 		watchdog_cl0: watchdog@10060000 {
--- 
-2.43.0.472.g3155946c3a-goog
+These parent clocks are managed by a secure world and exposed through SCMI.
 
+If I use .index or .fw_name, do I have to expose 122 clocks in my DT node ?
+
+This will significantly increase the size of the DT file
+
+             clock-names = "hse", "hsi", ..., "ck_scmi_stm500";
+             clocks = <&scmi_clk CK_SCMI_HSE>, <&scmi_clk CK_SCMI_HSI>,  
+... ,   <&scmi_clk CK_SCMI_STM500>;
+
+>
+>> +       { .name = "ck_icn_ls_mcu" },
+>> +};
+>> +
+>> +static const struct clk_parent_data adc3_src[] = {
+>> +       { .name = "ck_flexgen_47" },
+>> +       { .name = "ck_icn_ls_mcu" },
+>> +       { .name = "ck_flexgen_46" },
+>> +};
+> [...]
+>> +static struct clk_stm32_composite ck_ker_usb3pciephy = {
+>> +       .gate_id = GATE_USB3PCIEPHY,
+>> +       .mux_id = MUX_USB3PCIEPHY,
+>> +       .div_id = NO_STM32_DIV,
+>> +       .hw.init = CLK_HW_INIT_PARENTS_DATA("ck_ker_usb3pciephy", usb3pciphy_src,
+>> +                                           &clk_stm32_composite_ops, 0),
+>> +};
+>> +
+>> +/* USB3 DRD */
+>> +static struct clk_stm32_gate ck_icn_m_usb3dr = {
+>> +       .gate_id = GATE_USB3DR,
+>> +       .hw.init = CLK_HW_INIT("ck_icn_m_usb3dr", "ck_icn_hsl", &clk_stm32_gate_ops, 0),
+>> +};
+>> +
+>> +static struct clk_stm32_gate ck_ker_usb2phy2 = {
+>> +       .gate_id = GATE_USB3DR,
+>> +       .hw.init = CLK_HW_INIT("ck_ker_usb2phy2", "ck_flexgen_58", &clk_stm32_gate_ops, 0),
+>> +};
+>> +
+>> +/* USBTC */
+>> +static struct clk_stm32_gate ck_icn_p_usbtc = {
+>> +       .gate_id = GATE_USBTC,
+>> +       .hw.init = CLK_HW_INIT("ck_icn_p_usbtc", "ck_icn_apb4", &clk_stm32_gate_ops, 0),
+> Please stop using strings to match parents, i.e. don't use CLK_HW_INIT.
+>
+>> +};
+>> +
+>> +static struct clk_stm32_gate ck_ker_usbtc = {
+>> +       .gate_id = GATE_USBTC,
+>> +       .hw.init = CLK_HW_INIT("ck_ker_usbtc", "ck_flexgen_35", &clk_stm32_gate_ops, 0),
+>> +};
+>> +
+>> +/* VDEC / VENC */
+>> +static struct clk_stm32_gate ck_icn_p_vdec = {
+>> +       .gate_id = GATE_VDEC,
+>> +       .hw.init = CLK_HW_INIT("ck_icn_p_vdec", "ck_icn_apb4", &clk_stm32_gate_ops, 0),
+>> +};
+>> +
+>> +static struct clk_stm32_gate ck_icn_p_venc = {
+>> +       .gate_id = GATE_VENC,
+>> +       .hw.init = CLK_HW_INIT("ck_icn_p_venc", "ck_icn_apb4", &clk_stm32_gate_ops, 0),
+>> +};
+>> +
+>> +/* VREF */
+>> +static struct clk_stm32_gate ck_icn_p_vref = {
+>> +       .gate_id = GATE_VREF,
+>> +       .hw.init = CLK_HW_INIT("ck_icn_p_vref", "ck_icn_apb3", &clk_stm32_gate_ops, 0),
+>> +};
+>> +
+>> +/* WWDG */
+>> +static struct clk_stm32_gate ck_icn_p_wwdg1 = {
+>> +       .gate_id = GATE_WWDG1,
+>> +       .hw.init = CLK_HW_INIT("ck_icn_p_wwdg1", "ck_icn_apb3", &clk_stm32_gate_ops, 0),
+>> +};
+>> +
+>> +static struct clk_stm32_gate ck_icn_p_wwdg2 = {
+>> +       .gate_id = GATE_WWDG2,
+>> +       .hw.init = CLK_HW_INIT("ck_icn_p_wwdg2", "ck_icn_ls_mcu", &clk_stm32_gate_ops, 0),
+>> +};
+>> +
+>> +enum security_clk {
+>> +       SECF_NONE,
+> What is the use of this single value enum?
+
+Yes, just a define is enough for the moment. I will have more 
+definitions in my next series to introduce
+
+security (clocks could be managed by a secure world or not).
+
+>> +};
+>> +
+>> +static const struct clock_config stm32mp25_clock_cfg[] = {
+>> +       STM32_GATE_CFG(CK_BUS_ETH1,             ck_icn_p_eth1,          SECF_NONE),
+>> +       STM32_GATE_CFG(CK_BUS_ETH2,             ck_icn_p_eth2,          SECF_NONE),
+> [....]
+>> +
+>> +static const struct of_device_id stm32mp25_match_data[] = {
+>> +       {
+>> +               .compatible = "st,stm32mp25-rcc",
+>> +               .data = &stm32mp25_data,
+>> +       },
+> One line please:
+>
+>   	{ .compatible = "st,stm32mp25-rcc", .data = &stm32mp25_data, },
+
+ok
+
+>
+>> +       { }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, stm32mp25_match_data);
+>> +
+>> +static int get_clock_deps(struct device *dev)
+> What is the explanation for this function?
+
+It 's to manage the dependency with the SCMI clock driver.
+
+
+>> +{
+>> +       static const char * const clock_deps_name[] = {
+>> +               "hsi", "hse", "msi", "lsi", "lse",
+>> +       };
+>> +       int i;
+>> +
+>> +       for (i = 0; i < ARRAY_SIZE(clock_deps_name); i++) {
+>> +               struct clk *clk;
+>> +
+>> +               clk = of_clk_get_by_name(dev_of_node(dev), clock_deps_name[i]);
+>> +               if (IS_ERR(clk))
+>> +                       return PTR_ERR(clk);
+>> +
+>> +               clk_put(clk);
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int stm32mp25_rcc_clocks_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       void __iomem *base;
+>> +       int ret;
+>> +
+>> +       ret = get_clock_deps(dev);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       base = devm_of_iomap(dev, dev->of_node, 0, NULL);
+> Use platform device APIs.
+>
+>> +       if (WARN_ON(IS_ERR(base)))
+>> +               return PTR_ERR(base);
+>> +
+>> +       return stm32_rcc_init(dev, stm32mp25_match_data, base);
+>> +}
+>> +
+>> +static int stm32mp25_rcc_clocks_remove(struct platform_device *pdev)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       struct device_node *child, *np = dev_of_node(dev);
+>> +
+>> +       for_each_available_child_of_node(np, child)
+>> +               of_clk_del_provider(child);
+> Add the providers with devm?
+
+ok
+
+
+>
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static struct platform_driver stm32mp25_rcc_clocks_driver = {
+>> +       .driver = {
+>> +               .name = "stm32mp25_rcc",
+>> +               .of_match_table = stm32mp25_match_data,
+>> +       },
+>> +       .probe = stm32mp25_rcc_clocks_probe,
+>> +       .remove = stm32mp25_rcc_clocks_remove,
+>> +};
+>> +
+>> +static int __init stm32mp25_clocks_init(void)
+>> +{
+>> +       return platform_driver_register(&stm32mp25_rcc_clocks_driver);
+>> +}
+>> +
+>> +core_initcall(stm32mp25_clocks_init);
