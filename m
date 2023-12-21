@@ -1,41 +1,49 @@
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3116DD0C;
-	Thu, 21 Dec 2023 10:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA52F7317D
+	for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 12:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Z1imS8EF"
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 3BLAIA5j023361;
-	Thu, 21 Dec 2023 11:31:56 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=99YJf+8k0EOTgNd7hulokQbW66/Zhks58YSOFbxIzr4=; b=Z1
-	imS8EF3InYuxiSY/kECbMDOBUaFdAj9OnLX08a45a+Davt7scl4IJKmjKDxnESQK
-	kRuRGydvWcZEnY5rIIOqdRhkJEZUAQJrHAOakmLO/dXGHApOtasrpse71OlUG70a
-	GriChM/6p+fL4svvq/cvDCssFRKUxBQWwAy4a2mUXyrV0qu7N8pdaEo4M2MtEsZb
-	1B2XZutX4AyWnmTItSFp/dVyJZ7nbM7iySTJxEcQiwZBsYSbpuWnQ1JMcoC1eNR4
-	Q2xLPgj5Edq8ZbJ1kJLAAp/RxYEi066K57jPTQf2tJIbRflC4kLt2aY0MrSEJGhX
-	hl6lOeknqyk2/LU5k0UQ==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3v3q8104mr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Dec 2023 11:31:56 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0FEFD100053;
-	Thu, 21 Dec 2023 11:31:55 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EDF9524551B;
-	Thu, 21 Dec 2023 11:31:54 +0100 (CET)
-Received: from [10.201.21.240] (10.201.21.240) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 21 Dec
- 2023 11:31:54 +0100
-Message-ID: <21f758cb-ae25-4d74-905c-0d4820f00070@foss.st.com>
-Date: Thu, 21 Dec 2023 11:31:53 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LhZ/3gnE"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5534d8fcf7bso896415a12.3
+        for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 04:52:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1703163122; x=1703767922; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uGwBTIh4Dz1SJStKRaT4MD0TZ8mnFlnlThnve5PWJVQ=;
+        b=LhZ/3gnEr9CLL/qUrVtq787wjBunjeIP15S0UWDdjcgflgffZ1VbUnzyPMmWdpEEl1
+         mEl6I3taTHJSWBByfAI6UnVjtHOK9gPCIXYoxI+xkbA7nFfB7zC7HcP9XFQttXRmu6dn
+         KHvRopBSUxDUUfDWxlysZUw8vBwEeu5txE8kTYqaf6UBypzU8tvMtqI/W4tTgDBj6Etx
+         aP2URaZnpfq32b3xuBLr+J3IutUMD65s6ZYZgLUrhi2JeJFdKPP+ZzlbDLPldoWh/Dtq
+         HYBVBE7F561B0mU7P7GuNcZ0HmfAC/dJQTVNbSFLnGX8+Wp1Uo27u+r/AyDPtlTj9Fa7
+         vBbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703163122; x=1703767922;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uGwBTIh4Dz1SJStKRaT4MD0TZ8mnFlnlThnve5PWJVQ=;
+        b=NAB56Z3+z7/+oj7P2WaaPXR+nCi1hDcmQBgnnnxpuG3mH9mbUVZUJ5RXQ2Ox0BwgQk
+         m0GgahUfgqps3NxH8tQowiQWamgxIhEouSzR4wDDlSAJKk8Hl494U6C1TSsYHasuevxW
+         hvE5rs+l16KkghUf938rBy7A1QVibL6TafKciiQs9ZVBmyFN82xku642xj2F/Wb1alM2
+         xFWPL4Hvzw4wujSZIT4vg67wBM9ysuCx/eSb6xxIVZTsyonKrAPAL+FJO0EnL5kUAOy+
+         R5+Ne0VBRdw1ivNA7DVMtsLqjGnDZpVrXBkaJcVW4dHH0oGvgF9BujRI7OCW5bXu8iEK
+         UPxg==
+X-Gm-Message-State: AOJu0YzXZTFzLEF+HrzvC+vJnpvwq2rh5y3d3wgo5xonYZrZPIRNLxUA
+	m63Bue6iN4LMJBsnkx4R8UzFOg==
+X-Google-Smtp-Source: AGHT+IFpsAsQsrZEFCPKENktHEluTVoHQkw16pumZSePVVQj6bjUO8pFL/EkjErINMJ260tfuQXpsg==
+X-Received: by 2002:a17:907:7850:b0:a23:57a1:d85b with SMTP id lb16-20020a170907785000b00a2357a1d85bmr4379329ejc.74.1703163122074;
+        Thu, 21 Dec 2023 04:52:02 -0800 (PST)
+Received: from [192.168.199.125] (178235179206.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.206])
+        by smtp.gmail.com with ESMTPSA id e3-20020a17090681c300b00a1f7ae3dfbcsm935159ejx.174.2023.12.21.04.51.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Dec 2023 04:52:01 -0800 (PST)
+Message-ID: <b6866ee4-31d9-4404-9bd9-92bc4ab59b8c@linaro.org>
+Date: Thu, 21 Dec 2023 13:51:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,252 +51,99 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/2] clk: stm32: introduce clocks for STM32MP257
- platform
+Subject: Re: [PATCH 6/8] arm64: dts: qcom: sa8295p-adp: add max20411
 Content-Language: en-US
-To: Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20231219130909.265091-1-gabriel.fernandez@foss.st.com>
- <20231219130909.265091-2-gabriel.fernandez@foss.st.com>
- <c98539f99030f174583d7ee36802b4b9.sboyd@kernel.org>
-From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-In-Reply-To: <c98539f99030f174583d7ee36802b4b9.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-21_04,2023-12-20_01,2023-05-22_02
+To: Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold
+ <johan+linaro@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20231220-sa8295p-gpu-v1-0-d8cdf2257f97@quicinc.com>
+ <20231220-sa8295p-gpu-v1-6-d8cdf2257f97@quicinc.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20231220-sa8295p-gpu-v1-6-d8cdf2257f97@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 21.12.2023 04:50, Bjorn Andersson wrote:
+> From: Bjorn Andersson <andersson@kernel.org>
+> 
+> The SA8295P ADP has a MAX20411 LDO regulator on I2C 12, supplying the
+> VDD_GFX pads. Enable the bus and add the maxim,max20411 device on the
+> bus.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8295p-adp.dts | 40 ++++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8295p-adp.dts b/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
+> index fd253942e5e5..e16406c9c19d 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
+> @@ -266,6 +266,26 @@ &dispcc1 {
+>  	status = "okay";
+>  };
+>  
+> +&i2c12 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&qup1_i2c4_state>;
+property-n
+property-names
 
-On 12/20/23 23:16, Stephen Boyd wrote:
-> Quoting gabriel.fernandez@foss.st.com (2023-12-19 05:09:08)
->> diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk-stm32mp25.c
->> new file mode 100644
->> index 000000000000..313e022c6142
->> --- /dev/null
->> +++ b/drivers/clk/stm32/clk-stm32mp25.c
->> @@ -0,0 +1,1826 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
->> + * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/of_address.h>
->> +#include <linux/platform_device.h>
->> +
->> +#include "clk-stm32-core.h"
->> +#include "reset-stm32.h"
->> +#include "stm32mp25_rcc.h"
->> +
->> +#include <dt-bindings/clock/st,stm32mp25-rcc.h>
->> +#include <dt-bindings/reset/st,stm32mp25-rcc.h>
->> +
->> +static const struct clk_parent_data adc12_src[] = {
->> +       { .name = "ck_flexgen_46" },
-> This is a new driver. Don't use .name here. Instead use .index or .hw
-> and if that can't work then use .fw_name.
+(same below)
+> +
+> +	status = "okay";
+> +
+> +	vdd_gfx: regulator@39 {
+> +		compatible = "maxim,max20411";
+> +		reg = <0x39>;
+> +
+> +		regulator-min-microvolt = <800000>;
+> +		regulator-max-microvolt = <968750>;
+Is this ever going to be scaled? I suppose you could add some OPP code to
+drm/msm and use opp-microvolts.. Or lock this down at min=max
 
-These parent clocks are managed by a secure world and exposed through SCMI.
-
-If I use .index or .fw_name, do I have to expose 122 clocks in my DT node ?
-
-This will significantly increase the size of the DT file
-
-             clock-names = "hse", "hsi", ..., "ck_scmi_stm500";
-             clocks = <&scmi_clk CK_SCMI_HSE>, <&scmi_clk CK_SCMI_HSI>,  
-... ,   <&scmi_clk CK_SCMI_STM500>;
-
->
->> +       { .name = "ck_icn_ls_mcu" },
->> +};
->> +
->> +static const struct clk_parent_data adc3_src[] = {
->> +       { .name = "ck_flexgen_47" },
->> +       { .name = "ck_icn_ls_mcu" },
->> +       { .name = "ck_flexgen_46" },
->> +};
-> [...]
->> +static struct clk_stm32_composite ck_ker_usb3pciephy = {
->> +       .gate_id = GATE_USB3PCIEPHY,
->> +       .mux_id = MUX_USB3PCIEPHY,
->> +       .div_id = NO_STM32_DIV,
->> +       .hw.init = CLK_HW_INIT_PARENTS_DATA("ck_ker_usb3pciephy", usb3pciphy_src,
->> +                                           &clk_stm32_composite_ops, 0),
->> +};
->> +
->> +/* USB3 DRD */
->> +static struct clk_stm32_gate ck_icn_m_usb3dr = {
->> +       .gate_id = GATE_USB3DR,
->> +       .hw.init = CLK_HW_INIT("ck_icn_m_usb3dr", "ck_icn_hsl", &clk_stm32_gate_ops, 0),
->> +};
->> +
->> +static struct clk_stm32_gate ck_ker_usb2phy2 = {
->> +       .gate_id = GATE_USB3DR,
->> +       .hw.init = CLK_HW_INIT("ck_ker_usb2phy2", "ck_flexgen_58", &clk_stm32_gate_ops, 0),
->> +};
->> +
->> +/* USBTC */
->> +static struct clk_stm32_gate ck_icn_p_usbtc = {
->> +       .gate_id = GATE_USBTC,
->> +       .hw.init = CLK_HW_INIT("ck_icn_p_usbtc", "ck_icn_apb4", &clk_stm32_gate_ops, 0),
-> Please stop using strings to match parents, i.e. don't use CLK_HW_INIT.
->
->> +};
->> +
->> +static struct clk_stm32_gate ck_ker_usbtc = {
->> +       .gate_id = GATE_USBTC,
->> +       .hw.init = CLK_HW_INIT("ck_ker_usbtc", "ck_flexgen_35", &clk_stm32_gate_ops, 0),
->> +};
->> +
->> +/* VDEC / VENC */
->> +static struct clk_stm32_gate ck_icn_p_vdec = {
->> +       .gate_id = GATE_VDEC,
->> +       .hw.init = CLK_HW_INIT("ck_icn_p_vdec", "ck_icn_apb4", &clk_stm32_gate_ops, 0),
->> +};
->> +
->> +static struct clk_stm32_gate ck_icn_p_venc = {
->> +       .gate_id = GATE_VENC,
->> +       .hw.init = CLK_HW_INIT("ck_icn_p_venc", "ck_icn_apb4", &clk_stm32_gate_ops, 0),
->> +};
->> +
->> +/* VREF */
->> +static struct clk_stm32_gate ck_icn_p_vref = {
->> +       .gate_id = GATE_VREF,
->> +       .hw.init = CLK_HW_INIT("ck_icn_p_vref", "ck_icn_apb3", &clk_stm32_gate_ops, 0),
->> +};
->> +
->> +/* WWDG */
->> +static struct clk_stm32_gate ck_icn_p_wwdg1 = {
->> +       .gate_id = GATE_WWDG1,
->> +       .hw.init = CLK_HW_INIT("ck_icn_p_wwdg1", "ck_icn_apb3", &clk_stm32_gate_ops, 0),
->> +};
->> +
->> +static struct clk_stm32_gate ck_icn_p_wwdg2 = {
->> +       .gate_id = GATE_WWDG2,
->> +       .hw.init = CLK_HW_INIT("ck_icn_p_wwdg2", "ck_icn_ls_mcu", &clk_stm32_gate_ops, 0),
->> +};
->> +
->> +enum security_clk {
->> +       SECF_NONE,
-> What is the use of this single value enum?
-
-Yes, just a define is enough for the moment. I will have more 
-definitions in my next series to introduce
-
-security (clocks could be managed by a secure world or not).
-
->> +};
->> +
->> +static const struct clock_config stm32mp25_clock_cfg[] = {
->> +       STM32_GATE_CFG(CK_BUS_ETH1,             ck_icn_p_eth1,          SECF_NONE),
->> +       STM32_GATE_CFG(CK_BUS_ETH2,             ck_icn_p_eth2,          SECF_NONE),
-> [....]
->> +
->> +static const struct of_device_id stm32mp25_match_data[] = {
->> +       {
->> +               .compatible = "st,stm32mp25-rcc",
->> +               .data = &stm32mp25_data,
->> +       },
-> One line please:
->
->   	{ .compatible = "st,stm32mp25-rcc", .data = &stm32mp25_data, },
-
-ok
-
->
->> +       { }
->> +};
->> +MODULE_DEVICE_TABLE(of, stm32mp25_match_data);
->> +
->> +static int get_clock_deps(struct device *dev)
-> What is the explanation for this function?
-
-It 's to manage the dependency with the SCMI clock driver.
-
-
->> +{
->> +       static const char * const clock_deps_name[] = {
->> +               "hsi", "hse", "msi", "lsi", "lse",
->> +       };
->> +       int i;
->> +
->> +       for (i = 0; i < ARRAY_SIZE(clock_deps_name); i++) {
->> +               struct clk *clk;
->> +
->> +               clk = of_clk_get_by_name(dev_of_node(dev), clock_deps_name[i]);
->> +               if (IS_ERR(clk))
->> +                       return PTR_ERR(clk);
->> +
->> +               clk_put(clk);
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static int stm32mp25_rcc_clocks_probe(struct platform_device *pdev)
->> +{
->> +       struct device *dev = &pdev->dev;
->> +       void __iomem *base;
->> +       int ret;
->> +
->> +       ret = get_clock_deps(dev);
->> +       if (ret)
->> +               return ret;
->> +
->> +       base = devm_of_iomap(dev, dev->of_node, 0, NULL);
-> Use platform device APIs.
->
->> +       if (WARN_ON(IS_ERR(base)))
->> +               return PTR_ERR(base);
->> +
->> +       return stm32_rcc_init(dev, stm32mp25_match_data, base);
->> +}
->> +
->> +static int stm32mp25_rcc_clocks_remove(struct platform_device *pdev)
->> +{
->> +       struct device *dev = &pdev->dev;
->> +       struct device_node *child, *np = dev_of_node(dev);
->> +
->> +       for_each_available_child_of_node(np, child)
->> +               of_clk_del_provider(child);
-> Add the providers with devm?
-
-ok
-
-
->
->> +
->> +       return 0;
->> +}
->> +
->> +static struct platform_driver stm32mp25_rcc_clocks_driver = {
->> +       .driver = {
->> +               .name = "stm32mp25_rcc",
->> +               .of_match_table = stm32mp25_match_data,
->> +       },
->> +       .probe = stm32mp25_rcc_clocks_probe,
->> +       .remove = stm32mp25_rcc_clocks_remove,
->> +};
->> +
->> +static int __init stm32mp25_clocks_init(void)
->> +{
->> +       return platform_driver_register(&stm32mp25_rcc_clocks_driver);
->> +}
->> +
->> +core_initcall(stm32mp25_clocks_init);
+Konrad
