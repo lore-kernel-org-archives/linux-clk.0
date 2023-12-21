@@ -1,93 +1,97 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E11745DB
-	for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 13:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD83F73167
+	for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 13:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rGKHlCRt"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40d352c826eso9675285e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 05:03:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YRxZzmPb"
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-35fcea0ac1aso3451855ab.1
+        for <linux-clk@vger.kernel.org>; Thu, 21 Dec 2023 05:04:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703163800; x=1703768600; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RV0pLhc1eNEl1ZlcZJjaTsQkbCWEhiomsd6unkLFjqk=;
-        b=rGKHlCRtA4ArjWFndzqlKIVP3vp+6PJIY7OVbvjbhuXKfokId2z81ly8xoWl+LFvXj
-         0k8nfAa1QL7oRSIhsCVcMOGZzDmciJcL7bqEZar1GqL8SoQhHn0JW9HhabDRwqR9bFBJ
-         u8mWQmhJ8joPnIOx6yLO7ba8PjWNh2WvDBjxekcvceLhHjxzo9zHKMJpnMDbdRk+GA3W
-         8HXbWezTGoKGEG8ubhp8RccyYWIzUk16MoOXWn+wI/nwi9iyeoYzKyMQFszFTwgx3Dov
-         Evm7iST/Boqoenrrwv1mQ5PIdoXTivKjILGCv+bZ5bbNdD3XSlFNjKNijMtW2O1DcTuV
-         BXsw==
+        d=linaro.org; s=google; t=1703163887; x=1703768687; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fs/e9MeZesfWpR0gJSq5W4MUhBlmQTRQN91KHpHRCXc=;
+        b=YRxZzmPbX3MoQv1tzLDq2yeekIvP/jzpSOT3NzQIH2ttKWlk1+wimM7uf3ej9giYlt
+         uKAVxZYdgwMx7MrUiyoPcGX143hYZU2HLaCFP1JZ9cm0lWv2HoUWQV3qsqXUk2ERk3Tm
+         ri+6TN+vq1lBZR0lZuYZUG+YkHnFj7cXnLbItDHE8MwtIHIm/xvdXO1Uhp2tAkckQPcX
+         W3nrwW2esxMxBPwjcCC8Y/OwFZQTaXcUTPkvoiUWODXEOfBxR8z4dv87MvMfvfoUO0KA
+         HFBJB8Ugj3Vw0XKqXvXMltYQbOgLmD1iyQyu7bfl7qk5izeoGFolQpaGmidahNhto7jg
+         qfqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703163800; x=1703768600;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RV0pLhc1eNEl1ZlcZJjaTsQkbCWEhiomsd6unkLFjqk=;
-        b=ZZE3J01fNme3xNw2oGHso6JIXGcHrbZ32hGM4CRi4NhIN0DILH4rCx4rlUiyudmKtB
-         KS1YzK64yb4gX2OAgus/ksC+8NBlnGJvOM1pbjJrriAPBQsqpvBkI8KqoSU6+RX3UrGP
-         xoBRjFQlTEj1EytjH/FtScGLd5wia7AT+GuAq+zCfPIKsWH4MmuJoCoPsv1HQkbKTxpu
-         jlfeZwLx1/CKB/afpqRL0BRuh5KrFOdKD188pLs24TC60/Oiw6a855Ui23rzs+fESwQP
-         H1eg3tB/CBijb5ECCAurGqQAsXwLZF/6TFebdcSJJICPb8fM7kdng/pGY79NAA1f8U8S
-         4S6Q==
-X-Gm-Message-State: AOJu0YyQn/kdlJL5czd3r6sk21XEulUCbmDo2WdK76eyTtlxWLJYB1oL
-	QtWIOuBxtDskgaZS5E+aMbAzBQ==
-X-Google-Smtp-Source: AGHT+IGKsaJTN83KjRRHH8cCmgQL1O4crtaE1PWiINYVCRwM7jAdDKa1rYTlbRJxuhg6htojieQNew==
-X-Received: by 2002:a05:600c:1c10:b0:40b:5e21:dd49 with SMTP id j16-20020a05600c1c1000b0040b5e21dd49mr770884wms.119.1703163800473;
-        Thu, 21 Dec 2023 05:03:20 -0800 (PST)
-Received: from hackbox.lan ([79.115.23.25])
-        by smtp.gmail.com with ESMTPSA id g15-20020a05600c4ecf00b0040b36ad5413sm3229791wmq.46.2023.12.21.05.03.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Dec 2023 05:03:20 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	linux-imx@nxp.com,
-	shengjiu.wang@gmail.com,
-	Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: pll14xx: change naming of fvco to fout
-Date: Thu, 21 Dec 2023 15:03:07 +0200
-Message-Id: <170316377039.2868388.1010743948171671677.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <1703068389-6130-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1703068389-6130-1-git-send-email-shengjiu.wang@nxp.com>
+        d=1e100.net; s=20230601; t=1703163887; x=1703768687;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fs/e9MeZesfWpR0gJSq5W4MUhBlmQTRQN91KHpHRCXc=;
+        b=XWAe53Ij3xuS9BmqlNA1VqkqLzohTA/5unSX9gL+9PY83U32gjGgBs8WQwkv0Ck4eI
+         bujIWRVhkgVHEkEX83tpaEC35Ygi+VoGKm2zh+Ku7gDVi7Lm6JB4hulZea7Rhv6j1YyN
+         7eDZK3nEUX+iQgZ0atw+vzLUjb2vqmBUHdTVjVG7SmcfZraGNw+BkCzLCGaJWrTmodSh
+         eaEeqf/kFzw+JZxP4lrTknMhLKFeR7S3bMHaFWNHjd0exbNk9z4f0dk6nO6TGVq6cJbw
+         Zv1gQ+FDTOby78yz5zz7vyTdOvXsEwKfRlo16KJVrgwkW86IdcaxcurdshW3vEut/+gy
+         BLvw==
+X-Gm-Message-State: AOJu0Yw238XZSLTNvrxkRCZCmvRtp7AuHCcKeKvAqrVT8359ZUURMk2A
+	kmqVlm+L7z5uAQb0LdNCakBoi8z/mFryDLxAjqi1Fw==
+X-Google-Smtp-Source: AGHT+IEcQ/qhM/HCfkhU+7e5HDDYE3nEr4TsCdNTTfentyyhZrmbiraH3QVG51wo4jYGji9DPRWtOoqov3OVlKaVhMM=
+X-Received: by 2002:a05:6e02:3d05:b0:35f:ab11:1289 with SMTP id
+ db5-20020a056e023d0500b0035fab111289mr6672760ilb.114.1703163886562; Thu, 21
+ Dec 2023 05:04:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20231220-sa8295p-gpu-v1-0-d8cdf2257f97@quicinc.com>
+ <20231220-sa8295p-gpu-v1-2-d8cdf2257f97@quicinc.com> <8d206362-7d80-46dc-8474-871fc53abc20@linaro.org>
+In-Reply-To: <8d206362-7d80-46dc-8474-871fc53abc20@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 21 Dec 2023 15:04:35 +0200
+Message-ID: <CAA8EJpoEqKv_rWB8468WJzxqPA5w7u_zmGJJ0oKWAyaB9-f0eQ@mail.gmail.com>
+Subject: Re: [PATCH 2/8] clk: qcom: gdsc: Enable supply reglator in GPU GX handler
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <quic_bjorande@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Johan Hovold <johan+linaro@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 21 Dec 2023 at 15:01, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>
+> On 21.12.2023 04:50, Bjorn Andersson wrote:
+> > The GX GDSC is modelled to aid the GMU in powering down the GPU in the
+> > event that the GPU crashes, so that it can be restarted again. But in
+> > the event that the power-domain is supplied through a dedicated
+> > regulator (in contrast to being a subdomin of another power-domain),
+> > something needs to turn that regulator on, both to make sure things are
+> > powered and to match the operation in gdsc_disable().
+> >
+> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> > ---
+> >  drivers/clk/qcom/gdsc.c | 8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> > index 5358e28122ab..d1139c895503 100644
+> > --- a/drivers/clk/qcom/gdsc.c
+> > +++ b/drivers/clk/qcom/gdsc.c
+> > @@ -557,7 +557,13 @@ void gdsc_unregister(struct gdsc_desc *desc)
+> >   */
+> >  int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
+> I suppose the name is confusing now..
+>
+> But at the same time I can't come up with anything that's less than
+> like 6 words..
 
-On Wed, 20 Dec 2023 18:33:09 +0800, Shengjiu Wang wrote:
-> pll14xx_calc_rate() output the fout clock not the fvco clock
-> The relation of fvco and fout is:
-> 	fout = fvco / (1 << sdiv)
-> 
-> So use correct naming for the clock.
-> 
-> 
-> [...]
+gdsc_gx_enable() ;-)
 
-Applied, thanks!
-
-[1/1] clk: imx: pll14xx: change naming of fvco to fout
-      commit: f52f00069888e410cec718792b3e314624f209ea
-
-Best regards,
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+With best wishes
+Dmitry
