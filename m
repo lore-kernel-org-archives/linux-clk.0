@@ -1,128 +1,103 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18407651A4;
-	Thu, 21 Dec 2023 19:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6047D818;
+	Fri, 22 Dec 2023 00:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PKdBIb1C"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BLDMiN7031672;
-	Thu, 21 Dec 2023 19:16:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=M4ofItWEa2ZMEZHfAhfrl
-	hv/rg3HOV3fP0U/2gxcGck=; b=PKdBIb1CfcNOW97RL8HOl87615EbrPMxnp+Ne
-	PvEW4c4XXleqzMpI4vC8L5NeyZYPtlbvWu+PSwE31ibC9bg6SaALCkCpvwEMzvMS
-	Z7VlLslOlTRrKQl3MVbTh1hR5mVay5g/oRjeU6rSPk4iMzpp+zU5x55nfiEO3zaQ
-	IL+hfRWb5JSgcznKak74AvsVNYsYsZ33JfsjcXnWCtKSC8d1HB3JRE4B/XA4qFls
-	/e4v8VTK4Em+GZetTkBYAAS91IoXWTVkN1rxPGYpcCOb/kASLR67QU8/uvDoBOlb
-	Dos+LpEphOOte/6awbJ3J9EyXy7FEtradpfqFWmEylXRN6/6g==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3v4gvh25pn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Dec 2023 19:16:36 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BLJGara031058
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Dec 2023 19:16:36 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 21 Dec 2023 11:16:35 -0800
-Date: Thu, 21 Dec 2023 11:16:34 -0800
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        "Catalin
- Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/8] dt-bindings: clock: qcom: Allow VDD_GFX supply to GX
-Message-ID: <20231221191634.GS1766637@hu-bjorande-lv.qualcomm.com>
-References: <20231220-sa8295p-gpu-v1-0-d8cdf2257f97@quicinc.com>
- <20231220-sa8295p-gpu-v1-1-d8cdf2257f97@quicinc.com>
- <CAA8EJprRjRJsV5hPR6mzjgucKa8UEthJd-y573aYJH0P8QRWqw@mail.gmail.com>
- <CAA8EJpqgcOJHUFHtrTEE0T+jtQqdv3RGm-eTuVVa0ama_eFssQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gxBcCIzz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C3EC433C8;
+	Fri, 22 Dec 2023 00:49:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703206141;
+	bh=1DA8bmTOYGPA5GbuB9k2g469eTAv0F3olwtXeYlHwR0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=gxBcCIzz0cbD3ugkonPp9VYh2HSxnLxa44GHnYR4IW6PW3J4Rgn6Pi+WryMmWt1u+
+	 5wnyPnVzVHb6DgT2GO27/QCOg4t+BvjuTcwizCAit096W6X13xq+4fB/fkm9xMJ+mV
+	 XzzXiN6P8tqW/3UKazKRBC1dyh6uQYainN29c7Cz5EVUloedh5VnVDqEwg5ox/ZTPE
+	 WAnKi/wnq12bdu9JOoLCsG2Hs1BtJrFNhXZ6TLM0u4y2mx2j+ug/sbSq8E3XmcfDh4
+	 /mURGarpcdtNGvskvrtl4VatuZlGrDntmlitK3JCfTA5uqUMlr1JBBqsp/hc9VSEVz
+	 hmabHJBfCHumw==
+Message-ID: <a2d96b8259eed101c649fd71f7c1e453.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpqgcOJHUFHtrTEE0T+jtQqdv3RGm-eTuVVa0ama_eFssQ@mail.gmail.com>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: sdqrhYe5YehdA1OTvNJ99Jnj2rDKz_Bz
-X-Proofpoint-GUID: sdqrhYe5YehdA1OTvNJ99Jnj2rDKz_Bz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-09_01,2023-12-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 priorityscore=1501 clxscore=1015 adultscore=0 suspectscore=0
- mlxlogscore=999 bulkscore=0 phishscore=0 malwarescore=0 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2311290000 definitions=main-2312210146
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <21f758cb-ae25-4d74-905c-0d4820f00070@foss.st.com>
+References: <20231219130909.265091-1-gabriel.fernandez@foss.st.com> <20231219130909.265091-2-gabriel.fernandez@foss.st.com> <c98539f99030f174583d7ee36802b4b9.sboyd@kernel.org> <21f758cb-ae25-4d74-905c-0d4820f00070@foss.st.com>
+Subject: Re: [PATCH v7 1/2] clk: stm32: introduce clocks for STM32MP257 platform
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>, Conor Dooley <conor+dt@kernel.org>, Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>
+Date: Thu, 21 Dec 2023 16:48:59 -0800
+User-Agent: alot/0.10
 
-On Thu, Dec 21, 2023 at 09:10:28AM +0200, Dmitry Baryshkov wrote:
-> On Thu, 21 Dec 2023 at 09:03, Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
+Quoting Gabriel FERNANDEZ (2023-12-21 02:31:53)
+>=20
+> On 12/20/23 23:16, Stephen Boyd wrote:
+> > Quoting gabriel.fernandez@foss.st.com (2023-12-19 05:09:08)
+> >> diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk=
+-stm32mp25.c
+> >> new file mode 100644
+> >> index 000000000000..313e022c6142
+> >> --- /dev/null
+> >> +++ b/drivers/clk/stm32/clk-stm32mp25.c
+> >> @@ -0,0 +1,1826 @@
+> >> +// SPDX-License-Identifier: GPL-2.0-only
+> >> +/*
+> >> + * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
+> >> + * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMi=
+croelectronics.
+> >> + */
+> >> +
+> >> +#include <linux/clk.h>
+> >> +#include <linux/of_address.h>
+> >> +#include <linux/platform_device.h>
+> >> +
+> >> +#include "clk-stm32-core.h"
+> >> +#include "reset-stm32.h"
+> >> +#include "stm32mp25_rcc.h"
+> >> +
+> >> +#include <dt-bindings/clock/st,stm32mp25-rcc.h>
+> >> +#include <dt-bindings/reset/st,stm32mp25-rcc.h>
+> >> +
+> >> +static const struct clk_parent_data adc12_src[] =3D {
+> >> +       { .name =3D "ck_flexgen_46" },
+> > This is a new driver. Don't use .name here. Instead use .index or .hw
+> > and if that can't work then use .fw_name.
+>=20
+> These parent clocks are managed by a secure world and exposed through SCM=
+I.
+>=20
+> If I use .index or .fw_name, do I have to expose 122 clocks in my DT node=
+ ?
+>=20
+> This will significantly increase the size of the DT file
+>=20
+>  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 clock-names =3D=
+ "hse", "hsi", ..., "ck_scmi_stm500";
+>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 clocks =3D <&sc=
+mi_clk CK_SCMI_HSE>, <&scmi_clk CK_SCMI_HSI>,=C2=A0=20
+> ... , =C2=A0 <&scmi_clk CK_SCMI_STM500>;
+>=20
+
+Yes? We want DT to express the connections between device nodes, and if
+the clks managed by SCMI are consumed here then they need to be
+specified via the clocks property.
+
+>=20
 > >
-> > On Thu, 21 Dec 2023 at 05:51, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
-> > >
-> > > In some designs the SoC's VDD_GFX pads are supplied by an external
-> > > regulator, rather than a power-domain. Allow this to be described in the
-> > > GPU clock controller binding.
-> > >
-> > > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > > index f369fa34e00c..013ef78d2b31 100644
-> > > --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > > +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > > @@ -53,6 +53,9 @@ properties:
-> > >    power-domains:
-> > >      maxItems: 1
-> > >
-> > > +  vdd-gfx-supply:
-> > > +    description: Regulator supply for the VDD_GFX pads
-> > > +
-> > >    '#clock-cells':
-> > >      const: 1
-> >
-> > I think it might be good to restrict this property to a particular
-> > platform (via if:not:properties:compatible:contains
-> > then:properties:vdd-gfx-supply:false).
-> 
-> After reading the last patches in the series, there is another
-> suggestion. Maybe we should explicitly say that there should be either
-> power-domains or vdd-gfx-supply, but not both.
-> 
+> >> +       { }
+> >> +};
+> >> +MODULE_DEVICE_TABLE(of, stm32mp25_match_data);
+> >> +
+> >> +static int get_clock_deps(struct device *dev)
+> > What is the explanation for this function?
+>=20
+> It 's to manage the dependency with the SCMI clock driver.
 
-Even on this platform it's not a property of the SoC, but surrounding
-design. So I like this proposal.
-
-Thanks,
-Bjorn
+Please elaborate. Are you making sure the SCMI clk driver has probed
+before this driver? Why? What's wrong with probing this driver first?
