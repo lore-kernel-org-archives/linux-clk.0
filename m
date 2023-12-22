@@ -1,123 +1,102 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FC3101CF;
-	Fri, 22 Dec 2023 09:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE531426C
+	for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 10:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TtPklQtk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703236995; x=1703841795; i=markus.elfring@web.de;
-	bh=3ig45DHXiib9kb5XvzHMPJQLjNR+DPC4+AqNcZPSRqU=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=TtPklQtkl8+oC25Zf6mbd5TyMgo+6lOKU0OQ6BPWEXukGcGhAXOsA2ujSMIG/Gap
-	 0FjgjScqL6XlK4aTVnaZ3HJHxRZL1aQsjq823KBj8V91BGqSR1LjzMCqrL6/2et+8
-	 8C8s+MlA3/d5BFFoRC67FqXKoQNXhHKlEk/d2kAn+xFrqfFkzBo/8AR3PF3FlETlJ
-	 woXXx67SuJbhvZELQHW62xpEIZLkBVJ3+qx6QwKbhB1PqifE/yC6Kq4i7xceVXgG0
-	 X8LxdwPsXOIqB60V6Zl8O6AKnnj6wJnHsgviuBOYQ/yTm8XoPX25SZflNmBJ3S3NK
-	 mnVgOzkuBZcCKFkc0w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MYu1C-1rlM3f2aSe-00VDQ7; Fri, 22
- Dec 2023 10:23:15 +0100
-Message-ID: <0e906ec6-fe73-4dbd-b555-a2c03b6e1030@web.de>
-Date: Fri, 22 Dec 2023 10:23:13 +0100
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0ffGAluF"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3367632ce7bso1380295f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 02:48:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1703242110; x=1703846910; darn=vger.kernel.org;
+        h=mime-version:message-id:date:subject:cc:to:from:user-agent:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+GWXCTtjSNNR9oPq2iw0nf47LFIhwakJPmZPJ2MyFfU=;
+        b=0ffGAluFaWLABIeX+rnNQuZhorZHkEJBOBvQbSUUpY/mj7LsJxqXDNfLoAKNniED4s
+         VyRvSOcpVRlanfl48guWcmeHnYFmJb6+qHw3X7GK+i314cUy/W6WKfh9HiUrZf/AY21A
+         Vv9mdL/9UPaGePtUaSjoFtwQ3J7Pp6HtU7fUibw1mGJbCj/u6Ikjk6NxcnPgpJ+uZY4B
+         voQHcXP5fotcFxMvUyO9OZ4Xp9t2AuuJj2kEFtiCMkxc9sHp7Q/+XBvMSNXL2eVpiYJD
+         O6McIOP7ZwjHAcotNhBamEGJj+ccqOpO/Dv4sH5MtHXsD4KZ/pyPIBEUpz85O5nTWmW9
+         0m6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703242110; x=1703846910;
+        h=mime-version:message-id:date:subject:cc:to:from:user-agent
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+GWXCTtjSNNR9oPq2iw0nf47LFIhwakJPmZPJ2MyFfU=;
+        b=WxMOGwFZEBTGJNyKa6g5fXNvw1TDwbvNlslz/W8Z2Er3rCis6+T1fvS3Ou0RKjq96n
+         LMX1AyO0DkcjX6KmVSw6FX54vH5D5r81Z05EHU+XfKE9VBdGOObVB/mnTQLX4+bXv77L
+         GzdXyUCLzsIG4gf+a/N2+z8XyLkFK3uOHjwxAW9vQsqLMrywCPXjTjc9uSdl9+npOsba
+         sHzhUPjkWfzxRn625s83TCDU484zHOwS7FjW3TYYORi/HcC+0dURYMenqc9+1tb5SkH5
+         VZ7Z3PSeX7E0i7mv5KjwR53TNR+KIZ53LRpxC9627XHFY9v460Cnhn9aywExP7nM+krr
+         xMmQ==
+X-Gm-Message-State: AOJu0Yx+ZlZFU1c+HkX+lBpZS4vB7IoM3txMcnfjzi/fb8Stc5fq8aZo
+	ycod6GttcY4krFFdYAW8lgQPxauKhh8MJ2P8XBjpYQf/33k=
+X-Google-Smtp-Source: AGHT+IGpgKGlsu3/wK0e2gT8HUtM9465RlPHpE7S5sqn7igaY/OJ9/MGNXGVgdBk1vdggoRNKVwkTQ==
+X-Received: by 2002:a5d:40cb:0:b0:336:7655:c63f with SMTP id b11-20020a5d40cb000000b003367655c63fmr581406wrq.47.1703242109957;
+        Fri, 22 Dec 2023 02:48:29 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:c099:e596:3179:b0fa])
+        by smtp.gmail.com with ESMTPSA id h16-20020a056000001000b003365c83273csm3992142wrx.16.2023.12.22.02.48.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Dec 2023 02:48:29 -0800 (PST)
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org
+Subject: [GIT PULL] clk: meson: amlogic clock updates for v6.8
+Date: Fri, 22 Dec 2023 11:41:11 +0100
+Message-ID: <1jzfy28qdf.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Kuan-Wei Chiu <visitorckw@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, kernel@pengutronix.de, linux-imx@nxp.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-References: <20231210171907.3410922-1-visitorckw@gmail.com>
-Subject: [PATCH] clk: imx: scu: Use common error handling code in
- __imx_clk_gpr_scu()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20231210171907.3410922-1-visitorckw@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:bbmJkcNnDotFtiTs26dlJsi1vk2huEHcKia+9MBq1a39yWTPgMS
- jxhFdyB5D51I7V2INVG9+gNjPJfG3zdMnWzRIcEGYjtCXTTONE0KJFmWATS5l+g4+RrFe6t
- DKdM+bHpWvYpqx44h6Wp9m6v153RG55/R0H/TVxNvJ+j2z+15+3ZnVwS2zp+LQsm4Cnl4xp
- h2vs1+itu0+fUskgWwFQw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zIfadAQeSq0=;U6exYvAg99UQJpr3sFbuqp6wy5Y
- CzjzhyjdOylHww44g9D/ghe4CCwUAJ8X4Qrp+cOuxiGcvCMon3Z3NT+OchSlMoBNgl7S1w/bT
- w21jCQqNaSib2HSsOVCmrtMqmCV5XSbdKUPpc/vDoO8/liVbmrC5RK5r9oiygrPVhQ/4Smu4R
- 2E4/sTzLKZxxdgi2Q3OhKc/Qjq8RNnBc+xkfFTL/ELmNXQYe4cl9sPBXnfrgNun6VdZ7DFCFD
- sgrnOPBDY6x5LuumfxDBv79iIebR/OEjqIsNWc32xt+xBRQft4QxPT1kK/XjsJXqQo9q5V15s
- mMeEcee8BfcruREOc8JOQUi1OFu/YJMbgNL9Qn/g4Q948GnL+PPUO45LhWbBMiefoO59AwTuz
- +OUd5WRPfKpQobxz2X8VA8r+7vSkHZEx8eoIBRhJEazt/q7Y2rsW1MSKOimfOhCSBvxLSpyPq
- 69Iga/Ok0uZ0hwf6+bsJksn1VT1CJvgp7s9lbbvEhSkqnmUpZBiZ0wegh7EAxE9vVB5/eGKnb
- zcqunlyunsIgHCMgIpTw3Q04GCzTSnUQUTC6UZpv6G7ob8ABWv/j04NCRfc/+hGrianQEe8rn
- ON5sYyyGZi6BYrg7rodUEw0FNKKfxSIp2W5ZZxWNALPzbc8G4uyjT55x4kiuImWAJ/TJls++r
- ghulBoXWNBFC3X+kKOW8/Zb0OV+CUnjLFsewyKU07UqjXSQ6OwsQ7nZQvRFdPUAzFQ04HFbsW
- 8reCagSpVVsaHYOLOsNLL+L1uiQIDjDfKnceKE+cFZy0n18xSkgyEzBIEUw/AHSEROeECcAVZ
- 9wBStI85eq529BwxCNeu6ljkQCebwd1cQLB669/DS8SvWZRj5GNVkqvETh68RuCEojcD78eJx
- LzVzBSh3bdLaVbgU2BU8zp2Z/aqsi14cTVHCSmqbZ/XfQ4uEmOpdDsuFTaBcu8sNYCd5q5Zo8
- NfNhaQ==
+Content-Type: text/plain
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Dec 2023 10:05:32 +0100
 
-Use another label so that a bit of exception handling can be better reused
-at the end of this function.
+Hi Stephen,
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/clk/imx/clk-scu.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Here are the amlogic clock updates for v6.8.
+It adds few new clocks on the g12 SoC family, for DSI, CSI and the ISP.
 
-diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
-index e48a904c0013..4ca9dccf3d3b 100644
-=2D-- a/drivers/clk/imx/clk-scu.c
-+++ b/drivers/clk/imx/clk-scu.c
-@@ -882,19 +882,19 @@ struct clk_hw *__imx_clk_gpr_scu(const char *name, c=
-onst char * const *parent_na
- 		return ERR_PTR(-ENOMEM);
+Cheers
+Jerome
 
- 	if (!imx_scu_clk_is_valid(rsrc_id)) {
--		kfree(clk_node);
--		return ERR_PTR(-EINVAL);
-+		ret =3D -EINVAL;
-+		goto free_clk_node;
- 	}
+The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
 
- 	if (!imx_clk_is_resource_owned(rsrc_id)) {
--		kfree(clk_node);
--		return NULL;
-+		ret =3D 0;
-+		goto free_clk_node;
- 	}
+  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
 
- 	clk =3D kzalloc(sizeof(*clk), GFP_KERNEL);
- 	if (!clk) {
--		kfree(clk_node);
--		return ERR_PTR(-ENOMEM);
-+		ret =3D -ENOMEM;
-+		goto free_clk_node;
- 	}
+are available in the Git repository at:
 
- 	clk->rsrc_id =3D rsrc_id;
-@@ -922,6 +922,7 @@ struct clk_hw *__imx_clk_gpr_scu(const char *name, con=
-st char * const *parent_na
- 	ret =3D clk_hw_register(NULL, hw);
- 	if (ret) {
- 		kfree(clk);
-+free_clk_node:
- 		kfree(clk_node);
- 		hw =3D ERR_PTR(ret);
- 	} else {
-=2D-
-2.43.0
+  https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.8-1
+
+for you to fetch changes up to 5205628ab0bfe64952974d476ee001f6c7e0ef7f:
+
+  clk: meson: g12a: add CSI & ISP gates clocks (2023-11-24 18:08:48 +0100)
+
+----------------------------------------------------------------
+Amlogic clock updates for v6.8
+
+* Add DSI clocks on g12/sm1
+* Add CSI and ISP clocks on g12/sm1
+
+----------------------------------------------------------------
+Jerome Brunet (1):
+      Merge branch 'v6.8/dt-bindings' into v6.8/drivers
+
+Neil Armstrong (5):
+      dt-bindings: clk: g12a-clkc: add CTS_ENCL clock ids
+      clk: meson: g12a: add CTS_ENCL & CTS_ENCL_SEL clocks
+      dt-bindings: clock: g12a-clkc: add MIPI ISP & CSI PHY clock ids
+      clk: meson: g12a: add MIPI ISP clocks
+      clk: meson: g12a: add CSI & ISP gates clocks
+
+ drivers/clk/meson/g12a.c              | 115 ++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/g12a.h              |   1 +
+ include/dt-bindings/clock/g12a-clkc.h |   8 +++
+ 3 files changed, 124 insertions(+)
 
