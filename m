@@ -1,120 +1,296 @@
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB08E28DB1
-	for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 16:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4437125763;
+	Fri, 22 Dec 2023 17:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bervrMY6"
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-28b82dc11e6so1293425a91.1
-        for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 08:59:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gry6xFq6"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-40d4d70eca6so2450475e9.3;
+        Fri, 22 Dec 2023 09:36:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703264388; x=1703869188; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1703266594; x=1703871394; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wuszQHofzpx+eEflqAJILsyJnJgQIE3F/nW1KqPO/FA=;
-        b=bervrMY65dNi6zWslUSUshNj5AGz+p5ytJ1OVWwU993J+x9JiXGeKDXsl174uvwj0X
-         HVgOTqYlMkX2FV6U+H7BLMVavKggmQJXYACY1zkSK7F63POcC+hkQUeq/PAb4xscxjuZ
-         xgqvEGIxPe6FC2hQYTG7WzgGq0P7v3mlUFXc0+9qTyO1gVkA1KA2HBe2HsYl34mB6xs+
-         Xr1FuIuVabr6EJ7sSsjgespxCmxQWTXnyJa114qQShPjuT3hIv9rcj4hItE4gN99hMlS
-         WTPLk8MLSlfHbsMmoPxuDM6eyC2qHYid2/F5PUWvFC7hxf+5PAGgoYXarjw+ZAtgUllT
-         6CjQ==
+        bh=7YiZlI//r8En/tRk88upggSvyQysyuMQpr+gIg9UNzw=;
+        b=Gry6xFq6jDVoQ9ol3r56ZiLZ11gypYBpECIbYlUf3WViD9AlvWZKKF/fYo0WTGYwAy
+         O2ggP/Zfn67RtuqnLXDpge5O5s7aDIdmcIdB60PHcAvk+DFQWdkBukHjBeYz8OdUxWVv
+         FXhrnooLDPeAFl0kYDGaObr8Xyuj9iimLM0AuhuTeOhPa0RyaCJG1UOZJhK149jmkVSx
+         7YOPFALnl6hempXY7j1Oxi3xDHFEr1IGVpcbu3pyw0lreYD3tT3VyInrHdCnufJ+NK+k
+         oeG794FEsD8aAEvAG8IWqApRU/ckdOqemJ1KhreZPK6G3TgP6/M1nkmaABH50pn4Qurv
+         SmwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703264388; x=1703869188;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1703266594; x=1703871394;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wuszQHofzpx+eEflqAJILsyJnJgQIE3F/nW1KqPO/FA=;
-        b=RPKstUEXw0mPPErOb8YmSHbNhMSyyWDqqOg5EVuMNsvJCQBkRfOLIzaN3AxTHd8Bgd
-         CeDBWbIgewVjw5IvXIfvbt67IPIh0G5a3JlnIKqx4EQLdUkDnUF5CCWM6gRq0C4DB1Op
-         R+qf5Hn1s6YlzcQJBmVLGAE1wlF4ZNBQISmLxdyQAOqbZ7wAXww1itHh/88sWN1BfY7p
-         jUx7TdjN3O/VYuWGEnwTkwanwtlSXrA2IEkS/XeLdZUr/aSTiEFoJXT+2EfSBaiR+nhC
-         ZhvjpJ8bxx4Gvu1j1RYx21Y5tf++9lBrF0IhCrldkjPrHnscXCyN21NWqXhvkS54hB3C
-         DIhA==
-X-Gm-Message-State: AOJu0Yx5z1vg+HE3arZCxIr4ivarjR4J/UFubE3Z3SwiIqEqRiI82KWI
-	yoOOw3/mhbJX+jkOhR48GaVbRVgMQhyFm/pAURaty3LxhI6i/Q==
-X-Google-Smtp-Source: AGHT+IF1XHuTpYzUp4iOd/xTGtwwth5YJnhCHTZjBMG4kuAWdGXzF7hJdHw8znlpoFdT38YluNJ2YUrJlNB9teZFkUo=
-X-Received: by 2002:a17:90a:9741:b0:288:8bdb:31c6 with SMTP id
- i1-20020a17090a974100b002888bdb31c6mr974534pjw.83.1703264388185; Fri, 22 Dec
- 2023 08:59:48 -0800 (PST)
+        bh=7YiZlI//r8En/tRk88upggSvyQysyuMQpr+gIg9UNzw=;
+        b=ZftiC+jmzNaXSvw5r4YAMRSkzqrSEgeiNVnJ7yhlEromZBGEsDy6iuARh35TARDJ1H
+         DmYj09LRwbfXE16swI0J/X3d6boL7VsuotDW9RHJsWWzFSLfN6/FwHhW2KjFWFZI1gSX
+         1aIcITYjFkKrzTOwMoljWy3NsQErlvuvWGEqoWZvNN65DbYrZw3L47SS6nnPrXGoE9wH
+         ZmgIcwcps3iAXSF9eVksMkWxit/zXnCus+hZ+0eH8b1q3mNTJGc4KASu21dCN9JgQJJg
+         qMv5puzfGeH2RlZkpvaI7soDW5+LyzQMtSwnks87E5sJdJYqb6j+R2CVrqhfP3gR1xJX
+         RSRA==
+X-Gm-Message-State: AOJu0Yx/NoNX3HkFr9l0nD2NPNwI9sxSUs5+Gv+jyOwHCmmtNY6LrhXO
+	DCUzEBI4uIPdn9t81OdV8mQ=
+X-Google-Smtp-Source: AGHT+IEAqe5dPjXcNIC+gFC5cubYgHN/sN9f6NAD4LxEz9mwTJLk9dblvc9QQAfaFyUSkIhnyKdDDQ==
+X-Received: by 2002:a05:600c:4f88:b0:40c:2533:8f41 with SMTP id n8-20020a05600c4f8800b0040c25338f41mr665524wmq.210.1703266594211;
+        Fri, 22 Dec 2023 09:36:34 -0800 (PST)
+Received: from jernej-laptop.localnet (82-149-12-148.dynamic.telemach.net. [82.149.12.148])
+        by smtp.gmail.com with ESMTPSA id u9-20020a05600c19c900b0040d18fdfe96sm15504000wmq.44.2023.12.22.09.36.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Dec 2023 09:36:33 -0800 (PST)
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Frank Oltmanns <frank@oltmanns.dev>, Frank Oltmanns <frank@oltmanns.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>,
+ Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
+ Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Subject:
+ Re: [PATCH 5/5] drm/panel: st7703: Drive XBD599 panel at higher clock rate
+Date: Fri, 22 Dec 2023 18:36:31 +0100
+Message-ID: <4187182.1IzOArtZ34@jernej-laptop>
+In-Reply-To: <87v88qk3ge.fsf@oltmanns.dev>
+References:
+ <20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev>
+ <875y0sacmz.fsf@oltmanns.dev> <87v88qk3ge.fsf@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231222165355.1462740-1-peter.griffin@linaro.org> <20231222165355.1462740-4-peter.griffin@linaro.org>
-In-Reply-To: <20231222165355.1462740-4-peter.griffin@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 22 Dec 2023 10:59:37 -0600
-Message-ID: <CAPLW+4khNwA=480_69XU5vPOY=Zw=4ytA4stF7gvRfUDCEGE5Q@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: exynos: gs101: define Multi Core Timer
- (MCT) node
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	daniel.lezcano@linaro.org, tglx@linutronix.de, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, 
-	cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
-	willmcvicker@google.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Dec 22, 2023 at 10:54=E2=80=AFAM Peter Griffin <peter.griffin@linar=
-o.org> wrote:
->
-> MCT has one global timer and 8 CPU local timers. The global timer
-> can generate 4 interrupts, and each local timer can generate an
-> interrupt making 12 interrupts in total.
->
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
+Dne petek, 22. december 2023 ob 10:10:25 CET je Frank Oltmanns napisal(a):
+>=20
+> On 2023-12-20 at 19:57:06 +0100, Frank Oltmanns <frank@oltmanns.dev> wrot=
+e:
+> > Ok, I've done more detailed testing, and it seems this patch results in
+> > lots of dropped frames. I'm sorry for not being more thorough earlier.
+> > I'll do some more testing without this patch and might have to either
+> > remove it from V2 of this series.
+> >
+> > I need to see if the same stability can be achieved when running
+> > PLL-MIPI outside its specied range.
+>=20
+> I've done some more (load) testing and observing the panel for dropped
+> frames.
+>=20
+> The conclusion I draw from those results is that this patch isn't
+> necessary for the pinephone. It would be enough to use the correct clock
+> rate based on the existing values [*]:
+> -	.clock	     =3D 69000,
+> +	.clock	     =3D (720 + 40 + 40 + 40) * (1440 + 18 + 10 + 17) * 60 / 100=
+0,
+>=20
+> I've asked in the postmarketOS community for a bit more testing. They
+> already have a merge request that contains these changes [2].
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+This patch sounds reasonable and IMO should be merged.
 
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/bo=
-ot/dts/exynos/google/gs101.dtsi
-> index 9747cb3fa03a..4b09e740b58a 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -292,6 +292,26 @@ cmu_misc: clock-controller@10010000 {
->                         clock-names =3D "dout_cmu_misc_bus", "dout_cmu_mi=
-sc_sss";
->                 };
->
-> +               timer@10050000 {
-> +                       compatible =3D "google,gs101-mct",
-> +                                    "samsung,exynos4210-mct";
-> +                       reg =3D <0x10050000 0x800>;
-> +                       interrupts =3D <GIC_SPI 753 IRQ_TYPE_LEVEL_HIGH 0=
->,
-> +                                    <GIC_SPI 754 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 755 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 756 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 757 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 758 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 759 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 760 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 761 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 762 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 763 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH 0>;
-> +                       clocks =3D <&ext_24_5m>, <&cmu_misc CLK_GOUT_MISC=
-_MCT_PCLK>;
-> +                       clock-names =3D "fin_pll", "mct";
-> +               };
-> +
->                 watchdog_cl0: watchdog@10060000 {
->                         compatible =3D "google,gs101-wdt";
->                         reg =3D <0x10060000 0x100>;
-> --
-> 2.43.0.472.g3155946c3a-goog
->
+Best regards,
+Jernej
+
+>=20
+> This means that we would continue to drive PLL-MIPI outside it's
+> specified range. I have, so far, not experienced any downside of doing
+> so. It seems enough to fix the ratios that are part of the first four
+> patches in this series without introducing a min and max rate.
+>=20
+> In conclusion, I'll soon (after some more feedback from the fine folks
+> at postmarketOS) submit a V2 that addresses the fixes requested in the
+> first four patches of this series. I'll drop the existing PATCH 5 and
+> replace it with the one I sent in February [1] instead.
+>=20
+> After that, just for fun, I'll probably look into min_rate and max_rate
+> for nkm clocks and which consequences it has on the pinephone. I might
+> or might not send a follow up series for that. However, if the pinephone
+> runs stable without it, it's not a high priority for me.
+>=20
+> Best regards,
+>   Frank
+>=20
+> [*] I've already submitted a patch in February '23 [1]. It was of little
+>     use back then because the A64's PLL-MIPI clock was not able to run
+>     close to that rate. But since kernel 6.6 PLL-MIPI is able to set
+>     it's parent rate, so that it can come quite close to the required
+>     rate:
+>      + Panel requires 74.844 MHz with the current timings.
+>      +-> tcon-data-clock rate should be 112.266 MHz (panel*24/4/4).
+>       +-> PLL-MIPI rate should be 449.064 MHz (TCON0 * 4)
+>=20
+>     The 6.6 kernel the following rates are possible:
+>      + PLL-MIPI: ~448.984615 MHz
+>      +-> tcon-data-clock: ~112.246153
+>       +-> panel: ~74.830768 MHz
+>=20
+>     Which leaves us with a vertical refresh rate of ~59.989 Hz,
+>     deviating less then 0.2% from the ideal 60Hz. That's probably closer
+>     than the accumulated accuracy of all involved components can
+>     reliably achieve. I'd say, let's leave it at that.
+>=20
+> [1]: https://lore.kernel.org/lkml/20230219114553.288057-2-frank@oltmanns.=
+dev/
+> [2]: https://gitlab.com/postmarketOS/pmaports/-/merge_requests/4645
+> >
+> > Best regards,
+> >   Frank
+> >
+> > On 2023-12-20 at 16:18:49 +0100, Jernej =C5=A0krabec <jernej.skrabec@gm=
+ail.com> wrote:
+> >> Dne sreda, 20. december 2023 ob 08:14:27 CET je Frank Oltmanns napisal=
+(a):
+> >>>
+> >>> On 2023-12-19 at 18:04:29 +0100, Jernej =C5=A0krabec <jernej.skrabec@=
+gmail.com> wrote:
+> >>> > Dne ponedeljek, 18. december 2023 ob 14:35:23 CET je Frank Oltmanns=
+ napisal(a):
+> >>> >> This panel is used in the pinephone that runs on a Allwinner A64 S=
+OC.
+> >>> >> Acoording to it's datasheet, the SOC requires PLL-MIPI to run at m=
+ore
+> >>> >> than 500 MHz.
+> >>> >>
+> >>> >> Therefore, change [hv]sync_(start|end) so that we reach a clock ra=
+te
+> >>> >> that is high enough to drive PLL-MIPI within its limits.
+> >>> >>
+> >>> >> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> >>> >
+> >>> > I'm not too sure about this patch. I see that PLL_MIPI doesn't have=
+ set
+> >>> > minimum frequency limit in clock driver. If you add it, clock frame=
+work
+> >>> > should find rate that is high enough and divisible with target rate.
+> >>>
+> >>> This one is really a tough nut. Unfortunately, the PLL_MIPI clock for
+> >>> this panel has to run exactly at 6 * panel clock. Let me start by
+> >>> showing the relevant part of the clock tree (this is on the pinephone
+> >>> after applying the patches):
+> >>>     pll-video0                 393600000
+> >>>        pll-mipi                500945454
+> >>>           tcon0                500945454
+> >>>              tcon-data-clock   125236363
+> >>>
+> >>> To elaborate, tcon-data-clock has to run at 1/4 the DSI per-lane bit
+> >>> rate [1]. It's a fixed divisor
+> >>>
+> >>> The panel I'm proposing to change is defined as this:
+> >>>
+> >>>     static const struct st7703_panel_desc xbd599_desc =3D {
+> >>>     	.mode =3D &xbd599_mode,
+> >>>     	.lanes =3D 4,
+> >>>     	.mode_flags =3D MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_P=
+ULSE,
+> >>>     	.format =3D MIPI_DSI_FMT_RGB888,
+> >>>     	.init_sequence =3D xbd599_init_sequence,
+> >>>     };
+> >>>
+> >>> So, we have 24 bpp and 4 lanes. Therefore, the resulting requested
+> >>> tcon-data-clock rate is
+> >>>     crtc_clock * 1000 * (24 / 4) / 4
+> >>>
+> >>> tcon-data-clock therefore requests a parent rate of
+> >>>     4 * (crtc_clock * 1000 * (24 / 4) / 4)
+> >>>
+> >>> The initial 4 is the fixed divisor between tcon0 and tcon-data-clock.
+> >>> Since tcon0 is a ccu_mux, the rate of tcon0 equals the rate of pll-mi=
+pi.
+> >>>
+> >>> Since PLL-MIPI has to run at at least at 500MHz this forces us to hav=
+e a
+> >>> crtc_clock >=3D 83.333 MHz. The mode I'm prorposing results in a rate=
+ of
+> >>> 83.502 MHz.
+> >>
+> >> This is much better explanation why this change is needed. Still, I th=
+ink
+> >> adding min and max rate to PLL_MIPI would make sense, so proper rates
+> >> are guaranteed.
+> >>
+> >> Anyway, do you know where are all those old values come from? And how =
+did
+> >> you come up with new ones? I guess you can't just simply change timing=
+s,
+> >> there are probably some HW limitations? Do you know if BSP kernel supp=
+ort
+> >> this panel and how this situation is solved there?
+> >>
+> >>>
+> >>> If we only changed the constraints on the PLL_MIPI without changing t=
+he
+> >>> panel mode, we end up with a mismatch. This, in turn, would result in
+> >>> dropped frames, right?
+> >>
+> >> From what I read, I think frame rate would be higher than 60 fps. What
+> >> exactly would happen depends on the panel.
+> >>
+> >> Best regards,
+> >> Jernej
+> >>
+> >>>
+> >>> Best regards,
+> >>>   Frank
+> >>>
+> >>> [1] Source:
+> >>> https://elixir.bootlin.com/linux/v6.6.7/source/drivers/gpu/drm/sun4i/=
+sun4i_tcon.c#L346
+> >>>
+> >>> >
+> >>> > Best regards,
+> >>> > Jernej
+> >>> >
+> >>> >> ---
+> >>> >>  drivers/gpu/drm/panel/panel-sitronix-st7703.c | 14 +++++++-------
+> >>> >>  1 file changed, 7 insertions(+), 7 deletions(-)
+> >>> >>
+> >>> >> diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7703.c b/drive=
+rs/gpu/drm/panel/panel-sitronix-st7703.c
+> >>> >> index b55bafd1a8be..6886fd7f765e 100644
+> >>> >> --- a/drivers/gpu/drm/panel/panel-sitronix-st7703.c
+> >>> >> +++ b/drivers/gpu/drm/panel/panel-sitronix-st7703.c
+> >>> >> @@ -320,14 +320,14 @@ static int xbd599_init_sequence(struct st770=
+3 *ctx)
+> >>> >>
+> >>> >>  static const struct drm_display_mode xbd599_mode =3D {
+> >>> >>  	.hdisplay    =3D 720,
+> >>> >> -	.hsync_start =3D 720 + 40,
+> >>> >> -	.hsync_end   =3D 720 + 40 + 40,
+> >>> >> -	.htotal	     =3D 720 + 40 + 40 + 40,
+> >>> >> +	.hsync_start =3D 720 + 65,
+> >>> >> +	.hsync_end   =3D 720 + 65 + 65,
+> >>> >> +	.htotal      =3D 720 + 65 + 65 + 65,
+> >>> >>  	.vdisplay    =3D 1440,
+> >>> >> -	.vsync_start =3D 1440 + 18,
+> >>> >> -	.vsync_end   =3D 1440 + 18 + 10,
+> >>> >> -	.vtotal	     =3D 1440 + 18 + 10 + 17,
+> >>> >> -	.clock	     =3D 69000,
+> >>> >> +	.vsync_start =3D 1440 + 30,
+> >>> >> +	.vsync_end   =3D 1440 + 30 + 22,
+> >>> >> +	.vtotal	     =3D 1440 + 30 + 22 + 29,
+> >>> >> +	.clock	     =3D (720 + 65 + 65 + 65) * (1440 + 30 + 22 + 29) * 6=
+0 / 1000,
+> >>> >>  	.flags	     =3D DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
+> >>> >>  	.width_mm    =3D 68,
+> >>> >>  	.height_mm   =3D 136,
+> >>> >>
+> >>> >>
+> >>>
+>=20
+
+
+
+
