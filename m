@@ -1,50 +1,28 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EC117993
-	for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 12:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549C228DA5;
+	Fri, 22 Dec 2023 16:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y74jHu/t"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-50e3901c2e2so2173716e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 04:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703246857; x=1703851657; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=nvgpL3qEBxgU0a2eKbgDbOrM1FwKdSrTGRnjkzSYtp8=;
-        b=Y74jHu/tVgBpZDwL0mQ0j5I9klRWx334YLy+tS78nbxsExmV1WkKYkT2MC4rDF2SRH
-         o4pu/EqA0Y+s2F53cLNo1wJGFXqB4YMoXb0JgPGw/CnOH4on6h+CyghnyrZ1wMTjY4pb
-         OkAyGpTzt6gBwl35/1taiVcGTwwb+lPy1F2SeYBxF3VeM5DZVvk1XpLdfJrObgBExkZq
-         fkDzomtAx/cGzpfb9eTwTpGrFpkPUB1l7I4uuWGfkccPCtqLKgvQHtzBWyZQuaQXOwYK
-         vFvGHFvXWuGCWspz9eD9uTRizzCRIA9X8RNb+Fg0iNHAtpK4XiCqUnWIjP7IDNUqZXN4
-         Nk5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703246857; x=1703851657;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nvgpL3qEBxgU0a2eKbgDbOrM1FwKdSrTGRnjkzSYtp8=;
-        b=VDLcuFi+t6zwj4FVQxD2LtfwYsGh61fesrumXJc3vyf4Z41s+SZvPcRekCBCOYyUeJ
-         y/Q3TyBRAofsPBjI2TdROEm1Z0FEuTdkMGwVqsYdxchVAawUzywPYLEIA9+a9bUSZPnB
-         WLVmT/3uS9VT8i4pmRKoWs7SC3/1YH0ruTtMqeq0t7MipOu8KDWEsDbDHjZuG4TsivVP
-         T01meQc//UZ9JvBJdxn66ShlpRtM+qBHtfG4//eu23HeCRFymYWpU0NLJkeA/jTwXWdE
-         /v0v81bldsKM9dWQsd7dxcHPz18pE4ihawprwMTVTKNcVq1ilgBhncshfOemRyZ77ilm
-         LQnQ==
-X-Gm-Message-State: AOJu0YwftDXZJifTH+bD/ERdwM7dSjmemnQlpxV7WsEQ1wOuzwWIy/UQ
-	n20DHyutx2x47rUhfGgq3gcjQ9Ms3fr88g==
-X-Google-Smtp-Source: AGHT+IESJiqB2x1rgNMeJY/VGI58lLZz48PlqJXxFZTH15QE3NVtltjaDSQWwzqSSvdmDe/FGXrcHg==
-X-Received: by 2002:ac2:48b9:0:b0:50e:1870:1ef2 with SMTP id u25-20020ac248b9000000b0050e18701ef2mr480321lfg.114.1703246856607;
-        Fri, 22 Dec 2023 04:07:36 -0800 (PST)
-Received: from [192.168.199.125] (178235179206.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.206])
-        by smtp.gmail.com with ESMTPSA id f19-20020a056402069300b0054c9b0bd576sm2470850edy.26.2023.12.22.04.07.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Dec 2023 04:07:36 -0800 (PST)
-Message-ID: <94d2c5e2-d75e-4de6-928a-e278b341a02c@linaro.org>
-Date: Fri, 22 Dec 2023 13:07:33 +0100
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h2jY+MEX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1703262801; x=1703867601; i=markus.elfring@web.de;
+	bh=II1Syu+QZpTTdKNVAA8lEUdquR1iIiAORrysqoovEIw=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=h2jY+MEXYpMVABxYGUvm996cPhhIram0PivmZeM9XTQuG1paepFqqv531VIYPkpF
+	 tKIonNpSLhGLswkvBs2/2Jfd6y2DdNTW4gK0RG1QFmHRld5P/Rk1MkDwODqym3RWx
+	 IwI/rG+lm+qKVmKyTyNDna6fTCbwbkwBrip9lO8rMrZWn3qB/k/H6S90/CzxLZ3Ng
+	 pqPRduHHj+0eNa6O2ZqK5rEDK7BPUE9H+J0v88mDOZGYUuRoFcI7k1gnCZulICGNd
+	 eESfxaOrbbpt6/K9mU0mFSeK05AK9wR8qjhl5R6Zt8sn6Laz8K/JzD/njgVJ5BvMh
+	 NAdi+ouDfXEga2lRHA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N8Vsx-1rBvG53VZJ-014Irv; Fri, 22
+ Dec 2023 17:33:20 +0100
+Message-ID: <1d494176-2238-4430-bc26-4e4c78fe4ede@web.de>
+Date: Fri, 22 Dec 2023 17:33:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,105 +30,53 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] dt-bindings: clock: qcom: Allow VDD_GFX supply to
- GX
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bjorn Andersson <quic_bjorande@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold
- <johan+linaro@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20231220-sa8295p-gpu-v2-0-4763246b72c0@quicinc.com>
- <20231220-sa8295p-gpu-v2-1-4763246b72c0@quicinc.com>
- <26617c83-31b3-4ad9-8a61-0b8271fad41f@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
- BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
- HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
- TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
- zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
- MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
- t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
- UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
- aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
- kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
- Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
- R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
- BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
- yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
- xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
- 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
- GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
- mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
- x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
- BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
- mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
- Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
- xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
- AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
- 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
- jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
- cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
- jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
- cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
- bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
- YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
- bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
- nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
- izWDgYvmBE8=
-In-Reply-To: <26617c83-31b3-4ad9-8a61-0b8271fad41f@linaro.org>
+Content-Language: en-GB
+To: Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, kernel@pengutronix.de, linux-imx@nxp.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/2] clk: imx: composite-8m: Adjustments for
+ __imx8m_clk_hw_composite()
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:W6dljh25Z3qX0ewVj1QQEwoJbI1MVRnyEOTGeRUMxGzbQwCIVg8
+ Jpn+2Q85+M+DNp1/ozepjDmvieNaTOwDo9oEd9yJ46ddZ0GoKKWUYkA9fT0nniXAPnb1bTN
+ Q/syistUvudxN9oH4763xgTR5TTE0+xZsBzzcruzYhNG5JMpCqdIdkTmpWw1ZHJonWN5o6D
+ Mgqr6UohTu9mC9LNFY6ww==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:FqRND/JLYg4=;EfoGxG+5SJAxzghPY0IrN5E4rez
+ B3m9cjA6AaMtZsXqG+7gh2LC4fM4ug0OpwJsissxr6ftApZKl3WaiqAIbqpCDb5+DImS5juaC
+ 1pMfTjZMfU2rU99L1aky4ZCjGXyKg9j5les2Psg4RGYvWaGm0migpIzCMPov67m2Au+6NDb1C
+ MsJ51mOaCwTzmppJxK4+scgBGbAlEM1WB7q0BvTWpXT6W4VjMnfI3CgOBW0g50551HUIBCNrG
+ qNr7wjKrJgs1xu7vfvQJ7hWpo1TyFY1Rdx+PaX6qT3EJGgFhwbbrzK+ZBrmeP2+CWBC2PmVT1
+ 1PCvXyMaaAkSmVk0SO2oruZJTNZUVVg2cmznukUwQYQQmr0el/+6KlDUu1wBNqqnvVf1Lj0wX
+ Y8E4x9/xNKDmQ86RRjPx0RGcEgvKSxPcre5ADhkZlN8MSb2KwMJdT/Tcdo7/79PldRP77RtXt
+ 9Gch/59opWQOq6SA36pdjAXzj/iic+22cj36g3VAnnKfC+/e5BAfaJBHemdtCS10tJmw6vpMT
+ X8+poAovKjR7jrdJpoyIuqpmsKJ610WTIjWa38UVi1rrcgYmMNgVq/8mlnnec6cyxTin6mF/O
+ eCddRYVgZOuYqZYJzkY7osI8F1OU9DvLQGRGe7B9unqIfphEJqf6IEXl9L8yZITy/Uu2S1L8W
+ MbTJFHVC837bDVFjr8dtn7iGztI3h+Ppvjm1YuBDkMmt2+Rbrrv8Jx1djjwaW4N+gmX2feBMg
+ 6xgv5oKNUc9HVPhHJ3xjG7a2bL5kgzMkDV4Ysxjn0SuX9+kBU4Vbxzx/lBcDflrji/CvOdr4N
+ LDB5uZtdLsp/MYBOjA3441rWR5gQyrLl7HEBmxCCIPoihmO4uewdDsPCUyff5QVgfFFSinn44
+ d2RX/4LLUP/qti3HmY1bihp7wKt/cksc+VhsqAK/YPMI39y3GjFxLTzasuXOjkveSOyh40CG9
+ ULA0Apt+kDuvXq5h+P8suLoutmI=
 
-On 22.12.2023 09:12, Krzysztof Kozlowski wrote:
-> On 22/12/2023 05:39, Bjorn Andersson wrote:
->> In some designs the SoC's VDD_GFX pads are supplied by an external
->> regulator, rather than a power-domain. Allow this to be described in the
->> GPU clock controller binding.
->>
->> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
->> ---
->>  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml | 16 ++++++++++++++++
->>  1 file changed, 16 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
->> index f369fa34e00c..c0dd24c9dcb3 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
->> @@ -53,6 +53,9 @@ properties:
->>    power-domains:
->>      maxItems: 1
->>  
->> +  vdd-gfx-supply:
->> +    description: Regulator supply for the VDD_GFX pads
->> +
->>    '#clock-cells':
->>      const: 1
->>  
->> @@ -74,6 +77,19 @@ required:
->>    - '#reset-cells'
->>    - '#power-domain-cells'
->>  
->> +# Allow either power-domains or vdd-gfx-supply, not both
->> +oneOf:
->> +  - required:
->> +      - power-domains
->> +  - required:
->> +      - vdd-gfx-supply
-> 
-> This should be enough, assuming one of them is actually required. The
-> code. See also:
-> https://elixir.bootlin.com/linux/v5.17-rc2/source/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml#L91
-At least one of them indeed is, though this change is being made
-implicitly. No clock controller works with no power FWIW
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Dec 2023 17:24:32 +0100
 
-Konrad
+A few update suggestions were taken into account
+from source code analysis.
+
+Markus Elfring (2):
+  Less function calls after error detection
+  Delete two unnecessary initialisations
+
+ drivers/clk/imx/clk-composite-8m.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+=2D-
+2.43.0
+
