@@ -1,148 +1,162 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EEE944E;
-	Fri, 22 Dec 2023 07:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14078FBF2
+	for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 08:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="yfTUqeG/"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4SxK9d5hNTz9t37;
-	Fri, 22 Dec 2023 08:46:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-	s=MBO0001; t=1703231173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QReCVjp65CghleerQ4Gsba57ap8mMcMDnWkb8OUPQus=;
-	b=yfTUqeG/KzzUMlyxkh4Kr1ro6U3WNlOXHfwdMVxDWBWooswGbQ9Tf76tXJ/iDUuXhmukWP
-	SJgx93NSfrGhfjIcfrnJaBUhBMYKNjpU/tL0CDkZqR6eiOVv6egqgSp3reUif8cA9W8j10
-	hveCBXVvJUucNi2OxlfVRWZViA8CsXrEa+B9w6jm2VC/HDdNvGmDFkuTWft9ydWk74somG
-	GR7PfwtWATistc3dXQWwO/j0mUTDCIMdD5hVTeX4l+Ski4+Wjv5R02c/Bar5CgneCKfsss
-	n+AkM9pdMdi1lXHOxQqD1gZLXtA0ua/0D0kaD1DUq8C8HcrN3hW1TRiUrOwb+A==
-References: <20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev>
- <13411739.uLZWGnKmhe@jernej-laptop> <87il4t9wi1.fsf@oltmanns.dev>
- <2174554.Mh6RI2rZIc@jernej-laptop>
-From: Frank Oltmanns <frank@oltmanns.dev>
-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
- <samuel@sholland.org>, Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>,
- Purism Kernel Team
- <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 4/5] clk: sunxi-ng: a64: Add constraints on PLL-VIDEO0's
- n/m ratio
-In-reply-to: <2174554.Mh6RI2rZIc@jernej-laptop>
-Date: Fri, 22 Dec 2023 08:46:01 +0100
-Message-ID: <87edfellxi.fsf@oltmanns.dev>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jj/egOss"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-54c5d041c23so1760061a12.2
+        for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 00:12:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1703232726; x=1703837526; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l3ulPGHKv/ZPZ4PrF7+MKhogClUDyW/rffu8i5zrlFY=;
+        b=Jj/egOssPeZDNyTAF5XOnd2c38wymmYDBRjZpcUIzTuvLMh5VVnfA+/u1vDiHb3jpu
+         WmT7D3d9yalCa4kKRF6Uwfd0kD14VBIk71kks9n8z6aliWNlShVYKxlOIc/Hj/EvRcEo
+         4Bg0pQUyYtbiO1rx+61iCYxfeyPLJ7HqPwetmy7ItAo1VO434soxqZuaY+mj/Pznb32t
+         ZX8GlOB+Sby/SiCWhp8HQ2M1KWGZ2n2PXAR9U8jTN1bxrXC97jiLx4qU9jtlCvj9d04V
+         blTUJpIe9YJQz3t3GuqYmXsE02Ub87PpR5+fGxg5cmEwT1O202CnYEjkGgvy0ZvMTbeH
+         E11g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703232726; x=1703837526;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l3ulPGHKv/ZPZ4PrF7+MKhogClUDyW/rffu8i5zrlFY=;
+        b=KdvRKuX6recBdw/lfJmuj3+cfFhdvdRpC4vMAhbS7KWJxhLM5m9dTOH4hp6mtfUSyp
+         Iz/dUFhchdOzlxqytVv6TepNk4I4nxTvrTX53j7dJbvFvw1ZL6ObFNFFc3p2sIC9vCYO
+         UODXZxU2EFBuzjX/EoE+wqj3zI/G5v+W7ZfZOJErwS3dGRuF/w9rWT0h3hFcWAmJbaM7
+         C8eVZ64AlLNG5pbvVwuaeY0dgbcuxUV4Y+2LLjOieayzlBhwzY8Efedtov+Js0a3rmqe
+         LX9UabQz1dB3gszdzzDIflXWwAqO/swopEaGX6YfNCdghkcNyRVnVoAyY7pukvx8ZHNd
+         K5Bg==
+X-Gm-Message-State: AOJu0YzXzsI52DGCEtW6ODVyD9gwD6zJRcDXfOa+05ERFMgtHjvvWNlb
+	OPMiiqj+g9EPFFWmai/vHZpnF4CJaVYxGA==
+X-Google-Smtp-Source: AGHT+IFQ8yqAiGLpByY3+iJbad7ReYXbgOANRLDNM0da2/guhsGcIZctGqkBR7xXfeBxJLsHdfqtSQ==
+X-Received: by 2002:a17:906:4a15:b0:a23:5780:6305 with SMTP id w21-20020a1709064a1500b00a2357806305mr270074eju.216.1703232726357;
+        Fri, 22 Dec 2023 00:12:06 -0800 (PST)
+Received: from [192.168.0.22] ([78.10.206.178])
+        by smtp.gmail.com with ESMTPSA id u23-20020a170906109700b00a26af5717e9sm930059eju.42.2023.12.22.00.12.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Dec 2023 00:12:05 -0800 (PST)
+Message-ID: <26617c83-31b3-4ad9-8a61-0b8271fad41f@linaro.org>
+Date: Fri, 22 Dec 2023 09:12:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 4SxK9d5hNTz9t37
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] dt-bindings: clock: qcom: Allow VDD_GFX supply to
+ GX
+Content-Language: en-US
+To: Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold
+ <johan+linaro@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20231220-sa8295p-gpu-v2-0-4763246b72c0@quicinc.com>
+ <20231220-sa8295p-gpu-v2-1-4763246b72c0@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231220-sa8295p-gpu-v2-1-4763246b72c0@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 22/12/2023 05:39, Bjorn Andersson wrote:
+> In some designs the SoC's VDD_GFX pads are supplied by an external
+> regulator, rather than a power-domain. Allow this to be described in the
+> GPU clock controller binding.
+> 
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+> index f369fa34e00c..c0dd24c9dcb3 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+> @@ -53,6 +53,9 @@ properties:
+>    power-domains:
+>      maxItems: 1
+>  
+> +  vdd-gfx-supply:
+> +    description: Regulator supply for the VDD_GFX pads
+> +
+>    '#clock-cells':
+>      const: 1
+>  
+> @@ -74,6 +77,19 @@ required:
+>    - '#reset-cells'
+>    - '#power-domain-cells'
+>  
+> +# Allow either power-domains or vdd-gfx-supply, not both
+> +oneOf:
+> +  - required:
+> +      - power-domains
+> +  - required:
+> +      - vdd-gfx-supply
 
-On 2023-12-20 at 16:12:42 +0100, Jernej =C5=A0krabec <jernej.skrabec@gmail.=
-com> wrote:
-> Dne sreda, 20. december 2023 ob 08:09:28 CET je Frank Oltmanns napisal(a):
->>
->> On 2023-12-19 at 17:54:19 +0100, Jernej =C5=A0krabec <jernej.skrabec@gma=
-il.com> wrote:
->> > Dne ponedeljek, 18. december 2023 ob 14:35:22 CET je Frank Oltmanns na=
-pisal(a):
->> >> The Allwinner A64 manual lists the following constraint for the
->> >> PLL-VIDEO0 clock: 8 <=3D N/M <=3D 25
->> >>
->> >> Use this constraint.
->> >>
->> >> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
->> >> ---
->> >>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 8 ++++++--
->> >>  1 file changed, 6 insertions(+), 2 deletions(-)
->> >>
->> >> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunx=
-i-ng/ccu-sun50i-a64.c
->> >> index c034ac027d1c..75d839da446c 100644
->> >> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
->> >> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
->> >> @@ -68,7 +68,8 @@ static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_ba=
-se_clk, "pll-audio-base",
->> >>  				       BIT(28),	/* lock */
->> >>  				       CLK_SET_RATE_UNGATE);
->> >>
->> >> -static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_CLOSEST(pll_video0_c=
-lk, "pll-video0",
->> >> +static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_FEAT_NM_RATIO(pll_vi=
-deo0_clk,
->> >> +						"pll-video0",
->> >>  						"osc24M", 0x010,
->> >>  						192000000,	/* Minimum rate */
->> >>  						1008000000,	/* Maximum rate */
->> >> @@ -80,7 +81,10 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_CL=
-OSEST(pll_video0_clk, "pll-vid
->> >>  						297000000,	/* frac rate 1 */
->> >>  						BIT(31),	/* gate */
->> >>  						BIT(28),	/* lock */
->> >> -						CLK_SET_RATE_UNGATE);
->> >> +						CLK_SET_RATE_UNGATE,
->> >> +						CCU_FEATURE_FRACTIONAL |
->> >> +						CCU_FEATURE_CLOSEST_RATE,
->> >
->> > Above flags are unrelated change, put them in new patch if needed.
->>
->> You might notice that I am using a new macro for initializing the
->> pll_video0_clk struct:
->> New: SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_FEAT_NM_RATIO
->> Old: SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_CLOSEST
->>
->> Setting the two CCU_FEATURE flags is part of the old initialization
->> macro.
->>
->> I'll add SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_NM_RATIO_CLOSEST which
->> hopefully resolves the confusion.
->
-> I'm in doubt if we need so many macros. How many users of these macro we'=
-ll have?
-> I see that R40 SoC would also need same ratio limits, but other that that=
-, none?
-
-Ok, IIUC no additional macro and we keep this part of the patch as is.
+This should be enough, assuming one of them is actually required. The
+code. See also:
+https://elixir.bootlin.com/linux/v5.17-rc2/source/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml#L91
 
 Best regards,
-  Frank
+Krzysztof
 
->
-> Best regards,
-> Jernej
->
->>
->> Thanks,
->>   Frank
->>
->> >
->> > Best regards,
->> > Jernej
->> >
->> >> +						8, 25);		/* min/max nm ratio */
->> >>
->> >>  static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
->> >>  					"osc24M", 0x018,
->> >>
->> >>
->>
