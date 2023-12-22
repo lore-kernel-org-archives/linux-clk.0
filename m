@@ -1,47 +1,47 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B52724B3D
-	for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 16:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC4D25575
+	for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 16:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T4vglsCI"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40d3ae326f6so19921565e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 08:54:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Acal+pj5"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-40d22d3e751so18911615e9.1
+        for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 08:54:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703264082; x=1703868882; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1703264084; x=1703868884; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kQK2VmtCHYl6yYZDh5S9BZ2JwRKpJFyjaq6UtHRGJsk=;
-        b=T4vglsCIaAvQRh2yHcdaByv7aSOUPj0md4uP+JWWW5Qh5kUZ0jC2eUM90EmaSZxNGD
-         hFPR0mRNbIBG2CBdcZ1v1Lc2lWf8V+uvVbc6qG3Mkg5WaCaaeAiVbcn3KrZ+NsJ/9Sgn
-         TzHZ9rmL3Leub3Ja1gR3QQ3QXOk+BsIpYe0/UsG3fZQOBEpHk+vKdN+fZxStrta/E3VH
-         sHQja6CfvmQMLdQztv2ojqNPatBdFu+uaMrRAfxvINdc75WeoWBse5nnS+/48ccWgjji
-         mNX9v3G9+jQNggEqnvfWSbTvmFYtWKfBg0dvgpKnbnME3R6q/behd6NjERbfqRmxnN9q
-         2GJg==
+        bh=H2C5UTNIPG7mjByyTbN4UUYUJWv2TfPmtilLr3g/kHI=;
+        b=Acal+pj5ltoXwBdUReQyg/omMeFy1jj5Lxj6mhz51FAs58aI/exFwygV2ItRqsW301
+         6+vfgPxkEiNGz/weGDz4ovq0SwJtKWiCZdpgbfbPxQ2hknWsSXRxE53opZwlvKXqIslY
+         4uzUrkALoOC9r0syqwfDwN8MW/7D9MnBArpr84cH/Ym27nrSN0UiQrw7woE7QjpEMSaw
+         MPnMGcfaixVYLMM+7WqP+6rKknmcvgoczrvr9NezTvdnYWNjg88PzBw1WLqpps8sL2qU
+         AjJycwSglELdYIpdGDjCi66QXDVxe9UGzPFkbbKJYKAaurM7hF3QM0gEDiSONVSyb6CM
+         Epyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703264082; x=1703868882;
+        d=1e100.net; s=20230601; t=1703264084; x=1703868884;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kQK2VmtCHYl6yYZDh5S9BZ2JwRKpJFyjaq6UtHRGJsk=;
-        b=N1rGJeCtns7LRjBG4PjrfipKCBP61wtJ7gQD8S4dXh/T5GtM0QPsj08nhSK/d1RVg1
-         sW1XJAuOnKTztZPUFXFZ6GOFhPm65AZgGeF/lyE0A4to2n7wdrPAYXt3y3aeg/BLEXR4
-         dAyyajQAeMLPcU0qnQPuOXy+rrsriFbN9U0QqDvEumz5ucLh1eVU+EnBDJ09EW8HNJj6
-         0SmQo10b+alLZAILs4GiTXcq+GGJLzMUopB13C26nChDYv4fQa3HpQBNgbOZoA0yPd55
-         bybMhmgwGRx8fbIAUOd/iRT8oaIAwJlrLpSbVJB6NEKQs6ZE/YeitmOCyoix4BuiUV2m
-         Pg3w==
-X-Gm-Message-State: AOJu0YxNMuNDq7EtsEV1/BILNAwjTJkLpa9b/0TepCmIjfz7NU/QMYAB
-	gqgrFhZJhDHdw3Ga6BH360AHsIvzDzGivw==
-X-Google-Smtp-Source: AGHT+IFGi3TkdV0/ZkWoMA0Zj2LD/mEXVScaCaz/LMNhdFpRM0fz7SwOa9CY7MhveuIg3OuXknU8lA==
-X-Received: by 2002:a05:600c:34d6:b0:40d:43ea:e56b with SMTP id d22-20020a05600c34d600b0040d43eae56bmr853910wmq.22.1703264082711;
-        Fri, 22 Dec 2023 08:54:42 -0800 (PST)
+        bh=H2C5UTNIPG7mjByyTbN4UUYUJWv2TfPmtilLr3g/kHI=;
+        b=oOoTFFFvHYQBMtPjoY5MmK7oRZ7lHXGKXwSxXS+U7UuFVh+efGaqFXZv7g+EpqN17p
+         SetxPkR5ZFig6kLEQeW98/CsxYHFnXjB6DpoGXn57cs08Q7ZuJxhcI2z2aUKFUrYDJD2
+         gjU07HHDvKcpELYP+UmnjhmvCQ4jz6W8ri5LP19gJ+P9u5ISLhlTp45DyD05suZwpssD
+         cZU5oI5mtr9IGQub1EbeA+FhDDmNJJo9viZkLOpLb2BaajKf7k8PNLf4lH/7q2aKwjNT
+         TBibTxvJIDYfsbmSzeW1aGipR3j+/ZNYW+Ugp7a02PhVlTBmpeK8X7nMY/kzgUjQLzY7
+         4Kyg==
+X-Gm-Message-State: AOJu0YymBZyaC/zOvPcZMra3CuIVtaCvEYSDNafi7rQK7II2QbqT8EK6
+	3iqUzKdRyzPq5LrxQ7BL3wBb6wuBf4mi7g==
+X-Google-Smtp-Source: AGHT+IEDtRq/ZQw8ts0TCzkxHtm3cLI7WebPXBaKkTQlRZdi99kRrHc6ikhQl7aJvQ9Z9sqp/hNTUA==
+X-Received: by 2002:a05:600c:a686:b0:40d:39ea:1076 with SMTP id ip6-20020a05600ca68600b0040d39ea1076mr900090wmb.93.1703264083920;
+        Fri, 22 Dec 2023 08:54:43 -0800 (PST)
 Received: from gpeter-l.lan (host-78-151-55-40.as13285.net. [78.151.55.40])
-        by smtp.gmail.com with ESMTPSA id i15-20020a05600c354f00b0040d378510adsm10138520wmq.1.2023.12.22.08.54.41
+        by smtp.gmail.com with ESMTPSA id i15-20020a05600c354f00b0040d378510adsm10138520wmq.1.2023.12.22.08.54.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Dec 2023 08:54:41 -0800 (PST)
+        Fri, 22 Dec 2023 08:54:43 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: robh+dt@kernel.org,
 	krzysztof.kozlowski+dt@linaro.org,
@@ -66,9 +66,9 @@ Cc: devicetree@vger.kernel.org,
 	semen.protsenko@linaro.org,
 	saravanak@google.com,
 	willmcvicker@google.com
-Subject: [PATCH 1/3] dt-bindings: timer: exynos4210-mct: Add google,gs101-mct compatible
-Date: Fri, 22 Dec 2023 16:53:53 +0000
-Message-ID: <20231222165355.1462740-2-peter.griffin@linaro.org>
+Subject: [PATCH 2/3] clk: samsung: gs101: register cmu_misc clocks early
+Date: Fri, 22 Dec 2023 16:53:54 +0000
+Message-ID: <20231222165355.1462740-3-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 In-Reply-To: <20231222165355.1462740-1-peter.griffin@linaro.org>
 References: <20231222165355.1462740-1-peter.griffin@linaro.org>
@@ -80,34 +80,49 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add dedicated google,gs101-mct compatible to the dt-schema for
-representing mct timer of the Google Tensor gs101 SoC.
+Update cmu_misc so it is registered early, as it contains
+the gate which clocks the Multi Core Timer (MCT). This clock
+is required early in boot, otherwise exynos_mct will fail
+obtaining the clock.
+
+Note this wasn't previously an issue as exynos_mct wasn't
+enabled.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- .../devicetree/bindings/timer/samsung,exynos4210-mct.yaml       | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/samsung/clk-gs101.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-index 829bd2227f7c..774b7992a0ca 100644
---- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-+++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-@@ -26,6 +26,7 @@ properties:
-       - items:
-           - enum:
-               - axis,artpec8-mct
-+              - google,gs101-mct
-               - samsung,exynos3250-mct
-               - samsung,exynos5250-mct
-               - samsung,exynos5260-mct
-@@ -127,6 +128,7 @@ allOf:
-           contains:
-             enum:
-               - axis,artpec8-mct
-+              - google,gs101-mct
-               - samsung,exynos5260-mct
-               - samsung,exynos5420-mct
-               - samsung,exynos5433-mct
+diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
+index 0964bb11657f..590119a25c18 100644
+--- a/drivers/clk/samsung/clk-gs101.c
++++ b/drivers/clk/samsung/clk-gs101.c
+@@ -2478,6 +2478,15 @@ static const struct samsung_cmu_info misc_cmu_info __initconst = {
+ 	.clk_name		= "dout_cmu_misc_bus",
+ };
+ 
++static void __init gs101_cmu_misc_init(struct device_node *np)
++{
++	exynos_arm64_register_cmu(NULL, np, &misc_cmu_info);
++}
++
++/* Register CMU_MISC early, as it's needed for MCT timer */
++CLK_OF_DECLARE(gs101_cmu_misc, "google,gs101-cmu-misc",
++	       gs101_cmu_misc_init);
++
+ /* ---- platform_driver ----------------------------------------------------- */
+ 
+ static int __init gs101_cmu_probe(struct platform_device *pdev)
+@@ -2495,9 +2504,6 @@ static const struct of_device_id gs101_cmu_of_match[] = {
+ 	{
+ 		.compatible = "google,gs101-cmu-apm",
+ 		.data = &apm_cmu_info,
+-	}, {
+-		.compatible = "google,gs101-cmu-misc",
+-		.data = &misc_cmu_info,
+ 	}, {
+ 	},
+ };
 -- 
 2.43.0.472.g3155946c3a-goog
 
