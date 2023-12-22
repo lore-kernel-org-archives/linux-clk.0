@@ -1,28 +1,29 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549C228DA5;
-	Fri, 22 Dec 2023 16:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F39324B38;
+	Fri, 22 Dec 2023 16:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h2jY+MEX"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lDIg7aRD"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703262801; x=1703867601; i=markus.elfring@web.de;
-	bh=II1Syu+QZpTTdKNVAA8lEUdquR1iIiAORrysqoovEIw=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=h2jY+MEXYpMVABxYGUvm996cPhhIram0PivmZeM9XTQuG1paepFqqv531VIYPkpF
-	 tKIonNpSLhGLswkvBs2/2Jfd6y2DdNTW4gK0RG1QFmHRld5P/Rk1MkDwODqym3RWx
-	 IwI/rG+lm+qKVmKyTyNDna6fTCbwbkwBrip9lO8rMrZWn3qB/k/H6S90/CzxLZ3Ng
-	 pqPRduHHj+0eNa6O2ZqK5rEDK7BPUE9H+J0v88mDOZGYUuRoFcI7k1gnCZulICGNd
-	 eESfxaOrbbpt6/K9mU0mFSeK05AK9wR8qjhl5R6Zt8sn6Laz8K/JzD/njgVJ5BvMh
-	 NAdi+ouDfXEga2lRHA==
+	t=1703262954; x=1703867754; i=markus.elfring@web.de;
+	bh=hGP8tPk4MgeQkC4qAQyOA8Ei+y7T+/UNmzFqrcccYrE=;
+	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
+	 In-Reply-To;
+	b=lDIg7aRDDh34j6zbkdf6CqgXZBbESv7YKB2zqIgdiqT+uNNk8lY+hHNWweK2m1bO
+	 qz3APVm7iQlKX1IuG++i09NKEGz1o4/pNGa9317fvWM5jSt6hOEXFuR/B5C0G6Lh8
+	 PKfNHa0kfs4S7GJVhqVKZiZ3q4xRb6+xGm9jBn35DXMSGf5dY0xwsN8pJRjeWYzdN
+	 MIfWmq/Ep5dWOLm5TK+y2gVWWoUZsPZYnqBsfIUazWw4SkGzMABoQsusNkl8dEZQb
+	 D0zEAeDH43DGeZPZAv4UDIsHfg9PWM+WE4dgW04SMkV+UpgFioVrF3tXxWvfjjLax
+	 DKY4+Hx54IdGSoEnNw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N8Vsx-1rBvG53VZJ-014Irv; Fri, 22
- Dec 2023 17:33:20 +0100
-Message-ID: <1d494176-2238-4430-bc26-4e4c78fe4ede@web.de>
-Date: Fri, 22 Dec 2023 17:33:19 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MCol0-1rPTvW2oIC-009Ilg; Fri, 22
+ Dec 2023 17:35:54 +0100
+Message-ID: <147ca1e6-69f3-4586-b5b3-b69f9574a862@web.de>
+Date: Fri, 22 Dec 2023 17:35:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -30,7 +31,10 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: [PATCH 1/2] clk: imx: composite-8m: Less function calls in
+ __imx8m_clk_hw_composite() after error detection
 Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
 To: Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>,
  Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
  Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
@@ -38,45 +42,100 @@ To: Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>,
  linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  kernel-janitors@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH 0/2] clk: imx: composite-8m: Adjustments for
- __imx8m_clk_hw_composite()
+References: <1d494176-2238-4430-bc26-4e4c78fe4ede@web.de>
+In-Reply-To: <1d494176-2238-4430-bc26-4e4c78fe4ede@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:W6dljh25Z3qX0ewVj1QQEwoJbI1MVRnyEOTGeRUMxGzbQwCIVg8
- Jpn+2Q85+M+DNp1/ozepjDmvieNaTOwDo9oEd9yJ46ddZ0GoKKWUYkA9fT0nniXAPnb1bTN
- Q/syistUvudxN9oH4763xgTR5TTE0+xZsBzzcruzYhNG5JMpCqdIdkTmpWw1ZHJonWN5o6D
- Mgqr6UohTu9mC9LNFY6ww==
+X-Provags-ID: V03:K1:0VWpmmx7o1yt73QWfIGaaqlY5F4i6zRgEqXuglALwGa18bIXKW8
+ AOqDAUNW2Cjsz06QxmYHDoTBLM99qSfkA8gpV2Eep67T8N2XvumNoBvMSDZL+MVcICEknKr
+ 8vh3ggCJemhW9bVcaXt9ybA+0LXlevWtdmdzBDNCUp3uslBto9tV0ddzLPIX7kIkd/LqhoU
+ t1UQ7qde2xsX9YWyhSWCw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FqRND/JLYg4=;EfoGxG+5SJAxzghPY0IrN5E4rez
- B3m9cjA6AaMtZsXqG+7gh2LC4fM4ug0OpwJsissxr6ftApZKl3WaiqAIbqpCDb5+DImS5juaC
- 1pMfTjZMfU2rU99L1aky4ZCjGXyKg9j5les2Psg4RGYvWaGm0migpIzCMPov67m2Au+6NDb1C
- MsJ51mOaCwTzmppJxK4+scgBGbAlEM1WB7q0BvTWpXT6W4VjMnfI3CgOBW0g50551HUIBCNrG
- qNr7wjKrJgs1xu7vfvQJ7hWpo1TyFY1Rdx+PaX6qT3EJGgFhwbbrzK+ZBrmeP2+CWBC2PmVT1
- 1PCvXyMaaAkSmVk0SO2oruZJTNZUVVg2cmznukUwQYQQmr0el/+6KlDUu1wBNqqnvVf1Lj0wX
- Y8E4x9/xNKDmQ86RRjPx0RGcEgvKSxPcre5ADhkZlN8MSb2KwMJdT/Tcdo7/79PldRP77RtXt
- 9Gch/59opWQOq6SA36pdjAXzj/iic+22cj36g3VAnnKfC+/e5BAfaJBHemdtCS10tJmw6vpMT
- X8+poAovKjR7jrdJpoyIuqpmsKJ610WTIjWa38UVi1rrcgYmMNgVq/8mlnnec6cyxTin6mF/O
- eCddRYVgZOuYqZYJzkY7osI8F1OU9DvLQGRGe7B9unqIfphEJqf6IEXl9L8yZITy/Uu2S1L8W
- MbTJFHVC837bDVFjr8dtn7iGztI3h+Ppvjm1YuBDkMmt2+Rbrrv8Jx1djjwaW4N+gmX2feBMg
- 6xgv5oKNUc9HVPhHJ3xjG7a2bL5kgzMkDV4Ysxjn0SuX9+kBU4Vbxzx/lBcDflrji/CvOdr4N
- LDB5uZtdLsp/MYBOjA3441rWR5gQyrLl7HEBmxCCIPoihmO4uewdDsPCUyff5QVgfFFSinn44
- d2RX/4LLUP/qti3HmY1bihp7wKt/cksc+VhsqAK/YPMI39y3GjFxLTzasuXOjkveSOyh40CG9
- ULA0Apt+kDuvXq5h+P8suLoutmI=
+UI-OutboundReport: notjunk:1;M01:P0:uXnSM6Y3y2Y=;ZqW32hB+ptk2kYuDiM61wjVdQAm
+ aL3BOWuDVDmj/GqfYIOBsNosFuxpsJAIF76ShhehyftRzyOf6yL5ej9V0Osq5eHdjvPbL0pYW
+ 69y+VjNrOqLWmgi8elxKtmmlmx2dxH/kBvOYeSQQyqTyApK+rRRDlDgHwMO3kqzTgV0c19G3i
+ HG2/5wIgQ1cUJmr8cQgqiMMR0nuYspFk6UVN3jJxiwBMMu+8AoPykeq7CGp+pfgJhms/Lm8oX
+ PvssBnTr/X2ml35RXgK+pjW4l7Zl0GBgnl+sRv3M7pqhxkVPWWBY2+C9h6TtiOMjTJqhHDBYG
+ hIs7zhMy4fLuwOKu0oX+KvqhLhvE2SlDuelguWgy8fCKlHIId/35lrgiu7WG0vGKv+Hil8cR+
+ l6vXjvpd6HKf8Klc6mUWg5SZjOB5QAe9Tsj5ip9+QWO46DNN6cPySxaXWL2f3I5euzw0QJjhV
+ wCFqGq4oqy81Byb9nRUx6EVd1eQooS1AVRGrNf+elEl7N2nvPQxaeb1OGAzvRLl6t3bAFDb/0
+ JRtMWEgE59ziYYefEjIvex4DDgnx03Js86TG52IqI334FvTtp6RIK28Mkyo+dSfVsWIYp1Ow0
+ B4j1Z2RuLe4LwY0V4+hylU5M2QwFOCejlk7YSWydaSxEVKHBW/1CtLzYpRPjcOPESYxNCF5S1
+ +tyyF45iz0PlFvaz8QFSDuoqVGr9Zf8hfhMHXYw8qUglcG5B8Lfq5HPjk2npQoH+8+tIdptms
+ HQIebkSco+YYHh3fCZOlKQWNcgNcvN6cV90LjKZWrmxmcxvknesnwFKQxbk/sROz9zoTcWOsV
+ tbXYC+SuKi7RtOwpVWGF8bafesB3iRctdCLylup3wAFM2U4vMKNB0lDKbhn+eNjTdKjlE1kUV
+ 7urRWbSX7kOfqglzfS3fNXVmV1pAmiU1nUpqYQ7ROr7xEBJ5eEPH2Ju8SQ9SdFA6hqC+EI6D4
+ I4p6rw==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Dec 2023 17:24:32 +0100
+Date: Fri, 22 Dec 2023 16:48:24 +0100
 
-A few update suggestions were taken into account
-from source code analysis.
+The function =E2=80=9Ckfree=E2=80=9D was called in up to three cases
+by the function =E2=80=9C__imx8m_clk_hw_composite=E2=80=9D during error ha=
+ndling
+even if the passed variables contained a null pointer.
 
-Markus Elfring (2):
-  Less function calls after error detection
-  Delete two unnecessary initialisations
+Adjust jump targets according to the Linux coding style convention.
 
- drivers/clk/imx/clk-composite-8m.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/clk/imx/clk-composite-8m.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-comp=
+osite-8m.c
+index 27a08c50ac1d..eb5392f7a257 100644
+=2D-- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -220,7 +220,7 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *na=
+me,
+
+ 	mux =3D kzalloc(sizeof(*mux), GFP_KERNEL);
+ 	if (!mux)
+-		goto fail;
++		return ERR_CAST(hw);
+
+ 	mux_hw =3D &mux->hw;
+ 	mux->reg =3D reg;
+@@ -230,7 +230,7 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *na=
+me,
+
+ 	div =3D kzalloc(sizeof(*div), GFP_KERNEL);
+ 	if (!div)
+-		goto fail;
++		goto free_mux;
+
+ 	div_hw =3D &div->hw;
+ 	div->reg =3D reg;
+@@ -260,7 +260,7 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *na=
+me,
+ 	if (!mcore_booted) {
+ 		gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
+ 		if (!gate)
+-			goto fail;
++			goto free_div;
+
+ 		gate_hw =3D &gate->hw;
+ 		gate->reg =3D reg;
+@@ -272,13 +272,15 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *=
+name,
+ 			mux_hw, mux_ops, div_hw,
+ 			divider_ops, gate_hw, &clk_gate_ops, flags);
+ 	if (IS_ERR(hw))
+-		goto fail;
++		goto free_gate;
+
+ 	return hw;
+
+-fail:
++free_gate:
+ 	kfree(gate);
++free_div:
+ 	kfree(div);
++free_mux:
+ 	kfree(mux);
+ 	return ERR_CAST(hw);
+ }
 =2D-
 2.43.0
 
