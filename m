@@ -1,142 +1,190 @@
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [178.154.239.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AABE28E16
-	for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 17:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31728BE5;
+	Sat, 23 Dec 2023 08:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jXuMzfBa"
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-78113481f91so132184285a.3
-        for <linux-clk@vger.kernel.org>; Fri, 22 Dec 2023 09:56:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703267797; x=1703872597; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/HhLTRm08Y43dtSXWxfZ5KzfsdQRFgDHvFFek/ks+PY=;
-        b=jXuMzfBaTId7RAsCp4Ev56iOS2JNp5+JKj6ZQaE638gKfYpCCcaFxg5qFk4LlRWafe
-         bHvZTulOcsjjYWAJhIdYY+2VQTGx0lMDVka08BndKYZUxlSuVW/wR+MW2+SvFid6rnph
-         igMWh+bHsGJTOYUwTgVq2YcmYFB4PnkRzg5wN+OLn9IVRYKnF7RtX8RYffyo2o6my7O9
-         Nc9Lsil7JtrNdIMl6HAINnFw/F+ZKxDrJu4yvkUOSduVUikPkFrXo0XM1Wlh02Kbeuy7
-         KXNePdQriKjoAsXk4qSvENUvAvO4bumZnByfzl7J6GtPgPgw4G/4Jjorsfai79aZjIQ/
-         0+IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703267797; x=1703872597;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/HhLTRm08Y43dtSXWxfZ5KzfsdQRFgDHvFFek/ks+PY=;
-        b=gbY520hWXISEEnjqQSDGGucU6bCPndX6jG7lyoLVHhdquOUuR0QDp/DTSr7sHtsI47
-         enSQpo7EecNmyTSY2ddOJQXAmm/veMtR5/totENYXMZOGXZTYaFlV4i9dFgcSDLs8F+1
-         IXf0cUanafkMr4r/BuMZ+pwAR/gUi2sS+eINedGnjpTWO5J4Q0DWg+RnOopHu+pxK1Az
-         xVFyqHRTcZhWhP1vLVHq457So3WvnUKGGvHfI5j8kRFkIPIh8AWwnqMEyYbpRjmwnwz7
-         KDNIveWSSDPEMqHitCKcXGhUpm36KuP2KIAe39jnwRnJfE2DUVtsDEy/ZAkEcepfht0+
-         Q8rg==
-X-Gm-Message-State: AOJu0Yxv+/t/fT/jrliXx+PS3V5JJVgr4ZuHBTkld1lKHkl9dUjbzbJM
-	yc17wmPJx+qtXzr67Ygp7Si6C6A03jTntJyFuk8xptrizTK3sA==
-X-Google-Smtp-Source: AGHT+IG9Aiis1ajE6B2jjYD+C15ieRSm6oqpOi9lEtvJS7UBbdBf4Zjd9BXZZQoWAgS4DtHb8E2xzJl/+Kil1Evx0XA=
-X-Received: by 2002:a05:6214:1301:b0:67f:f64:8dce with SMTP id
- pn1-20020a056214130100b0067f0f648dcemr1955342qvb.108.1703267797556; Fri, 22
- Dec 2023 09:56:37 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="Fe/6ZeJw"
+Received: from mail-nwsmtp-smtp-production-main-39.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-39.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:1f89:0:640:43d3:0])
+	by forward502b.mail.yandex.net (Yandex) with ESMTP id 07A9F5EB34;
+	Sat, 23 Dec 2023 11:35:09 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-39.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 7ZLe5boZnCg0-PzfkPJLc;
+	Sat, 23 Dec 2023 11:35:08 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1703320508; bh=l8ib/tByu50rmfZCGTXI/YxhNvqeAxWyJnLOAm2kp4o=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=Fe/6ZeJwEztu5u9j1ebfvOz4GTyj99AXzKQN2eL2P3Tb+QnAVINnEHwjfkVeXa9rV
+	 R+3TCw2Dyh47WbGXTMsU5TcoF0RQbDXRjyi1u4/jaEJ7TKEVIJ5IpfPNvAlVT3LM6w
+	 22Hbm2wK58vEJSv9mNb3EaOxZ5eY54R1gv0O9aTk=
+Authentication-Results: mail-nwsmtp-smtp-production-main-39.myt.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <466da2894d7d5f2a23047c812dd34b52034402f8.camel@maquefel.me>
+Subject: Re: [PATCH v6 04/40] clk: ep93xx: add DT support for Cirrus EP93xx
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,  linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Date: Sat, 23 Dec 2023 11:35:07 +0300
+In-Reply-To: <ZXns9klLAhuK-Alz@smile.fi.intel.com>
+References: <20231212-ep93xx-v6-0-c307b8ac9aa8@maquefel.me>
+	 <20231212-ep93xx-v6-4-c307b8ac9aa8@maquefel.me>
+	 <ZXns9klLAhuK-Alz@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
- <20231214105243.3707730-3-tudor.ambarus@linaro.org> <20231220150726.GA223267-robh@kernel.org>
- <173b06ab-2518-49ee-a67f-85256bc5b6a7@linaro.org>
-In-Reply-To: <173b06ab-2518-49ee-a67f-85256bc5b6a7@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 22 Dec 2023 17:56:26 +0000
-Message-ID: <CADrjBPpGWxidBYvEcQjv1k6QRcoJSdnJ7SK1koJpeb60V3FhKA@mail.gmail.com>
-Subject: Re: [PATCH 02/13] dt-bindings: clock: google,gs101-clock: add PERIC0
- clock management unit
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org, 
-	andi.shyti@kernel.org, alim.akhtar@samsung.com, gregkh@linuxfoundation.org, 
-	jirislaby@kernel.org, catalin.marinas@arm.com, will@kernel.org, 
-	s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com, 
-	arnd@arndb.de, semen.protsenko@linaro.org, andre.draszik@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Tudor,
+SGVsbG8gQW5keSEKCk9uIFdlZCwgMjAyMy0xMi0xMyBhdCAxOTo0MiArMDIwMCwgQW5keSBTaGV2
+Y2hlbmtvIHdyb3RlOgo+IE9uIFR1ZSwgRGVjIDEyLCAyMDIzIGF0IDExOjIwOjIxQU0gKzAzMDAs
+IE5pa2l0YSBTaHViaW4gd3JvdGU6Cj4gPiBSZXdyaXRlIEVQOTN4eCBjbG9jayBkcml2ZXIgbG9j
+YXRlZCBpbiBhcmNoL2FybS9tYWNoLWVwOTN4eC9jbG9jay5jCj4gPiB0cnlpbmcgdG8gZG8gZXZl
+cnl0aGluZyB0aGUgZGV2aWNlIHRyZWUgd2F5Ogo+ID4gCj4gPiAtIHByb3ZpZGUgY2xvY2sgYWNj
+ZXMgdmlhIG9mCj4gPiAtIGRyb3AgY2xrX2h3X3JlZ2lzdGVyX2Nsa2Rldgo+ID4gLSBkcm9wIGlu
+aXQgY29kZSBhbmQgdXNlIG1vZHVsZV9hdXhpbGlhcnlfZHJpdmVyCj4gCj4gLi4uCj4gCj4gPiAr
+I2RlZmluZSBFUDkzWFhfSTJTQ0xLRElWX1NESVbCoMKgwqDCoMKgwqDCoMKgwqDCoCgxIDw8IDE2
+KQo+IAo+IEJJVCgpID8KPiAKPiAuLi4KPiAKPiA+ICtzdGF0aWMgdTggZXA5M3h4X211eF9nZXRf
+cGFyZW50KHN0cnVjdCBjbGtfaHcgKmh3KQo+ID4gK3sKPiA+ICvCoMKgwqDCoMKgwqDCoHN0cnVj
+dCBlcDkzeHhfY2xrICpjbGsgPSBlcDkzeHhfY2xrX2Zyb20oaHcpOwo+ID4gK8KgwqDCoMKgwqDC
+oMKgc3RydWN0IGVwOTN4eF9jbGtfcHJpdiAqcHJpdiA9IGVwOTN4eF9wcml2X2Zyb20oY2xrKTsK
+PiA+ICvCoMKgwqDCoMKgwqDCoHUzMiB2YWw7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqByZWdt
+YXBfcmVhZChwcml2LT5tYXAsIGNsay0+cmVnLCAmdmFsKTsKPiA+ICsKPiA+ICvCoMKgwqDCoMKg
+wqDCoHZhbCAmPSBFUDkzWFhfU1lTQ09OX0NMS0RJVl9NQVNLOwo+ID4gKwo+ID4gK8KgwqDCoMKg
+wqDCoMKgc3dpdGNoICh2YWwpIHsKPiA+ICvCoMKgwqDCoMKgwqDCoGNhc2UgRVA5M1hYX1NZU0NP
+Tl9DTEtESVZfRVNFTDoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4g
+MTsgLyogUExMMSAqLwo+ID4gK8KgwqDCoMKgwqDCoMKgY2FzZSBFUDkzWFhfU1lTQ09OX0NMS0RJ
+Vl9NQVNLOgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAyOyAvKiBQ
+TEwyICovCj4gCj4gPiArwqDCoMKgwqDCoMKgwqBkZWZhdWx0Ogo+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoGJyZWFrOwo+ID4gK8KgwqDCoMKgwqDCoMKgfTsKPiA+ICsKPiA+ICvC
+oMKgwqDCoMKgwqDCoHJldHVybiAwOyAvKiBYVEFMSSAqLwo+IAo+IFlvdSBtYXkgcmV0dXJuIGRp
+cmVjdGx5IGZyb20gZGVmYXVsdC4KPiAKPiA+ICt9Cj4gCj4gLi4uCj4gCj4gPiArc3RhdGljIGlu
+dCBlcDkzeHhfbXV4X3NldF9wYXJlbnRfbG9jayhzdHJ1Y3QgY2xrX2h3ICpodywgdTggaW5kZXgp
+Cj4gPiArewo+ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IGVwOTN4eF9jbGsgKmNsayA9IGVwOTN4
+eF9jbGtfZnJvbShodyk7Cj4gPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgZXA5M3h4X2Nsa19wcml2
+ICpwcml2ID0gZXA5M3h4X3ByaXZfZnJvbShjbGspOwo+ID4gK8KgwqDCoMKgwqDCoMKgdW5zaWdu
+ZWQgbG9uZyBmbGFnczsKPiA+ICvCoMKgwqDCoMKgwqDCoHUzMiB2YWw7Cj4gPiArCj4gPiArwqDC
+oMKgwqDCoMKgwqBpZiAoaW5kZXggPj0gMykKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqByZXR1cm4gLUVJTlZBTDsKPiAKPiA+ICvCoMKgwqDCoMKgwqDCoHNwaW5fbG9ja19pcnFz
+YXZlKCZwcml2LT5sb2NrLCBmbGFncyk7Cj4gCj4gV2h5IG5vdCBndWFyZCgpID8KPiAKPiA+ICvC
+oMKgwqDCoMKgwqDCoHJlZ21hcF9yZWFkKHByaXYtPm1hcCwgY2xrLT5yZWcsICZ2YWwpOwo+ID4g
+K8KgwqDCoMKgwqDCoMKgdmFsICY9IH4oRVA5M1hYX1NZU0NPTl9DTEtESVZfTUFTSyk7Cj4gPiAr
+wqDCoMKgwqDCoMKgwqB2YWwgfD0gaW5kZXggPiAwID8gRVA5M1hYX1NZU0NPTl9DTEtESVZfRVNF
+TCA6IDA7Cj4gPiArwqDCoMKgwqDCoMKgwqB2YWwgfD0gaW5kZXggPiAxID8gRVA5M1hYX1NZU0NP
+Tl9DTEtESVZfUFNFTCA6IDA7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqBlcDkzeHhfY2xrX3dy
+aXRlKHByaXYsIGNsay0+cmVnLCB2YWwpOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgc3Bpbl91
+bmxvY2tfaXJxcmVzdG9yZSgmcHJpdi0+bG9jaywgZmxhZ3MpOwo+ID4gKwo+ID4gK8KgwqDCoMKg
+wqDCoMKgcmV0dXJuIDA7Cj4gPiArfQo+IAo+IC4uLgo+IAo+ID4gK3N0YXRpYyBib29sIGlzX2Jl
+c3QodW5zaWduZWQgbG9uZyByYXRlLCB1bnNpZ25lZCBsb25nIG5vdywKPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBsb25nIGJlc3QpCj4gPiArewo+
+ID4gK8KgwqDCoMKgwqDCoMKgcmV0dXJuIGFic19kaWZmKHJhdGUsIG5vdykgPCBhYnNfZGlmZihy
+YXRlLCBiZXN0KTsKPiAKPiBIYXZlIHlvdSBpbmNsdWRlZCBuZWNlc3NhcnkgaGVhZGVyIGZvciB0
+aGlzPwo+IAo+ID4gK30KPiAKPiAuLi4KPiAKPiA+ICtzdGF0aWMgaW50IGVwOTN4eF9tdXhfZGV0
+ZXJtaW5lX3JhdGUoc3RydWN0IGNsa19odyAqaHcsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgY2xrX3JhdGVf
+cmVxdWVzdCAqcmVxKQo+ID4gK3sKPiA+ICvCoMKgwqDCoMKgwqDCoHVuc2lnbmVkIGxvbmcgYmVz
+dF9yYXRlID0gMCwgYWN0dWFsX3JhdGUsIG1jbGtfcmF0ZTsKPiA+ICvCoMKgwqDCoMKgwqDCoHVu
+c2lnbmVkIGxvbmcgcmF0ZSA9IHJlcS0+cmF0ZTsKPiAKPiA+ICvCoMKgwqDCoMKgwqDCoHN0cnVj
+dCBjbGtfaHcgKnBhcmVudF9iZXN0ID0gTlVMTDsKPiAKPiBTdHJpY3RseSBzcGVha2luZyB5b3Ug
+ZG9uJ3QgbmVlZCBhbiBhc3NpZ25tZW50IGhlcmUgYXMgeW91IGNhbgo+IGNvbXBhcmUgdGhlIGxv
+b3AKPiB2YXJpYWJsZSB2YWx1ZSBhZ2FpbnN0IHRoZSBtYXhpbXVtLiBCdXQgSSBkb24ndCBrbm93
+IGhvdyBoZWF2ZSB0aGUKPiByZXNwZWN0aXZlCj4gQ0xrIGNhbGwgaXMgYW5kIGlmIGl0IGhhcyBu
+byBzaWRlLWVmZmVjdHMgZHVlIHRvIG9wZXJhdGlvbnMgaW5zaWRlCj4gdGhlIGxvb3AgYm9keS4K
+PiAKPiA+ICvCoMKgwqDCoMKgwqDCoHVuc2lnbmVkIGxvbmcgcGFyZW50X3JhdGVfYmVzdDsKPiA+
+ICvCoMKgwqDCoMKgwqDCoHVuc2lnbmVkIGxvbmcgcGFyZW50X3JhdGU7Cj4gPiArwqDCoMKgwqDC
+oMKgwqBpbnQgZGl2LCBwZGl2Owo+ID4gK8KgwqDCoMKgwqDCoMKgdW5zaWduZWQgaW50IGk7Cj4g
+PiArCj4gPiArwqDCoMKgwqDCoMKgwqAvKgo+ID4gK8KgwqDCoMKgwqDCoMKgICogVHJ5IHRoZSB0
+d28gcGxsJ3MgYW5kIHRoZSBleHRlcm5hbCBjbG9jawo+IAo+IEVpdGhlciBjb21tYSArICdiJyBv
+ciBtaXNzaW5nIHBlcmlvZC4KPiAKPiA+ICvCoMKgwqDCoMKgwqDCoCAqIEJlY2F1c2UgdGhlIHZh
+bGlkIHByZWRpdmlkZXJzIGFyZSAyLCAyLjUgYW5kIDMsIHdlCj4gPiBtdWx0aXBseQo+ID4gK8Kg
+wqDCoMKgwqDCoMKgICogYWxsIHRoZSBjbG9ja3MgYnkgMiB0byBhdm9pZCBmbG9hdGluZyBwb2lu
+dCBtYXRoLgo+ID4gK8KgwqDCoMKgwqDCoMKgICoKPiA+ICvCoMKgwqDCoMKgwqDCoCAqIFRoaXMg
+aXMgYmFzZWQgb24gdGhlIGFsZ29yaXRobSBpbiB0aGUgZXA5M3h4IHJhc3Rlcgo+ID4gZ3VpZGU6
+Cj4gPiArwqDCoMKgwqDCoMKgwqAgKiBodHRwOi8vYmUtYS1tYXZlcmljay5jb20vZW4vcHVicy9h
+cHBOb3RlL0FOMjY5UkVWMS5wZGYKPiA+ICvCoMKgwqDCoMKgwqDCoCAqCj4gPiArwqDCoMKgwqDC
+oMKgwqAgKi8KPiA+ICvCoMKgwqDCoMKgwqDCoGZvciAoaSA9IDA7IGkgPCBjbGtfaHdfZ2V0X251
+bV9wYXJlbnRzKGh3KTsgaSsrKSB7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+c3RydWN0IGNsa19odyAqcGFyZW50ID0KPiA+IGNsa19od19nZXRfcGFyZW50X2J5X2luZGV4KGh3
+LCBpKTsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwYXJlbnRfcmF0
+ZSA9IGNsa19od19nZXRfcmF0ZShwYXJlbnQpOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoG1jbGtfcmF0ZSA9IHBhcmVudF9yYXRlICogMjsKPiA+ICsKPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAvKiBUcnkgZWFjaCBwcmVkaXZpZGVyIHZhbHVlICovCj4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZm9yIChwZGl2ID0gNDsgcGRpdiA8PSA2OyBw
+ZGl2KyspIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgZGl2ID0gRElWX1JPVU5EX0NMT1NFU1QobWNsa19yYXRlLCByYXRlICoKPiA+IHBkaXYpOwo+
+IAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAo
+IWluX3JhbmdlKGRpdiwgMSwgMTI3KSkKPiAKPiBTYW1lIGhlYWRlciBhcyBmb3IgYWJzX2RpZmYo
+KT8KPiAKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoGNvbnRpbnVlOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBhY3R1YWxfcmF0ZSA9IERJVl9ST1VORF9DTE9TRVNU
+KG1jbGtfcmF0ZSwKPiA+IHBkaXYgKiBkaXYpOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoaXNfYmVzdChyYXRlLCBhY3R1YWxfcmF0ZSwgYmVz
+dF9yYXRlKSkKPiA+IHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGJlc3RfcmF0ZSA9IGFjdHVhbF9yYXRlOwo+ID4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgcGFyZW50X3JhdGVfYmVzdCA9IHBhcmVudF9yYXRlOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcGFyZW50X2Jlc3Qg
+PSBwYXJlbnQ7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoH0KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Cj4gCj4gKDEpCj4gCj4g
+PiArwqDCoMKgwqDCoMKgwqB9Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqBpZiAoIXBhcmVudF9i
+ZXN0KQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAtRUlOVkFMOwo+
+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgcmVxLT5iZXN0X3BhcmVudF9yYXRlID0gcGFyZW50X3Jh
+dGVfYmVzdDsKPiA+ICvCoMKgwqDCoMKgwqDCoHJlcS0+YmVzdF9wYXJlbnRfaHcgPSBwYXJlbnRf
+YmVzdDsKPiA+ICvCoMKgwqDCoMKgwqDCoHJlcS0+cmF0ZSA9IGJlc3RfcmF0ZTsKPiA+ICsKPiA+
+ICvCoMKgwqDCoMKgwqDCoHJldHVybiAwOwo+ID4gK30KPiAKPiAuLi4KPiAKPiA+ICvCoMKgwqDC
+oMKgwqDCoG1jbGtfcmF0ZSA9IHBhcmVudF9yYXRlICogMjsKPiA+ICsKPiA+ICvCoMKgwqDCoMKg
+wqDCoGZvciAocGRpdiA9IDQ7IHBkaXYgPD0gNjsgcGRpdisrKSB7Cj4gPiArwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgZGl2ID0gRElWX1JPVU5EX0NMT1NFU1QobWNsa19yYXRlLCByYXRl
+ICogcGRpdik7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKCFpbl9yYW5n
+ZShkaXYsIDEsIDEyNykpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoGNvbnRpbnVlOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoGFjdHVhbF9yYXRlID0gRElWX1JPVU5EX0NMT1NFU1QobWNsa19yYXRlLCBwZGl2ICoKPiA+
+IGRpdik7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKGFicyhhY3R1YWxf
+cmF0ZSAtIHJhdGUpIDwgcmF0ZV9lcnIpIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgbnBkaXYgPSBwZGl2IC0gMzsKPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgbmRpdiA9IGRpdjsKPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmF0ZV9lcnIgPSBhYnMoYWN0
+dWFsX3JhdGUgLSByYXRlKTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Cj4g
+PiArwqDCoMKgwqDCoMKgwqB9Cj4gCj4gTG9va3MgdmVyeSBzaW1pbGFyIHRvICgxKS4gQ2FuIGJl
+IGRlZHVwbGljYXRlZD8KCkl0IHdhcyBteSB0aG91Z2h0IG9uIGZpcnN0IGl0ZXJhdGlvbnMgb2Yg
+Y2xrLCB1bmZvcnR1bmF0ZWx5IGkgZG9uJ3Qgc2VlCmFueSBnb29kIHdheSB0byBjb21iaW5lIHRo
+ZW06CgotIG11eF9kZXRlcm1pbmVfcmF0ZSBpcyBzZWFyY2hpbmcgdGhlIGJlc3QgcGFyZW50IHRo
+YXQgbWVldCB0aGUKY3JpdGVyaWEKLSBzZXRfcmF0ZSBpcyBzZWFyY2hpbmcgdGhlIGFjdHVhbCBk
+aXZpZGVycyB0byB3cml0ZSwgc28gZGlmZmVyZW5jZSBpcwptaW5pbXVtCgpDb21iaW5pbmcgdGhl
+bSBpbnRvIG9uZSBkb2Vzbid0IG1ha2UgaXQgbW9yZSB1bmRlcnN0YW5kYWJsZS4KCj4gCj4gLi4u
+Cj4gCj4gPiArwqDCoMKgwqDCoMKgwqAvKgo+ID4gK8KgwqDCoMKgwqDCoMKgICogQ2xlYXIgb2xk
+IGRpdmlkZXJzCj4gPiArwqDCoMKgwqDCoMKgwqAgKiBCaXQgNyBpcyByZXNlcnZlZCBiaXQgaW4g
+YWxsIENsa0RpdiByZWdpc3RlcnMKPiAKPiBNaXNzaW5nIHBlcmlvZHMuCj4gCj4gPiArwqDCoMKg
+wqDCoMKgwqAgKi8KPiAKPiAuLi4KPiAKPiA+ICtzdGF0aWMgdW5zaWduZWQgbG9uZyBjYWxjX3Bs
+bF9yYXRlKHU2NCByYXRlLCB1MzIgY29uZmlnX3dvcmQpCj4gPiArewo+ID4gK8KgwqDCoMKgwqDC
+oMKgcmF0ZSAqPSAoKGNvbmZpZ193b3JkID4+IDExKSAmIEdFTk1BU0soNCwgMCkpICsgMTvCoMKg
+wqDCoMKgwqAvKgo+ID4gWDFGQkQgKi8KPiA+ICvCoMKgwqDCoMKgwqDCoHJhdGUgKj0gKChjb25m
+aWdfd29yZCA+PiA1KSAmIEdFTk1BU0soNSwgMCkpICsgMTvCoMKgwqDCoMKgwqDCoC8qCj4gPiBY
+MkZCRCAqLwo+ID4gK8KgwqDCoMKgwqDCoMKgZG9fZGl2KHJhdGUsIChjb25maWdfd29yZCAmIEdF
+Tk1BU0soNCwgMCkpICsgMSk7wqDCoMKgwqDCoMKgwqDCoC8qCj4gPiBYMklQRCAqLwo+IAo+ID4g
+K8KgwqDCoMKgwqDCoMKgcmF0ZSA+Pj0gKChjb25maWdfd29yZCA+PiAxNikgJiBHRU5NQVNLKDEs
+IDApKTvCoMKgwqDCoMKgwqDCoMKgwqAvKgo+ID4gUFMgKi8KPiAKPiBPdXRlciBwYXJlbnRoZXNl
+cyBhcmUgcmVkdW5kYW50Lgo+IAo+ID4gK8KgwqDCoMKgwqDCoMKgcmV0dXJuIHJhdGU7Cj4gPiAr
+fQo+IAo+IC4uLgo+IAo+ID4gK8KgwqDCoMKgwqDCoMKgLyoKPiA+ICvCoMKgwqDCoMKgwqDCoCAq
+IEVQOTN4eCBTU1AgY2xvY2sgcmF0ZSB3YXMgZG91YmxlZCBpbiB2ZXJzaW9uIEUyLiBGb3IKPiA+
+IG1vcmUgaW5mb3JtYXRpb24KPiA+ICvCoMKgwqDCoMKgwqDCoCAqIHNlZToKPiA+ICvCoMKgwqDC
+oMKgwqDCoCAqwqDCoMKgwqAgaHR0cDovL3d3dy5jaXJydXMuY29tL2VuL3B1YnMvYXBwTm90ZS9B
+TjI3M1JFVjQucGRmCj4gCj4gQ2FuIHlvdSBwb2ludCB0byB0aGUgc3BlY2lmaWMgc2VjdGlvbj8g
+TGlrZQo+IAo+IMKgwqDCoMKgwqDCoMKgwqAgKiBzZWUgc2VjdGlvbiAxLjIuMyAiRm9vIGJhciI6
+Cj4gCj4gPiArwqDCoMKgwqDCoMKgwqAgKi8KPiAKPiAuLi4KPiAKPiA+ICvCoMKgwqDCoMKgwqDC
+oC8qIHRvdWNoc2NyZWVuL2FkYyBjbG9jayAqLwo+IAo+IEFEQwo+IAo+IC4uLgo+IAo+ID4gK8Kg
+wqDCoMKgwqDCoMKgLyoKPiA+ICvCoMKgwqDCoMKgwqDCoCAqIE9uIHJlc2V0IFBESVYgYW5kIFZE
+SVYgaXMgc2V0IHRvIHplcm8sIHdoaWxlIFBESVYgemVybwo+ID4gK8KgwqDCoMKgwqDCoMKgICog
+bWVhbnMgY2xvY2sgZGlzYWJsZSwgVkRJViBzaG91bGRuJ3QgYmUgemVyby4KPiA+ICvCoMKgwqDC
+oMKgwqDCoCAqIFNvIHdlIHNldCBib3RoIHZpZGVvIGFuZCBpczIgZGl2aWRlcnMgdG8gbWluaW11
+bS4KPiAKPiBpMnM/Cj4gCj4gPiArwqDCoMKgwqDCoMKgwqAgKiBFTkEgLSBFbmFibGUgQ0xLIGRp
+dmlkZXIuCj4gPiArwqDCoMKgwqDCoMKgwqAgKiBQRElWIC0gMDAgLSBEaXNhYmxlIGNsb2NrCj4g
+PiArwqDCoMKgwqDCoMKgwqAgKiBWRElWIC0gYXQgbGVhc3QgMgo+ID4gK8KgwqDCoMKgwqDCoMKg
+ICovCj4gCgo=
 
-On Thu, 21 Dec 2023 at 07:20, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
->
->
-> On 12/20/23 15:07, Rob Herring wrote:
-> > On Thu, Dec 14, 2023 at 10:52:32AM +0000, Tudor Ambarus wrote:
-> >> Add dt-schema documentation for the Connectivity Peripheral 0 (PERIC0)
-> >> clock management unit.
-> >>
-> >> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> >> ---
-> >>  .../bindings/clock/google,gs101-clock.yaml    | 25 +++++-
-> >>  include/dt-bindings/clock/google,gs101.h      | 86 +++++++++++++++++++
-> >>  2 files changed, 109 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-> >> index 3eebc03a309b..ba54c13c55bc 100644
-> >> --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-> >> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-> >> @@ -30,14 +30,15 @@ properties:
-> >>        - google,gs101-cmu-top
-> >>        - google,gs101-cmu-apm
-> >>        - google,gs101-cmu-misc
-> >> +      - google,gs101-cmu-peric0
-> >>
-> >>    clocks:
-> >>      minItems: 1
-> >> -    maxItems: 2
-> >> +    maxItems: 3
-> >>
-> >>    clock-names:
-> >>      minItems: 1
-> >> -    maxItems: 2
-> >> +    maxItems: 3
-> >>
-> >>    "#clock-cells":
-> >>      const: 1
-> >> @@ -88,6 +89,26 @@ allOf:
-> >>              - const: dout_cmu_misc_bus
-> >>              - const: dout_cmu_misc_sss
-> >>
-> >> +  - if:
-> >> +      properties:
-> >> +        compatible:
-> >> +          contains:
-> >> +            const: google,gs101-cmu-peric0
-> >> +
-> >> +    then:
-> >> +      properties:
-> >> +        clocks:
-> >> +          items:
-> >> +            - description: External reference clock (24.576 MHz)
-> >> +            - description: Connectivity Peripheral 0 bus clock (from CMU_TOP)
-> >> +            - description: Connectivity Peripheral 0 IP clock (from CMU_TOP)
-> >> +
-> >> +        clock-names:
-> >> +          items:
-> >> +            - const: oscclk
-> >> +            - const: dout_cmu_peric0_bus
-> >> +            - const: dout_cmu_peric0_ip
-> >
-> > 'bus' and 'ip' are sufficient because naming is local to the module. The
-> > same is true on 'dout_cmu_misc_bus'. As that has not made a release,
-> > please fix all of them.
-> >
->
-> Ok, will fix them shortly. Thanks, Rob!
-
-With Robs review comments addressed feel free to add my:
-
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
