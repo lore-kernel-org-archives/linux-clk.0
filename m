@@ -1,28 +1,28 @@
 Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9D915A1;
-	Sun, 24 Dec 2023 08:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAA5746B;
+	Sun, 24 Dec 2023 16:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Fa1v4kYU"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bcUiXv2U"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703407953; x=1704012753; i=markus.elfring@web.de;
-	bh=J9AFeaTjFODuXC5t8p5hISXXnz0jr5F1tAmJ6A9HIGs=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=Fa1v4kYUxSqv14A0oAQxXZCYXk6urYxYo20TODS9WM4UOtT7nT27ZLodhs8sikXh
-	 eS0Qn4v3zusco8tMXEM2Tg200p+MmErQ3ogtjQJbZVhruPJRSllytA/Lx6r0GJTUt
-	 guS9jXQTz9r0ZahW+M0vz6Vr4qj/DYaEq2HGdMoN+CibrX3FKcLVDaOEJAc7tUV0j
-	 YnJVSHT7aWtpxt3ouQ88Mp9obbSxr22yXQDfYLxw0O0dWfn3sVY11oo8AUsh/V5T2
-	 DOCMqW1oaub1IxsZOyubj4lhWqqNZ1Ho/Xt0BZ4qdm9vyqkISp2AqW6XuLBjQYu4u
-	 2FuzL3WGVSJeZ0YbEQ==
+	t=1703435634; x=1704040434; i=markus.elfring@web.de;
+	bh=9BiVbz0igTm7nDWglduX4wzhh6jbXHBNsHlsQ9SchSQ=;
+	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
+	b=bcUiXv2U4BW3uHtoz7UtDb6wyaqIKmeSH/2Vpxvpi0wHdbLtL9hpLXPD3e5XgmrJ
+	 3r/YGP6GAbSigggtezR2bIi3u9QU/E5Q4DUVllR6UVxNWMQHpHonMc5svlO1ulT+s
+	 1sIRTueixLnrK2WaB8zFJ+yznhBwlM9+ofYlEUn+sxPZ/HQSM4G+V/KomfQ5GQTga
+	 NjqCeFIqSs07LExzNYIl9OEC28+HWlX7mF6l5rklWd785DZ5L+D6ErIp5dwJ+Pd0u
+	 vcr79swPG6UqAydDMb3z6B71DTy0PD+y3iHPJx3DQ1tFegwviu8PAqWuStaUoKr2B
+	 wOQAR+qslyfwunedng==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Ma0PY-1rkuIf2nqe-00WMuB; Sun, 24
- Dec 2023 09:52:33 +0100
-Message-ID: <89708781-f34a-47af-8aab-025136507da0@web.de>
-Date: Sun, 24 Dec 2023 09:52:21 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MpTxo-1quU862wzU-00q6gg; Sun, 24
+ Dec 2023 17:33:54 +0100
+Message-ID: <20849a8e-e0f5-46df-ad8a-9eae6cbe337b@web.de>
+Date: Sun, 24 Dec 2023 17:33:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -30,78 +30,64 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+To: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Tero Kristo <kristo@kernel.org>,
+ Tony Lindgren <tony@atomide.com>
 Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] clk: stm32f4: One function call less in stm32f4_rcc_init()
- after error detection
+Subject: [PATCH 00/10] clk: ti: Adjustments for eight function implementations
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:B9yYikbLk2Rc1omAIk7V1I4TYkgY3SUAvNpijGraxc4PWGwWolc
- TDonYPQmNJkx+EONlIBJ5/9iuPRSHNUupsbJ31paWQp3ZdY25VE38Or3BDMAJSfyqmeKZvC
- jaxSusEoTz7PAmx62x5SHyQ2eHCnhFhqNmbuCf5ROQJRglUKPwcUbyopWjXGk685cbSS+9E
- V0xvNAC3t01QCbVdjiDjg==
+X-Provags-ID: V03:K1:5XEePEDeY0FjWsC2QA7qlbhxGaU3mauLYiNr3cIZ3Rev3r7moCG
+ EpqJ5+3sRGzZEKYzU6HcAzj7DCmep7Xg8Tm/h8uVyIgo4bsJV230JuACQT+Lh7iPDMaoa5w
+ YuOKgsWqAVAOcPYBEsyoRGfW2IpfQG0Oweudch3paIq20Grmi4eJ6yK8O2vOHz09oDkMIhQ
+ TjIiSk7LLBH4CH5fbYnRQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:cPzjS5EdR30=;8kzncu32jgClyJqfnSC/jFyGbPI
- chw/MI99G76gULkuV2Sgp0TBFmIG6ucPK7HZw62RNlHS8p0GDERWe3GXDl01mncMkykxjkfDR
- xuoMWgd+x1uIbA47j84raF36RnLtSLZ6lBT/LOUOSZVzIBOCOhck5N73mVJkA7jJFYJ15b0eA
- IcipaI0dPXU4NJOYDTM/NCmfWfc27yK7NEewAmCPMdViZc/ts7byidJI7Bgl8l9i2TCstjpWC
- Ew064FDTEku5YNzMvCLwvk8kREzvDt69+95Gegacaiv+aQbR68wNlSEDBwe9HhOPbnpJbvrwm
- EZDpk95XROIP7TZ9i3gTRtIByw9VbJg7EbGwAv6+Ns3GZkEzYjyJOvc2DYKNVuBxnXuvEa4o1
- SCGC8HYRrR+N2MHh4Joc47kAr4YzGajea56ls84e3yN2jvTSqrWUB4Ss58wdmGy50bik0p+0E
- 1BWnjNKG85DGHET2Mq+ZS/Y3a+O1tyV+xHpsSYFZc+leMtj3w7GPJ1JFiW/Qi/stv5V6zmN7g
- O/U30JpBaq3CGNAPBPStlsGX9tJMKn2FgNmF9EGLnYThSKFJG5G5v8gkG7f/sdUDgf/Y8yiIl
- FjHff+Otg8P2jkKDyDcRyvPLgb134darF2BJ/O7LFOL3w15kDOwMAfNZ5DWyGLXJod7INyV+0
- gNW/Mqvkk8xTe3YrSx8RVlmkstg2Cn7J9Ik8DfUw177MsbiQMSsjwHaGr7GNyMspGZ/0Y/dKz
- E55S2gyJ5+KFCR6ti+3+TQ3SDJj88/0edzbk4UI7oWIE7aT/HGD/inPr6JVOhpN2fYRXjNdJJ
- n6KzJlHj5HuySKuC4iKk3EsxCkm09Jo8rrplq+NcOkRMPSgB5LonlT/hQxKc9lYJOLsRzB5tj
- dPDqEhcozv1b+sacdz10EzKRWo6XnK4JqC2uCeIh2QtAvQGkGf79A4LHrnZctriXqa3hjMI9K
- GovnztI+5W68AwMDxI+eqz3hqFk=
+UI-OutboundReport: notjunk:1;M01:P0:sYxr3ZCv3ls=;Fc31zMwDem2J2sC/1TXNDDqWzLq
+ KizXtddyaG01hvUgdhUdsnWXDpOhPMZ/iOhBrTtWK5psW9hdxHDQ8qMMal5cLjiNk1KEqfT+0
+ 3r6ltPdwgA4uvhY9g9IAV3/jmzG6A/gCWhrQRyOzCeqAKjBYyEpGQEqPIhGypu+jVvZgV6vRZ
+ 56ljNC/Zd3ZxsTfEkPZAP3K2zgibymLHjr73JZPBoZjHLTAQrh+n0DjlZC7ziXQaa0DRPlMV8
+ /DS3cXxlwGmsuAJM+eQcYiYBOxWgQmkSxAZtDgM4a/F4/nTFii8MJYq1dWq+6rZhzwbUe59uZ
+ KeN8+phus6suqOrNsWufP9qhID71c1Abt9rpsxCnCsYV+Pr1iWVR/D9dPz+09u1syJpFyyJeH
+ aiIDZ/BZ6zasMD5bkEJLmnaPfbHFsztIjLCmm2hT2QRp442T4UH4QV+YZox7aizwPRsuopY2G
+ wzZJ71VKEqReNrj14v07z8VOqPxATOTylivN27I6OfdImm88s/nk7ZUtN4x6OcLooew0CUxcM
+ otwNOL/miNiMJF9DzLwqwaAQs4AQN/onGGmximvXKORAZPVW14RswOqGnXvtD4+IIY2emcCb4
+ lWQGtXjdFxbpDby9V/vLgEJ87crXqvq+LTaBfxCyCrU+ZVEW5ty0nQuOBHD4xnFPVlL4xdMUS
+ HjbKMgWrkXVOqbClJf580CuFOPI9DX+3GyCrtBggtuS4jRwHW63BlcnhRvrHjH0ei0vPFOBPQ
+ KbkwRqGXxylsUB1XfSKLsRO4/nplWyD+cRYB/He33vP78noQK0rQM8H+Vqe63ucJnCXsAJTsZ
+ brE5ck63LeABS/gweDDsEiXMATYIQ4Lpj0n1yk+CWB3BAKhGP7euaESCzLJ4kTNEXyaCIx81r
+ VrCmV6WIWMtA+6OvdBPaH7vw/z+VKXMHYoYaosZ0qHeU0MmMj8OseArsdmbjuTvdHJRJ2N2ue
+ H/J3fEwt4bRW88KgzRMmsshSsh0=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Dec 2023 09:40:10 +0100
+Date: Sun, 24 Dec 2023 17:03:21 +0100
 
-The kfree() function was called in one case by the
-stm32f4_rcc_init() function during error handling
-even if the passed variable contained a null pointer.
-This issue was detected by using the Coccinelle software.
+Several update suggestions were taken into account
+from static source code analysis.
 
-Thus use another label.
+Markus Elfring (10):
+  Less function calls in of_omap2_apll_setup() after error detection
+  Less function calls in of_dra7_apll_setup() after error detection
+  Use common code in omap_clk_register_apll()
+  Less function calls in ti_fapll_setup() after error detection
+  One function call less in ti_fapll_synth_setup() after error detection
+  Return directly after a failed kzalloc() in of_mux_clk_setup()
+  Less function calls in _ti_omap4_clkctrl_setup() after error detection
+  Use common error handling code in _ti_omap4_clkctrl_setup()
+  Less function calls in _ti_clkctrl_clk_register() after error detection
+  Delete an unnecessary initialisation in _ti_clkctrl_clk_register()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/clk/clk-stm32f4.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/ti/apll.c    | 58 ++++++++++++++++++++++++----------------
+ drivers/clk/ti/clkctrl.c | 44 ++++++++++++++++--------------
+ drivers/clk/ti/fapll.c   | 29 +++++++++++---------
+ drivers/clk/ti/mux.c     |  2 +-
+ 4 files changed, 76 insertions(+), 57 deletions(-)
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 07c13ebe327d..c7690a1594eb 100644
-=2D-- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -1714,7 +1714,7 @@ static void __init stm32f4_rcc_init(struct device_no=
-de *np)
- 	clks =3D kmalloc_array(data->gates_num + stm32fx_end_primary_clk,
- 			sizeof(*clks), GFP_KERNEL);
- 	if (!clks)
--		goto fail;
-+		goto unmap_io;
-
- 	stm32f4_gate_map =3D data->gates_map;
-
-@@ -1897,6 +1897,7 @@ static void __init stm32f4_rcc_init(struct device_no=
-de *np)
- 	return;
- fail:
- 	kfree(clks);
-+unmap_io:
- 	iounmap(base);
- }
- CLK_OF_DECLARE_DRIVER(stm32f42xx_rcc, "st,stm32f42xx-rcc", stm32f4_rcc_in=
-it);
 =2D-
 2.43.0
 
