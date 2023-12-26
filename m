@@ -1,146 +1,145 @@
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7D44EB50
-	for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 13:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BB54F88B
+	for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 17:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WaQn8t1Y"
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-77f70206016so399447885a.0
-        for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 05:38:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703597929; x=1704202729; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vuMqR9Rwybi6ENHNRAU+EjQWuJolmn+LEd8yiJfS37U=;
-        b=WaQn8t1YVGsC79PlZ7Y13tMopMvVIpMgokHA1KH69gwof5Ye+GWcXXKDNwYyx97nBi
-         BCzfDl6pSuqnq+enJ37jXUWyWi1UYDKLvyIixrH398MrJQcQR+Dcqsns4HddqzKWs6w9
-         KaCLR9lq8TEadhh8dF47aDR7rGHOdTZ98HAM0Lc2r865dOWBtyL2NKFKre8+ZQgCABiB
-         9vylbnah2xuq0MnRxFfTvcU2o58c0Id8jT+YnWonOTIk84sjuNQEOO2cXt9DPxAfodUt
-         D0YqaHVF6KYUb83PDJueJ73mZ7s49/IHWHUASjbQ6LM2/mDRnGVFvvQwq3Qhen9mdG6H
-         exGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703597929; x=1704202729;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vuMqR9Rwybi6ENHNRAU+EjQWuJolmn+LEd8yiJfS37U=;
-        b=FpUayEM3ruVSf39RJPJ6dvvsuzasMUYRRb0zQu1SkroO87uk0R1/1DPGiM5KalcY5u
-         GvagKlli65Et3FNQsXfpk2cvpWHkVbdmx7Aac0eSDDz6/6gXJzMOtBtmfZkFPbennciy
-         5f0FyYjsFyBDaT890UuQHIHxu1WpKgHDSaU8x4Y90U35j7dEJAj/hM9YgGrFkcffNqVh
-         B7u1wUS7qGdRPmzh5GI1XJ4Xgi2ca6wwXniFhOCYmXDWIgNozsHxT4HwrJQXiPk5+LPF
-         t4oKuk6lECAAsO4YHV4z/D6w5E4lZ4dGoj35hjufQ0v4uu0wo3cj+HET1VHyaFgAabbb
-         mU8A==
-X-Gm-Message-State: AOJu0Yxvk04wzxYY1VHXZlFlvILHVo4HkdljFTD3AlXExPPJzuWK3aiH
-	VrI//4U8Fh9FbEorkus67waQAG+1rEwqAg==
-X-Google-Smtp-Source: AGHT+IF/z9T/ozVBM07PXqtUZCL3vgUYzDGhf0tHXbGOqHTv7Y4u3pb9TshIJzdJwVzN9eBeHRoDRg==
-X-Received: by 2002:ac8:5986:0:b0:425:9224:3990 with SMTP id e6-20020ac85986000000b0042592243990mr9878534qte.4.1703597929626;
-        Tue, 26 Dec 2023 05:38:49 -0800 (PST)
-Received: from [192.168.0.22] ([78.10.206.178])
-        by smtp.gmail.com with ESMTPSA id b17-20020ac86791000000b0042545901450sm6030030qtp.72.2023.12.26.05.38.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Dec 2023 05:38:49 -0800 (PST)
-Message-ID: <bc6b5c5e-9396-4740-af99-1eda4275526b@linaro.org>
-Date: Tue, 26 Dec 2023 14:38:44 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vbjh+6Jg"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231226172244epoutp03595d327adc3b28866117f2c6a481959d~kcYKCiEqA2233822338epoutp03g
+	for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 17:22:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231226172244epoutp03595d327adc3b28866117f2c6a481959d~kcYKCiEqA2233822338epoutp03g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1703611364;
+	bh=aaKnFjErDRwPo8xwraoeFxPD1Aq9gkcKBsNh5h9LLCM=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=vbjh+6Jgt/PQcJl7p30N2Oj6+xIlQcGLxpUTAeqbjhFiCxCNDMjSrB993D8iFuLZ2
+	 Pg0KHMCgMnqVgIMD+dv1LsVWmE7AjzW8pO+A4z98kdezqi8Gw8F0j/oQASVBap41bv
+	 wLkX+/D+Ab4GQEoAH9uq+SCC+S61vSJwgjmbOJvI=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20231226172243epcas5p4e7158081ccb8296a8c5ea88215061f21~kcYJiZXj12557625576epcas5p43;
+	Tue, 26 Dec 2023 17:22:43 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4T01my28X9z4x9Pp; Tue, 26 Dec
+	2023 17:22:42 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7F.BF.10009.2EB0B856; Wed, 27 Dec 2023 02:22:42 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20231226165709epcas5p4294e1ad972e355d0a4bab6d2593a8c2e~kcB085LaY1187911879epcas5p4H;
+	Tue, 26 Dec 2023 16:57:09 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20231226165709epsmtrp13d63feb8ab858af68ae549208503adb8~kcB0723PF1935419354epsmtrp1I;
+	Tue, 26 Dec 2023 16:57:09 +0000 (GMT)
+X-AuditID: b6c32a4a-261fd70000002719-d9-658b0be2c75d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	55.0D.18939.5E50B856; Wed, 27 Dec 2023 01:57:09 +0900 (KST)
+Received: from FDSFTE353 (unknown [107.122.81.138]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20231226165707epsmtip24e332aa274a047d0aa8963be24c3e8f9~kcBy7iRSy1432914329epsmtip2k;
+	Tue, 26 Dec 2023 16:57:07 +0000 (GMT)
+From: "Varada Pavani" <v.pavani@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <s.nawrocki@samsung.com>,
+	<tomasz.figa@gmail.com>
+Cc: <linux-samsung-soc@vger.kernel.org>, <alim.akhtar@samsung.com>,
+	<aswani.reddy@samsung.com>, <pankaj.dubey@samsung.com>
+In-Reply-To: <cb9a6bd4-6c99-4409-9cc7-73b600eb8fce@linaro.org>
+Subject: RE: [PATCH 1/2] dt-bindings: clock: Fix spelling mistake in
+ 'tesla,fsd-clock.yaml'
+Date: Tue, 26 Dec 2023 22:27:06 +0530
+Message-ID: <003d01da381c$908906f0$b19b14d0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 16/16] riscv: dts: starfive: jh8100: Add clocks and resets
- nodes
-Content-Language: en-US
-To: Sia Jee Heng <jeeheng.sia@starfivetech.com>, kernel@esmil.dk,
- conor@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- emil.renner.berthing@canonical.com, hal.feng@starfivetech.com,
- xingyu.wu@starfivetech.com
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- leyfoon.tan@starfivetech.com
-References: <20231226053848.25089-1-jeeheng.sia@starfivetech.com>
- <20231226053848.25089-17-jeeheng.sia@starfivetech.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231226053848.25089-17-jeeheng.sia@starfivetech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIfKK3XePgr9siDWfg9PTfJIXwAgwFsxK7RAliZkDKwE7uEIA==
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIJsWRmVeSWpSXmKPExsWy7bCmhu4j7u5Ug9ZrnBYP5m1jszi0eSu7
+	xZq955gs5h85x2rR9+Ihs8Xe10Cxjz33WC0u75rDZjHj/D4mi4unXC0Wbf3CbnH4TTurxb9r
+	G1ksVu36w+jA5/H+Riu7x85Zd9k9Nq3qZPO4c20Pm0ffllWMHp83yQWwRWXbZKQmpqQWKaTm
+	JeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gBdq6RQlphTChQKSCwuVtK3
+	synKLy1JVcjILy6xVUotSMkpMCnQK07MLS7NS9fLSy2xMjQwMDIFKkzIzmg+3cRWcJSr4tTz
+	HsYGxt2cXYycHBICJhLPep8ydTFycQgJ7GaUmHr8OyuE84lR4vTOpcxwzoEtIA5Ey8W5k1hA
+	bCGBnYwST1Z7QRS9ALKn/WADSbAJ6EjsfrkcbJSIwH4miTuvjzKBJJgFaiROr30BVMTBwSlg
+	JzHpfgZIWFggVuLZuVfsIDaLgKrEo5XHwMp5BSwlFrc3M0LYghInZz5hgRijLbFs4WuogxQk
+	fj5dxgpiiwg4Saw8PZ0NokZc4ujPHrAPJATOcEj8fN7JDtHgIvH2xSYWCFtY4tXxLVBxKYmX
+	/W3sILdJCCRLtH/ihgjnSFzavYoJwraXOHBlDgtICbOApsT6XfoQYVmJqafWQX3IJ9H7+wlU
+	Oa/EjnkwtpLEzh0ToGwJiaer17BNYFSaheSzWUg+m4Xkg1kI2xYwsqxilEwtKM5NTy02LTDK
+	Sy2Hx3dyfu4mRnBa1vLawfjwwQe9Q4xMHIyHGCU4mJVEeGUVO1KFeFMSK6tSi/Lji0pzUosP
+	MZoCg3sis5Rocj4wM+SVxBuaWBqYmJmZmVgamxkqifO+bp2bIiSQnliSmp2aWpBaBNPHxMEp
+	1cBUOUlW772wASPD0xWJUgEXUiM4Z1u8XXci83h25+XvSjbx85kXnWk+46ab/2o1U+JXm6dz
+	HaZLvpR+pPz8odWZjutZMduy35zZu8g556vlBrH2P6++cQeWHdzidFYyxavzgfmc21OZdzyZ
+	wmN+duKlDQfiVVbLnLzzcNWGKy2nph69VvWnUupYltVG77tzUxZXv7C/Jlh763mA/H+9tYqy
+	iSsPxPE9F5KZ7/jAYdvFYBnWpJN/WWSP+WS9s9BekR3NP+NrZTbLw9hvn95npshP2fxU/Ihk
+	0xqm50921LifnpjHe+6Xc73Tk5In89K+r2kWFNk68cbahVGzF3A8ecTEt2dn1vcWcWaxK2tU
+	J90KnazEUpyRaKjFXFScCADqkrblVAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWy7bCSvO5T1u5Ug+8X9CwezNvGZnFo81Z2
+	izV7zzFZzD9yjtWi78VDZou9r4FiH3vusVpc3jWHzWLG+X1MFhdPuVos2vqF3eLwm3ZWi3/X
+	NrJYrNr1h9GBz+P9jVZ2j52z7rJ7bFrVyeZx59oeNo++LasYPT5vkgtgi+KySUnNySxLLdK3
+	S+DKmHdmP1PBZc6Ki7v72BsYV3J0MXJySAiYSFycO4mli5GLQ0hgO6PEpmPbWSASEhI7v7Uy
+	Q9jCEiv/PWeHKHrGKHHz1CFGkASbgI7E7pfLWUESIgLHmSTWHG8EG8Us0MAoMfn+N2aIlr2M
+	EpcePQEq4+DgFLCTmHQ/A6RbWCBaovXvTrAVLAKqEo9WHmMCsXkFLCUWtzczQtiCEidnPgE7
+	iVlAW6L3YSsjjL1s4Wuo8xQkfj5dxgpiiwg4Saw8PZ0NokZc4ujPHuYJjMKzkIyahWTULCSj
+	ZiFpWcDIsopRNLWgODc9N7nAUK84Mbe4NC9dLzk/dxMjODK1gnYwLlv/V+8QIxMH4yFGCQ5m
+	JRFeWcWOVCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8yjmdKUIC6YklqdmpqQWpRTBZJg5OqQam
+	HX84Yqxe3Vrz682dpydyVvUXXt9VkmVfvXDtAhVz1p6Osqsb37L7r4r14f6zslTfnHXuTLX5
+	DKWTQy0Se0MKDERWWH2tjrn31nWTgMap7XKmPzN75YWUKpwluMtf+H1Pjrhe++qAS+SDqica
+	rWcnxzycsyQ9N/3ttRsH/d42lsQtXrH9jM/a3uWh01rK/rvZFmwvOXkgU7BBNupXz3lL4fVB
+	HY+q3l7ublIqj9XprSjdIjBv5uPzeZNXnxIXaC++HHvasaKjZP18jbDQpH+T53v1H6zcZnsg
+	SYZ3SSPnFh1buYmKn682bHoe8e61umKgVtDtcoErMQ2S72cfF5G5umFK+dUHopef/rBzZe9T
+	YinOSDTUYi4qTgQA6sG/UDsDAAA=
+X-CMS-MailID: 20231226165709epcas5p4294e1ad972e355d0a4bab6d2593a8c2e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231219115856epcas5p371abeb4264f60309e597b90954e6d58c
+References: <CGME20231219115856epcas5p371abeb4264f60309e597b90954e6d58c@epcas5p3.samsung.com>
+	<20231219115834.65720-1-v.pavani@samsung.com>
+	<cb9a6bd4-6c99-4409-9cc7-73b600eb8fce@linaro.org>
 
-On 26/12/2023 06:38, Sia Jee Heng wrote:
-> Add SYSCRG/SYSCRG-NE/SYSCRG-NW/SYSCRG-SW/AONCRG clock and reset
-> nodes for JH8100 RISC-V SoC.
-> 
-> Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
-> Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
+Hi Krzysztof,
+
+-----Original Message-----
+From: Krzysztof Kozlowski =5Bmailto:krzysztof.kozlowski=40linaro.org=5D=20
+Sent: 19 December 2023 17:37
+To: Varada Pavani <v.pavani=40samsung.com>; mturquette=40baylibre.com; sboy=
+d=40kernel.org; krzysztof.kozlowski+dt=40linaro.org; conor+dt=40kernel.org;=
+ linux-clk=40vger.kernel.org; devicetree=40vger.kernel.org; linux-kernel=40=
+vger.kernel.org; s.nawrocki=40samsung.com; tomasz.figa=40gmail.com
+Cc: linux-samsung-soc=40vger.kernel.org; alim.akhtar=40samsung.com; aswani.=
+reddy=40samsung.com; pankaj.dubey=40samsung.com
+Subject: Re: =5BPATCH 1/2=5D dt-bindings: clock: Fix spelling mistake in 't=
+esla,fsd-clock.yaml'
+
+On 19/12/2023 12:58, Varada Pavani wrote:
+> Fix typo 'inteernal' to 'internal' in 'Documentation/devicetree/=20
+> bindings/clock/tesla,fsd-clock.yaml'.
+>=20
+> Signed-off-by: Varada Pavani <v.pavani=40samsung.com>
 > ---
+>  Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml =7C 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-...
+Are there any other typos in that file or in other Samsung clock bindings?
 
->  		compatible = "simple-bus";
->  		interrupt-parent = <&plic>;
-> @@ -357,6 +563,99 @@ uart4: serial@121a0000  {
->  			status = "disabled";
->  		};
->  
-> +		necrg: necrg@12320000 {
-
-This is a friendly reminder during the review process.
-
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
-
-Thank you.
-
-Best regards,
-Krzysztof
-
+I couldn=E2=80=99t=20find=20any=20other=20typos=20in=20current=20file=20and=
+=20also=20in=20other=20Samsung=20clock=20bindings.=0D=0A=0D=0AThanks=20for=
+=20the=20review=21=0D=0A=0D=0ABest=20regards,=0D=0AKrzysztof=0D=0A=0D=0A=0D=
+=0A
