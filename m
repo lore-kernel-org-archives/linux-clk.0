@@ -1,403 +1,127 @@
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BAC4CB22;
-	Tue, 26 Dec 2023 05:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-	by fd01.gateway.ufhost.com (Postfix) with ESMTP id 9C1DA807B;
-	Tue, 26 Dec 2023 13:40:48 +0800 (CST)
-Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 26 Dec
- 2023 13:40:48 +0800
-Received: from jsia-virtual-machine.localdomain (202.188.176.82) by
- EXMBX066.cuchost.com (172.16.6.66) with Microsoft SMTP Server (TLS) id
- 15.0.1497.42; Tue, 26 Dec 2023 13:40:42 +0800
-From: Sia Jee Heng <jeeheng.sia@starfivetech.com>
-To: <kernel@esmil.dk>, <conor@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <paul.walmsley@sifive.com>,
-	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <p.zabel@pengutronix.de>,
-	<emil.renner.berthing@canonical.com>, <hal.feng@starfivetech.com>,
-	<xingyu.wu@starfivetech.com>
-CC: <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<jeeheng.sia@starfivetech.com>, <leyfoon.tan@starfivetech.com>
-Subject: [RFC 16/16] riscv: dts: starfive: jh8100: Add clocks and resets nodes
-Date: Tue, 26 Dec 2023 13:38:48 +0800
-Message-ID: <20231226053848.25089-17-jeeheng.sia@starfivetech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231226053848.25089-1-jeeheng.sia@starfivetech.com>
-References: <20231226053848.25089-1-jeeheng.sia@starfivetech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E0F4EB42
+	for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 13:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="of2Lc4oL"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-336990fb8fbso2832667f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 05:33:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1703597586; x=1704202386; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AEpfRolqbS7MzSs8ssaLeygqdj98VhPNJFYG2WHLUtA=;
+        b=of2Lc4oLf4EQHT5u/dKJNEFHN7eUkKU695UFqWIyOMgfobX/R985Fupb70OAQmVFAw
+         Fj216KIqdIfEHgYz2uYxsn8volMa3m9MijS9fUfeQmREJKK4qdbVFpEjb3+LqoNj2WG8
+         60c4MqFJDgd8N9iRbkOvHdMBatYyM50u8X53nw1VzUgSrmEFQXTKIpfPQufPfu24lSXE
+         s5M+Hz3NgRxKsKqbxUt8Js2s/H3S7jPxdry/Vfx7emuCT/xC3mhKB0uc2MedlV2Lk8Nv
+         JC+3Sttwcef5NB+YF1Q+ShaQ6IhLDqvkPXkH3B7O8lJFpTUYQ912xjmjriOSwwBwS5wk
+         l5Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703597586; x=1704202386;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AEpfRolqbS7MzSs8ssaLeygqdj98VhPNJFYG2WHLUtA=;
+        b=b5GP6VjkaijXI+0adTbGFO96CNNMGRDH7H9jUhzh+Ss9xn0cr9uSndwCfMYNGpB/7p
+         k0tRIIwW2f1FhHQ434eFB6S2ELWBAmlRsN8Eqh9sUSnTDYqLb2BLAtvLyI51mjz82mKg
+         ouHeH+DVOZGrMjqQ8qe++1dupoAzhykAOs2iaFEr64hnUbMaK/uLsVZk5eStbrQYV4KR
+         PcUAtdWLoZmQPSfzgU1y7GdEobXyKO2JdsC6+TqH0se54HBQw4g1Xf4L2ztYstrhLYvX
+         1pxEinhMIiNo5r5sGtfp2bCQWZlWtyxoq/Fazq3GOIlPYEki/1WJBJPESKiw1EkV0aX8
+         fcwA==
+X-Gm-Message-State: AOJu0YzOUHOHrkgmzhXEdxbcd6G+8DNJFNlgxDaboKuuue6TngepG8rb
+	DJyn01GROoijC3tORmKgHDn2KdRrKxG6FA==
+X-Google-Smtp-Source: AGHT+IHw8TQWQttH/D+Kmz0JjVtaz0+bFo1JQ4hzge7iaGM/kY9KpdKe4oZxckTNmSMKoY05IZosOg==
+X-Received: by 2002:a05:600c:154a:b0:40d:4f1c:3957 with SMTP id f10-20020a05600c154a00b0040d4f1c3957mr3239250wmg.153.1703597586450;
+        Tue, 26 Dec 2023 05:33:06 -0800 (PST)
+Received: from [192.168.0.22] ([78.10.206.178])
+        by smtp.gmail.com with ESMTPSA id t14-20020a170906608e00b00a26f20fa719sm1782924ejj.220.2023.12.26.05.33.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Dec 2023 05:33:06 -0800 (PST)
+Message-ID: <f61963cc-dc1a-4f0d-84cf-da7b145b1617@linaro.org>
+Date: Tue, 26 Dec 2023 14:33:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX066.cuchost.com
- (172.16.6.66)
-X-YovoleRuleAgent: yovoleflag
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 00/16] Basic clock and reset support for StarFive JH8100
+ RISC-V SoC
+Content-Language: en-US
+To: Sia Jee Heng <jeeheng.sia@starfivetech.com>, kernel@esmil.dk,
+ conor@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ emil.renner.berthing@canonical.com, hal.feng@starfivetech.com,
+ xingyu.wu@starfivetech.com
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ leyfoon.tan@starfivetech.com
+References: <20231226053848.25089-1-jeeheng.sia@starfivetech.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231226053848.25089-1-jeeheng.sia@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add SYSCRG/SYSCRG-NE/SYSCRG-NW/SYSCRG-SW/AONCRG clock and reset
-nodes for JH8100 RISC-V SoC.
+On 26/12/2023 06:38, Sia Jee Heng wrote:
+> 
+> Patch 16 adds clocks and reset nodes to the JH8100 device tree.
+> 
+> Changes since [2]:
 
-Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
-Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
----
- arch/riscv/boot/dts/starfive/jh8100.dtsi | 313 +++++++++++++++++++++++
- 1 file changed, 313 insertions(+)
+Then this is v2, please version your patches correctly, so tools and
+people will understand it.
 
-diff --git a/arch/riscv/boot/dts/starfive/jh8100.dtsi b/arch/riscv/boot/d=
-ts/starfive/jh8100.dtsi
-index f26aff5c1ddf..0fc8889bc0eb 100644
---- a/arch/riscv/boot/dts/starfive/jh8100.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh8100.dtsi
-@@ -4,6 +4,8 @@
-  */
-=20
- /dts-v1/;
-+#include <dt-bindings/clock/starfive,jh8100-crg.h>
-+#include <dt-bindings/reset/starfive,jh8100-crg.h>
-=20
- / {
- 	compatible =3D "starfive,jh8100";
-@@ -279,6 +281,210 @@ clk_uart: clk-uart {
- 		clock-frequency =3D <24000000>;
- 	};
-=20
-+	osc: osc {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <24000000>;
-+	};
-+
-+	i2srx_bclk_ext: i2srx-bclk-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <12288000>;
-+	};
-+
-+	i2srx_lrck_ext: i2srx-lrck-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <192000>;
-+	};
-+
-+	mclk_ext: mclk-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <49152000>;
-+	};
-+
-+	usb3_tap_tck_ext: usb3-tap-tck-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <100000000>;
-+	};
-+
-+	glb_ext_clk: glb-ext-clk {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <30000000>;
-+	};
-+
-+	usb1_tap_tck_ext: usb1-tap-tck-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <100000000>;
-+	};
-+
-+	usb2_tap_tck_ext: usb2-tap-tck-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <100000000>;
-+	};
-+
-+	typec_tap_tck_ext: typec-tap-tck-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <100000000>;
-+	};
-+
-+	spi_in0_ext: spi-in0-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <100000000>;
-+	};
-+
-+	spi_in1_ext: spi-in1-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <100000000>;
-+	};
-+
-+	spi_in2_ext: spi-in2-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <100000000>;
-+	};
-+
-+	i2stx_bclk_ext: i2stx-bclk-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <12288000>;
-+	};
-+
-+	i2stx_lrck_ext: i2stx-lrck-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <192000>;
-+	};
-+
-+	dvp_ext: dvp-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <150000000>;
-+	};
-+
-+	isp_dphy_tap_tck_ext: isp-dphy-tap-tck-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <100000000>;
-+	};
-+
-+	vout_mipi_dphy_tap_tck_ext: vout-mipi-dphy-tap-tck-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <100000000>;
-+	};
-+
-+	vout_edp_tap_tck_ext: vout-edp-tap-tck-ext {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <100000000>;
-+	};
-+
-+	rtc: rtc {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <32768>;
-+	};
-+
-+	gmac0_rmii_func: gmac0-rmii-func {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <50000000>;
-+	};
-+
-+	gmac0_rgmii_func: gmac0-rgmii-func {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <125000000>;
-+	};
-+
-+	aon50: aon50 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <50000000>;
-+	};
-+
-+	aon125: aon125 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <125000000>;
-+	};
-+
-+	aon2000: aon2000 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <2000000000>;
-+	};
-+
-+	aon200: aon200 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <200000000>;
-+	};
-+
-+	aon667: aon667 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <667000000>;
-+	};
-+
-+	pll0: pll0 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <2000000000>;
-+	};
-+
-+	pll1: pll1 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <1782000000>;
-+	};
-+
-+	pll2: pll2 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <1843200000>;
-+	};
-+
-+	pll3: pll3 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <1866000000>;
-+	};
-+
-+	pll4: pll4 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <2000000000>;
-+	};
-+
-+	pll5: pll5 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <1500000000>;
-+	};
-+
-+	pll6: pll6 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <1782000000>;
-+	};
-+
-+	pll7: pll7 {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <2400000000>;
-+	};
-+
- 	soc {
- 		compatible =3D "simple-bus";
- 		interrupt-parent =3D <&plic>;
-@@ -357,6 +563,99 @@ uart4: serial@121a0000  {
- 			status =3D "disabled";
- 		};
-=20
-+		necrg: necrg@12320000 {
-+			compatible =3D "starfive,jh8100-necrg";
-+			reg =3D <0x0 0x12320000 0x0 0x10000>;
-+			clocks =3D <&osc>, <&syscrg JH8100_SYSCLK_AXI_400>,
-+				 <&syscrg JH8100_SYSCLK_VOUT_ROOT0>,
-+				 <&syscrg JH8100_SYSCLK_VOUT_ROOT1>,
-+				 <&syscrg JH8100_SYSCLK_USB_WRAP_480>,
-+				 <&syscrg JH8100_SYSCLK_USB_WRAP_625>,
-+				 <&syscrg JH8100_SYSCLK_USB_WRAP_240>,
-+				 <&syscrg JH8100_SYSCLK_USB_WRAP_60>,
-+				 <&syscrg JH8100_SYSCLK_USB_WRAP_156P25>,
-+				 <&syscrg JH8100_SYSCLK_USB_WRAP_312P5>,
-+				 <&syscrg JH8100_SYSCLK_USB_125M>,
-+				 <&nwcrg JH8100_NWCLK_GPIO_100>,
-+				 <&syscrg JH8100_SYSCLK_PERH_ROOT>,
-+				 <&syscrg JH8100_SYSCLK_MCLK>,
-+				 <&syscrg JH8100_SYSCLK_PERH_ROOT_PREOSC>,
-+				 <&syscrg JH8100_SYSCLK_AHB0>,
-+				 <&syscrg JH8100_SYSCLK_APB_BUS_PER1>,
-+				 <&syscrg JH8100_SYSCLK_APB_BUS_PER2>,
-+				 <&syscrg JH8100_SYSCLK_APB_BUS_PER3>,
-+				 <&syscrg JH8100_SYSCLK_APB_BUS_PER5>,
-+				 <&syscrg JH8100_SYSCLK_VENC_ROOT>,
-+				 <&syscrg JH8100_SYSCLK_SPI_CORE_100>,
-+				 <&glb_ext_clk>, <&usb3_tap_tck_ext>,
-+				 <&usb1_tap_tck_ext>, <&usb2_tap_tck_ext>,
-+				 <&typec_tap_tck_ext>, <&spi_in0_ext>,
-+				 <&spi_in1_ext>, <&i2stx_bclk_ext>, <&i2stx_lrck_ext>;
-+			clock-names =3D "osc", "axi_400", "vout_root0", "vout_root1",
-+				      "usb_wrap_480", "usb_wrap_625", "usb_wrap_240",
-+				      "usb_wrap_60", "usb_wrap_156p25", "usb_wrap_312p5",
-+				      "usb_125m", "gpio_100", "perh_root", "mclk",
-+				      "perh_root_preosc", "ahb0", "apb_bus_per1",
-+				      "apb_bus_per2", "apb_bus_per3", "apb_bus_per5",
-+				      "venc_root", "spi_core_100", "glb-ext-clk",
-+				      "usb3-tap-tck-ext", "usb1-tap-tck-ext",
-+				      "usb2-tap-tck-ext", "typec-tap-tck-ext", "spi-in0-ext",
-+				      "spi-in1-ext", "i2stx-bclk-ext", "i2stx-lrck-ext";
-+			#clock-cells =3D <1>;
-+			#reset-cells =3D <1>;
-+		};
-+
-+		nwcrg: nwcrg@123c0000 {
-+			compatible =3D "starfive,jh8100-nwcrg";
-+			reg =3D <0x0 0x123c0000 0x0 0x10000>;
-+			clocks =3D <&osc>, <&syscrg JH8100_SYSCLK_APB_BUS>,
-+				 <&syscrg JH8100_SYSCLK_APB_BUS_PER4>,
-+				 <&syscrg JH8100_SYSCLK_SPI_CORE_100>,
-+				 <&syscrg JH8100_SYSCLK_ISP_2X>,
-+				 <&syscrg JH8100_SYSCLK_ISP_AXI>,
-+				 <&syscrg JH8100_SYSCLK_VOUT_ROOT0>,
-+				 <&syscrg JH8100_SYSCLK_VOUT_ROOT1>,
-+				 <&syscrg JH8100_SYSCLK_VOUT_SCAN_ATS>,
-+				 <&syscrg JH8100_SYSCLK_VOUT_DC_CORE>,
-+				 <&syscrg JH8100_SYSCLK_VOUT_AXI>,
-+				 <&syscrg JH8100_SYSCLK_AXI_400>, <&syscrg JH8100_SYSCLK_AHB0>,
-+				 <&syscrg JH8100_SYSCLK_PERH_ROOT_PREOSC>,
-+				 <&dvp_ext>, <&isp_dphy_tap_tck_ext>, <&glb_ext_clk>,
-+				 <&vout_mipi_dphy_tap_tck_ext>, <&vout_edp_tap_tck_ext>,
-+				 <&spi_in2_ext>, <&pll5>;
-+			clock-names =3D "osc", "apb_bus", "apb_bus_per4", "spi_core_100",
-+				      "isp_2x", "isp_axi", "vout_root0", "vout_root1",
-+				      "vout_scan_ats", "vout_dc_core", "vout_axi", "axi_400",
-+				      "ahb0", "perh_root_preosc", "dvp-ext",
-+				      "isp-dphy-tap-tck-ext", "glb-ext-clk",
-+				      "vout-mipi-dphy-tap-tck-ext", "vout-edp-tap-tck-ext",
-+				      "spi-in2-ext", "pll5";
-+			#clock-cells =3D <1>;
-+			#reset-cells =3D <1>;
-+		};
-+
-+		syscrg: syscrg@126d0000 {
-+			compatible =3D "starfive,jh8100-syscrg";
-+			reg =3D <0x0 0x126d0000 0x0 0x10000>;
-+			clocks =3D <&osc>, <&mclk_ext>, <&pll0>, <&pll1>,
-+				 <&pll2>, <&pll3>, <&pll4>, <&pll6>, <&pll7>;
-+			clock-names =3D "osc", "mclk-ext", "pll0", "pll1", "pll2",
-+				      "pll3", "pll4", "pll6", "pll7";
-+			#clock-cells =3D <1>;
-+			#reset-cells =3D <1>;
-+		};
-+
-+		swcrg: swcrg@12720000 {
-+			compatible =3D "starfive,jh8100-swcrg";
-+			reg =3D <0x0 0x12720000 0x0 0x10000>;
-+			clocks =3D <&syscrg JH8100_SYSCLK_APB_BUS>,
-+				 <&syscrg JH8100_SYSCLK_VDEC_ROOT>,
-+				 <&syscrg JH8100_SYSCLK_FLEXNOC1>;
-+			clock-names =3D "apb_bus", "vdec_root", "flexnoc1";
-+			#clock-cells =3D <1>;
-+			#reset-cells =3D <1>;
-+		};
-+
- 		uart5: serial@127d0000  {
- 			compatible =3D "starfive,jh8100-uart", "cdns,uart-r1p8";
- 			reg =3D <0x0 0x127d0000 0x0 0x10000>;
-@@ -374,5 +673,19 @@ uart6: serial@127e0000  {
- 			interrupts =3D <73>;
- 			status =3D "disabled";
- 		};
-+
-+		aoncrg: aoncrg@1f310000 {
-+			compatible =3D "starfive,jh8100-aoncrg";
-+			reg =3D <0x0 0x1f310000 0x0 0x10000>;
-+			clocks =3D <&osc>, <&gmac0_rmii_func>,
-+				 <&gmac0_rgmii_func>, <&aon125>,
-+				 <&aon2000>, <&aon200>,
-+				 <&aon667>, <&rtc>;
-+			clock-names =3D "osc", "gmac0-rmii-func", "gmac0-rgmii-func",
-+				      "aon125", "aon2000", "aon200",
-+				      "aon667", "rtc";
-+			#clock-cells =3D <1>;
-+			#reset-cells =3D <1>;
-+		};
- 	};
- };
---=20
-2.34.1
+Best regards,
+Krzysztof
 
