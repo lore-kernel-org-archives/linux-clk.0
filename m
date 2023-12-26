@@ -1,49 +1,50 @@
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE82B50252
-	for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 18:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C03F653
+	for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 18:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="R41ZkslO"
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7baa8097064so143555139f.3
-        for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 10:07:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NLu8+aD+"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-554dbe1857dso1737799a12.3
+        for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 10:57:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1703614044; x=1704218844; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xPNsMK/s4OTo7V67GiJCawbHwE3mn0OYhqS2bmZF3nY=;
-        b=R41ZkslO/mQqVXbKZIXPZZxuRBN+ZcKbn3NCHWXVyNCLucv3hsQY0TAJodZHTLyLyX
-         iSHsHkoJZCvFPqc91jEmcCgClxDzqN+z4JrQEbYFl39u4jndZFh25+Uqi5ISKL5BAZVU
-         9ELzAs+Yh7FFmIlVEMFmmULFHqje0Iyl3A03JsB/AitlGgVegLkgJ/fCR/7HG0W7duK6
-         hPGy0vmgNsZpHJtFdNWUb4/X2mor2pOHKhY9GAbvhyp6ru9j3XYrG7k321d8bO4BH5kk
-         c/v8doVQFR7RptaVAsjTzGJlbRTKiUr4FCd1OQ+tW9f1h49rIfbrcbejcntaTl+k0lCk
-         DGDQ==
+        d=linaro.org; s=google; t=1703617074; x=1704221874; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=s+/xKpbe3rzbFxxV0m/bQ08D9ul9ygtDd5aVd+JFc3o=;
+        b=NLu8+aD+F1zeeFv3MUMyiB1jtogN8mTs3syjSSKmjgHtIfrnpEB0sy8jhnEqvO2aT8
+         6tif6JOTiEHC02JaeYu91k0uClxIpo/c2UHUawGXF/3YRT/SE8hIIUq4bC/npWm7ZUnd
+         uhHx6byzy7eEL1rJtKBChlT5GoxXO17mJ4keT7jwJXPIIVdXkLGV/rR7cLBTSQQxTjdc
+         DpqSofghuIiXND8Wp+5FYwzCOyTnCsOgLKYEwnr41hHkvcL3uLCJHxi7r6trfJK2mpis
+         JNjOCcZYv9dp0Y55GqZB3dpJQ6gDXyo9A0VH2bAnaeSB26xA49819U5pE0X1wKIzfM6k
+         xiiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703614044; x=1704218844;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xPNsMK/s4OTo7V67GiJCawbHwE3mn0OYhqS2bmZF3nY=;
-        b=IA+PDfJb3L5+E9UJR/c79FfulAvFVorHQUHjPdVYzYZgaHU0+XWVW7guBgVhZYn7FP
-         wbPgGp5hmdl0UhVKVkPfhyGldcTPD1uervvVvJbAPBrlEBLVjHrCzz6gmgfbObo/cC/3
-         A/cCDjxSzenvf2IEDkWg+LgBfUH2Q2LNW3ZEhGDiHJLeKainkwbUBm5MDPl5g//QYrsw
-         L/TrnAfM/43uuf3qX2PljnRoGaezPq1U5DEz5skh2MfjYZrsQBIEnC5aEFK5q3ld7KzA
-         o88DyFDWYwA+EM+nnmlCDOc/wc/V6n7cC0AFIUxUkBky0HRhzaIDyYIp1SCfS1qjePGK
-         YXwg==
-X-Gm-Message-State: AOJu0YzGOpPPAfxe1BcQXIywQhRbMvnFBv4at7AHTSwpzq5Giw/TXtpF
-	3m6pGDMksMMJrbsDY/jLzJGtT0q/Ia5TVA==
-X-Google-Smtp-Source: AGHT+IHSPY+TRVUuGXVP3M/71dufTcnvlBRUKwSE8sQnUYVeLpYEgd3pY+qwbb9vi2q+AP3Bi2hzJw==
-X-Received: by 2002:a5e:8a0c:0:b0:7ba:dbd9:51f3 with SMTP id d12-20020a5e8a0c000000b007badbd951f3mr3207772iok.3.1703614043898;
-        Tue, 26 Dec 2023 10:07:23 -0800 (PST)
-Received: from ?IPV6:2601:b051:12ac:a800:99cc:6547:8f68:3193? ([2601:b051:12ac:a800:99cc:6547:8f68:3193])
-        by smtp.gmail.com with ESMTPSA id g9-20020a6b6b09000000b007ba84cb7860sm3159341ioc.4.2023.12.26.10.07.22
+        d=1e100.net; s=20230601; t=1703617074; x=1704221874;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s+/xKpbe3rzbFxxV0m/bQ08D9ul9ygtDd5aVd+JFc3o=;
+        b=hD8L4DLNFgrU0PSx/05Yp4CRDRWPT3Kn1ITrOrj24g3INACC+OefjBDEgx8JmxJy7q
+         w/+u1aPl8Dd0cUkpWjrfuU3o/K7sr9TiUSsy50raou0r/TxqYXt1CcmfLQ5PsEAiJbJ7
+         1uxDfrjwTvXv9wfTU8OFJfTD0SlouWGgxOGsH57GZdPTHJaZyY5sSrNKKhDyYkYRworh
+         Xxdj0DL9onEiSrKqhJVZdbZSEZUwH33jTiDBalz2vFZ/OCZ/nl96BZUYZ5NpC5pCgGR1
+         opVkTcE9GAxW1p0/xX6oF7l8ayHhpo9MmS8wawPT8p6Ddt3WCMqAUjzil0efo1Q3sfJK
+         ncaQ==
+X-Gm-Message-State: AOJu0Yz+HxNKIWyJFUtNCjrn9UrHT+qQgcfnbf93rF0TFpFHik3WVq1I
+	Qixver6nEBH+egk2b4ztkH+i4vweNg6KBA==
+X-Google-Smtp-Source: AGHT+IGNJYb0T708InJ4PjZrixWklUHXmGWgfTn7jVAtSplE9YTtZ2LY0ArrLZ59TkOcdp6LfEEE7A==
+X-Received: by 2002:a17:906:10c4:b0:a23:2d6c:249d with SMTP id v4-20020a17090610c400b00a232d6c249dmr3113788ejv.90.1703617074413;
+        Tue, 26 Dec 2023 10:57:54 -0800 (PST)
+Received: from [192.168.0.22] ([78.10.206.178])
+        by smtp.gmail.com with ESMTPSA id gh33-20020a1709073c2100b00a26b3f29f3dsm4747759ejc.43.2023.12.26.10.57.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Dec 2023 10:07:23 -0800 (PST)
-Message-ID: <74649469-2b47-486e-b8d1-c89b705fe8c1@sifive.com>
-Date: Tue, 26 Dec 2023 12:07:21 -0600
+        Tue, 26 Dec 2023 10:57:53 -0800 (PST)
+Message-ID: <d22b9050-647a-4551-8a4d-b45e9b7700b2@linaro.org>
+Date: Tue, 26 Dec 2023 19:57:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,87 +52,78 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 07/16] dt-bindings: clock: Add StarFive JH8100 North-West
- clock and reset generator
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Fix spelling mistake in
+ 'tesla,fsd-clock.yaml'
+To: Varada Pavani <v.pavani@samsung.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
+ aswani.reddy@samsung.com, pankaj.dubey@samsung.com
+References: <CGME20231219115856epcas5p371abeb4264f60309e597b90954e6d58c@epcas5p3.samsung.com>
+ <20231219115834.65720-1-v.pavani@samsung.com>
+ <cb9a6bd4-6c99-4409-9cc7-73b600eb8fce@linaro.org>
+ <003d01da381c$908906f0$b19b14d0$@samsung.com>
 Content-Language: en-US
-To: Sia Jee Heng <jeeheng.sia@starfivetech.com>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- leyfoon.tan@starfivetech.com, kernel@esmil.dk, conor@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- emil.renner.berthing@canonical.com, hal.feng@starfivetech.com,
- xingyu.wu@starfivetech.com
-References: <20231226053848.25089-1-jeeheng.sia@starfivetech.com>
- <20231226053848.25089-8-jeeheng.sia@starfivetech.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <20231226053848.25089-8-jeeheng.sia@starfivetech.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <003d01da381c$908906f0$b19b14d0$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2023-12-25 11:38 PM, Sia Jee Heng wrote:
-> Add bindings for the North-West clock and reset generator (NWCRG) on
-> JH8100 SoC.
+On 26/12/2023 17:57, Varada Pavani wrote:
 > 
-> Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
-> Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
-> ---
->  .../bindings/clock/starfive,jh8100-nwcrg.yaml | 119 ++++++++++++++++++
->  .../dt-bindings/clock/starfive,jh8100-crg.h   |  43 +++++++
->  .../dt-bindings/reset/starfive,jh8100-crg.h   |  14 +++
->  3 files changed, 176 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh8100-nwcrg.yaml
+> Are there any other typos in that file or in other Samsung clock bindings?
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh8100-nwcrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh8100-nwcrg.yaml
-> new file mode 100644
-> index 000000000000..be0f94e64e6a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/starfive,jh8100-nwcrg.yaml
-> @@ -0,0 +1,119 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/starfive,jh8100-nwcrg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JH8100 North-West Clock and Reset Generator
-> +
-> +maintainers:
-> +  - Sia Jee Heng <jeeheng.sia@starfivetech.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: starfive,jh8100-nwcrg
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Main Oscillator (24 MHz)
-> +      - description: APB_BUS clock from SYSCRG
-> +      - description: APB_BUS_PER4 clock from SYSCRG
-> +      - description: SPI_CORE_100 clock from SYSCRG
-> +      - description: ISP_2X clock from SYSCRG
-> +      - description: ISP_AXI clock from SYSCRG
-> +      - description: VOUT_ROOT0 clock from SYSCRG
-> +      - description: VOUT_ROOT1 clock from SYSCRG
-> +      - description: VOUT_SCAN_ATS clock from SYSCRG
-> +      - description: VOUT_DC_CORE clock from SYSCRG
-> +      - description: VOUT_AXI clock from SYSCRG
-> +      - description: AXI_400 clock from SYSCRG
-> +      - description: AHB0 clock from SYSCRG
-> +      - description: PERH_ROOT_PREOSC from SYSCRG
-> +      - description: External DVP clock
-> +      - description: External ISP DPHY TAP TCK clock
-> +      - description: External golbal clock
+> I couldn’t find any other typos in current file and also in other Samsung clock bindings.
 
-Typo: global
+OK, that's fine. I will take it after the merge window.
 
-> +      - description: External VOUT MIPI DPHY TAP TCK
-> +      - description: External VOUT eDP TAP TCK
-> +      - description: External SPI In2 clock
-> +      - description: PLL5
-> [...]
+You need to fix your email program, so it will properly mark quotes.
+
+Best regards,
+Krzysztof
 
