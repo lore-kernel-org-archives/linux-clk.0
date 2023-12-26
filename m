@@ -1,49 +1,49 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0604EB4D
-	for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 13:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7D44EB50
+	for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 13:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e/8JOWQQ"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40d4103aed7so53760905e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 05:37:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WaQn8t1Y"
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-77f70206016so399447885a.0
+        for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 05:38:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703597836; x=1704202636; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1703597929; x=1704202729; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HziIBLJBq4AHPK6A497HSvwJS43O/3XpDECKK3QRAvg=;
-        b=e/8JOWQQpFOjkxEfT/ptJr0UCVCdVFdm/5UZ/mQyVlcNS7p/+t4ahyilh6+zxG059k
-         g9+Uk+hMWO7bnlcWON33Qpu3VjLFN5N3QmkzybBpci3cck1fSD+KMjn8UjA3Ab6Q+7FW
-         VYiBzy1JxRH166Ia1T5Ooo0UZoQgjSvxzvDCo8A27GUzFjLd9KyEtA1IV9ybRPYq64QL
-         YA5W4fPv940PhF5d96jLQbeOCmQKdPOiXKhezqj8rXlJhJnfROKIkLCHFTH37lfmZeo9
-         xbPgAZ8sB1rG5jbsj64gPFW70qj3YG/iqMlXxzp01wwFPI6/iBW0nG/0kZkhmZgQjD2F
-         H0AQ==
+        bh=vuMqR9Rwybi6ENHNRAU+EjQWuJolmn+LEd8yiJfS37U=;
+        b=WaQn8t1YVGsC79PlZ7Y13tMopMvVIpMgokHA1KH69gwof5Ye+GWcXXKDNwYyx97nBi
+         BCzfDl6pSuqnq+enJ37jXUWyWi1UYDKLvyIixrH398MrJQcQR+Dcqsns4HddqzKWs6w9
+         KaCLR9lq8TEadhh8dF47aDR7rGHOdTZ98HAM0Lc2r865dOWBtyL2NKFKre8+ZQgCABiB
+         9vylbnah2xuq0MnRxFfTvcU2o58c0Id8jT+YnWonOTIk84sjuNQEOO2cXt9DPxAfodUt
+         D0YqaHVF6KYUb83PDJueJ73mZ7s49/IHWHUASjbQ6LM2/mDRnGVFvvQwq3Qhen9mdG6H
+         exGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703597836; x=1704202636;
+        d=1e100.net; s=20230601; t=1703597929; x=1704202729;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HziIBLJBq4AHPK6A497HSvwJS43O/3XpDECKK3QRAvg=;
-        b=gKkwBxxh+/L9ApklM1HzsqMkORZ9IReLJd1m2kfMNJj8SIpRCWe1H8wEUHqmrW+GIT
-         ThBin2qx1PoIByBaIWUuw+FIj4AUa79Up49aFm2bupYFRucZYvVUA7ls4ECz3C3gjjP5
-         RaDlmq5MCzVRukGV4xbMejvMconf+wKA806ZBNAxWxgFY48Jafe4wtclpsnoa7mal/gv
-         H67hBRBZMaTj6tRdjbXZYN4qVRou+d9xUgfhqDtpixL2OZxnDoqb6N2f7RHRkzgGCIsJ
-         B8BaZIh+EPA6uh9k9AVRWGfc7KNqRlcUPbZBoecM8k188LAE6bZu6/SFlIHYedzF/FY0
-         +EiQ==
-X-Gm-Message-State: AOJu0YwK3Lt89z8CtIEs0ERNYRzvBfo7PGMnDJLDYLctioIHDpdTIBdc
-	JM30xUD5kPOxwvS07S/dNd5SejeYWVTIMQ==
-X-Google-Smtp-Source: AGHT+IHr4/7CCmW2NIuuid1gpL/r7IY7ImgYKMHKlazEUYOFDwMG08MoGBjCXKQzlGNx9OcuKKZieQ==
-X-Received: by 2002:a05:600c:138e:b0:40d:3519:9dd6 with SMTP id u14-20020a05600c138e00b0040d35199dd6mr4069128wmf.40.1703597836802;
-        Tue, 26 Dec 2023 05:37:16 -0800 (PST)
+        bh=vuMqR9Rwybi6ENHNRAU+EjQWuJolmn+LEd8yiJfS37U=;
+        b=FpUayEM3ruVSf39RJPJ6dvvsuzasMUYRRb0zQu1SkroO87uk0R1/1DPGiM5KalcY5u
+         GvagKlli65Et3FNQsXfpk2cvpWHkVbdmx7Aac0eSDDz6/6gXJzMOtBtmfZkFPbennciy
+         5f0FyYjsFyBDaT890UuQHIHxu1WpKgHDSaU8x4Y90U35j7dEJAj/hM9YgGrFkcffNqVh
+         B7u1wUS7qGdRPmzh5GI1XJ4Xgi2ca6wwXniFhOCYmXDWIgNozsHxT4HwrJQXiPk5+LPF
+         t4oKuk6lECAAsO4YHV4z/D6w5E4lZ4dGoj35hjufQ0v4uu0wo3cj+HET1VHyaFgAabbb
+         mU8A==
+X-Gm-Message-State: AOJu0Yxvk04wzxYY1VHXZlFlvILHVo4HkdljFTD3AlXExPPJzuWK3aiH
+	VrI//4U8Fh9FbEorkus67waQAG+1rEwqAg==
+X-Google-Smtp-Source: AGHT+IF/z9T/ozVBM07PXqtUZCL3vgUYzDGhf0tHXbGOqHTv7Y4u3pb9TshIJzdJwVzN9eBeHRoDRg==
+X-Received: by 2002:ac8:5986:0:b0:425:9224:3990 with SMTP id e6-20020ac85986000000b0042592243990mr9878534qte.4.1703597929626;
+        Tue, 26 Dec 2023 05:38:49 -0800 (PST)
 Received: from [192.168.0.22] ([78.10.206.178])
-        by smtp.gmail.com with ESMTPSA id t14-20020a170906608e00b00a26f20fa719sm1782924ejj.220.2023.12.26.05.37.15
+        by smtp.gmail.com with ESMTPSA id b17-20020ac86791000000b0042545901450sm6030030qtp.72.2023.12.26.05.38.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Dec 2023 05:37:16 -0800 (PST)
-Message-ID: <886627a6-0300-46e3-b778-876bd82b97a6@linaro.org>
-Date: Tue, 26 Dec 2023 14:37:15 +0100
+        Tue, 26 Dec 2023 05:38:49 -0800 (PST)
+Message-ID: <bc6b5c5e-9396-4740-af99-1eda4275526b@linaro.org>
+Date: Tue, 26 Dec 2023 14:38:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,8 +51,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 13/16] dt-bindings: clock: Add StarFive JH8100 Always-On
- clock and reset generator
+Subject: Re: [RFC 16/16] riscv: dts: starfive: jh8100: Add clocks and resets
+ nodes
 Content-Language: en-US
 To: Sia Jee Heng <jeeheng.sia@starfivetech.com>, kernel@esmil.dk,
  conor@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -64,7 +64,7 @@ Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  leyfoon.tan@starfivetech.com
 References: <20231226053848.25089-1-jeeheng.sia@starfivetech.com>
- <20231226053848.25089-14-jeeheng.sia@starfivetech.com>
+ <20231226053848.25089-17-jeeheng.sia@starfivetech.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -110,37 +110,36 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231226053848.25089-14-jeeheng.sia@starfivetech.com>
+In-Reply-To: <20231226053848.25089-17-jeeheng.sia@starfivetech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/12/2023 06:38, Sia Jee Heng wrote:
-> Add bindings for the Always-On clock and reset generator (AONCRG) on
-> JH8100 SoC.
+> Add SYSCRG/SYSCRG-NE/SYSCRG-NW/SYSCRG-SW/AONCRG clock and reset
+> nodes for JH8100 RISC-V SoC.
 > 
 > Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
 > Reviewed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
 > ---
 
+...
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>  		compatible = "simple-bus";
+>  		interrupt-parent = <&plic>;
+> @@ -357,6 +563,99 @@ uart4: serial@121a0000  {
+>  			status = "disabled";
+>  		};
+>  
+> +		necrg: necrg@12320000 {
 
+This is a friendly reminder during the review process.
 
----
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
 
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+Thank you.
 
 Best regards,
 Krzysztof
