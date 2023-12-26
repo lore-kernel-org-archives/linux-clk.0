@@ -1,49 +1,49 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14E52207B
-	for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 13:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0604EB4D
+	for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 13:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gvMflAkF"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a26f73732c5so105320266b.3
-        for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 05:36:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e/8JOWQQ"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40d4103aed7so53760905e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 05:37:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703597783; x=1704202583; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1703597836; x=1704202636; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=74fmkZZ1kC7QbnK+KkZdph4eeuVz7aZMcbnRE6ogk28=;
-        b=gvMflAkFTgFK6EuhjsM4OOLPEGH6rDwq/R0mMGqkuLZLyxXTuCLTra94Ws8CQmjR0c
-         2lh4L78ubqQTS/Q0JwgCVUz93AI7ky5wLe4wWQ6hFxPG3sRqZ3bIp9VtCFa+8F0zxjpE
-         +WnCU4ZzOVnN9aM5dCOqEvAAoYfejkHbxOj8157cU4PSF1qvRgdNUmxX63Y98yP+eYCD
-         gg9efyLq5L8fjcBv4GmOwG+FPk80cX9gnOsEdBalD37ySZXjirECOot6cyAksV+EnO+/
-         vV1kQ70YQRgJo85Toi4djFS2/OawPhBVIW0EudZJBtYm2QirPskAlLY/Vu9mbsSeV8Yc
-         ZrRQ==
+        bh=HziIBLJBq4AHPK6A497HSvwJS43O/3XpDECKK3QRAvg=;
+        b=e/8JOWQQpFOjkxEfT/ptJr0UCVCdVFdm/5UZ/mQyVlcNS7p/+t4ahyilh6+zxG059k
+         g9+Uk+hMWO7bnlcWON33Qpu3VjLFN5N3QmkzybBpci3cck1fSD+KMjn8UjA3Ab6Q+7FW
+         VYiBzy1JxRH166Ia1T5Ooo0UZoQgjSvxzvDCo8A27GUzFjLd9KyEtA1IV9ybRPYq64QL
+         YA5W4fPv940PhF5d96jLQbeOCmQKdPOiXKhezqj8rXlJhJnfROKIkLCHFTH37lfmZeo9
+         xbPgAZ8sB1rG5jbsj64gPFW70qj3YG/iqMlXxzp01wwFPI6/iBW0nG/0kZkhmZgQjD2F
+         H0AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703597783; x=1704202583;
+        d=1e100.net; s=20230601; t=1703597836; x=1704202636;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=74fmkZZ1kC7QbnK+KkZdph4eeuVz7aZMcbnRE6ogk28=;
-        b=t50WLujSCcdZJ+e/Ex422Ip5Jg3M5RMsIjX0t9ZnGJVTgt2Ak40f66CuWg4ymF0kkU
-         CAFWF/8Sqm97PK0Rw++H08XZlBikAIvbI13jKGEJxWCYupFChXKnJHlyC6nKGsnsmkOL
-         J+dSf5h9yv0EOi/PmS1afDQLcYYZwrzo3nVOOjPQ08UkpR6Z6axlv/HkP6eoMZ97PXZt
-         PKDQ+nszKzK3NBvgueDxUaks3XdovE/zZEOCTtsaX7DC25uv5HzQL1g0nlltCpfwb/OS
-         CYH4bQJVTrp6ipaefmgMoB6Onf2LRDwhHwL0fzdgqB6ofYPxOl7dJpcVNDmk1TRh9/v+
-         yrNA==
-X-Gm-Message-State: AOJu0YyVNL55vYEVFwssLA0tCmdKKU8a4C+tx3BEXZL1xhSULW/vN4rA
-	B1TmUdfwxTf2eEpiZMz7Q2csl2Seq0AfhA==
-X-Google-Smtp-Source: AGHT+IFfeympHv7OiNkmSyrH/ghgn1MYQ4gyB+xVnV/nJvl1xotdF+cswucHfDB4ZrfYfIr2XuIlfQ==
-X-Received: by 2002:a17:906:24c:b0:a23:3228:c66f with SMTP id 12-20020a170906024c00b00a233228c66fmr3531948ejl.85.1703597783194;
-        Tue, 26 Dec 2023 05:36:23 -0800 (PST)
+        bh=HziIBLJBq4AHPK6A497HSvwJS43O/3XpDECKK3QRAvg=;
+        b=gKkwBxxh+/L9ApklM1HzsqMkORZ9IReLJd1m2kfMNJj8SIpRCWe1H8wEUHqmrW+GIT
+         ThBin2qx1PoIByBaIWUuw+FIj4AUa79Up49aFm2bupYFRucZYvVUA7ls4ECz3C3gjjP5
+         RaDlmq5MCzVRukGV4xbMejvMconf+wKA806ZBNAxWxgFY48Jafe4wtclpsnoa7mal/gv
+         H67hBRBZMaTj6tRdjbXZYN4qVRou+d9xUgfhqDtpixL2OZxnDoqb6N2f7RHRkzgGCIsJ
+         B8BaZIh+EPA6uh9k9AVRWGfc7KNqRlcUPbZBoecM8k188LAE6bZu6/SFlIHYedzF/FY0
+         +EiQ==
+X-Gm-Message-State: AOJu0YwK3Lt89z8CtIEs0ERNYRzvBfo7PGMnDJLDYLctioIHDpdTIBdc
+	JM30xUD5kPOxwvS07S/dNd5SejeYWVTIMQ==
+X-Google-Smtp-Source: AGHT+IHr4/7CCmW2NIuuid1gpL/r7IY7ImgYKMHKlazEUYOFDwMG08MoGBjCXKQzlGNx9OcuKKZieQ==
+X-Received: by 2002:a05:600c:138e:b0:40d:3519:9dd6 with SMTP id u14-20020a05600c138e00b0040d35199dd6mr4069128wmf.40.1703597836802;
+        Tue, 26 Dec 2023 05:37:16 -0800 (PST)
 Received: from [192.168.0.22] ([78.10.206.178])
-        by smtp.gmail.com with ESMTPSA id t14-20020a170906608e00b00a26f20fa719sm1782924ejj.220.2023.12.26.05.36.21
+        by smtp.gmail.com with ESMTPSA id t14-20020a170906608e00b00a26f20fa719sm1782924ejj.220.2023.12.26.05.37.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Dec 2023 05:36:22 -0800 (PST)
-Message-ID: <83d44afb-17a6-4a84-ae40-024e826ab5d9@linaro.org>
-Date: Tue, 26 Dec 2023 14:36:21 +0100
+        Tue, 26 Dec 2023 05:37:16 -0800 (PST)
+Message-ID: <886627a6-0300-46e3-b778-876bd82b97a6@linaro.org>
+Date: Tue, 26 Dec 2023 14:37:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 11/16] dt-bindings: clock: Add StarFive JH8100 South-West
+Subject: Re: [RFC 13/16] dt-bindings: clock: Add StarFive JH8100 Always-On
  clock and reset generator
 Content-Language: en-US
 To: Sia Jee Heng <jeeheng.sia@starfivetech.com>, kernel@esmil.dk,
@@ -64,7 +64,7 @@ Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  leyfoon.tan@starfivetech.com
 References: <20231226053848.25089-1-jeeheng.sia@starfivetech.com>
- <20231226053848.25089-12-jeeheng.sia@starfivetech.com>
+ <20231226053848.25089-14-jeeheng.sia@starfivetech.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -110,12 +110,12 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231226053848.25089-12-jeeheng.sia@starfivetech.com>
+In-Reply-To: <20231226053848.25089-14-jeeheng.sia@starfivetech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/12/2023 06:38, Sia Jee Heng wrote:
-> Add bindings for the South-West clock and reset generator (SWCRG) on
+> Add bindings for the Always-On clock and reset generator (AONCRG) on
 > JH8100 SoC.
 > 
 > Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
@@ -124,6 +124,23 @@ On 26/12/2023 06:38, Sia Jee Heng wrote:
 
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+---
+
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
 
 Best regards,
 Krzysztof
