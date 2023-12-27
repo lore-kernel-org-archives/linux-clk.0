@@ -1,77 +1,131 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D4D22062;
-	Wed, 27 Dec 2023 16:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5894655B;
+	Wed, 27 Dec 2023 18:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E12Q7fwL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1703695187; x=1735231187;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jQwOPiBl18k/nFpfaL9IxGct2oQszbXckZn45iQKbHg=;
-  b=E12Q7fwLK8SVb1w+DokvZcxTM3+/QMO9Ge1GuxD7Sr0mDeBKKg3aBAE4
-   KDjLQ9PxhzJUof/iwOqaE5oTqq02M84cNWpu8akH71lqHU3ynxMJoGVPq
-   Au6Gkas0/pmC+VPsKry7I1UJSJd2gFVbychTUoT0Q7fjueAz+zTn1lhzZ
-   ErkDPEgql+rA/aRCOqDuesIspmShtKOTIDVuScAiu4py8aWhsMyw02HVU
-   Gxiv2XEjM97c1D2DBO5Ti1d/wUgFaHOaG42hUOJdnAoqn3OhtXatiZKtu
-   UtI/fz7yqLpZLVKSKdy0KooIdj8Oq7bvfZ4/nz2WlBBg4yiKG9DEr6YwY
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10936"; a="3293145"
-X-IronPort-AV: E=Sophos;i="6.04,309,1695711600"; 
-   d="scan'208";a="3293145"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Dec 2023 08:39:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10936"; a="896949296"
-X-IronPort-AV: E=Sophos;i="6.04,309,1695711600"; 
-   d="scan'208";a="896949296"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Dec 2023 08:39:42 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1rIWwV-00000009Su6-2ShE;
-	Wed, 27 Dec 2023 18:39:39 +0200
-Date: Wed, 27 Dec 2023 18:39:39 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Tero Kristo <kristo@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-Subject: Re: [PATCH 00/10] clk: ti: Adjustments for eight function
- implementations
-Message-ID: <ZYxTS6Cfm_c0WgXS@smile.fi.intel.com>
-References: <20849a8e-e0f5-46df-ad8a-9eae6cbe337b@web.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yt5cJEX0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41B9FC433CA;
+	Wed, 27 Dec 2023 18:27:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703701650;
+	bh=oyeL33g+9I+GVA+WFvuGJ+woG2igHBp3hw/HUXkmR1o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Yt5cJEX0sFi+XvmFwPc2Jh5rN7+8VemwEzH8NJPQYx/Ib8RTYqy2173po6ePEjNux
+	 YT8nL4SKmr6edPnW+a6iTlE2zU1NT2g5BfSnQDXPzw4e5QseT1cJEXUBV/uvbWbKvS
+	 198Be5Z6NuQxXaBdyJmU0nf+AGrHMkW+V+99IC+AkPmyVdQINb9B354fxIwH9JT3xX
+	 zN0AuDSLJDsC7xWF96fHWZqOUjtobOPhQCayRoUSuJcurs/XW24Bxlvuqr0hlRwKw9
+	 xW12bkB8b5xedokqaBvKSLLOBg3h9rAcdefvbruTM04YVd+aCt8t1sCZpjv2Ma1AEu
+	 FTZh5hrIgXDpg==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ccc80791e1so20449741fa.1;
+        Wed, 27 Dec 2023 10:27:30 -0800 (PST)
+X-Gm-Message-State: AOJu0Yw3Mt0dDLoI1mOum40cvXDUA0NX9hU7ReA/n9DYIHIVML8digdV
+	/YdSgdB1lsCUeP+j+4LByElHx5y5CFsg56ROqA==
+X-Google-Smtp-Source: AGHT+IH8nMyV28fe3BaJG8zJjdPFE095W0Lg1zumW1PhWjglNwi9cB/ff+b+TdEmGOf5hI23YuimFZtwX70lSpkxhJ4=
+X-Received: by 2002:a2e:3509:0:b0:2cc:dea3:23b with SMTP id
+ z9-20020a2e3509000000b002ccdea3023bmr662036ljz.3.1703701648332; Wed, 27 Dec
+ 2023 10:27:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20849a8e-e0f5-46df-ad8a-9eae6cbe337b@web.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20231227-mbly-clk-v2-0-a05db63c380f@bootlin.com> <20231227-mbly-clk-v2-3-a05db63c380f@bootlin.com>
+In-Reply-To: <20231227-mbly-clk-v2-3-a05db63c380f@bootlin.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Wed, 27 Dec 2023 11:27:15 -0700
+X-Gmail-Original-Message-ID: <CAL_JsqJD4ZeR+n09gC2fXnk1MFuqO0c0zADSg_-MiY65pck1Yw@mail.gmail.com>
+Message-ID: <CAL_JsqJD4ZeR+n09gC2fXnk1MFuqO0c0zADSg_-MiY65pck1Yw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] dt-bindings: soc: mobileye: add EyeQ5 OLB system controller
+To: =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, linux-mips@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 24, 2023 at 05:33:53PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 24 Dec 2023 17:03:21 +0100
-> 
-> Several update suggestions were taken into account
-> from static source code analysis.
+On Wed, Dec 27, 2023 at 10:24=E2=80=AFAM Th=C3=A9o Lebrun <theo.lebrun@boot=
+lin.com> wrote:
+>
+> Add documentation to describe the "Other Logic Block" syscon.
+>
+> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 44 ++++++++++++++++=
+++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 45 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq=
+5-olb.yaml b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-=
+olb.yaml
+> new file mode 100644
+> index 000000000000..b148a49b08f1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.y=
+aml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mobileye EyeQ5 SoC system controller
+> +
+> +maintainers:
+> +  - Gr=C3=A9gory Clement <gregory.clement@bootlin.com>
+> +  - Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> +  - Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+> +
+> +description:
+> +  OLB ("Other Logic Block") is a hardware block grouping smaller blocks.=
+ Clocks,
+> +  resets, pinctrl are being handled from here.
 
-Unneeded churn, if you want to make it better, switch the code to use
-cleanup.h.
+I don't see resets or pinctrl in the binding. Please make it complete
+whether you have the driver or not.
 
--- 
-With Best Regards,
-Andy Shevchenko
+As-is, you don't need clocks to be a child node.
 
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: mobileye,eyeq5-olb
+> +      - const: syscon
+> +      - const: simple-mfd
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  reg-io-width:
+> +    const: 4
 
+Why do you need this? It is not a generic block and can only ever be 1 valu=
+e.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-io-width
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    olb@e00000 {
+> +      compatible =3D "mobileye,eyeq5-olb", "syscon", "simple-mfd";
+> +      reg =3D <0xe00000 0x400>;
+> +      reg-io-width =3D <4>;
+
+Make this example complete and drop the child node example.
+
+Rob
