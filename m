@@ -1,49 +1,49 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6DE1FC4
-	for <linux-clk@vger.kernel.org>; Wed, 27 Dec 2023 01:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36C31C10
+	for <linux-clk@vger.kernel.org>; Wed, 27 Dec 2023 01:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q5jKE4Zl"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-554909ac877so2522355a12.1
-        for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 17:08:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a2JXwI2G"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-50e7c76897dso1298479e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 26 Dec 2023 17:09:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703639325; x=1704244125; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1703639390; x=1704244190; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=WW9HYx9j/x4ss/Xoh0AagUmpiviqWROUvVZzg+XtJcM=;
-        b=q5jKE4Zl3Sv47GoLX1ijfhm/VUCFcnhBRFd8VgyIPyfxFF5V9D5M0K1eSx/zdiA2La
-         dI958V7OJoqKnWoiWIfOyVR2TwqQ8aNFmD+qlJ4/ltSVZgMviglXFYH9GKNa3DgEMOb0
-         fLxdMxHWPRdMDwaHyRCViYOZZvtWVW+5YZGCPMe0tkJwJvfPEJfRN422O/kXozrJjPKk
-         vF1tjz1+tAJuTP3SmcKDgrAZymv2TZ+WI3hd8ryM6vtZasOjyw6hNqTXhzngIXd5I/SD
-         V3MKnX34srtBIbSYk1gPk7YJ4YRtWQKZq74Wep7pQO8AgiL5BPTfGQa2SknxGKPIZiRm
-         wexg==
+        bh=I9VfHVLP88p3cP7SpdmfALR412cMP7LrXGEL/d7Ygmg=;
+        b=a2JXwI2GSX1hs7LzbXADL5M0dwd18G463Z01eaQVF4Um8gooSaC4owJN5+XYU2p5Ib
+         kv2D7KT28wmO8d4vB0JLeWRyYAktyZMQnWD+lWo2t/BLOuzPqcS2nEtC181bYZ9KaNVw
+         Ydz+NZzvQ5TNkeDYDhauSCOK5UGdg3A7jecDyOPxKuxhVUB8Sx5Qzqkg0imx12sCaFOC
+         GeS0yfqly9aAxMzWOh3HhKOQxFCYPyYdJ0JUKi7k+emGeQzYB5AcoezhjnIzoi5E/cG/
+         uSOOVEkzj4wur67QHYGnV1qIgr+VYlqe5paOstzB1olu/p/GprGNmhcKKIpsne09fI3x
+         +QtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703639325; x=1704244125;
+        d=1e100.net; s=20230601; t=1703639390; x=1704244190;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WW9HYx9j/x4ss/Xoh0AagUmpiviqWROUvVZzg+XtJcM=;
-        b=ryyU+HPwMqO+C1/8MOk000HMziHNRJOpT+IdzWTJLa904sjjTFlbqJDph2ZV/WaREi
-         HKY8hrxIABrbFyTWOMLmzoiGQ2D3ZkHrpyWbn2DIl0fz00qI6j2gO6TsF6GbAFpdVzIk
-         9f6A8MBVbcxKLIz0gpAjEl6QZqDW0EYEbRsPzDJNWiOAMaB074WD1uU6MppAMvNaq0Y5
-         3X3u0QrUTRX8wFeUFJBr8ImRbXAcwAoK+89rr77ObPQDIRqd0TjrndhtNRNWLp7lWkYs
-         fytfmw+gVJIvfcywZnvgGvHlVcRrticW2BRWoOz3y3LhH1O1wQ7xZxihWt6kMWu/OCpr
-         /0DQ==
-X-Gm-Message-State: AOJu0Yw4Ijw5HkXkVB3AUZzve/5ssMAn0dIR/z5338T6z5Cgubuf5YIZ
-	pVlm0m7AwQJxSKyCS3f4lMnI6h0DFuHF7cY/JbAj8KLk1RI=
-X-Google-Smtp-Source: AGHT+IFMh9s/4u5QWAzEcZBzBdigcM8CuFsPVxhHwQbB5U+yW7MywTpJ7bNqMbbly25Js36Bq5/BNA==
-X-Received: by 2002:a05:6402:4410:b0:54a:f8e9:a9a8 with SMTP id y16-20020a056402441000b0054af8e9a9a8mr6190668eda.20.1703639325331;
-        Tue, 26 Dec 2023 17:08:45 -0800 (PST)
+        bh=I9VfHVLP88p3cP7SpdmfALR412cMP7LrXGEL/d7Ygmg=;
+        b=DintM5AXrwt0jcba12o7/MG47iPKSr1wliZPMd1uCEFwUo4MZLFOXkVE+Hp5KZ6+9u
+         yuxPVekhNgIvT4MEBy3I0O3mTP6edgvY1ptjhMDj/Z81bkiraQUdKwyUBm28CIuD56Ui
+         mRCHxoQIqsMsT+MYVzFDZ31ki+sGTGoVyVEXicQLGLxHNXcj9Wqs0Eq5rF4SJOTTwXFc
+         Y9AowlvEcAkLORrRG2Z/XOHy75rxCyeAvouajq9UB362gFzc9vDXBF2/yBIDvMcaySv4
+         CbKqAXxrKz4I0elOKMUesX6i+fyLMK5c1VsFyXVksdG6CNWm+9irQer5P2W6qD5XKU1O
+         8sNw==
+X-Gm-Message-State: AOJu0YwENkaHfMb3qVReXKW7u5UPwZW/9RnQ986a9KW2lutbiy33Q8uh
+	PXagtn+RoeWZZQfOZWSZ8VPfxKXlL2Rs/A==
+X-Google-Smtp-Source: AGHT+IEuiCPOp/0lMCRX1bA3Ozq+b+B6zjTRHTHfBM+/soywhiiJn3FVFC8wZOuOfSh/SvjvqSb8/A==
+X-Received: by 2002:ac2:4a72:0:b0:50e:7b34:c18a with SMTP id q18-20020ac24a72000000b0050e7b34c18amr500583lfp.111.1703639389958;
+        Tue, 26 Dec 2023 17:09:49 -0800 (PST)
 Received: from [192.168.199.125] (178235179028.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.28])
-        by smtp.gmail.com with ESMTPSA id ck8-20020a0564021c0800b0055515b40464sm1599865edb.81.2023.12.26.17.08.43
+        by smtp.gmail.com with ESMTPSA id ck8-20020a0564021c0800b0055515b40464sm1599865edb.81.2023.12.26.17.09.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Dec 2023 17:08:45 -0800 (PST)
-Message-ID: <9a11ba2f-d7bc-4860-9987-58f56fad76da@linaro.org>
-Date: Wed, 27 Dec 2023 02:08:43 +0100
+        Tue, 26 Dec 2023 17:09:49 -0800 (PST)
+Message-ID: <4a1c18e3-39c8-4070-ae55-b1148b3dc65b@linaro.org>
+Date: Wed, 27 Dec 2023 02:09:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] arm64: dts: qcom: sa8295p-adp: add max20411
+Subject: Re: [PATCH v2 7/8] arm64: dts: qcom: sa8295p-adp: Enable GPU
 Content-Language: en-US
 To: Bjorn Andersson <quic_bjorande@quicinc.com>,
  Bjorn Andersson <andersson@kernel.org>,
@@ -66,7 +66,7 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20231220-sa8295p-gpu-v2-0-4763246b72c0@quicinc.com>
- <20231220-sa8295p-gpu-v2-6-4763246b72c0@quicinc.com>
+ <20231220-sa8295p-gpu-v2-7-4763246b72c0@quicinc.com>
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -103,33 +103,43 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20231220-sa8295p-gpu-v2-6-4763246b72c0@quicinc.com>
+In-Reply-To: <20231220-sa8295p-gpu-v2-7-4763246b72c0@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 22.12.2023 05:39, Bjorn Andersson wrote:
-> From: Bjorn Andersson <andersson@kernel.org>
+> With the necessary support in place for supplying VDD_GFX from the
+> MAX20411 regulator, enable the GPU clock controller, GMU, Adreno SMMU
+> and the GPU on the SA8295P ADP.
 > 
-> The SA8295P ADP has a MAX20411 LDO regulator on I2C 12, supplying the
-> VDD_GFX pads. Enable the bus and add the maxim,max20411 device on the
-> bus.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 > ---
+[...]
 
->  &tlmm {
->  	pcie2a_default: pcie2a-default-state {
->  		clkreq-n-pins {
-> @@ -728,4 +760,12 @@ wake-n-pins {
->  			bias-pull-up;
->  		};
->  	};
+> +&gpucc {
+> +	vdd-gfx-supply = <&vdd_gfx>;
+> +	status = "okay";
+> +};
+Already enabled
+
 > +
-> +	qup1_i2c4_state: qup1-i2c4-state {
-> +		pins = "gpio0", "gpio1";
-> +		function = "qup12";
+> +&gmu {
+> +	status = "okay";
+> +};
 > +
-> +		drive-strength = <2>;
-unnecessary newline
+> +&gpu {
+> +	status = "okay";
+> +
+> +	zap-shader {
+> +		memory-region = <&gpu_mem>;
+> +		firmware-name = "qcom/sa8295p/a690_zap.mbn";
+> +	};
+> +};
+> +
+> +&gpu_smmu {
+> +	status = "okay";
+> +};
+Already enabled
+
 
 Konrad
