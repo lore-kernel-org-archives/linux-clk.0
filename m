@@ -1,186 +1,150 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E02446DC
-	for <linux-clk@vger.kernel.org>; Wed, 27 Dec 2023 12:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EAD46420;
+	Wed, 27 Dec 2023 16:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oR3Zu7tI"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3368abe1093so4476475f8f.2
-        for <linux-clk@vger.kernel.org>; Wed, 27 Dec 2023 04:38:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703680705; x=1704285505; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=K49GFbJ7QYX/aYXf6WBwayoQ+7LGUrfHPfuMV1wfcM8=;
-        b=oR3Zu7tIRl7Vrvbp9vVfkJItESCIkjgW+bo+/EHyfjXRtxwnVEighhIxS0UqsRWztg
-         e/ei0pz13MGh3F4hrX4Ubx4HDFXNDv993CLVRqS39pwvsNMLqaByg4DLHsUCP6+xVGj5
-         DpecqNpgkNVKBvXH6rQXPSxFIEXfkyGcXnpw3MZzoa2cWn/tR6ladUlrlOSUDsPSXYZ6
-         RA55S700OIoQx4HXN8sK6gP87A/gAJwAI8fy4vSRGqq8Qs54XdAd1fGdpc5oUuLxO1Ww
-         NvC/FG2r+DgJ0cjuuafcnQSaDovXqc3zZ34vkf1p4+TkUFOGaPjGFYdG0A9rdpEpMmIG
-         mJmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703680705; x=1704285505;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K49GFbJ7QYX/aYXf6WBwayoQ+7LGUrfHPfuMV1wfcM8=;
-        b=gqd+69BnWX5LHBYUXk9wk0CKuXqEQzb88SibooSy0k5jXSI/+nmt6zjeP+mUsdPUxH
-         SPUTZI3RwLRBlfT+K7eroELwi+gliGiu9alejD15zV4Sf/dg8TEWMvXSuYpo3zBrgKI5
-         ybOrsoXhcSsnWm2BQoNsYQRDQtJzfojFNqf5r4Y0zhgVHjNr7wZGK88Ctg6S61sqUnl/
-         R8Yxou4Xfktd86xVx6GQXQJ3OshfiBj7ryPVq97pkbs3XpBeUQr+4bdQmfqmxIEcAP4y
-         40C9MQSUsHxCJn/oKlWykM2NbX6Hpjv2qcvPetH8herzQwmpIlGxQoRap76KoYlwkF2I
-         1BbQ==
-X-Gm-Message-State: AOJu0YzAbCmMdVygWu2kBdZj4bZsapPA8L4LULz1pZercF63Hhdhoqx8
-	jY7amIE4ihx6awjIeVQKENydHhGq3F0eow==
-X-Google-Smtp-Source: AGHT+IEk8Z5vNZSE+UxA5iIfvuAuQqH01ijY55xsdhRWuCAzSey3tpD2HL7T5Js0WDnprd1CJaMF2w==
-X-Received: by 2002:a5d:5744:0:b0:333:5230:ad12 with SMTP id q4-20020a5d5744000000b003335230ad12mr5438335wrw.72.1703680704864;
-        Wed, 27 Dec 2023 04:38:24 -0800 (PST)
-Received: from [192.168.0.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id q28-20020adfab1c000000b0033690139ea5sm12410133wrc.44.2023.12.27.04.38.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Dec 2023 04:38:23 -0800 (PST)
-Message-ID: <425a228e-b2d3-4b19-9bcb-6ee1a90cd2ef@linaro.org>
-Date: Wed, 27 Dec 2023 12:38:21 +0000
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="P+g8MeCj"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F184DFF812;
+	Wed, 27 Dec 2023 16:24:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1703694244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ez0pbpdiJcFmloOhz2QpvcxjF2T6EB87V9C6wGzmJm8=;
+	b=P+g8MeCjZsDHxr7svBYTlxSZqen7NafmP862OWo5RRPSzTBYzEBLZS9oQ9JObibdf8UkC0
+	we1v1j7ntez0pf+D7eSL5v69jeRIIdMtAkuKDy7KyDjDm8PC67mqiVHPsQf5M6vj+iwz6a
+	TWqLlFHlNaTIJh1p8hhmMStB0TB/f3FWfM/B5IBUOGDMN9gNcBy4GHsnQPOUjHTtq+q7Fo
+	0BxlST2Vc4Oetq/LHBh5aqVeOJVQ+pTLSjSAhTjzykk+UggoL69G4JfjfJMufDKgPVjtLH
+	onp4wW6eP3gCyUMEnv9dIIAMaknqVhrT+Ue5XQ0UAtlZXqKENTlx93S71zipWA==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v2 0/6] Add support for Mobileye EyeQ5 clock controller
+Date: Wed, 27 Dec 2023 17:23:50 +0100
+Message-Id: <20231227-mbly-clk-v2-0-a05db63c380f@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/13] dt-bindings: clock: google,gs101-clock: add PERIC0
- clock management unit
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>
-Cc: sboyd@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org,
- alim.akhtar@samsung.com, gregkh@linuxfoundation.org, jirislaby@kernel.org,
- catalin.marinas@arm.com, will@kernel.org, s.nawrocki@samsung.com,
- tomasz.figa@gmail.com, cw00.choi@samsung.com, arnd@arndb.de,
- semen.protsenko@linaro.org, andre.draszik@linaro.org, saravanak@google.com,
- willmcvicker@google.com, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
- <20231214105243.3707730-3-tudor.ambarus@linaro.org>
- <20231220150726.GA223267-robh@kernel.org>
- <173b06ab-2518-49ee-a67f-85256bc5b6a7@linaro.org>
-Content-Language: en-US
-In-Reply-To: <173b06ab-2518-49ee-a67f-85256bc5b6a7@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJZPjGUC/3WOSw6CMBBAr0K6tqbT8imuvIdhQctUGoGalhAJ4
+ e4WXBiNLmbxJvNeZiEBvcVATslCPE42WDdE4IeE6LYerkhtE5lwxgXEob3qZqq7G5WFxkzzFAy
+ TJJ7fPRr72FOXKnJrw+j8vJcn2LavCAj2jkxAGZW5MgBl0YDAs3Ju7Oxw1K7fqn8UJZBlTa5Kh
+ fVPhYP8UtI0/psCk4blH0q1rusTffPRAAgBAAA=
+To: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.12.4
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Hi, Rob,
+Hi,
 
-On 12/21/23 07:20, Tudor Ambarus wrote:
-> 
-> 
-> On 12/20/23 15:07, Rob Herring wrote:
->> On Thu, Dec 14, 2023 at 10:52:32AM +0000, Tudor Ambarus wrote:
->>> Add dt-schema documentation for the Connectivity Peripheral 0 (PERIC0)
->>> clock management unit.
->>>
->>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->>> ---
->>>  .../bindings/clock/google,gs101-clock.yaml    | 25 +++++-
->>>  include/dt-bindings/clock/google,gs101.h      | 86 +++++++++++++++++++
->>>  2 files changed, 109 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
->>> index 3eebc03a309b..ba54c13c55bc 100644
->>> --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
->>> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
->>> @@ -30,14 +30,15 @@ properties:
->>>        - google,gs101-cmu-top
->>>        - google,gs101-cmu-apm
->>>        - google,gs101-cmu-misc
->>> +      - google,gs101-cmu-peric0
->>>  
->>>    clocks:
->>>      minItems: 1
->>> -    maxItems: 2
->>> +    maxItems: 3
->>>  
->>>    clock-names:
->>>      minItems: 1
->>> -    maxItems: 2
->>> +    maxItems: 3
->>>  
->>>    "#clock-cells":
->>>      const: 1
->>> @@ -88,6 +89,26 @@ allOf:
->>>              - const: dout_cmu_misc_bus
->>>              - const: dout_cmu_misc_sss
->>>  
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            const: google,gs101-cmu-peric0
->>> +
->>> +    then:
->>> +      properties:
->>> +        clocks:
->>> +          items:
->>> +            - description: External reference clock (24.576 MHz)
->>> +            - description: Connectivity Peripheral 0 bus clock (from CMU_TOP)
->>> +            - description: Connectivity Peripheral 0 IP clock (from CMU_TOP)
->>> +
->>> +        clock-names:
->>> +          items:
->>> +            - const: oscclk
->>> +            - const: dout_cmu_peric0_bus
->>> +            - const: dout_cmu_peric0_ip
->>
->> 'bus' and 'ip' are sufficient because naming is local to the module. The 
->> same is true on 'dout_cmu_misc_bus'. As that has not made a release, 
->> please fix all of them.
->>
-> 
-> Ok, will fix them shortly. Thanks, Rob!
+We replace fixed clocks as declared in the initial platform support
+series [1] by read-only clocks exposed by the clock driver implemented
+here. Write-ability is supported by the hardware but not implemented,
+it could be added later-on if the need appears.
 
-I tried your suggestion at
-https://lore.kernel.org/linux-arm-kernel/c6cc6e74-6c3d-439b-8dc1-bc50a88a3d8f@linaro.org/
+We expose ten PLLs that derive directly from the main crystal. Also, a
+divider clock is exposed as a child clock of one of the PLLs.
 
-and we noticed that we'd have to update the clock driver as well.
-These CMUs set the DT clock-name of the parent clock in the driver in
-struct samsung_cmu_info::clk_name[]. The driver then tries to enable the
-parent clock based on the clock-name in exynos_arm64_register_cmu().
+The platform devicetree has many more clock nodes but those are
+fixed-factors that are not hardware controllable; we therefore do not
+deal with them.
 
-In order to enable the parent clock of the CMU the following would be
-needed in the driver:
+This is V2. Full changelog below. Major changes are:
 
-diff --git a/drivers/clk/samsung/clk-gs101.c
-b/drivers/clk/samsung/clk-gs101.c
-index 68a27b78b00b..e91836ea3a98 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -2476,7 +2476,7 @@ static const struct samsung_cmu_info misc_cmu_info
-__initconst = {
-        .nr_clk_ids             = CLKS_NR_MISC,
-        .clk_regs               = misc_clk_regs,
-        .nr_clk_regs            = ARRAY_SIZE(misc_clk_regs),
--       .clk_name               = "dout_cmu_misc_bus",
-+       .clk_name               = "bus",
- };
+ - Switch to a platform driver.
+ - Switch to declaring PLLs as fixed-factor.
+ - Point to the parent clk using the fw_name field in clk_parent_data.
+ - The above two points means we add support in fixed-factor to (1) allow
+   fixed accuracy rather than parent accuracy and (2) add new register
+   prototypes to point to the parent clk using fw_name.
 
-I think I lean towards keeping the name as it was because it's clearer
-what are the clock dependencies in the driver. "dout_cmu_misc_bus" is
-the clock name used when defining the clock:
-DIV(CLK_DOUT_CMU_MISC_BUS, "dout_cmu_misc_bus", "gout_cmu_misc_bus",
-    CLK_CON_DIV_CLKCMU_MISC_BUS, 0, 4),
-The other exynos clock drivers are using too the driver's clock names
-for the clock-names device tree property. For consistency I'd keep it
-the same.
+[1]: https://lore.kernel.org/lkml/20231212163459.1923041-1-gregory.clement@bootlin.com/
 
-If you have a stronger opinion than mine, please tell and I'll happily
-update the driver.
+Have a nice day,
+Théo Lebrun
 
-Thanks,
-ta
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v2:
+- Drop [PATCH 1/5] that was taken by Stephen for clk-next.
+- Add accuracy support to fixed-factor that is enabled with a flag.
+  Register prototypes were added to exploit this feature.
+- Add fw_name support to fixed-factor. This allows pointing to parent
+  clocks using the value in `clock-names` in the DT. Register
+  prototypes were added for that.
+- Bindings were modified to be less dumb: a binding was added for OLB
+  and the clock-controller is a child property of it. Removed the
+  possibility of pointing to OLB using a phandle. $nodename is the
+  generic `clock-controller` and not custom `clocks`. Fix dt-bindings
+  examples.
+- Fix commit message for the driver patch. Add details, remove useless
+  fluff.
+- Squash both driver commits together.
+- Declare a platform_driver instead of using CLK_OF_DECLARE_DRIVER. This
+  also means using `dev_*` for logging, removing `pr_fmt`. We add a
+  pointer to device in the private structure.
+- Use fixed-factor instead of fixed-rate for PLLs. We don't grab a
+  reference to the parent clk, instead using newly added fixed-factor
+  register prototypes and fwname.
+- NULL is not an error when registering PLLs anymore.
+- Now checking the return value of of_clk_add_hw_provider for errors.
+- Fix includes.
+- Remove defensive conditional at start of eq5c_pll_parse_registers.
+- Rename clk_hw_to_ospi_priv to clk_to_priv to avoid confusion: it is
+  not part of the clk_hw_* family of symbols.
+- Fix negative returns in eq5c_ospi_div_set_rate. It was a typo
+  highlighted by Stephen Boyd.
+- Declare eq5c_ospi_div_ops as static.
+- In devicetree, move the OLB node prior to the UARTs, as platform
+  device probe scheduling is dependent on devicetree ordering. This is
+  required to declare the driver as a platform driver, else it
+  CLK_OF_DECLARE_DRIVER is required.
+- In device, create a core0-timer-clk fixed clock to feed to the GIC
+  timer. It requires a clock earlier than platform bus type init.
+- Link to v1: https://lore.kernel.org/r/20231218-mbly-clk-v1-0-44ce54108f06@bootlin.com
+
+---
+Théo Lebrun (6):
+      clk: fixed-factor: add optional accuracy support
+      clk: fixed-factor: add fwname-based constructor functions
+      dt-bindings: soc: mobileye: add EyeQ5 OLB system controller
+      dt-bindings: clock: mobileye,eyeq5-clk: add bindings
+      clk: eyeq5: add platform driver
+      MIPS: mobileye: eyeq5: use OLB clocks controller
+
+ .../bindings/clock/mobileye,eyeq5-clk.yaml         |  50 +++
+ .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  |  48 +++
+ MAINTAINERS                                        |   4 +
+ .../{eyeq5-fixed-clocks.dtsi => eyeq5-clocks.dtsi} |  54 ++--
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  23 +-
+ drivers/clk/Kconfig                                |  11 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-eyeq5.c                            | 348 +++++++++++++++++++++
+ drivers/clk/clk-fixed-factor.c                     |  94 +++++-
+ include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  22 ++
+ include/linux/clk-provider.h                       |  26 +-
+ 11 files changed, 621 insertions(+), 60 deletions(-)
+---
+base-commit: daf471f1ce94536da77948fac81d5c85ae12dbfa
+change-id: 20231023-mbly-clk-87ce5c241f08
+
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
+
