@@ -1,110 +1,125 @@
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C1024B2A
-	for <linux-clk@vger.kernel.org>; Wed, 27 Dec 2023 09:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eDIFHZLL"
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6d9b51093a0so1702817b3a.0
-        for <linux-clk@vger.kernel.org>; Wed, 27 Dec 2023 01:05:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1703667905; x=1704272705; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UqybA8kGXGwS0p6VfCaZS7VsH26LSz7rBgi0KXqcQ7I=;
-        b=eDIFHZLL0FxF5QSvJLxK1ALZKQCI/hE75enT1/3GkrZ/L/8nII7yLLlHhm/sgoExEB
-         08K8nohMfsKziIn/MCqY82WE+dGuMjhMPw+4IIS7I5Z4GfLX2alWhfgYGggSbPKDtIwm
-         Kr5O3lh3AJQqpPr5H4/aKgrvGcST5NzJ4oFdo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703667905; x=1704272705;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UqybA8kGXGwS0p6VfCaZS7VsH26LSz7rBgi0KXqcQ7I=;
-        b=t5vioOmKvhtf1bTijJSqY61cgFqUAtT6QXJZQvuUug2LhDrrok+BvIVsDp81PBMUf5
-         63200mTQmMl0XJOzNVjThOk3bv9gvxbGUgMPk8xI4iH4o+kAC0H3yhcYvD0kv8T3tC9Z
-         GxzUjW/1gKRFZrtKodNMENI8HLyX04kjujgwNRHmzMsZ479R9L8ZSUgswWhvc8akKKXA
-         6x+MlRkYKd2vOcszu4tLFIJ5I/BiiF2NreDKPjPFBNBU3Ymq8yYxO7mxo6kv+7MxOqhE
-         rccbv0sWlaqvOmrKbLwoTsz/PIFBumn2UlDHYcfyXh469cYY3Q5WiPLRvzmcREeePepH
-         YoWg==
-X-Gm-Message-State: AOJu0YykmqIB83R+docefoj0LsfzBe/FNE2JAmzD6SAbgKtwbBwOcN4h
-	+8LtnK3PRsjah/Kk9IRtuubcmcacBuTa
-X-Google-Smtp-Source: AGHT+IHzLN+1pxxIuXsPLSje0l/zdsr5/VBgqdxz5v1VViJZw0E1DLI5tn6YlpQiPS6VAvJrCPbvFw==
-X-Received: by 2002:a05:6a20:938d:b0:196:2c8b:9f21 with SMTP id x13-20020a056a20938d00b001962c8b9f21mr200388pzh.112.1703667905699;
-        Wed, 27 Dec 2023 01:05:05 -0800 (PST)
-Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:18d2:7869:e8b9:f4e4])
-        by smtp.gmail.com with ESMTPSA id v22-20020a056a00149600b006d9b65d1a8esm5347701pfu.28.2023.12.27.01.05.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Dec 2023 01:05:05 -0800 (PST)
-From: Pin-yen Lin <treapking@chromium.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Pin-yen Lin <treapking@chromium.org>,
-	linux-mediatek@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	Weiyi Lu <weiyi.lu@mediatek.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] clk: mediatek: mt8183: Enable need_runtime_pm on mt8183-mfgcfg
-Date: Wed, 27 Dec 2023 17:04:43 +0800
-Message-ID: <20231227090448.2216295-2-treapking@chromium.org>
-X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
-In-Reply-To: <20231227090448.2216295-1-treapking@chromium.org>
-References: <20231227090448.2216295-1-treapking@chromium.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B32444369;
+	Wed, 27 Dec 2023 10:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+	by ex01.ufhost.com (Postfix) with ESMTP id 12D8524E278;
+	Wed, 27 Dec 2023 18:51:39 +0800 (CST)
+Received: from EXMBX073.cuchost.com (172.16.6.83) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 27 Dec
+ 2023 18:51:39 +0800
+Received: from EXMBX066.cuchost.com (172.16.7.66) by EXMBX073.cuchost.com
+ (172.16.6.83) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 27 Dec
+ 2023 18:51:38 +0800
+Received: from EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f]) by
+ EXMBX066.cuchost.com ([fe80::5947:9245:907e:339f%17]) with mapi id
+ 15.00.1497.044; Wed, 27 Dec 2023 18:51:38 +0800
+From: JeeHeng Sia <jeeheng.sia@starfivetech.com>
+To: Samuel Holland <samuel.holland@sifive.com>
+CC: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Leyfoon Tan
+	<leyfoon.tan@starfivetech.com>, "kernel@esmil.dk" <kernel@esmil.dk>,
+	"conor@kernel.org" <conor@kernel.org>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "krzysztof.kozlowski+dt@linaro.org"
+	<krzysztof.kozlowski+dt@linaro.org>, "paul.walmsley@sifive.com"
+	<paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"emil.renner.berthing@canonical.com" <emil.renner.berthing@canonical.com>,
+	Hal Feng <hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
+Subject: RE: [RFC 07/16] dt-bindings: clock: Add StarFive JH8100 North-West
+ clock and reset generator
+Thread-Topic: [RFC 07/16] dt-bindings: clock: Add StarFive JH8100 North-West
+ clock and reset generator
+Thread-Index: AQHaN73wOhvDbHN7t0mtNi9lKoc0XLC7VyWAgAGek3A=
+Date: Wed, 27 Dec 2023 10:51:38 +0000
+Message-ID: <45cba9bf1af74128b4d77bea3e11ce69@EXMBX066.cuchost.com>
+References: <20231226053848.25089-1-jeeheng.sia@starfivetech.com>
+ <20231226053848.25089-8-jeeheng.sia@starfivetech.com>
+ <74649469-2b47-486e-b8d1-c89b705fe8c1@sifive.com>
+In-Reply-To: <74649469-2b47-486e-b8d1-c89b705fe8c1@sifive.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-transport-fromentityheader: Hosted
+x-yovoleruleagent: yovoleflag
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-mt8183-mfgcfg has a mutual dependency with genpd during the probing
-stage, so enable need_runtim_pm to prevent a deadlock in the following
-call stack:
-
-CPU0:  genpd_lock --> clk_prepare_lock
-genpd_power_off_work_fn()
- genpd_lock()
- generic_pm_domain::power_off()
-    clk_unprepare()
-      clk_prepare_lock()
-
-CPU1: clk_prepare_lock --> genpd_lock
-clk_register()
-  __clk_core_init()
-    clk_prepare_lock()
-    clk_pm_runtime_get()
-      genpd_lock()
-
-Do a runtime PM get at the probe function to make sure clk_register()
-won't acquire the genpd lock.
-
-Fixes: acddfc2c261b ("clk: mediatek: Add MT8183 clock support")
-Signed-off-by: Pin-yen Lin <treapking@chromium.org>
----
-
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-index ba504e19d420..62d876e150e1 100644
---- a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-+++ b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-@@ -29,6 +29,7 @@ static const struct mtk_gate mfg_clks[] = {
- static const struct mtk_clk_desc mfg_desc = {
- 	.clks = mfg_clks,
- 	.num_clks = ARRAY_SIZE(mfg_clks),
-+	.need_runtime_pm = true,
- };
- 
- static const struct of_device_id of_match_clk_mt8183_mfg[] = {
--- 
-2.43.0.472.g3155946c3a-goog
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2FtdWVsIEhvbGxhbmQg
+PHNhbXVlbC5ob2xsYW5kQHNpZml2ZS5jb20+DQo+IFNlbnQ6IFdlZG5lc2RheSwgRGVjZW1iZXIg
+MjcsIDIwMjMgMjowNyBBTQ0KPiBUbzogSmVlSGVuZyBTaWEgPGplZWhlbmcuc2lhQHN0YXJmaXZl
+dGVjaC5jb20+DQo+IENjOiBsaW51eC1yaXNjdkBsaXN0cy5pbmZyYWRlYWQub3JnOyBkZXZpY2V0
+cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgt
+Y2xrQHZnZXIua2VybmVsLm9yZzsgTGV5Zm9vbiBUYW4NCj4gPGxleWZvb24udGFuQHN0YXJmaXZl
+dGVjaC5jb20+OyBrZXJuZWxAZXNtaWwuZGs7IGNvbm9yQGtlcm5lbC5vcmc7IHJvYmgrZHRAa2Vy
+bmVsLm9yZzsga3J6eXN6dG9mLmtvemxvd3NraStkdEBsaW5hcm8ub3JnOw0KPiBwYXVsLndhbG1z
+bGV5QHNpZml2ZS5jb207IHBhbG1lckBkYWJiZWx0LmNvbTsgYW91QGVlY3MuYmVya2VsZXkuZWR1
+OyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgc2JveWRAa2VybmVsLm9yZzsNCj4gcC56YWJlbEBw
+ZW5ndXRyb25peC5kZTsgZW1pbC5yZW5uZXIuYmVydGhpbmdAY2Fub25pY2FsLmNvbTsgSGFsIEZl
+bmcgPGhhbC5mZW5nQHN0YXJmaXZldGVjaC5jb20+OyBYaW5neXUgV3UNCj4gPHhpbmd5dS53dUBz
+dGFyZml2ZXRlY2guY29tPg0KPiBTdWJqZWN0OiBSZTogW1JGQyAwNy8xNl0gZHQtYmluZGluZ3M6
+IGNsb2NrOiBBZGQgU3RhckZpdmUgSkg4MTAwIE5vcnRoLVdlc3QgY2xvY2sgYW5kIHJlc2V0IGdl
+bmVyYXRvcg0KPiANCj4gT24gMjAyMy0xMi0yNSAxMTozOCBQTSwgU2lhIEplZSBIZW5nIHdyb3Rl
+Og0KPiA+IEFkZCBiaW5kaW5ncyBmb3IgdGhlIE5vcnRoLVdlc3QgY2xvY2sgYW5kIHJlc2V0IGdl
+bmVyYXRvciAoTldDUkcpIG9uDQo+ID4gSkg4MTAwIFNvQy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYt
+Ynk6IFNpYSBKZWUgSGVuZyA8amVlaGVuZy5zaWFAc3RhcmZpdmV0ZWNoLmNvbT4NCj4gPiBSZXZp
+ZXdlZC1ieTogTGV5IEZvb24gVGFuIDxsZXlmb29uLnRhbkBzdGFyZml2ZXRlY2guY29tPg0KPiA+
+IC0tLQ0KPiA+ICAuLi4vYmluZGluZ3MvY2xvY2svc3RhcmZpdmUsamg4MTAwLW53Y3JnLnlhbWwg
+fCAxMTkgKysrKysrKysrKysrKysrKysrDQo+ID4gIC4uLi9kdC1iaW5kaW5ncy9jbG9jay9zdGFy
+Zml2ZSxqaDgxMDAtY3JnLmggICB8ICA0MyArKysrKysrDQo+ID4gIC4uLi9kdC1iaW5kaW5ncy9y
+ZXNldC9zdGFyZml2ZSxqaDgxMDAtY3JnLmggICB8ICAxNCArKysNCj4gPiAgMyBmaWxlcyBjaGFu
+Z2VkLCAxNzYgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3N0YXJmaXZlLGpoODEwMC1ud2NyZy55YW1s
+DQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L2Nsb2NrL3N0YXJmaXZlLGpoODEwMC1ud2NyZy55YW1sDQo+IGIvRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3N0YXJmaXZlLGpoODEwMC1ud2NyZy55YW1sDQo+ID4gbmV3
+IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwMDAwMDAuLmJlMGY5NGU2NGU2YQ0K
+PiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvY2xvY2svc3RhcmZpdmUsamg4MTAwLW53Y3JnLnlhbWwNCj4gPiBAQCAtMCwwICsxLDEx
+OSBAQA0KPiA+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wLW9ubHkgT1IgQlNE
+LTItQ2xhdXNlDQo+ID4gKyVZQU1MIDEuMg0KPiA+ICstLS0NCj4gPiArJGlkOiBodHRwOi8vZGV2
+aWNldHJlZS5vcmcvc2NoZW1hcy9jbG9jay9zdGFyZml2ZSxqaDgxMDAtbndjcmcueWFtbCMNCj4g
+PiArJHNjaGVtYTogaHR0cDovL2RldmljZXRyZWUub3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwj
+DQo+ID4gKw0KPiA+ICt0aXRsZTogU3RhckZpdmUgSkg4MTAwIE5vcnRoLVdlc3QgQ2xvY2sgYW5k
+IFJlc2V0IEdlbmVyYXRvcg0KPiA+ICsNCj4gPiArbWFpbnRhaW5lcnM6DQo+ID4gKyAgLSBTaWEg
+SmVlIEhlbmcgPGplZWhlbmcuc2lhQHN0YXJmaXZldGVjaC5jb20+DQo+ID4gKw0KPiA+ICtwcm9w
+ZXJ0aWVzOg0KPiA+ICsgIGNvbXBhdGlibGU6DQo+ID4gKyAgICBjb25zdDogc3RhcmZpdmUsamg4
+MTAwLW53Y3JnDQo+ID4gKw0KPiA+ICsgIHJlZzoNCj4gPiArICAgIG1heEl0ZW1zOiAxDQo+ID4g
+Kw0KPiA+ICsgIGNsb2NrczoNCj4gPiArICAgIGl0ZW1zOg0KPiA+ICsgICAgICAtIGRlc2NyaXB0
+aW9uOiBNYWluIE9zY2lsbGF0b3IgKDI0IE1IeikNCj4gPiArICAgICAgLSBkZXNjcmlwdGlvbjog
+QVBCX0JVUyBjbG9jayBmcm9tIFNZU0NSRw0KPiA+ICsgICAgICAtIGRlc2NyaXB0aW9uOiBBUEJf
+QlVTX1BFUjQgY2xvY2sgZnJvbSBTWVNDUkcNCj4gPiArICAgICAgLSBkZXNjcmlwdGlvbjogU1BJ
+X0NPUkVfMTAwIGNsb2NrIGZyb20gU1lTQ1JHDQo+ID4gKyAgICAgIC0gZGVzY3JpcHRpb246IElT
+UF8yWCBjbG9jayBmcm9tIFNZU0NSRw0KPiA+ICsgICAgICAtIGRlc2NyaXB0aW9uOiBJU1BfQVhJ
+IGNsb2NrIGZyb20gU1lTQ1JHDQo+ID4gKyAgICAgIC0gZGVzY3JpcHRpb246IFZPVVRfUk9PVDAg
+Y2xvY2sgZnJvbSBTWVNDUkcNCj4gPiArICAgICAgLSBkZXNjcmlwdGlvbjogVk9VVF9ST09UMSBj
+bG9jayBmcm9tIFNZU0NSRw0KPiA+ICsgICAgICAtIGRlc2NyaXB0aW9uOiBWT1VUX1NDQU5fQVRT
+IGNsb2NrIGZyb20gU1lTQ1JHDQo+ID4gKyAgICAgIC0gZGVzY3JpcHRpb246IFZPVVRfRENfQ09S
+RSBjbG9jayBmcm9tIFNZU0NSRw0KPiA+ICsgICAgICAtIGRlc2NyaXB0aW9uOiBWT1VUX0FYSSBj
+bG9jayBmcm9tIFNZU0NSRw0KPiA+ICsgICAgICAtIGRlc2NyaXB0aW9uOiBBWElfNDAwIGNsb2Nr
+IGZyb20gU1lTQ1JHDQo+ID4gKyAgICAgIC0gZGVzY3JpcHRpb246IEFIQjAgY2xvY2sgZnJvbSBT
+WVNDUkcNCj4gPiArICAgICAgLSBkZXNjcmlwdGlvbjogUEVSSF9ST09UX1BSRU9TQyBmcm9tIFNZ
+U0NSRw0KPiA+ICsgICAgICAtIGRlc2NyaXB0aW9uOiBFeHRlcm5hbCBEVlAgY2xvY2sNCj4gPiAr
+ICAgICAgLSBkZXNjcmlwdGlvbjogRXh0ZXJuYWwgSVNQIERQSFkgVEFQIFRDSyBjbG9jaw0KPiA+
+ICsgICAgICAtIGRlc2NyaXB0aW9uOiBFeHRlcm5hbCBnb2xiYWwgY2xvY2sNCj4gDQo+IFR5cG86
+IGdsb2JhbA0KT29wcy4gV2lsbCBmaXggaXQuIFRoYW5rcy4NCj4gDQo+ID4gKyAgICAgIC0gZGVz
+Y3JpcHRpb246IEV4dGVybmFsIFZPVVQgTUlQSSBEUEhZIFRBUCBUQ0sNCj4gPiArICAgICAgLSBk
+ZXNjcmlwdGlvbjogRXh0ZXJuYWwgVk9VVCBlRFAgVEFQIFRDSw0KPiA+ICsgICAgICAtIGRlc2Ny
+aXB0aW9uOiBFeHRlcm5hbCBTUEkgSW4yIGNsb2NrDQo+ID4gKyAgICAgIC0gZGVzY3JpcHRpb246
+IFBMTDUNCj4gPiBbLi4uXQ0KDQo=
