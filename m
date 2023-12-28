@@ -1,163 +1,155 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A0B63B1
-	for <linux-clk@vger.kernel.org>; Thu, 28 Dec 2023 01:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4D715C3;
+	Thu, 28 Dec 2023 05:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="boaX16/u"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2cc3f5e7451so59760551fa.2
-        for <linux-clk@vger.kernel.org>; Wed, 27 Dec 2023 17:45:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1703727955; x=1704332755; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=abPHoTgkKdKqNv7pVii73M9V/jiTguCmzH4R/B50i7k=;
-        b=boaX16/uPmjxMEQGH3Oh2SDlkIQyduzJBCnJLuzucXiIMUdlmYFYD+bSsrI0xU3qKG
-         PlXXwa+ONVxCHi0+EJFjxeQp/1okTC+/Nz9yR9j5Fs1BUDJVwkDAds9XJMs7rwa3D+oJ
-         hbaZV+2ux71SPg/cXYPRmEDXiOHENXcUWwf4E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703727955; x=1704332755;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=abPHoTgkKdKqNv7pVii73M9V/jiTguCmzH4R/B50i7k=;
-        b=tI7kH16EBt09ihwvc79fVF+S3xSJsM7kpYTsN1D2S5SqP5OrcWdEGnpXTKxpthm7Ax
-         5GM3Kj67v0QWhMCIK1qYhtuAg2IsXNV3rnjXXHAxWv6b/mY7OrzONnVVY9VpsK3IL+vw
-         Yahojmi9TXQQqM4ME7P1f2OC9DIp3Bnzmc6LOwX1d3E+26xSaz/JVjtYS/ZUvfYJe/FW
-         9u+iC2t4Ydy5aVqnMS26X6zPNoK127RcblkN921DwLpzLHHywtfk0PBvok1uNulAfYEb
-         X+cz9CUH5Ij+7IwsxRCxx16rOVgO3gNVZZcSiMQxWrELIDftEKSp6wZ6K6FWx9me/XjF
-         CdpA==
-X-Gm-Message-State: AOJu0Yz3cwyk9X/ycNk28TKQYM6BGj6ylaYKUSv/6tjk3VYLeZaBi2A1
-	hCZR7/zcv3MrHg3nFmV1HL8bcTqSKxfEdvpkfzghl0S+FpCi
-X-Google-Smtp-Source: AGHT+IFyQEVrdKaoeisrsf6Cy6K+2KeyCzfsqubA3HFnZaUvyDBGCdUMwxp3ymD+S4mf0mWRWa1471JPFZh8SGIkSiM=
-X-Received: by 2002:a2e:460a:0:b0:2cc:7445:bbc2 with SMTP id
- t10-20020a2e460a000000b002cc7445bbc2mr3496636lja.32.1703727955400; Wed, 27
- Dec 2023 17:45:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OCQ1XFZi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1703740771; x=1735276771;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HcGj3hy/rgIPr7kx2Q/XYCRW7TjUvWTpE5wspKmi1ck=;
+  b=OCQ1XFZiEp1ouyFNEGQRrz5UuZK7feKntZF2+50/T4NTxMyUAvqZL/TM
+   QHULu6vlziKnlKbRCjwaPercrCNaw86L2e6+F2Nht3x1uOM4u0+zCSFaN
+   yw79x9IQwfGLYxepoDQ2QibREw82JtLNabUNsWNzubrgAz/FNR8hrPjSa
+   sIIu66x6F6JHaiuNoWl0tvwndvjzCHaF1hACHH0UTgQ1BFySNy2lXwZzZ
+   Cjai2MLuf/uGlANaVRrgsKtzVoA39G5QUL1zAXgZ4gRhxZFp7ZAkRzF93
+   2+MzI7VDR/A3jBW5BDGXtq6rIl0p8nxetKkcOP0UTppRBQMJYEwDr86yM
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10936"; a="482692903"
+X-IronPort-AV: E=Sophos;i="6.04,311,1695711600"; 
+   d="scan'208";a="482692903"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Dec 2023 21:19:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10936"; a="754643985"
+X-IronPort-AV: E=Sophos;i="6.04,311,1695711600"; 
+   d="scan'208";a="754643985"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by orsmga006.jf.intel.com with ESMTP; 27 Dec 2023 21:19:26 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rIinj-000G81-2x;
+	Thu, 28 Dec 2023 05:19:23 +0000
+Date: Thu, 28 Dec 2023 13:18:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Tero Kristo <kristo@kernel.org>, Tony Lindgren <tony@atomide.com>
+Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	cocci@inria.fr
+Subject: Re: [PATCH 09/10] clk: ti: Less function calls in
+ _ti_clkctrl_clk_register() after error detection
+Message-ID: <202312281350.5H2Rhh67-lkp@intel.com>
+References: <b11039e4-69c6-4247-b4ba-c442b9427231@web.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231227090448.2216295-1-treapking@chromium.org>
-In-Reply-To: <20231227090448.2216295-1-treapking@chromium.org>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 28 Dec 2023 10:45:44 +0900
-Message-ID: <CAGXv+5E-vn4pCCJr-Qs4tcbMAyGBWk4YQEzm=fkHjE0U9nBpiA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: mediatek: Introduce need_pm_runtime to mtk_clk_desc
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b11039e4-69c6-4247-b4ba-c442b9427231@web.de>
 
-On Wed, Dec 27, 2023 at 6:05=E2=80=AFPM Pin-yen Lin <treapking@chromium.org=
-> wrote:
->
-> Introduce a new need_pm_runtime variable to mtk_clk_desc to indicate this
-> clock needs a runtime PM get during the probing stage.
+Hi Markus,
 
-Actually it means (based on our discussions and your code here) that
-runtime PM should be enabled for the clock controller. If runtime PM
-is not enabled before the clocks are registered, the CCF subsequently
-never toggles runtime PM.
+kernel test robot noticed the following build errors:
 
-The runtime PM get during the probe stage is to avoid triggering runtime
-suspend/resume during each clock registration, and hopefully avoid a
-deadlock. It should be mentioned separately. A comment should be added
-so that folks going over the code in the future don't remove it.
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on linus/master v6.7-rc7 next-20231222]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> ---
->
->  drivers/clk/mediatek/clk-mtk.c | 15 +++++++++++++++
->  drivers/clk/mediatek/clk-mtk.h |  2 ++
->  2 files changed, 17 insertions(+)
->
-> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mt=
-k.c
-> index 2e55368dc4d8..c31e535909c8 100644
-> --- a/drivers/clk/mediatek/clk-mtk.c
-> +++ b/drivers/clk/mediatek/clk-mtk.c
-> @@ -13,6 +13,7 @@
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/slab.h>
->
->  #include "clk-mtk.h"
-> @@ -494,6 +495,14 @@ static int __mtk_clk_simple_probe(struct platform_de=
-vice *pdev,
->                         return IS_ERR(base) ? PTR_ERR(base) : -ENOMEM;
->         }
->
-> +
-> +       if (mcd->need_runtime_pm) {
-> +               devm_pm_runtime_enable(&pdev->dev);
-> +               r =3D pm_runtime_resume_and_get(&pdev->dev);
+url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/clk-ti-Less-function-calls-in-of_omap2_apll_setup-after-error-detection/20231225-152410
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/b11039e4-69c6-4247-b4ba-c442b9427231%40web.de
+patch subject: [PATCH 09/10] clk: ti: Less function calls in _ti_clkctrl_clk_register() after error detection
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20231228/202312281350.5H2Rhh67-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231228/202312281350.5H2Rhh67-lkp@intel.com/reproduce)
 
-A comment for the resume and get should be added. Otherwise someone looking
-at this and the CCF could think that this isn't needed, since the CCF alrea=
-dy
-has similar calls.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202312281350.5H2Rhh67-lkp@intel.com/
 
-> +               if (r)
-> +                       return r;
-> +       }
-> +
->         /* Calculate how many clk_hw_onecell_data entries to allocate */
->         num_clks =3D mcd->num_clks + mcd->num_composite_clks;
->         num_clks +=3D mcd->num_fixed_clks + mcd->num_factor_clks;
-> @@ -574,6 +583,9 @@ static int __mtk_clk_simple_probe(struct platform_dev=
-ice *pdev,
->                         goto unregister_clks;
->         }
->
-> +       if (mcd->need_runtime_pm)
-> +               pm_runtime_put(&pdev->dev);
-> +
->         return r;
->
->  unregister_clks:
-> @@ -604,6 +616,9 @@ static int __mtk_clk_simple_probe(struct platform_dev=
-ice *pdev,
->  free_base:
->         if (mcd->shared_io && base)
->                 iounmap(base);
-> +
-> +       if (mcd->need_runtime_pm)
-> +               pm_runtime_put(&pdev->dev);
+All errors (new ones prefixed by >>):
 
-Please keep the error path calls strictly in reverse order of the setup
-calls. So this should go before iounmap().
+   drivers/clk/ti/clkctrl.c: In function '_ti_clkctrl_clk_register':
+>> drivers/clk/ti/clkctrl.c:330:1: error: 'free_init_name' undeclared (first use in this function)
+     330 | free_init_name;
+         | ^~~~~~~~~~~~~~
+   drivers/clk/ti/clkctrl.c:330:1: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/clk/ti/clkctrl.c:305:17: error: label 'free_init_name' used but not defined
+     305 |                 goto free_init_name;
+         |                 ^~~~
 
-ChenYu
 
->         return r;
->  }
+vim +/free_init_name +330 drivers/clk/ti/clkctrl.c
 
-> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mt=
-k.h
-> index 22096501a60a..c17fe1c2d732 100644
-> --- a/drivers/clk/mediatek/clk-mtk.h
-> +++ b/drivers/clk/mediatek/clk-mtk.h
-> @@ -237,6 +237,8 @@ struct mtk_clk_desc {
->
->         int (*clk_notifier_func)(struct device *dev, struct clk *clk);
->         unsigned int mfg_clk_idx;
-> +
-> +       bool need_runtime_pm;
->  };
->
->  int mtk_clk_pdev_probe(struct platform_device *pdev);
-> --
-> 2.43.0.472.g3155946c3a-goog
->
+   283	
+   284	static int __init
+   285	_ti_clkctrl_clk_register(struct omap_clkctrl_provider *provider,
+   286				 struct device_node *node, struct clk_hw *clk_hw,
+   287				 u16 offset, u8 bit, const char * const *parents,
+   288				 int num_parents, const struct clk_ops *ops,
+   289				 const char *clkctrl_name)
+   290	{
+   291		struct clk_init_data init = { NULL };
+   292		struct clk *clk;
+   293		struct omap_clkctrl_clk *clkctrl_clk;
+   294		int ret = 0;
+   295	
+   296		init.name = clkctrl_get_clock_name(node, clkctrl_name, offset, bit,
+   297						   ti_clk_get_features()->flags &
+   298						   TI_CLK_CLKCTRL_COMPAT);
+   299		if (!init.name)
+   300			return -ENOMEM;
+   301	
+   302		clkctrl_clk = kzalloc(sizeof(*clkctrl_clk), GFP_KERNEL);
+   303		if (!clkctrl_clk) {
+   304			ret = -ENOMEM;
+ > 305			goto free_init_name;
+   306		}
+   307	
+   308		clk_hw->init = &init;
+   309		init.parent_names = parents;
+   310		init.num_parents = num_parents;
+   311		init.ops = ops;
+   312		init.flags = 0;
+   313	
+   314		clk = of_ti_clk_register(node, clk_hw, init.name);
+   315		if (IS_ERR_OR_NULL(clk)) {
+   316			ret = -EINVAL;
+   317			goto cleanup;
+   318		}
+   319	
+   320		clkctrl_clk->reg_offset = offset;
+   321		clkctrl_clk->bit_offset = bit;
+   322		clkctrl_clk->clk = clk_hw;
+   323	
+   324		list_add(&clkctrl_clk->node, &provider->clocks);
+   325	
+   326		return 0;
+   327	
+   328	cleanup:
+   329		kfree(clkctrl_clk);
+ > 330	free_init_name;
+   331		kfree(init.name);
+   332		return ret;
+   333	}
+   334	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
