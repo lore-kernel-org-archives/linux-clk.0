@@ -1,134 +1,163 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9797547F46;
-	Wed, 27 Dec 2023 20:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A0B63B1
+	for <linux-clk@vger.kernel.org>; Thu, 28 Dec 2023 01:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ux55rSSB"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BRJnLEd022675;
-	Wed, 27 Dec 2023 20:30:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=a1sJzYXIn5ibvV7VtwX9y
-	AMbTpRigZoE9NWn6S+5Wd4=; b=Ux55rSSBDVeY8QKlrDNvqhgE6mfGjFfXebFqJ
-	E4YNVdWkL6rUPGoZCwAv0m6c1DUq0sVjtXzNreZdfY7IePYPRw8DL4pA49xITpRm
-	lM8y4O3fkTZvJcJIiO1cKUWlPMWZYk5cFI4VenuY+mdyndvNM0t43w3rTJahqLXL
-	ZCpT1Eyav+XoSVunzaVRkUlttVIXIRPzDwCFWDALSz+23Wat9Mexb/wtGs5GB4GH
-	7Ml9VslchF2o9pa6l/L9ck7qiggaELI4UANlNx7QJ1vIyiaRrrh63FD0yYOG6i09
-	X69s7sRyn30soXebVI+x8Pm+rvzggs4PiCYgLfsH31RYr4DRA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3v8hbg938e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Dec 2023 20:30:50 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BRKUoRh020263
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Dec 2023 20:30:50 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 27 Dec 2023 12:30:49 -0800
-Date: Wed, 27 Dec 2023 12:30:48 -0800
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        "Catalin
- Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/8] dt-bindings: clock: qcom: Allow VDD_GFX supply to
- GX
-Message-ID: <20231227203048.GB1315173@hu-bjorande-lv.qualcomm.com>
-References: <20231220-sa8295p-gpu-v2-0-4763246b72c0@quicinc.com>
- <20231220-sa8295p-gpu-v2-1-4763246b72c0@quicinc.com>
- <26617c83-31b3-4ad9-8a61-0b8271fad41f@linaro.org>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="boaX16/u"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2cc3f5e7451so59760551fa.2
+        for <linux-clk@vger.kernel.org>; Wed, 27 Dec 2023 17:45:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1703727955; x=1704332755; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=abPHoTgkKdKqNv7pVii73M9V/jiTguCmzH4R/B50i7k=;
+        b=boaX16/uPmjxMEQGH3Oh2SDlkIQyduzJBCnJLuzucXiIMUdlmYFYD+bSsrI0xU3qKG
+         PlXXwa+ONVxCHi0+EJFjxeQp/1okTC+/Nz9yR9j5Fs1BUDJVwkDAds9XJMs7rwa3D+oJ
+         hbaZV+2ux71SPg/cXYPRmEDXiOHENXcUWwf4E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703727955; x=1704332755;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=abPHoTgkKdKqNv7pVii73M9V/jiTguCmzH4R/B50i7k=;
+        b=tI7kH16EBt09ihwvc79fVF+S3xSJsM7kpYTsN1D2S5SqP5OrcWdEGnpXTKxpthm7Ax
+         5GM3Kj67v0QWhMCIK1qYhtuAg2IsXNV3rnjXXHAxWv6b/mY7OrzONnVVY9VpsK3IL+vw
+         Yahojmi9TXQQqM4ME7P1f2OC9DIp3Bnzmc6LOwX1d3E+26xSaz/JVjtYS/ZUvfYJe/FW
+         9u+iC2t4Ydy5aVqnMS26X6zPNoK127RcblkN921DwLpzLHHywtfk0PBvok1uNulAfYEb
+         X+cz9CUH5Ij+7IwsxRCxx16rOVgO3gNVZZcSiMQxWrELIDftEKSp6wZ6K6FWx9me/XjF
+         CdpA==
+X-Gm-Message-State: AOJu0Yz3cwyk9X/ycNk28TKQYM6BGj6ylaYKUSv/6tjk3VYLeZaBi2A1
+	hCZR7/zcv3MrHg3nFmV1HL8bcTqSKxfEdvpkfzghl0S+FpCi
+X-Google-Smtp-Source: AGHT+IFyQEVrdKaoeisrsf6Cy6K+2KeyCzfsqubA3HFnZaUvyDBGCdUMwxp3ymD+S4mf0mWRWa1471JPFZh8SGIkSiM=
+X-Received: by 2002:a2e:460a:0:b0:2cc:7445:bbc2 with SMTP id
+ t10-20020a2e460a000000b002cc7445bbc2mr3496636lja.32.1703727955400; Wed, 27
+ Dec 2023 17:45:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <26617c83-31b3-4ad9-8a61-0b8271fad41f@linaro.org>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 98FPQG18Sqptx1Veng75-suqw_ecH733
-X-Proofpoint-GUID: 98FPQG18Sqptx1Veng75-suqw_ecH733
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-09_01,2023-12-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
- mlxscore=0 suspectscore=0 spamscore=0 phishscore=0 adultscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2311290000 definitions=main-2312270151
+References: <20231227090448.2216295-1-treapking@chromium.org>
+In-Reply-To: <20231227090448.2216295-1-treapking@chromium.org>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 28 Dec 2023 10:45:44 +0900
+Message-ID: <CAGXv+5E-vn4pCCJr-Qs4tcbMAyGBWk4YQEzm=fkHjE0U9nBpiA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: mediatek: Introduce need_pm_runtime to mtk_clk_desc
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 22, 2023 at 09:12:04AM +0100, Krzysztof Kozlowski wrote:
-> On 22/12/2023 05:39, Bjorn Andersson wrote:
-> > In some designs the SoC's VDD_GFX pads are supplied by an external
-> > regulator, rather than a power-domain. Allow this to be described in the
-> > GPU clock controller binding.
-> > 
-> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> > ---
-> >  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > index f369fa34e00c..c0dd24c9dcb3 100644
-> > --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > @@ -53,6 +53,9 @@ properties:
-> >    power-domains:
-> >      maxItems: 1
-> >  
-> > +  vdd-gfx-supply:
-> > +    description: Regulator supply for the VDD_GFX pads
-> > +
-> >    '#clock-cells':
-> >      const: 1
-> >  
-> > @@ -74,6 +77,19 @@ required:
-> >    - '#reset-cells'
-> >    - '#power-domain-cells'
-> >  
-> > +# Allow either power-domains or vdd-gfx-supply, not both
-> > +oneOf:
-> > +  - required:
-> > +      - power-domains
-> > +  - required:
-> > +      - vdd-gfx-supply
-> 
-> This should be enough, assuming one of them is actually required. The
-> code. See also:
-> https://elixir.bootlin.com/linux/v5.17-rc2/source/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml#L91
-> 
+On Wed, Dec 27, 2023 at 6:05=E2=80=AFPM Pin-yen Lin <treapking@chromium.org=
+> wrote:
+>
+> Introduce a new need_pm_runtime variable to mtk_clk_desc to indicate this
+> clock needs a runtime PM get during the probing stage.
 
-Yes, that would be the correct binding. But the majority of our
-DeviceTree source does not specify a power-domain for their gpucc.
+Actually it means (based on our discussions and your code here) that
+runtime PM should be enabled for the clock controller. If runtime PM
+is not enabled before the clocks are registered, the CCF subsequently
+never toggles runtime PM.
 
-While this should be corrected, it seem reasonable to leave this
-optional for now.
+The runtime PM get during the probe stage is to avoid triggering runtime
+suspend/resume during each clock registration, and hopefully avoid a
+deadlock. It should be mentioned separately. A comment should be added
+so that folks going over the code in the future don't remove it.
 
-Regards,
-Bjorn
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> ---
+>
+>  drivers/clk/mediatek/clk-mtk.c | 15 +++++++++++++++
+>  drivers/clk/mediatek/clk-mtk.h |  2 ++
+>  2 files changed, 17 insertions(+)
+>
+> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mt=
+k.c
+> index 2e55368dc4d8..c31e535909c8 100644
+> --- a/drivers/clk/mediatek/clk-mtk.c
+> +++ b/drivers/clk/mediatek/clk-mtk.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/slab.h>
+>
+>  #include "clk-mtk.h"
+> @@ -494,6 +495,14 @@ static int __mtk_clk_simple_probe(struct platform_de=
+vice *pdev,
+>                         return IS_ERR(base) ? PTR_ERR(base) : -ENOMEM;
+>         }
+>
+> +
+> +       if (mcd->need_runtime_pm) {
+> +               devm_pm_runtime_enable(&pdev->dev);
+> +               r =3D pm_runtime_resume_and_get(&pdev->dev);
+
+A comment for the resume and get should be added. Otherwise someone looking
+at this and the CCF could think that this isn't needed, since the CCF alrea=
+dy
+has similar calls.
+
+> +               if (r)
+> +                       return r;
+> +       }
+> +
+>         /* Calculate how many clk_hw_onecell_data entries to allocate */
+>         num_clks =3D mcd->num_clks + mcd->num_composite_clks;
+>         num_clks +=3D mcd->num_fixed_clks + mcd->num_factor_clks;
+> @@ -574,6 +583,9 @@ static int __mtk_clk_simple_probe(struct platform_dev=
+ice *pdev,
+>                         goto unregister_clks;
+>         }
+>
+> +       if (mcd->need_runtime_pm)
+> +               pm_runtime_put(&pdev->dev);
+> +
+>         return r;
+>
+>  unregister_clks:
+> @@ -604,6 +616,9 @@ static int __mtk_clk_simple_probe(struct platform_dev=
+ice *pdev,
+>  free_base:
+>         if (mcd->shared_io && base)
+>                 iounmap(base);
+> +
+> +       if (mcd->need_runtime_pm)
+> +               pm_runtime_put(&pdev->dev);
+
+Please keep the error path calls strictly in reverse order of the setup
+calls. So this should go before iounmap().
+
+ChenYu
+
+>         return r;
+>  }
+
+> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mt=
+k.h
+> index 22096501a60a..c17fe1c2d732 100644
+> --- a/drivers/clk/mediatek/clk-mtk.h
+> +++ b/drivers/clk/mediatek/clk-mtk.h
+> @@ -237,6 +237,8 @@ struct mtk_clk_desc {
+>
+>         int (*clk_notifier_func)(struct device *dev, struct clk *clk);
+>         unsigned int mfg_clk_idx;
+> +
+> +       bool need_runtime_pm;
+>  };
+>
+>  int mtk_clk_pdev_probe(struct platform_device *pdev);
+> --
+> 2.43.0.472.g3155946c3a-goog
+>
