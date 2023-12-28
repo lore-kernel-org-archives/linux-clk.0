@@ -1,49 +1,49 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40FC63B6
-	for <linux-clk@vger.kernel.org>; Thu, 28 Dec 2023 07:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D0263B1
+	for <linux-clk@vger.kernel.org>; Thu, 28 Dec 2023 07:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E82J3kpI"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40d2376db79so54708585e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 27 Dec 2023 23:24:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nFWcvAHK"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-40d5aa35b60so17257565e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 27 Dec 2023 23:30:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703748258; x=1704353058; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1703748609; x=1704353409; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z7B182PMMQMyQXZ3ADPFDiUGvNqOfz+ErrBjWZrqqc8=;
-        b=E82J3kpId7XhIRjPBUNeBRPQdmBBHEUSXtlZAlPKLSoWUK9XkRLSzs0cla9VU6osyv
-         gzQyc2ewFUW/m91yRJ4BHjjR29KWOieSMbtn4xRO/3UjrFNijwmcvC/l/Xvv516w+wH5
-         jLHs3V5NvZ3FEYuyLrnftvippbZxnrnGpquWzTz1IM6upPAOrL3fmMW3dCS/QjHrAk2t
-         5LJ90Gi4ymm7lpINdvsuLfN2r3/P68QS1lb6BxKPSeYkivtmQ2ODISECWBmwolp84VEe
-         RRYkjkMUNgc2gzCV1x4jdlBawZqGbwqYzSoCJGq8v4NHStRhTlyZ/JrhIxvvaW1HmxWc
-         cmYg==
+        bh=wXjd+4bZiZ8Ko7l3VIaHI/vJ/Lj/GLWewcbeMBNDVk4=;
+        b=nFWcvAHKBtm3TqHn3JJSrhSCW5oWHii7iLjw1U/JsnYCAkEN2rsfC0msWTEvsf+fYq
+         oT/vpo8jxRm1g/xFWhYapNEaHcyrpBQqNhNSei4jouU9E3zHLET7qz+cvKGeg8qs6IaZ
+         k0wOdh4sHDRBRaMXMGK+SQGT6M0rfA4ff18Fj2/9lNqnRZD5vXRPq5Nq+dlcaHpb8Cv4
+         SRJdGRvUH1bhSjcJOUiwJs8Z6e9pRH/ed841xuZaMuYxkjyM2g5fR1ov7DUyoxUcJO3S
+         F6FOTUiJWJZubf3jLWUgf3r6qzfsFDMg+KOqB4eA78z5zUM01SmGuS2hZtE6zaOvmQsB
+         k+LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703748258; x=1704353058;
+        d=1e100.net; s=20230601; t=1703748609; x=1704353409;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z7B182PMMQMyQXZ3ADPFDiUGvNqOfz+ErrBjWZrqqc8=;
-        b=p/kiO0gXwSzr+FMUIBy5nAjxtm1MogSt5lwH1J07V8HzUN7vyWS9uFng8sOeokGwhJ
-         fYyxNhPIT5NRAsIJfaUi3au0Ms2qHvf2vtTSUgSIrER6k7iKYD3MTYE3tGkVbc31XhGt
-         Xm/y/wP1fCrZg/etmGIeSXwdjd11zyUIiVAwSHLX6+Oq9zRh5tr+5q+apSYv2ZxdkYzB
-         Bf9PG4RHx9I+BeKKwhGKkSlbz4yLJ4ZDtp7O3eOmAMeVNp577wCPhbCCZwrBdZuptM99
-         4zvW1YJtLkhjqEFJa4oR70m8xFNI6nSJKdZTWrGH3Im2LZfTYgC8vQLw7DVcOYUDFNkS
-         1c6A==
-X-Gm-Message-State: AOJu0YywH+uXTzIt2LPY0VubgyR48lfTTftRDWfiY9mk0OscwXI4U9eq
-	wWy6bFZP86MEQeH09CwhzFtJ362+oLhKMA==
-X-Google-Smtp-Source: AGHT+IF8scllTzcx/9xcRO4e50+IFhb7ToJN4T77vkNE6/V+kkUyEJxAQIHfGqG9F7TKzcPw2q97ew==
-X-Received: by 2002:a05:600c:a47:b0:40b:5e1b:54a0 with SMTP id c7-20020a05600c0a4700b0040b5e1b54a0mr6077257wmq.44.1703748258165;
-        Wed, 27 Dec 2023 23:24:18 -0800 (PST)
+        bh=wXjd+4bZiZ8Ko7l3VIaHI/vJ/Lj/GLWewcbeMBNDVk4=;
+        b=HsOFpFt9tcFQ4vsNrO1NPNxlUHF8kabB/gGuzeSsSkxDs6rHH57In4KkGRXws5qItA
+         eJlnKT7jrRr9VLGnnY21kL104rHodkhy7Htz1/QWaBpHclFKbAqXG1n6WLMg61Amy7Y/
+         ty3wgcQ48OyNnxKGfou/NnoJK6gc1k/r09JQ+cHJvlSYZlT4PwQ2b1nShV0veyf1k14Q
+         isg914zqvflSBsAXUNhLT5uvSV3LRVALwoiHO2Jwk2U9IdjriU/PXzH8n9UIXgALbnJn
+         PIO7NMZh0CS976guOK7RKMTXCmBSZxWp1aOScgaXRrtw1mXs7Vtu/Oonu8cy4NZz2U4Y
+         Adlw==
+X-Gm-Message-State: AOJu0YwRCam8GuosT6XUALGNmRNNdD0T6CvZIqGISsLWV5Lg9EG2IMmd
+	xBYPuY+8INB7GxbIgLh7FCISs02RoQQ0ng==
+X-Google-Smtp-Source: AGHT+IEI9RO02JQ1Wx+vbQf+CC49MIgZZB+lCDN8Kz7QN+HdlbXYiLvnleR1evrHs5pq1TrxvxaSow==
+X-Received: by 2002:a05:600c:a04:b0:40d:68a4:2bca with SMTP id z4-20020a05600c0a0400b0040d68a42bcamr103438wmp.92.1703748609166;
+        Wed, 27 Dec 2023 23:30:09 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id je17-20020a05600c1f9100b0040d1450ca7esm34324834wmb.7.2023.12.27.23.24.16
+        by smtp.gmail.com with ESMTPSA id iv13-20020a05600c548d00b0040d30af488asm31459820wmb.40.2023.12.27.23.30.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Dec 2023 23:24:17 -0800 (PST)
-Message-ID: <4c88b59e-9356-4709-b2c7-749c2e779cf9@linaro.org>
-Date: Thu, 28 Dec 2023 08:24:16 +0100
+        Wed, 27 Dec 2023 23:30:08 -0800 (PST)
+Message-ID: <7b39f962-8040-48b0-8580-abf5970bfad0@linaro.org>
+Date: Thu, 28 Dec 2023 08:30:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,22 +51,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] MIPS: mobileye: eyeq5: use OLB clocks controller
+Subject: Re: [PATCH 02/13] dt-bindings: clock: google,gs101-clock: add PERIC0
+ clock management unit
 Content-Language: en-US
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: sboyd@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org,
+ alim.akhtar@samsung.com, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, cw00.choi@samsung.com, arnd@arndb.de,
+ semen.protsenko@linaro.org, andre.draszik@linaro.org, saravanak@google.com,
+ willmcvicker@google.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-References: <20231227-mbly-clk-v2-0-a05db63c380f@bootlin.com>
- <20231227-mbly-clk-v2-6-a05db63c380f@bootlin.com>
+ linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
+ <20231214105243.3707730-3-tudor.ambarus@linaro.org>
+ <20231220150726.GA223267-robh@kernel.org>
+ <173b06ab-2518-49ee-a67f-85256bc5b6a7@linaro.org>
+ <425a228e-b2d3-4b19-9bcb-6ee1a90cd2ef@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -112,46 +116,114 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231227-mbly-clk-v2-6-a05db63c380f@bootlin.com>
+In-Reply-To: <425a228e-b2d3-4b19-9bcb-6ee1a90cd2ef@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 27/12/2023 17:23, Théo Lebrun wrote:
-> We add the clock controller inside the OLB syscon region and removed
-> previous fixed devicetree nodes representing PLLs exposed by the clock
-> controller.
+On 27/12/2023 13:38, Tudor Ambarus wrote:
+> Hi, Rob,
 > 
+> On 12/21/23 07:20, Tudor Ambarus wrote:
+>>
+>>
+>> On 12/20/23 15:07, Rob Herring wrote:
+>>> On Thu, Dec 14, 2023 at 10:52:32AM +0000, Tudor Ambarus wrote:
+>>>> Add dt-schema documentation for the Connectivity Peripheral 0 (PERIC0)
+>>>> clock management unit.
+>>>>
+>>>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>>>> ---
+>>>>  .../bindings/clock/google,gs101-clock.yaml    | 25 +++++-
+>>>>  include/dt-bindings/clock/google,gs101.h      | 86 +++++++++++++++++++
+>>>>  2 files changed, 109 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>>>> index 3eebc03a309b..ba54c13c55bc 100644
+>>>> --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>>>> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>>>> @@ -30,14 +30,15 @@ properties:
+>>>>        - google,gs101-cmu-top
+>>>>        - google,gs101-cmu-apm
+>>>>        - google,gs101-cmu-misc
+>>>> +      - google,gs101-cmu-peric0
+>>>>  
+>>>>    clocks:
+>>>>      minItems: 1
+>>>> -    maxItems: 2
+>>>> +    maxItems: 3
+>>>>  
+>>>>    clock-names:
+>>>>      minItems: 1
+>>>> -    maxItems: 2
+>>>> +    maxItems: 3
+>>>>  
+>>>>    "#clock-cells":
+>>>>      const: 1
+>>>> @@ -88,6 +89,26 @@ allOf:
+>>>>              - const: dout_cmu_misc_bus
+>>>>              - const: dout_cmu_misc_sss
+>>>>  
+>>>> +  - if:
+>>>> +      properties:
+>>>> +        compatible:
+>>>> +          contains:
+>>>> +            const: google,gs101-cmu-peric0
+>>>> +
+>>>> +    then:
+>>>> +      properties:
+>>>> +        clocks:
+>>>> +          items:
+>>>> +            - description: External reference clock (24.576 MHz)
+>>>> +            - description: Connectivity Peripheral 0 bus clock (from CMU_TOP)
+>>>> +            - description: Connectivity Peripheral 0 IP clock (from CMU_TOP)
+>>>> +
+>>>> +        clock-names:
+>>>> +          items:
+>>>> +            - const: oscclk
+>>>> +            - const: dout_cmu_peric0_bus
+>>>> +            - const: dout_cmu_peric0_ip
+>>>
+>>> 'bus' and 'ip' are sufficient because naming is local to the module. The 
+>>> same is true on 'dout_cmu_misc_bus'. As that has not made a release, 
+>>> please fix all of them.
+>>>
+>>
+>> Ok, will fix them shortly. Thanks, Rob!
+> 
+> I tried your suggestion at
+> https://lore.kernel.org/linux-arm-kernel/c6cc6e74-6c3d-439b-8dc1-bc50a88a3d8f@linaro.org/
+> 
+> and we noticed that we'd have to update the clock driver as well.
+> These CMUs set the DT clock-name of the parent clock in the driver in
+> struct samsung_cmu_info::clk_name[]. The driver then tries to enable the
+> parent clock based on the clock-name in exynos_arm64_register_cmu().
+> 
+> In order to enable the parent clock of the CMU the following would be
+> needed in the driver:
+> 
+> diff --git a/drivers/clk/samsung/clk-gs101.c
+> b/drivers/clk/samsung/clk-gs101.c
+> index 68a27b78b00b..e91836ea3a98 100644
+> --- a/drivers/clk/samsung/clk-gs101.c
+> +++ b/drivers/clk/samsung/clk-gs101.c
+> @@ -2476,7 +2476,7 @@ static const struct samsung_cmu_info misc_cmu_info
+> __initconst = {
+>         .nr_clk_ids             = CLKS_NR_MISC,
+>         .clk_regs               = misc_clk_regs,
+>         .nr_clk_regs            = ARRAY_SIZE(misc_clk_regs),
+> -       .clk_name               = "dout_cmu_misc_bus",
+> +       .clk_name               = "bus",
 
-...
+Yes, obviously, the names are used...
 
->  / {
->  	#address-cells = <2>;
-> @@ -42,6 +42,19 @@ soc: soc {
->  		ranges;
->  		compatible = "simple-bus";
->  
-> +		olb: olb@e00000 {
+The entire point was that a week ago Rob said:
+"As that has not made a release,  please fix all of them."
+but if you keep waiting, like 8 days for this simple patch, his
+statement is not true anymore.
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-Often: system-controller
-
-> +			compatible = "mobileye,eyeq5-olb", "syscon", "simple-mfd";
-> +			reg = <0 0xe00000 0x0 0x400>;
-> +			reg-io-width = <4>;
-> +
-> +			clocks: clock-controller {
-> +				compatible = "mobileye,eyeq5-clk";
-> +				#clock-cells = <1>;
-> +				clocks = <&xtal>;
-> +				clock-names = "ref";
-> +			};
-> +		};
-> +
-
+The only point was to send a fix *the next day*, so I would apply it and
+send further. You kind of solved that problem by waiting entire week for
+a simple driver and DTS change.
 
 Best regards,
 Krzysztof
