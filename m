@@ -1,329 +1,166 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0096714281;
-	Fri, 29 Dec 2023 20:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D3C14F63
+	for <linux-clk@vger.kernel.org>; Fri, 29 Dec 2023 23:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RH/r6IL/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1703881421; x=1735417421;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zhcP1s+xHtIa280S64WwBQn6834wuT45tSu7NBxVVpI=;
-  b=RH/r6IL/EWMZuo5mT/F7MaIIjabB82Wsha+6plMRPh+3ElF3Sf+khGce
-   qb7dzOEVu42PZkQqnbR5egSVM54OH/t6Yvl6ST+lMBVrQWnCvI9XKphUR
-   LKiq3lN9Z2TY3T65JAk0QkJUMxqKA1T6ddPLj1PniMzqYVpc9hLt1lQOq
-   NK0RYdC87f6PgNbTQj0xfTfP3YosALGBOzG7ceoh0wDSeURjNj9JAEHjc
-   BFL/snYr9X/ox3PGNP/hKpl2v842zVR7iTV61XyuGXsTyvGbgsvlZHLmj
-   2k2/zQG0sTXHVVFWnbeDcrdoT/RoLpJJylcZPLWIBnhouGwhLxqsqb214
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10938"; a="10057228"
-X-IronPort-AV: E=Sophos;i="6.04,316,1695711600"; 
-   d="scan'208";a="10057228"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Dec 2023 12:23:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10938"; a="778876607"
-X-IronPort-AV: E=Sophos;i="6.04,316,1695711600"; 
-   d="scan'208";a="778876607"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga002.jf.intel.com with ESMTP; 29 Dec 2023 12:23:37 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rJJOI-000HnN-28;
-	Fri, 29 Dec 2023 20:23:34 +0000
-Date: Sat, 30 Dec 2023 04:22:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chunyan Zhang <chunyan.zhang@unisoc.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: Re: [PATCH 3/3] clk: sprd: add support for UMS9620
-Message-ID: <202312300411.tYRuXlfZ-lkp@intel.com>
-References: <20231229085156.1490233-4-chunyan.zhang@unisoc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TGlnMH6f"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a26fa294e56so395587966b.0
+        for <linux-clk@vger.kernel.org>; Fri, 29 Dec 2023 15:51:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1703893914; x=1704498714; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+euFWqMJJkXiPS9ThG6gX+dfKUD0ApFu+6/ednPk02U=;
+        b=TGlnMH6fFccaGH1UcA3nW9ra6YLe7BXJ5tQa/95AEPaHTZpzb/b5yfoPYlS79ZcNSI
+         peWKe4mwv/ilZ2LnOm4PrcU6mr8GypQ6TnZMxw6RfvVxeGlAfEr8uHvqHngZNYJmwOi1
+         mBx06T8j0mCEc1BV0uaMYffaFdFCHd3TGZ5ufGj0CxnLqTKZJsLqJOixsYtZtBVz5CkW
+         LEf4efJFR3oZeGeiAxdOLQIO5hkwatZa+MNxt6jmv8eIaeGBzfxwOzsMfYHZ9w5esF2F
+         O0sr30Bsu2tHTSPck1zP1wMytpqQoz8djWC03COncOzBA1fBkJUtk56SZvWD5t1XrVpX
+         6b4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703893914; x=1704498714;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+euFWqMJJkXiPS9ThG6gX+dfKUD0ApFu+6/ednPk02U=;
+        b=M3JPVBgR6dsyAF9ZYnVMggU5TBME8SxsmRuHeYTk5XXJis50LmWhfsZccrkqRh2O4N
+         U4YumdsgABXv0fAfbHYeqWXoUyzs81owkKzxsFamUckSORrxgCzb2LEpLXvXcRNoM2QJ
+         nRDZJfaK20lr1hCIjVPzZDYN3wqXfe/a5n74NOOQ4uAp6p4O3NvV72rBi/ZNMhR7p8X2
+         /8u0op6+3aC7ERxDFCiVIXzTFYElxYVqLxPrlhAQjEewcaBtVnEEa8XQ6iFzcEiOohDN
+         UcGEi1QjPHisveu63cjaxGYa+AJ9jmB2jFO9dnrqYeIJz6dfhDCm+J+auqyglG16kUj0
+         QyOQ==
+X-Gm-Message-State: AOJu0YzXuQcBaSEfWj3TrO5TMuN6p2IpT/GPv/+ATSqh/WqxMfwJ2X4F
+	YSCqiuw6JXYbFxK9vPOYZRGRISxSciwYEg==
+X-Google-Smtp-Source: AGHT+IEZLEvgPP3ahYwzenIjDIuESsbwlOQfI4RC7EC8W/b1ijXh/HWo6aIqKz0oVQLeAdy9Po/ghw==
+X-Received: by 2002:a17:906:73d5:b0:a23:3bf5:bc73 with SMTP id n21-20020a17090673d500b00a233bf5bc73mr4897253ejl.58.1703893913867;
+        Fri, 29 Dec 2023 15:51:53 -0800 (PST)
+Received: from [192.168.199.125] (178235179036.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.36])
+        by smtp.gmail.com with ESMTPSA id d8-20020a170906304800b00a26a5f80d07sm2256252ejd.14.2023.12.29.15.51.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Dec 2023 15:51:53 -0800 (PST)
+Message-ID: <4e56729e-0549-4075-8f6c-a43c84ae9b9a@linaro.org>
+Date: Sat, 30 Dec 2023 00:51:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231229085156.1490233-4-chunyan.zhang@unisoc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] dt-bindings: clock: qcom: Allow VDD_GFX supply to
+ GX
+Content-Language: en-US
+To: Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold
+ <johan+linaro@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20231220-sa8295p-gpu-v2-0-4763246b72c0@quicinc.com>
+ <20231220-sa8295p-gpu-v2-1-4763246b72c0@quicinc.com>
+ <26617c83-31b3-4ad9-8a61-0b8271fad41f@linaro.org>
+ <20231227203048.GB1315173@hu-bjorande-lv.qualcomm.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20231227203048.GB1315173@hu-bjorande-lv.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Chunyan,
+On 27.12.2023 21:30, Bjorn Andersson wrote:
+> On Fri, Dec 22, 2023 at 09:12:04AM +0100, Krzysztof Kozlowski wrote:
+>> On 22/12/2023 05:39, Bjorn Andersson wrote:
+>>> In some designs the SoC's VDD_GFX pads are supplied by an external
+>>> regulator, rather than a power-domain. Allow this to be described in the
+>>> GPU clock controller binding.
+>>>
+>>> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml | 16 ++++++++++++++++
+>>>  1 file changed, 16 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>>> index f369fa34e00c..c0dd24c9dcb3 100644
+>>> --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>>> @@ -53,6 +53,9 @@ properties:
+>>>    power-domains:
+>>>      maxItems: 1
+>>>  
+>>> +  vdd-gfx-supply:
+>>> +    description: Regulator supply for the VDD_GFX pads
+>>> +
+>>>    '#clock-cells':
+>>>      const: 1
+>>>  
+>>> @@ -74,6 +77,19 @@ required:
+>>>    - '#reset-cells'
+>>>    - '#power-domain-cells'
+>>>  
+>>> +# Allow either power-domains or vdd-gfx-supply, not both
+>>> +oneOf:
+>>> +  - required:
+>>> +      - power-domains
+>>> +  - required:
+>>> +      - vdd-gfx-supply
+>>
+>> This should be enough, assuming one of them is actually required. The
+>> code. See also:
+>> https://elixir.bootlin.com/linux/v5.17-rc2/source/Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml#L91
+>>
+> 
+> Yes, that would be the correct binding. But the majority of our
+> DeviceTree source does not specify a power-domain for their gpucc.
+> 
+> While this should be corrected, it seem reasonable to leave this
+> optional for now.
+Moreover, I think it would be reasonable to add power-domains as
+required in qcom,gcc.yaml. IIRC all "normal" (not q6) clock controllers
+use at least CX+MX, with perhaps more hw-specific domains for some clocks
+or GDSCs.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on robh/for-next linus/master v6.7-rc7 next-20231222]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Chunyan-Zhang/dt-bindings-clk-sprd-Add-UMS9620-support/20231229-165718
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20231229085156.1490233-4-chunyan.zhang%40unisoc.com
-patch subject: [PATCH 3/3] clk: sprd: add support for UMS9620
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20231230/202312300411.tYRuXlfZ-lkp@intel.com/config)
-compiler: ClangBuiltLinux clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231230/202312300411.tYRuXlfZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202312300411.tYRuXlfZ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/clk/sprd/ums9620-clk.c:1671:37: warning: unused variable 'pmu_26m_parents' [-Wunused-const-variable]
-    1671 | static const struct clk_parent_data pmu_26m_parents[] = {
-         |                                     ^~~~~~~~~~~~~~~
->> drivers/clk/sprd/ums9620-clk.c:2642:37: warning: unused variable 'depth_parents' [-Wunused-const-variable]
-    2642 | static const struct clk_parent_data depth_parents[] = {
-         |                                     ^~~~~~~~~~~~~
-   2 warnings generated.
-
-
-vim +/pmu_26m_parents +1671 drivers/clk/sprd/ums9620-clk.c
-
-  1451	
-  1452	/* aon apb clks */
-  1453	static const struct clk_parent_data aon_apb_parents[] = {
-  1454		{ .hw = &rco_100m_4m.hw },
-  1455		{ .hw = &clk_4m3.hw },
-  1456		{ .hw = &clk_13m.hw },
-  1457		{ .hw = &rco_100m_25m.hw },
-  1458		{ .fw_name = "ext-26m" },
-  1459		{ .fw_name = "rco-100m" },
-  1460		{ .hw = &tgpll_128m.hw },
-  1461		{ .hw = &tgpll_153m6.hw },
-  1462	};
-  1463	static SPRD_COMP_CLK_DATA_OFFSET(aon_apb, "aon-apb", aon_apb_parents, 0x28,
-  1464				    0, 3, -4, 0, 2, 0);
-  1465	
-  1466	static const struct clk_parent_data adi_parents[] = {
-  1467		{ .hw = &rco_100m_4m.hw },
-  1468		{ .fw_name = "ext-26m" },
-  1469		{ .hw = &rco_100m_25m.hw },
-  1470		{ .hw = &tgpll_38m4.hw },
-  1471		{ .hw = &tgpll_51m2.hw },
-  1472	};
-  1473	static SPRD_MUX_CLK_DATA(adi, "adi", adi_parents, 0x34,
-  1474			    0, 3, UMS9620_MUX_FLAG);
-  1475	
-  1476	static const struct clk_parent_data pwm_parents[] = {
-  1477		{ .fw_name = "ext-32k" },
-  1478		{ .fw_name = "ext-26m" },
-  1479		{ .hw = &rco_100m_4m.hw },
-  1480		{ .hw = &rco_100m_25m.hw },
-  1481		{ .hw = &tgpll_48m.hw },
-  1482	};
-  1483	static SPRD_MUX_CLK_DATA(pwm0, "pwm0", pwm_parents, 0x40,
-  1484			    0, 3, UMS9620_MUX_FLAG);
-  1485	static SPRD_MUX_CLK_DATA(pwm1, "pwm1", pwm_parents, 0x4c,
-  1486			    0, 3, UMS9620_MUX_FLAG);
-  1487	static SPRD_MUX_CLK_DATA(pwm2, "pwm2", pwm_parents, 0x58,
-  1488			    0, 3, UMS9620_MUX_FLAG);
-  1489	static SPRD_MUX_CLK_DATA(pwm3, "pwm3", pwm_parents, 0x64,
-  1490			    0, 3, UMS9620_MUX_FLAG);
-  1491	
-  1492	static const struct clk_parent_data efuse_parents[] = {
-  1493		{ .hw = &rco_100m_25m.hw },
-  1494		{ .fw_name = "ext-26m" },
-  1495	};
-  1496	static SPRD_MUX_CLK_DATA(efuse, "efuse", efuse_parents, 0x70,
-  1497			    0, 1, UMS9620_MUX_FLAG);
-  1498	
-  1499	static const struct clk_parent_data uart_parents[] = {
-  1500		{ .hw = &rco_100m_4m.hw },
-  1501		{ .fw_name = "ext-26m" },
-  1502		{ .hw = &tgpll_48m.hw },
-  1503		{ .hw = &tgpll_51m2.hw },
-  1504		{ .hw = &tgpll_96m.hw },
-  1505		{ .fw_name = "rco-100m" },
-  1506		{ .hw = &tgpll_128m.hw },
-  1507	};
-  1508	static SPRD_MUX_CLK_DATA(uart0, "uart0", uart_parents, 0x7c,
-  1509			    0, 3, UMS9620_MUX_FLAG);
-  1510	static SPRD_MUX_CLK_DATA(uart1, "uart1", uart_parents, 0x88,
-  1511			    0, 3, UMS9620_MUX_FLAG);
-  1512	static SPRD_MUX_CLK_DATA(uart2, "uart2", uart_parents, 0x94,
-  1513			    0, 3, UMS9620_MUX_FLAG);
-  1514	
-  1515	static const struct clk_parent_data thm_parents[] = {
-  1516		{ .fw_name = "ext-32k" },
-  1517		{ .hw = &clk_250k.hw },
-  1518	};
-  1519	static SPRD_MUX_CLK_DATA(thm0, "thm0", thm_parents, 0xc4,
-  1520			    0, 1, UMS9620_MUX_FLAG);
-  1521	static SPRD_MUX_CLK_DATA(thm1, "thm1", thm_parents, 0xd0,
-  1522			    0, 1, UMS9620_MUX_FLAG);
-  1523	static SPRD_MUX_CLK_DATA(thm2, "thm2", thm_parents, 0xdc,
-  1524			    0, 1, UMS9620_MUX_FLAG);
-  1525	static SPRD_MUX_CLK_DATA(thm3, "thm3", thm_parents, 0xe8,
-  1526			    0, 1, UMS9620_MUX_FLAG);
-  1527	
-  1528	static const struct clk_parent_data aon_iis_parents[] = {
-  1529		{ .fw_name = "ext-26m" },
-  1530		{ .hw = &tgpll_128m.hw },
-  1531		{ .hw = &tgpll_153m6.hw },
-  1532	};
-  1533	static SPRD_MUX_CLK_DATA(aon_iis, "aon-iis", aon_iis_parents, 0x118,
-  1534			    0, 2, UMS9620_MUX_FLAG);
-  1535	
-  1536	static const struct clk_parent_data scc_parents[] = {
-  1537		{ .fw_name = "ext-26m" },
-  1538		{ .hw = &tgpll_48m.hw },
-  1539		{ .hw = &tgpll_51m2.hw },
-  1540		{ .hw = &tgpll_96m.hw },
-  1541	};
-  1542	static SPRD_MUX_CLK_DATA(scc, "scc", scc_parents, 0x124,
-  1543			    0, 2, UMS9620_MUX_FLAG);
-  1544	
-  1545	static const struct clk_parent_data apcpu_dap_parents[] = {
-  1546		{ .fw_name = "ext-26m" },
-  1547		{ .hw = &rco_100m_4m.hw },
-  1548		{ .hw = &tgpll_76m8.hw },
-  1549		{ .fw_name = "rco-100m" },
-  1550		{ .hw = &tgpll_128m.hw },
-  1551		{ .hw = &tgpll_153m6.hw },
-  1552	};
-  1553	static SPRD_MUX_CLK_DATA(apcpu_dap, "apcpu-dap", apcpu_dap_parents, 0x130,
-  1554			    0, 3, UMS9620_MUX_FLAG);
-  1555	
-  1556	static const struct clk_parent_data apcpu_ts_parents[] = {
-  1557		{ .fw_name = "ext-32k" },
-  1558		{ .fw_name = "ext-26m" },
-  1559		{ .hw = &tgpll_128m.hw },
-  1560		{ .hw = &tgpll_153m6.hw },
-  1561	};
-  1562	static SPRD_MUX_CLK_DATA(apcpu_ts, "apcpu-ts", apcpu_ts_parents, 0x13c,
-  1563			    0, 2, UMS9620_MUX_FLAG);
-  1564	
-  1565	static const struct clk_parent_data debug_ts_parents[] = {
-  1566		{ .fw_name = "ext-26m" },
-  1567		{ .hw = &tgpll_76m8.hw },
-  1568		{ .hw = &tgpll_128m.hw },
-  1569		{ .hw = &tgpll_192m.hw },
-  1570	};
-  1571	static SPRD_MUX_CLK_DATA(debug_ts, "debug-ts", debug_ts_parents, 0x148,
-  1572			    0, 2, UMS9620_MUX_FLAG);
-  1573	
-  1574	static const struct clk_parent_data pri_sbi_parents[] = {
-  1575		{ .fw_name = "ext-26m" },
-  1576		{ .fw_name = "ext-52m" },
-  1577		{ .hw = &tgpll_96m.hw },
-  1578	};
-  1579	static SPRD_MUX_CLK_DATA(pri_sbi, "pri-sbi", pri_sbi_parents, 0x154,
-  1580			    0, 2, UMS9620_MUX_FLAG);
-  1581	
-  1582	static const struct clk_parent_data xo_sel_parents[] = {
-  1583		{ .fw_name = "ext-26m" },
-  1584		{ .fw_name = "ext-52m" },
-  1585	};
-  1586	static SPRD_MUX_CLK_DATA(xo_sel, "xo-sel", xo_sel_parents, 0x160,
-  1587			    0, 1, UMS9620_MUX_FLAG);
-  1588	
-  1589	static const struct clk_parent_data rfti_lth_parents[] = {
-  1590		{ .fw_name = "ext-26m" },
-  1591		{ .fw_name = "ext-52m" },
-  1592	};
-  1593	static SPRD_MUX_CLK_DATA(rfti_lth, "rfti-lth", rfti_lth_parents, 0x16c,
-  1594			    0, 1, UMS9620_MUX_FLAG);
-  1595	
-  1596	static const struct clk_parent_data afc_lth_parents[] = {
-  1597		{ .fw_name = "ext-26m" },
-  1598		{ .fw_name = "ext-52m" },
-  1599	};
-  1600	static SPRD_MUX_CLK_DATA(afc_lth, "afc-lth", afc_lth_parents, 0x178,
-  1601			    0, 1, UMS9620_MUX_FLAG);
-  1602	
-  1603	static SPRD_DIV_CLK_FW_NAME(rco100m_fdk, "rco100m-fdk", "rco-100m", 0x18c,
-  1604			    0, 6, 0);
-  1605	
-  1606	static SPRD_DIV_CLK_FW_NAME(rco60m_fdk, "rco60m-fdk", "rco-60m", 0x1a4,
-  1607			    0, 5, 0);
-  1608	static const struct clk_parent_data rco6m_ref_parents[] = {
-  1609		{ .hw = &clk_16k.hw },
-  1610		{ .hw = &clk_2m.hw },
-  1611	};
-  1612	static SPRD_COMP_CLK_DATA_OFFSET(rco6m_ref, "rco6m-ref", rco6m_ref_parents, 0x1b4,
-  1613				    0, 1, -4, 0, 5, 0);
-  1614	static SPRD_DIV_CLK_FW_NAME(rco6m_fdk, "rco6m-fdk", "rco-6m", 0x1bc,
-  1615			    0, 9, 0);
-  1616	
-  1617	static const struct clk_parent_data djtag_tck_parents[] = {
-  1618		{ .hw = &rco_100m_4m.hw },
-  1619		{ .fw_name = "ext-26m" },
-  1620	};
-  1621	static SPRD_MUX_CLK_DATA(djtag_tck, "djtag-tck", djtag_tck_parents, 0x1cc,
-  1622			    0, 1, UMS9620_MUX_FLAG);
-  1623	
-  1624	static const struct clk_parent_data aon_tmr_parents[] = {
-  1625		{ .hw = &rco_100m_4m.hw },
-  1626		{ .hw = &rco_100m_25m.hw },
-  1627		{ .fw_name = "ext-26m" },
-  1628	};
-  1629	static SPRD_MUX_CLK_DATA(aon_tmr, "aon-tmr", aon_tmr_parents, 0x1f0,
-  1630			    0, 2, UMS9620_MUX_FLAG);
-  1631	
-  1632	static const struct clk_parent_data aon_pmu_parents[] = {
-  1633		{ .fw_name = "ext-32k" },
-  1634		{ .hw = &rco_100m_4m.hw },
-  1635		{ .hw = &clk_4m3.hw },
-  1636		{ .hw = &rco_60m_4m.hw },
-  1637	};
-  1638	static SPRD_MUX_CLK_DATA(aon_pmu, "aon-pmu", aon_pmu_parents, 0x208,
-  1639			    0, 2, UMS9620_MUX_FLAG);
-  1640	
-  1641	static const struct clk_parent_data debounce_parents[] = {
-  1642		{ .fw_name = "ext-32k" },
-  1643		{ .hw = &rco_100m_4m.hw },
-  1644		{ .hw = &rco_100m_25m.hw },
-  1645		{ .fw_name = "ext-26m" },
-  1646		{ .hw = &rco_60m_4m.hw },
-  1647		{ .hw = &rco_60m_20m.hw },
-  1648	};
-  1649	static SPRD_MUX_CLK_DATA(debounce, "debounce", debounce_parents, 0x214,
-  1650			    0, 3, UMS9620_MUX_FLAG);
-  1651	
-  1652	static const struct clk_parent_data apcpu_pmu_parents[] = {
-  1653		{ .fw_name = "ext-26m" },
-  1654		{ .hw = &tgpll_76m8.hw },
-  1655		{ .fw_name = "rco-60m" },
-  1656		{ .fw_name = "rco-100m" },
-  1657		{ .hw = &tgpll_128m.hw },
-  1658	};
-  1659	static SPRD_MUX_CLK_DATA(apcpu_pmu, "apcpu-pmu", apcpu_pmu_parents, 0x220,
-  1660			    0, 3, UMS9620_MUX_FLAG);
-  1661	
-  1662	static const struct clk_parent_data top_dvfs_parents[] = {
-  1663		{ .fw_name = "ext-26m" },
-  1664		{ .hw = &tgpll_96m.hw },
-  1665		{ .fw_name = "rco-100m" },
-  1666		{ .hw = &tgpll_128m.hw },
-  1667	};
-  1668	static SPRD_MUX_CLK_DATA(top_dvfs, "top-dvfs", top_dvfs_parents, 0x22c,
-  1669			    0, 2, UMS9620_MUX_FLAG);
-  1670	
-> 1671	static const struct clk_parent_data pmu_26m_parents[] = {
-  1672		{ .hw = &rco_100m_20m.hw },
-  1673		{ .fw_name = "ext-26m" },
-  1674		{ .hw = &rco_60m_20m.hw },
-  1675	};
-  1676	static SPRD_MUX_CLK_DATA(pmu_26m, "pmu-26m", aon_pmu_parents, 0x238,
-  1677			    0, 2, UMS9620_MUX_FLAG);
-  1678	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Konrad
