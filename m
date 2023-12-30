@@ -1,149 +1,187 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D4D79DD
-	for <linux-clk@vger.kernel.org>; Sat, 30 Dec 2023 12:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBADC8BED
+	for <linux-clk@vger.kernel.org>; Sat, 30 Dec 2023 13:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UdTmY8PN"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-555d4232e4fso1221537a12.3
-        for <linux-clk@vger.kernel.org>; Sat, 30 Dec 2023 04:22:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QBbyL0F5"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5555f9061b9so3553847a12.0
+        for <linux-clk@vger.kernel.org>; Sat, 30 Dec 2023 05:04:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703938933; x=1704543733; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=WraejfcK2e2j5BfUVDmZdtIL5eFxZdjlTkM6VwDeTVI=;
-        b=UdTmY8PNFYbmblYxw7hPNxvRCIn36zCMi8eXvlKUi1WLs5Rlmye9eaP4+7vA8uBiRM
-         RjpbWA04HOzVZiJmsR8io1p+96XQtZ6scoA7Iu4C0wkXVgYUU2I1Hr8Shh2zjZJUDSoB
-         yZWMETjJFJsvudSSCjkr9cKnKkB+richEhYHDUBaHi9Sr/Zt72FUQAiH0OHRdaljCWqU
-         bNlXvsPnXa5ckhsAp7i1l+kIh8eDD0kNVxmL9r1Kiu3Xp0FRdKRdOXGKVwCZVV9m4lIK
-         vrMrvd5+FpM/lkOaABJmvsXsykxq0Wm2l5G9CbXm3tn+PmXapx8ZqCN3N3XOJI8wagrN
-         1CxA==
+        d=linaro.org; s=google; t=1703941467; x=1704546267; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eAK3GkpXOGhDaB/Q0hZvmQy//6V7+7rM0YC0FJDvdW4=;
+        b=QBbyL0F5kI/gLJE4aLvgUrNB83KztRf1fR9gyiKHcO5bEbyHnYxVK8hWOE7PdaS+e0
+         l9wQhB7ZzDdRHl4mqKBCReYhuDWulSCM4F49F34riUUVWEvSe1WhZEeFpQd6PrOMzhWd
+         vKJEVyiI6cagnNKIj6RypLCon3WI/JyOuyMlo68luoZCuPFBR1FDQNDA5V0HBhoidOGX
+         t2jxtehgitsiAMpwyFC3S9SoqyxerXeqUyB4/2NCDu9Pjd86GiRHNHlx0pmy8K0Xukle
+         9lfBxhRHO5F/WnirlDxF48HMO+LrgFcMt6ibd7fNU9Kzz9ScBg4kK9vFN9WGgS3lbyvP
+         BRVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703938933; x=1704543733;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WraejfcK2e2j5BfUVDmZdtIL5eFxZdjlTkM6VwDeTVI=;
-        b=hKzWeoBffI/ishGwQg1wMPBK1RJ/0qZNcS/tvU/Z1gbB4zWIQh/lohAJCGSMXiEvxC
-         ul0bg7y4oJWJm6fgeF/FhQOYIdQ+rO19IwEcToUD0iOgIj0WA6jwbkbIVHTYg0/n4jLx
-         ahZOSTZJboO3rIWK9DmbairTy4Rm9zA2P0hkmh8LvC3xLy7GScSOsexUDNHdycOPienb
-         Z3csKmZe7qCvC1ggyVMwUGla8iggGuCUAkDXUqKPuzBYe+Cn7b9L9SSvPoeJy9iQHBa6
-         ZDB6UASBSwypDgAjQbqi5pcl4X/Ao52i/rQCmWeWNcu6hDwrDZLmiSKnECWHz9RcpjF8
-         T1+Q==
-X-Gm-Message-State: AOJu0YxGQmnBu9nAfRKI18mxzzNlgSEJA1MEdPCBvfbjbRKrYNMIT2iF
-	wnf6w0tt1yD17XkGfA0RRAJ0OwP9maCSsQ==
-X-Google-Smtp-Source: AGHT+IGioza2ZLJGqYDEiNM69okkxaTquc5p5kuP+zRZUhfhEuqvZbJCDySqOqnouQ7x7+YejTIElA==
-X-Received: by 2002:a50:8acb:0:b0:554:4dce:9d47 with SMTP id k11-20020a508acb000000b005544dce9d47mr7873841edk.14.1703938932976;
-        Sat, 30 Dec 2023 04:22:12 -0800 (PST)
-Received: from [192.168.199.125] (178235179036.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.36])
-        by smtp.gmail.com with ESMTPSA id s20-20020a056402015400b005530cb1464bsm12202499edu.15.2023.12.30.04.22.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Dec 2023 04:22:12 -0800 (PST)
-Message-ID: <dc11577e-7088-4975-8543-ad8001e678fe@linaro.org>
-Date: Sat, 30 Dec 2023 13:22:10 +0100
+        d=1e100.net; s=20230601; t=1703941467; x=1704546267;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eAK3GkpXOGhDaB/Q0hZvmQy//6V7+7rM0YC0FJDvdW4=;
+        b=h2BBfEvR2ZTfE0IXicLsRwxOFNkjStGwGZTWJKMWH7Yg1b5vYKR4Fdjsdu1E0xNrIf
+         hJoa2qgsMNsvx7N0o4Fpz1MPVqr1an3Z1D3HW8QwsP6OrDr9XTsDpeM8vzNBIGXmrkzq
+         +OlvQ2/UwhKxh3KqeIhdMAzxxiHZVJFyp4QdE5jQ6pE0d1CgZgd5i0VV6cgQX91Rrzva
+         kmJx4erOmWDFvbNLpjfpdVTPsbpRobIDVzuYQPPOq3LHj1ufDCHCek/oI0IUa6f0a8tw
+         6VE3gV8CdzaU9dTYbrZluyvuhGkFsaG44+de6vDVMNaSlrx1ECcHR9nLSCR2qRG/l6vP
+         1U9g==
+X-Gm-Message-State: AOJu0YzApwf4wMVv53+rXYyTwO4c4KdrFqnrlN3V1s3yO8DOZ67kvyc7
+	rZQZui6/Cs1SWPDcuOTmadlRkfueBTAqyQ==
+X-Google-Smtp-Source: AGHT+IFApVGYIiluQ6V//KKyvVa+N8o1/XlEG++DvWMnCS3ySSr/AKv0DWlWNQA7bkWDlxZMh4jquA==
+X-Received: by 2002:a50:bb69:0:b0:54c:87a1:34fe with SMTP id y96-20020a50bb69000000b0054c87a134femr8479103ede.10.1703941467118;
+        Sat, 30 Dec 2023 05:04:27 -0800 (PST)
+Received: from [10.167.154.1] (178235179036.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.36])
+        by smtp.gmail.com with ESMTPSA id ij14-20020a056402158e00b00554368c9ce8sm11359578edb.1.2023.12.30.05.04.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Dec 2023 05:04:26 -0800 (PST)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH v4 00/12] Unregister critical branch clocks + some RPM
+Date: Sat, 30 Dec 2023 14:04:02 +0100
+Message-Id: <20230717-topic-branch_aon_cleanup-v4-0-32c293ded915@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/8] arm64: dts: qcom: sa8295p-adp: Enable GPU
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold
- <johan+linaro@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20231220-sa8295p-gpu-v2-0-4763246b72c0@quicinc.com>
- <20231220-sa8295p-gpu-v2-7-4763246b72c0@quicinc.com>
- <4a1c18e3-39c8-4070-ae55-b1148b3dc65b@linaro.org>
- <20231227202130.GA1315173@hu-bjorande-lv.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20231227202130.GA1315173@hu-bjorande-lv.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEIVkGUC/43NTQ6DIBAF4KsY1qWRn4LtqvdoGoM4KAkBA2raG
+ O9eNF21G5fvZeZ7C0oQLSR0KxYUYbbJBp8DPxVI98p3gG2bM6IlZaUkEo9hsBo3UXnd1yr4Wjt
+ QfhqwuEqhCTMgiUb5vVEJvncZ8JNzuRwiGPva9x7PnHubxhDf+/xMtvbA0kxwiamUFW+pVNzwu
+ 7NexXAOsUObOtOjEt0kdakYFyUYKv4kdlRiWWLASKPhqsWPtK7rB+8p7yBqAQAA
+To: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Johan Hovold <johan+linaro@kernel.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1703941465; l=5058;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=BX4AD0XKdE4IXC+Rm7JwsEKLVBZzcfLUrFI0a0Z2nm0=;
+ b=bEAanTKBC7TP6EUNGTuwHzPQ6xbD7FPr/oHbFsFZyI8A6KXbP/a4TZsct1wjlXytuaWSXI+W7
+ 2/khx7fmCAOCUCluXvzwGdKiFOSg2i2tIcIrGVnfpY8ntXOtXO20h+7
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On 27.12.2023 21:21, Bjorn Andersson wrote:
-> On Wed, Dec 27, 2023 at 02:09:47AM +0100, Konrad Dybcio wrote:
->> On 22.12.2023 05:39, Bjorn Andersson wrote:
->>> With the necessary support in place for supplying VDD_GFX from the
->>> MAX20411 regulator, enable the GPU clock controller, GMU, Adreno SMMU
->>> and the GPU on the SA8295P ADP.
->>>
->>> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
->>> ---
->> [...]
->>
->>> +&gpucc {
->>> +	vdd-gfx-supply = <&vdd_gfx>;
->>> +	status = "okay";
->>> +};
->> Already enabled
->>
-> 
-> No, we're disabling these in sa8540p.dtsi, so they need to be re-enabled
-> here.
-> 
-> I don't remember if it's because the attempt to bring up gfx.lvl or if
-> it's the attempt to operate the GPU components without adequate VDD_GFX,
-> that is causing the issue...but either way, we don't survive boot.
-Oh right!
+On Qualcomm SoCs, certain branch clocks either need to be always-on, or
+should be if you're interested in touching some part of the hardware.
 
-On 8155 touching mmcx, lcx or lmx would kaboom the platform..
+Using CLK_IS_CRITICAL for this purpose sounds like a genius idea,
+however that messes with the runtime pm handling - if a clock is
+marked as such, the clock controller device will never enter the
+"suspended" state, leaving the associated resources online, which in
+turn breaks SoC-wide suspend.
 
-> 
-> 
-> It's possible that we could move the max20411 up to sa8540p.dtsi to
-> avoid the intermediate disable, but I'm not confident that it's "part of
-> the platform"...
-Yeah, it's probably a question that is impossible to answer, as my
-wild assumption is that all designs are ADP-derived anyway..
+This series aims to solve that on a couple SoCs that I could test the
+changes on and it sprinkles some runtime pm enablement atop these drivers.
 
-Konrad
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Changes in v4:
+- Add and unify the "/* Keep the critical clocks always-on */" comment
+- Rebase (next-20231222), also include 8650, X1E and 8280camcc drivers
+- Drop enabling runtime PM on GCC
+- Improve the commit message of "clk: qcom: gpucc-sm6115: Add runtime PM"
+- Link to v3: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v3-0-3e31bce9c626@linaro.org
+
+Changes in v3:
+- Rebase (next-20231219)
+- Fix up a copypaste mistake in "gcc-sm6375: Unregister critical clocks" (bod)
+- Pick up tags
+- Link to v2: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v2-0-2a583460ef26@linaro.org
+
+Changes in v2:
+- Rebase
+- Pick up tags
+- Fix up missing pm_runtime_put in SM6375 GCC (Johan)
+- Clarify the commit message of "Add runtime PM" commits (Johan)
+- "GPU_CCC" -> "GPU_CC" (oops)
+- Rebase atop next-20231129
+  - Also fix up camcc-sm8550 & gcc-sm4450
+  - Unify and clean up the comment style
+  - Fix missing comments in gcc-sc7180..
+  - Drop Johan's ack from "clk: qcom: Use qcom_branch_set_clk_en()"
+- Improve 6115 dt patch commit message (Bjorn)
+- Link to v1: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org
+
+---
+Konrad Dybcio (12):
+      clk: qcom: branch: Add a helper for setting the enable bit
+      clk: qcom: Use qcom_branch_set_clk_en()
+      clk: qcom: gcc-sm6375: Unregister critical clocks
+      clk: qcom: gpucc-sm6375: Unregister critical clocks
+      clk: qcom: gpucc-sm6115: Unregister critical clocks
+      clk: qcom: gpucc-sm6115: Add runtime PM
+      clk: qcom: gcc-sm6115: Unregister critical clocks
+      clk: qcom: gcc-qcm2290: Unregister critical clocks
+      arm64: dts: qcom: sm6375: Add VDD_CX to GCC
+      arm64: dts: qcom: qcm2290: Add VDD_CX to GCC
+      arm64: dts: qcom: sm6115: Add VDD_CX to GCC
+      arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CC
+
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi |   1 +
+ arch/arm64/boot/dts/qcom/sm6115.dtsi  |   3 +
+ arch/arm64/boot/dts/qcom/sm6375.dtsi  |   1 +
+ drivers/clk/qcom/camcc-sc8280xp.c     |   6 +-
+ drivers/clk/qcom/camcc-sm8550.c       |  10 +--
+ drivers/clk/qcom/clk-branch.h         |   7 ++
+ drivers/clk/qcom/dispcc-qcm2290.c     |   4 +-
+ drivers/clk/qcom/dispcc-sc7280.c      |   7 +-
+ drivers/clk/qcom/dispcc-sc8280xp.c    |   4 +-
+ drivers/clk/qcom/dispcc-sm6115.c      |   4 +-
+ drivers/clk/qcom/dispcc-sm8250.c      |   4 +-
+ drivers/clk/qcom/dispcc-sm8450.c      |   7 +-
+ drivers/clk/qcom/dispcc-sm8550.c      |   7 +-
+ drivers/clk/qcom/dispcc-sm8650.c      |   4 +-
+ drivers/clk/qcom/gcc-qcm2290.c        | 105 ++---------------------------
+ drivers/clk/qcom/gcc-sa8775p.c        |  25 +++----
+ drivers/clk/qcom/gcc-sc7180.c         |  22 +++---
+ drivers/clk/qcom/gcc-sc7280.c         |  20 +++---
+ drivers/clk/qcom/gcc-sc8180x.c        |  28 +++-----
+ drivers/clk/qcom/gcc-sc8280xp.c       |  25 +++----
+ drivers/clk/qcom/gcc-sdx55.c          |  12 ++--
+ drivers/clk/qcom/gcc-sdx65.c          |  13 ++--
+ drivers/clk/qcom/gcc-sdx75.c          |  10 +--
+ drivers/clk/qcom/gcc-sm4450.c         |  28 +++-----
+ drivers/clk/qcom/gcc-sm6115.c         | 123 +++-------------------------------
+ drivers/clk/qcom/gcc-sm6375.c         | 105 +++--------------------------
+ drivers/clk/qcom/gcc-sm7150.c         |  23 +++----
+ drivers/clk/qcom/gcc-sm8250.c         |  19 ++----
+ drivers/clk/qcom/gcc-sm8350.c         |  20 +++---
+ drivers/clk/qcom/gcc-sm8450.c         |  21 +++---
+ drivers/clk/qcom/gcc-sm8550.c         |  21 +++---
+ drivers/clk/qcom/gcc-sm8650.c         |  16 ++---
+ drivers/clk/qcom/gcc-x1e80100.c       |  16 ++---
+ drivers/clk/qcom/gpucc-sc7280.c       |   9 +--
+ drivers/clk/qcom/gpucc-sc8280xp.c     |   9 +--
+ drivers/clk/qcom/gpucc-sm6115.c       |  52 ++++++--------
+ drivers/clk/qcom/gpucc-sm6375.c       |  33 +--------
+ drivers/clk/qcom/gpucc-sm8550.c       |  10 +--
+ drivers/clk/qcom/lpasscorecc-sc7180.c |   7 +-
+ drivers/clk/qcom/videocc-sm8250.c     |   6 +-
+ drivers/clk/qcom/videocc-sm8350.c     |  10 +--
+ drivers/clk/qcom/videocc-sm8450.c     |  13 ++--
+ drivers/clk/qcom/videocc-sm8550.c     |  13 ++--
+ 43 files changed, 230 insertions(+), 653 deletions(-)
+---
+base-commit: 39676dfe52331dba909c617f213fdb21015c8d10
+change-id: 20230717-topic-branch_aon_cleanup-6976c13fe71c
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
