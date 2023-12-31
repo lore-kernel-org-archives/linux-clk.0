@@ -1,288 +1,224 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C502DDDBB;
-	Sat, 30 Dec 2023 21:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674D033CE;
+	Sun, 31 Dec 2023 04:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="Sm3iHXtN"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4T2Znr2Cjnz9scM;
-	Sat, 30 Dec 2023 22:17:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-	s=MBO0001; t=1703971040;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EqzpSggOCyXix/RyQdbwO3KPIBKLdQSHS6acVQjzt6c=;
-	b=Sm3iHXtNAXh9K/xf42tiU1rN0I+mCEy7Yh5xJB7lDG45dqj4W4QsJ7Q/8b/Z+/TQTOU6uL
-	xJzOGVp79vCiwI3fCWWUQt/IPOXhjto4X8+hF37c+grkV4kAMOOZCqwAm8Y2mnb6XP8d+z
-	sWkJ/CZAPewrist1vQJCgjN00S26rMZvLb5LeIiZJjWtBqHgUUHVHpw7yMy3M68bcYolTL
-	gB1ZRwWHrAaIUagoQw6KafgX2nljdrhZMH1SDYB7NJw92QYz8Zqoq2tQpdiAVY4bpGg21o
-	78kBpVZuMnESIZSP+DJR/X8wjBz5hKJDNFFo2xDZWzRFFpOp7sxQMs3olLm4lg==
-References: <20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev>
- <10386431.nUPlyArG6x@jernej-laptop> <87edfh9ud8.fsf@oltmanns.dev>
- <1845418.atdPhlSkOF@jernej-laptop>
-From: Frank Oltmanns <frank@oltmanns.dev>
-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
- <samuel@sholland.org>, Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>,
- Purism Kernel Team
- <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Icenowy
- Zheng <uwu@icenowy.me>
-Subject: Re: [PATCH 5/5] drm/panel: st7703: Drive XBD599 panel at higher
- clock rate
-In-reply-to: <1845418.atdPhlSkOF@jernej-laptop>
-Date: Sat, 30 Dec 2023 22:17:06 +0100
-Message-ID: <87wmsvo0fh.fsf@oltmanns.dev>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qxz1hyvm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAFA1C433C7;
+	Sun, 31 Dec 2023 04:07:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703995630;
+	bh=ptuLjlUKPnGzI09vvWf6AUIipqAGb+53ZX9S0FtKUQU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Qxz1hyvmfkmfi5TTJNGNbD2YD23KXgJD+HWO0fGFOcEiyJHYwgnnMy/Nbsg2A4KwO
+	 30TxgriXMljPhyqt5wDtomv+F+0HSizDVA8XE3fo5/bmvOKbIbUhaivkZIIM+cB3LV
+	 Q3tJcCf75lNDF42gc5eQt4iYvcu+AUlrwVOnFCmyxH6aDU7gzwzgCFINq+8Loa/RUf
+	 TRIcKhAK2fnI7bqprhl8W2UKSwlPVtn2DwpXlFtuoyzN7nQY2/zaXl9vir+ojOTyNH
+	 yyFU6zOAI46qYVL/ECZcxu56gqihC/nljZ0c6fI8RvonoTDO5fvV6usqtLAjWYHzDg
+	 AMiWlpB6yKU+g==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andy Gross <agross@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Vincent Knecht <vincent.knecht@mailoo.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Taniya Das <quic_tdas@quicinc.com>
+Subject: [GIT PULL] Qualcomm clock updates for v6.8
+Date: Sat, 30 Dec 2023 20:11:14 -0800
+Message-ID: <20231231041115.3263074-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 4T2Znr2Cjnz9scM
+Content-Transfer-Encoding: 8bit
 
 
-On 2023-12-20 at 16:18:49 +0100, Jernej =C5=A0krabec <jernej.skrabec@gmail.=
-com> wrote:
-> Dne sreda, 20. december 2023 ob 08:14:27 CET je Frank Oltmanns napisal(a):
->>
->> On 2023-12-19 at 18:04:29 +0100, Jernej =C5=A0krabec <jernej.skrabec@gma=
-il.com> wrote:
->> > Dne ponedeljek, 18. december 2023 ob 14:35:23 CET je Frank Oltmanns na=
-pisal(a):
->> >> This panel is used in the pinephone that runs on a Allwinner A64 SOC.
->> >> Acoording to it's datasheet, the SOC requires PLL-MIPI to run at more
->> >> than 500 MHz.
->> >>
->> >> Therefore, change [hv]sync_(start|end) so that we reach a clock rate
->> >> that is high enough to drive PLL-MIPI within its limits.
->> >>
->> >> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
->> >
->> > I'm not too sure about this patch. I see that PLL_MIPI doesn't have set
->> > minimum frequency limit in clock driver. If you add it, clock framework
->> > should find rate that is high enough and divisible with target rate.
->>
->> This one is really a tough nut. Unfortunately, the PLL_MIPI clock for
->> this panel has to run exactly at 6 * panel clock. Let me start by
->> showing the relevant part of the clock tree (this is on the pinephone
->> after applying the patches):
->>     pll-video0                 393600000
->>        pll-mipi                500945454
->>           tcon0                500945454
->>              tcon-data-clock   125236363
->>
->> To elaborate, tcon-data-clock has to run at 1/4 the DSI per-lane bit
->> rate [1]. It's a fixed divisor
->>
->> The panel I'm proposing to change is defined as this:
->>
->>     static const struct st7703_panel_desc xbd599_desc =3D {
->>     	.mode =3D &xbd599_mode,
->>     	.lanes =3D 4,
->>     	.mode_flags =3D MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULS=
-E,
->>     	.format =3D MIPI_DSI_FMT_RGB888,
->>     	.init_sequence =3D xbd599_init_sequence,
->>     };
->>
->> So, we have 24 bpp and 4 lanes. Therefore, the resulting requested
->> tcon-data-clock rate is
->>     crtc_clock * 1000 * (24 / 4) / 4
->>
->> tcon-data-clock therefore requests a parent rate of
->>     4 * (crtc_clock * 1000 * (24 / 4) / 4)
->>
->> The initial 4 is the fixed divisor between tcon0 and tcon-data-clock.
->> Since tcon0 is a ccu_mux, the rate of tcon0 equals the rate of pll-mipi.
->>
->> Since PLL-MIPI has to run at at least at 500MHz this forces us to have a
->> crtc_clock >=3D 83.333 MHz. The mode I'm prorposing results in a rate of
->> 83.502 MHz.
->
-> This is much better explanation why this change is needed. Still, I think
-> adding min and max rate to PLL_MIPI would make sense, so proper rates
-> are guaranteed.
+The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
 
-Okay, I'll include min and max rate in V2, because you're right that
-it's the sane thing to do and actually it wasn't too much work. I (and
-others) do experience crashes if pll-mipi is driven below the 500 MHz
-mark, so let's fix this once and for all.
+  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
 
-> Anyway, do you know where are all those old values come from?
+are available in the Git repository at:
 
-I've done some digging on lore and the values were originally submitted
-by Icenowy Zheng as part of a series to support the pinephone's LCD [1].
-There has been some refactoring after this initial submission and Ondrej
-Jirman took over. But the values are still the ones submitted by
-Icenowy, so I've added her to CC. I couldn't find any documentation for
-this specific panel.
+  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-6.8
 
-> And how did
-> you come up with new ones?
+for you to fetch changes up to 757d1ca14f94e4e00777491dcab0b4abee18f9bf:
 
-Trial and no error. :)
+  clk: qcom: dispcc-sm8650: Add test_ctl parameters to PLL config (2023-12-19 14:12:41 -0600)
 
-No, really, it was just a lucky guess. I know nothing about LCD panels,
-so I only looked at the original values:
-.htotal =3D  720 + 40 + 40 + 40,
-.vtotal =3D 1440 + 18 + 10 + 17,
+----------------------------------------------------------------
+Qualcomm clock updates for v6.8
 
-I thought, what if every time I increase a horizontal value by 2, I
-increase a vertical value by 1 (very roughly).
+New drivers to support global, display, gpu, tcsr, and rpmh clocks for
+the SM8650 platform is introduced.
 
-So I ended up with:
-.htotal =3D  720 + 65 + 65 + 65,
-.vtotal =3D 1440 + 30 + 22 + 29,
+Global and RPMh clock support for the new X1E80100 platform is added.
 
-So, in conclusion, I've increased each of the horizontal values by 25
-and each of the vertical values by 12. Then I just tried out these new
-values, and the world didn't end. :)
+Support for the Stromer APCS PLL found in IPQ5018 is added.
 
-If this is stupid, please somebody let me know.
+A new type of branch clock, with support for controlling separate memory
+control bits is introduced, and used in the newly introduced clock
+driver for the ECPRI on QDU1000 and QRU1000.
 
-I (and at least one postmarket OS tester) have been daily driving the
-panel with these values for about a week now.
+A number of missing clock related to CSI2 on MSM8939 are added. Support
+for the camera clock controller on SC8280XP is added.
 
-I've checked the panel's refresh rate with the following test setup:
- - I created a 60 fps video that shows the current frame number in each
-   frame. The video is 10 seconds (600 frames) long. [2]
- - I played that video on my pinephone using vlc. [3]
- - I recorded the playback with a Google Pixel 5 phone at 1/8 slow
-   motion (240 fps).
- - I converted the video into individual pictures [4], resized
-   the pictures to 10% [5], and finally - after deleting some superfluous
-   pictures at the beginning and end - I created one big collage out of
-   these [6].
+PLL configuration is corrected in GPU and Video clock controllers for
+SM8150, runtim PM support and a few missing resets are added to the
+video clock controller.
 
-I've uploaded the video[7], resulting collage [8] and the individual
-pictures [9].
+For SM8550 configuration of a variety of GDSCs in GCC is corrected.
+Shared RCGs was not marked appropriately when the driver was upstreamed,
+so this is corrected as well.
+For GPU and Display clock controllers PLL configuration settings are
+reviewed and corrected.
 
-In the resulting picture you can see that in the beginning frame 2 is
-missing and frame 136 is only barely visible because it is stuck too
-long on frame 135. Other than that, I think this looks pretty good.
+----------------------------------------------------------------
+Bjorn Andersson (5):
+      Merge branch '20231026105345.3376-3-bryan.odonoghue@linaro.org' into clk-for-6.8
+      Merge branch '20231106-topic-sm8650-upstream-clocks-v3-5-761a6fadb4c0@linaro.org' into clk-for-6.8
+      Merge branch '20231123064735.2979802-2-quic_imrashai@quicinc.com' into clk-for-6.8
+      Merge branch '20231205061002.30759-4-quic_sibis@quicinc.com' into clk-for-6.8
+      Merge branch '20231201-videocc-8150-v3-1-56bec3a5e443@quicinc.com' into clk-for-6.8
 
-> I guess you can't just simply change timings,
-> there are probably some HW limitations? Do you know if BSP kernel support
-> this panel and how this situation is solved there?
+Bryan O'Donoghue (3):
+      dt-bindings: clock: Use gcc.yaml for common clock properties
+      dt-bindings: clock: Add SC8280XP CAMCC
+      clk: qcom: camcc-sc8280xp: Add sc8280xp CAMCC
 
-I'm not aware of any BSP kernel that supports this kernel.
+Dan Carpenter (1):
+      clk: qcom: camcc-sc8280xp: Prevent error pointer dereference
 
->> If we only changed the constraints on the PLL_MIPI without changing the
->> panel mode, we end up with a mismatch. This, in turn, would result in
->> dropped frames, right?
->
-> From what I read, I think frame rate would be higher than 60 fps. What
-> exactly would happen depends on the panel.
+Gokul Sriram Palanisamy (2):
+      dt-bindings: clock: qcom,a53pll: add IPQ5018 compatible
+      clk: qcom: apss-ipq-pll: add support for IPQ5018
 
-To give this a fair comparison, I tested with the original timings but
-with correcting the panel's clock rate of 74844 kHZ instead of 69000 kHz
-as discussed elsewhere in this thread [10] and pll-mipi running at
-500MHz (because that's really a must to run the pinephone in a stable
-manner). I used the same procedure as described above. Again, I've
-uploaded the resulting video [11], collage [12] and the individual files
-[13].
+Imran Shaik (2):
+      dt-bindings: clock: qcom: Add ECPRICC clocks for QDU1000 and QRU1000
+      clk: qcom: Add ECPRICC driver support for QDU1000 and QRU1000
 
-Here, the being stuck happens much more often, e.g. frames 23, 31, 40,
-49, 58, 66 etc.
+Konrad Dybcio (9):
+      clk: qcom: gcc-sm8550: Add the missing RETAIN_FF_ENABLE GDSC flag
+      clk: qcom: gcc-sm8550: Mark the PCIe GDSCs votable
+      clk: qcom: gcc-sm8550: use collapse-voting for PCIe GDSCs
+      clk: qcom: gcc-sm8550: Mark RCGs shared where applicable
+      clk: qcom: gpucc-sm8550: Update GPU PLL settings
+      clk: qcom: dispcc-sm8550: Update disp PLL settings
+      clk: qcom: dispcc-sm8550: Use the correct PLL configuration function
+      clk: qcom: gpucc-sm8650: Add test_ctl parameters to PLL config
+      clk: qcom: dispcc-sm8650: Add test_ctl parameters to PLL config
 
-So, I think, in order to have a better user experience, I think it's a
-good idea to update the XBD599 panel with the new values I proposed in
-this patch.
+Neil Armstrong (11):
+      dt-bindings: clock: qcom: document the SM8650 TCSR Clock Controller
+      dt-bindings: clock: qcom: document the SM8650 General Clock Controller
+      dt-bindings: clock: qcom: document the SM8650 Display Clock Controller
+      dt-bindings: clock: qcom: document the SM8650 GPU Clock Controller
+      dt-bindings: clock: qcom: Document the SM8650 RPMH Clock Controller
+      clk: qcom: add the SM8650 Global Clock Controller driver, part 1
+      clk: qcom: add the SM8650 Global Clock Controller driver, part 2
+      clk: qcom: add the SM8650 TCSR Clock Controller driver
+      clk: qcom: add the SM8650 Display Clock Controller driver
+      clk: qcom: add the SM8650 GPU Clock Controller driver
+      clk: qcom: rpmh: add clocks for SM8650
 
-Best regards,
-  Frank
+Rajendra Nayak (4):
+      dt-bindings: clock: qcom: Add X1E80100 GCC clocks
+      dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings for X1E80100
+      clk: qcom: Add Global Clock controller (GCC) driver for X1E80100
+      clk: qcom: rpmh: Add support for X1E80100 rpmh clocks
 
-[1]: https://lore.kernel.org/all/20200311162936.221613-1-icenowy@aosc.io/
-[2]: ffmpeg -f lavfi -i testsrc=3Dduration=3D10:size=3D80x50:rate=3D60 -vf \
-   "drawtext=3Dtext=3D%{n}:fontsize=3D36:r=3D60:x=3D(w-tw)/2: y=3Dh-(1*lh):=
-fontcolor=3Dwhite:box=3D1:boxcolor=3D0x00000099"\
-   test_80x50.mp4
-[3]: cvlc test_80x50.mp4  --fullscreen --play-and-exit
-[4]: ffmpeg -i video_from_pixel_phone.mp4 -vsync vfr output_%04d.jpg
-[5]: mogrify -resize 10% output_*.jpg
-[6]: montage output_*.jpg -tile 20x -geometry +0+0 \
-      verify_panel_65_65_65_30_22_29_83502.jpg
-[7]: https://share.mailbox.org/ajax/share/0a471a7205211949ad7067d5211945719=
-84a15d1613d74be/1/8/Njg/NjgvMzE
-[8]: https://share.mailbox.org/ajax/share/0741f90808f2df4e7d1e5078f2df43cfa=
-e732189f27e75e3/1/8/Njg/NjgvMzI
-[9]: https://share.mailbox.org/ajax/share/0471bc0706bfee4e4e1a0086bfee40ecb=
-a2123a14c9b8d4d/1/8/Njg/NjgvMzA
-[10]: https://lore.kernel.org/all/87v88qk3ge.fsf@oltmanns.dev/
-[11]: https://share.mailbox.org/ajax/share/036036d00eac574e3f02adfeac5741dd=
-a88105026a1221f4/1/8/Njg/NjgvMzQ
-[12]: https://share.mailbox.org/ajax/share/05f6d3e905e30058566cfe65e300486a=
-a936122f2414639a/1/8/Njg/NjgvMzU
-[13]: https://share.mailbox.org/ajax/share/0cf25a810cce2357c62468ecce234681=
-a4e8e674d38d02cd/1/8/Njg/NjgvMzM
+Robert Marko (1):
+      dt-bindings: clock: qcom,gcc-ipq6018: split to separate schema
 
->
-> Best regards,
-> Jernej
->
->>
->> Best regards,
->>   Frank
->>
->> [1] Source:
->> https://elixir.bootlin.com/linux/v6.6.7/source/drivers/gpu/drm/sun4i/sun=
-4i_tcon.c#L346
->>
->> >
->> > Best regards,
->> > Jernej
->> >
->> >> ---
->> >>  drivers/gpu/drm/panel/panel-sitronix-st7703.c | 14 +++++++-------
->> >>  1 file changed, 7 insertions(+), 7 deletions(-)
->> >>
->> >> diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7703.c b/drivers/=
-gpu/drm/panel/panel-sitronix-st7703.c
->> >> index b55bafd1a8be..6886fd7f765e 100644
->> >> --- a/drivers/gpu/drm/panel/panel-sitronix-st7703.c
->> >> +++ b/drivers/gpu/drm/panel/panel-sitronix-st7703.c
->> >> @@ -320,14 +320,14 @@ static int xbd599_init_sequence(struct st7703 *=
-ctx)
->> >>
->> >>  static const struct drm_display_mode xbd599_mode =3D {
->> >>  	.hdisplay    =3D 720,
->> >> -	.hsync_start =3D 720 + 40,
->> >> -	.hsync_end   =3D 720 + 40 + 40,
->> >> -	.htotal	     =3D 720 + 40 + 40 + 40,
->> >> +	.hsync_start =3D 720 + 65,
->> >> +	.hsync_end   =3D 720 + 65 + 65,
->> >> +	.htotal      =3D 720 + 65 + 65 + 65,
->> >>  	.vdisplay    =3D 1440,
->> >> -	.vsync_start =3D 1440 + 18,
->> >> -	.vsync_end   =3D 1440 + 18 + 10,
->> >> -	.vtotal	     =3D 1440 + 18 + 10 + 17,
->> >> -	.clock	     =3D 69000,
->> >> +	.vsync_start =3D 1440 + 30,
->> >> +	.vsync_end   =3D 1440 + 30 + 22,
->> >> +	.vtotal	     =3D 1440 + 30 + 22 + 29,
->> >> +	.clock	     =3D (720 + 65 + 65 + 65) * (1440 + 30 + 22 + 29) * 60 /=
- 1000,
->> >>  	.flags	     =3D DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
->> >>  	.width_mm    =3D 68,
->> >>  	.height_mm   =3D 136,
->> >>
->> >>
->>
+Satya Priya Kakitapalli (5):
+      clk: qcom: gpucc-sm8150: Update the gpu_cc_pll1 config
+      dt-bindings: clock: Update the videocc resets for sm8150
+      clk: qcom: videocc-sm8150: Update the videocc resets
+      clk: qcom: videocc-sm8150: Add missing PLL config property
+      clk: qcom: videocc-sm8150: Add runtime PM support
+
+Taniya Das (1):
+      clk: qcom: branch: Add mem ops support for branch2 clocks
+
+Vincent Knecht (2):
+      dt-bindings: clock: qcom,gcc-msm8939: Add CSI2 related clocks
+      clk: qcom: gcc-msm8939: Add missing CSI2 related clocks
+
+ .../devicetree/bindings/clock/qcom,a53pll.yaml     |    1 +
+ .../bindings/clock/qcom,camcc-sm8250.yaml          |   18 +-
+ .../bindings/clock/qcom,gcc-ipq6018.yaml           |   57 +
+ .../devicetree/bindings/clock/qcom,gcc-other.yaml  |    3 -
+ .../bindings/clock/qcom,qdu1000-ecpricc.yaml       |   68 +
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    2 +
+ .../bindings/clock/qcom,sc7180-camcc.yaml          |   18 +-
+ .../bindings/clock/qcom,sc7280-camcc.yaml          |   18 +-
+ .../bindings/clock/qcom,sdm845-camcc.yaml          |   18 +-
+ .../bindings/clock/qcom,sm8450-camcc.yaml          |   20 +-
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |    8 +-
+ .../bindings/clock/qcom,sm8650-dispcc.yaml         |  106 +
+ .../devicetree/bindings/clock/qcom,sm8650-gcc.yaml |   65 +
+ .../bindings/clock/qcom,x1e80100-gcc.yaml          |   72 +
+ drivers/clk/qcom/Kconfig                           |   63 +
+ drivers/clk/qcom/Makefile                          |    7 +
+ drivers/clk/qcom/apss-ipq-pll.c                    |   21 +
+ drivers/clk/qcom/camcc-sc8280xp.c                  | 3045 +++++++++
+ drivers/clk/qcom/clk-branch.c                      |   38 +
+ drivers/clk/qcom/clk-branch.h                      |   21 +
+ drivers/clk/qcom/clk-rpmh.c                        |   58 +
+ drivers/clk/qcom/dispcc-sm8550.c                   |   12 +-
+ drivers/clk/qcom/dispcc-sm8650.c                   | 1818 ++++++
+ drivers/clk/qcom/ecpricc-qdu1000.c                 | 2456 +++++++
+ drivers/clk/qcom/gcc-msm8939.c                     |  110 +-
+ drivers/clk/qcom/gcc-sm8550.c                      |  110 +-
+ drivers/clk/qcom/gcc-sm8650.c                      | 3849 +++++++++++
+ drivers/clk/qcom/gcc-x1e80100.c                    | 6807 ++++++++++++++++++++
+ drivers/clk/qcom/gpucc-sm8150.c                    |    4 +-
+ drivers/clk/qcom/gpucc-sm8550.c                    |    6 +-
+ drivers/clk/qcom/gpucc-sm8650.c                    |  663 ++
+ drivers/clk/qcom/tcsrcc-sm8650.c                   |  182 +
+ drivers/clk/qcom/videocc-sm8150.c                  |   25 +-
+ include/dt-bindings/clock/qcom,gcc-msm8939.h       |    6 +
+ include/dt-bindings/clock/qcom,qdu1000-ecpricc.h   |  147 +
+ include/dt-bindings/clock/qcom,sc8280xp-camcc.h    |  179 +
+ include/dt-bindings/clock/qcom,sm8650-dispcc.h     |  102 +
+ include/dt-bindings/clock/qcom,sm8650-gcc.h        |  254 +
+ include/dt-bindings/clock/qcom,sm8650-gpucc.h      |   43 +
+ include/dt-bindings/clock/qcom,sm8650-tcsr.h       |   18 +
+ include/dt-bindings/clock/qcom,videocc-sm8150.h    |    4 +
+ include/dt-bindings/clock/qcom,x1e80100-gcc.h      |  485 ++
+ include/dt-bindings/reset/qcom,sm8650-gpucc.h      |   20 +
+ 44 files changed, 20891 insertions(+), 138 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq6018.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,qdu1000-ecpricc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8650-dispcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,x1e80100-gcc.yaml
+ create mode 100644 drivers/clk/qcom/camcc-sc8280xp.c
+ create mode 100644 drivers/clk/qcom/dispcc-sm8650.c
+ create mode 100644 drivers/clk/qcom/ecpricc-qdu1000.c
+ create mode 100644 drivers/clk/qcom/gcc-sm8650.c
+ create mode 100644 drivers/clk/qcom/gcc-x1e80100.c
+ create mode 100644 drivers/clk/qcom/gpucc-sm8650.c
+ create mode 100644 drivers/clk/qcom/tcsrcc-sm8650.c
+ create mode 100644 include/dt-bindings/clock/qcom,qdu1000-ecpricc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sc8280xp-camcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm8650-dispcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm8650-gcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm8650-gpucc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm8650-tcsr.h
+ create mode 100644 include/dt-bindings/clock/qcom,x1e80100-gcc.h
+ create mode 100644 include/dt-bindings/reset/qcom,sm8650-gpucc.h
