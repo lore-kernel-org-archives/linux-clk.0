@@ -1,87 +1,87 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7CDD27F;
-	Tue,  2 Jan 2024 09:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECC8D2E5;
+	Tue,  2 Jan 2024 10:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="vwpbM4Ek"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1704188507;
-	bh=FyLks047y5EHUM2OKY0gTkVd8p2xO2+y8kTMjKFijSg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vwpbM4EknSe+s+iyX71PYvZayhxWo+dUMoNsHsri18wj1l3ZS3hUxt9FFhZjr6tto
-	 IC/7DUykfGCRE7vgGNQfeldwcVLsSRHO9HC37m/GO7h9P9wY9RKAlcU0kaguoFaX9r
-	 3N3EzQbhdspbUtxvcJL7oehKuNPcUmSMvaE519+uZ4AXEJZJ472+3cHFuBWJIgg81c
-	 R+XEmQz0hJMnn8MR5aIqAMxawvkyhlKy87lz5OUv0CQsBia6AGxKyiKgcnuYM2YJya
-	 iqrngmitpclR0jCLy4wsH2RWqdpcze3Wpwp5jo23rTr8I5Vx32hfDJbm/PO4s+s66F
-	 DLxraCut+Yl3A==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A82E63781433;
-	Tue,  2 Jan 2024 09:41:46 +0000 (UTC)
-Message-ID: <0bfa27e8-c173-4a2a-b453-9289f2eb1926@collabora.com>
-Date: Tue, 2 Jan 2024 10:41:45 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahrD8bll"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3277BC433C9;
+	Tue,  2 Jan 2024 10:35:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704191755;
+	bh=+qEKOHUuvaeqbMv2dZKawxfqy3gZZ8r/eu72eL7McOQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ahrD8bll+9T4w+l6KytnHTr1qvj782jwU07/e5AujwKXmZSyG5Kbz2K5No5U6AwVx
+	 F5/c4lVQW3yPYiklQPsMMX3mirNZDPPZt68zEmkCzlqgWFYGYcTLVGLDVVQqBs+hKo
+	 ZYRnkJG7OntiLNGotlSGToorNfbtzScB4R0P8Cfd+A3a+xlzzohiEEp3b2G1GcS2Bo
+	 bvDmeJehj97YPD57LRSIoq/1MVqA10hUO7elWepSOYQhLcC1/mpnEsReJele3BFHcG
+	 czxOtPSs/dcuSWjSESee5/bZzfYaecy0bqZU902SWXiVUu52ZelIVjCoXi9kczhh3w
+	 98BWUb6tgzQ9w==
+Received: from johan by xi.lan with local (Exim 4.96.2)
+	(envelope-from <johan@kernel.org>)
+	id 1rKc7e-0002Im-1g;
+	Tue, 02 Jan 2024 11:35:46 +0100
+Date: Tue, 2 Jan 2024 11:35:46 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v4 02/12] clk: qcom: Use qcom_branch_set_clk_en()
+Message-ID: <ZZPnAvXB8oqds4KM@hovoldconsulting.com>
+References: <20230717-topic-branch_aon_cleanup-v4-0-32c293ded915@linaro.org>
+ <20230717-topic-branch_aon_cleanup-v4-2-32c293ded915@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: fix cppcheck error for uninitialized
- variable
-Content-Language: en-US
-To: mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
- kishan.dudhatra@siliconsignals.io
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Tom Rix <trix@redhat.com>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20231225152806.3716898-1-user@falcon>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20231225152806.3716898-1-user@falcon>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230717-topic-branch_aon_cleanup-v4-2-32c293ded915@linaro.org>
 
-Il 25/12/23 16:28,  ha scritto:
-> From: Kishan Dudhatra <kishan.dudhatra@siliconsignals.io>
+On Sat, Dec 30, 2023 at 02:04:04PM +0100, Konrad Dybcio wrote:
+> Instead of magically poking at the bit0 of branch clocks' CBCR, use
+> the newly introduced helper.
 > 
-> cppcheck reports below warning
-> 
-> clk/mediatek/clk-fhctl.c:206:27:
-> error: Uninitialized variable: pll_postdiv [uninitvar]
-> if (postdiv && postdiv < pll_postdiv)
-> 
-> This is due to uninitialization of variable pll_postdiv,
-> which is now initialized as part of this patch.
-> 
-> Signed-off-by: Kishan Dudhatra <kishan.dudhatra@siliconsignals.io>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
 
-This is a false positive... the pll_postdiv variable is *always* used
-and *only if* postdiv > 0.
+> diff --git a/drivers/clk/qcom/camcc-sc8280xp.c b/drivers/clk/qcom/camcc-sc8280xp.c
+> index 3dcd79b01515..94db130b85e2 100644
+> --- a/drivers/clk/qcom/camcc-sc8280xp.c
+> +++ b/drivers/clk/qcom/camcc-sc8280xp.c
+> @@ -3010,10 +3010,8 @@ static int camcc_sc8280xp_probe(struct platform_device *pdev)
+>  	clk_lucid_pll_configure(&camcc_pll6, regmap, &camcc_pll6_config);
+>  	clk_lucid_pll_configure(&camcc_pll7, regmap, &camcc_pll7_config);
+>  
+> -	/*
+> -	 * Keep camcc_gdsc_clk always enabled:
+> -	 */
+> -	regmap_update_bits(regmap, 0xc1e4, BIT(0), 1);
+> +	/* Keep the critical clocks always-on */
+> +	qcom_branch_set_clk_en(regmap, 0xc1e4); /* CAMCC_GDSC_CLK */
 
-P.S.: There was some problem with your email, as the From entry is empty.
+I still think something along the lines of
 
-Regards,
-Angelo
+	/* Keep some clocks always on */
 
-> 
-> diff --git a/drivers/clk/mediatek/clk-fhctl.c b/drivers/clk/mediatek/clk-fhctl.c
-> index 33b6ad8fdc2e..b0e71e4fd938 100644
-> --- a/drivers/clk/mediatek/clk-fhctl.c
-> +++ b/drivers/clk/mediatek/clk-fhctl.c
-> @@ -186,7 +186,7 @@ static int fhctl_hopping(struct mtk_fh *fh, unsigned int new_dds,
->   	struct fh_pll_regs *regs = &fh->regs;
->   	struct mtk_clk_pll *pll = &fh->clk_pll;
->   	spinlock_t *lock = fh->lock;
-> -	unsigned int pll_postdiv;
-> +	unsigned int pll_postdiv = 0;
->   	unsigned long flags = 0;
->   	int ret;
->   
+is preferred as it is far from obvious why a camera clock would be
+considered "critical".
 
+Or perhaps you can come up with a better description of why we've
+decided not to model these clocks and just leave them ungated.
 
+>  
+>  	ret = qcom_cc_really_probe(pdev, &camcc_sc8280xp_desc, regmap);
+>  	if (ret)
+
+Johan
