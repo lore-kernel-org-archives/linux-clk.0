@@ -1,257 +1,159 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FE2F9D2
-	for <linux-clk@vger.kernel.org>; Tue,  2 Jan 2024 12:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2091171B
+	for <linux-clk@vger.kernel.org>; Tue,  2 Jan 2024 14:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iRzhq4E5"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-da7ea62e76cso7514786276.3
-        for <linux-clk@vger.kernel.org>; Tue, 02 Jan 2024 04:05:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q+hiFzRa"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-50e78f1f41fso6286680e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 02 Jan 2024 06:27:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704197120; x=1704801920; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r7dyv4CcIU9mcvBuepSVkLmk0uNvBhGYSbHRwghn+UA=;
-        b=iRzhq4E5qXsvFK2f52/mzrj8tkI/EnoNYTeVhNIs2CEZObhBI5z0Ep0NLleuFSHh30
-         M2ILvdX3fnKw79aZm0v9owhF/a7Fr1qOhdTPGqfCuoYP6NfEZcTOWxxQew4pZno5+2U+
-         cnNk2PdYqDAAEIURo9v00MdVJVuli8nHntMF9qT0nrhHEXvB0cXguAbacxudBnC7cyR7
-         gv+/I5+6qtFS4JiMF7YRyqpiI/C9/o3MLCikM+uvEjaKXGs3SHH5kM4ApUf+OG2JnOND
-         iSR2HIeEw+dXG6NFXCE8MgRbV3VH50O/JDX4EYQOlBAtZBXvwk1gQjKkbNI32dpPsTOa
-         JLZQ==
+        d=linaro.org; s=google; t=1704205652; x=1704810452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NFaHotn2cJmn9bSUZqN8YKUiA/IurWzWG53AtgwJCMk=;
+        b=q+hiFzRaXYYyF89J1GOudz2n+ARL7JEAdtYT5pf/A3OD5CmymprB4tf+uvdzv7uWSq
+         ZaDbWIZNnYght6IeZDAsgs0IYQ7FLwNWGI9F6KqEHcSh2HypXc82hbU3Pb9j0oJwfSzB
+         Fs7+RSxdwXlO8aSlfTVQW2UEDkr+WzcIu2NaLkGIQfDT2JUm0iPnoqyVosb+sK3dPqs4
+         99F7U29ur93vfZI9zLmoOeAJU9BW/EgWgsPocH1hfrWCmWsNv7G9Rieq/lU3i24NR7o+
+         RiQbAl095YVrEW8q/l2QfFdS1Zly0SbUiwwzmRDnqOUohKCHidNrgTomheeCwyd8c5a7
+         6a/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704197120; x=1704801920;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r7dyv4CcIU9mcvBuepSVkLmk0uNvBhGYSbHRwghn+UA=;
-        b=KbO3CIPpyqMlGAgdne7MRb8f+J/sfQoJlY+hVW3yK8DzpRc8gPkroD8WXTFz/1luAA
-         trO9ig2BxXu/gRm9gV8mrWDmE8jWeuo0rV3R6YckW5utCbE086AiV8Q9GmCY570eLTl1
-         QZj3J6j/uC4Q2xXryYAmVHhDNUeSnfyknCE7MdJPFeSpZ4FXnBYS0J8/XazrZnRWFkBy
-         8b5dQweO+GJ7XSIKZ7x1t3xHDHKMf40Q4nwj0UIxy46t1qMJ3d6N4ZTf62G6Lwjk19mb
-         KB4JY6azZk74qOlGhRyBgYmUDxEs86Y30ahouARLvghi76IOcVgjFV/nEzO/Wlkd4FUD
-         +bog==
-X-Gm-Message-State: AOJu0Yz6MCv2kc3iVfTiE1y0a1s4UR8UTGRXOr4MxDEh/bKDiFnEGAA8
-	kYqxirukvtwoDwpH+63YJHAtbHVCQn/s0ITQuahfQDHFbnSe+A==
-X-Google-Smtp-Source: AGHT+IEeXcgSMZejIaCJRLPq2x5vR0P7iAZihrqFzc//NjqYOvq4btaXpo77KUSX72yNiNFkRjmDTr0E4xzqSgpOy28=
-X-Received: by 2002:a25:b310:0:b0:dbd:986e:2e9f with SMTP id
- l16-20020a25b310000000b00dbd986e2e9fmr8149442ybj.91.1704197120329; Tue, 02
- Jan 2024 04:05:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704205652; x=1704810452;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NFaHotn2cJmn9bSUZqN8YKUiA/IurWzWG53AtgwJCMk=;
+        b=OFXEfzeZcDaIKqZntnCF+4CMxHav1rlQeVizXteHvMDBlcdQiAMSExN+IYQiStgpjp
+         ngCRX0BAy68d8H3VbC+Y1AWtENH/IEzbfzWBIgaZHu5eU016orb2TJv6ZyfyR1bP17xL
+         64sDiuL8z/0zpXUuexNtXUw9SWwsUioey0krHipqeN0goOtlA4YwU9Iqr40mU8A3Hfow
+         SGCzMPmznEa9bxH8UKyWldJKtLKyA9uwQZg6pxGvT4QRAViiLzCKMgDAxX+f7fWD4udH
+         ZarA4X3kvEhayF7W6PynSqUTBtuxF21C3pK++75VkonyQnBS34eVEwvbvDtenh3TAwHo
+         QKYA==
+X-Gm-Message-State: AOJu0Yxy28kAXoXBbEzxwBu41LCTRvJk0ehsm+0jm2JwaF0NY4OCDwy3
+	Za47zDMGhLu1718lUTebLMd41G9VTG6R+Q==
+X-Google-Smtp-Source: AGHT+IG0DqgpsdZCuWAexDRCxSamRyVlM3Yf8OX2pliD+8Tvo0ksw10OtMaBn7DKGWpFLCew9BRXRg==
+X-Received: by 2002:ac2:47e6:0:b0:50e:7702:a18d with SMTP id b6-20020ac247e6000000b0050e7702a18dmr4756560lfp.36.1704205652109;
+        Tue, 02 Jan 2024 06:27:32 -0800 (PST)
+Received: from [192.168.199.125] (178235179036.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.36])
+        by smtp.gmail.com with ESMTPSA id t15-20020a056402020f00b005534057c72dsm15858756edv.18.2024.01.02.06.27.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jan 2024 06:27:31 -0800 (PST)
+Message-ID: <90749db5-a803-4bf0-8543-f049249b1df0@linaro.org>
+Date: Tue, 2 Jan 2024 15:27:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231231-hfpll-yaml-v1-0-359d44a4e194@z3ntu.xyz> <20231231-hfpll-yaml-v1-1-359d44a4e194@z3ntu.xyz>
-In-Reply-To: <20231231-hfpll-yaml-v1-1-359d44a4e194@z3ntu.xyz>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 2 Jan 2024 14:05:09 +0200
-Message-ID: <CAA8EJpqF=3n8vUrEzrGGLc4JtQ-s4EcOOr_NKC0rknwE0tuShw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom,hfpll: Convert to YAML
-To: Luca Weiss <luca@z3ntu.xyz>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/12] clk: qcom: Use qcom_branch_set_clk_en()
+Content-Language: en-US
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20230717-topic-branch_aon_cleanup-v4-0-32c293ded915@linaro.org>
+ <20230717-topic-branch_aon_cleanup-v4-2-32c293ded915@linaro.org>
+ <ZZPnAvXB8oqds4KM@hovoldconsulting.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <ZZPnAvXB8oqds4KM@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 31 Dec 2023 at 16:49, Luca Weiss <luca@z3ntu.xyz> wrote:
->
-> Convert the .txt documentation to .yaml.
->
-> Take the liberty to change the compatibles for ipq8064, apq8064, msm8974
-> and msm8960 to follow the updated naming schema. These compatibles are
-> not used upstream yet.
->
-> Also add a compatible for QCS404 since that SoC upstream already uses
-> qcom,hfpll compatible but without an SoC-specific string.
->
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> ---
->  .../devicetree/bindings/clock/qcom,hfpll.txt       | 63 -----------------
->  .../devicetree/bindings/clock/qcom,hfpll.yaml      | 82 ++++++++++++++++++++++
->  2 files changed, 82 insertions(+), 63 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-> deleted file mode 100644
-> index 5769cbbe76be..000000000000
-> --- a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-> +++ /dev/null
-> @@ -1,63 +0,0 @@
-> -High-Frequency PLL (HFPLL)
-> -
-> -PROPERTIES
-> -
-> -- compatible:
-> -       Usage: required
-> -       Value type: <string>:
-> -               shall contain only one of the following. The generic
-> -               compatible "qcom,hfpll" should be also included.
-> -
-> -                        "qcom,hfpll-ipq8064", "qcom,hfpll"
-> -                        "qcom,hfpll-apq8064", "qcom,hfpll"
-> -                        "qcom,hfpll-msm8974", "qcom,hfpll"
-> -                        "qcom,hfpll-msm8960", "qcom,hfpll"
-> -                        "qcom,msm8976-hfpll-a53", "qcom,hfpll"
-> -                        "qcom,msm8976-hfpll-a72", "qcom,hfpll"
-> -                        "qcom,msm8976-hfpll-cci", "qcom,hfpll"
-> -
-> -- reg:
-> -       Usage: required
-> -       Value type: <prop-encoded-array>
-> -       Definition: address and size of HPLL registers. An optional second
-> -                   element specifies the address and size of the alias
-> -                   register region.
-> -
-> -- clocks:
-> -       Usage: required
-> -       Value type: <prop-encoded-array>
-> -       Definition: reference to the xo clock.
-> -
-> -- clock-names:
-> -       Usage: required
-> -       Value type: <stringlist>
-> -       Definition: must be "xo".
-> -
-> -- clock-output-names:
-> -       Usage: required
-> -       Value type: <string>
-> -       Definition: Name of the PLL. Typically hfpllX where X is a CPU number
-> -                   starting at 0. Otherwise hfpll_Y where Y is more specific
-> -                   such as "l2".
-> -
-> -Example:
-> -
-> -1) An HFPLL for the L2 cache.
-> -
-> -       clock-controller@f9016000 {
-> -               compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-> -               reg = <0xf9016000 0x30>;
-> -               clocks = <&xo_board>;
-> -               clock-names = "xo";
-> -               clock-output-names = "hfpll_l2";
-> -       };
-> -
-> -2) An HFPLL for CPU0. This HFPLL has the alias register region.
-> -
-> -       clock-controller@f908a000 {
-> -               compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-> -               reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
-> -               clocks = <&xo_board>;
-> -               clock-names = "xo";
-> -               clock-output-names = "hfpll0";
-> -       };
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.yaml b/Documentation/devicetree/bindings/clock/qcom,hfpll.yaml
-> new file mode 100644
-> index 000000000000..2cb4098012bc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.yaml
-> @@ -0,0 +1,82 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,hfpll.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm High-Frequency PLL
-> +
-> +maintainers:
-> +  - Bjorn Andersson <andersson@kernel.org>
-> +
-> +description:
-> +  The HFPLL is used as CPU PLL on various Qualcomm SoCs.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - qcom,apq8064-hfpll
-> +          - qcom,ipq8064-hfpll
-> +          - qcom,msm8960-hfpll
+On 2.01.2024 11:35, Johan Hovold wrote:
+> On Sat, Dec 30, 2023 at 02:04:04PM +0100, Konrad Dybcio wrote:
+>> Instead of magically poking at the bit0 of branch clocks' CBCR, use
+>> the newly introduced helper.
+>>
+>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
+> 
+>> diff --git a/drivers/clk/qcom/camcc-sc8280xp.c b/drivers/clk/qcom/camcc-sc8280xp.c
+>> index 3dcd79b01515..94db130b85e2 100644
+>> --- a/drivers/clk/qcom/camcc-sc8280xp.c
+>> +++ b/drivers/clk/qcom/camcc-sc8280xp.c
+>> @@ -3010,10 +3010,8 @@ static int camcc_sc8280xp_probe(struct platform_device *pdev)
+>>  	clk_lucid_pll_configure(&camcc_pll6, regmap, &camcc_pll6_config);
+>>  	clk_lucid_pll_configure(&camcc_pll7, regmap, &camcc_pll7_config);
+>>  
+>> -	/*
+>> -	 * Keep camcc_gdsc_clk always enabled:
+>> -	 */
+>> -	regmap_update_bits(regmap, 0xc1e4, BIT(0), 1);
+>> +	/* Keep the critical clocks always-on */
+>> +	qcom_branch_set_clk_en(regmap, 0xc1e4); /* CAMCC_GDSC_CLK */
+> 
+> I still think something along the lines of
+> 
+> 	/* Keep some clocks always on */
+> 
+> is preferred as it is far from obvious why a camera clock would be
+> considered "critical".
+> 
+> Or perhaps you can come up with a better description of why we've
+> decided not to model these clocks and just leave them ungated.
+Technically they're not really super critical if the hardware is
+not in use.. It's just that at one point Qualcomm decided to take
+the lazy decision to keep them always-on downstream and we seem to
+have agreed on going with that, instead of pm_clk (remember my old
+attempt at getting rid of this on dispcc-sc8280xp?)..
 
-I think we should drop these entries. On msm8960 / apq8064 / ipq8064
-the HFPLLs are a part of GCC, so there is no need for a separate
-compat entry.
+For now, I was just trying to clean this up a bit before looking
+into a better solution for this (probably a whole lot of pm_clks
+with some clever handle-getting due to different ways of grabbing
+clock sources.. by-name vs by-index vs global lookup that we've
+accumulated over the years).
 
-> +          - qcom,msm8974-hfpll
+Some clock drivers do expose clocks that are related to the CPU
+subsystem access and keep them always-on for obvious reasons,
+but on newer socs they're not even controlled from Linux, so
+perhaps we can just unregister these (read: delete from the driver)
 
-This one is good, the HFPLL is separate, next to the acc / saw
-
-> +          - qcom,msm8976-hfpll-a53
-> +          - qcom,msm8976-hfpll-a72
-> +          - qcom,msm8976-hfpll-cci
-
-Ok.
-
-> +          - qcom,qcs404-hfpll
-> +      - const: qcom,hfpll
-> +
-> +  reg:
-> +    items:
-> +      - description: Base address and size of the register region
-> +      - description: Optional base address and size of the alias register region
-> +    minItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 0
-> +
-> +  clocks:
-> +    items:
-> +      - description: board XO clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: xo
-> +
-> +  clock-output-names:
-> +    description:
-> +      Name of the PLL. Typically hfpllX where X is a CPU number starting at 0.
-> +      Otherwise hfpll_Y where Y is more specific such as "l2".
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
-> +  - clocks
-> +  - clock-names
-> +  - clock-output-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # Example 1 - HFPLL for L2 cache
-> +  - |
-> +    clock-controller@f9016000 {
-> +        compatible = "qcom,ipq8064-hfpll", "qcom,hfpll";
-> +        reg = <0xf9016000 0x30>;
-> +        clocks = <&xo_board>;
-> +        clock-names = "xo";
-> +        clock-output-names = "hfpll_l2";
-> +        #clock-cells = <0>;
-> +    };
-> +  # Example 2 - HFPLL for CPU0
-> +  - |
-> +    clock-controller@f908a000 {
-> +        compatible = "qcom,ipq8064-hfpll", "qcom,hfpll";
-> +        reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
-> +        clocks = <&xo_board>;
-> +        clock-names = "xo";
-> +        clock-output-names = "hfpll0";
-> +        #clock-cells = <0>;
-> +    };
->
-> --
-> 2.43.0
->
->
-
-
--- 
-With best wishes
-Dmitry
+Konrad
