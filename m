@@ -1,25 +1,23 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628F817722;
-	Tue,  2 Jan 2024 22:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0FC1773F;
+	Tue,  2 Jan 2024 23:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLiwZxOi"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C8C54C433CA;
-	Tue,  2 Jan 2024 22:40:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYvx8/RO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF96C433C7;
+	Tue,  2 Jan 2024 23:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704235224;
-	bh=TYmyaLmtrD1cirMWGNO8g+3fto9TzrYtNubox6icnAI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=XLiwZxOiZosnthuFXBIG2y1aPYcvYRawalg/x73AEZfoq4ssPQrndx2gOtCp/xbyr
-	 hSFTA31e7JoPYAwFNphYdBQwytVxpOniQ3PfgvmqNqe1sFDl9Fmsdabnol5El0YxD3
-	 gHcLYc6aCl4bFT/3nowuIpeOmkRGKmBicUs3o0/bvVOmel5EfY8PI/Jnxro4qPU+3c
-	 t5Q5fy8klQJ0Bxqn3cHeDgVgF3aK71SMEHE2gHEvbUNSmswfdbDGEqVP8yoK/TQ1vf
-	 VWbwXcBje+zH/vCwGxJIhkQlGQ+zgzMnt0XNi4b+ssEUj9FwY/Y73Uqcmg94+BUECI
-	 2GUBqYOxksxRg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AE547C395C5;
-	Tue,  2 Jan 2024 22:40:24 +0000 (UTC)
+	s=k20201202; t=1704238242;
+	bh=yHQMbbCMfdmOdZwNywEUJRpRywJN3uD2vdfBpqT2ICg=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=GYvx8/ROn6w5OELZ8KQvSXmbPdfWDi7o9pbMoK+e1/1I19a7ScOxChOlkfS/skaAZ
+	 vzUn0g1kX2M2LVCwOQ/0JxsaMXaQ2WrcvUOvI/tDbiTRV/nubAMNTYd2LOvFg1pVUC
+	 zCK3xGqf2E7D6o/6jYQeBEvSs7HXflCTmAzV4DufTNlUm57919u/qT9XW6wV8FvkqW
+	 ZgC3wAnmCwX24afglblmdbgwgzQD8JQCjM3GRxT2lEXZiLJ3lfMWbtJvleWSUoifSs
+	 3Uqi0GIWm5pVJTdtFtphCG3GezxxCTGYIPIaRTT0yN1stCYFUHvnLkKYABFYu7kqVh
+	 gQmXNDt0uuN6g==
+Message-ID: <44ef74fb81ec3a16cec2b1197eb826f4.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -27,68 +25,33 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 00/11] renesas: rzg3s: Add support for Ethernet
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <170423522471.27299.969624057457704166.git-patchwork-notify@kernel.org>
-Date: Tue, 02 Jan 2024 22:40:24 +0000
-References: <20231207070700.4156557-1-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20231207070700.4156557-1-claudiu.beznea.uj@bp.renesas.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, linus.walleij@linaro.org,
- prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com,
- linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- claudiu.beznea.uj@bp.renesas.com
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231231041115.3263074-1-andersson@kernel.org>
+References: <20231231041115.3263074-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock updates for v6.8
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andy Gross <agross@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, Vincent Knecht <vincent.knecht@mailoo.org>, Dan Carpenter <dan.carpenter@linaro.org>, Robert Marko <robimarko@gmail.com>, Taniya Das <quic_tdas@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date: Tue, 02 Jan 2024 15:30:40 -0800
+User-Agent: alot/0.10
 
-Hello:
+Quoting Bjorn Andersson (2023-12-30 20:11:14)
+>=20
+> The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa=
+86:
+>=20
+>   Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-for-6.8
+>=20
+> for you to fetch changes up to 757d1ca14f94e4e00777491dcab0b4abee18f9bf:
+>=20
+>   clk: qcom: dispcc-sm8650: Add test_ctl parameters to PLL config (2023-1=
+2-19 14:12:41 -0600)
+>=20
+> ----------------------------------------------------------------
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu,  7 Dec 2023 09:06:49 +0200 you wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Hi,
-> 
-> Series adds Ethernet support for Renesas RZ/G3S.
-> Along with it preparatory cleanups and fixes were included.
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2,01/11] clk: renesas: rzg2l-cpg: Check reset monitor registers
-    (no matching commit)
-  - [v2,02/11] clk: renesas: r9a08g045-cpg: Add clock and reset support for ETH0 and ETH1
-    (no matching commit)
-  - [v2,03/11] pinctrl: renesas: rzg2l: Move arg and index in the main function block
-    (no matching commit)
-  - [v2,04/11] pinctrl: renesas: rzg2l: Add pin configuration support for pinmux groups
-    (no matching commit)
-  - [v2,05/11] pinctrl: renesas: rzg2l: Add support to select power source for Ethernet pins
-    (no matching commit)
-  - [v2,06/11] pinctrl: renesas: rzg2l: Add output enable support
-    (no matching commit)
-  - [v2,07/11] pinctrl: renesas: rzg2l: Add input enable to the Ethernet pins
-    (no matching commit)
-  - [v2,08/11] dt-bindings: net: renesas,etheravb: Document RZ/G3S support
-    https://git.kernel.org/netdev/net-next/c/060baa9b90d4
-  - [v2,09/11] arm64: renesas: r9a08g045: Add the Ethernet nodes
-    (no matching commit)
-  - [v2,10/11] arm64: renesas: rzg3s-smarc-som: Use switches' names to select on-board functionalities
-    (no matching commit)
-  - [v2,11/11] arm64: dts: renesas: rzg3s-smarc-som: Enable the Ethernet interfaces
-    (no matching commit)
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks. Pulled into clk-next
