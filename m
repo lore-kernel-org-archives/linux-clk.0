@@ -1,23 +1,23 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F178179A8
-	for <linux-clk@vger.kernel.org>; Tue,  2 Jan 2024 23:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A1C17981;
+	Tue,  2 Jan 2024 23:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3ZE47Lj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03D17C433CA;
-	Tue,  2 Jan 2024 23:34:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t19M/dx2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB434C433C8;
+	Tue,  2 Jan 2024 23:42:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704238450;
-	bh=WdepfEda+YXgv03KGYsOVF0L11R3Jotno5U9Y+c+TAw=;
+	s=k20201202; t=1704238967;
+	bh=YfSWBKVajWDhWg1Sr7vlQP066tr0a5p80GHvnjAdI9s=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=h3ZE47LjM5boSq4RLVHmKErAtycl4JyTdvNrZ3PxDxYKvwG4TPvt4O4aNmSw5TLgC
-	 AcSP/MYVa6BITFIehFgFK0hSo3RyInNOWVG67+DfMDaJcW0xlITSwcoPnszCdppSBS
-	 YFWIPEsCPiepqqFN2OoFDAO1zmBCdz45egLiFwrN3KE3xqlZfpJD/XyVzmrD6K1wSS
-	 C3jeTXS25kPl9t6q2AM2mQGgcg98FVguHpelPMH0rh+s75IU8wW1I/3KVO/65p+KgN
-	 0trbD8rDBghJfn7RGkPJLcoGQIzOHBBZ6mPZP16fFM+t/93VVjCu/21xNzpkw+Mr8a
-	 WCB137KrVv5GA==
-Message-ID: <6276336e185b0c347a17722b9582edbd.sboyd@kernel.org>
+	b=t19M/dx2bZFP0Gz1V9oTm8f434RnWH6i4JxgQvHlZ6snSX06ZfxN1LrLgr6xTZFn2
+	 IM4REYp/g7Rs8qmTRshvRLkkcklTVBNjjahvR44eIireFqUSvx5+i1UjNXu6Gm0h3M
+	 9qBgMC1Pv981+/tA45ssTJCypQj/B1HgLSgGNnT9AAAfPRRtgHAUHRpfiMIYqjSfd1
+	 OvgnzLvYqeWUUVWGANka1d0uxst0xBJ4A427xy8fEbvwMWTtQlwzRMuDZsrev7CoOn
+	 AA/r1MWTTEDRINB+kHDIHc3ZhNqNC3RRswROAHMQKm8VlwbpENf4N2RI2+do/rTexM
+	 Ik3/BuCnKuXLw==
+Message-ID: <fa32e6fae168e10d42051b89197855e9.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -26,38 +26,44 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1jzfy28qdf.fsf@starbuckisacylon.baylibre.com>
-References: <1jzfy28qdf.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [GIT PULL] clk: meson: amlogic clock updates for v6.8
+In-Reply-To: <CXUTPV1ZOSID.323RSEP4BL2AT@bootlin.com>
+References: <20231218-mbly-clk-v1-0-44ce54108f06@bootlin.com> <20231218-mbly-clk-v1-3-44ce54108f06@bootlin.com> <a8f740c7a8c1222d4a42bad588c75e87.sboyd@kernel.org> <CXUTPV1ZOSID.323RSEP4BL2AT@bootlin.com>
+Subject: Re: [PATCH 3/5] clk: eyeq5: add controller
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-To: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 02 Jan 2024 15:34:07 -0800
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+To: Conor Dooley <conor+dt@kernel.org>, Gregory CLEMENT <gregory.clement@bootlin.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+Date: Tue, 02 Jan 2024 15:42:45 -0800
 User-Agent: alot/0.10
 
-Quoting Jerome Brunet (2023-12-22 02:41:11)
+Quoting Th=C3=A9o Lebrun (2023-12-22 03:25:12)
+> On Wed Dec 20, 2023 at 12:09 AM CET, Stephen Boyd wrote:
+> > Quoting Th=C3=A9o Lebrun (2023-12-18 09:14:18)
 >=20
-> Hi Stephen,
+> > > +       of_clk_add_hw_provider(np, of_clk_hw_onecell_get, data);
+> > > +}
+> > > +
+> > > +CLK_OF_DECLARE_DRIVER(eq5c, "mobileye,eyeq5-clk", eq5c_init);
+> >
+> > Please use a platform driver.
 >=20
-> Here are the amlogic clock updates for v6.8.
-> It adds few new clocks on the g12 SoC family, for DSI, CSI and the ISP.
+> I've been trying to do that but I had a stall at boot. I initially
+> associated it with the UART driver acquiring a clock too early but
+> instead it is the CPU timer clocksource driver that consumes one of our
+> clock way earlier than any platform driver initialisation.
 >=20
-> Cheers
-> Jerome
+> The clocksource driver we are talking about is this one for reference:
+> https://elixir.bootlin.com/linux/v6.6.8/source/drivers/clocksource/mips-g=
+ic-timer.c
 >=20
-> The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa=
-86:
+> Its usage of TIMER_OF_DECLARE means it gets probed by timer_probe ->
+> plat_time_init -> time_init -> start_kernel. This is way before any
+> initcalls. Our prior use of CLK_OF_DECLARE_DRIVER meant that we got
+> probed by of_clk_init -> plat_time_init.
 >=20
->   Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
+> I'm guessing we are not the first one in this situation; any advice on
+> how to deal with it?
 >=20
-> are available in the Git repository at:
->=20
->   https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.8-1
->=20
-> for you to fetch changes up to 5205628ab0bfe64952974d476ee001f6c7e0ef7f:
->=20
->   clk: meson: g12a: add CSI & ISP gates clocks (2023-11-24 18:08:48 +0100)
->=20
-> ----------------------------------------------------------------
 
-Thanks. Pulled into clk-next
+You guessed correctly. In that case, use CLK_OF_DECLARE_DRIVER() and
+register the clk(s) needed for the timer in that function. Other clks
+shall be registered with a platform driver.
