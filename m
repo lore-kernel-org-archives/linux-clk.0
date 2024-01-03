@@ -1,160 +1,158 @@
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2075.outbound.protection.outlook.com [40.107.237.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FD2182A1;
-	Wed,  3 Jan 2024 07:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119E71803F
+	for <linux-clk@vger.kernel.org>; Wed,  3 Jan 2024 07:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dKqESCQl"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PIgo7bXsiaKAZEk0ltJJleeEuL99qKKejH1/J7yeGqdtDbcImjU2Ks6SMtVRHKDCsIZOtFUR2bT1tK0NlOWBm7sC6sJeg0Fa9N8kea3okSeXsU51VeJWuss3j7QXhE5velUhzFp4oePporgPH3YjuJ3SAlhZsqxtPDl3wMp+UbF+Fjxowexrc1891yEnh2o3BSUwBgCWWPcpcL04EHLyLLopkLSHJRdWVVKc+C2Edr2U02l+/XN+yz/j2WdyikIeid6AV+WmQt19nNbymnHLhNiPIEJM1DGdZWu+DM2NLPmuIiC9SfAfoeTUJH/n+F9tl5SSGWaPPmjw2SV9QwqgKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VElIniLMDSesrJPxroM2HJ5S4bT9DgNdb8TJqF4hkWs=;
- b=E7nLF898mFGpqXmSF5xLBla20Uh0ouhQjVNYOBDG4hs8YxovrdHCBZQVqu7OA/Snq+o7jy5AtVM/eoYIOZENUex3+Yg8wiZ8AsUOQKte+M9akPbfNGhuFv2m+wHihTf/5bTcsxRUcn/LIDf9zxiO1TbvCnH9TA602jFNGCcVRLmnP8+pyYpkyUVBZtRWEwwOmE6avHBq8HhcWNyOLnCf2Q+GcP+jPfJKY3Z5Lxe5xZjUWb5CugF6h53ZuoMA2nH7MNZoBOhlWD4zxP6kkDEXUvqytfN57fJXlLu1WiqkTET/Xn6OtyL1rtAC1bJys35IczWSHbhmXgqQEZ8pnRm81g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=baylibre.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VElIniLMDSesrJPxroM2HJ5S4bT9DgNdb8TJqF4hkWs=;
- b=dKqESCQllEeJeFapCqXdSjebRqBlxMb5Cz8Vq/EyyCQJMIuPpgCRPq/0cMpaYbvcjTkdlBL/2DwYrwkBV//WluF64ravvD+OWYgKMJLaoWK+M+Ul+xaeaAiAqGxSkOTjk/1RK79QPV40fUyofVoCzYLfDlDj3tXaoHg9IZKHBP0=
-Received: from DM6PR12CA0032.namprd12.prod.outlook.com (2603:10b6:5:1c0::45)
- by PH7PR12MB8016.namprd12.prod.outlook.com (2603:10b6:510:26b::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7135.25; Wed, 3 Jan
- 2024 07:20:46 +0000
-Received: from DS2PEPF00003439.namprd02.prod.outlook.com
- (2603:10b6:5:1c0:cafe::d) by DM6PR12CA0032.outlook.office365.com
- (2603:10b6:5:1c0::45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7135.21 via Frontend
- Transport; Wed, 3 Jan 2024 07:20:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS2PEPF00003439.mail.protection.outlook.com (10.167.18.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7159.9 via Frontend Transport; Wed, 3 Jan 2024 07:20:45 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Wed, 3 Jan
- 2024 01:20:38 -0600
-Received: from xsjwillw50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.34 via Frontend
- Transport; Wed, 3 Jan 2024 01:20:38 -0600
-From: Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <michal.simek@amd.com>,
-	<abel.vesa@linaro.org>, <robh@kernel.org>, <krzysztof.kozlowski@linaro.org>,
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Naman Trivedi Manojbhai
-	<naman.trivedimanojbhai@amd.com>
-Subject: [PATCH] drivers: clk: zynqmp: remove clock name dependency
-Date: Tue, 2 Jan 2024 23:20:17 -0800
-Message-ID: <20240103072017.1646007-1-naman.trivedimanojbhai@amd.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NznUv0QM"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ccc6e509c8so1757061fa.0
+        for <linux-clk@vger.kernel.org>; Tue, 02 Jan 2024 23:45:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1704267928; x=1704872728; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qp6FcFL6ukPLR5E+VXKBAlytc1GJbe7ZjRNXKkg7yJE=;
+        b=NznUv0QM2orzzFlteTkyn1/7uH1FabGzGJRHX3M9+oy/9chgciVnqFK+Heesb0SqIw
+         ssJu0+1P9t/cVtESScNy04KtpW9rfYKAvX4jpfO2wGqmW0e8iMTOSPsmJ6+Jh7q4dSpP
+         J9WsmGB76fnhxE3qQjfeyqhmoHRmyk3Ysh/FM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704267928; x=1704872728;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qp6FcFL6ukPLR5E+VXKBAlytc1GJbe7ZjRNXKkg7yJE=;
+        b=v2ybgqXq0yotThiqp7IostkJHeGDouFXkuGTS+CqbO27WvSUvTm0fa/jJfxngmhDPq
+         eYsvmOdkgebVd/SXdMCG3ELnf9sFVtKz0uRoILfc6t5UtdcDzsGIpBkdU1v632C8jhVu
+         NX/L1xZ3O4mqqEtYxFyG+UTSNfXq4Me+0CfZKog6Ij9BIG2CxIAHqc8XwtZV5FcNalIV
+         9eJzLFS0Ru1U8brmSDJmeMcX1gOuHAIHFnfEDKlArRKiJ+xK5u4LDSuxVgXjf5hkyFS7
+         mTlOj+Uro8Z1vdXwHVmYDtOw3hypNQnh024kOMcTFFJT+LvGr4ih6f8NjWmuAZuedhXu
+         HL7A==
+X-Gm-Message-State: AOJu0Yzoi1JNgRmZvZ9InFGBpUDxQuOIurPVqc/l6ENyiRAi1PZAHn89
+	JORvRsgYOapRjGcNdHlfrmiIEXz4dtaZI+GMXf3KxU5yqA9m
+X-Google-Smtp-Source: AGHT+IFyXu8My+izeEzyJdZ8sEntbdgwFjGfLGe2KKcFBr1ZqJrFAIQn6XWRmJwJINhZghJGH2+U4BezZsczM7OOQkw=
+X-Received: by 2002:a2e:a487:0:b0:2cd:19ba:36f0 with SMTP id
+ h7-20020a2ea487000000b002cd19ba36f0mr130664lji.17.1704267928052; Tue, 02 Jan
+ 2024 23:45:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003439:EE_|PH7PR12MB8016:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53a77fd1-68a7-4c96-e8ee-08dc0c2c80d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	iwT4CDlTZxLpVNzMd7u4wG47sayhdp20uZ13WISSM6JiZ7EbkhPraRumnhtqOI4DDFLrvhBMVcQJkziPlpDh3xoTlw814HnOCMJ8ee21XVgkQRsQcFsDthJJho+o8uF1o2JdN0HY04Y8tiOjHyhuvnHtCUC2IwlmiUfBwfx/ydghq60lyrehDhZ+M6OF3AncXrbPsuSz2SH/JboQJwIotHcskdon9SG7FztDih3KK/fC3SA5JTHEg8cSvKryvz5mynLmbLlsc7+CLooOeF5plP4tkTfR6C9EQ5E4KZJQd5Wnsgz3BCRvg6Z8PDwnE6f8qy4Jkh/8bPxDX+r3vkEy5GHzZ21U65ZvwoDPf9dQrXliDeihDue5Xp/v/sRc2XgPx80zw0jWod0y8A3zVJ+8osivQlFUkmYBp9L6ox4li62XjO1ZH/LFDeV9gl9c8uL/xyrtVhr4l0SlzsA9S1iShN1ysdG+pu+8jsDBjQnPolqE1lWoMqrt4CcYowEpwVX7f2DvMWO5XD0tTNBX8Ba9t8y9DXUCow4GySHnF3Xvpz4xF4AuNS0zFO0yK4uv8RCYIDxR1BmMGVqkPIOy3OW27A0z3eMsatI7FLGvE+M+DLRpDJUkvsD1tSXxswQUgiZj1mrjKeLBxBs/DBPHV217P8UymMmxw2IwNZSOfR17qQE9dHNwIiW+SJqGh/26oqP7K6lyNXPS6Z25w2ecjmZ+84+5ia7ZtGKroy2FhJcDoDpWEkkjwAaYhmJlLtGPWzJLGxd2f8TmoSaml+zhi5djZCEzm/YioYbKRlEVkNiN8cqRRoLGf/1OIlKYSAVryG6/
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(376002)(346002)(396003)(136003)(230273577357003)(230173577357003)(230922051799003)(186009)(64100799003)(1800799012)(451199024)(82310400011)(46966006)(36840700001)(40470700004)(40480700001)(40460700003)(6666004)(36860700001)(82740400003)(36756003)(81166007)(86362001)(356005)(478600001)(5660300002)(2906002)(26005)(2616005)(426003)(336012)(1076003)(47076005)(54906003)(70586007)(316002)(70206006)(8936002)(4326008)(110136005)(8676002)(41300700001)(83380400001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jan 2024 07:20:45.8648
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53a77fd1-68a7-4c96-e8ee-08dc0c2c80d6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003439.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8016
+References: <20240102081402.1226795-1-treapking@chromium.org>
+In-Reply-To: <20240102081402.1226795-1-treapking@chromium.org>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 3 Jan 2024 15:45:17 +0800
+Message-ID: <CAGXv+5F1AjQYf0qVd5PwZobkvHLCczX_KcGEebNP5JvJCHb9rw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: mediatek: Introduce need_pm_runtime to mtk_clk_desc
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>, 
+	linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, from zynqmp_get_parent_list() function the clock driver
-references the clock by name instead of its reference from device tree.
-This causes problem when the clock name in the device tree is changed.
+On Tue, Jan 2, 2024 at 4:14=E2=80=AFPM Pin-yen Lin <treapking@chromium.org>=
+ wrote:
+>
+> Introduce a new need_pm_runtime variable to mtk_clk_desc to indicate
+> this clock needs a runtime PM get on the clock controller during the
+> probing stage.
 
-Remove hard dependency of clock name and update the logic to use clock
-reference from device tree instead of clock name.
+No. The flag indicates that the clock controller needs runtime PM
+for its operation, likely because it needs some power domain enabled.
 
-Signed-off-by: Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
----
- drivers/clk/zynqmp/clkc.c | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+The runtime PM get during the probe phase is a workaround to prevent
+a deadlock in clk_register.
 
-diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-index a91d98e238c2..87915de083d9 100644
---- a/drivers/clk/zynqmp/clkc.c
-+++ b/drivers/clk/zynqmp/clkc.c
-@@ -549,18 +549,46 @@ static int zynqmp_get_parent_list(struct device_node *np, u32 clk_id,
- 	u32 total_parents = clock[clk_id].num_parents;
- 	struct clock_topology *clk_nodes;
- 	struct clock_parent *parents;
-+	struct clk *clk_parent;
-+	char *clk_name;
- 
- 	clk_nodes = clock[clk_id].node;
- 	parents = clock[clk_id].parent;
- 
- 	for (i = 0; i < total_parents; i++) {
- 		if (!parents[i].flag) {
-+			ret = of_property_match_string(np, "clock-names",
-+						       parents[i].name);
-+			if (ret >= 0) {
-+				clk_parent = of_clk_get(np, ret);
-+				if (clk_parent) {
-+					clk_name = __clk_get_name(clk_parent);
-+					if (clk_name)
-+						strcpy(parents[i].name, clk_name);
-+					else
-+						return 1;
-+				} else {
-+					return 1;
-+				}
-+			}
- 			parent_list[i] = parents[i].name;
- 		} else if (parents[i].flag == PARENT_CLK_EXTERNAL) {
- 			ret = of_property_match_string(np, "clock-names",
- 						       parents[i].name);
--			if (ret < 0)
-+			if (ret < 0) {
- 				strcpy(parents[i].name, "dummy_name");
-+			} else {
-+				clk_parent = of_clk_get(np, ret);
-+				if (clk_parent) {
-+					clk_name = __clk_get_name(clk_parent);
-+					if (clk_name)
-+						strcpy(parents[i].name, clk_name);
-+					else
-+						return 1;
-+				} else {
-+					return 1;
-+				}
-+			}
- 			parent_list[i] = parents[i].name;
- 		} else {
- 			strcat(parents[i].name,
--- 
-2.25.1
+These are two separate things. The second part also should be documented
+in the code with a comment, i.e. a comment should be placed before
+pm_runtime_resume_and_get().
 
+ChenYu
+
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> ---
+>
+> Changes in v2:
+> - Fix the order of error handling
+> - Update the commit message and add a comment before the runtime PM call
+>
+>  drivers/clk/mediatek/clk-mtk.c | 15 +++++++++++++++
+>  drivers/clk/mediatek/clk-mtk.h |  2 ++
+>  2 files changed, 17 insertions(+)
+>
+> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mt=
+k.c
+> index 2e55368dc4d8..c31e535909c8 100644
+> --- a/drivers/clk/mediatek/clk-mtk.c
+> +++ b/drivers/clk/mediatek/clk-mtk.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/slab.h>
+>
+>  #include "clk-mtk.h"
+> @@ -494,6 +495,14 @@ static int __mtk_clk_simple_probe(struct platform_de=
+vice *pdev,
+>                         return IS_ERR(base) ? PTR_ERR(base) : -ENOMEM;
+>         }
+>
+> +
+> +       if (mcd->need_runtime_pm) {
+> +               devm_pm_runtime_enable(&pdev->dev);
+> +               r =3D pm_runtime_resume_and_get(&pdev->dev);
+> +               if (r)
+> +                       return r;
+> +       }
+> +
+>         /* Calculate how many clk_hw_onecell_data entries to allocate */
+>         num_clks =3D mcd->num_clks + mcd->num_composite_clks;
+>         num_clks +=3D mcd->num_fixed_clks + mcd->num_factor_clks;
+> @@ -574,6 +583,9 @@ static int __mtk_clk_simple_probe(struct platform_dev=
+ice *pdev,
+>                         goto unregister_clks;
+>         }
+>
+> +       if (mcd->need_runtime_pm)
+> +               pm_runtime_put(&pdev->dev);
+> +
+>         return r;
+>
+>  unregister_clks:
+> @@ -604,6 +616,9 @@ static int __mtk_clk_simple_probe(struct platform_dev=
+ice *pdev,
+>  free_base:
+>         if (mcd->shared_io && base)
+>                 iounmap(base);
+> +
+> +       if (mcd->need_runtime_pm)
+> +               pm_runtime_put(&pdev->dev);
+>         return r;
+>  }
+>
+> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mt=
+k.h
+> index 22096501a60a..c17fe1c2d732 100644
+> --- a/drivers/clk/mediatek/clk-mtk.h
+> +++ b/drivers/clk/mediatek/clk-mtk.h
+> @@ -237,6 +237,8 @@ struct mtk_clk_desc {
+>
+>         int (*clk_notifier_func)(struct device *dev, struct clk *clk);
+>         unsigned int mfg_clk_idx;
+> +
+> +       bool need_runtime_pm;
+>  };
+>
+>  int mtk_clk_pdev_probe(struct platform_device *pdev);
+> --
+> 2.43.0.472.g3155946c3a-goog
+>
