@@ -1,50 +1,50 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9F21CA98
-	for <linux-clk@vger.kernel.org>; Wed,  3 Jan 2024 13:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779DA1C69F
+	for <linux-clk@vger.kernel.org>; Wed,  3 Jan 2024 13:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TFm3rVEH"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-55559e26ccfso6459521a12.3
-        for <linux-clk@vger.kernel.org>; Wed, 03 Jan 2024 05:37:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h1ixBfMk"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5569472f775so1856167a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jan 2024 05:37:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704289036; x=1704893836; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704289038; x=1704893838; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Tm7vsf6UZKbMh6cnZmrwv/W/K4dUYmjWU07UgTkkSLk=;
-        b=TFm3rVEH6elCQhdWkUehstSb2c9bZlUrnsJ4Ocg7W+o1QhpGL20qkAqAQV584dpwoB
-         WA7RobEUGATsd3LP8cJoYk2+Gt6YvnCOO8R3NrdyJMaLcXQGw7bX7txAioKcJJ8YJGNM
-         ClzlpJPSpRf/ZGae+m2dd7wxnJanOYhpAULRB8Nud/jCICV26Alkvxk8HKRr0ZfyaSHS
-         39ynjfEPe/N8BMjxQ+hs0Rsy+O4G+158sjMlDSeBgvPNtmuxVH2Y4EMufmR7k2PBcodQ
-         xtdNo6AvqDW2IRWpj8EAXH3RW8uo1jYGf2Za3Z+h+66P2YC6VL8puTVnKrXZP+pBKX3z
-         CMVg==
+        bh=RUTCpmfzsSKDHjYlRAYYiQ/aykX/VSlVLVDx9q/aHss=;
+        b=h1ixBfMknoaC4l+AUBd8AJxLIjHhdyqHNtr3TRY2V1hHkTm9QeSDGOvrG1GzBlZq+Q
+         NVCTPRvFcjckYbw7Y6qRd5AoJ4ONtTKVESzq/rubsJ+DENS23TMIeAr1KGrbpqCe3Yw0
+         v3sW3Z/obnwJ2/V+id+HCUx1KE9Z08MaYUzqTfLd6zhT5GjX7m4NQfn3DE/ZOzhK35ei
+         smQdQui0GNmWoXV4sodszlxVuV4gNDVT4wV6TVGPOaABi2MEYB7P68xFTYdd7u/U8NRv
+         l4VngCj4nKauf9etSdvfoWYSBL6LGYEU1bF43kR/SmQ31yXvIM0q+5JAyUJ0BfVJsHvb
+         eQFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704289036; x=1704893836;
+        d=1e100.net; s=20230601; t=1704289038; x=1704893838;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tm7vsf6UZKbMh6cnZmrwv/W/K4dUYmjWU07UgTkkSLk=;
-        b=jNEkggmrE6eI6pCw1hroDazAN3izaNczORoMl8q5u0R6ckiciK8CCYrngZ/hzZnFhD
-         B3nR+IjzpNdmxRUhlL9O6u8tvWgJWtOwJNnCY1luHJUvSB4L+kyNBx5JCnHjQCj2WsMT
-         okdFwxbORtlq+lWi1XRs8VFXrHgB7cNUkxEcyhnJF9wF1+JZuxt17ruwyAGVkxWGh/bk
-         cPRXFQW3nvQZQBbl868CKp9hLO67gcKvGsce92UKHRN46+UFc19IktFh21i9hdETzmzM
-         DTvu8z9ImMozQSWSwmcf5ANrGiZAWKt0eoqZ2CtmtJ5zlvvxT0bqjco+64C3YXFYkg11
-         EurA==
-X-Gm-Message-State: AOJu0Yy6pGKJQ7MsvE1x8bcm+kDnqicU/kMm3rG+YchZC+8SeKeR9BHK
-	KSwmDj/n4gdfEa9tM38BNaJl9ikCCDgurQ==
-X-Google-Smtp-Source: AGHT+IGvVYI4IeESAJWHTgmEd9qDmMC6i5QwnW7ftiUW6nuXzWeikhEhvNDPxQxxzuG4vsPRteLNPw==
-X-Received: by 2002:a17:906:bc58:b0:a28:a552:92e2 with SMTP id s24-20020a170906bc5800b00a28a55292e2mr240000ejv.43.1704289036270;
-        Wed, 03 Jan 2024 05:37:16 -0800 (PST)
+        bh=RUTCpmfzsSKDHjYlRAYYiQ/aykX/VSlVLVDx9q/aHss=;
+        b=uP//lUyjq9+NUOlu9eeBeWviSbFcf8oqmbbpU3QrnZodaXJsaYPJXLlTAupgfWu44p
+         pdZQe540Xux+yYOGj+flOMaOLkp1FhbW264K+7N24rizVVDsyNSaigF03FyGdRFM4337
+         1bzNBvVG+y4iGEeQaMt03kqL3ECNnF4YFUO+NVixjcrLTOt01MeNtZDAPID7MAOi2V5q
+         t8//sLw3s+TvD6beVs3Se5/OyFTIRFzpVYGno28teI03Q43t+0BiA3RgWREcKCeemkpI
+         dM/69rEj5AbGptJ+pI7MzmiX2Kw1EmywZsP8FvkEJozamb4YT9xn49uvdEufNWgRAXWl
+         u1Zw==
+X-Gm-Message-State: AOJu0YwSRvb5oVDJRC7y1wm5C4hScwB2gkfqr8HljRaXIN+8PcZ5V6iB
+	FAEcCcpO5JpJOjF704BzHvsObuTDuGAd4Q==
+X-Google-Smtp-Source: AGHT+IGb2r7J18V8yKKCdqerodJ+VgX/4qpTBHIyyTYZHgIVHNAnqdK32Kg08Qc9J+Leig1llChqKA==
+X-Received: by 2002:a17:906:1cca:b0:a26:9776:5ed8 with SMTP id i10-20020a1709061cca00b00a2697765ed8mr8882690ejh.91.1704289037859;
+        Wed, 03 Jan 2024 05:37:17 -0800 (PST)
 Received: from [10.167.154.1] (178235179036.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.36])
-        by smtp.gmail.com with ESMTPSA id cl2-20020a170906c4c200b00a275637e699sm6474351ejb.166.2024.01.03.05.37.14
+        by smtp.gmail.com with ESMTPSA id cl2-20020a170906c4c200b00a275637e699sm6474351ejb.166.2024.01.03.05.37.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jan 2024 05:37:16 -0800 (PST)
+        Wed, 03 Jan 2024 05:37:17 -0800 (PST)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Wed, 03 Jan 2024 14:36:09 +0100
-Subject: [PATCH v5 11/12] arm64: dts: qcom: sm6115: Add VDD_CX to GCC
+Date: Wed, 03 Jan 2024 14:36:10 +0100
+Subject: [PATCH v5 12/12] arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230717-topic-branch_aon_cleanup-v5-11-99942e6bf1ba@linaro.org>
+Message-Id: <20230717-topic-branch_aon_cleanup-v5-12-99942e6bf1ba@linaro.org>
 References: <20230717-topic-branch_aon_cleanup-v5-0-99942e6bf1ba@linaro.org>
 In-Reply-To: <20230717-topic-branch_aon_cleanup-v5-0-99942e6bf1ba@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>, 
@@ -66,30 +66,33 @@ Cc: Marijn Suijten <marijn.suijten@somainline.org>,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1704289018; l=758;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1704289018; l=911;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=L7WLthXykOxwSCjhfTNvX8JtR2g4GIz2oFPri6fp1uU=;
- b=4cv1/NHGVZ3hzhfLG3uMDFV74Ryx7DGRCmW/dgacvSjY+egEtyvdqP2T0EX9S1w/GJ+BKFrop
- ChwsYyJteiPCwLAcu1TicJmyGGi3eqV/Jjek3Tt9m8Z+pw2OvHtzuSs
+ bh=WDI26IliceRlW0YgN7X8GrPWGyVd7988pOYar0kAAss=;
+ b=01bznyiO7SHJ7u1n+mr2x5/l72XfL8vU3ZTAqXysZ9MQBbaRmXXk4/moJBIOB2Jy+kHXEQjaM
+ l7nr6hxPSFuDoC/YFopLpiuMznUulnRmARQvej1R6ze5B6MQZen2SfK
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-The GCC block is mainly powered by VDD_CX. Describe that.
+The GPU_CC block is powered by VDD_CX. Link the power domain and
+provide a reasonable minimum vote (lowest available on the platform)
+to ensure the registers within are accessible.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sm6115.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/qcom/sm6115.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/sm6115.dtsi b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-index 160e098f1075..30b140e1cec0 100644
+index 30b140e1cec0..ec9a74acc69c 100644
 --- a/arch/arm64/boot/dts/qcom/sm6115.dtsi
 +++ b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-@@ -807,6 +807,7 @@ gcc: clock-controller@1400000 {
- 			reg = <0x0 0x01400000 0x0 0x1f0000>;
- 			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>, <&sleep_clk>;
- 			clock-names = "bi_tcxo", "sleep_clk";
+@@ -1723,6 +1723,8 @@ gpucc: clock-controller@5990000 {
+ 			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+ 				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
+ 				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
 +			power-domains = <&rpmpd SM6115_VDDCX>;
++			required-opps = <&rpmpd_opp_low_svs>;
  			#clock-cells = <1>;
  			#reset-cells = <1>;
  			#power-domain-cells = <1>;
