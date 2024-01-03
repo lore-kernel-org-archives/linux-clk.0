@@ -1,141 +1,104 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5980919BCD
-	for <linux-clk@vger.kernel.org>; Wed,  3 Jan 2024 13:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405F71D532
+	for <linux-clk@vger.kernel.org>; Wed,  3 Jan 2024 20:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vd1kB+fw"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-50e7dd8bce8so7688322e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 03 Jan 2024 05:50:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SUHljg8X"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a27cc46d40bso392739666b.0
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jan 2024 12:20:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704289806; x=1704894606; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f1dvuFHKe4j17EX4txcAT9Lw2KXFp4kBJ6tMYnn9PJw=;
-        b=Vd1kB+fwqMnU3QXvnkHQmAtVz/PSr+7wtqZzL/Dv/Ne7RNPqVhQzCbe3hZWdKMur5B
-         CkuK0dR03IJ9NcdO1SNPGZ89tu6gIWAiCIR99glpAY1VUyKfPNheqcEDrh5G63YG0/yE
-         1L9QZwnaTWu3lyVg+9sbJ2RG+XT8Z0/GdBEriayY4gx8TWK1a7s1MnovjDSBuBidYWmp
-         xI7kyQ9SHQEWBqCsy/aBQRXERzDalaHfo9P7c0uFQFbXcLmHvVV5wBf+RhdkKXiyAStC
-         EmBqguRzUszOVbWUUXnq7VePiG1MP0LrA21l+V5eY4yDbupjYdHN1MrxQHG0lhAo+O8+
-         ObvA==
+        d=linaro.org; s=google; t=1704313233; x=1704918033; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k4tbVTuBseaOKe6F2sTtNlV91d7o5NJbIEDEdAscPJY=;
+        b=SUHljg8Xu5t0qPZOLOtvh1AbJ9YjzY8qtrqVOxQ98KU4eSvn2RFSQmomU87up7AsNu
+         /SluexvlNFlUZKos5putj7CSXaC3pGtihIu5okxsBlMfiLjvWWJ3C+x2Q9no07RD4UTR
+         v+ukp5hSXWjf34YCQEKbhIjw6TW4F5OCXCcutnzprLqD9eLHmmbIZsUmnV1qdHdf/emj
+         yE5UPuuVbKCSCcGeL24+ykGSOHADO2zz2WhxQOIurTjLilZkgxMEvrgBMRvOdXKsZcKV
+         0w517u13Zl/wUni76RM56JXzi4ZtL43PjnHCy8H2uE6Y5WNw4XpdfqNss/knooXC8Lri
+         enIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704289806; x=1704894606;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f1dvuFHKe4j17EX4txcAT9Lw2KXFp4kBJ6tMYnn9PJw=;
-        b=v6SAgEHOSbDNBxjiEF2Op2vzvmueaYEpIrcwC5wyBXal12L0P9bd3zPRGl/mi3j/mA
-         YqFQutD9h9Hq15gs4eHuyJC/xgYl6OZDpXVAdhp/IMBhkpttsmpHha9iJN/QdDAsAvtm
-         qxTJt7bX7U3tFTBKybsAFIPRwWdwYPn0RzPDYY2zsSCTPl6XpCnMu+old+c5szOKx77d
-         /WcoYQD95AWOOx5sR3gHXKTF5FJoZb7RnGZQQ92MSNrZ4zoU5IiDXfel6ZYpLUPNRagh
-         tmMdGD7J2AbrmARYLDTpNw2L3My3XDU5R8vFDW8KQVN1/SWt7CGb9e4aVHLLvADxHRqP
-         4Q4g==
-X-Gm-Message-State: AOJu0YyDHSFyT0kKUfPTkmeyyHq7dNYuYw5aRWM4iCrBEXf8bk4LB9wh
-	OPEqfOD7+cpsnODSBxnHyLWfgczSWKLK1Q==
-X-Google-Smtp-Source: AGHT+IHKBy24cMcTBsmEGGMRYVASYXcuE3vV3BgZ0qtR4tJ+F1QDU88ZKxXyy7feuxWWsXnn+F85uw==
-X-Received: by 2002:a05:6512:3451:b0:50b:ea8e:b42c with SMTP id j17-20020a056512345100b0050bea8eb42cmr7027914lfr.97.1704289806350;
-        Wed, 03 Jan 2024 05:50:06 -0800 (PST)
-Received: from [192.168.199.125] (178235179036.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.36])
-        by smtp.gmail.com with ESMTPSA id r9-20020aa7cb89000000b005550844cd1dsm11312288edt.30.2024.01.03.05.50.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jan 2024 05:50:06 -0800 (PST)
-Message-ID: <a888e261-e990-445c-ab98-f63859c19dd2@linaro.org>
-Date: Wed, 3 Jan 2024 14:50:04 +0100
+        d=1e100.net; s=20230601; t=1704313233; x=1704918033;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k4tbVTuBseaOKe6F2sTtNlV91d7o5NJbIEDEdAscPJY=;
+        b=gScz25JGncu6d8DlKaz8ZkGT0j/xZ9XtMOtHlhrq4uNhRHZhhWuIxXDxomuBnw562g
+         Ov9pE+MHYrtzVmD4puc6zZH1fjcPXd/i6ChG7hqWe0lpcxm4NgTYvmhqYJ2E8AeWjIK0
+         NcM7+/wtFWDIUmtsUisaFSD4b0PgPpwBfkyM/m3werPqeCKTN+7E5x3TEHolWrHN46P6
+         PJY5RKezPCvF6EX8k/+S+ZfjIrw+8YUK8ZHxOskuRBVWCpCS/TYCVSjCkdlIgx9p7NJs
+         kOuJbgtiQW8OfUBO36k+QQQBpfVTTa/+W7brx3SPzCroef/WRx5H2Uam7DJBhDAVqJ24
+         WDTQ==
+X-Gm-Message-State: AOJu0YwZpDTl+RmzuSQY2flgusLch1Yv5Msis7aNL9yBIN5QXFqQdu4i
+	2wbozD+FohNvmkXRHsveE6qcJUAi7KO0rDSxj3zeYrt2+OQ=
+X-Google-Smtp-Source: AGHT+IG7kp79wvHon1BZ74lJ9hHWzPd/UXnExJPnn5O4ULK5QPUSOZIiED8lwk8n4mRkQEh0WyHV4A==
+X-Received: by 2002:a17:906:b103:b0:a28:46fe:77f1 with SMTP id u3-20020a170906b10300b00a2846fe77f1mr1147886ejy.179.1704313233637;
+        Wed, 03 Jan 2024 12:20:33 -0800 (PST)
+Received: from [10.167.154.1] (178235179036.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.36])
+        by smtp.gmail.com with ESMTPSA id y15-20020a17090629cf00b00a26af6e4604sm12143136eje.107.2024.01.03.12.20.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jan 2024 12:20:33 -0800 (PST)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Date: Wed, 03 Jan 2024 21:20:18 +0100
+Subject: [PATCH] clk: qcom: dispcc-sdm845: Adjust internal GDSC wait times
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 14/16] arm64: dts: qcom: sc8280xp: Fix UFS PHY clocks
-Content-Language: en-US
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: andersson@kernel.org, vkoul@kernel.org, sboyd@kernel.org,
- mturquette@baylibre.com, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, quic_cang@quicinc.com
-References: <20231218120712.16438-1-manivannan.sadhasivam@linaro.org>
- <20231218120712.16438-15-manivannan.sadhasivam@linaro.org>
- <e905c463-6f89-4939-981a-7a360ed31669@linaro.org>
- <20231220083014.GB3544@thinkpad>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20231220083014.GB3544@thinkpad>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240103-topic-845gdsc-v1-1-368efbe1a61d@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAIHBlWUC/x2N0QqDMAwAf0XyvECrLcz9ythDm0YNSJVmjoH47
+ wt7vIPjTlBuwgqP7oTGH1HZqoG/dUBLqjOjFGPoXR+cdwO+t10I7yHORQkzlbHEME4+DmBNTsq
+ YW6q0WFWPdTW5N57k+588X9f1A4n/lZR0AAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1704313232; l=944;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=5toqP0lFGtj9eNNbeiZrB9TS1y8+JkIhCriQKhK2LUk=;
+ b=ayQoYDpiVHvtozAgvHKomd7CluAQM7F94qyU8j7sy+4nrpzsXjPt/ujoyuxJrGSHwDDQC1mVt
+ 8NksIbLJ9CTDO1iUdff+iznJOuCKAIPlzBfE9u5l41ncxcBOXXjEzxH
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On 20.12.2023 09:30, Manivannan Sadhasivam wrote:
-> On Wed, Dec 20, 2023 at 01:35:27AM +0100, Konrad Dybcio wrote:
->> On 18.12.2023 13:07, Manivannan Sadhasivam wrote:
->>> QMP PHY used in SC8280XP requires 3 clocks:
->>>
->>> * ref - 19.2MHz reference clock from RPMh
->>> * ref_aux - Auxiliary reference clock from GCC
->>> * qref - QREF clock from GCC
->>>
->>> Fixes: 152d1faf1e2f ("arm64: dts: qcom: add SC8280XP platform")
->>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 18 ++++++++++++------
->>>  1 file changed, 12 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
->>> index cad59af7ccef..37344abbe8bf 100644
->>> --- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
->>> @@ -2256,9 +2256,12 @@ ufs_mem_phy: phy@1d87000 {
->>>  			compatible = "qcom,sc8280xp-qmp-ufs-phy";
->>>  			reg = <0 0x01d87000 0 0x1000>;
->>>  
->>> -			clocks = <&gcc GCC_UFS_CARD_CLKREF_CLK>,
->>> -				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
->>> -			clock-names = "ref", "ref_aux";
->>> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
->>> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
->>> +				 <&gcc GCC_UFS_CARD_CLKREF_CLK>;
->> GCC_UFS_REF_CLKREF_CLK
-> 
-> I'm not sure about this CLK. So I kept it as it is until I verify it.
-I am quite sure everything *UFS_CARD_* refers to the other UFS host..
+SDM845 downstream uses non-default values for GDSC internal waits.
+Program them accordingly to avoid surprises.
 
-Konrad
+Fixes: 81351776c9fb ("clk: qcom: Add display clock controller driver for SDM845")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ drivers/clk/qcom/dispcc-sdm845.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
+index 735adfefc379..e792e0b130d3 100644
+--- a/drivers/clk/qcom/dispcc-sdm845.c
++++ b/drivers/clk/qcom/dispcc-sdm845.c
+@@ -759,6 +759,8 @@ static struct clk_branch disp_cc_mdss_vsync_clk = {
+ 
+ static struct gdsc mdss_gdsc = {
+ 	.gdscr = 0x3000,
++	.en_few_wait_val = 0x6,
++	.en_rest_wait_val = 0x5,
+ 	.pd = {
+ 		.name = "mdss_gdsc",
+ 	},
+
+---
+base-commit: 0fef202ac2f8e6d9ad21aead648278f1226b9053
+change-id: 20240103-topic-845gdsc-bcd9d549f153
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
