@@ -1,95 +1,184 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F4318657;
-	Wed,  3 Jan 2024 10:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A1818E0C;
+	Wed,  3 Jan 2024 11:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JB3TyGPo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C46BC433C7;
-	Wed,  3 Jan 2024 10:18:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704277121;
-	bh=Y3pBM4Uxbyl6bJL+EyV7rY92Ok2OHNDeN46fbDf5Lo4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JB3TyGPobr8IHhL2GlLPKFHPu24e3PGp0QET/v6IIV76JIslAi4GrtmjMHfpTx0qX
-	 haqxuH5qrXe60cRwhBaHFgX42TONYk93P3zuacq+7dtktdxT8NcVwdmLE/FuilI06D
-	 wlD7GOIHqtv/A8GySPXJTpF0kbHHCGs7aSELAmyVzUGXkG8wSDa2UaUg9NuAxus5CC
-	 HU/tTaZ1waH0P0FbVxtMITnpOhzOWUnZXwbqztvpkn2Gdtz6mSgY0vw0Z55QdQK1uy
-	 FGlmH3peDTgDHlPM/TOzTCb3e/n9g/ihsgMy05SkNksc6mZkyuBseBDo8pdQ5m2bDw
-	 uptE2pk5am1Xg==
-Received: from johan by xi.lan with local (Exim 4.96.2)
-	(envelope-from <johan@kernel.org>)
-	id 1rKyKY-0000kn-1x;
-	Wed, 03 Jan 2024 11:18:35 +0100
-Date: Wed, 3 Jan 2024 11:18:34 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v4 02/12] clk: qcom: Use qcom_branch_set_clk_en()
-Message-ID: <ZZU0eiw_1qSOklRN@hovoldconsulting.com>
-References: <20230717-topic-branch_aon_cleanup-v4-0-32c293ded915@linaro.org>
- <20230717-topic-branch_aon_cleanup-v4-2-32c293ded915@linaro.org>
- <ZZPnAvXB8oqds4KM@hovoldconsulting.com>
- <90749db5-a803-4bf0-8543-f049249b1df0@linaro.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXllc8JK"
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dbdbfaab70eso6371113276.3;
+        Wed, 03 Jan 2024 03:14:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704280487; x=1704885287; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GVbmSivqFm16l2ZyQvLc7/P+co6sVaCHTLFtmYuE64U=;
+        b=KXllc8JKUpgHUbmeBPfzAeAvkI6dLr8KpsBj0TD581VlgFmolZENykuquIzeAgUlkq
+         roPGPAi1BHGHLTb/nKPaNPSe6O40UDnAhoKdANVdDv11L++zO6w/PbTJLES8iYHVT53J
+         rYop4rMgTvMbvNELTchqWMFfYFdkPof33Xo+qpyg+stB+MRgp7btoPJEOATTA7t9rD5j
+         CdNIzrXh2kKvuY7cwyZBHyFuFfd1bubJxipuXHRuKGl/FBNwxS2QkFm9eHomA2a3oJWL
+         ZHUFV5fAEN+Tko4zOSje6TWhNTAX/AvzXvwU/mfN40VVY9bcwsumR5GcBFa8TezJb6RT
+         vm1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704280487; x=1704885287;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GVbmSivqFm16l2ZyQvLc7/P+co6sVaCHTLFtmYuE64U=;
+        b=pfU9nt9jeceDBvCKJRUi432JMn2idElEA03liFPHzLY8Zc5hA6Ngo/iopTcWkB7XP1
+         rtJa2RlWw0kkK4h/oJFmy0TZFjbCXPQEx0d4KAU3H9FZRGsZyZG/KGqRi5mPDqTeE4Vo
+         YjymBWzCeJECV2M8aVioyIJ6pdJjGYgZDOgeJKTNmVMqmAPt2HrjKvxN3XAMU4tLMWou
+         S0fThqEv4CGurlif+pSb8WA/fG5TDqhn3nfg7WuEqJod1I1XepywBq2y5ALU178P0CUY
+         v8K/9sGnIKxFMIxBG05M9D/aRRrlpYVbhTzWk6y0NBiZFkbeowAF+op5AvKXpVpuk/MN
+         IP3w==
+X-Gm-Message-State: AOJu0YxF1rd/IauQyZIWodyVb/N4pnnQ0tude9Hc+hOZ9zucUZGCYsqI
+	htFnSRa6PnVCLqqXJnL4/HQyCmnyHHTH4lRleH/y3ZOdR4U=
+X-Google-Smtp-Source: AGHT+IE+uUWbonqqQ1YDN9GzN2DHvb4IXcQ8qjCyQF38y+zzd/JJa+SWQk84/EpX8TMl8fJDznYvsK/8hbAF/j2W9JM=
+X-Received: by 2002:a81:9884:0:b0:5f0:8159:2df4 with SMTP id
+ p126-20020a819884000000b005f081592df4mr3923785ywg.89.1704280486667; Wed, 03
+ Jan 2024 03:14:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <90749db5-a803-4bf0-8543-f049249b1df0@linaro.org>
+References: <20231218170404.910153-1-tmaimon77@gmail.com> <7c322ab2ab59b434429ce471c148c026.sboyd@kernel.org>
+ <CAP6Zq1gYJTRw9=w6cP3KXX2jg3SPk2KBqNrbcs9NoOs2JeUnAg@mail.gmail.com> <5b31aa5cfb1e819b03678d080b630667.sboyd@kernel.org>
+In-Reply-To: <5b31aa5cfb1e819b03678d080b630667.sboyd@kernel.org>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Wed, 3 Jan 2024 13:14:35 +0200
+Message-ID: <CAP6Zq1hTGWcG+63QV2rUVw92E51_NdoXCQaKTCrWNkJDGiEXwQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND v21] clk: npcm8xx: add clock controller
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: avifishman70@gmail.com, benjaminfair@google.com, joel@jms.id.au, 
+	mturquette@baylibre.com, tali.perry1@gmail.com, venture@google.com, 
+	yuenn@google.com, openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jan 02, 2024 at 03:27:29PM +0100, Konrad Dybcio wrote:
-> On 2.01.2024 11:35, Johan Hovold wrote:
-> > On Sat, Dec 30, 2023 at 02:04:04PM +0100, Konrad Dybcio wrote:
+Hi Stephen,
 
-> >> @@ -3010,10 +3010,8 @@ static int camcc_sc8280xp_probe(struct platform_device *pdev)
-> >>  	clk_lucid_pll_configure(&camcc_pll6, regmap, &camcc_pll6_config);
-> >>  	clk_lucid_pll_configure(&camcc_pll7, regmap, &camcc_pll7_config);
-> >>  
-> >> -	/*
-> >> -	 * Keep camcc_gdsc_clk always enabled:
-> >> -	 */
-> >> -	regmap_update_bits(regmap, 0xc1e4, BIT(0), 1);
-> >> +	/* Keep the critical clocks always-on */
-> >> +	qcom_branch_set_clk_en(regmap, 0xc1e4); /* CAMCC_GDSC_CLK */
-> > 
-> > I still think something along the lines of
-> > 
-> > 	/* Keep some clocks always on */
-> > 
-> > is preferred as it is far from obvious why a camera clock would be
-> > considered "critical".
-> > 
-> > Or perhaps you can come up with a better description of why we've
-> > decided not to model these clocks and just leave them ungated.
+Thanks for your clarifications.
 
-> Technically they're not really super critical if the hardware is
-> not in use.. It's just that at one point Qualcomm decided to take
-> the lazy decision to keep them always-on downstream and we seem to
-> have agreed on going with that, instead of pm_clk (remember my old
-> attempt at getting rid of this on dispcc-sc8280xp?)..
-> 
-> For now, I was just trying to clean this up a bit before looking
-> into a better solution for this (probably a whole lot of pm_clks
-> with some clever handle-getting due to different ways of grabbing
-> clock sources.. by-name vs by-index vs global lookup that we've
-> accumulated over the years).
+On Wed, 3 Jan 2024 at 01:52, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Tomer Maimon (2023-12-21 05:43:20)
+> > Hi Stephen,
+> >
+> > Thanks for your comments
+> >
+> > On Thu, 21 Dec 2023 at 00:09, Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Tomer Maimon (2023-12-18 09:04:04)
+> > > > diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
+> > > > new file mode 100644
+> > > > index 000000000000..e6c5111cc255
+> > > > --- /dev/null
+> > > > +++ b/drivers/clk/clk-npcm8xx.c
+> > > > @@ -0,0 +1,552 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +/*
+> > > > + * Nuvoton NPCM8xx Clock Generator
+> > > > + * All the clocks are initialized by the bootloader, so this driver allows only
+> > > > + * reading of current settings directly from the hardware.
+> > > > + *
+> > > > + * Copyright (C) 2020 Nuvoton Technologies
+> > > > + * Author: Tomer Maimon <tomer.maimon@nuvoton.com>
+> > > > + */
+> > > > +
+> > > > +#define pr_fmt(fmt) "npcm8xx_clk: " fmt
+> > > > +
+> > > > +#include <linux/bitfield.h>
+> > > > +#include <linux/clk-provider.h>
+> > > > +#include <linux/err.h>
+> > > > +#include <linux/io.h>
+> > > > +#include <linux/kernel.h>
+> > > > +#include <linux/module.h>
+> > > > +#include <linux/platform_device.h>
+> > > > +#include <linux/slab.h>
+> > > > +#include <linux/regmap.h>
+> > > [...]
+> > > > +#define NPCM8XX_CLK_S_CLKOUT      "clkout"
+> > > > +#define NPCM8XX_CLK_S_PRE_ADC     "pre adc"
+> > > > +#define NPCM8XX_CLK_S_UART        "uart"
+> > > > +#define NPCM8XX_CLK_S_UART2       "uart2"
+> > > > +#define NPCM8XX_CLK_S_TIMER       "timer"
+> > > > +#define NPCM8XX_CLK_S_MMC         "mmc"
+> > > > +#define NPCM8XX_CLK_S_SDHC        "sdhc"
+> > > > +#define NPCM8XX_CLK_S_ADC         "adc"
+> > > > +#define NPCM8XX_CLK_S_GFX         "gfx0_gfx1_mem"
+> > > > +#define NPCM8XX_CLK_S_USBIF       "serial_usbif"
+> > > > +#define NPCM8XX_CLK_S_USB_HOST    "usb_host"
+> > > > +#define NPCM8XX_CLK_S_USB_BRIDGE  "usb_bridge"
+> > > > +#define NPCM8XX_CLK_S_PCI         "pci"
+> > > > +#define NPCM8XX_CLK_S_TH          "th"
+> > > > +#define NPCM8XX_CLK_S_ATB         "atb"
+> > > > +#define NPCM8XX_CLK_S_PRE_CLK     "pre_clk"
+> > > > +#define NPCM8XX_CLK_S_RG         "rg"
+> > > > +#define NPCM8XX_CLK_S_RCP        "rcp"
+> > > > +
+> > > > +static struct clk_hw hw_pll1_div2, hw_pll2_div2, hw_gfx_div2, hw_pre_clk;
+> > > > +static struct npcm8xx_clk_pll_data npcm8xx_pll_clks[] = {
+> > > > +       { NPCM8XX_CLK_S_PLL0, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON0, 0 },
+> > >
+> > > This is a new driver, so please stop using .name in clk_parent_data
+> > > structures.
+> > A few versions ago you suggested defining the reference clock in the
+> > device tree,Can I use .fw_name since the reference clock in the device
+> > tree
+> >
+> >         refclk: refclk-25mhz {
+> >                 compatible = "fixed-clock";
+> >                 clock-output-names = "refclk";
+>
+> Please don't use clock-output-names property.
+Will remove
+>
+> >                 clock-frequency = <25000000>;
+> >                 #clock-cells = <0>;
+> >         };
+>
+> Use of this binding is fine assuming the reference clk is a real thing
+> that exists outside the SoC. Is it?
+Yes it is.
+>
+> >
+> >         clk: clock-controller@f0801000 {
+> >                  compatible = "nuvoton,npcm845-clk";
+> >                  nuvoton,sysclk = <&rst>;
+> >                  #clock-cells = <1>;
+> >                  clocks = <&refclk>;
+>
+> This is index = 0
+O.K.
+>
+> >                  clock-names = "refclk";
+> >          };
+> >
+> > I will make sure to add refclk-25mhz to NPCM8xx device tree.
+> > >
+> > > > +       { NPCM8XX_CLK_S_PLL1, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON1, 0 },
+> > > > +       { NPCM8XX_CLK_S_PLL2, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON2, 0 },
+> > > > +       { NPCM8XX_CLK_S_PLL_GFX, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCONG, 0 },
+> > > > +};
+> > > > +
+> > > > +static const u32 cpuck_mux_table[] = { 0, 1, 2, 7 };
+> > > > +static const struct clk_parent_data cpuck_mux_parents[] = {
+> > > > +       { .hw = &npcm8xx_pll_clks[0].hw },
+> > > > +       { .hw = &npcm8xx_pll_clks[1].hw },
+> > > > +       { .index = 0 },
+> > >
+> > > This requires a binding update. As of today, there isn't a 'clocks'
+> > > property for the nuvoton,npcm845-clk binding.
+> > Can I use fw_name = NPCM8XX_CLK_S_REFCLK instead of  .index = 0 in
+> > that way, I will not need to modify nuvoton,npcm845-clk binding.
+>
+> Why don't you want to modify the binding? If you add a clocks property
+> like in the example above you will have to modify the binding.
+Will add clocks property to nuvoton,npcm845-clk binding.
 
-Yeah, that's fine. I'm not saying you have to come up with a better way
-of describing these for this series, but I find calling them "critical"
-throughout is more confusing than the current unspecified comments about
-leaving some clocks on (i.e. without a proper motivation or even hint
-about why they are being kept always on).
+Thanks,
 
-Johan
+Tomer
