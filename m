@@ -1,184 +1,148 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A1818E0C;
-	Wed,  3 Jan 2024 11:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2260B199A0;
+	Wed,  3 Jan 2024 12:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXllc8JK"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dbdbfaab70eso6371113276.3;
-        Wed, 03 Jan 2024 03:14:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704280487; x=1704885287; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GVbmSivqFm16l2ZyQvLc7/P+co6sVaCHTLFtmYuE64U=;
-        b=KXllc8JKUpgHUbmeBPfzAeAvkI6dLr8KpsBj0TD581VlgFmolZENykuquIzeAgUlkq
-         roPGPAi1BHGHLTb/nKPaNPSe6O40UDnAhoKdANVdDv11L++zO6w/PbTJLES8iYHVT53J
-         rYop4rMgTvMbvNELTchqWMFfYFdkPof33Xo+qpyg+stB+MRgp7btoPJEOATTA7t9rD5j
-         CdNIzrXh2kKvuY7cwyZBHyFuFfd1bubJxipuXHRuKGl/FBNwxS2QkFm9eHomA2a3oJWL
-         ZHUFV5fAEN+Tko4zOSje6TWhNTAX/AvzXvwU/mfN40VVY9bcwsumR5GcBFa8TezJb6RT
-         vm1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704280487; x=1704885287;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GVbmSivqFm16l2ZyQvLc7/P+co6sVaCHTLFtmYuE64U=;
-        b=pfU9nt9jeceDBvCKJRUi432JMn2idElEA03liFPHzLY8Zc5hA6Ngo/iopTcWkB7XP1
-         rtJa2RlWw0kkK4h/oJFmy0TZFjbCXPQEx0d4KAU3H9FZRGsZyZG/KGqRi5mPDqTeE4Vo
-         YjymBWzCeJECV2M8aVioyIJ6pdJjGYgZDOgeJKTNmVMqmAPt2HrjKvxN3XAMU4tLMWou
-         S0fThqEv4CGurlif+pSb8WA/fG5TDqhn3nfg7WuEqJod1I1XepywBq2y5ALU178P0CUY
-         v8K/9sGnIKxFMIxBG05M9D/aRRrlpYVbhTzWk6y0NBiZFkbeowAF+op5AvKXpVpuk/MN
-         IP3w==
-X-Gm-Message-State: AOJu0YxF1rd/IauQyZIWodyVb/N4pnnQ0tude9Hc+hOZ9zucUZGCYsqI
-	htFnSRa6PnVCLqqXJnL4/HQyCmnyHHTH4lRleH/y3ZOdR4U=
-X-Google-Smtp-Source: AGHT+IE+uUWbonqqQ1YDN9GzN2DHvb4IXcQ8qjCyQF38y+zzd/JJa+SWQk84/EpX8TMl8fJDznYvsK/8hbAF/j2W9JM=
-X-Received: by 2002:a81:9884:0:b0:5f0:8159:2df4 with SMTP id
- p126-20020a819884000000b005f081592df4mr3923785ywg.89.1704280486667; Wed, 03
- Jan 2024 03:14:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JQ2uUbfx"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1704284368;
+	bh=sXvCTJMiMZYRpZ56qv2vfroblI96aeB5QJhYBTGQ51s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JQ2uUbfxeiEBF2kzZjHIHn9Tdpp3LgHNaU6HfR0+Ta1mDvIV09iUJyfCqgy3OBVYp
+	 YOqMmMCP1NvVqwgSdrUALT2FXZ4PVcObau2maRNTgYKjl8b+aCUjv+7VBLX2KlyMeB
+	 KpVAgw+uaCqls572liiibW+OaX3hzfqqn2XGBhfs+zEqNrHos/KSU+RkY4GpBzrHXl
+	 cDYMyIrUza28IlH5XPy1XtMX6EUu2L6apf9/Az+zrQEPn1Jewg6oRuSvKq5Pyi6jSy
+	 SUqO3O2GjG0l7TgZgCmY96PkGvKZQ1s9hakqYJz5NfC2zybaoMKzwuGA6H8Fb4LXua
+	 qLtGS69h25y/A==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 451A5378104C;
+	Wed,  3 Jan 2024 12:19:27 +0000 (UTC)
+Message-ID: <eed88b36-ae56-40d3-8588-0d5d75da71a6@collabora.com>
+Date: Wed, 3 Jan 2024 13:19:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231218170404.910153-1-tmaimon77@gmail.com> <7c322ab2ab59b434429ce471c148c026.sboyd@kernel.org>
- <CAP6Zq1gYJTRw9=w6cP3KXX2jg3SPk2KBqNrbcs9NoOs2JeUnAg@mail.gmail.com> <5b31aa5cfb1e819b03678d080b630667.sboyd@kernel.org>
-In-Reply-To: <5b31aa5cfb1e819b03678d080b630667.sboyd@kernel.org>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Wed, 3 Jan 2024 13:14:35 +0200
-Message-ID: <CAP6Zq1hTGWcG+63QV2rUVw92E51_NdoXCQaKTCrWNkJDGiEXwQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND v21] clk: npcm8xx: add clock controller
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: avifishman70@gmail.com, benjaminfair@google.com, joel@jms.id.au, 
-	mturquette@baylibre.com, tali.perry1@gmail.com, venture@google.com, 
-	yuenn@google.com, openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] clk: mediatek: Introduce need_pm_runtime to
+ mtk_clk_desc
+Content-Language: en-US
+To: Pin-yen Lin <treapking@chromium.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Weiyi Lu <weiyi.lu@mediatek.com>, linux-mediatek@lists.infradead.org,
+ Eugen Hristev <eugen.hristev@collabora.com>
+References: <20240102081402.1226795-1-treapking@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240102081402.1226795-1-treapking@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Stephen,
+Il 02/01/24 09:12, Pin-yen Lin ha scritto:
+> Introduce a new need_pm_runtime variable to mtk_clk_desc to indicate
+> this clock needs a runtime PM get on the clock controller during the
+> probing stage.
+> 
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
 
-Thanks for your clarifications.
+Hello Pin-yen,
 
-On Wed, 3 Jan 2024 at 01:52, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Tomer Maimon (2023-12-21 05:43:20)
-> > Hi Stephen,
-> >
-> > Thanks for your comments
-> >
-> > On Thu, 21 Dec 2023 at 00:09, Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Quoting Tomer Maimon (2023-12-18 09:04:04)
-> > > > diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
-> > > > new file mode 100644
-> > > > index 000000000000..e6c5111cc255
-> > > > --- /dev/null
-> > > > +++ b/drivers/clk/clk-npcm8xx.c
-> > > > @@ -0,0 +1,552 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +/*
-> > > > + * Nuvoton NPCM8xx Clock Generator
-> > > > + * All the clocks are initialized by the bootloader, so this driver allows only
-> > > > + * reading of current settings directly from the hardware.
-> > > > + *
-> > > > + * Copyright (C) 2020 Nuvoton Technologies
-> > > > + * Author: Tomer Maimon <tomer.maimon@nuvoton.com>
-> > > > + */
-> > > > +
-> > > > +#define pr_fmt(fmt) "npcm8xx_clk: " fmt
-> > > > +
-> > > > +#include <linux/bitfield.h>
-> > > > +#include <linux/clk-provider.h>
-> > > > +#include <linux/err.h>
-> > > > +#include <linux/io.h>
-> > > > +#include <linux/kernel.h>
-> > > > +#include <linux/module.h>
-> > > > +#include <linux/platform_device.h>
-> > > > +#include <linux/slab.h>
-> > > > +#include <linux/regmap.h>
-> > > [...]
-> > > > +#define NPCM8XX_CLK_S_CLKOUT      "clkout"
-> > > > +#define NPCM8XX_CLK_S_PRE_ADC     "pre adc"
-> > > > +#define NPCM8XX_CLK_S_UART        "uart"
-> > > > +#define NPCM8XX_CLK_S_UART2       "uart2"
-> > > > +#define NPCM8XX_CLK_S_TIMER       "timer"
-> > > > +#define NPCM8XX_CLK_S_MMC         "mmc"
-> > > > +#define NPCM8XX_CLK_S_SDHC        "sdhc"
-> > > > +#define NPCM8XX_CLK_S_ADC         "adc"
-> > > > +#define NPCM8XX_CLK_S_GFX         "gfx0_gfx1_mem"
-> > > > +#define NPCM8XX_CLK_S_USBIF       "serial_usbif"
-> > > > +#define NPCM8XX_CLK_S_USB_HOST    "usb_host"
-> > > > +#define NPCM8XX_CLK_S_USB_BRIDGE  "usb_bridge"
-> > > > +#define NPCM8XX_CLK_S_PCI         "pci"
-> > > > +#define NPCM8XX_CLK_S_TH          "th"
-> > > > +#define NPCM8XX_CLK_S_ATB         "atb"
-> > > > +#define NPCM8XX_CLK_S_PRE_CLK     "pre_clk"
-> > > > +#define NPCM8XX_CLK_S_RG         "rg"
-> > > > +#define NPCM8XX_CLK_S_RCP        "rcp"
-> > > > +
-> > > > +static struct clk_hw hw_pll1_div2, hw_pll2_div2, hw_gfx_div2, hw_pre_clk;
-> > > > +static struct npcm8xx_clk_pll_data npcm8xx_pll_clks[] = {
-> > > > +       { NPCM8XX_CLK_S_PLL0, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON0, 0 },
-> > >
-> > > This is a new driver, so please stop using .name in clk_parent_data
-> > > structures.
-> > A few versions ago you suggested defining the reference clock in the
-> > device tree,Can I use .fw_name since the reference clock in the device
-> > tree
-> >
-> >         refclk: refclk-25mhz {
-> >                 compatible = "fixed-clock";
-> >                 clock-output-names = "refclk";
->
-> Please don't use clock-output-names property.
-Will remove
->
-> >                 clock-frequency = <25000000>;
-> >                 #clock-cells = <0>;
-> >         };
->
-> Use of this binding is fine assuming the reference clk is a real thing
-> that exists outside the SoC. Is it?
-Yes it is.
->
-> >
-> >         clk: clock-controller@f0801000 {
-> >                  compatible = "nuvoton,npcm845-clk";
-> >                  nuvoton,sysclk = <&rst>;
-> >                  #clock-cells = <1>;
-> >                  clocks = <&refclk>;
->
-> This is index = 0
-O.K.
->
-> >                  clock-names = "refclk";
-> >          };
-> >
-> > I will make sure to add refclk-25mhz to NPCM8xx device tree.
-> > >
-> > > > +       { NPCM8XX_CLK_S_PLL1, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON1, 0 },
-> > > > +       { NPCM8XX_CLK_S_PLL2, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON2, 0 },
-> > > > +       { NPCM8XX_CLK_S_PLL_GFX, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCONG, 0 },
-> > > > +};
-> > > > +
-> > > > +static const u32 cpuck_mux_table[] = { 0, 1, 2, 7 };
-> > > > +static const struct clk_parent_data cpuck_mux_parents[] = {
-> > > > +       { .hw = &npcm8xx_pll_clks[0].hw },
-> > > > +       { .hw = &npcm8xx_pll_clks[1].hw },
-> > > > +       { .index = 0 },
-> > >
-> > > This requires a binding update. As of today, there isn't a 'clocks'
-> > > property for the nuvoton,npcm845-clk binding.
-> > Can I use fw_name = NPCM8XX_CLK_S_REFCLK instead of  .index = 0 in
-> > that way, I will not need to modify nuvoton,npcm845-clk binding.
->
-> Why don't you want to modify the binding? If you add a clocks property
-> like in the example above you will have to modify the binding.
-Will add clocks property to nuvoton,npcm845-clk binding.
+We have experienced something similar, but it was really hard to reproduce after
+some changes.
 
-Thanks,
+In an effort to try to solve this issue (but again, reproducing is really hard),
+Eugen has sent a commit in the hope that someone else found a way to easily
+reproduce. Please look at [1].
 
-Tomer
+I'm also adding Eugen to the Cc's of this email.
+
+Cheers,
+Angelo
+
+[1]: 
+https://patchwork.kernel.org/project/linux-pm/patch/20231225133615.78993-1-eugen.hristev@collabora.com/
+
+> ---
+> 
+> Changes in v2:
+> - Fix the order of error handling
+> - Update the commit message and add a comment before the runtime PM call
+> 
+>   drivers/clk/mediatek/clk-mtk.c | 15 +++++++++++++++
+>   drivers/clk/mediatek/clk-mtk.h |  2 ++
+>   2 files changed, 17 insertions(+)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+> index 2e55368dc4d8..c31e535909c8 100644
+> --- a/drivers/clk/mediatek/clk-mtk.c
+> +++ b/drivers/clk/mediatek/clk-mtk.c
+> @@ -13,6 +13,7 @@
+>   #include <linux/of.h>
+>   #include <linux/of_address.h>
+>   #include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+>   #include <linux/slab.h>
+>   
+>   #include "clk-mtk.h"
+> @@ -494,6 +495,14 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+>   			return IS_ERR(base) ? PTR_ERR(base) : -ENOMEM;
+>   	}
+>   
+> +
+> +	if (mcd->need_runtime_pm) {
+> +		devm_pm_runtime_enable(&pdev->dev);
+> +		r = pm_runtime_resume_and_get(&pdev->dev);
+> +		if (r)
+> +			return r;
+> +	}
+> +
+>   	/* Calculate how many clk_hw_onecell_data entries to allocate */
+>   	num_clks = mcd->num_clks + mcd->num_composite_clks;
+>   	num_clks += mcd->num_fixed_clks + mcd->num_factor_clks;
+> @@ -574,6 +583,9 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+>   			goto unregister_clks;
+>   	}
+>   
+> +	if (mcd->need_runtime_pm)
+> +		pm_runtime_put(&pdev->dev);
+> +
+>   	return r;
+>   
+>   unregister_clks:
+> @@ -604,6 +616,9 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+>   free_base:
+>   	if (mcd->shared_io && base)
+>   		iounmap(base);
+> +
+> +	if (mcd->need_runtime_pm)
+> +		pm_runtime_put(&pdev->dev);
+>   	return r;
+>   }
+>   
+> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+> index 22096501a60a..c17fe1c2d732 100644
+> --- a/drivers/clk/mediatek/clk-mtk.h
+> +++ b/drivers/clk/mediatek/clk-mtk.h
+> @@ -237,6 +237,8 @@ struct mtk_clk_desc {
+>   
+>   	int (*clk_notifier_func)(struct device *dev, struct clk *clk);
+>   	unsigned int mfg_clk_idx;
+> +
+> +	bool need_runtime_pm;
+>   };
+>   
+>   int mtk_clk_pdev_probe(struct platform_device *pdev);
+
+
+
