@@ -1,49 +1,49 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEE52420D
-	for <linux-clk@vger.kernel.org>; Thu,  4 Jan 2024 15:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE95E241FE
+	for <linux-clk@vger.kernel.org>; Thu,  4 Jan 2024 15:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UPM6Mi0u"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a28b0207c1dso53606866b.3
-        for <linux-clk@vger.kernel.org>; Thu, 04 Jan 2024 07:44:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wLJpEuyN"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-555144cd330so875502a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 04 Jan 2024 07:44:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704383050; x=1704987850; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704383091; x=1704987891; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FIse23e7h0zCx/8fVm5yx266lHNMUYxbBuafezKM2vM=;
-        b=UPM6Mi0uw4GmZfC6K7a6Q+UqgWyYHWGRBTnz2CrkzXOoLdpF+oajpjuFhbxWxN7rim
-         wPcCaU8g5INWRO7prxmBCGqbjWGnvPZ12zfLHwbBAGws4G0LwMqhg9auHEu9Hog866YF
-         NamJa+WsDjtlKux7fX6sv2kd3jyGRbpZw7833/ZDr/cG3lT/wAVuU2ytpECh7tl9KbMF
-         D5BxxBMxjj+cYamzrBfuwkWW58O/QjzOnw1PJ+DsIqecqcrsGOk8V2ogBSvdYIWEfMiZ
-         wcfkVhsXs4NRvzmolbCuKYTjrI9qzJACbuDsYOtMxAqwCEUkkWKcFtMeL2JgS6YpHtls
-         cGKQ==
+        bh=Tubds6RL8BfJvxnz4IGYcV/XELCKRxYk4kk1CPB39m0=;
+        b=wLJpEuyNNaQ2uK0rw8XaEw/N95r4MBf5A2TJuV0PI2lg7SK4kw3HoaLg3tkKbRbLmV
+         qVqRTxScknBwM1L2gjOmC5LJk3fIDKkkYGI46sihLb5wHS72Z+b4ibrlqTOEbagXM3bs
+         onQKQnE2CoeX7zaPKuyxzLrnfSBGwd6czYGOnhvStp2VyuE8dzR7NLfwNPozbHGABWpp
+         Pqq81bu3HgIWEehJN+2YzsSzUjG/JFksW9xapoalVYyvZE0kScfB+oL7nq/E5bI8tDz/
+         TrNtSW1K7gELr2ciUKvYQFQrNRhEQnShuLG19X+tfHq0L3QT624nC1VojzDn6srA6EKw
+         dhVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704383050; x=1704987850;
+        d=1e100.net; s=20230601; t=1704383091; x=1704987891;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FIse23e7h0zCx/8fVm5yx266lHNMUYxbBuafezKM2vM=;
-        b=r11OZ+4+5ClMNE7KRB+MIk/XphDMW5Ca2lh2WEWmYnrVpe+vuvbUjGMXhWoQofWIys
-         cFZLnsLtQqNerDRja30nlQD3xvQrfIt1dYj8PmEL4eYFKEAoi2wXBqx9qbAfliuJ0jvw
-         8VU9KM9aE5F/DxN4SZepHD37MUj6GbhOZvGuJQ2YnoH4erqp3IG5fw998H1eK2QEc37c
-         L4+E65yvYM2Fo37nBYuERyhhElQQr8IDbj+zQbbZwGhXf+LLZGG95LtOMlQxoIMKbmTn
-         T/Hll8e6SQhQTjeCrUah6iwGndaioaM6fCJOOPKRh/FA3/pBvQ1hIqMdK4kXfeBRNEmx
-         5MUw==
-X-Gm-Message-State: AOJu0YwbUmFuq6JPwC0wc1h19HbCm8pVrIF8w95r3BpFq1+qMsCPZO3F
-	MQD88vzSSSX828+zGPmV0VGL1xAM+aLgUg==
-X-Google-Smtp-Source: AGHT+IGj1h1BkOcjE+uANRjE3W+IvzcZpRTIp7iwNVlmwOljqH46mPQ2lN3cUzzUy/aoCqRi29RZAg==
-X-Received: by 2002:a17:906:7fc7:b0:a28:9ec6:2fe5 with SMTP id r7-20020a1709067fc700b00a289ec62fe5mr305516ejs.77.1704383050512;
-        Thu, 04 Jan 2024 07:44:10 -0800 (PST)
+        bh=Tubds6RL8BfJvxnz4IGYcV/XELCKRxYk4kk1CPB39m0=;
+        b=Mpk2+2VHMEFUb/oL8H0xB2Q9+DVyKP33d/OwnfeZKre3clPrKC1L/xuyMitMl6zKzL
+         JmlcjFAaZGgDL7GdYoYeRUpkd4+ljcLMk8c1qRPvFIy1VYvc/UgMMjLRIRpnFTk/vFD9
+         Jsnhfv+zo7JGfZUgQIt5j5lL41R0FJPdfaMzFDmmdInvbKU/zgmkzFugHvKDhKiJVfce
+         jSK3IjSCOj1gZdG4tFLLM55KQ5z40MtVLr+LZzakua1dQQvow4MA32S9bA1Z289QRQ/Y
+         exTbfTkCGyy7voC/E6HmIVb9iFNOdsA78OMS8AzgplLY4QvXm6Mp+NFQTBVWCiVHtfHx
+         0JZQ==
+X-Gm-Message-State: AOJu0Yz3RVi4ONBtrzjCewabQC/kTetxYR8Nx+WZHidu2Y3lf7TukLkj
+	VSSxstmnxhvrHXtx+NqcrAvHmCjBYLT7CQ==
+X-Google-Smtp-Source: AGHT+IEmJ49VDkZN8QpWTiAWHH7AcXY9ND/OMm7IkK9llm9jh3JKs2nWm/KV0Ahe49nCtP21V0ZWsQ==
+X-Received: by 2002:a17:906:229a:b0:a28:b71d:5e3a with SMTP id p26-20020a170906229a00b00a28b71d5e3amr467584eja.67.1704383091216;
+        Thu, 04 Jan 2024 07:44:51 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id wi22-20020a170906fd5600b00a2693ce340csm13898856ejb.59.2024.01.04.07.44.09
+        by smtp.gmail.com with ESMTPSA id wi22-20020a170906fd5600b00a2693ce340csm13898856ejb.59.2024.01.04.07.44.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jan 2024 07:44:10 -0800 (PST)
-Message-ID: <f2a8f12d-1f1a-4717-b837-69c01e57c677@linaro.org>
-Date: Thu, 4 Jan 2024 16:44:08 +0100
+        Thu, 04 Jan 2024 07:44:50 -0800 (PST)
+Message-ID: <d4f79e6c-2803-4ffd-b8b9-74b902597aad@linaro.org>
+Date: Thu, 4 Jan 2024 16:44:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,7 +51,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] clk: qcom: gcc-sm8150: Update the gcc resets
+Subject: Re: [PATCH 1/3] clk: qcom: gcc-sm8150: Register QUPv3 RCGs for DFS on
+ SM8150
 Content-Language: en-US
 To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
  Bjorn Andersson <andersson@kernel.org>,
@@ -68,7 +69,7 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  Imran Shaik <quic_imrashai@quicinc.com>,
  Jagadeesh Kona <quic_jkona@quicinc.com>
 References: <20240104-sm8150-dfs-support-v1-0-a5eebfdc1b12@quicinc.com>
- <20240104-sm8150-dfs-support-v1-3-a5eebfdc1b12@quicinc.com>
+ <20240104-sm8150-dfs-support-v1-1-a5eebfdc1b12@quicinc.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -114,18 +115,18 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240104-sm8150-dfs-support-v1-3-a5eebfdc1b12@quicinc.com>
+In-Reply-To: <20240104-sm8150-dfs-support-v1-1-a5eebfdc1b12@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 04/01/2024 15:23, Satya Priya Kakitapalli wrote:
-> Add all the available resets for the global clock controller
-> on sm8150.
+> QUPv3 clocks support DFS and thus register the RCGs which require
+> support for the same.
 > 
 > Fixes: 2a1d7eb854bb ("clk: qcom: gcc: Add global clock controller driver for SM8150")
 
-If this is a fix, then please describe observable issue and how users
-are affected. See stable kernel rules document.
+Please describe user-observable issues you are fixing here. It's not
+obvious to me.
 
 Best regards,
 Krzysztof
