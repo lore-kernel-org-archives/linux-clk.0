@@ -1,49 +1,49 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4453A208D3
-	for <linux-clk@vger.kernel.org>; Thu,  4 Jan 2024 09:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E1D224E7
+	for <linux-clk@vger.kernel.org>; Thu,  4 Jan 2024 14:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wmx//jxu"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a27e323fdd3so31035866b.2
-        for <linux-clk@vger.kernel.org>; Thu, 04 Jan 2024 01:55:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TfHpK3Om"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-40d5f40ce04so5365435e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 04 Jan 2024 06:22:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704362130; x=1704966930; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1704378134; x=1704982934; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wO8OC0Dzb3+yM1rxiFt6WTsH4sWuKnHi0Z9bM/kkbiQ=;
-        b=wmx//jxuABvm2y49gbqV6XtIlD9HQgY8cFOjGH/7Y/StmIVb0cjHHgOmRUkV0kq72c
-         s0wQZSgYIepKl3hLYMNbhUmX2Q3p30i/RkADbt9HDLhsSQK5/6TyEU7m1HVYiYjrD1H1
-         GG53ZoIDhwFrXs4V18giI1lOCHhSfV46vJW9HwdmbLMV3cSaO5m1ag8ZUDOUgKmYOvEW
-         DTXhG+K6ghU+/ideKaXhyYvvAzfv3HptD7trvn5M62KhPD9xy8cXO78BAgMO59pOZSsz
-         SoHG205h5L2PNrL7j7oQpn92KwmWkPMX1lnyaPdHmPic9v5X/TxJww3dhSk2lZ1wxqxp
-         DEeg==
+        bh=pOIhKXF7biqxz+aA/XDTJ2jcGS5EMuYmWEXbjvsxFhY=;
+        b=TfHpK3Om4QDogYBdE6MnE3msalOcbX+pIXqJiAeHDryTFddbbG7dstHJbWAriphTI8
+         aozIdqm7uaFZ1kBfhATrLEHdVMWW5KGYXBtQfztF9f++TXRV3yEcUTR8ev/A5OK8lBei
+         hmBvD+ItDq6yoT8ztiRdfav0nikyePx0kR4dAPbXZ53/0DGMhVH0LRIVnqamAMCQkbLs
+         tblDrXoruVXyw+ocPTj0kEwqjZ3Q6FFc7fKg20q4Fm5WPrb/VRFhVC7nnHL5cFUqM34r
+         I1XkJHF7DADnxG8uomP1K1h31vDUnIwCn+dAtrxLKicfR54Kj/6LAbIuaEJ0bvvJLxwp
+         XWDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704362130; x=1704966930;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1704378134; x=1704982934;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wO8OC0Dzb3+yM1rxiFt6WTsH4sWuKnHi0Z9bM/kkbiQ=;
-        b=M1JJ7flBS2LAlEgX7EL2Q4h7pIAJkRsrrPAyQ6//+2CnMcPIHV+jyDswtWpwEOvTfy
-         SKXoX67+kwfPHKUCWsVR36r7E78YjbKPeq0CGE9qB+hjzNevdvzMEAePcmJ7KKI0uk66
-         abKT7wExPKwrDtxbmFMO2b25d+/PjArxsExcfODJ4LZDbNyVR+4sUIS9D8eN3GTphUhY
-         IayW4UNae8hkO58ivG5ceP5jfts8SruGvdpyFLGnTmC4MDnQt8Tp/qlX63XRxu7DCrVl
-         YOEyCbtCeAk4cXtnFLXCrD2k/OEzwWbbKkmcceKPGKc7ZgOTSuo+cCR1JWByzQ/pOFZm
-         GIWA==
-X-Gm-Message-State: AOJu0YyV9oQjjHT7v4k+9nFjUdk00E0495R+W3k73oRXxLpjEDZNV0A5
-	qBMQ9K7VRyXFJEXoI1nlitSHbyoqBNuyag==
-X-Google-Smtp-Source: AGHT+IEzIPkgZdDLrd4i3akEmjh8BhCDJun38iAcjUcvqneFS1rD6PnG9aBdDqyF3+Fji+7S1hRZvw==
-X-Received: by 2002:a17:906:d7a8:b0:a27:f2b7:bfde with SMTP id pk8-20020a170906d7a800b00a27f2b7bfdemr178795ejb.130.1704362130400;
-        Thu, 04 Jan 2024 01:55:30 -0800 (PST)
-Received: from [192.168.199.125] (178235179036.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.36])
-        by smtp.gmail.com with ESMTPSA id gk1-20020a17090790c100b00a28a8ca1c55sm1184525ejb.212.2024.01.04.01.55.29
+        bh=pOIhKXF7biqxz+aA/XDTJ2jcGS5EMuYmWEXbjvsxFhY=;
+        b=KPa/MW/GB293LcFryahbhnilNWzstBPs3smCPyh6P9FPwICY7LWmJxoH/JYSotUZef
+         7HfCZBZvtmaC2gYazrYc3Z+30+PiDeBDvcY7vUweEMwEN9iQOqS31WTJbuzz8xI6Fk9C
+         ixqLmpXZ1H9ttgU6AHQASkGHdM/IM8x+uVSjeJN4C9gnrP7XzoxpLMdGubfctmaBFMYv
+         Rsxil2VpLakG+ZTd/zclz+oYjHqmpFI+/gt6G05oBKfIZnU+/MuPRTUYRKg35+PsKGCq
+         2A5MGwmVJ7QIUuBVFV7NSemkP5IbS9VJI744IPSAd7D49M31LaZ0vKbCSOoqniphvUqd
+         6ybQ==
+X-Gm-Message-State: AOJu0Yw5dibxF6vydDrUiIbdofhdeqU6qKEcsa0VW6zxBVKcZxbik5xU
+	c00rIrpN6lbD6ec8js3vAdGIZ5zQNDtUkQ==
+X-Google-Smtp-Source: AGHT+IF5WicewklRFmMcWPw5W2zfn/1Y+Xf1MSh9HNXvJ0S8BzwdJIf9dtkChqe702hWNWojBcL1HQ==
+X-Received: by 2002:a1c:4b08:0:b0:40d:628a:1230 with SMTP id y8-20020a1c4b08000000b0040d628a1230mr384503wma.61.1704378134059;
+        Thu, 04 Jan 2024 06:22:14 -0800 (PST)
+Received: from [192.168.1.83] (host-92-17-96-230.as13285.net. [92.17.96.230])
+        by smtp.gmail.com with ESMTPSA id u21-20020a05600c139500b0040d7c3d5454sm5933073wmf.3.2024.01.04.06.22.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jan 2024 01:55:30 -0800 (PST)
-Message-ID: <7f2f738b-a2a7-43ba-b63a-bba59e76bae4@linaro.org>
-Date: Thu, 4 Jan 2024 10:55:28 +0100
+        Thu, 04 Jan 2024 06:22:13 -0800 (PST)
+Message-ID: <641e8800-4735-406b-8555-d4a80201f0b9@linaro.org>
+Date: Thu, 4 Jan 2024 14:22:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,88 +51,56 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/12] clk: qcom: gcc-sm6375: Unregister critical
- clocks
+Subject: Re: [PATCH] clk: qcom: dispcc-sdm845: Adjust internal GDSC wait times
 Content-Language: en-US
-To: Johan Hovold <johan@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
+ <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20230717-topic-branch_aon_cleanup-v5-0-99942e6bf1ba@linaro.org>
- <20230717-topic-branch_aon_cleanup-v5-3-99942e6bf1ba@linaro.org>
- <ZZZt1fV9WYJ6P-xE@hovoldconsulting.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <ZZZt1fV9WYJ6P-xE@hovoldconsulting.com>
+ linux-kernel@vger.kernel.org
+References: <20240103-topic-845gdsc-v1-1-368efbe1a61d@linaro.org>
+From: Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <20240103-topic-845gdsc-v1-1-368efbe1a61d@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 4.01.2024 09:35, Johan Hovold wrote:
-> On Wed, Jan 03, 2024 at 02:36:01PM +0100, Konrad Dybcio wrote:
->> Some clocks need to be always-on, but we don't really do anything
->> with them, other than calling enable() once and telling Linux they're
->> enabled.
->>
->> Unregister them to save a couple of bytes and, perhaps more
->> importantly, allow for runtime suspend of the clock controller device,
->> as CLK_IS_CRITICAL prevents the latter.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
->> @@ -3886,6 +3797,11 @@ static int gcc_sm6375_probe(struct platform_device *pdev)
->>  	qcom_branch_set_clk_en(regmap, 0x17028); /* GCC_CAMERA_XO_CLK */
->>  	qcom_branch_set_clk_en(regmap, 0x2b004); /* GCC_CPUSS_GNOC_CLK */
->>  	qcom_branch_set_clk_en(regmap, 0x1702c); /* GCC_DISP_XO_CLK */
->> +	qcom_branch_set_clk_en(regmap, 0x17008); /* GCC_CAMERA_AHB_CLK */
->> +	qcom_branch_set_clk_en(regmap, 0x1700c); /* GCC_DISP_AHB_CLK */
->> +	qcom_branch_set_clk_en(regmap, 0x36004); /* GCC_GPU_CFG_AHB_CLK */
->> +	qcom_branch_set_clk_en(regmap, 0x79004); /* GCC_SYS_NOC_CPUSS_AHB_CLK */
->> +	qcom_branch_set_clk_en(regmap, 0x17004); /* GCC_VIDEO_AHB_CLK */
-> 
-> Shouldn't you keep the above sorted by offset or at least try to group
-> them by subsystem (e.g. keep the camera clocks together)?
-Guess I assumed order-of-appearance sorting was fine when I made this
-patch.
 
-I can group it by hw block, though.
 
-Konrad
+On 03/01/2024 20:20, Konrad Dybcio wrote:
+> SDM845 downstream uses non-default values for GDSC internal waits.
+> Program them accordingly to avoid surprises.
+> 
+> Fixes: 81351776c9fb ("clk: qcom: Add display clock controller driver for SDM845")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+This doesn't break anything, but I'm not exactly sure what it fixes :P
+
+Tested-by: Caleb Connolly <caleb.connolly@linaro.org> # OnePlus 6
+> ---
+>  drivers/clk/qcom/dispcc-sdm845.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
+> index 735adfefc379..e792e0b130d3 100644
+> --- a/drivers/clk/qcom/dispcc-sdm845.c
+> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+> @@ -759,6 +759,8 @@ static struct clk_branch disp_cc_mdss_vsync_clk = {
+>  
+>  static struct gdsc mdss_gdsc = {
+>  	.gdscr = 0x3000,
+> +	.en_few_wait_val = 0x6,
+> +	.en_rest_wait_val = 0x5,
+>  	.pd = {
+>  		.name = "mdss_gdsc",
+>  	},
+> 
+> ---
+> base-commit: 0fef202ac2f8e6d9ad21aead648278f1226b9053
+> change-id: 20240103-topic-845gdsc-bcd9d549f153
+> 
+> Best regards,
+
+-- 
+// Caleb (they/them)
