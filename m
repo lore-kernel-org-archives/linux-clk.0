@@ -1,49 +1,49 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905202030A
-	for <linux-clk@vger.kernel.org>; Thu,  4 Jan 2024 08:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B9D1EA7F
+	for <linux-clk@vger.kernel.org>; Thu,  4 Jan 2024 08:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L+F+CNn/"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a275b3a1167so27504066b.3
-        for <linux-clk@vger.kernel.org>; Thu, 04 Jan 2024 00:48:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sByGSUQT"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-552d39ac3ccso2213012a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 04 Jan 2024 00:48:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704358086; x=1704962886; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704358135; x=1704962935; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yz8L5rcS/oZQG0JzRb54lfQRZQgbbjO7+jKrtemXPv4=;
-        b=L+F+CNn/ILzYTfOsS7ybnHoe/BDWHJj8peDKWfmwAtrKegKWrxeIdw2ow0/+5j6pg2
-         ViCjI/tSdLQ16bQ5RUc4ag/CPNZP7l3BsE3pm75eDg9P4YPslBcUqKHnx8aD9POckrdM
-         8Dy4W+Jnj8o8xo4IZBZKid5qKdJaJ3BtNDBEx7xpTOT2WEyrOB7+5qPQc4ax09mvZWdK
-         o4PBV7uQs2h7Dbah03PNaGIV5SSnzxogQjlnZ8hteBjEV0tM4Zd5LYuhkV9s7mxJQJly
-         mYPtrqApwJHp1tATNylfba0RexVMPhsQp2XwM/37qmoejBf7LCR5LefZORdHA252Irvs
-         Xvhg==
+        bh=yEeJCxTv4FtQCXSjfyLRBbFqtRimpgdlnbXrXwN26rQ=;
+        b=sByGSUQTGwUU1h9JBTaFfJ2gEAJkdJXB4M6vWkfvSR87959qBVDlCyYk4CrbepHzVT
+         tr2vWkBX7wFpJJv+t8x5wDamBpTTTcRhd7SSmNCLlsodCAIoem6u+f7d1ndV0UIROo2T
+         e73pOm07i1BS6us/MPYoFFSmnEZey/z3Y8on1tNpHh+1XrSFijx7OpRvi7i0AP89xTJj
+         DuAq0/FJN4wA8GMq5f/RLeHSCek59BdlHs99MbVF5awvG9JgZbm8ZT9wxe61AYyI76pz
+         2JVCHvhjVM83zKy+YnwrT7+GYT898vVd5RAKabDdHpcg3UH1izY0sRucnwG88dKCuuLT
+         J/Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704358086; x=1704962886;
+        d=1e100.net; s=20230601; t=1704358135; x=1704962935;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yz8L5rcS/oZQG0JzRb54lfQRZQgbbjO7+jKrtemXPv4=;
-        b=Dnvcz+pVMqr5ng8mjNZ1Kln/7ii4CK8gH/lYpEWYZ9vq5BR4+rLxS3DWX+XhO9AmLH
-         NBrNrX8dT4apOzUrq5L+McjHh/0Jj4pbvdb6rm5EHa818Wwxerpars7tKyGwu6/V4qlN
-         uHV5HKqRxXwk3nm1ipYxhABkKgQcNsbiwVNk1ky31V5bI0/TUhtz6mIJ9PJVjuNVufmj
-         H37+87xs+It10dZTk08TUVpD24gDUCghD/SoUfuZo2GqonIeYr1R8KAMU0Gk3XVwdQCM
-         8qp7tueT2BDydy74diJtQ6av09Syy7mkcGXu/v203CVRGsI+zhK9NyZKHASxwuc5NQ6D
-         Dc8A==
-X-Gm-Message-State: AOJu0YwY2nPLCD43tv4nC8A78bLIZcxgVNHU6SIyjVCf4LcrPczjUqvo
-	5bXXaxq3lec2trhmyVm4VVTT38seFGb7hA==
-X-Google-Smtp-Source: AGHT+IErboZlZUNTK/tkXvn3hKifzKAK/kYmSKAFSgzlTSjZGbp/TRrtj4IWK+r9w/xjGiFvDysZmQ==
-X-Received: by 2002:a17:906:33d9:b0:a23:6244:8370 with SMTP id w25-20020a17090633d900b00a2362448370mr156939eja.142.1704358085794;
-        Thu, 04 Jan 2024 00:48:05 -0800 (PST)
+        bh=yEeJCxTv4FtQCXSjfyLRBbFqtRimpgdlnbXrXwN26rQ=;
+        b=kWWPiMvyoYhYrlLY/dwEE7a7gDzytjfzFAyuYggva8NOgQhf4SJsIyCSi+4s9xrWoh
+         HievUrN8bNOc4fJU09b1/YZflM1yhVlS34mImratSsk0lRQEqA4Am9uomYde1YIcOxjI
+         97rnWm6ssLzFZYXgt3V+oGpUtvfIQSmMh+iwObnol57Swiwef5p3C8sIEVQfIvkMNPU8
+         xAbeDz8I+7xLb7wL5U6gd+G86fKrfMIu+yCa192b5TEG8eWL9WyUyhTx7JY3l9IzoRKt
+         YQp21itgTnTGzCQhxioYW/OBn3RMXNjY9ovq/44Byk5ulqujUrs5jx64TQ4H08QrulmJ
+         QSqQ==
+X-Gm-Message-State: AOJu0YxStyRPw9aXNr7IzmJbnwGfVN9x1/ff7XWaMcoLi0X8cZwCpgyZ
+	Ye2ybdBb1YJ1HM4/zCWFbr8Ngg/QHAjQ7A==
+X-Google-Smtp-Source: AGHT+IHdPFIhZxpEJfM/1lgjNAuOg7v60s+AHIPrEc9zJvsEnw7ZutVIL8Z0nh5dPL+vc6CueOwjOw==
+X-Received: by 2002:a17:907:2e19:b0:a26:e35a:de3d with SMTP id ig25-20020a1709072e1900b00a26e35ade3dmr219265ejc.23.1704358135332;
+        Thu, 04 Jan 2024 00:48:55 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id ka24-20020a170907921800b00a26a80a58fcsm13126060ejb.196.2024.01.04.00.48.04
+        by smtp.gmail.com with ESMTPSA id ka24-20020a170907921800b00a26a80a58fcsm13126060ejb.196.2024.01.04.00.48.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jan 2024 00:48:05 -0800 (PST)
-Message-ID: <71cf6e71-6273-4305-8fc4-44df6ce35eda@linaro.org>
-Date: Thu, 4 Jan 2024 09:48:04 +0100
+        Thu, 04 Jan 2024 00:48:54 -0800 (PST)
+Message-ID: <23dea360-b1a6-46e7-ad30-94f3e4e577d8@linaro.org>
+Date: Thu, 4 Jan 2024 09:48:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clk: sprd: Add dt-bindings include file for UMS9620
+Subject: Re: [PATCH V2 1/3] dt-bindings: clk: sprd: Add UMS9620 support
 Content-Language: en-US
 To: Chunyan Zhang <chunyan.zhang@unisoc.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
@@ -61,8 +61,8 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
  Baolin Wang <baolin.wang@linux.alibaba.com>,
  Chunyan Zhang <zhang.lyra@gmail.com>
-References: <20231229085156.1490233-1-chunyan.zhang@unisoc.com>
- <20231229085156.1490233-3-chunyan.zhang@unisoc.com>
+References: <20240104072148.1619009-1-chunyan.zhang@unisoc.com>
+ <20240104072148.1619009-2-chunyan.zhang@unisoc.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -108,87 +108,24 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231229085156.1490233-3-chunyan.zhang@unisoc.com>
+In-Reply-To: <20240104072148.1619009-2-chunyan.zhang@unisoc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/12/2023 09:51, Chunyan Zhang wrote:
-> This file defines all UMS9620 clock indexes. It should be included in
-> the DTS file(s) in which there're devices using these clocks.
-> 
+On 04/01/2024 08:21, Chunyan Zhang wrote:
+>    "#clock-cells":
+>      const: 1
+>  
+>    clocks:
+> -    minItems: 1
+> -    maxItems: 4
+>      description: |
+>        The input parent clock(s) phandle for the clock, only list
+>        fixed clocks which are declared in devicetree.
+>  
+> -  clock-names:
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching.
-
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-
-
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> ---
->  include/dt-bindings/clock/sprd,ums9620-clk.h | 515 +++++++++++++++++++
-
-This is part of previous patch.
-
-
->  1 file changed, 515 insertions(+)
->  create mode 100644 include/dt-bindings/clock/sprd,ums9620-clk.h
-> 
-> diff --git a/include/dt-bindings/clock/sprd,ums9620-clk.h b/include/dt-bindings/clock/sprd,ums9620-clk.h
-> new file mode 100644
-> index 000000000000..ed566e1208d7
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/sprd,ums9620-clk.h
-> @@ -0,0 +1,515 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +/*
-> + * Unisoc UMS9620 platform clocks
-> + *
-> + * Copyright (C) 2020-2023, Unisoc Inc.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_UMS9620_H_
-> +#define _DT_BINDINGS_CLK_UMS9620_H_
-> +
-> +#define CLK_26M_AUD		0
-> +#define CLK_13M			1
-> +#define CLK_6M5			2
-> +#define CLK_4M3			3
-> +#define CLK_4M			4
-> +#define CLK_2M			5
-> +#define CLK_1M			6
-> +#define CLK_250K		7
-> +#define CLK_16K			8
-> +#define CLK_RCO_100M_25M	9
-> +#define CLK_RCO_100m_20M	10
-> +#define CLK_RCO_100m_4M		11
-> +#define CLK_RCO_100m_2M		12
-> +#define CLK_RCO_60m_20M		13
-> +#define CLK_RCO_60m_4M		14
-> +#define CLK_RCO_60m_2M		15
-> +#define CLK_PHYR8PLL_GATE	16
-> +#define CLK_PSR8PLL_GATE	17
-> +#define CLK_CPLL_GATE		18
-> +#define CLK_V4NRPLL_GATE	19
-> +#define CLK_TGPLL_GATE		20
-> +#define CLK_MPLLL_GATE		21
-> +#define CLK_MPLLM_GATE		22
-> +#define CLK_MPLLB_GATE		23
-> +#define CLK_MPLLS_GATE		24
-> +#define CLK_DPLL0_GATE		25
-> +#define CLK_DPLL1_GATE		26
-> +#define CLK_DPLL2_GATE		27
-> +#define CLK_GPLL_GATE		28
-> +#define CLK_AIPLL_GATE		29
-> +#define CLK_VDSPPLL_GATE	30
-> +#define CLK_AUDPLL_GATE		31
-> +#define CLK_PIXELPLL_GATE	32
-> +#define CLK_PMU_GATE_NUM	(CLK_PIXELPLL_GATE + 1)
-
-Drop this and all other numbers. Not a binding and you cannot change it,
-if you ever want to add missing clock.
-
+Implement my comments from v1.
 
 Best regards,
 Krzysztof
