@@ -1,23 +1,23 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8330D2C681;
-	Thu,  4 Jan 2024 21:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF4D2C6B4;
+	Thu,  4 Jan 2024 21:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZB32WZeX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD073C433C7;
-	Thu,  4 Jan 2024 21:36:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GuOeNjzs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A171BC433C8;
+	Thu,  4 Jan 2024 21:38:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704404204;
-	bh=/gPJhI0luavzDAMUU3piZFqDvBPXXQmqih0y6CbPkDo=;
+	s=k20201202; t=1704404309;
+	bh=C6yj4tbn318pdlPF1SHSET3ntYVv+Yq1nuht+eVikeI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ZB32WZeXi9pWrXUs4nFLQOKWQKvgsLCPhg8HTDvMQhFsZ49JD/Jw1deYXZPm3o/SX
-	 x52TbzbuJ7w7zaPewansJqg+zHb8lttmaWATUuJ4SzSl2jH0rDh8pyJ0iU5ZL7JpUG
-	 vFdiAbo3/Wr0UkClMHKumsYsjy4P6fS5q0ps/1H+5gWzENdb1M7jhPF3lcCu88uGgd
-	 +kSOVjghQwtXpWwsXrwqrQtKVeiA5ju118sbwaMmC//4Joihr8xYDaOi0xhWHdOMRH
-	 S5Xl1Es0N99dCoAyn/X2I5yqMKsNE+B3EYqNsYzomPekVxXw++Ccp437MMTItRCG3i
-	 3UMzW9jMRxsjA==
-Message-ID: <988ae72846dc680382f98b63b61a8c32.sboyd@kernel.org>
+	b=GuOeNjzs7+jgEt/pSJNL8/o+eEmnqEjgSzbeDRPDlU7FLeASwA+SiFBaysdcbiZJ2
+	 oIs1QY1xa6xwzCiZvoDpPPNrQAZiIF78RafagJ0OaM2wSk1l0EMMm18E+dwxtlN5PF
+	 KN5rububvg9JxwK/ZI+MjS2km+QxoA4aVLObgF4oMHTVC0k2PEtFZIZ3wnAddIrhbP
+	 u2tkAZgpXu/JhSdZOPxGO7p8BCGozWbnvTM3WmiFzJFoqj/iZjVQfvtE4hyW0EghRn
+	 rnZ9UBXxysu8fyq1HAgTvzqJOaJYByyUQuJNvBymlSKv/+3UA72iDXhXHT93R1Kucu
+	 4YR4FwLcQHNVQ==
+Message-ID: <c1effbda6f323aa58935e1990ba3aed8.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -26,55 +26,71 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240104-sm8150-dfs-support-v1-1-a5eebfdc1b12@quicinc.com>
-References: <20240104-sm8150-dfs-support-v1-0-a5eebfdc1b12@quicinc.com> <20240104-sm8150-dfs-support-v1-1-a5eebfdc1b12@quicinc.com>
-Subject: Re: [PATCH 1/3] clk: qcom: gcc-sm8150: Register QUPv3 RCGs for DFS on SM8150
+In-Reply-To: <g5ahts576gcub7iwn3xsaky3yu7cqdh3szu67ovixmrrci7zq6@t5fjhj6as5vk>
+References: <cover.1702403904.git.u.kleine-koenig@pengutronix.de> <744a6371f94fe96f527eea6e52a600914e6fb6b5.1702403904.git.u.kleine-koenig@pengutronix.de> <5391068cdc86b6117920d31a524d934b.sboyd@kernel.org> <3fhgutm42b6sy6gdydcvflnsjuc2ozjetjbeyoxjvnl2t5q7za@4og2x6gqz5y2> <g5ahts576gcub7iwn3xsaky3yu7cqdh3szu67ovixmrrci7zq6@t5fjhj6as5vk>
+Subject: Re: [PATCH 1/2] clk: Add a devm variant of clk_rate_exclusive_get()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Deepak Katragadda <dkatraga@codeaurora.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, Vinod Koul <vkoul@kernel.org>
-Date: Thu, 04 Jan 2024 13:36:41 -0800
+Cc: linux-pwm@vger.kernel.org, Sean Anderson <sean.anderson@seco.com>, Michael Turquette <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Maxime Ripard <mripard@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, kernel@pengutronix.de, Michal Simek <michal.simek@amd.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Date: Thu, 04 Jan 2024 13:38:27 -0800
 User-Agent: alot/0.10
 
-Quoting Satya Priya Kakitapalli (2024-01-04 06:23:04)
-> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-> index 05d115c52dfe..6d76fd344ddf 100644
-> --- a/drivers/clk/qcom/gcc-sm8150.c
-> +++ b/drivers/clk/qcom/gcc-sm8150.c
-> @@ -453,19 +453,29 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s=
-0_clk_src[] =3D {
->         { }
->  };
-> =20
-> +static struct clk_init_data gcc_qupv3_wrap0_s0_clk_src_init =3D {
+Quoting Uwe Kleine-K=C3=B6nig (2024-01-04 10:06:29)
+> Hello Stephen,
+>=20
+> On Mon, Dec 18, 2023 at 02:01:41PM +0100, Uwe Kleine-K=EF=BF=BDnig wrote:
+> > [Cc +=3D Maxime]
+> >=20
+> > Hello Stephen,
+> >=20
+> > On Sun, Dec 17, 2023 at 04:17:41PM -0800, Stephen Boyd wrote:
+> > > Quoting Uwe Kleine-K=EF=BF=BDnig (2023-12-12 10:09:42)
+> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > index af2011c2a93b..78249ca2341c 100644
+> > > > --- a/drivers/clk/clk.c
+> > > > +++ b/drivers/clk/clk.c
+> > > > @@ -937,6 +937,21 @@ void clk_rate_exclusive_get(struct clk *clk)
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(clk_rate_exclusive_get);
+> > > > =20
+> > > > +static void devm_clk_rate_exclusive_put(void *data)
+> > > > +{
+> > > > +       struct clk *clk =3D data;
+> > > > +
+> > > > +       clk_rate_exclusive_put(clk);
+> > > > +}
+> > > > +
+> > > > +int devm_clk_rate_exclusive_get(struct device *dev, struct clk *cl=
+k)
+> > > > +{
+> > > > +       clk_rate_exclusive_get(clk);
+> > >=20
+> > > It seems the other thread wants this to return an error value.
+> >=20
+> > The status quo is that clk_rate_exclusive_get() always returns zero.
+> > Some users do error handling (which is dead code until Maxime reworks
+> > the call that it might return something non-zero), others just call it
+> > without checking.
+> >=20
+> > If you don't require to add something like:
+> >=20
+> >       ret =3D clk_rate_exclusive_get(clk);
+> >       if (ret)
+> >               return ret;
+> >=20
+> > where we currently have just
+> >=20
+> >       clk_rate_exclusive_get(clk);
+> >=20
+> > the patch can just be applied (using git am -3) not even hitting a merge
+> > conflict without that other series.
+>=20
+> I wonder what you think about this. This devm_clk_rate_exclusive_get()
+> would be very useful and simplify a few more drivers.
+>=20
+> Do you intend to take the patch as is, or should I rework it to check
+> for the zero it returns?
+>=20
 
-Can these be const?
-
-> +       .name =3D "gcc_qupv3_wrap0_s0_clk_src",
-> +       .parent_data =3D gcc_parents_0,
-> +       .num_parents =3D ARRAY_SIZE(gcc_parents_0),
-> +       .flags =3D CLK_SET_RATE_PARENT,
-> +       .ops =3D &clk_rcg2_ops,
-> +};
-> +
->  static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src =3D {
->         .cmd_rcgr =3D 0x17148,
->         .mnd_width =3D 16,
->         .hid_width =3D 5,
->         .parent_map =3D gcc_parent_map_0,
->         .freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -       .clkr.hw.init =3D &(struct clk_init_data){
-> -               .name =3D "gcc_qupv3_wrap0_s0_clk_src",
-[...]
-> @@ -3786,6 +3850,13 @@ static int gcc_sm8150_probe(struct platform_device=
- *pdev)
->         regmap_update_bits(regmap, 0x4d110, 0x3, 0x3);
->         regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
-> =20
-> +       ret =3D qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
-> +                                      ARRAY_SIZE(gcc_dfs_clocks));
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "Failed to register with DFS!\n");
-
-Use=20
-
-		return dev_err_probe(...);
+Please check the return value even if it is always zero. The discussion
+about handling the return value can continue in parallel.
