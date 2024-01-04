@@ -1,170 +1,201 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE3E1849;
-	Thu,  4 Jan 2024 01:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBC25667
+	for <linux-clk@vger.kernel.org>; Thu,  4 Jan 2024 02:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EP02KyZj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1704332485; x=1735868485;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hCbBXEsRZ3+SWSMbVZ2tJ+JX+kyIEszozluquihN60Y=;
-  b=EP02KyZj9SNNlgiLVAtdiF6EN4HpeiAVIsWJOaLeCGQx5H08YKByhrfz
-   IW0t4gy/WeavlgQdwT3B/RlbW08Q8hZQaqHOqHpF89snxUcG1zSOs0NDj
-   UYXw1zP5Hj8Bypbu/gzJu4z4R37NLd4xObtWBnSCaxUWYL3YAF+Q0LLCI
-   xHVH35iZL5TVGeJKzQek6yw+zRtEYrI39h6Y80PnXeK6TVx4niPfw94vy
-   4I8lG73ARdaZMGkOjPRl6n4qfpVsrITBHp5XGN/G/svq8Gs2GDjQk3bhp
-   n98AshPBHTgYRmiTMMHeBaiMNpzQPbvR0B3UrAm8ZaytPtmwILPY/r98l
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10942"; a="396825164"
-X-IronPort-AV: E=Sophos;i="6.04,329,1695711600"; 
-   d="scan'208";a="396825164"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jan 2024 17:41:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10942"; a="903619769"
-X-IronPort-AV: E=Sophos;i="6.04,329,1695711600"; 
-   d="scan'208";a="903619769"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 03 Jan 2024 17:41:14 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rLCjQ-000Mly-2B;
-	Thu, 04 Jan 2024 01:41:12 +0000
-Date: Thu, 4 Jan 2024 09:41:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, michal.simek@amd.com,
-	abel.vesa@linaro.org, robh@kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	angelogioacchino.delregno@collabora.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
-Subject: Re: [PATCH] drivers: clk: zynqmp: remove clock name dependency
-Message-ID: <202401040935.LLlZNxiu-lkp@intel.com>
-References: <20240103072017.1646007-1-naman.trivedimanojbhai@amd.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uQ8BOyiO"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-5ef7c6f4cfcso8183137b3.1
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jan 2024 18:02:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704333738; x=1704938538; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZBDVHhfPXBsz1dl6LhzU57fMc54pKkm8OgQTIWPCiJY=;
+        b=uQ8BOyiOrPTPmOP8NMcngaKAP8mFcCDJd7XQ9DMXsoyk9ViFtm8uOVFFKCNHyqVn+j
+         c+Mn+BGByxWHCHXCmiLyi/KLIE0uO8FahbVT1XvfCxYcVciaI8uXx1oWR36fCfjmz85F
+         Joes8l0aZxSeSI9j2QyYGIw7Jbf9R/jtxVzP4DZoxZmmjAodTWpKOrUgdUGulWxKJyTI
+         Ak/R9tGS1/TsNbbz3ZiImBtZ+sP60Aj9LLZ7MSWZBr90ZRplUEgXu5cilwdDNyGzb17x
+         ivvr9aVVfvqrMRWG38Ws5ap+ozrU/nd8d8c6vjXw96KTxQigwAPI8t7a/8IQNbGihUNT
+         h/pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704333738; x=1704938538;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZBDVHhfPXBsz1dl6LhzU57fMc54pKkm8OgQTIWPCiJY=;
+        b=w6eeBOnwxjW1hKqdrtTYLonnMfGLIrW/QJlWgduBMjxMPbmpXyU+KApBwkURMV1u3L
+         WPHT1+IDq7NN0C1Zdwuyx+kU+xE9tp7epcwRCBeNFjgHT4PdbLAPd4gbnmbuadZCanos
+         57hN02OITcjso75QBFavE6G4QOIvaqHmqTO8rGfsLoptyyiBQGhrniUEKG4xHyovvvaC
+         rHAgAyOtDI3oc4MYrvdKCmKrKiiyGx9QWQODlZJU4fpXWogC7xvMP0H+z3Ny3qLwdBxI
+         rqdW4ic94BwTafEqBm1S4jkrwMjGDgUYD6UJcBLE4IH8yRky98FlryBSzSzg+vhtcGil
+         Mdvw==
+X-Gm-Message-State: AOJu0YxpZfhkksthna5xtis6/gWsTWw7NCD2cAWd659gFA+97R2oYB+a
+	XrHsYx6lQJpnvKY6hrYvPgb3L4GZ0SUUgDDngf2nK/hIgUFVmA==
+X-Google-Smtp-Source: AGHT+IHQ6cXIsXzRc6XakmymCwoA7mv+zss2o4SvQ0KqdNTkZnHNCUPr3fyvzAazRLNXNEDo4i+YVf+M75DFe0sgi5g=
+X-Received: by 2002:a0d:e854:0:b0:5d7:1940:3ef4 with SMTP id
+ r81-20020a0de854000000b005d719403ef4mr1292274ywe.37.1704333737727; Wed, 03
+ Jan 2024 18:02:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240103072017.1646007-1-naman.trivedimanojbhai@amd.com>
+References: <20230827115033.935089-1-dmitry.baryshkov@linaro.org>
+ <20230827115033.935089-9-dmitry.baryshkov@linaro.org> <20231011154935.GA785564-robh@kernel.org>
+ <CAA8EJpqf4Q7wh657==C45Ka8YmmyopkCQnyEFcXkaoRwnCRZLQ@mail.gmail.com> <CAL_JsqKwWyoPdt3C0FdsgN087xK0jGyp3PVgiCaETZK9FX2JdQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqKwWyoPdt3C0FdsgN087xK0jGyp3PVgiCaETZK9FX2JdQ@mail.gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 4 Jan 2024 04:02:06 +0200
+Message-ID: <CAA8EJpqNRrpcK50FRLcrSdyHFadU1=6yRqBOCFv=fnTBYJs9=g@mail.gmail.com>
+Subject: Re: [PATCH v4 08/23] soc: qcom: Add driver for Qualcomm Krait L2
+ cache scaling
+To: Rob Herring <robh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Ilia Lin <ilia.lin@kernel.org>, 
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Georgi Djakov <djakov@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Christian Marangi <ansuelsmth@gmail.com>, Stephan Gerhold <stephan@gerhold.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Naman,
+HI Rob,
 
-kernel test robot noticed the following build warnings:
+Resurrecting old thread, but I think it's better as it has context.
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on linus/master v6.7-rc8 next-20240103]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Added driver core maintainers, see discussion points below.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Naman-Trivedi-Manojbhai/drivers-clk-zynqmp-remove-clock-name-dependency/20240103-152152
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20240103072017.1646007-1-naman.trivedimanojbhai%40amd.com
-patch subject: [PATCH] drivers: clk: zynqmp: remove clock name dependency
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240104/202401040935.LLlZNxiu-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240104/202401040935.LLlZNxiu-lkp@intel.com/reproduce)
+On Wed, 11 Oct 2023 at 21:44, Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Oct 11, 2023 at 1:20=E2=80=AFPM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > On Wed, 11 Oct 2023 at 18:49, Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Sun, Aug 27, 2023 at 02:50:18PM +0300, Dmitry Baryshkov wrote:
+> > > > Add a simple driver that handles scaling of L2 frequency and voltag=
+es.
+> > > >
+> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > ---
+> > >
+> > > [...]
+> > >
+> > > > +static const struct of_device_id krait_l2_match_table[] =3D {
+> > > > +     { .compatible =3D "qcom,krait-l2-cache" },
+> > > > +     {}
+> > > > +};
+> > > > +MODULE_DEVICE_TABLE(of, krait_l2_match_table);
+> > > > +
+> > > > +static struct platform_driver krait_l2_driver =3D {
+> > > > +     .probe =3D krait_l2_probe,
+> > > > +     .remove =3D krait_l2_remove,
+> > > > +     .driver =3D {
+> > > > +             .name =3D "qcom-krait-l2",
+> > > > +             .of_match_table =3D krait_l2_match_table,
+> > > > +             .sync_state =3D icc_sync_state,
+> > > > +     },
+> > > > +};
+> > >
+> > > As I mentioned in the other thread, cache devices already have a stru=
+ct
+> > > device. Specifically, they have a struct device (no subclass) on the
+> > > cpu_subsys bus type. So there should be no need for a platform device
+> > > and second struct device.
+> > >
+> > > See drivers/acpi/processor_driver.c for an example. Or grep any use o=
+f
+> > > "cpu_subsys".
+> >
+> > Most likely you mean drivers/base/cacheinfo.c. I saw this code, I
+> > don't think it makes a good fit here. The cacheinfo devices provide
+> > information only, they are not tied to DT nodes in any way.
+>
+> They are completely tied to DT nodes beyond L1.
+>
+> >  cpu_subsys
+> > doesn't provide a way to match drivers with subsys devices in the
+> > non-ACPI case, etc.
+>
+> That's a 2 line addition to add DT support.
+>
+> > Moreover, the whole cacheinfo subsys is
+> > non-existing on arm32, there is no cacheinfo implementation there,
+> > thanks to the overall variety of architectures.
+>
+> Humm, well I don't think it would be too hard to add, but I won't ask
+> you to do that. All the info comes from DT or can come from DT, so it
+> should be just a matter of arm32 calling the cacheinfo init.
+>
+> > Thus said, I don't think cacheinfo makes a good fit for the case of
+> > scaling L2 cache.
+>
+> I still disagree. It's not really cacheinfo. That is what creates the
+> devices, but it's the cpu_subsys bus type. Why do you care that it is
+> platform bus vs. cpu_subsys?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202401040935.LLlZNxiu-lkp@intel.com/
+I finally found a timeslot to look at cacheinfo. I added support for
+arm32 cacheinfo (which is fine) and tried using cacheinfo devices for
+L2 driver mapping (the RFC has been posted at [1]).
+But after I actually tried using it for the L2 cache driver.  I
+stumbled upon several issues, which I'd like to discuss before rushing
+to code.
 
-All warnings (new ones prefixed by >>):
+First, you supposed that cacheinfo devices land onto the cpu_subsys
+bus. However only actual CPU devices end up on cpu_subsys. CPU cache
+devices are created using cpu_device_create(), but despite its name
+they don't go to cpu_subsys.
 
-   drivers/clk/zynqmp/clkc.c: In function 'zynqmp_get_parent_list':
->> drivers/clk/zynqmp/clkc.c:565:50: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-     565 |                                         clk_name = __clk_get_name(clk_parent);
-         |                                                  ^
-   drivers/clk/zynqmp/clkc.c:583:50: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-     583 |                                         clk_name = __clk_get_name(clk_parent);
-         |                                                  ^
+Second and more important, these devices are created without any
+attempt to share them. So on a 4-core system I have 4 distinct devices
+for L2 cache even though it is shared between all cores.
 
+root@qcom-armv7a:~# stat -c "%N %i" /sys/bus/cpu/devices/cpu*/cache/index2/=
+level
+/sys/bus/cpu/devices/cpu0/cache/index2/level 15537
+/sys/bus/cpu/devices/cpu1/cache/index2/level 15560
+/sys/bus/cpu/devices/cpu2/cache/index2/level 15583
+/sys/bus/cpu/devices/cpu3/cache/index2/level 15606
 
-vim +/const +565 drivers/clk/zynqmp/clkc.c
+I think it makes sense to rework cacheinfo to create actual CPU cache
+devices (maybe having a separate cache bus).
+In my case it should become something like:
 
-   535	
-   536	/**
-   537	 * zynqmp_get_parent_list() - Create list of parents name
-   538	 * @np:			Device node
-   539	 * @clk_id:		Clock index
-   540	 * @parent_list:	List of parent's name
-   541	 * @num_parents:	Total number of parents
-   542	 *
-   543	 * Return: 0 on success else error+reason
-   544	 */
-   545	static int zynqmp_get_parent_list(struct device_node *np, u32 clk_id,
-   546					  const char **parent_list, u32 *num_parents)
-   547	{
-   548		int i = 0, ret;
-   549		u32 total_parents = clock[clk_id].num_parents;
-   550		struct clock_topology *clk_nodes;
-   551		struct clock_parent *parents;
-   552		struct clk *clk_parent;
-   553		char *clk_name;
-   554	
-   555		clk_nodes = clock[clk_id].node;
-   556		parents = clock[clk_id].parent;
-   557	
-   558		for (i = 0; i < total_parents; i++) {
-   559			if (!parents[i].flag) {
-   560				ret = of_property_match_string(np, "clock-names",
-   561							       parents[i].name);
-   562				if (ret >= 0) {
-   563					clk_parent = of_clk_get(np, ret);
-   564					if (clk_parent) {
- > 565						clk_name = __clk_get_name(clk_parent);
-   566						if (clk_name)
-   567							strcpy(parents[i].name, clk_name);
-   568						else
-   569							return 1;
-   570					} else {
-   571						return 1;
-   572					}
-   573				}
-   574				parent_list[i] = parents[i].name;
-   575			} else if (parents[i].flag == PARENT_CLK_EXTERNAL) {
-   576				ret = of_property_match_string(np, "clock-names",
-   577							       parents[i].name);
-   578				if (ret < 0) {
-   579					strcpy(parents[i].name, "dummy_name");
-   580				} else {
-   581					clk_parent = of_clk_get(np, ret);
-   582					if (clk_parent) {
-   583						clk_name = __clk_get_name(clk_parent);
-   584						if (clk_name)
-   585							strcpy(parents[i].name, clk_name);
-   586						else
-   587							return 1;
-   588					} else {
-   589						return 1;
-   590					}
-   591				}
-   592				parent_list[i] = parents[i].name;
-   593			} else {
-   594				strcat(parents[i].name,
-   595				       clk_type_postfix[clk_nodes[parents[i].flag - 1].
-   596				       type]);
-   597				parent_list[i] = parents[i].name;
-   598			}
-   599		}
-   600	
-   601		*num_parents = total_parents;
-   602		return 0;
-   603	}
-   604	
+cpu0-2-unified (shared between all 4 cores)
+cpu0-1-icache
+cpu0-1-dcache
+cpu1-1-icache
+cpu1-1-dcache
+...
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I'm not sure if it's worth supporting more than one instance of the
+same kind per level (e.g. I think current cacheinfo has nothing
+against having two I-cache or two D-cache devices)
+
+The cpuN/cache/indexM should become symlinks to those cache devices.
+
+What do you think?
+
+[1] https://lore.kernel.org/linux-arm-msm/CAA8EJppCRzknaujKFyLa_i7x4UnX31YF=
+Syjtux+zJ0harixrbA@mail.gmail.com
+
+> On a separate issue, I'd propose you move this to drivers/cache/
+> instead of the dumping ground that is drivers/soc/. It's nothing more
+> than a location to collect cache related drivers ATM because we seem
+> to be accumulating more of them.
+
+I thought about reusing drivers/devfreq, it already has the Mediatek CCI dr=
+iver.
+
+--=20
+With best wishes
+Dmitry
