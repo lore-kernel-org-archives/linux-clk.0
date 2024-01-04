@@ -1,49 +1,49 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093F5208A8
-	for <linux-clk@vger.kernel.org>; Thu,  4 Jan 2024 09:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4453A208D3
+	for <linux-clk@vger.kernel.org>; Thu,  4 Jan 2024 09:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jr/wUvc+"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-555f95cc2e4so370742a12.3
-        for <linux-clk@vger.kernel.org>; Thu, 04 Jan 2024 01:31:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wmx//jxu"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a27e323fdd3so31035866b.2
+        for <linux-clk@vger.kernel.org>; Thu, 04 Jan 2024 01:55:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704360665; x=1704965465; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704362130; x=1704966930; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=y+E7YrBlkhYNDogi7xlUtXlc4iitfTsqQEsfWrTgqeM=;
-        b=Jr/wUvc+4E6YkAv19RZysWZWFgw0Y+CyHSueS0SXlVdmuROduSTFrU8/1j+Dj17cld
-         thlo2yIytX1eRgooMuDsd3cFPYz1+D+4gXTZXnzETHE4coO5gJYXNCRS0l6/W38w/PwG
-         tRdSBXEEW5Df4bn8s0en0SZHYn3ECz9f0QiKpQAYM4Zi9KzjAGEwzFS+XC39UzwYgrdF
-         mmEg5xk9MOt+/TOLcopihOxNp+X2te6tgSiUWK7VsZiX2UMYQ8U1++Vh3UY7KlIVp98c
-         txRyBKwW2hLge5dMAqI+oHtT+g3ab/CpucU8odNFUA4msBSwnb964blSNaIJxa1b4k/Q
-         +0DA==
+        bh=wO8OC0Dzb3+yM1rxiFt6WTsH4sWuKnHi0Z9bM/kkbiQ=;
+        b=wmx//jxuABvm2y49gbqV6XtIlD9HQgY8cFOjGH/7Y/StmIVb0cjHHgOmRUkV0kq72c
+         s0wQZSgYIepKl3hLYMNbhUmX2Q3p30i/RkADbt9HDLhsSQK5/6TyEU7m1HVYiYjrD1H1
+         GG53ZoIDhwFrXs4V18giI1lOCHhSfV46vJW9HwdmbLMV3cSaO5m1ag8ZUDOUgKmYOvEW
+         DTXhG+K6ghU+/ideKaXhyYvvAzfv3HptD7trvn5M62KhPD9xy8cXO78BAgMO59pOZSsz
+         SoHG205h5L2PNrL7j7oQpn92KwmWkPMX1lnyaPdHmPic9v5X/TxJww3dhSk2lZ1wxqxp
+         DEeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704360665; x=1704965465;
+        d=1e100.net; s=20230601; t=1704362130; x=1704966930;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y+E7YrBlkhYNDogi7xlUtXlc4iitfTsqQEsfWrTgqeM=;
-        b=UZHfG8beas0yLWpNNW+aGz44Lp5aXgl7zu27yX9+smR/s63xGs2v2QEyJ8qI+qBZlA
-         /w4z1WA085rxdj4nVu3Ng+Vfy0iF0hg3AuSQ0mY+DP/ixX2Qd8krDIyfNhF1Uem5o8gv
-         lilwLQjfv6z84kwJllBXaqRJSmhsPvxZxPSmfNMdgSEBy4KNswRRZv2tm5OnDyeqx9ZJ
-         oRuwgCbj4wLtXmVoTtV1turrRcZbX4Az4NMcnLwhTvppDettovvrwsQPWzn8p2aAdsYx
-         TarS+xqm/9NcbcvE41CQ3ks2ASptRg80UPJoDmB7hgJ8yAIhBautOa0mjskkiB9SWjOz
-         buBQ==
-X-Gm-Message-State: AOJu0Yx60mEMvPdTavVpYy/57KQ9p0IHGIwmJF2+Ta0wGZm/dW5s/bzp
-	YrwCVqLRlTN7g3vJCQnoweSxBKflWVd/iQ==
-X-Google-Smtp-Source: AGHT+IGaZ00I4iu62g+5yeAUmS84jz3g3vAU1ga1EjhwZdgRSgEqazJbHks6Ja9FHIRKlu3Ut53abg==
-X-Received: by 2002:a17:907:c96:b0:a23:71ca:2bb4 with SMTP id gi22-20020a1709070c9600b00a2371ca2bb4mr149904ejc.144.1704360665262;
-        Thu, 04 Jan 2024 01:31:05 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id f17-20020a170906495100b00a26b057df46sm9910107ejt.126.2024.01.04.01.31.03
+        bh=wO8OC0Dzb3+yM1rxiFt6WTsH4sWuKnHi0Z9bM/kkbiQ=;
+        b=M1JJ7flBS2LAlEgX7EL2Q4h7pIAJkRsrrPAyQ6//+2CnMcPIHV+jyDswtWpwEOvTfy
+         SKXoX67+kwfPHKUCWsVR36r7E78YjbKPeq0CGE9qB+hjzNevdvzMEAePcmJ7KKI0uk66
+         abKT7wExPKwrDtxbmFMO2b25d+/PjArxsExcfODJ4LZDbNyVR+4sUIS9D8eN3GTphUhY
+         IayW4UNae8hkO58ivG5ceP5jfts8SruGvdpyFLGnTmC4MDnQt8Tp/qlX63XRxu7DCrVl
+         YOEyCbtCeAk4cXtnFLXCrD2k/OEzwWbbKkmcceKPGKc7ZgOTSuo+cCR1JWByzQ/pOFZm
+         GIWA==
+X-Gm-Message-State: AOJu0YyV9oQjjHT7v4k+9nFjUdk00E0495R+W3k73oRXxLpjEDZNV0A5
+	qBMQ9K7VRyXFJEXoI1nlitSHbyoqBNuyag==
+X-Google-Smtp-Source: AGHT+IEzIPkgZdDLrd4i3akEmjh8BhCDJun38iAcjUcvqneFS1rD6PnG9aBdDqyF3+Fji+7S1hRZvw==
+X-Received: by 2002:a17:906:d7a8:b0:a27:f2b7:bfde with SMTP id pk8-20020a170906d7a800b00a27f2b7bfdemr178795ejb.130.1704362130400;
+        Thu, 04 Jan 2024 01:55:30 -0800 (PST)
+Received: from [192.168.199.125] (178235179036.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.36])
+        by smtp.gmail.com with ESMTPSA id gk1-20020a17090790c100b00a28a8ca1c55sm1184525ejb.212.2024.01.04.01.55.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jan 2024 01:31:04 -0800 (PST)
-Message-ID: <1f66cf69-5d2c-4e15-bf44-4b96a4cc2900@linaro.org>
-Date: Thu, 4 Jan 2024 10:31:03 +0100
+        Thu, 04 Jan 2024 01:55:30 -0800 (PST)
+Message-ID: <7f2f738b-a2a7-43ba-b63a-bba59e76bae4@linaro.org>
+Date: Thu, 4 Jan 2024 10:55:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,100 +51,88 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clk: sprd: Add UMS9620 support
+Subject: Re: [PATCH v5 03/12] clk: qcom: gcc-sm6375: Unregister critical
+ clocks
 Content-Language: en-US
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Chunyan Zhang <chunyan.zhang@unisoc.com>, Stephen Boyd
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>
-References: <20231229085156.1490233-1-chunyan.zhang@unisoc.com>
- <20231229085156.1490233-2-chunyan.zhang@unisoc.com>
- <3a290bf9-928d-4d21-9c93-0d1db59d6fff@linaro.org>
- <CAAfSe-stvoKSVynTnoy87CUK3NM+ZEwfTMazO0tfwcx5BXG0Og@mail.gmail.com>
- <b8fdce9e-50d9-4b43-a018-c35350bcec0f@linaro.org>
- <CAAfSe-vRLaCZca2anp7iBnHDPUr-oVexSVy7PKYhNDUZ8GGgaw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAAfSe-vRLaCZca2anp7iBnHDPUr-oVexSVy7PKYhNDUZ8GGgaw@mail.gmail.com>
+ Conor Dooley <conor+dt@kernel.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20230717-topic-branch_aon_cleanup-v5-0-99942e6bf1ba@linaro.org>
+ <20230717-topic-branch_aon_cleanup-v5-3-99942e6bf1ba@linaro.org>
+ <ZZZt1fV9WYJ6P-xE@hovoldconsulting.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <ZZZt1fV9WYJ6P-xE@hovoldconsulting.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/01/2024 10:26, Chunyan Zhang wrote:
->>>> Missing names.
->>>
->>> The names are fixed, but the order are not.
+On 4.01.2024 09:35, Johan Hovold wrote:
+> On Wed, Jan 03, 2024 at 02:36:01PM +0100, Konrad Dybcio wrote:
+>> Some clocks need to be always-on, but we don't really do anything
+>> with them, other than calling enable() once and telling Linux they're
+>> enabled.
 >>
->> Order must be fixed.
-
-Did you read this? It must be. If it is not, your patchset has issues
-you must fix.
-
-
+>> Unregister them to save a couple of bytes and, perhaps more
+>> importantly, allow for runtime suspend of the clock controller device,
+>> as CLK_IS_CRITICAL prevents the latter.
 >>
->>>
->>> For example:
->>> clk_a {
->>>     clocks = <&ext_26m>, <&ext_32k>;
->>>     clock-names = "ext-26m", "ext-32k";
->>> };
->>>
->>> clk_b {
->>>     clocks = <&ext_26m>, <&ext_4m>;
->>>     clock-names = "ext-26m", "ext-4m";
->>
->> And here the order is fixed...
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > 
-> The order is not fixed, 'clk_b' will cause dtb_check error, since it
-> skips the second one i.e. ext-32k in the clock-names list.
+>> @@ -3886,6 +3797,11 @@ static int gcc_sm6375_probe(struct platform_device *pdev)
+>>  	qcom_branch_set_clk_en(regmap, 0x17028); /* GCC_CAMERA_XO_CLK */
+>>  	qcom_branch_set_clk_en(regmap, 0x2b004); /* GCC_CPUSS_GNOC_CLK */
+>>  	qcom_branch_set_clk_en(regmap, 0x1702c); /* GCC_DISP_XO_CLK */
+>> +	qcom_branch_set_clk_en(regmap, 0x17008); /* GCC_CAMERA_AHB_CLK */
+>> +	qcom_branch_set_clk_en(regmap, 0x1700c); /* GCC_DISP_AHB_CLK */
+>> +	qcom_branch_set_clk_en(regmap, 0x36004); /* GCC_GPU_CFG_AHB_CLK */
+>> +	qcom_branch_set_clk_en(regmap, 0x79004); /* GCC_SYS_NOC_CPUSS_AHB_CLK */
+>> +	qcom_branch_set_clk_en(regmap, 0x17004); /* GCC_VIDEO_AHB_CLK */
+> 
+> Shouldn't you keep the above sorted by offset or at least try to group
+> them by subsystem (e.g. keep the camera clocks together)?
+Guess I assumed order-of-appearance sorting was fine when I made this
+patch.
 
-Then why do you use the same compatible for two different devices?
+I can group it by hw block, though.
 
-Best regards,
-Krzysztof
-
+Konrad
