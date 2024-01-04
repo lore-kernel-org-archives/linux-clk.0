@@ -1,132 +1,80 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA7F27451;
-	Thu,  4 Jan 2024 20:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8330D2C681;
+	Thu,  4 Jan 2024 21:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="CS2ViA3A"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=public-files.de;
-	s=s31663417; t=1704401681; x=1705006481; i=frank-w@public-files.de;
-	bh=SKkSJVBzIOnKnn+RMuSC3/60nyMBWnquf6LcANeBPSQ=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:
-	 References;
-	b=CS2ViA3AGo92P0jwir5NIAVAgbg6yV/+1DM8ORA/rlVp8n/46+3FpFHhG3b3oDXu
-	 cuSQfVCACQpt2XO/1SIKwDEWf8+7CXPyh2g51AhADAaEvRJspB7C9dMZugSvCx/wf
-	 dqOleA4miuHaV7LzdRjZ9MKoVxTNTZGgApFdXmf50Y6MR9SnlCd7CODPj+0V8YkO1
-	 jDaGg8yPxeZaVhMLxmhx3QwSsT5lbLMbZITqKwUvMOBjnEBCk9zGSxCE7OSbS1p61
-	 dRMtq3jhAdQtWjyMhFbUgyqCmTzbWZfjCjH4g+eBuemcngs/5pLg69kRRCA8ejRWi
-	 xcCEOwOsEdcaW/DCCQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [157.180.226.237] ([157.180.226.237]) by web-mail.gmx.net
- (3c-app-gmx-bs29.server.lan [172.19.170.81]) (via HTTP); Thu, 4 Jan 2024
- 21:54:40 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZB32WZeX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD073C433C7;
+	Thu,  4 Jan 2024 21:36:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704404204;
+	bh=/gPJhI0luavzDAMUU3piZFqDvBPXXQmqih0y6CbPkDo=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ZB32WZeXi9pWrXUs4nFLQOKWQKvgsLCPhg8HTDvMQhFsZ49JD/Jw1deYXZPm3o/SX
+	 x52TbzbuJ7w7zaPewansJqg+zHb8lttmaWATUuJ4SzSl2jH0rDh8pyJ0iU5ZL7JpUG
+	 vFdiAbo3/Wr0UkClMHKumsYsjy4P6fS5q0ps/1H+5gWzENdb1M7jhPF3lcCu88uGgd
+	 +kSOVjghQwtXpWwsXrwqrQtKVeiA5ju118sbwaMmC//4Joihr8xYDaOi0xhWHdOMRH
+	 S5Xl1Es0N99dCoAyn/X2I5yqMKsNE+B3EYqNsYzomPekVxXw++Ccp437MMTItRCG3i
+	 3UMzW9jMRxsjA==
+Message-ID: <988ae72846dc680382f98b63b61a8c32.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-940b6e7e-1246-45f8-af65-f5048bc2265b-1704401680934@3c-app-gmx-bs29>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Daniel Golle <daniel@makrotopia.org>, Frank Wunderlich
- <linux@fw-web.de>, linux-mediatek@lists.infradead.org, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Matthias
- Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Philipp Zabel
- <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, Sam Shih <sam.shih@mediatek.com>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Aw: Re: [PATCH 1/2] dt-bindings: reset: mediatek: add MT7988 LVTS
- reset ID
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 4 Jan 2024 21:54:40 +0100
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <3e3455a1-c540-4323-9d9d-95289a395c3f@linaro.org>
-References: <20240104173930.13907-1-linux@fw-web.de>
- <20240104173930.13907-2-linux@fw-web.de>
- <ZZb0-pFWxuQlEm7q@pidgin.makrotopia.org>
- <3e3455a1-c540-4323-9d9d-95289a395c3f@linaro.org>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:ZLdxy+zk76HP1t6Fqt05SLqZ3emcYLI8IAqKeFvSrgvBnnBbjqewMQxqbTy69hsc+QjMq
- lffypJx3P8BsU3PPzXiNZ5iojUA+7zknLAIk7XF3U36Z+N7bEAwaU2K1eV7NAKq7kmSd4mpUPK+T
- vDzWopQ/zM2pdfMPWYpXpoCVWNC9FZ11a6/jlaAyfC76iBU43/oW6nF4ftAFkpAuDk1VQifJsRRt
- /DPKTi1eHs5BVsIJjmVGcHVGXxFgQAf+CLejc8zBq1p4omlNorq+qAWl9EbZnCR7WpMLsaSSMCrg
- eA=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:tB+ieJbTebQ=;0WICBO5JQdiX9M3vSS+T9ckm3a9
- bGtqXX18GHN6TYSLML7cneFFD2QCV0i55WJmMuU6C3NnsZzm7XZGNPSL2fVmEnaarxkfVGXtH
- u0nyxo+FCXPVprhuYZwKluLsQBI3+AXoNTKEC1lxjGM4TAqbZdgH/dudmrYqXpk41uBE9I7az
- 28FsvUElYvWBgGO3d4PSJIV07+q+uNKtXYoVq0WXrDRc7Lv/Q9dVYqrqkS0aOU+htULnJ7gnC
- W4vYjamfWlb1Y5LFMNu5YnNeMTNB6frj+XOUNOB7mjf2rz1sMJWg/sKW6xDIkO0kFrtCm5k1a
- F11TBoh2WrGmunSRhCxHPFEQGJrFQ8B412mqr5ubbuLZ2GCk9dtUuen9PapKyofzttvcPrQpw
- j43qPTxTVd8R1zxscAxHJpb/ivgBL8Mqj69QbRe4ldLrHCwG9yQKJrAIu9jVR4UMg2vqkcj5L
- MW7ijNCAOaO7maqwa9Ab3t80RzVf5gR0ljoMBy6yT0dKFAJdpaVsTXC2FrNMZB69CkB2oZvBo
- gg15EsOhF7obUIWzF9KufGYYGe450auwNceaiXv6HkQkER69bQ0Tu+sa5Aqwi7iUWKM5Xmdcb
- oIQIk0KRkBriUvzo9BohB5dUnA4bO/Hz6B8OkZGDra9DdSQJEuz22LiDCotNZpdcmvmVl0zXS
- UX33TFUhPKS+oQYZPEzeiXoZ075J/2FfTS/iCboU/HXZCuIlgNIY6oYNRD1MYIzyz8+axCWPZ
- N1f6B/PcyoF1JfUlNwKCQc78IOgdR2C7ZopRmhPBJTDir9ozPjav8PFHiwGrD6Hbw9JOFQR00
- VTrNtPB/zjBe/yMvvEQ7lLkyiSPb2CATLh6gaNXrFcPOk=
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240104-sm8150-dfs-support-v1-1-a5eebfdc1b12@quicinc.com>
+References: <20240104-sm8150-dfs-support-v1-0-a5eebfdc1b12@quicinc.com> <20240104-sm8150-dfs-support-v1-1-a5eebfdc1b12@quicinc.com>
+Subject: Re: [PATCH 1/3] clk: qcom: gcc-sm8150: Register QUPv3 RCGs for DFS on SM8150
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Deepak Katragadda <dkatraga@codeaurora.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, Vinod Koul <vkoul@kernel.org>
+Date: Thu, 04 Jan 2024 13:36:41 -0800
+User-Agent: alot/0.10
 
-Hi
+Quoting Satya Priya Kakitapalli (2024-01-04 06:23:04)
+> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+> index 05d115c52dfe..6d76fd344ddf 100644
+> --- a/drivers/clk/qcom/gcc-sm8150.c
+> +++ b/drivers/clk/qcom/gcc-sm8150.c
+> @@ -453,19 +453,29 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s=
+0_clk_src[] =3D {
+>         { }
+>  };
+> =20
+> +static struct clk_init_data gcc_qupv3_wrap0_s0_clk_src_init =3D {
 
-> Gesendet: Donnerstag, 04. Januar 2024 um 20:19 Uhr
-> Von: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
-> Betreff: Re: [PATCH 1/2] dt-bindings: reset: mediatek: add MT7988 LVTS r=
-eset ID
->
-> On 04/01/2024 19:12, Daniel Golle wrote:
-> > Hi Frank,
-> >
-> > On Thu, Jan 04, 2024 at 06:39:29PM +0100, Frank Wunderlich wrote:
-> >> From: Frank Wunderlich <frank-w@public-files.de>
-> >>
-> >> ---
-> >>  include/dt-bindings/reset/mediatek,mt7988-resets.h | 4 ++++
-> >>  1 file changed, 4 insertions(+)
-> >>
-> >> diff --git a/include/dt-bindings/reset/mediatek,mt7988-resets.h b/inc=
-lude/dt-bindings/reset/mediatek,mt7988-resets.h
-> >> index 493301971367..3f1e4ec07ad5 100644
-> >> --- a/include/dt-bindings/reset/mediatek,mt7988-resets.h
-> >> +++ b/include/dt-bindings/reset/mediatek,mt7988-resets.h
-> >> @@ -10,4 +10,8 @@
-> >>  /* ETHWARP resets */
-> >>  #define MT7988_ETHWARP_RST_SWITCH		0
-> >>
-> >> +/* INFRA resets */
-> >> +#define MT7988_INFRA_RST0_THERM_CTRL_SWRST	9
-> >
-> > I suppose this argument applies here as well:
-> >
-> > "IDs should start from 0 or 1 and increment by 1. If these are not IDs=
-,
-> > then you do not need them in the bindings."
-> >
-> > https://lore.kernel.org/all/59629ec1-cc0c-4c5a-87cc-ea30d64ec191@linar=
-o.org/
-> >
-> > As a consequence, as what you are describing there are hardware bits
->
-> If this is existing driver which already uses such pattern, then it is
-> fine. I usually comment this on new drivers which can be changed.
+Can these be const?
 
-this is a new driver so i guess i should change this like daniel suggests.
-As i want to use this constant in dts and driver i would like keep it as b=
-inding in the reset header,
-but because i use it only as index in the infra_idx_map array its value do=
-es not need to have the value
-needed in hardware. i kept it same to not have different values and for or=
-dering purposes (when the other
-possible resets are added).
+> +       .name =3D "gcc_qupv3_wrap0_s0_clk_src",
+> +       .parent_data =3D gcc_parents_0,
+> +       .num_parents =3D ARRAY_SIZE(gcc_parents_0),
+> +       .flags =3D CLK_SET_RATE_PARENT,
+> +       .ops =3D &clk_rcg2_ops,
+> +};
+> +
+>  static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src =3D {
+>         .cmd_rcgr =3D 0x17148,
+>         .mnd_width =3D 16,
+>         .hid_width =3D 5,
+>         .parent_map =3D gcc_parent_map_0,
+>         .freq_tbl =3D ftbl_gcc_qupv3_wrap0_s0_clk_src,
+> -       .clkr.hw.init =3D &(struct clk_init_data){
+> -               .name =3D "gcc_qupv3_wrap0_s0_clk_src",
+[...]
+> @@ -3786,6 +3850,13 @@ static int gcc_sm8150_probe(struct platform_device=
+ *pdev)
+>         regmap_update_bits(regmap, 0x4d110, 0x3, 0x3);
+>         regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+> =20
+> +       ret =3D qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+> +                                      ARRAY_SIZE(gcc_dfs_clocks));
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "Failed to register with DFS!\n");
 
-so the way starting at 0 will be the preferred one for me, is this ok?
+Use=20
 
-regards Frank
+		return dev_err_probe(...);
