@@ -1,46 +1,170 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D361849;
-	Thu,  4 Jan 2024 01:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE3E1849;
+	Thu,  4 Jan 2024 01:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jn8tdyiz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CEF7C433C8;
-	Thu,  4 Jan 2024 01:00:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704330009;
-	bh=YhPccyep9c7+vkew2LR1MHBYks2F3iHuMcYZNxDs8JE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jn8tdyizXuYWy3et3cfDV8Oex21VlgAgjfPLg8mcj9WenKss5F2xL/eV7hORqsg8C
-	 cdo/Lxy5Zl8AaYcxzBMPvUrnrpFD7A/dUZs02bLvikeL5Hsh+D0uTk3a1U2dG1HpRb
-	 P8nm4CyvrnJZ+nnQ6khZAQrbY+X4f+Ll2nHkQVR1E7kZPlgUgCbg5LqLoucXdF9cfj
-	 k+XuXh8BuBOFweE4yy/HO5yaMcNxyJrNDlnlYwQ8DATrZ2xzIVJvlqXKuLBc/QWGk8
-	 HOGyjm2h7MYDTwNUuuNuqEAK1I8mUC2ecqHhi+dJno8fewwnn3rfdWD1y94wA1DBXQ
-	 n8xtaPpDjTqlQ==
-Message-ID: <55fd522918aa41f386e01432248933da.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EP02KyZj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1704332485; x=1735868485;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hCbBXEsRZ3+SWSMbVZ2tJ+JX+kyIEszozluquihN60Y=;
+  b=EP02KyZj9SNNlgiLVAtdiF6EN4HpeiAVIsWJOaLeCGQx5H08YKByhrfz
+   IW0t4gy/WeavlgQdwT3B/RlbW08Q8hZQaqHOqHpF89snxUcG1zSOs0NDj
+   UYXw1zP5Hj8Bypbu/gzJu4z4R37NLd4xObtWBnSCaxUWYL3YAF+Q0LLCI
+   xHVH35iZL5TVGeJKzQek6yw+zRtEYrI39h6Y80PnXeK6TVx4niPfw94vy
+   4I8lG73ARdaZMGkOjPRl6n4qfpVsrITBHp5XGN/G/svq8Gs2GDjQk3bhp
+   n98AshPBHTgYRmiTMMHeBaiMNpzQPbvR0B3UrAm8ZaytPtmwILPY/r98l
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10942"; a="396825164"
+X-IronPort-AV: E=Sophos;i="6.04,329,1695711600"; 
+   d="scan'208";a="396825164"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jan 2024 17:41:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10942"; a="903619769"
+X-IronPort-AV: E=Sophos;i="6.04,329,1695711600"; 
+   d="scan'208";a="903619769"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 03 Jan 2024 17:41:14 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rLCjQ-000Mly-2B;
+	Thu, 04 Jan 2024 01:41:12 +0000
+Date: Thu, 4 Jan 2024 09:41:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>,
+	mturquette@baylibre.com, sboyd@kernel.org, michal.simek@amd.com,
+	abel.vesa@linaro.org, robh@kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	angelogioacchino.delregno@collabora.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
+Subject: Re: [PATCH] drivers: clk: zynqmp: remove clock name dependency
+Message-ID: <202401040935.LLlZNxiu-lkp@intel.com>
+References: <20240103072017.1646007-1-naman.trivedimanojbhai@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20240103072017.1646007-1-naman.trivedimanojbhai@amd.com>
-References: <20240103072017.1646007-1-naman.trivedimanojbhai@amd.com>
-Subject: Re: [PATCH] drivers: clk: zynqmp: remove clock name dependency
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
-To: Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>, abel.vesa@linaro.org, angelogioacchino.delregno@collabora.com, krzysztof.kozlowski@linaro.org, michal.simek@amd.com, mturquette@baylibre.com, robh@kernel.org
-Date: Wed, 03 Jan 2024 17:00:06 -0800
-User-Agent: alot/0.10
 
-Quoting Naman Trivedi Manojbhai (2024-01-02 23:20:17)
-> Currently, from zynqmp_get_parent_list() function the clock driver
-> references the clock by name instead of its reference from device tree.
-> This causes problem when the clock name in the device tree is changed.
->=20
-> Remove hard dependency of clock name and update the logic to use clock
-> reference from device tree instead of clock name.
+Hi Naman,
 
-Please use struct clk_parent_data instead.
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.7-rc8 next-20240103]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Naman-Trivedi-Manojbhai/drivers-clk-zynqmp-remove-clock-name-dependency/20240103-152152
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20240103072017.1646007-1-naman.trivedimanojbhai%40amd.com
+patch subject: [PATCH] drivers: clk: zynqmp: remove clock name dependency
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240104/202401040935.LLlZNxiu-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240104/202401040935.LLlZNxiu-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202401040935.LLlZNxiu-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/clk/zynqmp/clkc.c: In function 'zynqmp_get_parent_list':
+>> drivers/clk/zynqmp/clkc.c:565:50: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     565 |                                         clk_name = __clk_get_name(clk_parent);
+         |                                                  ^
+   drivers/clk/zynqmp/clkc.c:583:50: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     583 |                                         clk_name = __clk_get_name(clk_parent);
+         |                                                  ^
+
+
+vim +/const +565 drivers/clk/zynqmp/clkc.c
+
+   535	
+   536	/**
+   537	 * zynqmp_get_parent_list() - Create list of parents name
+   538	 * @np:			Device node
+   539	 * @clk_id:		Clock index
+   540	 * @parent_list:	List of parent's name
+   541	 * @num_parents:	Total number of parents
+   542	 *
+   543	 * Return: 0 on success else error+reason
+   544	 */
+   545	static int zynqmp_get_parent_list(struct device_node *np, u32 clk_id,
+   546					  const char **parent_list, u32 *num_parents)
+   547	{
+   548		int i = 0, ret;
+   549		u32 total_parents = clock[clk_id].num_parents;
+   550		struct clock_topology *clk_nodes;
+   551		struct clock_parent *parents;
+   552		struct clk *clk_parent;
+   553		char *clk_name;
+   554	
+   555		clk_nodes = clock[clk_id].node;
+   556		parents = clock[clk_id].parent;
+   557	
+   558		for (i = 0; i < total_parents; i++) {
+   559			if (!parents[i].flag) {
+   560				ret = of_property_match_string(np, "clock-names",
+   561							       parents[i].name);
+   562				if (ret >= 0) {
+   563					clk_parent = of_clk_get(np, ret);
+   564					if (clk_parent) {
+ > 565						clk_name = __clk_get_name(clk_parent);
+   566						if (clk_name)
+   567							strcpy(parents[i].name, clk_name);
+   568						else
+   569							return 1;
+   570					} else {
+   571						return 1;
+   572					}
+   573				}
+   574				parent_list[i] = parents[i].name;
+   575			} else if (parents[i].flag == PARENT_CLK_EXTERNAL) {
+   576				ret = of_property_match_string(np, "clock-names",
+   577							       parents[i].name);
+   578				if (ret < 0) {
+   579					strcpy(parents[i].name, "dummy_name");
+   580				} else {
+   581					clk_parent = of_clk_get(np, ret);
+   582					if (clk_parent) {
+   583						clk_name = __clk_get_name(clk_parent);
+   584						if (clk_name)
+   585							strcpy(parents[i].name, clk_name);
+   586						else
+   587							return 1;
+   588					} else {
+   589						return 1;
+   590					}
+   591				}
+   592				parent_list[i] = parents[i].name;
+   593			} else {
+   594				strcat(parents[i].name,
+   595				       clk_type_postfix[clk_nodes[parents[i].flag - 1].
+   596				       type]);
+   597				parent_list[i] = parents[i].name;
+   598			}
+   599		}
+   600	
+   601		*num_parents = total_parents;
+   602		return 0;
+   603	}
+   604	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
