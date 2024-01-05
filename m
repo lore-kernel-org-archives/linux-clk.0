@@ -1,221 +1,183 @@
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1136219F9
-	for <linux-clk@vger.kernel.org>; Fri,  5 Jan 2024 08:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3304128E1E
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jan 2024 10:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PWRVAEeG"
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3606ee78686so1586005ab.0
-        for <linux-clk@vger.kernel.org>; Fri, 05 Jan 2024 00:40:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dOFAPwkS"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ccec119587so16992401fa.0
+        for <linux-clk@vger.kernel.org>; Fri, 05 Jan 2024 02:22:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1704444006; x=1705048806; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8hYTNkHTn/zV3BgYDxe7QnouYI4dlQvnLZozWj8iLVc=;
-        b=PWRVAEeGlxA8QXY+YfFjBK53ZxGIpi39YdCIZ2eQO3ZK3yEapdOZSPhSQFytjwNnX6
-         GcMTvzbTnbwHE6atKoiZuBBUpP2CVL1OWxpAI3hUjFmu/Z5vUOjW+xcDnvwSV043EfVP
-         VLoeReGCrdG+yzn6eESJcXFK5wr2Q+JAOVSLU=
+        d=linaro.org; s=google; t=1704450169; x=1705054969; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Otn9loBBsw/UzqwebEZy3Ooa0CujzEAcJwFz8Zj1BXs=;
+        b=dOFAPwkSAsJq5YJUiju4J4fVJz0ZZ0Ky14HRIGt40H8EG8j+SXQVMFUUPmE1PGDfsd
+         wmGVc9s2cytmOHs83v1AY5GlxQqu4zXrB7ic70u71nFRkU5wVSkMRLUBpVbzM2ZHfcRy
+         gMDDroO+8usoVtxCxb9xQV/9H/Ky2W1tSOfAXxoBlX4/MrfkCmESsjnLj/NicbL8sVV4
+         cl7pgnGN63tNP8A78galhMAh9rZsobnRg1PjqGZaUp3mRMOmNOV+//cQbbmhZlledYCh
+         r1lB1AXZZDON/hnwU/8ZRrhwGGqnS33FfxNsZaxgPL7TCzXlZ0LrxoAkMxCEU90Y1F8B
+         uwKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704444006; x=1705048806;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8hYTNkHTn/zV3BgYDxe7QnouYI4dlQvnLZozWj8iLVc=;
-        b=W0QNReczmlstlS0zjCJBL9qa2LAqXDBOGzPiCSpD98+Z6MpWzT8bV+zbtSV260m5k8
-         fk/iZmS8YhBoiWG8sTE2ZDrMCFMPDT1tIwJb1wvZTtNgg3Ml7CXkQWikpE+EBn6PIy1t
-         HqW4IygEAygQrKzmq58W4tKa+BdFulTzzl5MQiVacgyAZhxr085BJobjDQpm+M4634GF
-         T/x1xunZTQR+1iuwEE7Xcod3QOdvJjbH8wY/Lv+8vER0mecG6wpYHqD6PMPZlV5Bf5wq
-         /4d8laYcb1mK7owCz20K8dDCzijcIQrTJ/qLAAF1mdHtTd8ZtzfgxnU3GnidpkhydpBe
-         Qpuw==
-X-Gm-Message-State: AOJu0YxFwHLbXONRBLgXmV68cSaoxV9n137RfnfPsAPRjgtyTgcjiVnQ
-	uJ5XoocPN+X/Dvr5uKp/fnZEyrEAgbYFJ2j7IQJia91gbXpX
-X-Google-Smtp-Source: AGHT+IG2pc/bVNtoQyA5vLjyh1fbFJLdrI+GkS/9G1KKGXF6RnAflb2KFxD/87ykUzd6ApsxNMt9jeo2n4l5+qagNf8=
-X-Received: by 2002:a05:6e02:1aac:b0:35f:ea02:7491 with SMTP id
- l12-20020a056e021aac00b0035fea027491mr2019344ilv.60.1704444005875; Fri, 05
- Jan 2024 00:40:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704450169; x=1705054969;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Otn9loBBsw/UzqwebEZy3Ooa0CujzEAcJwFz8Zj1BXs=;
+        b=jt/IPrAoJIFQevp0tFWfPMhlTDHtKIKMVIHqCeuhQtUl8D+y5DvH0dBQAsEv/49cuJ
+         XNSSQ5D7NFrpbM9uV6VDe4aV3BDS4ct6Yxd6LrhJFf7Vj7UyyKY4JC5Tzr6m/OaM5gc8
+         d9BDW7lcK2zYQhNiRdNvh8qasHBz5THoYoU8q0UISWZY8CxUD7Gw2DzBFW/LlF4hXHLa
+         Qkn8iDTuti+jR+L5L7V5JRlaOKK+PEulQFV4QYUFc0d+fNpzbF0Da5zt67lu1wrCcrnM
+         1pxTcuu3h5rn19gxFMUWRtj+Fy+I+AJrDWv/SENQvi/t3PQBKYldh5D7YfAXWHm6pDdp
+         EFAA==
+X-Gm-Message-State: AOJu0Yx/CyE0npQ5RnyKoOmbq/1ovj8eMwKs5mbygEMps+ZkpiNam07c
+	w3YBkKBlIaiBcN0WwGR60pwwkXhiNeoDMA==
+X-Google-Smtp-Source: AGHT+IE2UecOtUprnsE+wTP7UJCkRZPB7fx0sJ/qDDVGHx8WV3NGtKzjOZu+swh/2+L77+HG7FmkwQ==
+X-Received: by 2002:a2e:a9a2:0:b0:2cc:6bf6:cdc6 with SMTP id x34-20020a2ea9a2000000b002cc6bf6cdc6mr1295046ljq.7.1704450169091;
+        Fri, 05 Jan 2024 02:22:49 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id ek21-20020a056402371500b0055732bd1fc0sm474638edb.82.2024.01.05.02.22.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jan 2024 02:22:48 -0800 (PST)
+Message-ID: <19746c85-6eff-4f63-9370-9592ad73f22c@linaro.org>
+Date: Fri, 5 Jan 2024 10:22:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240102081402.1226795-1-treapking@chromium.org>
- <eed88b36-ae56-40d3-8588-0d5d75da71a6@collabora.com> <5520e8e3-c75b-480f-b831-c40b5cca029f@collabora.com>
- <CAEXTbpeqRsWNgZE3ZgcFKogxv-tjAmQT=D6o6X4ViuG5ZZFCHQ@mail.gmail.com>
-In-Reply-To: <CAEXTbpeqRsWNgZE3ZgcFKogxv-tjAmQT=D6o6X4ViuG5ZZFCHQ@mail.gmail.com>
-From: Pin-yen Lin <treapking@chromium.org>
-Date: Fri, 5 Jan 2024 16:39:55 +0800
-Message-ID: <CAEXTbpdCHa9M=nMQAOdRiqeQqEB3gHYiwSuVUsPhOD0vCkyY8A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: mediatek: Introduce need_pm_runtime to mtk_clk_desc
-To: Eugen Hristev <eugen.hristev@collabora.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/12] tty: serial: samsung: prepare for different IO
+ types
+Content-Language: en-US
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: peter.griffin@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ sboyd@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org,
+ alim.akhtar@samsung.com, jirislaby@kernel.org, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, cw00.choi@samsung.com, arnd@arndb.de,
+ semen.protsenko@linaro.org, andre.draszik@linaro.org, saravanak@google.com,
+ willmcvicker@google.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
+ kernel-team@android.com
+References: <20231228125805.661725-1-tudor.ambarus@linaro.org>
+ <20231228125805.661725-5-tudor.ambarus@linaro.org>
+ <2024010432-taco-moneyless-53e2@gregkh>
+ <a3a9df6a-4270-4076-9e9b-ce2fc7284d54@linaro.org>
+ <2024010450-heritage-variety-d72d@gregkh>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <2024010450-heritage-variety-d72d@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 4, 2024 at 10:51=E2=80=AFPM Pin-yen Lin <treapking@chromium.org=
-> wrote:
->
-> Hi Eugen and Angelo,
->
-> Unfortunately, I don't have a way to reliably reproduce this either.
->
-> We notice this issue from the automatic crash reports sent from the
-> users, but we are still not able to reproduce this locally.  So our
-> plan is to ship this patch to the users and see if the crash rate goes
-> down after a month or so.
->
-> Regards,
-> Pin-yen
->
-> On Wed, Jan 3, 2024 at 9:20=E2=80=AFPM Eugen Hristev
-> <eugen.hristev@collabora.com> wrote:
-> >
-> > On 1/3/24 14:19, AngeloGioacchino Del Regno wrote:
-> > > Il 02/01/24 09:12, Pin-yen Lin ha scritto:
-> > >> Introduce a new need_pm_runtime variable to mtk_clk_desc to indicate
-> > >> this clock needs a runtime PM get on the clock controller during the
-> > >> probing stage.
-> > >>
-> > >> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> > >
-> > > Hello Pin-yen,
-> > >
-> > > We have experienced something similar, but it was really hard to repr=
-oduce after
-> > > some changes.
-> > >
-> > > In an effort to try to solve this issue (but again, reproducing is re=
-ally hard),
-> > > Eugen has sent a commit in the hope that someone else found a way to =
-easily
-> > > reproduce. Please look at [1].
-> > >
-> > > I'm also adding Eugen to the Cc's of this email.
-> > >
-> > > Cheers,
-> > > Angelo
-> > >
-> > > [1]:
-> > > https://patchwork.kernel.org/project/linux-pm/patch/20231225133615.78=
-993-1-eugen.hristev@collabora.com/
-> >
-> > Hello Pin-yen,
-> >
-> > Can you try my patch and let me know if this changes anything for you ?
-> >
-> > If it does not change anything, can you also try this one as well ? It'=
-s another
-> > attempt to fix the synchronization with genpd.
-> >
-> > https://lore.kernel.org/linux-arm-kernel/20231129113120.4907-1-eugen.hr=
-istev@collabora.com/
-> >
-> > Thanks,
-> > Eugen
 
-Hi Eugen and Angelo,
 
-After the offline discussion with Chen-yu, we think this series is
-solving a different issue from the patches you mentioned. This one is
-trying to resolve a deadlock in the probe stage, and more details can
-be found in the commit message of the next patch. The referenced
-patches seem to be fixing other race conditions on powering on/off the
-power domain. Sorry for adding the wrong commit message and maybe
-leading to incorrect understanding on this series.
+On 1/4/24 15:56, Greg KH wrote:
+> On Thu, Jan 04, 2024 at 03:41:28PM +0000, Tudor Ambarus wrote:
+>>
+>>
+>> On 1/4/24 15:32, Greg KH wrote:
+>>> On Thu, Dec 28, 2023 at 12:57:57PM +0000, Tudor Ambarus wrote:
+>>>> GS101's Connectivity Peripheral blocks (peric0/1 blocks) which
+>>>> include the I3C and USI (I2C, SPI, UART) only allow 32-bit
+>>>> register accesses. If using 8-bit register accesses, a SError
+>>>> Interrupt is raised causing the system unusable.
+>>>>
+>>>> Instead of specifying the reg-io-width = 4 everywhere, for each node,
+>>>> the requirement should be deduced from the compatible.
+>>>>
+>>>> Prepare the samsung tty driver to allow IO types different than
+>>>> UPIO_MEM. ``struct uart_port::iotype`` is an unsigned char where all
+>>>> its 8 bits are exposed to uapi. We can't make NULL checks on it to
+>>>> verify if it's set, thus always set it from the driver's data.
+>>>>
+>>>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>>>> ---
+>>>> v2: new patch
+>>>>
+>>>>  drivers/tty/serial/samsung_tty.c | 9 ++++++++-
+>>>>  1 file changed, 8 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+>>>> index 66bd6c090ace..97ce4b2424af 100644
+>>>> --- a/drivers/tty/serial/samsung_tty.c
+>>>> +++ b/drivers/tty/serial/samsung_tty.c
+>>>> @@ -72,6 +72,7 @@ struct s3c24xx_uart_info {
+>>>>  	const char		*name;
+>>>>  	enum s3c24xx_port_type	type;
+>>>>  	unsigned int		port_type;
+>>>> +	unsigned char		iotype;
+>>>>  	unsigned int		fifosize;
+>>>>  	unsigned long		rx_fifomask;
+>>>>  	unsigned long		rx_fifoshift;
+>>>
+>>> Is there a reason you are trying to add unused memory spaces to this
+>>> structure for no valid reason?  I don't think you could have picked a
+>>> more incorrect place in there to add this :)
+>>>
+>>> Please fix.
+>>>
+>>
+>> Will put it after "const char *name".
+> 
+> If you do, spend some time with the tool, pahole, and see if that's
+> really the best place for it or not.  Might be, might not be, but you
+> should verify it please.
+> 
 
-By the way, sorry for the top posting in the previous mail.
+Thanks!
 
-Regards,
-Pin-yen
-> >
-> > >
-> > >> ---
-> > >>
-> > >> Changes in v2:
-> > >> - Fix the order of error handling
-> > >> - Update the commit message and add a comment before the runtime PM =
-call
-> > >>
-> > >>   drivers/clk/mediatek/clk-mtk.c | 15 +++++++++++++++
-> > >>   drivers/clk/mediatek/clk-mtk.h |  2 ++
-> > >>   2 files changed, 17 insertions(+)
-> > >>
-> > >> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/c=
-lk-mtk.c
-> > >> index 2e55368dc4d8..c31e535909c8 100644
-> > >> --- a/drivers/clk/mediatek/clk-mtk.c
-> > >> +++ b/drivers/clk/mediatek/clk-mtk.c
-> > >> @@ -13,6 +13,7 @@
-> > >>   #include <linux/of.h>
-> > >>   #include <linux/of_address.h>
-> > >>   #include <linux/platform_device.h>
-> > >> +#include <linux/pm_runtime.h>
-> > >>   #include <linux/slab.h>
-> > >>
-> > >>   #include "clk-mtk.h"
-> > >> @@ -494,6 +495,14 @@ static int __mtk_clk_simple_probe(struct platfo=
-rm_device *pdev,
-> > >>                      return IS_ERR(base) ? PTR_ERR(base) : -ENOMEM;
-> > >>      }
-> > >>
-> > >> +
-> > >> +    if (mcd->need_runtime_pm) {
-> > >> +            devm_pm_runtime_enable(&pdev->dev);
-> > >> +            r =3D pm_runtime_resume_and_get(&pdev->dev);
-> > >> +            if (r)
-> > >> +                    return r;
-> > >> +    }
-> > >> +
-> > >>      /* Calculate how many clk_hw_onecell_data entries to allocate *=
-/
-> > >>      num_clks =3D mcd->num_clks + mcd->num_composite_clks;
-> > >>      num_clks +=3D mcd->num_fixed_clks + mcd->num_factor_clks;
-> > >> @@ -574,6 +583,9 @@ static int __mtk_clk_simple_probe(struct platfor=
-m_device *pdev,
-> > >>                      goto unregister_clks;
-> > >>      }
-> > >>
-> > >> +    if (mcd->need_runtime_pm)
-> > >> +            pm_runtime_put(&pdev->dev);
-> > >> +
-> > >>      return r;
-> > >>
-> > >>   unregister_clks:
-> > >> @@ -604,6 +616,9 @@ static int __mtk_clk_simple_probe(struct platfor=
-m_device *pdev,
-> > >>   free_base:
-> > >>      if (mcd->shared_io && base)
-> > >>              iounmap(base);
-> > >> +
-> > >> +    if (mcd->need_runtime_pm)
-> > >> +            pm_runtime_put(&pdev->dev);
-> > >>      return r;
-> > >>   }
-> > >>
-> > >> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/c=
-lk-mtk.h
-> > >> index 22096501a60a..c17fe1c2d732 100644
-> > >> --- a/drivers/clk/mediatek/clk-mtk.h
-> > >> +++ b/drivers/clk/mediatek/clk-mtk.h
-> > >> @@ -237,6 +237,8 @@ struct mtk_clk_desc {
-> > >>
-> > >>      int (*clk_notifier_func)(struct device *dev, struct clk *clk);
-> > >>      unsigned int mfg_clk_idx;
-> > >> +
-> > >> +    bool need_runtime_pm;
-> > >>   };
-> > >>
-> > >>   int mtk_clk_pdev_probe(struct platform_device *pdev);
-> > >
-> > >
-> > >
-> > >
-> >
+I played with pahole a bit. For arm32 this struct is not as bad defined
+as for arm64, all members fit in the same cacheline. There are some
+holes though and 2 cachelines for arm64 where this struct needs some
+love. The best and minimum invasive change for my iotype member would be
+to put it before the "has_divslot" member, as the has_divslot bitfield
+will be combined with the previous field.
+
+But I think the entire struct has to be reworked and the driver
+butchered a bit so that we get to a better memory footprint and a single
+cacheline. I volunteer to do this in a separate patch set so that we
+don't block this series. I think the final struct can look as following:
+
+struct s3c24xx_uart_info {
+	const char  *              name;                 /*     0     8 */
+	enum s3c24xx_port_type     type;                 /*     8     4 */
+	unsigned int               port_type;            /*    12     4 */
+	unsigned int               fifosize;             /*    16     4 */
+	u32                        rx_fifomask;          /*    20     4 */
+	u32                        rx_fifoshift;         /*    24     4 */
+	u32                        rx_fifofull;          /*    28     4 */
+	u32                        tx_fifomask;          /*    32     4 */
+	u32                        tx_fifoshift;         /*    36     4 */
+	u32                        tx_fifofull;          /*    40     4 */
+	u32                        clksel_mask;          /*    44     4 */
+	u32                        clksel_shift;         /*    48     4 */
+	u32                        ucon_mask;            /*    52     4 */
+	u8                         def_clk_sel;          /*    56     1 */
+	u8                         num_clks;             /*    57     1 */
+	u8                         iotype;               /*    58     1 */
+	u8                         has_divslot:1;        /*    59: 0  1 */
+
+	/* size: 64, cachelines: 1, members: 17 */
+	/* padding: 4 */
+	/* bit_padding: 7 bits */
+};
+
+
+This looks a lot better than what we have now:
+	/* size: 120, cachelines: 2, members: 17 */
+	/* sum members: 105, holes: 2, sum holes: 8 */
+	/* sum bitfield members: 1 bits (0 bytes) */
+	/* padding: 4 */
+	/* bit_padding: 23 bits */
+	/* last cacheline: 56 bytes */
+
+I'll put iotype before has_divslot and then follow up with a patch set
+to clean the driver. Cheers,
+ta
