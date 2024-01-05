@@ -1,113 +1,112 @@
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9B81E508;
-	Fri,  5 Jan 2024 16:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F7E35F13;
+	Fri,  5 Jan 2024 20:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="eTopNlLc"
-Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout1.routing.net (Postfix) with ESMTP id 5AEE04027B;
-	Fri,  5 Jan 2024 16:21:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1704471665;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vJWaZdp7vwDloIQ8UP6qzcfjDSiX0CaWYDKppc3KgpY=;
-	b=eTopNlLc2+mGcCIV+tMnOyedCitCF83/aJOtYLEbxcgOCBQLCYMDMx6+Aa3JEH5Hx3kCgN
-	auv4YVUphpYKa0WbyYbeQ4FhrGz/Ae45YjSMDzpETYWyF2dC/RgwET1YGwepZnUy16risK
-	gmJig4Cr65ntK6Av8xywoPDzKIO02Dw=
-Received: from frank-G5.. (fttx-pool-80.245.77.34.bambit.de [80.245.77.34])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 7F9C6360303;
-	Fri,  5 Jan 2024 16:21:04 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	Sam Shih <sam.shih@mediatek.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 2/2] clk: mediatek: add infracfg reset controller for mt7988
-Date: Fri,  5 Jan 2024 17:20:55 +0100
-Message-Id: <20240105162056.43266-3-linux@fw-web.de>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240105162056.43266-1-linux@fw-web.de>
-References: <20240105162056.43266-1-linux@fw-web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CwIa9wnV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1704484819; x=1705089619; i=markus.elfring@web.de;
+	bh=7tKN9THIKO8mzprnhNgRdQfDAhpFFaMZeNyl5X57Uk4=;
+	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
+	 In-Reply-To;
+	b=CwIa9wnVA4pyddnDoXHRiF6n/xRqqyAEPRIdWC7MHKJRe/yjNQ1mIcatZ1Tc6GVG
+	 KCeKgNrX3UNiE70xrYlABgOj+RlB7Lozhvz2Agf1Fm3vGvCIKMNRXCtpruk7+AVEW
+	 h8vY9X3MRhlr/0OjqxRi9yLsoygYK7Pz0Vtv82cQQmtIwyXoRtXjrXBMH/S1k+oG0
+	 oD9Do5ml16+xZkThoA/ijiUOzVv6y1bxllzISyYAW3DYMJ0C2wveEQkLq8DBZTE7Q
+	 OeNeS9aHhGyACWVVy0DjY0clD5kvevTDKm7V7BqbbUJ0KUk+ArP5YlXRvRxtZfRJw
+	 I5K5rCylCNF0UqwHgg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mtguh-1r41Ou11mp-00ujzR; Fri, 05
+ Jan 2024 21:00:19 +0100
+Message-ID: <b8aa03e0-a375-40cb-b12a-7a100a49247d@web.de>
+Date: Fri, 5 Jan 2024 21:00:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: 31b037bd-067d-4073-9b39-c5bd1557013d
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: imx93: Fix an error code assignment in
+ imx93_clocks_probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+ kernel@pengutronix.de, Abel Vesa <abelvesa@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Zhanhao Hu <zero12113@hust.edu.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+References: <20230601033825.336558-1-zero12113@hust.edu.cn>
+ <cf7b69f4-c4b2-5160-e19a-14c272b0dc6e@web.de>
+In-Reply-To: <cf7b69f4-c4b2-5160-e19a-14c272b0dc6e@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ix32BVSsWMwSZ6Vh5wdmlGvAtykyML3TrHZxPYOle17n3AW20uX
+ X+uvlkuJHgff6iM3+VxV8y5npFJ0VopTxi92S6+mAx/UUXpF0OpHrfHidwB57yDfAMPMMhX
+ UFzf2ZfEmVTFxIHTI7wl1hjviFq2DNlid7KHBLxqTGf9gUUp19DYWFK2rUKhP23BamJvr3g
+ 306mEbXRZbc31cmESO9Xw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wFOxBD+xYDk=;IzyD/+s2SdULrl+/cVGgHxXVVdX
+ pc9s8QrmnTN3LdZMtPCzXu944QwG4FwGrFJl9kwoVplzJWo6cEBD0i9srcGqktklicFKe8OYo
+ WctTQKZZfsgVHzSIlsS2eJ7rQr6r38/2LtcTZKfsbu7E1SoObZYJh3vDx5AcSw1lHiAgaMAAs
+ GeNaQTIdKcoYNPM6uzuAt49W7+a3phEtj2X1Gu99GsrygSqSIwyqmFSna9w7SMET5QjAEDX/X
+ h4+syBqdERtceKqMabELRwi0zDUpAI5YZfo59lJC0Tfo7hjhoDM/XfWEtvIM5/3sIzd+LFH9G
+ 5XkE8GjgfS4Bft9U24NXrFtBvVoGiZ5l/4NN5ve5cyYTTLNIwXjfWlTz3P/ejiSb7UZSQUIup
+ rMztxdmf9NRQsWy2BObLQkQETNsi78vnXqYaO/qdNFwBPt0nKYcvq044VYbOwEhqChW7/Rjgl
+ 9BbpaXRp7iyyl2Q2ytxkEHYm4s3FaghYMbsfuL7Tw5vAZ8u1FCsu8vhLFKy6omyPByng0cKI6
+ 8jgDoU/fIrVl3QGVIQ1Uiu5YcY6UI9qKHm95JMMKTzQog7heMSsE/dRfyrJKzlaKSbwDRMf0q
+ TZdWmt2h9hGsVBhZ1D0vEQmEqJfYyT/TNgSsdSDnV0iLNLgoSxbStaaq0Om4ETPuDeXtNzJH6
+ N/blfoiaJH5/f1vWennq8JbvqRTt5Mvidt92h5jwcLWqF70L4vfGzVJJ8/DfqTzK1HTb72rFp
+ WN2cf8hfJjBoMtp4J3/aVaXkqOoTVVeNGKKSDG+G4rSW8gj9pfO1CBNae8hUR79VjfhIHBycv
+ gxrIXtFLvq8HdLQLG1lLMpOvVtv2CoKkAKArMZn//kLqxnjq5Yszvim5c0MHQHGG2OsDf6LV4
+ t2f2wNYNSIHwP8BgocNI25C0CnZ07fsZqfvl4TXR71FketuOr3bDtFqgLs57XmbkcsMBHhbDi
+ 1RKQD8rf/QT6JAwCrBa8R5kdEA8=
 
-From: Frank Wunderlich <frank-w@public-files.de>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 13 Jun 2023 21:50:50 +0200
+>
+> The variable =E2=80=9Cbase=E2=80=9D was passed to a call of the function=
+ =E2=80=9CPTR_ERR=E2=80=9D
+> in the implementation of the function =E2=80=9Cimx93_clocks_probe=E2=80=
+=9D.
+> Unfortunately, the variable was not assigned to an error pointer
+> before this if branch.
+> Thus use the variable =E2=80=9Canatop_base=E2=80=9D for an error code as=
+signment instead.
+>
+> Fixes: e02ba11b4576 ("clk: imx93: fix memory leak and missing unwind got=
+o in imx93_clocks_probe")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/clk/imx/clk-imx93.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index b6c7c2725906..44f435103c65 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -291,7 +291,7 @@ static int imx93_clocks_probe(struct platform_device=
+ *pdev)
+>  	anatop_base =3D devm_of_iomap(dev, np, 0, NULL);
+>  	of_node_put(np);
+>  	if (WARN_ON(IS_ERR(anatop_base))) {
+> -		ret =3D PTR_ERR(base);
+> +		ret =3D PTR_ERR(anatop_base);
+>  		goto unregister_hws;
+>  	}
+>
 
-Infracfg can also operate as reset controller, add support for it.
+Is this patch still in review queues?
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- drivers/clk/mediatek/clk-mt7988-infracfg.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+See also:
+https://lore.kernel.org/cocci/cf7b69f4-c4b2-5160-e19a-14c272b0dc6e@web.de/
+https://sympa.inria.fr/sympa/arc/cocci/2023-06/msg00016.html
 
-diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-index 8011ef278bea..1660a45349ff 100644
---- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
-+++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-@@ -14,6 +14,9 @@
- #include "clk-gate.h"
- #include "clk-mux.h"
- #include <dt-bindings/clock/mediatek,mt7988-clk.h>
-+#include <dt-bindings/reset/mediatek,mt7988-resets.h>
-+
-+#define	INFRA_RST_SET_OFFSET	0x80
- 
- static DEFINE_SPINLOCK(mt7988_clk_lock);
- 
-@@ -249,12 +252,29 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_INFRA3(CLK_INFRA_133M_PCIE_CK_P3, "infra_133m_pcie_ck_p3", "sysaxi_sel", 31),
- };
- 
-+static u16 infra_rst_ofs[] = {
-+	INFRA_RST_SET_OFFSET,
-+};
-+
-+static u16 infra_idx_map[] = {
-+	[MT7988_INFRA_RST0_THERM_CTRL_SWRST] = 0 * RST_NR_PER_BANK + 9,
-+};
-+
-+static struct mtk_clk_rst_desc infra_rst_desc = {
-+	.version = MTK_RST_SET_CLR,
-+	.rst_bank_ofs = infra_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(infra_rst_ofs),
-+	.rst_idx_map = infra_idx_map,
-+	.rst_idx_map_nr = ARRAY_SIZE(infra_idx_map),
-+};
-+
- static const struct mtk_clk_desc infra_desc = {
- 	.clks = infra_clks,
- 	.num_clks = ARRAY_SIZE(infra_clks),
- 	.mux_clks = infra_muxes,
- 	.num_mux_clks = ARRAY_SIZE(infra_muxes),
- 	.clk_lock = &mt7988_clk_lock,
-+	.rst_desc = &infra_rst_desc,
- };
- 
- static const struct of_device_id of_match_clk_mt7988_infracfg[] = {
--- 
-2.34.1
-
+Regards,
+Markus
