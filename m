@@ -1,28 +1,28 @@
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4C512B60
-	for <linux-clk@vger.kernel.org>; Sun,  7 Jan 2024 08:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876C612B68
+	for <linux-clk@vger.kernel.org>; Sun,  7 Jan 2024 08:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Vg/znhKa"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Wr3PdlO8"
 Received: from pop-os.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id MOGZrUCWm9dP0MOGZraHLC; Sun, 07 Jan 2024 09:12:21 +0100
+	id MOXDrF2CYiIuMMOXDr7vDG; Sun, 07 Jan 2024 09:29:35 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1704615141;
-	bh=LQ4ImjzjK8ZTAlmP+wrgMb7Xtb7eat0Xo8zSIFqCBoY=;
+	s=t20230301; t=1704616175;
+	bh=i2n3txj6/jmrhz3DYsK0OV/s61I4FvsrFPJ83pERyYY=;
 	h=From:To:Cc:Subject:Date;
-	b=Vg/znhKaeNOWrDwuXPv738I/Rd4tsXNsB3ybHAJAn6l8HG91aqtwLldsMS0hRsI1p
-	 oAlIJ0RAtQTEuavoIU0CR7c7E+FUUAqs1mVBt1a796Ht7OqizuXE+UTKrGT53ksWKC
-	 qmjLawYBogHzgJGYEuVGVNVisyMxvujp8vtTrCRqqDUjB6Xg5T3yuoyJYJHsRCcVl3
-	 LOS1VvOOPunuuAZLgbygiLQVHKAX27sNG9/FapW/BqSWzGPnKFske0RmZWBhVwVz2F
-	 nHUIYZrl5cPJzgK5BOIm1tBt63CRf+klN3R+35nqVDQ18EDz1O3j7ixB1LvvKMCoHO
-	 tM1uqfXx9MzAQ==
+	b=Wr3PdlO8sT2ulzf5BARVxJrPvz+SGF+saHX7S8M3y9fKfdUhM+hu9rxBkT2l2PZmn
+	 JcCuSJ5svMFqToYWc5pTW1Xx/b3341L7QRGc7xgCmHATkZt6RzSaa8dpkZ5MMg/toq
+	 nDQ/yHDITr0ax3ShBOwSX5nhiB/ywbFqXdEn5X1VXQuSfarnY3N5OgJNHSCmVgVrA3
+	 UOA1jN3WBX3GvKTR74F9m5AXjRyOlMtXOf+lFvHrhPHG9JZ9XCzy9QaNqK3HzlT8dS
+	 1XAKtxCj+wqE+CaeIhyXKEUy2YNt0UepBJ2HDg99G6ibKE5HbKGXJocXb8egHRbTVg
+	 AXyILBsppDazw==
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 07 Jan 2024 09:12:21 +0100
+X-ME-Date: Sun, 07 Jan 2024 09:29:35 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -36,9 +36,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: [PATCH] clk: mediatek: mt8135: Fix an error handling path in clk_mt8135_apmixed_probe()
-Date: Sun,  7 Jan 2024 09:12:17 +0100
-Message-Id: <6cd6af61e5a91598068227f1f68cfcfde1507453.1704615011.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] clk: mediatek: mt7622-apmixedsys: Fix an error handling path in clk_mt8135_apmixed_probe()
+Date: Sun,  7 Jan 2024 09:29:28 +0100
+Message-Id: <2c553c2a5077757e4f7af0bb895acc43881cf62c.1704616152.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -48,37 +48,30 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If an error occurs after mtk_alloc_clk_data(), mtk_free_clk_data() should
-be called, as already done in the remove function.
+'clk_data' is allocated with mtk_devm_alloc_clk_data(). So calling
+mtk_free_clk_data() explicitly in the remove function would lead to a
+double-free.
 
-Fixes: 54b7026f011e ("clk: mediatek: mt8135-apmixedsys: Convert to platform_driver and module")
+Remove the redundant call.
+
+Fixes: c50e2ea6507b ("clk: mediatek: mt7622-apmixedsys: Add .remove() callback for module build")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/clk/mediatek/clk-mt8135-apmixedsys.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-mt7622-apmixedsys.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8135-apmixedsys.c b/drivers/clk/mediatek/clk-mt8135-apmixedsys.c
-index d1239b4b3db7..41bb2d2e2ea7 100644
---- a/drivers/clk/mediatek/clk-mt8135-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt8135-apmixedsys.c
-@@ -59,7 +59,7 @@ static int clk_mt8135_apmixed_probe(struct platform_device *pdev)
- 
- 	ret = mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
- 	if (ret)
--		return ret;
-+		goto free_clk_data;
- 
- 	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
- 	if (ret)
-@@ -69,6 +69,8 @@ static int clk_mt8135_apmixed_probe(struct platform_device *pdev)
- 
- unregister_plls:
+diff --git a/drivers/clk/mediatek/clk-mt7622-apmixedsys.c b/drivers/clk/mediatek/clk-mt7622-apmixedsys.c
+index 9cffd278e9a4..1b8f859b6b6c 100644
+--- a/drivers/clk/mediatek/clk-mt7622-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt7622-apmixedsys.c
+@@ -127,7 +127,6 @@ static void clk_mt7622_apmixed_remove(struct platform_device *pdev)
+ 	of_clk_del_provider(node);
+ 	mtk_clk_unregister_gates(apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
  	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
-+free_clk_data:
-+	mtk_free_clk_data(clk_data);
- 
- 	return ret;
+-	mtk_free_clk_data(clk_data);
  }
+ 
+ static const struct of_device_id of_match_clk_mt7622_apmixed[] = {
 -- 
 2.34.1
 
