@@ -1,134 +1,119 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE1812E43
-	for <linux-clk@vger.kernel.org>; Sun,  7 Jan 2024 11:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027FD134AF
+	for <linux-clk@vger.kernel.org>; Sun,  7 Jan 2024 14:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="imM5v+Dw"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a28fb463a28so85328666b.3
-        for <linux-clk@vger.kernel.org>; Sun, 07 Jan 2024 03:23:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704626604; x=1705231404; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=GWEh2DbEAoAQjMX/SvxtXsAkCcimheIp/yoARvh6EP8=;
-        b=imM5v+DwX6LlrEY/G4lKQVXOiviXaCLMPxe258VvOA4vnKGptkO3RJDRA0qG+pyRr8
-         vB94Mne3XlW8xaw6AXDcUvH5AxtrF1g8LWCYkmBYqbBURmlwnUeqpCCkesindlX0ksiX
-         b6ILKoUmdpQeyyWUftDuhAGRj6H57+NaHSxXF+KHGPxkLjKdV09/G45G8iF97YuZHsJy
-         2x6XyGjyvQ1ikAjdlGDEja6nMLYFnOlx4//Jjglw2HKlxqhJjzAKZhkdSeX7c5GEErAs
-         X+6/Usb/bLK/MSXkYc8hVhKiNLDLDL7zCzr83dYOEWA1p2qadrOihIQeouOueS/G7nfm
-         Y3HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704626604; x=1705231404;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GWEh2DbEAoAQjMX/SvxtXsAkCcimheIp/yoARvh6EP8=;
-        b=Huc677zLY78Ok73pMilX6QMdApwlX+KQZ8sxn7Ckro/sd0w/nLZEZylqXPoa4jAK9a
-         lRRam69wB5K5g0fygQOEPtJJ1WvIrRFT8gDXTQ782Z15mbtnUwTH1h0/FWmuELy9a75T
-         QAbLYJ44XnGhDnOlwUoizNzetY6YezZ0bUt9/W83HUZi2PsqXyxKViia9YDVe4b/Hm7R
-         Cp+32RsOpyus3qqvX7TiwO9Z4QmQ/Ggcxl+4lm6VcvM/zoyd/2Z05d6AaPR4VKHuXvXX
-         ldYfv/ZWIIez6l9Rjxws42Vys2TEEEQuStQxtZ7czrEa/jhrU/FTvkXhR4NaTHYmYIir
-         +Btw==
-X-Gm-Message-State: AOJu0Yz/xSU4NxRNnztums0bqN6D6ZU61G8mTWMxZY9S7Ajl3qkPLTsU
-	9bO7cJVU0MXOwhGolUMMZvo3QvmrjejHcw==
-X-Google-Smtp-Source: AGHT+IH9WGSDG1MqPzhVpNBXQSCrK9M4FGaBcVIi/fZVFgFjBsN2lZoH+1DEVmYm/j7R0XsTtwEzGw==
-X-Received: by 2002:a17:906:c09a:b0:a27:361f:da4b with SMTP id f26-20020a170906c09a00b00a27361fda4bmr759273ejz.144.1704626604449;
-        Sun, 07 Jan 2024 03:23:24 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.223.112])
-        by smtp.gmail.com with ESMTPSA id b21-20020a1709063f9500b00a269597d173sm2916908ejj.135.2024.01.07.03.23.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Jan 2024 03:23:24 -0800 (PST)
-Message-ID: <965c6b87-819f-4f56-ba5a-308c77913dde@linaro.org>
-Date: Sun, 7 Jan 2024 12:23:21 +0100
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I6HWEHsl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704636199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/OY01PeTEJvk6CuYETd+RaDtK5F/6jApGt/2J+xPnJs=;
+	b=I6HWEHsl5T2gLVhegRKM8bFwxbKJwtIkF447q07iNgF5YHo64JMwBhRjm9MoC92GrLLE+3
+	SaCH/zma5YoDzqIxMzXrxsPUeVtnHgWvudzScVlMMird0RmlsDWzs+4wiS6z7IVQOt3ber
+	l8F/i5Pu+art/MdrMLyId+wR8jA7xNs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-690-d4nXrB50MU-3Y1hPR4Nzyg-1; Sun, 07 Jan 2024 09:03:14 -0500
+X-MC-Unique: d4nXrB50MU-3Y1hPR4Nzyg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C759D863010;
+	Sun,  7 Jan 2024 14:03:13 +0000 (UTC)
+Received: from shalem.redhat.com (unknown [10.39.192.59])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 39EEC2026D66;
+	Sun,  7 Jan 2024 14:03:11 +0000 (UTC)
+From: Hans de Goede <hdegoede@redhat.com>
+To: Johannes Stezenbach <js@sig21.net>,
+	Takashi Iwai <tiwai@suse.de>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
+	x86@kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/5] x86: atom-punit/-pmc s2idle device state checks
+Date: Sun,  7 Jan 2024 15:03:05 +0100
+Message-ID: <20240107140310.46512-1-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: reset: mediatek: add MT7988 LVTS
- reset ID
-To: Frank Wunderlich <linux@fw-web.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
- Sam Shih <sam.shih@mediatek.com>, Daniel Golle <daniel@makrotopia.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-mediatek@lists.infradead.org
-References: <20240105162056.43266-1-linux@fw-web.de>
- <20240105162056.43266-2-linux@fw-web.de>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240105162056.43266-2-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-On 05/01/2024 17:20, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> Add reset constant for using as index in driver and dts.
-> 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
-> v2:
+Hi All,
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+These patches are an upstream submission of a patch titled:
+"Intel Atom suspend: add debug check for S0ix blockers"
 
-Best regards,
-Krzysztof
+Which I have been carrying in my personal kernel tree for years now.
+This code originally comes from the latte-l-oss branch of:
+https://github.com/MiCode/Xiaomi_Kernel_OpenSource
+
+And has been posted on upstream mailinglists before by
+Johannes Stezenbach, whose authorship I have kept for
+the 2 base patches and has been reposted by Takashi Iwai
+and at one point in time I picked this up from Takashi's
+reposting as can be seen from the S-o-b lines. Unfortunately
+I cannot find the original postings, so I have no link to
+those.
+
+The original version of this added some ugly hooks into
+the intel_idle driver which I presume is why these patches
+never got anywhere upstream.
+
+With the new acpi_s2idle_dev_ops and acpi_register_lps0_dev()
+functionality this functionality can now be implemented cleanly
+and that is what this patch-series does.
+
+clk and x86/tip maintainers, it is probably the cleanest if this
+entire series is merged through the pdx86 tree (*). Can we have
+your ack for merging patch 1/5 resp. 5/5 through the pdx86 tree ?
+
+Regards,
+
+Hans
+
+*) Andy recently mentioned that it might be a good idea to move
+some of the arch/x86/platform code to drivers/platform/x86,
+arch/x86/platform/atom/punit_atom_debug.c which is a completely
+standalone driver definitly is a good candidate for this
+
+
+
+Hans de Goede (3):
+  clk: x86: Move clk-pmc-atom register defines to
+    include/linux/platform_data/x86/pmc_atom.h
+  platform/x86: pmc_atom: Annotate d3_sts register bit defines
+  platform/x86: pmc_atom: Check state of PMC clocks on s2idle
+
+Johannes Stezenbach (2):
+  platform/x86: pmc_atom: Check state of PMC managed devices on s2idle
+  x86/platform/atom: Check state of Punit managed devices on s2idle
+
+ arch/x86/platform/atom/punit_atom_debug.c  | 45 ++++++++++++-
+ drivers/clk/x86/clk-pmc-atom.c             | 13 +---
+ drivers/platform/x86/pmc_atom.c            | 78 ++++++++++++++++++++++
+ include/linux/platform_data/x86/pmc_atom.h | 25 +++++--
+ 4 files changed, 142 insertions(+), 19 deletions(-)
+
+-- 
+2.43.0
 
