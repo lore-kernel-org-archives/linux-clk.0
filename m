@@ -1,36 +1,36 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3447134B4
-	for <linux-clk@vger.kernel.org>; Sun,  7 Jan 2024 14:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBC6134A0
+	for <linux-clk@vger.kernel.org>; Sun,  7 Jan 2024 14:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZU4alR2T"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E/kxCR2H"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1704636204;
+	s=mimecast20190719; t=1704636209;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9XcEZtVlWJbYKm9+7v5nWl09Pma1pqjIHTzB6rryUDo=;
-	b=ZU4alR2TnMGwK4Xu6BvxHHDeFAMddmc6gRkw3xIE9Pueh68TVIyzf6BWVbtDBlCByOqdqi
-	N0J4mUjMVXaMzo4LUD7YtHvTlEQcIlf4WJ7xAt8KS0L4UbczKN6xEGMVo2Jjph0IrXxF/r
-	xPYH6ISCjCAWdosFTh+uuL66sAcOHp8=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-481-NHmGhWL_Nla_Ore9s13tEg-1; Sun,
- 07 Jan 2024 09:03:18 -0500
-X-MC-Unique: NHmGhWL_Nla_Ore9s13tEg-1
+	bh=yF7BU6FRePuNmoByYImgrr2UQ+ZpFqxAPcqARXe/rDU=;
+	b=E/kxCR2HjZbNiZErAyMLowDt40aK/L7bY9rLkWu+GLyoeN5guplFWImmI3YiV5JSquGV8i
+	TtfwOBe5FC7tYnb2t6awe8gkgGliRb40SGYmvCm+WRBn+UrH2e/Vpdg0YY+Em0SCg8rwrk
+	aYxi7h+A+OapM0abvSu9K05ymB5Kh8g=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-21-Tt4yBQA6Oayjb5c_GsDdDg-1; Sun, 07 Jan 2024 09:03:24 -0500
+X-MC-Unique: Tt4yBQA6Oayjb5c_GsDdDg-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CEE5738149A2;
-	Sun,  7 Jan 2024 14:03:17 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DE79885CE07;
+	Sun,  7 Jan 2024 14:03:23 +0000 (UTC)
 Received: from shalem.redhat.com (unknown [10.39.192.59])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 074A52026D6F;
-	Sun,  7 Jan 2024 14:03:15 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 14FAA2026D66;
+	Sun,  7 Jan 2024 14:03:21 +0000 (UTC)
 From: Hans de Goede <hdegoede@redhat.com>
 To: Johannes Stezenbach <js@sig21.net>,
 	Takashi Iwai <tiwai@suse.de>,
@@ -47,9 +47,9 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
 	platform-driver-x86@vger.kernel.org,
 	x86@kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v2 2/5] platform/x86: pmc_atom: Annotate d3_sts register bit defines
-Date: Sun,  7 Jan 2024 15:03:07 +0100
-Message-ID: <20240107140310.46512-3-hdegoede@redhat.com>
+Subject: [PATCH v2 5/5] x86/platform/atom: Check state of Punit managed devices on s2idle
+Date: Sun,  7 Jan 2024 15:03:10 +0100
+Message-ID: <20240107140310.46512-6-hdegoede@redhat.com>
 In-Reply-To: <20240107140310.46512-1-hdegoede@redhat.com>
 References: <20240107140310.46512-1-hdegoede@redhat.com>
 Precedence: bulk
@@ -61,45 +61,111 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-The include/linux/platform_data/x86/pmc_atom.h d3_sts register bit defines
-are named after how these bits are used on Bay Trail devices.
+From: Johannes Stezenbach <js@sig21.net>
 
-On Cherry Trail (CHT) devices some of these bits have a different meaning
-according to the datasheet.
+This is a port of "pm: Add pm suspend debug notifier for North IPs"
+from the latte-l-oss branch of:
+from https://github.com/MiCode/Xiaomi_Kernel_OpenSource latte-l-oss
 
-At a comment to the defines for bits which have a different meaning
-on Cherry Trail devices.
+With the new acpi_s2idle_dev_ops and acpi_register_lps0_dev()
+functionality this can now finally be ported to the mainline kernel
+without requiring adding non-upstreamable hooks into the cpu_idle
+driver mechanism.
 
+This adds a check that all hardware blocks in the North complex
+(controlled by Punit) are in a state that allows the SoC to enter S0i3
+and prints an error message for any device in D0.
+
+Signed-off-by: Johannes Stezenbach <js@sig21.net>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[hdegoede: Use acpi_s2idle_dev_ops]
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- include/linux/platform_data/x86/pmc_atom.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/platform/atom/punit_atom_debug.c | 45 ++++++++++++++++++++++-
+ 1 file changed, 44 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/platform_data/x86/pmc_atom.h b/include/linux/platform_data/x86/pmc_atom.h
-index 557622ef0390..161e4bc1c9ee 100644
---- a/include/linux/platform_data/x86/pmc_atom.h
-+++ b/include/linux/platform_data/x86/pmc_atom.h
-@@ -117,14 +117,14 @@
- #define	BIT_SCC_SDIO		BIT(9)
- #define	BIT_SCC_SDCARD		BIT(10)
- #define	BIT_SCC_MIPI		BIT(11)
--#define	BIT_HDA			BIT(12)
-+#define	BIT_HDA			BIT(12) /* CHT datasheet: reserved */
- #define	BIT_LPE			BIT(13)
- #define	BIT_OTG			BIT(14)
--#define	BIT_USH			BIT(15)
--#define	BIT_GBE			BIT(16)
--#define	BIT_SATA		BIT(17)
--#define	BIT_USB_EHCI		BIT(18)
--#define	BIT_SEC			BIT(19)
-+#define	BIT_USH			BIT(15) /* CHT datasheet: reserved */
-+#define	BIT_GBE			BIT(16) /* CHT datasheet: reserved */
-+#define	BIT_SATA		BIT(17) /* CHT datasheet: reserved */
-+#define	BIT_USB_EHCI		BIT(18) /* CHT datasheet: XHCI!    */
-+#define	BIT_SEC			BIT(19) /* BYT datasheet: reserved */
- #define	BIT_PCIE_PORT0		BIT(20)
- #define	BIT_PCIE_PORT1		BIT(21)
- #define	BIT_PCIE_PORT2		BIT(22)
+diff --git a/arch/x86/platform/atom/punit_atom_debug.c b/arch/x86/platform/atom/punit_atom_debug.c
+index f8ed5f66cd20..03ae08c99155 100644
+--- a/arch/x86/platform/atom/punit_atom_debug.c
++++ b/arch/x86/platform/atom/punit_atom_debug.c
+@@ -7,6 +7,9 @@
+  * Copyright (c) 2015, Intel Corporation.
+  */
+ 
++#define pr_fmt(fmt) "punit_atom: " fmt
++
++#include <linux/acpi.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/device.h>
+@@ -117,6 +120,37 @@ static void punit_dbgfs_unregister(void)
+ 	debugfs_remove_recursive(punit_dbg_file);
+ }
+ 
++#if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
++static const struct punit_device *punit_dev;
++
++static void punit_s2idle_check(void)
++{
++	const struct punit_device *punit_devp;
++	u32 punit_pwr_status, dstate;
++	int status;
++
++	for (punit_devp = punit_dev; punit_devp->name; punit_devp++) {
++		/* Skip MIO this is on till the very last moment */
++		if (punit_devp->reg == MIO_SS_PM)
++			continue;
++
++		status = iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ,
++				       punit_devp->reg, &punit_pwr_status);
++		if (status) {
++			pr_err("%s read failed\n", punit_devp->name);
++		} else  {
++			dstate = (punit_pwr_status >> punit_devp->sss_pos) & 3;
++			if (!dstate)
++				pr_err("%s is in D0 prior to s2idle\n", punit_devp->name);
++		}
++	}
++}
++
++static struct acpi_s2idle_dev_ops punit_s2idle_ops = {
++	.check = punit_s2idle_check,
++};
++#endif
++
+ #define X86_MATCH(model, data)						 \
+ 	X86_MATCH_VENDOR_FAM_MODEL_FEATURE(INTEL, 6, INTEL_FAM6_##model, \
+ 					   X86_FEATURE_MWAIT, data)
+@@ -131,19 +165,28 @@ MODULE_DEVICE_TABLE(x86cpu, intel_punit_cpu_ids);
+ 
+ static int __init punit_atom_debug_init(void)
+ {
++	struct punit_device *punit_device;
+ 	const struct x86_cpu_id *id;
+ 
+ 	id = x86_match_cpu(intel_punit_cpu_ids);
+ 	if (!id)
+ 		return -ENODEV;
+ 
+-	punit_dbgfs_register((struct punit_device *)id->driver_data);
++	punit_device = (struct punit_device *)id->driver_data;
++	punit_dbgfs_register(punit_device);
++#if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
++	punit_dev = punit_device;
++	acpi_register_lps0_dev(&punit_s2idle_ops);
++#endif
+ 
+ 	return 0;
+ }
+ 
+ static void __exit punit_atom_debug_exit(void)
+ {
++#if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
++	acpi_unregister_lps0_dev(&punit_s2idle_ops);
++#endif
+ 	punit_dbgfs_unregister();
+ }
+ 
 -- 
 2.43.0
 
