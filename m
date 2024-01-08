@@ -1,64 +1,144 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C7914017;
-	Mon,  8 Jan 2024 10:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E2B14274;
+	Mon,  8 Jan 2024 10:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Uug89SLG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1704708881;
-	bh=v3YxdNrdSgkWoqnPochuFDi/fDkCFuaCUTCM/mFHb+o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Uug89SLGrs671PvYYyqHZyKC4fITITj8cRDPQbcmt7Lxsr89yS001FrIIsSmsCK7l
-	 meZoCx2urIhIUNWtLf8mAKJFvrjYoh5S2xadnIslVpRXZ138MfElyhqaUshgqNqKoH
-	 0w9xHCfDLUprJS9xXI6+lPg+RQssAGmrFWk+ZxyjHmTq56hg10QlyvlO9qY1k/a0YW
-	 4DMX3G4ay5lrfBR1NRvvnqjyUKUZc7CLHLiUIbDbD6GGnbdb9MgVXTLJxzvun9BvuO
-	 W2IYrRnP+wFLgCxx4rbJ74mtG/+4xr4jHWItWeJadzP/VtyU2uSYiXdvAbQWRc8BmR
-	 999ufQxTpZrqg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 169F93780625;
-	Mon,  8 Jan 2024 10:14:41 +0000 (UTC)
-Message-ID: <5edf0558-7d31-4ccb-9635-dee64b026cbc@collabora.com>
-Date: Mon, 8 Jan 2024 11:14:41 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lYqEwqFa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1704711518; x=1736247518;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Xe3uRR2q3YbLM9EgMf3sRVLZRGE3oxMgYT9yokyH+Ck=;
+  b=lYqEwqFaA3q4UCf1pP5aYazFEF63alcnJSqAH0WbgRRx6K+hJYLbtOpQ
+   cWgBtVNCAOfj0lcmQ0aJvbf9kUL6r2hibwceRInbOq9F6XGXNsqn2yn2Y
+   Y0iaEx8Tfjr14np+2Ip3OGOiOV658llHDQqxtv3l6AD+quy563eVqeCi5
+   h7AZ0kPQpnUxMFlWs84jc7ndcR9Zj2calA5S2MEq0z9Pz1JH7EolD+zNx
+   1X6ns6vAPni5vdFGIcOHQd0ugL198bc4MSAwBQZQMniedbxYjJNIEhud4
+   R8WA3TWyBArOXPdcBRGIKNkc8O4vaaCBOGPEV8S2O9Y+iAnwayUKTojvo
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10946"; a="19349615"
+X-IronPort-AV: E=Sophos;i="6.04,340,1695711600"; 
+   d="scan'208";a="19349615"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2024 02:58:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10946"; a="900340804"
+X-IronPort-AV: E=Sophos;i="6.04,340,1695711600"; 
+   d="scan'208";a="900340804"
+Received: from stinti-mobl.ger.corp.intel.com ([10.249.37.10])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2024 02:58:33 -0800
+Date: Mon, 8 Jan 2024 12:58:31 +0200 (EET)
+From: =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+cc: Johannes Stezenbach <js@sig21.net>, Takashi Iwai <tiwai@suse.de>, 
+    Andy Shevchenko <andy@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+    Dave Hansen <dave.hansen@linux.intel.com>, 
+    "H . Peter Anvin" <hpa@zytor.com>, 
+    Michael Turquette <mturquette@baylibre.com>, 
+    Stephen Boyd <sboyd@kernel.org>, platform-driver-x86@vger.kernel.org, 
+    x86@kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] clk: x86: Move clk-pmc-atom register defines to
+ include/linux/platform_data/x86/pmc_atom.h
+In-Reply-To: <20240107140310.46512-2-hdegoede@redhat.com>
+Message-ID: <a9c2c296-38f0-1cf-a5d9-3169786adf@linux.intel.com>
+References: <20240107140310.46512-1-hdegoede@redhat.com> <20240107140310.46512-2-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: mt7622-apmixedsys: Fix an error handling
- path in clk_mt8135_apmixed_probe()
-Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <2c553c2a5077757e4f7af0bb895acc43881cf62c.1704616152.git.christophe.jaillet@wanadoo.fr>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <2c553c2a5077757e4f7af0bb895acc43881cf62c.1704616152.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323329-550535538-1704711516=:1762"
 
-Il 07/01/24 09:29, Christophe JAILLET ha scritto:
-> 'clk_data' is allocated with mtk_devm_alloc_clk_data(). So calling
-> mtk_free_clk_data() explicitly in the remove function would lead to a
-> double-free.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-550535538-1704711516=:1762
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+
+On Sun, 7 Jan 2024, Hans de Goede wrote:
+
+> Move the register defines for the Atom (Bay Trail, Cherry Trail) PMC
+> clocks to include/linux/platform_data/x86/pmc_atom.h.
 > 
-> Remove the redundant call.
+> This is a preparation patch to extend the S0i3 readiness checks
+> in drivers/platform/x86/pmc_atom.c with checking that the PMC
+> clocks are off on suspend entry.
 > 
-> Fixes: c50e2ea6507b ("clk: mediatek: mt7622-apmixedsys: Add .remove() callback for module build")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Note these are added to include/linux/platform_data/x86/pmc_atom.h rather
+> then to include/linux/platform_data/x86/clk-pmc-atom.h because the former
+> already has all the other Atom PMC register defines.
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/clk/x86/clk-pmc-atom.c             | 13 +------------
+>  include/linux/platform_data/x86/pmc_atom.h | 13 +++++++++++++
+>  2 files changed, 14 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+> index 2974dd0ec6f4..5ec9255e33fa 100644
+> --- a/drivers/clk/x86/clk-pmc-atom.c
+> +++ b/drivers/clk/x86/clk-pmc-atom.c
+> @@ -11,23 +11,12 @@
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+>  #include <linux/platform_data/x86/clk-pmc-atom.h>
+> +#include <linux/platform_data/x86/pmc_atom.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+>  
+>  #define PLT_CLK_NAME_BASE	"pmc_plt_clk"
+>  
+> -#define PMC_CLK_CTL_OFFSET		0x60
+> -#define PMC_CLK_CTL_SIZE		4
+> -#define PMC_CLK_NUM			6
+> -#define PMC_CLK_CTL_GATED_ON_D3		0x0
+> -#define PMC_CLK_CTL_FORCE_ON		0x1
+> -#define PMC_CLK_CTL_FORCE_OFF		0x2
+> -#define PMC_CLK_CTL_RESERVED		0x3
+> -#define PMC_MASK_CLK_CTL		GENMASK(1, 0)
+> -#define PMC_MASK_CLK_FREQ		BIT(2)
+> -#define PMC_CLK_FREQ_XTAL		(0 << 2)	/* 25 MHz */
+> -#define PMC_CLK_FREQ_PLL		(1 << 2)	/* 19.2 MHz */
+> -
+>  struct clk_plt_fixed {
+>  	struct clk_hw *clk;
+>  	struct clk_lookup *lookup;
+> diff --git a/include/linux/platform_data/x86/pmc_atom.h b/include/linux/platform_data/x86/pmc_atom.h
+> index b8a701c77fd0..557622ef0390 100644
+> --- a/include/linux/platform_data/x86/pmc_atom.h
+> +++ b/include/linux/platform_data/x86/pmc_atom.h
+> @@ -43,6 +43,19 @@
+>  				BIT_ORED_DEDICATED_IRQ_GPSC | \
+>  				BIT_SHARED_IRQ_GPSS)
+>  
+> +/* External clk generator settings */
+> +#define PMC_CLK_CTL_OFFSET		0x60
+> +#define PMC_CLK_CTL_SIZE		4
+> +#define PMC_CLK_NUM			6
+> +#define PMC_CLK_CTL_GATED_ON_D3		0x0
+> +#define PMC_CLK_CTL_FORCE_ON		0x1
+> +#define PMC_CLK_CTL_FORCE_OFF		0x2
+> +#define PMC_CLK_CTL_RESERVED		0x3
+> +#define PMC_MASK_CLK_CTL		GENMASK(1, 0)
+> +#define PMC_MASK_CLK_FREQ		BIT(2)
+> +#define PMC_CLK_FREQ_XTAL		(0 << 2)	/* 25 MHz */
+> +#define PMC_CLK_FREQ_PLL		(1 << 2)	/* 19.2 MHz */
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+
+Noting the last two look like:
+#define PMC_CLK_FREQ_XTAL	FIELD_PREP(PMC_MASK_CLK_FREQ, 0) /* 25 MHz */
+#define PMC_CLK_FREQ_PLL	FIELD_PREP(PMC_MASK_CLK_FREQ, 1) /* 19.2 MHz */
 
 
+-- 
+ i.
+
+--8323329-550535538-1704711516=:1762--
