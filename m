@@ -1,24 +1,24 @@
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB71952F91
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 15:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BDF537E1
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 15:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4T7ylp2RZSz4x2Rp
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 16:34:14 +0100 (CET)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4T7ylh6qq2z4x1XT
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 16:34:08 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:d323:2fd4:4f64:e281])
-	by albert.telenet-ops.be with bizsmtp
-	id YFZw2B00E0Qz0eJ06FZwec; Mon, 08 Jan 2024 16:34:07 +0100
+	by xavier.telenet-ops.be with bizsmtp
+	id YFZw2B00H0Qz0eJ01FZwDC; Mon, 08 Jan 2024 16:34:08 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rMrcp-00EtLy-2F;
+	id 1rMrcp-00EtMO-9w;
 	Mon, 08 Jan 2024 16:33:56 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rMrdU-00D7o1-8w;
+	id 1rMrdU-00D7oW-FY;
 	Mon, 08 Jan 2024 16:33:56 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -41,9 +41,9 @@ Cc: Cong Dang <cong.dang.xn@renesas.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/15] dt-bindings: power: Add r8a779h0 SYSC power domain definitions
-Date: Mon,  8 Jan 2024 16:33:43 +0100
-Message-Id: <1285e6a9fb423c8d6fff0c7faef157a1ea172d70.1704726960.git.geert+renesas@glider.be>
+Subject: [PATCH 10/15] soc: renesas: Introduce ARCH_RCAR_GEN4
+Date: Mon,  8 Jan 2024 16:33:49 +0100
+Message-Id: <4f4a2dbdb6ba51e151cbdc128da377083b0d850d.1704726960.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1704726960.git.geert+renesas@glider.be>
 References: <cover.1704726960.git.geert+renesas@glider.be>
@@ -55,73 +55,67 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Duy Nguyen <duy.nguyen.rh@renesas.com>
+Currently, all Kconfig symbols for R-Car Gen4 SoCs select the
+ARCH_RCAR_GEN3 SoC family symbol, which might confuse the casual reader.
 
-Add power domain indices for the Renesas R-Car V4M (R8A779H0) SoC.
+Fix this by introducing a new SoC family symbol for R-Car Gen4 SoCs.
+For now this just selects ARCH_RCAR_GEN3, to avoid duplication, and to
+relax dependencies.
 
-Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
-Signed-off-by: Hai Pham <hai.pham.ud@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/dt-bindings/power/r8a779h0-sysc.h | 49 +++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a779h0-sysc.h
+Once "[PATCH] i2c: rcar: Prepare for the advent of ARCH_RCAR_GEN4"[1]
+has been applied, ARCH_RCAR_GEN4 can stop selecting ARCH_RCAR_GEN3.
 
-diff --git a/include/dt-bindings/power/r8a779h0-sysc.h b/include/dt-bindings/power/r8a779h0-sysc.h
-new file mode 100644
-index 0000000000000000..29f05f0401a13336
---- /dev/null
-+++ b/include/dt-bindings/power/r8a779h0-sysc.h
-@@ -0,0 +1,49 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) 2023 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A779H0_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A779H0_SYSC_H__
+I'm open for suggestions how to improve this.
+Perhaps factor out common parts into ARCH_RCAR?
+
+[1] https://lore.kernel.org/r/bf7b105f7d9728ae5cd9fa99d1cdd278d71e7df2.1704723713.git.geert+renesas@glider.be
+---
+ drivers/soc/renesas/Kconfig | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 0986672f63757663..784a2b50561d5a97 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -34,6 +34,10 @@ config ARCH_RCAR_GEN3
+ 	select SYS_SUPPORTS_SH_CMT
+ 	select SYS_SUPPORTS_SH_TMU
+ 
++config ARCH_RCAR_GEN4
++	bool
++	select ARCH_RCAR_GEN3
 +
-+/*
-+ * These power domain indices match the Power Domain Register Numbers (PDR)
-+ */
-+
-+#define R8A779H0_PD_A1E0D0C0		0
-+#define R8A779H0_PD_A1E0D0C1		1
-+#define R8A779H0_PD_A1E0D0C2		2
-+#define R8A779H0_PD_A1E0D0C3		3
-+#define R8A779H0_PD_A2E0D0		16
-+#define R8A779H0_PD_A3CR0		21
-+#define R8A779H0_PD_A3CR1		22
-+#define R8A779H0_PD_A3CR2		23
-+#define R8A779H0_PD_A33DGA		24
-+#define R8A779H0_PD_A23DGB		25
-+#define R8A779H0_PD_C4			31
-+#define R8A779H0_PD_A1DSP0		33
-+#define R8A779H0_PD_A2IMP01		34
-+#define R8A779H0_PD_A2PSC		35
-+#define R8A779H0_PD_A2CV0		36
-+#define R8A779H0_PD_A2CV1		37
-+#define R8A779H0_PD_A3IMR0		38
-+#define R8A779H0_PD_A3IMR1		39
-+#define R8A779H0_PD_A3VC		40
-+#define R8A779H0_PD_A2CN0		42
-+#define R8A779H0_PD_A1CN0		44
-+#define R8A779H0_PD_A1DSP1		45
-+#define R8A779H0_PD_A2DMA		47
-+#define R8A779H0_PD_A2CV2		48
-+#define R8A779H0_PD_A2CV3		49
-+#define R8A779H0_PD_A3IMR2		50
-+#define R8A779H0_PD_A3IMR3		51
-+#define R8A779H0_PD_A3PCI		52
-+#define R8A779H0_PD_A2PCIPHY		53
-+#define R8A779H0_PD_A3VIP0		56
-+#define R8A779H0_PD_A3VIP2		58
-+#define R8A779H0_PD_A3ISP0		60
-+#define R8A779H0_PD_A3DUL		62
-+
-+/* Always-on power area */
-+#define R8A779H0_PD_ALWAYS_ON		64
-+
-+#endif /* __DT_BINDINGS_POWER_R8A779H0_SYSC_H__ */
+ config ARCH_RMOBILE
+ 	bool
+ 	select PM
+@@ -240,7 +244,7 @@ config ARCH_R8A77961
+ 
+ config ARCH_R8A779F0
+ 	bool "ARM64 Platform support for R-Car S4-8"
+-	select ARCH_RCAR_GEN3
++	select ARCH_RCAR_GEN4
+ 	select SYSC_R8A779F0
+ 	help
+ 	  This enables support for the Renesas R-Car S4-8 SoC.
+@@ -261,14 +265,14 @@ config ARCH_R8A77970
+ 
+ config ARCH_R8A779A0
+ 	bool "ARM64 Platform support for R-Car V3U"
+-	select ARCH_RCAR_GEN3
++	select ARCH_RCAR_GEN4
+ 	select SYSC_R8A779A0
+ 	help
+ 	  This enables support for the Renesas R-Car V3U SoC.
+ 
+ config ARCH_R8A779G0
+ 	bool "ARM64 Platform support for R-Car V4H"
+-	select ARCH_RCAR_GEN3
++	select ARCH_RCAR_GEN4
+ 	select SYSC_R8A779G0
+ 	help
+ 	  This enables support for the Renesas R-Car V4H SoC.
 -- 
 2.34.1
 
