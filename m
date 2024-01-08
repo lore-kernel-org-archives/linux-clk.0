@@ -1,31 +1,31 @@
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350D413ADD;
-	Mon,  8 Jan 2024 10:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C7914017;
+	Mon,  8 Jan 2024 10:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JI2igXEs"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Uug89SLG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1704708870;
-	bh=+6Hlxr0hsvZweqdmUQQAuzfh3fA7eGxoJr8e5qLrLCI=;
+	s=mail; t=1704708881;
+	bh=v3YxdNrdSgkWoqnPochuFDi/fDkCFuaCUTCM/mFHb+o=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JI2igXEsshtxlSPnZLcph1flUi93XgLxZl6t8n9XCWGOHtcarxXXrSzMnrIXsmvIl
-	 HSkOIMdhcgvFwd2TmLoWkGQE4jzw7Yod7QKq01FUoxa+EqwOvo8Jy+oOmE4gcbXWTd
-	 ukZ4oGNxG80HW+ehP/kTxI/9jEVdKpWVz3/IVK/6fwuhY8y781a9OFzv1JqhJHGhUb
-	 9Rc3/EMT0/P4iUKV838AhMBFy9MjWyydR5AMUZ94b1TuQAbhde5iFDVbok6GImtvt7
-	 n72YXbcgM8oJJEnkG6+5tYpI8JM0kFPSb3//0s1Gns2BMRKR3JMlK9UNMH21eADWq5
-	 LnNgHU6Rs26oA==
+	b=Uug89SLGrs671PvYYyqHZyKC4fITITj8cRDPQbcmt7Lxsr89yS001FrIIsSmsCK7l
+	 meZoCx2urIhIUNWtLf8mAKJFvrjYoh5S2xadnIslVpRXZ138MfElyhqaUshgqNqKoH
+	 0w9xHCfDLUprJS9xXI6+lPg+RQssAGmrFWk+ZxyjHmTq56hg10QlyvlO9qY1k/a0YW
+	 4DMX3G4ay5lrfBR1NRvvnqjyUKUZc7CLHLiUIbDbD6GGnbdb9MgVXTLJxzvun9BvuO
+	 W2IYrRnP+wFLgCxx4rbJ74mtG/+4xr4jHWItWeJadzP/VtyU2uSYiXdvAbQWRc8BmR
+	 999ufQxTpZrqg==
 Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id AB07C3780625;
-	Mon,  8 Jan 2024 10:14:29 +0000 (UTC)
-Message-ID: <97a1d977-38ad-48f7-bc10-f3973b635585@collabora.com>
-Date: Mon, 8 Jan 2024 11:14:29 +0100
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 169F93780625;
+	Mon,  8 Jan 2024 10:14:41 +0000 (UTC)
+Message-ID: <5edf0558-7d31-4ccb-9635-dee64b026cbc@collabora.com>
+Date: Mon, 8 Jan 2024 11:14:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -33,8 +33,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: mt8135: Fix an error handling path in
- clk_mt8135_apmixed_probe()
+Subject: Re: [PATCH] clk: mediatek: mt7622-apmixedsys: Fix an error handling
+ path in clk_mt8135_apmixed_probe()
 Content-Language: en-US
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -43,17 +43,20 @@ To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-mediatek@lists.infradead.org
-References: <6cd6af61e5a91598068227f1f68cfcfde1507453.1704615011.git.christophe.jaillet@wanadoo.fr>
+References: <2c553c2a5077757e4f7af0bb895acc43881cf62c.1704616152.git.christophe.jaillet@wanadoo.fr>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <6cd6af61e5a91598068227f1f68cfcfde1507453.1704615011.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <2c553c2a5077757e4f7af0bb895acc43881cf62c.1704616152.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 07/01/24 09:12, Christophe JAILLET ha scritto:
-> If an error occurs after mtk_alloc_clk_data(), mtk_free_clk_data() should
-> be called, as already done in the remove function.
+Il 07/01/24 09:29, Christophe JAILLET ha scritto:
+> 'clk_data' is allocated with mtk_devm_alloc_clk_data(). So calling
+> mtk_free_clk_data() explicitly in the remove function would lead to a
+> double-free.
 > 
-> Fixes: 54b7026f011e ("clk: mediatek: mt8135-apmixedsys: Convert to platform_driver and module")
+> Remove the redundant call.
+> 
+> Fixes: c50e2ea6507b ("clk: mediatek: mt7622-apmixedsys: Add .remove() callback for module build")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
