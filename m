@@ -1,112 +1,105 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C4AB65E
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 08:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C84134AC;
+	Mon,  8 Jan 2024 10:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eSIDp8pI"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1d3ea5cc137so13461765ad.0
-        for <linux-clk@vger.kernel.org>; Mon, 08 Jan 2024 00:18:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1704701923; x=1705306723; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PajgPkTBW3iluxw6UIGchSAnGs+6/xnB8PBfDDEr3ic=;
-        b=eSIDp8pIUHRUnRMpRxvShBcC93mhY4GBatmmS/Et4yMbFzihxilFXskFnVeRsq1UR+
-         azfv0ojCvJMg5TCEURzdYa1TkJttmljkwoaP0BfNHFSQHyO8jWiCCQoORok67sVUWRwG
-         zgO566agMWhFxA279kj/GOPpZWNG5g4RMgJ60=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704701923; x=1705306723;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PajgPkTBW3iluxw6UIGchSAnGs+6/xnB8PBfDDEr3ic=;
-        b=hU+s9rJUehlWLNSHQnArYBBIlZfYRcoIRrC4SZfKnJ8e6kNoeoc4ZssjqJPvKElIs9
-         vh0knkPzFuc1fhablsuUrxzF+yWD1o1QNyWGqO/2umHh5ZBatvienM7ZXTK9Sa/LRfP/
-         JNXCxCD7a+FocF0WvvEERGp+DrLnZNzLvATro7/I9AsrJRDAhx+d9mWvrh5pJkXrOQqL
-         0AD+hQQubnFk+bbrLve3zSIPANl6VHbGF1zbOZv03VfB41WcJeVKq6MPFKjS3LTk4krK
-         T1DLg6Da4x3zRuNKfNlIHDbJHDhEA12BINkCQkQIz9QLPuT+teXm4J9Vp14xXlASDZKU
-         Opag==
-X-Gm-Message-State: AOJu0Yww6NYzg7AVKLf8tK7GaFrx8WnzDalrdbz7UwneIxlv+FfWkYob
-	ugFV/7Y9+UxLNBwnFWUHaXM4SYoeEeZ0
-X-Google-Smtp-Source: AGHT+IHWcp3e1C1pCxpD9ZE1ctDnpB0lvwh36vHDQttf1iujltl/YpMCv6WgVen6qzG0XRhu94epxQ==
-X-Received: by 2002:a17:902:dac5:b0:1d0:6ffe:9f5 with SMTP id q5-20020a170902dac500b001d06ffe09f5mr4245569plx.83.1704701923020;
-        Mon, 08 Jan 2024 00:18:43 -0800 (PST)
-Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:6859:f8da:3370:7a74])
-        by smtp.gmail.com with ESMTPSA id jj4-20020a170903048400b001d078445059sm5672513plb.143.2024.01.08.00.18.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jan 2024 00:18:42 -0800 (PST)
-From: Pin-yen Lin <treapking@chromium.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Pin-yen Lin <treapking@chromium.org>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Weiyi Lu <weiyi.lu@mediatek.com>,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 2/2] clk: mediatek: mt8183: Enable need_runtime_pm on mt8183-mfgcfg
-Date: Mon,  8 Jan 2024 16:18:16 +0800
-Message-ID: <20240108081834.408403-2-treapking@chromium.org>
-X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
-In-Reply-To: <20240108081834.408403-1-treapking@chromium.org>
-References: <20240108081834.408403-1-treapking@chromium.org>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KxIykQWJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1704708748;
+	bh=CUvDS7z0vaI7dKOLj6bDMDn82Ts3BKg1N9K5vuqjjVo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KxIykQWJv9qPHoTN685bsqx/ZvJpaW5HT8TW6IaaeOu3furkgK8e+B7jfcScu7RSA
+	 EKmbZB1w5OdbHcw3FqdgvDKlVGt/6bNy5MsdggYfaxC7F6HZVnmSng1QvKSb6DetyC
+	 WjPLWzFktbECWAJ63+a8AE8pCwxu9BvHzEihqqJZAbToHzCMzyyI3fyjI5UHKqeuhc
+	 JjjSb+q66rQ51PdjzYsbrceEC4Z8vCdg5Z/oAsHOi95POXNHNl7cViQc2QxzkSObYu
+	 4C6IG/dcUKEONXLAl5o3gaF2EAmF9xK3Yy7DpswnX19IqcoSC5barSp7J7pYath7rw
+	 BHyJS4FCMYgVw==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A4CDC3780625;
+	Mon,  8 Jan 2024 10:12:27 +0000 (UTC)
+Message-ID: <717a21bb-de39-4f7d-913c-f2a20d8b02bd@collabora.com>
+Date: Mon, 8 Jan 2024 11:12:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] clk: mediatek: add infracfg reset controller for
+ mt7988
+Content-Language: en-US
+To: Frank Wunderlich <linux@fw-web.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+ Sam Shih <sam.shih@mediatek.com>, Daniel Golle <daniel@makrotopia.org>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+References: <20240105162056.43266-1-linux@fw-web.de>
+ <20240105162056.43266-3-linux@fw-web.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240105162056.43266-3-linux@fw-web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-mt8183-mfgcfg has a mutual dependency with genpd during the probing
-stage, so enable need_runtim_pm to prevent a deadlock in the following
-call stack:
+Il 05/01/24 17:20, Frank Wunderlich ha scritto:
+> From: Frank Wunderlich <frank-w@public-files.de>
+> 
+> Infracfg can also operate as reset controller, add support for it.
+> 
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+>   drivers/clk/mediatek/clk-mt7988-infracfg.c | 20 ++++++++++++++++++++
+>   1 file changed, 20 insertions(+)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+> index 8011ef278bea..1660a45349ff 100644
+> --- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
+> +++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+> @@ -14,6 +14,9 @@
+>   #include "clk-gate.h"
+>   #include "clk-mux.h"
+>   #include <dt-bindings/clock/mediatek,mt7988-clk.h>
+> +#include <dt-bindings/reset/mediatek,mt7988-resets.h>
+> +
+> +#define	INFRA_RST_SET_OFFSET	0x80
+>   
+>   static DEFINE_SPINLOCK(mt7988_clk_lock);
+>   
+> @@ -249,12 +252,29 @@ static const struct mtk_gate infra_clks[] = {
+>   	GATE_INFRA3(CLK_INFRA_133M_PCIE_CK_P3, "infra_133m_pcie_ck_p3", "sysaxi_sel", 31),
+>   };
+>   
+> +static u16 infra_rst_ofs[] = {
+> +	INFRA_RST_SET_OFFSET,
+> +};
+> +
+> +static u16 infra_idx_map[] = {
+> +	[MT7988_INFRA_RST0_THERM_CTRL_SWRST] = 0 * RST_NR_PER_BANK + 9,
 
-CPU0:  genpd_lock --> clk_prepare_lock
-genpd_power_off_work_fn()
- genpd_lock()
- generic_pm_domain::power_off()
-    clk_unprepare()
-      clk_prepare_lock()
+The MT7988A datasheet says that INFRA_RST0 bit 9 is CONN2EMI_M0_GALS_SLV_SWRST, so
+this is wrong: THERM_CTRL_SWRST is in the RST1 register, bit 9.
 
-CPU1: clk_prepare_lock --> genpd_lock
-clk_register()
-  __clk_core_init()
-    clk_prepare_lock()
-    clk_pm_runtime_get()
-      genpd_lock()
+Also, I'm sure that you really want to add the PCIe MAC reset bit as well, to be
+used with the PCIe driver...
 
-Do a runtime PM get at the probe function to make sure clk_register()
-won't acquire the genpd lock.
+[MT7988_INFRA_RST0_PEXTP_MAC_SWRST] = 0 * RST_NR_PER_BANK + 6,
+[MT7988_INFRA_RST1_THERM_CTRL_SWRST] = 1 * RST_NR_PER_BANK + 9,
 
-Fixes: acddfc2c261b ("clk: mediatek: Add MT8183 clock support")
-Signed-off-by: Pin-yen Lin <treapking@chromium.org>
----
+Enjoy... :-)
 
-(no changes since v1)
-
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-index ba504e19d420..62d876e150e1 100644
---- a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-+++ b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-@@ -29,6 +29,7 @@ static const struct mtk_gate mfg_clks[] = {
- static const struct mtk_clk_desc mfg_desc = {
- 	.clks = mfg_clks,
- 	.num_clks = ARRAY_SIZE(mfg_clks),
-+	.need_runtime_pm = true,
- };
- 
- static const struct of_device_id of_match_clk_mt8183_mfg[] = {
--- 
-2.43.0.472.g3155946c3a-goog
+Cheers,
+Angelo
 
