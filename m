@@ -1,152 +1,136 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837624A9BE
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 12:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7124550278
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 12:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AnGsQ19l"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1704717070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gp3UNv8Vq0x7Q9RkAN1Af3Vf7lQiP7anBZtHFuSgMx0=;
-	b=AnGsQ19lm/GFR0A6q3CnUfhA0ZjykWQ4efrW7Uk6cvksPeudVdp60MZeIFJYXWzK7/pe61
-	AJKmYpiJXrUxyuvinupVNAZdb6O2p6ddTqTr23BaM6nH2cXRATr/YstL5rQcHYkrfQLsFk
-	Oj4gvSJIsJZ9I8NuVc52TSN1ZCjpqqw=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-241-WLcNdeGOPE2VepIgsq96Xw-1; Mon, 08 Jan 2024 07:31:09 -0500
-X-MC-Unique: WLcNdeGOPE2VepIgsq96Xw-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a28f6a233afso91803866b.0
-        for <linux-clk@vger.kernel.org>; Mon, 08 Jan 2024 04:31:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="StG9Uh0o"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a28ab7ae504so162377366b.3
+        for <linux-clk@vger.kernel.org>; Mon, 08 Jan 2024 04:32:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704717150; x=1705321950; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7+LLSoSst0X3WX+FOtX7u0Smzdw3we/Qr2TbV3vNvmY=;
+        b=StG9Uh0oy3nKMkLdVnq/TAffu2g4s2sxsdCszU6jiWi2+Ou/L9vDjONT2FPVZsfFar
+         G+H2in+5cimNXKwrXHSNkWcr5BpF/Ck+viWlYaZwmvAkE5p3NUq41SusnGwJpVNNyjqQ
+         eDkI6w7Mkc5qmdzMAUN3kK+aPLamO64dK9aJmhl7PzFA5ZL8arg5YjGUoh3iyCAyFCbd
+         ir7m+8BKT3ZyjeZJe7vCXt3BDIdg6B4bLUTmnUqrx1ekKKCdRghYF7hgSpOI0iranbWk
+         hekVEWTHS/Uhx5O0GD3LL+CU0xTsex8zSZbAO4rIb1AgX51tUs4Ubm5bWATamFtWSwvC
+         pjhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704717068; x=1705321868;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gp3UNv8Vq0x7Q9RkAN1Af3Vf7lQiP7anBZtHFuSgMx0=;
-        b=YrLwankT2Y47qQRwEn/455sWIicKKgTm8jnqIUeaTwXxywiN6geJUWkMGzDj5BYf7R
-         YMLbTECVt/khZMTi7FMU0WrDzmYa+jfT7zZ1auqKsriPTjKRcchpVFulbrhmLGlZb6r/
-         tqDEdoG6p8mLt0Nmxzzv9GVd8+8jnNi0IV+Jv0YCwtLluKFOxXZQFV/AJNdiWrOqJ1UY
-         FIE33GrDKpWRJbmxw0zJujzUq+ppckB0W+bBaAv7yV7pefmhZYnHASQ4npz4ukahZbQl
-         yvCiGlI289xRUW14rbjQFxkVdY5sbnZh81h5XF74h4vKQHB8n2Ur6oPD8L8CSGgjxCKo
-         Bjig==
-X-Gm-Message-State: AOJu0YzcIPrRM+lDdKHoiU6m9Dt3Hoea1voe2tdxhivvkDuRDUOIKTOr
-	rVYwWf6hIl31Z4uRcfjXcdiazrR6+R+TRetYJTipwJWnRM6o4i0QPe+XVF+c+rHSVs376TBhcAx
-	ERta0a5gMj4Jui5ZhEFQK16+SdVQk
-X-Received: by 2002:a17:906:eb18:b0:a2b:6c3:5ba0 with SMTP id mb24-20020a170906eb1800b00a2b06c35ba0mr106697ejb.144.1704717067879;
-        Mon, 08 Jan 2024 04:31:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG+yDQPB6vndpAexmCcCh+Q1ZWETkqarjodKQIoZiw+/kDWRyDVNo/pJIcR0gzPCGi8FcNwZA==
-X-Received: by 2002:a17:906:eb18:b0:a2b:6c3:5ba0 with SMTP id mb24-20020a170906eb1800b00a2b06c35ba0mr106682ejb.144.1704717067563;
-        Mon, 08 Jan 2024 04:31:07 -0800 (PST)
-Received: from [10.40.98.142] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id 1-20020a170906318100b00a2a632e4eebsm1436012ejy.119.2024.01.08.04.31.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jan 2024 04:31:06 -0800 (PST)
-Message-ID: <e945120a-8968-4086-95b0-32f13ca0d9f4@redhat.com>
-Date: Mon, 8 Jan 2024 13:31:05 +0100
+        d=1e100.net; s=20230601; t=1704717150; x=1705321950;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7+LLSoSst0X3WX+FOtX7u0Smzdw3we/Qr2TbV3vNvmY=;
+        b=xB8+ECGCquLKLIdyg4Kd/Ge+QX4T7oNoaKtqv2L2tNdf6lNN4jh52AyLoY6pqhG91T
+         DIkTnfpCGFKeY/h75UBgbfCinJJ4QS/Z1w6ScVoJUbKBuoYiWGsxgAzcaFRHQhFsHMU7
+         iuni2OnT7jbq/rI9y6fr4jeR+KcrAeaEZtGXrQb+nS+AFZNYvn7t6HIYVXAJt2E4cBdG
+         0zv1LWuncviPhWuipkTZYQ269KlIIxORDTV9fxF0HGIfiox1RUuyPg1yQL4rdy3rGT/u
+         nLH/xN5WtPo/3AMB8A/eF8YkJvnxhjNWbhMaHlG8RZU0wEMJIu1cjFZDToVXf8Gn2Ivm
+         4Vxg==
+X-Gm-Message-State: AOJu0Yy+27cMwMf3W/zkTe3ogpkQgM6AgyLWjqVq7dwHlPUKzB1df1DX
+	KKhMPnjNW26cHb7CojxRuGmxTJaAoQjQZA==
+X-Google-Smtp-Source: AGHT+IG923JXhZHNH6bInFxUOJQ8Xb9OhAPPlhZkvZZZPYX5K6RO2so+Jy49/QpyTx/z5+gnHyjQ/A==
+X-Received: by 2002:a17:906:1995:b0:a28:aab9:656 with SMTP id g21-20020a170906199500b00a28aab90656mr1427848ejd.94.1704717150591;
+        Mon, 08 Jan 2024 04:32:30 -0800 (PST)
+Received: from [10.167.154.1] (178235179081.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.81])
+        by smtp.gmail.com with ESMTPSA id bs18-20020a170906d1d200b00a2808ee8ab1sm3892978ejb.150.2024.01.08.04.32.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jan 2024 04:32:30 -0800 (PST)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 00/18] Qualcomm GCC/VIDEOCC reset overhaul for Venus
+Date: Mon, 08 Jan 2024 13:32:17 +0100
+Message-Id: <20240105-topic-venus_reset-v1-0-981c7a624855@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] platform/x86: pmc_atom: Check state of PMC clocks
- on s2idle
-Content-Language: en-US
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Johannes Stezenbach <js@sig21.net>, Takashi Iwai <tiwai@suse.de>,
- Andy Shevchenko <andy@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin"
- <hpa@zytor.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, platform-driver-x86@vger.kernel.org,
- x86@kernel.org, linux-clk@vger.kernel.org
-References: <20240107140310.46512-1-hdegoede@redhat.com>
- <20240107140310.46512-5-hdegoede@redhat.com>
- <8fbc514d-b660-d45a-38e8-fc9fa560c8f8@linux.intel.com>
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <8fbc514d-b660-d45a-38e8-fc9fa560c8f8@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFHrm2UC/x2NQQqDQAwAvyI5N7Ar2opfKUV2t7EGJEqiUhD/3
+ tDjDAxzgpEyGfTVCUoHGy/iEG8VlCnJh5DfzlCHugkxtLgtKxc8SHYblIw2zG1zj3mMKXQP8C4
+ nI8yapExeyj7PLlelkb//0fN1XT+j7Lp4eAAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Dikshita Agarwal <quic_dikshita@quicinc.com>, 
+ Vikash Garodia <quic_vgarodia@quicinc.com>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1704717148; l=2600;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=Fc9zrFgHl1OElxmHS3Z3Skji4kyXQuba0Flg4ZyAyLg=;
+ b=JTY7Ia3zshIw9jL1LI/wLPRx9NMj5mL/ajINeiy+G14cRsW5nATZZO/LC82pu/dbPWWnBGqAo
+ Vg6WRvaiB9ECao1ALNAlwGXX/L3dNvCLqfnkBtzTFtEXXbJlX32hSlL
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-Hi,
+Some resets associated with venus require a larger delay for the hardware
+on the other end to function properly. These seem to fall into three
+categories:
 
-On 1/8/24 12:27, Ilpo Järvinen wrote:
-> On Sun, 7 Jan 2024, Hans de Goede wrote:
-> 
->> Extend the s2idle check with checking that none of the PMC clocks
->> is in the forced-on state. If one of the clocks is in forced on
->> state then S0i3 cannot be reached.
->>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> ---
->> Changes in v2:
->> - Drop the PMC_CLK_* defines these are defined in
->>   include/linux/platform_data/x86/pmc_atom.h now
->> - Drop duplicated "pmc_atom: " prefix from pr_err() message
->> ---
->>  drivers/platform/x86/pmc_atom.c | 11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
->> index 81ad66117365..d04f635c4075 100644
->> --- a/drivers/platform/x86/pmc_atom.c
->> +++ b/drivers/platform/x86/pmc_atom.c
->> @@ -477,6 +477,7 @@ static void pmc_s2idle_check(void)
->>  	u32 func_dis, func_dis_2;
->>  	u32 d3_sts_0, d3_sts_1;
->>  	u32 false_pos_sts_0, false_pos_sts_1;
->> +	int i;
->>  
->>  	func_dis = pmc_reg_read(pmc, PMC_FUNC_DIS);
->>  	func_dis_2 = pmc_reg_read(pmc, PMC_FUNC_DIS_2);
->> @@ -504,6 +505,16 @@ static void pmc_s2idle_check(void)
->>  
->>  	/* High part */
->>  	pmc_dev_state_check(d3_sts_1, m->d3_sts_1, func_dis_2, m->func_dis_2, false_pos_sts_1);
->> +
->> +	/* Check PMC clocks */
-> 
-> Kind of obvious comment, how about:
-> 
-> 	/* Check PMC clocks don't prevent S0i3 */
-> 
-> Or
-> 
-> 	/* Forced-on PMC clock prevents S0i3? */
-> 
-> ?
+- 150us for 8250 and earlier
+- 400us for 8350 and friends
+- 1000us for >=8450
 
-Good point. I have gone with the "Forced-on PMC clock prevents S0i3"
-comment.
+Make some housecleaning changes and describe these delays in preparation
+to moving this data out of the venus driver.
 
-Regards,
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (18):
+      clk: qcom: reset: Increase max reset delay
+      clk: qcom: reset: Commonize the de/assert functions
+      clk: qcom: reset: Ensure write completion on reset de/assertion
+      clk: qcom: gcc-sa8775p: Set delay for Venus CLK resets
+      clk: qcom: gcc-sc8180x: Set delay for Venus CLK resets
+      clk: qcom: gcc-sc8280xp: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm4450: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm7150: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm8250: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm8350: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm8450: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm8550: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm8650: Set delay for Venus CLK resets
+      clk: qcom: videocc-sm8150: Set delay for Venus CLK resets
+      clk: qcom: videocc-sm8250: Set delay for Venus CLK resets
+      clk: qcom: videocc-sm8350: Set delay for Venus CLK resets
+      clk: qcom: videocc-sm8450: Set delay for Venus CLK resets
+      clk: qcom: videocc-sm8550: Set delay for Venus CLK resets
 
-Hans
+ drivers/clk/qcom/gcc-sa8775p.c    |  4 ++--
+ drivers/clk/qcom/gcc-sc8180x.c    |  6 +++---
+ drivers/clk/qcom/gcc-sc8280xp.c   |  4 ++--
+ drivers/clk/qcom/gcc-sm4450.c     |  4 ++--
+ drivers/clk/qcom/gcc-sm7150.c     |  2 +-
+ drivers/clk/qcom/gcc-sm8250.c     |  4 ++--
+ drivers/clk/qcom/gcc-sm8350.c     |  4 ++--
+ drivers/clk/qcom/gcc-sm8450.c     |  4 ++--
+ drivers/clk/qcom/gcc-sm8550.c     |  4 ++--
+ drivers/clk/qcom/gcc-sm8650.c     |  4 ++--
+ drivers/clk/qcom/reset.c          | 27 ++++++++++++++-------------
+ drivers/clk/qcom/reset.h          |  2 +-
+ drivers/clk/qcom/videocc-sm8150.c |  2 +-
+ drivers/clk/qcom/videocc-sm8250.c |  4 ++--
+ drivers/clk/qcom/videocc-sm8350.c |  4 ++--
+ drivers/clk/qcom/videocc-sm8450.c |  4 ++--
+ drivers/clk/qcom/videocc-sm8550.c |  4 ++--
+ 17 files changed, 44 insertions(+), 43 deletions(-)
+---
+base-commit: bffdfd2e7e63175ae261131a620f809d946cf9a7
+change-id: 20240105-topic-venus_reset-b5461bf1a087
 
-
-> 
->> +	for (i = 0; i < PMC_CLK_NUM; i++) {
->> +		u32 ctl = pmc_reg_read(pmc, PMC_CLK_CTL_OFFSET + 4 * i);
->> +
->> +		if ((ctl & PMC_MASK_CLK_CTL) != PMC_CLK_CTL_FORCE_ON)
->> +			continue;
->> +
->> +		pr_err("clock %d is ON prior to freeze (ctl 0x%08x)\n", i, ctl);
->> +	}
->>  }
->>  
->>  static struct acpi_s2idle_dev_ops pmc_s2idle_ops = {
->>
-> 
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> 
-> 
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
