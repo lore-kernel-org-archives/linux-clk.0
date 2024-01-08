@@ -1,79 +1,53 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0AA55E64;
-	Mon,  8 Jan 2024 21:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2D4611A;
+	Mon,  8 Jan 2024 23:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJysBBxa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1719AC43390;
-	Mon,  8 Jan 2024 21:09:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9xXHPh9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97107C433C7;
+	Mon,  8 Jan 2024 23:33:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704748180;
-	bh=tOZeUwu8Ym50TZyoye/7s3VUIMz/brOfUTrnWpL/6c0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=LJysBBxajBMPFfDATpJd+uWkPL3Z5fpOojms4mGLvOAO91gF1W9TpCFLbFI6b/Vg9
-	 FXZn+YmoSnguYsVRJSiuSOOny/i5cwbpl3Zdv/iitV3842uA67jdfd8ERQD1josYtm
-	 Vcc+YUiyGE4jvoONH9istQxAVsBTOloUmkURe68BEBS8U0NVZppgbFNbVKik4XeZZe
-	 VfGMuvKJy74wu1sbbyFS6GlX20UK+unzrDKJJDDyrwd1mUyLmLxyjf84eNQaSwaVDm
-	 hZ8fwKSbS8gQW9SenAcToLaAj1yYZjNJokMkcpzwic95/GRBpstaVco5lDsWZqDidv
-	 Bac3fPiapXvnA==
-Received: (nullmailer pid 2140736 invoked by uid 1000);
-	Mon, 08 Jan 2024 21:09:36 -0000
+	s=k20201202; t=1704756785;
+	bh=huX0SMEBlPdt6J14Ce6Q9C1v+sDOT6c9HCdktumcX7o=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=P9xXHPh9HmpJJG8g2lH4JSRYF65/CfByoiB8E5YIY58GKfT8koywtNEMTao0eWawS
+	 1AwsEB0Z0GsXZR08854AwuMsuJLAc/z+3+hcbMjgYiajmYa5fItrxwhabbywUM9aZq
+	 sZJsHF6NdsC11m0aXxe3or5pVQ0MkDC1uArqMOD6CWh+VbafaWgDgVHs/PGGwBJYyN
+	 A8HbND90PZKB+k9+4L4ZGliTD/DBBborWIvR2nGOd/5PVSlEFaVWnuQdMjio6AJtck
+	 TzWlqegAAAygShkSvn15RtuAMWzEYDUG0jL2GOPmxbIymOu42Xn1I2DKIiQcFBrpNT
+	 JydyJAL+f4bGA==
+Message-ID: <a275f9b7b0b8fc9b2a65399b080c2f6c.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rob Herring <robh@kernel.org>
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: robh+dt@kernel.org, venture@google.com, linux-kernel@vger.kernel.org, sboyd@kernel.org, tali.perry1@gmail.com, linux-clk@vger.kernel.org, yuenn@google.com, mturquette@baylibre.com, openbmc@lists.ozlabs.org, benjaminfair@google.com, krzysztof.kozlowski+dt@linaro.org, joel@jms.id.au, devicetree@vger.kernel.org
-In-Reply-To: <20240108135421.684263-2-tmaimon77@gmail.com>
-References: <20240108135421.684263-1-tmaimon77@gmail.com>
- <20240108135421.684263-2-tmaimon77@gmail.com>
-Message-Id: <170474817687.2140623.4004065884295248395.robh@kernel.org>
-Subject: Re: [PATCH v22 1/8] dt-bindings: clock: npcm845: Add reference 25m
- clock  property
-Date: Mon, 08 Jan 2024 14:09:36 -0700
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240107140310.46512-2-hdegoede@redhat.com>
+References: <20240107140310.46512-1-hdegoede@redhat.com> <20240107140310.46512-2-hdegoede@redhat.com>
+Subject: Re: [PATCH v2 1/5] clk: x86: Move clk-pmc-atom register defines to include/linux/platform_data/x86/pmc_atom.h
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, x86@kernel.org, linux-clk@vger.kernel.org
+To: Andy Shevchenko <andy@kernel.org>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, H . Peter Anvin <hpa@zytor.com>, Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, Johannes Stezenbach <js@sig21.net>, Michael Turquette <mturquette@baylibre.com>, Takashi Iwai <tiwai@suse.de>, Thomas Gleixner <tglx@linutronix.de>
+Date: Mon, 08 Jan 2024 15:33:03 -0800
+User-Agent: alot/0.10
 
-
-On Mon, 08 Jan 2024 15:54:14 +0200, Tomer Maimon wrote:
-> The NPCM8XX clock driver uses 25Mhz external clock, therefor adding
-> refclk property.
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Quoting Hans de Goede (2024-01-07 06:03:06)
+> Move the register defines for the Atom (Bay Trail, Cherry Trail) PMC
+> clocks to include/linux/platform_data/x86/pmc_atom.h.
+>=20
+> This is a preparation patch to extend the S0i3 readiness checks
+> in drivers/platform/x86/pmc_atom.c with checking that the PMC
+> clocks are off on suspend entry.
+>=20
+> Note these are added to include/linux/platform_data/x86/pmc_atom.h rather
+> then to include/linux/platform_data/x86/clk-pmc-atom.h because the former
+> already has all the other Atom PMC register defines.
+>=20
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 > ---
->  .../bindings/clock/nuvoton,npcm845-clk.yaml      | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.example.dtb: clock-controller@f0801000: 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/nuvoton,npcm845-clk.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.example.dtb: clock-controller@f0801000: 'clock-names' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/nuvoton,npcm845-clk.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240108135421.684263-2-tmaimon77@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Acked-by: Stephen Boyd <sboyd@kernel.org>
