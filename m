@@ -1,55 +1,55 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64283FE59
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 12:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837624A9BE
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 12:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SLRAwH6w"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AnGsQ19l"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1704716713;
+	s=mimecast20190719; t=1704717070;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AwkYiwQF4NLGVI26IY7VJOS6s7uygalTNZSWBH0exq0=;
-	b=SLRAwH6wRB4WMHjtpRap7Ut88+UJHKBYwf7c/ZwX+x8lJNtjx0+AI18VC6h1xhhLM9jfgJ
-	U9DyRO+wJ+fBQ5TFPKTvVW1jJB4xA81n3EqJY/3XbZCxEXneTbkHxKecG/NYr1sBWNxULT
-	R/ArD2bDqzSCRVUg2Fx8eVUA+poMrnQ=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=gp3UNv8Vq0x7Q9RkAN1Af3Vf7lQiP7anBZtHFuSgMx0=;
+	b=AnGsQ19lm/GFR0A6q3CnUfhA0ZjykWQ4efrW7Uk6cvksPeudVdp60MZeIFJYXWzK7/pe61
+	AJKmYpiJXrUxyuvinupVNAZdb6O2p6ddTqTr23BaM6nH2cXRATr/YstL5rQcHYkrfQLsFk
+	Oj4gvSJIsJZ9I8NuVc52TSN1ZCjpqqw=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-07mncc1mN7qXghM7COyVWA-1; Mon, 08 Jan 2024 07:25:12 -0500
-X-MC-Unique: 07mncc1mN7qXghM7COyVWA-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1d50e74183fso3917835ad.1
-        for <linux-clk@vger.kernel.org>; Mon, 08 Jan 2024 04:25:11 -0800 (PST)
+ us-mta-241-WLcNdeGOPE2VepIgsq96Xw-1; Mon, 08 Jan 2024 07:31:09 -0500
+X-MC-Unique: WLcNdeGOPE2VepIgsq96Xw-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a28f6a233afso91803866b.0
+        for <linux-clk@vger.kernel.org>; Mon, 08 Jan 2024 04:31:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704716711; x=1705321511;
+        d=1e100.net; s=20230601; t=1704717068; x=1705321868;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AwkYiwQF4NLGVI26IY7VJOS6s7uygalTNZSWBH0exq0=;
-        b=hGoQNeDOEEI1suPNSq7dS6wU3GVzFVBIGQHprQejeEokr6SXGSF900y2bwXHQ5oEfd
-         KmSA/qjXuKeATw3MzC+572ckJ4fFmC6IVRqhzq2ifylo4lBkVmGQDjE8jLK/T+4VTjnt
-         MtYvytqhOxZ2zTDXSOEHroS/FKUcoVZQUBJo1T/0E7AMS4DhORW/GxtVrhwNpXHgSJl0
-         EWHE3jlWsPi9KvO7hb4VBfdSlMig21hMNB5ZFAuUOCu0MaUc66+aw/DU7Y2seZuF3Boa
-         PiKEYPKDvUWXXQ2C/YdMIvz7ETmveL1RKQzh5uutfnRRHfeL81XYJ3XG84Lgsk7Rh0kQ
-         5mXQ==
-X-Gm-Message-State: AOJu0YyHwhTsxIRVzE5Uy3CBnHzkQbWpYSVER502JcNC2fn+0CdvjM/Y
-	saxhXJQHxHfjkKO9qtX/Xx4Mx2/CtL648MXJ8QawQXnzP5rpYuAMtUdxvI6cMla5zvmh2cIafPf
-	3rLF9Adqiw8tViEecMBGbewovNdol
-X-Received: by 2002:a17:902:ea0c:b0:1d4:3af0:8650 with SMTP id s12-20020a170902ea0c00b001d43af08650mr1497303plg.38.1704716710964;
-        Mon, 08 Jan 2024 04:25:10 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHvzxV85vIB81C2jjjnPxMWzTmbseXUnjn17ijpGDbMbPWTCc3JmwlE5yXQbImC8MpugFJbJA==
-X-Received: by 2002:a17:902:ea0c:b0:1d4:3af0:8650 with SMTP id s12-20020a170902ea0c00b001d43af08650mr1497285plg.38.1704716710570;
-        Mon, 08 Jan 2024 04:25:10 -0800 (PST)
+        bh=gp3UNv8Vq0x7Q9RkAN1Af3Vf7lQiP7anBZtHFuSgMx0=;
+        b=YrLwankT2Y47qQRwEn/455sWIicKKgTm8jnqIUeaTwXxywiN6geJUWkMGzDj5BYf7R
+         YMLbTECVt/khZMTi7FMU0WrDzmYa+jfT7zZ1auqKsriPTjKRcchpVFulbrhmLGlZb6r/
+         tqDEdoG6p8mLt0Nmxzzv9GVd8+8jnNi0IV+Jv0YCwtLluKFOxXZQFV/AJNdiWrOqJ1UY
+         FIE33GrDKpWRJbmxw0zJujzUq+ppckB0W+bBaAv7yV7pefmhZYnHASQ4npz4ukahZbQl
+         yvCiGlI289xRUW14rbjQFxkVdY5sbnZh81h5XF74h4vKQHB8n2Ur6oPD8L8CSGgjxCKo
+         Bjig==
+X-Gm-Message-State: AOJu0YzcIPrRM+lDdKHoiU6m9Dt3Hoea1voe2tdxhivvkDuRDUOIKTOr
+	rVYwWf6hIl31Z4uRcfjXcdiazrR6+R+TRetYJTipwJWnRM6o4i0QPe+XVF+c+rHSVs376TBhcAx
+	ERta0a5gMj4Jui5ZhEFQK16+SdVQk
+X-Received: by 2002:a17:906:eb18:b0:a2b:6c3:5ba0 with SMTP id mb24-20020a170906eb1800b00a2b06c35ba0mr106697ejb.144.1704717067879;
+        Mon, 08 Jan 2024 04:31:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG+yDQPB6vndpAexmCcCh+Q1ZWETkqarjodKQIoZiw+/kDWRyDVNo/pJIcR0gzPCGi8FcNwZA==
+X-Received: by 2002:a17:906:eb18:b0:a2b:6c3:5ba0 with SMTP id mb24-20020a170906eb1800b00a2b06c35ba0mr106682ejb.144.1704717067563;
+        Mon, 08 Jan 2024 04:31:07 -0800 (PST)
 Received: from [10.40.98.142] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id b4-20020a170902d50400b001d46a313b51sm6134035plg.72.2024.01.08.04.25.05
+        by smtp.gmail.com with ESMTPSA id 1-20020a170906318100b00a2a632e4eebsm1436012ejy.119.2024.01.08.04.31.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jan 2024 04:25:09 -0800 (PST)
-Message-ID: <d7342193-cd48-42d4-8967-52e3a1bf8d84@redhat.com>
-Date: Mon, 8 Jan 2024 13:25:03 +0100
+        Mon, 08 Jan 2024 04:31:06 -0800 (PST)
+Message-ID: <e945120a-8968-4086-95b0-32f13ca0d9f4@redhat.com>
+Date: Mon, 8 Jan 2024 13:31:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,8 +57,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] platform/x86: pmc_atom: Check state of PMC managed
- devices on s2idle
+Subject: Re: [PATCH v2 4/5] platform/x86: pmc_atom: Check state of PMC clocks
+ on s2idle
 Content-Language: en-US
 To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 Cc: Johannes Stezenbach <js@sig21.net>, Takashi Iwai <tiwai@suse.de>,
@@ -69,196 +69,84 @@ Cc: Johannes Stezenbach <js@sig21.net>, Takashi Iwai <tiwai@suse.de>,
  Stephen Boyd <sboyd@kernel.org>, platform-driver-x86@vger.kernel.org,
  x86@kernel.org, linux-clk@vger.kernel.org
 References: <20240107140310.46512-1-hdegoede@redhat.com>
- <20240107140310.46512-4-hdegoede@redhat.com>
- <a4d814a2-66bd-6429-539c-196fabbf48ae@linux.intel.com>
+ <20240107140310.46512-5-hdegoede@redhat.com>
+ <8fbc514d-b660-d45a-38e8-fc9fa560c8f8@linux.intel.com>
 From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <a4d814a2-66bd-6429-539c-196fabbf48ae@linux.intel.com>
+In-Reply-To: <8fbc514d-b660-d45a-38e8-fc9fa560c8f8@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Hi,
 
-On 1/8/24 12:18, Ilpo Järvinen wrote:
+On 1/8/24 12:27, Ilpo Järvinen wrote:
 > On Sun, 7 Jan 2024, Hans de Goede wrote:
 > 
->> From: Johannes Stezenbach <js@sig21.net>
+>> Extend the s2idle check with checking that none of the PMC clocks
+>> is in the forced-on state. If one of the clocks is in forced on
+>> state then S0i3 cannot be reached.
 >>
->> This is a port of "pm: Add pm suspend debug notifier for South IPs"
->> from the latte-l-oss branch of:
->> from https://github.com/MiCode/Xiaomi_Kernel_OpenSource latte-l-oss
-> 
-> If this is to be included at all, don't place it first but last in the 
-> commit message. That is, focus on the change itself, not where the patch 
-> came from.
-> 
->> With the new acpi_s2idle_dev_ops and acpi_register_lps0_dev()
->> functionality this can now finally be ported to the mainline kernel
-> 
-> What is "this" (and no, don't point it to some external patch in some 
-> random branch).
-> 
->> without requiring adding non-upstreamable hooks into the cpu_idle
->> driver mechanism.
-> 
-> Somehow this entire paragraph (and the one preceeding it) has a flawed way 
-> to look things, it focuses on stuff that seems largely irrelevant. 
-> Instead, there should be "a problem statement", what is problem this patch 
-> is addressing / why.
-
-You are right this really belongs in the cover-letter which already
-has it. I have pretty much entirely rewritten the commit message
-for the upcoming v3 of this.
-
-Regards,
-
-Hans
-
-
-
-> 
->> This adds a check that all hardware blocks in the South complex
->> (controlled by PMC) are in a state that allows the SoC to enter S0i3
->> and prints an error message for any device in D0.
->>
->> Note the pmc_atom code is enabled by CONFIG_X86_INTEL_LPSS which
->> already depends on ACPI.
->>
->> Signed-off-by: Johannes Stezenbach <js@sig21.net>
->> Signed-off-by: Takashi Iwai <tiwai@suse.de>
->> [hdegoede: Use acpi_s2idle_dev_ops, ignore fused off blocks, PMIC I2C]
 >> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 >> ---
 >> Changes in v2:
->> - Drop duplicated "pmc_atom: " prefix from pr_err() / pr_dbg() messages
+>> - Drop the PMC_CLK_* defines these are defined in
+>>   include/linux/platform_data/x86/pmc_atom.h now
+>> - Drop duplicated "pmc_atom: " prefix from pr_err() message
 >> ---
->>  drivers/platform/x86/pmc_atom.c | 67 +++++++++++++++++++++++++++++++++
->>  1 file changed, 67 insertions(+)
+>>  drivers/platform/x86/pmc_atom.c | 11 +++++++++++
+>>  1 file changed, 11 insertions(+)
 >>
 >> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
->> index 93a6414c6611..81ad66117365 100644
+>> index 81ad66117365..d04f635c4075 100644
 >> --- a/drivers/platform/x86/pmc_atom.c
 >> +++ b/drivers/platform/x86/pmc_atom.c
->> @@ -6,6 +6,7 @@
+>> @@ -477,6 +477,7 @@ static void pmc_s2idle_check(void)
+>>  	u32 func_dis, func_dis_2;
+>>  	u32 d3_sts_0, d3_sts_1;
+>>  	u32 false_pos_sts_0, false_pos_sts_1;
+>> +	int i;
 >>  
->>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>>  	func_dis = pmc_reg_read(pmc, PMC_FUNC_DIS);
+>>  	func_dis_2 = pmc_reg_read(pmc, PMC_FUNC_DIS_2);
+>> @@ -504,6 +505,16 @@ static void pmc_s2idle_check(void)
 >>  
->> +#include <linux/acpi.h>
->>  #include <linux/debugfs.h>
->>  #include <linux/device.h>
->>  #include <linux/dmi.h>
->> @@ -17,6 +18,7 @@
->>  #include <linux/platform_device.h>
->>  #include <linux/pci.h>
->>  #include <linux/seq_file.h>
->> +#include <linux/suspend.h>
->>  
->>  struct pmc_bit_map {
->>  	const char *name;
->> @@ -448,6 +450,67 @@ static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
->>  	return 0;
->>  }
->>  
->> +#ifdef CONFIG_SUSPEND
->> +static void pmc_dev_state_check(u32 sts, const struct pmc_bit_map *sts_map,
->> +				u32 fd, const struct pmc_bit_map *fd_map,
->> +				u32 sts_possible_false_pos)
->> +{
->> +	int index;
+>>  	/* High part */
+>>  	pmc_dev_state_check(d3_sts_1, m->d3_sts_1, func_dis_2, m->func_dis_2, false_pos_sts_1);
 >> +
->> +	for (index = 0; sts_map[index].name; index++) {
->> +		if (!(fd_map[index].bit_mask & fd) &&
->> +		    !(sts_map[index].bit_mask & sts)) {
->> +			if (sts_map[index].bit_mask & sts_possible_false_pos)
->> +				pm_pr_dbg("%s is in D0 prior to s2idle\n",
->> +					  sts_map[index].name);
->> +			else
->> +				pr_err("%s is in D0 prior to s2idle\n",
->> +				       sts_map[index].name);
->> +		}
->> +	}
->> +}
->> +
->> +static void pmc_s2idle_check(void)
->> +{
->> +	struct pmc_dev *pmc = &pmc_device;
->> +	const struct pmc_reg_map *m = pmc->map;
->> +	u32 func_dis, func_dis_2;
->> +	u32 d3_sts_0, d3_sts_1;
->> +	u32 false_pos_sts_0, false_pos_sts_1;
->> +
->> +	func_dis = pmc_reg_read(pmc, PMC_FUNC_DIS);
->> +	func_dis_2 = pmc_reg_read(pmc, PMC_FUNC_DIS_2);
->> +	d3_sts_0 = pmc_reg_read(pmc, PMC_D3_STS_0);
->> +	d3_sts_1 = pmc_reg_read(pmc, PMC_D3_STS_1);
->> +
->> +	/*
->> +	 * Some blocks are not used on lower-featured versions of the SoC and
->> +	 * always report D0, add these to false_pos mask to log at debug level.
+>> +	/* Check PMC clocks */
 > 
-> Please explain this also in the commit message.
+> Kind of obvious comment, how about:
 > 
->> +	 */
->> +	if (m->d3_sts_1	== byt_d3_sts_1_map) {
->> +		/* BYT */
+> 	/* Check PMC clocks don't prevent S0i3 */
 > 
-> Can these be written open into the longer form.
+> Or
 > 
->> +		false_pos_sts_0 = BIT_GBE | BIT_SATA | BIT_PCIE_PORT0 |
->> +			BIT_PCIE_PORT1 | BIT_PCIE_PORT2 | BIT_PCIE_PORT3 |
->> +			BIT_LPSS2_F5_I2C5;
->> +		false_pos_sts_1 = BIT_SMB | BIT_USH_SS_PHY | BIT_DFX;
->> +	} else {
->> +		/* CHT */
->> +		false_pos_sts_0 = BIT_GBE | BIT_SATA | BIT_LPSS2_F7_I2C7;
->> +		false_pos_sts_1 = BIT_SMB | BIT_STS_ISH;
->> +	}
+> 	/* Forced-on PMC clock prevents S0i3? */
 > 
-> Perhaps move common bits out of the if blocks?
-> 
->> +
->> +	/* Low part */
->> +	pmc_dev_state_check(d3_sts_0, m->d3_sts_0, func_dis, m->func_dis, false_pos_sts_0);
->> +
->> +	/* High part */
->> +	pmc_dev_state_check(d3_sts_1, m->d3_sts_1, func_dis_2, m->func_dis_2, false_pos_sts_1);
-> 
-> The variables are called _0 and _1 but the comment talks about "low" and 
-> "high", could these be made consistent such that variabless end into _lo & 
-> _hi ?
-> 
-> After making that change, I don't think those comments add any value any 
-> further value to what is already plainly visible from the code itself.
+> ?
 
-Ack, I'll replace the _0 and _1 with _lo and _hi.
+Good point. I have gone with the "Forced-on PMC clock prevents S0i3"
+comment.
 
 Regards,
 
 Hans
 
 
-
 > 
->> +}
+>> +	for (i = 0; i < PMC_CLK_NUM; i++) {
+>> +		u32 ctl = pmc_reg_read(pmc, PMC_CLK_CTL_OFFSET + 4 * i);
 >> +
->> +static struct acpi_s2idle_dev_ops pmc_s2idle_ops = {
->> +	.check = pmc_s2idle_check,
->> +};
->> +#endif
+>> +		if ((ctl & PMC_MASK_CLK_CTL) != PMC_CLK_CTL_FORCE_ON)
+>> +			continue;
 >> +
->>  static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
->>  {
->>  	struct pmc_dev *pmc = &pmc_device;
->> @@ -485,6 +548,10 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
->>  		dev_warn(&pdev->dev, "platform clocks register failed: %d\n",
->>  			 ret);
->>  
->> +#ifdef CONFIG_SUSPEND
->> +	acpi_register_lps0_dev(&pmc_s2idle_ops);
->> +#endif
->> +
->>  	pmc->init = true;
->>  	return ret;
+>> +		pr_err("clock %d is ON prior to freeze (ctl 0x%08x)\n", i, ctl);
+>> +	}
 >>  }
+>>  
+>>  static struct acpi_s2idle_dev_ops pmc_s2idle_ops = {
 >>
+> 
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> 
 > 
 
