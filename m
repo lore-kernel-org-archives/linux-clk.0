@@ -1,21 +1,21 @@
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E5551C34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0E151C2C
 	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 15:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:d323:2fd4:4f64:e281])
 	by xavier.telenet-ops.be with bizsmtp
-	id YFZw2B00X0Qz0eJ01FZwDK; Mon, 08 Jan 2024 16:34:08 +0100
+	id YFZw2B00A0Qz0eJ01FZwD7; Mon, 08 Jan 2024 16:34:08 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rMrcp-00EtMf-Er;
+	id 1rMrcp-00EtM1-3J;
 	Mon, 08 Jan 2024 16:33:56 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rMrdU-00D7ov-Li;
+	id 1rMrdU-00D7o5-A2;
 	Mon, 08 Jan 2024 16:33:56 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -38,9 +38,9 @@ Cc: Cong Dang <cong.dang.xn@renesas.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 15/15] arm64: defconfig: Enable R8A779H0 SoC
-Date: Mon,  8 Jan 2024 16:33:54 +0100
-Message-Id: <db4ab7b72dc2f40085f19957f93b5442ca391fd6.1704726960.git.geert+renesas@glider.be>
+Subject: [PATCH 05/15] dt-bindings: reset: renesas,rst: Document R-Car V4M support
+Date: Mon,  8 Jan 2024 16:33:44 +0100
+Message-Id: <1d35a435db17a240abafb091751255379825b750.1704726960.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1704726960.git.geert+renesas@glider.be>
 References: <cover.1704726960.git.geert+renesas@glider.be>
@@ -52,29 +52,26 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Linh Phung <linh.phung.jy@renesas.com>
+Document support for the Reset (RST) module in the Renesas R-Car V4M
+(R8A779H0) SoC.
 
-Enable support for the Renesas R-Car V4M (R8A779H0) SoC in the ARM64
-defconfig.
-
-Signed-off-by: Linh Phung <linh.phung.jy@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/configs/defconfig | 1 +
+ Documentation/devicetree/bindings/reset/renesas,rst.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5ad2b841aafc8ed0..05500654bcf49a79 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1346,6 +1346,7 @@ CONFIG_ARCH_R8A77980=y
- CONFIG_ARCH_R8A77970=y
- CONFIG_ARCH_R8A779A0=y
- CONFIG_ARCH_R8A779G0=y
-+CONFIG_ARCH_R8A779H0=y
- CONFIG_ARCH_R8A774C0=y
- CONFIG_ARCH_R8A774E1=y
- CONFIG_ARCH_R8A774A1=y
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.yaml b/Documentation/devicetree/bindings/reset/renesas,rst.yaml
+index e7e4872477517b2d..58b4a45d338006ff 100644
+--- a/Documentation/devicetree/bindings/reset/renesas,rst.yaml
++++ b/Documentation/devicetree/bindings/reset/renesas,rst.yaml
+@@ -50,6 +50,7 @@ properties:
+       - renesas,r8a779a0-rst      # R-Car V3U
+       - renesas,r8a779f0-rst      # R-Car S4-8
+       - renesas,r8a779g0-rst      # R-Car V4H
++      - renesas,r8a779h0-rst      # R-Car V4M
+ 
+   reg:
+     maxItems: 1
 -- 
 2.34.1
 
