@@ -1,50 +1,50 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEFC537F0
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 12:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1108E53814
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 12:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tMsofVPx"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a26ed1e05c7so182808066b.2
-        for <linux-clk@vger.kernel.org>; Mon, 08 Jan 2024 04:32:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zNn54Rcl"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-50e7f58c5fbso2016530e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 08 Jan 2024 04:32:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704717161; x=1705321961; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704717163; x=1705321963; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OybVnChzpZZd58R6Wja2qOVNRv7BNYmPnvk8rkwqm98=;
-        b=tMsofVPx9JKk721Kx6as/ycjkkPSJYqNsJPCKZYLiqw4wwhHnbv0PRc7z2LCu5oond
-         9JHMDKKwIAUIl9fR3ZtxGME26AO4yR9HjZANf8dZUurnPDyklC4l0IV1uXCWAQad6Kwe
-         fuA8v4fOKGpVgHH0wbgaPShfoFL2AIWkkxW2RsZ0br7PkybA5pCBo3hADCc0HhjlWjU6
-         YSzWfxO/7i/06HQpcV8OCFeCTATxgtcQH7UNjKrincHcXjvd+XmLiJHgNN5SykwMhNih
-         MAljMYhfUIvAst2GE1Pf2kzhrnUOyvu2S3l2K/Wz8R6SLTJZ/hq+1TO9Nvab3cOYruc1
-         asfA==
+        bh=UNtUNkUh9FGJbdZOMIK94mTgP7TeoEvTtcC+EeetQyY=;
+        b=zNn54Rcl1qOTFSOWX3KPUUk0KbwDoooQpTXWDP2aRuhUwF23hc/RkETi50jGCyijaH
+         wXQbUf7lJyjhfzixITMoHk1QzkYAz9bCQYoZlc/zKok3/V3T9m9I0tdIm0le5WtKVtQE
+         xiYTJwnXbASPOrg+8D8Gb+qHt6g0hjjG89TtC+czvj3xGBTAEX7q4elUyvhsdBCA1HJN
+         CkCC7x72w1EiyI1yBTSDHbmige6xVlzrEBwbTpC7pX8DPRZ3geWKWHnHAdIrV1fa6nYf
+         wT5mz3FAJy3YvImv/16g7QECqL2xHSNHi8l8nFd4LB3zHRe1Lku/49+ADB6MKwPh5B6b
+         YgMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704717161; x=1705321961;
+        d=1e100.net; s=20230601; t=1704717163; x=1705321963;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OybVnChzpZZd58R6Wja2qOVNRv7BNYmPnvk8rkwqm98=;
-        b=WEm2SNgNcuO917YHRUjJHTwldDduH1q4AoFgGB+QbMAmSa9MpYeXCq1Vs19OnM8TIR
-         0d6vNrVVrvC+uS/gW+07amBgN6se78po5Xg8qdF9KqQzBYmIZobVbsL74xd36eQ1g4t+
-         jVPMc8w8knHbsO2VVxEu1tGAj+IlMxKifdbluW8ywNU/OUIgMR+J/vG13Fs5m7iT+kyC
-         P/NyKMGvH/pavP+AQI1HDJ36YkXTTCpl+AE1+ScBRk6hxJveYR9RXR6oXWZACAdhb5ce
-         +s0v6KToPGCAgKDvYNlA/dEY3tBH/O9e39BBi3RdtkxQ1J3Ahz7DItXyz6jNPaVNnt+w
-         GFZg==
-X-Gm-Message-State: AOJu0YwAX00biZk6uFcKo3kRR5IyPvyeQgbbjjStgSmjsTOHaBQ4bb+5
-	iHA9aUU002BDwDEAzShfAKetTLBQLucsoA==
-X-Google-Smtp-Source: AGHT+IH7KYyxwTJNALeRq3oYMA4ASzmHDOu1dlUSY0fW0LrJLv4hQqpddVpS5nzDBXRMBPzGxxaQVg==
-X-Received: by 2002:a17:906:6cf:b0:a28:e6b3:800a with SMTP id v15-20020a17090606cf00b00a28e6b3800amr972675ejb.89.1704717161537;
-        Mon, 08 Jan 2024 04:32:41 -0800 (PST)
+        bh=UNtUNkUh9FGJbdZOMIK94mTgP7TeoEvTtcC+EeetQyY=;
+        b=OPuS0GmyYXLwsArA4CGvrQPM4QCmWJ95HvzWz4m/L5PU9smNMhPj8OSRxMLzRe4vEF
+         ydq8jE8zGyg5oMkMy9p7X+kgGR1+HeIhap6qFrvd3hLoByicmhOr7zf4xf8yTzFFRXrt
+         66jsFKtC78eHS2p/PHHG+ksrTkiQ4Ns/T3zRcVLnXpoxRfx+qn+ddzUKpnPuBa1ppQsX
+         AX4QZtPw3h0D+aQSbSzSGcHMr9IJP8IsIV+1cEM+/w08N4lfFOCdlfpFvPd7Nvs4J+K9
+         D5Lk4u1YTEzhNJ0i/KJDh2PUUvg62E9ozqqZOqQs3UxztlO6/NX+IGR85MF30utBxUHu
+         wSLQ==
+X-Gm-Message-State: AOJu0YwPuqSRTt941hvlXOTyE4RsdefkDuMYU7B9496vJ1W/gE4T4KTJ
+	MThhRkP7RJILi1grCLRlxK4QPjRrtfECmQ==
+X-Google-Smtp-Source: AGHT+IEiAnD+s/Ww6yB1jo8E1/fS0G/tjzUMzG6PR8Zn7EKyqlkNO1H+B7HWCvyJOA8628WTrSiGgg==
+X-Received: by 2002:a05:6512:3b21:b0:50e:aed5:ec06 with SMTP id f33-20020a0565123b2100b0050eaed5ec06mr1899879lfv.87.1704717163102;
+        Mon, 08 Jan 2024 04:32:43 -0800 (PST)
 Received: from [10.167.154.1] (178235179081.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.81])
-        by smtp.gmail.com with ESMTPSA id bs18-20020a170906d1d200b00a2808ee8ab1sm3892978ejb.150.2024.01.08.04.32.39
+        by smtp.gmail.com with ESMTPSA id bs18-20020a170906d1d200b00a2808ee8ab1sm3892978ejb.150.2024.01.08.04.32.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jan 2024 04:32:41 -0800 (PST)
+        Mon, 08 Jan 2024 04:32:42 -0800 (PST)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Mon, 08 Jan 2024 13:32:23 +0100
-Subject: [PATCH 06/18] clk: qcom: gcc-sc8280xp: Set delay for Venus CLK
+Date: Mon, 08 Jan 2024 13:32:24 +0100
+Subject: [PATCH 07/18] clk: qcom: gcc-sm4450: Set delay for Venus CLK
  resets
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240105-topic-venus_reset-v1-6-981c7a624855@linaro.org>
+Message-Id: <20240105-topic-venus_reset-v1-7-981c7a624855@linaro.org>
 References: <20240105-topic-venus_reset-v1-0-981c7a624855@linaro.org>
 In-Reply-To: <20240105-topic-venus_reset-v1-0-981c7a624855@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -68,11 +68,11 @@ Cc: Marijn Suijten <marijn.suijten@somainline.org>,
  Konrad Dybcio <konrad.dybcio@linaro.org>, 
  Manivannan Sadhasivam <mani@kernel.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1704717148; l=956;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1704717148; l=954;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=kXhMR6j6x8UUPoTkNpGBdxTOTiabGpXywak8UVlAUas=;
- b=IjUluzegb5LfVJy/+4amSn52zp1EhChG57OqSJNaJN8oBMLAufCdz4s3KuSnwAiO7mJ1ndEs0
- 2/qagJFYxJ3BqAu7SLM08MGEyfky1JlMorpYZn5nO5Ek4+xB0UvOl7g
+ bh=Fxti0GA8oke9cfmTk8lezOQQ4xqJ9ulz/6+rw77WHBc=;
+ b=T9h8+bQcnBpTMQ95RCuWK06WIgUjFTQ0caVsHrO2vUMljG4A6UGeougSk6CMJZXsQLX9HipA2
+ AKpZMqk2QdUD0CWELycAu9jULjvQ9L0SWlJy0uA4HDDZt8IkkWa0VRS
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
@@ -80,24 +80,24 @@ Some Venus resets may require more time when toggling. Describe that.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/qcom/gcc-sc8280xp.c | 4 ++--
+ drivers/clk/qcom/gcc-sm4450.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-index bfb77931e868..9f4db815688c 100644
---- a/drivers/clk/qcom/gcc-sc8280xp.c
-+++ b/drivers/clk/qcom/gcc-sc8280xp.c
-@@ -7448,8 +7448,8 @@ static const struct qcom_reset_map gcc_sc8280xp_resets[] = {
- 	[GCC_USB4PHY_PHY_PRIM_BCR] = { 0x4a004 },
- 	[GCC_USB_PHY_CFG_AHB2PHY_BCR] = { 0x6a000 },
- 	[GCC_VIDEO_BCR] = { 0x28000 },
--	[GCC_VIDEO_AXI0_CLK_ARES] = { 0x28010, 2 },
--	[GCC_VIDEO_AXI1_CLK_ARES] = { 0x28018, 2 },
-+	[GCC_VIDEO_AXI0_CLK_ARES] = { .reg = 0x28010, .bit = 2, .udelay = 400 },
-+	[GCC_VIDEO_AXI1_CLK_ARES] = { .reg = 0x28018, .bit = 2, .udelay = 400 },
+diff --git a/drivers/clk/qcom/gcc-sm4450.c b/drivers/clk/qcom/gcc-sm4450.c
+index 31abe2775fc8..ab8fb77d15a2 100644
+--- a/drivers/clk/qcom/gcc-sm4450.c
++++ b/drivers/clk/qcom/gcc-sm4450.c
+@@ -2791,8 +2791,8 @@ static const struct qcom_reset_map gcc_sm4450_resets[] = {
+ 	[GCC_VENUS_BCR] = { 0xb601c },
+ 	[GCC_VIDEO_BCR] = { 0x42000 },
+ 	[GCC_VIDEO_VENUS_BCR] = { 0xb6000 },
+-	[GCC_VENUS_CTL_AXI_CLK_ARES] = { 0x4201c, 2 },
+-	[GCC_VIDEO_VENUS_CTL_CLK_ARES] = { 0xb6038, 2 },
++	[GCC_VENUS_CTL_AXI_CLK_ARES] = { .reg = 0x4201c, .bit = 2, .udelay = 400 },
++	[GCC_VIDEO_VENUS_CTL_CLK_ARES] = { .reg = 0xb6038, .bit = 2, .udelay = 400 },
  };
  
- static struct gdsc *gcc_sc8280xp_gdscs[] = {
+ static const struct clk_rcg_dfs_data gcc_dfs_clocks[] = {
 
 -- 
 2.43.0
