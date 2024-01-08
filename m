@@ -1,134 +1,264 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2085.outbound.protection.outlook.com [40.107.255.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDBF45941;
-	Mon,  8 Jan 2024 13:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BEB45BE2;
+	Mon,  8 Jan 2024 13:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nuvoton.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="Nzu45zx7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=public-files.de;
-	s=s31663417; t=1704721594; x=1705326394; i=frank-w@public-files.de;
-	bh=eHFTTnrAlxZxsnvH49LqdXsKFSZ7Cww6ornO/kw2wR4=;
-	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
-	 References;
-	b=Nzu45zx7TGWivSS7zIVmVRMzMRk2B9poNz47OhalBWl/jadI7bUDH5bEc8Y6zVOi
-	 3SH41JApS5KTBKRnGS1JdHCjnvn8lqPVKN79D695LFi1C//6O+/SORTwX4fl3dZJD
-	 DZnTAxyn5NWu4CgQX1MRbIQadJCMJYUBUsvM3glgjWEHZSlBIMPxfzdZuAF/iNLNw
-	 HchtxXDyBW9czu9+7RxMIDIdG9xGFhrbcngLGSUWPIXoeNvJy3zBQUh1siHGUAlgN
-	 +fy1no13Mi1waJl54T+eAUQZGhMKJtdjEAaRzFZrDt1NO5B8IlDpfZRuhfRIAGkD7
-	 3DfRMgspDTUF+t39cQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [IPv6:::1] ([80.187.71.7]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MEFzr-1rWQKj44DF-00AHf2; Mon, 08
- Jan 2024 14:46:34 +0100
-Date: Mon, 08 Jan 2024 14:46:17 +0100
-From: Frank Wunderlich <frank-w@public-files.de>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Frank Wunderlich <linux@fw-web.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-CC: Sam Shih <sam.shih@mediatek.com>, Daniel Golle <daniel@makrotopia.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-mediatek@lists.infradead.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_2/2=5D_clk=3A_mediatek=3A_add?= =?US-ASCII?Q?_infracfg_reset_controller_for_mt7988?=
-User-Agent: K-9 Mail for Android
-Reply-to: frank-w@public-files.de
-In-Reply-To: <717a21bb-de39-4f7d-913c-f2a20d8b02bd@collabora.com>
-References: <20240105162056.43266-1-linux@fw-web.de> <20240105162056.43266-3-linux@fw-web.de> <717a21bb-de39-4f7d-913c-f2a20d8b02bd@collabora.com>
-Message-ID: <D0CA0019-A61D-4843-B502-7F40DA619FB3@public-files.de>
+	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="vF/VpPeh"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cpuZPh/VEjOIFeHu9nqnk9vs5Dtwb0hYfgCapXdP2alVZbzrKES4EilkXzTOs+A1DglkDARezebwsPusZ6iDxmH4f2A8UdVSshci3n4yQuRsmqphEcM92WQpYFU7QILsiF7jFo2JiL2IUQ1jhb7XabvAY6/BsjnsMMGiksY6Bjm56GQtVbpxUR37uGB2e6GlviLokygqZIVH54LTA4QT4wzioiQIU2n+besr3q/yJaYI71Njv7Y+UIDxfGt+8mOoS19rsLv35nANcyUZdsx9Vh0xgkzrbuWCpEopuJSpn6bXGrppKZFTbxQLK+fI20Ih03yBM2hG+x1ONOHtsbEuRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ptIFbG2C2GApepsr4NAZlobdsnS5QR5bCkE9PiYHtuw=;
+ b=KjPpmCDs2YwH4kPwry+5E42Un1cGqCZRuGTSKuCd9QCRKlOb4kWhO8T/wwoB53vT86pTADfUSMDCJ6qxYgrhX7FeladAss0jtWJnSFoF5e1/vQGy2/Z18IZWzjulKNqztHnCsRswJqnQVRXfWUBJq92aYiFkvKgjPzNOZSlxJvNWu8weKu+q2fZcCFK0izRb5pVBLhxyoeKfVRAYniIzt7VDTHqYoj9i0rWBqZLZ1ftq8/pJMpxcL6/kaKC+sn2caPRTsCeaF0w7HCEZWUSNPwN6KlhaWUpruip0RH/wrC0Dc+B1eWl4+U0EeIj69W7x7LsvadmXjj0SnJ/S7LGyUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
+ is 211.75.126.7) smtp.rcpttodomain=baylibre.com
+ smtp.mailfrom=taln60.nuvoton.co.il; dmarc=fail (p=none sp=quarantine pct=100)
+ action=none header.from=gmail.com; dkim=none (message not signed); arc=none
+ (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ptIFbG2C2GApepsr4NAZlobdsnS5QR5bCkE9PiYHtuw=;
+ b=vF/VpPehbV6bcgRIoeCR6//VONDwwA1l+oifn1mEZn5XbBCsa+ve49vYOqz8SWXHQ8WLK0q3BkH7Sy89Ispfn3kIU72kFhZZumEEUL25g55CiCqTRsT7slx0NyBmt/N5qNYIkET7PDWAVSjzzyeiB6CjFBNB1MhVPbc7VDR5Pig=
+Received: from PS2PR02CA0074.apcprd02.prod.outlook.com (2603:1096:300:5c::14)
+ by KL1PR03MB5780.apcprd03.prod.outlook.com (2603:1096:820:71::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.21; Mon, 8 Jan
+ 2024 13:54:26 +0000
+Received: from HK2PEPF00006FB5.apcprd02.prod.outlook.com
+ (2603:1096:300:5c:cafe::39) by PS2PR02CA0074.outlook.office365.com
+ (2603:1096:300:5c::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.21 via Frontend
+ Transport; Mon, 8 Jan 2024 13:54:26 +0000
+X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
+ 211.75.126.7) smtp.mailfrom=taln60.nuvoton.co.il; dkim=none (message not
+ signed) header.d=none;dmarc=fail action=none header.from=gmail.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of taln60.nuvoton.co.il: DNS Timeout)
+Received: from NTHCCAS01.nuvoton.com (211.75.126.7) by
+ HK2PEPF00006FB5.mail.protection.outlook.com (10.167.8.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7181.12 via Frontend Transport; Mon, 8 Jan 2024 13:54:24 +0000
+Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS01.nuvoton.com
+ (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 8 Jan
+ 2024 21:54:24 +0800
+Received: from taln58.nuvoton.co.il (10.191.1.178) by NTHCCAS01.nuvoton.com
+ (10.1.8.28) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
+ Transport; Mon, 8 Jan 2024 21:54:24 +0800
+Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
+	by taln58.nuvoton.co.il (Postfix) with ESMTP id 6E51D5F5D2;
+	Mon,  8 Jan 2024 15:54:23 +0200 (IST)
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+	id 65106DC0047; Mon,  8 Jan 2024 15:54:23 +0200 (IST)
+From: Tomer Maimon <tmaimon77@gmail.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <tali.perry1@gmail.com>,
+	<joel@jms.id.au>, <venture@google.com>, <yuenn@google.com>,
+	<benjaminfair@google.com>
+CC: <openbmc@lists.ozlabs.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Tomer Maimon
+	<tmaimon77@gmail.com>
+Subject: [PATCH v22 0/8] Introduce Nuvoton Arbel NPCM8XX BMC SoC
+Date: Mon, 8 Jan 2024 15:54:13 +0200
+Message-ID: <20240108135421.684263-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xblEkwWVshSiG/6u0lgUW6oJn5QhPXUSO4eD2KMSmL3wRJcRLMH
- N52WYGxVpESAKG26Qc5C0MuKrWlqmrURECmvc4GnzGt9lwnwy27vrdLzDrlXEgANOKfq6uk
- bDz2NHK/9fUaUeA7HaRsDDfp9fnPpUX/3a+WxuhbWPM8AcsZc58J8UAj9j3MNUoX5R1rpyD
- rQRWLzvjH3ZEg0N2VWDUQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UHoxeZHGFCA=;zNPt/J3l03QqhDyB7HxtL7N9zr4
- NA8NfUJbGXxSCURvNbWIP13RBD1w8aha9xpnzf3RuoIEmLZOnVU7tcJGT5ABNsEvDjo+V/rbg
- 4S4A7/qReBDzO4pjGWDqyWvK/CzpWnlt9BYpuCQnxUxcQEZ1NJ1Tg/XpfRZkSXfIhHZuF4Scu
- p023r/UsyLcF+GfZ18YKyEuNXsOiD0u+/LR3rorNhNBCh5kEi2d3Vm9hLaOeQwTu+1PnvZsdY
- krSDiDizdIXOo7ySGRr38dVsceK3YxrRuGFMAsJt5jRE9FMHCxo+563TfWlGDXcCccUfeJl2r
- nJhCNrG8kOmFPi6Zl2fjRtDYJQ8bclKit1OXTjCrzJvSvJmlyXQWc64zP/ffePBvBRwKPoQar
- bDIFY1dt64NJCeG6RVDCza417fRzl14DfRc324Z43utKSlIhswr2crEAf/P51kzDC0WZrnHrO
- 6yGsg1OWsK9aCR9d0NkvVW1o6/LswUyGlvKevmWIiSn94KL4WPKiWH+nlhMqDYB/RnyYCZDf+
- 0Wd+ZJ7tn387ZIqq++rnSepwo6T9H2bxhlT2o9RwXx0Uqa2+nTA6u+5GvIpK2OszC5cb+knx0
- D0dVrX9P49ADAswF/dNBJR19J5x6bVBbrgPm5IJ+YH8Tr4h/I5zxe6lnCqlFqStOFQ2FVh0+H
- LXZ5N9YFxCxmqbirPh8rSMyBp1XVH4yLHaaDxMcDyVUMCnXT26IGh65Cwn3JM5p/JhwmkzqzJ
- HwlVXigIwOtGblAEs2ca6HsWXgHY+7yc/ows9rLksLNrw6h+coYyKYF2mgWnF4XmKeST/lnBp
- g7aHpZsoyR6aMqLb4vP6bwzKsc8X6RV+my67Pn9FwxoYn++Ng4Um7JmAIXk/Seh4RY51woWBk
- 85NpLVxq/u3itttkE3DiUt6bKTI8os87bliwvFwQRsNL3MYEZwCle/ZBlO8TNhIuLn/2q9Wne
- ivecCg==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-NotSetDelaration: True
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB5:EE_|KL1PR03MB5780:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f145de4-a5df-4e90-a407-08dc105152d9
+X-MS-Exchange-SenderADCheck: 2
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	/Neu2iX7Jl0y15N69bLpmvc9B3gdVs2nlNrXEj21MQotlbwsSTy50zF93vaSfnn/z7BRt6vOj8V815aLeH6ySZW/TIpeAnGuy4oPlyPpB2m2BcTm0/UBLilTXMkzUU4HxaeR2CSWAiRibJtg2oDmcPzou4ryG0FoFyrQWTM8P9NX2WPOdACPeBbPb3s8Xu5H5BtGUsvnSwToTpFla//pCeVrbwLTO9E/Z4OK2CDAT4C8Oi7u+wMH/Yj7q/r9Rop4012ewZdAuVEf1Ovk1AvgnRxfS64/hT/BZLM2yaH26vOpI/mYKhOmy2EvG5d85/x3ncm0odjcNsg4k6KRmCD2MC+L2aVqg+wD5umDl2k7m9eXKKLJh+Yg9YDiQnqzaMAxkMRcJOgeABqb9IcdY+h65Gu5awFLatHh20+7Vxq2MJ7OYKsgjmqTd24vRRBqqIFwMMdfCTfgKp8c7YMay0Dz9aUaHHL98rRvsgczHnt5iye3rD9oXhaCm/3L916y7vb2HSq8XywUjdSzNqnKUy8mAlm5au2qRyLDNxw8DHz/wSxOusQkfkaT+s8NmbwYnB4Q85/vdKY4PAOqlrdJMwUsThBoxs+UvTZ5z0vlA8i74h5QGjELDm6HMgKS3BRadn7RvWZqZ4drOhBu9+Kz6Nyw0yj0PV1SplZo+2HaenVUdFH1Q7dVJ19oysxhc0OuO/Ic0rz4clxKkGRjnozF49XBOrI1LjoEaWECjXCePB6B7ueg2nkEO8tqUqwg5aQCF+7BNMEzrrYMg9WTMjw4BNiEthVMq46NjrxEfkByDO0dxXnQ0RetRK+yx4hJivwk2rRXAkishUNooTcohk+X7PIS/0yLZqPp92t5+Zn3L4NVI5VOIKQLZc4FWYDi/EP30REgThTrht4fbroNDaGqLmRJyg==
+X-Forefront-Antispam-Report:
+	CIP:211.75.126.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS01.nuvoton.com;PTR:211-75-126-7.hinet-ip.hinet.net;CAT:NONE;SFS:(13230031)(4636009)(346002)(376002)(396003)(39860400002)(136003)(230173577357003)(230922051799003)(230273577357003)(61400799012)(64100799003)(451199024)(48200799006)(82310400011)(46966006)(40470700004)(40460700003)(40480700001)(336012)(73392003)(42882007)(63350400001)(966005)(6266002)(498600001)(4326008)(83380400001)(7416002)(5660300002)(8676002)(70206006)(8936002)(6666004)(70586007)(76482006)(1076003)(2616005)(82202003)(26005)(82740400003)(2906002)(81166007)(54906003)(36756003)(83170400001)(356005)(110136005)(316002)(42186006)(35950700001)(55446002)(47076005)(41300700001)(45356006)(32563001)(35450700002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: nuvoton.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jan 2024 13:54:24.7689
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f145de4-a5df-4e90-a407-08dc105152d9
+X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[211.75.126.7];Helo=[NTHCCAS01.nuvoton.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK2PEPF00006FB5.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB5780
 
-Am 8=2E Januar 2024 11:12:26 MEZ schrieb AngeloGioacchino Del Regno <angelo=
-gioacchino=2Edelregno@collabora=2Ecom>:
->Il 05/01/24 17:20, Frank Wunderlich ha scritto:
->> From: Frank Wunderlich <frank-w@public-files=2Ede>
->>=20
->> Infracfg can also operate as reset controller, add support for it=2E
->>=20
->> Signed-off-by: Frank Wunderlich <frank-w@public-files=2Ede>
->> ---
->>   drivers/clk/mediatek/clk-mt7988-infracfg=2Ec | 20 +++++++++++++++++++=
-+
->>   1 file changed, 20 insertions(+)
->>=20
->> diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg=2Ec b/drivers/clk=
-/mediatek/clk-mt7988-infracfg=2Ec
->> index 8011ef278bea=2E=2E1660a45349ff 100644
->> --- a/drivers/clk/mediatek/clk-mt7988-infracfg=2Ec
->> +++ b/drivers/clk/mediatek/clk-mt7988-infracfg=2Ec
->> @@ -14,6 +14,9 @@
->>   #include "clk-gate=2Eh"
->>   #include "clk-mux=2Eh"
->>   #include <dt-bindings/clock/mediatek,mt7988-clk=2Eh>
->> +#include <dt-bindings/reset/mediatek,mt7988-resets=2Eh>
->> +
->> +#define	INFRA_RST_SET_OFFSET	0x80
->>     static DEFINE_SPINLOCK(mt7988_clk_lock);
->>   @@ -249,12 +252,29 @@ static const struct mtk_gate infra_clks[] =3D {
->>   	GATE_INFRA3(CLK_INFRA_133M_PCIE_CK_P3, "infra_133m_pcie_ck_p3", "sys=
-axi_sel", 31),
->>   };
->>   +static u16 infra_rst_ofs[] =3D {
->> +	INFRA_RST_SET_OFFSET,
->> +};
->> +
->> +static u16 infra_idx_map[] =3D {
->> +	[MT7988_INFRA_RST0_THERM_CTRL_SWRST] =3D 0 * RST_NR_PER_BANK + 9,
->
->The MT7988A datasheet says that INFRA_RST0 bit 9 is CONN2EMI_M0_GALS_SLV_=
-SWRST, so
->this is wrong: THERM_CTRL_SWRST is in the RST1 register, bit 9=2E
->
->Also, I'm sure that you really want to add the PCIe MAC reset bit as well=
-, to be
->used with the PCIe driver=2E=2E=2E
->
->[MT7988_INFRA_RST0_PEXTP_MAC_SWRST] =3D 0 * RST_NR_PER_BANK + 6,
->[MT7988_INFRA_RST1_THERM_CTRL_SWRST] =3D 1 * RST_NR_PER_BANK + 9,
+This patchset adds clock support for the Nuvoton 
+Arbel NPCM8XX Board Management controller (BMC) SoC family.
 
-Yes you are right=2E=2E=2Ei have only rst1 as screenshot,need to get the f=
-ull datasheet or can you tell me base address for rst0? Need to change valu=
-e of INFRA_RST_SET_OFFSET then to rst0 and check RST_NR_PER_BANK to be corr=
-ect=2E
+This patchset cover letter is based from the initial support for NPCM8xx BMC to
+keep tracking the version history.
 
->Enjoy=2E=2E=2E :-)
->
->Cheers,
->Angelo
->
+all the other initial support patches had been applied to Linux kernel 6.0.
+
+This patchset was tested on the Arbel NPCM8XX evaluation board.
+
+Addressed comments from:
+ - Stephen Boyd: https://www.spinics.net/lists/linux-clk/msg93838.html
+
+Changes since version 21:
+ - Since using regmap instead of ioremap replace reg to syscon 
+   property in dt-bindings and dts.
+ - Add reference clock property to the dt-bindings and dts.
+ - Using .index instead of .name in clk_parent_data structures.
+ - Using string where any macros are used once.
+
+Changes since version 20:
+ - Using regmap instead of ioremap.
+   the clock and reset modules are sharing the same memory region 
+   and cause failure when using devm_platform_ioremap_resource
+   function, this version uses regmap to handle shared 
+   reset and clock memory region, in case it is approved I will
+   modify the reset driver to use the regmap as well.
+ - Using clk_hw instead of clk_parent_data structre.
+ - Divider clock definition to one line
+
+Changes since version 19:
+ - Remove unnecessary free command.
+ - Defining pr_fmt().
+ - Using dev_err_probe.
+ - Return zero in the end of the probe function.
+
+Changes since version 18:
+ - NPCM8XX clock driver did not changed from version 18 only build and tested under kernel 6.6-rc1.
+
+Changes since version 17:
+ - NPCM8XX clock driver did not changed from version 17 only build and tested under kernel 6.5-rc3.
+
+Changes since version 16:
+ - NPCM8XX clock driver
+	- Using devm_kzalloc instead kzalloc.
+	- Remove unnecessary parenthesis.
+	- Modify incorrect spelling.
+
+Changes since version 15:
+ - NPCM8XX clock driver
+	- Remove unused regs parameter from npcm8xx_pll_data structure.
+	- Using index and clk_hw parameters to set the clock parent in the clock structures.
+
+Changes since version 14:
+ - NPCM8XX clock driver
+	- Remove unnecessary register definitions.
+	- Remove the internal reference clock, instead use the external DT reference clock.
+	- rearrange the driver.
+	- using .names parameter in DT to define clock (refclk).
+
+Changes since version 13:
+ - NPCM8XX clock driver
+	- Remove unnecessary definitions and add module.h define
+	- Use in clk_parent_data struct.fw_name and .name.
+	- Add module_exit function.
+	- Add const to divider clock names.
+	- Add MODULE_DESCRIPTION and MODULE_LICENSE
+
+Changes since version 12:
+ - NPCM8XX clock driver
+	- Use clk_parent_data in mux and div clock structure.
+	- Add const to mux tables.
+	- Using devm_clk_hw_register_fixed_rate function.
+	- use only .name clk_parent_data instead .name and .fw_name.
+	- Modify mask values in mux clocks. 
+
+Changes since version 11:
+ - NPCM8XX clock driver
+	- Modify Kconfig help.
+	- Modify loop variable to unsigned int.
+
+Changes since version 11:
+ - NPCM8XX clock driver
+	- Modify Kconfig help.
+	- Modify loop variable to unsigned int.
+
+Changes since version 10:
+ - NPCM8XX clock driver
+	- Fix const warning.
+
+Changes since version 9:
+ - NPCM8XX clock driver
+	- Move configuration place.
+	- Using clk_parent_data instead of parent_name
+	- using devm_ioremap instead of ioremap. deeply sorry, I know we had
+	 a long discussion on what should the driver use, from other examples 
+	 (also in other clock drivers) I see the combination of 
+	 platform_get_resource and devm_ioremap are commonly used and it answer
+	 the reset and clock needs.
+
+Changes since version 8:
+ - NPCM8XX clock driver
+	- Move configuration place.
+	- Add space before and aftre '{' '}'.
+	- Handle devm_of_clk_add_hw_provider function error.
+
+Changes since version 7:
+ - NPCM8XX clock driver
+	- The clock and reset registers using the same memory region, 
+	  due to it the clock driver should claim the ioremap directly 
+	  without checking the memory region.
+
+Changes since version 5:
+ - NPCM8XX clock driver
+	- Remove refclk if devm_of_clk_add_hw_provider function failed.
+
+Changes since version 4:
+ - NPCM8XX clock driver
+	- Use the same quote in the dt-binding file.
+
+Changes since version 3:
+ - NPCM8XX clock driver
+	- Rename NPCM8xx clock dt-binding header file.
+	- Remove unused structures.
+	- Improve Handling the clocks registration.
+
+Changes since version 2:
+ - NPCM8XX clock driver
+	- Add debug new line.
+	- Add 25M fixed rate clock.
+	- Remove unused clocks and clock name from dt-binding.
+
+Changes since version 1:
+ - NPCM8XX clock driver
+	- Modify dt-binding.
+	- Remove unsed definition and include.
+	- Include alphabetically.
+	- Use clock devm.
 
 
-regards Frank
+Tomer Maimon (8):
+  dt-bindings: clock: npcm845: Add reference 25m clock  property
+  arm64: dts: nuvoton: npcm8xx: add refernace clock
+  arm: dts: nuvoton: npcm7xx: modify rst syscon node
+  dt-bindings: soc: nuvoton: add binding for clock and reset registers
+  arm64: dts: nuvoton: npcm8xx: add clock reset syscon node
+  dt-bindings: clock: npcm845: replace reg with syscon property
+  arm64: dts: nuvoton: npcm8xx: replace reg with syscon property
+  clk: npcm8xx: add clock controller
+
+ .../bindings/clock/nuvoton,npcm845-clk.yaml   |  38 +-
+ .../soc/nuvoton/nuvoton,npcm-clk-rst.yaml     |  40 ++
+ .../dts/nuvoton/nuvoton-common-npcm7xx.dtsi   |   4 +-
+ .../dts/nuvoton/nuvoton-common-npcm8xx.dtsi   |  19 +-
+ .../boot/dts/nuvoton/nuvoton-npcm845-evb.dts  |   6 +
+ drivers/clk/clk-npcm8xx.c                     | 510 ++++++++++++++++++
+ 6 files changed, 597 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/nuvoton/nuvoton,npcm-clk-rst.yaml
+ create mode 100644 drivers/clk/clk-npcm8xx.c
+
+-- 
+2.34.1
+
