@@ -1,21 +1,21 @@
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7337B51021
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 15:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E5551C34
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jan 2024 15:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:d323:2fd4:4f64:e281])
-	by andre.telenet-ops.be with bizsmtp
-	id YFZw2B0030Qz0eJ01FZwJz; Mon, 08 Jan 2024 16:34:07 +0100
+	by xavier.telenet-ops.be with bizsmtp
+	id YFZw2B00X0Qz0eJ01FZwDK; Mon, 08 Jan 2024 16:34:08 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rMrcp-00EtLt-1T;
+	id 1rMrcp-00EtMf-Er;
 	Mon, 08 Jan 2024 16:33:56 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rMrdU-00D7nx-7v;
+	id 1rMrdU-00D7ov-Li;
 	Mon, 08 Jan 2024 16:33:56 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -38,9 +38,9 @@ Cc: Cong Dang <cong.dang.xn@renesas.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/15] dt-bindings: power: renesas,rcar-sysc: Document R-Car V4M support
-Date: Mon,  8 Jan 2024 16:33:42 +0100
-Message-Id: <1196419f3ade9a27b3c7906b6a898376b817601d.1704726960.git.geert+renesas@glider.be>
+Subject: [PATCH 15/15] arm64: defconfig: Enable R8A779H0 SoC
+Date: Mon,  8 Jan 2024 16:33:54 +0100
+Message-Id: <db4ab7b72dc2f40085f19957f93b5442ca391fd6.1704726960.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1704726960.git.geert+renesas@glider.be>
 References: <cover.1704726960.git.geert+renesas@glider.be>
@@ -52,29 +52,29 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Duy Nguyen <duy.nguyen.rh@renesas.com>
+From: Linh Phung <linh.phung.jy@renesas.com>
 
-Document support for the System Controller (SYSC) in the R-Car V4M
-(R8A779H0) SoC.
+Enable support for the Renesas R-Car V4M (R8A779H0) SoC in the ARM64
+defconfig.
 
-Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
+Signed-off-by: Linh Phung <linh.phung.jy@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/power/renesas,rcar-sysc.yaml | 1 +
+ arch/arm64/configs/defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.yaml b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.yaml
-index 0720b54881c2c87a..e76fb273490ff588 100644
---- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.yaml
-+++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.yaml
-@@ -45,6 +45,7 @@ properties:
-       - renesas,r8a779a0-sysc # R-Car V3U
-       - renesas,r8a779f0-sysc # R-Car S4-8
-       - renesas,r8a779g0-sysc # R-Car V4H
-+      - renesas,r8a779h0-sysc # R-Car V4M
- 
-   reg:
-     maxItems: 1
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 5ad2b841aafc8ed0..05500654bcf49a79 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1346,6 +1346,7 @@ CONFIG_ARCH_R8A77980=y
+ CONFIG_ARCH_R8A77970=y
+ CONFIG_ARCH_R8A779A0=y
+ CONFIG_ARCH_R8A779G0=y
++CONFIG_ARCH_R8A779H0=y
+ CONFIG_ARCH_R8A774C0=y
+ CONFIG_ARCH_R8A774E1=y
+ CONFIG_ARCH_R8A774A1=y
 -- 
 2.34.1
 
