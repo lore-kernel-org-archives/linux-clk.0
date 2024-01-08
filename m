@@ -1,36 +1,37 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A551429B;
-	Mon,  8 Jan 2024 11:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF052575D;
+	Mon,  8 Jan 2024 11:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nGjceOY2"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P2a0uJMy"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1704713278; x=1736249278;
+  t=1704714004; x=1736250004;
   h=date:from:to:cc:subject:in-reply-to:message-id:
    references:mime-version;
-  bh=oB+rd8K1bLg/hg5Xlfda7T/RZWHkbpT0yjSDv5R4OYE=;
-  b=nGjceOY2K1jhi2eESnNgn9/fmvPPC6bpBhu4zKvxy3A/4fViWoYageqc
-   5kCEJzI9ipTttzRWVjeNKKdN3uN/eA5giszU/x1fKB/sXZ+H12mMPvBP4
-   86HEe0M0lfP8NMXl/1AOF3lBkjCqglM2LFid0BgR0owleeiPe6cWibG4z
-   KOCadleIwCtuE/HAcAS6mZLM4NmmaKN/U1FB4U+NyKmyZcAhrK2jaWpim
-   68B2jpp0qPa0Y4EQmhoXbdM82HYJItdPLzFbfa2APGOXIw+NIfNTEB2FP
-   WKJ4lUKx7roqRPEbOfGtpTQWEAnhViCVS4Cly8L+8cEH6EiDYqO8wjRK0
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10946"; a="484037020"
+  bh=AwhbznBYUDrwNqn9p+/THKs4qKiMCqIqZYM6nVaj4QA=;
+  b=P2a0uJMyhsCefA6mr8PFGaTTikB93LERPHhdiyuVDRnpYmJ2opeJ/qFV
+   IsLjYN+I/pwrdgIbgTIL8o93JTCv0bmNBWNjhP+fYyqjB0LvgX9uYr8qy
+   /8tj5GsJ7iZwZaJgshoBEGb81DWnD2x7kf4u+zkjTOLk8vSlCMcHuNvIB
+   kQR652FivhHDlsf/d9oFrfSffuIjZVBAtUZ1Oc4r5Z/fwND6iDXyOzjAj
+   9rzBBhBOdNUAQIQQrY/WP0n/BRW6ermBVbhXdtT3eq7kSryv5to+u+zPf
+   h4cmuvZzE+gl0SuOq8spwi8k1j9XxRJGZvGRMjTHfh2qPg/ITWCWrHbAH
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10946"; a="395023008"
 X-IronPort-AV: E=Sophos;i="6.04,340,1695711600"; 
-   d="scan'208";a="484037020"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2024 03:27:56 -0800
+   d="scan'208";a="395023008"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2024 03:40:03 -0800
 X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10946"; a="774468631"
 X-IronPort-AV: E=Sophos;i="6.04,340,1695711600"; 
-   d="scan'208";a="29766204"
+   d="scan'208";a="774468631"
 Received: from stinti-mobl.ger.corp.intel.com ([10.249.37.10])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2024 03:27:53 -0800
-Date: Mon, 8 Jan 2024 13:27:50 +0200 (EET)
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2024 03:39:59 -0800
+Date: Mon, 8 Jan 2024 13:39:56 +0200 (EET)
 From: =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
 To: Hans de Goede <hdegoede@redhat.com>
 cc: Johannes Stezenbach <js@sig21.net>, Takashi Iwai <tiwai@suse.de>, 
@@ -41,88 +42,138 @@ cc: Johannes Stezenbach <js@sig21.net>, Takashi Iwai <tiwai@suse.de>,
     Michael Turquette <mturquette@baylibre.com>, 
     Stephen Boyd <sboyd@kernel.org>, platform-driver-x86@vger.kernel.org, 
     x86@kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] platform/x86: pmc_atom: Check state of PMC clocks
- on s2idle
-In-Reply-To: <20240107140310.46512-5-hdegoede@redhat.com>
-Message-ID: <8fbc514d-b660-d45a-38e8-fc9fa560c8f8@linux.intel.com>
-References: <20240107140310.46512-1-hdegoede@redhat.com> <20240107140310.46512-5-hdegoede@redhat.com>
+Subject: Re: [PATCH v2 5/5] x86/platform/atom: Check state of Punit managed
+ devices on s2idle
+In-Reply-To: <20240107140310.46512-6-hdegoede@redhat.com>
+Message-ID: <8f8af87e-a797-bf36-5411-83a715765a9@linux.intel.com>
+References: <20240107140310.46512-1-hdegoede@redhat.com> <20240107140310.46512-6-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-2052543399-1704713276=:1762"
-
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-2052543399-1704713276=:1762
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
 
 On Sun, 7 Jan 2024, Hans de Goede wrote:
 
-> Extend the s2idle check with checking that none of the PMC clocks
-> is in the forced-on state. If one of the clocks is in forced on
-> state then S0i3 cannot be reached.
+> From: Johannes Stezenbach <js@sig21.net>
 > 
+> This is a port of "pm: Add pm suspend debug notifier for North IPs"
+> from the latte-l-oss branch of:
+> from https://github.com/MiCode/Xiaomi_Kernel_OpenSource latte-l-oss
+> 
+> With the new acpi_s2idle_dev_ops and acpi_register_lps0_dev()
+> functionality this can now finally be ported to the mainline kernel
+> without requiring adding non-upstreamable hooks into the cpu_idle
+> driver mechanism.
+
+Same problems with the commit message as in one of the earlier patches.
+
+> This adds a check that all hardware blocks in the North complex
+> (controlled by Punit) are in a state that allows the SoC to enter S0i3
+> and prints an error message for any device in D0.
+>
+> Signed-off-by: Johannes Stezenbach <js@sig21.net>
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> [hdegoede: Use acpi_s2idle_dev_ops]
 > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 > ---
-> Changes in v2:
-> - Drop the PMC_CLK_* defines these are defined in
->   include/linux/platform_data/x86/pmc_atom.h now
-> - Drop duplicated "pmc_atom: " prefix from pr_err() message
-> ---
->  drivers/platform/x86/pmc_atom.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>  arch/x86/platform/atom/punit_atom_debug.c | 45 ++++++++++++++++++++++-
+>  1 file changed, 44 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
-> index 81ad66117365..d04f635c4075 100644
-> --- a/drivers/platform/x86/pmc_atom.c
-> +++ b/drivers/platform/x86/pmc_atom.c
-> @@ -477,6 +477,7 @@ static void pmc_s2idle_check(void)
->  	u32 func_dis, func_dis_2;
->  	u32 d3_sts_0, d3_sts_1;
->  	u32 false_pos_sts_0, false_pos_sts_1;
-> +	int i;
+> diff --git a/arch/x86/platform/atom/punit_atom_debug.c b/arch/x86/platform/atom/punit_atom_debug.c
+> index f8ed5f66cd20..03ae08c99155 100644
+> --- a/arch/x86/platform/atom/punit_atom_debug.c
+> +++ b/arch/x86/platform/atom/punit_atom_debug.c
+> @@ -7,6 +7,9 @@
+>   * Copyright (c) 2015, Intel Corporation.
+>   */
 >  
->  	func_dis = pmc_reg_read(pmc, PMC_FUNC_DIS);
->  	func_dis_2 = pmc_reg_read(pmc, PMC_FUNC_DIS_2);
-> @@ -504,6 +505,16 @@ static void pmc_s2idle_check(void)
->  
->  	/* High part */
->  	pmc_dev_state_check(d3_sts_1, m->d3_sts_1, func_dis_2, m->func_dis_2, false_pos_sts_1);
+> +#define pr_fmt(fmt) "punit_atom: " fmt
 > +
-> +	/* Check PMC clocks */
-
-Kind of obvious comment, how about:
-
-	/* Check PMC clocks don't prevent S0i3 */
-
-Or
-
-	/* Forced-on PMC clock prevents S0i3? */
-
-?
-
-> +	for (i = 0; i < PMC_CLK_NUM; i++) {
-> +		u32 ctl = pmc_reg_read(pmc, PMC_CLK_CTL_OFFSET + 4 * i);
-> +
-> +		if ((ctl & PMC_MASK_CLK_CTL) != PMC_CLK_CTL_FORCE_ON)
-> +			continue;
-> +
-> +		pr_err("clock %d is ON prior to freeze (ctl 0x%08x)\n", i, ctl);
-> +	}
+> +#include <linux/acpi.h>
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+>  #include <linux/device.h>
+> @@ -117,6 +120,37 @@ static void punit_dbgfs_unregister(void)
+>  	debugfs_remove_recursive(punit_dbg_file);
 >  }
 >  
->  static struct acpi_s2idle_dev_ops pmc_s2idle_ops = {
+> +#if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
+> +static const struct punit_device *punit_dev;
+> +
+> +static void punit_s2idle_check(void)
+> +{
+> +	const struct punit_device *punit_devp;
+> +	u32 punit_pwr_status, dstate;
+> +	int status;
+> +
+> +	for (punit_devp = punit_dev; punit_devp->name; punit_devp++) {
+> +		/* Skip MIO this is on till the very last moment */
+
+Skip MIO, it is on ...
+
+> +		if (punit_devp->reg == MIO_SS_PM)
+> +			continue;
+> +
+> +		status = iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ,
+> +				       punit_devp->reg, &punit_pwr_status);
+> +		if (status) {
+> +			pr_err("%s read failed\n", punit_devp->name);
+> +		} else  {
+> +			dstate = (punit_pwr_status >> punit_devp->sss_pos) & 3;
+> +			if (!dstate)
+> +				pr_err("%s is in D0 prior to s2idle\n", punit_devp->name);
+> +		}
+> +	}
+> +}
+> +
+> +static struct acpi_s2idle_dev_ops punit_s2idle_ops = {
+> +	.check = punit_s2idle_check,
+> +};
+> +#endif
+> +
+>  #define X86_MATCH(model, data)						 \
+>  	X86_MATCH_VENDOR_FAM_MODEL_FEATURE(INTEL, 6, INTEL_FAM6_##model, \
+>  					   X86_FEATURE_MWAIT, data)
+> @@ -131,19 +165,28 @@ MODULE_DEVICE_TABLE(x86cpu, intel_punit_cpu_ids);
+>  
+>  static int __init punit_atom_debug_init(void)
+>  {
+> +	struct punit_device *punit_device;
+>  	const struct x86_cpu_id *id;
+>  
+>  	id = x86_match_cpu(intel_punit_cpu_ids);
+>  	if (!id)
+>  		return -ENODEV;
+>  
+> -	punit_dbgfs_register((struct punit_device *)id->driver_data);
+> +	punit_device = (struct punit_device *)id->driver_data;
+> +	punit_dbgfs_register(punit_device);
+> +#if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
+> +	punit_dev = punit_device;
+> +	acpi_register_lps0_dev(&punit_s2idle_ops);
+> +#endif
+>  
+>  	return 0;
+>  }
+>  
+>  static void __exit punit_atom_debug_exit(void)
+>  {
+> +#if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
+> +	acpi_unregister_lps0_dev(&punit_s2idle_ops);
+> +#endif
+
+I'd move these into new functions in the existing #if defined(CONFIG_ACPI) 
+&& defined(CONFIG_SUSPEND) block and add #else block which has dummy 
+functions for them.
+
+>  	punit_dbgfs_unregister();
+>  }
+>  
 > 
-
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-
 
 -- 
  i.
 
---8323329-2052543399-1704713276=:1762--
