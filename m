@@ -1,110 +1,207 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E3B6124;
-	Tue,  9 Jan 2024 06:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ELqD70Qf"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5eefd0da5c0so23561137b3.2;
-        Mon, 08 Jan 2024 22:45:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704782729; x=1705387529; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=80w7kcr2BiF5GwXEFqXyPAg3AD4hnM9w5LfuY1QzR9g=;
-        b=ELqD70QfcbgvZTe1mTHG4N9EDCIdciqe+gbOKJfNA88Iv/dEzM79X/Ppa5EsbDaxCk
-         a2mO0hbPXPbDXKx+Y5jRaYm3llx/7B0r3pfr05VMYdkGmKjI/KqcOWx9eDvHXj0PlfM5
-         BuLhNphVWvhwCHSqKVe1E9uL7Qkah5Jbz2QfPzqlp7UCKFuzFolC+8eNRfpXN7M9fb0H
-         bAnJ4G8H3ELHNT0tbtBsAA6nxjOp6Kg64DZerCg4N+3WnX78isXpY3UDXhP0oxGViJuu
-         zUmwTeA5YoyLbHnKjIPXh3T6RJdNEt5GspPfC1QjxGAAE8QTSqQqz8gGGpM01km5zFJH
-         Q3qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704782729; x=1705387529;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=80w7kcr2BiF5GwXEFqXyPAg3AD4hnM9w5LfuY1QzR9g=;
-        b=JrAFkgFUJiTO9EyuKiazPlPpLVuRTiOFD0rO4EabkOVtx88jsC61KUnx+5oze+hxIf
-         UFnhFbWknt+3zZb0T1504iQ65Ga/EIAhOb4TTr/6Hd+pGRlu8J5TeJQnpH4fx0BHl1Sv
-         Rc7OI8trjCMrH8CXvE19JxUNTt987g+I26Y5PGPlHyR0aRD5PNWqyXvHCsgCuM1S8dYE
-         aj8ZDvBeCYuJutb6Re9tAGxp+g4piAUgyHS5JqrMs9gBINmbT0IlO+M1q4CG9t1rUXyk
-         ZH8n3APS6yLnj1i+kzjzssFvIfZCG7OxOmaZOAquIOC0+BBCS+HkhmLT1vY1G89kI5Xn
-         mBpA==
-X-Gm-Message-State: AOJu0YxuRiMUeNIs0V4nv5sQUSlznRJArg6ZPm6Gl+5YrdH8f4XsBZcr
-	ewOJyDkQh3nFT1Pw2kW3x0fXDwMan0QwBjsN05w=
-X-Google-Smtp-Source: AGHT+IF6yT0FJnKlKhXx/rXnY0cNXPiWZTwPKLF8DD+ZaBFDZq7+NnCGOMow8QTcirbtaj3I4WJ3pTtlcUMgnGyhs8o=
-X-Received: by 2002:a05:6902:250c:b0:db5:3e3b:d2bb with SMTP id
- dt12-20020a056902250c00b00db53e3bd2bbmr2516111ybb.48.1704782728999; Mon, 08
- Jan 2024 22:45:28 -0800 (PST)
+Received: from sakura.ysato.name (ik1-413-38519.vs.sakura.ne.jp [153.127.30.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B947D22063;
+	Tue,  9 Jan 2024 08:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=users.sourceforge.jp
+Received: from SIOS1075.ysato.name (ZM005235.ppp.dion.ne.jp [222.8.5.235])
+	by sakura.ysato.name (Postfix) with ESMTPSA id 3009D1C0572;
+	Tue,  9 Jan 2024 17:23:48 +0900 (JST)
+From: Yoshinori Sato <ysato@users.sourceforge.jp>
+To: linux-sh@vger.kernel.org
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Lee Jones <lee@kernel.org>,
+	Helge Deller <deller@gmx.de>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Yang Xiwen <forbidden405@foxmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	David Rientjes <rientjes@google.com>,
+	Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Bin Meng <bmeng@tinylab.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: [DO NOT MERGE v6 05/37] sh: GENERIC_IRQ_CHIP support for CONFIG_OF=y
+Date: Tue,  9 Jan 2024 17:23:02 +0900
+Message-Id: <4d01ae9b3c5881b79095e6d98e1bdf8a008e2658.1704788539.git.ysato@users.sourceforge.jp>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1704788539.git.ysato@users.sourceforge.jp>
+References: <cover.1704788539.git.ysato@users.sourceforge.jp>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240108135421.684263-1-tmaimon77@gmail.com> <20240108135421.684263-2-tmaimon77@gmail.com>
- <170474817687.2140623.4004065884295248395.robh@kernel.org>
-In-Reply-To: <170474817687.2140623.4004065884295248395.robh@kernel.org>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Tue, 9 Jan 2024 08:45:17 +0200
-Message-ID: <CAP6Zq1iZdcrgc2BJREPvx8T9DZAZ=Sx_3iWbX0g=x2DmaG2MhQ@mail.gmail.com>
-Subject: Re: [PATCH v22 1/8] dt-bindings: clock: npcm845: Add reference 25m
- clock property
-To: Rob Herring <robh@kernel.org>
-Cc: robh+dt@kernel.org, venture@google.com, linux-kernel@vger.kernel.org, 
-	sboyd@kernel.org, tali.perry1@gmail.com, linux-clk@vger.kernel.org, 
-	yuenn@google.com, mturquette@baylibre.com, openbmc@lists.ozlabs.org, 
-	benjaminfair@google.com, krzysztof.kozlowski+dt@linaro.org, joel@jms.id.au, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Rob,
+Remove unused function prototype.
+Add helper update_sr_imask. use for SH7751 irq driver.
+Add stub intc_finalize.
 
-Thanks for your comment.
+Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+---
+ arch/sh/include/asm/io.h       |  2 ++
+ arch/sh/include/asm/irq.h      | 10 ++++++++--
+ arch/sh/kernel/cpu/Makefile    |  5 +----
+ arch/sh/kernel/cpu/irq/imask.c | 17 +++++++++++++++++
+ include/linux/sh_intc.h        |  7 ++++++-
+ 5 files changed, 34 insertions(+), 7 deletions(-)
 
-On Mon, 8 Jan 2024 at 23:09, Rob Herring <robh@kernel.org> wrote:
->
->
-> On Mon, 08 Jan 2024 15:54:14 +0200, Tomer Maimon wrote:
-> > The NPCM8XX clock driver uses 25Mhz external clock, therefor adding
-> > refclk property.
-> >
-> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> > ---
-> >  .../bindings/clock/nuvoton,npcm845-clk.yaml      | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> >
->
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
->
-> yamllint warnings/errors:
->
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.example.dtb: clock-controller@f0801000: 'clocks' is a required property
->         from schema $id: http://devicetree.org/schemas/clock/nuvoton,npcm845-clk.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.example.dtb: clock-controller@f0801000: 'clock-names' is a required property
->         from schema $id: http://devicetree.org/schemas/clock/nuvoton,npcm845-clk.yaml#
->
-> doc reference errors (make refcheckdocs):
->
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240108135421.684263-2-tmaimon77@gmail.com
->
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
->
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
->
-> pip3 install dtschema --upgrade
->
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
->
+diff --git a/arch/sh/include/asm/io.h b/arch/sh/include/asm/io.h
+index ac521f287fa5..5429b4169dc8 100644
+--- a/arch/sh/include/asm/io.h
++++ b/arch/sh/include/asm/io.h
+@@ -121,7 +121,9 @@ __BUILD_MEMORY_STRING(__raw_, q, u64)
+ 
+ #define ioport_map ioport_map
+ #define ioport_unmap ioport_unmap
++#ifndef CONFIG_SH_DEVICE_TREE
+ #define pci_iounmap pci_iounmap
++#endif
+ 
+ #define ioread8 ioread8
+ #define ioread16 ioread16
+diff --git a/arch/sh/include/asm/irq.h b/arch/sh/include/asm/irq.h
+index 0f384b1f45ca..3d897229dcc4 100644
+--- a/arch/sh/include/asm/irq.h
++++ b/arch/sh/include/asm/irq.h
+@@ -16,8 +16,8 @@
+ /*
+  * Simple Mask Register Support
+  */
+-extern void make_maskreg_irq(unsigned int irq);
+-extern unsigned short *irq_mask_register;
++
++void update_sr_imask(unsigned int irq, bool enable);
+ 
+ /*
+  * PINT IRQs
+@@ -54,4 +54,10 @@ extern void irq_finish(unsigned int irq);
+ 
+ #include <asm-generic/irq.h>
+ 
++/* SH3/4 INTC stuff */
++/* IRL level 0 - 15 */
++#define NR_IRL 15
++/* IRL0 -> IRQ16 */
++#define IRL_BASE_IRQ	16
++
+ #endif /* __ASM_SH_IRQ_H */
+diff --git a/arch/sh/kernel/cpu/Makefile b/arch/sh/kernel/cpu/Makefile
+index e00ebf134985..ad12807fae9c 100644
+--- a/arch/sh/kernel/cpu/Makefile
++++ b/arch/sh/kernel/cpu/Makefile
+@@ -20,7 +20,4 @@ ifndef CONFIG_COMMON_CLK
+ obj-y += clock.o
+ obj-$(CONFIG_SH_CLK_CPG_LEGACY)	+= clock-cpg.o
+ endif
+-ifndef CONFIG_GENERIC_IRQ_CHIP
+-obj-y	+= irq/
+-endif
+-obj-y	+= init.o fpu.o pfc.o proc.o
++obj-y	+= init.o fpu.o pfc.o proc.o irq/
+diff --git a/arch/sh/kernel/cpu/irq/imask.c b/arch/sh/kernel/cpu/irq/imask.c
+index 572585c3f2fd..7589ca7c506c 100644
+--- a/arch/sh/kernel/cpu/irq/imask.c
++++ b/arch/sh/kernel/cpu/irq/imask.c
+@@ -51,6 +51,7 @@ static inline void set_interrupt_registers(int ip)
+ 		     : "t");
+ }
+ 
++#ifndef CONFIG_GENERIC_IRQ_CHIP
+ static void mask_imask_irq(struct irq_data *data)
+ {
+ 	unsigned int irq = data->irq;
+@@ -83,3 +84,19 @@ void make_imask_irq(unsigned int irq)
+ 	irq_set_chip_and_handler_name(irq, &imask_irq_chip, handle_level_irq,
+ 				      "level");
+ }
++#else
++void update_sr_imask(unsigned int irq, bool enable)
++{
++	if (enable) {
++		set_bit(irq, imask_mask);
++		interrupt_priority = IMASK_PRIORITY -
++		  find_first_bit(imask_mask, IMASK_PRIORITY);
++	} else {
++		clear_bit(irq, imask_mask);
++		if (interrupt_priority < IMASK_PRIORITY - irq)
++			interrupt_priority = IMASK_PRIORITY - irq;
++	}
++	set_interrupt_registers(interrupt_priority);
++}
++EXPORT_SYMBOL(update_sr_imask);
++#endif
+diff --git a/include/linux/sh_intc.h b/include/linux/sh_intc.h
+index 27ae79191bdc..994b5b05a0d7 100644
+--- a/include/linux/sh_intc.h
++++ b/include/linux/sh_intc.h
+@@ -139,8 +139,13 @@ struct intc_desc symbol __initdata = {					\
+ int register_intc_controller(struct intc_desc *desc);
+ int intc_set_priority(unsigned int irq, unsigned int prio);
+ int intc_irq_lookup(const char *chipname, intc_enum enum_id);
++#ifndef CONFIG_SH_DEVICE_TREE
+ void intc_finalize(void);
+-
++#else
++static inline void intc_finalize(void)
++{
++}
++#endif
+ #ifdef CONFIG_INTC_USERIMASK
+ int register_intc_userimask(unsigned long addr);
+ #else
+-- 
+2.39.2
 
-probably I missed adding the clock and clock-names to the example
-node, will be fixed next version
