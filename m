@@ -1,141 +1,165 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CACB3D396
-	for <linux-clk@vger.kernel.org>; Tue,  9 Jan 2024 19:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9FA3D962;
+	Tue,  9 Jan 2024 20:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bY5HjZq3"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40e54f233abso1279535e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 09 Jan 2024 11:21:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fns79K0X"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-40d8902da73so32229035e9.2;
+        Tue, 09 Jan 2024 12:29:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704828105; x=1705432905; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0iDPQxfpa6JYqwDR22u630bpc83RjBN/ltpfDHg9liI=;
-        b=bY5HjZq39DGqzwm+PvYUziY4bxiOjODOLsi4lAnPJfqQNr7JaAEEgwmUF2L9HLhtBB
-         tQCZ1Xw8qh4wHKeW7nThrhdq4rf5OZ4BemJkCt1cYkwIMD+6SC4SgAVEXrAjDUt7DSbY
-         nPD1jG6tl635NXEhMo5jVWs0+zxHHaMyZfuKqYF0mlkm0VM9AfzlKE+bKscUZTrOE1Ax
-         Y9XCc+gUD4I1wl0hXQo497LSbaKjUMP+ub6r9ffn33B7P8xhKSdrg5l9UK+o76z48s22
-         j0h+QLQvrN2laYXJrzEx9yHGdsgc784Ls6xdbpIcgOZQaFYnFHUmt4goYf/VlunKqKmx
-         GJIA==
+        d=gmail.com; s=20230601; t=1704832182; x=1705436982; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YhFxPk9bq95VbdmA1a6BS885aCK0kZ8gAMJ7pYXAmuY=;
+        b=Fns79K0Xjk+b+8Cg0psJzqlG7mExQdD+aNZgvxaR7yTuJ6XGx0t9hE8EI1798vQXc/
+         cli/VdOipVDfOFHmg+hecDxeG/FOZlzuLtk94EqMYXptWhmLANNA5bAX6ekv8Cd2C046
+         B5wo0pVZWjBM357mv6nvJpqZHcTrCHkwtj1zSOQQ7hTs6Sn/sy1lQnagA9lzfmA0Lo38
+         VFB6oRvOP6sAF0smcwVrdBPP6rHdNEWZnmwXDeZ4Vl8avkWFPacSNK2ZAg2VCbp0gsbi
+         lFSF0JmNPSMJFoIrAwRqx00ee6P/yldTtyf9yzfl7Acdu844hW5p5LfhhKvJiRdf8FXw
+         /P6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704828105; x=1705432905;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0iDPQxfpa6JYqwDR22u630bpc83RjBN/ltpfDHg9liI=;
-        b=maQggRmsQ2Xrs1FYuNbNPmEv+yWJRapsh4fg7+8Qx9ZioEdD0wJP5EVUMAijQvaMf2
-         +XAdkb4g25X/ilTy8/C4cnCajcp/Xfda/5w2STybu4Q1uHgTSzGZF0ER3Z1TijqAXAEz
-         gnd9vHrvheMfdphX0Rq/FTQAaefSx/1Eh+aLTfyYYd2gmy3S4QRdgimdnqM4zA7kGLxl
-         zWg+8UJNlFqmBtWkg3vx/K6mSW2wT/Ws3jHDqQdhPVx/NXAbIG5P8E3WzFqxn5lxQkxz
-         yvEfJAB/Kym9Oj1noFCeL7PkJ4eobmzapqXSOegHCU5DIqX3t9JAYmx83EjO42fYS1uD
-         CoRQ==
-X-Gm-Message-State: AOJu0YyjMroD7jSYuH8pZAVvbtFYccfkF6B0ia5R/UJCdCedpvPvR5kz
-	7DSjTceoKIYtJJWc4c3PCQ+/hboHqsv8OQ==
-X-Google-Smtp-Source: AGHT+IFwgwgDOI4/Q6Y34zCKB/l0HiTfMab4ag9pxzy1vIZSIh6QYhf3vaHuo+ZbeSKwvdygEJLD7A==
-X-Received: by 2002:a05:600c:3d05:b0:40e:45aa:30d7 with SMTP id bh5-20020a05600c3d0500b0040e45aa30d7mr2258569wmb.171.1704828105371;
-        Tue, 09 Jan 2024 11:21:45 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.223.112])
-        by smtp.gmail.com with ESMTPSA id g11-20020a05600c310b00b0040d94b65342sm15897181wmo.48.2024.01.09.11.21.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jan 2024 11:21:44 -0800 (PST)
-Message-ID: <ca0cb671-43ce-4bda-aad5-da38bace4132@linaro.org>
-Date: Tue, 9 Jan 2024 20:21:42 +0100
+        d=1e100.net; s=20230601; t=1704832182; x=1705436982;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YhFxPk9bq95VbdmA1a6BS885aCK0kZ8gAMJ7pYXAmuY=;
+        b=M6yaI5NQXT1BPhJQ+unTTHQuy0g2ZxNB/D4NsherYcE4lxApNJt3eqhSrCSScZYQ6B
+         w0JISnVD3dgrirTlEtYcMZag2gDXnj4qp7MbdYLBCW69iKPX3nxMWqcJC4MVx+wrBLDT
+         C4ZEaJqzpYpfealeQciwjWfeOGMQ+ioo6R17ZqnZukkA/XbhZtBKxRzst+Cj9gbKue60
+         mmXBLCu/WQ1J0jqeOWQK1zp3He362XT3rz6LlTpZVtnn26xg85IJ2vqbqFIhzsJ+RI5r
+         NtMN+56MoCKO0pdJ/vnFrPzZd2lg+Sw2M46dbQAQ/UqUvZjLcgCCM/Yvi3VUNApWM0K0
+         yf/Q==
+X-Gm-Message-State: AOJu0YyOk5gRCrYej1c6VntT3lJylgYzlzcdasHWrR+J5Rx7VpsDoD13
+	3mcE+ARphjEy/9M7s4sTCsA=
+X-Google-Smtp-Source: AGHT+IE5TnoT1XdEn0n5wgCIogYrdeyA0CMiYERCnMzgmb3h9FCnrk13KBv23kZ3Cm17VgQCyOeKbA==
+X-Received: by 2002:a05:600c:1381:b0:40d:5aa1:8f9d with SMTP id u1-20020a05600c138100b0040d5aa18f9dmr3358939wmf.35.1704832181725;
+        Tue, 09 Jan 2024 12:29:41 -0800 (PST)
+Received: from jernej-laptop.localnet (213-161-3-116.dynamic.telemach.net. [213.161.3.116])
+        by smtp.gmail.com with ESMTPSA id v12-20020a05600c470c00b0040d5f3ef2a2sm15931585wmo.16.2024.01.09.12.29.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jan 2024 12:29:41 -0800 (PST)
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Frank Oltmanns <frank@oltmanns.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>,
+ Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
+ Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Subject:
+ Re: [PATCH 4/5] clk: sunxi-ng: a64: Add constraints on PLL-VIDEO0's n/m ratio
+Date: Tue, 09 Jan 2024 21:29:39 +0100
+Message-ID: <3461075.QJadu78ljV@jernej-laptop>
+In-Reply-To: <87jzoug2jz.fsf@oltmanns.dev>
+References:
+ <20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev>
+ <13411739.uLZWGnKmhe@jernej-laptop> <87jzoug2jz.fsf@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/15] dt-bindings: clock: Add R8A779H0 V4M CPG Core Clock
- Definitions
-Content-Language: en-US
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Magnus Damm <magnus.damm@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Cong Dang <cong.dang.xn@renesas.com>,
- Duy Nguyen <duy.nguyen.rh@renesas.com>, Hai Pham <hai.pham.ud@renesas.com>,
- Linh Phung <linh.phung.jy@renesas.com>, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-References: <cover.1704726960.git.geert+renesas@glider.be>
- <2e083461752c9d52fdb251ad9071f6111f13c3c5.1704726960.git.geert+renesas@glider.be>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <2e083461752c9d52fdb251ad9071f6111f13c3c5.1704726960.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-On 08/01/2024 16:33, Geert Uytterhoeven wrote:
-> From: Duy Nguyen <duy.nguyen.rh@renesas.com>
-> 
-> Add all Clock Pulse Generator Core Clock Outputs for the Renesas R-Car
-> V4M (R8A779H0) SoC.
-> 
-> Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
-> Signed-off-by: Hai Pham <hai.pham.ud@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Changes compared to the BSP:
->   - Drop POST* clocks, as they are internal clocks.
-> ---
->  include/dt-bindings/clock/r8a779h0-cpg-mssr.h | 96 +++++++++++++++++++
+Dne nedelja, 31. december 2023 ob 10:10:40 CET je Frank Oltmanns napisal(a):
+>=20
+> On 2023-12-19 at 17:54:19 +0100, Jernej =C5=A0krabec <jernej.skrabec@gmai=
+l.com> wrote:
+> > Dne ponedeljek, 18. december 2023 ob 14:35:22 CET je Frank Oltmanns nap=
+isal(a):
+> >> The Allwinner A64 manual lists the following constraint for the
+> >> PLL-VIDEO0 clock: 8 <=3D N/M <=3D 25
+> >>
+> >> Use this constraint.
+> >>
+> >> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> >> ---
+> >>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 8 ++++++--
+> >>  1 file changed, 6 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi=
+=2Dng/ccu-sun50i-a64.c
+> >> index c034ac027d1c..75d839da446c 100644
+> >> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> >> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> >> @@ -68,7 +68,8 @@ static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_bas=
+e_clk, "pll-audio-base",
+> >>  				       BIT(28),	/* lock */
+> >>  				       CLK_SET_RATE_UNGATE);
+> >>
+> >> -static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_CLOSEST(pll_video0_cl=
+k, "pll-video0",
+> >> +static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_FEAT_NM_RATIO(pll_vid=
+eo0_clk,
+> >> +						"pll-video0",
+> >>  						"osc24M", 0x010,
+> >>  						192000000,	/* Minimum rate */
+> >>  						1008000000,	/* Maximum rate */
+>=20
+> I just realized that adding the whole ratio limits for ccu_nm is
+> superfluous as you could just as well express them in for of a minimum
+> and maximum range:
+> Since 8 <=3D N/M <=3D 25 and parent_rate =3D 24 MHz, therefore
+>   192 MHz <=3D rate <=3D 600 MHz.
 
-Mediatek was able to switch to vendor,device naming scheme, so Renesas
-should follow as well.
+Good point!
+
+>=20
+> These absolute limits are also listed in Allwinner's A64 manual.
+>=20
+> BUT, here the upper limit was raised to 1008 MHz:
+> 5de39acaf34604bd04834f092479cf4dcc946dd "clk: sunxi-ng: a64: Add max.
+> rate constraint to video PLL"
+>=20
+> With this upper limit the ratio limitation is effectively:
+> 8 <=3D N/M <=3D 42
+>=20
+> Icenowy Zheng (added to CC) had the reasonable explanation that this was
+> used in the BSP kernel, so we should probably stick to that and ditch
+> the two PLL-VIDEO0 related patches. What are your thoughts on that?
+
+Ok, it seems that these patches are really superfluous. Remove them for v2.
 
 Best regards,
-Krzysztof
+Jernej
+
+>=20
+> >> @@ -80,7 +81,10 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_CLO=
+SEST(pll_video0_clk, "pll-vid
+> >>  						297000000,	/* frac rate 1 */
+> >>  						BIT(31),	/* gate */
+> >>  						BIT(28),	/* lock */
+> >> -						CLK_SET_RATE_UNGATE);
+> >> +						CLK_SET_RATE_UNGATE,
+> >> +						CCU_FEATURE_FRACTIONAL |
+> >> +						CCU_FEATURE_CLOSEST_RATE,
+> >
+> > Above flags are unrelated change, put them in new patch if needed.
+> >
+> > Best regards,
+> > Jernej
+> >
+> >> +						8, 25);		/* min/max nm ratio */
+> >>
+> >>  static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+> >>  					"osc24M", 0x018,
+> >>
+> >>
+>=20
+
+
+
 
