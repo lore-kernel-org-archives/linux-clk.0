@@ -1,49 +1,49 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3275A3C46E
-	for <linux-clk@vger.kernel.org>; Tue,  9 Jan 2024 18:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CACB3D396
+	for <linux-clk@vger.kernel.org>; Tue,  9 Jan 2024 19:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q+co3ngm"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-50e741123acso3474023e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 09 Jan 2024 10:41:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bY5HjZq3"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40e54f233abso1279535e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 09 Jan 2024 11:21:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704825712; x=1705430512; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704828105; x=1705432905; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=b3kY/sI+OewHLdAt8Sws7SovwxQjp4vZRhkHLuCSn/w=;
-        b=Q+co3ngm3QhNnSMVf1JtEQ9xRL+T6OdBUTkuBEfGHJ2TAHdIay644/+v4NxIXEw/R/
-         AWLhihcEiHGz+ay8oUrm4TN7Un39mw91e2TiQI2kCF6bVmwDBpqN2KPeBhmrusOGu9/j
-         D7pv5K3fswNu6IZynF0LyNIydwgPi4c/l4cPoggH1HzMLGxEkBEj2gsnGBpREKW7uZfO
-         XEPYEge8MNe5g0RnNsvfGdqBzyGD/AjD4lEuRnxopgOEV4G6a3H8cKOQHuJ/FR2M0JzN
-         Hkl41HY0GZW1ScZOzqDrEysoiEiPWGurVHDxQWAz6s5iF6Py6nKQJxKm5P8Z8W1jUjo4
-         jGTw==
+        bh=0iDPQxfpa6JYqwDR22u630bpc83RjBN/ltpfDHg9liI=;
+        b=bY5HjZq39DGqzwm+PvYUziY4bxiOjODOLsi4lAnPJfqQNr7JaAEEgwmUF2L9HLhtBB
+         tQCZ1Xw8qh4wHKeW7nThrhdq4rf5OZ4BemJkCt1cYkwIMD+6SC4SgAVEXrAjDUt7DSbY
+         nPD1jG6tl635NXEhMo5jVWs0+zxHHaMyZfuKqYF0mlkm0VM9AfzlKE+bKscUZTrOE1Ax
+         Y9XCc+gUD4I1wl0hXQo497LSbaKjUMP+ub6r9ffn33B7P8xhKSdrg5l9UK+o76z48s22
+         j0h+QLQvrN2laYXJrzEx9yHGdsgc784Ls6xdbpIcgOZQaFYnFHUmt4goYf/VlunKqKmx
+         GJIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704825712; x=1705430512;
+        d=1e100.net; s=20230601; t=1704828105; x=1705432905;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b3kY/sI+OewHLdAt8Sws7SovwxQjp4vZRhkHLuCSn/w=;
-        b=JG5ZdwUwLBzv6ZJu2o06mSpcoL4qWY9PQcxfv2udMqaizHBx8TaVhIOBAJgpDiG3k4
-         ncjEHHjQYOyENKA3rKOsULMOCwDtI0CnK126j/cUE/KBv0Yhy+CCjWgjlfuwSFiWJ/4G
-         h34QwAVKbQT+2EaNA0SEbKwT58JFzlU6Bk3zMsCQxAd3jk3JrDhBM7u1t0iLdTYfGf8K
-         siHX5U6rwK0YL70kw93AutCuNV5VQa6MZcoBtO5OnHtuKa2CCUVpMBuzGddVDa0mf2O3
-         FHVrwcz4V7EsaBoKGBfiWzqEvOeuC2V473FXDl4tfdlgiNhQJHg4lxNjpWzB0/jNasaT
-         70NQ==
-X-Gm-Message-State: AOJu0YxxkDy7W8Bczn5ox0Q7+rJVWWJ7ZMgTYBGcM8lptB+MIX/9VlQO
-	bKHqvaIu0EwqvHuWVMpP4LbnPua7/EAeSA==
-X-Google-Smtp-Source: AGHT+IEIf5y9iCXRqGeQfwB4wQA61OuNMht8Vp0eJHsbfT3YBU5W1VDHv2z3upGwadxw7MEo4SYUBA==
-X-Received: by 2002:a19:8c0a:0:b0:50e:7c08:4350 with SMTP id o10-20020a198c0a000000b0050e7c084350mr2353230lfd.42.1704825711996;
-        Tue, 09 Jan 2024 10:41:51 -0800 (PST)
+        bh=0iDPQxfpa6JYqwDR22u630bpc83RjBN/ltpfDHg9liI=;
+        b=maQggRmsQ2Xrs1FYuNbNPmEv+yWJRapsh4fg7+8Qx9ZioEdD0wJP5EVUMAijQvaMf2
+         +XAdkb4g25X/ilTy8/C4cnCajcp/Xfda/5w2STybu4Q1uHgTSzGZF0ER3Z1TijqAXAEz
+         gnd9vHrvheMfdphX0Rq/FTQAaefSx/1Eh+aLTfyYYd2gmy3S4QRdgimdnqM4zA7kGLxl
+         zWg+8UJNlFqmBtWkg3vx/K6mSW2wT/Ws3jHDqQdhPVx/NXAbIG5P8E3WzFqxn5lxQkxz
+         yvEfJAB/Kym9Oj1noFCeL7PkJ4eobmzapqXSOegHCU5DIqX3t9JAYmx83EjO42fYS1uD
+         CoRQ==
+X-Gm-Message-State: AOJu0YyjMroD7jSYuH8pZAVvbtFYccfkF6B0ia5R/UJCdCedpvPvR5kz
+	7DSjTceoKIYtJJWc4c3PCQ+/hboHqsv8OQ==
+X-Google-Smtp-Source: AGHT+IFwgwgDOI4/Q6Y34zCKB/l0HiTfMab4ag9pxzy1vIZSIh6QYhf3vaHuo+ZbeSKwvdygEJLD7A==
+X-Received: by 2002:a05:600c:3d05:b0:40e:45aa:30d7 with SMTP id bh5-20020a05600c3d0500b0040e45aa30d7mr2258569wmb.171.1704828105371;
+        Tue, 09 Jan 2024 11:21:45 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.223.112])
-        by smtp.gmail.com with ESMTPSA id h22-20020a170906719600b00a2b9a6f1e9dsm242124ejk.10.2024.01.09.10.41.47
+        by smtp.gmail.com with ESMTPSA id g11-20020a05600c310b00b0040d94b65342sm15897181wmo.48.2024.01.09.11.21.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jan 2024 10:41:51 -0800 (PST)
-Message-ID: <3666744f-0d34-477e-83bf-737ed7a4c230@linaro.org>
-Date: Tue, 9 Jan 2024 19:41:47 +0100
+        Tue, 09 Jan 2024 11:21:44 -0800 (PST)
+Message-ID: <ca0cb671-43ce-4bda-aad5-da38bace4132@linaro.org>
+Date: Tue, 9 Jan 2024 20:21:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,53 +51,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [DO NOT MERGE v6 04/37] dt-bindings: interrupt-controller: Add
- header for Renesas SH3/4 INTC.
+Subject: Re: [PATCH 02/15] dt-bindings: clock: Add R8A779H0 V4M CPG Core Clock
+ Definitions
 Content-Language: en-US
-To: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
-Cc: Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Thomas Gleixner <tglx@linutronix.de>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
- Heiko Stuebner <heiko@sntech.de>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Chris Morgan <macromorgan@hotmail.com>, Yang Xiwen
- <forbidden405@foxmail.com>, Sebastian Reichel <sre@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
- Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- David Rientjes <rientjes@google.com>, Baoquan He <bhe@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck
- <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>,
- Azeem Shaikh <azeemshaikh38@gmail.com>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Max Filippov <jcmvbkbc@gmail.com>, Palmer Dabbelt <palmer@rivosinc.com>,
- Bin Meng <bmeng@tinylab.org>, Jonathan Corbet <corbet@lwn.net>,
- Jacky Huang <ychuang3@nuvoton.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>,
- Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-fbdev@vger.kernel.org
-References: <cover.1704788539.git.ysato@users.sourceforge.jp>
- <b9cea5b530a6d68ea921174fbbda60afb8dd4432.1704788539.git.ysato@users.sourceforge.jp>
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Cong Dang <cong.dang.xn@renesas.com>,
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, Hai Pham <hai.pham.ud@renesas.com>,
+ Linh Phung <linh.phung.jy@renesas.com>, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+References: <cover.1704726960.git.geert+renesas@glider.be>
+ <2e083461752c9d52fdb251ad9071f6111f13c3c5.1704726960.git.geert+renesas@glider.be>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -143,21 +114,27 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <b9cea5b530a6d68ea921174fbbda60afb8dd4432.1704788539.git.ysato@users.sourceforge.jp>
+In-Reply-To: <2e083461752c9d52fdb251ad9071f6111f13c3c5.1704726960.git.geert+renesas@glider.be>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/01/2024 09:23, Yoshinori Sato wrote:
-> Renesas SH7751 Interrupt controller priority register define.
+On 08/01/2024 16:33, Geert Uytterhoeven wrote:
+> From: Duy Nguyen <duy.nguyen.rh@renesas.com>
 > 
+> Add all Clock Pulse Generator Core Clock Outputs for the Renesas R-Car
+> V4M (R8A779H0) SoC.
+> 
+> Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
+> Signed-off-by: Hai Pham <hai.pham.ud@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Changes compared to the BSP:
+>   - Drop POST* clocks, as they are internal clocks.
+> ---
+>  include/dt-bindings/clock/r8a779h0-cpg-mssr.h | 96 +++++++++++++++++++
 
-Still not a binding.
-
-Some parts of my comments are implemented, others are just ignored
-(dropping the file, fixing full stop in commit msg). This is confusing.
-I don't know. Shall I just NAK it to make it clear?
-
-NAK
+Mediatek was able to switch to vendor,device naming scheme, so Renesas
+should follow as well.
 
 Best regards,
 Krzysztof
