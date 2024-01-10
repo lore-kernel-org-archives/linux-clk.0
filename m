@@ -1,41 +1,40 @@
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2088.outbound.protection.outlook.com [40.92.102.88])
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2037.outbound.protection.outlook.com [40.92.103.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B314A04;
-	Wed, 10 Jan 2024 00:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA0823B1;
+	Wed, 10 Jan 2024 00:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="rTT0JthN"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="PXDeyqxd"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=egqP6ObkvJSAX96Uq0blMo2/NYXcIgBSLvJ2W2oK64X6Q1EC+Ihd2P02FHm/HpxbIW/zwjfTF40By/srLI2eDt024Br7GziIWeEu5oc74ZboWMf+blQ/uq0j5YOxu5EGeVJiE4rb9kbVI3nSWI8D0eNOQk2tsK3dc2iG9tFPJAReQqQizpd+02O2LOP7glNyYkL/u/k9p1getKbp5lZhDd2hw5Mwh0euK/Vk5tMg/YBuAPEBKvQ+/gx7sTvekjM5valBsEFqdFH/CdjmygzwbU2s9dvORqHD3re51e+/pZw/JZ+a08Nf72Rc9BjFbWwRo2ek/E3oE6A67r1x4hcvCw==
+ b=lzZ+1lPiU4ZSOS89m9PsEVAqLsEltxdn/547wAWnjXw8RaYkqxPGlw13emcrGY9bRkdE41NVIm97AIgur5QGY66ClOpr0BC8pLkXP8RVgx5DJsJDlZD7UMm7AF5OeNxIATbHvJF+HKvIltzQ+YvTdwfl8NIAj7m5jZsZY8C3cS10IwJIqbdNRDpwryAFGNogaQxGKd/lG/EE+I0jdGmaZW8fyTPYNsvOPH/qF7z5+rIn1velRBRrpfX6MVaWEsgRF8eNOKf2i6kOvWjIyZl5HPrW6nw5SzyoUBDQUWD3qyiEKyXjyCljzadV5lYkX0ZAfWafhsfdItckIQ7M1SxDZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S1VuauG0cMc9sxG48xp+zU6+ooo5HVTi7SaXCW2sSdc=;
- b=dU4UQB8BIjrokWRtlhBfc4QWthay1abKQ/jVuwTvz7/l38xOaDrJakZ/7eBp+gnQNKuDrxKiqE7nMbTG4cRjNatsKSV15ohXegMiShL2hLZanE7yQNHRPDuGd3dE5aXOflsRxf4juhbPwKrEWXpEbebNMiy2K/f1x7ofO+DpSMvjWHi25qHfkAxO42+Ovf/K91xT6S2iqVIxsKfnkmfn99Wrs/YK8J4Y/2Iz6IoDe18RkQpiN2HwSntAh9V0QEtDq/xA/GOZVLOWaimT8zZBahsWo5pXxVKG5R4dtlJU+x63jbQRhZlKOXXg3FV6hSRisyWYAXcJnqNFSSjpO3qEqw==
+ bh=TNuELUNym48UJ072ZAZ61tHoFZZCQ77oowsfdKiNtsk=;
+ b=JSVCHgd7evXMwZGP0xG6FCd2J/IXcGGLKJDl19WEtHUYeyu5jfaryR6Ui+5xLdKPJtpyj5nweCaIu9n1AiReTMRZsHL9LBmLlb/eGeO3iDKe8g2UWKkSQgKj6Gb4auuH/3kZsJASOp2Dv6wOKS3dxsQC6t7j3q420Gw8noamePrMBcIOxX5t+wXYHRU/PcjNyA9zbdBLbNRo8COjk6bo/LHuMeuPt1XvBjE4MUapQL66QM8fE5LO0ca3lb8tc4HIF3ixsrzFiHztm4Tln+PRBg9WT3zYothbptEcftOvNkLUk7GzgBdPcqvl7BQe/RMEPaSL7qSlKpVXgyEF5htfiQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S1VuauG0cMc9sxG48xp+zU6+ooo5HVTi7SaXCW2sSdc=;
- b=rTT0JthNKfiCYr053pcMAZ1kfrPjkfdt84EPSwt9zk1XLYdVAcVCqRphAhRpV82kpbCdhbvECMyVUA8rFsX7SpP+uukH6W1aPf2QBmxedToIPAJLcX8SEH2O6saq0RGFj8zPvEkVteyQJOhZjzxvcYAnlCayK5kybyFHpYcij0xSS7iTFDtR1648jKOUbFbs6iBy1sL5G7Mu854qD40UQrvzmyVoxKic3hv1G3O0hUjFUGwC9ieVvN7F/1sG1nCiPhB6ztL8xvLu5TjWuIchtI9JD+in3W/Ekv+Nn8vaHMyFQA9GwqVsv1VP5a75Vx+7CzhJ47SYhfHZVOYlXI75nw==
+ bh=TNuELUNym48UJ072ZAZ61tHoFZZCQ77oowsfdKiNtsk=;
+ b=PXDeyqxdeUPYxhaLIPSgFxCNrhVDeMOIFsO48zqpRTFULVhyGe68ypRjO9eSyQE6OsK7iSgVtPtN+Z0kZ64h+b/AQCFAG7/gGL94YEhPb8IsYjS9ccQhxpFwodq0bidyITtPSYZ9x2hmCAEb+vQO5ZDhpAIKCQJcoX/UHS7Js1TO75z9opPtuDCBYxtEmcpzt8X9fz3mFGl+10BdBneDa0e2vncft8jSH7YahY5LcV08P5qesLyhlZTRuNGXmsZb6oe1gfhwun6hcS6Xjevqdd/QUqDBLG10rae5J5GCJjeh6wKWRLewFpJh5WWo7J7RXPDmCdYpldmHl+OQ+tUjYA==
 Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN1P287MB2616.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:210::6) with
+ by PN0P287MB2195.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1c0::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.23; Wed, 10 Jan
- 2024 00:44:30 +0000
+ 2024 00:53:49 +0000
 Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
  ([fe80::6e80:69e1:f2e7:d70d]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
  ([fe80::6e80:69e1:f2e7:d70d%3]) with mapi id 15.20.7181.015; Wed, 10 Jan 2024
- 00:44:29 +0000
+ 00:53:49 +0000
 Message-ID:
- <MA0P287MB28223C0D5BD8E2A6A042A7BEFE692@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Wed, 10 Jan 2024 08:44:26 +0800
+ <MA0P287MB2822C7A3C1DC7786708E860BFE692@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Wed, 10 Jan 2024 08:53:42 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/4] dt-bindings: soc: sophgo: Add Sophgo system
- control module
+Subject: Re: [PATCH v7 2/4] dt-bindings: clock: sophgo: support SG2042
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
  Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu, chao.wei@sophgo.com,
  conor@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -45,23 +44,20 @@ To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
  haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, guoren@kernel.org,
  jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
+Cc: Conor Dooley <conor.dooley@microchip.com>
 References: <cover.1704694903.git.unicorn_wang@outlook.com>
- <acebc88db3e5fcd2a2607b56842af7443a6e1289.1704694903.git.unicorn_wang@outlook.com>
- <cc7cc943-7242-4fd1-9b56-3ece0a418e05@linaro.org>
- <MA0P287MB2822E54A6DD36F914DB56E98FE6B2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <1e1ef0a0-6639-4a4d-9b4e-50bcee3fb3c5@linaro.org>
- <MA0P287MB2822C1F51E9F03137EF42093FE6A2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <60abfdcc-3d61-4df1-b77b-23d4a5d26a46@linaro.org>
+ <925d99d5b4ece01337cb3389aaea4b631894dd1d.1704694903.git.unicorn_wang@outlook.com>
+ <f88b79c3-e44b-4136-ae56-10e1f2502e2d@linaro.org>
 From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <60abfdcc-3d61-4df1-b77b-23d4a5d26a46@linaro.org>
+In-Reply-To: <f88b79c3-e44b-4136-ae56-10e1f2502e2d@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TMN: [6xfKtfKUaY9H4hRvKBn/6tWn9UQHkpyt]
-X-ClientProxiedBy: SG2PR01CA0136.apcprd01.prod.exchangelabs.com
- (2603:1096:4:8f::16) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-TMN: [o5q9qnyUVBjD/JGz7KIBvW7mvlmTcjZv]
+X-ClientProxiedBy: TYCPR01CA0181.jpnprd01.prod.outlook.com
+ (2603:1096:400:2b0::10) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
  (2603:1096:a01:138::5)
 X-Microsoft-Original-Message-ID:
- <0cbf6438-7f9c-4010-bec6-543f4010133d@outlook.com>
+ <49375060-3dde-4e64-9aa5-912e1b343d3f@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,128 +66,105 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN1P287MB2616:EE_
-X-MS-Office365-Filtering-Correlation-Id: 60f192a5-439d-4e16-74de-08dc11754dc1
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN0P287MB2195:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8619ecef-59eb-472a-a06b-08dc11769b2b
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	G8xKHnSOJxfvjcPJCQadhaYNdVa4UwZblys8OXiB8M+93ujtfju2TOH/BWiG+0BkSFWGzDYNNTrelPXnBtgEgs9QNH0cEkY77kkdGrnrBti0BSbRV50idTfBJRUDrh8t3499YPqiRDZTwVKWXbklHsceRDf0+AIXJBEc9HMsu3EikO7g1v6B6ng+xMpp2T1rZzLrooWRwp7CkFByjc882DtPLJZt85RLkngnFVsvabSYjGgqQkBPhUWKcYVRFyBDdDYZle3TMRBZptLgDkI//h3tmWPQnDQ14jzq7L3HWDqfp4uVGPGVHDS4LQWxCj7E9CAiYE4mcpjWlsdDK2Wvg08ipdd+y7ugB8nnCntNuyIPeJdP6LhihuKOrEv6lLS8bYVH4v52wCW/rHiq+ywb+B47+ZEpnoJ5yqu4b6sMEoDFeSU80cKj+nVEGcOY8lhY/gvjYI7HBGTg60M2qAk3qxT/tRag21QfSaqV4ETqRMDhROi3v6m/5qjRZwOqOBJGoEzK2iSMryS6ChsE1coVrFyY2d34AHBdHxNqr4+oNWC5eCt2P1BuodnScDjZBDZxSqEV5AeEl2SuN/G/22YTgEBrfpZ7o3SvIwrF0qWPR3uIJK0Zniv++6/dBui6sc+DFJz9GQKp9BOnbCz+/uuwOA==
+	vsAvI6Ql+jiCmn63i6r82kH8QiLyu7V3d2bxyKHUIM4gTREFZ2Qbb4w+zzEZ0Y/3PsCzeC5udkjnZq/O5KouxBhFn2O+hq1y7/PVyRSeJ3VNMtNhj072KGpkJ4VOZBI0Sg0cyk+zWQxWBwnwd8vmwe6quxx8y0IXykNpI7sTEkK8m5Kpn48+G1LA2cQ2UBr1n3w+V95LvqfkQdTVBZjCPMJaixW3wbShe7KOp5AtfBjUtcYGkA0Y15d+mB8QLhnMfSOiAgMn11MuOTMAaCSvR1mtkgJl+jPZPMsR4YlBniCfJDgvTRLmv0HQvM7vz2dJAH0Jv93GnIiNfFXVRKEptHXAJp81G5nztxOgMSEx5dTzBDP4isLHHoQ9mkgpp+GzoSSuWpBFlMLciB7RSJDEOQLjFkdMJUoGQucs5jL+9Eikqa827M3UZB6K/dFwIXswyBvhXZ479jAG8BiYBv24fovyrMjh1xUDU8XxO1ZWXx2f+yV7lxs2cCKn1YXmH3ewTVfBbG6Fr16hfRXEZTdnKWJxDndFu3LsvsatHg1MUW5czUrahhMbFvXvMZsM9JCLngtNlKy8MSPyvvw6SJf+EXOnvM1+wM2PKmhgkKARklM=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YnV6RG9KdTJ4a1lTNzgwZmZvTnNyU2xEazhabFNTd0tUa01pOVh2RFdjL1Jt?=
- =?utf-8?B?RDlyMW5BV2lneHpGcWxRRUhlRFlMb1NaRzdrWFUyT2dxWXVadE1vR1o2bEla?=
- =?utf-8?B?NGZnZ0RyQk1laUJhQ1dVRnh3alZMa0hGT21RT3J2YzFsd3ErM1ZvYkV0L0lo?=
- =?utf-8?B?eFpjUE1BOUxRWFB3bTk1NURQbUpDSEI2SXdQWU1CNG1XVW94Y0tYZ3AvcUtk?=
- =?utf-8?B?eUdONTVscGFMU1drY3R2QzlSNmUvcXEvRlpJQW45Q0dkR2tJV1RhZmJXQUNO?=
- =?utf-8?B?UHQrS1UyMTRkUFZTVUdnSWI1MmsyeVordEpDU2V5eXdqTTk2VGNlZ2V2QUFq?=
- =?utf-8?B?eklMUHZmRXY3QzVvS0lNd2RDM0xWKy9UVmR1RzJLN1VqWFlmbCthYnkvR3pw?=
- =?utf-8?B?RGVvbnF4OVlZd3c2ak9DelJrRi9IZ24rdldNbmE5VWRyRTlubEZBS3gxVWRs?=
- =?utf-8?B?TzNqTUU0c3E2Y0RETEZ5RFI4UzNXUlVxNGl3Y1Bxcy9EOFJzRVRXRWtlV2k2?=
- =?utf-8?B?b0xiak4wVmRmbWF4bWNiUTRCaWprWjVySGVlYXh1SU12RVBhMnNFYWZBdmxS?=
- =?utf-8?B?ekJCdG1jeVZ6QTBmZ09CV2pNTGMxWjBsMFFUVWY3dktVNzBKZ0ZHeDVDbmxn?=
- =?utf-8?B?STAxSG1BRC9zQ05MNjU1NmVkU0cyNmxiL0FubE9SOUpSM0g3RXRBa1puMGhj?=
- =?utf-8?B?VUhiM21XaWxkK2dUbUVMNmlRMEx5M3U1SWxjQnhCOWplT2lPRFJYcVFZSmd2?=
- =?utf-8?B?ZjhhN3lsdytvSlJsdm9KRGV1eG84MXJNWHY5WjlEay9TbExRbUxXRzh1QVJW?=
- =?utf-8?B?NURySFkvazVhMTl4MW81YkwzdWVaQkJaTHVwY0p1VC9LNHU4N1RMUVhCVzNM?=
- =?utf-8?B?Q1hWcEZjdjYvdVVOTjI0MjhWZmRVTkZITWVhbDFQUjhVVklZNFN0RHA3SXVV?=
- =?utf-8?B?WnpET3hmbzNJYUM5bWNoSjdjY1kxZDFqODhOdU5Kd2YyVFVVRTNmSElONldR?=
- =?utf-8?B?SjZENk5IR0RxYk1KbVJreUtjQ3RqZ3MwVGYwQ08vbFNIdTBWL3ZlNHZsWkZT?=
- =?utf-8?B?cG5wTW4rRW1jYjQrNU5UTjk0cmNGVHVPQWlhNDhWS0M0VU5lN1NySGFlTEV0?=
- =?utf-8?B?Q1R6ZTNWMHAvMStjSkJLamhsRmdaZXViRVo1UDBKbEErVHhwYlJKVEZOYzNT?=
- =?utf-8?B?N0w2bU1hNzdNR0trZFhRYmYzZ1REYXkraVIzbEMvcWZ6NExGK3A2V0lWamxW?=
- =?utf-8?B?RExDQlZNYWxSMnMyKzIvenNKeHdNNGEvQVFxWDU1SGhGL0ZMQjROT2Z0bzcy?=
- =?utf-8?B?T0F3QlpZT3NnRk5QUWQ5ckQrMWVUaHpzcE5WWW5SWHdMbkpPZXZNVm1mNlZG?=
- =?utf-8?B?WXh1OTJQRnowSmZ3NDVKU3EyMTArM2tDc1JtT0pLK1N5TG5ydy9oOUJCdDNv?=
- =?utf-8?B?OGNwM1Ruc3lDVkt3Nk01ZGN1aHVRN09DSFJnK1RVc2VBSUtRejYyalkwdWw3?=
- =?utf-8?B?RmRVcURZOVpsQzR5anpRNm9qblQyUzRDanRTNlZYdExBNjVsdnc2U3p3RFVD?=
- =?utf-8?B?bEgrd3o2d3hsV1NhVXpoQzg0S09MS0pqOEhkNGtKaTNKY1VPVmZWMzE4OHJq?=
- =?utf-8?Q?jXGqwR6gS6+rLR3nX1hUT53tyUREQtakw/ClID3Y5rp0=3D?=
+	=?utf-8?B?VkhTZzlmNXZvWkhRR2p4VjhPSE1KcEVZYlBJTHo3VkQzWnp5NlBwdDRBR0FG?=
+ =?utf-8?B?aWZBLytZaE1hU0dINHNLcUZoZzV4UzE0OUhyM1BYamU3ZFFkRkMwZXdJcFl4?=
+ =?utf-8?B?QjZPQ01uL0VxV1JLMERDU1JRTUREWjBNdHNvbWxNZHhWMkI2UHFKNzEvUTRo?=
+ =?utf-8?B?K0Y4S3VIUHBZWE50VFQrRjlUYWNjck5xT2hpRmpzNm05NUovb0NOa2J3TTQv?=
+ =?utf-8?B?RGtEaExuYWk4cXUrcCtrUkZ3RWZCVStqVWxOa3ZPTWp1WDd5ZURwOGl3d25I?=
+ =?utf-8?B?M1NQcnR1c3FLQWhJaEJiWmFYUGN4eGphMEh0aTZvYW5nTWxBUXFRVlkxbDE0?=
+ =?utf-8?B?OHJLTGUwOW1Cb3BXMlV0UFhkM1hwcmgwc3YvTVdZT01Nc0lobTd0ZFhrazdL?=
+ =?utf-8?B?L0w5cklOSCtHUExTMUw4VjQ4SjNTVTBUYWdDd2kvalNITkc3QmJNZnJraWtB?=
+ =?utf-8?B?MHM4RDcvdW1pQ2Fqb3VMODFlYkFXZ05VSk1SSjZIUHU2eFJxNWJnV25MU2h1?=
+ =?utf-8?B?aXVKVThRUHVMWTluTDJvYTVpTGFrQ3E2eXNOS3p3dHdGQUNiREsvR0xMS0FJ?=
+ =?utf-8?B?TlJjNzlSTHcxTnlLM1BjV0k5MTl0Q2Z3dFgyclZMNkFoRDRMNUZabzYwZHlZ?=
+ =?utf-8?B?d1pKblljWW9Qb01tZU5NSm9TNEtDWWtrTTRCUU1LeDU2RmhWTzMvMFE3UURU?=
+ =?utf-8?B?MjZxYVBxbFlLRWdmMlQrVSt2S1ZBRkREdFdsYUEwOGhYdHhoNmxDSkhJREI2?=
+ =?utf-8?B?NytuSThDSXhxV3IrNnNLMndMM0IrQ0doYW9EN3dNM1VWOTBXaFVtY1Q3V2VJ?=
+ =?utf-8?B?SEZIZnpBVlRwSzY4ZnEyYldTOTZ2RXJneDVzN003VkZGdnQ1d1BiblJEZ3hH?=
+ =?utf-8?B?aG5kSjBQLzVWNmZpYWRxbEdlUjZYampIZTB4NFROTFplbU1PdXI0Y3pHcUN6?=
+ =?utf-8?B?NFVDb3JVVFBDVkJEK3lLUjFoU0dPcExBdXZDWDZsR0ZvMmR3SzVxdlZNYlRR?=
+ =?utf-8?B?V2xnTjh2S1NUTU1VY256RXduMGVMR3ZkZXFUMVg4Qitvd2JITFF5Rkg4aGt1?=
+ =?utf-8?B?dnJWRHRtWHUwdTFNVkdYQzB5NmZnZ3dBeHp5eFRVZG83aGttMGxocHIyNGVp?=
+ =?utf-8?B?QnBSU2ZoWFcwV1c3V2lIY0R5ZG5iVjF4YnVSVXQxMUdtVTk5Wk1yaDljLzl4?=
+ =?utf-8?B?SXRvUnhqMGY1R1gyWUR5dytNT21IZlVYY3J2RXVnd1p0YzdPSnU4RUk1NkI5?=
+ =?utf-8?B?TU94WFNjYi9hL0NwMWZUSldDZktBbkFOS0tUQzRCTnFVcDJyWkZ5M3RkZ1VT?=
+ =?utf-8?B?bWJPT3lMUTNuWk53dlNRWVI5ZWRLc0liK3dmOTdibzZtSVU0MWI2dE03b0xm?=
+ =?utf-8?B?VTJWajY5TkZBOUlrMnZkMVVuMzV2WEV5dFY1NDFmWGxBUmhiejZrNFZCVVNE?=
+ =?utf-8?B?b1EremdwWm41eStkcnV1OXpaVTdpa2tSSnlTbHFjUEJHeHVVaFE2RlhFR0tG?=
+ =?utf-8?B?UGhwMkJIWGlub1U1Sm1FM0xDOHl2d0JibHV2Uno3dWFobU1oc2J0OTlVWDRj?=
+ =?utf-8?B?UWNZME5ZWC8rQkpvSEE5UmNKQlBYak9ZdFIvbjdIYTk5K1kvSWtQdHZpWmVG?=
+ =?utf-8?Q?w0d0TfH+tcuIvLuJkrjzZWUzdVCKyOFHd9g7ToXMntUc=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60f192a5-439d-4e16-74de-08dc11754dc1
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8619ecef-59eb-472a-a06b-08dc11769b2b
 X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2024 00:44:29.6913
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2024 00:53:49.0613
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN1P287MB2616
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB2195
 
 
-On 2024/1/9 16:56, Krzysztof Kozlowski wrote:
-> On 09/01/2024 09:52, Chen Wang wrote:
->> On 2024/1/9 3:36, Krzysztof Kozlowski wrote:
->>> On 08/01/2024 08:20, Chen Wang wrote:
->>>> On 2024/1/8 15:03, Krzysztof Kozlowski wrote:
->>>>> On 08/01/2024 07:48, Chen Wang wrote:
->>>>>> From: Chen Wang <unicorn_wang@outlook.com>
->>>>>>
->>>>>> Add documentation to describe Sophgo System Controller for SG2042.
->>>>>>
->>>>>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
->>>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>> ---
->>>>>>     .../soc/sophgo/sophgo,sg2042-sysctrl.yaml     | 34 +++++++++++++++++++
->>>>>>     1 file changed, 34 insertions(+)
->>>>>>     create mode 100644 Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
->>>>>> new file mode 100644
->>>>>> index 000000000000..1ec1eaa55598
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
->>>>>> @@ -0,0 +1,34 @@
->>>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>>>>> +%YAML 1.2
->>>>>> +---
->>>>>> +$id: http://devicetree.org/schemas/soc/sophgo/sophgo,sg2042-sysctrl.yaml#
->>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>>> +
->>>>>> +title: Sophgo SG2042 SoC system controller
->>>>>> +
->>>>>> +maintainers:
->>>>>> +  - Chen Wang <unicorn_wang@outlook.com>
->>>>>> +
->>>>>> +description:
->>>>>> +  The Sophgo SG2042 SoC system controller provides register information such
->>>>>> +  as offset, mask and shift that can be used by other modules, such as clocks.
->>>>> "offset, mask and shift" is not a register information stored in
->>>>> syscons. Are you really sure, that your system controller hardware
->>>>> stores offsets of some other registers?
->>>>>
->>>>> Show as some example of such offsets, masks and shifts provided by this
->>>>> hardware.
->>>> The system control module is defined here:
->>>> https://github.com/sophgo/sophgo-doc/blob/main/SG2042/TRM/source/system-control.rst.
->>>> It contains some registers related to pll and gates.
->>> I do not see there registers providing shifts and offsets... just values.
->>>
->>>> Some other clocks registars are defined in
->>>> https://github.com/sophgo/sophgo-doc/blob/main/SG2042/TRM/source/clock.rst.
->>>>
->>>> memory-map is defined in
->>>> https://github.com/sophgo/sophgo-doc/blob/main/SG2042/TRM/source/mmap.rst
->>> Please fix the wording because it does not make sense. System controller
->>> does not provide register information. Your datasheet provides register
->>> information.
->> Could it be that what I said "that can be used by other modules, such as
-> modules as Linux modules should not be involved in this description.
->
->> clocks." may cause misunderstanding. I plan to change it to "The Sophgo
->> SG2042 SoC system controller provides register information such as
->> offset, mask and shift to configure related modules such as clock." Is
->> this better?
+On 2024/1/8 15:04, Krzysztof Kozlowski wrote:
+> On 08/01/2024 07:49, Chen Wang wrote:
+>> From: Chen Wang <unicorn_wang@outlook.com>
 >>
-> Still does not make sense. To provide "offset" means that some other
-> hardware reads sophgo module to get the value of offset. That's not the
-> case here.
-
-I'm probably starting to understand what you mean. How about changing it 
-to the following?
-
-The Sophgo system controller is a registers block, providing multiple 
-low level platform functions like chip configuration, clock control, etc.
-
+>> Add bindings for the clock generator on the SG2042 RISC-V SoC.
+>>
+>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>> ---
+>>   .../bindings/clock/sophgo,sg2042-clkgen.yaml  |  53 ++++++
+>>   .../dt-bindings/clock/sophgo,sg2042-clkgen.h  | 169 ++++++++++++++++++
+>>   2 files changed, 222 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
+>>   create mode 100644 include/dt-bindings/clock/sophgo,sg2042-clkgen.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml b/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
+>> new file mode 100644
+>> index 000000000000..f9935e66fc95
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
+>> @@ -0,0 +1,53 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/sophgo,sg2042-clkgen.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Sophgo SG2042 Clock Generator
+>> +
+>> +maintainers:
+>> +  - Chen Wang <unicorn_wang@outlook.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: sophgo,sg2042-clkgen
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  sophgo,system-ctrl:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      Phandle to SG2042 System Controller node. On SG2042, part of control
+>> +      registers of Clock Controller are defined in System controller. Clock
+>> +      driver will use this phandle to get the register map base to plus the
+>> +      offset of the registers to access them.
+> Do not describe the driver, but hardware. What registers are in
+> system-ctrl? What are their purpose? Why this hardware needs them?
+Understood, will fix the words in revision, thanks.
+>
+>
 >
 > Best regards,
 > Krzysztof
