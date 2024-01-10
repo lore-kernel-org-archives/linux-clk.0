@@ -1,101 +1,107 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3553B18D
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 09:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901333F8F4;
+	Wed, 10 Jan 2024 09:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hqvnyL/t"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3374c693f92so3098525f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 01:04:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704877478; x=1705482278; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9ENsgunoGMbZfgvfEWJ+ROzlMs04fiRcUoBPATIiU24=;
-        b=hqvnyL/tBS0TlBEYRYtcX/s2PRQstLiA5MRdZX+Iw0SYA+1MnyfsqVk5pmuLqbLq9b
-         5NQyN4LkRzJcqRUBZg/W91WVrw/d0ya6YPn2+6I2DwBCRiAU/S6KBnQ6A2bK5m980TJh
-         g/SpbEkiwobk+Wb7QEncVtZCI61Mpnpu0FKUDc6UyuwuWXytrmLRPwJ/uB2XhhukR4bb
-         hoA16KxMS4mvfHC8DSDdHW5kIVPrCB0fF5IdBIIqFT+kbrqJkhbgkWZjvdgR08X5hd8e
-         1IGhBwNTX6Zi94vcBw16P//lFnsAMO3Me6Qjlin8RHYbFT1jk8IkpcnX+Dmdc7BNSz01
-         EbdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704877478; x=1705482278;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ENsgunoGMbZfgvfEWJ+ROzlMs04fiRcUoBPATIiU24=;
-        b=fYOtPbMLLFbB1WkzWA3CnLTfFLbDf+STpUCcGPxkSVb29+r9poyL6N6OYR1eRZL5EK
-         fomLY86lWcgwGq2VpyYSShntWkMWnAuvVtnYM/bz9rqH00Rs3R/3aiR90YVxzmGfnko4
-         1O7xU8SI/Vp46ohwfkYdmKwFHgUT5Y4kiTX/3pEqqLIhHL5FA9+xEDlFqQmf/q9KfSyz
-         M9wfMpqonL1an6cqL+7eHg0VXHM9pBe/fbZwvKMILvUWKAVRIM682q7y9aQr2hc9Uqqj
-         GhNOOeKsD2f1m/5RTFs8apSBw+YzAVM8UNeGjV47xv/z5G8G3SHFb06yR84u+w3MlyBM
-         VrvQ==
-X-Gm-Message-State: AOJu0YwrkI4LT+RUO9sujGWQf50yCSsEnP58Smy31tCgocLFWeM2jhtj
-	wGwRrLgTMzOFT8/Uk2zfG6dyCz7SucGEZQ==
-X-Google-Smtp-Source: AGHT+IGmH7obDcrHPPh8+GTeUn69iyrivY7YHG42CJn+av2pD9yAeNWytG456eVVXSfxMThA2UVowA==
-X-Received: by 2002:a5d:6a01:0:b0:336:66f0:e8b8 with SMTP id m1-20020a5d6a01000000b0033666f0e8b8mr342757wru.89.1704877477728;
-        Wed, 10 Jan 2024 01:04:37 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id e8-20020a5d5008000000b00336e6014263sm4339124wrt.98.2024.01.10.01.04.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jan 2024 01:04:37 -0800 (PST)
-Message-ID: <aeee178d-f4ea-4732-98f4-fa28fcf2990f@linaro.org>
-Date: Wed, 10 Jan 2024 09:04:35 +0000
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UPEoGCz1"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40A8dZTp021783;
+	Wed, 10 Jan 2024 09:45:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=TJWOUqqOWfLSHwbrjDN1CSgQZxgpmxtxhOl651aGMzQ=; b=UP
+	EoGCz1JIcJI7najrHCxJQwR8o/m+doI/I+1jBZUEDUeH0wV/JgukuXcC+HK8hZ7P
+	9yVMeGxAl+T2YfE6Qgdc+5kkfqI5jNvJfgF+NO2w08BlghoHSfq3mxh+ct36ZW8p
+	TCbEWCPmVIfUR/xduUOG8UVT9eTIx3Cxvdst/IyApQ+0sSjk6nS9afaN31NNFeKH
+	b4UC93/oxzVG7hbrTJ1YMnBrDeI/A2QMzmYr2kFNZtPm4Sr3Cryg1UJL8Z8tDnkY
+	KSmQ24xE0lndkMFrtWw42dW+pdEzjbOrCsEIxy63wCwmVzpDDyGRSJQjzgdH/mC/
+	kRj53YjMop1hscVvf8jQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vh9vfhw4g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jan 2024 09:45:18 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 40A9jISZ023539
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jan 2024 09:45:18 GMT
+Received: from [10.217.217.69] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 10 Jan
+ 2024 01:45:12 -0800
+Message-ID: <c839d2b9-1b4b-f2a0-ff5d-9e841daec9f2@quicinc.com>
+Date: Wed, 10 Jan 2024 15:15:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/12] dt-bindings: serial: samsung: do not allow
- reg-io-width for gs101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 2/3] dt-bindings: clock: Update the gcc resets for sm8150
 Content-Language: en-US
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- peter.griffin@linaro.org, krzysztof.kozlowski+dt@linaro.org,
- gregkh@linuxfoundation.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
- conor+dt@kernel.org, andi.shyti@kernel.org, alim.akhtar@samsung.com,
- jirislaby@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com,
- cw00.choi@samsung.com, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
- andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com
-References: <20240109125814.3691033-1-tudor.ambarus@linaro.org>
- <20240109125814.3691033-4-tudor.ambarus@linaro.org>
- <5d24a5da-e4cd-4d32-ba2b-8e91cfc7dced@linaro.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <5d24a5da-e4cd-4d32-ba2b-8e91cfc7dced@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Michael
+ Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Deepak Katragadda" <dkatraga@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>, "Taniya Das" <quic_tdas@quicinc.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>
+References: <20240104-sm8150-dfs-support-v1-0-a5eebfdc1b12@quicinc.com>
+ <20240104-sm8150-dfs-support-v1-2-a5eebfdc1b12@quicinc.com>
+ <218f9822-0bbf-489e-b3ac-bb5ec6cee8d4@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <218f9822-0bbf-489e-b3ac-bb5ec6cee8d4@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bKXOcpCmGzCMjtTd2VmxKzNWt2EPMUPl
+X-Proofpoint-ORIG-GUID: bKXOcpCmGzCMjtTd2VmxKzNWt2EPMUPl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-09_01,2023-12-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 clxscore=1011 priorityscore=1501
+ impostorscore=0 adultscore=0 bulkscore=0 mlxlogscore=774 spamscore=0
+ phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2311290000 definitions=main-2401100079
 
 
-
-On 1/10/24 08:06, Krzysztof Kozlowski wrote:
-> On 09/01/2024 13:58, Tudor Ambarus wrote:
->> All gs101 serial ports are restricted to 32-bit register accesses.
->> This requirement will be inferred from the compatible. Do not allow
->> the reg-io-width property for the google,gs101-uart compatible.
+On 1/4/2024 9:13 PM, Krzysztof Kozlowski wrote:
+> On 04/01/2024 15:23, Satya Priya Kakitapalli wrote:
+>> Add all the available resets for the global clock controller
+>> on sm8150.
 >>
->> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 >> ---
->> v3: collect Peter's R-b tag
->> v2: new patch
->>
-> 
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Please split the serial patches into separate patchset and send them
-> usual way, so Greg can pick them up. GS101 was merged, thus this is not
-> initial submission anymore.
-> 
+> Subject:
+> Everything can be an update. You also miss prefix. Instead:
+> dt-bindings: clock: qcom,gcc-sm8150: Add Video camcc whatever foobar
+> reset IDs
 
-Got it, will do. Thanks.
-ta
+
+Okay, will update the subject.
+
+
+> Best regards,
+> Krzysztof
+>
