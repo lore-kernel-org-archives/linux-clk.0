@@ -1,207 +1,280 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13914B5B4;
-	Wed, 10 Jan 2024 14:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgFa3wsS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAAE3C433C7;
-	Wed, 10 Jan 2024 14:42:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704897779;
-	bh=AFSkkbHfhrMGjKTObrS4+Az4PqGEZgeRydKAgna01yk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hgFa3wsSXiUDfIW7lYT0djmbRxf2uNVnXqdkxdJHIeOrC4YLzwi9Nzq2b+zQyzF18
-	 rROYUHZrVoVjfykVIEA8HFIhh7E1gKE7b/XMr5KrXdsdOXoLgIGarIr2jc6sTan67i
-	 Ev2nnfgEnks9zWeWHaaktLClEAdPyaU/CNAe1XESVqj381sV9rqpWdOQGqWOyWXhZ3
-	 +IE2NkSFy+mh7xVC47KUBk9RZhTKGmpae+UWiX/qH5SGCyKd6ld3Y3xZWHDyZLsV1u
-	 UMiISJ9YK9o+SI/EIaLTSPw12j+230fkDPI27TXIn15rWfD5YmDLe/4BVgVZQwCE4/
-	 8bPxCcAGHadEA==
-Date: Wed, 10 Jan 2024 14:42:52 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Chen Wang <unicorn_wang@outlook.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
-	chao.wei@sophgo.com, krzysztof.kozlowski+dt@linaro.org,
-	mturquette@baylibre.com, palmer@dabbelt.com,
-	paul.walmsley@sifive.com, richardcochran@gmail.com,
-	robh+dt@kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com, guoren@kernel.org, jszhang@kernel.org,
-	inochiama@outlook.com, samuel.holland@sifive.com,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v7 2/4] dt-bindings: clock: sophgo: support SG2042
-Message-ID: <20240110-untoasted-underfed-fe81479506f6@spud>
-References: <cover.1704694903.git.unicorn_wang@outlook.com>
- <925d99d5b4ece01337cb3389aaea4b631894dd1d.1704694903.git.unicorn_wang@outlook.com>
- <f88b79c3-e44b-4136-ae56-10e1f2502e2d@linaro.org>
- <MA0P287MB2822C7A3C1DC7786708E860BFE692@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FD14C3A6;
+	Wed, 10 Jan 2024 15:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE32C2F4;
+	Wed, 10 Jan 2024 07:19:56 -0800 (PST)
+Received: from pluto (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F3933F64C;
+	Wed, 10 Jan 2024 07:19:09 -0800 (PST)
+Date: Wed, 10 Jan 2024 15:19:07 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: sudeep.holla@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ranjani.vaidyanathan@nxp.com,
+	glen.wienecke@nxp.com, nitin.garg_3@nxp.com, chuck.cannon@nxp.com,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2 1/2] firmware: arm_scmi: clock: implement get
+ permissions
+Message-ID: <ZZ61a9IUZk4YMpQM@pluto>
+References: <20231207093345.581048-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oKRhGC3CUc0pW3v5"
-Content-Disposition: inline
-In-Reply-To: <MA0P287MB2822C7A3C1DC7786708E860BFE692@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-
-
---oKRhGC3CUc0pW3v5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231207093345.581048-1-peng.fan@oss.nxp.com>
 
-Hey,
+On Thu, Dec 07, 2023 at 05:33:44PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
 
-On Wed, Jan 10, 2024 at 08:53:42AM +0800, Chen Wang wrote:
-> On 2024/1/8 15:04, Krzysztof Kozlowski wrote:
-> > On 08/01/2024 07:49, Chen Wang wrote:
-> > > From: Chen Wang <unicorn_wang@outlook.com>
-> > >=20
-> > > Add bindings for the clock generator on the SG2042 RISC-V SoC.
-> > >=20
-> > > Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> > > ---
-> > >   .../bindings/clock/sophgo,sg2042-clkgen.yaml  |  53 ++++++
-> > >   .../dt-bindings/clock/sophgo,sg2042-clkgen.h  | 169 +++++++++++++++=
-+++
-> > >   2 files changed, 222 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/clock/sophgo,s=
-g2042-clkgen.yaml
-> > >   create mode 100644 include/dt-bindings/clock/sophgo,sg2042-clkgen.h
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/clock/sophgo,sg2042-cl=
-kgen.yaml b/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.ya=
-ml
-> > > new file mode 100644
-> > > index 000000000000..f9935e66fc95
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.ya=
-ml
-> > > @@ -0,0 +1,53 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/clock/sophgo,sg2042-clkgen.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Sophgo SG2042 Clock Generator
-> > > +
-> > > +maintainers:
-> > > +  - Chen Wang <unicorn_wang@outlook.com>
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: sophgo,sg2042-clkgen
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  sophgo,system-ctrl:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > +    description:
-> > > +      Phandle to SG2042 System Controller node. On SG2042, part of c=
-ontrol
-> > > +      registers of Clock Controller are defined in System controller=
-=2E Clock
-> > > +      driver will use this phandle to get the register map base to p=
-lus the
-> > > +      offset of the registers to access them.
-> > Do not describe the driver, but hardware. What registers are in
-> > system-ctrl? What are their purpose? Why this hardware needs them?
-> Understood, will fix the words in revision, thanks.
+Hi Peng,
 
-I hope that I am not misunderstanding things, but I got a bit suspicious
-of this binding and look at the driver, and saw that there are clocks
-registered like:
+a few remarks down below, but generally LGTM.
 
-| static int sg2042_clk_register_gates(struct sg2042_clk_data *clk_data,
-| 				     const struct sg2042_gate_clock gate_clks[],
-| 				     int num_gate_clks)
-| {
-| 	struct clk_hw *hw;
-| 	const struct sg2042_gate_clock *gate;
-| 	int i, ret =3D 0;
-| 	void __iomem *reg;
-|=20
-| 	for (i =3D 0; i < num_gate_clks; i++) {
-| 		gate =3D &gate_clks[i];
-| 		if (gate->flag_sysctrl)
-| 			reg =3D clk_data->iobase_syscon + gate->offset_enable;
-| 		else
-| 			reg =3D clk_data->iobase + gate->offset_enable;
+>> Subject: Re: [PATCH V2 1/2] firmware: arm_scmi: clock: implement get permissions
 
-iobase_syscon is the base address of the system controller that this
-property points at & iobase is the base address of the clock controller
-itself.
+till now we never added a <proto>: tag just "firmware: arm_scmi:",
+capitalizing the first word. (not saying that using "clock:" is bad but
+since we never used till now...), as an example
 
-| 		hw =3D clk_hw_register_gate(NULL,
-| 					  gate->name,
-| 					  gate->parent_name,
-| 					  gate->flags,
-| 					  reg,
-| 					  gate->bit_idx,
-| 					  0,
-| 					  &sg2042_clk_lock);
+	firmware: arm_scmi: Implement Clock get permissions
 
-As far as I can tell, in this particular case, for any gate clock that
-flag_sysctrl is set, none of the registers actually lie inside the
-clkgen region, but instead are entirely contained in the sysctrl region.
 
-I think that this is because your devicetree does not correctly define
-the relationship between clocks, and these clocks are actually provided
-by the system controller block and are inputs to the clkgen block.
+> ARM SCMI Spec 3.2 introduces Clock Get Permission command. This patch
+> is to add the support. Add three bool entries to scmi_clock_info to
+> indicate the operation is forbidden or not. If the CLOCK_GET_PERMISSIONS
+> command is not supported, the three bool variables will default
+> set to false, otherwise they will be set according to the return result
+> of CLOCK_GET_PERMISSIONS.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> 
+> V2:
+>  Take Cristian's suggestion, https://lore.kernel.org/all/ZWiqqfQ73tezFmSk@pluto/
+> 
+>  drivers/firmware/arm_scmi/clock.c | 53 +++++++++++++++++++++++++++++++
+>  include/linux/scmi_protocol.h     |  4 +++
+>  2 files changed, 57 insertions(+)
+> 
+> diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+> index 98511a3aa367..0e048530bea2 100644
+> --- a/drivers/firmware/arm_scmi/clock.c
+> +++ b/drivers/firmware/arm_scmi/clock.c
+> @@ -25,8 +25,13 @@ enum scmi_clock_protocol_cmd {
+>  	CLOCK_POSSIBLE_PARENTS_GET = 0xC,
+>  	CLOCK_PARENT_SET = 0xD,
+>  	CLOCK_PARENT_GET = 0xE,
+> +	CLOCK_GET_PERMISSIONS = 0xF,
+>  };
+>  
+> +#define CLOCK_STATE_CONTROL_ALLOWED	BIT(31)
+> +#define CLOCK_PARENT_CONTROL_ALLOWED	BIT(30)
+> +#define CLOCK_RATE_CONTROL_ALLOWED	BIT(29)
+> +
+>  enum clk_state {
+>  	CLK_STATE_DISABLE,
+>  	CLK_STATE_ENABLE,
+> @@ -46,6 +51,7 @@ struct scmi_msg_resp_clock_attributes {
+>  #define SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(x)	((x) & BIT(30))
+>  #define SUPPORTS_EXTENDED_NAMES(x)		((x) & BIT(29))
+>  #define SUPPORTS_PARENT_CLOCK(x)		((x) & BIT(28))
+> +#define SUPPORTS_GET_PERMISSIONS(x)		((x) & BIT(1))
+>  	u8 name[SCMI_SHORT_NAME_MAX_SIZE];
+>  	__le32 clock_enable_latency;
+>  };
+> @@ -281,6 +287,35 @@ static int scmi_clock_possible_parents(const struct scmi_protocol_handle *ph, u3
+>  	return ret;
+>  }
+>  
+> +static int
+> +scmi_clock_get_permissions(const struct scmi_protocol_handle *ph, u32 clk_id,
+> +			   struct scmi_clock_info *clk)
+> +{
+> +	struct scmi_xfer *t;
+> +	u32 perm;
+> +	int ret;
+> +
+> +	ret = ph->xops->xfer_get_init(ph, CLOCK_GET_PERMISSIONS,
+> +				      sizeof(clk_id), sizeof(perm), &t);
+> +	if (ret)
+> +		return ret;
+> +
+> +	put_unaligned_le32(clk_id, t->tx.buf);
+> +
+> +	ret = ph->xops->do_xfer(ph, t);
+> +	if (!ret) {
+> +		perm = get_unaligned_le32(t->rx.buf);
+> +
+> +		clk->state_ctrl_forbidden = !(perm & CLOCK_STATE_CONTROL_ALLOWED);
+> +		clk->rate_ctrl_forbidden = !(perm & CLOCK_RATE_CONTROL_ALLOWED);
+> +		clk->parent_ctrl_forbidden = !(perm & CLOCK_PARENT_CONTROL_ALLOWED);
+> +	}
+> +
+> +	ph->xops->xfer_put(ph, t);
+> +
+> +	return ret;
+> +}
+> +
+>  static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
+>  				     u32 clk_id, struct scmi_clock_info *clk,
+>  				     u32 version)
+> @@ -307,6 +342,7 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
+>  		if (PROTOCOL_REV_MAJOR(version) >= 0x2)
+>  			latency = le32_to_cpu(attr->clock_enable_latency);
+>  		clk->enable_latency = latency ? : U32_MAX;
+> +		clk->attributes = attributes;
 
-| 		if (IS_ERR(hw)) {
-| 			pr_err("failed to register clock %s\n", gate->name);
-| 			ret =3D PTR_ERR(hw);
-| 			break;
-| 		}
-|=20
-| 		clk_data->onecell_data.hws[gate->id] =3D hw;
-| 	}
-|=20
-| 	/* leave unregister to outside if failed */
-| 	return ret;
-| }
+Exposing the full attributes is NOT needed anymore now you have the bools right ?
 
-I had a much briefer look at the `sg2042_pll_clock`s that make use of
-the regmap, and it doesn't seem like they "mix and match" registers
-between both blocks, and instead only have registers in the system
-controller? If so, it doesn't seem like this clkgen block should be
-providing the PLL clocks either, but instead be taking them as inputs.
+>  	}
+>  
+>  	ph->xops->xfer_put(ph, t);
+> @@ -327,6 +363,8 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
+>  			clk->rate_change_requested_notifications = true;
+>  		if (SUPPORTS_PARENT_CLOCK(attributes))
+>  			scmi_clock_possible_parents(ph, clk_id, clk);
+> +		if (SUPPORTS_GET_PERMISSIONS(attributes))
+> +			scmi_clock_get_permissions(ph, clk_id, clk);
+>  	}
+>  
+>  	return ret;
+> @@ -499,6 +537,10 @@ static int scmi_clock_rate_set(const struct scmi_protocol_handle *ph,
+>  	struct scmi_xfer *t;
+>  	struct scmi_clock_set_rate *cfg;
+>  	struct clock_info *ci = ph->get_priv(ph);
+> +	struct scmi_clock_info *clk = ci->clk + clk_id;
+> +
 
-Reading stuff like
-https://github.com/sophgo/sophgo-doc/blob/main/SG2042/TRM/source/system-con=
-trol.rst#pll_stat-offset-0x0c0
-(and onwards) makes it seem like those PLLs are fully contained within
-the system controller register space.
+This lacks a check on the provided clk_id bounds (just in case the
+calling SCMI driver misbehaves)....in other protocols we have some
+common internal helper to lookup a domain by id safely, it was still just
+not added till today in Clock since not so much needed.
 
-It seems like
-https://github.com/sophgo/sophgo-doc/blob/main/SG2042/TRM/source/clock-reg.=
-rst
-is the register map for the clkgen region? It seems like that region
-only contains gates and divider clocks, but no PLLs.
+This seems not to be the case anymore, so today I posted this trivial:
 
-Am I missing something, or is this description of the clock controllers
-on the soc incomplete?
+https://lore.kernel.org/linux-arm-kernel/20240110120916.2482603-1-cristian.marussi@arm.com/
 
-Cheers,
-Conor.
+Please rebase on this and just use it also on this patch like::
 
---oKRhGC3CUc0pW3v5
-Content-Type: application/pgp-signature; name="signature.asc"
+--->8---
+diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+index 51b21ce97cd5..01b372ac205f 100644
+--- a/drivers/firmware/arm_scmi/clock.c
++++ b/drivers/firmware/arm_scmi/clock.c
+@@ -549,7 +549,11 @@ static int scmi_clock_rate_set(const struct scmi_protocol_handle *ph,
+ 	struct scmi_xfer *t;
+ 	struct scmi_clock_set_rate *cfg;
+ 	struct clock_info *ci = ph->get_priv(ph);
+-	struct scmi_clock_info *clk = ci->clk + clk_id;
++	struct scmi_clock_info *clk;
++
++	clk = scmi_clock_domain_lookup(ci, clk_id);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
+ 
+ 	if (clk->rate_ctrl_forbidden)
+ 		return -EACCES;
+@@ -724,7 +728,11 @@ static int scmi_clock_enable(const struct scmi_protocol_handle *ph, u32 clk_id,
+ 			     bool atomic)
+ {
+ 	struct clock_info *ci = ph->get_priv(ph);
+-	struct scmi_clock_info *clk = ci->clk + clk_id;
++	struct scmi_clock_info *clk;
++
++	clk = scmi_clock_domain_lookup(ci, clk_id);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
+ 
+ 	if (clk->state_ctrl_forbidden)
+ 		return -EACCES;
+@@ -737,7 +745,11 @@ static int scmi_clock_disable(const struct scmi_protocol_handle *ph, u32 clk_id,
+ 			      bool atomic)
+ {
+ 	struct clock_info *ci = ph->get_priv(ph);
+-	struct scmi_clock_info *clk = ci->clk + clk_id;
++	struct scmi_clock_info *clk;
++
++	clk = scmi_clock_domain_lookup(ci, clk_id);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
+ 
+ 	if (clk->state_ctrl_forbidden)
+ 		return -EACCES;
+---8<-------
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZZ6s7AAKCRB4tDGHoIJi
-0jF+AP9U7Ip0sysdDHuU+lFng6/5u2ae4C0Zbk+jM2PBGR7HbAEA0T6L0+7y1+bA
-lUN9qeJRKWXmmXuVZl3nwSez1T3RUAU=
-=tbPZ
------END PGP SIGNATURE-----
+> +	if (clk->rate_ctrl_forbidden)
+> +		return -EACCES;
+>  
+>  	ret = ph->xops->xfer_get_init(ph, CLOCK_RATE_SET, sizeof(*cfg), 0, &t);
+>  	if (ret)
+> @@ -585,6 +627,9 @@ scmi_clock_set_parent(const struct scmi_protocol_handle *ph, u32 clk_id,
+>  	if (parent_id >= clk->num_parents)
+>  		return -EINVAL;
+>  
+> +	if (clk->parent_ctrl_forbidden)
+> +		return -EACCES;
+> +
+>  	ret = ph->xops->xfer_get_init(ph, CLOCK_PARENT_SET,
+>  				      sizeof(*cfg), 0, &t);
+>  	if (ret)
+> @@ -668,6 +713,10 @@ static int scmi_clock_enable(const struct scmi_protocol_handle *ph, u32 clk_id,
+>  			     bool atomic)
+>  {
+>  	struct clock_info *ci = ph->get_priv(ph);
+> +	struct scmi_clock_info *clk = ci->clk + clk_id;
 
---oKRhGC3CUc0pW3v5--
+Ditto.
+
+> +
+> +	if (clk->state_ctrl_forbidden)
+> +		return -EACCES;
+>  
+>  	return ci->clock_config_set(ph, clk_id, CLK_STATE_ENABLE,
+>  				    NULL_OEM_TYPE, 0, atomic);
+> @@ -677,6 +726,10 @@ static int scmi_clock_disable(const struct scmi_protocol_handle *ph, u32 clk_id,
+>  			      bool atomic)
+>  {
+>  	struct clock_info *ci = ph->get_priv(ph);
+> +	struct scmi_clock_info *clk = ci->clk + clk_id;
+Ditto.
+> +
+> +	if (clk->state_ctrl_forbidden)
+> +		return -EACCES;
+>  
+>  	return ci->clock_config_set(ph, clk_id, CLK_STATE_DISABLE,
+>  				    NULL_OEM_TYPE, 0, atomic);
+> diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
+> index f2f05fb42d28..ad75784b567b 100644
+> --- a/include/linux/scmi_protocol.h
+> +++ b/include/linux/scmi_protocol.h
+> @@ -47,6 +47,9 @@ struct scmi_clock_info {
+>  	bool rate_discrete;
+>  	bool rate_changed_notifications;
+>  	bool rate_change_requested_notifications;
+> +	bool state_ctrl_forbidden;
+> +	bool rate_ctrl_forbidden;
+> +	bool parent_ctrl_forbidden;
+>  	union {
+>  		struct {
+>  			int num_rates;
+> @@ -60,6 +63,7 @@ struct scmi_clock_info {
+>  	};
+>  	int num_parents;
+>  	u32 *parents;
+> +	u32 attributes;
+
+Ditto. Drop this.
+
+Thanks,
+Cristian
+
