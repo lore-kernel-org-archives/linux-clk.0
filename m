@@ -1,73 +1,89 @@
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CB34D587
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 18:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="K92IikLC"
-Received: from pop-os.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id NdmQrcFTLELO0NdmQru0ee; Wed, 10 Jan 2024 19:58:25 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1704913105;
-	bh=UZLX/89kS0mvMTTrsbJHGX+f4iKL5In/qByEVAfVrQU=;
-	h=From:To:Cc:Subject:Date;
-	b=K92IikLCz67DBvdTjNs3xcuUHpAYoUOA2V5gYXplrbCmcPqTHnMYDSmJ5g4Gw86vW
-	 LGS/AJqgFbbs+iC9pJmhgL/by6HUDNgfwlDBb/ZpKyf+fokA27n7VyQiWrmIJeXsds
-	 oqEsurz1Yt0bB30kgi45mGHcfbuwqvtaUuhihN7QrqvlpTs4yE5ql4tn41+u2Re5Lv
-	 ymH8zLrV8WL23sUI2GvJYleIpilN3c95kKipmLoFDCL/15CdQGZaRlOCiIcH1EgQl+
-	 3mTnGKNgVsTBXdwmkctWPc7rA6dusBc8FeIxkHbMoDNPtzIhQJ9le6wIwKdSYYxil+
-	 m5IxxQfB6TmmA==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 10 Jan 2024 19:58:25 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: hisilicon: hi3519: Release the correct number of gates in hi3519_clk_unregister()
-Date: Wed, 10 Jan 2024 19:58:21 +0100
-Message-Id: <c3f1877c9a0886fa35c949c8f0ef25547f284f18.1704912510.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839F64D594;
+	Wed, 10 Jan 2024 19:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skole.hr
+Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+	by mx.skole.hr (mx.skole.hr) with ESMTP id 7A2A786FA1;
+	Wed, 10 Jan 2024 20:04:05 +0100 (CET)
+From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Date: Wed, 10 Jan 2024 20:03:32 +0100
+Subject: [PATCH v8 6/9] dt-bindings: marvell: Document PXA1908 SoC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20240110-pxa1908-lkml-v8-6-fea768a59474@skole.hr>
+References: <20240110-pxa1908-lkml-v8-0-fea768a59474@skole.hr>
+In-Reply-To: <20240110-pxa1908-lkml-v8-0-fea768a59474@skole.hr>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ Haojian Zhuang <haojian.zhuang@linaro.org>, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
+ Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Kees Cook <keescook@chromium.org>, 
+ Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=890;
+ i=duje.mihanovic@skole.hr; h=from:subject:message-id;
+ bh=hQNDE8d2VNITaszqocq6Wcxo7kVXmCkyyXgEBB+XhoM=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlnuoDBhEmGm5+abaeyPMpgub9FLBfmr8K+0dTz
+ iZIfkvZ2c2JAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZZ7qAwAKCRCaEZ6wQi2W
+ 4fXzD/402VdzW/ljzZzpwPhSy0A8Xw3gevYw8HTA0PHBQUeUqOxMCkxI0m5gpAVAV5JEc6N0kDK
+ E6xe0aoYs3UEgTsgA83nK2BFxAeBzTBRGXwY48qtP+n4aTkdigsTdlQFWErZrRgw6G63aWQJ7Qd
+ DJxe+mveFJmdu/DQ4gMSsm7eVJhPtPJFu8xBdVKFGM5QxgMU+7GmnJFp5yfKTptljadkSrl3KBd
+ fLo+MnLv+7TUeVVaZet45/Iyd/DqSoYCDyyujf1yc8cr8dFLMcUV25XgMbxOHzvgDav1GM119xa
+ UMhAtNrBxb4/U3E1+XnO46kqeBHQDhi6QdoFTYgBx9bDJdfcaBdcNMdzPPVzqAp64ICvl8w4uim
+ ut0uwDx3+tmaOhCUFHaVGKY6ggliYBtjzJfPGW4dvMNZ8y4L/Rm3IUjkwTmpo3T4iqY9sRmyV4u
+ 8/9urqL97B5bsQ7nU77BGDAsj6OgRdOs2ixDi4ges7kUp8xUYZonk83dyA3wXaDemnHTBIjqdIy
+ gS8JVvyX5ix+RyqW9+DtxULOdIqRrYCeGVIyULBBnmvNZyngCT85hC34e9JrPZ55QhorKiA7mNm
+ Dz5U0xNpksEJtIX87DXSgJcR9ztXqfreUvYkEtScQ0Cahas0VV6ZEne5Sg6i2krNb3L/KozXt89
+ Q0YNjv6I6zxXe9Q==
+X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
+ fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 
-The gates are stored in 'hi3519_gate_clks', not 'hi3519_mux_clks'.
-This is also in line with how hisi_clk_register_gate() is called in the
-probe.
+Add dt binding for the Marvell PXA1908 SoC.
 
-Fixes: 224b3b262c52 ("clk: hisilicon: hi3519: add driver remove path and fix some issues")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- drivers/clk/hisilicon/clk-hi3519.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
-index b871872d9960..141b727ff60d 100644
---- a/drivers/clk/hisilicon/clk-hi3519.c
-+++ b/drivers/clk/hisilicon/clk-hi3519.c
-@@ -130,7 +130,7 @@ static void hi3519_clk_unregister(struct platform_device *pdev)
- 	of_clk_del_provider(pdev->dev.of_node);
+diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+index 4c43eaf3632e..f73bb8ec3a1a 100644
+--- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
++++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+@@ -35,6 +35,11 @@ properties:
+           - enum:
+               - dell,wyse-ariel
+           - const: marvell,mmp3
++      - description: PXA1908 based boards
++        items:
++          - enum:
++              - samsung,coreprimevelte
++          - const: marvell,pxa1908
  
- 	hisi_clk_unregister_gate(hi3519_gate_clks,
--				ARRAY_SIZE(hi3519_mux_clks),
-+				ARRAY_SIZE(hi3519_gate_clks),
- 				crg->clk_data);
- 	hisi_clk_unregister_mux(hi3519_mux_clks,
- 				ARRAY_SIZE(hi3519_mux_clks),
+ additionalProperties: true
+ 
+
 -- 
-2.34.1
+2.43.0
+
 
