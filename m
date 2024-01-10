@@ -1,49 +1,49 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB9B4F1E2
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 20:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4B44F1E7
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 21:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zm78/0Lu"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-40e4d64a431so24645755e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 12:59:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nuPRlgAS"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3368b9bbeb4so4477329f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 13:01:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704920394; x=1705525194; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704920464; x=1705525264; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JI+q1ygWucp0jEs2/K2kvo/jwjjqtn8Owxgmjhxgbus=;
-        b=Zm78/0LuXO3Fau87Cg7bh6Rkfh2m4QThkXFCc1c51TXyPTd/poik2agiqu6YfSIeHh
-         5M1/uU4pEWzyTw1U9Kd4Jq39R0keRsNBCjZ6ZOGueH+2PnnOh+0244p1w9w/33whlM1e
-         SDao2GWzcJTjClvxHBLDuv56COMAl2/O2dy1rWA1NTBXsAJ3x71MIkSCtYEHzmup3ErQ
-         HU/+BH4axtbk0doCxQfnO5t8B6d1yTFBXFKYfCcsU1ACZN31+iQKcBh2kMYyNxeK/+Ha
-         RQBkoUAcpnxclbyJFSzIp8rXknkKM0C71jrL2g0FCLefWRIEQG0U/xvoE9zljFvJSrsW
-         8g9w==
+        bh=gtGONfHAu/IEGXrUf6iu+COZeP2X33alZi+TZMyD4xc=;
+        b=nuPRlgASsjRNYPmHzLqeZQ4yjSr7atuW2mj2cHOlTxJ/nkpVlVVKtkNqd9NoBnV3uq
+         VXr7X3y64c8ClOM9RpySc1ND7jx28DQcT/GIdQX3BdJn3XJpGQ0QBMXZZXcnfWHTNsNW
+         xZOm7ABGVJl/C3sbk4MUgbTuCiASkqKJG1Yt1swoFfJF7TkItXFDBjxBoJ81mrJyiP+a
+         17imR+PB+Tz3mgx6kLhNYa4oBTRlzVJ2QgZAQpCCVnfUEKCqheJGBFgpNqo9gpVsDpj3
+         mpQGk2i3/W+/f9lDT1LCj5bnCm3/OtwtycoPbrmHhWHEiABrRf43n4KxSYcotLUG7GUN
+         dC+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704920394; x=1705525194;
+        d=1e100.net; s=20230601; t=1704920464; x=1705525264;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JI+q1ygWucp0jEs2/K2kvo/jwjjqtn8Owxgmjhxgbus=;
-        b=HmQvynmHkPIYCHXaSJConXoRoIWDzR/srfF0b0vNPr6zUAHROMHtD/faevxKoG/6M+
-         gAQpjLxz6Em6WyIqBBnlR6dl5E9Vx1cYFl5WxY57cmEb9lnhxrls2qPzrQ4XVB0XSBRs
-         Inoa6uv3fz+F+siL1NYCrVi/Sg6ahZc1rx6Sp9BbOhazZzdyWNCSSMlZFIT1T2oSStsI
-         ezG97yO/s83LYhTPUAG5jJXO3lU6kyjYYeCFOlCS0TFS1JWUYjasCIuY2kokspNx6Rb+
-         4ISLmxKwyULiCFbmNzDS8DSWt6QC1cCDsMlmkJAGET1AEejT/uwmgShUxkOM8jM9Ksd8
-         yF/g==
-X-Gm-Message-State: AOJu0YznC9x0aypW3GkQW9IHyw4h/PCUQBzgYHP+NjGzAgn43iR2ikZz
-	IzNv314RAFf0RturGxy0gRpnrOW6BQukng==
-X-Google-Smtp-Source: AGHT+IG78SOtofGPU9po9urYVVfeiUv7DQMjtQurhL8ph7WU9LQlkGnuxn/lalj5HJhOtBGIvMiVKA==
-X-Received: by 2002:a05:600c:6011:b0:40d:8dda:fb4c with SMTP id az17-20020a05600c601100b0040d8ddafb4cmr17283wmb.79.1704920393871;
-        Wed, 10 Jan 2024 12:59:53 -0800 (PST)
+        bh=gtGONfHAu/IEGXrUf6iu+COZeP2X33alZi+TZMyD4xc=;
+        b=g2ShFs23+0sx00ow6XfYUIaQ6Gzc/tBdjD39h5lU8JePt+U3n1aMG0UkOykgZTDlxE
+         y2Kp4IKSf9CHjei1NEahXqPDXiwr8tahaXhaEHR2FNloMVo4BI4ugwIS/efeqtbQiNHS
+         mOXZeifxap27dG67/UtASqnbfscDE5/yS5/qjbNc5q3WnRqIPwxvant9Ly4NqfhD0VHd
+         BKBor9/FQ9aYHpA422eyV7MzFsjiUDIw6IfMKho0ir/DiMX1HivoLNmKE0s197M6BP2s
+         ghnWlpwEgwx/aLyJO/QW7EYsMO0NEAeJuytt3lpUN1Qh5KXZTGjFqSyj6Nw2KaNVaToL
+         STSQ==
+X-Gm-Message-State: AOJu0Yx+h/3iGg+ByCXqXQc1b8HhL1tMt9YBOJgS7J734L3X4ero6Auc
+	XNu7jyBHAuHEoFhgtIS0O9FxpWbITVRvqw==
+X-Google-Smtp-Source: AGHT+IHb1OxJu8kv9/wwpgSac8HbcxGmz5FxehJvMfMa1Hl1SLTfmk5ymgdQyllHOUdADDHIdfyOXA==
+X-Received: by 2002:a5d:420e:0:b0:336:6914:4fa0 with SMTP id n14-20020a5d420e000000b0033669144fa0mr18340wrq.257.1704920463681;
+        Wed, 10 Jan 2024 13:01:03 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.223.112])
-        by smtp.gmail.com with ESMTPSA id k12-20020a5d6e8c000000b00336f43fa654sm5686931wrz.22.2024.01.10.12.59.52
+        by smtp.gmail.com with ESMTPSA id k12-20020a5d6e8c000000b00336f43fa654sm5686931wrz.22.2024.01.10.13.01.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jan 2024 12:59:53 -0800 (PST)
-Message-ID: <23fdd643-ae30-474b-93b0-fb98edeb0071@linaro.org>
-Date: Wed, 10 Jan 2024 21:59:52 +0100
+        Wed, 10 Jan 2024 13:01:02 -0800 (PST)
+Message-ID: <99eca166-7d78-4ada-ac0a-ad67f3d8eb33@linaro.org>
+Date: Wed, 10 Jan 2024 22:01:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,8 +51,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v22 7/8] arm64: dts: nuvoton: npcm8xx: replace reg with
- syscon property
+Subject: Re: [PATCH v22 3/8] arm: dts: nuvoton: npcm7xx: modify rst syscon
+ node
 Content-Language: en-US
 To: Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com,
  sboyd@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -61,7 +61,7 @@ To: Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com,
 Cc: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 References: <20240108135421.684263-1-tmaimon77@gmail.com>
- <20240108135421.684263-8-tmaimon77@gmail.com>
+ <20240108135421.684263-4-tmaimon77@gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -107,18 +107,33 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240108135421.684263-8-tmaimon77@gmail.com>
+In-Reply-To: <20240108135421.684263-4-tmaimon77@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 08/01/2024 14:54, Tomer Maimon wrote:
-> Replace reg with syscon property since the clock registers handle the
-> reset registers as well.
+> rst node name and compatible property modified since clock and reset are
+> handled in the same memory region.
 > 
 > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 > ---
+>  arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi b/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
+> index 868454ae6bde..f72c5a03d04c 100644
+> --- a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
+> +++ b/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
+> @@ -93,8 +93,8 @@ gcr: gcr@800000 {
+>  			reg = <0x800000 0x1000>;
+>  		};
+>  
+> -		rst: rst@801000 {
+> -			compatible = "nuvoton,npcm750-rst", "syscon", "simple-mfd";
+> +		clk_rst: syscon@801000 {
+> +			compatible = "nuvoton,npcm750-clk-rst", "syscon", "simple-mfd";
 
-NAK for the same reasons as previous patch.
+NAK. This breakes the users, is not justified, is not explained.
 
 Best regards,
 Krzysztof
