@@ -1,49 +1,49 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82194F1E2
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 20:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB9B4F1E2
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 20:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XrhjldG5"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-40e5c317b34so1942535e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 12:59:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zm78/0Lu"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-40e4d64a431so24645755e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 12:59:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704920380; x=1705525180; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704920394; x=1705525194; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8utmd43eIyJeOqvlyF2K0QyjFCG6Z2nBsu3GqoNhYh0=;
-        b=XrhjldG5ubCvsjE+PQmFtm4bkFA9VmSzfUYbE/Rhkw1oGqwiRaByBn/Zw9eqLgrK+H
-         DybuGJZpd4u4v/cb4cGGGPEXjRShFR+dIFiGbJEYDXICKKJ6GvtRFzOgE1LkfiQfFKLs
-         kBbhCJ6LpFBP+UdYOKolsoCbpdvVK48hulqSL5nJ+59PRV085gnSGJcv5eIeG91A/+qh
-         8fzpeS8twpZu/IgwKhRYKcB5R0did3fLrYJauOvRyzsoukXVU59ItSPEC3Ud+En4iYCi
-         EGPiCHu3MIKYVQYx2CpNhZdC9rbkMIrGX4Mt2W1hvWDoTy21desziG7h1E1TEZI2lHGi
-         g+YA==
+        bh=JI+q1ygWucp0jEs2/K2kvo/jwjjqtn8Owxgmjhxgbus=;
+        b=Zm78/0LuXO3Fau87Cg7bh6Rkfh2m4QThkXFCc1c51TXyPTd/poik2agiqu6YfSIeHh
+         5M1/uU4pEWzyTw1U9Kd4Jq39R0keRsNBCjZ6ZOGueH+2PnnOh+0244p1w9w/33whlM1e
+         SDao2GWzcJTjClvxHBLDuv56COMAl2/O2dy1rWA1NTBXsAJ3x71MIkSCtYEHzmup3ErQ
+         HU/+BH4axtbk0doCxQfnO5t8B6d1yTFBXFKYfCcsU1ACZN31+iQKcBh2kMYyNxeK/+Ha
+         RQBkoUAcpnxclbyJFSzIp8rXknkKM0C71jrL2g0FCLefWRIEQG0U/xvoE9zljFvJSrsW
+         8g9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704920380; x=1705525180;
+        d=1e100.net; s=20230601; t=1704920394; x=1705525194;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8utmd43eIyJeOqvlyF2K0QyjFCG6Z2nBsu3GqoNhYh0=;
-        b=uxcrRnJ355bpDGq7IFirdkDmCFjn/xIR6HXQPMO1zwqpOfJvKbbygvHsNyoZ2BWh9C
-         xNrokd9LT10TTFco3gFC+neIs5o2Tz8/sC0Ntkgm3TXI+GZYfSwYS0O+GqvfFF+yp5kj
-         xSRy19WZlMjqL4OAJp7glWXyVueMsdwIDQ08EpJMKscmbaYHWrRJi/KRqbcu4S9CDnDA
-         uihxsdLUagxpOeX6+zMINn18k+W12W98vDnhNUlKaWMZ3GUYnYKYU7VrP4eZ2l/iULlA
-         c/Pp5CPpUTUEkGZiTEdgTwRAWqyMlEH2uZLrDj6qVTqA8G9G/0vbZIt7UioBJYLZRu8z
-         Rl0A==
-X-Gm-Message-State: AOJu0YzbCuWnq8DHEo2aDb9/Lylu5Ut854evtGXtUUX9RmDeaGpnuEJD
-	Zr7UQobqr11eJjC1J50sxhZdign+G4wWYg==
-X-Google-Smtp-Source: AGHT+IHroDMzjrMbi1GTwdHWvJg1qsT8eOnPb1Srxqst0AguGEAi8pwFoty/gcHle7Kbsq9bwwpAUA==
-X-Received: by 2002:adf:ec0b:0:b0:337:10cc:77f2 with SMTP id x11-20020adfec0b000000b0033710cc77f2mr34265wrn.105.1704920380212;
-        Wed, 10 Jan 2024 12:59:40 -0800 (PST)
+        bh=JI+q1ygWucp0jEs2/K2kvo/jwjjqtn8Owxgmjhxgbus=;
+        b=HmQvynmHkPIYCHXaSJConXoRoIWDzR/srfF0b0vNPr6zUAHROMHtD/faevxKoG/6M+
+         gAQpjLxz6Em6WyIqBBnlR6dl5E9Vx1cYFl5WxY57cmEb9lnhxrls2qPzrQ4XVB0XSBRs
+         Inoa6uv3fz+F+siL1NYCrVi/Sg6ahZc1rx6Sp9BbOhazZzdyWNCSSMlZFIT1T2oSStsI
+         ezG97yO/s83LYhTPUAG5jJXO3lU6kyjYYeCFOlCS0TFS1JWUYjasCIuY2kokspNx6Rb+
+         4ISLmxKwyULiCFbmNzDS8DSWt6QC1cCDsMlmkJAGET1AEejT/uwmgShUxkOM8jM9Ksd8
+         yF/g==
+X-Gm-Message-State: AOJu0YznC9x0aypW3GkQW9IHyw4h/PCUQBzgYHP+NjGzAgn43iR2ikZz
+	IzNv314RAFf0RturGxy0gRpnrOW6BQukng==
+X-Google-Smtp-Source: AGHT+IG78SOtofGPU9po9urYVVfeiUv7DQMjtQurhL8ph7WU9LQlkGnuxn/lalj5HJhOtBGIvMiVKA==
+X-Received: by 2002:a05:600c:6011:b0:40d:8dda:fb4c with SMTP id az17-20020a05600c601100b0040d8ddafb4cmr17283wmb.79.1704920393871;
+        Wed, 10 Jan 2024 12:59:53 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.223.112])
-        by smtp.gmail.com with ESMTPSA id k12-20020a5d6e8c000000b00336f43fa654sm5686931wrz.22.2024.01.10.12.59.37
+        by smtp.gmail.com with ESMTPSA id k12-20020a5d6e8c000000b00336f43fa654sm5686931wrz.22.2024.01.10.12.59.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jan 2024 12:59:38 -0800 (PST)
-Message-ID: <171300da-3d49-4e1f-8969-9a454ecdd698@linaro.org>
-Date: Wed, 10 Jan 2024 21:59:37 +0100
+        Wed, 10 Jan 2024 12:59:53 -0800 (PST)
+Message-ID: <23fdd643-ae30-474b-93b0-fb98edeb0071@linaro.org>
+Date: Wed, 10 Jan 2024 21:59:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v22 6/8] dt-bindings: clock: npcm845: replace reg with
+Subject: Re: [PATCH v22 7/8] arm64: dts: nuvoton: npcm8xx: replace reg with
  syscon property
 Content-Language: en-US
 To: Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com,
@@ -61,7 +61,7 @@ To: Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com,
 Cc: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 References: <20240108135421.684263-1-tmaimon77@gmail.com>
- <20240108135421.684263-7-tmaimon77@gmail.com>
+ <20240108135421.684263-8-tmaimon77@gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -107,7 +107,7 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240108135421.684263-7-tmaimon77@gmail.com>
+In-Reply-To: <20240108135421.684263-8-tmaimon77@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
@@ -117,24 +117,8 @@ On 08/01/2024 14:54, Tomer Maimon wrote:
 > 
 > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 > ---
->  .../bindings/clock/nuvoton,npcm845-clk.yaml   | 22 +++++++++----------
->  1 file changed, 10 insertions(+), 12 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> index 0b642bfce292..c6bf05c163b4 100644
-> --- a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> @@ -18,8 +18,9 @@ properties:
->      enum:
->        - nuvoton,npcm845-clk
->  
-> -  reg:
-> -    maxItems: 1
-> +  nuvoton,sysclk:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: phandle to access clock registers.
 
-NAK. Not explained, not justified, not reasonable, breaking ABI.
+NAK for the same reasons as previous patch.
 
 Best regards,
 Krzysztof
