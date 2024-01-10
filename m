@@ -1,136 +1,114 @@
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5964347A7C;
-	Wed, 10 Jan 2024 11:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3606ad581a5so18766875ab.1;
-        Wed, 10 Jan 2024 03:31:28 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADDB47F6C
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 11:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="HCp4vY2Z"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2cd0f4f306fso47858541fa.0
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 03:59:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech.se; s=google; t=1704887985; x=1705492785; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ISdmhcRR/GVAZSppZHeKDEjXMJ9voCrSTY/WHRDPz+M=;
+        b=HCp4vY2ZbZply1USFWqt5b1iDJTqh9TcJVVGasPNOnnLkwh/B9r0B8EUOs97IU9FuH
+         Syyrp/QnIoStZWzbsfL6JXH4vsA9V5TuuHNFLqyx7XBRrjtA67E2NxWnIWzCDkRYi1a4
+         4XZteIjckrLT1p7YJnvBHSJox7xyLsd2TLVBdC8HzuRJOhx4AKFe/frNq54aa1oNPOU4
+         uJn8+oLiFt98RdODFEUzRRxdcOTktSbJsNZZ+CJJgwY7ErPI3VDNj2DlfKjzoPSOlHP5
+         HFhNiq2nVpuqPkdst6eZKP2CrTKEQwG40j+Uq7Npc+fo0uwc4/a3vWUw7DgnxWu1jKf+
+         /qUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704886287; x=1705491087;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rp53vQ2ebf1f54OIMX+oacHnmEBZZdohJKcQphr0pdo=;
-        b=rEpdbTsX+4AcHrZztMQXm/lIvZD+rvzOXMS8LYDwxJaMzEi+XDrl9c9dq+fNHkCeQK
-         vDY7sXlbMKQzxTSkZAmuNDpYxvuheK247POrSrC2/witgEa53HjeMsbmk/tdkF3TudAE
-         pWiVUCH0qXuAk1hyfbJqnKBqNOjDnWB9UCd0lTyEgk+lM6ol11QDzJpjCHiSYH/nz78b
-         rBvIu0qrFIeGBeVAQTwzscWRkmhqkwxmZj4qcnPFt50g91P2TWjJGn2CWkH5Xc9jel7K
-         k5tsEPHNOKWqjThcsQZmaydIH+sJPDAlvO3hfNsYz7JxdKaosUeijs7YCM6U73AVnWg+
-         2kCQ==
-X-Gm-Message-State: AOJu0YyHOmjVGl85PPY1OKOUpiNMRq/oTOAha3txHbN3aVqEDnJrQB5Y
-	DO4twqeLR9wV9vSzfD3rKCJsIV6i2E354Vc7
-X-Google-Smtp-Source: AGHT+IE4ykJgcq2BqiHgDY8T/mT9u8cCQfTLL2octH67MqlQMtVdHLymoA4Q65ngu5TSMaJ1EcyFXg==
-X-Received: by 2002:a05:6e02:1885:b0:360:a195:a142 with SMTP id o5-20020a056e02188500b00360a195a142mr1273026ilu.65.1704886285326;
-        Wed, 10 Jan 2024 03:31:25 -0800 (PST)
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com. [209.85.166.50])
-        by smtp.gmail.com with ESMTPSA id bz4-20020a056e02268400b003606ef496c4sm1215421ilb.63.2024.01.10.03.31.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jan 2024 03:31:25 -0800 (PST)
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7bee8f7df35so49536239f.3;
-        Wed, 10 Jan 2024 03:31:25 -0800 (PST)
-X-Received: by 2002:a81:9295:0:b0:5f0:5816:f339 with SMTP id
- j143-20020a819295000000b005f05816f339mr802434ywg.46.1704885831172; Wed, 10
- Jan 2024 03:23:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704887985; x=1705492785;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ISdmhcRR/GVAZSppZHeKDEjXMJ9voCrSTY/WHRDPz+M=;
+        b=n4M3jf1WlxqbnHpnbsCMWG4Sri6HGVxTKDpNrMw2QzFkkCc9pQU+fzbIzcWnvKuyfE
+         W5zMuiMnbTlbzDgH+77MkldZHEnAMG2p2SVZZr1otIfG38TVg/oMnlIhqf6yd3X3ORid
+         cfqh1jPXObvrSKn7EvMtPRrb1dNlApLQbYU/ekcTf+a8k3I8G53QY0V0KLhP26VbIzl2
+         9D68BQjowfbNvYVCykMz8zABbOgEHhrUzqJsYebDWfEGUbU+dj3O8rx5bvqRYr9V9Lw4
+         R1PKGStIFNvHWR7kFuZX5lF3/pAGVJJ8OiagJqpRQQLHG0L6Ldn6QZc3aUMEK2D2eeKi
+         OOug==
+X-Gm-Message-State: AOJu0YwQ/fa9uacpw6ntQ9nu8az/cG6YMPcw0Q/j3e4RM6TIDqLzdJ6d
+	QHlHkACB07ZOPjyRWaMXvMy9Pkh5gphWaQ==
+X-Google-Smtp-Source: AGHT+IGRceqNc3d0nTVh7e6+mL9Lw5I93LQLv+D4klCI5dK4DBKjF4S3gi0+1qjOna0v/0HlpNqqng==
+X-Received: by 2002:a2e:a305:0:b0:2c8:39fc:acf5 with SMTP id l5-20020a2ea305000000b002c839fcacf5mr513508lje.2.1704887984601;
+        Wed, 10 Jan 2024 03:59:44 -0800 (PST)
+Received: from localhost (h-46-59-36-113.A463.priv.bahnhof.se. [46.59.36.113])
+        by smtp.gmail.com with ESMTPSA id u1-20020a2eb801000000b002cd39846d92sm724889ljo.103.2024.01.10.03.59.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jan 2024 03:59:44 -0800 (PST)
+Date: Wed, 10 Jan 2024 12:59:43 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Cong Dang <cong.dang.xn@renesas.com>,
+	Duy Nguyen <duy.nguyen.rh@renesas.com>,
+	Hai Pham <hai.pham.ud@renesas.com>,
+	Linh Phung <linh.phung.jy@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH 01/15] dt-bindings: clock: renesas,cpg-mssr: Document
+ R-Car V4M support
+Message-ID: <20240110115943.GA1625657@ragnatech.se>
+References: <cover.1704726960.git.geert+renesas@glider.be>
+ <81f5a2b55795af06f6fd54b3d566156e91138a17.1704726960.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1704788539.git.ysato@users.sourceforge.jp>
- <c8aaf67e3fcdb7e60632c53a784691aabfc7733e.1704788539.git.ysato@users.sourceforge.jp>
- <20240109-fructose-bundle-05d01033277b@spud>
-In-Reply-To: <20240109-fructose-bundle-05d01033277b@spud>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 10 Jan 2024 12:23:37 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU1z64QHJOVd3jUsOfyuDApB1+khkUV8PvjoKbwsi327g@mail.gmail.com>
-Message-ID: <CAMuHMdU1z64QHJOVd3jUsOfyuDApB1+khkUV8PvjoKbwsi327g@mail.gmail.com>
-Subject: Re: [DO NOT MERGE v6 26/37] dt-bindings: vendor-prefixes: Add smi
-To: Conor Dooley <conor@kernel.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org, 
-	Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, 
-	Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko@sntech.de>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Chris Morgan <macromorgan@hotmail.com>, 
-	Yang Xiwen <forbidden405@foxmail.com>, Sebastian Reichel <sre@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	David Rientjes <rientjes@google.com>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <81f5a2b55795af06f6fd54b3d566156e91138a17.1704726960.git.geert+renesas@glider.be>
 
-Hi Conor,
+Hi Geert,
 
-On Tue, Jan 9, 2024 at 7:06=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
-e:
-> On Tue, Jan 09, 2024 at 05:23:23PM +0900, Yoshinori Sato wrote:
-> > Add Silicon Mortion Technology Corporation
+Thanks for your work.
 
-Motion
+On 2024-01-08 16:33:40 +0100, Geert Uytterhoeven wrote:
+> Document support for the Clock Pulse Generator (CPG) and Module Standby
+> Software Reset (MSSR) module on the Renesas R-Car V4M (R8A779H0) SoC.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> > https://www.siliconmotion.com/
-> >
-> > Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
-> > ---
-> >  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/D=
-ocumentation/devicetree/bindings/vendor-prefixes.yaml
-> > index 94ed63d9f7de..a338bdd743ab 100644
-> > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > @@ -1283,6 +1283,8 @@ patternProperties:
-> >      description: Skyworks Solutions, Inc.
-> >    "^smartlabs,.*":
-> >      description: SmartLabs LLC
-> > +  "^smi,.*":
-> > +    description: Silicon Motion Technology Corporation
->
-> How come "smi" is used for a company with this name?
-> Why is it not something like SMTC? There's probably some history here
-> that I am unaware of.
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-See Documentation/devicetree/bindings/display/sm501fb.txt
-The stock ticker is "SIMO", though.
-https://www.nasdaq.com/market-activity/stocks/simo
+> ---
+>  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> index 9c3dc6c4fa94218c..084259d30232aa68 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> @@ -50,6 +50,7 @@ properties:
+>        - renesas,r8a779a0-cpg-mssr # R-Car V3U
+>        - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+>        - renesas,r8a779g0-cpg-mssr # R-Car V4H
+> +      - renesas,r8a779h0-cpg-mssr # R-Car V4M
+>  
+>    reg:
+>      maxItems: 1
+> -- 
+> 2.34.1
+> 
+> 
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+Kind Regards,
+Niklas Söderlund
