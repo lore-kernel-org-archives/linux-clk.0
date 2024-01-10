@@ -1,171 +1,168 @@
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2037.outbound.protection.outlook.com [40.92.103.37])
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2109.outbound.protection.outlook.com [40.107.113.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA0823B1;
-	Wed, 10 Jan 2024 00:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049B2D50F;
+	Wed, 10 Jan 2024 01:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="PXDeyqxd"
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="oHwyH2Ia"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lzZ+1lPiU4ZSOS89m9PsEVAqLsEltxdn/547wAWnjXw8RaYkqxPGlw13emcrGY9bRkdE41NVIm97AIgur5QGY66ClOpr0BC8pLkXP8RVgx5DJsJDlZD7UMm7AF5OeNxIATbHvJF+HKvIltzQ+YvTdwfl8NIAj7m5jZsZY8C3cS10IwJIqbdNRDpwryAFGNogaQxGKd/lG/EE+I0jdGmaZW8fyTPYNsvOPH/qF7z5+rIn1velRBRrpfX6MVaWEsgRF8eNOKf2i6kOvWjIyZl5HPrW6nw5SzyoUBDQUWD3qyiEKyXjyCljzadV5lYkX0ZAfWafhsfdItckIQ7M1SxDZQ==
+ b=P2yO8zeajReMWNqI7CAE6EvurNj1QZEz+1LdzqEG31BcvAyk7t8i9UdBZ6GtQQtoO40enRghBkgUdlBAUHINT6j4Bda1ii8vwYWVQw9+j2UGQQ0nqngjkhnkgPMQah/FX/aHxo2IYIXsQeRYGah+fM9LscF0UQFfDC/ZSegyFVuiZSl5DzMZLYsG9WcYtq5PWEw6x62LVwSfNzk9MSkJvaX4nLfbtid2hLOE/oO4Mwpyn92ACdAr+wNqhZ/YS8jWLx5ODytmewT73bPaBgRXrLK144Qobxwjdttx5SZ069HPk3Dzq1JUN3vyn352HKgNe29fT3XDoALG0oT6oolwzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TNuELUNym48UJ072ZAZ61tHoFZZCQ77oowsfdKiNtsk=;
- b=JSVCHgd7evXMwZGP0xG6FCd2J/IXcGGLKJDl19WEtHUYeyu5jfaryR6Ui+5xLdKPJtpyj5nweCaIu9n1AiReTMRZsHL9LBmLlb/eGeO3iDKe8g2UWKkSQgKj6Gb4auuH/3kZsJASOp2Dv6wOKS3dxsQC6t7j3q420Gw8noamePrMBcIOxX5t+wXYHRU/PcjNyA9zbdBLbNRo8COjk6bo/LHuMeuPt1XvBjE4MUapQL66QM8fE5LO0ca3lb8tc4HIF3ixsrzFiHztm4Tln+PRBg9WT3zYothbptEcftOvNkLUk7GzgBdPcqvl7BQe/RMEPaSL7qSlKpVXgyEF5htfiQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ bh=Fdffg3S0vHldXFHnLfD+5g9CpW9xZQgN1Coew7qGlm8=;
+ b=Kf6Xv2hiZnkR3zEBTE/x9Motiud8Iv29Lk00rKUWoTX0D+x/r3wri9LCee1AHdHB57cJ+En1lp9+hJG91y+0xoU6916Pm6PhtB8yCF2cfS7P5VvNhJwpK2dKEcsNXwseYIptlEE2FglN2OSqEFuPlZqKBMXWnIaVO2+kYZJ+5moeXnaeUh4CL4rK/TtPCc0LnETyWTnxFLnpuPlljiZtt76ovifmrMcr2q2J07ZIuPCIu1h96Wy9SEN91H5kzSf+dwpLF20BJqmj5OkuGiH5XSuKjZ+hnwS4m1UBG+8tMV89kkpGLZoZZJP/nTB6JropOjUu2+v7ot06WHs3v+OX2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TNuELUNym48UJ072ZAZ61tHoFZZCQ77oowsfdKiNtsk=;
- b=PXDeyqxdeUPYxhaLIPSgFxCNrhVDeMOIFsO48zqpRTFULVhyGe68ypRjO9eSyQE6OsK7iSgVtPtN+Z0kZ64h+b/AQCFAG7/gGL94YEhPb8IsYjS9ccQhxpFwodq0bidyITtPSYZ9x2hmCAEb+vQO5ZDhpAIKCQJcoX/UHS7Js1TO75z9opPtuDCBYxtEmcpzt8X9fz3mFGl+10BdBneDa0e2vncft8jSH7YahY5LcV08P5qesLyhlZTRuNGXmsZb6oe1gfhwun6hcS6Xjevqdd/QUqDBLG10rae5J5GCJjeh6wKWRLewFpJh5WWo7J7RXPDmCdYpldmHl+OQ+tUjYA==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN0P287MB2195.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1c0::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.23; Wed, 10 Jan
- 2024 00:53:49 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::6e80:69e1:f2e7:d70d]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::6e80:69e1:f2e7:d70d%3]) with mapi id 15.20.7181.015; Wed, 10 Jan 2024
- 00:53:49 +0000
-Message-ID:
- <MA0P287MB2822C7A3C1DC7786708E860BFE692@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Wed, 10 Jan 2024 08:53:42 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/4] dt-bindings: clock: sophgo: support SG2042
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu, chao.wei@sophgo.com,
- conor@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
- richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, guoren@kernel.org,
- jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
-Cc: Conor Dooley <conor.dooley@microchip.com>
-References: <cover.1704694903.git.unicorn_wang@outlook.com>
- <925d99d5b4ece01337cb3389aaea4b631894dd1d.1704694903.git.unicorn_wang@outlook.com>
- <f88b79c3-e44b-4136-ae56-10e1f2502e2d@linaro.org>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <f88b79c3-e44b-4136-ae56-10e1f2502e2d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [o5q9qnyUVBjD/JGz7KIBvW7mvlmTcjZv]
-X-ClientProxiedBy: TYCPR01CA0181.jpnprd01.prod.outlook.com
- (2603:1096:400:2b0::10) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <49375060-3dde-4e64-9aa5-912e1b343d3f@outlook.com>
+ bh=Fdffg3S0vHldXFHnLfD+5g9CpW9xZQgN1Coew7qGlm8=;
+ b=oHwyH2IaTQzBuTPyMw0zwQSeu9of/c1Gx9FNhfZ6UMy2mIk0/tAtp4rgLHrrJqcZNODxpeJ8FjIePFa9tRsYPXyJcRQLh9jDEzP94rarDNda1cNHTG2uI2V1a0VDwGe+0CCLJOLPqMbpC/+oICHaRiuDPBzQ5+Ngg6PtraVjgss=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by OS3PR01MB8442.jpnprd01.prod.outlook.com
+ (2603:1096:604:195::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.17; Wed, 10 Jan
+ 2024 01:14:13 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::91d:1bfa:edc4:1c5b]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::91d:1bfa:edc4:1c5b%7]) with mapi id 15.20.7181.015; Wed, 10 Jan 2024
+ 01:14:13 +0000
+Message-ID: <87edeqgfbu.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Frank Rowand <frowand.list@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Aymeric Aillet <aymeric.aillet@iot.bzh>, Yusuke Goda <yusuke.goda.sx@renesas.com> 
+Subject: [PATCH v5 resend 0/4] drivers: clk: renesas: ignore all clocks which are assigned to non-Linux system
+User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 10 Jan 2024 01:14:13 +0000
+X-ClientProxiedBy: TYCP301CA0044.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:380::6) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN0P287MB2195:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8619ecef-59eb-472a-a06b-08dc11769b2b
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OS3PR01MB8442:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2c25664d-255c-48fa-4668-08dc11797537
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	vsAvI6Ql+jiCmn63i6r82kH8QiLyu7V3d2bxyKHUIM4gTREFZ2Qbb4w+zzEZ0Y/3PsCzeC5udkjnZq/O5KouxBhFn2O+hq1y7/PVyRSeJ3VNMtNhj072KGpkJ4VOZBI0Sg0cyk+zWQxWBwnwd8vmwe6quxx8y0IXykNpI7sTEkK8m5Kpn48+G1LA2cQ2UBr1n3w+V95LvqfkQdTVBZjCPMJaixW3wbShe7KOp5AtfBjUtcYGkA0Y15d+mB8QLhnMfSOiAgMn11MuOTMAaCSvR1mtkgJl+jPZPMsR4YlBniCfJDgvTRLmv0HQvM7vz2dJAH0Jv93GnIiNfFXVRKEptHXAJp81G5nztxOgMSEx5dTzBDP4isLHHoQ9mkgpp+GzoSSuWpBFlMLciB7RSJDEOQLjFkdMJUoGQucs5jL+9Eikqa827M3UZB6K/dFwIXswyBvhXZ479jAG8BiYBv24fovyrMjh1xUDU8XxO1ZWXx2f+yV7lxs2cCKn1YXmH3ewTVfBbG6Fr16hfRXEZTdnKWJxDndFu3LsvsatHg1MUW5czUrahhMbFvXvMZsM9JCLngtNlKy8MSPyvvw6SJf+EXOnvM1+wM2PKmhgkKARklM=
+	qnHNv1Tz3BaEfmA7x9eCqTB0a4C1rwohbzgDWgKG69Kq0bsXysJL031hIAGB2tI74581l6kdgwTetf24mDwlOB6GMZw2HrO8ILRyCHGFWubFPCEBQuH0pFv4fDRo3lPE8kQTGjLs8C90oujk3KN1wO9xJrPNZUGvYkHzlEZIe5291fBKjd1Z3uyq7DP1Mj4wrbHfG/O3fuEVa/TOmNdb1HQINDrkmrEBVHqnRaVUZwTyNZXt8g1T3h7OK3UL66ZUMo1NLwlBjzaMZOTw8nrEEJ/kzsXYvKaq2NPg5c1hk4xrK/ibwtTs0kTGzINJy6dv+klaHGyQyCPxuaAMs8mKPzFJedyizUE5D0o+rTOd7XMJ542+CSckDzUdQZjit+agiG6+x14bG2nhAIeiA9wrsFnVgSX/tFUz0a83yh8ySNzQqtOwWI/iyWeLXpdonZo2USOuWgq7Pfu3qvZRmc8vFV+AKDr9otZhvb1lFaJDAV29SkmGm3tNR3kzwoGOL3PVdiiE+A6ZO7nxLpSN4VRkNPxCdV9WLvbQPriHkMVNz/alS3hsNNnqNeDmeULaDCVELmBUFPTxAVoTsXVfjIK1paTjs2jU5ZkV9KNLT/lttwI=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(396003)(346002)(366004)(376002)(136003)(230922051799003)(64100799003)(451199024)(1800799012)(186009)(38100700002)(478600001)(6486002)(83380400001)(966005)(54906003)(8936002)(8676002)(66556008)(66476007)(4326008)(110136005)(316002)(66946007)(36756003)(52116002)(107886003)(2616005)(26005)(6512007)(86362001)(6506007)(2906002)(38350700005)(5660300002)(7416002)(41300700001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VkhTZzlmNXZvWkhRR2p4VjhPSE1KcEVZYlBJTHo3VkQzWnp5NlBwdDRBR0FG?=
- =?utf-8?B?aWZBLytZaE1hU0dINHNLcUZoZzV4UzE0OUhyM1BYamU3ZFFkRkMwZXdJcFl4?=
- =?utf-8?B?QjZPQ01uL0VxV1JLMERDU1JRTUREWjBNdHNvbWxNZHhWMkI2UHFKNzEvUTRo?=
- =?utf-8?B?K0Y4S3VIUHBZWE50VFQrRjlUYWNjck5xT2hpRmpzNm05NUovb0NOa2J3TTQv?=
- =?utf-8?B?RGtEaExuYWk4cXUrcCtrUkZ3RWZCVStqVWxOa3ZPTWp1WDd5ZURwOGl3d25I?=
- =?utf-8?B?M1NQcnR1c3FLQWhJaEJiWmFYUGN4eGphMEh0aTZvYW5nTWxBUXFRVlkxbDE0?=
- =?utf-8?B?OHJLTGUwOW1Cb3BXMlV0UFhkM1hwcmgwc3YvTVdZT01Nc0lobTd0ZFhrazdL?=
- =?utf-8?B?L0w5cklOSCtHUExTMUw4VjQ4SjNTVTBUYWdDd2kvalNITkc3QmJNZnJraWtB?=
- =?utf-8?B?MHM4RDcvdW1pQ2Fqb3VMODFlYkFXZ05VSk1SSjZIUHU2eFJxNWJnV25MU2h1?=
- =?utf-8?B?aXVKVThRUHVMWTluTDJvYTVpTGFrQ3E2eXNOS3p3dHdGQUNiREsvR0xMS0FJ?=
- =?utf-8?B?TlJjNzlSTHcxTnlLM1BjV0k5MTl0Q2Z3dFgyclZMNkFoRDRMNUZabzYwZHlZ?=
- =?utf-8?B?d1pKblljWW9Qb01tZU5NSm9TNEtDWWtrTTRCUU1LeDU2RmhWTzMvMFE3UURU?=
- =?utf-8?B?MjZxYVBxbFlLRWdmMlQrVSt2S1ZBRkREdFdsYUEwOGhYdHhoNmxDSkhJREI2?=
- =?utf-8?B?NytuSThDSXhxV3IrNnNLMndMM0IrQ0doYW9EN3dNM1VWOTBXaFVtY1Q3V2VJ?=
- =?utf-8?B?SEZIZnpBVlRwSzY4ZnEyYldTOTZ2RXJneDVzN003VkZGdnQ1d1BiblJEZ3hH?=
- =?utf-8?B?aG5kSjBQLzVWNmZpYWRxbEdlUjZYampIZTB4NFROTFplbU1PdXI0Y3pHcUN6?=
- =?utf-8?B?NFVDb3JVVFBDVkJEK3lLUjFoU0dPcExBdXZDWDZsR0ZvMmR3SzVxdlZNYlRR?=
- =?utf-8?B?V2xnTjh2S1NUTU1VY256RXduMGVMR3ZkZXFUMVg4Qitvd2JITFF5Rkg4aGt1?=
- =?utf-8?B?dnJWRHRtWHUwdTFNVkdYQzB5NmZnZ3dBeHp5eFRVZG83aGttMGxocHIyNGVp?=
- =?utf-8?B?QnBSU2ZoWFcwV1c3V2lIY0R5ZG5iVjF4YnVSVXQxMUdtVTk5Wk1yaDljLzl4?=
- =?utf-8?B?SXRvUnhqMGY1R1gyWUR5dytNT21IZlVYY3J2RXVnd1p0YzdPSnU4RUk1NkI5?=
- =?utf-8?B?TU94WFNjYi9hL0NwMWZUSldDZktBbkFOS0tUQzRCTnFVcDJyWkZ5M3RkZ1VT?=
- =?utf-8?B?bWJPT3lMUTNuWk53dlNRWVI5ZWRLc0liK3dmOTdibzZtSVU0MWI2dE03b0xm?=
- =?utf-8?B?VTJWajY5TkZBOUlrMnZkMVVuMzV2WEV5dFY1NDFmWGxBUmhiejZrNFZCVVNE?=
- =?utf-8?B?b1EremdwWm41eStkcnV1OXpaVTdpa2tSSnlTbHFjUEJHeHVVaFE2RlhFR0tG?=
- =?utf-8?B?UGhwMkJIWGlub1U1Sm1FM0xDOHl2d0JibHV2Uno3dWFobU1oc2J0OTlVWDRj?=
- =?utf-8?B?UWNZME5ZWC8rQkpvSEE5UmNKQlBYak9ZdFIvbjdIYTk5K1kvSWtQdHZpWmVG?=
- =?utf-8?Q?w0d0TfH+tcuIvLuJkrjzZWUzdVCKyOFHd9g7ToXMntUc=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8619ecef-59eb-472a-a06b-08dc11769b2b
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+	=?us-ascii?Q?phBA+qF72W1AECyrn4a4SCI9I6LGzI3w95apB8joytCdkMbPHbE9chW7TzbC?=
+ =?us-ascii?Q?a/lz8CVzX5rtYG22wV46ENuzCvRqvfpC+iX4vKfrbZQGahzaY2YFh6ViFePR?=
+ =?us-ascii?Q?an9v5Hwo0Ugw+jHhWhTBEbokaXz2ag+74prfvni6BguNWAvKaFEJp6LxccGb?=
+ =?us-ascii?Q?R3lFLyS7WEKjOwryblnovnQMvKeSFbqzcrXLC4PPDO+P3H0VK6O8UNxgRPHq?=
+ =?us-ascii?Q?1CEDk8MN+YBDVARENydsrzCDJo0dwvigxUcZ4Cs1W4hB7Br94Y0lRgvz0n6J?=
+ =?us-ascii?Q?Lnu7jCBzNtsalAcY7eZ5WAysS/ZUPqhWqyabOWo6uYES6lSaEg22RU0Tqs0Q?=
+ =?us-ascii?Q?usRIhud4YtBf2EV7G+T9vR+/Uee+GQPWKjJh6qft/yknMHymJV1KYCdTTdnI?=
+ =?us-ascii?Q?b1RSktDFmt3ORJYqJeCg6oJ8O/BChd10ln1AGHAxFNoxiWA1DcyQuDIGrRYw?=
+ =?us-ascii?Q?dxz9nIPbrIAB7xSne4WYVBkgTVR+xg9/RtG9XqF5JvIZ1Bcc/bN6AkZEhljv?=
+ =?us-ascii?Q?vKZwd1I+5kefnF7G6ZGtHKjVsGo3ll+7qwedupQeHSxaXyqkpZU5XvvE3Mna?=
+ =?us-ascii?Q?UBoYUHK1w5OvWP4LQQLe6h9xHWfpie56R8JK99DQotdVwlaYl0bGIvT/z8Sx?=
+ =?us-ascii?Q?fKgBcsAyOkGo8VKoOLEyIxSb4WPFfY1DBnLaS6kYDAr7M47gNWzBEGMi5O3t?=
+ =?us-ascii?Q?bnwMmAXlhPZp21ta7B4S/AwhCVCG4rxymE64QoGKOd9dSBZvODKxm5ykBE+L?=
+ =?us-ascii?Q?DE2M+XpON+kSIB/K+JOn9FBUJl3t7PY/ECSB3VperAAj7aEavGbdktjlJy3E?=
+ =?us-ascii?Q?QXfl9S5wKeQ69rbA0ojkB8y5I0/ax9x10J/3Tu7vS0d+jgCyhxiNAicXF4z9?=
+ =?us-ascii?Q?nxEq4bF5MPLPLCb217c9KxVjxTwEWlLiAXTCPnpvLql1Gz52QtN/qOqKDzg2?=
+ =?us-ascii?Q?K/9yRqh/ErNcURppMxE/00bW7IIZXoZ7IfAVK4u+vtshcDU+uonVQxgNaeJf?=
+ =?us-ascii?Q?tOz+/6VxNnkAMP6YlO7Pv6o0DQUtbRIMnHiCtbgpNYrP2vtcHi2s/hDhKAhz?=
+ =?us-ascii?Q?v9g5mUzIN6JP96DghJoSw553FFRUJ8uNxdcZJtNxnGa3nJH3D4cYWN8G9Ck8?=
+ =?us-ascii?Q?jIcfGjG1LI2EIIfPq1AVpQKdaYzcp52vcUaQ7cRhEW0QD7dwytS1BgFdVX8p?=
+ =?us-ascii?Q?bBqq6jXkl1mbOx6oKHj1KlBzVXzEQuVyAHtFN4mbbwK344QuICJqAIQxbCqQ?=
+ =?us-ascii?Q?mO+sZnKN52KWUlAl7Kn5GBbsnhiUOwgua8lxSfaU/m+MdxHo3wDWf60YzmQv?=
+ =?us-ascii?Q?IgqYisEbplWE3wmnJ6S2rZJL9Bo7PXHQ44iVBFvwuDnKYzvnxX9wkH+x7nCh?=
+ =?us-ascii?Q?xdXjIR06YISbeAsjSHf3e1RwTBHZwqsYuhiHDrN4d5Y8Rj2Oycz02nfld3mM?=
+ =?us-ascii?Q?j6Jwpc6y/7dc0GdulBCv7uDNR6oRa3Rv5EvyDJ68h4GvXkhJAXjB9qAiPmoA?=
+ =?us-ascii?Q?UEcPHZTQcc8xkrxvZRrYQYz9PTFeJIzC4F0og+8GEfjw2z/n3n2lz7sLeO7/?=
+ =?us-ascii?Q?RPrcgYlCcTmV7RpLkMEbP/MF+ow9j/XoX44aWo/OyCk9ZArjj77lgSAYl/kn?=
+ =?us-ascii?Q?tcUH/mfWHLMiNp0BpcpAKD4=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c25664d-255c-48fa-4668-08dc11797537
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2024 00:53:49.0613
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2024 01:14:13.6202
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB2195
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Igb3brg+bSVUGpbXE5nxRQ2iIiF075fXUsbjA/SmFBuafKwIhcHNQ4JmQHRdACrc7wcwCEngA3fbKJJLxR/lmjEs+LpoJBqVuwCiUuySngABucnm3NObhwpiC5pQKJgr
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8442
 
 
-On 2024/1/8 15:04, Krzysztof Kozlowski wrote:
-> On 08/01/2024 07:49, Chen Wang wrote:
->> From: Chen Wang <unicorn_wang@outlook.com>
->>
->> Add bindings for the clock generator on the SG2042 RISC-V SoC.
->>
->> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
->> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->> ---
->>   .../bindings/clock/sophgo,sg2042-clkgen.yaml  |  53 ++++++
->>   .../dt-bindings/clock/sophgo,sg2042-clkgen.h  | 169 ++++++++++++++++++
->>   2 files changed, 222 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
->>   create mode 100644 include/dt-bindings/clock/sophgo,sg2042-clkgen.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml b/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
->> new file mode 100644
->> index 000000000000..f9935e66fc95
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
->> @@ -0,0 +1,53 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/sophgo,sg2042-clkgen.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Sophgo SG2042 Clock Generator
->> +
->> +maintainers:
->> +  - Chen Wang <unicorn_wang@outlook.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: sophgo,sg2042-clkgen
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  sophgo,system-ctrl:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      Phandle to SG2042 System Controller node. On SG2042, part of control
->> +      registers of Clock Controller are defined in System controller. Clock
->> +      driver will use this phandle to get the register map base to plus the
->> +      offset of the registers to access them.
-> Do not describe the driver, but hardware. What registers are in
-> system-ctrl? What are their purpose? Why this hardware needs them?
-Understood, will fix the words in revision, thanks.
->
->
->
-> Best regards,
-> Krzysztof
->
+Hi Rob, Geert
+Cc Aymeric, Goda-san
+
+This is v5 resend of ignoring non Linux system assinged device.
+
+Some board might use Linux and another OS in the same time. In such
+case, current Linux will stop necessary module clock when booting
+which is not used on Linux side, but is used on another OS side.
+
+To avoid such situation, this patch-set try to find status = "reserved"
+devices, and add CLK_IGNORE_UNUSED flag to its clock.
+
+Table 2.4: Values for status property
+https://github.com/devicetree-org/devicetree-specification/releases/download/v0.4/devicetree-specification-v0.4.pdf
+
+"reserved"
+	Indicates that the device is operational, but should not be
+	used. Typically this is used for devices that are controlled
+	by another software component, such as platform firmware.
+
+[1/4] - [3/4] : expand existing function for "reserved"
+[4/4]         : adjust to "reserved" device on Renesas CPG
+
+v5 resend
+	- add Acked-by from Rob
+
+v4 -> v5
+	- typo fix s/assinged/assigned/
+	- separate error check on cpg_mssr_reserved_init()
+	- care it.node on cpg_mssr_reserved_init() error
+	- care of_clk_del_provider()
+	- rename label "reserve_err" -> "reserve_exit"
+
+v3 -> v4
+	- add Reviewed-by from Geert
+	- Tidyup many English
+	- use of_for_each_phandle() instead of while(!of_parse_phandle_with_args())
+	- move cpg_mssr_reserved_init() into cpg_mssr_common_init()
+
+v2 -> v3
+	- "__of_get_next_status_child()" -> "of_get_next_status_child()"
+	- add Reviewed-by from Rob
+
+v1 -> v2
+	- remove "default_ret" from __of_device_is_status()
+	- add new parameter explanation on cpg_mssr_priv
+
+Kuninori Morimoto (4):
+  of: add __of_device_is_status() and makes more generic status check
+  of: add of_get_next_status_child() and makes more generic of_get_next
+  of: add for_each_reserved_child_of_node()
+  drivers: clk: renesas: ignore all clocks which are assigned to non-Linux system
+
+ drivers/clk/renesas/renesas-cpg-mssr.c | 111 +++++++++++++++++++++++--
+ drivers/of/base.c                      | 111 ++++++++++++++++++-------
+ include/linux/of.h                     |  11 +++
+ 3 files changed, 196 insertions(+), 37 deletions(-)
+
+-- 
+2.25.1
+
