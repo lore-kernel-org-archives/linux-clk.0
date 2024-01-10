@@ -1,50 +1,49 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BF638DE0
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 07:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FEB3D968
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 07:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q6sF3G8U"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40e43e489e4so42629135e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 09 Jan 2024 23:19:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NhPCxOn4"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a28ee72913aso837967966b.1
+        for <linux-clk@vger.kernel.org>; Tue, 09 Jan 2024 23:24:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704871172; x=1705475972; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=u4hM6n1Tji6UXY28XNcMRm8koasqLSM706A4viv/sjY=;
-        b=q6sF3G8UCxwbcG9qGRIEb4TeFwbM0jfjrxh/R1IOHgG/gvFy0oN35sauwSJpO5KXHX
-         ezLXXSuZMg47MSfUZoXXNTY17MSkHcie07IjIsajmYopEWwkutzfKo6uEDRfeJM8BTPf
-         tzsq2YQJsQeoOIgZum4GYpjoLL2/sBlUmgFJqTpUDvHctG4cQpBiVwMWjrYxpZcF7akx
-         yZuICbUmTnaoYqbGVX4TAskgPL2U5IBKDxCJYD0nJlMMz+h9IGScfn0fiEY34/2KqNDG
-         hTA+0CRI9EGLWf+PjlTir7W0oZaLxhP60imVlrQqvD87lQ38r8CCpIc3CbCkM5JLDBPA
-         83tQ==
+        d=linaro.org; s=google; t=1704871460; x=1705476260; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Azmp4KYfdL3dOyr5tehq9G4ZZFHnH/CcRj4pQ5xag0A=;
+        b=NhPCxOn4BS6id78e+bjmeqbUXcjXPsK6QqFPeMp954JI7pFXs6qtfZ6nM5RreyN1xx
+         KUCE/3VsxKdAd9MwZLecl6Lch/Fkp31QncQj3+l7hD6dwp9MuBc+k8VyOmWv3vC0kvcq
+         B3GgoDgfFOhK3Zywp0KStLGpTuvGZ0gKOZUFEeko+eSq/zn5rDiau6e9U3FRlBMsUx74
+         b3OdBOHc34SE2UoSI131IiGgBl4R4un+IOW8Cq1iSWsPfh4mlim/NUV1sqOOUzUMINWv
+         Vahr7pzkFXpgm8cJmDyHttqnXRWRUHePuHULyfoAPdoYxLjwQwO10fzp4khIUVB0d5zE
+         tKoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704871172; x=1705475972;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u4hM6n1Tji6UXY28XNcMRm8koasqLSM706A4viv/sjY=;
-        b=Au12YyqK9xMXedcVk2laPJHFvxxOBxjNPwtTeEyl1KwYYBUq2b16I3LcTCoS52dtr+
-         bfTt5VavBkLMiMz9UWtTn3ahdbsXyp2RIEJg9GteL7gSWyXoJKOCqosc97KlzfAShtXz
-         Bhwf1q2rDw1FIj7jpPizKXS9HNOaAp2G+X999nIpXOqVv4Zagup/p79va2az63DZfjtL
-         26L7jKwo53ris0Wj7yUT0w5VwTIzurO7dGBEmXW9XkPwcfuBKAFiMA9d3uaVOSlRCD1y
-         0b7iE2Ahk/tZ+dcDtixl153hn1oadVN1vGiErPJiK7jFGpwyjh0KzQpQGGiFxZmsH2/8
-         UIcQ==
-X-Gm-Message-State: AOJu0YzzekeGal3PmHfhtSpjbCx3b/AHPt1XVbbU6ZKWlvIGgTEf853G
-	V2SpDnEYoDgijFIUzg3oDHdd53oy2pa+GA==
-X-Google-Smtp-Source: AGHT+IEjGTQoJbPpHPZtdbQppWgxlfoWVb9PU9Tm0reAhz6z1OUmwMvSKgJYzAU78HRY47W3+jHpTg==
-X-Received: by 2002:a05:600c:1548:b0:40e:36ba:e571 with SMTP id f8-20020a05600c154800b0040e36bae571mr290225wmg.6.1704871171869;
-        Tue, 09 Jan 2024 23:19:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704871460; x=1705476260;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Azmp4KYfdL3dOyr5tehq9G4ZZFHnH/CcRj4pQ5xag0A=;
+        b=Lr+2vb9x+mq7mO5KlB12jQ2o3m69KNaVvqM1maqxDicT8Ac2N4tzqf2GN9hgAkc+Ut
+         4LIWJvd0WzqRBM0HzodxUPHZSSFziJZzo58NDCcmgWglmvdaOjjnfc3jfmu8jtQo35cX
+         ofYhckg+VA0blzat9Guz7fRE4uMBERVof/8FYDuE6lAzw8oFKrRqi/rfhRQzbNrjNB7m
+         10mvqUVKqzQ1xZjidvf+JYvjPQYQeYbEBYMQCdnCh9SzCVtcHdZBPDsweBmbwj4gQi6f
+         uAFzB1+Mtvdla5OJXnw4EuDsGD8Uv4z47Q8N+0ZGqZmy2fzNnldr0RGSnd06htVRyS/a
+         8jnw==
+X-Gm-Message-State: AOJu0Yy+ytb5bQsCIAZ3spQdxNfmmykeeDQFwpQgjAPBRrdmT35jYY0r
+	Ahge/rckzDkPkiwOgbmF7ZU/wdvlT64NaQ==
+X-Google-Smtp-Source: AGHT+IFkVQyE5+aFuxGwgRFAAjNGnDl/rHG5MuVqbRusqX4yFBREGEWzFohuKpqGHIN4f7vgEZ4+aA==
+X-Received: by 2002:a17:907:77c1:b0:a2a:19eb:9144 with SMTP id kz1-20020a17090777c100b00a2a19eb9144mr2067875ejc.1.1704871460370;
+        Tue, 09 Jan 2024 23:24:20 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.223.112])
-        by smtp.gmail.com with ESMTPSA id fa24-20020a05600c519800b0040e490cb666sm1083553wmb.12.2024.01.09.23.19.28
+        by smtp.gmail.com with ESMTPSA id p11-20020a170906140b00b00a26b3f29f3dsm1801270ejc.43.2024.01.09.23.24.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jan 2024 23:19:31 -0800 (PST)
-Message-ID: <8cae92cf-ac7f-4e73-b28b-ee543a9064d9@linaro.org>
-Date: Wed, 10 Jan 2024 08:19:27 +0100
+        Tue, 09 Jan 2024 23:24:19 -0800 (PST)
+Message-ID: <36531917-7319-40d5-a5d9-1b5977be7849@linaro.org>
+Date: Wed, 10 Jan 2024 08:24:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,55 +51,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [DO NOT MERGE v6 27/37] dt-bindings: ata: ata-generic: Add new
- targets
-To: Damien Le Moal <dlemoal@kernel.org>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Thomas Gleixner <tglx@linutronix.de>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
- Heiko Stuebner <heiko@sntech.de>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Chris Morgan <macromorgan@hotmail.com>, Yang Xiwen
- <forbidden405@foxmail.com>, Sebastian Reichel <sre@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
- Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- David Rientjes <rientjes@google.com>, Baoquan He <bhe@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck
- <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>,
- Azeem Shaikh <azeemshaikh38@gmail.com>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Max Filippov <jcmvbkbc@gmail.com>, Palmer Dabbelt <palmer@rivosinc.com>,
- Bin Meng <bmeng@tinylab.org>, Jonathan Corbet <corbet@lwn.net>,
- Jacky Huang <ychuang3@nuvoton.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>,
- Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-fbdev@vger.kernel.org
-References: <cover.1704788539.git.ysato@users.sourceforge.jp>
- <06fdb2cf7927681acf3099b826390ef75ba321af.1704788539.git.ysato@users.sourceforge.jp>
- <c2f88d7b-cded-42ab-bc5c-3d9a723daa1f@kernel.org>
+Subject: Re: [PATCH v7 1/4] dt-bindings: soc: sophgo: Add Sophgo system
+ control module
 Content-Language: en-US
+To: Chen Wang <unicorn_wang@outlook.com>, Chen Wang <unicornxw@gmail.com>,
+ aou@eecs.berkeley.edu, chao.wei@sophgo.com, conor@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com,
+ robh+dt@kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, haijiao.liu@sophgo.com,
+ xiaoguang.xing@sophgo.com, guoren@kernel.org, jszhang@kernel.org,
+ inochiama@outlook.com, samuel.holland@sifive.com
+References: <cover.1704694903.git.unicorn_wang@outlook.com>
+ <acebc88db3e5fcd2a2607b56842af7443a6e1289.1704694903.git.unicorn_wang@outlook.com>
+ <cc7cc943-7242-4fd1-9b56-3ece0a418e05@linaro.org>
+ <MA0P287MB2822E54A6DD36F914DB56E98FE6B2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+ <1e1ef0a0-6639-4a4d-9b4e-50bcee3fb3c5@linaro.org>
+ <MA0P287MB2822C1F51E9F03137EF42093FE6A2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+ <60abfdcc-3d61-4df1-b77b-23d4a5d26a46@linaro.org>
+ <MA0P287MB28223C0D5BD8E2A6A042A7BEFE692@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -146,29 +116,28 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <c2f88d7b-cded-42ab-bc5c-3d9a723daa1f@kernel.org>
+In-Reply-To: <MA0P287MB28223C0D5BD8E2A6A042A7BEFE692@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/01/2024 03:06, Damien Le Moal wrote:
-> On 1/9/24 17:23, Yoshinori Sato wrote:
->> Added new ata-generic target.
->> - iodata,usl-5p-ata
->> - renesas,rts7751r2d-ata
->>
->> Each boards have simple IDE Interface. Use ATA generic driver.
-> 
-> This looks OK to me, so feel free to add:
-> 
-> Acked-by: Damien Le Moal <dlemoal@kernel.org>
-> 
-> Note: The "DO NOT MERGE" patch prefix almost got me to immediately delete this
-> 37 patches in my inbox... If you wish to get this work merged after review,
-> please use the regular "PATCH" prefix. No worries, the series will not be merged
-> until is is reviewed :)
+On 10/01/2024 01:44, Chen Wang wrote:
 
-The point of DO NOT MERGE was that feedback was not being implemented
-and same set of patches with same issues were kept sending. :/
+>>> clocks." may cause misunderstanding. I plan to change it to "The Sophgo
+>>> SG2042 SoC system controller provides register information such as
+>>> offset, mask and shift to configure related modules such as clock." Is
+>>> this better?
+>>>
+>> Still does not make sense. To provide "offset" means that some other
+>> hardware reads sophgo module to get the value of offset. That's not the
+>> case here.
+> 
+> I'm probably starting to understand what you mean. How about changing it 
+> to the following?
+> 
+> The Sophgo system controller is a registers block, providing multiple 
+> low level platform functions like chip configuration, clock control, etc.
+
+Yes, that sounds good.
 
 Best regards,
 Krzysztof
