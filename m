@@ -1,196 +1,207 @@
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D09B4A9B5;
-	Wed, 10 Jan 2024 14:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13914B5B4;
+	Wed, 10 Jan 2024 14:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nyea32r8"
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6ddeb015ec6so1049707a34.0;
-        Wed, 10 Jan 2024 06:28:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704896930; x=1705501730; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=zIaoX1yjQhXHbsmhohdAZwhtmgurjO4w2Fx+LKGYccs=;
-        b=Nyea32r8R/C0mH32mtZ2WbQtXIE5o7xBaJxVL2XElvGvYMcoXcaDenqoh/0pw4HbND
-         vE4hLziPzckFewL+k6T5sg89paRFXvq/gdaVZAsFsnoo7LL9M1Wtx+Fey/9qCrSPBcVa
-         jN+FgYp7SDzwPb5UzA8UywD8oJDlWpbF1Xdp1j+xLu4038TX668QfBKoL1QhiBzf4N3I
-         748+Wq+6lN3ARvco0eLpHK2lDGS0p/5L2dAltHdKLBhCM3t8810/6UORJj9MeJAlSsl4
-         EeAH3+vVKQvfiyZhfKNyTkSEwMHTMYcZA4YBKxWtHNsWXAlo0wboUKnFrIUrB6gxR/HY
-         lYwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704896930; x=1705501730;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zIaoX1yjQhXHbsmhohdAZwhtmgurjO4w2Fx+LKGYccs=;
-        b=B3U9Uk3UY9T1/gTYCPAkfOrUriffv2BQo7EllAd7QmDJ2McW80wJd2pbpLoGMG65Ge
-         jdXBzflSWttq2IoaAQFcWI02+Zvcxoq35416SaNKMHkzfzbKjgNZ/QI0JGODIs8lDhJB
-         qiau+7kiNp5MUVoB+t5EUopPqTn/q2n0+ANuj6tseuFJBzMy4G2a/gdafodcDbSnfuT6
-         n06WVriHXuGs8NVfVscSeow7U1b2mEN9k+qODx+qdcSpf8M2h5Lz2VLNgcztbx5FGJYC
-         opYQflUSEot0+VYNYkmbofnYcKYywwBeAADYlEbB5sajcAy4y1qtDMKm2xtZoJMMQqJG
-         hc6A==
-X-Gm-Message-State: AOJu0Yy6+V7okdryRmjebv/O9COr2cqYeksXgBZ6bSFJ3oIszmWdlUZK
-	r7PpmBOYAyC1kLf8UlrBE6c=
-X-Google-Smtp-Source: AGHT+IG7sLERgE1XfKcrO3RXf8zO3OfNiwPA15eOOZxyAfLlJXqm615gjKSh1CGFCVXN4fmaNYQHXQ==
-X-Received: by 2002:a05:6871:4319:b0:203:ceec:933c with SMTP id lu25-20020a056871431900b00203ceec933cmr845505oab.69.1704896930388;
-        Wed, 10 Jan 2024 06:28:50 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id x190-20020a6363c7000000b005cd945c0399sm3608310pgb.80.2024.01.10.06.28.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jan 2024 06:28:49 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <a854bbd3-2862-4ea4-b14d-aab2d89ac2df@roeck-us.net>
-Date: Wed, 10 Jan 2024 06:28:45 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgFa3wsS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAAE3C433C7;
+	Wed, 10 Jan 2024 14:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704897779;
+	bh=AFSkkbHfhrMGjKTObrS4+Az4PqGEZgeRydKAgna01yk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hgFa3wsSXiUDfIW7lYT0djmbRxf2uNVnXqdkxdJHIeOrC4YLzwi9Nzq2b+zQyzF18
+	 rROYUHZrVoVjfykVIEA8HFIhh7E1gKE7b/XMr5KrXdsdOXoLgIGarIr2jc6sTan67i
+	 Ev2nnfgEnks9zWeWHaaktLClEAdPyaU/CNAe1XESVqj381sV9rqpWdOQGqWOyWXhZ3
+	 +IE2NkSFy+mh7xVC47KUBk9RZhTKGmpae+UWiX/qH5SGCyKd6ld3Y3xZWHDyZLsV1u
+	 UMiISJ9YK9o+SI/EIaLTSPw12j+230fkDPI27TXIn15rWfD5YmDLe/4BVgVZQwCE4/
+	 8bPxCcAGHadEA==
+Date: Wed, 10 Jan 2024 14:42:52 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Chen Wang <unicorn_wang@outlook.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
+	chao.wei@sophgo.com, krzysztof.kozlowski+dt@linaro.org,
+	mturquette@baylibre.com, palmer@dabbelt.com,
+	paul.walmsley@sifive.com, richardcochran@gmail.com,
+	robh+dt@kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com, guoren@kernel.org, jszhang@kernel.org,
+	inochiama@outlook.com, samuel.holland@sifive.com,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v7 2/4] dt-bindings: clock: sophgo: support SG2042
+Message-ID: <20240110-untoasted-underfed-fe81479506f6@spud>
+References: <cover.1704694903.git.unicorn_wang@outlook.com>
+ <925d99d5b4ece01337cb3389aaea4b631894dd1d.1704694903.git.unicorn_wang@outlook.com>
+ <f88b79c3-e44b-4136-ae56-10e1f2502e2d@linaro.org>
+ <MA0P287MB2822C7A3C1DC7786708E860BFE692@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [DO NOT MERGE v6 26/37] dt-bindings: vendor-prefixes: Add smi
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Conor Dooley <conor@kernel.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org,
- Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Thomas Gleixner <tglx@linutronix.de>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
- Heiko Stuebner <heiko@sntech.de>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Chris Morgan <macromorgan@hotmail.com>, Yang Xiwen
- <forbidden405@foxmail.com>, Sebastian Reichel <sre@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
- Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- David Rientjes <rientjes@google.com>, Baoquan He <bhe@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Azeem Shaikh <azeemshaikh38@gmail.com>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Max Filippov <jcmvbkbc@gmail.com>, Palmer Dabbelt <palmer@rivosinc.com>,
- Bin Meng <bmeng@tinylab.org>, Jonathan Corbet <corbet@lwn.net>,
- Jacky Huang <ychuang3@nuvoton.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>,
- Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-fbdev@vger.kernel.org
-References: <cover.1704788539.git.ysato@users.sourceforge.jp>
- <c8aaf67e3fcdb7e60632c53a784691aabfc7733e.1704788539.git.ysato@users.sourceforge.jp>
- <20240109-fructose-bundle-05d01033277b@spud>
- <CAMuHMdU1z64QHJOVd3jUsOfyuDApB1+khkUV8PvjoKbwsi327g@mail.gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CAMuHMdU1z64QHJOVd3jUsOfyuDApB1+khkUV8PvjoKbwsi327g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="oKRhGC3CUc0pW3v5"
+Content-Disposition: inline
+In-Reply-To: <MA0P287MB2822C7A3C1DC7786708E860BFE692@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
 
-On 1/10/24 03:23, Geert Uytterhoeven wrote:
-> Hi Conor,
-> 
-> On Tue, Jan 9, 2024 at 7:06 PM Conor Dooley <conor@kernel.org> wrote:
->> On Tue, Jan 09, 2024 at 05:23:23PM +0900, Yoshinori Sato wrote:
->>> Add Silicon Mortion Technology Corporation
-> 
-> Motion
-> 
->>> https://www.siliconmotion.com/
->>>
->>> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
->>> ---
->>>   Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
->>> index 94ed63d9f7de..a338bdd743ab 100644
->>> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
->>> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
->>> @@ -1283,6 +1283,8 @@ patternProperties:
->>>       description: Skyworks Solutions, Inc.
->>>     "^smartlabs,.*":
->>>       description: SmartLabs LLC
->>> +  "^smi,.*":
->>> +    description: Silicon Motion Technology Corporation
->>
->> How come "smi" is used for a company with this name?
->> Why is it not something like SMTC? There's probably some history here
->> that I am unaware of.
-> 
-> See Documentation/devicetree/bindings/display/sm501fb.txt
-> The stock ticker is "SIMO", though.
-> https://www.nasdaq.com/market-activity/stocks/simo
-> 
 
- From https://en.wikipedia.org/wiki/Silicon_Motion:
+--oKRhGC3CUc0pW3v5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-"Controllers are marketed under the “SMI” brand,
-  enterprise-grade SSDs under the "Shannon Systems" brand.
-"
+Hey,
 
-Guenter
+On Wed, Jan 10, 2024 at 08:53:42AM +0800, Chen Wang wrote:
+> On 2024/1/8 15:04, Krzysztof Kozlowski wrote:
+> > On 08/01/2024 07:49, Chen Wang wrote:
+> > > From: Chen Wang <unicorn_wang@outlook.com>
+> > >=20
+> > > Add bindings for the clock generator on the SG2042 RISC-V SoC.
+> > >=20
+> > > Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > > ---
+> > >   .../bindings/clock/sophgo,sg2042-clkgen.yaml  |  53 ++++++
+> > >   .../dt-bindings/clock/sophgo,sg2042-clkgen.h  | 169 +++++++++++++++=
++++
+> > >   2 files changed, 222 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/clock/sophgo,s=
+g2042-clkgen.yaml
+> > >   create mode 100644 include/dt-bindings/clock/sophgo,sg2042-clkgen.h
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/clock/sophgo,sg2042-cl=
+kgen.yaml b/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.ya=
+ml
+> > > new file mode 100644
+> > > index 000000000000..f9935e66fc95
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.ya=
+ml
+> > > @@ -0,0 +1,53 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/clock/sophgo,sg2042-clkgen.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Sophgo SG2042 Clock Generator
+> > > +
+> > > +maintainers:
+> > > +  - Chen Wang <unicorn_wang@outlook.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: sophgo,sg2042-clkgen
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  sophgo,system-ctrl:
+> > > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > > +    description:
+> > > +      Phandle to SG2042 System Controller node. On SG2042, part of c=
+ontrol
+> > > +      registers of Clock Controller are defined in System controller=
+=2E Clock
+> > > +      driver will use this phandle to get the register map base to p=
+lus the
+> > > +      offset of the registers to access them.
+> > Do not describe the driver, but hardware. What registers are in
+> > system-ctrl? What are their purpose? Why this hardware needs them?
+> Understood, will fix the words in revision, thanks.
 
+I hope that I am not misunderstanding things, but I got a bit suspicious
+of this binding and look at the driver, and saw that there are clocks
+registered like:
+
+| static int sg2042_clk_register_gates(struct sg2042_clk_data *clk_data,
+| 				     const struct sg2042_gate_clock gate_clks[],
+| 				     int num_gate_clks)
+| {
+| 	struct clk_hw *hw;
+| 	const struct sg2042_gate_clock *gate;
+| 	int i, ret =3D 0;
+| 	void __iomem *reg;
+|=20
+| 	for (i =3D 0; i < num_gate_clks; i++) {
+| 		gate =3D &gate_clks[i];
+| 		if (gate->flag_sysctrl)
+| 			reg =3D clk_data->iobase_syscon + gate->offset_enable;
+| 		else
+| 			reg =3D clk_data->iobase + gate->offset_enable;
+
+iobase_syscon is the base address of the system controller that this
+property points at & iobase is the base address of the clock controller
+itself.
+
+| 		hw =3D clk_hw_register_gate(NULL,
+| 					  gate->name,
+| 					  gate->parent_name,
+| 					  gate->flags,
+| 					  reg,
+| 					  gate->bit_idx,
+| 					  0,
+| 					  &sg2042_clk_lock);
+
+As far as I can tell, in this particular case, for any gate clock that
+flag_sysctrl is set, none of the registers actually lie inside the
+clkgen region, but instead are entirely contained in the sysctrl region.
+
+I think that this is because your devicetree does not correctly define
+the relationship between clocks, and these clocks are actually provided
+by the system controller block and are inputs to the clkgen block.
+
+| 		if (IS_ERR(hw)) {
+| 			pr_err("failed to register clock %s\n", gate->name);
+| 			ret =3D PTR_ERR(hw);
+| 			break;
+| 		}
+|=20
+| 		clk_data->onecell_data.hws[gate->id] =3D hw;
+| 	}
+|=20
+| 	/* leave unregister to outside if failed */
+| 	return ret;
+| }
+
+I had a much briefer look at the `sg2042_pll_clock`s that make use of
+the regmap, and it doesn't seem like they "mix and match" registers
+between both blocks, and instead only have registers in the system
+controller? If so, it doesn't seem like this clkgen block should be
+providing the PLL clocks either, but instead be taking them as inputs.
+
+Reading stuff like
+https://github.com/sophgo/sophgo-doc/blob/main/SG2042/TRM/source/system-con=
+trol.rst#pll_stat-offset-0x0c0
+(and onwards) makes it seem like those PLLs are fully contained within
+the system controller register space.
+
+It seems like
+https://github.com/sophgo/sophgo-doc/blob/main/SG2042/TRM/source/clock-reg.=
+rst
+is the register map for the clkgen region? It seems like that region
+only contains gates and divider clocks, but no PLLs.
+
+Am I missing something, or is this description of the clock controllers
+on the soc incomplete?
+
+Cheers,
+Conor.
+
+--oKRhGC3CUc0pW3v5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZZ6s7AAKCRB4tDGHoIJi
+0jF+AP9U7Ip0sysdDHuU+lFng6/5u2ae4C0Zbk+jM2PBGR7HbAEA0T6L0+7y1+bA
+lUN9qeJRKWXmmXuVZl3nwSez1T3RUAU=
+=tbPZ
+-----END PGP SIGNATURE-----
+
+--oKRhGC3CUc0pW3v5--
