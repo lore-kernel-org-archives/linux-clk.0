@@ -1,137 +1,132 @@
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2055.outbound.protection.outlook.com [40.92.102.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B9CD28F;
-	Thu, 11 Jan 2024 07:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF08CDDC3
+	for <linux-clk@vger.kernel.org>; Thu, 11 Jan 2024 07:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="uA930Ww2"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WtHJ0c83BKn0HcbwbV2sJ1wpcMFXTuzzVbtJQgH7/h/SGWgaIrRZ8YOkT5oFg4klpEjCAhyRpYNTjIvKH4WiAtsKsRZn0BQth61Hdzz/3djJWFs1g7ZaLoWG4T4A99Qe1T79Cro/Tpzg1vbeCDt8u4aRCdaxoTbXP4s4JWEb+56vfgp7JKt/s+uSgCE/Ab9Tm7rQ+RIGZ/MaBRDnhH56qfRAVYuI33ArXkhIhl3kNp/Y2numk1+QAoqZMkiSp+jSn+pCbRS/Euv3r4PJncTb8cOBIP7rx3YTpLl4sMRCQ4kyehjA5/cJ/PsvOBG3kai0xXN6Tp9GO+kFN5NSEqPI0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mutx7ZzYrouYw8vQtyupaqIVeYGVSSCLwYRYZGp9fY8=;
- b=CfBDps99+Oi81zi6fAO94m1QPzi0KnSryazy0422EWLTVK6IXkGpznYgysb9fb12O/DTM97QJbF+6ek5e8RNUGHPmS2SwAjB+Wmm5c2FnFgAQHypVoJCw1T3LKYaFKMT53CjKzIhZKWNTEMSJ/RKrHSrddVALhdPpXm/xh9UZ6Y58rsHUrJUQ9Lths7opb7v7mHOBVtOxVUbt8TIACulVeVUYpjS+ypGSvJ4vjHkxP8gZHdhbwmvwNYAaiRFNH18BfcNY2ho57antOP1WOOuA7zzlw7osTumVe46XMaE4PB6OO9/wlkZeksexWKYC396/B0DgECiey9Tc6KeKV9xdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mutx7ZzYrouYw8vQtyupaqIVeYGVSSCLwYRYZGp9fY8=;
- b=uA930Ww2Dm8XBhsGoNn8YinyVaLkko0OOSZE6B8TagcaQhMd3hnZ9BJnkA1GdZIW9f5hYWeV64UkHAnj7SDYaluunqLTUsvb1J17gjSCirztfyvQyjkp/9lO/8WH5xxo/69ZdmRyPvXY4NLol/1974lhzj691ly4McrJREjHiH6F08nC/LANwCF3lJNgr++ZVI7bBRbkfy6n0SzWx82Mc2+l3+hu728tTxKPwMtKGnhEu4Jm/u1KNTVYmrtXEI5e4OiIkqzOszqPkRiyuQT69O4KVqE+BYIntTLOqD+yv5ZpkhkbRfuJyZBWeJIMPCvJ+2X4peoWpxnX7o0PyeAPDg==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN3P287MB0836.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:17c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.18; Thu, 11 Jan
- 2024 07:55:56 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::6e80:69e1:f2e7:d70d]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::6e80:69e1:f2e7:d70d%3]) with mapi id 15.20.7181.019; Thu, 11 Jan 2024
- 07:55:56 +0000
-Message-ID:
- <MA0P287MB28223C2A4D405527AA806008FE682@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Thu, 11 Jan 2024 15:55:52 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/4] riscv: dts: add clock generator for Sophgo SG2042
- SoC
-To: Conor Dooley <conor@kernel.org>, Chen Wang <unicornxw@gmail.com>
-Cc: aou@eecs.berkeley.edu, chao.wei@sophgo.com,
- krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
- palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com,
- robh+dt@kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, haijiao.liu@sophgo.com,
- xiaoguang.xing@sophgo.com, guoren@kernel.org, jszhang@kernel.org,
- inochiama@outlook.com, samuel.holland@sifive.com
-References: <cover.1704694903.git.unicorn_wang@outlook.com>
- <25650372c373b15309cd9f3822306838e556d3c7.1704694903.git.unicorn_wang@outlook.com>
- <20240110-sedative-reggae-389839cef8c4@spud>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20240110-sedative-reggae-389839cef8c4@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [rj3+RFThqDDelvaISKpwucbXuH7321ie]
-X-ClientProxiedBy: SI1PR02CA0046.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::14) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <ea342ca0-40d3-4b58-8f5b-877dbba9653c@outlook.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yGNx/G6f"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3376f71fcbbso3124188f8f.1
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jan 2024 23:59:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704959998; x=1705564798; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xndt1zrIB/llbpzJBquNAjCEK/PQsh4Vrye/RXmedmM=;
+        b=yGNx/G6f0goG7VPcrLsZaDP5wlL/8tg1dUpa0TZLIjRqFCNwlaUsVC2QE4IEhnohvb
+         CMlDqhz5ZAztxbxkF6inGjA0NbXFb56ZObSryOfqnbyunZVtl5Pm+oVcO07/mXL+qkED
+         jRGFSMkG9XfTKCldo/xZdZhIxL9WPN/ng/GZFvRaeRzRbVOOdWXl0Lu+67D+ntHeOfQz
+         59dIFMTyfDacllfhIBPvhF70Vu/uhirG/Ec6tE9m/PzC3agtUOfA4OL6TmQYzFEvmTrA
+         EwKBMhPuby9Qop+qX3IodcbKEqiQOE0P3syJIdZromXpTid4AezUsaLgFN8zIEnNsdDh
+         KNUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704959998; x=1705564798;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xndt1zrIB/llbpzJBquNAjCEK/PQsh4Vrye/RXmedmM=;
+        b=Xhjq8+ijaIkHHtlncCYxDNQLgQ9M/WJ/rUNkCzT1dRKHre6oTNcRrguTbZd1R4Ng2K
+         qmELk4ZnU+BLSlG9ENqA54TZDjTvjrGjbGHOGv1JtMg9R+ZhgoVy36u0XzXxX2olpGxS
+         GQ5X19BtUfAQwUQPfdIBqS6W3UWWDh9foYmXOuYUVVmtXsnytGU0sXHVht9+WNllN8Rj
+         PQbe5AXTfaagcrRAcAtcSul+imL/+/D2KqZ80Gh0ZxSSvQ6wr/bN1eaybvANqXmyUlIr
+         IwhaLTKrlMpbZHR098BG0aoy4IrTG3sLoASq8E6dmdty8ZS6/Py0mqNlcA7ZW2zwnki7
+         +u7A==
+X-Gm-Message-State: AOJu0Yy4O/MbUjkxPvaEm8qrP6ebgegMEKuszlI9ypN58AK5R8ZMaU55
+	0MAJotwvBa4LpFtwJnfuVNrmXZ8DgIvjSQ==
+X-Google-Smtp-Source: AGHT+IGC4aiBa5J92Arp2wInNsQJBFvNbyEqBauXS8enVzz4ZaAqAUR2Yj4jaFf2ygK7ai8bNRZymw==
+X-Received: by 2002:a5d:408f:0:b0:336:985:8598 with SMTP id o15-20020a5d408f000000b0033609858598mr163367wrp.202.1704959993278;
+        Wed, 10 Jan 2024 23:59:53 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.223.112])
+        by smtp.gmail.com with ESMTPSA id c28-20020adfa31c000000b0033775980d26sm514449wrb.2.2024.01.10.23.59.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jan 2024 23:59:52 -0800 (PST)
+Message-ID: <960340e0-81b5-4060-ad76-432925c97fb2@linaro.org>
+Date: Thu, 11 Jan 2024 08:59:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN3P287MB0836:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5f9449bd-9c2d-4962-3b41-08dc127abdbe
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	xfAflkPOzf5vUWstlhpuK6IV0dTXvAZJMdja9b/P+O8/loL5OK0mgOxWfsVGuAprzVpD/pmUk629RZfkT4DNB5ORi5bZ4aXzv1H4CRLSAB2Y5vAQN5yoRKKYS3jP/YJsf43auDdIf249C2HycnFWF4pjai71IXsFjetGjhYEXeorrTyF/wDee5fJeTfHxWf+LDKWnG2VhX+U2VvRK9VqnzDQQedHB1CfzC9uYth3l5I6iC7LhmaleVauWDuysxZWhVi7kk0utb/euApmt9BnuXvSBWBzkqs3WcvE1+bPtMnskvSixVG8p4SSYCH1x3oaemKDtZL4jr3t1kF4IJ/BDPIRbwH/yeKbnZXNY5WCNGzhgo5C2M87rK2ImLgCdWyzs83ZKjDZJjQ+YN06H43fkk8jqir6x9TuWa4H4xto9trD/eQERlecQeeI3bAErxi4CMjI4iI65MElhXdrzUYAOT7vw8T8XDiqDkVID1fFpnQHZHMNv8xOGHAo0WgyIzlR5hC+wW0kmr09/fhd5SCix78MdXV9sE4KSsIwBojDuvwJH4jG1Yq9aPFEaajVATRLrERaxj3qMSfol+MYJh6EOMElEI/dgbTMc6hnfzQ/I60=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Nm9reWY2OEdlZW0yQi9rYWx2QW41a1BqaDJwd1d0VkoxczFaQkdPL2ZDeHND?=
- =?utf-8?B?UVhBVTlqMzl1SmQrdExYNzZOZmQxeG45REJnWEdvaXVkMHRYcHlIVkxORnFn?=
- =?utf-8?B?RUo1Q2p6VzJkcFhvWUdvc0VnTk5TdWU2VDk5bm9VN2NQbTFzbTBZdy9WZWpE?=
- =?utf-8?B?UFoyRGFDL28yellXbUprQjRFS0dUMytwbEtBRXJvcmlvWDVEZ2hjVUdEdlBJ?=
- =?utf-8?B?ZmY0WnFwaXhVWmpRUk5aeUFSdmRHTjlJTVFMUjZBR0ZaLy9XWmZJN29pVUMy?=
- =?utf-8?B?Q3hTUXAwdWZnREJKZ1BQSGtoQWEzYm9hOHpZbWNvSTNyb2RyRzlJZk9ZdG91?=
- =?utf-8?B?bWZQVURPRGhsWjhsZUdhbUcvTk1md2ZJcmZIeWY0UUk5S1J1Umt5aFJVVHFQ?=
- =?utf-8?B?eE81dVpCTG9YMEhjOCttR0M0UWRYSHFrOWZlOFI0ZGNuMGVZY1hEaWp1aFlt?=
- =?utf-8?B?MGNac01sN3NUVFRrR1lwc0hKRFRHQ3VVWkdmTnROK1RibWczN245UkdHaFcr?=
- =?utf-8?B?cnU4YXdpN09PSzhEZC81RnFycm9JN2hoZGtEU3k5WjNhK3hXaVlSRC9VYjVH?=
- =?utf-8?B?NE04cUg5WVlGZzlmREw2NEJWVUpnN2xQcnJHaHZtbHJETlI3VFYwWlhnOTgw?=
- =?utf-8?B?blFEaE5ydDBkL3VlSEl2b3hiNjlKbk5jYUZNRTBsSDhEYTc1ajJyTnBmcEF1?=
- =?utf-8?B?aHFjbXJLcmZhdXpTVFNEalQxa1BweGJ4MGtDblBNaks4Uk5oRGFPNlYxaExV?=
- =?utf-8?B?WU96M3p2d3Y1Q0YxaUJuV2M2OS83VW0zblVPNFMxSmMvVVMxcUtQQ3lHMXZM?=
- =?utf-8?B?UXk1c3JIVmo3eXFVRmZNZlRHMW5Hb3ZqYTdleXZlaHFuMk5LeFUxL3hXMlNr?=
- =?utf-8?B?S1lSL2p3YXlubENsdld2VGpnQ1dxQTU1bXFxbVFXbmRQV1E3SU9LdFM4TFFP?=
- =?utf-8?B?bkdDTXcrSFRkY3lxa1lWOG9vekh2NlVxdm54WUo0bk5OeEFKb2Q2WlNmeENH?=
- =?utf-8?B?bS9CNkVSZTFNQlFWLzdXN1hoTmlOaDVNS0cvcWtHQ2puRk9uV0I2S05LbVBx?=
- =?utf-8?B?Zkh0WG5KL0E3NnVzOHAxb0F4NzI1ZDlUSFh0WHZKWWdJRTFMM2l0blZaNVN0?=
- =?utf-8?B?SGFuTkhsazR0NFpVUFFicU1FalhqRGFzR3J1Qk1QaUI0ODZEWnE1ZVJxaytq?=
- =?utf-8?B?dGpla01jN1djTGhhRXZKK0ZoeE5ETDZpWUtKcktuOVJqVWRGSlRISkhIem5t?=
- =?utf-8?B?aGdkQmhqMGRJRmtCcHhsNUJCR0FFcllqSXk3NTEwQldFbFVIajN3dXhFcXNx?=
- =?utf-8?B?Qi9XeU9iMndha3FLRUJ6aTRTT3VmOURxM1RUc0p1b1JIRnVSRkMvTzJxWHlL?=
- =?utf-8?B?K0JWQWJqaVB4WXBBOG9sL1hzQ3E2QUlCRzlnUWxoRFhRR1R5N25NRWNTMjdj?=
- =?utf-8?B?aGJoRkxXMWdaMG9RNFYyd004T2lpTzUxa3RYeGFoMTN6RzFJOU9NOGlCVkVh?=
- =?utf-8?B?S3UrQmRBR0orcnBYMlB1d01DbWJsSXNGYng3b2FteEhDNkxUMjlIWDF2ckNI?=
- =?utf-8?B?djRWVUFXQ1pURzJZS1JHak9teWttaU5qdnB6NGxOY1RyU25QQStURFJ4a0dn?=
- =?utf-8?Q?KuMwgmCo7986gnYs8k8UPV7fMcAHRCcbAVWkGO2hUlEI=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f9449bd-9c2d-4962-3b41-08dc127abdbe
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jan 2024 07:55:56.1889
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB0836
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: qcom,gcc-sm8150: Add gcc video
+ resets for sm8150
+Content-Language: en-US
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Taniya Das <quic_tdas@quicinc.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240111-sm8150-dfs-support-v2-0-6edb44c83d3b@quicinc.com>
+ <20240111-sm8150-dfs-support-v2-2-6edb44c83d3b@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240111-sm8150-dfs-support-v2-2-6edb44c83d3b@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 11/01/2024 07:32, Satya Priya Kakitapalli wrote:
+> Add gcc video axic, axi0 and axi1 resets for the global clock controller
+> on sm8150.
+> 
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
 
-On 2024/1/10 22:13, Conor Dooley wrote:
-> On Mon, Jan 08, 2024 at 02:49:53PM +0800, Chen Wang wrote:
->
->> +	cgi: oscillator {
->> +		compatible = "fixed-clock";
->> +		clock-output-names = "cgi";
->> +		#clock-cells = <0>;
->> +	};
-> Where does the name "cgi" come from and what does it mean?
-> Clock Generator Input? Does the sg2042 documentation call it that?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-It's abbrevation of "Clock Gen IC", I found this in the clock tree 
-diagram. 
-https://github.com/sophgo/sophgo-doc/blob/main/SG2042/TRM/source/pic/clock-tree.png
+Best regards,
+Krzysztof
 
-BTW, There are three cgi on the diagram. Should I define 3 in DTS too? I 
-just found they are the same so I just defined one.
-
->
-> Cheers,
-> Conor.
