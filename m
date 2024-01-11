@@ -1,109 +1,137 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01178C8F5;
-	Thu, 11 Jan 2024 06:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4D6D2F3;
+	Thu, 11 Jan 2024 07:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cNcl8KoI"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40B5tDtM027873;
-	Thu, 11 Jan 2024 06:32:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:date:subject:mime-version:content-type
-	:content-transfer-encoding:message-id:references:in-reply-to:to
-	:cc; s=qcppdkim1; bh=Ed9FvcCxjPahHj5DCQnCG2rVK5w4YX+xEkPlELY2UP8
-	=; b=cNcl8KoI+vlMO4H3MO9hB1Wnj2Q8Mlfcwda8XTAAnYneyn7JwaPbq1VB9sW
-	mebhNbVl/64EjN+riEWpK0sWySNNa9YP5FOZgHbOMvx76qV03dojgCo0cZ+hGjAI
-	tY5eOJYhvYtN8xMLZry0uwCqKCcPQkn0fPUIKmx78aI9BlU3RRJ7kLr38KfDYsud
-	29dIlVYXT3NufG5EmTslgIxAxzhCAaAJaRPAHj0MkSMc7Kvypuko+8ah8GAUTz/Z
-	/AHR7i8AL1o/MXmnfNw9lvbiNhFrDtSicLHddgQ998sKJKPT9hzlbksTgt8yH3Zs
-	FFmXwMCU+uHqFrTHRubHwFQ5vgA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vj0sk9750-1
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="zGnNVz9N"
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40B2SaOE030198;
+	Thu, 11 Jan 2024 08:16:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=selector1; bh=+X4Cxs8
+	db+Il6tUMjOf6juuuQ6x88rMKAMZWEwcxwR0=; b=zGnNVz9NsQyR7xdOIIJT3jY
+	QyOmnZ9kPd8mEoGkEzGWiYN9ZEBUCac8fartg2KfM5N2qOkmV7fMISht5wm1a2rG
+	coFNpm7NrHlJa0kln+Ew7/i+q7kJoKiwQWK+D2onHNBMIlstCJK6SZ6PGJ6cVSC5
+	ZlckpP7kg+Uw59EvuNypSi5v7ReNsNY8jXm1K5d65VUWcTRRzX1hd5fkVQDMJ2mK
+	wsZyLoX1fl1U+JXjon9tXb7PqEIby6Z4K22dEF3jgvDhRO/YAstvq5HofSqBvTX1
+	RqWJ5adUqqV+NSR76RNKfIxvo+PuGGI2lVsA2XPYHDmAxySyTkkzAax5QamMTsw=
+	=
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3vey30v352-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jan 2024 06:32:53 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 40B6Wqqd028350
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jan 2024 06:32:52 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 10 Jan 2024 22:32:47 -0800
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Date: Thu, 11 Jan 2024 12:02:30 +0530
-Subject: [PATCH v2 3/3] clk: qcom: gcc-sm8150: Add gcc video resets for
- sm8150
+	Thu, 11 Jan 2024 08:16:08 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 662CF10002A;
+	Thu, 11 Jan 2024 08:16:07 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 52FC32194E0;
+	Thu, 11 Jan 2024 08:16:07 +0100 (CET)
+Received: from localhost (10.201.21.240) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 11 Jan
+ 2024 08:16:07 +0100
+From: <gabriel.fernandez@foss.st.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v8 0/3] Introduce STM32MP257 clock driver
+Date: Thu, 11 Jan 2024 08:15:33 +0100
+Message-ID: <20240111071536.659409-1-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240111-sm8150-dfs-support-v2-3-6edb44c83d3b@quicinc.com>
-References: <20240111-sm8150-dfs-support-v2-0-6edb44c83d3b@quicinc.com>
-In-Reply-To: <20240111-sm8150-dfs-support-v2-0-6edb44c83d3b@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>
-X-Mailer: b4 0.12.4
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OUqV5KnjJJGwWt6rzh9oqop45faK5cN3
-X-Proofpoint-ORIG-GUID: OUqV5KnjJJGwWt6rzh9oqop45faK5cN3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-09_02,2023-12-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- adultscore=0 suspectscore=0 impostorscore=0 malwarescore=0 mlxlogscore=860
- bulkscore=0 lowpriorityscore=0 spamscore=0 phishscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2311290000
- definitions=main-2401110051
+ definitions=2024-01-05_08,2024-01-05_01,2023-05-22_02
 
-Add gcc video axic, axi0 and axi1 resets for the global clock
-controller on sm8150.
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- drivers/clk/qcom/gcc-sm8150.c | 3 +++
- 1 file changed, 3 insertions(+)
+v8:
+  - use .index of clk_parent_data struct to define a parent
+  - remove unnecessary dependency check with SCMI clock driver
+  - convert to platform device APIs
+  - convert to devm_of_clk_add_hw_provider()
+  - convert single value enum to a define
 
-diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-index 80315307dbb4..a47ef9dfa808 100644
---- a/drivers/clk/qcom/gcc-sm8150.c
-+++ b/drivers/clk/qcom/gcc-sm8150.c
-@@ -3778,6 +3778,9 @@ static const struct qcom_reset_map gcc_sm8150_resets[] = {
- 	[GCC_USB30_PRIM_BCR] = { 0xf000 },
- 	[GCC_USB30_SEC_BCR] = { 0x10000 },
- 	[GCC_USB_PHY_CFG_AHB2PHY_BCR] = { 0x6a000 },
-+	[GCC_VIDEO_AXIC_CLK_BCR] = { 0xb02c, 2 },
-+	[GCC_VIDEO_AXI0_CLK_BCR] = { 0xb024, 2 },
-+	[GCC_VIDEO_AXI1_CLK_BCR] = { 0xb028, 2 },
- };
- 
- static struct gdsc *gcc_sm8150_gdscs[] = {
+v7: base on next-20231219
+  - These patches below are applied to clk-next:
+      clk: stm32mp1: move stm32mp1 clock driver into stm32 directory
+      clk: stm32mp1: use stm32mp13 reset driver
+      dt-bindings: stm32: add clocks and reset binding for stm32mp25
+  - remove unnecessary includes
+  - migrate clock parents to struct clk_parent_data and remove
+    CLK_STM32_XXX() macros  to have a more readble code
+  - use platform device APIs (devm_of_iomap() instead of_iomap())
+  - move content of stm32mp25_rcc_init() to stm32mp25_rcc_clocks_probe()
+  - simply get_clock_deps()
+  - add const to stm32mp25_data struct
+  - remove ck_icn_p_serc clock (will be integrate later with security
+    management)
+
+v6:
+  - remove useless defines in drivers/clk/stm32/stm32mp25_rcc.h
+
+v5:
+  - Fix sparse warnings: was not declared. Should it be static?
+    drivers/clk/stm32/clk-stm32mp13.c:1516:29: symbol 'stm32mp13_reset_data'
+    drivers/clk/stm32/clk-stm32mp1.c:2148:29: symbol 'stm32mp1_reset_data'
+    drivers/clk/stm32/clk-stm32mp25.c:1003:5: symbol 'stm32mp25_cpt_gate'
+    drivers/clk/stm32/clk-stm32mp25.c:1005:29: symbol 'stm32mp25_clock_data'
+    drivers/clk/stm32/clk-stm32mp25.c:1011:29: symbol 'stm32mp25_reset_data'
+
+v4:
+  - use GPL-2.0-only OR BSD-2-Clause for clock and reset binding files
+  - use quotes ' for #clock-cells and #reset-cells in YAML documentation
+  - reset binding start now to 0 instead 1
+  - improve management of reset lines that are not managed
+
+v3:
+  - from Rob Herring change clock item description in YAML documentation
+v2:
+  - rework reset binding (use ID witch start from 0)
+  - rework reset driver to manage STM32MP13 / STM32MP15 / STM32MP25
+  - rework YAML documentation
+
+Gabriel Fernandez (3):
+  clk: stm32mp13: use platform device APIs
+  clk: stm32: introduce clocks for STM32MP257 platform
+  arm64: dts: st: add rcc support in stm32mp251
+
+ arch/arm64/boot/dts/st/stm32mp251.dtsi |  132 +-
+ drivers/clk/stm32/Kconfig              |    7 +
+ drivers/clk/stm32/Makefile             |    1 +
+ drivers/clk/stm32/clk-stm32-core.c     |   11 +-
+ drivers/clk/stm32/clk-stm32mp13.c      |   72 +-
+ drivers/clk/stm32/clk-stm32mp25.c      | 1876 ++++++++++++++++++++++++
+ drivers/clk/stm32/reset-stm32.c        |   59 +-
+ drivers/clk/stm32/reset-stm32.h        |    7 +
+ drivers/clk/stm32/stm32mp25_rcc.h      |  712 +++++++++
+ 9 files changed, 2765 insertions(+), 112 deletions(-)
+ create mode 100644 drivers/clk/stm32/clk-stm32mp25.c
+ create mode 100644 drivers/clk/stm32/stm32mp25_rcc.h
 
 -- 
 2.25.1
