@@ -1,139 +1,105 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A237315AC0
-	for <linux-clk@vger.kernel.org>; Fri, 12 Jan 2024 08:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BlO6yhsX"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3367601a301so5285616f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 12 Jan 2024 00:38:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705048732; x=1705653532; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ctfo2QUvaYOsGhaFDOu5VyntquVZ2L861CsiV5mIQwQ=;
-        b=BlO6yhsXrisk9bf9miUsvFOBXN60EuxNaYm/e9IcvTKkyxj1/FjSGo4XGJmoIQ0Nwu
-         25i9C40NhmAZNVTmvc0kYNdtF6SRXB8o8ar+nRa5g25M4aYGlzr3IOVWVGbkFGd97NY+
-         5ijpOYc0JyapZMF/ndvH0i7pJDZn6WX/oaomjWVWzuqdlmyjuwBzkss5yu2+PojssQX+
-         CRldkSSpRT5EmQ3Bnno2rUVqhWab/so1i97ltXxtUYeJcQlnz8V1X/bKjr2AHcVVhX97
-         7XPb7h8bkLEgbiTJtfSYbd3ZoBMEdvrFFLfYV957l4bpNvv5CwAg6YOYr+z1bkVp2ff2
-         tAyQ==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328F864AAA;
+	Fri, 12 Jan 2024 14:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5fa52e173f7so33196367b3.3;
+        Fri, 12 Jan 2024 06:13:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705048732; x=1705653532;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ctfo2QUvaYOsGhaFDOu5VyntquVZ2L861CsiV5mIQwQ=;
-        b=lThYugNmq+mvvNQhHS7SRZMfQSKBykdw+W77+VIMRtHpihm0N3I/bP/+OxxG4xg5Kh
-         2nEU4bq5PfiAoD+/zy9/RzVqDyd9YmSKnX0AyYjEwfCmyI/povxlDmy8Ia6F17L3SImr
-         oSzi1rGYNMPVpXhgDmep2YsGojs7ursJ8VuRvFt7cyvmd60HLPtNtG3DBlkXyNePj30f
-         xBlLY0T41RRNOq+vCTvWTypEsoF8PRfpByBpPqHwgtda8lbcgbQU+wWi7bBA7pqO4OWw
-         +EyrXbKlSWzQ0UraTP+XEpRg9RMzVkvOHBpVuRXZJoNZN2Kz2hAtsvBgje8Kd6/cBLjy
-         tN/w==
-X-Gm-Message-State: AOJu0YxRdRbY3GIyDiQ+slP973IqmDlXfZsqCGuIg4fm86TGI02nl4xp
-	2dC98Y0ufTQCZQbr+sxmE6PCM1dXG3kGpA==
-X-Google-Smtp-Source: AGHT+IEX0HJ0ERjFNa67qV5ViBiuNMOR2tfMTkp5EpBJsgzpsgcArfq6uIQ7rNkSpAK3iQX2xvk+5g==
-X-Received: by 2002:adf:f9c6:0:b0:336:2a24:eb8a with SMTP id w6-20020adff9c6000000b003362a24eb8amr354533wrr.161.1705048731884;
-        Fri, 12 Jan 2024 00:38:51 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.223.112])
-        by smtp.gmail.com with ESMTPSA id x6-20020adfcc06000000b00336f43fa654sm3225857wrh.22.2024.01.12.00.38.49
+        d=1e100.net; s=20230601; t=1705068794; x=1705673594;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ogmBK4GcHnlicaeksl+88HTGrvs80uzfrt9z9GfN5KM=;
+        b=q2aQdezOMkTi488Fx34hxeBwzrkyVLaeinNhuwXDd38KvpoGJdiVGn1Z0RuBk6nTxH
+         vnG7yb8otKUq/XmDKQqYf73CD8H71pYw5p7eJNfG3dVPEZmOBKK8fVFTM8Zne+976aAi
+         etHhbJmsm9IWWfCwipad99M/LkFPixXS+BbFqUMVYW5ESFCFkfHeG1HRABtOglR0qHx1
+         r+KYKYChvyuLN8igq/jfM+5L/3EEKsBLHhASW7Pznf0QOZeEvA1fOgDyzYbOM5ta8GsO
+         b9elZKuwWNGoRGTldXWiHUEc+0KNhyqNaFY4k6pGr4vYR4sENzBY7944fMAbeJU3FyYE
+         212A==
+X-Gm-Message-State: AOJu0YycU/2j2nLLMW1fq7294fsJBQ0uKw/yviRkhMPudvMaj8wd6mPp
+	90hxatdOdvDT70LSgVkllnEP0E9AKXltZg==
+X-Google-Smtp-Source: AGHT+IFIzJ/PmIVOEEFVeKiaFwHi+rAUcGrgk0Vxlk7x5Le2iSnlytZAHamkfjeUZMjWbL7z83XYkQ==
+X-Received: by 2002:a81:6dca:0:b0:5fb:9321:9ff5 with SMTP id i193-20020a816dca000000b005fb93219ff5mr1289598ywc.61.1705068793959;
+        Fri, 12 Jan 2024 06:13:13 -0800 (PST)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id g139-20020a0ddd91000000b005d6f34893dfsm1355399ywe.135.2024.01.12.06.13.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jan 2024 00:38:51 -0800 (PST)
-Message-ID: <ccb2eee4-aaff-4263-8666-bae4609536b2@linaro.org>
-Date: Fri, 12 Jan 2024 09:38:48 +0100
+        Fri, 12 Jan 2024 06:13:13 -0800 (PST)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-5fa52e173f7so33196057b3.3;
+        Fri, 12 Jan 2024 06:13:12 -0800 (PST)
+X-Received: by 2002:a05:690c:7:b0:5fb:86a1:3e57 with SMTP id
+ bc7-20020a05690c000700b005fb86a13e57mr1510809ywb.39.1705068792784; Fri, 12
+ Jan 2024 06:13:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/4] dt-bindings: clock: sophgo: support SG2042
-Content-Language: en-US
-To: Chen Wang <unicorn_wang@outlook.com>,
- Conor Dooley <conor.dooley@microchip.com>
-Cc: Conor Dooley <conor@kernel.org>, Chen Wang <unicornxw@gmail.com>,
- aou@eecs.berkeley.edu, chao.wei@sophgo.com,
- krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
- palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com,
- robh+dt@kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, haijiao.liu@sophgo.com,
- xiaoguang.xing@sophgo.com, guoren@kernel.org, jszhang@kernel.org,
- inochiama@outlook.com, samuel.holland@sifive.com
-References: <cover.1704694903.git.unicorn_wang@outlook.com>
- <925d99d5b4ece01337cb3389aaea4b631894dd1d.1704694903.git.unicorn_wang@outlook.com>
- <f88b79c3-e44b-4136-ae56-10e1f2502e2d@linaro.org>
- <MA0P287MB2822C7A3C1DC7786708E860BFE692@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <20240110-untoasted-underfed-fe81479506f6@spud>
- <MA0P287MB282224A6097B4FCCF721C89AFE682@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <20240111-jolly-prize-930931cc648a@spud>
- <MA0P287MB28229BCC9EA83507B99A9F3BFE6F2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <20240112-overhead-disallow-8c2a4b97c36c@wendy>
- <MA0P287MB2822A18C53C4EDDEB2DAF42CFE6F2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <MA0P287MB2822A18C53C4EDDEB2DAF42CFE6F2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <87edeqgfbu.wl-kuninori.morimoto.gx@renesas.com> <878r4ygfap.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <878r4ygfap.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 Jan 2024 15:13:01 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVq8gjv=NFQdN0PcMoQsZ8QWYF0A9sej1mLPPF_SOSS-Q@mail.gmail.com>
+Message-ID: <CAMuHMdVq8gjv=NFQdN0PcMoQsZ8QWYF0A9sej1mLPPF_SOSS-Q@mail.gmail.com>
+Subject: Re: [PATCH v5 resend 4/4] drivers: clk: renesas: ignore all clocks
+ which are assigned to non-Linux system
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Aymeric Aillet <aymeric.aillet@iot.bzh>, Yusuke Goda <yusuke.goda.sx@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/01/2024 09:35, Chen Wang wrote:
-> Conor and Krzysztof,
-> 
-> Just a quick question, due to I am planning to change the binding files 
-> you have reviewed,  should I remain your signature of “Reviewed-by" or 
-> remove it in next patchset?
+On Wed, Jan 10, 2024 at 2:15=E2=80=AFAM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> Some boards might use Linux and another OS at the same time. In such
+> case, currently, during booting, Linux will stop necessary module clocks
+> which are not used on the Linux side, but are used by another OS.
+>
+> To avoid such situation, renesas-cpg-mssr tries to find
+> status =3D "reserved" devices (A), and adds CLK_IGNORE_UNUSED flag to its
+> <&cgp CPG_MOD xxx> clock (B).
+>
+> Table 2.4: Values for status property
+> https://github.com/devicetree-org/devicetree-specification/releases/downl=
+oad/v0.4/devicetree-specification-v0.4.pdf
+>
+> "reserved"
+>         Indicates that the device is operational, but should not be
+>         used. Typically this is used for devices that are controlled
+>         by another software component, such as platform firmware.
+>
+> ex)
+>         scif5: serial@e6f30000 {
+>                 ...
+> (B)             clocks =3D <&cpg CPG_MOD 202>,
+>                          <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+>                          <&scif_clk>;
+>                 ...
+> (A)             status =3D "reserved";
+>         };
+>
+> Cc: Aymeric Aillet <aymeric.aillet@iot.bzh>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Tested-by: Yusuke Goda <yusuke.goda.sx@renesas.com>
 
-Depends on the amount of changes. If you remove or add properties, then
-please drop the tag. Whenever you drop a tag or skip it (so do not add
-after receiving), explain this in the changelog. changelog goes under ---.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
