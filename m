@@ -1,111 +1,55 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FA717726
-	for <linux-clk@vger.kernel.org>; Fri, 12 Jan 2024 22:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hefring.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hefring.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12EC18638;
+	Fri, 12 Jan 2024 22:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hefring-com.20230601.gappssmtp.com header.i=@hefring-com.20230601.gappssmtp.com header.b="MltP2E0w"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dbedb1ee3e4so6152010276.3
-        for <linux-clk@vger.kernel.org>; Fri, 12 Jan 2024 14:00:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hefring-com.20230601.gappssmtp.com; s=20230601; t=1705096807; x=1705701607; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0hhVOcFdh1HTKD3eGnDrrPjtYobkiYS23JtQg/2eggU=;
-        b=MltP2E0wHB66G1e+RUw5daU0x9C0fvyB/NMYNtcbhGnKt8aVHsw42ZckMLOY1BuYJj
-         +r5Qm+NR0EaqihUhhPyT2e/3TX8VCQbZCwybMBl3chpeMqFxRv5LuU3yJdCPVSYy21WV
-         BqRVNXl2JU3ctNwuFBUauDJI2jHmrfwxqG8z37ytKYtFuLWGYvr5bXRrRndaJWJG1uHU
-         xUIBxby97F96nIvreeC4v/NRo1eyIyzanJjx/CP9f4+aeyDJupqbSlFfYuJqVBwm+Z/o
-         dHk3VNmGpu7ipTQCU9RTRkouOtBzWX4GUGgZEz1TNrnj/vc3YgLlqiZvGD++lH1YP+5R
-         7WmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705096807; x=1705701607;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0hhVOcFdh1HTKD3eGnDrrPjtYobkiYS23JtQg/2eggU=;
-        b=gek8Sshluic8gpl9KCK5299rSAPJki56zA7yw4A9uYy0KTIPIA+dPwO0cTjP7xWADW
-         Rikr6yqDgbr4JKEpJ6FCzQ7ADsodBqxTuGMh+OVIA9ySplK2azV9oeYdFTnMdY6l4k2k
-         ybI+ychZhtFju5FkESdxP9YhLoj1mz2Q8+aQhsYK2ozL7YbQguYVRd4Y1oda9Ul6zEp6
-         qKhHzZVK4EwmSKlVcIS0PrCHGsmuYuTj4oiPl2kZVgBsPj0mwM+F9WwlwYkqAgOeridC
-         qbk/Sr4J/0VHr9fLNWbTl4VUBVC1LRPXfFLxs6WK4QuKd0Gbdzb4c/zfxTgfDLDcGBcF
-         G5ng==
-X-Gm-Message-State: AOJu0YzjLiwg4bswBGFXGbSagPt1LExjOJDX7d+k1W5FDWm+8fcsbyl0
-	v79mNiJTiYEUvPjFEGvZBZaPRdT02WoDYA==
-X-Google-Smtp-Source: AGHT+IHbrYRi12cOjI23zBiUfiGMMjgGZ1WdMjYT+UYdd79zzlNQgTtNbGfGpkVNdrhDuqR5cHrh/g==
-X-Received: by 2002:a05:6902:2182:b0:dbd:5be1:1768 with SMTP id dl2-20020a056902218200b00dbd5be11768mr1339723ybb.73.1705096807499;
-        Fri, 12 Jan 2024 14:00:07 -0800 (PST)
-Received: from dell-precision-5540 ([50.212.55.90])
-        by smtp.gmail.com with ESMTPSA id en12-20020a05622a540c00b00427e36e21d9sm1688262qtb.64.2024.01.12.14.00.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jan 2024 14:00:06 -0800 (PST)
-Date: Fri, 12 Jan 2024 17:00:04 -0500
-From: Ben Wolsieffer <ben.wolsieffer@hefring.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CELxkbm1"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6BB00C433F1;
+	Fri, 12 Jan 2024 22:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705098028;
+	bh=FYsUy/hqDzdQAnyQK5gZMiuusYTz0xctN/Jq/mNFkNw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=CELxkbm13Zxtg8CfxIKEk+ULcItM7+V9noulBolltObEb6jDoJLCEFNcJXTEiUDxw
+	 wo85VZwNVdKDAJk+wTgW63+rVopKHXgUFTqbm0pZvIq0gZLpNOIUNmEaDy8bJZXKis
+	 NIQ+8vzgELvvGSN+m/yxF7eBMWj8qaUjYJR25QCEcFRMJFjOi8T52fkeaRSAV0OHUZ
+	 P3XuTU5CIAtdE3dJQuDQYlCpwtOCxPsdq8tuWo108cdRtcWXsgxG6cSrMzUf9ZYlqd
+	 7eyIpUefa2t2QaEEqkMaDGguG7aqJP68+7wHFR+yWaBKKOwkC1TJ0xiry50t9yNot8
+	 kkycWjzecBYcA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 589A0DFC697;
+	Fri, 12 Jan 2024 22:20:28 +0000 (UTC)
+Subject: Re: [GIT PULL] clk changes for the merge window
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240109223928.2113621-1-sboyd@kernel.org>
+References: <20240109223928.2113621-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240109223928.2113621-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+X-PR-Tracked-Commit-Id: 4f964cfef39d48a8e6748847df9a1ed310b96c4e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c736c9a9553f9cfcb1b03e65f91bc29fc6446fd3
+Message-Id: <170509802835.4331.5074851812869255335.pr-tracker-bot@kernel.org>
+Date: Fri, 12 Jan 2024 22:20:28 +0000
 To: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 1/2] clk: stm32: initialize syscon after clocks are
- registered
-Message-ID: <ZaG2ZDCLP34jcI6Y@dell-precision-5540>
-References: <20231002180854.1603452-1-ben.wolsieffer@hefring.com>
- <20231002180854.1603452-2-ben.wolsieffer@hefring.com>
- <883a61872f94c972cc410da84eaf7b97.sboyd@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <883a61872f94c972cc410da84eaf7b97.sboyd@kernel.org>
 
-On Sun, Dec 17, 2023 at 03:05:01PM -0800, Stephen Boyd wrote:
-> Quoting Ben Wolsieffer (2023-10-02 11:08:53)
-> > The stm32-power-config syscon (PWR peripheral) is used in this driver
-> > and the STM32 RTC driver to enable write access to backup domain
-> > registers. The syscon's clock has a gate controlled by this clock
-> > driver, but this clock is currently not registered in the device tree.
-> > This only happens to work currently because all relevant clock setup and
-> > RTC initialization happens before clk_disabled_unused(). After this
-> > point, all syscon register writes are ignored.
-> 
-> Seems like we should mark those clks as CLK_IGNORE_UNUSED and add a
-> comment to that fact.
+The pull request you sent on Tue,  9 Jan 2024 14:39:24 -0800:
 
-That seems like a worse solution than specifying the clock dependency in
-the device tree.
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
 
-> 
-> > 
-> > If we simply add the syscon clock in the device tree, we end up with a
-> > circular dependency because the clock has not been registered at the
-> > point this driver requests the syscon.
-> > 
-> > This patch avoids this circular dependency by moving the syscon lookup
-> > after the clocks are registered. This does appear to create a possible
-> > race condition where someone could attempt to perform an operation on a
-> > backup domain clock before the syscon has been initialized. This would
-> > result in the operation having no effect because backup domain writes
-> > could not be enabled. I'm not sure if this is a problem or if there is
-> > a way to avoid it.
-> 
-> There's no comment in the code that says the regmap must be set there
-> instead of earlier. What's to stop someone from tripping over this
-> problem later? At the least, please add a comment.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c736c9a9553f9cfcb1b03e65f91bc29fc6446fd3
 
-Yeah, I'll fix that. Do you have any thoughts on the race condition I
-described? Should I add some kind of locking to block
-enable/disable_power_domain_write_protection() until stm32f4_rcc_init()
-attempts to initialize the syscon?
+Thank you!
 
-Thank you, Ben
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
