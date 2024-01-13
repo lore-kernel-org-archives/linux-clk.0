@@ -1,50 +1,51 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7964A2D
-	for <linux-clk@vger.kernel.org>; Sat, 13 Jan 2024 14:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F70416435
+	for <linux-clk@vger.kernel.org>; Sat, 13 Jan 2024 14:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HKFIBwZ3"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-558fc54e28eso425446a12.1
-        for <linux-clk@vger.kernel.org>; Sat, 13 Jan 2024 06:51:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cpeAPNZP"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5534dcfdd61so13019899a12.0
+        for <linux-clk@vger.kernel.org>; Sat, 13 Jan 2024 06:51:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705157468; x=1705762268; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705157470; x=1705762270; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=W7xS7+izUNzuVlSMQ27hfUhVKMOnBNsD+XhqYWRzbz0=;
-        b=HKFIBwZ307cXjp/i06lWPkvshWse3jdlsax4KQ7wXH/LPZ7wqm32qrF2hoGx5368bL
-         uCWhafsNSk2iphUArTpH7XmHqV36Y1kaLhg4UEKuWBryqBDTIagCB/YasxITMr9rDSRH
-         ENULhhTZznvhKofZFEVrEDUbGi1POh7fEKl2uj3QizikguVCPlFmglgZz1v6dx0FZRAD
-         8em/Xs834tJH+4Dha4oVpqLjgelRS4bJdmoDCALd4/JjnSPmFVbIiXvEjmBKsfq0265E
-         zY1K3G5h1Xil0fXK0JhsSSOsJDwcKMp+vHl2W1pyRl97LofEq2agHiGNiPM1sHJudhrU
-         +lEA==
+        bh=thdguaCHTvAyDkbl0M+QcqRz8Ch/GnJdkkYVZMckGzA=;
+        b=cpeAPNZP8/KT13V1HZTdM0i79UCcZRexOLOttmOXC61gVc1jBj8HGNtBm0nqmZCbRO
+         F27NHiwcDBwqgBSFm0lFwxUmE8ZQHLInFxS354cI3iKQmHmmXW9Z86eXYNPYmhG8lBM4
+         My/0m3KWtJ/bRkLMcGKvreXTUzqEoa0TB+vRhlHSqxUktCLMJX+ZSZO+Zc2gc6YaWgXa
+         iIt+8tyzR0f/GcFZ+gHbZrp2Xna1MpCghh+N+tjUiLwg7y+0DtLrESCfCy59SUCf7wIY
+         2XVNS3ISyoGcO0vFqnmu7V7FOxy9ie37h8wu48nnlCuYGTJ9tYkCbFFJJiLVroOSr4gO
+         TQiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705157468; x=1705762268;
+        d=1e100.net; s=20230601; t=1705157470; x=1705762270;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=W7xS7+izUNzuVlSMQ27hfUhVKMOnBNsD+XhqYWRzbz0=;
-        b=NB3B0Ie0JS/0SOrjTRVmbZGlyL/TlgJzdTg4hmY4IHvvCmYvs+wBjpdqvnWPQRRVkV
-         xT+MZHjUCuUenQoC74Pa8WDHJUikHxNzc/7Hx7dpD9xe/yILLdBwzQnf/vsM95u80Wk+
-         mi/SflmHfO38rXU896+CGHXMVnU2QGXXruXLEQ5hmm9bcZo1eDc3IAG0yEtIfm+9UfR4
-         1W+gHQTd446JGz6sXK1Jt4R5ZSIpGsw4gfGtRR+VBW7XV+SS5S0wDKAuQbcbTevdBSyU
-         9ZedkKA+dpSxOywKxKjMY5Gih0CUoroWhjFw71Cpialz0R0wckzkWErIyxhWFVMPfZLP
-         Xh1Q==
-X-Gm-Message-State: AOJu0YxMt9/sCjfm+w7ct1Sm7rkaRcJVBa/H3eZ6xxw17TkoWKjMCsWN
-	9v8OfqSzR2b6n4FIB2L1vYgKwlm8FezDWA==
-X-Google-Smtp-Source: AGHT+IFxsdVBWr0a+SjOvvo44vZrIK6sNUcCi/8/gxRPS7nQ2JfiJeVmsmDzSkIosm8jAi//nCpmTw==
-X-Received: by 2002:aa7:dc18:0:b0:558:84d8:e2f with SMTP id b24-20020aa7dc18000000b0055884d80e2fmr1461473edu.46.1705157468196;
-        Sat, 13 Jan 2024 06:51:08 -0800 (PST)
+        bh=thdguaCHTvAyDkbl0M+QcqRz8Ch/GnJdkkYVZMckGzA=;
+        b=KZuDPzzw/Xma53JhhbdbrJLcvR9NAofBYQqWr+8p9xM+GeGpE3a+ZKIWM1rAxaDVU7
+         BjeXA2n54Tybz2Rh0Ifv0Zu0I5Gvn7Uyyz6kKwO/Xg8bHqyGUdk7M10eh26xpTu7Pn9D
+         L+M+VBFCR47LY5PE1hYWeQslaHFLm5Prcl/YX9SN4815Gkba4GhFTKUKFAPbUZy7U5UF
+         uxkioT+9oanLmNIwP7/Dk1Nl585HHobjT0WUSuYBwjp8xKY5GsD0nRAtB4MzQhx4az9o
+         I04gsnmmVeuxEeqaPgfJuTy7UG+BId/Y6NSW9a6uq9BaIwCCACeH3TAgQI150zo7DWf6
+         J4yw==
+X-Gm-Message-State: AOJu0Ywg84zMRieyJ1f/UqFax7Bb9yXSX2ZirDVUFsBmHZnOz3SBovbw
+	wt+JL6a6Xa3+ZGTtlKP/8pfkI0eU6awF1w==
+X-Google-Smtp-Source: AGHT+IExb0HaeS9YQnBeXitdcZOSG/e4eFR5enkCM2S1Vys9ZWKwP7jE4Z51wmOK4duaTlgQ9aosUg==
+X-Received: by 2002:a05:6402:31f5:b0:558:e302:5c28 with SMTP id dy21-20020a05640231f500b00558e3025c28mr2060091edb.0.1705157469933;
+        Sat, 13 Jan 2024 06:51:09 -0800 (PST)
 Received: from [10.167.154.1] (178235179017.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.17])
-        by smtp.gmail.com with ESMTPSA id es18-20020a056402381200b00554b1d1a934sm3014593edb.27.2024.01.13.06.51.07
+        by smtp.gmail.com with ESMTPSA id es18-20020a056402381200b00554b1d1a934sm3014593edb.27.2024.01.13.06.51.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jan 2024 06:51:07 -0800 (PST)
+        Sat, 13 Jan 2024 06:51:09 -0800 (PST)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Sat, 13 Jan 2024 15:50:56 +0100
-Subject: [PATCH v6 07/12] clk: qcom: gcc-sm6115: Unregister critical clocks
+Date: Sat, 13 Jan 2024 15:50:57 +0100
+Subject: [PATCH v6 08/12] clk: qcom: gcc-qcm2290: Unregister critical
+ clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,7 +54,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230717-topic-branch_aon_cleanup-v6-7-46d136a4e8d0@linaro.org>
+Message-Id: <20230717-topic-branch_aon_cleanup-v6-8-46d136a4e8d0@linaro.org>
 References: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
 In-Reply-To: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>, 
@@ -66,11 +67,11 @@ Cc: Marijn Suijten <marijn.suijten@somainline.org>,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1705157455; l=7187;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1705157455; l=6713;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=iYyi3pIcadPzcV3JUoNjpiYD91rVmbufz+P6nURn+eI=;
- b=Mj6T1tBCYTx89nXXVXzUa2AoosHFoSNTuC2FXEg+pph1enF+QcyUzIOfjdp0eA5laBo9w6de/
- vljQnmcyd4pAJnQ6AxWgu+KOyApwrh01/Ju5IgIIbmJt4kTGz+l+WDp
+ bh=1E+XbA6wAIFD3Fn0xiIZhPRBVyiQV4eHkv9HIqt0AbM=;
+ b=nePDHV51tjm21DJokck4AsoX3wlGUcUyAnDwmG9WUL9x32OilLO47vI3bU3C0MQk7Z5YaMS+Q
+ LQL4Mk4918FB49nbqt2FaY64TkXfQi81RsEqOEfOZ1n0qb4HGLz8LMt
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
@@ -84,14 +85,14 @@ as CLK_IS_CRITICAL prevents the latter.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/qcom/gcc-sm6115.c | 124 +++---------------------------------------
- 1 file changed, 9 insertions(+), 115 deletions(-)
+ drivers/clk/qcom/gcc-qcm2290.c | 106 ++++-------------------------------------
+ 1 file changed, 8 insertions(+), 98 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-sm6115.c b/drivers/clk/qcom/gcc-sm6115.c
-index 13e521cd4259..99130508d281 100644
---- a/drivers/clk/qcom/gcc-sm6115.c
-+++ b/drivers/clk/qcom/gcc-sm6115.c
-@@ -1586,36 +1586,6 @@ static struct clk_branch gcc_cam_throttle_rt_clk = {
+diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
+index 48995e50c6bd..fd20408d8205 100644
+--- a/drivers/clk/qcom/gcc-qcm2290.c
++++ b/drivers/clk/qcom/gcc-qcm2290.c
+@@ -1397,36 +1397,6 @@ static struct clk_branch gcc_cam_throttle_rt_clk = {
  	},
  };
  
@@ -128,26 +129,10 @@ index 13e521cd4259..99130508d281 100644
  static struct clk_branch gcc_camss_axi_clk = {
  	.halt_reg = 0x58044,
  	.halt_check = BRANCH_HALT,
-@@ -2124,38 +2094,6 @@ static struct clk_branch gcc_cfg_noc_usb3_prim_axi_clk = {
+@@ -1825,22 +1795,6 @@ static struct clk_branch gcc_cfg_noc_usb3_prim_axi_clk = {
  	},
  };
  
--static struct clk_branch gcc_cpuss_gnoc_clk = {
--	.halt_reg = 0x2b004,
--	.halt_check = BRANCH_HALT_VOTED,
--	.hwcg_reg = 0x2b004,
--	.hwcg_bit = 1,
--	.clkr = {
--		.enable_reg = 0x79004,
--		.enable_mask = BIT(22),
--		.hw.init = &(struct clk_init_data){
--			.name = "gcc_cpuss_gnoc_clk",
--			.flags = CLK_IS_CRITICAL,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
 -static struct clk_branch gcc_disp_ahb_clk = {
 -	.halt_reg = 0x1700c,
 -	.halt_check = BRANCH_HALT,
@@ -167,7 +152,7 @@ index 13e521cd4259..99130508d281 100644
  static struct clk_regmap_div gcc_disp_gpll0_clk_src = {
  	.reg = 0x17058,
  	.shift = 0,
-@@ -2215,20 +2153,6 @@ static struct clk_branch gcc_disp_throttle_core_clk = {
+@@ -1899,20 +1853,6 @@ static struct clk_branch gcc_disp_throttle_core_clk = {
  	},
  };
  
@@ -188,7 +173,7 @@ index 13e521cd4259..99130508d281 100644
  static struct clk_branch gcc_gp1_clk = {
  	.halt_reg = 0x4d000,
  	.halt_check = BRANCH_HALT,
-@@ -2283,22 +2207,6 @@ static struct clk_branch gcc_gp3_clk = {
+@@ -1964,22 +1904,6 @@ static struct clk_branch gcc_gp3_clk = {
  	},
  };
  
@@ -211,7 +196,7 @@ index 13e521cd4259..99130508d281 100644
  static struct clk_branch gcc_gpu_gpll0_clk_src = {
  	.halt_check = BRANCH_HALT_DELAY,
  	.clkr = {
-@@ -2771,22 +2679,6 @@ static struct clk_branch gcc_sdcc2_apps_clk = {
+@@ -2439,22 +2363,6 @@ static struct clk_branch gcc_sdcc2_apps_clk = {
  	},
  };
  
@@ -231,10 +216,10 @@ index 13e521cd4259..99130508d281 100644
 -	},
 -};
 -
- static struct clk_branch gcc_sys_noc_ufs_phy_axi_clk = {
- 	.halt_reg = 0x45098,
+ static struct clk_branch gcc_sys_noc_usb3_prim_axi_clk = {
+ 	.halt_reg = 0x1a080,
  	.halt_check = BRANCH_HALT,
-@@ -3272,8 +3164,6 @@ static struct clk_regmap *gcc_sm6115_clocks[] = {
+@@ -2774,8 +2682,6 @@ static struct clk_regmap *gcc_qcm2290_clocks[] = {
  	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
  	[GCC_CAM_THROTTLE_NRT_CLK] = &gcc_cam_throttle_nrt_clk.clkr,
  	[GCC_CAM_THROTTLE_RT_CLK] = &gcc_cam_throttle_rt_clk.clkr,
@@ -243,11 +228,10 @@ index 13e521cd4259..99130508d281 100644
  	[GCC_CAMSS_AXI_CLK] = &gcc_camss_axi_clk.clkr,
  	[GCC_CAMSS_AXI_CLK_SRC] = &gcc_camss_axi_clk_src.clkr,
  	[GCC_CAMSS_CAMNOC_ATB_CLK] = &gcc_camss_camnoc_atb_clk.clkr,
-@@ -3322,20 +3212,16 @@ static struct clk_regmap *gcc_sm6115_clocks[] = {
+@@ -2816,19 +2722,16 @@ static struct clk_regmap *gcc_qcm2290_clocks[] = {
  	[GCC_CAMSS_TOP_AHB_CLK] = &gcc_camss_top_ahb_clk.clkr,
  	[GCC_CAMSS_TOP_AHB_CLK_SRC] = &gcc_camss_top_ahb_clk_src.clkr,
  	[GCC_CFG_NOC_USB3_PRIM_AXI_CLK] = &gcc_cfg_noc_usb3_prim_axi_clk.clkr,
--	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
 -	[GCC_DISP_AHB_CLK] = &gcc_disp_ahb_clk.clkr,
  	[GCC_DISP_GPLL0_CLK_SRC] = &gcc_disp_gpll0_clk_src.clkr,
  	[GCC_DISP_GPLL0_DIV_CLK_SRC] = &gcc_disp_gpll0_div_clk_src.clkr,
@@ -264,28 +248,27 @@ index 13e521cd4259..99130508d281 100644
  	[GCC_GPU_GPLL0_CLK_SRC] = &gcc_gpu_gpll0_clk_src.clkr,
  	[GCC_GPU_GPLL0_DIV_CLK_SRC] = &gcc_gpu_gpll0_div_clk_src.clkr,
  	[GCC_GPU_IREF_CLK] = &gcc_gpu_iref_clk.clkr,
-@@ -3376,7 +3262,6 @@ static struct clk_regmap *gcc_sm6115_clocks[] = {
+@@ -2869,7 +2772,6 @@ static struct clk_regmap *gcc_qcm2290_clocks[] = {
  	[GCC_SDCC2_AHB_CLK] = &gcc_sdcc2_ahb_clk.clkr,
  	[GCC_SDCC2_APPS_CLK] = &gcc_sdcc2_apps_clk.clkr,
  	[GCC_SDCC2_APPS_CLK_SRC] = &gcc_sdcc2_apps_clk_src.clkr,
 -	[GCC_SYS_NOC_CPUSS_AHB_CLK] = &gcc_sys_noc_cpuss_ahb_clk.clkr,
- 	[GCC_SYS_NOC_UFS_PHY_AXI_CLK] = &gcc_sys_noc_ufs_phy_axi_clk.clkr,
  	[GCC_SYS_NOC_USB3_PRIM_AXI_CLK] = &gcc_sys_noc_usb3_prim_axi_clk.clkr,
- 	[GCC_UFS_CLKREF_CLK] = &gcc_ufs_clkref_clk.clkr,
-@@ -3513,6 +3398,15 @@ static int gcc_sm6115_probe(struct platform_device *pdev)
- 	clk_alpha_pll_configure(&gpll10, regmap, &gpll10_config);
- 	clk_alpha_pll_configure(&gpll11, regmap, &gpll11_config);
+ 	[GCC_USB30_PRIM_MASTER_CLK] = &gcc_usb30_prim_master_clk.clkr,
+ 	[GCC_USB30_PRIM_MASTER_CLK_SRC] = &gcc_usb30_prim_master_clk_src.clkr,
+@@ -2994,6 +2896,14 @@ static int gcc_qcm2290_probe(struct platform_device *pdev)
+ 	clk_alpha_pll_configure(&gpll8, regmap, &gpll8_config);
+ 	clk_alpha_pll_configure(&gpll9, regmap, &gpll9_config);
  
 +	/* Keep some clocks always-on */
 +	qcom_branch_set_clk_en(regmap, 0x17008); /* GCC_CAMERA_AHB_CLK */
 +	qcom_branch_set_clk_en(regmap, 0x1700c); /* GCC_DISP_AHB_CLK */
 +	qcom_branch_set_clk_en(regmap, 0x17028); /* GCC_CAMERA_XO_CLK */
 +	qcom_branch_set_clk_en(regmap, 0x1702c); /* GCC_DISP_XO_CLK */
-+	qcom_branch_set_clk_en(regmap, 0x2b004); /* GCC_CPUSS_GNOC_CLK */
 +	qcom_branch_set_clk_en(regmap, 0x2b06c); /* GCC_SYS_NOC_CPUSS_AHB_CLK */
 +	qcom_branch_set_clk_en(regmap, 0x36004); /* GCC_GPU_CFG_AHB_CLK */
 +
- 	return qcom_cc_really_probe(pdev, &gcc_sm6115_desc, regmap);
+ 	return qcom_cc_really_probe(pdev, &gcc_qcm2290_desc, regmap);
  }
  
 
