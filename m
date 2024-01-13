@@ -1,120 +1,201 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA256210E6
-	for <linux-clk@vger.kernel.org>; Sat, 13 Jan 2024 12:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32637EBB
+	for <linux-clk@vger.kernel.org>; Sat, 13 Jan 2024 14:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TfjJG+Cb"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5578485fc0eso6264563a12.1
-        for <linux-clk@vger.kernel.org>; Sat, 13 Jan 2024 04:16:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q5A2u/Zp"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ccec119587so89945291fa.0
+        for <linux-clk@vger.kernel.org>; Sat, 13 Jan 2024 06:50:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705148167; x=1705752967; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zwASn8C7UEZZZoWNwFdQpTrZjLvObf4QOT7LkGKv8Rw=;
-        b=TfjJG+CbhJnRT19dDv2VnH94J8DwWEjMPUrelLiJ355XC4fL9A2+NyGlEyw08wBJO5
-         uYkFqfQ6mZ09KcK47M5JYH7C1aY6o48ncbSHzmXe6RFgsbe765vZDzALbHeCSgXRC9gq
-         fZ8Rt/WHR4npBtRTcVK7FDbdWqgryVDVEaaxdqe3jQUbP4TFfpa3p4k7EoBgVrzpUlkS
-         y3oFttIrgNTAert55sZXlDrYpFsZz83FuArDoowNl6IcjpzOce6HVP7orn54Gp1P+Ggl
-         ZjpwCR3nlhGWzWYVUHSjOrGNhldENunib15M22YFoTTXznN7KJ2Iqt2ZZOrziYhS6Mnl
-         8z3w==
+        d=linaro.org; s=google; t=1705157457; x=1705762257; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V/I/XuCXTujbt8vVT93hkh8hG2X/qqDSbSC/vDBIwwM=;
+        b=q5A2u/ZpdPqOCzCY65fvqKkZagGFZsuAA1mk2ykZgKRm8CPdqkoo0OQBMgjES3HLRe
+         yu8k0WcrGmdGcjwVTVDcgQCLAPSq0V4hjLGitsdpPRJexc5qaWb6GbvlHamIl3nf1wkj
+         fRkrljMfOwE+H3uzWFjtTQuWlyCVnDK1ViLnUagPtVMOJcLdR3oPffDnfbaUoctk/zSb
+         HDQrd7VpVOi4Nxjw+76c8AlHlLp9dmCEF5zMr2ZdURPKwxQlShiSB9KT3nHThHPaWdZ2
+         mqUNsIUlGyqOesgere3FigZs86/pAUMcXvTWtNKWIrw3E4ijFP9zmY7ULYAwYpD4KKsr
+         VWSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705148167; x=1705752967;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zwASn8C7UEZZZoWNwFdQpTrZjLvObf4QOT7LkGKv8Rw=;
-        b=rJvMuhIprMA37xrz1515ly4zhTLstP9f/sEDaGtSkEwSJDgv0fGrv7KfaYKtK/OHH4
-         CnbblY3rl0hAu5d2IwnaWgVWHoEVrGvhPZjAoFMLJRDhz0ZvtdUrQsMGLfbYH6OPvJyx
-         phMIozXmlJcqzIthDxJcr2+Zs1mt7RUS19iT73BMutmDDLelvvLCMuBKco9T85zbubNd
-         +FiAjsfwMVwcA/y7p5saHJB/lKVEuCvgdlJ4b/zT24GrPO4GAyDRB3Uq4BIsCmCKh711
-         5QLDMHkDxAwjmYttIuXWqgX/DQmTq9yY0W7uJx5aVbuHc/59a+53tvwyJ+gNk8SuvDLq
-         0qyQ==
-X-Gm-Message-State: AOJu0Yxxnd1FuRS3HB7TgQUXmM0Zag7XQ8pl6AEdsocD9F5o6RTL1C3/
-	KwmvP7lyQiEMaVdzNgoE19J5jg5YdcPwiA==
-X-Google-Smtp-Source: AGHT+IGZvjC3FPhJYs+PlP8FIl1bVQickoygZOA+9cUxJxIHk9EEJj80ffU7Y8CaYc9IAfAr4I7O+Q==
-X-Received: by 2002:a05:6402:5210:b0:558:d206:3bba with SMTP id s16-20020a056402521000b00558d2063bbamr1553275edd.20.1705148167105;
-        Sat, 13 Jan 2024 04:16:07 -0800 (PST)
-Received: from [192.168.174.25] (178235179017.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.17])
-        by smtp.gmail.com with ESMTPSA id b11-20020aa7dc0b000000b00558fc426affsm630422edu.88.2024.01.13.04.16.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Jan 2024 04:16:06 -0800 (PST)
-Message-ID: <a4ff0c32-6eef-44d5-9bfb-ae076bdd7487@linaro.org>
-Date: Sat, 13 Jan 2024 13:16:05 +0100
+        d=1e100.net; s=20230601; t=1705157457; x=1705762257;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V/I/XuCXTujbt8vVT93hkh8hG2X/qqDSbSC/vDBIwwM=;
+        b=FE5zwg2mkfSFHx1ZSmsrqhq8rcuD4641/zg+i7CX0umTkweN62QRTAyYUjaMotE1Os
+         hPVYJ24g9FJUuogF9vqeWRQ7+CWgv+0Bnk0FGOPudCCLnd7LNU5vE1n31DhvdVIJemQW
+         024IBRdlIvcDAIm0LJZIAU3gEpS6C4viFIfhuictDbGz8LRkrsNFjG9hQdyd4tBUFv6s
+         V3SGxBJU+uRf3BOkqDjJBLnS5iwVUVOyRPDp5RzNtD929GDV3rYtlNsp7kPk3b4V1kJy
+         /VcggQwVKqbA261/Onnwn5iDElRCnJKYl2urp6RDENeuW7rS33HlDEjKN0/WR0v9dr5X
+         8MZQ==
+X-Gm-Message-State: AOJu0YwmvB26TlfbX68jyL3Z41nTU6q8ha1p/at/zomfhQs7nBNN2xZZ
+	OoXCydZPQsPPQpZqK8X+Jen9sz1FNvEa2g==
+X-Google-Smtp-Source: AGHT+IEIkD8M+NRpyGNFGTUOTUgSGHF6/CfxX89txVZtbvmTwMrQqcYA225a9wiy10Vh5XUxVPwmlg==
+X-Received: by 2002:a2e:9094:0:b0:2cd:2334:ed0d with SMTP id l20-20020a2e9094000000b002cd2334ed0dmr1484478ljg.88.1705157457269;
+        Sat, 13 Jan 2024 06:50:57 -0800 (PST)
+Received: from [10.167.154.1] (178235179017.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.17])
+        by smtp.gmail.com with ESMTPSA id es18-20020a056402381200b00554b1d1a934sm3014593edb.27.2024.01.13.06.50.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jan 2024 06:50:56 -0800 (PST)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH v6 00/12] Unregister critical branch clocks + some RPM
+Date: Sat, 13 Jan 2024 15:50:49 +0100
+Message-Id: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] clk: qcom: gcc-sm8150: Add gcc video resets for
- sm8150
-Content-Language: en-US
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Taniya Das <quic_tdas@quicinc.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240111-sm8150-dfs-support-v2-0-6edb44c83d3b@quicinc.com>
- <20240111-sm8150-dfs-support-v2-3-6edb44c83d3b@quicinc.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240111-sm8150-dfs-support-v2-3-6edb44c83d3b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEmjomUC/43NwY7CIBQF0F8xrAdTHhTElf8xMQbow5I00IA2Y
+ 0z/faiZjXEWLO/Ne+c+ScEcsJDj7kkyLqGEFGuQXzviRhOvSMNQM4EOeKeYorc0B0dtNtGNF5P
+ ixU1o4n2mUivpGPeomCP13ZqCf3cViPdpquWc0Yef1973ueYxlFvKj9f8wra2YWlhtKOg1EEMo
+ Izw4jSFaHLap3wlm7pAqwSbZPoDF7JDD/JD4q0SrxJHzqxD7eQ/kmiVxCaBA80HHDTrP6S+Veq
+ rpLUWgNJ6Zs2btK7rL2ZRG3H+AQAA
+To: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Johan Hovold <johan+linaro@kernel.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1705157455; l=5611;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=vkGbXU848WEspgSharGEk+6olgNHHL+yL2Y/bvSVj1Y=;
+ b=B+x4cJRS0CIrn1Z9W2YFKQpp0A4nI77fQC9MYbBOHmqv1dBNWdU9qu9Lf7YuSAeHDNYnTJhEQ
+ C2AaPzVQLX8CuPgjNFWbsaIK3c8GZlmfGTJ1myCgprrkpOhYypfjjdI
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On 11.01.2024 07:32, Satya Priya Kakitapalli wrote:
-> Add gcc video axic, axi0 and axi1 resets for the global clock
-> controller on sm8150.
-> 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
+On Qualcomm SoCs, certain branch clocks either need to be always-on, or
+should be if you're interested in touching some part of the hardware.
 
-Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Using CLK_IS_CRITICAL for this purpose sounds like a genius idea,
+however that messes with the runtime pm handling - if a clock is
+marked as such, the clock controller device will never enter the
+"suspended" state, leaving the associated resources online, which in
+turn breaks SoC-wide suspend.
 
-Konrad
+This series aims to solve that on a couple SoCs that I could test the
+changes on and it sprinkles some runtime pm enablement atop these drivers.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Changes in v6:
+- Rebase (next-20240112)
+- Reorder qcom_branch_set_clk_en calls by register in "*: Unregister
+  critical clocks" (Johan)
+- Pick up tags
+- Link to v5: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v5-0-99942e6bf1ba@linaro.org
+
+Changes in v5:
+- Change the "Keep the critical clocks always-on" comment to "Keep
+  some clocks always-on"
+- Add the same comment to commits unregistering clocks on 6115/6375/2290
+- Link to v4: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v4-0-32c293ded915@linaro.org
+
+Changes in v4:
+- Add and unify the "/* Keep the critical clocks always-on */" comment
+- Rebase (next-20231222), also include 8650, X1E and 8280camcc drivers
+- Drop enabling runtime PM on GCC
+- Improve the commit message of "clk: qcom: gpucc-sm6115: Add runtime PM"
+- Link to v3: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v3-0-3e31bce9c626@linaro.org
+
+Changes in v3:
+- Rebase (next-20231219)
+- Fix up a copypaste mistake in "gcc-sm6375: Unregister critical clocks" (bod)
+- Pick up tags
+- Link to v2: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v2-0-2a583460ef26@linaro.org
+
+Changes in v2:
+- Rebase
+- Pick up tags
+- Fix up missing pm_runtime_put in SM6375 GCC (Johan)
+- Clarify the commit message of "Add runtime PM" commits (Johan)
+- "GPU_CCC" -> "GPU_CC" (oops)
+- Rebase atop next-20231129
+  - Also fix up camcc-sm8550 & gcc-sm4450
+  - Unify and clean up the comment style
+  - Fix missing comments in gcc-sc7180..
+  - Drop Johan's ack from "clk: qcom: Use qcom_branch_set_clk_en()"
+- Improve 6115 dt patch commit message (Bjorn)
+- Link to v1: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org
+
+---
+Konrad Dybcio (12):
+      clk: qcom: branch: Add a helper for setting the enable bit
+      clk: qcom: Use qcom_branch_set_clk_en()
+      clk: qcom: gcc-sm6375: Unregister critical clocks
+      clk: qcom: gpucc-sm6375: Unregister critical clocks
+      clk: qcom: gpucc-sm6115: Unregister critical clocks
+      clk: qcom: gpucc-sm6115: Add runtime PM
+      clk: qcom: gcc-sm6115: Unregister critical clocks
+      clk: qcom: gcc-qcm2290: Unregister critical clocks
+      arm64: dts: qcom: sm6375: Add VDD_CX to GCC
+      arm64: dts: qcom: qcm2290: Add VDD_CX to GCC
+      arm64: dts: qcom: sm6115: Add VDD_CX to GCC
+      arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CC
+
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi |   1 +
+ arch/arm64/boot/dts/qcom/sm6115.dtsi  |   3 +
+ arch/arm64/boot/dts/qcom/sm6375.dtsi  |   1 +
+ drivers/clk/qcom/camcc-sc8280xp.c     |   6 +-
+ drivers/clk/qcom/camcc-sm8550.c       |  10 +--
+ drivers/clk/qcom/clk-branch.h         |   7 ++
+ drivers/clk/qcom/dispcc-qcm2290.c     |   4 +-
+ drivers/clk/qcom/dispcc-sc7280.c      |   7 +-
+ drivers/clk/qcom/dispcc-sc8280xp.c    |   4 +-
+ drivers/clk/qcom/dispcc-sm6115.c      |   4 +-
+ drivers/clk/qcom/dispcc-sm8250.c      |   4 +-
+ drivers/clk/qcom/dispcc-sm8450.c      |   7 +-
+ drivers/clk/qcom/dispcc-sm8550.c      |   7 +-
+ drivers/clk/qcom/dispcc-sm8650.c      |   4 +-
+ drivers/clk/qcom/gcc-qcm2290.c        | 106 +++--------------------------
+ drivers/clk/qcom/gcc-sa8775p.c        |  25 +++----
+ drivers/clk/qcom/gcc-sc7180.c         |  22 +++---
+ drivers/clk/qcom/gcc-sc7280.c         |  20 +++---
+ drivers/clk/qcom/gcc-sc8180x.c        |  28 +++-----
+ drivers/clk/qcom/gcc-sc8280xp.c       |  25 +++----
+ drivers/clk/qcom/gcc-sdx55.c          |  12 ++--
+ drivers/clk/qcom/gcc-sdx65.c          |  13 ++--
+ drivers/clk/qcom/gcc-sdx75.c          |  10 +--
+ drivers/clk/qcom/gcc-sm4450.c         |  28 +++-----
+ drivers/clk/qcom/gcc-sm6115.c         | 124 +++-------------------------------
+ drivers/clk/qcom/gcc-sm6375.c         | 105 +++-------------------------
+ drivers/clk/qcom/gcc-sm7150.c         |  23 +++----
+ drivers/clk/qcom/gcc-sm8250.c         |  19 ++----
+ drivers/clk/qcom/gcc-sm8350.c         |  20 +++---
+ drivers/clk/qcom/gcc-sm8450.c         |  21 +++---
+ drivers/clk/qcom/gcc-sm8550.c         |  21 +++---
+ drivers/clk/qcom/gcc-sm8650.c         |  16 ++---
+ drivers/clk/qcom/gcc-x1e80100.c       |  16 ++---
+ drivers/clk/qcom/gpucc-sc7280.c       |   9 +--
+ drivers/clk/qcom/gpucc-sc8280xp.c     |   9 +--
+ drivers/clk/qcom/gpucc-sm6115.c       |  53 ++++++---------
+ drivers/clk/qcom/gpucc-sm6375.c       |  34 ++--------
+ drivers/clk/qcom/gpucc-sm8550.c       |  10 +--
+ drivers/clk/qcom/lpasscorecc-sc7180.c |   7 +-
+ drivers/clk/qcom/videocc-sm8250.c     |   6 +-
+ drivers/clk/qcom/videocc-sm8350.c     |  10 +--
+ drivers/clk/qcom/videocc-sm8450.c     |  13 ++--
+ drivers/clk/qcom/videocc-sm8550.c     |  13 ++--
+ 43 files changed, 234 insertions(+), 653 deletions(-)
+---
+base-commit: 8d04a7e2ee3fd6aabb8096b00c64db0d735bc874
+change-id: 20230717-topic-branch_aon_cleanup-6976c13fe71c
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
