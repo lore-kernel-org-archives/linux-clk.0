@@ -1,190 +1,202 @@
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02olkn2069.outbound.protection.outlook.com [40.92.15.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1E61FCC;
-	Sun, 14 Jan 2024 04:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439181846
+	for <linux-clk@vger.kernel.org>; Sun, 14 Jan 2024 04:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="fhjtoc+F"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Yr9PLZl+W5VzHvp+ASv60sBFvnVr3NHyAiKCsbYYrwEty5M58TXEYjdHYmYwN0+ZskZWMZHc7fWKMCo/3haqfBGKRoG3zRfDE1msG8NGcJm50WjbHabzytuNFAOkNTGMF4dCQjKrR5Vqm9YBrD9gnks6u2nAyOxFyemysbN6PB+RsniQGkr/0RaFf4zBxp/d4PL2Y8v12rBQXPFFCNEvHAd9Pa+yynu+bZLGAVqgfPIIwQIn+mwmNiDdeEJQ/bcmVPe1fT9wmyBF9sSDuT0LDgMwmcaM5A2ONoBSfgyswLEgZRqZYREylIPgBr7VHVmLQjSqCuQCAWngc8QKryPFwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Cor42z0n//rFJE8KJb9aLxI19y8bM26Khqn4WDnZiok=;
- b=RbzfmYrvUUDUtgT8ucGjxtPh2Og2WOBto8sUhngGd0RN1PsquwG2GAsSVN3BT1gEWuE8cPJfeYgN8ajXG8UunVF8BttR1pWEoQjQifdNwh6AnhdTOQRSgjgA7yUJbJYNngLW4dFUjYapwsx+jWKGv3DQCjtKhJiwWOtPxGBRGVk7PTYoQsj3U+8HkpO/43V7APc3X6p86IUYsUqU9ICx40sfcWetRk3upI+DTDMfEUyRjGoZ0ZfCG4X29ovH0Zi7iaKZ+yfKtOqFIQK/Oc7LSj1/XA8+Ue5FoVL9ugAp/9SL4HyK74AeguJUnmPPFi5EW9fYtiZSfdT7EmdrSK7B7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Cor42z0n//rFJE8KJb9aLxI19y8bM26Khqn4WDnZiok=;
- b=fhjtoc+FJzCpxcw8Z/oLkVsIcgnlU0n7iW1h37BLIv7YaTpe+JfDgB1J25TkNkwvI37L/FVroR7k/tmsk8MrH5roN6q3gimW3azaD+LFtKAZV+MtJglYXPh9kf0ZCT5XOGQ9CeUDy+7YxofF2MHfNC4rKMJJ/OAqCQeBh868Crk1Xcs0oqfPcG+/MD2TuH6YGabm+10k6E9Ua058AQJ37xOJaqD3s3tRmQzwhF1UTmgwDVzbSMEROZnTfTiw32YMGhqyOt2jNoVNLJdT7RGjxD1olkwN/HwyQ+Eqw80yvAmjgB3oMVnGITLdaQqJF8Cp54tM1+u86XGkuWvC1kgNIw==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by MN2PR20MB3477.namprd20.prod.outlook.com (2603:10b6:208:265::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.23; Sun, 14 Jan
- 2024 04:17:40 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::406a:664b:b8bc:1e6b]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::406a:664b:b8bc:1e6b%2]) with mapi id 15.20.7181.020; Sun, 14 Jan 2024
- 04:17:40 +0000
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chao Wei <chao.wei@sophgo.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Inochi Amaoto <inochiama@outlook.com>
-Cc: Jisheng Zhang <jszhang@kernel.org>,
-	Liu Gui <kenneth.liu@sophgo.com>,
-	Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
-	dlan@gentoo.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v6 4/4] riscv: dts: sophgo: add uart clock for Sophgo CV1800 series SoC
-Date: Sun, 14 Jan 2024 12:17:01 +0800
-Message-ID:
- <IA1PR20MB49537ED3211A94684EA7E9A7BB6D2@IA1PR20MB4953.namprd20.prod.outlook.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <IA1PR20MB4953C774D41EDF1EADB6EC18BB6D2@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB4953C774D41EDF1EADB6EC18BB6D2@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [iKgEvI2wucQG1bzboi7iwFBYi8cDOYmpP8Gg/66QzUhc6XB52fCsxWfjgPiJehBJ]
-X-ClientProxiedBy: TYCP286CA0351.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:7c::20) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <20240114041702.644522-4-inochiama@outlook.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eN5vLx0x"
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3606dd96868so42221465ab.2
+        for <linux-clk@vger.kernel.org>; Sat, 13 Jan 2024 20:54:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1705208047; x=1705812847; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=w+nZpplFtDyf9HT1zuGlQzwp4NeGzUTTxIdAtIlnQho=;
+        b=eN5vLx0xFlf8aQCdtCJcASa/ESbcoLEhN6GmMAsGdJO3RfT57aAlOQNod61wMFIgLs
+         2HxJMSahpFWteD5diI7fdkogz0UV5x6UXKocpslVAB0hMXc2jjQs6ZIyCF5t1OYS8k7k
+         +jDzI4Ty6nsW7ms/WpGEBzP9frn/C5zGYhF8al5TaaYJxR5LQ/zGwBsrVM+V4PGh0njR
+         jkY3VN3v1yxLb0aS1ViotacMHOqvALbJdNDYkvM9FZaIMOh8lObmm9DW1VnoCGSGKBAa
+         ZZk3Id5Nd2PGRoWCotAGC+E9YKdsOhXYuk2Yf+AwBah/r4SHUFPz2IfRi+a+Q5i5+LFt
+         HzBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705208047; x=1705812847;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w+nZpplFtDyf9HT1zuGlQzwp4NeGzUTTxIdAtIlnQho=;
+        b=XR+ezJceeiuuiZcQSycAMzy7YFJeh7LhYFfD3MFbzUtIUcGGt1PcW3asaoVrJOefVS
+         yWFmDy7CXMwhUWOSj8Lbylsw+9w2Yxg4z4jcNUP7bmhnsyXfyThV4yIRuVc/lNa56x6g
+         6SejZCfjw/phqXTYRfdoDxn2cAMc2rsAoGapXKcki01mBqdPSlLkVKL5N0N5UG1h0XdB
+         mFShVShUBiqOVdjD/q7P7Eqpje79aV1NVTpg0hF2z6fFXAAsu+hPk8RxeK6qSMKpY6JU
+         WF6RwfzmXnx4rsQxRE26nJjsoGL+Vdec96Qg2JiUTAT2FtNZzPwAWL1Uv3XqfyG0fkbQ
+         2iCA==
+X-Gm-Message-State: AOJu0YyYsfSHQ4yZExQbx0Q63mg5eWNTfhZHnVQS9KahrzPILXHhQf5z
+	8xK0u5GSglpkVSzvhAcYyUeyOF4EmcCtW+5EexK/ThaxGLebWA==
+X-Google-Smtp-Source: AGHT+IEBDEYpuSs+yR1gLtlKicR6M8ikYIvpUonqJtgtPwzyhoOZ622GCEj8y7gg+8KQwltDBVsrLZorHExb5WkFaoY=
+X-Received: by 2002:a92:d410:0:b0:360:97d9:309f with SMTP id
+ q16-20020a92d410000000b0036097d9309fmr3388713ilm.5.1705208047302; Sat, 13 Jan
+ 2024 20:54:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|MN2PR20MB3477:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8908361-8afb-45c2-e722-08dc14b7bf76
-X-MS-Exchange-SLBlob-MailProps:
-	YfhX3sd/0TXV24TVZ8EiknFmWQa4Fqp015K6lbLmsS9m1llCIx0lj8pPZr3ulPApJfRyooPx4HlpSQ9jX5Ldnfl22hJgS6QrzOBowv2HzaZFgF3Nr4q87mHYxzbRqEHcSJogJNmc7H7vVXhogFDMsox0JuC1IW6N6MTcoZbJCGeTrB+8pfw0QEfzgjqag1cmgU6sccaW86MQPiki50E6U6h8ffAZUBSNgokg39oWKg9OT4mBrpaaplXB0yD8PCe2disjlh1AV+vKMfNJ1/tBm8I0AqyquVlNs+0aK5KNTE3P7NKA8ixwHVW8m5A+pwpIE0BJFFC251wumV4ZGwvjZvcs7j6EfAAIkzeP8pSCLMmFzgHCZhGXBTiuPim+xRxDERk46DH3cBdeMB80lu3Ga8urs4qRNMnM4pdyk5/KvMuG7lJYBLPrVHXKUZZNEwHVcC6hNv06XcbfkdPNZM9f2wDHdxq3uf3pwUfVwpbYEFvVSGMXQzAZ3bUTda0GUr8JQZGI67trgNaEL32qPTSXDOtLszzcIg9ap+rBY4oXuPrIVndct4XX7J74qkPwIf9poVYbzMPCLwq0rxkWisYgb/HFa6lWlZYEgpeJZ3XNAeLEMk85rkjXt+wNXVAgSkmC7vhcWOMDs7Jg/9XShql+kheRXDytVUsK25srQeE9zJmQz4zGqlLRd1Sqpn6wzMYzyr0qLmcv+ZSw6IckT05dkJ5O5yVL6k7OPd1hsju12If+qh/i8pKjeojMvpmhv2QX5p01bs3Q0Tbij2B8VfqzrWYpvdMOAQlsfMhCPFht1Nk=
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	0F843biAHWHzBytmo+eJtnUNwCh+8FJfORElu8E63QBWwPv6ksxfwGAXNXJcTYgmCepKxOueTHi8v3UL7ayPrxxErQYtk0oBrXv6TkMD8CBID5ow7Ka3Li3bVB1dpVyu2K8u5h5gVTjGsFFr52xBzxXIOIvauk1hjPTOAw2po7QDkV6Wabl3xap7P3hLnSl9ZmmrngQlZOc5hG2fNnbvz9uRFa586jdX02uaRYEH9efWDZ7XxZDnUBCkSJSu9HQbSKvNKqWXsY+1DtTP25zOYzBHPDwV5xQ8NMswWbGCTJk0jGK1qt3qwg0Q5KT9GvuWcyzMIXJvuxPdG0fYIRxd+iLrhfuDaR0RzFRyhy7c324ywH2IWWtNT6FLjgYkUuJrkWh3yREoW9MbET6PupS/zsIMr2vqJKomHB6C+mPzPEdkgS5/AX2ts7l5rgqr2a8A/Zft4PqeU9YHch4ILyyFS4z+HSqvK4WzuiAU1s7gQI1Y2/RP4UKRJJ2C8ZyqqpqlWxica7gYyYackuEyIogdzPWlCWXlbjBk7j+h+FhWKaJbCfNcd5kKkAoxZBxgSioraEiCmZy22neYMGyncy7UecT9xZaLAkc505ckaFjqXM0HP5KNk+SV+S64uqTICkys
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?COx1WGKiIi1uYzfLKYDxWgDng1iSrS34Ii71RJPYsbXmXfI5JCfGGxdUyVyZ?=
- =?us-ascii?Q?79MsXJBP3NYmqX/xmaHLgfTXLVlCJUJlMvU6Q5gS3qsyxvxeTeviu1OGZNro?=
- =?us-ascii?Q?M/r8LOeX8IAFTlSgcFwhP9nPFo8fhQ2H/fkk712Uf0mEDtG3EgPmjk18pLNu?=
- =?us-ascii?Q?Y2nO/3W6O6FBvbF2mRc6tz4Tg705ipuvVE25K7Rr8nI4lfCiSnwO9/IxeKFP?=
- =?us-ascii?Q?B+/77/MhbTKnKuBcIp4VtNuVjKN18X8aWjUynCAHNog7MoxG/63Q19D15k+4?=
- =?us-ascii?Q?FU3NjlYkg1Txy6BanTRtX82/EkuCRtzD1Wjpkw7aGm0ObVk5Qjv9yp9CFXs2?=
- =?us-ascii?Q?EsX5MffXsjmOV19ZVnHBe4d989Uik2IskVJ/E1lvYcRkXu0F4bAiTnqMCSSq?=
- =?us-ascii?Q?8h8/7ZhPAA2u8ubZA7ku3DaGUOzhokuBUttYJKacAO1ONDNo3hEf4dxPq3Cu?=
- =?us-ascii?Q?x1eHaxDBvA44O9eT6MSG1lcEL6c9cVmZGjTXe+x4JKI/X3KlBhQaCml/ET5C?=
- =?us-ascii?Q?ffRn66HsTD56S+mzBskKqCTXmj9y+O8O7WkcErrBVRvWzroMaIzx7UZFyeGU?=
- =?us-ascii?Q?xy6lzQ0qswYAlBCAsZmo9GRvpLsOsmB21DC1TzEQ7P3Yh74SYGculYbpK6mv?=
- =?us-ascii?Q?oQpVGYmElLQzJQ+Z643eXecu3WtTErIXNkrAjewrqM0eBknBQBMwB5mqPJ9U?=
- =?us-ascii?Q?DD8pkyGr5DBBNdTNUCLlxSsqc2mnX50CwRWVgzPpoCEZXVPELDAeGhgEqWkb?=
- =?us-ascii?Q?vKNALA9wHdXKjkWR7GvTqPvGrslRafTDyKFHnCFSBi0WqGg2Ab+C3HxN50ly?=
- =?us-ascii?Q?jPgxjS8+2J3QPEZ+8rCUmfPUQzi8m8+jQujiBOCSVWOnoZ6QT0Ttmts6daV8?=
- =?us-ascii?Q?ydBO/KgNAC8mBaWjS/R1Jakb8rh1aFT65rHjLfUXNpaEj044qILcfE677r/J?=
- =?us-ascii?Q?ehak192UEF6TYO0Q1RpNd3ag5Zj5jtLWVgzRCCCO4MUpJDvTVx1cjz4rmFZN?=
- =?us-ascii?Q?MXaoHBiep8t35Djo5f90PVD/5FkV3sD7PoNtPetQ44z6CNaQfWucfgb330WV?=
- =?us-ascii?Q?BCy+2ZGt23Na22+BQdLK/EBRw+eXl0CQT55gFSCtU1CuhvMHC+ttTUW9tdm5?=
- =?us-ascii?Q?R5bq2yXOEzzvtotC8gfAmQd35IH79SX5CJHiSJx0GQCnzwXwStufol9lo9oz?=
- =?us-ascii?Q?04oO9tEBXOubhUHTtQQzUwOCEJUfszAeHoC74Y1aDc5SQk7nrhwQB4qfxQ7U?=
- =?us-ascii?Q?bwXaXUNQMfYLIH7bxoZw4g08gUuPO7N8FhnTqiMZxQ=3D=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8908361-8afb-45c2-e722-08dc14b7bf76
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jan 2024 04:17:40.5512
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR20MB3477
+References: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
+In-Reply-To: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sun, 14 Jan 2024 06:53:56 +0200
+Message-ID: <CAA8EJppjxT=qri+bhfa=DbX09aCiFVp0vO3P0OD=TNiYJAd1-g@mail.gmail.com>
+Subject: Re: [PATCH v6 00/12] Unregister critical branch clocks + some RPM
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Add missing clocks of uart node for CV1800B and CV1812H.
+On Sat, 13 Jan 2024 at 16:51, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>
+> On Qualcomm SoCs, certain branch clocks either need to be always-on, or
+> should be if you're interested in touching some part of the hardware.
+>
+> Using CLK_IS_CRITICAL for this purpose sounds like a genius idea,
+> however that messes with the runtime pm handling - if a clock is
+> marked as such, the clock controller device will never enter the
+> "suspended" state, leaving the associated resources online, which in
+> turn breaks SoC-wide suspend.
+>
+> This series aims to solve that on a couple SoCs that I could test the
+> changes on and it sprinkles some runtime pm enablement atop these drivers.
 
-Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
----
- arch/riscv/boot/dts/sophgo/cv18xx.dtsi | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+Probably it is out of scope for this
+I wonder if it makes sense to route (some) of the clocks properly.
+Should we use GCC_foo_SLEEEP_CLK as a sleep clock for the
+corresponding device?
+I'm not sure about the AHB and XO clocks.
 
-diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-index 6ea1b2784db9..7c88cbe8e91d 100644
---- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-@@ -5,6 +5,7 @@
-  */
+Another question is regarding the suspended state. Wouldn't leaving
+GCC_foo_XO clocks enabled keep the XO enabled as well?
 
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/clock/sophgo,cv1800.h>
+>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+> Changes in v6:
+> - Rebase (next-20240112)
+> - Reorder qcom_branch_set_clk_en calls by register in "*: Unregister
+>   critical clocks" (Johan)
+> - Pick up tags
+> - Link to v5: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v5-0-99942e6bf1ba@linaro.org
+>
+> Changes in v5:
+> - Change the "Keep the critical clocks always-on" comment to "Keep
+>   some clocks always-on"
+> - Add the same comment to commits unregistering clocks on 6115/6375/2290
+> - Link to v4: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v4-0-32c293ded915@linaro.org
+>
+> Changes in v4:
+> - Add and unify the "/* Keep the critical clocks always-on */" comment
+> - Rebase (next-20231222), also include 8650, X1E and 8280camcc drivers
+> - Drop enabling runtime PM on GCC
+> - Improve the commit message of "clk: qcom: gpucc-sm6115: Add runtime PM"
+> - Link to v3: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v3-0-3e31bce9c626@linaro.org
+>
+> Changes in v3:
+> - Rebase (next-20231219)
+> - Fix up a copypaste mistake in "gcc-sm6375: Unregister critical clocks" (bod)
+> - Pick up tags
+> - Link to v2: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v2-0-2a583460ef26@linaro.org
+>
+> Changes in v2:
+> - Rebase
+> - Pick up tags
+> - Fix up missing pm_runtime_put in SM6375 GCC (Johan)
+> - Clarify the commit message of "Add runtime PM" commits (Johan)
+> - "GPU_CCC" -> "GPU_CC" (oops)
+> - Rebase atop next-20231129
+>   - Also fix up camcc-sm8550 & gcc-sm4450
+>   - Unify and clean up the comment style
+>   - Fix missing comments in gcc-sc7180..
+>   - Drop Johan's ack from "clk: qcom: Use qcom_branch_set_clk_en()"
+> - Improve 6115 dt patch commit message (Bjorn)
+> - Link to v1: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org
+>
+> ---
+> Konrad Dybcio (12):
+>       clk: qcom: branch: Add a helper for setting the enable bit
+>       clk: qcom: Use qcom_branch_set_clk_en()
+>       clk: qcom: gcc-sm6375: Unregister critical clocks
+>       clk: qcom: gpucc-sm6375: Unregister critical clocks
+>       clk: qcom: gpucc-sm6115: Unregister critical clocks
+>       clk: qcom: gpucc-sm6115: Add runtime PM
+>       clk: qcom: gcc-sm6115: Unregister critical clocks
+>       clk: qcom: gcc-qcm2290: Unregister critical clocks
+>       arm64: dts: qcom: sm6375: Add VDD_CX to GCC
+>       arm64: dts: qcom: qcm2290: Add VDD_CX to GCC
+>       arm64: dts: qcom: sm6115: Add VDD_CX to GCC
+>       arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CC
+>
+>  arch/arm64/boot/dts/qcom/qcm2290.dtsi |   1 +
+>  arch/arm64/boot/dts/qcom/sm6115.dtsi  |   3 +
+>  arch/arm64/boot/dts/qcom/sm6375.dtsi  |   1 +
+>  drivers/clk/qcom/camcc-sc8280xp.c     |   6 +-
+>  drivers/clk/qcom/camcc-sm8550.c       |  10 +--
+>  drivers/clk/qcom/clk-branch.h         |   7 ++
+>  drivers/clk/qcom/dispcc-qcm2290.c     |   4 +-
+>  drivers/clk/qcom/dispcc-sc7280.c      |   7 +-
+>  drivers/clk/qcom/dispcc-sc8280xp.c    |   4 +-
+>  drivers/clk/qcom/dispcc-sm6115.c      |   4 +-
+>  drivers/clk/qcom/dispcc-sm8250.c      |   4 +-
+>  drivers/clk/qcom/dispcc-sm8450.c      |   7 +-
+>  drivers/clk/qcom/dispcc-sm8550.c      |   7 +-
+>  drivers/clk/qcom/dispcc-sm8650.c      |   4 +-
+>  drivers/clk/qcom/gcc-qcm2290.c        | 106 +++--------------------------
+>  drivers/clk/qcom/gcc-sa8775p.c        |  25 +++----
+>  drivers/clk/qcom/gcc-sc7180.c         |  22 +++---
+>  drivers/clk/qcom/gcc-sc7280.c         |  20 +++---
+>  drivers/clk/qcom/gcc-sc8180x.c        |  28 +++-----
+>  drivers/clk/qcom/gcc-sc8280xp.c       |  25 +++----
+>  drivers/clk/qcom/gcc-sdx55.c          |  12 ++--
+>  drivers/clk/qcom/gcc-sdx65.c          |  13 ++--
+>  drivers/clk/qcom/gcc-sdx75.c          |  10 +--
+>  drivers/clk/qcom/gcc-sm4450.c         |  28 +++-----
+>  drivers/clk/qcom/gcc-sm6115.c         | 124 +++-------------------------------
+>  drivers/clk/qcom/gcc-sm6375.c         | 105 +++-------------------------
+>  drivers/clk/qcom/gcc-sm7150.c         |  23 +++----
+>  drivers/clk/qcom/gcc-sm8250.c         |  19 ++----
+>  drivers/clk/qcom/gcc-sm8350.c         |  20 +++---
+>  drivers/clk/qcom/gcc-sm8450.c         |  21 +++---
+>  drivers/clk/qcom/gcc-sm8550.c         |  21 +++---
+>  drivers/clk/qcom/gcc-sm8650.c         |  16 ++---
+>  drivers/clk/qcom/gcc-x1e80100.c       |  16 ++---
+>  drivers/clk/qcom/gpucc-sc7280.c       |   9 +--
+>  drivers/clk/qcom/gpucc-sc8280xp.c     |   9 +--
+>  drivers/clk/qcom/gpucc-sm6115.c       |  53 ++++++---------
+>  drivers/clk/qcom/gpucc-sm6375.c       |  34 ++--------
+>  drivers/clk/qcom/gpucc-sm8550.c       |  10 +--
+>  drivers/clk/qcom/lpasscorecc-sc7180.c |   7 +-
+>  drivers/clk/qcom/videocc-sm8250.c     |   6 +-
+>  drivers/clk/qcom/videocc-sm8350.c     |  10 +--
+>  drivers/clk/qcom/videocc-sm8450.c     |  13 ++--
+>  drivers/clk/qcom/videocc-sm8550.c     |  13 ++--
+>  43 files changed, 234 insertions(+), 653 deletions(-)
+> ---
+> base-commit: 8d04a7e2ee3fd6aabb8096b00c64db0d735bc874
+> change-id: 20230717-topic-branch_aon_cleanup-6976c13fe71c
+>
+> Best regards,
+> --
+> Konrad Dybcio <konrad.dybcio@linaro.org>
+>
+>
 
- / {
- 	#address-cells = <1>;
-@@ -135,7 +136,8 @@ uart0: serial@4140000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x04140000 0x100>;
- 			interrupts = <44 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&osc>;
-+			clocks = <&clk CLK_UART0>, <&clk CLK_APB_UART0>;
-+			clock-names = "baudclk", "apb_pclk";
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			status = "disabled";
-@@ -145,7 +147,8 @@ uart1: serial@4150000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x04150000 0x100>;
- 			interrupts = <45 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&osc>;
-+			clocks = <&clk CLK_UART1>, <&clk CLK_APB_UART1>;
-+			clock-names = "baudclk", "apb_pclk";
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			status = "disabled";
-@@ -155,7 +158,8 @@ uart2: serial@4160000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x04160000 0x100>;
- 			interrupts = <46 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&osc>;
-+			clocks = <&clk CLK_UART2>, <&clk CLK_APB_UART2>;
-+			clock-names = "baudclk", "apb_pclk";
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			status = "disabled";
-@@ -165,7 +169,8 @@ uart3: serial@4170000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x04170000 0x100>;
- 			interrupts = <47 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&osc>;
-+			clocks = <&clk CLK_UART3>, <&clk CLK_APB_UART3>;
-+			clock-names = "baudclk", "apb_pclk";
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			status = "disabled";
-@@ -175,7 +180,8 @@ uart4: serial@41c0000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x041c0000 0x100>;
- 			interrupts = <48 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&osc>;
-+			clocks = <&clk CLK_UART4>, <&clk CLK_APB_UART4>;
-+			clock-names = "baudclk", "apb_pclk";
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			status = "disabled";
---
-2.43.0
 
+-- 
+With best wishes
+Dmitry
