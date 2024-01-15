@@ -1,49 +1,50 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8629C2C68A
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jan 2024 11:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F90B15AF9
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jan 2024 12:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="es8YCWNF"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-55817a12ad8so6347734a12.2
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jan 2024 03:39:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kbQwBJC5"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5542a7f1f3cso10511653a12.2
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jan 2024 04:56:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705318765; x=1705923565; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l3frZZSaJ0FqqnRHcXPzH/pZUPe1LoezaNa34iVa8Bg=;
-        b=es8YCWNFHPE2gr2fy7H/6KSELLKLMDuNkVbF+Kz3dn8JjTTVjyAIZUWTI//koa/iMX
-         vprov5bL3hEMQHBtwtxe8ffvyuA1T/H3LlGlE7f/fWJRd+X4IN70DSRw3O4R+5PFCSr/
-         AVQ5qsgsL5NWkbvB4Ya3QlZ5lJifQTZ0FaZE4Y5HysU9o52LiJOGQRvybapL0azCxdtw
-         W0xBQkkg134x8QoLBExamy7y31og1eBezXE4BCgk4H3ae4rApFeEXo0VVsOpdUzHEnEa
-         Y9G5boHWkTVD6Tr74e6kpHUbKd+0dZdSDt2V/sP97+nUFc/2k0SWx9PfdHvLr/eXCIWj
-         mA0A==
+        d=linaro.org; s=google; t=1705323377; x=1705928177; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=lM8l+Kg7H3OmO93CQRqa11BNKcS6wvrxEA302FfDg9k=;
+        b=kbQwBJC5KBAq7aM9tw75Q+LZPnpQp2Z7SOndhFaKaq7XkAFJXRSy6gQplbIS4CNPBH
+         GQ5AqSqQm7LupvhW6lAnt6TRFJPldQb/qO2Sc0+knIV5tIVwDdRYbqH08TZUSzSPIP1m
+         I4+Dd1CcQVE7Sbpy9NXP7lrczzDIlHHVtOqdl9+Me8GYSePQQf7AClt2vuZhnoxMLxp4
+         L5uXRO0XQS0ElDGbaZpQdwkGPdwiSGV6uxSI6o5tytXKsWBDb9N5U1ZHefCv0OyCvWuP
+         lUPiL9bmxixm8P6brHCx05S9GZwvyyW+Yn6V6PRXiuwDOMmbXB+Z8kNwYXZ/nsAN87jL
+         kecw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705318765; x=1705923565;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l3frZZSaJ0FqqnRHcXPzH/pZUPe1LoezaNa34iVa8Bg=;
-        b=hfP+Nwfw9tHNhej4Tuxes+DAqcOs40dP2AtR/Yrt8WmPfSV2Z5+YCnzRWRwhAyFS/+
-         TDjkBWWquIDp1nmBTJvJ/sUaqnXglF38vfcU+uBTNu32JM3cZXFs28433E+CIKmdoy3+
-         uH9rMo5OriM2S2LP+i0Wwzv+/e5Wz/hxZ6P+6iJhnh88cpAuAtekOsMFAqMlboSSzRjp
-         kq9krKz5t1e9R/k1YKyZfXeGBaAsKd7FruZjigrxoDNGGw6OFhdmIUYc05+GVXhJ0kOW
-         S5N0vMIeHeG6n9HJkjS7Ge1IAqoXNPPohsDyaXpcKj9UpU2Wi7k1QklPDL6yde/FRjzR
-         nYiA==
-X-Gm-Message-State: AOJu0Yyarnd3DFrnmIPlSbBwJ+TfmRFbGR2iEU9kDA9rN5Fjyo3metj4
-	//sf7zox/QSQNsXV1M/Tt53hUQH1ahBNuA==
-X-Google-Smtp-Source: AGHT+IHiXIWP+10j7TO4GK7Xp69CrOm3VKfG7rCFmd5MmDfqZGjVwTJTMs3juUrFE9gIYsiR+38Ffg==
-X-Received: by 2002:a17:906:19d3:b0:a26:e760:40ba with SMTP id h19-20020a17090619d300b00a26e76040bamr2294148ejd.46.1705318764912;
-        Mon, 15 Jan 2024 03:39:24 -0800 (PST)
+        d=1e100.net; s=20230601; t=1705323377; x=1705928177;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lM8l+Kg7H3OmO93CQRqa11BNKcS6wvrxEA302FfDg9k=;
+        b=w6sG251Tu77aG4FQ0AC72vwdFNxnUKLcjbrP9j4o5JWkIw8id4JuEHHyDozWBiuCNh
+         rkaFFyHzxRJZCp5kGZBjV/dD30JACpyXS2/8kxoYvZMhBImTJ+4ZC0oyGdCJnO3OIYRj
+         GrEI3lIGoDp24Qo0Z307t/TwpETAEFrW7to/FRppgYKeVE/FE59vXC9N7c3NIBsqNVgj
+         /F4Us3KAQYHVhHFmW4XResUd1O5Scr29CkNC8OtiaLHfbR1cBHhw78DCUwCM9iVhlULn
+         iEhEXywEOOE70cI9bhyyxVCDUivPNlcnQkOv+XqY+7KuBSrlYY57mm9ul5A+dM4XAm+p
+         Qnrw==
+X-Gm-Message-State: AOJu0YzdOLq1XYHGLLNAJ1czBT+XQyAK5Q1pQkGJDNz1GxqoI2p1ZvQX
+	awIhK6abvwKf/PMREcHZvEWdHX3e1KacSw==
+X-Google-Smtp-Source: AGHT+IGn3HurX+bmSkbGLcM9xIQ+2W9ZEnvooUApwVW5h6781EvvWw4GkWA3pEn3d6MmKSJiQw2VsQ==
+X-Received: by 2002:a50:c358:0:b0:558:c83c:c32e with SMTP id q24-20020a50c358000000b00558c83cc32emr2776349edb.45.1705323377419;
+        Mon, 15 Jan 2024 04:56:17 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id gc9-20020a170906c8c900b00a26f1f36708sm5178658ejb.78.2024.01.15.03.39.23
+        by smtp.gmail.com with ESMTPSA id q8-20020a056402040800b0055703db2c9fsm5468958edv.1.2024.01.15.04.56.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jan 2024 03:39:24 -0800 (PST)
-Message-ID: <f354cfe1-88eb-4daf-aea3-7acd2de5d106@linaro.org>
-Date: Mon, 15 Jan 2024 12:39:22 +0100
+        Mon, 15 Jan 2024 04:56:16 -0800 (PST)
+Message-ID: <35f28e7d-d0d1-4edc-a6c2-d8b402003cd3@linaro.org>
+Date: Mon, 15 Jan 2024 13:56:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,25 +52,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/15] dt-bindings: clock: Add R8A779H0 V4M CPG Core Clock
- Definitions
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+Subject: Re: [PATCH RFC 1/3] dt-bindings: clock: Add T-Head TH1520 AP clock
+ definitions
+To: Drew Fustini <dfustini@tenstorrent.com>,
+ Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+ Fu Wei <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Magnus Damm <magnus.damm@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Cong Dang <cong.dang.xn@renesas.com>,
- Duy Nguyen <duy.nguyen.rh@renesas.com>, Hai Pham <hai.pham.ud@renesas.com>,
- Linh Phung <linh.phung.jy@renesas.com>, linux-renesas-soc@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Yangtao Li <frank.li@vivo.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-References: <cover.1704726960.git.geert+renesas@glider.be>
- <2e083461752c9d52fdb251ad9071f6111f13c3c5.1704726960.git.geert+renesas@glider.be>
- <ca0cb671-43ce-4bda-aad5-da38bace4132@linaro.org>
- <CAMuHMdUJYH7YhQ65Bh1K8F2earTM60VwBd2=LH2vnGbaGPU53w@mail.gmail.com>
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Han Gao <gaohan@iscas.ac.cn>, Xi Ruoyao <xry111@xry111.site>,
+ Robert Nelson <robertcnelson@beagleboard.org>,
+ Jason Kridner <jkridner@beagleboard.org>,
+ Drew Fustini <dfustini@tenstorrent.org>
+References: <20240110-clk-th1520-v1-0-8b0682567984@tenstorrent.com>
+ <20240110-clk-th1520-v1-1-8b0682567984@tenstorrent.com>
+Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -115,47 +115,22 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAMuHMdUJYH7YhQ65Bh1K8F2earTM60VwBd2=LH2vnGbaGPU53w@mail.gmail.com>
+In-Reply-To: <20240110-clk-th1520-v1-1-8b0682567984@tenstorrent.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 15/01/2024 10:27, Geert Uytterhoeven wrote:
-> Hi Krzysztof,
+On 10/01/2024 17:35, Drew Fustini wrote:
+> From: Yangtao Li <frank.li@vivo.com>
 > 
-> On Tue, Jan 9, 2024 at 8:21 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->> On 08/01/2024 16:33, Geert Uytterhoeven wrote:
->>> From: Duy Nguyen <duy.nguyen.rh@renesas.com>
->>>
->>> Add all Clock Pulse Generator Core Clock Outputs for the Renesas R-Car
->>> V4M (R8A779H0) SoC.
->>>
->>> Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
->>> Signed-off-by: Hai Pham <hai.pham.ud@renesas.com>
->>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>> ---
->>> Changes compared to the BSP:
->>>   - Drop POST* clocks, as they are internal clocks.
->>> ---
->>>  include/dt-bindings/clock/r8a779h0-cpg-mssr.h | 96 +++++++++++++++++++
->>
->> Mediatek was able to switch to vendor,device naming scheme, so Renesas
->> should follow as well.
+> Add the clock definitions for T-Head TH1520 AP sub-system.
 > 
-> For new bindings, or also for existing ones?
-> Doing the former means there are inconsistencies among different SoCs
-> in the same family.
+> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> [fixed duplicate number for CLK_NPU and CLK_NPU_AXI]
+> [revised commit description]
+> Signed-off-by: Drew Fustini <dfustini@tenstorrent.org>
 
-For the new ones. It's just naming inconsistency which does not cause
-any issues. Otherwise you never move to vendor,device.h format... which
-is not that critical, but in the long term brings uniformity.
-
-> Doing the latter requires keeping the existing header files as wrappers
-> including the new header files, because the binding definitions are
-> part of the stable DT API.
-
-This could also work if you want all the filenames to be consistent. I
-would go only with new ones, though.
+Where are the bindings for this device? Header alone does not make sense.
 
 Best regards,
 Krzysztof
