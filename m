@@ -1,136 +1,106 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E8CC2D3
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jan 2024 09:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yES32lqX"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-556c3f0d6c5so10232728a12.2
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jan 2024 01:29:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705310950; x=1705915750; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=K+nA5BMsBtuAQLecJV0tVbl8+7H0Iz426JLB/WU66Ag=;
-        b=yES32lqXpOhi93jKRjfqBPdbY/nkZOulQ+FHD8b02e1EMAuE18AsdCTmKolHsMkEgt
-         QCG9gtvLVaE30APoKMkv+3/WwZQDBiYDTJAqRhWPY8XhjKMUjfjXzkGogXZvRpy8MCAM
-         tNjECaw6ZZJQvxo8z6GBK06ANhJk8c7eWrZxxLOtYZ1LcbcxcI0evhcbroyi1HcQIn2I
-         d+ke+ujBNtWKf5mUQd5yoc9aJ1EZPaW0T0EGlfSGPDL6Fkhrbh4fGZSGNuRDKL5Pjh0d
-         r9g3UcUUvjLBa48D6QDUKzY1fYNTc3uiJbvdQcNbZ2r/AIBOm4aoHLLBrtPZM12ajw1m
-         jvgQ==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18989F4E3;
+	Mon, 15 Jan 2024 09:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5efb0e180f0so84137307b3.1;
+        Mon, 15 Jan 2024 01:29:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705310950; x=1705915750;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K+nA5BMsBtuAQLecJV0tVbl8+7H0Iz426JLB/WU66Ag=;
-        b=lI6A/dBZuiGVjBUJ08KOj5z/YxPXVt8jdOHCZIqkMYCe1skMUjybucxLEvhZ+PlPLw
-         318UW/ZC8gpQsm8Cu9Zftx/P4JGcElj17g26M5igTO44irjBMsmcx1+dlV2BUi983Nne
-         BWwQ0kb9w2VcG7tTn0B6ma5RQZIiOn7vgnFGY4gWC5R3//gXEhaCW8MpQzQX1fUiPBw0
-         qNTctHjHUNF0XBkfbDynAVHhRfSkNm+XUVhQ00/yNykoZuj6QpYXTIlJfZEJF2HKnPAR
-         nQhKQ7Ek6bpF6x55VE3sQ498qPz2Ejuc7v+y9csW8u/Va/pJKXlvl7abGO7XkwhKoO5L
-         d5lA==
-X-Gm-Message-State: AOJu0YyItvjIVSd5+UvZMNHP+OAZubdcAvL8fWsFrU9YKT5i9ABTqLkZ
-	op2AXkvucCJuLPdcDKDaEnQFnqoetF8RhQ==
-X-Google-Smtp-Source: AGHT+IHxuVUVu4cAQ15YGoDAYmqMrusE9AEKDMja+4xWZJYKXRiARG593emzoRsoP6U21zVJESGzXQ==
-X-Received: by 2002:a17:906:1159:b0:a27:fcd0:13fc with SMTP id i25-20020a170906115900b00a27fcd013fcmr1525879eja.168.1705310950585;
-        Mon, 15 Jan 2024 01:29:10 -0800 (PST)
-Received: from [192.168.174.25] (178235179017.dynamic-4-waw-k-1-3-0.vectranet.pl. [178.235.179.17])
-        by smtp.gmail.com with ESMTPSA id cx12-20020a170907168c00b00a2d3ecfb8ecsm2644337ejd.154.2024.01.15.01.29.08
+        d=1e100.net; s=20230601; t=1705310994; x=1705915794;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oJZ9RgNzg7VLWUx8YQuwC3dXe057PkvGB0IXNBt0r28=;
+        b=dtfes5M+7LLvHlCbwZEEyxf5Qi3hJR1D3kdnXnKkzzG/eWCbzMvNID54EB2novQQ0+
+         zpfggxrpOp7XhEV9BSuuqt/z4hXnDSpNAfceK9kpN6fMpfdtRrY3XsxvRHfDGunrw3h5
+         GrZOV1tlPU2ufXGtaPhAehbmLmWV9tMiJqb91fIxlWX9nWpkh2TxWr1avfw6NZiBXEry
+         URtSUV/CjwPzgGoTOuoBfV2tc68oNOKay62kwFGwYsZ/GuLHPaGISICOSNOAqrWhmsPQ
+         kC+uRu0EDzqbLs2kZOinC/UwwAfPNs/gwz8ik5zkrAgh4WcJ1jA7r0K11E5Y7IWUOmZu
+         Fd6g==
+X-Gm-Message-State: AOJu0YwP+L+kp2HeVSS2w+Adod0ZZCp8MU4s1DSguDfFsUdQdoDsSYS5
+	aDUa5pTVyV/ut28OKqn0Y3Dd+ziqxjLL8g==
+X-Google-Smtp-Source: AGHT+IHNpy1SfNWdjqyl21eVF7EgjPpYGMelhc9v7045OlQYeXup7+ylWjrrQcklwFuBy1UkQgPi2A==
+X-Received: by 2002:a81:9b0f:0:b0:5e9:d166:2438 with SMTP id s15-20020a819b0f000000b005e9d1662438mr3417304ywg.86.1705310994190;
+        Mon, 15 Jan 2024 01:29:54 -0800 (PST)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id s7-20020a817707000000b005e3f0da06ffsm3843909ywc.34.2024.01.15.01.29.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jan 2024 01:29:10 -0800 (PST)
-Message-ID: <a78cf494-2a01-48d9-bc82-dfa6058f077e@linaro.org>
-Date: Mon, 15 Jan 2024 10:29:07 +0100
+        Mon, 15 Jan 2024 01:29:53 -0800 (PST)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-5efb0e180f0so84136827b3.1;
+        Mon, 15 Jan 2024 01:29:53 -0800 (PST)
+X-Received: by 2002:a81:8395:0:b0:5ca:607e:b16e with SMTP id
+ t143-20020a818395000000b005ca607eb16emr3313628ywf.0.1705310992678; Mon, 15
+ Jan 2024 01:29:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/12] Unregister critical branch clocks + some RPM
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Johan Hovold <johan+linaro@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-References: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
- <CAA8EJppjxT=qri+bhfa=DbX09aCiFVp0vO3P0OD=TNiYJAd1-g@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CAA8EJppjxT=qri+bhfa=DbX09aCiFVp0vO3P0OD=TNiYJAd1-g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1704788539.git.ysato@users.sourceforge.jp> <dbaaf58b50b681cf03bc5ad3eef0a546fe863bca.1704788539.git.ysato@users.sourceforge.jp>
+In-Reply-To: <dbaaf58b50b681cf03bc5ad3eef0a546fe863bca.1704788539.git.ysato@users.sourceforge.jp>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 15 Jan 2024 10:29:41 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXw=FC5EsYSHw6y2GzT9pNPNEB1iO3DRVmMLjzuPfx8nQ@mail.gmail.com>
+Message-ID: <CAMuHMdXw=FC5EsYSHw6y2GzT9pNPNEB1iO3DRVmMLjzuPfx8nQ@mail.gmail.com>
+Subject: Re: [DO NOT MERGE v6 21/37] dt-bindings: serial: renesas,scif: Add scif-sh7751.
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, 
+	Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko@sntech.de>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Chris Morgan <macromorgan@hotmail.com>, 
+	Yang Xiwen <forbidden405@foxmail.com>, Sebastian Reichel <sre@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	David Rientjes <rientjes@google.com>, Baoquan He <bhe@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
+	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14.01.2024 05:53, Dmitry Baryshkov wrote:
-> On Sat, 13 Jan 2024 at 16:51, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>
->> On Qualcomm SoCs, certain branch clocks either need to be always-on, or
->> should be if you're interested in touching some part of the hardware.
->>
->> Using CLK_IS_CRITICAL for this purpose sounds like a genius idea,
->> however that messes with the runtime pm handling - if a clock is
->> marked as such, the clock controller device will never enter the
->> "suspended" state, leaving the associated resources online, which in
->> turn breaks SoC-wide suspend.
->>
->> This series aims to solve that on a couple SoCs that I could test the
->> changes on and it sprinkles some runtime pm enablement atop these drivers.
-> 
-> Probably it is out of scope for this
-> I wonder if it makes sense to route (some) of the clocks properly.
-> Should we use GCC_foo_SLEEEP_CLK as a sleep clock for the
-> corresponding device?
-> I'm not sure about the AHB and XO clocks.
-> 
-> Another question is regarding the suspended state. Wouldn't leaving
-> GCC_foo_XO clocks enabled keep the XO enabled as well?
+On Tue, Jan 9, 2024 at 9:24=E2=80=AFAM Yoshinori Sato
+<ysato@users.sourceforge.jp> wrote:
+> Add Renesas SH7751 SCIF.
+>
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 
-Doesn't seem to be the case
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Konrad
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
