@@ -1,49 +1,49 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2F1168A4
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jan 2024 12:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60A0171A0
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jan 2024 13:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gt6mzu67"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5542a7f1f3cso10513100a12.2
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jan 2024 04:57:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hxfl4oWz"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-50e835800adso9474426e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jan 2024 05:03:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705323444; x=1705928244; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705323837; x=1705928637; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=iVzF8C/6HG6CFkGeWOtmqNfxcQ/XO75kr+E1fd0CXSc=;
-        b=gt6mzu67rCZZUTAPSzi2aNE5wShn89/0ybp535Td9M+h6lxIqRHBU+5Wgq97mn8A4+
-         gZN2Y85SD67cmeG6pbCiAh6i1bFhbeOQIhhvsX4LDwVny03y7xUnzbu3lTM7EXYUoDqn
-         BWQuw8tCs0YY6o+gln82mpsn6Bt8cHWODxgm1P/09F68TAYaqNoHS4UC2RCaRYCAnCZF
-         vRWExHVfuLi4PMafVpOT20yInoKaFgGt+lUXmD3Sr8ar/uFIiSxNT6s9IZAB9EnuBj5S
-         Sb+rfF/Qzazm6XHs488M+CfMqhrbBFnVEs5fecMCe7r+61fLPA4DElBTUn5zhphzWXSx
-         1Eig==
+        bh=SRHOavHhoKFNhf7tWS0sueLbIcvZac7GafUBIAgGQY4=;
+        b=Hxfl4oWz6qT86iSOkXnJN0MrcFH9ArGThdEsH0dfvfRiUJCNazZBnYhMhxhXnTAFl9
+         Un5x2U5I8eaSWnlFzhh6N6Kh9yQUJ9xs+wTk+rA0FwuTqadRGP/vVJU+X12uRd8RPtjZ
+         rH7CGMTeuqo5Fs3J+A4nOJ5d5MmpBm+EhGzFTeBCwt3caQ4qPc1Md5HlyU5lgCeFvE51
+         ZdxIgF76gKy4eKXKwxDfveYBblWbPb6sNSyV0/yizrYz26F4OwVKuN5AD5hBT68NdUDw
+         bhOMMPixCMuQXM/UxSLP129toQfcO6ylBG6PyiVYlATtzLR6UQ03D0d474LyCjqJCuYL
+         J5aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705323444; x=1705928244;
+        d=1e100.net; s=20230601; t=1705323837; x=1705928637;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iVzF8C/6HG6CFkGeWOtmqNfxcQ/XO75kr+E1fd0CXSc=;
-        b=MBGW5WhECFobHgq7yPyhusoohaHcGY3pFqnDOtsVAXqS4cly3dxce4DNoqNdgRuRRs
-         yO2tBa9KcJWPR2ruoxyWVrhIwTb6AAvCezcVPvwrDlOkD6LM7NE6UowvKAfOcz2MA/SH
-         wxbTZfONCzQBJsy/8s9376tkkfHukhWkKKa0pHLfQ1Ftw2Z+mK/jGorKcvAUwA47cfJJ
-         v/FlACtVfvfAdRnrGkE/h44NqgpZ6J43dvdEjWr/Imv/VGkFwpfGXZ5xGgEvUVLxPY/t
-         roAdi/NPdqSd3fZOrNh/8cC7920Xbhmp4j2UaMoFcqMeOeK9+mqyUo8CcTjiKnYT4Qd3
-         hKWg==
-X-Gm-Message-State: AOJu0YzZ9/3hCS7DMQNP80DxA/96QwDDKnKq+h1JqkTpYJXQE+UUqzL6
-	4up7GWCmavAZ2PDEqm3OaMhsVvFqvfRAbg==
-X-Google-Smtp-Source: AGHT+IEvbCXbHuEd5QzN4ARJ83ctVC27a0o1jy67k1ZrTNbg+gD4msqicIzEv35JzQ/q0N/Kdteqig==
-X-Received: by 2002:a05:6402:948:b0:558:30df:b183 with SMTP id h8-20020a056402094800b0055830dfb183mr2439321edz.22.1705323444057;
-        Mon, 15 Jan 2024 04:57:24 -0800 (PST)
+        bh=SRHOavHhoKFNhf7tWS0sueLbIcvZac7GafUBIAgGQY4=;
+        b=KRnNpAmH4S8qFs0Gm92y9a1YiEw4nLpflLn3yAXAKmqqzgO/dg8/VfSX8UpmPBsnBX
+         tW2enbqDeQBfBQgRFKcdKfR48K32PFshMmcjLTRSZAMFDAuDvMqoZAjpu3oywieFgwHJ
+         D165pzA7yLqaEUN7rZVxWfAOh1Rf5pEPsiK/JfWQ/VjfN2EdhZxpW+RQYSO6jd+nk+02
+         dnMxIfeEjQKqWwXyEfwMSg87YqM/srI9g1IIKeJGglvF1W180cXSkvkyNjTs1Y/Y/o5r
+         77ta/KYjHOIMUtLF9NK0zG5HXlZPEZlP/nzv1LJgN4kyJHjSabcer13cuKIz6e3WeVYI
+         M+rw==
+X-Gm-Message-State: AOJu0YyZW4wvQf6v9WKXT+ANuDyfZoA2JF8rp01Ndv9s8twnMD0+tZU0
+	yjmZuHmEJMOvC2D0Gi1rH8amyfddXJWFXg==
+X-Google-Smtp-Source: AGHT+IE1uBHWdY4lkQHV7/J1ucpvPGIgdX7FrlFz687TWtq4/BiKPsOVmezsrnPeUYwzVpK78N7AmQ==
+X-Received: by 2002:a05:6512:6d0:b0:50e:8e75:3eb7 with SMTP id u16-20020a05651206d000b0050e8e753eb7mr1810521lff.51.1705323836875;
+        Mon, 15 Jan 2024 05:03:56 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id q8-20020a056402040800b0055703db2c9fsm5468958edv.1.2024.01.15.04.57.21
+        by smtp.gmail.com with ESMTPSA id s23-20020a170906455700b00a2c70ec1533sm5070925ejq.66.2024.01.15.05.03.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jan 2024 04:57:23 -0800 (PST)
-Message-ID: <7b0a4e42-6d34-491a-9ec2-0df61dbe2b19@linaro.org>
-Date: Mon, 15 Jan 2024 13:57:21 +0100
+        Mon, 15 Jan 2024 05:03:56 -0800 (PST)
+Message-ID: <c2e17393-6983-4eb9-9929-3de7f066626e@linaro.org>
+Date: Mon, 15 Jan 2024 14:03:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -128,87 +128,11 @@ On 10/01/2024 17:35, Drew Fustini wrote:
 > [fixed dt_binding_check warnings]
 > [revised commit description]
 > Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
-> ---
->  .../bindings/clock/thead,th1520-clk-ap.yaml        | 65 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 66 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-> new file mode 100644
-> index 000000000000..53e7802a4ad7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
 
-
-If this is for the header, then two patches should be squashed and you
-should use the same name for the header.
-
-> @@ -0,0 +1,65 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/thead,th1520-clk-ap.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: T-HEAD TH1520 AP sub-system clock controller
-> +
-> +description: |
-> +  The T-HEAD TH1520 AP sub-system clock controller configures the
-> +  CPU, DPU, GMAC and TEE PLLs.
-> +
-> +  SoC reference manual
-> +  https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
-> +
-> +maintainers:
-> +  - Jisheng Zhang <jszhang@kernel.org>
-> +  - Wei Fu <wefu@redhat.com>
-> +  - Yangtao Li <frank.li@vivo.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: thead,th1520-clk-ap
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: main oscillator (24MHz)
-> +
-> +  clock-names:
-> +    items:
-> +      - const: osc
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/clock/thead,th1520-clk.h> for valid indices.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - "#clock-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/thead,th1520-clk.h>
-> +    soc {
-> +
-
-Drop redundant blank line.
-
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +
-> +      clk: clock-controller@ffef010000 {
-
-Drop unused label.
-
-
+Emails bounced:
+"Your message wasn't delivered to dfustini@tenstorrent.org because the
+domain tenstorrent.org couldn't be found. Check for typos or unnecessary
+spaces and try again."
 
 Best regards,
 Krzysztof
