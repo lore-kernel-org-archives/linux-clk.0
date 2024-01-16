@@ -1,68 +1,67 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FBB1D53C;
-	Tue, 16 Jan 2024 19:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B296130E4F;
+	Tue, 16 Jan 2024 19:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705433997; cv=none; b=mYfd/JSl9owTGX1ZxFSSswiH2K3jqCWFEiLKsLcBvwu47Sw8CGM2yhSMDpnoWJDGDuratbyn+1dE3461y6L5X+33HQZjxmXa5pbLZ7VkZuwdQuv9hlQzgzOR29mTwnFgr6WCg5FOXQYCB5Z80WygD3fTf09uoXj4Elgh7KSV8cg=
+	t=1705434688; cv=none; b=euMd0lYYpvbBiBnJLzEe1P697HhyuvkLw1AMbN5jE5X5Qu8jeIoCuBaLgCaifCzuoNM8tmuMY/HkM5yCWr6XlPXkIWPLxzCBaNOdt/1qGauNRZrJO8bkaqRuW7uuBMRJW3q7+glD2hLeDh9hOTfs0TGex4jhTA8J0R8EBaVqkYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705433997; c=relaxed/simple;
-	bh=/TXrWyHiiSTgpveq6sOiQ38RhpDY6Y4heRubaDLwPmE=;
+	s=arc-20240116; t=1705434688; c=relaxed/simple;
+	bh=8LNFAiNLxDK9BNpZe1yap94I2WcbyLVKDUX+vZ5KaBQ=;
 	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:MIME-Version:
 	 References:In-Reply-To:From:Date:Message-ID:Subject:To:Cc:
-	 Content-Type; b=Yv52fNl1rwu3G2x5RvroxE6SeFVSNaFk1lEESj6TiLDaQKdUibSAeNH3igk7xJIH2QZDMJYBaOo21I8V+YjHb8wHGKL3Et6WksVPck/VVUC7omDmlBNA5wjG2T/HQ091gjZgu0GBTu/68djCPJSRAeGLPvQpljkwx3jKyb7jImI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ir7VTOym; arc=none smtp.client-ip=209.85.128.177
+	 Content-Type; b=D5TeW1AC5SW66Rh/M+2k5NJYzJTSvn9jSFvMIkEdgNGs0iCQVKkrX/+gG2Lv7qzAyL1d0imBtQexujygqaL9hYCxRUAHilGBIRdWTLooUkTOw4d9X2NUQltvfFpynO4wzDkZrUPVoQkioJoaNaVrQYJE9KckgzDRpWJoo9ajSMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZhndZ5PJ; arc=none smtp.client-ip=209.85.219.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ir7VTOym"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-5ff63b12340so378157b3.0;
-        Tue, 16 Jan 2024 11:39:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZhndZ5PJ"
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dbed4b84667so9604472276.0;
+        Tue, 16 Jan 2024 11:51:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705433995; x=1706038795; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1705434685; x=1706039485; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/TXrWyHiiSTgpveq6sOiQ38RhpDY6Y4heRubaDLwPmE=;
-        b=Ir7VTOymj2T743RlreOVTjvsCZcKpCZEVDxtDJQPynYtwfj2H3+8soewz43jQybRfI
-         1A0uuzt+HdLJ+2vXlSRPGeJgJsB9seVL6tlB1vRXTNCGun6lU6tsrFFEacUYcGS4WkKW
-         CZ69mtZmVzRF9VUvC091ml10H3BDWCbRThUSpblmMtPZDUIz1lDqevgKthAS/K1SnAe5
-         cEm02aMLLZv6J2IS7AXn/3tQKBQ6d3Pe10blzTpnANbYZGRa2eKO5qefqqtoUr5U4Y13
-         p5M/NblL8VNtQY2Iv91ju9t+HOFnsrze8bKkgR7yF1mIiHIxN1/VilfvGKgTq65fjON3
-         GxZg==
+        bh=K8w04xiJGT72J3l5pZYydZFnp7VG18KNZBIm6eg0WXU=;
+        b=ZhndZ5PJmmeC7K11+j75TJ+jargGUCHC4OeVaOK/SjRtsuBWvD/V9Wpzg/AyPqXkku
+         1Wc3jXyhonOnE7xkkpmcgTPhT1DkbwbVsdFELECY6KXrSZBcVQNgEoaMc1MEJ8WYimK5
+         k0+vYaRAz+ACl1MKOaAObtLxN+sPvuy1uJJBKo6vHL7p6gaAO1wDQCQZHuheVttnUHvP
+         d+pYcFcenLOP+bu9tAThFs51K97bRTp2w7a0AubNz7btfw8bBiDbEMaoDrLRR8PDLSK6
+         Vxmf6E/bggwxD/F4PutNEnTp9UHMLWuH0HQamzXWaGof5x71hxCDID/lRGfACMu8enaq
+         ql1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705433995; x=1706038795;
+        d=1e100.net; s=20230601; t=1705434685; x=1706039485;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/TXrWyHiiSTgpveq6sOiQ38RhpDY6Y4heRubaDLwPmE=;
-        b=Xp2Fi+t6pc84iDhtzZJSmvfYKwsNzyOlsLKUqYyCkc84nAvOcHZUPefxiBDNbBxSIz
-         xcqXNL/v1J+CROZ0JfYbmOvUdgbKBPhw55be4W9HWwfHssUruz7CV8dLBbbPKML6Ihw7
-         HdsKxekx4O3+TXHSSBeZvJWV+PkLUEfGTw9oyJaAvrb0ubMLHju1bevqMhFh0MvM4CiX
-         TgtAcgg8C91hIgJOqtE49ulXpVZKZpF86NublR4JP2t10xt1Ys8ZaXDa8MQ0jUFope27
-         HhApzKkU5JouBb2CAGbtUSoblPLqDyDZvc8lb2xZkFUtU8MV1orcIFDh1s8fP1VuWbX1
-         y6aA==
-X-Gm-Message-State: AOJu0YxTUcmJr4v6e1+T4gV97lXUWa2dbUXw8YW6oUJPdP9lkBTtBIGn
-	faTdbOdwWyGnKV34+VrNEqTRUxi6Ejk1JZIpvKo=
-X-Google-Smtp-Source: AGHT+IHl7pQB/4BopFUtAbosETyvinXpzrfJUa2QsBn7qAYwOuBOVtdkXkA/phlJcO5qEAjLc6AKbVoymoezexRzl3E=
-X-Received: by 2002:a05:690c:f90:b0:5ff:56b4:263e with SMTP id
- df16-20020a05690c0f9000b005ff56b4263emr1259306ywb.101.1705433995037; Tue, 16
- Jan 2024 11:39:55 -0800 (PST)
+        bh=K8w04xiJGT72J3l5pZYydZFnp7VG18KNZBIm6eg0WXU=;
+        b=QvzTYrBnAnY6Ncifi0VW7nBOWLhK8rT6qrli2WHqUEtPaL5l1rLvx4WDpxQExLZAKK
+         B/MbDXRe5/In5ZVdzwwfO6QcaCzSOnQ7agdW+uQVWPvLDRkDbO9ze7TRVxk5/q/6hvpc
+         L1HTHzdFNaWxynb4wWoqa1mgLFziTzIk7xmBhrV9xvPxr/0ISbb95k9Urj+G5af8fABd
+         KsDQgrk/2c69pKOt13VHqpT6HU+lCVqMZCg7G5pKYdRPy/kbmucv2wFvEwDF2LpbuN0/
+         AM3yP7FREM/ZJ6YzfroK/NFx5sir9tZNcud4U9nkfuqjfU/P7zE5fAp9Pep60XLmfCSK
+         IPww==
+X-Gm-Message-State: AOJu0YzENZgs6D/MVl0bGIsR7fT4SflMd6wKAPj/7X+7qdQMO23Xdufg
+	5GTVSVo+4XkmN/dmOWbseoUbHD2KGooTMyq128I=
+X-Google-Smtp-Source: AGHT+IEcHHyG+hJdFrG3M4zsgP7m+03vGfwWM2Y7XjxHTSXuNkOfPFJRl4DAeDiaEXh4RoBm4dUCzVDv8eYRlr6MSWI=
+X-Received: by 2002:a25:910:0:b0:dc2:266a:7814 with SMTP id
+ 16-20020a250910000000b00dc2266a7814mr1142886ybj.120.1705434685611; Tue, 16
+ Jan 2024 11:51:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240108135421.684263-1-tmaimon77@gmail.com> <20240108135421.684263-8-tmaimon77@gmail.com>
- <23fdd643-ae30-474b-93b0-fb98edeb0071@linaro.org>
-In-Reply-To: <23fdd643-ae30-474b-93b0-fb98edeb0071@linaro.org>
+References: <20240108135421.684263-1-tmaimon77@gmail.com> <20240108135421.684263-4-tmaimon77@gmail.com>
+ <99eca166-7d78-4ada-ac0a-ad67f3d8eb33@linaro.org>
+In-Reply-To: <99eca166-7d78-4ada-ac0a-ad67f3d8eb33@linaro.org>
 From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Tue, 16 Jan 2024 21:39:44 +0200
-Message-ID: <CAP6Zq1i88mx8hfE-Ui_yMDOUxB5YofyyRSygBY8zuPq71ptHqg@mail.gmail.com>
-Subject: Re: [PATCH v22 7/8] arm64: dts: nuvoton: npcm8xx: replace reg with
- syscon property
+Date: Tue, 16 Jan 2024 21:51:14 +0200
+Message-ID: <CAP6Zq1g7NoLVbAUyeQ8jm3qZvjLV6HSVZB+r-X7dxvVNtvddPg@mail.gmail.com>
+Subject: Re: [PATCH v22 3/8] arm: dts: nuvoton: npcm7xx: modify rst syscon node
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, 
 	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, joel@jms.id.au, 
@@ -75,18 +74,35 @@ Hi Krzysztof,
 
 Thanks for your comment.
 
-On Wed, 10 Jan 2024 at 22:59, Krzysztof Kozlowski
+On Wed, 10 Jan 2024 at 23:01, Krzysztof Kozlowski
 <krzysztof.kozlowski@linaro.org> wrote:
 >
 > On 08/01/2024 14:54, Tomer Maimon wrote:
-> > Replace reg with syscon property since the clock registers handle the
-> > reset registers as well.
+> > rst node name and compatible property modified since clock and reset are
+> > handled in the same memory region.
 > >
 > > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 > > ---
+> >  arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi b/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
+> > index 868454ae6bde..f72c5a03d04c 100644
+> > --- a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
+> > +++ b/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
+> > @@ -93,8 +93,8 @@ gcr: gcr@800000 {
+> >                       reg = <0x800000 0x1000>;
+> >               };
+> >
+> > -             rst: rst@801000 {
+> > -                     compatible = "nuvoton,npcm750-rst", "syscon", "simple-mfd";
+> > +             clk_rst: syscon@801000 {
+> > +                     compatible = "nuvoton,npcm750-clk-rst", "syscon", "simple-mfd";
 >
-> NAK for the same reasons as previous patch.
-Will explain more in the commit message
+> NAK. This breakes the users, is not justified, is not explained.
+Sorry, I didn't understand, which user it is breaking? there isn't a
+device tree node that uses the rst node.
+Should I explain it better in the commit message?
 >
 > Best regards,
 > Krzysztof
