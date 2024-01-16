@@ -1,104 +1,62 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D411B941;
-	Tue, 16 Jan 2024 15:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691391C298;
+	Tue, 16 Jan 2024 15:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGiU5sr0"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5fc2e997804so34354777b3.3;
-        Tue, 16 Jan 2024 07:21:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705418517; x=1706023317; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=13JrJeAldiqSPGnO/8nR55kEZJiWwYEFrmzzkOgGtcQ=;
-        b=MGiU5sr0jaB0LuTRdMYYPfeLvvukL9kd+LHNrL7h3gLFGPIUbUkcSFJKc55BUNRPAR
-         3B3hzC5UY+Z0hjOXHcc3zOaSEwXQ5Ie6u1blh4dGg5UCDb+P6DYPcCKK0LI18hVOqyPC
-         TbtFaCKKlmQKgBaaEdMmcMJUDkf8baFgGsE+q0unb2n+N28uYrAKmOgWHXoXvfEyKru4
-         t3aLngBvolJuJAbsVYcI3SYyHx2lQUULBGYwccOug6eBsHHyFOJFnkLfZRhSBoZo7gVF
-         hrlZSi6mfHd0QSMHjBrwZ+pJjlEigfVbwtDGt8TcAJZID8NouOuBhhOZVd/WD8IRUTLH
-         pLvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705418517; x=1706023317;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=13JrJeAldiqSPGnO/8nR55kEZJiWwYEFrmzzkOgGtcQ=;
-        b=L0UY4xxWhbrZabhwvIgYrUpf9zUXx+LZj8GH9MK1UlaegCJoNJLBTttdFYKU7NnXCL
-         ZcHdUulMHNLfkxCMzFNGI94yeNztZrEvmCftzL1YEBveDeU8OAaLSNH7AHwjRMNBRSw9
-         0DpNHLyRbFCM2VcCfFPWLEQbg+QTknp/io1ZlG4a+ApCg3joPxyxBYNBft7IGIMDkhXa
-         bM2eQKIv6moFGJlUvx4Q42l0lReZdULx2oUDctv2Pr6ui8zFkAhiwXr4goQB9mQxbYgP
-         vhj3qb2hDrTzEOkXrXDYhFBEebDR8ccSrpvNmT9IiRBHUhPhHyQODRloPlyzvFafl0wm
-         s0aw==
-X-Gm-Message-State: AOJu0Ywa8ZIv/8nSAezRZ+OLoGu6EGZ+idlWoBjwNMAImNSG1UsSTe9Z
-	fU5xIS1sq2FQ6rRnFHIYHKiUUlb8Kf6HvssOEII=
-X-Google-Smtp-Source: AGHT+IFlQeu3q+ElU+rld3EnjOvz9eE/88otShb9zYT15iLTCLTu+OZ9uWUpKmfFbrAENM1p3a2FZ3JgKivbohmlLEI=
-X-Received: by 2002:a81:8584:0:b0:5fb:9705:5853 with SMTP id
- v126-20020a818584000000b005fb97055853mr5307731ywf.73.1705418517573; Tue, 16
- Jan 2024 07:21:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJz7ajbP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B03ACC433F1;
+	Tue, 16 Jan 2024 15:48:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705420123;
+	bh=O49fZM3TYYx0viOOAtw2wmoD1vZvsLcuxqV/YnXt0cY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jJz7ajbP/DKiVzOpv+NOMxKUFUSUsLZael48iQS4cgllPs8B3r+pi2OuXDUi3dDif
+	 LYZwfti/fuGOFcVoCfCruxkkG2bEeFqiB3jOM0MYP/FoX3e7qW7kiiJb0JbnlNilmz
+	 fW8mXF4afycwnIT8SYWc2in9ti0jc7JynZeSFghMpmsr0yYSbBK+Ahi5cyensmKzd5
+	 vQ2FtvmHh/Zpk8vnSWL2D67J4PTi4Q8CDcocwcP4rY8kLyj9M0qmjnUKzuA61kHPUh
+	 VZMey4hYLx1ODPcjG1gGaENOO6t4C9BMtZ3iGSgDR3SPJFZAYM9dfuq8QNWMtXu5c3
+	 OmJxykFL5UsfA==
+Date: Tue, 16 Jan 2024 09:48:40 -0600
+From: Rob Herring <robh@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-clk@vger.kernel.org, andre.draszik@linaro.org,
+	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
+	devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	linux-kernel@vger.kernel.org, cw00.choi@samsung.com,
+	peter.griffin@linaro.org, robh+dt@kernel.org, tomasz.figa@gmail.com,
+	conor+dt@kernel.org, semen.protsenko@linaro.org,
+	linux-arm-kernel@lists.infradead.org, willmcvicker@google.com,
+	kernel-team@android.com
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: gs101: rename cmu_misc
+ clock-names
+Message-ID: <170542011998.4183893.12913158398991338657.robh@kernel.org>
+References: <20240109114908.3623645-1-tudor.ambarus@linaro.org>
+ <20240109114908.3623645-2-tudor.ambarus@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240108135421.684263-1-tmaimon77@gmail.com> <20240108135421.684263-2-tmaimon77@gmail.com>
- <20240109170830.GA2772086-robh@kernel.org> <CAP6Zq1jCHVrFfRa6c3DZ4t2aaJTkWukeEkia0AqhzppC0mjbfg@mail.gmail.com>
- <dc739435-d955-44f7-b5ee-9de4d5336725@linaro.org> <78875535469138a0fd0659d7e621a4f2.sboyd@kernel.org>
-In-Reply-To: <78875535469138a0fd0659d7e621a4f2.sboyd@kernel.org>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Tue, 16 Jan 2024 17:21:46 +0200
-Message-ID: <CAP6Zq1gcjayNA0j2fR-RW_mSJN41RS4PR2Q9AjLKFoGOvo-ecQ@mail.gmail.com>
-Subject: Re: [PATCH v22 1/8] dt-bindings: clock: npcm845: Add reference 25m
- clock property
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring <robh@kernel.org>, 
-	mturquette@baylibre.com, krzysztof.kozlowski+dt@linaro.org, 
-	tali.perry1@gmail.com, joel@jms.id.au, venture@google.com, yuenn@google.com, 
-	benjaminfair@google.com, openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240109114908.3623645-2-tudor.ambarus@linaro.org>
 
-Hi Stephen,
 
-On Wed, 10 Jan 2024 at 23:46, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Krzysztof Kozlowski (2024-01-10 12:54:14)
-> > On 10/01/2024 14:47, Tomer Maimon wrote:
-> > >>> +
-> > >>> +  clock-names:
-> > >>> +    items:
-> > >>> +      - const: refclk
-> > >>> +
-> > >>>    '#clock-cells':
-> > >>>      const: 1
-> > >>>      description:
-> > >>> @@ -30,12 +38,20 @@ properties:
-> > >>>  required:
-> > >>>    - compatible
-> > >>>    - reg
-> > >>> +  - clocks
-> > >>> +  - clock-names
-> > >>
-> > >> New required properties are an ABI break. That's fine if you explain why
-> > >> that's okay in the commit msg.
-> > > What do you mean?
-> >
-> > I think it was clear. Which part is not clear?
-> >
-> > > Could I add the new required properties to the required list?
-> >
-> > You just did, didn't you? And received feedback that you are breaking
-> > the ABI.
-> >
->
-> It's fine to break the ABI as long as the commit message explains that
-> the driver isn't merged yet.
+On Tue, 09 Jan 2024 11:49:06 +0000, Tudor Ambarus wrote:
+> 'bus' and 'ip' are sufficient because naming is local to the module.
+> As the bindings have not made a release yet, rename the cmu_misc
+> clock-names.
+> 
+> Fixes: 0a910f160638 ("dt-bindings: clock: Add Google gs101 clock management unit bindings")
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/google,gs101-clock.yaml         | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-Thanks for your clarification.
+Acked-by: Rob Herring <robh@kernel.org>
 
-Best regards,
-
-Tomer
