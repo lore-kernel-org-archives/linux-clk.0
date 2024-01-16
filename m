@@ -1,151 +1,199 @@
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2011.outbound.protection.outlook.com [40.92.103.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0891B800;
-	Tue, 16 Jan 2024 11:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E060E1B944
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jan 2024 12:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="aVtdOKKH"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=B1dWFzTvzJG+PQD+b+X2z91q8ejtQxTg2NLPRtsYygo50erX6/nx33PMgG+T4wZkHa3GMqEZdMlYiPbjFITzCJJQ5zJO9tE/gjygzOetUwnBES6FIblB7QXa2kZBO+Cbhgf7pssJm0P4kIf/xqSxGy/YXYPLRFsiBdm5esQ3zpTc29synS6eUkcCrVUARVqg7bKoERBn/Nd+QwkR26nPiQOINQrsOCMXL6gqrrNqERJCQsrVH8vDpfk9indOOlU/zXg5dimtYFaWlDrY8IeoEf5/OInRHHIOI/pJIvi/+LnbKxxFAf7+9ykjBoMyRv8CrrWGrbk2tBjsob4jw7Gzeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+OzH72il6OjBv1RX7nVH1YTZit25IECfY+31A3wpbk0=;
- b=YEu+GaqTGSe0od1MxCqW3jyabmxsZeU7re+wzFfiHzHFfKE8W4RRxMQ+tdrkho6KQf3UA8CsYosLWPzwkGlRO6pTVbgc7DbUWHocDdrGpQJUFQH3K0+twVHwCtPI8qsI1276hhZHF8Vpyxi75QIbXhJp6m4fdGY05HdKqs3CMATlKIN7ntMlla0sxaLOSufFpI+uu0mYDC8/Jx6zeAIrLCYNob0qTb6IdyOA8SyTTE0XkrIaqLseEZGrAXbzxQyC2qeu8UN9gbfdo7VZLvSKNHaAx7cKlqImpznecT3LJ4f3sXYw0pdZRTUZCHz5wqYEG5YkThLdiPR5F4aoh+U4aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+OzH72il6OjBv1RX7nVH1YTZit25IECfY+31A3wpbk0=;
- b=aVtdOKKHRRoAgf5ZRQxcjNpPhGwII/Nt9dTedtc29iIKBnvR/E3rGv5eC+Tco0wuBReP+V1+Q6l1WQoaZ95QrnRaZixAhJS4AcaH+Vw2XSub2pOA2SIeDkjkhgRUQkI8ge0NxmBhnFrooX+Yr6guXwfdMGpibbU7FSpwIUhyVdhrW9htx0EwWDB5Qep604DtRcjhkmrEduUymHdFbydwBcFUhOusBJzDPH4t6HrQjlxZTFG0CMiZRZpDTnweTZVqJLowm83UfTRJhf7wABxT8qwtRm+BpsLfMhexrgOkDHgkkECGurkHBApoEX3NqO6aAJEyEzrSxfZyD3uVJwdM9w==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN3P287MB1847.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:19d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.29; Tue, 16 Jan
- 2024 11:39:50 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::6e80:69e1:f2e7:d70d]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::6e80:69e1:f2e7:d70d%3]) with mapi id 15.20.7181.027; Tue, 16 Jan 2024
- 11:39:50 +0000
-Message-ID:
- <MA0P287MB28223124A3B5F121EA9055FEFE732@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Tue, 16 Jan 2024 19:39:42 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/5] riscv: sophgo: add clock support for sg2042
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu, chao.wei@sophgo.com,
- conor@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
- richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, guoren@kernel.org,
- jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
-References: <cover.1705388518.git.unicorn_wang@outlook.com>
- <a9f369bf-48ab-4b6d-bd9e-b51e47bbe535@linaro.org>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <a9f369bf-48ab-4b6d-bd9e-b51e47bbe535@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [OYbHeiVMaJteuo2QkdC+6r35LSKGphfO]
-X-ClientProxiedBy: TYCPR01CA0101.jpnprd01.prod.outlook.com
- (2603:1096:405:4::17) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <40c794f9-0f7a-4ee1-8105-6274be92c7a4@outlook.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WtgTVIhA"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-55817a12ad8so7659714a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jan 2024 04:15:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1705407329; x=1706012129; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/kk/O+CBQq1j1li3fi1pfcRqWXCdCx2SuioSuSfFP1w=;
+        b=WtgTVIhACCEs5mx+Ws04Fc03pyV4aqMKnkNBNz6973jwJAwW6xjZ5KG+OWteNJkftW
+         RCUE689CkQ8C6nQ78q+tzRvO9xMp5XOnZEwLyLeMqdlQDKhX6hfVu+fWS+zsAvwjcmsx
+         p82JWtATHO51ecFOnhykc9qHsGiOb5XDyaZAhmdZJng2dW4w6+c4AmRZAY6EbwAhklPf
+         9ceqm9Hox1VN5BmRCQRj+Mdo/EdW2DAxyj3OeY9zTZfKehhlBoMCbuaycCY67EtAb4VI
+         oRF3k1zNTEV0y1aW2hyBMnmQFLnI2fr3EmdYiLa1/1/CRAq78opoPDXo23aInKBw3sMh
+         OfXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705407329; x=1706012129;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/kk/O+CBQq1j1li3fi1pfcRqWXCdCx2SuioSuSfFP1w=;
+        b=d6RcM68S+fcQABU5VYSVffcvT5QwWC4+45LefILYxPOgx9Ux+r2/GvZcsSp6hrnsKl
+         0JO/skCQp25XdNbtsrFA9KgIqGvTq/SPycug7wvlxXCllwPvlJTWDdTLZ7wVKtheZglS
+         YQBsBOiemoEHd/dzUocjOnWnnskrTXsdUs7GZzDMJs3lCpMj+kCIhSAIq7fVjpGJCY3K
+         56Ote0J11DJlITHAC7Y1lXUf8lUct1gZGT9UPSlUuTxMVWBvxLRzY7cQIq+joftNW+W2
+         7MgDg7bg+lLB31W9W0A/CFAjdberHeU0R/iFJAkAWQWw1L+29+ibqjjFtePf9+9WLymv
+         013w==
+X-Gm-Message-State: AOJu0YwcZRZIDQHOppjxsHboaFFqKcRxIyvAYPqFsuwkw/qVpootGOcH
+	0h30nmyOvtM+eKEj6gwqsSRz3bFD+p6ayw==
+X-Google-Smtp-Source: AGHT+IEwxFWU0HVj73235n9DWQNSKJOTuUjeFLvXg7/pyeoQbu4ZnHrHCnBnuulNQwp8FgsBy2SMgg==
+X-Received: by 2002:aa7:d4cb:0:b0:54c:e28c:2086 with SMTP id t11-20020aa7d4cb000000b0054ce28c2086mr3923869edr.38.1705407329028;
+        Tue, 16 Jan 2024 04:15:29 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.215.66])
+        by smtp.gmail.com with ESMTPSA id s24-20020aa7cb18000000b00558e38d4c6asm5046806edt.93.2024.01.16.04.15.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jan 2024 04:15:28 -0800 (PST)
+Message-ID: <52c0b805-bcbb-47e5-bbac-e527e9dc57a6@linaro.org>
+Date: Tue, 16 Jan 2024 13:15:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN3P287MB1847:EE_
-X-MS-Office365-Filtering-Correlation-Id: fdaa63d8-a198-4867-ca3a-08dc1687d970
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	RKyUymoz6sijufIudk4gxfm3idYg/jivDB/cKulHoW+ePip7NktLw19vKW5omg6+Pq5EHMKTZ9FFQ/0y/GMiOEA+z6Qgbuhzc05gXrT/VfKVfhvrgFIISfaF6Q21kta7diGQ5yI7aooJatE9J3nwpkqY/qHL285FbQfJzthmJT+wfxVZseAkpKPOXMj+5d2SqMmRHUrszqT7d5bjRbIbOJMeHpS7WBoFPbKVs7PwSWH02WbYdOsRePwyezgFkLkcKcj0oLF6ebdPul2rqijwDHGamLexw/Ce8ZiTStt+F8Yu5lD4k4/m29zagMMIuspIQxmSyek3IGpnx3RWLH8Wup9FuUN6tdtWsnx/8TOGXMqlBBk3nx1Rw35X8Yp7+KS+gyvINRHB+QdR5GT9ptFdvxBHBN4Qq10UPdwHQfXwP/K5UHAHVYHLOR7B27Nw/M1wENvVykjEy7hplnXq7YXtc5IlB6EHJE4tSkYTTFgDdLWvaWnJM0EBY1JI/1xnLsX5yS9Rqnaqre+oTEu1/b/yFEp4B74/5ObAMEim+x1u/JcJY5zdk+Tize5wDu3akGHDZZ6fwDTMalGadrCQ0KrGXiH3rY7w2raMucq85tA8U/oyl8Xke7HISpXWG2clCScj6gDbAcjWpTWhNyVanqnFtw==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OU94R3M2S1RpbnZCSHFyS290djZVbDZEL1piSkQzMUY2b2lNc1FxSTR6UDF6?=
- =?utf-8?B?bHA4OStxZnVNQkIzczlHUkk2Z3J6Rkt1d3hBVEtvNFZYdUlEZXA2ODdkVlEz?=
- =?utf-8?B?MWtTSDQ1VE1oajFMejZUTVljcmpRQ2lRYmNsLytyUzZHTi9kcXoybFRaS1Bn?=
- =?utf-8?B?azZyVkFmckczOGhlb0RmTURrSGtNc2VqeHFKMGJyNWNmU1YwMDZJaFFLYXB4?=
- =?utf-8?B?RGFsSmpjVXdSaEFYMTlJU29zUDhXLzZDZ1VTTjIySDZZVU84Nmh3eG4zTzU3?=
- =?utf-8?B?eWsrbEFnTC9TR0tXcjBWYlJKUXA0YmxOS2tPT21oWjlLczkzc1J6TnNENmZp?=
- =?utf-8?B?REFwaU03cmJ6SC95YnU1WUN3RkZOd3psWGtySmlBSE13Ykg4amxOd3JMSlpF?=
- =?utf-8?B?bSs0eW1yWDJVQlE4cGhVeWZhYUgzMGdjUHIzQ2VNK1JNUGczeWIvYmFnZDhj?=
- =?utf-8?B?ZkZuUkRuZWRGdUM2T2crQkt3UjhQUVJkSHNwTys3NG1LWTdOVG0yaTU2T3Iz?=
- =?utf-8?B?eHRIOFF2V2MzbmdwRVpBVktRZmZaZmJJT3V3ZGVBNktxa2NyckZNNGpDQi9T?=
- =?utf-8?B?cHNTb0ZpeHc1V2RZUGV0RWxBMTB6MmIrNzZjTHkwS1ZkenRGNXpYenlVSlNi?=
- =?utf-8?B?SExQbU9KQlVxSG4vWDhybmdRU1U3Ly9HNHF6bHRWS0VmWnBEVmx5NHNmQ21T?=
- =?utf-8?B?bkhyYk9ENVd1WGVxOHF3bGM1ZlQxWk8yS2ljS0RPTms2eWljRWpQZFhhTG1z?=
- =?utf-8?B?SVVlb1V1TmtZN2Yxd3FpYmFhbkMyV2s3RzN6SFdTKzVBVUxEb1VsZjhDMzJY?=
- =?utf-8?B?d2l4ZUZyNUdjeVhHL3RuK3VXdEpKTHBXcXVBdGd6KzFlYTkwM3N5UHpvZUVo?=
- =?utf-8?B?UmpBaXkzd2RtM3NQeTR1N2xzanMvbURkOG0zdzFocGxPNjVJUEFJdlFsTnlH?=
- =?utf-8?B?MUk1SDlWSUdrNU8wOExGSm85U2NWQkxwZmVWd3RrN2hBMHdPWUpnbFAwQ1VK?=
- =?utf-8?B?SjBNd0dlTjEyWVFHY2MwQUlZNmpEd0tENCtQRzVYTFdhQzRMcnp0bVN6a0Rv?=
- =?utf-8?B?bHBnNzdFN2JBY01XYU1nYWVoMTNxVTlwYTVWaGl4andYZkVEOXp0bUJiM0xC?=
- =?utf-8?B?emJuekZRVUpqV0JqblhOWXNEMWFTUVY1M2xUOExLL2RyR3FaQ3NuaVpwRGJY?=
- =?utf-8?B?eXNqVEF3a2NtbWZCWGpoNVY3R0JSOUs4OS94aXNiZ2pPbkJHQ3JPdDNTRm1I?=
- =?utf-8?B?blZtTTBHVUxRTkJDR2Z5N1EwSjMvTDA1TFo1QW93SEh3ZGNsc1M1ZzlqYk1L?=
- =?utf-8?B?bkF0NXNOT2xwU3RVd25VbUpZV2lmeGhGRkdKVXZJa0ZQeS8yOE5kK0JOTUdF?=
- =?utf-8?B?R1VrV2VvczEyTnFJNlhnNzY4Ym12dFNDK3hZUmg0UmZITFh6MnVvbXIxclVN?=
- =?utf-8?B?SDZOSFFwUXdZZkNncVpNNkwwL2FTYkdKV3kwdmxEeVQ2VHZzRGhBQkcvR3VG?=
- =?utf-8?B?OG41dmM3bGIrLzFkQWlBV0VlalBwa1RXYjlWeHVHemJLTXRQRTVQVGY3RGps?=
- =?utf-8?B?RmpwLyt0VU92YjgzZVMxMGxNdlJmWnJmeUZOREJsb3JjUWoydXlMY0xVU2ZN?=
- =?utf-8?Q?B5izhvyoCfg496O0eTObPGF2PF3CYS6fJBApVGj/A5WU=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdaa63d8-a198-4867-ca3a-08dc1687d970
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2024 11:39:50.7454
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1847
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/5] dt-bindings: soc: sophgo: Add Sophgo system
+ control module
+To: Chen Wang <unicorn_wang@outlook.com>, Chen Wang <unicornxw@gmail.com>,
+ aou@eecs.berkeley.edu, chao.wei@sophgo.com, conor@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com,
+ robh+dt@kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, haijiao.liu@sophgo.com,
+ xiaoguang.xing@sophgo.com, guoren@kernel.org, jszhang@kernel.org,
+ inochiama@outlook.com, samuel.holland@sifive.com
+References: <cover.1705388518.git.unicorn_wang@outlook.com>
+ <598b1026fdf9989bc48e5e10d1034b37947d3b80.1705388518.git.unicorn_wang@outlook.com>
+ <f4a46311-2e12-458b-98a8-d3caa2c95517@linaro.org>
+ <MA0P287MB282232DC6DF6290F5520BA89FE732@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <MA0P287MB282232DC6DF6290F5520BA89FE732@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 16/01/2024 12:37, Chen Wang wrote:
+> 
+> On 2024/1/16 18:06, Krzysztof Kozlowski wrote:
+>> On 16/01/2024 08:21, Chen Wang wrote:
+>>> From: Chen Wang <unicorn_wang@outlook.com>
+>>>
+>>> Add documentation to describe Sophgo System Control for SG2042.
+>>>
+>>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>>> ---
+>>>   .../soc/sophgo/sophgo,sg2042-sysctrl.yaml     | 46 +++++++++++++++++++
+>>>   1 file changed, 46 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
+>>> new file mode 100644
+>>> index 000000000000..7b50bb56b4cf
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
+>>> @@ -0,0 +1,46 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/soc/sophgo/sophgo,sg2042-sysctrl.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Sophgo SG2042 SoC system control
+>>> +
+>>> +maintainers:
+>>> +  - Chen Wang <unicorn_wang@outlook.com>
+>>> +
+>>> +description:
+>>> +  The Sophgo system control is a registers block (SYS_CTRL), providing multiple
+>>> +  low level platform functions like chip configuration, clock control, etc.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: sophgo,sg2042-sysctrl
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  clock-controller:
+>>> +    # Child node
+>> Drop the comment, it is obvious. It cannot be anything else.
+>>
+>>> +    $ref: /schemas/clock/sophgo,sg2042-sysclk.yaml#
+>>> +    type: object
+>> Why isn't this merged here? You do not need the child node really...
+>> unless the clock inputs are specific to that clock controller and you
+>> will have here more devices? But where are they in such case?
+> I don't see more devices will be included later. It should be ok to 
+> merge them into one.
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - clock-controller
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    system-control@30010000 {
+>> Why did you change the name? Please provide detailed changelog with
+>> explanation of such changes.
+> 
+> I changed the name due to I find the 
+> TRM(https://github.com/sophgo/sophgo-doc/blob/main/SG2042/TRM/source/system-control.rst) 
+> call it "system control",  so I changed it in v8.
+> 
+> Which one do you prefer? I'm not sure if there are any requirements for 
+> this?
 
-On 2024/1/16 17:47, Krzysztof Kozlowski wrote:
-> On 16/01/2024 08:20, Chen Wang wrote:
->> From: Chen Wang <unicorn_wang@outlook.com>
->>
->> This series adds clock controller support for sophgo sg2042.
->>
->> Thanks,
->> Chen
->>
->> ---
->>
->> Changes in v8:
->>    The patch series is based on v6.7. You can simply review or test the
->>    patches at the link [9].
->>    
-> ...
->
->> Changes in v1:
->>    The patch series is based on v6.7-rc1. You can simply review or test the
->>    patches at the link [1].
->>
->> Link: https://github.com/unicornx/linux-riscv/commits/upstream-sg2042-clock-v1 [1]
->> Link: https://github.com/unicornx/linux-riscv/commits/upstream-sg2042-clock-v2 [2]
->> Link: https://github.com/unicornx/linux-riscv/commits/upstream-sg2042-clock-v3 [3]
->> Link: https://lore.kernel.org/linux-riscv/MA0P287MB03329AE180378E1A2E034374FE82A@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM/ [4]
->> Link: https://github.com/unicornx/linux-riscv/commits/upstream-sg2042-clock-v4 [5]
->> Link: https://github.com/unicornx/linux-riscv/commits/upstream-sg2042-clock-v5 [6]
->> Link: https://github.com/unicornx/linux-riscv/commits/upstream-sg2042-clock-v6 [7]
->> Link: https://github.com/unicornx/linux-riscv/commits/upstream-sg2042-clock-v7 [8]
->> Link: https://github.com/unicornx/linux-riscv/commits/upstream-sg2042-clock-v8 [9]
-> lore links are useful to previous discussions. This shows what was at
-> v7, but I cannot see my comments and compare whether you applied them.
-Ok, I will replace them with lore links in next revision.
->
-> Best regards,
-> Krzysztof
->
+Node names should be generic and follow common guidelines, not match
+your TRM. Please use the same name all other devices use for the same class.
+
+Best regards,
+Krzysztof
+
