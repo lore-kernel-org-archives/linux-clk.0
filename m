@@ -1,49 +1,49 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECA213AC0
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jan 2024 10:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A480413ADF
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jan 2024 10:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VACNRWP3"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a28b1095064so1082393866b.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jan 2024 02:06:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q9B1eHrF"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-55790581457so11056139a12.3
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jan 2024 02:09:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705399565; x=1706004365; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705399743; x=1706004543; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OZTIIP3sJf0VlBiBgQq2oPnZChL1jOKPVa8eOrSDmuM=;
-        b=VACNRWP3k9Dh3+P4YFrqJfXPwkGzBqOmGMmM3KYsCw09qVTxnxUVQNh1P3Hr29DKxm
-         rACIQX3rm1GMeMYxyk4gZiHtKSgq7UlptbZRe0wRDCtlXGPfoCM38OGa1cN9c+uEZAdn
-         qxtJBR72YU0n0KYaQPtGN/LAVo/OGQzJJrt8Pxqrgi4C+inzkXBvMOVZWgsfZFJLJzNt
-         A6oMgHaS7CB5o7wgLbBvDsJNTFwQnWXFc6ZB7LZlaa5rOf34ooGpKOKHnbbQsfUaa3XC
-         e+ndjdy7Nk13dOTzuWWQlveaVTRN1mOvz5aid+0yZw0LLFc9P9+/yhp6dirNNN4TqadH
-         1+Xw==
+        bh=S2ouztY5FabhLEMLctP28JtMU7jyUhI1ZTSnZTMlTAg=;
+        b=q9B1eHrFHUDyg6oHJxlggKLaG/0tGSQ+Zla/7lHkRYedNN37FY5khEQuXQY6nOmPtr
+         cjaVCtHpsQUNbAZNSO7UMrfkgfefHjVsWGKECcrgbJtKoIpxZyn8mWU0bPyUrx5h0g3Q
+         pVDifD8UhImFU0rs/ZlLLoJ5StJApIOZ6aLTp1jiLNmGQSP5+HigbLMzKI8MW0sEm4lq
+         IgOV05K36zeo9cEfFWjsQwuKLV/Lc+X4LD/ouw5YRMQiqqzlavcSK11yxot4JyM6hMC5
+         GGDaYHOkO9D9xJhJI86c2eKsLwdhVs1eYXUKi/QaCvpatZqn/bqG8Q2r6xYrRhf8xuLa
+         h4Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705399565; x=1706004365;
+        d=1e100.net; s=20230601; t=1705399743; x=1706004543;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OZTIIP3sJf0VlBiBgQq2oPnZChL1jOKPVa8eOrSDmuM=;
-        b=o+ox6nfgoQPGz1/XeuWJReYMhY0+wTPk38nAYVkar4RSg5qzEiWaB0Lq+RGtZyJ2wC
-         RzTPkjLEoYp75VEYTBxeBNs/atUFv2ndZfq3XDHOIJqM9mknHfChTWaR40HcfiZzqnTH
-         UoJ9ay4r9MVEif2IMn4pLYTuVuO9vIQD6ynmxqHtsCAoky7hdvcY9HNRNUGp3ZXvOBcO
-         cr8MeCl60YAKwYT9ccrCmy9SYdBd/hYYFq4gWrysGNHRFqbd1j1h5IIHuY2rHqXkkcOS
-         Kxe1c13bymkpUN2pbOQvDcMhXyg0YF/jNXyr7kXoxByE3amom1FAYf7tzvMl3J1sOM/U
-         joxQ==
-X-Gm-Message-State: AOJu0YyFpduCRK3XjLNZV1tmtOheFjIH3FZbY65HwgrIVMLaFMH8Vwfh
-	kjknHxGVcZax71CJlvCp/tTfq1wAmEPiJg==
-X-Google-Smtp-Source: AGHT+IFsaL5xpC1jtrEaUXh2spsJYu2prL8w44FIry9ZmDgMoFdMO9cuTBzvzslnKNJnehG+3DQJ2Q==
-X-Received: by 2002:a17:906:e2c3:b0:a2d:4e55:1d4f with SMTP id gr3-20020a170906e2c300b00a2d4e551d4fmr1063543ejb.153.1705399565214;
-        Tue, 16 Jan 2024 02:06:05 -0800 (PST)
+        bh=S2ouztY5FabhLEMLctP28JtMU7jyUhI1ZTSnZTMlTAg=;
+        b=UCg+AygzNtjQOa9K4MRR/XjKjuj0FdwZlgE8mMSFXuNvaLDOElkfDjZfV50qifNCKx
+         lAt4OQ4KnKVEfkon7Wi42uTmvCcRHZAYi3T/GKzXhXAY46ZzsHrBBlxfeJlwsU+K9SXg
+         zrUMmq9GrOn3L684zrUx5+Pxcwq3KTtomxees8bpap8EkmT7aiMgOuy+9oOyKTs/YM/Q
+         cMbwqh84hGQpl64nkYDaK04MfFPTOylQesaSonVXumJWJlCdgnT+RwurZF5dhppHz8BX
+         f62IhSXbCo9JhMb35bpia/6ssFZ5XKrddUlGndVrT4zsd3L17Ymeuhq5IF7HXjmluH3F
+         Vc1A==
+X-Gm-Message-State: AOJu0Yx/QNkf+kyqBFZim7ZzalRkRLfNZibzbo3+nI2zpwX7SpI2Fi/P
+	CabV/Ydog9ZaoQimP7mNBp0HEaD4SkeTBZC2s4V++kd3is8=
+X-Google-Smtp-Source: AGHT+IHmCqFOcCJrghmCUjCf+psCuvdWnLq3g1eg7KArxDOrcVfD+DKcH+WHPqkU7gLc5Pmes4Phmw==
+X-Received: by 2002:a05:6402:1d97:b0:559:6abf:5226 with SMTP id dk23-20020a0564021d9700b005596abf5226mr1009637edb.73.1705399743036;
+        Tue, 16 Jan 2024 02:09:03 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id g17-20020a170906c19100b00a2b1a20e662sm6234716ejz.34.2024.01.16.02.06.03
+        by smtp.gmail.com with ESMTPSA id cq13-20020a056402220d00b0055946388052sm2507937edb.43.2024.01.16.02.09.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jan 2024 02:06:04 -0800 (PST)
-Message-ID: <f4a46311-2e12-458b-98a8-d3caa2c95517@linaro.org>
-Date: Tue, 16 Jan 2024 11:06:02 +0100
+        Tue, 16 Jan 2024 02:09:02 -0800 (PST)
+Message-ID: <6badfa7b-543f-4aa0-87db-bac27c2d1f46@linaro.org>
+Date: Tue, 16 Jan 2024 11:09:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,8 +51,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/5] dt-bindings: soc: sophgo: Add Sophgo system
- control module
+Subject: Re: [PATCH v8 1/5] dt-bindings: clock: sophgo: add sysclk for SG2042
 Content-Language: en-US
 To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
  chao.wei@sophgo.com, conor@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -64,7 +63,7 @@ To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
  jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
 Cc: Chen Wang <unicorn_wang@outlook.com>
 References: <cover.1705388518.git.unicorn_wang@outlook.com>
- <598b1026fdf9989bc48e5e10d1034b37947d3b80.1705388518.git.unicorn_wang@outlook.com>
+ <7071845b8d1ff6aa91112c91feb62bc875066d9e.1705388518.git.unicorn_wang@outlook.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -110,80 +109,29 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <598b1026fdf9989bc48e5e10d1034b37947d3b80.1705388518.git.unicorn_wang@outlook.com>
+In-Reply-To: <7071845b8d1ff6aa91112c91feb62bc875066d9e.1705388518.git.unicorn_wang@outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/01/2024 08:21, Chen Wang wrote:
+On 16/01/2024 08:20, Chen Wang wrote:
 > From: Chen Wang <unicorn_wang@outlook.com>
 > 
-> Add documentation to describe Sophgo System Control for SG2042.
+> Add bindings for the clocks of which configuration registers are in the
+> range of SYS_CTRL in the memory-map.
+
+This means it is not a separate device and should be just merged with
+parent node. Otherwise please give us some arguments why this should be
+a separate device node.
+
+
 > 
 > Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> ---
->  .../soc/sophgo/sophgo,sg2042-sysctrl.yaml     | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
-> new file mode 100644
-> index 000000000000..7b50bb56b4cf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/sophgo/sophgo,sg2042-sysctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sophgo SG2042 SoC system control
-> +
-> +maintainers:
-> +  - Chen Wang <unicorn_wang@outlook.com>
-> +
-> +description:
-> +  The Sophgo system control is a registers block (SYS_CTRL), providing multiple
-> +  low level platform functions like chip configuration, clock control, etc.
-> +
-> +properties:
-> +  compatible:
-> +    const: sophgo,sg2042-sysctrl
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clock-controller:
-> +    # Child node
+> .
 
-Drop the comment, it is obvious. It cannot be anything else.
+Some stray characters above ^^^. Clean your commit msg. Also, I have
+doubts it passes checkpatch.
 
-> +    $ref: /schemas/clock/sophgo,sg2042-sysclk.yaml#
-> +    type: object
-
-Why isn't this merged here? You do not need the child node really...
-unless the clock inputs are specific to that clock controller and you
-will have here more devices? But where are they in such case?
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clock-controller
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    system-control@30010000 {
-
-Why did you change the name? Please provide detailed changelog with
-explanation of such changes.
-
-
-> +        compatible = "sophgo,sg2042-sysctrl";
-> +        reg = <0x30010000 0x1000>;
-> +
 
 Best regards,
 Krzysztof
