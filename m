@@ -1,187 +1,141 @@
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A68010A3F;
-	Tue, 16 Jan 2024 07:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8C812B7B;
+	Tue, 16 Jan 2024 07:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e+wFDVJ4"
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-21080bacc6fso53843fac.0;
-        Mon, 15 Jan 2024 23:22:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705389747; x=1705994547; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DSNu/F0YjWWvZJ8YEGZOLrkQaebTdrL0bEYeNxkjWKw=;
-        b=e+wFDVJ4qt7wJHsUt49BsyFF5oT/gSL5eyElCI5m4b2rilfySUi1uTmBix8UKOyvq/
-         ajK1S55BKtfKujVTnqnpKLGZ9bOo/vygUEixJEtmIew454CgLsTO0MWit+W55dJnUgh4
-         zAs1XC/fMW1xFcImYKR/QXJZCuUulDPsmT5tV5U+RBs64lY7wW1voO/I1uPBWX3L3aB1
-         vGAZNSssuAbamq9leUmW14S+w4d1Jr3OPagQ4tn0m14QgPOdSseouBJ/NWJM0UwBBjCh
-         vrwO/UHVSne4C6hJMLcRwSxD99OuRA1BU19eoqhbZm77iZSYEWZPWxXuVU9yVfAbikQZ
-         Ni2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705389747; x=1705994547;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DSNu/F0YjWWvZJ8YEGZOLrkQaebTdrL0bEYeNxkjWKw=;
-        b=CX+wQRaZK/5TAx0waJ6SmDmhfi8Q9WlqOJi5qdZiuYSDoWTUNhFvmCTG1RKAV7OPhO
-         pU428/EaHLB+AQ1HFLJPSC3SRbv5LWSFkJwKsZacARLWPeOCH1MUPawppQIff2liJhbo
-         EDml7e6zV6MY7sj9Q+IwaWWDWYdf7SUzm+ZycdAbpVxlniZy0oxfmDBEMC0H1Duqbhu+
-         cfoQs+BaSpH4fJB6fRzul8+fQeU/HbPHqOIG8M+eZJ2E5YWgB31qYmG6ijVK2lvNnLS6
-         wY7NNc6pxYMduh7cZz8rU2wfJ8IMuTgZmsg13haFmz+91EDR9Ioy3OgW5JsBpMrSmcKn
-         cmmw==
-X-Gm-Message-State: AOJu0YxHprTbDtmwCRkZCrDigln1P1u+/PJWUKuncVytrCnDKyPomBWd
-	W5e1I+TkOlOIndBJ9PLNcmE=
-X-Google-Smtp-Source: AGHT+IH69Ohci1IK5bZui+I6s85n29iczQYaPx877llDqKJLtWt+hCvbGqWnV03YlB5FQwI24tl4OQ==
-X-Received: by 2002:a05:6870:3128:b0:210:7b00:e811 with SMTP id v40-20020a056870312800b002107b00e811mr389496oaa.71.1705389747085;
-        Mon, 15 Jan 2024 23:22:27 -0800 (PST)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id t20-20020a05687044d400b002060e99b486sm2905903oai.22.2024.01.15.23.22.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jan 2024 23:22:26 -0800 (PST)
-From: Chen Wang <unicornxw@gmail.com>
-To: aou@eecs.berkeley.edu,
-	chao.wei@sophgo.com,
-	conor@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	mturquette@baylibre.com,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	richardcochran@gmail.com,
-	robh+dt@kernel.org,
-	sboyd@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	guoren@kernel.org,
-	jszhang@kernel.org,
-	inochiama@outlook.com,
-	samuel.holland@sifive.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v8 5/5] riscv: dts: add clock generator for Sophgo SG2042 SoC
-Date: Tue, 16 Jan 2024 15:22:20 +0800
-Message-Id: <f2edd136c97cea465a81e8949a36471c26db9b09.1705388518.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1705388518.git.unicorn_wang@outlook.com>
-References: <cover.1705388518.git.unicorn_wang@outlook.com>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="gH7MHFK3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1705390662; x=1736926662;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W2Z5WovOkoDhRrX3oZ/2SAj8+B2nb1yllR5MhnzNHik=;
+  b=gH7MHFK3Qvhg+39qCyI0l9EQynOo2OfkTZWU4XIvZSeuOsh1ZR3us1R3
+   /YGIJ3UOwnxRFGpCJrFQd6TU8LhA7NMQ/OQ8RiObTOn97ZuRmGvAF+/w/
+   P6slbE3Pfmz740oGOuzF5SnhL+46qVaUhnK8aQ9Ur6rA+OgUJI9TMvrjZ
+   kNxVWdJBkk0B/ldkoaivyY6a0Ta5Lrn67Hd5yaK3YJNlPS1daarc4phS9
+   gTTLXhfrcxE5N2LpOqqEZARt3YN5cBDA1FdnplCs4piNRtEnocDukQPOr
+   2u1xTJIfk7z+u9jPHkwA6AJeSiJ7AZ8J+L3N5fqNIFrbsyXd/6IyEemIl
+   A==;
+X-CSE-ConnectionGUID: IsWRT3HCQVmB2vjRJZ30Vg==
+X-CSE-MsgGUID: fn1riB1hQsScBhpbjzpgYw==
+X-IronPort-AV: E=Sophos;i="6.04,198,1695711600"; 
+   d="asc'?scan'208";a="14788093"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Jan 2024 00:37:40 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 16 Jan 2024 00:37:38 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Tue, 16 Jan 2024 00:37:34 -0700
+Date: Tue, 16 Jan 2024 07:36:58 +0000
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Inochi Amaoto <inochiama@outlook.com>
+CC: Conor Dooley <conor@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Chao
+ Wei <chao.wei@sophgo.com>, Chen Wang <unicorn_wang@outlook.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Jisheng Zhang <jszhang@kernel.org>, Liu
+ Gui <kenneth.liu@sophgo.com>, Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
+	<dlan@gentoo.org>, <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v6 1/4] dt-bindings: clock: sophgo: Add clock controller
+ of SG2000 series SoC
+Message-ID: <20240116-doubling-fanning-2a46405942ae@wendy>
+References: <20240115-spendable-achiness-cff7918fe810@spud>
+ <IA1PR20MB4953C0E6DCC3C4CC0A398529BB732@IA1PR20MB4953.namprd20.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="eB8X+Pg8BaNk7w+A"
+Content-Disposition: inline
+In-Reply-To: <IA1PR20MB4953C0E6DCC3C4CC0A398529BB732@IA1PR20MB4953.namprd20.prod.outlook.com>
 
-From: Chen Wang <unicorn_wang@outlook.com>
+--eB8X+Pg8BaNk7w+A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add clock generator node to device tree for SG2042, and enable clock for
-uart.
+On Tue, Jan 16, 2024 at 08:27:59AM +0800, Inochi Amaoto wrote:
+> >On Sun, Jan 14, 2024 at 12:16:58PM +0800, Inochi Amaoto wrote:
+> >> SG2000 series SoC has the same clock as CV1810 series, but the clock
+> >> related to A53 is functional in SG2000 series. So a new compatible
+> >> string is needed for the new SoC.
+> >>
+> >> Add definition for the clock controller of the SG2000 series SoC.
+> >>
+> >> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+> >> Link: https://github.com/sophgo/sophgo-doc/releases/tag/sg2000-datashe=
+et-v1.0-alpha
+> >> ---
+> >>  Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml | 3 ++-
+> >>  1 file changed, 2 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/sophgo,cv1800-clk=
+=2Eyaml b/Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml
+> >> index c1dc24673c0d..59ef41adb539 100644
+> >> --- a/Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml
+> >> +++ b/Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml
+> >> @@ -4,7 +4,7 @@
+> >>  $id: http://devicetree.org/schemas/clock/sophgo,cv1800-clk.yaml#
+> >>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>
+> >> -title: Sophgo CV1800 Series Clock Controller
+> >> +title: Sophgo CV1800/SG2000 Series Clock Controller
+> >>
+> >>  maintainers:
+> >>    - Inochi Amaoto <inochiama@outlook.com>
+> >> @@ -14,6 +14,7 @@ properties:
+> >>      enum:
+> >>        - sophgo,cv1800-clk
+> >>        - sophgo,cv1810-clk
+> >> +      - sophgo,sg2000-clk
+> >
+> >I recall before you mentioned that the Sophgo folks were considering
+> >renaming one of their devices. Is the sg2000 the renamed one, or a
+> >different chip?
 
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
----
- .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  | 12 ++++++
- arch/riscv/boot/dts/sophgo/sg2042.dtsi        | 39 +++++++++++++++++++
- 2 files changed, 51 insertions(+)
+> The sg2000/sg2002 SoCs have one A53 core which cv1812/cv1813 SoCs
+> don't have. I prefer sg2000/sg2002 are different chips, or at least
+> an enhanced version of existed cv1812/cv1813. It is not a simple
+> rename.
+>=20
+> For this patch, the sg2000 doesn't need to disable A53 related clocks
+> like cv18xx series. So this compatible is needed to bind to this new
+> logic.
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-index 49b4b9c2c101..80cb017974d8 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-+++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-@@ -14,6 +14,18 @@ chosen {
- 	};
- };
- 
-+&cgi_main {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll0 {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll1 {
-+	clock-frequency = <25000000>;
-+};
-+
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index 93256540d078..6dd8d89d4833 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -5,6 +5,7 @@
- 
- /dts-v1/;
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/clock/sophgo,sg2042-clkgen.h>
- 
- #include "sg2042-cpus.dtsi"
- 
-@@ -18,6 +19,24 @@ aliases {
- 		serial0 = &uart0;
- 	};
- 
-+	cgi_main: oscillator0 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_main";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll0: oscillator1 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll0";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll1: oscillator2 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll1";
-+		#clock-cells = <0>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
-@@ -311,12 +330,32 @@ intc: interrupt-controller@7090000000 {
- 			riscv,ndev = <224>;
- 		};
- 
-+		system-control@7030010000 {
-+			compatible = "sophgo,sg2042-sysctrl";
-+			reg = <0x70 0x30010000 0x0 0x1000>;
-+
-+			sysclk: clock-controller {
-+				compatible = "sophgo,sg2042-sysclk";
-+				clocks = <&cgi_main>, <&cgi_dpll0>, <&cgi_dpll1>;
-+				#clock-cells = <1>;
-+			};
-+		};
-+
-+		clkgen: clock-controller@7030012000 {
-+			compatible = "sophgo,sg2042-clkgen";
-+			reg = <0x70 0x30012000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
- 		uart0: serial@7040000000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x00000070 0x40000000 0x00000000 0x00001000>;
- 			interrupt-parent = <&intc>;
- 			interrupts = <112 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <500000000>;
-+			clocks = <&clkgen GATE_CLK_UART_500M>,
-+				 <&clkgen GATE_CLK_APB_UART>;
-+			clock-names = "baudclk", "apb_pclk";
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			status = "disabled";
--- 
-2.25.1
+I'm not disputing the unique compatible - you previously mentioned that
+Sophgo were considering rebranding the cvXXXX series of chips going
+forward and that one particular chip might undergo a name change.
+I was wondering if this was that chip or just another device in the
+series.
 
+Thanks,
+Conor.
+
+--eB8X+Pg8BaNk7w+A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZaYyFgAKCRB4tDGHoIJi
+0ny6AQD8jsSGjB9PRHJIURaIii46XV0kYNTdn/N7cJvxFm0LXQEApESH0dzNDVT/
+TL70OnJGXzymk7n0pSlvQzK/NlNa2gY=
+=HiGa
+-----END PGP SIGNATURE-----
+
+--eB8X+Pg8BaNk7w+A--
