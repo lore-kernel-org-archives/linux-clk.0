@@ -1,165 +1,117 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0975014282;
-	Wed, 17 Jan 2024 10:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055B914294
+	for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 10:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705485978; cv=none; b=pQBfCZa5Xvg+AfObSRFSv6xGACocS7axxPOJkr5ptCbNWh+PyPeCVpxWlw5qNQskovfXS3DBdePfN/VsGlXbeMh/t+DPxYKX5k2vm71ED3uHvCjMhC/JeCcwgGD+VEpe+RIkciK5seXZyIcrU9/MnA6DM1rF3lhJc3k2KwU7Sqs=
+	t=1705486645; cv=none; b=P+1KOiouBqGI6FM75gb7wWxln+YXG0FI1+uocC7toX/FciA9SqJhaLBiZ4RXAzRK0SgpCR6rVrY4uh1NcNQM7H78fdMoI1cgNs8EIsYeOneUke5Ctk1eHPn5z54f0IH+DsvgCcnP/DZ6QueOFxLQF8WVhzfATOWUEVIq48YIzgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705485978; c=relaxed/simple;
-	bh=+cxx2b/N2LvNg0nWquPf/YpjQZ5mfMypJFmZWd9uQdc=;
-	h=Received:X-Google-DKIM-Signature:X-Gm-Message-State:
-	 X-Google-Smtp-Source:X-Received:Received:Received:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:
-	 X-Gmail-Original-Message-ID:Message-ID:Subject:To:Cc:Content-Type:
-	 Content-Transfer-Encoding; b=tBoWVinOOOmBbgRDjAGq9ns14o2g5VemiOeTCg7rmZ+DoPGbJT7PsjpOlWBwBENr2aJrXQo5971fe1EeRrzwYMMOSZG036+B4NiDk9DNWZ0md+jAn4unqncTkVIeRuCUTpMYFwum1WCYVKGFLnAhp38fGxhzI70iZS0sEa1ZRvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-5f68af028afso92131237b3.2;
-        Wed, 17 Jan 2024 02:06:15 -0800 (PST)
+	s=arc-20240116; t=1705486645; c=relaxed/simple;
+	bh=754t0uTULSRpJAMac1CD95NbzZnhj+FFC+mGT+l7NBs=;
+	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:From:
+	 To:Cc:Subject:Date:Message-Id:X-Mailer; b=P4MabMcXPG59yBaAEr2TzImxNyOZuKZvzhaZz7e/UPCPovliwTeVqgCQXY+/N6g1GF+p5OzvkIYpqW3lrDA4xsBDWp3XTzuTmySlO89oVThJAymMeeJ8gCenp8YbOt4O2QXmN6u1R6Cdc8XjAuL8d8owf8GsLHFeTUJBoX7CWCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=8devices.com; spf=pass smtp.mailfrom=8devices.com; dkim=pass (2048-bit key) header.d=8devices.com header.i=@8devices.com header.b=eevvGNsl; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=8devices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8devices.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=8devices.com header.i=@8devices.com header.b="eevvGNsl"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a271a28aeb4so1183908266b.2
+        for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 02:17:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=8devices.com; s=8devices; t=1705486641; x=1706091441; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hrjlcWfn/pDpqQxIFmiRolfpjezwCtleMfj2jxEGGng=;
+        b=eevvGNsl/Qb3lS8PTmOKBvhbO9UPT+rbpR5GQgPEuB53zNNZMVv7g+kSfgy853/IcG
+         NXralb7aTjJQ+agQkMDmMTZ0RcGMt1th6zWD3TCzGe2JS9GFpaqQcCCCXPjIAi+ZuXVz
+         b9H41hPSuJMSVg0OqvhOYAuSZmQvmF1MdEGBkPbEiRrK1LYciYe7b5cdBajd6AB/1+rc
+         p3WuCESQD27ksH03Y451WxgalSHvyHfv9/M5iEmVB1ZqkZUJyFz173RxMzW+psqFmQNw
+         h8gegC1Njm5QsCrtmdqAj8rViVqGyc6Lysq/QIZpJ+CGwq4O8xXZ70TisNlWA04p316Z
+         3HaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705485975; x=1706090775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1705486641; x=1706091441;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ktKDg1Kr1k5upORAnFgj9TjW3VLUUCKOkhGf1ZiTWq0=;
-        b=mFJmS23fQc++YO/zFXRwgtK6yS1H0p2B67RZ2WrktMJuaSr5q5ZP3fK9FDOT2tjwKl
-         wBxJEpMKMTENBQzLKB+5gNSc7haazIGK4bGuaz8TK6YBCOAllduQ84NTI3IvaI6++QIc
-         Jn9Zw2idHIJB3te/cb2s13XR1OdnPUX5xBmcjeUJasUnKZEKoSM1XMoTPqj1T87k84UT
-         qEFtmf+LnWplPEoZ65rE101grFNd28WywjsWwRenMZNh7TkKG/GcnLx82yL3LQKFCtEq
-         DsVssmQvaLX2oXctuwnWlxFux+KEcdc1PABMOxRAIU8+UsGk8aJyLtw/EHJwPn7yFLKd
-         dvxg==
-X-Gm-Message-State: AOJu0YwyXFpO1PtvBCus81+IgUNlnvrvx4eAom/zIY7agMz4xtctefIn
-	TY0sYB6u9Q8JzIdrL/VneoD5tnu31BOVvQ==
-X-Google-Smtp-Source: AGHT+IGvsKro72mIsn7zC0rDold1fCYfQbqHaTRxf3TuiU8P9HI/5ZCiNSd7B6rJpaD3yJoF6v7fBw==
-X-Received: by 2002:a81:e602:0:b0:5ee:65b3:f289 with SMTP id u2-20020a81e602000000b005ee65b3f289mr4814207ywl.3.1705485974739;
-        Wed, 17 Jan 2024 02:06:14 -0800 (PST)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id d4-20020a0ddb04000000b005ff5fc95e34sm982467ywe.55.2024.01.17.02.06.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jan 2024 02:06:14 -0800 (PST)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-5e54d40cca2so83078567b3.3;
-        Wed, 17 Jan 2024 02:06:14 -0800 (PST)
-X-Received: by 2002:a05:690c:fd5:b0:5ee:7299:e2cf with SMTP id
- dg21-20020a05690c0fd500b005ee7299e2cfmr5153857ywb.52.1705485974135; Wed, 17
- Jan 2024 02:06:14 -0800 (PST)
+        bh=hrjlcWfn/pDpqQxIFmiRolfpjezwCtleMfj2jxEGGng=;
+        b=HiL4qdI1TAOGmPXc/7SSYtv/fi5iOARILo7U0FJCYEfxzGtn61vIHhKJxyc98BnKyh
+         XDF+XtG6eFhOmLJrqofKR3cmxNQJB8St0RosLAQcn1mgSGbB+rJngcOKhb2NVQ9MQND/
+         IcKgAVAaPE4QMrPdRiM6h6nz6NX+E0o8dLW4auLir11dDhxrJJ6Vbo07QeTp1w9ZXxa+
+         H8vcmxZYRD0iNpYxbGtb13mKiP1kcKrjESgIyom/hwS0g+oGGRruKMtut/yVNnTfMRBW
+         HgI93RkeX975mGzxmhWZezDKGXORJZEhJ4vjap4uWJsiKS3rf8s8ihutn9s1sIrO3syR
+         /P8g==
+X-Gm-Message-State: AOJu0YwiNPgz39JHrAlZ3EfgdJksra0IcyNpcqPalISIELKJyQnHKAdB
+	qYoBrNgNYG/XzeGXiobURy7FpPykkQaxpiz91pUApvoN2twoLA==
+X-Google-Smtp-Source: AGHT+IFnNFFKnBL/28HVHLl3XdPWmHosKITeRDNylFga0N9qWEwAjTFEOYHJ+jqRzPMlPYDHaq60+Q==
+X-Received: by 2002:a17:906:2411:b0:a28:fd13:ecd with SMTP id z17-20020a170906241100b00a28fd130ecdmr3558696eja.129.1705486641393;
+        Wed, 17 Jan 2024 02:17:21 -0800 (PST)
+Received: from mantas-MS-7994.8devices.com ([84.15.37.222])
+        by smtp.gmail.com with ESMTPSA id p12-20020a17090653cc00b00a2c56fb5ad5sm7558767ejo.21.2024.01.17.02.17.20
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Jan 2024 02:17:21 -0800 (PST)
+From: Mantas Pucka <mantas@8devices.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Mantas Pucka <mantas@8devices.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc-ipq6018: add qdss_at clock needed for wifi operation
+Date: Wed, 17 Jan 2024 12:17:08 +0200
+Message-Id: <1705486629-25592-1-git-send-email-mantas@8devices.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1704788539.git.ysato@users.sourceforge.jp>
- <bc794e2165244bd0cee81bc0106f1e2d1bef1613.1704788539.git.ysato@users.sourceforge.jp>
- <CACRpkdYLsf-uWdMCTpieji7u1-H3oTGojvC4xm7Erox97XJ6RQ@mail.gmail.com> <8734uwwavx.wl-ysato@users.sourceforge.jp>
-In-Reply-To: <8734uwwavx.wl-ysato@users.sourceforge.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 17 Jan 2024 11:06:02 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX_2Tgm2LLM1TgFrkLdokD99gAeKHJWrKy9Y2A+wtf5RA@mail.gmail.com>
-Message-ID: <CAMuHMdX_2Tgm2LLM1TgFrkLdokD99gAeKHJWrKy9Y2A+wtf5RA@mail.gmail.com>
-Subject: Re: [DO NOT MERGE v6 17/37] dt-bindings: interrupt-controller:
- renesas,sh7751-intc: Add json-schema
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, 
-	Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, 
-	Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko@sntech.de>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Chris Morgan <macromorgan@hotmail.com>, 
-	Yang Xiwen <forbidden405@foxmail.com>, Sebastian Reichel <sre@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Vlastimil Babka <vbabka@suse.cz>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, David Rientjes <rientjes@google.com>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Sato-san,
+Without it system hangs upon wifi firmware load. Bindings already exist
+for it, so add it based on vendor code.
 
-On Wed, Jan 17, 2024 at 10:46=E2=80=AFAM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> On Tue, 09 Jan 2024 21:30:34 +0900,
-> Linus Walleij wrote:
-> > On Tue, Jan 9, 2024 at 9:24=E2=80=AFAM Yoshinori Sato
-> > <ysato@users.sourceforge.jp> wrote:
-> >
-> > > +  renesas,icr-irlm:
-> > > +    $ref: /schemas/types.yaml#/definitions/flag
-> > > +    description: If true four independent interrupt requests mode (I=
-CR.IRLM is 1).
-> > > +
-> > > +  renesas,ipr-map:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > > +    description: |
-> > > +      IRQ to IPR mapping definition.
-> > > +      1st - INTEVT code
-> > > +      2nd - Register
-> > > +      3rd - bit index
-> >
-> > (...)
-> >
-> > > +            renesas,ipr-map =3D <0x240 IPRD IPR_B12>, /* IRL0 */
-> > > +                              <0x2a0 IPRD IPR_B8>,  /* IRL1 */
-> > > +                              <0x300 IPRD IPR_B4>,  /* IRL2 */
-> > > +                              <0x360 IPRD IPR_B0>,  /* IRL3 */
-> > (...)
-> >
-> > Is it really necessary to have all this in the device tree?
-> >
-> > You know from the compatible that this is "renesas,sh7751-intc"
-> > and I bet this table will be the same for any sh7751 right?
-> >
-> > Then just put it in a table in the driver instead and skip this from
-> > the device tree and bindings. If more interrupt controllers need
-> > to be supported by the driver, you can simply look up the table from
-> > the compatible string.
->
-> The SH interrupt controller has the same structure, only this part is dif=
-ferent for each SoC.
-> Currently, we are targeting only the 7751, but in the future we plan to h=
-andle all SoCs.
-> Is it better to differentiate SoC only by compatible?
+Signed-off-by: Mantas Pucka <mantas@8devices.com>
+---
+ drivers/clk/qcom/gcc-ipq6018.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Yes, it is better to differentiate SoC only by compatible value.
+diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+index b366912cd648..7cdaf7751566 100644
+--- a/drivers/clk/qcom/gcc-ipq6018.c
++++ b/drivers/clk/qcom/gcc-ipq6018.c
+@@ -3522,6 +3522,22 @@ static struct clk_branch gcc_prng_ahb_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_qdss_at_clk = {
++	.halt_reg = 0x29024,
++	.clkr = {
++		.enable_reg = 0x29024,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_qdss_at_clk",
++			.parent_hws = (const struct clk_hw *[]){
++				&qdss_at_clk_src.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_qdss_dap_clk = {
+ 	.halt_reg = 0x29084,
+ 	.clkr = {
+@@ -4361,6 +4377,7 @@ static struct clk_regmap *gcc_ipq6018_clks[] = {
+ 	[GCC_SYS_NOC_PCIE0_AXI_CLK] = &gcc_sys_noc_pcie0_axi_clk.clkr,
+ 	[GCC_PCIE0_PIPE_CLK] = &gcc_pcie0_pipe_clk.clkr,
+ 	[GCC_PRNG_AHB_CLK] = &gcc_prng_ahb_clk.clkr,
++	[GCC_QDSS_AT_CLK] = &gcc_qdss_at_clk.clkr,
+ 	[GCC_QDSS_DAP_CLK] = &gcc_qdss_dap_clk.clkr,
+ 	[GCC_QPIC_AHB_CLK] = &gcc_qpic_ahb_clk.clkr,
+ 	[GCC_QPIC_CLK] = &gcc_qpic_clk.clkr,
+-- 
+2.7.4
 
-When you describe all differences explicitly using properties, you
-might discover later that you missed something important, causing
-backwards compatibility issues with old DTBs.
-DT is a stable ABI, while you can always update a driver when needed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
