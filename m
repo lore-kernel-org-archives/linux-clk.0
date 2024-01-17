@@ -1,112 +1,156 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB04521A04;
-	Wed, 17 Jan 2024 15:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFB02233D
+	for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 16:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705506434; cv=none; b=Hh5ggD4gPT0oDQglxdKKPKVox+xE6PL8m96+9W4Bao1vF9uHkSDu/IqykMTtWZv5teofhJWcWSr+/vFBfoBnylZk8JJEkWoQWz0d5FSmpWKz4SD1fnJdRpYmvy+U79gyqvv55h3BnyQ0lJyLXwWxoeNWPS9YeW3MYPH0uyC0aF0=
+	t=1705507910; cv=none; b=qjevHCx5o81g5AWgWNDXgrblPNtxeTax8fW6bndv4PCmu8tZVg9/ZkPhr8di6tE88vWXJ+Yr2GvHz/BouThKhmlDjwiYrJidOMv81Q7ImkqfrseXY0/B9f3+AYGh8tX8cWuVgyPT09zuoehmCAyIbqKEeShrzWat/XJjMJpVJJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705506434; c=relaxed/simple;
-	bh=imkRlcEIxSECpvWrb/WZ1Fs6wTq5TbwnfYWP3f3j4fs=;
-	h=DKIM-Signature:X-UI-Sender-Class:Received:Message-ID:Date:
-	 MIME-Version:User-Agent:To:Content-Language:Cc:From:Subject:
-	 Content-Type:Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:
-	 UI-OutboundReport; b=i8U9CK6evj8Mb112wgAdSnnu5X/1FtfHFlt1aSMBkQcutkiGmofuysPuIfMR5kh1Cab7jFtRXzFSqvGKwJDDv0P555/F4Yb+lppaJH51HT56xkAHzkFkQ1jlhykwpxc21BzwSCZR9nSyjbxgAXvCmpAu71+d275iDsaiI7/zKAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Kn4viGP6; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1705507910; c=relaxed/simple;
+	bh=dQUa+ynEVxPBJ1mLZg+emq2IoeEU/beREy4ePffoRTA=;
+	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:MIME-Version:
+	 References:In-Reply-To:From:Date:Message-ID:Subject:To:Cc:
+	 Content-Type:Content-Transfer-Encoding; b=fuSEbEoBI+qjqdn7BQp+/Lkyb+4igC7OtGrkJo9mMdO6nXU4DJJ5G5dkOIqx4nC5uz5/jPIGcEkSvqYc1SxvXQcDauJ4y3zDVeakQyZ2wnX8QZexQ7/Qxk4TlcR2wej04ZM4TWjQjx+W40YL5Jc7lvekzMZDffXhpC3cydSRXSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VJtyq7rU; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Kn4viGP6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1705506412; x=1706111212; i=markus.elfring@web.de;
-	bh=imkRlcEIxSECpvWrb/WZ1Fs6wTq5TbwnfYWP3f3j4fs=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=Kn4viGP66uEY6hxKFeNR65Oofu8m8OWNSkAVv97ZrRaL3xBmOukZq/3bam2QshtB
-	 1nrBQ3OexdBFfGQ6j3M5K4GmxcrE8VOjPgh7eSjWJNLgDBjQ7PGnRZfBWdH0UntT5
-	 o2ee8PvtfTjQMVg0goDHGDtlZfsKsUyEtLwECsiu+Z2PxwAu3e2MGQ9vhD5itao2R
-	 G0DoagToRPpXkEDCrQ5NgjmMnYnBvgEg5two8BQ2YElshGPux7N4t4UsBF4MIB+FM
-	 LyiG6HaxdZWxzOg0NcBwbO8npi0aCEO9MAikPL1yVUYaZruveWE0ilNCLV+NO8l5w
-	 6RD1dvU480Ce92AldA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1aDp-1rRVpv1iQN-003E2Y; Wed, 17
- Jan 2024 16:46:52 +0100
-Message-ID: <75f302b2-9fe0-4b3d-a132-85186c4d9445@web.de>
-Date: Wed, 17 Jan 2024 16:46:38 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VJtyq7rU"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-28e85db00d1so1226993a91.2
+        for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 08:11:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1705507908; x=1706112708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=drJWjvb+yQYbOubeqxcSCSSS8No8nI+honzyTfQXeuM=;
+        b=VJtyq7rUFgrt0k2pMwGAT+VOygyyxm79vszaYbcwAgera96aijYqrtjXp+EON8HxyI
+         0Q8EotMW5THkk7NSzy1hH0bkPwY7zP1onEnCygKFE9ZMlH1vlR3/9wSiB+gVXOc3nUfA
+         BVgF499nHkHUV73Pxn89sBn/Rrfq39fFfmw4Krq7iO9C97QXC+PmYOEmm+GyJaSvWIhT
+         flJXKq5a77K3Th0q4nx6YNvYF7sazyRhBULlovkqNqXQ6YIRNIY745T1oiVjYhDfslEJ
+         lipBiQQLznPFMvdajPT+/oSKYrfdW+QeLvQviFlIcAG5x1m3eVsDL+pfaEiAbpRRuvKZ
+         10dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705507908; x=1706112708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=drJWjvb+yQYbOubeqxcSCSSS8No8nI+honzyTfQXeuM=;
+        b=V01NUDITlo9x8hTphDc1OSJi0OmI0hdFXIFZQ068xR7F1A4NwciB/AqKPwFPgX2knq
+         ANDmwueGTVAbGBvQg/FmYzXMfactx6n5T1kfS46xT7UzkoJQIqPeR2QUde7cheBRBvgJ
+         5Q9ado8/FIeTk0ixVWrsfaeRFXbMlXEtMpJxbAyRFVwbfV448s/t9QMsCpzvxJItfgd/
+         m82L/2gn00uxcE5XiHk6Z2gks2c8HSB59OjVhPN7MyoDA23DkoQtIvO6ykUvizCzexJ7
+         7Rq+mJW/poipLKFOefwPipLjSmcRCqub39xT+VI4mrEoNF0GmGrQyhGBLD+h9lHOfvoY
+         xDsw==
+X-Gm-Message-State: AOJu0YwLKeH9RLLTkjk8K5w8ZqOCANKuSrfmVy7VjdbckYqm9a7EoV/n
+	QgxulCT1+BlURw7IWVG4cJcLHtgol1vIiFL2UvjUr1sZOI/D0Q==
+X-Google-Smtp-Source: AGHT+IF/BkPqfcI7s6qu0WKHY8iBQUPv+9/611flmwtBk2+/CmUzDdGw9MwVL258kmnYaNPMuijP+jQO6OHgZTgpXiA=
+X-Received: by 2002:a17:90b:1996:b0:28e:2d7e:7cd6 with SMTP id
+ mv22-20020a17090b199600b0028e2d7e7cd6mr3076285pjb.14.1705507907883; Wed, 17
+ Jan 2024 08:11:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Alex Helms <alexander.helms.jy@renesas.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Saeed Nowshadi <saeed.nowshadi@amd.com>, Kunwu Chan <chentao@kylinos.cn>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] clk: versaclock7: Return directly after a failed kasprintf()
- call in vc7_probe()
-Content-Type: text/plain; charset=UTF-8
+References: <20240109125814.3691033-1-tudor.ambarus@linaro.org>
+ <20240109125814.3691033-8-tudor.ambarus@linaro.org> <CAPLW+4=y12fBf47v_HKfBdHTsQJfWo2cwBuFosUKo3xPBqcKJw@mail.gmail.com>
+ <f394e372-dbfd-4fd5-b5c8-23c383cb6cf2@linaro.org>
+In-Reply-To: <f394e372-dbfd-4fd5-b5c8-23c383cb6cf2@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 17 Jan 2024 10:11:36 -0600
+Message-ID: <CAPLW+4nc1GDJHZ=-+R1+aEAMzoU_OpAX37Ke84qqg66xbjC9eA@mail.gmail.com>
+Subject: Re: [PATCH v3 07/12] clk: samsung: gs101: add support for cmu_peric0
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: peter.griffin@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
+	gregkh@linuxfoundation.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh+dt@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org, 
+	alim.akhtar@samsung.com, jirislaby@kernel.org, s.nawrocki@samsung.com, 
+	tomasz.figa@gmail.com, cw00.choi@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-serial@vger.kernel.org, andre.draszik@linaro.org, 
+	kernel-team@android.com, willmcvicker@google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NgCtdZimQ5H+nTibuBuhAhJQP71uJFO/lCYKigwy9yWfdEzQ2Ep
- 1fS3Km4lhjngeIh1jGfZzmD7eygbbm+/eEn83smX2ZnuhHRfUp52GYqiyt6L23plZVUFIyG
- 2ICbgu10T5UeGP0dUFjh2hqVETLRNOLNKuMz1OJQ1qJOmmEEQFBdUz6fk8jtQaBDjhQv/4z
- fupMtFMdwomMLhhTNlcTA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+6buGsTWYV8=;2Fb2dSZsw8JVKKweUIItlQHbilk
- Wk0CGsJEH7Z2IcEqcPAq/BziG61Hr0kzofIqcQ4t7L//BagEXHq/qfmcmEM8wC/cwklC1O1EX
- EmbX0VnEV9yaRkTLv4sgoIyp7xc1SUVg1BkqX1BmkyqGVG/2Qbd9KYtT5J0GLU+1UQe86+Apq
- FobItahZnvZM8DwdeeWZB3fXfY2MTrVUAodpz0A6SOacvn7jRLx3w185+yhHLqmcdSTN06k37
- 2lLALBFw3eL4gOu3/ozkjgv0m9732FI/QjoRG3w1gxqb9ngCrKqmW86dc6A8FPBFfcvKV5XXv
- LMF+eGv5Vfn4e02SRGTXLkVrkPXXERlJMLp/yRUjixdl1jCPR5h2wcxEtk7JVBLG+Y2kPwUyJ
- aHYyP5jNbavgKPXzBl81T8UGa0k52bJNFzb54RYEe/8dDS9cB85fGjinjxZCfMq9g22HgjdHN
- rwDiby9mpW1ppymx//U8ddACOLMW7imp7sgsGfOShY/wy4L0p2A0NnO2h0vcCJYxn6nEcgwxf
- KmZr3WzbY81m98hwiFdUcQjU+baiIf+HRQNlw92qGlEVdMUXf3a1MiT11bR3ENwQ6nxbdMBU/
- YW3C97YbFGP48PpM0vgSRmS2UoBaj2mCrSmy1ZObNh6wsd5p8jhJzn0v3MAj82S7YOuroeNd4
- SXhaJ3ny/OECH9On3sL9LHyGIeVmBvSxHW7SYq4jYn5S19eFGGUb8nhNyJLUwAy/vZAL9hg0X
- zq/PjSL2b7ndsKFFHeIJnCDaw7keTVPquSnzrCBCO7kC7Hf9BuT3gDVWTc0TEzM9tyAn55qsO
- Z94sEOJMjsFRwSng7ek60b/tueZKiHjzz+fj7AuS1X1nS9FEm22gqtO0WqSG7m5UHoLdGYJN5
- h8kFUaEQD0H8SJmDhqub59248Qxm6gYC5xa6YBZHFWfi7oo2yLZoWd1KFyCVYhrlzoDAR95jo
- 481BJg==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 17 Jan 2024 14:06:13 +0100
+On Wed, Jan 17, 2024 at 8:49=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+.org> wrote:
+>
+> Hi, Sam,
+>
+> Thanks for reviewing the series!
+>
+> On 1/16/24 17:42, Sam Protsenko wrote:
+>
+> cut
+>
+> >> Few clocks are marked as critical because when either of them is
+> >> disabled, the system hangs even if their clock parents are enabled.
+> >>
+> >> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> >> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> >> ---
+> cut
+> >>
+> >> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk=
+-gs101.c
+> >> index 782993951fff..f3f0f5feb28d 100644
+> >> --- a/drivers/clk/samsung/clk-gs101.c
+> >> +++ b/drivers/clk/samsung/clk-gs101.c
+>
+> cut
+>
+> >> +static const struct samsung_gate_clock peric0_gate_clks[] __initconst=
+ =3D {
+> >> +       /* Disabling this clock makes the system hang. Mark the clock =
+as critical. */
+> >> +       GATE(CLK_GOUT_PERIC0_PERIC0_CMU_PERIC0_PCLK,
+> >> +            "gout_peric0_peric0_cmu_peric0_pclk", "mout_peric0_bus_us=
+er",
+> >> +            CLK_CON_GAT_CLK_BLK_PERIC0_UID_PERIC0_CMU_PERIC0_IPCLKPOR=
+T_PCLK,
+> >> +            21, CLK_IS_CRITICAL, 0),
+> > Why not just CLK_IGNORE_UNUSED? As I understand this gate clock can be
+>
+> When either of the clocks that I marked as critical is disabled, the
+> system hangs, even if their clock parent is enabled. I tested this by
+> enabling the clock debugfs with write permissions. I prepared-enabled
+> the parent clock to increase their user count so that when the child
+> gets disabled to not disable the parent as well. When disabling the
+> child the system hung, even if its parent was enabled. Thus I considered
+> that the child is critical. I mentioned this in the commit message as
+> well. Please tell if get this wrong.
+>
 
-The result from a call of the function =E2=80=9Ckasprintf=E2=80=9D was pas=
-sed to
-a subsequent function call without checking for a null pointer before
-(according to a memory allocation failure).
-This issue was detected by using the Coccinelle software.
+Ok, if you already tested this particular clock with CLK_IGNORE_UNUSED
+and it didn't help:
 
-Thus return directly after a failed kasprintf() call.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Fixes: 48c5e98fedd9e ("clk: Renesas versaclock7 ccf device driver")
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/clk/clk-versaclock7.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-versaclock7.c b/drivers/clk/clk-versaclock7.c
-index f323263e32c3..96e6b05f2aac 100644
-=2D-- a/drivers/clk/clk-versaclock7.c
-+++ b/drivers/clk/clk-versaclock7.c
-@@ -1127,8 +1127,11 @@ static int vc7_probe(struct i2c_client *client)
- 		node_name =3D client->dev.of_node->name;
-
- 	/* Register APLL */
--	apll_rate =3D vc7_get_apll_rate(vc7);
- 	apll_name =3D kasprintf(GFP_KERNEL, "%s_apll", node_name);
-+	if (!apll_name)
-+		return -ENOMEM;
-+
-+	apll_rate =3D vc7_get_apll_rate(vc7);
- 	vc7->clk_apll.clk =3D clk_register_fixed_rate(&client->dev, apll_name,
- 						    __clk_get_name(vc7->pin_xin),
- 						    0, apll_rate);
-=2D-
-2.43.0
-
+> > used to disable PCLK (bus clock) provided to the whole CMU_PERIC0.
+> > Aren't there any valid cases for disabling this clock, like during
+> > some PM transitions? For Exynos850 clock driver I marked all clocks of
+>
+> They aren't, because if one switches off any of these clocks that are
+> marked as critical, the system hangs and it will not be able to resume.
+>
+> > this kind as CLK_IGNORE_UNUSED and it works fine. In other words: I'd
+> > say CLK_IS_CRITICAL flag is more "strong" than CLK_IGNORE_UNUSED, and
+> > requires better and more specific explanation, to make sure we are not
+> > abusing it. And I'm not sure this is the case.
+>
+> Is the explanation from the commit message enough?
+> >
+> > The same goes for the rest of clocks marked as CLK_IS_CRITICAL in this
+> > patch. Please check if maybe using CLK_IGNORE_UNUSED makes sense for
+> > any of those as well.
+>
+> I've already checked and all behave as described above.
+>
+> Thanks,
+> ta
