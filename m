@@ -1,61 +1,61 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C8121364
-	for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 14:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275E92136A
+	for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 15:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705503570; cv=none; b=OArRL4rOq50Jk3KAqmddqd2e/Mm/9J4r0dIrYbAPl2ZdeZnps5MwUDrdawONgIcL1CSVFbd9wcwKsUd5B1yj+XW5bX9Z/KhPTxvQnNjLsulcsz1r01CJ83pt9eFO8YvQR1YQQwlYOlzTGtNtxlyvuh88CPj87/HFyr/v+nhSidA=
+	t=1705504113; cv=none; b=Ei7BcdnZOmRrdusBRn+G1bQ1fwTfCv2bYzLoMUSSkgVuNgEUC8r9guvRvb+PtRp/OUg7ilFXbjLY93r/10dalBWlSGbLLFxtRDW91VomxMYXyrMlNTRCPq6z/FMHF7N0+MgpQfjtDZ+iWFJaug2M2K0xF54Qi69/UzyK1D3jziU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705503570; c=relaxed/simple;
-	bh=7j81HGmM3UVZuMW1aajgnh/Tqkfv5ZlF1e2arTN11NI=;
+	s=arc-20240116; t=1705504113; c=relaxed/simple;
+	bh=i3U2j7vOQbkMVl1sDwVpugX13EUmGtzhct0T+w72pZY=;
 	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:
 	 Message-ID:Date:MIME-Version:User-Agent:Subject:Content-Language:
 	 To:Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding; b=Ku9YSdB2cZtoBsV2szFfLWihJkHmFtEV1AGYBdhnG0e3j0TiJ7HxgM5ovBWyHgQdEZdF00HkbAF05/pid3rsHok0sNec3sRkaoXbmouiqHCuPW4D/UE35BC+VIBJ0+HslhfmGDRK2RpkcFpvs4FkZgOlgD+tRwfZkEkU8dbJPKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M126Baao; arc=none smtp.client-ip=209.85.128.48
+	 Content-Transfer-Encoding; b=kOjMHrj5B0qPgl1BsQ10MxgiXvZyem12iA4Z2IJ0dLFarwJXgBCkz27dY3gctWo02ZPYmwmyB+YQT32VxiRd7RbhxwS6x2GQu+a1GH/K2ySOQqFHP5y3qL/+Djq/1/V4tV9duMs/u36mjTxTwBAxLo3ANm5tbGqI7BcLX1UWkm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IoFWo24i; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M126Baao"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-40b5155e154so134240025e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 06:59:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IoFWo24i"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-559de6145c3so674103a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 07:08:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705503567; x=1706108367; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705504110; x=1706108910; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nmOxe8Kt63reb+K83M/fiIpc7ZoymLxbMzD4gGdoAzs=;
-        b=M126Baaoif7bxWr9cLsIatT/8b81mBZd4R7H9bNooD8W27aH0LrMDecGWraXMcRqC8
-         Ir2XCV3QW5PYHHEZyxbiTeHHcKTbpDjR0+sj4IAcyoWnPfqhEul5vKC2d6GpAHnQPeik
-         RfVme+heJWOj5cgrC3fNaO4kOw5O9+CkeB0Mxj6UzWe53WYVKsbVgIpFK/Lw69MGhDC1
-         tNDxkChPwapCvqQWBVrKshvO6rOwmxdBjbl9PrPGqABSStMEmZfwIIxmNT/swZBRRHS+
-         TuM7NxiyJInuDpgPPQmdz/SB4/Bjqsa4hE+fDa+fYE3Eew0ORyFTxVBaxLpeZ0Fq1T2d
-         7UdA==
+        bh=kkGmMglMSGi1Tk3tWRTcLr5B6FcpdYBkxOQWqzkF1BE=;
+        b=IoFWo24iaR3hQ1M4rgyN5CUsu5s6R53Or23kOcZeAqzVW7oNlFjA5XnUV8PwNRIvHG
+         fnOQ4jCWvvy1V916ykLmXv3PU0TUahEAWNR8cHwtFjtlWZdWCQWiqJmplSU2RjG8fWyf
+         +/rqkP2yLXHal/9HxxftrMD+exN4LhtmAemTVy5hwtJmKQDCFevaJ3zJWw2/XuczMeOy
+         WfgjzYUrAtKRKhDE7PeiCZRGNetHh11E/maAf3ROqiMIy32B0hZoMl92EOkUkJXZ4iI/
+         1Pfhbpqka0CjaMpqrs0ttbi+wG/PdGC6yjOwUFkZxkArZz+WhKKt13ME1m+f1Z6ruR3i
+         EQBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705503567; x=1706108367;
+        d=1e100.net; s=20230601; t=1705504110; x=1706108910;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nmOxe8Kt63reb+K83M/fiIpc7ZoymLxbMzD4gGdoAzs=;
-        b=X7uLDJDvBLC0/vWA02Pyk57G6z/Vou/Um55QJlnLuJA3+NnS+XdsMpvPcYFJrccqQ9
-         k51V1aLU+gIn5AYSZFdsZIU38/4L6vYyGll8lsrqk1ruoZg65UTaTfJZPrWqi6/OP4Te
-         +9IVwjRnJMXOrB7A8U/SRCF1WpohlBsGB/0eqfbfByNYOhwnFVXi3wrdbDEfzLSEjdXE
-         NPOnX8aZ9S/HHQBb6ZLOp4gvE463rAbiljocs6PnZamJ/dyr6F3M0XPRI9RGF2tddh8r
-         HQaUz0+sa7poyy7/gj08QMuDlOZPMKcBt0Feij/j9lMvPSKmAZfCHmXD5tvblF3VkF2V
-         JjpA==
-X-Gm-Message-State: AOJu0YwsTaP8JdjKOHpfjNO130TGXr8E2JZBnc0MzEK2Nm+G58aQm2/t
-	XoAQ/iVDl8nONE5h6RF5izz6yx3vTCCihw==
-X-Google-Smtp-Source: AGHT+IGy6qHkEPrF3Ir1FNIzi8E8U7HINl3OXeiajhONjDtBYPNIZN6SHJlqkSjxbgHRxUhaMtMqfg==
-X-Received: by 2002:a05:600c:84ca:b0:40e:4e54:3e46 with SMTP id er10-20020a05600c84ca00b0040e4e543e46mr4715735wmb.91.1705503567601;
-        Wed, 17 Jan 2024 06:59:27 -0800 (PST)
+        bh=kkGmMglMSGi1Tk3tWRTcLr5B6FcpdYBkxOQWqzkF1BE=;
+        b=o1XAIB6qUlBLhNDPqLHPaABrNzY4qbgizAPhPwZ4itpXrO5vreOdM2dFJTH3Nb/Ag/
+         ZB10B/vWUJDxsRBtqf2ttOccNM3OKnVc+7ruHhUUwTq3JwMRL/W249FpBY2SlMCAIv0W
+         Jgw7rgtDuuY44aI31f+wIiDeCmL3rHaBn4l6tMnj0ZxYCIMjzGduJsQBUwewWtPUgnFY
+         LQjWxmQ9xy/fW96SN64209PKK3HuHZepF1LwsYYOx57Y9+A3wN4cwCDdkY4nZoBt0jvQ
+         B1Wrw5YAwOT15Fw6ZXsyUPB9RsCWelCjlqK2T+3Afa0EB3sAhQJq672sa20VKJWOCFje
+         JHZA==
+X-Gm-Message-State: AOJu0YwZEod5YcvdsAW1FSczAi1dwBr+LAs9YkMu8BIwsSpCUsKgimqB
+	xtLLzLHKqigdtWglePzYpZ+bDHwjeg5Iyw==
+X-Google-Smtp-Source: AGHT+IFcr+ez01bxt2+jBCE1HBgBtrHmVB1u3dibyd63ZbwxzQ93NvPhsVzA0lDEagXIip7zsb1ZPA==
+X-Received: by 2002:a17:907:a08f:b0:a2c:b0a6:8ab with SMTP id hu15-20020a170907a08f00b00a2cb0a608abmr5384441ejc.7.1705504110276;
+        Wed, 17 Jan 2024 07:08:30 -0800 (PST)
 Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id bm19-20020a170906c05300b00a2362c5e3dbsm7856439ejb.151.2024.01.17.06.59.25
+        by smtp.gmail.com with ESMTPSA id o19-20020a17090608d300b00a2adc93e308sm7838583eje.222.2024.01.17.07.08.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jan 2024 06:59:27 -0800 (PST)
-Message-ID: <59a2e142-e970-4792-9233-7c447ac391b2@linaro.org>
-Date: Wed, 17 Jan 2024 14:59:24 +0000
+        Wed, 17 Jan 2024 07:08:29 -0800 (PST)
+Message-ID: <c72ca8b2-55a6-4ec7-8013-0a563d6dcdfe@linaro.org>
+Date: Wed, 17 Jan 2024 15:08:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,8 +63,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/12] arm64: dts: exynos: gs101: remove reg-io-width
- from serial
+Subject: Re: [PATCH v3 11/12] arm64: dts: exynos: gs101: define USI8 with I2C
+ configuration
 Content-Language: en-US
 To: Sam Protsenko <semen.protsenko@linaro.org>
 Cc: peter.griffin@linaro.org, krzysztof.kozlowski+dt@linaro.org,
@@ -78,45 +78,65 @@ Cc: peter.griffin@linaro.org, krzysztof.kozlowski+dt@linaro.org,
  linux-serial@vger.kernel.org, andre.draszik@linaro.org,
  kernel-team@android.com, willmcvicker@google.com
 References: <20240109125814.3691033-1-tudor.ambarus@linaro.org>
- <20240109125814.3691033-9-tudor.ambarus@linaro.org>
- <CAPLW+4mUMx9RvFiS0L2U+_Fd_PzcHhmNbyR4cmUrYF3BVgb=Cw@mail.gmail.com>
+ <20240109125814.3691033-12-tudor.ambarus@linaro.org>
+ <CAPLW+4=U9DBmwgxyWz3cy=V-Ui7s2Z9um4xbEuyax1o=0zB_NA@mail.gmail.com>
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <CAPLW+4mUMx9RvFiS0L2U+_Fd_PzcHhmNbyR4cmUrYF3BVgb=Cw@mail.gmail.com>
+In-Reply-To: <CAPLW+4=U9DBmwgxyWz3cy=V-Ui7s2Z9um4xbEuyax1o=0zB_NA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-On 1/16/24 17:57, Sam Protsenko wrote:
-> On Tue, Jan 9, 2024 at 7:00 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->> Remove the reg-io-width property in order to comply with the bindings.
+On 1/16/24 18:03, Sam Protsenko wrote:
+>> USI8 CONFIG register comes with a 0x0 reset value, meaning that USI8
+>> doesn't have a default protocol (I2C, SPI, UART) at reset. Thus the
+>> selection of the protocol is intentionally left for the board dts file.
 >>
->> The entire bus (PERIC) on which the GS101 serial resides only allows
->> 32-bit register accesses. The reg-io-width dt property is disallowed
->> for the "google,gs101-uart" compatible and instead the iotype is
->> inferred from the compatible.
->>
->> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 >> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 >> ---
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+>> v3: reorder usi8 clock order (thanks Andre'!). Did not make any
+>> difference at testing as the usi driver treats the clocks in bulk.
+>> v2:
+>> - identify and use gate clocks instead of dividers
+>> - move cells and pinctrl properties from dts to dtsi
+>> - move IRQ type constant on the previous line
+>>
+>>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 29 ++++++++++++++++++++
+>>  1 file changed, 29 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>> index 6aa25cc4676e..f14a24628d04 100644
+>> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>> @@ -352,6 +352,35 @@ pinctrl_peric0: pinctrl@10840000 {
+>>                         interrupts = <GIC_SPI 625 IRQ_TYPE_LEVEL_HIGH 0>;
+>>                 };
+>>
+>> +               usi8: usi@109700c0 {
+>> +                       compatible = "google,gs101-usi",
+>> +                                    "samsung,exynos850-usi";
+>> +                       reg = <0x109700c0 0x20>;
+>> +                       ranges;
+>> +                       #address-cells = <1>;
+>> +                       #size-cells = <1>;
+>> +                       clocks = <&cmu_peric0 CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK>,
+>> +                                <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_7>;
+>> +                       clock-names = "pclk", "ipclk";
+>> +                       samsung,sysreg = <&sysreg_peric0 0x101c>;
+> I'd also add samsung,mode for the "default" USI mode here, just to
+> avoid providing it later in the board's dts. But that's a matter of
+> taste I guess.
 > 
-> Just out of curiosity (I probably missed the relevant discussion
-> earlier): what is the actual reason for moving 'reg-io-width' to the
-> driver's code as 'iotype'? I mean, what is the actual problem that's
 
-The majority (if not all?) of the hardware blocks in GS101 SoC require
-32 bit register access widths. Instead of specifying reg-io-width = 4
-everywhere in the device tree, we infer it from the compatibles.
+USI8 CONFIG register comes with a 0x0 reset value, meaning that USI8
+doesn't have a default protocol (I2C, SPI, UART) at reset. Thus the
+selection of the protocol is intentionally left for the board dts file.
 
-The relevant discussion is here:
-https://lore.kernel.org/linux-arm-kernel/db368449-f446-47e8-81b6-a11c2a872306@linaro.org/
+I wanted to emphasize that USI8 doesn't have any HW defaults and its
+mode must be chosen by each particular board.
+
+I mentioned the same in the commit message, please tell if you feel it
+needs updating.
 
 Cheers,
 ta
-
-> being solved by this -- is it to make the earlycon functional for
-> gs101? I'm asking because the bus width looks like a part of HW
-> description, which usually belongs to dts, from the design point of
-> view. Anyways, that's not a concern, just trying to understand the
-> decision.
