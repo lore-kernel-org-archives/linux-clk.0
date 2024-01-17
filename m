@@ -1,117 +1,148 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055B914294
-	for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 10:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FB1224FB
+	for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 14:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705486645; cv=none; b=P+1KOiouBqGI6FM75gb7wWxln+YXG0FI1+uocC7toX/FciA9SqJhaLBiZ4RXAzRK0SgpCR6rVrY4uh1NcNQM7H78fdMoI1cgNs8EIsYeOneUke5Ctk1eHPn5z54f0IH+DsvgCcnP/DZ6QueOFxLQF8WVhzfATOWUEVIq48YIzgc=
+	t=1705502953; cv=none; b=Yu0lsjMnlb/lHVEIeYrHhgUa4L6WqGnKiDaDyfc5FEh+axRThY+s68NeoLgs6htNVSaxISMkrU13BHvrf3QkescXe1vjopdL/pwTwwqtVNw82kafrf890rzySPSB2TGMXxLrA0JmCuWQXM9rRkadu3CMuG3mGmDBIEDhcuNwiIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705486645; c=relaxed/simple;
-	bh=754t0uTULSRpJAMac1CD95NbzZnhj+FFC+mGT+l7NBs=;
+	s=arc-20240116; t=1705502953; c=relaxed/simple;
+	bh=xbOsZ7hNf9ivXDXTjA3fkk2LMk4yyJfbnqb4EOp2G0o=;
 	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:From:
-	 To:Cc:Subject:Date:Message-Id:X-Mailer; b=P4MabMcXPG59yBaAEr2TzImxNyOZuKZvzhaZz7e/UPCPovliwTeVqgCQXY+/N6g1GF+p5OzvkIYpqW3lrDA4xsBDWp3XTzuTmySlO89oVThJAymMeeJ8gCenp8YbOt4O2QXmN6u1R6Cdc8XjAuL8d8owf8GsLHFeTUJBoX7CWCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=8devices.com; spf=pass smtp.mailfrom=8devices.com; dkim=pass (2048-bit key) header.d=8devices.com header.i=@8devices.com header.b=eevvGNsl; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=8devices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8devices.com
+	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:Content-Language:
+	 To:Cc:References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding; b=SC1ijyCK1F2uh5JFw2azhWWKEh6d6N7OpcTmbsQCzyjOE8AKOiBhwRKJyL7hJnhqP3dfDfJtT7DKTFHbZnxbeEnFpwYSaRHjP4Jxv3BpVYqATEoU5Pp3srbZ9Bpuvixqvg14hM9rgwaV9UbVDSyWgZjW3YWLMjdsA/Vuz1mL+vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KD7tYHP+; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8devices.com header.i=@8devices.com header.b="eevvGNsl"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a271a28aeb4so1183908266b.2
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 02:17:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KD7tYHP+"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a29058bb2ceso1178206866b.0
+        for <linux-clk@vger.kernel.org>; Wed, 17 Jan 2024 06:49:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=8devices.com; s=8devices; t=1705486641; x=1706091441; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hrjlcWfn/pDpqQxIFmiRolfpjezwCtleMfj2jxEGGng=;
-        b=eevvGNsl/Qb3lS8PTmOKBvhbO9UPT+rbpR5GQgPEuB53zNNZMVv7g+kSfgy853/IcG
-         NXralb7aTjJQ+agQkMDmMTZ0RcGMt1th6zWD3TCzGe2JS9GFpaqQcCCCXPjIAi+ZuXVz
-         b9H41hPSuJMSVg0OqvhOYAuSZmQvmF1MdEGBkPbEiRrK1LYciYe7b5cdBajd6AB/1+rc
-         p3WuCESQD27ksH03Y451WxgalSHvyHfv9/M5iEmVB1ZqkZUJyFz173RxMzW+psqFmQNw
-         h8gegC1Njm5QsCrtmdqAj8rViVqGyc6Lysq/QIZpJ+CGwq4O8xXZ70TisNlWA04p316Z
-         3HaA==
+        d=linaro.org; s=google; t=1705502950; x=1706107750; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wUp7AtgEUSYNvZ7/fVy0kILGk6FxXL69i5KUD1q97UU=;
+        b=KD7tYHP+aNzQhO/v8Gv6InoamNLudK4Bu9cxQ+vn/k3HfVqP/E1JNP+iskw4JLgUtU
+         Co1rI5XiV6gNnExMeB3S2NqqJ/ZGsCrmbtCxpO4it+pxJbC96bxLyhxN8FB9NmKGbZO2
+         o3yP/aCKX4K4TDq51T7lYwzi3c6QrTr43py2Zz9DwA2h3IwdT1jRKgdH4H4IYs8NpIlO
+         znZ8Dym8DyCwWfUE7qg/KfyLxSODbs+xdiefQnfnRbxLfTM6XuDeY/9V4GkXKoN2xoKV
+         mg/F1IK1wLQjhFeWj8mD/Z/oPl2Wn/OAA32IDY3SIh80GqnWE5R0FgB0Wdyy067xwPkW
+         aFfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705486641; x=1706091441;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hrjlcWfn/pDpqQxIFmiRolfpjezwCtleMfj2jxEGGng=;
-        b=HiL4qdI1TAOGmPXc/7SSYtv/fi5iOARILo7U0FJCYEfxzGtn61vIHhKJxyc98BnKyh
-         XDF+XtG6eFhOmLJrqofKR3cmxNQJB8St0RosLAQcn1mgSGbB+rJngcOKhb2NVQ9MQND/
-         IcKgAVAaPE4QMrPdRiM6h6nz6NX+E0o8dLW4auLir11dDhxrJJ6Vbo07QeTp1w9ZXxa+
-         H8vcmxZYRD0iNpYxbGtb13mKiP1kcKrjESgIyom/hwS0g+oGGRruKMtut/yVNnTfMRBW
-         HgI93RkeX975mGzxmhWZezDKGXORJZEhJ4vjap4uWJsiKS3rf8s8ihutn9s1sIrO3syR
-         /P8g==
-X-Gm-Message-State: AOJu0YwiNPgz39JHrAlZ3EfgdJksra0IcyNpcqPalISIELKJyQnHKAdB
-	qYoBrNgNYG/XzeGXiobURy7FpPykkQaxpiz91pUApvoN2twoLA==
-X-Google-Smtp-Source: AGHT+IFnNFFKnBL/28HVHLl3XdPWmHosKITeRDNylFga0N9qWEwAjTFEOYHJ+jqRzPMlPYDHaq60+Q==
-X-Received: by 2002:a17:906:2411:b0:a28:fd13:ecd with SMTP id z17-20020a170906241100b00a28fd130ecdmr3558696eja.129.1705486641393;
-        Wed, 17 Jan 2024 02:17:21 -0800 (PST)
-Received: from mantas-MS-7994.8devices.com ([84.15.37.222])
-        by smtp.gmail.com with ESMTPSA id p12-20020a17090653cc00b00a2c56fb5ad5sm7558767ejo.21.2024.01.17.02.17.20
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Jan 2024 02:17:21 -0800 (PST)
-From: Mantas Pucka <mantas@8devices.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Mantas Pucka <mantas@8devices.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-ipq6018: add qdss_at clock needed for wifi operation
-Date: Wed, 17 Jan 2024 12:17:08 +0200
-Message-Id: <1705486629-25592-1-git-send-email-mantas@8devices.com>
-X-Mailer: git-send-email 2.7.4
+        d=1e100.net; s=20230601; t=1705502950; x=1706107750;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wUp7AtgEUSYNvZ7/fVy0kILGk6FxXL69i5KUD1q97UU=;
+        b=YGoOmSDzIt60UU3jcY9KISkF9JfWOzKn4uX3m1DSO6ZSXW+i35Jg+5BhhJrc+CzkhK
+         vpFFMXlU4QINWUn2w/P8GFvCXlgNKjVuk8nXvH+LIOYeRLn1vCdGGz3yHTjiFLx7l0e2
+         J7JlXwwV3SB7I0l4H+BhqkZLRXvNPWg+EEKLrKmF80WUI3CyV6SVmHGdSaKkz2UjVvRx
+         GMW9pK4d3CwNCi3Vb3vE0WnZoxriQo9PZfi3pbLDQ/a3/9fdG4H80JHLbNG1nPiwc1/0
+         3sqbESf3tQDzf6UYjeH+t4FwnweZog233wpA/4v0P/WHtLCkOCiP8FFGHJqo8/RtjiYJ
+         0yug==
+X-Gm-Message-State: AOJu0YxWkdEeYofedbxTPoCjRMP8j4X5AZ3y7PhXrerheAd3TwrjN7FJ
+	IrDj2rj+bhyhnEXbHYv11NbUkFDmCrRYjw==
+X-Google-Smtp-Source: AGHT+IGfogk1vyrdo+0VUD+8Wa7WTI0X1CJ1wuka8a695dU1RQlPFwd51cLYisobNRPZgcLdGzCY+A==
+X-Received: by 2002:a17:907:7215:b0:a2c:cf7a:b70b with SMTP id dr21-20020a170907721500b00a2ccf7ab70bmr3242363ejc.145.1705502950157;
+        Wed, 17 Jan 2024 06:49:10 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id o10-20020a170906288a00b00a2a632e4eebsm7758780ejd.119.2024.01.17.06.49.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jan 2024 06:49:09 -0800 (PST)
+Message-ID: <f394e372-dbfd-4fd5-b5c8-23c383cb6cf2@linaro.org>
+Date: Wed, 17 Jan 2024 14:49:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/12] clk: samsung: gs101: add support for cmu_peric0
+Content-Language: en-US
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: peter.griffin@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+ gregkh@linuxfoundation.org, mturquette@baylibre.com, sboyd@kernel.org,
+ robh+dt@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org,
+ alim.akhtar@samsung.com, jirislaby@kernel.org, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, cw00.choi@samsung.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-serial@vger.kernel.org, andre.draszik@linaro.org,
+ kernel-team@android.com, willmcvicker@google.com
+References: <20240109125814.3691033-1-tudor.ambarus@linaro.org>
+ <20240109125814.3691033-8-tudor.ambarus@linaro.org>
+ <CAPLW+4=y12fBf47v_HKfBdHTsQJfWo2cwBuFosUKo3xPBqcKJw@mail.gmail.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CAPLW+4=y12fBf47v_HKfBdHTsQJfWo2cwBuFosUKo3xPBqcKJw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Without it system hangs upon wifi firmware load. Bindings already exist
-for it, so add it based on vendor code.
+Hi, Sam,
 
-Signed-off-by: Mantas Pucka <mantas@8devices.com>
----
- drivers/clk/qcom/gcc-ipq6018.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Thanks for reviewing the series!
 
-diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-index b366912cd648..7cdaf7751566 100644
---- a/drivers/clk/qcom/gcc-ipq6018.c
-+++ b/drivers/clk/qcom/gcc-ipq6018.c
-@@ -3522,6 +3522,22 @@ static struct clk_branch gcc_prng_ahb_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_qdss_at_clk = {
-+	.halt_reg = 0x29024,
-+	.clkr = {
-+		.enable_reg = 0x29024,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_qdss_at_clk",
-+			.parent_hws = (const struct clk_hw *[]){
-+				&qdss_at_clk_src.clkr.hw },
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_qdss_dap_clk = {
- 	.halt_reg = 0x29084,
- 	.clkr = {
-@@ -4361,6 +4377,7 @@ static struct clk_regmap *gcc_ipq6018_clks[] = {
- 	[GCC_SYS_NOC_PCIE0_AXI_CLK] = &gcc_sys_noc_pcie0_axi_clk.clkr,
- 	[GCC_PCIE0_PIPE_CLK] = &gcc_pcie0_pipe_clk.clkr,
- 	[GCC_PRNG_AHB_CLK] = &gcc_prng_ahb_clk.clkr,
-+	[GCC_QDSS_AT_CLK] = &gcc_qdss_at_clk.clkr,
- 	[GCC_QDSS_DAP_CLK] = &gcc_qdss_dap_clk.clkr,
- 	[GCC_QPIC_AHB_CLK] = &gcc_qpic_ahb_clk.clkr,
- 	[GCC_QPIC_CLK] = &gcc_qpic_clk.clkr,
--- 
-2.7.4
+On 1/16/24 17:42, Sam Protsenko wrote:
 
+cut
+
+>> Few clocks are marked as critical because when either of them is
+>> disabled, the system hangs even if their clock parents are enabled.
+>>
+>> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> ---
+cut
+>>
+>> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
+>> index 782993951fff..f3f0f5feb28d 100644
+>> --- a/drivers/clk/samsung/clk-gs101.c
+>> +++ b/drivers/clk/samsung/clk-gs101.c
+
+cut
+
+>> +static const struct samsung_gate_clock peric0_gate_clks[] __initconst = {
+>> +       /* Disabling this clock makes the system hang. Mark the clock as critical. */
+>> +       GATE(CLK_GOUT_PERIC0_PERIC0_CMU_PERIC0_PCLK,
+>> +            "gout_peric0_peric0_cmu_peric0_pclk", "mout_peric0_bus_user",
+>> +            CLK_CON_GAT_CLK_BLK_PERIC0_UID_PERIC0_CMU_PERIC0_IPCLKPORT_PCLK,
+>> +            21, CLK_IS_CRITICAL, 0),
+> Why not just CLK_IGNORE_UNUSED? As I understand this gate clock can be
+
+When either of the clocks that I marked as critical is disabled, the
+system hangs, even if their clock parent is enabled. I tested this by
+enabling the clock debugfs with write permissions. I prepared-enabled
+the parent clock to increase their user count so that when the child
+gets disabled to not disable the parent as well. When disabling the
+child the system hung, even if its parent was enabled. Thus I considered
+that the child is critical. I mentioned this in the commit message as
+well. Please tell if get this wrong.
+
+> used to disable PCLK (bus clock) provided to the whole CMU_PERIC0.
+> Aren't there any valid cases for disabling this clock, like during
+> some PM transitions? For Exynos850 clock driver I marked all clocks of
+
+They aren't, because if one switches off any of these clocks that are
+marked as critical, the system hangs and it will not be able to resume.
+
+> this kind as CLK_IGNORE_UNUSED and it works fine. In other words: I'd
+> say CLK_IS_CRITICAL flag is more "strong" than CLK_IGNORE_UNUSED, and
+> requires better and more specific explanation, to make sure we are not
+> abusing it. And I'm not sure this is the case.
+
+Is the explanation from the commit message enough?
+> 
+> The same goes for the rest of clocks marked as CLK_IS_CRITICAL in this
+> patch. Please check if maybe using CLK_IGNORE_UNUSED makes sense for
+> any of those as well.
+
+I've already checked and all behave as described above.
+
+Thanks,
+ta
