@@ -1,206 +1,132 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46B52D607;
-	Thu, 18 Jan 2024 18:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E460F2E848;
+	Thu, 18 Jan 2024 22:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705602440; cv=none; b=CIAupL0fEb049DyiTAD86NX6I4PLPz7e/jwo2zW+cx0TvAGUsPf964Z+jHhAMwOx6Dm32S6OWFeM0EANUrBz4sy7EaqZsBxJulAEwIC9rqfaFXO3qZRkdDzlOGyfyK6zIwSmlpubslWzjnq1wRjiBs9oy2y6pWFcyZ48C1IX4UQ=
+	t=1705615225; cv=none; b=AM38J6gQvGzdqSptVER+eQHj+M1nDgFKmJzcNRu6y6vCDt9n+muAfGppZOWQuEFRM6hIlP+M/G9wZ6b1I8u1M7m+JMk9BKEWs0FLjyrXFeFyheAbu8Xdw9TYAAdhkShaPAVqePlebFj6w9k3dW4IM0jZdQC1IKEgn3tUpzwqnLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705602440; c=relaxed/simple;
-	bh=2MOfPFz7G5ELeaymAprmqeqIr3xcUu1nA2k4jv5ebks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuegSm6MAc8qvEF5Q4n89walbUvsSogf2zmOGLZgGAYWMDQ3XKIVhhimIqu6nLIdfcXM+AObgfXIF1Utg6vn4C2w/O8wRnIO6uhBcuJwC8qqHsBOMX3sKmeZrZrgu7l3JA+mpqjtnBofoiJ43tJh9ihUl/7Hjt/dlbjcldMZtwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 980B11042;
-	Thu, 18 Jan 2024 10:28:02 -0800 (PST)
-Received: from pluto (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C4943F766;
-	Thu, 18 Jan 2024 10:27:15 -0800 (PST)
-Date: Thu, 18 Jan 2024 18:27:12 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: sudeep.holla@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V3 2/2] clk: scmi: support state_ctrl_forbidden
-Message-ID: <ZaltgIGyx1al-F9x@pluto>
-References: <20240115060203.813168-1-peng.fan@oss.nxp.com>
- <20240115060203.813168-2-peng.fan@oss.nxp.com>
+	s=arc-20240116; t=1705615225; c=relaxed/simple;
+	bh=wLvsv08eBZtYU7ZaISCpiqBuWqPFTTvXPV3fWg3VUvE=;
+	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
+	 In-Reply-To:References; b=lvDJxyU9HM6+fdVtRvQo6+oxCZiuedCRNgase7XSvxTwsUKfgaFa/1uo5eJWAzPRKBURFNG/rzCeTOhzWwLFOLFZ6sudaKKJhweynEn8B8SRP/qx4//VfFzZLihrUcmfFGxOGs9zt9wvLokKN6GvGGftTqer32u5tmbYFBqbEGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=SNygzZwl; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="SNygzZwl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=public-files.de;
+	s=s31663417; t=1705615201; x=1706220001; i=frank-w@public-files.de;
+	bh=wLvsv08eBZtYU7ZaISCpiqBuWqPFTTvXPV3fWg3VUvE=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:
+	 References;
+	b=SNygzZwl8NfRCJswcMPa1qVnqtVMkWjHZFA8tBNg4DXhCdz2eroL9vQ3dbkRQ/Ni
+	 aj7x406MCWWHhVcekTs/Ba8hCs6VsigS3bFLa1UwnMyk9lZb7ZHDs6OflttwxQZJ1
+	 nvMcMdnSzcOJUDp64TZx7g1ThNYgkiRnReat+IQ/bbSTQiwLese2F6/Yy4n6AfZqu
+	 gmhRIf+u9XOcljJqD2OF1TUDfuqTQTlfbriHhNvPkS7AOI+kzGMjt/mwM4/X2Rfu6
+	 c1yQPaB5n2/OnV+dJphPqXqt3kLdC6X8XD+PmvnlPO3LY2ljEiGTyAe+HAgqvQqHx
+	 Ir5lZe60hBiIPyD3DQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [217.61.159.198] ([217.61.159.198]) by web-mail.gmx.net
+ (3c-app-gmx-bap21.server.lan [172.19.172.91]) (via HTTP); Thu, 18 Jan 2024
+ 23:00:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240115060203.813168-2-peng.fan@oss.nxp.com>
+Message-ID: <trinity-afc4f48e-65e1-46ee-a78b-1d670cc0f310-1705615200900@3c-app-gmx-bap21>
+From: Frank Wunderlich <frank-w@public-files.de>
+To: Conor Dooley <conor@kernel.org>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <linux@fw-web.de>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Matthias
+ Brugger <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Sam Shih <sam.shih@mediatek.com>, Daniel Golle <daniel@makrotopia.org>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+Subject: Aw: Re: [PATCH v3 1/2] dt-bindings: reset: mediatek: add MT7988
+ reset IDs
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 18 Jan 2024 23:00:00 +0100
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <20240118-calcium-krypton-3c787b8d1912@spud>
+References: <20240117184111.62371-1-linux@fw-web.de>
+ <20240117184111.62371-2-linux@fw-web.de>
+ <20240118-calcium-krypton-3c787b8d1912@spud>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:i7cKlr7pbBOeeo2MJju4eygi1kMNVyLIp+PFrgFTenIkemr6mJ/6zZ1a/Lg1H9bvFTdMp
+ TI7kGYsJ+UQM26RzgcW7nABwCLt3D1kj+LOIj9a0Cq6nZrtefigXaCJBaeV3x/mcPy6KsMB7kXU9
+ dM0jDKxM9ibIjtGnclsOb0Mqoog2SEyR9Cko1fqakeMUdslD4rpxVB2ypJfppjPFxuXFdFYGPzQP
+ 6O3N8pLs7UnnLzru6iS1jFdOxB0t/+rjiqYhxiD96PppyYlpd6CUzg/T4yYBP9pq3BNDAGSOm9e5
+ ik=
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Gzu+rTj6VvA=;AFUqbzs2KLld0OIuq1bzMhSKPgl
+ Kd7wJWth+9/ff1+bN2OyVvlJR0rjHQ7GcdSOu5Gg2jgh331Cni4J64RQFLkLC/EaHwzxmS2Uz
+ XL44FMFv8vE4oCmSOzKtD24Nr1ISiK9JraRdcY5PZPfIDv122vBbvsk3DHmEjbM+q9fjkMb+q
+ YmREoZ5tY3k9jH3P9QMpN3UYxARaUzCezNsWzSsRDitvRXFPI9fyn9SYTqT9tRfC1Uh9cnCyW
+ m6plg3l/HV2u/4ItKFKwD/yX8o6kNWsy6th/2u0qO4+EDzy7hMz96zo4kkzFTzjzPdATfYYG/
+ CcQ65Cxeo/Q3IDz/NmtvkpGq7/d+hIR3pNHpweLsy50DWTic+PHXlQ+wc4c3JxdIY/+eJgar9
+ 9dSDWS6xBkRSUzCX26dPWzEowUPPaKtAPl0kkQY9BLoXZmlM1LuzV3oHW0TpGiPXsVR6bPWw+
+ nhxlc2CGClYR2an6957v3MOMdYtqbNnanhl79XeoEMFIqgqHYiDPrO834OqDPg4AM6b6qIVF1
+ WR7gsIYRWrdXsS+lhb/FHdIOt+wwG8hBHQ6ihMBrnrUSgm8xTWHEJM+v6a4U3ZQYLeQPEUJn7
+ omzxu8D1RDFlLgxRO9viMu0N/xh0Qr9W2niMCedv4y4VEjFJMhxK+ygXRKjwzastXE3TYNJea
+ WlA+RXaGs7BDFDEXjBV1DJDzATdgGqXq8AnOW9CtWyrrirW9TJpTV0IRbj6No/L8d5pqf01oj
+ E8+0bhGoBMcdz8f6cL6gqxMCoGGAH1tVzG9IlVljibVUcGPRy8IhPXyxK5yFok+EerEmSq2tL
+ b5i84Et/qC1kETeXvhxKK7ew==
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 15, 2024 at 02:02:03PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Some clocks may exported to linux, while those clocks are not allowed
-> to configure by Linux. For example:
-> 
-> SYS_CLK1-----
->              \
-> 	     --MUX--->MMC1_CLK
->              /
-> SYS_CLK2-----
-> 
-> MMC1 needs set parent, so SYS_CLK1 and SYS_CLK2 are exported to Linux,
-> then the clk propagation will touch SYS_CLK1 or SYS_CLK2.
-> So we need bypass the failure for SYS_CLK1 or SYS_CLK2 when enable
-> the clock of MMC1.
-> 
+> Gesendet: Donnerstag, 18. Januar 2024 um 17:49 Uhr
+> Von: "Conor Dooley" <conor@kernel.org>
+> On Wed, Jan 17, 2024 at 07:41:10PM +0100, Frank Wunderlich wrote:
+> > From: Frank Wunderlich <frank-w@public-files.de>
+> >
+> > Add reset constants for using as index in driver and dts.
+> >
+> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> > ---
+> > v3:
+> > - add pcie reset id as suggested by angelo
+> >
+> > v2:
+> >  - add missing commit message and SoB
+> >  - change value of infrareset to 0
+> > ---
+> >  include/dt-bindings/reset/mediatek,mt7988-resets.h | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/include/dt-bindings/reset/mediatek,mt7988-resets.h b/incl=
+ude/dt-bindings/reset/mediatek,mt7988-resets.h
+> > index 493301971367..0eb152889a89 100644
+> > --- a/include/dt-bindings/reset/mediatek,mt7988-resets.h
+> > +++ b/include/dt-bindings/reset/mediatek,mt7988-resets.h
+> > @@ -10,4 +10,10 @@
+> >  /* ETHWARP resets */
+> >  #define MT7988_ETHWARP_RST_SWITCH		0
+> >
+> > +/* INFRA resets */
+> > +#define MT7988_INFRA_RST0_PEXTP_MAC_SWRST	0
+> > +#define MT7988_INFRA_RST1_THERM_CTRL_SWRST	1
+>
+> These are just "random" numbers, why not continue the numbering from the
+> ETHWARP?
 
-Hi,
+i can do...basicly these consts are used in DTS and driver only as index.
 
-so this looks good to me and apparently (as noted) the CLK framework is OK
-with a driver swallowing the -EACCESS when a clock is immutable, BUT at the
-end of the day do we even need to try this SCMI call and hide the failure in
-case of immutable clocks ?
+@angelo what do you think? I though also in leaving some space to allow gr=
+ouping RST0 and RST1
+when more consts are added, else the numbers are mixed up.
 
-I mean, what if we just dont provide any callback for enable/disable...I can
-see plenty of drivers not providing those callbacks ?
-Maybe this is probably more of a question for Stephen...
+so e.g. let RST0 start at 20 and RST1 at 40 (or even higher, because RST0 =
+and RST1 can have up to 32 resets).
+That will allow adding more reset constants between my values and having r=
+aising numbers.
 
-IOW what about doing something like below...does it make any difference
-in your setup ? works fine in my emulated env
-
-(Note that last snippet in clk_gate_restore_context() is probably a fix
- that needs to be added anyway by looking at the code in clk.c)
-
-Thanks,
-Cristian
-
---->8----
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index 5327e0547741..a669a2f2f78b 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -121,11 +121,7 @@ static int scmi_clk_enable(struct clk_hw *hw)
- 	struct scmi_clk *clk = to_scmi_clk(hw);
- 	int ret;
- 
--	ret = scmi_proto_clk_ops->enable(clk->ph, clk->id, NOT_ATOMIC);
--	if (ret == -EACCES && clk->info->state_ctrl_forbidden)
--		return 0;
--
--	return ret;
-+	return scmi_proto_clk_ops->enable(clk->ph, clk->id, NOT_ATOMIC);
- }
- 
- static void scmi_clk_disable(struct clk_hw *hw)
-@@ -140,11 +136,7 @@ static int scmi_clk_atomic_enable(struct clk_hw *hw)
- 	struct scmi_clk *clk = to_scmi_clk(hw);
- 	int ret;
- 
--	ret = scmi_proto_clk_ops->enable(clk->ph, clk->id, ATOMIC);
--	if (ret == -EACCES && clk->info->state_ctrl_forbidden)
--		return 0;
--
--	return ret;
-+	return scmi_proto_clk_ops->enable(clk->ph, clk->id, ATOMIC);
- }
- 
- static void scmi_clk_atomic_disable(struct clk_hw *hw)
-@@ -204,6 +196,15 @@ static const struct clk_ops scmi_atomic_clk_ops = {
- 	.determine_rate = scmi_clk_determine_rate,
- };
- 
-+static const struct clk_ops scmi_no_state_ctrl_clk_ops = {
-+	.recalc_rate = scmi_clk_recalc_rate,
-+	.round_rate = scmi_clk_round_rate,
-+	.set_rate = scmi_clk_set_rate,
-+	.set_parent = scmi_clk_set_parent,
-+	.get_parent = scmi_clk_get_parent,
-+	.determine_rate = scmi_clk_determine_rate,
-+};
-+
- static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
- 			     const struct clk_ops *scmi_ops)
- {
-@@ -300,8 +301,10 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
- 		 * specify (or support) an enable_latency associated with a
- 		 * clock, we default to use atomic operations mode.
- 		 */
--		if (is_atomic &&
--		    sclk->info->enable_latency <= atomic_threshold)
-+		if (sclk->info->state_ctrl_forbidden)
-+			scmi_ops = &scmi_no_state_ctrl_clk_ops;
-+		else if (is_atomic &&
-+			 sclk->info->enable_latency <= atomic_threshold)
- 			scmi_ops = &scmi_atomic_clk_ops;
- 		else
- 			scmi_ops = &scmi_clk_ops;
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f0940af485a5..79b90a8099d7 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1200,9 +1200,11 @@ void clk_gate_restore_context(struct clk_hw *hw)
- 	struct clk_core *core = hw->core;
- 
- 	if (core->enable_count)
--		core->ops->enable(hw);
-+		if (core->ops->enable)
-+			core->ops->enable(hw);
- 	else
--		core->ops->disable(hw);
-+		if (core->ops->disable)
-+			core->ops->disable(hw);
- }
- EXPORT_SYMBOL_GPL(clk_gate_restore_context);
----8<---
-
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> 
-> V3:
->  Add check in atomic enable
-> 
-> V2:
->  New. Take Cristian's suggestion
-> 
->  drivers/clk/clk-scmi.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index 8cbe24789c24..5327e0547741 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -119,8 +119,13 @@ static int scmi_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *r
->  static int scmi_clk_enable(struct clk_hw *hw)
->  {
->  	struct scmi_clk *clk = to_scmi_clk(hw);
-> +	int ret;
-> +
-> +	ret = scmi_proto_clk_ops->enable(clk->ph, clk->id, NOT_ATOMIC);
-> +	if (ret == -EACCES && clk->info->state_ctrl_forbidden)
-> +		return 0;
->  
-> -	return scmi_proto_clk_ops->enable(clk->ph, clk->id, NOT_ATOMIC);
-> +	return ret;
->  }
->  
->  static void scmi_clk_disable(struct clk_hw *hw)
-> @@ -133,8 +138,13 @@ static void scmi_clk_disable(struct clk_hw *hw)
->  static int scmi_clk_atomic_enable(struct clk_hw *hw)
->  {
->  	struct scmi_clk *clk = to_scmi_clk(hw);
-> +	int ret;
-> +
-> +	ret = scmi_proto_clk_ops->enable(clk->ph, clk->id, ATOMIC);
-> +	if (ret == -EACCES && clk->info->state_ctrl_forbidden)
-> +		return 0;
->  
-> -	return scmi_proto_clk_ops->enable(clk->ph, clk->id, ATOMIC);
-> +	return ret;
->  }
->  
->  static void scmi_clk_atomic_disable(struct clk_hw *hw)
-> -- 
-> 2.37.1
-> 
+regards Frank
