@@ -1,133 +1,245 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD3E3BB3B;
-	Fri, 19 Jan 2024 09:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895F14C62D
+	for <linux-clk@vger.kernel.org>; Fri, 19 Jan 2024 11:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705656515; cv=none; b=Il83y/2jQ6BuQEAFX1PCKAY3Bnau+u0EJBM+A8u61xlMURa5A4bp9yCe27KI/NwbxryC69v0Wijaxuwzzm26ZOcsWDbsfV8/P843RvR0gpFl0gGdKcGABCrhwIXYHeOna/MHrZaPxSU3F9STOFFsRHzW3E1yqdmRiWRGd6yLyRA=
+	t=1705662711; cv=none; b=aK/22LB/n+BMHOgFIz2v7t6w4vaNqjDHK5ri67viyfX74D9CU5DZUWopL2bFzJsC11yNdr6IYsPD5ZtYqDeQS5mh60TRzOBG0ZrDWCaGqwLbOIctjQ6pb1WPV5K8dO0PbW0umtVAiQf9qwCrWKHHwH8ZX7evCxlWPxLqH1+SjU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705656515; c=relaxed/simple;
-	bh=Lhbql/RT2O/SWJDfGJ70KFwReffC1OnjFnXgYb8Q0nI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XBdZj1KnAHjMaj4FCHRpPfVsLZ0EqHMDsdoK8CR5+8/Bn3IDtmHKWbNcCtvJYNnKsLvsFsSb/fmOKqcjh17JXyYdPFx/lePoQQd8im8JfpkPV3qPuavzvMrdr2QcdVgC3ZfZ2kRUD1lARz652Z6EBVqqI8/tfNEMJZovx/+K8Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=1ET+SY7K; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1705662711; c=relaxed/simple;
+	bh=Icqr6uOgdJLk5QgwR2OUDD6Dy7qQHxU9897G/is5FVE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MwyHNQTGtmE8rdTaCq7EWMn09C3e8EvFsk+sw+nrz6tF2bq/z0pMjkfmb4z9vNT0Q4FF6IUzpyo0+0RIEfZ+M9kzimZ24ZsBcgfgoEs2b3Oy+iSCcLl0OgJwn3l/7jpehwvp/VJKbcKiOY0MEA3W6+QWAJzhnO17jYpHlwNINzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u2VyAxVR; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="1ET+SY7K"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1705656512;
-	bh=Lhbql/RT2O/SWJDfGJ70KFwReffC1OnjFnXgYb8Q0nI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=1ET+SY7K7XySrZyuXVekgjjQz1L29u/gNLqq8DRykljix0PWXmKfCEhw7nx8qOQ9T
-	 qsth7UfW62Bg7siz/4nbAHpv/9b+QzVskY/tbaGfAIDKdBtFM8s8gPGfeH30eaWBMT
-	 p78Or/RanDDOJ9pVaJRFXez0D/eQCOMTI0CkMcNft+Y+EAEz6uARYxmzOGvXdQUa+K
-	 wbBxmjxAnSCk+77vnE2m6CaqGTCBEf9BiVcAPHvhTf4X/43ayWEOiT576soOJy1bvV
-	 pN/d0B4adJc+4EPa2Mbo14esown6eDPApaz2KdD3h8gFT+VWGFcO+ZrqnI95sa5Wa9
-	 NC7iCNCmReOYg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4B65837811F1;
-	Fri, 19 Jan 2024 09:28:31 +0000 (UTC)
-Message-ID: <43f946cc-07e1-48c5-9b31-40fc9bc93037@collabora.com>
-Date: Fri, 19 Jan 2024 10:28:30 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u2VyAxVR"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40e9101b5f9so6904965e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 19 Jan 2024 03:11:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1705662708; x=1706267508; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZKp1YGQpY9dJ29tzPoAgulzyG9Dox8/PAN9avATnHt0=;
+        b=u2VyAxVRwbewSrlA6s++uK+BCzm6SfuZPpRWbrNTBCA3pOxaiN8KjbRzwTMTYLWAbS
+         P8Mq2nTRMfyOFTaFbJVGrfyjKZXp+xtdBSNSOzuG6kWSC75dpWoJb63Hfk3poXVDfMSD
+         PYY68+8hz6CTHuMnCmSRcGXfuN7rXfsGZqTqsqmmxfECFL4lJnsv50c2/JoHjzF57ly7
+         L2C2NGDKS9akr6tIDwl15yQDqVAiCwr5R1SQoSsEO6aTFrwGed/AJq+5nH3JoTVsUJvf
+         czQa1TfArfRREPlNHm2/E+xes6TyRljlSh2GSd5UsnZn4Dtt+JxLGuN9434T38SHWPgN
+         1fuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705662708; x=1706267508;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZKp1YGQpY9dJ29tzPoAgulzyG9Dox8/PAN9avATnHt0=;
+        b=I+M6S2kA23z/eDSGcIUUvHqceYEl+515T6ukNP746Mn+lNvll7pu2l+kmuTvrTVJIn
+         z7DPKuGhM1CkJDQSovzW8Hkl7cF79VhwKAl4xD0AIeczjztWRHhBZWMuquCvamgo1rEL
+         /kGrgkav332cqTXJ8YXpFKJV0xKKBuw/yjRX8GzW4RK6VhNfIQ+RWnFTfb6RmgvTfQKX
+         pv0nW59YZVBaC5MfR6vYECwGDFEhXYP6vcjpyeyWU6hCrdxG+9dbYGzFs/qkmo+ZXOLi
+         ox4kXFQISSDUAfu3jA9gc2ZuDcSIFEyqst3m8S2bI89nC6YpzoNOColHRkfX31PeMIvu
+         PdSg==
+X-Gm-Message-State: AOJu0YxCkX1OyqVQ64cwk6BJLrqN24qPHDxIulFyrUNzyhhTSiwlNEWO
+	oPZLQV2UpqaFosS14zg2r5LlkGdKtmmQHyEnaB1a4hwG9xUqG1Ye082fkjgyCpI=
+X-Google-Smtp-Source: AGHT+IGxdlSduKVkeLV1BSigmxYl9LCYBbrtabItH/jVHg6U07jz/qR1KvdKxVuAqPU87tf3HfsGjQ==
+X-Received: by 2002:a05:600c:16ca:b0:40e:8d59:d240 with SMTP id l10-20020a05600c16ca00b0040e8d59d240mr1352319wmn.54.1705662707914;
+        Fri, 19 Jan 2024 03:11:47 -0800 (PST)
+Received: from ta2.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
+        by smtp.gmail.com with ESMTPSA id o10-20020a5d62ca000000b00337d4ce6ab4sm3341868wrv.20.2024.01.19.03.11.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jan 2024 03:11:46 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: peter.griffin@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: andi.shyti@kernel.org,
+	alim.akhtar@samsung.com,
+	s.nawrocki@samsung.com,
+	tomasz.figa@gmail.com,
+	cw00.choi@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	andre.draszik@linaro.org,
+	semen.protsenko@linaro.org,
+	willmcvicker@google.com,
+	kernel-team@android.com,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 1/8] dt-bindings: clock: google,gs101-clock: add PERIC0 clock management unit
+Date: Fri, 19 Jan 2024 11:11:25 +0000
+Message-ID: <20240119111132.1290455-2-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
+In-Reply-To: <20240119111132.1290455-1-tudor.ambarus@linaro.org>
+References: <20240119111132.1290455-1-tudor.ambarus@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Aw: Re: [PATCH v3 1/2] dt-bindings: reset: mediatek: add MT7988
- reset IDs
-Content-Language: en-US
-To: Frank Wunderlich <frank-w@public-files.de>,
- Conor Dooley <conor@kernel.org>
-Cc: Frank Wunderlich <linux@fw-web.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Sam Shih <sam.shih@mediatek.com>,
- Daniel Golle <daniel@makrotopia.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20240117184111.62371-1-linux@fw-web.de>
- <20240117184111.62371-2-linux@fw-web.de>
- <20240118-calcium-krypton-3c787b8d1912@spud>
- <trinity-afc4f48e-65e1-46ee-a78b-1d670cc0f310-1705615200900@3c-app-gmx-bap21>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <trinity-afc4f48e-65e1-46ee-a78b-1d670cc0f310-1705615200900@3c-app-gmx-bap21>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 18/01/24 23:00, Frank Wunderlich ha scritto:
->> Gesendet: Donnerstag, 18. Januar 2024 um 17:49 Uhr
->> Von: "Conor Dooley" <conor@kernel.org>
->> On Wed, Jan 17, 2024 at 07:41:10PM +0100, Frank Wunderlich wrote:
->>> From: Frank Wunderlich <frank-w@public-files.de>
->>>
->>> Add reset constants for using as index in driver and dts.
->>>
->>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
->>> ---
->>> v3:
->>> - add pcie reset id as suggested by angelo
->>>
->>> v2:
->>>   - add missing commit message and SoB
->>>   - change value of infrareset to 0
->>> ---
->>>   include/dt-bindings/reset/mediatek,mt7988-resets.h | 6 ++++++
->>>   1 file changed, 6 insertions(+)
->>>
->>> diff --git a/include/dt-bindings/reset/mediatek,mt7988-resets.h b/include/dt-bindings/reset/mediatek,mt7988-resets.h
->>> index 493301971367..0eb152889a89 100644
->>> --- a/include/dt-bindings/reset/mediatek,mt7988-resets.h
->>> +++ b/include/dt-bindings/reset/mediatek,mt7988-resets.h
->>> @@ -10,4 +10,10 @@
->>>   /* ETHWARP resets */
->>>   #define MT7988_ETHWARP_RST_SWITCH		0
->>>
->>> +/* INFRA resets */
->>> +#define MT7988_INFRA_RST0_PEXTP_MAC_SWRST	0
->>> +#define MT7988_INFRA_RST1_THERM_CTRL_SWRST	1
->>
->> These are just "random" numbers, why not continue the numbering from the
->> ETHWARP?
-> 
-> i can do...basicly these consts are used in DTS and driver only as index.
-> 
-> @angelo what do you think? I though also in leaving some space to allow grouping RST0 and RST1
-> when more consts are added, else the numbers are mixed up.
-> 
-> so e.g. let RST0 start at 20 and RST1 at 40 (or even higher, because RST0 and RST1 can have up to 32 resets).
-> That will allow adding more reset constants between my values and having raising numbers.
+Add dt-schema documentation for the Connectivity Peripheral 0 (PERIC0)
+clock management unit.
 
-The resets are organized on a per-reset-controller basis, so, the ETHWARP
-reset controller's first reset is RST_SWITCH, the second one is RST_something_else,
-etc. while the first reset of the INFRA reset controller is PEXTP_MAC_SWRST.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+ .../bindings/clock/google,gs101-clock.yaml    | 25 +++++-
+ include/dt-bindings/clock/google,gs101.h      | 81 +++++++++++++++++++
+ 2 files changed, 104 insertions(+), 2 deletions(-)
 
-That's why ETHWARP has a reset index 0 and INFRA also starts at 0.
-I think that the numbering is good as it is, and having one driver start at index 5
-while the other starts at index 12 would only overcomplicate registering the resets
-in each driver, or waste bytes by making unnecessarily large arrays, for (imo) no
-good reason.
-
-This is one header, but it should "in theory" be more than one... so we would have
-one for each hardware block - but that'd make the reset directory over-crowded, as
-other MediaTek SoCs have got even more resets in even more hardware blocks than the
-MT7988. That'd be something like ~4 reset headers per SoC (and will increase with
-newer ones)...
-...and this is why we have one binding header for resets.
-
-On the topic of leaving space to allow grouping RST0/RST1: -> No. <-
-The indices have to start from zero and have to be sequential, with no holes.
-
-Cheers,
-Angelo
+diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+index ca7fdada3ff2..03698cdecf7a 100644
+--- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+@@ -30,14 +30,15 @@ properties:
+       - google,gs101-cmu-top
+       - google,gs101-cmu-apm
+       - google,gs101-cmu-misc
++      - google,gs101-cmu-peric0
+ 
+   clocks:
+     minItems: 1
+-    maxItems: 2
++    maxItems: 3
+ 
+   clock-names:
+     minItems: 1
+-    maxItems: 2
++    maxItems: 3
+ 
+   "#clock-cells":
+     const: 1
+@@ -88,6 +89,26 @@ allOf:
+             - const: bus
+             - const: sss
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: google,gs101-cmu-peric0
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (24.576 MHz)
++            - description: Connectivity Peripheral 0 bus clock (from CMU_TOP)
++            - description: Connectivity Peripheral 0 IP clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: bus
++            - const: ip
++
+ additionalProperties: false
+ 
+ examples:
+diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
+index 21adec22387c..64e6bdc6359c 100644
+--- a/include/dt-bindings/clock/google,gs101.h
++++ b/include/dt-bindings/clock/google,gs101.h
+@@ -389,4 +389,85 @@
+ #define CLK_GOUT_MISC_WDT_CLUSTER1_PCLK			73
+ #define CLK_GOUT_MISC_XIU_D_MISC_ACLK			74
+ 
++/* CMU_PERIC0 */
++#define CLK_MOUT_PERIC0_BUS_USER			1
++#define CLK_MOUT_PERIC0_I3C_USER			2
++#define CLK_MOUT_PERIC0_USI0_UART_USER			3
++#define CLK_MOUT_PERIC0_USI14_USI_USER			4
++#define CLK_MOUT_PERIC0_USI1_USI_USER			5
++#define CLK_MOUT_PERIC0_USI2_USI_USER			6
++#define CLK_MOUT_PERIC0_USI3_USI_USER			7
++#define CLK_MOUT_PERIC0_USI4_USI_USER			8
++#define CLK_MOUT_PERIC0_USI5_USI_USER			9
++#define CLK_MOUT_PERIC0_USI6_USI_USER			10
++#define CLK_MOUT_PERIC0_USI7_USI_USER			11
++#define CLK_MOUT_PERIC0_USI8_USI_USER			12
++#define CLK_DOUT_PERIC0_I3C				13
++#define CLK_DOUT_PERIC0_USI0_UART			14
++#define CLK_DOUT_PERIC0_USI14_USI			15
++#define CLK_DOUT_PERIC0_USI1_USI			16
++#define CLK_DOUT_PERIC0_USI2_USI			17
++#define CLK_DOUT_PERIC0_USI3_USI			18
++#define CLK_DOUT_PERIC0_USI4_USI			19
++#define CLK_DOUT_PERIC0_USI5_USI			20
++#define CLK_DOUT_PERIC0_USI6_USI			21
++#define CLK_DOUT_PERIC0_USI7_USI			22
++#define CLK_DOUT_PERIC0_USI8_USI			23
++#define CLK_GOUT_PERIC0_IP				24
++#define CLK_GOUT_PERIC0_PERIC0_CMU_PERIC0_PCLK		25
++#define CLK_GOUT_PERIC0_CLK_PERIC0_OSCCLK_CLK		26
++#define CLK_GOUT_PERIC0_D_TZPC_PERIC0_PCLK		27
++#define CLK_GOUT_PERIC0_GPC_PERIC0_PCLK			28
++#define CLK_GOUT_PERIC0_GPIO_PERIC0_PCLK		29
++#define CLK_GOUT_PERIC0_LHM_AXI_P_PERIC0_I_CLK		30
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_0		31
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_1		32
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_10		33
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_11		34
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_12		35
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_13		36
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_14		37
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_15		38
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_2		39
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_3		40
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_4		41
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_5		42
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_6		43
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_7		44
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_8		45
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_9		46
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_0		47
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_1		48
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_10		49
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_11		50
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_12		51
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_13		52
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_14		53
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_15		54
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_2		55
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_3		56
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_4		57
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_5		58
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_6		59
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_7		60
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_8		61
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_9		62
++#define CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_0		63
++#define CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_2		64
++#define CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_0		65
++#define CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_2		66
++#define CLK_GOUT_PERIC0_CLK_PERIC0_BUSP_CLK		67
++#define CLK_GOUT_PERIC0_CLK_PERIC0_I3C_CLK		68
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI0_UART_CLK	69
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI14_USI_CLK	70
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI1_USI_CLK		71
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI2_USI_CLK		72
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI3_USI_CLK		73
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI4_USI_CLK		74
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI5_USI_CLK		75
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI6_USI_CLK		76
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI7_USI_CLK		77
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK		78
++#define CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK		79
++
+ #endif /* _DT_BINDINGS_CLOCK_GOOGLE_GS101_H */
+-- 
+2.43.0.429.g432eaa2c6b-goog
 
