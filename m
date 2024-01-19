@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38F152F84;
-	Fri, 19 Jan 2024 16:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2518A55760;
+	Fri, 19 Jan 2024 16:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705680706; cv=none; b=JogeslxgAwlPgLsvtjM4qH6sb0Fg1STgCD+T9egYozvIwMJ439Qs058EmOCB+DlvVUEtnTR5j9RWUopcQuUJyQmZRZBhALf9q89hf5hGaQgq+eq+XaxoMEmCAV6bYj1cGr5Rj+zUpwOOk+x4vnZSu59arBSyUN+KUI7olbpWEa0=
+	t=1705680859; cv=none; b=R0CtIgDordARuTfZhz5puCAh5n0yP93eIBpZc2tcU4iXw8lwbK0msauxWxUq13BjYHAvPcOd73i2g3l2cFCO4k5W7wtPhWuJG5uH7XNJU92qeau4VmiBl3L9XxiL5xLDj45yJd9Yz40I9cQYaAohHiBDM2R1YLJ15RP3L8Un9Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705680706; c=relaxed/simple;
-	bh=+skD1Cd21Cux1rhwy4Loe+zv/a/MyUJx8jCiWv0gWcQ=;
+	s=arc-20240116; t=1705680859; c=relaxed/simple;
+	bh=FTiyumdDUu3LG/iF+VkzG7r/ahERdxQdR7At/f8SshE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUS/mKvKwvQgE4OIWzjqweE5mLlsPUJTd7/5Z99ecUbp3FMPbVeII14WtBmFC5e3h2wQccld59YOhEzjajposMVAtGmo82Gk0wLwBKsDUXvr2zabpTwH0AbgRxHMzas7ZDsRhGkTXoBgyLPPvPfepLgWaXmqEUaLAQU89oB8uG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uf+AudPq; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=N1Cm6oNayWf2hKdB5CjfDG84id9uTDcfoWS5XDUt0pryWP9fePcp7wyB4KKt9XxiTn2w9j55I13Nl57Zle4zJIQ+nVESq2gIavtSc0ssYzcA74O2swT3VzdNd9h0imi9/grrkYxp0ent5EdzgWPEogLI84Se6Ujiko87RZjfuRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GTfpgvYQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uf+AudPq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8066C43390;
-	Fri, 19 Jan 2024 16:11:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTfpgvYQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 930A6C43390;
+	Fri, 19 Jan 2024 16:14:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705680706;
-	bh=+skD1Cd21Cux1rhwy4Loe+zv/a/MyUJx8jCiWv0gWcQ=;
+	s=k20201202; t=1705680858;
+	bh=FTiyumdDUu3LG/iF+VkzG7r/ahERdxQdR7At/f8SshE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uf+AudPqoPRw2CG/rHV1Kffa3eWl6QKRrqtmSoJe9FVdMskVAu0ugBpCxGhggmZyS
-	 9Oq3ASqWG10ShScumrsntAokrOUy34wthJ+/oGg1Vv/JsS88Zso0Jl+dsQK5ADd+L1
-	 QvQrUk5klEGzWqpB4XBqHqhdF0DMcPh1N3GMW2X+EY6N2gjnjQmajySm6UHobM+7/W
-	 Hb6nQ4wtI+HgaekBxElXPGdSiYzEXc6pjcxdgUdiwCpIcwfLyRIXkyszTb1odu0RDb
-	 ikgxeONpT8Vzjtt4SJNRFkfi4W0T4H9hnmT1mf22OqNY0WqFJv3ZJ3+oqGBgm6HLgw
-	 IFRS6UAIhLrTQ==
-Date: Fri, 19 Jan 2024 16:11:37 +0000
+	b=GTfpgvYQliKoCICox/GA4UF2qAAxQTCC01Jg+KSo0KX0XdqZoq4jYqxseI7HESkTO
+	 4vEuUO1984PbcN8UQaD+CcMp5kYGwNe937aToDNy5E6XRcQvUj2iPKj1WqG6hIeDB6
+	 hUwt2sXl37wkfEc7LzkFIxoRM1zrUU74jvIjYtt70gq5M+nubkMjR1ifH38iY/TQ4h
+	 d3ViRA6fvtLvQNHzdlzY6NQ38FJZiVHdHAeRaan5oJEr7MLGLkDBC2PhSBEPcbubhb
+	 +yA16381Zz+VRROSh0ZHPsHAk7KUUtSocsgI9I7FEH7IlvQLmzzNynMv9QohE//pDj
+	 V+4QBJ2XxE56Q==
+Date: Fri, 19 Jan 2024 16:14:12 +0000
 From: Conor Dooley <conor@kernel.org>
 To: "Ghennadi Procopciuc (OSS)" <ghennadi.procopciuc@oss.nxp.com>
 Cc: Chester Lin <chester62515@gmail.com>, Andreas Farber <afaerber@suse.de>,
@@ -46,9 +46,10 @@ Cc: Chester Lin <chester62515@gmail.com>, Andreas Farber <afaerber@suse.de>,
 	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
 	Ciprian Costea <ciprianmarian.costea@nxp.com>
 Subject: Re: [PATCH 1/3] dt-bindings: clock: s32g: add uSDHC clock IDs
-Message-ID: <20240119-magnetic-racing-0adf8e5fbd4a@spud>
+Message-ID: <20240119-cattle-antarctic-432fa8e1c0ef@spud>
 References: <20240119130231.2854146-1-ghennadi.procopciuc@oss.nxp.com>
  <20240119130231.2854146-2-ghennadi.procopciuc@oss.nxp.com>
+ <20240119-magnetic-racing-0adf8e5fbd4a@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,60 +57,67 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IwcdJ08lEQ0ScTZl"
+	protocol="application/pgp-signature"; boundary="qUpbBLVWlyJG4s+w"
 Content-Disposition: inline
-In-Reply-To: <20240119130231.2854146-2-ghennadi.procopciuc@oss.nxp.com>
+In-Reply-To: <20240119-magnetic-racing-0adf8e5fbd4a@spud>
 
 
---IwcdJ08lEQ0ScTZl
+--qUpbBLVWlyJG4s+w
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 19, 2024 at 03:02:28PM +0200, Ghennadi Procopciuc (OSS) wrote:
-> From: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+On Fri, Jan 19, 2024 at 04:11:37PM +0000, Conor Dooley wrote:
+> On Fri, Jan 19, 2024 at 03:02:28PM +0200, Ghennadi Procopciuc (OSS) wrote:
+> > From: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> >=20
+> > Add the SCMI clock IDs for the uSDHC controller present on
+> > S32G SoCs.
+> >=20
+> > Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+> > Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> > ---
+> >  include/dt-bindings/clock/s32g-scmi-clock.h | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >  create mode 100644 include/dt-bindings/clock/s32g-scmi-clock.h
+> >=20
+> > diff --git a/include/dt-bindings/clock/s32g-scmi-clock.h b/include/dt-b=
+indings/clock/s32g-scmi-clock.h
+> > new file mode 100644
+> > index 000000000000..739f98a924c3
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/s32g-scmi-clock.h
+> > @@ -0,0 +1,14 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
+> > +/*
+> > + * Copyright 2020-2024 NXP
+> > + */
+> > +#ifndef _DT_BINDINGS_SCMI_CLK_S32G_H
+> > +#define _DT_BINDINGS_SCMI_CLK_S32G_H
+> > +
+> > +/* uSDHC */
+> > +#define S32G_SCMI_CLK_USDHC_AHB		31
+> > +#define S32G_SCMI_CLK_USDHC_MODULE	32
+> > +#define S32G_SCMI_CLK_USDHC_CORE	33
+> > +#define S32G_SCMI_CLK_USDHC_MOD32K	34
 >=20
-> Add the SCMI clock IDs for the uSDHC controller present on
-> S32G SoCs.
->=20
-> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> ---
->  include/dt-bindings/clock/s32g-scmi-clock.h | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->  create mode 100644 include/dt-bindings/clock/s32g-scmi-clock.h
->=20
-> diff --git a/include/dt-bindings/clock/s32g-scmi-clock.h b/include/dt-bin=
-dings/clock/s32g-scmi-clock.h
-> new file mode 100644
-> index 000000000000..739f98a924c3
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/s32g-scmi-clock.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
-> +/*
-> + * Copyright 2020-2024 NXP
-> + */
-> +#ifndef _DT_BINDINGS_SCMI_CLK_S32G_H
-> +#define _DT_BINDINGS_SCMI_CLK_S32G_H
-> +
-> +/* uSDHC */
-> +#define S32G_SCMI_CLK_USDHC_AHB		31
-> +#define S32G_SCMI_CLK_USDHC_MODULE	32
-> +#define S32G_SCMI_CLK_USDHC_CORE	33
-> +#define S32G_SCMI_CLK_USDHC_MOD32K	34
+> Why do these numbers not start at 0?
 
-Why do these numbers not start at 0?
+Ah, because these are the SCMI IDs directly. If these are numbers that
+are in the TRM, just use the numbers directly - there's no need to
+create bindings for that.
 
---IwcdJ08lEQ0ScTZl
+
+
+--qUpbBLVWlyJG4s+w
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZaqfOQAKCRB4tDGHoIJi
-0m6QAQDkyHsKFGP8Nx5njMmo5n45oTbiIFTNGOPzdthdFHkyAgEA7YBexbTeR4Lj
-zdvAD8t9m+g3o/zvlGrCYsXaDDCNkAc=
-=2Ek4
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZaqf1AAKCRB4tDGHoIJi
+0h34AP9TixDJ6YFjXe+5v6wxO9hgfYPUCpxkmHGGn4w/+waszQD/Wzjy8sz++98r
+s+IkN7/DXavVamW4wy7pnsZC9nJwFgI=
+=XE+5
 -----END PGP SIGNATURE-----
 
---IwcdJ08lEQ0ScTZl--
+--qUpbBLVWlyJG4s+w--
