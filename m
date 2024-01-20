@@ -1,100 +1,76 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41EE3222;
-	Sat, 20 Jan 2024 10:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4418CD262;
+	Sat, 20 Jan 2024 10:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705744956; cv=none; b=pPB9MsQkTCg0HA4wnqDAXkGllLHv8/7Dm+U1wKGoVkyTiUZcQyYePF9QbeYiER0CwWi20EcZUaAVqtX4VAINoUAuQWoJ4jfIcrzqIh9B/h+2C0G9LsYVIVZ6mj3ir+lyttBKJrP9kERI/MduZ6jh7w8qzx/roTrULfhm5gNoSTs=
+	t=1705745244; cv=none; b=KhOLz/a/2sqxorC79PX2Bp4svOn1FV86lyXXrMGw+8iytc0HN0KsbmOJNVZkXBE701o0MKJMBf1nlR0I2HygybiOZi7djcGvxmCW3XMCdv/7b4GCWs3f1Z8oDMJv1ym5zEoHgmFWOmSZBnBsHRSuK51K8xOEIs2vnOu0cChI2Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705744956; c=relaxed/simple;
-	bh=1mq/TzDDXHVp5Q39X59Xe+zvOA2DB6bcQQvkeWJI9TU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AfYSc18oqyXyY19othwQULuqlW3WUq8rRHhMCn4+7/yDW53haPJKU2kT4VZ28xtSG6aS6WPUeRBaBCiLOq5uJg3V6D/Ns6sZTfSqcdo3UfeQVveC3hk//KrbiCw/tbaF/RecMMikHReOcVGvDCwNT8hwlG/1IWEpyIoYR2gTHe0=
+	s=arc-20240116; t=1705745244; c=relaxed/simple;
+	bh=RHllaD+Z3afhGqk7hdVhYxhjR8H3nKx82VdjEZg6NJE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JDFo7FVdd4zMjBd7apa2UzDgy8fM688LBTazJbIOtjDt0k+7RAxNZi3tyzeJ1ZKeZiBGGQwBPyRt6PAja0C9PoUheWaYPANAMxPU8GqswNPl8KfMHHxM3P8yEVzQnF+E3/pCkVOPW9d24xtbQSXgbHNwW1ZDd+wsVRtfgXETxS4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8264DA7;
-	Sat, 20 Jan 2024 02:03:18 -0800 (PST)
-Received: from pluto (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 35D873F73F;
-	Sat, 20 Jan 2024 02:02:31 -0800 (PST)
-Date: Sat, 20 Jan 2024 10:02:28 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24B96DA7;
+	Sat, 20 Jan 2024 02:08:07 -0800 (PST)
+Received: from pluto.fritz.box (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F7003F73F;
+	Sat, 20 Jan 2024 02:07:19 -0800 (PST)
 From: Cristian Marussi <cristian.marussi@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: sudeep.holla@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V3 2/2] clk: scmi: support state_ctrl_forbidden
-Message-ID: <ZauaNDGTs8LFvnwT@pluto>
-References: <20240115060203.813168-1-peng.fan@oss.nxp.com>
- <20240115060203.813168-2-peng.fan@oss.nxp.com>
- <ZaltgIGyx1al-F9x@pluto>
- <c9385ba8-b225-4c8d-b09f-971d9e6008ab@oss.nxp.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: sudeep.holla@arm.com,
+	peng.fan@oss.nxp.com,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: Check ops are available in clk_gate_restore_context
+Date: Sat, 20 Jan 2024 10:07:11 +0000
+Message-ID: <20240120100711.2832897-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c9385ba8-b225-4c8d-b09f-971d9e6008ab@oss.nxp.com>
 
-On Sat, Jan 20, 2024 at 10:44:06AM +0800, Peng Fan wrote:
-> 
-> 
-> 在 1/19/2024 2:27 AM, Cristian Marussi 写道:
-> > On Mon, Jan 15, 2024 at 02:02:03PM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > > 
-> > > Some clocks may exported to linux, while those clocks are not allowed
-> > > to configure by Linux. For example:
-> > > 
-> > > SYS_CLK1-----
-> > >               \
-> > > 	     --MUX--->MMC1_CLK
-> > >               /
-> > > SYS_CLK2-----
-> > > 
-> > > MMC1 needs set parent, so SYS_CLK1 and SYS_CLK2 are exported to Linux,
-> > > then the clk propagation will touch SYS_CLK1 or SYS_CLK2.
-> > > So we need bypass the failure for SYS_CLK1 or SYS_CLK2 when enable
-> > > the clock of MMC1.
-> > > 
-> > 
-> > Hi,
-> > 
-> > so this looks good to me and apparently (as noted) the CLK framework is OK
-> > with a driver swallowing the -EACCESS when a clock is immutable, BUT at the
-> > end of the day do we even need to try this SCMI call and hide the failure in
-> > case of immutable clocks ?
-> > 
-> > I mean, what if we just dont provide any callback for enable/disable...I can
-> > see plenty of drivers not providing those callbacks ?
-> > Maybe this is probably more of a question for Stephen...
-> > 
-> > IOW what about doing something like below...does it make any difference
-> > in your setup ? works fine in my emulated env
-> 
-> It should be fine to use your changes. Do you expect me to use your patch or
-> make it as a follow up patch?
-> 
+Add a check in clk_gate_restore_context() to assure that the clock enable
+and disable ops are available before calling them.
 
-It was just a suggestion, if you think is fine just include it in your
-series, I dont mind.
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: linux-clk@vger.kernel.org
+Fixes: 9be766274db4 ("clk: Clean up suspend/resume coding style")
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+---
+Spotted this by code inspection.
+I may be missing something, though, given my limited familiarity with CLK.
+---
+ drivers/clk/clk.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> > 
-> > (Note that last snippet in clk_gate_restore_context() is probably a fix
-> >   that needs to be added anyway by looking at the code in clk.c)
-> 
-> This API seems only used by TI gate driver, this change should be in a
-> standalone change go through clk tree. So I would your changes
-> as a standalone optimization follow up patch, while not included
-> in my patchset.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f0940af485a5..79b90a8099d7 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1200,9 +1200,11 @@ void clk_gate_restore_context(struct clk_hw *hw)
+ 	struct clk_core *core = hw->core;
+ 
+ 	if (core->enable_count)
+-		core->ops->enable(hw);
++		if (core->ops->enable)
++			core->ops->enable(hw);
+ 	else
+-		core->ops->disable(hw);
++		if (core->ops->disable)
++			core->ops->disable(hw);
+ }
+ EXPORT_SYMBOL_GPL(clk_gate_restore_context);
+ 
+-- 
+2.43.0
 
-Yes, indeed I have made a small patch of it to post it separately..and I
-forgot :D... sending it now.
-
-Thanks,
-Cristian
