@@ -1,216 +1,117 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A768DF69
-	for <linux-clk@vger.kernel.org>; Sat, 20 Jan 2024 15:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8CD364A6;
+	Sun, 21 Jan 2024 05:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705762995; cv=none; b=tMcIuEmLA3Ao8nAn5H3V5IPhEwTtxRLSaUgLcVkaOKEauqVftqszP6xaI+sY3EW185Sez2thHnOBRMvIMcDgGrJRV0iXKnTF5KayX0NhbSFGtsCyknVjfVrYeULcdTaf/DNbtQqzIxyv1Iz5pmRMvXNQ0qZUiHCPMogbsJMtMjk=
+	t=1705814325; cv=none; b=TLo1P0S5KUlyGN8fHo8x6M0sOUGlARiuv5/qO/+Ciq2orAAMLp6KoceuciI7rMAz6fvkMfOigUdJ3q0VrTtadhibEmtVh2YNAwhl7d6DIrxrNUTK8zY7Av9t6egCZwVwXk4Gih5xDAx+l/EvNV87joiETabOPM9FW2YwBRvANVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705762995; c=relaxed/simple;
-	bh=9Nc4TyqG+r5zlvwlDzv/990T6nw9lYMWHgz1H2lzc8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AzptGkg/7xkdabaF4KBGxqiDrSANMt4m2+pymVr6souGWpDBL44IIrwIlgAWvmWPGpslCPd7glCprak9RJTf+ZSxpyuH8qMfb3MgjrZOIRxQR9CAtHWNZKK2TAZ1UCSwuZFdgYhk5FXj4mXVh8Y3NrDTj9+CUGksu4V8V9Djgeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k1oQCuF7; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1705814325; c=relaxed/simple;
+	bh=UFTWkqX6bnktQloDzscK9PYzEVaNTQz67zW0Sog3Ui8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U2w9v5ItA37wTLutiFKk/GoQdZ+tpgPa8Vcb+2XnvPhk+8eYnabJn2fZMnthfVFlT9AQGdKaDgrP9y+DXJ5TeHhIfeqCeGJBsylQTYzGr96XkImShrfGzYDrwPPJAVahK/NhuH+0gfTeOKsde1CXvPr61wNCZkINgwSOdbsQwsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=znEoVl01; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k1oQCuF7"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-5cf2d73a183so2039975a12.1
-        for <linux-clk@vger.kernel.org>; Sat, 20 Jan 2024 07:03:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705762993; x=1706367793; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aqeZN7shB1TWVe9IvpTxqZEMMVop3gcQDbpsLD1ei1I=;
-        b=k1oQCuF7VUbfuyx/cjq3lXh/rPXIKV2bYbv8s004C/K5uVQeIK5hnOSpNqq3MBjzyz
-         L/ort3QKMBKNVZzmCJctqOyqwJuP5j0tGJvJaVi5l7IPrS/gDYc5o5/4ETSQbuwwKN/x
-         a99rcM02DhOYX/Cf0tJ845v8j1nxMyUlJmhn008oMJVvlRbcEhrHiDeq8afn54PjfLfk
-         MSOt+J4yakeBavo9yUPGIeGU+TxjsOJKUVdA7dAb+0rw1oyUp3R05jZBmNtvznnJpjpU
-         q/LMhF7eNqaPJASUVRUFT16BYxPz+F7JzE6WV1OWnV20vQcNgdnljDiIfzonK21W2YuS
-         waXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705762993; x=1706367793;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aqeZN7shB1TWVe9IvpTxqZEMMVop3gcQDbpsLD1ei1I=;
-        b=nJaZ8v70APC85kWWmbcjcRCxAInHDwhNj6fcWQSiM1NtumkYAQK8sPixJEql1LAMCV
-         mLWPZkKoC79DFKbtdkPvC6DMddcAYuseebyfpcBJBq9L9z1E6GCKnb8c10nAIHDhAsHA
-         1bHJg7xxovRuuWMv9jqxGsGl5EBuZTFpQMnVjcaBAP0OWaWWcnPnQFP2agwuC1Ecv1qx
-         U0mN5mokqerCVFyfqaO/uExVGUi7LbrpqPQQG7rJNulm31Igo9dI9NrC02zS5gJnWs+n
-         9sbO6EYnI7iDnProa9HwTuKsZigxVgBfW2us8knHZ2QdSVGsDJlpXdNZWPzvfIRPtmhm
-         zHyA==
-X-Gm-Message-State: AOJu0YzKuZTDniSeMCK5lQ23GF/DHwHUXlCSuXSoSuLDBfIN3GbeVKKi
-	aGMERdrmQAP/IYqrqtipTPm0f1PLsvEMt9AI9XOz3oc0xwX8fiPfBGK4o/R6/gxOt6kpvcTZpyA
-	=
-X-Google-Smtp-Source: AGHT+IF9elycQzObJiXmLQq+7kgsfP/837fqR12nEVd9AChjMfbf9gdfFJ76v0f/vydjEopzP9fHtQ==
-X-Received: by 2002:a17:90a:c001:b0:28e:8e78:8ba6 with SMTP id p1-20020a17090ac00100b0028e8e788ba6mr1979052pjt.43.1705762992906;
-        Sat, 20 Jan 2024 07:03:12 -0800 (PST)
-Received: from thinkpad ([117.202.189.10])
-        by smtp.gmail.com with ESMTPSA id sl7-20020a17090b2e0700b0028b6759d8c1sm6219778pjb.29.2024.01.20.07.03.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Jan 2024 07:03:12 -0800 (PST)
-Date: Sat, 20 Jan 2024 20:33:03 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, jingoohan1@gmail.com, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-	linux@armlinux.org.uk, m.szyprowski@samsung.com
-Subject: Re: [PATCH v3 1/2] clk: Provide managed helper to get and enable
- bulk clocks
-Message-ID: <20240120150303.GB5405@thinkpad>
-References: <20240110110115.56270-1-shradha.t@samsung.com>
- <CGME20240110110156epcas5p36bac4093be0fa6eaa501d7eaed4d43d3@epcas5p3.samsung.com>
- <20240110110115.56270-2-shradha.t@samsung.com>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="znEoVl01"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=EpNABUkQ/ZpQnYGH4JyM/iICjAozI40BQcRt+WngSNU=; b=znEoVl0105CY16oSOWr1I1fFXh
+	TQkHYZeFXRMclH0WBPFsfm2i6Msf+8Q1hUdj6ngm7FWKGuGXvPKd1Ks7XmPPfLleU0nUHj3zv6OSm
+	E8Slr9DuSaXFDMk9VW2xAehPlo7hoKcfAFDqPSmQ+TbYlyZjG1g3FT/StW257jw4ds2lfiC1M2B2p
+	3CgweM7Y7HTWf4YAIbWZ7raZ2lyv5Q9ZfT0P+N6iL1S4LGLnEz9pfnp3D2X1BwYbh/GSR+Wjpp3pk
+	MIgNf7ZxEB3BJW6ovyZ8AAllwWlCdVM4OhoKH7rLpdgn1TejzDECrj7jKWxyeKZUQDcrKD4mYOWdH
+	K3f0mu0g==;
+Received: from [50.53.50.0] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1rRQEA-008uL5-2x;
+	Sun, 21 Jan 2024 05:18:38 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev
+Subject: [PATCH] clk: sunxi: a20-gmac: fix kernel-doc warnings
+Date: Sat, 20 Jan 2024 21:18:35 -0800
+Message-ID: <20240121051837.17564-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240110110115.56270-2-shradha.t@samsung.com>
 
-On Wed, Jan 10, 2024 at 04:31:14PM +0530, Shradha Todi wrote:
-> Provide a managed devm_clk_bulk* wrapper to get and enable all
-> bulk clocks in order to simplify drivers that keeps all clocks
-> enabled for the time of driver operation.
-> 
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> ---
->  drivers/clk/clk-devres.c | 41 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/clk.h      | 25 ++++++++++++++++++++++++
->  2 files changed, 66 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index 4fb4fd4b06bd..05b0ff4bc1d4 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -102,6 +102,7 @@ EXPORT_SYMBOL_GPL(devm_clk_get_optional_enabled);
->  struct clk_bulk_devres {
->  	struct clk_bulk_data *clks;
->  	int num_clks;
-> +	void (*exit)(int num_clks, const struct clk_bulk_data *clks);
->  };
->  
->  static void devm_clk_bulk_release(struct device *dev, void *res)
-> @@ -182,6 +183,46 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
->  }
->  EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
->  
-> +static void devm_clk_bulk_release_all_enabled(struct device *dev, void *res)
-> +{
-> +	struct clk_bulk_devres *devres = res;
-> +
-> +	if (devres->exit)
-> +		devres->exit(devres->num_clks, devres->clks);
-> +
-> +	clk_bulk_put_all(devres->num_clks, devres->clks);
-> +}
-> +
-> +int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
-> +				  struct clk_bulk_data **clks, int *num_clks)
+Move the function kernel-doc comment to be immediately before the
+function implementation, then add a function parameter description
+to prevent kernel-doc warnings:
 
-What is the user supposed to do with "num_clks" when you are already handling
-the enable part?
+clk-a20-gmac.c:43: warning: expecting prototype for sun7i_a20_gmac_clk_setup(). Prototype was for SUN7I_A20_GMAC_GPIT() instead
+clk-a20-gmac.c:53: warning: Function parameter or struct member 'node' not described in 'sun7i_a20_gmac_clk_setup'
 
-> +{
-> +	struct clk_bulk_devres *devres;
-> +	int ret;
-> +
-> +	devres = devres_alloc(devm_clk_bulk_release_all_enabled,
-> +			      sizeof(*devres), GFP_KERNEL);
-> +	if (!devres)
-> +		return -ENOMEM;
-> +
-> +	ret = clk_bulk_get_all(dev, &devres->clks);
-> +	if (ret > 0) {
-> +		*clks = devres->clks;
-> +		devres->num_clks = ret;
-> +		*num_clks = ret;
-> +		devres_add(dev, devres);
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Emilio López <emilio@elopez.com.ar>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Samuel Holland <samuel@sholland.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-sunxi@lists.linux.dev
+---
+ drivers/clk/sunxi/clk-a20-gmac.c |   21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-If you move the statements inside this condition to the end of this function,
-you could get rid of the exit() callback and directly use
-clk_bulk_disable_unprepare() in devm_clk_bulk_release_all_enabled().
-
-> +	} else {
-> +		devres_free(devres);
-> +		return ret;
-> +	}
-> +
-> +	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
-> +	if (!ret)
-> +		devres->exit = clk_bulk_disable_unprepare;
-
-Here you can just do clk_bulk_put_all() and devres_free() directly because you
-know that the driver won't proceed after this error.
-
-- Mani
-
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enabled);
-> +
->  static int devm_clk_match(struct device *dev, void *res, void *data)
->  {
->  	struct clk **c = res;
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 1ef013324237..bf3e9bee5754 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -438,6 +438,24 @@ int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
->  int __must_check devm_clk_bulk_get_all(struct device *dev,
->  				       struct clk_bulk_data **clks);
->  
-> +/**
-> + * devm_clk_bulk_get_all_enabled - managed get multiple clk consumers and
-> + *					enable all clk
-> + * @dev: device for clock "consumer"
-> + * @clks: pointer to the clk_bulk_data table of consumer
-> + * @num_clks: out parameter to store the number of clk_bulk_data
-> + *
-> + * Returns success (0) or negative errno.
-> + *
-> + * This helper function allows drivers to get several clk
-> + * consumers and enable all of them in one operation with management.
-> + * The clks will automatically be disabled and freed when the device
-> + * is unbound.
-> + */
-> +
-> +int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
-> +				struct clk_bulk_data **clks, int *num_clks);
-> +
->  /**
->   * devm_clk_get - lookup and obtain a managed reference to a clock producer.
->   * @dev: device for clock "consumer"
-> @@ -960,6 +978,13 @@ static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
->  	return 0;
->  }
->  
-> +static inline int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
-> +				struct clk_bulk_data **clks, int *num_clks)
-> +{
-> +
-> +	return 0;
-> +}
-> +
->  static inline struct clk *devm_get_clk_from_child(struct device *dev,
->  				struct device_node *np, const char *con_id)
->  {
-> -- 
-> 2.17.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+diff -- a/drivers/clk/sunxi/clk-a20-gmac.c b/drivers/clk/sunxi/clk-a20-gmac.c
+--- a/drivers/clk/sunxi/clk-a20-gmac.c
++++ b/drivers/clk/sunxi/clk-a20-gmac.c
+@@ -15,8 +15,19 @@
+ 
+ static DEFINE_SPINLOCK(gmac_lock);
+ 
++
++#define SUN7I_A20_GMAC_GPIT	2
++#define SUN7I_A20_GMAC_MASK	0x3
++#define SUN7I_A20_GMAC_PARENTS	2
++
++static u32 sun7i_a20_gmac_mux_table[SUN7I_A20_GMAC_PARENTS] = {
++	0x00, /* Select mii_phy_tx_clk */
++	0x02, /* Select gmac_int_tx_clk */
++};
++
+ /**
+  * sun7i_a20_gmac_clk_setup - Setup function for A20/A31 GMAC clock module
++ * @node: &struct device_node for the clock
+  *
+  * This clock looks something like this
+  *                               ________________________
+@@ -39,16 +50,6 @@ static DEFINE_SPINLOCK(gmac_lock);
+  * enable/disable this clock to configure the required state. The clock
+  * driver then responds by auto-reparenting the clock.
+  */
+-
+-#define SUN7I_A20_GMAC_GPIT	2
+-#define SUN7I_A20_GMAC_MASK	0x3
+-#define SUN7I_A20_GMAC_PARENTS	2
+-
+-static u32 sun7i_a20_gmac_mux_table[SUN7I_A20_GMAC_PARENTS] = {
+-	0x00, /* Select mii_phy_tx_clk */
+-	0x02, /* Select gmac_int_tx_clk */
+-};
+-
+ static void __init sun7i_a20_gmac_clk_setup(struct device_node *node)
+ {
+ 	struct clk *clk;
