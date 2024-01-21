@@ -1,176 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A1F36AFA;
-	Sun, 21 Jan 2024 13:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528383C26;
+	Sun, 21 Jan 2024 14:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705843983; cv=none; b=bBV1S1NIAyq7MCWSD66n7V1+ZDdmzIYOQ5SoSHE5w7U5NpztrVlskFEVeDfPensv9EO3aXWDxriAFWfgHo/N0PX5vjSU8Ghv0a63qAO10JrdBAt7wUAhwzIDGEdKrYYrL/EAfe3QnV6MDivE/4sg1MtGwmkl8sm+Q8mY6bJ+O7Y=
+	t=1705847424; cv=none; b=kYFUMDa9aFQre6xS9uJvN5CU7fQ0gfXFyl/Oxnj82rNjeKAHgcFL4E3/XtRkH7GDt+cRvykx4e3D67tHRm0/F9k8Njsw1p9uiAM28d7pJxI+g1fM6TKKBqAndAbq8ktq5BYe4s1556EZGRSS4isLb2BB4QUCDblKaWN0U5AZQCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705843983; c=relaxed/simple;
-	bh=WO1X2k3Tcsgw0LmomtyLLfnR3lITak/6PftppiXMzfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BL7arqdsKN4ltM4ddA0WHYFi7WqV6rmvVPWc1xb9IcI0FgGchxoHn8KmvD7gVZ7csa4QrmuySQ3V9nTukwsdX63WGuc/itjqfU4ek73z7TE7Nm8zfaAqIBfYVPo1LibDRF+GffM8gwRWbLnzMgcwQceGGSAtgb4q4CgIeGgSrLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEiJlW4C; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1705847424; c=relaxed/simple;
+	bh=ROOPfL0J6ngi897r/UdZbHSKZB2DdN3Hw5gHQ/zsnqE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K57wmqb5iGA8jstEQiMEH7zNXeS5hNpTqOby9/+1b2CzmaGmTH9joUYIXQ5WMpGUEPgVksTBBvGb6/0E8wjg3Qqp5ykgszF8cPVI8Zb4fD+ieCMF2VeQfCpSBi9iXDGRcMforHr+xMBIq7IGsyecv0SBz1clPHEQ56BEDdkwSKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=erick.archer@gmx.com header.b=NTxkNRpr; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEiJlW4C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A2CC433F1;
-	Sun, 21 Jan 2024 13:32:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705843982;
-	bh=WO1X2k3Tcsgw0LmomtyLLfnR3lITak/6PftppiXMzfE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lEiJlW4Ca6fCl+Hnb5vYRfKXJdy+BoFzAQG23LXdeWDtfxunfmF0DEIjpCgGOrZ71
-	 VyhUcjAcrnGmrZQj6KoEf2Tc4hrhna0AB2n8+nwqmRJRb85CNOzuOuGGp+X5F9O6Z7
-	 7LtMmjELbNZcLMK06mu3+Z3mTXa9+H6fpBm7q/BPfVl47C1M65D+qirtmyAW3XiYn4
-	 qjHaCGf+VcYGpKz2+eEPCKfTNOIPQrGiMC2t1N/seOgzfViYZfFOzeC5MOYAkqGE8I
-	 KVIRMgHsny5TGcndhvECpwmAWQwwUs937cmzJEiI9emplhCXwmiOaev85HLgk2/SAP
-	 80fltvf5UuLUQ==
-Date: Sun, 21 Jan 2024 13:32:56 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
-Cc: Chester Lin <chester62515@gmail.com>, Andreas Farber <afaerber@suse.de>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, NXP S32 Linux Team <s32@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
-	Ciprian Costea <ciprianmarian.costea@nxp.com>
-Subject: Re: [PATCH 1/3] dt-bindings: clock: s32g: add uSDHC clock IDs
-Message-ID: <20240121-statutory-endurance-6d03d7e734c9@spud>
-References: <20240119130231.2854146-1-ghennadi.procopciuc@oss.nxp.com>
- <20240119130231.2854146-2-ghennadi.procopciuc@oss.nxp.com>
- <20240119-magnetic-racing-0adf8e5fbd4a@spud>
- <20240119-cattle-antarctic-432fa8e1c0ef@spud>
- <75a16ac3-39eb-4874-9100-d605b2cfadfc@oss.nxp.com>
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=erick.archer@gmx.com header.b="NTxkNRpr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com;
+	s=s31663417; t=1705847402; x=1706452202; i=erick.archer@gmx.com;
+	bh=ROOPfL0J6ngi897r/UdZbHSKZB2DdN3Hw5gHQ/zsnqE=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+	b=NTxkNRprs2SBv/OSvlLRcN69DfsYjo/5fl2lc1vznHqj5JbsAqtQI6LeYBEdaEjo
+	 b3s0bjvWLlXV2LY0qHXdY2xCHYOrSpEpj0VTqt36w7OWua9yyNBfVhLkpNTMg6VIC
+	 bWNaYzSoeHO5QeMf19NgHU8W5ttlPTkylPcNh9Qc6zbkdOV70SrBFOQCoECNzKqMT
+	 MP1dkSXLZ0ab7GYWe9xqSlFYXsThbWldkl5FfETm7sw35wCkp/QZdWup/IDr3lmCn
+	 VOLU/+Fub9+6oNZPEkVLT8lCNcSsnDg8T2kGfvKyla7qny/iLmYP1E5dSVdLZ6wM/
+	 Mt0E28iB6Q1hs1uA3Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from localhost.localdomain ([79.157.194.183]) by mail.gmx.net
+ (mrgmx004 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 1MPGW7-1rk4E03T8H-00PcNY; Sun, 21 Jan 2024 15:30:02 +0100
+From: Erick Archer <erick.archer@gmx.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Nick Alcock <nick.alcock@oracle.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Erick Archer <erick.archer@gmx.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] clk: hisilicon: Use devm_kcalloc() instead of devm_kzalloc()
+Date: Sun, 21 Jan 2024 15:29:46 +0100
+Message-Id: <20240121142946.2796-1-erick.archer@gmx.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="j8ddR5K2BQkdwnI0"
-Content-Disposition: inline
-In-Reply-To: <75a16ac3-39eb-4874-9100-d605b2cfadfc@oss.nxp.com>
-
-
---j8ddR5K2BQkdwnI0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mkG9QVQaqmmilRWlxaI8ilR/37NfHtuvfZE2ItkuEK0LrE0cxTc
+ fe2/xScnOEf62uIBHC1DDmUsK6fnhtUjCZMRB5g0E55awQFef6PfB4QHbU/zPqQfBSOXpHK
+ nho0C1EXxCkWac3hDUKh8KgD0+iaNEa3V6egzZLKIlOaWpYYITln9MPi4fHOswCCgKDtZam
+ 6+DVISAH1W5JatXHyY5qQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+sTATPOEqmI=;uvPCLLHlmcGb+V5VSuymptM8i7/
+ kYERBUseMuCyPa/4QDzhT8zZAw1IIxtBWfnlf9kErYqEhOi8qzoPJm3S5VFqVZkS5ROUikq73
+ +xiqeYQLzQQigXgmRVHzk8iAaie7Ov5fKZjQWa17sI/p+SKyt5uLPGnszBBZNdcKo1iRHiRX7
+ j2pqrdNlvxIU2MfkkTBwwNYbkb7gjaGPw4rqYUd62TGZfqPfQdJU3S27MuzbK2QtW2qqk2gsF
+ flYGfG2P/RfnJQJWbXTS4lVX1IGQ2Z2IUcbkdDUhwKUGgV6HR8V0QbudpFmUzDHY+kG9GN484
+ usEZh/i+zvloXy/KaCelyX4xTg1lXXcsb4N8cwnLamvHUW0XQvStIwZhvtnnaBuGqonjxvcze
+ YkvlmXkKkHLwVYX2yyQdRXCLn/+Z9bvqXGDWXlYfqa4DHOJBV8DBzWiScbppnCDiQqHXLkg3F
+ bKeVjDmisoNESxmIO3Z55maiCY/C9JdhV2rJFdv/Z/33Wzqoeyf5sFxikCqApc1Wp/aujjLns
+ 5FGYMMKzVp7IHo0mCcs3wTHYJBLyry8iHg018a450PJmQ+T8rd/VbnEf9ODIneGY26eSfyYEk
+ hssiFn05anjoM0NdmWwfdEgXgB41dymEjj4rpT98xltvR13uMMoaGBB4+tqDZ74v69zV+OhU3
+ vvMott3tGS4AqLLFMBIPunYVV7K0kYaRVQAjGmPMPiFcj8t/GLiL4+PYmejHKXQZyzRbLA5Rk
+ m8aKDawhVbMV00umLD9WRC8VfDr8jIr84YRAMytEy1YMiUPs0/8lL07iLjpOUXxpa0vAdgo8j
+ UUAtzAj2WAj9srWtidyYUZB+/BwneICMhEjDMgr+UDWK9TILIkHdV2sW0Z629lhoz2qAGP3sZ
+ zUd654IjDMWB9JN48Cj6ECFE4v1wCvQNIBbd4b8hxYIAwqKkBiF6mKMzwYt8i2sVMb73EbI8v
+ 7AAXy7/SgclrU4szShvSCOZCWhw=
 
-On Fri, Jan 19, 2024 at 11:25:57PM +0200, Ghennadi Procopciuc wrote:
-> On 1/19/24 18:14, Conor Dooley wrote:
-> > On Fri, Jan 19, 2024 at 04:11:37PM +0000, Conor Dooley wrote:
-> >> On Fri, Jan 19, 2024 at 03:02:28PM +0200, Ghennadi Procopciuc (OSS) wr=
-ote:
-> >>> From: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> >>>
-> >>> Add the SCMI clock IDs for the uSDHC controller present on
-> >>> S32G SoCs.
-> >>>
-> >>> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
-> >>> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> >>> ---
-> >>>  include/dt-bindings/clock/s32g-scmi-clock.h | 14 ++++++++++++++
-> >>>  1 file changed, 14 insertions(+)
-> >>>  create mode 100644 include/dt-bindings/clock/s32g-scmi-clock.h
-> >>>
-> >>> diff --git a/include/dt-bindings/clock/s32g-scmi-clock.h b/include/dt=
--bindings/clock/s32g-scmi-clock.h
-> >>> new file mode 100644
-> >>> index 000000000000..739f98a924c3
-> >>> --- /dev/null
-> >>> +++ b/include/dt-bindings/clock/s32g-scmi-clock.h
-> >>> @@ -0,0 +1,14 @@
-> >>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
-> >>> +/*
-> >>> + * Copyright 2020-2024 NXP
-> >>> + */
-> >>> +#ifndef _DT_BINDINGS_SCMI_CLK_S32G_H
-> >>> +#define _DT_BINDINGS_SCMI_CLK_S32G_H
-> >>> +
-> >>> +/* uSDHC */
-> >>> +#define S32G_SCMI_CLK_USDHC_AHB		31
-> >>> +#define S32G_SCMI_CLK_USDHC_MODULE	32
-> >>> +#define S32G_SCMI_CLK_USDHC_CORE	33
-> >>> +#define S32G_SCMI_CLK_USDHC_MOD32K	34
-> >>
-> >> Why do these numbers not start at 0?
-> >=20
-> > Ah, because these are the SCMI IDs directly. If these are numbers that
-> > are in the TRM, just use the numbers directly - there's no need to
-> > create bindings for that.
-> >=20
->=20
-> Hi Conor,
->=20
-> I appreciate you taking the time to review the proposed changes. I
-> wanted to clarify that the IDs mentioned in the header are SCMI IDs
-> exported by the TF-A and are utilized by the second patch of this
-> series. These IDs are for the uSDHC controller to control its clocks. As
-> other SoCs use this model, I have included all the necessary IDs in a
-> dedicated header file:
-> - rk3588s     (arch/arm64/boot/dts/rockchip/rk3588s.dtsi:97 [0])
-> - stm32mp157c (arch/arm/boot/dts/st/stm32mp157c-ed1-scmi.dts:73 [1])
-> - stm32mp131  (arch/arm/boot/dts/st/stm32mp131.dtsi:1372 [2])
->=20
-> Should I remove the header and use raw numbers in the uSDHC node?
+As noted in the "Deprecated Interfaces, Language Features, Attributes,
+and Conventions" documentation [1], size calculations (especially
+multiplication) should not be performed in memory allocator (or similar)
+function arguments due to the risk of them overflowing. This could lead
+to values wrapping around and a smaller allocation being made than the
+caller was expecting. Using those allocations could lead to linear
+overflows of heap memory and other misbehaviors.
 
-IMO, yes. There's no abstraction/binding being created here if they're
-the SCMI IDs.
+So, use the purpose specific devm_kcalloc() function instead of the
+argument size * count in the devm_kzalloc() function.
 
-Thanks,
-conor.
+Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-co=
+ded-arithmetic-in-allocator-arguments [1]
+Link: https://github.com/KSPP/linux/issues/162
+Signed-off-by: Erick Archer <erick.archer@gmx.com>
+=2D--
+ drivers/clk/hisilicon/clk-hi3559a.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> For
-> example:
-> > +		usdhc0: mmc@402f0000 {
-> > +			compatible =3D "nxp,s32g2-usdhc";
-> > +			reg =3D <0x402f0000 0x1000>;
-> > +			interrupts =3D <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-> > +			clocks =3D <&clks 32>,
-> > +				 <&clks 31>,
-> > +				 <&clks 33>;
-> > +			clock-names =3D "ipg", "ahb", "per";
-> > +			bus-width =3D <8>;
-> > +			status =3D "disabled";
-> > +		};
->=20
-> [0]
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/a=
-rch/arm64/boot/dts/rockchip/rk3588s.dtsi#n97
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/a=
-rch/arm/boot/dts/st/stm32mp157c-ed1-scmi.dts#n73
-> [2]
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/a=
-rch/arm/boot/dts/st/stm32mp131.dtsi#n1372
->=20
-> --=20
-> Regards,
-> Ghennadi
->=20
+diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/c=
+lk-hi3559a.c
+index ff4ca0edce06..da476f940326 100644
+=2D-- a/drivers/clk/hisilicon/clk-hi3559a.c
++++ b/drivers/clk/hisilicon/clk-hi3559a.c
+@@ -461,8 +461,7 @@ static void hisi_clk_register_pll(struct hi3559av100_p=
+ll_clock *clks,
+ 	struct clk_init_data init;
+ 	int i;
 
---j8ddR5K2BQkdwnI0
-Content-Type: application/pgp-signature; name="signature.asc"
+-	p_clk =3D devm_kzalloc(dev, sizeof(*p_clk) * nums, GFP_KERNEL);
+-
++	p_clk =3D devm_kcalloc(dev, nums, sizeof(*p_clk), GFP_KERNEL);
+ 	if (!p_clk)
+ 		return;
 
------BEGIN PGP SIGNATURE-----
+=2D-
+2.25.1
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZa0dCAAKCRB4tDGHoIJi
-0tbDAP9C3Ddt9YZ9DP7wBYaBEycx/ESvtGWww99gkrH/japApgD+JACED+ImvaAK
-GI58nfW2LBnYdiQEN0HZ6OvxWPwZtw0=
-=dtqZ
------END PGP SIGNATURE-----
-
---j8ddR5K2BQkdwnI0--
