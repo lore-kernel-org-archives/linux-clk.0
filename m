@@ -1,147 +1,168 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52AE63400;
-	Mon, 22 Jan 2024 17:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE51665BA3;
+	Mon, 22 Jan 2024 17:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705944386; cv=none; b=QrPvFqWxwjUy6GqPKP7P3IwV1eZ2R3mI05ITVaXX2VUo1wb8PvXEjZkIJSZNAU1tJ3HmIiQoLaaYYI3VOtxWKlxr9QBA1qRrfpUT8LcEQBuQQPxvRxyoKVYtcudks+06+1NpDn+GH/Q2E3FO9ma7ZQI1h99XkBSUZR6qMiD24dY=
+	t=1705944724; cv=none; b=BsEWzRktE7prQruUvozpdGpYQv4bE/bkIMam0ggB8Dw74vC2Qu99c5NtyItubygFhA3DvRRarl4a3grTadGyAzEpIK6F8rEHyNLF8/nU+2loBH6cSvYVl0VfSjh9OeblTQ5g1V+hMxjuDHlbwwdY1zSlRMuG8htesONru8upQRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705944386; c=relaxed/simple;
-	bh=26A8tfsGChMmLH71cY/nGmPPy+2IwXxvuF1dkUp/XGA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IhdmtCZFeN3cLs92nMPopa5UWkKo92O2TZxFIgq9KNhw2BoAZwKhL+Elo+ccZsUbQLJhSpCNdlcI9UT1tARDUQS2UvP1iVk08CbgLgx5Q5S4VsLaxTQRzPJ4OspiuLaDlp3gT6t5UC9T833J3tFJUGnd+etfJyRCEoND2bN2WQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ESggLioe; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1705944724; c=relaxed/simple;
+	bh=PLLdunxeYvO/kADnB7/MVmlZyft705svQ9X6HGOvVyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GxW+0DR6hvw1WRus3hmIH/BysVwbDLYPBzKaJRDYHnwFC9pJxV0dJV4SArVQsrX7uomfK/ijcuveL4aaJpqF1WrSTZVOpklcmHSWwyNVIyBoFVnH3T8zoLaYrsQo/Eg9uXjqEU44aWrFyP5ZLcGckS4c6VqBgsuNy4AXmfsBpIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMMM/Gej; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESggLioe"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dc22597dbfeso3702707276.3;
-        Mon, 22 Jan 2024 09:26:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMMM/Gej"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1d70a986c4aso12284725ad.2;
+        Mon, 22 Jan 2024 09:32:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705944384; x=1706549184; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TLhmakZVx7P/y+xJl0pVM/baovZzW+u/LUkkxQgBmHI=;
-        b=ESggLioeqskwcyaEN7/7f/sBd3AX0uo5969CCSQUuRUyi/lZ2MGNpBXSTewJD9BVnU
-         D1h9JkaaNEb1XqY3od4YT++g0d1x8OBMiy5wrgcT+jzy1mt8YsrykwAAUcTCMNA3jlc4
-         72+tEys4dfek1XG4JwmGvC1w9HZyl1V5seAOoy/QIFxQPqQcmrC/3wgmto6di5uZ9P++
-         qULAUlB3raNAs6THxMgGblOH30SB9kqVRDHGMRZv6jio5z5L378mN8waBgHustjZUCNT
-         vGxaSIdNQKIJQ+HjFih9rdOShgSGQ4V5/yFbZi3eaNNj5ysUt+Griru1P6SyQFPBXPVr
-         LzxQ==
+        d=gmail.com; s=20230601; t=1705944722; x=1706549522; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=7yb9FdfO6K0ON4aZtJnJ2ZytMkXhmFGKBCJMdJaPFRo=;
+        b=WMMM/GejdB7HfqD8j9tKqtZqXHQQrCTfcVj4yLNsGuBkoUuVX6wYk7BpgBi7KZVkv0
+         j3jV78UbEfWn1l8jSBUJRUT4KnaPAbNoClEuTdyAkx/IfJD0DOt/MGecziyPvSackW7H
+         kEgNdEKSV/feb9OLSj6hNVLyzrZunIcZ8ZrjQ/A8OeX2O4vh4Iidfg1YmopkW+Os6txZ
+         2SezNQy0gkJesHuVaP2BbADOO7bRst/vVlOqF8lAfBLXiCMdySvUOqKpmTLr+fi+FuTg
+         HAjZjJEvUn1XZ8pXFWmZr6cG5p8peHiNsRF5R6er8te07ru4xZWFxbmdGsg2IXsZ/dGe
+         UFKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705944384; x=1706549184;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1705944722; x=1706549522;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TLhmakZVx7P/y+xJl0pVM/baovZzW+u/LUkkxQgBmHI=;
-        b=pAZF8b/bZXrXQP5/qzqDKcVqaxuprowM8U0IpsgQ8wwqeTmk/gJMMQ2kFMqpKhyRjV
-         sOOU7QCMgUdGUZT3aJ3QHC6UQn7O0jz4IH/+rFdEGdk1MLmf/V0azNbr/a1hcscQ7Imw
-         ukXs29xTTfVIzxTEoAQLGG5wYWTbqrBI46P+87d2HZ3Sx5z4s1hLzjeVMwtEkK8r9D0V
-         aoAbclTer2zyyRUPDoIEvsN6zful8jilPzPSID7SZcYEmCR60J3hefHsguniwAAeHrZG
-         BiNKG1WrBXdcJKHcpu0O4DRPZpDd82LsxGwj4fXmPItRWIbAp10CLAyaXFHpZju4qWV8
-         rjqg==
-X-Gm-Message-State: AOJu0YybQw/1UFrWmW6tUE6bVf2a78UmDs3rr/keuxpowCaEI3c+uxKm
-	eOhyesQHuwH1kcRB9bH6Q9WTuoMgLV4wO0e3uE9ATe+N2NsAvgVI2rjHwNSBl2YpW4jXzXJpJh6
-	29gnhKCa4h9E67Phu8nxwcZ3Ed3U=
-X-Google-Smtp-Source: AGHT+IGlkwiyiVqqnE5ObJjEoOKvtdd41NNwjfTkam4z85lvQtQ1t00ake2EBs3cpPEEWIqpmhcM2ZqpuRipoAA5iI0=
-X-Received: by 2002:a25:8211:0:b0:dc2:36b1:7586 with SMTP id
- q17-20020a258211000000b00dc236b17586mr2974030ybk.9.1705944383702; Mon, 22 Jan
- 2024 09:26:23 -0800 (PST)
+        bh=7yb9FdfO6K0ON4aZtJnJ2ZytMkXhmFGKBCJMdJaPFRo=;
+        b=w+MUKwT1JE0ZU6VwfXY+zJhraYt1bmpQq6/X/2O1fC/RBfnVT7wSxJir4mra9YQzKk
+         MEGx81bPEXeNT+KbDx15g5IlRlZcRB1yCMwxJbtv6n9WxenlGAwDlJPLe3w4uj3u2XZg
+         kEXsdHqldZfRbFUmrGDqhl/MutvGK/9eQTkdZwdcuwLUknTOW8SZxIdqf6u6Iy4jL+F/
+         GLQclGD/CHly33JUZKXOtfLLvBpWyJKZhLIVkHsOorZ2zJDiuIMjb8qwQNe2CG97Ozc9
+         A90O72Gs9yi0n9caFjtdEKYWA0ZEygdeSw+uWPjlhuB4QNT1zaxFxRjjrq6jGk9q772k
+         ftCw==
+X-Gm-Message-State: AOJu0YxOyCTJA0Dth6wbdY95OXOEi5iyNiz63J7nc6wSHEZo/55Xgn5Q
+	+e5sO2dPvCJmvMcKSTrOD5UWPe2A3THgDG40aiJcAgeY6R8o4qId
+X-Google-Smtp-Source: AGHT+IHgrcFz7P82ixmtguteJa3w8fRJDNyyha+XDeGEaz1Bk3ts/ZtLlcizCJ3WP9J9jTc89X+JRg==
+X-Received: by 2002:a17:902:da91:b0:1d7:4e2:592b with SMTP id j17-20020a170902da9100b001d704e2592bmr2616895plx.103.1705944722171;
+        Mon, 22 Jan 2024 09:32:02 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id t3-20020a170902a5c300b001d755ec4bc0sm1770461plq.241.2024.01.22.09.32.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jan 2024 09:32:01 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <c857cdd4-459b-41ae-b4bb-0da45e461335@roeck-us.net>
+Date: Mon, 22 Jan 2024 09:31:59 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240108135421.684263-1-tmaimon77@gmail.com> <20240108135421.684263-7-tmaimon77@gmail.com>
- <171300da-3d49-4e1f-8969-9a454ecdd698@linaro.org> <CAP6Zq1hifi7CY=tYaDY_o82AXhbS5P9=MZBb-bqmvNCLZk3O2g@mail.gmail.com>
- <018fc173-edf3-4490-8f29-4059bd17268e@linaro.org>
-In-Reply-To: <018fc173-edf3-4490-8f29-4059bd17268e@linaro.org>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Mon, 22 Jan 2024 19:26:12 +0200
-Message-ID: <CAP6Zq1jQ9T4Q+WvwyAH4sKLK1+Mp0utcA_STgm=_Z3ywKoLoCw@mail.gmail.com>
-Subject: Re: [PATCH v22 6/8] dt-bindings: clock: npcm845: replace reg with
- syscon property
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, joel@jms.id.au, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/10] watchdog: rzg2l_wdt: Check return status of
+ pm_runtime_put()
+Content-Language: en-US
+To: Claudiu <claudiu.beznea@tuxon.dev>, wim@linux-watchdog.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de, biju.das.jz@bp.renesas.com
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240122111115.2861835-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240122111115.2861835-4-claudiu.beznea.uj@bp.renesas.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240122111115.2861835-4-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+On 1/22/24 03:11, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> pm_runtime_put() may return an error code. Check its return status.
+> 
+> Fixes: 2cbc5cd0b55f ("watchdog: Add Watchdog Timer driver for RZ/G2L")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>   drivers/watchdog/rzg2l_wdt.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
+> index 4ab9e7c5e771..0554965027cd 100644
+> --- a/drivers/watchdog/rzg2l_wdt.c
+> +++ b/drivers/watchdog/rzg2l_wdt.c
+> @@ -144,9 +144,13 @@ static int rzg2l_wdt_start(struct watchdog_device *wdev)
+>   static int rzg2l_wdt_stop(struct watchdog_device *wdev)
+>   {
+>   	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+> +	int ret;
+>   
+>   	rzg2l_wdt_reset(priv);
+> -	pm_runtime_put(wdev->parent);
+> +
+> +	ret = pm_runtime_put(wdev->parent);
+> +	if (ret < 0)
+> +		return ret;
+>   
+>   	return 0;
+>   }
 
-Thanks for your comments.
+A simple
+	return pm_runtime_put();
+might do.
 
-On Tue, 16 Jan 2024 at 22:40, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 16/01/2024 20:37, Tomer Maimon wrote:
-> > Hi Krzysztof,
-> >
-> > As explained in my [PATCH v22 4/8] dt-bindings: soc: nuvoton: add
-> > binding for clock and reset registers mail.
-> >
-> > In the NPCM8XX SoC, the reset and the clock register modules are
-> > scrambled in the same memory register region.
-> > The NPCM8XX Clock driver is still in the upstream process (for a long
-> > time) but the NPCM8XX reset driver is already upstreamed.
->
-> First of all, the drivers itself don't matter here, we talk about
-> bindings. I assume though they were going together, so that's why you
-> mentioned driver... but just to clarify: we talk here only about drivers.
->
-> If reset bindings were accepted, then why they aren't referenced?
->
-> If clock bindings were not accepted, then what is this patch and this
-> file about?
->
-> >
-> > On Wed, 10 Jan 2024 at 22:59, Krzysztof Kozlowski
-> > <krzysztof.kozlowski@linaro.org> wrote:
-> >>
-> >> On 08/01/2024 14:54, Tomer Maimon wrote:
-> >>> Replace reg with syscon property since the clock registers handle the
-> >>> reset registers as well.
-> >>>
-> >>> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> >>> ---
-> >>>  .../bindings/clock/nuvoton,npcm845-clk.yaml   | 22 +++++++++----------
-> >>>  1 file changed, 10 insertions(+), 12 deletions(-)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> >>> index 0b642bfce292..c6bf05c163b4 100644
-> >>> --- a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> >>> +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> >>> @@ -18,8 +18,9 @@ properties:
-> >>>      enum:
-> >>>        - nuvoton,npcm845-clk
-> >>>
-> >>> -  reg:
-> >>> -    maxItems: 1
-> >>> +  nuvoton,sysclk:
-> >>> +    $ref: /schemas/types.yaml#/definitions/phandle
-> >>> +    description: phandle to access clock registers.
-> >>
-> >> NAK. Not explained, not justified, not reasonable, breaking ABI.
-> > Should I explain more in the commit message or/and the nuvoton,sysclk property?
->
-> Let's try to explain here first. I really do not understand why do you
-> change this binding. Your device did not change, so your binding should
-> not. Now, if you say "but I changed drivers", then it does not matter.
-> Bindings do not change because you did something in the drivers, in
-> general. At least they should not.
-The confusion here is because the clock binding was upstreamed but the
-clock driver has not upstreamed yet.
-The clock driver will use regmap and ioremap so reg property is not
-needed, should I remove it? or leave it?
->
-> Best regards,
-> Krzysztof
->
+However, one question: Given that pm_runtime_put() returns -ENOSYS if
+CONFIG_PM is disabled, that means the driver will depend on CONFIG_PM=y.
+Assuming this is intentional, would it make sense to explicitly declare
+that dependency in Kconfig ? It doesn't seem to make any sense to build
+the driver if it won't work anyway.
 
-Best regards,
+Thanks,
+Guenter
 
-Tomer
