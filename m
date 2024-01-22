@@ -1,180 +1,159 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997F33C497
-	for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 08:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5371E39AEA;
+	Mon, 22 Jan 2024 08:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705913253; cv=none; b=CxUPVkeDHR5q+ot5gU5hMvlvymKPmDyTntRTp59l70HdTTgAL0YAp/fiqVmlsV0pb1L8Y+732cYUfH2dJoAVI6IPedVWv15bd5mhw0X44yrnGf7Q4QN3wNsv9w6nRf/W2bzx1+5s6OkF04PtLP7GemDJGuSEYpOnIRzKCxiwmPo=
+	t=1705913836; cv=none; b=jhjYMD74OgSaOPohefE/LzKntGRJEBIkBWLuafzOJUxQBZFoeficU2WpbrPBxxMfKIOy2J9Ge8TUKr/FHOVpG0SWK7w1yWs9EyNTLUw1HDxm3iqmoVmUAqN0vgYudKZLoqasnzNwRsJrZIXmXbMNvq7SOMXw1kjkVBgGm39zNn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705913253; c=relaxed/simple;
-	bh=rE3sB0GjrGPFE7JauoLtOc/n7sCA+d8vNW1jXYqT+pU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jdJc/eowBTXXUjQnLv4wmoK5JrZewyy8z9hCdTJY0h6k8xhTF2u2errvAue/EM41+iL729KkEhxD5UWHIYvLMSjKNRRKhgZmN5fBwQKsVCU6L7jPbJYWU/R7pCWjvzcXv2yK/Y8ZxFi4CkeBZXj0EiAM9bdugQO/LHOnqKhaJVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ndoA3sQ0; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1705913836; c=relaxed/simple;
+	bh=DZdxQzVzfHrKANIN7+0mhcd4gKztKEpFjrLdWtyyBjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ATCvl/X1rrguEjaTmjHjDlSIQUeC1Mm5wFMybebTlYiXdhKUGNHbJaGQwNTedtro4JpBdMdavp690Io/6zNe+hjrKVzHX8/RNyhTFsq/IOaCdhtms1vGJE7jmXNighORldCVR1X+CwgeI0eElPGypOIAfVOOhZ08vTYlkwaHDWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gHVIqYgH; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ndoA3sQ0"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-50eaa8b447bso3010338e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 00:47:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gHVIqYgH"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-40eb033c192so1424095e9.0;
+        Mon, 22 Jan 2024 00:57:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705913249; x=1706518049; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BAKH1Rh64tvqkxawFp0eVPkTup3ob02eY3wJbwsR52U=;
-        b=ndoA3sQ0wDwc9yNN4tG3/fG2QKgor+u9HddiY9sMD8KnIbmCD40QaN299ejtscI5Vh
-         8WUCFUL4Q32RVnkGM2LsGdw9KMPlm6YVhtm/Y+SgNdD5d3Oz13++3EbGZUK5tKhXlS5R
-         UGmmC/SeISfKs8/dkmNNtpqiabciOcFv/LDqlQqRXXU5WnI13RmEAacU6FCJt4EWwQMJ
-         ZgxSV4orcTX4Kt8SOWkQl76Bmo0iZZNoRNWfg/dkbUiCrrYBelysSt6aWnC2BuhP+SrQ
-         folUN/vGKkgkBdAER3uuuGxIAjMbxOZVvtUhyIYoI53tEa0y+HOVMftDNJwfMySlNTlU
-         eiJA==
+        d=gmail.com; s=20230601; t=1705913833; x=1706518633; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w1+TRGt25MpNfEoS3hXoxH/tN7Awcod+oM5fMO5D3jc=;
+        b=gHVIqYgH8dcud1vWnPY7mB3JSQXJEV/UsNO4FZAn9czkUsZ7FIKqKSsvv/0W4dnURY
+         r4uEYBRAdfqss6/9etVRmhREtKaAbpUke83UwG4//OILXht6L76cXtEU1dQBuTY65HX5
+         N4kb1SIhaKvkiLGKZ1JdBvT39gE3jNBhF7r2L7TVP7YpItJCEykGCXLZ/S0QNStVyn5j
+         zdawaGfVshEtHcqdGTTOcd4P261htXKBPBL2WKkdxgXSmELMyGvH85jJGhN78+eyhZUn
+         SxwFmKALkLazagsSkI//38RikJNdYSeeCVwB58YtplGmfdt3POsim1uuveYQBtFlsFF8
+         vr4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705913249; x=1706518049;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BAKH1Rh64tvqkxawFp0eVPkTup3ob02eY3wJbwsR52U=;
-        b=uQpZuDZqix2fsQx9BxaNEeJGB/msIDH4xHvaUYSoB4ScCHUZGZnEfk3srGdNsf7mZt
-         RTSZeYvOG/E2VqD1d4DTwkmy6IQYmZDJA3UACjSpQlfEN0Fguv9Cr4KZVCtNHbkenfKB
-         HSmdQRB5cmKmoUee632xfYULJNpKk19qS4Km4YiXOcOpo0zsrBBHLJeyhqHg5k3LDLxo
-         Igh2/betVYuZvfg68P9beR9CrxDKJfljaVItLGxoXt9xPbA/dZgBMC7iBIiQuzaAEK1j
-         aqdcmVv7UJNm2Ltt6m/fxbrwdBzPH1eK5ER1kTTYfxQqxqx3zzmbZkmLYN4SSfsTIhWj
-         zoxg==
-X-Gm-Message-State: AOJu0Yw/FVUJyQ88ikNyc8GD8krFyFwsa5O1u9goE/qxfSSUCNWJWZ0b
-	UA4cRmuYOGJ97Eb2X7nYp7D6+iTrtf0sRBsMiEWbNqaohteC74zT2hY9H4vXBTk=
-X-Google-Smtp-Source: AGHT+IHfEaQBIOFgJB+5p4vY8oMqDpTFUi/HC13a3ZpAuo6Q0KCqxUcL2zDYCcInSfC37F7CPxacAw==
-X-Received: by 2002:a05:6512:3c8c:b0:50e:d1f9:ebe0 with SMTP id h12-20020a0565123c8c00b0050ed1f9ebe0mr614114lfv.2.1705913249649;
-        Mon, 22 Jan 2024 00:47:29 -0800 (PST)
-Received: from [127.0.1.1] ([79.115.23.25])
-        by smtp.gmail.com with ESMTPSA id b21-20020a17090630d500b00a2c4c23cd12sm13075462ejb.217.2024.01.22.00.47.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 00:47:29 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 22 Jan 2024 10:47:05 +0200
-Subject: [PATCH v4 5/5] venus: pm_helpers: Use dev_pm_genpd_set_hwmode to
- switch GDSC mode
+        d=1e100.net; s=20230601; t=1705913833; x=1706518633;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w1+TRGt25MpNfEoS3hXoxH/tN7Awcod+oM5fMO5D3jc=;
+        b=uZxIvlTHvbdC6PjJhPKgV/so5BFT+2MLkw2OgrGAtSgca6tmLGDH/ni6E1Gda7Gdxt
+         Qmjajen5X9jo7e7d2Yyd1OHkpRo79ngPuk/tPdjVSRzlxoChA1A8fRBeZasU3aqLFI3T
+         Tt37FCcX63l2HlKDvNbbhuBcnRB22/7RCTRiwxuJU1heuLVVtxTRJ6PeE10ipNzaBB1p
+         aATWFPt7JJSiAfFVMJCOiuxZrilihW3rUs8J14LzEbF1BbRgRY9u7Sk4h5Jr9x9vWmyf
+         6yo6IL1wUXHbzxIJneHnr1qroNZJpPdM8Zv0ontifKxiPKm6Ah3+W0AduugHt/mB+aLf
+         sUKQ==
+X-Gm-Message-State: AOJu0YweXQx8pYLEKtd4N+wyAfffjM8q2HtgNLZrgP9UVhSsyR+Gvuds
+	KULLBfSmmNkbbTTdJ4S1kBWRpQPxBNM0W3ZCiZu4qY3SrzWKgvjI
+X-Google-Smtp-Source: AGHT+IHTPThDUzVUHUWazCjWo+HmxmUbfHP07K3tx1bQtUkViBI9fvhJQ7xyJRZWWrJ9IqRbxqlZig==
+X-Received: by 2002:a05:600c:6a8e:b0:40e:4ad9:90df with SMTP id jl14-20020a05600c6a8e00b0040e4ad990dfmr1813366wmb.158.1705913833292;
+        Mon, 22 Jan 2024 00:57:13 -0800 (PST)
+Received: from [192.168.2.177] ([207.188.161.188])
+        by smtp.gmail.com with ESMTPSA id s8-20020a05600c45c800b0040e527602c8sm42479485wmo.9.2024.01.22.00.57.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jan 2024 00:57:12 -0800 (PST)
+Message-ID: <0d3c2713-6da5-4e7c-8568-180df6e424d7@gmail.com>
+Date: Mon, 22 Jan 2024 09:57:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: reset: mediatek: add MT7988 LVTS
+ reset ID
+Content-Language: en-US, ca-ES, es-ES
+To: Frank Wunderlich <linux@fw-web.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+ Sam Shih <sam.shih@mediatek.com>, Daniel Golle <daniel@makrotopia.org>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+References: <20240105162056.43266-1-linux@fw-web.de>
+ <20240105162056.43266-2-linux@fw-web.de>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; keydata=
+ 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
+In-Reply-To: <20240105162056.43266-2-linux@fw-web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240122-gdsc-hwctrl-v4-5-9061e8a7aa07@linaro.org>
-References: <20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org>
-In-Reply-To: <20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
- Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
- Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-media@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2921; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=Vk/itDO+Lfx/2A5RsJFS6owpFqpo96HTGoEN2vQw4oo=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBlriuVGw/R23nM4ftPZR0CdvkJ4dv64Da6oA9WK
- 96wepF1DsqJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZa4rlQAKCRAbX0TJAJUV
- VidJD/4zyhZuJ7ZOsHBa4UU8Jq/BAiGJv1LeEHcRLK8S9ZKuYLOC9/Oin9OJxSzdUK9hob033FN
- 6+wwyXsCYKCgbsV99dAVITZ2UDpYYWkOaoGT8ajmqcdkgNBLE/sfA+aqDXTZfSOAg7df6NMdYyE
- oek/aEmXsrHDDJDc/dQpDQ701/Eo9CUiEOauVx0eTcuwYTfHKnZSP6v6XBoMus/m/hUbSIRx57a
- pcW8lH+USq6Il8oWkcV3H2kj90564ElJKkkTRBjfYttfkYWb5n2i0uni6P9HSYA9QrTRWBtGBOi
- M1nuAYyD4skwVE6wHcycYEKrNQGqcsEVLgHTGGw9t7xNu9ow2YLTubM/xHl5kAUrMbEvxAadkZH
- FCXULcoCvKsgYJwaKN79UHY4X8KzhC1m7hC5SVmiG+9tUAEmLnDQ3U7+De+vT+C0vpJn1vMyOwo
- foXCgzrKi6zr48YnPdcMeSH43ge+pCRQ+xH5qr93sIr13dsA6CakHCRKdBsoLL4dxRx9F904/D4
- Z2e1UlE5aHb7HSE14qE14q5bfAyLJ+GNEd8aH7IFnzbozhLZKUe9pXdf4GW1iqb8SSQKO27R546
- 3QC0px+i8lCBfow12dLlcmRWVpYq7V25U2oZLmqu4BzuBkA48sLOatafpnihxYSzI77GFbZ0XN6
- vxYCs+6rFpyF0TQ==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
 
-Use dev_pm_genpd_set_hwmode API to switch the vcodec gdsc to SW/HW
-modes at runtime based on requirement for venus V6 variants.
 
-Before the GDSC HWCTL was available to the consumer, the venus driver
-needed to somehow keep the power from collapsing while under the driver
-control. The only way to do that was to clear the CORE_PWR_DISABLE bit
-(in wrapper POWER_CONTROL register) and, respectively, set it back after
-the driver control was completed. Now, that there is a way to switch the
-GDSC HW/SW control back and forth, the CORE_PWR_DISABLE toggling in
-vcodec_control_v4() can be dropped for V6 variants.
+On 05/01/2024 17:20, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
+> 
+> Add reset constant for using as index in driver and dts.
+> 
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 
-With newer implementation, the mode of vcodec gdsc gets switched only in
-set_hwmode API and the GDSC should not be switched to HW control mode
-before turning off the GDSC, else subsequent GDSC enable may fail, hence
-add check to avoid switching the GDSC to HW mode before powering off the
-GDSC on V6 variants.
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/media/platform/qcom/venus/pm_helpers.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-index a1b127caa90a..55e8ec3f4ee9 100644
---- a/drivers/media/platform/qcom/venus/pm_helpers.c
-+++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-@@ -412,10 +412,9 @@ static int vcodec_control_v4(struct venus_core *core, u32 coreid, bool enable)
- 	u32 val;
- 	int ret;
- 
--	if (IS_V6(core)) {
--		ctrl = core->wrapper_base + WRAPPER_CORE_POWER_CONTROL_V6;
--		stat = core->wrapper_base + WRAPPER_CORE_POWER_STATUS_V6;
--	} else if (coreid == VIDC_CORE_ID_1) {
-+	if (IS_V6(core))
-+		return dev_pm_genpd_set_hwmode(core->pmdomains[coreid], !enable);
-+	else if (coreid == VIDC_CORE_ID_1) {
- 		ctrl = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL;
- 		stat = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_STATUS;
- 	} else {
-@@ -451,9 +450,11 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
- 
- 		vcodec_clks_disable(core, core->vcodec0_clks);
- 
--		ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
--		if (ret)
--			return ret;
-+		if (!IS_V6(core)) {
-+			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
-+			if (ret)
-+				return ret;
-+		}
- 
- 		ret = pm_runtime_put_sync(core->pmdomains[1]);
- 		if (ret < 0)
-@@ -467,9 +468,11 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
- 
- 		vcodec_clks_disable(core, core->vcodec1_clks);
- 
--		ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
--		if (ret)
--			return ret;
-+		if (!IS_V6(core)) {
-+			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
-+			if (ret)
-+				return ret;
-+		}
- 
- 		ret = pm_runtime_put_sync(core->pmdomains[2]);
- 		if (ret < 0)
-
--- 
-2.34.1
-
+> ---
+> v2:
+>   - add missing commit message and SoB
+>   - change value of infrareset to 0
+> ---
+>   include/dt-bindings/reset/mediatek,mt7988-resets.h | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/include/dt-bindings/reset/mediatek,mt7988-resets.h b/include/dt-bindings/reset/mediatek,mt7988-resets.h
+> index 493301971367..0216eeb249c7 100644
+> --- a/include/dt-bindings/reset/mediatek,mt7988-resets.h
+> +++ b/include/dt-bindings/reset/mediatek,mt7988-resets.h
+> @@ -10,4 +10,8 @@
+>   /* ETHWARP resets */
+>   #define MT7988_ETHWARP_RST_SWITCH		0
+>   
+> +/* INFRA resets */
+> +#define MT7988_INFRA_RST0_THERM_CTRL_SWRST	0
+> +
+>   #endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT7988 */
+> +
