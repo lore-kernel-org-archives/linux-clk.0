@@ -1,141 +1,169 @@
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898E63F8D4
-	for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 17:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BC247A6C;
+	Mon, 22 Jan 2024 21:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705945916; cv=none; b=ShunANs+iWSlNa0upx4eNboiZCfA49NKDdAQ01dA5BnySQ3AGdRKwT1A5WHFM3tVjI9KM5j1eLtMDeVBrI43xeUodM1d1UmRmuwio2lH6sHHKqxFjXu3HmuFOYpF10MnqN5fZ6zuqQtE0xpJ6dwa1UbygpET4mlcCccMkU66GYc=
+	t=1705957652; cv=none; b=pHiLC7D8mh/Fqm+0vk+ZAKVtA4mSVvnFrGmB6yioYaCy44Ho8RJ8l+aI21gXWG+iSASDKpY7Qpp/x9RNkxxEHn8h8jrES6c7/SQnX109z0jQcJr5eeLR7Jn7lPxIJAsMvbat6ztKU9eqmwClA3sf82vGFrs3VIqXo1iNJzCQjH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705945916; c=relaxed/simple;
-	bh=owMXn5/UTsrMQS2BtQGc3ge2yqhtI0C0ELbKT3M/yjE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NBy/fIQoDybZ2sqhQvFMPuI0NwF2nt3Ew/Y/hGbG6YHgq3qRL1zdL1IY9fe4gsReKEKb3++LuGa0f5zS9mye23PbcKBb0vTKGKkJgIYg/wQda0JBH8Ia18QmmAwrFy7PMw8HK06yQa+dZL/s6QIB8uQHklHxEpLsLz2pn6NShx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=pd3bElU0; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+	s=arc-20240116; t=1705957652; c=relaxed/simple;
+	bh=1XOSbykEqUUQSCdQydNqmiiDGdDbGfe7HfEwHvPi2S8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xc5PUR7hyo1ZOoRuMoyToo1/FeWyLlOkjBAXMrngTKZlzcll8i3fVgZXSzNgljjZqdcqhSE+ANzCz8LtChwyQ+0Ug92cxsXLN/39ZeZyMc2uynr+DzRQgqH7PTbNciBYr8REDgp8ByOyszinfXcPUH81d4AGJa/9ov1a7zzwnxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=IpAtV/t8; arc=none smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="pd3bElU0"
-Received: from eig-obgw-5001a.ext.cloudfilter.net ([10.0.29.139])
-	by cmsmtp with ESMTPS
-	id RwMrrmXrrTHHuRySfrd7em; Mon, 22 Jan 2024 17:51:53 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id RySerWymQRT1bRySfrCxQn; Mon, 22 Jan 2024 17:51:53 +0000
-X-Authority-Analysis: v=2.4 cv=MKVzJeVl c=1 sm=1 tr=0 ts=65aeab39
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=WzbPXH4gqzPVN0x6HrNMNA==:17
- a=IkcTkHD0fZMA:10 a=dEuoMetlWLkA:10 a=wYkD_t78qR0A:10 a=VwQbUJbxAAAA:8
- a=NEAV23lmAAAA:8 a=7YfXLusrAAAA:8 a=ej3Yaj9vPbnurUtvnZYA:9 a=QEXdDO2ut3YA:10
- a=9cHFzqQdt-sA:10 a=PUnBvhIW4WwA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=SLz71HocmBbuEhFRYD3r:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=7hCmgKmn2q+Ph8u4I5kiPW/QetBMHfbxFqikOfCMiAE=; b=pd3bElU0BAm2/39AGANe0PiTc0
-	OhNGobE9XqvPCsMwyrqLqvUo3RQO6xB689iEI7Jq2NTWlyqKaFLLbtMT46u+nl54mLSHE/GNZXuX2
-	ok6qICo5VjRiPM+kbNxQuinW5jII5XuD5FDucvC+fJBjncPdmHBdng41Q8XDHyEEnocrjxo2E3A3c
-	HvSZ3IupNdeiPCLPDBzp+qAUzAgU5TB/yCRNmI1DSmsWipYppFJk0pSmkbGsPdpC6ZMcv12fIQAf6
-	/6r0HwMhGjE3lwNd5G7ZOrEk2wMqBV7lUKVBCvgcRF4UV4uL272niC+vNIePtiyNVjeczzJJW9zIn
-	BWv8I1SA==;
-Received: from 187-162-21-192.static.axtel.net ([187.162.21.192]:40442 helo=[192.168.15.10])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1rRySc-001JMH-35;
-	Mon, 22 Jan 2024 11:51:50 -0600
-Message-ID: <b21d9eb5-eeb7-460f-99c1-9878532be148@embeddedor.com>
-Date: Mon, 22 Jan 2024 11:51:49 -0600
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="IpAtV/t8"
+Received: from pps.filterd (m0148664.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40ML6lmG024542;
+	Mon, 22 Jan 2024 21:06:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date : from : to : cc :
+ subject : message-id : reply-to : references : mime-version : content-type
+ : in-reply-to; s=pps0720; bh=5B3Ox/oe0H1oIjownqXHkO9GUdRiWejqb33wdY7F3CA=;
+ b=IpAtV/t8wmVXT0eN1ck/aPLOnjuHRJw70ora0kSme+ghKpIyOp6wje+EXv7QOkOgN6HU
+ zqrokRz+gY722mc8Iy2DNa6oyLkWmLDMEttpIz6hBxgXitWO3VqdrcbCgTiCl5Bv8Smc
+ SeUE+nsxVlWmfiDiucLZi2KvRf2QDYhWSIfxMGCr2K3aa8lFnd9ITJZ44qXIbtEIzDET
+ 4v//BBqTs8RnGJhnjmTWbvVXOrU+ofBkDJlWSoHmBJg6ZViH/juImZHUd53luj925gPR
+ rauInwLMQwVnpRMPVTGOmFvkn81aOOf5/W8InwfM6caf+hGRD45qJTB1UdeOn2C8Sb/C gg== 
+Received: from p1lg14878.it.hpe.com ([16.230.97.204])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 3vsp9te4bq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jan 2024 21:06:47 +0000
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14878.it.hpe.com (Postfix) with ESMTPS id 0704913780;
+	Mon, 22 Jan 2024 21:06:45 +0000 (UTC)
+Received: from perchik (unknown [16.231.227.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 8274A80A0F2;
+	Mon, 22 Jan 2024 21:05:55 +0000 (UTC)
+Date: Mon, 22 Jan 2024 14:05:53 -0700
+From: Jerry Hoemann <jerry.hoemann@hpe.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>, wim@linux-watchdog.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        biju.das.jz@bp.renesas.com, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 07/10] watchdog: rzg2l_wdt: Add suspend/resume support
+Message-ID: <20240122210553.GA2731@perchik>
+Reply-To: Jerry.Hoemann@hpe.com
+References: <20240122111115.2861835-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240122111115.2861835-8-claudiu.beznea.uj@bp.renesas.com>
+ <a5a807c1-76ef-4cf7-a2cf-bc432c420ded@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: hisilicon: Use devm_kcalloc() instead of
- devm_kzalloc()
-Content-Language: en-US
-To: Erick Archer <erick.archer@gmx.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Conor Dooley <conor.dooley@microchip.com>,
- Heiko Stuebner <heiko@sntech.de>, Dinh Nguyen <dinguyen@kernel.org>,
- Rob Herring <robh@kernel.org>, Nick Alcock <nick.alcock@oracle.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20240121142946.2796-1-erick.archer@gmx.com>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240121142946.2796-1-erick.archer@gmx.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.21.192
-X-Source-L: No
-X-Exim-ID: 1rRySc-001JMH-35
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-21-192.static.axtel.net ([192.168.15.10]) [187.162.21.192]:40442
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 28
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfNfN+wyS78pB6ChqUASuQG8ftn+bnF+jvADiYk52EfsDlYxL5stwFf1Zy8ukVs/ks5IkjNN6UQiFE9wcyDJjO/ej/nCkjht7MmFwD1Oxhnx21vcPEKtn
- jrrpBwxnUVZJ2RiiDF1FEGY0/R1DM7CsKL6HoXO42ibNJFpcQPKTbqgD6dIt/39O5aoAw8d4DnpcZ1mhbnVeQdiOkTkeXnyM9yY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a5a807c1-76ef-4cf7-a2cf-bc432c420ded@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-ORIG-GUID: 42lPsTHy_FvCBKUGNWisWyAD5N2G08zB
+X-Proofpoint-GUID: 42lPsTHy_FvCBKUGNWisWyAD5N2G08zB
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-22_09,2024-01-22_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
+ clxscore=1011 priorityscore=1501 phishscore=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2401220150
 
-
-
-On 1/21/24 08:29, Erick Archer wrote:
-> As noted in the "Deprecated Interfaces, Language Features, Attributes,
-> and Conventions" documentation [1], size calculations (especially
-> multiplication) should not be performed in memory allocator (or similar)
-> function arguments due to the risk of them overflowing. This could lead
-> to values wrapping around and a smaller allocation being made than the
-> caller was expecting. Using those allocations could lead to linear
-> overflows of heap memory and other misbehaviors.
+On Mon, Jan 22, 2024 at 09:39:27AM -0800, Guenter Roeck wrote:
+> On 1/22/24 03:11, Claudiu wrote:
+> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > 
+> > The RZ/G3S supports deep sleep states where power to most of the IP blocks
+> > is cut off. To ensure proper working of the watchdog when resuming from
+> > such states, the suspend function is stopping the watchdog and the resume
+> > function is starting it. There is no need to configure the watchdog
+> > in case the watchdog was stopped prior to starting suspend.
+> > 
+> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > ---
+> >   drivers/watchdog/rzg2l_wdt.c | 26 ++++++++++++++++++++++++++
+> >   1 file changed, 26 insertions(+)
+> > 
+> > diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
+> > index 9333dc1a75ab..186796b739f7 100644
+> > --- a/drivers/watchdog/rzg2l_wdt.c
+> > +++ b/drivers/watchdog/rzg2l_wdt.c
+> > @@ -279,6 +279,7 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+> >   	priv->wdev.timeout = WDT_DEFAULT_TIMEOUT;
+> >   	watchdog_set_drvdata(&priv->wdev, priv);
+> > +	dev_set_drvdata(dev, priv);
+> >   	ret = devm_add_action_or_reset(&pdev->dev, rzg2l_wdt_pm_disable, &priv->wdev);
+> >   	if (ret)
+> >   		return ret;
+> > @@ -300,10 +301,35 @@ static const struct of_device_id rzg2l_wdt_ids[] = {
+> >   };
+> >   MODULE_DEVICE_TABLE(of, rzg2l_wdt_ids);
+> > +static int rzg2l_wdt_suspend_late(struct device *dev)
+> > +{
+> > +	struct rzg2l_wdt_priv *priv = dev_get_drvdata(dev);
+> > +
+> > +	if (!watchdog_active(&priv->wdev))
+> > +		return 0;
+> > +
+> > +	return rzg2l_wdt_stop(&priv->wdev);
+> > +}
+> > +
+> > +static int rzg2l_wdt_resume_early(struct device *dev)
+> > +{
+> > +	struct rzg2l_wdt_priv *priv = dev_get_drvdata(dev);
+> > +
+> > +	if (!watchdog_active(&priv->wdev))
+> > +		return 0;
+> > +
+> > +	return rzg2l_wdt_start(&priv->wdev);
+> > +}
+> > +
+> > +static const struct dev_pm_ops rzg2l_wdt_pm_ops = {
+> > +	LATE_SYSTEM_SLEEP_PM_OPS(rzg2l_wdt_suspend_late, rzg2l_wdt_resume_early)
+> > +};
+> > +
+> >   static struct platform_driver rzg2l_wdt_driver = {
+> >   	.driver = {
+> >   		.name = "rzg2l_wdt",
+> >   		.of_match_table = rzg2l_wdt_ids,
+> > +		.pm = pm_ptr(&rzg2l_wdt_pm_ops),
 > 
-> So, use the purpose specific devm_kcalloc() function instead of the
-> argument size * count in the devm_kzalloc() function.
+> I think this will create a build error if CONFIG_PM=n because rzg2l_wdt_pm_ops
+> will be unused but is not marked with __maybe_unused. But then the driver won't be
+> operational with CONFIG_PM=n, so I really wonder if it makes sense to include any
+> such conditional code instead of making the driver depend on CONFIG_PM.
 > 
-> Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [1]
-> Link: https://github.com/KSPP/linux/issues/162
-> Signed-off-by: Erick Archer <erick.archer@gmx.com>
+> I really don't think it is desirable to suggest that the driver would work with
+> CONFIG_PM=n if that isn't really true.
+> 
+> Guenter
 
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Guenter,
 
-Thanks!
+I'm working on a similar patch.
+
+Is your concern limited to the use of the "pm_ptr" macro?  Or is it
+wider?
+
+Thanks
+
+Jerry
+
 -- 
-Gustavo
 
-> ---
->   drivers/clk/hisilicon/clk-hi3559a.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/clk-hi3559a.c
-> index ff4ca0edce06..da476f940326 100644
-> --- a/drivers/clk/hisilicon/clk-hi3559a.c
-> +++ b/drivers/clk/hisilicon/clk-hi3559a.c
-> @@ -461,8 +461,7 @@ static void hisi_clk_register_pll(struct hi3559av100_pll_clock *clks,
->   	struct clk_init_data init;
->   	int i;
-> 
-> -	p_clk = devm_kzalloc(dev, sizeof(*p_clk) * nums, GFP_KERNEL);
-> -
-> +	p_clk = devm_kcalloc(dev, nums, sizeof(*p_clk), GFP_KERNEL);
->   	if (!p_clk)
->   		return;
-> 
-> --
-> 2.25.1
-> 
-> 
+-----------------------------------------------------------------------------
+Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
+-----------------------------------------------------------------------------
