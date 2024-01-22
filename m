@@ -1,24 +1,24 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D703A1BF;
-	Mon, 22 Jan 2024 10:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FD73A8F3;
+	Mon, 22 Jan 2024 10:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705920298; cv=none; b=Q+bqxO9kfjpjL4wuoAEUFGWCRxa3wiZx9ivZiQpnNijP+yvVfqj1b/N/ouDWx44Qf4NbTxzlHKsSaVEOBxQq6wKSzYpP7dqHAOZT/jzNXZ0ukIj41XTvqIx945+DVn0nhnY/5s1roSQQfnahphWe9wfh6jXZEV3vm+ETtQ9r1PQ=
+	t=1705920310; cv=none; b=CIXsSCj+05MbIoWxIzNQzkI0CSMEwaZDBNh5iQUBmJ5U8E3T/D4fz0er59XPQZ51+RN+L3P6rzcWmFdLrXgPnEB2g0VU9X8i/FoEkbwDw4qjrd6ojbNrPU4/iteeV5RMXNMGpNl/thybsxHxiw1WEvqq2Ddth5+VC2WeFKuTNZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705920298; c=relaxed/simple;
-	bh=Oo9JvPel0eUrGXufOdPEuMNLinBUN4aQEBFsMu9+TLg=;
+	s=arc-20240116; t=1705920310; c=relaxed/simple;
+	bh=MP9qblO7l0EcL4VDFXP1Rehwt0w//Bdd/37L+LCTm34=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=osOhFdQwB2DSsOLBvF0/uec105GAwR8aH5mqJIB1LTr0y7DLWmfqss1cuDe8f0pPtKBJhvPZFqIm2z+j7zSdyGc6JfV3zlhHPF0WADDBSARcrVx6B6ZXYqzE/NFDOGqG5FseMJtek7Far0qTey6hSBthbrQVpJ090D9NhPxCk4A=
+	 MIME-Version:Content-Type; b=e2cIYVADwGDypVOfd8KBGM3r5eN+kO5qG+U8JozFm5vFpN+YDPGVzwZgNJKtjL9FzPwKNZolYdALuOa2xHihJyjnpJwy7GdbrQf/+D9KbLvILJtH9uUqP0NN+140bGpQ7v5BptTliOM0w9ZTz5/idzBNLl5lrA/s5s0MzHonCeY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 960351FB;
-	Mon, 22 Jan 2024 02:45:42 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 017DF1FB;
+	Mon, 22 Jan 2024 02:45:54 -0800 (PST)
 Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2247F3F5A1;
-	Mon, 22 Jan 2024 02:44:55 -0800 (PST)
-Date: Mon, 22 Jan 2024 10:44:52 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E0853F5A1;
+	Mon, 22 Jan 2024 02:45:06 -0800 (PST)
+Date: Mon, 22 Jan 2024 10:45:04 +0000
 From: Andre Przywara <andre.przywara@arm.com>
 To: Randy Dunlap <rdunlap@infradead.org>
 Cc: linux-kernel@vger.kernel.org, Emilio =?UTF-8?B?TMOzcGV6?=
@@ -27,10 +27,10 @@ Cc: linux-kernel@vger.kernel.org, Emilio =?UTF-8?B?TMOzcGV6?=
  <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
  <samuel@sholland.org>, linux-arm-kernel@lists.infradead.org,
  linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH] clk: sunxi: a20-gmac: fix kernel-doc warnings
-Message-ID: <20240122104452.2fc420ac@donnerap.manchester.arm.com>
-In-Reply-To: <20240121051837.17564-1-rdunlap@infradead.org>
-References: <20240121051837.17564-1-rdunlap@infradead.org>
+Subject: Re: [PATCH] clk: sunxi: sun9i-cpus: fix kernel-doc warnings
+Message-ID: <20240122104504.1f84ed98@donnerap.manchester.arm.com>
+In-Reply-To: <20240121051845.17603-1-rdunlap@infradead.org>
+References: <20240121051845.17603-1-rdunlap@infradead.org>
 Organization: ARM
 X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
@@ -42,25 +42,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, 20 Jan 2024 21:18:35 -0800
+On Sat, 20 Jan 2024 21:18:44 -0800
 Randy Dunlap <rdunlap@infradead.org> wrote:
 
-> Move the function kernel-doc comment to be immediately before the
-> function implementation, then add a function parameter description
-> to prevent kernel-doc warnings:
+> Move the function description kernel-doc comment to immediately above
+> the function implementation, correct the function name in the comment,
+> then add a function parameter description to prevent these kernel-doc
+> warnings:
 >=20
-> clk-a20-gmac.c:43: warning: expecting prototype for sun7i_a20_gmac_clk_se=
-tup(). Prototype was for SUN7I_A20_GMAC_GPIT() instead
-> clk-a20-gmac.c:53: warning: Function parameter or struct member 'node' no=
-t described in 'sun7i_a20_gmac_clk_setup'
-
-Confirmed to be just the move, plus the added parameter description.
+> drivers/clk/sunxi/clk-sun9i-cpus.c:25: warning: expecting prototype for s=
+un9i_a80_cpus_clk_setup(). Prototype was for SUN9I_CPUS_MAX_PARENTS() inste=
+ad
+> clk-sun9i-cpus.c:184: warning: Function parameter or struct member 'node'=
+ not described in 'sun9i_a80_cpus_setup'
 
 Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
 Cheers,
 Andre
-=20
+
 > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 > Cc: Emilio L=C3=B3pez <emilio@elopez.com.ar>
 > Cc: Michael Turquette <mturquette@baylibre.com>
@@ -72,50 +72,33 @@ Andre
 > Cc: linux-arm-kernel@lists.infradead.org
 > Cc: linux-sunxi@lists.linux.dev
 > ---
->  drivers/clk/sunxi/clk-a20-gmac.c |   21 +++++++++++----------
->  1 file changed, 11 insertions(+), 10 deletions(-)
+>  drivers/clk/sunxi/clk-sun9i-cpus.c |    7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 >=20
-> diff -- a/drivers/clk/sunxi/clk-a20-gmac.c b/drivers/clk/sunxi/clk-a20-gm=
-ac.c
-> --- a/drivers/clk/sunxi/clk-a20-gmac.c
-> +++ b/drivers/clk/sunxi/clk-a20-gmac.c
-> @@ -15,8 +15,19 @@
+> diff -- a/drivers/clk/sunxi/clk-sun9i-cpus.c b/drivers/clk/sunxi/clk-sun9=
+i-cpus.c
+> --- a/drivers/clk/sunxi/clk-sun9i-cpus.c
+> +++ b/drivers/clk/sunxi/clk-sun9i-cpus.c
+> @@ -18,9 +18,6 @@
 > =20
->  static DEFINE_SPINLOCK(gmac_lock);
+>  static DEFINE_SPINLOCK(sun9i_a80_cpus_lock);
 > =20
-> +
-> +#define SUN7I_A20_GMAC_GPIT	2
-> +#define SUN7I_A20_GMAC_MASK	0x3
-> +#define SUN7I_A20_GMAC_PARENTS	2
-> +
-> +static u32 sun7i_a20_gmac_mux_table[SUN7I_A20_GMAC_PARENTS] =3D {
-> +	0x00, /* Select mii_phy_tx_clk */
-> +	0x02, /* Select gmac_int_tx_clk */
-> +};
-> +
->  /**
->   * sun7i_a20_gmac_clk_setup - Setup function for A20/A31 GMAC clock modu=
-le
+> -/**
+> - * sun9i_a80_cpus_clk_setup() - Setup function for a80 cpus composite clk
+> - */
+> =20
+>  #define SUN9I_CPUS_MAX_PARENTS		4
+>  #define SUN9I_CPUS_MUX_PARENT_PLL4	3
+> @@ -180,6 +177,10 @@ static const struct clk_ops sun9i_a80_cp
+>  	.set_rate	=3D sun9i_a80_cpus_clk_set_rate,
+>  };
+> =20
+> +/**
+> + * sun9i_a80_cpus_setup() - Setup function for a80 cpus composite clk
 > + * @node: &struct device_node for the clock
->   *
->   * This clock looks something like this
->   *                               ________________________
-> @@ -39,16 +50,6 @@ static DEFINE_SPINLOCK(gmac_lock);
->   * enable/disable this clock to configure the required state. The clock
->   * driver then responds by auto-reparenting the clock.
->   */
-> -
-> -#define SUN7I_A20_GMAC_GPIT	2
-> -#define SUN7I_A20_GMAC_MASK	0x3
-> -#define SUN7I_A20_GMAC_PARENTS	2
-> -
-> -static u32 sun7i_a20_gmac_mux_table[SUN7I_A20_GMAC_PARENTS] =3D {
-> -	0x00, /* Select mii_phy_tx_clk */
-> -	0x02, /* Select gmac_int_tx_clk */
-> -};
-> -
->  static void __init sun7i_a20_gmac_clk_setup(struct device_node *node)
+> + */
+>  static void sun9i_a80_cpus_setup(struct device_node *node)
 >  {
->  	struct clk *clk;
+>  	const char *clk_name =3D node->name;
 >=20
 
