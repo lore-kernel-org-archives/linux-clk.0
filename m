@@ -1,52 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179DB5D72B;
-	Mon, 22 Jan 2024 15:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651E46DD1E;
+	Mon, 22 Jan 2024 15:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705935671; cv=none; b=WE62eSiiLUzHD6ueF3KL2O8SZXySFxjYdCgRvRSm/VnOESTZPeVWMsImkx0QMBUBEumTgelzbE9luXQ+r4+PT90wbsZLugUDdpBpqZiOL5gXMw5YuY0Cxl/PORtWwSe9qMtk+Z9iC0TO2WuyfL0vhinF8eLY3cbbooDi9PlnOB8=
+	t=1705936034; cv=none; b=uQ5pS3Il+nRXvLO0ZYD71RX5Ta9JteAJvvjMMHLxnhWZqUOS/ZInR9QsH6i9FYciedDk51+/Mybc5U4KKOlZ5ADFNpS6W4w8c6q36r+DaUJvpfqkENVC4SikTgoJ21M9VSQcJKdwdOkDAnaSQ8kbyuRKvkC0A2+p9CUMJb1njNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705935671; c=relaxed/simple;
-	bh=IVyJGvpiA9eg1GLGeKrTfWT38yVbLDTSmjexmMIhq5g=;
+	s=arc-20240116; t=1705936034; c=relaxed/simple;
+	bh=fOsTqgZAd0vrP6tVW5esPMiUQEc5a6uhT+FU1ciBxb4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HZ8Ir7keIHoYlyh3dbgnP7P+vyrvjTXFWgmM6TWqVlWops/8SiwIlXkTYqu40kYZT/KbFf1+uF7hAfYOZ/mXwWFXbSRSWnjU9RXs1YJARm1444l2Tw3/rY7vTuWXWE1boyIZzC8bGfvBh7TuM292g+VkEIUrw9scxORgF80GBNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkQ6OXgB; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=lKImFK3xqNh/qg8c5F1YM4rrxlGkTmgY8AXafhP9YFo7J7LhhuUoK/IhGH1sjqg/RtgBCF3EH3xBCgbcN16CaUVR1y2CFu9vCBLy6mo1TvGyJeZXtdGbabkSl1uxJvqBH/Jg/RLmqyO7OqgwJqb3OyjWh8hNtQvNaiStzFjqrwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLkVK3U+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkQ6OXgB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F82C43330;
-	Mon, 22 Jan 2024 15:01:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLkVK3U+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0063C43390;
+	Mon, 22 Jan 2024 15:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705935670;
-	bh=IVyJGvpiA9eg1GLGeKrTfWT38yVbLDTSmjexmMIhq5g=;
+	s=k20201202; t=1705936034;
+	bh=fOsTqgZAd0vrP6tVW5esPMiUQEc5a6uhT+FU1ciBxb4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SkQ6OXgBj3jDYP8HrLfmSYyk2KIhwJQigWVbv3h8dOci+U82Q4GrCM/KXff93mW9S
-	 PlM2EziLnA506N/70LY6NBCQnMkQeSb4iakhCHF7hdrod/byKB8qXFqIOkRFLVGImg
-	 vUbtd9kPB50F17LeTiu1ZymVCGfors+WYQVgD1eSYzh8sChbd2E4Mzi1Ys0H/U7c5G
-	 WcJsUSS/xFxeZ0Wo1eNk5iSfixxb0oeQTCvV/IJoX7UDOsitOYRaqDmmfFYifGpsB0
-	 N6FzfGg0ubHkuV8vpM9sUBVQ6tzEGWlJOm0PNLzZPMTr5R8h1gQTXCU+9NA42K+53w
-	 4vaNzA5+2qd7A==
+	b=LLkVK3U+ioDx57r4/AtB++X8dV+lc2D5ZtmuGdav4bcv0jD3pcL4yLL6nSZM4tC1l
+	 FrFI1nQRjU2xsXdxAcU/cLkmgZ7ULl2PgUby7GoK3aqr8w1z8DAn17dzXuxgtghu4d
+	 zJIJiqJh8oHNpb2kDNuSmq8SZEWyRrrHFOj8dZk8DWLlHaWKK5Ay+IVf6eZ+2PNqpU
+	 UBgfL+3wIaae3hXunobhk9NmZ2gGRey/tqdoXt8+5JdHgbyAp69xkcT9m+X8lQz1QO
+	 Sx1l3nEy4hZVwbfMTLoj9omn/lzkt3W9DULmRhhG0GQJSzKXJ3CsTcj2kB0o7D+bwS
+	 MqEH69J2qhWOA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	"Oliver F . Brown" <oliver.brown@oss.nxp.com>,
-	Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	abelvesa@kernel.org,
 	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.7 71/88] clk: imx: clk-imx8qxp: fix LVDS bypass, pixel and phy clocks
-Date: Mon, 22 Jan 2024 09:51:44 -0500
-Message-ID: <20240122145608.990137-71-sashal@kernel.org>
+	krzysztof.kozlowski@linaro.org,
+	angelogioacchino.delregno@collabora.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 51/73] clk: hi3620: Fix memory leak in hi3620_mmc_clk_init()
+Date: Mon, 22 Jan 2024 10:02:05 -0500
+Message-ID: <20240122150432.992458-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240122145608.990137-1-sashal@kernel.org>
-References: <20240122145608.990137-1-sashal@kernel.org>
+In-Reply-To: <20240122150432.992458-1-sashal@kernel.org>
+References: <20240122150432.992458-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,78 +52,42 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.7.1
+X-stable-base: Linux 6.6.13
 Content-Transfer-Encoding: 8bit
 
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
 
-[ Upstream commit 3f5f63adeea7e7aa715e101ffe4b4ac9705f9664 ]
+[ Upstream commit bfbea9e5667cfa9552c3d88f023386f017f6c308 ]
 
-To be compatible with SCU firmware based on 1.15 a different clock
-routing for LVDS is needed.
+In cases where kcalloc() fails for the 'clk_data->clks' allocation, the
+code path does not handle the failure gracefully, potentially leading
+to a memory leak. This fix ensures proper cleanup by freeing the
+allocated memory for 'clk_data' before returning.
 
-Signed-off-by: Oliver F. Brown <oliver.brown@oss.nxp.com>
-Signed-off-by: Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-Link: https://lore.kernel.org/r/20231218122407.2757175-1-alexander.stein@ew.tq-group.com/
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Link: https://lore.kernel.org/r/20231210165040.3407545-1-visitorckw@gmail.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx8qxp.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ drivers/clk/hisilicon/clk-hi3620.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
-index 41f0a45aa162..7d8883916cac 100644
---- a/drivers/clk/imx/clk-imx8qxp.c
-+++ b/drivers/clk/imx/clk-imx8qxp.c
-@@ -66,6 +66,22 @@ static const char * const lcd_pxl_sels[] = {
- 	"lcd_pxl_bypass_div_clk",
- };
+diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
+index 2d7186905abd..5d0226530fdb 100644
+--- a/drivers/clk/hisilicon/clk-hi3620.c
++++ b/drivers/clk/hisilicon/clk-hi3620.c
+@@ -466,8 +466,10 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
+ 		return;
  
-+static const char *const lvds0_sels[] = {
-+	"clk_dummy",
-+	"clk_dummy",
-+	"clk_dummy",
-+	"clk_dummy",
-+	"mipi0_lvds_bypass_clk",
-+};
-+
-+static const char *const lvds1_sels[] = {
-+	"clk_dummy",
-+	"clk_dummy",
-+	"clk_dummy",
-+	"clk_dummy",
-+	"mipi1_lvds_bypass_clk",
-+};
-+
- static const char * const mipi_sels[] = {
- 	"clk_dummy",
- 	"clk_dummy",
-@@ -207,9 +223,9 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
- 	/* MIPI-LVDS SS */
- 	imx_clk_scu("mipi0_bypass_clk", IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_BYPASS);
- 	imx_clk_scu("mipi0_pixel_clk", IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_PER);
--	imx_clk_scu("mipi0_lvds_pixel_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC2);
- 	imx_clk_scu("mipi0_lvds_bypass_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_BYPASS);
--	imx_clk_scu("mipi0_lvds_phy_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC3);
-+	imx_clk_scu2("mipi0_lvds_pixel_clk", lvds0_sels, ARRAY_SIZE(lvds0_sels), IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC2);
-+	imx_clk_scu2("mipi0_lvds_phy_clk", lvds0_sels, ARRAY_SIZE(lvds0_sels), IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC3);
- 	imx_clk_scu2("mipi0_dsi_tx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_MST_BUS);
- 	imx_clk_scu2("mipi0_dsi_rx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_SLV_BUS);
- 	imx_clk_scu2("mipi0_dsi_phy_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_PHY);
-@@ -219,9 +235,9 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
+ 	clk_data->clks = kcalloc(num, sizeof(*clk_data->clks), GFP_KERNEL);
+-	if (!clk_data->clks)
++	if (!clk_data->clks) {
++		kfree(clk_data);
+ 		return;
++	}
  
- 	imx_clk_scu("mipi1_bypass_clk", IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_BYPASS);
- 	imx_clk_scu("mipi1_pixel_clk", IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_PER);
--	imx_clk_scu("mipi1_lvds_pixel_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC2);
- 	imx_clk_scu("mipi1_lvds_bypass_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_BYPASS);
--	imx_clk_scu("mipi1_lvds_phy_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC3);
-+	imx_clk_scu2("mipi1_lvds_pixel_clk", lvds1_sels, ARRAY_SIZE(lvds1_sels), IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC2);
-+	imx_clk_scu2("mipi1_lvds_phy_clk", lvds1_sels, ARRAY_SIZE(lvds1_sels), IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC3);
- 
- 	imx_clk_scu2("mipi1_dsi_tx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_MST_BUS);
- 	imx_clk_scu2("mipi1_dsi_rx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_SLV_BUS);
+ 	for (i = 0; i < num; i++) {
+ 		struct hisi_mmc_clock *mmc_clk = &hi3620_mmc_clks[i];
 -- 
 2.43.0
 
