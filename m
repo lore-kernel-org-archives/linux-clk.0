@@ -1,121 +1,147 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4601E3EA84;
-	Mon, 22 Jan 2024 17:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52AE63400;
+	Mon, 22 Jan 2024 17:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705943844; cv=none; b=JkrRd4XIioTqEPgGnhB6oFbmBbwp5tk8UoXH/MK7LbANpaeM97uOlszTyxLGKRxHxExGBiWL2CtT9yeU4laOySrBAuaP0Td5Klh2HLKBPPIiGsHdoI6ihxFQ5VszCoYkYqcQr7qB5OYAGlM2jukAC5BxAWP54Bywl7fD3MtSS/c=
+	t=1705944386; cv=none; b=QrPvFqWxwjUy6GqPKP7P3IwV1eZ2R3mI05ITVaXX2VUo1wb8PvXEjZkIJSZNAU1tJ3HmIiQoLaaYYI3VOtxWKlxr9QBA1qRrfpUT8LcEQBuQQPxvRxyoKVYtcudks+06+1NpDn+GH/Q2E3FO9ma7ZQI1h99XkBSUZR6qMiD24dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705943844; c=relaxed/simple;
-	bh=KDFtMJDZ8kPGPxRG/wiPLBoAwqtONcETQZz1W104Fps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MvsxOWd+8a34YJSNIDxh8QynLmrF4Sz7G+hNCJyN5MVhJRPvQmyZb/bOJ9/kvyuiNET+pp3dCzUDvQE63QpR45hRUXXLgTx8hlRRqPCzETOptue2FHueXcpowsSGY5m0kCKpZfVn3iFQ5J5U2iSWHUR3QjCMLirbkR7CiHXhB3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDD321FB;
-	Mon, 22 Jan 2024 09:18:07 -0800 (PST)
-Received: from pluto (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C6143F5A1;
-	Mon, 22 Jan 2024 09:17:20 -0800 (PST)
-Date: Mon, 22 Jan 2024 17:17:18 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: sudeep.holla@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V4 2/2] clk: scmi: support state_ctrl_forbidden
-Message-ID: <Za6jHg6lD2_U3uO0@pluto>
-References: <20240121110901.1414856-1-peng.fan@oss.nxp.com>
- <20240121110901.1414856-2-peng.fan@oss.nxp.com>
+	s=arc-20240116; t=1705944386; c=relaxed/simple;
+	bh=26A8tfsGChMmLH71cY/nGmPPy+2IwXxvuF1dkUp/XGA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IhdmtCZFeN3cLs92nMPopa5UWkKo92O2TZxFIgq9KNhw2BoAZwKhL+Elo+ccZsUbQLJhSpCNdlcI9UT1tARDUQS2UvP1iVk08CbgLgx5Q5S4VsLaxTQRzPJ4OspiuLaDlp3gT6t5UC9T833J3tFJUGnd+etfJyRCEoND2bN2WQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ESggLioe; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESggLioe"
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dc22597dbfeso3702707276.3;
+        Mon, 22 Jan 2024 09:26:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705944384; x=1706549184; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TLhmakZVx7P/y+xJl0pVM/baovZzW+u/LUkkxQgBmHI=;
+        b=ESggLioeqskwcyaEN7/7f/sBd3AX0uo5969CCSQUuRUyi/lZ2MGNpBXSTewJD9BVnU
+         D1h9JkaaNEb1XqY3od4YT++g0d1x8OBMiy5wrgcT+jzy1mt8YsrykwAAUcTCMNA3jlc4
+         72+tEys4dfek1XG4JwmGvC1w9HZyl1V5seAOoy/QIFxQPqQcmrC/3wgmto6di5uZ9P++
+         qULAUlB3raNAs6THxMgGblOH30SB9kqVRDHGMRZv6jio5z5L378mN8waBgHustjZUCNT
+         vGxaSIdNQKIJQ+HjFih9rdOShgSGQ4V5/yFbZi3eaNNj5ysUt+Griru1P6SyQFPBXPVr
+         LzxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705944384; x=1706549184;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TLhmakZVx7P/y+xJl0pVM/baovZzW+u/LUkkxQgBmHI=;
+        b=pAZF8b/bZXrXQP5/qzqDKcVqaxuprowM8U0IpsgQ8wwqeTmk/gJMMQ2kFMqpKhyRjV
+         sOOU7QCMgUdGUZT3aJ3QHC6UQn7O0jz4IH/+rFdEGdk1MLmf/V0azNbr/a1hcscQ7Imw
+         ukXs29xTTfVIzxTEoAQLGG5wYWTbqrBI46P+87d2HZ3Sx5z4s1hLzjeVMwtEkK8r9D0V
+         aoAbclTer2zyyRUPDoIEvsN6zful8jilPzPSID7SZcYEmCR60J3hefHsguniwAAeHrZG
+         BiNKG1WrBXdcJKHcpu0O4DRPZpDd82LsxGwj4fXmPItRWIbAp10CLAyaXFHpZju4qWV8
+         rjqg==
+X-Gm-Message-State: AOJu0YybQw/1UFrWmW6tUE6bVf2a78UmDs3rr/keuxpowCaEI3c+uxKm
+	eOhyesQHuwH1kcRB9bH6Q9WTuoMgLV4wO0e3uE9ATe+N2NsAvgVI2rjHwNSBl2YpW4jXzXJpJh6
+	29gnhKCa4h9E67Phu8nxwcZ3Ed3U=
+X-Google-Smtp-Source: AGHT+IGlkwiyiVqqnE5ObJjEoOKvtdd41NNwjfTkam4z85lvQtQ1t00ake2EBs3cpPEEWIqpmhcM2ZqpuRipoAA5iI0=
+X-Received: by 2002:a25:8211:0:b0:dc2:36b1:7586 with SMTP id
+ q17-20020a258211000000b00dc236b17586mr2974030ybk.9.1705944383702; Mon, 22 Jan
+ 2024 09:26:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240121110901.1414856-2-peng.fan@oss.nxp.com>
+References: <20240108135421.684263-1-tmaimon77@gmail.com> <20240108135421.684263-7-tmaimon77@gmail.com>
+ <171300da-3d49-4e1f-8969-9a454ecdd698@linaro.org> <CAP6Zq1hifi7CY=tYaDY_o82AXhbS5P9=MZBb-bqmvNCLZk3O2g@mail.gmail.com>
+ <018fc173-edf3-4490-8f29-4059bd17268e@linaro.org>
+In-Reply-To: <018fc173-edf3-4490-8f29-4059bd17268e@linaro.org>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Mon, 22 Jan 2024 19:26:12 +0200
+Message-ID: <CAP6Zq1jQ9T4Q+WvwyAH4sKLK1+Mp0utcA_STgm=_Z3ywKoLoCw@mail.gmail.com>
+Subject: Re: [PATCH v22 6/8] dt-bindings: clock: npcm845: replace reg with
+ syscon property
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, joel@jms.id.au, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Jan 21, 2024 at 07:09:01PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Some clocks may exported to linux, while those clocks are not allowed
-> to configure by Linux. For example:
-> 
-> SYS_CLK1-----
->              \
-> 	     --MUX--->MMC1_CLK
->              /
-> SYS_CLK2-----
-> 
-> MMC1 needs set parent, so SYS_CLK1 and SYS_CLK2 are exported to Linux,
-> then the clk propagation will touch SYS_CLK1 or SYS_CLK2.
-> So we need bypass the failure for SYS_CLK1 or SYS_CLK2 when enable
-> the clock of MMC1, adding scmi_no_state_ctrl_clk_ops to use software
-> enable counter, while not calling scmi api.
-> 
-> Co-developed-by: Cristian Marussi <cristian.marussi@arm.com>
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
+Hi Krzysztof,
 
-Thanks, LGTM.
+Thanks for your comments.
 
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-Tested-by: Cristian Marussi <cristian.marussi@arm.com>
+On Tue, 16 Jan 2024 at 22:40, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 16/01/2024 20:37, Tomer Maimon wrote:
+> > Hi Krzysztof,
+> >
+> > As explained in my [PATCH v22 4/8] dt-bindings: soc: nuvoton: add
+> > binding for clock and reset registers mail.
+> >
+> > In the NPCM8XX SoC, the reset and the clock register modules are
+> > scrambled in the same memory register region.
+> > The NPCM8XX Clock driver is still in the upstream process (for a long
+> > time) but the NPCM8XX reset driver is already upstreamed.
+>
+> First of all, the drivers itself don't matter here, we talk about
+> bindings. I assume though they were going together, so that's why you
+> mentioned driver... but just to clarify: we talk here only about drivers.
+>
+> If reset bindings were accepted, then why they aren't referenced?
+>
+> If clock bindings were not accepted, then what is this patch and this
+> file about?
+>
+> >
+> > On Wed, 10 Jan 2024 at 22:59, Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> >>
+> >> On 08/01/2024 14:54, Tomer Maimon wrote:
+> >>> Replace reg with syscon property since the clock registers handle the
+> >>> reset registers as well.
+> >>>
+> >>> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> >>> ---
+> >>>  .../bindings/clock/nuvoton,npcm845-clk.yaml   | 22 +++++++++----------
+> >>>  1 file changed, 10 insertions(+), 12 deletions(-)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
+> >>> index 0b642bfce292..c6bf05c163b4 100644
+> >>> --- a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
+> >>> +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
+> >>> @@ -18,8 +18,9 @@ properties:
+> >>>      enum:
+> >>>        - nuvoton,npcm845-clk
+> >>>
+> >>> -  reg:
+> >>> -    maxItems: 1
+> >>> +  nuvoton,sysclk:
+> >>> +    $ref: /schemas/types.yaml#/definitions/phandle
+> >>> +    description: phandle to access clock registers.
+> >>
+> >> NAK. Not explained, not justified, not reasonable, breaking ABI.
+> > Should I explain more in the commit message or/and the nuvoton,sysclk property?
+>
+> Let's try to explain here first. I really do not understand why do you
+> change this binding. Your device did not change, so your binding should
+> not. Now, if you say "but I changed drivers", then it does not matter.
+> Bindings do not change because you did something in the drivers, in
+> general. At least they should not.
+The confusion here is because the clock binding was upstreamed but the
+clock driver has not upstreamed yet.
+The clock driver will use regmap and ioremap so reg property is not
+needed, should I remove it? or leave it?
+>
+> Best regards,
+> Krzysztof
+>
 
-Cheers,
-Cristian
+Best regards,
 
-> 
-> V4:
->  Add scmi_no_state_ctrl_clk_ops per Cristian
->  Add Cristian's tag
-> 
-> V3:
->  Add check in atomic enable
-> 
-> V2:
->  New. Take Cristian's suggestion
-> 
->  drivers/clk/clk-scmi.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index 8cbe24789c24..5747b6d651f0 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -194,6 +194,15 @@ static const struct clk_ops scmi_atomic_clk_ops = {
->  	.determine_rate = scmi_clk_determine_rate,
->  };
->  
-> +static const struct clk_ops scmi_no_state_ctrl_clk_ops = {
-> +	.recalc_rate = scmi_clk_recalc_rate,
-> +	.round_rate = scmi_clk_round_rate,
-> +	.set_rate = scmi_clk_set_rate,
-> +	.set_parent = scmi_clk_set_parent,
-> +	.get_parent = scmi_clk_get_parent,
-> +	.determine_rate = scmi_clk_determine_rate,
-> +};
-> +
->  static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
->  			     const struct clk_ops *scmi_ops)
->  {
-> @@ -290,8 +299,10 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
->  		 * specify (or support) an enable_latency associated with a
->  		 * clock, we default to use atomic operations mode.
->  		 */
-> -		if (is_atomic &&
-> -		    sclk->info->enable_latency <= atomic_threshold)
-> +		if (sclk->info->state_ctrl_forbidden)
-> +			scmi_ops = &scmi_no_state_ctrl_clk_ops;
-> +		else if (is_atomic &&
-> +			 sclk->info->enable_latency <= atomic_threshold)
->  			scmi_ops = &scmi_atomic_clk_ops;
->  		else
->  			scmi_ops = &scmi_clk_ops;
-> -- 
-> 2.37.1
-> 
+Tomer
