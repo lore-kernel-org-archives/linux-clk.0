@@ -1,44 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FDF6E2C1;
-	Mon, 22 Jan 2024 15:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA7F73197;
+	Mon, 22 Jan 2024 15:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705936037; cv=none; b=ChBFq0pAVuL5i7lBIe6jVirXy3QwTTctA2KkRkJACJenbLp9lt4srfRv1zAh6ZfG5lOStBOmGU2XMoVV7HqWCqO9bJJvrj9MLAmBu0zG0IeQDtV6e7YZOsgV/mywC9aDy+Azl21EgPCAVg0T8VZ1sU9W7CWqPEASOqHhudGX7UU=
+	t=1705936067; cv=none; b=mwDHRRFSlecrDXFqdurWZRELRSQw/5Zka9IA47oP6og+RcQtAd7xQaAmGAuJ1iPErWxSkRRmscklVT91rsQcwf9tmx3mX2mbacIL1W61nUoHEjZsKqjc7CnWXnbR0thtLdSWXgwkrxs978C/bXGflrwg8jGh4+S8Qai2UAAAW/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705936037; c=relaxed/simple;
-	bh=gi/zS+FijJoacGOzitI9u1y72nJ7iavRiUxAwlBWS9s=;
+	s=arc-20240116; t=1705936067; c=relaxed/simple;
+	bh=1iXArv8FU/ZuQTY0a6RpJOk7tVMeI8eEDuX08ppLVNY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cTItRP7+GPJxT+nVIlRSLWbtUSfaNaD9+bjsAKj9UwMB5ti6Y3Z9Jwzq8EYqUByi5IY88rZocYk2xmTJKERpCQ2yqE4Uzy+oZC5HHKrzYLFwvilfXHXVHMRohZJDHPTgxveRznwyCAVOsO0CtyeTBTM1tcs38ZiP1ChYukoRyi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnUZxFU1; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=WiE951S4dSQGrPJe8aLQfhnyqpgZSg9fylXTKPJUKFC3tfcDUxerQ3Qpol8sfRSoSEi+lg9oFcWM6b0UJApA6B5A1SfReHP5zPsbT357fnp6WTCFurwF62XI0n+fFmmnPDhuQRBVkTdZhSJguhV4myDDAMkfAHNFSf7QA4Jr2BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UF27xx5Z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnUZxFU1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A89AFC43390;
-	Mon, 22 Jan 2024 15:07:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UF27xx5Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29586C43394;
+	Mon, 22 Jan 2024 15:07:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705936036;
-	bh=gi/zS+FijJoacGOzitI9u1y72nJ7iavRiUxAwlBWS9s=;
+	s=k20201202; t=1705936066;
+	bh=1iXArv8FU/ZuQTY0a6RpJOk7tVMeI8eEDuX08ppLVNY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FnUZxFU1Kavc+oCxcqg+OK/1lKB193vwZ8uEx3oIisart/W5tNer+wd+EmDbtGhyu
-	 YHZ4DT0Q5afmi0zEzOAdCXmeR7uOvBOQc1msGK1D+AIzHdb+ObfR09qto0skaXytXd
-	 5WYrlMLgUFWUiCiwPUzpjvmgGmw21zwyuW5M8gtild3ySU7JOOrer4cNnf6mNDl7LC
-	 9cSLZp/qLisTsEpUJ9SZSRQkiwt1vvn82fE6LfnKnIugrLCuuFR8jhWglAus5Yuw2R
-	 pIXzb0P8FDaXek3SnEOuhEiobpYqQYLDx1uZL1lZMIXHWcoFeTFv0fut83Xmvpcw1F
-	 tFyfeFXi+d+zg==
+	b=UF27xx5ZWxM1rHkhwGcw68XvMP2AiArZw2HJZWx7V3C3IULRy1fVThBY/Pjy7Ilfp
+	 b7z0qJ3cZXci1y5yFZeHHaYOyTc8OVMeBO00ny83TyfswUIr1dLuFsQBTiVhlWt/eB
+	 d2HucZSC9HjSXhtfj64V9Eqpy7y88glL/nwH6oz9HAyIPZfJdbxEwZbxwJCWPUhMUy
+	 H1iLql00Ky1S3MYhmMdfOTDxYjIHImswu1bhwiyaDcTw5bodMOZLy8MSBU62qyUic5
+	 V9MckK1Vg9NG0/7sNZHtlY5lWqpo17tdLrqXtugQdNm34X5FrhHjufyDxrJtvTj2c8
+	 Du8o7LDq7aiNA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	"Oliver F . Brown" <oliver.brown@oss.nxp.com>,
+	Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
+	abelvesa@kernel.org,
 	mturquette@baylibre.com,
-	duje.mihanovic@skole.hr,
-	conor.dooley@microchip.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 52/73] clk: mmp: pxa168: Fix memory leak in pxa168_clk_init()
-Date: Mon, 22 Jan 2024 10:02:06 -0500
-Message-ID: <20240122150432.992458-52-sashal@kernel.org>
+	sboyd@kernel.org,
+	shawnguo@kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.6 58/73] clk: imx: clk-imx8qxp: fix LVDS bypass, pixel and phy clocks
+Date: Mon, 22 Jan 2024 10:02:12 -0500
+Message-ID: <20240122150432.992458-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240122150432.992458-1-sashal@kernel.org>
 References: <20240122150432.992458-1-sashal@kernel.org>
@@ -53,49 +58,75 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.13
 Content-Transfer-Encoding: 8bit
 
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-[ Upstream commit 2fbabea626b6467eb4e6c4cb7a16523da12e43b4 ]
+[ Upstream commit 3f5f63adeea7e7aa715e101ffe4b4ac9705f9664 ]
 
-In cases where mapping of mpmu/apmu/apbc registers fails, the code path
-does not handle the failure gracefully, potentially leading to a memory
-leak. This fix ensures proper cleanup by freeing the allocated memory
-for 'pxa_unit' before returning.
+To be compatible with SCU firmware based on 1.15 a different clock
+routing for LVDS is needed.
 
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-Link: https://lore.kernel.org/r/20231210175232.3414584-1-visitorckw@gmail.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Oliver F. Brown <oliver.brown@oss.nxp.com>
+Signed-off-by: Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Link: https://lore.kernel.org/r/20231218122407.2757175-1-alexander.stein@ew.tq-group.com/
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/mmp/clk-of-pxa168.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/imx/clk-imx8qxp.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
-index fb0df64cf053..c5a7ba1deaa3 100644
---- a/drivers/clk/mmp/clk-of-pxa168.c
-+++ b/drivers/clk/mmp/clk-of-pxa168.c
-@@ -308,18 +308,21 @@ static void __init pxa168_clk_init(struct device_node *np)
- 	pxa_unit->mpmu_base = of_iomap(np, 0);
- 	if (!pxa_unit->mpmu_base) {
- 		pr_err("failed to map mpmu registers\n");
-+		kfree(pxa_unit);
- 		return;
- 	}
+diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
+index 4020aa4b79bf..245761e01897 100644
+--- a/drivers/clk/imx/clk-imx8qxp.c
++++ b/drivers/clk/imx/clk-imx8qxp.c
+@@ -66,6 +66,22 @@ static const char * const lcd_pxl_sels[] = {
+ 	"lcd_pxl_bypass_div_clk",
+ };
  
- 	pxa_unit->apmu_base = of_iomap(np, 1);
- 	if (!pxa_unit->apmu_base) {
- 		pr_err("failed to map apmu registers\n");
-+		kfree(pxa_unit);
- 		return;
- 	}
++static const char *const lvds0_sels[] = {
++	"clk_dummy",
++	"clk_dummy",
++	"clk_dummy",
++	"clk_dummy",
++	"mipi0_lvds_bypass_clk",
++};
++
++static const char *const lvds1_sels[] = {
++	"clk_dummy",
++	"clk_dummy",
++	"clk_dummy",
++	"clk_dummy",
++	"mipi1_lvds_bypass_clk",
++};
++
+ static const char * const mipi_sels[] = {
+ 	"clk_dummy",
+ 	"clk_dummy",
+@@ -200,9 +216,9 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
+ 	/* MIPI-LVDS SS */
+ 	imx_clk_scu("mipi0_bypass_clk", IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_BYPASS);
+ 	imx_clk_scu("mipi0_pixel_clk", IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_PER);
+-	imx_clk_scu("mipi0_lvds_pixel_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC2);
+ 	imx_clk_scu("mipi0_lvds_bypass_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_BYPASS);
+-	imx_clk_scu("mipi0_lvds_phy_clk", IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC3);
++	imx_clk_scu2("mipi0_lvds_pixel_clk", lvds0_sels, ARRAY_SIZE(lvds0_sels), IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC2);
++	imx_clk_scu2("mipi0_lvds_phy_clk", lvds0_sels, ARRAY_SIZE(lvds0_sels), IMX_SC_R_LVDS_0, IMX_SC_PM_CLK_MISC3);
+ 	imx_clk_scu2("mipi0_dsi_tx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_MST_BUS);
+ 	imx_clk_scu2("mipi0_dsi_rx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_SLV_BUS);
+ 	imx_clk_scu2("mipi0_dsi_phy_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_0, IMX_SC_PM_CLK_PHY);
+@@ -212,9 +228,9 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
  
- 	pxa_unit->apbc_base = of_iomap(np, 2);
- 	if (!pxa_unit->apbc_base) {
- 		pr_err("failed to map apbc registers\n");
-+		kfree(pxa_unit);
- 		return;
- 	}
+ 	imx_clk_scu("mipi1_bypass_clk", IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_BYPASS);
+ 	imx_clk_scu("mipi1_pixel_clk", IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_PER);
+-	imx_clk_scu("mipi1_lvds_pixel_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC2);
+ 	imx_clk_scu("mipi1_lvds_bypass_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_BYPASS);
+-	imx_clk_scu("mipi1_lvds_phy_clk", IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC3);
++	imx_clk_scu2("mipi1_lvds_pixel_clk", lvds1_sels, ARRAY_SIZE(lvds1_sels), IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC2);
++	imx_clk_scu2("mipi1_lvds_phy_clk", lvds1_sels, ARRAY_SIZE(lvds1_sels), IMX_SC_R_LVDS_1, IMX_SC_PM_CLK_MISC3);
  
+ 	imx_clk_scu2("mipi1_dsi_tx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_MST_BUS);
+ 	imx_clk_scu2("mipi1_dsi_rx_esc_clk", mipi_sels, ARRAY_SIZE(mipi_sels), IMX_SC_R_MIPI_1, IMX_SC_PM_CLK_SLV_BUS);
 -- 
 2.43.0
 
