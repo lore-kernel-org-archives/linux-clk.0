@@ -1,101 +1,154 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01243FE25;
-	Mon, 22 Jan 2024 15:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD244643C
+	for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 15:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705936753; cv=none; b=AdUsRaY2aF7lnxNsWiqNwVuaUQ/0UoSrRJAuMRMeVR7j/xSw44wb7GLz1e1Ca8PECZMdAjsBHwXo6duSmE/0HIchuqJ7tyLBCXImFh54ZkqC+QT91zg4PsTKEmFHkl58GcqudmW9wO4V60TPiijP7zctaaa2v5tuRYGBJVwVCSk=
+	t=1705937334; cv=none; b=BX9Nf7ymexYuGFy6z02+tCorYdgey/PsUKZj5GJb4xyk+e9EuJyXhmQMK+BGYucA2ouhiphbqLiDi7bmyVftiQ5qHtJns4vOdVg0Alv5GRH+JwkvZ7ZG0H5jjxXgol+3uwsXSP5qsjBUcXOZOmEtegz9MowIk+zPe/kicda/r2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705936753; c=relaxed/simple;
-	bh=RSfFW5hWnDVynWV4jW6qkfYMtLyQ16JOdwenWKS7Wo0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TtCstxglVcWWzY/jtbWL9dx/v9KzH4uid2sxq/tavb8DZ7tOcAT4osE7zYvpOt7dlLd4pmiJPBP9kCd16RotfZo+vbsT9GLLcZCr/ejvOt2HUyRO30llWCb+ti2e+KiML81lzbcyNgBvH3Nk9Dvo6c3NTv8Es3Y5mAt6TepKqVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDkZUEgy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1705937334; c=relaxed/simple;
+	bh=9BdBSqeP+pKAU1otFzDF6/umZq7OutkXNkVwcIuJQAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPhYkdKr4L4PnssrVF8C77Udw2zUt+BGTD6hywSK7QuN6dYpjQjaaQgQdmO38iigEcdpHe2jC8B5hLnJ2Tb2mU7ktaiXNTPBXFNSwh95gGdBr7wMwIkxcP9VJZehlL3IkO1nCLzFnyCfPgBPOiphl/gq8D/Um73FyytFNcW7LEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=UeI6At6N; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDkZUEgy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B65AC433C7;
-	Mon, 22 Jan 2024 15:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705936753;
-	bh=RSfFW5hWnDVynWV4jW6qkfYMtLyQ16JOdwenWKS7Wo0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iDkZUEgylSi0pA2H5Sr+O9eH3PK4lIZt/Iae/D9aQ8aH06E+rhK9S/c843zNQZeHG
-	 CjApAI+3I/mbgX4a7zArpHF+/LbECkq281LEli4qJjWirhQ4AYpHeCy0rRVsYjoBRv
-	 Y972ACG6e9thn5YFdDY+d4SXQz1+CqyTwW1bZjUaHo592/TMP7RG21Xdp6cvf4Yc+d
-	 xKHAs4aadRz8PO9RagC/5nhf0uXT8HJ01v6vUwExStFLS+XV7Sx1Inb2qq7oEfgv+J
-	 +MNe+7ZziyHLA1jl4BEuqIYsAy967fCMqpdfOo6KkCW3D1WqBpoKb+ilef3PK82yuU
-	 Qy9eIKqos3q4A==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	mturquette@baylibre.com,
-	duje.mihanovic@skole.hr,
-	conor.dooley@microchip.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 19/23] clk: mmp: pxa168: Fix memory leak in pxa168_clk_init()
-Date: Mon, 22 Jan 2024 10:17:59 -0500
-Message-ID: <20240122151823.997644-19-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240122151823.997644-1-sashal@kernel.org>
-References: <20240122151823.997644-1-sashal@kernel.org>
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="UeI6At6N"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-50edf4f478eso4210732e87.3
+        for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 07:28:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech.se; s=google; t=1705937330; x=1706542130; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2K12GqOYOmu/kngnIcRPPAXG1MUNKwc6xKsFfoWOXrk=;
+        b=UeI6At6NFCH5powLVwcaLYggyPZeHDZAHw2m67waGZai2AJLjwRxTr3SFz7KGRhxaI
+         7Yk6JejoxyWCAmVA/WbBYmFkMFUp5/YXmYvFY5Zplc/oItg+v4QAGWjUqQd3EHCMS4Ym
+         3EEyNZzQ0EYvXQ7DI0II+x2ycnAeoQZZIY+1vjG1bCjXkLbtZMedZPTqbJyduHv3RPcb
+         Q9lujAV0nBIixqG7lsppxVfwzE1VADVii6F5KHfk7sr+aZ7L9iuHQ0/9U7Xbb4qBmQ/J
+         oTV/k41m1GL6kElrIrDz3q5IE713Q2zRFhfQOQmniauYCL3O56oxmZE0OGgTEfVuYxcC
+         PR5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705937330; x=1706542130;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2K12GqOYOmu/kngnIcRPPAXG1MUNKwc6xKsFfoWOXrk=;
+        b=LuJdyfoTlVUX7T2d5NzfR3m5t/+5tZx6WsLkcyW1ayxh0Ea+Xs+HDPdx/Ch+IFgtlO
+         JDtoSQzXRbZ5dzoq5g7XYMOxy6NSlYJrkRXZLYT0jk1MclBNLhCP8epi4bAnhl9NLQSZ
+         n84KH67YG/P7YNzPLBG47r8gunsoI7m4O6U9aFszQGFLHx7gjqwkjRlBhMxu292a8TeX
+         XQIjZfZpQM1EUbJCklxfa+aie38iirJXSFbVykgq2WytjbBUkAv35/CbiXi1E+PylKss
+         gycBpGKWkOCd4ZFbKPzdNHlkUngHtYnmftHG+ioODa3Gu3zzN0/JJTIqz5sD/8s8TuXr
+         Mf+A==
+X-Gm-Message-State: AOJu0YzRiyGJOk7IROdKmWfJAvJbAERZOBrFaIY4gBiNZKV2Mzx4/eBR
+	6aHdtu0/X7Bn0lMG9s/2/3rU870uTkCvPtdFMm5slil+b0a3bFhnaNChB6Uhemo=
+X-Google-Smtp-Source: AGHT+IFXMsLAfSiyXwYetfcWWI5V/6UXuXMRBGjPtwt7+N7rAeMR8gi0EtfzDJPIeqQ3uAipOI8Y/A==
+X-Received: by 2002:a05:6512:33c3:b0:50e:9a0d:d402 with SMTP id d3-20020a05651233c300b0050e9a0dd402mr2309630lfg.105.1705937330396;
+        Mon, 22 Jan 2024 07:28:50 -0800 (PST)
+Received: from localhost (h-46-59-36-113.A463.priv.bahnhof.se. [46.59.36.113])
+        by smtp.gmail.com with ESMTPSA id b15-20020a056512304f00b0050e897b320fsm2018106lfb.192.2024.01.22.07.28.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jan 2024 07:28:50 -0800 (PST)
+Date: Mon, 22 Jan 2024 16:28:49 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: mstp: Remove obsolete clkdev registration
+Message-ID: <20240122152849.GF4126432@ragnatech.se>
+References: <e98a6e47ebecc44fa41de6d88b4ed20c6efbd177.1705931322.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.305
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e98a6e47ebecc44fa41de6d88b4ed20c6efbd177.1705931322.git.geert+renesas@glider.be>
 
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
+Hi Geert,
 
-[ Upstream commit 2fbabea626b6467eb4e6c4cb7a16523da12e43b4 ]
+Thanks for your work.
 
-In cases where mapping of mpmu/apmu/apbc registers fails, the code path
-does not handle the failure gracefully, potentially leading to a memory
-leak. This fix ensures proper cleanup by freeing the allocated memory
-for 'pxa_unit' before returning.
+On 2024-01-22 14:49:45 +0100, Geert Uytterhoeven wrote:
+> After the DT conversion of SH-Mobile and Armadillo-800-EVA display
+> support, all devices are registered from DT, so we can remove the
+> registration of clkdevs.
+> 
+> Add the missing #include <linux/slab.h>, which was included implicitly
+> through <linux/clkdev.h> before.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-Link: https://lore.kernel.org/r/20231210175232.3414584-1-visitorckw@gmail.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/mmp/clk-of-pxa168.c | 3 +++
- 1 file changed, 3 insertions(+)
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
-index f110c02e83cb..9674c6c06dca 100644
---- a/drivers/clk/mmp/clk-of-pxa168.c
-+++ b/drivers/clk/mmp/clk-of-pxa168.c
-@@ -258,18 +258,21 @@ static void __init pxa168_clk_init(struct device_node *np)
- 	pxa_unit->mpmu_base = of_iomap(np, 0);
- 	if (!pxa_unit->mpmu_base) {
- 		pr_err("failed to map mpmu registers\n");
-+		kfree(pxa_unit);
- 		return;
- 	}
- 
- 	pxa_unit->apmu_base = of_iomap(np, 1);
- 	if (!pxa_unit->apmu_base) {
- 		pr_err("failed to map apmu registers\n");
-+		kfree(pxa_unit);
- 		return;
- 	}
- 
- 	pxa_unit->apbc_base = of_iomap(np, 2);
- 	if (!pxa_unit->apbc_base) {
- 		pr_err("failed to map apbc registers\n");
-+		kfree(pxa_unit);
- 		return;
- 	}
- 
+> ---
+> Patch written in 2015 ;-)
+
+I scratch my head reading some of these patches, I have seen some of 
+them before, but could not figure out when.
+
+> 
+> To be queued in renesas-clk for v6.9.
+> ---
+>  drivers/clk/renesas/clk-mstp.c | 16 +++-------------
+>  1 file changed, 3 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+> index e96457371b4cce88..cab4c89c4d657740 100644
+> --- a/drivers/clk/renesas/clk-mstp.c
+> +++ b/drivers/clk/renesas/clk-mstp.c
+> @@ -10,7 +10,6 @@
+>  
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+> -#include <linux/clkdev.h>
+>  #include <linux/clk/renesas.h>
+>  #include <linux/device.h>
+>  #include <linux/io.h>
+> @@ -19,6 +18,7 @@
+>  #include <linux/of_address.h>
+>  #include <linux/pm_clock.h>
+>  #include <linux/pm_domain.h>
+> +#include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  
+>  /*
+> @@ -238,22 +238,12 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+>  
+>  		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
+>  						       clkidx, group);
+> -		if (!IS_ERR(clks[clkidx])) {
+> +		if (!IS_ERR(clks[clkidx]))
+>  			group->data.clk_num = max(group->data.clk_num,
+>  						  clkidx + 1);
+> -			/*
+> -			 * Register a clkdev to let board code retrieve the
+> -			 * clock by name and register aliases for non-DT
+> -			 * devices.
+> -			 *
+> -			 * FIXME: Remove this when all devices that require a
+> -			 * clock will be instantiated from DT.
+> -			 */
+> -			clk_register_clkdev(clks[clkidx], name, NULL);
+> -		} else {
+> +		else
+>  			pr_err("%s: failed to register %pOFn %s clock (%ld)\n",
+>  			       __func__, np, name, PTR_ERR(clks[clkidx]));
+> -		}
+>  	}
+>  
+>  	of_clk_add_provider(np, of_clk_src_onecell_get, &group->data);
+> -- 
+> 2.34.1
+> 
+> 
+
 -- 
-2.43.0
-
+Kind Regards,
+Niklas Söderlund
