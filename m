@@ -1,82 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AF53EA8A;
-	Mon, 22 Jan 2024 16:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263DD4B5A5;
+	Mon, 22 Jan 2024 17:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705939463; cv=none; b=NcrSzmGapqYey+CK7KrT+KLORfWyAjzHx4RVWB/uvDNuHHmztOQeepefAbZcG6d316WNNHNd7KzA0Lq/wuYvWLpxz95NsErEvWE3jyyMjfHuzhpr9kTxsjaID5PS8sb+dSFb2HpH3YifyafQy8Pa621zVVBTkfqnPnbD5u5eXZ0=
+	t=1705943552; cv=none; b=oIoGrK56BFxzN6cEBkXGWvsFAG4SSXDCtlttPzpJGsh+cnXUSN+92QN57Rfl301qZBX1IZmryoOdZOMINO8CrTo4RjnUSS7wQ0Wvfh4dVLmQFOK1WMu3382LumhIe8uCBH+g6FBYJh2HP2ImKDWn2VrAipnITknm+jU+tWzorEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705939463; c=relaxed/simple;
-	bh=qLSgpbBBjjg35owhN/n1BlJHspH8+vAvlKmDPma2+BA=;
+	s=arc-20240116; t=1705943552; c=relaxed/simple;
+	bh=FaIC2T5lnXb5UyX04tjerRUZFs1cl/YjtZm/ySeUnMQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fsX+Vvj2J/cGARBs7VKH4mCCJYW1Vz2al6YyimPnuGj8bfOEtnkUNjiazMtaG1wxFyxkMXZMo3fokLyYYfpvgPtOw0vjkKhBBRS529Rkcc0Txjfy35C8bazWcsbwEnq4j0J7aVmNDRu/GiRtJK3Tk7A9X64Jyu/yagKMOKYgbwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YO8HccBY; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=QVJU1nHv0P1ME4qAFICwj3kq2J8BtZ7IedvBUPKpDcEqjaWZ8b6opbHP4G/NjD1Pxjifj69rkH8AJ2rrBw/WXAtIlNwXLL1LssW3Uv06gkr5icIYwqIDKOrXeEl7awUlQOG9qA58sCGooEfq7smX/8aywN9uh9312HnGl/jgdqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQhvKgCQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YO8HccBY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9465AC433F1;
-	Mon, 22 Jan 2024 16:04:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQhvKgCQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9E2DC43390;
+	Mon, 22 Jan 2024 17:12:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705939462;
-	bh=qLSgpbBBjjg35owhN/n1BlJHspH8+vAvlKmDPma2+BA=;
+	s=k20201202; t=1705943551;
+	bh=FaIC2T5lnXb5UyX04tjerRUZFs1cl/YjtZm/ySeUnMQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YO8HccBYFKH8Refu6bMmvbllXSeC0OF/Efvh/rVL0L6W9YV0Fqse3g36Jhh8enxa8
-	 avDc+ZvDTR4gXd4Apqd93gGxsC2E73xQanifhYh4+ovSHe5/cfNIePcaJFo8vtW8Rd
-	 UwJuxO3+dKAumwrow+VsBmGMHfTk0Nc9IzdxyY6rdeTY4nOE3HbIWOGbn7VhqlX3E8
-	 kByuuqEcUtCdrm6Xn+t7eTC/QbXzmdmR6h8OkeENMFm+oGRu0AsUurZSZT4ou9l7yU
-	 Ts34s+romNCTlZefwEMLKEIYUdIWuAEh7IOdaH0cgG4ezmgEzNadC15vpqMUXPyiTx
-	 H6fKjzHZP1ZvA==
-Date: Mon, 22 Jan 2024 10:04:20 -0600
-From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Aymeric Aillet <aymeric.aillet@iot.bzh>,
-	Yusuke Goda <yusuke.goda.sx@renesas.com>
-Subject: Re: [PATCH v5 resend 0/4] drivers: clk: renesas: ignore all clocks
- which are assigned to non-Linux system
-Message-ID: <20240122160420.GE601827-robh@kernel.org>
-References: <87edeqgfbu.wl-kuninori.morimoto.gx@renesas.com>
- <CAMuHMdV1GLYZGn_TgYbxfPakkLpUNTsP5hsEk9tUqLzpb5wOdQ@mail.gmail.com>
+	b=UQhvKgCQRN7TRWntwh+PHd8vUSluk+R0HJE2SL24r0wGMP7J6YpoYZuaqudXhNj+x
+	 tu8ZFaM32piopWgRudrf4zCsTNYRNMFOY/PlECpHBEJhHtTylB9YR2Hal7I6ERj9/Q
+	 S7wvvTaBULMWVYVC4unRYeMos0y12mOwejsbnDrMs//jBCMtCucoJQuLjJHUdwu6CG
+	 uDbghL3oAxLNaUAPzRrmSkTkuCuaKp3B63eXf2uqVKkg8cCQNJ3FaiQ7+YA+KldJAr
+	 7dfTScH5DHN4AlcWm412RvkLeHbyheujLb7HqCTWZbfbW/Tx3XgYOeQYBxa8aoD4qi
+	 6cIukHf0hJ/vA==
+Date: Mon, 22 Jan 2024 17:12:25 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: wim@linux-watchdog.org, linux@roeck-us.net, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	geert+renesas@glider.be, magnus.damm@gmail.com,
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+	biju.das.jz@bp.renesas.com, linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 08/10] dt-bindings: watchdog: renesas,wdt: Document
+ RZ/G3S support
+Message-ID: <20240122-mahogany-dastardly-f8087e9f28e7@spud>
+References: <20240122111115.2861835-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240122111115.2861835-9-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2aXKdcl0xK084Ddu"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdV1GLYZGn_TgYbxfPakkLpUNTsP5hsEk9tUqLzpb5wOdQ@mail.gmail.com>
+In-Reply-To: <20240122111115.2861835-9-claudiu.beznea.uj@bp.renesas.com>
 
-On Fri, Jan 12, 2024 at 03:21:41PM +0100, Geert Uytterhoeven wrote:
-> Hi Morimoto-san, Rob,
-> 
-> On Wed, Jan 10, 2024 at 2:14 AM Kuninori Morimoto
-> <kuninori.morimoto.gx@renesas.com> wrote:
-> > This is v5 resend of ignoring non Linux system assinged device.
-> 
-> Thanks for the update!
-> 
-> > v5 resend
-> >         - add Acked-by from Rob
-> 
-> You mean Reviewed-by?
-> With an Acked-by, I wouldn't have to ask the next question ;-)
-> 
-> Rob: How to proceed:
->   1. I give my Acked-by, you merge the series?
->   2. You give your Acked-by, I merge the series?
->   3. We do the immutable branch dance?
->        a. You apply 1-3 to an immutable branch
->        b. I merge the immutable branch and apply 4.
-> 
-> You get to choose, as there are more DT than renesas-clk patches ;-)
 
-You can take it. I don't give Reviewed-by nor Acked-by if I plan to 
-apply it.
+--2aXKdcl0xK084Ddu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Rob
+On Mon, Jan 22, 2024 at 01:11:13PM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> Document the support for the watchdog IP available on RZ/G3S SoC. The
+> watchdog IP available on RZ/G3S SoC is identical to the one found on
+> RZ/G2UL SoC.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+> ---
+>  Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml =
+b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+> index 951a7d54135a..220763838df0 100644
+> --- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+> @@ -29,6 +29,7 @@ properties:
+>                - renesas,r9a07g043-wdt    # RZ/G2UL and RZ/Five
+>                - renesas,r9a07g044-wdt    # RZ/G2{L,LC}
+>                - renesas,r9a07g054-wdt    # RZ/V2L
+> +              - renesas,r9a08g045-wdt    # RZ/G3S
+>            - const: renesas,rzg2l-wdt
+> =20
+>        - items:
+> --=20
+> 2.39.2
+>=20
+
+--2aXKdcl0xK084Ddu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZa6h+QAKCRB4tDGHoIJi
+0j8oAP913+4XCq8gn1k2THbD8Dx+5oJcfz0y3Ia5R2VopsJpEQEAlF3W4mym2WwK
+P5sPOP6qyvqQ6z0lN04L6msIIrB0jAg=
+=Ndlo
+-----END PGP SIGNATURE-----
+
+--2aXKdcl0xK084Ddu--
