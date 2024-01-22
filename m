@@ -1,146 +1,109 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0AF3CF42
-	for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 13:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBE73D0B4
+	for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 13:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705929231; cv=none; b=JevRnGAKWPItBc0Di3pScTZxmkUlgj1gx3LGh0F4LUf/WYTMr5xQImy+qOjJiA1atXZnNZOj5pK2dPis7qTVt2HEPqPGepIj6NbkyiYT1DM7A9mdt+TFecUdgnyVNraf25hHPN5WHEMxkEFSLgLU2OeqS7EsNbAP18yDGFX9o7I=
+	t=1705931392; cv=none; b=DodQKKx+ysxNGFqXzkKFCoVhQVe0nY37hQm+9AvRhM0vb5ZAVtPcazvgpoQaelt3/lImfKMKxUh9BFi2l/1Eq0KJ/mVudbwcH53cL3fPsgJu+FeoZLGu9Eb1wVCvi89gOIuUY0WWyk57twGjpPqg5hWIEFSW5R8o6btXAxA4jgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705929231; c=relaxed/simple;
-	bh=5R7j8Dl9cK0KfAuJewWJ6X7E8Pn2vi+QuvLjLtLOAz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WFW6syw5C/mvN5oPc0squj5kaFEktBlRo9UOIbf2UGQxqh63swY9GveYfhKCSqutNSyLUfpFx0NJri8LBqanmMIPgabf0aXJHdQ42x2LVLCUoPpl5s0wAZRhIdstE52GCMWXGDsLkbSsiYhQGO2SnfPpVmsQIIdq/NBlr52u360=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1rRu75-0005ez-Pg; Mon, 22 Jan 2024 14:13:19 +0100
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1rRu73-001biB-E1; Mon, 22 Jan 2024 14:13:17 +0100
-Received: from pengutronix.de (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id EDDCF27B58F;
-	Mon, 22 Jan 2024 13:13:16 +0000 (UTC)
-Date: Mon, 22 Jan 2024 14:13:16 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-riscv@lists.infradead.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
-	Wolfgang Grandegger <wg@grandegger.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] dt-bindings: can: mpfs: add missing required clock
-Message-ID: <20240122-surely-crimp-ba4a8c55106d-mkl@pengutronix.de>
-References: <20240122-catty-roast-d3625dbb02fe@spud>
- <20240122-breeder-lying-0d3668d98886@spud>
+	s=arc-20240116; t=1705931392; c=relaxed/simple;
+	bh=JThqksEFWTF8uLx+x7NyMsFlcUdDrQwrkxPKhDD2Yw0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WIYuTeqHHlp0W4cYO9bHJX8sRmEBC6BWDN0UsCQJoktFT2a+Pp8XEoukl9lrb4EqjnDtcUawWDiEHZP4ZR1QZJvuCefw7Mw5oNpl6wcGl6buLAnYB64vLDW3D2pb1VZbvk5CK+FzvvMkSiDvIrATdWYVGos+UZvywuZezpQ6Y38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:955e:bba5:7ff4:cfb6])
+	by albert.telenet-ops.be with bizsmtp
+	id dppo2B00D0ZxL6o06ppovs; Mon, 22 Jan 2024 14:49:48 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rRufb-00GGvS-DN;
+	Mon, 22 Jan 2024 14:49:48 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rRugO-00CDwv-CX;
+	Mon, 22 Jan 2024 14:49:48 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: mstp: Remove obsolete clkdev registration
+Date: Mon, 22 Jan 2024 14:49:45 +0100
+Message-Id: <e98a6e47ebecc44fa41de6d88b4ed20c6efbd177.1705931322.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gm5qx6ivqj7qxcxg"
-Content-Disposition: inline
-In-Reply-To: <20240122-breeder-lying-0d3668d98886@spud>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+After the DT conversion of SH-Mobile and Armadillo-800-EVA display
+support, all devices are registered from DT, so we can remove the
+registration of clkdevs.
 
---gm5qx6ivqj7qxcxg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add the missing #include <linux/slab.h>, which was included implicitly
+through <linux/clkdev.h> before.
 
-On 22.01.2024 12:19:50, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->=20
-> The CAN controller on PolarFire SoC has an AHB peripheral clock _and_ a
-> CAN bus clock. The bus clock was omitted when the binding was written,
-> but is required for operation. Make up for lost time and add it.
->=20
-> Cautionary tale in adding bindings without having implemented a real
-> user for them perhaps.
->=20
-> Fixes: c878d518d7b6 ("dt-bindings: can: mpfs: document the mpfs CAN contr=
-oller")
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  .../devicetree/bindings/net/can/microchip,mpfs-can.yaml     | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can=
-=2Eyaml b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
-> index 45aa3de7cf01..01e4d4a54df6 100644
-> --- a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
-> @@ -24,7 +24,9 @@ properties:
->      maxItems: 1
-> =20
->    clocks:
-> -    maxItems: 1
-> +    items:
-> +      - description: AHB peripheral clock
-> +      - description: CAN bus clock
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Patch written in 2015 ;-)
 
-What about adding clock-names, so that the order can be checked
-automatically?
+To be queued in renesas-clk for v6.9.
+---
+ drivers/clk/renesas/clk-mstp.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-> =20
->  required:
->    - compatible
-> @@ -39,7 +41,7 @@ examples:
->      can@2010c000 {
->          compatible =3D "microchip,mpfs-can";
->          reg =3D <0x2010c000 0x1000>;
-> -        clocks =3D <&clkcfg 17>;
-> +        clocks =3D <&clkcfg 17>, <&clkcfg 37>;
->          interrupt-parent =3D <&plic>;
->          interrupts =3D <56>;
->      };
-> --=20
-> 2.43.0
->=20
->=20
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index e96457371b4cce88..cab4c89c4d657740 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -10,7 +10,6 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/clk/renesas.h>
+ #include <linux/device.h>
+ #include <linux/io.h>
+@@ -19,6 +18,7 @@
+ #include <linux/of_address.h>
+ #include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
++#include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+ /*
+@@ -238,22 +238,12 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+ 
+ 		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
+ 						       clkidx, group);
+-		if (!IS_ERR(clks[clkidx])) {
++		if (!IS_ERR(clks[clkidx]))
+ 			group->data.clk_num = max(group->data.clk_num,
+ 						  clkidx + 1);
+-			/*
+-			 * Register a clkdev to let board code retrieve the
+-			 * clock by name and register aliases for non-DT
+-			 * devices.
+-			 *
+-			 * FIXME: Remove this when all devices that require a
+-			 * clock will be instantiated from DT.
+-			 */
+-			clk_register_clkdev(clks[clkidx], name, NULL);
+-		} else {
++		else
+ 			pr_err("%s: failed to register %pOFn %s clock (%ld)\n",
+ 			       __func__, np, name, PTR_ERR(clks[clkidx]));
+-		}
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &group->data);
+-- 
+2.34.1
 
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---gm5qx6ivqj7qxcxg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEDs2BvajyNKlf9TJQvlAcSiqKBOgFAmWuaecACgkQvlAcSiqK
-BOiItAgAiVb1F3nml4JkuMIY7dmQo5gzshMOge9YwxV+CViwK6+VZN81W+a+uBRC
-nG6H9blRP6/eWCGmJMty07eR8pnzfzh1F7fdSr3ZjVJAtPcNY/Ywc5ByKebJz8jS
-bXxVgQ4cxcMzl54lO6xd0cFi9cCAIc8ENFStCmEhc65/KJMu8uDcitYv2T1fDj3d
-mrs7ok2oKy0JvVoQUVdeSfcWj3KxK4Hl4HX4cDZlsQhLuNRcRm17k5Xf8wtqiW+T
-Qi0Lyzls8rj/Phk0qKpWpcsMxVa76FAYj6W6yyW0s0mP+0piGLWfxNYqdXsvkOvh
-7ak8HyX1amqRf3OBh6/9Uk1imCpACw==
-=oZCM
------END PGP SIGNATURE-----
-
---gm5qx6ivqj7qxcxg--
