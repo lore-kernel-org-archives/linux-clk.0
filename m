@@ -1,208 +1,148 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754203D96B
-	for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 14:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251483D56D
+	for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 14:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705934373; cv=none; b=njNJm9L9G80SYMtOlY1jiGYmEd+32LxjECzG7TPnFM0RH301t+Ys4+W8qan3/xMJb83ZoQB9zP087RahonGbNqfLaqM/Idojhw4iF/tkkZWPYEDevwmft8DVj3QdqQ+zRS8Px0jhuynjsKanmFgcgyShlkQrQMTDXD0gHhK1mxg=
+	t=1705934801; cv=none; b=Moq8oX98yxL39rgEGh9bncvmQzXERO2MxvCksPq72Md2k28zzK2+MH7eAGshiXn3Ust93fDMiSpLC+u9vk1450V4m2mblj5OjKrR8/lQk1dOyVX02DTIoUXfMSXYxarlVF7H9Dg7Myc+pppVDyHElYLnAy/K8RuzmModwO3mMNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705934373; c=relaxed/simple;
-	bh=HdyUZf62kgjNhc07s/teq5GSlhwGxXpPTINVlGw5Xm4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jPJwDz772okaX5NHGOUmMp6QhtLOL9M5IMZn3QOA9EQqQ/+zYc95CrlHD0uWeBFvIFeI/NwFpzsCILlq0Z7B6ssg/QhwuPDIrSjrM0RBHKrnJ+5PZ8NYNImVEJxyEW3tt1q372VnC61rc9DeccBRAhxLPdQx7iPtrbCjNkNqSbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eo8SYT0D; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eo8SYT0D"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e775695c6so32376715e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 06:39:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1705934370; x=1706539170; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B8lvCubU57aNIM2sBEUNaYeXXZI+ZZd7zrjhp/AYVOA=;
-        b=eo8SYT0DNNiQsm027pSKU3nSMDRwfnrAA/2YKL/H+1WIYe96LXC/Fe/UyMITAd3Fuw
-         pcIp0m1sZoy+g2P6KY3t45f54Mp9ivj7Bbij1aw792NQzM280HgIXkLoUKvsZphfNuzb
-         B1JKpcVpl/L+ZOIUX9qWoawGMNGJf9lgY98yGF+cN7ercwWptJUzp3vYrwxzVrpoQPxz
-         B42QMZ2ZUEuzeIROt3mEjKhIhZzjb8o1IvZEXOzDjtErBwA46u9hKEVIgAGxQm5NfmOE
-         odcofmsXQo21ziQNsiTUCHsjO/v8W6Bil9MLC/AN5jo/DyWL47NzBwFjQG6cFe1zute3
-         nNGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705934370; x=1706539170;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B8lvCubU57aNIM2sBEUNaYeXXZI+ZZd7zrjhp/AYVOA=;
-        b=Gibhp90hel+OX6jN6C4TnONuoNrAJbwkRGkYrqB3AxSli7ONnC42TwjtLKmyX8dpKc
-         HwB2oq745+dDaTS9v//GEGSpSFNCOfM4V46aVE62TV/Lq3pqLceiLdbhX4yvoiZMHCaF
-         Fmub4h1lQc8WFQArIwmUVnlDVJsgW11aW6dgusabIzu2baFHK1FIENwKMoQNozrvolS1
-         YGzeG2i20+/nrsYGnsSRxu5M2qzJa+U+nrTaU9WTC8o4S2DLpglRUjMLWDlBQ1OxxrTH
-         UKmVL142cndGEe5qu6/3LepLVYC5U7FquJ8V7dBbOjLZ3+WEgbj9/hWYR2xKCHkZj1aE
-         oD3Q==
-X-Gm-Message-State: AOJu0YyLss7J9HocsAFni1/lXn8KBt6qI0OuK9Ox+zwqLryxTCX3egFh
-	qY2vvzNhtW30a9EFGgKPqAve4WKaMAarbw6y857ksXsCiBlQt1ZVPtM95VM98xg=
-X-Google-Smtp-Source: AGHT+IEdsqyOsPosFvOf94mD/UiOTrBNPGiAbDkqL6dHgwHaSf32EOQ4SCLbaCzVosKC4SbAD4vuog==
-X-Received: by 2002:a5d:4243:0:b0:339:35e8:f9 with SMTP id s3-20020a5d4243000000b0033935e800f9mr956516wrr.123.1705934369759;
-        Mon, 22 Jan 2024 06:39:29 -0800 (PST)
-Received: from [192.168.2.177] ([207.188.161.188])
-        by smtp.gmail.com with ESMTPSA id w15-20020adfec4f000000b00338a3325331sm9111017wrn.69.2024.01.22.06.39.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jan 2024 06:39:29 -0800 (PST)
-Message-ID: <372ed255-85b7-4f18-a28e-82e18171f7e3@suse.com>
-Date: Mon, 22 Jan 2024 15:39:27 +0100
+	s=arc-20240116; t=1705934801; c=relaxed/simple;
+	bh=n5dxUuHU7pv4+Yj+D91RpfZ47wiz3XZx89mC8ZutNhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3xNEvFNCp1FMJcpwp7WAp1HnMaIm4bRZd2Kxq1Q5kMEPY0MIKfWwpgGU8h0BHrgFQXxRrX1tjtZelARrkVsAfSxi+DvvR4HMww/yzJUbT0BQf978kFkfrurUo6TeivyY2QX8BPHkeZQ6Rzj6Wwpj67ZH+5lZk+V4bms8ZNbhCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1rRvYt-0003ay-HO; Mon, 22 Jan 2024 15:46:07 +0100
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1rRvYr-001cU3-Kp; Mon, 22 Jan 2024 15:46:05 +0100
+Received: from pengutronix.de (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 2DCE527B6A2;
+	Mon, 22 Jan 2024 14:46:05 +0000 (UTC)
+Date: Mon, 22 Jan 2024 15:46:04 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-riscv@lists.infradead.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
+	Wolfgang Grandegger <wg@grandegger.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] dt-bindings: can: mpfs: add missing required clock
+Message-ID: <20240122-smokeless-ion-63e4148c22e5-mkl@pengutronix.de>
+References: <20240122-catty-roast-d3625dbb02fe@spud>
+ <20240122-breeder-lying-0d3668d98886@spud>
+ <20240122-surely-crimp-ba4a8c55106d-mkl@pengutronix.de>
+ <20240122-cruelly-dainty-002081f0beb2@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: s32g: add uSDHC node
-Content-Language: en-US, ca-ES, es-ES
-To: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- Chester Lin <chester62515@gmail.com>, Andreas Farber <afaerber@suse.de>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: NXP S32 Linux Team <s32@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- NXP Linux Team <linux-imx@nxp.com>, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Ghennadi Procopciuc
- <ghennadi.procopciuc@nxp.com>, Ciprian Costea <ciprianmarian.costea@nxp.com>
-References: <20240122140602.1006813-1-ghennadi.procopciuc@oss.nxp.com>
- <20240122140602.1006813-3-ghennadi.procopciuc@oss.nxp.com>
-From: Matthias Brugger <mbrugger@suse.com>
-Autocrypt: addr=mbrugger@suse.com; keydata=
- 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
- PVrr2NoUqi/bxI8fFQJD1jVj8K0=
-In-Reply-To: <20240122140602.1006813-3-ghennadi.procopciuc@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zuyztwmnpelwfpxf"
+Content-Disposition: inline
+In-Reply-To: <20240122-cruelly-dainty-002081f0beb2@spud>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
 
+--zuyztwmnpelwfpxf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 22/01/2024 15:06, Ghennadi Procopciuc wrote:
-> From: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> 
-> Add the uSDHC node for the boards that are based on S32G SoCs.
-> 
-> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+On 22.01.2024 14:21:04, Conor Dooley wrote:
+> On Mon, Jan 22, 2024 at 02:13:16PM +0100, Marc Kleine-Budde wrote:
+> > On 22.01.2024 12:19:50, Conor Dooley wrote:
+> > > From: Conor Dooley <conor.dooley@microchip.com>
+> > >=20
+> > > The CAN controller on PolarFire SoC has an AHB peripheral clock _and_=
+ a
+> > > CAN bus clock. The bus clock was omitted when the binding was written,
+> > > but is required for operation. Make up for lost time and add it.
+> > >=20
+> > > Cautionary tale in adding bindings without having implemented a real
+> > > user for them perhaps.
+> > >=20
+> > > Fixes: c878d518d7b6 ("dt-bindings: can: mpfs: document the mpfs CAN c=
+ontroller")
+> > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > > ---
+> > >  .../devicetree/bindings/net/can/microchip,mpfs-can.yaml     | 6 ++++=
+--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/net/can/microchip,mpfs=
+-can.yaml b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.ya=
+ml
+> > > index 45aa3de7cf01..01e4d4a54df6 100644
+> > > --- a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.ya=
+ml
+> > > +++ b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.ya=
+ml
+> > > @@ -24,7 +24,9 @@ properties:
+> > >      maxItems: 1
+> > > =20
+> > >    clocks:
+> > > -    maxItems: 1
+> > > +    items:
+> > > +      - description: AHB peripheral clock
+> > > +      - description: CAN bus clock
+> >=20
+> > What about adding clock-names, so that the order can be checked
+> > automatically?
+>=20
+> I don't personally care for doing so, but if your heart is set on having
+> them, then sure.
 
-Reviewed-by: Matthias Brugger <mbrugger@suse.com>
+Usually the CAN driver needs to have the clock rate of the clocks that
+the basis for the CAN bus clock. Looking at the clocks description it's
+probably the 2nd one.
 
-> ---
->   arch/arm64/boot/dts/freescale/s32g2.dtsi        | 10 ++++++++++
->   arch/arm64/boot/dts/freescale/s32g274a-evb.dts  |  6 +++++-
->   arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts |  6 +++++-
->   3 files changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> index ef1a1d61f2ba..fc19ae2e8d3b 100644
-> --- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> @@ -138,6 +138,16 @@ uart2: serial@402bc000 {
->   			status = "disabled";
->   		};
->   
-> +		usdhc0: mmc@402f0000 {
-> +			compatible = "nxp,s32g2-usdhc";
-> +			reg = <0x402f0000 0x1000>;
-> +			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clks 32>, <&clks 31>, <&clks 33>;
-> +			clock-names = "ipg", "ahb", "per";
-> +			bus-width = <8>;
-> +			status = "disabled";
-> +		};
-> +
->   		gic: interrupt-controller@50800000 {
->   			compatible = "arm,gic-v3";
->   			reg = <0x50800000 0x10000>,
-> diff --git a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-> index 9118d8d2ee01..00070c949e2a 100644
-> --- a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-> +++ b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-> @@ -1,7 +1,7 @@
->   // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
->   /*
->    * Copyright (c) 2021 SUSE LLC
-> - * Copyright (c) 2019-2021 NXP
-> + * Copyright 2019-2021, 2024 NXP
->    */
->   
->   /dts-v1/;
-> @@ -32,3 +32,7 @@ memory@80000000 {
->   &uart0 {
->   	status = "okay";
->   };
-> +
-> +&usdhc0 {
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-> index e05ee854cdf5..b3fc12899cae 100644
-> --- a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-> +++ b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-> @@ -1,7 +1,7 @@
->   // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
->   /*
->    * Copyright (c) 2021 SUSE LLC
-> - * Copyright (c) 2019-2021 NXP
-> + * Copyright 2019-2021, 2024 NXP
->    */
->   
->   /dts-v1/;
-> @@ -38,3 +38,7 @@ &uart0 {
->   &uart1 {
->   	status = "okay";
->   };
-> +
-> +&usdhc0 {
-> +	status = "okay";
-> +};
+With clock-names we can automatically check that the 2nd clock is always
+the CAN clock.
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--zuyztwmnpelwfpxf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEDs2BvajyNKlf9TJQvlAcSiqKBOgFAmWuf6oACgkQvlAcSiqK
+BOiCMwf+PILQdcoKYj1XmQD6oOg99QEnpCsTXRVcTpE6fUQPNRyfKH6+KYIhiXhn
+bBp6u3rBJ6pnaJfTajjpdFrgjpD7QJBD88Eg37Elv8V9211/UtPLuVLRVQpQfREt
+8vmqnVihZCubToC+pC3B/RadtYJCUb6uD2A0tvdmF154H9lwvpe+ojEmLp/6j9F1
+fr/p52aGJcKdO+8VUx7dXpKlaghGwJoVcPIhTBxaa60hhJsSM8mNuVHx84GtZNBL
+K+ELI4xCxy5U9gs3CAr9FiP2zbtetZhnj19rHAY8ndFGT6DVu9Hp/xgWGyO9pCUR
+rwYkqH/u8YFRS0UmZmZG5A49oESIUQ==
+=yo0x
+-----END PGP SIGNATURE-----
+
+--zuyztwmnpelwfpxf--
