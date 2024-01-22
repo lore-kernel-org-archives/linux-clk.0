@@ -1,79 +1,75 @@
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2068.outbound.protection.outlook.com [40.107.105.68])
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2066.outbound.protection.outlook.com [40.92.103.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4B339AF1;
-	Mon, 22 Jan 2024 10:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1BB39FE2;
+	Mon, 22 Jan 2024 10:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.66
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705918207; cv=fail; b=IhQXGld3ofenD4K1OjOGUp4dD/NjVECVj7VOFe7cMGoJx2E6WDVWdE2Vr6f0swU+hVcNylza4sGD89yauwgT/+m5pbGzifei2yiursMlcgkO5s6Apfh5TTWP8+fFyVtv5ClnYfGWbATDRraykSxtrWhuJhJAFzOJE/Alb+1neIQ=
+	t=1705918298; cv=fail; b=IlL9wVIEGvLe3WY+jvm6+QctO9Ns+ImYfghx1744ClPMSYmahUhQVJMrGSP+ql614A4V4wYVgZLLLz/o1fJSJZeuFw4Auzk1YbpkbBybxGZqGCrNpQwO4C7Jln92bXNI8+PtHs81QNd+v1W3FErR+2RTz52Oc93PhCTBfh962T0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705918207; c=relaxed/simple;
-	bh=DgnHhAeuPKomJe/QxCutrKX2JgpLhB5ayO5AKZqyuDE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=TQu1t7UKKGFw1da/nn2mRsJwlqEuhAg6RVMorKYVy5HR9Ez8ZBwLKzvGI6/Ex1GgdRA/LdGVrZT5OujXClKHPJwh+sBcMn2NJd6JAjgX2rvRJIIc0+okDX52WyKfssT8Y1QGCsRPR43eKjF08wr8yE3Idn0lMOa4vpjNsAO6Bp0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=U8J5KzZM; arc=fail smtp.client-ip=40.107.105.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	s=arc-20240116; t=1705918298; c=relaxed/simple;
+	bh=VCBaVCzDV6K55DRCttt2S3ZCHo9ve0utSKJh+SyFjNk=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fJOJSZm8bWnU91fkKPO2DQ9WhWai5FnTPYIpeYuMANu/r7Jai4A3iacywG0BknkXQ7Eq6NJR1Zh3ZBvpfDIUJ76ayHTRwAb7OKiVv6ZXaj8tN/X4z95qoPl/uaYJS1eZMd9BVFWrgNbnYW0rJtQpZXx5HKX9IiRkIZxgBIPLs8I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=GMUS63JJ; arc=fail smtp.client-ip=40.92.103.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="U8J5KzZM"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="GMUS63JJ"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SWHosaNwSeYsQHDTmTKsbyD4WarXEWlPBOxcYEc5z0j/Hd2UUIL6HJwf422PKV6CE8YDub8PC1soWw+A9W4CDsviHHMHRvI1P2X5bmZ7LGWUYmUb07WGgJK2WYgV78n3hNXai5RA42szS671eM14xKkLOr+n2djvhvOTftnPouN2X59gli/F2fzcxzyn8c5xcvswyO46v78cQrhtFEM6eYhv7CrAH9VSiHphMeZ9rqWvK17z7uCM07twMNxIjWZp+v0Jo0IdztRiX9RiAJ7EyE19ZYlgF3fw2GxSuxH+79TsjyoJCBT8hDuBBsrUqcUOZsqCMJfuh9+6rR8Ydg7U7w==
+ b=mSQ8FXApYv5tXkn+mvPY/mM2tcioQXdIXOl7Tdpwr/O7liW4grBw82dTRhKCc/dbG73/DOv56tG8nn0bE5tAN7PiGHIQeO12awHXMSzGWPbVGgGqHCwOe2nwOsunugUnIJXXy21MYjqTwnw33vHq94D34FZ9FteBtXWGH6mPg9Q5Qd5mFWRN1xIwwiBHlUUgonsy8FlSwT9b52Tbgkzh8OYidylrxI9OxYkTLKi9X/OhDb82tau0BQnxG15Jr9vhkgcFFp4GpjVy+uNTgY1dHGOvx2cSTjxRB11WiQonYpqNuc1u7/aX7fZ6AZ08XCVm13LvmAdPGAgKBmUIJSUusw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SKjv8fcNG8+3r+Wh9tWwIcRYr52KrKqUdeEwOIQ5VEM=;
- b=HcZ9Iu6+vR7c7RN5+Y1Isbc704Owt/u21zKafmxy1M0AUUZfZXM8qCLwNdEYDOlZgG/BqQcLDqNP6XGnHTsQilzDsszGwaCJeMPxDIu8iwbyrpcPJLCVxHn5O1fIHeo8Wy5sehCaiz+HD2x5iyBHpqoNWMM9ii5/ir0BgvED1ZgK/JLdNRmXNc/+/nCV1p19TZXgKHgfXPv/3xZbkHiBzvnB/iGqTeQIyUAsAhtlIMEa0F4sP79v4TqAzidqj82MCmk4UYMBEbrRZDoY59hfXk6U6yVznDVd2mr8+9OZKzCyTSxSFViCjgBFNW9XhTrHLrfQDvfIZemhPYjuPoP/sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
+ bh=iTokLvTji4opG+w33J4WtYo7phhifYrfwZVWc2XLfYQ=;
+ b=UvjcUnFOD6q2mww2f3McOw7af/PXHL0v2QRn8uKojPvu4YGNOwNUpQiEwpU5RvVoHMr1AdCOAWBfSpOy0Lb94JMGtIiIOOdxzg5a9N9VTtKge8DcN/N2GuVRRiS4kHb8ceuf0yrWGlOCpz56hilcdpFRUzn4OgwRLJPvyHgHS6Y9qJra4YLmxwLKxW0N2vf58EanzYCQLaZ+bGqMmCu/+3kPts9L/5Tqt1PTEEaS7T0lVd/psLUq8kC6HSHmGrorbw7VgGYsy5ZqHS43RfVAO4A7VmFu5Nk0z3D+nQ8+SBwWDZecoZPGLCGkCOC95Q/4RdISnv0BdcbrqkU+TRP/HA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SKjv8fcNG8+3r+Wh9tWwIcRYr52KrKqUdeEwOIQ5VEM=;
- b=U8J5KzZMH8PuCgr0kPDoSmLC0Za6iZv81ow+K2/kIm5w4UJwSWIz7GQVkrB7+XzYGin1qp624LSExyqBYHk71V0n5yAB0vUvDVQShutXsdSHEU0JOcyCd2zfbLkD5J8SjdnJmyaTustT3iKsM79wzYdIF05bSKahMQSq8jgfr98=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU2PR04MB8582.eurprd04.prod.outlook.com (2603:10a6:10:2d9::24)
- by VE1PR04MB7486.eurprd04.prod.outlook.com (2603:10a6:800:1b2::10) with
+ bh=iTokLvTji4opG+w33J4WtYo7phhifYrfwZVWc2XLfYQ=;
+ b=GMUS63JJXhSRGZohAjaJWBqw1mUdHyN+n+ZkoZre4OFAqtwRoiQjza+M/WJKUITs8AzG4DpSpMKHLIgQtTSPN7v1qBKXZmVVM79hdR2Qa6YxNYg0f0pl3VPHpnBQqUriZiNDqJwZTqZ3KRCzjKhigacC6M41LIXfQ/f+zOpGzQTjyCoqkiqDFv8/+tLDmDFuHHGqNsEFwy4kyI3nbrcvGmXubvMP9ENyqOvaUvERRFqYOXI3zAbTPC4ZWKX7iw/q5RMu/hjp2ePt0+beoDSpH+K85Tt/QcE1npilQZ06haleQOo+pzR8u6BIQMYrThxEnTe1b7P29nEGMY4JcsEv9g==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN0P287MB2152.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1b7::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7202.32; Mon, 22 Jan
- 2024 10:10:01 +0000
-Received: from DU2PR04MB8582.eurprd04.prod.outlook.com
- ([fe80::195c:9861:96a1:56ed]) by DU2PR04MB8582.eurprd04.prod.outlook.com
- ([fe80::195c:9861:96a1:56ed%4]) with mapi id 15.20.7202.031; Mon, 22 Jan 2024
- 10:10:01 +0000
-Message-ID: <f45e02bb-1353-4c03-9a3d-294c3b78e8dd@oss.nxp.com>
-Date: Mon, 22 Jan 2024 12:09:56 +0200
+ 2024 10:11:28 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::6e80:69e1:f2e7:d70d]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::6e80:69e1:f2e7:d70d%3]) with mapi id 15.20.7202.031; Mon, 22 Jan 2024
+ 10:11:28 +0000
+Message-ID:
+ <MA0P287MB2822BCB4E43BCB495FCF9069FE752@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Mon, 22 Jan 2024 18:11:20 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: s32g: add uSDHC clock IDs
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>
-Cc: Chester Lin <chester62515@gmail.com>, Andreas Farber <afaerber@suse.de>,
- Matthias Brugger <mbrugger@suse.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, NXP S32 Linux Team <s32@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- NXP Linux Team <linux-imx@nxp.com>, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Ghennadi Procopciuc
- <ghennadi.procopciuc@nxp.com>, Ciprian Costea <ciprianmarian.costea@nxp.com>
-References: <20240119130231.2854146-1-ghennadi.procopciuc@oss.nxp.com>
- <20240119130231.2854146-2-ghennadi.procopciuc@oss.nxp.com>
- <20240119-magnetic-racing-0adf8e5fbd4a@spud>
- <20240119-cattle-antarctic-432fa8e1c0ef@spud>
- <75a16ac3-39eb-4874-9100-d605b2cfadfc@oss.nxp.com>
- <20240121-statutory-endurance-6d03d7e734c9@spud>
-From: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
-In-Reply-To: <20240121-statutory-endurance-6d03d7e734c9@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR06CA0212.eurprd06.prod.outlook.com
- (2603:10a6:802:2c::33) To DU2PR04MB8582.eurprd04.prod.outlook.com
- (2603:10a6:10:2d9::24)
+Subject: Re: [PATCH v8 2/5] dt-bindings: soc: sophgo: Add Sophgo system
+ control module
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu, chao.wei@sophgo.com,
+ conor@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, guoren@kernel.org,
+ jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
+References: <cover.1705388518.git.unicorn_wang@outlook.com>
+ <598b1026fdf9989bc48e5e10d1034b37947d3b80.1705388518.git.unicorn_wang@outlook.com>
+ <f4a46311-2e12-458b-98a8-d3caa2c95517@linaro.org>
+ <MA0P287MB282232DC6DF6290F5520BA89FE732@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+ <MA0P287MB2822FBA18674540BA85035BDFE712@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+ <c9feb32f-1efb-4613-94c9-9d6bb0f45366@linaro.org>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <c9feb32f-1efb-4613-94c9-9d6bb0f45366@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TMN: [n3fkDQygIzdUiN28vMEsfXKhKBijUAwV]
+X-ClientProxiedBy: SG2PR01CA0197.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:189::8) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <06dac627-f144-4ae0-a8df-fbb494aec2d2@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,160 +78,147 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8582:EE_|VE1PR04MB7486:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b2d2b3a-fe25-464d-792b-08dc1b324b75
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN0P287MB2152:EE_
+X-MS-Office365-Filtering-Correlation-Id: a3195ace-9d73-462d-5c6e-08dc1b327e57
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	GGGx/SWf08E+Uv06Ahyn/ni4eLP6HlTh8DT5EnIMCQG49s8092/GdN68UQKXCR035C662d4IHNUU0yOi+QjxoxwsXb2yt65s3EaoCb4pynNDGKk3xTXNTzeDQTw7ZrRfNb8uqrCJ5O3Pum3Wy2Pn26B6UAg8g139eECrD13yYsfr2nd8npBrjCgMavvi2K42nbf/Cm6HBmzD31jkbLf8sg86ZISJjMxg2Z7MaH8dVuKAtSa5Et5XABLMnYozlIVO6MWgMzOQ2Ghj+2FNOnuljx6cf9j5tn7ArOeL7E+wMxd+5NfxnR44iR0QGE3SrYnGMZ4eESMeOEz6Gd2HLuF8h1Ag1nRehyHTuH5tlbmCk/watxKihaQIPzBpVNoiDyMsH9U+VYggHR4Rf7swjeRDr768UvFnX8iZ4BJE4d4lXbIIAPaJCByJvMirK4wotD+20WAJEsilSAF4L/Q/2XrF9XOflmZ2nyfsd1pWvF2JHyX6dqe05mawHcEqFY/20xnHUnxMNGlpOyO8Y4PIKwWSa48QXx4A1df0ATbMj4AR4MOQ0iSPu6PEo8zSrhbLR2kDYAtCecYYa2FBDhHbosvqBebnAmjsr4vPnjf6xpJNmcR0irEoxxrI6HBxOJd+G8BidIh0dSL++Ed9V8GOC6wIAw==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8582.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(366004)(346002)(396003)(376002)(39860400002)(230922051799003)(1800799012)(451199024)(186009)(64100799003)(2616005)(26005)(6506007)(6512007)(6666004)(53546011)(83380400001)(5660300002)(7416002)(44832011)(6486002)(4326008)(2906002)(41300700001)(8936002)(8676002)(966005)(316002)(478600001)(6916009)(66946007)(66556008)(54906003)(66476007)(86362001)(31696002)(38100700002)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+	Toi/Y6h3G7mQdQiMSEBZy8diE/K/CAs5CpGBXepi0GDTG/ZVhsN6tuhT2lStXx+9XE/C1ExnHc7RuSnM+nBZHgH+8Bho4Sd5UnYGXLoyHPyZ5dj1LEUTc9NBGaeGNS7hWNwMocc707O7zncMDr2vWJkB5fO/C1pE9A21OoiIglPg6dqs0HcrEe1O17wtBjTY6UwFBS5L297bkAtT+3iPVidOhzjQj7cRQoQ4KBsMysCkvCJOoi9pNoG/B6xCflCaQbMgIfjO3OC22aWCHJRsccGXp28IphX8Bh+/8dmpOpSzufbSS0Nu6qx9NSkcJHRNZgYzlEFAIFW88jPDZ6SBELhb7xmOiyTkM3os6xdn80XQWqfEX9zF4O/HNQukEXHXtIvDVk/EmkttyiPRHyu4cxXDknY6eFUwkngyxIhxjeQzvihb6CX6kI0lKGehhAZ3bXaWnnjI6DoKUEzh1JIq9rmrAx1/ZId/NysujmiL5Ie37DlSkDnHS/76BCozpLYqkQvvrEvk5+P2C6ib0qouR3HpRjHPZ/pQqXM0rLkrciD3B8KcKWfckhCb2LaAwUNs6QPYLUgruEo0NvioWi3mYJ/lKIrQLK+CoP2rrtzOye64U6WbVwNiEi7TVwzLYRmfe912QP3OKsn/iBX7VLjnbQ==
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TWQ5SmdDV1p1eU90WWlnZnRQcEcxSzN4Mzk2dW1zNjJ3bGRVWHpOZEgwWng3?=
- =?utf-8?B?K0N4eU5nYnlNYllSUXdnR21IVThrTzdTK0lwcmlocXJRZTNZSmJCU1BSblln?=
- =?utf-8?B?K0dVYkYxTmVSVEpPS2lnSjRVR29ycGROZmQwUmJEWlZxQWtYT3VZaWUzVWxy?=
- =?utf-8?B?OWJPd3BSWjM1K2dsUkxSeDNkQWFGdmxqb1RQYVBFa1doOUwxbWhHdnV2TWxj?=
- =?utf-8?B?T1ZGdmxQNkV1alc2MGVjZ011Zk9DTFp2aFErUERYMjRlVlM5cHlwTWhKR2VD?=
- =?utf-8?B?TDEybzNwdVgyai81WGpQZUs4aTByck41azJrSWc1aHlhQ0FYMzJNSHBGeHpD?=
- =?utf-8?B?SXZFRlhyWUlnNGpEUHBoUW9aNjlHdWVieUNqaVRwdUVWNzI0TTlKKzlOWmVk?=
- =?utf-8?B?a0F1MGI5V0ZtK3RUbVRBKzl6cU9QeWZ0TGlkOWcrOVJNcE5qK1IrSU1SMzV4?=
- =?utf-8?B?bEVRYlV2dDlBRXQ3OVVkQTlqbkJmanlJRmYvZlNjdUgycnd0NThMZ1k2ZTYr?=
- =?utf-8?B?eWl4WGF4ZlQ3eTh2SHB6UndaT2ZidGhoczQwajNGOUN0Z3prSVR5R0ltS3BM?=
- =?utf-8?B?S2V6SWU3dlBWaDk3OXZKTGVLZXIrT3dyVXdLd3E1S2E4RTBYN2VuZWJqY2dy?=
- =?utf-8?B?SU81M1hla2liTVFDcmFBd1J0ZUYvUGRkOUNSb0pQSTNCRU93M3V3K3RoMlhX?=
- =?utf-8?B?VVVEYzh0MVFMMElmTzhOWXE5NjlTVDd5M1JkYkxVZ001VmpvY1JJNmkzSE5t?=
- =?utf-8?B?dVdQckh0Vi9WYUdnMkdvMFhpOWVUMjhIY2NDMnorTTB5WUdkeklpZmVjRTZX?=
- =?utf-8?B?cHhEMlBYajd0UXYxRTNPQmw0Tkg5bWRRWSs0SlBQcE1sVHlFRm9CdE52ck13?=
- =?utf-8?B?dUUvbDZscVdVVGJjcmtvOW1vMGY0MGlSU0hTWlRUZEFBT3JnRlhaYUR0VHBz?=
- =?utf-8?B?YmtUR1JqM1hCYmt2bnMyVndURHE4UkxDazV3Ykw4bVAzWnQ5OGY4a05YMDJU?=
- =?utf-8?B?R2xTTytpc3pFSUNZUTQrMHdBbjZnb21MYVpZeHJnV1FNREN0d2lBckhLZDhT?=
- =?utf-8?B?RXhsMHY5MnFsbE9WMUpWODN2WnNnVyt3SGR4bmhCTzJtYXE2alJIVjgySktw?=
- =?utf-8?B?a0VHeUNsWlBNWmxZV3BndHY5ZHkwWGxKc05ZbHJPa0lYTE80bzEvYXZRRHhp?=
- =?utf-8?B?YUVkOHZKL3JCSjZlMmo1Tk84VFRjekJtWFNHQVpGeUpqR25uSzl6ZXF1alg0?=
- =?utf-8?B?VHNYZXRGY2Z4cHVXdVNmT3hPOGZpVUV2dVdHVUt1RkpRTXpNakRSN1pyNVJN?=
- =?utf-8?B?WFJGck5xa2VCL3dsRUNCcnc3Y20zZ1pMZlRVMUlqNnJvTWNqYi96SXhoSk8v?=
- =?utf-8?B?MmQvSVlKUnArKzF3QzNPenpMVnpQYm15RThRRVFLT1RIQVVrdm9TeExFTVoy?=
- =?utf-8?B?d29SM0FCbU9MUlB3QVF5V0d4QnFvMXNCRTNNZmdtNU02dXlKdjhOaTZlZkhB?=
- =?utf-8?B?NEU1YnptVDJHRVRCRzB2N3VONVd1NU5FcmIyUG5YZmQrUmE2eW1BZjA3ZUVo?=
- =?utf-8?B?TnBpTjh0aVVyZjQrTEpiODF6aU4rOSs1VUN2VTJEYXIyUEJxOGU0RmVIWmtQ?=
- =?utf-8?B?YWc2d0VJZTFLZGs5aXVWUGpuaGpRSDJTalVrTTEweTVZd1JJWVBRd28rWk1H?=
- =?utf-8?B?L2hTOUQwS0VOVFN2bk96RndSRi93VjN5dVI2UTBWZkNmOU9GQktsSXpZdGk5?=
- =?utf-8?B?dWdldElLcVdqODJ3U2EyNVUvQVh1VmVDdUZZVnd6TjVZN3FzSEdFZ01Hd1Zv?=
- =?utf-8?B?NXVTVXVKaUdMQ3FNMklnTHZjZE1peGpGdkpkaFI3RHQ3aTdWOTFZY05uYkdD?=
- =?utf-8?B?ZENERUcrRFhZVjNoMHlqbFB0Zkh5aWVQamladUd4L3RPYjBkSkI0VkJidXVL?=
- =?utf-8?B?R0h2Z2lJUnJkTTV4RWk2aTJyZTBCZ2IvdWJvMWkydnZvWWdJZkJreGdQbitD?=
- =?utf-8?B?VmZ2QXFNYXFlWWVXVkFab3lNdmp5b0Q0RVd3NW14Q0puVExlaTlDVVo2dU1m?=
- =?utf-8?B?VGdrTWh1L3JTM2NXNjcwUWxjSFZyUHlybmM2S0cwVDlHTEE4bEMxenZ1Q0R6?=
- =?utf-8?B?cDJ0VDlNbStwaUhmMldvbWNDOE5rWXFxY1NLaldpUTZJYkw2cTZZMnp6RXpZ?=
- =?utf-8?B?ZlE9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b2d2b3a-fe25-464d-792b-08dc1b324b75
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8582.eurprd04.prod.outlook.com
+	=?utf-8?B?UGxkM0R4bkNxUnB6N1hEMjBvMy9rcEovd1NCZ0xtNERHalZ4dmhtc09IZ2lW?=
+ =?utf-8?B?OHZHQTM1THJMMXd5cjJaeW1iYlVTbzZIa1h0MzJWN0w0WEVSVCtFd0FzK0kw?=
+ =?utf-8?B?clZicE56ZHExV1hvbnBLblhCL2ZGZnlxc1dZNW1XQ2Vwc1dIeGhyK3AvMjdO?=
+ =?utf-8?B?UVF4WHBnb3pBaUdlS3RZM2pXRmVpdjJqZmRNQjJpdzBVbFZEZzBHT1Y3OUw2?=
+ =?utf-8?B?cVpWM244T3dhNGpJVXJGaDhteXg4ZXJrNm5UQ2xZZTBRMkU0UnFUY0hoWXQw?=
+ =?utf-8?B?RDF2bFBpMzkram1remRDM0djbGxJMXNFQUs3NGVxLzlCa05kWVNVNHd6Rk00?=
+ =?utf-8?B?WC9PbktKYVF1bTUxcjZ3V0Y2RzYyWWp4OUFyRXNmL2lzdGVxdGFmcjhQNlNq?=
+ =?utf-8?B?MEpvQ2Q3U29xY0h3bEl3Q21GWFBObnJ4WjdkYU5ja0h3ZjVjWEFpaFFDamFN?=
+ =?utf-8?B?TndEZ2c1RUxHR0ZlVUZuWVFUV05ZSm9ORVlmM1UzZ0U3OGx5TlBSSkt6dWE2?=
+ =?utf-8?B?NFVVYVMzOGR6enpvS3ZCUzNteFArWFR0ZjdBUmY0MTQ1QzhyY2tWOXVFaUZM?=
+ =?utf-8?B?bi84QUJRbGV0V21NbkljbksyUEplTW9wZ3JLUHJUUlpVaE91SWVFaGV6dkNh?=
+ =?utf-8?B?U1dialVrL1dSUjdpZ1RNL3pEc2xXNS96bzR0NW5LQ0VLMk9GRHJZbERJT04x?=
+ =?utf-8?B?ZTBnbnZTaWhHaVVxdVMxSXZVakhwWFBLdzdUdWdpLzQxQ0FlYlFZRkJkZ2Vu?=
+ =?utf-8?B?OTNXcXBxVXgyUUZnN1VqN2FtcC9zSTZoODJMYjBmU0c5K2JSZ1BGd2k5eDVk?=
+ =?utf-8?B?TEprOUdvRGdQWTJBMVdJWGhHMW4vdWNyekk5Q3BpQ3JzRFVMdkJHOStya1BY?=
+ =?utf-8?B?VW1BWTVVRWhUOVpyNXA1SEkvSE9wanVtcnludm04RHBHMUV0MFpVaWZqQTFI?=
+ =?utf-8?B?eGFrTVpRUjV5NEUvU0o3bFNJbSs1RFdaZXg0dEQ5TjZmRHRHMUlQYTg0aWFI?=
+ =?utf-8?B?WVZhV2p1d21yVkx2dEVGZkhCWXBWdTl1dlZTbldWVHVkNWdFVUQ2TkFwQ0oz?=
+ =?utf-8?B?WkZ6SEcwNjF5YjNoekZQS3Q5QWV5ZUwvbTdDV2Fwc2xsV0lQcTdvNlJhTzBo?=
+ =?utf-8?B?YkRsZkIwUVRWdVZXUlZRUFI0a2w2cVc0eFR1NUtjT1cwbFJTOHdKZGpWcmxJ?=
+ =?utf-8?B?UTBtMXc1ems5b00vN2ZjMWdyNG96aGZMOU1OU1F1K1ZTazNXcW9teVJQOWts?=
+ =?utf-8?B?RnZXdlJzSS9OUnlQWEplRE0vZUlIYnowb3pjNndrVGtRT1lRYWRuNFJoMndm?=
+ =?utf-8?B?VG4vWWZieVpzVlFVLzJML2wrZllCdS9pYWozdEQ2YkhYcmtWU1lPb3hiYitE?=
+ =?utf-8?B?bk9tR3hNdHB0cXpMUzZnNjVmODZzVTNtUjM1ci82SmpsQko4SDhVaHcyUmJZ?=
+ =?utf-8?B?OVhTWkFKRWdDQW9vMys2VzF5TlpWRkpWSmhWYUJhblJTYURJWjcvTlN1NWRi?=
+ =?utf-8?B?SUZBWjdUbnRaZm9TSnNsdmEySy9tT3VBekYzNVhkYi9Fd3BKRGpXSGRHZXNy?=
+ =?utf-8?B?ZzVhUmhTLzVuZjJMcUs3bEkrcHoyUW5KckVlYWZxd2FEVmFWaTZOMWcxMU15?=
+ =?utf-8?Q?VorCjY4D7XFoVn5R0e+HZCNWswde5f07NZ+OWGbOOvHU=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3195ace-9d73-462d-5c6e-08dc1b327e57
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2024 10:10:01.3774
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2024 10:11:28.4067
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aomZAklnT1UK3xLXiN2gHDX0gGIIXTXUt5BX+1UStiu+hHBNTx59lYoARcrbFz1Y1fLCvwB6ue+YLrhkXvuPFnkw9pogkgU3c+T2SUkUWYk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7486
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB2152
 
-On 1/21/24 15:32, Conor Dooley wrote:
-> On Fri, Jan 19, 2024 at 11:25:57PM +0200, Ghennadi Procopciuc wrote:
->> On 1/19/24 18:14, Conor Dooley wrote:
->>> On Fri, Jan 19, 2024 at 04:11:37PM +0000, Conor Dooley wrote:
->>>> On Fri, Jan 19, 2024 at 03:02:28PM +0200, Ghennadi Procopciuc (OSS) wrote:
->>>>> From: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+
+On 2024/1/22 16:10, Krzysztof Kozlowski wrote:
+> On 18/01/2024 06:29, Chen Wang wrote:
+>> On 2024/1/16 19:37, Chen Wang wrote:
+>>> On 2024/1/16 18:06, Krzysztof Kozlowski wrote:
+>>>> On 16/01/2024 08:21, Chen Wang wrote:
+>>>>> From: Chen Wang <unicorn_wang@outlook.com>
 >>>>>
->>>>> Add the SCMI clock IDs for the uSDHC controller present on
->>>>> S32G SoCs.
+>>>>> Add documentation to describe Sophgo System Control for SG2042.
 >>>>>
->>>>> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
->>>>> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+>>>>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
 >>>>> ---
->>>>>  include/dt-bindings/clock/s32g-scmi-clock.h | 14 ++++++++++++++
->>>>>  1 file changed, 14 insertions(+)
->>>>>  create mode 100644 include/dt-bindings/clock/s32g-scmi-clock.h
+>>>>>    .../soc/sophgo/sophgo,sg2042-sysctrl.yaml     | 46
+>>>>> +++++++++++++++++++
+>>>>>    1 file changed, 46 insertions(+)
+>>>>>    create mode 100644
+>>>>> Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
 >>>>>
->>>>> diff --git a/include/dt-bindings/clock/s32g-scmi-clock.h b/include/dt-bindings/clock/s32g-scmi-clock.h
+>>>>> diff --git
+>>>>> a/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
+>>>>> b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
+>>>>>
 >>>>> new file mode 100644
->>>>> index 000000000000..739f98a924c3
+>>>>> index 000000000000..7b50bb56b4cf
 >>>>> --- /dev/null
->>>>> +++ b/include/dt-bindings/clock/s32g-scmi-clock.h
->>>>> @@ -0,0 +1,14 @@
->>>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
->>>>> +/*
->>>>> + * Copyright 2020-2024 NXP
->>>>> + */
->>>>> +#ifndef _DT_BINDINGS_SCMI_CLK_S32G_H
->>>>> +#define _DT_BINDINGS_SCMI_CLK_S32G_H
+>>>>> +++
+>>>>> b/Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2042-sysctrl.yaml
+>>>>> @@ -0,0 +1,46 @@
+>>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>>>> +%YAML 1.2
+>>>>> +---
+>>>>> +$id:
+>>>>> http://devicetree.org/schemas/soc/sophgo/sophgo,sg2042-sysctrl.yaml#
+>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >>>>> +
->>>>> +/* uSDHC */
->>>>> +#define S32G_SCMI_CLK_USDHC_AHB		31
->>>>> +#define S32G_SCMI_CLK_USDHC_MODULE	32
->>>>> +#define S32G_SCMI_CLK_USDHC_CORE	33
->>>>> +#define S32G_SCMI_CLK_USDHC_MOD32K	34
+>>>>> +title: Sophgo SG2042 SoC system control
+>>>>> +
+>>>>> +maintainers:
+>>>>> +  - Chen Wang <unicorn_wang@outlook.com>
+>>>>> +
+>>>>> +description:
+>>>>> +  The Sophgo system control is a registers block (SYS_CTRL),
+>>>>> providing multiple
+>>>>> +  low level platform functions like chip configuration, clock
+>>>>> control, etc.
+>>>>> +
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    const: sophgo,sg2042-sysctrl
+>>>>> +
+>>>>> +  reg:
+>>>>> +    maxItems: 1
+>>>>> +
+>>>>> +  clock-controller:
+>>>>> +    # Child node
+>>>> Drop the comment, it is obvious. It cannot be anything else.
 >>>>
->>>> Why do these numbers not start at 0?
->>>
->>> Ah, because these are the SCMI IDs directly. If these are numbers that
->>> are in the TRM, just use the numbers directly - there's no need to
->>> create bindings for that.
->>>
+>>>>> +    $ref: /schemas/clock/sophgo,sg2042-sysclk.yaml#
+>>>>> +    type: object
+>>>> Why isn't this merged here? You do not need the child node really...
+>>>> unless the clock inputs are specific to that clock controller and you
+>>>> will have here more devices? But where are they in such case?
+>>> I don't see more devices will be included later. It should be ok to
+>>> merge them into one.
+>> hi, Krzysztof,
 >>
->> Hi Conor,
+>> After some double check, I find we will have more devices in
+>> system-control. For example, in the SYS_CTRL area, there is also a
+>> section of registers used to control the "General Purpose Interrupt".
+>> The pcie controller of sg2042 will use this interrupt controller which
+>> is defined in SYS_CTRL, we will add it in later work.
 >>
->> I appreciate you taking the time to review the proposed changes. I
->> wanted to clarify that the IDs mentioned in the header are SCMI IDs
->> exported by the TF-A and are utilized by the second patch of this
->> series. These IDs are for the uSDHC controller to control its clocks. As
->> other SoCs use this model, I have included all the necessary IDs in a
->> dedicated header file:
->> - rk3588s     (arch/arm64/boot/dts/rockchip/rk3588s.dtsi:97 [0])
->> - stm32mp157c (arch/arm/boot/dts/st/stm32mp157c-ed1-scmi.dts:73 [1])
->> - stm32mp131  (arch/arm/boot/dts/st/stm32mp131.dtsi:1372 [2])
->>
->> Should I remove the header and use raw numbers in the uSDHC node?
-> 
-> IMO, yes. There's no abstraction/binding being created here if they're
-> the SCMI IDs.
-> 
-> Thanks,
-> conor.
+> I expect then all devices to be documented.
 
-Thank you for letting me know. I will make sure to include this change
-in the second version of the patchset.
+hi, Krzysztof.
 
->> For
->> example:
->>> +		usdhc0: mmc@402f0000 {
->>> +			compatible = "nxp,s32g2-usdhc";
->>> +			reg = <0x402f0000 0x1000>;
->>> +			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
->>> +			clocks = <&clks 32>,
->>> +				 <&clks 31>,
->>> +				 <&clks 33>;
->>> +			clock-names = "ipg", "ahb", "per";
->>> +			bus-width = <8>;
->>> +			status = "disabled";
->>> +		};
->>
->> [0]
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3588s.dtsi#n97
->> [1]
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/st/stm32mp157c-ed1-scmi.dts#n73
->> [2]
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/st/stm32mp131.dtsi#n1372
->>
->> -- 
->> Regards,
->> Ghennadi
->>
+First, I'm very sorry for having double-checked with you for this system 
+controller and child node issue, but this time I'm sure there should be 
+no more child nodes except the clock and interrupt controllers, though 
+there are some other registers in SYS_CTRL section, but we will not use 
+them till now.
 
--- 
-Regards,
-Ghennadi
+One question, when you say "to be documented", do you mean I need write 
+binding/yaml files for other child node? But they exceed the scope of 
+this patchset (this patchset is for clock support only). That's why I 
+suggest just add clock-controller in this patchset and to add the 
+interrupt controller in another patchset for pcie support. This 
+mechanism should be suitable for our expansion.
 
+Thanks,
+
+Chen
+
+>
+> Best regards,
+> Krzysztof
+>
