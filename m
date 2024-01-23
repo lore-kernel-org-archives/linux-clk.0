@@ -1,132 +1,173 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB9056B65
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 11:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A839E5A11B
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 12:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706010602; cv=none; b=Hz5Wf8yquM7vHvhL4+g7p8iwqaV5xrqd2P7FJjiVESsOCAS60zkgRYnJMJod6ESUGJt56f8MojGRQQaivvC9kgUw/0MjpF/tybNqfoNBG9l+h2P6B+pvcvakOwuh25lnhE2l7pjTHIiwAz7398fJHBpF2lc/B0oAlLIJwZXth9U=
+	t=1706012108; cv=none; b=BTi6zYxhwXGwbPYeLKSjObhZclD6S1HIJsmGxYdiu+RmejIfBDk7tVwmLzlz1rGNOs0FfM91RDDaSooUGA0vomp4TCwwiJXEHUQ1HUtGyKHh6Qg1i/naaS9EnN67TugwBX0kTBzbB8DSVzaN3BvDLmkEqaPmMXs2WyIaHXoMRuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706010602; c=relaxed/simple;
-	bh=5bC09vgD7VmrESs1alLhu6EpMuDiGscc90Ewm/A6g1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hPDNM55m3vLoNS2K8ptH23IzaLEnQj7HodC69jhmSOk8wRgnYRRzWLRcC9Zy9ddLAa/5tTllMyv8VP1zqsNr0RRDzZ1eSsKLguj2WlqKFErlX7ISTDcS32NtrA6RhxUGHva5mAW9QAXyTxbjc/c3PM7M8XdjRDN9v0AN065/4Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NmfyhidD; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1706012108; c=relaxed/simple;
+	bh=BYGRDUQ2oYvIYx1fG3CEeY7nYdsYyMhSfFnuUClPtBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i1oml2z3tOSKFYiN+885lyo0uvk7YsxsXmMsS7tKACrNm51VTEVgefcxk0S4kAiPwHB2JV+36Gts/dni5wkCq3XkvrWxq7Wm2yuPTULvzeWsGHFxBgUTwgfS6tG8OOTj1F1ddugQYvBtuSAh8bhOf7/GDlwI9F/2xVyynTU1AW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cACebxdL; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NmfyhidD"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-55a8fb31fc2so3294475a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 03:49:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cACebxdL"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e775695c6so41577115e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 04:15:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706010597; x=1706615397; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nl5aSgUhW5224Zb5I6h7KA4cDC9AhC2LWUB6hKUEnbY=;
-        b=NmfyhidDi7pfjvIDWileBSr6xJX2+TiBCgHE4fjgI3IoD3sovX+0yL91dT+83OsZ1h
-         LXt9d79yMLy/50uBuIiQ3kG0cb+0y6T7eOqcgXweXSihBEVNmpMJFVwj81TR7UWZ75jM
-         V4QU+4lLBEq/ZpACpNTjLA4JAMj7qyWuKvrghPWfHqUqA+1teVfwYQ4siazilG93etn4
-         XeG68TOPfEBDimlAkFQfz084a92idhGbu63SeBa/k9pK3oA7dQuH52agwyGIQtRxzQFW
-         xk4F/ji4d5rJbzvdFkDcInE6AF+DvZKsVyWnU+tlLRkHY9wFm0C2GnK3bCEmcfKe24D8
-         fQ2Q==
+        d=linaro.org; s=google; t=1706012105; x=1706616905; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XbySdSqyixVey9XUJl2wI2fXpfFGflTsEKME/UI6qxs=;
+        b=cACebxdLDkv07rdpMjBlPi/mQGNAcukQw6qZEijNW7zXTfVuadML47Obr8ANa6CWPr
+         pnXO+k9UfXM4K3ysrORzPllMSQXq1OzjwM4adcaaM3TiyOr0xeudx9KPJuNr6o79Uy1a
+         q/oNS1x03ecxYRz4WxzTB79d6SvTIINlgSJ3gr9BcY1aZxH6hohpVsGvmVpEY2TskeaG
+         Oz8YTxbKB/m/TL8klYouJCZbtsjITmNPadeLzWqTAuKtoMRy9kWTXNoDFYViBduuJRSW
+         GBCPE6kN+OCpmeD/xCt31PlhcEWLVyGME4daA47ju7KjGKQzyMNgAibLL2Lo3B4qI6cS
+         sSbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706010597; x=1706615397;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nl5aSgUhW5224Zb5I6h7KA4cDC9AhC2LWUB6hKUEnbY=;
-        b=gtuku9em8ebtzKIRfwuIpVEGr9xekNOMZBd2BkbMH5JqHiu7PXZNn88T52m9lXInQT
-         1cX7mAeuMcl/noVDKfrYOFHK3vQAFDS9uoCW0tmyV+oeEpi+RIyc4ggQwn/R4JaNB/KW
-         dpuSbTLVQKlowyVb5lhQQTgUBS4HMG8LtmWC5eo2DVp0M/FR6qq/v87wFlSbT1YRDImZ
-         S1dF/5rWd0orranh3ThbtVOGP1TXY+zUhbMyT+IMH//fpRoPvyPZfs1qNQsKXzfmipMH
-         S9l6cFt5d/mqHGVVzc7fJ7Xz60P7GHqtYgD9J+fxiUdhgl/KYtHBn2jB0ygcjldV6QDn
-         dNoA==
-X-Gm-Message-State: AOJu0YwRl+wdZoLvXJr611daMthvzR/ctW5hKZ68EK/fOiMfOJv7ZllE
-	mAqzbCAx69WXTTQbl6ZWuW2xzC575qx4WPyzel1gPLzHj+vyETKZ6bdhou2ohTE=
-X-Google-Smtp-Source: AGHT+IGMqxSLffD7NLcEGQBjjhAZx//MLEVRpkbTYe3+mhpWdIhi1Dk8+v4AX01N6tjRbyCraj7Yhg==
-X-Received: by 2002:a17:907:1dc8:b0:a28:bdbb:dca7 with SMTP id og8-20020a1709071dc800b00a28bdbbdca7mr40934ejc.15.1706010597194;
-        Tue, 23 Jan 2024 03:49:57 -0800 (PST)
-Received: from linaro.org ([79.115.23.25])
-        by smtp.gmail.com with ESMTPSA id vk6-20020a170907cbc600b00a2ecec00a88sm7357656ejc.99.2024.01.23.03.49.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jan 2024 03:49:56 -0800 (PST)
-Date: Tue, 23 Jan 2024 13:49:55 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	Rajendra Nayak <quic_rjendra@quicinc.com>
-Subject: Re: [PATCH v2 10/10] clk: qcom: Add camcc clock driver for x1e80100
-Message-ID: <Za+n4zfzoZFhhLIa@linaro.org>
-References: <20231214-x1e80100-clock-controllers-v2-0-2b0739bebd27@linaro.org>
- <20231214-x1e80100-clock-controllers-v2-10-2b0739bebd27@linaro.org>
- <624956b6-d7ea-43da-bb8d-32d9166a0272@linaro.org>
+        d=1e100.net; s=20230601; t=1706012105; x=1706616905;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XbySdSqyixVey9XUJl2wI2fXpfFGflTsEKME/UI6qxs=;
+        b=YVFLU4dClkngueBnXy4sqh0L/mgazQ+hbf/PbZca+IfaplRLcAVMZglc14nERuvCjN
+         Tr+YOlZUNwfQXaLek73qTn8tCBOinmbn5y/QHI7c+9BLL7+sgi47drjeT8sL9QWXq7qi
+         xl2mKIwu9Vmo/tEbDcm/Ka5ov8HJfaqeGU4QvxNmbz3HZ5ENJZe36yy/cHheH6Bw0pJ8
+         32IPMNyTY+6FaQXd1QEIcFAoL2+xH4vm+dk2S7oZxNT4ryVl7IChxmyQhUj6B7Zhsxxp
+         qJW4jRka1QbR+SgcS1A985qhzazgrY991GkAPVqtbHSWRQ4zDNbGEN7luQr25Mks6U5O
+         zYLw==
+X-Gm-Message-State: AOJu0YzSwZHm0Hg9He8shDu6+J2H4wOAymnOUOPR3Xn068eQ+LcdYTU7
+	NMzrG0S663alOJZdASQjuOKBiXm5BWllqfKT3YNEzAUF6+1YwKJdJKkHmeFHdGw=
+X-Google-Smtp-Source: AGHT+IFg6AdpL8JP+l2IT0GeSA2/bMT2+fhZ1Wv/iLLjQ1khFfEweOmoWKHaQUax2h/ibbZH23lxYQ==
+X-Received: by 2002:a05:600c:4f52:b0:40e:6b7f:5ca9 with SMTP id m18-20020a05600c4f5200b0040e6b7f5ca9mr567647wmq.80.1706012104886;
+        Tue, 23 Jan 2024 04:15:04 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.215.66])
+        by smtp.gmail.com with ESMTPSA id bi25-20020a05600c3d9900b0040ea5ae94acsm11653024wmb.27.2024.01.23.04.15.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jan 2024 04:15:04 -0800 (PST)
+Message-ID: <9da1e9bf-0b3e-481e-a9c5-016238ee93ca@linaro.org>
+Date: Tue, 23 Jan 2024 13:15:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <624956b6-d7ea-43da-bb8d-32d9166a0272@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] dt-bindings: clock: support NXP i.MX95
+Content-Language: en-US
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, abelvesa@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
+Cc: devicetree@vger.kernel.org, linux-imx@nxp.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Peng Fan <peng.fan@nxp.com>
+References: <20240122013239.1434383-1-peng.fan@oss.nxp.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240122013239.1434383-1-peng.fan@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 23-12-16 14:39:48, Konrad Dybcio wrote:
-> On 14.12.2023 17:49, Abel Vesa wrote:
-> > From: Rajendra Nayak <quic_rjendra@quicinc.com>
-> > 
-> > Add the camcc clock driver for x1e80100
-> > 
-> > Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> [...]
-> 
-> > +enum {
-> > +	DT_BI_TCXO,
-> > +	DT_BI_TCXO_AO,
-> > +	DT_SLEEP_CLK,
-> > +};
-> > +
-> > +enum {
-> > +	P_BI_TCXO,
-> Please don't overload this define with DT_BI_TCXO_AO, add a new one
-> for the active-only clock. Please also do this in other drivers in
-> this series.
+On 22/01/2024 02:32, Peng Fan (OSS) wrote:
+> +
+> +/* The index should match i.MX95 SCMI Firmware */
+> +#define IMX95_CLK_32K                       1
+> +#define IMX95_CLK_24M                       2
+> +#define IMX95_CLK_FRO                       3
+> +#define IMX95_CLK_SYSPLL1_VCO               4
+> +#define IMX95_CLK_SYSPLL1_PFD0_UNGATED      5
+> +#define IMX95_CLK_SYSPLL1_PFD0              6
+> +#define IMX95_CLK_SYSPLL1_PFD0_DIV2         7
+> +#define IMX95_CLK_SYSPLL1_PFD1_UNGATED      8
+> +#define IMX95_CLK_SYSPLL1_PFD1              9
+> +#define IMX95_CLK_SYSPLL1_PFD1_DIV2         10
+> +#define IMX95_CLK_SYSPLL1_PFD2_UNGATED      11
+> +#define IMX95_CLK_SYSPLL1_PFD2              12
+> +#define IMX95_CLK_SYSPLL1_PFD2_DIV2         13
+> +#define IMX95_CLK_AUDIOPLL1_VCO             14
+> +#define IMX95_CLK_AUDIOPLL1                 15
+> +#define IMX95_CLK_AUDIOPLL2_VCO             16
+> +#define IMX95_CLK_AUDIOPLL2                 17
+> +#define IMX95_CLK_VIDEOPLL1_VCO             18
+> +#define IMX95_CLK_VIDEOPLL1                 19
+> +#define IMX95_CLK_RESERVED20                20
+> +#define IMX95_CLK_RESERVED21                21
+> +#define IMX95_CLK_RESERVED22                22
+> +#define IMX95_CLK_RESERVED23                23
+> +#define IMX95_CLK_ARMPLL_VCO                24
+> +#define IMX95_CLK_ARMPLL_PFD0_UNGATED       25
+> +#define IMX95_CLK_ARMPLL_PFD0               26
+> +#define IMX95_CLK_ARMPLL_PFD1_UNGATED       27
+> +#define IMX95_CLK_ARMPLL_PFD1               28
+> +#define IMX95_CLK_ARMPLL_PFD2_UNGATED       29
+> +#define IMX95_CLK_ARMPLL_PFD2               30
+> +#define IMX95_CLK_ARMPLL_PFD3_UNGATED       31
+> +#define IMX95_CLK_ARMPLL_PFD3               32
+> +#define IMX95_CLK_DRAMPLL_VCO               33
+> +#define IMX95_CLK_DRAMPLL                   34
+> +#define IMX95_CLK_HSIOPLL_VCO               35
+> +#define IMX95_CLK_HSIOPLL                   36
+> +#define IMX95_CLK_LDBPLL_VCO                37
+> +#define IMX95_CLK_LDBPLL                    38
+> +#define IMX95_CLK_EXT1                      39
+> +#define IMX95_CLK_EXT2                      40
+> +
+> +#define IMX95_CCM_NUM_CLK_SRC               41
 
-Nope, that needs to stay if we want to align the dt bindings between
-SM8550, SM8650 and this. At least for dispcc. But I would like to have
-the same dt schema for the rest of the clock controller drivers between
-platforms that share basically the same ip block.
+All my comments from previous version or for other patchsets you sent
+recently apply.
 
-> 
-> [...]
-> 
-> > +	clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
-> > +	clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
-> > +	clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
-> > +	clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
-> > +	clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
-> > +	clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
-> > +	clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, &cam_cc_pll8_config);
-> Do we know whether these configure calls are actually necessary?
-> > +
-> > +	/*
-> > +	 * Keep clocks always enabled:
-> > +	 *	cam_cc_gdsc_clk
-> > +	 *	cam_cc_sleep_clk
-> > +	 */
-> > +	regmap_update_bits(regmap, 0x13a9c, BIT(0), BIT(0));
-> > +	regmap_update_bits(regmap, 0x13ab8, BIT(0), BIT(0));
-> Please make the comments inline with each line
-> 
-> Konrad
+Best regards,
+Krzysztof
+
