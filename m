@@ -1,113 +1,94 @@
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823C75D8E0
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 09:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9535A0E7
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 09:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706003139; cv=none; b=DS1fUAhMjkOaXrQZNeeIqy5pEFthWT4LICW1QfprW2bkw3km44lKJe9qxCfoQ7bcYGYWkjqvu3uJTpB0i11TyprXvD/IP4CRTuJkkJZhOYmJsm2MrOqO5xf4kGC/Fg5muSGEI53OX9GYKph7Tc7HwfM/ciEs6oNqq0AlLqc2LME=
+	t=1706003699; cv=none; b=HxPesTUu1POvxm+HbBWml2J+Fkn2ohGnmlK1QuzTDwRF03rv/FGN38K0mKrVka6gtFYGHLsez3KeMf3RWk5N7d/Ozcl8uE5xjaqLKM02U8NC80PBs3rYGzSBqENhmGZQRfjZ+CNB1L5aZuO2+Wo3EJXyM/+14MdJlBQNeRfGku8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706003139; c=relaxed/simple;
-	bh=aLi4ni515fDPLmheTfXWKONnXtTpxfLwvtIiaSEI/pI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l7G7N+52OXPxVzz4L1IopaY9ezuoDU1cB6Y8uw5yMnFhPO0G7LiEjjYqE9KplsMNVB7pTucwsZFFTEwZvBVY2v5HcZ6q/nMK0JlykFVUZt07iRgnyB1gjb8mNKG/ygMJuHNkhM37WVFwnGbSRbL8A+NHUcm6OPQYYAEf0NTmtok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SgqeWKKk; arc=none smtp.client-ip=209.85.160.177
+	s=arc-20240116; t=1706003699; c=relaxed/simple;
+	bh=s9+X44rPvtMGKpTNWIFeGkpPDxkX8dmkzY3qoWw0MEg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JXDG9Onb/Jo2jvdrktU307JwFqdcRH18wjKIaeu4UdRh0Z2+/FqcNvMaS1V3q80/uV+cW0M3SCRYnO9+ougGn3N+aS9dQXAAXzCC/lNR6uPGPkb94X1WPVm1JruOl2xAYPTW2VV6rwRymewJbZE2yYJxQM1FgMsrFoFWKEj4VM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AS2hSVaF; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SgqeWKKk"
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4299f424e55so18761431cf.1
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 01:45:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AS2hSVaF"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-337d6d7fbd5so2970989f8f.0
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 01:54:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706003136; x=1706607936; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GPuIu+Od8YPZ7JAGfosVr9r0tWmFr9cTu0oqbB+e0Zo=;
-        b=SgqeWKKkVfxFi6U7w1Pb3K8TdafaRdah6HPMhYpQCSjsPbxITaoq/4gOfakq4uHny1
-         iyaLBJIoOITozXmV3Nf8bZ+uVxL2n2qzAPyhagNapf5fXxmWWg74khT9OZ3jKdzVKj5M
-         Vw20FKcGeQi3Soibai1EkTr//02S+07D7D0xp9zq/809AI/yyg+Z3Ty/AP/sV+a2Ibam
-         RoiqsJMcCApxz6LVBRkyeMGYfLJ8or+rRMa9fDWXCvv6v40HOHQ2aWpRL0ICazeaV6i1
-         vUsLTYN3FdfpbhpJxyhF5Mkpe04uKOcGnLVKUz0fvZJY+MWoKXAEeHrpt7NWTU4hPflv
-         jrZQ==
+        d=linaro.org; s=google; t=1706003696; x=1706608496; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Im8GtCvE7H26gkn/fdW7k+g4Cg7EiQCmiyIP3+igXQU=;
+        b=AS2hSVaFOPuPZ7iRgo43bn97pX4mFEmUJyRDZzU1Sche6I6ZQ5ma/ABTD+cgxSz8Hz
+         joTNvO1OcAkqQDGijJgqQ509dx4LFTuzevvIKjik/fuS+z0Eg/t69tO+uePlTwdkkz4Z
+         dEKgXYic56E7Q5Dk6WWyf75kZB0+4xBUHLTfDd2/3iFOj+pfQw+d/LCreqhGiPoJsfU4
+         sXQHbUbiPxHhJ6gjoVZtYGgDBzd7tnsAxDNk2YSqm6P+0JONO0/OYY0AQIUIXDDBMBv9
+         5P9i772SvcqQIiD5RzBjuTVH2us2QwCv0VbfVMpq+GWzG+S28lulIk3NayWRmLWKCtfE
+         XfGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706003136; x=1706607936;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GPuIu+Od8YPZ7JAGfosVr9r0tWmFr9cTu0oqbB+e0Zo=;
-        b=XtubIxEfv1+U8iEiS2EbzfuDv//1WtC5wh+OanMDlmRkocHyD0YEbFwb8lQR5A4Oni
-         W2yzXWt6aeZbJlgRIAuLAScaG+6lfy5Vyb9BeXBNrHsS0fWBNv/Vn7U0N/fDvLmXLHQw
-         Ql44ZovrMwTeqqogyY1bGLNje8q6ElTFJTAfclO1hWO5WINK1+lDJkxSTbb+VjAKc0zJ
-         wpdFfmCrIZAmg2DFo0WQZBgkZUGTIoRwCo6aK/jUCyXblZYrUAKpMOFdM+273eYjY1B8
-         8WvL7NhVXWSwM+bRZtI7D9zS7VcaG6CD8aA6Rrx2S/OLRIDKdWfVXSgLmSRCYVsX/n6S
-         3jKg==
-X-Gm-Message-State: AOJu0YzOvRcqMbwNTj3OTOP+e97sbrdzuTOUcIzDajetqg00uIA0JmCg
-	zUicc64/WlNgb0bm/54l+LjZTepiPQDyRD/hoxt338Mqtrobs7bvkJniVIR3CA==
-X-Google-Smtp-Source: AGHT+IGwmRddd4hbzIPzChpuRO0Dfx5I4nzCNEfptJ98zrnanML4MnrVA1G0oVNdUJTPC+nD4BLe2g==
-X-Received: by 2002:ac8:4e93:0:b0:42a:3a03:7ea0 with SMTP id 19-20020ac84e93000000b0042a3a037ea0mr450084qtp.111.1706003136386;
-        Tue, 23 Jan 2024 01:45:36 -0800 (PST)
-Received: from thinkpad ([120.56.197.174])
-        by smtp.gmail.com with ESMTPSA id fg6-20020a05622a580600b00429be14d3bbsm3323313qtb.13.2024.01.23.01.45.31
+        d=1e100.net; s=20230601; t=1706003696; x=1706608496;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Im8GtCvE7H26gkn/fdW7k+g4Cg7EiQCmiyIP3+igXQU=;
+        b=Bv1Ktq6HL6d7/ho/9lpvoYWWhEyvpG9es9A6EPWF271I2J/HAjFQL7cI6eFiI1YK5X
+         IVYIxN+HYCcBjEgiV7TGpcMPTZ4gw4I7/ktkfhPFpqCoEzGiGSXvUfYrzQpbfZyALNQr
+         IcXbpvadYhmDQMFj1fOWD6cSBg2NntkkjOjbyu5PBiRNUKnCITYGDKqAzZHFYrqhVU6d
+         wZYTGcZ8TpCPoVLvLxYCPYfBdgzINcrqNxrf+TNtIkfP9wGJUcO+i0ZY5E0CCcRVYJRS
+         1F6N+jOfcKCg2vTHAduAUmJeOZaWoKreuZcFcKZHkp70sFo9SbuCBAvFfnEAe9qWwb4W
+         QPvw==
+X-Gm-Message-State: AOJu0YyFtl45tznGv6wwLCHxS1ID2HwlQx7dG4pgcuT5aBJZ5at0ReSI
+	SDFv3Y7hxD07g463JUMTTcf0KVmms7nQOy3jVMgzzPjfDbK1BaNOJ5AkzMCFAr0=
+X-Google-Smtp-Source: AGHT+IHw/B87/PaQqzMO5KRdBZBLAqtogyyjUnxTtDRW9gb+I3AZovHZMua5klsp86mAFZRTrAyj7A==
+X-Received: by 2002:a05:600c:2183:b0:40d:1d1c:ffaa with SMTP id e3-20020a05600c218300b0040d1d1cffaamr335809wme.169.1706003695716;
+        Tue, 23 Jan 2024 01:54:55 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.215.66])
+        by smtp.gmail.com with ESMTPSA id l34-20020a05600c1d2200b0040e89ade84bsm21649964wms.4.2024.01.23.01.54.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jan 2024 01:45:36 -0800 (PST)
-Date: Tue, 23 Jan 2024 15:15:28 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Amit Pundir <amit.pundir@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-sdm845: Add soft dependency on rpmhpd
-Message-ID: <20240123094528.GA19029@thinkpad>
-References: <20240123062814.2555649-1-amit.pundir@linaro.org>
+        Tue, 23 Jan 2024 01:54:55 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: mturquette@baylibre.com, sboyd@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, 
+ Varada Pavani <v.pavani@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com, 
+ aswani.reddy@samsung.com, pankaj.dubey@samsung.com
+In-Reply-To: <20231219115834.65720-1-v.pavani@samsung.com>
+References: <CGME20231219115856epcas5p371abeb4264f60309e597b90954e6d58c@epcas5p3.samsung.com>
+ <20231219115834.65720-1-v.pavani@samsung.com>
+Subject: Re: (subset) [PATCH 1/2] dt-bindings: clock: Fix spelling mistake
+ in 'tesla,fsd-clock.yaml'
+Message-Id: <170600369366.35728.6701987973179299907.b4-ty@linaro.org>
+Date: Tue, 23 Jan 2024 10:54:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240123062814.2555649-1-amit.pundir@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.4
 
-On Tue, Jan 23, 2024 at 11:58:14AM +0530, Amit Pundir wrote:
-> With the addition of RPMh power domain to the GCC node in
-> device tree, we noticed a significant delay in getting the
-> UFS driver probed on AOSP which futher led to mount failures
-> because Android do not support rootwait. So adding a soft
-> dependency on RPMh power domain which informs modprobe to
-> load rpmhpd module before gcc-sdm845.
+
+On Tue, 19 Dec 2023 17:28:33 +0530, Varada Pavani wrote:
+> Fix typo 'inteernal' to 'internal' in 'Documentation/devicetree/
+> bindings/clock/tesla,fsd-clock.yaml'.
 > 
-> Cc: <stable@vger.kernel.org> # v5.4+
-> Fixes: 4b6ea15c0a11 ("arm64: dts: qcom: sdm845: Add missing RPMh power domain to GCC")
-> Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/clk/qcom/gcc-sdm845.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index 725cd52d2398..ea4c3bf4fb9b 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -4037,3 +4037,4 @@ module_exit(gcc_sdm845_exit);
->  MODULE_DESCRIPTION("QTI GCC SDM845 Driver");
->  MODULE_LICENSE("GPL v2");
->  MODULE_ALIAS("platform:gcc-sdm845");
-> +MODULE_SOFTDEP("pre: rpmhpd");
-> -- 
-> 2.25.1
 > 
 
+Applied, thanks!
+
+[1/2] dt-bindings: clock: Fix spelling mistake in 'tesla,fsd-clock.yaml'
+      https://git.kernel.org/krzk/linux/c/5b62ea0b85ea8e11945f862fd2eee16ac3a45d4b
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
