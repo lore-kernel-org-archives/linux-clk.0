@@ -1,90 +1,199 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45E85C91A;
-	Tue, 23 Jan 2024 11:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8D75D8EB;
+	Tue, 23 Jan 2024 11:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706008402; cv=none; b=r/cYTnmBuOVT53uKwAHiIKUodmWQ+QcbOh26htJ4AYbA7A+iz7XiSh2o6W2QJw+lnj7Vo7V2BWW7f6GkKS8l2D/p5Mr0ExEbg+4d3Bzd4Mcrx8+YzwmtzlNPyxmyYBE9EsYWEEUfyfZ5hcB2q3vSvvJqL+EHC6nWTlQQFT8f2aI=
+	t=1706008834; cv=none; b=Um0ZGhkqhw4EywePvxIFaBtOtEuShMvdxWC9uB1pu5srb+lHC4vY3Gt1fwU+mmnWtX+yKan9AdnMCx2Pb9hiHAGK9IL4GwLOhPFUYpf9YifSKyWk1EX/WT1nzKIfxKiLSb//ORSt3Gran3HQYhoykwNv/u4biOJP06TT033uQbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706008402; c=relaxed/simple;
-	bh=UYWReQW9UpugO0v/i1SILTLzGmv7pXpZJGlihgITteM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0gDPUs4NUGvosOz/64KTnZsgBrP5C8sP3XofV+0ZMMoxKbu56lQ1nFu9SRFwIZrYQn0rWaqGUHgLn/jw4M/IHQh2/bPEd7jszns+8mBT5dVFxaMuhkxtYSqFdOZXN8mGYYak2kD704aGgJCZYzj1sTnLlxxK/9r5FtOqvLTYbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C32AF1FB;
-	Tue, 23 Jan 2024 03:14:05 -0800 (PST)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 360543F762;
-	Tue, 23 Jan 2024 03:13:19 -0800 (PST)
-Date: Tue, 23 Jan 2024 11:13:16 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, sboyd@kernel.org
-Cc: cristian.marussi@arm.com, mturquette@baylibre.com,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V4 2/2] clk: scmi: support state_ctrl_forbidden
-Message-ID: <Za-fTES4owsmmxgO@bogus>
-References: <20240121110901.1414856-1-peng.fan@oss.nxp.com>
- <20240121110901.1414856-2-peng.fan@oss.nxp.com>
+	s=arc-20240116; t=1706008834; c=relaxed/simple;
+	bh=Ma8J6HFntmgJqAnxZ1TzwNoqA60TOtVPoP1qAOVBdOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pMPA7sJywQX9+g+DQti/+4zpzpPVvSoaJAwvWXHODouqBeMHgSADxEm6Gaw+51kc6ZmeSKfQvjir4yaRq2n8skjhlgSLn1hI/a6/pa3UV/JBNuCcpu7Rz2hBxVe8kUfhE2XxgNBsnMJeAGC5qqdpsNToZGxg6S3oQxIn9PdSxug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OiIjpPi+; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OiIjpPi+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1706008831;
+	bh=Ma8J6HFntmgJqAnxZ1TzwNoqA60TOtVPoP1qAOVBdOo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OiIjpPi+qqbZF55b3g1FH53iADZRQPVIE3JvYXt24FNRlry7Mc/kxIGxSJjltIY8t
+	 paaOhSDkeW/GZIyZqk/I3coGbW7gHp/dEAQKoj3DpID416Tm0AvXMs5R0o7FVT7nHv
+	 n8z04qnbz8DdYLedWX5n8/cgCu2QEJ1c9qXdANZJsK+ZTrGGzUFO5ZBduQQW5P2UYr
+	 VZtb1xEHO2r9LVunE4J8+Kl5Edo4MWJCUv+pMq4282q+CcC39d3P00sY+9h/fNWkja
+	 EM0P7HPeVqgxT4jnvw2DZRHpYfEtgffMl6KGYqxdBOornIlk/jMc5lsF+vYmZpK+mB
+	 z/OYXluJ/LUvg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 94BD937813B5;
+	Tue, 23 Jan 2024 11:20:30 +0000 (UTC)
+Message-ID: <e17b85b1-7f1f-4b60-89b7-43f560466cc2@collabora.com>
+Date: Tue, 23 Jan 2024 12:20:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240121110901.1414856-2-peng.fan@oss.nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: arm: mediatek: convert PCIESYS to the
+ json-schema
+Content-Language: en-US
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+ Russell King <linux@armlinux.org.uk>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20240123082100.7334-1-zajec5@gmail.com>
+ <20240123082100.7334-3-zajec5@gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240123082100.7334-3-zajec5@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jan 21, 2024 at 07:09:01PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+Il 23/01/24 09:20, Rafał Miłecki ha scritto:
+> From: Rafał Miłecki <rafal@milecki.pl>
 > 
-> Some clocks may exported to linux, while those clocks are not allowed
-> to configure by Linux. For example:
+> This helps validating DTS files. Introduced changes:
+> 1. Documented "reg" property
+> 2. Adjusted "reg" in example
 > 
-> SYS_CLK1-----
->              \
-> 	     --MUX--->MMC1_CLK
->              /
-> SYS_CLK2-----
+> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+> ---
+>   .../arm/mediatek/mediatek,mt7622-pciesys.yaml | 47 +++++++++++++++++++
+>   .../arm/mediatek/mediatek,pciesys.txt         | 25 ----------
+>   2 files changed, 47 insertions(+), 25 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
+>   delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
 > 
-> MMC1 needs set parent, so SYS_CLK1 and SYS_CLK2 are exported to Linux,
-> then the clk propagation will touch SYS_CLK1 or SYS_CLK2.
-> So we need bypass the failure for SYS_CLK1 or SYS_CLK2 when enable
-> the clock of MMC1, adding scmi_no_state_ctrl_clk_ops to use software
-> enable counter, while not calling scmi api.
->
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
+> new file mode 100644
+> index 000000000000..7340a2512402
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
 
-I would rewrite the commit message something like:
-"
-    clk: scmi: Add support for forbidden clock state controls
+I think that we should really move all those clock controller yaml files to their
+proper directory, which would be
 
-    Some clocks may be exported to OS agent, while certain configurations/
-    access to those clocks are restricted to the OS agent by the SCMI platform
-    firmware. For example:
+Documentation/devicetree/bindings/clock/
 
-    SYS_CLK1-----
-                 \
-                 --MUX--->MMC1_CLK
-                 /
-    SYS_CLK2-----
+...because those are clock controllers anyway and the fact that they do also
+provide a reset controller doesn't really justify having them in arm/mediatek.
 
-    MMC1_CLK needs to set parent as part of it initialisation and enabling.
-    SYS_CLK1 and SYS_CLK2 are exported to the OS agent. The clk propagation
-    will access SYS_CLK1 or SYS_CLK2 based on the configuration. However,
-    we need bypass the failure to access SYS_CLK1 or SYS_CLK2 when MMC1_CLK
-    is accessed and enabled.
+Besides, I would appreciate if you could also move mt8186/92/95 and eventual
+others that are there to clock/.
 
-    Add a separate scmi_no_state_ctrl clk_ops where the calls to the SCMI
-    platform firmware are avoided if the access is not permitted.
-"
-No need to repost.
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt7622-pciesys.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek PCIESYS controller
+> +
+> +description:
+> +  The MediaTek PCIESYS controller provides various clocks to the system.
+> +
+> +maintainers:
+> +  - Matthias Brugger <matthias.bgg@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt7622-pciesys
+> +          - mediatek,mt7629-pciesys
+> +      - const: syscon
 
-I need Stephen's ack to take this together with scmi clk changes.
+I know that there's syscon all over the place and, even if I admit I didn't check,
+I am fairly sure that there's absolutely no reason to have syscon there, and that
+the syscon compatible never did anything for (most of, or all of) those clock
+controllers, at all.
 
---
-Regards,
-Sudeep
+I'm not sure - though - if removing syscon during the txt->yaml conversion is
+acceptable (yeah we'd be cheating a bit), but something makes me say it is, because
+the bindings couldn't validate before that one as well.
+
+Of course you'd have to remove the syscon compatible from the affected device trees
+as well as omitting it here.
+
+However, to be sure that we're doing the right thing here, I have to summon someone
+that can actually give a definitive answer to what I just said.....
+
+Krzysztof, please? :-)
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +    description: The available clocks are defined in dt-bindings/clock/mt*-clk.h
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +required:
+> +  - reg
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pciesys@1a100800 {
+
+This is a clock controller, so it is clock-controller@1a100800
+
+> +        compatible = "mediatek,mt7622-pciesys", "syscon";
+> +        reg = <0x1a100800 0x1000>;
+> +        #clock-cells = <1>;
+> +        #reset-cells = <1>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+> deleted file mode 100644
+> index d179a61536f4..000000000000
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+> +++ /dev/null
+> @@ -1,25 +0,0 @@
+> -MediaTek PCIESYS controller
+> -============================
+> -
+> -The MediaTek PCIESYS controller provides various clocks to the system.
+> -
+> -Required Properties:
+> -
+> -- compatible: Should be:
+> -	- "mediatek,mt7622-pciesys", "syscon"
+> -	- "mediatek,mt7629-pciesys", "syscon"
+> -- #clock-cells: Must be 1
+> -- #reset-cells: Must be 1
+> -
+> -The PCIESYS controller uses the common clk binding from
+> -Documentation/devicetree/bindings/clock/clock-bindings.txt
+> -The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+> -
+> -Example:
+> -
+> -pciesys: pciesys@1a100800 {
+> -	compatible = "mediatek,mt7622-pciesys", "syscon";
+> -	reg = <0 0x1a100800 0 0x1000>;
+> -	#clock-cells = <1>;
+> -	#reset-cells = <1>;
+> -};
+
+
