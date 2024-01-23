@@ -1,108 +1,106 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8359612AAF4;
-	Tue, 23 Jan 2024 18:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611735392;
+	Tue, 23 Jan 2024 20:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706035640; cv=none; b=aHZbCbogJoAYbZyFzfii8qHIYKZ156Nmy8os5haXa0ZV0FFYhs7Vsi2A2FXrNct0V7RH9bo+DWuOaXGN5nAuWrK01oSdP7vEt6zLy/ePTI5kXzIz4J9B4oxTNMidoHrwcYZxh4cQw2fUk+fqIBnTZK2PBEd56g7ZdcVyNKPl2Mw=
+	t=1706043464; cv=none; b=g6FxYRP2/ax2ad4Dl3jucvuabZtPkuKb3KVQ6Q14ebqoQTt8RVddXKe8d/ALdxSprI4zeOxrN+ehjrn7OqreNaoCmMuxm4Ov39v1sTwsElwgiBYjfqPLkwTgz/9dzGR6LlpjMbeMxOHd2QE2wkHBubNob6xSWO+NObtLlDumgS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706035640; c=relaxed/simple;
-	bh=yjp12oSxfxja7jh6fC7F+aeYuNS75B25MmED7rLtaBE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o8n1dbuXyEYdhq1eVqWvTOjV3+xw4X3pAVV5Du8qi6HfZfmblwpXCFlK10V8EdvttMIq59aPGjPTSBpy0bMPIN9FK3oh3kmI3Dq+qmIWFW2QHiPyzJozvqvkjkzCENv6GeoRioKTw3MbtEva2XRu4YNu0JlUgtaXDZ4A5EkM4Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mwtbmPbn; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1706043464; c=relaxed/simple;
+	bh=LMHI3ZyKjenRYrlE+O2xcbn5Ctiz1JUEBKIqeCuDgSk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VZY+EtIi9nKBVxh72fiaQnEFp7EFgIL0QVmBDyGPjXwES4hGVk6oIQGc4qniYwVnnGtaXwhbFh+8oG0YZtUGHMKfg2LelBZz6fbgQM560uYy9GCs5GQ+uMQG7Z17PCA9JdHhMmZ1CvFrZbTmbbtAdnmm/ey0OGppAQ4+uMuDfvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T4p8TLuC; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mwtbmPbn"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E52E0C000D;
-	Tue, 23 Jan 2024 18:47:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1706035635;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dCny+mSIAQq2p/t/iXy+uHmjfw0TgeBQHqm3tqR9vX8=;
-	b=mwtbmPbnHEV8ihY4Nsm93+07vaoHgZHgbpN6eBU/T6yLf7ws9jHcuV5bPT5EZrJx9zyewO
-	kjxpMtPpMUrcerqr+apQChN5GxKHgXdYuxeaUB0XTwBVyaIaACVsQqTBQwWVjIJnCGA41L
-	WqfUI01cVLoiDIQidNCoPHGP5jj5uRgbqsWSJiCvY06l0XLBXXgFsJ/t/7OurUZuMojcxk
-	Vc7Lwq4nbZdTfipYQE/b0R474+YZZdf8oM7WyjcXgnxpYJJ2yK88Uz+P7maZZ205bplll4
-	rV0YdAhnZx4F7LfW6gFqLOqVzbzTGAr6XjR3PMQVXC0cIKsaRn9ev6hpKch5oA==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Tue, 23 Jan 2024 19:47:02 +0100
-Subject: [PATCH v3 17/17] MIPS: mobileye: eyeq5: add pinctrl properties to
- UART nodes
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4p8TLuC"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-339237092dcso3453625f8f.3;
+        Tue, 23 Jan 2024 12:57:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706043461; x=1706648261; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LMHI3ZyKjenRYrlE+O2xcbn5Ctiz1JUEBKIqeCuDgSk=;
+        b=T4p8TLuCjCiy27AfWxyDPzTgQbabC5J3ilqLHXDkZEWpgpQ4r7j4TKf3/5Z7jyXkYY
+         6F0Yfzff6L0GyCrbj+cMEm+QGd4Lgv18cfEhAY8VZkUZ+87Ft9axyfDbNetOaKtvns9i
+         Oj8Bz8YVLnRzKSTDPqku96JjD2Oj/IN9xYIXbMuKnEM34DNvnQ/JEyC+u8ZnqJg+XA3r
+         xGCPY9gxKMfzr/uh2hJGghddDg15PG/kITQxY6UfA8/D1AOeHTc5Z09xjTOfacitDMhG
+         V2ecPB9oDIPD8Hq6gt12mXncnSv98xkPnp64vNQEZnWeeBm9m2RhLCVIAhJyCPEhB4lg
+         qniQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706043461; x=1706648261;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LMHI3ZyKjenRYrlE+O2xcbn5Ctiz1JUEBKIqeCuDgSk=;
+        b=BMutvzPRF6VeZPJQkFjTwKloagXU5ozPH68nLpCCtTgrpAUPVm/+1O9K1cawQTuoeq
+         47rTvuHJacxVYGqYA5eYjawHoesZFkoa1OToMqOZqkSqnOtNlYeRJKE3codrmG4UcWJN
+         CccoFNSir158L3rvdtQz6swk9nmSNsMvqJcUYTsUjTq1hSNrhT6I2641oaVWkUp6yd+O
+         aWDfzc9zGkATSniO39vtMX44PZyAF6wNFHw5t/mRXJb/31Yle4cIe4Tt8dsk47U31jMu
+         RuI8/WWdzZoubZ3A4aZ8i1UakVc8zPjAhhLk6THhsfy/anAwSeibfQ2jSjd6YTWnUjuW
+         MN/A==
+X-Gm-Message-State: AOJu0YzYLlDX78LoxPZjPWVIu6jIeqt1TtfbqGncfCYazKOGOO1COUYF
+	vZvC2gMNNpp3KsHgdqL/zyWNb0UW0shn3PYLS/CQy0JJme05v7n8q8d1AioE
+X-Google-Smtp-Source: AGHT+IGyHltPBF01PYc7KGvL0FOhunCwSkDUTKurU5YPs5tT3eu+XinrHNV/4/LQKm1C0hTJ+Jh5Dw==
+X-Received: by 2002:adf:e58f:0:b0:337:b56f:caf0 with SMTP id l15-20020adfe58f000000b00337b56fcaf0mr3889646wrm.47.1706043460423;
+        Tue, 23 Jan 2024 12:57:40 -0800 (PST)
+Received: from jernej-laptop.localnet (86-58-14-70.dynamic.telemach.net. [86.58.14.70])
+        by smtp.gmail.com with ESMTPSA id c2-20020a5d4cc2000000b003392d3dcf60sm7986180wrt.88.2024.01.23.12.57.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jan 2024 12:57:40 -0800 (PST)
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+ Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ linux-clk@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH] clk: sunxi: usb: fix kernel-doc warnings
+Date: Tue, 23 Jan 2024 21:57:39 +0100
+Message-ID: <5906747.MhkbZ0Pkbq@jernej-laptop>
+In-Reply-To: <20240121051858.17647-1-rdunlap@infradead.org>
+References: <20240121051858.17647-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240123-mbly-clk-v3-17-392b010b8281@bootlin.com>
-References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
-In-Reply-To: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
-To: Gregory CLEMENT <gregory.clement@bootlin.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.12.4
-X-GND-Sasl: theo.lebrun@bootlin.com
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-UART nodes are present in the platform devicetree. Add pinctrl to them
-now that the pin controller is supported.
+Dne nedelja, 21. januar 2024 ob 06:18:57 CET je Randy Dunlap napisal(a):
+> Move the function description comment to immediately above the
+> function implementation, the add function parameter descriptions to
+> prevent kernel-doc warnings:
+>=20
+> clk-usb.c:80: warning: expecting prototype for sunxi_usb_clk_setup(). Pro=
+totype was for SUNXI_USB_MAX_SIZE() instead
+> clk-usb.c:91: warning: Function parameter or struct member 'node' not des=
+cribed in 'sunxi_usb_clk_setup'
+> clk-usb.c:91: warning: Function parameter or struct member 'data' not des=
+cribed in 'sunxi_usb_clk_setup'
+> clk-usb.c:91: warning: Function parameter or struct member 'lock' not des=
+cribed in 'sunxi_usb_clk_setup'
+>=20
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Emilio L=F3pez <emilio@elopez.com.ar>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Cc: Samuel Holland <samuel@sholland.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-sunxi@lists.linux.dev
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- arch/mips/boot/dts/mobileye/eyeq5.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Merged, thanks!
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-index 05987c58ed73..bf06d7a801a2 100644
---- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-+++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-@@ -79,6 +79,8 @@ uart0: serial@800000 {
- 			clocks  = <&uart_clk>, <&occ_periph>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&reset 0 10>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart0_pins>;
- 		};
- 
- 		uart1: serial@900000 {
-@@ -90,6 +92,8 @@ uart1: serial@900000 {
- 			clocks  = <&uart_clk>, <&occ_periph>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&reset 0 11>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart1_pins>;
- 		};
- 
- 		uart2: serial@a00000 {
-@@ -101,6 +105,8 @@ uart2: serial@a00000 {
- 			clocks  = <&uart_clk>, <&occ_periph>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&reset 0 12>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart2_pins>;
- 		};
- 
- 		olb: system-controller@e00000 {
+Best regards,
+Jernej
 
--- 
-2.43.0
 
