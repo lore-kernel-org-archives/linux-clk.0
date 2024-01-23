@@ -1,120 +1,127 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3AD481C7;
-	Tue, 23 Jan 2024 16:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF3512AAD4
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 16:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706027677; cv=none; b=kkZpJwxXex3KS/IrU6k6PWeLGaOT9nbjkcNYlq61eZqrJrpCev0u0E01h1XCdfmsV4ghXR0g+B1NjJRkKEMunhvzk5rBJWkaQyP1ULhcsV8j6Pmv8I3JUjtqBiKr0sf81Z1+0ayP050wcuncXFqcOjJClYqJFbviC8qhF/N++40=
+	t=1706028573; cv=none; b=s5rBmQR9A25ryi0J3Pfny0qjYkdXlskgkFx39ctqCiVytt758+xwGtAXjoCQccB6VduLlrKnWxTce3MAZSLB0EOs2vvmg5z1lMqdUny2hxgzSqHH6LDV5zAtpqNviNRZGE7KgFGDEKUeSPtINbvfPU/w6JX7ENM+sVe0LeScBnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706027677; c=relaxed/simple;
-	bh=ZVT6u/jVKOPURDGdsXTE55rzOKA3jVxHIiN5SEtzdcc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=FCbz+i47LY4TRmsk9W4NSWoz8Y8u1Io86G9cW+0WQzWZAA+8VM6TGnZr7RGerFrWUpuGRQJZ/AquUiabXGWc2uZ/cRCMDMupeunniJ43hb2a7ZoqcjAb5OIqDoR/9Uq2mxE6RWKw5aRQVSYIPWTEubss9/RDNXPgmmDwtSIBKcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RqcwivGW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1706028573; c=relaxed/simple;
+	bh=0GodLf30+iNTBjP5Gh6/duXnvzTXZV9C69MvyxMo8U4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tZPFRO2GGirhmxsX9uRNtxmP/qoAM1TaBud07J46L0MbVVnLTHO1mNH1VYn8uOhgjPIcg+50gO/UO3fh7yR0YVVgvevAMcFB1ZbbJVjUQ+hRZ9YcbbnLLlyf9JYu1a8+tt7G88UIjBpG/pY6fV/R/J/xtMPUGBd0u3gILcBJgB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eCbhgJNJ; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RqcwivGW"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40NBU8k2004867;
-	Tue, 23 Jan 2024 16:34:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:date:subject:mime-version:content-type
-	:content-transfer-encoding:message-id:references:in-reply-to:to
-	:cc; s=qcppdkim1; bh=5b5fU+KTOzPUrCgOe77YLsSItA8Pgv5o+1xi3qZwPH0
-	=; b=RqcwivGWESdAuAZqs+/Dzgj6VHm0kVuX5yd/imvEFTJk8vygyB9WwL/68C6
-	d/cGY89W/dpNxB0nH4KWbsR0l5TsCVFGaSmkBplT4VbvMXTKwPw2IbDHJzNhhnt0
-	lfozjlIGbwDjnDsfgAcsJV4c9IAPIeEzTkMm/SeI+U26n+a9j5ub8JqIaoL0c5rh
-	xyla5Svfpp4qx+pNpKGj0VXGpkbK7usCTcMKWjenmT2ufYoEXBTtGuavLvlbk2fa
-	GRf8FA0gBg9+ZulAi7aZT3ZpVsR6mng6XUbERbp/lot91SUyEY6AU6TJGEAMCEYm
-	dNxaTJ9P/Rtg3mZ1JudMkzFiDNA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vt9un97ya-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jan 2024 16:34:32 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 40NGYW6i009628
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jan 2024 16:34:32 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 23 Jan 2024 08:34:27 -0800
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Date: Tue, 23 Jan 2024 22:04:09 +0530
-Subject: [PATCH 3/3] arm64: dts: qcom: sm8150: Add bi_tcxo_ao support for
- gcc
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eCbhgJNJ"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5ff7dc53ce0so33423167b3.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 08:49:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706028570; x=1706633370; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aXz6WQyGCVGvl5jSp/sFyNgM0abYZYPNAeAICiPwHO8=;
+        b=eCbhgJNJvcM1TmjWFhBZCwvo4N+jgvjxgMOR2MqTqudxEr99MPdQWJ+RJtEhwyxq7O
+         eUqJTMAc32WZodMqMq9bhTuKCYpFqdH2q5DQw3qWnTJJz2KXCUqmZjpse1jA47qEr2Gm
+         udGRMzYCeuPq2fQtBseRlG61FucIuhDcwa2JuYGJXldVDT2yDdKCB1vV8cZ4drdxw/ku
+         Y0Yo7IT7FeW7sreqCbCreFWytvCnP6/L7RKDOAYl6MVzXX6a5HRRwBI4p53n/ED5Fh/+
+         kq/F9dZaCW7sl3vYvWa4h9dKz/xXFsFhNfdQ7YWOTvNMFtTHN1fHXmAfkolTGRVOgRR9
+         5D0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706028570; x=1706633370;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aXz6WQyGCVGvl5jSp/sFyNgM0abYZYPNAeAICiPwHO8=;
+        b=f21rX8+SqUw/g0NAYGHCvSI7A4se5cVoA2zZdR57MoGAelvUhG0xxWlPNzkOyOZ4rC
+         2isysKPtD//TQqOxILSynWA31lAMD09yorBcGplGlALe1G2t5FxK6lll0hS5ONY+uqk6
+         WPRGQLbkPVJ5yjEo4HOyME9bhME5uQBflIkeppfOStT1Dsr4iecmXbWO5QJ6LxaR3u55
+         htqPALGwlNuoKWjs+D73kV4A4Z9ex+lD9gsoxox4jJlx4gUgRsBc2U5m0ga1RD3g7HMS
+         apVAjHdJI7B3lWheBhjZXB5YaeovGaWypne9THL9bklGiAl0vF3rQRRo0c0iKq4zkB9e
+         vYog==
+X-Gm-Message-State: AOJu0Yw54Tw57oBBDCR1Vq7nJ5a199N69huY48waCAUoSasbcE/Kvht+
+	Sf4MeJAhW1zvefDSphakq5AXuHTNVc3AUEjSHbZaTJWF0DvBgiK+exndHG9IKLoECJ2t/2RRpnt
+	GnwQk/kDMPQU2Lae1D4sLGvfMpZcc41zPoFiy+Q==
+X-Google-Smtp-Source: AGHT+IEE5iwDZNZnKWCqP0X/hJ8GqixDXEFeBY9HQDXHizFGiA1pCXIi2xw17JvVbOPkrHIwHkzBMtTYGJvnD55grhc=
+X-Received: by 2002:a0d:d50f:0:b0:5ff:9eaf:be5d with SMTP id
+ x15-20020a0dd50f000000b005ff9eafbe5dmr3326432ywd.81.1706028570482; Tue, 23
+ Jan 2024 08:49:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240123-gcc-ao-support-v1-3-6c18d5310874@quicinc.com>
-References: <20240123-gcc-ao-support-v1-0-6c18d5310874@quicinc.com>
-In-Reply-To: <20240123-gcc-ao-support-v1-0-6c18d5310874@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>
-X-Mailer: b4 0.12.4
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8MRo409U4M5HUK3i5XJqUBUDGN5clySr
-X-Proofpoint-GUID: 8MRo409U4M5HUK3i5XJqUBUDGN5clySr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-23_09,2024-01-23_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=501
- priorityscore=1501 adultscore=0 clxscore=1015 spamscore=0
- lowpriorityscore=0 bulkscore=0 mlxscore=0 impostorscore=0 phishscore=0
- malwarescore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2311290000 definitions=main-2401230122
+References: <20240123-gcc-ao-support-v1-0-6c18d5310874@quicinc.com> <20240123-gcc-ao-support-v1-2-6c18d5310874@quicinc.com>
+In-Reply-To: <20240123-gcc-ao-support-v1-2-6c18d5310874@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 23 Jan 2024 18:49:19 +0200
+Message-ID: <CAA8EJpqLZQNMzn_oC7AbzXP2f==PujUe-atfUNgFC3VaFF8=Bg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: qcom: gcc-sm8150: Add gcc_parents_0_ao support
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add bi_tcxo_ao support to be able to put active only vote
-on critical clocks during suspend.
+On Tue, 23 Jan 2024 at 18:35, Satya Priya Kakitapalli
+<quic_skakitap@quicinc.com> wrote:
+>
+> Add active_only support for gcc_parents_0, this is needed because
+> some of the clocks under it are critical which would vote on xo
+> blocking the suspend.
 
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sm8150.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The kernel should be able to work with older DT files. Please add
+support for using bi_tcxo as a fallback.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index 761a6757dc26..b91ef95c0c3a 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -906,9 +906,10 @@ gcc: clock-controller@100000 {
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
--			clock-names = "bi_tcxo",
-+			clock-names = "bi_tcxo", "bi_tcxo_ao",
- 				      "sleep_clk";
- 			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK_A>,
- 				 <&sleep_clk>;
- 		};
- 
+>
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  drivers/clk/qcom/gcc-sm8150.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+> index 05d115c52dfe..2a0608c5a104 100644
+> --- a/drivers/clk/qcom/gcc-sm8150.c
+> +++ b/drivers/clk/qcom/gcc-sm8150.c
+> @@ -123,6 +123,12 @@ static const struct clk_parent_data gcc_parents_0[] = {
+>         { .hw = &gpll0_out_even.clkr.hw },
+>  };
+>
+> +static const struct clk_parent_data gcc_parents_0_ao[] = {
+> +       { .fw_name = "bi_tcxo_ao", .name = "bi_tcxo_ao" },
+> +       { .hw = &gpll0.clkr.hw },
+> +       { .hw = &gpll0_out_even.clkr.hw },
+> +};
+> +
+>  static const struct parent_map gcc_parent_map_1[] = {
+>         { P_BI_TCXO, 0 },
+>         { P_GPLL0_OUT_MAIN, 1 },
+> @@ -222,8 +228,8 @@ static struct clk_rcg2 gcc_cpuss_ahb_clk_src = {
+>         .freq_tbl = ftbl_gcc_cpuss_ahb_clk_src,
+>         .clkr.hw.init = &(struct clk_init_data){
+>                 .name = "gcc_cpuss_ahb_clk_src",
+> -               .parent_data = gcc_parents_0,
+> -               .num_parents = ARRAY_SIZE(gcc_parents_0),
+> +               .parent_data = gcc_parents_0_ao,
+> +               .num_parents = ARRAY_SIZE(gcc_parents_0_ao),
+>                 .flags = CLK_SET_RATE_PARENT,
+>                 .ops = &clk_rcg2_ops,
+>         },
+>
+> --
+> 2.25.1
+>
+>
+
 
 -- 
-2.25.1
-
+With best wishes
+Dmitry
