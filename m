@@ -1,111 +1,107 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AF458AB6
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 08:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AA356B9C;
+	Tue, 23 Jan 2024 08:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705998855; cv=none; b=MQ/ilPN7tAEHVLkyQCrdnzR8b+8tSUSz9GFUkinP++GXuqsPwFXgv9j85e5CbABkXilLRvr18xzHUVvddO84d8ckoY5DQLqCQic30wVq3A8Wd0KY54OuZlxINqh2kf/UWZ7+IKN4VX+6sSEe52kJ0UmRW3Ik0AnV+2kY2ISnX+U=
+	t=1705998900; cv=none; b=hIP3aMQgWfXtychIaaBp9WTqiLMLXQFJhVamfWcTXGZU8LvOUTj6XjX0tyncsfTF3TKDL2BLpEnG9uhm5m2lj1XixEYPYFb5WKdn2Q268Rwnv0gHfevx2vPDkrSNAcy/DKl2TkUyPKqBxGtwvuFuDp8ROxCRuSe95yZ1Lu7jAaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705998855; c=relaxed/simple;
-	bh=5ExUUjVENReZ6nNNRQd1DhQ3Hrey0IKfdVg+0g3aZWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KiDKxYkgTotyTl1iFVl5GNh9+3I1in3ArNR5vvXwg8gRNGnn/HmjEyTJsSiTk5YsEpoRR1w7yIKTevU53DIsb0KXjyHnM+cpUyZ3YCEGqLi1JeSkV8Yxhqp1mxUgdgFEzBsSsOx3Ee77YP0zjjOmbls5KuAf6YSydE6P+ZL4oO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zuyIwmHD; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zuyIwmHD"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-337d58942c9so4335539f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 00:34:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705998852; x=1706603652; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XO+dw9hjpAkz16g21i5T858l1Se4V6/Q5rPys97A/CY=;
-        b=zuyIwmHDGzcq0ae5Kwp2KgNkIWzvxtyKB0u5hSsz24q9m3u9ewZ0uU7Xpz0xSi6xbW
-         1VD2ODQhWy+KhAYBgiPnEykslwdymn2q3cKTdLzvCk7KuAK5Im80tJND/o/rtts6Xal3
-         /mzUrtF+J3/a5JDtJvXcs5+jfqSK69BMcTf1eksUv3Qekxq+/xfgbXjT969Bv+yxfVEF
-         inevkKCBl38OnWdU/OYDy51uGICtI69QkkK1X5+3PLk4md55liWcGXtBT3pky/Wlh/V6
-         1wX6rGwBxg9BnMyhMs62pARrGnaBZ0R5rObXSQK0ZoqHGcZdHnGFudKT18Sbuph9WoHF
-         w3tA==
+	s=arc-20240116; t=1705998900; c=relaxed/simple;
+	bh=1ejOsp0WyLj81Cuzanl5KQ82KBzjBh4EzhBYQwtGcj0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZXb8Tl2/LhgWPhp+w9hrVLWC8eRC4uzGcJhq/CTtd+PcobSZXDETxel9n6odfoIcWsEDdT8SvHGUcPrF46CGX7QgzodHhmbOnHE7u5PQL6IWOPahc1Fa+H2IShHl7+42iHemEFrcXFboh39RKZtlP3hadXWt5jjhaxgR9Kt4myE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5ffee6e8770so19641757b3.0;
+        Tue, 23 Jan 2024 00:34:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705998852; x=1706603652;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XO+dw9hjpAkz16g21i5T858l1Se4V6/Q5rPys97A/CY=;
-        b=byWXKdJvfSWROW5s0otde0ItXU4wpm7Mu5eyMhG1hXpgHDZgIZhZI6aFiYsCCmkJLK
-         b6FBZL21SgFIpddUk9G8UEVI44/CPSi2o+153NOZHVUTSrbKJDVQmqQwQE1gC6kWhGsG
-         IgppnC0v4IqCLq87zBkku/nx+pccEaJfR+qx+NK143nvMuY8R4FMz0mfeZslZ5IzmbF3
-         qOdZ0pIN0tsg1++k7sXcG1+v/3Asi8I7IA1P74x3emsHy1NDDU27yr2VBe96yFu5Rjo5
-         SqqEIcxEZWI3D0VPIgban9Ib+fml3OpbAJg/8sK9Gk306nh6yJIaDTpLesYd1euXYkYH
-         +mZg==
-X-Gm-Message-State: AOJu0YwPKp8pe9AWh5Y8BeDunh2jfXYXvne5WAvViNW/rk3lVUnr/vCa
-	aWmMbe1FwBEm66VZ81Rp/fvPrN5fts2tUzXMWnNBxE+u9GWxtrC9g6j1SsQrnSs=
-X-Google-Smtp-Source: AGHT+IGrCAgTgEAukfsy/q0uXDaS3k3nOqy0ClJGMMZBpBzpyjTKUPVawtgMdG2hAzicgJ1/u0atxw==
-X-Received: by 2002:a05:6000:905:b0:339:359c:11c0 with SMTP id cw5-20020a056000090500b00339359c11c0mr1889379wrb.37.1705998852085;
-        Tue, 23 Jan 2024 00:34:12 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id x8-20020a5d4448000000b0033925e94c89sm8687254wrr.12.2024.01.23.00.34.10
+        d=1e100.net; s=20230601; t=1705998897; x=1706603697;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ye4ouHieVhEIcWhf8tZrStIArLF/Vpv3d73AE9gbFmQ=;
+        b=hJHW/AzLrUwfs+E486HIcTnyvPga1ZwcM0S50IpTe2e/3/DOrXC9SA0QJphUSr4It0
+         FG1p/H32tERn5qXe6G8hNq6Q0fKwYrdjdtz/o+K46OeiTLyZV/SXd8FywWLHDcDFPXlv
+         cIOf3DCqm+bDlQbMQZjqXu1Sb/Wz02yjH6EJnIxaRH3ynSIzqY52b8QAsFftzkrTuY0z
+         MwnxRPasOfvL/12t4T38HxA9+t44KWgPtAjAE05EPeXkOyesYUgjx5W+Jj4794kn9mP/
+         Jhf3Ajvk/xl/PjYZAunNg2uUqUgqywwMoFy/kJLggUyq0jzIuDH1NYOhGzX6ZOdevxZ6
+         wrQg==
+X-Gm-Message-State: AOJu0YwAenH1tiqnEVk4TctdvA+BO4kUhsiYL2LUvXUFdRKHIsXT9QmT
+	ODhfhXofsp7VMHwFyiUzc7lohzNYlFXc0H7Swyhmo1cWKAv2r802DimPTLBOT4Q=
+X-Google-Smtp-Source: AGHT+IG03rJTTfo2tGosWcRva4v57CnH6WPxt6sCThCChvfe1VBon8kqQsykSWBlqQm/iVig1n3SJw==
+X-Received: by 2002:a0d:ddd7:0:b0:5ff:84cc:7e8b with SMTP id g206-20020a0dddd7000000b005ff84cc7e8bmr4010039ywe.80.1705998897282;
+        Tue, 23 Jan 2024 00:34:57 -0800 (PST)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id m18-20020a819c12000000b0060015b8057esm819235ywa.68.2024.01.23.00.34.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jan 2024 00:34:11 -0800 (PST)
-Message-ID: <6ddbf20c-6929-4cb0-9fdb-570cc7170b9c@linaro.org>
-Date: Tue, 23 Jan 2024 08:34:09 +0000
+        Tue, 23 Jan 2024 00:34:57 -0800 (PST)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dc250cff65aso2416113276.1;
+        Tue, 23 Jan 2024 00:34:57 -0800 (PST)
+X-Received: by 2002:a25:9103:0:b0:dc2:5436:7def with SMTP id
+ v3-20020a259103000000b00dc254367defmr3111483ybl.42.1705998896617; Tue, 23 Jan
+ 2024 00:34:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/8] arm64: dts: exynos: gs101: define USI8 with I2C
- configuration
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: andi.shyti@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
- tomasz.figa@gmail.com, cw00.choi@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- andre.draszik@linaro.org, semen.protsenko@linaro.org,
- willmcvicker@google.com, kernel-team@android.com
-References: <20240119111132.1290455-1-tudor.ambarus@linaro.org>
- <20240119111132.1290455-8-tudor.ambarus@linaro.org>
- <9d12f4f9-1892-48f3-b8d1-8f59788cc91d@linaro.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <9d12f4f9-1892-48f3-b8d1-8f59788cc91d@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <e98a6e47ebecc44fa41de6d88b4ed20c6efbd177.1705931322.git.geert+renesas@glider.be>
+ <20240122152849.GF4126432@ragnatech.se>
+In-Reply-To: <20240122152849.GF4126432@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 23 Jan 2024 09:34:45 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVx80ZH6F2q14-pijCrUBQZvqaw3oRfxKiiBz1w9WwTHQ@mail.gmail.com>
+Message-ID: <CAMuHMdVx80ZH6F2q14-pijCrUBQZvqaw3oRfxKiiBz1w9WwTHQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: mstp: Remove obsolete clkdev registration
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Niklas,
 
+On Mon, Jan 22, 2024 at 4:28=E2=80=AFPM Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> On 2024-01-22 14:49:45 +0100, Geert Uytterhoeven wrote:
+> > After the DT conversion of SH-Mobile and Armadillo-800-EVA display
+> > support, all devices are registered from DT, so we can remove the
+> > registration of clkdevs.
+> >
+> > Add the missing #include <linux/slab.h>, which was included implicitly
+> > through <linux/clkdev.h> before.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech
 
-On 1/23/24 07:52, Krzysztof Kozlowski wrote:
-> On 19/01/2024 12:11, Tudor Ambarus wrote:
->> USI8 I2C is used to communicate with an eeprom found on the battery
->> connector. Define USI8 in I2C configuration.
->>
->> USI8 CONFIG register comes with a 0x0 reset value, meaning that USI8
->> doesn't have a default protocol (I2C, SPI, UART) at reset. Thus the
->> selection of the protocol is intentionally left for the board dts file.
-> 
-> ... and dropped, because this patch does not build:
-> https://krzk.eu/#/builders/29/builds/3869
-> and I missed weird dependency mentioned in cover letter:
-> 
-> "This patch set shall be queued after the cmu_misc clock name fixes from:"
-> 
-> Sorry, this cannot work like that. DTS for new features cannot build
-> depend on driver changes.
+Thanks!
 
-No worries. What shall I do so that you re-consider the dropped patches?
-I'm not yet familiar with your release management, but I guess that if
-you submit your "fixes-clk" branch for integration into v6.8-rc2, and
-then merge v6.8-rc2 into your "next/dt64", you'll then be able to queue
-the dropped patches as well.
+> > ---
+> > Patch written in 2015 ;-)
+>
+> I scratch my head reading some of these patches, I have seen some of
+> them before, but could not figure out when.
 
-Thanks,
-ta
+Probably it reminds you of "[PATCH/RFC 3/3] clk: renesas: emev2:
+Remove obsolete clkdev registration"?
+https://lore.kernel.org/all/f54a30d7a9e2aa075d462db701a60b0b59c6ad0b.168632=
+5857.git.geert+renesas@glider.be
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
