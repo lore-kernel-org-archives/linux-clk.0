@@ -1,126 +1,122 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A2E57878
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 09:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF605A0EA
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 09:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706001003; cv=none; b=T8K94kPglpc4P4JCUJKqtzkSu3xwtFxNQ0wPTmn+cto1no8HTal4G7d6Om8R9VLseB6J4wmBKHNqOPrbN5xdjiEsH4fSRwYl4+zri2zhCXwYidQyFljx1AR+H9qNgAuUh1LNI/YS4VNZO9lTksst2P8LsFQQXAtoavwqAU92n4o=
+	t=1706001986; cv=none; b=MQNWqb78ar5aVSRE8gXfuAjMqhDEnDYe/v2rYJURwQXNNj5VXW+lHZUOpw/RVyXrKr0Ao4E4EtJ4b7vFvhnfUs7RLvMx6r1VxLrapUjHxhez9/KdMMywkSdni3nqpJuYU4m9JsPB/pSmDpY2dvtmO3wAyWp8mBwKn0E2mBpKr9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706001003; c=relaxed/simple;
-	bh=l1z7MpNV2XBlhoyz3GMY3Nt1zn0+YBINb8neBgR4jnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LfWiwtX1oGMeCSbYjlXwQeSF62nhxTiKdF9GQvltVGdZ6T6e6mloK+dBTzJA8tpcyGvANCV3DzGy2+8lr2f8NLTe3EtjHAKUFqSeBg31JX49UGMYj3gGm/LcUa53MP7BH/RDFEjDtn9BuboGzObLhdWNvCIcfwN163S79pVG7Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TRxKOzwk; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706001986; c=relaxed/simple;
+	bh=d+ji7QeA2nW3W7Gc/Juv21P65TRJBRAPQQXq7yw1sK4=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Wc24SXR5apgVwDP94DG+fHeq9qNlX7vHqc5rRVHOC/1ct6YakHZxy+NUbGnTXZOOAjg6rjMW6d7lJcXYOMH0UEScKD+SCmcHsoehZj2TjRiudDFxG6eCXrHhGZMybea3MIK+HaHHIfV/pIuIU6PvQ/WFAN+X2tOjhzfVUyFtJRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=8devices.com; spf=pass smtp.mailfrom=8devices.com; dkim=pass (2048-bit key) header.d=8devices.com header.i=@8devices.com header.b=Mo9m6cFH; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=8devices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8devices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TRxKOzwk"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-338aca547d9so3212238f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 01:10:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=8devices.com header.i=@8devices.com header.b="Mo9m6cFH"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2cd0f4797aaso40300501fa.0
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 01:26:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706001000; x=1706605800; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G/HqiW9cuoCgRPzOrcA9BJqfZ68FEkgWUe/8BGsgIpk=;
-        b=TRxKOzwkby3p645v2Wckz6OeuPX0dZUh8PQxABZE6I6H3CTOK2zZcpF/rAEK/IacVC
-         mgOi/JrlYRD18zERETm1OPdx5E4WCaCsOoPm8oBhrBUpr+Xm/WylubBIEMpjU1Odiq+K
-         MJcJ5VnCBuBBOC2dZqsz3XPMPYYcI/FNx8e1ExwtcfqrOyGOXvtdVlYPLw4L5+0KF3m2
-         e1gJy/Pq39ceT/8tkG8DCEQKwlOJStxc9CPTjWpDjaD7KkIzGBY/vf61d/gjUKxSdO3U
-         z/6pXVTQHdc+8uFZea72DeAUkFU+Wxpsih39ZxwXcjDhfLn/K1U65UqpeUaMQ73jTtQt
-         WqFQ==
+        d=8devices.com; s=8devices; t=1706001982; x=1706606782; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=da3DB4fuctftgszn0IBbViUysDG4/tuurWVRkb8i9zc=;
+        b=Mo9m6cFHbh35eG05TCpyBAw5nW41qjqpC2PHGpTUV62gpTfirKNHuGGX57dnsbSxJ6
+         rdzKx50+iTtuPXWACg5yMTvg8Vf4vyuWD7zFL3LKC8y8+jNXgVGYt9iRFA6/HTQFFSMG
+         QXY4qNy0EmOpuYrnAJ/sgQRS1ZxOzAqGHLBuf1ECqHLKn1fzH+y4NXO/CF7ZCUbdYrC5
+         2kf7Ek0dd5oWHckGzNLJX10ckZ6EqyAuNHs3Ap3COduoZHw8jKL7GEfy0YzHs1jz9jJ9
+         se0cZd0im6AkrHPppD9GNv0CAOdYVN6qMY89d4cKs1J0v+IcuTkBaLChg6QGqujR5F+j
+         OhTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706001000; x=1706605800;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G/HqiW9cuoCgRPzOrcA9BJqfZ68FEkgWUe/8BGsgIpk=;
-        b=S8wT7oDLrWCENMTes5xtKBWMVwTNvTqLlWM/0ocrex1ipXTkcq2lVkb/3MwLNb7SYD
-         R6R+K0OeN6YIgyXB+rxpfdMJNjeZlT51JW1osmz7pQydMlzWVoxi7eXS1o551NE9ZwGS
-         PW94tDxEr0Q8nPURQ3VeoJg5EQ3S3wTQGeoZyAIfQvTn+2wXWcaCEI/v0t189quHSvgy
-         pECgTUl479NeJScI5TCZ7yU9xwK7CIrvDP4e+tx6wdgKS3DJLQPOcwJGWqcOcfHbnt08
-         Px5zcAGkJQfTqADuTwWKENF2y02/kIYhhsX/vPN90sTYj1J4sSmGfQcXdvlGkHsauRXl
-         9X3g==
-X-Gm-Message-State: AOJu0YwlMzWGj6QBGsHjeXpxDki3/wx4vFaUh3ci66utG5vL0cicPjua
-	73U1Dc7MZ8SM3EC+wwPSzAhJH4Ovq9UrnPRWo3Q7et6OmuUA5CzhEOvbE29fykw=
-X-Google-Smtp-Source: AGHT+IHwTNj8g3dvwECmi4e9jyueOXSQNydI76YVWJPcRPlJ19sDAS1sSw+zEcJmwp9KYsK7H8mCrw==
-X-Received: by 2002:a5d:4986:0:b0:337:b38f:ceff with SMTP id r6-20020a5d4986000000b00337b38fceffmr1453386wrq.231.1706001000055;
-        Tue, 23 Jan 2024 01:10:00 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id j6-20020adfb306000000b00339208ecb30sm10897064wrd.68.2024.01.23.01.09.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jan 2024 01:09:59 -0800 (PST)
-Message-ID: <fd46e414-16f7-4ca8-9125-39e423ce32f1@linaro.org>
-Date: Tue, 23 Jan 2024 09:09:57 +0000
+        d=1e100.net; s=20230601; t=1706001982; x=1706606782;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=da3DB4fuctftgszn0IBbViUysDG4/tuurWVRkb8i9zc=;
+        b=bTiTfF4RiaClARaaSI1jEvzSVP26E9sQ8AH8bAzNbGWL1WftucPQJLGlWQtfIOxthr
+         x9LE/KTZK++FeineMLY75OH3hGQcd3HZ2ob86ZK/a4k4DNgoiS0lTh1vFWjG+Rivf0bk
+         bK7sIkoJU20kgv7SzSMUAg/FqBc2+faWL2XYHYTnfDaDb2xc5Qrmvf6CHVXLxvkk5wZE
+         9W6Xfw+jPJ+qgw9kuAKHaMe5q+h/IT/y2FFAi2M3CIJwlOMigAy1IyrLwrjLAaf9nZ36
+         YdHMS6WAEvXiQTmFO/VgDVrPcGBeAX/+e1JTEOJ0QOfkU9WpZVOdyZyrne5PwZ570YOK
+         UWJQ==
+X-Gm-Message-State: AOJu0YzpZgkTTCGfxC5kRWBSS0dv5cChtqik5160AC77PZBT7QI90TCJ
+	dsM/NvTrC3v7TSmh+pAutpl2Zw0vV6P8Ns6r7Y7BxK+cAxVYSMY7kI+8C38V8mf1aNZ8XPJJhD4
+	fzWw=
+X-Google-Smtp-Source: AGHT+IHI6Qn5P31tRVp9wkWdE0blQn6n0A5HtclN71tDiZKAJ3uAaQHsYm3HctwCzZ3l8O/L7QQpXA==
+X-Received: by 2002:a05:651c:1c7:b0:2cf:2d0:2236 with SMTP id d7-20020a05651c01c700b002cf02d02236mr1278001ljn.105.1706001982001;
+        Tue, 23 Jan 2024 01:26:22 -0800 (PST)
+Received: from mantas-MS-7994.8devices.com ([84.15.37.222])
+        by smtp.gmail.com with ESMTPSA id q31-20020a2ea69f000000b002cf088cef55sm186679lje.55.2024.01.23.01.26.21
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Jan 2024 01:26:21 -0800 (PST)
+From: Mantas Pucka <mantas@8devices.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Mantas Pucka <mantas@8devices.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: qcom: gcc-ipq6018: add qdss_at clock needed for wifi operation
+Date: Tue, 23 Jan 2024 11:26:09 +0200
+Message-Id: <1706001970-26032-1-git-send-email-mantas@8devices.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/8] arm64: dts: exynos: gs101: define USI8 with I2C
- configuration
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: andi.shyti@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
- tomasz.figa@gmail.com, cw00.choi@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- andre.draszik@linaro.org, semen.protsenko@linaro.org,
- willmcvicker@google.com, kernel-team@android.com
-References: <20240119111132.1290455-1-tudor.ambarus@linaro.org>
- <20240119111132.1290455-8-tudor.ambarus@linaro.org>
- <9d12f4f9-1892-48f3-b8d1-8f59788cc91d@linaro.org>
- <6ddbf20c-6929-4cb0-9fdb-570cc7170b9c@linaro.org>
- <7fdc00e1-0a93-43a6-8fb6-c447ad8aef64@linaro.org>
- <a2c64a9f-4467-44ef-a13d-0af80abf4dfd@linaro.org>
- <9d5249a6-5838-4af1-be18-3b9a9e34a937@linaro.org>
- <bf651183-9321-4dd7-b8b4-4cd635760f31@linaro.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <bf651183-9321-4dd7-b8b4-4cd635760f31@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+Without it system hangs upon wifi firmware load. It should be enabled by
+remoteproc/wifi driver. Bindings already exist for it, so add it based
+on vendor code.
 
+Signed-off-by: Mantas Pucka <mantas@8devices.com>
+---
 
-On 1/23/24 08:59, Krzysztof Kozlowski wrote:
-> On 23/01/2024 09:57, Tudor Ambarus wrote:
->>
->>
->> On 1/23/24 08:44, Tudor Ambarus wrote:
->>>> However I don't fully understand why that dependency - except patch hunk
->>>> context - exists. You shouldn't have such dependency.
->>>>
->>> Let me try offline, I'll get back to you.
->>
->> The dropped patches depend on the dt-bindings patch that you queued
->> through the "next/drivers" branch:
->>
->> b393a6c5e656 dt-bindings: clock: google,gs101-clock: add PERIC0 clock
->> management unit
->>
->> We need the peric0 bindings that are referenced in device tree, that's
->> why the next/dt64 branch failed to build.
->>
->> Please let me know if there's something on my side that I have to do
->> (now or in the future).
-> 
-> It is useful to mention this in cover letter, so I will know how to
-> apply the patches. I understand therefore the dependency mention in the
+Changes in v2:
+  Remove CLK_IS_CRITICAL flag
+  Note in commit message that clock should be enabled by remoteproc driver
 
-Thanks for the patience, I learn along the way.
+ drivers/clk/qcom/gcc-ipq6018.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-> cover letter is not accurate, so I can ignore that aspect.
-> 
+diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+index b366912cd648..cef787674479 100644
+--- a/drivers/clk/qcom/gcc-ipq6018.c
++++ b/drivers/clk/qcom/gcc-ipq6018.c
+@@ -3522,6 +3522,22 @@ static struct clk_branch gcc_prng_ahb_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_qdss_at_clk = {
++	.halt_reg = 0x29024,
++	.clkr = {
++		.enable_reg = 0x29024,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_qdss_at_clk",
++			.parent_hws = (const struct clk_hw *[]){
++				&qdss_at_clk_src.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_qdss_dap_clk = {
+ 	.halt_reg = 0x29084,
+ 	.clkr = {
+@@ -4361,6 +4377,7 @@ static struct clk_regmap *gcc_ipq6018_clks[] = {
+ 	[GCC_SYS_NOC_PCIE0_AXI_CLK] = &gcc_sys_noc_pcie0_axi_clk.clkr,
+ 	[GCC_PCIE0_PIPE_CLK] = &gcc_pcie0_pipe_clk.clkr,
+ 	[GCC_PRNG_AHB_CLK] = &gcc_prng_ahb_clk.clkr,
++	[GCC_QDSS_AT_CLK] = &gcc_qdss_at_clk.clkr,
+ 	[GCC_QDSS_DAP_CLK] = &gcc_qdss_dap_clk.clkr,
+ 	[GCC_QPIC_AHB_CLK] = &gcc_qpic_ahb_clk.clkr,
+ 	[GCC_QPIC_CLK] = &gcc_qpic_clk.clkr,
+-- 
+2.7.4
 
-Yes, that's right. The dependency on name fixes is just as a patch hunk
-context, no functional or build dependencies. I now know the process,
-and I'll be more verbose next time.
-
-Cheers,
-ta
