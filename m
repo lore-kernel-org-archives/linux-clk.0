@@ -1,58 +1,58 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A839E5A11B
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 12:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059F15C8FF
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 12:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706012108; cv=none; b=BTi6zYxhwXGwbPYeLKSjObhZclD6S1HIJsmGxYdiu+RmejIfBDk7tVwmLzlz1rGNOs0FfM91RDDaSooUGA0vomp4TCwwiJXEHUQ1HUtGyKHh6Qg1i/naaS9EnN67TugwBX0kTBzbB8DSVzaN3BvDLmkEqaPmMXs2WyIaHXoMRuo=
+	t=1706012536; cv=none; b=sM9UFnVLv0yAS3gf2DeCDsLz1Os7B1PpG9fb6aI0/jYNTTQlhWFSYa3opuc3qZ8dg4VibRjoRBMPKcwky0ZUoby3HMFjX64dWsQucqP84h6V/fSMYh+fmH7Ot2M0U2Ka1A4NrDLpEq5KMhoXodbQm6wcHB9Q6Er+1WZXlnlgihk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706012108; c=relaxed/simple;
-	bh=BYGRDUQ2oYvIYx1fG3CEeY7nYdsYyMhSfFnuUClPtBE=;
+	s=arc-20240116; t=1706012536; c=relaxed/simple;
+	bh=RxjltIb2tnevyFQ2UZ8jKYTWxSpg4QN8Ti3mX5vGGFA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i1oml2z3tOSKFYiN+885lyo0uvk7YsxsXmMsS7tKACrNm51VTEVgefcxk0S4kAiPwHB2JV+36Gts/dni5wkCq3XkvrWxq7Wm2yuPTULvzeWsGHFxBgUTwgfS6tG8OOTj1F1ddugQYvBtuSAh8bhOf7/GDlwI9F/2xVyynTU1AW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cACebxdL; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:Content-Type; b=bL51df8G3kHgBaV2Zk2XifBm0plasfaTuJN+eDhkBlcJzJYSj8WrBAxpzUw/lENyL/c0KrOp2HvbdHmaz8zDKTlXBnn4C9avEfiBgyiq88gCGUp4hvFHIc9igpD2+R6ADlZY3lHX6EeQA3uiZmAyXAOY+7CgmtkMKNva+LHv818=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dKYM/PiY; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cACebxdL"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e775695c6so41577115e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 04:15:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dKYM/PiY"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-40e60e135a7so41787775e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 04:22:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706012105; x=1706616905; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706012533; x=1706617333; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XbySdSqyixVey9XUJl2wI2fXpfFGflTsEKME/UI6qxs=;
-        b=cACebxdLDkv07rdpMjBlPi/mQGNAcukQw6qZEijNW7zXTfVuadML47Obr8ANa6CWPr
-         pnXO+k9UfXM4K3ysrORzPllMSQXq1OzjwM4adcaaM3TiyOr0xeudx9KPJuNr6o79Uy1a
-         q/oNS1x03ecxYRz4WxzTB79d6SvTIINlgSJ3gr9BcY1aZxH6hohpVsGvmVpEY2TskeaG
-         Oz8YTxbKB/m/TL8klYouJCZbtsjITmNPadeLzWqTAuKtoMRy9kWTXNoDFYViBduuJRSW
-         GBCPE6kN+OCpmeD/xCt31PlhcEWLVyGME4daA47ju7KjGKQzyMNgAibLL2Lo3B4qI6cS
-         sSbQ==
+        bh=3Xh4hoiszx6vPtNJtgIPNAsItrI2Mq/OMaWZXX1X6Pc=;
+        b=dKYM/PiYRdpa4/0zBPLAOiac0dj4S2rPhGZoGb7CJdp58Dp/Z0nJX4hhStRb0wyMKW
+         9JV38dpJI+JzYSCbsyWxgZzRVBBB2ZQrNyda5cZdHkrY4Dir7TOHVgy4+9atf560vK33
+         SFYEWnkP5sG62Noi7FFhOK/0/usMZKiE6UNqi2a12BwbLxUwHb7c2o/wphWQSh1HJSkC
+         6nV1/BRTKHIJCjoIaUqsXwVZSnqWthJeUjMkrCXcm52RkO1VHsMBVunO0Z0+9WrnwCN3
+         XB/qw7wXbX44ODKXozJiQus3dLVF3f3BOJsikA+XbpQCjFFnktz7XRaEt92QvYyLFRbh
+         ITpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706012105; x=1706616905;
+        d=1e100.net; s=20230601; t=1706012533; x=1706617333;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XbySdSqyixVey9XUJl2wI2fXpfFGflTsEKME/UI6qxs=;
-        b=YVFLU4dClkngueBnXy4sqh0L/mgazQ+hbf/PbZca+IfaplRLcAVMZglc14nERuvCjN
-         Tr+YOlZUNwfQXaLek73qTn8tCBOinmbn5y/QHI7c+9BLL7+sgi47drjeT8sL9QWXq7qi
-         xl2mKIwu9Vmo/tEbDcm/Ka5ov8HJfaqeGU4QvxNmbz3HZ5ENJZe36yy/cHheH6Bw0pJ8
-         32IPMNyTY+6FaQXd1QEIcFAoL2+xH4vm+dk2S7oZxNT4ryVl7IChxmyQhUj6B7Zhsxxp
-         qJW4jRka1QbR+SgcS1A985qhzazgrY991GkAPVqtbHSWRQ4zDNbGEN7luQr25Mks6U5O
-         zYLw==
-X-Gm-Message-State: AOJu0YzSwZHm0Hg9He8shDu6+J2H4wOAymnOUOPR3Xn068eQ+LcdYTU7
-	NMzrG0S663alOJZdASQjuOKBiXm5BWllqfKT3YNEzAUF6+1YwKJdJKkHmeFHdGw=
-X-Google-Smtp-Source: AGHT+IFg6AdpL8JP+l2IT0GeSA2/bMT2+fhZ1Wv/iLLjQ1khFfEweOmoWKHaQUax2h/ibbZH23lxYQ==
-X-Received: by 2002:a05:600c:4f52:b0:40e:6b7f:5ca9 with SMTP id m18-20020a05600c4f5200b0040e6b7f5ca9mr567647wmq.80.1706012104886;
-        Tue, 23 Jan 2024 04:15:04 -0800 (PST)
+        bh=3Xh4hoiszx6vPtNJtgIPNAsItrI2Mq/OMaWZXX1X6Pc=;
+        b=oW/zF4xrSJB19R1djAfijaHn5wDZcx5dNPymHiWgFyJzZd1X8+4J/EzOaQniHwIYVX
+         trtdp9JKie8i4LxnA4ivbpRdpnxieX6nA3ZZtAoxpNkVitAJ/B2FjF3rzbRBEk0fQ6+g
+         yImEn0Y4iz7IStmcp8xG3t7XPl9VPLvoZ2fG6j8h35sJBuDnrAy8NO4VLTUJxfY81WK+
+         U6ClJTDxLAiI4kcik+JJqXFsNEmV0VH2x5CwHKUu3cScH1pregiHsN8KGyEFPGPkkH1h
+         WiuG6guHuXFbPrgvGOa2SyUHX9OhlG/+3MAZBcMJbAHYjkYgMXiB3+Oyub0rdx71R5Pt
+         TfHA==
+X-Gm-Message-State: AOJu0YxWM1aQN+TnJizE3hFFA1zrL+1k2+bvn5J1wrvhi/BRj0UPfR0K
+	+0aTG+y8tnELWMcfhSEcPEQSwRLQO/o9vd4MiqYJ068njs0QJmI9GyfJIkbFlaM=
+X-Google-Smtp-Source: AGHT+IGccBIX6QiHEm6StMHteGiq7t8STHchgC5xenXi4ifW3VwAcmeyLDLRMdZevyTxKo2oKmw3Mw==
+X-Received: by 2002:a05:600c:45d2:b0:40e:397e:16e7 with SMTP id s18-20020a05600c45d200b0040e397e16e7mr529388wmo.3.1706012533288;
+        Tue, 23 Jan 2024 04:22:13 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id bi25-20020a05600c3d9900b0040ea5ae94acsm11653024wmb.27.2024.01.23.04.15.03
+        by smtp.gmail.com with ESMTPSA id je14-20020a05600c1f8e00b0040e3635ca65sm46144602wmb.2.2024.01.23.04.22.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jan 2024 04:15:04 -0800 (PST)
-Message-ID: <9da1e9bf-0b3e-481e-a9c5-016238ee93ca@linaro.org>
-Date: Tue, 23 Jan 2024 13:15:02 +0100
+        Tue, 23 Jan 2024 04:22:12 -0800 (PST)
+Message-ID: <0d3505ae-b227-438a-9077-4556ffb64e79@linaro.org>
+Date: Tue, 23 Jan 2024 13:22:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,16 +60,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] dt-bindings: clock: support NXP i.MX95
+Subject: Re: [PATCH 2/7] dt-bindings: spi: samsung: Add Exynos850 SPI
 Content-Language: en-US
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, abelvesa@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
- s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
-Cc: devicetree@vger.kernel.org, linux-imx@nxp.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Peng Fan <peng.fan@nxp.com>
-References: <20240122013239.1434383-1-peng.fan@oss.nxp.com>
+To: Sam Protsenko <semen.protsenko@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20240120012948.8836-1-semen.protsenko@linaro.org>
+ <20240120012948.8836-3-semen.protsenko@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -115,58 +119,24 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240122013239.1434383-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20240120012948.8836-3-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/01/2024 02:32, Peng Fan (OSS) wrote:
-> +
-> +/* The index should match i.MX95 SCMI Firmware */
-> +#define IMX95_CLK_32K                       1
-> +#define IMX95_CLK_24M                       2
-> +#define IMX95_CLK_FRO                       3
-> +#define IMX95_CLK_SYSPLL1_VCO               4
-> +#define IMX95_CLK_SYSPLL1_PFD0_UNGATED      5
-> +#define IMX95_CLK_SYSPLL1_PFD0              6
-> +#define IMX95_CLK_SYSPLL1_PFD0_DIV2         7
-> +#define IMX95_CLK_SYSPLL1_PFD1_UNGATED      8
-> +#define IMX95_CLK_SYSPLL1_PFD1              9
-> +#define IMX95_CLK_SYSPLL1_PFD1_DIV2         10
-> +#define IMX95_CLK_SYSPLL1_PFD2_UNGATED      11
-> +#define IMX95_CLK_SYSPLL1_PFD2              12
-> +#define IMX95_CLK_SYSPLL1_PFD2_DIV2         13
-> +#define IMX95_CLK_AUDIOPLL1_VCO             14
-> +#define IMX95_CLK_AUDIOPLL1                 15
-> +#define IMX95_CLK_AUDIOPLL2_VCO             16
-> +#define IMX95_CLK_AUDIOPLL2                 17
-> +#define IMX95_CLK_VIDEOPLL1_VCO             18
-> +#define IMX95_CLK_VIDEOPLL1                 19
-> +#define IMX95_CLK_RESERVED20                20
-> +#define IMX95_CLK_RESERVED21                21
-> +#define IMX95_CLK_RESERVED22                22
-> +#define IMX95_CLK_RESERVED23                23
-> +#define IMX95_CLK_ARMPLL_VCO                24
-> +#define IMX95_CLK_ARMPLL_PFD0_UNGATED       25
-> +#define IMX95_CLK_ARMPLL_PFD0               26
-> +#define IMX95_CLK_ARMPLL_PFD1_UNGATED       27
-> +#define IMX95_CLK_ARMPLL_PFD1               28
-> +#define IMX95_CLK_ARMPLL_PFD2_UNGATED       29
-> +#define IMX95_CLK_ARMPLL_PFD2               30
-> +#define IMX95_CLK_ARMPLL_PFD3_UNGATED       31
-> +#define IMX95_CLK_ARMPLL_PFD3               32
-> +#define IMX95_CLK_DRAMPLL_VCO               33
-> +#define IMX95_CLK_DRAMPLL                   34
-> +#define IMX95_CLK_HSIOPLL_VCO               35
-> +#define IMX95_CLK_HSIOPLL                   36
-> +#define IMX95_CLK_LDBPLL_VCO                37
-> +#define IMX95_CLK_LDBPLL                    38
-> +#define IMX95_CLK_EXT1                      39
-> +#define IMX95_CLK_EXT2                      40
-> +
-> +#define IMX95_CCM_NUM_CLK_SRC               41
+On 20/01/2024 02:29, Sam Protsenko wrote:
+> Document samsung,exynos850-spi compatible which will be used on
+> Exynos850 SoC. Exynos850 doesn't have ioclk, so only two clocks are
+> needed (bus clock and functional SPI clock).
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/spi/samsung,spi.yaml | 1 +
 
-All my comments from previous version or for other patchsets you sent
-recently apply.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+I assume this will go via SPI tree. Probably better to send SPI patches
+separately with fixed subject prefix (spi: dt-bindings: samsung:)
 
 Best regards,
 Krzysztof
