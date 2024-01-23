@@ -1,160 +1,126 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E975FDC8
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 12:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6565EE82
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 13:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706014613; cv=none; b=ad1gvpn9s9IEkrMEZdfw/W9dhSYEX/W7dpSVYiOYJO75+EcRwwX041bILB80np2V7OXwMUrt+apRjdgFD9HdHnaRv0oLjn94vxxP5AlGkvgNVDXpBnwVpcZdDgdq8ZxTEyq6E2AYRazTiUigJFnSku+9Cg5N8e3Cj2XbTAivgc8=
+	t=1706014867; cv=none; b=nspc3AfcdxajN4lTZv3djYPox8TLztSmuQIU1PEHrmA8rzptTWSHHsK0kxVaI3lDQ4Rz7MXX813DfL/WeAJd08i10nDy2WHC4iQPUtBPh1yHNM94JLlCxicgJ6gpx+vX2wLB+6kIXy2R3PEx4CNhDCAzHT/y7yNYttwAMW9Bazc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706014613; c=relaxed/simple;
-	bh=uGaGoVqwixAox4DIu8EqI+hzB6nU8p+rAL7pp/jvsQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t+zglJfL5ITSKgmO9rcU2UNoPgTvFFeyGXjCVcYUQJK+j7G9IeeggWwB/Zov40cRGJf3Q7BJCyGO12/jO+f1VbfbNHu0x4mE3LR+UN/aCCsZJRWNIoPGnVIi3Es356laWO3juzYlO0pajFQaEQmc0xLCTo4ktemPr308d8HPMUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SA2QzBf3; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1706014867; c=relaxed/simple;
+	bh=Rhu11kHNwAkr6YhiKhtbh07fNK4FgW0qEO9f97hhyI0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kQ0dr+8g8Hb7boZBdMaryD6CUEXsXH94OIeHH0kZDjrSeDSehyzreogZfzdmmHoARpirOM/7+jysMphqfVI5T0wlM9Y0eTvGfOhb+1OQAUKxxW4AYPQ2cKvFRc7ckr9jdQUMkmuRNPZOyuUOpBbAldvH8V4y9C3WjSIMFlsZDsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I9wfgzI6; arc=none smtp.client-ip=209.85.219.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SA2QzBf3"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-339208f5105so3657681f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 04:56:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I9wfgzI6"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-db3fa47c2f7so3699796276.0
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 05:01:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706014610; x=1706619410; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/LXtsp1mimgAEc3f/RyZbd67GKahYFAcU0Yghrpz8j0=;
-        b=SA2QzBf3jiXXdK0bTdE0HhIl7U7Eh5LZoxIRksdKb+AW+echAWq9sh6I8CsYyqCFMr
-         vHjhlfUFPf6UQalWWLnXBvR5AsAWx2iULVPc/g51Rd2EgmBdHcdP3XrHrriOP7j3izQC
-         mOcCHCQZaNMdqJn2S0VSAqxcHPCUslxvuCrTgyolv/ts+Xhu3TjZhkdrv0XXdKMtDqvI
-         NIoASnF3ztDImm2DrtN8uyeFFtJNKLqoNeqY5I+qV/TE8RsuNddiGa1wcmXUpT8HKyjm
-         06x5TNYWtdwaSmQsbcf08xXA0+bTgZkbCp516rAAg9RToaj85qxq7Yb8zZUn8gaLbQGu
-         W7FQ==
+        d=linaro.org; s=google; t=1706014864; x=1706619664; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3nn+YYpd5382zai0iv6hd4Aw6J6UtUSEjEEQnVFo5no=;
+        b=I9wfgzI6RteeWG1uauP3YOui1uTmV6L6MSgtpnlxpfaDBAP2QnFBqznn72Eo+yVLaw
+         pIIC9TNCz86Gt5KAB1zfMJPV7y+Jlk1c716sywU/ReVSNFeS+NS9l6lRSAdpBfL2vYFI
+         d3ODVcH8eFq31y6GnOUEd+Fd2S/Yx3UJmxAGbjghCrzsGS89jS4Wjfc6GVVE7gN9zg5i
+         hyq1w6lUjh4AfRv1oXv1wCQKHwKRAiV3CvJKNS2dbvPpp0brHUBwx5nVxmOaRM0j3mR5
+         uf9urjHMPC/lGqq0E9rtKEhSw3opM8+WEBrwPBDzQS+WheRWlzpT9PwJ8bzYKUiHpT3h
+         NV4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706014610; x=1706619410;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/LXtsp1mimgAEc3f/RyZbd67GKahYFAcU0Yghrpz8j0=;
-        b=PVQ1jTfWqcSaj5E78vtQeGhMKXOzFzjw2UDwb1IY7uuYFjwRXYFL3YT85UZUF75riK
-         xl7RSOmSICGfhGPde2+3Xv04jA7PwjnOKpAzh8vm3sGXxRBxjVjLtcIa4VKgX7BxoCUS
-         +CsYh3uYApU0suR7avXimQKbrHd+LY6+fd39okEjyB9bJzSRPA6h78Y1dsAvpJTGrwgl
-         6tomEh41Y/zYdCP+BDq8TJr++Rtm2dHVYF7SFFlrd0Yl/7igRMZIlvQ9ZwXb4pOgbCNS
-         BHucwXBjtCUyVQrizgaSC5SmX6YgrOG4yT7d5jF5HkVRc2mBm3npRCDbM/TRBjT+DAZg
-         XyGA==
-X-Gm-Message-State: AOJu0Yxw8rt/vGoUzWwolB9YwVYHvVRObE5FL5M/tBl/+Sgfgg0n4k3s
-	3qI+svaym7mFmO2p6wmC9iO+vOZM0aKYwB8wnisgrOrCwkh8ZA2iGVpatJIoUxU=
-X-Google-Smtp-Source: AGHT+IH0EqcxNO1Y1YHE7d4z2t2NPfR9LfIJ2GiwoVXVGaPdFyx7G3cLXUI88jWorgaeI1b1XNwOqw==
-X-Received: by 2002:a5d:44c6:0:b0:337:c7be:cba5 with SMTP id z6-20020a5d44c6000000b00337c7becba5mr2248728wrr.0.1706014610498;
-        Tue, 23 Jan 2024 04:56:50 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id k2-20020a5d6282000000b0033838c2c169sm11518355wru.108.2024.01.23.04.56.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jan 2024 04:56:50 -0800 (PST)
-Message-ID: <12296a4b-213b-4703-808c-be0667914b0f@linaro.org>
-Date: Tue, 23 Jan 2024 13:56:48 +0100
+        d=1e100.net; s=20230601; t=1706014864; x=1706619664;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3nn+YYpd5382zai0iv6hd4Aw6J6UtUSEjEEQnVFo5no=;
+        b=OC5TGpBrETi2Q2ZPnFrwYMyAMzNgiA35J3jUBAEAU8dhwm5W/KIdj+lSPMQ5pZEAPL
+         bFEJY0lS8R4lvd4Z9i5F3SqLggB6RFEG0xYT94r3mZtICLUFWXlIq20gr9XZMgq8OpNa
+         Ityu1lT7gTZdlKHeJi8bomcIPCNMh9F3JowdnczXmReI5wKNc7vpsAidBf1ntt+I8ofA
+         pZ4MWm/LCzZKhBVdvyRfpd6qVXEbixptgx3XTNMgJjs6XIsPG9HhdHcsbYXDOYa4fSAy
+         bDriZpWx/Y/NMC0a4iQbeu/OVxv9j6tXVTEykTENCwrsBLkkGEKM2zWsJhVovPxa02f3
+         I8Bw==
+X-Gm-Message-State: AOJu0YwRnzkpXdusun5Iwc6qsjB0TkPnqrC03MFcuP01ARjAD/0PUau/
+	/Y8xl04VkqQLHPnh3y1iaZVCEWv8y2itGGLO6uQ4aizfD9fCuYG3ZsdXf8OrPR4UdJ9whhPICZi
+	LZVLps2qDp60Cqy2SXq8Ux8A0YJsX4gRWjmQWwQ==
+X-Google-Smtp-Source: AGHT+IGjEf+QjHzCIZuEvzPO4c751eB6RGzISMIAvrjoFnsPa6N8IGO0Gksu7V5PY9K+8g3LsFuqwdUTtXYbGpYeIk0=
+X-Received: by 2002:a81:48cd:0:b0:5ff:7cca:a434 with SMTP id
+ v196-20020a8148cd000000b005ff7ccaa434mr4298126ywa.51.1706014864029; Tue, 23
+ Jan 2024 05:01:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] arm64: dts: exynos: Add SPI nodes for Exynos850
-Content-Language: en-US
-To: Sam Protsenko <semen.protsenko@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <20240120012948.8836-1-semen.protsenko@linaro.org>
- <20240120012948.8836-8-semen.protsenko@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240120012948.8836-8-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org>
+In-Reply-To: <20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 23 Jan 2024 14:00:28 +0100
+Message-ID: <CAPDyKFqVGJ3DUfPaifvqhyTBMH1bM30AExr3M2apZMx00vv9Jw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] PM: domains: Add control for switching back and
+ forth to HW control
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Gross <agross@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 20/01/2024 02:29, Sam Protsenko wrote:
-> Some USI blocks can be configured as SPI controllers. Add corresponding
-> SPI nodes to Exynos850 SoC device tree.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+On Mon, 22 Jan 2024 at 09:47, Abel Vesa <abel.vesa@linaro.org> wrote:
+>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
->  arch/arm64/boot/dts/exynos/exynos850.dtsi | 54 +++++++++++++++++++++++
->  1 file changed, 54 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> index cd0a452cd6b4..e35973a254e6 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> @@ -738,6 +738,24 @@ usi_spi_0: usi@139400c0 {
->  				 <&cmu_peri CLK_GOUT_SPI0_IPCLK>;
->  			clock-names = "pclk", "ipclk";
->  			status = "disabled";
-> +
-> +			spi_0: spi@13940000 {
-> +				compatible = "samsung,exynos850-spi";
-> +				reg = <0x13940000 0x30>;
-> +				interrupts = <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
-> +				pinctrl-names = "default";
-> +				pinctrl-0 = <&spi0_pins>;
+> Changes in v4:
+> - Re-worded 1st patch commit message, as per Bjorn's suggestion, and added
+>   Dmitry's R-b tag
+> - Added Bjorn's and Dmitry's R-b tags to the 2nd patch
+> - Re-worded 3rd patch commit message, to better explain the HW_CTRL_TRIGGER flag.
+> - Added mode transition delay when setting mode for GDSC
+> - Added status polling if GDSSC is enabled when transitioning from HW to SW
+> - Re-worded 4th patch commit message to better explain why the
+>   HW_CTRL_TRIGGER needs to be used instead
+> - Drop changes to SC7180, SDM845 and SM8550 video CC drivers, as only
+>   SC7280 and SM8250 have been tested so far. More platforms (with v6 venus)
+>   will be added eventually.
+> - Call genpd set_hwmode API only for v6 and dropped the vcodec_pmdomains_hwctrl.
+> - Re-worded 5th patch commit message accordingly.
+> - Link to v3:
+>   https://lore.kernel.org/r/20231101-gdsc-hwctrl-v3-0-0740ae6b2b04@linaro.org/
+>
+> ---
+> Abel Vesa (1):
+>       PM: domains: Add the domain HW-managed mode to the summary
+>
+> Jagadeesh Kona (3):
+>       clk: qcom: gdsc: Add set and get hwmode callbacks to switch GDSC mode
+>       clk: qcom: Use HW_CTRL_TRIGGER flag to switch video GDSC to HW mode
+>       venus: pm_helpers: Use dev_pm_genpd_set_hwmode to switch GDSC mode
+>
+> Ulf Hansson (1):
+>       PM: domains: Allow devices attached to genpd to be managed by HW
+>
+>  drivers/clk/qcom/gdsc.c                        | 54 +++++++++++++++++
+>  drivers/clk/qcom/gdsc.h                        |  1 +
+>  drivers/clk/qcom/videocc-sc7280.c              |  2 +-
+>  drivers/clk/qcom/videocc-sm8250.c              |  4 +-
+>  drivers/media/platform/qcom/venus/pm_helpers.c | 23 +++----
+>  drivers/pmdomain/core.c                        | 83 +++++++++++++++++++++++++-
+>  include/linux/pm_domain.h                      | 17 ++++++
+>  7 files changed, 169 insertions(+), 15 deletions(-)
+> ---
 
-pinctrl-0
-pinctrl-names
+Bjorn, if it helps, I can funnel this complete series via my pmdomain tree?
 
-Same in other places.
+Another option is that I host an immutable branch with patch1 and
+patch2 for you to pull in? Just let me know what you prefer.
 
-
-
-Best regards,
-Krzysztof
-
+Kind regards
+Uffe
