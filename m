@@ -1,101 +1,239 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF0E5C5E0
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 09:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E705A0F4;
+	Tue, 23 Jan 2024 10:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706003705; cv=none; b=iCUs0xdFLaZ7IPSDTPwUYl6hkvNgN8E7ke7OfITp0vI67rT+qQZcA9lI5TxX6kQqsLYOIRFtEc3d5PaUHUzHiIKZt2Kcp5qlIVXdiMwArTD79L0ORaocFi1GBxwVtvRIDL4cKvGOMsPkNrpZ0p7Xh0k7lu4GsEvBkFsDNYSRJOs=
+	t=1706004028; cv=none; b=fcBUMcSy2q03y3iqTd2AazL9mBW/UMALEFTKfFiUk9lgS1JFb4XCHz7qJSi/on0hCpvdMVTaqRTpTUv+VJsGH95ev8XFTD20Zm4pYBlO2wDM0bvC+/uqKDxuefh0EFD5+QILdlCEsfq96tA0wW1W2av3FPK1aHbUtNQNurNmx0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706003705; c=relaxed/simple;
-	bh=LDx4x+PbphlW2IlWmkbie/u9O6xlW/ljOSnG6So+pg8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=e0JvVd53cn0D8uC6rRDdjqjSVMbwUEiHRrSm/Zx1cLHuvmQXb2bVXHg5atEp2yx1YbzfHp/+9qxBBibPQESUwy7Jnyq0Okr+DdN7eRPX62w4nYMZYn1QxGs6asuKNZJFCPvMJ7lmZbk+4/7SC0sQqtUi30Xw8qYNnVPTo1B88Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W+isd+PV; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706004028; c=relaxed/simple;
+	bh=tWtM0aRE7gi8J0xM0NngvsObtVXPw8EzFJdj7ZUJtEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CfsCZFEOPBITo0nU1WHLK3Hr9IZggK2MJ8t5wZ5pJoMyQDWxzWQxDkk3hG3z8EAVD1F+CPiRDA6SBC7a/l+2AjBPBCYw8dTZKP/2OFo5Esw8Ac+iW618To/WV4tKEdKiuPVRgg6TFsjpU9FWADhnf7Ikbql/35Iq4+r9PPuH8gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GS5ysBOp; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W+isd+PV"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3367a304091so4476687f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 01:55:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GS5ysBOp"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-5cf1f4f6c3dso1964893a12.2;
+        Tue, 23 Jan 2024 02:00:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706003702; x=1706608502; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vp9Qkxpyl0SLEsF0UAyLTjA2Ib2sT1Vds4gNvwsTHtA=;
-        b=W+isd+PVkpKZAZlJa/La6hQJ7aq4WeQScSZoiD1yvp3/b0RelDkyDhprN99bfNXMKE
-         G4swfqKBPYvUnBZb5bOX7sg+AypvpQKYMAmLb5Xsej2gIYd415XKIAVHiyiR6d/3omrB
-         8bwlwOKK5fJJ40w/AEcIAAMJ3EBQz8Al8mfQdNdyiEnssyOueMrrtVUEzoFwaAPEhl2B
-         Dq5jP81DbALgm/+LboaqOE7mlA7OG0x8Xngj/qEcc3kd+S31Zv4LKSFVeo3WFBojHVjV
-         ME23vCcgPF1T4Vmqg2wfALxPxbTcPZRo26IKnw8fidmUWIeBVdiwGl5hYmNNGmxLi5Jd
-         Hu6Q==
+        d=gmail.com; s=20230601; t=1706004025; x=1706608825; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=F+ctDPNeFBq/VjlK1sIBZskqA0s3m7Q2NTDa1byxa0M=;
+        b=GS5ysBOp4OboGgT1pk+B91RmHTPE8YaCUZeVdlsPzZBluEznHcXvWH02MFqLIXZ6bO
+         BCoa6qKiSqbAhueMS2kUKpCY6A4EtFwvEP7pBxCarTMJp/g+OpmX7+foIxQbgyDqyJaM
+         TBVkHdApNGcH1N53Nns2nP7zZxRGPN9QLYmSa7eKa/snmx0ht/FQ6CafZyfVJHtU7DZz
+         9c0HGF3Dig5vgdN6q61Cz2TEcE4RS/MTmsuzjRN0v11FKQXRaD9YXAVbindNaem34vrx
+         U69FjhUWN95DJaHa/m+dIKf+07AZAEyIokAw/4MHzIkO6/bwojQdNtiIaew3q6VagtN8
+         H5Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706003702; x=1706608502;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vp9Qkxpyl0SLEsF0UAyLTjA2Ib2sT1Vds4gNvwsTHtA=;
-        b=D2QH3WGgNTPGwIMfaAjsVk64z7+uky75KNRd4Dp7EvNyXkqyMP+KhlceH3YhdvzUVA
-         k3is0mzQDC/w6AsWZ7ZXh1rZTJwPs7qosT5YGNDl5ii1A8c8p5jOn1LPhFoG4/01BG8i
-         4noIhyWla5qHTrpCJK9Im499gQHdLMnrRtonMF/LadIeh6bnKsUI7Si/d7pEwghMNJq+
-         Y4qGCqYX6erCfgeeZpfud0CCRiLetDRT/YP1UtS/iZ8k1aw2p6qBxOAoYp9KNFCQv5Of
-         kEBS1ngDcY2tVZrxz2HR+jI9G7s/+2mkkUbM4E1RDLtXafFwuQniWchBZFoaSUTDhCYq
-         mUGg==
-X-Gm-Message-State: AOJu0Ywuz0QPiQ3gHiGoiuAIppL/T5AcNjGfBLbWrgmnbjsbWLpQPZXY
-	AhrSFUbZwCp2Rmr4kSdRQi+qy/lNgL+2BJEkV/p3kiJj53PXWfeZ63R+ccDo2K0=
-X-Google-Smtp-Source: AGHT+IG41tP9StehDN0qHxWlZ79Rb04+IOcVI3mvK2WoSqofs3q14dkzZICzZdniGGR2Pr8wx5ufwA==
-X-Received: by 2002:a05:600c:4b27:b0:40e:78ee:cb61 with SMTP id i39-20020a05600c4b2700b0040e78eecb61mr235679wmp.94.1706003702005;
-        Tue, 23 Jan 2024 01:55:02 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id l34-20020a05600c1d2200b0040e89ade84bsm21649964wms.4.2024.01.23.01.54.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jan 2024 01:55:01 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, 
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: andi.shyti@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com, 
- tomasz.figa@gmail.com, cw00.choi@samsung.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
- andre.draszik@linaro.org, semen.protsenko@linaro.org, 
- willmcvicker@google.com, kernel-team@android.com
-In-Reply-To: <20240119111132.1290455-9-tudor.ambarus@linaro.org>
-References: <20240119111132.1290455-1-tudor.ambarus@linaro.org>
- <20240119111132.1290455-9-tudor.ambarus@linaro.org>
-Subject: Re: (subset) [PATCH v4 8/8] arm64: dts: exynos: gs101: enable
- eeprom on gs101-oriole
-Message-Id: <170600369957.35728.5412696474700042763.b4-ty@linaro.org>
-Date: Tue, 23 Jan 2024 10:54:59 +0100
+        d=1e100.net; s=20230601; t=1706004025; x=1706608825;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F+ctDPNeFBq/VjlK1sIBZskqA0s3m7Q2NTDa1byxa0M=;
+        b=DD2hqWPLATy1KRQ2RB8IJOSdfgKG7cJ+zm+hKYxi6G01m5xKsScYAZoTO4FIBGwGvi
+         qJMpGc1tHgC+r4RXGtXvOq88ZzrbCsh/cKdmdxaVn4Yw5it5IwINqqvyKhywi9GHQUT0
+         rHZlirvfwU3PB1bv8rKrGQvZsaxHeYymw/6Of0WMnfJufJZcv45V50C5YMg+SkTxyQCi
+         xZhYJYweZYCKZrVmyVbUTkgSmhWEtewftdFn0h4oWK23WSYyfksWFQBCSmEfE4NS3rWl
+         qq4yAH360VPjSXuU07ZAKmPsITyl6pI5U+/DA9vRHnQDZ4tH/lELhBslxgPD0/WAb6N2
+         5iAw==
+X-Gm-Message-State: AOJu0Yz4gPP0gwCzHscnVShtz08palbAISibOhUw2RC7CSq/x9Gfo2Ci
+	gZ470aaU9yo6/2RbYwFc7P68tr/unf0dn/N4zHCwKSKEgoIma60O
+X-Google-Smtp-Source: AGHT+IFhl6oGMpu/Q2RixaDZx/DlJFHiVeGGPWYCGCf11/ly5Pxkq/dWyQ7cXN7oG4ew+lJWTJrwKw==
+X-Received: by 2002:a17:90b:88e:b0:290:8a26:248 with SMTP id bj14-20020a17090b088e00b002908a260248mr1772945pjb.17.1706004025346;
+        Tue, 23 Jan 2024 02:00:25 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id q6-20020a17090ac10600b00290b567b27csm2781206pjt.46.2024.01.23.02.00.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jan 2024 02:00:24 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <1fbd3b4d-620f-4d2f-852a-e3a275bb425d@roeck-us.net>
+Date: Tue, 23 Jan 2024 02:00:22 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/10] watchdog: rzg2l_wdt: Check return status of
+ pm_runtime_put()
+Content-Language: en-US
+To: claudiu beznea <claudiu.beznea@tuxon.dev>, wim@linux-watchdog.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de, biju.das.jz@bp.renesas.com
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240122111115.2861835-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240122111115.2861835-4-claudiu.beznea.uj@bp.renesas.com>
+ <c857cdd4-459b-41ae-b4bb-0da45e461335@roeck-us.net>
+ <92db308f-075c-4799-9777-5bc14438ce68@tuxon.dev>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <92db308f-075c-4799-9777-5bc14438ce68@tuxon.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-On Fri, 19 Jan 2024 11:11:32 +0000, Tudor Ambarus wrote:
-> Enable the eeprom found on the battery connector.
+On 1/22/24 23:02, claudiu beznea wrote:
 > 
-> The selection of the USI protocol is done in the board dts file because
-> the USI CONFIG register comes with a 0x0 reset value, meaning that USI8
-> does not have a default protocol (I2C, SPI, UART) at reset.
+> 
+> On 22.01.2024 19:31, Guenter Roeck wrote:
+>> On 1/22/24 03:11, Claudiu wrote:
+>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> pm_runtime_put() may return an error code. Check its return status.
+>>>
+>>> Fixes: 2cbc5cd0b55f ("watchdog: Add Watchdog Timer driver for RZ/G2L")
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>> ---
+>>>    drivers/watchdog/rzg2l_wdt.c | 6 +++++-
+>>>    1 file changed, 5 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
+>>> index 4ab9e7c5e771..0554965027cd 100644
+>>> --- a/drivers/watchdog/rzg2l_wdt.c
+>>> +++ b/drivers/watchdog/rzg2l_wdt.c
+>>> @@ -144,9 +144,13 @@ static int rzg2l_wdt_start(struct watchdog_device
+>>> *wdev)
+>>>    static int rzg2l_wdt_stop(struct watchdog_device *wdev)
+>>>    {
+>>>        struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+>>> +    int ret;
+>>>          rzg2l_wdt_reset(priv);
+>>> -    pm_runtime_put(wdev->parent);
+>>> +
+>>> +    ret = pm_runtime_put(wdev->parent);
+>>> +    if (ret < 0)
+>>> +        return ret;
+>>>          return 0;
+>>>    }
+>>
+>> A simple
+>>      return pm_runtime_put();
+>> might do.
+> 
+> pm_runtime_put() may return 1 if the device is already suspended though
+> this call trace:
+> 
+> pm_runtime_put() ->
+>     __pm_runtime_idle() ->
+>         rpm_idle() ->
+>             rpm_suspend() ->
+>                 rpm_check_suspend_allowed() [1]
+> 
+> That return value is not considered error thus I wanted to consider it
+> here, too.
+> 
+Good point.
+
+> [1]
+> https://elixir.bootlin.com/linux/latest/source/drivers/base/power/runtime.c#L278
+> 
+>>
+>> However, one question: Given that pm_runtime_put() returns -ENOSYS if
+>> CONFIG_PM is disabled, that means the driver will depend on CONFIG_PM=y.
+> 
+> Indeed, the driver depends on CONFIG_PM=y for proper working. It is for
+> devices selecting ARCH_RZG2L and RZ/V2M (ARM64 based uarch) which select
+> CONFIG_PM=y:
+> https://elixir.bootlin.com/linux/latest/source/drivers/soc/renesas/Kconfig#L45
+> 
+> The driver is written with CONFIG_PM=y dependency in mind (e.g. the clocks
+> are enabled though runtime PM APIs).
+> 
+>> Assuming this is intentional, would it make sense to explicitly declare
+>> that dependency in Kconfig ? It doesn't seem to make any sense to build
+>> the driver if it won't work anyway.
+> 
+> The dependency exists there for ARCH_RZG2L and RZ/V2M devices but not
+> directly and it is not strict (in the sense that we allow to build the
+> driver w/o CONFIG_PM (I think this is good to check build on different
+> configurations, the COMPILE_TEST is there anyway in [1]) ). E.g.:
+> 
+> RENESAS_RZG2LWDT depends on ARCH_RENESAS [1]
+> ARCH_RENESAS is the ARMv8 uarch flag [2]
+> SOC_RENESAS is set if ARCH_RENESAS [3]
+> ARCH_RZG2L is visible only if SOC_RENESAS [4]
+> ARCH_RZG2L selects PM [5]
+> RZ/V2M selects PM [6]
+> 
+> Please let me know what do you think about it?
+> 
+If the driver indeed depends on CONFIG_PM, that should be made explicit.
+
+Guenter
+
+> Thank you,
+> Claudiu Beznea
 > 
 > 
-> [...]
-
-Applied, thanks!
-
-[8/8] arm64: dts: exynos: gs101: enable eeprom on gs101-oriole
-      https://git.kernel.org/krzk/linux/c/c68efa676ca8febfd36aab50fe747c072c224d52
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> [1]
+> https://elixir.bootlin.com/linux/latest/source/drivers/watchdog/Kconfig#L913
+> [2]
+> https://elixir.bootlin.com/linux/latest/source/arch/arm64/Kconfig.platforms#L273
+> [3]
+> https://elixir.bootlin.com/linux/latest/source/drivers/soc/renesas/Kconfig#L2
+> [4]
+> https://elixir.bootlin.com/linux/latest/source/drivers/soc/renesas/Kconfig#L9
+> [5]
+> https://elixir.bootlin.com/linux/latest/source/drivers/soc/renesas/Kconfig#L45
+> [6]
+> https://elixir.bootlin.com/linux/latest/source/drivers/soc/renesas/Kconfig#L328
+> 
+> 
+>>
+>> Thanks,
+>> Guenter
+>>
+> 
 
