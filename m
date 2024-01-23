@@ -1,59 +1,58 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A70B3611E
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 07:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5485F56472
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 07:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705995859; cv=none; b=UXLIj6xLMW7zIe2gaCywMyvFO+/ty9q2j5j2CsU20uomJbvc780oEZfimQQ7vzJ7pDAj5b1gGbdLBZYSSYiSrt2kLqX3csoxl2GwcDQCYpMuDKFMQQMpTzL09vBkdMA1JZTXVlNYUlkp1DZunzN/wmsleWckhD6W9hHJrzPpCsM=
+	t=1705996368; cv=none; b=Sj3gXhg6bSVAb5nsQ79VqDuS+5FCGfeXr3wq7uLcGoUBt/Ph6H58BRgrn2JZbBkg6Zc60g9rcTKHo4jItP/sKUaUEZI8A6JLKrUvD12+Mle9AyJ0jetQhIUTvsaraxTP/1S6YhMC11DYSfwF40uAUClgJuuKz3hX8+ydqkk2B80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705995859; c=relaxed/simple;
-	bh=dMDh8ycfE7LPUzqo/kuKFrbuyh/cSsXu1/F3ITTBaaI=;
+	s=arc-20240116; t=1705996368; c=relaxed/simple;
+	bh=6o+5pT45dHRAhli14TjwEXDbKi/FTEHCMKECgpqUaH4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=reiMFFZUwUFeEeRcCy+Ayxk8VIepE8Y6kPsSsEf+P3tiUtf70Ffb/jhh3JlqNJfK7mS9DHIIBRduS7R/JlThgqK3gPPjgOpxdgFpJlnp5lOneeQxRVp05ERfI7rE1KAk9dtcL3GRUhey+5R+A4pBSFluGZ3+R1g08+bC5Wd4KVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LrQ5/Ckz; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:Content-Type; b=EFBLyJDMkvGfp3b/If5W4tQ0GqnZ6DeGkAuCQrMYYRHh2tHu3LjFIntv43uSxYqLgoQVvST/fe8rRAOXPX3DFM4vVM6SjcHpeggHd0IKzkEu2yIfwR2FFWpX0Qm4mjhltOZD2VdWqj8jKgvcnw3xU3FLzYpCVx1JLEcOXxFpWJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oYDUBnRP; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LrQ5/Ckz"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e490c2115so30202695e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 23:44:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oYDUBnRP"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-33931b38b65so1970453f8f.3
+        for <linux-clk@vger.kernel.org>; Mon, 22 Jan 2024 23:52:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705995855; x=1706600655; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705996365; x=1706601165; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZBTWlxp6e4Lb4iC20/lRrr6cKmKomR5gYQ5hhsStkTM=;
-        b=LrQ5/CkzJpPgjMYVU8aB+/Y9IjUPAEoRUfkE137lDDlGC9KWon8S/JCKqcHwCD81/B
-         Cxt1wS9UcUJOiiDCs1rxN7A5lBQdW/XHYXl45pOEwRbUNEJzLXm1bu2nvy3RYhDcRmFA
-         6ZARtJLyAr8FIyMHHIBvJUxHQDTQ5Qtd2xJZXe8t655SFj+KYLRcRaHfnkI12BHhauHt
-         cBiGgb2nCvQ7VTmIt538CRsdUrwmFn+bd5OsBLM6++L+tN7wP58Lgi57bvhw/URUTY8g
-         /pQVizou387QbEWq7OiS5ZVHjcUOcVWQ6QgLD7xcd6roK3G1IZmSz7mpi3kWxXzMkj77
-         jZTg==
+        bh=sgMx3t0D01iLikPnPU/I8l76IP5yCZgP3fM27oqjNzY=;
+        b=oYDUBnRP2U29Psvgo3t66M9g9+y3XYtVK7E1xnOW82TMWdmRrBh3J5AeEEipaUXrnQ
+         oYLc4uBa790jy9b9Br2dn6HZW+tx1XIfQgjKeSIvh3XAeKneCLFcgSPs8VCI3b834/iF
+         EU5gnlhgCNJN6j2fIkKtbhnwxgdNtW2Om326cc7z0xvye9QOf8wBFga8kBwf5YqnDFJz
+         jpOb3MUwrTY0NwREnrAC5J/on4d+WxR2cOklog+LDoSE0pvS6Afx0inaPerRBV3/2nJV
+         nkRHYfsrAtndKJCh0+W+1Zd9GPfcTJhuRKsGFWkUEnsFxiV3NkECHtPH+Li+Furcah0z
+         T+fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705995855; x=1706600655;
+        d=1e100.net; s=20230601; t=1705996365; x=1706601165;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZBTWlxp6e4Lb4iC20/lRrr6cKmKomR5gYQ5hhsStkTM=;
-        b=RTvfDgKlbW7Nx+dRQkI7g1l+f2z8lCPIqd+isWoysjWBbl3RTn+Zw4EiAF9RPujpTa
-         CWNdHxjpl5c1Usy8X1yt/ToeZR94b7svb8suL3h/xQLLFIdwbzDkDluBzIyHEu7rQSb/
-         gk+z0HURAPqp+bHd1fTbWRfqYX0/kb3mjvzKsOWtn1W95LMouGKAj7gx34nxvuSYU3Qf
-         MGYHfzEhjgxk6Kphp4ukZhwjvjfvFLSmvx56O4Y1PRLiZ1oDLqTtQICT2uSPEdn6wPyE
-         +ecCAG0llBPv1ekNiY/p/SwjPL5KmViyFOrhD/oHvd7s/FMiq4sSzFuF4gGZ8Exq6mxn
-         0kSg==
-X-Gm-Message-State: AOJu0YxQWt0NYihKuSQjzFNBguG1h66NMZO2yOf+gl+zsrhz+bSBANP8
-	dRHU7Baau/U1yuM4BgTob/7XC0LWlSgP/P5s9XJVJ0Gj5G/4Mey8+JdOLnT1QHZUsGaorFllTQe
-	Y
-X-Google-Smtp-Source: AGHT+IHP7uyl6QxlyXKx2arz0R932jWX7aAcRehRM5cqJEta+YrsbyBUFsSad0lY/fz5VLAq4sJVHA==
-X-Received: by 2002:a05:600c:2d52:b0:40e:4c31:affa with SMTP id a18-20020a05600c2d5200b0040e4c31affamr220901wmg.138.1705995855388;
-        Mon, 22 Jan 2024 23:44:15 -0800 (PST)
+        bh=sgMx3t0D01iLikPnPU/I8l76IP5yCZgP3fM27oqjNzY=;
+        b=oT0USVPxi6XDJeT+zGLLzONyZiZ+3oUu1I/66ove41xnwismbFtObPTd6GLqsJjn8m
+         zQLe8VrO4q5V8GJ7To6dGeYLKlKs7YXfO1RvqJZnjMkgAknqvpT8N9gZPdxQnEMiub1n
+         LUhoeOEtlzIFL+E2qLEwONA7BvQMQ3Q45c4dii4xSoYamUimsO/SPTdqaaI9yv/2Gd48
+         LVcJYL4e71VIfrt2mu/gwDOrqqJ7irC7rl+zzLHaJvh2kdn8M15YS8HcYi9LdAL+SJpk
+         1df0U2KwKVOgj1wZE+Jyt3ycyxCmIBNG/JrVmv6mu/ccqdIiqI8GiAb6R7IG1SzltEiB
+         yRmQ==
+X-Gm-Message-State: AOJu0YxPduN37xZrt23evt4gsBMXAuS2yCBcYnfny09y4+RbkKV3UbjY
+	h8EeEqXUd46cX1SLvk7zaJrm2WDtKmbvoVpGwQMBAOXNOIt3HBa52UUfb7ZBVtk=
+X-Google-Smtp-Source: AGHT+IEqbL6mPW+8uNIsQRzZuRza5M+QnmmY4AchnhG1cgu9rNMkz3MaqVG1KJKcp08YIvcfUqZNQA==
+X-Received: by 2002:a05:6000:1b08:b0:337:bfa5:ef90 with SMTP id f8-20020a0560001b0800b00337bfa5ef90mr1414324wrz.236.1705996365611;
+        Mon, 22 Jan 2024 23:52:45 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id iw7-20020a05600c54c700b0040d604dea3bsm40762622wmb.4.2024.01.22.23.44.13
+        by smtp.gmail.com with ESMTPSA id v2-20020a5d4a42000000b003392b1ebf5csm7591526wrs.59.2024.01.22.23.52.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jan 2024 23:44:14 -0800 (PST)
-Message-ID: <cfef99f3-bd87-4c42-ad43-3030b6c9f047@linaro.org>
-Date: Tue, 23 Jan 2024 08:44:12 +0100
+        Mon, 22 Jan 2024 23:52:45 -0800 (PST)
+Message-ID: <9d12f4f9-1892-48f3-b8d1-8f59788cc91d@linaro.org>
+Date: Tue, 23 Jan 2024 08:52:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,21 +60,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v22 6/8] dt-bindings: clock: npcm845: replace reg with
- syscon property
+Subject: Re: [PATCH v4 7/8] arm64: dts: exynos: gs101: define USI8 with I2C
+ configuration
 Content-Language: en-US
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, joel@jms.id.au,
- venture@google.com, yuenn@google.com, benjaminfair@google.com,
- openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240108135421.684263-1-tmaimon77@gmail.com>
- <20240108135421.684263-7-tmaimon77@gmail.com>
- <171300da-3d49-4e1f-8969-9a454ecdd698@linaro.org>
- <CAP6Zq1hifi7CY=tYaDY_o82AXhbS5P9=MZBb-bqmvNCLZk3O2g@mail.gmail.com>
- <018fc173-edf3-4490-8f29-4059bd17268e@linaro.org>
- <CAP6Zq1jQ9T4Q+WvwyAH4sKLK1+Mp0utcA_STgm=_Z3ywKoLoCw@mail.gmail.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc: andi.shyti@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, cw00.choi@samsung.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ andre.draszik@linaro.org, semen.protsenko@linaro.org,
+ willmcvicker@google.com, kernel-team@android.com
+References: <20240119111132.1290455-1-tudor.ambarus@linaro.org>
+ <20240119111132.1290455-8-tudor.ambarus@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -121,87 +120,26 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAP6Zq1jQ9T4Q+WvwyAH4sKLK1+Mp0utcA_STgm=_Z3ywKoLoCw@mail.gmail.com>
+In-Reply-To: <20240119111132.1290455-8-tudor.ambarus@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/01/2024 18:26, Tomer Maimon wrote:
-> Hi Krzysztof,
+On 19/01/2024 12:11, Tudor Ambarus wrote:
+> USI8 I2C is used to communicate with an eeprom found on the battery
+> connector. Define USI8 in I2C configuration.
 > 
-> Thanks for your comments.
-> 
-> On Tue, 16 Jan 2024 at 22:40, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 16/01/2024 20:37, Tomer Maimon wrote:
->>> Hi Krzysztof,
->>>
->>> As explained in my [PATCH v22 4/8] dt-bindings: soc: nuvoton: add
->>> binding for clock and reset registers mail.
->>>
->>> In the NPCM8XX SoC, the reset and the clock register modules are
->>> scrambled in the same memory register region.
->>> The NPCM8XX Clock driver is still in the upstream process (for a long
->>> time) but the NPCM8XX reset driver is already upstreamed.
->>
->> First of all, the drivers itself don't matter here, we talk about
->> bindings. I assume though they were going together, so that's why you
->> mentioned driver... but just to clarify: we talk here only about drivers.
->>
->> If reset bindings were accepted, then why they aren't referenced?
->>
->> If clock bindings were not accepted, then what is this patch and this
->> file about?
->>
->>>
->>> On Wed, 10 Jan 2024 at 22:59, Krzysztof Kozlowski
->>> <krzysztof.kozlowski@linaro.org> wrote:
->>>>
->>>> On 08/01/2024 14:54, Tomer Maimon wrote:
->>>>> Replace reg with syscon property since the clock registers handle the
->>>>> reset registers as well.
->>>>>
->>>>> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
->>>>> ---
->>>>>  .../bindings/clock/nuvoton,npcm845-clk.yaml   | 22 +++++++++----------
->>>>>  1 file changed, 10 insertions(+), 12 deletions(-)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
->>>>> index 0b642bfce292..c6bf05c163b4 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
->>>>> +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
->>>>> @@ -18,8 +18,9 @@ properties:
->>>>>      enum:
->>>>>        - nuvoton,npcm845-clk
->>>>>
->>>>> -  reg:
->>>>> -    maxItems: 1
->>>>> +  nuvoton,sysclk:
->>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>>> +    description: phandle to access clock registers.
->>>>
->>>> NAK. Not explained, not justified, not reasonable, breaking ABI.
->>> Should I explain more in the commit message or/and the nuvoton,sysclk property?
->>
->> Let's try to explain here first. I really do not understand why do you
->> change this binding. Your device did not change, so your binding should
->> not. Now, if you say "but I changed drivers", then it does not matter.
->> Bindings do not change because you did something in the drivers, in
->> general. At least they should not.
-> The confusion here is because the clock binding was upstreamed but the
-> clock driver has not upstreamed yet.
+> USI8 CONFIG register comes with a 0x0 reset value, meaning that USI8
+> doesn't have a default protocol (I2C, SPI, UART) at reset. Thus the
+> selection of the protocol is intentionally left for the board dts file.
 
-So what does it mean? Being upstreamed independently does not mean
-something is wrong, so I do not see any confusion. There is absolutely
-no confusion in upstreaming binding before upstreaming driver.
+... and dropped, because this patch does not build:
+https://krzk.eu/#/builders/29/builds/3869
+and I missed weird dependency mentioned in cover letter:
 
-> The clock driver will use regmap and ioremap so reg property is not
-> needed, should I remove it? or leave it?
+"This patch set shall be queued after the cmu_misc clock name fixes from:"
 
-Just because you upstream drivers? You should not change bindings just
-because you figured out that you will implement something that or other
-way. Please describe the hardware in the binding, not the driver.
-
+Sorry, this cannot work like that. DTS for new features cannot build
+depend on driver changes.
 
 Best regards,
 Krzysztof
