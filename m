@@ -1,120 +1,212 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C41C8120A
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 17:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08361292D4;
+	Tue, 23 Jan 2024 18:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706032570; cv=none; b=WezLqHlbwXTlmAp5MgKlq8IzccuAde+P0ElBz16i+WkTFLS4+PMBz3tYcpcQiUPuBm6VD6mf2Au+lw98P2o4VHmDAbKy5Ii7u4tbMZqwRFVic8xFHqxMpwKx7u4Y83qoAdlWmOJrUUOQyVbsnMNZ58vy9yCsnIjiBSBQmbwZ3R4=
+	t=1706035632; cv=none; b=FUj3pUb5HOhWsHpaTdbVtfu0szn+Vr0AL3AoOvx3HvgyOoZrj4fUZm9ssEKu91th7Hf8GeBQOqZnavsjllYlfF9VuhfVB+vpTxu1xPib3Vk+8CQ/DI5Qtzxr7yrPB/Ha2ASxWBYp4bL6VAQA645N+8l3muJngrNVjlzjTy5Q9/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706032570; c=relaxed/simple;
-	bh=Kr7w+SGEwqQihNACAI+flJSJVscpWWcaaMGKuGdc9I4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B0KWNwpfF7dHfL71P6a2fBjppSXo/G/DkZDcrRKwQiYDkazrM4OrHmWAtWdQPfHbbE+IJOBITu4eun+e5tfFITyVDGZtbjrqrrjA8DqUhs3Zs00MA24BHXUZAaIHsXIznBk71DQokhYrOdgBW/yAyS3bsKbN8XNwxu3k27v7KeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dHYPbyaz; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706035632; c=relaxed/simple;
+	bh=YIEKqK5MI7C6wgG1cBeAfL6H69SH6ljkSO16YrF7vPc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=duRum4awE4/m4x/4ZyKb1CvQDkoxxgEep22E4OMDMr8teckO1Utem2z1d+CabctREIi5vPM6/v4hh0uqSYsZB0SLQYANQmeDEsILOAku5Pdvho9q7MBMixneK+1EBFI7Cv4SMWG5CNfSxB94DnXKeKVbF4m7wLOTBKRO17CIhus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XPDUxWDk; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dHYPbyaz"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-50e7d6565b5so5650290e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 09:56:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706032565; x=1706637365; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WsZ4KlUHiglOsCzCfXatA2rETh1XN4ZPTM126THuUHg=;
-        b=dHYPbyaziPPSWKqT5rWuOtoNXKtw3ZOQj1AVUwhhT9ddAk2OMQq/JQUZMOhpcWKCJW
-         9vD3cHW8opbTSRbAhxJi2rS5ErzLPab2/JS4pBtxZ7IoaGkFlpRYNEQ0dTU+810V3TlA
-         eEfBVJz+2R7kd1b3CtYize6ct9ZhryKlf8JCrar9bBw9N/iJ3ZNQOX8YaJTjdUBnbiMD
-         L5zkIjX4HAG40A5TdZlFsNyO1iVpH/dk8foT02RiU4ZuSJvdhh4XpOMR04eMt8b9TGnK
-         5eXnAvmGAbRVRVV1Et1Eg9V7UvSuxx3+9Xr1y1+VTPZvUrDcBFO229ENnX7FDA+tKWrQ
-         smyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706032565; x=1706637365;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WsZ4KlUHiglOsCzCfXatA2rETh1XN4ZPTM126THuUHg=;
-        b=cCUY0+o/GOsn8awfh/oVqRq4IgYnA17+Fon2GtqbkM9OtJycPkpN9fIZwJTj1fT51u
-         SQvaihmirhcSdAtNY4EPPYJj8kYn1prCGOuClKMr+HnhsLk7Aw4xSfG6XjW1trwebabW
-         L0MzaQ94Z0bkmR2acVM/F/uk78Xxxdn0H6XdHAl3PhUHQ61R1Yw0tq2TAl/Y+EFfvzOT
-         XK3XCNBMhJZ1CGowhOjx8yH+9fbYdf028Umd3W3Id8uaVyykfmVLz1diEFD1yWZ0MYrF
-         QNOmm+jKp2nlQqZ8y4XNoVTMmXVTElOB0litJk3wWeEdCUMPkbTJbxAdZy2A5OBu9Fnz
-         3zXg==
-X-Gm-Message-State: AOJu0Yy3WaOQ2T3D6sdP4h5tsk373/1qnSgVWFC/y2M7N5UaAo5qnx1J
-	rmN4ap0Io2CWbBorNZK9U5zMWmVm/EYNIVdGBfb3iSwSsyeT1GIz61vvuLHt5f4=
-X-Google-Smtp-Source: AGHT+IFmCLYzgjjZPiLgBJlOLM29I1/FO8zGdLnpI82VdMTXlCFvm48M4Uuf3x4GeJBr2Vn8ojX7mg==
-X-Received: by 2002:a05:6512:33c3:b0:50e:9a0d:d402 with SMTP id d3-20020a05651233c300b0050e9a0dd402mr3678975lfg.105.1706032565599;
-        Tue, 23 Jan 2024 09:56:05 -0800 (PST)
-Received: from [172.30.205.123] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id o9-20020a056512050900b0050ef7f44884sm2335262lfb.199.2024.01.23.09.56.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jan 2024 09:56:05 -0800 (PST)
-Message-ID: <f5784838-0386-4ef8-bc3b-195a0132a29d@linaro.org>
-Date: Tue, 23 Jan 2024 18:56:03 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XPDUxWDk"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DB95EC000A;
+	Tue, 23 Jan 2024 18:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1706035622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pM6whmgyRwSqq5DhU05BK7t5rD5rPlWu1apIXMRZECI=;
+	b=XPDUxWDk56dPVlQg4Hwl+Y5KnNrvtzFndQXn6q3tJmJdz15glHWUKOWF2G4mckyPpf7d9V
+	cXkxEITwnC2+pu6n5xHSSyMZfMn1dAwdS5z6pJoHp/kXgUTwsY+0eHXOaXsDGN7QjYY0Wv
+	Pya5jSziHUO2Ll1XfCLFttbjnr8U4VjLu1072UukAT8fx8IFtgsdob4mebl4QdWmg6QNtK
+	0xBhgzbl5b4CXfHcKjnvxuzRN+iFSBhQqp1+yPetBL7AhxP2AA0KvvBQLsXsvLjkAl0uGG
+	oq1kYvAno0jSxIcVxNYCq0xROPBBvI6p43XwLArPNOeVSXIzfKUC+5E5W68x6g==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Date: Tue, 23 Jan 2024 19:46:46 +0100
+Subject: [PATCH v3 01/17] clk: fixed-factor: add optional accuracy support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/10] clk: qcom: Add camcc clock driver for x1e80100
-Content-Language: en-US
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- Rajendra Nayak <quic_rjendra@quicinc.com>
-References: <20231214-x1e80100-clock-controllers-v2-0-2b0739bebd27@linaro.org>
- <20231214-x1e80100-clock-controllers-v2-10-2b0739bebd27@linaro.org>
- <624956b6-d7ea-43da-bb8d-32d9166a0272@linaro.org>
- <Za+n4zfzoZFhhLIa@linaro.org>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <Za+n4zfzoZFhhLIa@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240123-mbly-clk-v3-1-392b010b8281@bootlin.com>
+References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
+In-Reply-To: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.12.4
+X-GND-Sasl: theo.lebrun@bootlin.com
 
+Fixed factor clock reports the parent clock accuracy. Add flags and acc
+fields to `struct clk_fixed_factor` to support setting a fixed
+accuracy. The default if no flag is set is not changed: use the parent
+clock accuracy.
 
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+ drivers/clk/clk-fixed-factor.c | 28 +++++++++++++++++++++-------
+ include/linux/clk-provider.h   | 12 +++++++++++-
+ 2 files changed, 32 insertions(+), 8 deletions(-)
 
-On 1/23/24 12:49, Abel Vesa wrote:
-> On 23-12-16 14:39:48, Konrad Dybcio wrote:
->> On 14.12.2023 17:49, Abel Vesa wrote:
->>> From: Rajendra Nayak <quic_rjendra@quicinc.com>
->>>
->>> Add the camcc clock driver for x1e80100
->>>
->>> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
->>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->>> ---
->> [...]
->>
->>> +enum {
->>> +	DT_BI_TCXO,
->>> +	DT_BI_TCXO_AO,
->>> +	DT_SLEEP_CLK,
->>> +};
->>> +
->>> +enum {
->>> +	P_BI_TCXO,
->> Please don't overload this define with DT_BI_TCXO_AO, add a new one
->> for the active-only clock. Please also do this in other drivers in
->> this series.
-> 
-> Nope, that needs to stay if we want to align the dt bindings between
-> SM8550, SM8650 and this. At least for dispcc. But I would like to have
-> the same dt schema for the rest of the clock controller drivers between
-> platforms that share basically the same ip block.
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index b3e66202b942..bc2644a9bd7d 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -57,10 +57,22 @@ static int clk_factor_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
++static unsigned long clk_factor_recalc_accuracy(struct clk_hw *hw,
++						unsigned long parent_accuracy)
++{
++	struct clk_fixed_factor *fix = to_clk_fixed_factor(hw);
++
++	if (fix->flags & CLK_FIXED_FACTOR_FIXED_ACCURACY)
++		return fix->acc;
++
++	return parent_accuracy;
++}
++
+ const struct clk_ops clk_fixed_factor_ops = {
+ 	.round_rate = clk_factor_round_rate,
+ 	.set_rate = clk_factor_set_rate,
+ 	.recalc_rate = clk_factor_recalc_rate,
++	.recalc_accuracy = clk_factor_recalc_accuracy,
+ };
+ EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
+ 
+@@ -81,7 +93,7 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 		const char *name, const char *parent_name,
+ 		const struct clk_hw *parent_hw, int index,
+ 		unsigned long flags, unsigned int mult, unsigned int div,
+-		bool devm)
++		unsigned long acc, unsigned int fixflags, bool devm)
+ {
+ 	struct clk_fixed_factor *fix;
+ 	struct clk_init_data init = { };
+@@ -105,6 +117,8 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 	fix->mult = mult;
+ 	fix->div = div;
+ 	fix->hw.init = &init;
++	fix->acc = acc;
++	fix->flags = fixflags;
+ 
+ 	init.name = name;
+ 	init.ops = &clk_fixed_factor_ops;
+@@ -152,7 +166,7 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
+ 		unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, NULL, index,
+-					      flags, mult, div, true);
++					      flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_index);
+ 
+@@ -174,7 +188,7 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+ 		unsigned long flags, unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
+-					      -1, flags, mult, div, true);
++					      -1, flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_parent_hw);
+ 
+@@ -184,7 +198,7 @@ struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL,
+ 					      parent_hw, -1, flags, mult, div,
+-					      false);
++					      0, 0, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_parent_hw);
+ 
+@@ -193,7 +207,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 		unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL, -1,
+-					      flags, mult, div, false);
++					      flags, mult, div, 0, 0, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+ 
+@@ -240,7 +254,7 @@ struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+ 		unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL, -1,
+-			flags, mult, div, true);
++			flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
+ 
+@@ -267,7 +281,7 @@ static struct clk_hw *_of_fixed_factor_clk_setup(struct device_node *node)
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
+ 
+ 	hw = __clk_hw_register_fixed_factor(NULL, node, clk_name, NULL, NULL, 0,
+-					    0, mult, div, false);
++					    0, mult, div, 0, 0, false);
+ 	if (IS_ERR(hw)) {
+ 		/*
+ 		 * Clear OF_POPULATED flag so that clock registration can be
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 1293c38ddb7f..7ddc952c8c67 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1084,18 +1084,28 @@ void of_fixed_factor_clk_setup(struct device_node *node);
+  * @hw:		handle between common and hardware-specific interfaces
+  * @mult:	multiplier
+  * @div:	divider
++ * @acc:	fixed accuracy in ppb
++ * @flags:	behavior modifying flags
+  *
+  * Clock with a fixed multiplier and divider. The output frequency is the
+  * parent clock rate divided by div and multiplied by mult.
+- * Implements .recalc_rate, .set_rate and .round_rate
++ * Implements .recalc_rate, .set_rate, .round_rate and .recalc_accuracy
++ *
++ * Flags:
++ * * CLK_FIXED_FACTOR_FIXED_ACCURACY - Use the value in @acc instead of the
++ *                                     parent clk accuracy.
+  */
+ 
+ struct clk_fixed_factor {
+ 	struct clk_hw	hw;
+ 	unsigned int	mult;
+ 	unsigned int	div;
++	unsigned long	acc;
++	unsigned int	flags;
+ };
+ 
++#define CLK_FIXED_FACTOR_FIXED_ACCURACY	BIT(0)
++
+ #define to_clk_fixed_factor(_hw) container_of(_hw, struct clk_fixed_factor, hw)
+ 
+ extern const struct clk_ops clk_fixed_factor_ops;
 
-No, you're confusing the dt ordering enum (the first one) with the
-parent list enum (the one below that I'm commenting on).
+-- 
+2.43.0
 
-Konrad
