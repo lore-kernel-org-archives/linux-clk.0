@@ -1,127 +1,102 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF3512AAD4
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 16:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0348480036;
+	Tue, 23 Jan 2024 17:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706028573; cv=none; b=s5rBmQR9A25ryi0J3Pfny0qjYkdXlskgkFx39ctqCiVytt758+xwGtAXjoCQccB6VduLlrKnWxTce3MAZSLB0EOs2vvmg5z1lMqdUny2hxgzSqHH6LDV5zAtpqNviNRZGE7KgFGDEKUeSPtINbvfPU/w6JX7ENM+sVe0LeScBnc=
+	t=1706031732; cv=none; b=TqYKwRlEh6//7Bqxpp5aghbAmaKgawpnVu+epSuqaTa3GEBYqgRLwmCr6Cd+Hm0rwRbzZkqldl7DyFX2W5lxfYvXCODBPvvtGICwuSo3davxKJmFRACWQ00dw7kSd+EPNHvhQ8QUEw4KSum2B75CZG8/FuS8fRmPvkEE+PlgPbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706028573; c=relaxed/simple;
-	bh=0GodLf30+iNTBjP5Gh6/duXnvzTXZV9C69MvyxMo8U4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tZPFRO2GGirhmxsX9uRNtxmP/qoAM1TaBud07J46L0MbVVnLTHO1mNH1VYn8uOhgjPIcg+50gO/UO3fh7yR0YVVgvevAMcFB1ZbbJVjUQ+hRZ9YcbbnLLlyf9JYu1a8+tt7G88UIjBpG/pY6fV/R/J/xtMPUGBd0u3gILcBJgB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eCbhgJNJ; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706031732; c=relaxed/simple;
+	bh=eax/EtDLlyAHvmuizexdFChDdC8AlZ8nFb8XRqzXxHs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xrctk2bmUZ63bvlDLdYeWaDWp2sUZ9LT51uqXajonvHq9J0dmQopXFWUrjBcYSOLJaHGQdcZ4f1bOwg/8kw8ITmTcmP74q4i2eszKziOkUIGHrLIYS8R8bSHRzw6jvcSf9R60sREcPDdxsCVC925PYoM6xKlwKYHXT5D6XfMQZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEMifkmo; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eCbhgJNJ"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5ff7dc53ce0so33423167b3.1
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 08:49:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEMifkmo"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40e5afc18f5so50267215e9.3;
+        Tue, 23 Jan 2024 09:42:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706028570; x=1706633370; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aXz6WQyGCVGvl5jSp/sFyNgM0abYZYPNAeAICiPwHO8=;
-        b=eCbhgJNJvcM1TmjWFhBZCwvo4N+jgvjxgMOR2MqTqudxEr99MPdQWJ+RJtEhwyxq7O
-         eUqJTMAc32WZodMqMq9bhTuKCYpFqdH2q5DQw3qWnTJJz2KXCUqmZjpse1jA47qEr2Gm
-         udGRMzYCeuPq2fQtBseRlG61FucIuhDcwa2JuYGJXldVDT2yDdKCB1vV8cZ4drdxw/ku
-         Y0Yo7IT7FeW7sreqCbCreFWytvCnP6/L7RKDOAYl6MVzXX6a5HRRwBI4p53n/ED5Fh/+
-         kq/F9dZaCW7sl3vYvWa4h9dKz/xXFsFhNfdQ7YWOTvNMFtTHN1fHXmAfkolTGRVOgRR9
-         5D0A==
+        d=gmail.com; s=20230601; t=1706031729; x=1706636529; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eax/EtDLlyAHvmuizexdFChDdC8AlZ8nFb8XRqzXxHs=;
+        b=CEMifkmo4FCQ/Vn3t+0B/W+urlc8MbwOkt4llWhR4ffkxVySTlYhHR3evMYbLlnH2Z
+         wfeFqOalty7b8zRbgYSBTz1nQ9aAb8EZxkZqwezy9zEfKwbzwefCOYaY/aN0qlxr7HGG
+         v8AxsOVsPprgjJPQrnUuGsreIg/jkYRyIaeiwHMht77NPQw7PdMqoOW3heTaYrj4U0eu
+         7kNPzNvCAMmZPUY25yTOyT4C6XU5cmxY5g2TIKK4HVswlXd9QDRRJXZWRhGr4zIwtI2r
+         mF1Zs1jn/g3U85NdzYT/NqmovrgbalSBfxgzsAdb0XC4MYlp7o2aVQKQByUinEmLtFJl
+         qeCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706028570; x=1706633370;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aXz6WQyGCVGvl5jSp/sFyNgM0abYZYPNAeAICiPwHO8=;
-        b=f21rX8+SqUw/g0NAYGHCvSI7A4se5cVoA2zZdR57MoGAelvUhG0xxWlPNzkOyOZ4rC
-         2isysKPtD//TQqOxILSynWA31lAMD09yorBcGplGlALe1G2t5FxK6lll0hS5ONY+uqk6
-         WPRGQLbkPVJ5yjEo4HOyME9bhME5uQBflIkeppfOStT1Dsr4iecmXbWO5QJ6LxaR3u55
-         htqPALGwlNuoKWjs+D73kV4A4Z9ex+lD9gsoxox4jJlx4gUgRsBc2U5m0ga1RD3g7HMS
-         apVAjHdJI7B3lWheBhjZXB5YaeovGaWypne9THL9bklGiAl0vF3rQRRo0c0iKq4zkB9e
-         vYog==
-X-Gm-Message-State: AOJu0Yw54Tw57oBBDCR1Vq7nJ5a199N69huY48waCAUoSasbcE/Kvht+
-	Sf4MeJAhW1zvefDSphakq5AXuHTNVc3AUEjSHbZaTJWF0DvBgiK+exndHG9IKLoECJ2t/2RRpnt
-	GnwQk/kDMPQU2Lae1D4sLGvfMpZcc41zPoFiy+Q==
-X-Google-Smtp-Source: AGHT+IEE5iwDZNZnKWCqP0X/hJ8GqixDXEFeBY9HQDXHizFGiA1pCXIi2xw17JvVbOPkrHIwHkzBMtTYGJvnD55grhc=
-X-Received: by 2002:a0d:d50f:0:b0:5ff:9eaf:be5d with SMTP id
- x15-20020a0dd50f000000b005ff9eafbe5dmr3326432ywd.81.1706028570482; Tue, 23
- Jan 2024 08:49:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706031729; x=1706636529;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eax/EtDLlyAHvmuizexdFChDdC8AlZ8nFb8XRqzXxHs=;
+        b=cR6dxo0gzgAByk6mK/Mzv7ldtmVSzM7cnt1/bBI6TlCZ5F4U1Sscj0zcx+EpoHKsVE
+         12ESmUKmikMgkLHk5zvPjh/IjMmweYJv4odIpG8ASpmQ4krIA2IGko+o9TZWqFHCOZEG
+         nfO6AfUeUjb3dBQEgcqhaAwML6xlCg7dDKjgRQ4GIdoS6pqevAKDeq6owKH9pgcP1FPo
+         ZeBSeXyQ0lqU5mttUd7VP4Pr+nkXLE9OtY4EuWnZBb3D6Pt5ufHkIqwCUqmVHCX6/XLF
+         flVeaexJ/fpLYAX5kOpKzbq/in0csPrZCpV0TJmkDrWuwABcEesU4T5vqu/xN792tcue
+         pvPQ==
+X-Gm-Message-State: AOJu0Yx51V46/mY6NvsTMwNCyd/7Zwt388trq5adGQitSw9zDzpBS7j6
+	HC/Wb9rizJF4vofBK3XRv744NUZW6t2E24MOS5L0gfv2lNyYPpV2x7sDpuPh
+X-Google-Smtp-Source: AGHT+IEHI4pj/K4LiqnxQDGK5V6KRCyGVOa0sFel7fFOcCnONd7ha8avu5EPQBpiJt5XmNPfzI6IJQ==
+X-Received: by 2002:a05:600c:1e23:b0:40e:758a:96d5 with SMTP id ay35-20020a05600c1e2300b0040e758a96d5mr339369wmb.167.1706031728897;
+        Tue, 23 Jan 2024 09:42:08 -0800 (PST)
+Received: from jernej-laptop.localnet (86-58-14-70.dynamic.telemach.net. [86.58.14.70])
+        by smtp.gmail.com with ESMTPSA id az8-20020a05600c600800b0040ebf626bfcsm2267320wmb.1.2024.01.23.09.42.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jan 2024 09:42:08 -0800 (PST)
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+ Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ linux-clk@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH] clk: sunxi: a20-gmac: fix kernel-doc warnings
+Date: Tue, 23 Jan 2024 18:42:07 +0100
+Message-ID: <12366031.O9o76ZdvQC@jernej-laptop>
+In-Reply-To: <20240121051837.17564-1-rdunlap@infradead.org>
+References: <20240121051837.17564-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240123-gcc-ao-support-v1-0-6c18d5310874@quicinc.com> <20240123-gcc-ao-support-v1-2-6c18d5310874@quicinc.com>
-In-Reply-To: <20240123-gcc-ao-support-v1-2-6c18d5310874@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 23 Jan 2024 18:49:19 +0200
-Message-ID: <CAA8EJpqLZQNMzn_oC7AbzXP2f==PujUe-atfUNgFC3VaFF8=Bg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: qcom: gcc-sm8150: Add gcc_parents_0_ao support
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Tue, 23 Jan 2024 at 18:35, Satya Priya Kakitapalli
-<quic_skakitap@quicinc.com> wrote:
->
-> Add active_only support for gcc_parents_0, this is needed because
-> some of the clocks under it are critical which would vote on xo
-> blocking the suspend.
+Dne nedelja, 21. januar 2024 ob 06:18:35 CET je Randy Dunlap napisal(a):
+> Move the function kernel-doc comment to be immediately before the
+> function implementation, then add a function parameter description
+> to prevent kernel-doc warnings:
+>=20
+> clk-a20-gmac.c:43: warning: expecting prototype for sun7i_a20_gmac_clk_se=
+tup(). Prototype was for SUN7I_A20_GMAC_GPIT() instead
+> clk-a20-gmac.c:53: warning: Function parameter or struct member 'node' no=
+t described in 'sun7i_a20_gmac_clk_setup'
+>=20
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Emilio L=F3pez <emilio@elopez.com.ar>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Cc: Samuel Holland <samuel@sholland.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-sunxi@lists.linux.dev
 
-The kernel should be able to work with older DT files. Please add
-support for using bi_tcxo as a fallback.
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
->
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->  drivers/clk/qcom/gcc-sm8150.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-> index 05d115c52dfe..2a0608c5a104 100644
-> --- a/drivers/clk/qcom/gcc-sm8150.c
-> +++ b/drivers/clk/qcom/gcc-sm8150.c
-> @@ -123,6 +123,12 @@ static const struct clk_parent_data gcc_parents_0[] = {
->         { .hw = &gpll0_out_even.clkr.hw },
->  };
->
-> +static const struct clk_parent_data gcc_parents_0_ao[] = {
-> +       { .fw_name = "bi_tcxo_ao", .name = "bi_tcxo_ao" },
-> +       { .hw = &gpll0.clkr.hw },
-> +       { .hw = &gpll0_out_even.clkr.hw },
-> +};
-> +
->  static const struct parent_map gcc_parent_map_1[] = {
->         { P_BI_TCXO, 0 },
->         { P_GPLL0_OUT_MAIN, 1 },
-> @@ -222,8 +228,8 @@ static struct clk_rcg2 gcc_cpuss_ahb_clk_src = {
->         .freq_tbl = ftbl_gcc_cpuss_ahb_clk_src,
->         .clkr.hw.init = &(struct clk_init_data){
->                 .name = "gcc_cpuss_ahb_clk_src",
-> -               .parent_data = gcc_parents_0,
-> -               .num_parents = ARRAY_SIZE(gcc_parents_0),
-> +               .parent_data = gcc_parents_0_ao,
-> +               .num_parents = ARRAY_SIZE(gcc_parents_0_ao),
->                 .flags = CLK_SET_RATE_PARENT,
->                 .ops = &clk_rcg2_ops,
->         },
->
-> --
-> 2.25.1
->
->
+Best regards,
+Jernej
 
 
--- 
-With best wishes
-Dmitry
