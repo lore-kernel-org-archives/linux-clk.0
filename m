@@ -1,56 +1,56 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0348480036;
-	Tue, 23 Jan 2024 17:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E14811E4;
+	Tue, 23 Jan 2024 17:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706031732; cv=none; b=TqYKwRlEh6//7Bqxpp5aghbAmaKgawpnVu+epSuqaTa3GEBYqgRLwmCr6Cd+Hm0rwRbzZkqldl7DyFX2W5lxfYvXCODBPvvtGICwuSo3davxKJmFRACWQ00dw7kSd+EPNHvhQ8QUEw4KSum2B75CZG8/FuS8fRmPvkEE+PlgPbc=
+	t=1706031775; cv=none; b=l6b6uop71XUMQnN0jkY7p+YpiVmHQHk8SsxvHZkXYCpAxKOjJ7GrLmJfmsMOXZR0wS1nxskJhK7Jw7IzmaChSkUTjNQ5zSI3fFfyNy3+71ezr3zq+s9JkSAcDWLuJAMMFLffAu/4ZRILqEzPGeAVWDjAmvXWg1i7T+8BtAHnnhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706031732; c=relaxed/simple;
-	bh=eax/EtDLlyAHvmuizexdFChDdC8AlZ8nFb8XRqzXxHs=;
+	s=arc-20240116; t=1706031775; c=relaxed/simple;
+	bh=8pc24spgmXPatNy46icvObRxrkz2BjHey8vExIG5+DY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xrctk2bmUZ63bvlDLdYeWaDWp2sUZ9LT51uqXajonvHq9J0dmQopXFWUrjBcYSOLJaHGQdcZ4f1bOwg/8kw8ITmTcmP74q4i2eszKziOkUIGHrLIYS8R8bSHRzw6jvcSf9R60sREcPDdxsCVC925PYoM6xKlwKYHXT5D6XfMQZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEMifkmo; arc=none smtp.client-ip=209.85.128.44
+	 MIME-Version:Content-Type; b=XHjehepuKz+RT5XKWocwTL5n/lPZwZVRMbO4+Ctx9eyl4rnVXJPFRfbz5jYaSlaJmLVAGbrXL8Eo47A4CoZrESUD7lmulETmPmADBzTLMVg1q2pS53ATp9voNw0c08ziPR7sl1+Nhz5DfXCFWD+2R97JAAtsI7srlJFQw+NSxMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRig2XuW; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEMifkmo"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40e5afc18f5so50267215e9.3;
-        Tue, 23 Jan 2024 09:42:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRig2XuW"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40e86a9fc4bso59347225e9.2;
+        Tue, 23 Jan 2024 09:42:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706031729; x=1706636529; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1706031772; x=1706636572; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eax/EtDLlyAHvmuizexdFChDdC8AlZ8nFb8XRqzXxHs=;
-        b=CEMifkmo4FCQ/Vn3t+0B/W+urlc8MbwOkt4llWhR4ffkxVySTlYhHR3evMYbLlnH2Z
-         wfeFqOalty7b8zRbgYSBTz1nQ9aAb8EZxkZqwezy9zEfKwbzwefCOYaY/aN0qlxr7HGG
-         v8AxsOVsPprgjJPQrnUuGsreIg/jkYRyIaeiwHMht77NPQw7PdMqoOW3heTaYrj4U0eu
-         7kNPzNvCAMmZPUY25yTOyT4C6XU5cmxY5g2TIKK4HVswlXd9QDRRJXZWRhGr4zIwtI2r
-         mF1Zs1jn/g3U85NdzYT/NqmovrgbalSBfxgzsAdb0XC4MYlp7o2aVQKQByUinEmLtFJl
-         qeCA==
+        bh=8pc24spgmXPatNy46icvObRxrkz2BjHey8vExIG5+DY=;
+        b=dRig2XuWMHjADtY839PPwSS/IY9YwsVZfRgx13U6JrVsY8BZm+pecBdbfY7gC8up17
+         O5qM48REDwRvxNEwzWojkg0gB4G09CXBQSBhmiYrF1Rc5Wm16H5OSKe1ZSBjGQsWOLuv
+         +2EctGBwgHBH99s8MXCau/ASexYtPSNy8ZLKzzVpszPeedWLJdjNgdyqAurwnHIiPuDf
+         ZgsClnvFRpKo81kOv7q++Ax615b/+mg+nHr7Rk0uDYTBdPxD33b/FNT3VRK9xtsGBbCC
+         7+ry52N5V4fvA9ptFE+E3TBHy3896IqJU8vjmPeyqVy6WBbHDj8rVqAojJ9yjE/i5T6j
+         tZWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706031729; x=1706636529;
+        d=1e100.net; s=20230601; t=1706031772; x=1706636572;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eax/EtDLlyAHvmuizexdFChDdC8AlZ8nFb8XRqzXxHs=;
-        b=cR6dxo0gzgAByk6mK/Mzv7ldtmVSzM7cnt1/bBI6TlCZ5F4U1Sscj0zcx+EpoHKsVE
-         12ESmUKmikMgkLHk5zvPjh/IjMmweYJv4odIpG8ASpmQ4krIA2IGko+o9TZWqFHCOZEG
-         nfO6AfUeUjb3dBQEgcqhaAwML6xlCg7dDKjgRQ4GIdoS6pqevAKDeq6owKH9pgcP1FPo
-         ZeBSeXyQ0lqU5mttUd7VP4Pr+nkXLE9OtY4EuWnZBb3D6Pt5ufHkIqwCUqmVHCX6/XLF
-         flVeaexJ/fpLYAX5kOpKzbq/in0csPrZCpV0TJmkDrWuwABcEesU4T5vqu/xN792tcue
-         pvPQ==
-X-Gm-Message-State: AOJu0Yx51V46/mY6NvsTMwNCyd/7Zwt388trq5adGQitSw9zDzpBS7j6
-	HC/Wb9rizJF4vofBK3XRv744NUZW6t2E24MOS5L0gfv2lNyYPpV2x7sDpuPh
-X-Google-Smtp-Source: AGHT+IEHI4pj/K4LiqnxQDGK5V6KRCyGVOa0sFel7fFOcCnONd7ha8avu5EPQBpiJt5XmNPfzI6IJQ==
-X-Received: by 2002:a05:600c:1e23:b0:40e:758a:96d5 with SMTP id ay35-20020a05600c1e2300b0040e758a96d5mr339369wmb.167.1706031728897;
-        Tue, 23 Jan 2024 09:42:08 -0800 (PST)
+        bh=8pc24spgmXPatNy46icvObRxrkz2BjHey8vExIG5+DY=;
+        b=oOSqYemOwB1YrZ3FEa8tOJUARu8LzCvZVyd4lFvz5RbgGf7pfZ7Xi0Qrr3O4OSb2uf
+         l6P5qDnUu72aMd/65/bhzDipMhI4fPZecZo428ffWZKi3saHDXtOQ5a46n/fagH4GD8u
+         Lg7ZZRgvEr6O+iHtrupNrBSETwJMSgc8UMQluaqeM07dI5yfACTpL980PF6mB2MaedC6
+         SREF2dbX3qdiFz/2Gn5Cd34sBBjmvTj4RumhSvTCQ2Oeaz1+gMdzfEBMcz+cHKn7AJmg
+         6AMcq1XXv3MH4jGazGey0dMLH+631LdczVp85hSe2gSdusSZaSPJaxLQb/qBbzMYU84x
+         ygRw==
+X-Gm-Message-State: AOJu0Yw0md833eoFNXziIxWyQFko9LG2ISC3weB3pjzD5s3asINcrS5T
+	oXulsp6y1TZYWeZNff+nk4g03W5oR4N5Vc2jLkuGvDkn/rMBCLxG/JTecfBL
+X-Google-Smtp-Source: AGHT+IFw87D3LFYgYwwCGd82u9LdTEv5cKIfV943QiE9irMJ589vP9IBdgh8NaBgMnNCK2JgkWgEvg==
+X-Received: by 2002:a7b:c307:0:b0:40e:c180:89fc with SMTP id k7-20020a7bc307000000b0040ec18089fcmr365493wmj.87.1706031771854;
+        Tue, 23 Jan 2024 09:42:51 -0800 (PST)
 Received: from jernej-laptop.localnet (86-58-14-70.dynamic.telemach.net. [86.58.14.70])
-        by smtp.gmail.com with ESMTPSA id az8-20020a05600c600800b0040ebf626bfcsm2267320wmb.1.2024.01.23.09.42.07
+        by smtp.gmail.com with ESMTPSA id m22-20020a05600c4f5600b0040ebf603a89sm2249826wmq.11.2024.01.23.09.42.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jan 2024 09:42:08 -0800 (PST)
+        Tue, 23 Jan 2024 09:42:51 -0800 (PST)
 From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 To: linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
 Cc: Randy Dunlap <rdunlap@infradead.org>,
@@ -59,11 +59,11 @@ Cc: Randy Dunlap <rdunlap@infradead.org>,
  linux-clk@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
  Samuel Holland <samuel@sholland.org>, linux-arm-kernel@lists.infradead.org,
  linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH] clk: sunxi: a20-gmac: fix kernel-doc warnings
-Date: Tue, 23 Jan 2024 18:42:07 +0100
-Message-ID: <12366031.O9o76ZdvQC@jernej-laptop>
-In-Reply-To: <20240121051837.17564-1-rdunlap@infradead.org>
-References: <20240121051837.17564-1-rdunlap@infradead.org>
+Subject: Re: [PATCH] clk: sunxi: sun9i-cpus: fix kernel-doc warnings
+Date: Tue, 23 Jan 2024 18:42:50 +0100
+Message-ID: <4891826.31r3eYUQgx@jernej-laptop>
+In-Reply-To: <20240121051845.17603-1-rdunlap@infradead.org>
+References: <20240121051845.17603-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -73,15 +73,17 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="iso-8859-1"
 
-Dne nedelja, 21. januar 2024 ob 06:18:35 CET je Randy Dunlap napisal(a):
-> Move the function kernel-doc comment to be immediately before the
-> function implementation, then add a function parameter description
-> to prevent kernel-doc warnings:
+Dne nedelja, 21. januar 2024 ob 06:18:44 CET je Randy Dunlap napisal(a):
+> Move the function description kernel-doc comment to immediately above
+> the function implementation, correct the function name in the comment,
+> then add a function parameter description to prevent these kernel-doc
+> warnings:
 >=20
-> clk-a20-gmac.c:43: warning: expecting prototype for sun7i_a20_gmac_clk_se=
-tup(). Prototype was for SUN7I_A20_GMAC_GPIT() instead
-> clk-a20-gmac.c:53: warning: Function parameter or struct member 'node' no=
-t described in 'sun7i_a20_gmac_clk_setup'
+> drivers/clk/sunxi/clk-sun9i-cpus.c:25: warning: expecting prototype for s=
+un9i_a80_cpus_clk_setup(). Prototype was for SUN9I_CPUS_MAX_PARENTS() inste=
+ad
+> clk-sun9i-cpus.c:184: warning: Function parameter or struct member 'node'=
+ not described in 'sun9i_a80_cpus_setup'
 >=20
 > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 > Cc: Emilio L=F3pez <emilio@elopez.com.ar>
