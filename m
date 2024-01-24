@@ -1,200 +1,207 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FC914AB3
-	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 07:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDC4168D2
+	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 07:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706079944; cv=none; b=fr8ZhqZTO/BorROoEuEsjf2YriMf+zewGWe+FE25N3IoRCWJsw/7SKtygbK8nUXD7jEKLwSCHtxqlPPCUokb79QXw0sUisuew1MmSZK92UgPzJNrGeY135/B0Ji24yzBmlNei/T3bPqaCOAO1omuXou7pKhTOmYZwh9U4n86vXQ=
+	t=1706082121; cv=none; b=tyXWtbnjjU09C+44r3pwkuA3c+HUY9MkmL1CLMbbYfl/Sbl2i6ViATi1lK/jzahIHg5+N7JNDAveiPd37AY20tzaDRn06BHosFNL4j/s8OmEmhbgtWZ9bpx5dKuSprsAhcZ/YQgCxTPIgJNg/t7/Cq4hWpy+qAWxxNIua/lmVXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706079944; c=relaxed/simple;
-	bh=Zj5tnw4jopb0rTKmkovPBqBq8nwSE/xJiBlkRKTkq6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=US2AipmguYCsBIfkDAMbXRyNBbZ6I4eG3lphe00L4TH4SfruVCAUUhqnr+9msEriDEPupxbdd9OOdCdbU0kXbHPGHU56tCxqNVgRCoVMPBSGFJdmZzn6t0JcEmW4VeQbo5gD1U7mMpk+vQyOMRUKUlZqLVMktJPr1VVMnINkJ1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PBpEhQrr; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1706082121; c=relaxed/simple;
+	bh=OaUKTFa+qvvu5Rsp3TtvsN6u6MA3MqdDaKggac88QpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xz3FGSyjXSot510FrHqipoRGgql545YO6U/8+fUt9klqT2WSU2Mo8b+Eb1upiBcsTh1ZKyKALcwFTanuNDwKNlmtSMb1MCouX2oJWri4vhkNJEUrSCcocWG7xzCNUFfEOy1ruLx7gtTutF23XO/1IsvwvjGn3gf5KlXH84ORbUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PSWVwyLf; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PBpEhQrr"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-55a86795a3bso5025687a12.1
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 23:05:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PSWVwyLf"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2cd33336b32so68388841fa.0
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 23:41:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706079941; x=1706684741; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cNh642ztM9/JIoi6gRH/DDCNqKXOoK1COb5sZK4/5nY=;
-        b=PBpEhQrrHgi9HZbnr5XsKmpdB6EmsDrwEhXugKSQSvPDEymgxdMb1hzpatiKdvNalY
-         h9LQ2NQLCwQRivcUMRchKwFxTot75840OcR3CxszpH9K3V0utr6vMXaCh4JMC3t5AUFG
-         jr1btrg4RXgEbu9/f/HobYIj7DRMPb752D6ZtLdCf79RuKhB/zpjS53NeyVxwujSPl9Y
-         JIOKRc3sMRMFBNmgBb97OrXh3MQ8MhxqiFrgdE+MEf5XwWaerCBItbdi1XOsWC2c1y9R
-         Q0ds+LouvdV+iOOcuvQYqCHqN3Vqkxd49IZ//D9MM6buxd/UJOI2lH21izgNcvSQFwnp
-         k7Rw==
+        d=linaro.org; s=google; t=1706082117; x=1706686917; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iIoS+Yzzl1A1EheZCV/EaLjSj7/UHXg8aEfXVE/L5eI=;
+        b=PSWVwyLfLqG1A4Xep2y1UCN5YpeSASGjOa0gB1F13ozFGuF2+qItMCAYMrv13q/xoV
+         Xw10Cb+u2mNMU4x2u0kSayR+7+uEg6Ay0tDBNgdBummo/zVZ6mmMSX8oz6CfcyRXj/iJ
+         uZjSDRom33uy1jHVBS49ufntW5+GkvVTTFsV7qlMTpSCTwD+hwe9QZgE3mHrwYBQSi1D
+         aQFo2os5aLVsWSmlW55Z5UaJnZDrM82Vw9ZrWxCt1ZBpAupyd/aG/UdBxIWIATM2fG4k
+         I7G0lLmVcxAX/1ufWifQzpivgiKRTyjSSAsnTE8AniwuEkKLdpmdUx0Xlt4R8Jzp+U0S
+         ge+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706079941; x=1706684741;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cNh642ztM9/JIoi6gRH/DDCNqKXOoK1COb5sZK4/5nY=;
-        b=rDauVuGp+a4hkqoPF07kwHNIzE+WBx4Ni//E67hmP7646a30MZhI60bmtw07JZt35n
-         1IkeCUXbOCkZNscCL7Ezj5Is8kF2WSyVzvIb68nVWx8ENox9jGq7QauXD3Mou9zV0PZ2
-         KcMaPDnen2gsg7RSRC/7OyNI6lVXfmMu/gNAQCUJH67LOUmKi2nJWjtmX98OB8g61qY4
-         yGgbICwEq3w5B2WBeShz6ljsON+KELbl5ujSlhru4YdTZGYwEz+Eq+odLT1vUIZ79AXD
-         9bYc/7EXqbEkyEhttGe+uw2ea5U7DGRYaJRk7YckpidOQGiav0ev61wLm3ySgOnuuhIU
-         r11g==
-X-Gm-Message-State: AOJu0YzqQNaCFEE/YwmJxr2Y+IS5o6ukR0jMFt69jVdoARV6meqGJEIN
-	I5nIjdkeY2od3opxB0SVMYI8QeUqvSPGXjFA/BbEQTsAWabHkQ/8IjhByE9ZZLI=
-X-Google-Smtp-Source: AGHT+IE+B/bzZTkN3YO9vqMT1INobm1x/DmdeR4af9NrfWeqRBgmTbxK71v+Fgo6vHAYR38oOWNrKg==
-X-Received: by 2002:a05:6402:1358:b0:55c:ccd4:7cc3 with SMTP id y24-20020a056402135800b0055cccd47cc3mr81823edw.49.1706079940797;
-        Tue, 23 Jan 2024 23:05:40 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id ch27-20020a0564021bdb00b0055c4a251205sm2823463edb.90.2024.01.23.23.05.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jan 2024 23:05:39 -0800 (PST)
-Message-ID: <127fd51b-cd64-4e00-99d6-7be9b79f2dcc@linaro.org>
-Date: Wed, 24 Jan 2024 08:05:37 +0100
+        d=1e100.net; s=20230601; t=1706082117; x=1706686917;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iIoS+Yzzl1A1EheZCV/EaLjSj7/UHXg8aEfXVE/L5eI=;
+        b=JCQ9eaR/eA/NbvvreJ7l2wTwqtxV30z+md2oXjenKhQ8ncfAEWC8Tr9nN3Tc74zmCc
+         5WjSx/a+DqXTsqucnH08/JR7Ytp1D2UsXdNi9KhgATYOUKD5EzBpzdMwgZfLWoWG3zw/
+         RdFrFGrlRCJO1PYQD9gR0ubvnLWsJRWM01x9Tq8eKFS8n+u+AFCaI4RccUht8hI39Uah
+         6WjiFXik1wa4jSnja51ZSNlRJc+rvCdpRikZpsICHfSoPHWxbRNTWhd6gUcC1Pmclvyb
+         HOu9KRd733qKEd8VT5el92XM7bW+O085P8Bhhdl/+AxqZXoNqR3scicoDppWpSwzDcRr
+         oAoQ==
+X-Gm-Message-State: AOJu0YxG7lxnl5alcZc5Fwv7K9KeA0JNKDoGxTswsjqEKs3CUJVnuiZX
+	X0knKfpMYtgfhHXVlK6td2L7UcIe/nD/XUFzB4iN182tyvHscDsmJmpSAB+RFSY=
+X-Google-Smtp-Source: AGHT+IFL6Gd+P2an+MzB5i1gCcD0NpuAS/4xvV73WbPCTiVtNvIA8qk4J6qMXgi1WiQ2hCXmZ1Cddw==
+X-Received: by 2002:a2e:88cc:0:b0:2cf:2783:fadd with SMTP id a12-20020a2e88cc000000b002cf2783faddmr134100ljk.78.1706082117202;
+        Tue, 23 Jan 2024 23:41:57 -0800 (PST)
+Received: from linaro.org ([79.115.23.25])
+        by smtp.gmail.com with ESMTPSA id ek22-20020a056402371600b0055ca93f3930sm513785edb.0.2024.01.23.23.41.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jan 2024 23:41:56 -0800 (PST)
+Date: Wed, 24 Jan 2024 09:41:54 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v6 00/12] Unregister critical branch clocks + some RPM
+Message-ID: <ZbC/QqfTvJ09KcZN@linaro.org>
+References: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/17] clk: eyeq5: add platform driver
-Content-Language: en-US
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <rafal@milecki.pl>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org
-References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
- <20240123-mbly-clk-v3-8-392b010b8281@bootlin.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240123-mbly-clk-v3-8-392b010b8281@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
 
-On 23/01/2024 19:46, Théo Lebrun wrote:
-> Add the Mobileye EyeQ5 clock controller driver. It might grow to add
-> support for other platforms from Mobileye.
+On 24-01-13 15:50:49, Konrad Dybcio wrote:
+> On Qualcomm SoCs, certain branch clocks either need to be always-on, or
+> should be if you're interested in touching some part of the hardware.
 > 
-> It handles 10 read-only PLLs derived from the main crystal on board. It
-> exposes a table-based divider clock used for OSPI. Other platform
-> clocks are not configurable and therefore kept as fixed-factor
-> devicetree nodes.
+> Using CLK_IS_CRITICAL for this purpose sounds like a genius idea,
+> however that messes with the runtime pm handling - if a clock is
+> marked as such, the clock controller device will never enter the
+> "suspended" state, leaving the associated resources online, which in
+> turn breaks SoC-wide suspend.
+
+Generally speaking, HW-wise, if the power domain of a clock controller
+is being disabled, all clocks that it provides are being disabled.
+
+Are you saying that is not the case ?
+
 > 
-> Two PLLs are required early on and are therefore registered at
-> of_clk_init(). Those are pll-cpu for the GIC timer and pll-per for the
-> UARTs.
+> This series aims to solve that on a couple SoCs that I could test the
+> changes on and it sprinkles some runtime pm enablement atop these drivers.
 > 
-
-
-> +#define OLB_PCSR1_RESET				BIT(0)
-> +#define OLB_PCSR1_SSGC_DIV			GENMASK(4, 1)
-> +/* Spread amplitude (% = 0.1 * SPREAD[4:0]) */
-> +#define OLB_PCSR1_SPREAD			GENMASK(9, 5)
-> +#define OLB_PCSR1_DIS_SSCG			BIT(10)
-> +/* Down-spread or center-spread */
-> +#define OLB_PCSR1_DOWN_SPREAD			BIT(11)
-> +#define OLB_PCSR1_FRAC_IN			GENMASK(31, 12)
-> +
-> +static struct clk_hw_onecell_data *eq5c_clk_data;
-> +static struct regmap *eq5c_olb;
-
-Drop these two. No file-scope regmaps for drivers. Use private container
-structures.
-
-...
-
-> +static void __init eq5c_init(struct device_node *np)
-> +{
-> +	struct device_node *parent_np = of_get_parent(np);
-> +	int i, ret;
-> +
-> +	eq5c_clk_data = kzalloc(struct_size(eq5c_clk_data, hws, EQ5C_NB_CLKS),
-> +				GFP_KERNEL);
-> +	if (!eq5c_clk_data) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> +
-> +	eq5c_clk_data->num = EQ5C_NB_CLKS;
-> +
-> +	/*
-> +	 * Mark all clocks as deferred. We register some now and others at
-> +	 * platform device probe.
-> +	 */
-> +	for (i = 0; i < EQ5C_NB_CLKS; i++)
-> +		eq5c_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
-> +
-> +	/*
-> +	 * Currently, if OLB is not available, we log an error, fail init then
-
-How it could be not available? Only with broken initcall ordering. Fix
-your initcall ordering and then simplify all this weird code.
-
-> +	 * fail probe. We might want to change this behavior and assume all
-> +	 * clocks are in bypass mode; this is what is being done in the vendor
-> +	 * driver.
-> +	 *
-> +	 * It is unclear if there are valid situations where the OLB region
-> +	 * would be inaccessible.
-
-
-
-Best regards,
-Krzysztof
-
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+> Changes in v6:
+> - Rebase (next-20240112)
+> - Reorder qcom_branch_set_clk_en calls by register in "*: Unregister
+>   critical clocks" (Johan)
+> - Pick up tags
+> - Link to v5: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v5-0-99942e6bf1ba@linaro.org
+> 
+> Changes in v5:
+> - Change the "Keep the critical clocks always-on" comment to "Keep
+>   some clocks always-on"
+> - Add the same comment to commits unregistering clocks on 6115/6375/2290
+> - Link to v4: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v4-0-32c293ded915@linaro.org
+> 
+> Changes in v4:
+> - Add and unify the "/* Keep the critical clocks always-on */" comment
+> - Rebase (next-20231222), also include 8650, X1E and 8280camcc drivers
+> - Drop enabling runtime PM on GCC
+> - Improve the commit message of "clk: qcom: gpucc-sm6115: Add runtime PM"
+> - Link to v3: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v3-0-3e31bce9c626@linaro.org
+> 
+> Changes in v3:
+> - Rebase (next-20231219)
+> - Fix up a copypaste mistake in "gcc-sm6375: Unregister critical clocks" (bod)
+> - Pick up tags
+> - Link to v2: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v2-0-2a583460ef26@linaro.org
+> 
+> Changes in v2:
+> - Rebase
+> - Pick up tags
+> - Fix up missing pm_runtime_put in SM6375 GCC (Johan)
+> - Clarify the commit message of "Add runtime PM" commits (Johan)
+> - "GPU_CCC" -> "GPU_CC" (oops)
+> - Rebase atop next-20231129
+>   - Also fix up camcc-sm8550 & gcc-sm4450
+>   - Unify and clean up the comment style
+>   - Fix missing comments in gcc-sc7180..
+>   - Drop Johan's ack from "clk: qcom: Use qcom_branch_set_clk_en()"
+> - Improve 6115 dt patch commit message (Bjorn)
+> - Link to v1: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org
+> 
+> ---
+> Konrad Dybcio (12):
+>       clk: qcom: branch: Add a helper for setting the enable bit
+>       clk: qcom: Use qcom_branch_set_clk_en()
+>       clk: qcom: gcc-sm6375: Unregister critical clocks
+>       clk: qcom: gpucc-sm6375: Unregister critical clocks
+>       clk: qcom: gpucc-sm6115: Unregister critical clocks
+>       clk: qcom: gpucc-sm6115: Add runtime PM
+>       clk: qcom: gcc-sm6115: Unregister critical clocks
+>       clk: qcom: gcc-qcm2290: Unregister critical clocks
+>       arm64: dts: qcom: sm6375: Add VDD_CX to GCC
+>       arm64: dts: qcom: qcm2290: Add VDD_CX to GCC
+>       arm64: dts: qcom: sm6115: Add VDD_CX to GCC
+>       arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CC
+> 
+>  arch/arm64/boot/dts/qcom/qcm2290.dtsi |   1 +
+>  arch/arm64/boot/dts/qcom/sm6115.dtsi  |   3 +
+>  arch/arm64/boot/dts/qcom/sm6375.dtsi  |   1 +
+>  drivers/clk/qcom/camcc-sc8280xp.c     |   6 +-
+>  drivers/clk/qcom/camcc-sm8550.c       |  10 +--
+>  drivers/clk/qcom/clk-branch.h         |   7 ++
+>  drivers/clk/qcom/dispcc-qcm2290.c     |   4 +-
+>  drivers/clk/qcom/dispcc-sc7280.c      |   7 +-
+>  drivers/clk/qcom/dispcc-sc8280xp.c    |   4 +-
+>  drivers/clk/qcom/dispcc-sm6115.c      |   4 +-
+>  drivers/clk/qcom/dispcc-sm8250.c      |   4 +-
+>  drivers/clk/qcom/dispcc-sm8450.c      |   7 +-
+>  drivers/clk/qcom/dispcc-sm8550.c      |   7 +-
+>  drivers/clk/qcom/dispcc-sm8650.c      |   4 +-
+>  drivers/clk/qcom/gcc-qcm2290.c        | 106 +++--------------------------
+>  drivers/clk/qcom/gcc-sa8775p.c        |  25 +++----
+>  drivers/clk/qcom/gcc-sc7180.c         |  22 +++---
+>  drivers/clk/qcom/gcc-sc7280.c         |  20 +++---
+>  drivers/clk/qcom/gcc-sc8180x.c        |  28 +++-----
+>  drivers/clk/qcom/gcc-sc8280xp.c       |  25 +++----
+>  drivers/clk/qcom/gcc-sdx55.c          |  12 ++--
+>  drivers/clk/qcom/gcc-sdx65.c          |  13 ++--
+>  drivers/clk/qcom/gcc-sdx75.c          |  10 +--
+>  drivers/clk/qcom/gcc-sm4450.c         |  28 +++-----
+>  drivers/clk/qcom/gcc-sm6115.c         | 124 +++-------------------------------
+>  drivers/clk/qcom/gcc-sm6375.c         | 105 +++-------------------------
+>  drivers/clk/qcom/gcc-sm7150.c         |  23 +++----
+>  drivers/clk/qcom/gcc-sm8250.c         |  19 ++----
+>  drivers/clk/qcom/gcc-sm8350.c         |  20 +++---
+>  drivers/clk/qcom/gcc-sm8450.c         |  21 +++---
+>  drivers/clk/qcom/gcc-sm8550.c         |  21 +++---
+>  drivers/clk/qcom/gcc-sm8650.c         |  16 ++---
+>  drivers/clk/qcom/gcc-x1e80100.c       |  16 ++---
+>  drivers/clk/qcom/gpucc-sc7280.c       |   9 +--
+>  drivers/clk/qcom/gpucc-sc8280xp.c     |   9 +--
+>  drivers/clk/qcom/gpucc-sm6115.c       |  53 ++++++---------
+>  drivers/clk/qcom/gpucc-sm6375.c       |  34 ++--------
+>  drivers/clk/qcom/gpucc-sm8550.c       |  10 +--
+>  drivers/clk/qcom/lpasscorecc-sc7180.c |   7 +-
+>  drivers/clk/qcom/videocc-sm8250.c     |   6 +-
+>  drivers/clk/qcom/videocc-sm8350.c     |  10 +--
+>  drivers/clk/qcom/videocc-sm8450.c     |  13 ++--
+>  drivers/clk/qcom/videocc-sm8550.c     |  13 ++--
+>  43 files changed, 234 insertions(+), 653 deletions(-)
+> ---
+> base-commit: 8d04a7e2ee3fd6aabb8096b00c64db0d735bc874
+> change-id: 20230717-topic-branch_aon_cleanup-6976c13fe71c
+> 
+> Best regards,
+> -- 
+> Konrad Dybcio <konrad.dybcio@linaro.org>
+> 
+> 
