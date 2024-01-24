@@ -1,58 +1,58 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D5616423
-	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 06:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A3416423
+	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 06:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706078642; cv=none; b=DetVCuoWe1TW64xxuIDtiZ5p+6iaoPUdS4WpVSj1SMDwfK+Jr2uzFnWCNbTW9QMqWLE0lZkvWQMQfM+qwLp2wOxXYLjto5IWqbw+Hsek5oQegQ8vYw8AcYQXLHnI8qN4L3Opd3QoFTfURpI6Dh9Yc3dw9Wvlk8h4IQA76YYKDDs=
+	t=1706078709; cv=none; b=Kq7H6ODiy75UvR1LxDwZ4Vo7VP3T58JwUtBSRRhTt7kJ98ZYeTBqvjHBrInpXpWgdowc+BINz2cdQzvIG++L7R2x9Xk/iUQt0cNrMLhaTqHOUWKAVFncQ3LXwd0EL5lRA5pjzZWdICkZrSNvjXfuMydPlFy4hCMIwc0uMnqRlkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706078642; c=relaxed/simple;
-	bh=Na0yZodDGdLLgXtRdWqdoILFz9ttzJ5tSnwypSt8hZo=;
+	s=arc-20240116; t=1706078709; c=relaxed/simple;
+	bh=jsmlIquP690cGoENBSOd4+x6qYBtXWNIl5gW/+HaX14=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bENVp2oViXdzGmnLzbiFISPPWDsj+ieD8RGf7GO7AWoRng99AzPEObsEfVwnLhKdcn7W8TwE519uZn7i1LPRhyyZni1UOrUwCkaH7SpQWQN/AalmDl6eDs4JBfHARfggA9wtrp+sPYPGAKlnOYALhBkd23ER0SdcRn8Pr4MwsVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qW4bgW5q; arc=none smtp.client-ip=209.85.221.41
+	 In-Reply-To:Content-Type; b=Syqk8PRZRjQ5kqfdLaadlNWI/KhAFlD1sn+RHR8ECn1NVgCFRsiCPzIkuTzFP/JqS49OxjFPnOWGOoOS1Wev8FeCedL/iTNwrS94IyhCTGVBcSBrWbRlZm0T2eeCiZP/3qjdz78v8WMvDUJaxGwRB7HplbStW3ynX87CJk5epow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M9F6hJGV; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qW4bgW5q"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-338aca547d9so4111764f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 22:44:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M9F6hJGV"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40ec3535225so9478555e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 22:45:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706078639; x=1706683439; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706078706; x=1706683506; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0qEUB5tJP/fNciUnEzy2EmInFvQjzNFbZ/qXkS+XWvs=;
-        b=qW4bgW5qJ7ezeHl0fR0bdzB2KgOdMD5Ib1SuuJ2lqXFisRx6fOg7uCvLKe6UP1xSLp
-         HFUXhzqSjSHj1oEgXSYluBXMrZ968J+rXHPTaR1YBt1CI1qjY0aAEhg405F8jSqo2jHX
-         ceNjqlHc9QKDTYXbt+olv7MQkvdchsks4CBJIdge5zn6kR4Ze6DWtrZVt36m2SR3ke5k
-         /iSBmfZfWV7Jfi3G5agog97iklz2tN3F3QkKA3sqGW64htwfe6MoSNAQwRMZbTzzhidU
-         jL0ezqJyapJ5q/pDXv4n5dFX+b3cErsMKdi61Qd2FaViG9Wiizsw8QOVRO+yojla18gc
-         jHrg==
+        bh=N5Fg1dg5sggaNhbiNm2KS9e9Ur0hINEiu4CzKHDJkN8=;
+        b=M9F6hJGV1hFzo9UqS5/1VHNg7yIWDq8Ga4mZiNiLMIcGWdBD87gX17HGp4e4Ii/9l1
+         bzlHtsRZ6CbjoiPTFUVjGqJA0VFwpf74oiF8A0Ju3cRJnTsaG9rHl0Ao7lA7bAXRrYIN
+         88bM0SDaLbUty5Z2orvORUpJIXVh3gnIuQ23MDtX2r3JOGuU5orcQZWL6QUKj0SZLAzS
+         UA8yIJ7130ODkCvxsFYgpXVwhUa1fQMXL2dhebeLR8PrRvbA6/LZTgW39ww/FXNM0g0X
+         YCYwASaqidSO0YzW0Sifc8eI/eIfyL44MdKyv08Xdao9/9QUBKYyLtlIRd+3V380kFOf
+         0hZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706078639; x=1706683439;
+        d=1e100.net; s=20230601; t=1706078706; x=1706683506;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qEUB5tJP/fNciUnEzy2EmInFvQjzNFbZ/qXkS+XWvs=;
-        b=U7f5k+CvtUNDSiQ3cwcZFP9tlotY2Y7qazclB+05i1YgKyFzkRd9b1L0wgOYIuz7OC
-         sgYwoBdzO7arVzEZL3ymzf2gAATYX4QStgZkacrXrxPrFQEBKbsNhG/dQQ36amP1RCYR
-         gyUbpM1rpaX63jmNkPXwg+XhsWVI0gE8LvydgDSO5G+2r9OU0mhy+dFn6lyc1b+j/P/5
-         fzLII1MUpWIxkNcreQRDB/a8kf1K1U8ysIDB71cmFWMlkfA7ug7InsKAk/6eVbQsAplh
-         J4sD6TH/hV53Ax5MBrrPGTqYDQe36cb09uZtbQHNmRJjApS3EROLsY2HaPuhJR62ulzi
-         pJ7A==
-X-Gm-Message-State: AOJu0YyTCezx84oVWMTWq3rNENj7YO7jA/NwE7KX9c0Ywf5n2rUwgcbh
-	QhGEDHv5kx09JP6FiEqEf8Fqh3XM5oHESW8Yu24BVsJQdv39YUfoZjoIzh1YslQ=
-X-Google-Smtp-Source: AGHT+IGr1uEWkcvi66Qp0ZFkWgk/OsnzEd8H9LyXwS6DhOk0+ZGckrbfb3DvoRSS+v9CoKxtteLb+Q==
-X-Received: by 2002:adf:e68c:0:b0:337:699b:26e2 with SMTP id r12-20020adfe68c000000b00337699b26e2mr139105wrm.73.1706078638759;
-        Tue, 23 Jan 2024 22:43:58 -0800 (PST)
+        bh=N5Fg1dg5sggaNhbiNm2KS9e9Ur0hINEiu4CzKHDJkN8=;
+        b=BgSjOne+EXeJj79SbU+a/43XI07pNkJ4gasb9kNxz24nSxBflRnzRtcaBHAr8JF3Gj
+         cOrUcwV7uyrzu1IyO1tIQY58JG0ODPKKU4RkAkJTQr6g4FoP88i6UzXG9EM4rCyMTpHj
+         fYC/RtsQjQPC21QpiyhLRNhboemAb54upTDzUOYX91eXafWRBNdSt/TmFcVlGjK2Cw68
+         hWoXrjUHkzNkdJREkn2PZ6JcOomRV/BOeC3RhmnkvfTff0TLXJbARpRZOoGqSt6xC8mn
+         xClyCMw2dgSYg+oebrBR7Skj6d7JxGth+V9UM01r2PMlAINyjRYiU+H8xVvlzomHtG0n
+         PfLg==
+X-Gm-Message-State: AOJu0YwmUL3s2C0TvQLIeSUJ/+t0fUrkRuDEPfY7TnqcnZAz5E7oiv25
+	zr7G54yC4hyZZtQ/9LAoyrsrhERrkBXuYJr6xDytTWpInEAmd2XfvbHYgJ5NbIc=
+X-Google-Smtp-Source: AGHT+IGWFgHneETDiyehZChMpDST5KWe7BRozW5SyFAuBLbgM8MeJEquRV/4LH59Ihb/5eRbq+oBPg==
+X-Received: by 2002:a05:600c:6b0d:b0:40e:85e0:52b9 with SMTP id jn13-20020a05600c6b0d00b0040e85e052b9mr675628wmb.284.1706078706018;
+        Tue, 23 Jan 2024 22:45:06 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id i6-20020adfb646000000b00337bc2176f6sm17930422wre.81.2024.01.23.22.43.57
+        by smtp.gmail.com with ESMTPSA id i6-20020adfb646000000b00337bc2176f6sm17930422wre.81.2024.01.23.22.45.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jan 2024 22:43:58 -0800 (PST)
-Message-ID: <407ffaf1-d16d-4035-9566-866f44411fd2@linaro.org>
-Date: Wed, 24 Jan 2024 07:43:56 +0100
+        Tue, 23 Jan 2024 22:45:05 -0800 (PST)
+Message-ID: <0b515a30-0134-4ffc-9beb-aced55a5fd8b@linaro.org>
+Date: Wed, 24 Jan 2024 07:45:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,7 +60,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/17] Add support for Mobileye EyeQ5 system controller
+Subject: Re: [PATCH v3 05/17] dt-bindings: clock: mobileye,eyeq5-clk: add
+ bindings
 Content-Language: en-US
 To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
  Gregory CLEMENT <gregory.clement@bootlin.com>,
@@ -77,6 +78,7 @@ Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org
 References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
+ <20240123-mbly-clk-v3-5-392b010b8281@bootlin.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -122,21 +124,21 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
+In-Reply-To: <20240123-mbly-clk-v3-5-392b010b8281@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 On 23/01/2024 19:46, Théo Lebrun wrote:
-> Hi,
+> Add DT schema bindings for the EyeQ5 clock controller driver.
 > 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
 
-You miss here, in this place, the most important information which I
-asked previously - dependencies/merging:
-https://lore.kernel.org/all/db9b2786-29f7-4d45-9087-a9f85b770b6c@linaro.org/
 
-> The goal of this series is to add clk, reset and pinctrl support for the
-> Mobileye EyeQ5 platform [0]. Control of those is grouped inside a
-> system controller block called "OLB".
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+(for this patch... your patchset is still broken as pointed out by robot)
+
 Best regards,
 Krzysztof
 
