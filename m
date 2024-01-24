@@ -1,115 +1,158 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23C8168B7;
-	Wed, 24 Jan 2024 08:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A621A17981
+	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 08:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706085224; cv=none; b=C+E/edZjwNLBdaxB8EwntoLWvIaAsgM2Vk8FLhKbH0ECvUJV7u8kJ4TQ0+HAvB/5EEDPOGFQp86jeKJfWWYidP6BKom0BKQc6Vhqz+/PfhLJp6PW7oZetRguPkvfv5OJFQN0fSgTTAlL+5e4ZO+GfuewDzmR1sKBTkRkCepT+zs=
+	t=1706085808; cv=none; b=EOClk2HuwcOqjbKzwSUZ/qn8etmJnZuoDuc5ULXCyeI0Bd1cbCpC+WQ3+JkY8ogFFFOT0I8stwH3vGNqSV+L7Ra7y5knFXqcPnO+TXtj1F01+FOtA5yKAgowpbKyuPU65HtnU2qVWrvGRlcZvKQoMscG8FkF+/sz6YSyLfbuNkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706085224; c=relaxed/simple;
-	bh=EzCClBVRfIQQjiEtneiOW2Rs5f79PU3aGY7X9Y7gYBI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ckaZIYhFQ7K2tRwPfdMf4sojfxeW2MicVYglra8nBV3w+fj7hCDv6rWtO1MhmbzXgHlsdYNhJKAefRYXkDXJE1yhsKJZZfjhiLneOptw1WlraE+/vR75YRAoB8M+8ADgEE2pFSdb90cqMqt8gVcZR3SBsOWUdq10nkNUZJ7Zrno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m/PHmsqQ; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1706085808; c=relaxed/simple;
+	bh=a5+Y4PK8Tvf+sigWvxT2Oizf/v8oqo1GVxi7PwImtVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=psD5JlMtyV7R+nTwC9+2kcEpmSrkkI/QmUPgsYPVWyR/HzEWGBWdcrPnZLE3trZ0O1EhFa+nJbZSkbiokUOcJv5afGmDbd1vUlsOmRSiJePvYnoDcEeTrTfZv8kvXcLbC/gsVUHSTD6dfV3pyNxNm0MJymBqGZmq4GMPPf76HHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t5rB2M5+; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/PHmsqQ"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2cf13c259f3so14764591fa.2;
-        Wed, 24 Jan 2024 00:33:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t5rB2M5+"
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3bd3b34a58dso3337211b6e.3
+        for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 00:43:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706085220; x=1706690020; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5hd/1O/Sg3JdYzCg1+SznBDCwVJqhnijf0uPOjWbChE=;
-        b=m/PHmsqQzBwPfXvl3E8XmaEdmgpTFrNqPto7kvI0pVj2/6rIJZSWBr9p8JRKZqgCSv
-         cAV5DehcLnWEgMmpI1yABlgqL3/fwuo34+DxdoJibDR/bMlZLZ7UKMlQ7EaDitA/gaZe
-         H7YghbfYwavKRdPQ3kg/+mwCop+wyMZ/Z2M1KORvd9rH9olLU3bxONV4Pcb30Z7woLRS
-         1pC5JlNSw1KCmwR1qmo1D42Z7t+HF7qcHtK0IMfgtTvHn5N3lU7umTavUXGjEVJTZbL2
-         IGMpoCkW7ir4C6jk5ezVPs/Wn3shRcGUm4JIOjp2zO56Gnyo0ZThSBFSRX7iC5H4ycyd
-         IBYg==
+        d=linaro.org; s=google; t=1706085804; x=1706690604; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5F77cepD96Xl+KWE10eagNpd7WlTaV/PHMJWTPQtzTE=;
+        b=t5rB2M5+MAajF2aV9uQKCMpPhUIeDzUSKVnfCNkSHl/CL1QkZJiTOo1juuU6mFlSMA
+         pv1MwOhTUEc0Aop8nlSlEcz3dCt+qRhDkzZONQ8LcgwjQRdFtelJWPKb+l/NutDdspIc
+         6DM7FjDTmNrjrxtrPm5tR04FzonWwrCuhgaovkR8huepuM6LZ4e/wY2KSQNlwBSCEnUt
+         z9N/u6MYNNSHIv63ippwl0nd4QvnQE2VkxQQqxtSurerPLwLu+csuVCxfPcXLX22aaRE
+         Prmstzb7hAB+WRhsmj8ivh/ylHiDBIsOPLLzrpUjoSAWN2X3cI2swI1qV29vLPCTj+4f
+         T0vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706085220; x=1706690020;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        d=1e100.net; s=20230601; t=1706085804; x=1706690604;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5hd/1O/Sg3JdYzCg1+SznBDCwVJqhnijf0uPOjWbChE=;
-        b=CrlgkBZOj6xtMuPqiEk+W/CK3SVxHVCSJeRs89DpULI4Sk147Qr+3M7Kf1D9SD+KEo
-         IWXVdbV82IvK8zhCQDlPn/8a0FBYjs1Hr69vYgbt/r9cs9cTwZPblUXPrztVQOGWYCOh
-         +q18RIFxE5dNK8QejMeidzaZKd18C029lQ/tGy2v3aCD4IUn5ur2dal58dZqw6UZwWD6
-         ls4/QHQi5OeRDzybZmtmSkXFFjFJux/UEinTfPpUUCiEztEKsb3aKsJ8x95cJIFQ7pNX
-         JBYatc7YZaf6ipHZSyqJSEhuhaEetZaSdt8moVd4rg5aWYKeGRJa3acfvYXE/JP6AYuu
-         hLzA==
-X-Gm-Message-State: AOJu0YyqTLnAGOjTHaVAytmvPe+yIAAKBrMBO0u2KLnUWZumcnjzrZad
-	GSRzJwSxDoFIpDKMA30iT0PC0oOjnwYb6HjDRXWCiX0UNLWSh9wi1zrcaxkWD3E=
-X-Google-Smtp-Source: AGHT+IE6U5DpYNkERuWKwc5U2ERYS4WpXA04rDyoxcT71SlhND78Rp2Rht6y6AEUfe9ZRdOUS1sqvg==
-X-Received: by 2002:a2e:a37a:0:b0:2cc:8b49:6dbb with SMTP id i26-20020a2ea37a000000b002cc8b496dbbmr364086ljn.62.1706085220103;
-        Wed, 24 Jan 2024 00:33:40 -0800 (PST)
-Received: from [192.168.1.105] ([31.173.80.46])
-        by smtp.gmail.com with ESMTPSA id c18-20020a05651c015200b002cce6095241sm3750351ljd.62.2024.01.24.00.33.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jan 2024 00:33:39 -0800 (PST)
-Subject: Re: [PATCH v3 12/17] MIPS: mobileye: eyeq5: remove reg-io-width
- property from OLB syscon
-To: =?UTF-8?Q?Th=c3=a9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <rafal@milecki.pl>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org
-References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
- <20240123-mbly-clk-v3-12-392b010b8281@bootlin.com>
-From: Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Message-ID: <30ab446a-c00d-12d6-0f54-4bcf7c42a6fe@gmail.com>
-Date: Wed, 24 Jan 2024 11:33:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        bh=5F77cepD96Xl+KWE10eagNpd7WlTaV/PHMJWTPQtzTE=;
+        b=Dxs2CwALvz7W9L14jZvdjyEsn9+LqhNJnsJra3B9hLGKfeMma/PpyRIwe6+yPbrJnm
+         G48OU//hpbp6OXb3raHRDdo6M/W1n+a3D6lV9w2SQb4mchLcRgNr4ECGVdP+dB7YemfY
+         wpdB60IwCqxNAywkNx4vmAFCA4bCICV71Jn8avQUeJw3vdOfHCdm8GiviJuSgg2md0CD
+         VCDnYPg4U8nZbBzy1e8QmeRMUwOoYgBnFq2h0ECAuhvipmFvJyXrI8JSluFM3kJZmr7N
+         bwb9STOiHOZqk2C6yuqNbbeIL0Jy4kvQ2TjJ3kHFB7ujO5xe5FmeAU4ShMhZAHOF8THY
+         umnQ==
+X-Gm-Message-State: AOJu0YxJojzFsxR3ly774mU84sIWFdebzfb1z2SS2WzIn3A4LhHkp2tH
+	GdYM7WqA76zeK+aGD7p6TVSOxV6ifHdLGQiVCBQiiH5wqW4qiC7caL2waEpWfA==
+X-Google-Smtp-Source: AGHT+IHKCJEXy30SfEdm+8xbyObjZ+0ZwuX9yqOA4WKKW5OGso/7AlJuDblMWxjiQyWpjfRUI6IqJA==
+X-Received: by 2002:a05:6808:11c9:b0:3bd:9ff7:6051 with SMTP id p9-20020a05680811c900b003bd9ff76051mr1163124oiv.72.1706085804661;
+        Wed, 24 Jan 2024 00:43:24 -0800 (PST)
+Received: from thinkpad ([117.217.189.109])
+        by smtp.gmail.com with ESMTPSA id s36-20020a056a0017a400b006dd89752e8asm1067422pfg.22.2024.01.24.00.43.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jan 2024 00:43:24 -0800 (PST)
+Date: Wed, 24 Jan 2024 14:13:13 +0530
+From: 'Manivannan Sadhasivam' <manivannan.sadhasivam@linaro.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, jingoohan1@gmail.com, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+	linux@armlinux.org.uk, m.szyprowski@samsung.com,
+	pankaj.dubey@samsung.com
+Subject: Re: [PATCH v3 1/2] clk: Provide managed helper to get and enable
+ bulk clocks
+Message-ID: <20240124084313.GD4906@thinkpad>
+References: <20240110110115.56270-1-shradha.t@samsung.com>
+ <CGME20240110110156epcas5p36bac4093be0fa6eaa501d7eaed4d43d3@epcas5p3.samsung.com>
+ <20240110110115.56270-2-shradha.t@samsung.com>
+ <20240120150303.GB5405@thinkpad>
+ <05ea01da4e92$0357d310$0a077930$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240123-mbly-clk-v3-12-392b010b8281@bootlin.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <05ea01da4e92$0357d310$0a077930$@samsung.com>
 
-On 1/23/24 9:46 PM, Théo Lebrun wrote:
-
-> Remove the `reg-io-width` property from the olb@e00000 syscon. The
-
-   The diff says it's system-controller@e00000 now... :-)
-
-> default memory access width is what we desire: no need to make it
-> explicit.
+On Wed, Jan 24, 2024 at 12:23:15PM +0530, Shradha Todi wrote:
 > 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> ---
->  arch/mips/boot/dts/mobileye/eyeq5.dtsi | 1 -
->  1 file changed, 1 deletion(-)
 > 
-> diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> index 81497febcdee..03e7e942ee22 100644
-> --- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> +++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> @@ -103,7 +103,6 @@ uart2: serial@a00000 {
->  		olb: system-controller@e00000 {
->  			compatible = "mobileye,eyeq5-olb", "syscon", "simple-mfd";
->  			reg = <0 0xe00000 0x0 0x400>;
-> -			reg-io-width = <4>;
->  		};
->  
->  		gic: interrupt-controller@140000 {
+> > -----Original Message-----
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Sent: 20 January 2024 20:33
+> > To: Shradha Todi <shradha.t@samsung.com>
+> > Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> > pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
+> > soc@vger.kernel.org; mturquette@baylibre.com; sboyd@kernel.org;
+> > jingoohan1@gmail.com; lpieralisi@kernel.org; kw@linux.com; robh@kernel.org;
+> > bhelgaas@google.com; krzysztof.kozlowski@linaro.org;
+> > alim.akhtar@samsung.com; linux@armlinux.org.uk;
+> > m.szyprowski@samsung.com
+> > Subject: Re: [PATCH v3 1/2] clk: Provide managed helper to get and enable bulk
+> > clocks
+> > 
+> > On Wed, Jan 10, 2024 at 04:31:14PM +0530, Shradha Todi wrote:
+> > > Provide a managed devm_clk_bulk* wrapper to get and enable all bulk
+> > > clocks in order to simplify drivers that keeps all clocks enabled for
+> > > the time of driver operation.
+> > >
+> > > Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> > > ---
+> > >  drivers/clk/clk-devres.c | 41
+> > ++++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/clk.h      | 25 ++++++++++++++++++++++++
+> > >  2 files changed, 66 insertions(+)
+> > >
+> > > diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c index
+> > > 4fb4fd4b06bd..05b0ff4bc1d4 100644
+> > > --- a/drivers/clk/clk-devres.c
+> > > +++ b/drivers/clk/clk-devres.c
+> > > @@ -102,6 +102,7 @@
+> > EXPORT_SYMBOL_GPL(devm_clk_get_optional_enabled);
+> > >  struct clk_bulk_devres {
+> > >  	struct clk_bulk_data *clks;
+> > >  	int num_clks;
+> > > +	void (*exit)(int num_clks, const struct clk_bulk_data *clks);
+> > >  };
+> > >
+> > >  static void devm_clk_bulk_release(struct device *dev, void *res) @@
+> > > -182,6 +183,46 @@ int __must_check devm_clk_bulk_get_all(struct device
+> > > *dev,  }  EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
+> > >
+> > > +static void devm_clk_bulk_release_all_enabled(struct device *dev,
+> > > +void *res) {
+> > > +	struct clk_bulk_devres *devres = res;
+> > > +
+> > > +	if (devres->exit)
+> > > +		devres->exit(devres->num_clks, devres->clks);
+> > > +
+> > > +	clk_bulk_put_all(devres->num_clks, devres->clks); }
+> > > +
+> > > +int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
+> > > +				  struct clk_bulk_data **clks, int *num_clks)
+> > 
+> > What is the user supposed to do with "num_clks" when you are already handling
+> > the enable part?
+> > 
+> 
+> Since the initial clk_bulk_get_all was returning the num_clks value, the thought was to maintain this
+> as the user might want to have a check in their driver whether x number of clocks were successfully
+> retrieved and enabled.
+> 
 
-MBR, Sergey
+IIUC, the returned clock count is only used for enabling or disabling the
+clocks later. Since you are already handling it inside this API, I do not see a
+necessity to return the count.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
