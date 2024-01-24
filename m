@@ -1,150 +1,118 @@
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48DC132C36
-	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 19:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830B9134744;
+	Wed, 24 Jan 2024 20:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706125895; cv=none; b=PbiGwWnaRYrpRbyCTnNJ++URnjSNtYHpSkaw6TaQ803q+Ofalf6GqA91/LViclJbYkvKOcmL8ItaRUvEL+Awcou9W7y2FrsYY5BT0qm1/g+dfxhFom+TBeWpqVZZ+mYytOK03L4mtSd7g+WnJfrY0ty2KJmLlJIGYBe+S5XmgOc=
+	t=1706129331; cv=none; b=B8NQtjJK6tiU07aQi+2sdvpqdveq/CxORpe5r1NZJ2sTQy3o11fp3cYf8ZsXMvTvyRVLLE7p0TFvP9vUXLPBvGz3CJCzAa0P4tAN7B6lpaBbAK3z9ayD0b5OD00T97MlY3YW/CWUxmM8cgw23nQO0Jx+3IH+KzqEhoxShiTzC8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706125895; c=relaxed/simple;
-	bh=9RgnrZAMWic/KU6v8vx6qvscwLiT9mhJjXhgg6UxIS0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F3oAb069jN8ZDuN0ouY+GHPVPk2pUbZV+DfrT/uCTYMwOmro67HSk56RMYc3tgiUhnB6Or5RxFtqoSYcoxqNEaMnmY4S+LPNB93pjvHdU+03hAYrI99kKnfLjtkj57C7YEpzu82F3OlKyYInYaR9o/9K3ZOjienYMryv/Jo1vgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YCcTa0dT; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706129331; c=relaxed/simple;
+	bh=Pu2WnJULiZ3SHOQa+Ls5gMiBM9GGmreLuufDrBDDCxY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Uf08sUOzJ4pW1qMkV9Ht2FU/CAPzzNkaah2flzseZHvvcbYmnnWdjk72RHaqqlbM6KfOz3+4LajtJRsLRe6dpHmXLFHtNdh0KAez+9rDWcKZyc1Uc8ybJAzy7Py9n0za/nLqse4q0THJyytfRhyaDFuuJWrArxu42diouFWWcGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/lDnsnr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YCcTa0dT"
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2906773c7e9so2371583a91.1
-        for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 11:51:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706125893; x=1706730693; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LbUXpdpBL5inpaz8wpZ3Hd1xvaYHJgSJQFchXab3614=;
-        b=YCcTa0dTAvJ/NQncvAxv/uTwTOk/zkXNuCvPY40OLaIrfWxvb7a57P9CaIdqGKv4jx
-         CO+CXpaBBCuR5+7ihG+IE7lk2NfG6SU7ZOU57DTSoebqsj2hCEF5kGQWCBOrjjR1Mxvf
-         MWIpXEs54fSlsr0PRF6nO9iVPC/3ev/Qo2FyR2ulqKQp6SAm3Obgiw+7FohdSfFjEHoQ
-         X0xnAaXWDILC9nGcHMCuuxmXteyvk7fnvo3fCGik7yAYR7L95QOHA7WatREpSue4oFIy
-         DcIuwNkZtoqcZ+RHUBOUOh2aR1+WS85UCj9MokMv/Deqd7T+VkMUZ879d+H0GIjbYe+G
-         UC7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706125893; x=1706730693;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LbUXpdpBL5inpaz8wpZ3Hd1xvaYHJgSJQFchXab3614=;
-        b=vfzczolKVfx6cYmuSg7dZzeekt936dul7wdpfAA6eyM6M6DUqo/gkzV2eaJEQ3Oabs
-         bMjej5mgV+Ia/Ck67KEUDpV8LxezP03524s/H2SiKWyjG2DICA7YV6a0Zm2eZL+TzLrE
-         C9qHrZZjQ/3p653jRyT6eOKplroDDwz1Mrp3tTjTU9Rz80TIkWRxaUUbSvm22BJEnBp1
-         YockfpJDGrWelYYXclxFi8292auq3GkoSUwueaNdK9WsX3dg7JTzw/VING1IA/qywN/f
-         Gg8JeKAzj6KF6qdXIXrK68I+ZFsNpy265pRPRVo4z/OUsmI3Cig7FfvKvU4WFcfqk6SZ
-         uNzQ==
-X-Gm-Message-State: AOJu0Yx3TtNdjN2ZLzpHdYRLHCXb4Xb1eXvCAAv7ELKm4OvK+kcKC3S8
-	vMidtWJelPqlHFkmCXkDsZVEOU057JgC7s2dmNiW29X1FL1xhZhjW/meF29Aa15/7LyvW8DVS2W
-	v3iCCVx4yBbtziamf9KIBoSAT4os9Bg7pRi/88w==
-X-Google-Smtp-Source: AGHT+IEW7C7lF/Ll0fHsqyeD+dcwHldsUGy1XZeoMRGL2x6NWPAjSHfSS5d/No56Zjnsn4Tw4ZCtsxSsFSrAAAmuhKM=
-X-Received: by 2002:a17:90b:3606:b0:290:c91e:7402 with SMTP id
- ml6-20020a17090b360600b00290c91e7402mr52093pjb.78.1706125892911; Wed, 24 Jan
- 2024 11:51:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/lDnsnr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D15F6C433C7;
+	Wed, 24 Jan 2024 20:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706129330;
+	bh=Pu2WnJULiZ3SHOQa+Ls5gMiBM9GGmreLuufDrBDDCxY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=l/lDnsnrKGyL4NokUGCsi1Dqf3sT2rJfYHrXct9Zr7T2d5xHZklzHnHzME7Eh9v0M
+	 3BHNHwvIlFu/Unu8C2lQmm46LAVa2hT+wPbd81/wdHD4gh0hnjgoy4w56q3WJv2xfH
+	 q7HOrUFDXOuWYrd0wxS6m7yDHyE5reYUHX7ovIqmjpCfP5d5adU7uQf1Qb8gRaJ5Yj
+	 KlycmGGIsCESbhnKmb3TeMBdTK7Sss/DnCDlxbAgi/doD/hQ6yUzeMMuz6UHu1+MmX
+	 rlClWFvh0p71trdnWXIZXqg0HnqytUqUTGRYk+FmHqO43y8xd7c5SwvuKUnIhqYvGR
+	 3O7Y9BSLwS89w==
+Message-ID: <cae77ff909448cd7eb88716696d24091.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240120012948.8836-1-semen.protsenko@linaro.org>
- <20240120012948.8836-6-semen.protsenko@linaro.org> <9c9e71ff-42ab-4753-80cf-09b34a97b28c@linaro.org>
-In-Reply-To: <9c9e71ff-42ab-4753-80cf-09b34a97b28c@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 24 Jan 2024 13:51:21 -0600
-Message-ID: <CAPLW+4=z9cgVZgY_a6d69sGfDaErsYSc9tL8mtYdoBeahZGJyA@mail.gmail.com>
-Subject: Re: [PATCH 5/7] spi: s3c64xx: Add Exynos850 support
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, linux-spi@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <TYCPR01MB1126908A3DCEE35723E102993867B2@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+References: <20240123115821.292787-1-biju.das.jz@bp.renesas.com> <20240123115821.292787-5-biju.das.jz@bp.renesas.com> <Za-u9VO2OuY6vhT8@kekkonen.localdomain> <20240123153550.GT10679@pendragon.ideasonboard.com> <TYCPR01MB112691B281C74CAD8EB14433E86742@TYCPR01MB11269.jpnprd01.prod.outlook.com> <20240123221011.GA16581@pendragon.ideasonboard.com> <TYCPR01MB1126908A3DCEE35723E102993867B2@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+Subject: RE: [PATCH 4/4] media: platform: rzg2l-cru: rzg2l-video: Restructure clk handling
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Rob Herring <robh@kernel.org>, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-media@vger.kernel.org <linux-media@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, biju.das.au <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org <linux-renesas-soc@vger.kernel.org>, linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Wed, 24 Jan 2024 12:48:48 -0800
+User-Agent: alot/0.10
 
-On Wed, Jan 24, 2024 at 12:49=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linar=
-o.org> wrote:
->
->
->
-> On 1/20/24 01:29, Sam Protsenko wrote:
-> > Add SPI port configuration for Exynos850 SoC. It has 3 USI blocks which
-> > can be configured in SPI mode:
-> >
-> >   * spi_0: BLK_PERI_SPI_0 (0x13940000)
-> >   * spi_1: BLK_ALIVE_USI_CMGP00 (0x11d00000)
-> >   * spi_2: BLK_ALIVE_USI_CMGP01 (0x11d20000)
-> >
-> > SPI FIFO depth is 64 bytes for all those SPI blocks, so the
-> > .fifo_lvl_mask value is set to 0x7f. All blocks have DIV_4 as the
-> > default internal clock divider, and an internal loopback mode to run
-> > a loopback test.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->
-> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->
-> > ---
-> >  drivers/spi/spi-s3c64xx.c | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
-> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> > index 0e48ffd499b9..f7d623ad6ac3 100644
-> > --- a/drivers/spi/spi-s3c64xx.c
-> > +++ b/drivers/spi/spi-s3c64xx.c
-> > @@ -1461,6 +1461,17 @@ static const struct s3c64xx_spi_port_config exyn=
-os5433_spi_port_config =3D {
-> >       .quirks         =3D S3C64XX_SPI_QUIRK_CS_AUTO,
-> >  };
-> >
-> > +static const struct s3c64xx_spi_port_config exynos850_spi_port_config =
-=3D {
-> > +     .fifo_lvl_mask  =3D { 0x7f, 0x7f, 0x7f },
->
-> I'll come with a follow up patch on top of this. Having the dt alias
-> used as an index in the fifo_lvl_mask to determine the FIFO depth is
-> wrong. Not only because of the dependency on the alias, but also because
-> the fifo_lvl_mask value does not reflect the FIFO level reg field.
-> Playing with what we have now is ok by me, I find the patch good.
->
+Quoting Biju Das (2024-01-24 06:01:30)
+> > > > > > CSI2nMCT0_VDLN(csi2->lanes)); @@
+> > > > > > -386,11 +389,40 @@ static void
+> > > > > > rzg2l_csi2_mipi_link_enable(struct
+> > > > rzg2l_csi2 *csi2)
+> > > > > >       rzg2l_csi2_write(csi2, CSI2nDTEL, 0xf778ff0f);
+> > > > > >       rzg2l_csi2_write(csi2, CSI2nDTEH, 0x00ffff1f);
+> > > > > >
+> > > > > > +     clk_disable_unprepare(csi2->vclk);
+> > > > > > +     for (count =3D 0; count < 5; count++) {
+> > > > > > +             if (!(__clk_is_enabled(csi2->vclk)))
 
-Yeah, we just have to make sure all our patches are taken in the
-correct order, to avoid any possible conflicts.
+__clk_is_enabled() is a clk provider API. You shouldn't be using it in
+consumer drivers.
 
-> > +     .rx_lvl_offset  =3D 15,
-> > +     .tx_st_done     =3D 25,
-> > +     .clk_div        =3D 4,
-> > +     .high_speed     =3D true,
-> > +     .clk_from_cmu   =3D true,
-> > +     .has_loopback   =3D true,
-> > +     .quirks         =3D S3C64XX_SPI_QUIRK_CS_AUTO,
-> > +};
-> > +
-> >  static const struct s3c64xx_spi_port_config exynosautov9_spi_port_conf=
-ig =3D {
-> >       .fifo_lvl_mask  =3D { 0x1ff, 0x1ff, 0x7f, 0x7f, 0x7f, 0x7f, 0x1ff=
-, 0x7f,
-> >                           0x7f, 0x7f, 0x7f, 0x7f},
-> > @@ -1515,6 +1526,9 @@ static const struct of_device_id s3c64xx_spi_dt_m=
-atch[] =3D {
-> >       { .compatible =3D "samsung,exynos5433-spi",
-> >                       .data =3D (void *)&exynos5433_spi_port_config,
-> >       },
-> > +     { .compatible =3D "samsung,exynos850-spi",
-> > +                     .data =3D (void *)&exynos850_spi_port_config,
-> > +     },
-> >       { .compatible =3D "samsung,exynosautov9-spi",
-> >                       .data =3D (void *)&exynosautov9_spi_port_config,
-> >       },
+> > > > > > +                     break;
+> > > > > > +             usleep_range(10, 20);
+> > > > > > +     }
+> > > > > > +
+> > > > > > +     if (count =3D=3D 5) {
+> > > > > > +             dev_err(csi2->dev, "Timeout, not able to turn OFF
+> > vclk\n");
+> > > > > > +             return -ETIMEDOUT;
+> > > > > > +     }
+> > > > >
+> > > > > It'd be nice to have a CCF function to do this. Either way, you
+> > > > > can use read_poll_timeout().
+> > > >
+> > > > I would have sworn that clk_disable_unprepare() is synchronous, and
+> > > > would have sworn even stronger for clk_prepare_enable(). What's
+> > > > going on here, is there really a delay ? It sounds like a bug in the
+> > clock driver.
+> > >
+> > > At the moment we are not checking clock status when we turn off a
+> > > clock However, for clock ON we are checking the status while turning =
+it
+> > ON.
+> > > We need to fix the driver for clk_disable_unprepare().
+> >=20
+> > Does that mean that the check below clk_prepare_enable() could be remov=
+ed
+> > already ?
+>=20
+> Yes, that is correct I will remove in the next version as clk_prepare_ena=
+ble() is
+> synchronous as it checks the status to make sure it is turned ON.
+>=20
+> >=20
+> > Regarding clock disable, it isn't clear if the API guarantees synchrono=
+us
+> > calls. I'd recommend asking the clock maintainers. If it doesn't, then =
+the
+> > clock driver isn't wrong (and may lead to faster operation in most case=
+s),
+> > but I think synchronizing the clock disable by waiting for the clock to=
+ be
+> > actually disabled should be implemented as a helper in CCF.
+>=20
+> +clk.
+>=20
+> Hi Stephen and all,
+>=20
+> Can you please shed some light on this?
+>=20
+
+clk_disable() is reference counted. The call to clk_disable() may do
+nothing besides decrement a count and return. Per the documentation in
+clk.h it means that the consumer is no longer using the clk. The clk
+could be turned off later, or not at all.
+
+It seems like the clk driver has a bug. Make the clk driver synchronize
+the disable with enable please.
