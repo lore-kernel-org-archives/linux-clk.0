@@ -1,59 +1,58 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443B114293
-	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 06:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E94F9C7
+	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 06:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706078054; cv=none; b=Gfd38tfnR42RobKa5E7uvD/J15yKjFWh759LjFh1SvPHQ2xmP3qU2TO10hcelA8zGleaPwv77OjBaaVY2QpcCzCUuupoFTDDAXoAugvBKIstKEdwYnDRmvjxOC5/D0d9rMjHM6dpdv7DRCKuAM+n/XXkSKDZ6pfZTxb7oVZGtmk=
+	t=1706078511; cv=none; b=ZYUqlSaLR/x+3P5a4WSaYvrdQwz6lMhDaGkrIA4rtxo+y5CJpCWSLcPZzCnkhfBJ5kYbsRgWm7dRTdLNbsMf4WLC10BcAN+e6J/OnOLyxdPLJSlbzeN1sLqs0caj/h7Ek2zGLdHmRZu1mIJtEDAL/f4V7ZYY5K8GCPIYYBx/H+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706078054; c=relaxed/simple;
-	bh=L+THUiwmAARSADYIRz0u64nl4DCcopfBuIz76DH9F9o=;
+	s=arc-20240116; t=1706078511; c=relaxed/simple;
+	bh=gdjigPYxfGVv/qeBZHfdru5JoUiV9JRMZh9hMOWPR+4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SL8vUVgl/5cK4hiXCPkNgFPRgbk0rTmgXxpo4cTMp0RVQ8c2dYnTpWciKSEKRqqZYSt6B728Sb7cpwA5YHVBIZMnGqR0iS/QrPTfrogWzMaAt/f6o282vT6ufz5KdSee0sV7+jWQLqPJFmvjiXxKo1jD0HjnzWP9+PCnRYombpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e1zk9p8s; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:Content-Type; b=pwpAk2OugPS/vAXJGBzAUGZhQfGwhB65RcpG4hHm0dUfiCx5yZAA8CRsfEK6dZaJ4URBwYqGPyhtVVRjjkBddUTJVS8HVh0UQ+Fi6G9E0wHSCNl6NQb6JLzMq+Xr/yOMr8dKvshwbxZYIWuRZCjnewL8QPE3eV/JmggBCTGU5hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S7qLZwo9; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e1zk9p8s"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5100c3f7df1so1348658e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 22:34:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S7qLZwo9"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3387ef9fc62so4737005f8f.2
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jan 2024 22:41:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706078051; x=1706682851; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706078508; x=1706683308; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vfNWnUWcm3WPEBVslcuE4aBui9NgU4AGTeDXSpoH9UY=;
-        b=e1zk9p8sxOqkgK1nq39MNWxwoAzzodi0gouFTGbmtFv1C93k15LDfbW1LS+8JimgWN
-         nd/keSx7V2nhsS7sYr0PJ1eQQ0erYKhnCOvxsVFCMNw2EYKHcv+/j7KjBoKxpLS3RcXB
-         e81UnIqcSsBHFGr8ccR1xElLRfC9nxY86AyjKm0a1irWRZ5nPqCneIJkF2weHW8/5ZRN
-         5+HIBkM8fWAJSgpyNCYLxMdj7eWViWSjpr7AjzWfYdZ/FXbFSJoSAVmfnni9+OvA5/uL
-         nVbwVsBtkmVv8WoNX2mGq0YAIbfHbnnsuunMyyWxQ1WV1m4nvbS/68Bc7yfOdmzpuBxM
-         5k9Q==
+        bh=gXfAVeTUyj0V0Cx9OOrCXcp0NweVNGV81kqhQ909vpE=;
+        b=S7qLZwo9mTNtyx3nHpXDP2tZaUd2uF0Y99gcUnoROA0bjvCvj+rHX250CBY9cuPHf3
+         kwE08Jt+3HNTPaXki9jdeNgenFN0HzDQrJS7L+m1Iv2U7XtLx3Fni6NfyAUXLwmk6bQ1
+         NOYCUBzdY/vPk+KGlSgAlWcqkB95C4bBgwtJ8tCXSaZn8BNkaafcJYx/wHJJr6DdpRHU
+         qAlpMIqCC4faYD1wVYbDupKKkGE+RXpTQgAAQOq9+pPVEreD0op+JLppfqS+gLObclYQ
+         Hgk3VzrdCllnj8Yu3joQNnWItbEc/m7hlRXKtwSMs5RAgUr4nhwVPJtMImxucMbfSIq9
+         EwqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706078051; x=1706682851;
+        d=1e100.net; s=20230601; t=1706078508; x=1706683308;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfNWnUWcm3WPEBVslcuE4aBui9NgU4AGTeDXSpoH9UY=;
-        b=FqqWjVChpVJSvWSe04iCTx2HRQ/XSiKqMLCyS0SMlepqhOVVVOb5dRWzfimzm1Cte9
-         0qOCDD/2RwzaLCdt94Nkont4nyXmpSfQVlQVtumMDzaACb2jhWoMWrd3502NV1hKlO7P
-         IE8osa9qWc5pfA+kGwdQzr+IAwrJVXEgM6p+aOqrEcR4bSQUsyqGrBJqoJ0FdUMW4kRD
-         ksDiLDQOFZb7TOE1stV1Dp/w1pIDLRLBBLi8QD1D0OSNO1sFNbHA1FZFjbw6djRdsNty
-         1Z1SYmxC/1NOt1tprBfCZv3PiuVp8689vbr1TaKWOG5eb/qOt8SlPhrJodv8qKIH6c5y
-         /5hQ==
-X-Gm-Message-State: AOJu0Yz1kILdoBn4+3iTXKQp2FMuoaVZbt7woHjXcgoY+ukgrlKza1QS
-	3QSn5pkbvZFtl7FouRsYXv1mlzTezqm4XPFTPg87YRfcRgthwxQfq9nbHdma/H6H0eK/yje1inu
-	h0K8=
-X-Google-Smtp-Source: AGHT+IG7fUo88pMASepU5qZZLwqvGAdHoLhOHiZFHeH8aD0WcxgPFajpan06yafeLMt2vz+PejV9Gw==
-X-Received: by 2002:a05:6512:718:b0:510:d70:4823 with SMTP id b24-20020a056512071800b005100d704823mr497608lfs.44.1706078051338;
-        Tue, 23 Jan 2024 22:34:11 -0800 (PST)
+        bh=gXfAVeTUyj0V0Cx9OOrCXcp0NweVNGV81kqhQ909vpE=;
+        b=UnngAvj9WWCi+me0/RH0/VSq1T/ehxBS6lsYnxSCZqXcCOqOsDVt8AZHgFv8yW7Obg
+         WboHF/GQULG0f9aRYW5AhBLwwicY4EHUbaqdewHYAiCARfJQ0YRX18ZdxGdyOl43ZoQe
+         OuB8qr3YthS7rYj3l0FCJGi5nCQnFcVQtz3Uso4LfTLiGQfKyz6L66l6QX+euDFaUETl
+         W9JX7Px7pakw+mnT5CLepxVJh0iQycC/fC1FXxdeZAGRDIN3acIOcnL02xkxDDiimPZ9
+         oRESuWlmsXDN6D+yFQZLRr8BBrMObAeyrnpZHdNOlSVBgYrrgnshjKcaWzWqbSE9Mw10
+         PZ0A==
+X-Gm-Message-State: AOJu0YwUZ9/zskHq5qSdDL81+IUA4T3yaGIDs81E2913NFKdmA4r94rN
+	QiTWlWVW9ie1VABmuWp2GCe7RpH40oV1rDwQdXfR9j6+R18LJFdO5mXFlzzHHWM=
+X-Google-Smtp-Source: AGHT+IFy2B3hDcPHpEyupu73Pa43sNWQ6wvHbVMuCgEFRM805mJWYSD88TcNZr89mL9xv0dV6sQyvw==
+X-Received: by 2002:a5d:5042:0:b0:337:c29a:409a with SMTP id h2-20020a5d5042000000b00337c29a409amr206144wrt.119.1706078508198;
+        Tue, 23 Jan 2024 22:41:48 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id d13-20020a05651233cd00b0050e7b6ee12bsm2490852lfg.296.2024.01.23.22.34.09
+        by smtp.gmail.com with ESMTPSA id bw12-20020a0560001f8c00b00337cef427f8sm15589455wrb.70.2024.01.23.22.41.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jan 2024 22:34:10 -0800 (PST)
-Message-ID: <28b3f4c6-9bd3-4a26-95d1-8809690b68a2@linaro.org>
-Date: Wed, 24 Jan 2024 07:34:08 +0100
+        Tue, 23 Jan 2024 22:41:47 -0800 (PST)
+Message-ID: <256fa483-928a-4f43-8c15-d111b6aa6b21@linaro.org>
+Date: Wed, 24 Jan 2024 07:41:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,23 +60,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom,gcc-sm8150: Add support for
- bi_tcxo_ao
+Subject: Re: [PATCH 1/3] dt-bindings: clock: gcc-msm8953: add reset for MDSS
+ subsystem
 Content-Language: en-US
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
+To: Luca Weiss <luca@z3ntu.xyz>, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
  Konrad Dybcio <konrad.dybcio@linaro.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+ Conor Dooley <conor+dt@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240123-gcc-ao-support-v1-0-6c18d5310874@quicinc.com>
- <20240123-gcc-ao-support-v1-1-6c18d5310874@quicinc.com>
+ Vladimir Lypak <vladimir.lypak@gmail.com>
+References: <20240123-msm8953-mdss-reset-v1-0-bb8c6d3ce897@z3ntu.xyz>
+ <20240123-msm8953-mdss-reset-v1-1-bb8c6d3ce897@z3ntu.xyz>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -123,37 +120,20 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240123-gcc-ao-support-v1-1-6c18d5310874@quicinc.com>
+In-Reply-To: <20240123-msm8953-mdss-reset-v1-1-bb8c6d3ce897@z3ntu.xyz>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/01/2024 17:34, Satya Priya Kakitapalli wrote:
-> Add support for bi_tcxo_ao, this allows to put an active only vote on
-> the critical clocks.
+On 23/01/2024 22:03, Luca Weiss wrote:
+> From: Vladimir Lypak <vladimir.lypak@gmail.com>
 > 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> Add a new define for the GCC_MDSS_BCR found on MSM8953.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
-> index 58ccb7df847c..17e29e9bbc11 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
-> @@ -23,11 +23,13 @@ properties:
->    clocks:
->      items:
->        - description: Board XO source
-> +      - description: Board XO active only source
->        - description: Sleep clock source
->  
->    clock-names:
->      items:
->        - const: bi_tcxo
-> +      - const: bi_tcxo_ao
->        - const: sleep_clk
+> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> [luca: expand commit message]
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 
-You cannot add clocks in the middle. The order is fixed.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
