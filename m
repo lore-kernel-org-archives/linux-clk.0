@@ -1,75 +1,72 @@
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A621A17981
-	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 08:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CEE17BA0
+	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 08:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706085808; cv=none; b=EOClk2HuwcOqjbKzwSUZ/qn8etmJnZuoDuc5ULXCyeI0Bd1cbCpC+WQ3+JkY8ogFFFOT0I8stwH3vGNqSV+L7Ra7y5knFXqcPnO+TXtj1F01+FOtA5yKAgowpbKyuPU65HtnU2qVWrvGRlcZvKQoMscG8FkF+/sz6YSyLfbuNkA=
+	t=1706086039; cv=none; b=E7ZUbDyxT7kJB/S409g/HjViiQlPDqC2wRcxeHbT4RuA24CkGh8LiMbxkSvUu+KkeVYjKP/gEzCQS0VeXK4yAN6dyNr55RXtx5x3+O03bcwMR3y1E6bB8yqIy2zohQ/8ShOLc6Bi8P+kF+wt+eJXN9BL4Geu0XykpJWhC4GN2zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706085808; c=relaxed/simple;
-	bh=a5+Y4PK8Tvf+sigWvxT2Oizf/v8oqo1GVxi7PwImtVY=;
+	s=arc-20240116; t=1706086039; c=relaxed/simple;
+	bh=/zscOn2VGjXQu+e3uCRHdAjLTiAFEmj5ojQ5R1TC/KQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=psD5JlMtyV7R+nTwC9+2kcEpmSrkkI/QmUPgsYPVWyR/HzEWGBWdcrPnZLE3trZ0O1EhFa+nJbZSkbiokUOcJv5afGmDbd1vUlsOmRSiJePvYnoDcEeTrTfZv8kvXcLbC/gsVUHSTD6dfV3pyNxNm0MJymBqGZmq4GMPPf76HHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t5rB2M5+; arc=none smtp.client-ip=209.85.167.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=sF9mg5Hn2+X1NrQD/6kViEb7yRjbrmtE5Bfm9uVvO42XNpBo3HJIwED+rQdrf2FFzGEbGt5VrRPHZaKsFutocNe/qabttlJa1dsTfsES+o878XFPz1dzit21KTMQMW41EUoqLs9jreVsMlZyLCz13xHAyYFsfsQCY+sAgyKDip0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CwfckkQG; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t5rB2M5+"
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3bd3b34a58dso3337211b6e.3
-        for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 00:43:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CwfckkQG"
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6806914dba7so36742466d6.2
+        for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 00:47:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706085804; x=1706690604; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706086036; x=1706690836; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=5F77cepD96Xl+KWE10eagNpd7WlTaV/PHMJWTPQtzTE=;
-        b=t5rB2M5+MAajF2aV9uQKCMpPhUIeDzUSKVnfCNkSHl/CL1QkZJiTOo1juuU6mFlSMA
-         pv1MwOhTUEc0Aop8nlSlEcz3dCt+qRhDkzZONQ8LcgwjQRdFtelJWPKb+l/NutDdspIc
-         6DM7FjDTmNrjrxtrPm5tR04FzonWwrCuhgaovkR8huepuM6LZ4e/wY2KSQNlwBSCEnUt
-         z9N/u6MYNNSHIv63ippwl0nd4QvnQE2VkxQQqxtSurerPLwLu+csuVCxfPcXLX22aaRE
-         Prmstzb7hAB+WRhsmj8ivh/ylHiDBIsOPLLzrpUjoSAWN2X3cI2swI1qV29vLPCTj+4f
-         T0vQ==
+        bh=vOnv3adWQrKv1Zkv4bX3OIcJzRZ65t2vYD9WyrY+EY8=;
+        b=CwfckkQGPhnKM9Pmx6O+LlYtGGJW83sZXAd9LivfOdsY8Um6xgBJuyNPXVS2etgPsy
+         kLJhx+PIT2sGvPdk64S2D0p5GWFaIv7BQvtLcb/ZK8GyBYt8OaaZb0EgV6tidNrJBNYU
+         sjTeLFUUPcOTREuAi1olCMNH/jK3ivIgkHZMfYTcLZDKpXpODeO5+2OmCRrc40DuPlYj
+         m7kWidT/aAnQhcFe9HDpyOamlF7P1C27l9fojL9/zzeOiR7zgQGoHWu2b36NgKPhzZV/
+         H66O/7nzBfkhOxfsEirJXy6lL8pmnQYv05I+xiFH5HwiaN0D/wlmVjVWELH8Gh5uY4Bf
+         A5Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706085804; x=1706690604;
+        d=1e100.net; s=20230601; t=1706086036; x=1706690836;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5F77cepD96Xl+KWE10eagNpd7WlTaV/PHMJWTPQtzTE=;
-        b=Dxs2CwALvz7W9L14jZvdjyEsn9+LqhNJnsJra3B9hLGKfeMma/PpyRIwe6+yPbrJnm
-         G48OU//hpbp6OXb3raHRDdo6M/W1n+a3D6lV9w2SQb4mchLcRgNr4ECGVdP+dB7YemfY
-         wpdB60IwCqxNAywkNx4vmAFCA4bCICV71Jn8avQUeJw3vdOfHCdm8GiviJuSgg2md0CD
-         VCDnYPg4U8nZbBzy1e8QmeRMUwOoYgBnFq2h0ECAuhvipmFvJyXrI8JSluFM3kJZmr7N
-         bwb9STOiHOZqk2C6yuqNbbeIL0Jy4kvQ2TjJ3kHFB7ujO5xe5FmeAU4ShMhZAHOF8THY
-         umnQ==
-X-Gm-Message-State: AOJu0YxJojzFsxR3ly774mU84sIWFdebzfb1z2SS2WzIn3A4LhHkp2tH
-	GdYM7WqA76zeK+aGD7p6TVSOxV6ifHdLGQiVCBQiiH5wqW4qiC7caL2waEpWfA==
-X-Google-Smtp-Source: AGHT+IHKCJEXy30SfEdm+8xbyObjZ+0ZwuX9yqOA4WKKW5OGso/7AlJuDblMWxjiQyWpjfRUI6IqJA==
-X-Received: by 2002:a05:6808:11c9:b0:3bd:9ff7:6051 with SMTP id p9-20020a05680811c900b003bd9ff76051mr1163124oiv.72.1706085804661;
-        Wed, 24 Jan 2024 00:43:24 -0800 (PST)
+        bh=vOnv3adWQrKv1Zkv4bX3OIcJzRZ65t2vYD9WyrY+EY8=;
+        b=O+3QyIikUvorVNmUw447OROEq4ywnXBmeOMGroBozBGbNPoplOt3twOC8y0L+pOKZz
+         NVWV9UgCWZSzLB1dGJgQRtdsWbgU6WfB/1BlW1S1vn0Kea+tBR5wwJNq96srjRQNbQMm
+         1hdEwfdK0aZ2SqidjzsH4xBI2ZPWqV5W0TqM1yT0nRlPsl0urvHmN9/1m/nSGMmNueQu
+         TFOC9YPh1EwwSUSMGBjhBck9jE76kLiW2QN8XJANG596OWlr6wXD3RXl6gL6UFYZtp+V
+         5Fm+lZLDq1O+cBROnr4wrbn0iiH7T54GeAKXNhu9vFYecpf+jPY4CQcuxVLIYKPbAw/p
+         9vVA==
+X-Gm-Message-State: AOJu0YwcKbtcpB4p/bo9L5TprlDJoS+Wo6pPXYsyqI092Wll2m9ukaz1
+	SXUBib3OAIsaZTVeVXtmbptl2hZThUMVx9ayOCxyaaMhMG5Jxk/G8+DUYTMSRQ==
+X-Google-Smtp-Source: AGHT+IHI35pk3JFRrtsiBg3LW/bMC+Q5U/NC24rnsI0zZ+xuGKIthCubKXQN+iyZccdPkF6iDuPrJw==
+X-Received: by 2002:a0c:e285:0:b0:686:2b72:6f39 with SMTP id r5-20020a0ce285000000b006862b726f39mr2160281qvl.98.1706086036074;
+        Wed, 24 Jan 2024 00:47:16 -0800 (PST)
 Received: from thinkpad ([117.217.189.109])
-        by smtp.gmail.com with ESMTPSA id s36-20020a056a0017a400b006dd89752e8asm1067422pfg.22.2024.01.24.00.43.18
+        by smtp.gmail.com with ESMTPSA id ny18-20020a056214399200b006868e6d8b37sm2960906qvb.23.2024.01.24.00.47.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jan 2024 00:43:24 -0800 (PST)
-Date: Wed, 24 Jan 2024 14:13:13 +0530
-From: 'Manivannan Sadhasivam' <manivannan.sadhasivam@linaro.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, jingoohan1@gmail.com, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-	linux@armlinux.org.uk, m.szyprowski@samsung.com,
-	pankaj.dubey@samsung.com
-Subject: Re: [PATCH v3 1/2] clk: Provide managed helper to get and enable
- bulk clocks
-Message-ID: <20240124084313.GD4906@thinkpad>
-References: <20240110110115.56270-1-shradha.t@samsung.com>
- <CGME20240110110156epcas5p36bac4093be0fa6eaa501d7eaed4d43d3@epcas5p3.samsung.com>
- <20240110110115.56270-2-shradha.t@samsung.com>
- <20240120150303.GB5405@thinkpad>
- <05ea01da4e92$0357d310$0a077930$@samsung.com>
+        Wed, 24 Jan 2024 00:47:15 -0800 (PST)
+Date: Wed, 24 Jan 2024 14:16:59 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: andersson@kernel.org, vkoul@kernel.org, sboyd@kernel.org,
+	mturquette@baylibre.com, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, quic_cang@quicinc.com
+Subject: Re: [PATCH v2 14/16] arm64: dts: qcom: sc8280xp: Fix UFS PHY clocks
+Message-ID: <20240124084659.GE4906@thinkpad>
+References: <20231218120712.16438-1-manivannan.sadhasivam@linaro.org>
+ <20231218120712.16438-15-manivannan.sadhasivam@linaro.org>
+ <e905c463-6f89-4939-981a-7a360ed31669@linaro.org>
+ <20231220083014.GB3544@thinkpad>
+ <a888e261-e990-445c-ab98-f63859c19dd2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -79,78 +76,47 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <05ea01da4e92$0357d310$0a077930$@samsung.com>
+In-Reply-To: <a888e261-e990-445c-ab98-f63859c19dd2@linaro.org>
 
-On Wed, Jan 24, 2024 at 12:23:15PM +0530, Shradha Todi wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Sent: 20 January 2024 20:33
-> > To: Shradha Todi <shradha.t@samsung.com>
-> > Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> > pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
-> > soc@vger.kernel.org; mturquette@baylibre.com; sboyd@kernel.org;
-> > jingoohan1@gmail.com; lpieralisi@kernel.org; kw@linux.com; robh@kernel.org;
-> > bhelgaas@google.com; krzysztof.kozlowski@linaro.org;
-> > alim.akhtar@samsung.com; linux@armlinux.org.uk;
-> > m.szyprowski@samsung.com
-> > Subject: Re: [PATCH v3 1/2] clk: Provide managed helper to get and enable bulk
-> > clocks
+On Wed, Jan 03, 2024 at 02:50:04PM +0100, Konrad Dybcio wrote:
+> On 20.12.2023 09:30, Manivannan Sadhasivam wrote:
+> > On Wed, Dec 20, 2023 at 01:35:27AM +0100, Konrad Dybcio wrote:
+> >> On 18.12.2023 13:07, Manivannan Sadhasivam wrote:
+> >>> QMP PHY used in SC8280XP requires 3 clocks:
+> >>>
+> >>> * ref - 19.2MHz reference clock from RPMh
+> >>> * ref_aux - Auxiliary reference clock from GCC
+> >>> * qref - QREF clock from GCC
+> >>>
+> >>> Fixes: 152d1faf1e2f ("arm64: dts: qcom: add SC8280XP platform")
+> >>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> >>> ---
+> >>>  arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 18 ++++++++++++------
+> >>>  1 file changed, 12 insertions(+), 6 deletions(-)
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> >>> index cad59af7ccef..37344abbe8bf 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> >>> +++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> >>> @@ -2256,9 +2256,12 @@ ufs_mem_phy: phy@1d87000 {
+> >>>  			compatible = "qcom,sc8280xp-qmp-ufs-phy";
+> >>>  			reg = <0 0x01d87000 0 0x1000>;
+> >>>  
+> >>> -			clocks = <&gcc GCC_UFS_CARD_CLKREF_CLK>,
+> >>> -				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
+> >>> -			clock-names = "ref", "ref_aux";
+> >>> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+> >>> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
+> >>> +				 <&gcc GCC_UFS_CARD_CLKREF_CLK>;
+> >> GCC_UFS_REF_CLKREF_CLK
 > > 
-> > On Wed, Jan 10, 2024 at 04:31:14PM +0530, Shradha Todi wrote:
-> > > Provide a managed devm_clk_bulk* wrapper to get and enable all bulk
-> > > clocks in order to simplify drivers that keeps all clocks enabled for
-> > > the time of driver operation.
-> > >
-> > > Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> > > ---
-> > >  drivers/clk/clk-devres.c | 41
-> > ++++++++++++++++++++++++++++++++++++++++
-> > >  include/linux/clk.h      | 25 ++++++++++++++++++++++++
-> > >  2 files changed, 66 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c index
-> > > 4fb4fd4b06bd..05b0ff4bc1d4 100644
-> > > --- a/drivers/clk/clk-devres.c
-> > > +++ b/drivers/clk/clk-devres.c
-> > > @@ -102,6 +102,7 @@
-> > EXPORT_SYMBOL_GPL(devm_clk_get_optional_enabled);
-> > >  struct clk_bulk_devres {
-> > >  	struct clk_bulk_data *clks;
-> > >  	int num_clks;
-> > > +	void (*exit)(int num_clks, const struct clk_bulk_data *clks);
-> > >  };
-> > >
-> > >  static void devm_clk_bulk_release(struct device *dev, void *res) @@
-> > > -182,6 +183,46 @@ int __must_check devm_clk_bulk_get_all(struct device
-> > > *dev,  }  EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
-> > >
-> > > +static void devm_clk_bulk_release_all_enabled(struct device *dev,
-> > > +void *res) {
-> > > +	struct clk_bulk_devres *devres = res;
-> > > +
-> > > +	if (devres->exit)
-> > > +		devres->exit(devres->num_clks, devres->clks);
-> > > +
-> > > +	clk_bulk_put_all(devres->num_clks, devres->clks); }
-> > > +
-> > > +int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
-> > > +				  struct clk_bulk_data **clks, int *num_clks)
-> > 
-> > What is the user supposed to do with "num_clks" when you are already handling
-> > the enable part?
-> > 
-> 
-> Since the initial clk_bulk_get_all was returning the num_clks value, the thought was to maintain this
-> as the user might want to have a check in their driver whether x number of clocks were successfully
-> retrieved and enabled.
+> > I'm not sure about this CLK. So I kept it as it is until I verify it.
+> I am quite sure everything *UFS_CARD_* refers to the other UFS host..
 > 
 
-IIUC, the returned clock count is only used for enabling or disabling the
-clocks later. Since you are already handling it inside this API, I do not see a
-necessity to return the count.
+We cannot infer that from the naming. There is a chance that the same clock
+could be routed to MEM_PHY internally. Moreover, there is no separate "ref"
+clock for MEM_PHY though.
 
 - Mani
 
