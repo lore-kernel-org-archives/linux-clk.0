@@ -1,135 +1,147 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17541AAB1
-	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 11:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D455820B
+	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 11:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706095244; cv=none; b=FV6CD71ffOtEPAML59q7KBETQqvIUM7vdQ+D2ZupXm5Mox9fo7b65D7sQZZkeldPBvxxupx8Zukkt7nEYG8lVrQXp3kVLjjT6Exfn21X8aHX+FKpIP/WAp80lWsTu5TGE6q8QC3GOr4CTi4MywcuOZLwRxJRtNBy+Hk7DcvwL6I=
+	t=1706096865; cv=none; b=lJMfxQ2X/klhrJV90NQL0K89fnIDAI2YKZ51sp7/zhoYLKNKbHhOtQMZDhPn9PLQhe9WfCnXAMIBFlkD3sC4ZHxa3F9pyaaZGMuAUd2fabUKgRRuAI9aJaScRk0ojs8Pahf6PtLDTX1Cc6YJu3eF7xhmhFK5giTa3vYmTpQfQb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706095244; c=relaxed/simple;
-	bh=SviQCXmDLirCs4JO1nzHIrTlDlz6LsIRudKgj0uC0xE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t/BGcnWi7Cx/VjZxPe4bFL2B0Wg2Tdbmp/xrXKo3AWgkFBRx5Fu7F2+SXBh+VR4EBCakBI339JPggHjEoBKJfkeYzVZgiTJbbG8W061UnixgRTTfcqNwaxnTIlwz4jjhumnbskoKqiLtjOtgCJellEUBPhNS4bnI5V5++iL3y6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ju6HOdVb; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706096865; c=relaxed/simple;
+	bh=dwUFUgXnc97o1JhfPJM4lmSZq785hcoEF4F3egx8Bq4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=hHx91DHRvhcTqNxZr5FmzasvkjeACreZthdEdGsSzKYZ5ZUwd2MiOBQLfa0lz0bjebqUR8HNu+5CLt1L4BQ/PYFKbB3yg4p1vIsIKdd9w7yBnbcTc+NyMtsHEkazxsKOIiuaM084SjR+A+KEaw6Ei0b3JmUUPmS1iNGOQcSb86M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZQPhwcOO; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ju6HOdVb"
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-600094c5703so27885797b3.3
-        for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 03:20:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706095242; x=1706700042; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2bdIHrfXD/9hbP6UF2QacCP3XBc//BmgWJRzX/SOVJA=;
-        b=Ju6HOdVbXDs3NV5Tf2qOVc4/B5qU/6qm7+A6YyOV7oSgrBBmem+T9Dqfn45uEQM7R3
-         ghw0R3ScMqKHmA0jnjKYeJtvMr2tkoNwVUx32x5r60bktj4yCAbZrETM+s4IWCtsrS8w
-         zLOeIkC8QVP9xzjlfZR03r5XKwRvIKNps2t2s9CSw2MDGjGghpOELsYqDhncM3KeMuvP
-         tz/73/3nzAkE1JYQ3OMRAQJLnYK5VIyON/0GN6CQoNHuLExfyHBPiQCiP37FP2V3IPUW
-         HA3OPLwrFFFIxl4pW4Mv8ZEzw9cfGryuTIEaZ+YvOAjYPLyx+538VxObJ0hCeBqgI7Bp
-         4vgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706095242; x=1706700042;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2bdIHrfXD/9hbP6UF2QacCP3XBc//BmgWJRzX/SOVJA=;
-        b=M0x9cITkmPiJpkdNOAmlIOWwuwUMHuGfZq4wRzq7xTTT+X90qJlydtdStjIPx2tgZe
-         6IvbINHz993vrpZyRqpjGUhoMAozfNtNij73cOkcopWaUcQe1ok5AFgk7glCybHen2en
-         vIpCpqNy+4HXY2QXCH7u5/lgt4JtMA2ENFzz2WUWJJ6zT7F9BJ1kBqY0ZtMS7eosV+t8
-         Yp6BzYNUg6Kj7FCmvWtS3gOtqb4RitmCPB28uWWH0gAzL5DErbOcYnZRqMVuZRalwQED
-         sfc42Gohl1qpVNXkCxsu5O8zJYLBmRgfwrE2L6Q4SCUrPXQJPWJ6D+C/6TfVaN1i92xm
-         5nNg==
-X-Gm-Message-State: AOJu0Yy0/f7Dl3Z7wf8GM/SsQxbNXLlvd3iliM+NOb/1+yVbU6pM3oBx
-	ixyODSHBQqmv3u4CchQt8Ny88nFybcWvbKxKsgrZC/dY9XfMk7uiMc1naDTGRajze+Toqb7S/kz
-	xH45E7K28VAiaDgCJjEBujhOPUm2W297wNJBA7k3Y8r/micfEHvI=
-X-Google-Smtp-Source: AGHT+IE1uiznvlPBDMQFqFLFS9RjLC7Gaa0RsS3QjYSWYZJzRs91oTkCJNvkTYasdSG0GHhFVhDmU5cHiNmysX9/6IU=
-X-Received: by 2002:a81:7c57:0:b0:5f5:9ba1:788a with SMTP id
- x84-20020a817c57000000b005f59ba1788amr591735ywc.95.1706095241785; Wed, 24 Jan
- 2024 03:20:41 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZQPhwcOO"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240124114740epoutp01d81413d7b425db7ad393a9c722451d32~tRg42cXOs0196301963epoutp01j
+	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 11:47:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240124114740epoutp01d81413d7b425db7ad393a9c722451d32~tRg42cXOs0196301963epoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1706096860;
+	bh=FAgkRhdAC59JFAtm6cZa0lcuph+thmUnykW5y5DcQUI=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ZQPhwcOOfJhIjaSXLhqK2zJoqczs0rv2migJCof/kn3ULLzW8g0KCQYcFiCl24kGr
+	 uQUujZUwy26sFlTqUSfNSSB09LOAnXeUEl5JrqQwmhnA3N3t4owtlU5n8jucRMlSI/
+	 qoZeie0nFR4yq6jC7TUg6KVlsgTyPgUEnJHxS4jQ=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240124114740epcas5p13e64a477aeab25808dfb39ee2f01be06~tRg4XzjGz0304803048epcas5p1s;
+	Wed, 24 Jan 2024 11:47:40 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4TKhyy3jbvz4x9Pv; Wed, 24 Jan
+	2024 11:47:38 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	11.D5.19369.AD8F0B56; Wed, 24 Jan 2024 20:47:38 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240124103850epcas5p48fcb1e92172efd246b8292a294740dd1~tQkx79-pI2047220472epcas5p47;
+	Wed, 24 Jan 2024 10:38:50 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240124103850epsmtrp126601239072c5bb26298f097af4e18d4~tQkx6KDW32198721987epsmtrp1T;
+	Wed, 24 Jan 2024 10:38:50 +0000 (GMT)
+X-AuditID: b6c32a50-c99ff70000004ba9-ff-65b0f8da8882
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	04.6C.08817.9B8E0B56; Wed, 24 Jan 2024 19:38:49 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240124103847epsmtip26853ef4be44a9903676df0f3deffbbfd~tQkvY2buE0212502125epsmtip2q;
+	Wed, 24 Jan 2024 10:38:47 +0000 (GMT)
+From: Shradha Todi <shradha.t@samsung.com>
+To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org, jingoohan1@gmail.com,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+	linux@armlinux.org.uk, m.szyprowski@samsung.com,
+	manivannan.sadhasivam@linaro.org, pankaj.dubey@samsung.com, Shradha Todi
+	<shradha.t@samsung.com>
+Subject: [PATCH v4 0/2] Add helper function to get and enable all bulk
+ clocks
+Date: Wed, 24 Jan 2024 16:08:36 +0530
+Message-Id: <20240124103838.32478-1-shradha.t@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmpu6tHxtSDT7cEbN4MG8bm8WSpgyL
+	FV9mslvsfb2V3aKh5zerxabH11gtPvbcY7W4vGsOm8XZecfZLGac38dkcWjqXkaLlj8tLBZr
+	j9xlt7jb0slqcfGUq8WirV/YLf7v2cFu8e/aRhaL3sO1DsIel69dZPZ4f6OV3WPnrLvsHgs2
+	lXpsWtXJ5nHn2h42jydXpjN5bF5S79G3ZRWjx+dNcgFcUdk2GamJKalFCql5yfkpmXnptkre
+	wfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUBvKSmUJeaUAoUCEouLlfTtbIryS0tSFTLy
+	i0tslVILUnIKTAr0ihNzi0vz0vXyUkusDA0MjEyBChOyMw7828Ja8JCz4tmrlAbGD+xdjJwc
+	EgImElOamtm6GLk4hAT2MErcOtXNBOF8YpQ48e4wO4TzjVFiVuNTli5GDrCWr1v9IOJ7GSX+
+	fullgXBamSQ+7uoCm8smoCXR+LWLGSQhIrAYaO6OzawgDrPAEyaJJTf+soBUCQv4Szw5uo8V
+	xGYRUJX4ufwzWDevgJXE1O2f2SAulJdYveEA2CQJgbUcEh3Nk6ESLhKf9r9lgrCFJV4d3wL1
+	kpTEy/42KDtdYuXmGcwQdo7Et81LoOrtJQ5cmQP2D7OApsT6XfoQYVmJqafWgZUwC/BJ9P5+
+	AlXOK7FjHoytLPHl7x4WCFtSYt6xy6wQtofEjLfTwGqEBGIlFixuZZ/AKDsLYcMCRsZVjFKp
+	BcW56anJpgWGunmp5fCoSs7P3cQITq9aATsYV2/4q3eIkYmD8RCjBAezkgjvDcl1qUK8KYmV
+	ValF+fFFpTmpxYcYTYGBNpFZSjQ5H5jg80riDU0sDUzMzMxMLI3NDJXEeV+3zk0REkhPLEnN
+	Tk0tSC2C6WPi4JRqYOrwDwhQVk6sj0hu0bSWLltwNcQ+/X3p/ocbemoqnF6+v787SLNI+/XT
+	uYe+7LT5Zm/tI3Wl7LjhsicGy9/1XTv508nvlujUmdH3+TYvFQniV1u9zeXegbDwqFuOb+yO
+	7ebNeqLi0VR7Mq4t4a192Ly3BVrVc3cvcI13n37p8TyB28t1LwWdty+Lm7KkZq5brkCFlEtd
+	fS7Ldwmh4xu4P/VKPXhx9PYb1fNXAnz7sp9NtV4RMWnOSutPkZ51IVcfC7Guk8oy7dO90rz8
+	hvXCj4wZOxvE1X6vfO8lvknni5jwec/N+5ddmXGzw4v36f+vK0WNfL2f9fxrN+t/WXvGePFG
+	jV7937w8Umax7zq5LJRYijMSDbWYi4oTAd8/t8c4BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHLMWRmVeSWpSXmKPExsWy7bCSvO7OFxtSDS7ssbJ4MG8bm8WSpgyL
+	FV9mslvsfb2V3aKh5zerxabH11gtPvbcY7W4vGsOm8XZecfZLGac38dkcWjqXkaLlj8tLBZr
+	j9xlt7jb0slqcfGUq8WirV/YLf7v2cFu8e/aRhaL3sO1DsIel69dZPZ4f6OV3WPnrLvsHgs2
+	lXpsWtXJ5nHn2h42jydXpjN5bF5S79G3ZRWjx+dNcgFcUVw2Kak5mWWpRfp2CVwZB/5tYS14
+	yFnx7FVKA+MH9i5GDg4JAROJr1v9uhi5OIQEdjNKzH14gqWLkRMoLinx+eI6JghbWGLlv+fs
+	EEXNTBLt/w6wgSTYBLQkGr92MYMkRASWM0r8PPmUCcRhFvjCJDHp4S4mkBXCAr4SJ2+VgjSw
+	CKhK/Fz+mR3E5hWwkpi6/TMbxAZ5idUbDjBPYORZwMiwilEytaA4Nz232LDAKC+1XK84Mbe4
+	NC9dLzk/dxMjOMi1tHYw7ln1Qe8QIxMH4yFGCQ5mJRHeG5LrUoV4UxIrq1KL8uOLSnNSiw8x
+	SnOwKInzfnvdmyIkkJ5YkpqdmlqQWgSTZeLglGpg0s75XbaO4/P+SR94++7fz1pySv3WzRXN
+	99QXM1qFSc4MVfHjv/KDIYWj6sad6F19UrKJf/K2pgRbnrvy5BVXYlX7jcrSCIkVf9wPfdhZ
+	NC0t9PexdfLPHz5fbppvqXxFeIGyoJ/4+80c4eu6GpLXd6wyTPWMYOd9Pbn4u1fx3J/WZad+
+	+gc9eTZvWlDkosQdOrKNG2WnNnhsalrou3nxsp3M9+7YNAWI/uVPOZ11+912xn98+ZrXN+1M
+	M68u/SKzNPnlRg7WWTOyFn29e80p6fgqm2u5Gb+mHPbx5T33nLe6uDZta59p06Rl7QXmUm2m
+	Cwx/Xnjw7njk++W/Pk/YZq11ZZH2waMc+3Vqv12Z+EeJpTgj0VCLuag4EQAt8+rK4QIAAA==
+X-CMS-MailID: 20240124103850epcas5p48fcb1e92172efd246b8292a294740dd1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240124103850epcas5p48fcb1e92172efd246b8292a294740dd1
+References: <CGME20240124103850epcas5p48fcb1e92172efd246b8292a294740dd1@epcas5p4.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
- <20230717-topic-branch_aon_cleanup-v6-1-46d136a4e8d0@linaro.org> <e993b237-46fb-3a0b-dc91-41e27ea0ab98@quicinc.com>
-In-Reply-To: <e993b237-46fb-3a0b-dc91-41e27ea0ab98@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 24 Jan 2024 13:20:30 +0200
-Message-ID: <CAA8EJpqDrFB_PmcA1uyubuaC5G8n6GqKkmY3sNDOf37AqrO=dw@mail.gmail.com>
-Subject: Re: [PATCH v6 01/12] clk: qcom: branch: Add a helper for setting the
- enable bit
-To: Imran Shaik <quic_imrashai@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Andy Gross <agross@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 23 Jan 2024 at 11:33, Imran Shaik <quic_imrashai@quicinc.com> wrote:
->
->
->
-> On 1/13/2024 8:20 PM, Konrad Dybcio wrote:
-> > We hardcode some clocks to be always-on, as they're essential to the
-> > functioning of the SoC / some peripherals. Add a helper to do so
-> > to make the writes less magic.
-> >
-> > Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-> > Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > ---
-> >   drivers/clk/qcom/clk-branch.h | 7 +++++++
-> >   1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-> > index 8ffed603c050..0514bc43100b 100644
-> > --- a/drivers/clk/qcom/clk-branch.h
-> > +++ b/drivers/clk/qcom/clk-branch.h
-> > @@ -64,6 +64,7 @@ struct clk_mem_branch {
-> >   #define CBCR_FORCE_MEM_PERIPH_OFF   BIT(12)
-> >   #define CBCR_WAKEUP                 GENMASK(11, 8)
-> >   #define CBCR_SLEEP                  GENMASK(7, 4)
-> > +#define CBCR_CLOCK_ENABLE            BIT(0)
-> >
-> >   static inline void qcom_branch_set_force_mem_core(struct regmap *regmap,
-> >                                                 struct clk_branch clk, bool on)
-> > @@ -98,6 +99,12 @@ static inline void qcom_branch_set_sleep(struct regmap *regmap, struct clk_branc
-> >                          FIELD_PREP(CBCR_SLEEP, val));
-> >   }
-> >
-> > +static inline void qcom_branch_set_clk_en(struct regmap *regmap, u32 cbcr)
-> > +{
-> > +     regmap_update_bits(regmap, cbcr, CBCR_CLOCK_ENABLE,
-> > +                        CBCR_CLOCK_ENABLE);
-> > +}
-> > +
->
-> Could you please help me understand how this helper function is useful?
-> Seems like this is just for reducing parameters compared to
-> regmap_update_bits(). But anyhow the same is being done in the existing
-> clock controller drivers with a comment which explains the functionality.
+Create a managed API wrapper to get all the bulk clocks and enable them
+as it is a very common practice in many drivers. The second patch uses
+this API to adapt to clk_bulk_* APIs in the exynos driver.
+v1:
+ - https://lore.kernel.org/lkml/20231009062216.6729-1-shradha.t@samsung.com/
+v2:
+ - https://lore.kernel.org/lkml/20231115065621.27014-1-shradha.t@samsung.com/
+ - Addressed Manivannan's comments to improve patch
+v3:
+ - https://lore.kernel.org/all/20240110110115.56270-1-shradha.t@samsung.com/
+ - Took Marek's suggestion to make a common bulk clk wrapper and use it in
+   the exynos driver
+v4:
+ - Addressed Alim and Manivannan's comments
+ - Changed enabled->enable and disabled->disable in function name
+ - Remove num_clks out parameter as it is not required by user
+ - Removed exit callback and used function name directly in release
 
-So, yes, it replaces the boilerplate code with API, which is good.
+Shradha Todi (2):
+  clk: Provide managed helper to get and enable bulk clocks
+  PCI: exynos: Adapt to clk_bulk_* APIs
 
->
-> Thanks & Regards,
-> Imran
->
-> >   extern const struct clk_ops clk_branch_ops;
-> >   extern const struct clk_ops clk_branch2_ops;
-> >   extern const struct clk_ops clk_branch_simple_ops;
-> >
->
-
+ drivers/clk/clk-devres.c                | 40 ++++++++++++++++++
+ drivers/pci/controller/dwc/pci-exynos.c | 54 ++-----------------------
+ include/linux/clk.h                     | 24 +++++++++++
+ 3 files changed, 68 insertions(+), 50 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.17.1
+
