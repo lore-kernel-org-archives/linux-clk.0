@@ -1,117 +1,190 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E756019478;
-	Wed, 24 Jan 2024 10:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FA3199DC
+	for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 10:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706093589; cv=none; b=XVam+Z1HFeatYV4lxYd2nAuYrudCAyO4/s3lY6q64WYMDe5qoxKY2oayY8yV/zCEwDfsbrIPWoVDFQLetWBzOBv8paA5Sds3UfEV0MxN1bNhMndf5ZbIgT8Z6sdgoQ7zEkeiev9oIakYzqfhqli4E9KwjvurgDssPcGp2SzwPUQ=
+	t=1706093673; cv=none; b=UYM+Drm1vhil+h/zHaoVWjeDexC8UYAROCRZD73Aw7AQQ4FaKifF4LzkycGn06GATIJJLkV836mECYaTUFxZgD3CE7o0wf+LZpr0yq5JShTjiz6p5wVr/vpJaDa1RlFPl8NJU6y8vBgtNxigwkNXQf5MhvdqBi6gcMfheBQdocY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706093589; c=relaxed/simple;
-	bh=fRgI8TKe4TKT/CoqSe6b8eZTQCRj+3aZnKViQg8ViUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZvohiZRqmoItiJVzUlzHLWDXKTvKqg3M5szZ77CYeRqq/AwA/odE46X7zjwxmrznPeNrV/YA57+FrzKx2YEUVMARiXk/3LJ0uQLqNhk/YXRETYdcR6kE/N6QvF/E4GFSBLbkYFMgv4LZvbEsXfCRT1idNyNlAj9FKEZ14Dr0oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixOxMw5F; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixOxMw5F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE588C433C7;
-	Wed, 24 Jan 2024 10:53:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706093588;
-	bh=fRgI8TKe4TKT/CoqSe6b8eZTQCRj+3aZnKViQg8ViUY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ixOxMw5FcDNAqJhnJyrgJmvMbZ1a5j6Aa5lWfeiyWmx6Ch/xgFkX166AtrluDWK/c
-	 3gxEoXGl5KfF2eo8XKNkkn9FdNkATkEGcxV4Xt/4sgzGCRVZKhI4Qzye0a5QjTjZgX
-	 GsCbuvU9/7yFHDwo0zichXRUK68Lty75ebKlSUueQPJr6t7ds8BDog97Pwq3iqU44T
-	 S4WL9jlWOeKrlPz4vl9l6wUQjfdqjYo7YP9F1XLbWA6l/qoU7JLirvtUhNBs2c3zY0
-	 BrRxzGf8OVQICKnEc9pjDm7lVuBbiNtBRJ8WLPVSPMOUxxJE26HGRv5EksXfcDYRfi
-	 hcJkhJpFe75Mw==
-Date: Wed, 24 Jan 2024 11:53:05 +0100
-From: Wolfram Sang <wsa@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Cong Dang <cong.dang.xn@renesas.com>,
-	Duy Nguyen <duy.nguyen.rh@renesas.com>,
-	Hai Pham <hai.pham.ud@renesas.com>,
-	Linh Phung <linh.phung.jy@renesas.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH 15/15] arm64: defconfig: Enable R8A779H0 SoC
-Message-ID: <ZbDsEU2z1C_4diTM@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Cong Dang <cong.dang.xn@renesas.com>,
-	Duy Nguyen <duy.nguyen.rh@renesas.com>,
-	Hai Pham <hai.pham.ud@renesas.com>,
-	Linh Phung <linh.phung.jy@renesas.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org
-References: <cover.1704726960.git.geert+renesas@glider.be>
- <db4ab7b72dc2f40085f19957f93b5442ca391fd6.1704726960.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1706093673; c=relaxed/simple;
+	bh=lKdiVruIzPpYmtbsDhdv0Tfge2qMRNvAnOAyUZusIqI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LUxieoqwU0Kpxb/43Acy5vZUnvOLJbR1+Tuy6uDEM9z9lfotlOcdoD0hpIM6hFh/EDVPH8GNq3ixAYFCBD5ejD+OuvZVJRK3y7AWhDpPRceOJsUxlz/AnKrflGZhYWbhIOGI95/ctU/gq+lgJ0KjL3nWR+GQK2Th8tWmWseygFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1rSatc-00013p-UF; Wed, 24 Jan 2024 11:54:16 +0100
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1rSatb-0022P4-5Z; Wed, 24 Jan 2024 11:54:15 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1rSatb-00086H-0J;
+	Wed, 24 Jan 2024 11:54:15 +0100
+Message-ID: <82bde47d48ec2962d69d9e4edde6d6d96fcbbd65.camel@pengutronix.de>
+Subject: Re: [PATCH v3 09/17] reset: eyeq5: add platform driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: =?ISO-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>, Gregory
+ CLEMENT <gregory.clement@bootlin.com>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Linus Walleij
+ <linus.walleij@linaro.org>,  =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?=
+ <rafal@milecki.pl>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+  linux-gpio@vger.kernel.org
+Date: Wed, 24 Jan 2024 11:54:14 +0100
+In-Reply-To: <20240123-mbly-clk-v3-9-392b010b8281@bootlin.com>
+References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
+	 <20240123-mbly-clk-v3-9-392b010b8281@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bJ2xvEoFeWU4mZ1F"
-Content-Disposition: inline
-In-Reply-To: <db4ab7b72dc2f40085f19957f93b5442ca391fd6.1704726960.git.geert+renesas@glider.be>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
+On Di, 2024-01-23 at 19:46 +0100, Th=C3=A9o Lebrun wrote:
+[...]
+> diff --git a/drivers/reset/reset-eyeq5.c b/drivers/reset/reset-eyeq5.c
+> new file mode 100644
+> index 000000000000..2217e42e140b
+> --- /dev/null
+> +++ b/drivers/reset/reset-eyeq5.c
+> @@ -0,0 +1,383 @@
+[...]
 
---bJ2xvEoFeWU4mZ1F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +static int eq5r_assert(struct reset_controller_dev *rcdev, unsigned long=
+ id)
+> +{
+> +	struct eq5r_private *priv =3D dev_get_drvdata(rcdev->dev);
 
-On Mon, Jan 08, 2024 at 04:33:54PM +0100, Geert Uytterhoeven wrote:
-> From: Linh Phung <linh.phung.jy@renesas.com>
->=20
-> Enable support for the Renesas R-Car V4M (R8A779H0) SoC in the ARM64
-> defconfig.
->=20
-> Signed-off-by: Linh Phung <linh.phung.jy@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+rcdev is contained in priv, you can just use container_of instead of
+chasing pointers around.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> +	u32 offset =3D id & GENMASK(7, 0);
+> +	u32 domain =3D id >> 8;
+> +	int ret;
+> +
+> +	if (WARN_ON(domain >=3D EQ5R_DOMAIN_COUNT))
+> +		return -EINVAL;
 
+Reset controls with domain >=3D EQ5R_DOMAIN_COUNT are already weeded out
+during request by of_xlate, so this check is not necessary.
 
---bJ2xvEoFeWU4mZ1F
-Content-Type: application/pgp-signature; name="signature.asc"
+> +	dev_dbg(rcdev->dev, "%u-%u: assert request\n", domain, offset);
+> +
+> +	mutex_lock(&priv->mutexes[domain]);
+> +	_eq5r_assert(priv, domain, offset);
+> +	ret =3D _eq5r_busy_wait(priv, rcdev->dev, domain, offset, true);
+> +	mutex_unlock(&priv->mutexes[domain]);
+> +
+> +	return ret;
 
------BEGIN PGP SIGNATURE-----
+Consider using guard(mutex)(&priv->mutexes[domain]) from
+linux/cleanup.h to automatically unlock on return.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmWw7BEACgkQFA3kzBSg
-KbY/JQ/+PT+Y/iWQ+m3vrkErMMKgF415lb7D4ZbGmFGHODMFjNAD0FIJTffZ2fDo
-q95UUvlxu3M2VQddneEB97ZsQWgZ+2szRyTrOogmbf3XEbgNY2rhkhbH3FR157u3
-Jth6Ai6kvNvcYK5AjYyLLIvgyEfT2L8N8AVrmEAYiRaWhOAwSqnE8V4fesmR87Uy
-8Tn4cSWklQggQG9AWQ9Q+3056ZctyHhUFmqXmFmaQ5ZVevrmxiSuPTikUrfYxBop
-ui35IS6UkyIANuQipqULfuwBuyrxTgAZzEZX5ga8/LPFYG3zMuRhf/FyE6Qtedsq
-/oW3WixgN/sh7faXKvmEZt8eg9VPTqO+dJ50BgbuZ6sJZTm6dOlFkFB+1/+e+iaZ
-ExMVBiVCS4nTZnDywl5Rpo+7QPzB6KqPe0z0kWCSgwcwHlr9zUD1hP4U/cWkNuA/
-2ST+nKJUxD03xLiLWFXN54z7BqfjloKwI0XS4phJQhP88LttG72Kb2tey7kemARx
-QpH3Hn0CGKtqZTjIGoSDnFkyVY8KzbMrEr+BLgVNXGfj7Km9rB3uCfotK3IvjAGS
-KZVhlRiln+Ea1E+CyglqUBOUaz7PI6hW4eZAr+h9kJ+zIAtqVhTbsstWZIy+nIPS
-QghhOGVEoieCsd/D88YYDRpiKs0PMtv5UfnQVOWWox6vvSYb3Uk=
-=dHbB
------END PGP SIGNATURE-----
+[...]
+> +static int eq5r_reset(struct reset_controller_dev *rcdev, unsigned long =
+id)
 
---bJ2xvEoFeWU4mZ1F--
+Is this used by anything? If unused, I'd prefer this not to be
+implemented. If it is used, is no delay required between assert and
+deassert by any consumer?
+
+> +{
+> +	struct device *dev =3D rcdev->dev;
+> +	struct eq5r_private *priv =3D dev_get_drvdata(dev);
+> +	u32 offset =3D id & GENMASK(7, 0);
+> +	u32 domain =3D id >> 8;
+> +	int ret;
+> +
+> +	if (WARN_ON(domain >=3D EQ5R_DOMAIN_COUNT))
+> +		return -EINVAL;
+> +
+> +	dev_dbg(dev, "%u-%u: reset request\n", domain, offset);
+> +
+> +	mutex_lock(&priv->mutexes[domain]);
+> +
+> +	_eq5r_assert(priv, domain, offset);
+> +	ret =3D _eq5r_busy_wait(priv, dev, domain, offset, true);
+> +	if (ret) /* don't let an error disappear silently */
+> +		dev_warn(dev, "%u-%u: reset assert failed: %d\n",
+> +			 domain, offset, ret);
+
+Why not return the error though?
+
+> +	_eq5r_deassert(priv, domain, offset);
+> +	ret =3D _eq5r_busy_wait(priv, dev, domain, offset, false);
+> +
+> +	mutex_unlock(&priv->mutexes[domain]);
+> +
+> +	return ret;
+> +}
+[...]
+> +static int eq5r_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct device_node *np =3D dev->of_node;
+> +	struct device_node *parent_np =3D of_get_parent(np);
+> +	struct eq5r_private *priv;
+> +	int ret, i;
+> +
+> +	priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
+
+Using devm_kzalloc() avoids leaking this on error return or driver
+unbind.
+
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	dev_set_drvdata(dev, priv);
+> +
+> +	priv->olb =3D ERR_PTR(-ENODEV);
+> +	if (parent_np) {
+> +		priv->olb =3D syscon_node_to_regmap(parent_np);
+> +		of_node_put(parent_np);
+> +	}
+> +	if (IS_ERR(priv->olb))
+> +		return PTR_ERR(priv->olb);
+> +
+> +	for (i =3D 0; i < EQ5R_DOMAIN_COUNT; i++)
+> +		mutex_init(&priv->mutexes[i]);
+> +
+> +	priv->rcdev.ops =3D &eq5r_ops;
+> +	priv->rcdev.owner =3D THIS_MODULE;
+> +	priv->rcdev.dev =3D dev;
+> +	priv->rcdev.of_node =3D np;
+> +	priv->rcdev.of_reset_n_cells =3D 2;
+> +	priv->rcdev.of_xlate =3D eq5r_of_xlate;
+> +
+> +	priv->rcdev.nr_resets =3D 0;
+> +	for (i =3D 0; i < EQ5R_DOMAIN_COUNT; i++)
+> +		priv->rcdev.nr_resets +=3D __builtin_popcount(eq5r_valid_masks[i]);
+> +
+> +	ret =3D reset_controller_register(&priv->rcdev);
+
+Similarly, use devm_reset_controller_register() or disable driver
+unbind with suppress_bind_attrs.
+
+regards
+Philipp
+
