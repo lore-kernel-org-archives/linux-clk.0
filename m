@@ -1,118 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830B9134744;
-	Wed, 24 Jan 2024 20:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27907E760;
+	Wed, 24 Jan 2024 21:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706129331; cv=none; b=B8NQtjJK6tiU07aQi+2sdvpqdveq/CxORpe5r1NZJ2sTQy3o11fp3cYf8ZsXMvTvyRVLLE7p0TFvP9vUXLPBvGz3CJCzAa0P4tAN7B6lpaBbAK3z9ayD0b5OD00T97MlY3YW/CWUxmM8cgw23nQO0Jx+3IH+KzqEhoxShiTzC8w=
+	t=1706131288; cv=none; b=iF8hmDiMo0Ji+eM9Nsjv3R0pTJDOU2eLQJZJLZ0hsLnaGjpoA6SMNZLim+ElFgwm9wxrDdBjqFyAHxa8CJQ3wNf5n6O5s/5bsyyqshKCDAbupvRVlw2tlnXweWyf2UXhRaawNuX66XOnwCI+f+9CgTHaOTDZ7SBRuv5iO9jGsdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706129331; c=relaxed/simple;
-	bh=Pu2WnJULiZ3SHOQa+Ls5gMiBM9GGmreLuufDrBDDCxY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Uf08sUOzJ4pW1qMkV9Ht2FU/CAPzzNkaah2flzseZHvvcbYmnnWdjk72RHaqqlbM6KfOz3+4LajtJRsLRe6dpHmXLFHtNdh0KAez+9rDWcKZyc1Uc8ybJAzy7Py9n0za/nLqse4q0THJyytfRhyaDFuuJWrArxu42diouFWWcGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/lDnsnr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706131288; c=relaxed/simple;
+	bh=FzOKL9KxZDnA9cvK6swo/MuG4jFcfk0VvlqEQegPZuM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NwzDoNxCrr864qeHlF53AOVBuvpdSgzOqba+aqBBsLiAH9HHjZOojj+gJ1b2EfNj0Q//YLNbRLPauxjR/k63u8WyprUL4ChJvrdC5TKAcyvIIi0VDeUpFpxnUx2gb3yPBDhCGXTj0tRU3rdE/sb18GyEf2EnwuE5dB+YA+3E6iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Mme52Erm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/lDnsnr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D15F6C433C7;
-	Wed, 24 Jan 2024 20:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706129330;
-	bh=Pu2WnJULiZ3SHOQa+Ls5gMiBM9GGmreLuufDrBDDCxY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=l/lDnsnrKGyL4NokUGCsi1Dqf3sT2rJfYHrXct9Zr7T2d5xHZklzHnHzME7Eh9v0M
-	 3BHNHwvIlFu/Unu8C2lQmm46LAVa2hT+wPbd81/wdHD4gh0hnjgoy4w56q3WJv2xfH
-	 q7HOrUFDXOuWYrd0wxS6m7yDHyE5reYUHX7ovIqmjpCfP5d5adU7uQf1Qb8gRaJ5Yj
-	 KlycmGGIsCESbhnKmb3TeMBdTK7Sss/DnCDlxbAgi/doD/hQ6yUzeMMuz6UHu1+MmX
-	 rlClWFvh0p71trdnWXIZXqg0HnqytUqUTGRYk+FmHqO43y8xd7c5SwvuKUnIhqYvGR
-	 3O7Y9BSLwS89w==
-Message-ID: <cae77ff909448cd7eb88716696d24091.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Mme52Erm"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40OKkjkD001981;
+	Wed, 24 Jan 2024 21:21:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=qcppdkim1; bh=NrQMdqBAv+lIUzaRxo00i
+	82mdCZlOLZNAfk2vB4ojS4=; b=Mme52Erm7bRgY2cHMG7zrbWV9VeZlueP72/SI
+	JzCtHwuU1jvIbLmKRsg0RAMQ7t4nsxFzJRFy+ZLB8y5n2MyYgVEiSiHgU4myr+Gu
+	4iCH8fGWtSycVUDtW5gJklU+HyTQ/dZBKVA+eu0Shf9Gv3hg0UOQinH08UMr0iNH
+	dZwPVprAOXP+2tPbYVscUV8RUMgLYWX9TWF1rqXzplwJTYt0lpOA6NGBe3ZXDWUi
+	/3jgraC2txKrPuuessJ9P3r88C+0YHbpF3laifc/xTF5BAvd+HBix5ejLYyfmq6Y
+	prHgL1hxangmbrrqWceKYs6qV3LejrDEEQXHvjxV74F/WPq+Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vu81g8b4k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Jan 2024 21:21:18 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 40OLLHoS012562
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Jan 2024 21:21:17 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Wed, 24 Jan 2024 13:21:17 -0800
+Date: Wed, 24 Jan 2024 13:21:16 -0800
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Johan Hovold
+	<johan+linaro@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: qcom: Allow VDD_GFX supply to
+ GX
+Message-ID: <20240124212116.GH2936378@hu-bjorande-lv.qualcomm.com>
+References: <20240123-sa8295p-gpu-v3-0-d5b4474c8f33@quicinc.com>
+ <20240123-sa8295p-gpu-v3-1-d5b4474c8f33@quicinc.com>
+ <f6844d28-c7c2-4afa-8520-2e62c608930d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <TYCPR01MB1126908A3DCEE35723E102993867B2@TYCPR01MB11269.jpnprd01.prod.outlook.com>
-References: <20240123115821.292787-1-biju.das.jz@bp.renesas.com> <20240123115821.292787-5-biju.das.jz@bp.renesas.com> <Za-u9VO2OuY6vhT8@kekkonen.localdomain> <20240123153550.GT10679@pendragon.ideasonboard.com> <TYCPR01MB112691B281C74CAD8EB14433E86742@TYCPR01MB11269.jpnprd01.prod.outlook.com> <20240123221011.GA16581@pendragon.ideasonboard.com> <TYCPR01MB1126908A3DCEE35723E102993867B2@TYCPR01MB11269.jpnprd01.prod.outlook.com>
-Subject: RE: [PATCH 4/4] media: platform: rzg2l-cru: rzg2l-video: Restructure clk handling
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Rob Herring <robh@kernel.org>, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-media@vger.kernel.org <linux-media@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, biju.das.au <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org <linux-renesas-soc@vger.kernel.org>, linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Wed, 24 Jan 2024 12:48:48 -0800
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <f6844d28-c7c2-4afa-8520-2e62c608930d@linaro.org>
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PnLJdRJX2jEfCfQfJoYniqoyj87W6M1A
+X-Proofpoint-ORIG-GUID: PnLJdRJX2jEfCfQfJoYniqoyj87W6M1A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-24_10,2024-01-24_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 lowpriorityscore=0 suspectscore=0 phishscore=0 adultscore=0
+ spamscore=0 malwarescore=0 impostorscore=0 mlxscore=0 mlxlogscore=771
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401190000 definitions=main-2401240154
 
-Quoting Biju Das (2024-01-24 06:01:30)
-> > > > > > CSI2nMCT0_VDLN(csi2->lanes)); @@
-> > > > > > -386,11 +389,40 @@ static void
-> > > > > > rzg2l_csi2_mipi_link_enable(struct
-> > > > rzg2l_csi2 *csi2)
-> > > > > >       rzg2l_csi2_write(csi2, CSI2nDTEL, 0xf778ff0f);
-> > > > > >       rzg2l_csi2_write(csi2, CSI2nDTEH, 0x00ffff1f);
-> > > > > >
-> > > > > > +     clk_disable_unprepare(csi2->vclk);
-> > > > > > +     for (count =3D 0; count < 5; count++) {
-> > > > > > +             if (!(__clk_is_enabled(csi2->vclk)))
+On Wed, Jan 24, 2024 at 07:31:34AM +0100, Krzysztof Kozlowski wrote:
+> On 24/01/2024 05:25, Bjorn Andersson wrote:
+> > +# Allow either power-domains or vdd-gfx-supply, not both
+> > +oneOf:
+> > +  - required:
+> > +      - power-domains
+> > +  - required:
+> > +      - vdd-gfx-supply
+> > +  - not:
+> > +      anyOf:
+> > +        - required:
+> > +            - power-domains
+> > +        - required:
+> > +            - vdd-gfx-supply
+> 
+> I don't fully understand what you want to achieve here. If only "allow
+> either", so not a "require either", then simpler:
+> 
+> https://lore.kernel.org/all/20230118163208.GA117919-robh@kernel.org/
+> 
 
-__clk_is_enabled() is a clk provider API. You shouldn't be using it in
-consumer drivers.
+As discussed in v2, power-domains is currently an optional property in
+this binding and I'm adding vdd-gfx-supply as an alternative to that.
 
-> > > > > > +                     break;
-> > > > > > +             usleep_range(10, 20);
-> > > > > > +     }
-> > > > > > +
-> > > > > > +     if (count =3D=3D 5) {
-> > > > > > +             dev_err(csi2->dev, "Timeout, not able to turn OFF
-> > vclk\n");
-> > > > > > +             return -ETIMEDOUT;
-> > > > > > +     }
-> > > > >
-> > > > > It'd be nice to have a CCF function to do this. Either way, you
-> > > > > can use read_poll_timeout().
-> > > >
-> > > > I would have sworn that clk_disable_unprepare() is synchronous, and
-> > > > would have sworn even stronger for clk_prepare_enable(). What's
-> > > > going on here, is there really a delay ? It sounds like a bug in the
-> > clock driver.
-> > >
-> > > At the moment we are not checking clock status when we turn off a
-> > > clock However, for clock ON we are checking the status while turning =
-it
-> > ON.
-> > > We need to fix the driver for clk_disable_unprepare().
-> >=20
-> > Does that mean that the check below clk_prepare_enable() could be remov=
-ed
-> > already ?
->=20
-> Yes, that is correct I will remove in the next version as clk_prepare_ena=
-ble() is
-> synchronous as it checks the status to make sure it is turned ON.
->=20
-> >=20
-> > Regarding clock disable, it isn't clear if the API guarantees synchrono=
-us
-> > calls. I'd recommend asking the clock maintainers. If it doesn't, then =
-the
-> > clock driver isn't wrong (and may lead to faster operation in most case=
-s),
-> > but I think synchronizing the clock disable by waiting for the clock to=
- be
-> > actually disabled should be implemented as a helper in CCF.
->=20
-> +clk.
->=20
-> Hi Stephen and all,
->=20
-> Can you please shed some light on this?
->=20
+As it's optional, barely any of our platforms define the property, so
+requiring this would not be compatible with existing DT source.
 
-clk_disable() is reference counted. The call to clk_disable() may do
-nothing besides decrement a count and return. Per the documentation in
-clk.h it means that the consumer is no longer using the clk. The clk
-could be turned off later, or not at all.
+It's clear that this does not accurately represent the power situation
+for the block, so we should fix this. But I'd prefer to see that as a
+separate task.
 
-It seems like the clk driver has a bug. Make the clk driver synchronize
-the disable with enable please.
+
+Implementation-wise, we need to figure how to consume multiple
+power-domains in the GPUCC drivers in Linux, because the correct
+definition seems to be to add both CX and GX/GFX domains here - and if
+we just add them to the DT node Linux will break.
+
+Regards,
+Bjorn
