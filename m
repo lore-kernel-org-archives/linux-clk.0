@@ -1,41 +1,64 @@
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C25224E8
-	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 15:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B09573167
+	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 15:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706197411; cv=none; b=eUbo0l5YcJEMli/FLLsq+u+Z3q/BkgOsW6RtfAO5kTCkZc9JJtzU7lBCT7RHhG19+U2zJvHQQhzBi6PwgaX6UkV+AF/X0BcA1AXkP0LRVKAVWtFO6UyuETjJlwilCe/Rp3h9KoMrhhUDBHfxhruY9Yp6jSD4ToiPmtZv5AHbDso=
+	t=1706197441; cv=none; b=d1EKn4M2SBe0kfkDN4g1ZZ3Xf1i6W/7A/0x6FT9/Og1O1Jz2aPpaaDQKfIUhitPeKUenr/VsZ1y7FHdzbFHrKL6X8gWenufZtODboeGaE4aSssYO9V7OSgYFunbrtjsn/COPqNgSKR4DRsGVFI0SOBW6Gc9Uleu3jFkS1s060ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706197411; c=relaxed/simple;
-	bh=zWe3tCCEsgYRHeb9TN02orgVqN6or7rmfDdSe/lSNLA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=S0KvNUBJRyNpqv26LfJjyXKk0J998aVCoOp9u+S+UPpcurpkzVla2EMkSEmG1HMy6owsvmsay2OVMjkZddhRzHcIgA1dzzQXSS8OhGJxE5bzh7zskQzOVlCYIxoWaty5AGegEo4j+Hfe0GP6HOziKxjiNHbWo7MOzQLxC3du2IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+	s=arc-20240116; t=1706197441; c=relaxed/simple;
+	bh=5kt5BtaMu+g3R+vgsVwu5Jtmq9SYlBM3BUBpX2Sm2w8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XBKe1XojG/udHDH0GGHvfTiNxCpoJ8EglJEPOFyIHreTX86OLyL1w9zQ7Ic/93H64jKuFp+ZNWovxwkdgFs8lqngueGgtgv8lvIAs6/a1k4noGCcws4E/+a0xNoCE+n7s6j5Xrt+qVeDEm6CEpOJ1qMvGYm0V64escEd1HKNSi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4TLPyq5Hrrz4wyWV
+	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 16:34:59 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:bc9e:fcb8:8aa3:5dc0])
-	by andre.telenet-ops.be with bizsmtp
-	id f3jU2B00358agq2013jUiF; Thu, 25 Jan 2024 16:43:28 +0100
+	by xavier.telenet-ops.be with bizsmtp
+	id f3am2B00758agq2013amcM; Thu, 25 Jan 2024 16:34:59 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1sD-00GUxT-WD;
-	Thu, 25 Jan 2024 16:43:28 +0100
+	id 1rT1jo-00GUvl-29;
+	Thu, 25 Jan 2024 16:34:46 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1t1-00Fs7D-TF;
-	Thu, 25 Jan 2024 16:43:27 +0100
+	id 1rT1kc-00Fs2c-1U;
+	Thu, 25 Jan 2024 16:34:46 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Cong Dang <cong.dang.xn@renesas.com>,
+	Duy Nguyen <duy.nguyen.rh@renesas.com>,
+	Hai Pham <hai.pham.ud@renesas.com>,
+	Linh Phung <linh.phung.jy@renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779g0: Correct PFC/GPIO parent clocks
-Date: Thu, 25 Jan 2024 16:43:26 +0100
-Message-Id: <5401fccd204dc90b44f0013e7f53b9eff8df8214.1706197297.git.geert+renesas@glider.be>
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 05/15] dt-bindings: reset: renesas,rst: Document R-Car V4M support
+Date: Thu, 25 Jan 2024 16:34:33 +0100
+Message-Id: <bd26299d687412c20fea5e2d57195a763cc532e9.1706194617.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1706194617.git.geert+renesas@glider.be>
+References: <cover.1706194617.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,69 +68,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-According to the R-Car V4H Series Hardware User’s Manual Rev.1.00, the
-parent clock of the Pin Function (PFC/GPIO) module clocks is the CP
-clock.
+Document support for the Reset (RST) module in the Renesas R-Car V4M
+(R8A779H0) SoC.
 
-Fix this by adding the missing CP clock, and correcting the PFC parents.
-
-Fixes: f2afa78d5a0c0b0b ("dt-bindings: clock: Add r8a779g0 CPG Core Clock Definitions")
-Fixes: 36ff366033f0dde1 ("clk: renesas: r8a779g0: Add PFC/GPIO clocks")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-To be queued in renesas-clk for v6.9.
+v2:
+  - Add Acked-by, Reviewed-by.
+---
+ Documentation/devicetree/bindings/reset/renesas,rst.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/clk/renesas/r8a779g0-cpg-mssr.c       | 11 ++++++-----
- include/dt-bindings/clock/r8a779g0-cpg-mssr.h |  1 +
- 2 files changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index 5974adcef3eda194..0acc301221e552f7 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -22,7 +22,7 @@
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.yaml b/Documentation/devicetree/bindings/reset/renesas,rst.yaml
+index e7e4872477517b2d..58b4a45d338006ff 100644
+--- a/Documentation/devicetree/bindings/reset/renesas,rst.yaml
++++ b/Documentation/devicetree/bindings/reset/renesas,rst.yaml
+@@ -50,6 +50,7 @@ properties:
+       - renesas,r8a779a0-rst      # R-Car V3U
+       - renesas,r8a779f0-rst      # R-Car S4-8
+       - renesas,r8a779g0-rst      # R-Car V4H
++      - renesas,r8a779h0-rst      # R-Car V4M
  
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
--	LAST_DT_CORE_CLK = R8A779G0_CLK_R,
-+	LAST_DT_CORE_CLK = R8A779G0_CLK_CP,
- 
- 	/* External Input Clocks */
- 	CLK_EXTAL,
-@@ -141,6 +141,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
- 	DEF_FIXED("svd2_vip",	R8A779G0_CLK_SVD2_VIP,	CLK_SV_VIP,	2, 1),
- 	DEF_FIXED("cbfusa",	R8A779G0_CLK_CBFUSA,	CLK_EXTAL,	2, 1),
- 	DEF_FIXED("cpex",	R8A779G0_CLK_CPEX,	CLK_EXTAL,	2, 1),
-+	DEF_FIXED("cp",		R8A779G0_CLK_CP,	CLK_EXTAL,	2, 1),
- 	DEF_FIXED("viobus",	R8A779G0_CLK_VIOBUS,	CLK_VIO,	1, 1),
- 	DEF_FIXED("viobusd2",	R8A779G0_CLK_VIOBUSD2,	CLK_VIO,	2, 1),
- 	DEF_FIXED("vcbus",	R8A779G0_CLK_VCBUS,	CLK_VC,		1, 1),
-@@ -232,10 +233,10 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",		911,	R8A779G0_CLK_R),
- 	DEF_MOD("cmt2",		912,	R8A779G0_CLK_R),
- 	DEF_MOD("cmt3",		913,	R8A779G0_CLK_R),
--	DEF_MOD("pfc0",		915,	R8A779G0_CLK_CL16M),
--	DEF_MOD("pfc1",		916,	R8A779G0_CLK_CL16M),
--	DEF_MOD("pfc2",		917,	R8A779G0_CLK_CL16M),
--	DEF_MOD("pfc3",		918,	R8A779G0_CLK_CL16M),
-+	DEF_MOD("pfc0",		915,	R8A779G0_CLK_CP),
-+	DEF_MOD("pfc1",		916,	R8A779G0_CLK_CP),
-+	DEF_MOD("pfc2",		917,	R8A779G0_CLK_CP),
-+	DEF_MOD("pfc3",		918,	R8A779G0_CLK_CP),
- 	DEF_MOD("tsc",		919,	R8A779G0_CLK_CL16M),
- 	DEF_MOD("tsn",		2723,	R8A779G0_CLK_S0D4_HSC),
- 	DEF_MOD("ssiu",		2926,	R8A779G0_CLK_S0D6_PER),
-diff --git a/include/dt-bindings/clock/r8a779g0-cpg-mssr.h b/include/dt-bindings/clock/r8a779g0-cpg-mssr.h
-index 754c54a6eb06a46d..7850cdc62e285493 100644
---- a/include/dt-bindings/clock/r8a779g0-cpg-mssr.h
-+++ b/include/dt-bindings/clock/r8a779g0-cpg-mssr.h
-@@ -86,5 +86,6 @@
- #define R8A779G0_CLK_CPEX		74
- #define R8A779G0_CLK_CBFUSA		75
- #define R8A779G0_CLK_R			76
-+#define R8A779G0_CLK_CP			77
- 
- #endif /* __DT_BINDINGS_CLOCK_R8A779G0_CPG_MSSR_H__ */
+   reg:
+     maxItems: 1
 -- 
 2.34.1
 
