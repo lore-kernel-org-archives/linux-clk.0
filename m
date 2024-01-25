@@ -1,123 +1,104 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BB51CABE
-	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 09:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F88E1BF28
+	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 09:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706174892; cv=none; b=s8zLPlzGtobQ/5Ryweywa5IwU5tGQ87+mGftD73/bwGO1gPOd/g9k4KCbNdKRTrJQtD1Z9ncBSdkm2ir8LCwrG9GcfwYasKQkEZ1rA1jGUi6zwAA1hCJk7J3JlPkA7j7+2oPUnFwY0PRJlqAuOxuAxKLDW5jusjfHny/bK7kMoU=
+	t=1706176169; cv=none; b=Zu7qF6zopR7+RaMvVz0ZJx/LU7OcJ/GpwX/v8yuMqVCPANXyNlLr1Itlk6cYiU6Do1SkGuSYEpE4eXjBfMrT9vcRnLxByaGdsCY+fXrnK10CMFaLZycZ1LO9I1n3r8lKjSax3tG2I8dri73N49ZoRynZXhjanvLiSSHm4wtSHsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706174892; c=relaxed/simple;
-	bh=4FhzQMyuNRu9cVH4Ij85n7GCnfVD5xm77q2Ax+afBBk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iYW9PosMDlRMGcr0yTPvs97L+LTE411a+5IjnaAWKdB19OE4ld+gz09zoe3i7nKP4zXajHhxs3ktJcd47MdweaoRRSpD+MR5W3pPmjczi0ajyj6rD2sU0RRKINLGKZbh+M1iLQuDui2MIJ7y/xuMf0wfxIUt0BiOlkRzGOSK9O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=coRIzuKu; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1706176169; c=relaxed/simple;
+	bh=MpsKrdTIjIwvbcRwRfZF01jdybzRyWoMrLmCa/UdKpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Udfvmwf17tn+d4oiLFEI078BiyAr5Xqj4ngyiLURlMsb+Rz4JFb4xqSC5at7WEWdUzo6cgBrmHyO2Q9Zztiw4Ge2M3nzDaDx7Cs4CPFtbVua5K45enUar+uKMNjInk8HhNGwLfnzRI8C+B953/skq6MDmp01FcsQlacw27u164Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oS0rLRbC; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="coRIzuKu"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-55a87dfc3b5so5615061a12.3
-        for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 01:28:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oS0rLRbC"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2cf2b218c62so17971691fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 01:49:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706174889; x=1706779689; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JLNRnzxe4/p0rMB0AsJl/Ri8TUeEmBjJpE+eIe/tTYA=;
-        b=coRIzuKuOqIEM+LyOBo1js6mdCEXlkaoOnr2ooeVDFveVHAfyHgfoMC0ltSa3bwLrN
-         laA4YoDrkvJNGh+xkaGYFKdaiivNALfXPaSRmLNz4yWdIBfHYp+oEKj2fo4I/gjDDHuc
-         piAgusGkJOVxEskVui+yGGxrSooR89YlNlrM1VQYgbA/hfK5+PFtvr1vKS5ZCiW14AuA
-         wUJSDCXbJLtw91BRQicjQxWwp4nXakLEnLaaaM1njgl1+Im0W+VOIXmMSUlI4T0fZgOG
-         xPKRAZmuUbGIQ1YQOxXy9iGm10PSasjaGkjhBgFOdl+xlBJfmgERpPb9e2xAh8bCR3gX
-         5mKw==
+        d=linaro.org; s=google; t=1706176165; x=1706780965; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NPMySe0yXPWxWL/iJsUJSLzHKiI9qsvkmijA7/w7YXM=;
+        b=oS0rLRbCRZNOyocDPkriqf4PgqaLwUWwsVRtwREmrXhsxieqPuSnw2MXFXXQ13Z0p6
+         1TZQ9zCcTZbb7J2Ig1VLTzUpxYBdMn+q2bWjJXmDbo1457mOf2B3TRGmuCCiiErHfQ+C
+         dQ7hYs7YrPDRKz9h0t0ptE6cIIbW9LusDQ2l5WKc6xmHxACUS77/wdjsCX594Aca9F0A
+         xRRIw6+sM5S4QcAtlY29pQj3lKb4NxF6D72NeVFrlPeudQA1V6Oz3gG94REIHh6SC7aq
+         8BHGDqJwTHAqUPtuwkAzZR+i0zZodP0QKoaDXXfNzlIKOS3i7lyK4cBkz1hsKe1QC6JW
+         ZhCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706174889; x=1706779689;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JLNRnzxe4/p0rMB0AsJl/Ri8TUeEmBjJpE+eIe/tTYA=;
-        b=qqwponOfvKw33aK9ELPCDWkAnHa5y1HV/ToIGz4gVpKl3eJT5ETy7Y3dQ2uXVxD7wr
-         X/ZQBzvMqSVssW7G36XNgRcY4eZckj1oWrlDSdmP2myWazouFH9hqKIL0xOMXyKmCSTT
-         qq3Z8aeZeSLlAQmb7XEkseDvXyjdCzoJXz4OQGAMgXxTHu9j0lZmaaOULJvzKBNluTiS
-         uE+DnpDv+MuMIbzFvZY++U5sVvkiTndDavTOu4eIE3vfPwxfi2BYjtNvP2TanZ1KO7lf
-         VgkM0j/XieILEmFjMnioyhxvdA5tf24SHMRpNex1ZXo53AfAYnTd/j+JBleetR3MOa2A
-         CDhg==
-X-Gm-Message-State: AOJu0YxkTcwXLb9dAD7RL5/WJgps7H4vEsJNJPAPw++DwiXgmsoYueoa
-	NW2SE1dbbjni/FGlFIAS4LpWXXXmOvvn4eFiLI4N36/TS7gtyNuMaNdVZvhKQfSS6Ay/lNOT/nA
-	q
-X-Google-Smtp-Source: AGHT+IGF5HE4900Esq4LG85HNYrVZua2xMqt9RXVRLh3ifbkx5FX+VjRG/Dgu3rYNjdwZlS4bfnKWQ==
-X-Received: by 2002:a05:6402:714:b0:55c:8cdc:b2c6 with SMTP id w20-20020a056402071400b0055c8cdcb2c6mr381105edx.10.1706174888969;
-        Thu, 25 Jan 2024 01:28:08 -0800 (PST)
-Received: from [127.0.1.1] ([79.115.23.25])
-        by smtp.gmail.com with ESMTPSA id f19-20020a056402005300b00554af5ec62asm17356391edu.8.2024.01.25.01.28.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jan 2024 01:28:08 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Thu, 25 Jan 2024 11:27:49 +0200
-Subject: [PATCH 5/5] clk: qcom: dispcc-sm8650: Drop the Disp AHB DT
- provided clock
+        d=1e100.net; s=20230601; t=1706176165; x=1706780965;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NPMySe0yXPWxWL/iJsUJSLzHKiI9qsvkmijA7/w7YXM=;
+        b=vz6ULZmKtj0LDAsE7xNkTw/CHq6Ad1czVMLy8kRmnWC0ghRgJOSMqtgM7Bc1x1P5Tp
+         JDBsluwh90CZTF5J1556CUHMBFfdMTF3oLzCGBt0VAKafjtuj8XRukh+MU6L8H1IS5ou
+         roJf9xeNQeMDCA+tzJTrHEGDN/wkBKLdj091zAKMJNW/UbPwvgspZOjuQHv0RaGODiuA
+         zOVpyT5Kus/9F0ryG3rGynU1NCVL9mREq0hr+dXVX9pjy1Z9ODNMm/QpHbsh6okW/I3S
+         9D6/tW97npN8i9X2BSO++6yo/vh5xexj8B/PNJsJcAJO1k2TdQ9ynLH8Xlfz6D3e1Z+2
+         cyfg==
+X-Gm-Message-State: AOJu0YynZZUQPRdyUW9OBv44UI2oXEbcGYmRtD/sav96pwOgII3H3jps
+	fXdYFVS/g9Yhr0TVLoQEfv+g8YS/bVdgBuW7MZpM0JsAxk4DrHlZjglmLWg6/T4=
+X-Google-Smtp-Source: AGHT+IG+s/733KbkSSZ85ObjfXVAW2/zhE83DZd9BKMuD04ff2X3novkGEI4Owm4MiKjR+acNDE0jg==
+X-Received: by 2002:a05:651c:623:b0:2cd:f876:27f with SMTP id k35-20020a05651c062300b002cdf876027fmr198484lje.130.1706176165223;
+        Thu, 25 Jan 2024 01:49:25 -0800 (PST)
+Received: from [172.30.205.155] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id x26-20020a05651c105a00b002ccd49fa5a9sm236170ljm.19.2024.01.25.01.49.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Jan 2024 01:49:24 -0800 (PST)
+Message-ID: <99817149-4a2e-49fc-aedc-fe298964a019@linaro.org>
+Date: Thu, 25 Jan 2024 10:49:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240125-dispcc-sm8550-sm8650-drop-disp-ahb-clk-v1-5-0f8d96156156@linaro.org>
-References: <20240125-dispcc-sm8550-sm8650-drop-disp-ahb-clk-v1-0-0f8d96156156@linaro.org>
-In-Reply-To: <20240125-dispcc-sm8550-sm8650-drop-disp-ahb-clk-v1-0-0f8d96156156@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] clk: qcom: sm8[56]50: Drop the Disp AHB clock from
+ Display Clock Controller
+Content-Language: en-US
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
  Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=699; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=4FhzQMyuNRu9cVH4Ij85n7GCnfVD5xm77q2Ax+afBBk=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBlsimf+b1kIT9CRygBqdcl6OsrWJwKtA+IS6Mus
- 59bM1COowaJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZbIpnwAKCRAbX0TJAJUV
- VlNhD/4j69Ljrfvn/PVcSUIvyHNmnIqC/mxKxo6qN/NK0EfeFzzFY2G28aABZxuSQtAZLCxu0+B
- UV9Xb8QZ2l0Ka9aCnVP4TF+Ax1UmVfnqX5WQOWlKbqQ9eqoeqyknMjjTgNjyqsxHUZ0xdFZN+/g
- LhzweFk6FmQwvNfKusPau6VTHufo9+p9eo5q5RAt1vgs5GYLmDcdp38ecMp7eaPUcNhss+TTjeh
- Mk++gwVLfuY8cpV2R3wsLLoWjb1hyiSvkZrghWIfJYPRsUGFCAmM2CKqz9Ej9znvNhDk4+DANVt
- FtB6NXyAMkc7JVOYBzHzA/969k1biyHNdbt9Gj3mxiZZlcfylpTV5+wtUMX5pz12zMz2UchLbJY
- dDxZVqFZB5Lpptalv295B6C+eOVZ1N0a9h9HdmHRVUWgMky6iMqLKN+toGvS/rRkiSJ5Ph4HOVv
- 7xWTKWGsmrmfnaj2we4MakE5Z7RBX/t2eroX5EqdChrob8YjXFSAtK6RAGyoF7ZmrC0efqFbQjV
- 8zctck7/adbJY5iaGtMeXvBVoJBrIysiV4mOoYRCH13Sl3lhEyebf8ZniBJ6n6s65EUnJbuYcEk
- gEnDmU2gOgyRAkC9W5QibH6CVlw9giEVR+lnNFO1S+t2SFwogomzfN5utkvGqUFFUXExwaWMUdu
- /ppzcrqQc93R5Yw==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240125-dispcc-sm8550-sm8650-drop-disp-ahb-clk-v1-0-0f8d96156156@linaro.org>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240125-dispcc-sm8550-sm8650-drop-disp-ahb-clk-v1-0-0f8d96156156@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The GCC doesn't even register the Disp AHB clock. It enables it
-on probe though. So drop it from the list of DT provided clocks as well.
 
-Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/clk/qcom/dispcc-sm8650.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
-index f3b1d9d16bae..382ebc1866b9 100644
---- a/drivers/clk/qcom/dispcc-sm8650.c
-+++ b/drivers/clk/qcom/dispcc-sm8650.c
-@@ -29,7 +29,6 @@
- enum {
- 	DT_BI_TCXO,
- 	DT_BI_TCXO_AO,
--	DT_AHB_CLK,
- 	DT_SLEEP_CLK,
- 
- 	DT_DSI0_PHY_PLL_OUT_BYTECLK,
+On 1/25/24 10:27, Abel Vesa wrote:
+> The Disp AHB clock is provided by the GCC but never registered. It is
+> instead enabled on probe as it is expected to be always-on. So it should
+> be dropped from Disp CC entirely.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
 
--- 
-2.34.1
+Abel, you just raised some concerns over my series doing this and now
+you're doing the same, plus breaking backwards compatibility for no
+good reason, instead of solving the problem.
 
+The correct solution here is to register the AHB clock with GCC and
+pm_clk_add() it from dispcc's .probe (and enable runtime PM on dispcc
+if it's already not the case). Then the AHB clock will be gated when
+no display hardware (= no dispcc consumer) is in use.
+
+8[56]50 are in a good position for this, as they already have the
+required DTS reference. Unfortunately, I still haven't fully dug
+into this for platforms without one, but that's on me.
+
+Konrad
