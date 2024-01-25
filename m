@@ -1,58 +1,58 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D51312B8D
-	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 07:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F95D12E4F
+	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 07:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706168360; cv=none; b=L2dzcysyFJEF5bDcU1l0y64dwwNTHZdZCng1zH8fEf76jIvP6CHTf6cW1rVOtDwFNyHouSQ2kxnu3OVdTApaNLnICh4QL5HZuDCOw4xruWKU2XFpQA3nQabqdHzxrV2CeOt6Dai0KXkeVJZ8TeJ0yp6hiraOQptYd927b2kCvlE=
+	t=1706168778; cv=none; b=dQnVhlppwMZaeLfSYSK80oE1U8U6RG/KILE3iv8HTSmGK6TDuKTwAu6byX/WuZ3sFT++7LypVxaXZJhYl6T7ecO+sWqdA8ayBULwaUD5Xxx4XJkuzyp0calea0oIK0fv1lj4SdP2OIkJGxA4vrRbr2QkexHQqAdLE6ktMTqe08I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706168360; c=relaxed/simple;
-	bh=Mw5vEDQv7u4zVkX/DvrsT1kbpOxxCwaGJtvj/Ec3hEI=;
+	s=arc-20240116; t=1706168778; c=relaxed/simple;
+	bh=lq3Qw18a0IYvMyc7eMwCvEMPKYqJuwapZWYaFsLvWEw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FT5tFDdr2iIhY6/K/wSj4UGAjPTeBGfvynQDSXqRdp6taS5Mb0FDzUOWv+aGzaFnDYV9zGG1BB6CNLeqSkn06ppwnTDlZbwU1ieBbvx6WnNTjIXazopj1hS//9W6VAh7DbEiGfWjjvZXIetcoRd9CoTVY/f2Xl9Y6u2rH6f8NTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fht7J5sm; arc=none smtp.client-ip=209.85.128.44
+	 In-Reply-To:Content-Type; b=G0NmtJ1dO9lNuU6RZ1Dh89IP7uyhceMYI2RyxZH4bqSaJMkhnCoVPTp7Oz1aZflVL89SYAzNSvWK7ucUMPbsQTyhrOKgif1d9YECAEWrXpfsHWdNfmRTdHBOwf8F4fYJ9jUbTWr31BW9G73OFH2zN6ZD3q2lciieW7cVJe4WtWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PB6zL286; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fht7J5sm"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40e913e3f03so79982615e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 23:39:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PB6zL286"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5100893015fso3326347e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 23:46:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706168357; x=1706773157; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706168774; x=1706773574; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hH0jMx6UHZTKBifmk34GWSzSdS+/3EcRnn013oRzjRk=;
-        b=Fht7J5sm9m5XGId5hfOY9kb4IU4dwaNyODFNogIMxqx3jhYoLcH88Z0hUsYjTchQE8
-         YbNVyFJfXXhtceqmsuVKgykTUl7mABoaL7e5vZSC0FoPAGpD3gXxi/CmNkChAovZYBjq
-         kZKZS4OnKn7EKzLv2vPfAVlz+BfSmZiPXT48CR5EFGxJq4utO+WYw/Tv0tuoVozcHhpg
-         m1xOkuSPUsyCJ6BRXhSVPvs1errala3rqKqTr0GZ4CcDnVPafE8h/0dh3bE54m0UTWiR
-         A+WhuMmmXfBYmlwKUtwTCvkYQFgR3/QMXSXXnnmcJMQGrUPYVwmiKZD5jCCzNlU1OBTH
-         nSaw==
+        bh=tLJ9hqRNdMmwKJi2pdcZAjFZNSmuS+g91IU0KUQzJ4k=;
+        b=PB6zL286iBiUhYeRv81OB78ldIRDuEB8X6HSjo9DpDpMDCaE53Ep5IJ+2ARzhilDY+
+         fYTb4sSFLxRkCudaA7M9I53dczs0YoAwOzsiRTyGJ7MUoHGBdO9XZPbQVymE+PUAlTeK
+         7wJhZoGy2sZ0I2XfKPdAYr/2NKw9z3suL7PsVg0zaOG133m1DdROHoq/0xUVqt4SWuok
+         xiid4vM/6n9E8smkUjm6bCO5wtR3zKJY1QqXfa4Ly8GWvsfsWGKjQVEcCedE5DIm+aOp
+         gq3Of1EBmdiu+I1aYsewGST+a6FZqKXJAIzhgRdvvbJPNZbRKzVOtp0tasI1cjizBQn8
+         H2qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706168357; x=1706773157;
+        d=1e100.net; s=20230601; t=1706168774; x=1706773574;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hH0jMx6UHZTKBifmk34GWSzSdS+/3EcRnn013oRzjRk=;
-        b=RFeFlKLFMUI1VZPcRnZQiwXRoOJ6+XnzngKFLWlUlSC9Smo+x3P+Hw0rKvQOHtCYxv
-         Ce4p5PbH3zHWFOMpni00zEsVZwwmENnXpRD/dN9gCwLzeHWGiwdbP2hbNfQadbSmvfar
-         SMQchFtPeeeanzdlFbuzgd/Eogdi2VqV/s83Ovs8jm22kmOU8fj5NwiUC/JS1JDQzETp
-         NjlIMVXBMihNYHlmaGgAnULNIWytrQSv+A0fnuF7H7zuXY0Ur86gLavLeqmqb6QtCtED
-         nDu8H4cS3MLxaMh/ca++x6z2TumE2x3LgPFbFTuknezPpl0CkoM9t4oMzVba/hqGPRZq
-         DluQ==
-X-Gm-Message-State: AOJu0YzkuOioH7xSH6ZpMimfN7DZd3Dgyr4rhfomlNKs6l8IyIHcqKSF
-	Qu/aWgCzPGHdWoGYlbAfNTn7RPLO6lciIku6NoLzlCtY+j8ACeEFQjEkWAoSbXY=
-X-Google-Smtp-Source: AGHT+IFOytjLNvmjiHVzdf4a427+lqnb2WeSj7VtriuX3UHr11rQpJFezm0gCR++NUoAsyLwbOJbIA==
-X-Received: by 2002:a05:600c:1ca2:b0:40d:60ac:16f1 with SMTP id k34-20020a05600c1ca200b0040d60ac16f1mr244533wms.55.1706168356610;
-        Wed, 24 Jan 2024 23:39:16 -0800 (PST)
+        bh=tLJ9hqRNdMmwKJi2pdcZAjFZNSmuS+g91IU0KUQzJ4k=;
+        b=TCU4JVyXlOAuKuVeAINjNYphFq/V/uADbsrIKq1c0bia+Ok9FdLTYUalUqGCr4qBLT
+         NzepB88kcMYlPhDEfraA5QM+3a1Tox9tEeA2v6mMjiWugL9b0/oMoFV+EcJWssm5DDGR
+         iMFD6vhE7AvurTr+tqKk/ZS7WWaLxGP7JlKNEAbTEfWr+Qf1+Jw7AWths6Pwy8+Urqp6
+         afXbwe1t384nHyIGpqcAAZ3+TxXlBAcBhwQnrSEkKwBaFCGD3nqgxQw3D0apY/gnRT8d
+         8c2GByytuH9vIreDs2PZHgnETXt99KyG2LZqJWcHnprDPEcUb7hCZS3vqBgXBLaSQsK6
+         UClA==
+X-Gm-Message-State: AOJu0Ywm64BM/UV4Z/waDc6ZKFRK3G6MYFTG8favJV6tnXzzMp1VpJSH
+	+ByAeZP9U64hM9Qfj9w9LfzgCZtPgwhtE3cmlkAksqOt7/QhjCerXI+uxx/h4GE=
+X-Google-Smtp-Source: AGHT+IElj6u1gYVFw2VudyXs/G3iQmkA0PqkWOzKELx42H3hiRqiA5lm303AXC7IlvG0UNt7FxRz+w==
+X-Received: by 2002:a19:f816:0:b0:50e:b19d:c992 with SMTP id a22-20020a19f816000000b0050eb19dc992mr145487lff.197.1706168774376;
+        Wed, 24 Jan 2024 23:46:14 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id fk15-20020a05600c0ccf00b0040e9f7dadc6sm1539709wmb.25.2024.01.24.23.39.15
+        by smtp.gmail.com with ESMTPSA id k8-20020a056402048800b0055d0a05b1bbsm114114edv.5.2024.01.24.23.46.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jan 2024 23:39:16 -0800 (PST)
-Message-ID: <cc68112f-3863-4f82-b708-7787a4895a88@linaro.org>
-Date: Thu, 25 Jan 2024 08:39:15 +0100
+        Wed, 24 Jan 2024 23:46:13 -0800 (PST)
+Message-ID: <001993b9-ea0c-49c3-a4e5-4cea10c54082@linaro.org>
+Date: Thu, 25 Jan 2024 08:46:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,24 +60,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] dt-bindings: clock: qcom: Allow VDD_GFX supply to
- GX
+Subject: Re: [PATCH v3 08/17] clk: eyeq5: add platform driver
 Content-Language: en-US
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
- Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240123-sa8295p-gpu-v3-0-d5b4474c8f33@quicinc.com>
- <20240123-sa8295p-gpu-v3-1-d5b4474c8f33@quicinc.com>
- <f6844d28-c7c2-4afa-8520-2e62c608930d@linaro.org>
- <20240124212116.GH2936378@hu-bjorande-lv.qualcomm.com>
+ Conor Dooley <conor+dt@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org
+References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
+ <20240123-mbly-clk-v3-8-392b010b8281@bootlin.com>
+ <127fd51b-cd64-4e00-99d6-7be9b79f2dcc@linaro.org>
+ <CYN33YJ10HYS.2YDXB158LFZPL@bootlin.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -123,37 +125,125 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240124212116.GH2936378@hu-bjorande-lv.qualcomm.com>
+In-Reply-To: <CYN33YJ10HYS.2YDXB158LFZPL@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/01/2024 22:21, Bjorn Andersson wrote:
-> On Wed, Jan 24, 2024 at 07:31:34AM +0100, Krzysztof Kozlowski wrote:
->> On 24/01/2024 05:25, Bjorn Andersson wrote:
->>> +# Allow either power-domains or vdd-gfx-supply, not both
->>> +oneOf:
->>> +  - required:
->>> +      - power-domains
->>> +  - required:
->>> +      - vdd-gfx-supply
->>> +  - not:
->>> +      anyOf:
->>> +        - required:
->>> +            - power-domains
->>> +        - required:
->>> +            - vdd-gfx-supply
->>
->> I don't fully understand what you want to achieve here. If only "allow
->> either", so not a "require either", then simpler:
->>
->> https://lore.kernel.org/all/20230118163208.GA117919-robh@kernel.org/
->>
+On 24/01/2024 17:41, Théo Lebrun wrote:
+> Hello,
 > 
-> As discussed in v2, power-domains is currently an optional property in
-> this binding and I'm adding vdd-gfx-supply as an alternative to that.
+> On Wed Jan 24, 2024 at 8:05 AM CET, Krzysztof Kozlowski wrote:
+>> On 23/01/2024 19:46, Théo Lebrun wrote:
+>>> Add the Mobileye EyeQ5 clock controller driver. It might grow to add
+>>> support for other platforms from Mobileye.
+>>>
+>>> It handles 10 read-only PLLs derived from the main crystal on board. It
+>>> exposes a table-based divider clock used for OSPI. Other platform
+>>> clocks are not configurable and therefore kept as fixed-factor
+>>> devicetree nodes.
+>>>
+>>> Two PLLs are required early on and are therefore registered at
+>>> of_clk_init(). Those are pll-cpu for the GIC timer and pll-per for the
+>>> UARTs.
+>>>
+>>
+>>
+>>> +#define OLB_PCSR1_RESET				BIT(0)
+>>> +#define OLB_PCSR1_SSGC_DIV			GENMASK(4, 1)
+>>> +/* Spread amplitude (% = 0.1 * SPREAD[4:0]) */
+>>> +#define OLB_PCSR1_SPREAD			GENMASK(9, 5)
+>>> +#define OLB_PCSR1_DIS_SSCG			BIT(10)
+>>> +/* Down-spread or center-spread */
+>>> +#define OLB_PCSR1_DOWN_SPREAD			BIT(11)
+>>> +#define OLB_PCSR1_FRAC_IN			GENMASK(31, 12)
+>>> +
+>>> +static struct clk_hw_onecell_data *eq5c_clk_data;
+>>> +static struct regmap *eq5c_olb;
+>>
+>> Drop these two. No file-scope regmaps for drivers. Use private container
+>> structures.
 > 
+> I wouldn't know how to handle the two steps then. Two clocks and the clk
+> provider are registered at of_clk_init() using CLK_OF_DECLARE_DRIVER().
 
-Then go with Rob's syntax - not:required: Much easier code.
+Right, if some clocks have to be early, CLK_OF_DECLARE_DRIVER needs
+static ones. But your commit subject says it is a platform driver and
+all other pieces of this code is rather incompatible with this approach.
+
+Do not use CLK_OF_DECLARE_DRIVER for cases where you have dependencies
+because it forces you to manually order initcalls, which is exactly what
+we do not want.
+
+
+> The rest is at platform device probe. Without a static, there are no
+> way to pass the struct clk_hw_onecell_data from one to the other.
+> 
+> I've looked at all clock drivers that do CLK_OF_DECLARE_DRIVER() and
+> register a platform driver.
+
+Even though the code is correct, using arguments "other did it" will not
+work. You want to say that you implement legacy, poor code because you
+saw legacy, poor code?
+
+> 
+>  - The following use a static variable:
+>    drivers/clk/axis/clk-artpec6.c
+>    drivers/clk/clk-aspeed.c
+>    drivers/clk/clk-ast2600.c
+>    drivers/clk/clk-eyeq5.c
+>    drivers/clk/clk-gemini.c
+>    drivers/clk/clk-milbeaut.c
+>    drivers/clk/mediatek/clk-mt2701.c
+>    drivers/clk/mediatek/clk-mt6797.c
+>    drivers/clk/mediatek/clk-mt8173-infracfg.c
+>    drivers/clk/nxp/clk-lpc18xx-creg.c
+>    drivers/clk/ralink/clk-mt7621.c
+>    drivers/clk/ralink/clk-mtmips.c
+>    drivers/clk/sunxi/clk-mod0.c
+>    drivers/clk/axis/clk-artpec6.c
+> 
+>  - Those two declare different clock providers at init and probe:
+>    drivers/clk/ralink/clk-mt7621.c
+>    drivers/clk/sunxi/clk-mod0.c
+> 
+>  - It doesn't register new clocks at probe (only resets) so no need to
+>    share variables.
+>    drivers/clk/ralink/clk-mtmips.c
+> 
+>>
+>> ...
+>>
+>>> +static void __init eq5c_init(struct device_node *np)
+>>> +{
+>>> +	struct device_node *parent_np = of_get_parent(np);
+>>> +	int i, ret;
+>>> +
+>>> +	eq5c_clk_data = kzalloc(struct_size(eq5c_clk_data, hws, EQ5C_NB_CLKS),
+>>> +				GFP_KERNEL);
+>>> +	if (!eq5c_clk_data) {
+>>> +		ret = -ENOMEM;
+>>> +		goto err;
+>>> +	}
+>>> +
+>>> +	eq5c_clk_data->num = EQ5C_NB_CLKS;
+>>> +
+>>> +	/*
+>>> +	 * Mark all clocks as deferred. We register some now and others at
+>>> +	 * platform device probe.
+>>> +	 */
+>>> +	for (i = 0; i < EQ5C_NB_CLKS; i++)
+>>> +		eq5c_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+>>> +
+>>> +	/*
+>>> +	 * Currently, if OLB is not available, we log an error, fail init then
+>>
+>> How it could be not available? Only with broken initcall ordering. Fix
+>> your initcall ordering and then simplify all this weird code.
+> 
+> of_syscon_register() and regmap_init_mmio() lists many reasons for
+> it to not be available. Am I missing something?
+
+Yes, initcall ordering.
 
 Best regards,
 Krzysztof
