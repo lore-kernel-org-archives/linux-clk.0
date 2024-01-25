@@ -1,147 +1,156 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4361B6E2C9;
-	Thu, 25 Jan 2024 14:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD496EB43;
+	Thu, 25 Jan 2024 14:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706194209; cv=none; b=MuC8fZn+9BSKARWZSFeJOLYN3hTD6+It8CzOWOBEThoiPe4Cl7dKSrCrqRAFH9GOgyIszeMtyIP+xFBHVPKYKlSqDfkWKmwlEw8/l5U7KM6HXUkN1HMKH1+b0Ue13J0IBGaAMbgl4sOqWoasy0mIGW2OKZvUFHBHT33jMxfzo88=
+	t=1706194315; cv=none; b=D9JsZHCwZGtn2+1ihgUwo36kVI9umsFu19CHXp2t1Kpq4/gSIdrVbYkt/xNxEqYQM83bPVaeKkVqpq3pufmvMOd1TZ2W928t6lQCFCAUPo4IqxgsQAfKOi5hVs7vw7QM6EYgV4ekWAWHzn7N9NYJxYToFWIgdwH/jPvtA9oZMus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706194209; c=relaxed/simple;
-	bh=ACVtmX3llcZ3tfvcSAXupWV1km9UBIPngejcwrfKSZw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=F38cE/aH6we6VGVzyxxuIgTb01MDsSBM+kp1Nvsw5LudtNDwBRsopV4WBWv+Fu5RgRoF6z5CyXgGIrHRlqIvotOXgt/44sdkFs+jLrQQOfBnu5tIQCY/NvvXAm35b8s6O8M2ctXlGwDEyRWwuKckUw2gICCXQlQelEGXhIsmMxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=U5Hu1h05; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1706194315; c=relaxed/simple;
+	bh=nLmptd5vtjBBt5Sd8cMVl5TBxBzQ5i5Uf5uA4+C/h9Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=U8YTPRolkr/buVZA45UTO0KaLUuLIV+Kzl3tIvwmzaZREK25rgXC62qvk0Qa5RUhwgJ6yt5SA4r4uChObF4bx58nRwNKNTjpV3/6D4r8s7kNhLlV2BEOBT2kwLv8Rfys86Uvm5eW1bbvG3u6VcrQqfMpNx82XA1lTYlESW/boXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=bQbFZwvs; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="U5Hu1h05"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2AD8FC0012;
-	Thu, 25 Jan 2024 14:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1706194197;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ogOpwZQkYRG5dXU2wj0R+7adxXD9kVYWvL6LdD2YosI=;
-	b=U5Hu1h05YgVVy1e9XMnsulE1q6eJD310wXJhpRMNMwlLSol4EJtmHk20pcaA/6GXAy+cns
-	Ih+ju0KTLmRTBmbN/+GLZTEOThbUoBnz8FPEou7lEZWxSQ2WOBWO0ZN9hW6o9HwvxQ/S+H
-	lQ2hmT7xQRD+EyLadkeDKfs7XTlxpyRNFu+wdoez24nABWRm2QJxwjXncD64DBssybAfog
-	pDfudljBPu+vedfEYfsVkf1lvLfDWOIx+IVdPh6CunfyLZ57xp7wkOrvufRaEMCCg1FGjt
-	x/+tCF7sWN3l7+y6c0kQBANgFaVwAEPGat1sWGjelxiC5snpNzZ/+EhbM4IS3g==
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="bQbFZwvs"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40P9ZLjS032503;
+	Thu, 25 Jan 2024 15:51:15 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=OdOyBjIbGPWEnFAfgcVDEJsf51RApeBzKhFso3DoU6k=; b=bQ
+	bFZwvsbEkM7FCjI4sthB7EdciMMV72Lznb/wSSFYgg/e0INQ1OxhDOcFb9dH6QGM
+	s4LgUheLLYUU9lKfMF3hsPfjqAq1ezukvwYnmRA6OoKPNXlaV/41cYD6CHBypWpz
+	6ZnCBqx0La/NMDVO6RGqFlZzBsfxCBDQ44XC4Mgy5ubQMSo5Gml+aIuYy2G4LW62
+	8V6q05INn86RBrM3/xyQnhXzw+CIGuX5qmMwePg7YX4DQ8cLZ6Ub48Th6A+NvuYz
+	1QqCu+q0E6rcHbRS8LHdmaZgigWNZmVxmFOo1cswQqZNJhGBAF24fMxh0zXG8Jdx
+	OT3NWWBaLY7urdwM2X3w==
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3vtmf9gkda-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Jan 2024 15:51:15 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 804E810005D;
+	Thu, 25 Jan 2024 15:51:14 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6829629BBC6;
+	Thu, 25 Jan 2024 15:51:14 +0100 (CET)
+Received: from [10.201.21.240] (10.201.21.240) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 25 Jan
+ 2024 15:51:13 +0100
+Message-ID: <07681e93-6bad-4438-91d6-fa74756c20bd@foss.st.com>
+Date: Thu, 25 Jan 2024 15:51:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 25 Jan 2024 15:49:55 +0100
-Message-Id: <CYNVD4U0M5OS.LQ2MAKOL0LAP@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v3 04/17] dt-bindings: soc: mobileye: add EyeQ5 OLB
- system controller
-Cc: "Gregory CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, "Philipp Zabel"
- <p.zabel@pengutronix.de>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, <linux-mips@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, <linux-gpio@vger.kernel.org>
-To: "Andrew Davis" <afd@ti.com>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski@linaro.org>, "Rob Herring" <robh@kernel.org>
-X-Mailer: aerc 0.15.2
-References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
- <20240123-mbly-clk-v3-4-392b010b8281@bootlin.com>
- <20240124151405.GA930997-robh@kernel.org>
- <dd7e723d-3c4c-4edf-afc2-51db9a074efa@linaro.org>
- <CYNQHXOZ73YR.3QODFI2X08KC6@bootlin.com>
- <9a5f017c-530c-482b-9cbf-a07281e92589@ti.com>
-In-Reply-To: <9a5f017c-530c-482b-9cbf-a07281e92589@ti.com>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/3] Introduce STM32MP257 clock driver
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240111071536.659409-1-gabriel.fernandez@foss.st.com>
+Content-Language: en-US
+From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+In-Reply-To: <20240111071536.659409-1-gabriel.fernandez@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-25_08,2024-01-25_01,2023-05-22_02
 
-Hello,
+Hello Stephen,
 
-On Thu Jan 25, 2024 at 3:33 PM CET, Andrew Davis wrote:
-> On 1/25/24 5:01 AM, Th=C3=A9o Lebrun wrote:
-> > Hello,
-> >=20
-> > On Thu Jan 25, 2024 at 8:51 AM CET, Krzysztof Kozlowski wrote:
-> >> On 24/01/2024 16:14, Rob Herring wrote:
-> >>>> +
-> >>>> +      pinctrl-b {
-> >>>> +        compatible =3D "mobileye,eyeq5-b-pinctrl";
-> >>>> +        #pinctrl-cells =3D <1>;
-> >>>> +      };
-> >>>> +    };
-> >>>
-> >>> This can all be simplified to:
-> >>>
-> >>> system-controller@e00000 {
-> >>>      compatible =3D "mobileye,eyeq5-olb", "syscon";
-> >>>      reg =3D <0xe00000 0x400>;
-> >>>      #reset-cells =3D <2>;
-> >>>      #clock-cells =3D <1>;
-> >>>      clocks =3D <&xtal>;
-> >>>      clock-names =3D "ref";
-> >>>
-> >>>      pins { ... };
-> >>> };
-> >>>
-> >>> There is no need for sub nodes unless you have reusable blocks or eac=
-h
-> >>> block has its own resources in DT.
-> >>
-> >> Yes, however I believe there should be resources here: each subnode
-> >> should get its address space. This is a bit tied to implementation,
-> >> which currently assumes "everyone can fiddle with everything" in this =
-block.
-> >>
-> >> Theo, can you draw memory map?
-> >=20
-> > It would be a mess. I've counted things up. The first 147 registers are
-> > used in this 0x400 block. There are 31 individual blocks, with 7
-> > registers unused (holes to align next block).
-> >=20
-> > Functions are reset, clocks, LBIST, MBIST, DDR control, GPIO,
-> > accelerator control, CPU entrypoint, PDTrace, IRQs, chip info & ID
-> > stuff, control registers for PCIe / eMMC / Eth / SGMII / DMA / etc.
-> >=20
-> > Some will never get used from Linux, others might. Maybe a moderate
-> > approach would be to create ressources for major blocks and make it
-> > evolve organically, without imposing that all uses lead to a new
-> > ressource creation.
-> >=20
+Gentle reminder.
+
+Thanks
+
+Gabriel
+
+
+On 1/11/24 08:15, gabriel.fernandez@foss.st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 >
-> That is usually how nodes are added to DT. If you modeled this
-> system-controller space as a "simple-bus" instead of a "syscon"
-> device, you could add nodes as you implement them. Rather than
-> all at once as you have to by treating this space as one large
-> blob device.
-
-I see where you are coming from, but in our case modeling our DT node as
-a simple-bus would be lying about the hardware behind. There is no such
-underlying bus. Let's try to keep the devicetree an abstraction
-describing the hardware.
-
-Also, we are having conflicts because multiple such child nodes are
-being added at the same time as the base node. Once this initial series
-is out (meaning dt-bindings for the OLB will exist) we'll be able to
-add new nodes or ressources on a whim.
-
-Have you got an opinion on the approach described in this email?
-https://lore.kernel.org/lkml/CYNRCGYA1PJ2.FYENLB4SRJWH@bootlin.com/
-
-Thanks,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> v8:
+>    - use .index of clk_parent_data struct to define a parent
+>    - remove unnecessary dependency check with SCMI clock driver
+>    - convert to platform device APIs
+>    - convert to devm_of_clk_add_hw_provider()
+>    - convert single value enum to a define
+>
+> v7: base on next-20231219
+>    - These patches below are applied to clk-next:
+>        clk: stm32mp1: move stm32mp1 clock driver into stm32 directory
+>        clk: stm32mp1: use stm32mp13 reset driver
+>        dt-bindings: stm32: add clocks and reset binding for stm32mp25
+>    - remove unnecessary includes
+>    - migrate clock parents to struct clk_parent_data and remove
+>      CLK_STM32_XXX() macros  to have a more readble code
+>    - use platform device APIs (devm_of_iomap() instead of_iomap())
+>    - move content of stm32mp25_rcc_init() to stm32mp25_rcc_clocks_probe()
+>    - simply get_clock_deps()
+>    - add const to stm32mp25_data struct
+>    - remove ck_icn_p_serc clock (will be integrate later with security
+>      management)
+>
+> v6:
+>    - remove useless defines in drivers/clk/stm32/stm32mp25_rcc.h
+>
+> v5:
+>    - Fix sparse warnings: was not declared. Should it be static?
+>      drivers/clk/stm32/clk-stm32mp13.c:1516:29: symbol 'stm32mp13_reset_data'
+>      drivers/clk/stm32/clk-stm32mp1.c:2148:29: symbol 'stm32mp1_reset_data'
+>      drivers/clk/stm32/clk-stm32mp25.c:1003:5: symbol 'stm32mp25_cpt_gate'
+>      drivers/clk/stm32/clk-stm32mp25.c:1005:29: symbol 'stm32mp25_clock_data'
+>      drivers/clk/stm32/clk-stm32mp25.c:1011:29: symbol 'stm32mp25_reset_data'
+>
+> v4:
+>    - use GPL-2.0-only OR BSD-2-Clause for clock and reset binding files
+>    - use quotes ' for #clock-cells and #reset-cells in YAML documentation
+>    - reset binding start now to 0 instead 1
+>    - improve management of reset lines that are not managed
+>
+> v3:
+>    - from Rob Herring change clock item description in YAML documentation
+> v2:
+>    - rework reset binding (use ID witch start from 0)
+>    - rework reset driver to manage STM32MP13 / STM32MP15 / STM32MP25
+>    - rework YAML documentation
+>
+> Gabriel Fernandez (3):
+>    clk: stm32mp13: use platform device APIs
+>    clk: stm32: introduce clocks for STM32MP257 platform
+>    arm64: dts: st: add rcc support in stm32mp251
+>
+>   arch/arm64/boot/dts/st/stm32mp251.dtsi |  132 +-
+>   drivers/clk/stm32/Kconfig              |    7 +
+>   drivers/clk/stm32/Makefile             |    1 +
+>   drivers/clk/stm32/clk-stm32-core.c     |   11 +-
+>   drivers/clk/stm32/clk-stm32mp13.c      |   72 +-
+>   drivers/clk/stm32/clk-stm32mp25.c      | 1876 ++++++++++++++++++++++++
+>   drivers/clk/stm32/reset-stm32.c        |   59 +-
+>   drivers/clk/stm32/reset-stm32.h        |    7 +
+>   drivers/clk/stm32/stm32mp25_rcc.h      |  712 +++++++++
+>   9 files changed, 2765 insertions(+), 112 deletions(-)
+>   create mode 100644 drivers/clk/stm32/clk-stm32mp25.c
+>   create mode 100644 drivers/clk/stm32/stm32mp25_rcc.h
+>
