@@ -1,90 +1,167 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6E413AA34
-	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 22:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB3D13B7B4
+	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 22:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706220824; cv=none; b=l4mSyhhhDw7oGKCk/YHSZgt4jNyzN2oAQaRqyE9vEZxsIbMuH3JzaNPGreCuICkvs3msUtxF5oCB0L5zDbdRTi0a4t7Ka3SjufBi0fh/8n7gVsgZU0vxsuBY9sycPN4uBA9cmd/O+aLSqUrROggm6/MEaCHDtDCeR/Ywc1NGsjo=
+	t=1706221793; cv=none; b=B+oYgIcxdtftUWawjlOobOX2piRu3xABblVD0Is+Vz0j+cxpKsFdD4lB5g0951wtTqtqMSwKQM7+TuWQ1yqXbo9aLdfbivNgXST4GA29FX/BxgrImS338+62wBTGWM8XxR4OyK45GgrC4B9EjmbF5tBeFOjoEDoXEOFO0qXJ3RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706220824; c=relaxed/simple;
-	bh=/q+OKPTvjfhtwgZQ3LtD4ypTdtx/UFBmU0i1AagUJwU=;
+	s=arc-20240116; t=1706221793; c=relaxed/simple;
+	bh=pdmqitTeaF84l4GLBECsFls/XdMw2AE1xh/qLajhugI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=du94KN9pexieoVFfRqz2tA6rf71efLOb6IgZEL1aLsVJUORY0khRNf1Nmt8uWpn2sWMaHlyGIpwL/tFA8fcpz0hue9B+54FrsQLCwHVrgpGHFjgRu0odENjdSrUn0QXXNOuiHN/Ts2oqyGekgXeSef/O0Zj8UHHz+iSc02cSKdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bW2gQW2s; arc=none smtp.client-ip=209.85.128.181
+	 To:Cc:Content-Type; b=sia844IyaICLOLhRjsUf5u5IM+3OAyFKt9ORQLqmHYrF8npkeblcMXTQd/euVBJqR7R9w+fs291ak1+vahm1qJZqkrPB9q+tGhQUx015XLg7al0x81R1oeN+vzP52ldrVlToMQUhnNJ13J4uEarDAzAZEL0V39B4dgj1su7Xw4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eTFidCax; arc=none smtp.client-ip=209.85.219.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bW2gQW2s"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6001449a2beso37569147b3.3
-        for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 14:13:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eTFidCax"
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dc63dfe77caso114704276.3
+        for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 14:29:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706220821; x=1706825621; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706221791; x=1706826591; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=slwtZcSfd5oU0OLpt8FDjn7MWT/cYH2TJp6qwy9HSCY=;
-        b=bW2gQW2sQmAslc3/bpTtAV5QqH6TAAxFQ7V9JEk58Cq7AkNeKTYBKSir+YX4kZvBfL
-         JICtdNL2fOWOOe43hSPVvdmWUjPzsHfuXp08B+scFUSFVk/p9Q41rvQHt7GoTTgfk8kS
-         XtVDn8RZ5tbcQsqmZK2/HLNXVhib5iEpvoArs85b/PC407wLmc2QmOPMllWxzqgkHrAZ
-         SnoIVQXKpw4KUtAEJP1sEjtPa4+LjnxKltA2WvH9MIqae7ytMawnFPt2olm/H0Giz+2X
-         PMH1u87jn0KiQWKtpXmp7jXnrrwYINDo+RDJVUQMi4Xb5fx1INXPKEgWvASiEPRpSKI+
-         6mfQ==
+        bh=0qj1aarYcNCRPMpfcILtapIIFfoDQsiP4fM6MW/nqV0=;
+        b=eTFidCaxsOw3f3pz74qAqEMl3M5gbAgocD6v2alejncgRQTq+gXP7C/vfJsyQDhQcz
+         VOw1GiSIOUSaEuZ3WTYfOIyCuNeKnEPyMkCQBsGk37WUCS89KWQFEwR1+h6Y0vI/1TG3
+         YcBBxYRca1SQAy9KxFafty2au49wZi9XpgMKZzQ0OaedagalbQ3KbBY0ccwY+RagfAo0
+         UMFWS0ZZ71TR3UmJYqgs4X4fASpPNPCnxjtBcF+MXJDNBpuOn3fMzJ4HY7ZijHhwAayz
+         a2Ax7LpiZSCfgivTJaITOY1taRRLwG1ADiPH5P8BJPt3rvWy/Srm0+TNwmJdr4UjxaSv
+         55aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706220821; x=1706825621;
+        d=1e100.net; s=20230601; t=1706221791; x=1706826591;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=slwtZcSfd5oU0OLpt8FDjn7MWT/cYH2TJp6qwy9HSCY=;
-        b=SKSiWJ1+Xgo+cyOfl0DIPE8PcjyqAqIiVSGHydBD+X6vhhCGXI5Dd4yKa/d45EpmtP
-         IB9TRpJQembQid+KknlY+mFVpht2a9QRI95e7edXXnTqEOQ2laK74omqGfNQOAfNEUQx
-         O9yUhm9QzdlttJ4b/NCvVUcYDTCg1OztUk9625IX0sIx2aw3gujUF53wWRBXneWc3IpB
-         zbCvF5JAHCytQdKdq2dB7WNCa4ymiV5ivVZSOpvluzGU+xo3kZY/klw5eVLeDPLFIcUE
-         Em3KZlVpZcciiuRdJARcZ4Mr7Q2LQJf0P5jAq5/M43/rEI5xLVHQT4S0/5BRRMgRXHCx
-         ahsg==
-X-Gm-Message-State: AOJu0YyxIlIdORLek2mbyOy2CBP2LdfI0hTOMjwDNR1/4irjuPu5GeCz
-	3a4tJwZ9j1wJJGuAd148ZV0Z8ygmlVgb3nlNbUZANXGsehZo/XYmMsqMCpd3Ypk/1/XSkT2HPnK
-	B2f3uipMcN3edMDXnwKKbkC4ZabzW/8VJc1V4Cg==
-X-Google-Smtp-Source: AGHT+IE3TWyGHNGHsG2xqF2JXCIF6aVnGmnqe4/3CyA3myFBwqZCxjCHe2OS/OaFjyPxVBpRCKQb3m3/ij+f63iLZtk=
-X-Received: by 2002:a81:c441:0:b0:5ff:7cc9:1691 with SMTP id
- s1-20020a81c441000000b005ff7cc91691mr475647ywj.70.1706220821421; Thu, 25 Jan
- 2024 14:13:41 -0800 (PST)
+        bh=0qj1aarYcNCRPMpfcILtapIIFfoDQsiP4fM6MW/nqV0=;
+        b=o3IMn35+MNd0Qrw9kWd/gzaW8xB8O247G7JA6jWjRSP3TLAL5+PCc3O9kNvX6T1EZb
+         lIK8cpvI5aoLjkFxUVrMyIvIg41RWroHIhof/3hfgRgTlt/5Guv8z2u87w7CL1ZiLaZm
+         qzPr+yWRJFPkpDaQG4P6ZNp1SnNoT/rInKDPJ/A1nmSeC835NQEcRZ+KMRQ4U4XtC2q5
+         N+nKHN2GdBsLZux97LCyz4bUVan1YhlvWqAphNolkbhpchz1j4d2CTWHmyKlYMFeeK+H
+         /Z4Glwcy+dU173WHjtLcXp2RhaBrJIo4A/lmhzGdGdpJOKiT7L94mzdL1ZMN1kILtiBM
+         BGhg==
+X-Gm-Message-State: AOJu0Yz7InHAXuRag63SLOi5L2D8YDZJRdQ0jN5+rm3bN0/kJVE73CYm
+	nFhrQ+Kr6tiGEm2uqLv6QWFTc6Eia3G8FEwP/U5n3/Gf/YQ6WXBdVElxnjwImlnEd6ea9ZICwrC
+	vrO/dFr2KNp+2Y5pPDeyqDuNc8KPwiQ3bshdvKg==
+X-Google-Smtp-Source: AGHT+IEIrXiJz/BJm8XfspLPa6VXYTY6QIWf67Zf9KppnCLv1hYViKn5F1vUW8HIv7famATu3qJ7JAubWNKmRV2MlZo=
+X-Received: by 2002:a25:ab34:0:b0:dc2:1fa9:5329 with SMTP id
+ u49-20020a25ab34000000b00dc21fa95329mr496445ybi.29.1706221791148; Thu, 25 Jan
+ 2024 14:29:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240125-msm8953-mdss-reset-v2-0-fd7824559426@z3ntu.xyz> <20240125-msm8953-mdss-reset-v2-2-fd7824559426@z3ntu.xyz>
-In-Reply-To: <20240125-msm8953-mdss-reset-v2-2-fd7824559426@z3ntu.xyz>
+References: <20240125-sa8295p-gpu-v4-0-7011c2a63037@quicinc.com> <20240125-sa8295p-gpu-v4-6-7011c2a63037@quicinc.com>
+In-Reply-To: <20240125-sa8295p-gpu-v4-6-7011c2a63037@quicinc.com>
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 26 Jan 2024 00:13:30 +0200
-Message-ID: <CAA8EJpqb_FFUzyGR2SYH7wwrDCrC8Wy7QcUFyJgHqAvx42Vgfw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: qcom: gcc-msm8953: add more resets
-To: Luca Weiss <luca@z3ntu.xyz>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+Date: Fri, 26 Jan 2024 00:29:40 +0200
+Message-ID: <CAA8EJprR74VGm4djFdZvVA8xtqHvbFypwacmxqcMZhOLUo6XSQ@mail.gmail.com>
+Subject: Re: [PATCH v4 6/8] arm64: dts: qcom: sa8295p-adp: add max20411
+To: Bjorn Andersson <quic_bjorande@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh+dt@kernel.org>, 
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Johan Hovold <johan+linaro@kernel.org>, 
 	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Vladimir Lypak <vladimir.lypak@gmail.com>
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 25 Jan 2024 at 23:36, Luca Weiss <luca@z3ntu.xyz> wrote:
+On Thu, 25 Jan 2024 at 23:06, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
 >
-> From: Vladimir Lypak <vladimir.lypak@gmail.com>
+> From: Bjorn Andersson <andersson@kernel.org>
 >
-> Add new entries in the gcc driver for some more resets found on MSM8953.
+> The SA8295P ADP has a MAX20411 LDO regulator on I2C 12, supplying the
+> VDD_GFX pads. Enable the bus and add the maxim,max20411 device on the
+> bus.
 >
-> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> [luca: expand commit message, move entry, add more entries]
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> ---
->  drivers/clk/qcom/gcc-msm8953.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+This doesn't match the From header.
+
+> ---
+>  arch/arm64/boot/dts/qcom/sa8295p-adp.dts | 39 ++++++++++++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sa8295p-adp.dts b/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
+> index fd253942e5e5..bd0962f39fc5 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
+> @@ -266,6 +266,26 @@ &dispcc1 {
+>         status = "okay";
+>  };
+>
+> +&i2c12 {
+> +       pinctrl-0 = <&qup1_i2c4_state>;
+> +       pinctrl-names = "default";
+> +
+> +       status = "okay";
+> +
+> +       vdd_gfx: regulator@39 {
+> +               compatible = "maxim,max20411";
+> +               reg = <0x39>;
+> +
+> +               regulator-min-microvolt = <800000>;
+> +               regulator-max-microvolt = <800000>;
+> +
+> +               enable-gpios = <&pmm8540a_gpios 2 GPIO_ACTIVE_HIGH>;
+> +
+> +               pinctrl-0 = <&max20411_en>;
+> +               pinctrl-names = "default";
+> +       };
+> +};
+> +
+>  &mdss0 {
+>         status = "okay";
+>  };
+> @@ -476,6 +496,10 @@ &pcie4_phy {
+>         status = "okay";
+>  };
+>
+> +&qup1 {
+> +       status = "okay";
+> +};
+> +
+>  &qup2 {
+>         status = "okay";
+>  };
+> @@ -636,6 +660,14 @@ &xo_board_clk {
+>
+>  /* PINCTRL */
+>
+> +&pmm8540a_gpios {
+> +       max20411_en: max20411-en-state {
+> +               pins = "gpio2";
+> +               function = "normal";
+> +               output-enable;
+> +       };
+> +};
+> +
+>  &tlmm {
+>         pcie2a_default: pcie2a-default-state {
+>                 clkreq-n-pins {
+> @@ -728,4 +760,11 @@ wake-n-pins {
+>                         bias-pull-up;
+>                 };
+>         };
+> +
+> +       qup1_i2c4_state: qup1-i2c4-state {
+> +               pins = "gpio0", "gpio1";
+> +               function = "qup12";
+> +               drive-strength = <2>;
+> +               bias-pull-up;
+> +       };
+>  };
+>
+> --
+> 2.25.1
+>
+>
+
 
 -- 
 With best wishes
