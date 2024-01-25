@@ -1,95 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD5760EC4;
-	Thu, 25 Jan 2024 14:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7E06340E;
+	Thu, 25 Jan 2024 14:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706191367; cv=none; b=tQtgjJsWWavrThbH5mH3p8suC/q4PgHJRxPziaJg6u7TTJPXkkk50l1cho17HHOSdW+mDRDlhBBE6sEVLyANjdjHSoW6DFRtJ5mgIVOq+diS1g83VX5hLeyAHrKxMHAdV4d23rIaWtEXUgNPBU+wE/8lfSDE/CTltqCyDskdfgc=
+	t=1706193263; cv=none; b=WxAK+zfgQ9/7kUfb1UAiPxLR4L110H7X9Fyr6bB7cykK7DDYKFit4l5T4EpGS5HdIKldePBNfM7pG9nxrgo5d8xIjKeAqAGV/60Q2A+Yo0DAXBLJMHVpGw+gXPV7/3n80/UOW0tbuy7DA2e/o3kOtXnEd9XWjyvtUq7a3qbF8yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706191367; c=relaxed/simple;
-	bh=hW+7KwLKI/bBlcGNcAWmmmbt2DqB5Fpalsq0UAOigPM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pFuPFm2ctjmDIMrZf98R7N+OgkKNVB0A+hgwMPAmTl6Zp5ugjv+H+jwurY+U+8yPKSxmx0RmQfrCCGBwqBP7WmxWmU5BgxjQN/JcRVK7aud9gYXvr4Nd/haK+rPnurYgP+RxmvwOmsE9980hJrBbGQcJHwfxS5eLypJO2r+iNIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4TkpIWN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706193263; c=relaxed/simple;
+	bh=sjdoDcDKRSkLx4UDwlfMTbTX9nBFU/s/iUda1EdkDKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qJIJSZZUEJHZTY8VFpnEjAk5ckf87uk87Gjro66U01/dzO+ooA6SJuEE8F+sRaef1WiAf1SJBViT+n0SBygWbQ8tdEI1m9eee1u2PUaR4MCQ30kyPEFvHGO4uDpOsXuwy0UCTOywWfVlsLZt4D+AeZoxqN1c7cy54C7sGMkKgiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=S3i9JLAF; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4TkpIWN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26D06C433C7;
-	Thu, 25 Jan 2024 14:02:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706191367;
-	bh=hW+7KwLKI/bBlcGNcAWmmmbt2DqB5Fpalsq0UAOigPM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=N4TkpIWNTxnqtSfosttOzWNDmPZ2ZYsvTxL0myI5GpDkNU9ZvpFOO2zmmsD7czfzA
-	 HDwNl5P6IFmNpXBKtreSRDRglECxaHo+sV8ahx6TKXDuHlQiuyZ5NDZ20qNNDVvPaA
-	 RPKOQWpxH8OlCF9Iz7Pms/LiE4Q+D6clzU7pzVNfH1uC+tDNTbq/wF6tDhRHOUxn2H
-	 xNuZKDM63XZOHrB2b/iwB2fsGX8FU1ZU1JNtUspUYIGx7SfH/VQ4LsUgXEfJws/Z6a
-	 KEBGdRxpUt+ui/69T85DafdBLm+8nuHzlWygg6IZtGmw1i4iwcdUKNBRb0glA88Q9x
-	 e0Agwd3NHwKfw==
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
- linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-In-Reply-To: <20240120012948.8836-1-semen.protsenko@linaro.org>
-References: <20240120012948.8836-1-semen.protsenko@linaro.org>
-Subject: Re: (subset) [PATCH 0/7] arm64: exynos: Enable SPI for Exynos850
-Message-Id: <170619136385.38074.4377918274781683592.b4-ty@kernel.org>
-Date: Thu, 25 Jan 2024 14:02:43 +0000
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="S3i9JLAF"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 40PEXsZn003349;
+	Thu, 25 Jan 2024 08:33:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1706193234;
+	bh=D3et9L4RHHyPosS3VDVQzoYncrvITyHk1dVQbc6iud8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=S3i9JLAFv/yOUIvqQltF0KZwma/RCvGqNExNYIpZXMRkFerkygu+XtgdcXNRAe/E+
+	 wMDR0ducWngXiGpABRGbxXH4nLQRLmbwhH60TRobQknis7fiOEVs5mHMh84B029fzV
+	 47V1e2KNcoFTOsmivniaScYuG/FFSc8Dt+hDFr9k=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 40PEXsPY129184
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 25 Jan 2024 08:33:54 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 25
+ Jan 2024 08:33:54 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 25 Jan 2024 08:33:54 -0600
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 40PEXr4k008480;
+	Thu, 25 Jan 2024 08:33:53 -0600
+Message-ID: <9a5f017c-530c-482b-9cbf-a07281e92589@ti.com>
+Date: Thu, 25 Jan 2024 08:33:53 -0600
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-a684c
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/17] dt-bindings: soc: mobileye: add EyeQ5 OLB system
+ controller
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>
+CC: Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Linus
+ Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+	<rafal@milecki.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Vladimir
+ Kondratiev <vladimir.kondratiev@mobileye.com>,
+        <linux-mips@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>,
+        Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+        <linux-gpio@vger.kernel.org>
+References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
+ <20240123-mbly-clk-v3-4-392b010b8281@bootlin.com>
+ <20240124151405.GA930997-robh@kernel.org>
+ <dd7e723d-3c4c-4edf-afc2-51db9a074efa@linaro.org>
+ <CYNQHXOZ73YR.3QODFI2X08KC6@bootlin.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <CYNQHXOZ73YR.3QODFI2X08KC6@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, 19 Jan 2024 19:29:41 -0600, Sam Protsenko wrote:
-> This series enables SPI for Exynos850 SoC. The summary:
+On 1/25/24 5:01 AM, Théo Lebrun wrote:
+> Hello,
 > 
->   1. Enable PDMA, it's needed for SPI (dts, clk)
->   2. Propagate SPI src clock rate change up to DIV clocks, to make it
->      possible to change SPI frequency (clk driver)
->   3. Add Exynos850 support in SPI driver
->   4. Add SPI nodes to Exynos850 SoC dtsi
+> On Thu Jan 25, 2024 at 8:51 AM CET, Krzysztof Kozlowski wrote:
+>> On 24/01/2024 16:14, Rob Herring wrote:
+>>>> +
+>>>> +      pinctrl-b {
+>>>> +        compatible = "mobileye,eyeq5-b-pinctrl";
+>>>> +        #pinctrl-cells = <1>;
+>>>> +      };
+>>>> +    };
+>>>
+>>> This can all be simplified to:
+>>>
+>>> system-controller@e00000 {
+>>>      compatible = "mobileye,eyeq5-olb", "syscon";
+>>>      reg = <0xe00000 0x400>;
+>>>      #reset-cells = <2>;
+>>>      #clock-cells = <1>;
+>>>      clocks = <&xtal>;
+>>>      clock-names = "ref";
+>>>
+>>>      pins { ... };
+>>> };
+>>>
+>>> There is no need for sub nodes unless you have reusable blocks or each
+>>> block has its own resources in DT.
+>>
+>> Yes, however I believe there should be resources here: each subnode
+>> should get its address space. This is a bit tied to implementation,
+>> which currently assumes "everyone can fiddle with everything" in this block.
+>>
+>> Theo, can you draw memory map?
 > 
-> [...]
+> It would be a mess. I've counted things up. The first 147 registers are
+> used in this 0x400 block. There are 31 individual blocks, with 7
+> registers unused (holes to align next block).
+> 
+> Functions are reset, clocks, LBIST, MBIST, DDR control, GPIO,
+> accelerator control, CPU entrypoint, PDTrace, IRQs, chip info & ID
+> stuff, control registers for PCIe / eMMC / Eth / SGMII / DMA / etc.
+> 
+> Some will never get used from Linux, others might. Maybe a moderate
+> approach would be to create ressources for major blocks and make it
+> evolve organically, without imposing that all uses lead to a new
+> ressource creation.
+> 
 
-Applied to
+That is usually how nodes are added to DT. If you modeled this
+system-controller space as a "simple-bus" instead of a "syscon"
+device, you could add nodes as you implement them. Rather than
+all at once as you have to by treating this space as one large
+blob device.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Andrew
 
-Thanks!
-
-[2/7] dt-bindings: spi: samsung: Add Exynos850 SPI
-      commit: 737cf74b38007fd5d5d2f15d4d4bc16e5f1cbfed
-[5/7] spi: s3c64xx: Add Exynos850 support
-      commit: 0229278bf33ea69cc1bba12c287f173e9b18c1f8
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> Thanks,
+> 
+> --
+> Théo Lebrun, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+> 
