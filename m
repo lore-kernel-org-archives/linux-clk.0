@@ -1,31 +1,30 @@
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675966EB7B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8930673169
 	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 15:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706196901; cv=none; b=Res6zcDOTH9rhfQ7ok6bIsBrFX/SOFdJVQMIRHrx8HeMhlJu/IM+PYckzey0zGm5mvPMVT1r2yjwakdD547ZYCIfPjPRFPU7IriYLBAAZfFr8ZWbm3SO50pApA9gNkkCbId4+uyI28FEykoHPBf1tWWPeqJlZKDsI+ofzb6wQ60=
+	t=1706196902; cv=none; b=ugDtyRDKDhZWFd+WMOWaIpu4B5pAc4ojDfghBDoAJRq6nGsCKu6lwIpboR+LqopF3FS/kzU7HqlD9U6BPiNOq1iQeZH2tncA0SToAhyXxsR7mDAhcoQaiJJN931S/GbDsmevqh3ivTxCCrUkQZBz+MerZthXjxAv3MSAd95nLPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706196901; c=relaxed/simple;
-	bh=Eur2rkOIf6kFZcP6Zrtp15/cO6YVofM69aRwlAEX3BU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Sun946yx+zRD//+oQvRCeODKjj3fb5/zvExWxW79Sr6IXwg+BYNc1KMv5Ln3gUjywwIULGRaYjjQ17wTkm/eyNZ+oN8srq1WD16dOmx4lg/zhzd9HK3p/oqYhSy6RgPPKEK4EIXPBIifDoT3yyrx9LAw9zRKiQdf606YW7+7eIY=
+	s=arc-20240116; t=1706196902; c=relaxed/simple;
+	bh=v15vasOy5jTU6RKaAc6l/DxvJnBWxYnDy11GfBA+2Fc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=I+H4zFbY/JFsb+wgh/uKAQAcpwDTFkEtaDzeXH6gternVbZenl3DmoLfn8IyrxP6cl5CM1Dnrrq05zcJ2M6xdTHjocCmyxtuZv0Nbo68zAGhMzqjPxszEmNL4T1PP71FOSA5qImv7wjFqT8rEz3YO5mK3XZLyTpbjQiTDgNW2BY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:bc9e:fcb8:8aa3:5dc0])
 	by andre.telenet-ops.be with bizsmtp
-	id f3am2B00R58agq2013amKe; Thu, 25 Jan 2024 16:34:56 +0100
+	id f3am2B00558agq2013amKN; Thu, 25 Jan 2024 16:34:56 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1jo-00GUwG-97;
-	Thu, 25 Jan 2024 16:34:46 +0100
+	id 1rT1jn-00GUvT-Tx;
+	Thu, 25 Jan 2024 16:34:45 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1kc-00Fs3F-8Z;
-	Thu, 25 Jan 2024 16:34:46 +0100
+	id 1rT1kb-00Fs2H-Qu;
+	Thu, 25 Jan 2024 16:34:45 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -47,168 +46,115 @@ Cc: Cong Dang <cong.dang.xn@renesas.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 13/15] arm64: dts: renesas: Add Renesas R8A779H0 SoC support
-Date: Thu, 25 Jan 2024 16:34:41 +0100
-Message-Id: <4107bc3d7c31932da29e671ddf4b1564ba38a84c.1706194617.git.geert+renesas@glider.be>
+Subject: [PATCH v2 00/15] arm64: renesas: Add R-Car V4M and Gray Hawk Single support
+Date: Thu, 25 Jan 2024 16:34:28 +0100
+Message-Id: <cover.1706194617.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1706194617.git.geert+renesas@glider.be>
-References: <cover.1706194617.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Hai Pham <hai.pham.ud@renesas.com>
+	Hi all,
 
-Add initial support for the Renesas R-Car V4M (R8A779H0) SoC.
+This patch series adds initial support for the Renesas R-Car V4M
+(R8A779G0) SoC and the Renesas Gray Hawk Single development board.
 
-Signed-off-by: Hai Pham <hai.pham.ud@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Add vendor-prefixes to DT binding definition header files.
+As both driver code and DTS have hard dependencies on DT binding
+definitions, most patches in this series are supposed to go in through
+the renesas-devel and/or renesas-clk trees, using a shared branch for DT
+binding definitions, as usual.  For the PM domain patches (03, 04, 09),
+Ulf already offered to apply these to his pmdomain tree, and provide an
+immutable "dt" branch, to be pulled in my renesas-devel tree.
 
-Changes compared to the BSP:
-  - Add "-clk" suffix to clock node names,
-  - Rename "pmu_a76" node to "pmu-a76",
-  - Drop bogus CPU masks from GICv3 PPI interrupt specifiers,
-  - Drop hscif0 dmas and dma-names placeholder,
-  - Add missing hypervisor virtual timer IRQ to timer node.
----
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 121 ++++++++++++++++++++++
- 1 file changed, 121 insertions(+)
+Changes compared to v1[1]:
+  - Add Acked-by, Reviewed-by,
+  - Add vendor-prefix to DT binding definition header file names and
+    update include guards,
+  - Add "board" to compatible comment,
+  - Add missing CP core clock,
+  - Add SoC name to top-level comment.
+
+For testing, this series can be found at
+https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/v4m-gray-hawk-single-v2
+
+Thanks for your comments!
+
+[1] "[PATCH 00/15] arm64: renesas: Add R-Car V4M and Gray Hawk Single
+    support"
+    https://lore.kernel.org/linux-renesas-soc/cover.1704726960.git.geert+renesas@glider.be
+
+Cong Dang (1):
+  clk: renesas: cpg-mssr: Add support for R-Car V4M
+
+Duy Nguyen (6):
+  dt-bindings: clock: Add R8A779H0 V4M CPG Core Clock Definitions
+  dt-bindings: power: renesas,rcar-sysc: Document R-Car V4M support
+  dt-bindings: power: Add r8a779h0 SYSC power domain definitions
+  pmdomain: renesas: r8a779h0-sysc: Add r8a779h0 support
+  soc: renesas: Identify R-Car V4M
+  soc: renesas: rcar-rst: Add support for R-Car V4M
+
+Geert Uytterhoeven (6):
+  dt-bindings: clock: renesas,cpg-mssr: Document R-Car V4M support
+  dt-bindings: reset: renesas,rst: Document R-Car V4M support
+  dt-bindings: soc: renesas: Document R-Car V4M Gray Hawk Single
+  clk: renesas: rcar-gen4: Add support for FRQCRC1
+  soc: renesas: Introduce ARCH_RCAR_GEN4
+  arm64: dts: renesas: Add Gray Hawk Single board support
+
+Hai Pham (1):
+  arm64: dts: renesas: Add Renesas R8A779H0 SoC support
+
+Linh Phung (1):
+  arm64: defconfig: Enable R8A779H0 SoC
+
+ .../bindings/clock/renesas,cpg-mssr.yaml      |   1 +
+ .../bindings/power/renesas,rcar-sysc.yaml     |   1 +
+ .../bindings/reset/renesas,rst.yaml           |   1 +
+ .../bindings/soc/renesas/renesas.yaml         |   6 +
+ arch/arm64/boot/dts/renesas/Makefile          |   2 +
+ .../dts/renesas/r8a779h0-gray-hawk-single.dts |  52 ++++
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi     | 121 +++++++++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/renesas/Kconfig                   |   5 +
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c       | 241 ++++++++++++++++++
+ drivers/clk/renesas/rcar-gen4-cpg.c           |  10 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c        |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h        |   1 +
+ drivers/pmdomain/renesas/Kconfig              |   4 +
+ drivers/pmdomain/renesas/Makefile             |   1 +
+ drivers/pmdomain/renesas/r8a779h0-sysc.c      |  55 ++++
+ drivers/pmdomain/renesas/rcar-gen4-sysc.c     |   3 +
+ drivers/pmdomain/renesas/rcar-gen4-sysc.h     |   1 +
+ drivers/soc/renesas/Kconfig                   |  17 +-
+ drivers/soc/renesas/rcar-rst.c                |   1 +
+ drivers/soc/renesas/renesas-soc.c             |   8 +
+ .../clock/renesas,r8a779h0-cpg-mssr.h         |  96 +++++++
+ .../dt-bindings/power/renesas,r8a779h0-sysc.h |  49 ++++
+ 24 files changed, 679 insertions(+), 5 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+ create mode 100644 drivers/clk/renesas/r8a779h0-cpg-mssr.c
+ create mode 100644 drivers/pmdomain/renesas/r8a779h0-sysc.c
+ create mode 100644 include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/renesas,r8a779h0-sysc.h
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-new file mode 100644
-index 0000000000000000..a082e2d06b696019
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-@@ -0,0 +1,121 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the R-Car V4M (R8A779H0) SoC
-+ *
-+ * Copyright (C) 2023 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/renesas,r8a779h0-sysc.h>
-+
-+/ {
-+	compatible = "renesas,r8a779h0";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		a76_0: cpu@0 {
-+			compatible = "arm,cortex-a76";
-+			reg = <0>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A779H0_PD_A1E0D0C0>;
-+		};
-+	};
-+
-+	extal_clk: extal-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	extalr_clk: extalr-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	pmu-a76 {
-+		compatible = "arm,cortex-a76-pmu";
-+		interrupts-extended = <&gic GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	soc: soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a779h0-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x4000>;
-+			clocks = <&extal_clk>, <&extalr_clk>;
-+			clock-names = "extal", "extalr";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a779h0-rst";
-+			reg = <0 0xe6160000 0 0x4000>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a779h0-sysc";
-+			reg = <0 0xe6180000 0 0x4000>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		hscif0: serial@e6540000 {
-+			compatible = "renesas,hscif-r8a779h0",
-+				     "renesas,rcar-gen4-hscif", "renesas,hscif";
-+			reg = <0 0xe6540000 0 0x60>;
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 514>,
-+				 <&cpg CPG_CORE R8A779H0_CLK_SASYNCPERD1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
-+			resets = <&cpg 514>;
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@f1000000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0xf1000000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x110000>;
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+				      <&gic GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+				      <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+				      <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
-+				      <&gic GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
