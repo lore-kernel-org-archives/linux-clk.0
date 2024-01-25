@@ -1,30 +1,30 @@
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7A37319D
-	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 15:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B10B4F5EC
+	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 15:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706196903; cv=none; b=H2+DkCJCQ8T8Px7iulNraRGryMN69CTJMQDCcwOkmzyiESLOfaccUDqoMpM/mzq9ngSEJoSQI7nWg+fVvlcD6PR1valyh9UBaGYGpahoUi9ZzJIvwbhXHHX2hvQ3ODzj+7hQuuqzJIriZCDp+j+vUhHUEbFNPIXt3DOvXnYYYc8=
+	t=1706196903; cv=none; b=tI3GqMdGhWFPsoHYmQczXk1Vvd7GJTtuWm6DGJcXXRK3k4BxFb+J4tCSTxaDs0YKTvTGEIXFUA5Qt8JnQnuDKhwglggeoJwviB12dgwAGDyzSScvGusXdeXeLZ6lB2mQq+3uUSDB7RxiniJQUcmbIrOZ/D6KvDjGJloUmgR/WBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706196903; c=relaxed/simple;
-	bh=93GkKmd4fyfQi5SOpTnAYdsS7YxqGZvt4lLw8GcEVM0=;
+	bh=/AvJGwQgX6dcvpaIBXSgcqhgJjIVJ4v8vhMLFY6UuLs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tIsRj+ZeXZ/rv63JJUVQEL4Ji+V3bCrGEVCqcGd+ckIP58VboEgOoifF+c++BiPtloDHuOU6p9xKbwRjGTwO4u6UoAXimCKFVZuQwrNQUfnqKOCbQ1ntotpz711PAWcBbmCPiNBGUwfSJe+BwV/t71BYtgnGEofLksNQF+Q4s/o=
+	 MIME-Version; b=qYxEkpKJo2Ckq65mtBJlpVIEFfduyXs2DY2MuDRkKPLHiRkUvJ3aCuLqrHwJfnZBv2MLXBEizg4ewpMsk4FL71Mty3ntFeRYVc1srhu7bP1ONZzxxXAW4U7OAKiWiKoEBbGP4mAPwsd6Mqz2rjb6o+YuzZE0N7/zP5LFjEWC/ec=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:bc9e:fcb8:8aa3:5dc0])
 	by xavier.telenet-ops.be with bizsmtp
-	id f3am2B00858agq2013amcN; Thu, 25 Jan 2024 16:34:58 +0100
+	id f3am2B00958agq2013amcP; Thu, 25 Jan 2024 16:34:56 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1jo-00GUvt-3q;
+	id 1rT1jo-00GUw1-5z;
 	Thu, 25 Jan 2024 16:34:46 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1kc-00Fs2l-3A;
+	id 1rT1kc-00Fs2w-5N;
 	Thu, 25 Jan 2024 16:34:46 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -46,12 +46,10 @@ Cc: Cong Dang <cong.dang.xn@renesas.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 07/15] clk: renesas: rcar-gen4: Add support for FRQCRC1
-Date: Thu, 25 Jan 2024 16:34:35 +0100
-Message-Id: <f64d5573a92a18505619ff0ff808d50cfc2bde55.1706194617.git.geert+renesas@glider.be>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 09/15] pmdomain: renesas: r8a779h0-sysc: Add r8a779h0 support
+Date: Thu, 25 Jan 2024 16:34:37 +0100
+Message-Id: <eed6faa02c628d32676ab8ea0eee636b4ffd6c47.1706194617.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1706194617.git.geert+renesas@glider.be>
 References: <cover.1706194617.git.geert+renesas@glider.be>
@@ -61,54 +59,149 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-R-Car V4H and V4M have a second Frequency Control Register C.
-Add support for this by treating bit field offsets beyond 31 as
-referring to the second register.
+From: Duy Nguyen <duy.nguyen.rh@renesas.com>
 
+Add support for R-Car V4M (R8A779H0) SoC power areas to the R-Car SYSC
+driver.
+
+Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Tested by enabling CLOCK_ALLOW_WRITE_DEBUGFS and checking the impact of
-CPU core clk rate on CPU core speed on R-Car V4M.
-
 v2:
-  - Add Reviewed-by.
----
- drivers/clk/renesas/rcar-gen4-cpg.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+  - Add vendor-prefix to DT binding definition header file.
 
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index 8f771fe59bfdc756..8e4559fbb0bc3352 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -220,7 +220,8 @@ static struct clk * __init cpg_pll_clk_register(const char *name,
-  */
- #define CPG_FRQCRB			0x00000804
- #define CPG_FRQCRB_KICK			BIT(31)
--#define CPG_FRQCRC			0x00000808
-+#define CPG_FRQCRC0			0x00000808
-+#define CPG_FRQCRC1			0x000008e0
+Changes compared to the BSP:
+  - Move from drivers/soc/renesas/ to drivers/pmdomain/renesas/,
+  - Include rcar-gen4-sysc glue from "soc: renesas: rcar-gen4-sysc:
+    Introduce R-Car Gen4 SYSC driver",
+  - Remove unneeded includes,
+  - Align second column,
+  - Fix names of "a33dga" and "a23dgb" domains,
+  - Add missing "a3cr[012]" domains.
+---
+ drivers/pmdomain/renesas/Kconfig          |  4 ++
+ drivers/pmdomain/renesas/Makefile         |  1 +
+ drivers/pmdomain/renesas/r8a779h0-sysc.c  | 55 +++++++++++++++++++++++
+ drivers/pmdomain/renesas/rcar-gen4-sysc.c |  3 ++
+ drivers/pmdomain/renesas/rcar-gen4-sysc.h |  1 +
+ 5 files changed, 64 insertions(+)
+ create mode 100644 drivers/pmdomain/renesas/r8a779h0-sysc.c
+
+diff --git a/drivers/pmdomain/renesas/Kconfig b/drivers/pmdomain/renesas/Kconfig
+index 80bf2cf8b60e6f63..54acb4b1ec7c4892 100644
+--- a/drivers/pmdomain/renesas/Kconfig
++++ b/drivers/pmdomain/renesas/Kconfig
+@@ -71,6 +71,10 @@ config SYSC_R8A779G0
+ 	bool "System Controller support for R-Car V4H" if COMPILE_TEST
+ 	select SYSC_RCAR_GEN4
  
- struct cpg_z_clk {
- 	struct clk_hw hw;
-@@ -345,7 +346,12 @@ static struct clk * __init cpg_z_clk_register(const char *name,
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
++config SYSC_R8A779H0
++	bool "System Controller support for R-Car V4M" if COMPILE_TEST
++	select SYSC_RCAR_GEN4
++
+ config SYSC_RMOBILE
+ 	bool "System Controller support for R-Mobile" if COMPILE_TEST
  
--	zclk->reg = reg + CPG_FRQCRC;
-+	if (offset < 32) {
-+		zclk->reg = reg + CPG_FRQCRC0;
-+	} else {
-+		zclk->reg = reg + CPG_FRQCRC1;
-+		offset -= 32;
-+	}
- 	zclk->kick_reg = reg + CPG_FRQCRB;
- 	zclk->hw.init = &init;
- 	zclk->mask = GENMASK(offset + 4, offset);
+diff --git a/drivers/pmdomain/renesas/Makefile b/drivers/pmdomain/renesas/Makefile
+index e306e396fc8c10e3..89180f19c23be732 100644
+--- a/drivers/pmdomain/renesas/Makefile
++++ b/drivers/pmdomain/renesas/Makefile
+@@ -24,6 +24,7 @@ obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
+ obj-$(CONFIG_SYSC_R8A779A0)	+= r8a779a0-sysc.o
+ obj-$(CONFIG_SYSC_R8A779F0)	+= r8a779f0-sysc.o
+ obj-$(CONFIG_SYSC_R8A779G0)	+= r8a779g0-sysc.o
++obj-$(CONFIG_SYSC_R8A779H0)     += r8a779h0-sysc.o
+ # Family
+ obj-$(CONFIG_SYSC_RCAR)		+= rcar-sysc.o
+ obj-$(CONFIG_SYSC_RCAR_GEN4)	+= rcar-gen4-sysc.o
+diff --git a/drivers/pmdomain/renesas/r8a779h0-sysc.c b/drivers/pmdomain/renesas/r8a779h0-sysc.c
+new file mode 100644
+index 0000000000000000..ce2a82183ba8c9ab
+--- /dev/null
++++ b/drivers/pmdomain/renesas/r8a779h0-sysc.c
+@@ -0,0 +1,55 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Renesas R-Car V4M System Controller
++ *
++ * Copyright (C) 2016-2017 Glider bvba
++ * Copyright (C) 2023 Renesas Electronics Corp
++ */
++
++#include <linux/kernel.h>
++
++#include <dt-bindings/power/renesas,r8a779h0-sysc.h>
++
++#include "rcar-gen4-sysc.h"
++
++static struct rcar_gen4_sysc_area r8a779h0_areas[] __initdata = {
++	{ "always-on",	R8A779H0_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
++	{ "c4",		R8A779H0_PD_C4, R8A779H0_PD_ALWAYS_ON },
++	{ "a2e0d0",	R8A779H0_PD_A2E0D0, R8A779H0_PD_C4, PD_SCU },
++	{ "a1e0d0c0",	R8A779H0_PD_A1E0D0C0, R8A779H0_PD_A2E0D0, PD_CPU_NOCR },
++	{ "a1e0d0c1",	R8A779H0_PD_A1E0D0C1, R8A779H0_PD_A2E0D0, PD_CPU_NOCR },
++	{ "a1e0d0c2",	R8A779H0_PD_A1E0D0C2, R8A779H0_PD_A2E0D0, PD_CPU_NOCR },
++	{ "a1e0d0c3",	R8A779H0_PD_A1E0D0C3, R8A779H0_PD_A2E0D0, PD_CPU_NOCR },
++	{ "a3cr0",	R8A779H0_PD_A3CR0, R8A779H0_PD_ALWAYS_ON, PD_CPU_NOCR },
++	{ "a3cr1",	R8A779H0_PD_A3CR1, R8A779H0_PD_ALWAYS_ON, PD_CPU_NOCR },
++	{ "a3cr2",	R8A779H0_PD_A3CR2, R8A779H0_PD_ALWAYS_ON, PD_CPU_NOCR },
++	{ "a33dga",	R8A779H0_PD_A33DGA, R8A779H0_PD_C4 },
++	{ "a23dgb",	R8A779H0_PD_A23DGB, R8A779H0_PD_A33DGA },
++	{ "a3vip0",	R8A779H0_PD_A3VIP0, R8A779H0_PD_C4 },
++	{ "a3vip2",	R8A779H0_PD_A3VIP2, R8A779H0_PD_C4 },
++	{ "a3dul",	R8A779H0_PD_A3DUL, R8A779H0_PD_C4 },
++	{ "a3isp0",	R8A779H0_PD_A3ISP0, R8A779H0_PD_C4 },
++	{ "a2cn0",	R8A779H0_PD_A2CN0, R8A779H0_PD_C4 },
++	{ "a1cn0",	R8A779H0_PD_A1CN0, R8A779H0_PD_A2CN0 },
++	{ "a1dsp0",	R8A779H0_PD_A1DSP0, R8A779H0_PD_A2CN0 },
++	{ "a1dsp1",	R8A779H0_PD_A1DSP1, R8A779H0_PD_A2CN0 },
++	{ "a2imp01",	R8A779H0_PD_A2IMP01, R8A779H0_PD_C4 },
++	{ "a2psc",	R8A779H0_PD_A2PSC, R8A779H0_PD_C4 },
++	{ "a2dma",	R8A779H0_PD_A2DMA, R8A779H0_PD_C4 },
++	{ "a2cv0",	R8A779H0_PD_A2CV0, R8A779H0_PD_C4 },
++	{ "a2cv1",	R8A779H0_PD_A2CV1, R8A779H0_PD_C4 },
++	{ "a2cv2",	R8A779H0_PD_A2CV2, R8A779H0_PD_C4 },
++	{ "a2cv3",	R8A779H0_PD_A2CV3, R8A779H0_PD_C4 },
++	{ "a3imr0",	R8A779H0_PD_A3IMR0, R8A779H0_PD_C4 },
++	{ "a3imr1",	R8A779H0_PD_A3IMR1, R8A779H0_PD_C4 },
++	{ "a3imr2",	R8A779H0_PD_A3IMR2, R8A779H0_PD_C4 },
++	{ "a3imr3",	R8A779H0_PD_A3IMR3, R8A779H0_PD_C4 },
++	{ "a3vc",	R8A779H0_PD_A3VC, R8A779H0_PD_C4 },
++	{ "a3pci",	R8A779H0_PD_A3PCI, R8A779H0_PD_C4 },
++	{ "a2pciphy",	R8A779H0_PD_A2PCIPHY, R8A779H0_PD_A3PCI },
++};
++
++const struct rcar_gen4_sysc_info r8a779h0_sysc_info __initconst = {
++	.areas = r8a779h0_areas,
++	.num_areas = ARRAY_SIZE(r8a779h0_areas),
++};
+diff --git a/drivers/pmdomain/renesas/rcar-gen4-sysc.c b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
+index 9e5e6e077abc081c..728248659a97e8cc 100644
+--- a/drivers/pmdomain/renesas/rcar-gen4-sysc.c
++++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
+@@ -284,6 +284,9 @@ static const struct of_device_id rcar_gen4_sysc_matches[] __initconst = {
+ #endif
+ #ifdef CONFIG_SYSC_R8A779G0
+ 	{ .compatible = "renesas,r8a779g0-sysc", .data = &r8a779g0_sysc_info },
++#endif
++#ifdef CONFIG_SYSC_R8A779H0
++	{ .compatible = "renesas,r8a779h0-sysc", .data = &r8a779h0_sysc_info },
+ #endif
+ 	{ /* sentinel */ }
+ };
+diff --git a/drivers/pmdomain/renesas/rcar-gen4-sysc.h b/drivers/pmdomain/renesas/rcar-gen4-sysc.h
+index 388cfa8f8f9fd656..fdf843aa51134f87 100644
+--- a/drivers/pmdomain/renesas/rcar-gen4-sysc.h
++++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.h
+@@ -40,5 +40,6 @@ struct rcar_gen4_sysc_info {
+ extern const struct rcar_gen4_sysc_info r8a779a0_sysc_info;
+ extern const struct rcar_gen4_sysc_info r8a779f0_sysc_info;
+ extern const struct rcar_gen4_sysc_info r8a779g0_sysc_info;
++extern const struct rcar_gen4_sysc_info r8a779h0_sysc_info;
+ 
+ #endif /* __SOC_RENESAS_RCAR_GEN4_SYSC_H__ */
 -- 
 2.34.1
 
