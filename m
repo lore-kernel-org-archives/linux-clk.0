@@ -1,134 +1,121 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7927B3589C
-	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 10:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A061BDCA;
+	Thu, 25 Jan 2024 11:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706180209; cv=none; b=abJ5BwgbrTOWAn/WuVaZFUGtxHREXkvw6kmSpV5yMygvanHte0hwMvKBwrX1UUoSMYDGCJ0Rhz6L2NKj9WijSIg6yfMwISWjLlMD/dCvOF/F1Wf+4qnsCScnndS7YOHnhXo1mTudUfImPbgO2cXW9jgA2qVoGbjZ4Nt4trxP8Ic=
+	t=1706180473; cv=none; b=ufP5h4zqxySHxmc/3uYd6G2nGuwhem1oF4OixzXzSp9viYyvSdPVHLRzplRzWw9Kc/LUOOhIY7RK6spDFk5YEC0bKfJE3JCmzRWSMevxjxKBtQjZiP//4a6p0Vqr9vgLout+kD5aRJaXy8EXCwFYpyYWiGw3HRjftuYVhkYUchM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706180209; c=relaxed/simple;
-	bh=9qY2haHLwCCpegYVyW5Gz9pPYqp5yfhyAdGIM8sSa0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=prgcciXE4cemX9ExvmPWShueXHIhiz3Al37WbKpVGMOGDwD17TXrAfYATQf32OME529SSOjOlsYqbllDAA0tK39bFkONHlXJdd7uUn3HSjku3qazIGbIoq3iHF+gH3t3KhsxsFigvg5kwf6riUOYJv1h0/PCohFT6aKBqII7x9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S0MHBwtd; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706180473; c=relaxed/simple;
+	bh=YSxa/mMSgqpJQW+2kobPEHT7Vxr7BU0VRT1lEHw89/8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=o6UdvLhBpA6I7ZHZt5F7piMDaQ0k6wnYyLNup8JndyrTqlPqj+8lrrsrOmuwcP/tqs/qYdiX86d2bDNFx6c+dkVOVxzs3yngGrsfHm+BxzIg+M5/I4TtWo2C54sPefYFOEeoem48N8O0e04UPuQElGwOwYjF99jDNGspWksCbzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MfjLijkO; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S0MHBwtd"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ccec119587so83901611fa.0
-        for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 02:56:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706180205; x=1706785005; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pCfQ4dB5qtEMvlBkDX6rwlE0l9miPxpcPJ/nwYxSowU=;
-        b=S0MHBwtdrk6e5b+WIRtkLHyqTz9OQ8lTbTnpYU+Z+Q789sgGELgmcdd2UgjYuLclQX
-         bd712yyF7NMHEf9M5DA/xCGloH+UcYUq9N6KPtrj6VjCSGDv6fBcI8gXVjTKzBxt70QS
-         B3/HOntD1SFZ+cyoxOXdZnWKXm6osIVTt7/x2NcCEC+GxJSzdh3HPbNfgh22gytz4RCV
-         0YdE/altzt2lhj1qDb6A5Q7NcCKLt11Sq509gybAG8a8vMp5KJFVurR2hu3InVuZzKn/
-         EU9OrXA4m7ScWSBxen9aqUijwZ8iwR7IPbyqoJKUw6iIyLma0fJsTC3F4k9qHyMkEIMk
-         6GJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706180205; x=1706785005;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pCfQ4dB5qtEMvlBkDX6rwlE0l9miPxpcPJ/nwYxSowU=;
-        b=cbmB8CadwnNOsH+qJ63BbwlwYh6hEoODilcokb/hCL3dCOFOVp7LThuD3XEc3iRFx/
-         /YtMAzrOL+qiNDItRPiXjZ86ryNazD7qsh4oQyPnUxFrracjPOzSnXcfgtIhPgdS6Ngn
-         C4Q6bbbWFgZdVbOzV2U7Rmj9f11Pb3cY2vwvUK1TImsXy4BZ2TBbSTvDDtL8JSfYHNKG
-         arY+jVTy0Ps+qLl6C91imzka/pLszOsxMbwTMd6OdNwtSQNkb9v/lwMbvUKJECTgcHLh
-         N8xmeHqmSb40jBQ8MijsPR9k3WjOSPGuwMgl6rXB6z3Ne/v6tvm4f0wZFmaaBSIZn5M5
-         +pfg==
-X-Gm-Message-State: AOJu0Yz7zeWetrH4V/EtQdkuW5eUbIZThf6VksEUDpXEp5qJHU9+avLM
-	3Z/KQNnpjdYkBmiAFUwMEkIH9+qs87MHmGs1fFKcepazDlRwXK26AHgntnYVjrw=
-X-Google-Smtp-Source: AGHT+IHRtAZxhGIF/Y+ITlHpQgzW+VI9oR1q2AdFBH42WjiA/tqDSCXgRSch7fRF3PNSewVYjvX/Fg==
-X-Received: by 2002:a2e:a786:0:b0:2cf:26d5:1813 with SMTP id c6-20020a2ea786000000b002cf26d51813mr919939ljf.13.1706180205552;
-        Thu, 25 Jan 2024 02:56:45 -0800 (PST)
-Received: from [172.30.205.155] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id z18-20020a2e3512000000b002cd5b233861sm234062ljz.60.2024.01.25.02.56.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jan 2024 02:56:45 -0800 (PST)
-Message-ID: <49a98836-b4a1-4654-8b39-7cf095a17d1b@linaro.org>
-Date: Thu, 25 Jan 2024 11:56:43 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MfjLijkO"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C16C3E0007;
+	Thu, 25 Jan 2024 11:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1706180467;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0WPcj9jp5TczMii0r01DGB7rL3rO4+5GSU7rJ/lR9/s=;
+	b=MfjLijkO2Rs/IJY59mGODNP/JT6HojMlLEygWWr5DF4P1y0IIez1TW8cVbD6TDFRHWVTKi
+	PR3KcjQR2MWWU75NdypK99FP5jLTmpxeUFGB/PboMU9DRs8TT12e/NG3cxNsZlYZJrxemH
+	4D6PuAiSzlf8BwD9Xlu1994KMwwrs4Gy2NidmNbl4HZ6zzjdGAFii2WJAG4MH4ilF+6G+W
+	H73hkH12M/633aKMyZynCItrWYvFM7JbX3251ecZAZvm6GSgwYKauN4igXpCn9hiTqKaFf
+	V8ynQBqZaDO+R+kFRJQdbUzuQlHTOMFGwxJ/fpG2i+HjY7D/nYuPNbuVoKWV4A==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/12] Unregister critical branch clocks + some RPM
-Content-Language: en-US
-To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Johan Hovold <johan+linaro@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-References: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
- <d4a14fb9-849c-4236-9ec1-538f2944fb02@quicinc.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <d4a14fb9-849c-4236-9ec1-538f2944fb02@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 25 Jan 2024 12:01:06 +0100
+Message-Id: <CYNQHXOZ73YR.3QODFI2X08KC6@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v3 04/17] dt-bindings: soc: mobileye: add EyeQ5 OLB
+ system controller
+Cc: "Gregory CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, <linux-mips@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, <linux-gpio@vger.kernel.org>
+To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Rob Herring"
+ <robh@kernel.org>
+X-Mailer: aerc 0.15.2
+References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
+ <20240123-mbly-clk-v3-4-392b010b8281@bootlin.com>
+ <20240124151405.GA930997-robh@kernel.org>
+ <dd7e723d-3c4c-4edf-afc2-51db9a074efa@linaro.org>
+In-Reply-To: <dd7e723d-3c4c-4edf-afc2-51db9a074efa@linaro.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
+Hello,
 
+On Thu Jan 25, 2024 at 8:51 AM CET, Krzysztof Kozlowski wrote:
+> On 24/01/2024 16:14, Rob Herring wrote:
+> >> +
+> >> +      pinctrl-b {
+> >> +        compatible =3D "mobileye,eyeq5-b-pinctrl";
+> >> +        #pinctrl-cells =3D <1>;
+> >> +      };
+> >> +    };
+> >=20
+> > This can all be simplified to:
+> >=20
+> > system-controller@e00000 {
+> >     compatible =3D "mobileye,eyeq5-olb", "syscon";
+> >     reg =3D <0xe00000 0x400>;
+> >     #reset-cells =3D <2>;
+> >     #clock-cells =3D <1>;
+> >     clocks =3D <&xtal>;
+> >     clock-names =3D "ref";
+> >=20
+> >     pins { ... };
+> > };
+> >=20
+> > There is no need for sub nodes unless you have reusable blocks or each=
+=20
+> > block has its own resources in DT.
+>
+> Yes, however I believe there should be resources here: each subnode
+> should get its address space. This is a bit tied to implementation,
+> which currently assumes "everyone can fiddle with everything" in this blo=
+ck.
+>
+> Theo, can you draw memory map?
 
-On 1/25/24 11:16, Taniya Das wrote:
-> Hi Konrad,
-> 
-> Thanks for your patch.
-> 
-> On 1/13/2024 8:20 PM, Konrad Dybcio wrote:
->> On Qualcomm SoCs, certain branch clocks either need to be always-on, or
->> should be if you're interested in touching some part of the hardware.
->>
->> Using CLK_IS_CRITICAL for this purpose sounds like a genius idea,
->> however that messes with the runtime pm handling - if a clock is
->> marked as such, the clock controller device will never enter the
->> "suspended" state, leaving the associated resources online, which in
->> turn breaks SoC-wide suspend.
-> 
-> I am really curious to know a little more about the SoC-Wide Suspend not happening on these targets. Could you add more details here ?
-> 
-> The Resource Power Manager (RPM) is the main aggregator on these targets where the active & sleep votes on XO, shared rails (CX/MX) decide the SoC wide suspend. The High Level OS on our internal platforms never had any suspend issues due to clocks(GCC/GPUCC) or shared rails being kept enabled from the consumers.
+It would be a mess. I've counted things up. The first 147 registers are
+used in this 0x400 block. There are 31 individual blocks, with 7
+registers unused (holes to align next block).
 
-With the common clock framework, CLK_IS_CRITICAL blocks pm operations, as
-clk_disable fails at some point. Since RPM(h)PDs are modeled as pmdomains,
-this in turn results in them never getting disabled, leading to outstanding
-votes. Then, RPM(h) sees these votes and (among other things which are not
-properly described on most SoCs leading to dangling votes) decides that
-CXPD/XOSD/AOSD can't be entered because there's a request on a resource.
+Functions are reset, clocks, LBIST, MBIST, DDR control, GPIO,
+accelerator control, CPU entrypoint, PDTrace, IRQs, chip info & ID
+stuff, control registers for PCIe / eMMC / Eth / SGMII / DMA / etc.
 
-> 
->>
->> This series aims to solve that on a couple SoCs that I could test the
->> changes on and it sprinkles some runtime pm enablement atop these drivers.
->>
-> 
-> As CX is a shared resource/rail on these specific targets we definitely do not achieve any power saving with the runtime pm attached to these clock controllers, but I see a little more SW overhead. Though you could please add your observations/comments.
+Some will never get used from Linux, others might. Maybe a moderate
+approach would be to create ressources for major blocks and make it
+evolve organically, without imposing that all uses lead to a new
+ressource creation.
 
-Hm, simply adding a power-domains entry to denote the required
-performance state values when voting for downstream GDSCs would
-be enough and runtime PM only makes sense if there's an additional
-rail, say MMCX or GFX. But see the comment below.
+Thanks,
 
-> 
-> Removing the CLK_IS_CRITICAL is a good cleanup and moving them to probe is a good way to handle the always-on clocks.
-
-Unless it turns out to be really messy with keeping backwards DTS
-compatibilty, the goal is to use the pm_clk APIs to only keep the
-interface/xo/sleep clocks for subsystems active when that subsystem
-is active (i.e. when SUBSYS_CC is *runtime-active*).
-
-This will result in a treewide patchset.
-
-Konrad
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
