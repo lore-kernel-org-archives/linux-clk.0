@@ -1,34 +1,31 @@
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A7374E36
-	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 15:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A9974E39
+	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 15:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706196907; cv=none; b=FGpg0c2Bu7FusFivOG2PNU6A05jun0BdIe6VwHa4LEgo+fdd5FnjNYHzQhBqsITpzAPPmhb81eP1g1HrAkNl5X83nk6NLX6+PDuaY4BKQI/1L8Hlf1LRJ/OzMESBk5Nu2XZ9VQKr1Mvru/utlN7S7dYrjeGgnYw2mXUfeHNHYT8=
+	t=1706196909; cv=none; b=GzPaGdLGMq5/Zn61zh0IjJsAz9i30UaSa9CIFp+pFe9T5pexGfHhj84DHXWWNUSNsqOKrcmNzsxMHcGvHqpIaW6ainvn7vp9TSwbXmR++j0DJxqyQpKC73uhBy7Rn3LGQM//A3QFv7eAWH3KuBneSgo3tWiuFXpl4NUwxn5NFGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706196907; c=relaxed/simple;
-	bh=KWptP/q+SI7IkYUS0NXIxPMW/D8IJmR9Rt7P/xmxXOA=;
+	s=arc-20240116; t=1706196909; c=relaxed/simple;
+	bh=sWacTy8fqdpm+liAekvyPvdRGwz5kCdbPHjdVjIHXmg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GSKgsuA3kz46sQCSDIZ17mfeYJCxnG1dk8uvA5XN4eBXv0vGyX7BUXLFsI8B9GdrdMr5XJlqxV6ynPu5Ajmt5ufAepUAjG1XW4Qsg+wioAuT2XVcSTQTZWecpcvKldzH8xcdvg0Pa3SwG5wmTDj2OYAZFzrAbf14tqDOPWqHtB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
+	 MIME-Version; b=J41t8BDaT89/erNb/LVEh67WeKVLa42s0qZuTBgnB+pthM8AkX+lbNZkYfSrIyU7STCV99RtaY3iayyaQu0SZ0QfizZUs+ijPOK27E/PddCTObE5SZItOqEyOXrrs5OgOO6bYKtHd/trCJQJHDfnveCSljlEIEUxQak44ckoT00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4TLPyp0cGNz4x0p9
-	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 16:34:58 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:bc9e:fcb8:8aa3:5dc0])
-	by albert.telenet-ops.be with bizsmtp
-	id f3am2B00658agq2063am9R; Thu, 25 Jan 2024 16:34:57 +0100
+	by laurent.telenet-ops.be with bizsmtp
+	id f3am2B00858agq2013amNd; Thu, 25 Jan 2024 16:34:57 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1jn-00GUvY-Vt;
+	id 1rT1jo-00GUw9-7Y;
 	Thu, 25 Jan 2024 16:34:46 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1kb-00Fs2O-UY;
-	Thu, 25 Jan 2024 16:34:45 +0100
+	id 1rT1kc-00Fs36-6y;
+	Thu, 25 Jan 2024 16:34:46 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -50,10 +47,10 @@ Cc: Cong Dang <cong.dang.xn@renesas.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 02/15] dt-bindings: clock: Add R8A779H0 V4M CPG Core Clock Definitions
-Date: Thu, 25 Jan 2024 16:34:30 +0100
-Message-Id: <11acbd2a30b58607474e9c32eb798b3a00e85e73.1706194617.git.geert+renesas@glider.be>
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 11/15] soc: renesas: Identify R-Car V4M
+Date: Thu, 25 Jan 2024 16:34:39 +0100
+Message-Id: <31e06d055aec1bc70c3e9a02f9268bcfc72b2204.1706194617.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1706194617.git.geert+renesas@glider.be>
 References: <cover.1706194617.git.geert+renesas@glider.be>
@@ -63,132 +60,70 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Duy Nguyen <duy.nguyen.rh@renesas.com>
 
-Add all Clock Pulse Generator Core Clock Outputs for the Renesas R-Car
-V4M (R8A779H0) SoC.
+Add support for identifying the R-Car V4M (R8A779H0) SoC.
 
 Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
-Signed-off-by: Hai Pham <hai.pham.ud@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 v2:
-  - Add Reviewed-by,
-  - Add vendor-prefix to file name and update include guard.
+  - Add Reviewed-by.
 
 Changes compared to the BSP:
-  - Drop POST* clocks, as they are internal clocks.
+  - Use lower-case hex for literals in C source code.
 ---
- .../clock/renesas,r8a779h0-cpg-mssr.h         | 96 +++++++++++++++++++
- 1 file changed, 96 insertions(+)
- create mode 100644 include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
+ drivers/soc/renesas/Kconfig       | 7 +++++++
+ drivers/soc/renesas/renesas-soc.c | 8 ++++++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h b/include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..7ab6cfbaf9010326
---- /dev/null
-+++ b/include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
-@@ -0,0 +1,96 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) 2023 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_RENESAS_R8A779H0_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_RENESAS_R8A779H0_CPG_MSSR_H__
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 2367385d84b5a17d..1b8a89ad4fd7e7a3 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -282,6 +282,13 @@ config ARCH_R8A779G0
+ 	help
+ 	  This enables support for the Renesas R-Car V4H SoC.
+ 
++config ARCH_R8A779H0
++	bool "ARM64 Platform support for R-Car V4M"
++	select ARCH_RCAR_GEN4
++	select SYSC_R8A779H0
++	help
++	  This enables support for the Renesas R-Car V4M SoC.
 +
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
+ config ARCH_R8A774C0
+ 	bool "ARM64 Platform support for RZ/G2E"
+ 	select ARCH_RCAR_GEN3
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 67de980ec4244c41..083f6580cb5dae00 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -271,6 +271,11 @@ static const struct renesas_soc soc_rcar_v4h __initconst __maybe_unused = {
+ 	.id	= 0x5c,
+ };
+ 
++static const struct renesas_soc soc_rcar_v4m __initconst __maybe_unused = {
++	.family = &fam_rcar_gen4,
++	.id     = 0x5d,
++};
 +
-+/* r8a779h0 CPG Core Clocks */
-+
-+#define R8A779H0_CLK_ZX			0
-+#define R8A779H0_CLK_ZD			1
-+#define R8A779H0_CLK_ZS			2
-+#define R8A779H0_CLK_ZT			3
-+#define R8A779H0_CLK_ZTR		4
-+#define R8A779H0_CLK_S0D2		5
-+#define R8A779H0_CLK_S0D3		6
-+#define R8A779H0_CLK_S0D4		7
-+#define R8A779H0_CLK_S0D1_VIO		8
-+#define R8A779H0_CLK_S0D2_VIO		9
-+#define R8A779H0_CLK_S0D4_VIO		10
-+#define R8A779H0_CLK_S0D8_VIO		11
-+#define R8A779H0_CLK_VIOBUSD1		12
-+#define R8A779H0_CLK_VIOBUSD2		13
-+#define R8A779H0_CLK_S0D1_VC		14
-+#define R8A779H0_CLK_S0D2_VC		15
-+#define R8A779H0_CLK_S0D4_VC		16
-+#define R8A779H0_CLK_VCBUSD1		17
-+#define R8A779H0_CLK_VCBUSD2		18
-+#define R8A779H0_CLK_S0D2_MM		19
-+#define R8A779H0_CLK_S0D4_MM		20
-+#define R8A779H0_CLK_S0D2_U3DG		21
-+#define R8A779H0_CLK_S0D4_U3DG		22
-+#define R8A779H0_CLK_S0D2_RT		23
-+#define R8A779H0_CLK_S0D3_RT		24
-+#define R8A779H0_CLK_S0D4_RT		25
-+#define R8A779H0_CLK_S0D6_RT		26
-+#define R8A779H0_CLK_S0D2_PER		27
-+#define R8A779H0_CLK_S0D3_PER		28
-+#define R8A779H0_CLK_S0D4_PER		29
-+#define R8A779H0_CLK_S0D6_PER		30
-+#define R8A779H0_CLK_S0D12_PER		31
-+#define R8A779H0_CLK_S0D24_PER		32
-+#define R8A779H0_CLK_S0D1_HSC		33
-+#define R8A779H0_CLK_S0D2_HSC		34
-+#define R8A779H0_CLK_S0D4_HSC		35
-+#define R8A779H0_CLK_S0D8_HSC		36
-+#define R8A779H0_CLK_SVD1_IR		37
-+#define R8A779H0_CLK_SVD2_IR		38
-+#define R8A779H0_CLK_IMPAD1		39
-+#define R8A779H0_CLK_IMPAD4		40
-+#define R8A779H0_CLK_IMPB		41
-+#define R8A779H0_CLK_SVD1_VIP		42
-+#define R8A779H0_CLK_SVD2_VIP		43
-+#define R8A779H0_CLK_CL			44
-+#define R8A779H0_CLK_CL16M		45
-+#define R8A779H0_CLK_CL16M_MM		46
-+#define R8A779H0_CLK_CL16M_RT		47
-+#define R8A779H0_CLK_CL16M_PER		48
-+#define R8A779H0_CLK_CL16M_HSC		49
-+#define R8A779H0_CLK_ZC0		50
-+#define R8A779H0_CLK_ZC1		51
-+#define R8A779H0_CLK_ZC2		52
-+#define R8A779H0_CLK_ZC3		53
-+#define R8A779H0_CLK_ZB3		54
-+#define R8A779H0_CLK_ZB3D2		55
-+#define R8A779H0_CLK_ZB3D4		56
-+#define R8A779H0_CLK_ZG			57
-+#define R8A779H0_CLK_SD0H		58
-+#define R8A779H0_CLK_SD0		59
-+#define R8A779H0_CLK_RPC		60
-+#define R8A779H0_CLK_RPCD2		61
-+#define R8A779H0_CLK_MSO		62
-+#define R8A779H0_CLK_CANFD		63
-+#define R8A779H0_CLK_CSI		64
-+#define R8A779H0_CLK_FRAY		65
-+#define R8A779H0_CLK_IPC		66
-+#define R8A779H0_CLK_SASYNCRT		67
-+#define R8A779H0_CLK_SASYNCPERD1	68
-+#define R8A779H0_CLK_SASYNCPERD2	69
-+#define R8A779H0_CLK_SASYNCPERD4	70
-+#define R8A779H0_CLK_DSIEXT		71
-+#define R8A779H0_CLK_DSIREF		72
-+#define R8A779H0_CLK_ADGH		73
-+#define R8A779H0_CLK_OSC		74
-+#define R8A779H0_CLK_ZR0		75
-+#define R8A779H0_CLK_ZR1		76
-+#define R8A779H0_CLK_ZR2		77
-+#define R8A779H0_CLK_RGMII		78
-+#define R8A779H0_CLK_CPEX		79
-+#define R8A779H0_CLK_CP			80
-+#define R8A779H0_CLK_CBFUSA		81
-+#define R8A779H0_CLK_R			82
-+
-+#endif /* __DT_BINDINGS_CLOCK_RENESAS_R8A779H0_CPG_MSSR_H__ */
+ static const struct renesas_soc soc_shmobile_ag5 __initconst __maybe_unused = {
+ 	.family	= &fam_shmobile,
+ 	.id	= 0x37,
+@@ -381,6 +386,9 @@ static const struct of_device_id renesas_socs[] __initconst __maybe_unused = {
+ #ifdef CONFIG_ARCH_R8A779G0
+ 	{ .compatible = "renesas,r8a779g0",	.data = &soc_rcar_v4h },
+ #endif
++#ifdef CONFIG_ARCH_R8A779H0
++	{ .compatible = "renesas,r8a779h0",	.data = &soc_rcar_v4m },
++#endif
+ #ifdef CONFIG_ARCH_R9A07G043
+ #ifdef CONFIG_RISCV
+ 	{ .compatible = "renesas,r9a07g043",	.data = &soc_rz_five },
 -- 
 2.34.1
 
