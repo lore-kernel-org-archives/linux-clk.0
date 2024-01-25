@@ -1,141 +1,119 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5091350F4;
-	Wed, 24 Jan 2024 21:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37748F511
+	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 01:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706131424; cv=none; b=a5vyX9RDXXojZllYwjl65xYF3VP4HL2yfevWMUNtRFEnJWYaLRXzqP2eU4YNCTE8bkwcYGJkyzLgmnjjZlOvIcKBjensY5RtuEr5XCKJhHpBU0rYoASD6Tc6ZDclih1eCFpYPcCxjUrTiTwuBHWd4regLn7VxbTpw2Qe38puO8s=
+	t=1706146546; cv=none; b=j16x+Koaimidpq9q6EIGRKKhwXOhbPNP7bzBdZQCSjBLeEinztKvM7wjqqYbG2RRhYBKA+r+iDsuu7V9eSZzrM5Balxbzw7iBfXGhc3Xpxnm7S00nd6WO+WNY8MODkQkgObO8Jkr3lsoMl9A8Zg2a6gDf7Wj+67wgAq7HUDxWak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706131424; c=relaxed/simple;
-	bh=yyw2wTBAUi65i4ZHKK9kqJJWvPudrQSeVdORmsL63CU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jPeSGCwYq1rj4mr79I+ZJKgqOgEvIRsZQ9z00RKUWG6tk6vdgB4uXbon7LLBUcI+tbQItANitji0p5HnjTlq+Rhfq5QhKy3fesHJTDvhDrfgC3DfVYmkZ7fnmyoIfnON6oS+6iAtbCVKTdO0Fq3K44CcAD1ePdOhqD9ac+P63SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CK9J0d7C; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1706146546; c=relaxed/simple;
+	bh=ImPV6ylvDLNKhmYcU5bvYmZGFnnlYjliM2xywtcdAl4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qjidhgET+98/TMauRlbaKyJPiaZLiRzbXkFet1fVhhjnNBoQIXYulK1Cm2lIu/O0dYMqUhHHxYHcKzTQ1hDWayr6Fx4Z8bozMAq/qTgUIi5fm4eMjSv0S6JrOCuC/gtoTLvqDBtIzMYOaaMzlmg4CmzcpMSWsvkXzi+frCBVpfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DB2ayWhs; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CK9J0d7C"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40OK8BCK011436;
-	Wed, 24 Jan 2024 21:23:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=lEu9IuU4bGL5BCly4Dnyc
-	ngQdVk/sa1XqqPwqrVMMI0=; b=CK9J0d7CIztBWGgb+6OoOhovZZMX2z5S+A1A1
-	IdVAiXmAEMzNqZ6IkoF7/Mzp91HxVeekCJR6Z8oHGnC6D3YrlCZJFJxy9UcnEd8b
-	h91Fk0qI0z9Dw7t1gTWgG8MZsm/+VlagR8rjfuZNCLJwbHRe1GFtPwurHr/hDIb8
-	0pRHinnDdQQij7AtIO077fm5Zda4eZoSXtFzAM/dbc3vSxnEDRN0nX2QjCED2EJ9
-	2F5raurBtt5+L3WL9WVRGBfpoVB9pDvQb9zPwxD5/KoP27+z16nQtc0qHYH+71eL
-	iGmKa/EAMlcGuWDqoOZoDge76bk4EWWSwTTGYUmFVKjZ1Ljpg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vu99b04u4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jan 2024 21:23:36 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 40OLNY1S011669
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jan 2024 21:23:34 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 24 Jan 2024 13:23:34 -0800
-Date: Wed, 24 Jan 2024 13:23:33 -0800
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Johan Hovold
-	<johan+linaro@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v3 4/8] soc: qcom: rpmhpd: Drop SA8540P gfx.lvl
-Message-ID: <20240124212333.GI2936378@hu-bjorande-lv.qualcomm.com>
-References: <20240123-sa8295p-gpu-v3-0-d5b4474c8f33@quicinc.com>
- <20240123-sa8295p-gpu-v3-4-d5b4474c8f33@quicinc.com>
- <CAPDyKFqre9Y0XOn5Xig3zbiqR0FQJ+cvK0VXMZRbtt0NsSE4+w@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DB2ayWhs"
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5961a2726aaso3144440eaf.0
+        for <linux-clk@vger.kernel.org>; Wed, 24 Jan 2024 17:35:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706146544; x=1706751344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g5NL15WLk6NkJypOkLe+mhvC699JlR9mZPB9t6UM0NU=;
+        b=DB2ayWhsszzj86YWy8nzDWV1nuMWf/jFivvx4iGPKNxiwWG9zLUeQ3L7FFyfIsIh9I
+         WN0YELLjoWX4VzvoAW6YVzJIlhRA57nfFRMQMDtw+7sSlr72LC5we7ma98Vszd6vu+M/
+         HDO0oCxrwoo1/skkk5wKumbzSTEYBUAEarhkF3O/fDRtwDKIfLc/vtySOI4q6stEli/x
+         DZCwBoK+BNLHf6tUDscEEbzR1PjhmlryCRB4j/diF3y7Eh8r5rN1Wdl78+CK/8y9X6rU
+         fhPpxpd2NwyQOlZmW9/gDorxBV6OYIB0EFUFclS9r9PRLbRt4VKBIvuujjOp8vy1UX/S
+         OcMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706146544; x=1706751344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g5NL15WLk6NkJypOkLe+mhvC699JlR9mZPB9t6UM0NU=;
+        b=N+YlBH+v1JTJlfJOxVoRpY9mQMQfuf7rqmXeirNxiw0qzfeRbKmnC5IdK1BTYIZCVm
+         i4jiLbU8sGTEX92rEpS3sUl6Jf2E30RSt1dgc626uLcja+ZGNTnBvdzKfvh89nnKkoCU
+         yg0Hmg+hcgdpZD++j0d14VEQpMrqeX9Mc3odsjCrCCqkTbBTJrnvgCbWNdegC7fCCGBb
+         ErbaY1N54bgfM4vSWYXEfavz5vuHecoM/OZG6mhVehb66ZfyGI7dc0lxdRCMgcS6yyVt
+         rnzlBwV//Ft76XK62CRNjqQSL0Uk8granY6P0hFwc3W8vvwTFyrE+WJQawwURGvMLZSQ
+         9VUg==
+X-Gm-Message-State: AOJu0Yzgs/3t62z8d+7/5u4FGzA8ZrMoR92vFUDpWRJzmflw+V99t0el
+	gNlGlVvVMZlDKYJ01Ky4ZpwitEpkIeCJgb6JBi1Dyl9RHT7ngNc+/BYs4yNH30c=
+X-Google-Smtp-Source: AGHT+IHS4UMF831ciy4ADYrkN6MN8XRIU/+ABp6RXg/kfJImSRaWpJ4d9LHHjwWd5W66OdxMWqPoXg==
+X-Received: by 2002:a4a:b106:0:b0:599:c981:61f6 with SMTP id a6-20020a4ab106000000b00599c98161f6mr304994ooo.4.1706146544311;
+        Wed, 24 Jan 2024 17:35:44 -0800 (PST)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id v11-20020a056820100b00b00599bcaaaf23sm222838oor.8.2024.01.24.17.35.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jan 2024 17:35:43 -0800 (PST)
+From: Sam Protsenko <semen.protsenko@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/2] spi: samsung: Add Exynos850 support
+Date: Wed, 24 Jan 2024 19:35:41 -0600
+Message-Id: <20240125013543.31067-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqre9Y0XOn5Xig3zbiqR0FQJ+cvK0VXMZRbtt0NsSE4+w@mail.gmail.com>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: zWGghweUU2-EPaZhnWMy7rfUWrenPxPX
-X-Proofpoint-ORIG-GUID: zWGghweUU2-EPaZhnWMy7rfUWrenPxPX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-24_10,2024-01-24_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 impostorscore=0 spamscore=0 suspectscore=0 malwarescore=0
- lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2401190000
- definitions=main-2401240155
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 24, 2024 at 10:36:34AM +0100, Ulf Hansson wrote:
-> On Wed, 24 Jan 2024 at 05:25, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
-> >
-> > On SA8295P and SA8540P gfx.lvl is not provdied by rpmh, but rather is
-> > handled by an external regulator (max20411). Drop gfx.lvl from the list
-> > of power-domains exposed on this platform.
-> >
-> > Fixes: f68f1cb3437d ("soc: qcom: rpmhpd: add sc8280xp & sa8540p rpmh power-domains")
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> 
-> I assume you are picking this via your tree? If not, please tell me if I should.
-> 
+Enable SPI support for Exynos850 SoC in spi-s3c64xx driver, and add the
+corresponding bindings. It was tested using `spidev_test' tool in all
+possible modes:
 
-That sounds good, thanks.
+  - Polling mode: xfer_size <= 32
+  - IRQ mode: 64 >= xfer_size >= 32
+  - DMA mode: xfer_size > 64
 
-> Before applying, please amend the prefix of commit message header to
-> be "pmdomain: ..."
-> 
+with 200 kHz ... 49.9 MHz SPI frequencies. The next 3 approaches were
+used:
 
-Thanks for noticing, I will update accordingly.
+  1. Software loopback ('-l' option for `spidev_test' tool)
+  2. Hardware loopback (by connecting MISO line to MOSI)
+  3. By communicating with ATMega found on Sensors Mezzanine board [1],
+     programmed to act as an SPI slave device
 
-Regards,
-Bjorn
+and all the transactions were additionally checked on my Logic Analyzer
+to make sure the SCK frequencies were actually correct.
 
-> Kind regards
-> Uffe
-> 
-> > ---
-> >  drivers/pmdomain/qcom/rpmhpd.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/drivers/pmdomain/qcom/rpmhpd.c b/drivers/pmdomain/qcom/rpmhpd.c
-> > index 3078896b1300..27a73ff72614 100644
-> > --- a/drivers/pmdomain/qcom/rpmhpd.c
-> > +++ b/drivers/pmdomain/qcom/rpmhpd.c
-> > @@ -217,7 +217,6 @@ static struct rpmhpd *sa8540p_rpmhpds[] = {
-> >         [SC8280XP_CX] = &cx,
-> >         [SC8280XP_CX_AO] = &cx_ao,
-> >         [SC8280XP_EBI] = &ebi,
-> > -       [SC8280XP_GFX] = &gfx,
-> >         [SC8280XP_LCX] = &lcx,
-> >         [SC8280XP_LMX] = &lmx,
-> >         [SC8280XP_MMCX] = &mmcx,
-> >
-> > --
-> > 2.25.1
-> >
+This series is supposed to go via SPI tree. All other related SPI
+changes are independent from this series and will go via Krzysztof's
+tree.
+
+Changes in v2:
+  - Collected R-b tags
+  - Split the initial submission [1] by 2 patch series
+  - Changed bindings patch title to "spi: dt-bindings: ..."
+
+[1] https://www.96boards.org/product/sensors-mezzanine/
+[2] https://lore.kernel.org/all/20240120012948.8836-1-semen.protsenko@linaro.org/
+
+Sam Protsenko (2):
+  spi: dt-bindings: samsung: Add Exynos850 SPI
+  spi: s3c64xx: Add Exynos850 support
+
+ .../devicetree/bindings/spi/samsung,spi.yaml       |  1 +
+ drivers/spi/spi-s3c64xx.c                          | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
+
+-- 
+2.39.2
+
