@@ -1,30 +1,30 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B9D7318B
-	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 15:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D9A7318C
+	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 15:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706196903; cv=none; b=aCVHriz1xJ/KAMsyxd9JdSwmsItvBTW8sq+ltaKRmrgIoKzjmJA94nT8bKcriommswi231HHo1TuAp/lXXydLOhQjDUoxx5F3QVWZ1THeVbRp5nlwbhyeytwkkXjROXjWS70xvPSMLaV7oGWDrsSxlsuDjNGrRx9VSHeGS3KzKw=
+	t=1706196903; cv=none; b=NM3oV4BliC1tQSyX4aeGSzfgAQT0/HoHXzEslJ384fbbKifefdOAXfgn9rxqrEDVTvRJwvDDaHzpgb68DoqYC4C35hx1kWRjyJtb+OuaWGSYYfBpj4xD0sZL8W7DNt9tvUKQbupH0+1g0mfRmxJE7tMNM7PRrJNVK3WEtwr6TkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706196903; c=relaxed/simple;
-	bh=miU3KgyoRL/DnHsCK7yuQkwQeANobdlCrfj7pCVoidc=;
+	bh=7k0+BPt755vhBCbjrPSf56+yw3Lv4ac5eXyCUnlz+rQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oghqUt5nlUYquk80ZIjXmZy7i4OUYbBcezeFTKZBJ5k7NCLS0F7wYlyeO3VEmAJRMBcTvsmW3elaeoH/6MyH8INzvtZ5skbccFsq+VEN2Byd89RARQGS+pVGYyHw5+ZHR30y0BpwQGgw99xv/MVWdkdmz3IIWryn5ePjNUINlrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	 MIME-Version; b=FYTvP0slnrX767QGWsKzXFrjm8DFY9oAU7Nx4SjW7MLKQcMh7UaLNE1tfl1hMHpM+DHG0NFlI5+XxXc95lxmFFw7USfDORIwJrZ77yytGk9m8m5IxHBWnofp06JIo5lVsuCi1Hw8TZpp3f8AVj/VzoKF5KgQXueXijz5YdZXOXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:bc9e:fcb8:8aa3:5dc0])
-	by albert.telenet-ops.be with bizsmtp
-	id f3am2B00L58agq2063am9W; Thu, 25 Jan 2024 16:34:57 +0100
+	by baptiste.telenet-ops.be with bizsmtp
+	id f3am2B00258agq2013amrl; Thu, 25 Jan 2024 16:34:58 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1jo-00GUwE-8I;
+	id 1rT1jo-00GUvq-37;
 	Thu, 25 Jan 2024 16:34:46 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rT1kc-00Fs3A-7i;
+	id 1rT1kc-00Fs2g-2K;
 	Thu, 25 Jan 2024 16:34:46 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -47,10 +47,11 @@ Cc: Cong Dang <cong.dang.xn@renesas.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Conor Dooley <conor.dooley@microchip.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 12/15] soc: renesas: rcar-rst: Add support for R-Car V4M
-Date: Thu, 25 Jan 2024 16:34:40 +0100
-Message-Id: <13dc9f014e27db5092b3cc23edddf4b5e01a6645.1706194617.git.geert+renesas@glider.be>
+Subject: [PATCH v2 06/15] dt-bindings: soc: renesas: Document R-Car V4M Gray Hawk Single
+Date: Thu, 25 Jan 2024 16:34:34 +0100
+Message-Id: <1065a81afb8dbed09b0098b51dc7fb22da421a97.1706194617.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1706194617.git.geert+renesas@glider.be>
 References: <cover.1706194617.git.geert+renesas@glider.be>
@@ -62,35 +63,41 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Duy Nguyen <duy.nguyen.rh@renesas.com>
+Document the compatible values for the Renesas R-Car V4M (R8A779H0) SoC
+and the Renesas Gray Hawk Single development board.
 
-Add support for the R-Car V4M (R8A779H0) SoC to the R-Car RST driver.
-
-Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Early firmware versions may not enable WDT resets, so you may need to do
-s/rcar_rst_gen4/rcar_rst_v3u/ for testing.
-
 v2:
-  - Add Reviewed-by.
----
- drivers/soc/renesas/rcar-rst.c | 1 +
- 1 file changed, 1 insertion(+)
+  - Add Acked-by, Reviewed-by,
+  - Add "board" to compatible comment.
 
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index 98fd97da6cd4330d..7ba02f3a4a4fbb9f 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -117,6 +117,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	{ .compatible = "renesas,r8a779a0-rst", .data = &rcar_rst_v3u },
- 	{ .compatible = "renesas,r8a779f0-rst", .data = &rcar_rst_gen4 },
- 	{ .compatible = "renesas,r8a779g0-rst", .data = &rcar_rst_gen4 },
-+	{ .compatible = "renesas,r8a779h0-rst", .data = &rcar_rst_gen4 },
- 	{ /* sentinel */ }
- };
+The Gray Hawk Single board is an integrated variant of the (not yet
+supported) Gray Hawk board stack, which is very similar to the White
+Hawk board stack.
+---
+ Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+index 15b9dd52938996f4..1a228dd4822ccda2 100644
+--- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
++++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+@@ -361,6 +361,12 @@ properties:
+           - const: renesas,white-hawk-cpu
+           - const: renesas,r8a779g0
  
++      - description: R-Car V4M (R8A779H0)
++        items:
++          - enum:
++              - renesas,gray-hawk-single # Gray Hawk Single board (RTP8A779H0ASKB0F10S)
++          - const: renesas,r8a779h0
++
+       - description: R-Car H3e (R8A779M0)
+         items:
+           - enum:
 -- 
 2.34.1
 
