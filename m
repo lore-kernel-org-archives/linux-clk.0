@@ -1,237 +1,124 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F30B1CD28;
-	Thu, 25 Jan 2024 10:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD88612C7
+	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 10:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706177879; cv=none; b=rcKYsZpsh13SqCH8gfGAhwXjdzVU6LPCc+ShtNS9Cr3iyIDzcCXLcOW8+Bhtw+P+Y2Sz/9018Ztw8T7NH7WSAx9BcWaLVoNHz3gMNF5w+0rM2zMJfJjF76UbYGrzHfaIn8C+ffJsIUVxlVHLxopNR8AoaPPPQo23MiGV+Cgz+q4=
+	t=1706179481; cv=none; b=Ji66c1yJKc/K0MjEMwlCyN72ThumsvJDm2hPfJeFbysco3rLQcDMcbhgU3BAi3Mq+k3ASZzsnUXDY65aB1i6ANs3T5wniV1hTarFAgGVdvEZQFtnmBsPTmFuTe5viFTZKnYL7dN0PmClB4cUPrR3a8Frz2KB2thYCzTqN76bX3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706177879; c=relaxed/simple;
-	bh=bB50DiLiSI/AjIntQtj8OLZXA1hJ46f8ucE5lxaMffA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UUE4xgTp7VG7z6pf9l/L2oEXesdKgql2cfsbH6I8PvGh+NzeiCbSmKimeQOdMNTma4YcZOBAmZLZ1dETdgGjbxSE/pZOMlw80mDxSdiOHFhEzSaq+u+7mWg33FcGVuaHko25f6ggQccVsvMPsExNaHAdLXPVH6zMtZ6H41uK6AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LzKrfYYm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1706179481; c=relaxed/simple;
+	bh=yT1mRF6XNlXaTfuWIVMhLXVcISTzbXHuEXNJEvgnJqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9TSFFR8CaOhzy94Krj5YZrDKZXrw4jLIdYLwaM41M+tu9I+zbp0uf8hPjhsWHqjMICeE4PYypSPSMy1i8UX0PjOiQhD0IeCtCY5tDmfaDhlw1focYTk6mfGNum/RBWPkR3yRzd+K8dImLfuMxe6VfySDoGKJx1ghqnx5abYnFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a9uTMdnc; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LzKrfYYm"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40P9No7G004502;
-	Thu, 25 Jan 2024 10:17:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=aLqFVE/DSS8tNOS7Nmf+NZKIYYQc3O4Zzw7wicUI/U4=; b=Lz
-	KrfYYmbpHacI5W6qAuMxvWyccrsj21DdiMjPjSFLDaYlRjZ3SuxQqgzFikZbvt+1
-	BSwhrCR98T633mgNag568JuaF6lyxDUAQKsMsE2F4nVrB9p2JZokRoxNyMK3VCJs
-	e+ncUTFNMePKjr6e36wrCFZo8PqQPhxvxRtIgj3AXHebVD2csxceQOFcehMrGVml
-	qnJbQAOrZ0TtKNOy3+lV6kvIfChw+CWLlzSHvu4sUjyYNmzvLzF23fnqWQR04bLF
-	MyUeheHkl+qNAog3zgetM8AH0gKfiVCTtJM/RXp2XCnyRq43ZDp9R31u3HZghG6k
-	xAS2EXftmZ5V5NCuug8A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vumyng3dp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jan 2024 10:17:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 40PAHlfK003926
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jan 2024 10:17:47 GMT
-Received: from [10.218.0.85] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 25 Jan
- 2024 02:17:42 -0800
-Message-ID: <d4a14fb9-849c-4236-9ec1-538f2944fb02@quicinc.com>
-Date: Thu, 25 Jan 2024 15:46:33 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a9uTMdnc"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-559f92bf7b6so1239444a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 02:44:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706179478; x=1706784278; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DP1TkMGJCcP03wjm/2IvbB0Zl5zG12ipI2nSUEb0ViM=;
+        b=a9uTMdnc5HKWIM6ieliulr3BHXgwysfjW028gwnVeVZ2qZr/U9WbCRnWbjzVmumKHA
+         mwwl/6BtHFs8tJkhCDlVStk03+ffHCejCwK3uw1Eg4+C0n2LXJWDd5efWjsH9BzmGgKR
+         1j3C2xEmSDvDKxc0OeI1Nirkva/MTPpbIuXA2f+6741zGkWVYAoEjTyNSG3hLH5opRMe
+         PN42Gx3nqxXQ1ny6h2JHIFcR7AhF09r8rmXhE/l6LzNDJ18tOyYL3d/y/GNtIP6EHo5T
+         dMwmqiaxhT3DdU4LNdD08RMDtF9xwaBadNSxmAMY8jkWnTzxoIPojryIacOGZn2xwKHk
+         2wcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706179478; x=1706784278;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DP1TkMGJCcP03wjm/2IvbB0Zl5zG12ipI2nSUEb0ViM=;
+        b=cm5ZGuY+aYeEPaYi9qOzXOmjA4titrffoT0ZzlFIS0qLCbsua44csSIWexdK4aph5y
+         3wHdU8RH/M+5EMCelU61ubdZ2IrNXcXmvpBOpCcf64MspXL/G3wuruaiABEj0TmFJhGU
+         XP4CF7njrB8/9EY2atGoHqlleP6aDHUtJgn4/GJ4gjhlt1mQgKYlHnr5LgL/Ld4GtBT1
+         fXy50ZpsudtjGQxt7ag3wa0NJKzWXqAyQEo5tiT6TsmBwzJZ6t/SmSbNJE4/nYInUGnl
+         Ndt3VZn2+pCL7K4Bm3wTygQZ3Cn0XUCjrbmvPti+z/gxioFkAFRhxZtDBtVK0dSgQfTZ
+         3vCw==
+X-Gm-Message-State: AOJu0Yy8msZT2eu4SHkNkO97OUObR4iD/sw+9c9VyqsKfSOSTPeJuKve
+	f50zRqhggjSpd1k5CbqVDIUGp+q2t1w4gC02wDhnPkWTX1XzYx2cPsUAcPikC1Y=
+X-Google-Smtp-Source: AGHT+IGG9jiccgy/B1Ja0Qj3GOeWRI+vkQ1p7kjIJbpZvMUF9eD/sku0Vq25Up2+hLJIJLvcnhGwEw==
+X-Received: by 2002:aa7:d857:0:b0:55c:feaa:aca4 with SMTP id f23-20020aa7d857000000b0055cfeaaaca4mr661597eds.9.1706179477838;
+        Thu, 25 Jan 2024 02:44:37 -0800 (PST)
+Received: from linaro.org ([79.115.23.25])
+        by smtp.gmail.com with ESMTPSA id ig1-20020a056402458100b0055ca5ce62ddsm1760685edb.12.2024.01.25.02.44.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jan 2024 02:44:37 -0800 (PST)
+Date: Thu, 25 Jan 2024 12:44:35 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] clk: qcom: sm8[56]50: Drop the Disp AHB clock from
+ Display Clock Controller
+Message-ID: <ZbI7k+bDy+KSmncq@linaro.org>
+References: <20240125-dispcc-sm8550-sm8650-drop-disp-ahb-clk-v1-0-0f8d96156156@linaro.org>
+ <99817149-4a2e-49fc-aedc-fe298964a019@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/12] Unregister critical branch clocks + some RPM
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Marijn Suijten <marijn.suijten@somainline.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Johan Hovold
-	<johan+linaro@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-References: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20230717-topic-branch_aon_cleanup-v6-0-46d136a4e8d0@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _VS6zcPvV0xrC47TQ77j3pSQdlfwOUgY
-X-Proofpoint-ORIG-GUID: _VS6zcPvV0xrC47TQ77j3pSQdlfwOUgY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-25_05,2024-01-25_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=948 adultscore=0 spamscore=0 lowpriorityscore=0 clxscore=1011
- impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401190000 definitions=main-2401250070
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <99817149-4a2e-49fc-aedc-fe298964a019@linaro.org>
 
-Hi Konrad,
-
-Thanks for your patch.
-
-On 1/13/2024 8:20 PM, Konrad Dybcio wrote:
-> On Qualcomm SoCs, certain branch clocks either need to be always-on, or
-> should be if you're interested in touching some part of the hardware.
+On 24-01-25 10:49:23, Konrad Dybcio wrote:
 > 
-> Using CLK_IS_CRITICAL for this purpose sounds like a genius idea,
-> however that messes with the runtime pm handling - if a clock is
-> marked as such, the clock controller device will never enter the
-> "suspended" state, leaving the associated resources online, which in
-> turn breaks SoC-wide suspend.
+> 
+> On 1/25/24 10:27, Abel Vesa wrote:
+> > The Disp AHB clock is provided by the GCC but never registered. It is
+> > instead enabled on probe as it is expected to be always-on. So it should
+> > be dropped from Disp CC entirely.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> 
+> Abel, you just raised some concerns over my series doing this and now
+> you're doing the same, plus breaking backwards compatibility for no
+> good reason, instead of solving the problem.
 
-I am really curious to know a little more about the SoC-Wide Suspend not 
-happening on these targets. Could you add more details here ?
+Sorry but, during the off-list discussion, you convinced me that it is OK to drop
+their registration as long as we enable them on probe.
 
-The Resource Power Manager (RPM) is the main aggregator on these targets 
-where the active & sleep votes on XO, shared rails (CX/MX) decide the 
-SoC wide suspend. The High Level OS on our internal platforms never had 
-any suspend issues due to clocks(GCC/GPUCC) or shared rails being kept 
-enabled from the consumers.
+I've not seen the following reply in time before sending current series:
+https://lore.kernel.org/all/6aa58497-9727-4601-b6eb-264c478997c3@linaro.org/
+
+Since this is blocking the patches for dispcc and dts for X1E80100, I
+thought I'd just drop the clock as required from DT point of view.
+But yeah, you're right, it breaks bindings ABI and that's wrong.
 
 > 
-> This series aims to solve that on a couple SoCs that I could test the
-> changes on and it sprinkles some runtime pm enablement atop these drivers.
-> 
+> The correct solution here is to register the AHB clock with GCC and
+> pm_clk_add() it from dispcc's .probe (and enable runtime PM on dispcc
+> if it's already not the case). Then the AHB clock will be gated when
+> no display hardware (= no dispcc consumer) is in use.
 
-As CX is a shared resource/rail on these specific targets we definitely 
-do not achieve any power saving with the runtime pm attached to these 
-clock controllers, but I see a little more SW overhead. Though you could 
-please add your observations/comments.
+I agree.
 
-Removing the CLK_IS_CRITICAL is a good cleanup and moving them to probe 
-is a good way to handle the always-on clocks.
+> 
+> 8[56]50 are in a good position for this, as they already have the
+> required DTS reference. Unfortunately, I still haven't fully dug
+> into this for platforms without one, but that's on me.
 
+Since I need to do this for the X1E80100, I'll probably do it for the
+other two as well.
 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
-> Changes in v6:
-> - Rebase (next-20240112)
-> - Reorder qcom_branch_set_clk_en calls by register in "*: Unregister
->    critical clocks" (Johan)
-> - Pick up tags
-> - Link to v5: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v5-0-99942e6bf1ba@linaro.org
-> 
-> Changes in v5:
-> - Change the "Keep the critical clocks always-on" comment to "Keep
->    some clocks always-on"
-> - Add the same comment to commits unregistering clocks on 6115/6375/2290
-> - Link to v4: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v4-0-32c293ded915@linaro.org
-> 
-> Changes in v4:
-> - Add and unify the "/* Keep the critical clocks always-on */" comment
-> - Rebase (next-20231222), also include 8650, X1E and 8280camcc drivers
-> - Drop enabling runtime PM on GCC
-> - Improve the commit message of "clk: qcom: gpucc-sm6115: Add runtime PM"
-> - Link to v3: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v3-0-3e31bce9c626@linaro.org
-> 
-> Changes in v3:
-> - Rebase (next-20231219)
-> - Fix up a copypaste mistake in "gcc-sm6375: Unregister critical clocks" (bod)
-> - Pick up tags
-> - Link to v2: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v2-0-2a583460ef26@linaro.org
-> 
-> Changes in v2:
-> - Rebase
-> - Pick up tags
-> - Fix up missing pm_runtime_put in SM6375 GCC (Johan)
-> - Clarify the commit message of "Add runtime PM" commits (Johan)
-> - "GPU_CCC" -> "GPU_CC" (oops)
-> - Rebase atop next-20231129
->    - Also fix up camcc-sm8550 & gcc-sm4450
->    - Unify and clean up the comment style
->    - Fix missing comments in gcc-sc7180..
->    - Drop Johan's ack from "clk: qcom: Use qcom_branch_set_clk_en()"
-> - Improve 6115 dt patch commit message (Bjorn)
-> - Link to v1: https://lore.kernel.org/r/20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org
-> 
-> ---
-> Konrad Dybcio (12):
->        clk: qcom: branch: Add a helper for setting the enable bit
->        clk: qcom: Use qcom_branch_set_clk_en()
->        clk: qcom: gcc-sm6375: Unregister critical clocks
->        clk: qcom: gpucc-sm6375: Unregister critical clocks
->        clk: qcom: gpucc-sm6115: Unregister critical clocks
->        clk: qcom: gpucc-sm6115: Add runtime PM
->        clk: qcom: gcc-sm6115: Unregister critical clocks
->        clk: qcom: gcc-qcm2290: Unregister critical clocks
->        arm64: dts: qcom: sm6375: Add VDD_CX to GCC
->        arm64: dts: qcom: qcm2290: Add VDD_CX to GCC
->        arm64: dts: qcom: sm6115: Add VDD_CX to GCC
->        arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CC
->  >   arch/arm64/boot/dts/qcom/qcm2290.dtsi |   1 +
->   arch/arm64/boot/dts/qcom/sm6115.dtsi  |   3 +
->   arch/arm64/boot/dts/qcom/sm6375.dtsi  |   1 +
->   drivers/clk/qcom/camcc-sc8280xp.c     |   6 +-
->   drivers/clk/qcom/camcc-sm8550.c       |  10 +--
->   drivers/clk/qcom/clk-branch.h         |   7 ++
->   drivers/clk/qcom/dispcc-qcm2290.c     |   4 +-
->   drivers/clk/qcom/dispcc-sc7280.c      |   7 +-
->   drivers/clk/qcom/dispcc-sc8280xp.c    |   4 +-
->   drivers/clk/qcom/dispcc-sm6115.c      |   4 +-
->   drivers/clk/qcom/dispcc-sm8250.c      |   4 +-
->   drivers/clk/qcom/dispcc-sm8450.c      |   7 +-
->   drivers/clk/qcom/dispcc-sm8550.c      |   7 +-
->   drivers/clk/qcom/dispcc-sm8650.c      |   4 +-
->   drivers/clk/qcom/gcc-qcm2290.c        | 106 +++--------------------------
->   drivers/clk/qcom/gcc-sa8775p.c        |  25 +++----
->   drivers/clk/qcom/gcc-sc7180.c         |  22 +++---
->   drivers/clk/qcom/gcc-sc7280.c         |  20 +++---
->   drivers/clk/qcom/gcc-sc8180x.c        |  28 +++-----
->   drivers/clk/qcom/gcc-sc8280xp.c       |  25 +++----
->   drivers/clk/qcom/gcc-sdx55.c          |  12 ++--
->   drivers/clk/qcom/gcc-sdx65.c          |  13 ++--
->   drivers/clk/qcom/gcc-sdx75.c          |  10 +--
->   drivers/clk/qcom/gcc-sm4450.c         |  28 +++-----
->   drivers/clk/qcom/gcc-sm6115.c         | 124 +++-------------------------------
->   drivers/clk/qcom/gcc-sm6375.c         | 105 +++-------------------------
->   drivers/clk/qcom/gcc-sm7150.c         |  23 +++----
->   drivers/clk/qcom/gcc-sm8250.c         |  19 ++----
->   drivers/clk/qcom/gcc-sm8350.c         |  20 +++---
->   drivers/clk/qcom/gcc-sm8450.c         |  21 +++---
->   drivers/clk/qcom/gcc-sm8550.c         |  21 +++---
->   drivers/clk/qcom/gcc-sm8650.c         |  16 ++---
->   drivers/clk/qcom/gcc-x1e80100.c       |  16 ++---
->   drivers/clk/qcom/gpucc-sc7280.c       |   9 +--
->   drivers/clk/qcom/gpucc-sc8280xp.c     |   9 +--
->   drivers/clk/qcom/gpucc-sm6115.c       |  53 ++++++---------
->   drivers/clk/qcom/gpucc-sm6375.c       |  34 ++--------
->   drivers/clk/qcom/gpucc-sm8550.c       |  10 +--
->   drivers/clk/qcom/lpasscorecc-sc7180.c |   7 +-
->   drivers/clk/qcom/videocc-sm8250.c     |   6 +-
->   drivers/clk/qcom/videocc-sm8350.c     |  10 +--
->   drivers/clk/qcom/videocc-sm8450.c     |  13 ++--
->   drivers/clk/qcom/videocc-sm8550.c     |  13 ++--
->   43 files changed, 234 insertions(+), 653 deletions(-)
-> ---
-> base-commit: 8d04a7e2ee3fd6aabb8096b00c64db0d735bc874
-> change-id: 20230717-topic-branch_aon_cleanup-6976c13fe71c
-> 
-> Best regards,
+Sorry for the misunderstanding.
 
--- 
-Thanks & Regards,
-Taniya Das.
+> 
+> Konrad
