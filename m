@@ -1,57 +1,57 @@
 Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3798D130E25
-	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 18:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5B913473D
+	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 19:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706208415; cv=none; b=oMAsVhSk9dX5Qeb7F6eMOJay9TlR70eutVCJxVf/QSJV4hZ8S8WLplwqHoXPnc88ko+WPeSh1XcjaQNX/+ZGVZWKGXD1Y5vdlhtTjtLN7kzQEI1iC02juWZ0+SoxSRpvbfJtWMUcVkhHCe+Zk9tlkccQJz6VbsmqXa/NMd0n8ZQ=
+	t=1706210123; cv=none; b=m8ZXgBBuEZbWTFm922uF0EMfFFBbIuVJgfZccUHkBnhzRWZIA/bD5ws02VnCB4BLBcAQgC5q5ae3FlrOmkaZ/tYVIXlzlPk2H0TtfFzOqwP0KTdhfNXKIoF8iiUYiFnoN3A1pdeKx8Qe1q8Eus33TTO0XJm1xr9Qe1qkWdQ1tp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706208415; c=relaxed/simple;
-	bh=rv4T3qdLmEfetGuJi0ByL4QTqZj0wiVvUcF5OzkeW+s=;
+	s=arc-20240116; t=1706210123; c=relaxed/simple;
+	bh=kzQaYPUWbynoSnERWzMhIZje2cAZDJ5JaR8kt7YTbqY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pkszc1trsmOWOl1hbpPynpde0P3Bdl1FMismeESAw5UwFo8Nv9If7CR8WfkHzT/K00EujTRgAGiJv68K6lM3PUkr9/0Hx9iaVoIfOGtFf2GQ2Os/ARuknweQ7bLK/Nsc1DQEjELSN0jYg2wQUVyFz/V/xjAWNvuUWbQ7SjStpQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=F1LkpyB/; arc=none smtp.client-ip=209.85.167.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=H5J2IVxl4BLZyDtBJPu/gf7/r/Pkg8JjWOTrZB4on6dvc7HI1Uu9XbxOf43kazTVJyUnHuO18SDgKm5mje2L0uCVYNNc2+qINC9/eW65AExEuLhMx4g+41tOtIfvlFqCGqeLe8owizSCwdkhIOm6gzO+fXy88OeV5nc+NgZO1Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=y8R1QLd/; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="F1LkpyB/"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51021b25396so597828e87.3
-        for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 10:46:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="y8R1QLd/"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-50eab4bf47aso1149597e87.0
+        for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 11:15:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech.se; s=google; t=1706208411; x=1706813211; darn=vger.kernel.org;
+        d=ragnatech.se; s=google; t=1706210118; x=1706814918; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=93RGbS95fTdxBvjhjzM93NymEuuojGPAvYLX5OxMtj8=;
-        b=F1LkpyB/4LvkJ6kwKVwlPnvJGvtvkdWYxxnPKoctjgnU57ZWz+3zqZneLN9hZ0zeC/
-         XQtj6mwpDy2Z+gEobq7ZmrX75mR6TISWhVLRL7EahHZj3xALQq5j4Nf8U6ZgLzS7XTNb
-         LMIqcgtal2Z2VZJhrJJvTaeD3cHnLKysI3IaohLaXMF+dw1saVsGBtMjGg8sFDKIXeqq
-         nL6B1ebEJ8yMz3wr7hJE0WcJoPjPSnc6aT5JGLoa1OSKM8ybimW1brGvDHrc9vs8I15D
-         Wu1SQDBSccuf4tbMCzEnqqRYr1QnOWdB5UxJYJqDLwaQTkgz5cGtlNOXv5zCVtVXNEFz
-         +0bA==
+        bh=l5lfCYOS1NBrTdzjyrz70RC7raHVrIJ2n0SqF7ll480=;
+        b=y8R1QLd/NE2Dacorgmlgs6dJwoApduA794o+quFH7F6aviM93eTf/pF3sgVSjaFSVG
+         Td1PM9psxOXQ7QA6AJjwpK6rWSHnPXvnhJ2C45VRQ7SmwMUNQyKeEk3vQyIY+c6zX1UT
+         AyxlzypawPWvtzMx7wqVhMvUxT2dJ+xIBRg7h6kJ011nXYc3vSK6SHqKc9dmifPRf0fK
+         xIL7enjWq+ZoSZqWvjNZJ72S/furaO2dGdF0tXkBpikrfIUEsmgE9B/d5jeCPouSYB5t
+         4tB0iEr+9yMSEU4FOTbFzptoKegm9l09ZcnTpD7jt1P97vmf4fCgoYRXsuITEGkgOub4
+         IYFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706208411; x=1706813211;
+        d=1e100.net; s=20230601; t=1706210118; x=1706814918;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=93RGbS95fTdxBvjhjzM93NymEuuojGPAvYLX5OxMtj8=;
-        b=H+UEqX328MjjcZ3KloN4Z2/nCNGOYOr5/mHhidJQBJClCs+VaXQ78bovhfpvNMBQdy
-         zgU84wIzSj1eRmojAWfGlONjH5isFn2HdSyfzezVUWX2QP7aalRld9RzmH9CFYGHwezR
-         7fw+tLXJa2pyfEiD1YV7MD9R52VyxZxuDIPZEK1R0Se91QFmAGeUFYbJ5qmuWR/YLgRQ
-         JIqybFoy32rGDRkee6GFcX0vzxr7FTiqNZRaRXADQrLyU4r/gbB2d8RM4PTjGzoDtsYM
-         quWRV0aogZc0y5+gOH7aAdvKKQWTHRVY0w4xltbc13BhPCPbvVUlNMsMTYL3VPibqWm1
-         6nkQ==
-X-Gm-Message-State: AOJu0YyiPsdP/vBAYT1+Ekk4zP7dKRkyjuzvi+I3r4vEhhS9Msqsm/sP
-	ZLKv2BiCSYYPU5rlkrYXkVxxs4BB7DCGObBLAMYJcp6XWG0+N/8say53utpgCIA=
-X-Google-Smtp-Source: AGHT+IEp83VjztzUYh+e7xAlIA9dFh/K8WRm0dffj9Nc01ToRAaOc/sjvpNxHLmvk5nJJRl7yAuvsw==
-X-Received: by 2002:a05:6512:3248:b0:50e:c3fd:5dec with SMTP id c8-20020a056512324800b0050ec3fd5decmr88551lfr.119.1706208411126;
-        Thu, 25 Jan 2024 10:46:51 -0800 (PST)
+        bh=l5lfCYOS1NBrTdzjyrz70RC7raHVrIJ2n0SqF7ll480=;
+        b=qP35Uyp7Qo+bAahsqFa+XLxqEHs917ueZ7gYtvr1mg3JOKPdFZOrY2N51zr/GH1Fbz
+         Ci0dQ2Aej4Il30h+wAxVuJusnGQ/G9qVgcsybIKHoQTgiYM2Vptsxn77rwicHx6H3yd0
+         Cz/tWJctrg9vRaIs5aZz6+TbkJKLeMwCNUJPLGzfrxusZlB4UCzOh6/OAyBLP+nFOpat
+         9WuaHK48zFC9ZMumkgDQw1sT18mVqOEQV8Nm7I0MlCT13luOrICqMzuS1/W/bF7pg/yr
+         am/h8JyoAUQdN32TCSElyTO69vn0FPafsRA2ohwkcPye6/G76+Hhcfoz3dOBgBN9MBi0
+         PBQg==
+X-Gm-Message-State: AOJu0YzLRh+uBBPCFN+3A8izEIz+Fhf9O3JtRkduNGh/vE5SamUP1/nz
+	jUS645OxWV0wNHfeVsGuVlng8kPs7R1ksHKj2oYCMPPGZgTcKA/ZUyIekj3Bzh4=
+X-Google-Smtp-Source: AGHT+IHdhRRf00wGnpJGNkIlMig5CfXGMbmF8O8TgwEHLBg4n1bEZ9kzRmDO2Ym2ZF/YsbEisx9tNA==
+X-Received: by 2002:ac2:5b0f:0:b0:50e:74f3:c320 with SMTP id v15-20020ac25b0f000000b0050e74f3c320mr7358lfn.21.1706210118492;
+        Thu, 25 Jan 2024 11:15:18 -0800 (PST)
 Received: from localhost (h-46-59-36-113.A463.priv.bahnhof.se. [46.59.36.113])
-        by smtp.gmail.com with ESMTPSA id d5-20020ac241c5000000b0051014c847casm445132lfi.62.2024.01.25.10.46.50
+        by smtp.gmail.com with ESMTPSA id j11-20020ac2454b000000b005100d4455a2sm635122lfm.72.2024.01.25.11.15.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jan 2024 10:46:50 -0800 (PST)
-Date: Thu, 25 Jan 2024 19:46:50 +0100
+        Thu, 25 Jan 2024 11:15:17 -0800 (PST)
+Date: Thu, 25 Jan 2024 20:15:17 +0100
 From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -69,11 +69,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 09/15] pmdomain: renesas: r8a779h0-sysc: Add r8a779h0
+Subject: Re: [PATCH v2 13/15] arm64: dts: renesas: Add Renesas R8A779H0 SoC
  support
-Message-ID: <20240125184650.GO4126432@ragnatech.se>
+Message-ID: <20240125191517.GP4126432@ragnatech.se>
 References: <cover.1706194617.git.geert+renesas@glider.be>
- <eed6faa02c628d32676ab8ea0eee636b4ffd6c47.1706194617.git.geert+renesas@glider.be>
+ <4107bc3d7c31932da29e671ddf4b1564ba38a84c.1706194617.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -83,159 +83,164 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <eed6faa02c628d32676ab8ea0eee636b4ffd6c47.1706194617.git.geert+renesas@glider.be>
+In-Reply-To: <4107bc3d7c31932da29e671ddf4b1564ba38a84c.1706194617.git.geert+renesas@glider.be>
 
 Hi Geert,
 
 Thanks for your work.
 
-On 2024-01-25 16:34:37 +0100, Geert Uytterhoeven wrote:
-> From: Duy Nguyen <duy.nguyen.rh@renesas.com>
+On 2024-01-25 16:34:41 +0100, Geert Uytterhoeven wrote:
+> From: Hai Pham <hai.pham.ud@renesas.com>
 > 
-> Add support for R-Car V4M (R8A779H0) SoC power areas to the R-Car SYSC
-> driver.
+> Add initial support for the Renesas R-Car V4M (R8A779H0) SoC.
 > 
-> Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
+> Signed-off-by: Hai Pham <hai.pham.ud@renesas.com>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
 > ---
 > v2:
->   - Add vendor-prefix to DT binding definition header file.
+>   - Add vendor-prefixes to DT binding definition header files.
 > 
 > Changes compared to the BSP:
->   - Move from drivers/soc/renesas/ to drivers/pmdomain/renesas/,
->   - Include rcar-gen4-sysc glue from "soc: renesas: rcar-gen4-sysc:
->     Introduce R-Car Gen4 SYSC driver",
->   - Remove unneeded includes,
->   - Align second column,
->   - Fix names of "a33dga" and "a23dgb" domains,
->   - Add missing "a3cr[012]" domains.
+>   - Add "-clk" suffix to clock node names,
+>   - Rename "pmu_a76" node to "pmu-a76",
+>   - Drop bogus CPU masks from GICv3 PPI interrupt specifiers,
+>   - Drop hscif0 dmas and dma-names placeholder,
+>   - Add missing hypervisor virtual timer IRQ to timer node.
 > ---
->  drivers/pmdomain/renesas/Kconfig          |  4 ++
->  drivers/pmdomain/renesas/Makefile         |  1 +
->  drivers/pmdomain/renesas/r8a779h0-sysc.c  | 55 +++++++++++++++++++++++
->  drivers/pmdomain/renesas/rcar-gen4-sysc.c |  3 ++
->  drivers/pmdomain/renesas/rcar-gen4-sysc.h |  1 +
->  5 files changed, 64 insertions(+)
->  create mode 100644 drivers/pmdomain/renesas/r8a779h0-sysc.c
+>  arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 121 ++++++++++++++++++++++
+>  1 file changed, 121 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/renesas/r8a779h0.dtsi
 > 
-> diff --git a/drivers/pmdomain/renesas/Kconfig b/drivers/pmdomain/renesas/Kconfig
-> index 80bf2cf8b60e6f63..54acb4b1ec7c4892 100644
-> --- a/drivers/pmdomain/renesas/Kconfig
-> +++ b/drivers/pmdomain/renesas/Kconfig
-> @@ -71,6 +71,10 @@ config SYSC_R8A779G0
->  	bool "System Controller support for R-Car V4H" if COMPILE_TEST
->  	select SYSC_RCAR_GEN4
->  
-> +config SYSC_R8A779H0
-> +	bool "System Controller support for R-Car V4M" if COMPILE_TEST
-> +	select SYSC_RCAR_GEN4
-> +
->  config SYSC_RMOBILE
->  	bool "System Controller support for R-Mobile" if COMPILE_TEST
->  
-> diff --git a/drivers/pmdomain/renesas/Makefile b/drivers/pmdomain/renesas/Makefile
-> index e306e396fc8c10e3..89180f19c23be732 100644
-> --- a/drivers/pmdomain/renesas/Makefile
-> +++ b/drivers/pmdomain/renesas/Makefile
-> @@ -24,6 +24,7 @@ obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
->  obj-$(CONFIG_SYSC_R8A779A0)	+= r8a779a0-sysc.o
->  obj-$(CONFIG_SYSC_R8A779F0)	+= r8a779f0-sysc.o
->  obj-$(CONFIG_SYSC_R8A779G0)	+= r8a779g0-sysc.o
-> +obj-$(CONFIG_SYSC_R8A779H0)     += r8a779h0-sysc.o
->  # Family
->  obj-$(CONFIG_SYSC_RCAR)		+= rcar-sysc.o
->  obj-$(CONFIG_SYSC_RCAR_GEN4)	+= rcar-gen4-sysc.o
-> diff --git a/drivers/pmdomain/renesas/r8a779h0-sysc.c b/drivers/pmdomain/renesas/r8a779h0-sysc.c
+> diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
 > new file mode 100644
-> index 0000000000000000..ce2a82183ba8c9ab
+> index 0000000000000000..a082e2d06b696019
 > --- /dev/null
-> +++ b/drivers/pmdomain/renesas/r8a779h0-sysc.c
-> @@ -0,0 +1,55 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> +++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+> @@ -0,0 +1,121 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +/*
-> + * Renesas R-Car V4M System Controller
+> + * Device Tree Source for the R-Car V4M (R8A779H0) SoC
 > + *
-> + * Copyright (C) 2016-2017 Glider bvba
-
-Is 2016-2017 correct? With or without that fixed,
-
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> + * Copyright (C) 2023 Renesas Electronics Corp
+> + * Copyright (C) 2023 Renesas Electronics Corp.
 > + */
 > +
-> +#include <linux/kernel.h>
-> +
+> +#include <dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
 > +#include <dt-bindings/power/renesas,r8a779h0-sysc.h>
 > +
-> +#include "rcar-gen4-sysc.h"
+> +/ {
+> +	compatible = "renesas,r8a779h0";
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
 > +
-> +static struct rcar_gen4_sysc_area r8a779h0_areas[] __initdata = {
-> +	{ "always-on",	R8A779H0_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
-> +	{ "c4",		R8A779H0_PD_C4, R8A779H0_PD_ALWAYS_ON },
-> +	{ "a2e0d0",	R8A779H0_PD_A2E0D0, R8A779H0_PD_C4, PD_SCU },
-> +	{ "a1e0d0c0",	R8A779H0_PD_A1E0D0C0, R8A779H0_PD_A2E0D0, PD_CPU_NOCR },
-> +	{ "a1e0d0c1",	R8A779H0_PD_A1E0D0C1, R8A779H0_PD_A2E0D0, PD_CPU_NOCR },
-> +	{ "a1e0d0c2",	R8A779H0_PD_A1E0D0C2, R8A779H0_PD_A2E0D0, PD_CPU_NOCR },
-> +	{ "a1e0d0c3",	R8A779H0_PD_A1E0D0C3, R8A779H0_PD_A2E0D0, PD_CPU_NOCR },
-> +	{ "a3cr0",	R8A779H0_PD_A3CR0, R8A779H0_PD_ALWAYS_ON, PD_CPU_NOCR },
-> +	{ "a3cr1",	R8A779H0_PD_A3CR1, R8A779H0_PD_ALWAYS_ON, PD_CPU_NOCR },
-> +	{ "a3cr2",	R8A779H0_PD_A3CR2, R8A779H0_PD_ALWAYS_ON, PD_CPU_NOCR },
-> +	{ "a33dga",	R8A779H0_PD_A33DGA, R8A779H0_PD_C4 },
-> +	{ "a23dgb",	R8A779H0_PD_A23DGB, R8A779H0_PD_A33DGA },
-> +	{ "a3vip0",	R8A779H0_PD_A3VIP0, R8A779H0_PD_C4 },
-> +	{ "a3vip2",	R8A779H0_PD_A3VIP2, R8A779H0_PD_C4 },
-> +	{ "a3dul",	R8A779H0_PD_A3DUL, R8A779H0_PD_C4 },
-> +	{ "a3isp0",	R8A779H0_PD_A3ISP0, R8A779H0_PD_C4 },
-> +	{ "a2cn0",	R8A779H0_PD_A2CN0, R8A779H0_PD_C4 },
-> +	{ "a1cn0",	R8A779H0_PD_A1CN0, R8A779H0_PD_A2CN0 },
-> +	{ "a1dsp0",	R8A779H0_PD_A1DSP0, R8A779H0_PD_A2CN0 },
-> +	{ "a1dsp1",	R8A779H0_PD_A1DSP1, R8A779H0_PD_A2CN0 },
-> +	{ "a2imp01",	R8A779H0_PD_A2IMP01, R8A779H0_PD_C4 },
-> +	{ "a2psc",	R8A779H0_PD_A2PSC, R8A779H0_PD_C4 },
-> +	{ "a2dma",	R8A779H0_PD_A2DMA, R8A779H0_PD_C4 },
-> +	{ "a2cv0",	R8A779H0_PD_A2CV0, R8A779H0_PD_C4 },
-> +	{ "a2cv1",	R8A779H0_PD_A2CV1, R8A779H0_PD_C4 },
-> +	{ "a2cv2",	R8A779H0_PD_A2CV2, R8A779H0_PD_C4 },
-> +	{ "a2cv3",	R8A779H0_PD_A2CV3, R8A779H0_PD_C4 },
-> +	{ "a3imr0",	R8A779H0_PD_A3IMR0, R8A779H0_PD_C4 },
-> +	{ "a3imr1",	R8A779H0_PD_A3IMR1, R8A779H0_PD_C4 },
-> +	{ "a3imr2",	R8A779H0_PD_A3IMR2, R8A779H0_PD_C4 },
-> +	{ "a3imr3",	R8A779H0_PD_A3IMR3, R8A779H0_PD_C4 },
-> +	{ "a3vc",	R8A779H0_PD_A3VC, R8A779H0_PD_C4 },
-> +	{ "a3pci",	R8A779H0_PD_A3PCI, R8A779H0_PD_C4 },
-> +	{ "a2pciphy",	R8A779H0_PD_A2PCIPHY, R8A779H0_PD_A3PCI },
-> +};
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
 > +
-> +const struct rcar_gen4_sysc_info r8a779h0_sysc_info __initconst = {
-> +	.areas = r8a779h0_areas,
-> +	.num_areas = ARRAY_SIZE(r8a779h0_areas),
+> +		a76_0: cpu@0 {
+> +			compatible = "arm,cortex-a76";
+> +			reg = <0>;
+> +			device_type = "cpu";
+> +			power-domains = <&sysc R8A779H0_PD_A1E0D0C0>;
+> +		};
+> +	};
+> +
+> +	extal_clk: extal-clk {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		/* This value must be overridden by the board */
+> +		clock-frequency = <0>;
+> +	};
+> +
+> +	extalr_clk: extalr-clk {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		/* This value must be overridden by the board */
+> +		clock-frequency = <0>;
+> +	};
+> +
+> +	pmu-a76 {
+> +		compatible = "arm,cortex-a76-pmu";
+> +		interrupts-extended = <&gic GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +
+> +	/* External SCIF clock - to be overridden by boards that provide it */
+> +	scif_clk: scif-clk {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <0>;
+> +	};
+> +
+> +	soc: soc {
+> +		compatible = "simple-bus";
+> +		interrupt-parent = <&gic>;
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		cpg: clock-controller@e6150000 {
+> +			compatible = "renesas,r8a779h0-cpg-mssr";
+> +			reg = <0 0xe6150000 0 0x4000>;
+> +			clocks = <&extal_clk>, <&extalr_clk>;
+> +			clock-names = "extal", "extalr";
+> +			#clock-cells = <2>;
+> +			#power-domain-cells = <0>;
+> +			#reset-cells = <1>;
+> +		};
+> +
+> +		rst: reset-controller@e6160000 {
+> +			compatible = "renesas,r8a779h0-rst";
+> +			reg = <0 0xe6160000 0 0x4000>;
+> +		};
+> +
+> +		sysc: system-controller@e6180000 {
+> +			compatible = "renesas,r8a779h0-sysc";
+> +			reg = <0 0xe6180000 0 0x4000>;
+> +			#power-domain-cells = <1>;
+> +		};
+> +
+> +		hscif0: serial@e6540000 {
+> +			compatible = "renesas,hscif-r8a779h0",
+> +				     "renesas,rcar-gen4-hscif", "renesas,hscif";
+> +			reg = <0 0xe6540000 0 0x60>;
+> +			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 514>,
+> +				 <&cpg CPG_CORE R8A779H0_CLK_SASYNCPERD1>,
+> +				 <&scif_clk>;
+> +			clock-names = "fck", "brg_int", "scif_clk";
+> +			power-domains = <&sysc R8A779H0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 514>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gic: interrupt-controller@f1000000 {
+> +			compatible = "arm,gic-v3";
+> +			#interrupt-cells = <3>;
+> +			#address-cells = <0>;
+> +			interrupt-controller;
+> +			reg = <0x0 0xf1000000 0 0x20000>,
+> +			      <0x0 0xf1060000 0 0x110000>;
+> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +		};
+> +
+> +		prr: chipid@fff00044 {
+> +			compatible = "renesas,prr";
+> +			reg = <0 0xfff00044 0 4>;
+> +		};
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts-extended = <&gic GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+> +				      <&gic GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+> +				      <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+> +				      <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
+> +				      <&gic GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
+> +	};
 > +};
-> diff --git a/drivers/pmdomain/renesas/rcar-gen4-sysc.c b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-> index 9e5e6e077abc081c..728248659a97e8cc 100644
-> --- a/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-> +++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-> @@ -284,6 +284,9 @@ static const struct of_device_id rcar_gen4_sysc_matches[] __initconst = {
->  #endif
->  #ifdef CONFIG_SYSC_R8A779G0
->  	{ .compatible = "renesas,r8a779g0-sysc", .data = &r8a779g0_sysc_info },
-> +#endif
-> +#ifdef CONFIG_SYSC_R8A779H0
-> +	{ .compatible = "renesas,r8a779h0-sysc", .data = &r8a779h0_sysc_info },
->  #endif
->  	{ /* sentinel */ }
->  };
-> diff --git a/drivers/pmdomain/renesas/rcar-gen4-sysc.h b/drivers/pmdomain/renesas/rcar-gen4-sysc.h
-> index 388cfa8f8f9fd656..fdf843aa51134f87 100644
-> --- a/drivers/pmdomain/renesas/rcar-gen4-sysc.h
-> +++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.h
-> @@ -40,5 +40,6 @@ struct rcar_gen4_sysc_info {
->  extern const struct rcar_gen4_sysc_info r8a779a0_sysc_info;
->  extern const struct rcar_gen4_sysc_info r8a779f0_sysc_info;
->  extern const struct rcar_gen4_sysc_info r8a779g0_sysc_info;
-> +extern const struct rcar_gen4_sysc_info r8a779h0_sysc_info;
->  
->  #endif /* __SOC_RENESAS_RCAR_GEN4_SYSC_H__ */
 > -- 
 > 2.34.1
 > 
