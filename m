@@ -1,168 +1,120 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB3D13B7B4
-	for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 22:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DD76D1A8;
+	Fri, 26 Jan 2024 08:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706221793; cv=none; b=B+oYgIcxdtftUWawjlOobOX2piRu3xABblVD0Is+Vz0j+cxpKsFdD4lB5g0951wtTqtqMSwKQM7+TuWQ1yqXbo9aLdfbivNgXST4GA29FX/BxgrImS338+62wBTGWM8XxR4OyK45GgrC4B9EjmbF5tBeFOjoEDoXEOFO0qXJ3RA=
+	t=1706256801; cv=none; b=FO24g7rnSGZ0/hK74YNzuqLG4WZRA8asZcD/cfoMW+MiLdgKG8jF9dXhqb6STRcdWCIh0KPhwt3NjKmUNkxAgKDWjmfnZUZRY5fea/cL+WDTFjOOjfzsJUmEVcj7QYusM8XONjTBRi/w0KrQkBQf+YGRpqmHVQ0P1OFO0F6DNmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706221793; c=relaxed/simple;
-	bh=pdmqitTeaF84l4GLBECsFls/XdMw2AE1xh/qLajhugI=;
+	s=arc-20240116; t=1706256801; c=relaxed/simple;
+	bh=weH33ky7oNm3EiJ3aEacbbdeg0oNvXbtDaN1/TiAS3s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sia844IyaICLOLhRjsUf5u5IM+3OAyFKt9ORQLqmHYrF8npkeblcMXTQd/euVBJqR7R9w+fs291ak1+vahm1qJZqkrPB9q+tGhQUx015XLg7al0x81R1oeN+vzP52ldrVlToMQUhnNJ13J4uEarDAzAZEL0V39B4dgj1su7Xw4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eTFidCax; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eTFidCax"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dc63dfe77caso114704276.3
-        for <linux-clk@vger.kernel.org>; Thu, 25 Jan 2024 14:29:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706221791; x=1706826591; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qj1aarYcNCRPMpfcILtapIIFfoDQsiP4fM6MW/nqV0=;
-        b=eTFidCaxsOw3f3pz74qAqEMl3M5gbAgocD6v2alejncgRQTq+gXP7C/vfJsyQDhQcz
-         VOw1GiSIOUSaEuZ3WTYfOIyCuNeKnEPyMkCQBsGk37WUCS89KWQFEwR1+h6Y0vI/1TG3
-         YcBBxYRca1SQAy9KxFafty2au49wZi9XpgMKZzQ0OaedagalbQ3KbBY0ccwY+RagfAo0
-         UMFWS0ZZ71TR3UmJYqgs4X4fASpPNPCnxjtBcF+MXJDNBpuOn3fMzJ4HY7ZijHhwAayz
-         a2Ax7LpiZSCfgivTJaITOY1taRRLwG1ADiPH5P8BJPt3rvWy/Srm0+TNwmJdr4UjxaSv
-         55aA==
+	 To:Cc:Content-Type; b=SQ2Tw+JzdL7xLFSD8sAFY3mTGObKH0qKvKNesj5qQ3OQyTzC98jkCndzfZINFXjM6BWvkTAymWthr3Eyg5OQz7DxYhbkf/yHGP9xmlfZISbm4F0cTJIusEDGWkUmFbFZ+pX5qC2NXy2SUpk7k1iOgKegEVksxGLB2+ivczyUb84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-602cf7dfeb1so1005567b3.0;
+        Fri, 26 Jan 2024 00:13:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706221791; x=1706826591;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0qj1aarYcNCRPMpfcILtapIIFfoDQsiP4fM6MW/nqV0=;
-        b=o3IMn35+MNd0Qrw9kWd/gzaW8xB8O247G7JA6jWjRSP3TLAL5+PCc3O9kNvX6T1EZb
-         lIK8cpvI5aoLjkFxUVrMyIvIg41RWroHIhof/3hfgRgTlt/5Guv8z2u87w7CL1ZiLaZm
-         qzPr+yWRJFPkpDaQG4P6ZNp1SnNoT/rInKDPJ/A1nmSeC835NQEcRZ+KMRQ4U4XtC2q5
-         N+nKHN2GdBsLZux97LCyz4bUVan1YhlvWqAphNolkbhpchz1j4d2CTWHmyKlYMFeeK+H
-         /Z4Glwcy+dU173WHjtLcXp2RhaBrJIo4A/lmhzGdGdpJOKiT7L94mzdL1ZMN1kILtiBM
-         BGhg==
-X-Gm-Message-State: AOJu0Yz7InHAXuRag63SLOi5L2D8YDZJRdQ0jN5+rm3bN0/kJVE73CYm
-	nFhrQ+Kr6tiGEm2uqLv6QWFTc6Eia3G8FEwP/U5n3/Gf/YQ6WXBdVElxnjwImlnEd6ea9ZICwrC
-	vrO/dFr2KNp+2Y5pPDeyqDuNc8KPwiQ3bshdvKg==
-X-Google-Smtp-Source: AGHT+IEIrXiJz/BJm8XfspLPa6VXYTY6QIWf67Zf9KppnCLv1hYViKn5F1vUW8HIv7famATu3qJ7JAubWNKmRV2MlZo=
-X-Received: by 2002:a25:ab34:0:b0:dc2:1fa9:5329 with SMTP id
- u49-20020a25ab34000000b00dc21fa95329mr496445ybi.29.1706221791148; Thu, 25 Jan
- 2024 14:29:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706256798; x=1706861598;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/QB6xsdYCRXR/22GDHbqNHIS69HRzW17anUq6GjF6Pw=;
+        b=Q1EwLQCZG+xzSYkzIp7oPz8fwgG7LYxPU7qFoBX9adZVs1r0PmqkqPwz9u6yZK53iH
+         B88Gbc1oMUV5o2EaYA4+/XTDx+echv/elIH7hdB3ctj1Uxx1TJTwjVixqkborctAdfD+
+         NAa+8cQFcF+s4KfpFAkLCmKirFLiE4UfznDf/zbgBUUeFlc3spIEISDdQikCzccCyt4Y
+         oQT+6mhPYMVF2FusHTkgKr6sQqIv7+LjWQHvM7smqB4210ZKonuv4AW12Ncbif6HGbJF
+         G3bMiMObE7JXKa4UoKWER5kDl5AnY32ChCCxpit90w8ITuPqmBB2GbTFTJhhLHGYeMwK
+         vCeQ==
+X-Gm-Message-State: AOJu0YytcwvQ4Qa5JpmMdwOwB+q4MkVg9c3XZZcIvciHmeo2QIe/Tv5R
+	K9DXD+N5Egtxp4j00WLHUHAgb0ez9pBPq9X9sV2239Nk1+ZQiZ+Ds4BMMtvOxj8=
+X-Google-Smtp-Source: AGHT+IHKaJLdjj9r7u/sJwswtl4eZOWoFKnImF7c4zcTQAewRfjU7c4ipSYXiUnGTRyh5TXG5Py26A==
+X-Received: by 2002:a0d:d489:0:b0:5ff:529c:504d with SMTP id w131-20020a0dd489000000b005ff529c504dmr1021098ywd.79.1706256798157;
+        Fri, 26 Jan 2024 00:13:18 -0800 (PST)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id y192-20020a81a1c9000000b00602ab11425csm228055ywg.81.2024.01.26.00.13.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jan 2024 00:13:17 -0800 (PST)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-5ff7a8b5e61so1065777b3.2;
+        Fri, 26 Jan 2024 00:13:17 -0800 (PST)
+X-Received: by 2002:a0d:ea82:0:b0:5ff:30d2:a63c with SMTP id
+ t124-20020a0dea82000000b005ff30d2a63cmr960276ywe.14.1706256796983; Fri, 26
+ Jan 2024 00:13:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240125-sa8295p-gpu-v4-0-7011c2a63037@quicinc.com> <20240125-sa8295p-gpu-v4-6-7011c2a63037@quicinc.com>
-In-Reply-To: <20240125-sa8295p-gpu-v4-6-7011c2a63037@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 26 Jan 2024 00:29:40 +0200
-Message-ID: <CAA8EJprR74VGm4djFdZvVA8xtqHvbFypwacmxqcMZhOLUo6XSQ@mail.gmail.com>
-Subject: Re: [PATCH v4 6/8] arm64: dts: qcom: sa8295p-adp: add max20411
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+References: <cover.1706194617.git.geert+renesas@glider.be> <eed6faa02c628d32676ab8ea0eee636b4ffd6c47.1706194617.git.geert+renesas@glider.be>
+ <20240125184650.GO4126432@ragnatech.se>
+In-Reply-To: <20240125184650.GO4126432@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2024 09:13:05 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUBPdiSqgkZOs2nddvk_xEVe3m7sZ51XC20Optcp+pVLg@mail.gmail.com>
+Message-ID: <CAMuHMdUBPdiSqgkZOs2nddvk_xEVe3m7sZ51XC20Optcp+pVLg@mail.gmail.com>
+Subject: Re: [PATCH v2 09/15] pmdomain: renesas: r8a779h0-sysc: Add r8a779h0 support
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh+dt@kernel.org>, 
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Johan Hovold <johan+linaro@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Cong Dang <cong.dang.xn@renesas.com>, 
+	Duy Nguyen <duy.nguyen.rh@renesas.com>, Hai Pham <hai.pham.ud@renesas.com>, 
+	Linh Phung <linh.phung.jy@renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 25 Jan 2024 at 23:06, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
->
-> From: Bjorn Andersson <andersson@kernel.org>
->
-> The SA8295P ADP has a MAX20411 LDO regulator on I2C 12, supplying the
-> VDD_GFX pads. Enable the bus and add the maxim,max20411 device on the
-> bus.
->
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Hi Niklas,
 
-This doesn't match the From header.
+On Thu, Jan 25, 2024 at 7:46=E2=80=AFPM Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> On 2024-01-25 16:34:37 +0100, Geert Uytterhoeven wrote:
+> > From: Duy Nguyen <duy.nguyen.rh@renesas.com>
+> >
+> > Add support for R-Car V4M (R8A779H0) SoC power areas to the R-Car SYSC
+> > driver.
+> >
+> > Signed-off-by: Duy Nguyen <duy.nguyen.rh@renesas.com>
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > v2:
+> >   - Add vendor-prefix to DT binding definition header file.
 
-> ---
->  arch/arm64/boot/dts/qcom/sa8295p-adp.dts | 39 ++++++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
+> > --- /dev/null
+> > +++ b/drivers/pmdomain/renesas/r8a779h0-sysc.c
+> > @@ -0,0 +1,55 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Renesas R-Car V4M System Controller
+> > + *
+> > + * Copyright (C) 2016-2017 Glider bvba
 >
-> diff --git a/arch/arm64/boot/dts/qcom/sa8295p-adp.dts b/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
-> index fd253942e5e5..bd0962f39fc5 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
-> +++ b/arch/arm64/boot/dts/qcom/sa8295p-adp.dts
-> @@ -266,6 +266,26 @@ &dispcc1 {
->         status = "okay";
->  };
->
-> +&i2c12 {
-> +       pinctrl-0 = <&qup1_i2c4_state>;
-> +       pinctrl-names = "default";
-> +
-> +       status = "okay";
-> +
-> +       vdd_gfx: regulator@39 {
-> +               compatible = "maxim,max20411";
-> +               reg = <0x39>;
-> +
-> +               regulator-min-microvolt = <800000>;
-> +               regulator-max-microvolt = <800000>;
-> +
-> +               enable-gpios = <&pmm8540a_gpios 2 GPIO_ACTIVE_HIGH>;
-> +
-> +               pinctrl-0 = <&max20411_en>;
-> +               pinctrl-names = "default";
-> +       };
-> +};
-> +
->  &mdss0 {
->         status = "okay";
->  };
-> @@ -476,6 +496,10 @@ &pcie4_phy {
->         status = "okay";
->  };
->
-> +&qup1 {
-> +       status = "okay";
-> +};
-> +
->  &qup2 {
->         status = "okay";
->  };
-> @@ -636,6 +660,14 @@ &xo_board_clk {
->
->  /* PINCTRL */
->
-> +&pmm8540a_gpios {
-> +       max20411_en: max20411-en-state {
-> +               pins = "gpio2";
-> +               function = "normal";
-> +               output-enable;
-> +       };
-> +};
-> +
->  &tlmm {
->         pcie2a_default: pcie2a-default-state {
->                 clkreq-n-pins {
-> @@ -728,4 +760,11 @@ wake-n-pins {
->                         bias-pull-up;
->                 };
->         };
-> +
-> +       qup1_i2c4_state: qup1-i2c4-state {
-> +               pins = "gpio0", "gpio1";
-> +               function = "qup12";
-> +               drive-strength = <2>;
-> +               bias-pull-up;
-> +       };
->  };
->
-> --
-> 2.25.1
->
->
+> Is 2016-2017 correct? With or without that fixed,
 
+That must have been copied from r8a7795-sysc.c...
+As the layout of R-Car V4M is completely different from R-Car H3,
+I will drop that line (with or without reposting).
 
--- 
-With best wishes
-Dmitry
+> Acked-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
