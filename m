@@ -1,80 +1,98 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2E912B8C
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jan 2024 10:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C021B943
+	for <linux-clk@vger.kernel.org>; Fri, 26 Jan 2024 11:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706266615; cv=none; b=oelH22WxJatxduZD+iwtrxQyG2CgqUOBporowV4y3Ebk059b73oDvfS+cvohWK8r7nd8NCIV9OEAq64qvfflSMBqgdKdwxfeA+XJj0PoqmPn7XFkyNfwg3/2pGq8gWjpmjS67Ca1BCfSnwDIneNObZMJ6Ng00Li6FJbsPdLhvm4=
+	t=1706268158; cv=none; b=gHmoRw+L9MojfoeseLR8Qd5HlSr16BcbGpw0M43v+WSPtF6AxxiaGoZLr0aOnv0OUnNPjU3hFdMooWLCygfGsyOTwgYE0RL9yfFqAaGiRmz+f2ReZB+kNxKecpkA8pi+G1XbEttEikavCy3+6ctb0gLOEOycGaDzGRWhW4FNsME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706266615; c=relaxed/simple;
-	bh=Z1K8XxAr0NS1rz0ikSX+SB4azNcTAf76x+/v/glo0BM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kRkglaUNPuwevHoijI3KZtRWcOmpmOMPlnEJz1bhTgZpuYLattxqg0jV1MYnq3eKzwKoGpMtpdE0LaoyCTLitbscpwCzV+OOY+Oyced06RReMhealOvQiETP3m9AhDGVBsW7dp6vbGO4FhC8lG4tGkO1VmkCzXu1df/ay77qxY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:8d64:ae04:ce87:de06])
-	by albert.telenet-ops.be with bizsmtp
-	id fNwm2B0091AdMdB06NwmND; Fri, 26 Jan 2024 11:56:46 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJsK-00GWgN-3W;
-	Fri, 26 Jan 2024 11:56:46 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJne-00G5ZK-84;
-	Fri, 26 Jan 2024 11:51:06 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Cong Dang <cong.dang.xn@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779h0: Add PFC/GPIO clocks
-Date: Fri, 26 Jan 2024 11:50:56 +0100
-Message-Id: <a7d8f4111b87decb825db5ed310de8294f90b9f9.1706266196.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1706268158; c=relaxed/simple;
+	bh=mACbSjLNn43qQIDNya9zDgNcOnXMiY4Me7YFeN+xW90=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=D65z56vuOzU8/HVkw1bqbykDlRoFkeASKgAsC7ib15wkuxF2Yt5NbsH+wty76+J4jhnYhp4o4vNyLiwMDrDiYJru7mELtzSDup1kpGCcUNtR2Dvjx8Ds242Fs5rJhR8oh4wG6Ghoj7Na+XjU2N7+dY4iv1A9kXRZECBQTrwjVYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uX9CbdA2; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uX9CbdA2"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2cf4bc44ce1so3048611fa.0
+        for <linux-clk@vger.kernel.org>; Fri, 26 Jan 2024 03:22:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706268155; x=1706872955; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xS+dLyse9Mmq2wfzYg8MWhXB6r8382gdva6ZXhQz530=;
+        b=uX9CbdA2f154mzB9e9wWeSQGAr+C/EYKhIg7qMk4d6BFTcC1GOWguths8zg+WY3Hc0
+         QAN9QA952fa8OThthu1tr7w6NfktlA3tJPRQgqw7xjZqqUflX1mnruHD083ADA3Gn6+Z
+         O7wqzUOw/Mhy5nlxw/XDeqjQJ1SvmHXQUsypGmWrUHKFfhG9Nm3sUcPpapt6XOv8C8AG
+         OMdbSHMO72169SlxrCuiIJnzV8wXEEy6BZW2zf8gbTTSnfk6oiVJke0po3U8JG2dLB79
+         Rc22tSGhUsPf5kYAGrrvIykQBBFwqNhNDsbIksdecdCa/Ez8E9QmcahLddI5XAVvngtl
+         /XCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706268155; x=1706872955;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xS+dLyse9Mmq2wfzYg8MWhXB6r8382gdva6ZXhQz530=;
+        b=flxbKVsBwfCXaRiCm1Z4waYtGSQ26d5TkWR2Ur69SQWMpVCMfzLcRPMY1vDCuCfuhi
+         Nr4U+IuE4S254Z2bK2TPybRfeRzLxS/Fb5EdRhwToEaByWEV/NzS0qzAZTtIq12tDzyp
+         +jWlvRld9KNQpsga645CPGcdsqW8144glDhyQzSVFIx6ntraV4ijnJQd/oj/4Ofy2+oz
+         N2GpnPuIbbNFBfuKMlRXIXPC8gUhHYVeNhqTTCrlGxzLI6RZnRCAcD/ITCjAgL7C1ElI
+         183loKMQVrgU9O8RtCFS4X1Ueh5fDmuT+R0WuL+wfuMbzfVDymEDx9xG2KS7QCXnQe7g
+         FsMg==
+X-Gm-Message-State: AOJu0YzaXYYOB0dLHg7+OZsPK099+VTbnrOdGjtN3M5d2327n8R8m6FX
+	PPbHSPyaLkyxleTqEoEESYu2axl9li6RA335tgh1x9mhm8bdvsUPAKpMI19jPwQ=
+X-Google-Smtp-Source: AGHT+IELkAMgyLeASnVJbzwF/GxPRN+LTezHRJs3Yv64SVBtFnuO5FEPoJYjpDpoE3SWJYzzKI2Wng==
+X-Received: by 2002:a2e:b5b8:0:b0:2ce:d23:ec9a with SMTP id f24-20020a2eb5b8000000b002ce0d23ec9amr655114ljn.104.1706268154619;
+        Fri, 26 Jan 2024 03:22:34 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.215.66])
+        by smtp.gmail.com with ESMTPSA id h1-20020a0564020e0100b0055d312732dbsm469202edh.5.2024.01.26.03.22.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jan 2024 03:22:33 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Gregory Clement <gregory.clement@bootlin.com>, 
+ =?utf-8?q?=EF=BF=BDipraga?= <alsi@bang-olufsen.dk>, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>
+Cc: Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20231004063712.3348978-3-alvin@pqrs.dk>
+References: <20231004063712.3348978-1-alvin@pqrs.dk>
+ <20231004063712.3348978-3-alvin@pqrs.dk>
+Subject: Re: (subset) [PATCH v2 2/4] ARM: dts: dove-cubox: fix si5351 node
+ names
+Message-Id: <170626815309.51665.6755169978488848085.b4-ty@linaro.org>
+Date: Fri, 26 Jan 2024 12:22:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.4
 
-From: Cong Dang <cong.dang.xn@renesas.com>
 
-Add the module clocks used by the Pin Function Controller (PFC) and
-General Purpose Input/Output (GPIO) blocks on the Renesas R-Car V4M
-(R8A779H0) SoC.
+On Wed, 04 Oct 2023 08:35:28 +0200, Alvin Šipraga wrote:
+> Correct the device tree to conform with the bindings. The node name and
+> index should be separated with an @.
+> 
+> 
 
-Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Changes compared to the BSP:
-  - Change parent clock from CL16M to CP.
+Applied, thanks!
 
-To be queued in renesas-clk for v6.9.
----
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 3 +++
- 1 file changed, 3 insertions(+)
+[2/4] ARM: dts: dove-cubox: fix si5351 node names
+      https://git.kernel.org/krzk/linux-dt/c/2df26223650027602d017368f4e8dc1eff90404e
 
-diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-index 1259b8544980f07a..219941047291d34d 100644
---- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-@@ -177,6 +177,9 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
- 	DEF_MOD("hscif1",	515,	R8A779H0_CLK_SASYNCPERD1),
- 	DEF_MOD("hscif2",	516,	R8A779H0_CLK_SASYNCPERD1),
- 	DEF_MOD("hscif3",	517,	R8A779H0_CLK_SASYNCPERD1),
-+	DEF_MOD("pfc0",		915,	R8A779H0_CLK_CP),
-+	DEF_MOD("pfc1",		916,	R8A779H0_CLK_CP),
-+	DEF_MOD("pfc2",		917,	R8A779H0_CLK_CP),
- };
- 
- /*
+Best regards,
 -- 
-2.34.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
