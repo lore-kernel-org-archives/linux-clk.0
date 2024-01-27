@@ -1,107 +1,113 @@
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914B122EE6;
-	Fri, 26 Jan 2024 20:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC93B39E
+	for <linux-clk@vger.kernel.org>; Sat, 27 Jan 2024 00:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706300108; cv=none; b=l67EXN/Ir4OUdJbzUddYMGxkM6xWSMfKtZ/AxpzOnJPDd6gUk21b2/t+Df4dZhdf4OH4WtLi/Avv7EZguuqB1BKIiaLy+v++ZjBqQFRZjl64O6cFv0l8im+s5SQEf48oIom/g+TuncjDYgJCYsXMnz9wuU6Ei+Np8DEep3r3ZnQ=
+	t=1706314784; cv=none; b=AjrD25xIqyS8G8YKq86DEiYfC2jDtxneObKnnk8tKk2TvKkvqwiOvJq2VbBO+p/usUtF0s2FsX3FeVc1Wg+KVvljrPq74uwOhnmx/rvWmwh7DmOTUYUuTzQBj8Y2S4HQxqGPrtP/ZPQh2FCgPtKhfqLV541YwPRvd+UzUTildsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706300108; c=relaxed/simple;
-	bh=4sEMq0puBME/237eMZk3ovA7X8MRhuki13KbJQyBrEQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U2Lg0YIZpCA1oN6o6OoU/iB7mFEhmmic+36rSfXzauo4MSw9Ul9LFwcp+J716I5glVQ23g9DGvnRBkCL7huA0Ov3WOrAso7nGB8iSyY031s8te/d2N/NVuyagXeb4+r6GRDJrMLY8jY/935yaP+qPac4LxS45SZeZKjmCATyKvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=X7YmOrJ5; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+	s=arc-20240116; t=1706314784; c=relaxed/simple;
+	bh=c7iK9Q9i+/5KtbjjQ/B86HiRg6utBMxubkhs/C/qBEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gqi4dNcEfAVNEO2CSsL/ulJQyW91i8qoK6QwIJnPEhm6xEiNft18XxrN7q/9GL5exy6i3BJTxOrRQUy7GZ/VJ2nblKDobWRMj0IKgdG0lAwUk4hGhFfBjn5e8eEox4seAvMmiTH05rDKtRyDEIMAyMUqFZMbwJiZtrmHwamVI3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ajlb2/23; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="X7YmOrJ5"
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id DB211100008;
-	Fri, 26 Jan 2024 23:14:58 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru DB211100008
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1706300098;
-	bh=YSHUVKqeGq3nTAxTTeI0cf6HT4MFk+fExmZZ2XSG68c=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=X7YmOrJ5G6dUon2EuzxLn6/s319RkRH6lJYmu8PHniJ0bZ8wTCqMhPBh3MuWXfCrI
-	 yPX6e4Js4QAij//7mIpLH/9u3zLbbWcowxFzXbekvkHMiiOD6ZtmK0//Ql+AXHWqvJ
-	 8awp9guqUt/lcjPEfZPhWFOlvOVX8+xQ8C8lORVY5Vl17TkXmhT2Ob+zTSfibGJXXg
-	 e7R91UZZmOp2B7b6bJ7kKmTpF0mbDZZ7pOBw6Vn/3ZoccjGM6leuUNpEFfIkjWDYFT
-	 3yFsP0mfw0Sz9eyq+OKbbGdJtpxteRhQbXggiyT0dI3miFLleTOJcdXotvBGzJYFWA
-	 dgGTv+VDceiXg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 26 Jan 2024 23:14:58 +0300 (MSK)
-Received: from CAB-WSD-0003115.sberdevices.ru (100.64.160.123) by
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Fri, 26 Jan 2024 23:14:57 +0300
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <kernel@salutedevices.com>, Jan Dakinevich
-	<jan.dakinevich@salutedevices.com>
-Subject: [PATCH] clk: allow to skip clk_core_req_round_rate_nolock()
-Date: Fri, 26 Jan 2024 23:14:33 +0300
-Message-ID: <20240126201433.1830600-1-jan.dakinevich@salutedevices.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ajlb2/23"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a350bfcc621so68449666b.0
+        for <linux-clk@vger.kernel.org>; Fri, 26 Jan 2024 16:19:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706314780; x=1706919580; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R/Rm0yYDXOMu68wV8GexASxsNK6lcu3pWifwK+J3GEg=;
+        b=ajlb2/23tvb/6s+91Mu7wtxth3Evb0cqF/86MJou4CjUGOLJBikgYLRQu3CMJMA2bA
+         3L9q6gSK8VVzY2/YL2S+24sqabt53VhdVUj10EetXXQIXbpQ2lvehyB7s4FGdWCQ+QZ9
+         BR3lu4haE3GlLtQnLegJn3jBkXHq9ZhzLXxMJ1yN3oZhtJYxfvo/6JwxLT/X/FZK8qjR
+         gq9e9fUW5ta/YsA+R8nJ2Bq+bYCM3Z0B/ubdeQwj18m+a5CJGDpdqL8bqBD87zZDsqPB
+         /6NqPfcdWpDuAlLXTGWQbYe7chIUr+0BDwkmGsCUd+4HJgGjXvy75E0J+qsZFrrzY/g3
+         9jqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706314780; x=1706919580;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R/Rm0yYDXOMu68wV8GexASxsNK6lcu3pWifwK+J3GEg=;
+        b=GmxIX/g1LfK0Cn6ksU674/opL9/4AmeGPpolrf/PWgmd4vLIoJbf5D4cuiuwFvxiUJ
+         9HD5aHKiOTULzR1WbZxXwnPj9iHt9l0knoTH90EHKVF1LWZfv/gRBMQlzVDe0OY0Chhf
+         GdlkEGAY8+geGblBrNeeFlM6hkvrlmkxItIbgWlrrHdoV4msjzANpY7IbpuG9cjgW1Qg
+         TdaDBRPJjXUjsUqaAOAgzNVGHVYCTfwywTHMp1YRU/UMavdO04Kgf7lmRl24qcsxHVmm
+         uadRnVcIC/8bHCI+33ULhFpuZd60M2WxMZpDf3ueZtjyLDBvuBI0J6v/HjJRJPtC/jk5
+         GT0w==
+X-Gm-Message-State: AOJu0Yygn3TZY9G5V0XTz3vg5gJUjRDAnVzCfP/XlijnRhLiOxk4NKDu
+	oLwM0Ln+hlADdCInKshdq6QlfpDAxtUEj06aEMO72zwln3gI4Np+TS1w5/qte4Y=
+X-Google-Smtp-Source: AGHT+IHLOaiuHvoFTH+gfWrR6r9blUug2B/0DbKBGkdsAnqaaQUsJ3oQnpIIzDIfgkkkW6+UsehFug==
+X-Received: by 2002:a17:906:470a:b0:a34:e324:c8d5 with SMTP id y10-20020a170906470a00b00a34e324c8d5mr309303ejq.33.1706314780146;
+        Fri, 26 Jan 2024 16:19:40 -0800 (PST)
+Received: from puffmais.c.googlers.com.com (229.112.91.34.bc.googleusercontent.com. [34.91.112.229])
+        by smtp.gmail.com with ESMTPSA id x16-20020a170906135000b00a339d705a10sm1141359ejb.80.2024.01.26.16.19.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jan 2024 16:19:39 -0800 (PST)
+From: =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
+To: peter.griffin@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@android.com,
+	tudor.ambarus@linaro.org,
+	willmcvicker@google.com,
+	semen.protsenko@linaro.org,
+	alim.akhtar@samsung.com,
+	s.nawrocki@samsung.com,
+	tomasz.figa@gmail.com,
+	cw00.choi@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 1/9] clk: samsung: gs-101: drop extra empty line
+Date: Sat, 27 Jan 2024 00:19:05 +0000
+Message-ID: <20240127001926.495769-2-andre.draszik@linaro.org>
+X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
+In-Reply-To: <20240127001926.495769-1-andre.draszik@linaro.org>
+References: <20240127001926.495769-1-andre.draszik@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 182973 [Jan 26 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.3
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 7 0.3.7 6d6bf5bd8eea7373134f756a2fd73e9456bb7d1a, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/01/26 14:25:00 #23442014
-X-KSMG-AntiVirus-Status: Clean, skipped
 
-Calling of clk_core_req_round_rate_nolock() can be time-consuming in a
-case of deep hierarchy with multiple dividers/parents. But if the clock
-already has exactly the same rate as desired, there is no need to
-determine how it could be rounded.
+There is an extra empty line here which doesn't exist in any of the
+other cmu code blocks in this file.
 
-Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+Drop it to align cmu_top with the rest of the file.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/clk/clk.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/samsung/clk-gs101.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 2253c154a824..04f0ddced932 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2423,6 +2423,12 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	if (!core)
- 		return 0;
+diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
+index 4a0520e825b6..27debbafdce4 100644
+--- a/drivers/clk/samsung/clk-gs101.c
++++ b/drivers/clk/samsung/clk-gs101.c
+@@ -25,7 +25,6 @@
+ /* ---- CMU_TOP ------------------------------------------------------------- */
  
-+	/* skip calculation of rounded rate if the clock already has exactly
-+	 * the same rate as desired
-+	 */
-+	if (req_rate == clk_core_get_rate_nolock(core))
-+		return 0;
-+
- 	rate = clk_core_req_round_rate_nolock(core, req_rate);
- 
- 	/* bail early if nothing to do */
+ /* Register Offset definitions for CMU_TOP (0x1e080000) */
+-
+ #define PLL_LOCKTIME_PLL_SHARED0			0x0000
+ #define PLL_LOCKTIME_PLL_SHARED1			0x0004
+ #define PLL_LOCKTIME_PLL_SHARED2			0x0008
 -- 
-2.34.1
+2.43.0.429.g432eaa2c6b-goog
 
