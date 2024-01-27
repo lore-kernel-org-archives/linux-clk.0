@@ -1,48 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E03241E6;
-	Sat, 27 Jan 2024 22:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CE02DF7D;
+	Sat, 27 Jan 2024 22:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706394891; cv=none; b=AftQDfpCBjksemJNkwlmsHZrc1Ypcjsvo3/n+LasiwU421pJEzJNyq5tvqqIw17wW89xfErhNhqMZ8gzFEQrrJ/oNQOV599YxykdjPAfKqX9UtGKzccXAAQYGOxLn3gVCfOxEDDsbEMp6vPyAajiR3AJs3UAjL9Sew86R1xwSjc=
+	t=1706394894; cv=none; b=hOgn/r7gUsRxtIcghEMz/DhkgykjGvAGkcfX0w1/5chJpCZ4xsd+WohxHXbB2U0G2hiX8aLBWDMlAish9WW6SGzvYjDVclJEVcdZTTFw8P54hHNtVJ0fTb8FC27tzqvOB9VNdzPWYZmpSYGg7BhrpyU8LGaI4C1jYurGTc5rUO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706394891; c=relaxed/simple;
-	bh=3MtbqTRUkghGjkybbP36SJXviTXb0b228TDWVW5PFz0=;
+	s=arc-20240116; t=1706394894; c=relaxed/simple;
+	bh=3XI+ijAAAJlxjLXfL/N3a6o8AO58B78cy9nUhRsZQM8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hrYi8JEy6uE09cQ6UNLFHBzRC0y6hKJDJkesA7vPfU2jIebggD/Ris5FT47E+Yk2bFLRO2J4wZieZSjrMXZUMzjri4p6RNNjgcjImXOMOgMqT/H0xZTqnXMBRUWl9bJwbQj+1x8AqTvtLVe5Ff8sPrUjzLjNj8u54494DaIwcqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7WbNoAj; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=ZDNfapP6PheeFkQ7Oi36c2n3v01QFKl0IyoBeBX/At6lWhOd+IatS+13D9xYvrcoLjkZw/1DkDrU5+ZUu/tROSgJj86kUDpNVs2FRN74DfSpz7PhmRZx5MjeaL5GrwEWeaO2+Rm4mtxubPMo6L0F5QlW/kI+JzEoMGHDu7gXF8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iy5u4aMo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7WbNoAj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53BDBC433C7;
-	Sat, 27 Jan 2024 22:34:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iy5u4aMo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51249C43399;
+	Sat, 27 Jan 2024 22:34:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706394891;
-	bh=3MtbqTRUkghGjkybbP36SJXviTXb0b228TDWVW5PFz0=;
+	s=k20201202; t=1706394893;
+	bh=3XI+ijAAAJlxjLXfL/N3a6o8AO58B78cy9nUhRsZQM8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a7WbNoAj9S4ZcRMQdS4RyxpWHOdBkP3QOvgTJjg7UNReoHSnfOAMCr3tKGJgRwu0p
-	 ZNQ2QuJ50PNUAOIJXw1zK72yX/O1RDfOSZ5/eaP8Pn0pgsgnricuwz61Sem5gQ8vV9
-	 NbBiyArE11rtplRHF1hNjAQvfRv0KKZoEZ4wsErG/FXyKVLgPg7nBbg/KAV7gEjwSl
-	 EfhienstjLbWrsjDOQdgdRyyek2qXMv1OF2QuoxzBRbyt1v+EVtr3D2GPPxmXVP4sy
-	 RKlktbRBwJ6XbmI8rdpGb6kd7GpWPZ/bPTHF/XGUTuhHe5HhROtM6riV5emTGra5d1
-	 8A8MHJJUf0d4A==
+	b=iy5u4aMo04ysrVsyxXSf38d45o3muIZ1O1RMBgXBxniVpU8UY3A93/ADluXrqYN8J
+	 wX8mE3cbxNP9NFUsKv6hL66wEBcXEAEa9K7iifH4mlV8dNOA7HJas+SKEV6HldVFV4
+	 iI2DP0aEGiaDaJf5zzRC38Fz8urSSe/beravBE5LdVtjqbdyGtPgJAvrPIrJgVKoCy
+	 mwl1hP9MWJWozbl9/wu5jpaPY+V0cehzTTHCmLJvrr12ue4b0N1DtBArhCLpwzgGQX
+	 Lw1F0eAIynHID2abwS6Ctke91kwlgLywCLECp5++tyRyslo+36a7ke7l65Os+kFRWj
+	 ecIuvqvkCbe0g==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Amit Pundir <amit.pundir@linaro.org>
+	Mantas Pucka <mantas@8devices.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-sdm845: Add soft dependency on rpmhpd
-Date: Sat, 27 Jan 2024 16:34:42 -0600
-Message-ID: <170639487720.21016.8909458221744793614.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: qcom: gcc-ipq6018: add qdss_at clock needed for wifi operation
+Date: Sat, 27 Jan 2024 16:34:45 -0600
+Message-ID: <170639487718.21016.15465918144131759968.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240123062814.2555649-1-amit.pundir@linaro.org>
-References: <20240123062814.2555649-1-amit.pundir@linaro.org>
+In-Reply-To: <1706001970-26032-1-git-send-email-mantas@8devices.com>
+References: <1706001970-26032-1-git-send-email-mantas@8devices.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,20 +50,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 23 Jan 2024 11:58:14 +0530, Amit Pundir wrote:
-> With the addition of RPMh power domain to the GCC node in
-> device tree, we noticed a significant delay in getting the
-> UFS driver probed on AOSP which futher led to mount failures
-> because Android do not support rootwait. So adding a soft
-> dependency on RPMh power domain which informs modprobe to
-> load rpmhpd module before gcc-sdm845.
+On Tue, 23 Jan 2024 11:26:09 +0200, Mantas Pucka wrote:
+> Without it system hangs upon wifi firmware load. It should be enabled by
+> remoteproc/wifi driver. Bindings already exist for it, so add it based
+> on vendor code.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc-sdm845: Add soft dependency on rpmhpd
-      commit: 1d9054e3a4fd36e2949e616f7360bdb81bcc1921
+[1/1] clk: qcom: gcc-ipq6018: add qdss_at clock needed for wifi operation
+      commit: fd712118aa1aa758da1fd1546b3f8a1b00e42cbc
 
 Best regards,
 -- 
