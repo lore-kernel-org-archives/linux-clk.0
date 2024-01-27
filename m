@@ -1,127 +1,89 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8A511C80
-	for <linux-clk@vger.kernel.org>; Sat, 27 Jan 2024 04:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FAF28F5;
+	Sat, 27 Jan 2024 22:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706328230; cv=none; b=lUmp0HZ2eM+uXIUGGSBApIXCkPsNUMNdGrdbH6+OmmBx2W06fi783gXrXrY1jZn5WbjL3KLlSX6tUBAnniHfVFKZ+DWRVYyodd3DTqodU3iQYVA4rFgR1oA1kD+mGQds5aASyveVNFW0TVc48UceWiQRZKJroejMM4B1tFe4lR0=
+	t=1706394867; cv=none; b=X2JXW27HdnCA5RBt4MP0zvtNr5Wtz0QZVrvpab4SfwsumlVoYKldyIzk7UXfFD75msSRCBy7kQs5ry6CYTj/OzsLM28XCeUiQh2nAWYx+74hksxilwblnM9+Qz5LuKlNb7HcGGXpaaVRlCN5wJ882KKta9q9ie1ploHf4teVYps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706328230; c=relaxed/simple;
-	bh=ibPIG32KDz5lkYlFOZqgY9Su1g2LgI59+9TH7QrBfEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AzjoYXWKpAch1v4s9VK/XDBHLEZ9LoIctYe7XfwpPL3n07+UvtMo+o+c4+Jh+ESlg9vxXvsPbiYf6DVuNH/N5mgdc1yBO09r07jui/eEUJiWCLRAw6WX3dYLZFBS62QukxFO6p2Ii33KZtpePyqQcYESlqXwGuhp4+ea6vBUMbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nFu4WjlZ; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706394867; c=relaxed/simple;
+	bh=iNJCVwBYoi92TF68dI/xBHr9ANWwQklf9tMHA1ga848=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lEB0cxfH+JLSRieUZcKMu99apGxwWQQOn0GxkoUr8r+5WSgox6n42v5OplJzQNiMkHLUAMAr4Lb0zmJr6L9iBV3vFnBR8UJU1FFRIR9KklMDPGvZModEHtHuxWw5o9gs4BOMI2yljDYd+UDBbEUdKsW1v0ml+WU9wVi6VM639ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WyizPbHe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nFu4WjlZ"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5101f2dfdadso1887612e87.2
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jan 2024 20:03:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706328225; x=1706933025; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AhVLIlzeBK5qY5g8wi502EuRXY3kZQUh5Yr30GtXoR4=;
-        b=nFu4WjlZDPrhvPHRTRXGoWCZvXPAXEFAJ5KR1mKS7EdyGevpV/OYvS9P7A5sqQUU3Y
-         EHjPb710IGSUsqbjZeU+UBPpioe/TQYEJBCbNj5aLC1bCtghJCwLY+EGpsMd0ndTMAUS
-         15mi6Ob0p9usZTq8RQVKHukrMFRWSrwNPZhdMsNgB8DjdNHIn/jnnBzY5lpHs9yVsWdV
-         9Ul+DcwrdZzWlKQ+/a14Ek6LNIH/+M7MksowT7UMXFEdCF+FGZ+zELetcHVS6TOTY2mb
-         TZ6sqhCea/ViLAx7Ha19GGpEvl2/k6ut4DzuMZ9MVUaQNkC6aTXIhntrSGbHAzBax8L6
-         7Tcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706328225; x=1706933025;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AhVLIlzeBK5qY5g8wi502EuRXY3kZQUh5Yr30GtXoR4=;
-        b=Ybw6RX1KQYATydz6lR25f68sblgaTfJKZvDRxOncf7L+UYkh0e4aKR9JATp3k68d/N
-         3yQOc7pehNBw3honKgn0kXZwxTVHY75mBmKLEJPuJSYlunwqUJxv5FOWkF7tjpFEbLoy
-         kiHVao+0JDoyHaSf38n7jtc3/bisV0annB/Osm3gWl8nZ8/ovinB8KG0P+fTUJkogvjm
-         +Fn9Xq68AnYsufdfrFkEQYmJ0xd0ZKOsQbIYD+An3/7k628efP6wqgu3Nx73f5t0TYv7
-         i/EjWj6FMxBNOtVezv2b+EQ6NxFwJUqpgv9hY0d2txzzKS9iPMMamwPY6kUrsYkM/MoT
-         Cdag==
-X-Gm-Message-State: AOJu0Yw73JVehhVSaRbWkmu0mNkngPbxNF85bXTUSAhy6UWLEz6YoVq4
-	Qn/rvMNp/9vu8MdjYVp2Z4zRaXiEGqQRDPMOLGSJ6Qovg6K9nM9dHT2T7K0F8PI=
-X-Google-Smtp-Source: AGHT+IGqPf0Y4JlE0TDyayzJ4+4DkjB7KETghuDJrX0IvXWt4UWKxRjXEnwgnh8i1uo8NmohOi+woQ==
-X-Received: by 2002:ac2:4c13:0:b0:50e:b65b:4944 with SMTP id t19-20020ac24c13000000b0050eb65b4944mr513639lfq.21.1706328225421;
-        Fri, 26 Jan 2024 20:03:45 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id f19-20020a17090624d300b00a2f15b8cb76sm1298403ejb.184.2024.01.26.20.03.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jan 2024 20:03:43 -0800 (PST)
-Message-ID: <6ccf359a-faeb-485b-8047-fa61bb1a3fc8@linaro.org>
-Date: Sat, 27 Jan 2024 04:03:41 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WyizPbHe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AA0DC433C7;
+	Sat, 27 Jan 2024 22:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706394867;
+	bh=iNJCVwBYoi92TF68dI/xBHr9ANWwQklf9tMHA1ga848=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WyizPbHe6MwmeLMSlREOBLZYik7O7rn8awukKrZODEOGbEh4WVPGg6tfU2mB7uXMe
+	 tQL+/6MrV+blK/MWomFLlFqCQQuWIW/Xby7tzca1+k6roV7I+GKNsSla/aiYMvMYvo
+	 ofmYQ/CqIWJr57c5w7n23NAOVkRqXVLyJrRGFfM3j+a8xcGzLkz1Y9YhHPjTb4AtMN
+	 33r1n6LWf5EoljMrap7fA/MJe02X/fpuZsqLP/iQ6mlwezQat02LGb/HnpF8WExSpC
+	 /vEnYpV8hE0NlD+KOejjgLxvjvszfF7mPWA31akp8SfcBaR53FtVf6x+LJ8v6KXP5V
+	 k+xjjprSqEsow==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/10] More 8180x dts fixes
+Date: Sat, 27 Jan 2024 16:34:20 -0600
+Message-ID: <170639483110.20773.5258274792331313647.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20231230-topic-8180_more_fixes-v1-0-93b5c107ed43@linaro.org>
+References: <20231230-topic-8180_more_fixes-v1-0-93b5c107ed43@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] arm64: dts: exynos: gs101: use correct clocks for
- usi_uart
-Content-Language: en-US
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- peter.griffin@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
- willmcvicker@google.com, semen.protsenko@linaro.org,
- alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com,
- cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240127003607.501086-1-andre.draszik@linaro.org>
- <20240127003607.501086-5-andre.draszik@linaro.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240127003607.501086-5-andre.draszik@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-
-On 1/27/24 00:35, André Draszik wrote:
-> Wrong pclk clocks have been used in this usi8 instance here. For USI
-> and UART, we need the ipclk and pclk, where pclk is the bus clock.
-> Without it, nothing can work.
-> It is unclear what exactly is using USI0_UART_CLK, but it is not
-> required for the IP to be operational at this stage, while pclk is.
-> This also brings the DT in line with the clock names expected by the
-> usi and uart drivers.
+On Sat, 30 Dec 2023 01:05:01 +0100, Konrad Dybcio wrote:
+> SC8180X has got various random power plumbing issues, this series tries
+> to address that, and introduces RPMh sleep stats.
 > 
-> Update the DTSI accordingly.
 > 
-> Fixes: d97b6c902a40 ("arm64: dts: exynos: gs101: update USI UART to use peric0 clocks")
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> index e5b665be2d62..f93e937d2726 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -410,7 +410,7 @@ usi_uart: usi@10a000c0 {
->  			ranges;
->  			#address-cells = <1>;
->  			#size-cells = <1>;
-> -			clocks = <&cmu_peric0 CLK_GOUT_PERIC0_CLK_PERIC0_USI0_UART_CLK>,
-> +			clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_0>,
 
-As I said in the previous email, I don't think this is correct. This is
-just a heads up for Krzysztof to not pick these 2 patches yet. We'll
-come back on this matter on Monday.
+Applied, thanks!
 
->  				 <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_0>;
->  			clock-names = "pclk", "ipclk";
->  			samsung,sysreg = <&sysreg_peric0 0x1020>;
-> @@ -422,7 +422,7 @@ serial_0: serial@10a00000 {
->  				reg = <0x10a00000 0xc0>;
->  				interrupts = <GIC_SPI 634
->  					      IRQ_TYPE_LEVEL_HIGH 0>;
-> -				clocks = <&cmu_peric0 CLK_GOUT_PERIC0_CLK_PERIC0_USI0_UART_CLK>,
-> +				clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_0>,
->  					 <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_0>;
->  				clock-names = "uart", "clk_uart_baud0";
->  				samsung,uart-fifosize = <256>;
+[01/10] dt-bindings: clock: gcc-sc8180x: Add the missing CX power domain
+        commit: af5b3a595954bdf5a7fb92bd6594fccd241f77b2
+[02/10] arm64: dts: qcom: sc8180x: Hook up VDD_CX as GCC parent domain
+        commit: 3c58b96df110a80e78fa36ef928f1e6c375008e3
+[03/10] arm64: dts: qcom: sc8180x: Fix up big CPU idle state entry latency
+        commit: 266a3a92044b89c392b3e9cfcc328d4167c18294
+[04/10] arm64: dts: qcom: sc8180x: Add missing CPU off state
+        commit: 07b600dfdfea65d58dd80ea25becd8cff69bfafc
+[05/10] arm64: dts: qcom: sc8180x: Fix eDP PHY power-domains
+        commit: 24e98cb3d5e2c86565680e00008a794b4eac0040
+[06/10] arm64: dts: qcom: sc8180x: Don't hold MDP core clock at FMAX
+        commit: 309b5774f45aafd002efdb2656673542419abd6f
+[07/10] arm64: dts: qcom: sc8180x: Require LOW_SVS vote for MMCX if DISPCC is on
+        commit: 6d9fb9e4c473cdfd2adca019b46d8e482105cae7
+[08/10] arm64: dts: qcom: sc8180x: Add missing CPU<->MDP_CFG path
+        commit: f0cd5a0ebd419bd151ed79baf5f044da797521ac
+[09/10] arm64: dts: qcom: sc8180x: Shrink aoss_qmp register space size
+        commit: dcad0590d1ea4278a55c30dd2903611a96111601
+[10/10] arm64: dts: qcom: sc8180x: Add RPMh sleep stats
+        commit: 3168e86af8d1c346edf69b2114b3948ff03b2848
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
