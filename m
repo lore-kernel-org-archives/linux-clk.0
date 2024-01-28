@@ -1,79 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321D931A9D;
-	Sun, 28 Jan 2024 18:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E453C466
+	for <linux-clk@vger.kernel.org>; Sun, 28 Jan 2024 21:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706465642; cv=none; b=Kp12Zr90RSMJPNWLxOrOhL3NnfrydJtHCcZEL5Pu8YhoJREmMKGA9C2IeJHtbU6raTiNBH9Ri+DqEc8LcrSaIZHF0OrTR4nw9keoIAvgv2ILXCY96I86p6KKQUFM+WquE+f8vSPbR3ueI1HwRjD4QO80Js5terZ7SeiB3ILitC0=
+	t=1706478896; cv=none; b=OshZhaMUQeQjq6pd46X9Z5dEvqM55Ro7sCbhvNy6YOTdL77fpPkAQxhNUeXOJ2liU45Tp4Ese/TErowbTsOwOd4uIunFzN8uVOinnEqbhGYrQVCclHq8x/nXDOs0MDwf3ybM4hANt+e1fz2yU7YcAWsazRJB+pYIZ4VyRgCA71M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706465642; c=relaxed/simple;
-	bh=/dl/P1ipEarojSrDRxnOzQCeUyRhDHVokkam1jS6qCU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZG9y/6qXbxfWDY+QznwkxX6RXHwj4uuDC3qoUSO54SaP/5xqI0YJI5QL850nE2dt4ZHmkyZ1IrlIixLkhsv259q2zCeT7Wnwl1gO0iJ12RcsUKVKF74kuwqofOBxgO4M/syOfPwu09BwxCiPDXnjXr3qPpwJTv/H5G5BtZO2N7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2eo+Ny0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706478896; c=relaxed/simple;
+	bh=WugGfDK+emUMgdBb1FkLCuURsfNZ1uU59q+8DxDxxZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=myGxx3mA48ECByBTlmPa7hT1mdOGVTC0WD6XbZdlZGEMr2DEJ8GOD09M+Fkd5o07T7OkM/WAivYUIJDX5+yADqmwDSfxEhIvXnDAaRROGQBAL/AY/VcEljaF33H5A6mO1MooI23S9neEIRQ3hLZhWvZjiHsTSygqRdOk9KgTjjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cv/CHmIz; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2eo+Ny0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60AE3C4166D;
-	Sun, 28 Jan 2024 18:14:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706465641;
-	bh=/dl/P1ipEarojSrDRxnOzQCeUyRhDHVokkam1jS6qCU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f2eo+Ny0IttL94YunBQntLZrRigoQ4VfjAUM00I+iRn5zKhrTVTF+bfZ6CBWOrRcJ
-	 /Y3QNrz6ovDmohTDvDGaVDZm6d6yJIOUd31lEMgKgT5nv2XkwBLIecldCe7oWADWBo
-	 rjpqwOzWgs/3nt2IAkchIFgC7HMxY+TUHcbpGnt59jr4Br9icJNRK04U6mxn3jJ1jI
-	 SvJkMwmgufy0MEC5Rvj+gGZPmdFxGsZJWv6+2hTNW2OSCzP5ynW12O0KkZlrWt8nDK
-	 C1rRlOXQnSiM6wGyYO2qCGH3YMNKhNA9/VOmg+BmnQcwbS/vT6OhWZilANQwBL3uTe
-	 O38gok0zQuY2g==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cv/CHmIz"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a3542a3374bso159512466b.2
+        for <linux-clk@vger.kernel.org>; Sun, 28 Jan 2024 13:54:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706478893; x=1707083693; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+XQ5J70Vv4JK+99QpNV1l2iMHbJbDR/DSuCxbzTjVM=;
+        b=cv/CHmIzfVJ6pd22YjE1Mtfe4WoJ5LPntjTugKqhzRmY3/FtzAdEmDqP0Ga8GxzH4n
+         ZYRdbEs2+ITAwojqhk9c3PKgdpSh7s/gGVgK2a1Meos6i6FQaucc0mi9LazNmLfW8sR7
+         FaUtNI92bm9mqOxbO++zpRNeUosi9fKAqPrJPFKjP0FJsW3kIAArnsbz/gXBguKcIjt0
+         qQD7gQHxutEpDEU/oIVwUDf/RzoxKZbHtdDAmPPBN1TC39XubtlOHbbmKtb8xGJO564z
+         u16Z4g69r6vk3gI2GwfQcmPasRfbXRhWiXogP0DUpxAQASQXNoSwxcnf+h/YR0RijLZu
+         vyng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706478893; x=1707083693;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D+XQ5J70Vv4JK+99QpNV1l2iMHbJbDR/DSuCxbzTjVM=;
+        b=U9XXCukfNyMhPVoPP+38J1yYhMXtQSW73GNeafqNTksuhdz4CVSKVzga6+lTag6EY7
+         fxpz/LplHSE9a+n1tS7ggm1V4VFvlHwL0pBx0NkkMxKkTcumUsdfz6h5Va7tibb7hp/i
+         eWVn28oe2OybhXK7EJTrEO5EJSIVTDSGhghMGrdW+HUwpcN6kq0UjbxfEx1sHYEALkmF
+         pJIjsilLyl7bUa6nFuEwFuk6lG7kbFD3onbV+mHMOyVK7AQ/Ox4QxcwcTyu7tKBgkQ44
+         cGS2RwIidcj2ZfiiUR43AD4T5gIrH7knT/wewhWekN9WlmdRIMJX6seD9v1FMWwdfCx/
+         VdSg==
+X-Gm-Message-State: AOJu0Yxep3EPMfDKUozhegZcgzwzlbBNW6zZ0hD+LL24cTEHSJ1DO3qc
+	tQwaJqQkPJFCAXGMPImYQKxlodcqMrcdCSwjEmI492b4XEnSezcJ4I622rhdY+I=
+X-Google-Smtp-Source: AGHT+IGwkQQURlUlsbXUqGqdg2JFIas0UFI7/DKvPhXxcltfn/ipNh+f9fXJupwAXTqT/wt8TETTOA==
+X-Received: by 2002:a17:906:4901:b0:a35:2758:22a3 with SMTP id b1-20020a170906490100b00a35275822a3mr2847446ejq.1.1706478892377;
+        Sun, 28 Jan 2024 13:54:52 -0800 (PST)
+Received: from linaro.org ([79.115.23.25])
+        by smtp.gmail.com with ESMTPSA id s8-20020a170906bc4800b00a317165027fsm3297385ejv.13.2024.01.28.13.54.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Jan 2024 13:54:51 -0800 (PST)
+Date: Sun, 28 Jan 2024 23:54:50 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Rob Herring <robh+dt@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>
-Subject: Re: [PATCH v2 0/3] clk: qcom: Add dfs support for QUPv3 RCGs on SM8150
-Date: Sun, 28 Jan 2024 12:13:53 -0600
-Message-ID: <170646562752.66688.15730501105778918521.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240111-sm8150-dfs-support-v2-0-6edb44c83d3b@quicinc.com>
-References: <20240111-sm8150-dfs-support-v2-0-6edb44c83d3b@quicinc.com>
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	Rajendra Nayak <quic_rjendra@quicinc.com>
+Subject: Re: [PATCH v2 10/10] clk: qcom: Add camcc clock driver for x1e80100
+Message-ID: <ZbbNKtXF7b20YZLl@linaro.org>
+References: <20231214-x1e80100-clock-controllers-v2-0-2b0739bebd27@linaro.org>
+ <20231214-x1e80100-clock-controllers-v2-10-2b0739bebd27@linaro.org>
+ <624956b6-d7ea-43da-bb8d-32d9166a0272@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <624956b6-d7ea-43da-bb8d-32d9166a0272@linaro.org>
 
-
-On Thu, 11 Jan 2024 12:02:27 +0530, Satya Priya Kakitapalli wrote:
-> Add dfs support and missing resets for SM8150 global clock
-> controller.
+On 23-12-16 14:39:48, Konrad Dybcio wrote:
+> On 14.12.2023 17:49, Abel Vesa wrote:
+> > From: Rajendra Nayak <quic_rjendra@quicinc.com>
+> > 
+> > Add the camcc clock driver for x1e80100
+> > 
+> > Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> [...]
 > 
+> > +enum {
+> > +	DT_BI_TCXO,
+> > +	DT_BI_TCXO_AO,
+> > +	DT_SLEEP_CLK,
+> > +};
+> > +
+> > +enum {
+> > +	P_BI_TCXO,
+> Please don't overload this define with DT_BI_TCXO_AO, add a new one
+> for the active-only clock. Please also do this in other drivers in
+> this series.
 > 
+> [...]
+> 
+> > +	clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
+> > +	clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
+> > +	clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
+> > +	clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
+> > +	clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
+> > +	clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
+> > +	clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, &cam_cc_pll8_config);
+> Do we know whether these configure calls are actually necessary?
 
-Applied, thanks!
+So camera support hasn't been fully brought up yet, but based on the SM8550
+driver (which is quite similar), they seem to be needed.
 
-[1/3] clk: qcom: gcc-sm8150: Register QUPv3 RCGs for DFS on SM8150
-      commit: 2ff787e34174e72a435a79003e5358c962384c3b
-[2/3] dt-bindings: clock: qcom,gcc-sm8150: Add gcc video resets for sm8150
-      commit: 4b3dbd706a6181f19ba63f9265e6f996f01aa76d
-[3/3] clk: qcom: gcc-sm8150: Add gcc video resets for sm8150
-      commit: c8bf3e08c62533430a83d96d31d34c781483283c
+Once camera is up, we can confirm for sure.
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+> > +
+> > +	/*
+> > +	 * Keep clocks always enabled:
+> > +	 *	cam_cc_gdsc_clk
+> > +	 *	cam_cc_sleep_clk
+> > +	 */
+> > +	regmap_update_bits(regmap, 0x13a9c, BIT(0), BIT(0));
+> > +	regmap_update_bits(regmap, 0x13ab8, BIT(0), BIT(0));
+> Please make the comments inline with each line
+
+Will do.
+
+> 
+> Konrad
