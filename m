@@ -1,92 +1,79 @@
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E2D20DC6
-	for <linux-clk@vger.kernel.org>; Sat, 27 Jan 2024 23:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321D931A9D;
+	Sun, 28 Jan 2024 18:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706398575; cv=none; b=uxfUBGOM5IpcNRgZESJXz7bT5w6EHIZcJ6zpRyJyvD3aLmS4jf0L/6nfIxIa362GtTjI86a6SRUGGThxW4IA8NgV2tydGAcq2f9C2AYOyv1HUyJSQc69vnFlIS+VA0JUBR1ks34ff1FjnMK8JH9zudGTFAZ+/qJr5U+O8UH8j9w=
+	t=1706465642; cv=none; b=Kp12Zr90RSMJPNWLxOrOhL3NnfrydJtHCcZEL5Pu8YhoJREmMKGA9C2IeJHtbU6raTiNBH9Ri+DqEc8LcrSaIZHF0OrTR4nw9keoIAvgv2ILXCY96I86p6KKQUFM+WquE+f8vSPbR3ueI1HwRjD4QO80Js5terZ7SeiB3ILitC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706398575; c=relaxed/simple;
-	bh=XVKbaMpkpPl4OamNNqyBIfrPPvBb/CuhmBwz5z4c778=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wl+BYUg5QjLarJj1G/SHHZjCvC1pq9/0kOH6pRdX4WlFCcBWQQDURid8mgRSvzmrC7tQ/kfLOvbFw+TVGj8qM9uTG9xD3vABNR3p7id5rG02t1Vqw3NEKzwj+zWfesrJhp/zmHtMQciStrBPmG++UO0Bql1uju0yj58btpkgdWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GpfmGgUC; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706465642; c=relaxed/simple;
+	bh=/dl/P1ipEarojSrDRxnOzQCeUyRhDHVokkam1jS6qCU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZG9y/6qXbxfWDY+QznwkxX6RXHwj4uuDC3qoUSO54SaP/5xqI0YJI5QL850nE2dt4ZHmkyZ1IrlIixLkhsv259q2zCeT7Wnwl1gO0iJ12RcsUKVKF74kuwqofOBxgO4M/syOfPwu09BwxCiPDXnjXr3qPpwJTv/H5G5BtZO2N7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2eo+Ny0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GpfmGgUC"
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-429af318342so16198491cf.0
-        for <linux-clk@vger.kernel.org>; Sat, 27 Jan 2024 15:36:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706398573; x=1707003373; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XVKbaMpkpPl4OamNNqyBIfrPPvBb/CuhmBwz5z4c778=;
-        b=GpfmGgUCzBt6GWD8FZab7OoSg3wEV6+Q89BeHMQDsO/fsAkiSvbomXq58QNB2qAKgR
-         oh+QeOn8F7vso94xK+/eHtvYcCkUrlx8h0MfcpWDqQBC51s2GsMs2Ux3G/Ku9gB6dnxx
-         feqWCcLKGl3Mhw5ccRANO1MBh+F4TWD8XqPWRyueCVvduWZTJ8MTjUYvrjaq32Cxl6vC
-         lo7zJyeqpS0IuCFAtPap38X+wG3BdqJ5SzOCfPeY0iSQkESRNm0sbfYkBZbZUj/6yOtI
-         dmoTZPYcKpA/QHJgcNLVs6mwl6RvPw9o1arwbUZ+cAf2+sZjsPFh1fK3vlmCljDBAFw/
-         QqvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706398573; x=1707003373;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XVKbaMpkpPl4OamNNqyBIfrPPvBb/CuhmBwz5z4c778=;
-        b=XkmSyXBKKoTxWpsX3TX4y5SFNnxIi0//U5zf+5z5VPAUQk6jdBhoN79JWXNxGP/Ljv
-         DxkBI6eX+W+Tn3EqR4MAIHwJu67YfJ3chhZ40bfopogaYQX99gEzFpiaEorSFJe0xVj+
-         3DnyOT0jBTfCIJwOKDs0xqdecKA7DhGOb7KJxLy/NAzBvql/qh8hGTQZEDX1LjnIILQc
-         W/TK8GbeHHd+jFNsH6fTgUhtNawIup3ydOGPb1uAX+fvv2wJFw6wCgh2xpenp9+ydayO
-         /GNdiVsn5WMoj8m2kmpmGT5XY/A0DJXGcVOdOrwFJwSxF1aQfmNlTGgvsaR+Ro+DTmHn
-         s/hA==
-X-Gm-Message-State: AOJu0YwaNZ9EfIx1FMVYu3CRdGW2QZ7I5H4aj8u1Q9c22xuAdBP3aujb
-	VgJS9A3NNe6R+XpD57d6TPsDw94P/ti5P39HJ0qFsehRGYyj4eQN08D4WhR1dumgIh90beEI9Xs
-	DSyg9vRu9mRJ3ZhXU0Lh5bkqizecfv2K2AtMbeA==
-X-Google-Smtp-Source: AGHT+IEgp6Wx5JnuWyXYHz8pZVr0cnqh2sFmftzNYViLIBvxeKcfFE9nBHRj3w+ge53ptzIE4c2ITaNbwP7ir3iKXKM=
-X-Received: by 2002:a05:620a:20c3:b0:783:df74:8f97 with SMTP id
- f3-20020a05620a20c300b00783df748f97mr2269258qka.148.1706398573145; Sat, 27
- Jan 2024 15:36:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2eo+Ny0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60AE3C4166D;
+	Sun, 28 Jan 2024 18:14:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706465641;
+	bh=/dl/P1ipEarojSrDRxnOzQCeUyRhDHVokkam1jS6qCU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=f2eo+Ny0IttL94YunBQntLZrRigoQ4VfjAUM00I+iRn5zKhrTVTF+bfZ6CBWOrRcJ
+	 /Y3QNrz6ovDmohTDvDGaVDZm6d6yJIOUd31lEMgKgT5nv2XkwBLIecldCe7oWADWBo
+	 rjpqwOzWgs/3nt2IAkchIFgC7HMxY+TUHcbpGnt59jr4Br9icJNRK04U6mxn3jJ1jI
+	 SvJkMwmgufy0MEC5Rvj+gGZPmdFxGsZJWv6+2hTNW2OSCzP5ynW12O0KkZlrWt8nDK
+	 C1rRlOXQnSiM6wGyYO2qCGH3YMNKhNA9/VOmg+BmnQcwbS/vT6OhWZilANQwBL3uTe
+	 O38gok0zQuY2g==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>
+Subject: Re: [PATCH v2 0/3] clk: qcom: Add dfs support for QUPv3 RCGs on SM8150
+Date: Sun, 28 Jan 2024 12:13:53 -0600
+Message-ID: <170646562752.66688.15730501105778918521.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240111-sm8150-dfs-support-v2-0-6edb44c83d3b@quicinc.com>
+References: <20240111-sm8150-dfs-support-v2-0-6edb44c83d3b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240110-pxa1908-lkml-v8-0-fea768a59474@skole.hr> <20240110-pxa1908-lkml-v8-3-fea768a59474@skole.hr>
-In-Reply-To: <20240110-pxa1908-lkml-v8-3-fea768a59474@skole.hr>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 28 Jan 2024 00:36:02 +0100
-Message-ID: <CACRpkdaZGc1z8y7NmS=xeHBSFkOe4agMaSBspcikTnrbaeB8rA@mail.gmail.com>
-Subject: Re: [PATCH v8 3/9] pinctrl: single: add marvell,pxa1908-padconf compatible
-To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, 
-	Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, phone-devel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, Karel Balej <balejk@matfyz.cz>, 
-	David Wronek <david@mainlining.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 10, 2024 at 8:04=E2=80=AFPM Duje Mihanovi=C4=87 <duje.mihanovic=
-@skole.hr> wrote:
 
-> Add the "marvell,pxa1908-padconf" compatible to allow migrating to a
-> separate pinctrl driver later.
->
-> Signed-off-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
+On Thu, 11 Jan 2024 12:02:27 +0530, Satya Priya Kakitapalli wrote:
+> Add dfs support and missing resets for SM8150 global clock
+> controller.
+> 
+> 
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Applied, thanks!
 
-I guess you will merge all of this through the SoC tree?
+[1/3] clk: qcom: gcc-sm8150: Register QUPv3 RCGs for DFS on SM8150
+      commit: 2ff787e34174e72a435a79003e5358c962384c3b
+[2/3] dt-bindings: clock: qcom,gcc-sm8150: Add gcc video resets for sm8150
+      commit: 4b3dbd706a6181f19ba63f9265e6f996f01aa76d
+[3/3] clk: qcom: gcc-sm8150: Add gcc video resets for sm8150
+      commit: c8bf3e08c62533430a83d96d31d34c781483283c
 
-Yours,
-Linus Walleij
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
