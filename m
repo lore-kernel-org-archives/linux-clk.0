@@ -1,249 +1,114 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78B91E532
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jan 2024 09:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373A65579D
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jan 2024 09:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706521089; cv=none; b=EQZj5UTGB5444eiqeNGkDAVkvyZRa3YBi/TR3wz67wPx7qmCrLR1XTI+4TWAhPqref2y+Qks2j6OA8tR4oEeW8LQC+4v6NRwhgSE6cuWi+HUunk+wti9DxitZzP2zosKHQMa/piJP6DNKXteQZqADelX0PTwOPexcXjb1l8tlOU=
+	t=1706521732; cv=none; b=hxSjeY8l7c6KCiQwsBYZBij20puKjZ7msdDTvFYJtPRsL3W7r4iQELu7ntywVJbzl/CECavFMXLfom0659Ilid/KPDw27zMEWMEfvLK4DMgmQz12nYkmcU9wMW1yM00OR9sQV762DyvqTx3+5vIFGzV2SWfGcKpEGJLNIDu9koc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706521089; c=relaxed/simple;
-	bh=Ldj1FDg/nEnZb9STOe9WZ7ecK09+3FkjkQDPFWHzixs=;
+	s=arc-20240116; t=1706521732; c=relaxed/simple;
+	bh=BA1tOGEvLJ2F1biwjB2573ANIuiUoV8stL0uXeeVPnE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TXCWl1Y9SnvDeB8BBd8W57cx1/s0u3EGVR/XoohEyBMbb3tZMabdbz6fcFO2FfcAYcxiL++XwQWq5/0aGGnR9dCXWWh+DpXipA0eKucyHRdHknTU7DlATFjUvalWZlIWNPn1HnJc7OpKOtzccyFJoGMOkSOuy+wvmdbWBevFZZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nl0TWa5S; arc=none smtp.client-ip=209.85.128.176
+	 To:Cc:Content-Type; b=vGpquQfYkm+q1l7t9zDwYQd3zgoMDySw9AbUCHuMztCpy56pQ7JYNzqKM5lYcoHXN9i9IH1ilr32MY44S21yk2M7OL3LWnneMNGlodLPXdpLY/6xWv5lnjhXbkVv20FbCdDGn9zuP0U+z46oOFXYPaRrJi4jYio4AgH+DIhlBUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JeGa3dgS; arc=none smtp.client-ip=209.85.222.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nl0TWa5S"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-602c714bdbeso18274817b3.1
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jan 2024 01:38:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JeGa3dgS"
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-783d84ecb13so272676085a.0
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jan 2024 01:48:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706521086; x=1707125886; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7GUkQLMq88GAXuh3Eqx0lD6UD7ww86b8Rhtv6iqBIbU=;
-        b=nl0TWa5SnLrytGAWQRk0g4SW80M2Vo4gZU8aO+ILxSlBU6DlflrmukDGMWwy3fKHuj
-         NfBj+FGfE+hWjxiPdNrya5S4r/Q17k4mcLM+Zeg8aTFUXbePSS0gjYkBPvm+Uc3ZJ6SF
-         JB0L74Xb8+JkitijWhxS+1tw0QETuMbpiQY4la1GCCo9YygJRvtu/hp5oaWx/DNzk4sz
-         1O5rScmqiieFOSr8k+mnIjucTQ7wbFCmom+1JFY9oWZZwVB45IbT6F262ShYPeSR/V2G
-         8AYFlS73+LG1OyDmQ2fGG5NMe0/GRdrfY7uK+RGp2VWro1r+sdF+PiZkl5l9oMwGlgFw
-         AxFw==
+        d=linaro.org; s=google; t=1706521730; x=1707126530; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pHEsVlM7f5nwbIgc9gzWyFxBBE04dfKP6ctAVu1W4LQ=;
+        b=JeGa3dgSsjcygSr6r7tr9gwnGHHJ8xC36E0lXADUUDAT3b0z2wUc6orpW2w0W7R5JK
+         8zVXJhEfUEDcyef6P7Afmg7jGg8OZxspOaKOtd7BFI1TFql/wui+tRnHKDMvAgEQUQ3G
+         3/EFX659GThPRQsE6F5ewxqExsC6JOjkzuPSVqTnVrOjETaHaj0qW34JAWHV/JFmv7u4
+         vRsZcQBDxlOu+8OKloqntIXF7dureVbgvK9sN8r1gJVXDOzX/LCH3KZ3TUT5KI+fRmsu
+         PxRj9KFixCsVGFts4VkluiW2uqHhWWN0FZzTYvvfZ5DCK2K/1aPpBmEhF+xYVzVL1Vr6
+         AT+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706521086; x=1707125886;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7GUkQLMq88GAXuh3Eqx0lD6UD7ww86b8Rhtv6iqBIbU=;
-        b=BWQF97L/DxwwkOKdLNt2yRtS5iiXTFDZbeTn1pBqHLHURR+utUGCEhEOHqzJZjMTGC
-         MxrtH3McMtK2oBhb1vu7m2tNtUM+g0HLg9KWmsY37GKp/ASGO0+AoUb6ZxKkZj6UJlbS
-         T21H9DbeHZa0vjOchXDaqpvoBq/WqeA0coW9WTPN/mX7LFGAjRNRAwRUXlvKCnr1D8v3
-         LHutphQkDiDxJWAWXn5f/1OuoLdl8Tvs10Y1N9bojFBEid3nd4o1O5BhBquDLT0x5gya
-         409OG8HW+0YO28BoMhrvBBhVu3C9/LNjeleZK15AXMxZoGpfuKig4y9LlhbtWiZ73cbn
-         49hw==
-X-Gm-Message-State: AOJu0YwDLaks5HXBGlfMwWR+8QPMmJHtit7QLVPFLVPa+Kk8sTU3I3iG
-	Q0qMUcV1FqG4EJLrmSeE0lefTfOyW6XnQM0/WkAV5VOUcKZM7VhEap2+5ulwcRSk4XNON3jNT4M
-	2gd2V8hSwQQl3QHo51MjuKAEfoKpzOfssfRM5qQ==
-X-Google-Smtp-Source: AGHT+IEeoJUoLMtBvZJFkIJY4mg0SVO8RrXIC2eL8rV9XVO7o4cYzCCwHONGiBoxbodpc9WxXQGklKeSWkdZplHmeNA=
-X-Received: by 2002:a81:aa12:0:b0:5ff:5406:e064 with SMTP id
- i18-20020a81aa12000000b005ff5406e064mr2222313ywh.10.1706521085719; Mon, 29
- Jan 2024 01:38:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706521730; x=1707126530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pHEsVlM7f5nwbIgc9gzWyFxBBE04dfKP6ctAVu1W4LQ=;
+        b=weA85bexfVUxn0tI5xHy5LSYvZsan11duFDEQcE+I08RnnQgFaeXXIr75DCQjHzsJv
+         gzoXEBsu/jBNdJ+TRJBjMRqmJnqdIqxG9OWQaK8nUQJZV+m4m4qm2I9BtrfzZGkECPUs
+         9iuWdS3B3pjqelheUYpPaUgM6dSjWpJ18gMIgUa84TtKhnf+GQAMOQCr3ko4akI/hNgt
+         aGmpw+l7YLJxq35qgvMHmMIPuZ9dDXcyRIU2NNuQq/Azh7GMrLOUk+WQAesiGRbUJp0O
+         c+zeJZz/DdQaDSEn15QdzArXzybM2KaWwzw3xlC7F3ES4cVOqXmNQ+xMnKRkWipqLrSy
+         /cHw==
+X-Gm-Message-State: AOJu0Yyc9uaZN1iuPIfFzqohaIETvdt/J+E3f2xbtE/03A0/8mXgXU5G
+	deyW/rPm+5yZbGdkGkA3BP1cfaZnzforu6c8sagkCGPqpInlyHj9NxJ7fnLy0PXEDUeKAxCJ02Z
+	d685z+A/Yx7KpP4dyZCZlG+UsyoLhNMbCvDGepQ==
+X-Google-Smtp-Source: AGHT+IE/FkXm22hoOy7Bm93rW+z/+jgXNC3MtDsNhFcBpfDqK2p05aSH1dhnMpcNvIVeXslT5ipbAnbdvzJvrwoQ90U=
+X-Received: by 2002:ad4:5f8a:0:b0:68c:467d:c60d with SMTP id
+ jp10-20020ad45f8a000000b0068c467dc60dmr4539234qvb.118.1706521730025; Mon, 29
+ Jan 2024 01:48:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240129051104.1855487-1-quic_devipriy@quicinc.com> <20240129051104.1855487-4-quic_devipriy@quicinc.com>
-In-Reply-To: <20240129051104.1855487-4-quic_devipriy@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 29 Jan 2024 11:37:54 +0200
-Message-ID: <CAA8EJppG0NehyLPkML5_Xe__Vy_aEu=qNYAd8WU5rsgLjrW8CA@mail.gmail.com>
-Subject: Re: [PATCH V3 3/7] clk: qcom: gcc-ipq9574: Add gpll0_out_aux clock &
- enable few nssnoc clocks
-To: Devi Priya <quic_devipriy@quicinc.com>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, 
-	p.zabel@pengutronix.de, richardcochran@gmail.com, geert+renesas@glider.be, 
-	arnd@arndb.de, neil.armstrong@linaro.org, nfraprado@collabora.com, 
-	m.szyprowski@samsung.com, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	netdev@vger.kernel.org
+References: <20240127003607.501086-1-andre.draszik@linaro.org> <20240127003607.501086-3-andre.draszik@linaro.org>
+In-Reply-To: <20240127003607.501086-3-andre.draszik@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 29 Jan 2024 09:48:38 +0000
+Message-ID: <CADrjBPoTewqx2eF9Zw2EHZtjEpPzesAA5cEjVKw-WWgTT8fd_Q@mail.gmail.com>
+Subject: Re: [PATCH 2/5] arm64: dts: exynos: gs101: fix usi8 default mode
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	tudor.ambarus@linaro.org, willmcvicker@google.com, semen.protsenko@linaro.org, 
+	alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, 
+	cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 29 Jan 2024 at 07:13, Devi Priya <quic_devipriy@quicinc.com> wrote:
+On Sat, 27 Jan 2024 at 00:37, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
 >
-> gcc_nssnoc_nsscc_clk, gcc_nssnoc_snoc_clk, gcc_nssnoc_snoc_1_clk are
-> enabled by default and the RCGs are properly configured by the bootloader.
+> While commit 6d44d1a1fb62 ("arm64: dts: exynos: gs101: define USI8 with
+> I2C configuration") states that the USI8 CONFIG is 0 at reset, the boot
+> loader has configured it by the time Linux runs and it has a different
+> value at this stage.
 >
-> Some of the NSS clocks needs these clocks to be enabled. To avoid
-> these clocks being disabled by clock framework, drop these entries
-> from the clock table and enable it in the driver probe itself.
-
-Obvious NAK for mixing two independent changes into a single patch.
-
+> Since we want board DTS files to explicitly select the mode, we should
+> set it to none here so as to ensure things don't work by accident and
+> to make it clear that board DTS actually need to set the mode based on
+> the configuration.
 >
-> Also, add support for gpll0_out_aux clock which acts as the parent for
-> certain networking subsystem (nss) clocks.
->
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> Fixes: 6d44d1a1fb62 ("arm64: dts: exynos: gs101: define USI8 with I2C con=
+figuration")
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > ---
->  Changes in V3:
->         - Dropped flags for gpll0_out_aux
->         - Dropped few nss clock entries from the clock table and enabled
->           them in the probe
->
->  drivers/clk/qcom/gcc-ipq9574.c | 83 ++++++++++++----------------------
->  1 file changed, 28 insertions(+), 55 deletions(-)
->
-> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-> index e8190108e1ae..987703431b5b 100644
-> --- a/drivers/clk/qcom/gcc-ipq9574.c
-> +++ b/drivers/clk/qcom/gcc-ipq9574.c
-> @@ -105,6 +105,20 @@ static struct clk_alpha_pll_postdiv gpll0 = {
->         },
->  };
->
-> +static struct clk_alpha_pll_postdiv gpll0_out_aux = {
-> +       .offset = 0x20000,
-> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-> +       .width = 4,
-> +       .clkr.hw.init = &(const struct clk_init_data) {
-> +               .name = "gpll0_out_aux",
-> +               .parent_hws = (const struct clk_hw *[]) {
-> +                       &gpll0_main.clkr.hw
-> +               },
-> +               .num_parents = 1,
-> +               .ops = &clk_alpha_pll_postdiv_ro_ops,
-> +       },
-> +};
-> +
->  static struct clk_alpha_pll gpll4_main = {
->         .offset = 0x22000,
->         .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-> @@ -2186,23 +2200,6 @@ static struct clk_branch gcc_nsscfg_clk = {
->         },
->  };
->
-> -static struct clk_branch gcc_nssnoc_nsscc_clk = {
-> -       .halt_reg = 0x17030,
-> -       .clkr = {
-> -               .enable_reg = 0x17030,
-> -               .enable_mask = BIT(0),
-> -               .hw.init = &(const struct clk_init_data) {
-> -                       .name = "gcc_nssnoc_nsscc_clk",
-> -                       .parent_hws = (const struct clk_hw *[]) {
-> -                               &pcnoc_bfdcd_clk_src.clkr.hw
-> -                       },
-> -                       .num_parents = 1,
-> -                       .flags = CLK_SET_RATE_PARENT,
-> -                       .ops = &clk_branch2_ops,
-> -               },
-> -       },
-> -};
-> -
 
-What is the actual consumer for these clocks? Why are you trying to
-hide them instead of making them used by the consumer device?
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
->  static struct clk_branch gcc_nsscc_clk = {
->         .halt_reg = 0x17034,
->         .clkr = {
-> @@ -2585,40 +2582,6 @@ static struct clk_branch gcc_q6ss_boot_clk = {
->         },
->  };
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> -static struct clk_branch gcc_nssnoc_snoc_clk = {
-> -       .halt_reg = 0x17028,
-> -       .clkr = {
-> -               .enable_reg = 0x17028,
-> -               .enable_mask = BIT(0),
-> -               .hw.init = &(const struct clk_init_data) {
-> -                       .name = "gcc_nssnoc_snoc_clk",
-> -                       .parent_hws = (const struct clk_hw *[]) {
-> -                               &system_noc_bfdcd_clk_src.clkr.hw
-> -                       },
-> -                       .num_parents = 1,
-> -                       .flags = CLK_SET_RATE_PARENT,
-> -                       .ops = &clk_branch2_ops,
-> -               },
-> -       },
-> -};
-> -
-> -static struct clk_branch gcc_nssnoc_snoc_1_clk = {
-> -       .halt_reg = 0x1707c,
-> -       .clkr = {
-> -               .enable_reg = 0x1707c,
-> -               .enable_mask = BIT(0),
-> -               .hw.init = &(const struct clk_init_data) {
-> -                       .name = "gcc_nssnoc_snoc_1_clk",
-> -                       .parent_hws = (const struct clk_hw *[]) {
-> -                               &system_noc_bfdcd_clk_src.clkr.hw
-> -                       },
-> -                       .num_parents = 1,
-> -                       .flags = CLK_SET_RATE_PARENT,
-> -                       .ops = &clk_branch2_ops,
-> -               },
-> -       },
-> -};
-> -
->  static struct clk_branch gcc_qdss_etr_usb_clk = {
->         .halt_reg = 0x2d060,
->         .clkr = {
-> @@ -4043,7 +4006,6 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
->         [GCC_SDCC1_AHB_CLK] = &gcc_sdcc1_ahb_clk.clkr,
->         [PCNOC_BFDCD_CLK_SRC] = &pcnoc_bfdcd_clk_src.clkr,
->         [GCC_NSSCFG_CLK] = &gcc_nsscfg_clk.clkr,
-> -       [GCC_NSSNOC_NSSCC_CLK] = &gcc_nssnoc_nsscc_clk.clkr,
->         [GCC_NSSCC_CLK] = &gcc_nsscc_clk.clkr,
->         [GCC_NSSNOC_PCNOC_1_CLK] = &gcc_nssnoc_pcnoc_1_clk.clkr,
->         [GCC_QDSS_DAP_AHB_CLK] = &gcc_qdss_dap_ahb_clk.clkr,
-> @@ -4059,8 +4021,6 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
->         [GCC_CMN_12GPLL_AHB_CLK] = &gcc_cmn_12gpll_ahb_clk.clkr,
->         [GCC_CMN_12GPLL_APU_CLK] = &gcc_cmn_12gpll_apu_clk.clkr,
->         [SYSTEM_NOC_BFDCD_CLK_SRC] = &system_noc_bfdcd_clk_src.clkr,
-> -       [GCC_NSSNOC_SNOC_CLK] = &gcc_nssnoc_snoc_clk.clkr,
-> -       [GCC_NSSNOC_SNOC_1_CLK] = &gcc_nssnoc_snoc_1_clk.clkr,
->         [GCC_QDSS_ETR_USB_CLK] = &gcc_qdss_etr_usb_clk.clkr,
->         [WCSS_AHB_CLK_SRC] = &wcss_ahb_clk_src.clkr,
->         [GCC_Q6_AHB_CLK] = &gcc_q6_ahb_clk.clkr,
-> @@ -4140,6 +4100,7 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
->         [GCC_SNOC_PCIE1_1LANE_S_CLK] = &gcc_snoc_pcie1_1lane_s_clk.clkr,
->         [GCC_SNOC_PCIE2_2LANE_S_CLK] = &gcc_snoc_pcie2_2lane_s_clk.clkr,
->         [GCC_SNOC_PCIE3_2LANE_S_CLK] = &gcc_snoc_pcie3_2lane_s_clk.clkr,
-> +       [GPLL0_OUT_AUX] = &gpll0_out_aux.clkr,
->  };
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/bo=
+ot/dts/exynos/google/gs101.dtsi
+> index aaac04df5e65..bc251e565be6 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> @@ -384,6 +384,7 @@ usi8: usi@109700c0 {
+>                                  <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP0=
+_IPCLK_7>;
+>                         clock-names =3D "pclk", "ipclk";
+>                         samsung,sysreg =3D <&sysreg_peric0 0x101c>;
+> +                       samsung,mode =3D <USI_V2_NONE>;
+>                         status =3D "disabled";
 >
->  static const struct qcom_reset_map gcc_ipq9574_resets[] = {
-> @@ -4326,7 +4287,19 @@ static const struct qcom_cc_desc gcc_ipq9574_desc = {
->
->  static int gcc_ipq9574_probe(struct platform_device *pdev)
->  {
-> -       return qcom_cc_probe(pdev, &gcc_ipq9574_desc);
-> +       struct regmap *regmap;
-> +
-> +       regmap = qcom_cc_map(pdev, &gcc_ipq9574_desc);
-> +
-> +       if (IS_ERR(regmap))
-> +               return PTR_ERR(regmap);
-> +
-> +       /* Keep the critical clocks always-On */
-> +       regmap_update_bits(regmap, 0x17030, BIT(0), BIT(0)); /* gcc_nssnoc_nsscc_clk */
-> +       regmap_update_bits(regmap, 0x17028, BIT(0), BIT(0)); /* gcc_nssnoc_snoc_clk */
-> +       regmap_update_bits(regmap, 0x1707C, BIT(0), BIT(0)); /* gcc_nssnoc_snoc_1_clk */
-> +
-> +       return qcom_cc_really_probe(pdev, &gcc_ipq9574_desc, regmap);
->  }
->
->  static struct platform_driver gcc_ipq9574_driver = {
+>                         hsi2c_8: i2c@10970000 {
 > --
-> 2.34.1
+> 2.43.0.429.g432eaa2c6b-goog
 >
->
-
-
--- 
-With best wishes
-Dmitry
