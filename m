@@ -1,57 +1,57 @@
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DDA4EB35
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jan 2024 06:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C41F4D5BC
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jan 2024 06:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706511303; cv=none; b=DWeY56ZNaJVFn4dZwiO/708n/CGA2sl10Ljhcv7Q564hn+sUhF9cMUTGCcMWkDUmDGiQjIWabicJrIZlqd3k1umxkwO6gGxUS66W00fLQb1/XO+4EPEzz2lV0fyFmeT2Xt/tbCuSZ28INCzEB8Iwv6EPBUVFsKEhAu+CCPRU4xg=
+	t=1706511542; cv=none; b=ZQ1nXXkJn92y83gwVnOsy+y95k7sV32TZK/Zrzk5Rnnl2SGMQTF6Fmbep6xlTJSU1erZBjG+JUVlVJgIDFjBS3Tg7GZ0RAxTaAWvCBlWdsWUZKb4cKZvI5yAVDd/JNbJ4RSMtGp+pPtVX7H/CxXm9+WnheD8G3x0HNkWUgqOgG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706511303; c=relaxed/simple;
-	bh=2EPa0U+VukGXPRNbsZYJGUNCbNggov8QmdEi5cf3Kko=;
+	s=arc-20240116; t=1706511542; c=relaxed/simple;
+	bh=OXQjh4lioyfB8StO1nZmX9WLl+HFNIwwqGc1GR4QKLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qUXn0oomT5oEROwi1XA9h5O/6REez8w0WHEHggQQlcFJUTrU4cyAvaxHpEY3jL+gG2bOxHhs+Dc4F9F7RaweSDpyROGcmZX+61IEVPqnTNOBkvuXBpue01TbxoL/tzZIGaSSNQulk8oOkd9Kzg7SYe5KAum4WtLDKSYVQtMbiG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yXCeIgja; arc=none smtp.client-ip=209.85.160.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=NgsItphQeNjV8v89i7pPluaCzUeaiDc+NQEvRJ4y82VQ4op3xtCOJAkp/aAiDZCz5n8qyP3/df9lY5gvAtpP8kgCP3tkXbHonlsx73t2cYC8NU5j7prHgzvp6fBMyP5j5ujVBrN5HKtehOn+oZzRI8vLUemlidCzH99WMQQEY/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=opHhLT04; arc=none smtp.client-ip=209.85.219.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yXCeIgja"
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-42a446cb1baso21383761cf.0
-        for <linux-clk@vger.kernel.org>; Sun, 28 Jan 2024 22:55:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="opHhLT04"
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6818a9fe380so20363706d6.2
+        for <linux-clk@vger.kernel.org>; Sun, 28 Jan 2024 22:59:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706511300; x=1707116100; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706511539; x=1707116339; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=s1hxnPoh6daX0WjU31FuHTB7nYnSeoBVwHLBpFGzZZE=;
-        b=yXCeIgja1BeZkXGrCxSjIQFQTKha3rrK7ldC39PtRrQfCWas1NYafGEkgQ6VaLhZrT
-         ncXNQRL/9U4QNTYdBzsbBSyrKH6IkB1/FPn0JUuKNAe4mtHwnj4fgyw8fvD6ICUuVohP
-         JhTvrUoPVXOUCK+GH8GTv1cmA8npbkz6TcRMIeEq+MewxcStyRMHW6AuYBqY3IrM1kBE
-         pGFi8wckNS7jMO4FPFY9jhO3Kj3l2UMVe7FJsg5tjByPIj+AD3eS8altVt3cZHVcQyOF
-         L3/x9/OEHoFskp6aNg7Q5C5wc7DKLrMGlFdYEoVApo4nlMtWYgQuA8e48EywXFyq1cjO
-         1l9Q==
+        bh=FwYcxzBqqOvegvaMhu9gdP9KfDlhUbugGliFvDojZT0=;
+        b=opHhLT04j6jEhDUQl0KHkf/NtUUOganAu5SufZ4EcaVb+b1qeUJESAkdFv4DLoQXKf
+         nGENClORkAfKnCFlaDfPbwhGyoDNk6S3CKnBqXRPDs2MnftDOVSW3Gu54rCH08NyGJnr
+         o6aoTsEPfcew7aMpO/LS1OFOMIoaZJ4D+Gkb+3lsgQh4oPMw0HSXtbKi12aJuX8Mu2Ob
+         0GwFpz9lJgHUOI1BrYyizJH5pThiOfwuvpRDYbumyJ8e31jQbmSgyHbwSsBYcJHPoeUq
+         9PyivYDtgOk5KHMPuDV1s+e5/LLpdXJcvnO6ruYxXGbruETOcXxtJ2gxoS4N7VWWzLKy
+         Kd0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706511300; x=1707116100;
+        d=1e100.net; s=20230601; t=1706511539; x=1707116339;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s1hxnPoh6daX0WjU31FuHTB7nYnSeoBVwHLBpFGzZZE=;
-        b=WzG2NuNI3s4jpG+aH0YM+2znSN76sZxH53tAzVl39kuR8mgk9IJ/4V7NZ7Sqb2A8Zb
-         13PHy9rTSY3kZCTOcKOooLBOjZPMIAFRk4HKXgwGRkwcPn+FzA9qZMuQSocdkwnUgAtw
-         rD7UlXxLXGYz5wOfW5ge4p18YBzpkQkojo37laTlM07s4mgJUXXpUyYAo7nGfCxUmjkt
-         Fs3DGGvjLPCZyF0qP3B5lappoDRZ+vDKiXQmF2NmTsaouKfPhUcBWT5GDIzo94p8768V
-         wZuwGPv6s9vNsEN0ChKvXK9Kx3UoDHErAvVebJOBIqb/7a8AVCK8UHCUWsWrPCn46Amo
-         1gcw==
-X-Gm-Message-State: AOJu0YzltwxQ9u2E58pq25YE2Noc6cLA7sHdCvm9EHbaycG9d1SLlczH
-	ge8bZe0XZucTjIx3rOwS6lQHze6SF++xGgOBhv3fbQwDZllTkeGUNJKAhqGdXQ==
-X-Google-Smtp-Source: AGHT+IHwfQa7OVYQ7eqwRmxrB+cXFuJ+tQWWagggVHZdoSqnHID39moNiRd92Sd4lXHtYQce6W0czA==
-X-Received: by 2002:ac8:7f4c:0:b0:42a:9b63:7828 with SMTP id g12-20020ac87f4c000000b0042a9b637828mr2844845qtk.68.1706511299804;
-        Sun, 28 Jan 2024 22:54:59 -0800 (PST)
+        bh=FwYcxzBqqOvegvaMhu9gdP9KfDlhUbugGliFvDojZT0=;
+        b=g59kl3+ZrxfyCBrHs5YAHt+psHHhC6MQgPqo8n+CZFO1bk4ChLdxsOhZB0r/YVIejT
+         jqi3iPQtKVK9zn0QsiXNM7Hqj+8RALLOc3U3ixROXko2pa8LXVkDzCxv5W0Z/wsAt7RL
+         r5UlRzQgEOKiy2brm14gFJLYAcb8iCmdXAhxUnCJWsiNGSJHtNi7gLD2jsU65ZJ10+bj
+         LDrzQj/DJK28ShegfDlC6SCPdrEd2JRDDq5dqkpnoYu2NctFWihsWktf9adbD4Ag/17M
+         JxLU4yqL8cMQkNFM3oIUKvrG1vjPyvCFWI4ROFc4j7fb6675u6Qd8hnSeoMt+FydeVRl
+         W7iA==
+X-Gm-Message-State: AOJu0Yw1UcLbhhAHzTFWQdt4tHJKXRCXn8zSMEVMVVtDvTUnXBtPt0m+
+	9bRuu/+z737q9V4cW5V/8WByDeicNDyXYdsc3vwKiQyIxqP5x7v0YJ373WYs2g==
+X-Google-Smtp-Source: AGHT+IH5SRvoNClvm0mfYs/inH/IxKkrY8a8G5cj2l07JgqvnKPSvqgPdo+o6ckTisfvK8pj9GlW0g==
+X-Received: by 2002:ad4:5c47:0:b0:686:acd7:ea95 with SMTP id a7-20020ad45c47000000b00686acd7ea95mr7107306qva.71.1706511539120;
+        Sun, 28 Jan 2024 22:58:59 -0800 (PST)
 Received: from thinkpad ([117.193.214.109])
-        by smtp.gmail.com with ESMTPSA id cb27-20020a05622a1f9b00b004283695a39bsm1356146qtb.94.2024.01.28.22.54.52
+        by smtp.gmail.com with ESMTPSA id h4-20020a0cd804000000b006869dae6edbsm3124426qvj.77.2024.01.28.22.58.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jan 2024 22:54:59 -0800 (PST)
-Date: Mon, 29 Jan 2024 12:24:48 +0530
+        Sun, 28 Jan 2024 22:58:58 -0800 (PST)
+Date: Mon, 29 Jan 2024 12:28:46 +0530
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: Shradha Todi <shradha.t@samsung.com>
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -62,12 +62,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
 	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
 	linux@armlinux.org.uk, m.szyprowski@samsung.com,
 	pankaj.dubey@samsung.com
-Subject: Re: [PATCH v4 1/2] clk: Provide managed helper to get and enable
- bulk clocks
-Message-ID: <20240129065448.GC2971@thinkpad>
+Subject: Re: [PATCH v4 2/2] PCI: exynos: Adapt to clk_bulk_* APIs
+Message-ID: <20240129065846.GD2971@thinkpad>
 References: <20240124103838.32478-1-shradha.t@samsung.com>
- <CGME20240124103855epcas5p27400bd95df42f36b9547a4e28aa26f5d@epcas5p2.samsung.com>
- <20240124103838.32478-2-shradha.t@samsung.com>
+ <CGME20240124103858epcas5p3d96cdbe8a6c8f31ccc934025411a09b8@epcas5p3.samsung.com>
+ <20240124103838.32478-3-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -77,152 +76,122 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240124103838.32478-2-shradha.t@samsung.com>
+In-Reply-To: <20240124103838.32478-3-shradha.t@samsung.com>
 
-On Wed, Jan 24, 2024 at 04:08:37PM +0530, Shradha Todi wrote:
-> Provide a managed devm_clk_bulk* wrapper to get and enable all
-> bulk clocks in order to simplify drivers that keeps all clocks
-> enabled for the time of driver operation.
+On Wed, Jan 24, 2024 at 04:08:38PM +0530, Shradha Todi wrote:
+> There is no need to hardcode the clock info in the driver as driver can
+> rely on the devicetree to supply the clocks required for the functioning
+> of the peripheral. Get rid of the static clock info and obtain the
+> platform supplied clocks. All the clocks supplied is obtained and enabled
+> using the devm_clk_bulk_get_all_enable() API.
 > 
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> ---
->  drivers/clk/clk-devres.c | 40 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/clk.h      | 24 ++++++++++++++++++++++++
->  2 files changed, 64 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index 4fb4fd4b06bd..cbbd2cc339c3 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -182,6 +182,46 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
->  }
->  EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
->  
-> +static void devm_clk_bulk_release_all_enable(struct device *dev, void *res)
-> +{
-> +	struct clk_bulk_devres *devres = res;
-> +
-> +	clk_bulk_disable_unprepare(devres->num_clks, devres->clks);
-> +	clk_bulk_put_all(devres->num_clks, devres->clks);
-> +}
-> +
-> +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
-> +					      struct clk_bulk_data **clks)
-> +{
-> +	struct clk_bulk_devres *devres;
-> +	int ret;
-> +
-> +	devres = devres_alloc(devm_clk_bulk_release_all_enable,
-> +			      sizeof(*devres), GFP_KERNEL);
-> +	if (!devres)
-> +		return -ENOMEM;
-> +
-> +	ret = clk_bulk_get_all(dev, &devres->clks);
-> +	if (ret > 0) {
-> +		*clks = devres->clks;
-> +		devres->num_clks = ret;
-> +	} else {
-> +		devres_free(devres);
-> +		return ret;
-> +	}
 
-How about:
-
-	ret = clk_bulk_get_all(dev, &devres->clks);
-	if (ret <= 0) {
-		devres_free(devres);
-		return ret;
-	}
-
-	*clks = devres->clks;
-	devres->num_clks = ret;
-
-Even though this patch follows the pattern used by the rest of the APIs in the
-driver, IMO above makes it more readable.
-
-> +
-> +	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
-> +	if (!ret) {
-> +		devres_add(dev, devres);
-> +	} else {
-> +		clk_bulk_put_all(devres->num_clks, devres->clks);
-> +		devres_free(devres);
-> +	}
-> +
-
-Same as above:
-
-	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
-	if (ret) {
-		clk_bulk_put_all(devres->num_clks, devres->clks);
-		devres_free(devres);
-		return ret;
-	}
-
-	devres_add(dev, devres);
-
-> +	return ret;
-
-	return 0;
-
-> +}
-> +EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
-> +
->  static int devm_clk_match(struct device *dev, void *res, void *data)
->  {
->  	struct clk **c = res;
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 1ef013324237..a005e709b7bd 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -438,6 +438,23 @@ int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
->  int __must_check devm_clk_bulk_get_all(struct device *dev,
->  				       struct clk_bulk_data **clks);
->  
-> +/**
-> + * devm_clk_bulk_get_all_enable - managed get multiple clk consumers and
-> + *				  enable all clks
-
-"Get and enable all clocks of the consumer (managed)"
-
-> + * @dev: device for clock "consumer"
-> + * @clks: pointer to the clk_bulk_data table of consumer
-> + *
-> + * Returns success (0) or negative errno.
-> + *
-> + * This helper function allows drivers to get several clk
-
-"This helper function allows drivers to get all clocks of the consumer and
-enables them..."
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
 - Mani
 
-> + * consumers and enable all of them in one operation with management.
-> + * The clks will automatically be disabled and freed when the device
-> + * is unbound.
-> + */
-> +
-> +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
-> +					      struct clk_bulk_data **clks);
-> +
->  /**
->   * devm_clk_get - lookup and obtain a managed reference to a clock producer.
->   * @dev: device for clock "consumer"
-> @@ -960,6 +977,13 @@ static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
->  	return 0;
->  }
+> ---
+>  drivers/pci/controller/dwc/pci-exynos.c | 54 ++-----------------------
+>  1 file changed, 4 insertions(+), 50 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+> index ec5611005566..3234eb5be1fb 100644
+> --- a/drivers/pci/controller/dwc/pci-exynos.c
+> +++ b/drivers/pci/controller/dwc/pci-exynos.c
+> @@ -54,43 +54,11 @@
+>  struct exynos_pcie {
+>  	struct dw_pcie			pci;
+>  	void __iomem			*elbi_base;
+> -	struct clk			*clk;
+> -	struct clk			*bus_clk;
+> +	struct clk_bulk_data		*clks;
+>  	struct phy			*phy;
+>  	struct regulator_bulk_data	supplies[2];
+>  };
 >  
-> +static inline int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
-> +						struct clk_bulk_data **clks)
-> +{
-> +
-> +	return 0;
-> +}
-> +
->  static inline struct clk *devm_get_clk_from_child(struct device *dev,
->  				struct device_node *np, const char *con_id)
+> -static int exynos_pcie_init_clk_resources(struct exynos_pcie *ep)
+> -{
+> -	struct device *dev = ep->pci.dev;
+> -	int ret;
+> -
+> -	ret = clk_prepare_enable(ep->clk);
+> -	if (ret) {
+> -		dev_err(dev, "cannot enable pcie rc clock");
+> -		return ret;
+> -	}
+> -
+> -	ret = clk_prepare_enable(ep->bus_clk);
+> -	if (ret) {
+> -		dev_err(dev, "cannot enable pcie bus clock");
+> -		goto err_bus_clk;
+> -	}
+> -
+> -	return 0;
+> -
+> -err_bus_clk:
+> -	clk_disable_unprepare(ep->clk);
+> -
+> -	return ret;
+> -}
+> -
+> -static void exynos_pcie_deinit_clk_resources(struct exynos_pcie *ep)
+> -{
+> -	clk_disable_unprepare(ep->bus_clk);
+> -	clk_disable_unprepare(ep->clk);
+> -}
+> -
+>  static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)
 >  {
+>  	writel(val, base + reg);
+> @@ -332,17 +300,9 @@ static int exynos_pcie_probe(struct platform_device *pdev)
+>  	if (IS_ERR(ep->elbi_base))
+>  		return PTR_ERR(ep->elbi_base);
+>  
+> -	ep->clk = devm_clk_get(dev, "pcie");
+> -	if (IS_ERR(ep->clk)) {
+> -		dev_err(dev, "Failed to get pcie rc clock\n");
+> -		return PTR_ERR(ep->clk);
+> -	}
+> -
+> -	ep->bus_clk = devm_clk_get(dev, "pcie_bus");
+> -	if (IS_ERR(ep->bus_clk)) {
+> -		dev_err(dev, "Failed to get pcie bus clock\n");
+> -		return PTR_ERR(ep->bus_clk);
+> -	}
+> +	ret = devm_clk_bulk_get_all_enable(dev, &ep->clks);
+> +	if (ret < 0)
+> +		return ret;
+>  
+>  	ep->supplies[0].supply = "vdd18";
+>  	ep->supplies[1].supply = "vdd10";
+> @@ -351,10 +311,6 @@ static int exynos_pcie_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = exynos_pcie_init_clk_resources(ep);
+> -	if (ret)
+> -		return ret;
+> -
+>  	ret = regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep->supplies);
+>  	if (ret)
+>  		return ret;
+> @@ -369,7 +325,6 @@ static int exynos_pcie_probe(struct platform_device *pdev)
+>  
+>  fail_probe:
+>  	phy_exit(ep->phy);
+> -	exynos_pcie_deinit_clk_resources(ep);
+>  	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
+>  
+>  	return ret;
+> @@ -383,7 +338,6 @@ static int __exit exynos_pcie_remove(struct platform_device *pdev)
+>  	exynos_pcie_assert_core_reset(ep);
+>  	phy_power_off(ep->phy);
+>  	phy_exit(ep->phy);
+> -	exynos_pcie_deinit_clk_resources(ep);
+>  	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
+>  
+>  	return 0;
 > -- 
 > 2.17.1
 > 
