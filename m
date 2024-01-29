@@ -1,191 +1,133 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4E01173C
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jan 2024 04:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D9E3D3AC;
+	Mon, 29 Jan 2024 05:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706501333; cv=none; b=NYg4+bUvm4c/yXP7I1BFzc3UUcw2L59e++MMNa79DAw/Rtpmb3utsEQGPo5oOZBgfmTFEn89sGwroAw3HeDUO8WMp96BduYLNtffzoPXzjCs8G5jvaqdJ2G4yW5k/Mi0a27oy22cf0WbPhjYzEiBbp5pI0Cd368IsQaJ/3cA7fk=
+	t=1706505119; cv=none; b=G3zKu1NgDXf/P1Fm19N+DEvA5qdS4BtyU4QbgjvfUeVzhAIffnjBytL1a4xrHburCTIDZ1z0t7VNraauLqoYIbHI0hLNNmUMVT+TVJWlHZFVD1d28ylh3G+FRilyWUS1dLennctQTpmO9wKmLcSZ/uh4yFXF+HQi61pfEUF1ph4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706501333; c=relaxed/simple;
-	bh=MFnqxa2FlwSQnHD4FuVTTxhMbrdlgpPdXx9P5+EY9jo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cL/+hsOaC3H93TwRWt6KgKAU1m24Tx1w+3RkYAwAcQwkzn9QTerUQEqs4Cw8fG2rrR0bMEahqmCJyGbhkP+Vw0tx8CTrhW5AbYGiBWPf1pE9OZp9/loQKq8V3AqRIaavOd8DJVaYsSelOXGeRvUbQADyEkxPtg3T1SjQGYi/zXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rnFuZ7Mr; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706505119; c=relaxed/simple;
+	bh=/Xbx5iud/jNw2n247ZZHQLr3VIYzbgeqZXaBadjU2wM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZlQP9JQhyx7S2nzEVpy0eVzV/rGV7O/iys7m5oS32krU9b1tfm715Pz+tATMORqHA1oAbkOiCk9zKOAObsnSNIqAqQbm1Pwp9TqhVUgIFfueci0U68dkKJ4/gtW8WGOHUGO/IlTZ3FwWvDOHV5BHzIZCtS8EIAa2vZDrgFvIKz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mIF+KXVF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rnFuZ7Mr"
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6002317a427so17277847b3.2
-        for <linux-clk@vger.kernel.org>; Sun, 28 Jan 2024 20:08:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706501329; x=1707106129; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AKHdQZdCTLHs4pcHr7TzhQwsCq0HwLSonhICMhFAgjk=;
-        b=rnFuZ7MrkWp1PzUWSio+u2CbOiXmUmCc2CONW/odWGuXNbfbcyLdvByxY97Q/v2Pfs
-         CHujqPfiAAB0ph4BWthOD303v2WbJ76uT87ZXzKY1J6XyGrno2/RBEktkAHHEprF8vD1
-         DbszTvEL7/5vC36fJFHvnIZN4ylwF3HeWvRy+Z2hpHh0gB7TUDZgzVbMf/US5zAwbynK
-         Q8G3yS7IO1ZQZFsEnYJvagV12QMqWoF71imr1MGA4oXsWYCeaM/YI/2impEwv7b0jnQT
-         GEyXhfyqWu1HAMvs8oMbtpFhHeMOsLN1tjsCwOPedyV/ModgG5rDbEywQUVLI2Gaf5al
-         KXZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706501329; x=1707106129;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AKHdQZdCTLHs4pcHr7TzhQwsCq0HwLSonhICMhFAgjk=;
-        b=VEPwfjS5ItA/Wc6OtpEA2tmKftNpyhYA1Ubg9CBo+h39+JaRbTlxbHKTP8YlZM65zA
-         wz9FNWdf8mJePSHkQa3r/fLmCRSlrQE0Xfh1V00tku5lSZPOv9nKuiOwfqfrhEdKc9mX
-         s9fiw0e0cGxHZr3HfbLpxXdbSo5OvwGk0HBUWTKgCCB4aavZqSkDyQDO550uTK9N4sdI
-         6IMjia24kg13mGdoxLAFjJ0V5mxYCZuvbxy+Wh0+9ca/FznWligbt8A6Yy3pbxak5bFl
-         rcwttIsXPjsjKUWlVFAOfZZD3JSk7zzK1/3V8p79KT2FkaT/PPuI/msNtCAdAGNHKfHW
-         tkhw==
-X-Gm-Message-State: AOJu0YzZzk3ByURk+Lf59/pubQJo0pVL7/t+vJh3FHlUiKGsEI2ir7iW
-	QIM16RFoWw+o41ZIxYfX/EcI8czLy0hGcnWjhcdzUHP7LmWlO0udp/EAWf4zUS8leeXqWkrgLe+
-	OgQjBvPHKODWkoCwihw/Z6FRZAR1ie8S1SzGOhA==
-X-Google-Smtp-Source: AGHT+IHmGSN3vYOtt0Yg2EhoesVrd7TO0jYAzwGfrgIgN8CjVtzRElVO9Po5LQYN1roAhOENrN/kaSwBj3wivE0PLWA=
-X-Received: by 2002:a81:b666:0:b0:603:414b:d357 with SMTP id
- h38-20020a81b666000000b00603414bd357mr2958529ywk.52.1706501329443; Sun, 28
- Jan 2024 20:08:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mIF+KXVF"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40T4BRUg002358;
+	Mon, 29 Jan 2024 05:11:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=dllY4O7
+	uZ73K357nbzp17SDxldytUa04WbNlzeykXLw=; b=mIF+KXVF8GNMpBZHPWdfYVZ
+	kjirV/gR6jSvkMlRYPUlVin0hZU7vP6VsKg/PB4TQBdRneOMJ0AGnxKrF/yBbsTY
+	3cWfKx7raeHerjzB4gQG39rqLRTL+cVoPp3JbMTDGQ4yb8rzelgbwgYpI6PD1p/o
+	7qzId+3SW5oeMQzYkjbPbXD2Hm8UzNjwgNS8ZA090apYfMcvY6VZSWNLtsvPHnsN
+	VhMiKxhN1VTETApTD3W88UDufScYv1HnnRSeJYWi+4TXy8baqFjcQEMeoSeHX/bw
+	6QfVjnziwFoBa9W3QQyan/Sl8AeBOh8jQ6kcifqyGSSFddGRfCm/uwpCzou7nhQ=
+	=
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vvu4ctrdh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jan 2024 05:11:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 40T5BPVI023202
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jan 2024 05:11:25 GMT
+Received: from hu-devipriy-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Sun, 28 Jan 2024 21:11:18 -0800
+From: Devi Priya <quic_devipriy@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>, <p.zabel@pengutronix.de>,
+        <richardcochran@gmail.com>, <geert+renesas@glider.be>, <arnd@arndb.de>,
+        <neil.armstrong@linaro.org>, <nfraprado@collabora.com>,
+        <m.szyprowski@samsung.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <quic_devipriy@quicinc.com>
+Subject: [PATCH V3 0/7] Add NSS clock controller support for IPQ9574
+Date: Mon, 29 Jan 2024 10:40:57 +0530
+Message-ID: <20240129051104.1855487-1-quic_devipriy@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240129-x1e80100-clock-controllers-v3-0-d96dacfed104@linaro.org> <20240129-x1e80100-clock-controllers-v3-6-d96dacfed104@linaro.org>
-In-Reply-To: <20240129-x1e80100-clock-controllers-v3-6-d96dacfed104@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 29 Jan 2024 06:08:38 +0200
-Message-ID: <CAA8EJppBtc2HKcZ2sAgBm=+sxtisp-hsADp-ui6PRTRRixB8xw@mail.gmail.com>
-Subject: Re: [PATCH v3 06/10] clk: qcom: clk-alpha-pll: Add support for zonda
- ole pll configure
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, Rajendra Nayak <quic_rjendra@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: iERiaerN-W2X_6N-QiAi-qUOlGUuE5zd
+X-Proofpoint-ORIG-GUID: iERiaerN-W2X_6N-QiAi-qUOlGUuE5zd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-29_02,2024-01-25_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ clxscore=1011 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ bulkscore=0 suspectscore=0 mlxlogscore=922 phishscore=0 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401190000 definitions=main-2401290033
 
-On Mon, 29 Jan 2024 at 00:52, Abel Vesa <abel.vesa@linaro.org> wrote:
->
-> From: Rajendra Nayak <quic_rjendra@quicinc.com>
->
-> Zonda ole pll has as extra PLL_OFF_CONFIG_CTL_U2 register, hence add
-> support for it.
->
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 26 ++++++++++++++++++++++++++
->  drivers/clk/qcom/clk-alpha-pll.h |  4 ++++
->  2 files changed, 30 insertions(+)
->
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 05898d2a8b22..85f8e2ad0b37 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -52,6 +52,7 @@
->  #define PLL_CONFIG_CTL(p)      ((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL])
->  #define PLL_CONFIG_CTL_U(p)    ((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL_U])
->  #define PLL_CONFIG_CTL_U1(p)   ((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL_U1])
-> +#define PLL_CONFIG_CTL_U2(p)   ((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL_U2])
->  #define PLL_TEST_CTL(p)                ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL])
->  #define PLL_TEST_CTL_U(p)      ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U])
->  #define PLL_TEST_CTL_U1(p)     ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U1])
-> @@ -228,6 +229,21 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
->                 [PLL_OFF_ALPHA_VAL] = 0x24,
->                 [PLL_OFF_ALPHA_VAL_U] = 0x28,
->         },
-> +       [CLK_ALPHA_PLL_TYPE_ZONDA_OLE] =  {
-> +               [PLL_OFF_L_VAL] = 0x04,
-> +               [PLL_OFF_ALPHA_VAL] = 0x08,
-> +               [PLL_OFF_USER_CTL] = 0x0c,
-> +               [PLL_OFF_USER_CTL_U] = 0x10,
-> +               [PLL_OFF_CONFIG_CTL] = 0x14,
-> +               [PLL_OFF_CONFIG_CTL_U] = 0x18,
-> +               [PLL_OFF_CONFIG_CTL_U1] = 0x1c,
-> +               [PLL_OFF_CONFIG_CTL_U2] = 0x20,
-> +               [PLL_OFF_TEST_CTL] = 0x24,
-> +               [PLL_OFF_TEST_CTL_U] = 0x28,
-> +               [PLL_OFF_TEST_CTL_U1] = 0x2c,
-> +               [PLL_OFF_OPMODE] = 0x30,
-> +               [PLL_OFF_STATUS] = 0x3c,
-> +       },
->  };
->  EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
->
-> @@ -2093,6 +2109,16 @@ const struct clk_ops clk_alpha_pll_zonda_ops = {
->  };
->  EXPORT_SYMBOL_GPL(clk_alpha_pll_zonda_ops);
->
-> +const struct clk_ops clk_alpha_pll_zonda_ole_ops = {
-> +       .enable = clk_zonda_pll_enable,
-> +       .disable = clk_zonda_pll_disable,
-> +       .is_enabled = clk_trion_pll_is_enabled,
-> +       .recalc_rate = clk_trion_pll_recalc_rate,
-> +       .round_rate = clk_alpha_pll_round_rate,
-> +       .set_rate = clk_zonda_pll_set_rate,
-> +};
-> +EXPORT_SYMBOL(clk_alpha_pll_zonda_ole_ops);
+Add bindings, driver and devicetree node for networking sub system clock 
+controller on IPQ9574. Also add support for NSS Huayra type alpha PLL and
+add support for gpll0_out_aux clock which serves as the parent for 
+some nss clocks.
 
-Let's maybe follow the existing example and #define
-clk_alpha_pll_zonda_ole_ops clk_alpha_pl_zonda_ops ?
-See the defines at clk-alpha-pll.h
+Some of the nssnoc clocks present in GCC driver is
+enabled by default and its RCG is configured by bootloaders, so enable
+those clocks in driver probe.
 
-LGTM otherwise
+The NSS clock controller driver depends on the below patchset which adds
+support for multiple configurations for same frequency.
+https://lore.kernel.org/linux-arm-msm/20231220221724.3822-1-ansuelsmth@gmail.com/
 
-> +
->  void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->                                  const struct alpha_pll_config *config)
->  {
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-> index a1a75bb12fe8..99a3db9de4a1 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.h
-> +++ b/drivers/clk/qcom/clk-alpha-pll.h
-> @@ -21,6 +21,7 @@ enum {
->         CLK_ALPHA_PLL_TYPE_LUCID = CLK_ALPHA_PLL_TYPE_TRION,
->         CLK_ALPHA_PLL_TYPE_AGERA,
->         CLK_ALPHA_PLL_TYPE_ZONDA,
-> +       CLK_ALPHA_PLL_TYPE_ZONDA_OLE,
->         CLK_ALPHA_PLL_TYPE_LUCID_EVO,
->         CLK_ALPHA_PLL_TYPE_LUCID_OLE,
->         CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
-> @@ -42,6 +43,7 @@ enum {
->         PLL_OFF_CONFIG_CTL,
->         PLL_OFF_CONFIG_CTL_U,
->         PLL_OFF_CONFIG_CTL_U1,
-> +       PLL_OFF_CONFIG_CTL_U2,
->         PLL_OFF_TEST_CTL,
->         PLL_OFF_TEST_CTL_U,
->         PLL_OFF_TEST_CTL_U1,
-> @@ -119,6 +121,7 @@ struct alpha_pll_config {
->         u32 config_ctl_val;
->         u32 config_ctl_hi_val;
->         u32 config_ctl_hi1_val;
-> +       u32 config_ctl_hi2_val;
->         u32 user_ctl_val;
->         u32 user_ctl_hi_val;
->         u32 user_ctl_hi1_val;
-> @@ -173,6 +176,7 @@ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops;
->
->  extern const struct clk_ops clk_alpha_pll_zonda_ops;
->  #define clk_alpha_pll_postdiv_zonda_ops clk_alpha_pll_postdiv_fabia_ops
-> +extern const struct clk_ops clk_alpha_pll_zonda_ole_ops;
->
->  extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
->  extern const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops;
->
-> --
-> 2.34.1
->
+Changes in V3:
+	- Detailed change logs are added to the respective patches.
+
+V2 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230825091234.32713-1-quic_devipriy@quicinc.com/
+
+Devi Priya (7):
+  clk: qcom: clk-alpha-pll: Add NSS HUAYRA ALPHA PLL support for ipq9574
+  dt-bindings: clock: gcc-ipq9574: Add definition for GPLL0_OUT_AUX
+  clk: qcom: gcc-ipq9574: Add gpll0_out_aux clock & enable few nssnoc
+    clocks
+  dt-bindings: clock: Add ipq9574 NSSCC clock and reset definitions
+  clk: qcom: Add NSS clock Controller driver for IPQ9574
+  arm64: dts: qcom: ipq9574: Add support for nsscc node
+  arm64: defconfig: Build NSS Clock Controller driver for IPQ9574
+
+ .../bindings/clock/qcom,ipq9574-nsscc.yaml    |   69 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   39 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c              |   10 +
+ drivers/clk/qcom/clk-alpha-pll.h              |    1 +
+ drivers/clk/qcom/gcc-ipq9574.c                |   83 +-
+ drivers/clk/qcom/nsscc-ipq9574.c              | 3068 +++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |    1 +
+ .../dt-bindings/clock/qcom,ipq9574-nsscc.h    |  152 +
+ .../dt-bindings/reset/qcom,ipq9574-nsscc.h    |  134 +
+ 12 files changed, 3511 insertions(+), 55 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+ create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+ create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
 
 
+base-commit: 596764183be8ebb13352b281a442a1f1151c9b06
 -- 
-With best wishes
-Dmitry
+2.34.1
+
