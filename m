@@ -1,121 +1,189 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9896A334
-	for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 13:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E126A00C
+	for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 13:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706619712; cv=none; b=gef/pUWOIwxXl5Q6UkZ5pDSqWzKBzg3PteZY4j8wRKHYW/MMXPCcGsT0SKQ9VdurUKnWZ/N+dhCQoMO4RLbsZc/7z8Fq6nGsPexeEAU8NSgofiybatYFvjsPxd76uL5LfTyov8nW4E3EWk2dt9AC+PkepFYY4UHXp/Ui0ZeYvmw=
+	t=1706620313; cv=none; b=MNb8uRaYTMPvTOLss713lsEDUy8ouEcQTis3DYjho9H+tkEujXCQUQT45edGDrk1gPuDFp8Vnp8rM/xrALH3vS0pa7ZVWrKJa+KPaYtQv57/V7YKxFNoZnXmk6rpov05YW57cUwLRvMGGWLtjMvR1ya91vGSE/JADs4bYTDHg9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706619712; c=relaxed/simple;
-	bh=A1ipchrz8gQoxwvqpWNrh58UUatxvyP9Y8B8dG0FZR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUVxD235i77wW3f1mp8mmuMbJqAccSbF6RrcDczf1UOMXEnwwXHELn265dnu2p60FN1lFlbp48CHX8x8ur4wAsIcm1/R1f1ReauTdhuEEvHRCnLsFJNe/U3g2ipACJloKnNYWWwAxRlRUGhYhDNNgwBqSuFhdx+XCu9hDGjLSyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1rUnjk-0004RW-00; Tue, 30 Jan 2024 14:01:12 +0100
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1rUnji-003Phu-6h; Tue, 30 Jan 2024 14:01:10 +0100
-Received: from pengutronix.de (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id B2018281751;
-	Tue, 30 Jan 2024 13:01:09 +0000 (UTC)
-Date: Tue, 30 Jan 2024 14:01:09 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Wolfgang Grandegger <wg@grandegger.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] dt-bindings: can: mpfs: add missing required clock
-Message-ID: <20240130-fragrance-disinfect-22cc1911bf48-mkl@pengutronix.de>
-References: <20240122-catty-roast-d3625dbb02fe@spud>
- <20240122-breeder-lying-0d3668d98886@spud>
- <20240122-surely-crimp-ba4a8c55106d-mkl@pengutronix.de>
- <20240122-cruelly-dainty-002081f0beb2@spud>
- <20240122-smokeless-ion-63e4148c22e5-mkl@pengutronix.de>
- <20240122-uncoated-cherub-a29cba1c0035@spud>
- <20240122-pogo-reputable-b1d06ae1f1f1-mkl@pengutronix.de>
- <20240130-narrow-lyricism-8b25baac7bb2@wendy>
+	s=arc-20240116; t=1706620313; c=relaxed/simple;
+	bh=fdsM/RQGHBnGYEyW8iJ1J7nomMb3JP2gqVVCMYkIC8U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E0wXFjoKYOZxf3rmQ/k97U01ifrYYXYXO744JxVUIDLTuopquWfajXdRWMFJ4/crbbjkPH8K4c1nKKlAZTeRJ1+PmLQxLvGQbMOoYFmwhM0/I0m/PJ5slVrw8K5+iBnD7vq/uJEUnD0efMW0KXKniU3M/xdyZBImR8oVZ9PZbqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c9KmOoLe; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c9KmOoLe"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dc25e12cc63so4268883276.0
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 05:11:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706620310; x=1707225110; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0XyRMME8pDr6DjGIF4jnfi9KerBGa4nDHBbrYJypaqI=;
+        b=c9KmOoLeJ4q66kthJuKqgJYyv+BhlYmzp/N74YURr7Otx9tPfBfEzqPK5WJWUZYvZc
+         lPlEW10tZT3HKUH80A6wwMIMMbnd00Pn5GH/tnhOh8zYgVYhN8ZlXAWSAVEZe+7GnDV/
+         UMce7tGhf2bqvUkVirUpQMq+fu0xcPfPpv0eMUWkEl46qQ4r5FxYS408PNh4o3S+XZNc
+         XlxLsIcNxB4aaQBu99YFlso4D6P2fkN9SYBCkWRxZ+Nqtn7AwOlNEsfj+RpA8n8fp0At
+         CrIFuEkn7sSgYTKFLRI+VlzDWzkvoK28cUEFRx4k5Fe0SsF4Q8h3RW/K5SaiF0NjUART
+         iejA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706620310; x=1707225110;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0XyRMME8pDr6DjGIF4jnfi9KerBGa4nDHBbrYJypaqI=;
+        b=AtEsFE+/hBKQB8nGeZTlJI8AwHzy/r1makkoMonbDsHFYqHsSPs358wjWXUqwrLsLZ
+         apujbpqPIXjJ7Ft9+bpSCn8RDDM5AuuRmXuqm8t2RcGLTLJ7hS+Dtq9neR9jGFHfJnmC
+         GFVJ6sQSGLyUoJ3KgcNtETZ0ZtbtFteyxKu1ESSJpmLqTa0xcAnNiYiI2kh9XmfVItnW
+         IPbtNyzOfTaYMo/weOCgLarMlAkBS59EUobglTUdW002TkWKBfkvG6CXE983ChbWhFu3
+         idDhYrdjQuTT4qv5SsYfZ7vE8XJWB19rnRGM/4eTANxX2cNTv8VowCgyU1jUdwxLHlDH
+         zD1w==
+X-Gm-Message-State: AOJu0Yz4ELVZrU1xBFWIcTozCfCjJK4YlkUO/w2mwuxi3++aNTkumJNn
+	dGUNFXkb63MjvSlVbxdBgmSH739tjMIw9dIbQbxrBXOEOMtwoSU7/Q3qveR22T6UgobgE3Xvt7F
+	/gZWopLx/1GR3KPzz7UiQIYGjbRMzLZ23jg496A==
+X-Google-Smtp-Source: AGHT+IGVYj01HQ2hq/JifyqWz/KVsf0C8m1IL/EZ4Kf9P5M0gEI5mykk+pshRrPwk2n8TLJtoS1gjHQYx7sx4HZyEhw=
+X-Received: by 2002:a25:2d13:0:b0:dc6:18ba:9b51 with SMTP id
+ t19-20020a252d13000000b00dc618ba9b51mr673573ybt.41.1706620309734; Tue, 30 Jan
+ 2024 05:11:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f4vw5ea6lcxcee4m"
-Content-Disposition: inline
-In-Reply-To: <20240130-narrow-lyricism-8b25baac7bb2@wendy>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <cover.1706194617.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1706194617.git.geert+renesas@glider.be>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 30 Jan 2024 14:11:14 +0100
+Message-ID: <CAPDyKFpxaEUHvKKb+spxV6HG2P2gLx5qM1mLPxJie+PdkmTL4w@mail.gmail.com>
+Subject: Re: [PATCH v2 00/15] arm64: renesas: Add R-Car V4M and Gray Hawk
+ Single support
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Cong Dang <cong.dang.xn@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
+	Hai Pham <hai.pham.ud@renesas.com>, Linh Phung <linh.phung.jy@renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+On Thu, 25 Jan 2024 at 16:34, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+>         Hi all,
+>
+> This patch series adds initial support for the Renesas R-Car V4M
+> (R8A779G0) SoC and the Renesas Gray Hawk Single development board.
+>
+> As both driver code and DTS have hard dependencies on DT binding
+> definitions, most patches in this series are supposed to go in through
+> the renesas-devel and/or renesas-clk trees, using a shared branch for DT
+> binding definitions, as usual.  For the PM domain patches (03, 04, 09),
+> Ulf already offered to apply these to his pmdomain tree, and provide an
+> immutable "dt" branch, to be pulled in my renesas-devel tree.
+
+Patch 3,4 and 9 (I dropped the copyright line in patch9, as pointed
+out by Niklas) applied for next, thanks!
+
+Patch 3,4 are also available at the immutable dt branch for you to pull in.
+
+Kind regards
+Uffe
 
 
---f4vw5ea6lcxcee4m
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 30.01.2024 12:11:44, Conor Dooley wrote:
-> On Mon, Jan 22, 2024 at 04:31:32PM +0100, Marc Kleine-Budde wrote:
-> > On 22.01.2024 14:56:09, Conor Dooley wrote:
->=20
-> > > I think we already had this discussion on v1, where I said that the
-> > > binding requires the clocks to be in that order, regardless of whether
-> > > or not clock-names is provided. You feel more strongly about it than I
-> > > do, so I will add them when I get around to sending a v3.
-> >=20
-> > Yes, this discussion sounded very familiar to me, never mind. Keep it as
-> > is, and let's get this binding and the CAN driver upstream!
->=20
-> BTW, I didn't see an ack on this nor do I see it in linux-next (yet).
-> Are you expecting the patch to go with the rest via the clock tree,
-> via the DT tree or will you be taking it with CAN stuff via netdev?
->=20
-> I can resend this one patch with a netdev appropriate subject prefix
-> if you like.
-
-Feel free to take the whole series via the clock tree.
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---f4vw5ea6lcxcee4m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEDs2BvajyNKlf9TJQvlAcSiqKBOgFAmW48xIACgkQvlAcSiqK
-BOh05ggAtrkirkvFxfCZmmZ3aogx7JpH2jGUD/uWcu+/to8Esew52WV5+k+a3PFY
-yxF+BD27a4/qjz5d6+KlUy58RrTj18KJIT0PoLwfFTXPUrdqBVD7MYok3u3eWVkR
-Y5CIFBKQTCVBOCsnOPaEjrI6SIqpgJedEJeEhRm8hObb5a9EZR82GkYW2NSojYZj
-8bhFtoSuUlgZ5Qiqo1DIZct1verZ0pTjbFsDTtGzlrOKQ5zxalbZKgr+Qpofpbfz
-aSBQCch6ZW+m3fxuJP4S6V6NQIwI14HQIbR1xysbciRy5hn4I+PczwLPhHx+VgQr
-5nBdDcwbEHBxlsqMSPbp/65xsStnYw==
-=foUg
------END PGP SIGNATURE-----
-
---f4vw5ea6lcxcee4m--
+>
+> Changes compared to v1[1]:
+>   - Add Acked-by, Reviewed-by,
+>   - Add vendor-prefix to DT binding definition header file names and
+>     update include guards,
+>   - Add "board" to compatible comment,
+>   - Add missing CP core clock,
+>   - Add SoC name to top-level comment.
+>
+> For testing, this series can be found at
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/v4m-gray-hawk-single-v2
+>
+> Thanks for your comments!
+>
+> [1] "[PATCH 00/15] arm64: renesas: Add R-Car V4M and Gray Hawk Single
+>     support"
+>     https://lore.kernel.org/linux-renesas-soc/cover.1704726960.git.geert+renesas@glider.be
+>
+> Cong Dang (1):
+>   clk: renesas: cpg-mssr: Add support for R-Car V4M
+>
+> Duy Nguyen (6):
+>   dt-bindings: clock: Add R8A779H0 V4M CPG Core Clock Definitions
+>   dt-bindings: power: renesas,rcar-sysc: Document R-Car V4M support
+>   dt-bindings: power: Add r8a779h0 SYSC power domain definitions
+>   pmdomain: renesas: r8a779h0-sysc: Add r8a779h0 support
+>   soc: renesas: Identify R-Car V4M
+>   soc: renesas: rcar-rst: Add support for R-Car V4M
+>
+> Geert Uytterhoeven (6):
+>   dt-bindings: clock: renesas,cpg-mssr: Document R-Car V4M support
+>   dt-bindings: reset: renesas,rst: Document R-Car V4M support
+>   dt-bindings: soc: renesas: Document R-Car V4M Gray Hawk Single
+>   clk: renesas: rcar-gen4: Add support for FRQCRC1
+>   soc: renesas: Introduce ARCH_RCAR_GEN4
+>   arm64: dts: renesas: Add Gray Hawk Single board support
+>
+> Hai Pham (1):
+>   arm64: dts: renesas: Add Renesas R8A779H0 SoC support
+>
+> Linh Phung (1):
+>   arm64: defconfig: Enable R8A779H0 SoC
+>
+>  .../bindings/clock/renesas,cpg-mssr.yaml      |   1 +
+>  .../bindings/power/renesas,rcar-sysc.yaml     |   1 +
+>  .../bindings/reset/renesas,rst.yaml           |   1 +
+>  .../bindings/soc/renesas/renesas.yaml         |   6 +
+>  arch/arm64/boot/dts/renesas/Makefile          |   2 +
+>  .../dts/renesas/r8a779h0-gray-hawk-single.dts |  52 ++++
+>  arch/arm64/boot/dts/renesas/r8a779h0.dtsi     | 121 +++++++++
+>  arch/arm64/configs/defconfig                  |   1 +
+>  drivers/clk/renesas/Kconfig                   |   5 +
+>  drivers/clk/renesas/Makefile                  |   1 +
+>  drivers/clk/renesas/r8a779h0-cpg-mssr.c       | 241 ++++++++++++++++++
+>  drivers/clk/renesas/rcar-gen4-cpg.c           |  10 +-
+>  drivers/clk/renesas/renesas-cpg-mssr.c        |   6 +
+>  drivers/clk/renesas/renesas-cpg-mssr.h        |   1 +
+>  drivers/pmdomain/renesas/Kconfig              |   4 +
+>  drivers/pmdomain/renesas/Makefile             |   1 +
+>  drivers/pmdomain/renesas/r8a779h0-sysc.c      |  55 ++++
+>  drivers/pmdomain/renesas/rcar-gen4-sysc.c     |   3 +
+>  drivers/pmdomain/renesas/rcar-gen4-sysc.h     |   1 +
+>  drivers/soc/renesas/Kconfig                   |  17 +-
+>  drivers/soc/renesas/rcar-rst.c                |   1 +
+>  drivers/soc/renesas/renesas-soc.c             |   8 +
+>  .../clock/renesas,r8a779h0-cpg-mssr.h         |  96 +++++++
+>  .../dt-bindings/power/renesas,r8a779h0-sysc.h |  49 ++++
+>  24 files changed, 679 insertions(+), 5 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
+>  create mode 100644 arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+>  create mode 100644 drivers/clk/renesas/r8a779h0-cpg-mssr.c
+>  create mode 100644 drivers/pmdomain/renesas/r8a779h0-sysc.c
+>  create mode 100644 include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
+>  create mode 100644 include/dt-bindings/power/renesas,r8a779h0-sysc.h
+>
+> --
+> 2.34.1
+>
+> Gr{oetje,eeting}s,
+>
+>                                                 Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                                             -- Linus Torvalds
