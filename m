@@ -1,217 +1,156 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C90762D6;
-	Tue, 30 Jan 2024 23:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EAB7EF0B
+	for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 23:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706655632; cv=none; b=ddD0i6ZkLmbnydOJsTmdFe1kILvzTcgXq5cGaJTT1cjKAafSqLHCuGrdPgzFwWI4cXvyQSjOzKZaFqaX7MBFx7HR/rRe3oQ1YoL2LXW6Yybv8SvBvkei0FUU/vVNzshgZ0czcL1Amm6JlqI4pwcAcqeqyCxIlwWt3yJV0Qm1rNo=
+	t=1706655706; cv=none; b=ezDDYG0Ths9GwTo1nQ8LCprwYmlVPLcNva5nNQGdGjOuaMSp9G0kBhHARq+O7rMzvz9LG6dvdKUUeXl4AuWtI/icPCoL855txhQxq7nxix2HB3csAs16nPeQRQti5yNo944GbFlZIyoH2cmCKKrwZiROS8rsAatsgATq32qK0Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706655632; c=relaxed/simple;
-	bh=muw5hlCB+CasqSg6EzDmDjc7eOdhLxEwSKaoqUd4dR4=;
+	s=arc-20240116; t=1706655706; c=relaxed/simple;
+	bh=BhXfGyAPv4SiBtMKJ3yf878gVc2hoptHT3pniLDIM20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eusaVSoWIO6a2tkNR9RAFm+a3QkHLpfLkz3hgSRjgAKCPPN1DxwZlq5fRgNjbhk56xPBTOAI/4gfuj6S7dpvtVPtr1RZOdjbI781oFF0LCerOdMTrzYxWQRMd9TR9gkUTR8ZELzsxURMaXlr784ugNNSzLMsrv9W18NdCX/re3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evV4oyD6; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=jaM42YV7Gp5YW/ZBW4JbdBS5QGNLBDPC1/UGHiaOuyNqQIrUvgolHZNC+NI6ZiVH0YXCpSuBbGZh3WDTxbBYgrFAdyn89FckTG3PhvXpEf/KhdJTBfkJyojCrloWkxbnPnxGyFUCNixgalRWD+4KldihDRzS9AIdC19C2fvfzbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RpRd5lvT; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evV4oyD6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0336C43390;
-	Tue, 30 Jan 2024 23:00:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706655631;
-	bh=muw5hlCB+CasqSg6EzDmDjc7eOdhLxEwSKaoqUd4dR4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=evV4oyD679f/3vkVOnkjPsx9XeFWCaj4l4D6EJKwhtHsaPCS10deshB7MLDUNdoW4
-	 F0hTde+heLpMvspfTW3jJlqzoYpT6oSvucqlBR5lzb1q3snx9NZShRu/t5srHdRwTp
-	 SJ6J2ETUjaigKWv28CWhYN2nJLUXx3PenkQ49X4pmPMX4RNFZPkqIfTfuCsKLzDuES
-	 4LJHJ3DfYJ5Le8EEEmTMD+iZOrZGwoSWIVCD14gbxe6zSBh6HvIxlDL1TWEcrcP013
-	 DwBcN4VQiQHADNrDf3E6bxSj5H+qlwPED7FeAWV+hdpWhTiFxIdv9qCp78cI7y8quI
-	 UZfimX8GCUG+w==
-Date: Tue, 30 Jan 2024 17:00:28 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Gross <agross@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
-	Vikash Garodia <quic_vgarodia@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v4 3/5] clk: qcom: gdsc: Add set and get hwmode callbacks
- to switch GDSC mode
-Message-ID: <qbqsvxmnl2tuansxzr6u4vqxemw4dzrsvz2ill6qnyxdp5gtji@lsemt4asmsax>
-References: <20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org>
- <20240122-gdsc-hwctrl-v4-3-9061e8a7aa07@linaro.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RpRd5lvT"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1d8d08f9454so29085ad.1
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 15:01:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1706655704; x=1707260504; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=InqSXSTpbT1eiS6unjbH+Gd3bGvOKOKvltW4HzECThc=;
+        b=RpRd5lvTS00wy3JtmBLu9dGD33xQ6OX28VGFno/GYwlLFxiLuQIkSCk0GMHBNkZVWY
+         VOUBK2wbqtwbt/1DQQAd0h37ksNJRlAW0BXFCENY8yUlLx405/7aIOwP0HwWADBv6ATm
+         +/fb11FDGSXR1tadTGuhoKPHajzkGNjR5rb4UOIg7dlLhZTJXdpDcI8WdL4R1eo5+XbU
+         0VFyToz6gWr9sP9VZMXVykIKxgcoVbt9rdzpHs2yxSX5aLaXK2Sz8+6RdWO1vXz9TaEI
+         25HaovjgmSdPOCeddIFnsJHneNDXJMATFcjaSxYzZo4T6v9rbAkyn1ThlH3ebBHI716C
+         /GVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706655704; x=1707260504;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=InqSXSTpbT1eiS6unjbH+Gd3bGvOKOKvltW4HzECThc=;
+        b=UZNhlRZVWPM1rsd8Bs1Ket65HWbGWbmP8Kev/xYbmLqFm1PdfnrBKRzyj/GDDhNCS1
+         U5xueq33ReaYLd9BInA19UKTEfPAwK2mgArIowJFzaizXQqng7lsHG3C/CPHyNBFAn8h
+         vw4H9YTs+ynFQojAg2qCHhVt+c80K/6o+sd3Dsw/XUvANnHUE2wx2J1/C2h0Xgwhs97t
+         qTlaN79QDp7XHpIflLVvWpJ/L/aVlqJ9Vd/cWBntHxfDx7BoLFr1kWnX6CZrcx492Fza
+         jKPG2LyZKuoKHgNawMpKeU9VDLoWul9H+ax12yZzCe2Uw8PoUR2GP7Vkc5zQC4gqVD7D
+         FJCg==
+X-Gm-Message-State: AOJu0YwyDG8Q37W73T9ON2riJ11Ah0Knm2MvP55RsKVnh/AbsYcKRe94
+	z4yET/X2Uq0k291YZ2HjVHXTd+vl8HFH6+y12OH9wAIH+Aogz3ks2rkQe74xQw==
+X-Google-Smtp-Source: AGHT+IHHlfMmJN3TbbAqe9NgDhqGhzDl2uuy1MggUp8v8ebeUy6kOFXJOYClhwrKxKJuMakJW6TItQ==
+X-Received: by 2002:a17:902:c943:b0:1d5:78d5:760b with SMTP id i3-20020a170902c94300b001d578d5760bmr389018pla.10.1706655703427;
+        Tue, 30 Jan 2024 15:01:43 -0800 (PST)
+Received: from google.com (69.8.247.35.bc.googleusercontent.com. [35.247.8.69])
+        by smtp.gmail.com with ESMTPSA id iz3-20020a170902ef8300b001d8e974ed2fsm3827918plb.284.2024.01.30.15.01.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jan 2024 15:01:42 -0800 (PST)
+Date: Tue, 30 Jan 2024 15:01:39 -0800
+From: William McVicker <willmcvicker@google.com>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com, tudor.ambarus@linaro.org,
+	semen.protsenko@linaro.org, alim.akhtar@samsung.com,
+	s.nawrocki@samsung.com, tomasz.figa@gmail.com,
+	cw00.choi@samsung.com, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 6/7] arm64: dts: exynos: gs101: define USI12 with I2C
+ configuration
+Message-ID: <Zbl_01J_T6FoNZPy@google.com>
+References: <20240129174703.1175426-1-andre.draszik@linaro.org>
+ <20240129174703.1175426-7-andre.draszik@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240122-gdsc-hwctrl-v4-3-9061e8a7aa07@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240129174703.1175426-7-andre.draszik@linaro.org>
 
-On Mon, Jan 22, 2024 at 10:47:03AM +0200, Abel Vesa wrote:
-> From: Jagadeesh Kona <quic_jkona@quicinc.com>
+Hi Andre,
+
+On 01/29/2024, André Draszik wrote:
+> On the gs101-oriole board, i2c bus 12 has various USB-related
+> controllers attached to it.
 > 
-> Add support for set and get hwmode callbacks to switch the GDSC between
-> SW and HW modes. Currently, the GDSC is moved to HW control mode
-> using HW_CTRL flag and if this flag is present, GDSC is moved to HW
-> mode as part of GDSC enable itself. The intention is to keep the
-> HW_CTRL flag functionality as is, since many older chipsets still use
-> this flag.
+> Note the selection of the USI protocol is intentionally left for the
+> board dts file.
 > 
-
-This provides insight into why we end up with both HW_CTRL and
-HW_CTRL_TRIGGER. This doesn't describe why this change is needed, but
-rather just an implementation detail.
-
-> But consumer drivers also require the GDSC mode to be switched dynamically
-> at runtime based on requirement for certain usecases. Some of these
-> usecases are switching the GDSC to SW mode to keep it ON during the
-> enablement of clocks that are dependent on GDSC and while programming
-> certain configurations that require GDSC to be ON. Introduce a new
-> HW_CTRL_TRIGGER flag to register the set_hwmode_dev and get_hwmode_dev
-> callbacks which allows the consumer drivers to switch the GDSC back and
-> forth between HW/SW modes dynamically at runtime using new
-> dev_pm_genpd_set_hwmode API.
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 > 
-
-This still expresses the need for HW_CTRL_TRIGGER in terms of "some
-drivers need for some use case". We don't need these many words to say:
-"Introduce HW_CTRL_TRIGGER for client drivers that need it."
-
-
-I find that it would be useful to document that every time a GDSC is
-turned on the mode will be switched to SW...
-
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
->  drivers/clk/qcom/gdsc.c | 54 +++++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/qcom/gdsc.h |  1 +
->  2 files changed, 55 insertions(+)
+> v2:
+> * reorder pinctrl-0 & pinctrl-names
+> * collect Reviewed-by: tags
+> ---
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 30 ++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
 > 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index 5358e28122ab..71626eb20101 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -363,6 +363,56 @@ static int gdsc_disable(struct generic_pm_domain *domain)
->  	return 0;
->  }
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> index e1bcf490309a..9876ecae0ad8 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> @@ -451,6 +451,36 @@ pinctrl_peric1: pinctrl@10c40000 {
+>  			interrupts = <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH 0>;
+>  		};
 >  
-> +static int gdsc_set_hwmode(struct generic_pm_domain *domain, struct device *dev, bool mode)
-> +{
-> +	struct gdsc *sc = domain_to_gdsc(domain);
-> +	u32 val;
-> +	int ret;
+> +		usi12: usi@10d500c0 {
+> +			compatible = "google,gs101-usi",
+> +				     "samsung,exynos850-usi";
+> +			reg = <0x10d500c0 0x20>;
+> +			ranges;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_5>,
+> +				 <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_5>;
+> +			clock-names = "pclk", "ipclk";
+> +			samsung,sysreg = <&sysreg_peric1 0x1010>;
+> +			samsung,mode = <USI_V2_NONE>;
+> +			status = "disabled";
 > +
-> +	if (sc->rsupply && !regulator_is_enabled(sc->rsupply)) {
+> +			hsi2c_12: i2c@10d50000 {
+> +				compatible = "google,gs101-hsi2c",
+> +					     "samsung,exynosautov9-hsi2c";
+> +				reg = <0x10d50000 0xc0>;
+> +				interrupts = <GIC_SPI 655 IRQ_TYPE_LEVEL_HIGH 0>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				pinctrl-0 = <&hsi2c12_bus>;
+> +				pinctrl-names = "default";
+> +				clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_5>,
+> +					 <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_5>;
+> +				clock-names = "hsi2c", "hsi2c_pclk";
+> +				status = "disabled";
+> +			};
 
-Why is this a restriction only for GDSCs supplied by regulators? I don't
-find anything preventing this API from being called on GDSCs supplied by
-other genpd instances.
+Can you include the i2c aliases for hsi2c_12 and hsi2c_8 (added by Tudor
+previously)? This will ensure userspace compatibility with the existing Pixel
+userspace builds.
 
-Also note that regulator_is_enabled() is racy, in that it tells us if
-the regulator is currently turned on, not if we're the one holding that
-vote. As such this might change at any moment - and hence shouldn't be
-significant here.
+Feel free to do so in a follow-up patch, but I'd prefer the aliases get
+included in the same kernel release that these devices were added in (v6.9).
 
-> +		pr_err("Cannot set mode while parent is disabled\n");
-> +		return -EIO;
-> +	}
+Thanks,
+Will
+
+> +		};
 > +
-> +	ret = gdsc_hwctrl(sc, mode);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Wait for 1usec for mode transition to properly complete */
-> +	udelay(1);
-> +
-> +	if (!mode) {
-> +		ret = regmap_read(sc->regmap, sc->gdscr, &val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		/*
-> +		 * While switching from HW to SW mode, if GDSC is in enabled
-> +		 * state, poll for GDSC to complete the power up.
-> +		 */
-
-I had to give this some thought, to conclude that this is relevant if HW
-has the GDSC disabled and we're switching to SW - which would then
-enable it. I think this comment can be improved slightly, to save the
-reader the need for figuring out this on their own.
-
-> +		if (!(val & SW_COLLAPSE_MASK))
-
-This not being true, would imply that gdsc_disable() has been called
-already, in which case there's no guarantee that the parent still
-supplies power.
-
-In the introduced API power on and hw control are orthogonal states, but
-not so in this implementation. This need to made clear, to reduce future
-surprises.
-
-> +			return gdsc_poll_status(sc, GDSC_ON);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static bool gdsc_get_hwmode(struct generic_pm_domain *domain, struct device *dev)
-> +{
-> +	struct gdsc *sc = domain_to_gdsc(domain);
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret = regmap_read(sc->regmap, sc->gdscr, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (val & HW_CONTROL_MASK)
-> +		return true;
-> +
-> +	return false;
-
-return !!(val & HW_CONTROL_MASK);
-
-Regards,
-Bjorn
-
-> +}
-> +
->  static int gdsc_init(struct gdsc *sc)
->  {
->  	u32 mask, val;
-> @@ -451,6 +501,10 @@ static int gdsc_init(struct gdsc *sc)
->  		sc->pd.power_off = gdsc_disable;
->  	if (!sc->pd.power_on)
->  		sc->pd.power_on = gdsc_enable;
-> +	if (sc->flags & HW_CTRL_TRIGGER) {
-> +		sc->pd.set_hwmode_dev = gdsc_set_hwmode;
-> +		sc->pd.get_hwmode_dev = gdsc_get_hwmode;
-> +	}
->  
->  	ret = pm_genpd_init(&sc->pd, NULL, !on);
->  	if (ret)
-> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> index 803512688336..1e2779b823d1 100644
-> --- a/drivers/clk/qcom/gdsc.h
-> +++ b/drivers/clk/qcom/gdsc.h
-> @@ -67,6 +67,7 @@ struct gdsc {
->  #define ALWAYS_ON	BIT(6)
->  #define RETAIN_FF_ENABLE	BIT(7)
->  #define NO_RET_PERIPH	BIT(8)
-> +#define HW_CTRL_TRIGGER	BIT(9)
->  	struct reset_controller_dev	*rcdev;
->  	unsigned int			*resets;
->  	unsigned int			reset_count;
-> 
+>  		pinctrl_hsi1: pinctrl@11840000 {
+>  			compatible = "google,gs101-pinctrl";
+>  			reg = <0x11840000 0x00001000>;
 > -- 
-> 2.34.1
+> 2.43.0.429.g432eaa2c6b-goog
 > 
