@@ -1,138 +1,103 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE0D605C1
-	for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 09:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6759159B49
+	for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 09:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706605952; cv=none; b=XdutGtd27uzJBkcibUcaDa8x5hmOpJ8eLvrxrl8u7GetxDboyI5204/QwbcdrExLmgYcfusGQdzQhvnacMK2IWBoeB2D7ks09yUxuln4EhGQVCmzazYhok70YodkBgvFH44ae5sgdSAxMAsW+ikfFnJsgU8uahu6sAQaBwq92BE=
+	t=1706607087; cv=none; b=caWxUN8tPMZrmzvdJFnXBdNbX2CL5ew7Pq8P3+BaaKO4dwGxRFvjHRgQS2YA+RSLHwUf6/MwUr3EcdCjmMYkFTLzIfMO66Nrr9UCPXW9tNkhwE0ncMZ6mwbbwX7JykgvThNtj8ZkjAk6oYhpeOVM66kxcgdCGo+cQfy6cPHd20g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706605952; c=relaxed/simple;
-	bh=rKhHZGSb+Y6aNJ+cXifm6W5LIoIisj9pyI6bNCYAugc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gaUnFE9SS1bkPhv9Q6GWcyeYAmDE6L1mmOO7hFqeDzLRYLuwlevuf7zzcaoKksyIwkgEXdYaiAIvbQIXwp0bdk5GF02372dTgUisAJLXWEJ8BV/N72KGfSrIKidLInLj5kPobTBCGwawKzp3DSZcEiCNuqEY6WgERLWblWLAug4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jvCc+JWa; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1706607087; c=relaxed/simple;
+	bh=XYx0s0X4N57mkCoKTn7uq1S0HzyLcLKx4l9yG2NJoTw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D0faTy9XME81qjnPLMAzr2Mg40V4Xrf9QWick0d074LkgUOH4kPq3kz4UxYydWTjOfNUSEpJp2kHZa9xHrKcQOcs9WlzvplcasQKETC4A4WtqSCGrR0uVnuTwHzXVxpepxQEgeNxAIlRDKTmvEixR63xFiu0+aMe/XIHO/cKE28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FSNoKLvy; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jvCc+JWa"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a354fc17f24so305509566b.0
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 01:12:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FSNoKLvy"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51114557c77so2000595e87.0
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 01:31:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706605948; x=1707210748; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dIk06W/m1toDs3ZlWZXYAsOHgljm2ZVOiVWudPYtTEg=;
-        b=jvCc+JWat5DDimHXr1Yowksm8Qho2qnuIVHpjEkrMg5msithX5x+h/8OnPKIReulG7
-         QzA+TEquRGYh5tFzqEhVgfhSerfu39i9qxdBj7hrYQMgeCfE8l2kBPL79c7HNxu31c95
-         wuDY2LiK/scSwAG+fNbF7oFr7DJRtc2Aru0l4rA/WfXnE8MZ0DQXT6s2Vq6Lgh0DUrvd
-         3QYLNHQmuq9kKPmNYi5g/5E2a/YuGrSV1uxPir24DbKCy9qkI47u+J3PflLYtLZaKyS9
-         V4JTnNgB4QGWKCDQUrXKK0AKAgiE9tXHJmAtISb26Zyz3x9opxTa0L63TOjGaysYwXX6
-         s08A==
+        d=linaro.org; s=google; t=1706607083; x=1707211883; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XYx0s0X4N57mkCoKTn7uq1S0HzyLcLKx4l9yG2NJoTw=;
+        b=FSNoKLvye6bBhZZNYpBh/KbwH7uMI5bx7ZbW0Mn/GclqE5dUexRET+cs0kHa5efLvS
+         1C0EQIpnfAIAWAfyvLTy3k3u791A8woTVIGGZaRklDYlEmAWZ9xroApUcvdfGGDNG/Kx
+         uqqS2h9w0dAoc1IDVwxw+0DOSJxxi1xebKNN3lhVEiv46jqi4WTwKDCorfJAiTX3xgMT
+         Xpsq7NcY4/2NVaQ66KU0dwd/7ldVubWr0GJYzJXOkgfpspbq4YxRCNQeDftrDWS5Lovi
+         MNalSZMtqkO28hrFqr9uV0E6RX2GP5AXT3HYK+r5ApxYbSN4v+0u54g6QD4xefIIzMB8
+         3NDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706605948; x=1707210748;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dIk06W/m1toDs3ZlWZXYAsOHgljm2ZVOiVWudPYtTEg=;
-        b=ISQBAv/6mak25Syn8MENmCah6hz6xb76S3AJ0fHxck0NfGHcOA+v+QpSXysKnShJEC
-         YugdJZVhkIVIghUw0dD2+lhj3vFSEDJ3vdS3DpCa5EwrHC8JGyQwMx3Y/SJR2K9PZPTa
-         pVBV4IMDI+RR9kEUbiWLgpZn6biZWTFWDNDKwBdSOU7v5o49Cr9cHgLbML/TBznAWbDk
-         klwae3nv0wOEvNnpNN2BLoWnG5uOAec1XSFE0WRj8sVQ5MAsJ4EI5bQAWzJ3Pne/STmK
-         HBUOjhKoptQDH4Mb4k/mMWLDmXDS56o8b85fscrIpePo4nSwKmq9vx85i1UAA2dcDDGm
-         wtxQ==
-X-Gm-Message-State: AOJu0YwKGnhPr2obWFFFsl2hCYRdsaoPFlrKpVk2qezlE9eXbuNlJv2d
-	mzs62dGqjGttipF3yx6/BUc8iq8jp686W0TuOCjs8RXNg9zjdbt+KFlTXIbL5O0=
-X-Google-Smtp-Source: AGHT+IGyVMf2OkueT1e2jkuy8V6uo08rZuNEronGpcRFfv+SAzH/npoMxojClmBxEorK0G3C/NJ1Jg==
-X-Received: by 2002:a17:906:e53:b0:a31:1b72:9efd with SMTP id q19-20020a1709060e5300b00a311b729efdmr6023698eji.66.1706605948445;
-        Tue, 30 Jan 2024 01:12:28 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id ss6-20020a170907c00600b00a3535b76c42sm3958064ejc.15.2024.01.30.01.12.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jan 2024 01:12:28 -0800 (PST)
-Message-ID: <338efca2-d1fe-4adb-8275-5f570ab445d8@linaro.org>
-Date: Tue, 30 Jan 2024 09:12:26 +0000
+        d=1e100.net; s=20230601; t=1706607083; x=1707211883;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XYx0s0X4N57mkCoKTn7uq1S0HzyLcLKx4l9yG2NJoTw=;
+        b=FF947yxpdUt2rip9LsFjMA1T5sw4BfTlEaHvPERdcSOfUuZXi56mDTU4K5GcjWR8z/
+         FuA4SWRu8pISC+yCr9kbfw01rs2eryG/LLuq3ZSLANslSgGUjPStqc9BSHQrfw9IYnt9
+         QNlRrbGalHGT9vgTZMbl/4J4huSv0Hjjl/Nv66mJ9HS8Cm1YEz0AyG4JcwvElVVQjd4R
+         qzBNzAgkN+7Dvqd+V+sSvm3X75FK5aCDX2kN5TxlumHYNREpnQ2680XVoVlRsWofk7Vp
+         ZpOeAJXZ7YguKgsqbKTVzfP01sxZDGLhGnmfywLJZo6TOjJIjiKj0m7PAXaTnA85DMBC
+         6slQ==
+X-Gm-Message-State: AOJu0YwVBzKEDLgUbA043km/iC08pCUd6A6K8XuMj/7VNjKQu02T9cYj
+	PvPsY8CVZ7AOpbNh36q6c892wpq387jCPLFlW+zUTCyIKu1+iRcjotTtxQsQOS4=
+X-Google-Smtp-Source: AGHT+IH73ECOedOmbLboh50bSkCcm9bWbbIIdQpZY7C2yF6U75+RErqJaRRYI5LoY3XIRMWTRBDv2A==
+X-Received: by 2002:ac2:4208:0:b0:510:293e:83b with SMTP id y8-20020ac24208000000b00510293e083bmr4843330lfh.18.1706607083413;
+        Tue, 30 Jan 2024 01:31:23 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id l22-20020a05600c1d1600b0040ef95e1c78sm4452775wms.3.2024.01.30.01.31.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jan 2024 01:31:23 -0800 (PST)
+Message-ID: <bbaab3addf958bc1f484a20ee0bdb65af05cf5da.camel@linaro.org>
+Subject: Re: [PATCH 5/5] clk: samsung: gs101: don't mark non-essential
+ clocks as critical
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: peter.griffin@linaro.org, robh+dt@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-team@android.com,
+ tudor.ambarus@linaro.org,  willmcvicker@google.com,
+ alim.akhtar@samsung.com, s.nawrocki@samsung.com,  tomasz.figa@gmail.com,
+ cw00.choi@samsung.com, mturquette@baylibre.com,  sboyd@kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org,  devicetree@vger.kernel.org
+Date: Tue, 30 Jan 2024 09:31:22 +0000
+In-Reply-To: <CAPLW+4kSka+twSoZmQeMsh3RWermrGG-wyENrr14AmX3zZ2eqA@mail.gmail.com>
+References: <20240127003607.501086-1-andre.draszik@linaro.org>
+	 <20240127003607.501086-6-andre.draszik@linaro.org>
+	 <CAPLW+4mL1gb_R8PhKaMhwOUTa0GDqat_9W=348ScYj+hBarQJg@mail.gmail.com>
+	 <d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org>
+	 <CAPLW+4kSka+twSoZmQeMsh3RWermrGG-wyENrr14AmX3zZ2eqA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.1-1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/7] arm64: dts: exynos: gs101: enable i2c bus 12 on
- gs101-oriole
-Content-Language: en-US
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
- willmcvicker@google.com, semen.protsenko@linaro.org,
- alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com,
- cw00.choi@samsung.com, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240129174703.1175426-1-andre.draszik@linaro.org>
- <20240129174703.1175426-8-andre.draszik@linaro.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240129174703.1175426-8-andre.draszik@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
+On Mon, 2024-01-29 at 13:16 -0600, Sam Protsenko wrote:
+> That sounds reasonable. But I wonder if that bit (about making this
+> clock CLK_IS_CRITICAL to make earlycon functional) can be documented
+> somewhere. Perhaps in the serial driver (earlycon function), or
+> somewhere in device tree bindings? Because otherwise it might remain
+> an arcane knowledge and people won't be able to use earlycon later.
+> Anyways, for this patch:
+>=20
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+>=20
+> and if you think it makes sense to document the bit above, please do.
 
+Will do on top of
+https://lore.kernel.org/all/20240119104526.1221243-6-tudor.ambarus@linaro.o=
+rg/
+once that is in.
 
-On 1/29/24 17:46, André Draszik wrote:
-> This bus has three USB-related devices attached to it:
->     0x25: Maxim 77759 Type-C port controller
->     0x35: Maxim 20339EWB Surge protection IC
->     0x36: Maxim 77759 Fuel gauge
->     0x57: NXP PCA9468 Battery charger
->     0x66: Maxim 77759 PMIC
->     0x69: Maxim 77759 Charger
-> where the Maxim 77759 has multiple i2c slave addresses.
-> 
-> These don't have (upstream) Linux drivers yet, but nevertheless we can
-> enable the bus so as to allow working on them (and to make i2cdetect /
-> i2cdump / etc. work).
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Cheers,
+Andre'
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> 
-> ---
-> v2:
-> * add short summary of devices attached to this bus & add TODO
-> * collect Reviewed-by: tags
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> index cb4d17339b6b..6ccade2c8cb4 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> @@ -72,6 +72,11 @@ eeprom: eeprom@50 {
->  	};
->  };
->  
-> +&hsi2c_12 {
-> +	status = "okay";
-> +	/* TODO: add the devices once drivers exist */
-> +};
-> +
->  &pinctrl_far_alive {
->  	key_voldown: key-voldown-pins {
->  		samsung,pins = "gpa7-3";
-> @@ -113,6 +118,11 @@ &usi8 {
->  	status = "okay";
->  };
->  
-> +&usi12 {
-> +	samsung,mode = <USI_V2_I2C>;
-> +	status = "okay";
-> +};
-> +
->  &watchdog_cl0 {
->  	timeout-sec = <30>;
->  	status = "okay";
