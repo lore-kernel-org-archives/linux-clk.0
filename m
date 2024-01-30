@@ -1,109 +1,119 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260E96BB3F
-	for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 09:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8246775E;
+	Tue, 30 Jan 2024 12:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706608504; cv=none; b=KLyH7hBl0wRyONgP4snoaRRiXq3jFR7i0lFNYNQUVExMsIPLK7zYT1K0y3AIKWWdObt6jOCZjHqcLvJ4y8TB5yYr0mxsDzVW0LCR2HaYcKiPYhT5YZx19lh1KskRq77ldHTHh1Mr3Aw9XfGuPZ23PT8H6fmp5uckcPuhy5wE1U8=
+	t=1706616763; cv=none; b=oBr0r24JzlNqydKpF+2lKM3WcZLGSRHRwxKD9okwu/9m2FNQpKp/zNsFOto6U/KOIK0tQTM887x6z9JfENpVngpyuHsmwCi7NeE72Ej5PYKoSZxgJi5DGZr5PlU6FF68X9cSYIrrI3Eq4UmH1ylNpO4UVjVhBDUGj0g2BvPceUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706608504; c=relaxed/simple;
-	bh=GfBdeJzGb3Dr+4DHZv3lavSCQwPmP/68TQMZyct44Rk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ofM03fiTacaf0LxOVMRPK1OQPA+ZkFxRe0x9C2TM+ei5X3NgEZQmYUlOD7pZa7KRFTuZGRqYhGipE6PLFr2gAkXFRlW0IwoLkm7+2E6ZO1w6Bhu0tTScJWwXO9dZZszwBhW0founal6s/dgWZE4lIbHNdaasCej1NpEVJKwQk+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K/KGaXWQ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706616763; c=relaxed/simple;
+	bh=ts6+3cKiUi9J177cwzVgCHsWG2TI3IL/jBqFMX29Dpg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zpi+xbnV5c1TpIwtePql4bXhFOmPG2iHOe0h7exEZ1a3KytTfdeWFsLWhu/1G2I6ZLQNs96OKkECbpLO4nl3sp+t2QMTSj2RnzRMDq9vI2ec2ae3ze+T+1REN8aEnNx+AtyHJ/8kXU7oyfahwObSKAZoBv0OFu6aWekQK4dlSqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=VTUFh7+F; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K/KGaXWQ"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40f02b8d176so3253495e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 01:55:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706608501; x=1707213301; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jeMbeD/uNn8B0S2W7XkIfdcJDUpQv994E+HPOf4FW6M=;
-        b=K/KGaXWQcJx5zyGhPJGKxmjFVxZLxP7NADo/t2yHW10WubTJakqlfMrJvZiGRzT7kq
-         4nQ1xet+uR3epVqsUj+4XdKqVz6Yil0+3Nc4z2h01Cq71Xc/gotBNveMBTB5tY7rbHeJ
-         EJRl++0Bczn73RmALoVorLenShYS5yhQF8SrjM+fILtwfW8UlIiKo0Fzjf+djviCuHW4
-         MlRuA7sRwkWVsduefU4nViI5/zOFX9wAdXEfKy9KFTRXXrMySZhFstPsB1NM/4VJXIjf
-         1vMooIHKrFiQNWACp15G5pYzwkdh5RXNiRmvcZ5YKji9Vn9wHIi/bo+EuevEEyPye5BI
-         mdXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706608501; x=1707213301;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jeMbeD/uNn8B0S2W7XkIfdcJDUpQv994E+HPOf4FW6M=;
-        b=ujbTAxibZBCUjENE2xZ0EjO7HpuX468V15xqYNi2WLSwTAt4Nv9YSUhVtQZrkud2Fm
-         aaz95liPQAfbR1eIOM1Q56wYE0R/Oldxs6rLuSCvi16QiGUwHDgydwhOtbYx6zIrAZJc
-         +jkt6EMCj1PISnC8/O/MCXTsxkZwoHj2UqXCb9XcpcGMTU0ubZdp+lmDErmfE8hF71PH
-         6+Oy8hkHIHIx1sdXa6DtaET/ElVv1U5aRSmpp+/CIWC2H7Ajm5ipEK2gT9NyDCkwpINc
-         xonOOlkSaUm1WgASZn7CGR5IkpGmaqRy/+UjKdNVK2BPZv1USNg4NSIa0pmaxFoSWEX2
-         Y4Qw==
-X-Gm-Message-State: AOJu0YxZ5peqTehloRmDQEMjed14DtdNhdgR4XbEQeDFjUR290oeoOi0
-	/SvOKUWo2u2V99P0cHktrQX68+l2SpQdzJJt7wAxgVi7gWYTi0/45T3189/bYHg=
-X-Google-Smtp-Source: AGHT+IF92jgiXA3xKHufpbtgSPJbMRgX2vYkkXiWhwHoCA53f8jLGKT698ChHJQx170BU5WnhsFzzg==
-X-Received: by 2002:a05:600c:4f06:b0:40f:afbf:804b with SMTP id l6-20020a05600c4f0600b0040fafbf804bmr75754wmq.22.1706608501360;
-        Tue, 30 Jan 2024 01:55:01 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id bn7-20020a056000060700b0033946c0f9e7sm10388135wrb.17.2024.01.30.01.55.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jan 2024 01:55:01 -0800 (PST)
-Message-ID: <beadeaae-d740-47b7-9de3-3be7d9fbc586@linaro.org>
-Date: Tue, 30 Jan 2024 10:55:00 +0100
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="VTUFh7+F"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1706616761; x=1738152761;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ts6+3cKiUi9J177cwzVgCHsWG2TI3IL/jBqFMX29Dpg=;
+  b=VTUFh7+FYr0Zzk/gUT779ohSTh63PUvwYD7lp08nfsrts9UH6gwnlea5
+   r/XLp5ijX3YgbVAj6bBSZRYGlueV+/4urvbPrtmx+p6p/hOzzQoDFidce
+   SF09U+r64FCvYLIauhdywePchwR/QeWe67cb0QlxL/o5Sfe+RNfcemvoY
+   ZICAZVkkBOrQY2SggEjr6nMBNI/3XU37KEhv/1GMPv5ZNu+ZMXrTzgPVI
+   25MZBSrtKAtNkypTLpVPfw2CarvZOSG2lsamPbE8xNK+ch+vjJ3xPNLAT
+   LmKhwiR4EMfNZcH6+64L27lNPaENe4u3XN8W9CFrEPy7EZgn9nBSQ/X8w
+   A==;
+X-CSE-ConnectionGUID: daF2h1OmQfmAoCYQvT7ARg==
+X-CSE-MsgGUID: SGmXWDjFQGqzfcOyr/9P1g==
+X-IronPort-AV: E=Sophos;i="6.05,707,1701154800"; 
+   d="asc'?scan'208";a="182745230"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Jan 2024 05:12:39 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 30 Jan 2024 05:12:25 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Tue, 30 Jan 2024 05:12:22 -0700
+Date: Tue, 30 Jan 2024 12:11:44 +0000
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+CC: Conor Dooley <conor@kernel.org>, <linux-riscv@lists.infradead.org>, "Daire
+ McNamara" <daire.mcnamara@microchip.com>, Wolfgang Grandegger
+	<wg@grandegger.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, Michael Turquette <mturquette@baylibre.com>,
+	"Stephen Boyd" <sboyd@kernel.org>, <linux-can@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: can: mpfs: add missing required clock
+Message-ID: <20240130-narrow-lyricism-8b25baac7bb2@wendy>
+References: <20240122-catty-roast-d3625dbb02fe@spud>
+ <20240122-breeder-lying-0d3668d98886@spud>
+ <20240122-surely-crimp-ba4a8c55106d-mkl@pengutronix.de>
+ <20240122-cruelly-dainty-002081f0beb2@spud>
+ <20240122-smokeless-ion-63e4148c22e5-mkl@pengutronix.de>
+ <20240122-uncoated-cherub-a29cba1c0035@spud>
+ <20240122-pogo-reputable-b1d06ae1f1f1-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: timer: exynos4210-mct: Add
- google,gs101-mct compatible
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, tglx@linutronix.de, conor+dt@kernel.org,
- alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com,
- cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@android.com,
- tudor.ambarus@linaro.org, andre.draszik@linaro.org,
- semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com
-References: <20231222165355.1462740-1-peter.griffin@linaro.org>
- <20231222165355.1462740-2-peter.griffin@linaro.org>
- <e4288d81-cd0c-41cf-989f-85ce10d5904e@linaro.org>
- <bc643c81-ba84-48e9-8805-a27ca8d9acc5@linaro.org>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <bc643c81-ba84-48e9-8805-a27ca8d9acc5@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="HOtgW7KLF4e36W+S"
+Content-Disposition: inline
+In-Reply-To: <20240122-pogo-reputable-b1d06ae1f1f1-mkl@pengutronix.de>
 
-On 30/01/2024 08:33, Krzysztof Kozlowski wrote:
-> On 22/01/2024 13:11, Daniel Lezcano wrote:
->> On 22/12/2023 17:53, Peter Griffin wrote:
->>> Add dedicated google,gs101-mct compatible to the dt-schema for
->>> representing mct timer of the Google Tensor gs101 SoC.
->>>
->>
->> Applied, thanks
-> 
-> Daniel,
-> You a week ago that this was applied, but I still do not see the patch
-> in linux-next. Can you double check?
+--HOtgW7KLF4e36W+S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It is applied, but I did not pushed the branch. It is done now, it 
-should appear in linux-next soon.
+On Mon, Jan 22, 2024 at 04:31:32PM +0100, Marc Kleine-Budde wrote:
+> On 22.01.2024 14:56:09, Conor Dooley wrote:
 
-Thanks for the head up
+> > I think we already had this discussion on v1, where I said that the
+> > binding requires the clocks to be in that order, regardless of whether
+> > or not clock-names is provided. You feel more strongly about it than I
+> > do, so I will add them when I get around to sending a v3.
+>=20
+> Yes, this discussion sounded very familiar to me, never mind. Keep it as
+> is, and let's get this binding and the CAN driver upstream!
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+BTW, I didn't see an ack on this nor do I see it in linux-next (yet).
+Are you expecting the patch to go with the rest via the clock tree,
+via the DT tree or will you be taking it with CAN stuff via netdev?
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+I can resend this one patch with a netdev appropriate subject prefix
+if you like.
 
+Thanks,
+Conor.
+
+--HOtgW7KLF4e36W+S
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZbjnfwAKCRB4tDGHoIJi
+0td9AP91wL1UJKxv7WEXkQU6wml5iEFKMQpde0b5OMFJLiz7ggD/cJBfDDVA8GxG
+4K79+ItvQhc3pNrmvQLtKEyZc1+fRQ8=
+=AXqd
+-----END PGP SIGNATURE-----
+
+--HOtgW7KLF4e36W+S--
