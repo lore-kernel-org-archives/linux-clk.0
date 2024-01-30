@@ -1,94 +1,139 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE28012BF01;
-	Tue, 30 Jan 2024 16:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE671401B;
+	Tue, 30 Jan 2024 20:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706633515; cv=none; b=SyVSnBQnTfpnrfWjEF+g8UL3uCOOawIJ4/FG8t0xVG0OtlHmoC7yDnxKBFHJte+5H8RALBaZMGNNsYTgSR0ADEh6Pkh2W3JQIEsVjbJYuVLvN24W/r4OcmeKpbM+1VS4Jz3fUPun7wmSdcjZPIcJB3t9MAu2raQWaW9rdVOSE1Y=
+	t=1706646857; cv=none; b=NYN2tTaKUAbyRUiekS4xj7ioHsKiPDgnccz3oEQ3l5X2mgBOvy1uuguKOPzNE3KHQPei88OBD81HnGKvA9DHv6MvUxRRqy81mQLfc+BrupEctu909fL1Mv9INYbniNNDxl3IThIQHKIDNjKe6B7cH2otbJCeRS9/wnisE+1XZlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706633515; c=relaxed/simple;
-	bh=3MiEP5eOgQ4lg0GdP4/Ed2yC/9Hq1HQZtjLNdBQXC9Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XaMJLFj696ZgUnZTjCUBBYqTcqYtvzdB8cLKBotXBYmIuwRFaYrd5YEEANEOA2CLpJlICcdH9dtWZubcl0VPXFfQgzHZU/m4LSMyhsqVCz+yNqLl25S6FJYnFa5iVtkOSmwM61Jvw1OCxFYJfd5zlBmVM4UtTGNzBCDIXG6i6gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-603e086c05bso20574737b3.3;
-        Tue, 30 Jan 2024 08:51:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706633512; x=1707238312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M3CmPRl9No55bMg5rWsUS+waqxIDNarqKD2npzFU6Sk=;
-        b=fXZ3ia9+WPMNdG0jjp4Beg/EP0OeekPt+yJk+iU7Sr/1Cj2lhe+GhoJOONEzTlX148
-         LvjwPxmnbighpJc/gJHaRijFFW54qtEoApWmkR9okqjy5xv4UmjLxaKgkfvF5Tgc/ii6
-         KO8hRFxnoPN43cNCT3K01lUfS8OCnTK8ZRYexK1rSkR9/6V78gSzV0GYvLTS+cfLiqRq
-         D0+4nyB9nzcmsiBK75cchj8L/PYdZ6cIif3mBGazFm9BIEI6CpTX/56rBy+kZ4+IAsxS
-         aIJuEcFqDPcrhNuwMepLkofbcNV96MDTR3EEFn6Gt8u3YIBOYrs5dDByZa1C3jM/oWGu
-         upSg==
-X-Gm-Message-State: AOJu0Yw24CxOXkYKAiJCnvUdrgB6ZWRID5Ha1RA3z5O6wCeKm480z+bU
-	1hU60Jl1HsRV9Ag88oY589qB49PVlcuZvrLtGF6ho0hGrL2MoEYTeHn8HZD+WHg=
-X-Google-Smtp-Source: AGHT+IEes7l3MqnEEgyzZjox33g+IWahW5pKasEZWlykDYApEMn3V+GIMgzeedJNjRMF+RKPjglkKQ==
-X-Received: by 2002:a81:c103:0:b0:5ff:8179:bbfa with SMTP id f3-20020a81c103000000b005ff8179bbfamr6857932ywi.30.1706633512438;
-        Tue, 30 Jan 2024 08:51:52 -0800 (PST)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id u198-20020a8184cf000000b0060024349bcbsm3282142ywf.132.2024.01.30.08.51.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jan 2024 08:51:52 -0800 (PST)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6002317a427so34632347b3.2;
-        Tue, 30 Jan 2024 08:51:52 -0800 (PST)
-X-Received: by 2002:a0d:d242:0:b0:5ff:7cb4:d200 with SMTP id
- u63-20020a0dd242000000b005ff7cb4d200mr6524302ywd.17.1706633511895; Tue, 30
- Jan 2024 08:51:51 -0800 (PST)
+	s=arc-20240116; t=1706646857; c=relaxed/simple;
+	bh=/t3GFmRm5hVeR5xzoWsZKKi65PGNECWaoN8DFhDtjuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJa5iPXfMJSlnfwFfVeQWLewxmBccGE9JNk5orBxZ12saVwG8hOqo5O1JFUQyhtytMXyLa7shRmnJdHwVWyetdyruIEl1D5SY7lhbh/OQBhm07v7qBt4ZkFurZkmjNsl9fb3mfGrd+SMmRYLLj+kSqBC8SDQEmCIG7PNXjbR1NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KR4vSkzh; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KR4vSkzh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CEB0C433F1;
+	Tue, 30 Jan 2024 20:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706646856;
+	bh=/t3GFmRm5hVeR5xzoWsZKKi65PGNECWaoN8DFhDtjuI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KR4vSkzhXVYDoJgMgUekpqQCkB0fnG56TeJoVnaeQrHDhNs0viEsSZp1NgkHvj6hy
+	 K+/DGxoG65pCGKy7cnZIha/D50KPC8xbtVQ6sIokl/3dE28rYz2dK+aWQd37rppXqq
+	 SzgWt77k7MdIHZ7h7aDp7XpwOf2bJT9oPn2IPkX5bH5XJNcfotHgGVmpofnhDmODiX
+	 xaxrL3RDXJEZHTc3bLIVQQgMqUOnxrHgzh7Aq17lpk4Q+VlaUmDEFj0H2jpJDOO84G
+	 a499XEVFN6mwFjKRSIepGcMTFMMZZcuJ34w89OqoWwhIDRlA3vX5ph1YreFdnVsiJp
+	 wFvB0O34NMVTw==
+Date: Tue, 30 Jan 2024 14:34:13 -0600
+From: Rob Herring <robh@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Russell King <linux@armlinux.org.uk>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 2/3] dt-bindings: arm: mediatek: convert PCIESYS to the
+ json-schema
+Message-ID: <20240130203413.GA2290196-robh@kernel.org>
+References: <20240123082100.7334-1-zajec5@gmail.com>
+ <20240123082100.7334-3-zajec5@gmail.com>
+ <e17b85b1-7f1f-4b60-89b7-43f560466cc2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240122111115.2861835-1-claudiu.beznea.uj@bp.renesas.com> <20240122111115.2861835-11-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240122111115.2861835-11-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 30 Jan 2024 17:51:40 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUnegMZ6aLF1yQ274phT2A91TZDPaBrmnQ-QB8bRmv12A@mail.gmail.com>
-Message-ID: <CAMuHMdUnegMZ6aLF1yQ274phT2A91TZDPaBrmnQ-QB8bRmv12A@mail.gmail.com>
-Subject: Re: [PATCH 10/10] arm64: dts: renesas: rzg3s-smarc-som: Enable the
- watchdog interface
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: wim@linux-watchdog.org, linux@roeck-us.net, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com, 
-	sboyd@kernel.org, p.zabel@pengutronix.de, biju.das.jz@bp.renesas.com, 
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e17b85b1-7f1f-4b60-89b7-43f560466cc2@collabora.com>
 
-On Mon, Jan 22, 2024 at 12:11=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Enable the watchdog interface (accessible by Cortex-A of RZ/G3S SoC) on
-> RZ/G3S SMARC SoM.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Tue, Jan 23, 2024 at 12:20:29PM +0100, AngeloGioacchino Del Regno wrote:
+> Il 23/01/24 09:20, Rafał Miłecki ha scritto:
+> > From: Rafał Miłecki <rafal@milecki.pl>
+> > 
+> > This helps validating DTS files. Introduced changes:
+> > 1. Documented "reg" property
+> > 2. Adjusted "reg" in example
+> > 
+> > Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+> > ---
+> >   .../arm/mediatek/mediatek,mt7622-pciesys.yaml | 47 +++++++++++++++++++
+> >   .../arm/mediatek/mediatek,pciesys.txt         | 25 ----------
+> >   2 files changed, 47 insertions(+), 25 deletions(-)
+> >   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
+> >   delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
+> > new file mode 100644
+> > index 000000000000..7340a2512402
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
+> 
+> I think that we should really move all those clock controller yaml files to their
+> proper directory, which would be
+> 
+> Documentation/devicetree/bindings/clock/
+> 
+> ...because those are clock controllers anyway and the fact that they do also
+> provide a reset controller doesn't really justify having them in arm/mediatek.
+> 
+> Besides, I would appreciate if you could also move mt8186/92/95 and eventual
+> others that are there to clock/.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.9.
+Yes, please move it.
 
-Gr{oetje,eeting}s,
+> 
+> > @@ -0,0 +1,47 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt7622-pciesys.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: MediaTek PCIESYS controller
+> > +
+> > +description:
+> > +  The MediaTek PCIESYS controller provides various clocks to the system.
+> > +
+> > +maintainers:
+> > +  - Matthias Brugger <matthias.bgg@gmail.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - mediatek,mt7622-pciesys
+> > +          - mediatek,mt7629-pciesys
+> > +      - const: syscon
+> 
+> I know that there's syscon all over the place and, even if I admit I didn't check,
+> I am fairly sure that there's absolutely no reason to have syscon there, and that
+> the syscon compatible never did anything for (most of, or all of) those clock
+> controllers, at all.
+> 
+> I'm not sure - though - if removing syscon during the txt->yaml conversion is
+> acceptable (yeah we'd be cheating a bit), but something makes me say it is, because
+> the bindings couldn't validate before that one as well.
 
-                        Geert
+As long as you state why you are removing it in the commit msg.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> 
+> Of course you'd have to remove the syscon compatible from the affected device trees
+> as well as omitting it here.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+You could also do 'minItems: 1' and 'deprecated' in the 2nd item.
+
+> However, to be sure that we're doing the right thing here, I have to summon someone
+> that can actually give a definitive answer to what I just said.....
+> 
+> Krzysztof, please? :-)
