@@ -1,91 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB1D67726;
-	Tue, 30 Jan 2024 09:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260E96BB3F
+	for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 09:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706608394; cv=none; b=MeyzCQLxE6xijn3BAIMmyhQYvCC81shLJi8LX1fUtSEiZFSq5ETndPa0w++5Ad+5vO5PXsPrkQk1njL3+2evqwHRgANmUqdBX02lt2Vze0kiZ/YTEPPUFRhc+IEONYE6PHjilH7C2AqUsBpel9UsateqXEY+YEm2llEaVCqB5Gg=
+	t=1706608504; cv=none; b=KLyH7hBl0wRyONgP4snoaRRiXq3jFR7i0lFNYNQUVExMsIPLK7zYT1K0y3AIKWWdObt6jOCZjHqcLvJ4y8TB5yYr0mxsDzVW0LCR2HaYcKiPYhT5YZx19lh1KskRq77ldHTHh1Mr3Aw9XfGuPZ23PT8H6fmp5uckcPuhy5wE1U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706608394; c=relaxed/simple;
-	bh=aH4QtpQL+AnXelMo8WKWWufmhco7kLrBK4zmy20fJTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CLuuZOuxzjzzyqeZqJWdh11thPLX3GjRxd6DqgFyUzfJHNex416o/opcVbuMEV1e2qPpWxVApNbROO9/Bp+6usgJ5pdj1lYl648wC9uixhjN9MiFQf41n8VKmoSIEbWDoXds54i79mcfcsXCBX2cRGKpJpWCnTCfVqYzn7jS134=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q17YMMQg; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706608504; c=relaxed/simple;
+	bh=GfBdeJzGb3Dr+4DHZv3lavSCQwPmP/68TQMZyct44Rk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ofM03fiTacaf0LxOVMRPK1OQPA+ZkFxRe0x9C2TM+ei5X3NgEZQmYUlOD7pZa7KRFTuZGRqYhGipE6PLFr2gAkXFRlW0IwoLkm7+2E6ZO1w6Bhu0tTScJWwXO9dZZszwBhW0founal6s/dgWZE4lIbHNdaasCej1NpEVJKwQk+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K/KGaXWQ; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q17YMMQg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDDEFC433C7;
-	Tue, 30 Jan 2024 09:53:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706608394;
-	bh=aH4QtpQL+AnXelMo8WKWWufmhco7kLrBK4zmy20fJTI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q17YMMQgiuAU1jEP/KuGwknZt9O2FGyBEV2J4hXetYhPAA3n4hifin2XoYyZRjVlK
-	 rXm1nTXSEp/qihgNqgeYCw29N/nxAnQ8oR9cOvdk3xJkzOx3gmwdvtVKQzLNVSYqVr
-	 2qqtFE/ilBkUSBvNjgAZvHBUaWBnfx/7RpC+7TSE5FGqL0FY76HaaA4aZv3VygyH4U
-	 xJ3NFjbLFmy/tFiI2UUuKkNVj2r4yaeDu3bctL0bvg3qWTZ7oaYsUWOdOPKmCRKib2
-	 uSnlyWp37MKJXWSVh/J0yf5+Q6I8uyTVeZ/X19pe2KG4mQr2NYQKGuH1OICip6aRTK
-	 mi75GcC0fQNOA==
-Date: Tue, 30 Jan 2024 10:53:11 +0100
-From: Wolfram Sang <wsa@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a779g0: Fix PCIe clock name
-Message-ID: <ZbjHB3dFonrg1tFD@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <f582067564f357e2183d3db67b217084ecb51888.1706608032.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K/KGaXWQ"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40f02b8d176so3253495e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 01:55:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706608501; x=1707213301; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jeMbeD/uNn8B0S2W7XkIfdcJDUpQv994E+HPOf4FW6M=;
+        b=K/KGaXWQcJx5zyGhPJGKxmjFVxZLxP7NADo/t2yHW10WubTJakqlfMrJvZiGRzT7kq
+         4nQ1xet+uR3epVqsUj+4XdKqVz6Yil0+3Nc4z2h01Cq71Xc/gotBNveMBTB5tY7rbHeJ
+         EJRl++0Bczn73RmALoVorLenShYS5yhQF8SrjM+fILtwfW8UlIiKo0Fzjf+djviCuHW4
+         MlRuA7sRwkWVsduefU4nViI5/zOFX9wAdXEfKy9KFTRXXrMySZhFstPsB1NM/4VJXIjf
+         1vMooIHKrFiQNWACp15G5pYzwkdh5RXNiRmvcZ5YKji9Vn9wHIi/bo+EuevEEyPye5BI
+         mdXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706608501; x=1707213301;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jeMbeD/uNn8B0S2W7XkIfdcJDUpQv994E+HPOf4FW6M=;
+        b=ujbTAxibZBCUjENE2xZ0EjO7HpuX468V15xqYNi2WLSwTAt4Nv9YSUhVtQZrkud2Fm
+         aaz95liPQAfbR1eIOM1Q56wYE0R/Oldxs6rLuSCvi16QiGUwHDgydwhOtbYx6zIrAZJc
+         +jkt6EMCj1PISnC8/O/MCXTsxkZwoHj2UqXCb9XcpcGMTU0ubZdp+lmDErmfE8hF71PH
+         6+Oy8hkHIHIx1sdXa6DtaET/ElVv1U5aRSmpp+/CIWC2H7Ajm5ipEK2gT9NyDCkwpINc
+         xonOOlkSaUm1WgASZn7CGR5IkpGmaqRy/+UjKdNVK2BPZv1USNg4NSIa0pmaxFoSWEX2
+         Y4Qw==
+X-Gm-Message-State: AOJu0YxZ5peqTehloRmDQEMjed14DtdNhdgR4XbEQeDFjUR290oeoOi0
+	/SvOKUWo2u2V99P0cHktrQX68+l2SpQdzJJt7wAxgVi7gWYTi0/45T3189/bYHg=
+X-Google-Smtp-Source: AGHT+IF92jgiXA3xKHufpbtgSPJbMRgX2vYkkXiWhwHoCA53f8jLGKT698ChHJQx170BU5WnhsFzzg==
+X-Received: by 2002:a05:600c:4f06:b0:40f:afbf:804b with SMTP id l6-20020a05600c4f0600b0040fafbf804bmr75754wmq.22.1706608501360;
+        Tue, 30 Jan 2024 01:55:01 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id bn7-20020a056000060700b0033946c0f9e7sm10388135wrb.17.2024.01.30.01.55.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jan 2024 01:55:01 -0800 (PST)
+Message-ID: <beadeaae-d740-47b7-9de3-3be7d9fbc586@linaro.org>
+Date: Tue, 30 Jan 2024 10:55:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q1rakYIcTsiwcE9R"
-Content-Disposition: inline
-In-Reply-To: <f582067564f357e2183d3db67b217084ecb51888.1706608032.git.geert+renesas@glider.be>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: timer: exynos4210-mct: Add
+ google,gs101-mct compatible
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, tglx@linutronix.de, conor+dt@kernel.org,
+ alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com,
+ cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@android.com,
+ tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+ semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com
+References: <20231222165355.1462740-1-peter.griffin@linaro.org>
+ <20231222165355.1462740-2-peter.griffin@linaro.org>
+ <e4288d81-cd0c-41cf-989f-85ce10d5904e@linaro.org>
+ <bc643c81-ba84-48e9-8805-a27ca8d9acc5@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <bc643c81-ba84-48e9-8805-a27ca8d9acc5@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 30/01/2024 08:33, Krzysztof Kozlowski wrote:
+> On 22/01/2024 13:11, Daniel Lezcano wrote:
+>> On 22/12/2023 17:53, Peter Griffin wrote:
+>>> Add dedicated google,gs101-mct compatible to the dt-schema for
+>>> representing mct timer of the Google Tensor gs101 SoC.
+>>>
+>>
+>> Applied, thanks
+> 
+> Daniel,
+> You a week ago that this was applied, but I still do not see the patch
+> in linux-next. Can you double check?
 
---q1rakYIcTsiwcE9R
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It is applied, but I did not pushed the branch. It is done now, it 
+should appear in linux-next soon.
 
-On Tue, Jan 30, 2024 at 10:47:49AM +0100, Geert Uytterhoeven wrote:
-> Fix a typo in the name of the module clock for the second PCIe channel.
->=20
-> Fixes: 5ab16198b431ca48 ("clk: renesas: r8a779g0: Add PCIe clocks")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks for the head up
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
---q1rakYIcTsiwcE9R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmW4xwcACgkQFA3kzBSg
-Kba2/hAAl7KJvoqh6UXtR4oI04XFl84IFVVCoUrGEI7mNcH/KTQx74rN1e8RQDxo
-A3DcD58pHkWj0uNmrl7RN8B+yuH4PTv0SCr8kN96Q5uCGPe4c2EFCDkPZYjDwIsW
-3WVShXdKzUptz/evqaT9PewGu081EY8Af2hpa0F6ksbdT73V19W5O4aUshU8iPVy
-jdGTglSqOKGNLwkSBxaQllw9AB8y/zsyWMkO5/ooolkvaaiXyHXwsA+7dmFaVHzy
-yFcn4/96PYzWeAIZotNshdnSxn94rbnuIN1h2UZ3hiD0WHM1G6++ZYX0n4oW10er
-nmD7BJHgkAnyPNKCO8Z9CxZ/UNyzhIS7Zt7e3bVQs5LXzPOrf1zwaEwRYp4ngr+3
-ABVuKh0iFDGZ1n4GtLmf2TcFoNO9eTppbzRf8BpvalhrcnNAeBf82FS72mERV4dJ
-n6AfaTJpO0zITPCDxBRGQAO4QhAizllsFURYZfrhUOrEn6rPzFTuAyC+G7ajznvl
-BTu4PUyoKhI+yMexiNKXmhfsVwf+HEFeR0/msvYpTPvEEQ3BC4pABDGhrWwfHJgH
-TVaVYkqhaMsqfLtI4P8q/2vFt8d7PL1hhmx2OHSe/SQSufnfPnPgxulSxcMyhDqF
-PQ3mfZ7n/DxYZjaapUCWUk6xm6CFq/UrMikfTi0wqjrg1xLB6iE=
-=QXmu
------END PGP SIGNATURE-----
-
---q1rakYIcTsiwcE9R--
