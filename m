@@ -1,195 +1,217 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAA47D3ED;
-	Tue, 30 Jan 2024 21:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C90762D6;
+	Tue, 30 Jan 2024 23:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706651874; cv=none; b=PZIGnDMExYDlFAWnPBPxGUjXWXlUkuvhMm99RyVapk+KZYN16RL/qQRvxh27p9CuZKgU33cgOlWpS+WMWbwKeKet968xfTa2oVCBy4Tzov6NoXMHqJ/zzeIS1LpMTquWxd+ND2w9XpeKlcj9oyFmwmayPO12oLRckRhrZ1Tk9to=
+	t=1706655632; cv=none; b=ddD0i6ZkLmbnydOJsTmdFe1kILvzTcgXq5cGaJTT1cjKAafSqLHCuGrdPgzFwWI4cXvyQSjOzKZaFqaX7MBFx7HR/rRe3oQ1YoL2LXW6Yybv8SvBvkei0FUU/vVNzshgZ0czcL1Amm6JlqI4pwcAcqeqyCxIlwWt3yJV0Qm1rNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706651874; c=relaxed/simple;
-	bh=HDWDAcQoYXifJAgQU95qvjKYaNNSaHnT1PVLpa+0ZHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g8w3OpW29+q0WKDjxqFMWcBAsPKJ2Ke1rv+UnesKv6SEmg+GplATlk++Q2ayaa87vFonQsxt2gR7V8qk24o/uKqc+EnsyAVIJCXPxDHCwiAH4/AF0eSkTns2SzD/JRr7APtZHABpwHU2zqGbyeDRuOA8JNKg+4lImmbwcQbSzXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQ8rXa/J; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1706655632; c=relaxed/simple;
+	bh=muw5hlCB+CasqSg6EzDmDjc7eOdhLxEwSKaoqUd4dR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eusaVSoWIO6a2tkNR9RAFm+a3QkHLpfLkz3hgSRjgAKCPPN1DxwZlq5fRgNjbhk56xPBTOAI/4gfuj6S7dpvtVPtr1RZOdjbI781oFF0LCerOdMTrzYxWQRMd9TR9gkUTR8ZELzsxURMaXlr784ugNNSzLMsrv9W18NdCX/re3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evV4oyD6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQ8rXa/J"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a3122b70439so607259366b.3;
-        Tue, 30 Jan 2024 13:57:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706651871; x=1707256671; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wdh/VQpoX951eaSBCyP28Nr1FHihNafI7p4+z0vryQs=;
-        b=KQ8rXa/J37U7wb7KHrtHOx6czJ6ul7t2tz6610jCIPG0ZC2WCmfGmbrkM/gouYvKKd
-         GQg7mOIQgrasd7+iHcEl40IqKZA/jOqoLoSMEjQny6FbgJJZKkaHSAA74g9gpA3oFPMb
-         1ypx/9QebExnKgN0fFvgLgbhwp3Ph8cyfoA+X5hDoFvFHdxgM2/4q57AdYYeyGaHV7hA
-         DCitzktYTyUHXqbys4HEkBZTaoEkg/Nd8vhfmjKMeOUekZ8bXP43jJ1zgmyw+KaoocET
-         srS0NwkZjszcqjax0V8g46FvYzL43JXHRUoHd4jz959hTVAat3aEaOo3huKqCMxUkGRR
-         4Ptw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706651871; x=1707256671;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wdh/VQpoX951eaSBCyP28Nr1FHihNafI7p4+z0vryQs=;
-        b=kTGB3WCubst1/DcxXG7po9q67EhDvomWhKTD8mhAxsdjZJpEk2WOao8tOY3s92wJiz
-         reZ52waM+gmIhp1Iu9CD630r3gpLffUb/VBsPsxi4DG+6j05NuP5yl9imj3Sx7HYczn6
-         ol12HaGwifLL0bWSu01U4/sgg8gkW8zQbCCX6IynA2i6ZxR8WJtoKq4EWKZe/S2yK6UQ
-         KfFoVDjs0dimwxeU5O93enXWiWgCpxNG7cMVHvuyfSo65vDir875+kKUuHXYc+daP1Q9
-         xW/NuozaAHSJJsFBnegbuTnMvIQYw+VQtrFjSss9P61miUTxn0Z85cYgKZOkSAlOFqxY
-         BJqg==
-X-Gm-Message-State: AOJu0Ywa9smqYU8DSH9d9rWaib6vzl1LMBBXqUAp321+d9cJ6LkxqJpA
-	t5+I0e2omJ04FnB1ZubteM+Ff7HcXa5ZxKnDGghJBL7GzYeuIVFs
-X-Google-Smtp-Source: AGHT+IEQSbMTrpr0DCCyf4rAOMtntZKl6TLmVGMeQghYBiFGqw3C3cfdFBUahwQOq31kv6SqyZh6xQ==
-X-Received: by 2002:a17:906:4ad2:b0:a35:fbc4:4c20 with SMTP id u18-20020a1709064ad200b00a35fbc44c20mr3161908ejt.6.1706651870454;
-        Tue, 30 Jan 2024 13:57:50 -0800 (PST)
-Received: from [192.168.26.149] (031011218106.poznan.vectranet.pl. [31.11.218.106])
-        by smtp.googlemail.com with ESMTPSA id x10-20020a170906298a00b00a34a20b247fsm5519809eje.84.2024.01.30.13.57.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jan 2024 13:57:49 -0800 (PST)
-Message-ID: <c2adae73-9f1b-467e-880d-3e87eaeb10ea@gmail.com>
-Date: Tue, 30 Jan 2024 22:57:47 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evV4oyD6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0336C43390;
+	Tue, 30 Jan 2024 23:00:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706655631;
+	bh=muw5hlCB+CasqSg6EzDmDjc7eOdhLxEwSKaoqUd4dR4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=evV4oyD679f/3vkVOnkjPsx9XeFWCaj4l4D6EJKwhtHsaPCS10deshB7MLDUNdoW4
+	 F0hTde+heLpMvspfTW3jJlqzoYpT6oSvucqlBR5lzb1q3snx9NZShRu/t5srHdRwTp
+	 SJ6J2ETUjaigKWv28CWhYN2nJLUXx3PenkQ49X4pmPMX4RNFZPkqIfTfuCsKLzDuES
+	 4LJHJ3DfYJ5Le8EEEmTMD+iZOrZGwoSWIVCD14gbxe6zSBh6HvIxlDL1TWEcrcP013
+	 DwBcN4VQiQHADNrDf3E6bxSj5H+qlwPED7FeAWV+hdpWhTiFxIdv9qCp78cI7y8quI
+	 UZfimX8GCUG+w==
+Date: Tue, 30 Jan 2024 17:00:28 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Gross <agross@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+	Vikash Garodia <quic_vgarodia@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v4 3/5] clk: qcom: gdsc: Add set and get hwmode callbacks
+ to switch GDSC mode
+Message-ID: <qbqsvxmnl2tuansxzr6u4vqxemw4dzrsvz2ill6qnyxdp5gtji@lsemt4asmsax>
+References: <20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org>
+ <20240122-gdsc-hwctrl-v4-3-9061e8a7aa07@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: arm: mediatek: convert PCIESYS to the
- json-schema
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- Russell King <linux@armlinux.org.uk>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20240123082100.7334-1-zajec5@gmail.com>
- <20240123082100.7334-3-zajec5@gmail.com>
- <e17b85b1-7f1f-4b60-89b7-43f560466cc2@collabora.com>
- <20240130203413.GA2290196-robh@kernel.org>
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-In-Reply-To: <20240130203413.GA2290196-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240122-gdsc-hwctrl-v4-3-9061e8a7aa07@linaro.org>
 
-On 30.01.2024 21:34, Rob Herring wrote:
-> On Tue, Jan 23, 2024 at 12:20:29PM +0100, AngeloGioacchino Del Regno wrote:
->> Il 23/01/24 09:20, Rafał Miłecki ha scritto:
->>> From: Rafał Miłecki <rafal@milecki.pl>
->>>
->>> This helps validating DTS files. Introduced changes:
->>> 1. Documented "reg" property
->>> 2. Adjusted "reg" in example
->>>
->>> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
->>> ---
->>>    .../arm/mediatek/mediatek,mt7622-pciesys.yaml | 47 +++++++++++++++++++
->>>    .../arm/mediatek/mediatek,pciesys.txt         | 25 ----------
->>>    2 files changed, 47 insertions(+), 25 deletions(-)
->>>    create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
->>>    delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
->>> new file mode 100644
->>> index 000000000000..7340a2512402
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
->>
->> I think that we should really move all those clock controller yaml files to their
->> proper directory, which would be
->>
->> Documentation/devicetree/bindings/clock/
->>
->> ...because those are clock controllers anyway and the fact that they do also
->> provide a reset controller doesn't really justify having them in arm/mediatek.
->>
->> Besides, I would appreciate if you could also move mt8186/92/95 and eventual
->> others that are there to clock/.
+On Mon, Jan 22, 2024 at 10:47:03AM +0200, Abel Vesa wrote:
+> From: Jagadeesh Kona <quic_jkona@quicinc.com>
 > 
-> Yes, please move it.
+> Add support for set and get hwmode callbacks to switch the GDSC between
+> SW and HW modes. Currently, the GDSC is moved to HW control mode
+> using HW_CTRL flag and if this flag is present, GDSC is moved to HW
+> mode as part of GDSC enable itself. The intention is to keep the
+> HW_CTRL flag functionality as is, since many older chipsets still use
+> this flag.
 > 
->>
->>> @@ -0,0 +1,47 @@
->>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt7622-pciesys.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: MediaTek PCIESYS controller
->>> +
->>> +description:
->>> +  The MediaTek PCIESYS controller provides various clocks to the system.
->>> +
->>> +maintainers:
->>> +  - Matthias Brugger <matthias.bgg@gmail.com>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - mediatek,mt7622-pciesys
->>> +          - mediatek,mt7629-pciesys
->>> +      - const: syscon
->>
->> I know that there's syscon all over the place and, even if I admit I didn't check,
->> I am fairly sure that there's absolutely no reason to have syscon there, and that
->> the syscon compatible never did anything for (most of, or all of) those clock
->> controllers, at all.
->>
->> I'm not sure - though - if removing syscon during the txt->yaml conversion is
->> acceptable (yeah we'd be cheating a bit), but something makes me say it is, because
->> the bindings couldn't validate before that one as well.
+
+This provides insight into why we end up with both HW_CTRL and
+HW_CTRL_TRIGGER. This doesn't describe why this change is needed, but
+rather just an implementation detail.
+
+> But consumer drivers also require the GDSC mode to be switched dynamically
+> at runtime based on requirement for certain usecases. Some of these
+> usecases are switching the GDSC to SW mode to keep it ON during the
+> enablement of clocks that are dependent on GDSC and while programming
+> certain configurations that require GDSC to be ON. Introduce a new
+> HW_CTRL_TRIGGER flag to register the set_hwmode_dev and get_hwmode_dev
+> callbacks which allows the consumer drivers to switch the GDSC back and
+> forth between HW/SW modes dynamically at runtime using new
+> dev_pm_genpd_set_hwmode API.
 > 
-> As long as you state why you are removing it in the commit msg.
+
+This still expresses the need for HW_CTRL_TRIGGER in terms of "some
+drivers need for some use case". We don't need these many words to say:
+"Introduce HW_CTRL_TRIGGER for client drivers that need it."
+
+
+I find that it would be useful to document that every time a GDSC is
+turned on the mode will be switched to SW...
+
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  drivers/clk/qcom/gdsc.c | 54 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/gdsc.h |  1 +
+>  2 files changed, 55 insertions(+)
 > 
->>
->> Of course you'd have to remove the syscon compatible from the affected device trees
->> as well as omitting it here.
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 5358e28122ab..71626eb20101 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -363,6 +363,56 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>  	return 0;
+>  }
+>  
+> +static int gdsc_set_hwmode(struct generic_pm_domain *domain, struct device *dev, bool mode)
+> +{
+> +	struct gdsc *sc = domain_to_gdsc(domain);
+> +	u32 val;
+> +	int ret;
+> +
+> +	if (sc->rsupply && !regulator_is_enabled(sc->rsupply)) {
+
+Why is this a restriction only for GDSCs supplied by regulators? I don't
+find anything preventing this API from being called on GDSCs supplied by
+other genpd instances.
+
+Also note that regulator_is_enabled() is racy, in that it tells us if
+the regulator is currently turned on, not if we're the one holding that
+vote. As such this might change at any moment - and hence shouldn't be
+significant here.
+
+> +		pr_err("Cannot set mode while parent is disabled\n");
+> +		return -EIO;
+> +	}
+> +
+> +	ret = gdsc_hwctrl(sc, mode);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Wait for 1usec for mode transition to properly complete */
+> +	udelay(1);
+> +
+> +	if (!mode) {
+> +		ret = regmap_read(sc->regmap, sc->gdscr, &val);
+> +		if (ret)
+> +			return ret;
+> +
+> +		/*
+> +		 * While switching from HW to SW mode, if GDSC is in enabled
+> +		 * state, poll for GDSC to complete the power up.
+> +		 */
+
+I had to give this some thought, to conclude that this is relevant if HW
+has the GDSC disabled and we're switching to SW - which would then
+enable it. I think this comment can be improved slightly, to save the
+reader the need for figuring out this on their own.
+
+> +		if (!(val & SW_COLLAPSE_MASK))
+
+This not being true, would imply that gdsc_disable() has been called
+already, in which case there's no guarantee that the parent still
+supplies power.
+
+In the introduced API power on and hw control are orthogonal states, but
+not so in this implementation. This need to made clear, to reduce future
+surprises.
+
+> +			return gdsc_poll_status(sc, GDSC_ON);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static bool gdsc_get_hwmode(struct generic_pm_domain *domain, struct device *dev)
+> +{
+> +	struct gdsc *sc = domain_to_gdsc(domain);
+> +	u32 val;
+> +	int ret;
+> +
+> +	ret = regmap_read(sc->regmap, sc->gdscr, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (val & HW_CONTROL_MASK)
+> +		return true;
+> +
+> +	return false;
+
+return !!(val & HW_CONTROL_MASK);
+
+Regards,
+Bjorn
+
+> +}
+> +
+>  static int gdsc_init(struct gdsc *sc)
+>  {
+>  	u32 mask, val;
+> @@ -451,6 +501,10 @@ static int gdsc_init(struct gdsc *sc)
+>  		sc->pd.power_off = gdsc_disable;
+>  	if (!sc->pd.power_on)
+>  		sc->pd.power_on = gdsc_enable;
+> +	if (sc->flags & HW_CTRL_TRIGGER) {
+> +		sc->pd.set_hwmode_dev = gdsc_set_hwmode;
+> +		sc->pd.get_hwmode_dev = gdsc_get_hwmode;
+> +	}
+>  
+>  	ret = pm_genpd_init(&sc->pd, NULL, !on);
+>  	if (ret)
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 803512688336..1e2779b823d1 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -67,6 +67,7 @@ struct gdsc {
+>  #define ALWAYS_ON	BIT(6)
+>  #define RETAIN_FF_ENABLE	BIT(7)
+>  #define NO_RET_PERIPH	BIT(8)
+> +#define HW_CTRL_TRIGGER	BIT(9)
+>  	struct reset_controller_dev	*rcdev;
+>  	unsigned int			*resets;
+>  	unsigned int			reset_count;
 > 
-> You could also do 'minItems: 1' and 'deprecated' in the 2nd item.
-
-I expected this to be quite straightforward but I can't get it to work.
-
-Can you tell me if I'm making some mistake or is that some meta schema
-limitation?
-
-properties:
-   compatible:
-     oneOf:
-       - minItems: 1
-         items:
-           - enum:
-               - mediatek,mt2701-hifsys
-               - mediatek,mt7622-hifsys
-           - const: syscon
-             deprecated: true
-       - minItems: 2
-         items:
-           - enum:
-               - mediatek,mt7623-hifsys
-           - const: mediatek,mt2701-hifsys
-           - const: syscon
-             deprecated: true
-
-Gives me:
-
-Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml: properties:compatible:oneOf:0:items: 'oneOf' conditional failed, one must be fixed:
-         [{'enum': ['mediatek,mt2701-hifsys', 'mediatek,mt7622-hifsys']}, {'const': 'syscon', 'deprecated': True}] is not of type 'object'
-         Additional properties are not allowed ('deprecated' was unexpected)
-         from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
-Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml: properties:compatible:oneOf:1:items: 'oneOf' conditional failed, one must be fixed:
-         [{'enum': ['mediatek,mt7623-hifsys']}, {'const': 'mediatek,mt2701-hifsys'}, {'const': 'syscon', 'deprecated': True}] is not of type 'object'
-         Additional properties are not allowed ('deprecated' was unexpected)
-         from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
+> -- 
+> 2.34.1
+> 
