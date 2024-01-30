@@ -1,92 +1,138 @@
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75606F074;
-	Tue, 30 Jan 2024 14:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BECD6BB2B;
+	Tue, 30 Jan 2024 14:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706623516; cv=none; b=YgZU9WKZWxAQ6wk/pH+PFhKTRbAK8nBb3eZByMQ6VVjOWdfUZjjN4bbRCL5S+tv8Hy4dpko8ON+02hZk7Xm7DsVbUTqsQb4I/jIn6hN4Hw3E+Ggp7TEEiKMGq24mOiVVUMQ0QarJX7XG7ghaufPMCoXv7sk+tzTR44SVPtdyMKY=
+	t=1706626056; cv=none; b=cS9zVlazTm5AdUS8IZqmDsox9FdnpSRlD68NWm6alep9Kp/WAUKMoL2jdMr/Ng1UNiVUpfHly6tRrWj5mNYkrJM4IpE3/L+Oz3j/xN+fUxbBm+d+qBZimcKhHECfq8S3EtWypSgzhJpbIRII/3wAC4PsuuNxzfUVta/L2DtIIBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706623516; c=relaxed/simple;
-	bh=VpT5dlDoRmeGgD6qZE6y21AzYGbOa7AsKenFyXyqw5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cB+qbnDFnPvv9kcre3LzP/GGBJoqDzXe6qqo4ZPHZz03eCfgAz7QFq+vCigdlGmBWaa5eNA5z6xe2/uzJ2PRiLlWOJKY5eNnIyy+3nFmOZU7NPj1gZNoKMmeacTI5ctUfdW7RmFo00gBwwApFeL6pa7CcnZYPfTn8N/vzT4aVuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6e114e247a2so1579234a34.0;
-        Tue, 30 Jan 2024 06:05:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706623513; x=1707228313;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g/q7TDLVxNB2L3f+/Bvfj3yaUibZb3HxYVU/k3K3+UU=;
-        b=W2vq2lD/vjK+t1af7qd8UQ756USJJ0suDA0NP4IibR9PQH0T/ffKrntblL+I/BWIPS
-         zlOOvzg2kfwPKNWWYht2fk3tAafmuL8PsmXOWbcuKsxp8fCAPrEkH65t0/+AezPV/hrs
-         hBjCoucejpmbg3VG6VryeN+SIH7te4oRcgPP83wfa9mgnJfoLLGk1f13I+Ux9VZhXyS/
-         NdoNvITGMfZ9J1PsFC7KmlsZfyhcatRJ/5EHPPQW4hGtrNYigiSQejQg2m22+sJ6GCj7
-         n8c6BQy0C49HeOdY8ulW+5iU3FWhMlu6aMIijO/3a/DOajVAolzj4BaZ6ygRLR0yiPCb
-         nrVQ==
-X-Gm-Message-State: AOJu0Yx44BNEunBnStVL6UJXWY4E58hqiyoZ1ULLc0qsCI1+BxYjFrp4
-	hDh87SLQqIswTVDr+uz0/O3JMPbILdkS6JUe9ktNunZMDmH2EdVp+5/Y6Ye53yY=
-X-Google-Smtp-Source: AGHT+IEAc9+LSFnKRd92LsqDz7E5H2rNgV9Y6FHRLoqnMDv5lv74R5bLb8sy/AmDYr8xegAkjz+kow==
-X-Received: by 2002:a9d:664b:0:b0:6e0:ead6:5206 with SMTP id q11-20020a9d664b000000b006e0ead65206mr7727986otm.29.1706623513565;
-        Tue, 30 Jan 2024 06:05:13 -0800 (PST)
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com. [209.85.210.46])
-        by smtp.gmail.com with ESMTPSA id a8-20020a056830008800b006e125aea5a3sm1000313oto.41.2024.01.30.06.05.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jan 2024 06:05:13 -0800 (PST)
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6e13cfc0b2fso429294a34.2;
-        Tue, 30 Jan 2024 06:05:13 -0800 (PST)
-X-Received: by 2002:a9d:75c5:0:b0:6e0:be61:850d with SMTP id
- c5-20020a9d75c5000000b006e0be61850dmr6850179otl.1.1706623512929; Tue, 30 Jan
- 2024 06:05:12 -0800 (PST)
+	s=arc-20240116; t=1706626056; c=relaxed/simple;
+	bh=FI1o2shOT/ij4/zuD/4jiajye0Rvj5KQ1PCOiOvQ1qg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fW279lv9R/+dHj8dzk+P0WV5xzvSqs/mBq7LfSii2I/m8kE+L6lccX+OzR6hQ39PUSKt4BoCZdH4lBO6nouSKlNjDGxD6t2Fh3+aMpR28eOUzcz7gBWUzqfTA032zcBso+c0VDNTZ06cnzdBsc98rjddY2Jw5FOZNybCsN48wLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZAq2ro36; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZAq2ro36"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1706626053;
+	bh=FI1o2shOT/ij4/zuD/4jiajye0Rvj5KQ1PCOiOvQ1qg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZAq2ro36Muznt5+EuPTqB4/iT8QRQF9EO4FTRfFxsocopEluPGjTN2VZN0QcmUHQ3
+	 T4iWq8vHQLUpAtCIB1HELSRImOnrehoM9ZxIUV58h+EPdc4idlh4VIV/NZzBZWO0Hk
+	 B29F7TBTfaBiU5/7C+lsoungykWMJyIr4PQtwaw3Iq30TtUeghjOmrPyvDOKxNpIlA
+	 LUHoKTYlCvA+jeqPGqjEqlgh0cNQpTUDbF496POSqM2T8Y/4+GRSSE2VL/H9TOTB9m
+	 0r2sxPzVvD65SoWyIYTZItLpIy3vwhr9Ai35ZpeSO1AafypuOA6cumYcO5RDxY7nLP
+	 cwUEuCdEwkY3A==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2D94937811CF;
+	Tue, 30 Jan 2024 14:47:33 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id C283E1063C86; Tue, 30 Jan 2024 15:47:32 +0100 (CET)
+Date: Tue, 30 Jan 2024 15:47:32 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	Elaine Zhang <zhangqing@rock-chips.com>, Kever Yang <kever.yang@rock-chips.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, huangtao@rock-chips.com, 
+	andy.yan@rock-chips.com, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	kernel@collabora.com
+Subject: Re: [PATCH v8 7/7] clk: rockchip: implement proper GATE_LINK support
+Message-ID: <i5qagtdg73rhojifmublx2w2kxvjeisd6qwqbo5vnhrgyedx3i@pyckzpstlnvb>
+References: <20240126182919.48402-1-sebastian.reichel@collabora.com>
+ <20240126182919.48402-8-sebastian.reichel@collabora.com>
+ <8b4214a5-6ba7-402d-b2f6-f2424783d455@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240123114415.290918-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20240123114415.290918-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 30 Jan 2024 15:05:01 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWFjewxNNbhwkBP96uzXVa9ZuuJLygbNBLV8uUZBU8vug@mail.gmail.com>
-Message-ID: <CAMuHMdWFjewxNNbhwkBP96uzXVa9ZuuJLygbNBLV8uUZBU8vug@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a07g043: Add clock and reset entries for CRU
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vkzhu7wafk4plwhd"
+Content-Disposition: inline
+In-Reply-To: <8b4214a5-6ba7-402d-b2f6-f2424783d455@collabora.com>
+
+
+--vkzhu7wafk4plwhd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 23, 2024 at 12:44=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.c=
-om> wrote:
-> Add CRU clock and reset entries to CPG driver.
->
-> CRU_SYSCLK and CRU_VCLK clocks need to be turned ON/OFF in particular
-> sequence for the CRU block hence add these clocks to
-> r9a07g043_no_pm_mod_clks[] array and pass it as part of CPG data for
-> RZ/G2UL SoCs.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Hi Dmitry,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.9.
+On Fri, Jan 26, 2024 at 10:36:13PM +0300, Dmitry Osipenko wrote:
+> On 1/26/24 21:18, Sebastian Reichel wrote:
+> > Recent Rockchip SoCs have a new hardware block called Native Interface
+> > Unit (NIU), which gates clocks to devices behind them. These effectively
+> > need two parent clocks.
+> >=20
+> > GATE_LINK type clocks handle the second parent via 'linkedclk' by using
+> > runtime PM clocks. To make that possible a new platform device is creat=
+ed
+> > for every clock handled in this way.
+> >=20
+> > Note, that before this patch clk_rk3588_probe() has never been called,
+> > because CLK_OF_DECLARE marks the DT node as processed. This patch repla=
+ces
+> > that with CLK_OF_DECLARE_DRIVER and thus the probe function is used now.
+> > This is necessary to have 'struct device' available.
+> >=20
+> > Also instead of builtin_platform_driver_probe, the driver has been
+> > switched to use core_initcall, since it should be fully probed before
+> > the Rockchip PM domain driver (and that is using postcore_initcall).
+>=20
+> Why clk driver needs to be fully probed before PD? The PD driver
+> shouldn't probe until all clk providers that it uses are registered, and
+> then both clk and PD should be registered at the default level.
 
-Gr{oetje,eeting}s,
+The error handling in the rockchip PD driver needs rework to
+properly handle -EPROBE_DEFER, which I consider a separate series.
 
-                        Geert
+Note, that the driver currently has 'builtin_platform_driver_probe',
+but does not actually probe anything. All clocks are registered via
+CLK_OF_DECLARE, which happens even before core_initcall. So this
+does not make things worse.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Also the OF node is marked as initialized by the early clocks
+(CLK_OF_DECLARE_DRIVER) via the call to of_clk_add_provider(). This
+is necessary, since otherwise the early clocks cannot be referenced
+and we need the early clocks for the timer registration (so it's not
+possible to move all the clocks to late init). This effectively
+results in fw_devlink not working properly. It will tell PM domain
+driver too early, that it may start probing (so a bunch of useless
+-EPROBE_DEFER will happen).
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Greetings,
+
+-- Sebastian
+
+--vkzhu7wafk4plwhd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmW5C/0ACgkQ2O7X88g7
++ppdJw/8CHy0yXXXuEDrx70oy4owoZo5xIMHXN32hTvwFH9eVj8nYPtVQjOhGwJW
+gVj28u1i87QbL246bl2ok/4PbStOC+OgniV1weSi8QWIoWJGsOK3UHy7FErWcXw8
+khKb305Fc+aUwrdbgy0hbcoIH0oYnFQqnzNrG0yCnnCY6+Qshx1jxlHLBoWSOzo+
+Cbm6FVZuwV4tVsoa7ORK06ZmNruyQ5q7uj1igUsPGhTuXO+QQSvZIv0jv14FN4ml
++mAVU2vn5C+4yU3AV4z2t9c/RxAS7O4OlQ22jNMgHnea2QiIMmzYCVL2mF5oe4pD
+nn5KxT8qPTkBx5tOtCRVqc817ciG+ZCkYe0qxXvepxxtTV9y+tS9yEU6yPBzOeOO
+CgacGJ5Z7Oe7msH30CjGiLX2wzdz3g2v7d+yt/DGHkUGgAniXI4Wz/ADiu0w+Mes
+DwPsIUbVrWRfs0T6tilPCOul720EyNPUt2+gX4U+gU8Hts7NwSOYMNTyHx95aztm
+XMHqOd+cDHdcZ4yL2BOuo7kkK76wz7/8N03WhV5i4psn4V7NADrF3fW3Xs9QMmaH
+zYtPR6iUtnF30RNeNShgi3fOCKHJeg3Ot7nBQA8iNJLRnHYM5OPZ4CjFfqu9sUxx
+bvctNp/h03OavnjOmRYh5DQO7vEIdQGvpJ8MF8hOEM288oxk1pM=
+=NE/i
+-----END PGP SIGNATURE-----
+
+--vkzhu7wafk4plwhd--
