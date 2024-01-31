@@ -1,73 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4B713B793;
-	Wed, 31 Jan 2024 20:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4733422087
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 20:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706732877; cv=none; b=fk721B9phdL/l87FSp/OBqzM6t8e7omj8sREvhrOfGOqKTzgf8s0kqsvWk2o/e41/bIaAL3zfvaQFFg250t/dzpYsfMpGmHTZe6aBzp7fJ2SMaiHP2+MyJGvEeQKXIgGZ3St4VgajaZ8cxDEPyXd0vGX3gMAd6P5ip2vL5NxCLk=
+	t=1706733895; cv=none; b=X9IDY6VCYwr+M+m6SNtGWh3XP0B2oAL/QmYt0sQCfleEcuTnDjg8CDu3qk8wwP8kfK7aLNfOErmIiDftYCjewGtSWALDccikwpCjHLWmKPu96hTMTa+GpTM4PgBAvrIMDMl42RVj6zNVucwtkftJ/Q8xsoc/5EEJkqTPhyRZWdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706732877; c=relaxed/simple;
-	bh=rRrpAzNPWC0Uc0k4linxzIOnqWxJWK0A8gToje8T8Rs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Py2CSEC7QBVrC5omQdImjrp6Y9yHzWMqyyq2pOMAYh/goEFpv9bbEGNq9GK/5ChLs7VfMCodHZehERLhtpCeQ+iFW4aoED1DAUkL05Reu4viPtbveDa/k64ZXB5nNXccWOntUWSB1xg/w8dBSE7oXSmMsg/RzHPPJxNDUoo4vdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RI1WIFeA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706733895; c=relaxed/simple;
+	bh=+Aepf8sdCd8G//RlCha5XYDrJRIchvN1hEFdOszOu6g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R1Tms+g6pi3bLPNcMTn26JY8UcrD6Vz2aMXSAG+T25gjaF6AHSwgkipIAasY1TGsKZCXNHCQ0PjST7z3GJEh2LykaQOQaGJlRwzgtEZ7VqW0hUsWfWUkR8PxDiQgHRiuS4/XPFikvZRa6TR8zwLqRM0teNyQljdjIT9Wxzb28lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VO2ox0YB; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RI1WIFeA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EC52C433C7;
-	Wed, 31 Jan 2024 20:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706732876;
-	bh=rRrpAzNPWC0Uc0k4linxzIOnqWxJWK0A8gToje8T8Rs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RI1WIFeA1BRID32Vn6aQlO9JmEGm0zZpPHQ01lEWmaAtZHwLK/KCkl+1PU7PclYWP
-	 k5aq04Ark5g8sj9byAMMGF3FQ5bxH2PkC9up/xRDZfs6xPrDmyN51DA9fpPO4y5ASe
-	 9cE0AY8T8eRlWYILC1cIGqJpJiRc8tH//1Y8f3vjpp3sJRTSNMbUxIkAt6VO65sWCT
-	 R80PrO1I8acir4HwO/73eKIpN2N340cRAlykRpyUqrrO6f8vyiZJgK8PFfKEhI1mOp
-	 B878WmpiRPviZH+ztTkhcItCILOy94fmwiKzSMOSMKHfIcFKYtt1Njocmzj4pRJmd+
-	 I51eTYaLJ0kFA==
-Date: Wed, 31 Jan 2024 14:27:54 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: sboyd@kernel.org, mturquette@baylibre.com,
-	krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-	peter.griffin@linaro.org, semen.protsenko@linaro.org,
-	conor+dt@kernel.org, kernel-team@android.com, tomasz.figa@gmail.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org, alim.akhtar@samsung.com,
-	robh+dt@kernel.org, cw00.choi@samsung.com, s.nawrocki@samsung.com,
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	willmcvicker@google.com
-Subject: Re: [PATCH v3 4/7] dt-bindings: samsung: exynos-sysreg: gs101-peric1
- requires a clock
-Message-ID: <170673287371.2245012.6605138156185654489.robh@kernel.org>
-References: <20240129174703.1175426-1-andre.draszik@linaro.org>
- <20240129174703.1175426-5-andre.draszik@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VO2ox0YB"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6040fe8ba39so2395357b3.2
+        for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 12:44:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706733893; x=1707338693; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Aepf8sdCd8G//RlCha5XYDrJRIchvN1hEFdOszOu6g=;
+        b=VO2ox0YBjiSG31RTVbeDI2z1IFZxNfm318i+xgL9o0l6lV1eQuIHpPdz7DgUERgFkq
+         JesaQHiT+pdJ00vk7VIA9ZYSn7Ddetwo5NCyYLT4Oc3dTpAM4wnBHW2CnR4lBQmbeqc/
+         Pp7G4hh1vNQSdUpAT0CpGcW09XxpiyqDwWZHkWXXh9mNCqkjfpOybDmPGqaLIv8qggiD
+         k8g22wwpuCPKkqgA61s9zFOzazpMAIUG5JImyfkl34cfbt0foudlH+sOLcS74K9hTgau
+         riDWmSyla8hspJQr6jB6S/rSpfvN/CxX7f0exXsHdlD4PcttPowt4MwhZOZ9Gz0Av2Rj
+         xk0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706733893; x=1707338693;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+Aepf8sdCd8G//RlCha5XYDrJRIchvN1hEFdOszOu6g=;
+        b=uwcbMbyg3Mds13RCU7t7d2UVvPlZGOnTS0GIL0bDiU85X5puKKe9BpABKSfC0pdVMb
+         839m1nHIsHC36WfKBXm0FGr4Z+dyKi4faSzv3qu3lgrlrHpGH+6DMeHYNoVTrVjvB5rQ
+         NETfltzf1A47PmizAgzWu+jKtzBZAg4EWQYJzwzXxAx+fjaMTlDfVEE165k3JZnF0Qnb
+         9QAYjYRhvDPaaOOn9saK7N6iEfnqtf/eLr8XAJj+UkxblKNX/EifaprtzbPh+HPCnt2p
+         LNz7RzvgYUoGwFQGC9DKWUaVpHyZVktEGMmw1a7TNiDWcqUShPqyGGdWn8DLG6/BMxG+
+         mAZA==
+X-Gm-Message-State: AOJu0YwhqMD6MWnr0802i6m5xX3ei7VJ/XW83NTzJS82Bqq3krRKjMYl
+	WpNsxQ4gJJkRgDNYGu+U9ny0ImnIkwA1GdJ6Tu8HQ8MHn6g+u4cPZ5lUYNhWMncNKpgMre1bZ8K
+	T1FGA6kADcXOD7kUel7zV9pXEzZCyQ4gPEnewFQ==
+X-Google-Smtp-Source: AGHT+IHS/WgJih0pA4PCi6jtXXi0NvvqNNRcB0nvYJUMQTqgkNEy0vEgAEVs0YIeJ1unhWTazFjP4rw+Sm0vCsAVTlU=
+X-Received: by 2002:a81:4950:0:b0:603:fd67:a5aa with SMTP id
+ w77-20020a814950000000b00603fd67a5aamr1871650ywa.19.1706733893289; Wed, 31
+ Jan 2024 12:44:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240129174703.1175426-5-andre.draszik@linaro.org>
+References: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
+In-Reply-To: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 31 Jan 2024 21:44:42 +0100
+Message-ID: <CACRpkdb+aWL-NU36dF6urL3T9gUROQX=9-L7aUC=+GM8x+bArA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/18] Add support for Mobileye EyeQ5 system controller
+To: =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, linux-mips@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Theo,
 
-On Mon, 29 Jan 2024 17:46:03 +0000, André Draszik wrote:
-> Otherwise it won't be accessible.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-> 
-> ---
-> v2: collect Reviewed-by: tags
-> ---
->  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml   | 1 +
->  1 file changed, 1 insertion(+)
-> 
+thanks for your patches!
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+A *new* MIPS platform, not every day I see this!
 
+On Wed, Jan 31, 2024 at 5:27=E2=80=AFPM Th=C3=A9o Lebrun <theo.lebrun@bootl=
+in.com> wrote:
+
+> Pin control is about controlling bias, drive strength and muxing. The
+> latter allows two functions per pin; the first function is always GPIO
+> while the second one is pin-dependent. There exists two banks, each
+> handled in a separate driver instance. Each pin maps to one pin group.
+> That makes pin & group indexes the same, simplifying logic.
+
+Can the three pin control patches be merged separately? (It looks like.)
+
+That would make my job easier when we ge there.
+
+I will try to look closer at each patch!
+
+Yours,
+Linus Walleij
