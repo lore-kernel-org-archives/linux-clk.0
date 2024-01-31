@@ -1,113 +1,79 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1954912F5BF;
-	Wed, 31 Jan 2024 14:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484E469D05;
+	Wed, 31 Jan 2024 16:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706713011; cv=none; b=eQGFATUEBs4Vj1rjPyi3O0zg46rD5npeEl+hWxCJO5wtvVxAU0za1FZeWob7oqaBJAenv+w/LR9J15rtVNkHkNzIRh18q8gU9S34PUiheMB6NgEkLMb3yqFMBMo1l1F8LiToNr8tW2D69Nu3z4JfVLxA8wytbnW9vO4s6wNOq+s=
+	t=1706717398; cv=none; b=Yh8Qw9S7PbTFd8ohvFwAj1ZlUJbS/vJbRLwvnHkBr2Aj+3DyahPTaWKHa+0H7hj8g8Rj6f4Nx912JnTX78pzURhFgNtVYLMKlkXFtEa3BKoOJFwnPjOF4Jc0mkYfpLOyXHSb0nRSfc5ENdM24/sA6nRACz85zkIePC84Ai2Vne4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706713011; c=relaxed/simple;
-	bh=5xXgKjjwswzHov9slieCEtQPAKF5OMnVbk7lR2026l0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kxDUobZHf97MXQf6yDw8jBGJF7VeKSzmsdBmoAXekdwVsF5pYKogCsT8Lo62LWV+G62zbpHBoioatz7hkjgdyZ/OWf+9Jo5ZbARuTguT801R+BGdb/JMo5segolLKowWluiyxnxuMORtBDW4cCd/cgded/rHlofIAc5URJFfpkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-603c5d7997aso39584357b3.1;
-        Wed, 31 Jan 2024 06:56:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706713005; x=1707317805;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zpKdMjyzizQdBL1+BwnYNIUR7N8c1tbrrD6RLX3dXvU=;
-        b=dTbeBBeeSyuj0o+K5IKfgLJ3jr6a5C4RuLdAlvFGO1gbqwel4ru2YxOJoqnbQ8DogQ
-         2cabcUh+FdJInED/bOK4JgMSaEf9ILIa5srFM2u0jPHs9eXERcyovRWdDbof5eWkt7EI
-         eLHKt9tOjpt/3G52CHFJuGaDMImVh0nOcjnO8QhMnWJ/iZ6hkAUP5YEhX8hPqJoMP4mJ
-         cCecXlfyz1UBpzLgTpF5bEtwlFZZkj2hIpASy9493CWl4trCFi3xqeJ8YXAt9TUt7iFz
-         wUbmSIrg5jlqZFuDHVjGioqX3ASp+4Rzdn3L1j0lbMd1+hVV9E0z/FYrJGd6gvBGpZ/M
-         h+Dg==
-X-Gm-Message-State: AOJu0Ywlo2H8NR4+kXLrF+vxmjqd6/vNaeBiPo/IQKXp0uPqBPioQM+h
-	EqdUC/1MhQSk+oMNrq3uFscVtj0nZbw8OJ1XjBRJ3nX5hePOHU/0oWl58Qc6++Y=
-X-Google-Smtp-Source: AGHT+IF/TambxL5fDs1immlNAVTHs6ZR7UaqSfVfLrHF3n/t9eHtvP6U2XD2JpvU0LExSshj+3SBjw==
-X-Received: by 2002:a0d:d715:0:b0:5e9:fa4a:fd56 with SMTP id z21-20020a0dd715000000b005e9fa4afd56mr1613182ywd.13.1706713004775;
-        Wed, 31 Jan 2024 06:56:44 -0800 (PST)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id cb8-20020a05690c090800b005ff3fdb8bf8sm3817435ywb.2.2024.01.31.06.56.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jan 2024 06:56:43 -0800 (PST)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dc61fd6ba8cso3949096276.3;
-        Wed, 31 Jan 2024 06:56:43 -0800 (PST)
-X-Received: by 2002:a25:8243:0:b0:dc2:3427:f0f3 with SMTP id
- d3-20020a258243000000b00dc23427f0f3mr1822274ybn.35.1706713003619; Wed, 31 Jan
- 2024 06:56:43 -0800 (PST)
+	s=arc-20240116; t=1706717398; c=relaxed/simple;
+	bh=MwIxIYeYpTcB9h848/ZPazREWf6wyNf1jMcp3F1E58s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YJmdn++CZqdWbdi5+4GhwRTcVRzl1bjY8mAeWgFNZy/t8JagfkVhedOXimrWcHgWv15pXt2NdoP4FzfE/OTkaYs4ZgxuJeDCMGFPWWk0uaw3A31Q9Tckx/2SRYq47wcwDmNXvoUp5YHYa/axU2HVF/V7V0zh2D3P0ZuO0bFoxSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.05,231,1701097200"; 
+   d="scan'208";a="192402235"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 01 Feb 2024 01:09:54 +0900
+Received: from localhost.localdomain (unknown [10.226.92.227])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 926864007129;
+	Thu,  1 Feb 2024 01:09:50 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH RFC 0/3] Add clk_disable_unprepare_sync()
+Date: Wed, 31 Jan 2024 16:09:44 +0000
+Message-Id: <20240131160947.96171-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1706194617.git.geert+renesas@glider.be> <CAPDyKFpxaEUHvKKb+spxV6HG2P2gLx5qM1mLPxJie+PdkmTL4w@mail.gmail.com>
-In-Reply-To: <CAPDyKFpxaEUHvKKb+spxV6HG2P2gLx5qM1mLPxJie+PdkmTL4w@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 31 Jan 2024 15:56:31 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUswhJ3BQLnOQZC7X7qc7SFCqsr9Uy65LfBT_BNWfyhFQ@mail.gmail.com>
-Message-ID: <CAMuHMdUswhJ3BQLnOQZC7X7qc7SFCqsr9Uy65LfBT_BNWfyhFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/15] arm64: renesas: Add R-Car V4M and Gray Hawk
- Single support
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Cong Dang <cong.dang.xn@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
-	Hai Pham <hai.pham.ud@renesas.com>, Linh Phung <linh.phung.jy@renesas.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Ulf,
+Currently clk_disable() is not synchronous. Consumers just
+gate the clock, but it doesn't check actually the clock is
+gated.
 
-On Tue, Jan 30, 2024 at 2:11=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
-> On Thu, 25 Jan 2024 at 16:34, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > This patch series adds initial support for the Renesas R-Car V4M
-> > (R8A779G0) SoC and the Renesas Gray Hawk Single development board.
-> >
-> > As both driver code and DTS have hard dependencies on DT binding
-> > definitions, most patches in this series are supposed to go in through
-> > the renesas-devel and/or renesas-clk trees, using a shared branch for D=
-T
-> > binding definitions, as usual.  For the PM domain patches (03, 04, 09),
-> > Ulf already offered to apply these to his pmdomain tree, and provide an
-> > immutable "dt" branch, to be pulled in my renesas-devel tree.
->
-> Patch 3,4 and 9 (I dropped the copyright line in patch9, as pointed
-> out by Niklas) applied for next, thanks!
->
-> Patch 3,4 are also available at the immutable dt branch for you to pull i=
-n.
+On RZ/G2L SMARC EVK before starting link reception we need to
+make sure the video clock is off, then start reception and
+turn video clock back to on.
 
-Thank you!
+Introduce clk_disable_unprepare_sync() to synchronize
+the clock gate operation.
 
-I have pulled the immutable branch, added the remaining DT binding
-definitions, and queued all remaining patches.
+Note:
+ patch#3 depend upon [1]
 
-Gr{oetje,eeting}s,
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20240130164115.116613-5-biju.das.jz@bp.renesas.com/
 
-                        Geert
+Biju Das (3):
+  clk: Add clk_disable_unprepare_sync()
+  clk: renesas: rzg2l: Add disable_sync() callback
+  media: platform: rzg2l-cru: rzg2l-video: Use
+    clk_disable_unprepare_sync()
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+ drivers/clk/clk.c                             | 36 ++++++++++++++-----
+ drivers/clk/renesas/rzg2l-cpg.c               | 23 ++++++++++++
+ .../platform/renesas/rzg2l-cru/rzg2l-csi2.c   |  2 +-
+ include/linux/clk-provider.h                  |  4 +++
+ include/linux/clk.h                           | 25 +++++++++++++
+ 5 files changed, 80 insertions(+), 10 deletions(-)
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+2.25.1
+
