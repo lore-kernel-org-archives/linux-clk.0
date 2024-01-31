@@ -1,83 +1,69 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA997BB0A
-	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 10:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4C669D0B
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 10:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706696449; cv=none; b=OjZqOljm+RsOyyUK2+meNsvUI64CwlKGic1qJqFWe/RAaCx9gzDN/c87oNjZftifkxHRt0Iju5wx0cCHddBCWL6dtMuvPvkmKjoLLfYu5V1tL2x6S20CWzwHiwNPwOBlV7J6sf42zWpPu/eQhAgcnHsBnzRd03I7uR4fXRZ+ilk=
+	t=1706696983; cv=none; b=qxm9Uz+sXOGj+LlltxrjIwgLbeAokypB582AxB2ptydwPtFDiFEh/AaN6OqFj7qNyQAW1oeQs8YTBnOjiS++qqEE//4cchmULk/O1G8jfJbBnzvrMPZKG3G9zAvGWZ1kkEZ581h0YrqfKam4bsz5iU1UyMY7uk32lZJu6LfLQyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706696449; c=relaxed/simple;
-	bh=wT2twA9lBFQ9GfBDBM65zJOM0hifl2dwZasWPoBrtWk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sJmJGIDoudAenUsKzJ9a9mvANOdZRCEHiik0ypQuWWXPUYbsf7mSZI/tnKGHPcpV7QJ59zClJiAkJYj19Cyeo3E/5IBYlel0sX683qoCu2GL1FgHhz+WCkPUGaQF2idbRFvHt+GGGURgdH8YZVyFrmhHj7ljwH/nKuN7KFUDbOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fcUhICZP; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1706696983; c=relaxed/simple;
+	bh=4F7pRSeLHkCCQhjqVZv4OCZ2YJL4wtrbUADgwRekjc4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hAaqv/7oVgPmUagDyKjXTg5N3PNrtI20MB0HgojSqThYJMcW86GbZcgrdnICeQ5WiviDe9JhXjLQzjvh5t5XMdm6uEWpFdOBpveovFFRz3MQlPAMye1qG7eRY3E6bK74EUfZxdhehAmlm6X4P11semOyRj0tgSb0pQ3max+Ysm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NZ+bdKwq; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fcUhICZP"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a2f22bfb4e6so706150566b.0
-        for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 02:20:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NZ+bdKwq"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2cf595d5b4aso43058831fa.0
+        for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 02:29:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1706696446; x=1707301246; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4cEqK4k1A7PVq0QJziHE6k8iVWTQh9yIWRh++Qn1t9A=;
-        b=fcUhICZPGSIa82MpzbXwIBdXgsWC7+x2I4AZ5wlTGDTDBqZ8xNRjmri13y/afrmhLP
-         M1gcAvsGMKf6cZAV4bg7hProNb9znfoCxhg5cv2Y2yfOBLfL3u6Rw++jostXa1eEV+1V
-         mqWbz4Z767YqdAFIMmIjWYkl39Itqa3nV642LOv8Mmu7HbwbX7i48SoF0OOP0mZgdCup
-         kcI6CUkMwOwMWPOYm9JpwqFhPkKYZH2WSLlG99UWQIhUSJFJbK0xu+eskCxsGIHub/0m
-         kH9itJegyjZZkzCmkFLtyG/T9NMizoPFPIBrxXOnRC7+5HYSocIdpK4zI62K3McRdhG6
-         fweA==
+        d=tuxon.dev; s=google; t=1706696978; x=1707301778; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uAPsb7wv9ncMZqGhKLbsOzYzbM14KqWAhQQvx6jMrWQ=;
+        b=NZ+bdKwqoEBkVvCeucEeccV4yu0mKzHKyDSSLFGuYLN5Wa6iNGaW+XoaNgcI/06iqX
+         G2SW00+49LEZ0h4IISy7Oti6tRWAJifd1UeP46gE/CEk5TzdUdDzETzsv9I7wDBqUVp8
+         LLoMgfUtoUMpevZ/Ar31I+hDEPKp2+P1Of18oZfzTm7sRVX4MDJ+LuBbtWJl5hThlaUN
+         fJmPtwfeou10TulVeUN5Eez16D5GTx6OsPGfPTlRYUgCnPgkY6cr1jAQ6JygxqR70n4e
+         ZBJcO2dhChwewM+/HiGu9z6ebqg1VRFskjVsQJHwm2uTO4/MzxEM7UADUgjsZUcanZVD
+         MUvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706696446; x=1707301246;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4cEqK4k1A7PVq0QJziHE6k8iVWTQh9yIWRh++Qn1t9A=;
-        b=CiIWHdv4T8ymxEJcgocJp+JK7aSX/MnI2ttHEuN1qWqz3fZKXr+3WhjeatOkh6ywjV
-         mq/26dok2vfgz8zSFb9tHaVzCwFRD5eWJ4OUR1xCYgWPBuB54Wt4wz/J1mYqrfyHNP01
-         zb5phUqk7OunYuiVJYRSO3x8ERlHieXHQPe+bEuA+78PDwfnpN84QYShbtZz9DJbxpEd
-         mu5PzEjYBI5HT49Gb20F5ieI+YgTLlCYdbCEbfLe/ZFQwarvP3ORU4l7yx1rv/kTyjTH
-         Nl8jjhIn/peL6MGLXzqoA74w5/nGzTvrCstswm4ixKX4O3PwyXpQ+tAD3JiXjunKD8t1
-         HKkg==
-X-Gm-Message-State: AOJu0Yxu/emkulbIjDdz3cb8HuDupGvcGZ9Qsj6VpiBjyq4h7Ep8LdaR
-	L256Edf50sOYhPWgk4ktSKOAbALIGx5EwCho5g4CAYjToRK2hAhgl8o6vZ92KP8=
-X-Google-Smtp-Source: AGHT+IHaruO06vu0kGjs4fVXjxYqlkZO5gWImdkgO8i59fTy0v8FKtn34c2CwaOEyfCvlfz6+Bu/Zg==
-X-Received: by 2002:a17:906:7fc9:b0:a36:8b9b:bc1c with SMTP id r9-20020a1709067fc900b00a368b9bbc1cmr354388ejs.71.1706696446075;
-        Wed, 31 Jan 2024 02:20:46 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCXkZpikAZ1gjM9N3uZkKy1KiYWhb+LW7nmrtHggi4T1YOS7pUcDxpKM9MasBpWNrR+lGhTEpNuGopVk2ok3CAS53EIKVQZXGVcpznPZUixLv9TlBJhb3BYdr54gqaDVxKESFTHQLZ2Zfde3FGRday4OCNKe5mYc9/JzGyJzPWbSgyhUOwW87KidZI5I1B5K14Q+C8NHTp6vDUNIyWDm4jlP3ugSG41QidEE13lsai097p/TvfbYp2keUynLLFSVrdiIyntAkmNcWv38GCGtvUKlTqA+SYsLpWokEDKL6viW35iObmZ4PV5SowHz4up/ujXFuo5qshCbLZu4Q6icGJa7nmq5idcqhj/dGo+AZY6TxAS+8xxUoTT3ExcXGkBK8kUqVYncL/LgievwmEO92f4Rye/s8c4gYngEc1Kw6xfv4AqXmuiYAy+qFX58nNogufN3ATFIoFnK+NbnAOan2wWfDsjbI1oknZ+COywXK1S8iwPC7mSbK7zc7SxdGWpTeKsaDTWzKrdyzLmNZ2YndKiFWocd1iD96Hm8/CazyJBYBJQGHvDWtpq0NHvUiAw/Fa1PfbodEn/Is2CxP5tNbjPQqhkeqEapy0LKTsziHWdYarU=
+        d=1e100.net; s=20230601; t=1706696978; x=1707301778;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uAPsb7wv9ncMZqGhKLbsOzYzbM14KqWAhQQvx6jMrWQ=;
+        b=lR95oJSbaq68wX0vDSwzpfaLIdB291n9UwcKBEiF4c6mstqukvM7bELkJJvq3KzP3x
+         ETJqSDZeHzovLzAnHexvjfSgIF8U5G5QOKOv8LhvdFDJ/NDOU89kgvyL4VtMft8Fh9lR
+         Srl8gCZL2QBI/lY07JNGicrHgQ3I697fNuZitjqBBFDkLM9YA9ZycF/8SIZ7SJRBamgC
+         g5lwZI0eNHX5QGezpyy3ngG3P7KYjDsvWSnv/qIrERrV3L0SY3oTunU+4H3AARgCbYyx
+         lATIA8Ac+TKImQOw/vMqbP1IVRowx9uwpbZTDjooNgjtWCEgwYAWyZxJRxfq9obGSrSU
+         wo6Q==
+X-Gm-Message-State: AOJu0Yy8U05fJutgRIbkQVgGCPoOIPcx2qM40gZi9CpKS9NMeivtnm8/
+	awPcYPE2TJS2JEhQfYerd3jcPpYyQzHAa9SYoRF91GWTFKWFkL2jAukWw/PXvYg=
+X-Google-Smtp-Source: AGHT+IGm6vO1gDmeaNdgHV1ERLXyt6Fs95AO6Yk/NY9nclQlphcKvM6vYTvFfJDa17nLMgBL9NsvLg==
+X-Received: by 2002:a2e:a285:0:b0:2d0:6473:6286 with SMTP id k5-20020a2ea285000000b002d064736286mr809799lja.41.1706696978502;
+        Wed, 31 Jan 2024 02:29:38 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCURVfGVV/fgoZz/y96LwsWL8mjFEQI7eN5zwYPcYO+P+ror2taAymowKrBLq3tNR41XqJyjbI1XiX5zQtzqx49mZKa0N2ANmRIursqaKWYaXNNlHzPcr4KZzeZRCnFNYg2SUyh2U0Q0b77SKW8GI+IiVl48n8YGsnhFG5Z0g2W3PtvxA5W6gfjtaj9xBBft6zG1YC5RGdt+HTtNKz8f8F9OgNmRn3mZB1v87wB57PjJhEM65SezwhspLmV1+Yj8IUfn589/F35Su8/q5uVhYA==
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.87])
-        by smtp.gmail.com with ESMTPSA id vk6-20020a170907cbc600b00a3524be5a86sm5212966ejc.103.2024.01.31.02.20.44
+        by smtp.gmail.com with ESMTPSA id p16-20020aa7d310000000b0055f3b11d0adsm1618989edq.55.2024.01.31.02.29.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jan 2024 02:20:45 -0800 (PST)
+        Wed, 31 Jan 2024 02:29:38 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: wim@linux-watchdog.org,
-	linux@roeck-us.net,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
+To: geert+renesas@glider.be,
 	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	biju.das.jz@bp.renesas.com
-Cc: linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	sboyd@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 11/11] arm64: dts: renesas: rzg3s-smarc-som: Enable the watchdog interface
-Date: Wed, 31 Jan 2024 12:20:17 +0200
-Message-Id: <20240131102017.1841495-12-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 0/2] clk: renesas: r9a08g04{3,4}: Fix typos
+Date: Wed, 31 Jan 2024 12:29:28 +0200
+Message-Id: <20240131102930.1841901-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240131102017.1841495-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240131102017.1841495-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -88,32 +74,22 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Enable the watchdog interface (accessible by Cortex-A of RZ/G3S SoC) on
-RZ/G3S SMARC SoM.
+Hi,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+Series addresses few typos identified in r9a08g04{3,4} clock drivers.
 
-Changes in v2:
-- collected tags
+Thank you,
+Claudiu Beznea
 
- arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Claudiu Beznea (2):
+  clk: renesas: r9a08g04{3,4}: Use SEL_SDHI1_STS status configuration
+    for SD1 mux
+  clk: renesas: r9a07g04{3,4}: Fix typo for sel_shdi variable
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index f062d4ad78b7..2b7fa5817d58 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -336,3 +336,8 @@ mux {
- 		};
- 	};
- };
-+
-+&wdt0 {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
+ drivers/clk/renesas/r9a07g043-cpg.c | 6 +++---
+ drivers/clk/renesas/r9a07g044-cpg.c | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
 -- 
 2.39.2
 
