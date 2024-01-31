@@ -1,267 +1,178 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC7A3D54D
-	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 05:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017D63EA66
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 07:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706677521; cv=none; b=JEEscbpgoS1qKD+hOqO6NIgikjyS7xO7soubjBVHi/hqDouHy9hbDDapQiXc2aD6BY5zy3YxkpEAWjTFU7Pq4tbiD2BYRphdtrxJv/XuSaN9+HaMvXteVz6qI/jxL0Yjcg4vkCre3ApK5knXJJi6VoFy91VGpRFCjiUq/HCZXK8=
+	t=1706684872; cv=none; b=D/voLMQkPIno8rFzRmqCA5QbBFqlluFVc0/bBOGYHSJtWGKSsLuYGuzmkSAYO/kXeU6gPHhFnhUvyTUq8Li1hFLcTsYDjZ1O6xWsK2wJ8PKuInet6O08Uzy6Nf4tXabBLCL15ncEGjjsVtpwTp7ITwsKqxy69MgasTJP3am4D7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706677521; c=relaxed/simple;
-	bh=n2Tq6bEYRktcu0UZ4ZDAI8v/i2S9seIWoTbtVHKBVp4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=AzYLRjB/cFRqzmGFvy8CfRVWjm3MyuDE/9xzI0eGqgeKDElv4IfxlxAwzA5XKV3ZYAuAXlqnGt+nTwe4jFW7Wpuv1CtLeCHTDN8nj1qQqiwqHk+5d/ykTV+CgrWTgzxCxjLVSF6VWIqq0s3aUi+MzE5x9E+96xlXBlbby9HxvQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DecoXf+h; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1706684872; c=relaxed/simple;
+	bh=8oILixSlZ5urTs1vGCrQlsyLD+Svdi6zXRxdXJ11eVo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lpSoKGCrRoNEUWYezbRF+D01+kC/vNf3dYqgMpOrid2LlGhKHErSOwwbqQII99MBX67G+G2CdXdmH4twIGjDZWOHI+5ra/TJ60XOkf+tTQZdOlG1cj9M9CaDbXir9a7xz5O0mFEC/aJF3mZqrvA3D/8tW0Gmsye8l04Z1Qs5J5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aR8uiQIa; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DecoXf+h"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240131050516epoutp017c4e31db9a20aa1c9e6e68a932e34565~vVii9GC703237832378epoutp01N
-	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 05:05:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240131050516epoutp017c4e31db9a20aa1c9e6e68a932e34565~vVii9GC703237832378epoutp01N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1706677516;
-	bh=qL3Ay4Pba21ebKmLP4wgOqqtjTV7NsQxQZC9542ZZjY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=DecoXf+hQ/1V8f4MuFlF9yo32Dbk2T/9Z5muRsTIVYMSCgPBtWWjCMInWaF7/FNPJ
-	 tgiDxgf3AJed02x519mN5FUHlK1cvEcn0GmLVoNg5O55yv3/XRGWUaAajHYoYfmqiY
-	 8lKooD6FW7HM0H+od1QGLmDClVXCRQEhbGtFMows=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240131050516epcas5p47d8730317828176765d0897f441b7e6e~vViiq6zJ30567105671epcas5p4U;
-	Wed, 31 Jan 2024 05:05:16 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4TPqjQ3n3kz4x9Pw; Wed, 31 Jan
-	2024 05:05:14 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BA.59.08567.A05D9B56; Wed, 31 Jan 2024 14:05:14 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240131050514epcas5p4be8d9e13921fd986fe4575a0e6b1357c~vVigf2yS90107301073epcas5p48;
-	Wed, 31 Jan 2024 05:05:14 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240131050514epsmtrp2abde2bb514eebfd5e4158a59666f7af3~vVigdBfIQ0572005720epsmtrp2E;
-	Wed, 31 Jan 2024 05:05:14 +0000 (GMT)
-X-AuditID: b6c32a44-617fd70000002177-41-65b9d50a5e2e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	24.A0.08817.905D9B56; Wed, 31 Jan 2024 14:05:13 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240131050511epsmtip154775cf4996d87fa587c78df7e8f1ced~vVidxnqFt2072320723epsmtip1O;
-	Wed, 31 Jan 2024 05:05:11 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Shradha Todi'" <shradha.t@samsung.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>
-Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <jingoohan1@gmail.com>,
-	<lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-	<bhelgaas@google.com>, <krzysztof.kozlowski@linaro.org>,
-	<linux@armlinux.org.uk>, <m.szyprowski@samsung.com>,
-	<manivannan.sadhasivam@linaro.org>, <pankaj.dubey@samsung.com>
-In-Reply-To: <20240124103838.32478-3-shradha.t@samsung.com>
-Subject: RE: [PATCH v4 2/2] PCI: exynos: Adapt to clk_bulk_* APIs
-Date: Wed, 31 Jan 2024 10:35:10 +0530
-Message-ID: <009c01da5403$12b926d0$382b7470$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aR8uiQIa"
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-5cedfc32250so2924719a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 23:07:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706684870; x=1707289670; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dOSkO6Y4FYd8fxupP96Kte1aY7D/V2g1zrYc1jxvyPQ=;
+        b=aR8uiQIanIUMGZJPN5Sv1LcknTsmogTFKFsBH0RxXhFlPMLfMEu2PTuKwuc66hAAdd
+         y0WFp+kwoZkRTzZrEBN5u4tLNugTB3lxDxM93SsqGahJ/NjYJgh64z3ULGCPRbrus8LD
+         zONGvlwTM4O7jcltoiZ7mg0gw9XG/7VrAk4fgShW3b2zv2tqo/qaTkrc5kNh+RjivHin
+         dX2Y27qzDnOjo+GZ3jhYsaJxkV2TzIzzaQBy0LYGPmulSjrgZbwsTmFKzBCzEdlhZZrK
+         frdNu/gxKS65ra3QN42XUk+b1rQaPIzdMti0QJW8GVtVxLz7vgdv1Atu1byYN7hlIYgl
+         yIZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706684870; x=1707289670;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dOSkO6Y4FYd8fxupP96Kte1aY7D/V2g1zrYc1jxvyPQ=;
+        b=fAMfALsObPcIa2RvODaxeyNXcdcQMpJ9UA7XjaZVPhTjOwEFNkK5rDKT2uG7LROwxv
+         IMMB4dLBGaet0RqjOO3mhoBeT39jqsbrAa40LuRxBvGImoq0jvLRNIeF73aiiGoxEcTs
+         zDIiKYGBZ6tcMCt849HfYb/Qkfz60ZPFpIAzET4LAYdIY9c7JN3T2KHCC5HgOkEHCD6J
+         ZULNuoq23vp340TdlXF12UEiwkJREo7FHzCqF3SniqjvshkM3S/ulQbSi0L+nSb3IDbS
+         O8a/8yIC5Bty8sORl5wVqN1lHvCJVkXaGh3qoloUVRzqaOLHWyDO5Wf3ennk5KzHt2IL
+         gAZA==
+X-Gm-Message-State: AOJu0Yw5UHqi1eV01PPMeIoR0HUAchAck0JGzF8CbqmCb8Y3BFXpNuS2
+	zk6vYmFBJpSdfx6maJgPZzrWdbRWrU0DPq/5x/rxQOjTScTpbjHuQrCo8ulgYg==
+X-Google-Smtp-Source: AGHT+IGq4Dd3fKbHGpJ491lSOAvBvsjx9O1WWxRttsPouRtdA4cN3NaV7/uiBsxKoB69XgDHDdyI+w==
+X-Received: by 2002:a05:6a20:9e91:b0:19c:a7c0:acd8 with SMTP id mq17-20020a056a209e9100b0019ca7c0acd8mr719947pzb.0.1706684870039;
+        Tue, 30 Jan 2024 23:07:50 -0800 (PST)
+Received: from [127.0.1.1] ([103.28.246.26])
+        by smtp.gmail.com with ESMTPSA id lp17-20020a056a003d5100b006ddd182bf1csm9087956pfb.46.2024.01.30.23.07.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jan 2024 23:07:49 -0800 (PST)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 00/17] Fix Qcom UFS PHY clocks
+Date: Wed, 31 Jan 2024 12:37:23 +0530
+Message-Id: <20240131-ufs-phy-clock-v3-0-58a49d2f4605@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIcpPks/WB953w72Rl3v8cfkz9jJgIOwv9MAllxpn6wS3ptMA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xbZRjG+XoHxZwVyD6KznIMYzCBVgocBmyDgTvKEjDEJZooO6EnlFBO
-	m152M5uddMxdQEDIRhmTFsKwyBiFymWwAbsgIEHCVnDKlJuZI4AbWDAwsO3ZlP9+7/c+T57v
-	/S48Jn+GI+BlURpSRRFylOPB+v52UGCIx4M2UmT8yg+r/kKG1S6VcbHOWSsX011YZWOWKRsb
-	e3rhERsbab/MwQav9HKwS0M3GVhPaSfA9Gt6FlZ/Z5yLjevPsrHh/iTMZF3iYhsdrVxs3dbI
-	wvJvn9jLx0dsw0x8Yew0F28zjHPxSosWt5jPcvBfbR0cfPr+RQbeVP05XtBsBviiZVuqx8fZ
-	sTKSkJIqIUllKKRZVGYcmpyWvi89IlIkDhFHY1GokCJyyDg08UBqyLtZcsdEqPAwIdc6llIJ
-	tRoN2x2rUmg1pFCmUGviUFIplSslylA1kaPWUpmhFKnZJRaJ3olwCA9lyyYry5nKDfTo4q1B
-	hg48f/0ccOdBRAJHbd3AyXzkBoB9E0dpfgbgpFV6Dng42A5g6e/lnJeGurZGNt3oBHD5+R8c
-	ungMoGFqiOtUcZAQ2FqV52p4I6MALi2bWc6CidxgwLn2FVegOxIDJ6t7mE72QuLhY/vXLmYh
-	AdB0a4TtZE8kGhaUDrBo3gL7yqZdzER2whrjLJPekxD+M1Pj0nsjCXChto5Da7bCP+/e4TqD
-	IbLBg7PFl1i0IRGWjAy8MHvBJ73NXJoFcHG+02HmORiHpjUBvSyDc1cbAM17YNf9yyynhIkE
-	wYb2MDrqNZi/Os2gnZ7wyzw+rQ6AufMPXoT6waLz59k04zDP/oRTCPwNmwYzbBrMsGkAw/9h
-	lYBlBr6kUp2TSWZEKMUUeeS/+85Q5FiA670HJ7aCsW/WQ3sAgwd6AOQxUW/Pb7e1kXxPKXHs
-	OKlSpKu0clLdAyIcp13EFPhkKBwfhtKkiyXRIklkZKQkOjxSjG71nD1dIeUjmYSGzCZJJal6
-	6WPw3AU6hq95vWqitj9+/MdjQabc7Vla4Z78h7+EBM4UuX04vvdwxILeS1xQfBN/76mv36Dg
-	4FsnT5bsC89utK4kdu3W/vATdQ33f9acNCNJfVNwKD1+LbG7cAXvqCqLsjE+6Ky2G4dMxrdb
-	djwK3tFb6nY9bCgZpNUn7S/W/XWxrXG95VURNexjuZISc0Qyub0ld3VN98oJ6mdtytjDxYnC
-	Nz4rqbib0Tyv/7RVMFATk7M8F+7vZp/L3WUt6K0/OFNo/u5UH9tny73QhWKiXldR3tFckHYm
-	wNiYMBp44NTfpoCm/pSue1PvD8+zric07LzKLpo1dp+5Vpf8CRFrbtKjvx2Xy6LsH+1HWWoZ
-	IQ5mqtTEv6KRjfJ4BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsWy7bCSnC7n1Z2pBveuWFksacqwWPFlJrvF
-	3tdb2S0aen6zWmx6fI3V4mPPPVaLy7vmsFmcnXeczWLG+X1MFoem7mW0aPnTwmKx9shddou7
-	LZ2sFhdPuVos2vqF3eL/nh3sFv+ubWSx6D1c6yDkcfnaRWaP9zda2T12zrrL7rFgU6nHplWd
-	bB53ru1h83hyZTqTx+Yl9R59W1YxenzeJBfAFcVlk5Kak1mWWqRvl8CVcaBpCWvBLcWKfZ+2
-	MjcwXpPuYuTkkBAwkVi9cyNrFyMXh5DAbkaJ5n+TmSES0hLXN05gh7CFJVb+e84OUfSMUWLS
-	/yZGkASbgK7EjsVtbCAJEYG7jBKNy/+AdTALnGSSmDdfBW7ssgNnWEASnALWEo+WHAJbISzg
-	KPHiG8Q6FgFViUX7L7OC2LwClhJ9U0+zQNiCEidnPmGBGKot0fuwlRHGXrbwNdSpChI/ny4D
-	6xURcJJ4v2I1G0SNuMTLo0fYJzAKz0IyahaSUbOQjJqFpGUBI8sqRsnUguLc9NxiwwKjvNRy
-	veLE3OLSvHS95PzcTYzgSNfS2sG4Z9UHvUOMTByMhxglOJiVRHhXyu1MFeJNSaysSi3Kjy8q
-	zUktPsQozcGiJM777XVvipBAemJJanZqakFqEUyWiYNTqoEpwiLDRv6GcOpx0cLzq4rPmv/Q
-	e7L03ILZVu2bL9jURavcFHbZNoeNdwlPuMb/jQ+6GWo1v4QfmlOQqXx+4tbmP+eUzM8ph37d
-	FqrK61x+mPN1WOFPqYTbfKbrgxddPSPe5S7S98n0S+Pv0w9+VJVKuq5u5N3I8vfPwxlBX851
-	O9pP5ro6aZpj5IWZvrIlHR7rjxuGaFdmX9Hc0TtRn/HX3+BnRuJ+0ctfvs2a0javRVuk/MnD
-	k7aiBseyDvseqN378wpjqPMr9YkH7uwJMXSN2HhRPaN+qsChffGuLdtuaQfOijeSPRkQ1K5c
-	eVlU7/Fjpg9eez768x9nenNtg9/x88cjL5n9u5Z1XLdWuZpDiaU4I9FQi7moOBEAYH66VWMD
-	AAA=
-X-CMS-MailID: 20240131050514epcas5p4be8d9e13921fd986fe4575a0e6b1357c
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240124103858epcas5p3d96cdbe8a6c8f31ccc934025411a09b8
-References: <20240124103838.32478-1-shradha.t@samsung.com>
-	<CGME20240124103858epcas5p3d96cdbe8a6c8f31ccc934025411a09b8@epcas5p3.samsung.com>
-	<20240124103838.32478-3-shradha.t@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKvxuWUC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDQ2ND3dK0Yt2CjErd5Jz85Gxdc0tjyyRLI1OLJONkJaCegqLUtMwKsHn
+ RsbW1AADUe1pfAAAA
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, quic_cang@quicinc.com, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3384;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=8oILixSlZ5urTs1vGCrQlsyLD+Svdi6zXRxdXJ11eVo=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBlufG2op3Brs8QxQHR4Lma+anPdMoGprBMDMvoU
+ 04otxHtgv+JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZbnxtgAKCRBVnxHm/pHO
+ 9WobB/9NZYXT3tglVcat/alW1W2NsBvVeeQMIiTQSkS56WqIl4UHrc0WDixCWSWuq90DVYkkzQj
+ DQR93pb3ofsHf4bPUZZv5CGNDYGZCKpMh/5OM+tGYjOElbgJKujYEIJjw50vJRw+7ZDXPKEV4be
+ sFNBIU2jj44uXi7+XSbMAvTUX9Ho3lZ2OT4jV4lQMe0cHuUiZbidlw/QOQdhHrtO9tCuZtUlCov
+ ZrxHspD4SpPtxp9deLDoG0fBe/cl8tIAIu2EYe0rxn6Mkg4HrbpK/dFVIHH3SB8XnuOGqrZuAyg
+ MjZsL5Jw2TXxRS+wnDHx6CxtVTT7I95xGozCN6KUdmV+7jlP
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-Hello Shradha
+Hi,
 
-> -----Original Message-----
-> From: Shradha Todi <shradha.t=40samsung.com>
-> Sent: Wednesday, January 24, 2024 4:09 PM
-> To: linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
-> pci=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-sams=
-ung-
-> soc=40vger.kernel.org
-> Cc: mturquette=40baylibre.com; sboyd=40kernel.org; jingoohan1=40gmail.com=
-;
-> lpieralisi=40kernel.org; kw=40linux.com; robh=40kernel.org;
-> bhelgaas=40google.com; krzysztof.kozlowski=40linaro.org;
-> alim.akhtar=40samsung.com; linux=40armlinux.org.uk;
-> m.szyprowski=40samsung.com; manivannan.sadhasivam=40linaro.org;
-> pankaj.dubey=40samsung.com; Shradha Todi <shradha.t=40samsung.com>
-> Subject: =5BPATCH v4 2/2=5D PCI: exynos: Adapt to clk_bulk_* APIs
->=20
-> There is no need to hardcode the clock info in the driver as driver can r=
-ely on
-> the devicetree to supply the clocks required for the functioning of the
-> peripheral. Get rid of the static clock info and obtain the platform supp=
-lied
-> clocks. All the clocks supplied is obtained and enabled using the
-> devm_clk_bulk_get_all_enable() API.
->=20
-> Signed-off-by: Shradha Todi <shradha.t=40samsung.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+This series fixes the clocks supplied to QMP PHY IPs in the Qcom SoCs. All
+of the Qcom SoCs except MSM8996 require 3 clocks for QMP UFS:
 
->  drivers/pci/controller/dwc/pci-exynos.c =7C 54 ++-----------------------
->  1 file changed, 4 insertions(+), 50 deletions(-)
->=20
-> diff --git a/drivers/pci/controller/dwc/pci-exynos.c
-> b/drivers/pci/controller/dwc/pci-exynos.c
-> index ec5611005566..3234eb5be1fb 100644
-> --- a/drivers/pci/controller/dwc/pci-exynos.c
-> +++ b/drivers/pci/controller/dwc/pci-exynos.c
-> =40=40 -54,43 +54,11 =40=40
->  struct exynos_pcie =7B
->  	struct dw_pcie			pci;
->  	void __iomem			*elbi_base;
-> -	struct clk			*clk;
-> -	struct clk			*bus_clk;
-> +	struct clk_bulk_data		*clks;
->  	struct phy			*phy;
->  	struct regulator_bulk_data	supplies=5B2=5D;
->  =7D;
->=20
-> -static int exynos_pcie_init_clk_resources(struct exynos_pcie *ep) -=7B
-> -	struct device *dev =3D ep->pci.dev;
-> -	int ret;
-> -
-> -	ret =3D clk_prepare_enable(ep->clk);
-> -	if (ret) =7B
-> -		dev_err(dev, =22cannot enable pcie rc clock=22);
-> -		return ret;
-> -	=7D
-> -
-> -	ret =3D clk_prepare_enable(ep->bus_clk);
-> -	if (ret) =7B
-> -		dev_err(dev, =22cannot enable pcie bus clock=22);
-> -		goto err_bus_clk;
-> -	=7D
-> -
-> -	return 0;
-> -
-> -err_bus_clk:
-> -	clk_disable_unprepare(ep->clk);
-> -
-> -	return ret;
-> -=7D
-> -
-> -static void exynos_pcie_deinit_clk_resources(struct exynos_pcie *ep) -=
-=7B
-> -	clk_disable_unprepare(ep->bus_clk);
-> -	clk_disable_unprepare(ep->clk);
-> -=7D
-> -
->  static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)  =
-=7B
->  	writel(val, base + reg);
-> =40=40 -332,17 +300,9 =40=40 static int exynos_pcie_probe(struct platform=
-_device
-> *pdev)
->  	if (IS_ERR(ep->elbi_base))
->  		return PTR_ERR(ep->elbi_base);
->=20
-> -	ep->clk =3D devm_clk_get(dev, =22pcie=22);
-> -	if (IS_ERR(ep->clk)) =7B
-> -		dev_err(dev, =22Failed to get pcie rc clock=5Cn=22);
-> -		return PTR_ERR(ep->clk);
-> -	=7D
-> -
-> -	ep->bus_clk =3D devm_clk_get(dev, =22pcie_bus=22);
-> -	if (IS_ERR(ep->bus_clk)) =7B
-> -		dev_err(dev, =22Failed to get pcie bus clock=5Cn=22);
-> -		return PTR_ERR(ep->bus_clk);
-> -	=7D
-> +	ret =3D devm_clk_bulk_get_all_enable(dev, &ep->clks);
-> +	if (ret < 0)
-> +		return ret;
->=20
->  	ep->supplies=5B0=5D.supply =3D =22vdd18=22;
->  	ep->supplies=5B1=5D.supply =3D =22vdd10=22;
-> =40=40 -351,10 +311,6 =40=40 static int exynos_pcie_probe(struct platform=
-_device
-> *pdev)
->  	if (ret)
->  		return ret;
->=20
-> -	ret =3D exynos_pcie_init_clk_resources(ep);
-> -	if (ret)
-> -		return ret;
-> -
->  	ret =3D regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep-
-> >supplies);
->  	if (ret)
->  		return ret;
-> =40=40 -369,7 +325,6 =40=40 static int exynos_pcie_probe(struct platform_=
-device
-> *pdev)
->=20
->  fail_probe:
->  	phy_exit(ep->phy);
-> -	exynos_pcie_deinit_clk_resources(ep);
->  	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
->=20
->  	return ret;
-> =40=40 -383,7 +338,6 =40=40 static int __exit exynos_pcie_remove(struct
-> platform_device *pdev)
->  	exynos_pcie_assert_core_reset(ep);
->  	phy_power_off(ep->phy);
->  	phy_exit(ep->phy);
-> -	exynos_pcie_deinit_clk_resources(ep);
->  	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
->=20
->  	return 0;
-> --
-> 2.17.1
+* ref - 19.2MHz reference clock from RPM/RPMh
+* ref_aux - Auxiliary reference clock from GCC
+* qref - QREF clock from GCC or TCSR (TCSR since SM8550)
 
+MSM8996 only requires 'ref' and 'qref' clocks.
+
+Hence, this series fixes the binding, DT and GCC driver to reflect the
+actual clock topology.
+
+Note that the clock topology is not based on any downstream dts sources (even
+they are not accurate). But rather based on information from Qcom internal
+documentation and brain dump from Can Guo.
+
+Testing
+=======
+
+Tested on Qualcomm RB5 development board based on SM8250 SoC. I don't
+expect this series to break other SoCs too.
+
+- Mani
+
+Changes in v3:
+
+* Added a patch for SM8650
+* Collected review tags
+* Rebased on top of next/20231123
+
+Changes in v2:
+
+* Reworded the commit message of patch 1 to justify ABI breakage
+* Collected review tags
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Manivannan Sadhasivam (17):
+      dt-bindings: phy: qmp-ufs: Fix PHY clocks
+      phy: qcom-qmp-ufs: Switch to devm_clk_bulk_get_all() API
+      dt-bindings: clock: qcom: Add missing UFS QREF clocks
+      clk: qcom: gcc-sc8180x: Add missing UFS QREF clocks
+      arm64: dts: qcom: msm8996: Fix UFS PHY clocks
+      arm64: dts: qcom: msm8998: Fix UFS PHY clocks
+      arm64: dts: qcom: sdm845: Fix UFS PHY clocks
+      arm64: dts: qcom: sm6115: Fix UFS PHY clocks
+      arm64: dts: qcom: sm6125: Fix UFS PHY clocks
+      arm64: dts: qcom: sm6350: Fix UFS PHY clocks
+      arm64: dts: qcom: sm8150: Fix UFS PHY clocks
+      arm64: dts: qcom: sm8250: Fix UFS PHY clocks
+      arm64: dts: qcom: sc8180x: Fix UFS PHY clocks
+      arm64: dts: qcom: sc8280xp: Fix UFS PHY clocks
+      arm64: dts: qcom: sm8350: Fix UFS PHY clocks
+      arm64: dts: qcom: sm8550: Fix UFS PHY clocks
+      arm64: dts: qcom: sm8650: Fix UFS PHY clocks
+
+ .../bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml    | 48 ++++++++---------
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              |  4 +-
+ arch/arm64/boot/dts/qcom/msm8998.dtsi              | 12 ++---
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi              |  6 ++-
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi             | 18 ++++---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |  8 +--
+ arch/arm64/boot/dts/qcom/sm6115.dtsi               |  8 ++-
+ arch/arm64/boot/dts/qcom/sm6125.dtsi               |  8 +--
+ arch/arm64/boot/dts/qcom/sm6350.dtsi               |  8 +--
+ arch/arm64/boot/dts/qcom/sm8150.dtsi               |  8 +--
+ arch/arm64/boot/dts/qcom/sm8250.dtsi               |  8 +--
+ arch/arm64/boot/dts/qcom/sm8350.dtsi               |  8 +--
+ arch/arm64/boot/dts/qcom/sm8550.dtsi               |  9 ++--
+ arch/arm64/boot/dts/qcom/sm8650.dtsi               |  8 +--
+ drivers/clk/qcom/gcc-sc8180x.c                     | 28 ++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp-ufs.c            | 63 +++-------------------
+ include/dt-bindings/clock/qcom,gcc-sc8180x.h       |  2 +
+ 17 files changed, 129 insertions(+), 125 deletions(-)
+---
+base-commit: 06f658aadff0e483ee4f807b0b46c9e5cba62bfa
+change-id: 20240131-ufs-phy-clock-7939b9258b3c
+
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
