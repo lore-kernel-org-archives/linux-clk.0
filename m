@@ -1,155 +1,140 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C16A5DF17;
-	Wed, 31 Jan 2024 08:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE35B69D07
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 10:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706689934; cv=none; b=atcT0o8Fj1PLP3IseHZ+kM+mcvCfiTUJHbmBKzEZtJMl2hLW1HGR0fYlYQqO2W258Klevna315evt3Gk7xj6E/BkQoIJ/u0F5ZVYK0Qkti0nD8mLU5WIVJhZ41/4VO/3Eduqsh6x3tItzSSDYO7qWptHEn0wY7XMCGazQy9FUeU=
+	t=1706696431; cv=none; b=r0heUb38cSM5tEWJKKrgixNAXtryI2nNDVToUcMumR8lYjLe4/Rh//rtJn5YZRXujnT+NgeyY/k3fvhms9v2n2HYSYEgoHnOJ7JxX8iUsyvI3NDVSFpFnBvixbL6zCi79SuUfHUINc5HciwzgUJtzR/kkzS0aw1fHh4QDu3kAog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706689934; c=relaxed/simple;
-	bh=LnrH8a5zYVpmAlRagGxradQPGUkv1B0XDLbxWC6rdmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ksl/91ngH02Nys0nrzpgyW1ooSmTpWrGA5lCHDsFYrC+jT2wbf9mB03BaG1IzJ28eWWnCxgjAfEZGoe8Y40Nm1F7fYhh8feUWHkfU5R4AaAqknsDRH1yfyPU6JI/L0/43pZTmVWlxVsa5WwelExbuiz0wdzpgA8uh+eQNclgoqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lDQSfraS; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1706696431; c=relaxed/simple;
+	bh=UiORm6wg+ND2g1timUzZOpcyVuU+9hkkKah588hb8I0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=efiMZhn5GvVqZD0bAqzU0oHSKT7810LVfbrWAYiq5kzmL6NGxj9jPlKEzIPdln7xTxTFNPscbrrXEN+awP4vgKH1Pw5QlNZ6JFV/YOGRPGthuOmS7m9vWtcRe8vZqw/ElRGGpy+SvJZl/auwgQHEb4BdQ+618ZjFoJWlLQ21ptU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OIsnyWfX; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lDQSfraS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1706689930;
-	bh=LnrH8a5zYVpmAlRagGxradQPGUkv1B0XDLbxWC6rdmA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lDQSfraSCJwGUPW5n9z/BbT0hc5H5woZFWcMz7OmWUoONNJNka8sk8fzhPQ5ZJVX4
-	 JtOqZTULJOVS9Lgl0KpXtULLXUqRyNZDpA2HtRPC46jTEktXLhyGAcx1s7+VfQCF/Z
-	 8JwIwnbiuU6exVHUMgZo6Pfxc+9CabHXbXmq4n9/6P44t7Lu6bsUSERmjUjUL5bcDc
-	 OHYI5CSyg0uLDfrerIBBUoC1dGX8qf3St3mRTTFKB10c7csVzrIFMj1osey0ATMvV0
-	 7wPxXxJoQn3Tc4p+V3zz8JkS4RsqJuKTIgg28MNC/j8X1xhPmtPYMgl052FgMQrz5d
-	 7bAyDN6ldt/1A==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4543F37803EE;
-	Wed, 31 Jan 2024 08:32:09 +0000 (UTC)
-Message-ID: <7574acab-4a4e-4213-a477-5ef1870fe98a@collabora.com>
-Date: Wed, 31 Jan 2024 09:32:08 +0100
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OIsnyWfX"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-55eedf5a284so4591607a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 02:20:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1706696427; x=1707301227; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T5kJFKr5iTOo1U31zyzdDHRoKpUWs/L5KPoOuxNE44c=;
+        b=OIsnyWfX2TvfrJaoCw5HUFgjtWkv93KI62j96xZDFbDwr3BRHuWErO7SLxTwd3/f1Z
+         WCsax3b9rfowTCbC7GtqFbHdIMLBq4J9gMzJCOguMsLVezW9/ipuV5uaMXEG3CxAmwSc
+         +nsR/a+hx2W4igRpMPRVkwAPg7P3vFS8G9EMl4/Orywc1ISmT03ScgAMvs/QST8J8Vbb
+         mV5/fnzjLV2SXNgZ5XFsi1QHJYw6Uzz5WG1xxV+2Pa3911SPKHgbKU0xuhWtp0Tl5Ugh
+         3N6gMpcfEVNfSE2QzknYEV2N7IBuQZeKfyt3pYKwjr4Jjh6S1qsvaaHTQsOTCtRYU4Jv
+         xNCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706696427; x=1707301227;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T5kJFKr5iTOo1U31zyzdDHRoKpUWs/L5KPoOuxNE44c=;
+        b=nFMLeaP6FJTw5QSys1DeQc6FjxO2pXGU74YXiJc6HfowEhHs24WQ9exLl16eahoaDS
+         iXUAwrrUdIeLZYIsoa3XG9eK/LkQjSNlzDZGO/VWcqtyFkInLx+Opm61WIVV9lsY5e56
+         +SEg6zl+c+7/r/5ouX1RrEzF92TPww5jvxYg6Ts1Xo68dAoNmAFp9zaVRZ7qwFj279R/
+         qlGQQ+deQQA5fCQOFFSbfs3lSqfkBVkxqCfIG4+QWePiS9DYishf8U4T6sIvcCwdJce+
+         LW0keOHYV8KVUb6jjerg02yGj5cE12yTngNpdhIoqwVkiSFsbk0loC7MrQ5FNk2Xnc+C
+         mtqw==
+X-Gm-Message-State: AOJu0YyAzj4sRwk2x1OvRm4yP8tJmPevIbNfrSrh1qeyL4mK5RWfQ3VT
+	y8wlzU/+Ss8NjzRTbGd4CFAZ0vtj8HQPnhrjUfZleCCblaCBLWeOmR4I/XSHCI4=
+X-Google-Smtp-Source: AGHT+IGsS1EVCz9f1k8KuUptnP8yNx0ak7r9DfqvZR6JCmobFGB5IciSh4lafL4wf8HZCeB9WD+/NA==
+X-Received: by 2002:a17:906:4f10:b0:a31:81e9:dbbb with SMTP id t16-20020a1709064f1000b00a3181e9dbbbmr744774eju.52.1706696426805;
+        Wed, 31 Jan 2024 02:20:26 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCWqb/5dxkuvkTtbLVQaq3G8f1oqCG6PQKLkgRSnq4U7gFpJvcncDYg0Qe7BZGgD6TVGQ1r1WeZIkouY0CmEC6vX9wDZFXFx9xvkchCCpGkggbnXguZftsvVMixwWixVS3rnDH+MjN5WbaUtSjvVGhNDJ8xv9LpM5iTzQ/BdIjbfmJdnIO8n5tLe52NG8Ci3LIBNdOli73YkQGsqhUE0pEemxPOcoFULibOJuqhRffOBy7jcww4hzC1dd0YqkrpU7+otl4/l9JgruqvTe6AXaxyPA8Dw6oJY+5FyrEJNjZ1vAgJLAOYoHEIPSi6PN/ofn+6BQgfSL+1c2yRCpXHEEhUG8KpwUwvcoUZlLxBrqyNquEynepYij6zUAw8f1ArUi7oCHT5Te14N7sJSfTVQAclxBPXs5LajiqQQ16WQdNuy9v3R2RUytKdDqMgAmQ2dIAHKHeEm6VnCIrrIMULqLjkTaPV7NK49B1R0sdsAvlBXMCzBlXCXa5VCO8s6D4juUWilW4bwkwjx4bbWxJyCxcbIZStAvSalZo1uD+HRNykWJvN2DwtSq8D1Xg/fIw4ca4BiPQELfFmQRv6ymBh0uwAmgYsxa+u4pCUe2RJfZ2J2B6E=
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.87])
+        by smtp.gmail.com with ESMTPSA id vk6-20020a170907cbc600b00a3524be5a86sm5212966ejc.103.2024.01.31.02.20.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jan 2024 02:20:26 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de,
+	biju.das.jz@bp.renesas.com
+Cc: linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 00/11] watchdog: rzg2l_wdt: Add support for RZ/G3S
+Date: Wed, 31 Jan 2024 12:20:06 +0200
+Message-Id: <20240131102017.1841495-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: arm: mediatek: convert PCIESYS to the
- json-schema
-To: Rob Herring <robh@kernel.org>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- Russell King <linux@armlinux.org.uk>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20240123082100.7334-1-zajec5@gmail.com>
- <20240123082100.7334-3-zajec5@gmail.com>
- <e17b85b1-7f1f-4b60-89b7-43f560466cc2@collabora.com>
- <20240130203413.GA2290196-robh@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240130203413.GA2290196-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Il 30/01/24 21:34, Rob Herring ha scritto:
-> On Tue, Jan 23, 2024 at 12:20:29PM +0100, AngeloGioacchino Del Regno wrote:
->> Il 23/01/24 09:20, Rafał Miłecki ha scritto:
->>> From: Rafał Miłecki <rafal@milecki.pl>
->>>
->>> This helps validating DTS files. Introduced changes:
->>> 1. Documented "reg" property
->>> 2. Adjusted "reg" in example
->>>
->>> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
->>> ---
->>>    .../arm/mediatek/mediatek,mt7622-pciesys.yaml | 47 +++++++++++++++++++
->>>    .../arm/mediatek/mediatek,pciesys.txt         | 25 ----------
->>>    2 files changed, 47 insertions(+), 25 deletions(-)
->>>    create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
->>>    delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
->>> new file mode 100644
->>> index 000000000000..7340a2512402
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
->>
->> I think that we should really move all those clock controller yaml files to their
->> proper directory, which would be
->>
->> Documentation/devicetree/bindings/clock/
->>
->> ...because those are clock controllers anyway and the fact that they do also
->> provide a reset controller doesn't really justify having them in arm/mediatek.
->>
->> Besides, I would appreciate if you could also move mt8186/92/95 and eventual
->> others that are there to clock/.
-> 
-> Yes, please move it.
-> 
->>
->>> @@ -0,0 +1,47 @@
->>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt7622-pciesys.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: MediaTek PCIESYS controller
->>> +
->>> +description:
->>> +  The MediaTek PCIESYS controller provides various clocks to the system.
->>> +
->>> +maintainers:
->>> +  - Matthias Brugger <matthias.bgg@gmail.com>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - mediatek,mt7622-pciesys
->>> +          - mediatek,mt7629-pciesys
->>> +      - const: syscon
->>
->> I know that there's syscon all over the place and, even if I admit I didn't check,
->> I am fairly sure that there's absolutely no reason to have syscon there, and that
->> the syscon compatible never did anything for (most of, or all of) those clock
->> controllers, at all.
->>
->> I'm not sure - though - if removing syscon during the txt->yaml conversion is
->> acceptable (yeah we'd be cheating a bit), but something makes me say it is, because
->> the bindings couldn't validate before that one as well.
-> 
-> As long as you state why you are removing it in the commit msg.
-> 
->>
->> Of course you'd have to remove the syscon compatible from the affected device trees
->> as well as omitting it here.
-> 
-> You could also do 'minItems: 1' and 'deprecated' in the 2nd item.
-> 
-
-That too. Yes. But I still really want to see the syscon compatible removed from
-the device trees on those nodes because it doesn't make any sense to have it :-)
-
->> However, to be sure that we're doing the right thing here, I have to summon someone
->> that can actually give a definitive answer to what I just said.....
->>
->> Krzysztof, please? :-)
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
 
+Hi,
+
+Series adds watchdog support for Renesas RZ/G3S (R9A08G045) SoC.
+
+Patches do the following:
+- patch 1/11 selects CONFIG_PM for the watchdog driver
+- patch 2/11 adds clock and reset support for watchdog
+- patches 3-7/11 adds fixes and cleanup for the watchdog driver
+- patch 8/11 adds suspend to RAM to the watchdog driver (to be used by
+  RZ/G3S)
+- patch 9/11 documents the RZ/G3S support
+- patches 10-11/11 add device tree support
+
+It is expected that the clock and device tree support will go through
+Geert's tree while the rest of the patches through the watchdog tree.
+
+Thank you,
+Claudiu Beznea
+
+Changes in v2:
+- added patch "watchdog: rzg2l_wdt: Select PM"
+- propagate the return status of rzg2l_wdt_start() to it's callers
+  in patch "watchdog: rzg2l_wdt: Use pm_runtime_resume_and_get()" 
+- propagate the return status of rzg2l_wdt_stop() to it's callers
+  in patch "watchdog: rzg2l_wdt: Check return status of pm_runtime_put()" 
+- removed pm_ptr() from patch "watchdog: rzg2l_wdt: Add suspend/resume support"
+- s/G2UL/G2L in patch "dt-bindings: watchdog: renesas,wdt: Document RZ/G3S support"
+- collected tags
+
+Claudiu Beznea (11):
+  clk: renesas: r9a08g045: Add clock and reset support for watchdog
+  watchdog: rzg2l_wdt: Select PM
+  watchdog: rzg2l_wdt: Use pm_runtime_resume_and_get()
+  watchdog: rzg2l_wdt: Check return status of pm_runtime_put()
+  watchdog: rzg2l_wdt: Remove reset de-assert on probe/stop
+  watchdog: rzg2l_wdt: Remove comparison with zero
+  watchdog: rzg2l_wdt: Rely on the reset driver for doing proper reset
+  watchdog: rzg2l_wdt: Add suspend/resume support
+  dt-bindings: watchdog: renesas,wdt: Document RZ/G3S support
+  arm64: dts: renesas: r9a08g045: Add watchdog node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable the watchdog interface
+
+ .../bindings/watchdog/renesas,wdt.yaml        |   1 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  14 +++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   5 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   3 +
+ drivers/watchdog/Kconfig                      |   1 +
+ drivers/watchdog/rzg2l_wdt.c                  | 111 ++++++++++--------
+ 6 files changed, 85 insertions(+), 50 deletions(-)
+
+-- 
+2.39.2
 
