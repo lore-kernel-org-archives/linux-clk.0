@@ -1,96 +1,155 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE3C55764
-	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 07:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C16A5DF17;
+	Wed, 31 Jan 2024 08:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706685430; cv=none; b=M850c6bDY5CuZW4SEoDwEmxT4EAZy+syslZQ8R09L5/80kXBlHgdBZ1gc/iNcLEHcze/3ZEXmifILJPJYUNYFHZCPq8WDM89W6ve5p+7FaWEVvJahhkx0wZzVqR+ovWE9lLSyObfKUs4zn5KWouP30p5sKwryYwLU76us6F8Uuk=
+	t=1706689934; cv=none; b=atcT0o8Fj1PLP3IseHZ+kM+mcvCfiTUJHbmBKzEZtJMl2hLW1HGR0fYlYQqO2W258Klevna315evt3Gk7xj6E/BkQoIJ/u0F5ZVYK0Qkti0nD8mLU5WIVJhZ41/4VO/3Eduqsh6x3tItzSSDYO7qWptHEn0wY7XMCGazQy9FUeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706685430; c=relaxed/simple;
-	bh=SBwf/LLGCzAHLu6vwrpQFfw+tJTtM2sMiItF7LdOdsk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R/jsk06gogrlS/oWcDrfHdC2iRgp32d+egPZUbkiK9spQOSEyjqZSVJRdiD03wTshXY+lGdUmkkI5qAyLP57Xp6iJPasl+/Q3vRWuxJXW5V6p/v6x4WkBtaxUq3y0TpDPL6chJa6jAcmVGja5XqsrsrUiad9E/IOCDQC78WGnBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=skGgilxU; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706689934; c=relaxed/simple;
+	bh=LnrH8a5zYVpmAlRagGxradQPGUkv1B0XDLbxWC6rdmA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ksl/91ngH02Nys0nrzpgyW1ooSmTpWrGA5lCHDsFYrC+jT2wbf9mB03BaG1IzJ28eWWnCxgjAfEZGoe8Y40Nm1F7fYhh8feUWHkfU5R4AaAqknsDRH1yfyPU6JI/L0/43pZTmVWlxVsa5WwelExbuiz0wdzpgA8uh+eQNclgoqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lDQSfraS; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="skGgilxU"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dc6a631a90dso1170287276.2
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 23:17:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706685427; x=1707290227; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=i++Ghkf0yxbfp+SFq64kOAC5DCFdLn2FGQfA07BzBKg=;
-        b=skGgilxUjyHfYPott6hjnYEwUcGIIw0iLZ79jmZDeoTwQ39TGuwMbYfSOSeR1xlylj
-         KmPNLTPoxFsJwxfzStCQBl9x0+j+gA5Yvjo3wYuxEPKriaQgq2ByUszH4EPwE35vBKzY
-         GaXKNuo/7a+G7t0FcS4oRg5A3f2GO1a/A9LAKud+MnfzVLc/FwUkfunju5D9hFFhavbq
-         ZGICYfM7Yv7s2aPLbMBG9JNBR0wTf34KCtRDGW9T+8pXqVz9FcClOQNMF6FdVbKI3KpA
-         qFQIIxUU3o45sNSE1RBBvB536zGlzscmCRlaNiu3jGFNQtxkpJSI73D0DaNVU2ivhgB3
-         Np5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706685427; x=1707290227;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i++Ghkf0yxbfp+SFq64kOAC5DCFdLn2FGQfA07BzBKg=;
-        b=Tk59XkALKeHK8AfwbnBgGvQx/lPARs8yPajbyG1eXVsSQYLAshkIVE8okZrVGmabAq
-         egML5EM9eyL34YOs0k4L5zvSE/NY1MI/2RP7mfMuAcNvuM3FnSM7gDQ0nQuULjxNyzK9
-         dA3p/IksQOUwRasOLw210q7dVf3Nev1tg6iM5YfIG2ZIHc0lcKJe98L94xk6LdtItbGv
-         N4gQxUnc3WegiwVvMcHoZNx+arluic5crQZ4cNbt86TGwD50d61cs/hB4n2usjLd8zr2
-         1CxX6PWmGjJznnlBKLFVbyqAdUgV6J/Fs0nED/uCiOy1URijwRPyKYXVn4kjQjqXaQzP
-         5huQ==
-X-Gm-Message-State: AOJu0YwSC95AhoNMtOaUlJ94//DsMNygLp83I7LqZ7HJfjsC9ibi1CJ+
-	5r6c0biUwDB709RZvE7CRvHT7SYinhzcI0e9H6yblWUm6lpznPNZkHGBDs6g2hE01HYp5qtze9f
-	Ky+v6ps7Ef8sm3+2m2gzn1dR/cTT+2NoQpheHjw==
-X-Google-Smtp-Source: AGHT+IFTNzxcPE7P1aDSv5JKuBB1enENzJJokT41i2jNc0I+1qhMXhMXCe1ePN6biXsX0bf+Ecr83unT7phgH6+21hA=
-X-Received: by 2002:a25:6b44:0:b0:dc2:2e50:dc4b with SMTP id
- o4-20020a256b44000000b00dc22e50dc4bmr894449ybm.52.1706685427161; Tue, 30 Jan
- 2024 23:17:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lDQSfraS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1706689930;
+	bh=LnrH8a5zYVpmAlRagGxradQPGUkv1B0XDLbxWC6rdmA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lDQSfraSCJwGUPW5n9z/BbT0hc5H5woZFWcMz7OmWUoONNJNka8sk8fzhPQ5ZJVX4
+	 JtOqZTULJOVS9Lgl0KpXtULLXUqRyNZDpA2HtRPC46jTEktXLhyGAcx1s7+VfQCF/Z
+	 8JwIwnbiuU6exVHUMgZo6Pfxc+9CabHXbXmq4n9/6P44t7Lu6bsUSERmjUjUL5bcDc
+	 OHYI5CSyg0uLDfrerIBBUoC1dGX8qf3St3mRTTFKB10c7csVzrIFMj1osey0ATMvV0
+	 7wPxXxJoQn3Tc4p+V3zz8JkS4RsqJuKTIgg28MNC/j8X1xhPmtPYMgl052FgMQrz5d
+	 7bAyDN6ldt/1A==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4543F37803EE;
+	Wed, 31 Jan 2024 08:32:09 +0000 (UTC)
+Message-ID: <7574acab-4a4e-4213-a477-5ef1870fe98a@collabora.com>
+Date: Wed, 31 Jan 2024 09:32:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131-ufs-phy-clock-v3-0-58a49d2f4605@linaro.org> <20240131-ufs-phy-clock-v3-2-58a49d2f4605@linaro.org>
-In-Reply-To: <20240131-ufs-phy-clock-v3-2-58a49d2f4605@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 31 Jan 2024 09:16:56 +0200
-Message-ID: <CAA8EJpqGhUiF6is9K0OeB+DW5BmTTEEvk1sEDkxV+cN5BWpNnw@mail.gmail.com>
-Subject: Re: [PATCH v3 02/17] phy: qcom-qmp-ufs: Switch to devm_clk_bulk_get_all()
- API
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, quic_cang@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: arm: mediatek: convert PCIESYS to the
+ json-schema
+To: Rob Herring <robh@kernel.org>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+ Russell King <linux@armlinux.org.uk>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20240123082100.7334-1-zajec5@gmail.com>
+ <20240123082100.7334-3-zajec5@gmail.com>
+ <e17b85b1-7f1f-4b60-89b7-43f560466cc2@collabora.com>
+ <20240130203413.GA2290196-robh@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240130203413.GA2290196-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 31 Jan 2024 at 09:08, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> Device drivers should just rely on the clocks provided by the devicetree
-> and enable/disable them based on the requirement. There is no need to
-> validate the clocks provided by devicetree in the driver. That's the job
-> of DT schema.
->
-> So let's switch to devm_clk_bulk_get_all() API that just gets the clocks
-> provided by devicetree and remove hardcoded clocks info.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 63 ++++-----------------------------
->  1 file changed, 7 insertions(+), 56 deletions(-)
+Il 30/01/24 21:34, Rob Herring ha scritto:
+> On Tue, Jan 23, 2024 at 12:20:29PM +0100, AngeloGioacchino Del Regno wrote:
+>> Il 23/01/24 09:20, Rafał Miłecki ha scritto:
+>>> From: Rafał Miłecki <rafal@milecki.pl>
+>>>
+>>> This helps validating DTS files. Introduced changes:
+>>> 1. Documented "reg" property
+>>> 2. Adjusted "reg" in example
+>>>
+>>> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+>>> ---
+>>>    .../arm/mediatek/mediatek,mt7622-pciesys.yaml | 47 +++++++++++++++++++
+>>>    .../arm/mediatek/mediatek,pciesys.txt         | 25 ----------
+>>>    2 files changed, 47 insertions(+), 25 deletions(-)
+>>>    create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
+>>>    delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
+>>> new file mode 100644
+>>> index 000000000000..7340a2512402
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt7622-pciesys.yaml
+>>
+>> I think that we should really move all those clock controller yaml files to their
+>> proper directory, which would be
+>>
+>> Documentation/devicetree/bindings/clock/
+>>
+>> ...because those are clock controllers anyway and the fact that they do also
+>> provide a reset controller doesn't really justify having them in arm/mediatek.
+>>
+>> Besides, I would appreciate if you could also move mt8186/92/95 and eventual
+>> others that are there to clock/.
+> 
+> Yes, please move it.
+> 
+>>
+>>> @@ -0,0 +1,47 @@
+>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,mt7622-pciesys.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: MediaTek PCIESYS controller
+>>> +
+>>> +description:
+>>> +  The MediaTek PCIESYS controller provides various clocks to the system.
+>>> +
+>>> +maintainers:
+>>> +  - Matthias Brugger <matthias.bgg@gmail.com>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - enum:
+>>> +          - mediatek,mt7622-pciesys
+>>> +          - mediatek,mt7629-pciesys
+>>> +      - const: syscon
+>>
+>> I know that there's syscon all over the place and, even if I admit I didn't check,
+>> I am fairly sure that there's absolutely no reason to have syscon there, and that
+>> the syscon compatible never did anything for (most of, or all of) those clock
+>> controllers, at all.
+>>
+>> I'm not sure - though - if removing syscon during the txt->yaml conversion is
+>> acceptable (yeah we'd be cheating a bit), but something makes me say it is, because
+>> the bindings couldn't validate before that one as well.
+> 
+> As long as you state why you are removing it in the commit msg.
+> 
+>>
+>> Of course you'd have to remove the syscon compatible from the affected device trees
+>> as well as omitting it here.
+> 
+> You could also do 'minItems: 1' and 'deprecated' in the 2nd item.
+> 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+That too. Yes. But I still really want to see the syscon compatible removed from
+the device trees on those nodes because it doesn't make any sense to have it :-)
+
+>> However, to be sure that we're doing the right thing here, I have to summon someone
+>> that can actually give a definitive answer to what I just said.....
+>>
+>> Krzysztof, please? :-)
 
 
--- 
-With best wishes
-Dmitry
+
