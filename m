@@ -1,60 +1,60 @@
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EAD54BD3
-	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 07:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410F755C10
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 07:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706684887; cv=none; b=jmUJD3y0rsIWv/QJ6sxtHuOxb6ZiIX8pa5sJeF4zTAg8bjR7ayszC6opcxQdv6xCg6N2d5kAzfCYGI6FUSD9CIhFyM+t1mMryZidLR4cdccKHc/GWSCeCUeRR38aBMqNWHnbSLDew1/sW/HKl91saNk/TXjpZG1RCYTZggc1TfI=
+	t=1706684895; cv=none; b=oX6t3F/Dmr1ygqWs42nQubzEkR6SJU4uoiY3RtOzQGwuz0U4/58G/CiidlyaDjMXHKlLx1jOXTIyq9ovuHawq5gCckh+KhSZ+1ouXZIflV+QUTIE8AH6HAX3GFA0uHxi7CVCpCwTXAfdvlwNSEvun97bG0fHgt2MRWdWIzqtYw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706684887; c=relaxed/simple;
-	bh=eg29QpxTi3ABDM8Q2DT3ev/3ZsS2P/QOtpIx5SRYMdA=;
+	s=arc-20240116; t=1706684895; c=relaxed/simple;
+	bh=Oh+qBJcINLq2OcoHBhkxeh1csmVsCpWRCken5YykIEM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gub7p8RShdPBYLqV1Fb9/iQG7n1fJBztFg79cObIOwpmCFMv14ViQoehOh6+dbAl65gK5nu050W0YTLl25u0dWyXKfmx41QT5CuBL7EyOFuJznsdwDh2sfsFxQlQTlnP1R4pCsEEsXC47XScaiyzab8QurLnv9skDa5uB5CG4N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JddaQjSd; arc=none smtp.client-ip=209.85.210.49
+	 In-Reply-To:To:Cc; b=k5R6qiAMg6dqn5Ne9wGj0riM4Mx8WMWmAt7OY5Wk+MqfZr2WKCQx+i02T4VkqRsIOFNW/UL4da5vftrY9amsuGRuO52FwKuN4jLvQ6xr5PoOy2VAn78vSEVKa/w5KhNEfeqh9ULL75PdFtTLfQAq+b5b+RR52qO9OBmmdqbhxd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vKorYLF3; arc=none smtp.client-ip=209.85.210.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JddaQjSd"
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6e12b917df2so1548031a34.1
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 23:08:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vKorYLF3"
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-6e118da997cso1967058a34.3
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jan 2024 23:08:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706684884; x=1707289684; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706684892; x=1707289692; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sBqhHWcchsRJISu4NAHeEL0Dxp9/GvA2bdM9yR8s63M=;
-        b=JddaQjSdrPw1r7Lr4i4q7Z410Ej6T90HPgF2X5K2OE1dwCNYEDZ/e67WSwXSr31Ze2
-         N02Zt2tZ7ir8jQ8KxPQ8KzXyS7gj004R5M2mBuAUH1Lud0grUSv9obhRR8ilaF+WcVB2
-         pZLZ3csKqxcYBBETx3juRvAKN53YSDdJ/luxkezSfanGsGQ6Z77eXQqa02No5pS+ShBp
-         sThXK010TPhTVhWfnNFgYRjz4TibI5y5YwnabCRjWvc+mdNxCuGvCtlFRsljF0umEImB
-         JWaf0cVt77H0uyKmGj8SnUCloTo61FGarvezmTBwm2SY3bQwPYDS6VCF5gB5dXqzyYjA
-         KEOA==
+        bh=uQzh0HKJLV9OIo7v+P8AXxLZS3sXrPK/5N8JyocCrC8=;
+        b=vKorYLF3vNRwFaEv9XN8kgxd60oClUXukLF24RzPHZeXfGT60/RpTOpsDj00R6emlX
+         tdAJ2bZ+8jA3hnSq/oWtukhnoGLAz4QLFBpcD06mFmFfltHE6l8vAckvJYX5ULAQo2pS
+         GzjyEBSWnYzLoGeDOek//Xw7ajm+8SuFg9GUXbUqwTqACQ60Zuaz2mPn7Z9BduQNQYV+
+         3bFel+IZt11cnd5ptskDzTWvPtRdnBn/9dso4WvyhEcuy3N0GNY/2Z6/yQ5Qef4OiyZ+
+         heVYYccAzw3l8i5TBXNt8BiC53HGcYjQuBAczOqKSfYxzrRKHw6oGbxTtAM8SSTtP+Zq
+         OtoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706684884; x=1707289684;
+        d=1e100.net; s=20230601; t=1706684892; x=1707289692;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sBqhHWcchsRJISu4NAHeEL0Dxp9/GvA2bdM9yR8s63M=;
-        b=G5AGpqe2EWT0NasFBjs6TLe2dJVle8F5o9kS1RVladuEwqJ46BlBenZcBzP1gHne4w
-         ddYPC9V45qaVM5chy05z30bgNUPvmqV7pTn/OSseKt15aZ2X8OThWXr68ZzPx0lHbvlH
-         hqo+TQqjC1pd8ymsEdNFwbq85dmEhl4ZFZnJMq+Id0NH/AfNa3342UxCJ89JeivfhWmg
-         4fQEtUqv6gT2DtTJRgB/lT1lSC7rY1gTNHg+gTwYZn8XYzI/xlBUB7s218d2zv5IUaOM
-         20h+Qp5uQrnBlOmQOYu//B7EWXrDMnk1ucpY7imtfj1F1g03h4NCoKRRg80ORh/yQmXl
-         11Kg==
-X-Gm-Message-State: AOJu0Yx4LGk7Kp8vNc1S/IGPFoHD3yCR2g9HibCF00atkmnsQWkFc3AA
-	iBRk5uKgNTPlDdkL92tjp3rgdn6i9vfFCufKW1vnsNg0OHAdS5CRCdFgT+RpPg==
-X-Google-Smtp-Source: AGHT+IHvMSDBcrOY+N+BHWrx7Fb2p5cQuWH7WxKzXfwwIM7ax1D2poFdsOfRDlr+Y4AGOXgUdzlMWg==
-X-Received: by 2002:a05:6359:1585:b0:178:9a4d:4b94 with SMTP id jv5-20020a056359158500b001789a4d4b94mr670270rwb.5.1706684884507;
-        Tue, 30 Jan 2024 23:08:04 -0800 (PST)
+        bh=uQzh0HKJLV9OIo7v+P8AXxLZS3sXrPK/5N8JyocCrC8=;
+        b=BCzUZgbTfQozuSmYS6fgf20MbET77a8AKlMkqAwfEyN1iEb2dFo+MbwaEkl9AHEf3E
+         5NvRUDj6Vz1d8tkBp4kf9MCscFViCrpBOX8ue9rZpn2GX57WAOAYpaE7stfg2sGWhoiS
+         066H+DZEx2RUhGR17+KANBSgQSrjlT+KrIklnB3cSgZiZjQ+Tke8YLTaLPACfcU4jsZa
+         RF9gmk3MaQ82m9lf+E55aXU7JNBWxq4ul7JMoa//c6duPcpNNT8U7Mql/iyTG6PFxqEf
+         wl4O/K9htrgcNlwkj9CxqHdu97UKmId91LPGOtQ8DYQOtuLPXG7yNWJeLzDaQXqlEElY
+         kQ7g==
+X-Gm-Message-State: AOJu0Yw45BJARVpGBCvDt2UkcPcnMLs0J5U+UuR0lJ1pIn8DLqGMJert
+	Ynq9uMCWRDR5abpP1LFDpCbvOIDypurdnYcQQl+C/O6OLKCtS6C75Ai1X2APxg==
+X-Google-Smtp-Source: AGHT+IHhaczXoyebcX0Ci/z75+z8a7nwadolealrO3mrZHk66PieHH3wFp2W4NYZNelqO7uo+4O0VQ==
+X-Received: by 2002:a05:6358:2915:b0:176:a5f5:d266 with SMTP id y21-20020a056358291500b00176a5f5d266mr660926rwb.6.1706684892422;
+        Tue, 30 Jan 2024 23:08:12 -0800 (PST)
 Received: from [127.0.1.1] ([103.28.246.26])
-        by smtp.gmail.com with ESMTPSA id lp17-20020a056a003d5100b006ddd182bf1csm9087956pfb.46.2024.01.30.23.07.56
+        by smtp.gmail.com with ESMTPSA id lp17-20020a056a003d5100b006ddd182bf1csm9087956pfb.46.2024.01.30.23.08.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jan 2024 23:08:04 -0800 (PST)
+        Tue, 30 Jan 2024 23:08:11 -0800 (PST)
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Wed, 31 Jan 2024 12:37:25 +0530
-Subject: [PATCH v3 02/17] phy: qcom-qmp-ufs: Switch to
- devm_clk_bulk_get_all() API
+Date: Wed, 31 Jan 2024 12:37:26 +0530
+Subject: [PATCH v3 03/17] dt-bindings: clock: qcom: Add missing UFS QREF
+ clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240131-ufs-phy-clock-v3-2-58a49d2f4605@linaro.org>
+Message-Id: <20240131-ufs-phy-clock-v3-3-58a49d2f4605@linaro.org>
 References: <20240131-ufs-phy-clock-v3-0-58a49d2f4605@linaro.org>
 In-Reply-To: <20240131-ufs-phy-clock-v3-0-58a49d2f4605@linaro.org>
 To: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
@@ -77,237 +77,44 @@ To: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-clk@vger.kernel.org, quic_cang@quicinc.com, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7957;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=920;
  i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=eg29QpxTi3ABDM8Q2DT3ev/3ZsS2P/QOtpIx5SRYMdA=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBlufG7zFsb3aHB0OvU5Wj5lOfwKBgEYaxoAW2Uc
- g+Vf+SNTuOJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZbnxuwAKCRBVnxHm/pHO
- 9YFhB/4q/CKwcgfYdHF1n1aNnXT+prChXmoqWs5CgMe38P4yFBgkKIMKxuxzMAiLjrAwMeZU+0b
- wZLFrS+4tsgjZMRsa2CWUykVBDnD0PusmfrGJ/EZjKDFi/6QejENSaNavmaAaX9aI8m818gDwMo
- raTEK0Z8YQpXFp8NqazfPmvwVXEpvwu6w2Tk/HFlH+ANsqed3FDnM7qNZj2JV00kb1iJg5cLXCv
- nKOpEclINW52XotM/tikkM2Fay5owXSVfnpxg+Nd12liZIyis+bqL3iyscx6UAPG4c+az51fPH+
- 1rGypqgwh2LBGesTy6VbhxGCf/7JlAVmBg8DldYshM/8wzj3
+ bh=Oh+qBJcINLq2OcoHBhkxeh1csmVsCpWRCken5YykIEM=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBlufG7TeUQgpF/a42PzE+MhGgIrIUjlECuigRwm
+ nPn0vpTJwmJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZbnxuwAKCRBVnxHm/pHO
+ 9a8JCACUr5RRPWChWvqVroeXCyW19FzPPkP3kW7i8BiXlVihSOZhiZS6z/ylsgq+r19Zl6xggQr
+ KS6VA4AAunNd/PnXR1+GMTulirXY1SngbpM4hRKAk0aipixyBHTwFMCq/4ZjdVDDScdOy9BIh4A
+ cENw388V5jgp2GpU/w24DE5sWW4jQC2A/vsco5bqDvqCwAmdb4puPFxQxwb7tQvMXMBtc58sXoA
+ xPigBzG5dyXSa7DiX7MN2DlPazv1/1ZfxpbSqFCn/mECiFjPMr6gGdEa4IlK1mHFGrmwDA/zUod
+ 14V05wtx5CuXwbyj+vhpTDv5PULQo6K9etzwCzxeryQCW0a5
 X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
  fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-Device drivers should just rely on the clocks provided by the devicetree
-and enable/disable them based on the requirement. There is no need to
-validate the clocks provided by devicetree in the driver. That's the job
-of DT schema.
+Add missing QREF clocks for UFS MEM and UFS CARD controllers.
 
-So let's switch to devm_clk_bulk_get_all() API that just gets the clocks
-provided by devicetree and remove hardcoded clocks info.
-
+Fixes: 0fadcdfdcf57 ("dt-bindings: clock: Add SC8180x GCC binding")
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 63 ++++-----------------------------
- 1 file changed, 7 insertions(+), 56 deletions(-)
+ include/dt-bindings/clock/qcom,gcc-sc8180x.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-index 38c4a4cc670a..590432d581f9 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-@@ -923,9 +923,6 @@ struct qmp_phy_cfg {
- 	/* Additional sequence for different HS Gears */
- 	const struct qmp_phy_cfg_tbls tbls_hs_overlay[NUM_OVERLAY];
+diff --git a/include/dt-bindings/clock/qcom,gcc-sc8180x.h b/include/dt-bindings/clock/qcom,gcc-sc8180x.h
+index e893415ae13d..90c6e021a035 100644
+--- a/include/dt-bindings/clock/qcom,gcc-sc8180x.h
++++ b/include/dt-bindings/clock/qcom,gcc-sc8180x.h
+@@ -246,6 +246,8 @@
+ #define GCC_PCIE_3_CLKREF_CLK					236
+ #define GCC_USB3_PRIM_CLKREF_CLK				237
+ #define GCC_USB3_SEC_CLKREF_CLK					238
++#define GCC_UFS_MEM_CLKREF_EN					239
++#define GCC_UFS_CARD_CLKREF_EN					240
  
--	/* clock ids to be requested */
--	const char * const *clk_list;
--	int num_clks;
- 	/* regulators to be requested */
- 	const char * const *vreg_list;
- 	int num_vregs;
-@@ -951,6 +948,7 @@ struct qmp_ufs {
- 	void __iomem *rx2;
- 
- 	struct clk_bulk_data *clks;
-+	int num_clks;
- 	struct regulator_bulk_data *vregs;
- 	struct reset_control *ufs_reset;
- 
-@@ -983,20 +981,6 @@ static inline void qphy_clrbits(void __iomem *base, u32 offset, u32 val)
- 	readl(base + offset);
- }
- 
--/* list of clocks required by phy */
--static const char * const msm8996_ufs_phy_clk_l[] = {
--	"ref",
--};
--
--/* the primary usb3 phy on sm8250 doesn't have a ref clock */
--static const char * const sm8450_ufs_phy_clk_l[] = {
--	"qref", "ref", "ref_aux",
--};
--
--static const char * const sdm845_ufs_phy_clk_l[] = {
--	"ref", "ref_aux",
--};
--
- /* list of regulators */
- static const char * const qmp_phy_vreg_l[] = {
- 	"vdda-phy", "vdda-pll",
-@@ -1035,9 +1019,6 @@ static const struct qmp_phy_cfg msm8996_ufsphy_cfg = {
- 		.rx_num		= ARRAY_SIZE(msm8996_ufsphy_rx),
- 	},
- 
--	.clk_list		= msm8996_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(msm8996_ufs_phy_clk_l),
--
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 
-@@ -1075,8 +1056,6 @@ static const struct qmp_phy_cfg sa8775p_ufsphy_cfg = {
- 		.pcs_num	= ARRAY_SIZE(sm8350_ufsphy_g4_pcs),
- 		.max_gear	= UFS_HS_G4,
- 	},
--	.clk_list		= sm8450_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(sm8450_ufs_phy_clk_l),
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs			= ufsphy_v5_regs_layout,
-@@ -1111,8 +1090,6 @@ static const struct qmp_phy_cfg sc7280_ufsphy_cfg = {
- 		.pcs_num        = ARRAY_SIZE(sm8150_ufsphy_hs_g4_pcs),
- 		.max_gear	= UFS_HS_G4,
- 	},
--	.clk_list               = sm8450_ufs_phy_clk_l,
--	.num_clks               = ARRAY_SIZE(sm8450_ufs_phy_clk_l),
- 	.vreg_list              = qmp_phy_vreg_l,
- 	.num_vregs              = ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs                   = ufsphy_v4_regs_layout,
-@@ -1147,8 +1124,6 @@ static const struct qmp_phy_cfg sc8280xp_ufsphy_cfg = {
- 		.pcs_num	= ARRAY_SIZE(sm8350_ufsphy_g4_pcs),
- 		.max_gear	= UFS_HS_G4,
- 	},
--	.clk_list		= sdm845_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs			= ufsphy_v5_regs_layout,
-@@ -1174,8 +1149,6 @@ static const struct qmp_phy_cfg sdm845_ufsphy_cfg = {
- 		.serdes		= sdm845_ufsphy_hs_b_serdes,
- 		.serdes_num	= ARRAY_SIZE(sdm845_ufsphy_hs_b_serdes),
- 	},
--	.clk_list		= sdm845_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs			= ufsphy_v3_regs_layout,
-@@ -1203,8 +1176,6 @@ static const struct qmp_phy_cfg sm6115_ufsphy_cfg = {
- 		.serdes		= sm6115_ufsphy_hs_b_serdes,
- 		.serdes_num	= ARRAY_SIZE(sm6115_ufsphy_hs_b_serdes),
- 	},
--	.clk_list		= sdm845_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs			= ufsphy_v2_regs_layout,
-@@ -1232,8 +1203,6 @@ static const struct qmp_phy_cfg sm7150_ufsphy_cfg = {
- 		.serdes		= sdm845_ufsphy_hs_b_serdes,
- 		.serdes_num	= ARRAY_SIZE(sdm845_ufsphy_hs_b_serdes),
- 	},
--	.clk_list		= sdm845_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs			= ufsphy_v3_regs_layout,
-@@ -1270,8 +1239,6 @@ static const struct qmp_phy_cfg sm8150_ufsphy_cfg = {
- 		.pcs_num	= ARRAY_SIZE(sm8150_ufsphy_hs_g4_pcs),
- 		.max_gear	= UFS_HS_G4,
- 	},
--	.clk_list		= sdm845_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs			= ufsphy_v4_regs_layout,
-@@ -1306,8 +1273,6 @@ static const struct qmp_phy_cfg sm8250_ufsphy_cfg = {
- 		.pcs_num	= ARRAY_SIZE(sm8150_ufsphy_hs_g4_pcs),
- 		.max_gear	= UFS_HS_G4,
- 	},
--	.clk_list		= sdm845_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs			= ufsphy_v4_regs_layout,
-@@ -1342,8 +1307,6 @@ static const struct qmp_phy_cfg sm8350_ufsphy_cfg = {
- 		.pcs_num	= ARRAY_SIZE(sm8350_ufsphy_g4_pcs),
- 		.max_gear	= UFS_HS_G4,
- 	},
--	.clk_list		= sdm845_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs			= ufsphy_v5_regs_layout,
-@@ -1378,8 +1341,6 @@ static const struct qmp_phy_cfg sm8450_ufsphy_cfg = {
- 		.pcs_num	= ARRAY_SIZE(sm8350_ufsphy_g4_pcs),
- 		.max_gear	= UFS_HS_G4,
- 	},
--	.clk_list		= sm8450_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(sm8450_ufs_phy_clk_l),
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs			= ufsphy_v5_regs_layout,
-@@ -1425,8 +1386,6 @@ static const struct qmp_phy_cfg sm8550_ufsphy_cfg = {
- 		.pcs_num	= ARRAY_SIZE(sm8550_ufsphy_g5_pcs),
- 		.max_gear	= UFS_HS_G5,
- 	},
--	.clk_list		= sdm845_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs			= ufsphy_v6_regs_layout,
-@@ -1448,8 +1407,6 @@ static const struct qmp_phy_cfg sm8650_ufsphy_cfg = {
- 		.pcs		= sm8650_ufsphy_pcs,
- 		.pcs_num	= ARRAY_SIZE(sm8650_ufsphy_pcs),
- 	},
--	.clk_list		= sdm845_ufs_phy_clk_l,
--	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
- 	.vreg_list		= qmp_phy_vreg_l,
- 	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
- 	.regs			= ufsphy_v6_regs_layout,
-@@ -1541,7 +1498,7 @@ static int qmp_ufs_com_init(struct qmp_ufs *qmp)
- 		return ret;
- 	}
- 
--	ret = clk_bulk_prepare_enable(cfg->num_clks, qmp->clks);
-+	ret = clk_bulk_prepare_enable(qmp->num_clks, qmp->clks);
- 	if (ret)
- 		goto err_disable_regulators;
- 
-@@ -1561,7 +1518,7 @@ static int qmp_ufs_com_exit(struct qmp_ufs *qmp)
- 
- 	reset_control_assert(qmp->ufs_reset);
- 
--	clk_bulk_disable_unprepare(cfg->num_clks, qmp->clks);
-+	clk_bulk_disable_unprepare(qmp->num_clks, qmp->clks);
- 
- 	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
- 
-@@ -1737,19 +1694,13 @@ static int qmp_ufs_vreg_init(struct qmp_ufs *qmp)
- 
- static int qmp_ufs_clk_init(struct qmp_ufs *qmp)
- {
--	const struct qmp_phy_cfg *cfg = qmp->cfg;
- 	struct device *dev = qmp->dev;
--	int num = cfg->num_clks;
--	int i;
- 
--	qmp->clks = devm_kcalloc(dev, num, sizeof(*qmp->clks), GFP_KERNEL);
--	if (!qmp->clks)
--		return -ENOMEM;
-+	qmp->num_clks = devm_clk_bulk_get_all(dev, &qmp->clks);
-+	if (qmp->num_clks < 0)
-+		return qmp->num_clks;
- 
--	for (i = 0; i < num; i++)
--		qmp->clks[i].id = cfg->clk_list[i];
--
--	return devm_clk_bulk_get(dev, num, qmp->clks);
-+	return 0;
- }
- 
- static void qmp_ufs_clk_release_provider(void *res)
+ #define GCC_EMAC_BCR						0
+ #define GCC_GPU_BCR						1
 
 -- 
 2.25.1
