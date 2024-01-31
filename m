@@ -1,66 +1,66 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4733422087
-	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 20:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D2138DDA
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 20:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706733895; cv=none; b=X9IDY6VCYwr+M+m6SNtGWh3XP0B2oAL/QmYt0sQCfleEcuTnDjg8CDu3qk8wwP8kfK7aLNfOErmIiDftYCjewGtSWALDccikwpCjHLWmKPu96hTMTa+GpTM4PgBAvrIMDMl42RVj6zNVucwtkftJ/Q8xsoc/5EEJkqTPhyRZWdg=
+	t=1706734567; cv=none; b=mrTPBZghL9Yj8Gza+XwvRtenHqFUcoda9uS3uI9tFrCUlK6V4tvQcnDVEpaBdWCOk780sR6Be0NwIY8TXTFeFFMvMEOD1ORiP6NYgBRfi+4He4M7A1p48zIjATeqY3q6ZIWNz0IipWBRajb7EtOzO8eY6FmMRBeEDa7Jthzwquc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706733895; c=relaxed/simple;
-	bh=+Aepf8sdCd8G//RlCha5XYDrJRIchvN1hEFdOszOu6g=;
+	s=arc-20240116; t=1706734567; c=relaxed/simple;
+	bh=SN8BqaoqK4IhvOPgDP2RdQxe6JgLeGUnxbb+hDI6eKI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R1Tms+g6pi3bLPNcMTn26JY8UcrD6Vz2aMXSAG+T25gjaF6AHSwgkipIAasY1TGsKZCXNHCQ0PjST7z3GJEh2LykaQOQaGJlRwzgtEZ7VqW0hUsWfWUkR8PxDiQgHRiuS4/XPFikvZRa6TR8zwLqRM0teNyQljdjIT9Wxzb28lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VO2ox0YB; arc=none smtp.client-ip=209.85.128.178
+	 To:Cc:Content-Type; b=XXNKr4fvGY2ER23F2U5JL9khENgestzuevt4duostZWuuTskmFnpzngVih5ABTIi3kyeTu6famNSa32Ao5ojNcnVJUAjLfIWoGD70UClR9Y+naVX7uYGetmKVLCGI7iudQ5eBAsK+fWx1biTccQ6Tw5Sb+jAiuX1RcTG3ruCHcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G1+wMIIJ; arc=none smtp.client-ip=209.85.128.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VO2ox0YB"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6040fe8ba39so2395357b3.2
-        for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 12:44:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G1+wMIIJ"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-602d2e67217so2125027b3.2
+        for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 12:56:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706733893; x=1707338693; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706734564; x=1707339364; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+Aepf8sdCd8G//RlCha5XYDrJRIchvN1hEFdOszOu6g=;
-        b=VO2ox0YBjiSG31RTVbeDI2z1IFZxNfm318i+xgL9o0l6lV1eQuIHpPdz7DgUERgFkq
-         JesaQHiT+pdJ00vk7VIA9ZYSn7Ddetwo5NCyYLT4Oc3dTpAM4wnBHW2CnR4lBQmbeqc/
-         Pp7G4hh1vNQSdUpAT0CpGcW09XxpiyqDwWZHkWXXh9mNCqkjfpOybDmPGqaLIv8qggiD
-         k8g22wwpuCPKkqgA61s9zFOzazpMAIUG5JImyfkl34cfbt0foudlH+sOLcS74K9hTgau
-         riDWmSyla8hspJQr6jB6S/rSpfvN/CxX7f0exXsHdlD4PcttPowt4MwhZOZ9Gz0Av2Rj
-         xk0w==
+        bh=F7hyd0uUWhkbaFe/33mIS/9rt+Zgy9D3j/1s4opCgVA=;
+        b=G1+wMIIJIU7EHJ6Og+6RLOHz5Oq7bJJZzdngxPfE+D+l1rbrZneMFjhsnQoVe6n4wW
+         BqReeI164HGr4joyYJblNT/2NmchMOS9jhi7lRivQ+fFlykiPKAaYGPL4rydmf58NQSd
+         HhmnQGOWFvraor9flr7N/7lMLfsfBF5+8hpYuwfp9NS+9TBErT3q+nXa2rNtr59oqm00
+         1NoRvK35Jgy4zs6mxK088X5ZaIQ7pczl6Sy/qeriJsAPBIK7yHd8WVt9DqHFZ94mzr27
+         ituI3qc+cwZGzWzqS12A0SybqPK42F6IzoyxLbPNOoenFy+r8b8uBxrFM2I+E29HAZgC
+         kYqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706733893; x=1707338693;
+        d=1e100.net; s=20230601; t=1706734564; x=1707339364;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+Aepf8sdCd8G//RlCha5XYDrJRIchvN1hEFdOszOu6g=;
-        b=uwcbMbyg3Mds13RCU7t7d2UVvPlZGOnTS0GIL0bDiU85X5puKKe9BpABKSfC0pdVMb
-         839m1nHIsHC36WfKBXm0FGr4Z+dyKi4faSzv3qu3lgrlrHpGH+6DMeHYNoVTrVjvB5rQ
-         NETfltzf1A47PmizAgzWu+jKtzBZAg4EWQYJzwzXxAx+fjaMTlDfVEE165k3JZnF0Qnb
-         9QAYjYRhvDPaaOOn9saK7N6iEfnqtf/eLr8XAJj+UkxblKNX/EifaprtzbPh+HPCnt2p
-         LNz7RzvgYUoGwFQGC9DKWUaVpHyZVktEGMmw1a7TNiDWcqUShPqyGGdWn8DLG6/BMxG+
-         mAZA==
-X-Gm-Message-State: AOJu0YwhqMD6MWnr0802i6m5xX3ei7VJ/XW83NTzJS82Bqq3krRKjMYl
-	WpNsxQ4gJJkRgDNYGu+U9ny0ImnIkwA1GdJ6Tu8HQ8MHn6g+u4cPZ5lUYNhWMncNKpgMre1bZ8K
-	T1FGA6kADcXOD7kUel7zV9pXEzZCyQ4gPEnewFQ==
-X-Google-Smtp-Source: AGHT+IHS/WgJih0pA4PCi6jtXXi0NvvqNNRcB0nvYJUMQTqgkNEy0vEgAEVs0YIeJ1unhWTazFjP4rw+Sm0vCsAVTlU=
-X-Received: by 2002:a81:4950:0:b0:603:fd67:a5aa with SMTP id
- w77-20020a814950000000b00603fd67a5aamr1871650ywa.19.1706733893289; Wed, 31
- Jan 2024 12:44:53 -0800 (PST)
+        bh=F7hyd0uUWhkbaFe/33mIS/9rt+Zgy9D3j/1s4opCgVA=;
+        b=lFZjKrOVyFNE8m5L44mHQk0TECnVJjiBZvZqNbB9DlvwgZqSqqPCK4ZP9+VNHmvGts
+         KO1FmDJyM8Akll4lfEAyri0AItQgNZq8knoI87whoBYJmykitdO3eh0tXB/ZZHn6yl5S
+         ytTl7+0Wpy94lQRVb5a0uVPQja8v2uAxIkwpsg3s0IGgl3teo5MwruFJp77QNFDpOCxr
+         6cD+ptrb2fOc7bLjNmhdTwPhCS9sjnUDMFXaGNCkG3m+sPDqSQl6Tq8u3KE5fColHxa1
+         n5viJxlWFL42dmzNUQ7G5zFne+UwZhDABdmxh8eYiwSq1P8J00LEEH7kJXBPR99JcKPP
+         SMwA==
+X-Gm-Message-State: AOJu0Yw0bHIbChcbYwPOjlfRWogHFEbxhl/1diwmLi5ueu+HCuiKr5CV
+	RHuN7ydKYsloQP+SUnDapMzoiN1rA3eT3DEgCIJ8C0pV10sqLkowYWEXiynLFA9x7EmgSTCCNnE
+	N2091unotME2c3n4CFJqWu5Cz9xdFWkXczcmw+Q==
+X-Google-Smtp-Source: AGHT+IFJ/1xZgCSwoaduRMuAwfRIZptre9CM/jzrBsxgmGVbsa52bCGEib3ffEWOgkTlCCPbnjv9iZn0wOW7R+22/YA=
+X-Received: by 2002:a81:6c97:0:b0:5ff:956d:8b7f with SMTP id
+ h145-20020a816c97000000b005ff956d8b7fmr2745745ywc.10.1706734564562; Wed, 31
+ Jan 2024 12:56:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
-In-Reply-To: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
+References: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com> <20240131-mbly-clk-v4-10-bcd00510d6a0@bootlin.com>
+In-Reply-To: <20240131-mbly-clk-v4-10-bcd00510d6a0@bootlin.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 31 Jan 2024 21:44:42 +0100
-Message-ID: <CACRpkdb+aWL-NU36dF6urL3T9gUROQX=9-L7aUC=+GM8x+bArA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/18] Add support for Mobileye EyeQ5 system controller
+Date: Wed, 31 Jan 2024 21:55:52 +0100
+Message-ID: <CACRpkdZvj2E1zfSU1RGY2+_6sCCYxu=pbQ0yv+-bmTLGzEyFwg@mail.gmail.com>
+Subject: Re: [PATCH v4 10/18] pinctrl: eyeq5: add platform driver
 To: =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>
 Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
@@ -77,24 +77,71 @@ Content-Transfer-Encoding: quoted-printable
 
 Hi Theo,
 
-thanks for your patches!
-
-A *new* MIPS platform, not every day I see this!
+thanks for your patch!
 
 On Wed, Jan 31, 2024 at 5:27=E2=80=AFPM Th=C3=A9o Lebrun <theo.lebrun@bootl=
 in.com> wrote:
 
-> Pin control is about controlling bias, drive strength and muxing. The
-> latter allows two functions per pin; the first function is always GPIO
-> while the second one is pin-dependent. There exists two banks, each
-> handled in a separate driver instance. Each pin maps to one pin group.
-> That makes pin & group indexes the same, simplifying logic.
+> Add the Mobileye EyeQ5 pin controller driver. It might grow to add later
+> support of other platforms from Mobileye. It belongs to a syscon region
+> called OLB.
+>
+> Existing pins and their function live statically in the driver code
+> rather than in the devicetree, see compatible match data.
+>
+> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
 
-Can the three pin control patches be merged separately? (It looks like.)
+The driver looks very nice and is using all standard features, I'm pretty s=
+ure
+we can merge this soon.
 
-That would make my job easier when we ge there.
+> +static void eq5p_update_bits(const struct eq5p_pinctrl *pctrl,
+> +                            enum eq5p_bank bank, enum eq5p_regs reg,
+> +                            u32 mask, u32 val)
+> +{
+> +       void __iomem *ptr =3D pctrl->base + eq5p_regs[bank][reg];
+> +
+> +       writel((readl(ptr) & ~mask) | (val & mask), ptr);
+> +}
 
-I will try to look closer at each patch!
+This is in practice a reimplementation of regmap MMIO.
+
+Can't you just use regmap MMIO to access the banks then...?
+
+Maybe it doesn't add much here. I'm not sure.
+
+> +static bool eq5p_readl_bit(const struct eq5p_pinctrl *pctrl,
+
+eq5p_test_bit() maybe? that describes better what the
+function does.
+
+> +                          enum eq5p_bank bank, enum eq5p_regs reg, int b=
+it)
+> +{
+> +       u32 val =3D readl(pctrl->base + eq5p_regs[bank][reg]);
+> +
+> +       return (val & BIT(bit)) !=3D 0;
+> +}
+
+Maybe add a check for bit > 31?
+
+> +static int eq5p_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
+> +                                      unsigned int selector,
+> +                                      const unsigned int **pins,
+> +                                      unsigned int *num_pins)
+> +{
+> +       *pins =3D &pctldev->desc->pins[selector].number;
+> +       *num_pins =3D 1;
+> +       return 0;
+> +}
+
+One pin per group, also known as the "qualcomm trick".
+
+(It's fine.)
+
+> +       mask =3D 0b11 << offset;
+
+That's pretty nonstandard but it's quite readable so let's keep it!
 
 Yours,
 Linus Walleij
