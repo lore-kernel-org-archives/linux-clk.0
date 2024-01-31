@@ -1,172 +1,223 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9846E7867A
-	for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 12:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC4E79DD0;
+	Wed, 31 Jan 2024 13:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706703159; cv=none; b=LaWEq2BjWoXi56uYaUf0SMUydEaMmf9TAXLq/T23l7Z3mmsG55cjwi++ETFOSM3i3fdpV1bFnBd4KjkBeD9m0c+xOZwHLSpzZjoIm+q6KAOPYIV9iiDuQBDkcRuMMvj7nFaESWJLPyOcc2+gD4+EDSX/BDW+KYyLB3/sMGRG2kQ=
+	t=1706706854; cv=none; b=ai22HjM+qDqQ9qh75ANYzWkQXeTY/FxvJR+cYppT0wBApmKGSmZzIxOHirgQmbFAc4bsK6SuTdQdGMt9rqd+FHxNU8cchmBJj0GPCRTSNbMh7wIMM8Ik9F+lAumD58agMo5d1zJ8pywhZ7kJbMLw781HC0Lj322DaS+dOdh9yWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706703159; c=relaxed/simple;
-	bh=/wVA/4AFAw4JgOYNgYRJpbRJX3HBAQ0JInxifG3k/Ds=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fXIaGvwP5rDNJa8WEnLtnHDzUjy+K56v6tOTKe3EYFxd6zemysbabKN1b9Mjef/3NiAywKEEsmq6HJlh+L7XqR+9p0lj7rLX7R1FhxAhvAlg7RB1CT+xY2gjW8yZvJDD2wIP0xIJ1V4udDdAXs7uT9JZnQuIMw0jd9CLINSflSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aF2KQPn2; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706706854; c=relaxed/simple;
+	bh=CIoNWqd6M+hQVXYvItsgUvIEkP6QIav4idAL5Wa4dWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mdynwTYiQPYiMKbI1uq4L+75R+zC0F9vpvdatC6UWM8HsMv9GnirlGhLPgRbZGcAb1M1zF73shXPjQSaPG1jK5S6qHekvO4KL93d+FLKZ8Swn/Sbq6c4QV2sQ7jAj7wqTrcWVRyTrU0UbhMM0l5wEmtZ06x5+K11DU+hcoeWNgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYLeWyYc; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aF2KQPn2"
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-602c714bdbeso7029017b3.1
-        for <linux-clk@vger.kernel.org>; Wed, 31 Jan 2024 04:12:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYLeWyYc"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6de0f53f8e8so708126b3a.0;
+        Wed, 31 Jan 2024 05:14:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706703156; x=1707307956; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=saoJoK9zStSfMj3STxg2WdyLizENiKtg2wNhGKTv28w=;
-        b=aF2KQPn2T7Z+qBYWgxZRVcdF8BwDapLvSGAjGUQZkETdjabKy67dop89KfZ0y4Me2T
-         up7l1HlMyL+/ucZ4GJEmrLkn8PyeU78/Sl0K092XVz7VhmEKts7tmyv40RZE7idTgFqI
-         pWdqz7EQeBNEHUXvS3T/+fwxeyHn0PXutFYu6zIXdXBgL6X4vwWwQTjTpj4UdMkMROGJ
-         mrdcfZaAGVMUcDo1rcOSG9vXQcEWeFcXvNIxEphvqVTtcJAXvwkW//beAgiTS7hIrIDJ
-         g9/y96JGGe5Tw0iycfFlLcRnd3qtXyawucs1H2zH4/ZEXYuw+OWd8Q/lx2FjB0H0vYuo
-         PFSw==
+        d=gmail.com; s=20230601; t=1706706852; x=1707311652; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=cyQTQCAwcgO1XS+KBRjMHmKhoGL5WnQbolSZvV0q3F4=;
+        b=SYLeWyYcboG37pSKUZWQobh/G/FLk609EPKgk1fCamjE9Pr3f+yLfE1xmk6i0hAhvj
+         H0jAaXNW4p2OvzqfaWa++tVfSqNfIk/ZUpeTQqtr1LY7E3p2dvFfGF4tcw+2g9B/lhFq
+         C4xt4MQ+XSuKap8bd3AwRxRkbgw1DiRXeuo+I9rzSZ6KZFgmaIqwOK43fTyEeGLnPSBm
+         uK7b1i513G0ey/DCrWKpi57rBVrBo9VMyYSQb3knVm21eZAa2hBby3mgxpPby2/27Yqr
+         7Vv5AvQ2wcW6CofYA+3q1NKfrokEHbpvYAT10H8MrmI0Ix1sSLRyxJJg7DR0MZf8+TAL
+         sTrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706703156; x=1707307956;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1706706852; x=1707311652;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=saoJoK9zStSfMj3STxg2WdyLizENiKtg2wNhGKTv28w=;
-        b=KiYTIBp+K4+pjPqoGGC/Ir4GwVslKiW9ui6k6Xb7ogwELL3OPhHjae4HsYUAOSuI7h
-         CM50Hhi7Jo/Y73bVUWuQ8YBvHZJI4WgJPITJdrrCFGcrtIbZBfXNNvM88cbA9idTSZJY
-         z1orEjkEuLHGId+NmGqMIZ2qQZlx76mxvZACxn9f69CMs4AJgD63h+/WBgw6yQpnYtd6
-         nzxL8kgdqoarllcWqBpZ8faafDvAdqquwFs6L0po/wRcISzyhRBMbWCFVTB9oiICd1Z0
-         NfBdTLAswVJteeTWh7h/MyWEQGnTAwT2Lm1XB+0i7+b+Gc19kvJdHnmXjh0nBMswhZRd
-         uWuA==
-X-Gm-Message-State: AOJu0Yx/liuiiJaELDqEhD2waSLnV60hA2/1wrZbsVg+pEbmSwNnh3nO
-	lR7YtFhnJ0KsCEcowJCTLy+eWLw8/VmxjUHc1FaMgt5LTtYkeaiLCHyVPnjiTYoiMOH1swXjYvN
-	ZJ7LDwmjztjSPWGPeJPnNkoCqL1aIcgxL1c2IjQ==
-X-Google-Smtp-Source: AGHT+IHyahz3e4s2n42YdMrUWKGK11tElif28yCW0pIcplk+tuCLctSvZ9MyE7xh0xkmoOSg5CSw+arOO7LUGqKd/7A=
-X-Received: by 2002:a81:a0c3:0:b0:604:fd3:e656 with SMTP id
- x186-20020a81a0c3000000b006040fd3e656mr453925ywg.19.1706703156500; Wed, 31
- Jan 2024 04:12:36 -0800 (PST)
+        bh=cyQTQCAwcgO1XS+KBRjMHmKhoGL5WnQbolSZvV0q3F4=;
+        b=I1eK5HCzatCNXa7JNYPY/XBblZCh/o/pvsapyns9TgELc5KTUPwAlxu42NeG0HQtAv
+         kHAtwtf3zZo9UF6YvUO6TM3Bk6Uu2dUhxNttLupqTJfacD+vtvj8TMtFi+JL9/e9xGa/
+         RuIug37oeAb+Lm2PyVfU54AwjL5SAiRUkIvZUk1EDz02D+QrE5wFQJT2DmkbDKmTYamH
+         x6i36e21v6ItVod4aHBLWWz0VC6rMKeHjXxC8jfnYOKhznwNibvXJLEJVv0i0raUw1nb
+         uIlPuARc/+ilHfbJfezAW0xpkh4WUBGiah11lNQNYU4ma38x2bsNZ3kmch8DdZI7HgTy
+         +blg==
+X-Gm-Message-State: AOJu0Yye6HNSx/bZw4syfOstPutQBI54xOFVr2Na8r0jw1lvFSsiXJwl
+	I5HjadCcUd+KvXY9PPruNB/jmv+rBFOIgbzC0OoRNIzKVulcJTqd
+X-Google-Smtp-Source: AGHT+IGrZ43dFsSf1oXRfFhDyUEbMelY1yUpJ6vWQT2e5OX9RXYowqCdG3NCRWl/26k52BknG9OXZg==
+X-Received: by 2002:a05:6a20:4997:b0:19b:6424:cd7d with SMTP id fs23-20020a056a20499700b0019b6424cd7dmr1291291pzb.27.1706706851699;
+        Wed, 31 Jan 2024 05:14:11 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id o15-20020a63e34f000000b005c2420fb198sm10464784pgj.37.2024.01.31.05.14.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jan 2024 05:14:10 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <247dcdfa-3761-4745-bdc8-88edf8cd06ea@roeck-us.net>
+Date: Wed, 31 Jan 2024 05:14:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org>
- <20240122-gdsc-hwctrl-v4-1-9061e8a7aa07@linaro.org> <tax3c6o5qjegy6tv3zbgrd5rencfvypr3zg7twxfrmdngscp74@n44ei3q63g64>
-In-Reply-To: <tax3c6o5qjegy6tv3zbgrd5rencfvypr3zg7twxfrmdngscp74@n44ei3q63g64>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 31 Jan 2024 13:12:00 +0100
-Message-ID: <CAPDyKFpdtrWbzNksLoY++aOY7Ltyt1HhtLZo8bj8sQ05-4Sq0g@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] PM: domains: Allow devices attached to genpd to be
- managed by HW
-To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Gross <agross@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/11] watchdog: rzg2l_wdt: Check return status of
+ pm_runtime_put()
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>,
+ "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+ "robh+dt@kernel.org" <robh+dt@kernel.org>,
+ "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240131102017.1841495-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240131102017.1841495-5-claudiu.beznea.uj@bp.renesas.com>
+ <TYCPR01MB11269AD7463C9C7C0A09A43A9867C2@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+ <ddc0b42c-bf88-4c0d-b938-8bd7ff7b329a@tuxon.dev>
+ <TYCPR01MB11269BFC2DB457049A2B8C0C8867C2@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <TYCPR01MB11269BFC2DB457049A2B8C0C8867C2@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 31 Jan 2024 at 02:09, Bjorn Andersson <andersson@kernel.org> wrote:
->
-> On Mon, Jan 22, 2024 at 10:47:01AM +0200, Abel Vesa wrote:
-> > From: Ulf Hansson <ulf.hansson@linaro.org>
-> >
-> > Some power-domains may be capable of relying on the HW to control the power
-> > for a device that's hooked up to it. Typically, for these kinds of
-> > configurations the consumer driver should be able to change the behavior of
-> > power domain at runtime, control the power domain in SW mode for certain
-> > configurations and handover the control to HW mode for other usecases.
-> >
-> > To allow a consumer driver to change the behaviour of the PM domain for its
-> > device, let's provide a new function, dev_pm_genpd_set_hwmode(). Moreover,
-> > let's add a corresponding optional genpd callback, ->set_hwmode_dev(),
-> > which the genpd provider should implement if it can support switching
-> > between HW controlled mode and SW controlled mode. Similarly, add the
-> > dev_pm_genpd_get_hwmode() to allow consumers to read the current mode and
-> > its corresponding optional genpd callback, ->get_hwmode_dev(), which the
-> > genpd provider can also implement for reading back the mode from the
-> > hardware.
-> >
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/pmdomain/core.c   | 69 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/pm_domain.h | 17 ++++++++++++
-> >  2 files changed, 86 insertions(+)
-> >
-> > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> > index a1f6cba3ae6c..41b6411d0ef5 100644
-> > --- a/drivers/pmdomain/core.c
-> > +++ b/drivers/pmdomain/core.c
-> > @@ -548,6 +548,75 @@ void dev_pm_genpd_synced_poweroff(struct device *dev)
-> >  }
-> >  EXPORT_SYMBOL_GPL(dev_pm_genpd_synced_poweroff);
-> >
-> > +/**
-> > + * dev_pm_genpd_set_hwmode - Set the HW mode for the device and its PM domain.
->
-> This isn't proper kernel-doc
+On 1/31/24 02:41, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Wednesday, January 31, 2024 10:36 AM
+>> Subject: Re: [PATCH v2 04/11] watchdog: rzg2l_wdt: Check return status of
+>> pm_runtime_put()
+>>
+>> Hi, Biju,
+>>
+>> On 31.01.2024 12:32, Biju Das wrote:
+>>> Hi Claudiu,
+>>>
+>>> Thanks for the feedback.
+>>>
+>>>> -----Original Message-----
+>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>>>> Sent: Wednesday, January 31, 2024 10:20 AM
+>>>> Subject: [PATCH v2 04/11] watchdog: rzg2l_wdt: Check return status of
+>>>> pm_runtime_put()
+>>>>
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> pm_runtime_put() may return an error code. Check its return status.
+>>>>
+>>>> Along with it the rzg2l_wdt_set_timeout() function was updated to
+>>>> propagate the result of rzg2l_wdt_stop() to its caller.
+>>>>
+>>>> Fixes: 2cbc5cd0b55f ("watchdog: Add Watchdog Timer driver for
+>>>> RZ/G2L")
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> ---
+>>>>
+>>>> Changes in v2:
+>>>> - propagate the return code of rzg2l_wdt_stop() to it's callers
+>>>>
+>>>>   drivers/watchdog/rzg2l_wdt.c | 11 +++++++++--
+>>>>   1 file changed, 9 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/watchdog/rzg2l_wdt.c
+>>>> b/drivers/watchdog/rzg2l_wdt.c index d87d4f50180c..7bce093316c4
+>>>> 100644
+>>>> --- a/drivers/watchdog/rzg2l_wdt.c
+>>>> +++ b/drivers/watchdog/rzg2l_wdt.c
+>>>> @@ -144,9 +144,13 @@ static int rzg2l_wdt_start(struct
+>>>> watchdog_device
+>>>> *wdev)  static int rzg2l_wdt_stop(struct watchdog_device *wdev)  {
+>>>>   	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+>>>> +	int ret;
+>>>>
+>>>>   	rzg2l_wdt_reset(priv);
+>>>> -	pm_runtime_put(wdev->parent);
+>>>> +
+>>>> +	ret = pm_runtime_put(wdev->parent);
+>>>> +	if (ret < 0)
+>>>> +		return ret;
+>>>
+>>> Do we need to check the return code? So far we didn't hit this
+>> condition.
+>>> If you are planning to do it, then just
+>>>
+>>> return pm_runtime_put(wdev->parent);
+>>
+>> pm_runtime_put() may return 1 if the device is suspended (which is not
+>> considered error) as explained here:
+> 
+> Oops, I missed that discussion. Out of curiosity,
+> What watchdog framework/consumer is going to do with a
+> Non-error return value of 1?
+> 
 
-Sorry, I didn't quite get that. What is wrong?
+You mean what the watchdog subsystem does if a driver violates its API ?
+That is undefined. The API says:
 
->
-> > + *
-> > + * @dev: Device for which the HW-mode should be changed.
-> > + * @enable: Value to set or unset the HW-mode.
-> > + *
-> > + * Some PM domains can rely on HW signals to control the power for a device. To
-> > + * allow a consumer driver to switch the behaviour for its device in runtime,
-> > + * which may be beneficial from a latency or energy point of view, this function
-> > + * may be called.
-> > + *
-> > + * It is assumed that the users guarantee that the genpd wouldn't be detached
-> > + * while this routine is getting called.
-> > + *
-> > + * Returns 0 on success and negative error values on failures.
-> > + */
-> > +int dev_pm_genpd_set_hwmode(struct device *dev, bool enable)
-> > +{
-> > +     struct generic_pm_domain *genpd;
-> > +     int ret = 0;
-> > +
-> > +     genpd = dev_to_genpd_safe(dev);
-> > +     if (!genpd)
-> > +             return -ENODEV;
-> > +
-> > +     if (!genpd->set_hwmode_dev)
-> > +             return -EOPNOTSUPP;
-> > +
-> > +     genpd_lock(genpd);
-> > +
-> > +     if (dev_gpd_data(dev)->hw_mode == enable)
->
-> Between this and the gdsc patch, the hw_mode state might not match the
-> hardware state at boot.
->
-> With hw_mode defaulting to false, your first dev_pm_genpd_set_hwmode(,
-> false) will not bring control to SW - which might be fatal.
+* start: this is a pointer to the routine that starts the watchdog timer
+   device.
+   The routine needs a pointer to the watchdog timer device structure as a
+   parameter. It returns zero on success or a negative errno code for failure.
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Right, good point.
+We are not going to change the API, if that is what you are suggesting.
 
-I think we have two ways to deal with this:
-1) If the provider is supporting ->get_hwmode_dev(), we can let
-genpd_add_device() invoke it to synchronize the state.
-2) If the provider doesn't support ->get_hwmode_dev() we need to call
-->set_hwmode_dev() to allow an initial state to be set.
+Thanks,
+Guenter
 
-The question is then, if we need to allow ->get_hwmode_dev() to be
-optional, if the ->set_hwmode_dev() is supported - or if we can
-require it. What's your thoughts around this?
-
-Kind regards
-Uffe
