@@ -1,77 +1,158 @@
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52BC6216B
-	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 12:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CC762141;
+	Thu,  1 Feb 2024 13:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706790302; cv=none; b=eytUtUzrOyll4i1u6KMm1WUqoMfrBBp6keQhyUHS6h3lZfv0EFrJ2D8RcXBpLO8GwjEuTz6fFvT3+sxKYFBWXMAwm8SD4u8Rd3sNL07CltRzBAKOII879KVF9EVfUDwRBrylAvubU1oeru/lbX4bCdPC7y1HUCBeJSl6bB3hg6E=
+	t=1706793170; cv=none; b=gpg5A/HByvRI65sJFzdtHrpiAw3cHwoB1UAB+EdyWmd22dvsDs/o52SNb6fpErxhy9wuHHjxiuYA3TK66uqtzaWPCdpfcGkiHujJ5S908krmSstnRYmPARCccDqwL7WxtqeLAZNWRgayedsCGGkhO7rXPy/eS9V37tdmUk4rQx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706790302; c=relaxed/simple;
-	bh=4B22GN08OXnVQ/Xxe7b+5vZHFWexoxE556bJQ6gwhgs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HqV67Tpg1HcXGXRvVoihEA6Ojw91n5p4vUQqry0otXwj1qFFQAGYC8CKR3TrO1FVZiJLLXFWNLz50zxyfqpiXtDc3fLXlBM4eJqX4E4cI+tlcjDme35HkdSSsGwg5zEbNPgGLI0ykRlOuehiYI957M5dVtJsNyvEL9HqBjetb78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:88f0:c83b:bafa:cdc3])
-	by laurent.telenet-ops.be with bizsmtp
-	id hoQy2B00Y4efzLr01oQy7k; Thu, 01 Feb 2024 13:24:59 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rVW6v-00Guz8-Ng;
-	Thu, 01 Feb 2024 13:24:58 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rVW7m-00ARwE-MJ;
-	Thu, 01 Feb 2024 13:24:58 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Cong Dang <cong.dang.xn@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779h0: Add I2C clocks
-Date: Thu,  1 Feb 2024 13:24:56 +0100
-Message-Id: <7a76dadbce24c81dd2bee68765a0b41beca2d565.1706790236.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1706793170; c=relaxed/simple;
+	bh=qvtQsVUpv6mrbOusIihe550/VZAo/qI5LTEF9Sr+vYc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iZXmpyf0dfecKh82qe4n7/BqYZoEQrEdt3livDNt5vpMFb2miHNs/YI9eAshsZQoxpykZqfeS2dn2TVFylVHhGmH3P9H89vIsCGFak5Cu04IW20rZoEHpxGwPG+FhhYC1mOxng38FE0RAVczgFOsGI4P/E+SXBkINlhPG7aoYeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tnXpvvYb; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tnXpvvYb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1706793169; x=1738329169;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qvtQsVUpv6mrbOusIihe550/VZAo/qI5LTEF9Sr+vYc=;
+  b=tnXpvvYbOg9GNGZJTIfv1k59HOOELkzDc2fBILKzb611pVZs2H+jmUh0
+   JNqzV1KR4nvZLrCd1Te3TlWOfyGiInkfSRulCmVZZUP5DN5FOHYDQ49eK
+   y9Rp3RTcXeXzMDJkWjNHOBU7SB0tg17Kq75/EDbZR1x4sTs2TJr5Uk/wo
+   JsOXWvb9fhVVHRBCg6VtBVOhqhzjmDbvt5+PUWBWAdtt+IkiiNohKFrhg
+   LciGzh7KWOT1TF3Kv8dCuu4rbZJTHkkm36CHWuiQphqT0/M795IdALFkv
+   pXNiTTSUECCrypC64j6i088L2hSDlU06Tdy6G7xE9mqkExciIxJZPAmOB
+   Q==;
+X-CSE-ConnectionGUID: DojxIC2fROuGfno2oWJAig==
+X-CSE-MsgGUID: UGxvDEb7R5C65tm/xwNFig==
+X-IronPort-AV: E=Sophos;i="6.05,234,1701154800"; 
+   d="asc'?scan'208";a="15617257"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Feb 2024 06:12:42 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 1 Feb 2024 06:12:21 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Thu, 1 Feb 2024 06:12:18 -0700
+Date: Thu, 1 Feb 2024 13:11:39 +0000
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Frank Wunderlich <frank-w@public-files.de>
+CC: Conor Dooley <conor@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Frank Wunderlich
+	<linux@fw-web.de>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+	<conor+dt@kernel.org>, Sam Shih <sam.shih@mediatek.com>, Daniel Golle
+	<daniel@makrotopia.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
+Subject: Re: Aw: Re: [PATCH v3 1/2] dt-bindings: reset: mediatek: add MT7988
+ reset IDs
+Message-ID: <20240201-goes-passable-0ba841d36bc3@wendy>
+References: <20240117184111.62371-1-linux@fw-web.de>
+ <20240117184111.62371-2-linux@fw-web.de>
+ <20240118-calcium-krypton-3c787b8d1912@spud>
+ <trinity-afc4f48e-65e1-46ee-a78b-1d670cc0f310-1705615200900@3c-app-gmx-bap21>
+ <43f946cc-07e1-48c5-9b31-40fc9bc93037@collabora.com>
+ <20240119-dupe-obligate-707b3a01b356@spud>
+ <0EA6A126-DDC0-4E9F-BEBC-FD018B08CA84@public-files.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7WXHEjVDjRcKaa45"
+Content-Disposition: inline
+In-Reply-To: <0EA6A126-DDC0-4E9F-BEBC-FD018B08CA84@public-files.de>
 
-From: Cong Dang <cong.dang.xn@renesas.com>
+--7WXHEjVDjRcKaa45
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add the module clocks used by the I2C Bus Interfaces on the Renesas
-R-Car V4M (R8A779H0) SoC.
+On Thu, Feb 01, 2024 at 12:40:17PM +0100, Frank Wunderlich wrote:
+> Am 19. Januar 2024 18:04:36 MEZ schrieb Conor Dooley <conor@kernel.org>:
+> >On Fri, Jan 19, 2024 at 10:28:30AM +0100, AngeloGioacchino Del Regno wro=
+te:
+> >>
+> >> The resets are organized on a per-reset-controller basis, so, the ETHW=
+ARP
+> >> reset controller's first reset is RST_SWITCH, the second one is RST_so=
+mething_else,
+> >> etc. while the first reset of the INFRA reset controller is PEXTP_MAC_=
+SWRST.
+> >>=20
+> >> That's why ETHWARP has a reset index 0 and INFRA also starts at 0.
+> >> I think that the numbering is good as it is, and having one driver sta=
+rt at index 5
+> >> while the other starts at index 12 would only overcomplicate registeri=
+ng the resets
+> >> in each driver, or waste bytes by making unnecessarily large arrays, f=
+or (imo) no
+> >> good reason.
+> >>=20
+> >> This is one header, but it should "in theory" be more than one... so w=
+e would have
+> >> one for each hardware block - but that'd make the reset directory over=
+-crowded, as
+> >> other MediaTek SoCs have got even more resets in even more hardware bl=
+ocks than the
+> >> MT7988. That'd be something like ~4 reset headers per SoC (and will in=
+crease with
+> >> newer ones)...
+> >> ...and this is why we have one binding header for resets.
+> >
+> >That's okay. The commit message leaves me, who clearly isn't a mediatek
+> >guy, with no information as to why these are not one contiguous set.
+> >IMO being for different reset controllers entirely is fine.
+> >
+> >> On the topic of leaving space to allow grouping RST0/RST1: -> No. <-
+> >> The indices have to start from zero and have to be sequential, with no=
+ holes.
+> >
+> >Agreed.
+>=20
+> Hi,
+>=20
+> Just a friendly reminder.
+>=20
+> As far as i understood, Patches are fine so far and do not need any rewor=
+k,right?
 
-Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk for v6.9.
+I suspect I was asking for a commit message that explains why these
+numbers don't continue in sequence. With that,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Cheers,
+Conor.
 
-diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-index 322db567d5f889d6..70d104393594091c 100644
---- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-@@ -177,6 +177,10 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
- 	DEF_MOD("hscif1",	515,	R8A779H0_CLK_SASYNCPERD1),
- 	DEF_MOD("hscif2",	516,	R8A779H0_CLK_SASYNCPERD1),
- 	DEF_MOD("hscif3",	517,	R8A779H0_CLK_SASYNCPERD1),
-+	DEF_MOD("i2c0",		518,	R8A779H0_CLK_S0D6_PER),
-+	DEF_MOD("i2c1",		519,	R8A779H0_CLK_S0D6_PER),
-+	DEF_MOD("i2c2",		520,	R8A779H0_CLK_S0D6_PER),
-+	DEF_MOD("i2c3",		521,	R8A779H0_CLK_S0D6_PER),
- 	DEF_MOD("wdt1:wdt0",	907,	R8A779H0_CLK_R),
- 	DEF_MOD("pfc0",		915,	R8A779H0_CLK_CP),
- 	DEF_MOD("pfc1",		916,	R8A779H0_CLK_CP),
--- 
-2.34.1
+>=20
+> But i have not seen them picked up yet in linux-next.
+> regards Frank
 
+--7WXHEjVDjRcKaa45
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZbuYiwAKCRB4tDGHoIJi
+0pvVAP93MxxzBvNZvtpY9olFpk98CWj6rUSSZNqZsc6xps/yEAD+Kke0OXNnExQZ
+iR3rlwQAtPweOolLZJS0LiATIRpshgQ=
+=wI+F
+-----END PGP SIGNATURE-----
+
+--7WXHEjVDjRcKaa45--
