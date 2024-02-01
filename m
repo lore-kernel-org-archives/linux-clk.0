@@ -1,59 +1,59 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E70915AABD
-	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 08:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1617A15AAB4
+	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 08:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706777106; cv=none; b=RLqFvd6IMOt0Yle8HYAizuabxlNP6lm0nOHiXZpRkS3hWT39Ih8WhOoczvXE4PJMMl2HxkzZ52j7cEyz+kxKiQLCD/Ojw+xdJaGhsS6Ku/dyGlcljfSivLgEmNEkBk8CUwIqCZeWZ0iCyyXFLL0EsSDu7ZxlL10G8l4Og3XTGlE=
+	t=1706777934; cv=none; b=mVl4z/Y9XzJrqIcpd7PK5N4GeWf+7s6dDzUcOtVH3+qdiZ4tvlLvrvBtg8xNdTbt2H4azbtUwIjK4TvZA1b8tl8D2yi9jWhlVaT9eaA2IWSXvvFOMiwhuyYeZtUpbNEhdVmaMHSztcbz1PRDe4lNfrYWojeP68pEqEdexKJkm6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706777106; c=relaxed/simple;
-	bh=H63ky5OGP/fMkHzYxDZrGRGJseXqxobdgokONowi+AY=;
+	s=arc-20240116; t=1706777934; c=relaxed/simple;
+	bh=lXquSksINnAQgs9rhIZIDnVL2EKjkAWgHOMS4W4xcWs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fTwCQKUxZ/PwmDjB6Win2lZh2rTeaSQjgPzxsABKJWitOClzujNO4miPOW6JpLcOQSo60JcLEok3bTAgwT8vmR9UxvwSbz6XiqCcLyAtGoTuGwtOG85KndqLFiQTRNEE54qryYpIhq1CdlUucOXr0TJbnwoTOLj4m7Get0/jHqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EY8zvD/V; arc=none smtp.client-ip=209.85.208.48
+	 In-Reply-To:Content-Type; b=bprd/FLf6IF0vutV3CQ3ZBbPqzuVdhRP5/noyVfY9glvNnxTeHU9BYAPy58gVJhcQJShBQlCk+m5zJ42cEm7TgTccjy5vZEOzUVtOodPsvCaEjgYS8dNv7JqLIJ1RktrH7vtKs2JrOhWSN0QWjNYgYjp9WtqJmkqUgZZXQrxk+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wz+W1+aD; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EY8zvD/V"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-55f082c2c92so877777a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 01 Feb 2024 00:45:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wz+W1+aD"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a26f73732c5so87558366b.3
+        for <linux-clk@vger.kernel.org>; Thu, 01 Feb 2024 00:58:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706777103; x=1707381903; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706777930; x=1707382730; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZKhtgxx9F1SKH9mor42U/3ONSOP1lRbYWhFvHuqK0z8=;
-        b=EY8zvD/VRbAOm3W1uU8JqIjSCOrRVkuRPDHPc6KXSxmrpUm/WhKi2wnoiXuodjPj1U
-         UTb4GJBOifqvl07rsd+btdlRyH8SdFs19sxOvZWeTK+a5iIGO+xi+VqJ4AMFQ1OrNXCf
-         Awk+krbV4nlBrL+OOz4YpeU2HJaqBK/NGv67WiEc0pQyyNYKXk8zoK5obDZ4NZNOfIz9
-         mHPlxRRRj8t8sOKjwilYA0XDtDjkVW9vWA9d1rCtbPzer0U0bQH5LfZyF4scVeXh39tQ
-         LteI1HLeEtbqSQASvfGBcdxFGqzCb1suBez8r7FPVgyUzBgX8zKMbm+ePu2Fm53AIo7r
-         M7LQ==
+        bh=vnahjsb4pOQLDby7/J+uHzKaCcjEiFwB97sDznnRHfU=;
+        b=Wz+W1+aDDkEOG1XY42i0NtuFb819FgkqZRJtIOe9MPv3OlhzyrMGGJh8mg/lWcQCA8
+         C/B2Sa1F13O/p+yHamaiA/wIaouuj3cdwQ3GDav9iQEI/EoPzbftaVe7uZnt/sz+viN8
+         1miEJfgIvQf7NGkSs9wIPHbNpM9Txun1ZjqvucquWPTjYDj0XRbQWMkoikWo7OJY4pz+
+         OZYnWDM8S9A1RTUh6GSmtZX2mT2d0OLP5Q05GPdks//VHltnlYGizaoLcbPV9bUSv++k
+         B5hbj769uHq8PDpdGRBK8jeKdMRclsiy3wirzURKvd09FE7SQEaLt580PPocxu3WKD/q
+         Jx1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706777103; x=1707381903;
+        d=1e100.net; s=20230601; t=1706777930; x=1707382730;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZKhtgxx9F1SKH9mor42U/3ONSOP1lRbYWhFvHuqK0z8=;
-        b=frJ7F9OO6PA3yJkPyOhU/bwqmHAOll/61/7yy4Y/xZK+oLvF/qElorUm8Ypy2l4NeJ
-         OSsjQUo1h3iElK92jQrlauQIXFQN2+Xjsi+CsfRKiIM3i9KIER7H/s1kd/NI71IWBK8U
-         0aKQbUCkQwWL3ISddL5nxFoBUGDWI8MsQoHGAYV3wk/12FKqICxy5XivvAqquB3jxsas
-         n6NfH2KNT8BdsQXXe8MGoDJx8vzJesLTNch0nPL3zF6CW3DXLgYvO0/ygJmjcoRVNUCk
-         vSdoN5hBef8rPacdAhJJJ14gnA3eW9ngNTfb+8ngUlfwmV0qG4jrEQ7CnKUwsicHlzbo
-         eaTw==
-X-Gm-Message-State: AOJu0YwZ41sd5fkJyYZVWraFVsFO62mfS1jlDeXVf85/L9JlYtOr5hoQ
-	Li7SKS+JuCtRXut76jotVbc/dUQmPHBnSJAyx75bStefpR9eiaiLQg4f+N5u6mM=
-X-Google-Smtp-Source: AGHT+IHTv/FFzGdUJfzgXdvklrUopceP0lK0QC1GyD4W+X6XemVEt3RWLSFEynqDLKfI4N94C4i1RA==
-X-Received: by 2002:a17:906:3b8e:b0:a35:7c25:b7c6 with SMTP id u14-20020a1709063b8e00b00a357c25b7c6mr1197838ejf.72.1706777103251;
-        Thu, 01 Feb 2024 00:45:03 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCWX3fPBRMuTirggrXtYuqHCx13rNhQPzUp6WB0CWgF6dofQYJaknvP85XJs5MmcLpWGYUSqp4vJk6Fu049HtPQ883017R+FwK8HiQrQ0DEM9S6y4h1AruZIIJUhFTyNyrJauaVy7JgxHbddKaqf4lOyj5Wj81WCckyhyGCQi/TuOorLyk6/uuBeQzfhBrmL+z/Hrz1saF6nccWOFb8w98tLCRyB1/qRMLVVpdb5bFH14HzlfHXnuiT3XIpAOw1REzRFCG++OESs1XfNYRFfqd8xyX+JfBu6B5XnmU88nlCjRZ/klv43J5he3J2D17mv9CFsSKypRLZfGwKCIL5d/0xvwjBSNQYM2c9eombyVVjgB39X5NoNBqru8SqoAYahI98gx1HWWpQnjTbc6ycvyBJgK9g7w7U0PPmvF2foP/Yj/5GoNc87N19w+vTL
+        bh=vnahjsb4pOQLDby7/J+uHzKaCcjEiFwB97sDznnRHfU=;
+        b=R3crhpN8fIDgsl8b0sTab80Zcqzgyr6nbOCMThFAIxQYockY5TztL7rbiwcBGWJY9G
+         4b52WJ5dnZ2SpuGakh2P2uyY1UejZ/XApDONHIY6+TQHhboO8KRhKOwuE+nTC/kN610b
+         kpCn2r7KZgG5SMJ2KiRDWaTdxbkHfcqum5Q3lzQ23OXu7Xz5LXELrIXbNmhc3GuZXhTQ
+         Y1T11E95DNBvo7kVLpLtmt0z9GyNsRAUYXq6hXbcoVEVKhHmj5OfDjd9D0sMLIDIQy2M
+         pw18m+TGsjY27zrmUgvPUm82AO1/hvEJd0nSPGbzyUjWN8Q4EKtXZU+0DgAMG8j2VJFW
+         TCZQ==
+X-Gm-Message-State: AOJu0YxJhsQ2MdXN3HRlclDqy++Xo6SiTED7oqcELnQ45Og0//+lztod
+	vzPeZZWoJuu6zr5ck2eYHPE9fgqN+ZHGb+Oe3RMJUjb0S/HPH/YY2S6KCjLQ3ek=
+X-Google-Smtp-Source: AGHT+IGCVX0wVZBLFNP3H7tBIEao7tri0750Mpd+CzIpeEhrsJKa5eVo0JUl7i0WvplLkHdqwVS0cw==
+X-Received: by 2002:a17:906:22d6:b0:a36:c845:86c2 with SMTP id q22-20020a17090622d600b00a36c84586c2mr539710eja.51.1706777930228;
+        Thu, 01 Feb 2024 00:58:50 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCVVAzN0iPoBBCQ0p+uFB1UzQGKLIa1StwdomT7NOn/+KGFkt9UQV88DuvaRv4O4G/0A38BiZaUuxd1lzz1dJPdFNy6PsDRmdMaVV2LSTFxegohgGFDO3Gv0I1gNF8QDaFBmGgS/8PvBN7yv9brAZ+mDkX6fw02jhcYScfaaVX0mBQyQnSz13qGcbTIcK6J0Dt4yBubrQbE/ca+YXhbifnS7DkaowpALoEyFur3jdWqb2alesiaAXX7EFDghY40dvvvDHwfcxVV+UWxOhv8uew/9ZeR51SsTXlOekyGdqsh1ja3xBIlWIMgEZwyXp6O5Fh/7kPVp5Gp4Ds/5IgkWzZ7T8xqsxHMpADL39g/WVfeJFxo4uS0iCKL4whE66s2tPFYkwRvbrmzwYmKMFnTyEcvgzolsWYyTGLTWxetLr5CTDx3rm0rN6MHqFvSlxdlNdCzdvVHyrLu4CuMK3sUGotG6EU+M6AXQToQ8PRxANYFpyQd0mq+4J6arjdwFhjbAGUJdqMVgDhJwWYNmRIuPUvgHUsa/R946C8sv+8V8zRDc98p9ubCV5RuBZ63Qml6qIHbXpF1Yy9agI0wtntmn8Xq8HLP39DLfAon1RKBtSyPg+8WSimZzxzNN7Pldj/qPJkMiW/yBH+WCGA==
 Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id p6-20020a170906228600b00a3589038f0asm4809306eja.198.2024.02.01.00.45.01
+        by smtp.gmail.com with ESMTPSA id ll9-20020a170907190900b00a36c3e2e52dsm285476ejc.61.2024.02.01.00.58.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Feb 2024 00:45:02 -0800 (PST)
-Message-ID: <ddeca5d1-a636-4524-90b4-613655642d91@linaro.org>
-Date: Thu, 1 Feb 2024 09:45:00 +0100
+        Thu, 01 Feb 2024 00:58:49 -0800 (PST)
+Message-ID: <f6e5b748-17c4-4de1-be42-f79155be21cb@linaro.org>
+Date: Thu, 1 Feb 2024 09:58:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,17 +61,25 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 1/3] dt-bindings: clock: npcm845: Add reference 25m
- clock property
+Subject: Re: [PATCH v4 04/18] dt-bindings: clock: mobileye,eyeq5-clk: add
+ bindings
 Content-Language: en-US
-To: Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- tali.perry1@gmail.com, joel@jms.id.au, venture@google.com, yuenn@google.com,
- benjaminfair@google.com
-Cc: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240131182653.2673554-1-tmaimon77@gmail.com>
- <20240131182653.2673554-2-tmaimon77@gmail.com>
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org
+References: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
+ <20240131-mbly-clk-v4-4-bcd00510d6a0@bootlin.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -117,21 +125,34 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240131182653.2673554-2-tmaimon77@gmail.com>
+In-Reply-To: <20240131-mbly-clk-v4-4-bcd00510d6a0@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 31/01/2024 19:26, Tomer Maimon wrote:
-> The NPCM8XX clock driver uses a 25Mhz external clock, therefore adding
-> clock property.
+On 31/01/2024 17:26, Théo Lebrun wrote:
+> Add DT schema bindings for the EyeQ5 clock controller driver.
 > 
-> The new required clock property does not break the NPCM8XX clock ABI
-> since the NPCM8XX clock driver hasn't merged yet to the Linux vanilla.
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 > ---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+No changelog, tags ignored, I scrolled through first two pages of cover
+letter and also no changelog.
+
+This is a friendly reminder during the review process.
+
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
 
 Best regards,
 Krzysztof
