@@ -1,101 +1,103 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0CB3A1BB;
-	Thu,  1 Feb 2024 10:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5381F17B
+	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 10:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706783573; cv=none; b=TdEkZHwhZAqR8ohXue1O36CxceMd2Wd6hrzEHxcPgZBleZuLdWqhrXEIOqlpOJvJYE0yCFMJMGJ0LvVXpNnvVpdhbcu5lBKwhRF4o9RBBNjWUkCyfXnrkZdwzl2YOQMtmjW2+TreEWndP1r5UGRs8aYBSdLs5DwcxtPeM0kWvEQ=
+	t=1706783774; cv=none; b=EQmEfSjXGAy+6OwE2/ac1hVyPR7cz7nasKo2kjFV9Tmn5NQ8rtkqM3SHjFk3NZXqIYpGFcmpeX+oTRImP7PRU/2dDRRbXUR0kuPOhXsNiCA6uKwWO6wln2/vywS61v3rTod2fa3rKA/4RM95r2y6KujGmqtkMKK28ZRGI7vPFS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706783573; c=relaxed/simple;
-	bh=TgTbXs3zXQgsCRHs+2nScZSazTQCoWxdSLvuVQys3Ng=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=mMlfcIA4qzQ72PG9RI9gWicr2YfiJZDpEGZ9XomGQyHMkUdlWMK7zF4ciJY0xIZHWTERgP5MfWdcUwrovjx5QTY/MHj7G+J/0FcUoaknotwSzMz24ksCjG8prxATIPrOwr/WTj3L34GWluhXrcmRWB6U/mT4XQyliwgAclJfgac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=djNXr9rO; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1706783774; c=relaxed/simple;
+	bh=hke+AcsGSJc4QX/LANnvQFD9/kVcMq16pY1/yHnO/B4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=iHB0L2pxi1j1cMG6FI3cW6p2olGUvzuAPrH8juijUnpmnCnpt4aY0I6M7ovpIA5C4oF/X/FSUraZo494IHTuoRCRFJ6E5Up/Fa1soHmLZglhmGP26e0QzRp/WEPBxzE98iQpsfeVEbBcmIX4T2fvr9SMyoDjr9/JrHMCnoWCHZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ju2WgEPp; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="djNXr9rO"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6E4D440011;
-	Thu,  1 Feb 2024 10:32:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1706783563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nh2ckVW/G7bltpuqgL5G8D+2iH7aZ1ZzEef5xypez5Y=;
-	b=djNXr9rOS+iz4zWcJKOooX3ArAh1Rc93KwVsDjNxv3sKkQDcndt6LUnZ7hM5bzcly9XEea
-	FJxqt5zgSII3cvpcmmENRHucZ3KcZ3ObIDTpvH5nuQtsmwl8nIF4hB2SFM6Ho1Yi4a6kKH
-	DQt5/JCQnCeVi073a/XoH7icXHvRIeM6Xm7qHJqJ2xuh28b+s7WkNufJ1foi0xFzgVSMCl
-	aSI0eG0/yjF0gndiFrz6I4dqvPiddyQ5IL3ARs8MdeckXSGy1vEVxGQ+qMQsHK/70pJvqu
-	9UVyY7u3AS2KkNVbQniCVMjcMpZuqaObBexdP9JkKVDGmwq+dQv2tILTBVuUAg==
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ju2WgEPp"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-55ef4a66008so779026a12.3
+        for <linux-clk@vger.kernel.org>; Thu, 01 Feb 2024 02:36:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706783769; x=1707388569; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O9bW5DWKZwEm3XWa3arzOrQZClJJLst9IgsA8gjEHUE=;
+        b=Ju2WgEPprqwHxfJ8/T6ilxYwgHxQQkfyipXik1MhVdQ6PlpBNpyg7RgHDftMcN7+k3
+         7xYi39Sf83Xa9H14wqxjJcRPhntg8IMTZRCTpwk3Pn9L1qvNm3ixSdi8BmS4HM6vj+Gw
+         +EH47pPBUoZEuOX4OxnED/gzSSpHZ5zyeoPU8kRryTt3ll2++au5v1jaKWneJsGILcqj
+         HqdzSea3LbxU+YFhLKOySj06HioXTzWS/6ltkgraLHYQh/rLekXXUPNJfCS1p5XQWyo7
+         VpXmMPP7RdLEVckjIerYVZ4m1BVZTwIau81Xuxo7sAL9X2exvpiUENtbWChCQaeOe5/u
+         dKoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706783769; x=1707388569;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O9bW5DWKZwEm3XWa3arzOrQZClJJLst9IgsA8gjEHUE=;
+        b=fQsnJed4hvzTftyslSnD9PM+m7mYfb1tHLzcYG6wLM+T6K8da8isFvtrImjM/IaDa8
+         OX5JSl9LX4Vvx92cabV5PTlUaGYUn1wIE3UGeZaJWK7SQ0NBNTr6InJdKSztf0NKiKNh
+         8c9J6yasQZ196PvtXg4nPRdrQiMS52HJDydpChyqDQOcNCHAG8rSKdYq2Mk8Xe1+O7I/
+         lr/ffZQfgViEKQaIfuNEdEE9ahlzQMQycGPLo8J7T7JPjdOjTl8Qkqv4X7X20oDRSxSn
+         u1r9quqQX9PX1o2C25W8ez4BZVNrc/Jw39EXwDi2LyAxGBaGmMqwUGqsCimxSmb1EgfP
+         Jtjg==
+X-Gm-Message-State: AOJu0YxviPypSy+8n8tk7s5RKg8boEQ2O4KQzvKjoDRI4r0B9060Ev50
+	FH7D+mbUyjMAm73ZygNTWjYSgT5w2LTXCHlY7VHmz3297K4cZ96fwwgyhE9BzpM=
+X-Google-Smtp-Source: AGHT+IH0PEtxtdLjw0ROF0VltCVw5n5mnSK/kesalTaXz2Q0NcDj/fGcH9Qh1lX1fUcDEcV6k4E5PQ==
+X-Received: by 2002:a17:906:688d:b0:a36:72f5:af5 with SMTP id n13-20020a170906688d00b00a3672f50af5mr3475965ejr.11.1706783769344;
+        Thu, 01 Feb 2024 02:36:09 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCW1ZdWP5vVe6GXZKwGv0eleCpoPE9D5supFbviv5vsvqLias0vAsT8XvaCIlZflJRIbwZBcOD53aj1WaerF6+ZnY7O+eB/SuVidU3N6WESgXKJYJLoDMAG3yhTNOcWHubs5PUTrV+IIhmpY/3s+PTgWPEo4LS7lna7nrBKfzkPUijWD1eTG/TLfh7OkhvxW+InHmIsumoJ2LBLtKtEaL2PqAIXRdNDF7FH45YipsYTZGC71NuioEWEJn5d8Jxipg2VrCwfn/lw4KcB1SJc3bx0k/UCGgHKQQJHB483e+Fa6fJfQKO7Mgb85No4xh7omxwSa2Hnp+ZkFgi08k4n3BNBPodQfIyjgK4J+n+BjBTFhg+wf53/Ahpzkyx0Hq7lMmhQvrqkh848TAUgW7mVUWbuDzQUjSp4kcQUuspSqaBGamrt5YB5fI/SQ9GFpzA+yJlkqCn5OMSFDQrScKRZPbnrzuQQcQLxusgONa77KZOGR6381Z2WkSdgfC8OE+UyxNGjuphT3wig4pX4bTjZaDeniSkohhz0Xn8Mfku5YV7L3keHmszqgA9oFQDVIUr6dp0HBWXtqnySJxOLGjpbVS/98XJwMd4mpllSG9Et69dIwYsb2ydzk4dgq+tV2IOa3v5zeVJ2tcFWw74pR0x2lBhkSoEB67y3iU5QgU+eAlMNM1IMmgnQN+A==
+Received: from [127.0.1.1] ([178.197.222.62])
+        by smtp.gmail.com with ESMTPSA id hu17-20020a170907a09100b00a3603b49889sm3041749ejc.21.2024.02.01.02.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Feb 2024 02:36:08 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, 
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+ tudor.ambarus@linaro.org, willmcvicker@google.com, 
+ semen.protsenko@linaro.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com, 
+ tomasz.figa@gmail.com, cw00.choi@samsung.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20240130093812.1746512-4-andre.draszik@linaro.org>
+References: <20240130093812.1746512-1-andre.draszik@linaro.org>
+ <20240130093812.1746512-4-andre.draszik@linaro.org>
+Subject: Re: (subset) [PATCH v2 3/6] arm64: dts: exynos: gs101: use correct
+ clocks for usi8
+Message-Id: <170678376730.179918.14593646521347774739.b4-ty@linaro.org>
+Date: Thu, 01 Feb 2024 11:36:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 01 Feb 2024 11:32:42 +0100
-Message-Id: <CYTO9ZZ41LYD.170JY5PLQE7JE@bootlin.com>
-Subject: Re: [PATCH v4 16/18] MIPS: mobileye: eyeq5: add reset properties to
- UARTs
-Cc: "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
- <linux-mips@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, <linux-gpio@vger.kernel.org>
-To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Gregory
- CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh+dt@kernel.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>, "Linus Walleij"
- <linus.walleij@linaro.org>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?=
- <rafal@milecki.pl>, "Philipp Zabel" <p.zabel@pengutronix.de>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.15.2
-References: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
- <20240131-mbly-clk-v4-16-bcd00510d6a0@bootlin.com>
- <3f3b1665-30d4-4581-84a8-7894a4a03b93@linaro.org>
-In-Reply-To: <3f3b1665-30d4-4581-84a8-7894a4a03b93@linaro.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.4
 
-Hello,
 
-On Thu Feb 1, 2024 at 10:13 AM CET, Krzysztof Kozlowski wrote:
-> On 31/01/2024 17:26, Th=C3=A9o Lebrun wrote:
-> > UART nodes have been added to the devicetree by the initial platform
-> > support patch series. Add reset properties now that the reset node is
-> > declared.
-> >=20
-> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> > ---
-> >  arch/mips/boot/dts/mobileye/eyeq5.dtsi | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >=20
-> > diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dt=
-s/mobileye/eyeq5.dtsi
-> > index 06e941b0ce10..ece71cafb6ee 100644
-> > --- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> > +++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> > @@ -78,6 +78,7 @@ uart0: serial@800000 {
-> >  			interrupts =3D <GIC_SHARED 6 IRQ_TYPE_LEVEL_HIGH>;
-> >  			clocks  =3D <&uart_clk>, <&occ_periph>;
-> >  			clock-names =3D "uartclk", "apb_pclk";
-> > +			resets =3D <&reset 0 10>;
->
-> You touch the same file. Squash the patch with previous one. It's the
-> same logical change to add reset to entire SoC. You don't add half of
-> reset, right?
+On Tue, 30 Jan 2024 09:36:42 +0000, André Draszik wrote:
+> Wrong pclk clocks have been used in this usi8 instance here. For USI
+> and I2C, we need the ipclk and pclk, where pclk is the bus clock.
+> Without it, nothing can work.
+> 
+> It is unclear what exactly is using USI8_USI_CLK, but it is not
+> required for the IP to be operational at this stage, while pclk is.
+> This also brings the DT in line with the clock names expected by the
+> usi and i2c drivers.
+> 
+> [...]
 
-Makes sense. I'll update the commit message with that change.
+Applied, thanks!
 
-Thanks,
+[3/6] arm64: dts: exynos: gs101: use correct clocks for usi8
+      https://git.kernel.org/krzk/linux/c/512b5a875cd8b8352257fefe71513097ee97be77
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
