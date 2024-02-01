@@ -1,158 +1,178 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CC762141;
-	Thu,  1 Feb 2024 13:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF2B86647;
+	Thu,  1 Feb 2024 13:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706793170; cv=none; b=gpg5A/HByvRI65sJFzdtHrpiAw3cHwoB1UAB+EdyWmd22dvsDs/o52SNb6fpErxhy9wuHHjxiuYA3TK66uqtzaWPCdpfcGkiHujJ5S908krmSstnRYmPARCccDqwL7WxtqeLAZNWRgayedsCGGkhO7rXPy/eS9V37tdmUk4rQx8=
+	t=1706794619; cv=none; b=lmONTI7lUV8VqHNknA3egSHQ0qBUwQeXp+Tia7JtP7VJTLXFutz01MJH2XVmiLBzIrleG3BiorU2ehuQXL+BHfYsuTs9UejKS0Tf57jDF0SRjGWygYk+BB1iXva4EgdukWIEL1NFtzVIAkS0uZFJyfy0qLCYPNJ9RssOvdpodbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706793170; c=relaxed/simple;
-	bh=qvtQsVUpv6mrbOusIihe550/VZAo/qI5LTEF9Sr+vYc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZXmpyf0dfecKh82qe4n7/BqYZoEQrEdt3livDNt5vpMFb2miHNs/YI9eAshsZQoxpykZqfeS2dn2TVFylVHhGmH3P9H89vIsCGFak5Cu04IW20rZoEHpxGwPG+FhhYC1mOxng38FE0RAVczgFOsGI4P/E+SXBkINlhPG7aoYeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tnXpvvYb; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1706794619; c=relaxed/simple;
+	bh=Y6xuwZ/UytPs1s0uPT289WKmjRvZNzYA5jAUKSKRGow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=crxZR0BtL5BdzPySo+PihSRYzSfUPBGNNjuGbjM2LentuqJgEjGzlpkxPxRKRaI74W3rrBaBvN0XXopt+ZZg0/ZSCMaS0zlCjM+Au6o09uoYLLvPlKZcy5N/c908Qi4z0JDMkDOm8UlW+sEUJJXJR5UTKhaPClk0NTX7AVrykVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWkQ0fk7; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tnXpvvYb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1706793169; x=1738329169;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qvtQsVUpv6mrbOusIihe550/VZAo/qI5LTEF9Sr+vYc=;
-  b=tnXpvvYbOg9GNGZJTIfv1k59HOOELkzDc2fBILKzb611pVZs2H+jmUh0
-   JNqzV1KR4nvZLrCd1Te3TlWOfyGiInkfSRulCmVZZUP5DN5FOHYDQ49eK
-   y9Rp3RTcXeXzMDJkWjNHOBU7SB0tg17Kq75/EDbZR1x4sTs2TJr5Uk/wo
-   JsOXWvb9fhVVHRBCg6VtBVOhqhzjmDbvt5+PUWBWAdtt+IkiiNohKFrhg
-   LciGzh7KWOT1TF3Kv8dCuu4rbZJTHkkm36CHWuiQphqT0/M795IdALFkv
-   pXNiTTSUECCrypC64j6i088L2hSDlU06Tdy6G7xE9mqkExciIxJZPAmOB
-   Q==;
-X-CSE-ConnectionGUID: DojxIC2fROuGfno2oWJAig==
-X-CSE-MsgGUID: UGxvDEb7R5C65tm/xwNFig==
-X-IronPort-AV: E=Sophos;i="6.05,234,1701154800"; 
-   d="asc'?scan'208";a="15617257"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Feb 2024 06:12:42 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 1 Feb 2024 06:12:21 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Thu, 1 Feb 2024 06:12:18 -0700
-Date: Thu, 1 Feb 2024 13:11:39 +0000
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Frank Wunderlich <frank-w@public-files.de>
-CC: Conor Dooley <conor@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Frank Wunderlich
-	<linux@fw-web.de>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
-	<conor+dt@kernel.org>, Sam Shih <sam.shih@mediatek.com>, Daniel Golle
-	<daniel@makrotopia.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
-Subject: Re: Aw: Re: [PATCH v3 1/2] dt-bindings: reset: mediatek: add MT7988
- reset IDs
-Message-ID: <20240201-goes-passable-0ba841d36bc3@wendy>
-References: <20240117184111.62371-1-linux@fw-web.de>
- <20240117184111.62371-2-linux@fw-web.de>
- <20240118-calcium-krypton-3c787b8d1912@spud>
- <trinity-afc4f48e-65e1-46ee-a78b-1d670cc0f310-1705615200900@3c-app-gmx-bap21>
- <43f946cc-07e1-48c5-9b31-40fc9bc93037@collabora.com>
- <20240119-dupe-obligate-707b3a01b356@spud>
- <0EA6A126-DDC0-4E9F-BEBC-FD018B08CA84@public-files.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWkQ0fk7"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-296043e44caso707951a91.0;
+        Thu, 01 Feb 2024 05:36:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706794617; x=1707399417; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=NIOY7HRa3XDmbQkCgZJQXD0Vyc4i5CecSgVuCotRWD0=;
+        b=YWkQ0fk7yeKg4suSY7ZrfpfDCHwGnZ//QcV0eoWH1h+jWbRlf1Vbjps+Eun9/NcX6V
+         Px7kQLFFYzQqxV/6BkS+r2sgmUl8tO7SrXS4vgTLS5uxfMkmAlVe7IFDBtr1iAm29Xrf
+         a6yCMVsQC8yXSpuTHv61Ec4QJL5szekeGYji6ZWSC5KqpRMjddY7J8Q4EfxQGgkavKFV
+         IN7TwJX1XUGtzLPFFmXOCWGw2zVo56liYSm2WbUFsVh88mdI5dGV1FZBV62t5nHOrjDW
+         X/vLwpvM7G5PFBlMBqkN5W8cNVwhWSB6YMDtW+gFdQDC/vlfEDeksAyR59pSbT/lpSk9
+         IbSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706794617; x=1707399417;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NIOY7HRa3XDmbQkCgZJQXD0Vyc4i5CecSgVuCotRWD0=;
+        b=UdFXZ/p/JoI3gc3OaZ8jGfaimIqXpovt7KoN/o533hTAppT0+QYSSnG5wI+WCZKVz/
+         yS1sMUYCNpfIqkNBJT8VdcO5Ex3oGgF6sbehmaRXBrtrzQNkhlDgRAYrp6Af/mZLPnVh
+         L29Nt0dzlgfvr+lv6oZjrKwkUNIG6+yTCJeXs4fSdPs1Xla5BS3o2CUArfJD0pr5Zpis
+         FaB0cN2YPayUdXWkcNd3V0uoKZyechGgHu7ThKzwlOpNcBPix5zIb9oS3MCsEOCX6iqF
+         Z6lxnpZI2W2qeuiWaJ8IEk+jVirDYtiY+Y+vV8z+D+QEY4ucqsVMeT0mlr4By6HsSUFX
+         e/eQ==
+X-Gm-Message-State: AOJu0Yz3Y2BxCcIiLLHCmRNLIADzSXnlSVSrGQ44cnsDLuJ4BpW4Tr0B
+	/ewVIRV2red1WKjENY4ZpRj4yPK/S36ju/eOcp6RhUToqauV/wgLzwzYwy/4
+X-Google-Smtp-Source: AGHT+IE87mn1kUx7KsvJ1kw4VnW2wGVQtKQwjkTKGie4+oCKmaWmUVUSmze+c//NEmTWv422isLx6g==
+X-Received: by 2002:a17:90b:30c5:b0:295:1a47:d70f with SMTP id hi5-20020a17090b30c500b002951a47d70fmr4515280pjb.3.1706794616765;
+        Thu, 01 Feb 2024 05:36:56 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCVQvkuKLc+GA8XZDsVfJEW8YCYHHXaoiokTfChGeswxJcXBRwpxku4nd4z4lzDUtkS2Mf9VEPr2adPz1vyS+YYQ4PskLASl1MhD70R+mF3X82bhDAmegRqmRMSOlq6yz4Gcas++UsC6+zL7NEeqQiNfl8FStcbow3WzAe1bEVjtsnRq2L4WU2q0zsRjpd6bow//EH/XDkbU6uXzz+5URKUL862vxnk0EcbHBObTM0SaCB2agpVvZik9ZoJ543PfKe2xTcjfn5gWQ2lyM/bZ6K/lym/kWVtvnuUH6oq6Db2c5KX8HggmtctiDgsgBvzaLNwFRK1iOfAw67dsHCZtzNhW7kaiZnEoooyVmukRV15QH4CYfnyPQiO65OG/2X8De8jC9OhgmXhkjycfQDgVobcBGiUThKKCQbp4NHXgqn8bJ5P3tk5pQLhfSPURNlo73wa4Y0vxrPqMTXD6Bsq7aXg4H09ld7Z1MqgbN3i0pFUpTAd0caZ12WZKoBKsxSRtOXkXO3J+yzrKA1N8GEkcl0pE0i4I7DHBUDWzGCMqxAavVa/WWH0KqNT4yoo3kBB20gCDEHT4ufnFZ84/c5188juWpDgrSqoXblJC4BpmN1tYwyVPaUDzlBkkhTCVwVY=
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id pb8-20020a17090b3c0800b00295fdf538e1sm2443191pjb.12.2024.02.01.05.36.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Feb 2024 05:36:56 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <313ec14d-c991-4bd0-a964-5759db108855@roeck-us.net>
+Date: Thu, 1 Feb 2024 05:36:53 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7WXHEjVDjRcKaa45"
-Content-Disposition: inline
-In-Reply-To: <0EA6A126-DDC0-4E9F-BEBC-FD018B08CA84@public-files.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/11] watchdog: rzg2l_wdt: Select PM
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Claudiu <claudiu.beznea@tuxon.dev>
+Cc: wim@linux-watchdog.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de, biju.das.jz@bp.renesas.com,
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240131102017.1841495-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240131102017.1841495-3-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUT3XFz2a+iWxrT2p_fbe+QCoXuhYprcWY9v4e5KA5q2w@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAMuHMdUT3XFz2a+iWxrT2p_fbe+QCoXuhYprcWY9v4e5KA5q2w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---7WXHEjVDjRcKaa45
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2/1/24 00:52, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Thu, Feb 1, 2024 at 2:30 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The rzg2l_wdt watchdog driver cannot work w/o CONFIG_PM=y (e.g. the
+>> clocks are enabled though pm_runtime_* specific APIs). To avoid building
+>> a driver that don't work select CONFIG_PM.
+>>
+>> Suggested-by: Guenter Roeck <linux@roeck-us.net>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/drivers/watchdog/Kconfig
+>> +++ b/drivers/watchdog/Kconfig
+>> @@ -912,6 +912,7 @@ config RENESAS_RZG2LWDT
+>>          tristate "Renesas RZ/G2L WDT Watchdog"
+>>          depends on ARCH_RENESAS || COMPILE_TEST
+>>          select WATCHDOG_CORE
+>> +       select PM
+> 
+> depends on PM
+> 
 
-On Thu, Feb 01, 2024 at 12:40:17PM +0100, Frank Wunderlich wrote:
-> Am 19. Januar 2024 18:04:36 MEZ schrieb Conor Dooley <conor@kernel.org>:
-> >On Fri, Jan 19, 2024 at 10:28:30AM +0100, AngeloGioacchino Del Regno wro=
-te:
-> >>
-> >> The resets are organized on a per-reset-controller basis, so, the ETHW=
-ARP
-> >> reset controller's first reset is RST_SWITCH, the second one is RST_so=
-mething_else,
-> >> etc. while the first reset of the INFRA reset controller is PEXTP_MAC_=
-SWRST.
-> >>=20
-> >> That's why ETHWARP has a reset index 0 and INFRA also starts at 0.
-> >> I think that the numbering is good as it is, and having one driver sta=
-rt at index 5
-> >> while the other starts at index 12 would only overcomplicate registeri=
-ng the resets
-> >> in each driver, or waste bytes by making unnecessarily large arrays, f=
-or (imo) no
-> >> good reason.
-> >>=20
-> >> This is one header, but it should "in theory" be more than one... so w=
-e would have
-> >> one for each hardware block - but that'd make the reset directory over=
--crowded, as
-> >> other MediaTek SoCs have got even more resets in even more hardware bl=
-ocks than the
-> >> MT7988. That'd be something like ~4 reset headers per SoC (and will in=
-crease with
-> >> newer ones)...
-> >> ...and this is why we have one binding header for resets.
-> >
-> >That's okay. The commit message leaves me, who clearly isn't a mediatek
-> >guy, with no information as to why these are not one contiguous set.
-> >IMO being for different reset controllers entirely is fine.
-> >
-> >> On the topic of leaving space to allow grouping RST0/RST1: -> No. <-
-> >> The indices have to start from zero and have to be sequential, with no=
- holes.
-> >
-> >Agreed.
->=20
-> Hi,
->=20
-> Just a friendly reminder.
->=20
-> As far as i understood, Patches are fine so far and do not need any rewor=
-k,right?
+Yes, I did not want to suggest that the driver should _select_ PM.
+Sorry that I wasn't more specific.
 
-I suspect I was asking for a commit message that explains why these
-numbers don't continue in sequence. With that,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Guenter
 
-Cheers,
-Conor.
+> The availability of PM is architecture/platform-specific, hence it
+> must not be selected by individual drivers.
+> 
+>>          help
+>>            This driver adds watchdog support for the integrated watchdogs in the
+>>            Renesas RZ/G2L SoCs. These watchdogs can be used to reset a system.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                  -- Linus Torvalds
+> 
 
->=20
-> But i have not seen them picked up yet in linux-next.
-> regards Frank
-
---7WXHEjVDjRcKaa45
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZbuYiwAKCRB4tDGHoIJi
-0pvVAP93MxxzBvNZvtpY9olFpk98CWj6rUSSZNqZsc6xps/yEAD+Kke0OXNnExQZ
-iR3rlwQAtPweOolLZJS0LiATIRpshgQ=
-=wI+F
------END PGP SIGNATURE-----
-
---7WXHEjVDjRcKaa45--
