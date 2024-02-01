@@ -1,81 +1,74 @@
-Received: from new-mail.astralinux.ru (new-mail.astralinux.ru [51.250.53.244])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C0515D5D1;
-	Thu,  1 Feb 2024 12:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.250.53.244
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAED15D5B5
+	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 12:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706789442; cv=none; b=enrW3h6evKiBF6ooYRb62g6Bgn8Y4XJtg1nQKUWQ4Q3X5I+JjWJii3zjN4iDNj7C2npn65DUCNNtKa3YVIglqSWZNUWERhpPexpvHB16TABn9e32dCIWfqDIEg+dWOAh57WCIedvial/lCCeYtcxf+CYXnfOLo4NiymA4auN0cQ=
+	t=1706790127; cv=none; b=tGgCMpKIbcMZJgM3c67aNwIup47Ft7xd2vgSMYKKbrNuUjLnvKbrxaxmqyYMVZAIGzdxmWtpGFfzA8IO7hUBYJ+2gSzZoiRGtYbmUEjTo6p2gMJxD7P9aQoyvpaFJv/zj74M8iaHL6yAtp5igbgZegIHpaDLCLkk5NkLiJ3oucM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706789442; c=relaxed/simple;
-	bh=XEc06V1n4FSn+Ug40uuVMig1sywikd4XSsElhJISztc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SKBQCMrZHs/LN+rYSmALGwyE9UBFruZ3914NBfIVDi94QroKz9gmiAJJV94gHduDGvhOh2/r7MODtUkZQenhTxV8BqEWJiBFL0EfSskKjGfFU4p7YTLZ1t89UFkSWVm/1n5yiETt2WGseBKhsSYgd8EonQog4BZdmMyGB9cCqhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=51.250.53.244
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from [10.177.233.61] (unknown [10.177.233.61])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4TQcx26v5mzGptc;
-	Thu,  1 Feb 2024 15:03:02 +0300 (MSK)
-Message-ID: <93df720b-1d99-47e5-8a89-187d2bc119a1@astralinux.ru>
-Date: Thu, 1 Feb 2024 15:02:52 +0300
+	s=arc-20240116; t=1706790127; c=relaxed/simple;
+	bh=E59gvsiaDeWyRIZv9XVTeh3SEuFP6dWv2HYQRTt7UEI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MW26OINn7S4+FPpLLmy5ZtiFfoRntAgyYIgdevPH3bsWgZd1B8QJGB7ffuPV7VqEzdiK8vhxH/Z4d3Bg/kA9fHRVfrwY9E2TTQ1sUaRLAtP3wUxTyhZCP1rd7kcJ6k4h9bvOMvGu1CAh0Y+x/VV4VE9CM5lr4Q7X2MVlVxZz1zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:88f0:c83b:bafa:cdc3])
+	by michel.telenet-ops.be with bizsmtp
+	id hoMw2B00D4efzLr06oMwwP; Thu, 01 Feb 2024 13:21:57 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rVW3z-00Guz3-KW;
+	Thu, 01 Feb 2024 13:21:56 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rVW4q-00ARtC-Jh;
+	Thu, 01 Feb 2024 13:21:56 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Cong Dang <cong.dang.xn@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a779h0: Add watchdog clock
+Date: Thu,  1 Feb 2024 13:21:55 +0100
+Message-Id: <f1dbf0f3f484015f2e629d78b746cf377d6f6746.1706790015.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: RuPost Desktop
-Subject: Re: [PATCH] clk: keystone: sci-clk: check devm_kmalloc_array() return
- value
-Content-Language: ru
-To: Nishanth Menon <nm@ti.com>
-Cc: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- lvc-project@linuxtesting.org
-References: <20240110134621.17209-1-adiupina@astralinux.ru>
-From: =?UTF-8?B?0JDQu9C10LrRgdCw0L3QtNGA0LAg0JTRjtC/0LjQvdCw?=
- <adiupina@astralinux.ru>
-In-Reply-To: <20240110134621.17209-1-adiupina@astralinux.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DrWeb-SpamScore: -100
-X-DrWeb-SpamState: legit
-X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttderjeenucfhrhhomhepteipvghktggrhhipphgrucippihnpihhrgcuoegrughiuhhpihhnrgesrghsthhrrghlihhnuhigrdhruheqnecuggftrfgrthhtvghrnheptedvhedvkeeileejheejvddutddvieegudfgieegleeiheevtefgvdffueefheehnecuffhomhgrihhnpehlihhnuhigthgvshhtihhnghdrohhrghenucfkphepuddtrddujeejrddvfeefrdeiudenucfrrghrrghmpehhvghloheplgdutddrudejjedrvdeffedriedungdpihhnvghtpedutddrudejjedrvdeffedriedumeeggedvuddvpdhmrghilhhfrhhomheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopeelpdhrtghpthhtohepnhhmsehtihdrtghomhdprhgtphhtthhopehkrhhishhtoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhsrghnthhoshhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvg
- hlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghlkhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvhgtqdhprhhojhgvtghtsehlihhnuhigthgvshhtihhnghdrohhrgh
-X-DrWeb-SpamVersion: Vade Retro 01.423.251#02 AS+AV+AP Profile: DRWEB; Bailout: 300
-X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.61.08090, Virus records: 12290912, Updated: 2024-Feb-01 10:21:37 UTC]
+Content-Transfer-Encoding: 8bit
 
-just a friendly reminder
+From: Cong Dang <cong.dang.xn@renesas.com>
 
-10/01/24 16:46, Alexandra Diupina:
-> devm_kmalloc_array() may return NULL, so
-> check return value to avoid null pointer
-> dereferencing
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->
-> Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
-> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
-> ---
->   drivers/clk/keystone/sci-clk.c | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-> index 35fe197dd303..a2fa24e4f88a 100644
-> --- a/drivers/clk/keystone/sci-clk.c
-> +++ b/drivers/clk/keystone/sci-clk.c
-> @@ -459,6 +459,9 @@ static int ti_sci_scan_clocks_from_fw(struct sci_clk_provider *provider)
->   			tmp_clks = devm_kmalloc_array(dev, max_clks + 64,
->   						      sizeof(sci_clk),
->   						      GFP_KERNEL);
-> +			if (!tmp_clks)
-> +				return -ENOMEM;
-> +
->   			memcpy(tmp_clks, clks, max_clks * sizeof(sci_clk));
->   			if (max_clks)
->   				devm_kfree(dev, clks);
+Add the module clock used by the RCLK Watchdog Timer on the Renesas
+R-Car V4M (R8A779H0) SoC.
 
+Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk for v6.9.
+
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+index 219941047291d34d..322db567d5f889d6 100644
+--- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+@@ -177,6 +177,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
+ 	DEF_MOD("hscif1",	515,	R8A779H0_CLK_SASYNCPERD1),
+ 	DEF_MOD("hscif2",	516,	R8A779H0_CLK_SASYNCPERD1),
+ 	DEF_MOD("hscif3",	517,	R8A779H0_CLK_SASYNCPERD1),
++	DEF_MOD("wdt1:wdt0",	907,	R8A779H0_CLK_R),
+ 	DEF_MOD("pfc0",		915,	R8A779H0_CLK_CP),
+ 	DEF_MOD("pfc1",		916,	R8A779H0_CLK_CP),
+ 	DEF_MOD("pfc2",		917,	R8A779H0_CLK_CP),
+-- 
+2.34.1
 
