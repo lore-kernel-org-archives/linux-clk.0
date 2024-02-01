@@ -1,155 +1,165 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBFC15AABD
-	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 10:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB0A15B989;
+	Thu,  1 Feb 2024 10:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706782599; cv=none; b=Lao+yhhWdNcGqJgiTSZdBSRb4VlYOBz/aJ4W2cgvaU5Ctmx1mg0o3MO6dNGlTkKvrntz2d/g0wN43Maedp6EpGrtKc03X4JPLbFgIDT9s6zn7+nGbwJGLvZGh0Jp+BHFQHCbqNakSu3MyIJhr0KrlW30Xvj6VsuOOcNxoU7nRx0=
+	t=1706783046; cv=none; b=qa2b3zTochAmLGD8ENXCvrZAVqdK9FtRJv+90aQOCNNwQkcaAoHJWbjde6FmocZsC365rHwS2lBVgxgnZq9gRiS9GROPx8WUz7S24zObDsmGXbiEvhZG/ApRzWUBsiLcFFAP1AVuVJysubCLdUOgcwvUS3BXt9frZC4Wcp9X42s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706782599; c=relaxed/simple;
-	bh=mw4oPzJQ++DU/wQ2rMB0bz9c1MaDOQvv7yGm4EgXNG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QQKhhoLFX6sLvK62L8vT9n8bZYZ4IckX+6qUROnUeD81cGkkQjZNSUoKCwrLBPRM/3GrTaM30C64h1zXVFlTHMGla7mivRUiz6ihCptT62bbcFPqH6qc9KTKJsito6Mg6QEEw1PE2wLDuPtGqnwRCHtY10x1lxg3Wq5BS3ZVDuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HdfTkIRl; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706783046; c=relaxed/simple;
+	bh=0Q6Xto1WiMvLE/VQuYpSOMFy+OwWNRLXtUxjsUiPS20=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=fXdctvp0eP9jMiFwBSDoEMzj4ru0UvslnxxULaUArCn+tnUg6RvCYOYncKPB9vVvnkXkkLME2abCize56BHxnbo2nI0LajNJlShKL9zJ50JLgJ9z91QVRCwc8Cc6e7lwQPnSLBVwT3G519rJveHRH7zieUC9PLtsfxbkLn+Tyts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dNc3bIKO; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HdfTkIRl"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-55eed368b0bso1312568a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 01 Feb 2024 02:16:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706782595; x=1707387395; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mw4oPzJQ++DU/wQ2rMB0bz9c1MaDOQvv7yGm4EgXNG8=;
-        b=HdfTkIRlQ//fdEetEJb44xtBPUOStUZce80Ztb0/tqyPbxZKWITXX2nMrt3CXRYxs+
-         HzWUnm6on5cFV+rK9Ycb4DzMI+D0Tti+L1hRMjsfHR07hoGp/LnrZxBwCs7kPs5fJURR
-         q1WU+ddKB+6xhq6Jm2fexcfnfuEdW3/q6FtVcnAbxiPaRCp/7DctzUAUpjiwOydSUmtG
-         107btmSMWzPfjIWHXWq2hZKMqtEAeRguIdX7lYBKdKEHIM3jS9y10x4/5CEmB0v8Jd2S
-         Wo0R+QcqY3xlz7+REPPYNb/9f4N7NlixcK0i0qVvkZ0zu4b0vXX/7F2ykE782MPB3yQM
-         2VgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706782595; x=1707387395;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mw4oPzJQ++DU/wQ2rMB0bz9c1MaDOQvv7yGm4EgXNG8=;
-        b=Zg0Fe2xLH9p65U7KUzNNQ5HcfpuOirNe45uiUWzcz57cxl0cFFqsZs+7VM5glTeXIa
-         jkJyV3HwJLR7zHkJ3wDi6YSQf0Xyh0jmesXfGRWxZZeiKxIy6XZnmyyMJESdUr5v2UzL
-         NBQx1T0asiLvt3qtjt4Q/aOascBAp2KOYXfNbaJeFoediCQAP5mT3u8wBxbEGFu20aVY
-         f/K8qqJQwefptI/ssiM120ncUaIVvpWRMwGFocH+H8SPscf49ff5c9aVf1uDJXhJJqt3
-         15jHVFfIMTkvhpsQjaU/co+DWaTKm6YHS17j/8I1VheUw50T+UAXZx9Sy99DdxIcl3b7
-         prZQ==
-X-Gm-Message-State: AOJu0YxhIZKsvw3HSjPhC9kQkNGbwX9IFb+T5T+EkPYFLv1z/8u4gWgB
-	+0tuKdVIMux6HVbfI25YcA1ccvi9fziBjmBQAKAQZnoLwip5b3nBu3JEwAhJJHM=
-X-Google-Smtp-Source: AGHT+IHO/rsGSVRpfJeQJhlOHSuGs76jSTvJGqyVP4S5Kquwd6WHuQII3L1oeoygquoCF2opwwYP7Q==
-X-Received: by 2002:aa7:cf92:0:b0:55f:2be:1af0 with SMTP id z18-20020aa7cf92000000b0055f02be1af0mr7189469edx.16.1706782595578;
-        Thu, 01 Feb 2024 02:16:35 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCXUuswTcH8ZIlRr+OKWjTKr/4pDuMWqaiUkLo1owb4nw98mL/PrMCMnzXJhlmeB+6C1P3VOYk/M16IOlanfy0lmvjCvOV+yow2f0LtL3vwZ3NpmVJRyaenbLjN4zn1L0UabCR0Z3vxvCaqiNo/rP8qGdW346Jfb8E7yW4sOBLqJSNW+NPmGfsY0CD1ALr/dy0GsGnxfgenGUkOjl4v4Xi9z69mhXvNEVDHPzpt95SCFFn+OoVaGq0y5rVKRYgYokdvMSBbAUWMfLJ7lnpYXsL43Opxb36e1SQ1IGwd/Mx1Xt2eXkegStR5IhQDwThHzTEpOW30rY1bQ0yy2IBUEokYGfjrNK8eHgWxG518FqtjmD+/wuPXRGhShW8eWl/17nwfsq3zi0XhjcQXx3cThtfaPZZBozajxUJakDqsjd6oHxx+wGhLhq9qN4Dwo4EyxUUX4EFporW1rDvuypxVNWEJTerkLl51qvQVOSPyej40MKLXN9ruvwhoHCcsJnrHDs7UP6hz3f5o1uEzPrNyfLzbDY6hoch49iE8Sq0ddVRujewhgdtHlki7tSF3QWBkGyzafugg+mUZZv1+j+rRxrT9QTZjDNA9XfdX391b/qRrwnETbkefwBtx3m3E10goXFa6unQvOjNQhILuBsBnq8e+5XS93WFfznM6Nsf+Khe3YmZHKXDGr4A==
-Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id da18-20020a056402177200b0055efaddeafdsm4105773edb.86.2024.02.01.02.16.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Feb 2024 02:16:35 -0800 (PST)
-Message-ID: <54cbf305-8cad-495a-a805-94a249bdefcf@linaro.org>
-Date: Thu, 1 Feb 2024 11:16:32 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dNc3bIKO"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0DE9520002;
+	Thu,  1 Feb 2024 10:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1706783041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FewLjWlZG58wHVzMJTz9qAeznTJTLigBtSdDwMBeolo=;
+	b=dNc3bIKOu/9LYn5OEE+Y+Wlb/Ixwon+TlSy1c2m5HjDJDOe79K5kDFwpT1L9LZ2gsVTD70
+	24u5pWgkrBfhBSyzColLqs7a+rRdsp9L9+LOGrU25akeoEidWLY9WKd7xtHAuMrvmF7jzw
+	ion6JiBfPo7T5IBb7uN9sEsGzQqY0p8LA/bU/A56V++CkRzUa0wNn+3WJe3IO3uDtRA4z5
+	3TGpQZNhRuJazkrQkouTGaedoc2UXKD3Bk11EYh8DDdlZUYTJs8YCWfbPjDwDOEuSoyBCu
+	BMgM2OxPWame5nmmJKzr+veHIWcBIkc4eLLBHODbAvQo/PIqsBPwM/vSHzeP5g==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] arm64: dts: exynos: gs101: fix usi8 default mode
-Content-Language: en-US
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
- tudor.ambarus@linaro.org, willmcvicker@google.com,
- semen.protsenko@linaro.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
- tomasz.figa@gmail.com, cw00.choi@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240130093812.1746512-1-andre.draszik@linaro.org>
- <20240130093812.1746512-3-andre.draszik@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240130093812.1746512-3-andre.draszik@linaro.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Thu, 01 Feb 2024 11:23:59 +0100
+Message-Id: <CYTO3C0G7083.1TVFK6PN35G1B@bootlin.com>
+Cc: "Gregory CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
+ <robh+dt@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, <linux-mips@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, <linux-gpio@vger.kernel.org>
+To: "Linus Walleij" <linus.walleij@linaro.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v4 10/18] pinctrl: eyeq5: add platform driver
+X-Mailer: aerc 0.15.2
+References: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
+ <20240131-mbly-clk-v4-10-bcd00510d6a0@bootlin.com>
+ <CACRpkdZvj2E1zfSU1RGY2+_6sCCYxu=pbQ0yv+-bmTLGzEyFwg@mail.gmail.com>
+In-Reply-To: <CACRpkdZvj2E1zfSU1RGY2+_6sCCYxu=pbQ0yv+-bmTLGzEyFwg@mail.gmail.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On 30/01/2024 10:36, André Draszik wrote:
-> While commit 6d44d1a1fb62 ("arm64: dts: exynos: gs101: define USI8 with
-> I2C configuration") states that the USI8 CONFIG is 0 at reset, the boot
-> loader has configured it by the time Linux runs and it has a different
-> value at this stage.
+Hi Linus,
 
-This issue was pointed during review:
-https://lore.kernel.org/all/CAPLW+4=U9DBmwgxyWz3cy=V-Ui7s2Z9um4xbEuyax1o=0zB_NA@mail.gmail.com/
+On Wed Jan 31, 2024 at 9:55 PM CET, Linus Walleij wrote:
+> Hi Theo,
+>
+> thanks for your patch!
+>
+> On Wed, Jan 31, 2024 at 5:27=E2=80=AFPM Th=C3=A9o Lebrun <theo.lebrun@boo=
+tlin.com> wrote:
+>
+> > Add the Mobileye EyeQ5 pin controller driver. It might grow to add late=
+r
+> > support of other platforms from Mobileye. It belongs to a syscon region
+> > called OLB.
+> >
+> > Existing pins and their function live statically in the driver code
+> > rather than in the devicetree, see compatible match data.
+> >
+> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+>
+> The driver looks very nice and is using all standard features, I'm pretty=
+ sure
+> we can merge this soon.
 
-Yet you posted new version of patchset not implementing this, just to do
-it week later as new patch.
+It is useful to get some feedback that tells me your state of mind as
+one involved maintainer. Thanks.
 
-Sorry guys, it seems you need much more time to accept and go through
-review, I will use two weeks delay time for applying GS patches.
+>
+> > +static void eq5p_update_bits(const struct eq5p_pinctrl *pctrl,
+> > +                            enum eq5p_bank bank, enum eq5p_regs reg,
+> > +                            u32 mask, u32 val)
+> > +{
+> > +       void __iomem *ptr =3D pctrl->base + eq5p_regs[bank][reg];
+> > +
+> > +       writel((readl(ptr) & ~mask) | (val & mask), ptr);
+> > +}
+>
+> This is in practice a reimplementation of regmap MMIO.
+>
+> Can't you just use regmap MMIO to access the banks then...?
+>
+> Maybe it doesn't add much here. I'm not sure.
 
-Now, for the patch, we don't do it for any other nodes which have 0 as
-reset value and we do not know what bootloader does there. Bootloader
-also can change.
+Indeed, I went the minimalist route. You tell me if you'd prefer an MMIO
+regmap.
 
-This is a required property, therefore please explain me how, really
-how, this can happen:
+I've not seen any helper to get a regmap based on a resource, targeting
+by name. Is the expected procedure to acquire the resource then create
+a regmap config then call devm_regmap_init_mmio()?
 
-" we should
-set it to none here so as to ensure things don't work by accident"
+>
+> > +static bool eq5p_readl_bit(const struct eq5p_pinctrl *pctrl,
+>
+> eq5p_test_bit() maybe? that describes better what the
+> function does.
 
-NAK
+Good idea, thanks.
 
-Best regards,
-Krzysztof
+>
+> > +                          enum eq5p_bank bank, enum eq5p_regs reg, int=
+ bit)
+> > +{
+> > +       u32 val =3D readl(pctrl->base + eq5p_regs[bank][reg]);
+> > +
+> > +       return (val & BIT(bit)) !=3D 0;
+> > +}
+>
+> Maybe add a check for bit > 31?
 
+Will do. I like that sort of defensive programming. What behavior would
+you expect?
+ - WARN_ON(bit > 31) and return false?
+ - Just return false?
+ - Something else?
+
+Actually looking at uses of eq5p_readl_bit() I'm thinking about a bug
+that might be occuring wrt the second bank and that offset. I'll make
+sure to fix it for next revision.
+
+> > +static int eq5p_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
+> > +                                      unsigned int selector,
+> > +                                      const unsigned int **pins,
+> > +                                      unsigned int *num_pins)
+> > +{
+> > +       *pins =3D &pctldev->desc->pins[selector].number;
+> > +       *num_pins =3D 1;
+> > +       return 0;
+> > +}
+>
+> One pin per group, also known as the "qualcomm trick".
+>
+> (It's fine.)
+
+:-)
+
+Thanks!
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
