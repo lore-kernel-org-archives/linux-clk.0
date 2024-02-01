@@ -1,148 +1,119 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BAC1626BE
-	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 16:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A8446A3
+	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 16:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706803999; cv=none; b=s7C/qzf/Zn+QfoiupXWDxQBZWrHJ0nBx1O3KuBs1bd88aZ8na5OqIgOpcTVd9L7ehpib/GLGT/Wu64kRh6UoXAE2s2GjDB6oiBtaHY72VOLjRT7YVU7c0JHUsgKHYg2pHglF0tfnxAJk7ygbJ4tkdiRV7/13x0ytxSTkbGSIiFI=
+	t=1706806086; cv=none; b=XmrfS1slIlmZCsmDHTBYR5eYhOQfkzFzP9raBpNUc42rKh73T6Z5RH7M6iSj691Qehe9cFhcSYZ2+1omc+3cMPLfZkGefp83QXLn6ydaab1NCZST/bVr2Nr14sappcWRsHVVEUXEvIphRIqMDbV6aTM9m//1Ck9uLMRhAH4zzaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706803999; c=relaxed/simple;
-	bh=2FLyLSMxouej+8orm8pfQuuanEcEjePQYiFIIWFUSo4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cxKxR2QSSvqAQNKGt1AUgh0AFtbfRFizVBrxpHi82LVtJcvRLRUPWVymbTM/Nk7nkUDb1PoBw+qE7bcC9IMAZVJf9wwSoY1xrxzxZZuLbGv6oWYHOIC2ZVfmyAUBtWx+5PHAvFZL7ioqvZr3/Z/fFePthzsBLJYtbz2+PyyH3YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jo52lV7E; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1706806086; c=relaxed/simple;
+	bh=SEGEdx+dqT+/Ew8JKhflR6LHqrtX2JQ7vsb63ovQuTk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bT5VqoeZWFZNyunCXjJ3gLkgtL2PF9MqReHeC159iR9kXD208GVYOO3CBHjRJ+St/RxKHSjDIdf+SGxJcrsia9ab7DHqvb/UfiQsMi63v1ASyBFy+6H7ZujEzEEKCwG92djQnS6olJ286l95yzEb4bhjWkEvEJJW47XeT3gRZ+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OPcGNwzL; arc=none smtp.client-ip=209.85.128.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jo52lV7E"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a3566c0309fso148625166b.1
-        for <linux-clk@vger.kernel.org>; Thu, 01 Feb 2024 08:13:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OPcGNwzL"
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-603fdc46852so11704827b3.2
+        for <linux-clk@vger.kernel.org>; Thu, 01 Feb 2024 08:48:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706803995; x=1707408795; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1706806083; x=1707410883; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6fevGXd4BI2moq50653412xOu8d51z/JG91u6Lfu1FI=;
-        b=jo52lV7EjWHoD0CYBioZkYywofybp7RjJvtYdZIjKJpg2Lub0SQMkP7lskces+emd6
-         A271Y1SFlm/x0cG/CBRfUcYmFq77+23ln/4zefOdMqy7gVmzdxjkG6m++w8yWhU69V0N
-         +WHy28Lw2GMzBuDqIaV500D2dh4ZJarIBu0nIPAy39BfLQApGyyfzCQyr2tUFUnGBImy
-         WhwucGU7RFajUlqLBbPCltpKepiIsNRt7mQ9u6uPcWZwma13Zq3ejjEuOwhCqw4YSfxS
-         zi0veu6fxm4cd0u2peRJUeuu/ApBZQ81XNvXbYzk8naa8dFlwbGrOwnu/MjSdHV/pDm8
-         wA0A==
+        bh=A7fik1J0VW0e/Mqa8n8TwB+QOmKZHZ7Id4mjBLFxQY8=;
+        b=OPcGNwzL11qz+3B2RvanL72RqurfjxcvWMZ9yTzfvrJsX8KqbpXXeA+iYXRc3VebLY
+         nn+Ap/IQC7xbXHi0rrvrQXyrP0H4ciLnjd/lgRuhhpc+dY0WVQZqrQx4xHeS329/qISh
+         28K6M5A8APN4g3/xB+M//HDyIk6jySW/aUZ6/X2RNhhaPyPhvF4KZvttxtkv2WTc9mgU
+         UP9Aky3gqI6kPPkOL2xdor2QaXqhOcpRwe4b8ABerLs1TrAQvLlhHYbpdAJa0bGVCzNu
+         U+bBXu4/bB95KIkwtfC+zVUy9NKK2V//pHqJSNJK7h0GI//rCuDEZxdGfMTW5Rv9WBcb
+         6NUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706803995; x=1707408795;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1706806083; x=1707410883;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6fevGXd4BI2moq50653412xOu8d51z/JG91u6Lfu1FI=;
-        b=IbnRolzj6lbO23M0iLSfs/t6D6uz14LKE6OnjNMknjmHBeAoI8Rtz3qsB4DgbAldfo
-         ucOaXzdeupHfh22FVhNpDLbus5HFL3tIERy9+7xJEvTyxJps9FVBXzzzU3pYsg80vae0
-         nXDh6W/KKdusBEpM6LLvpmq/V/vt4fMzpnGW5Pt5U+0CdZyFHoDklTbO6IGe0Tfmh9X4
-         HHHKOQ6uXMMD/QtSgUXGiOGS7ahIuSGNUPqQodUSflbVOJ6PCBUsp2TnU+DW/ydmLynS
-         PwJT5dkIeqomWusV/6IlbvWNZy1D7x4D0CwTeWlnDI/kcK5UNvgEajVFlGGL40kGOPTS
-         FHRQ==
-X-Gm-Message-State: AOJu0YxPxWA0v8kNxUUmmN2b1BF7eijxKhGFsuNAztxlndG9TIPYGsk8
-	FXUxBeuAb/TVtlK2Hpt+/Y0Oz9PHNtHeTtOwqBMjwnYJcBpDYGyxA6pQTWT1UiU=
-X-Google-Smtp-Source: AGHT+IFhguAAclKiCco3fTM0sMYbI4pIplRkK1mebkhTq/cDb502YVYUsPkO5B4sHMqbRZc9IMlAvQ==
-X-Received: by 2002:a17:906:3bdb:b0:a28:c5dc:4802 with SMTP id v27-20020a1709063bdb00b00a28c5dc4802mr4232485ejf.31.1706803995513;
-        Thu, 01 Feb 2024 08:13:15 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCXgXwPBpLUULH/EFtlJUUDVpxeUuu9ta39bfZsGelmXsPC+kz1N6I0M1kt39vtMHwxsH3jItgc88CdUtbdWXZEUWVKPAD8IqwdFSrKjAQ/9QJZHy9R+pyfJ+6olLx3VMvNqa/XtFcfNVMNXlVusvxqjHxMadll6Og3/J1tdq0Re1iLBL+JtemX2g9DWue86SBRCFLH8nS/b1uhazP/F3OlQg+57tLywDmQUKVvfDjXln1SWvx3yvFlidPBjumEAqFdnvA4WFzvNkh65etjdRQl42l6KokmQGryBhkCK4vL6XoNDtL2ebw5bVm6AdloXI2MqJxGBaVSfLLbmiA88WXoq9Td7JNY7TCx064N1vVOYca2Y8XeIMhJU4pUaWl4/cqT5rHWepz1jzCjpHjwItYUYE7hO0pXBw5DGFVEeNlBzIGakd8NeeRfBiQr1BH1NSBP2GU3xkQuIMHnh+io2scCvGMvnkahi+T0+J2uTgvPxkgIGuzopMOs1yDpAa1TvV5rN/NMgSh+v9YAdmIr75yhgm82sHoZqIuAyeq7u8WW/sRSmvxH7kPwauodjPf3Op/IzQxtOZyqC1HLKrQHDv4lOVB89K37UklnOwFJo8G2qWMvDIXexkBO6sbu6rO1OqWT3Ktj6SLbPOV7/+fsQgfO85Fj5UzWEv1//qbJCRsvdSaN4DcKKKA==
-Received: from puffmais.c.googlers.com.com (94.189.141.34.bc.googleusercontent.com. [34.141.189.94])
-        by smtp.gmail.com with ESMTPSA id hw18-20020a170907a0d200b00a3600d7c2fbsm3449288ejc.176.2024.02.01.08.13.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Feb 2024 08:13:14 -0800 (PST)
-From: =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
-To: peter.griffin@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@android.com,
-	tudor.ambarus@linaro.org,
-	willmcvicker@google.com,
-	semen.protsenko@linaro.org,
-	alim.akhtar@samsung.com,
-	s.nawrocki@samsung.com,
-	tomasz.figa@gmail.com,
-	cw00.choi@samsung.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH v3 7/7] arm64: dts: exynos: gs101: enable i2c bus 12 on gs101-oriole
-Date: Thu,  1 Feb 2024 16:11:43 +0000
-Message-ID: <20240201161258.1013664-8-andre.draszik@linaro.org>
-X-Mailer: git-send-email 2.43.0.594.gd9cf4e227d-goog
-In-Reply-To: <20240201161258.1013664-1-andre.draszik@linaro.org>
-References: <20240201161258.1013664-1-andre.draszik@linaro.org>
+        bh=A7fik1J0VW0e/Mqa8n8TwB+QOmKZHZ7Id4mjBLFxQY8=;
+        b=MNxIb+vzNW5Ua8CPh/wsnJg6+LGnMM4l9HCDzggdm/iloxwgbj9K1Bg7dTc+gHzTXE
+         eUmXKZBaZLa+DmflGKkn4dVZV610LnBq+S4txKsFsVm9zURv3EBSYrANHXdfZxQC8iSr
+         dosnMIluS2ojJlVPEUhF62HZpIcAjNGzL4qWccH/5eQUVr0ReL6ONIbGfr7X7CUkwNXj
+         WU4jvUtFp6Yb9Grk/QzjTmMyvKjBa5RePLAANP4iEgl4vUl9Z6V8hQq+KqW3EHe4wrdB
+         CfWWoVHIzJ510cqVllreMKRbfLqlNLWb8yY+G9vrhm2X7GTzl/rFXZ8eiihsEBM9M34M
+         1W9g==
+X-Gm-Message-State: AOJu0YyPOUvkUdyo/TSWkdJJZw1YAaJvovUh+6ncQm7Lilbae8B3ZV11
+	6dX8OhLrnsXFIQUs5f8paCXnqRzJXMuEtN36tMW1g8zUeEF1Z8ouMZoHhbiTzvWt0Kiw5rEiFG0
+	n+RJxQxkN4uX0djF1yGFWmtizM7d3tou+kb4byQ==
+X-Google-Smtp-Source: AGHT+IG+SmfjRaQH7El4HH0vjqrdEODfpaYOF7D3+sS8NkQHEjWCndUfnYiQf8SoO624jsugJerkjDJUp44CWBy3d2Y=
+X-Received: by 2002:a81:c545:0:b0:5ff:a52b:55ac with SMTP id
+ o5-20020a81c545000000b005ffa52b55acmr4910993ywj.34.1706806083247; Thu, 01 Feb
+ 2024 08:48:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
+ <20240131-mbly-clk-v4-10-bcd00510d6a0@bootlin.com> <CACRpkdZvj2E1zfSU1RGY2+_6sCCYxu=pbQ0yv+-bmTLGzEyFwg@mail.gmail.com>
+ <CYTO3C0G7083.1TVFK6PN35G1B@bootlin.com>
+In-Reply-To: <CYTO3C0G7083.1TVFK6PN35G1B@bootlin.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 1 Feb 2024 17:47:52 +0100
+Message-ID: <CACRpkdYaVPWKATRec4Ta9mQatsjtt5Fexb-enXFEjGSxAt12tg@mail.gmail.com>
+Subject: Re: [PATCH v4 10/18] pinctrl: eyeq5: add platform driver
+To: =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, linux-mips@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This bus has three USB-related devices attached to it:
-    0x25: Maxim 77759 Type-C port controller
-    0x35: Maxim 20339EWB Surge protection IC
-    0x36: Maxim 77759 Fuel gauge
-    0x57: NXP PCA9468 Battery charger
-    0x66: Maxim 77759 PMIC
-    0x69: Maxim 77759 Charger
-where the Maxim 77759 has multiple i2c slave addresses.
+On Thu, Feb 1, 2024 at 11:24=E2=80=AFAM Th=C3=A9o Lebrun <theo.lebrun@bootl=
+in.com> wrote:
 
-These don't have (upstream) Linux drivers yet, but nevertheless we can
-enable the bus so as to allow working on them (and to make i2cdetect /
-i2cdump / etc. work).
+> > Can't you just use regmap MMIO to access the banks then...?
+> >
+> > Maybe it doesn't add much here. I'm not sure.
+>
+> Indeed, I went the minimalist route. You tell me if you'd prefer an MMIO
+> regmap.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+I'm not sure, because it might be that it adds more overhead than
+it saves and then it is pointless.
 
----
-v3: collect Reviewed-by: tags
+> I've not seen any helper to get a regmap based on a resource, targeting
+> by name. Is the expected procedure to acquire the resource then create
+> a regmap config then call devm_regmap_init_mmio()?
 
-v2:
-* add short summary of devices attached to this bus & add TODO
-* collect Reviewed-by: tags
----
- arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+No... haven't seen such a thing.
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-index cb4d17339b6b..6ccade2c8cb4 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-@@ -72,6 +72,11 @@ eeprom: eeprom@50 {
- 	};
- };
- 
-+&hsi2c_12 {
-+	status = "okay";
-+	/* TODO: add the devices once drivers exist */
-+};
-+
- &pinctrl_far_alive {
- 	key_voldown: key-voldown-pins {
- 		samsung,pins = "gpa7-3";
-@@ -113,6 +118,11 @@ &usi8 {
- 	status = "okay";
- };
- 
-+&usi12 {
-+	samsung,mode = <USI_V2_I2C>;
-+	status = "okay";
-+};
-+
- &watchdog_cl0 {
- 	timeout-sec = <30>;
- 	status = "okay";
--- 
-2.43.0.594.gd9cf4e227d-goog
+> > > +                          enum eq5p_bank bank, enum eq5p_regs reg, i=
+nt bit)
+> > > +{
+> > > +       u32 val =3D readl(pctrl->base + eq5p_regs[bank][reg]);
+> > > +
+> > > +       return (val & BIT(bit)) !=3D 0;
+> > > +}
+> >
+> > Maybe add a check for bit > 31?
+>
+> Will do. I like that sort of defensive programming. What behavior would
+> you expect?
+>  - WARN_ON(bit > 31) and return false?
+>  - Just return false?
+>  - Something else?
 
+Your pick is as good as mine :D
+I let the author choose what to do there.
+
+Yours,
+Linus Walleij
