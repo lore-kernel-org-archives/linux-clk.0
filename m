@@ -1,59 +1,59 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C93115B0E2
-	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 09:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CE015B115
+	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 09:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706778817; cv=none; b=hTvzaPR5SgeyDGUC6B2BHv/jHi4H4iPb270HdYD1xPBy4mSOR76Z1mZNP2QGAmpf831dZlIi54aILWmKXo7GwxeW7ZtnEe9Tef0AkrDf4iQQewmVMrJol2DRO0lMF5r5zqOa8ysx9dhUtuGtQsO4JDG7gRnDN0uWWksTwp8CS5s=
+	t=1706780203; cv=none; b=W5qZaMLNuf11qZZAJUVxdxtmcTzGAeJyBb1nNwIC5DMg3vUhFoRTgytgeJGk4uZIjbm7pyM7/GsEUg1+OIKVYOwMit/V3w9/HwtpUm/1hzdBFVU2EzsiUObxE2JmnFNUp8wisc8+QvG4KFr4OxMEbdUFHou5emY5ikjzv9PjmC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706778817; c=relaxed/simple;
-	bh=EXlxsw0xqSjeNDi02pBDKRQOcESkn5FmTw1AInyjnJI=;
+	s=arc-20240116; t=1706780203; c=relaxed/simple;
+	bh=VBJ3v7tZGm+k2N8ADxEK1r3ckzFwQWUh5/X8mvn9RBE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XnwkyzT3bO1NLxj2f9kc/YH4RpRUCdZ8pFr/AXVLA/UXBFKfEAKoJO8klvHUnYXbV0TB5ZIA/+ZlAqNPjlXeTA9NT/s72u+bnQpdNP4vPzVVhGaqXT9v59TowiIwPHrYiEHNbkfCYQ+Ctt/8fTBXr5ZvE8kgbzlosrPGthEds8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fUNwUqYb; arc=none smtp.client-ip=209.85.208.46
+	 In-Reply-To:Content-Type; b=T3Q+7zLceQ8QGpwX6Ml1YRBYSU7bmLhjWRZmsVKT9RBrpUlBKXFNcWa+mBXKbIQ5uCoPVz5LV2OI25epvJQrLRVh5tcsTBGu7z206TXL1xFdG1OSsyK999uRJ6zhnYJEAP+lTrnVGnIlZOkX3bFZ1aNFa8qJwpbtYgUGum+Fs8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O9Uap6oU; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fUNwUqYb"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-55fc06c0dbeso325021a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 01 Feb 2024 01:13:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O9Uap6oU"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a3122b70439so88337366b.3
+        for <linux-clk@vger.kernel.org>; Thu, 01 Feb 2024 01:36:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706778813; x=1707383613; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706780199; x=1707384999; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UVBkwdIPyLUypbilq6LG32fGQrEMtBwFKfcA1+LPZ58=;
-        b=fUNwUqYbjQlTWatZ5r4Z7ct+5gAud5+uXTDBoMcJ960NOfCSthPuYAbJVaa4djsqeF
-         nJ74z4H/6gVgjellaPfDlM5F8ZBNpbxJxZETNgyhmUAf5MdeTM2iGn3tcdP+Nv6yn37y
-         SCxoXiSNGzW57+MzvZfWQ6E/kPJV26pKGDRN/LSKvqbH3WeosxMA38VHo/Op5o63EOjA
-         L9imkOh4JRYsnE9VUkC2nEvnByibSx2AbvLyD7G/o75sVR+pPtrVONPnKnxCofCh8wx3
-         8W5eRBYNFn+2z3gr2OLRUv3hDJIZW57XuY4XeUd8CPN3uwtk5EsFR6kFJ7Vf7d7D3T8U
-         O4VA==
+        bh=poTuQf0LwQNiakczK1chklgkGLVMfrUoDvHBIrggrEc=;
+        b=O9Uap6oU8H/FFBq/2aXvNc8Mc3Pgp7HbACN/cxnLdQB9UkkPftd5g64Upobh1Dk/Nm
+         p4kx2LQmzYWdBCR2sb1tz76oa3xIfdwxB/DXCYgR225EHvOTbIrZz+ldxKl3AI7dXIs8
+         6E0dvm81TIYHztNqL2OnLxo0yNa8k47tdE1VTrWnz/Ht9radGjvCmdMk7aBmOj86b6Kk
+         y1nSTfefLfSe6QObe0oSfxsKsdC34vGX5bbDQq48Tdzup/nqDcZ6QcBjMv/7mrbO9TIf
+         X38IgTD3XwIhpsjJGTd5EO4n37Yy8EUj5Nd9ORY2pkxHqCvp3+oMbbSTI17kWRAvA7C+
+         tlOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706778813; x=1707383613;
+        d=1e100.net; s=20230601; t=1706780199; x=1707384999;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UVBkwdIPyLUypbilq6LG32fGQrEMtBwFKfcA1+LPZ58=;
-        b=P0ipbL7ctERfnam9ALOnZIZu8J6vz95L/4PF5dVYUtmRvNio/3Rq6IbcmvO8xJRP7S
-         VOsOHiYYp+WPab0CG/WANiKi87X53LrRSO9uutoEGJQj43v7rVSypmgywQLA+qnoFcnM
-         /HSy0kRyzLW6ljPlCME7DThNNaWaqk57bAwTneWMCmZnB7iUne2zQBLis7a0Hg52AEWI
-         bSNM9XGqXACd8aq94smxwV1Gk5J9mh2GNEJYO+5F3dtNHAk6G2lw2bOn2h72M+2LYThr
-         53isAj2gMwktbUncdlqo6ntElNHbwfKGj6wResTUJaUO3N6h5R6cGvkw/TnlAPvt+BeR
-         /qWA==
-X-Gm-Message-State: AOJu0YyQdrawTgGOxpo9C/tjZKKao10ehGCNXO9MdlTY33beEVRcg8Ue
-	hfq1PWVCnuQwLwUnObXfna0y8W+owe0kEg4g4S22/H8rw/RIH1DEw+GE3l9ZD+k=
-X-Google-Smtp-Source: AGHT+IE4qnm2DIQsSgmPSzKp1c6qW7MxR8EbRnV04IPJh6u8tkzlDCS687XiAx+TKbL7abrOQjh3Ug==
-X-Received: by 2002:a17:906:806:b0:a35:8d47:70a with SMTP id e6-20020a170906080600b00a358d47070amr2877746ejd.36.1706778813652;
-        Thu, 01 Feb 2024 01:13:33 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCUXC/YFbKMImqTMzScpqUK9HZa0xsbhGtNvzJ+9fiI5jrpAt5WkFxCu7CW1um1cPIhWJ5j7kqCoMzyg2T54VqEtcB3/pOi2RmPMrLyGoO/We7EPgI93wAE3o2dOsujk++D+c8GXbLOgTaj1+GQvKlEjhxdejELD7yccQiGy7r1xYfX7Tp5DUYcbG7/aVX56EJra7HtGXJYy//503X5s+TjfEys7kX+E0yMYmqu84KfPwIIaAeURvzVCk3Y0VfsfEiYaCbHNSvs45MErdSVHTp/7VTC/lQamqAn9xDpzBwWJb4HyKE+gYKCEmz8+H3ACE+yHc2/zmNEa60WqEEJWZdl3tu2GXB58eDcsxUoJolJlx3KcmVvv/ijQkXN1ecfGxdKUQLdC0jlbcZynjoPAgoABkgwcqZy6NPbGd8qyzOczCedJE8NC2/gEEsAhufs0Tae8p/yJ3paaUShCW1NqpjzR85kUtkK8/CJkpF7U0ixpwUD04CoT6O2pkvrzI8vnqK+eh7ZDgP/vOlCrMKJP4iSSX7bhOAJQJD3mRfqml9+oVqF8KKJSWQQ4IOmzBBpjxmN7Vo9vKCGRYL4kNNMT/61sf1wMSWvizlQCcEM5DqpzgFW76B6hNJGrbWDMzhyb8C1HzkZn9Ooyqw==
+        bh=poTuQf0LwQNiakczK1chklgkGLVMfrUoDvHBIrggrEc=;
+        b=VtEmRmj/6/7EgcliDdTndRcIjdVIGxFXTUyNtVbRBXS1RO6iPe65Is0YoFEJ4zFgYS
+         TTwLUhkDactw+K24EmvbuTX38zBS8Fby6yaV4SaElfj5dUuNMqQUmlEC3GcJUR+A+MsL
+         V0+WmpI2uiyrzZNxMAhEVKHTr+/hcQKQmZkQ0np0WGnCWEtliY95F8aZ0FtkGN4KYL/9
+         fWVp+ZQB3oDm83SY2GUNYp3VkLR8whYcIicVepi4qxcE2SKGgpEmLVIPVGuIp/6iFDfx
+         lo5lt/8HQeSHwlehD9TU+A1McQgE1BnWEIz1I/DGQv08fMkbIV4uCC5u3CHj+aZu/Kua
+         6yiQ==
+X-Gm-Message-State: AOJu0YzAxqQ4LwmaqtF0/zWcTzS2R1xNakQHsFR5Jx0B9yFhyAyndv7e
+	quyF2oAS9WV0I8ENk8AmAG+TuueG693do1WxmTzFVLxuxHNrKNq6C+nSrfp5qMo=
+X-Google-Smtp-Source: AGHT+IElQ8/d4GLq3GOx5zQpFcggQ/15LvaFRwDCBRBrM0v2013xgeW8ql9X4WOe6h1VwivnkuqsHA==
+X-Received: by 2002:a17:906:7f16:b0:a36:47d9:1c35 with SMTP id d22-20020a1709067f1600b00a3647d91c35mr2884287ejr.44.1706780199642;
+        Thu, 01 Feb 2024 01:36:39 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCWjDzvTr2BIqc0egXiReI2kXvxp8qEXSElKxpGISo3WO+j0Ix5B32p9BeeQJyWGvnHoC/I0RnKw+IE6RjTF+xifEep0kgf+7c8ZmktCmH+BCXhbU0Ux7T8gE3Sv1JolXa33jTNF9/XP9NMv1CmitIryH1zc68JkyPPi4kOhe04JRYzgtedHAqKrjbNQpM6W1Ik5yMWjRWLLoCU4zpcXUXqrOwk9oMBbNdI6uK1/5l5DJJLuGpvlH4GiWutax9xPGPWW1HnRrW0wn/T5xxHwjbyu2Pl6J+L0Bal/vNTpHrMtAWtFaTXJOLNYd64HcV+2mX54HylOo4bOEvRwO9ybmcLEh/+ny5yR0Y/aJTW3SufKyWsCtRK71I30ATQHgYQR3idJCdGDtgWVlJmPVYiAVN3MwSr+CGYiIFjl5zqQ9bQlpYxyOfQIj7NEft7ae/xyXbQjnxSbxq9E5kq0/pASDzY0mDoYVMdFbuj3QsOb/E8nr9IJpPE0yLjqdcBynOTQ6JOyde1ncAf1xFMP1U3xo146RZBxa/QIsB+eAwYqeSHH5Pf+XX3bRb8p3fxXufq0VYDoVmAc/FiZAz4apMYTlFRZSRx47jhFXObPcOYmdTMseczIPCuZ39NoPZF6mAVcsE8bIpw/dLzxaA==
 Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id cu3-20020a170906ba8300b00a368903fc98sm1165092ejd.136.2024.02.01.01.13.31
+        by smtp.gmail.com with ESMTPSA id ty8-20020a170907c70800b00a353d1a19a9sm5929063ejc.191.2024.02.01.01.36.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Feb 2024 01:13:33 -0800 (PST)
-Message-ID: <3f3b1665-30d4-4581-84a8-7894a4a03b93@linaro.org>
-Date: Thu, 1 Feb 2024 10:13:31 +0100
+        Thu, 01 Feb 2024 01:36:39 -0800 (PST)
+Message-ID: <ca618c6e-ef29-4ee5-860f-68b48ebbeb9e@linaro.org>
+Date: Thu, 1 Feb 2024 10:36:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,8 +61,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 16/18] MIPS: mobileye: eyeq5: add reset properties to
- UARTs
+Subject: Re: [PATCH v4 07/18] dt-bindings: soc: mobileye: add EyeQ5 OLB system
+ controller
 Content-Language: en-US
 To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
  Gregory CLEMENT <gregory.clement@bootlin.com>,
@@ -79,7 +79,7 @@ Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org
 References: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
- <20240131-mbly-clk-v4-16-bcd00510d6a0@bootlin.com>
+ <20240131-mbly-clk-v4-7-bcd00510d6a0@bootlin.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -125,33 +125,80 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240131-mbly-clk-v4-16-bcd00510d6a0@bootlin.com>
+In-Reply-To: <20240131-mbly-clk-v4-7-bcd00510d6a0@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 On 31/01/2024 17:26, Théo Lebrun wrote:
-> UART nodes have been added to the devicetree by the initial platform
-> support patch series. Add reset properties now that the reset node is
-> declared.
+> Add documentation to describe the "Other Logic Block" syscon.
 > 
 > Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 > ---
->  arch/mips/boot/dts/mobileye/eyeq5.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
+>  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 89 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 90 insertions(+)
 > 
-> diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> index 06e941b0ce10..ece71cafb6ee 100644
-> --- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> +++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> @@ -78,6 +78,7 @@ uart0: serial@800000 {
->  			interrupts = <GIC_SHARED 6 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks  = <&uart_clk>, <&occ_periph>;
->  			clock-names = "uartclk", "apb_pclk";
-> +			resets = <&reset 0 10>;
 
-You touch the same file. Squash the patch with previous one. It's the
-same logical change to add reset to entire SoC. You don't add half of
-reset, right?
+...
+
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +  - ranges
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    soc {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      system-controller@e00000 {
+> +        compatible = "mobileye,eyeq5-olb", "syscon", "simple-mfd";
+> +        reg = <0x0 0xe00000 0x0 0x400>;
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges = <0x0 0x0 0xe00000 0x400>;
+
+If there is going to be any resend:
+1. ranges follows reg
+2. Use lower-case hex
+
+See DTS coding style.
+
+> +
+> +        clocks: clock-controller@2c {
+> +          compatible = "mobileye,eyeq5-clk";
+> +          reg = <0x02C 0x50>, <0x11C 0x04>;
+> +          reg-names = "plls", "ospi";
+> +          #clock-cells = <1>;
+> +          clocks = <&xtal>;
+> +          clock-names = "ref";
+> +        };
+> +
+> +        reset: reset-controller@0 {
+
+0 is before 2c, keep nodes properly ordered.
+
+
+
+> +          compatible = "mobileye,eyeq5-reset";
+> +          reg = <0x000 0x0C>, <0x200 0x34>, <0x120 0x04>;
+> +          reg-names = "d0", "d1", "d2";
+> +          #reset-cells = <2>;
+> +        };
+> +
+> +        pinctrl: pinctrl@b0 {
+> +          compatible = "mobileye,eyeq5-pinctrl";
+> +          reg = <0x0B0 0x30>;
+
+This looks incomplete. Your binding mentions children, so provide at
+least one child.
+
+> 
 
 Best regards,
 Krzysztof
