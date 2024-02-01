@@ -1,119 +1,130 @@
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5D25339F
-	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 13:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CF35D494
+	for <linux-clk@vger.kernel.org>; Thu,  1 Feb 2024 14:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706794784; cv=none; b=Bo9p4VPx6/iKr/Po1E7UFuOW8sQfAoSYjfyqex53/QVrhBC+SDwgvVcApeuocn3I1wSFgPMkpu4jlsN3QL+tTFyB65a61GL4kEphFLJ8LYM66GyMZXVfzv6OD9YuV9nbleZbvih0rdgvaB7pYOjgBL4A3GMxgN2bNciR471AtBU=
+	t=1706797338; cv=none; b=pf52/YolveRM1puSCs3J82ezWbn6R0j9TUgt2u6gDZLNp7HI+i8E+EZ4blsfj9k5sPelTPeyeOmikxTtdPDtngUO5bxCqTFnaK1nIMGfICr8BHQYwvAFS+K9WyY1IBsZgBnftov2l+NDOtYLHDWD4/2Gif9p9X2oQwoRrSpNmWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706794784; c=relaxed/simple;
-	bh=oKW+ZvZ0W8r2/eWIkuHxCK05oPWdP3Q3wRGNCB5uESc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=USCMKNa/t7GKsv6yWPaA0+glOzRnj17Cb9nzwGmTmFWAqETgfZTx2EH9v3NDTtn3dZdXWSQK+yiycU8EzPE56y8jLmqlhAfhgM58w9VY/cPPvhs71wHlxTDxQaamGgnoRIOm4n0iIitJ1qlv7PcFm3UNpTbBBlTUErywij6N8Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yV7H34b+; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1706797338; c=relaxed/simple;
+	bh=1O1AOTNGsQX+i0nDTY1kz81nsRaOmNyTqRoqQQPcBeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XTjnlQYvSYhwmAe46Dqo+E0xg2K4Lu2a1Rmi9r70CBjffZdKPnkghaA8y5Y8BoCrd3ugWI2ZK0YyV0VSn0Pn8o1mvGrN04W+mGUy5v8+T/lTfPXFPWzzbIQjR6lvJlV/ZnaCW6ho14Wu7F8AGOH1MPnK8A7kItRAn7X5CbcHe4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o1L1I5hC; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yV7H34b+"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 411DcgEc115765;
-	Thu, 1 Feb 2024 07:38:42 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1706794722;
-	bh=wUltm4O22TSdHMMQQnjm/lr+r7KNSZZ/mmQiwWRdgo0=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=yV7H34b+Xtv/U/aWMv5ChtNoE1oqA7QKbh+RSf8xibF1w2r1Hc2ejTyOxU3HuyC8p
-	 4eKHW6ylJxyfDRqQ7LEt5YIuVVAtVAYNkU1BzUnXAqwMoUgYFzp1tsaQQEg/M73WTj
-	 m4BBdihQ0FR4TFel1bI6ONuZQg/mBkCqJgVBmGVE=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 411DcgJ8024036
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 1 Feb 2024 07:38:42 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 1
- Feb 2024 07:38:41 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 1 Feb 2024 07:38:42 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 411Dcf18124265;
-	Thu, 1 Feb 2024 07:38:41 -0600
-Date: Thu, 1 Feb 2024 07:38:41 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Sekhar Nori <nsekhar@ti.com>
-CC: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Sekhar Nori
-	<nori.sekhar@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: drop Sekhar Nori
-Message-ID: <20240201133841.qcerpmyo4xwc7zxu@volatile>
-References: <20240131093434.55652-1-nsekhar@ti.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o1L1I5hC"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6ddcfbc5a5fso747036b3a.2
+        for <linux-clk@vger.kernel.org>; Thu, 01 Feb 2024 06:22:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706797335; x=1707402135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R6RqxSYIRPivOTJEnlw3gOkIIa+Ul1PRzCUBYhNeDdQ=;
+        b=o1L1I5hChL71yecrcBoh/i5TxnGFN48SlTa6ffMxWpNnn/Vts3idVS64/7dP191Dea
+         DiYTTjTBCDA76pnMxDDZ0DcmGrBC73q3aL8yIEgYqgooHk5jXEGB6cCxLVFPWtObxgaP
+         v8UnQmGJQoH5A6CKa6dQ6Mhzyg4wYoghW3FRXDic/G56aAdwh5N0ErQ9mDSI45B7jy0P
+         9po+smAMAzRODYtTQgAUK7mFb0TBaS8clJdiFmeMqkggELfeEeO+b5NeB7+Jv6z0w+QX
+         DwFtB4b0WCl9/5GdJ/IcIP11HYHNVshU7DSU43QBVjQ0BK9Dru1nyux75FjOqsizqZ+c
+         Ko3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706797335; x=1707402135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R6RqxSYIRPivOTJEnlw3gOkIIa+Ul1PRzCUBYhNeDdQ=;
+        b=gNKAL2RJk5QAB6vxH4lMAa+kKfKbWDtOlHGARqNqTRlz0BGvGbKhQX/I0g0znJZJCG
+         gITEjZACLIIhyRhWsrJtIeU0MPrLh9lkBPU8Hp8M24UJ4icaceUlJoTTDt/2NEOxpdLX
+         5HAl+v/uL+5ghWkGw19Gzib1vYGtElO9inL8nzBct3cN83OsTi7pmZ16s0CvZtOQP5tx
+         bfzDMEk7ec9yik8fuSeJSOdoUs9MqUu0G4j6ovZD8S06sD0XKB1yXVevUMGTGitfAN5w
+         D/adHTXpJX/1UGbczrHj3+3fdTLJqCu0JiBcN1hF1RSYnCJuTgANfGvB/LPwrW/qeNPD
+         DmMg==
+X-Gm-Message-State: AOJu0YylTfIquT9aDTtg7wt9Q4S+qHm753yrqZ9A3TD3cHyKhdwVMl7A
+	n+oAfLdLqdoQLtSuxkZlatDALAzHyFHGcB8xxznk9Q/cjlOJ2NYOQ4M7+0HeotLtyagRwRl5xxr
+	Zw4bg+mJQ0yN/+IXWzH3bto61dVkgVbd/zg8W9w==
+X-Google-Smtp-Source: AGHT+IErbFgMVG98pJg/oaehaHSpsB61MD2tROFlx7fdPd5hSbz2EsbFIOcbXTPEqNs8GfN7zqAzP9yPfu+IfMDWtSA=
+X-Received: by 2002:a05:6a20:c526:b0:19c:74d1:b314 with SMTP id
+ gm38-20020a056a20c52600b0019c74d1b314mr1891047pzb.17.1706797335445; Thu, 01
+ Feb 2024 06:22:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240131093434.55652-1-nsekhar@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240125013858.3986-1-semen.protsenko@linaro.org>
+ <20240125013858.3986-4-semen.protsenko@linaro.org> <cd9ca36f-84f6-4cc7-bc1e-a4c5781d2bf2@linaro.org>
+In-Reply-To: <cd9ca36f-84f6-4cc7-bc1e-a4c5781d2bf2@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Thu, 1 Feb 2024 08:22:04 -0600
+Message-ID: <CAPLW+4ke9AJ_7FkmqTsT7kQv3TWYW0_G2rc=RsSGVFuvX2qi-w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: Add SPI nodes for Exynos850
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15:04-20240131, Sekhar Nori wrote:
-> My TI e-mail address will become inactive soon. Drop it.
-> Add an entry to CREDITS file for work done on TI DaVinci
-> family SoCs.
-> 
-> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-> ---
->  CREDITS     | 5 +++++
->  MAINTAINERS | 1 -
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/CREDITS b/CREDITS
-> index df8d6946739f..11d918e0fb0e 100644
-> --- a/CREDITS
-> +++ b/CREDITS
-> @@ -2955,6 +2955,11 @@ S: 2364 Old Trail Drive
->  S: Reston, Virginia 20191
->  S: USA
->  
-> +N: Sekhar Nori
-> +E: nori.sekhar@gmail.com
-> +D: Maintainer of Texas Instruments DaVinci machine support, contributor
-> +D: to device drivers relevant to that SoC family.
-> +
->  N: Fredrik Noring
->  E: noring@nocrew.org
->  W: http://www.lysator.liu.se/~noring/
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c4828ab15f1a..f74ecde541bb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21945,7 +21945,6 @@ F:	drivers/i2c/busses/i2c-davinci.c
->  
->  TI DAVINCI SERIES CLOCK DRIVER
->  M:	David Lechner <david@lechnology.com>
-> -R:	Sekhar Nori <nsekhar@ti.com>
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/clock/ti/davinci/
->  F:	drivers/clk/davinci/
-> -- 
-> 2.17.1
+On Thu, Feb 1, 2024 at 4:31=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 25/01/2024 02:38, Sam Protsenko wrote:
+> > Some USI blocks can be configured as SPI controllers. Add corresponding
+> > SPI nodes to Exynos850 SoC device tree.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> > Changes in v2:
+> >   - Sorted pinctrl properties properly
+> >
+> >  arch/arm64/boot/dts/exynos/exynos850.dtsi | 54 +++++++++++++++++++++++
+> >  1 file changed, 54 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boo=
+t/dts/exynos/exynos850.dtsi
+> > index 618bc674896e..ca257da74b50 100644
+> > --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> > +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> > @@ -738,6 +738,24 @@ usi_spi_0: usi@139400c0 {
+> >                                <&cmu_peri CLK_GOUT_SPI0_IPCLK>;
+> >                       clock-names =3D "pclk", "ipclk";
+> >                       status =3D "disabled";
+> > +
+> > +                     spi_0: spi@13940000 {
+> > +                             compatible =3D "samsung,exynos850-spi";
+> > +                             reg =3D <0x13940000 0x30>;
+> > +                             interrupts =3D <GIC_SPI 221 IRQ_TYPE_LEVE=
+L_HIGH>;
+> > +                             pinctrl-0 =3D <&spi0_pins>;
+> > +                             pinctrl-names =3D "default";
+> > +                             clocks =3D <&cmu_peri CLK_GOUT_SPI0_IPCLK=
+>,
+> > +                                      <&cmu_peri CLK_GOUT_SPI0_PCLK>;
+> > +                             clock-names =3D "spi_busclk0", "spi";
+> > +                             samsung,spi-src-clk =3D <0>;
+> > +                             dmas =3D <&pdma0 5>, <&pdma0 4>;
+> > +                             dma-names =3D "tx", "rx";
+> > +                             num-cs =3D <1>;
+>
+> For the future: please keep properties sorted by name, so clocks+name,
+> dmas+name, interrupts, pinctrl+name, more-or-less matching DTS coding
+> style. address/size cells can go to the end.
+>
 
-Thank you Sekhar for over 2 decades of consistent upstream focus,
-numerous contributions and helping set the essence of working in
-upstream @ TI. Wish you the very best ahead.
+Noted, thanks! So IIUC, basically follow the order of properties
+described at [1], but keep the standard/common properties block
+sorted, and then keep vendor properties sorted, right?
 
-Acked-by: Nishanth Menon <nm@ti.com>
+[1] Documentation/devicetree/bindings/dts-coding-style.rst
 
-I am going to assume this is going via Stephen's tree. If there is any
-help needed, let me know.
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+> Best regards,
+> Krzysztof
+>
