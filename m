@@ -1,55 +1,57 @@
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32426DDAF;
-	Fri,  2 Feb 2024 06:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227CA48788;
+	Fri,  2 Feb 2024 06:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706855951; cv=none; b=VNJi8ftO3Q68hsJxecwGlVzV342Q2qUNRrJhBddLWu7/So595wlt+Vk/mpOwVVzL8DmNmxiP0zkjYgY/eAk8pGI/IgpE+i3LnlLRp/dYczfQ9NMpHwBmim1kDhfCcZ4OjSJ+eLiI1XprNla0afrPy+sncyrsRNhKeIyEYq8tIws=
+	t=1706856098; cv=none; b=N8vJFCH1WDN8afM39cjh6NDJ9wJEfV52dUbcQWgGBIteRIvndmnGEJpr+uOrSYIHx1d4fhePidtrMPTMmkvXvKZZgRGyOrMV8wMPxWu0JJugyXGnWdG0F+7swz2IsHt3vTizDykD3usv+yZJGhV+IrR42UZVwDpda2qqrZe7MoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706855951; c=relaxed/simple;
-	bh=6EPiH1cuCdFr3hqVydnRELVaVjXd9CwJbGjbB3z8Wgw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XjHC8vFNZQHlg61hjAFbsMCnrFapip+TfYxP2vDNwW+YvQ8UIBrBFm4e2iQxtTDj2zXIa5k0kQ2QGINjlMDb09Mw1mOvxo2yCZLwRQAhSpGLRgUNtbiG4qjFuFHW13nAAW/a55Xr0rJuEDtAldmfSdSdTAEqZhcoXuqeLIodAjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AynIh1kh; arc=none smtp.client-ip=209.85.161.51
+	s=arc-20240116; t=1706856098; c=relaxed/simple;
+	bh=FnWjsjwj8800isp2bFvFIFMiFcnzRWHiCH41bnxfCwY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DlGTxOfVcL1SH1ayq5ToceQ+sa2ClZIN4PRaAvjHnyvBTSJFXAicrQt55wsPXw9dtHe4YD3+wSR2ydXGLUV9UKkOo1DyvqkBxu0X6AT4YQnpqImqjtK0dRMxEbHTV0Sm1oNtqnv65DxczGfLxJkqxLjUPF6HjWsTrL3KPeqWopI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M5sW7cfD; arc=none smtp.client-ip=209.85.160.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AynIh1kh"
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-59a31c14100so1049273eaf.0;
-        Thu, 01 Feb 2024 22:39:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5sW7cfD"
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2144c37f3d3so989380fac.0;
+        Thu, 01 Feb 2024 22:41:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706855949; x=1707460749; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJbEo/Toazrk+xPxIk8inyWPiuGq5pJrmcLxJn+T+WI=;
-        b=AynIh1khorRJcv57+m3X/oio/wp/GNJ3ll5bIDqZ3jIRuH8imf6MKPZ3lCG7pPyTgC
-         TVdjN37nAzJbEGb8dg5YcFQchzWJmXGyYS5ga/n05oew5SmaJKJKdctJAro417SD5klA
-         uH4D2lMohfYopjrm1Yu387v9A0i3a8+yFTj4yjihLSGdos+K+1D+8jFvzAuE9uFVJnyB
-         JU3awfCuRIJIS3jbhw8joI8/ArMlwsCpD4soiIG1TEIypdinx2b5AVxbxxq7pHsJu4HI
-         ef+pDRPXwK5m8eXQu9YthKWNeHT0HiM6Jj28PcEgaeeSUrgjsxg/Kw1c9DIcRXx51SBA
-         ZQeQ==
+        d=gmail.com; s=20230601; t=1706856096; x=1707460896; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H/7Ihe4vPnqb+El0TxxOCHRxUyQil8HxVU+vhaaiIU4=;
+        b=M5sW7cfDuayE8gjf3PSbR6cgR9/Gge2XgASzvIjgQ/dt4SVRsj4NQC69bslN7NXzSc
+         La3dI+IqSwAg0rCJ8SUnmcUo9a8sOSszdZl4aH77jlBlDvQejQjOWVSTuj3ln8jGglZ8
+         2MDvVCJkwJ8aI1VYQ44oXoEpyMzNVVJOphER5zYgD+J+KhP0GhzOZE9FeXrqoyjqIvC8
+         nXLOOxHiZm9q9GptSw1O0wCNEl7M6iEkRzy0LTHeLL/s1mE514D1r9wXEP3sVMDcilYN
+         tjiZOihnQKOVprwID6Q/zkyrhi1o2EUVUvrpqN2nqbXknHM17L8fIcjM1sEJbAqAlLHS
+         L/WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706855949; x=1707460749;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jJbEo/Toazrk+xPxIk8inyWPiuGq5pJrmcLxJn+T+WI=;
-        b=atVu8mkX7AnYGXtbO11AkY7/Ydz1cSzfOR3+g5geawKmlM+SV9DrL2Ex/ZJqlITSw4
-         NOODItltCCBKrNq3F4FF7XzIAf09pwKAwNnuy1H3GPhfd58coIlz686iR2K6kS/AzQg5
-         R8Tr9KbKGqLWViTIjbCYrwlufKiGm0BtRHyB2xip2G6mMp+oDIDzfGWRiPMj6W6maYkt
-         BuH9Y4CS9ubgdZQFMfb8pSIINLGX6TlpL1JZyBCfnlCzHgwxv7WLXTU7yKQvCH2zdwHs
-         QorbGa6HnIFmz1xNwL11JM7FPYrsxkWgJyC5GF3luB0bEFrAlV3RSgCfVM/O4gBqCUZ1
-         n1hA==
-X-Gm-Message-State: AOJu0Yy5hbz9hKh4YlKc9VmJlphzp/41UfNCCH+zwWPglQnRBEpsLEj6
-	6YooLOPzQ8tcj2YVcQGlKEo0JwWIaIrcAB9+z7IMY4qVhF57ksaA
-X-Google-Smtp-Source: AGHT+IGwsUmKtKQ7cPmsSLpZJJolXyk1TGNZXnqP9wf9YCFH9Dg7QrcMIbyRoqm83Ityw48qUXsJtQ==
-X-Received: by 2002:a4a:d6ca:0:b0:599:ba9c:393a with SMTP id j10-20020a4ad6ca000000b00599ba9c393amr6598794oot.0.1706855948981;
-        Thu, 01 Feb 2024 22:39:08 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCUoW95Sf6wGde/380u1EAZ2lKERzkZFeHkae99XR42pzvscPXgjIwes+2uaUHVqR8QAX/yV2DcOUgWX97pQ/MoGDd5LPuqL9t0TQXTKldZIL9T0iMM/pngv325PB99DIqVn8zTwhiNAfSg448iKnf/KR/1O2Gao9RM3ynIQU5YS3vGzZWCuRwBxUSUhqidHk3nmsssBJ04gFXcEZ1xSAritxbJGm2DpBS1iJHEZ5d5ELRMTBignY9trUMNwEsQ1kQ7+2B+OOqlnWSdcIvR50PEIWSAF6aNfIMFOnJPFm8UIUZRRKXc7tcWuD2gOjweKpLu2zrJAFBGZ2onhI4pENe1MLIgY+Ww7tN95bzaEvw5GkZoEbe4BHWAq1Ns5CQIiLWU5A6MpVg95eGVpQRY1SywnT3O7ApMfwJIMkTnQQ/xUVsVB4aUcauEc6ZgjHInCvZRCjz5ApIH0WzKb9TOSHQbQLKaLX36I19GV2rNkartAeXB7OhdkQBiwrztEVGyNyAtvnI3/uJKW96SEQ9aISJbDTGVxIPNGxwouxtGjrehdhot+p82CyXgOUEfZfG+6Mm4EX1/PBy2n1n4EB/jdpcp+gvH03L2xpHNDS8plO7pzLiXTFttBztPJ0osxReFuVSvntRSCh1vYL0TetnrxqX4mKqoIH7EVFKwi0TSKqNZp+T4=
+        d=1e100.net; s=20230601; t=1706856096; x=1707460896;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H/7Ihe4vPnqb+El0TxxOCHRxUyQil8HxVU+vhaaiIU4=;
+        b=KF0lTWdB0XgirbcQ22XjppLvEysKpOww/GSpj/WBD/cgL2g2mVA0GspD92I0XenOKT
+         mbGM9AZpZ77Ob4voMCbPFl8sMFsJgZDxjx+JGcqC374t/666iCdzCpWoEJy0isDKRfAJ
+         1gMD73Nw+2oFqmGHA1TqDKm4kufgUdAu5zW2Ih4tjhCIJR+S5JtROjK21LmDEkwBd9Lm
+         IUfaYIhc6l3TNBPZ/xKoqsjyMBYMeREx0oMzJZvElMCTATt9kvS+McTJX+5Hucj6TZCl
+         prDyts9btbZ/DVoXDSZyGxAGxcu3ydJuSyRej/NhISPsau9dcWar0dUUA6+16DxD4uFT
+         FOyg==
+X-Gm-Message-State: AOJu0YzcKx9JggTSHcUd3alHjrfcDS033Zv6I80WSWkhXOFecarlGrP6
+	jhMYXnH8rvBITrIVCO8Lt1jStfQ8NKQcbsY5MaFou06plDw4YnZZ
+X-Google-Smtp-Source: AGHT+IHSiFTmHke13wN1SxKcd66FM+K2StullT3LYnHJcbR7rpQ5ZFrlEClwc0zT0kIMT5IkxBOkrQ==
+X-Received: by 2002:a05:6870:a119:b0:218:dec1:8330 with SMTP id m25-20020a056870a11900b00218dec18330mr1063507oae.8.1706856096067;
+        Thu, 01 Feb 2024 22:41:36 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCX9fyP97T4LGPWcPjGEhvjLc+c58XmBo0/gXNEC1NZHfGLci4RzYqgMSvCkP8r6WWKeQ7rFoFtGpwnKpMbt0wCIrhZoIgV1ULFXJqV+EMaX9Xxbids+QPLJ90x0WP7Te/hJovSp9zxHKtUQwuz5Dfm8+98FhhJEJy09Rl8NfghF3w9XRO6mtxdq1Df1JXZ0UWkQtg1+2nCjVv0wIO2DFtGj53Fy9pi3TihN8uPmOGJadRFlUTavMeHu403+hY57YoDLcDbeqrSNXke3rUlt+GzxjjAGnYZ7O0mXmLdp6TG7Q/H7L5iVxUqaDWa0jDEBx18ac77BmzWKfbSDhCvo+rqVxeMOuvgh4mImSKrpVl7D9WcIQMePJDi5G/LYutDX6l/3yGSmrGLcZVxaouXDXVaXNmshRMLPsNZQCaYmw2Xpld5+UFbBThgBBXYqsVsAAtwKa04Nay28Vu9UYdoixkdkOLW3cQYoL+GGjVvhPMWyzSnJg9wx92qqCInTah3uPV5/uKnZ8aycVNNEyjNfuPSIVdvZuP566bNINTOQv07bBKymsvDHBTBQAE7gxqACz0WwDy/2wP3GykpZkXQkKSBMatCXahwyF5NNlgiBceV6ws1EElGHJi9GoF58aR50ERZWFtGyFdghkkBU/RBUSRqmFff7hSYS/0F/vmJ5XmOJxfw=
 Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 17-20020a4ae1b1000000b0059a530f54c6sm281948ooy.10.2024.02.01.22.39.07
+        by smtp.gmail.com with ESMTPSA id sc23-20020a056871221700b00205d664c127sm335381oab.16.2024.02.01.22.41.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Feb 2024 22:39:08 -0800 (PST)
+        Thu, 01 Feb 2024 22:41:35 -0800 (PST)
 From: Chen Wang <unicornxw@gmail.com>
 To: aou@eecs.berkeley.edu,
 	chao.wei@sophgo.com,
@@ -72,10 +74,12 @@ To: aou@eecs.berkeley.edu,
 	inochiama@outlook.com,
 	samuel.holland@sifive.com
 Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v9 0/5] riscv: sophgo: add clock support for sg2042
-Date: Fri,  2 Feb 2024 14:39:00 +0800
-Message-Id: <cover.1706854074.git.unicorn_wang@outlook.com>
+Subject: [PATCH v9 1/5] dt-bindings: clock: sophgo: add pll clocks for SG2042
+Date: Fri,  2 Feb 2024 14:41:27 +0800
+Message-Id: <bf3b8178a013004f259cd9254b13279254505852.1706854074.git.unicorn_wang@outlook.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1706854074.git.unicorn_wang@outlook.com>
+References: <cover.1706854074.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -86,143 +90,87 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen Wang <unicorn_wang@outlook.com>
 
-This series adds clock controller support for sophgo sg2042.
+Add bindings for the pll clocks for Sophgo SG2042.
 
-Thanks,
-Chen
-
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
 ---
-
-Changes in v9:
-  The patch series is based on v6.8-rc2.
-
-  From this version, drop the system-controller node due to there is no actual
-  device corresponding to it in IC design. SYS_CTRL is just a registers segment
-  defined on TRM for misc functions. Now three clock-controllers are defined for
-  SG2042, the control registers of the three clock-controllers are scattered in
-  different memory address spaces:
-  - the first one is for pll clocks;
-  - the second one is for gate clocks for RP subsystem;
-  - the third one is for div/mux, and gate clocks working for other subsystem
-    than RP subsystem.
-
-Changes in v8:
-  The patch series is based on v6.7. You can simply review or test the
-  patches at the link [9].
-  
-  In this version, the main change is to split one clock provider into two.
-  Strictly follow the hardware instructions, in the memoymap, the control
-  registers of some clocks are defined in the SYS_CTRL segment, and the
-  control registers of other clocks are defined in the CLOCK segment.
-  Therefore, the new design defines two clock controllers, one as a child
-  node of the system control and the other as an independent clock controller
-  node.
-
-  This modification involves a major modification to the binding files, so
-  the reviewed-by tags has been deleted.
-
-Changes in v7:
-  The patch series is based on v6.7. You can simply review or test the
-  patches at the link [8].
-  - fixed initval issue.
-  - fixed pll clk crash issue.
-  - fixed warning reported by <lkp@intel.com>
-  - code optimization as per review comments.
-  - code cleanup and style improvements as per review comments and checkpatch
-    with "--strict"
-
-Changes in v6:
-  The patch series is based on v6.7-rc1. You can simply review or test the
-  patches at the link [7].
-  - fixed some warnings/errors reported by kernel test robot <lkp@intel.com>.
-
-Changes in v5:
-  The patch series is based on v6.7-rc1. You can simply review or test the
-  patches at the link [6].
-  - dt-bindings: improved yaml, such as:
-    - add vendor prefix for system-ctrl property for clock generator.
-    - Add explanation for system-ctrl property.
-  - move sophgo,sg2042-clkgen.yaml to directly under clock folder.
-  - fixed bugs for driver Makefile/Kconfig
-  - continue cleaning-up debug print for driver code.
-
-Changes in v4:
-  The patch series is based on v6.7-rc1. You can simply review or test the
-  patches at the link [5].
-  - dt-bindings: fixed a dt_binding_check error.
-
-Changes in v3:
-  The patch series is based on v6.7-rc1. You can simply review or test the
-  patches at the link [3].
-  - DTS: don't use syscon but define sg2042 specific system control node. More
-    background info can read [4].
-  - Updating minor issues in dt-bindings as per input from reviews.
-
-Changes in v2:
-  The patch series is based on v6.7-rc1. You can simply review or test the
-  patches at the link [2].
-  - Squashed the patch adding clock definitions with the patch adding the
-    binding for the clock controller.
-  - Updating dt-binding for syscon, remove oneOf for property compatible;
-    define clock controller as child of syscon.
-  - DTS changes: merge sg2042-clock.dtsi into sg2042.dtsi; move clock-frequency
-    property of osc to board devicethree due to the oscillator is outside the
-    SoC.
-  - Fixed some bugs in driver code during testing, including removing warnings
-    for rv32_defconfig.
-  - Updated MAINTAINERS info.
-
-Changes in v1:
-  The patch series is based on v6.7-rc1. You can simply review or test the
-  patches at the link [1].
-
-Link: https://lore.kernel.org/linux-riscv/cover.1699879741.git.unicorn_wang@outlook.com/ [1]
-Link: https://lore.kernel.org/linux-riscv/cover.1701044106.git.unicorn_wang@outlook.com/ [2]
-Link: https://lore.kernel.org/linux-riscv/cover.1701691923.git.unicorn_wang@outlook.com/ [3]
-Link: https://lore.kernel.org/linux-riscv/MA0P287MB03329AE180378E1A2E034374FE82A@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM/ [4]
-Link: https://lore.kernel.org/linux-riscv/cover.1701734442.git.unicorn_wang@outlook.com/ [5]
-Link: https://lore.kernel.org/linux-riscv/cover.1701938395.git.unicorn_wang@outlook.com/ [6]
-Link: https://lore.kernel.org/linux-riscv/cover.1701997033.git.unicorn_wang@outlook.com/ [7]
-Link: https://lore.kernel.org/linux-riscv/cover.1704694903.git.unicorn_wang@outlook.com/ [8]
-Link: https://lore.kernel.org/linux-riscv/cover.1705388518.git.unicorn_wang@outlook.com/ [9]
-
----
-
-Chen Wang (5):
-  dt-bindings: clock: sophgo: add pll clocks for SG2042
-  dt-bindings: clock: sophgo: add RP gate clocks for SG2042
-  dt-bindings: clock: sophgo: add clkgen for SG2042
-  clk: sophgo: Add SG2042 clock driver
-  riscv: dts: add clock generator for Sophgo SG2042 SoC
-
- .../bindings/clock/sophgo,sg2042-clkgen.yaml  |   37 +
- .../bindings/clock/sophgo,sg2042-pll.yaml     |   45 +
- .../bindings/clock/sophgo,sg2042-rpgate.yaml  |   37 +
- .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |   12 +
- arch/riscv/boot/dts/sophgo/sg2042.dtsi        |   41 +
- drivers/clk/Kconfig                           |    1 +
- drivers/clk/Makefile                          |    1 +
- drivers/clk/sophgo/Kconfig                    |    8 +
- drivers/clk/sophgo/Makefile                   |    2 +
- drivers/clk/sophgo/clk-sophgo-sg2042.c        | 1401 +++++++++++++++++
- drivers/clk/sophgo/clk-sophgo-sg2042.h        |  233 +++
- .../dt-bindings/clock/sophgo,sg2042-clkgen.h  |  111 ++
- include/dt-bindings/clock/sophgo,sg2042-pll.h |   14 +
- .../dt-bindings/clock/sophgo,sg2042-rpgate.h  |   58 +
- 14 files changed, 2001 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
+ .../bindings/clock/sophgo,sg2042-pll.yaml     | 45 +++++++++++++++++++
+ include/dt-bindings/clock/sophgo,sg2042-pll.h | 14 ++++++
+ 2 files changed, 59 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-pll.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-rpgate.yaml
- create mode 100644 drivers/clk/sophgo/Kconfig
- create mode 100644 drivers/clk/sophgo/Makefile
- create mode 100644 drivers/clk/sophgo/clk-sophgo-sg2042.c
- create mode 100644 drivers/clk/sophgo/clk-sophgo-sg2042.h
- create mode 100644 include/dt-bindings/clock/sophgo,sg2042-clkgen.h
  create mode 100644 include/dt-bindings/clock/sophgo,sg2042-pll.h
- create mode 100644 include/dt-bindings/clock/sophgo,sg2042-rpgate.h
 
-
-base-commit: 41bccc98fb7931d63d03f326a746ac4d429c1dd3
+diff --git a/Documentation/devicetree/bindings/clock/sophgo,sg2042-pll.yaml b/Documentation/devicetree/bindings/clock/sophgo,sg2042-pll.yaml
+new file mode 100644
+index 000000000000..b9af733e8a73
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sophgo,sg2042-pll.yaml
+@@ -0,0 +1,45 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/sophgo,sg2042-pll.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sophgo SG2042 PLL Clock Generator
++
++maintainers:
++  - Chen Wang <unicorn_wang@outlook.com>
++
++properties:
++  compatible:
++    const: sophgo,sg2042-pll
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Oscillator(Clock Generation IC) for Main/Fixed PLL (25 MHz)
++      - description: Oscillator(Clock Generation IC) for DDR PLL 0 (25 MHz)
++      - description: Oscillator(Clock Generation IC) for DDR PLL 1 (25 MHz)
++
++  '#clock-cells':
++    const: 1
++    description:
++      See <dt-bindings/clock/sophgo,sg2042-pll.h> for valid indices.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@10000000 {
++      compatible = "sophgo,sg2042-pll";
++      reg = <0x10000000 0x10000>;
++      clocks = <&cgi_main>, <&cgi_dpll0>, <&cgi_dpll1>;
++      #clock-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/sophgo,sg2042-pll.h b/include/dt-bindings/clock/sophgo,sg2042-pll.h
+new file mode 100644
+index 000000000000..2d519b3bf51c
+--- /dev/null
++++ b/include/dt-bindings/clock/sophgo,sg2042-pll.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
++/*
++ * Copyright (C) 2023 Sophgo Technology Inc. All rights reserved.
++ */
++
++#ifndef __DT_BINDINGS_SOPHGO_SG2042_PLL_H__
++#define __DT_BINDINGS_SOPHGO_SG2042_PLL_H__
++
++#define MPLL_CLK			0
++#define FPLL_CLK			1
++#define DPLL0_CLK			2
++#define DPLL1_CLK			3
++
++#endif /* __DT_BINDINGS_SOPHGO_SG2042_PLL_H__ */
 -- 
 2.25.1
 
