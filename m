@@ -1,215 +1,321 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDD27F7EF
-	for <linux-clk@vger.kernel.org>; Fri,  2 Feb 2024 12:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F75047768
+	for <linux-clk@vger.kernel.org>; Fri,  2 Feb 2024 13:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706877024; cv=none; b=OQHgrAn3cZ8qQWncHVbNaWX9JMSH1slxkviURGgUqjLTHHhnaolt4ZwPwPg1iiMmyhS9J4W9MoS4jyyM0kCq31H3KEcInWg4CUNvyCfefI6U7N2zzfz9q1GABQUIXoPgEjKTBZyLRxFU1YJsvvc99rV3gOs8f5Bk4S5aYwhcuH8=
+	t=1706882400; cv=none; b=tKj2tWlxh5N0Jt6KrHPUw0kDinnVgShJXnskipmk7Kfv1ehjVDlTn7G7DI42OiHXt+qMuCpEAPvru0xXRpBuYdYngwlJnP5z1jYshD1faw3q0v70tWLw89PI0eTmc7cYU7jrTMvwJ6ChyymK2fVxdrTY+HxCbkTqcwjAGrqOy/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706877024; c=relaxed/simple;
-	bh=IGI9/dQV3qGBVH5j2vJp9yftTikrYa+t8RlZXVoJbpk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aSMN+Sgs8/72f+2mMa6Den3d2PPUlXfI7SWieu3Zhx6fjisw/ctQQad5bVuRglurnIgpKbGqT7b6Br5l3FQI/e+NpMEI80t+2fqamgDz+Xuo+wNu6nB0dc4pprnTG9Ullx04r9zPn36YHHGDXp6Yx81iu56pTxs4HaS7eI5Jbzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j3P3q7PM; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706882400; c=relaxed/simple;
+	bh=ANIJS9UzkOmFsPmPeZuENE1ZuoiAp/fMOA7MnKgVqIE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=mZPsiUcTWPJzNZfrg/nLJ5Kh/UHcv2+BwnXTvSN4ZZ3pihtz2BJfq7YDF/Y2Sw04/L6a0PyGwSdpo1ewSvBSCirSHf4To0Qj2o8On1PB+Ox4MAUrn8+RaOIzFthAugVFB5QjcTTS67yzmh/eGsaMRE85lC+OIn3pM+DUYLKKBtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Y9YIZYgg; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j3P3q7PM"
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-60406da718aso20809827b3.1
-        for <linux-clk@vger.kernel.org>; Fri, 02 Feb 2024 04:30:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706877020; x=1707481820; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=v8oOpYwr9iTQslYutTkqU0qxshC1/W4QlmLIOUl40bM=;
-        b=j3P3q7PMRtEF//DUJSJAzp+q30tS7/3EAyFxKYJoBQ6DJBoU3f3y4Ox3fOvvMxEPps
-         o+OAQWjgGd8FDMiNhHIIVHaifSCi5+KmGXoVVELn72zmCcbD0b0UKo1BWEkokh7cB2tY
-         sepVIuuXtzUDR18Zmk8pCsQw7ATmexdkQfrD7eY0tx3WpXGNnHQfXN+IQOqn1vvVxlv7
-         V439fOeRn9wP+beqbNmfsLHq8hKEbCd8FKcYYn9eYknBPCIL7/Z63TNfCk4RpTOjBTyo
-         jPUOTAHYvZPUPgXB+Oj8ja57B1E3WhMgfvVtIRnn5zaFyo5IlbkcA9CjetF7DMsP38HJ
-         PusA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706877020; x=1707481820;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v8oOpYwr9iTQslYutTkqU0qxshC1/W4QlmLIOUl40bM=;
-        b=tL82f7g2LwN4GoHfOJnALEH2OYXzR4rXInUTjhatQpClQfZpcktAPxWuWeUtdTvGIp
-         YbEH3tK1dvZZhFr3632Vt/46L6VAYyNYqRYXslSqQqLpio0tSnywqa71nPeDmGKY6VBQ
-         FdBRtaSHWWke7w7f3dmtA2GZDNVG/BSeehNfR7/mza+sbmTuB587dMdxhpZcCA9myF1T
-         FZAFkylNQe6YvWnOHjIiIwShLHFXcpyIzBVsm2KNfwkigQWEv6130wct7d7tCL5Y0FKD
-         lczW/qqD2bnb8+CwiKMvpVrlSBsKA113Sbba3iC0k3eS1Mi0z59+qrApDMxmnign441g
-         ZHYA==
-X-Gm-Message-State: AOJu0YzCfLbbZP/NVIgetoYtlvaXHkWItU+nKg/YYbgCoWvmVbExD7nT
-	uPMkpPuUmtbr99fjtqjDk0gEk2SohkRevR7KuM07vAI3ZHkHsDT3mK0fpH2ubtxL/lICiyMulsn
-	PMGxWryz0Z7w+pQfD6msN9eqSyKMTONb1BWCqPw==
-X-Google-Smtp-Source: AGHT+IETPsoeVpj0fMEFsGC6sNVxTsee80Br4NXMlKwi1BUq1xFrUlkgkaLYgBcbwbf7U/G9cwauAMTlt8UuJHRtKp0=
-X-Received: by 2002:a0d:ddcc:0:b0:5ff:58f1:9944 with SMTP id
- g195-20020a0dddcc000000b005ff58f19944mr2068910ywe.30.1706877020693; Fri, 02
- Feb 2024 04:30:20 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Y9YIZYgg"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240202135954epoutp0186e1b6ae22599ea523426369fcbbfc2a~wEH5x6pHG1338013380epoutp01U
+	for <linux-clk@vger.kernel.org>; Fri,  2 Feb 2024 13:59:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240202135954epoutp0186e1b6ae22599ea523426369fcbbfc2a~wEH5x6pHG1338013380epoutp01U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1706882394;
+	bh=uPljuUqcnvBKfoTySKkhA0+5apgmEsMGTJCKcyU/yGk=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Y9YIZYgg0UM/CDb7siYyh1EpHU+CwmZrspyKMd+PBWop6KQgudfOqKCmHWgANBUtg
+	 rEHe3CjXYZxJwsheX4pVvc0iobLihlKFsKQ4ny572K0NcvRJwDL8dpWBGkBUcTG9es
+	 j1M9pU78pNuj3pC6yMo8ZToCfJp9VW5s6AlfMNI4=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240202135952epcas5p14a5f82d917b630160044cc0cab67da79~wEH4njU-I2501125011epcas5p1N;
+	Fri,  2 Feb 2024 13:59:52 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4TRHTM0l7hz4x9Ps; Fri,  2 Feb
+	2024 13:59:51 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4B.4C.19369.655FCB56; Fri,  2 Feb 2024 22:59:50 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240202115943epcas5p4ffd74eaf0571f61e3bac50be11a94632~wCe_eyBOS1710017100epcas5p4u;
+	Fri,  2 Feb 2024 11:59:43 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240202115943epsmtrp1f6562f1a4757eff343b41e8d1578699c~wCe_dpNxn1052510525epsmtrp1f;
+	Fri,  2 Feb 2024 11:59:43 +0000 (GMT)
+X-AuditID: b6c32a50-c99ff70000004ba9-e9-65bcf556438e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D7.27.07368.F29DCB56; Fri,  2 Feb 2024 20:59:43 +0900 (KST)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240202115940epsmtip103f90ce67606603a09560c7217533b83~wCe79AHbc2779527795epsmtip1y;
+	Fri,  2 Feb 2024 11:59:40 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: "'Manivannan Sadhasivam'" <manivannan.sadhasivam@linaro.org>,
+	<m.szyprowski@samsung.com>, <sboyd@kernel.org>, <mturquette@baylibre.com>
+Cc: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <jingoohan1@gmail.com>,
+	<lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+	<bhelgaas@google.com>, <krzysztof.kozlowski@linaro.org>,
+	<alim.akhtar@samsung.com>, <linux@armlinux.org.uk>,
+	<pankaj.dubey@samsung.com>
+In-Reply-To: <20240129065448.GC2971@thinkpad>
+Subject: RE: [PATCH v4 1/2] clk: Provide managed helper to get and enable
+ bulk clocks
+Date: Fri, 2 Feb 2024 17:29:30 +0530
+Message-ID: <08a901da55cf$4ee48000$ecad8000$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org>
- <20240122-gdsc-hwctrl-v4-1-9061e8a7aa07@linaro.org> <tax3c6o5qjegy6tv3zbgrd5rencfvypr3zg7twxfrmdngscp74@n44ei3q63g64>
- <CAPDyKFpdtrWbzNksLoY++aOY7Ltyt1HhtLZo8bj8sQ05-4Sq0g@mail.gmail.com> <l7icfezpajren25545n4cjtqehhividt5b2dxnxgetdsshc3k3@tdws423qdblk>
-In-Reply-To: <l7icfezpajren25545n4cjtqehhividt5b2dxnxgetdsshc3k3@tdws423qdblk>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 2 Feb 2024 13:29:44 +0100
-Message-ID: <CAPDyKFp1vg2+-pHJ_idkdhb_zZUMpq7W17DnCCGj0eTwd4jFbQ@mail.gmail.com>
-Subject: Re: Re: [PATCH v4 1/5] PM: domains: Allow devices attached to genpd
- to be managed by HW
-To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Gross <agross@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIcpPks/WB953w72Rl3v8cfkz9jJgG3GiapAsOufW4BkcYK8bBB75tA
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTVxjGc3r7ydLlrkU5dKHBi1MR+agreFEYS2DsLriExTjnpmM3cNci
+	/UpvK27OjLiqgYH41SBFqiIBRWBSKAJr58K3ZBNZm06jqJtd6GSbHQM2BMooFzf++533vM95
+	8rznHD4i8nEl/HyNgdJrSBXGDWG390RHx7475aASiq3b8EfWdi5ee1iJX56s5OHOcTsPLyqd
+	5eC2xx4O/mfpAw7u6jrHxb+3DnDxs8PfsPBusxPgpjkTG2/qHeXho6ZiDj4y9AZeY5/k4QuO
+	Dh4e8LSwXxcRLs8IQjy9c4RHdFpGecQFm5GwNRRzifseB5fwuitYRGvt58TxtgZA/GWTZoe8
+	X5CipMg8Sh9JaXK1efkaRSqWtSMnPScxKUEWK0vGt2CRGlJNpWIZ27NjM/NVi5GwyP2kyrhY
+	yiZpGot/LUWvNRqoSKWWNqRilC5PpZPr4mhSTRs1ijgNZdgqS0jYnLjY+FGB0tXbw9X54w/8
+	dOMMUgSc60qAgA9ROfReq+GVgBC+CHUAaHd0IsxiAsDATQuLWUwDWDrZySkB/CXJvaZtTN0J
+	4B9zjezgUSLUB+BvTXSQuegm6HXPIUEORcsA7PIXBgUIegqB9X2zILghQGPhbb+JE2Qxugue
+	ni5jBZmNroWDPw4usRBNhjd8VQjDL8Gbld4lMwSNgXUXxxEmQySc+aWOw5hlwqo2G5fpCYN9
+	M6VLcSBaLoDHpqo4jCADfrnwA2BYDJ8MtPEYlsBfy48uswJeaT27bKCC0621LIbT4Lfuc+zg
+	JBA0Gn7VFc+UI6B5qJnF+L4Iy2a9y+1C2GF9zlFwct7BZjgcWvtdnBMAs6yIZlkRzbIiguV/
+	twuA3QAklI5WK6jcRJ0sVkMV/nfjuVq1DSw9+Y3ZHeDqtfm4bsDig24A+QgWKrwi7aREwjzy
+	k08pvTZHb1RRdDdIXBz4SUSyKle7+Gc0hhyZPDlBnpSUJE9+NUmGhQnHj1TniVAFaaAKKEpH
+	6Z/rWHyBpIgljvEJ/XX2OM+T/XdbHqetj7ofisR4Wpoa/+krd8vTn30Xte/Q3g3tt1ZpGmKm
+	9ogiXI/2kIrLBtRpCxdVrD5/Ujph/yzz2Bnz9dOEtPDtiJJdCrZZvHNd2VTgwzHBYH7DQ/vH
+	nuohgfbOm2rJWv+limHBzykzPVdHyIM7X9CJd/eEHbi3ufnB9Q/Ulpa0/vqMTv+mv+fGwmVF
+	t9dkheZKzvc3krKnvb8nNu09vrU7ekvNRLTyYav1vUPpRwONh794eQYUBr5Ok7SNiQcqrT4W
+	1Ruzen4N37yw3aQcHqqYCevPEtD1mbtPVG94S3p3yjTUjD07NWK79QpcMO94Z5/i0kE3xqaV
+	pGwjoqfJfwHDWPdIewQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsWy7bCSnK7+zT2pBj2XRSwezNvGZrGkKcNi
+	xZeZ7BZ7X29lt2jo+c1qsenxNVaLjz33WC0u75rDZnF23nE2ixnn9zFZHJq6l9Gi5U8Li8Xa
+	I3fZLe62dLJaXDzlarFo6xd2i/97drBb/Lu2kcVByOPytYvMHu9vtLJ77Jx1l91jwaZSj02r
+	Otk87lzbw+bx5Mp0Jo/NS+o9+rasYvT4vEkugCuKyyYlNSezLLVI3y6BK+Ptjr9MBc/1Kv5M
+	nMzUwLhYtYuRg0NCwETi9lrrLkYuDiGB3YwSX46sYOti5ASKS0p8vriOCcIWllj57zk7RNEz
+	RomTT68wgiTYBHQknlz5wwySEBGYyCixfl4HK4jDLLCAWWL+pW/MEC13GCVaF71gAWnhFNCV
+	uPChhRXEFhYIldh9ZjM7iM0ioCJx4voJsH28ApYS+1/MZoawBSVOznwC1sssoC3x9OZTOHvZ
+	wtfMEPcpSPx8ugxspoiAm8TsLZvYIGrEJY7+7GGewCg8C8moWUhGzUIyahaSlgWMLKsYJVML
+	inPTc5MNCwzzUsv1ihNzi0vz0vWS83M3MYJjXUtjB+O9+f/0DjEycTAeYpTgYFYS4V0ptzNV
+	iDclsbIqtSg/vqg0J7X4EKM0B4uSOK/hjNkpQgLpiSWp2ampBalFMFkmDk6pBqatWysDRbm3
+	Brx7+sh3F3/+IncXe3a/iukzfTP/eNZce701VP5WinJG0WvuXWXuJ+euenLUaP+GI9dmsP7w
+	cMz903svS2fNf3nZQ+7/znU7XTv63OvWJVEPVcE3kwW+h+5kTdbOPCPV1fOvUDjxVrybTdeN
+	10ZNE9Sn7A+Kkcu01rP0Vwhjrm4qFjn44Nsij+WvZ0xXPH/ALW7ny/VRZz1bJx5uWWUVPP8V
+	+9Q4C837cTY6Nj8mM+7nVy6syZUVitaedOTkxW/JCw5/+v9h+4FTS+9M2Gpt/H9iwyXeNR0v
+	NrzYqfwqkUdPODtYNEzc2vTuB7EzZ77l6YqeOicp2sAkonDHpujZJv2VSiJTGf2VWIozEg21
+	mIuKEwFOiEzzZAMAAA==
+X-CMS-MailID: 20240202115943epcas5p4ffd74eaf0571f61e3bac50be11a94632
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240124103855epcas5p27400bd95df42f36b9547a4e28aa26f5d
+References: <20240124103838.32478-1-shradha.t@samsung.com>
+	<CGME20240124103855epcas5p27400bd95df42f36b9547a4e28aa26f5d@epcas5p2.samsung.com>
+	<20240124103838.32478-2-shradha.t@samsung.com>
+	<20240129065448.GC2971@thinkpad>
 
-On Fri, 2 Feb 2024 at 00:51, Bjorn Andersson <andersson@kernel.org> wrote:
->
-> On Wed, Jan 31, 2024 at 01:12:00PM +0100, Ulf Hansson wrote:
-> > On Wed, 31 Jan 2024 at 02:09, Bjorn Andersson <andersson@kernel.org> wrote:
-> > >
-> > > On Mon, Jan 22, 2024 at 10:47:01AM +0200, Abel Vesa wrote:
-> > > > From: Ulf Hansson <ulf.hansson@linaro.org>
-> > > >
-> > > > Some power-domains may be capable of relying on the HW to control the power
-> > > > for a device that's hooked up to it. Typically, for these kinds of
-> > > > configurations the consumer driver should be able to change the behavior of
-> > > > power domain at runtime, control the power domain in SW mode for certain
-> > > > configurations and handover the control to HW mode for other usecases.
-> > > >
-> > > > To allow a consumer driver to change the behaviour of the PM domain for its
-> > > > device, let's provide a new function, dev_pm_genpd_set_hwmode(). Moreover,
-> > > > let's add a corresponding optional genpd callback, ->set_hwmode_dev(),
-> > > > which the genpd provider should implement if it can support switching
-> > > > between HW controlled mode and SW controlled mode. Similarly, add the
-> > > > dev_pm_genpd_get_hwmode() to allow consumers to read the current mode and
-> > > > its corresponding optional genpd callback, ->get_hwmode_dev(), which the
-> > > > genpd provider can also implement for reading back the mode from the
-> > > > hardware.
-> > > >
-> > > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > ---
-> > > >  drivers/pmdomain/core.c   | 69 +++++++++++++++++++++++++++++++++++++++++++++++
-> > > >  include/linux/pm_domain.h | 17 ++++++++++++
-> > > >  2 files changed, 86 insertions(+)
-> > > >
-> > > > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> > > > index a1f6cba3ae6c..41b6411d0ef5 100644
-> > > > --- a/drivers/pmdomain/core.c
-> > > > +++ b/drivers/pmdomain/core.c
-> > > > @@ -548,6 +548,75 @@ void dev_pm_genpd_synced_poweroff(struct device *dev)
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(dev_pm_genpd_synced_poweroff);
-> > > >
-> > > > +/**
-> > > > + * dev_pm_genpd_set_hwmode - Set the HW mode for the device and its PM domain.
-> > >
-> > > This isn't proper kernel-doc
+
+
+> -----Original Message-----
+> From: Manivannan Sadhasivam <manivannan.sadhasivam=40linaro.org>
+> Sent: 29 January 2024 12:25
+> To: Shradha Todi <shradha.t=40samsung.com>
+> Cc: linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
+> pci=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-sams=
+ung-
+> soc=40vger.kernel.org; mturquette=40baylibre.com; sboyd=40kernel.org;
+> jingoohan1=40gmail.com; lpieralisi=40kernel.org; kw=40linux.com; robh=40k=
+ernel.org;
+> bhelgaas=40google.com; krzysztof.kozlowski=40linaro.org;
+> alim.akhtar=40samsung.com; linux=40armlinux.org.uk;
+> m.szyprowski=40samsung.com; pankaj.dubey=40samsung.com
+> Subject: Re: =5BPATCH v4 1/2=5D clk: Provide managed helper to get and en=
+able bulk
+> clocks
+>=20
+> On Wed, Jan 24, 2024 at 04:08:37PM +0530, Shradha Todi wrote:
+> > Provide a managed devm_clk_bulk* wrapper to get and enable all bulk
+> > clocks in order to simplify drivers that keeps all clocks enabled for
+> > the time of driver operation.
 > >
-> > Sorry, I didn't quite get that. What is wrong?
+> > Suggested-by: Marek Szyprowski <m.szyprowski=40samsung.com>
+> > Signed-off-by: Shradha Todi <shradha.t=40samsung.com>
+> > ---
+> >  drivers/clk/clk-devres.c =7C 40
+> ++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/clk.h      =7C 24 ++++++++++++++++++++++++
+> >  2 files changed, 64 insertions(+)
 > >
->
-> https://docs.kernel.org/doc-guide/kernel-doc.html#function-documentation
-> says that there should be () after the function name, and below there
-> should be a Return:
-
-Thanks for the pointers!
-
->
-> > >
-> > > > + *
-> > > > + * @dev: Device for which the HW-mode should be changed.
-> > > > + * @enable: Value to set or unset the HW-mode.
-> > > > + *
-> > > > + * Some PM domains can rely on HW signals to control the power for a device. To
-> > > > + * allow a consumer driver to switch the behaviour for its device in runtime,
-> > > > + * which may be beneficial from a latency or energy point of view, this function
-> > > > + * may be called.
-> > > > + *
-> > > > + * It is assumed that the users guarantee that the genpd wouldn't be detached
-> > > > + * while this routine is getting called.
-> > > > + *
-> > > > + * Returns 0 on success and negative error values on failures.
-> > > > + */
-> > > > +int dev_pm_genpd_set_hwmode(struct device *dev, bool enable)
-> > > > +{
-> > > > +     struct generic_pm_domain *genpd;
-> > > > +     int ret = 0;
-> > > > +
-> > > > +     genpd = dev_to_genpd_safe(dev);
-> > > > +     if (!genpd)
-> > > > +             return -ENODEV;
-> > > > +
-> > > > +     if (!genpd->set_hwmode_dev)
-> > > > +             return -EOPNOTSUPP;
-> > > > +
-> > > > +     genpd_lock(genpd);
-> > > > +
-> > > > +     if (dev_gpd_data(dev)->hw_mode == enable)
-> > >
-> > > Between this and the gdsc patch, the hw_mode state might not match the
-> > > hardware state at boot.
-> > >
-> > > With hw_mode defaulting to false, your first dev_pm_genpd_set_hwmode(,
-> > > false) will not bring control to SW - which might be fatal.
+> > diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c index
+> > 4fb4fd4b06bd..cbbd2cc339c3 100644
+> > --- a/drivers/clk/clk-devres.c
+> > +++ b/drivers/clk/clk-devres.c
+> > =40=40 -182,6 +182,46 =40=40 int __must_check devm_clk_bulk_get_all(str=
+uct
+> > device *dev,  =7D  EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
 > >
-> > Right, good point.
+> > +static void devm_clk_bulk_release_all_enable(struct device *dev, void
+> > +*res) =7B
+> > +	struct clk_bulk_devres *devres =3D res;
+> > +
+> > +	clk_bulk_disable_unprepare(devres->num_clks, devres->clks);
+> > +	clk_bulk_put_all(devres->num_clks, devres->clks); =7D
+> > +
+> > +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> > +					      struct clk_bulk_data **clks) =7B
+> > +	struct clk_bulk_devres *devres;
+> > +	int ret;
+> > +
+> > +	devres =3D devres_alloc(devm_clk_bulk_release_all_enable,
+> > +			      sizeof(*devres), GFP_KERNEL);
+> > +	if (=21devres)
+> > +		return -ENOMEM;
+> > +
+> > +	ret =3D clk_bulk_get_all(dev, &devres->clks);
+> > +	if (ret > 0) =7B
+> > +		*clks =3D devres->clks;
+> > +		devres->num_clks =3D ret;
+> > +	=7D else =7B
+> > +		devres_free(devres);
+> > +		return ret;
+> > +	=7D
+>=20
+> How about:
+>=20
+> 	ret =3D clk_bulk_get_all(dev, &devres->clks);
+> 	if (ret <=3D 0) =7B
+> 		devres_free(devres);
+> 		return ret;
+> 	=7D
+>=20
+> 	*clks =3D devres->clks;
+> 	devres->num_clks =3D ret;
+>=20
+> Even though this patch follows the pattern used by the rest of the APIs i=
+n the
+> driver, IMO above makes it more readable.
+>=20
+
+Since I have usually seen that maintainers suggest to maintain the coding s=
+tyle of the file, I followed the same.
+If you have a stronger reason to change this, please let me know
+Marek, Michael, Stephen please let us know what do you think about this?
+
+> > +
+> > +	ret =3D clk_bulk_prepare_enable(devres->num_clks, *clks);
+> > +	if (=21ret) =7B
+> > +		devres_add(dev, devres);
+> > +	=7D else =7B
+> > +		clk_bulk_put_all(devres->num_clks, devres->clks);
+> > +		devres_free(devres);
+> > +	=7D
+> > +
+>=20
+> Same as above:
+>=20
+> 	ret =3D clk_bulk_prepare_enable(devres->num_clks, *clks);
+> 	if (ret) =7B
+> 		clk_bulk_put_all(devres->num_clks, devres->clks);
+> 		devres_free(devres);
+> 		return ret;
+> 	=7D
+>=20
+> 	devres_add(dev, devres);
+>=20
+> > +	return ret;
+>=20
+> 	return 0;
+>=20
+
+Same as above
+
+> > +=7D
+> > +EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
+> > +
+> >  static int devm_clk_match(struct device *dev, void *res, void *data)
+> > =7B
+> >  	struct clk **c =3D res;
+> > diff --git a/include/linux/clk.h b/include/linux/clk.h index
+> > 1ef013324237..a005e709b7bd 100644
+> > --- a/include/linux/clk.h
+> > +++ b/include/linux/clk.h
+> > =40=40 -438,6 +438,23 =40=40 int __must_check
+> > devm_clk_bulk_get_optional(struct device *dev, int num_clks,  int
+> __must_check devm_clk_bulk_get_all(struct device *dev,
+> >  				       struct clk_bulk_data **clks);
 > >
-> > I think we have two ways to deal with this:
-> > 1) If the provider is supporting ->get_hwmode_dev(), we can let
-> > genpd_add_device() invoke it to synchronize the state.
->
-> I'd suggest that we skip the optimization for now and just let the
-> update hit the driver on each call.
+> > +/**
+> > + * devm_clk_bulk_get_all_enable - managed get multiple clk consumers a=
+nd
+> > + *				  enable all clks
+>=20
+> =22Get and enable all clocks of the consumer (managed)=22
+>=20
 
-Okay.
+Will take this up in the next patchset
 
->
-> > 2) If the provider doesn't support ->get_hwmode_dev() we need to call
-> > ->set_hwmode_dev() to allow an initial state to be set.
+> > + * =40dev: device for clock =22consumer=22
+> > + * =40clks: pointer to the clk_bulk_data table of consumer
+> > + *
+> > + * Returns success (0) or negative errno.
+> > + *
+> > + * This helper function allows drivers to get several clk
+>=20
+> =22This helper function allows drivers to get all clocks of the consumer =
+and enables
+> them...=22
+>=20
+> - Mani
+>=20
+
+Will take this up. Thanks for your review Mani=21
+
+> > + * consumers and enable all of them in one operation with management.
+> > + * The clks will automatically be disabled and freed when the device
+> > + * is unbound.
+> > + */
+> > +
+> > +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> > +					      struct clk_bulk_data **clks);
+> > +
+> >  /**
+> >   * devm_clk_get - lookup and obtain a managed reference to a clock pro=
+ducer.
+> >   * =40dev: device for clock =22consumer=22
+> > =40=40 -960,6 +977,13 =40=40 static inline int __must_check
+> devm_clk_bulk_get_all(struct device *dev,
+> >  	return 0;
+> >  =7D
 > >
-> > The question is then, if we need to allow ->get_hwmode_dev() to be
-> > optional, if the ->set_hwmode_dev() is supported - or if we can
-> > require it. What's your thoughts around this?
+> > +static inline int __must_check devm_clk_bulk_get_all_enable(struct dev=
+ice
+> *dev,
+> > +						struct clk_bulk_data **clks)
+> > +=7B
+> > +
+> > +	return 0;
+> > +=7D
+> > +
+> >  static inline struct clk *devm_get_clk_from_child(struct device *dev,
+> >  				struct device_node *np, const char *con_id)  =7B
+> > --
+> > 2.17.1
 > >
->
-> Iiuc this resource can be shared between multiple clients, and we're
-> in either case returning the shared state. That would mean a client
-> acting upon the returned value, is subject to races.
-
-Not sure I understand this, but I also don't have in-depth knowledge
-of how the HW works.
-
-Isn't the HW mode set on a per device basis?
-
->
-> I'm therefore inclined to say that we shouldn't have a getter, other
-> than for debugging purposes, in which case reading the HW-state or
-> failing would be reasonable outcomes.
-
-If you only want this for debug purposes, it seems better to keep it
-closer to the rpmh code, rather than adding generic callbacks to the
-genpd interface.
-
-So to conclude, you think having a ->set_hwmode_dev() callback should
-be sufficient and no caching of the current state?
-
-Abel, what's your thoughts around this?
-
-Kind regards
-Uffe
+>=20
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D=20=E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D=0D=0A=0D=0A
