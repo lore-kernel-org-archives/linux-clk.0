@@ -1,172 +1,228 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4724547F59;
-	Thu,  1 Feb 2024 23:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32426DDAF;
+	Fri,  2 Feb 2024 06:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706831509; cv=none; b=bX6nH0Ib01G4QJ5Cv9yG9jc4pd7tI5I7SgEK9BpW7KobpjJjRpihgYS3yjllizYD2dUbNN3dZ8OrfDgZiR7TMI9y3kjgVLgUdV72mTwdbfMEhYq2IAu8C3mBosRtQmH9qlGMO0eAquosuhNH/qLrtgZ4N5MRkHBf9dKU8sTM73c=
+	t=1706855951; cv=none; b=VNJi8ftO3Q68hsJxecwGlVzV342Q2qUNRrJhBddLWu7/So595wlt+Vk/mpOwVVzL8DmNmxiP0zkjYgY/eAk8pGI/IgpE+i3LnlLRp/dYczfQ9NMpHwBmim1kDhfCcZ4OjSJ+eLiI1XprNla0afrPy+sncyrsRNhKeIyEYq8tIws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706831509; c=relaxed/simple;
-	bh=FOHcufONbN0/pF2GMlGqhXYPYixKrUUq72o/McpHSq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pRV8y874F6DWGAB9DEH228FpY/4XwUEVWTkfNPYPeb0E77KSsz4R7Bn2auauT33lmOCYipWXAjVw1gJ50QzkhXUN7GXZbixg7ZfA2yL7vPJJSj32NZ5rnKnDTTIEpOjHjiby18RgoYkN6FBFq8dH/MH0I0uWdcf2I/4Jsh+Zu8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5EBWuJA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706855951; c=relaxed/simple;
+	bh=6EPiH1cuCdFr3hqVydnRELVaVjXd9CwJbGjbB3z8Wgw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XjHC8vFNZQHlg61hjAFbsMCnrFapip+TfYxP2vDNwW+YvQ8UIBrBFm4e2iQxtTDj2zXIa5k0kQ2QGINjlMDb09Mw1mOvxo2yCZLwRQAhSpGLRgUNtbiG4qjFuFHW13nAAW/a55Xr0rJuEDtAldmfSdSdTAEqZhcoXuqeLIodAjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AynIh1kh; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5EBWuJA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08DBEC433C7;
-	Thu,  1 Feb 2024 23:51:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706831508;
-	bh=FOHcufONbN0/pF2GMlGqhXYPYixKrUUq72o/McpHSq0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F5EBWuJAP/b8dmyCSFJx8XNPEJ5E1M8Dp1GohRlEGSI8SE1/pNUNHLxByQS83YTZp
-	 +kTMEBxol1rAQCSE17sCAq+awsWMGpeaDR22rbUWqjevvacu9rtP/dqQbK4c2WAlck
-	 /DIMSq2Q1PowNjSf4B0a4Lz6ZnwyJ7sgh+MPmabnDX89axYwtvdWdbtVqUqkNQMBsO
-	 4rcJmUTLRz6TjSkVc6KS+oRPiGxp/CycgheXgB3YnOGMo96KTOgRI531EHSZLPwmzt
-	 0WUMDoJSDuCHrb3fFel0qo8oZ1fsVssVEgkGDO2djNy9oUkvYklOLAHbuABdumDvlh
-	 +YVdi/wSh/09g==
-Date: Thu, 1 Feb 2024 17:51:45 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Gross <agross@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: Re: [PATCH v4 1/5] PM: domains: Allow devices attached to genpd
- to be managed by HW
-Message-ID: <l7icfezpajren25545n4cjtqehhividt5b2dxnxgetdsshc3k3@tdws423qdblk>
-References: <20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org>
- <20240122-gdsc-hwctrl-v4-1-9061e8a7aa07@linaro.org>
- <tax3c6o5qjegy6tv3zbgrd5rencfvypr3zg7twxfrmdngscp74@n44ei3q63g64>
- <CAPDyKFpdtrWbzNksLoY++aOY7Ltyt1HhtLZo8bj8sQ05-4Sq0g@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AynIh1kh"
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-59a31c14100so1049273eaf.0;
+        Thu, 01 Feb 2024 22:39:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706855949; x=1707460749; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jJbEo/Toazrk+xPxIk8inyWPiuGq5pJrmcLxJn+T+WI=;
+        b=AynIh1khorRJcv57+m3X/oio/wp/GNJ3ll5bIDqZ3jIRuH8imf6MKPZ3lCG7pPyTgC
+         TVdjN37nAzJbEGb8dg5YcFQchzWJmXGyYS5ga/n05oew5SmaJKJKdctJAro417SD5klA
+         uH4D2lMohfYopjrm1Yu387v9A0i3a8+yFTj4yjihLSGdos+K+1D+8jFvzAuE9uFVJnyB
+         JU3awfCuRIJIS3jbhw8joI8/ArMlwsCpD4soiIG1TEIypdinx2b5AVxbxxq7pHsJu4HI
+         ef+pDRPXwK5m8eXQu9YthKWNeHT0HiM6Jj28PcEgaeeSUrgjsxg/Kw1c9DIcRXx51SBA
+         ZQeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706855949; x=1707460749;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jJbEo/Toazrk+xPxIk8inyWPiuGq5pJrmcLxJn+T+WI=;
+        b=atVu8mkX7AnYGXtbO11AkY7/Ydz1cSzfOR3+g5geawKmlM+SV9DrL2Ex/ZJqlITSw4
+         NOODItltCCBKrNq3F4FF7XzIAf09pwKAwNnuy1H3GPhfd58coIlz686iR2K6kS/AzQg5
+         R8Tr9KbKGqLWViTIjbCYrwlufKiGm0BtRHyB2xip2G6mMp+oDIDzfGWRiPMj6W6maYkt
+         BuH9Y4CS9ubgdZQFMfb8pSIINLGX6TlpL1JZyBCfnlCzHgwxv7WLXTU7yKQvCH2zdwHs
+         QorbGa6HnIFmz1xNwL11JM7FPYrsxkWgJyC5GF3luB0bEFrAlV3RSgCfVM/O4gBqCUZ1
+         n1hA==
+X-Gm-Message-State: AOJu0Yy5hbz9hKh4YlKc9VmJlphzp/41UfNCCH+zwWPglQnRBEpsLEj6
+	6YooLOPzQ8tcj2YVcQGlKEo0JwWIaIrcAB9+z7IMY4qVhF57ksaA
+X-Google-Smtp-Source: AGHT+IGwsUmKtKQ7cPmsSLpZJJolXyk1TGNZXnqP9wf9YCFH9Dg7QrcMIbyRoqm83Ityw48qUXsJtQ==
+X-Received: by 2002:a4a:d6ca:0:b0:599:ba9c:393a with SMTP id j10-20020a4ad6ca000000b00599ba9c393amr6598794oot.0.1706855948981;
+        Thu, 01 Feb 2024 22:39:08 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCUoW95Sf6wGde/380u1EAZ2lKERzkZFeHkae99XR42pzvscPXgjIwes+2uaUHVqR8QAX/yV2DcOUgWX97pQ/MoGDd5LPuqL9t0TQXTKldZIL9T0iMM/pngv325PB99DIqVn8zTwhiNAfSg448iKnf/KR/1O2Gao9RM3ynIQU5YS3vGzZWCuRwBxUSUhqidHk3nmsssBJ04gFXcEZ1xSAritxbJGm2DpBS1iJHEZ5d5ELRMTBignY9trUMNwEsQ1kQ7+2B+OOqlnWSdcIvR50PEIWSAF6aNfIMFOnJPFm8UIUZRRKXc7tcWuD2gOjweKpLu2zrJAFBGZ2onhI4pENe1MLIgY+Ww7tN95bzaEvw5GkZoEbe4BHWAq1Ns5CQIiLWU5A6MpVg95eGVpQRY1SywnT3O7ApMfwJIMkTnQQ/xUVsVB4aUcauEc6ZgjHInCvZRCjz5ApIH0WzKb9TOSHQbQLKaLX36I19GV2rNkartAeXB7OhdkQBiwrztEVGyNyAtvnI3/uJKW96SEQ9aISJbDTGVxIPNGxwouxtGjrehdhot+p82CyXgOUEfZfG+6Mm4EX1/PBy2n1n4EB/jdpcp+gvH03L2xpHNDS8plO7pzLiXTFttBztPJ0osxReFuVSvntRSCh1vYL0TetnrxqX4mKqoIH7EVFKwi0TSKqNZp+T4=
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 17-20020a4ae1b1000000b0059a530f54c6sm281948ooy.10.2024.02.01.22.39.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Feb 2024 22:39:08 -0800 (PST)
+From: Chen Wang <unicornxw@gmail.com>
+To: aou@eecs.berkeley.edu,
+	chao.wei@sophgo.com,
+	conor@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	mturquette@baylibre.com,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	richardcochran@gmail.com,
+	robh+dt@kernel.org,
+	sboyd@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	guoren@kernel.org,
+	jszhang@kernel.org,
+	inochiama@outlook.com,
+	samuel.holland@sifive.com
+Cc: Chen Wang <unicorn_wang@outlook.com>
+Subject: [PATCH v9 0/5] riscv: sophgo: add clock support for sg2042
+Date: Fri,  2 Feb 2024 14:39:00 +0800
+Message-Id: <cover.1706854074.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFpdtrWbzNksLoY++aOY7Ltyt1HhtLZo8bj8sQ05-4Sq0g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 31, 2024 at 01:12:00PM +0100, Ulf Hansson wrote:
-> On Wed, 31 Jan 2024 at 02:09, Bjorn Andersson <andersson@kernel.org> wrote:
-> >
-> > On Mon, Jan 22, 2024 at 10:47:01AM +0200, Abel Vesa wrote:
-> > > From: Ulf Hansson <ulf.hansson@linaro.org>
-> > >
-> > > Some power-domains may be capable of relying on the HW to control the power
-> > > for a device that's hooked up to it. Typically, for these kinds of
-> > > configurations the consumer driver should be able to change the behavior of
-> > > power domain at runtime, control the power domain in SW mode for certain
-> > > configurations and handover the control to HW mode for other usecases.
-> > >
-> > > To allow a consumer driver to change the behaviour of the PM domain for its
-> > > device, let's provide a new function, dev_pm_genpd_set_hwmode(). Moreover,
-> > > let's add a corresponding optional genpd callback, ->set_hwmode_dev(),
-> > > which the genpd provider should implement if it can support switching
-> > > between HW controlled mode and SW controlled mode. Similarly, add the
-> > > dev_pm_genpd_get_hwmode() to allow consumers to read the current mode and
-> > > its corresponding optional genpd callback, ->get_hwmode_dev(), which the
-> > > genpd provider can also implement for reading back the mode from the
-> > > hardware.
-> > >
-> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >  drivers/pmdomain/core.c   | 69 +++++++++++++++++++++++++++++++++++++++++++++++
-> > >  include/linux/pm_domain.h | 17 ++++++++++++
-> > >  2 files changed, 86 insertions(+)
-> > >
-> > > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> > > index a1f6cba3ae6c..41b6411d0ef5 100644
-> > > --- a/drivers/pmdomain/core.c
-> > > +++ b/drivers/pmdomain/core.c
-> > > @@ -548,6 +548,75 @@ void dev_pm_genpd_synced_poweroff(struct device *dev)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(dev_pm_genpd_synced_poweroff);
-> > >
-> > > +/**
-> > > + * dev_pm_genpd_set_hwmode - Set the HW mode for the device and its PM domain.
-> >
-> > This isn't proper kernel-doc
-> 
-> Sorry, I didn't quite get that. What is wrong?
-> 
+From: Chen Wang <unicorn_wang@outlook.com>
 
-https://docs.kernel.org/doc-guide/kernel-doc.html#function-documentation
-says that there should be () after the function name, and below there
-should be a Return:
+This series adds clock controller support for sophgo sg2042.
 
-> >
-> > > + *
-> > > + * @dev: Device for which the HW-mode should be changed.
-> > > + * @enable: Value to set or unset the HW-mode.
-> > > + *
-> > > + * Some PM domains can rely on HW signals to control the power for a device. To
-> > > + * allow a consumer driver to switch the behaviour for its device in runtime,
-> > > + * which may be beneficial from a latency or energy point of view, this function
-> > > + * may be called.
-> > > + *
-> > > + * It is assumed that the users guarantee that the genpd wouldn't be detached
-> > > + * while this routine is getting called.
-> > > + *
-> > > + * Returns 0 on success and negative error values on failures.
-> > > + */
-> > > +int dev_pm_genpd_set_hwmode(struct device *dev, bool enable)
-> > > +{
-> > > +     struct generic_pm_domain *genpd;
-> > > +     int ret = 0;
-> > > +
-> > > +     genpd = dev_to_genpd_safe(dev);
-> > > +     if (!genpd)
-> > > +             return -ENODEV;
-> > > +
-> > > +     if (!genpd->set_hwmode_dev)
-> > > +             return -EOPNOTSUPP;
-> > > +
-> > > +     genpd_lock(genpd);
-> > > +
-> > > +     if (dev_gpd_data(dev)->hw_mode == enable)
-> >
-> > Between this and the gdsc patch, the hw_mode state might not match the
-> > hardware state at boot.
-> >
-> > With hw_mode defaulting to false, your first dev_pm_genpd_set_hwmode(,
-> > false) will not bring control to SW - which might be fatal.
-> 
-> Right, good point.
-> 
-> I think we have two ways to deal with this:
-> 1) If the provider is supporting ->get_hwmode_dev(), we can let
-> genpd_add_device() invoke it to synchronize the state.
+Thanks,
+Chen
 
-I'd suggest that we skip the optimization for now and just let the
-update hit the driver on each call.
+---
 
-> 2) If the provider doesn't support ->get_hwmode_dev() we need to call
-> ->set_hwmode_dev() to allow an initial state to be set.
-> 
-> The question is then, if we need to allow ->get_hwmode_dev() to be
-> optional, if the ->set_hwmode_dev() is supported - or if we can
-> require it. What's your thoughts around this?
-> 
+Changes in v9:
+  The patch series is based on v6.8-rc2.
 
-Iiuc this resource can be shared between multiple clients, and we're
-in either case returning the shared state. That would mean a client
-acting upon the returned value, is subject to races.
+  From this version, drop the system-controller node due to there is no actual
+  device corresponding to it in IC design. SYS_CTRL is just a registers segment
+  defined on TRM for misc functions. Now three clock-controllers are defined for
+  SG2042, the control registers of the three clock-controllers are scattered in
+  different memory address spaces:
+  - the first one is for pll clocks;
+  - the second one is for gate clocks for RP subsystem;
+  - the third one is for div/mux, and gate clocks working for other subsystem
+    than RP subsystem.
 
-I'm therefore inclined to say that we shouldn't have a getter, other
-than for debugging purposes, in which case reading the HW-state or
-failing would be reasonable outcomes.
+Changes in v8:
+  The patch series is based on v6.7. You can simply review or test the
+  patches at the link [9].
+  
+  In this version, the main change is to split one clock provider into two.
+  Strictly follow the hardware instructions, in the memoymap, the control
+  registers of some clocks are defined in the SYS_CTRL segment, and the
+  control registers of other clocks are defined in the CLOCK segment.
+  Therefore, the new design defines two clock controllers, one as a child
+  node of the system control and the other as an independent clock controller
+  node.
 
-Regards,
-Bjorn
+  This modification involves a major modification to the binding files, so
+  the reviewed-by tags has been deleted.
+
+Changes in v7:
+  The patch series is based on v6.7. You can simply review or test the
+  patches at the link [8].
+  - fixed initval issue.
+  - fixed pll clk crash issue.
+  - fixed warning reported by <lkp@intel.com>
+  - code optimization as per review comments.
+  - code cleanup and style improvements as per review comments and checkpatch
+    with "--strict"
+
+Changes in v6:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [7].
+  - fixed some warnings/errors reported by kernel test robot <lkp@intel.com>.
+
+Changes in v5:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [6].
+  - dt-bindings: improved yaml, such as:
+    - add vendor prefix for system-ctrl property for clock generator.
+    - Add explanation for system-ctrl property.
+  - move sophgo,sg2042-clkgen.yaml to directly under clock folder.
+  - fixed bugs for driver Makefile/Kconfig
+  - continue cleaning-up debug print for driver code.
+
+Changes in v4:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [5].
+  - dt-bindings: fixed a dt_binding_check error.
+
+Changes in v3:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [3].
+  - DTS: don't use syscon but define sg2042 specific system control node. More
+    background info can read [4].
+  - Updating minor issues in dt-bindings as per input from reviews.
+
+Changes in v2:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [2].
+  - Squashed the patch adding clock definitions with the patch adding the
+    binding for the clock controller.
+  - Updating dt-binding for syscon, remove oneOf for property compatible;
+    define clock controller as child of syscon.
+  - DTS changes: merge sg2042-clock.dtsi into sg2042.dtsi; move clock-frequency
+    property of osc to board devicethree due to the oscillator is outside the
+    SoC.
+  - Fixed some bugs in driver code during testing, including removing warnings
+    for rv32_defconfig.
+  - Updated MAINTAINERS info.
+
+Changes in v1:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [1].
+
+Link: https://lore.kernel.org/linux-riscv/cover.1699879741.git.unicorn_wang@outlook.com/ [1]
+Link: https://lore.kernel.org/linux-riscv/cover.1701044106.git.unicorn_wang@outlook.com/ [2]
+Link: https://lore.kernel.org/linux-riscv/cover.1701691923.git.unicorn_wang@outlook.com/ [3]
+Link: https://lore.kernel.org/linux-riscv/MA0P287MB03329AE180378E1A2E034374FE82A@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM/ [4]
+Link: https://lore.kernel.org/linux-riscv/cover.1701734442.git.unicorn_wang@outlook.com/ [5]
+Link: https://lore.kernel.org/linux-riscv/cover.1701938395.git.unicorn_wang@outlook.com/ [6]
+Link: https://lore.kernel.org/linux-riscv/cover.1701997033.git.unicorn_wang@outlook.com/ [7]
+Link: https://lore.kernel.org/linux-riscv/cover.1704694903.git.unicorn_wang@outlook.com/ [8]
+Link: https://lore.kernel.org/linux-riscv/cover.1705388518.git.unicorn_wang@outlook.com/ [9]
+
+---
+
+Chen Wang (5):
+  dt-bindings: clock: sophgo: add pll clocks for SG2042
+  dt-bindings: clock: sophgo: add RP gate clocks for SG2042
+  dt-bindings: clock: sophgo: add clkgen for SG2042
+  clk: sophgo: Add SG2042 clock driver
+  riscv: dts: add clock generator for Sophgo SG2042 SoC
+
+ .../bindings/clock/sophgo,sg2042-clkgen.yaml  |   37 +
+ .../bindings/clock/sophgo,sg2042-pll.yaml     |   45 +
+ .../bindings/clock/sophgo,sg2042-rpgate.yaml  |   37 +
+ .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |   12 +
+ arch/riscv/boot/dts/sophgo/sg2042.dtsi        |   41 +
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/sophgo/Kconfig                    |    8 +
+ drivers/clk/sophgo/Makefile                   |    2 +
+ drivers/clk/sophgo/clk-sophgo-sg2042.c        | 1401 +++++++++++++++++
+ drivers/clk/sophgo/clk-sophgo-sg2042.h        |  233 +++
+ .../dt-bindings/clock/sophgo,sg2042-clkgen.h  |  111 ++
+ include/dt-bindings/clock/sophgo,sg2042-pll.h |   14 +
+ .../dt-bindings/clock/sophgo,sg2042-rpgate.h  |   58 +
+ 14 files changed, 2001 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-pll.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-rpgate.yaml
+ create mode 100644 drivers/clk/sophgo/Kconfig
+ create mode 100644 drivers/clk/sophgo/Makefile
+ create mode 100644 drivers/clk/sophgo/clk-sophgo-sg2042.c
+ create mode 100644 drivers/clk/sophgo/clk-sophgo-sg2042.h
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2042-clkgen.h
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2042-pll.h
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2042-rpgate.h
+
+
+base-commit: 41bccc98fb7931d63d03f326a746ac4d429c1dd3
+-- 
+2.25.1
+
