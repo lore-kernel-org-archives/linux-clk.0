@@ -1,54 +1,56 @@
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BF31854;
-	Fri,  2 Feb 2024 14:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93DB1420A4;
+	Fri,  2 Feb 2024 17:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706884031; cv=none; b=ZVi1el5BYsDo00rW8sLH5XgYOCHrVHhYZ5/95RlCk6+bv+I6MGff/c7WxLByogp8baDY1vbBnPqxBY3xfOEztsTFblPMGJ1n88OB+XkTmjoGn0YZbzbFM2SVhixqZ/Ln1FrD0ArBKKVXz9ascgm933qrOqIkGrgqoJf+XHbHRSk=
+	t=1706894381; cv=none; b=qfyh48QD3RMG9B0MS+myps8hx0Z0r07c+B9G92zcQx/Gvzifm8pkng1hOPlVqvghY1BKJQMT73EsBTySATsHepCLO9UWx7w5KGS/ckqFW1rKUuMxuVzzEKW87/L4UwcxM5ft2s56xDYo7ZCXlKv8bZdMQG9GFopasmnMYpp2c6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706884031; c=relaxed/simple;
-	bh=CHL4VTwATVPlntAxMS+V97knUqQfUioN/hnMfpChPiY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DOvTpdWYHhCym8NMXGfHzssHmIIpsjncNx8iGyg/1mYmeRCuo4D9DDEFnms/zQWabHP1AbTTkK44vmkO/4HKrscYlZjfg2Hdwok+/TRN5xY5zZ/vkYKIrsxY1uswalZb9n8QNugViYGEbIaGO11pSmENLhKl+mo3kc2ZugpUugE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=tv1lOjPn; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+	s=arc-20240116; t=1706894381; c=relaxed/simple;
+	bh=tc/H3cE6aOg2akGtqlufzRlVEUi7dZgg0jTn47lX3Zc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HHwysGQlCt1zBdGv2lNSepMQ4UqwmcxIAuQc5zStai/wsWcYdaEG/SO9pXtr2pONvNjKeLRCJ5jnhM/zuOTZVlCLjR9pPBpCfl5WeAiuhWPFDKWdLqnWfMm9uF24AYKMAMBzpeqLD4TqoGethp9/lxN26/h5uJ1Y1mw8LTiBN8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G+/MD08j; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="tv1lOjPn"
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 856F8100009;
-	Fri,  2 Feb 2024 17:27:03 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 856F8100009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1706884023;
-	bh=JeqPP36z4pnlbw1sLnjMU+SnvqzYB8B7+7WjQdUZT4c=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=tv1lOjPnlavwyjm3XqtQCuyI0jQIgx8BjwD5J7mtuY+0ASihXhtcUwGqBSlJOpxF0
-	 4VcsGPlJbYKLmhw4lYFAHsYtbmjiRh6elHhYTXK16Txt+RykRNbsbloux+baHiiROX
-	 O37p8jA5N1pIMokgEMIfVIHfHW8aiWYuyJ5Jt0y3likxUqK0Y4+Q3N5+TD23MQyNmh
-	 JL1FlWWuJiMA4sWq+EBP80SCK6Ckxspn9FxGmMxjpacDIaBY4YL2T4SdV6rqW26I4N
-	 UBwHr9zyHt7iTS+fJ2xhaDLfRz5V6XQbSr4acJqiKHuO/pqPndy8yaPV2POm8jBRTd
-	 hCSgBs0aA0r9Q==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri,  2 Feb 2024 17:27:03 +0300 (MSK)
-Received: from localhost.localdomain (100.64.160.123) by
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G+/MD08j"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 412HEAXX020339;
+	Fri, 2 Feb 2024 17:19:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=15c9nbq
+	JheROjqA7qKcVMJWn/7rwUepjgl9U7MZxvjU=; b=G+/MD08j4UGU7bcgur3GPZt
+	82VyhA1TfjYaB3qFAZooEXyFmY6uuPbDpZ2I3C61wB252XW9XWA6Bx2RhPztD7hK
+	0GPLA7dMz4uofoQkjvRoWrwAkkHTE2rZOIclnA9SSABJ2KU1qKn5notJK+ovP3np
+	0kOAf7Ae1k/B9vXkrBHtTSH8XVFyB604KMTaLBpPwFIjQHIh3AGDgPru3jhOVmCQ
+	5RTISmD40NWYF4fdbxAdYtURY7iZ3Dod9zV2OkDS6yIh12Z/+0t30yuw7tadTiP/
+	lbvkgjL2PURuiMFtSfdPnAirDEAAOa6GuTPq3RL+n/vyCLJQvcHTOzaM0mFNA9g=
+	=
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w0pwc1xa4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Feb 2024 17:19:35 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 412HJYMs005638
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 2 Feb 2024 17:19:34 GMT
+Received: from jhugo-lnx.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Fri, 2 Feb 2024 17:27:03 +0300
-From: Igor Prusov <ivprusov@salutedevices.com>
-To: <jbrunet@baylibre.com>, <neil.armstrong@linaro.org>
-CC: <kernel@salutedevices.com>, <prusovigor@gmail.com>, Igor Prusov
-	<ivprusov@salutedevices.com>, Kevin Hilman <khilman@baylibre.com>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: meson: Add missing clocks to axg_clk_regmaps
-Date: Fri, 2 Feb 2024 17:25:48 +0300
-Message-ID: <20240202172537.1.I64656c75d84284bc91e6126b50b33c502be7c42a@changeid>
+ 15.2.1118.40; Fri, 2 Feb 2024 09:19:33 -0800
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jeffrey Hugo
+	<quic_jhugo@quicinc.com>
+Subject: [PATCH] dt-bindings: clock: qcom: Fix @codeaurora email in Q6SSTOP
+Date: Fri, 2 Feb 2024 10:19:15 -0700
+Message-ID: <20240202171915.4101842-1-quic_jhugo@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -58,92 +60,46 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 183159 [Feb 02 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.3
-X-KSMG-AntiSpam-Envelope-From: ivprusov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 7 0.3.7 6d6bf5bd8eea7373134f756a2fd73e9456bb7d1a, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/02 11:00:00 #23326006
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tLd5zrOf45gRUkyhEWyLLzfEYwn_xy1c
+X-Proofpoint-ORIG-GUID: tLd5zrOf45gRUkyhEWyLLzfEYwn_xy1c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-02_10,2024-01-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=807 clxscore=1011
+ phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 malwarescore=0 impostorscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401310000 definitions=main-2402020124
 
-Some clocks were missing from axg_clk_regmaps, which caused kernel panic
-during cat /sys/kernel/debug/clk/clk_summary
+The servers for the @codeaurora domain are long retired and any messages
+addressed there will bounce.  Govind Singh has left the company which
+appears to leave the Q6SSTOP clock controller binding unmaintained.
 
-[   57.349402] Unable to handle kernel NULL pointer dereference at virtual address 00000000000001fc
-...
-[   57.430002] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   57.436900] pc : regmap_read+0x1c/0x88
-[   57.440608] lr : clk_regmap_gate_is_enabled+0x3c/0xb0
-[   57.445611] sp : ffff800082f1b690
-[   57.448888] x29: ffff800082f1b690 x28: 0000000000000000 x27: ffff800080eb9a70
-[   57.455961] x26: 0000000000000007 x25: 0000000000000016 x24: 0000000000000000
-[   57.463033] x23: ffff800080e8b488 x22: 0000000000000015 x21: ffff00000e7e7000
-[   57.470106] x20: ffff00000400ec00 x19: 0000000000000000 x18: ffffffffffffffff
-[   57.477178] x17: 0000000000000000 x16: 0000000000000000 x15: ffff0000042a3000
-[   57.484251] x14: 0000000000000000 x13: ffff0000042a2fec x12: 0000000005f5e100
-[   57.491323] x11: abcc77118461cefd x10: 0000000000000020 x9 : ffff8000805e4b24
-[   57.498396] x8 : ffff0000028063c0 x7 : ffff800082f1b710 x6 : ffff800082f1b710
-[   57.505468] x5 : 00000000ffffffd0 x4 : ffff800082f1b6e0 x3 : 0000000000001000
-[   57.512541] x2 : ffff800082f1b6e4 x1 : 000000000000012c x0 : 0000000000000000
-[   57.519615] Call trace:
-[   57.522030]  regmap_read+0x1c/0x88
-[   57.525393]  clk_regmap_gate_is_enabled+0x3c/0xb0
-[   57.530050]  clk_core_is_enabled+0x44/0x120
-[   57.534190]  clk_summary_show_subtree+0x154/0x2f0
-[   57.538847]  clk_summary_show_subtree+0x220/0x2f0
-[   57.543505]  clk_summary_show_subtree+0x220/0x2f0
-[   57.548162]  clk_summary_show_subtree+0x220/0x2f0
-[   57.552820]  clk_summary_show_subtree+0x220/0x2f0
-[   57.557477]  clk_summary_show_subtree+0x220/0x2f0
-[   57.562135]  clk_summary_show_subtree+0x220/0x2f0
-[   57.566792]  clk_summary_show_subtree+0x220/0x2f0
-[   57.571450]  clk_summary_show+0x84/0xb8
-[   57.575245]  seq_read_iter+0x1bc/0x4b8
-[   57.578954]  seq_read+0x8c/0xd0
-[   57.582059]  full_proxy_read+0x68/0xc8
-[   57.585767]  vfs_read+0xb0/0x268
-[   57.588959]  ksys_read+0x70/0x108
-[   57.592236]  __arm64_sys_read+0x24/0x38
-[   57.596031]  invoke_syscall+0x50/0x128
-[   57.599740]  el0_svc_common.constprop.0+0x48/0xf8
-[   57.604397]  do_el0_svc+0x28/0x40
-[   57.607675]  el0_svc+0x34/0xb8
-[   57.610694]  el0t_64_sync_handler+0x13c/0x158
-[   57.615006]  el0t_64_sync+0x190/0x198
-[   57.618635] Code: a9bd7bfd 910003fd a90153f3 aa0003f3 (b941fc00)
-[   57.624668] ---[ end trace 0000000000000000 ]---
+Move maintenance of the binding to the Qualcomm Clock Drivers maintainer
+as suggested by Bjorn Andersson.
 
-Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
+Signed-off-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 ---
+ Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/meson/axg.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index c12f81dfa674..5f60f2bcca59 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -2142,7 +2142,9 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
- 	&axg_vclk_input,
- 	&axg_vclk2_input,
- 	&axg_vclk_div,
-+	&axg_vclk_div1,
- 	&axg_vclk2_div,
-+	&axg_vclk2_div1,
- 	&axg_vclk_div2_en,
- 	&axg_vclk_div4_en,
- 	&axg_vclk_div6_en,
+diff --git a/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+index 03fa30fe9253..e0f4d692728c 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Q6SSTOP clock Controller
+ 
+ maintainers:
+-  - Govind Singh <govinds@codeaurora.org>
++  - Bjorn Andersson <andersson@kernel.org>
+ 
+ properties:
+   compatible:
 -- 
 2.34.1
 
