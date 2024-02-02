@@ -1,321 +1,149 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F75047768
-	for <linux-clk@vger.kernel.org>; Fri,  2 Feb 2024 13:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BF31854;
+	Fri,  2 Feb 2024 14:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706882400; cv=none; b=tKj2tWlxh5N0Jt6KrHPUw0kDinnVgShJXnskipmk7Kfv1ehjVDlTn7G7DI42OiHXt+qMuCpEAPvru0xXRpBuYdYngwlJnP5z1jYshD1faw3q0v70tWLw89PI0eTmc7cYU7jrTMvwJ6ChyymK2fVxdrTY+HxCbkTqcwjAGrqOy/0=
+	t=1706884031; cv=none; b=ZVi1el5BYsDo00rW8sLH5XgYOCHrVHhYZ5/95RlCk6+bv+I6MGff/c7WxLByogp8baDY1vbBnPqxBY3xfOEztsTFblPMGJ1n88OB+XkTmjoGn0YZbzbFM2SVhixqZ/Ln1FrD0ArBKKVXz9ascgm933qrOqIkGrgqoJf+XHbHRSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706882400; c=relaxed/simple;
-	bh=ANIJS9UzkOmFsPmPeZuENE1ZuoiAp/fMOA7MnKgVqIE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=mZPsiUcTWPJzNZfrg/nLJ5Kh/UHcv2+BwnXTvSN4ZZ3pihtz2BJfq7YDF/Y2Sw04/L6a0PyGwSdpo1ewSvBSCirSHf4To0Qj2o8On1PB+Ox4MAUrn8+RaOIzFthAugVFB5QjcTTS67yzmh/eGsaMRE85lC+OIn3pM+DUYLKKBtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Y9YIZYgg; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1706884031; c=relaxed/simple;
+	bh=CHL4VTwATVPlntAxMS+V97knUqQfUioN/hnMfpChPiY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DOvTpdWYHhCym8NMXGfHzssHmIIpsjncNx8iGyg/1mYmeRCuo4D9DDEFnms/zQWabHP1AbTTkK44vmkO/4HKrscYlZjfg2Hdwok+/TRN5xY5zZ/vkYKIrsxY1uswalZb9n8QNugViYGEbIaGO11pSmENLhKl+mo3kc2ZugpUugE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=tv1lOjPn; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Y9YIZYgg"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240202135954epoutp0186e1b6ae22599ea523426369fcbbfc2a~wEH5x6pHG1338013380epoutp01U
-	for <linux-clk@vger.kernel.org>; Fri,  2 Feb 2024 13:59:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240202135954epoutp0186e1b6ae22599ea523426369fcbbfc2a~wEH5x6pHG1338013380epoutp01U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1706882394;
-	bh=uPljuUqcnvBKfoTySKkhA0+5apgmEsMGTJCKcyU/yGk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=Y9YIZYgg0UM/CDb7siYyh1EpHU+CwmZrspyKMd+PBWop6KQgudfOqKCmHWgANBUtg
-	 rEHe3CjXYZxJwsheX4pVvc0iobLihlKFsKQ4ny572K0NcvRJwDL8dpWBGkBUcTG9es
-	 j1M9pU78pNuj3pC6yMo8ZToCfJp9VW5s6AlfMNI4=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240202135952epcas5p14a5f82d917b630160044cc0cab67da79~wEH4njU-I2501125011epcas5p1N;
-	Fri,  2 Feb 2024 13:59:52 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4TRHTM0l7hz4x9Ps; Fri,  2 Feb
-	2024 13:59:51 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4B.4C.19369.655FCB56; Fri,  2 Feb 2024 22:59:50 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240202115943epcas5p4ffd74eaf0571f61e3bac50be11a94632~wCe_eyBOS1710017100epcas5p4u;
-	Fri,  2 Feb 2024 11:59:43 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240202115943epsmtrp1f6562f1a4757eff343b41e8d1578699c~wCe_dpNxn1052510525epsmtrp1f;
-	Fri,  2 Feb 2024 11:59:43 +0000 (GMT)
-X-AuditID: b6c32a50-c99ff70000004ba9-e9-65bcf556438e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D7.27.07368.F29DCB56; Fri,  2 Feb 2024 20:59:43 +0900 (KST)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240202115940epsmtip103f90ce67606603a09560c7217533b83~wCe79AHbc2779527795epsmtip1y;
-	Fri,  2 Feb 2024 11:59:40 +0000 (GMT)
-From: "Shradha Todi" <shradha.t@samsung.com>
-To: "'Manivannan Sadhasivam'" <manivannan.sadhasivam@linaro.org>,
-	<m.szyprowski@samsung.com>, <sboyd@kernel.org>, <mturquette@baylibre.com>
-Cc: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <jingoohan1@gmail.com>,
-	<lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-	<bhelgaas@google.com>, <krzysztof.kozlowski@linaro.org>,
-	<alim.akhtar@samsung.com>, <linux@armlinux.org.uk>,
-	<pankaj.dubey@samsung.com>
-In-Reply-To: <20240129065448.GC2971@thinkpad>
-Subject: RE: [PATCH v4 1/2] clk: Provide managed helper to get and enable
- bulk clocks
-Date: Fri, 2 Feb 2024 17:29:30 +0530
-Message-ID: <08a901da55cf$4ee48000$ecad8000$@samsung.com>
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="tv1lOjPn"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 856F8100009;
+	Fri,  2 Feb 2024 17:27:03 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 856F8100009
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1706884023;
+	bh=JeqPP36z4pnlbw1sLnjMU+SnvqzYB8B7+7WjQdUZT4c=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=tv1lOjPnlavwyjm3XqtQCuyI0jQIgx8BjwD5J7mtuY+0ASihXhtcUwGqBSlJOpxF0
+	 4VcsGPlJbYKLmhw4lYFAHsYtbmjiRh6elHhYTXK16Txt+RykRNbsbloux+baHiiROX
+	 O37p8jA5N1pIMokgEMIfVIHfHW8aiWYuyJ5Jt0y3likxUqK0Y4+Q3N5+TD23MQyNmh
+	 JL1FlWWuJiMA4sWq+EBP80SCK6Ckxspn9FxGmMxjpacDIaBY4YL2T4SdV6rqW26I4N
+	 UBwHr9zyHt7iTS+fJ2xhaDLfRz5V6XQbSr4acJqiKHuO/pqPndy8yaPV2POm8jBRTd
+	 hCSgBs0aA0r9Q==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Fri,  2 Feb 2024 17:27:03 +0300 (MSK)
+Received: from localhost.localdomain (100.64.160.123) by
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Fri, 2 Feb 2024 17:27:03 +0300
+From: Igor Prusov <ivprusov@salutedevices.com>
+To: <jbrunet@baylibre.com>, <neil.armstrong@linaro.org>
+CC: <kernel@salutedevices.com>, <prusovigor@gmail.com>, Igor Prusov
+	<ivprusov@salutedevices.com>, Kevin Hilman <khilman@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: meson: Add missing clocks to axg_clk_regmaps
+Date: Fri, 2 Feb 2024 17:25:48 +0300
+Message-ID: <20240202172537.1.I64656c75d84284bc91e6126b50b33c502be7c42a@changeid>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIcpPks/WB953w72Rl3v8cfkz9jJgG3GiapAsOufW4BkcYK8bBB75tA
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTVxjGc3r7ydLlrkU5dKHBi1MR+agreFEYS2DsLriExTjnpmM3cNci
-	/UpvK27OjLiqgYH41SBFqiIBRWBSKAJr58K3ZBNZm06jqJtd6GSbHQM2BMooFzf++533vM95
-	8rznHD4i8nEl/HyNgdJrSBXGDWG390RHx7475aASiq3b8EfWdi5ee1iJX56s5OHOcTsPLyqd
-	5eC2xx4O/mfpAw7u6jrHxb+3DnDxs8PfsPBusxPgpjkTG2/qHeXho6ZiDj4y9AZeY5/k4QuO
-	Dh4e8LSwXxcRLs8IQjy9c4RHdFpGecQFm5GwNRRzifseB5fwuitYRGvt58TxtgZA/GWTZoe8
-	X5CipMg8Sh9JaXK1efkaRSqWtSMnPScxKUEWK0vGt2CRGlJNpWIZ27NjM/NVi5GwyP2kyrhY
-	yiZpGot/LUWvNRqoSKWWNqRilC5PpZPr4mhSTRs1ijgNZdgqS0jYnLjY+FGB0tXbw9X54w/8
-	dOMMUgSc60qAgA9ROfReq+GVgBC+CHUAaHd0IsxiAsDATQuLWUwDWDrZySkB/CXJvaZtTN0J
-	4B9zjezgUSLUB+BvTXSQuegm6HXPIUEORcsA7PIXBgUIegqB9X2zILghQGPhbb+JE2Qxugue
-	ni5jBZmNroWDPw4usRBNhjd8VQjDL8Gbld4lMwSNgXUXxxEmQySc+aWOw5hlwqo2G5fpCYN9
-	M6VLcSBaLoDHpqo4jCADfrnwA2BYDJ8MtPEYlsBfy48uswJeaT27bKCC0621LIbT4Lfuc+zg
-	JBA0Gn7VFc+UI6B5qJnF+L4Iy2a9y+1C2GF9zlFwct7BZjgcWvtdnBMAs6yIZlkRzbIiguV/
-	twuA3QAklI5WK6jcRJ0sVkMV/nfjuVq1DSw9+Y3ZHeDqtfm4bsDig24A+QgWKrwi7aREwjzy
-	k08pvTZHb1RRdDdIXBz4SUSyKle7+Gc0hhyZPDlBnpSUJE9+NUmGhQnHj1TniVAFaaAKKEpH
-	6Z/rWHyBpIgljvEJ/XX2OM+T/XdbHqetj7ofisR4Wpoa/+krd8vTn30Xte/Q3g3tt1ZpGmKm
-	9ogiXI/2kIrLBtRpCxdVrD5/Ujph/yzz2Bnz9dOEtPDtiJJdCrZZvHNd2VTgwzHBYH7DQ/vH
-	nuohgfbOm2rJWv+limHBzykzPVdHyIM7X9CJd/eEHbi3ufnB9Q/Ulpa0/vqMTv+mv+fGwmVF
-	t9dkheZKzvc3krKnvb8nNu09vrU7ekvNRLTyYav1vUPpRwONh794eQYUBr5Ok7SNiQcqrT4W
-	1Ruzen4N37yw3aQcHqqYCevPEtD1mbtPVG94S3p3yjTUjD07NWK79QpcMO94Z5/i0kE3xqaV
-	pGwjoqfJfwHDWPdIewQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsWy7bCSnK7+zT2pBj2XRSwezNvGZrGkKcNi
-	xZeZ7BZ7X29lt2jo+c1qsenxNVaLjz33WC0u75rDZnF23nE2ixnn9zFZHJq6l9Gi5U8Li8Xa
-	I3fZLe62dLJaXDzlarFo6xd2i/97drBb/Lu2kcVByOPytYvMHu9vtLJ77Jx1l91jwaZSj02r
-	Otk87lzbw+bx5Mp0Jo/NS+o9+rasYvT4vEkugCuKyyYlNSezLLVI3y6BK+Ptjr9MBc/1Kv5M
-	nMzUwLhYtYuRg0NCwETi9lrrLkYuDiGB3YwSX46sYOti5ASKS0p8vriOCcIWllj57zk7RNEz
-	RomTT68wgiTYBHQknlz5wwySEBGYyCixfl4HK4jDLLCAWWL+pW/MEC13GCVaF71gAWnhFNCV
-	uPChhRXEFhYIldh9ZjM7iM0ioCJx4voJsH28ApYS+1/MZoawBSVOznwC1sssoC3x9OZTOHvZ
-	wtfMEPcpSPx8ugxspoiAm8TsLZvYIGrEJY7+7GGewCg8C8moWUhGzUIyahaSlgWMLKsYJVML
-	inPTc5MNCwzzUsv1ihNzi0vz0vWS83M3MYJjXUtjB+O9+f/0DjEycTAeYpTgYFYS4V0ptzNV
-	iDclsbIqtSg/vqg0J7X4EKM0B4uSOK/hjNkpQgLpiSWp2ampBalFMFkmDk6pBqatWysDRbm3
-	Brx7+sh3F3/+IncXe3a/iukzfTP/eNZce701VP5WinJG0WvuXWXuJ+euenLUaP+GI9dmsP7w
-	cMz903svS2fNf3nZQ+7/znU7XTv63OvWJVEPVcE3kwW+h+5kTdbOPCPV1fOvUDjxVrybTdeN
-	10ZNE9Sn7A+Kkcu01rP0Vwhjrm4qFjn44Nsij+WvZ0xXPH/ALW7ny/VRZz1bJx5uWWUVPP8V
-	+9Q4C837cTY6Nj8mM+7nVy6syZUVitaedOTkxW/JCw5/+v9h+4FTS+9M2Gpt/H9iwyXeNR0v
-	NrzYqfwqkUdPODtYNEzc2vTuB7EzZ77l6YqeOicp2sAkonDHpujZJv2VSiJTGf2VWIozEg21
-	mIuKEwFOiEzzZAMAAA==
-X-CMS-MailID: 20240202115943epcas5p4ffd74eaf0571f61e3bac50be11a94632
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240124103855epcas5p27400bd95df42f36b9547a4e28aa26f5d
-References: <20240124103838.32478-1-shradha.t@samsung.com>
-	<CGME20240124103855epcas5p27400bd95df42f36b9547a4e28aa26f5d@epcas5p2.samsung.com>
-	<20240124103838.32478-2-shradha.t@samsung.com>
-	<20240129065448.GC2971@thinkpad>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 183159 [Feb 02 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.3
+X-KSMG-AntiSpam-Envelope-From: ivprusov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 7 0.3.7 6d6bf5bd8eea7373134f756a2fd73e9456bb7d1a, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/02 11:00:00 #23326006
+X-KSMG-AntiVirus-Status: Clean, skipped
 
+Some clocks were missing from axg_clk_regmaps, which caused kernel panic
+during cat /sys/kernel/debug/clk/clk_summary
 
+[   57.349402] Unable to handle kernel NULL pointer dereference at virtual address 00000000000001fc
+...
+[   57.430002] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   57.436900] pc : regmap_read+0x1c/0x88
+[   57.440608] lr : clk_regmap_gate_is_enabled+0x3c/0xb0
+[   57.445611] sp : ffff800082f1b690
+[   57.448888] x29: ffff800082f1b690 x28: 0000000000000000 x27: ffff800080eb9a70
+[   57.455961] x26: 0000000000000007 x25: 0000000000000016 x24: 0000000000000000
+[   57.463033] x23: ffff800080e8b488 x22: 0000000000000015 x21: ffff00000e7e7000
+[   57.470106] x20: ffff00000400ec00 x19: 0000000000000000 x18: ffffffffffffffff
+[   57.477178] x17: 0000000000000000 x16: 0000000000000000 x15: ffff0000042a3000
+[   57.484251] x14: 0000000000000000 x13: ffff0000042a2fec x12: 0000000005f5e100
+[   57.491323] x11: abcc77118461cefd x10: 0000000000000020 x9 : ffff8000805e4b24
+[   57.498396] x8 : ffff0000028063c0 x7 : ffff800082f1b710 x6 : ffff800082f1b710
+[   57.505468] x5 : 00000000ffffffd0 x4 : ffff800082f1b6e0 x3 : 0000000000001000
+[   57.512541] x2 : ffff800082f1b6e4 x1 : 000000000000012c x0 : 0000000000000000
+[   57.519615] Call trace:
+[   57.522030]  regmap_read+0x1c/0x88
+[   57.525393]  clk_regmap_gate_is_enabled+0x3c/0xb0
+[   57.530050]  clk_core_is_enabled+0x44/0x120
+[   57.534190]  clk_summary_show_subtree+0x154/0x2f0
+[   57.538847]  clk_summary_show_subtree+0x220/0x2f0
+[   57.543505]  clk_summary_show_subtree+0x220/0x2f0
+[   57.548162]  clk_summary_show_subtree+0x220/0x2f0
+[   57.552820]  clk_summary_show_subtree+0x220/0x2f0
+[   57.557477]  clk_summary_show_subtree+0x220/0x2f0
+[   57.562135]  clk_summary_show_subtree+0x220/0x2f0
+[   57.566792]  clk_summary_show_subtree+0x220/0x2f0
+[   57.571450]  clk_summary_show+0x84/0xb8
+[   57.575245]  seq_read_iter+0x1bc/0x4b8
+[   57.578954]  seq_read+0x8c/0xd0
+[   57.582059]  full_proxy_read+0x68/0xc8
+[   57.585767]  vfs_read+0xb0/0x268
+[   57.588959]  ksys_read+0x70/0x108
+[   57.592236]  __arm64_sys_read+0x24/0x38
+[   57.596031]  invoke_syscall+0x50/0x128
+[   57.599740]  el0_svc_common.constprop.0+0x48/0xf8
+[   57.604397]  do_el0_svc+0x28/0x40
+[   57.607675]  el0_svc+0x34/0xb8
+[   57.610694]  el0t_64_sync_handler+0x13c/0x158
+[   57.615006]  el0t_64_sync+0x190/0x198
+[   57.618635] Code: a9bd7bfd 910003fd a90153f3 aa0003f3 (b941fc00)
+[   57.624668] ---[ end trace 0000000000000000 ]---
 
-> -----Original Message-----
-> From: Manivannan Sadhasivam <manivannan.sadhasivam=40linaro.org>
-> Sent: 29 January 2024 12:25
-> To: Shradha Todi <shradha.t=40samsung.com>
-> Cc: linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
-> pci=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-sams=
-ung-
-> soc=40vger.kernel.org; mturquette=40baylibre.com; sboyd=40kernel.org;
-> jingoohan1=40gmail.com; lpieralisi=40kernel.org; kw=40linux.com; robh=40k=
-ernel.org;
-> bhelgaas=40google.com; krzysztof.kozlowski=40linaro.org;
-> alim.akhtar=40samsung.com; linux=40armlinux.org.uk;
-> m.szyprowski=40samsung.com; pankaj.dubey=40samsung.com
-> Subject: Re: =5BPATCH v4 1/2=5D clk: Provide managed helper to get and en=
-able bulk
-> clocks
->=20
-> On Wed, Jan 24, 2024 at 04:08:37PM +0530, Shradha Todi wrote:
-> > Provide a managed devm_clk_bulk* wrapper to get and enable all bulk
-> > clocks in order to simplify drivers that keeps all clocks enabled for
-> > the time of driver operation.
-> >
-> > Suggested-by: Marek Szyprowski <m.szyprowski=40samsung.com>
-> > Signed-off-by: Shradha Todi <shradha.t=40samsung.com>
-> > ---
-> >  drivers/clk/clk-devres.c =7C 40
-> ++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/clk.h      =7C 24 ++++++++++++++++++++++++
-> >  2 files changed, 64 insertions(+)
-> >
-> > diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c index
-> > 4fb4fd4b06bd..cbbd2cc339c3 100644
-> > --- a/drivers/clk/clk-devres.c
-> > +++ b/drivers/clk/clk-devres.c
-> > =40=40 -182,6 +182,46 =40=40 int __must_check devm_clk_bulk_get_all(str=
-uct
-> > device *dev,  =7D  EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
-> >
-> > +static void devm_clk_bulk_release_all_enable(struct device *dev, void
-> > +*res) =7B
-> > +	struct clk_bulk_devres *devres =3D res;
-> > +
-> > +	clk_bulk_disable_unprepare(devres->num_clks, devres->clks);
-> > +	clk_bulk_put_all(devres->num_clks, devres->clks); =7D
-> > +
-> > +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
-> > +					      struct clk_bulk_data **clks) =7B
-> > +	struct clk_bulk_devres *devres;
-> > +	int ret;
-> > +
-> > +	devres =3D devres_alloc(devm_clk_bulk_release_all_enable,
-> > +			      sizeof(*devres), GFP_KERNEL);
-> > +	if (=21devres)
-> > +		return -ENOMEM;
-> > +
-> > +	ret =3D clk_bulk_get_all(dev, &devres->clks);
-> > +	if (ret > 0) =7B
-> > +		*clks =3D devres->clks;
-> > +		devres->num_clks =3D ret;
-> > +	=7D else =7B
-> > +		devres_free(devres);
-> > +		return ret;
-> > +	=7D
->=20
-> How about:
->=20
-> 	ret =3D clk_bulk_get_all(dev, &devres->clks);
-> 	if (ret <=3D 0) =7B
-> 		devres_free(devres);
-> 		return ret;
-> 	=7D
->=20
-> 	*clks =3D devres->clks;
-> 	devres->num_clks =3D ret;
->=20
-> Even though this patch follows the pattern used by the rest of the APIs i=
-n the
-> driver, IMO above makes it more readable.
->=20
+Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
+---
 
-Since I have usually seen that maintainers suggest to maintain the coding s=
-tyle of the file, I followed the same.
-If you have a stronger reason to change this, please let me know
-Marek, Michael, Stephen please let us know what do you think about this?
+ drivers/clk/meson/axg.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> > +
-> > +	ret =3D clk_bulk_prepare_enable(devres->num_clks, *clks);
-> > +	if (=21ret) =7B
-> > +		devres_add(dev, devres);
-> > +	=7D else =7B
-> > +		clk_bulk_put_all(devres->num_clks, devres->clks);
-> > +		devres_free(devres);
-> > +	=7D
-> > +
->=20
-> Same as above:
->=20
-> 	ret =3D clk_bulk_prepare_enable(devres->num_clks, *clks);
-> 	if (ret) =7B
-> 		clk_bulk_put_all(devres->num_clks, devres->clks);
-> 		devres_free(devres);
-> 		return ret;
-> 	=7D
->=20
-> 	devres_add(dev, devres);
->=20
-> > +	return ret;
->=20
-> 	return 0;
->=20
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index c12f81dfa674..5f60f2bcca59 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -2142,7 +2142,9 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
+ 	&axg_vclk_input,
+ 	&axg_vclk2_input,
+ 	&axg_vclk_div,
++	&axg_vclk_div1,
+ 	&axg_vclk2_div,
++	&axg_vclk2_div1,
+ 	&axg_vclk_div2_en,
+ 	&axg_vclk_div4_en,
+ 	&axg_vclk_div6_en,
+-- 
+2.34.1
 
-Same as above
-
-> > +=7D
-> > +EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
-> > +
-> >  static int devm_clk_match(struct device *dev, void *res, void *data)
-> > =7B
-> >  	struct clk **c =3D res;
-> > diff --git a/include/linux/clk.h b/include/linux/clk.h index
-> > 1ef013324237..a005e709b7bd 100644
-> > --- a/include/linux/clk.h
-> > +++ b/include/linux/clk.h
-> > =40=40 -438,6 +438,23 =40=40 int __must_check
-> > devm_clk_bulk_get_optional(struct device *dev, int num_clks,  int
-> __must_check devm_clk_bulk_get_all(struct device *dev,
-> >  				       struct clk_bulk_data **clks);
-> >
-> > +/**
-> > + * devm_clk_bulk_get_all_enable - managed get multiple clk consumers a=
-nd
-> > + *				  enable all clks
->=20
-> =22Get and enable all clocks of the consumer (managed)=22
->=20
-
-Will take this up in the next patchset
-
-> > + * =40dev: device for clock =22consumer=22
-> > + * =40clks: pointer to the clk_bulk_data table of consumer
-> > + *
-> > + * Returns success (0) or negative errno.
-> > + *
-> > + * This helper function allows drivers to get several clk
->=20
-> =22This helper function allows drivers to get all clocks of the consumer =
-and enables
-> them...=22
->=20
-> - Mani
->=20
-
-Will take this up. Thanks for your review Mani=21
-
-> > + * consumers and enable all of them in one operation with management.
-> > + * The clks will automatically be disabled and freed when the device
-> > + * is unbound.
-> > + */
-> > +
-> > +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
-> > +					      struct clk_bulk_data **clks);
-> > +
-> >  /**
-> >   * devm_clk_get - lookup and obtain a managed reference to a clock pro=
-ducer.
-> >   * =40dev: device for clock =22consumer=22
-> > =40=40 -960,6 +977,13 =40=40 static inline int __must_check
-> devm_clk_bulk_get_all(struct device *dev,
-> >  	return 0;
-> >  =7D
-> >
-> > +static inline int __must_check devm_clk_bulk_get_all_enable(struct dev=
-ice
-> *dev,
-> > +						struct clk_bulk_data **clks)
-> > +=7B
-> > +
-> > +	return 0;
-> > +=7D
-> > +
-> >  static inline struct clk *devm_get_clk_from_child(struct device *dev,
-> >  				struct device_node *np, const char *con_id)  =7B
-> > --
-> > 2.17.1
-> >
->=20
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D=20=E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D=0D=0A=0D=0A
