@@ -1,74 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC4960260;
-	Sat,  3 Feb 2024 17:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448145D8FB;
+	Sat,  3 Feb 2024 17:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706979990; cv=none; b=K48iwQ4B4scd2orShc63nIYky+W2RgtptDzS6zr4s/NInPnftWev3GGoTHAe4O4fXg3NH3LYZQzsfumz0TFzRs3c83YirlDXAheCtwMIMcqS/W+jCYiwssmY3YNaC1X/r8hOI6mzhWXdMWeK/tMKWRR2aiuFM+9NTMGP9pv0hkQ=
+	t=1706981823; cv=none; b=dR0QUbCT90maJIgy4Hse2CFvNDcJnIQzz++Ma0Q2TvQKboOCKtNrxQf4eeiE1r3o28dK91nlZ1w91dNgOX7Z99iuuyiPTG+bOugG5j1GQ+NgKwxA567up9QErIW1WzSHkg6c7Ap9TttL0yb04TxzjLZPMcFGmkaWlYcvMYRmVrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706979990; c=relaxed/simple;
-	bh=s6nZRbM0fTJL+N2c/ac4KqfCqy+WoklBkqv8viEYCMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i5iLAnY53Wj735qV/pEo19ryysH5tfUqFAgTthMpqLjqyDL5fVyEwIT5FiO83xlHW9pbE+v4JSvLXJqjtG/INy1VuufJY9uS+gLXanb2EUMfIqhkjnaccNigYi8T15B1Si8xaba0bEe2lhc1vowrNoebtVHJFqtB/ljZ9LYiWnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQUOr7KA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706981823; c=relaxed/simple;
+	bh=6CIwMC1CajdMlU8LRM9E5jjOF9jo53Xs7p8jN9KVEYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rU15sgBhBM6bK8o3CdAZAuM6NuWlH4LFyjbI1bCVCwvxWOfHQ15TCmA6ireI+yWj2dvSUU4NzWe1/OVNXUvywrxKz7X3zpaolcL5qEINn3HvPRwn/WWSv7bVpMzbrCuCq6sTk+ENyMVygjnhwnr2U0Ax0K/lf/jQfEzEF/z4NPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boQXCJ2M; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQUOr7KA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41FEEC433C7;
-	Sat,  3 Feb 2024 17:06:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boQXCJ2M"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F51C433F1;
+	Sat,  3 Feb 2024 17:37:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706979990;
-	bh=s6nZRbM0fTJL+N2c/ac4KqfCqy+WoklBkqv8viEYCMA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cQUOr7KA6ItuhvvIPxQly6HS3T0rkdSMcOWUkDjEwBPL+LJu6JlV3uSXqpKGINKpA
-	 zhp4Zrzzcp1BotCx/eepZvAg6YFbb0PIBtQLuwXmtIwSAZtRjoFNquozAUItpF+/9T
-	 yiYi0T0YZcJ1BTiZ3fMHszvLY65A59Bxq9R5YqOsyG1zmbxit2UbXJtdhltY08x1jO
-	 wlo9xK9+6LJiDw5L1RxXVf9DPM5wwPP6CBblfb6w6UxOdhjgsuGwTWaQcDfrXXIwr5
-	 +hcl2zdG2Ad7upyEJ/hJZA5oXsPni0tAeIGIAWuma6FxIAoiLxyyNayHKBSr14HQCF
-	 XAiiAuvFa+JXQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: konrad.dybcio@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: qcom: Fix @codeaurora email in Q6SSTOP
-Date: Sat,  3 Feb 2024 11:06:21 -0600
-Message-ID: <170697997759.332807.15158372274778421217.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240202171915.4101842-1-quic_jhugo@quicinc.com>
-References: <20240202171915.4101842-1-quic_jhugo@quicinc.com>
+	s=k20201202; t=1706981822;
+	bh=6CIwMC1CajdMlU8LRM9E5jjOF9jo53Xs7p8jN9KVEYM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=boQXCJ2MHwtEZO0dvWiRSBhza1U2pxy33Dq6MJxqspVPB6D99GhVODK2GbMd7v3sv
+	 sL8EKqkdEs0CLsqqjSCdgjPGY3gTkFcm29U5AI7qXBUBQw5SZsWN6Z7OWigLxSqboY
+	 5299vB3fUOiN52inEwh68XUGug2JNdFxAxBvqPtJslEEgBF9IN6iwXlBC5NmNXdGkh
+	 mFon/MbwhhbUH5UqCBKjhQocCr46ftKpeQG7nfESkSnwxk4oodDrzTTuHjhcoSRWJO
+	 gAlc88mFRJP5drhT7Ld0XGiimITUsE8DFRCkEoGdn0UMtTimYFrtpUphB/cWfHBqUq
+	 kSb7xA2ClQoXw==
+Date: Sat, 3 Feb 2024 18:36:59 +0100
+From: Wolfram Sang <wsa@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, Cong Dang <cong.dang.xn@renesas.com>
+Subject: Re: [PATCH] clk: renesas: r8a779h0: Add watchdog clock
+Message-ID: <Zb55u82Bbf1QfpzO@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, Cong Dang <cong.dang.xn@renesas.com>
+References: <f1dbf0f3f484015f2e629d78b746cf377d6f6746.1706790015.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SYoilqVqBl0N0AAM"
+Content-Disposition: inline
+In-Reply-To: <f1dbf0f3f484015f2e629d78b746cf377d6f6746.1706790015.git.geert+renesas@glider.be>
 
 
-On Fri, 02 Feb 2024 10:19:15 -0700, Jeffrey Hugo wrote:
-> The servers for the @codeaurora domain are long retired and any messages
-> addressed there will bounce.  Govind Singh has left the company which
-> appears to leave the Q6SSTOP clock controller binding unmaintained.
-> 
-> Move maintenance of the binding to the Qualcomm Clock Drivers maintainer
-> as suggested by Bjorn Andersson.
-> 
-> [...]
+--SYoilqVqBl0N0AAM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+On Thu, Feb 01, 2024 at 01:21:55PM +0100, Geert Uytterhoeven wrote:
+> From: Cong Dang <cong.dang.xn@renesas.com>
+>=20
+> Add the module clock used by the RCLK Watchdog Timer on the Renesas
+> R-Car V4M (R8A779H0) SoC.
+>=20
+> Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[1/1] dt-bindings: clock: qcom: Fix @codeaurora email in Q6SSTOP
-      commit: d22118f005231f543ef45e17342c3eb2a71cbfe3
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+
+--SYoilqVqBl0N0AAM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmW+ebsACgkQFA3kzBSg
+KbZEpQ//RqWsWpqg3D1cbrlbTyOOBo+b3DHwiJq/MQRgXjOcdosiP/pCLgnYeWn1
+CWXUYq69B+11g64SGU7RQSotprS3l5gqxKgNchWdiY0aSFmBPx/A5hgKc6TGw9aH
+HzttemgUUlmoUQ9TEpzIoawapJQpbqszQgPOd+EKNuVpal17jJ2IFSwV9jyYwAib
+MiAJ3ow+H5wyxPBhMz1iNPw6ltwlyyOGKBKBOIC8GR918GTNIjETtsL41i8EMwQe
+2vmGsDV4xpMOF5FzaO6STUDrXRRQ3I6SSV8H8DQB/mWUh+isOx9p1CRomfatV/Gf
+goODhTzqdaZ8eQnZDSorzNc5sOdlYUieXic+U3A3hnUncigJaH7mAtj6HXN3wPBY
+Y2bJEtmrG0hxiGSewciCIBBEiZi0XnI/L0dJRcUFSMXL7ZJ1X8jQO4x3zdBIz4Dy
+58Pnp0dfKVhq/xsEcfPaqXewhGg/v6fEBFAuxT8NSMc4xy5Mg984j8Jy9LTNSz2y
+t21ccI+2Fx9ZlPrAfJD+JFMRUKYyWYW9t/Ti78v1SrLYzYEJrIUonBZWhVDsyVvO
+Y8e4BOOWKpHDFRXGHQnlZwZn9KPJt4hYX2fjCbeqxPo6IpWykyYgfycozc5R04P4
+HbprEB4swUIt3Cxr/hYq7PTzLANmHXYYZa9TNjz4RtBQAn+ddBc=
+=lYhH
+-----END PGP SIGNATURE-----
+
+--SYoilqVqBl0N0AAM--
