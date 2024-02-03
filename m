@@ -1,91 +1,74 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECA28062A;
-	Fri,  2 Feb 2024 20:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC4960260;
+	Sat,  3 Feb 2024 17:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706905330; cv=none; b=lKU5dZ0TJ0vdbVDiciyr8AjkONtievE8yUtA0CAcLxkyF6/jWYjeT21K9vJKuClB2X7VVizbdSvsi/ZJm6ESqvRRUBDLiidYXFqvljgJikdM3BZihOpGjOrdHyRBzPTYroUGkVOkIS+TVhIgFK0/Ca/o50tzFsCibW7hmuF853g=
+	t=1706979990; cv=none; b=K48iwQ4B4scd2orShc63nIYky+W2RgtptDzS6zr4s/NInPnftWev3GGoTHAe4O4fXg3NH3LYZQzsfumz0TFzRs3c83YirlDXAheCtwMIMcqS/W+jCYiwssmY3YNaC1X/r8hOI6mzhWXdMWeK/tMKWRR2aiuFM+9NTMGP9pv0hkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706905330; c=relaxed/simple;
-	bh=Q2m/2wszr55453umWWxAgsLwrfW/dmW8Ii0UsK5l6PM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iNAspKSZSc0FKEev0E921pT3RJMzJzpDoPo30Y7KF/RRoN0eTrmLVkW7i+nwYoqQBkKrLthb3uEu9dsON89WiHqQGptnRJwcfWKjBxAViXVZjhJKNz4Ng0c4+pepav0h7+mbuoFDnjUblP6wrARVBQFLnfqnvLOj5JluZz6SLqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=G8C10dje; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1706979990; c=relaxed/simple;
+	bh=s6nZRbM0fTJL+N2c/ac4KqfCqy+WoklBkqv8viEYCMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i5iLAnY53Wj735qV/pEo19ryysH5tfUqFAgTthMpqLjqyDL5fVyEwIT5FiO83xlHW9pbE+v4JSvLXJqjtG/INy1VuufJY9uS+gLXanb2EUMfIqhkjnaccNigYi8T15B1Si8xaba0bEe2lhc1vowrNoebtVHJFqtB/ljZ9LYiWnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQUOr7KA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="G8C10dje"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1706905298; x=1707510098; i=markus.elfring@web.de;
-	bh=Q2m/2wszr55453umWWxAgsLwrfW/dmW8Ii0UsK5l6PM=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=G8C10djeXh5lOZvU247Dn+9Cm7OL0cH/D1Bl7WRpbIO2WUKq6yMS521XEpMvH11G
-	 WRc1JCbYGrSI15XggN2RCra71OGpZkOw/2pMmYBAyRP02aCEoaMjo17NonpG7dho1
-	 yMhEmSatRaN1UzQVYk3O0LFCT0q8ylU80Dg71ThxyrJ6FmDQIZHPGmNNoF3FfSEYk
-	 isnxm9vgAhHTnXuxxAg3+TNrXnCN7Ub6cRk4KYRxDOmY6Ym36usxl903tLabYsvNv
-	 SjkoKSBKfbZoeLvoa2+xR1kYH6sc07rftcALRcZ+fYHMe5Qk4zhVfR4o1fssmy9li
-	 +yh3SSzuItAQLfhwEg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MlbLM-1qoioK00NG-00iZ9I; Fri, 02
- Feb 2024 21:21:38 +0100
-Message-ID: <1a3c05b8-45f8-4205-8cb5-3b8f2d791877@web.de>
-Date: Fri, 2 Feb 2024 21:21:19 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQUOr7KA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41FEEC433C7;
+	Sat,  3 Feb 2024 17:06:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706979990;
+	bh=s6nZRbM0fTJL+N2c/ac4KqfCqy+WoklBkqv8viEYCMA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cQUOr7KA6ItuhvvIPxQly6HS3T0rkdSMcOWUkDjEwBPL+LJu6JlV3uSXqpKGINKpA
+	 zhp4Zrzzcp1BotCx/eepZvAg6YFbb0PIBtQLuwXmtIwSAZtRjoFNquozAUItpF+/9T
+	 yiYi0T0YZcJ1BTiZ3fMHszvLY65A59Bxq9R5YqOsyG1zmbxit2UbXJtdhltY08x1jO
+	 wlo9xK9+6LJiDw5L1RxXVf9DPM5wwPP6CBblfb6w6UxOdhjgsuGwTWaQcDfrXXIwr5
+	 +hcl2zdG2Ad7upyEJ/hJZA5oXsPni0tAeIGIAWuma6FxIAoiLxyyNayHKBSr14HQCF
+	 XAiiAuvFa+JXQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: konrad.dybcio@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: qcom: Fix @codeaurora email in Q6SSTOP
+Date: Sat,  3 Feb 2024 11:06:21 -0600
+Message-ID: <170697997759.332807.15158372274778421217.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240202171915.4101842-1-quic_jhugo@quicinc.com>
+References: <20240202171915.4101842-1-quic_jhugo@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: clk: imx: scu: Use common error handling code in
- __imx_clk_gpr_scu()
-To: Abel Vesa <abel.vesa@linaro.org>, kernel@pengutronix.de,
- linux-imx@nxp.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- cocci@inria.fr
-References: <20231210171907.3410922-1-visitorckw@gmail.com>
- <0e906ec6-fe73-4dbd-b555-a2c03b6e1030@web.de> <Zb04UUeE/cU9HtKZ@linaro.org>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <Zb04UUeE/cU9HtKZ@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CSJNiI+KQkY3wXk46J8sqBLCgeytL9YGPMpnE6bhxbHLS1ujsvH
- WtIcKGpQpstSECuHkRUVRn7udhpV/cp9kKG3djHijk+tDqEvugBIpO3jvDiEAqjrmsEDchj
- EB/bFJ8Rrbp+rgxqrwcoYmApEj+c4vj/lGSZtItFepLt/wAggTQ5pyAma0iq4NKvir+Oe1Q
- K195UfBoLASAs8DyCP3XQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wMEpts7wPes=;A2mzpRYQ4imzka4vF4y/w2Bur/w
- +FcbRBULuHCiHAEiLUmpDmxYIoiEltOqt4+UAk/GlKEpka4Jn5xgjW1J+CEP9gFrwJB3OlNFj
- FJr4Ol1aVJgaGQ+I3MuQYaZOCVyjPu69gnwqMW8PAoBRa3z8C8bthaxs/4GvWMAmhWSpUCj4M
- K8TumhrqIE+EdrRpNSOiUe0gCQLuB3kFtQvIvhjHiWB8O98aP8if4f1E0KD5sj7ZJC7TzYlxy
- CjC4T1SDfC3Aiu9wwDuQbqzh0MB1vGCueyN6gBcoqrrrckDnwkUAaYEP5L/NWLM6/Kwp+mWks
- aMlsR0gYgdFWcCZmF3y3zlGgLeHfZ5Dm+gy1Zms2zcwWokaTBClVb/NCL32Vdir/5vKhdmouv
- PGBVxFZ77RhVflIUxRMPQiyAbfQzb/Coghset1BFN5oKKZV6GXUZP9b+DERLK9p4Bg3hS5IXf
- WckBsAsM6SRD1eXkK3sHAfX50iFQHIEQ4MKOpHQFEZuU0H5zFP/Ku/6oEXISDQ3MVa1jNUzAB
- F94sq+123wtyPRNE7ozcyCqYsPRU+zrmf7meIQpP5n8ALO8XSA86QlQh/YgE7o2abTUggMKfh
- XaPy+YMek2mKIegRxReEA6k4bjJHfVsMzxccWG+3LwXzDgx0fNNASGZxHBR1M7Ko1DdnAYQeg
- GkRwilOySYpq3y+oaBWb18XmC11HyOKkIwYkgsZ8ZexZ3B3rYcsSSpYplPZ8Hk9mjoYPZGpcJ
- YhCslGURNYJTpxQOU5y0V+K7LV1Fv7wgpLLc0lPOj+sI/hnMnGZN/bNP4SWTuSkw/ThjnYK2R
- 5/y3ncMmAVC/iinfzzKk+KQynOb3EdQWFAZGl/bFksZyQ=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
->> Use another label so that a bit of exception handling can be better reu=
-sed
->> at the end of this function.
->
-> Please don't send patches as reply to other(s) patches.
 
-This is a general possibility to connect an information sources with
-a corresponding change idea.
-Will the acceptance grow for the presented source code transformation?
+On Fri, 02 Feb 2024 10:19:15 -0700, Jeffrey Hugo wrote:
+> The servers for the @codeaurora domain are long retired and any messages
+> addressed there will bounce.  Govind Singh has left the company which
+> appears to leave the Q6SSTOP clock controller binding unmaintained.
+> 
+> Move maintenance of the binding to the Qualcomm Clock Drivers maintainer
+> as suggested by Bjorn Andersson.
+> 
+> [...]
 
-Regards,
-Markus
+Applied, thanks!
+
+[1/1] dt-bindings: clock: qcom: Fix @codeaurora email in Q6SSTOP
+      commit: d22118f005231f543ef45e17342c3eb2a71cbfe3
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
