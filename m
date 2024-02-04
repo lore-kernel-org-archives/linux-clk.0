@@ -1,92 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA6C5F54D;
-	Sat,  3 Feb 2024 17:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB36E22EF2
+	for <linux-clk@vger.kernel.org>; Sun,  4 Feb 2024 17:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706982007; cv=none; b=VlgWoSV2s/hv5dI7YtHDjS96c4OvyJBbIMjDWUeyYTL/u7l7IX7fsKd0XnIPF1hT1nNWOwJwczJCVwb5KThJ9Osfng44kNnCKFsnwBy2Gfg5QdJfLwzmzDzAu0C08Jy0PQoQQnuD4JajGKVoHYlllhXV4Mg/rcTpwaObEDZi3Rk=
+	t=1707066242; cv=none; b=MOsUd0OV8sKaVeQu3+eBeSAbSm/Cc/wjM+Wa5F6BIMtotYJVSkhheTzgLf2+XvTyY6JsVMISg26O7LyyIDEspj3NCHrhrjXieD4E4ciWHHFPUi7uaP7HiAz5uGyDItHU+gyAdOfDQR+JgxqHBSI2yyFcKhdh3DyXLWhX7WRe27w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706982007; c=relaxed/simple;
-	bh=sJ5dR86lqOLETZ/oJMT7ifSiCYggbtLFez7bSt5sqcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CpR3qiUrwV2vVoTqmD4R9ijoAMCB+5sLGn9mRxR6Nhw8kbgvAFyy1y3mw7/pH45ScfUIGHsFskgArrKsBks1tCgsfDHzTieqZh3YlGuv4DmPYq51skSLFnnhZr1Aj4SjB0xP0VBKRPMdWo4qd40ugQGu04BTvAWq9t4KJ0pb1Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2e1DLCg; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2e1DLCg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33BBCC433F1;
-	Sat,  3 Feb 2024 17:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706982007;
-	bh=sJ5dR86lqOLETZ/oJMT7ifSiCYggbtLFez7bSt5sqcc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M2e1DLCg5KpL7DlFboUD9dF7xJChMqfnRD1mjB+Byp7ePdrNT6Is8JN194cYCoKpv
-	 GpiliENoCOyHe+cewfzcT8XsPewQYT5uHWdr5pV8oA/0JMze40L+1s+BHJvjX7kE/L
-	 9TF92CnoUUcPI1whueht41Rb4V9KXmPrLwcENtZOe20tPtCIhKULda3CwKKWGGSbuz
-	 zWqXFIig/hCMMNo/y1q3zTf/WWS1AQncNUysQkBxovuTY0DL4BEdby4v0/3DHpbBsf
-	 iqK7QO2xeIud4yb3QsgxaoMmwAzlG/uY6wscI1GIj5nVMe4bspJPCodsyWhMtUYDRX
-	 jGb2++r391oLA==
-Date: Sat, 3 Feb 2024 18:40:04 +0100
-From: Wolfram Sang <wsa@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, Cong Dang <cong.dang.xn@renesas.com>
-Subject: Re: [PATCH] clk: renesas: r8a779h0: Add I2C clocks
-Message-ID: <Zb56dNAUFLMD27cI@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	s=arc-20240116; t=1707066242; c=relaxed/simple;
+	bh=Hc9tUiOGoKDix4zY3uj/vZxzd566MMLdtIeaQ+DJ8F0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZHflm16Zp32GCjtZIFubXQtg0bZDx9tWqHQogDtosU8ZAM1t5+feAm6vxOe05cxqr5Rq2ql7uMyGa0i+yb6NQVqjMOoiUAExTfh24yeGlJjBYA0roGdKqxrikS6qOr0cjnweoelxRsR0LE6MUFGp/38pxcuHVmmM61BmNulV6AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-30.elisa-laajakaista.fi [88.113.26.30])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id 61aa5fc3-c37f-11ee-b3cf-005056bd6ce9;
+	Sun, 04 Feb 2024 19:03:58 +0200 (EET)
+From: andy.shevchenko@gmail.com
+Date: Sun, 4 Feb 2024 19:03:56 +0200
+To: Nikita Shubin <nikita.shubin@maquefel.me>
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Lukasz Majewski <lukma@denx.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andy Shevchenko <andy@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, Cong Dang <cong.dang.xn@renesas.com>
-References: <7a76dadbce24c81dd2bee68765a0b41beca2d565.1706790236.git.geert+renesas@glider.be>
+	Stephen Boyd <sboyd@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Mark Brown <broonie@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	"Wu, Aaron" <Aaron.Wu@analog.com>, Lee Jones <lee@kernel.org>,
+	Olof Johansson <olof@lixom.net>, Niklas Cassel <cassel@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
+	netdev@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-ide@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-sound@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v7 00/39] ep93xx device tree conversion
+Message-ID: <Zb_DfISgoNyTKWMp@surfacebook.localdomain>
+References: <20240118-ep93xx-v7-0-d953846ae771@maquefel.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EK9mvlLcUB0sIgUO"
-Content-Disposition: inline
-In-Reply-To: <7a76dadbce24c81dd2bee68765a0b41beca2d565.1706790236.git.geert+renesas@glider.be>
-
-
---EK9mvlLcUB0sIgUO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240118-ep93xx-v7-0-d953846ae771@maquefel.me>
 
-On Thu, Feb 01, 2024 at 01:24:56PM +0100, Geert Uytterhoeven wrote:
-> From: Cong Dang <cong.dang.xn@renesas.com>
->=20
-> Add the module clocks used by the I2C Bus Interfaces on the Renesas
-> R-Car V4M (R8A779H0) SoC.
->=20
-> Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thu, Jan 18, 2024 at 11:20:43AM +0300, Nikita Shubin kirjoitti:
+> The goal is to recieve ACKs for all patches in series to merge it via Arnd branch.
+> 
+> No major changes since last version (v6) all changes are cometic.
+> 
+> Following patches require attention from Stephen Boyd, as they were converted to aux_dev as suggested:
+> 
+> - ARM: ep93xx: add regmap aux_dev
+> - clk: ep93xx: add DT support for Cirrus EP93xx
+> 
+> Following patches require attention from Vinod Koul:
+> 
+> - dma: cirrus: Convert to DT for Cirrus EP93xx
+> - dma: cirrus: remove platform code
+> 
+> Following patches are dropped:
+> - dt-bindings: wdt: Add ts72xx (pulled requested by Wim Van Sebroeck)
+> 
+> Big Thanks to Andy Shevchenko once again.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+You're welcome!
+
+I have a few minor comments, I believe if you send a new version it will be
+final (at least from my p.o.v.).
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---EK9mvlLcUB0sIgUO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmW+enQACgkQFA3kzBSg
-KbZPXw//UYHJsBZ1ba8zUgq6FU4shhsWblCId1C7EEVCsejX+puxAj+WHTUyx/7x
-Qw5sq1fL8izghWDRpdKlI6bnZbp3nS6TuGmAeeIpV626HBw5N17mUU+7JFAddWln
-oRwJuytZZAsvtgiVPevWKp/kdcvAZ7FIHatzBjgGeIBCK2dDybfH1ITQfFVi/wt3
-4ZybodB4SJO73Zs2gE2HHr+TK5VzdHAreC7mmmYm6iyhkZCpAko5zQ5plFVBvTTF
-cUfuQnkq4WkErGtNLZpEKqXRnwy8XKnAP7Gw/geYK9l9l8GesLbJgQC/Vfno7+lF
-KSjp6NeegfNhK+foOLrO1vwHQ996i2Kj3nfU42X01VdFiFRSqY4+ARVIPQk7DndT
-8g34G2n7qwqx63pl5J6KcL6pT36ybSyBqwq8eV8otgiqG6dMmQPzC4yXrCYbZU4y
-nRh3mQPUEl56wdvkDanvhxWfPx6xpC/c9txqeipHvqv/ZS/WNLJiM2iP7Jaurq7p
-Ac3cKIWdz4rZ16RbKi8ItraIYoOqqGLrdMbhjKmoE7Ll7h0uJuMnTUDJskPFEvpO
-pbMUpq7E38B64/U0T48fIXfptWskoR7Z5nE3WKDjw5FugXI7oT1ClH4ck0YGVVeI
-6j0+fiJGwW+nCWxg3mPwDa2L558ML19WHR0iOoPl5a1nw7iTDvw=
-=cJoa
------END PGP SIGNATURE-----
-
---EK9mvlLcUB0sIgUO--
