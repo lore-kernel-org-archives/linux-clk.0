@@ -1,158 +1,80 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9616547F59;
-	Mon,  5 Feb 2024 17:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661B24C3C6;
+	Mon,  5 Feb 2024 18:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707155957; cv=none; b=sXur2vmJ7TNEXIChHErh77RSU0KRMTviX2APg8w1ijAb+J6V1NSF6b2JahwyPn3u59TDcPDvlpHrpDhs9nf45kiS20yprkGN86b9P1BfV9YVXEQM3lReFU/76fX0zdUB0RN3RU3Mw3FwF3rAfcAVTlOoDeFY9u8oZy4o7OhiXGA=
+	t=1707158022; cv=none; b=KZC03VTB7M5IhKSmOMyEqDRFYP4wcAmluULyA3KLDJbQzOuEnMnR0NCpk/RFRZZInZ0fdCBg73cyTK4SIZ10ff7YMp8p95HsuebV81BXxhyl1CHdRb2g1c/sOVaTwTg4j9494UEtHq/A6gdAHTHNzVn+vsGXaTJMQm/F29dDtcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707155957; c=relaxed/simple;
-	bh=iENWrZku65hAa8Tz2gQfbHCsXLTOVZAomEQlg6Oanw4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CI/+ByrJB9FpPqRhDqx64BTaKT/TeQ0hlEkuRE10s4bQ9KGRVu8I5sE/7VNwOEnCq+YCwmMgeazJd5M6qE4HaXEEgbQE4v+E3yn1AqlAH//YBU03qbwRwE+chejtonP+cIivDk4HxLci1XplKeRhAQobtMKuGf5MTbN5VFBwXfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WlysB1YJ; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1707158022; c=relaxed/simple;
+	bh=OMpuFYp2jnF+MtIul2XGUwcOea6+QDQ7KKMjIrGCNbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YG9G4bWDTqxi21KuMRIT1+mC4AwOU+ZdI+3p93FKQ1Q71YG/ZFHAs3wXbkcT9r9Ft8WNB9CNwhz6W9ZsrO8tEv6X1i5nR8lFeCQ29B+NCnAF5voCX/04LerxJPwyflF+lUSHlMrU8YB8yKi9lpkM5VvqP0JDwoU+tXT+DkBYkyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BoBI3GEP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WlysB1YJ"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40fb94d42e4so37731075e9.2;
-        Mon, 05 Feb 2024 09:59:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707155954; x=1707760754; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/C76pIYyE7acYLURd95YZ9JvqXFzoendTPcs1BJgd4E=;
-        b=WlysB1YJ6g3tQgpifq8XHEEzk2AR/w3c2pDbbfk6+C/5aezUpazqq0GChlITvEC58l
-         VWFDAJ1tU7fN8Wz4sWgh06hiO0I9jWjku4krxTdkutgbJRKofbkaz55NotlBejQx17P+
-         buOUGwg+mNhA5apNEDOlRPHF1M5wjGAmWdYUyVZ0GzhVOiqXTPS3lufuntb/XvwrsuPi
-         514+60jX6PPqPcLA8+Mxi0ihm09BdIuAZXd9cpVeCEJ3/VGVU3ftOjKdTiYeE3hPA3j0
-         aTPoBBT+L9SLWYysNS8GD3S3VAlcIYLOLdN5wE6adq8dVsOPmG2nN0lMsKgGodZilUWj
-         NUhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707155954; x=1707760754;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/C76pIYyE7acYLURd95YZ9JvqXFzoendTPcs1BJgd4E=;
-        b=ClpFqxKQnJV3N7ClvoN6t/01q4aWQhWUO+jhkVifANGy5+U0oKFoa8dL0gMyDHNLaw
-         AIUW0VctWW2PXjVOYb4xNs/IuYdoLlsWVX/F3Uxn/6HcUiOybDBzVDS4XdWoYIF2k4AD
-         ZlLwxfI3vDSfRd7MvDTeo9ZX+6UZVtMOj2vsrJcViQUUxGABy8tdtOrDKSD/zd5XyDy/
-         +nc7cz6X3ra7xvcO821W009sONZ34aSdP5whaZy6arQTdfjQd7/t7o/rd73vx5h0jAB4
-         zr21KkD7KHp6KcigIynFFxc31bcmsvE0ehUTkJXP331A9fYFOd+XWnlEkRTsyzvNmzLh
-         LP3A==
-X-Gm-Message-State: AOJu0YymZdkmpV0jGx8ywr6CL5XTqH4IcclJ2MzfJ0LiBmeO7SLPgGSe
-	6138GBwOlx11zCe3aNOj3W9xzz5RaWA6W0HdEt04V3nNBat1nrAh
-X-Google-Smtp-Source: AGHT+IFDfuNn+dprW7ssb+MdCy5jmgRJzkLpuJk9Jj3FJq01fEAA1ewSEAVDfj9a3mttC9NNW39/qQ==
-X-Received: by 2002:a05:600c:1f84:b0:40f:b69e:aa20 with SMTP id je4-20020a05600c1f8400b0040fb69eaa20mr367170wmb.11.1707155953740;
-        Mon, 05 Feb 2024 09:59:13 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCXLGxFNA/76SPYxu2gToiQ41JQj1r64t0+xMs6T6ok0+J1kX7Lo3HRGsUqaghaMGWDQKL6PXq6NGNLqkkIL6fSH+q/R9n/7nX8t2HjGfS3xy3tDno+jNBpq3yhdlwMv0JwIiWGHs7pPMDmY3tppwuh007wlxUZZNFKoz77/2ORkHBIoHDnI/ufPPjYSKeEjDHiim+gWsQfvUDhYaX4z4mypzFDUcevPha6r2x7iWsfup6Oiqst2nvuH9rdJU+46xkyCnn4/ivUw8S9IVKnsMGJMg7qLChe9iXwNVF4SCU8JxeoTjvXi+r+Z7MWS7ud6I6MU3beXQxs2GYwHrSALeZRdfuLoAOymERlSPSMKGdcDcx94TlN6SAedrWcdATopdC7sw+tGASkr4zKKwBMRUJe1wqriolatAq9Krhbe2ZvlAVP8+Zy9nmXh5532Nn2rGu603uvVkCKmx1uBEh3bNT/W3C96U2wkhKAwy+zzb0/Hryn9kMrnc5Zde3M5KIM1PCxu3jMYbICJMCjqOU3GXYf/+aNklvlAAL7wlqEid1ZvQbER77q+Sl3cnYa2OWdgpqgT93pkXJ5ey7ataDjI4ghXTLkxxVsmaktCslsYlt9Ju6YQORWFaRAX9Z/+h/vH5qsTw8NvtUZlaj6372xbn8YDKQpN3d3WD4PqIgRvAa0bGxQ6j1r+SY0ebh56EgW/cmCqa02ZWncBwHOt/d33kTfrgMWYlRohrPyqeEHjhi/B1UjcLy/CNW+Bqv7keb9iJQ0cLjehkuUPyw==
-Received: from jernej-laptop.localnet (82-149-13-182.dynamic.telemach.net. [82.149.13.182])
-        by smtp.gmail.com with ESMTPSA id v8-20020a05600c444800b0040fddd8de88sm2013072wmn.15.2024.02.05.09.59.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Feb 2024 09:59:13 -0800 (PST)
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
- Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Frank Oltmanns <frank@oltmanns.dev>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- Frank Oltmanns <frank@oltmanns.dev>
-Subject:
- Re: [PATCH v2 5/6] drm/panel: st7703: Drive XBD599 panel at higher clock rate
-Date: Mon, 05 Feb 2024 18:59:11 +0100
-Message-ID: <13445659.uLZWGnKmhe@jernej-laptop>
-In-Reply-To: <20240205-pinephone-pll-fixes-v2-5-96a46a2d8c9b@oltmanns.dev>
-References:
- <20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev>
- <20240205-pinephone-pll-fixes-v2-5-96a46a2d8c9b@oltmanns.dev>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BoBI3GEP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB90C433F1;
+	Mon,  5 Feb 2024 18:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707158021;
+	bh=OMpuFYp2jnF+MtIul2XGUwcOea6+QDQ7KKMjIrGCNbI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BoBI3GEPGCdugQDRKMbiYTzMfkh3t9fccCfY6tk7r7UtfdqFfAmne/A80hkIrZpSW
+	 5sGjVSALvMngl/H6IL44p9ftSd969fGHeV7Oy8uUMzRwcbFY/I4vzwYk5dFKGq8BmW
+	 AyiFKAyq+2CucJD76BRK0JJgYl2024CbOXrl7UzovvaMh+ax5hWb37zMbIFew4F9xH
+	 suRquXmceZfXo9d2pTDGBCXYLow5orClBv6+1P1OY/aMjFzlJhkCqGsYCAuVbfoL89
+	 jaCSjyu79HmirWOJ7wm/p8gQ8SwgrU3jvSG5JOYmrRvEcNxS0/CyPdeNiD3i/T/1Wb
+	 Twf20KepIdgwA==
+Date: Mon, 5 Feb 2024 18:33:38 +0000
+From: Rob Herring <robh@kernel.org>
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com,
+	sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: qcom: Fix @codeaurora email in
+ Q6SSTOP
+Message-ID: <20240205183338.GA3905881-robh@kernel.org>
+References: <20240202171915.4101842-1-quic_jhugo@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240202171915.4101842-1-quic_jhugo@quicinc.com>
 
-Dne ponedeljek, 05. februar 2024 ob 16:22:28 CET je Frank Oltmanns napisal(a):
-> This panel is used in the pinephone that runs on a Allwinner A64 SOC.
-> The SOC requires pll-mipi to run at more than 500 MHz.
+On Fri, Feb 02, 2024 at 10:19:15AM -0700, Jeffrey Hugo wrote:
+> The servers for the @codeaurora domain are long retired and any messages
+> addressed there will bounce.  Govind Singh has left the company which
+> appears to leave the Q6SSTOP clock controller binding unmaintained.
 > 
-> This is the relevant clock tree:
->  pll-mipi
->     tcon0
->        tcon-data-clock
+> Move maintenance of the binding to the Qualcomm Clock Drivers maintainer
+> as suggested by Bjorn Andersson.
 > 
-> tcon-data-clock has to run at 1/4 the DSI per-lane bit rate. The XBD599
-> has 24 bpp and 4 lanes. Therefore, the resulting requested
-> tcon-data-clock rate is:
->     crtc_clock * 1000 * (24 / 4) / 4
-> 
-> tcon-data-clock runs at tcon0 / 4 (fixed divisor), so it requests a
-> parent rate of
->     4 * (crtc_clock * 1000 * (24 / 4) / 4)
-> 
-> Since tcon0 is a ccu_mux, the rate of tcon0 equals the rate of pll-mipi.
-> 
-> pll-mipi's constraint to run at 500MHz or higher forces us to have a
-> crtc_clock >= 83333 kHz if we want a 60 Hz vertical refresh rate.
-> 
-> Change [hv]sync_(start|end) so that we reach a clock rate of 83502 kHz
-> so that it is high enough to align with pll-pipi limits.
-
-Typo: pll-pipi -> pll-mipi
-
-Best regards,
-Jernej
-
-> 
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> Signed-off-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 > ---
->  drivers/gpu/drm/panel/panel-sitronix-st7703.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7703.c b/drivers/gpu/drm/panel/panel-sitronix-st7703.c
-> index b55bafd1a8be..6886fd7f765e 100644
-> --- a/drivers/gpu/drm/panel/panel-sitronix-st7703.c
-> +++ b/drivers/gpu/drm/panel/panel-sitronix-st7703.c
-> @@ -320,14 +320,14 @@ static int xbd599_init_sequence(struct st7703 *ctx)
->  
->  static const struct drm_display_mode xbd599_mode = {
->  	.hdisplay    = 720,
-> -	.hsync_start = 720 + 40,
-> -	.hsync_end   = 720 + 40 + 40,
-> -	.htotal	     = 720 + 40 + 40 + 40,
-> +	.hsync_start = 720 + 65,
-> +	.hsync_end   = 720 + 65 + 65,
-> +	.htotal      = 720 + 65 + 65 + 65,
->  	.vdisplay    = 1440,
-> -	.vsync_start = 1440 + 18,
-> -	.vsync_end   = 1440 + 18 + 10,
-> -	.vtotal	     = 1440 + 18 + 10 + 17,
-> -	.clock	     = 69000,
-> +	.vsync_start = 1440 + 30,
-> +	.vsync_end   = 1440 + 30 + 22,
-> +	.vtotal	     = 1440 + 30 + 22 + 29,
-> +	.clock	     = (720 + 65 + 65 + 65) * (1440 + 30 + 22 + 29) * 60 / 1000,
->  	.flags	     = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
->  	.width_mm    = 68,
->  	.height_mm   = 136,
-> 
-> 
+>  Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
+How about the rest of the tree?:
 
-
-
+Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml:  - Sandeep Panda <spanda@codeaurora.org
+>
+Documentation/devicetree/bindings/display/panel/visionox,rm69299.yaml:  - Harigovindan P <harigovi@codeauro
+ra.org>
+Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml:  - Odelu Kukatla <okukatla@codeaurora.org>
+Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml:  - Kiran Gunda <kgunda@codeaurora.org>
+Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml:  - Balakrishna Godavarthi <bgodava
+r@codeaurora.org>
+Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml:  - Rocky Liao <rjliao@codeaurora.o
+rg>
+Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml:  - Shyam Kumar Thella <sthella@codeaurora.org>
+Documentation/devicetree/bindings/sound/google,sc7280-herobrine.yaml:  - Srinivasa Rao Mandadapu <srivasam@
+codeaurora.org>
+Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml:  - Sai Prakash Ranjan <saiprakash.ranjan@codeauro
+ra.org>
