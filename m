@@ -1,520 +1,160 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC04F4879E
-	for <linux-clk@vger.kernel.org>; Mon,  5 Feb 2024 17:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CA8481A0;
+	Mon,  5 Feb 2024 17:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707155749; cv=none; b=H7LBtsCZAq8VPZM3qjgyazA5dCKkjT9kgyUiDGHb2X0bXofOY+yLzp4IbN+xu9fZ010a77ixGt55jyfKBhARzOvvbl1iZUOukWEi2OoMGJHJ9uCLgK4GPJaitTTHVXNKemXR+NdKBgkO4jnBqtaCcQWaNKMCfuAB8vAXasbqoQI=
+	t=1707155775; cv=none; b=q8CEGz0bPzJHfgZ1bPTYPZ4mimFUAYBRtKy0vBVxIvEm5PUdkqcjB5LenRJNsmWo+0lBn6SP5PkxePWXTCrRvX4T2o4oXtgaGejTuZD7DbTT45E47pmkY/6zjFtwmMIdWX71BjRQZpNIEQ+9e9qr02nyZ9HPBOln29nrFmi3/JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707155749; c=relaxed/simple;
-	bh=7Kf3HPglDKUG/aYHn5uv+MfHpQhrMt9zxAb8kCgv5B4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Zbu36jzhWnNfZtdFSXjkDoQ0t1Wd4Vr/4AGhhi54CFGQBHtw7cnQ4K7CdpT7oz7d8PlmMOm/NMrLlmRObZdKGpToBJLz6OJmnK4JuzBk3fih21eCQM3i4oZQ55F73qteU8wbmxRI5hNs2wq/VWLGvzxKy2XC1fdMC40Is2rRddg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mNA0D8RO; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707155775; c=relaxed/simple;
+	bh=dcEb2nf7K4Z0S7p1uHTCyCEbqhKHVVffOCKTgy2nN0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ki6gU2nSd13PHkVRccp3Fec3eyuQCrUi4YUn7VDSKqJY6IZcYyOy7rsS2ddrBhDq/tQ/sQFWkMCzg3vW7vgw4/R/cI4ZmiSR5DafrmZzZYzjAvxbk4Nnn4CadaURrtb9Le6zjU8BYbG69pk+dVE7Ookanyjz8gjy2tX/ONBQtkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aW4OyUKS; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mNA0D8RO"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40fdf17fa89so2539935e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 05 Feb 2024 09:55:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aW4OyUKS"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40fdd5bbe65so7444905e9.2;
+        Mon, 05 Feb 2024 09:56:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707155745; x=1707760545; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6CEQapZHD/xXUBiMxlOlNXosOM3ZH2y4glGOQxeOqG8=;
-        b=mNA0D8ROUcIhqW2NlNYhTBKubOI/hqnKC07vC2oLopXrdatg66K3Eg9UrXjhlyrPtW
-         xPOu2+UoVlRS3s31nf8LUWeEg/P1pGH93F4vPP37c9ldcYJ2VMx6gRN2zkOjGC9KCiFj
-         N2SWfpMGaRHb6Jn/8dw/gFtyB45gI6emr0pDwtIdNTjx1i/qtVGjD09E7Nm7Icer7ZqA
-         98aeRBfBTv9l4rarZl080eUxRslnX9SoMgFaWa7x+tON5xk3ov4stIVIzNR00DKVVn00
-         PmcT86ao7WldVQB7otJi0B22yC2huWYAaGPpwyyS0v5qpW80vCRf6odsMfMEL0Zjary8
-         tfrA==
+        d=gmail.com; s=20230601; t=1707155772; x=1707760572; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yQo7DEH+Zbxsn/GDq6x2R3lR0LaSJXJADj+lFUkrcCQ=;
+        b=aW4OyUKSCdWvdvUIrUGg7x4Bex6NWRc+O9ilT3tvtphu+oJukAPap9Mt3gyNCJkhuM
+         grqxXjRhY0+n/Xv/25Xm8VE2iDf3WV1t2OIYCNcuypS1m0Cj8tlc3Hoa+Rkd6ZErVSTt
+         H/qVheAWP7CvvqTCCJDC5+MH81EIc+3bT9GIzlXb9pH8z6GZrkIaocO4DmxhxDAep4kz
+         YGH2YoIKvFwzyJx9Ofz8DcOuaQfyH5m35sKjUqlZolihECZwAr7OcfBCQbc94vO2CUj1
+         UKx7OFzucy4Z5Y9V+qvaXeVAuL3wBdJcHY+uTc90tKQLrU6CcUYm4u+SFoZvdRmMi3X6
+         oelQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707155745; x=1707760545;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1707155772; x=1707760572;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6CEQapZHD/xXUBiMxlOlNXosOM3ZH2y4glGOQxeOqG8=;
-        b=O9Nnukr/Mp4lFk/zLj4oDKWP0sWgQN6YqP5JcXh7cAc8noO7t2ADW9/EHmYl73K7kv
-         xXufBHqpmNJbzOTMuM6I18RtsueYkHpFJlF60y3yX8KBkp7J5WNBUF5g4DKGRADAq2Yi
-         OeCVKOFlT0hYnjh0honq5BFHVdqCJkfaNLmzzcdKHz9WbKzjqgz8oya3sP/ZTxpb9NIh
-         HTXbfdHc7gnxciTcjvmgynY5LwH7oEFGufACCFgztVdAG/vWXGNhb9C2N5aenl90dePP
-         iMsXMFN3NDGDbM6W6aJPFlMdZtPJCpeZTnZcwFVIFHJsgTLnSM0btaUGEy0Dp5xnb1Op
-         L5AQ==
-X-Gm-Message-State: AOJu0YzA57MlcAO3ew3W2VJHSQ+gUo1ARpRy8ojIffIDk9Mc6MiU/MNu
-	2WZTL3DH6qIqKif6XWmPm17rzmXjgq97CkzktON132x3ChAu6f2W9hBgVQPrziw=
-X-Google-Smtp-Source: AGHT+IHWGYX67kI897F0xxQ1R57GLuS/Mf0fPYGnhxw/gflc8fuYMw62u+lGxIKF7czBDtQjsKUlpA==
-X-Received: by 2002:a05:600c:3b14:b0:40e:aca0:7b0a with SMTP id m20-20020a05600c3b1400b0040eaca07b0amr5078664wms.10.1707155745205;
-        Mon, 05 Feb 2024 09:55:45 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCWofnczo5qzLNWBcE7kn+sulFLJTNvvVa2/a7OyvgOcln1J1Rhqqk02dKd5qXoZm+MiR4A4E8g+Y+PUCfIgnhr0CVTwKmiYGB50Wy5B7bfDRvSCK+eu3LNl9WVqGInvgLv8zIqwcU6ZYaticfNOdhl3XlyTEUz6V8EMYt5dzy3WFjbgvWhzQRT4j1a+D1XTgLaxgMHoSQo5qy7rt8yT8UhJoa9rGljl5NagfiW+FiKOXoKwc5ECpAjQ7XsjJCVpj+z2Nos6mA4g8kyswRHRPm2EyPFtC3Jk2ag3Fihg9SrS6HB0Q/FjkYLj63vjupsQ90lvAKfESuRG3PDmoy4cKx+Xx5HduLHelMv03bO0kOIszVhM3EMbrbCTBh3N+gH85XL1U6x+wgvyjns0pw/xO8ou04yGGzE2aLbYg0X9Lh4BPVUoO5+9hjKVGEF8tJABzGF7JSD2Qva2OUFA/N2Zss6Y72JHhjHoJuduvnISwYbjt4c3twFq7EUeOEjCz/ffh0JGYomf4yn2e775Zw98miJ3ke14NUTZ71wWxAsgrN0NXHDe+cZDJFnUlOQUAU5CFxLOyTChoYWDEPC+1qlFTmk0FKtUvyhAW9F49FOiA+QA9Z3ydXejw/QUAAT/TuLybYZDqulQcL/2pPbr2XmyzBjSDqXJZsBXjt/C4gZ2fQUi6jyP4T997HoFaZyqrnsIHWPiqzQjetOo+/lVAJSb9HcrkTNfkqu3192WhLg06xZgEUqsTDk9xgvnV6/9KLNkRfI1yWCJjzrCXEptGqcTCvyuZg==
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id je16-20020a05600c1f9000b0040ee8765901sm517556wmb.43.2024.02.05.09.55.44
+        bh=yQo7DEH+Zbxsn/GDq6x2R3lR0LaSJXJADj+lFUkrcCQ=;
+        b=CZ3MFsPS8lJ3BjwALTjx8FscGFjLyfEgR08itzB4eOUeUjsERw6rJTOmBBxS/v2dgO
+         EVUnuhtDhnm8wsl66dI3RmgpdIA5Xei4K58ks3hleSvz2CMRiQYgCHxOpuirKMiDisdU
+         ntq28B5cXP+uS0ipkWkWOurHDX/U8U5YyzmtyQBvKgHe781JVN2HZj56vj4/6ZfHZzpL
+         ki9tW9k22XzD1jqQIgVn/kHl81AUjK1NqApYEJpxRjTL7j+4JgoaIQyFUoC4a6Du274I
+         zcqCWIGtBpFObePdyGWpu7NlBm2q/KdcTCRfz0NQECEwci0+m3sNBS594vVbHW/S33Fm
+         N2Kw==
+X-Gm-Message-State: AOJu0YytGJOBd57a/ZWNZ08t20lbFem1++/e0bXl3hdHism8aCnJZOYj
+	H5dPQBE3I7F1cuLfV95TD2gpac6eplmkb5usjehjUyMmVMY+e3ay
+X-Google-Smtp-Source: AGHT+IEsTlp9iHH6e8DPKagWNrPZEnjKRxqc6vq6sXhD5ZPYHBTALUGH8fsHvNTKshHOCqRe73BnQw==
+X-Received: by 2002:a05:600c:4e90:b0:40e:f681:b7b6 with SMTP id f16-20020a05600c4e9000b0040ef681b7b6mr340863wmq.37.1707155772063;
+        Mon, 05 Feb 2024 09:56:12 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCXPLF5BJxHk+SVf+iXJqOC4NqstlwVSQCIrIQZ0CNKx8ubzjsfiVziRQGSQjYrsoTpZS719hvULJu17cAsZCT1mJqFYI87qvTedGmJh27eHfDmDc/xT+M4qqBBmjm1fw5N0GFwDaOt5pID6gTxIDZzOG699DFKNj10o5fwAuCAjF/iBN5GfoIDWavEsOcGYJRC0i0oc/EEWvPfQfDpX8V0OXLXLm7zbwOgTkrV840/lRKYjWXEzpdNT7ruexZWEx7yt1Y7AWw0mgsfD3gF9jzPiqwVeqtLeVkKk6OiP0pg11SrkJkWPpcD33wXcDmrzX44WIjkvgzTvM01NkQiFu6sKPtuHTxjVmc7DKWkYk0HMq8w9DVJVHId+g8FMK5qFa3a+Hbe5YwXWckiu65qxVa6SUJuagtrMU6nr5bKCqks/E9gLYFxzvum7AFxwEcph+cl9FtZklC6jPxL12g41YTi4tG6usJR9juOrxJMvKmQiRH9CF4e9yBZBlEopCajudfY3Sk+I5UmM/i2DXlhyB0rEoqns95uSDxyUgBtgbv+0bdeL+xLYqpuMU/cjhxrmZ44fkH+BvJ5nz6cBI7Z+/mO2rQzRk66jE62DAIeCR36FneUwm7kHaV5CQ+wvM1x1M6a24wmx0kviiUARhVkKOtxWREpKRc6Z0erXqYG2cTyUDJjw0U0LsZ4R7WTH+Rtx2NI9tzNWsnjEM1WG5YUcs684BlQZBX6+EC4/1q2b2veO7C/qHXyN0jZMKO5H7Z7NoyHN5pObCTBBPA==
+Received: from jernej-laptop.localnet (82-149-13-182.dynamic.telemach.net. [82.149.13.182])
+        by smtp.gmail.com with ESMTPSA id c29-20020adfa31d000000b0033b3a010001sm144509wrb.4.2024.02.05.09.56.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Feb 2024 09:55:44 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 05 Feb 2024 18:55:34 +0100
-Subject: [PATCH v10 7/7] arm64: dts: amlogic: meson-g12b-bananapi-cm4: add
- support for MNT Reform2 with CM4 adaper
+        Mon, 05 Feb 2024 09:56:11 -0800 (PST)
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>,
+ Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
+ Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Frank Oltmanns <frank@oltmanns.dev>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ Frank Oltmanns <frank@oltmanns.dev>
+Subject:
+ Re: [PATCH v2 3/6] clk: sunxi-ng: nkm: Support minimum and maximum rate
+Date: Mon, 05 Feb 2024 18:56:09 +0100
+Message-ID: <4543794.LvFx2qVVIh@jernej-laptop>
+In-Reply-To: <20240205-pinephone-pll-fixes-v2-3-96a46a2d8c9b@oltmanns.dev>
+References:
+ <20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev>
+ <20240205-pinephone-pll-fixes-v2-3-96a46a2d8c9b@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240205-amlogic-v6-4-upstream-dsi-ccf-vim3-v10-7-dc06073d5330@linaro.org>
-References: <20240205-amlogic-v6-4-upstream-dsi-ccf-vim3-v10-0-dc06073d5330@linaro.org>
-In-Reply-To: <20240205-amlogic-v6-4-upstream-dsi-ccf-vim3-v10-0-dc06073d5330@linaro.org>
-To: Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Nicolas Belin <nbelin@baylibre.com>, 
- Jagan Teki <jagan@amarulasolutions.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- "Lukas F. Hartmann" <lukas@mntre.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9577;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=7Kf3HPglDKUG/aYHn5uv+MfHpQhrMt9zxAb8kCgv5B4=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlwSEWwwOqUxztWQoBbKdkamxaSzTOoRPntDcXO046
- nrmoXoOJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZcEhFgAKCRB33NvayMhJ0e8SD/
- 4pbVBzy4chIUxiD+X/Nf2MyjkJ/JOEaJooi/C5nSaln+aIHELuMx1tZX3vc5c3t2shtdnnhrx5t7eL
- u4lHN8uTjZk73H4gws6PTh0pF1upUJJ0n/iopjIqglgtxTH73M6pw4RYxeTD8+Y+lKyRrTLnTZZ4mv
- zATk7EI2cxc2czEPQVei5ktOJoN0KR9cqSdqiD45Z34nLQzxTzfoRXDyJRNSiCRmYkv8YhgTKdXHCx
- zAOLGMhHW21OkUIZOmdAryOZbhEtKxglr31ydY7YZozXRLuGjuBQG5+d0IH06/NU4DcohGWbCilVFe
- 8iA26w2FErSKxYnEsdmlaK3QbJNrP18dr6UiRP6kfWgKQ2Yvkxr5iaFJkdhw6DbJkBjwpkc5HFVYGc
- ovq+Pqm0g2U+jSfAzDCGXsLRL5VWtJiYa9Qsudk5aq+7PY/ZOAOsKU3PRWSces22nFfTOQD0WrSMeI
- XgY9h/GupRFR/ca+VfsMUnOmE4Xyd7EJ5IhQKEmrtrHAyHxR5lV6hImB4DeuqeLiHzFiaz7GoTOREa
- zhWCwosaAmE4RmAiIlNeHyeNiLpK8MX6xNiv32a67v602PUX/JsPyPRXQidDwfqAzz5cpCFoL2x329
- G7ge6uOKhQFZqbyHTb27Pdg7QvvZceB4ZknUzGryKuB/+ZWCJxZ3MIRX1Rvw==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-This adds a basic devicetree for the MNT Reform2 DIY laptop when using a
-CM4 adapter and a BPI-CM4 module.
+Dne ponedeljek, 05. februar 2024 ob 16:22:26 CET je Frank Oltmanns napisal(a):
+> According to the Allwinner User Manual, the Allwinner A64 requires
+> PLL-MIPI to run at 500MHz-1.4GHz. Add support for that to ccu_nkm.
+> 
+> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> ---
+>  drivers/clk/sunxi-ng/ccu_nkm.c | 13 +++++++++++++
+>  drivers/clk/sunxi-ng/ccu_nkm.h |  2 ++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+> index 1168d894d636..7d135908d6e0 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> @@ -181,6 +181,12 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>  		rate *= nkm->fixed_post_div;
+>  
+> +	if (nkm->min_rate && rate < nkm->min_rate)
+> +		rate = nkm->min_rate;
+> +
+> +	if (nkm->max_rate && rate > nkm->max_rate)
+> +		rate = nkm->max_rate;
 
-Co-developed-by: Lukas F. Hartmann <lukas@mntre.com>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/amlogic/Makefile               |   1 +
- .../meson-g12b-bananapi-cm4-mnt-reform2.dts        | 384 +++++++++++++++++++++
- 2 files changed, 385 insertions(+)
+Please take a look at ccu_nm_round_rate() code. You need to consider postdiv
+and you can return immediately.
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index 5e5ea0f14fe2..0d819a63b15e 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -15,6 +15,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-g12a-x96-max.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-a311d-bananapi-m2s.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-a311d-khadas-vim3.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-bananapi-cm4-cm4io.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-g12b-bananapi-cm4-mnt-reform2.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-gsking-x.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-gtking-pro.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-gtking.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dts
-new file mode 100644
-index 000000000000..003efed529ba
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dts
-@@ -0,0 +1,384 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
-+ * Copyright 2023 MNT Research GmbH
-+ */
-+
-+/dts-v1/;
-+
-+#include "meson-g12b-bananapi-cm4.dtsi"
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
-+
-+/ {
-+	model = "MNT Reform 2 with BPI-CM4 Module";
-+	compatible = "mntre,reform2-cm4", "bananapi,bpi-cm4", "amlogic,a311d", "amlogic,g12b";
-+	chassis-type = "laptop";
-+
-+	aliases {
-+		ethernet0 = &ethmac;
-+		i2c0 = &i2c1;
-+		i2c1 = &i2c3;
-+	};
-+
-+	hdmi_connector: hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_tx_tmds_out>;
-+			};
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-blue {
-+			color = <LED_COLOR_ID_BLUE>;
-+			function = LED_FUNCTION_STATUS;
-+			gpios = <&gpio_ao GPIOAO_7 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led-green {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_STATUS;
-+			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	sound {
-+		compatible = "amlogic,axg-sound-card";
-+		model = "MNT-REFORM2-BPI-CM4";
-+		audio-widgets = "Headphone", "Headphone Jack",
-+				"Speaker", "External Speaker",
-+				"Microphone", "Mic Jack";
-+		audio-aux-devs = <&tdmout_a>, <&tdmout_b>, <&tdmin_b>;
-+		audio-routing =	"TDMOUT_A IN 0", "FRDDR_A OUT 0",
-+				"TDMOUT_A IN 1", "FRDDR_B OUT 0",
-+				"TDMOUT_A IN 2", "FRDDR_C OUT 0",
-+				"TDM_A Playback", "TDMOUT_A OUT",
-+				"TDMOUT_B IN 0", "FRDDR_A OUT 1",
-+				"TDMOUT_B IN 1", "FRDDR_B OUT 1",
-+				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
-+				"TDM_B Playback", "TDMOUT_B OUT",
-+				"TDMIN_B IN 1", "TDM_B Capture",
-+				"TDMIN_B IN 4", "TDM_B Loopback",
-+				"TODDR_A IN 1", "TDMIN_B OUT",
-+				"TODDR_B IN 1", "TDMIN_B OUT",
-+				"TODDR_C IN 1", "TDMIN_B OUT",
-+				"Headphone Jack", "HP_L",
-+				"Headphone Jack", "HP_R",
-+				"External Speaker", "SPK_LP",
-+				"External Speaker", "SPK_LN",
-+				"External Speaker", "SPK_RP",
-+				"External Speaker", "SPK_RN",
-+				"LINPUT1", "Mic Jack",
-+				"Mic Jack", "MICB";
-+
-+		assigned-clocks = <&clkc CLKID_MPLL2>,
-+					<&clkc CLKID_MPLL0>,
-+					<&clkc CLKID_MPLL1>;
-+		assigned-clock-parents = <0>, <0>, <0>;
-+		assigned-clock-rates = <294912000>,
-+				       <270950400>,
-+				       <393216000>;
-+
-+		dai-link-0 {
-+			sound-dai = <&frddr_a>;
-+		};
-+
-+		dai-link-1 {
-+			sound-dai = <&frddr_b>;
-+		};
-+
-+		dai-link-2 {
-+			sound-dai = <&frddr_c>;
-+		};
-+
-+		dai-link-3 {
-+			sound-dai = <&toddr_a>;
-+		};
-+
-+		dai-link-4 {
-+			sound-dai = <&toddr_b>;
-+		};
-+
-+		dai-link-5 {
-+			sound-dai = <&toddr_c>;
-+		};
-+
-+		/* 8ch hdmi interface */
-+		dai-link-6 {
-+			sound-dai = <&tdmif_a>;
-+			dai-format = "i2s";
-+			dai-tdm-slot-tx-mask-0 = <1 1>;
-+			dai-tdm-slot-tx-mask-1 = <1 1>;
-+			dai-tdm-slot-tx-mask-2 = <1 1>;
-+			dai-tdm-slot-tx-mask-3 = <1 1>;
-+			mclk-fs = <256>;
-+
-+			codec {
-+				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_A>;
-+			};
-+		};
-+
-+		/* Analog Audio */
-+		dai-link-7 {
-+			sound-dai = <&tdmif_b>;
-+			dai-format = "i2s";
-+			dai-tdm-slot-tx-mask-0 = <1 1>;
-+			mclk-fs = <256>;
-+
-+			codec {
-+				sound-dai = <&wm8960>;
-+			};
-+		};
-+
-+		/* hdmi glue */
-+		dai-link-8 {
-+			sound-dai = <&tohdmitx TOHDMITX_I2S_OUT>;
-+
-+			codec {
-+				sound-dai = <&hdmi_tx>;
-+			};
-+		};
-+	};
-+
-+	reg_main_1v8: regulator-main-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1V8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&reg_main_3v3>;
-+	};
-+
-+	reg_main_1v2: regulator-main-1v2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1V2";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		vin-supply = <&reg_main_5v>;
-+	};
-+
-+	reg_main_3v3: regulator-main-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	reg_main_5v: regulator-main-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+	};
-+
-+	reg_main_usb: regulator-main-usb {
-+		compatible = "regulator-fixed";
-+		regulator-name = "USB_PWR";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&reg_main_5v>;
-+	};
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm_AO_ab 0 10000 0>;
-+		power-supply = <&reg_main_usb>;
-+		enable-gpios = <&gpio 58 GPIO_ACTIVE_HIGH>;
-+		brightness-levels = <0 32 64 128 160 200 255>;
-+		default-brightness-level = <6>;
-+	};
-+
-+	panel {
-+		compatible = "innolux,n125hce-gn1";
-+		power-supply = <&reg_main_3v3>;
-+		backlight = <&backlight>;
-+		no-hpd;
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&edp_bridge_out>;
-+			};
-+		};
-+	};
-+
-+	clock_12288: clock_12288 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12288000>;
-+	};
-+};
-+
-+&mipi_analog_dphy {
-+	status = "okay";
-+};
-+
-+&mipi_dphy {
-+	status = "okay";
-+};
-+
-+&mipi_dsi {
-+	status = "okay";
-+
-+	assigned-clocks = <&clkc CLKID_GP0_PLL>,
-+			  <&clkc CLKID_MIPI_DSI_PXCLK_SEL>,
-+			  <&clkc CLKID_MIPI_DSI_PXCLK>,
-+			  <&clkc CLKID_CTS_ENCL_SEL>,
-+			  <&clkc CLKID_VCLK2_SEL>;
-+	assigned-clock-parents = <0>,
-+				 <&clkc CLKID_GP0_PLL>,
-+				 <0>,
-+				 <&clkc CLKID_VCLK2_DIV1>,
-+				 <&clkc CLKID_GP0_PLL>;
-+	assigned-clock-rates = <936000000>,
-+			       <0>,
-+			       <936000000>,
-+			       <0>,
-+			       <0>;
-+};
-+
-+&mipi_dsi_panel_port {
-+	mipi_dsi_out: endpoint {
-+		remote-endpoint = <&edp_bridge_in>;
-+	};
-+};
-+
-+&cecb_AO {
-+	status = "okay";
-+};
-+
-+&ethmac {
-+	status = "okay";
-+};
-+
-+&hdmi_tx {
-+	status = "okay";
-+};
-+
-+&hdmi_tx_tmds_port {
-+	hdmi_tx_tmds_out: endpoint {
-+		remote-endpoint = <&hdmi_connector_in>;
-+	};
-+};
-+
-+&pwm_AO_ab {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm_ao_a_pins>;
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+};
-+
-+&i2c3 {
-+	status = "okay";
-+
-+	edp_bridge: bridge@2c {
-+		compatible = "ti,sn65dsi86";
-+		reg = <0x2c>;
-+		enable-gpios = <&gpio GPIOX_10 GPIO_ACTIVE_HIGH>; // PIN_24 / GPIO8
-+		vccio-supply = <&reg_main_1v8>;
-+		vpll-supply = <&reg_main_1v8>;
-+		vcca-supply = <&reg_main_1v2>;
-+		vcc-supply = <&reg_main_1v2>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				edp_bridge_in: endpoint {
-+					remote-endpoint = <&mipi_dsi_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				edp_bridge_out: endpoint {
-+					remote-endpoint = <&panel_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+
-+	wm8960: codec@1a {
-+		compatible = "wlf,wm8960";
-+		reg = <0x1a>;
-+		clocks = <&clock_12288>;
-+		clock-names = "mclk";
-+		#sound-dai-cells = <0>;
-+		wlf,shared-lrclk;
-+	};
-+
-+	rtc@68 {
-+		compatible = "nxp,pcf8523";
-+		reg = <0x68>;
-+	};
-+};
-+
-+&pcie {
-+	status = "okay";
-+};
-+
-+&sd_emmc_b {
-+	status = "okay";
-+};
-+
-+&tdmif_a {
-+	status = "okay";
-+};
-+
-+&tdmout_a {
-+	status = "okay";
-+};
-+
-+&tdmif_b {
-+	pinctrl-0 = <&tdm_b_dout0_pins>, <&tdm_b_fs_pins>, <&tdm_b_sclk_pins>, <&tdm_b_din1_pins>;
-+	pinctrl-names = "default";
-+
-+	assigned-clocks = <&clkc_audio AUD_CLKID_TDM_SCLK_PAD1>,
-+			  <&clkc_audio AUD_CLKID_TDM_LRCLK_PAD1>;
-+	assigned-clock-parents = <&clkc_audio AUD_CLKID_MST_B_SCLK>,
-+				 <&clkc_audio AUD_CLKID_MST_B_LRCLK>;
-+	assigned-clock-rates = <0>, <0>;
-+};
-+
-+&tdmin_b {
-+	status = "okay";
-+};
-+
-+&toddr_a {
-+	status = "okay";
-+};
-+
-+&toddr_b {
-+	status = "okay";
-+};
-+
-+&toddr_c {
-+	status = "okay";
-+};
-+
-+&tohdmitx {
-+	status = "okay";
-+};
-+
-+&usb {
-+	dr_mode = "host";
-+
-+	status = "okay";
-+};
+> +
+>  	if (!clk_hw_can_set_rate_parent(&nkm->common.hw))
+>  		rate = ccu_nkm_find_best(*parent_rate, rate, &_nkm, &nkm->common);
+>  	else
+> @@ -220,6 +226,13 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	_nkm.min_m = 1;
+>  	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+>  
+> +
+> +	if (nkm->min_rate && rate < nkm->min_rate)
+> +		rate = nkm->min_rate;
+> +
+> +	if (nkm->max_rate && rate > nkm->max_rate)
+> +		rate = nkm->max_rate;
+> +
 
--- 
-2.34.1
+No need for this, clk subsystem calls round rate before setting actual clock
+rate.
+
+Best regards,
+Jernej
+
+>  	ccu_nkm_find_best(parent_rate, rate, &_nkm, &nkm->common);
+>  
+>  	spin_lock_irqsave(nkm->common.lock, flags);
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
+> index c409212ee40e..358a9df6b6a0 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
+> @@ -27,6 +27,8 @@ struct ccu_nkm {
+>  	struct ccu_mux_internal	mux;
+>  
+>  	unsigned int		fixed_post_div;
+> +	unsigned long		min_rate;
+> +	unsigned long		max_rate;
+>  	unsigned long		max_m_n_ratio;
+>  	unsigned long		min_parent_m_ratio;
+>  
+> 
+> 
+
+
+
 
