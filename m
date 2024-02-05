@@ -1,149 +1,170 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8838199BC
-	for <linux-clk@vger.kernel.org>; Mon,  5 Feb 2024 11:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A1F23768;
+	Mon,  5 Feb 2024 14:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707133305; cv=none; b=dUmCc/3Uprh/YYYPwqNYDSmsUFDno0Vjoz+YaXa+/KmiMFT+LRbpzy/We0np+wRvw5fZKYekcz1wwkVsIdJzCsjyLzHZM89bBVMfBjp9eX6fYSt71jtkFA9m158vWYsqjTxRsd2iLNTrOy8Vt/pQe65dy6/MHsqGdcdym4zeVlQ=
+	t=1707141914; cv=none; b=l5b2nc/Eow22bsSHVatH3vHDFoObjktWJFgcDrj0RrCS+c7iAVlZrCltyu3+9p+sK56j1Jq1nXlf1K2QEoqHlxWA6Y/6G0CWIs3pCjbFhqlB3zmyASkzP3gwm2/FTm7/Fo5r4HaK62/CG9wW907l+jhZEnBZba3/gu6iS8AxGfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707133305; c=relaxed/simple;
-	bh=HZ0nvGaBN5Wk8A4XWPCkZFffRcIQnmcMCoXMFKcitgE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=S74hS3jfDAIQfVnIzUcc8FZ+6bakgx4qzNtvq2bC1Kk8ng+rfqkCRBcFRCeQ5CoOuwysRleeXyLhri1rEbu+a+WXqLOtzJBQzkd2WVY397ZkYkpj9O+gIdN4tuttjcOUtuQZvezIHbcjBv90ulqxCQl+V5hwFRWxeZM8ZvJ/254=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hUONy5p/; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1707141914; c=relaxed/simple;
+	bh=4bIEfg7PdUaON+zlchHH8C9f6qqA8dXeOfMbDZuxrhw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rOdsxYSAFPFDKXvWxpO1Xu39IebRqulv7Ghriua0/R95bDm/93/Vv6xLvJUDRf5zX2WVsoJ2i4134AmTNf6Dxo1NVbT0+TUmhSBK6/wXmL6D03nZxUCggtAu2at0lsrZxlDECSGUW3swboT9xdCqBNPTzd1jiqcxC4liK1fdqMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mOezREo/; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hUONy5p/"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240205114139epoutp0256594cdf3feda0cc49dafbf02a346a3c~w9LDuuwhs0738207382epoutp02E
-	for <linux-clk@vger.kernel.org>; Mon,  5 Feb 2024 11:41:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240205114139epoutp0256594cdf3feda0cc49dafbf02a346a3c~w9LDuuwhs0738207382epoutp02E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1707133299;
-	bh=EOGLXpG9HMEKocHPZBogLBBCsSl2pNgppt6+gMxaTpU=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=hUONy5p/n5cO3CZKPUNfxh4B3VSAnVKPCRHe6JbMqFW+KYmVmoL+RCClGCd+pfv3n
-	 yIF5mwJnpoAGa9kE9B8PMvdi9M8lotcHA1ETnHkKYew15bU46vbemeYenkbbvd0dRR
-	 HWnhsRBcURbA9kahftdLgcQfdpX9YkxfBUJnSYN0=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240205114138epcas5p2ad8001def351e326ca13516349412c4d~w9LC8gp0K2986229862epcas5p2_;
-	Mon,  5 Feb 2024 11:41:38 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	67.6E.09634.279C0C56; Mon,  5 Feb 2024 20:41:38 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240205111208epcas5p4775d540854dd8778388065a574b7862b~w8xSX8cPM3247232472epcas5p4L;
-	Mon,  5 Feb 2024 11:12:08 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240205111208epsmtrp2795d08284788a0322be86253dec2151a~w8xSXIiRI2233822338epsmtrp2T;
-	Mon,  5 Feb 2024 11:12:08 +0000 (GMT)
-X-AuditID: b6c32a49-159fd700000025a2-b7-65c0c9721711
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C3.97.07368.882C0C56; Mon,  5 Feb 2024 20:12:08 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.109.224.44]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240205111206epsmtip2b4840220644a39cb4b591bc7a2ff1469~w8xQspkMX3117131171epsmtip2K;
-	Mon,  5 Feb 2024 11:12:06 +0000 (GMT)
-From: Onkarnarth <onkarnath.1@samsung.com>
-To: paulburton@kernel.org, mturquette@baylibre.com, sboyd@kernel.org
-Cc: linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, r.thapliyal@samsung.com, Onkarnath
-	<onkarnath.1@samsung.com>, Maninder singh <maninder1.s@samsung.com>
-Subject: [PATCH 1/1] clk: imgtec: use %pe for better readability of errors
- while printing
-Date: Mon,  5 Feb 2024 16:41:55 +0530
-Message-Id: <20240205111155.3939125-1-onkarnath.1@samsung.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mOezREo/"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 415E50ig023002;
+	Mon, 5 Feb 2024 08:05:00 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1707141900;
+	bh=tWHCZPGdnVP9n6u5fBWigVBsLLeSsPy8VL0rQblycqY=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=mOezREo/iNM/aeAbvC6SOz5GAuInx3j8MW55bLKM71fM4VJ8t7Nk0HvsZgKAxwML/
+	 Wc+xXyOGBSXbDMZxmE92/1uDO0X9fWFd2dAkEGhGc5H0GgBfAJ0Lx68tWz0/OwGrIa
+	 AwQub8cyiH8ru32LKiG/oFJ6RnenEzWRQU1lRTNE=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 415E50SH032340
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 5 Feb 2024 08:05:00 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 5
+ Feb 2024 08:04:59 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 5 Feb 2024 08:04:59 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 415E4xjt050034;
+	Mon, 5 Feb 2024 08:04:59 -0600
+Date: Mon, 5 Feb 2024 08:04:59 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Udit Kumar <u-kumar1@ti.com>
+CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <vigneshr@ti.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v1] clk: keystone: sci-clk: Adding support for non
+ contiguous clocks
+Message-ID: <20240205140459.orjvjqqtiugmyosc@obscurity>
+References: <20240205044557.3340848-1-u-kumar1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZdlhTS7fo5IFUg3VNahYfe+6xWlzeNYfN
-	onPTVkaLw/PbWCwunnK1WNHzgdWi49tcFouN97It/l3byOLA6fH+Riu7x6ZVnWwefVtWMXp8
-	3iQXwBLFZZOSmpNZllqkb5fAlfF6SS9rwX3uihtb1rM0MD7g7GLk4JAQMJFY2h/TxcjFISSw
-	m1Fiau8TFgjnE6PE3s4nrBDON6DMm+/MXYycYB27XvyHqtrLKPHn1U+oqi+MEtsXf2UFqWIT
-	0JKYcecAE4gtIuAi0btuFyOIzSxwmFHizBF+EFtYIFqi/9pKFhCbRUBVYtbZRnYQm1fATmLR
-	mq+MENvkJWZe+g4VF5Q4OfMJC8QceYnmrbOZQRZLCFxjl1j65hQLRIOLxJcjD1khbGGJV8e3
-	sEPYUhKf3+1lg7DzJVpmz2KGBECNxNWnqhBhe4knFxeygoSZBTQl1u/ShwjLSkw9tY4JYi2f
-	RO/vJ0wQcV6JHfNgbFWJX1OmQl0gLXH/91yoTR4SHZ0fwWqEBGIleq5PY5/AKD8LyTezkHwz
-	C2HzAkbmVYySqQXFuempxaYFhnmp5XrFibnFpXnpesn5uZsYwclFy3MH490HH/QOMTJxMB5i
-	lOBgVhLhNdtxIFWINyWxsiq1KD++qDQntfgQozQHi5I47+vWuSlCAumJJanZqakFqUUwWSYO
-	TqkGJoa1E29IybRGRq+uW+P0sb9JavveG+tY7K6HzPn0SKh42SWzfTJ1a/rmK0SfYtJ/sbpI
-	vI9v+uYGxeKc1QkKWxkqcrfznNrrp6l7bdZrscjYSbeTpyg+cKmXPfdHLSfk59+6iz1lO1mO
-	v5bS2W8wNeXd9aMhs9LcN3wx8S6e67voY/Dqaxc9Bdl96/8aOvxiZD41JTd4d5vyUuutRbM/
-	znh5S7XEmiHm8u2tco2FzX2e0aoGf54GP01ZsyWgZGbz+k3Wc8/kV5T9LUlctTwmfW5C9hmV
-	bx0JshP2ntyzWah7+mYX/3LWiU7TV1VJT0+Xb+rrXhNX2tIaE+NmN13vSce0HbWz7CccXHX6
-	vi/DOyWW4oxEQy3mouJEAOg5FtGdAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMLMWRmVeSWpSXmKPExsWy7bCSvG7HoQOpBpuOSVl87LnHanF51xw2
-	i85NWxktDs9vY7G4eMrVYkXPB1aLjm9zWSw23su2+HdtI4sDp8f7G63sHptWdbJ59G1Zxejx
-	eZNcAEsUl01Kak5mWWqRvl0CV8brJb2sBfe5K25sWc/SwPiAs4uRk0NCwERi14v/LF2MXBxC
-	ArsZJY59Ws0KkZCW+HR5DjuELSyx8t9zdoiiT4wSrQumMIMk2AS0JGbcOcAEYosIeEjsOvKG
-	GaSIWeAko8SdRbdYQBLCApESc7c0gzWwCKhKzDrbCDaVV8BOYtGar4wQG+QlZl76DhUXlDg5
-	8wlYLzNQvHnrbOYJjHyzkKRmIUktYGRaxSiZWlCcm56bbFhgmJdarlecmFtcmpeul5yfu4kR
-	HK5aGjsY783/p3eIkYmD8RCjBAezkgiv2Y4DqUK8KYmVValF+fFFpTmpxYcYpTlYlMR5DWfM
-	ThESSE8sSc1OTS1ILYLJMnFwSjUwJes9t+1luXfhxTLnZXMeVcku8Y0Jv/LlRtkOljcfTZZJ
-	SWUKiXud+HCRaeKLBG/HgwmdK1ds6lp/iXP36rq1TLvSQ41C5vyO678T8XDmua9Bd6V+8Mtd
-	ZTmVmySyM9J+Bl/zzLSSsMbVb1bufl52P3xTgWFSCKfk+ktMV+4GHE0usVz/4TFX4P7VFpu1
-	jXuZvBtT513doD/Bc9PkopxZfir3vtmo7t7DurnjwNQ93yv0Hh1/vvjfuqsFyytfvOPQXOD3
-	TrVSV+6694Klqey6Wyv4tDkWp//Z1CAfsshn7urlG+Ps+e94Luo+mb1NvWWazedjy4xKQkJL
-	NWz2SOq+vM/ytTooWzvJY+HKBSfPrlBiKc5INNRiLipOBADdWwUnxgIAAA==
-X-CMS-MailID: 20240205111208epcas5p4775d540854dd8778388065a574b7862b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20240205111208epcas5p4775d540854dd8778388065a574b7862b
-References: <CGME20240205111208epcas5p4775d540854dd8778388065a574b7862b@epcas5p4.samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240205044557.3340848-1-u-kumar1@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Onkarnath <onkarnath.1@samsung.com>
+On 10:15-20240205, Udit Kumar wrote:
+> Most of clocks and their parents are defined in contiguous range,
+> But in few cases, there is gap in clock numbers[0].
+> 
+> Driver assumes clocks to be in contiguous range, and assigns
+> accordingly.
+> 
+> New firmware started returning error in case of
+> non-available clock id.  Therefore drivers throws error while
+> re-calculate and other functions.
 
-instead of printing errros as a number(%ld), it's better to print in string
-format for better readability of logs
+What changed here? started returning error for what API? also please fix
+up 70 char alignment -> there extra spaces in your commit message.
+> 
+> In this fix, before assigning and adding clock in list,
+> driver checks if given clock is valid or not.
+> 
+> Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
+> 
+> [0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
+> Section Clocks for NAVSS0_CPTS_0 Device,
+> clock id 12-15 and 18-19 not present
+> 
+> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+> ---
+> Original logs
+> https://gist.github.com/uditkumarti/de4b36b21247fb36725ad909ce4812f6#file-original-logs
+> Line 2630 for error
+> 
+> Logs with fix
+> https://gist.github.com/uditkumarti/de4b36b21247fb36725ad909ce4812f6#file-with-fix
+> Line 2594 
+> 
+>  drivers/clk/keystone/sci-clk.c | 20 ++++++++++++++++----
+>  1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+> index 35fe197dd303..d417ec018d82 100644
+> --- a/drivers/clk/keystone/sci-clk.c
+> +++ b/drivers/clk/keystone/sci-clk.c
+> @@ -517,6 +517,8 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+>  	int num_clks = 0;
+>  	int num_parents;
+>  	int clk_id;
+> +	int max_clk_id;
+> +	u64 freq;
+>  	const char * const clk_names[] = {
+>  		"clocks", "assigned-clocks", "assigned-clock-parents", NULL
+>  	};
+> @@ -584,6 +586,7 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+>  				}
+>  
+>  				clk_id = args.args[1] + 1;
+> +				max_clk_id = clk_id + num_parents;
+>  
+>  				while (num_parents--) {
+>  					sci_clk = devm_kzalloc(dev,
+> @@ -592,11 +595,20 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+>  					if (!sci_clk)
+>  						return -ENOMEM;
+>  					sci_clk->dev_id = args.args[0];
+> -					sci_clk->clk_id = clk_id++;
+> -					sci_clk->provider = provider;
+> -					list_add_tail(&sci_clk->node, &clks);
+> +					/* check if given clock id is valid by calling get_freq */
+> +					/* loop over max possible ids */
+> +					do {
+> +						sci_clk->clk_id = clk_id++;
+>  
+> -					num_clks++;
+> +						ret = provider->ops->get_freq(provider->sci,
+> +							   sci_clk->dev_id, sci_clk->clk_id, &freq);
+> +					} while (ret != 0 && clk_id < max_clk_id);
 
-Signed-off-by: Maninder singh <maninder1.s@samsung.com>
-Signed-off-by: Onkarnath <onkarnath.1@samsung.com>
----
- drivers/clk/imgtec/clk-boston.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+take clock ids 0 1 2 3 -> Say 2 is reserved.
+num_parents = 4
+while(num_parents) Loop 1 ->  clk ID 0 is valid, list_add_tail
+while(num_parents) Loop 2 ->  clk ID 1 is valid, list_add_tail
+while(num_parents) Loop 3 ->  clk ID 2 is invalid.. so we scan forward
+	to clk ID 3 -> list_add_tail
+while(num_parents) Loop 4 ->  clk ID 4 is invalid.. but 5 is out of
+	range, so we break off loop. sci_clk is still devm_kzalloced ->
+	but since clk_id > max_clk_id, we jump off loop, and we dont add
+	it to tail. so one extra allocation?
+If we have multiple reserved intermediate ones, then we'd have as many
+allocations that aren't linked? Could we not improve the logic a bit to
+allocate just what is necessary?
 
-diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-index b00cbd045af5..db96f8bea630 100644
---- a/drivers/clk/imgtec/clk-boston.c
-+++ b/drivers/clk/imgtec/clk-boston.c
-@@ -67,21 +67,21 @@ static void __init clk_boston_setup(struct device_node *np)
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
- 	if (IS_ERR(hw)) {
--		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
-+		pr_err("failed to register input clock: %pe\n", hw);
- 		goto fail_input;
- 	}
- 	onecell->hws[BOSTON_CLK_INPUT] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
- 	if (IS_ERR(hw)) {
--		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
-+		pr_err("failed to register sys clock: %pe\n", hw);
- 		goto fail_sys;
- 	}
- 	onecell->hws[BOSTON_CLK_SYS] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
- 	if (IS_ERR(hw)) {
--		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
-+		pr_err("failed to register cpu clock: %pe\n", hw);
- 		goto fail_cpu;
- 	}
- 	onecell->hws[BOSTON_CLK_CPU] = hw;
+> +
+> +					sci_clk->provider = provider;
+> +					if (ret == 0) {
+> +						list_add_tail(&sci_clk->node, &clks);
+> +						num_clks++;
+> +					}
+>  				}
+>  			}
+>  
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.25.1
-
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
