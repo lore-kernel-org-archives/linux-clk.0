@@ -1,61 +1,61 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9D445947
-	for <linux-clk@vger.kernel.org>; Mon,  5 Feb 2024 17:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB7C45953
+	for <linux-clk@vger.kernel.org>; Mon,  5 Feb 2024 17:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707155743; cv=none; b=ro86YeKyEWsf4DRSU2CfOp9siM+ZUMA6cTeUA9R27vezcT8xe8VBcPX+9YuUuBM1hVzw0KgG+YuE1NGB+OYjP7i8vhimk/Cm/HDz8P8cQqGeFcmfcev96LzF2jO+fgrkyFzXnW3nYnzSzQ8SJZ0YlnLd/5bSBpBk15TKKRErbdE=
+	t=1707155744; cv=none; b=T2KK7UarWdDzUhu1vw0RgTqcY+GwUpGHrNznGUoF9HrdCHRUrG6gb5d79lsAKnCrteXLrPZrCuBXXyancwsLkC/lZki6hQf3JrCKyiXTvKbGcf/zrbXbZfRvF2xHSPIzX97aQT9AR47xwgu3tCiODR0rax/U7eEmVtf4ZYHjesQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707155743; c=relaxed/simple;
-	bh=dsHeljQP++qeke1zASpQ3YPnuH6eGTAu4r6z8mvmrbM=;
+	s=arc-20240116; t=1707155744; c=relaxed/simple;
+	bh=hnsfiSsJKInr4JylyhW7C8X4DcUP5JxEtf5koT8x+g4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kLPu1F97Ke51rrX9ss2q7waui3NUJg2a6Aa+L0zpalPoijLem6PAeioLXMcuYuPbhf7AbJAYTt3KTLORg+c/U4Y+tnj0ywQTuyEHWTavpaadCtSUrt5jNwKRU+zaX+QQ3CUuA/LRcWw4eF30Q46yyqZYKGsmh1li4HVJVUHHbXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GIWes4dd; arc=none smtp.client-ip=209.85.221.46
+	 In-Reply-To:To:Cc; b=St+bHJAy8JIpQNrOqoeTxlZ6Ah1G9jNS2R2jT85vlg39ByyDjohgEsy7shfe+SyMHi5TfCuH2Iz+eB1I6DzJMmIG4GJY/P5DltCjOPVRWe6bxOHtfgdtZ7+0z3goiyqpGbcmhx7kcdR2Oe6nYJaX137TAXij96w7ChhEX6RyW34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tpsr3G71; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GIWes4dd"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-33929364bdaso2934941f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 05 Feb 2024 09:55:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tpsr3G71"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40f02b8d176so41383365e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 05 Feb 2024 09:55:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707155737; x=1707760537; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1707155740; x=1707760540; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=szbyE8B5HmerWTS9QCGM8GNA9TtBAZ10zn0t2kxJOBs=;
-        b=GIWes4dd+dQkjv+erx0AlSSljN0dFYyqKuAMYMgJ+G0/2BkYHDL7S21MDxnK/2KbMV
-         MzHEsYK/S7ZMdkNHRP+OvgwR+jJe/W7Cs5F9qCFSPZQ3yQSHkPGr1xvzIjVmNcmZe6bV
-         g3nDCeCPtqd6bf/G06nK2BAcYF0rc+zypP3qMQEUNzeLwKe9AiUvauJdSDM67XGzB4Ny
-         3jSDdFo4151ygMuSiaFyYHyQjceKotluR2zifZpxs9RryZm7dfF6UIayCvh5aZZ+gDbI
-         RaMKc14D5EO7dkWE3faSvPBHkGog+dsQ/haHLtZidnvkrP0r5IwXN+FPVlUp04RLEV8e
-         /j+w==
+        bh=ZkiDF6CyURpbjnTnlPpjl05T1hEzDiWol01BVqEjgn0=;
+        b=Tpsr3G71Y/lkQJ2hd6LqyWx9M77CuBERIREklU/W+a1fha5GyJ3LVs11GfYAJM89fS
+         gOgaZY9uuzHgKU57EsR0nZ03j7YAZt2ft0yGlDSjmkPeymmTHV3eKeZ+Ki6mpYDrkXoQ
+         1inUzY3/Id/nj2RIUaHzwpUXS8WFIVQ1nbbM/okxxBCozbTBy4r7xuy5afUzPRw4MPHe
+         nnkuokfrnxcLHnVvq1KPSuJ7wNw3nRSo0kIq0sZ82kraCE+U5o9mINH6f5z2iDtk/Ajd
+         +4OdK2eb7IZnUBM7ECGKpWf5e+5Lw0pCj71iDGJfSFJ7oZUPX8/UUKWIQz3HygX3WE3t
+         2rgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707155737; x=1707760537;
+        d=1e100.net; s=20230601; t=1707155740; x=1707760540;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=szbyE8B5HmerWTS9QCGM8GNA9TtBAZ10zn0t2kxJOBs=;
-        b=NzG5+Xsz4irRPb/BgttQFONUUlJtQ/HeyBPBYoEvw6CXlon/TGAzpKDzpKWwFCFe2K
-         yvoQsShOTtciQaMtej57LMeFJi5bxPNktQFyn6khGajpY+1ukyP2xhoa88GYn+sWHeGd
-         GOJKl4k83NdunN2U6SDLBMBA2vBBoL3Bu4dBh2LkvRzuIeIehFP/AruJGGOZgUIxfqCK
-         bMSPGEuIO8nAAvEha7YlqZvAE21p9xqtCtVnn3vAtTb9XwWvM0edQhSFGc1T1M1Idpxg
-         mph3GrCe4lUXZBWqt3qNwyWTU98jPM9Acy7TlKwrjfi61CLdCCb00K0YmcwIWN2fjOVp
-         lpXQ==
-X-Gm-Message-State: AOJu0Yy+hRFkGY7c2s504ibb67QbuzzAWu0MiIrDs9CwIxkDLPW1jasI
-	xqcqKtf8g3WcE6p+Uzl8qd5Ll0mRoJaIY5NNBiXlc6bon6xozMpuN26EeANmm8s=
-X-Google-Smtp-Source: AGHT+IHzPv5LMbjyU60gsDCwrFazyTvvle25BDscy8+ByFFpC7e2TQ4l8+2KODtVkD57MCSsp9Hdug==
-X-Received: by 2002:a05:6000:d8a:b0:33b:3fe8:640e with SMTP id dv10-20020a0560000d8a00b0033b3fe8640emr155686wrb.16.1707155737401;
-        Mon, 05 Feb 2024 09:55:37 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCVM50fTjxTu0/xwr/5kMMi/SDP0CggyLV2aA//oJFKPwxW7n64dPykTFS0U9qE8rqv5Sc/wDNjmK5Dq9fhxmoYnuFCF+VNi7IcUqwGxpB/1zS7cXPmMA15BKXOJVHCm7iPpCaiCFeORxD9HGhs5r3BVQ9MhzlY8ON6S0mE8bX9WlRzQjbTkCChDcXOeBYMT8rxOHkKSHgxVeYqrri9eeZnV2vbdtGFeIZOTrA3g386MnQLa74//9u3PcDlop3CFKicmbz4dFvVhr4o3OdheJkOj47cv1KhZfLNbfX19XTqvbAQcSvBOL88AtC+hod0RPb9fd3NblrYr3gYEqFecREA+N9EvwrJezbA+7o8fojrD3FIOMfQA0JHcPBF7orMpL1Y3cZ5BR9rrrb89Hxp1N2BJavlEbeuECXI+KyY2jRIe7ImTf0M9xK5wXezlFUWfva3mbhYeSKV140KgIuR6ecCBmN5Vg47pE5mplktNY3zkWTXKu6FDYQTLxNTpDfcUzcgLbiaCJYD/S7F+sFuZauZYMpCb4uUutOpkAhiQcEf59b8M6G5ynRfib0V3u58hDb8EVMXFWN/jp0h9oul/N+m22WV4SJa5/fi27fJAncxu8cf6RZmuzknLNRdwiKjCn0zQO2QMO4Bg/DPq5SVlrIQc/FFpcLaGvwXJJQ3x4ckF69ArauH5I7OwGmsY/Dm+J/nwfslGfDcjnICd7be+YGN5W+BMGd0zcO0o57F/ngCUjVbSpPXJMomej1CG/T+TLYfeWH5WxcwVEJc8r7IDlBMYgjNIebA9GwGhQcrO
+        bh=ZkiDF6CyURpbjnTnlPpjl05T1hEzDiWol01BVqEjgn0=;
+        b=jZV/yXcVdqdcaukTzllfne2LK2opvl+Bj3KFScwd+YGCcVOB2KeaK3VcXXkoJ10jLK
+         2TVZ5HciNmd+MVOl4jj3ncwypXvgyEXww3j9sRV9aDo9qAER5CPxiLsIXajO0XRN5ngL
+         tpG0Krjc+38HcW1dStSp97lrwjNchj+rxe0ylrg1JpA/SyZD+39C2B/YNRJgo/BpoESu
+         ZZAmJIMJq98+PiI9f+NtxICkZJapJbHFrtUxNW1Uk/eeIXZwKTilBThqagk2k+wB7TPS
+         MU3UMRCTTAC9laHslSH+Hy0hCcGXFkdjkv9pVB8QHd0wbzpRuhh8QQLYEupoPpTIgOeD
+         CoqA==
+X-Gm-Message-State: AOJu0Ywhs5c95VLHoSipSrlE/xcCJqKWzYrvAE4QzfoYBFRTYzfe9bw3
+	4qblC7DEQWACcJCqzIswIlWdf3b43w1NPjmAeXRnMH4pyuQ7VGTK/XykeSuZf38=
+X-Google-Smtp-Source: AGHT+IETQBGHOnAagAgMuffwKFHFP8vTVTzJToIQcFvVHqE01f3YvEkn203TM64MOOaOv+xNt/Bd8w==
+X-Received: by 2002:a05:600c:5755:b0:40f:d2ff:85b1 with SMTP id jw21-20020a05600c575500b0040fd2ff85b1mr319812wmb.25.1707155740089;
+        Mon, 05 Feb 2024 09:55:40 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCVZScdR35F1dmrk3FwTtHiaHAlXV3DYGNV3amdyK0nzRRy32zPD3lgfR+G/zrWFiyQi2uU8i1JBMpw82mqBUxqL4B+cIptkYNu5FE0sGlWP9Vugmaq6RjjYUbNF2MkPxuALgtJpy/AzQjsKup3xZbbavx4sAAG5ZkOYeo4EMEfUPBvY6Q8DRednB/dxtECyNJe3+eE33+tSoInBLWMR7dW8laSXHB6eH5izdleZfmCg/3ULfy1P2CmkCAcI0rad8QBfPiZQg0FaBKewCYag6VeEaS4bv+TAl/9886PI7JbK+EplM1tza6g/jjiMGSmfZfBiJM2pXvytC8PFr/1aEbujDhM5SJbP21ZLHCkw0EJ8GmLu/9wh/jx50gmcSjplloo/60MVx+Jof7x5PvAKfXWn9/FCslIOrtfMeqa0yc/W9GUt20jSUIHAK+hR95u6hwQ99uyIJUH9Vx469R/KTLCfoyFrLrl2L5+D/MnYF/Mk69GPrRi8QB9eJ7X+iWkICWStX8mZq+PSdHDMh5eptGoizSK9CRUASSgwKBsPNmzRli84UvKJgfiSPfVrQ8b91dRBeezHCCj7GbAxAuii0i9K9n5IibDI2afO0JinqEpv+keFl4pKSEYKOHUg18PgML1MrTH0xtoq1wBBPoE5luSeUsQ2tg1Az/v4gBVtI3Al+OyAeDy5DbhiMUci3G6BsT5CwTH5ZIxamyqKNJbY/wvHLg75CRVTD2MrnazxOni1YcPH+1kKLGqQXsVEVnrZUUo=
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id je16-20020a05600c1f9000b0040ee8765901sm517556wmb.43.2024.02.05.09.55.36
+        by smtp.gmail.com with ESMTPSA id je16-20020a05600c1f9000b0040ee8765901sm517556wmb.43.2024.02.05.09.55.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Feb 2024 09:55:37 -0800 (PST)
+        Mon, 05 Feb 2024 09:55:39 -0800 (PST)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 05 Feb 2024 18:55:28 +0100
-Subject: [PATCH v10 1/7] dt-bindings: arm: amlogic: Document the MNT Reform
- 2 CM4 adapter with a BPI-CM4 Module
+Date: Mon, 05 Feb 2024 18:55:30 +0100
+Subject: [PATCH v10 3/7] clk: meson: g12a: make VCLK2 and ENCL clock path
+ configurable by CCF
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240205-amlogic-v6-4-upstream-dsi-ccf-vim3-v10-1-dc06073d5330@linaro.org>
+Message-Id: <20240205-amlogic-v6-4-upstream-dsi-ccf-vim3-v10-3-dc06073d5330@linaro.org>
 References: <20240205-amlogic-v6-4-upstream-dsi-ccf-vim3-v10-0-dc06073d5330@linaro.org>
 In-Reply-To: <20240205-amlogic-v6-4-upstream-dsi-ccf-vim3-v10-0-dc06073d5330@linaro.org>
 To: Rob Herring <robh@kernel.org>, 
@@ -82,47 +82,302 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Conor Dooley <conor.dooley@microchip.com>
+ Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=886;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8195;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=dsHeljQP++qeke1zASpQ3YPnuH6eGTAu4r6z8mvmrbM=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlwSETaOGV/LfGvPj9RkwIO8SpqVlmJ5bu/JPHvBxw
- MhoMyGSJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZcEhEwAKCRB33NvayMhJ0UlYD/
- 9D5EgwF9dY0ePJOrDxc0L/pBLl3YvRvByoSAHYyvlLebG1LealyXE13WkrJPxKU2gxouPPprPZoSg7
- xV2Cmd5Ci3GvXtq/VBV5zMQOXmvtORdpoKgYhFB0+P8L+ttJHXyH+X8QhaDyfefFOr2zexMrmoEDf2
- EtjTA/3rGN9AOpi7bOr9FxtyR3/kgAN6unsXB0W622z0QDAK110rj4ITdGXemGRgomf11zjk4fyvpf
- IKkCct4yYWkopzIKn8HXVU1ETWmrB8ovYPIGENVEn2b2o2fj0VLXai9mUhU88O/PIlUVaoQ+V7jY9a
- MNV+Md/lM9z4lQlHEjABIHPMtMipSJqkxFUN5SdKnTP/ovZpZu68S3XKCf/8f42zLwbiXtVz3qyeCw
- BX95wWutuiELlGhLkxYoB87jlFl0VzRce1lASTpG0BtlTWUInPiMHVgW6Ws4DbkrYD4WL/VhdieM+T
- Yykb94ImYEKlvsVGMpkyojwJ7H1gyeZrXRpTafAc16tdBH77g2D1Ev8X11FrgQaI89mmL4zEENO+pM
- GqfEggf444uxQs3HuyFDX9fdCepIaIKOSCXhkHh+S4niRQPbtev0i3ZGw9yh+BM4Yae+erHyobbvbA
- 08bciuZ5EXewIPkwV7zyBR28akMd5/uA8UA0WFFxskAkp+NjyF3maME9d2IQ==
+ bh=hnsfiSsJKInr4JylyhW7C8X4DcUP5JxEtf5koT8x+g4=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBlwSEUk5CX06yo7N4kEWfDk4rTAYGmo9doFA7V9cBp
+ dvDU6OiJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZcEhFAAKCRB33NvayMhJ0a8ED/
+ 4oP/DPfQe+plv8p72/ryqS4Dq8cSiowWNzJq6W0+obvJsrY6K57XJAGL0//PhbTfAOTx7T6CBfdJlx
+ YaPO4GgWqnHAaJXbl2xEbAx2USsAdbcMcNr9JCE/VF+ARySMkvGY1ht0MxM+xSQJ6Zy5qbGUaSZ0eq
+ tuFI44yyzajKydbZJvTN3toYMp8Q63eDuAoEPlN0YCV2d5NleMIfODBeR8xTuPFCkRgwUJHdhP3TWq
+ /r8qkvi3P/ruWqJuxKxDJfg+dPFK1PpAwJDvXybIyi5a8zf+E9DOpW/SMF+3B1mxH0jPz3Ftnwo354
+ bEFFcUAG/U9GqDMidwsrLJ8Gyo1nAJUh9KuQUlrQjZIFUnFAvt1is2r3tUsiXM7lBZNTXLHnWjtxep
+ 1hKr3SbA3R04Z9ZaeVIYHEGcHPRInc4aR8XNsEG0Afo5hCk63RBzmo0s6hMCC/zkcviJ04J2A4S6s/
+ zmE2Ok7xuoXJdA3oEHvGZg57XyuPvU2qSEp49phdlw4bjrIITC8CXsTgBeUKRTZDuwqM27zEU15Fii
+ ++qHa044A7sR/zpWpb7YTBjzto+u9FNEtPfMtP1AUvwWE6KgVRPRRsvSLbkURjvVZq9CwKdzlrg616
+ 1MXEsomMRMfnNTTAnrtKSZELyxtUeT0NeC9xjtTNNo6SAY5BuDPiyBDJuW/g==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-The MNT Reform 2 CM4 adapter can be populated with any Raspberry Pi CM4
-compatible module such as a BPI-CM4 Module, document that.
+In order to setup the DSI clock, let's make the unused VCLK2 clock path
+configuration via CCF.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+The nocache option is removed from following clocks:
+- vclk2_sel
+- vclk2_input
+- vclk2_div
+- vclk2
+- vclk_div1
+- vclk2_div2_en
+- vclk2_div4_en
+- vclk2_div6_en
+- vclk2_div12_en
+- vclk2_div2
+- vclk2_div4
+- vclk2_div6
+- vclk2_div12
+- cts_encl_sel
+
+vclk2 and vclk2_div uses the newly introduced vclk regmap driver
+to handle the enable and reset bits.
+
+In order to set a rate on cts_encl via the vclk2 clock path,
+the NO_REPARENT flag is set on cts_encl_sel & vclk2_sel in order
+to keep CCF from selection a parent.
+The parents of cts_encl_sel & vclk2_sel are expected to be defined
+in DT or manually set by the display driver at some point.
+
+The following clock scheme is to be used for DSI:
+
+xtal
+\_ gp0_pll_dco
+   \_ gp0_pll
+      |- vclk2_sel
+      |  \_ vclk2_input
+      |     \_ vclk2_div
+      |        \_ vclk2
+      |           \_ vclk2_div1
+      |              \_ cts_encl_sel
+      |                 \_ cts_encl	-> to VPU LCD Encoder
+      |- mipi_dsi_pxclk_sel
+      \_ mipi_dsi_pxclk_div
+         \_ mipi_dsi_pxclk		-> to DSI controller
+
+The mipi_dsi_pxclk_div is set as bypass with a single /1 entry in div_table
+in order to use the same GP0 for mipi_dsi_pxclk and vclk2_input.
+
+The SET_RATE_PARENT is only set on the mipi_dsi_pxclk_sel clock so the
+DSI bitclock is the reference base clock to calculate the vclk2_div value
+when pixel clock is set on the cts_encl endpoint.
+
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- Documentation/devicetree/bindings/arm/amlogic.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/meson/Kconfig |  1 +
+ drivers/clk/meson/g12a.c  | 72 ++++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 53 insertions(+), 20 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
-index caab7ceeda45..2154a4614fda 100644
---- a/Documentation/devicetree/bindings/arm/amlogic.yaml
-+++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
-@@ -164,6 +164,7 @@ properties:
-         items:
-           - enum:
-               - bananapi,bpi-cm4io
-+              - mntre,reform2-cm4
-           - const: bananapi,bpi-cm4
-           - const: amlogic,a311d
-           - const: amlogic,g12b
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 8a9823789fa3..59a40a49f8e1 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -144,6 +144,7 @@ config COMMON_CLK_G12A
+ 	select COMMON_CLK_MESON_EE_CLKC
+ 	select COMMON_CLK_MESON_CPU_DYNDIV
+ 	select COMMON_CLK_MESON_VID_PLL_DIV
++	select COMMON_CLK_MESON_VCLK
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for the clock controller on Amlogic S905D2, S905X2 and S905Y2
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 90f4c6103014..083882e53b65 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -22,6 +22,7 @@
+ #include "clk-regmap.h"
+ #include "clk-cpu-dyndiv.h"
+ #include "vid-pll-div.h"
++#include "vclk.h"
+ #include "meson-eeclk.h"
+ #include "g12a.h"
+ 
+@@ -3165,7 +3166,7 @@ static struct clk_regmap g12a_vclk2_sel = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = g12a_vclk_parent_hws,
+ 		.num_parents = ARRAY_SIZE(g12a_vclk_parent_hws),
+-		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
++		.flags = CLK_SET_RATE_NO_REPARENT,
+ 	},
+ };
+ 
+@@ -3193,7 +3194,6 @@ static struct clk_regmap g12a_vclk2_input = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_sel.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
+@@ -3215,19 +3215,32 @@ static struct clk_regmap g12a_vclk_div = {
+ };
+ 
+ static struct clk_regmap g12a_vclk2_div = {
+-	.data = &(struct clk_regmap_div_data){
+-		.offset = HHI_VIID_CLK_DIV,
+-		.shift = 0,
+-		.width = 8,
++	.data = &(struct meson_vclk_div_data){
++		.div = {
++			.reg_off = HHI_VIID_CLK_DIV,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.enable = {
++			.reg_off = HHI_VIID_CLK_DIV,
++			.shift   = 16,
++			.width   = 1,
++		},
++		.reset = {
++			.reg_off = HHI_VIID_CLK_DIV,
++			.shift   = 17,
++			.width   = 1,
++		},
++		.flags = CLK_DIVIDER_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "vclk2_div",
+-		.ops = &clk_regmap_divider_ops,
++		.ops = &meson_vclk_div_ops,
+ 		.parent_hws = (const struct clk_hw *[]) {
+ 			&g12a_vclk2_input.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_GET_RATE_NOCACHE,
++		.flags = CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -3246,16 +3259,24 @@ static struct clk_regmap g12a_vclk = {
+ };
+ 
+ static struct clk_regmap g12a_vclk2 = {
+-	.data = &(struct clk_regmap_gate_data){
+-		.offset = HHI_VIID_CLK_CNTL,
+-		.bit_idx = 19,
++	.data = &(struct meson_vclk_gate_data){
++		.enable = {
++			.reg_off = HHI_VIID_CLK_CNTL,
++			.shift   = 19,
++			.width   = 1,
++		},
++		.reset = {
++			.reg_off = HHI_VIID_CLK_CNTL,
++			.shift   = 15,
++			.width   = 1,
++		},
+ 	},
+ 	.hw.init = &(struct clk_init_data) {
+ 		.name = "vclk2",
+-		.ops = &clk_regmap_gate_ops,
++		.ops = &meson_vclk_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3339,7 +3360,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3353,7 +3374,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3367,7 +3388,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3381,7 +3402,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3395,7 +3416,7 @@ static struct clk_regmap g12a_vclk2_div12_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3461,6 +3482,7 @@ static struct clk_fixed_factor g12a_vclk2_div2 = {
+ 			&g12a_vclk2_div2_en.hw
+ 		},
+ 		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3474,6 +3496,7 @@ static struct clk_fixed_factor g12a_vclk2_div4 = {
+ 			&g12a_vclk2_div4_en.hw
+ 		},
+ 		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3487,6 +3510,7 @@ static struct clk_fixed_factor g12a_vclk2_div6 = {
+ 			&g12a_vclk2_div6_en.hw
+ 		},
+ 		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3500,6 +3524,7 @@ static struct clk_fixed_factor g12a_vclk2_div12 = {
+ 			&g12a_vclk2_div12_en.hw
+ 		},
+ 		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3561,7 +3586,7 @@ static struct clk_regmap g12a_cts_encl_sel = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = g12a_cts_parent_hws,
+ 		.num_parents = ARRAY_SIZE(g12a_cts_parent_hws),
+-		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
+ 	},
+ };
+ 
+@@ -3717,15 +3742,22 @@ static struct clk_regmap g12a_mipi_dsi_pxclk_sel = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = g12a_mipi_dsi_pxclk_parent_hws,
+ 		.num_parents = ARRAY_SIZE(g12a_mipi_dsi_pxclk_parent_hws),
+-		.flags = CLK_SET_RATE_NO_REPARENT,
++		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
++/* Force as bypass by forcing a single /1 table entry, and not rely of boot value */
++static const struct clk_div_table g12a_mipi_dsi_pxclk_div_table[] = {
++	{ .val = 0, .div = 1 },
++	{ /* sentinel */ },
++};
++
+ static struct clk_regmap g12a_mipi_dsi_pxclk_div = {
+ 	.data = &(struct clk_regmap_div_data){
+ 		.offset = HHI_MIPIDSI_PHY_CLK_CNTL,
+ 		.shift = 0,
+ 		.width = 7,
++		.table = g12a_mipi_dsi_pxclk_div_table,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mipi_dsi_pxclk_div",
 
 -- 
 2.34.1
