@@ -1,159 +1,149 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A2818E0F
-	for <linux-clk@vger.kernel.org>; Mon,  5 Feb 2024 11:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8838199BC
+	for <linux-clk@vger.kernel.org>; Mon,  5 Feb 2024 11:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707132817; cv=none; b=CO1olvP6dNXYkm/dpuQdOCDVD6CrfO/oAX2kXtMBv/u4HZv/7bRG4wXEw+hVk29z9vZYeFaadFAI9bKPFDT2cKM8BbY/pM0CKi8+gwDoDvZ6HIIK24UFH4OX099iN/5m5Dt6hQH+Q7PodhMVOeCmnaJeNxn8pp8rexly5XMQT5s=
+	t=1707133305; cv=none; b=dUmCc/3Uprh/YYYPwqNYDSmsUFDno0Vjoz+YaXa+/KmiMFT+LRbpzy/We0np+wRvw5fZKYekcz1wwkVsIdJzCsjyLzHZM89bBVMfBjp9eX6fYSt71jtkFA9m158vWYsqjTxRsd2iLNTrOy8Vt/pQe65dy6/MHsqGdcdym4zeVlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707132817; c=relaxed/simple;
-	bh=pqHr8ktcWjb7z6YkpH8/0b9yqCF/o9NhA+xa5c+rTns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iw3H7I9O0jz0BSPigp4pPflIotD3cJfXnVGoz5qHJqN6exUgUlbKgXVFbGMY9jKvQEuH/Q40jVcvtdrDkWC5ra28PvOSreOtSN6OQeJzDM/8w7j4/0wOdvEk5K+ekDk0E7yTQ3ikmMvV5bSiKn6eICHBTXeaQEoKPbPCRr94ZEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qSWqRmpA; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707133305; c=relaxed/simple;
+	bh=HZ0nvGaBN5Wk8A4XWPCkZFffRcIQnmcMCoXMFKcitgE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=S74hS3jfDAIQfVnIzUcc8FZ+6bakgx4qzNtvq2bC1Kk8ng+rfqkCRBcFRCeQ5CoOuwysRleeXyLhri1rEbu+a+WXqLOtzJBQzkd2WVY397ZkYkpj9O+gIdN4tuttjcOUtuQZvezIHbcjBv90ulqxCQl+V5hwFRWxeZM8ZvJ/254=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hUONy5p/; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qSWqRmpA"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a30f7c9574eso575968866b.0
-        for <linux-clk@vger.kernel.org>; Mon, 05 Feb 2024 03:33:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707132812; x=1707737612; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o4RoA1rH4rB2jaS+AHrZsou+aBL79EHdgTVoMA6pD7E=;
-        b=qSWqRmpAAV3ysP0eoc4GTKQEWXviQk7N/wSa/+WeujTdNfJfwXKUgIai/rFr5hOVhe
-         xeHemWEQGu9MQ/+hkA+jRf+NRHRbmmu8txibA1wBG1UbbNK8AynuW9PZ4R7r6ljNqqop
-         v1NGt/kskHMzVqwv/XP3QAn0aR+RgvyoNdeVpf5/9eUGFTuvXoU6gm+1BLJt05b+vovh
-         kMh/NWlT626RP/4tHiv2QrHGcq7kYDRgWTpsUR4uAYvOCrZNgeMR7GAa219ZduYJoVXB
-         ypgzteh9zBdEGLW2IsaaC1TFxOzjNwom+ZQ6jN4ttr7xM/Hh7zS1b1EyXU+aHh4OeIi3
-         Bd2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707132812; x=1707737612;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o4RoA1rH4rB2jaS+AHrZsou+aBL79EHdgTVoMA6pD7E=;
-        b=Se1Vj2FGdbeD8Gt84aI8alrfZlhyIsuegvefZDdwfLGPjNhNHbl5m7fOGqRb9JNSXP
-         uTNDRfKFoGWfGycVnefp2OIYTHt4DquEr9L472RuqtfqX52/8faW0OmniuI4R5DmWLCw
-         L8hFaw4Gb8n7eWvZqhW86PKSUhu1Xqg2tWtEqddreK5wETnqdNoLZ9HPNPwWmzD2rXSu
-         kTrNTwYHRD6LMdtWb4WIx6wXLkNk39KnCwh1hneU1XGryYHrCcjzr0JTR5SJ1nLSzoK6
-         TJG9KlvKj+FnVfJZd+DZdUHgajqlDTCxkuQbicPLg/s5YLYBcOSIvfJKXm3rIOXlY4VF
-         uuiw==
-X-Gm-Message-State: AOJu0YwSXU9ZacBK3IPgSpCTaMmW1ZTRRxnPy3MySQfzrc8Xfeda8gVn
-	rfk8nzsr4p0ShNe7prJ5gUa67z7PdmPCC+fujNv4VtbsIAxridQ0YUsznd87670=
-X-Google-Smtp-Source: AGHT+IECEQfrfiKwnBW6JBBmnfYfx4ll9x/HMfLGeAGA+z1tHhkvEOdqDeipnNcAozA5+TVebA/rUw==
-X-Received: by 2002:a17:906:31d9:b0:a37:2176:251d with SMTP id f25-20020a17090631d900b00a372176251dmr5226974ejf.15.1707132812195;
-        Mon, 05 Feb 2024 03:33:32 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCVIKDymKFwpaw0owuIVjaaVHIJEixWT6e2nh/2aI2NxesHM6Fn+jsrih0eFIHj4iw2Q8nSDuTOVNNMTJbcvfaJ4vHgwbFGdQi+SXcneuAkekZomVLErSJNvVfa3xjtpJpx/As4NmOezkfAYHyVFX9I6r2xfVySi1INlVPX4Ill98BCq8z7zJmT5KY8LlOTqWOg87x5QYxnA6IYBR1Uj33oRmG2pYTHr6Attvqd99Z3+H0WsKrP5Xe5nO/RYVBPH7Rb75YSDgvzQ4M5ZttkjblpYJ+5XHJYn4OWSZQBbT2a6qboAZ6C2VSZMx7aaoNakIWL+dX3wy1VRPSRW1S/N8Hg0cYr6UCz0Z4AXrqbz33FftZ5P/1jq3Jj/5gkGzlFMMdhAa//ikgiYLqrt2VwXz8+gHrsePFB6fUt1cuVtiaEB7s+tQjSRjaFuFDQKavEaq/YmOWP077j2SK981wdKKxM+K/x9gbzZ9C59W13cOIEGXbPiGQ==
-Received: from [192.168.159.104] (037008245233.garwolin.vectranet.pl. [37.8.245.233])
-        by smtp.gmail.com with ESMTPSA id g9-20020a170906348900b00a3522154450sm4299604ejb.12.2024.02.05.03.33.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Feb 2024 03:33:31 -0800 (PST)
-Message-ID: <6fdde54e-12cb-442c-9dea-d1d6cbca340b@linaro.org>
-Date: Mon, 5 Feb 2024 12:33:29 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hUONy5p/"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240205114139epoutp0256594cdf3feda0cc49dafbf02a346a3c~w9LDuuwhs0738207382epoutp02E
+	for <linux-clk@vger.kernel.org>; Mon,  5 Feb 2024 11:41:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240205114139epoutp0256594cdf3feda0cc49dafbf02a346a3c~w9LDuuwhs0738207382epoutp02E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1707133299;
+	bh=EOGLXpG9HMEKocHPZBogLBBCsSl2pNgppt6+gMxaTpU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=hUONy5p/n5cO3CZKPUNfxh4B3VSAnVKPCRHe6JbMqFW+KYmVmoL+RCClGCd+pfv3n
+	 yIF5mwJnpoAGa9kE9B8PMvdi9M8lotcHA1ETnHkKYew15bU46vbemeYenkbbvd0dRR
+	 HWnhsRBcURbA9kahftdLgcQfdpX9YkxfBUJnSYN0=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240205114138epcas5p2ad8001def351e326ca13516349412c4d~w9LC8gp0K2986229862epcas5p2_;
+	Mon,  5 Feb 2024 11:41:38 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	67.6E.09634.279C0C56; Mon,  5 Feb 2024 20:41:38 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240205111208epcas5p4775d540854dd8778388065a574b7862b~w8xSX8cPM3247232472epcas5p4L;
+	Mon,  5 Feb 2024 11:12:08 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240205111208epsmtrp2795d08284788a0322be86253dec2151a~w8xSXIiRI2233822338epsmtrp2T;
+	Mon,  5 Feb 2024 11:12:08 +0000 (GMT)
+X-AuditID: b6c32a49-159fd700000025a2-b7-65c0c9721711
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C3.97.07368.882C0C56; Mon,  5 Feb 2024 20:12:08 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.109.224.44]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240205111206epsmtip2b4840220644a39cb4b591bc7a2ff1469~w8xQspkMX3117131171epsmtip2K;
+	Mon,  5 Feb 2024 11:12:06 +0000 (GMT)
+From: Onkarnarth <onkarnath.1@samsung.com>
+To: paulburton@kernel.org, mturquette@baylibre.com, sboyd@kernel.org
+Cc: linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, r.thapliyal@samsung.com, Onkarnath
+	<onkarnath.1@samsung.com>, Maninder singh <maninder1.s@samsung.com>
+Subject: [PATCH 1/1] clk: imgtec: use %pe for better readability of errors
+ while printing
+Date: Mon,  5 Feb 2024 16:41:55 +0530
+Message-Id: <20240205111155.3939125-1-onkarnath.1@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clk: qcom: gcc-sm8150: Add gcc_parents_0_ao support
-Content-Language: en-US
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240123-gcc-ao-support-v1-0-6c18d5310874@quicinc.com>
- <20240123-gcc-ao-support-v1-2-6c18d5310874@quicinc.com>
- <d31a52fc-9073-483d-b84b-1f02a5698a89@linaro.org>
- <77903574-696b-90f9-f136-be5c5d219ba1@quicinc.com>
- <5ae84692-b05d-4a43-aabb-4d2e7d9926d5@linaro.org>
- <04788b2c-a212-b8a2-1124-d904f2f61f5d@quicinc.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <04788b2c-a212-b8a2-1124-d904f2f61f5d@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZdlhTS7fo5IFUg3VNahYfe+6xWlzeNYfN
+	onPTVkaLw/PbWCwunnK1WNHzgdWi49tcFouN97It/l3byOLA6fH+Riu7x6ZVnWwefVtWMXp8
+	3iQXwBLFZZOSmpNZllqkb5fAlfF6SS9rwX3uihtb1rM0MD7g7GLk4JAQMJFY2h/TxcjFISSw
+	m1Fiau8TFgjnE6PE3s4nrBDON6DMm+/MXYycYB27XvyHqtrLKPHn1U+oqi+MEtsXf2UFqWIT
+	0JKYcecAE4gtIuAi0btuFyOIzSxwmFHizBF+EFtYIFqi/9pKFhCbRUBVYtbZRnYQm1fATmLR
+	mq+MENvkJWZe+g4VF5Q4OfMJC8QceYnmrbOZQRZLCFxjl1j65hQLRIOLxJcjD1khbGGJV8e3
+	sEPYUhKf3+1lg7DzJVpmz2KGBECNxNWnqhBhe4knFxeygoSZBTQl1u/ShwjLSkw9tY4JYi2f
+	RO/vJ0wQcV6JHfNgbFWJX1OmQl0gLXH/91yoTR4SHZ0fwWqEBGIleq5PY5/AKD8LyTezkHwz
+	C2HzAkbmVYySqQXFuempxaYFhnmp5XrFibnFpXnpesn5uZsYwclFy3MH490HH/QOMTJxMB5i
+	lOBgVhLhNdtxIFWINyWxsiq1KD++qDQntfgQozQHi5I47+vWuSlCAumJJanZqakFqUUwWSYO
+	TqkGJoa1E29IybRGRq+uW+P0sb9JavveG+tY7K6HzPn0SKh42SWzfTJ1a/rmK0SfYtJ/sbpI
+	vI9v+uYGxeKc1QkKWxkqcrfznNrrp6l7bdZrscjYSbeTpyg+cKmXPfdHLSfk59+6iz1lO1mO
+	v5bS2W8wNeXd9aMhs9LcN3wx8S6e67voY/Dqaxc9Bdl96/8aOvxiZD41JTd4d5vyUuutRbM/
+	znh5S7XEmiHm8u2tco2FzX2e0aoGf54GP01ZsyWgZGbz+k3Wc8/kV5T9LUlctTwmfW5C9hmV
+	bx0JshP2ntyzWah7+mYX/3LWiU7TV1VJT0+Xb+rrXhNX2tIaE+NmN13vSce0HbWz7CccXHX6
+	vi/DOyWW4oxEQy3mouJEAOg5FtGdAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMLMWRmVeSWpSXmKPExsWy7bCSvG7HoQOpBpuOSVl87LnHanF51xw2
+	i85NWxktDs9vY7G4eMrVYkXPB1aLjm9zWSw23su2+HdtI4sDp8f7G63sHptWdbJ59G1Zxejx
+	eZNcAEsUl01Kak5mWWqRvl0CV8brJb2sBfe5K25sWc/SwPiAs4uRk0NCwERi14v/LF2MXBxC
+	ArsZJY59Ws0KkZCW+HR5DjuELSyx8t9zdoiiT4wSrQumMIMk2AS0JGbcOcAEYosIeEjsOvKG
+	GaSIWeAko8SdRbdYQBLCApESc7c0gzWwCKhKzDrbCDaVV8BOYtGar4wQG+QlZl76DhUXlDg5
+	8wlYLzNQvHnrbOYJjHyzkKRmIUktYGRaxSiZWlCcm56bbFhgmJdarlecmFtcmpeul5yfu4kR
+	HK5aGjsY783/p3eIkYmD8RCjBAezkgiv2Y4DqUK8KYmVValF+fFFpTmpxYcYpTlYlMR5DWfM
+	ThESSE8sSc1OTS1ILYLJMnFwSjUwJes9t+1luXfhxTLnZXMeVcku8Y0Jv/LlRtkOljcfTZZJ
+	SWUKiXud+HCRaeKLBG/HgwmdK1ds6lp/iXP36rq1TLvSQ41C5vyO678T8XDmua9Bd6V+8Mtd
+	ZTmVmySyM9J+Bl/zzLSSsMbVb1bufl52P3xTgWFSCKfk+ktMV+4GHE0usVz/4TFX4P7VFpu1
+	jXuZvBtT513doD/Bc9PkopxZfir3vtmo7t7DurnjwNQ93yv0Hh1/vvjfuqsFyytfvOPQXOD3
+	TrVSV+6694Klqey6Wyv4tDkWp//Z1CAfsshn7urlG+Ps+e94Luo+mb1NvWWazedjy4xKQkJL
+	NWz2SOq+vM/ytTooWzvJY+HKBSfPrlBiKc5INNRiLipOBADdWwUnxgIAAA==
+X-CMS-MailID: 20240205111208epcas5p4775d540854dd8778388065a574b7862b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20240205111208epcas5p4775d540854dd8778388065a574b7862b
+References: <CGME20240205111208epcas5p4775d540854dd8778388065a574b7862b@epcas5p4.samsung.com>
 
-On 5.02.2024 09:37, Satya Priya Kakitapalli (Temp) wrote:
-> 
-> On 1/25/2024 3:25 PM, Konrad Dybcio wrote:
->>
->>
->> On 1/25/24 06:49, Satya Priya Kakitapalli (Temp) wrote:
->>>
->>> On 1/23/2024 11:17 PM, Konrad Dybcio wrote:
->>>>
->>>>
->>>> On 1/23/24 17:34, Satya Priya Kakitapalli wrote:
->>>>> Add active_only support for gcc_parents_0, this is needed because
->>>>> some of the clocks under it are critical which would vote on xo
->>>>> blocking the suspend.
->>>>>
->>>>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->>>>> ---
->>>>
->>>> Is there a need to keep gcc_cpuss_ahb_clk_src around? Do we do any
->>>> ratesetting on it? Should we ever turn it off?
->>>>
->>>
->>> The branch clocks under gcc_cpuss_ahb_clk_src are critical clocks, which are running at 19.2Mhz causing vote on XO during suspend. As of now no rate setting is happening but this rcg is useful to get the exact rates from debugfs. Hence this change is needed to avoid XO shutdown issues.
->>
->> So, if I underderstood you correctly, this clock serves no purpose other
->> than getting rate?
->>
->> In this case, I'd say we should de-register it from the clock driver and
->> use debugcc [1] (contributions welcome!) for precise measurements.
->>
-> 
-> Although currently there is no rate-setting happening now, its better to keep the rcg modelling as is, considering that it might be needed if some use case arises in future.
+From: Onkarnath <onkarnath.1@samsung.com>
 
-We don't tend to solve imaginary problems, please lay out what it would be
-used for, if at all. Then, we can assess whether it's necessary.
+instead of printing errros as a number(%ld), it's better to print in string
+format for better readability of logs
 
-Konrad
+Signed-off-by: Maninder singh <maninder1.s@samsung.com>
+Signed-off-by: Onkarnath <onkarnath.1@samsung.com>
+---
+ drivers/clk/imgtec/clk-boston.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+index b00cbd045af5..db96f8bea630 100644
+--- a/drivers/clk/imgtec/clk-boston.c
++++ b/drivers/clk/imgtec/clk-boston.c
+@@ -67,21 +67,21 @@ static void __init clk_boston_setup(struct device_node *np)
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+ 	if (IS_ERR(hw)) {
+-		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
++		pr_err("failed to register input clock: %pe\n", hw);
+ 		goto fail_input;
+ 	}
+ 	onecell->hws[BOSTON_CLK_INPUT] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
+ 	if (IS_ERR(hw)) {
+-		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
++		pr_err("failed to register sys clock: %pe\n", hw);
+ 		goto fail_sys;
+ 	}
+ 	onecell->hws[BOSTON_CLK_SYS] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
+ 	if (IS_ERR(hw)) {
+-		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
++		pr_err("failed to register cpu clock: %pe\n", hw);
+ 		goto fail_cpu;
+ 	}
+ 	onecell->hws[BOSTON_CLK_CPU] = hw;
+-- 
+2.25.1
+
