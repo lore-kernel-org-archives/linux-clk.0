@@ -1,128 +1,165 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3830E48796;
-	Mon,  5 Feb 2024 18:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AA81350DD;
+	Mon,  5 Feb 2024 20:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707158612; cv=none; b=S+irNdiXj3NckLfZzjeoIek+j/GEBWp6iwzK+RA9sc12MtJ6jtiltEE5BS+PvnmPvJXSDL6R9fd2lqDl0s9fhL8tfJLTo9maY++z6eiEzoy5s/WmHFxOjQAFU1EFo2AU0KMw9smNpEuiAO72+VnUkSoA1G+RA8dZKkehwsHAb/U=
+	t=1707165258; cv=none; b=FAK0iNDZxN+Rtsr9elqnjHrkMvNpvQHuHl1vZO/2jkgF8HvBN9WfSTqyFiK7p9V12HUMGIuWYIe8kcJsdVF6zGf3ZcWzh5lGb4AhN4amwcot10X1dOI14FVxWeF6ZPR3ieZ7Q+nVA75cTFaree+jENM1Pb+MuFdQPMMJwuVrq2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707158612; c=relaxed/simple;
-	bh=QlgzPgs6KCB4COcwRVJDbUMBhSrCoN/54lajE9rvpI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NZ2bZDa7d/PVfoq22TJ0STbh94zPw+0CdneDicnGteiE4Z7LQlIQYiTCjc5uu2uCOrrtOfgY1eduwEKRarezsFzFTxVJZxcBPO5s2544kP/eTMpgSfo1MCnnGsZlHxJxCT1NzDf0NbmLakNktqmOV8GN0kxkyXPJE/PyroVLAp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gBgAJ3IY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1707165258; c=relaxed/simple;
+	bh=N0qxgdQexW+YOk1HTnBxVMlAEbMGIRQ+C4gNI/hmAyQ=;
+	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RJyfR7Kwt3EnH/hvQcnYgkb/wmGaUz7ltsBSLZZ2jLPYilasp5yHO7f2ID05Sgv683Nbu0Wytm7ZiHzg8nZxAqBrbpMYT8boz/5H/Su5B7m4Mygq23M5WTtRYdg7YIK8qbdVtWNynfBUzx8/4nJ4wbU2E2AMJfl/Gsv3JoNy92c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev; spf=pass smtp.mailfrom=oltmanns.dev; dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b=R2djw1HS; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gBgAJ3IY"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 415Ado7U025429;
-	Mon, 5 Feb 2024 18:43:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=4ZWfCHX4P4mlG3MlnCZlj7DBCqdL6mjOYU2eJew/9K0=; b=gB
-	gAJ3IYsf82/V/OXH5V6LKEf7Zn8fNNE9NGQS038fIidvS7L5Zlj6Hthpgr73DhJv
-	7mzfePExJdKlnxTyNm5zENNC3xWyrjKmft6VFaTrdGMAIIMdihrZVKw6VPX/CCnE
-	/8Gwv7GLiCEoHM0IP0z3n0T0QIZL2Im2CU+6U8nXXwlB5qHupHpie4GkJDWOyEgI
-	1hXqZeBx0miKTWn4AkXe/Vjr1nHroD2nDNqfWoAQrj8aR9ZTNEJCGN1uOANgyuLc
-	XkV1EEK2Q16HaWgEdqDzhr0HQfzI2qNU1vZ710/e+EpVk0ztKQ2UTjpxoDK0kfSK
-	mnJgiTRv+txSxL7X4pzQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w2v729e3p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Feb 2024 18:43:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 415IhPSf026192
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 5 Feb 2024 18:43:25 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 5 Feb
- 2024 10:43:24 -0800
-Message-ID: <1d1db241-c4e3-75f8-5dc3-69598bf4ec76@quicinc.com>
-Date: Mon, 5 Feb 2024 11:43:23 -0700
+	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="R2djw1HS"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4TTJ4z2JdKz9t1g;
+	Mon,  5 Feb 2024 21:34:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+	s=MBO0001; t=1707165251;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JhbWLYxrCrQ3+gd4ivimBZHSQmaCXqHOjjg02OP3xx8=;
+	b=R2djw1HS8bxFkt+EI/9CYDUBEevDM+VSAHffx73SoUKoK3bMJKRxs9VhkuAnCRK+JERH7Y
+	60alGLPy+4ai9716fWUmzZ646rdY6pgoqi1ZWH1GH9iUjc+596EwHN9Y+M9PjYqv1gP0I1
+	qcJfe5iGohVH86cGzU7SUJMotblba4oWxv6A0IeKoPsDdpMJj0NItuJrnukhNZ4sJaQIaR
+	r1spiZSvnnbQm0XKfV+DqbIjLUMZAumVhScEj8JnzNyYsh9fX7KUCgjJe9nSr/1EUcdIVx
+	5Ma4zhFbM5OTlPpPhgWzfsiCyYyrdPp27xZhdsqVzRBBQ2KjB8cZgiOUdhodOQ==
+References: <20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev>
+ <20240205-pinephone-pll-fixes-v2-3-96a46a2d8c9b@oltmanns.dev>
+ <4543794.LvFx2qVVIh@jernej-laptop>
+From: Frank Oltmanns <frank@oltmanns.dev>
+To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
+ <samuel@sholland.org>, Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>,
+ Purism Kernel Team
+ <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] clk: sunxi-ng: nkm: Support minimum and maximum
+ rate
+In-reply-to: <4543794.LvFx2qVVIh@jernej-laptop>
+Date: Mon, 05 Feb 2024 21:34:04 +0100
+Message-ID: <87eddqzm4j.fsf@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH] dt-bindings: clock: qcom: Fix @codeaurora email in
- Q6SSTOP
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240202171915.4101842-1-quic_jhugo@quicinc.com>
- <20240205183338.GA3905881-robh@kernel.org>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240205183338.GA3905881-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: XMKFtqzjRdtXP_s1gu_eudgW1S5OnsA-
-X-Proofpoint-ORIG-GUID: XMKFtqzjRdtXP_s1gu_eudgW1S5OnsA-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-05_12,2024-01-31_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 clxscore=1015 spamscore=0
- mlxscore=0 priorityscore=1501 bulkscore=0 suspectscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401310000 definitions=main-2402050141
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2/5/2024 11:33 AM, Rob Herring wrote:
-> On Fri, Feb 02, 2024 at 10:19:15AM -0700, Jeffrey Hugo wrote:
->> The servers for the @codeaurora domain are long retired and any messages
->> addressed there will bounce.  Govind Singh has left the company which
->> appears to leave the Q6SSTOP clock controller binding unmaintained.
+
+On 2024-02-05 at 18:56:09 +0100, Jernej =C5=A0krabec <jernej.skrabec@gmail.=
+com> wrote:
+> Dne ponedeljek, 05. februar 2024 ob 16:22:26 CET je Frank Oltmanns napisa=
+l(a):
+>> According to the Allwinner User Manual, the Allwinner A64 requires
+>> PLL-MIPI to run at 500MHz-1.4GHz. Add support for that to ccu_nkm.
 >>
->> Move maintenance of the binding to the Qualcomm Clock Drivers maintainer
->> as suggested by Bjorn Andersson.
->>
->> Signed-off-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
 >> ---
->>   Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> How about the rest of the tree?:
-> 
-> Documentation/devicetree/bindings/display/bridge/ti,sn65dsi86.yaml:  - Sandeep Panda <spanda@codeaurora.org
+>>  drivers/clk/sunxi-ng/ccu_nkm.c | 13 +++++++++++++
+>>  drivers/clk/sunxi-ng/ccu_nkm.h |  2 ++
+>>  2 files changed, 15 insertions(+)
 >>
-> Documentation/devicetree/bindings/display/panel/visionox,rm69299.yaml:  - Harigovindan P <harigovi@codeauro
-> ra.org>
-> Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml:  - Odelu Kukatla <okukatla@codeaurora.org>
-> Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml:  - Kiran Gunda <kgunda@codeaurora.org>
-> Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml:  - Balakrishna Godavarthi <bgodava
-> r@codeaurora.org>
-> Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml:  - Rocky Liao <rjliao@codeaurora.o
-> rg>
-> Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml:  - Shyam Kumar Thella <sthella@codeaurora.org>
-> Documentation/devicetree/bindings/sound/google,sc7280-herobrine.yaml:  - Srinivasa Rao Mandadapu <srivasam@
-> codeaurora.org>
-> Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml:  - Sai Prakash Ranjan <saiprakash.ranjan@codeauro
-> ra.org>
+>> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_n=
+km.c
+>> index 1168d894d636..7d135908d6e0 100644
+>> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+>> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+>> @@ -181,6 +181,12 @@ static unsigned long ccu_nkm_round_rate(struct ccu_=
+mux_internal *mux,
+>>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>>  		rate *=3D nkm->fixed_post_div;
+>>
+>> +	if (nkm->min_rate && rate < nkm->min_rate)
+>> +		rate =3D nkm->min_rate;
+>> +
+>> +	if (nkm->max_rate && rate > nkm->max_rate)
+>> +		rate =3D nkm->max_rate;
+>
+> Please take a look at ccu_nm_round_rate() code. You need to consider post=
+div
+> and you can return immediately.
 
-Most of these already have patches posted with updates.
+There is a difference here insofar that ccu_nm is always connected to a
+fixed rate parent (at least that's my understanding). Therefore, in
+ccu_nm_round_rate() we can be sure that the min or max rate can really
+be set. In ccu_nkm we don't have that luxury, we actually have to find a
+rate that is approximately equal to the min and max rate, based on the
+parent rate. Therefore, we can't return immediately.
 
-The following have not yet been updated as we are looking for a new 
-owner.  Hoping to have someone identified this week so we can post updates.
+Also, I'm not sure what you mean about me needing to consider postdiv.
+That's what I did. The check is after multiplying with the postdiv. It's
+the same as in ccu_nm_round_rate() (just minus the immediate return).
 
-Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml:  - Shyam 
-Kumar Thella <sthella@codeaurora.org>
-Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml:  - Sai Prakash 
-Ranjan <saiprakash.ranjan@codeaurora.org>
-Documentation/devicetree/bindings/display/panel/visionox,rm69299.yaml: 
-- Harigovindan P <harigovi@codeaurora.org>
+>
+>> +
+>>  	if (!clk_hw_can_set_rate_parent(&nkm->common.hw))
+>>  		rate =3D ccu_nkm_find_best(*parent_rate, rate, &_nkm, &nkm->common);
+>>  	else
+>> @@ -220,6 +226,13 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsi=
+gned long rate,
+>>  	_nkm.min_m =3D 1;
+>>  	_nkm.max_m =3D nkm->m.max ?: 1 << nkm->m.width;
+>>
+>> +
+>> +	if (nkm->min_rate && rate < nkm->min_rate)
+>> +		rate =3D nkm->min_rate;
+>> +
+>> +	if (nkm->max_rate && rate > nkm->max_rate)
+>> +		rate =3D nkm->max_rate;
+>> +
+>
+> No need for this, clk subsystem calls round rate before setting actual cl=
+ock
+> rate.
 
--Jeff
+I'll remove the checks in V3.
+
+Best regards,
+  Frank
+
+>
+> Best regards,
+> Jernej
+>
+>>  	ccu_nkm_find_best(parent_rate, rate, &_nkm, &nkm->common);
+>>
+>>  	spin_lock_irqsave(nkm->common.lock, flags);
+>> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_n=
+km.h
+>> index c409212ee40e..358a9df6b6a0 100644
+>> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
+>> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
+>> @@ -27,6 +27,8 @@ struct ccu_nkm {
+>>  	struct ccu_mux_internal	mux;
+>>
+>>  	unsigned int		fixed_post_div;
+>> +	unsigned long		min_rate;
+>> +	unsigned long		max_rate;
+>>  	unsigned long		max_m_n_ratio;
+>>  	unsigned long		min_parent_m_ratio;
+>>
+>>
+>>
