@@ -1,75 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C681344C66;
-	Mon,  5 Feb 2024 17:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AA245953;
+	Mon,  5 Feb 2024 17:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707153558; cv=none; b=YUiT9bPOSM4itGqreOvtF2EtFpuOxZSesIg1A0rPou1RRQRcrs9K5+wWFsbizZdN1oE9X+j1l+WxQDPX9GvYLO9elQLfdqv23ecDg77siYJsJK2/b5FrAYXznnHWwOfL2WLG5lrEXevjOH/mYrkyaBTW1mLL30DDT/kMouFA7YM=
+	t=1707153728; cv=none; b=nQ30j6LjxGLgtr0nvJgpYL3nB18bBL5WhjgO+di3uOX8zEAm0wz3rYSoycdXvryiK6L+qDct0Xx3CEjnOYSj1q8Y1FtgdiTyMQIb4Jj8lq4eshp+5mZVhsQjtN/xNVqPrLpWQe/t8Lt5rqTeBbrqQNPVE6LLWubCUvcltaJU7yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707153558; c=relaxed/simple;
-	bh=I/dPQVxNsqI+9sYP9jfmmTlxuMjd/mdTPS+ppBlP91k=;
+	s=arc-20240116; t=1707153728; c=relaxed/simple;
+	bh=Et6Ae8kKVfkwexIZgZibcIr2o12bANsTHAJ7mXeWTHY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s302S1tHwKk9mm+gMv0U1lIshUaZtkOIkuxWCBrHcWLNJl59MWhS6HDo/0qp3dRm6IeCNycsjR7nFXK97GmG8J6gV4nZXy9B/xkaCLj4IXxKym7Lla8Eyc1CbElGBPHdY0nx+vGh6jBao1wz7DFHgLujiquDiBxAh+qXsOLS+UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjLMnhnS; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=a5c44ixBybzYX11ZsLWL0fYF2aChaHm1a3tV15kNN3XXymYFGkpFjNUhT8Cn495wecjyk06VbHwAZdDyit3kDTdOGDSiGpqUHsj+o+qoxl5jTe0u1+uydNX+ccTYSNRtsx9ZBXN76s00lAcZNlmuFcD7tj37RNgGWSsX262xtJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rH5KnDyE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjLMnhnS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CBD8C433F1;
-	Mon,  5 Feb 2024 17:19:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rH5KnDyE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2266C433C7;
+	Mon,  5 Feb 2024 17:22:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707153558;
-	bh=I/dPQVxNsqI+9sYP9jfmmTlxuMjd/mdTPS+ppBlP91k=;
+	s=k20201202; t=1707153727;
+	bh=Et6Ae8kKVfkwexIZgZibcIr2o12bANsTHAJ7mXeWTHY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gjLMnhnS6bLqj5NEb2kdZC1z8lR4VQEnrshyp+MlHCJjA9yFuBHRtW3ApRELIL5Vq
-	 D1QlzYPuzqErllQIS+pbu5Fak5hAKAyUuf9S8xTCw90/v2nRz4eXBVHT760hftISK5
-	 hG6xlJ/mLI0206EygnzvudqY+8M47NFCv7JpN1RNSz/CbMn5SrkIQ00wEP7406MdQE
-	 TSuHLhB5i1JeyqdjlSQkp3+wa/+1pGKx3xQvjjmyK3Kc1u1j+A5plAEZwsVviM2Qbe
-	 mGIjWSyPOrdcW+kpHLypq/JrTs2jdf5VBd+Ec7VXO5f2JkH9u4jEMOjW71JtZPUSJz
-	 kkZzWmjmM/rQA==
-Date: Mon, 5 Feb 2024 17:19:15 +0000
+	b=rH5KnDyEFEFfgQ0g9h6NChGENuZo0wYudf5fBhcNDE1xepWPY15eDz0bV1KrcszzW
+	 6Ea+R37M/gcLFJRLPtO4hZDqW3dWsI4MnFWOoLaAnJhOg0AHax3W7HUnJXEhtPnAMq
+	 GbrRhCOhxDVsxoUeUprR2R8sqDbQOwxdrCdsSqt6wMBspz8u4yy0znGMDTtN1cBf39
+	 TPoIBqVIAEdyPiinmu1cJir3ekzvG2WHlB/M6VUQZQgFdJqKaOGg73afv1jsbY7oAU
+	 caEKAseZ2VMAeWlqV3eEjgdQVngYjcIREVIpaEkMp31LOIKSpM3B061X+wD4lNy8gC
+	 u3ohm2+idj4+A==
+Date: Mon, 5 Feb 2024 17:22:03 +0000
 From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: linux-gpio@vger.kernel.org,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Rob Herring <robh+dt@kernel.org>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-mips@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-	devicetree@vger.kernel.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v4 06/18] dt-bindings: pinctrl: mobileye,eyeq5-pinctrl:
- add bindings
-Message-ID: <170715355367.3639066.15524146689406248436.robh@kernel.org>
-References: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
- <20240131-mbly-clk-v4-6-bcd00510d6a0@bootlin.com>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: guoren@kernel.org, Chen Wang <unicorn_wang@outlook.com>,
+	palmer@dabbelt.com, sboyd@kernel.org, haijiao.liu@sophgo.com,
+	paul.walmsley@sifive.com, xiaoguang.xing@sophgo.com,
+	devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
+	jszhang@kernel.org, linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org, samuel.holland@sifive.com,
+	inochiama@outlook.com, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, richardcochran@gmail.com,
+	linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
+	krzysztof.kozlowski+dt@linaro.org, conor@kernel.org
+Subject: Re: [PATCH v9 1/5] dt-bindings: clock: sophgo: add pll clocks for
+ SG2042
+Message-ID: <170715372308.3643466.1804804263763287247.robh@kernel.org>
+References: <cover.1706854074.git.unicorn_wang@outlook.com>
+ <bf3b8178a013004f259cd9254b13279254505852.1706854074.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240131-mbly-clk-v4-6-bcd00510d6a0@bootlin.com>
+In-Reply-To: <bf3b8178a013004f259cd9254b13279254505852.1706854074.git.unicorn_wang@outlook.com>
 
 
-On Wed, 31 Jan 2024 17:26:19 +0100, Théo Lebrun wrote:
-> Add dt-schema type bindings for the Mobileye EyeQ5 pin controller.
+On Fri, 02 Feb 2024 14:41:27 +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
 > 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> Add bindings for the pll clocks for Sophgo SG2042.
+> 
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
 > ---
->  .../bindings/pinctrl/mobileye,eyeq5-pinctrl.yaml   | 242 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 243 insertions(+)
+>  .../bindings/clock/sophgo,sg2042-pll.yaml     | 45 +++++++++++++++++++
+>  include/dt-bindings/clock/sophgo,sg2042-pll.h | 14 ++++++
+>  2 files changed, 59 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-pll.yaml
+>  create mode 100644 include/dt-bindings/clock/sophgo,sg2042-pll.h
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
