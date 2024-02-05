@@ -1,111 +1,142 @@
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB36E22EF2
-	for <linux-clk@vger.kernel.org>; Sun,  4 Feb 2024 17:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154D0AD32;
+	Mon,  5 Feb 2024 04:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707066242; cv=none; b=MOsUd0OV8sKaVeQu3+eBeSAbSm/Cc/wjM+Wa5F6BIMtotYJVSkhheTzgLf2+XvTyY6JsVMISg26O7LyyIDEspj3NCHrhrjXieD4E4ciWHHFPUi7uaP7HiAz5uGyDItHU+gyAdOfDQR+JgxqHBSI2yyFcKhdh3DyXLWhX7WRe27w=
+	t=1707108600; cv=none; b=eITWtNZQGRipG0CHGtmCTyjhlTuU4Mmmk4LAoIo9Bsw5Ed86wJOVe1pBMEpvcPBIWeNkVG/hCsL2hggGW/OPyEhF1IEzmZfEfHPEeOyXDtDXXwTJ78GF1w9zglAebwEuefkSj2j/34VHNLh/5YTh8416YCd7UkbseVSyaHrK+gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707066242; c=relaxed/simple;
-	bh=Hc9tUiOGoKDix4zY3uj/vZxzd566MMLdtIeaQ+DJ8F0=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZHflm16Zp32GCjtZIFubXQtg0bZDx9tWqHQogDtosU8ZAM1t5+feAm6vxOe05cxqr5Rq2ql7uMyGa0i+yb6NQVqjMOoiUAExTfh24yeGlJjBYA0roGdKqxrikS6qOr0cjnweoelxRsR0LE6MUFGp/38pxcuHVmmM61BmNulV6AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-26-30.elisa-laajakaista.fi [88.113.26.30])
-	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-	id 61aa5fc3-c37f-11ee-b3cf-005056bd6ce9;
-	Sun, 04 Feb 2024 19:03:58 +0200 (EET)
-From: andy.shevchenko@gmail.com
-Date: Sun, 4 Feb 2024 19:03:56 +0200
-To: Nikita Shubin <nikita.shubin@maquefel.me>
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Lukasz Majewski <lukma@denx.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andy Shevchenko <andy@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Mark Brown <broonie@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	"Wu, Aaron" <Aaron.Wu@analog.com>, Lee Jones <lee@kernel.org>,
-	Olof Johansson <olof@lixom.net>, Niklas Cassel <cassel@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-	netdev@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-ide@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-sound@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v7 00/39] ep93xx device tree conversion
-Message-ID: <Zb_DfISgoNyTKWMp@surfacebook.localdomain>
-References: <20240118-ep93xx-v7-0-d953846ae771@maquefel.me>
+	s=arc-20240116; t=1707108600; c=relaxed/simple;
+	bh=NduTLHFnZfhCN2CkJ9oqz73qOh10y1E+6FLyT0zEKO0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EdqwiqhH40g+E1KDV4zvWh41ASQy+7XnpODDEJ0BhYLbxbaxC4AcovFFtxvEwM/y88Qea600VzZ4sMxY75gOeabL3YMEeRETn8Gxgdx4Z08LzIOLye9U/ZdoiRrtMRdKynymlMdiOb8dbmrxfJjrxB1yam+3sXBMsa+XZ+FOmb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cOON0SHv; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cOON0SHv"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4154nElG022636;
+	Sun, 4 Feb 2024 22:49:14 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1707108554;
+	bh=Xtnfb8xnQNhu/YXCkFubO57gi1E2WQInflCGp92loXQ=;
+	h=From:To:CC:Subject:Date;
+	b=cOON0SHvZCUNGkGhchQdw7q+4bpaFV9mnhg0AQDO9GSCKkxzkOuEaWO4QqUa16+49
+	 8k2/LwQs8SjG+mM/LxQCT4P5MFcvljlwbtCJQur5gjTgjPJ/wlsLXMot1TxnIoq7XD
+	 VEOLYb5P1K82DJE/Hbm4pkl6bK9Gv1MupKij/z+Q=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4154nE5h031263
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 4 Feb 2024 22:49:14 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 4
+ Feb 2024 22:49:13 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 4 Feb 2024 22:49:13 -0600
+Received: from udit-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (udit-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.18])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4154nA0K035269;
+	Sun, 4 Feb 2024 22:49:11 -0600
+From: Udit Kumar <u-kumar1@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>
+CC: <vigneshr@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>
+Subject: [PATCH v1] clk: keystone: sci-clk: Adding support for non contiguous clocks
+Date: Mon, 5 Feb 2024 10:15:58 +0530
+Message-ID: <20240205044557.3340848-1-u-kumar1@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240118-ep93xx-v7-0-d953846ae771@maquefel.me>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Thu, Jan 18, 2024 at 11:20:43AM +0300, Nikita Shubin kirjoitti:
-> The goal is to recieve ACKs for all patches in series to merge it via Arnd branch.
-> 
-> No major changes since last version (v6) all changes are cometic.
-> 
-> Following patches require attention from Stephen Boyd, as they were converted to aux_dev as suggested:
-> 
-> - ARM: ep93xx: add regmap aux_dev
-> - clk: ep93xx: add DT support for Cirrus EP93xx
-> 
-> Following patches require attention from Vinod Koul:
-> 
-> - dma: cirrus: Convert to DT for Cirrus EP93xx
-> - dma: cirrus: remove platform code
-> 
-> Following patches are dropped:
-> - dt-bindings: wdt: Add ts72xx (pulled requested by Wim Van Sebroeck)
-> 
-> Big Thanks to Andy Shevchenko once again.
+Most of clocks and their parents are defined in contiguous range,
+But in few cases, there is gap in clock numbers[0].
 
-You're welcome!
+Driver assumes clocks to be in contiguous range, and assigns
+accordingly.
 
-I have a few minor comments, I believe if you send a new version it will be
-final (at least from my p.o.v.).
+New firmware started returning error in case of
+non-available clock id.  Therefore drivers throws error while
+re-calculate and other functions.
 
+In this fix, before assigning and adding clock in list,
+driver checks if given clock is valid or not.
+
+Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
+
+[0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
+Section Clocks for NAVSS0_CPTS_0 Device,
+clock id 12-15 and 18-19 not present
+
+Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+---
+Original logs
+https://gist.github.com/uditkumarti/de4b36b21247fb36725ad909ce4812f6#file-original-logs
+Line 2630 for error
+
+Logs with fix
+https://gist.github.com/uditkumarti/de4b36b21247fb36725ad909ce4812f6#file-with-fix
+Line 2594 
+
+ drivers/clk/keystone/sci-clk.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+index 35fe197dd303..d417ec018d82 100644
+--- a/drivers/clk/keystone/sci-clk.c
++++ b/drivers/clk/keystone/sci-clk.c
+@@ -517,6 +517,8 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+ 	int num_clks = 0;
+ 	int num_parents;
+ 	int clk_id;
++	int max_clk_id;
++	u64 freq;
+ 	const char * const clk_names[] = {
+ 		"clocks", "assigned-clocks", "assigned-clock-parents", NULL
+ 	};
+@@ -584,6 +586,7 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+ 				}
+ 
+ 				clk_id = args.args[1] + 1;
++				max_clk_id = clk_id + num_parents;
+ 
+ 				while (num_parents--) {
+ 					sci_clk = devm_kzalloc(dev,
+@@ -592,11 +595,20 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+ 					if (!sci_clk)
+ 						return -ENOMEM;
+ 					sci_clk->dev_id = args.args[0];
+-					sci_clk->clk_id = clk_id++;
+-					sci_clk->provider = provider;
+-					list_add_tail(&sci_clk->node, &clks);
++					/* check if given clock id is valid by calling get_freq */
++					/* loop over max possible ids */
++					do {
++						sci_clk->clk_id = clk_id++;
+ 
+-					num_clks++;
++						ret = provider->ops->get_freq(provider->sci,
++							   sci_clk->dev_id, sci_clk->clk_id, &freq);
++					} while (ret != 0 && clk_id < max_clk_id);
++
++					sci_clk->provider = provider;
++					if (ret == 0) {
++						list_add_tail(&sci_clk->node, &clks);
++						num_clks++;
++					}
+ 				}
+ 			}
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
