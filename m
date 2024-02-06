@@ -1,123 +1,107 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF6D1429E
-	for <linux-clk@vger.kernel.org>; Tue,  6 Feb 2024 19:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EFA1C291;
+	Tue,  6 Feb 2024 22:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707246393; cv=none; b=Z8EYhhl/DtzlYmjFaq6aCfLOaNTWQ54m3ALiT0+6bUeFxEAr9QDhJR3ddmqSBkJCojRBsGlaQxqxM+xTH8q6Fim/gZKB9LeAwPwC0/BDi2y6vCnIeASB6HFSMM08dJfX7iUwFeyh9HgMs1HSKOnpomawDv0b8yCguQzLyuPStv0=
+	t=1707259280; cv=none; b=OiDfrgbRBnyJEn2nsbe22SrR5KRe3GBJnI1zNcH9KUe68BIcuSbNdspf3+u0PQETWNhjgdEOr5tUygupMQye+dcPmYSNBwGYLWRBcq1v2xni5DZp/BVaklyQ0SxjtWoLa4aFLZKEWdeIDa21BgAJoAo2iIz6yqwfyuz6xKm7PcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707246393; c=relaxed/simple;
-	bh=l3ivtluzGMS+UFOlURuwHmNGsbLlLoybUWlfRVn8wf0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uyigEPgTpXFsDn83YQqb6yiVaGgIkAbaNn4givlFLE5giB9LzUHMLqEmVLHKz+u51e6ybZ921BGK39RYqJ6RYzHwC2GMFtaO4gCmKokKLeX/3x1rD0scXegCjTEEJtvP0NoKHE7dIjmX/IyyQjrhUzes8rvuRC2h1/f2kynogBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U40jFE5w; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707259280; c=relaxed/simple;
+	bh=GvQWGxfzzJo/PNDI8kmCuJ1FJnA7C1Qpj2C4krhkaK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IC7uLJWG3UT39tEQ7CSwwoa72J9mfdbaR2EWSK3mnJ+GsefELAnStatz31pPpE+YTUvUhrgp79npU++Jq191a10GGXvIlUH1Ddej0nhN9EYt+kHoDdXVKTyNKEIFHa1VtIV9kU9RUXZ6GDRrvBsHHbyo7KZi4IvGN7EKeI/UVSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NohBTfRn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U40jFE5w"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a2d7e2e7fe0so192436166b.1
-        for <linux-clk@vger.kernel.org>; Tue, 06 Feb 2024 11:06:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707246390; x=1707851190; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hi6y8i9DoSg4wDjsc1n31h89s4NUnmc/xGQo5BVmiac=;
-        b=U40jFE5weNZapjqbtoA0OiOUF0+qo/fRxpvHhoIs844u/zgIsKh5cERSYCtQCXDClh
-         Dao+IF64kOpCEOPID+D7L4I3hfpBOmDhVezjs1r0UdJwWGXkgEJuLWgtMJBAkud6Gyit
-         8cpo2d0LmS1b8O3cA4sfOISINVEBpz93cIjNSokXuH0quhTgopJ0YGmZEmuHa8pk6tTy
-         uNj9mWWHiKmd+QKEwXLYAfPXSYNNnajtiU7ZpcYiqPwHEP0fb2JSIGylbwUiDKQLJ5yd
-         fv3v1DPyX9Z0Xx/YuMFAA9QNVgCQy8eVmbC8UYZm4+SVvJi3r41Ks+XZoINElfruJauJ
-         6/MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707246390; x=1707851190;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hi6y8i9DoSg4wDjsc1n31h89s4NUnmc/xGQo5BVmiac=;
-        b=NI0M7eRh4Ia0afwjW5wT3UA5rYiokOdyfFSt/8mTZ4c3qGNyaHPkO1P40TAFk4ATdZ
-         sSyvvb4q4MFIf3ygLscDp2Na+RvQ1KYDNVtthLPeJkBbF6DKaYIpKM0SSm0INN6wI9fW
-         02/wXdLyv6UAo/lOqUCaodU8Mb/ZP6hLDtsI9PAmDl8X9Yz+olap/g5dEu0TwYf7FPQ0
-         Z8FM+V0CHfzFQrHAFSnRq5RvZqohXqaDfyxR0xk9rXN8MQIbileqlqK5c2bDwauVyV8/
-         mFz9lGjtyxgSnMyPR5ux3+pKGvm4JnnCBgYbNGtNg5ucjavaEFKuzrjWsXSDPf4Aeg9a
-         ygUQ==
-X-Gm-Message-State: AOJu0YzDkpfdTKLdjdyZy1khGpj7mLJ/8NXPrF2ogvEHue0FosqFmOCx
-	yYfgrrtrNKNDZZNif66nYI/00TLN4jV+lJ1IIqU4ZTuSL3xAbURCKB/ExgOi47w=
-X-Google-Smtp-Source: AGHT+IHT4+/eAwSKoDadylPUBsFyAu60qD2pCoBHHzueqaAaRzRLGW/TECKr0o+s5WxLb0EZW17+fA==
-X-Received: by 2002:a17:906:c1d4:b0:a36:dfa5:69c with SMTP id bw20-20020a170906c1d400b00a36dfa5069cmr3709786ejb.14.1707246389882;
-        Tue, 06 Feb 2024 11:06:29 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCW0zKcutm2hosz8VAiP4Zn9wjWU+bUQ1stTv9FpXE16vcojCwrAHbTboRlCQ4UNfaHkOGLE97qkQzWwE8N9JzzJVIq8wNgYugOxUc4kEJOES7okF8rSgcNDxCHbMi74jq1WsrvIJofoMFP1vrdxPxP7x5vq6aJtJJm9w7L2gG5I20/cSuZ7/pHTYC1FxyuudHRYJmY/3iMRGMlP2FHG96cifw==
-Received: from [192.168.192.207] (037008245233.garwolin.vectranet.pl. [37.8.245.233])
-        by smtp.gmail.com with ESMTPSA id h16-20020a17090619d000b00a385535a02asm224018ejd.171.2024.02.06.11.06.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Feb 2024 11:06:29 -0800 (PST)
-Message-ID: <f98d925d-920c-457d-b909-32763a42f5d6@linaro.org>
-Date: Tue, 6 Feb 2024 20:06:28 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NohBTfRn"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 416KWrq3009087;
+	Tue, 6 Feb 2024 22:41:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=XxdHIA+QMOuSWmvYypzcXruKSBNNGtCu59rJ1V7ez8A=; b=No
+	hBTfRnxrX69Eu+8SXUmV/QXc/mYYHIiFVdMt3O/9J0JdnHagFaKR6Kl8dCIQk66v
+	aCI0GXuz3RpZtdcsBSTPmqVe41WxYsOEzX6suCl0hwc+sjGWfll55bT6mT7Qr/h4
+	eHLPAvW1kBKLolcJ+YxcZ7rTpT3S4dObKxaKzww1rVO107Dtbo+hsrPtiB5AaPLe
+	HyPqvgYu9I2QuUCo2juBMgXfxKX7XIeAN1VevdnnIKvUiN9kK/jrPZRQuv7Z83a8
+	AQxsXGnZW2tIM2qkq9COpZqswqAt8cnrjUZQHPRNn4VNLbzoKQLmQSlQqN2gyIi/
+	djehOOBI97R/j4f8EAvA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w3k6g9evp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Feb 2024 22:41:10 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 416Mf80B020563
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 6 Feb 2024 22:41:08 GMT
+Received: from [10.110.46.191] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 6 Feb
+ 2024 14:41:07 -0800
+Message-ID: <bce60ac4-9c57-94ff-f93a-c3facf0ad267@quicinc.com>
+Date: Tue, 6 Feb 2024 14:41:05 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] clk: qcom: videocc-*: switch to
- module_platform_driver
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 06/10] clk: qcom: clk-alpha-pll: Add support for zonda
+ ole pll configure
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240206-clk-module-platform-driver-v1-0-db799bd2feeb@linaro.org>
- <20240206-clk-module-platform-driver-v1-4-db799bd2feeb@linaro.org>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240206-clk-module-platform-driver-v1-4-db799bd2feeb@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+To: Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rajendra Nayak
+	<quic_rjendra@quicinc.com>
+References: <20240129-x1e80100-clock-controllers-v3-0-d96dacfed104@linaro.org>
+ <20240129-x1e80100-clock-controllers-v3-6-d96dacfed104@linaro.org>
+From: Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <20240129-x1e80100-clock-controllers-v3-6-d96dacfed104@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Co5JC-mJFxt24F0GfrrBMK_a0lQ-E7QV
+X-Proofpoint-GUID: Co5JC-mJFxt24F0GfrrBMK_a0lQ-E7QV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-06_14,2024-01-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=792
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 clxscore=1011
+ impostorscore=0 mlxscore=0 bulkscore=0 adultscore=0 spamscore=0
+ suspectscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2401310000 definitions=main-2402060160
 
-On 6.02.2024 16:25, Dmitry Baryshkov wrote:
-> There is no need to register video clock controllers during subsys init
-> calls. Use module_platform_driver() instead.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+On 1/28/2024 2:52 PM, Abel Vesa wrote:
+> +	.set_rate = clk_zonda_pll_set_rate,
+> +};
+> +EXPORT_SYMBOL(clk_alpha_pll_zonda_ole_ops);
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+GPL variant please. 
 
-Konrad
+-- 
+---Trilok Soni
+
