@@ -1,131 +1,144 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C215438D;
-	Tue,  6 Feb 2024 14:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6351350EC
+	for <linux-clk@vger.kernel.org>; Tue,  6 Feb 2024 15:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707230361; cv=none; b=Sr5ibLHOuwm/akl+T+Pr5V39oDpxQ3yHszCqzeUt9ABbJZzJg6cTWH669omeiceLX3wHYXO3aO7j5UGF5N86YDvSrKBjHSugigobhbBMizx9miEe4zySoOzz+crc25CWmYH/qZllg8RjvTKdVMzoCQuAEvMniMjK8rTKg9a6vOw=
+	t=1707233123; cv=none; b=Q0IFMG8UYnWzIBRHShtWC84yHBI1AQ9VGnpPfu8PPxNuLhagXCQtuOVTwc0DNfiMkyai3gvGRVcSuA4hCz1/zL8ngmpRAifQoBw/4P0BXkjVOhX8hiUwSrxpXgWsVg9kdR81VGW44TGo8PDfzPM1H1/kn6EFqQlpXOmT03m5pkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707230361; c=relaxed/simple;
-	bh=lgOEKAcriUKR1R+3/onXDsuF9htvWfPfkhPmt5o/xuw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XN5qm+E3cPT+zEBvoS5uZ6TXawT/DCnu0YIxy0Yx9eUqu4+foQnexYlZ/J8tH16lduu/xnXWRm0XcCdax0sGGwv1mSAtA03K85Lpicnp4cWXCVBBV7ovkU0uryx3BJZC4TqbL6kcGdWtQZKYBM/9jiC/T70u87hNT0dbJexBV9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=I8WcFTku; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1707233123; c=relaxed/simple;
+	bh=ZbnYWOWGvK/ES3S9eMzDXjdwxf8rQeCcOIBgJpBO860=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mLPOE8GFUdRB5kg6wG4yXvdJi4/J25gsRwpEb5xb+zfhwV+rlg7FtafwEU8eZ8xNj7im4D78/tXB4ArJSl/8OC7NVOe9Z+mVJEeetgyEWpAWz6kgQWfTZSwyEMGfTOzFV7MnQBLNpaTkB4saAjHcHAU4pjf43NNpXvKkiT/iyFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GGs6ZWMr; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I8WcFTku"
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 416EdAE5107824;
-	Tue, 6 Feb 2024 08:39:10 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1707230350;
-	bh=MrWuEOqIJdRB3uRaM/IMcntwfhK8jW9zSzRcS2wE14Y=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=I8WcFTkuuQefvtWQdafrFEcSuR1KXA0DodYP0x+UZM0W4+0sdUOLS/wBcktq5i/NG
-	 Iseg8muMZfg0W4pclddmqKohCDcBdwVqzS+xjONpj4iZY4rKvzxURy2IhFwC8zzX1O
-	 5+RuCaTbKg4fmcUB96pV7DpyuaGWsIzEiIqHQ1Bs=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 416EdAXH090983
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 6 Feb 2024 08:39:10 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
- Feb 2024 08:39:10 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 6 Feb 2024 08:39:10 -0600
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 416Ed5xI007843;
-	Tue, 6 Feb 2024 08:39:06 -0600
-Message-ID: <a4fdbcfe-e0e0-4280-8638-e39b6b46778e@ti.com>
-Date: Tue, 6 Feb 2024 20:09:05 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GGs6ZWMr"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51032058f17so1204619e87.3
+        for <linux-clk@vger.kernel.org>; Tue, 06 Feb 2024 07:25:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1707233118; x=1707837918; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LhLhbWyNSAgVaEka1oBuIOHQq9gF/Km+IN/mo3o84+Q=;
+        b=GGs6ZWMrFVCtp7i6a+ioFSOf54AkzcWF7TqtxrsTzwLpg73g1QrSJKjk2rmITUgeBk
+         HCbuckMdWBzzUzvtmd95MXCCC/OFIhtrlXVCMlmVH8wjIAi8a/SS++KrLU6d870wywvL
+         asUwHEa5L1n4v0Fh7K4DiY98AmLjmP1TmY2jjRWoptk7D0YBzhP9GFLulYEdhe9yA65G
+         sLZuNjLz6thK/3KX2dB8fomKFLbNATeN48Nr2hR+nr4liDhTVuv/FHWbf9o+5SQ0h1ZM
+         ryVoW/XrrVNMnH63JEVFlyne8Q6XPxmaN98AxGCzSPKSrVDCEGOnDhPq5LJDIWY4idnl
+         gAmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707233118; x=1707837918;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LhLhbWyNSAgVaEka1oBuIOHQq9gF/Km+IN/mo3o84+Q=;
+        b=oj3q+IVmr5hojQFNcN2sXaIYrIXgW9wfkHfDlVU7L4ro358XcyCe/GHVtfFwwbDj24
+         u0aogBywoR9GjqKPj44u8MAoMe42tgokTzc1gZCalwxbRdCCRlTHv4/QKkcB970HVHuK
+         DJqlYUasGsLgAKqTIq+RqtAfNRSy+QAkwHVv1syZ8gSC/r5H2tA3Y7hjHnm/VRY+st8+
+         SFlLrDg7Vi1wgbBFj4JjI6JHpOOCWRW64vLK5YmP49m6W6A6odYZi9YCnlOjo2lo4Gop
+         vaD+40d1DMzhD7VB/w1yVYQN5DEqr8ixyZRDQcVBV1144fc+4ULXMYBbC8siFIBtnln3
+         oiEg==
+X-Gm-Message-State: AOJu0YwDIDMGJwl1wQxyWP1lx4srRdbv1U8in/vSmKHtjIbefcHxmvK/
+	ZPEFIyBPZ6cPl7HA72sUfo4JCBQMT1XWvt2JS6Pq//+BaRIlFaDVSRPHQcK2D/Q=
+X-Google-Smtp-Source: AGHT+IHgrme5l0a/6VoHEUQnA81swpwwVPX0/BHOx9r0lbFWIl7y4qjYTCnDIpiLA8VPo2TpTdLKSg==
+X-Received: by 2002:ac2:5585:0:b0:511:49ab:6aa9 with SMTP id v5-20020ac25585000000b0051149ab6aa9mr2166152lfg.16.1707233117732;
+        Tue, 06 Feb 2024 07:25:17 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCVaNqmv5xntVoJqJvdiFyzjbIMqBbtjBauhTuAIG+Azhd5qaBkl586H0tKGP+b8Ny0B0vrkRpTq+llIy0OY3IWV9E+uvaRqjOJ1H41muJ/+RhM70NFU9yAD971NAMU/gUY35mz4wPrD78bY/9pk1Ctm7OlGuIizgz8NXnOYCycqu7f50jhtozTB/OKp1AMub+T3uVWWsmOIbszQ39n9H+2RBfYnZBtbhgc/rWwpC9muQNIkpyRXF4KBVw1WrYNbfbcTDg==
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id u4-20020a056512128400b005114a6cbc57sm264624lfs.46.2024.02.06.07.25.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Feb 2024 07:25:17 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 0/4] clk: qcom: use module_platform_driver() to register
+ drivers
+Date: Tue, 06 Feb 2024 17:25:11 +0200
+Message-Id: <20240206-clk-module-platform-driver-v1-0-db799bd2feeb@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: keystone: sci-clk: Adding support for non
- contiguous clocks
-Content-Language: en-US
-To: CHANDRU DHAVAMANI <chandru@ti.com>, Kamlesh Gurudasani <kamlesh@ti.com>,
-        Nishanth Menon <nm@ti.com>
-CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <rishabh@ti.com>,
-        <vigneshr@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <u-kumar1@ti.com>
-References: <20240206104357.3803517-1-u-kumar1@ti.com>
- <20240206131420.wtitflgav23jto2q@verbally>
- <871q9pzoiq.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
- <c5b6bd1d-dbb4-4bfb-8b3e-9b0733e2ba5d@ti.com>
- <c2b7f22d-f07d-4cac-8a01-af7b014e7ff4@ti.com>
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <c2b7f22d-f07d-4cac-8a01-af7b014e7ff4@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFdPwmUC/x3MQQqDMBAF0KvIrDuQBLHaq5QugvnWwWhkYqUg3
+ t3g8m3eQRkqyPSqDlLskiUtBfZRUT/65QuWUEzOuNo403AfJ55T+EXwGv02JJ05qOxQrm1jPdA
+ G2z2pBKtikP+dvz/neQEX/kW4bAAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2647;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=ZbnYWOWGvK/ES3S9eMzDXjdwxf8rQeCcOIBgJpBO860=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBlwk9cS0FIsiOLgd0aPKirfJBqrshOur7JuNpoe
+ bA6pu8/DcqJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZcJPXAAKCRCLPIo+Aiko
+ 1ZmdCACp1oQfDTRyFlFNZkJOtC/vZrRoVx9aAJW9Dh832c6zfzx4T8r2UurAedVfzFx1e5cw4KJ
+ 51rMKlF4mOLYtH8JegGzFFilDzc87BpBfirm+8oiqEDEqVlozzKqRBKVuOrnGgIDR4aSiOh8EWO
+ wLemFtzDA/0vcoch7Irx7nQH5+mhfYeE0gbxj2CChh5xJ+1dIoObcpyhck/m3nWgOZdLmL3DnkH
+ 0jDiN8RBpFpO66XIM/OSq046uKnILxk73/JAeoq8xC6KNld9IqSHHzyWEe1eagGKycqlWSg/ejL
+ tXuytMKEyNpt/gMm69X9s0KUbfiU9E1Lvffh3uTvm2+oScjr
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
+Several Qualcomm clock controller drivers use subsys_initcall to
+register the driver early. This makes sense for GCC or TCSRcc. However
+there is no need to register camera, display, GPU or venus clocks
+earlier. Shift registration to driver init level, where they belong.
 
-On 2/6/2024 7:56 PM, CHANDRU DHAVAMANI wrote:
->
-> On 06/02/24 19:45, Kumar, Udit wrote:
->>
->> On 2/6/2024 7:24 PM, Kamlesh Gurudasani wrote:
->>> Nishanth Menon <nm@ti.com> writes:
->>>
->>>> On 16:13-20240206, Udit Kumar wrote:
->>>>> Most of clocks and their parents are defined in contiguous range,
->>>>> But in few cases, there is gap in clock numbers[0].
->>>>> Driver assumes clocks to be in contiguous range, and add their clock
->>>>> ids incrementally.
->>>>>
->>>>> New firmware started returning error while calling get_freq and is_on
->>>>> API for non-available clock ids.
->>>>>
->>>>> In this fix, driver checks and adds only valid clock ids.
->>>>>
->>>>> Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for 
->>>>> dynamically probing clocks")
->>>>>
->>>>> [0] 
->>>>> https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html 
->>>>>
->>>>> Section Clocks for NAVSS0_CPTS_0 Device,
->>>>> clock id 12-15 not present.
->>>>>
->>>>> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
->>>>>                   while (num_parents--) {
->>>>> +                    /* Check if this clock id is valid */
->>>>> +                    ret = provider->ops->get_freq(provider->sci,
->>>>> +                        sci_clk->dev_id, clk_id, &freq);
->>>> get_freq is a bit expensive as it has to walk the clock tree to find
->>>> the clock frequency (at least the first time?). just wondering if
->>>> there is lighter alternative here?
->>>>
->>> How about get_clock? Doesn't read the registers at least.
->>
->> Said API needs, some flags to be passed,
->>
->> Can those flag be set to zero, Chandru ?
->
->
-> get_clock doesn't require any flags to be passed.
+Note, I didn't touch lpass clock drivers, they need to be analysed
+separately.
 
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (4):
+      clk: qcom: camcc-*: switch to module_platform_driver
+      clk: qcom: dispcc-*: switch to module_platform_driver
+      clk: qcom: gpucc-*: switch to module_platform_driver
+      clk: qcom: videocc-*: switch to module_platform_driver
 
-May be firmware does not need it but  I was referring to
+ drivers/clk/qcom/camcc-sc7180.c    | 12 +-----------
+ drivers/clk/qcom/camcc-sc7280.c    | 12 +-----------
+ drivers/clk/qcom/camcc-sdm845.c    | 12 +-----------
+ drivers/clk/qcom/camcc-sm6350.c    | 12 +-----------
+ drivers/clk/qcom/dispcc-qcm2290.c  | 12 +-----------
+ drivers/clk/qcom/dispcc-sc7180.c   | 12 +-----------
+ drivers/clk/qcom/dispcc-sc7280.c   | 12 +-----------
+ drivers/clk/qcom/dispcc-sc8280xp.c | 12 +-----------
+ drivers/clk/qcom/dispcc-sdm845.c   | 12 +-----------
+ drivers/clk/qcom/dispcc-sm6125.c   | 12 +-----------
+ drivers/clk/qcom/dispcc-sm6350.c   | 12 +-----------
+ drivers/clk/qcom/dispcc-sm6375.c   | 12 +-----------
+ drivers/clk/qcom/dispcc-sm8250.c   | 12 +-----------
+ drivers/clk/qcom/dispcc-sm8450.c   | 12 +-----------
+ drivers/clk/qcom/dispcc-sm8550.c   | 12 +-----------
+ drivers/clk/qcom/dispcc-sm8650.c   | 12 +-----------
+ drivers/clk/qcom/gpucc-sa8775p.c   | 12 +-----------
+ drivers/clk/qcom/gpucc-sc7180.c    | 12 +-----------
+ drivers/clk/qcom/gpucc-sc7280.c    | 12 +-----------
+ drivers/clk/qcom/gpucc-sdm845.c    | 12 +-----------
+ drivers/clk/qcom/gpucc-sm8150.c    | 12 +-----------
+ drivers/clk/qcom/gpucc-sm8250.c    | 12 +-----------
+ drivers/clk/qcom/gpucc-sm8350.c    | 12 +-----------
+ drivers/clk/qcom/gpucc-sm8550.c    | 12 +-----------
+ drivers/clk/qcom/videocc-sc7180.c  | 12 +-----------
+ drivers/clk/qcom/videocc-sc7280.c  | 12 +-----------
+ drivers/clk/qcom/videocc-sdm845.c  | 12 +-----------
+ drivers/clk/qcom/videocc-sm8150.c  | 12 +-----------
+ drivers/clk/qcom/videocc-sm8250.c  | 12 +-----------
+ drivers/clk/qcom/videocc-sm8450.c  | 12 +-----------
+ drivers/clk/qcom/videocc-sm8550.c  | 12 +-----------
+ 31 files changed, 31 insertions(+), 341 deletions(-)
+---
+base-commit: 076d56d74f17e625b3d63cf4743b3d7d02180379
+change-id: 20240206-clk-module-platform-driver-4161aee8d197
 
-https://elixir.bootlin.com/linux/latest/source/drivers/clk/keystone/sci-clk.c#L78
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-
-
->
->
->>
->>
->>> Regards,
->>> Kamlesh
