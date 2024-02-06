@@ -1,200 +1,153 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133DFD529;
-	Tue,  6 Feb 2024 17:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEC813FEE
+	for <linux-clk@vger.kernel.org>; Tue,  6 Feb 2024 18:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707241867; cv=none; b=bYqD2jJxF1kZdY+3tfCo/s3KNgpZaaY6jut5MWRXKKJvZ7k12xMtwFjWWu5b1R4pD3RrOi2AedTSWiNx2WXPJHY2oN7gEuowdQHS1am1icW0FLuBytqt1kkmsCZ+NHlelH7pAq0b5XMmxuSsuNgI6uCWh0FMaOyzoHtzXuVViu4=
+	t=1707245022; cv=none; b=FiuV31B+dn9zlg6l11Lo4wV4aNMlUnYHaV8R9QRWhwKYPlEv1QPCPzchPXF3hNJDrLCVaz10adnnS0GCKB8koSIiXt41ygBsI/c58MCkcD3zLNLYrs8b/wa4fqrf7Jex6EnNgU0+kcTN43KxnCvGXgcxTXV4KDnpc8ts0hGVZYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707241867; c=relaxed/simple;
-	bh=IZKb1XetSfArgIDMAWLf0LauVjj5Kgg4kk09DX9ogSA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fC1m6W4lq09Mg62kB9/mNk4o2Zwhz7eEH1LR0rh9n0BVm2U7KAGikt60JNgDpVcjXC9bu3BFb1iQ9GgQeLPYFaQnyI3yk2caFuYh5ECmghDF/UdY070WodQx4YCsjo9Hg6WM5X56EM7/eSzUV5yoLtZ60KLOYXLzVJrwlryLuvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTKX2ZkL; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1707245022; c=relaxed/simple;
+	bh=yDmruuQF6fFZAPlSNaL/m0BOFTSsJrnucEdwAIP0S64=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SC4c4pBBp/XWTMFDME13BVnEOgkUb9gtUM+5eAdfRgMUcW1dAOl0aJb/UAVCSQO+r8Hy13onlSrPmzCNJx8cBHOuXaAWSqzZotraKsGhEwKDT9A+TqtiOZIgpMwLHUCHdNK6GQBVb6ohscn8LTaOZGDHV50b95qxiQDoP7M9F+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jW569ETY; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTKX2ZkL"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3392b045e0aso736931f8f.2;
-        Tue, 06 Feb 2024 09:51:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jW569ETY"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a36126ee41eso757379366b.2
+        for <linux-clk@vger.kernel.org>; Tue, 06 Feb 2024 10:43:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707241864; x=1707846664; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RyDSK4F15cuDmx/vu6ZGAEnvOFxcasBhnuqvACgOoY8=;
-        b=CTKX2ZkLZ5y7weAgyAx+X45RAO120u4xhWJogiVTu7IHEt3PUH4beXMPqHzn1tHI7l
-         PtTlPdiWid83iHBEMcRMu0ay120NDtnRYWPElPA9Ygr3yjzPZgSpGcJh20FQ+TDe/uaA
-         841eeEwh2S1NxfpMVuwgrSslCd7aUA7a6hHMLFyzW2ZNAUDJ9plx8du8ymd/u9QQgGLZ
-         0U1Q6UbwO084AFjeBlAWAxDDt/ayeblaFv+WJqcUgBK0iXGv8ruyTS9qUSTdQnXU/Wn4
-         ik/VGvvWvxubqNNGOQvVG/BwiUKOpRYGGoou0xqKGE/bQjEY5K55ZV27Fxyvyu+2i0zd
-         IlFg==
+        d=linaro.org; s=google; t=1707245019; x=1707849819; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EPinIhB5nRjoZSkHxrPck/Req/gZMo5duEbps1JKDSE=;
+        b=jW569ETYOI82jKAh+40VLkeasraAPYhJ70IlaX3XWRoHl7/aHNyxAh+uXhhch+Jp1C
+         2dQfDkDW/isjgVyX+/6Q/jJMtltIuZC1/BccmOnt5trM/XhJqPfUS13sJSDdopp71aw9
+         zn4jHVpbKQPsbOC8DXSsx7Dm2igooIpPnZMl0NsBtAiS8U7F4J8EKgHm3mK4F1JvfL4E
+         hjxmT2pDzrxms6dGalzIu+qYfD4LNj2eHO7srO9TZKR8GZu4MrvDyCr815gMipsrhx4/
+         PH624U9LSEJIelz6/RABk35gm3L8gd2vINKQfTyhjbvNKUg3+Bim3uV7BNdqhgCUC5hw
+         yZ7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707241864; x=1707846664;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RyDSK4F15cuDmx/vu6ZGAEnvOFxcasBhnuqvACgOoY8=;
-        b=MOkKASvihBvWpiEaFoYutGVFqTRjU+chhSvltNWvhz2rmm+7U3buReOervn6sOl7kH
-         AI/GgYOPrJImTuc6AtYr3pda7ieb5z/N8z5s9GY58qXo79BywVTn1T02yM7hGhoqUDfk
-         J6hkgLHN3kKYvOqFcS4cf+G3Dr/l35c5nexTNDmxei0oPRfwFhs0Q+Sw7woKn23nDeUC
-         pVAjRSnjp+B672cj+18SWNDnHy5j/luKqdYaALr5PvIFZLBJZDskYWGrX+vkdVtdPtry
-         n44Cy4U+IpJfe41pquTq6y11IK8hEZ8QUlzeLRNu0Zs4Gp95sAesPZw7+a/KjdtPVnXJ
-         xDHw==
-X-Gm-Message-State: AOJu0YzuTCUKDZgmkiSZNkiJvffFloi3O2nEsxDFfXsVhlctO8pcqS+c
-	8JjKiWXVovgX6u5AJVnTQsyllasOjXnC5F/4hoTUb0pScfnZEyFb
-X-Google-Smtp-Source: AGHT+IFFGw8MurJEQRDhd3NrPc7k/aeq09X31PYFeQnZKxSyzmXwRdTODxBIQmNqM5wVALjwXtAHqw==
-X-Received: by 2002:a05:6000:108d:b0:33b:2856:5188 with SMTP id y13-20020a056000108d00b0033b28565188mr2440903wrw.44.1707241864183;
-        Tue, 06 Feb 2024 09:51:04 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCVnl+77EHlyL7OjE70j4LZEUM8ybfGzihKXR1fW7X87Lb8QtN/NH2w5BHRaSzjtsOgKSoIXtGS4t4G2jjpQ6fSTVquJjK474xw5tcMreE2+/4zq8GNkR7I+4PuKylb2TaUemBu8BQP7che3uNZh5Y06mYd0CAMqKsnemk02z49VekronMmyA8f6CLLE7d5KTtqwYc6Q7eUOOBwe3rgL/qsmc+DP2wZ+iBdqianq9pVLVdQ1zQm+HDfUj5IvasaTVJtULALl7VDi30cJJjKTVj9GDa2xNanGFQa+hD5zoKLggjJPLh1g/IFHIU9AnQgQK8mNFy1nZAb5mf4aTmNH8Xljyyh2fbOzfQGWE7nRbkcuN90nt2+jcCMRJgjcbftVXgdxEFEW6TJDUR5HK50qp/20EdMikeoENxf8WfXOBoE6dtpnGLsyomGZ5rat1Xym13QtVmVi2WEffS+IRcHJPyaBPzgCfBFlmYqVcnO3QtGxWM7ZpHXohGrN7VFLnEZT34g7ajm2XGbCcrLh6bAoulKDPol4jszQem+JN18eRgFXIxAyVlp5pCb8YBFDMbSLJ3iSl110HAlJE0k/LFnhooj9NkTJ9apVJdXKxbKfMwIyeD6F/m52kaq8PhuhQKP1z8iad1wLx3x4daI6ITF3tsnGgPiJCpw0B8AclUtFNQaXQYA2H1uQmY1PaYyF+7BT8LHG1aaUGT8lm7k5QY0BrmrV8jAipi7pEyIuB4Km30ZBf4LLfh4zb+Y3brtRzdyIoUXXLnGPxmbK5mVnGcVv0MI=
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id q11-20020adfab0b000000b0033b2276e71csm2627016wrc.62.2024.02.06.09.51.02
+        d=1e100.net; s=20230601; t=1707245019; x=1707849819;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EPinIhB5nRjoZSkHxrPck/Req/gZMo5duEbps1JKDSE=;
+        b=Cy5OQhwZa/54mO3ZMp+v1KCx/FBFZqtOu44uHVa/s+Yq1KF9x/94oT6+evPQUCQ3Yp
+         wylCFGZdIxoXHc8k1V8qJb3rJypNqWLR5nSUHnRhHMpLdhBwVgi+2ufcCVGr47+2LDpJ
+         X0t4ZVb/k/7LuddHy/sh2YVDYhljbKBzQF7XQr6dwuaQhWMKLcethifBdPO+mBdZnKrY
+         nKlkwgLuBbQczlbqO0vZccX4wnd13tAvBzk032Qssjvx4uWw1gPeeeyUuYpVFy5Pdynj
+         cLgLS9sK0q3PS6J7VlIJ3JghyEja7qzHazE6JEd3CVxw9hhOSTytQ1XHfEG434AtZOA9
+         4LIQ==
+X-Gm-Message-State: AOJu0Yz67i9/0LLpxKohOrsnciiIJTrnFW2piZZGxaT+pyqlhwXJaeVs
+	aOdxsVqf6kB5FCd+0L5Mvt8E2PRRZGdwuN6FSZdrbNxbYKj8f/F2nz2woaS8NOU=
+X-Google-Smtp-Source: AGHT+IG69MWyI/fNP1oAOlGJFsc3y7aOqQvZFe/yNI+O+DjRzhvBz+gVC2ZHAkmswNLc8nBo1PKTeg==
+X-Received: by 2002:a17:907:7898:b0:a38:4365:a5c5 with SMTP id ku24-20020a170907789800b00a384365a5c5mr1089191ejc.13.1707245018845;
+        Tue, 06 Feb 2024 10:43:38 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCVLGmVoMO+w58EzIO+EO7SbiXNGlwA2UmjJbT7sNcUNolDUXewVSnGu52rgkDcgkwr1Vw14cdfGLsHWJvtaAQFny7RglViQwkHmCa/4vPP/GeX4vNygg7Nsz4aVGjbGVSWVd7ljMlIayQA/I4dIRnH15dtF6MldOFNKuXH4cYOAns6BftYFTcbYp0yUQyl+/K6nvEs1XYsl9BAeh6uIPSzBlTjoHEfRaUBCuqoJNZt5bwP5mdBUJ7R7a6d6FuNpcm0qnswXDVkIWMMzYCxnMDb25AA4pF9VN/q1ePLH2dbU3MdsIHXDo3Ga0kzlSaBsfEY2itOy9VJ91w2UdUL7O5UmN7IHcUY6VJHW/brKXPkobuIR6IwytA9x+r84uO7I0xtO/UKiQ9sxg+3Sb7p2jXfvK4QgA2/Mvr045sz2ksPRyHqRkoeu+VMerP+IuKsV5wEn0aRY/nCo
+Received: from [10.167.154.1] (037008245233.garwolin.vectranet.pl. [37.8.245.233])
+        by smtp.gmail.com with ESMTPSA id un9-20020a170907cb8900b00a384365e3b9sm562305ejc.195.2024.02.06.10.43.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Feb 2024 09:51:03 -0800 (PST)
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Frank Oltmanns <frank@oltmanns.dev>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
- Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org
-Subject:
- Re: [PATCH v2 3/6] clk: sunxi-ng: nkm: Support minimum and maximum rate
-Date: Tue, 06 Feb 2024 18:51:02 +0100
-Message-ID: <3280499.44csPzL39Z@jernej-laptop>
-In-Reply-To: <87eddqzm4j.fsf@oltmanns.dev>
-References:
- <20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev>
- <4543794.LvFx2qVVIh@jernej-laptop> <87eddqzm4j.fsf@oltmanns.dev>
+        Tue, 06 Feb 2024 10:43:38 -0800 (PST)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH v2 00/18] Qualcomm GCC/VIDEOCC reset overhaul for Venus
+Date: Tue, 06 Feb 2024 19:43:33 +0100
+Message-Id: <20240105-topic-venus_reset-v2-0-c37eba13b5ce@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANV9wmUC/32NQQqDMBAAv1Jy7pYkGLU99R9FSpKuuiCJbDS0i
+ H9v6gN6nIFhNpGQCZO4nTbBmClRDAX0+ST8aMOAQK/CQktdSSUNLHEmDxnDmp6MCRdwpqqV65W
+ VbSNK52xCcGyDH0sZ1mkqcmbs6X2MHl3hkdIS+XN8s/rZf4usQMK1Vb6xta5aY+4TBcvxEnkQ3
+ b7vX25arlHIAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Dikshita Agarwal <quic_dikshita@quicinc.com>, 
+ Vikash Garodia <quic_vgarodia@quicinc.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1707245017; l=2858;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=yDmruuQF6fFZAPlSNaL/m0BOFTSsJrnucEdwAIP0S64=;
+ b=HtYYLU6J5DdnzEQhJpjXJ/NVyentVHNiW9ifCXBv3p88W/6LDStzzyYaqd1AvhujA1ojoVXjx
+ r75ifKSJiPlCz/eSsWiM2vkFL6/CcHnwH7op2UDAKUy75iIqDJ/Co8R
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-Dne ponedeljek, 05. februar 2024 ob 21:34:04 CET je Frank Oltmanns napisal(=
-a):
->=20
-> On 2024-02-05 at 18:56:09 +0100, Jernej =C5=A0krabec <jernej.skrabec@gmai=
-l.com> wrote:
-> > Dne ponedeljek, 05. februar 2024 ob 16:22:26 CET je Frank Oltmanns napi=
-sal(a):
-> >> According to the Allwinner User Manual, the Allwinner A64 requires
-> >> PLL-MIPI to run at 500MHz-1.4GHz. Add support for that to ccu_nkm.
-> >>
-> >> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> >> ---
-> >>  drivers/clk/sunxi-ng/ccu_nkm.c | 13 +++++++++++++
-> >>  drivers/clk/sunxi-ng/ccu_nkm.h |  2 ++
-> >>  2 files changed, 15 insertions(+)
-> >>
-> >> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu=
-_nkm.c
-> >> index 1168d894d636..7d135908d6e0 100644
-> >> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> >> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> >> @@ -181,6 +181,12 @@ static unsigned long ccu_nkm_round_rate(struct cc=
-u_mux_internal *mux,
-> >>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> >>  		rate *=3D nkm->fixed_post_div;
-> >>
-> >> +	if (nkm->min_rate && rate < nkm->min_rate)
-> >> +		rate =3D nkm->min_rate;
-> >> +
-> >> +	if (nkm->max_rate && rate > nkm->max_rate)
-> >> +		rate =3D nkm->max_rate;
-> >
-> > Please take a look at ccu_nm_round_rate() code. You need to consider po=
-stdiv
-> > and you can return immediately.
->=20
-> There is a difference here insofar that ccu_nm is always connected to a
-> fixed rate parent (at least that's my understanding). Therefore, in
-> ccu_nm_round_rate() we can be sure that the min or max rate can really
-> be set. In ccu_nkm we don't have that luxury, we actually have to find a
-> rate that is approximately equal to the min and max rate, based on the
-> parent rate. Therefore, we can't return immediately.
+Some resets associated with venus require a larger delay for the hardware
+on the other end to function properly. These seem to fall into three
+categories:
 
-Good point.
+- 150us for 8250 and earlier
+- 400us for 8350 and friends
+- 1000us for >=8450
 
->=20
-> Also, I'm not sure what you mean about me needing to consider postdiv.
-> That's what I did. The check is after multiplying with the postdiv. It's
-> the same as in ccu_nm_round_rate() (just minus the immediate return).
+Make some housecleaning changes and describe these delays in preparation
+to moving this data out of the venus driver.
 
-Nevermind, this applies only for immediate return.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Changes in v2:
+- Wrap the function parameters in patch 2
+- Better describe the sources of reset delay values
+- Pick up tags, rebase (with no changes)
+- Link to v1: https://lore.kernel.org/r/20240105-topic-venus_reset-v1-0-981c7a624855@linaro.org
+
+---
+Konrad Dybcio (18):
+      clk: qcom: reset: Increase max reset delay
+      clk: qcom: reset: Commonize the de/assert functions
+      clk: qcom: reset: Ensure write completion on reset de/assertion
+      clk: qcom: gcc-sa8775p: Set delay for Venus CLK resets
+      clk: qcom: gcc-sc8180x: Set delay for Venus CLK resets
+      clk: qcom: gcc-sc8280xp: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm4450: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm7150: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm8250: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm8350: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm8450: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm8550: Set delay for Venus CLK resets
+      clk: qcom: gcc-sm8650: Set delay for Venus CLK resets
+      clk: qcom: videocc-sm8150: Set delay for Venus CLK resets
+      clk: qcom: videocc-sm8250: Set delay for Venus CLK resets
+      clk: qcom: videocc-sm8350: Set delay for Venus CLK resets
+      clk: qcom: videocc-sm8450: Set delay for Venus CLK resets
+      clk: qcom: videocc-sm8550: Set delay for Venus CLK resets
+
+ drivers/clk/qcom/gcc-sa8775p.c    |  4 ++--
+ drivers/clk/qcom/gcc-sc8180x.c    |  6 +++---
+ drivers/clk/qcom/gcc-sc8280xp.c   |  4 ++--
+ drivers/clk/qcom/gcc-sm4450.c     |  4 ++--
+ drivers/clk/qcom/gcc-sm7150.c     |  2 +-
+ drivers/clk/qcom/gcc-sm8250.c     |  4 ++--
+ drivers/clk/qcom/gcc-sm8350.c     |  4 ++--
+ drivers/clk/qcom/gcc-sm8450.c     |  4 ++--
+ drivers/clk/qcom/gcc-sm8550.c     |  4 ++--
+ drivers/clk/qcom/gcc-sm8650.c     |  4 ++--
+ drivers/clk/qcom/reset.c          | 27 ++++++++++++++-------------
+ drivers/clk/qcom/reset.h          |  2 +-
+ drivers/clk/qcom/videocc-sm8150.c |  2 +-
+ drivers/clk/qcom/videocc-sm8250.c |  4 ++--
+ drivers/clk/qcom/videocc-sm8350.c |  4 ++--
+ drivers/clk/qcom/videocc-sm8450.c |  4 ++--
+ drivers/clk/qcom/videocc-sm8550.c |  4 ++--
+ 17 files changed, 44 insertions(+), 43 deletions(-)
+---
+base-commit: ac139fc7db67968e5061715508b5fc4aa7c40c56
+change-id: 20240105-topic-venus_reset-b5461bf1a087
 
 Best regards,
-Jernej
-
->=20
-> >
-> >> +
-> >>  	if (!clk_hw_can_set_rate_parent(&nkm->common.hw))
-> >>  		rate =3D ccu_nkm_find_best(*parent_rate, rate, &_nkm, &nkm->common);
-> >>  	else
-> >> @@ -220,6 +226,13 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, un=
-signed long rate,
-> >>  	_nkm.min_m =3D 1;
-> >>  	_nkm.max_m =3D nkm->m.max ?: 1 << nkm->m.width;
-> >>
-> >> +
-> >> +	if (nkm->min_rate && rate < nkm->min_rate)
-> >> +		rate =3D nkm->min_rate;
-> >> +
-> >> +	if (nkm->max_rate && rate > nkm->max_rate)
-> >> +		rate =3D nkm->max_rate;
-> >> +
-> >
-> > No need for this, clk subsystem calls round rate before setting actual =
-clock
-> > rate.
->=20
-> I'll remove the checks in V3.
->=20
-> Best regards,
->   Frank
->=20
-> >
-> > Best regards,
-> > Jernej
-> >
-> >>  	ccu_nkm_find_best(parent_rate, rate, &_nkm, &nkm->common);
-> >>
-> >>  	spin_lock_irqsave(nkm->common.lock, flags);
-> >> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu=
-_nkm.h
-> >> index c409212ee40e..358a9df6b6a0 100644
-> >> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
-> >> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
-> >> @@ -27,6 +27,8 @@ struct ccu_nkm {
-> >>  	struct ccu_mux_internal	mux;
-> >>
-> >>  	unsigned int		fixed_post_div;
-> >> +	unsigned long		min_rate;
-> >> +	unsigned long		max_rate;
-> >>  	unsigned long		max_m_n_ratio;
-> >>  	unsigned long		min_parent_m_ratio;
-> >>
-> >>
-> >>
->=20
-
-
-
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
