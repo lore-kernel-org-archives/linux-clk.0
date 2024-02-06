@@ -1,61 +1,61 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED021BDED
-	for <linux-clk@vger.kernel.org>; Tue,  6 Feb 2024 18:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CB11C2A1
+	for <linux-clk@vger.kernel.org>; Tue,  6 Feb 2024 18:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707245041; cv=none; b=blTbFoHxQ9ktPQ2SuHppEruxjT9eLiXuem3gAdguxUUT+PmcuYDTdxJ6YAkT1TtCigudpaXhYMFtFeMOQ/qe/0Bfg0eKuAhovkbGLzJbo7KpxMfVLjrVBnkxdI6E9OX+wIZaThg/dTCY2LuUMcBV6WuOfWoj4dRdwzSUbRDIxf8=
+	t=1707245043; cv=none; b=cfltAJaxFMi+3E6ysfx67bkravI2GXCtDgNKrb8WY3bY9+poNuyaZM3MdMcmwTpK7n+l7dSkF3SAwdkQBwbTSncG1Z3u3OsuKUJK0Z8joYa+wAL2do5rx+8kgUpRHDZlNq51EnsmFXwsEIudDitf4kZqWUDlisgWgPBI0eGg8IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707245041; c=relaxed/simple;
-	bh=8KOUxxHlTkggQTw7pN3WXloq1WdTnUWQp8JLscQ7fqE=;
+	s=arc-20240116; t=1707245043; c=relaxed/simple;
+	bh=z0UvCR3eA/Pj02vuX/VE6kFABcANNusSJTpXlxREtE4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jR0yUMV7F+ZR+MIba5H/ioIyhod9xxpU2JOPfWU7iF9ljh3SUT4ToPp3jOWUqUEfB0hk3ti1yl2OyisrfQgCdUPpF5QbNhLnyzwzNKZznhYjPY8lIJWA4JIvoAbA1osKygcL3IDsxt2gqKsApogFqz93PnQLAEI/SZWHNRFOqkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BDvSG3ht; arc=none smtp.client-ip=209.85.218.43
+	 In-Reply-To:To:Cc; b=WqCkZ7EbdQvjxFRITS78/0fRTAAyj6ccfaKZL2q/CthHPVex4+nGd7QlS4ZJ3bZ9FlE3DIFPnaH6sn15Nv7sSxR0QCWISTpoMIWFezfB6+obrbTT3VIbCMp96FpkMKoXq38eAJZTepDiXWjRkapSX3ha3dkaB8qf18WgtcdGQiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kSNUn91d; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BDvSG3ht"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a380c98e824so164343166b.2
-        for <linux-clk@vger.kernel.org>; Tue, 06 Feb 2024 10:43:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kSNUn91d"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a380a1fa56fso171176766b.0
+        for <linux-clk@vger.kernel.org>; Tue, 06 Feb 2024 10:44:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707245038; x=1707849838; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1707245040; x=1707849840; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NKzZAHgHTdg4BbNqiHqVVtnjbyCumYhOTEucfxgTrIw=;
-        b=BDvSG3htV++/trWPPvgIPCvOpvquduoUWmpWZZjvevEw4/Q9dlGofCPWF0zU105y2N
-         S1QNbmqbSboYeU3x0SKUZZg5nHhCY4qiii/MsWsvnDqntQ0jwR++jw4g6uFyS2R159fk
-         73H2uiqQ7AnvmKcprGgq7Z9vTGdPR0n+JJ4HaW07J/nBGqDq16qqIleltqQt4wbqNsXZ
-         EjLWSc5HP6ichJqvZDYnyb61I3aF4bEMkh0WpgH/nVec97R1M+zj4wvDl5r+KPze3rMC
-         YFj44hvtThJZHG7nM7D+uwI7/qE2arZd5SmWUQBD3TLDs1+qtyJBpm/aKi5h4kCYHZMd
-         6MIg==
+        bh=LTXMySSjM+TB9gHsIW2sZkrPWRgmdi9eib/Lrz67hao=;
+        b=kSNUn91dCfpEHeuLWtzAYRP5N8N8b+NAYs3JHKfhb39UtLfNuoMDWm1untJxj4NW1x
+         XLxZP9wv7I7FVfmgyvGOrOZcT5LqMenORW/YH9Lwfe2PGSUXkMZBqeU3WpESAaexhBSv
+         dbbt0m7wXqrM3vZOp9JSgF4NHNmzG77RDXMbJuonlUH7UejWO2B/Pabate51LyNKCX0u
+         SltzUj8tEZCt/00fc8mbnhxH9BMaXDVs+3QzSBt2Nc4C/iFF0jKlarksVsLneL/PY352
+         rUbd2l2iJZgt6ICegjRdO9naF/rMvbG1VGc3VzdXzLRVJcpZYZWBoSk+wvqxWM8ctcWn
+         UKMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707245038; x=1707849838;
+        d=1e100.net; s=20230601; t=1707245040; x=1707849840;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NKzZAHgHTdg4BbNqiHqVVtnjbyCumYhOTEucfxgTrIw=;
-        b=ZRNV9jZd2Nkc4JirORI1kaG44G4Uq5HGnH0g/z2OSfm2GEZjjqn7ypsRzEtI1M/Rok
-         Cwhe0SB/7oBoOVlKu2fGwUfR+5H8hhPOP0w+P7VTXL60o65M409BYqvmbAFN07CQvNyD
-         MGhdZ1USlpWKwiFN485s2E3IutSUz5n8pOy8u7sBR2y4bc///8OD4xgcS6MkaHHoG677
-         tQkvmzgRn5N0j8LCba/g2xWbDkzwU3azTgobl5ho0XlyPOFWn9N14xCURA+HgwVgW2M7
-         is3bvnyb4ltaMxcaoONaIHaTt1+xCdOntZ/XE4ObsZS+93vHr6lfi8VkfdYwRLXAj+70
-         Z6IQ==
-X-Gm-Message-State: AOJu0Yw9Tcn+yZMfojQXa38NH1N1EU068f4zaZdw2w30bEYmgDnpmOKp
-	fKD/8ICQBZtyHvjEWvN5w8gkmeOoTqG5TVZYdEamo8pDIYMC4TtwVJGeOB+iSm0=
-X-Google-Smtp-Source: AGHT+IEpxaqbXk/sCzajWJj1TSeZlTVEf+GgKyUNCFgxhTbHZQMVybKGhSkVSF50B6HQQh9UUw/G5w==
-X-Received: by 2002:a17:906:6acf:b0:a36:c353:952e with SMTP id q15-20020a1709066acf00b00a36c353952emr2677030ejs.41.1707245038414;
-        Tue, 06 Feb 2024 10:43:58 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCXNXsO2PoV0ZOcB7JTVIQvy680ITZXlBp7AmI9t5ymHnrrKMbUlXoqwCaNG0kQgk3RjxPJTgqoV5tRcCDwRRxQJBiLgBwvKo8VmdfoIBRP0Fp/5sVtAy06KldUaGyeEGELtSB95e1cVTMmYa521RO6u7uTXxPZapPCSKPaokxVJF84odL3XLAMCYLnM7siXsAs0M68Qf3evIG9D3F3Fr9VOo9Mr1STvixzR7YJLyQX9RXEZkF//Mao99kDUsYlq9C9xLV2DWWubZzYzpkQqDA4Vf7EbysNDWPmS95CMCDEBIxlVBhmN9y1baDRSnA1bJlfSi5Lykbh46WbJQPy5IcStjhGEMfSlT2aj96phzfDfBQNcKhb8WgrMEpL/H/6M7BqfBBG16jelpW4x0rJOebUWHriVVhH97+wVm7JBGOvBxUXg6z2JGoTRZQkMCP8GS5pIqFpZmVfA
+        bh=LTXMySSjM+TB9gHsIW2sZkrPWRgmdi9eib/Lrz67hao=;
+        b=HVFjykgQahKEbRA6W7RDdAvNJL6OhcmXZExhSNqrO+jL4qOpFiemEYpxofui2Ohh+s
+         K3h+8j+5BWi7kVEuh9l/WeB4MOc7tzpcuj849j0pzbPR25Gtx/hJ6Nhz0qk/6ktDLwLG
+         pMFwPmy3jLQa5ze+Kq8bfKuy1H5Dj38giN8dKL5HEMqD9fKp7w5cpqWrsfiXyGwgnXBe
+         ZPwPEGBoAhLT46cXAS0nrsgpASdYRDD1IfwBWaW363/w6SGcVgyLENEcKYL2sNjBBzhn
+         iirPh24vYvZxTLFC1LfF7seabWkxf1mXNr0FEkyfVnjk+S+tusp0tlBjLkojpP6boiGb
+         wRAA==
+X-Gm-Message-State: AOJu0YzibrJLzp0lMTugWFXoz4YLcmrSxSZ8f9qv7TkddTXNilmSBg/q
+	26lUQwENszcPnk+OavTwTrOgsGwUcw8d4uSOmrbtxHm4tgG+oVKl2RIXJpO/7dQ=
+X-Google-Smtp-Source: AGHT+IG5uMZMjX6h98nWMSRbSnIRSsKQ1Wi2SXVTsg+zAzkQdsMS+ErVE14TEWkjRXRbhkktBGBIrA==
+X-Received: by 2002:a17:906:c102:b0:a38:32bc:bd24 with SMTP id do2-20020a170906c10200b00a3832bcbd24mr2260583ejc.36.1707245039950;
+        Tue, 06 Feb 2024 10:43:59 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCXhJSLgRrI+1tJO3R6fUdpSrGmCCIZjRlWz0bKqd1nMxD0oU17TOtxCG2zSkg1xGhZXlOZZTY/pHtkj89aemRURa4JINJndaRyzFAk3Iz8CKv/HwC6pMM8jqgDFpqn7+SS08a6mDmjymWE2uAlySAs8FwFMZzNNDsZkJemMydczdJNORe+U/aOKuuyak+rPW/FZVCCE+D8Kd7T5v6lTijQI9JbYZ4ziSJrhoH5t35VLbJuIkChisoOUt1O4dMMyw+ByzLXHgp1L4GiMelP7BgoYSKJ735TA+tUXPxEW+cNoqTbhaLxkGI9cweCAVy+zhgpnJl6MOKkD20CDaR8z3eqyrt0fx2Xv8IhlEslL8nfoOWjoW4uT9eEuFOIylUeK3zHrSAz7KXK0xW57Z/WqHzLyUv2Pmf4raAyI9KNQJE0HTgZrvnK70rnRAlSp3TwZSvHqIq+bOYTd
 Received: from [10.167.154.1] (037008245233.garwolin.vectranet.pl. [37.8.245.233])
-        by smtp.gmail.com with ESMTPSA id un9-20020a170907cb8900b00a384365e3b9sm562305ejc.195.2024.02.06.10.43.56
+        by smtp.gmail.com with ESMTPSA id un9-20020a170907cb8900b00a384365e3b9sm562305ejc.195.2024.02.06.10.43.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Feb 2024 10:43:58 -0800 (PST)
+        Tue, 06 Feb 2024 10:43:59 -0800 (PST)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Tue, 06 Feb 2024 19:43:46 +0100
-Subject: [PATCH v2 13/18] clk: qcom: gcc-sm8650: Set delay for Venus CLK
- resets
+Date: Tue, 06 Feb 2024 19:43:47 +0100
+Subject: [PATCH v2 14/18] clk: qcom: videocc-sm8150: Set delay for Venus
+ CLK resets
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240105-topic-venus_reset-v2-13-c37eba13b5ce@linaro.org>
+Message-Id: <20240105-topic-venus_reset-v2-14-c37eba13b5ce@linaro.org>
 References: <20240105-topic-venus_reset-v2-0-c37eba13b5ce@linaro.org>
 In-Reply-To: <20240105-topic-venus_reset-v2-0-c37eba13b5ce@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -78,39 +78,38 @@ Cc: Marijn Suijten <marijn.suijten@somainline.org>,
  Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
  Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1707245017; l=1017;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1707245017; l=1115;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=8KOUxxHlTkggQTw7pN3WXloq1WdTnUWQp8JLscQ7fqE=;
- b=y9cwir5KB6HgBFeoRBqgqFEwRDH0tpnirUD7O5WzDrrGFcovKkl6Ndal6mmD10FwERgIQAyvR
- 12wa8gOU6loCmR5UvcOT5Bz8D3paNH3ZrNaQMM7EnCvt+AP7Ts9U+n3
+ bh=z0UvCR3eA/Pj02vuX/VE6kFABcANNusSJTpXlxREtE4=;
+ b=uwAcFMJiU9sa8CMjznz4S5ue15VbSRNhDDSuo3SKtpqPYbgs3tcYdBzNoRVm31F1Yprjuf7Kj
+ pVU8qTsf3boC4aeZeNpffu5UHI33LrIK+c+GTrxq3Lb3JieCOC5auPj
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
 Some Venus resets may require more time when toggling. Describe that.
 
-The Venus hw on 8650 is similar to the one on 8550, follow its
-requirements.
+The value was obtained by referencing the msm-4.14/19 driver, which uses a
+single value for all platforms [1].
 
+[1] https://git.codelinaro.org/clo/la/platform/vendor/opensource/video-driver/-/blob/LA.UM.9.15.c26/msm/vidc/hfi_common.c?ref_type=heads#L3662-3663
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/qcom/gcc-sm8650.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/videocc-sm8150.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-sm8650.c b/drivers/clk/qcom/gcc-sm8650.c
-index 9174dd82308c..63becb03cd90 100644
---- a/drivers/clk/qcom/gcc-sm8650.c
-+++ b/drivers/clk/qcom/gcc-sm8650.c
-@@ -3734,8 +3734,8 @@ static const struct qcom_reset_map gcc_sm8650_resets[] = {
- 	[GCC_USB3_PHY_SEC_BCR] = { 0x5000c },
- 	[GCC_USB3PHY_PHY_PRIM_BCR] = { 0x50004 },
- 	[GCC_USB3PHY_PHY_SEC_BCR] = { 0x50010 },
--	[GCC_VIDEO_AXI0_CLK_ARES] = { 0x32018, 2 },
--	[GCC_VIDEO_AXI1_CLK_ARES] = { 0x32024, 2 },
-+	[GCC_VIDEO_AXI0_CLK_ARES] = { .reg = 0x32018, .bit = 2, .udelay = 1000 },
-+	[GCC_VIDEO_AXI1_CLK_ARES] = { .reg = 0x32024, .bit = 2, .udelay = 1000 },
- 	[GCC_VIDEO_BCR] = { 0x32000 },
+diff --git a/drivers/clk/qcom/videocc-sm8150.c b/drivers/clk/qcom/videocc-sm8150.c
+index f1456eaa87c4..bead5186a5d6 100644
+--- a/drivers/clk/qcom/videocc-sm8150.c
++++ b/drivers/clk/qcom/videocc-sm8150.c
+@@ -215,7 +215,7 @@ static const struct regmap_config video_cc_sm8150_regmap_config = {
  };
  
+ static const struct qcom_reset_map video_cc_sm8150_resets[] = {
+-	[VIDEO_CC_MVSC_CORE_CLK_BCR] = { 0x850, 2 },
++	[VIDEO_CC_MVSC_CORE_CLK_BCR] = { .reg = 0x850, .bit = 2, .udelay = 150 },
+ 	[VIDEO_CC_INTERFACE_BCR] = { 0x8f0 },
+ 	[VIDEO_CC_MVS0_BCR] = { 0x870 },
+ 	[VIDEO_CC_MVS1_BCR] = { 0x8b0 },
 
 -- 
 2.43.0
