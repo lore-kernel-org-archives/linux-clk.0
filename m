@@ -1,55 +1,68 @@
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7932112F59C;
-	Tue,  6 Feb 2024 10:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCD6130AC9;
+	Tue,  6 Feb 2024 11:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707216259; cv=none; b=OKD+i07NJhpIl3WMXR/x9T5aA4IafMprcaGR5GTHPVRErXmNI8XGC8pEG1n7SHht5GUi9OTyX2b4o4d2AgrfPeGb4+jAOdW1/Pb3ZLMueDMiTrlhsdg7beV+SdJU7AtZmEnk2gRcum3NA/UCKljdTzzQ5uinNxgr0i7ESSuQUFU=
+	t=1707219137; cv=none; b=eJ7iraAJsAYlQh6KR9C7HUP8kDwx6CIEaCtAipipFaLUxoM1mgic8TgRH9E7OJbP1PIwThB7cXPIg/nOlpLab9g3POC969VD5V7/GNeFEoFU8lSKkKo8HuqMyo/zsQW/w85bgo8+a17XsNeUgmvISTVRlhahqx6rMKx3cPqqSdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707216259; c=relaxed/simple;
-	bh=i371UdEhQpXaJ8mvQCXn8mXTIx12rvp+EJtokqwZJ0o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h4HYfnUZH8+Q2YbdqTHfdjviRW0iwSRHmfRtvu4GpkZniCV5HGCmS3E5CkSBeHJiU9PEm4FjMNI0tCW9L/Lqp7w7oMVwaiaq+V+dyxQeBhvY/kW0ebEvjsEMU3awP8Oh8FaaXDnmMngXucy2TBK99RnPN9pOX5a8IXtaBkpGNDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LH/jS+gs; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1707219137; c=relaxed/simple;
+	bh=RgiiVTkv2UIw5nxUPD/uiphokqDs+9ojkYcvt1/ntAk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EC4JPBN7IKPYc0RtaIj6s90H0uefTv3SsNsx6xQB9uHMAIKuNxBKgLB+AMboeBq/BcZZRi1OLFPWT6qzCDPRREGIluTY3IPIvl5r9yiTQZTAptCzRVyzzejaruiU0MOo56D9khK2lrYyHekaEocmR0e93xKpAhUDI1CREThonBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kc/eAhyA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LH/jS+gs"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 416AiApb113600;
-	Tue, 6 Feb 2024 04:44:10 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1707216250;
-	bh=fnMZZfEYZdxyhfRJnAJGVe2SVYyE9V81+i0dqrp0+hM=;
-	h=From:To:CC:Subject:Date;
-	b=LH/jS+gsZAjdpWXQCEkzCns5tn8qrTjMBvLE30s913ioKACAbH/Q09rDAgSctLJQE
-	 kvHqUhmrdM/Il5wflJ4yo4AUGV5PGJ0g9yw4mI5ylN6K5UCVKylHX7P4JUQ4NAnfuo
-	 xTp1TKQwgQmJ5dJsZHFWXlk4v1ziyqOUAJOB6Kuc=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 416AiAet028004
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 6 Feb 2024 04:44:10 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
- Feb 2024 04:44:10 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 6 Feb 2024 04:44:10 -0600
-Received: from udit-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (udit-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.18])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 416Ai6iS105184;
-	Tue, 6 Feb 2024 04:44:07 -0600
-From: Udit Kumar <u-kumar1@ti.com>
-To: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>, <chandru@ti.com>,
-        <rishabh@ti.com>
-CC: <vigneshr@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>
-Subject: [PATCH v2] clk: keystone: sci-clk: Adding support for non contiguous clocks
-Date: Tue, 6 Feb 2024 16:13:57 +0530
-Message-ID: <20240206104357.3803517-1-u-kumar1@ti.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kc/eAhyA"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 416AcWYD007766;
+	Tue, 6 Feb 2024 11:32:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=CVHcz0b
+	NbywadoMU6fGB649MjS2WWGGq8j42V2DdIMU=; b=Kc/eAhyA+0VMqJkwEehQkM4
+	bi9lULZt1Q3S+gsmtU60Rk0AJ/BVkF1tbtZTXZGtsRx/nydJ0XEENpWoWzWoiky2
+	U5/s6r2HCy2iA5prjPMCS2V/SMX3fTApPlQDhIaguPsqgfcw5+ZM0WmXOC4Cu5YI
+	Dgli6S/V4bvIL2NYdtkQ0LESDWv4uwYgXrfyGl4IRfqDb9aIxk6Ta8Wz3j+dC/ae
+	7Ir12dFLPUuPG4DNvtYQfX+txemJLaEV0PQKKg2S4M8Xe1O2Rx/L279wKuxZVE8u
+	/5Ayyf7tHI2pfJ7OJxOAwrZ+iLOCNSDQACzMeTx26c8sncvS5+HO4pMpJdRI3bg=
+	=
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w3k6g83jp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Feb 2024 11:32:11 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 416BWAxW000920
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 6 Feb 2024 11:32:10 GMT
+Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Tue, 6 Feb 2024 03:32:05 -0800
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Ajit Pandey" <quic_ajipan@quicinc.com>,
+        Jagadeesh Kona
+	<quic_jkona@quicinc.com>
+Subject: [PATCH 0/5] Add support for videocc and camcc on SM8650
+Date: Tue, 6 Feb 2024 17:01:40 +0530
+Message-ID: <20240206113145.31096-1-quic_jkona@quicinc.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -58,90 +71,44 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TMnJ34t1gw1M_8IL81zplxQuv_hO_cma
+X-Proofpoint-GUID: TMnJ34t1gw1M_8IL81zplxQuv_hO_cma
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-06_04,2024-01-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=608
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 clxscore=1011
+ impostorscore=0 mlxscore=0 bulkscore=0 adultscore=0 spamscore=0
+ suspectscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2401310000 definitions=main-2402060081
 
-Most of clocks and their parents are defined in contiguous range,
-But in few cases, there is gap in clock numbers[0].
-Driver assumes clocks to be in contiguous range, and add their clock
-ids incrementally.
+Add support for video and camera clock controllers on Qualcomm
+SM8650 platform.
 
-New firmware started returning error while calling get_freq and is_on
-API for non-available clock ids.
+Jagadeesh Kona (5):
+  dt-bindings: clock: qcom: Add video clock bindings for SM8650
+  clk: qcom: videocc-sm8550: Add support for SM8650 videocc
+  dt-bindings: clock: qcom: Add SM8650 camera clock controller
+  clk: qcom: camcc-sm8650: Add camera clock controller driver for SM8650
+  arm64: dts: qcom: sm8650: Add video and camera clock controllers
 
-In this fix, driver checks and adds only valid clock ids.
+ .../bindings/clock/qcom,sm8450-camcc.yaml     |    3 +
+ .../bindings/clock/qcom,sm8450-videocc.yaml   |    4 +-
+ arch/arm64/boot/dts/qcom/sm8650.dtsi          |   28 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/camcc-sm8650.c               | 3601 +++++++++++++++++
+ drivers/clk/qcom/videocc-sm8550.c             |  160 +-
+ .../dt-bindings/clock/qcom,sm8450-videocc.h   |    8 +-
+ include/dt-bindings/clock/qcom,sm8650-camcc.h |  195 +
+ 9 files changed, 4002 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/clk/qcom/camcc-sm8650.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8650-camcc.h
 
-Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
-
-[0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
-Section Clocks for NAVSS0_CPTS_0 Device,
-clock id 12-15 not present.
-
-Signed-off-by: Udit Kumar <u-kumar1@ti.com>
----
-Changelog
-
-Changes in v2
-- Updated commit message
-- Simplified logic for valid clock id
-link to v1 https://lore.kernel.org/all/20240205044557.3340848-1-u-kumar1@ti.com/
-
-
-P.S
-Firmawre returns total num_parents count including non available ids.
-For above device id NAVSS0_CPTS_0, number of parents clocks are 16
-i.e from id 2 to 17. But out of these ids few are not valid.
-So driver adds only valid clock ids out ot total.
-
-Original logs
-https://gist.github.com/uditkumarti/de4b36b21247fb36725ad909ce4812f6#file-original-logs
-Line 2630 for error
-
-Logs with fix v2
-https://gist.github.com/uditkumarti/94e3e28d62282fd708dbfe37435ce1d9
-Line 2591
-
-
- drivers/clk/keystone/sci-clk.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-index 35fe197dd303..ff249cbd54a1 100644
---- a/drivers/clk/keystone/sci-clk.c
-+++ b/drivers/clk/keystone/sci-clk.c
-@@ -517,6 +517,7 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
- 	int num_clks = 0;
- 	int num_parents;
- 	int clk_id;
-+	u64 freq;
- 	const char * const clk_names[] = {
- 		"clocks", "assigned-clocks", "assigned-clock-parents", NULL
- 	};
-@@ -586,16 +587,23 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
- 				clk_id = args.args[1] + 1;
- 
- 				while (num_parents--) {
-+					/* Check if this clock id is valid */
-+					ret = provider->ops->get_freq(provider->sci,
-+						sci_clk->dev_id, clk_id, &freq);
-+
-+					clk_id++;
-+					if (ret)
-+						continue;
-+
- 					sci_clk = devm_kzalloc(dev,
- 							       sizeof(*sci_clk),
- 							       GFP_KERNEL);
- 					if (!sci_clk)
- 						return -ENOMEM;
- 					sci_clk->dev_id = args.args[0];
--					sci_clk->clk_id = clk_id++;
-+					sci_clk->clk_id = clk_id - 1;
- 					sci_clk->provider = provider;
- 					list_add_tail(&sci_clk->node, &clks);
--
- 					num_clks++;
- 				}
- 			}
 -- 
-2.34.1
+2.43.0
 
