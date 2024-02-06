@@ -1,118 +1,147 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBE012EBF3;
-	Tue,  6 Feb 2024 10:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7932112F59C;
+	Tue,  6 Feb 2024 10:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707214389; cv=none; b=Al/mBOcCrFtcRO2Yn7ankCcVyKa2M2cnA3TFRcTxgRn462QAJLEFKEefUylzoPopF85WLe59wpo3MQRYSer72UIMvh8amDZ89dq3cJ7ksVPqHnF4QRz1Ao3YJOoKonRHWsrhsIeU4yZtKCUiGBQGJ2H+j8/SR3EYYaBOQEdjFNA=
+	t=1707216259; cv=none; b=OKD+i07NJhpIl3WMXR/x9T5aA4IafMprcaGR5GTHPVRErXmNI8XGC8pEG1n7SHht5GUi9OTyX2b4o4d2AgrfPeGb4+jAOdW1/Pb3ZLMueDMiTrlhsdg7beV+SdJU7AtZmEnk2gRcum3NA/UCKljdTzzQ5uinNxgr0i7ESSuQUFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707214389; c=relaxed/simple;
-	bh=kqMo2mkEaV1uSbwgI1g5KgAxopmIWmq8uQN0eHbaI8w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=omxOCiFTQqLL+VCokffkhp7Bpjt4JK15xVtflO4y2NOh27xOMYWYAyIkV0gHX1OHexoP3B2UofriRAWVvFwxF0MtBbcAzPW7o8efE0fnHinEsH9T1+4rscg92C4Gob2+HstwALKZ9lHXkIbwFV06nQcVtXQ/u6B3x9y0aRAWGWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BI/CKhos; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1707216259; c=relaxed/simple;
+	bh=i371UdEhQpXaJ8mvQCXn8mXTIx12rvp+EJtokqwZJ0o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h4HYfnUZH8+Q2YbdqTHfdjviRW0iwSRHmfRtvu4GpkZniCV5HGCmS3E5CkSBeHJiU9PEm4FjMNI0tCW9L/Lqp7w7oMVwaiaq+V+dyxQeBhvY/kW0ebEvjsEMU3awP8Oh8FaaXDnmMngXucy2TBK99RnPN9pOX5a8IXtaBkpGNDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LH/jS+gs; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BI/CKhos"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A5B5D40013;
-	Tue,  6 Feb 2024 10:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1707214384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wYHYy9wM/XJWCBvUKP+eSh79QSZHlIijB5K8Zu/UezQ=;
-	b=BI/CKhosTgEXVhWpl9iV4qjDtB08F2u86pXekaGVKk/DX5TY/qjmViVpsZYKTnUacdHRFs
-	V0b227hFwI1b/xXybq7zJnTda5BsN83Rg6VZHfj8VyQn4rNaxTsih/FclM6YwQlSjQsXuJ
-	3Jcwn8nQiqonmxlq3sDevEAxVf9g9Zh32F0DK4XSB13EyXJWLL0KmC+/G4LoQswtO6DWeS
-	PReLv+IivCNS0ImjtBh2p0rK6N1p4ifPfpNLmFuTIMaT/T+JzACQa03UrMcp+R271jlBc5
-	wSXx2Vt+8kDG2YeULq2yKE6jO+pMeRPIBUfBOefZWFYTbOEvJIHBESvKeREZ4g==
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LH/jS+gs"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 416AiApb113600;
+	Tue, 6 Feb 2024 04:44:10 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1707216250;
+	bh=fnMZZfEYZdxyhfRJnAJGVe2SVYyE9V81+i0dqrp0+hM=;
+	h=From:To:CC:Subject:Date;
+	b=LH/jS+gsZAjdpWXQCEkzCns5tn8qrTjMBvLE30s913ioKACAbH/Q09rDAgSctLJQE
+	 kvHqUhmrdM/Il5wflJ4yo4AUGV5PGJ0g9yw4mI5ylN6K5UCVKylHX7P4JUQ4NAnfuo
+	 xTp1TKQwgQmJ5dJsZHFWXlk4v1ziyqOUAJOB6Kuc=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 416AiAet028004
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 6 Feb 2024 04:44:10 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
+ Feb 2024 04:44:10 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 6 Feb 2024 04:44:10 -0600
+Received: from udit-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (udit-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.18])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 416Ai6iS105184;
+	Tue, 6 Feb 2024 04:44:07 -0600
+From: Udit Kumar <u-kumar1@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>, <chandru@ti.com>,
+        <rishabh@ti.com>
+CC: <vigneshr@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>
+Subject: [PATCH v2] clk: keystone: sci-clk: Adding support for non contiguous clocks
+Date: Tue, 6 Feb 2024 16:13:57 +0530
+Message-ID: <20240206104357.3803517-1-u-kumar1@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 06 Feb 2024 11:13:03 +0100
-Message-Id: <CYXWZOJ7KLIC.27XVZMBQASH9O@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v4 04/18] dt-bindings: clock: mobileye,eyeq5-clk: add
- bindings
-Cc: "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
- <linux-mips@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, <linux-gpio@vger.kernel.org>
-To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Gregory
- CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh+dt@kernel.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>, "Linus Walleij"
- <linus.walleij@linaro.org>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?=
- <rafal@milecki.pl>, "Philipp Zabel" <p.zabel@pengutronix.de>
-X-Mailer: aerc 0.15.2
-References: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
- <20240131-mbly-clk-v4-4-bcd00510d6a0@bootlin.com>
- <f6e5b748-17c4-4de1-be42-f79155be21cb@linaro.org>
- <CYTOEGEI34JQ.36CF09LNJFQHS@bootlin.com>
- <4e9ce766-602f-4b75-8c25-48da4d22051e@linaro.org>
-In-Reply-To: <4e9ce766-602f-4b75-8c25-48da4d22051e@linaro.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello,
+Most of clocks and their parents are defined in contiguous range,
+But in few cases, there is gap in clock numbers[0].
+Driver assumes clocks to be in contiguous range, and add their clock
+ids incrementally.
 
-On Thu Feb 1, 2024 at 12:00 PM CET, Krzysztof Kozlowski wrote:
-> On 01/02/2024 11:38, Th=C3=A9o Lebrun wrote:
-> > Hello,
-> >=20
-> > On Thu Feb 1, 2024 at 9:58 AM CET, Krzysztof Kozlowski wrote:
-> >> On 31/01/2024 17:26, Th=C3=A9o Lebrun wrote:
-> >>> Add DT schema bindings for the EyeQ5 clock controller driver.
-> >>>
-> >>> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> >>> ---
-> >>
-> >> No changelog, tags ignored, I scrolled through first two pages of cove=
-r
-> >> letter and also no changelog.
-> >=20
-> > In this case we fit into the "If a tag was not added on purpose". Sorry
-> > the changelog was not explicit enough. In my mind it fits into the
-> > first bullet point of the cover letter changelog:
-> >=20
-> >> - Have the three drivers access MMIO directly rather than through the
-> >>   syscon & regmap.
->
-> ... which I might not even connect to binding patches. I see only one
-> entry regarding bindings in your changelog, so I find it not much
-> informative.
->
-> For the future, please state that you ignore tags for given reason.
->
-> >=20
-> > That change means important changes to the dt-bindings to adapt to this
-> > new behavior. In particular we now have reg and reg-names properties
-> > that got added and made required.
-> >=20
-> > I wanted to have your review on that and did not want to tag the patch
-> > as already reviewed.
->
-> Makes sense, but how can I know it? Other people often ignore the tags,
-> so safe assumption is that it happened here as well.
+New firmware started returning error while calling get_freq and is_on
+API for non-available clock ids.
 
-I'm prepping a new revision. Should I be taking your previous
-Reviewed-By tags in? You sent them for the previous revision, do the
-changes in this V4 look good to you?
+In this fix, driver checks and adds only valid clock ids.
 
-Thanks Krzysztof,
+Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+[0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
+Section Clocks for NAVSS0_CPTS_0 Device,
+clock id 12-15 not present.
+
+Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+---
+Changelog
+
+Changes in v2
+- Updated commit message
+- Simplified logic for valid clock id
+link to v1 https://lore.kernel.org/all/20240205044557.3340848-1-u-kumar1@ti.com/
+
+
+P.S
+Firmawre returns total num_parents count including non available ids.
+For above device id NAVSS0_CPTS_0, number of parents clocks are 16
+i.e from id 2 to 17. But out of these ids few are not valid.
+So driver adds only valid clock ids out ot total.
+
+Original logs
+https://gist.github.com/uditkumarti/de4b36b21247fb36725ad909ce4812f6#file-original-logs
+Line 2630 for error
+
+Logs with fix v2
+https://gist.github.com/uditkumarti/94e3e28d62282fd708dbfe37435ce1d9
+Line 2591
+
+
+ drivers/clk/keystone/sci-clk.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+index 35fe197dd303..ff249cbd54a1 100644
+--- a/drivers/clk/keystone/sci-clk.c
++++ b/drivers/clk/keystone/sci-clk.c
+@@ -517,6 +517,7 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+ 	int num_clks = 0;
+ 	int num_parents;
+ 	int clk_id;
++	u64 freq;
+ 	const char * const clk_names[] = {
+ 		"clocks", "assigned-clocks", "assigned-clock-parents", NULL
+ 	};
+@@ -586,16 +587,23 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+ 				clk_id = args.args[1] + 1;
+ 
+ 				while (num_parents--) {
++					/* Check if this clock id is valid */
++					ret = provider->ops->get_freq(provider->sci,
++						sci_clk->dev_id, clk_id, &freq);
++
++					clk_id++;
++					if (ret)
++						continue;
++
+ 					sci_clk = devm_kzalloc(dev,
+ 							       sizeof(*sci_clk),
+ 							       GFP_KERNEL);
+ 					if (!sci_clk)
+ 						return -ENOMEM;
+ 					sci_clk->dev_id = args.args[0];
+-					sci_clk->clk_id = clk_id++;
++					sci_clk->clk_id = clk_id - 1;
+ 					sci_clk->provider = provider;
+ 					list_add_tail(&sci_clk->node, &clks);
+-
+ 					num_clks++;
+ 				}
+ 			}
+-- 
+2.34.1
+
