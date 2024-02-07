@@ -1,136 +1,167 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD57E1D529
-	for <linux-clk@vger.kernel.org>; Wed,  7 Feb 2024 11:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC11B24208;
+	Wed,  7 Feb 2024 12:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707306780; cv=none; b=leOPLL80WtEL7jvOE3I08v+J6VOGZ0dSndE4tHtn8KC0IZmAwxDyywmqVeRndGcZIvbenZf2NTOZbHy2re0wp3gtFTjyC5MyTyuD/nltQMUMnITSwpfUjJXtgln2gg+jyQ9B5TJPtKeDVd61dYMSrcRcmxMfxKqtore4gTK8bv0=
+	t=1707310465; cv=none; b=eL18C7E+5DW8Kpa6u7FOHXsHHQLqU8r6e6hRNoToGnOU6X4IIVDmUoYpAUZ1o1FyjZqAD8xX3VATywAk575lnpm70FEKoLE8SF7E5eltwYDLh/wlRI8oNLqnwP11Ara6aDmgFSzF9wYlws2lJNNSrRQ4FiXukfd8YjyzO0bOwdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707306780; c=relaxed/simple;
-	bh=eV5wBqXyYWxm3GJYq17Dw7WMBVfXoMOnaHqJbXfRxOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ScjBeKF3VlUfW4tvrU2BS2aIqgDujcuHfo2fErclJ+8eIb8I62aGm9AqgHOYJcdMdes8GoOmx4/LE10ghv6aaLbF7bVriBZlJKikz54l2g4i7wz+WjlD2Gn8WQtzb0e8MOmlgpAPq4fv/MVE7fYLBD5+DXzjdi+iIt9G+m4YutM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ey585n2O; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707310465; c=relaxed/simple;
+	bh=0dgVTyRDyIITEw8cjx/bO5qjXxVQQNS5aCdwjS7/6us=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I8vJ/e+Y22MM2GyL+ikblsyEgRg44OlnwXzg6fl97Dh9JF/8SA02Ox1r+9rMy+4JQGyxcsj3MNj7oi+yHuND14BvAssLEbG+Vo668AdWr9JXidQGTpriMmsSMUwJu7a6pA4e3Q6z2+w2m66GzoUJmP8v+FA0zPDu4x4I4wWVbW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=N5gE6h6/; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ey585n2O"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a36126ee41eso73211066b.2
-        for <linux-clk@vger.kernel.org>; Wed, 07 Feb 2024 03:52:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707306776; x=1707911576; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=a15ZhCM0RHZkt7ueSuD9TDSzAwNNe3GnKdqdBGrHtl8=;
-        b=ey585n2OOE9j0VYyD4xn0Qh01PSRjsJ5aaiZlwMDyTeYf/aNbhc0ON2xXXyhecOFh8
-         CP1Levg7G89WTDZtBk2uHCBvsLQBwBhTTm2ts2aAOq16T/CZQyf38DSwMF6Gav5u3Bcf
-         0XjeI6uANd4BkXakS9MppFJs5Elpc0sh9YRUaWcNt7Siteg6XXLP0jT5whyRFjHktXD+
-         9N9o9IRyKv2JAXOTMqvvk0it5037UOwDwbrap86+U+d8DdeKqL+XMCIxAXPH46zsQWaR
-         tgQJm5nuYBmalEQ8FZE4yz5EIG6oc2OsoDLXwhCg0YzDAkC2Gve7ioFyjrWnyBlJ9Twx
-         OZBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707306776; x=1707911576;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a15ZhCM0RHZkt7ueSuD9TDSzAwNNe3GnKdqdBGrHtl8=;
-        b=bRjCLmT0TLdpm8LaQHwPmI5jO+6MYaPi/TrwmoDeeLjb/86FdqpvTAWnoC1VdkS33M
-         KWdfjYZcwiniSir99Yykla3z5sFgjWqj5WX6mYqZRYj524Yz3HKPnOHkUupnxCKJwqpT
-         TvVB2PAZEg2axyewVD5rCNC5OZX4WeK+EDo7X+GRrE62+mgvzJSYBTuw1GyGe0T5hu4t
-         JUdpNkWTo4Ahh2EqxNVY2vgPCA7nw7fP3+lJqtz37E0AwGJj6CEtYrRcEtgc33daRkvG
-         gN7uHsJ8S0/+hAMW20I70w/85EfQ7SAq3XhYZLcJuVTXrcsiRO0Z4N/0qeZxf9+v70l8
-         A0MA==
-X-Gm-Message-State: AOJu0YxJGXNk4XsdPOdjIrUekdRiWCvAoswUZDe43CxwQMr9OXi4C2GP
-	NbBWvKysYS4FVz21arEc0yKNUngwxBCOqV/Lfjakb1v0aryzq3gOlspG5il3ERo=
-X-Google-Smtp-Source: AGHT+IHD5LgBNqffuEGmyaup0AhvUur8sSstagtQoaWu6P9MEnV5Gf8YaH7zqiUNUZXvgFDyqZM4ig==
-X-Received: by 2002:a17:906:5a49:b0:a37:78f1:1302 with SMTP id my9-20020a1709065a4900b00a3778f11302mr3558917ejc.70.1707306776051;
-        Wed, 07 Feb 2024 03:52:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUlD3zvNR+AyI+BiMqELJHPtrhlCMI006Y1oTK+iMGepbeLYiU1rQ1dQmEhOmnwqA+aLT+yzOQMN25NCuszemxePKLknkUjqc5RFlBenfLJ5FEA1G2oB45yDwAoUdXPTDvFl4HVEjLBcFvTc1hID4uhMdbpoxb+I98V07l6FH4N3eIC0KT90h/bXg4qc7ur4j0arl0QtICHgVyRE+WQW2mSebS+DSkQNFecHBgIxnSDwLun1HpRfFl95GrdOabCWH3SuehInhLyEV2HCSE9ktR127BSr7MF1xKD9tB1hcDwuCVFBPMCQ99Oyvv6e8Jue94ZhKWXuayDld9bM2DNRumTEuFmBWmnejlOFcDsEZMfpNuimtsKnrskgKZ/o2BWfoXEH3TjGyWgvK4GqsGsTdFt24VVAyHBbvYcgyvvqOIXPRSJvan0luNRETKR5mKRun3J3nyi7zw2huaNmF0=
-Received: from [192.168.192.207] (037008245233.garwolin.vectranet.pl. [37.8.245.233])
-        by smtp.gmail.com with ESMTPSA id ps6-20020a170906bf4600b00a35a11fd795sm670284ejb.129.2024.02.07.03.52.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Feb 2024 03:52:55 -0800 (PST)
-Message-ID: <a5fba6b2-4bb1-4b9a-9fb6-466fa816c3d1@linaro.org>
-Date: Wed, 7 Feb 2024 12:52:53 +0100
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N5gE6h6/"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 417CsBdp121309;
+	Wed, 7 Feb 2024 06:54:11 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1707310451;
+	bh=/M9KAPNd5z2NR6F6xgrGXHPVw+rjKoUC+4SOpn6mtiE=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=N5gE6h6/hLjlX6TbkCtPrKh5vRFkzS+KahqSVhxacypUrHq4P/XRSOFU/oHomAChv
+	 JsR2t+ekh6PexlcdKrBeu86PyoS6FWFZr0nEo/iVAob6ioNoNabkwHWn+QhfDqMxi4
+	 zojEteZiUXeZpAQBKX6SN97E4XSuv/GJxm8ADkLY=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 417CsBdH072448
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 7 Feb 2024 06:54:11 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
+ Feb 2024 06:54:10 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 7 Feb 2024 06:54:11 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 417CsA3J074777;
+	Wed, 7 Feb 2024 06:54:10 -0600
+Date: Wed, 7 Feb 2024 06:54:10 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Udit Kumar <u-kumar1@ti.com>
+CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <chandru@ti.com>,
+        <rishabh@ti.com>, <kamlesh@ti.com>, <vigneshr@ti.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v3] clk: keystone: sci-clk: Adding support for non
+ contiguous clocks
+Message-ID: <20240207125410.r2q3jcplvif7dvt2@tumbling>
+References: <20240207091100.4001428-1-u-kumar1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/18] clk: qcom: reset: Ensure write completion on
- reset de/assertion
-To: Johan Hovold <johan@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20240105-topic-venus_reset-v2-0-c37eba13b5ce@linaro.org>
- <20240105-topic-venus_reset-v2-3-c37eba13b5ce@linaro.org>
- <ZcNIT-NxKSZ44NjZ@hovoldconsulting.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <ZcNIT-NxKSZ44NjZ@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240207091100.4001428-1-u-kumar1@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 7.02.2024 10:07, Johan Hovold wrote:
-> On Tue, Feb 06, 2024 at 07:43:36PM +0100, Konrad Dybcio wrote:
->> Trying to toggle the resets in a rapid fashion can lead to the changes
->> not actually arriving at the clock controller block when we expect them
->> to. This was observed at least on SM8250.
->>
->> Read back the value after regmap_update_bits to ensure write completion.
->>
->> Fixes: db1029814f1f ("clk: qcom: reset: Ensure write completion on reset de/assertion")
+On 14:41-20240207, Udit Kumar wrote:
+> Most of clocks and their parents are defined in contiguous range,
+> But in few cases, there is gap in clock numbers[0].
+> Driver assumes clocks to be in contiguous range, and add their clock
+> ids incrementally.
 > 
-> This commit does not exist in mainline or linux-next it seems.
+> New firmware started returning error while calling get_freq and is_on
+> API for non-available clock ids.
+> 
+> In this fix, driver checks and adds only valid clock ids.
+> 
+> Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
+> 
+> [0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
+> Section Clocks for NAVSS0_CPTS_0 Device,
+> clock id 12-15 not present.
+> 
+> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+> ---
+> Changelog
+> Changes in v3
+> - instead of get_freq, is_auto API is used to check validilty of clock
+> - Address comments of v2, to have preindex increment
+> Link to v2 https://lore.kernel.org/all/20240206104357.3803517-1-u-kumar1@ti.com/
+> 
+> Changes in v2
+> - Updated commit message
+> - Simplified logic for valid clock id
+> link to v1 https://lore.kernel.org/all/20240205044557.3340848-1-u-kumar1@ti.com/
+> 
+> 
+> P.S
+> Firmawre returns total num_parents count including non available ids.
+> For above device id NAVSS0_CPTS_0, number of parents clocks are 16
+> i.e from id 2 to 17. But out of these ids few are not valid.
+> So driver adds only valid clock ids out ot total.
+> 
+> Original logs
+> https://gist.github.com/uditkumarti/de4b36b21247fb36725ad909ce4812f6#file-original-logs
+> Line 2630 for error
+> 
+> Logs with fix v3
+> https://gist.github.com/uditkumarti/94e3e28d62282fd708dbfe37435ce1d9#file-v3
+> Line 2586
+> 
+> 
+>  drivers/clk/keystone/sci-clk.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+> index 35fe197dd303..31b7df05d7bb 100644
+> --- a/drivers/clk/keystone/sci-clk.c
+> +++ b/drivers/clk/keystone/sci-clk.c
+> @@ -516,6 +516,7 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+>  	struct sci_clk *sci_clk, *prev;
+>  	int num_clks = 0;
+>  	int num_parents;
+> +	bool state;
+>  	int clk_id;
+>  	const char * const clk_names[] = {
+>  		"clocks", "assigned-clocks", "assigned-clock-parents", NULL
+> @@ -583,16 +584,23 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+>  					num_parents = 255;
+>  				}
+>  
+> -				clk_id = args.args[1] + 1;
+> +				clk_id = args.args[1];
+>  
+>  				while (num_parents--) {
+> +					/* Check if this clock id is valid */
+> +					ret = provider->ops->is_auto(provider->sci,
+> +						sci_clk->dev_id, ++clk_id, &state);
 
-Yeah, I managed to copy the last and not the first commit hash concerning
-reset.c :/
+A bit too nice coding ;) => I had been confused momentarily by clk_id = args.args[1]
+change just above till I saw that you are pre-incrementing
+clk_id - Is there a harm in leaving the original clk_id increment logic
+alone (it was much simpler to read up)?
 
-Konrad
+> +
+> +					if (ret)
+> +						continue;
+> +
+>  					sci_clk = devm_kzalloc(dev,
+>  							       sizeof(*sci_clk),
+>  							       GFP_KERNEL);
+>  					if (!sci_clk)
+>  						return -ENOMEM;
+>  					sci_clk->dev_id = args.args[0];
+> -					sci_clk->clk_id = clk_id++;
+> +					sci_clk->clk_id = clk_id;
+>  					sci_clk->provider = provider;
+>  					list_add_tail(&sci_clk->node, &clks);
+>  
+> -- 
+> 2.34.1
+> 
+
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
