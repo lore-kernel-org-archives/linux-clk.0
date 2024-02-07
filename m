@@ -1,82 +1,74 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13A6199B4;
-	Wed,  7 Feb 2024 13:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460AF7A702;
+	Wed,  7 Feb 2024 14:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707313549; cv=none; b=ahVsVuphBKLgIImwTg5ZQmD6xayqqJzMj4vurAYdlDe4DI6jmted+iUs8dbPnAWjn4QXbtwGYrydsaYJXMOTuEQEyUp5hYa6UNwlYqnj8441/kWW24rmzdnEM6D110Ewq6tjz8i99O2ul1x8XEKlhtHmv7VHHLDTU4bRfGdd39g=
+	t=1707314483; cv=none; b=oq5uDQfUWTXQiIOTRGU0Wc+wPWeSJC6h4QsPBbWyc/NECeHb8NOJUJMII+wrdXg1uAk+NO0p0bYpVuu+tbEJSw9GdJXQgNJ7iq9FPiPKZStk5V9CyEvbe2fQC1OCqotc/OJkup2LP1Suwb5prXIggndPMLD7V7CJbTGrYj8RH4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707313549; c=relaxed/simple;
-	bh=tS/prRl5t8R43hQLzqGPVVnj4kD+14hA2T/50X3qjsQ=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Am4DzZ9qFBPYWMGqXSTeSOpDTjkyPzBFvnJLK9MvMpaGXVGQbg1z5NQpiDEnt5Ni45rppnkVCS2gYc7p65PNFXFthtPvMsFDAf1+IcysrwNW8hdLiypZqhxzyVWgtzR0ns540/yrR1WqX+Z0qBZYBq2gUSVYUGUp+sz90jEZMQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=e966wrx4; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1707314483; c=relaxed/simple;
+	bh=/sde8nj0AruifCnxUEsSucAxWC/DrKQeRHqzY4J5e2Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=VGHzZeNsH69nwXUjvE+ul+sBPSpHT/n0g56eqAgATpOkw60g0oXcUlZSyaq1R/N7dy5H3ig8y33FsmA2qJnE0K1nD8jn+DrCVNW4ur4+uNN3+4v0sVJHfBoOu4F5FIpehtUQyvTZYPFXl+rYGzA/S1oTFp8ZQ22BF/upxoaKeLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4cnwQE7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e966wrx4"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 417DjeO4036011;
-	Wed, 7 Feb 2024 07:45:40 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1707313540;
-	bh=tS/prRl5t8R43hQLzqGPVVnj4kD+14hA2T/50X3qjsQ=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date;
-	b=e966wrx44vDMXmY+4rZi77AG7bLxdNoH8TPWGx+DBy3vAsofgMvPp8YOsPmg2Hyyf
-	 XxuUAsGxW5eiW9NxJiTjbmD/tKkO2rhJpqCUlOb8pkIKJYfBVEu5CnPruAjh2n11BN
-	 GmcyR7l49BCzKgSu0QIuGiniMCRlE4XpUF5Utf/0=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 417Djeql016507
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 7 Feb 2024 07:45:40 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
- Feb 2024 07:45:39 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 7 Feb 2024 07:45:39 -0600
-Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 417Djd9Y026046;
-	Wed, 7 Feb 2024 07:45:39 -0600
-From: Kamlesh Gurudasani <kamlesh@ti.com>
-To: Nishanth Menon <nm@ti.com>, Udit Kumar <u-kumar1@ti.com>
-CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <chandru@ti.com>,
-        <rishabh@ti.com>, <vigneshr@ti.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3] clk: keystone: sci-clk: Adding support for non
- contiguous clocks
-In-Reply-To: <20240207125410.r2q3jcplvif7dvt2@tumbling>
-References: <20240207091100.4001428-1-u-kumar1@ti.com>
- <20240207125410.r2q3jcplvif7dvt2@tumbling>
-Date: Wed, 7 Feb 2024 19:15:38 +0530
-Message-ID: <87il30xu9p.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4cnwQE7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB04AC433C7;
+	Wed,  7 Feb 2024 14:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707314481;
+	bh=/sde8nj0AruifCnxUEsSucAxWC/DrKQeRHqzY4J5e2Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=s4cnwQE7RpfM/ykNtfdDbC3HeXScAhKK97KbID6lq2EaKm0Z0btdX94stFXU0sXG0
+	 nNAJpRS28muuedEn1y6R2ACtJ1PPJAAVx9KzdhqM13PH/yhklMQAmqoKx7+qKHTtZA
+	 aQ8ArH5h1+nTlgkCntUT7kfK1iv/bfuKBcm0mDtI02Ni5GLDVjzUAJCBp8J+EnkYGX
+	 3ZFUA12cWayRfE6wAyXbkl1WfWY0xUoFtJgUM4kM2TXX7/JuexOwvc6F3LWMDkWFII
+	 QCzH2g1ddzAwyZfU+Xy+mcppi32gM+g9dVdTNJYY9HJgHrnUY/aKnkGWCRCyOolx9V
+	 ICLn93YdGCz2w==
+From: Vinod Koul <vkoul@kernel.org>
+To: andersson@kernel.org, konrad.dybcio@linaro.org, sboyd@kernel.org, 
+ mturquette@baylibre.com, robh+dt@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, quic_cang@quicinc.com
+In-Reply-To: <20231218120712.16438-1-manivannan.sadhasivam@linaro.org>
+References: <20231218120712.16438-1-manivannan.sadhasivam@linaro.org>
+Subject: Re: (subset) [PATCH v2 00/16] Fix Qcom UFS PHY clocks
+Message-Id: <170731447862.147119.7425320983212079444.b4-ty@kernel.org>
+Date: Wed, 07 Feb 2024 15:01:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 
-Nishanth Menon <nm@ti.com> writes:
 
->
-> A bit too nice coding ;) => I had been confused momentarily by clk_id = args.args[1]
-> change just above till I saw that you are pre-incrementing
-> clk_id - Is there a harm in leaving the original clk_id increment logic
-> alone (it was much simpler to read up)?
->
-Personlly, I think this is simpler as this keeps everything related to
-parents inside while loop and increment only at one place.
+On Mon, 18 Dec 2023 17:36:56 +0530, Manivannan Sadhasivam wrote:
+> This series fixes the clocks supplied to QMP PHY IPs in the Qcom SoCs. All
+> of the Qcom SoCs except MSM8996 require 3 clocks for QMP UFS:
+> 
+> * ref - 19.2MHz reference clock from RPM/RPMh
+> * ref_aux - Auxiliary reference clock from GCC
+> * qref - QREF clock from GCC or TCSR (TCSR since SM8550)
+> 
+> [...]
 
-The other logic will have increment inside condition and also at 2 other
-places.
+Applied, thanks!
 
-Let's Udit take a call.
+[01/16] dt-bindings: phy: qmp-ufs: Fix PHY clocks
+        commit: b0bcec86f47b44c98a23c31d54dd3963e27761a2
+[02/16] phy: qcom-qmp-ufs: Switch to devm_clk_bulk_get_all() API
+        commit: 2668cae8b64bf25c4c7a39eb2cb0012c92153c11
 
-Kamlesh
+Best regards,
+-- 
+~Vinod
+
+
