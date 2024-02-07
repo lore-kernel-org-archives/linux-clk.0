@@ -1,50 +1,53 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757BF12E5D;
-	Wed,  7 Feb 2024 04:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D8F219FD;
+	Wed,  7 Feb 2024 04:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707281217; cv=none; b=ZkFSDGfvJaD2eKUwbapPlP9CMppNUiuVtj+D4vMNTEdBWhW0SMh6oWMYEmjzb+aLgjHqAEx3uMKGnowinmqC38PqeErSA+2aZTfzmlikqbMFYcdg0y6J58wOshHvl6oqFsis1t7Yknyqy/+iVhnjsIAboMEY6lXfuloH9DtCMt0=
+	t=1707281225; cv=none; b=pIDbsAf/6MrnhqQwWFWhOXOzsvJHutdaFtW3ZH2z+pyX4FbSoDjdBSJ/N+WYfe2i5xynziDZShTDx4CeDQlrnfFVSmjIFj+tSfdzEjXDupA2c5dR4rXhI1mldrBUIU9s4TtQWqywITfAZZDSz2vtt5S8CvnxCEsQNNPlnRlIzao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707281217; c=relaxed/simple;
-	bh=CP5ohI1fd60+unOrz5KQxM3NupdVu/QZC8pQFKfOZCA=;
+	s=arc-20240116; t=1707281225; c=relaxed/simple;
+	bh=iY0SgIfmD0SR5ThgyjjMZ3tbTVIJfNbscQJZdIHdO88=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D85x8XAByNpcc2jRz8azD4022Owexh3A3CpVFX4BKtmOGn3jYl+MzcJ9aQQUZqcw6Hz9nG4ScBmSaFNQY2fIuWWGwUPbJKCBcQB+QxqWofBz4FXNMpGozEdIpTBjt3tqfyCIuWzC8u3I+urA/meRNfKWrIaozZ4YIvbz3hBxYGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YU5sLBPb; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=D85vh8KSyE4012tqbRFV71Kt3hDPAJjNUh5H5tQiw7tjJad8lR7rUYIMonADKfld3coD7qZfPHue1Y+9a63wFk8csCnMZ2FderJjE1c127kOJRbYo3VOQ5R3yvWhdEPcDXJyLIO9lRqqnjk/0gyIPR2dQNObZa+gPZ7BUaYYRyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hftIsCn1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YU5sLBPb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DC12C43390;
-	Wed,  7 Feb 2024 04:46:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hftIsCn1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC19BC43394;
+	Wed,  7 Feb 2024 04:47:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707281217;
-	bh=CP5ohI1fd60+unOrz5KQxM3NupdVu/QZC8pQFKfOZCA=;
+	s=k20201202; t=1707281225;
+	bh=iY0SgIfmD0SR5ThgyjjMZ3tbTVIJfNbscQJZdIHdO88=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YU5sLBPblyz/cK3syEFzJKebd1aWL0e2UOlIk9doTwgwb9oAZHR23WyXbAB+dnrKY
-	 lyqTcqffmLHlaRPd7855ohs5syYkzhJh63fULi0e6V0CbOsXsgpO3drAKeyZhHdCmF
-	 lhWvq1s/zkmcbu87GFs2Dms+X9gnRfTF58EJwGItcVctG3wZP+Dirmw/z1OSAhjo0n
-	 qaPJVQfBvqwKsH86eUMJCe7co9sK+kCGKON0dwd+HzjB31lZT80GmlAw0fFj3v+XbZ
-	 f0kS8MzVpZ3ZwxBjnFnq/9jU363TDKPjl7xAK3rVxR7KHBHQZbl1w0C0TF/5yMAih6
-	 NL7750de49Lhg==
+	b=hftIsCn1cMr/XeIsfhGOHqa0x+pJiysxeSsYLr0y5CguJoAf9rNwUraB6k4OO7HoF
+	 MLPSbsIAnXaZvsrudOU+iVJkk3fk2I2/HxCN2BJvGmAimZWGpc/9E1Hu9RawpTO02x
+	 3FuuBVTFCsEw3uHfOr0VYIFFvKvFUPM8xVGiuE+kHIGzMohSTLnaiowwLDR4dMXNfo
+	 hFxBs3Tsn01NS/E1UEhyYXSi7tDAlRI1jZ2gdKUsF4Aq+suH0861vFFT/ojvtZIYUM
+	 4l1y5z3ma4tdIepzlg6NCYO+Ms+lbU0gSQQ7VhqGo9QDRerwbvjwTUYrWL0d6IwNOT
+	 JoEhHQ5TdpeMw==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
+To: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Luca Weiss <luca@z3ntu.xyz>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v2 00/18] Qualcomm GCC/VIDEOCC reset overhaul for Venus
-Date: Tue,  6 Feb 2024 22:46:20 -0600
-Message-ID: <170728117670.479358.17590271434964788867.b4-ty@kernel.org>
+	Vladimir Lypak <vladimir.lypak@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH v2 0/3] Add MDSS_BCR reset (+some more) for MSM8953
+Date: Tue,  6 Feb 2024 22:46:27 -0600
+Message-ID: <170728117686.479358.8704110052717594470.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240105-topic-venus_reset-v2-0-c37eba13b5ce@linaro.org>
-References: <20240105-topic-venus_reset-v2-0-c37eba13b5ce@linaro.org>
+In-Reply-To: <20240125-msm8953-mdss-reset-v2-0-fd7824559426@z3ntu.xyz>
+References: <20240125-msm8953-mdss-reset-v2-0-fd7824559426@z3ntu.xyz>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,55 +58,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 06 Feb 2024 19:43:33 +0100, Konrad Dybcio wrote:
-> Some resets associated with venus require a larger delay for the hardware
-> on the other end to function properly. These seem to fall into three
-> categories:
+On Thu, 25 Jan 2024 22:35:11 +0100, Luca Weiss wrote:
+> Add the MDSS_BCR reset that is found in the GCC of MSM8953 so we can
+> make sure the MDSS gets properly reset before Linux starts using it.
 > 
-> - 150us for 8250 and earlier
-> - 400us for 8350 and friends
-> - 1000us for >=8450
+> Also add some others that have been found in the LK sources.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[01/18] clk: qcom: reset: Increase max reset delay
-        commit: 316861f383176c6360dcffecceb1f843d860faf0
-[02/18] clk: qcom: reset: Commonize the de/assert functions
-        commit: eda40d9c583e95e0b6ac69d2950eec10f802e0e8
-[03/18] clk: qcom: reset: Ensure write completion on reset de/assertion
-        commit: 1bd8c3ad02b1aaa9163a72fece2c28360a52b345
-[04/18] clk: qcom: gcc-sa8775p: Set delay for Venus CLK resets
-        commit: 6c0530974183709e74c3e809d4f0df386a23465b
-[05/18] clk: qcom: gcc-sc8180x: Set delay for Venus CLK resets
-        commit: 627fcb22966d9e7dcfcc040f3895e5da7f64fb9c
-[06/18] clk: qcom: gcc-sc8280xp: Set delay for Venus CLK resets
-        commit: 446b8e191072b78de4af16f5288dcdbfbda78dd1
-[07/18] clk: qcom: gcc-sm4450: Set delay for Venus CLK resets
-        commit: eff85a0f548e536563d57d42bdd6c215031e8c84
-[08/18] clk: qcom: gcc-sm7150: Set delay for Venus CLK resets
-        commit: b8b2343112083f76a4183aa2acdfe861dcc1bb6b
-[09/18] clk: qcom: gcc-sm8250: Set delay for Venus CLK resets
-        commit: 2013a0bca5679dab16fc0f4b7dde4cf8b15b7621
-[10/18] clk: qcom: gcc-sm8350: Set delay for Venus CLK resets
-        commit: cecdccc3e50924a09411f8f9af760f4d1ef8b5c6
-[11/18] clk: qcom: gcc-sm8450: Set delay for Venus CLK resets
-        commit: 6ad1da7c0f2317ceffdfe50ac913b6123cd6ff71
-[12/18] clk: qcom: gcc-sm8550: Set delay for Venus CLK resets
-        commit: d64c6880c44e3a6d52b97dda1082c17317c82c74
-[13/18] clk: qcom: gcc-sm8650: Set delay for Venus CLK resets
-        commit: 6efbf3e21211ece0b49bb75499398f9f08fb9cd6
-[14/18] clk: qcom: videocc-sm8150: Set delay for Venus CLK resets
-        commit: 23fd517957693846ed279cb86f30f548aed01fda
-[15/18] clk: qcom: videocc-sm8250: Set delay for Venus CLK resets
-        commit: 726184dd7b2f7c41a7007a1c1add301ddf173cf2
-[16/18] clk: qcom: videocc-sm8350: Set delay for Venus CLK resets
-        commit: b68d14f84c2c179d0f56588bda2e3a2675dd6d28
-[17/18] clk: qcom: videocc-sm8450: Set delay for Venus CLK resets
-        commit: ed17763a24f22d04e8da104715eb48ba69989dfa
-[18/18] clk: qcom: videocc-sm8550: Set delay for Venus CLK resets
-        commit: ba4354f6ae160609aea8f7adec22ce1a9d0f586a
+[3/3] arm64: dts: qcom: msm8953: add reset for display subsystem
+      commit: 9b4dec638c9cd1e881125894e263b0f824b8f75e
 
 Best regards,
 -- 
