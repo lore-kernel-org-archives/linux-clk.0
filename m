@@ -1,263 +1,181 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2BA1C2B3;
-	Tue,  6 Feb 2024 22:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873FB12E74;
+	Wed,  7 Feb 2024 03:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707260333; cv=none; b=rbIEkiRSYybvp4fHkKc+K1Fu06S7L/176dUzIiM+aTXfyGPxXOtynM2ELLFI+QVvG+is70pUSt9jMiCdii2dGKuP+JdXjxClYTMaum9Pi+LZ1uJ/Ni2ipskk4ppGULIF+6rriwUbWH13jmtWnsKRef4CJjoZkb2oTEFq0IJmxL8=
+	t=1707277780; cv=none; b=GfaE0Jj6Cc1utxWn4akcSi7XpOlYwQXMBx+xSxbIR7Rko9nkMDt/OScI0o37iX1I6TjccjTk6wTi0yo3/CH8W2ukQJroxRoYk41kpBKB3fsNFOjVvX+nE18vtzIgPgBkOMV/GxfdXiasGqFVWyeyGz803Z8We/wxrlJN/WUUmfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707260333; c=relaxed/simple;
-	bh=T/vXfYRll4Ksyx7SXhuvZXrGTu5XPic5PtVaxrU5/L8=;
+	s=arc-20240116; t=1707277780; c=relaxed/simple;
+	bh=ObkV3zInduvhSkY4zn3MNEHSwTQuIk8E/taDaK7eh1I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bx7kVylKGDBMieHh7JXCAW+f/KS4+ekWIAXqJY+QlM5GUT/y+wcf+VUKYL+SoH5Mq0ld55wjBhEAiwhNfH/YnXUt6LohwSNCoCGEW8lc440cGbiAQ5Z0WZtTFuZUOQzI+txZCBOiGI1t03icSw2m825arq1XtZAR0Nafstmv7Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=J2YNXgB8; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=nNVk/sglDjWRYFWYii+Xr1CyUYmJSm/N55jL45CsBsQCtUw5dY3YPXqjeFAT7Sjpz4RI3tSdXK0dswxpViPHKfxpzvSVp62DK3VOuqhe+YHcaMiT6ocfIr+NBKKBdx5/DaHe5Q9OO+u83+oNw5AVuLQXkA89qYT5r5oPTv0XFzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WRSfXb5g; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="J2YNXgB8"
-Received: from pendragon.ideasonboard.com (117.145-247-81.adsl-dyn.isp.belgacom.be [81.247.145.117])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7589B14F6;
-	Tue,  6 Feb 2024 23:57:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1707260245;
-	bh=T/vXfYRll4Ksyx7SXhuvZXrGTu5XPic5PtVaxrU5/L8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J2YNXgB8KHoXI3eurJvgGLzENamaYif5ZvPXqI/y3UoFnXLBgyWt7uEs2RUyOg7Kx
-	 nrS9BJ+eoelrC8IQ1W1nVpaeMe7O5Gk5Q4Ktu8FnVxTYly5sPeDHb9BqlCJI+hplCZ
-	 iB73+B9NhKunJjNVLc3wsoBqeglO0jX0OA6YoYSM=
-Date: Wed, 7 Feb 2024 00:58:50 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH RFC 1/3] clk: Add clk_disable_unprepare_sync()
-Message-ID: <20240206225850.GA23702@pendragon.ideasonboard.com>
-References: <20240131160947.96171-1-biju.das.jz@bp.renesas.com>
- <20240131160947.96171-2-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WRSfXb5g"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1707277777; x=1738813777;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ObkV3zInduvhSkY4zn3MNEHSwTQuIk8E/taDaK7eh1I=;
+  b=WRSfXb5gX94iaJDY/smAUga9ND1/koJxgx9QM+6pFzyxwxnJPEp0PE3O
+   vMOhq+iqzC6iFNSjoZY/ghtD/ZJmak6ICePDQAQFUcY0TTnBf5qzIa+gV
+   Q55bVPS7WzNX6xrAGu5wdXNGopomZCbjsqAaKh/s7z5F4mZwIb9T2Q2LR
+   wzgunk/nLiRhpz/jowJ5J3S3V4aIXAX4P6QYo1r7zhPuCtated2lkU83f
+   eHSHFGOCLxPjo54WmEfXXAcrVewJybhGVWXgPkHC6oY1DYl2CnYP4ZSWg
+   wXLAxYUnLR3BFV0RE9ZbziFmiZVPek2Sa+gOIJpmKFXpIQtIDl3rKCLq4
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10976"; a="1049669"
+X-IronPort-AV: E=Sophos;i="6.05,250,1701158400"; 
+   d="scan'208";a="1049669"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Feb 2024 19:49:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,250,1701158400"; 
+   d="scan'208";a="5825634"
+Received: from lkp-server01.sh.intel.com (HELO 01f0647817ea) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 06 Feb 2024 19:49:32 -0800
+Received: from kbuild by 01f0647817ea with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rXYwE-00024y-1S;
+	Wed, 07 Feb 2024 03:49:30 +0000
+Date: Wed, 7 Feb 2024 11:49:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>
+Subject: Re: [PATCH 2/5] clk: qcom: videocc-sm8550: Add support for SM8650
+ videocc
+Message-ID: <202402071128.aZc6BNmF-lkp@intel.com>
+References: <20240206113145.31096-3-quic_jkona@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240131160947.96171-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20240206113145.31096-3-quic_jkona@quicinc.com>
 
-Hi Biju,
+Hi Jagadeesh,
 
-Thank you for the patch.
+kernel test robot noticed the following build warnings:
 
-On Wed, Jan 31, 2024 at 04:09:45PM +0000, Biju Das wrote:
-> Currently clk_disable() is not synchronous. Consumers just
-> gate the clock, but it doesn't check actually the clock is
-> gated. Introduce clk_disable_unprepare_sync() to synchronize
-> the clock gate operation.
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on robh/for-next linus/master v6.8-rc3 next-20240206]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I think this needs to be designed a bit more.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jagadeesh-Kona/dt-bindings-clock-qcom-Add-video-clock-bindings-for-SM8650/20240206-194148
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20240206113145.31096-3-quic_jkona%40quicinc.com
+patch subject: [PATCH 2/5] clk: qcom: videocc-sm8550: Add support for SM8650 videocc
+config: i386-buildonly-randconfig-002-20240207 (https://download.01.org/0day-ci/archive/20240207/202402071128.aZc6BNmF-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240207/202402071128.aZc6BNmF-lkp@intel.com/reproduce)
 
-First of all, you state that clk_disable() is not synchronous, but
-that's not documented anywhere. This should be addressed as a first
-patch, with clarifications to the documentation of the clock API
-functions (clk_disable(), clk_unprepare() and clk_disable_unprepare())
-and the corresponding clock provider operations (clk_ops). You should
-also explain in that patch why that's the desired behaviour, compared to
-making those operations synchronous.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202402071128.aZc6BNmF-lkp@intel.com/
 
-Then, instead of adding a new synchronous clock disable operation, I
-wonder if it wouldn't be better to add a public function that
-synchronizes a previous disable call by using the exising
-infrastructure, and in particular the .is_enabled() operation. This
-would provide the feature you're looking for without needing to modify
-all clock provider drivers.
+All warnings (new ones prefixed by >>):
 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
->  drivers/clk/clk.c            | 36 +++++++++++++++++++++++++++---------
->  include/linux/clk-provider.h |  4 ++++
->  include/linux/clk.h          | 25 +++++++++++++++++++++++++
->  3 files changed, 56 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 2253c154a824..958d6677b3a6 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1080,7 +1080,7 @@ int clk_prepare(struct clk *clk)
->  }
->  EXPORT_SYMBOL_GPL(clk_prepare);
->  
-> -static void clk_core_disable(struct clk_core *core)
-> +static void clk_core_disable(struct clk_core *core, bool sync)
->  {
->  	lockdep_assert_held(&enable_lock);
->  
-> @@ -1102,17 +1102,20 @@ static void clk_core_disable(struct clk_core *core)
->  	if (core->ops->disable)
->  		core->ops->disable(core->hw);
->  
-> +	if (sync && core->ops->disable_sync)
-> +		core->ops->disable_sync(core->hw);
-> +
->  	trace_clk_disable_complete(core);
->  
-> -	clk_core_disable(core->parent);
-> +	clk_core_disable(core->parent, false);
->  }
->  
-> -static void clk_core_disable_lock(struct clk_core *core)
-> +static void clk_core_disable_lock(struct clk_core *core, bool sync)
->  {
->  	unsigned long flags;
->  
->  	flags = clk_enable_lock();
-> -	clk_core_disable(core);
-> +	clk_core_disable(core, sync);
->  	clk_enable_unlock(flags);
->  }
->  
-> @@ -1133,10 +1136,25 @@ void clk_disable(struct clk *clk)
->  	if (IS_ERR_OR_NULL(clk))
->  		return;
->  
-> -	clk_core_disable_lock(clk->core);
-> +	clk_core_disable_lock(clk->core, false);
->  }
->  EXPORT_SYMBOL_GPL(clk_disable);
->  
-> +/**
-> + * clk_disable_sync - gate a clock synchronously
-> + * @clk: the clk being gated
-> + *
-> + * It is similar to clk_disable, but guarantees that clk is gated synchronously.
-> + */
-> +void clk_disable_sync(struct clk *clk)
-> +{
-> +	if (IS_ERR_OR_NULL(clk))
-> +		return;
-> +
-> +	clk_core_disable_lock(clk->core, true);
-> +}
-> +EXPORT_SYMBOL_GPL(clk_disable_sync);
-> +
->  static int clk_core_enable(struct clk_core *core)
->  {
->  	int ret = 0;
-> @@ -1164,7 +1182,7 @@ static int clk_core_enable(struct clk_core *core)
->  		trace_clk_enable_complete(core);
->  
->  		if (ret) {
-> -			clk_core_disable(core->parent);
-> +			clk_core_disable(core->parent, false);
->  			return ret;
->  		}
->  	}
-> @@ -1340,7 +1358,7 @@ static int clk_core_prepare_enable(struct clk_core *core)
->  
->  static void clk_core_disable_unprepare(struct clk_core *core)
->  {
-> -	clk_core_disable_lock(core);
-> +	clk_core_disable_lock(core, false);
->  	clk_core_unprepare_lock(core);
->  }
->  
-> @@ -2058,7 +2076,7 @@ static void __clk_set_parent_after(struct clk_core *core,
->  	 * for preventing a race with clk_enable().
->  	 */
->  	if (core->prepare_count) {
-> -		clk_core_disable_lock(core);
-> +		clk_core_disable_lock(core, false);
->  		clk_core_disable_unprepare(old_parent);
->  	}
->  
-> @@ -2352,7 +2370,7 @@ static void clk_change_rate(struct clk_core *core)
->  	core->rate = clk_recalc(core, best_parent_rate);
->  
->  	if (core->flags & CLK_SET_RATE_UNGATE) {
-> -		clk_core_disable_lock(core);
-> +		clk_core_disable_lock(core, false);
->  		clk_core_unprepare(core);
->  	}
->  
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 1293c38ddb7f..604cc9338465 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -115,6 +115,9 @@ struct clk_duty {
->   * @disable:	Disable the clock atomically. Called with enable_lock held.
->   *		This function must not sleep.
->   *
-> + * @disable_sync: Disable and sync the clockatomically. Called with enable_lock
-> + *		held.This function must not sleep.
-> + *
->   * @is_enabled:	Queries the hardware to determine if the clock is enabled.
->   *		This function must not sleep. Optional, if this op is not
->   *		set then the enable count will be used.
-> @@ -238,6 +241,7 @@ struct clk_ops {
->  	void		(*unprepare_unused)(struct clk_hw *hw);
->  	int		(*enable)(struct clk_hw *hw);
->  	void		(*disable)(struct clk_hw *hw);
-> +	void		(*disable_sync)(struct clk_hw *hw);
->  	int		(*is_enabled)(struct clk_hw *hw);
->  	void		(*disable_unused)(struct clk_hw *hw);
->  	int		(*save_context)(struct clk_hw *hw);
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 06f1b292f8a0..f472756310c7 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -664,6 +664,23 @@ int __must_check clk_bulk_enable(int num_clks,
->   */
->  void clk_disable(struct clk *clk);
->  
-> +/**
-> + * clk_disable_sync - inform the system when the clock source is no longer
-> + *		      required.
-> + * @clk: clock source
-> + *
-> + * Inform the system that a clock source is no longer required by
-> + * a driver and is in shut down.
-> + *
-> + * May be called from atomic contexts.
-> + *
-> + * Implementation detail: if the clock source is shared between
-> + * multiple drivers, clk_enable() calls must be balanced by the
-> + * same number of clk_disable_sync() calls for the clock source to be
-> + * disabled.
-> + */
-> +void clk_disable_sync(struct clk *clk);
-> +
->  /**
->   * clk_bulk_disable - inform the system when the set of clks is no
->   *		      longer required.
-> @@ -995,6 +1012,8 @@ static inline int __must_check clk_bulk_enable(int num_clks,
->  
->  static inline void clk_disable(struct clk *clk) {}
->  
-> +static inline void clk_disable_sync(struct clk *clk) {}
-> +
->  
->  static inline void clk_bulk_disable(int num_clks,
->  				    const struct clk_bulk_data *clks) {}
-> @@ -1086,6 +1105,12 @@ static inline void clk_disable_unprepare(struct clk *clk)
->  	clk_unprepare(clk);
->  }
->  
-> +static inline void clk_disable_unprepare_sync(struct clk *clk)
-> +{
-> +	clk_disable_sync(clk);
-> +	clk_unprepare(clk);
-> +}
-> +
->  static inline int __must_check
->  clk_bulk_prepare_enable(int num_clks, const struct clk_bulk_data *clks)
->  {
+>> drivers/clk/qcom/videocc-sm8550.c:570:14: warning: variable 'offset' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     570 |         } else  if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8650-videocc")) {
+         |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/qcom/videocc-sm8550.c:590:29: note: uninitialized use occurs here
+     590 |         regmap_update_bits(regmap, offset, BIT(0), BIT(0));
+         |                                    ^~~~~~
+   drivers/clk/qcom/videocc-sm8550.c:570:10: note: remove the 'if' if its condition is always true
+     570 |         } else  if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8650-videocc")) {
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/qcom/videocc-sm8550.c:547:12: note: initialize the variable 'offset' to silence this warning
+     547 |         u32 offset;
+         |                   ^
+         |                    = 0
+   1 warning generated.
+
+
+vim +570 drivers/clk/qcom/videocc-sm8550.c
+
+   542	
+   543	static int video_cc_sm8550_probe(struct platform_device *pdev)
+   544	{
+   545		struct regmap *regmap;
+   546		int ret;
+   547		u32 offset;
+   548	
+   549		ret = devm_pm_runtime_enable(&pdev->dev);
+   550		if (ret)
+   551			return ret;
+   552	
+   553		ret = pm_runtime_resume_and_get(&pdev->dev);
+   554		if (ret)
+   555			return ret;
+   556	
+   557		regmap = qcom_cc_map(pdev, &video_cc_sm8550_desc);
+   558		if (IS_ERR(regmap)) {
+   559			pm_runtime_put(&pdev->dev);
+   560			return PTR_ERR(regmap);
+   561		}
+   562	
+   563		if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8550-videocc")) {
+   564			video_cc_sm8550_clocks[VIDEO_CC_MVS0_SHIFT_CLK] = NULL;
+   565			video_cc_sm8550_clocks[VIDEO_CC_MVS0C_SHIFT_CLK] = NULL;
+   566			video_cc_sm8550_clocks[VIDEO_CC_MVS1_SHIFT_CLK] = NULL;
+   567			video_cc_sm8550_clocks[VIDEO_CC_MVS1C_SHIFT_CLK] = NULL;
+   568			video_cc_sm8550_clocks[VIDEO_CC_XO_CLK_SRC] = NULL;
+   569			offset = 0x8140;
+ > 570		} else  if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8650-videocc")) {
+   571			video_cc_pll0_config.l = 0x1e;
+   572			video_cc_pll0_config.alpha = 0xa000;
+   573			video_cc_pll1_config.l = 0x2b;
+   574			video_cc_pll1_config.alpha = 0xc000;
+   575			video_cc_mvs0_clk_src.freq_tbl = ftbl_video_cc_mvs0_clk_src_sm8650;
+   576			video_cc_mvs1_clk_src.freq_tbl = ftbl_video_cc_mvs1_clk_src_sm8650;
+   577			offset = 0x8150;
+   578		}
+   579	
+   580		clk_lucid_ole_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
+   581		clk_lucid_ole_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
+   582	
+   583		/*
+   584		 * Keep clocks always enabled:
+   585		 *	video_cc_ahb_clk
+   586		 *	video_cc_sleep_clk
+   587		 *	video_cc_xo_clk
+   588		 */
+   589		regmap_update_bits(regmap, 0x80f4, BIT(0), BIT(0));
+   590		regmap_update_bits(regmap, offset, BIT(0), BIT(0));
+   591		regmap_update_bits(regmap, 0x8124, BIT(0), BIT(0));
+   592	
+   593		ret = qcom_cc_really_probe(pdev, &video_cc_sm8550_desc, regmap);
+   594	
+   595		pm_runtime_put(&pdev->dev);
+   596	
+   597		return ret;
+   598	}
+   599	
 
 -- 
-Regards,
-
-Laurent Pinchart
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
