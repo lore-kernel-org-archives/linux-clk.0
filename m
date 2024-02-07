@@ -1,158 +1,73 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B87200A4;
-	Wed,  7 Feb 2024 08:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9205320B03;
+	Wed,  7 Feb 2024 09:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707293181; cv=none; b=IYp62c6+iDggEKt7Z/Y027PPaoZuuYyUr1+jYgkqfDm15CulDL+zbAAWiwT9Usf0KR4AG2YADqj0TfT3vN6lBn/z/5KzeIhfZZMQ/8ajH/HaZ332iPpJrXGiKWZSOZk7KUVljP7rbfeXlc1rcXhQ9C08ElXAkjklsE8Re9tGEfo=
+	t=1707296839; cv=none; b=J3nIfZmSTh4K5PDZRfBEBs7QteARQcwXnwm/nH5Qd8i5hQVcy1H6DkcCO4/Kh/acgCoD3p9qAQeQfV6pbPhbheLoe/8jrME0PtVSXOX7J9SreX6csEpkIOMchbGuqVsQK6pycvPUuKZpJwUEUN55gfEKy7M/6ycmbXTcp5YMI60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707293181; c=relaxed/simple;
-	bh=0akLjgta1i5BwmXhrQQ86/PzQcGvJya4mfnU7574Grw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WmXCCo9dHyid5BTRS/HJZ83O3dcwClp/zUPmesn5/cREVhp35SKVa3X8BwoNvt7j2nWdtZwDoTuaxqOrmjq99deXRRYFcVAASTOX9mVRJiNaDw582YcdoPnHHYf6s6IR29ZYXZJCsIvicXaEICrKxfQd4CgJfCCN5jnp/9LnM9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=k7g2xvuH; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1707296839; c=relaxed/simple;
+	bh=vzywu5IswpNrXIxbT6TvtMwzem9EQ7EDDDB9P61uUzk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C8ZBVeHpI/7jYjRBZTAHRPslIvO4uS7q5rSKwTXe06pn9vB0vwKXSrjoy93p/OYVLw5KWYJz3seP++k29LxxWcWNrnyjYn9KEPw+nE1piVvL1w7Sl4zmgR1v5L5VQUvnxsmkr9BlDw35anRhIpmwS7TJZql4PfYKY4bsgIzy3mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AA9tlt0e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="k7g2xvuH"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 41786AmG111110;
-	Wed, 7 Feb 2024 02:06:10 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1707293170;
-	bh=cYHxqfbAMZy5YcllbR7IzjQ6cA/xPUZllesIYQkr87I=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=k7g2xvuHASWzgVNETsP3hMuXhzzgmzJO8I33XXDvEEjZnj2aymFkitTZCfxHjIKGp
-	 NO2E5gZ+v4FmI4/Irc+5QXBxAJz+gwyOHUZhssCe3MBYseGElRVbMZANuEobf67J+D
-	 OH72v657HWUi92w9N9H5MmbnOjjAjFxIrl2K49KU=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 41786Ahi008231
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 7 Feb 2024 02:06:10 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
- Feb 2024 02:06:10 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 7 Feb 2024 02:06:10 -0600
-Received: from [10.24.69.14] (chandru.dhcp.ti.com [10.24.69.14])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 417866mQ072127;
-	Wed, 7 Feb 2024 02:06:06 -0600
-Message-ID: <5f54ee18-b3df-4918-9d5e-b765a6714ea2@ti.com>
-Date: Wed, 7 Feb 2024 13:36:05 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AA9tlt0e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07B0CC433F1;
+	Wed,  7 Feb 2024 09:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707296839;
+	bh=vzywu5IswpNrXIxbT6TvtMwzem9EQ7EDDDB9P61uUzk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AA9tlt0eHXoJfI6RgIJl94FdEkz+Wnf2bgd2NhBMNyFdXngnzwLK9sNYTyuGxaCTg
+	 8+IDtMP4CNdjOTntGO7v/2OwFimJJJlkBQemOLepM5coJtMCfsHQtM5EtDZdVzZteU
+	 o+DQonhhCrTXkJJr292vmL0M/NMzFa4kD35H9RkLNmyWxLF4q6NdJXcWf4VVeGIXLp
+	 +TE1r7QBzGpyTFPdqLNTMtnwkhaPLenic35Z9eFanyEc6IgjyEu5Pqxu8lQEpe6UAM
+	 OKdzImvSfG5+k6nb+aqbXy7Fxs6AZdKC9hXup+wOrdStRbEWnWT4ttpaKKeFTDZ9Vr
+	 jLEd2am4c5cvQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1rXdtv-000000005zh-09RT;
+	Wed, 07 Feb 2024 10:07:27 +0100
+Date: Wed, 7 Feb 2024 10:07:27 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v2 03/18] clk: qcom: reset: Ensure write completion on
+ reset de/assertion
+Message-ID: <ZcNIT-NxKSZ44NjZ@hovoldconsulting.com>
+References: <20240105-topic-venus_reset-v2-0-c37eba13b5ce@linaro.org>
+ <20240105-topic-venus_reset-v2-3-c37eba13b5ce@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: keystone: sci-clk: Adding support for non
- contiguous clocks
-Content-Language: en-US
-To: "Kumar, Udit" <u-kumar1@ti.com>, Kamlesh Gurudasani <kamlesh@ti.com>,
-        Nishanth Menon <nm@ti.com>, <vishalm@ti.com>
-CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <rishabh@ti.com>,
-        <vigneshr@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20240206104357.3803517-1-u-kumar1@ti.com>
- <20240206131420.wtitflgav23jto2q@verbally>
- <871q9pzoiq.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
- <c5b6bd1d-dbb4-4bfb-8b3e-9b0733e2ba5d@ti.com>
- <c2b7f22d-f07d-4cac-8a01-af7b014e7ff4@ti.com>
- <a4fdbcfe-e0e0-4280-8638-e39b6b46778e@ti.com>
- <87ttmly4fa.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
- <e2ea03ce-0367-413b-aca9-7c1fabda173a@ti.com>
- <4398af20-3396-4a5c-8fcb-a7b3d0d6f15b@ti.com>
- <978c8110-3083-4fc2-a348-d7f97fd7839c@ti.com>
-From: CHANDRU DHAVAMANI <chandru@ti.com>
-In-Reply-To: <978c8110-3083-4fc2-a348-d7f97fd7839c@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240105-topic-venus_reset-v2-3-c37eba13b5ce@linaro.org>
 
+On Tue, Feb 06, 2024 at 07:43:36PM +0100, Konrad Dybcio wrote:
+> Trying to toggle the resets in a rapid fashion can lead to the changes
+> not actually arriving at the clock controller block when we expect them
+> to. This was observed at least on SM8250.
+> 
+> Read back the value after regmap_update_bits to ensure write completion.
+> 
+> Fixes: db1029814f1f ("clk: qcom: reset: Ensure write completion on reset de/assertion")
 
-On 07/02/24 13:03, Kumar, Udit wrote:
->
-> On 2/7/2024 12:53 PM, CHANDRU DHAVAMANI wrote:
->>
->> On 07/02/24 11:03, Kumar, Udit wrote:
->>>
->>> On 2/6/2024 9:24 PM, Kamlesh Gurudasani wrote:
->>>> "Kumar, Udit" <u-kumar1@ti.com> writes:
->>>>
->>>>>>>>> get_freq is a bit expensive as it has to walk the clock tree 
->>>>>>>>> to find
->>>>>>>>> the clock frequency (at least the first time?). just wondering if
->>>>>>>>> there is lighter alternative here?
->>>>>>>>>
->>>>>>>> How about get_clock? Doesn't read the registers at least.
->>>>>>> Said API needs, some flags to be passed,
->>>>>>>
->>>>>>> Can those flag be set to zero, Chandru ?
->>>>>>
->>>>>> get_clock doesn't require any flags to be passed.
->>>>>
->>>>> May be firmware does not need it but  I was referring to
->>>>>
->>>>> https://elixir.bootlin.com/linux/latest/source/drivers/clk/keystone/sci-clk.c#L78 
->>>>>
->>>> Just took a look,
->>>>
->>>> I now understand the reason for confusion,
->>>>
->>>> #define TI_SCI_MSG_SET_CLOCK_STATE    0x0100
->>>> #define TI_SCI_MSG_GET_CLOCK_STATE    0x0101
->>>>
->>>> cops->get_clock = ti_sci_cmd_get_clock;  --> refers to
->>>> TI_SCI_MSG_SET_CLOCK_STATE
->>>> That's why we are passing the flag from linux for get_clock
->>>>
->>>> Linux is using terminology of get/put.
->>>>
->>>> As Chandru pointed, we don't have to pass flags, cause he is refering
->>>> to TI_SCI_MSG_GET_CLOCK_STATE
->>>>
->>>> Below functions passes TI_SCI_MSG_GET_CLOCK_STATE to DM, which is what
->>>> we actually want.
->>>> cops->is_auto = ti_sci_cmd_clk_is_auto;
->>>> cops->is_on = ti_sci_cmd_clk_is_on;
->>>> cops->is_off = ti_sci_cmd_clk_is_off;
->>>
->>>
->>> I think calling ti_sci_cmd_clk_is_auto should be good . other 
->>> functions needs current state and requested state.
->>>
->>> Chandru ?
->>>
->>
->> ti_sci_cmd_clk_is_auto is internal function to linux.
->> For TI_SCI_MSG_GET_CLOCK_STATE, linux only needs to pass pointers to 
->> the variables where result will be stored.
->
->
-> Yes this internal function calls TI_SCI_MSG_GET_CLOCK_STATE
->
+This commit does not exist in mainline or linux-next it seems.
 
-Okay. We can use TI_SCI_MSG_GET_CLOCK_STATE to check to if clock is 
-valid or not.
-
-
->
->>
->>
->>>>
->>>> Which should be safe to call, Chandru can confirm.
->>>>
->>>> Regards,
->>>> Kamlesh
->>>>>
->>>>>
->>>>>>
->>>>>>>
->>>>>>>> Regards,
->>>>>>>> Kamlesh
+Johan
