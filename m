@@ -1,108 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEC06F531;
-	Thu,  8 Feb 2024 12:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EC071B2E
+	for <linux-clk@vger.kernel.org>; Thu,  8 Feb 2024 12:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707394591; cv=none; b=B+kSOoFYep52Pt5OgWktHttS5wsAs5Mprv9VcEolQuzFYkjIbT6pvt94n/411BMzls31dHN+fo5zcZ8x+TsXKsVigUFRE2C6+XeZtSL5wGBdl5hXLv1YZoBgRpv/l5uXHlHzBBRbN9eprwyrz4CaRFTBDt8pD+1+uuU5ic4z9Jo=
+	t=1707396226; cv=none; b=STrbiQYh2YbPgMQnSVV6oY0qLFWTJvs8sMdnwNLv8Bju27KIXstPkQXRX7udeI5rFKdk4g5fDKQDQUwHTfGsmizDbu/h6cZfPwlM5jhQGCiO4Md3kO6yD09Z44XVnhykWyotAVhZUim75PgYSCb2+RTfRRueNhb3YSfCe9ydW9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707394591; c=relaxed/simple;
-	bh=USkxMo00wu+oAG8dbi0UUhcAygROpPKwwkXbpptKPw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i0JakIhWGeXUojq+zflFb26cwJxskQQPSgEQpCfH2BzkMv0QmrB0TPBP9Z8XyGZ2A48s4TPrQLn8hku3zZOwHmlEJcs6+MyTuGCIiFgcAL5LfXckzZ1rykfONpOtRWxPZBQCyuXAeHLcvn1sLZ2lyyYvmSwSgZRtEwYjFKXNpwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSnsdIyB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707396226; c=relaxed/simple;
+	bh=4YzyhUoPY0n5wlQMtJwSrkS3+ZjUeV1jFH7EHUBufPs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hqzfI7mY+waLi+0mCqyWRvh0R3JAC/w0FoQlimiunSoeEJa4AtRtxcAQcq07hkobATGk5wd/TDYBDmFbFdjckzB8jNqQDyoj+Z7pcLNr6eNPAeaoSm+56NtNQd98AEokM7MHZOH974vJ+Oo3VMFPVfaoQaA3euy+IYgJUlSqFqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=d85Br8P/; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSnsdIyB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64826C433F1;
-	Thu,  8 Feb 2024 12:16:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707394590;
-	bh=USkxMo00wu+oAG8dbi0UUhcAygROpPKwwkXbpptKPw0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mSnsdIyBgjtrpmx4IO6IAxNTOBoAYUpwNNlSLkBDFRnlYsNjH6LMU1HMJ9mrpFb75
-	 /2cZcLMxIxfdsFyq3dzzxkFBVmCZj8wEvJO5olQyLjIDdYyI7cJ8GP555tVOQNl6uD
-	 TXMtm9Nafx5RjDeopn5SJdGpdshEIZ+wmtBNcJU0Q1xYd/hS5eawcY2mjSd3siFvEg
-	 kJC7o74B+5/K5POXR5b0Tsbt7roheh+iUaNazrmA+c/NYYEX3MgYRRnswxeMiycbfZ
-	 tQt3o5/vBBmHR8FNOTEz+GFJEhpvcn7aYFZ1/ByDQB9Vk9B9nmyFYa+7Vui4p/HIBh
-	 RLqvn9ug3AY/Q==
-Date: Thu, 8 Feb 2024 13:16:27 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Frank Oltmanns <frank@oltmanns.dev>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] clk: sunxi-ng: nkm: Support minimum and maximum
- rate
-Message-ID: <exb2lvjcozak5fayrgyenrd3ntii4jfxgvqork4klyz5pky2aq@dj2zyw5su6pv>
-References: <20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev>
- <20240205-pinephone-pll-fixes-v2-3-96a46a2d8c9b@oltmanns.dev>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="d85Br8P/"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5116b017503so1581383e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 08 Feb 2024 04:43:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1707396222; x=1708001022; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=euiJLfBajM/ZFVIDyhIV5fjjCmiMvfIZ0T4coXTdvWE=;
+        b=d85Br8P/U/eGstYU94yYzf4n4Ulgb6UAeu9slFgkiVcV4EoMfqJvRZ8zKT0WrRyzxt
+         gikABKcEOU3sPkNMo4Bv0n9F6wqmHdQRt+e/6SlQ1eEDWBQ1/c1oWMN3Q3DYG7w+O/U6
+         akGmOq7hLt+7HEVKbJcIkhiHgFCrrYEbsbzgZPDAGpREEn1NOFJC0gheBGEdhV2RgUNO
+         0VPZbIO0P3ic77MbayIsXDvOJWg1YPNIzXvehiJRm1adLiR9ojah7B4DZpHYW7ZArK3h
+         0L6HFLyWh5CzL/i3rnCsfAck3dLa+B9kG6J+UpScbvepTAVXJoBTnufd6j7LeX7KVKpM
+         Ak+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707396222; x=1708001022;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=euiJLfBajM/ZFVIDyhIV5fjjCmiMvfIZ0T4coXTdvWE=;
+        b=dHGUgDD4CM/fsmHBu84sE6dIIvjBKEOIHKQkGft0q+RbHvq5Zu/ZNXKKtBQQEZSyl6
+         FkM5cpNoZzgo9VNI4bMw5ZuFkCuTBVp6KBtA1n4EtlaGucXA7yAivURD2Sr92W98ATVT
+         hed7AEoPOdb6Cdz72dpSKDhg3vqj6j3DIf0l6Zxc2GH6Tz0n2R8xuedl8SKiMtmRjm7S
+         p4p4tQN+l5zTgqzs3TZRLyEu+OfjN1hGdfndvBbnCc6AB6AboGfNdpmiBZzK5yasQdS9
+         JQBPJkB3TDlPPOf2+hbG3AtMZI+sHVagy3F0q8UdPfhPshwtZlbyAJnF4uJiZFPKZh0X
+         FYeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjePbkrekOFx869t/aHnEgnCM3tIEV3do6oYb1aRUTbiXp/Kp2AMr4PsUpMxqp/Jl0SIvBY8ZW8WJMVaniWnC9YayDYs5R1Kp7
+X-Gm-Message-State: AOJu0Yz39haGzs732XOQ3t/49JJUvihHTouhRX3zRSm2Ch6g90k12uB4
+	GZ9lTyJMGk8sco0iR5YOyJISngtP6zTkzKPNv6ph2HkxwzWZM9PhAVhPPgXuw/0=
+X-Google-Smtp-Source: AGHT+IGFiG7OHJfzRNPbhImwwPJamXoJQIEhIgb6vjVPNybgWE5Mqmkj9l3PB8njMa4WiG5eqbRvxQ==
+X-Received: by 2002:a05:6512:33cc:b0:511:5724:dcd1 with SMTP id d12-20020a05651233cc00b005115724dcd1mr7734788lfg.11.1707396222387;
+        Thu, 08 Feb 2024 04:43:42 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWr+/IOtPfh0lK3AG+Z2s/nxleo8pO7DNwgvhzMfvQOlQeo0BQH94pIvapJvPkZXT7ludRt0V+zlZx62qzOHVY6SOOcwiztRENMNS5ttT/QzvChrqrk00aJIsWx4Vt2c8wBXhfHRFyHj0pfjdVpU7qL9XL3h2uHIjX+E7WNTj0cpaKRyvNm0Ja/l6yLSd2P7yTY4IQaZ92erU6P8uUKz8hmle7apJ+YzTGyWowtGq1LPEZgwSEAbqbd6qmrGfD82zRqVopXiTjBd9o1q/O2VuW2925SPB81j28coIaRlNJGyYSaOyoJnO+6WJv+jOAu1Al7abQ5TRMvglgi01KlUN7O4UzNnBLcnBifcAp4n9tiE8pt9WciwX8RLricE7vehrbXPiZO0hUKk0+70QjmIIMB6VblERZovT9GO0WUuFeZ4mBpnldemseNCZvJRdbwuapgoOjy/ZCYeiCUWltUFkgtTHU6x32rHfEft9nTEJwO7R5uAH93iOlpTFw5ClvujCf+oGbGn2ihPSlUFlgFBJC1rQymxDr6CZ5hqwN/a9/82ti6abyqsOL/jMmqXHulG9k=
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.45])
+        by smtp.gmail.com with ESMTPSA id o13-20020a05600c4fcd00b0041047382b76sm790244wmq.37.2024.02.08.04.43.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Feb 2024 04:43:42 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 00/17] clk: renesas: rzg2l: Add support for power domains
+Date: Thu,  8 Feb 2024 14:42:43 +0200
+Message-Id: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="g5pwkiip3azj2ftk"
-Content-Disposition: inline
-In-Reply-To: <20240205-pinephone-pll-fixes-v2-3-96a46a2d8c9b@oltmanns.dev>
+Content-Transfer-Encoding: 8bit
 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
---g5pwkiip3azj2ftk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Mon, Feb 05, 2024 at 04:22:26PM +0100, Frank Oltmanns wrote:
-> According to the Allwinner User Manual, the Allwinner A64 requires
-> PLL-MIPI to run at 500MHz-1.4GHz. Add support for that to ccu_nkm.
->=20
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> ---
->  drivers/clk/sunxi-ng/ccu_nkm.c | 13 +++++++++++++
->  drivers/clk/sunxi-ng/ccu_nkm.h |  2 ++
->  2 files changed, 15 insertions(+)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nk=
-m.c
-> index 1168d894d636..7d135908d6e0 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> @@ -181,6 +181,12 @@ static unsigned long ccu_nkm_round_rate(struct ccu_m=
-ux_internal *mux,
->  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->  		rate *=3D nkm->fixed_post_div;
-> =20
-> +	if (nkm->min_rate && rate < nkm->min_rate)
-> +		rate =3D nkm->min_rate;
-> +
-> +	if (nkm->max_rate && rate > nkm->max_rate)
-> +		rate =3D nkm->max_rate;
-> +
+Series adds support for power domains on rzg2l driver.
 
-This is provided by the clock range already. If you call
-clk_hw_set_rate_range, it should work just fine.
+RZ/G2L kind of devices support a functionality called MSTOP (module
+stop/standby). According to hardware manual the module could be switch
+to standby after its clocks are disabled. The reverse order of operation
+should be done when enabling a module (get the module out of standby,
+enable its clocks etc).
 
-Maxime
+In [1] the MSTOP settings were implemented by adding code in driver
+to attach the MSTOP state to the IP clocks. But it has been proposed
+to implement it as power domain. The result is this series.
 
---g5pwkiip3azj2ftk
-Content-Type: application/pgp-signature; name="signature.asc"
+Along with MSTOP functionality there is also module power down
+functionality (which is currently available only on RZ/G3S). This has
+been also implemented through power domains.
 
------BEGIN PGP SIGNATURE-----
+The DT bindings were updated with power domain IDs (plain integers
+that matches the DT with driver data structures). The current DT
+bindings were updated with module IDs for the modules listed in tables
+with name "Registers for Module Standby Mode" (see HW manual) exception
+being RZ/G3S where, due to the power down functionality, the DDR,
+TZCDDR, OTFDE_DDR were also added, to avoid system being blocked due
+to the following lines of code from patch 7/17.
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZcTGGwAKCRDj7w1vZxhR
-xfpFAQDl1iMbvaT5VL0H8/WZy4Wj8WN7EQPe6yGsH1gHJm+SJwEA2hmsuOH5dUHZ
-3CUtUEMx4fGkAxCIbucEMa+tx6gRUgI=
-=MjMG
------END PGP SIGNATURE-----
++       /* Prepare for power down the BUSes in power down mode. */
++       if (info->pm_domain_pwrdn_mstop)
++               writel(CPG_PWRDN_MSTOP_ENABLE, priv->base + CPG_PWRDN_MSTOP);
 
---g5pwkiip3azj2ftk--
+Domain IDs were added to all SoC specific bindings to avoid breaking
+dt schema validation failures.
+
+If the proposed dt-binding update is good for you, please let me know
+if you want me to also update the individual dt schemas to reflect
+the newly introduced power domain IDs in schema examples, if any.
+
+Thank you,
+Claudiu Beznea 
+
+[1] https://lore.kernel.org/all/20231120070024.4079344-4-claudiu.beznea.uj@bp.renesas.com/
+
+Claudiu Beznea (17):
+  dt-bindings: clock: r9a07g043-cpg: Add power domain IDs
+  dt-bindings: clock: r9a07g044-cpg: Add power domain IDs
+  dt-bindings: clock: r9a07g054-cpg: Add power domain IDs
+  dt-bindings: clock: r9a08g045-cpg: Add power domain IDs
+  dt-bindings: clock: r9a09g011-cpg: Add always-on power domain IDs
+  dt-bindings: clock: renesas,rzg2l-cpg: Update #power-domain-cells =
+    <1>
+  clk: renesas: rzg2l: Extend power domain support
+  clk: renesas: r9a07g043: Add initial support for power domains
+  clk: renesas: r9a07g044: Add initial support for power domains
+  clk: renesas: r9a08g045: Add support for power domains
+  clk: renesas: r9a09g011: Add initial support for power domains
+  arm64: dts: renesas: rzg3s-smarc-som: Guard the ethernet IRQ GPIOs
+    with proper flags
+  arm64: dts: renesas: r9a07g043: Update #power-domain-cells = <1>
+  arm64: dts: renesas: r9a07g044: Update #power-domain-cells = <1>
+  arm64: dts: renesas: r9a07g054: Update #power-domain-cells = <1>
+  arm64: dts: renesas: r9a08g045: Update #power-domain-cells = <1>
+  arm64: dts: renesas: r9a09g011: Update #power-domain-cells = <1>
+
+ .../bindings/clock/renesas,rzg2l-cpg.yaml     |   4 +-
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |  84 +++----
+ arch/arm64/boot/dts/renesas/r9a07g043u.dtsi   |   6 +-
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    | 100 ++++----
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi    | 100 ++++----
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  20 +-
+ arch/arm64/boot/dts/renesas/r9a09g011.dtsi    |  28 +--
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   4 +
+ arch/riscv/boot/dts/renesas/r9a07g043f.dtsi   |   2 +-
+ drivers/clk/renesas/r9a07g043-cpg.c           |   9 +
+ drivers/clk/renesas/r9a07g044-cpg.c           |  13 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |  27 +++
+ drivers/clk/renesas/r9a09g011-cpg.c           |   9 +
+ drivers/clk/renesas/rzg2l-cpg.c               | 227 ++++++++++++++++--
+ drivers/clk/renesas/rzg2l-cpg.h               |  68 ++++++
+ include/dt-bindings/clock/r9a07g043-cpg.h     |  48 ++++
+ include/dt-bindings/clock/r9a07g044-cpg.h     |  58 +++++
+ include/dt-bindings/clock/r9a07g054-cpg.h     |  58 +++++
+ include/dt-bindings/clock/r9a08g045-cpg.h     |  70 ++++++
+ include/dt-bindings/clock/r9a09g011-cpg.h     |   3 +
+ 20 files changed, 752 insertions(+), 186 deletions(-)
+
+-- 
+2.39.2
+
