@@ -1,236 +1,115 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0706567E61;
-	Thu,  8 Feb 2024 06:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB360692FB
+	for <linux-clk@vger.kernel.org>; Thu,  8 Feb 2024 07:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707373755; cv=none; b=V27OAcV5cUfMXk5bSrpa+NrJ2k2dzYfDLOmKJtj96pd3D1i577c3Re7g7v4steilG2D9efJMMQV7NSQdNYGExTqMEyI/JW5WBVj78XuCTYLgMY7xj2xD3Lxq46oelU9f1odiuzOsKw8uhdtt4z1FSQorL0vopPnIHd4GnJjIPhs=
+	t=1707375617; cv=none; b=jgBToAdZS3JZwr0N2FAOos5Qc8G9GuN0PjduOF5P5VChOWkyHSEnC45It4IdonnInbTUYReX9wCCgOm/+kNRk7UmBMfSnwGHWMv8MB0gRN70xxPPZKc+qhBlAUvTsjYsz9xrWfdoSHXZ4sBIvKoKNToJmT5GS5FXjUUP4WdEUfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707373755; c=relaxed/simple;
-	bh=VP+kt4un+Npwv130OUeqNC4/K4PHeK1uA/pVFjmW7ZA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QBl2Wc0cAAh26XT9S9upMUVdMJHtIbe9inaUyloR41sjLuuAAM3XEY47tAvbYtRk8Wdi3nlFJqrQp0ZrBFtjIhHtjpUpfdzJLghP8Kn8knX/qbmA6wckSGj8ppp01eKinWtbI1fjkE6w4yLoCs4mvzLJABf+vH3StLw0OC5FVOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BxDlLnbf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1707375617; c=relaxed/simple;
+	bh=HdW46PmYFY/U2koHlqQYLlKz8MMgMac1hAcgaMNd+Is=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XKPDJvO27VXQIOXSjMry2n7IrBPU/qhG6//kQP2KYN4yxHlVwktFn3JjW6Osuq4iVIf8YoQp0dVHYdzQq7wkIo9VzySccc1cewjFIsynQ9hh0as8EuDK6+rraY8Fv1CGNCSM3AIHeTjQLreP5WCY6UA3U9JW+eTEWeUP/JztcOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i/sI9zqb; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BxDlLnbf"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4185xfL8027641;
-	Thu, 8 Feb 2024 06:29:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-type; s=qcppdkim1; bh=zLtdOZGA2TuvAnHvnyh6
-	uZUdKTmNwsolcBMKp1HBP+o=; b=BxDlLnbfgp2VT6qAODWqFYKGEZ5LutaszQ3S
-	dskD8G7e9mCeK0uE51tHblryOdL0xKeDT0c8XqlC0N6oBV9ue2No7Fea/GDMBK1n
-	Dq/fvD0IC9TBnBFdlf6aO8OHwG3CmjVkGCOsMeL2c3XHS0GslOnbaeQze1Sl15I2
-	vn+01ChTqlJK81o7MtCr0mv2yNgE2Mu5lL/sfK2nx0sSLiKgQvqUlGG5FLBeVxse
-	g/NjL+9dl6yuJ1M4J9mgunNhoZVVoPZmQRDIrFemmgpMUoLYA4VLIFVaKLPPsGjF
-	7VQRvf9v/GdrRdH8sYykrjtvwj9yKFxq39P0piKdGND76HevZQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w46r82g2t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Feb 2024 06:29:10 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4186T9Mk012386
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 8 Feb 2024 06:29:09 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 7 Feb 2024 22:29:06 -0800
-From: Taniya Das <quic_tdas@quicinc.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?=
-	<mturquette@baylibre.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Subject: [PATCH 5/5] arm64: dts: qcom: Update protected clocks list for qcm6490 variants
-Date: Thu, 8 Feb 2024 11:58:36 +0530
-Message-ID: <20240208062836.19767-6-quic_tdas@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240208062836.19767-1-quic_tdas@quicinc.com>
-References: <20240208062836.19767-1-quic_tdas@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i/sI9zqb"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-60491cb9571so15423967b3.0
+        for <linux-clk@vger.kernel.org>; Wed, 07 Feb 2024 23:00:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1707375607; x=1707980407; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eByR5GQoGX+Bs//9xgHnZ7HhZOW4ltAO5NoiyDJIpLc=;
+        b=i/sI9zqb9t2vJIwU7gvZ6cRZC+/v4IeSJ24h+IZy8LcHB+vL6AokZJZFjey+7ANh7u
+         89pMGfbfEz4EoKBVGGwSARl4q8nj2QzbN2wqypVYEGlwQRmcXgy7Vw6lHkP8IAWFjK/+
+         6fdslD1Emj5vJgMQ6ungQJTVVdnUAu1LhgD9opzUBYADKyF8fbkzqmuauBwsIwJdoQau
+         846drm5ySY0a9k+To1ynmWO295o5OH11PskAUQBTHXJkCFx2NCcN/xm+8TpDO+jdAMsN
+         aGWP4+zYhBcdlu504YXoFVTT6qydB+kxiQlVpAhUfnMizagVcSTLsUoe/xxg1RKf/QPZ
+         2u4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707375607; x=1707980407;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eByR5GQoGX+Bs//9xgHnZ7HhZOW4ltAO5NoiyDJIpLc=;
+        b=m4vkGLfwACicN2B3JtkEU1WTmMkmQdpQIy/+HdsQ7uZ1BmW6HwS4ByUURc7VOdT2aF
+         BSaDGbDPKZgn07f33RsHTwPQGl0SbJmhus9EiV5rYJuIWHvqpFBS4Scx97dtO9WtxAu8
+         KiWD46hbNYnt5+/eEMspw8DYVdTIzJ1TpIJneIetmf4t4je/Kd3FbgUzEwIEp0ghrdj/
+         U/J9xEHKXWsH0bZq5dsxd7ScvV+hZOs8P/cQr4FAOD/sX+ppgtckLCTo0xmIUkkqCXzf
+         IkbvKldzVeowu64B29zPy1dOO5ECtgXAgsJRkWHhFvzjVQldZh1mTYcoqAtn9k1WDpBn
+         splA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9wyjkdo2FjjTqeeiIZ9D/Z449J0Qixc/ZrwgHwCmZzvYj19OnMZrtBLmkNoer3wdLWViZ5Eh0/+x/UGKyW/z4TsravDFLD1+W
+X-Gm-Message-State: AOJu0YypE3i9id/AyLKJvEtEK3q4VejZXTIWZNDfuDItzUGskHCgf2aH
+	YXVgLkcq3CGOVB6xLGTq5xh0cc+RMdxIrsOkOxx4iAJnA634JLRQfWOXa/WA/4XtfiRYqrUFG7s
+	+cbhFvhLzFvDYghl2iFkQKm8W+XVuS803mmR5qA==
+X-Google-Smtp-Source: AGHT+IGm34qOlpbHetB6jIH/phC+hvmN9qPvqCv6koH3ApB3V3uhPCKOnQYCKQ/aKUMRl8jP02VpYUq/dGK1Myuht5E=
+X-Received: by 2002:a0d:e504:0:b0:604:999a:3992 with SMTP id
+ o4-20020a0de504000000b00604999a3992mr3591745ywe.35.1707375607622; Wed, 07 Feb
+ 2024 23:00:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4wvxeMOOnOshP2AgLngQpAFrDsu7Rbvi
-X-Proofpoint-ORIG-GUID: 4wvxeMOOnOshP2AgLngQpAFrDsu7Rbvi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-08_01,2024-02-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=838
- spamscore=0 mlxscore=0 adultscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401310000 definitions=main-2402080032
+References: <20240208062836.19767-1-quic_tdas@quicinc.com> <20240208062836.19767-2-quic_tdas@quicinc.com>
+In-Reply-To: <20240208062836.19767-2-quic_tdas@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 8 Feb 2024 08:59:56 +0200
+Message-ID: <CAA8EJpoF7ii59WuY0WaMkdbs3+GE8UFPmbxdvohfjUfwqC4c0Q@mail.gmail.com>
+Subject: Re: [PATCH 1/5] bindings: clock: qcom: Add "qcom,adsp-skip-pll" property
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Certain clocks are not accessible on QCM6490-IDP and QCS6490-RB3GEN2 boards
-thus require them to be marked protected.
+On Thu, 8 Feb 2024 at 08:29, Taniya Das <quic_tdas@quicinc.com> wrote:
+>
+> When remoteproc is used to boot the LPASS the ADSP PLL should not be
+> configured from the high level OS.
 
-Also disable the LPASS nodes which are not to be used.
+Why?
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcm6490-idp.dts     | 54 +++++++++++++++++++-
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 50 +++++++++++++++++-
- 2 files changed, 102 insertions(+), 2 deletions(-)
+> Thus add support for property to
+> avoid configuring the LPASS PLL.
+>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml   | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+> index deee5423d66e..358eb4a1cffd 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+> @@ -49,6 +49,11 @@ properties:
+>        peripheral loader.
+>      type: boolean
+>
+> +  qcom,adsp-skip-pll:
+> +    description:
+> +      Indicates if the LPASS PLL configuration is to be skipped.
+> +    type: boolean
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-index 03e97e27d16d..425e4b87490b 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: BSD-3-Clause
- /*
-- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
+This property describes OS behaviour rather than the hardware. Such
+things are generally not acceptable.
 
- /dts-v1/;
-@@ -415,6 +415,58 @@
- 	};
- };
+> +
+>  required:
+>    - compatible
+>    - reg
+> --
+> 2.17.1
+>
+>
 
-+&gcc {
-+	protected-clocks = <GCC_AGGRE_NOC_PCIE_1_AXI_CLK> ,<GCC_PCIE_1_AUX_CLK>,
-+			<GCC_PCIE_1_AUX_CLK_SRC>, <GCC_PCIE_1_CFG_AHB_CLK>,
-+			<GCC_PCIE_1_MSTR_AXI_CLK>, <GCC_PCIE_1_PHY_RCHNG_CLK_SRC>,
-+			<GCC_PCIE_1_PIPE_CLK>, <GCC_PCIE_1_PIPE_CLK_SRC>,
-+			<GCC_PCIE_1_SLV_AXI_CLK>, <GCC_PCIE_1_SLV_Q2A_AXI_CLK>,
-+			<GCC_QSPI_CNOC_PERIPH_AHB_CLK>, <GCC_QSPI_CORE_CLK>,
-+			<GCC_QSPI_CORE_CLK_SRC>,<GCC_USB30_SEC_MASTER_CLK>,
-+			<GCC_USB30_SEC_MASTER_CLK_SRC>, <GCC_USB30_SEC_MOCK_UTMI_CLK>,
-+			<GCC_USB30_SEC_MOCK_UTMI_CLK_SRC>,
-+			<GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC>, <GCC_USB30_SEC_SLEEP_CLK>,
-+			<GCC_USB3_SEC_PHY_AUX_CLK>, <GCC_USB3_SEC_PHY_AUX_CLK_SRC>,
-+			<GCC_USB3_SEC_PHY_COM_AUX_CLK>, <GCC_USB3_SEC_PHY_PIPE_CLK>,
-+			<GCC_USB3_SEC_PHY_PIPE_CLK_SRC>, <GCC_CFG_NOC_LPASS_CLK>,
-+			<GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>, <GCC_MSS_CFG_AHB_CLK>,
-+			<GCC_MSS_OFFLINE_AXI_CLK>, <GCC_MSS_SNOC_AXI_CLK>,
-+			<GCC_MSS_Q6_MEMNOC_AXI_CLK>, <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
-+			<GCC_SEC_CTRL_CLK_SRC>, <GCC_WPSS_AHB_CLK>,
-+			<GCC_WPSS_AHB_BDG_MST_CLK>, <GCC_WPSS_RSCP_CLK>;
-+};
-+
-+&lpasscc {
-+	status = "disabled";
-+};
-+
-+&lpass_audiocc {
-+	qcom,adsp-skip-pll;
-+	protected-clocks = <LPASS_AUDIO_CC_CDIV_RX_MCLK_DIV_CLK_SRC>,
-+		<LPASS_AUDIO_CC_CODEC_MEM0_CLK>, <LPASS_AUDIO_CC_CODEC_MEM1_CLK>,
-+		<LPASS_AUDIO_CC_CODEC_MEM2_CLK>, <LPASS_AUDIO_CC_CODEC_MEM_CLK>,
-+		<LPASS_AUDIO_CC_EXT_MCLK0_CLK>, <LPASS_AUDIO_CC_EXT_MCLK0_CLK_SRC>,
-+		<LPASS_AUDIO_CC_EXT_MCLK1_CLK>, <LPASS_AUDIO_CC_EXT_MCLK1_CLK_SRC>,
-+		<LPASS_AUDIO_CC_PLL>, <LPASS_AUDIO_CC_PLL_OUT_AUX2>,
-+		<LPASS_AUDIO_CC_PLL_OUT_AUX2_DIV_CLK_SRC>,
-+		<LPASS_AUDIO_CC_PLL_OUT_MAIN_DIV_CLK_SRC>,
-+		<LPASS_AUDIO_CC_RX_MCLK_2X_CLK>, <LPASS_AUDIO_CC_RX_MCLK_CLK>,
-+		<LPASS_AUDIO_CC_RX_MCLK_CLK_SRC>;
-+	/delete-property/ power-domains;
-+};
-+
-+&lpass_aon {
-+	status = "disabled";
-+};
-+
-+&lpass_core {
-+	status = "disabled";
-+};
-+
-+&lpass_hm {
-+	status = "disabled";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-index 8bb7d13d85f6..1398b84634c3 100644
---- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: BSD-3-Clause
- /*
-- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
 
- /dts-v1/;
-@@ -413,6 +413,54 @@
- 	};
- };
-
-+&gcc {
-+	protected-clocks = <GCC_QSPI_CNOC_PERIPH_AHB_CLK>, <GCC_QSPI_CORE_CLK>,
-+			<GCC_QSPI_CORE_CLK_SRC>,<GCC_USB30_SEC_MASTER_CLK>,
-+			<GCC_USB30_SEC_MASTER_CLK_SRC>, <GCC_USB30_SEC_MOCK_UTMI_CLK>,
-+			<GCC_USB30_SEC_MOCK_UTMI_CLK_SRC>,
-+			<GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC>, <GCC_USB30_SEC_SLEEP_CLK>,
-+			<GCC_USB3_SEC_PHY_AUX_CLK>, <GCC_USB3_SEC_PHY_AUX_CLK_SRC>,
-+			<GCC_USB3_SEC_PHY_COM_AUX_CLK>, <GCC_USB3_SEC_PHY_PIPE_CLK>,
-+			<GCC_USB3_SEC_PHY_PIPE_CLK_SRC>, <GCC_CFG_NOC_LPASS_CLK>,
-+			<GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>, <GCC_MSS_CFG_AHB_CLK>,
-+			<GCC_MSS_OFFLINE_AXI_CLK>, <GCC_MSS_SNOC_AXI_CLK>,
-+			<GCC_MSS_Q6_MEMNOC_AXI_CLK>, <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
-+			<GCC_SEC_CTRL_CLK_SRC>, <GCC_WPSS_AHB_CLK>,
-+			<GCC_WPSS_AHB_BDG_MST_CLK>, <GCC_WPSS_RSCP_CLK>;
-+};
-+
-+&lpasscc {
-+	status = "disabled";
-+};
-+
-+&lpass_audiocc {
-+	qcom,adsp-skip-pll;
-+	protected-clocks = <LPASS_AUDIO_CC_CDIV_RX_MCLK_DIV_CLK_SRC>,
-+		<LPASS_AUDIO_CC_CODEC_MEM0_CLK>, <LPASS_AUDIO_CC_CODEC_MEM1_CLK>,
-+		<LPASS_AUDIO_CC_CODEC_MEM2_CLK>, <LPASS_AUDIO_CC_CODEC_MEM_CLK>,
-+		<LPASS_AUDIO_CC_EXT_MCLK0_CLK>, <LPASS_AUDIO_CC_EXT_MCLK0_CLK_SRC>,
-+		<LPASS_AUDIO_CC_EXT_MCLK1_CLK>, <LPASS_AUDIO_CC_EXT_MCLK1_CLK_SRC>,
-+		<LPASS_AUDIO_CC_PLL>, <LPASS_AUDIO_CC_PLL_OUT_AUX2>,
-+		<LPASS_AUDIO_CC_PLL_OUT_AUX2_DIV_CLK_SRC>,
-+		<LPASS_AUDIO_CC_PLL_OUT_MAIN_DIV_CLK_SRC>,
-+		<LPASS_AUDIO_CC_RX_MCLK_2X_CLK>, <LPASS_AUDIO_CC_RX_MCLK_CLK>,
-+		<LPASS_AUDIO_CC_RX_MCLK_CLK_SRC>;
-+	/delete-property/ power-domains;
-+};
-+
-+&lpass_aon {
-+	status = "disabled";
-+};
-+
-+&lpass_core {
-+	status = "disabled";
-+};
-+
-+&lpass_hm {
-+	status = "disabled";
-+};
-+
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
---
-2.17.1
-
+-- 
+With best wishes
+Dmitry
