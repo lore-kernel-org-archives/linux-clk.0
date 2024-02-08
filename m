@@ -1,83 +1,69 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3AD7640B
-	for <linux-clk@vger.kernel.org>; Thu,  8 Feb 2024 12:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA5377F0A;
+	Thu,  8 Feb 2024 14:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707396265; cv=none; b=qc7uWs2mr7HIHPhGDm8Ye9uGrbv3o2kkSgv9o7UwahpeOTCSB7Hh6eDBvIqdynDtOiGfpyBarFjuasnCFxr62/xqOLEzQ89hb9Pfn0cg7VknHLAQB4OoPA3Loao+4DViSl4riAo90gXRG+oocyfmuT/OFTnQfdkD38+Lb2BqzBY=
+	t=1707402255; cv=none; b=S/ACHiZUOjF4CEKc2Vp+dRKqLI/ZHjgvbr7+zCUjeYMvBlIsOz7bghJzOKEowqE7PHlzySdj9v1V5LtBRUUaCZYtYn9r5KGJKeR73cJuoLJg1OQ8VJ16FDM3Z6pA9GK0EqBj7BHFx0GbxAnhdbjAqyaxjEQe39/bVpz5Q8p/kiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707396265; c=relaxed/simple;
-	bh=gRX2x88FqVLUStqN8zuHyneH2upnBTYGjfOVYMyFZ0E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ikqFNv2jh4168jh+xY0cZ3jPffQO59etB4//BGJPVujJgfTHPOBgVqQr+cpsfVlGwkxyB9YGOQs07lbLOSL/eDp39AwQcSemMMBrmVSJw8jxGqdP8dIXTxGAW0vOFoHcTNsm8whhGS4++Wya6aIsqikQSIa2jWsFELTTQ9TOdWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=KKJuxj0d; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1707402255; c=relaxed/simple;
+	bh=yKL/GD2g+PqqgINfyNMStamCKLF/QziBlhTPzWm6TAg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fRPOI7s0VrWhkvwhKV7oWcAd53hS/EmJxIpVc9zZNipcMWZB4zf8602j2NB2897+Hjk616Sv7N1Q0ijAfDy92nwZkN/tYRuWc0XQd9xG818f9TvvTD3BI3eKXUJ5xhHlh3zM44/S+5GHtS62BI8FZ+5Ytabn7rYXTrVe+V2Ekhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=gt78yFlH; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="KKJuxj0d"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4104dee26bfso905925e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 08 Feb 2024 04:44:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1707396261; x=1708001061; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6yTEa4/lsVRh49barZX5/hHwmF5ODn+0XbIAzs9ib3A=;
-        b=KKJuxj0d3E7VI/zgAkCYq9iS28icvQc3wktVef55AGsDGZgWHKVJe+dQX4GUCCoDGM
-         zONbRMFr4bDbPYkT7u2D+nh2HerfwtkxgrJIirDXYFrAGCa8YX8w73vTeGZZhlmYbwcQ
-         /By6OAPXb3e5wnhInvQc3UEz6coIW8UAo6y/ep0lAf8e8X69GUDiKUEpUe0shoXKD8Rq
-         6OwZkiopObf0sFrH/LbF51tgjI9l8I/JD2TH5aRx2EG5sELqZ2P/76aaX4euJecJ2949
-         QI1i16pl3rEbmCGSI0WYdVlmlULbo3r+auNKFvwtu7gWbUYNIUL26CVnrkIct8HG8fJS
-         yVAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707396261; x=1708001061;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6yTEa4/lsVRh49barZX5/hHwmF5ODn+0XbIAzs9ib3A=;
-        b=Bm3llj5WcyB0tNEgT8X1RV4PAAuylRXWGLyw4ZDEtKt8mwe8LlzebzRZmpL49nF/KZ
-         2RzNJ3Kdvv83pE6LzFipeN+slTrzaWF0TJ8UXauvYfL38MQ/LZxznWYj44Alzy0Zo+nB
-         4mgURsGBG0ppHmcbonrBSsGOomMtApoIpocvPTKAmCKJjoyr6DTVg0E/z5CHXSKE3UFu
-         FeQuleFeNMaXiRFEEwCGFGNcXleMFglZc10uffcx8yCL07Yae758RksRkF01zTIfg8YL
-         Ta59AyX2IemMaWvIer1Kn9ljHCSzrHU0HFcA7H7yjsDfk28ZQTxpNN40RkDFuRAq5+k+
-         aIfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDTvmY1SwhFxAZ4LZI7sK7YkJmBRcCiNjBX5AaNNChTudnoyDiHQq6IHBtt5+rIvVk6bFkZEu6kOt4D+AtiKqg4fJ9OHVVwY+G
-X-Gm-Message-State: AOJu0Yx188hNnD31zbcuO/vR6YB46PTh5ohCuaZS8tBtUWAykoLk/SEN
-	DSQOEU499sZWMN9qJEMTBz7kDMW3tPnUGB+K+rIwqfDOZ9e8fOHg3r7T9xRHjRY=
-X-Google-Smtp-Source: AGHT+IGANbj1iqOytgIwqTg4Mq/0gpcdPMAp60+0punCG5pjW18WFbjKTwZGb5kh4i/RgdGw5GaHyw==
-X-Received: by 2002:a05:600c:1c9e:b0:40f:c1b7:2556 with SMTP id k30-20020a05600c1c9e00b0040fc1b72556mr7366673wms.11.1707396261396;
-        Thu, 08 Feb 2024 04:44:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW9Sr/LYarYn0Ydw9Z5UndLl0lPc2rf5eImobbDtGEveI/5qBkV4OQYupRBQfDCMJRJ35YozSSMZas9QWzlnjzZVptnk7zkEZazrYTVw86UYlPS3AI0amTEsE6I1FZTTCY+hKtcasM7WBV0CBCiw8LWCK5V8+EBrXoy+b097mnpz/r7tCy6nox9rqP8L6C/nTjqQwSbamMiJThJ8fRRSO1vtaaCazKwu8e2vMsvJBixIu9GxEvggwQmByZNF0Ftcn2PZ+sei2Tg2ED43jC+Pkt/GSwfzj4BqqDpmdcS/ligPgbTVv4N94S7AmYojqC3XPwLYcTPlsGwptui7xpDuKnOfdMoU91UuSuawHavUuKJrBzwPp3Gk8VKSIXbo2O13LQPhV7Rrq5vTtcWY2ksYI7gP3GUlsypZNX08ORpOoYrg0q6+EI8xVUSuGbFdrQeqxp/s1UyKIEqYLsn9o0yOymBeDmq7b0rAXaZJ+wGnPwDdhKPP0W9GZMM1Ow3IYm8P5oq0ulAfZVqpmXZbInU1pEw6JiKqDGpNY1BXjMkk/DzWiFO5eVGwKSTxx5g6mbiqdQ=
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.45])
-        by smtp.gmail.com with ESMTPSA id o13-20020a05600c4fcd00b0041047382b76sm790244wmq.37.2024.02.08.04.44.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Feb 2024 04:44:20 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	magnus.damm@gmail.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 17/17] arm64: dts: renesas: r9a09g011: Update #power-domain-cells = <1>
-Date: Thu,  8 Feb 2024 14:43:00 +0200
-Message-Id: <20240208124300.2740313-18-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="gt78yFlH"
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 418B6uVn003091;
+	Thu, 8 Feb 2024 15:23:48 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding:content-type; s=
+	selector1; bh=r6X6BGtuJHlAwq5hKk1XL9iK7bAsTfplYeEEaPUDmGs=; b=gt
+	78yFlH/4nXmqHv++xvfLQUdHMklC1zYZNE8Z8SEyfd7slnlJrFykgU0+ywbq8J6c
+	hxOF5OcVoyeKCQALhyzqaSH65IyHDIHyRl6gp/wsbaMWArN+BG9YOHF5m0fqAxGG
+	QK7eK1mr+cUX3Ull1X+B2t7ASbXI2yTI4Wy4GzhEmEX8tRNHu+ZJQNFojBtT6lfx
+	+GQirwl38qCQsQqJvFYYCcO89+URtBjmDDZahJvkvtwbb+HwxrkkOu8lJXD5zhJb
+	WrJIMprppNlSBE5fZrWY12lO2tvDE2t2XXr1Ix89H/sjTUbtkuNs0geT6l3ku51t
+	4IOYATrKSiC+meAKp/WA==
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3w1yx4b7xr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Feb 2024 15:23:48 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8ADFD100052;
+	Thu,  8 Feb 2024 15:23:43 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7FBDC29B132;
+	Thu,  8 Feb 2024 15:23:43 +0100 (CET)
+Received: from localhost (10.201.21.240) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 8 Feb
+ 2024 15:23:43 +0100
+From: <gabriel.fernandez@foss.st.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v9 1/4] clk: stm32mp13: use platform device APIs
+Date: Thu, 8 Feb 2024 15:22:58 +0100
+Message-ID: <20240208142301.155698-2-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240208142301.155698-1-gabriel.fernandez@foss.st.com>
+References: <20240208142301.155698-1-gabriel.fernandez@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,148 +71,176 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-08_05,2024-02-08_01,2023-05-22_02
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Update CPG #power-domain-cells = <1> and move all the IPs to be part of the
-always on power domain as the driver has been modified to support multiple
-power domains.
+Convert devm_platform_ioremap_resource() and remove unnecessary
+dependency check with SCMI clock driver.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g011.dtsi | 28 +++++++++++-----------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/clk/stm32/clk-stm32-core.c | 11 +++--
+ drivers/clk/stm32/clk-stm32mp13.c  | 72 +++---------------------------
+ 2 files changed, 10 insertions(+), 73 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g011.dtsi b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
-index 50ed66d42a24..74af0f730b89 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
-@@ -81,7 +81,7 @@ sdhi0: mmc@85000000 {
- 				 <&cpg CPG_MOD R9A09G011_SDI0_ACLK>;
- 			clock-names = "core", "clkh", "cd", "aclk";
- 			resets = <&cpg R9A09G011_SDI0_IXRST>;
--			power-domains = <&cpg>;
-+			power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/clk/stm32/clk-stm32-core.c b/drivers/clk/stm32/clk-stm32-core.c
+index 58705fcad334..1721a3ed7386 100644
+--- a/drivers/clk/stm32/clk-stm32-core.c
++++ b/drivers/clk/stm32/clk-stm32-core.c
+@@ -25,7 +25,6 @@ static int stm32_rcc_clock_init(struct device *dev,
+ {
+ 	const struct stm32_rcc_match_data *data = match->data;
+ 	struct clk_hw_onecell_data *clk_data = data->hw_clks;
+-	struct device_node *np = dev_of_node(dev);
+ 	struct clk_hw **hws;
+ 	int n, max_binding;
  
-@@ -97,7 +97,7 @@ sdhi1: mmc@85010000  {
- 				 <&cpg CPG_MOD R9A09G011_SDI1_ACLK>;
- 			clock-names = "core", "clkh", "cd", "aclk";
- 			resets = <&cpg R9A09G011_SDI1_IXRST>;
--			power-domains = <&cpg>;
-+			power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
+@@ -64,7 +63,7 @@ static int stm32_rcc_clock_init(struct device *dev,
+ 			hws[cfg_clock->id] = hw;
+ 	}
  
-@@ -113,7 +113,7 @@ emmc: mmc@85020000  {
- 				 <&cpg CPG_MOD R9A09G011_EMM_ACLK>;
- 			clock-names = "core", "clkh", "cd", "aclk";
- 			resets = <&cpg R9A09G011_EMM_IXRST>;
--			power-domains = <&cpg>;
-+			power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
+-	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
+ }
  
-@@ -129,7 +129,7 @@ usb3drd: usb3drd@85070400 {
- 				 <&cpg CPG_MOD R9A09G011_USB_PCLK>;
- 			clock-names = "axi", "reg";
- 			resets = <&cpg R9A09G011_USB_DRD_RESET>;
--			power-domains = <&cpg>;
-+			power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 			ranges;
- 			#address-cells = <2>;
- 			#size-cells = <2>;
-@@ -144,7 +144,7 @@ usb3host: usb@85060000 {
- 					 <&cpg CPG_MOD R9A09G011_USB_PCLK>;
- 				clock-names = "axi", "reg";
- 				resets = <&cpg R9A09G011_USB_ARESETN_H>;
--				power-domains = <&cpg>;
-+				power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 				status = "disabled";
- 			};
+ int stm32_rcc_init(struct device *dev, const struct of_device_id *match_data,
+@@ -638,7 +637,7 @@ struct clk_hw *clk_stm32_mux_register(struct device *dev,
+ 	mux->lock = lock;
+ 	mux->clock_data = data->clock_data;
  
-@@ -157,7 +157,7 @@ usb3peri: usb3peri@85070000 {
- 					 <&cpg CPG_MOD R9A09G011_USB_PCLK>;
- 				clock-names = "axi", "reg";
- 				resets = <&cpg R9A09G011_USB_ARESETN_P>;
--				power-domains = <&cpg>;
-+				power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 				status = "disabled";
- 			};
- 		};
-@@ -207,7 +207,7 @@ avb: ethernet@a3300000 {
- 				 <&cpg CPG_MOD R9A09G011_ETH0_GPTP_EXT>;
- 			clock-names = "axi", "chi", "gptp";
- 			resets = <&cpg R9A09G011_ETH0_RST_HW_N>;
--			power-domains = <&cpg>;
-+			power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -220,7 +220,7 @@ cpg: clock-controller@a3500000 {
- 			clock-names = "extal";
- 			#clock-cells = <2>;
- 			#reset-cells = <1>;
--			#power-domain-cells = <0>;
-+			#power-domain-cells = <1>;
- 		};
+-	err = clk_hw_register(dev, hw);
++	err = devm_clk_hw_register(dev, hw);
+ 	if (err)
+ 		return ERR_PTR(err);
  
- 		pwc: pwc@a3700000 {
-@@ -244,7 +244,7 @@ csi0: spi@a4020000 {
- 				 <&cpg CPG_MOD R9A09G011_CPERI_GRPG_PCLK>;
- 			clock-names = "csiclk", "pclk";
- 			resets = <&cpg R9A09G011_CSI_GPG_PRESETN>;
--			power-domains = <&cpg>;
-+			power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -258,7 +258,7 @@ csi4: spi@a4020200 {
- 				 <&cpg CPG_MOD R9A09G011_CPERI_GRPH_PCLK>;
- 			clock-names = "csiclk", "pclk";
- 			resets = <&cpg R9A09G011_CSI_GPH_PRESETN>;
--			power-domains = <&cpg>;
-+			power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -274,7 +274,7 @@ i2c0: i2c@a4030000 {
- 			interrupt-names = "tia", "tis";
- 			clocks = <&cpg CPG_MOD R9A09G011_IIC_PCLK0>;
- 			resets = <&cpg R9A09G011_IIC_GPA_PRESETN>;
--			power-domains = <&cpg>;
-+			power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
+@@ -659,7 +658,7 @@ struct clk_hw *clk_stm32_gate_register(struct device *dev,
+ 	gate->lock = lock;
+ 	gate->clock_data = data->clock_data;
  
-@@ -288,7 +288,7 @@ i2c2: i2c@a4030100 {
- 			interrupt-names = "tia", "tis";
- 			clocks = <&cpg CPG_MOD R9A09G011_IIC_PCLK1>;
- 			resets = <&cpg R9A09G011_IIC_GPB_PRESETN>;
--			power-domains = <&cpg>;
-+			power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
+-	err = clk_hw_register(dev, hw);
++	err = devm_clk_hw_register(dev, hw);
+ 	if (err)
+ 		return ERR_PTR(err);
  
-@@ -311,7 +311,7 @@ wdt0: watchdog@a4050000 {
- 			clock-names = "pclk", "oscclk";
- 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
- 			resets = <&cpg R9A09G011_WDT0_PRESETN>;
--			power-domains = <&cpg>;
-+			power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
+@@ -680,7 +679,7 @@ struct clk_hw *clk_stm32_div_register(struct device *dev,
+ 	div->lock = lock;
+ 	div->clock_data = data->clock_data;
  
-@@ -361,7 +361,7 @@ pinctrl: pinctrl@b6250000 {
- 				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD R9A09G011_PFC_PCLK>;
--			power-domains = <&cpg>;
-+			power-domains = <&cpg R9A09G011_PD_ALWAYS_ON>;
- 			resets = <&cpg R9A09G011_PFC_PRESETN>;
- 		};
- 	};
+-	err = clk_hw_register(dev, hw);
++	err = devm_clk_hw_register(dev, hw);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+@@ -701,7 +700,7 @@ struct clk_hw *clk_stm32_composite_register(struct device *dev,
+ 	composite->lock = lock;
+ 	composite->clock_data = data->clock_data;
+ 
+-	err = clk_hw_register(dev, hw);
++	err = devm_clk_hw_register(dev, hw);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+diff --git a/drivers/clk/stm32/clk-stm32mp13.c b/drivers/clk/stm32/clk-stm32mp13.c
+index d4ecb3c34a1b..bf81d7491708 100644
+--- a/drivers/clk/stm32/clk-stm32mp13.c
++++ b/drivers/clk/stm32/clk-stm32mp13.c
+@@ -1536,77 +1536,16 @@ static const struct of_device_id stm32mp13_match_data[] = {
+ };
+ MODULE_DEVICE_TABLE(of, stm32mp13_match_data);
+ 
+-static int stm32mp1_rcc_init(struct device *dev)
+-{
+-	void __iomem *rcc_base;
+-	int ret = -ENOMEM;
+-
+-	rcc_base = of_iomap(dev_of_node(dev), 0);
+-	if (!rcc_base) {
+-		dev_err(dev, "%pOFn: unable to map resource", dev_of_node(dev));
+-		goto out;
+-	}
+-
+-	ret = stm32_rcc_init(dev, stm32mp13_match_data, rcc_base);
+-out:
+-	if (ret) {
+-		if (rcc_base)
+-			iounmap(rcc_base);
+-
+-		of_node_put(dev_of_node(dev));
+-	}
+-
+-	return ret;
+-}
+-
+-static int get_clock_deps(struct device *dev)
+-{
+-	static const char * const clock_deps_name[] = {
+-		"hsi", "hse", "csi", "lsi", "lse",
+-	};
+-	size_t deps_size = sizeof(struct clk *) * ARRAY_SIZE(clock_deps_name);
+-	struct clk **clk_deps;
+-	int i;
+-
+-	clk_deps = devm_kzalloc(dev, deps_size, GFP_KERNEL);
+-	if (!clk_deps)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < ARRAY_SIZE(clock_deps_name); i++) {
+-		struct clk *clk = of_clk_get_by_name(dev_of_node(dev),
+-						     clock_deps_name[i]);
+-
+-		if (IS_ERR(clk)) {
+-			if (PTR_ERR(clk) != -EINVAL && PTR_ERR(clk) != -ENOENT)
+-				return PTR_ERR(clk);
+-		} else {
+-			/* Device gets a reference count on the clock */
+-			clk_deps[i] = devm_clk_get(dev, __clk_get_name(clk));
+-			clk_put(clk);
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+ static int stm32mp1_rcc_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	int ret = get_clock_deps(dev);
++	void __iomem *base;
+ 
+-	if (!ret)
+-		ret = stm32mp1_rcc_init(dev);
+-
+-	return ret;
+-}
+-
+-static void stm32mp1_rcc_clocks_remove(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct device_node *child, *np = dev_of_node(dev);
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (WARN_ON(IS_ERR(base)))
++		return PTR_ERR(base);
+ 
+-	for_each_available_child_of_node(np, child)
+-		of_clk_del_provider(child);
++	return stm32_rcc_init(dev, stm32mp13_match_data, base);
+ }
+ 
+ static struct platform_driver stm32mp13_rcc_clocks_driver = {
+@@ -1615,7 +1554,6 @@ static struct platform_driver stm32mp13_rcc_clocks_driver = {
+ 		.of_match_table = stm32mp13_match_data,
+ 	},
+ 	.probe = stm32mp1_rcc_clocks_probe,
+-	.remove_new = stm32mp1_rcc_clocks_remove,
+ };
+ 
+ static int __init stm32mp13_clocks_init(void)
 -- 
-2.39.2
+2.25.1
 
