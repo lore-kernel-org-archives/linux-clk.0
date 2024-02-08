@@ -1,389 +1,224 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2060.outbound.protection.outlook.com [40.107.114.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2BD78B4D;
-	Thu,  8 Feb 2024 14:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707402301; cv=none; b=K4C9BpAkZm9W6I1mYrdLmJlsIXGXEZci+bmLVrn02577KJXpBYdToOSwhR028clQgIBmD+foKDrL1aOSi69mM/xjT6aKiwTQEfTcqVWEcBHbqdH6rKtHwsJwYkFEm8ATYK734e76B4AqNA5K2eBsvwQP7HCi9u6gemAy5hNuYgw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707402301; c=relaxed/simple;
-	bh=c4s8OsmjUGLvGQpKlUOCJ6Zy+20N2yx++tNv310tsME=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U9AXVjfnUFT5YXlCofmSz8rpYA6xaMh49J2egTEgcufXjTyNV0uwcZwp879LXAO3h3ufA0SON7K0gaCeuOcmRIdCumXBlacUcB9QCDCE+M5BwK91z6I0i6SvNOaDkg06n5HDG//tBNuOPa+4mnENpkKs1Xt8g0R+vWFLWGpbSyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=bCVvNu32; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2205200D2;
+	Thu,  8 Feb 2024 14:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.114.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707402651; cv=fail; b=B5NRXP8vl97Wngt8kYiWmKl702tFBRdYjHnnoIlsCgV/6Xx/aNgsBZW3drXYFT8B3vRxmJdPIDzgZgcqb6SJlE3ykYP1DvI2Dejim0VTVensK/bchyVCaQdpeRPsygypLdf+0cu2u9dmwBETLtKxW8jv/1phhVbEl/UrTmu6tBg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707402651; c=relaxed/simple;
+	bh=FO5QzftycPUTlAVb4VOUfPGLfoggq+pFWUY0VLtnJqw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KhZU7j7OXXRxQQVqhGKYsenjO3H++JdvDLDX3/qODn33EBE850mDARc0t2XHx8gLz/l3pBNNSQwBbekCpmuxGivdhGm6POWBIPxpX6bXSeLUTu8IzWjYp3r7TM4rpE60eX7QW+l+bybPzADGTHeUyJbLXPPAVTWAnVOKIH1Kc3g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=sLXoQWrI; arc=fail smtp.client-ip=40.107.114.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="bCVvNu32"
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 418Du9VY003834;
-	Thu, 8 Feb 2024 15:24:47 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	selector1; bh=hKislKxnW7bDWoDYssDOxiVgE9aR5W6wE8Gb1TrL33s=; b=bC
-	VvNu32qde9qd9wN83HenoemEyY2pT2x5rwxCAZ0pGG24oTGsOGPB+EPZBvBc0Tf3
-	OLfpL0RtC8qhDajAr1pb/nQwMli+0YJs26B8aXb/jy5l4J6B0Z4EYvfZoOeUy/2T
-	ilAEpFA6rQ6i2miGJ/JkvPpScyetjKvLZ2q7hWdGMo/51rCqIupZZlAsYqE4Kn2m
-	UI9JAaQ7WA+5kVPn2MUS+vHMzK0T1cnq2RVrnzVgpgWeBcs4KElSzUk+luL9cVfk
-	x+954LyjblVxmzQLS02otfbMnwBDxzDOi0jDWo3CPVq4fRvbQmxWuJ+AdCgr4duN
-	4s+MD6lncXoPBKdd0YwQ==
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3w1ewpd67n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Feb 2024 15:24:47 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3170C100051;
-	Thu,  8 Feb 2024 15:24:46 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2719429B140;
-	Thu,  8 Feb 2024 15:24:46 +0100 (CET)
-Received: from localhost (10.201.21.240) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 8 Feb
- 2024 15:24:45 +0100
-From: <gabriel.fernandez@foss.st.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v9 4/4] arm64: dts: st: add rcc support for STM32MP25
-Date: Thu, 8 Feb 2024 15:23:01 +0100
-Message-ID: <20240208142301.155698-5-gabriel.fernandez@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240208142301.155698-1-gabriel.fernandez@foss.st.com>
-References: <20240208142301.155698-1-gabriel.fernandez@foss.st.com>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="sLXoQWrI"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CuDl0jfnBqdUtuAlpgR1VWeJR0UqYfxYNckySAlgUuGVgNg/f+5DRq7lQWQoB7ctolvZlYdrac2dV3oDfAqxKGYYLgq+Eaf/xnA5LbqEC+tGNWLm7X8fZDAYnslX5CwegzLKpQVG3edTo1duHhwlRryldysA/Hy8y7Pfc0sRo8JAEpcc6P+D+6xUvxf8i8o2g9k3emz+vdRnkCD2QHq+nLnDNqvxhsz+MORGSIP70ViqdPnqSJR8pxEG0XOFlie/XIKi9tyfBicWN/rbcIQBBL0otrt45++Kk0we3vnU4KASQgzAkiXytpfq+tGdC6o20ZHwvLJnFuEbtln9pMTc3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B1k7cI4SMRfWAYuQl1mbzhIBgxyZ0jBdiZvPDsREblM=;
+ b=CoRFlh2pdQWH/c0O/MaPx5PbhVy8AqAwpPGcQvMxJ+t3vHzD3MyVyIHH7+3Lc6z1HojzRXXUpo+P2bTfyi6TuonC9WcJeXa/ckc8JUw5dUft4LLM0Jzo6n2ua9aeLHgbsGy5tn9sMGEGGg7E0obxAgsWHSsK4zlsLmI6kvribL5rWV51FcTsWBWYDm0tJBMBEhbGREgYnQduFuppWtu4dhu3GfHUL/U/9nChFBNjfnkMEN1nJ1J0RG3zEHexCI5nlYZ/QEJr0XtTGiiKqHnImaYgkDtadVelGvPNs3MqABLuhPe+1344PonpUhsgrQ5JqR9pRcpl9jgJbVSncbidlg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B1k7cI4SMRfWAYuQl1mbzhIBgxyZ0jBdiZvPDsREblM=;
+ b=sLXoQWrI6ZWbq0jzGGksf6ApmE970+0nG0Zy+dEkokd03l32Bjl20Ze8yowbRw1bWSp/WKL0QoYa4KGzBQBWhAgU8Nw1/ff+MPaVzwN88QF3ko3IcYKjXDBGodIBp30UGpm/A23aC3aono3sN46M4rP/V2UybeHt2VMBDeq40WE=
+Received: from TYCPR01MB11269.jpnprd01.prod.outlook.com
+ (2603:1096:400:3c0::10) by TYWPR01MB10836.jpnprd01.prod.outlook.com
+ (2603:1096:400:2a8::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.31; Thu, 8 Feb
+ 2024 14:30:42 +0000
+Received: from TYCPR01MB11269.jpnprd01.prod.outlook.com
+ ([fe80::6719:535a:7217:9f0]) by TYCPR01MB11269.jpnprd01.prod.outlook.com
+ ([fe80::6719:535a:7217:9f0%3]) with mapi id 15.20.7249.039; Thu, 8 Feb 2024
+ 14:30:42 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "geert+renesas@glider.be"
+	<geert+renesas@glider.be>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "krzysztof.kozlowski+dt@linaro.org"
+	<krzysztof.kozlowski+dt@linaro.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com"
+	<palmer@dabbelt.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	Claudiu.Beznea <claudiu.beznea@tuxon.dev>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>
+Subject: RE: [PATCH 01/17] dt-bindings: clock: r9a07g043-cpg: Add power domain
+ IDs
+Thread-Topic: [PATCH 01/17] dt-bindings: clock: r9a07g043-cpg: Add power
+ domain IDs
+Thread-Index: AQHaWox93XkHXchpTkaSnTQ6Ok/3vrEAgGfQ
+Date: Thu, 8 Feb 2024 14:30:42 +0000
+Message-ID:
+ <TYCPR01MB11269DEA9261CA594EECC949686442@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240208124300.2740313-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240208124300.2740313-2-claudiu.beznea.uj@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB11269:EE_|TYWPR01MB10836:EE_
+x-ms-office365-filtering-correlation-id: 8d5ad3db-2cde-4947-bbf0-08dc28b287db
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ Clx1e2WfOY9yL4bsQLohBl/+ixhcGTrdZwxioq2ExrmSrRp12USZwce3vpLzEVfQSJMgMUPJuEx1xlye73IAow9PmoJoWlT7Lv7LSewqySejuZwhvE986XJa+97Ynph4oDpTElKfDRuMdo8/RQr4lrRpDzMGs72YlaID5Vfd10J+QuqYHZQQtfDe6MzC7OXFszooCO4ogab5XZ6T46YL+MHWzeibPH7Shnzq6hK6Ty/wmhFcT+iFNgGlgB6XT5RWp6iv095KfH9E3N7OgWSqulDJ2D3ZdnHi1eFQVUI7NnZttLzfcBYaZSc8sQHt5eafVk4FBqZOo4nUMPlYqpMn1M1MUUAUQ+swx07bz7NsJSTaymCfLAKEvYorV0JM3quRoFQ41vSYliJqxDGc/BafzwOErddMiLd3xAB4A+1nIlI5qAs1+wRHShmmPID1w35fBZFirNOKIbIWevv1W9LsGzGMj8MR6hc/i0XsDFkN9T3x1wMRg0vfsmazFvluW2qwTK1rOn2QN5HVua4Ar3D8HXnCgx5wkX8yI3kiueN54Ca8zbyb8Fn10y3JdapnOOREI47pz/Dnd8VtbtfCk048q+SkOZfQkquY7KDtwX5/Y9SjMLZfYDXKzyWXobyAU7p38JZxJzg2X3mCbKQgG3nt+Q==
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11269.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(376002)(366004)(346002)(136003)(396003)(230922051799003)(1800799012)(64100799003)(186009)(451199024)(55016003)(9686003)(55236004)(83380400001)(38070700009)(33656002)(86362001)(38100700002)(54906003)(921011)(6506007)(122000001)(8936002)(53546011)(478600001)(26005)(107886003)(52536014)(5660300002)(66556008)(66446008)(4326008)(7416002)(66946007)(64756008)(76116006)(316002)(8676002)(71200400001)(66476007)(7696005)(110136005)(2906002)(41300700001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?l3WysoI/ZxlIEtXFlk2Lu/bSYow0uhFGKm8uyJSVZ/kkOZRAJigU9kvpjclf?=
+ =?us-ascii?Q?nGRwE2buHtFaiqAk9pEdAjv/E7ZIeGUmASv0rk7WlbHVSIjjOO4t8gYy3zwR?=
+ =?us-ascii?Q?FVrdA3B+eRwH4WDWxzVDH6Ok1UpledJ6nUgy1CFWXM/GhL+Q033Ufizni2Au?=
+ =?us-ascii?Q?TuVWcC/LwzBbZnReGE5+0QWon7pCXKmCR2ewN359cZwVZ2gnO0ZvW58zxTMq?=
+ =?us-ascii?Q?7wJXMy70Ku+aiTbl7b905+nq/mYWmyotgc1PYa73qdTcDFMPzuR4Hqy7AnEd?=
+ =?us-ascii?Q?cuRdTqciABIn70tf3bV+ZZgDLz1VtaI6EzCIhzgFN+bmkmHH+D7Wt0vtduBr?=
+ =?us-ascii?Q?4DyvzaTbPltqJZ8rTyFtxAx+32Sm70RY95NILc8CQL7A/9d/kRGfGL38KH6C?=
+ =?us-ascii?Q?tPoa4HyKr0g9NmrxPrrsx2sLKsdJADrXCIw0PfB9jPheE78luFCSBpjENwSm?=
+ =?us-ascii?Q?xO+U7awnfHfBrrffDxecjO2EYWIgdRf6DCJF5H5CrpXagvUCzmDPt1mlaUUW?=
+ =?us-ascii?Q?TUFAlWR/Wt30WmOyGmdl4Ej1OjtqufEBoJvdjeh0x1G7R7VkLl+zgVXFOy9K?=
+ =?us-ascii?Q?CzCuE14BMt23t/InXgSlg9DqiyWOTXgd9eVXLzoSDOSqBcawI2UyS8dqNwcO?=
+ =?us-ascii?Q?Qcp3HcTYZc6gfG//0TnONaU2WD4d4jRGoT0GYGKh6d1jgsPte9h84wvJbEn5?=
+ =?us-ascii?Q?al8RXcBk3jBbvEBQHEZl5DwxpI8aZimr2hSwKbT3ufLm0PPsRBtdAKPxvjQe?=
+ =?us-ascii?Q?b/8ysFkfZ4SjoT4tztzZbI9I/wcF05dDVI/AxhvlgEo9Z9+SqXwyChneua3Z?=
+ =?us-ascii?Q?nUfk2B+VXYletbDteS0Z0OnUoCImhd0bITHJXEZxVxeRlLwPDQrbOVzooPwh?=
+ =?us-ascii?Q?qnUblpv6w7TeLD0R0RccMXYdM0XW2n374oxzjolfh3s51glem66LurS0KSUU?=
+ =?us-ascii?Q?bL44p4S6goIou22pBDpOFvovCybLjjoQ8qMXHvSuBHxS5/xelXNNGif0Jr0j?=
+ =?us-ascii?Q?H7ceeuJXeVp6Ty6w2EpO2eOkcOk7wj3/XfJNHYa6xcDXb9yS42lgYbnPG+SG?=
+ =?us-ascii?Q?ALghf+wKCBFZvKoWxgzQMPSy/FrCOMuv6POuhxUkpeEydw/5qwqh0R9Xtj2w?=
+ =?us-ascii?Q?5ev8nIEyUd3vD+HUa+8pe508WfhC2kI2g2kFKRRi4z0STl1CWQicaygaDIlu?=
+ =?us-ascii?Q?uMa8shVX644N3W6BE7/rvW6bykneAIsb/AP4CzNjEF1JMQsnoiStCHqJl7Xn?=
+ =?us-ascii?Q?uczhVfE25nOBDbuXjG/qTsxvoqpM/CoGgRPHhop095kUI7s5cp4QCZuHfnR5?=
+ =?us-ascii?Q?Q2Uj3Fjk8wfzOJzhhA65j7ke1C4ImyelEpR76lNXbo/k47TzUYDGk5FVoO2o?=
+ =?us-ascii?Q?IydCfj658ABrkD6JcWyQOKidZp3u0tdpJGVA8/5zfEWIssIPA4IHwPIKAHrr?=
+ =?us-ascii?Q?TogLvC20+FsQuZMhOt1bbvNvPSQ8H8FZMAZ5FmQDjztM/iDHCTeMHq2io+PL?=
+ =?us-ascii?Q?9TKB4mUxFHMmO1swQNH+f8o4XURJSG00LauwplvsFpMapiTsLsn+oXt0XSXK?=
+ =?us-ascii?Q?KYZ4QJqGcVlQWGJnZckkjJpjTFfaAAdCK8Yii8HnIxZePhxkXgmvd3nJ/HwF?=
+ =?us-ascii?Q?wg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-08_05,2024-02-08_01,2023-05-22_02
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11269.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d5ad3db-2cde-4947-bbf0-08dc28b287db
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2024 14:30:42.7994
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4JkkLfg/jqiYJASkWu84y8LgW8u3wmpwCjaMuWV5vVTveLYaK9nJ+pIqP3Th4e8Q162mJteT1vOLMFy32P8h3kqqpVTaDGSNeHdN1nNl4/w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10836
 
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Hi Claudiu,
 
-Add RCC support to manage clocks and resets on the STM32MP25.
+Thanks for the patch.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 144 ++++++++++++++++++-------
- arch/arm64/boot/dts/st/stm32mp255.dtsi |   4 +-
- 2 files changed, 110 insertions(+), 38 deletions(-)
+> -----Original Message-----
+> From: Claudiu <claudiu.beznea@tuxon.dev>
+> Sent: Thursday, February 8, 2024 12:43 PM
+> Subject: [PATCH 01/17] dt-bindings: clock: r9a07g043-cpg: Add power domai=
+n
+> IDs
+>=20
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> Add power domain IDs for RZ/G2UL (R9A07G043) SoC.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>  include/dt-bindings/clock/r9a07g043-cpg.h | 48 +++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>=20
+> diff --git a/include/dt-bindings/clock/r9a07g043-cpg.h b/include/dt-
+> bindings/clock/r9a07g043-cpg.h
+> index 77cde8effdc7..eabfeec7ac37 100644
+> --- a/include/dt-bindings/clock/r9a07g043-cpg.h
+> +++ b/include/dt-bindings/clock/r9a07g043-cpg.h
+> @@ -200,5 +200,53 @@
+>  #define R9A07G043_AX45MP_CORE0_RESETN	78	/* RZ/Five Only */
+>  #define R9A07G043_IAX45_RESETN		79	/* RZ/Five Only */
+>=20
+> +/* Power domain IDs. */
+> +#define R9A07G043_PD_ALWAYS_ON		0
+> +#define R9A07G043_PD_GIC		1
+> +#define R9A07G043_PD_IA55		2
+> +#define R9A07G043_PD_MHU		3
+> +#define R9A07G043_PD_CORESIGHT		4
+> +#define R9A07G043_PD_SYC		5
+> +#define R9A07G043_PD_DMAC		6
+> +#define R9A07G043_PD_GTM0		7
+> +#define R9A07G043_PD_GTM1		8
+> +#define R9A07G043_PD_GTM2		9
+> +#define R9A07G043_PD_MTU		10
+> +#define R9A07G043_PD_POE3		11
+> +#define R9A07G043_PD_WDT0		12
+> +#define R9A07G043_PD_SPI		13
+> +#define R9A07G043_PD_SDHI0		14
+> +#define R9A07G043_PD_SDHI1		15
+> +#define R9A07G043_PD_ISU		16
+> +#define R9A07G043_PD_CRU		17
+> +#define R9A07G043_PD_LCDC		18
+> +#define R9A07G043_PD_SSI0		19
+> +#define R9A07G043_PD_SSI1		20
+> +#define R9A07G043_PD_SSI2		21
+> +#define R9A07G043_PD_SSI3		22
+> +#define R9A07G043_PD_SRC		23
+> +#define R9A07G043_PD_USB0		24
+> +#define R9A07G043_PD_USB1		25
+> +#define R9A07G043_PD_USB_PHY		26
+> +#define R9A07G043_PD_ETHER0		27
+> +#define R9A07G043_PD_ETHER1		28
+> +#define R9A07G043_PD_I2C0		29
+> +#define R9A07G043_PD_I2C1		30
+> +#define R9A07G043_PD_I2C2		31
+> +#define R9A07G043_PD_I2C3		32
+> +#define R9A07G043_PD_SCIF0		33
+> +#define R9A07G043_PD_SCIF1		34
+> +#define R9A07G043_PD_SCIF2		35
+> +#define R9A07G043_PD_SCIF3		36
+> +#define R9A07G043_PD_SCIF4		37
+> +#define R9A07G043_PD_SCI0		38
+> +#define R9A07G043_PD_SCI1		39
+> +#define R9A07G043_PD_IRDA		40
+> +#define R9A07G043_PD_RSPI0		41
+> +#define R9A07G043_PD_RSPI1		42
+> +#define R9A07G043_PD_RSPI2		43
+> +#define R9A07G043_PD_CANFD		44
+> +#define R9A07G043_PD_ADC		45
+> +#define R9A07G043_PD_TSU		46
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index 5dd4f3580a60..15b79d26d1c6 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -3,7 +3,9 @@
-  * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
-  * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
-  */
-+#include <dt-bindings/clock/st,stm32mp25-rcc.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/st,stm32mp25-rcc.h>
- 
- / {
- 	#address-cells = <2>;
-@@ -35,34 +37,16 @@ arm_wdt: watchdog {
- 	};
- 
- 	clocks {
--		ck_flexgen_08: ck-flexgen-08 {
-+		clk_dsi_txbyte: txbyteclk {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
--			clock-frequency = <100000000>;
-+			clock-frequency = <0>;
- 		};
- 
--		ck_flexgen_51: ck-flexgen-51 {
-+		clk_rcbsec: clk-rcbsec {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
--			clock-frequency = <200000000>;
--		};
--
--		ck_icn_ls_mcu: ck-icn-ls-mcu {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <200000000>;
--		};
--
--		ck_icn_p_vdec: ck-icn-p-vdec {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <200000000>;
--		};
--
--		ck_icn_p_venc: ck-icn-p-venc {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <200000000>;
-+			clock-frequency = <64000000>;
- 		};
- 	};
- 
-@@ -134,7 +118,7 @@ usart2: serial@400e0000 {
- 				compatible = "st,stm32h7-uart";
- 				reg = <0x400e0000 0x400>;
- 				interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ck_flexgen_08>;
-+				clocks = <&rcc CK_KER_USART2>;
- 				status = "disabled";
- 			};
- 
-@@ -143,8 +127,9 @@ sdmmc1: mmc@48220000 {
- 				arm,primecell-periphid = <0x00353180>;
- 				reg = <0x48220000 0x400>, <0x44230400 0x8>;
- 				interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ck_flexgen_51>;
-+				clocks = <&rcc CK_KER_SDMMC1 >;
- 				clock-names = "apb_pclk";
-+				resets = <&rcc SDMMC1_R>;
- 				cap-sd-highspeed;
- 				cap-mmc-highspeed;
- 				max-frequency = <120000000>;
-@@ -168,6 +153,93 @@ package_otp@1e8 {
- 			};
- 		};
- 
-+		rcc: clock-controller@44200000 {
-+			compatible = "st,stm32mp25-rcc";
-+			reg = <0x44200000 0x10000>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			clocks = <&scmi_clk CK_SCMI_HSE>,
-+				<&scmi_clk CK_SCMI_HSI>,
-+				<&scmi_clk CK_SCMI_MSI>,
-+				<&scmi_clk CK_SCMI_LSE>,
-+				<&scmi_clk CK_SCMI_LSI>,
-+				<&scmi_clk CK_SCMI_HSE_DIV2>,
-+				<&scmi_clk CK_SCMI_ICN_HS_MCU>,
-+				<&scmi_clk CK_SCMI_ICN_LS_MCU>,
-+				<&scmi_clk CK_SCMI_ICN_SDMMC>,
-+				<&scmi_clk CK_SCMI_ICN_DDR>,
-+				<&scmi_clk CK_SCMI_ICN_DISPLAY>,
-+				<&scmi_clk CK_SCMI_ICN_HSL>,
-+				<&scmi_clk CK_SCMI_ICN_NIC>,
-+				<&scmi_clk CK_SCMI_ICN_VID>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_07>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_08>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_09>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_10>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_11>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_12>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_13>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_14>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_15>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_16>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_17>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_18>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_19>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_20>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_21>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_22>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_23>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_24>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_25>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_26>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_27>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_28>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_29>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_30>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_31>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_32>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_33>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_34>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_35>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_36>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_37>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_38>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_39>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_40>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_41>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_42>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_43>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_44>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_45>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_46>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_47>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_48>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_49>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_50>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_51>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_52>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_53>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_54>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_55>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_56>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_57>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_58>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_59>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_60>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_61>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_62>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_63>,
-+				<&scmi_clk CK_SCMI_ICN_APB1>,
-+				<&scmi_clk CK_SCMI_ICN_APB2>,
-+				<&scmi_clk CK_SCMI_ICN_APB3>,
-+				<&scmi_clk CK_SCMI_ICN_APB4>,
-+				<&scmi_clk CK_SCMI_ICN_APBDBG>,
-+				<&scmi_clk CK_SCMI_TIMG1>,
-+				<&scmi_clk CK_SCMI_TIMG2>,
-+				<&scmi_clk CK_SCMI_PLL3>,
-+				<&clk_dsi_txbyte>;
-+		};
-+
- 		syscfg: syscon@44230000 {
- 			compatible = "st,stm32mp25-syscfg", "syscon";
- 			reg = <0x44230000 0x10000>;
-@@ -186,7 +258,7 @@ gpioa: gpio@44240000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x0 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOA>;
- 				st,bank-name = "GPIOA";
- 				status = "disabled";
- 			};
-@@ -197,7 +269,7 @@ gpiob: gpio@44250000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x10000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOB>;
- 				st,bank-name = "GPIOB";
- 				status = "disabled";
- 			};
-@@ -208,7 +280,7 @@ gpioc: gpio@44260000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x20000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOC>;
- 				st,bank-name = "GPIOC";
- 				status = "disabled";
- 			};
-@@ -219,7 +291,7 @@ gpiod: gpio@44270000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x30000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOD>;
- 				st,bank-name = "GPIOD";
- 				status = "disabled";
- 			};
-@@ -230,7 +302,7 @@ gpioe: gpio@44280000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x40000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOE>;
- 				st,bank-name = "GPIOE";
- 				status = "disabled";
- 			};
-@@ -241,7 +313,7 @@ gpiof: gpio@44290000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x50000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOF>;
- 				st,bank-name = "GPIOF";
- 				status = "disabled";
- 			};
-@@ -252,7 +324,7 @@ gpiog: gpio@442a0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x60000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOG>;
- 				st,bank-name = "GPIOG";
- 				status = "disabled";
- 			};
-@@ -263,7 +335,7 @@ gpioh: gpio@442b0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x70000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOH>;
- 				st,bank-name = "GPIOH";
- 				status = "disabled";
- 			};
-@@ -274,7 +346,7 @@ gpioi: gpio@442c0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x80000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOI>;
- 				st,bank-name = "GPIOI";
- 				status = "disabled";
- 			};
-@@ -285,7 +357,7 @@ gpioj: gpio@442d0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x90000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOJ>;
- 				st,bank-name = "GPIOJ";
- 				status = "disabled";
- 			};
-@@ -296,7 +368,7 @@ gpiok: gpio@442e0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0xa0000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOK>;
- 				st,bank-name = "GPIOK";
- 				status = "disabled";
- 			};
-@@ -315,7 +387,7 @@ gpioz: gpio@46200000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOZ>;
- 				st,bank-name = "GPIOZ";
- 				st,bank-ioport = <11>;
- 				status = "disabled";
-diff --git a/arch/arm64/boot/dts/st/stm32mp255.dtsi b/arch/arm64/boot/dts/st/stm32mp255.dtsi
-index 17f197c5b22b..d5175a1f339c 100644
---- a/arch/arm64/boot/dts/st/stm32mp255.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp255.dtsi
-@@ -12,14 +12,14 @@ vdec: vdec@480d0000 {
- 				compatible = "st,stm32mp25-vdec";
- 				reg = <0x480d0000 0x3c8>;
- 				interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ck_icn_p_vdec>;
-+				clocks = <&rcc CK_BUS_VDEC>;
- 			};
- 
- 			venc: venc@480e0000 {
- 				compatible = "st,stm32mp25-venc";
- 				reg = <0x480e0000 0x800>;
- 				interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&rcc CK_BUS_VENC>;
- 			};
- 		};
- 	};
--- 
-2.25.1
+Not sure from "Table 42.3 Registers for Module Standby Mode"
+
+Power domain ID has to be based on CPG_BUS_***_MSTOP or CPG_CLKON_***
+As former reduces number of IDs??
+
+Cheers,
+Biju
+
+=20
 
