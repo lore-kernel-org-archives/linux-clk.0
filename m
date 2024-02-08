@@ -1,142 +1,186 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2107.outbound.protection.outlook.com [40.92.42.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070596A328
-	for <linux-clk@vger.kernel.org>; Thu,  8 Feb 2024 08:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707380413; cv=none; b=liqXp3D4+SkNPB3LqAsdkCARHXSjh1owAcS8+QIACJEf4fwiQwgKqLsBpQN9Hn0/g1jCuI9KvpUVdu5ZfHJohCOOJPbR6t1rHEViFUYBnxSL3bRlXTNa7F73ChhXoCxvpT7FJatYpGz4y4Ux59LFmsd9F3hvFY3+ReMWaOq3W/g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707380413; c=relaxed/simple;
-	bh=DC8QwyYyPRHm/TlNRlGL0sH5e3TC/GILV1OYtK/te3o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OeAFRGHKO4gudD0HdwLEqyPAUCHEheifn4fzChzOojvW8G2y2RJmXM5gRPJUMcouiYi5+9Jt0+uP09LgCQzPV4oK1u5YrKLUU7y1bM8nW6WCxmim8MBQL3fqC1XYD0WmWG6P/gnVU81NKAuTO+fWG0y0X3kjF4JV2OFWyXdW4cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x/v1NGfl; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74A26A8A9;
+	Thu,  8 Feb 2024 08:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.107
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707382069; cv=fail; b=Q7I545QyG9eyqIFQQCfo3EPc3V46vaWCXD86zpTzMKrubAeMRJ9+tjX4FRTWDOttYIgpeHSPQSKGRtIQ49F88JE/x1/g4dN4N3zPUWjdm0s0xKwhJCIH69grvLi0hV2X4e+bZNI7IetosisT+PFbFUvWAWd0NdI6jScsow6XI+w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707382069; c=relaxed/simple;
+	bh=BEuuu/WSK/zNFQ+na/z27swfV/k+tccAPw9KIjYGaOE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=FYWLAmD+pWLUTEzzjQHy4iNeexdapbEQNFRGAQWrPpcCZtOKpkttNaLEao4zZtHMk7jvy1D2foXD0xQOATHNYFFTorVhCLzL0s2NZWec916MjeehZaer+Tw3653gvtsxQazC/38m5WiX8Y4ZqQlxggU/SBm5dndTuJOOtQjhKBk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=hLwgdHpc; arc=fail smtp.client-ip=40.92.42.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x/v1NGfl"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-33b5978de44so115395f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 08 Feb 2024 00:20:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707380410; x=1707985210; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jIOIft8KnFzWtuRL8KYkbQwBLhkW8ybQTTPohMHfZ5Y=;
-        b=x/v1NGfl9/rN0W82kIRNf5YUdt12E9U+G0hAml5KIO78dh9MHXXDuBR5oH5+tKoolI
-         rf/pERhzFzx6y6Bk3jjoaEmxA/8JATFlaRJXdrOfWX3Skh8XCyKvtK4IXvEGRxleDk+D
-         pDc6MCBQicye6xo0cxBJ9XmavrEuxP7AbidaEJDKeNcb/KdLKK6e5l4ed8Oa3jDjTBNi
-         qgmsyWu/x0uTpY/Cup1LzDJAEyXxAZDohmv4XgxMIV/8vrtyuD1x334NSvGs/KQ2hsZV
-         v9Eoos90tZT7tdmVp5Xsjur04ee5kQVSITsBpJ32bc5DC0ctPO75Eo6M3at5MKtX2/EM
-         unjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707380410; x=1707985210;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jIOIft8KnFzWtuRL8KYkbQwBLhkW8ybQTTPohMHfZ5Y=;
-        b=KdIBf1Fd+3GsmWp5pXfDsXdpTOgrV1tnq4Z22vp4ZDY40Qt5mPt3syT/l1s4max7sE
-         OZouRr1ORWGaZvwrZbgz/ziigg+dywwwDSq/hpNO+jah6VpeEgjFMduCsMfwii50wvli
-         Rbu2RziMUqw4UJIKC/Ed5x2VVbFR9+duV2I0gYMAVPokgJXWul7+X5GqHoIMZJgQlOTh
-         YeLD8RYVUbz29fCC9abnNr4cpu2hNaXE6mq7bzuWPwawKuKieO5DDUC5Zgwrm+ltLI2/
-         N0HvqoiRvzAIa0Ci3eGYOZBRHv8NQx/94GhVXo/rKZTS2NMSod6HvA6dpxcn3kzJEGvm
-         bI/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUTLFdEiwvK50b69IA+gvwzkkksImG0fMj/oZBJWt/byA6MLNV6GodUM0piGqGfqp/vuiyRaP+/mgYBCsTneakCNbhp2zXWJEQR
-X-Gm-Message-State: AOJu0YzRTWPdVjkgIVO47uBJDunhODwjz3t0FLH5+wwwAL5jGqDr9uxZ
-	Fr4uewAh64D2RZiz5YtH1V3ZcSzI4GRhfb3PGCt+mNTSpC7Pxo9anVrLZuj3EOQ=
-X-Google-Smtp-Source: AGHT+IFjGCO6+8oIO4SWmt/OcbsoaBOmdhytrRg/6oVRaCjbdzNyG32UGzNW60LUcBoIy2zAVl1yEA==
-X-Received: by 2002:a05:6000:14d:b0:33b:178a:6715 with SMTP id r13-20020a056000014d00b0033b178a6715mr5741893wrx.24.1707380410340;
-        Thu, 08 Feb 2024 00:20:10 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7vYRonzxMr2QzJL4uVagWPRNmkJmFjVP5H4EO2WrpMgi80T4FfqLzs+E+luacVTKvmUbrrgiF8M6XRlR0aErExN3Bb0x42dxia37PK+9EGXZmgBi7BOsA/p4eMNL1nypPsWwwp2VuKfcdsDXRM78KihzBhGNBBDL57NOCLtuxegMEI8twy9GcI4cT2aMc38/9iVDG4KqYgVE99jE18Ygn1TEboBhNgw9sUv3bcV1iGhY9vuAXOH2rTr5d1m8pMY7h1McMUCSBnvPCXAyKtdp8v3pFnBxLoghjbLmGTZ11wRPjgbEtppETkep0Brq77+lkqLLWlTncUfWS/YnzuTT9jC8ka+qrcvUtpu1+6VZPmlqseSIwhHxvGzacfCjbOLIJ8VlPxEwN5KscCEq0RltCemMSpgXiOLGPhskYH0bQ0eH3wzweihXNJyZoOygzbExm0avVs2QKKZ+efHDEHb4vMtIPFKAeImDnOu+MBOTeijnjQ63NFW6bUBU0QGfafR73AZypkjeXvt0Ezf6fg7gOaA==
-Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id r20-20020adfb1d4000000b00337d6f0013esm3099374wra.107.2024.02.08.00.20.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Feb 2024 00:20:09 -0800 (PST)
-Message-ID: <7546ebef-c616-440b-ac63-4864fab83838@linaro.org>
-Date: Thu, 8 Feb 2024 09:20:08 +0100
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="hLwgdHpc"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Gt6viydCx0lGvAWTN0AAQvcHv7DcFa98+Uw+2FAXrQyhIduUWSew68XZxjmb1du+iRtE5G7G4ec/UzGvjTP7uOTdCeDpbPcypM8Nj1cT7aa1OdeGSK1c2RSGWWlF7Ueni6YAjUJWRHc87GO9fL+tVJpXPuGOG3na2HvXxT0SMQa3IriyY0b+QIMZTrpZE4VIXyF4kocYJdtuqPGh57CpHj9n9uRZmNdc5Gbzo4ZHZkczKJQkow9tw8im6QR0L61/OSc1Ibb9bBl+hmlZENWDLTCJ8jBv+mB+WfsmLd3wyEd16OsZxM6Wz4uqdEA0ErFOASRELxc7QyhZJvrdaodmkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WPt728JWQKB11LAfIAyYEWAAb5P8id84wKpeuiHCdS8=;
+ b=UOCMATprAbodVHXzotOeTE2/gt5ZfC14jG04fphSoxFikX3Azz4tPFAIXaVNUhBu5Ajqxe3GbroW+Od7eG42WBB3mziHHfD3Lo1W0k+bZ65k01xn1+gaB9Qr4YaphfADTrbtaLv82d4/IxqA2aZcUX92oA+/8yaVy2k8Dve1k4n8mUU5FhOAvb4vvm6HRE7gVrvcFIMpE9SvMfFsiIQySDkZSo2sewSIprW9CI0ZHEPWitJuvl2MypH50+3y8zLtsaLGtpLfN8Xs3VgoYzxH3Z9/myd9CjDNxEaArmeNF/cqwz61N+23au1m09IWJG1pwvwPvVc8bgCg14cr5OCIcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WPt728JWQKB11LAfIAyYEWAAb5P8id84wKpeuiHCdS8=;
+ b=hLwgdHpcxY5Pe+81Q+XQzwTbOCbBbgQnP6X0UcyJfYB0PaftiHcN10OQr5EparTE4Ej7y6B/x6Ke2h/4A/sTLG+JOz1hrpOrBeQ8NqjDmfv8hyuWWQmSO97G8pYenAq2E+mf1v0NxxXThZThCdP6kZ2zCadlSAbbP96pM0lC39EhYdMIr4dNdwyLEfb2o+iPYB6RkIY8ZxbkOmxxUwDBDdXZ1PBs5B+H4gW9WTyX80uCbhzjbu3vO115FSZ3xKIvEuN4gSQ5iFQKei4Nikwe80ecTBqeDEsG00fX7tRAA6nEdN4pIUnPO4Aq8iobdnccqUNr54/LKcNRJUfrHXV+xw==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by CY8PR20MB5985.namprd20.prod.outlook.com (2603:10b6:930:73::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.36; Thu, 8 Feb
+ 2024 08:47:44 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::406a:664b:b8bc:1e6b]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::406a:664b:b8bc:1e6b%2]) with mapi id 15.20.7249.035; Thu, 8 Feb 2024
+ 08:47:44 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Inochi Amaoto <inochiama@outlook.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v7 0/8] riscv: sophgo: add clock support for Sophgo CV1800/SG2000 SoCs
+Date: Thu,  8 Feb 2024 16:47:42 +0800
+Message-ID:
+ <IA1PR20MB49533B0C8B05FF5679E0C2F4BB442@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [McTkfx7ccH6l9onq5zc/paGB+pttV+i3Ucn9JyTaMXWmTVzZE3PYfmo50dRN9OIW]
+X-ClientProxiedBy: TY1PR01CA0205.jpnprd01.prod.outlook.com (2603:1096:403::35)
+ To IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <20240208084744.1112468-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] dt-bindings: clock: qcom: Add SM8650 camera clock
- controller
-Content-Language: en-US
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Imran Shaik <quic_imrashai@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20240206113145.31096-1-quic_jkona@quicinc.com>
- <20240206113145.31096-4-quic_jkona@quicinc.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240206113145.31096-4-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|CY8PR20MB5985:EE_
+X-MS-Office365-Filtering-Correlation-Id: 41df43c5-3882-440d-a50f-08dc28829ded
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	m+Zm9pLA60YDx9ic/IOb8iR0YoSbfehTnFDgBu12k9+9Ubq2WvyliHyCB6vKkdxzp44oM4JbrNGoP4DBQc9fwEgEyr6HvXjWm/H0jcfuztZL69jwjJJxkv464OIQabi6YBYv4bEgTIL3B/B2k38rBjqghxOlrQAVvMXcJQwDqPJSQHzqKhO+eBmPVeJeZGpJYqpzTJa7vOY+TEG58qIYpmbdSgydeK/wg1Q9NduYze6/8iw62kc41SJ1qgZOtdC6Aq3GF8oV+QKw8TcHe81SLz48fosEF96cN+yWKdscXzPP0vv9wiOJb9jPdL6Ez08PwLrV/qPkYB7IfE+0zFudQ/eURfyyHgURHbON0HDAoaItcdX9EWFWj1BtZeo1sO1YQ+o0QLbVbziIg3G8fdS7HOGSO9wxg32HNplyNzANBrF0FKqSEBXFG+Bm0PA60rKTd8T5jBREI/yAk5wvpePzRATXFwdI202DMslJe8XibP86/pDggDskzIvL4wSHZdPyV33ciyJvemhP1t4FjpIdEQwI6iBklM8IMhtRIDxm/FNIExgyzAZsR7a9qxFMDL9NK5V2pSwLKdVU6PXD+gFoJRMd6EkZuxC3QfKxJJWRM1+Xd4IdRuNP8QEncBai/FSd
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WUXR0fRCx3Y7UKfm/pgCx2CTT6cBYyNb5tkCmy8+gaTpEEOt34OZlzo31T1C?=
+ =?us-ascii?Q?wLWLrE+snf1oVVnAT3EXROvUHDP6h7fL3DVKcxJ76BeXlb+s3UgvdjsnhW+x?=
+ =?us-ascii?Q?efxJzFWZ66SW13nA7yUFU3oxICMh5CqorK7G4/9FxoZcBUU25+9R4GgxzfBt?=
+ =?us-ascii?Q?01M/FNkuVfzjcbQkEXnIUe1RGMf65w2vvjnXCwh5d+vkRulIflHPv32SMvFA?=
+ =?us-ascii?Q?pabNb8zHSICu3/dZgfQJE3/mADhRh+ycPVGnPUjGorRY8RAEs8u+k9JwCMeo?=
+ =?us-ascii?Q?634ngo13ZXo9lF3zoua2DWp7Y0kLAIn9qcxeAUZDaytJC1oXZQNsB9kZ1PaL?=
+ =?us-ascii?Q?cgvRwJ4Wg2EMzjQ5d352VfzcEo2GEQQlz0a4FyqETHtVbLTxTz3gfoSPbsOk?=
+ =?us-ascii?Q?tS49FPnxeclwXVODMqqXL+g3GF/4FL3LmmeNASiYFh/KX04gII3uEf/zv9Q0?=
+ =?us-ascii?Q?sE6nn+YBK5KsBitWaL8w2x56Wf2DgLhnUoFJbKNcKm0kbxNGlVAAWK54OWCs?=
+ =?us-ascii?Q?EsN3fcC7qpjeX2QUCMeTWGmxPGzdwtgEEX+N9hsYD0GJfOXN7Z1WF1VTuYKd?=
+ =?us-ascii?Q?XwIYH/pxHNLVoRl62++eAzIf6VkNG9oNeObC79fJrJqMZn8x3iruww7npCqi?=
+ =?us-ascii?Q?8htUdVdR3XpmJ/sgoFZSrIkp84ckDyOw5V0dpY7o9VdmKL2qOeNHUT8pQicN?=
+ =?us-ascii?Q?gO47VkamTXfG9olnzwZqU8vjL9rFpEiFmDWysgwttJosRftnfTTn9diYosq4?=
+ =?us-ascii?Q?LhC07yMqaDt/hn3kxFexHVAlijXmQ7LUDez1BzaolGpHNBsTiLpoEpzR9t3l?=
+ =?us-ascii?Q?dSk0efCcq3nfUvegcnlwM4YVkTHl9OSwcLEXnBsMwQkdYn4i6gx+4n4wLMnj?=
+ =?us-ascii?Q?ozV+sRfELlibgxmhfPjMQ5oPdsNcbNcmyntUy9L5sWoCft+04+7O7bAfoJIc?=
+ =?us-ascii?Q?zZO6Tz80Zto7B9L30am1ri9DCYIs63tgdP9GrAHhNZdNh505e7nwQUC7iM0N?=
+ =?us-ascii?Q?htkPyymxCE3eYgztb6k/ThAbp45gn42PahDXwziB0DrAtUfF/Dob9xq8OMk0?=
+ =?us-ascii?Q?L/C0Xj2q4/FlMxx3xQdHoFDLmhB6tv92f7JApfXTonSwavk1WKR3PBjRJAsM?=
+ =?us-ascii?Q?rciGniOqdnkx7J/ITbCG2YSBQhFoALTXF9mQY82zVm0EAkuUNnUz+2QIDcBX?=
+ =?us-ascii?Q?SDXelj8opo0GFZwaSiHtQlYNTFb/2WUckWBV4pcE422kytmmKRipMYkEmfrg?=
+ =?us-ascii?Q?zmSr4Hl+2h7Sz10/GHPnncJ/Qt+d1h7O6bzEo4+0Fw=3D=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41df43c5-3882-440d-a50f-08dc28829ded
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Feb 2024 08:47:44.2367
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR20MB5985
 
-On 06/02/2024 12:31, Jagadeesh Kona wrote:
-> Add device tree bindings for the camera clock controller on
-> Qualcomm SM8650 platform.
-> 
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> ---
+Add clock controller support for the Sophgo CV1800B, CV1812H and SG2000.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Changed from v6:
+1. fix dead lock when setting rate.
+2. split the driver patch into several patch for easy reading.
 
-Best regards,
-Krzysztof
+Changed from v5:
+1. rebased to mainline master tree
+2. add SG2000 clock support.
+3. fix document link
+
+Changed from v4:
+1. improve code for patch 2
+2. remove the already applied bindings
+https://lore.kernel.org/all/IA1PR20MB49535E448097F6FFC1218C39BB90A@IA1PR20MB4953.namprd20.prod.outlook.com/
+
+Changed from v3:
+1. improve comment of patch 3
+2. cleanup the include of patch 2
+
+Changed from v2:
+1. remove clock-names from bindings.
+2. remove clock-frequency node of DT from previous patch.
+3. change some unused clock to bypass mode to avoid unlockable PLL.
+
+Changed from v1:
+1. fix license issues.
+
+Inochi Amaoto (8):
+  dt-bindings: clock: sophgo: Add clock controller of SG2000 series SoC
+  clk: sophgo: Add CV1800/SG2000 series clock controller driver skeleton
+  clk: sophgo: implement clk_ops for CV1800 series clock controller
+    driver
+  clk: sophgo: Add clock support for CV1800 SoC
+  clk: sophgo: Add clock support for CV1810 SoC
+  clk: sophgo: Add clock support for SG2000 SoC
+  riscv: dts: sophgo: add clock generator for Sophgo CV1800 series SoC
+  riscv: dts: sophgo: add uart clock for Sophgo CV1800 series SoC
+
+ .../bindings/clock/sophgo,cv1800-clk.yaml     |    3 +-
+ arch/riscv/boot/dts/sophgo/cv1800b.dtsi       |    4 +
+ arch/riscv/boot/dts/sophgo/cv1812h.dtsi       |    4 +
+ arch/riscv/boot/dts/sophgo/cv18xx.dtsi        |   22 +-
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/sophgo/Kconfig                    |   12 +
+ drivers/clk/sophgo/Makefile                   |    7 +
+ drivers/clk/sophgo/clk-cv1800.c               | 1541 +++++++++++++++++
+ drivers/clk/sophgo/clk-cv1800.h               |  123 ++
+ drivers/clk/sophgo/clk-cv18xx-common.c        |   66 +
+ drivers/clk/sophgo/clk-cv18xx-common.h        |   81 +
+ drivers/clk/sophgo/clk-cv18xx-ip.c            |  887 ++++++++++
+ drivers/clk/sophgo/clk-cv18xx-ip.h            |  261 +++
+ drivers/clk/sophgo/clk-cv18xx-pll.c           |  420 +++++
+ drivers/clk/sophgo/clk-cv18xx-pll.h           |  118 ++
+ 16 files changed, 3545 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/clk/sophgo/Kconfig
+ create mode 100644 drivers/clk/sophgo/Makefile
+ create mode 100644 drivers/clk/sophgo/clk-cv1800.c
+ create mode 100644 drivers/clk/sophgo/clk-cv1800.h
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.c
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.h
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.c
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.h
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.c
+ create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.h
+
+--
+2.43.0
 
