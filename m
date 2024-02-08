@@ -1,44 +1,44 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2047.outbound.protection.outlook.com [40.92.42.47])
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2017.outbound.protection.outlook.com [40.92.42.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833356BFD3;
-	Thu,  8 Feb 2024 08:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC69E6E2DE;
+	Thu,  8 Feb 2024 08:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.17
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707382148; cv=fail; b=DInKQntEck00fndhmXUC897XLPzilO8NPQKZtkymDfWI9+UQZui7j0sc2nnaiHk4Y2J5uL7YFonatFyuKFDmS/NSgFfGwt+Z8Ku5vzl/StXdrzif/XsWobcrSDmYwBpeJufEVOflt8dGATbNj2ux1r//Skwc22IMfGlcIOdyxG4=
+	t=1707382153; cv=fail; b=nG2AvCaRT+KO3FYU3PYGa5ZRjgeDz+0ejKlCVupvIZtm/kzCXtrdXUcXh3RAMAuu6Ug6QvTyvOPKn5XIGcGNmPmp82m/euyf8yKjhme1mexGTLClLrx9VHPRdG9cBN4KhnRZIKrnefFHNqC4MYr6zWkqViLP3axfUlmdaZXFYZQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707382148; c=relaxed/simple;
-	bh=2Yy4K5upxFFYgk/tHDMtiLHkltjWtyUZNBMhf3vbgVg=;
+	s=arc-20240116; t=1707382153; c=relaxed/simple;
+	bh=ejub+3iH5kAYj3xgpEJtaf4E3VuowN9V9RLWwv1VMjM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ja0/QRVO+2QgsILbe9Y67aDrxXg0ysDcNs6Q1Vf3sFNfj0050ZFniC+qD3dSG6OMGrVkCvrmJAf/bmE+VfWpaw+SdXUV1m6Wc19KDJ9YmE2JNVsbr9L6MSkxEht6rIwHlQuoBlWDmEUbggGaAHKi9ucyJAOlADOaq24s8mFZcVY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ca5Snq64; arc=fail smtp.client-ip=40.92.42.47
+	 Content-Type:MIME-Version; b=BL3Q81TUA7fOb+374XZKh5apXfYFMhxFX+AerEWyq+kqua/TquCxdU28Fk8V1N3yof5qnB+vWZCE6CCVzvFI33YASifRtMED/eIK0bfMLa6f4ugbPNvuQiJkOltdXASIi9qcLzt0ezRaVIrsxbK4AD2+wSYRw4TuKddnL3rXg8E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=XM83+2Lq; arc=fail smtp.client-ip=40.92.42.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ca5Snq64"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="XM83+2Lq"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PCrcHjFAePrCXjLLJTqR8MvNiC7chNbwSeFkyohhoS4ahpBANu9gkABxaiaYAhojQm8PlLpDmDYwUXmfklsv9IdyPgqTuONTMx9tXzYctCJ/xgqOcwaaHMV653/Xcdxvb4x2uc+1SBHRkXg23Zv3D7x767zGpO5+J8SVxJyLbsKxrVPcwcGIjXsCewzFRj7sjRT07HWKMOsx9QevJBNZcC1V+uqGWVMoCqvkjYpUvzVsQfawJ0qSp76yN7LQQDNc43CUF2Q69gA/eVjRZbNq3t4S6LcCoxKStfSTln3iAAL6SyL6gY/E+HJYix0bosW9Ti3RgWH9jPf4WaQWuLSbuQ==
+ b=S2M79xfPJ9qphGiAtDQYMjx/CdPnQaESydL55ezY1uaTTbIsE6DNRcgDSJZh4u8ZOhrnTsmxxLcOxrgIkbI4T5huwALb/pxuwwFuLXo6+jLix52s3PoFB2WTYGC87PylnjBhv7NlU5OQvvGghSa/wGBQSmHgtFF/VwtNMTKJtkNiP7r/sLNMYapIgy+cAjpRUrSvrat4vRmRZotxzwXiNcc17BqXmeKGYzHR0bn3/Y2V+kKpMy3L4ogjFCAVWU1DJWUZKMkbUoAiPoKrMwJTji8QneAjg/ih3UUGYP4/L44CT6E5ohkStIzgV5Tf9s3k827BZ/RU4iMkLrjWDBBz3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1Z2ckSUAGA0WTElV0ZfUEKLqi8YiiSOhP3RBE09N9j4=;
- b=j2aI60k/0qvlwXLdNdbmBOG12U9b6yDhEJ7dgE1N9XbE14RscqQmN7OmJ91ashVAi5/q3+TLhOiErVPqnKPEHiR1jWc0CCByHPXYHBOo0QjAgL8mHUrf6hvepTQaaccs+o9YpS1Dkw6uxsZ4A+UbYyBVAxQR/hozbx6NFHJYbTKBvtcqXfqz6mFXdvskOuLYquJczPbI14fLf+XSDAH4/MRCpS2XqCCpsYg9Pmk8DMOFPLCSn+O5+pPgwnPoGbux6KrpW4kgoRit/Fa/AcH2j/lJXL58X2/xyAIPePMCagiup9cjUjnuwK4mjdMRucyzXmxVe/z1Z6z1RGf4Nbq7hQ==
+ bh=3RaCQlIfR6SKoXqzVm/xabl63e+kKEp2SUfSXCgEn70=;
+ b=EgzW2czEGYvqRnmEYPCDhTvO8cRgWYhWc9kj0wmaQvljO8gao1XcnLoKiUt/JqWXmLtZ098UuZuW1m4yg9IGQg8nC0MBQ9+o7HhQLibldMfApyLdvNFHzx8gmjy0taDPLkU7Z9On+hb0nqEEjf6WkbueQYWlYjPImOPbkvioU/MOY+vrEUp3eFvbSkzyq8wPrnsFTJZ1DhkdxkD5bTiVdsYsJ0J1PDxmeqUs8bD6Ipnh83pzlOCaWD+JVyUK48JvAv8dF4n9EdUfbJ0om/HW6BVTnQI9cljn/LZyy/a4ryS6Y1czmtR1u7hm63bIeavlq9ZCmkg7WeKQ+TNHsFe/mg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Z2ckSUAGA0WTElV0ZfUEKLqi8YiiSOhP3RBE09N9j4=;
- b=ca5Snq64DUUT6UE/NT/Cn4nob+oHqjV7pWRuCmpBLok+AbJr7ezzK9CmDX/nKNcRHVGw2CUu0gKTmuewzxvt7y4CHDPwRYgXTJrDGaPCc3rxpIVJ/46eKRrXJ5t5WnHmt2ys092Trl2jDSnS/tVIyOpC823UubbGaGGGWhBTolizM5MZz7a2t/mVz5pnXXrCf3jxI846rEl8A2478wgvJi/BJMaYFIJeQn24ZiceZxir4x8s55VNEou6JL81sbdzDViB5xcUwlqU3jqkYqg/l6fQR3Gr7Uyucoa8Gl/kidNIS9KQH7n69IQ9iEHNu9l3VClqPQ5I4+gbZU8870Z+Lw==
+ bh=3RaCQlIfR6SKoXqzVm/xabl63e+kKEp2SUfSXCgEn70=;
+ b=XM83+2LqkIJM5J/CoodORjWBHNuk4GKbYKbW+2n2hfehe8xBJ0LKVEqY1p2tV/C1sbW40zE28dULZyP74ez9ITaPAiyRO4d6xiYwEkZCDEEXYgzwlMIqOWeP+Ztx6C092BwaWsPTD1pwj6ki9uXEVRe8IK21IDpTJkkPwgXDal0/MYFH7fZOmbXz1B7gggLfGSfcVUT3UtWj5uTAu2QNfWSkDegF4+Wqp1fCp923s5Xxu1ZJf+2ie4RXwDHiyhIdYsZwSFvvKG6dP3PZ4dXxsjV1HoCHXjRmxzruHYk0zwSz+0KJjJRJTQfoK3kla/NjV8kfsdRlXOBoN8iVGouwaw==
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
  by CY8PR20MB5985.namprd20.prod.outlook.com (2603:10b6:930:73::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.36; Thu, 8 Feb
- 2024 08:49:03 +0000
+ 2024 08:49:08 +0000
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::406a:664b:b8bc:1e6b]) by IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::406a:664b:b8bc:1e6b%2]) with mapi id 15.20.7249.035; Thu, 8 Feb 2024
- 08:49:03 +0000
+ 08:49:08 +0000
 From: Inochi Amaoto <inochiama@outlook.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -58,20 +58,21 @@ Cc: Jisheng Zhang <jszhang@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org
-Subject: [PATCH v7 2/8] clk: sophgo: Add CV1800/SG2000 series clock controller driver skeleton
-Date: Thu,  8 Feb 2024 16:48:50 +0800
+Subject: [PATCH v7 3/8] clk: sophgo: implement clk_ops for CV1800 series clock controller driver
+Date: Thu,  8 Feb 2024 16:48:51 +0800
 Message-ID:
- <IA1PR20MB49535D0FB58F033DFFEC4A94BB442@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB49534558A17C332722AF5BC2BB442@IA1PR20MB4953.namprd20.prod.outlook.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <IA1PR20MB49533B0C8B05FF5679E0C2F4BB442@IA1PR20MB4953.namprd20.prod.outlook.com>
 References: <IA1PR20MB49533B0C8B05FF5679E0C2F4BB442@IA1PR20MB4953.namprd20.prod.outlook.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-TMN: [fP0rugm6v8E2ZvrpMoZQSQrVAJ9SB3g+jS3hLNmHIBqraK0PwlMzCISsDAgFti8c]
-X-ClientProxiedBy: TYCPR01CA0017.jpnprd01.prod.outlook.com (2603:1096:405::29)
- To IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+X-TMN: [PEynzEnP2ELR7y+tqWQ7xvFS7++wDEM5byC9bhh0xLSv2RnxwyJ6SEFSUX9jPHVE]
+X-ClientProxiedBy: TYCP286CA0249.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:456::7) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
 X-Microsoft-Original-Message-ID:
- <20240208084858.1113628-2-inochiama@outlook.com>
+ <20240208084858.1113628-3-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -81,39 +82,39 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|CY8PR20MB5985:EE_
-X-MS-Office365-Filtering-Correlation-Id: 979ad04b-e56f-419f-1c17-08dc2882cd00
+X-MS-Office365-Filtering-Correlation-Id: e682a34e-ba18-4fc7-847c-08dc2882cff9
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	khiAnw8JqiKs0Kb/5VvYTxdBI/kpkeSExhg/6O3yduyhY5AEudqyptb8sY8X33JL6bQpnpNfZUaw5/Su/ZiTLrn2qvd6/6EwtwpL2vrSnBD5vTPn1JsnGAHxffVPYELiX6LRbDCnLE3305hGDWoXq6HmiIfV1yO2lytlrffmo0m+UFMurLI0S0PXH+BAtioox2jc6fAv0L2ngQfK6ZkpqQzLz7UCPbdtYmjg7BIUIlQH4ApfcoXaEuBFqEL5Vjr5mRWMnm5yAPDG/Uqj8+OpksU3+3I0voPPbQ/NDKSU8E3yaN1VSVRo+5N+QKjkQ0+rm3IkzfdY6X90+jurHf2iFNbtgnSKQ5gTxhl7B/SrltGY2E2aXQKQtIN5x8SotMGED6O5bwz81svO2GNK/b2c57sgK5Le23t0PU5ms9/Qis4E373bv+49dS1jFudylT+a9mci0+vLdy7jW0XGJ3yg3ALgVOgJ6Jmb+AV7wxEypqqqkWYDiTmqWU2lCPX2bV+C2WQdRzwwbQmhh9WaJcQgKM2DzrdKEPxHGzSybXKOz5zmE2TfkXZPwIJpL8r8+pKRGdyGyUgVD6k2SyGV9zJpX5XNe19ebCE7fR2VbnwkpbAofkFyNtFcZvCrzsA1wp+w
+	fFlsUiNohDXwrlWTzBwK+HfmJMYsblruPvD1+xk/ZgAQW37ws8aTD8yzjgMak100G4v/6qgdvRetYbLyUDtlQtbDBHtQDb2ksMSAMOCdmfoeYU/ITYHLRgXVE0eu/v6Gf1Lsrte+uT0yoF5lELG1S7OI+SKJi01ApRA++TCE3gkcpd+BApkxw3fUuPgPR9EOQrFtTg4+GMCOoZI+asf+7I7Y9WUoeuEbjNwRGM8rjPSLnLx2BkYaxIGzMqutAmv1/a9JQuU9CZ75hmAaZgXkKg+1QcP+sXWfFZJ70b3+eI3XWfFv2wuLqmq0Mpz4EHI2lwRLpZ9YD4xTnWBc68q1I+yogoouXbgj3due2jFpdiUsChYMzmCYchcj31FMpvoJtzdsgVgqBJpQ7hmTjKUV9NiRoxgTQGD3MHVZra30CjLNW+DtTxQu6j/iDYx1aBBQYTQO996FqegF1BDHsbmKazpvRv+IPNlOE0pmCs8cfzTv+UuNrRpsgdrdLYh1/uycq4UjsZ7SNTp3GioPcJPhtPIi/EJiExfxkVuEwdvvhzZynad1948LueJ9wj1c3nBJAfFBo0fBbn861WnUiMBLtV1zEV+oYA4wP5Rvwjv9NnrgbJ7DKGeWI/a0HpHiSuMm
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MavuPe4x6jIeQ99d7oWMM/z5qHVcIDTrSj6EQyUB05mEEsgW746MT0oTXr4C?=
- =?us-ascii?Q?Y8X2lpaO0K4UF5sfj22mFa2ttVJZiKKOB7wmxjF4WSDjQMyeft2LKEtTio9v?=
- =?us-ascii?Q?q1s8Bj6ysN0QOtRl0gwvCkjifjy2CRDeKJ9ycslLs08VB/zoW+5I0q3+Fzvx?=
- =?us-ascii?Q?3wmwVEOGYallmO0l1WBNybh50J+ek4pIsjJkJ1V2TIocLtUZ5qG5LNQd3IzP?=
- =?us-ascii?Q?fVQxhocEmcmJ5f6cyI6dmzsSMvrmB54Ze2swXyuCtW0yiYPYMaTdATUpSUBA?=
- =?us-ascii?Q?B7UJKPGLhCrz8Hdb97Yj7U2tvKscEGsDsh7E+vTg3wf7GZG7kuec8GqTE/ru?=
- =?us-ascii?Q?4EoJ1oPL0ofE+tcJs/nV+OeQhWj+j8vmSHZ8mcLghu4c8+fLMIPQdEqkAmS/?=
- =?us-ascii?Q?FA1hzE6GwcdUpkRbiIs0xOCY5YUuzvI6bvURmb6V761xav+/yg2ulK1crubT?=
- =?us-ascii?Q?QoCvXGK8uJvAalXOAc2SEJ/B8p/CtTDjQXK/4hkzo9pubyT4/LH2Gr+i4KgX?=
- =?us-ascii?Q?esSxIpAEq7M5RmhiVNC5nwQD/cbBOWY02nngbTzBfLM5bpH2GwXmp1mXaifH?=
- =?us-ascii?Q?HHThVUL6iVpExxGPr0h0Whc6ZhwRFrkUezA5SiCpBwAJ+jazrP01SyvVwSsl?=
- =?us-ascii?Q?6syZ1PfPNVsfHf1Fo7NtXplGWTLvIHqQTGYBVqob1wCgjIPqjm1UfaTKxHGo?=
- =?us-ascii?Q?HZn6PoO78Vtwu+jSkQuLfvtx7MPN8j3+ZRBCYgJz9uMKLOLiM6TrMKoMPRCe?=
- =?us-ascii?Q?F8rP43KXJGxaF8/AJcq9DYQzC00/+J75aGGg1rkI9pBcqoIsxdaWOew+dFP7?=
- =?us-ascii?Q?epUBEsWPj09qAsoNkW/PAUkyq+9txh8WW2Y+s+h90IoEdq8k0iNSghJv2Pbp?=
- =?us-ascii?Q?sYBkMwEMivb9m1OVCpkQ7o9rcBK4BL9p64zfjrpfNi3DhJq401GHpI14dT+2?=
- =?us-ascii?Q?ziutyIA9qzbNLPOOuGCPuojDMUiRWQz4i/D+U9ZTIBfp1NipIyKEWAqLsvlH?=
- =?us-ascii?Q?TMQRFUcXQJFScFLTKQfVOvwoW4qLGzCEkvg9dad3owLxkCsYE6VdONmMoFWM?=
- =?us-ascii?Q?OzJ0aGa1gfvFVWxjvA6g3op5W3+lSiwFLBbOuXnM7QXW75OfoOAei1yysWCZ?=
- =?us-ascii?Q?k6ATwJwylVhOqubPOt3GNNbSILG/CKk87JXpeee9DfUoJlGvIUktGfjE5sCX?=
- =?us-ascii?Q?NZKrF2HYEYAIPdSxEeH8jxeEwKUqv27U68SaVeIQ0CSKkbfYPg7ID0rBgViz?=
- =?us-ascii?Q?DoxqxbDo436k8wR4RMoXt0pC0r+XZ6NOVMLQQhXqQA=3D=3D?=
+	=?us-ascii?Q?cIcIjttInc809vFMXO26UXGj8dGtYC/Sf9pbzBSI694WwiCn46mzM5XZJK2g?=
+ =?us-ascii?Q?wsSpefSI3fr6LhUDd1ABRhUGIprQmJIggAPNpeuuutvsrF1zEeTYm6+gEo1+?=
+ =?us-ascii?Q?NBl6pXlpUAbq+A9Tol/9DtOGBzRvpsXJ0nvG+frciy/8iBVw0H7++qpl5EEI?=
+ =?us-ascii?Q?7IeTR8wJCzSzZ4avvi30ojFQxjODMlFOKrSkKz311NrbNs4M43MudcywoOQd?=
+ =?us-ascii?Q?YXYT3TqUzvoinDLprK+KvFnpZx/yoYJLywCGPGfRE45IuMNI4Mjg9JkQlxJw?=
+ =?us-ascii?Q?eV0HhVl2tlc1JFWzTxJ/Ozjxu98OX9OvLcAylBZ/A1N6PRgVdgMmMB8HSSVP?=
+ =?us-ascii?Q?4YEg4xkWzLjNsf7V0fkJv3ShFf+KbLYXkMwCkbNMH93TrPLfyeXyQrisc2SD?=
+ =?us-ascii?Q?7lTf/+Efu0iFlrcBAMdf4O28SEvMDZUEQ5tUhfRmqoUEmQcSPc60sGkpLhDV?=
+ =?us-ascii?Q?SZiT2HAEHD4wXWvpye3B/Op9U9h8HmKiEExqFmqErDludLKjQ5QjthXN0YbZ?=
+ =?us-ascii?Q?aJ3/42RBE+uXWH4RRL3M0Ccfdthz3xRXGbsPkJq1ELTdo5TpuNUWKvMtBxNy?=
+ =?us-ascii?Q?+zBCaqGO0RcGPrs+YKGKEj1MRp6x8PSr4MX8LdwBf8QuKA1TohJuurJ3gvfH?=
+ =?us-ascii?Q?/GprThjELuIZKm1MktqC/JyiXv3arE76ETJ/oYcIjMbsWBg7vw1d6xI/uMbF?=
+ =?us-ascii?Q?M60pv5y5lenDZH5Xvsq1UTTHcTEd1xl9ktvpx0BdPvfA5aPSU9B1ivrGw0ev?=
+ =?us-ascii?Q?vTceJlZRuWos6srpF0ImoXJWMSD3nF2bPCzA82Mi7DxReMgFfHAZaj1MMf/F?=
+ =?us-ascii?Q?Or/zWnMH99huhumr84E4Y/T/t098H5FbxLaePK5W4UaoN+VwKBfHnSvr8+4n?=
+ =?us-ascii?Q?fC4ap3cAfJ4X+a2azuHrcCpiJyhxQpT3yTBavKQ8i88kg97nFtx4d4tDu4qS?=
+ =?us-ascii?Q?XUK9ofNHoc0c6KEkO3FcZSz4JzPa/eVnK4hQGTgprfhU8BwQkAkBc1tlWRvV?=
+ =?us-ascii?Q?67GKtMpnj7eUQ+q5EdEfrW5xNlqYezqTm315Nz4YqLI0soh81RwCuVhpxNpB?=
+ =?us-ascii?Q?9XMUhXa4MFytWXSx3UvWDzouky50giYZQheZlYGAfCX8ENoMdyeZ36sLJ3ps?=
+ =?us-ascii?Q?uD+bIQbak9PXis2znYXR/c0Fq3xVg+g8CKR+cEfIsCX4HndjQPAq164usshG?=
+ =?us-ascii?Q?Bem1lVuptAsxRIbEgvu5OC6tUXTgkQIeTPo7MO7O9l99UwYO1NewqNvv75lD?=
+ =?us-ascii?Q?qjDCyd4tyG1M7FZeYjYgVHLTuJx8GkKbR8Olcu+aKw=3D=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 979ad04b-e56f-419f-1c17-08dc2882cd00
+X-MS-Exchange-CrossTenant-Network-Message-Id: e682a34e-ba18-4fc7-847c-08dc2882cff9
 X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Feb 2024 08:49:03.3420
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Feb 2024 08:49:08.4112
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -121,904 +122,1377 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR20MB5985
 
-Add driver skeleton for CV1800/SG2000 series clock controller.
-The skeleton code includes:
-1. common utility code for clk_ops implementation
-2. basic probe code of the whole driver
-3. helper structure for clk definition
+Add clk_ops implement of pll and ip clocks for the clock controller.
 
 Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+Link: https://github.com/milkv-duo/duo-files/blob/6f4e9b8ecb459e017cca1a8df248a19ca70837a3/duo/datasheet/CV1800B-CV1801B-Preliminary-Datasheet-full-en.pdf
 ---
- drivers/clk/Kconfig                    |   1 +
- drivers/clk/Makefile                   |   1 +
- drivers/clk/sophgo/Kconfig             |  12 ++
- drivers/clk/sophgo/Makefile            |   7 +
- drivers/clk/sophgo/clk-cv1800.c        | 113 +++++++++++
- drivers/clk/sophgo/clk-cv18xx-common.c |  66 +++++++
- drivers/clk/sophgo/clk-cv18xx-common.h |  81 ++++++++
- drivers/clk/sophgo/clk-cv18xx-ip.c     |  98 ++++++++++
- drivers/clk/sophgo/clk-cv18xx-ip.h     | 261 +++++++++++++++++++++++++
- drivers/clk/sophgo/clk-cv18xx-pll.c    |  34 ++++
- drivers/clk/sophgo/clk-cv18xx-pll.h    | 118 +++++++++++
- 11 files changed, 792 insertions(+)
- create mode 100644 drivers/clk/sophgo/Kconfig
- create mode 100644 drivers/clk/sophgo/Makefile
- create mode 100644 drivers/clk/sophgo/clk-cv1800.c
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.c
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.h
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.c
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.h
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.c
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.h
+ drivers/clk/sophgo/clk-cv18xx-ip.c  | 889 ++++++++++++++++++++++++++--
+ drivers/clk/sophgo/clk-cv18xx-pll.c | 414 ++++++++++++-
+ 2 files changed, 1239 insertions(+), 64 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 50af5fc7f570..bc28502ec3c9 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -489,6 +489,7 @@ source "drivers/clk/rockchip/Kconfig"
- source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/sifive/Kconfig"
- source "drivers/clk/socfpga/Kconfig"
-+source "drivers/clk/sophgo/Kconfig"
- source "drivers/clk/sprd/Kconfig"
- source "drivers/clk/starfive/Kconfig"
- source "drivers/clk/sunxi/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 14fa8d4ecc1f..4abe16c8ccdf 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -118,6 +118,7 @@ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
- obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
- obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
- obj-y					+= socfpga/
-+obj-y					+= sophgo/
- obj-$(CONFIG_PLAT_SPEAR)		+= spear/
- obj-y					+= sprd/
- obj-$(CONFIG_ARCH_STI)			+= st/
-diff --git a/drivers/clk/sophgo/Kconfig b/drivers/clk/sophgo/Kconfig
-new file mode 100644
-index 000000000000..d67009fa749f
---- /dev/null
-+++ b/drivers/clk/sophgo/Kconfig
-@@ -0,0 +1,12 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# common clock support for SOPHGO SoC family.
-+
-+config CLK_SOPHGO_CV1800
-+	tristate "Support for the Sophgo CV1800 series SoCs clock controller"
-+	default m
-+	depends on ARCH_SOPHGO || COMPILE_TEST
-+	help
-+	  This driver supports clock controller of Sophgo CV18XX series SoC.
-+	  The driver require a 25MHz Oscillator to function generate clock.
-+	  It includes PLLs, common clock function and some vendor clock for
-+	  IPs of CV18XX series SoC
-diff --git a/drivers/clk/sophgo/Makefile b/drivers/clk/sophgo/Makefile
-new file mode 100644
-index 000000000000..a50320764200
---- /dev/null
-+++ b/drivers/clk/sophgo/Makefile
-@@ -0,0 +1,7 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_CLK_SOPHGO_CV1800)	+= clk-sophgo-cv1800.o
-+
-+clk-sophgo-cv1800-y		+= clk-cv1800.o
-+clk-sophgo-cv1800-y		+= clk-cv18xx-common.o
-+clk-sophgo-cv1800-y		+= clk-cv18xx-ip.o
-+clk-sophgo-cv1800-y		+= clk-cv18xx-pll.o
-diff --git a/drivers/clk/sophgo/clk-cv1800.c b/drivers/clk/sophgo/clk-cv1800.c
-new file mode 100644
-index 000000000000..7183e67f20bf
---- /dev/null
-+++ b/drivers/clk/sophgo/clk-cv1800.c
-@@ -0,0 +1,113 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2023 Inochi Amaoto <inochiama@outlook.com>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+#include <linux/spinlock.h>
-+
-+#include "clk-cv18xx-common.h"
-+
-+struct cv1800_clk_ctrl;
-+
-+struct cv1800_clk_desc {
-+	struct clk_hw_onecell_data	*clks_data;
-+
-+	int (*pre_init)(struct device *dev, void __iomem *base,
-+			struct cv1800_clk_ctrl *ctrl,
-+			const struct cv1800_clk_desc *desc);
-+};
-+
-+struct cv1800_clk_ctrl {
-+	const struct cv1800_clk_desc	*desc;
-+	spinlock_t			lock;
-+};
-+
-+static int cv1800_clk_init_ctrl(struct device *dev, void __iomem *reg,
-+				struct cv1800_clk_ctrl *ctrl,
-+				const struct cv1800_clk_desc *desc)
+diff --git a/drivers/clk/sophgo/clk-cv18xx-ip.c b/drivers/clk/sophgo/clk-cv18xx-ip.c
+index cd397d102442..5ffe2a4c6394 100644
+--- a/drivers/clk/sophgo/clk-cv18xx-ip.c
++++ b/drivers/clk/sophgo/clk-cv18xx-ip.c
+@@ -11,88 +11,877 @@
+ #include "clk-cv18xx-ip.h"
+
+ /* GATE */
++static inline struct cv1800_clk_gate *hw_to_cv1800_clk_gate(struct clk_hw *hw)
 +{
-+	int i, ret;
++	struct cv1800_clk_common *common = hw_to_cv1800_clk_common(hw);
 +
-+	ctrl->desc = desc;
-+	spin_lock_init(&ctrl->lock);
++	return container_of(common, struct cv1800_clk_gate, common);
++}
 +
-+	for (i = 0; i < desc->clks_data->num; i++) {
-+		struct clk_hw *hw = desc->clks_data->hws[i];
-+		struct cv1800_clk_common *common;
-+		const char *name;
++static int gate_enable(struct clk_hw *hw)
++{
++	struct cv1800_clk_gate *gate = hw_to_cv1800_clk_gate(hw);
 +
-+		if (!hw)
++	return cv1800_clk_setbit(&gate->common, &gate->gate);
++}
++
++static void gate_disable(struct clk_hw *hw)
++{
++	struct cv1800_clk_gate *gate = hw_to_cv1800_clk_gate(hw);
++
++	cv1800_clk_clearbit(&gate->common, &gate->gate);
++}
++
++static int gate_is_enabled(struct clk_hw *hw)
++{
++	struct cv1800_clk_gate *gate = hw_to_cv1800_clk_gate(hw);
++
++	return cv1800_clk_checkbit(&gate->common, &gate->gate);
++}
++
++static unsigned long gate_recalc_rate(struct clk_hw *hw,
++				      unsigned long parent_rate)
++{
++	return parent_rate;
++}
++
++static long gate_round_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long *parent_rate)
++{
++	return *parent_rate;
++}
++
++static int gate_set_rate(struct clk_hw *hw, unsigned long rate,
++			 unsigned long parent_rate)
++{
++	return 0;
++}
++
+ const struct clk_ops cv1800_clk_gate_ops = {
+-	.disable = NULL,
+-	.enable = NULL,
+-	.is_enabled = NULL,
++	.disable = gate_disable,
++	.enable = gate_enable,
++	.is_enabled = gate_is_enabled,
+
+-	.recalc_rate = NULL,
+-	.round_rate = NULL,
+-	.set_rate = NULL,
++	.recalc_rate = gate_recalc_rate,
++	.round_rate = gate_round_rate,
++	.set_rate = gate_set_rate,
+ };
+
+ /* DIV */
++#define _DIV_EN_CLK_DIV_FACTOR_FIELD		BIT(3)
++
++#define DIV_GET_EN_CLK_DIV_FACTOR(_reg) \
++	FIELD_GET(_DIV_EN_CLK_DIV_FACTOR_FIELD, _reg)
++
++#define DIV_SET_EN_DIV_FACTOR(_reg) \
++	_CV1800_SET_FIELD(_reg, 1, _DIV_EN_CLK_DIV_FACTOR_FIELD)
++
++static inline struct cv1800_clk_div *hw_to_cv1800_clk_div(struct clk_hw *hw)
++{
++	struct cv1800_clk_common *common = hw_to_cv1800_clk_common(hw);
++
++	return container_of(common, struct cv1800_clk_div, common);
++}
++
++static int div_enable(struct clk_hw *hw)
++{
++	struct cv1800_clk_div *div = hw_to_cv1800_clk_div(hw);
++
++	return cv1800_clk_setbit(&div->common, &div->gate);
++}
++
++static void div_disable(struct clk_hw *hw)
++{
++	struct cv1800_clk_div *div = hw_to_cv1800_clk_div(hw);
++
++	cv1800_clk_clearbit(&div->common, &div->gate);
++}
++
++static int div_is_enabled(struct clk_hw *hw)
++{
++	struct cv1800_clk_div *div = hw_to_cv1800_clk_div(hw);
++
++	return cv1800_clk_checkbit(&div->common, &div->gate);
++}
++
++static int div_helper_set_rate(struct cv1800_clk_common *common,
++			       struct cv1800_clk_regfield *div,
++			       unsigned long val)
++{
++	unsigned long flags;
++	u32 reg;
++
++	if (div->width == 0)
++		return 0;
++
++	spin_lock_irqsave(common->lock, flags);
++
++	reg = readl(common->base + div->reg);
++	reg = cv1800_clk_regfield_set(reg, val, div);
++	if (div->initval > 0)
++		reg = DIV_SET_EN_DIV_FACTOR(reg);
++
++	writel(reg, common->base + div->reg);
++
++	spin_unlock_irqrestore(common->lock, flags);
++
++	return 0;
++}
++
++static u32 div_helper_get_clockdiv(struct cv1800_clk_common *common,
++				   struct cv1800_clk_regfield *div)
++{
++	u32 clockdiv = 1;
++	u32 reg;
++
++	if (!div || div->initval < 0 || (div->width == 0 && div->initval <= 0))
++		return 1;
++
++	if (div->width == 0 && div->initval > 0)
++		return div->initval;
++
++	reg = readl(common->base + div->reg);
++
++	if (div->initval == 0 || DIV_GET_EN_CLK_DIV_FACTOR(reg))
++		clockdiv = cv1800_clk_regfield_get(reg, div);
++	else if (div->initval > 0)
++		clockdiv = div->initval;
++
++	return clockdiv;
++}
++
++static u32 div_helper_round_rate(struct cv1800_clk_regfield *div,
++				 struct clk_hw *hw, struct clk_hw *parent,
++				 unsigned long rate, unsigned long *prate)
++{
++	if (div->width == 0) {
++		if (div->initval <= 0)
++			return DIV_ROUND_UP_ULL(*prate, 1);
++		else
++			return DIV_ROUND_UP_ULL(*prate, div->initval);
++	}
++
++	return divider_round_rate_parent(hw, parent, rate, prate, NULL,
++					 div->width, div->flags);
++}
++
++static long div_round_rate(struct clk_hw *parent, unsigned long *parent_rate,
++			   unsigned long rate, int id, void *data)
++{
++	struct cv1800_clk_div *div = data;
++
++	return div_helper_round_rate(&div->div, &div->common.hw, parent,
++				     rate, parent_rate);
++}
++
++static bool div_is_better_rate(struct cv1800_clk_common *common,
++			       unsigned long target, unsigned long now,
++			       unsigned long best)
++{
++	if (common->features & CLK_DIVIDER_ROUND_CLOSEST)
++		return abs_diff(target, now) < abs_diff(target, best);
++
++	return now <= target && now > best;
++}
++
++static int mux_helper_determine_rate(struct cv1800_clk_common *common,
++				     struct clk_rate_request *req,
++				     long (*round)(struct clk_hw *,
++						   unsigned long *,
++						   unsigned long,
++						   int,
++						   void *),
++				     void *data)
++{
++	unsigned long best_parent_rate = 0, best_rate = 0;
++	struct clk_hw *best_parent, *hw = &common->hw;
++	unsigned int i;
++
++	if (clk_hw_get_flags(hw) & CLK_SET_RATE_NO_REPARENT) {
++		unsigned long adj_parent_rate;
++
++		best_parent = clk_hw_get_parent(hw);
++		best_parent_rate = clk_hw_get_rate(best_parent);
++
++		best_rate = round(best_parent, &adj_parent_rate,
++				  req->rate, -1, data);
++
++		goto find;
++	}
++
++	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
++		unsigned long tmp_rate, parent_rate;
++		struct clk_hw *parent;
++
++		parent = clk_hw_get_parent_by_index(hw, i);
++		if (!parent)
 +			continue;
 +
-+		name = hw->init->name;
++		parent_rate = clk_hw_get_rate(parent);
 +
-+		common = hw_to_cv1800_clk_common(hw);
-+		common->base = reg;
-+		common->lock = &ctrl->lock;
++		tmp_rate = round(parent, &parent_rate, req->rate, i, data);
 +
-+		ret = devm_clk_hw_register(dev, hw);
-+		if (ret) {
-+			dev_err(dev, "Couldn't register clock %d - %s\n",
-+				i, name);
-+			return ret;
++		if (tmp_rate == req->rate) {
++			best_parent = parent;
++			best_parent_rate = parent_rate;
++			best_rate = tmp_rate;
++			goto find;
++		}
++
++		if (div_is_better_rate(common, req->rate,
++				       tmp_rate, best_rate)) {
++			best_parent = parent;
++			best_parent_rate = parent_rate;
++			best_rate = tmp_rate;
 +		}
 +	}
 +
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					  desc->clks_data);
-+
-+	return ret;
-+}
-+
-+static int cv1800_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	void __iomem *reg;
-+	int ret;
-+	const struct cv1800_clk_desc *desc;
-+	struct cv1800_clk_ctrl *ctrl;
-+
-+	reg = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(reg))
-+		return PTR_ERR(reg);
-+
-+	desc = device_get_match_data(dev);
-+	if (!desc) {
-+		dev_err(dev, "no match data for platform\n");
++	if (best_rate == 0)
 +		return -EINVAL;
-+	}
 +
-+	ctrl = devm_kmalloc(dev, sizeof(*ctrl), GFP_KERNEL);
-+	if (!ctrl)
-+		return -ENOMEM;
-+
-+	if (desc->pre_init) {
-+		ret = desc->pre_init(dev, reg, ctrl, desc);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = cv1800_clk_init_ctrl(dev, reg, ctrl, desc);
-+
-+	return ret;
++find:
++	req->best_parent_hw = best_parent;
++	req->best_parent_rate = best_parent_rate;
++	req->rate = best_rate;
++	return 0;
 +}
 +
-+static const struct of_device_id cv1800_clk_ids[] = {
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, cv1800_clk_ids);
-+
-+static struct platform_driver cv1800_clk_driver = {
-+	.probe	= cv1800_clk_probe,
-+	.driver	= {
-+		.name			= "cv1800-clk",
-+		.suppress_bind_attrs	= true,
-+		.of_match_table		= cv1800_clk_ids,
-+	},
-+};
-+module_platform_driver(cv1800_clk_driver);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sophgo/clk-cv18xx-common.c b/drivers/clk/sophgo/clk-cv18xx-common.c
-new file mode 100644
-index 000000000000..cbcdd88f0e23
---- /dev/null
-+++ b/drivers/clk/sophgo/clk-cv18xx-common.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2023 Inochi Amaoto <inochiama@outlook.com>
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/spinlock.h>
-+#include <linux/bug.h>
-+
-+#include "clk-cv18xx-common.h"
-+
-+int cv1800_clk_setbit(struct cv1800_clk_common *common,
-+		      struct cv1800_clk_regbit *field)
++static int div_determine_rate(struct clk_hw *hw,
++			      struct clk_rate_request *req)
 +{
-+	u32 mask = BIT(field->shift);
-+	u32 value;
-+	unsigned long flags;
++	struct cv1800_clk_div *div = hw_to_cv1800_clk_div(hw);
 +
-+	spin_lock_irqsave(common->lock, flags);
++	return mux_helper_determine_rate(&div->common, req,
++					 div_round_rate, div);
++}
 +
-+	value = readl(common->base + field->reg);
-+	writel(value | mask, common->base + field->reg);
++static unsigned long div_recalc_rate(struct clk_hw *hw,
++				     unsigned long parent_rate)
++{
++	struct cv1800_clk_div *div = hw_to_cv1800_clk_div(hw);
++	unsigned long val;
 +
-+	spin_unlock_irqrestore(common->lock, flags);
++	val = div_helper_get_clockdiv(&div->common, &div->div);
++	if (val == 0)
++		return 0;
++
++	return divider_recalc_rate(hw, parent_rate, val, NULL,
++				   div->div.flags, div->div.width);
++}
++
++static int div_set_rate(struct clk_hw *hw, unsigned long rate,
++			 unsigned long parent_rate)
++{
++	struct cv1800_clk_div *div = hw_to_cv1800_clk_div(hw);
++	unsigned long val;
++
++	val = divider_get_val(rate, parent_rate, NULL,
++			      div->div.width, div->div.flags);
++
++	return div_helper_set_rate(&div->common, &div->div, val);
++}
++
+ const struct clk_ops cv1800_clk_div_ops = {
+-	.disable = NULL,
+-	.enable = NULL,
+-	.is_enabled = NULL,
++	.disable = div_disable,
++	.enable = div_enable,
++	.is_enabled = div_is_enabled,
+
+-	.determine_rate = NULL,
+-	.recalc_rate	= NULL,
+-	.set_rate = NULL,
++	.determine_rate = div_determine_rate,
++	.recalc_rate	= div_recalc_rate,
++	.set_rate = div_set_rate,
+ };
+
++static inline struct cv1800_clk_bypass_div *
++hw_to_cv1800_clk_bypass_div(struct clk_hw *hw)
++{
++	struct cv1800_clk_div *div = hw_to_cv1800_clk_div(hw);
++
++	return container_of(div, struct cv1800_clk_bypass_div, div);
++}
++
++static long bypass_div_round_rate(struct clk_hw *parent,
++				  unsigned long *parent_rate,
++				  unsigned long rate, int id, void *data)
++{
++	struct cv1800_clk_bypass_div *div = data;
++
++	if (id == -1) {
++		if (cv1800_clk_checkbit(&div->div.common, &div->bypass))
++			return *parent_rate;
++		else
++			return div_round_rate(parent, parent_rate, rate,
++					      -1, &div->div);
++	}
++
++	if (id == 0)
++		return *parent_rate;
++
++	return div_round_rate(parent, parent_rate, rate, id - 1, &div->div);
++}
++
++static int bypass_div_determine_rate(struct clk_hw *hw,
++				     struct clk_rate_request *req)
++{
++	struct cv1800_clk_bypass_div *div = hw_to_cv1800_clk_bypass_div(hw);
++
++	return mux_helper_determine_rate(&div->div.common, req,
++					 bypass_div_round_rate, div);
++}
++
++static unsigned long bypass_div_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
++{
++	struct cv1800_clk_bypass_div *div = hw_to_cv1800_clk_bypass_div(hw);
++
++	if (cv1800_clk_checkbit(&div->div.common, &div->bypass))
++		return parent_rate;
++
++	return div_recalc_rate(hw, parent_rate);
++}
++
++static int bypass_div_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct cv1800_clk_bypass_div *div = hw_to_cv1800_clk_bypass_div(hw);
++
++	if (cv1800_clk_checkbit(&div->div.common, &div->bypass))
++		return 0;
++
++	return div_set_rate(hw, rate, parent_rate);
++}
++
++static u8 bypass_div_get_parent(struct clk_hw *hw)
++{
++	struct cv1800_clk_bypass_div *div = hw_to_cv1800_clk_bypass_div(hw);
++
++	if (cv1800_clk_checkbit(&div->div.common, &div->bypass))
++		return 0;
++
++	return 1;
++}
++
++static int bypass_div_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct cv1800_clk_bypass_div *div = hw_to_cv1800_clk_bypass_div(hw);
++
++	if (index)
++		return cv1800_clk_clearbit(&div->div.common, &div->bypass);
++
++	return cv1800_clk_setbit(&div->div.common, &div->bypass);
++}
++
+ const struct clk_ops cv1800_clk_bypass_div_ops = {
+-	.disable = NULL,
+-	.enable = NULL,
+-	.is_enabled = NULL,
++	.disable = div_disable,
++	.enable = div_enable,
++	.is_enabled = div_is_enabled,
+
+-	.determine_rate = NULL,
+-	.recalc_rate = NULL,
+-	.set_rate = NULL,
++	.determine_rate = bypass_div_determine_rate,
++	.recalc_rate = bypass_div_recalc_rate,
++	.set_rate = bypass_div_set_rate,
+
+-	.set_parent = NULL,
+-	.get_parent = NULL,
++	.set_parent = bypass_div_set_parent,
++	.get_parent = bypass_div_get_parent,
+ };
+
+ /* MUX */
++static inline struct cv1800_clk_mux *hw_to_cv1800_clk_mux(struct clk_hw *hw)
++{
++	struct cv1800_clk_common *common = hw_to_cv1800_clk_common(hw);
++
++	return container_of(common, struct cv1800_clk_mux, common);
++}
++
++static int mux_enable(struct clk_hw *hw)
++{
++	struct cv1800_clk_mux *mux = hw_to_cv1800_clk_mux(hw);
++
++	return cv1800_clk_setbit(&mux->common, &mux->gate);
++}
++
++static void mux_disable(struct clk_hw *hw)
++{
++	struct cv1800_clk_mux *mux = hw_to_cv1800_clk_mux(hw);
++
++	cv1800_clk_clearbit(&mux->common, &mux->gate);
++}
++
++static int mux_is_enabled(struct clk_hw *hw)
++{
++	struct cv1800_clk_mux *mux = hw_to_cv1800_clk_mux(hw);
++
++	return cv1800_clk_checkbit(&mux->common, &mux->gate);
++}
++
++static long mux_round_rate(struct clk_hw *parent, unsigned long *parent_rate,
++			   unsigned long rate, int id, void *data)
++{
++	struct cv1800_clk_mux *mux = data;
++
++	return div_helper_round_rate(&mux->div, &mux->common.hw, parent,
++				     rate, parent_rate);
++}
++
++static int mux_determine_rate(struct clk_hw *hw,
++			      struct clk_rate_request *req)
++{
++	struct cv1800_clk_mux *mux = hw_to_cv1800_clk_mux(hw);
++
++	return mux_helper_determine_rate(&mux->common, req,
++					 mux_round_rate, mux);
++}
++
++static unsigned long mux_recalc_rate(struct clk_hw *hw,
++				     unsigned long parent_rate)
++{
++	struct cv1800_clk_mux *mux = hw_to_cv1800_clk_mux(hw);
++	unsigned long val;
++
++	val = div_helper_get_clockdiv(&mux->common, &mux->div);
++	if (val == 0)
++		return 0;
++
++	return divider_recalc_rate(hw, parent_rate, val, NULL,
++				   mux->div.flags, mux->div.width);
++}
++
++static int mux_set_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long parent_rate)
++{
++	struct cv1800_clk_mux *mux = hw_to_cv1800_clk_mux(hw);
++	unsigned long val;
++
++	val = divider_get_val(rate, parent_rate, NULL,
++			      mux->div.width, mux->div.flags);
++
++	return div_helper_set_rate(&mux->common, &mux->div, val);
++}
++
++static u8 mux_get_parent(struct clk_hw *hw)
++{
++	struct cv1800_clk_mux *mux = hw_to_cv1800_clk_mux(hw);
++	u32 reg = readl(mux->common.base + mux->mux.reg);
++
++	return cv1800_clk_regfield_get(reg, &mux->mux);
++}
++
++static int _mux_set_parent(struct cv1800_clk_mux *mux, u8 index)
++{
++	u32 reg;
++
++	reg = readl(mux->common.base + mux->mux.reg);
++	reg = cv1800_clk_regfield_set(reg, index, &mux->mux);
++	writel(reg, mux->common.base + mux->mux.reg);
 +
 +	return 0;
 +}
 +
-+int cv1800_clk_clearbit(struct cv1800_clk_common *common,
-+			struct cv1800_clk_regbit *field)
++static int mux_set_parent(struct clk_hw *hw, u8 index)
 +{
-+	u32 mask = BIT(field->shift);
-+	u32 value;
++	struct cv1800_clk_mux *mux = hw_to_cv1800_clk_mux(hw);
 +	unsigned long flags;
 +
-+	spin_lock_irqsave(common->lock, flags);
++	spin_lock_irqsave(mux->common.lock, flags);
 +
-+	value = readl(common->base + field->reg);
-+	writel(value & ~mask, common->base + field->reg);
++	_mux_set_parent(mux, index);
 +
-+	spin_unlock_irqrestore(common->lock, flags);
++	spin_unlock_irqrestore(mux->common.lock, flags);
 +
 +	return 0;
 +}
 +
-+int cv1800_clk_checkbit(struct cv1800_clk_common *common,
-+			struct cv1800_clk_regbit *field)
+ const struct clk_ops cv1800_clk_mux_ops = {
+-	.disable = NULL,
+-	.enable = NULL,
+-	.is_enabled = NULL,
++	.disable = mux_disable,
++	.enable = mux_enable,
++	.is_enabled = mux_is_enabled,
+
+-	.determine_rate = NULL,
+-	.recalc_rate = NULL,
+-	.set_rate = NULL,
++	.determine_rate = mux_determine_rate,
++	.recalc_rate = mux_recalc_rate,
++	.set_rate = mux_set_rate,
+
+-	.set_parent = NULL,
+-	.get_parent = NULL,
++	.set_parent = mux_set_parent,
++	.get_parent = mux_get_parent,
+ };
+
++static inline struct cv1800_clk_bypass_mux *
++hw_to_cv1800_clk_bypass_mux(struct clk_hw *hw)
 +{
-+	return readl(common->base + field->reg) & BIT(field->shift);
++	struct cv1800_clk_mux *mux = hw_to_cv1800_clk_mux(hw);
++
++	return container_of(mux, struct cv1800_clk_bypass_mux, mux);
 +}
 +
-+#define PLL_LOCK_TIMEOUT_US	(200 * 1000)
-+
-+void cv1800_clk_wait_for_lock(struct cv1800_clk_common *common,
-+			      u32 reg, u32 lock)
++static long bypass_mux_round_rate(struct clk_hw *parent,
++				  unsigned long *parent_rate,
++				  unsigned long rate, int id, void *data)
 +{
-+	void __iomem *addr = common->base + reg;
++	struct cv1800_clk_bypass_mux *mux = data;
++
++	if (id == -1) {
++		if (cv1800_clk_checkbit(&mux->mux.common, &mux->bypass))
++			return *parent_rate;
++		else
++			return mux_round_rate(parent, parent_rate, rate,
++					      -1, &mux->mux);
++	}
++
++	if (id == 0)
++		return *parent_rate;
++
++	return mux_round_rate(parent, parent_rate, rate, id - 1, &mux->mux);
++}
++
++static int bypass_mux_determine_rate(struct clk_hw *hw,
++				     struct clk_rate_request *req)
++{
++	struct cv1800_clk_bypass_mux *mux = hw_to_cv1800_clk_bypass_mux(hw);
++
++	return mux_helper_determine_rate(&mux->mux.common, req,
++					 bypass_mux_round_rate, mux);
++}
++
++static unsigned long bypass_mux_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
++{
++	struct cv1800_clk_bypass_mux *mux = hw_to_cv1800_clk_bypass_mux(hw);
++
++	if (cv1800_clk_checkbit(&mux->mux.common, &mux->bypass))
++		return parent_rate;
++
++	return mux_recalc_rate(hw, parent_rate);
++}
++
++static int bypass_mux_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct cv1800_clk_bypass_mux *mux = hw_to_cv1800_clk_bypass_mux(hw);
++
++	if (cv1800_clk_checkbit(&mux->mux.common, &mux->bypass))
++		return 0;
++
++	return mux_set_rate(hw, rate, parent_rate);
++}
++
++static u8 bypass_mux_get_parent(struct clk_hw *hw)
++{
++	struct cv1800_clk_bypass_mux *mux = hw_to_cv1800_clk_bypass_mux(hw);
++
++	if (cv1800_clk_checkbit(&mux->mux.common, &mux->bypass))
++		return 0;
++
++	return mux_get_parent(hw) + 1;
++}
++
++static int bypass_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct cv1800_clk_bypass_mux *mux = hw_to_cv1800_clk_bypass_mux(hw);
++
++	if (index == 0)
++		return cv1800_clk_setbit(&mux->mux.common, &mux->bypass);
++
++	return cv1800_clk_clearbit(&mux->mux.common, &mux->bypass);
++}
++
+ const struct clk_ops cv1800_clk_bypass_mux_ops = {
+-	.disable = NULL,
+-	.enable = NULL,
+-	.is_enabled = NULL,
++	.disable = mux_disable,
++	.enable = mux_enable,
++	.is_enabled = mux_is_enabled,
+
+-	.determine_rate = NULL,
+-	.recalc_rate = NULL,
+-	.set_rate = NULL,
++	.determine_rate = bypass_mux_determine_rate,
++	.recalc_rate = bypass_mux_recalc_rate,
++	.set_rate = bypass_mux_set_rate,
+
+-	.set_parent = NULL,
+-	.get_parent = NULL,
++	.set_parent = bypass_mux_set_parent,
++	.get_parent = bypass_mux_get_parent,
+ };
+
+ /* MMUX */
++static inline struct cv1800_clk_mmux *hw_to_cv1800_clk_mmux(struct clk_hw *hw)
++{
++	struct cv1800_clk_common *common = hw_to_cv1800_clk_common(hw);
++
++	return container_of(common, struct cv1800_clk_mmux, common);
++}
++
++static u8 mmux_get_parent_id(struct cv1800_clk_mmux *mmux)
++{
++	struct clk_hw *hw = &mmux->common.hw;
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned int i;
++
++	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
++		if (parent == clk_hw_get_parent_by_index(hw, i))
++			return i;
++	}
++
++	unreachable();
++}
++
++static int mmux_enable(struct clk_hw *hw)
++{
++	struct cv1800_clk_mmux *mmux = hw_to_cv1800_clk_mmux(hw);
++
++	return cv1800_clk_setbit(&mmux->common, &mmux->gate);
++}
++
++static void mmux_disable(struct clk_hw *hw)
++{
++	struct cv1800_clk_mmux *mmux = hw_to_cv1800_clk_mmux(hw);
++
++	cv1800_clk_clearbit(&mmux->common, &mmux->gate);
++}
++
++static int mmux_is_enabled(struct clk_hw *hw)
++{
++	struct cv1800_clk_mmux *mmux = hw_to_cv1800_clk_mmux(hw);
++
++	return cv1800_clk_checkbit(&mmux->common, &mmux->gate);
++}
++
++static long mmux_round_rate(struct clk_hw *parent, unsigned long *parent_rate,
++			    unsigned long rate, int id, void *data)
++{
++	struct cv1800_clk_mmux *mmux = data;
++	s8 div_id;
++
++	if (id == -1) {
++		if (cv1800_clk_checkbit(&mmux->common, &mmux->bypass))
++			return *parent_rate;
++
++		id = mmux_get_parent_id(mmux);
++	}
++
++	div_id = mmux->parent2sel[id];
++
++	if (div_id < 0)
++		return *parent_rate;
++
++	return div_helper_round_rate(&mmux->div[div_id],
++				     &mmux->common.hw, parent,
++				     rate, parent_rate);
++}
++
++static int mmux_determine_rate(struct clk_hw *hw,
++			       struct clk_rate_request *req)
++{
++	struct cv1800_clk_mmux *mmux = hw_to_cv1800_clk_mmux(hw);
++
++	return mux_helper_determine_rate(&mmux->common, req,
++					 mmux_round_rate, mmux);
++}
++
++static unsigned long mmux_recalc_rate(struct clk_hw *hw,
++				      unsigned long parent_rate)
++{
++	struct cv1800_clk_mmux *mmux = hw_to_cv1800_clk_mmux(hw);
++	unsigned long val;
++	struct cv1800_clk_regfield *div;
++
++	if (cv1800_clk_checkbit(&mmux->common, &mmux->bypass))
++		return parent_rate;
++
++	if (cv1800_clk_checkbit(&mmux->common, &mmux->clk_sel))
++		div = &mmux->div[0];
++	else
++		div = &mmux->div[1];
++
++	val = div_helper_get_clockdiv(&mmux->common, div);
++	if (val == 0)
++		return 0;
++
++	return divider_recalc_rate(hw, parent_rate, val, NULL,
++				   div->flags, div->width);
++}
++
++static int mmux_set_rate(struct clk_hw *hw, unsigned long rate,
++			 unsigned long parent_rate)
++{
++	struct cv1800_clk_mmux *mmux = hw_to_cv1800_clk_mmux(hw);
++	struct cv1800_clk_regfield *div;
++	unsigned long val;
++
++	if (cv1800_clk_checkbit(&mmux->common, &mmux->bypass))
++		return parent_rate;
++
++	if (cv1800_clk_checkbit(&mmux->common, &mmux->clk_sel))
++		div = &mmux->div[0];
++	else
++		div = &mmux->div[1];
++
++	val = divider_get_val(rate, parent_rate, NULL,
++			      div->width, div->flags);
++
++	return div_helper_set_rate(&mmux->common, div, val);
++}
++
++static u8 mmux_get_parent(struct clk_hw *hw)
++{
++	struct cv1800_clk_mmux *mmux = hw_to_cv1800_clk_mmux(hw);
++	struct cv1800_clk_regfield *mux;
++	u32 reg;
++	s8 clk_sel;
++
++	if (cv1800_clk_checkbit(&mmux->common, &mmux->bypass))
++		return 0;
++
++	if (cv1800_clk_checkbit(&mmux->common, &mmux->clk_sel))
++		clk_sel = 0;
++	else
++		clk_sel = 1;
++	mux = &mmux->mux[clk_sel];
++
++	reg = readl(mmux->common.base + mux->reg);
++
++	return mmux->sel2parent[clk_sel][cv1800_clk_regfield_get(reg, mux)];
++}
++
++static int mmux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct cv1800_clk_mmux *mmux = hw_to_cv1800_clk_mmux(hw);
++	struct cv1800_clk_regfield *mux;
++	unsigned long flags;
++	u32 reg;
++	s8 clk_sel = mmux->parent2sel[index];
++
++	if (index == 0 || clk_sel == -1) {
++		cv1800_clk_setbit(&mmux->common, &mmux->bypass);
++		goto release;
++	}
++
++	cv1800_clk_clearbit(&mmux->common, &mmux->bypass);
++
++	if (clk_sel)
++		cv1800_clk_clearbit(&mmux->common, &mmux->clk_sel);
++	else
++		cv1800_clk_setbit(&mmux->common, &mmux->clk_sel);
++
++	spin_lock_irqsave(mmux->common.lock, flags);
++
++	mux = &mmux->mux[clk_sel];
++	reg = readl(mmux->common.base + mux->reg);
++	reg = cv1800_clk_regfield_set(reg, index, mux);
++
++	writel(reg, mmux->common.base + mux->reg);
++
++release:
++	spin_unlock_irqrestore(mmux->common.lock, flags);
++
++	return 0;
++}
++
+ const struct clk_ops cv1800_clk_mmux_ops = {
+-	.disable = NULL,
+-	.enable = NULL,
+-	.is_enabled = NULL,
++	.disable = mmux_disable,
++	.enable = mmux_enable,
++	.is_enabled = mmux_is_enabled,
+
+-	.determine_rate = NULL,
+-	.recalc_rate = NULL,
+-	.set_rate = NULL,
++	.determine_rate = mmux_determine_rate,
++	.recalc_rate = mmux_recalc_rate,
++	.set_rate = mmux_set_rate,
+
+-	.set_parent = NULL,
+-	.get_parent = NULL,
++	.set_parent = mmux_set_parent,
++	.get_parent = mmux_get_parent,
+ };
+
+ /* AUDIO CLK */
++static inline struct cv1800_clk_audio *
++hw_to_cv1800_clk_audio(struct clk_hw *hw)
++{
++	struct cv1800_clk_common *common = hw_to_cv1800_clk_common(hw);
++
++	return container_of(common, struct cv1800_clk_audio, common);
++}
++
++static int aclk_enable(struct clk_hw *hw)
++{
++	struct cv1800_clk_audio *aclk = hw_to_cv1800_clk_audio(hw);
++
++	cv1800_clk_setbit(&aclk->common, &aclk->src_en);
++	return cv1800_clk_setbit(&aclk->common, &aclk->output_en);
++}
++
++static void aclk_disable(struct clk_hw *hw)
++{
++	struct cv1800_clk_audio *aclk = hw_to_cv1800_clk_audio(hw);
++
++	cv1800_clk_clearbit(&aclk->common, &aclk->output_en);
++	cv1800_clk_clearbit(&aclk->common, &aclk->src_en);
++}
++
++static int aclk_is_enabled(struct clk_hw *hw)
++{
++	struct cv1800_clk_audio *aclk = hw_to_cv1800_clk_audio(hw);
++
++	return cv1800_clk_checkbit(&aclk->common, &aclk->output_en);
++}
++
++static int aclk_determine_rate(struct clk_hw *hw,
++			       struct clk_rate_request *req)
++{
++	struct cv1800_clk_audio *aclk = hw_to_cv1800_clk_audio(hw);
++
++	req->rate = aclk->target_rate;
++
++	return 0;
++}
++
++static unsigned long aclk_recalc_rate(struct clk_hw *hw,
++				      unsigned long parent_rate)
++{
++	struct cv1800_clk_audio *aclk = hw_to_cv1800_clk_audio(hw);
++	u64 rate = parent_rate;
++	u64 factor = 2;
 +	u32 regval;
 +
-+	if (!lock)
-+		return;
++	if (!cv1800_clk_checkbit(&aclk->common, &aclk->div_en))
++		return 0;
 +
-+	WARN_ON(readl_relaxed_poll_timeout(addr, regval, regval & lock,
-+					   100, PLL_LOCK_TIMEOUT_US));
++	regval = readl(aclk->common.base + aclk->m.reg);
++	factor *= cv1800_clk_regfield_get(regval, &aclk->m);
++
++	regval = readl(aclk->common.base + aclk->n.reg);
++	rate *= cv1800_clk_regfield_get(regval, &aclk->n);
++
++	return DIV64_U64_ROUND_UP(rate, factor);
 +}
-diff --git a/drivers/clk/sophgo/clk-cv18xx-common.h b/drivers/clk/sophgo/clk-cv18xx-common.h
-new file mode 100644
-index 000000000000..2bfda02b2064
---- /dev/null
-+++ b/drivers/clk/sophgo/clk-cv18xx-common.h
-@@ -0,0 +1,81 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2023 Inochi Amaoto <inochiama@outlook.com>
-+ */
 +
-+#ifndef _CLK_SOPHGO_CV18XX_IP_H_
-+#define _CLK_SOPHGO_CV18XX_IP_H_
-+
-+#include <linux/compiler.h>
-+#include <linux/clk-provider.h>
-+#include <linux/bitfield.h>
-+
-+struct cv1800_clk_common {
-+	void __iomem	*base;
-+	spinlock_t	*lock;
-+	struct clk_hw	hw;
-+	unsigned long	features;
-+};
-+
-+#define CV1800_CLK_COMMON(_name, _parents, _op, _flags)			\
-+	{								\
-+		.hw.init = CLK_HW_INIT_PARENTS_DATA(_name, _parents,	\
-+						    _op, _flags),	\
-+	}
-+
-+static inline struct cv1800_clk_common *
-+hw_to_cv1800_clk_common(struct clk_hw *hw)
++static void aclk_determine_mn(unsigned long parent_rate, unsigned long rate,
++			      u32 *m, u32 *n)
 +{
-+	return container_of(hw, struct cv1800_clk_common, hw);
++	u32 tm = parent_rate / 2;
++	u32 tn = rate;
++	u32 tcommon = gcd(tm, tn);
++	*m = tm / tcommon;
++	*n = tn / tcommon;
 +}
 +
-+struct cv1800_clk_regbit {
-+	u16		reg;
-+	s8		shift;
-+};
++static int aclk_set_rate(struct clk_hw *hw, unsigned long rate,
++			 unsigned long parent_rate)
++{
++	struct cv1800_clk_audio *aclk = hw_to_cv1800_clk_audio(hw);
++	unsigned long flags;
++	u32 m, n;
 +
-+struct cv1800_clk_regfield {
-+	u16		reg;
-+	u8		shift;
-+	u8		width;
-+	s16		initval;
-+	unsigned long	flags;
-+};
++	aclk_determine_mn(parent_rate, rate,
++			  &m, &n);
 +
-+#define CV1800_CLK_BIT(_reg, _shift)	\
-+	{				\
-+		.reg = _reg,		\
-+		.shift = _shift,	\
-+	}
++	spin_lock_irqsave(aclk->common.lock, flags);
 +
-+#define CV1800_CLK_REG(_reg, _shift, _width, _initval, _flags)	\
-+	{							\
-+		.reg = _reg,					\
-+		.shift = _shift,				\
-+		.width = _width,				\
-+		.initval = _initval,				\
-+		.flags = _flags,				\
-+	}
++	writel(m, aclk->common.base + aclk->m.reg);
++	writel(n, aclk->common.base + aclk->n.reg);
 +
-+#define cv1800_clk_regfield_genmask(_reg) \
-+	GENMASK((_reg)->shift + (_reg)->width - 1, (_reg)->shift)
-+#define cv1800_clk_regfield_get(_val, _reg) \
-+	(((_val) >> (_reg)->shift) & GENMASK((_reg)->width - 1, 0))
-+#define cv1800_clk_regfield_set(_val, _new, _reg)    \
-+	(((_val) & ~cv1800_clk_regfield_genmask((_reg))) | \
-+	 (((_new) & GENMASK((_reg)->width - 1, 0)) << (_reg)->shift))
++	cv1800_clk_setbit(&aclk->common, &aclk->div_en);
++	cv1800_clk_setbit(&aclk->common, &aclk->div_up);
 +
-+#define _CV1800_SET_FIELD(_reg, _val, _field) \
-+	(((_reg) & ~(_field)) | FIELD_PREP((_field), (_val)))
++	spin_unlock_irqrestore(aclk->common.lock, flags);
 +
-+int cv1800_clk_setbit(struct cv1800_clk_common *common,
-+		      struct cv1800_clk_regbit *field);
-+int cv1800_clk_clearbit(struct cv1800_clk_common *common,
-+			struct cv1800_clk_regbit *field);
-+int cv1800_clk_checkbit(struct cv1800_clk_common *common,
-+			struct cv1800_clk_regbit *field);
++	return 0;
++}
 +
-+void cv1800_clk_wait_for_lock(struct cv1800_clk_common *common,
-+			      u32 reg, u32 lock);
-+
-+#endif // _CLK_SOPHGO_CV18XX_IP_H_
-diff --git a/drivers/clk/sophgo/clk-cv18xx-ip.c b/drivers/clk/sophgo/clk-cv18xx-ip.c
-new file mode 100644
-index 000000000000..cd397d102442
---- /dev/null
-+++ b/drivers/clk/sophgo/clk-cv18xx-ip.c
-@@ -0,0 +1,98 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2023 Inochi Amaoto <inochiama@outlook.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/gcd.h>
-+#include <linux/spinlock.h>
-+
-+#include "clk-cv18xx-ip.h"
-+
-+/* GATE */
-+const struct clk_ops cv1800_clk_gate_ops = {
-+	.disable = NULL,
-+	.enable = NULL,
-+	.is_enabled = NULL,
-+
-+	.recalc_rate = NULL,
-+	.round_rate = NULL,
-+	.set_rate = NULL,
-+};
-+
-+/* DIV */
-+const struct clk_ops cv1800_clk_div_ops = {
-+	.disable = NULL,
-+	.enable = NULL,
-+	.is_enabled = NULL,
-+
-+	.determine_rate = NULL,
-+	.recalc_rate	= NULL,
-+	.set_rate = NULL,
-+};
-+
-+const struct clk_ops cv1800_clk_bypass_div_ops = {
-+	.disable = NULL,
-+	.enable = NULL,
-+	.is_enabled = NULL,
-+
-+	.determine_rate = NULL,
-+	.recalc_rate = NULL,
-+	.set_rate = NULL,
-+
-+	.set_parent = NULL,
-+	.get_parent = NULL,
-+};
-+
-+/* MUX */
-+const struct clk_ops cv1800_clk_mux_ops = {
-+	.disable = NULL,
-+	.enable = NULL,
-+	.is_enabled = NULL,
-+
-+	.determine_rate = NULL,
-+	.recalc_rate = NULL,
-+	.set_rate = NULL,
-+
-+	.set_parent = NULL,
-+	.get_parent = NULL,
-+};
-+
-+const struct clk_ops cv1800_clk_bypass_mux_ops = {
-+	.disable = NULL,
-+	.enable = NULL,
-+	.is_enabled = NULL,
-+
-+	.determine_rate = NULL,
-+	.recalc_rate = NULL,
-+	.set_rate = NULL,
-+
-+	.set_parent = NULL,
-+	.get_parent = NULL,
-+};
-+
-+/* MMUX */
-+const struct clk_ops cv1800_clk_mmux_ops = {
-+	.disable = NULL,
-+	.enable = NULL,
-+	.is_enabled = NULL,
-+
-+	.determine_rate = NULL,
-+	.recalc_rate = NULL,
-+	.set_rate = NULL,
-+
-+	.set_parent = NULL,
-+	.get_parent = NULL,
-+};
-+
-+/* AUDIO CLK */
-+const struct clk_ops cv1800_clk_audio_ops = {
-+	.disable = NULL,
-+	.enable = NULL,
-+	.is_enabled = NULL,
-+
-+	.determine_rate = NULL,
-+	.recalc_rate = NULL,
-+	.set_rate = NULL,
-+};
-diff --git a/drivers/clk/sophgo/clk-cv18xx-ip.h b/drivers/clk/sophgo/clk-cv18xx-ip.h
-new file mode 100644
-index 000000000000..b37ba42bfde3
---- /dev/null
-+++ b/drivers/clk/sophgo/clk-cv18xx-ip.h
-@@ -0,0 +1,261 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2023 Inochi Amaoto <inochiama@outlook.com>
-+ */
-+
-+#ifndef _CLK_SOPHGO_CV1800_IP_H_
-+#define _CLK_SOPHGO_CV1800_IP_H_
-+
-+#include "clk-cv18xx-common.h"
-+
-+struct cv1800_clk_gate {
-+	struct cv1800_clk_common	common;
-+	struct cv1800_clk_regbit	gate;
-+};
-+
-+struct cv1800_clk_div_data {
-+	u32		reg;
-+	u32		mask;
-+	u32		width;
-+	u32		init;
-+	u32		flags;
-+};
-+
-+struct cv1800_clk_div {
-+	struct cv1800_clk_common	common;
-+	struct cv1800_clk_regbit	gate;
-+	struct cv1800_clk_regfield	div;
-+};
-+
-+struct cv1800_clk_bypass_div {
-+	struct cv1800_clk_div		div;
-+	struct cv1800_clk_regbit	bypass;
-+};
-+
-+struct cv1800_clk_mux {
-+	struct cv1800_clk_common	common;
-+	struct cv1800_clk_regbit	gate;
-+	struct cv1800_clk_regfield	div;
-+	struct cv1800_clk_regfield	mux;
-+};
-+
-+struct cv1800_clk_bypass_mux {
-+	struct cv1800_clk_mux		mux;
-+	struct cv1800_clk_regbit	bypass;
-+};
-+
-+struct cv1800_clk_mmux {
-+	struct cv1800_clk_common	common;
-+	struct cv1800_clk_regbit	gate;
-+	struct cv1800_clk_regfield	div[2];
-+	struct cv1800_clk_regfield	mux[2];
-+	struct cv1800_clk_regbit	bypass;
-+	struct cv1800_clk_regbit	clk_sel;
-+	const s8			*parent2sel;
-+	const u8			*sel2parent[2];
-+};
-+
-+struct cv1800_clk_audio {
-+	struct cv1800_clk_common	common;
-+	struct cv1800_clk_regbit	src_en;
-+	struct cv1800_clk_regbit	output_en;
-+	struct cv1800_clk_regbit	div_en;
-+	struct cv1800_clk_regbit	div_up;
-+	struct cv1800_clk_regfield	m;
-+	struct cv1800_clk_regfield	n;
-+	u32				target_rate;
-+};
-+
-+#define CV1800_GATE(_name, _parent, _gate_reg, _gate_shift, _flags)	\
-+	struct cv1800_clk_gate _name = {				\
-+		.common	= CV1800_CLK_COMMON(#_name, _parent,		\
-+					    &cv1800_clk_gate_ops,	\
-+					    _flags),			\
-+		.gate	= CV1800_CLK_BIT(_gate_reg, _gate_shift),	\
-+	}
-+
-+#define _CV1800_DIV(_name, _parent, _gate_reg, _gate_shift,		\
-+		    _div_reg, _div_shift, _div_width, _div_init,	\
-+		    _div_flag, _ops, _flags)				\
-+	{								\
-+		.common		= CV1800_CLK_COMMON(#_name, _parent,	\
-+						    _ops, _flags),	\
-+		.gate		= CV1800_CLK_BIT(_gate_reg,		\
-+						 _gate_shift),		\
-+		.div		= CV1800_CLK_REG(_div_reg, _div_shift,	\
-+						 _div_width, _div_init,	\
-+						 _div_flag),		\
-+	}
-+
-+#define _CV1800_FIXED_DIV_FLAG	\
-+	(CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ROUND_CLOSEST)
-+
-+#define _CV1800_FIXED_DIV(_name, _parent, _gate_reg, _gate_shift,	\
-+			  _fix_div, _ops, _flags)			\
-+	{								\
-+		.common		= CV1800_CLK_COMMON(#_name, _parent,	\
-+						    _ops, _flags),	\
-+		.gate		= CV1800_CLK_BIT(_gate_reg,		\
-+						 _gate_shift),		\
-+		.div		= CV1800_CLK_REG(0, 0, 0,		\
-+						 _fix_div,		\
-+						 _CV1800_FIXED_DIV_FLAG),\
-+	}
-+
-+#define CV1800_DIV(_name, _parent, _gate_reg, _gate_shift,		\
-+		   _div_reg, _div_shift, _div_width, _div_init,		\
-+		   _div_flag, _flags)					\
-+	struct cv1800_clk_div _name =					\
-+		_CV1800_DIV(_name, _parent, _gate_reg, _gate_shift,	\
-+			    _div_reg, _div_shift, _div_width, _div_init,\
-+			    _div_flag, &cv1800_clk_div_ops, _flags)
-+
-+#define CV1800_BYPASS_DIV(_name, _parent, _gate_reg, _gate_shift,	\
-+			  _div_reg, _div_shift, _div_width, _div_init,	\
-+			  _div_flag, _bypass_reg, _bypass_shift, _flags)\
-+	struct cv1800_clk_bypass_div _name = {				\
-+		.div	= _CV1800_DIV(_name, _parent,			\
-+				      _gate_reg, _gate_shift,		\
-+				      _div_reg, _div_shift,		\
-+				      _div_width, _div_init, _div_flag,	\
-+				      &cv1800_clk_bypass_div_ops,	\
-+				      _flags),				\
-+		.bypass	= CV1800_CLK_BIT(_bypass_reg, _bypass_shift),	\
-+	}
-+
-+#define CV1800_FIXED_DIV(_name, _parent, _gate_reg, _gate_shift,	\
-+			 _fix_div, _flags)				\
-+	struct cv1800_clk_div _name =					\
-+		_CV1800_FIXED_DIV(_name, _parent,			\
-+				  _gate_reg, _gate_shift,		\
-+				  _fix_div,				\
-+				  &cv1800_clk_div_ops, _flags)		\
-+
-+#define CV1800_BYPASS_FIXED_DIV(_name, _parent, _gate_reg, _gate_shift,	\
-+				_fix_div, _bypass_reg, _bypass_shift,	\
-+				_flags)					\
-+	struct cv1800_clk_bypass_div _name = {				\
-+		.div	= _CV1800_FIXED_DIV(_name, _parent,		\
-+					    _gate_reg, _gate_shift,	\
-+					    _fix_div,			\
-+					    &cv1800_clk_bypass_div_ops,	\
-+					    _flags),			\
-+		.bypass	= CV1800_CLK_BIT(_bypass_reg, _bypass_shift),	\
-+	}
-+
-+#define _CV1800_MUX(_name, _parent, _gate_reg, _gate_shift,		\
-+		    _div_reg, _div_shift, _div_width, _div_init,	\
-+		    _div_flag,						\
-+		    _mux_reg, _mux_shift, _mux_width,			\
-+		    _ops, _flags)					\
-+	{								\
-+		.common		= CV1800_CLK_COMMON(#_name, _parent,	\
-+						    _ops, _flags),	\
-+		.gate		= CV1800_CLK_BIT(_gate_reg,		\
-+						 _gate_shift),		\
-+		.div		= CV1800_CLK_REG(_div_reg, _div_shift,	\
-+						 _div_width, _div_init,	\
-+						 _div_flag),		\
-+		.mux		= CV1800_CLK_REG(_mux_reg, _mux_shift,	\
-+						 _mux_width, 0, 0),	\
-+	}
-+
-+#define CV1800_MUX(_name, _parent, _gate_reg, _gate_shift,		\
-+		   _div_reg, _div_shift, _div_width, _div_init,		\
-+		   _div_flag,						\
-+		   _mux_reg, _mux_shift, _mux_width, _flags)		\
-+	struct cv1800_clk_mux _name =					\
-+		_CV1800_MUX(_name, _parent, _gate_reg, _gate_shift,	\
-+			    _div_reg, _div_shift, _div_width, _div_init,\
-+			    _div_flag, _mux_reg, _mux_shift, _mux_width,\
-+			    &cv1800_clk_mux_ops, _flags)
-+
-+#define CV1800_BYPASS_MUX(_name, _parent, _gate_reg, _gate_shift,	\
-+			  _div_reg, _div_shift, _div_width, _div_init,	\
-+			  _div_flag,					\
-+			  _mux_reg, _mux_shift, _mux_width,		\
-+			  _bypass_reg, _bypass_shift, _flags)		\
-+	struct cv1800_clk_bypass_mux _name = {				\
-+		.mux	= _CV1800_MUX(_name, _parent,			\
-+				      _gate_reg, _gate_shift,		\
-+				      _div_reg, _div_shift, _div_width,	\
-+				      _div_init, _div_flag,		\
-+				      _mux_reg, _mux_shift, _mux_width,	\
-+				      &cv1800_clk_bypass_mux_ops,	\
-+				      _flags),				\
-+		.bypass	= CV1800_CLK_BIT(_bypass_reg, _bypass_shift),	\
-+	}
-+
-+#define CV1800_MMUX(_name, _parent, _gate_reg, _gate_shift,		\
-+		    _div0_reg, _div0_shift, _div0_width, _div0_init,	\
-+		    _div0_flag,						\
-+		    _div1_reg, _div1_shift, _div1_width, _div1_init,	\
-+		    _div1_flag,						\
-+		    _mux0_reg, _mux0_shift, _mux0_width,		\
-+		    _mux1_reg, _mux1_shift, _mux1_width,		\
-+		    _bypass_reg, _bypass_shift,				\
-+		    _clk_sel_reg, _clk_sel_shift,			\
-+		    _parent2sel, _sel2parent0, _sel2parent1, _flags)	\
-+	struct cv1800_clk_mmux _name = {				\
-+		.common		= CV1800_CLK_COMMON(#_name, _parent,	\
-+						    &cv1800_clk_mmux_ops,\
-+						    _flags),		\
-+		.gate		= CV1800_CLK_BIT(_gate_reg, _gate_shift),\
-+		.div		= {					\
-+			CV1800_CLK_REG(_div0_reg, _div0_shift,		\
-+				       _div0_width, _div0_init,		\
-+				       _div0_flag),			\
-+			CV1800_CLK_REG(_div1_reg, _div1_shift,		\
-+				       _div1_width, _div1_init,		\
-+				       _div1_flag),			\
-+		},							\
-+		.mux		= {					\
-+			CV1800_CLK_REG(_mux0_reg, _mux0_shift,		\
-+				       _mux0_width, 0, 0),		\
-+			CV1800_CLK_REG(_mux1_reg, _mux1_shift,		\
-+				       _mux1_width, 0, 0),		\
-+		},							\
-+		.bypass		= CV1800_CLK_BIT(_bypass_reg,		\
-+						 _bypass_shift),	\
-+		.clk_sel	= CV1800_CLK_BIT(_clk_sel_reg,		\
-+						 _clk_sel_shift),	\
-+		.parent2sel	= _parent2sel,				\
-+		.sel2parent	= { _sel2parent0, _sel2parent1 },	\
-+	}
-+
-+#define CV1800_ACLK(_name, _parent,					\
-+		    _src_en_reg, _src_en_reg_shift,			\
-+		    _output_en_reg, _output_en_shift,			\
-+		    _div_en_reg, _div_en_reg_shift,			\
-+		    _div_up_reg, _div_up_reg_shift,			\
-+		    _m_reg, _m_shift, _m_width, _m_flag,		\
-+		    _n_reg, _n_shift, _n_width, _n_flag,		\
-+		    _target_rate, _flags)				\
-+	struct cv1800_clk_audio _name = {				\
-+		.common		= CV1800_CLK_COMMON(#_name, _parent,	\
-+						    &cv1800_clk_audio_ops,\
-+						    _flags),		\
-+		.src_en		= CV1800_CLK_BIT(_src_en_reg,		\
-+						 _src_en_reg_shift),	\
-+		.output_en	= CV1800_CLK_BIT(_output_en_reg,	\
-+						 _output_en_shift),	\
-+		.div_en		= CV1800_CLK_BIT(_div_en_reg,		\
-+						 _div_en_reg_shift),	\
-+		.div_up		= CV1800_CLK_BIT(_div_up_reg,		\
-+						 _div_up_reg_shift),	\
-+		.m		= CV1800_CLK_REG(_m_reg, _m_shift,	\
-+						 _m_width, 0, _m_flag),	\
-+		.n		= CV1800_CLK_REG(_n_reg, _n_shift,	\
-+						 _n_width, 0, _n_flag),	\
-+		.target_rate	= _target_rate,				\
-+	}
-+
-+extern const struct clk_ops cv1800_clk_gate_ops;
-+extern const struct clk_ops cv1800_clk_div_ops;
-+extern const struct clk_ops cv1800_clk_bypass_div_ops;
-+extern const struct clk_ops cv1800_clk_mux_ops;
-+extern const struct clk_ops cv1800_clk_bypass_mux_ops;
-+extern const struct clk_ops cv1800_clk_mmux_ops;
-+extern const struct clk_ops cv1800_clk_audio_ops;
-+
-+#endif // _CLK_SOPHGO_CV1800_IP_H_
+ const struct clk_ops cv1800_clk_audio_ops = {
+-	.disable = NULL,
+-	.enable = NULL,
+-	.is_enabled = NULL,
++	.disable = aclk_disable,
++	.enable = aclk_enable,
++	.is_enabled = aclk_is_enabled,
+
+-	.determine_rate = NULL,
+-	.recalc_rate = NULL,
+-	.set_rate = NULL,
++	.determine_rate = aclk_determine_rate,
++	.recalc_rate = aclk_recalc_rate,
++	.set_rate = aclk_set_rate,
+ };
 diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
-new file mode 100644
-index 000000000000..345bb5e27cfd
---- /dev/null
+index 345bb5e27cfd..ee5a289d39cc 100644
+--- a/drivers/clk/sophgo/clk-cv18xx-pll.c
 +++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
-@@ -0,0 +1,34 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2023 Inochi Amaoto <inochiama@outlook.com>
-+ */
+@@ -10,25 +10,411 @@
+
+ #include "clk-cv18xx-pll.h"
+
++static inline struct cv1800_clk_pll *hw_to_cv1800_clk_pll(struct clk_hw *hw)
++{
++	struct cv1800_clk_common *common = hw_to_cv1800_clk_common(hw);
 +
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/limits.h>
-+#include <linux/spinlock.h>
++	return container_of(common, struct cv1800_clk_pll, common);
++}
 +
-+#include "clk-cv18xx-pll.h"
++static unsigned long ipll_calc_rate(unsigned long parent_rate,
++				    unsigned long pre_div_sel,
++				    unsigned long div_sel,
++				    unsigned long post_div_sel)
++{
++	unsigned long rate = parent_rate;
 +
-+const struct clk_ops cv1800_clk_ipll_ops = {
-+	.disable = NULL,
-+	.enable = NULL,
-+	.is_enabled = NULL,
++	rate *= div_sel;
++	do_div(rate, pre_div_sel * post_div_sel);
 +
-+	.recalc_rate = NULL,
-+	.determine_rate = NULL,
-+	.set_rate = NULL,
-+};
++	return rate;
++}
 +
-+const struct clk_ops cv1800_clk_fpll_ops = {
-+	.disable = NULL,
-+	.enable = NULL,
-+	.is_enabled = NULL,
++static unsigned long ipll_recalc_rate(struct clk_hw *hw,
++				      unsigned long parent_rate)
++{
++	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
++	u32 value;
 +
-+	.recalc_rate = NULL,
-+	.determine_rate = NULL,
-+	.set_rate = NULL,
++	value = readl(pll->common.base + pll->pll_reg);
 +
-+	.set_parent = NULL,
-+	.get_parent = NULL,
-+};
-diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.h b/drivers/clk/sophgo/clk-cv18xx-pll.h
-new file mode 100644
-index 000000000000..7a33f3da2d64
---- /dev/null
-+++ b/drivers/clk/sophgo/clk-cv18xx-pll.h
-@@ -0,0 +1,118 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2023 Inochi Amaoto <inochiama@outlook.com>
-+ */
++	return ipll_calc_rate(parent_rate,
++			      PLL_GET_PRE_DIV_SEL(value),
++			      PLL_GET_DIV_SEL(value),
++			      PLL_GET_POST_DIV_SEL(value));
++}
 +
-+#ifndef _CLK_SOPHGO_CV1800_PLL_H_
-+#define _CLK_SOPHGO_CV1800_PLL_H_
++static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
++			  unsigned long prate, unsigned long *rate,
++			  u32 *value)
++{
++	unsigned long best_rate = 0;
++	unsigned long trate = *rate;
++	unsigned long pre_div_sel = 0, div_sel = 0, post_div_sel = 0;
++	unsigned long pre, div, post;
++	u32 detected = *value;
++	unsigned long tmp;
 +
-+#include "clk-cv18xx-common.h"
++	for_each_pll_limit_range(pre, &limit->pre_div) {
++		for_each_pll_limit_range(div, &limit->div) {
++			for_each_pll_limit_range(post, &limit->post_div) {
++				tmp = ipll_calc_rate(prate, pre, div, post);
 +
-+struct cv1800_clk_pll_limit {
-+	struct {
-+		u8 min;
-+		u8 max;
-+	} pre_div, div, post_div, ictrl, mode;
-+};
++				if (tmp > trate)
++					continue;
 +
-+#define _CV1800_PLL_LIMIT(_min, _max)	\
-+	{				\
-+		.min = _min,		\
-+		.max = _max,		\
-+	}				\
-+
-+#define for_each_pll_limit_range(_var, _restrict) \
-+	for (_var = (_restrict)->min; _var <= (_restrict)->max; _var++)
-+
-+struct cv1800_clk_pll_synthesizer {
-+	struct cv1800_clk_regbit	en;
-+	struct cv1800_clk_regbit	clk_half;
-+	u32				ctrl;
-+	u32				set;
-+};
-+
-+#define _PLL_PRE_DIV_SEL_FIELD		GENMASK(6, 0)
-+#define _PLL_POST_DIV_SEL_FIELD		GENMASK(14, 8)
-+#define _PLL_SEL_MODE_FIELD		GENMASK(16, 15)
-+#define _PLL_DIV_SEL_FIELD		GENMASK(23, 17)
-+#define _PLL_ICTRL_FIELD		GENMASK(26, 24)
-+
-+#define _PLL_ALL_FIELD_MASK \
-+	(_PLL_PRE_DIV_SEL_FIELD | \
-+	 _PLL_POST_DIV_SEL_FIELD | \
-+	 _PLL_SEL_MODE_FIELD | \
-+	 _PLL_DIV_SEL_FIELD | \
-+	 _PLL_ICTRL_FIELD)
-+
-+#define PLL_COPY_REG(_dest, _src) \
-+	(((_dest) & (~_PLL_ALL_FIELD_MASK)) | ((_src) & _PLL_ALL_FIELD_MASK))
-+
-+#define PLL_GET_PRE_DIV_SEL(_reg) \
-+	FIELD_GET(_PLL_PRE_DIV_SEL_FIELD, (_reg))
-+#define PLL_GET_POST_DIV_SEL(_reg) \
-+	FIELD_GET(_PLL_POST_DIV_SEL_FIELD, (_reg))
-+#define PLL_GET_SEL_MODE(_reg) \
-+	FIELD_GET(_PLL_SEL_MODE_FIELD, (_reg))
-+#define PLL_GET_DIV_SEL(_reg) \
-+	FIELD_GET(_PLL_DIV_SEL_FIELD, (_reg))
-+#define PLL_GET_ICTRL(_reg) \
-+	FIELD_GET(_PLL_ICTRL_FIELD, (_reg))
-+
-+#define PLL_SET_PRE_DIV_SEL(_reg, _val) \
-+	_CV1800_SET_FIELD((_reg), (_val), _PLL_PRE_DIV_SEL_FIELD)
-+#define PLL_SET_POST_DIV_SEL(_reg, _val) \
-+	_CV1800_SET_FIELD((_reg), (_val), _PLL_POST_DIV_SEL_FIELD)
-+#define PLL_SET_SEL_MODE(_reg, _val) \
-+	_CV1800_SET_FIELD((_reg), (_val), _PLL_SEL_MODE_FIELD)
-+#define PLL_SET_DIV_SEL(_reg, _val) \
-+	_CV1800_SET_FIELD((_reg), (_val), _PLL_DIV_SEL_FIELD)
-+#define PLL_SET_ICTRL(_reg, _val) \
-+	_CV1800_SET_FIELD((_reg), (_val), _PLL_ICTRL_FIELD)
-+
-+struct cv1800_clk_pll {
-+	struct cv1800_clk_common		common;
-+	u32					pll_reg;
-+	struct cv1800_clk_regbit		pll_pwd;
-+	struct cv1800_clk_regbit		pll_status;
-+	const struct cv1800_clk_pll_limit	*pll_limit;
-+	struct cv1800_clk_pll_synthesizer	*pll_syn;
-+};
-+
-+#define CV1800_INTEGRAL_PLL(_name, _parent, _pll_reg,			\
-+			     _pll_pwd_reg, _pll_pwd_shift,		\
-+			     _pll_status_reg, _pll_status_shift,	\
-+			     _pll_limit, _flags)			\
-+	struct cv1800_clk_pll _name = {					\
-+		.common		= CV1800_CLK_COMMON(#_name, _parent,	\
-+						    &cv1800_clk_ipll_ops,\
-+						    _flags),		\
-+		.pll_reg	= _pll_reg,				\
-+		.pll_pwd	= CV1800_CLK_BIT(_pll_pwd_reg,		\
-+					       _pll_pwd_shift),		\
-+		.pll_status	= CV1800_CLK_BIT(_pll_status_reg,	\
-+					       _pll_status_shift),	\
-+		.pll_limit	= _pll_limit,				\
-+		.pll_syn	= NULL,					\
++				if ((trate - tmp) < (trate - best_rate)) {
++					best_rate = tmp;
++					pre_div_sel = pre;
++					div_sel = div;
++					post_div_sel = post;
++				}
++			}
++		}
 +	}
 +
-+#define CV1800_FACTIONAL_PLL(_name, _parent, _pll_reg,			\
-+			     _pll_pwd_reg, _pll_pwd_shift,		\
-+			     _pll_status_reg, _pll_status_shift,	\
-+			     _pll_limit, _pll_syn, _flags)		\
-+	struct cv1800_clk_pll _name = {					\
-+		.common		= CV1800_CLK_COMMON(#_name, _parent,	\
-+						    &cv1800_clk_fpll_ops,\
-+						    _flags),		\
-+		.pll_reg	= _pll_reg,				\
-+		.pll_pwd	= CV1800_CLK_BIT(_pll_pwd_reg,		\
-+					       _pll_pwd_shift),		\
-+		.pll_status	= CV1800_CLK_BIT(_pll_status_reg,	\
-+					       _pll_status_shift),	\
-+		.pll_limit	= _pll_limit,				\
-+		.pll_syn	= _pll_syn,				\
++	if (best_rate) {
++		detected = PLL_SET_PRE_DIV_SEL(detected, pre_div_sel);
++		detected = PLL_SET_POST_DIV_SEL(detected, post_div_sel);
++		detected = PLL_SET_DIV_SEL(detected, div_sel);
++		*value = detected;
++		*rate = best_rate;
++		return 0;
 +	}
 +
-+extern const struct clk_ops cv1800_clk_ipll_ops;
-+extern const struct clk_ops cv1800_clk_fpll_ops;
++	return -EINVAL;
++}
 +
-+#endif // _CLK_SOPHGO_CV1800_PLL_H_
++static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
++{
++	u32 val;
++	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
++
++	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
++			      &req->rate, &val);
++}
++
++static void pll_get_mode_ctrl(unsigned long div_sel,
++			      bool (*mode_ctrl_check)(unsigned long,
++						      unsigned long,
++						      unsigned long),
++			      const struct cv1800_clk_pll_limit *limit,
++			      u32 *value)
++{
++	unsigned long ictrl = 0, mode = 0;
++	u32 detected = *value;
++
++	for_each_pll_limit_range(mode, &limit->mode) {
++		for_each_pll_limit_range(ictrl, &limit->ictrl) {
++			if (mode_ctrl_check(div_sel, ictrl, mode)) {
++				detected = PLL_SET_SEL_MODE(detected, mode);
++				detected = PLL_SET_ICTRL(detected, ictrl);
++				*value = detected;
++				return;
++			}
++		}
++	}
++}
++
++static bool ipll_check_mode_ctrl_restrict(unsigned long div_sel,
++					  unsigned long ictrl,
++					  unsigned long mode)
++{
++	unsigned long left_rest = 20 * div_sel;
++	unsigned long right_rest = 35 * div_sel;
++	unsigned long test = 184 * (1 + mode) * (1 + ictrl) / 2;
++
++	return test > left_rest && test <= right_rest;
++}
++
++static int ipll_set_rate(struct clk_hw *hw, unsigned long rate,
++			 unsigned long parent_rate)
++{
++	u32 regval, detected = 0;
++	unsigned long flags;
++	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
++
++	ipll_find_rate(pll->pll_limit, parent_rate, &rate, &detected);
++	pll_get_mode_ctrl(PLL_GET_DIV_SEL(detected),
++			  ipll_check_mode_ctrl_restrict,
++			  pll->pll_limit, &detected);
++
++	spin_lock_irqsave(pll->common.lock, flags);
++
++	regval = readl(pll->common.base + pll->pll_reg);
++	regval = PLL_COPY_REG(regval, detected);
++
++	writel(regval, pll->common.base + pll->pll_reg);
++
++	spin_unlock_irqrestore(pll->common.lock, flags);
++
++	cv1800_clk_wait_for_lock(&pll->common, pll->pll_status.reg,
++			      BIT(pll->pll_status.shift));
++
++	return 0;
++}
++
++static int pll_enable(struct clk_hw *hw)
++{
++	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
++
++	return cv1800_clk_clearbit(&pll->common, &pll->pll_pwd);
++}
++
++static void pll_disable(struct clk_hw *hw)
++{
++	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
++
++	cv1800_clk_setbit(&pll->common, &pll->pll_pwd);
++}
++
++static int pll_is_enable(struct clk_hw *hw)
++{
++	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
++
++	return cv1800_clk_checkbit(&pll->common, &pll->pll_pwd) == 0;
++}
++
+ const struct clk_ops cv1800_clk_ipll_ops = {
+-	.disable = NULL,
+-	.enable = NULL,
+-	.is_enabled = NULL,
++	.disable = pll_disable,
++	.enable = pll_enable,
++	.is_enabled = pll_is_enable,
+
+-	.recalc_rate = NULL,
+-	.determine_rate = NULL,
+-	.set_rate = NULL,
++	.recalc_rate = ipll_recalc_rate,
++	.determine_rate = ipll_determine_rate,
++	.set_rate = ipll_set_rate,
+ };
+
++#define PLL_SYN_FACTOR_DOT_POS		26
++#define PLL_SYN_FACTOR_MINIMUM		((4 << PLL_SYN_FACTOR_DOT_POS) + 1)
++
++static bool fpll_is_factional_mode(struct cv1800_clk_pll *pll)
++{
++	return cv1800_clk_checkbit(&pll->common, &pll->pll_syn->en);
++}
++
++static unsigned long fpll_calc_rate(unsigned long parent_rate,
++				    unsigned long pre_div_sel,
++				    unsigned long div_sel,
++				    unsigned long post_div_sel,
++				    unsigned long ssc_syn_set,
++				    bool is_full_parent)
++{
++	u64 dividend = parent_rate * div_sel;
++	u64 factor = ssc_syn_set * pre_div_sel * post_div_sel;
++	unsigned long rate;
++
++	dividend <<= PLL_SYN_FACTOR_DOT_POS - 1;
++	rate = dividend / factor;
++	dividend %= factor;
++
++	if (is_full_parent) {
++		dividend <<= 1;
++		rate <<= 1;
++	}
++
++	rate += DIV64_U64_ROUND_CLOSEST(dividend, factor);
++
++	return rate;
++}
++
++static unsigned long fpll_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
++	u32 value;
++	bool clk_full;
++	u32 syn_set;
++
++	if (!fpll_is_factional_mode(pll))
++		return ipll_recalc_rate(hw, parent_rate);
++
++	syn_set = readl(pll->common.base + pll->pll_syn->set);
++
++	if (syn_set == 0)
++		return 0;
++
++	clk_full = cv1800_clk_checkbit(&pll->common,
++					  &pll->pll_syn->clk_half);
++
++	value = readl(pll->common.base + pll->pll_reg);
++
++	return fpll_calc_rate(parent_rate,
++			      PLL_GET_PRE_DIV_SEL(value),
++			      PLL_GET_DIV_SEL(value),
++			      PLL_GET_POST_DIV_SEL(value),
++			      syn_set, clk_full);
++}
++
++static unsigned long fpll_find_synthesizer(unsigned long parent,
++					   unsigned long rate,
++					   unsigned long pre_div,
++					   unsigned long div,
++					   unsigned long post_div,
++					   bool is_full_parent,
++					   u32 *ssc_syn_set)
++{
++	u32 test_max = U32_MAX, test_min = PLL_SYN_FACTOR_MINIMUM;
++	unsigned long trate;
++
++	while (test_min < test_max) {
++		u32 tssc = (test_max + test_min) / 2;
++
++		trate = fpll_calc_rate(parent, pre_div, div, post_div,
++				       tssc, is_full_parent);
++
++		if (trate == rate) {
++			test_min = tssc;
++			break;
++		}
++
++		if (trate > rate)
++			test_min = tssc + 1;
++		else
++			test_max = tssc - 1;
++	}
++
++	if (trate != 0)
++		*ssc_syn_set = test_min;
++
++	return trate;
++}
++
++static int fpll_find_rate(struct cv1800_clk_pll *pll,
++			  const struct cv1800_clk_pll_limit *limit,
++			  unsigned long prate,
++			  unsigned long *rate,
++			  u32 *value, u32 *ssc_syn_set)
++{
++	unsigned long best_rate = 0;
++	unsigned long pre_div_sel = 0, div_sel = 0, post_div_sel = 0;
++	unsigned long pre, div, post;
++	unsigned long trate = *rate;
++	u32 detected = *value;
++	unsigned long tmp;
++	bool clk_full = cv1800_clk_checkbit(&pll->common,
++					       &pll->pll_syn->clk_half);
++
++	for_each_pll_limit_range(pre, &limit->pre_div) {
++		for_each_pll_limit_range(post, &limit->post_div) {
++			for_each_pll_limit_range(div, &limit->div) {
++				tmp = fpll_find_synthesizer(prate, trate,
++							    pre, div, post,
++							    clk_full,
++							    ssc_syn_set);
++
++				if ((trate - tmp) < (trate - best_rate)) {
++					best_rate = tmp;
++					pre_div_sel = pre;
++					div_sel = div;
++					post_div_sel = post;
++				}
++			}
++		}
++	}
++
++	if (best_rate) {
++		detected = PLL_SET_PRE_DIV_SEL(detected, pre_div_sel);
++		detected = PLL_SET_POST_DIV_SEL(detected, post_div_sel);
++		detected = PLL_SET_DIV_SEL(detected, div_sel);
++		*value = detected;
++		*rate = best_rate;
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
++static int fpll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
++{
++	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
++	u32 val, ssc_syn_set;
++
++	if (!fpll_is_factional_mode(pll))
++		return ipll_determine_rate(hw, req);
++
++	fpll_find_rate(pll, &pll->pll_limit[2], req->best_parent_rate,
++		       &req->rate, &val, &ssc_syn_set);
++
++	return 0;
++}
++
++static bool fpll_check_mode_ctrl_restrict(unsigned long div_sel,
++					  unsigned long ictrl,
++					  unsigned long mode)
++{
++	unsigned long left_rest = 10 * div_sel;
++	unsigned long right_rest = 24 * div_sel;
++	unsigned long test = 184 * (1 + mode) * (1 + ictrl) / 2;
++
++	return test > left_rest && test <= right_rest;
++}
++
++static int fpll_set_rate(struct clk_hw *hw, unsigned long rate,
++			 unsigned long parent_rate)
++{
++	u32 regval;
++	u32 detected = 0, detected_ssc = 0;
++	unsigned long flags;
++	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
++
++	if (!fpll_is_factional_mode(pll))
++		return ipll_set_rate(hw, rate, parent_rate);
++
++	fpll_find_rate(pll, &pll->pll_limit[2], parent_rate,
++		       &rate, &detected, &detected_ssc);
++	pll_get_mode_ctrl(PLL_GET_DIV_SEL(detected),
++			  fpll_check_mode_ctrl_restrict,
++			  pll->pll_limit, &detected);
++
++	spin_lock_irqsave(pll->common.lock, flags);
++
++	writel(detected_ssc, pll->common.base + pll->pll_syn->set);
++
++	regval = readl(pll->common.base + pll->pll_reg);
++	regval = PLL_COPY_REG(regval, detected);
++
++	writel(regval, pll->common.base + pll->pll_reg);
++
++	spin_unlock_irqrestore(pll->common.lock, flags);
++
++	cv1800_clk_wait_for_lock(&pll->common, pll->pll_status.reg,
++			      BIT(pll->pll_status.shift));
++
++	return 0;
++}
++
++static u8 fpll_get_parent(struct clk_hw *hw)
++{
++	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
++
++	if (fpll_is_factional_mode(pll))
++		return 1;
++
++	return 0;
++}
++
++static int fpll_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
++
++	if (index)
++		cv1800_clk_setbit(&pll->common, &pll->pll_syn->en);
++	else
++		cv1800_clk_clearbit(&pll->common, &pll->pll_syn->en);
++
++	return 0;
++}
++
+ const struct clk_ops cv1800_clk_fpll_ops = {
+-	.disable = NULL,
+-	.enable = NULL,
+-	.is_enabled = NULL,
++	.disable = pll_disable,
++	.enable = pll_enable,
++	.is_enabled = pll_is_enable,
+
+-	.recalc_rate = NULL,
+-	.determine_rate = NULL,
+-	.set_rate = NULL,
++	.recalc_rate = fpll_recalc_rate,
++	.determine_rate = fpll_determine_rate,
++	.set_rate = fpll_set_rate,
+
+-	.set_parent = NULL,
+-	.get_parent = NULL,
++	.set_parent = fpll_set_parent,
++	.get_parent = fpll_get_parent,
+ };
 --
 2.43.0
 
