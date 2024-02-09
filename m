@@ -1,135 +1,152 @@
-Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20287B3EC
-	for <linux-clk@vger.kernel.org>; Fri,  9 Feb 2024 17:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF9576414;
+	Fri,  9 Feb 2024 17:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707498243; cv=none; b=k4iPgq7uL++McIb73UG4z+vt9dmgyZuRLdd4mK8maGDlgYZ66RwFJ0RbkqcsjWQfHVDjWQAqt5bgAM3b7+Hjn/d3v7xzgAHthPUhpIOefhqDSccPc9/DOE9RiGtIFPsuBbBgME54gWeL+XeN+myntJes5ZYAROlhFci5voKjWBQ=
+	t=1707499577; cv=none; b=dA/W8ERL7yP72PrxO2SMereiQJSq5ExWjXB1wuEjUSxQgL83y9DXDWitAfSUynLYJcQpT+v26NeC1fOiIVn4T71k2U6mB1Xd06aWFhGOOHfnTzkF+dHmBeTRq3eKs8ERlrW9siLcE8qaJdccudNgIPvPvvqFDbp1iVlKTGhEhCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707498243; c=relaxed/simple;
-	bh=Ar6jZZtmxNtSGD1n3iT9Lz+PyHaa/Q+C5SBE/Q9Zo60=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mlUxp/USxaSHgrWlfgLifNpfwhQ1FqSJmyxq6kc1Uqbl6BJsGJOCRSwn0jzVUKvF1e2inY/PD3qfgmJghGiWcLFFUha6sADCtRNpZpZW5FyZrvCA0GSm3oNWbtuKP6pgYdlz2yOLjecupTVd0st2oc2VrkrqLBUaPnmtS6QfNEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4TWg2Z6gPcz4x04n
-	for <linux-clk@vger.kernel.org>; Fri,  9 Feb 2024 17:55:18 +0100 (CET)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:55fd:ff17:c1c8:954d])
-	by baptiste.telenet-ops.be with bizsmtp
-	id l4vJ2B00A4RKXn6014vJmM; Fri, 09 Feb 2024 17:55:18 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rYU9i-0008Gw-0U;
-	Fri, 09 Feb 2024 17:55:18 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rYU9m-0061H2-81;
-	Fri, 09 Feb 2024 17:55:18 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.9
-Date: Fri,  9 Feb 2024 17:55:15 +0100
-Message-Id: <cover.1707496335.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1707499577; c=relaxed/simple;
+	bh=ie5ldj9yiN5heSZ1zRAjnTvccO7uZDnrTmVr98yTE04=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u3/YeU7K4TuqhAkhw8i05Y3sM7VBYUfWD92X2BJnaE5luNu4qQI29UOwLFjSV/u3SNcbW7amt3bMm6SvYqNAjDTJpZbF47h8zSfmC1J3AhrFlR1+IB5yvH4m3/k8i0e1BWj4Syle4qyYsKcfe8yJ3Sx+Wx5dBVhdqn05LBzd28w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qbxvAUFK; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qbxvAUFK"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 419HPtq9027981;
+	Fri, 9 Feb 2024 11:25:55 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1707499555;
+	bh=o/yHIEvgh2LRKD3q5Z1jqyyrArHXgL1I3+o2CJJSOiI=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=qbxvAUFK3+CMJemxeZkMJm7kaneX+IrQQ6sdbs/KBn32b83WOYrcPq/Gtlhs66rJ5
+	 baPk94KBCfjzmlyZZcayIUSP1B64qYjooypHx10NKEKbjkHfdRSCn8XQ5TQhZWx8NH
+	 HWY6gsa23a5FTrbWjvtMGoGZfycPy5l5EafmNxhY=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 419HPtNo002091
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 9 Feb 2024 11:25:55 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 9
+ Feb 2024 11:25:55 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 9 Feb 2024 11:25:55 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 419HPt5I126337;
+	Fri, 9 Feb 2024 11:25:55 -0600
+Date: Fri, 9 Feb 2024 11:25:55 -0600
+From: Nishanth Menon <nm@ti.com>
+To: "Kumar, Udit" <u-kumar1@ti.com>
+CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <chandru@ti.com>,
+        <rishabh@ti.com>, <kamlesh@ti.com>, <vigneshr@ti.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v3] clk: keystone: sci-clk: Adding support for non
+ contiguous clocks
+Message-ID: <20240209172555.fxlxijhhbgrkyibo@agreeing>
+References: <20240207091100.4001428-1-u-kumar1@ti.com>
+ <20240207125410.r2q3jcplvif7dvt2@tumbling>
+ <3a7c4a18-5463-414f-82df-39aaed861148@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <3a7c4a18-5463-414f-82df-39aaed861148@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-	Hi Mike, Stephen,
+On 19:53-20240207, Kumar, Udit wrote:
+> Hi Nishanth,
+> 
+> On 2/7/2024 6:24 PM, Nishanth Menon wrote:
+> > On 14:41-20240207, Udit Kumar wrote:
+> > > Most of clocks and their parents are defined in contiguous range,
+> > > But in few cases, there is gap in clock numbers[0].
+> > > Driver assumes clocks to be in contiguous range, and add their clock
+> > > ids incrementally.
+> > > 
+> > > New firmware started returning error while calling get_freq and is_on
+> > > API for non-available clock ids.
+> > > 
+> > > In this fix, driver checks and adds only valid clock ids.
+> > > 
+> > > Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
+> > > 
+> > > [0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
+> > > Section Clocks for NAVSS0_CPTS_0 Device,
+> > > clock id 12-15 not present.
+> > > 
+> > > Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+> > > ---
+> > > Changelog
+> > > Changes in v3
+> > > - instead of get_freq, is_auto API is used to check validilty of clock
+> > > - Address comments of v2, to have preindex increment
+> > > Link to v2 https://lore.kernel.org/all/20240206104357.3803517-1-u-kumar1@ti.com/
+> > > 
+> > > Changes in v2
+> > > - Updated commit message
+> > > - Simplified logic for valid clock id
+> > > link to v1 https://lore.kernel.org/all/20240205044557.3340848-1-u-kumar1@ti.com/
+> > > 
+> > > 
+> > > P.S
+> > > Firmawre returns total num_parents count including non available ids.
+> > > For above device id NAVSS0_CPTS_0, number of parents clocks are 16
+> > > i.e from id 2 to 17. But out of these ids few are not valid.
+> > > So driver adds only valid clock ids out ot total.
+> > > 
+> > > Original logs
+> > > https://gist.github.com/uditkumarti/de4b36b21247fb36725ad909ce4812f6#file-original-logs
+> > > Line 2630 for error
+> > > 
+> > > Logs with fix v3
+> > > https://gist.github.com/uditkumarti/94e3e28d62282fd708dbfe37435ce1d9#file-v3
+> > > Line 2586
+> > > 
+> > > 
+> > >   drivers/clk/keystone/sci-clk.c | 12 ++++++++++--
+> > >   1 file changed, 10 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+> > > index 35fe197dd303..31b7df05d7bb 100644
+> > > --- a/drivers/clk/keystone/sci-clk.c
+> > > +++ b/drivers/clk/keystone/sci-clk.c
+> > > @@ -516,6 +516,7 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+> > >   	struct sci_clk *sci_clk, *prev;
+> > >   	int num_clks = 0;
+> > >   	int num_parents;
+> > > [..]					/* Check if this clock id is valid */
+> > > +					ret = provider->ops->is_auto(provider->sci,
+> > > +						sci_clk->dev_id, ++clk_id, &state);
+> > A bit too nice coding ;) => I had been confused momentarily by clk_id = args.args[1]
+> > change just above till I saw that you are pre-incrementing
+> > clk_id - Is there a harm in leaving the original clk_id increment logic
+> > alone (it was much simpler to read up)?
+> 
+> No warm in using original code but want to avoid, two statement for
+> increment in case of failure and success.
+> 
+> Let me know, if i need to add few comments around this
+> 
+> or if you think, code is confusing I can move to original one
 
-The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
+Yes, please drop the un-necessary changes. In this case, original
+increment code should work just fine.
 
-  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.9-tag1
-
-for you to fetch changes up to 5aaa139b9a03e1a43484a73248c6353a9c4d95c6:
-
-  clk: renesas: r8a779h0: Add I2C clocks (2024-02-06 11:20:12 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.9
-
-  - Ignore all clocks which are assigned to a non-Linux system,
-  - Add watchdog clock on RZ/G3S,
-  - Add camera (CRU) clock and reset on RZ/G2UL,
-  - Add support for the R-Car V4M (R8A779H0) SoC,
-  - Miscellaneous fixes and improvements.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (1):
-      clk: renesas: r9a07g043: Add clock and reset entries for CRU
-
-Claudiu Beznea (1):
-      clk: renesas: r9a08g045: Add clock and reset support for watchdog
-
-Cong Dang (4):
-      clk: renesas: cpg-mssr: Add support for R-Car V4M
-      clk: renesas: r8a779h0: Add PFC/GPIO clocks
-      clk: renesas: r8a779h0: Add watchdog clock
-      clk: renesas: r8a779h0: Add I2C clocks
-
-Duy Nguyen (3):
-      dt-bindings: power: renesas,rcar-sysc: Document R-Car V4M support
-      dt-bindings: power: Add r8a779h0 SYSC power domain definitions
-      dt-bindings: clock: Add R8A779H0 V4M CPG Core Clock Definitions
-
-Geert Uytterhoeven (5):
-      clk: renesas: mstp: Remove obsolete clkdev registration
-      dt-bindings: clock: renesas,cpg-mssr: Document R-Car V4M support
-      Merge tag 'renesas-r8a779h0-dt-binding-defs-tag' into renesas-clk-for-v6.9
-      clk: renesas: rcar-gen4: Add support for FRQCRC1
-      clk: renesas: r8a779g0: Fix PCIe clock name
-
-Kuninori Morimoto (4):
-      of: Add __of_device_is_status() and makes more generic status check
-      of: Add of_get_next_status_child() and makes more generic of_get_next
-      of: Add for_each_reserved_child_of_node()
-      clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system
-
- .../bindings/clock/renesas,cpg-mssr.yaml           |   1 +
- .../bindings/power/renesas,rcar-sysc.yaml          |   1 +
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/clk-mstp.c                     |  16 +-
- drivers/clk/renesas/r8a779g0-cpg-mssr.c            |   2 +-
- drivers/clk/renesas/r8a779h0-cpg-mssr.c            | 249 +++++++++++++++++++++
- drivers/clk/renesas/r9a07g043-cpg.c                |  31 +++
- drivers/clk/renesas/r9a08g045-cpg.c                |   3 +
- drivers/clk/renesas/rcar-gen4-cpg.c                |  10 +-
- drivers/clk/renesas/renesas-cpg-mssr.c             | 117 +++++++++-
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- drivers/of/base.c                                  | 111 ++++++---
- .../dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h  |  96 ++++++++
- include/dt-bindings/power/renesas,r8a779h0-sysc.h  |  49 ++++
- include/linux/of.h                                 |  11 +
- 16 files changed, 651 insertions(+), 53 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a779h0-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
- create mode 100644 include/dt-bindings/power/renesas,r8a779h0-sysc.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
