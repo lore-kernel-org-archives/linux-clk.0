@@ -1,95 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28037BB08;
-	Fri,  9 Feb 2024 17:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20287B3EC
+	for <linux-clk@vger.kernel.org>; Fri,  9 Feb 2024 17:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707498179; cv=none; b=Cd+Amo8sWcXga8gsGHY5s0Rm0xcadSAiy6vK1wQVjA4nJGR7rUrpM8EZoMSjkHJJfyD2xx3IzlC4P+ORRzlyMaQeYn21ia/AYsgjr2EpJkaksq+DU6Pgl3urh7nFrA5hWBa31Wfa+wIe++FBqKC+m2pU3NdXzsHR1cM6b0ene9M=
+	t=1707498243; cv=none; b=k4iPgq7uL++McIb73UG4z+vt9dmgyZuRLdd4mK8maGDlgYZ66RwFJ0RbkqcsjWQfHVDjWQAqt5bgAM3b7+Hjn/d3v7xzgAHthPUhpIOefhqDSccPc9/DOE9RiGtIFPsuBbBgME54gWeL+XeN+myntJes5ZYAROlhFci5voKjWBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707498179; c=relaxed/simple;
-	bh=Lrq5hrellIefTYXXaHqu+INob5qfnV/eTzPySL8VU5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fnIv5z4j/DhLwt31OSdaw7z33HtPfnQP0xG2NUYe5wZUVAk34z8EcRmegQRtnict09n4dF7wf9lNdx+9i+favafWCX4YbycbZnUBVFP08IzXmjECpyUYcpgeg/mDtIYrBNsUfVZWxPU3ss8X3YuXJix7gXFb6zVXiGPPNjipS30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q35So9lM; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q35So9lM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 774C1C43390;
-	Fri,  9 Feb 2024 17:02:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707498179;
-	bh=Lrq5hrellIefTYXXaHqu+INob5qfnV/eTzPySL8VU5g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q35So9lMUF2qGPmWrxH5SYbPPJBrKVvLLQw5AQec4iPoHNRwhUzDQ6SYepvHKvMro
-	 oCqjzcMTp4qbIiaqL2RA9dcZkHPMyJ8cFx2i9ruAJEn6fofmNCCEfOb1MIYdlSuqRu
-	 wShi0uujxKxLN2LnKK6rGoIzOy9gXVTx5dbheOVbYBSLcUbztCGqv6HYN0U3Ry922i
-	 oJey30Qf+Td7NtryF4L5kN7kEm3Y8uu00Yfdogb9ZqHE54Z+NNzFpxOHV9aOQsYhnl
-	 cZBhywCyFiyJOYuJ2DsHlUZlmpYZSx1Ph8LczEAJf5cTpqTRlXCHoDQDwFPaat9Wd3
-	 GwifIkFRL1Vbw==
-Date: Fri, 9 Feb 2024 17:02:54 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 2/4] dt-bindings: stm32: update DT bingding for
- stm32mp25
-Message-ID: <20240209-stinging-unwarlike-674ebb82d53e@spud>
-References: <20240208142301.155698-1-gabriel.fernandez@foss.st.com>
- <20240208142301.155698-3-gabriel.fernandez@foss.st.com>
- <20240208-syndrome-storeroom-5cc8bdd07c05@spud>
- <768067ff-cd69-4a55-aa5a-fc1eae5c1116@foss.st.com>
+	s=arc-20240116; t=1707498243; c=relaxed/simple;
+	bh=Ar6jZZtmxNtSGD1n3iT9Lz+PyHaa/Q+C5SBE/Q9Zo60=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mlUxp/USxaSHgrWlfgLifNpfwhQ1FqSJmyxq6kc1Uqbl6BJsGJOCRSwn0jzVUKvF1e2inY/PD3qfgmJghGiWcLFFUha6sADCtRNpZpZW5FyZrvCA0GSm3oNWbtuKP6pgYdlz2yOLjecupTVd0st2oc2VrkrqLBUaPnmtS6QfNEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4TWg2Z6gPcz4x04n
+	for <linux-clk@vger.kernel.org>; Fri,  9 Feb 2024 17:55:18 +0100 (CET)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:55fd:ff17:c1c8:954d])
+	by baptiste.telenet-ops.be with bizsmtp
+	id l4vJ2B00A4RKXn6014vJmM; Fri, 09 Feb 2024 17:55:18 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rYU9i-0008Gw-0U;
+	Fri, 09 Feb 2024 17:55:18 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rYU9m-0061H2-81;
+	Fri, 09 Feb 2024 17:55:18 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.9
+Date: Fri,  9 Feb 2024 17:55:15 +0100
+Message-Id: <cover.1707496335.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ySXbP4Hch0LxT6iF"
-Content-Disposition: inline
-In-Reply-To: <768067ff-cd69-4a55-aa5a-fc1eae5c1116@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
+	Hi Mike, Stephen,
 
---ySXbP4Hch0LxT6iF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
 
-On Fri, Feb 09, 2024 at 10:46:14AM +0100, Gabriel FERNANDEZ wrote:
-> Hi Conor,
->=20
-> Thank's for your review.
->=20
-> Yes, I have checked that point. I have also written the RCC driver for
-> TFA/OPTE/UBOOT and once
->=20
-> I receive Ack in the Kernel, I will upstream the other components.
+  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
 
-Okay, if you know theres no other implementations:
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+are available in the Git repository at:
 
-btw, please avoid top posting in the future.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.9-tag1
 
-Thanks,
-Conor.
+for you to fetch changes up to 5aaa139b9a03e1a43484a73248c6353a9c4d95c6:
 
---ySXbP4Hch0LxT6iF
-Content-Type: application/pgp-signature; name="signature.asc"
+  clk: renesas: r8a779h0: Add I2C clocks (2024-02-06 11:20:12 +0100)
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+clk: renesas: Updates for v6.9
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZcZavgAKCRB4tDGHoIJi
-0nJ9AP9pgCiDfbPPK8C8wpcNkD8v8BwOQJmplpuRMXqfPtlZbAD/TCtE1mY94jtz
-r1I6lqx/NZblJhh+vgmcoqfZ+KCBWw8=
-=1lSt
------END PGP SIGNATURE-----
+  - Ignore all clocks which are assigned to a non-Linux system,
+  - Add watchdog clock on RZ/G3S,
+  - Add camera (CRU) clock and reset on RZ/G2UL,
+  - Add support for the R-Car V4M (R8A779H0) SoC,
+  - Miscellaneous fixes and improvements.
 
---ySXbP4Hch0LxT6iF--
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (1):
+      clk: renesas: r9a07g043: Add clock and reset entries for CRU
+
+Claudiu Beznea (1):
+      clk: renesas: r9a08g045: Add clock and reset support for watchdog
+
+Cong Dang (4):
+      clk: renesas: cpg-mssr: Add support for R-Car V4M
+      clk: renesas: r8a779h0: Add PFC/GPIO clocks
+      clk: renesas: r8a779h0: Add watchdog clock
+      clk: renesas: r8a779h0: Add I2C clocks
+
+Duy Nguyen (3):
+      dt-bindings: power: renesas,rcar-sysc: Document R-Car V4M support
+      dt-bindings: power: Add r8a779h0 SYSC power domain definitions
+      dt-bindings: clock: Add R8A779H0 V4M CPG Core Clock Definitions
+
+Geert Uytterhoeven (5):
+      clk: renesas: mstp: Remove obsolete clkdev registration
+      dt-bindings: clock: renesas,cpg-mssr: Document R-Car V4M support
+      Merge tag 'renesas-r8a779h0-dt-binding-defs-tag' into renesas-clk-for-v6.9
+      clk: renesas: rcar-gen4: Add support for FRQCRC1
+      clk: renesas: r8a779g0: Fix PCIe clock name
+
+Kuninori Morimoto (4):
+      of: Add __of_device_is_status() and makes more generic status check
+      of: Add of_get_next_status_child() and makes more generic of_get_next
+      of: Add for_each_reserved_child_of_node()
+      clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system
+
+ .../bindings/clock/renesas,cpg-mssr.yaml           |   1 +
+ .../bindings/power/renesas,rcar-sysc.yaml          |   1 +
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/clk-mstp.c                     |  16 +-
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c            |   2 +-
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c            | 249 +++++++++++++++++++++
+ drivers/clk/renesas/r9a07g043-cpg.c                |  31 +++
+ drivers/clk/renesas/r9a08g045-cpg.c                |   3 +
+ drivers/clk/renesas/rcar-gen4-cpg.c                |  10 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c             | 117 +++++++++-
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ drivers/of/base.c                                  | 111 ++++++---
+ .../dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h  |  96 ++++++++
+ include/dt-bindings/power/renesas,r8a779h0-sysc.h  |  49 ++++
+ include/linux/of.h                                 |  11 +
+ 16 files changed, 651 insertions(+), 53 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a779h0-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/renesas,r8a779h0-sysc.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
