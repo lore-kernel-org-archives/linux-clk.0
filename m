@@ -1,209 +1,95 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F8A7B3EE
-	for <linux-clk@vger.kernel.org>; Fri,  9 Feb 2024 16:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28037BB08;
+	Fri,  9 Feb 2024 17:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707497183; cv=none; b=AmWG3xPH9oRoGzvcXu7mhpNQ+AsfpcXtB+xjnooaPQX2Eq1pBjjFb5EPXfLqoG8tiGJ5Q39O3KrOsaPil9fbiqTTy1XdchnSgArzkfCp6uAhgcdH34vp+418oj25Dxn47tOxu3r2Rj3IjMPCxO8tQZ5OQDu9YJnQw9ODLVjZuj8=
+	t=1707498179; cv=none; b=Cd+Amo8sWcXga8gsGHY5s0Rm0xcadSAiy6vK1wQVjA4nJGR7rUrpM8EZoMSjkHJJfyD2xx3IzlC4P+ORRzlyMaQeYn21ia/AYsgjr2EpJkaksq+DU6Pgl3urh7nFrA5hWBa31Wfa+wIe++FBqKC+m2pU3NdXzsHR1cM6b0ene9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707497183; c=relaxed/simple;
-	bh=O3fngnfCj5aOh0G0wwm8vha6G/YnqgOojLqiWw4NAZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EdtlK1h1fBhfieUjmWV2iFUzvKLPB++BjzGA1nT/GKFXdV0rO0+0KH11qH80cyhEKHGlWaTcW9iH4bV1xAxRRqCwFNGg43EFOQrkh0VB+djfjOmlwr0c37qF/nL8DAeYrCBgQ63PWLY7HtWl3ww8h/o2RU0A+VqbEaYD9rskeLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AzW5mZ/8; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707498179; c=relaxed/simple;
+	bh=Lrq5hrellIefTYXXaHqu+INob5qfnV/eTzPySL8VU5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fnIv5z4j/DhLwt31OSdaw7z33HtPfnQP0xG2NUYe5wZUVAk34z8EcRmegQRtnict09n4dF7wf9lNdx+9i+favafWCX4YbycbZnUBVFP08IzXmjECpyUYcpgeg/mDtIYrBNsUfVZWxPU3ss8X3YuXJix7gXFb6zVXiGPPNjipS30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q35So9lM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AzW5mZ/8"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a2a17f3217aso145723866b.2
-        for <linux-clk@vger.kernel.org>; Fri, 09 Feb 2024 08:46:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707497179; x=1708101979; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1rUsxPQxs+K7iUQvdQghSAavfdmA0Tse73YII5128kk=;
-        b=AzW5mZ/8ZFBq35Ddnp9g/1rcdVvg+J1VT/LIhL2LvGf633lrnQNG0B96mQmCDb+BjP
-         k/bRgKxGhNdSVpfbky1GENCSLDi/4yg5foAeAE9hhHc4sVhPBhGBgcCIyr4EKt8DQ0bP
-         RL9UbQ49j0Bt/TxjYRvoetEUyW4rGzfth/OzPzk9uqgTNhb6OcOQVLwf76QMAjx4jDDz
-         waZFLGPELYf0vx4gmvYrb1Y0WLTRxbs1paSP0G/xUdbU1/TznGFwKfcx/7jdZHIoYihB
-         hEuhV1gZhEpKtnX+kTAAsp++a1whgfyFOsS+MGlTuvz2z0lmwry9NW8D0RDOpvZywtHH
-         Ilqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707497179; x=1708101979;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1rUsxPQxs+K7iUQvdQghSAavfdmA0Tse73YII5128kk=;
-        b=d6H07r53KKfahj0APVSFNdIry486AG9i+5LQLxoMeszqpFra5huF8RLdKs8M0pd1gE
-         aqv/pjujj0A0CKKU3gAO3NyGUFjNC8iE0eVoj0vbqndyh7/fU1MFFv7dBJqRXMWxxmMX
-         B7+8RE72CVCnvE0vALQTScPO8nQcUuNacBO1Su/5lGEzOiCKXe0hxEVKR1M3BTBmmJmC
-         0SMivI4rSqTbjkFT4K1ZISBmXSMgtnVfBlHUAVk4A84a1WKUf8l9SXo4RZCj7NKE2inn
-         Diw8Nmj5EGKEaiijWMZz9ZtrE2j79fQnQXBiFEtlFrxZmZcS1q5zd1w2bG0F8uoAMTqf
-         fhAQ==
-X-Gm-Message-State: AOJu0YzI0Zte7mjDyK55NOjQbPIdAOGwO6mhPKziIt9HTKCTxI22ePGi
-	zhk+TLzU5UGMRfUiHbdTjvPUBFbcYNWwgk7M1ApuDDCqTFqvy3H18jW7CDIn51akMtTCqcwgR6a
-	p
-X-Google-Smtp-Source: AGHT+IF+KoPD1FCogFq1g1HVZo9JDowlvJb+vv3Ik862H1eIqG6bGPcF3oBJaI8TiGYJ0NSxqzsavw==
-X-Received: by 2002:a17:906:bfe3:b0:a37:bbe7:6002 with SMTP id vr3-20020a170906bfe300b00a37bbe76002mr1505111ejb.19.1707497179535;
-        Fri, 09 Feb 2024 08:46:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVxFJxB5SWe8jb932wdrFaVqu+jSrTbnro9C4RAlZu433iTqktEI+RNKnG607wh1mTeaHxzMRyHx+EAcBuuWprfTAG6hPujAcBMeSzfvk69kgxortfWEjtxOqdpEer7f+xkfcb2aCMuK8MeKv/2QAg+v5haS+oqeYgKWqbY+aBtPAKu8C4aFUnIGt0HFzEAlrK05QHzdEa7enkA13Nt+NYeHuWhN4FxuoOzv47U1otZ+EqfKgVJD/yKGYmpMo0CVWXJtCZhAGH/5bs/spIAqJQXuWYvxzHCugTpTfdKPXIKWnhRwtbWJBriOStv3mXtJagUrg==
-Received: from [192.168.192.207] (037008245233.garwolin.vectranet.pl. [37.8.245.233])
-        by smtp.gmail.com with ESMTPSA id qw32-20020a1709066a2000b00a3c09f3aea8sm263632ejc.211.2024.02.09.08.46.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Feb 2024 08:46:18 -0800 (PST)
-Message-ID: <7003e28a-c901-4def-be31-a68eb896adb8@linaro.org>
-Date: Fri, 9 Feb 2024 17:46:16 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q35So9lM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 774C1C43390;
+	Fri,  9 Feb 2024 17:02:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707498179;
+	bh=Lrq5hrellIefTYXXaHqu+INob5qfnV/eTzPySL8VU5g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q35So9lMUF2qGPmWrxH5SYbPPJBrKVvLLQw5AQec4iPoHNRwhUzDQ6SYepvHKvMro
+	 oCqjzcMTp4qbIiaqL2RA9dcZkHPMyJ8cFx2i9ruAJEn6fofmNCCEfOb1MIYdlSuqRu
+	 wShi0uujxKxLN2LnKK6rGoIzOy9gXVTx5dbheOVbYBSLcUbztCGqv6HYN0U3Ry922i
+	 oJey30Qf+Td7NtryF4L5kN7kEm3Y8uu00Yfdogb9ZqHE54Z+NNzFpxOHV9aOQsYhnl
+	 cZBhywCyFiyJOYuJ2DsHlUZlmpYZSx1Ph8LczEAJf5cTpqTRlXCHoDQDwFPaat9Wd3
+	 GwifIkFRL1Vbw==
+Date: Fri, 9 Feb 2024 17:02:54 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 2/4] dt-bindings: stm32: update DT bingding for
+ stm32mp25
+Message-ID: <20240209-stinging-unwarlike-674ebb82d53e@spud>
+References: <20240208142301.155698-1-gabriel.fernandez@foss.st.com>
+ <20240208142301.155698-3-gabriel.fernandez@foss.st.com>
+ <20240208-syndrome-storeroom-5cc8bdd07c05@spud>
+ <768067ff-cd69-4a55-aa5a-fc1eae5c1116@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: Update protected clocks list for
- qcm6490 variants
-Content-Language: en-US
-To: Taniya Das <quic_tdas@quicinc.com>, Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240208062836.19767-1-quic_tdas@quicinc.com>
- <20240208062836.19767-6-quic_tdas@quicinc.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240208062836.19767-6-quic_tdas@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ySXbP4Hch0LxT6iF"
+Content-Disposition: inline
+In-Reply-To: <768067ff-cd69-4a55-aa5a-fc1eae5c1116@foss.st.com>
 
-On 8.02.2024 07:28, Taniya Das wrote:
-> Certain clocks are not accessible on QCM6490-IDP and QCS6490-RB3GEN2 boards
-> thus require them to be marked protected.
-> 
-> Also disable the LPASS nodes which are not to be used.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
 
-One patch per board, please
+--ySXbP4Hch0LxT6iF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  arch/arm64/boot/dts/qcom/qcm6490-idp.dts     | 54 +++++++++++++++++++-
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 50 +++++++++++++++++-
->  2 files changed, 102 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> index 03e97e27d16d..425e4b87490b 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: BSD-3-Clause
->  /*
-> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->   */
-> 
->  /dts-v1/;
-> @@ -415,6 +415,58 @@
->  	};
->  };
-> 
-> +&gcc {
-> +	protected-clocks = <GCC_AGGRE_NOC_PCIE_1_AXI_CLK> ,<GCC_PCIE_1_AUX_CLK>,
-> +			<GCC_PCIE_1_AUX_CLK_SRC>, <GCC_PCIE_1_CFG_AHB_CLK>,
-> +			<GCC_PCIE_1_MSTR_AXI_CLK>, <GCC_PCIE_1_PHY_RCHNG_CLK_SRC>,
-> +			<GCC_PCIE_1_PIPE_CLK>, <GCC_PCIE_1_PIPE_CLK_SRC>,
-> +			<GCC_PCIE_1_SLV_AXI_CLK>, <GCC_PCIE_1_SLV_Q2A_AXI_CLK>,
-> +			<GCC_QSPI_CNOC_PERIPH_AHB_CLK>, <GCC_QSPI_CORE_CLK>,
-> +			<GCC_QSPI_CORE_CLK_SRC>,<GCC_USB30_SEC_MASTER_CLK>,
-> +			<GCC_USB30_SEC_MASTER_CLK_SRC>, <GCC_USB30_SEC_MOCK_UTMI_CLK>,
-> +			<GCC_USB30_SEC_MOCK_UTMI_CLK_SRC>,
-> +			<GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC>, <GCC_USB30_SEC_SLEEP_CLK>,
-> +			<GCC_USB3_SEC_PHY_AUX_CLK>, <GCC_USB3_SEC_PHY_AUX_CLK_SRC>,
-> +			<GCC_USB3_SEC_PHY_COM_AUX_CLK>, <GCC_USB3_SEC_PHY_PIPE_CLK>,
-> +			<GCC_USB3_SEC_PHY_PIPE_CLK_SRC>, <GCC_CFG_NOC_LPASS_CLK>,
-> +			<GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>, <GCC_MSS_CFG_AHB_CLK>,
-> +			<GCC_MSS_OFFLINE_AXI_CLK>, <GCC_MSS_SNOC_AXI_CLK>,
-> +			<GCC_MSS_Q6_MEMNOC_AXI_CLK>, <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
-> +			<GCC_SEC_CTRL_CLK_SRC>, <GCC_WPSS_AHB_CLK>,
-> +			<GCC_WPSS_AHB_BDG_MST_CLK>, <GCC_WPSS_RSCP_CLK>;
+On Fri, Feb 09, 2024 at 10:46:14AM +0100, Gabriel FERNANDEZ wrote:
+> Hi Conor,
+>=20
+> Thank's for your review.
+>=20
+> Yes, I have checked that point. I have also written the RCC driver for
+> TFA/OPTE/UBOOT and once
+>=20
+> I receive Ack in the Kernel, I will upstream the other components.
 
-Why on earth are clocks such as USB sleep reserved? How does it work?
+Okay, if you know theres no other implementations:
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> +};
-> +
-> +&lpasscc {
-> +	status = "disabled";
-> +};
-> +
-> +&lpass_audiocc {
-> +	qcom,adsp-skip-pll;
-> +	protected-clocks = <LPASS_AUDIO_CC_CDIV_RX_MCLK_DIV_CLK_SRC>,
-> +		<LPASS_AUDIO_CC_CODEC_MEM0_CLK>, <LPASS_AUDIO_CC_CODEC_MEM1_CLK>,
-> +		<LPASS_AUDIO_CC_CODEC_MEM2_CLK>, <LPASS_AUDIO_CC_CODEC_MEM_CLK>,
-> +		<LPASS_AUDIO_CC_EXT_MCLK0_CLK>, <LPASS_AUDIO_CC_EXT_MCLK0_CLK_SRC>,
-> +		<LPASS_AUDIO_CC_EXT_MCLK1_CLK>, <LPASS_AUDIO_CC_EXT_MCLK1_CLK_SRC>,
-> +		<LPASS_AUDIO_CC_PLL>, <LPASS_AUDIO_CC_PLL_OUT_AUX2>,
-> +		<LPASS_AUDIO_CC_PLL_OUT_AUX2_DIV_CLK_SRC>,
-> +		<LPASS_AUDIO_CC_PLL_OUT_MAIN_DIV_CLK_SRC>,
-> +		<LPASS_AUDIO_CC_RX_MCLK_2X_CLK>, <LPASS_AUDIO_CC_RX_MCLK_CLK>,
-> +		<LPASS_AUDIO_CC_RX_MCLK_CLK_SRC>;
-> +	/delete-property/ power-domains;
-> +};
+btw, please avoid top posting in the future.
 
-This literally disables all clocks that come out of this controller, why
-not just set status = "reserved"?
+Thanks,
+Conor.
 
-> +
-> +&lpass_aon {
-> +	status = "disabled";
-> +};
-> +
-> +&lpass_core {
-> +	status = "disabled";
-> +};
-> +
-> +&lpass_hm {
-> +	status = "disabled";
-> +};
+--ySXbP4Hch0LxT6iF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-These three are status = "reserved" by default already, so it's a NOP..
+-----BEGIN PGP SIGNATURE-----
 
-Konrad
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZcZavgAKCRB4tDGHoIJi
+0nJ9AP9pgCiDfbPPK8C8wpcNkD8v8BwOQJmplpuRMXqfPtlZbAD/TCtE1mY94jtz
+r1I6lqx/NZblJhh+vgmcoqfZ+KCBWw8=
+=1lSt
+-----END PGP SIGNATURE-----
+
+--ySXbP4Hch0LxT6iF--
