@@ -1,144 +1,83 @@
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4474E8287F;
-	Fri,  9 Feb 2024 20:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A836C5B5C5
+	for <linux-clk@vger.kernel.org>; Sun, 11 Feb 2024 14:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707508880; cv=none; b=sAk65YsO7dzRoR+lqSX3halzb2/kcCidKZobrZji9nrnotoLDFX1Eh+6gsBWULzDXKJoMNLkzBMvCrVFwDMZaZNTp/R3/JFIXv0zqAB7hAZ+7Wz2idz33o4JjwdoTPzbATa2s930N7bbfvIc0x1ayIoDcSYZxeW+iaQf5DTAJ+I=
+	t=1707661389; cv=none; b=Ezc6XKipy2xuQMOHlWxvMWmXQwJ3PKuFmpiRjsyJHMH1TBPAt4q9lZtuDQ5GKmC2Jn2OUEfGuKgk2hSKBcyPZ/3PsS3ajKZ+ry1qiGCfPjf+fOmDVhSTgyj+gj+fXY4JPkwrbunX03PqHnVAGTDo6JvRpJFTqV83CudvkNttMf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707508880; c=relaxed/simple;
-	bh=o/8wndvIYXCDVyptq7fP01DqP1w9rrvG4uBd7m7U/L8=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ERyRGBG4UOvUls0qshlkYWcDCxd2cnkLeFu8NHSsUJUEv7byhoDZywrj579mPZQDEn7+flQkEPp1ce+Yb8CIu85JNwyB0sylFPRK9Aw++jNzs573kxWo4A73LYxVT8FrL2BODEhFKnwgEW2CTk6EMTL9NF5qLClIJMD+2Sku448=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wZncPceV; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wZncPceV"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 419K1BPA115191;
-	Fri, 9 Feb 2024 14:01:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1707508871;
-	bh=SVASYROGxveF2vwE6Vi8wJxsEEn0nCoTyOo/LpiBJmI=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date;
-	b=wZncPceVNlpS3o/yQVaWIttf3hJWUdzMgqX4+OC+Aft8+zd5pb6dv6oiFEn7GpoNc
-	 je6dJwwkj0juPx7G+8JeOjjJR4DXg0E4+LXAkDNA06JSxwrCYLCbSETk4gnuBkLLg9
-	 t/M4Scwv/OJ7jmWpV8sIW2IpAoMf0LVKy6Tsq7vs=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 419K1Bnf041601
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 9 Feb 2024 14:01:11 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 9
- Feb 2024 14:01:10 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 9 Feb 2024 14:01:10 -0600
-Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 419K1AJx003931;
-	Fri, 9 Feb 2024 14:01:10 -0600
-From: Kamlesh Gurudasani <kamlesh@ti.com>
-To: Nishanth Menon <nm@ti.com>
-CC: "Kumar, Udit" <u-kumar1@ti.com>, <kristo@kernel.org>,
-        <ssantosh@kernel.org>, <chandru@ti.com>, <rishabh@ti.com>,
-        <vigneshr@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3] clk: keystone: sci-clk: Adding support for non
- contiguous clocks
-In-Reply-To: <20240209190227.lboi6n5s2oy7kxgc@pristine>
-References: <20240207091100.4001428-1-u-kumar1@ti.com>
- <20240207125410.r2q3jcplvif7dvt2@tumbling>
- <3a7c4a18-5463-414f-82df-39aaed861148@ti.com>
- <20240209172555.fxlxijhhbgrkyibo@agreeing>
- <87y1btlb66.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
- <20240209190227.lboi6n5s2oy7kxgc@pristine>
-Date: Sat, 10 Feb 2024 01:31:09 +0530
-Message-ID: <87v86xl856.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+	s=arc-20240116; t=1707661389; c=relaxed/simple;
+	bh=nrxTaYyayeEAbX7cZFDXgV3HkCaKcBBZ3cXv2UpBXOM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uw8+fiNqB1g56KEqTyJTMgqdRjlYIWvwd6W4UJ4EwPHq31qyA7CDbNJWldcz2DW/1v14NHynt2rwYG3XK3q5N1r+oAZKlOBkfVi0/kES+7AamZlKCFo5ZHauuuuIJythhXofjicIKhmiNNn0lZNbGZA7BUh9N4ImELUlLa1G5tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4TXqYv2lstz4x0WZ
+	for <linux-clk@vger.kernel.org>; Sun, 11 Feb 2024 15:22:59 +0100 (CET)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5c16:aeff:e73f:ad67])
+	by xavier.telenet-ops.be with bizsmtp
+	id lqNs2B003493aJM01qNs30; Sun, 11 Feb 2024 15:22:52 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rZAjH-000QhI-2k;
+	Sun, 11 Feb 2024 15:22:52 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rZAjL-006Wof-Vw;
+	Sun, 11 Feb 2024 15:22:52 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Cong Dang <cong.dang.xn@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a779h0: Add EtherAVB clocks
+Date: Sun, 11 Feb 2024 15:22:46 +0100
+Message-Id: <a5b4252d9822ded3fd523bc35417306cae2ec2bd.1707661303.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
-Nishanth Menon <nm@ti.com> writes:
+From: Cong Dang <cong.dang.xn@renesas.com>
 
-> On 00:25-20240210, Kamlesh Gurudasani wrote:
->> >> > > 
->> >> > > diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
->> >> > > index 35fe197dd303..31b7df05d7bb 100644
->> >> > > --- a/drivers/clk/keystone/sci-clk.c
->> >> > > +++ b/drivers/clk/keystone/sci-clk.c
->> >> > > @@ -516,6 +516,7 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
->> >> > >   	struct sci_clk *sci_clk, *prev;
->> >> > >   	int num_clks = 0;
->> >> > >   	int num_parents;
->> >> > > [..]					/* Check if this clock id is valid */
->> >> > > +					ret = provider->ops->is_auto(provider->sci,
->> >> > > +						sci_clk->dev_id, ++clk_id, &state);
->> >> > A bit too nice coding ;) => I had been confused momentarily by clk_id = args.args[1]
->> >> > change just above till I saw that you are pre-incrementing
->> >> > clk_id - Is there a harm in leaving the original clk_id increment logic
->> >> > alone (it was much simpler to read up)?
->> >> 
->> >> No warm in using original code but want to avoid, two statement for
->> >> increment in case of failure and success.
->> >> 
->> >> Let me know, if i need to add few comments around this
->> >> 
->> >> or if you think, code is confusing I can move to original one
->> >
->> > Yes, please drop the un-necessary changes. In this case, original
->> > increment code should work just fine.
->> I wouldn't call it unnecessary, If I have to track increment/addition at
->> 3 different places just to understand the loop, it is hard. On other
->> hand, pre-increment code is solving the problem by having increment at
->> only one place(easier to track). On the plus side, every clk_id belonging to
->> parent is handled completely inside the loop.
->> 
->> For a new person looking at this code, pre-increment code would be
->> actually easier to undertsand.
->> 
->> Also, Udit feels the same.
->> 
->> Would you please explain why do you think the original increment code
->> make more sense? It's not simple to understand or track, that's for sure.
->
-> the context of the fix is the is_auto call to know what parent options
-> are valid or not. Do the absolutely what is necessary in the change. if
-> you want to beautify etc, move it to some other patch and debate about
-> it. So, this is un-necessary change in this patch.
-The context of the fix i.e. handling non contiguous parents is making
-the loop logic complex. Before this patch, i.e. contiguous clock
-handling was simple.
+Add the module clocks used by the Ethernet AVB (EtherAVB-IF) blocks on
+the Renesas R-Car V4M (R8A779H0) SoC.
 
-In this fix, we are solving the problem as well as keeping the loop
-simple. clk_id is basically the part of the same loop and it's affecting
-nothing but the loop count. 
+Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk for v6.9.
 
-This is not just beautification, this is also simplifying the logic and
-improving the readibility. 
+Changes compared to the BSP:
+  - Rename "avbN-rgmiiN" to "avbN:rgmiiN",
+  - Drop blank line.
+---
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-If the patch can provide the solution and avoid the complexity, then I don't
-understand why we need a patch that introduce the complexity and another
-patch to solve the complexity.
+diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+index 70d104393594091c..46202e367d713d41 100644
+--- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+@@ -173,6 +173,9 @@ static const struct cpg_core_clk r8a779h0_core_clks[] = {
+ };
+ 
+ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
++	DEF_MOD("avb0:rgmii0",	211,	R8A779H0_CLK_S0D8_HSC),
++	DEF_MOD("avb1:rgmii1",	212,	R8A779H0_CLK_S0D8_HSC),
++	DEF_MOD("avb2:rgmii2",	213,	R8A779H0_CLK_S0D8_HSC),
+ 	DEF_MOD("hscif0",	514,	R8A779H0_CLK_SASYNCPERD1),
+ 	DEF_MOD("hscif1",	515,	R8A779H0_CLK_SASYNCPERD1),
+ 	DEF_MOD("hscif2",	516,	R8A779H0_CLK_SASYNCPERD1),
+-- 
+2.34.1
 
-My original question below is still not answered so I guess there is no
-debate here actually.
-"Would you please explain why do you think the original increment code
- make more sense? It's not simple to understand or track, that's for
- sure."
-
-Kamlesh
->
-> -- 
-> Regards,
-> Nishanth Menon
-> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
