@@ -1,129 +1,77 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812945B668;
-	Sun, 11 Feb 2024 15:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A5F54278;
+	Sun, 11 Feb 2024 15:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707666176; cv=none; b=e4e3eIpLIENHWH1hsRoCn8WHWV1RD6+ydshnGNKS72i4Uo46bAnMMlpVkpIKsujf9dCJnEDe2Q173sSI4lwOI/4+hUXfdEPKSISSVUUtQz9n0Yw/qvRj5UEa4EVXCNqClTQECOA+MTvFh6ORQSAY26bjID2VgSc28Ymebbo1KZg=
+	t=1707666909; cv=none; b=Gm3B0Pn4zRUzf7FYO4pdZkqDip3mgZh+QnGj0kaMMfk8gJAlZIzjCVEPvYv+fJNn1ykVLIOMT7fpNJgUNXClnk8q6j4y33WYG5pU6qi0aTyvbr74bB5p9uSqmPCLvQY9OZNaPxbEDf6cLCe8OROSoFamFKMvr3aq4fgIGfuoWw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707666176; c=relaxed/simple;
-	bh=lhbXjww9UyAKMdiEKIwf186NCMys5erRb0M4pfLaPfM=;
-	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fZGH1rP0r/IlK71rhCgqycn+G/Fpxf4gtpJEDA2iJbitT4wUD3vl0XFNZl8S/5MKedoK+RZotq9jW9mcLdSxCjKcKePl2x/iO5YY6zu3zKETRGIOuMJe1UuysDkIvobvRuxYvxWMkkzMtKcr8KP9Cw7Gjwpoq5v8KNz6knETQ1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev; spf=pass smtp.mailfrom=oltmanns.dev; dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b=dtbevJw2; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
+	s=arc-20240116; t=1707666909; c=relaxed/simple;
+	bh=+p/TPMiKZKlmXoxJMQ/Ac21V0WaExMeOFivDJAjmfCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HAod2FEkwQZ2CRjbhG9o2fZqNr7DAhqo4xNIG5KPGl2zcwYKezNk00az+rXdRIXaHQxCr9/xuS+K26x/VRSZHG7xr/oPn10A1+EeMR35TqKaSKaRF6mtfeb6dTUc9npzelKsqSuDUtRlLP1cvxgZ5iEXD8VacogaLzuPRPB6UoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=cnVsoZYH; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="dtbevJw2"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4TXsL23Rdhz9scZ;
-	Sun, 11 Feb 2024 16:42:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-	s=MBO0001; t=1707666170;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=98aDbHgBbGqJamJlcPsF9M6fGfi3Twm9F/GrRpw8fzI=;
-	b=dtbevJw2RvdVTy1+oh5ExI/QO4OF403FR6JiNYzrqWdLydcjnRivDO15lGVH9EtidDlKzl
-	oyXvxHTUS2c4XApjWIuMjMOgBxMKmmmDtrkPpSXmfDot5xPTE1TtEO9iGJfByr0YJa8sT0
-	FTifdEFNutdUrivRSWb3OFHI/17FqDhzk8iAgTgM/Kq6cQZWiECx2tOPlxJq0xauL8o6/f
-	in9z6b7cL4yVjxXoSxoumh0x9U8qViyV1w2GC0AukoHC0EtFBYyXrGKje/BEMpqVxg6wo2
-	FoCa5h/xYhFO2TyLCITT9NvnUlOQIuuEBgy3nnNQvBoFXkqUm0Wmo8t4NOo4XQ==
-References: <20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev>
- <20240205-pinephone-pll-fixes-v2-5-96a46a2d8c9b@oltmanns.dev>
- <poua4bzyciiwt65sqjf2whqfdumvoe4h3bkjpf64px2vwgumrf@sai73byg2iju>
-From: Frank Oltmanns <frank@oltmanns.dev>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Guido
- =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, Purism Kernel Team
- <kernel@puri.sm>, Ondrej
- Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>, Jessica
- Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] drm/panel: st7703: Drive XBD599 panel at higher
- clock rate
-In-reply-to: <poua4bzyciiwt65sqjf2whqfdumvoe4h3bkjpf64px2vwgumrf@sai73byg2iju>
-Date: Sun, 11 Feb 2024 16:42:43 +0100
-Message-ID: <87sf1zxb0s.fsf@oltmanns.dev>
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="cnVsoZYH"
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id A0D5820751;
+	Sun, 11 Feb 2024 16:55:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1707666904;
+	bh=8M/NTInG6Nop42RnQgfHsyNKhHaJCOtRgNV478Trz5s=; h=From:To:Subject;
+	b=cnVsoZYHZj3wakEHaE3KqHdWFZRhHvPtr03SyIlO4jn5FP8usu86QomBnG5UgPCWS
+	 cBe7+Qje074Ri72ZEtjZhQIQCzKKsEVCLfsQQRJpHibC8pj5q+y1kpbqSuFQ5rG3G4
+	 iXY/DYLzq/WlN8XIKYPLqVPR7itfjstv+NPE0qgK39OK9YGRGfh7x9NL0zShJQXQew
+	 XTG5Mq2EdM/yjJN+EIJX0zao7ZrjyvMuWMV+BD706waEG1jIcMzYvOj9dqnqC6bu4B
+	 IdHBl//d3NzIYTnl93VSm+4w93+yCEoaVq5J/7tlbeFIE+KcWtElMpJlEVPdTCMBdn
+	 2r5vcZmNZXPMQ==
+Date: Sun, 11 Feb 2024 16:54:59 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Udit Kumar <u-kumar1@ti.com>
+Cc: nm@ti.com, kristo@kernel.org, ssantosh@kernel.org, chandru@ti.com,
+	rishabh@ti.com, kamlesh@ti.com, vigneshr@ti.com,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3] clk: keystone: sci-clk: Adding support for non
+ contiguous clocks
+Message-ID: <20240211155459.GA4443@francesco-nb>
+References: <20240207091100.4001428-1-u-kumar1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 4TXsL23Rdhz9scZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240207091100.4001428-1-u-kumar1@ti.com>
 
+On Wed, Feb 07, 2024 at 02:41:00PM +0530, Udit Kumar wrote:
+> Most of clocks and their parents are defined in contiguous range,
+> But in few cases, there is gap in clock numbers[0].
+> Driver assumes clocks to be in contiguous range, and add their clock
+> ids incrementally.
+> 
+> New firmware started returning error while calling get_freq and is_on
+> API for non-available clock ids.
+> 
+> In this fix, driver checks and adds only valid clock ids.
+> 
+> Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
+> 
+> [0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
+> Section Clocks for NAVSS0_CPTS_0 Device,
+> clock id 12-15 not present.
+> 
+> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
 
-On 2024-02-08 at 20:05:08 +0100, Maxime Ripard <mripard@kernel.org> wrote:
-> [[PGP Signed Part:Undecided]]
-> Hi Frank,
->
-> On Mon, Feb 05, 2024 at 04:22:28PM +0100, Frank Oltmanns wrote:
->> This panel is used in the pinephone that runs on a Allwinner A64 SOC.
->> The SOC requires pll-mipi to run at more than 500 MHz.
->>
->> This is the relevant clock tree:
->>  pll-mipi
->>     tcon0
->>        tcon-data-clock
->>
->> tcon-data-clock has to run at 1/4 the DSI per-lane bit rate. The XBD599
->> has 24 bpp and 4 lanes. Therefore, the resulting requested
->> tcon-data-clock rate is:
->>     crtc_clock * 1000 * (24 / 4) / 4
->>
->> tcon-data-clock runs at tcon0 / 4 (fixed divisor), so it requests a
->> parent rate of
->>     4 * (crtc_clock * 1000 * (24 / 4) / 4)
->>
->> Since tcon0 is a ccu_mux, the rate of tcon0 equals the rate of pll-mipi.
->>
->> pll-mipi's constraint to run at 500MHz or higher forces us to have a
->> crtc_clock >= 83333 kHz if we want a 60 Hz vertical refresh rate.
->>
->> Change [hv]sync_(start|end) so that we reach a clock rate of 83502 kHz
->> so that it is high enough to align with pll-pipi limits.
->>
->> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
->
-> That commit log is great, but it's kind of off-topic. It's a panel
-> driver, it can be used on any MIPI-DSI controller, the only relevant
-> information there should be the panel timings required in the datasheet.
->
-> The PLL setup is something for the MIPI-DSI driver to adjust, not for
-> the panel to care for.
->
+no empty lines in between tags and only tags at the end of the commit
+message, this [0] reference needs to be before or moved to a `Link:` tag,
+whatever works best for you.
 
-I absolutely agree. It even was the reason for my submission of a
-sunxi-ng patch series last year that was accepted, to make pll-mipi more
-flexible. :)
+Francesco
 
-The only remaining option I currently see for adjusting the sunxi-ng
-driver to further accomodate the panel, is trying to use a higher
-divisor than 4 for calculating tcon-data-clock from tcon0. I remember
-reading a discussion about this, but as far as I remember that proposal
-was rejected (by you, IIRC).
-
-While I appreciate other suggestion as well, I'll look into options for
-using a different divisor than 4.
-
-Best regards,
-  Frank
-
->
-> Maxime
->
-> [[End of PGP Signed Part]]
