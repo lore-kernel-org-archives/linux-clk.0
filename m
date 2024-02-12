@@ -1,60 +1,48 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161BE3984A
-	for <linux-clk@vger.kernel.org>; Mon, 12 Feb 2024 11:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA9C39FFD;
+	Mon, 12 Feb 2024 13:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707736142; cv=none; b=g+iFfSZDJ2X7ZEovZQRiIUw2z6s+0HG4SwLmRJN3KkGhRDs+pEcSCTVJxfSiYitOETbRngt9+4UZ/WE71uyj4ex1q1+TgoNso2WuWrtuoOrLrT4yL/phjKGEm5f/rTu4Jw629KTuuKip6GoQBpv4UXWFssFDE8qA6P5739PpvoQ=
+	t=1707743259; cv=none; b=TMjdrQY/pW9Y1BDwaQ7cyXcgV5CnTseU3tdgkdpnPQ9kVg70G1RJs4FPtTRb7TCwQVtnvDlZ2BOWB2wuYZwD+fcF/SCDP22yXSeZNF/PqK4CIRs7I28JH77WroazOHm6Ne32DcOZ/VUGGT5yyL0eIsmxMHz6HPdiiegOwPEa5U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707736142; c=relaxed/simple;
-	bh=n7pGJC8iqunN1hSKHOcQpsCH8YnEcFiqx3Po50Kk0K4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nBok8uWm8fX3zLojTOIfFO+sjcBwQC/mjAHjFeOjlxRdHHywQmIIZQZ3ovwGPa60BnUB24KEA0cf0K/UTLyX9dCWYUdPQNgddbaTqCPUirX8UK+1K6xNF2ReoFfYUqYYiehy0q2UnPzuaxoyRjcclraNqWVWPV5Pn7KsZnAA6Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=TiRxWv9Z; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1707743259; c=relaxed/simple;
+	bh=vZ+hSARcnLjxR8aMhf3FOMyEWNZPAUjXRDllNiuoaY0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GRm37julXdSze1tEw4E9RozCrVWoO6pQSPHweKLL0XIrCXFwrJ2OamtX4IGLb6ESnPin5qxOreie/R669j4MOHwDweD0OUnivaBXJQcJwZypyDDMSpXTSu1jr/j0+k3mMFHTCFpHESp5fniErriz+Uj8qwiuO/bcwf/dAzOqW/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YwMrvMOr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TiRxWv9Z"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5116ec49365so3312311e87.3
-        for <linux-clk@vger.kernel.org>; Mon, 12 Feb 2024 03:08:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1707736138; x=1708340938; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wgtCKhK82z+I2PwaVcKMp99Q6wqABgNsVHzLAE9dAn0=;
-        b=TiRxWv9ZUxCoPg/H+kQvn0zebUmCAYMBd+c01zE9HKLq8456MUfayXfMMCoVS7ljyr
-         GHOVZG2Ma1YEUTZcMEqdKMzud0D0D3rtzUf0U6qJ/CJJl3f9Oxv7VSdLUqHkFjJZhrLU
-         4v0cA+S+WZP9uHsbcy5c+5P2RbOEEYJ0fHrEGaJ4WKL8B9Ta1n3p9cFm7hYyaIxrJaeo
-         /rvI/G2Uj9IRG18snZgCFfRIYWVVHbBdX9uDiG1WEU0xHvAn4V4uLChBu2TAn8FexbMV
-         axQw7Uw51cTsR2Kb9kcDhcHfgFYIblIzMMEYLO4PJ45obcDsbQiz4O27p1rCHrvE/NAU
-         SbRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707736138; x=1708340938;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wgtCKhK82z+I2PwaVcKMp99Q6wqABgNsVHzLAE9dAn0=;
-        b=u13slOeuHdJSgPrWVyjz79tEDJlLyW1ITqSdxdFp6J9Qfa9v3XISax/yPmAjAShdes
-         22wG06Y8OJlGRIywxc6JOmSBLcam9pSzm8/BCvGjhJugJ1pTwu2/SQ//T9iimDy1C22o
-         c1Fqe9Bm7L5+ZHPryTklq+/y4wbSZm9sGjsMYW17m9WZ3H5dC9r/VDn71DzkSVhDHcpk
-         trdnfrxnw4tsA3J1m9QqWjteKwz5CtaKoEkqLUqBhreacMkjhYb9p3+yRJYPZHLlRfUK
-         vmsIWdRFDiKXybtiUX1Xbw//1wFukICS4/hOejHH+1WVArcE8nobXpOWRdP5xGEOCT/V
-         PsSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYWslywhTQNObwZJrRFOVU00nkBxJJ4ns3qFNEp/GU66QSz1Ztdw/26mmAnAV6RbmPxus41Hf/8PjzBbRGKEAwU0usPQeyCqSN
-X-Gm-Message-State: AOJu0Yzhitgdoy81LqiBPbi5BGo5syEbZhAktt9DD/TBN4J64D++owm/
-	bRuJIOADlbQBr5i0jnYigWEP6ISFl96cp5rAMm1Tlu8l/3r2aEcevWf0NsrKGn4=
-X-Google-Smtp-Source: AGHT+IH8gaBRvO6QKQUrPxiD25VWApPudReK8NgbiCQc/XSlHiAxgcfJ7p7cminjrDMRArdPlCn8nA==
-X-Received: by 2002:a05:6512:3b06:b0:511:83b3:a9aa with SMTP id f6-20020a0565123b0600b0051183b3a9aamr4080530lfv.6.1707736137995;
-        Mon, 12 Feb 2024 03:08:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX8yeUTmlC6AXe6nz+jYbF13B4T0HRNvlfOzDTAijU9nE/ugflYEEiia18f/syV5symAYoFb/2oWYh4e3d2w/nrU7iEVQfVa8FpOV+37/IrAQ5rxgS8rdSNHDr4TGQ17T54VTKN7KW9duYD5GIDo50lNRZKcUyLTYuQ7fDaDNrFmDTM8e3Wlga5PbZMv+7McplQMP4vflAjvNsxE/DeIPFBTwqTPNaANXD1tHhlKFr0ThOiH1+aX89nYu6S4kuh9GSrNKUZWqkx+si7g4qg3scnhRNFkha4ZBHWxA+hIOBpMbnouvNN/FdOJhwVxjEn32UHy8hial0CUYlH4vLAem1937X1sV6SgLa+4X10YRMNUUtNLrb+MZa/vugHqOqN5t3SdJWW+VG4ZXiXbN+s4rTOg7edeKEtZQN/C5EBb6mdKr7Tj8NMD2rmMWCvGGTBOBpJoh+Htqal3wtS5vMrZUdwAlkGkN9IsfMS8fSdXOYeXCrPGcLTOGgzKPxgpHIyrFpxhoRcLiIj2NYSxnMIPxWoiuYdy17F6gYIh0Rlev7XNYJOSNP1n1rroGj/tXHcSsNfBcDUMFr8aQOTeWgt695zTX5t6IYgLch5
-Received: from [192.168.50.4] ([82.78.167.20])
-        by smtp.gmail.com with ESMTPSA id h17-20020a05600c315100b00410cf4ee021sm2963960wmo.29.2024.02.12.03.08.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Feb 2024 03:08:57 -0800 (PST)
-Message-ID: <4c2369c0-bcd0-47c8-aee5-3c901f7920de@tuxon.dev>
-Date: Mon, 12 Feb 2024 13:08:55 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YwMrvMOr"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41C8ePKF018491;
+	Mon, 12 Feb 2024 13:07:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=Jm/Rp6PYFPPRH1G1KAQNpPCE+cXaHQkYUggUJFrTmOs=; b=Yw
+	MrvMOrctK/k5gm8oigBsvvpvXIWkvlr2+JYcOkGWNLcXetLcKEu8CAM2vWh26TbA
+	Kr4pPz/02Wbxgy/CcPaA+NauY5SSP47kf9VoPgTNlBAwXyJaSi/0BpFy3zShvhzj
+	rrF6ozZzw2tR9XPX5vOXW7AdrYZwe05IRZsfTPXbNQ88JJ6tYVzaFWUlTg2h2Qrr
+	iV9Bs2lqq/wSiKESszKohEkT+3OGo57O/nUSX1Dd/ZC0fG6jFEtcNzQanOs3y8wj
+	8vrfR1KiDv+nKlDgpAZcZvWr5GJ3tuH0yy3ueYUPhmmX8wsAbAx4BGb7pkPv7FT7
+	QuSzOR+2+cckHEyl9COQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w62ps3e2n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Feb 2024 13:07:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41CD7WSn023381
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Feb 2024 13:07:32 GMT
+Received: from [10.216.29.101] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 12 Feb
+ 2024 05:07:27 -0800
+Message-ID: <d88f0f42-c9ec-4638-8090-055bc4806574@quicinc.com>
+Date: Mon, 12 Feb 2024 18:36:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,262 +50,225 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/17] dt-bindings: clock: r9a07g043-cpg: Add power domain
- IDs
+Subject: Re: [PATCH 2/5] clk: qcom: videocc-sm8550: Add support for SM8650
+ videocc
 Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
- "palmer@dabbelt.com" <palmer@dabbelt.com>,
- "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com>
- <20240208124300.2740313-2-claudiu.beznea.uj@bp.renesas.com>
- <TYCPR01MB11269DEA9261CA594EECC949686442@TYCPR01MB11269.jpnprd01.prod.outlook.com>
- <67ad8052-1406-4dcb-9e35-5c42ada28797@tuxon.dev>
- <TYCPR01MB112698AB206332D13105C064186442@TYCPR01MB11269.jpnprd01.prod.outlook.com>
- <e170f5f8-f95c-4553-b088-1072345fae53@tuxon.dev>
- <TYCPR01MB11269015C92AA327DC6BFA76586442@TYCPR01MB11269.jpnprd01.prod.outlook.com>
- <786f90f4-ba47-46cb-b5e0-e3c42b1b741a@tuxon.dev>
- <TYCPR01MB11269A240E2EDD460D0B97B9786482@TYCPR01MB11269.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TYCPR01MB11269A240E2EDD460D0B97B9786482@TYCPR01MB11269.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Ajit Pandey" <quic_ajipan@quicinc.com>
+References: <20240206113145.31096-1-quic_jkona@quicinc.com>
+ <20240206113145.31096-3-quic_jkona@quicinc.com>
+ <CAA8EJpqbKQS7Bp28xNZ0twu7BFLdOES9qS5xBvoonux8Ma4q6Q@mail.gmail.com>
+ <e90522c1-7a2d-40ff-bf4e-c8f974722ddf@quicinc.com>
+ <CAA8EJpqCDOE_5vg+4ew8H0HbhQM1w8reqU6Pu0MAYJtMw8zXUw@mail.gmail.com>
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <CAA8EJpqCDOE_5vg+4ew8H0HbhQM1w8reqU6Pu0MAYJtMw8zXUw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: MZusrz6iviKqZhiYSYNZNQ-SuxQ5798z
+X-Proofpoint-GUID: MZusrz6iviKqZhiYSYNZNQ-SuxQ5798z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-12_09,2024-02-12_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 bulkscore=0 spamscore=0 phishscore=0 suspectscore=0
+ mlxscore=0 priorityscore=1501 adultscore=0 clxscore=1015 mlxlogscore=999
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401310000 definitions=main-2402120099
 
 
 
-On 12.02.2024 10:59, Biju Das wrote:
-> Hi Claudiu,
+On 2/7/2024 12:49 PM, Dmitry Baryshkov wrote:
+> On Wed, 7 Feb 2024 at 08:59, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 2/6/2024 5:24 PM, Dmitry Baryshkov wrote:
+>>> On Tue, 6 Feb 2024 at 13:39, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+>>>>
+>>>> Add support to the SM8650 video clock controller by extending the
+>>>> SM8550 video clock controller, which is mostly identical but SM8650
+>>>> has few additional clocks and minor differences.
+>>>
+>>> In the past we tried merging similar clock controllers. In the end
+>>> this results in the ugly source code. Please consider submitting a
+>>> separate driver.
+>>>
+>>
+>> Thanks Dmitry for your review. SM8650 has only few clock additions and
+>> minor changes compared to SM8550, so I believe it is better to reuse
+>> this existing driver and extend it.
 > 
->> -----Original Message-----
->> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->> Sent: Monday, February 12, 2024 8:02 AM
->> Subject: Re: [PATCH 01/17] dt-bindings: clock: r9a07g043-cpg: Add power
->> domain IDs
+> I'd say, the final decision is on Bjorn and Konrad as maintainers.
+> 
 >>
->> Hi, Biju,
+>>>>
+>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>> ---
+>>>>    drivers/clk/qcom/videocc-sm8550.c | 160 +++++++++++++++++++++++++++++-
+>>>>    1 file changed, 156 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
+>>>> index f3c9dfaee968..cdc08f5900fc 100644
+>>>> --- a/drivers/clk/qcom/videocc-sm8550.c
+>>>> +++ b/drivers/clk/qcom/videocc-sm8550.c
+>>>> @@ -1,6 +1,6 @@
+>>>>    // SPDX-License-Identifier: GPL-2.0-only
+>>>>    /*
+>>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>     */
+>>>>
+>>>>    #include <linux/clk-provider.h>
+>>>
+>>> [skipping]
+>>>
+>>>>    static struct gdsc video_cc_mvs0c_gdsc = {
+>>>>           .gdscr = 0x804c,
+>>>>           .en_rest_wait_val = 0x2,
+>>>> @@ -354,15 +481,20 @@ static struct clk_regmap *video_cc_sm8550_clocks[] = {
+>>>>           [VIDEO_CC_MVS0_CLK] = &video_cc_mvs0_clk.clkr,
+>>>>           [VIDEO_CC_MVS0_CLK_SRC] = &video_cc_mvs0_clk_src.clkr,
+>>>>           [VIDEO_CC_MVS0_DIV_CLK_SRC] = &video_cc_mvs0_div_clk_src.clkr,
+>>>> +       [VIDEO_CC_MVS0_SHIFT_CLK] = &video_cc_mvs0_shift_clk.clkr,
+>>>>           [VIDEO_CC_MVS0C_CLK] = &video_cc_mvs0c_clk.clkr,
+>>>>           [VIDEO_CC_MVS0C_DIV2_DIV_CLK_SRC] = &video_cc_mvs0c_div2_div_clk_src.clkr,
+>>>> +       [VIDEO_CC_MVS0C_SHIFT_CLK] = &video_cc_mvs0c_shift_clk.clkr,
+>>>>           [VIDEO_CC_MVS1_CLK] = &video_cc_mvs1_clk.clkr,
+>>>>           [VIDEO_CC_MVS1_CLK_SRC] = &video_cc_mvs1_clk_src.clkr,
+>>>>           [VIDEO_CC_MVS1_DIV_CLK_SRC] = &video_cc_mvs1_div_clk_src.clkr,
+>>>> +       [VIDEO_CC_MVS1_SHIFT_CLK] = &video_cc_mvs1_shift_clk.clkr,
+>>>>           [VIDEO_CC_MVS1C_CLK] = &video_cc_mvs1c_clk.clkr,
+>>>>           [VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC] = &video_cc_mvs1c_div2_div_clk_src.clkr,
+>>>> +       [VIDEO_CC_MVS1C_SHIFT_CLK] = &video_cc_mvs1c_shift_clk.clkr,
+>>>>           [VIDEO_CC_PLL0] = &video_cc_pll0.clkr,
+>>>>           [VIDEO_CC_PLL1] = &video_cc_pll1.clkr,
+>>>> +       [VIDEO_CC_XO_CLK_SRC] = &video_cc_xo_clk_src.clkr,
+>>>>    };
+>>>>
+>>>>    static struct gdsc *video_cc_sm8550_gdscs[] = {
+>>>> @@ -380,6 +512,7 @@ static const struct qcom_reset_map video_cc_sm8550_resets[] = {
+>>>>           [CVP_VIDEO_CC_MVS1C_BCR] = { 0x8074 },
+>>>>           [VIDEO_CC_MVS0C_CLK_ARES] = { 0x8064, 2 },
+>>>>           [VIDEO_CC_MVS1C_CLK_ARES] = { 0x8090, 2 },
+>>>> +       [VIDEO_CC_XO_CLK_ARES] = { 0x8124, 2 },
+>>>
+>>> Is this reset applicable to videocc-sm8550?
+>>>
 >>
->> On 08.02.2024 21:20, Biju Das wrote:
+>> SM8550 also has above reset support in hardware, hence it is safe to
+>> model above reset for both SM8550 and SM8650.
+> 
+> Then, separate commit, Fixes tag.
+> 
+
+Sure, will separate and add Fixes tag in next series.
+
+>>
+>>>>    };
+>>>>
+>>>>    static const struct regmap_config video_cc_sm8550_regmap_config = {
+>>>> @@ -402,6 +535,7 @@ static struct qcom_cc_desc video_cc_sm8550_desc = {
+>>>>
+>>>>    static const struct of_device_id video_cc_sm8550_match_table[] = {
+>>>>           { .compatible = "qcom,sm8550-videocc" },
+>>>> +       { .compatible = "qcom,sm8650-videocc" },
+>>>>           { }
+>>>>    };
+>>>>    MODULE_DEVICE_TABLE(of, video_cc_sm8550_match_table);
+>>>> @@ -410,6 +544,7 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+>>>>    {
+>>>>           struct regmap *regmap;
+>>>>           int ret;
+>>>> +       u32 offset;
+>>>>
+>>>>           ret = devm_pm_runtime_enable(&pdev->dev);
+>>>>           if (ret)
+>>>> @@ -425,6 +560,23 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+>>>>                   return PTR_ERR(regmap);
+>>>>           }
+>>>>
+>>>> +       if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8550-videocc")) {
+>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS0_SHIFT_CLK] = NULL;
+>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS0C_SHIFT_CLK] = NULL;
+>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS1_SHIFT_CLK] = NULL;
+>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS1C_SHIFT_CLK] = NULL;
+>>>> +               video_cc_sm8550_clocks[VIDEO_CC_XO_CLK_SRC] = NULL;
 >>>
+>>> Please invert the logic. Make video_cc_sm8550_clocks reflect SM8550
+>>> and patch in new clocks in the SM8650-specific branch below.
 >>>
->>>> -----Original Message-----
->>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>>> Sent: Thursday, February 8, 2024 4:53 PM
->>>> To: Biju Das <biju.das.jz@bp.renesas.com>; geert+renesas@glider.be;
->>>> mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
->>>> krzysztof.kozlowski+dt@linaro.org; conor+dt@kernel.org;
->>>> magnus.damm@gmail.com; paul.walmsley@sifive.com; palmer@dabbelt.com;
->>>> aou@eecs.berkeley.edu
->>>> Cc: linux-renesas-soc@vger.kernel.org; linux-clk@vger.kernel.org;
->>>> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
->>>> riscv@lists.infradead.org; Claudiu Beznea
->>>> <claudiu.beznea.uj@bp.renesas.com>
->>>> Subject: Re: [PATCH 01/17] dt-bindings: clock: r9a07g043-cpg: Add
->>>> power domain IDs
+>>
+>> Sure, will add these clocks as NULL in video_cc_sm8550_clocks and patch
+>> in new clocks here for SM8650. Then we can remove above check for SM8550.
+> 
+> No need to set them to NULL, it is the default value. Just add them to
+> the sm8650 branch.
+> 
+
+The video_cc_sm8550_clocks[] array size is fixed and has memory 
+allocated only for current sm8550 clocks. To be able to accommodate 
+sm8650 clocks in the same array, we need to initialize the clocks to 
+NULL as below snippet to increase the array size.
+
+static struct clk_regmap *video_cc_sm8550_clocks[] = {
+.....
+	[VIDEO_CC_XO_CLK_SRC] = NULL,
+}
+
+Thanks,
+Jagadeesh
+
+>>
+>> Thanks,
+>> Jagadeesh
+>>
+>>>> +               offset = 0x8140;
+>>>> +       } else  if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8650-videocc")) {
+>>>> +               video_cc_pll0_config.l = 0x1e;
+>>>> +               video_cc_pll0_config.alpha = 0xa000;
+>>>> +               video_cc_pll1_config.l = 0x2b;
+>>>> +               video_cc_pll1_config.alpha = 0xc000;
+>>>> +               video_cc_mvs0_clk_src.freq_tbl = ftbl_video_cc_mvs0_clk_src_sm8650;
+>>>> +               video_cc_mvs1_clk_src.freq_tbl = ftbl_video_cc_mvs1_clk_src_sm8650;
+>>>> +               offset = 0x8150;
+>>>> +       }
+>>>> +
+>>>>           clk_lucid_ole_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
+>>>>           clk_lucid_ole_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
+>>>>
+>>>> @@ -435,7 +587,7 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+>>>>            *      video_cc_xo_clk
+>>>>            */
+>>>>           regmap_update_bits(regmap, 0x80f4, BIT(0), BIT(0));
+>>>> -       regmap_update_bits(regmap, 0x8140, BIT(0), BIT(0));
+>>>> +       regmap_update_bits(regmap, offset, BIT(0), BIT(0));
+>>>>           regmap_update_bits(regmap, 0x8124, BIT(0), BIT(0));
+>>>>
+>>>>           ret = qcom_cc_really_probe(pdev, &video_cc_sm8550_desc, regmap);
+>>>> --
+>>>> 2.43.0
 >>>>
 >>>>
->>>>
->>>> On 08.02.2024 18:28, Biju Das wrote:
->>>>>
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>>>>> Sent: Thursday, February 8, 2024 3:46 PM
->>>>>> Subject: Re: [PATCH 01/17] dt-bindings: clock: r9a07g043-cpg: Add
->>>>>> power domain IDs
->>>>>>
->>>>>> Hi, Biju,
->>>>>>
->>>>>> On 08.02.2024 16:30, Biju Das wrote:
->>>>>>> Hi Claudiu,
->>>>>>>
->>>>>>> Thanks for the patch.
->>>>>>>
->>>>>>>> -----Original Message-----
->>>>>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>>>>>> Sent: Thursday, February 8, 2024 12:43 PM
->>>>>>>> Subject: [PATCH 01/17] dt-bindings: clock: r9a07g043-cpg: Add
->>>>>>>> power domain IDs
->>>>>>>>
->>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>>>
->>>>>>>> Add power domain IDs for RZ/G2UL (R9A07G043) SoC.
->>>>>>>>
->>>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>>> ---
->>>>>>>>  include/dt-bindings/clock/r9a07g043-cpg.h | 48
->>>>>>>> +++++++++++++++++++++++
->>>>>>>>  1 file changed, 48 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/include/dt-bindings/clock/r9a07g043-cpg.h
->>>>>>>> b/include/dt- bindings/clock/r9a07g043-cpg.h index
->>>>>>>> 77cde8effdc7..eabfeec7ac37
->>>>>>>> 100644
->>>>>>>> --- a/include/dt-bindings/clock/r9a07g043-cpg.h
->>>>>>>> +++ b/include/dt-bindings/clock/r9a07g043-cpg.h
->>>>>>>> @@ -200,5 +200,53 @@
->>>>>>>>  #define R9A07G043_AX45MP_CORE0_RESETN	78	/* RZ/Five Only */
->>>>>>>>  #define R9A07G043_IAX45_RESETN		79	/* RZ/Five Only */
->>>>>>>>
->>>>>>>> +/* Power domain IDs. */
->>>>>>>> +#define R9A07G043_PD_ALWAYS_ON		0
->>>>>>>> +#define R9A07G043_PD_GIC		1
->>>>>>>> +#define R9A07G043_PD_IA55		2
->>>>>>>> +#define R9A07G043_PD_MHU		3
->>>>>>>> +#define R9A07G043_PD_CORESIGHT		4
->>>>>>>> +#define R9A07G043_PD_SYC		5
->>>>>>>> +#define R9A07G043_PD_DMAC		6
->>>>>>>> +#define R9A07G043_PD_GTM0		7
->>>>>>>> +#define R9A07G043_PD_GTM1		8
->>>>>>>> +#define R9A07G043_PD_GTM2		9
->>>>>>>> +#define R9A07G043_PD_MTU		10
->>>>>>>> +#define R9A07G043_PD_POE3		11
->>>>>>>> +#define R9A07G043_PD_WDT0		12
->>>>>>>> +#define R9A07G043_PD_SPI		13
->>>>>>>> +#define R9A07G043_PD_SDHI0		14
->>>>>>>> +#define R9A07G043_PD_SDHI1		15
->>>>>>>> +#define R9A07G043_PD_ISU		16
->>>>>>>> +#define R9A07G043_PD_CRU		17
->>>>>>>> +#define R9A07G043_PD_LCDC		18
->>>>>>>> +#define R9A07G043_PD_SSI0		19
->>>>>>>> +#define R9A07G043_PD_SSI1		20
->>>>>>>> +#define R9A07G043_PD_SSI2		21
->>>>>>>> +#define R9A07G043_PD_SSI3		22
->>>>>>>> +#define R9A07G043_PD_SRC		23
->>>>>>>> +#define R9A07G043_PD_USB0		24
->>>>>>>> +#define R9A07G043_PD_USB1		25
->>>>>>>> +#define R9A07G043_PD_USB_PHY		26
->>>>>>>> +#define R9A07G043_PD_ETHER0		27
->>>>>>>> +#define R9A07G043_PD_ETHER1		28
->>>>>>>> +#define R9A07G043_PD_I2C0		29
->>>>>>>> +#define R9A07G043_PD_I2C1		30
->>>>>>>> +#define R9A07G043_PD_I2C2		31
->>>>>>>> +#define R9A07G043_PD_I2C3		32
->>>>>>>> +#define R9A07G043_PD_SCIF0		33
->>>>>>>> +#define R9A07G043_PD_SCIF1		34
->>>>>>>> +#define R9A07G043_PD_SCIF2		35
->>>>>>>> +#define R9A07G043_PD_SCIF3		36
->>>>>>>> +#define R9A07G043_PD_SCIF4		37
->>>>>>>> +#define R9A07G043_PD_SCI0		38
->>>>>>>> +#define R9A07G043_PD_SCI1		39
->>>>>>>> +#define R9A07G043_PD_IRDA		40
->>>>>>>> +#define R9A07G043_PD_RSPI0		41
->>>>>>>> +#define R9A07G043_PD_RSPI1		42
->>>>>>>> +#define R9A07G043_PD_RSPI2		43
->>>>>>>> +#define R9A07G043_PD_CANFD		44
->>>>>>>> +#define R9A07G043_PD_ADC		45
->>>>>>>> +#define R9A07G043_PD_TSU		46
->>>>>>>
->>>>>>> Not sure from "Table 42.3 Registers for Module Standby Mode"
->>>>>>>
->>>>>>> Power domain ID has to be based on CPG_BUS_***_MSTOP or
->>>>>>> CPG_CLKON_*** As former reduces number of IDs??
->>>>>>
->>>>>> If I understand correctly your point here, you want me to describe
->>>>>> PM domain in DT with something like:
->>>>>>
->>>>>> power-domains = <&cpg CPG_BUS_X_MSTOP>;
->>>>>
->>>>> MSTOP bits are distinct for each IP.
->>>>>
->>>>> <&cpg CPG_BUS_MCPU1_MSTOP x>; x =1..9
->>>>>
->>>>> 2=MTU IP
->>>>>
->>>>> 4= GPT
->>>>>
->>>>> etc...
->>>>>
->>>>> Is it something work??
->>>>
->>>> It might work. But:
->>>>
->>>> - you have to consider that some IPs have more than one MSTOP bit,
->>>> thus, do
->>>>   we want to uniquely identify these with all MSTOP bits (thus the
->>>> 2nd cell
->>>>   being a bitmask) or only one is enough?
 >>>
->>> We can have an encoding in that case 8:16 24 bit entries
->>
->> I consider this complicates the bindings. I don't consider this is the way
->> going forward. But I may be wrong. I'll let Geert to give his opinion on
->> it and change it afterwards, if any.
->>
 >>>
->>>> - some HW blocks (e.g. OTFDE_DDR) have no MSTOP bits associated (as of
->> my
->>>>   current research), so, only PWRDN
->>>
->>> Why do we want to add power domain support for DDR?
->>
->> To power it up (in case bootloader does any settings in this area) such
->> that the system will not block while booting.
 > 
-> DDR is enabled by TF_A and is not touched by linux, so why are we adding
-> Power domain at all in first place. TZC DDR is not accessible in normal world.
 > 
-> So if you don't add DDR power domains, linux doesn't know about any thing about
-> and it should work like current case.
 > 
->>
->> It is explained in cover letter:
->>
->> The current DT
->> bindings were updated with module IDs for the modules listed in tables
->> with name "Registers for Module Standby Mode" (see HW manual) exception
->> being RZ/G3S where, *due to the power down functionality*, the DDR,
->> TZCDDR, OTFDE_DDR were also added, to avoid system being blocked due to
->> the following lines of code from patch 7/17.
->>
->> +       /* Prepare for power down the BUSes in power down mode. */
->> +       if (info->pm_domain_pwrdn_mstop)
->> +               writel(CPG_PWRDN_MSTOP_ENABLE, priv->base +
->> + CPG_PWRDN_MSTOP);
->>
->>>
->>>> - some HW blocks have both MSTOP and PWRDN
->>>
->>> That will be an array right?
->>
->> I'm not sure what you want to say here.
-> 
-> This has to be an array PM domains(multi PM domain) like clocks?
-
-Forgot to reply to this...
-
-Yes, this should work for IPs having both MSTOP and PWRDN. It is an
-alternative to the current implementation. I kept both MSTOP and PWRDN
-under the control of the same PM domain in the current implementation.
-
-But if future hardware implementation will spread the MSTOP bits for one IP
-to more than one register (I don't know if this is likely to happen but it
-may worth considering) then multiple MSTOP bits for the same power domain
-cannot be handled by this approach and describing the domain with register
-offset and bitmask.
-
-> 
-> Or 
-> 
-> It can be  handled as sibliling power domain like sibling clocks in RZ/G2L Gbether.
-
-Kind of this implementation was proposed initially (linking the MSTOP to
-the IP clocks inside the clock driver).
-
-Thank you,
-Claudiu Beznea
-
-> 
-> Cheers,
-> Biju
