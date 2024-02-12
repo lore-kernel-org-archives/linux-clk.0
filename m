@@ -1,107 +1,80 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CE979C0;
-	Mon, 12 Feb 2024 04:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4F4EAE3;
+	Mon, 12 Feb 2024 07:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707712608; cv=none; b=W+xM60acnlzD0wEyzyO4LbDPpJkXhyWn/Az4RTBIqqNxGbqosJvmzMZIz1nVwvdEhfiCp05kBE/lU9ZizHjsPf5N3vJXw9F3VIoHlIpKikStpxgdgcxT9Womn6GAH8g5kZGIZNV99XEcoWoYKxXz2RKG2KnKKiRATQkTy9AvpTU=
+	t=1707724708; cv=none; b=cCNHshvyTWxmbG+4Jmv2KJop+zsrViRC4YvPYoTTxTe1oDbaWiPFl9N0oIrxAUBplMHdgTeUeY1/WdXoM9v6EEmSlCvpCrSD/u8CRtfvsVe5vB0x7KuaJkeWZ8NhePbcACKqLc7+GO0f78h9R0FBu2jBqPgSYktWyLuATWwRtkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707712608; c=relaxed/simple;
-	bh=0LdfwuXEgvUuy96j1v+0E60cIj1z0yxVc1lMVvSOjng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SRRMRY7mo9ird8gACHKQAOgjlxtRawHkiVvncSUXJG+8BuqzJFt2K9SqTfg5bFxpeaGNIN7eFz8crfBVLK+jOTbo6sAn1VT9oFKO20L/9pPjrMZWy5ZxxHTH9hPJ1kW69f2Zgy+/jgdIYEyh0wzA/h1R8oX+qC5ZvU4VSrvnbdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RkROSJQn; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1707724708; c=relaxed/simple;
+	bh=ChLP6pbuX2n266hqFM2tnkNlDBSoV7MLNaEjbkanKOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ekaS5vGvXuuio+sBdxfg5AuiLVdgD6LcLmPqMmzYAUR7uToDHbAiL503vJCdWVCfqI1TFttROZRPhkX2znev/HjBqKrXl3vqEQKkQA9YcKuAQz+gjb85e05irY2txtquW2rLiJf5t9MuqRGEQAZbAkZuVu+ITrtpvOFbOGh4x1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=QHLMuBxK; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RkROSJQn"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 41C4aZph042290;
-	Sun, 11 Feb 2024 22:36:35 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1707712595;
-	bh=dDe2x2/sNsxxovWiqiXQgtSK6CZ2bkfH7mRKphacIVw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=RkROSJQnh61KCNT0f5C5CL8FiFvbIU5XYMyiXUtxqmgenmaHyb4p8OoBkikUwmSNP
-	 KKePU1FCmTSgSozuOBINuIV/x7BOCXnlIiJRbdBbLq8FeQ8lQvjJ7YYJbox+coP6LO
-	 9QEe551QcM5EO9nwSYfiro5NQm4m6RNDuS1LUia0=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 41C4aZ44083637
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 11 Feb 2024 22:36:35 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 11
- Feb 2024 22:36:35 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 11 Feb 2024 22:36:35 -0600
-Received: from [172.24.20.156] (lt5cd2489kgj.dhcp.ti.com [172.24.20.156])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 41C4aVAh000720;
-	Sun, 11 Feb 2024 22:36:31 -0600
-Message-ID: <b27ea51f-ad29-4c8a-8f33-f51640f0c013@ti.com>
-Date: Mon, 12 Feb 2024 10:06:30 +0530
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="QHLMuBxK"
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 339EC1FE73;
+	Mon, 12 Feb 2024 08:58:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1707724701;
+	bh=4hwu309SeUk6g/9RpOPLjbl+0yrbn1Vtt3YfrGLQYvY=;
+	h=Received:From:To:Subject;
+	b=QHLMuBxKP2Gw8DE3/9RHOnt4TiG7jSpVnpdNjIXCezQ6q+z6anI++UX4m9IpBqcBG
+	 z/c+iu4DRaYbuU/+dFY4RmDVGbZIVc2WKsfeIlW/Xy9gU9IsKb61aexH6PN9cMsaf8
+	 x+/YXGSFfYVyRJ7okqcQJuMvLB///6UxJhwWTxHEh3E7SgWcaDT/jQGKWwtt803bMI
+	 gmW7AorPGTKPmUIRLTTTyjdLisoFtQ1jYlosNX1Ouf96cHwF5fDJzOWPstW8rDomAa
+	 bd1rHnIr44Y+NeM+91UgGspHg3uLzB/84r4GLJOf3cgBmaPMeHqlcQTqFxdu5ohwRJ
+	 n19/KRrG54cnw==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id D44AF7F9D7; Mon, 12 Feb 2024 08:58:20 +0100 (CET)
+Date: Mon, 12 Feb 2024 08:58:20 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: "Kumar, Udit" <u-kumar1@ti.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>, nm@ti.com, kristo@kernel.org,
+	ssantosh@kernel.org, chandru@ti.com, rishabh@ti.com, kamlesh@ti.com,
+	vigneshr@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3] clk: keystone: sci-clk: Adding support for non
+ contiguous clocks
+Message-ID: <ZcnPnMEknPjtwJtz@gaggiata.pivistrello.it>
+References: <20240207091100.4001428-1-u-kumar1@ti.com>
+ <20240211155459.GA4443@francesco-nb>
+ <b27ea51f-ad29-4c8a-8f33-f51640f0c013@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] clk: keystone: sci-clk: Adding support for non
- contiguous clocks
-Content-Language: en-US
-To: Francesco Dolcini <francesco@dolcini.it>
-CC: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>, <chandru@ti.com>,
-        <rishabh@ti.com>, <kamlesh@ti.com>, <vigneshr@ti.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20240207091100.4001428-1-u-kumar1@ti.com>
- <20240211155459.GA4443@francesco-nb>
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240211155459.GA4443@francesco-nb>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b27ea51f-ad29-4c8a-8f33-f51640f0c013@ti.com>
 
+On Mon, Feb 12, 2024 at 10:06:30AM +0530, Kumar, Udit wrote:
+> 
+> On 2/11/2024 9:24 PM, Francesco Dolcini wrote:
+> > On Wed, Feb 07, 2024 at 02:41:00PM +0530, Udit Kumar wrote:
+> > > Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
+> > > 
+> > > [0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
+> > > Section Clocks for NAVSS0_CPTS_0 Device,
+> > > clock id 12-15 not present.
+> > > 
+> > > Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+> > no empty lines in between tags and only tags at the end of the commit
+> > message, this [0] reference needs to be before or moved to a `Link:` tag,
+> > whatever works best for you.
+> will below works ?
 
-On 2/11/2024 9:24 PM, Francesco Dolcini wrote:
-> On Wed, Feb 07, 2024 at 02:41:00PM +0530, Udit Kumar wrote:
->> Most of clocks and their parents are defined in contiguous range,
->> But in few cases, there is gap in clock numbers[0].
->> Driver assumes clocks to be in contiguous range, and add their clock
->> ids incrementally.
->>
->> New firmware started returning error while calling get_freq and is_on
->> API for non-available clock ids.
->>
->> In this fix, driver checks and adds only valid clock ids.
->>
->> Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
->>
->> [0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
->> Section Clocks for NAVSS0_CPTS_0 Device,
->> clock id 12-15 not present.
->>
->> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
-> no empty lines in between tags and only tags at the end of the commit
-> message, this [0] reference needs to be before or moved to a `Link:` tag,
-> whatever works best for you.
+No, it does not fullfil the expectation to have only tags at the end.
 
-
-Thanks
-
-will below works ?
-
-[0]https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
-Section Clocks for NAVSS0_CPTS_0 Device,
-clock id 12-15 not present
-Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for 
-dynamically probing clocks")
-
-
-Udit
-
+> [0]https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
+> Section Clocks for NAVSS0_CPTS_0 Device,
+> clock id 12-15 not present
+> Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically
+> probing clocks")
