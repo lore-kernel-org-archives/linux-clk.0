@@ -1,261 +1,93 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FD9487A7;
-	Mon, 12 Feb 2024 13:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4E13B19E;
+	Mon, 12 Feb 2024 14:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707745490; cv=none; b=ShYyvrxGXnEPzX+ndFtlxXFbWIlynLBMmov7yhnfwI/Xlws1sJ5CFYkmD3X8JV88lqS06WG+VjLyM42ilf9ZX4bxyYxUMMIb8zVe1LDBIE66puAPeqIZ7RhEFX6PRHqHRt19dwSJkBLYqO92ypcEnq34aOD087g6+mj3kJb27iI=
+	t=1707746480; cv=none; b=DkqTg2AtK8ZmEOpH799tmcJwS9/Ayubcrk7Mf2IQNB2xe3bwDWI6SDZmIOxe0Xo2dYInVphOFgMl1M4MOneY3YHoPNtGhJCDB+DXNrdQGx4SI9DFUSoQz5LJzRPhM+Q3WQBuh/myqe23OkgeFFqWhnSgf4xtMzSCfbksxD1hgWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707745490; c=relaxed/simple;
-	bh=AOujWblAL/Eb3SoFX/DXZmLu4by42Gj1/JOw1DWfuS8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fySjpcaL2IxQt05lXlmeghC7zT53+XBxvoj4/Z5pJTHBLrJftkSs89IUs35S4qzMfI9SO7rCOt6qo4WQKMCsQlsKCHyLm86qNqyTI7d29iv+UKRbI3uOJyRfuUkDT9XxJsLMHNw3Lpw+opET5zXdXadCGYDaAbXIldD53C4lCMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FEuE7F60; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FEuE7F60"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E59C7FF80D;
-	Mon, 12 Feb 2024 13:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1707745485;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ntwnUlVjSIXSSPhME4Hzl2L0UVU1UFUtEinrPzePqbc=;
-	b=FEuE7F60GbzlKRHPPJBWauRvqMcuSgV8RV3aIUMUmQyFbdDZBR6GhUc1Icb5cwl4iLA6Wa
-	sG+z4mYAo0SPRU5zatybX2y2De23/gGgNld179CWO46ltbv4YBcOiNVkD07Kjs/i1vCi64
-	mCzPyQZ3KTYcb4UHvLPAsjb7t9GEemSpU7ctBusSKKeC80/u86AdcQ/QbhmdQD/uANZGn3
-	5vlQswfP609J3hRyVVzBonv0Mz9u/WM6jZr6LOm2mKuwN60aCMbe6qXIMqiNgAxJiC1Lup
-	gWZjBn5LqwmE0Fvw9Y3GwX/eNkVvvvk1uuQHaTO++nmygxsej7TK4RnFOQn2KA==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Mon, 12 Feb 2024 14:44:44 +0100
-Subject: [PATCH v6 13/13] MIPS: mobileye: eyeq5: add pinctrl node & pinmux
- function nodes
+	s=arc-20240116; t=1707746480; c=relaxed/simple;
+	bh=Nf2LAAJyH/O+1XUTqugKWF/n+9ur/iLtudshdIEbVds=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V5hvJ2H1CB1eKcLYA0aKc13kiGJeqoWSUjBn0kvA7xajM7dHMnjfij2rN4aC4U0ghSzs517mIxDTK07cBo6VY0LrXmnYzJjoVwFuWM/nJq+3l6Pfu58VRFi43m634KieJyUWoAjljrjXUURAnIfEReHzcfSrIgohLBw6xbGsdT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-60498c31743so28678527b3.3;
+        Mon, 12 Feb 2024 06:01:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707746477; x=1708351277;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kxRGG2OetTgyV1iIms7NfSY29g5rngponZF3XBLDVZ8=;
+        b=W2gXpn3c9MFKOfCZFhb900Kd7MdlguIti/Qzf1dsBsDS5lB6CCdWRFGKaYI47Pprjq
+         068eYuqCM6SY0+VZVgk7oPmPnCoO+x+L+7NGbAvk0unjFvGCmr7NYJPhmLLq/5XzVNRS
+         5hpUbOXjyd1D/BWbwS0nLk5mKYMFL0/YzgVKtNuER2sEBofR3N7mYLn6iJPsqnx6ciEd
+         dq8bFx+OhcjeEW5GQ31IQ2LpUAuODZp/fmYaAOeG0+f1wFtGWs0qL33XtCfPn5k8c2Fu
+         ok3znt/6FRDTkOOzaFekHNCvM5noYWOZAwDfs8ntPuIbr9DnUPqUVBitOP5Ne+hOL/2f
+         xb4A==
+X-Gm-Message-State: AOJu0Yxp8UtLzD3orvCKMh1JaFUL6UC+m/Z0lbiRAwvTthYUrwrXwE8V
+	OCdqAt+0THaXReXyMOvOMoJrf+EOMpB6NctAatbzmke5JETlpXQYNEDEQusjsX0=
+X-Google-Smtp-Source: AGHT+IEHI5n5lPTv3LgpXFpeAifn7zROZ5V9+roTkH3x8zdsYLWVhpXchyYrpiWLeD/Ycpka/9w6VA==
+X-Received: by 2002:a0d:d7cb:0:b0:604:a1c1:dd5d with SMTP id z194-20020a0dd7cb000000b00604a1c1dd5dmr5520848ywd.17.1707746477464;
+        Mon, 12 Feb 2024 06:01:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX2TQv7HHsNuax8Y7OJ2xL0cNksmFWB81+up9rdQgcettJ4j6KoMZUIIjK+EzYWrpU27bb+vAvr+jGEzLx3/fxWYxuRIbbjELgedDrBA2j4ByMhkmFPJ/zVoB3Fnb7zd7/mJNAZ4gZwJJvKWZY+jBsLI6kcml5fqKx5hDTQnaGkAqsHhe5+WLdxr6s=
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id o128-20020a817386000000b00604a248f32bsm1193518ywc.52.2024.02.12.06.01.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Feb 2024 06:01:17 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dcbc00f6c04so204815276.3;
+        Mon, 12 Feb 2024 06:01:17 -0800 (PST)
+X-Received: by 2002:a25:d387:0:b0:dc7:46b7:b7f6 with SMTP id
+ e129-20020a25d387000000b00dc746b7b7f6mr5618254ybf.28.1707746477078; Mon, 12
+ Feb 2024 06:01:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240212-mbly-clk-v6-13-c46fa1f93839@bootlin.com>
-References: <20240212-mbly-clk-v6-0-c46fa1f93839@bootlin.com>
-In-Reply-To: <20240212-mbly-clk-v6-0-c46fa1f93839@bootlin.com>
-To: Gregory CLEMENT <gregory.clement@bootlin.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.12.4
-X-GND-Sasl: theo.lebrun@bootlin.com
+References: <20240131102930.1841901-1-claudiu.beznea.uj@bp.renesas.com> <20240131102930.1841901-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240131102930.1841901-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Feb 2024 15:01:05 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVmS5cPuWuFaRsA+6TEmJc6B8iZZLFkJpRABQvYgC5p6A@mail.gmail.com>
+Message-ID: <CAMuHMdVmS5cPuWuFaRsA+6TEmJc6B8iZZLFkJpRABQvYgC5p6A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: renesas: r9a08g04{3,4}: Use SEL_SDHI1_STS status
+ configuration for SD1 mux
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Hien Huynh <hien.huynh.px@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Pins on this platform have two functions: GPIO or something-else. We
-create function nodes for each something-else based on functions.
+On Thu, Feb 1, 2024 at 9:46=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> w=
+rote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The status configuration for SD1 mux clock is SEL_SDHI1_STS. Fix it.
+>
+> Fixes: 16b86e5c03c5 ("clk: renesas: rzg2l: Refactor SD mux driver")
+> Reported-by: Hien Huynh <hien.huynh.px@renesas.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-UART nodes are present in the platform devicetree. Add pinctrl to them
-now that the pin controller is supported.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.9, with s/r9a08/r9a07/.
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi | 125 ++++++++++++++++++++++++++++
- arch/mips/boot/dts/mobileye/eyeq5.dtsi      |  13 +++
- 2 files changed, 138 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi b/arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi
-new file mode 100644
-index 000000000000..42acda13e57a
---- /dev/null
-+++ b/arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi
-@@ -0,0 +1,125 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+
-+/*
-+ * Default pin configuration for Mobileye EyeQ5 boards. We mostly create one
-+ * pin configuration node per function.
-+ */
-+
-+&pinctrl {
-+	timer0_pins: timer0-pins {
-+		function = "timer0";
-+		pins = "PA0", "PA1";
-+	};
-+	timer1_pins: timer1-pins {
-+		function = "timer1";
-+		pins = "PA2", "PA3";
-+	};
-+	timer2_pins: timer2-pins {
-+		function = "timer2";
-+		pins = "PA4", "PA5";
-+	};
-+	pps0_pins: pps0-pin {
-+		function = "timer2";
-+		pins = "PA4";
-+	};
-+	pps1_pins: pps1-pin {
-+		function = "timer2";
-+		pins = "PA5";
-+	};
-+	timer5_ext_pins: timer5-ext-pins {
-+		function = "timer5";
-+		pins = "PA6", "PA7", "PA8", "PA9";
-+	};
-+	timer5_ext_input_pins: timer5-ext-input-pins {
-+		function = "timer5";
-+		pins = "PA6", "PA7";
-+	};
-+	timer5_ext_incap_a_pins: timer5-ext-incap-a-pin {
-+		function = "timer5";
-+		pins = "PA6";
-+	};
-+	timer5_ext_incap_b_pins: timer5-ext-incap-b-pin {
-+		function = "timer5";
-+		pins = "PA7";
-+	};
-+	can0_pins: can0-pins {
-+		function = "can0";
-+		pins = "PA14", "PA15";
-+	};
-+	can1_pins: can1-pins {
-+		function = "can1";
-+		pins = "PA16", "PA17";
-+	};
-+	uart0_pins: uart0-pins {
-+		function = "uart0";
-+		pins = "PA10", "PA11";
-+	};
-+	uart1_pins: uart1-pins {
-+		function = "uart1";
-+		pins = "PA12", "PA13";
-+	};
-+	spi0_pins: spi0-pins {
-+		function = "spi0";
-+		pins = "PA18", "PA19", "PA20", "PA21", "PA22";
-+	};
-+	spi1_pins: spi1-pins {
-+		function = "spi1";
-+		pins = "PA23", "PA24", "PA25", "PA26", "PA27";
-+	};
-+	spi1_slave_pins: spi1-slave-pins {
-+		function = "spi1";
-+		pins = "PA24", "PA25", "PA26";
-+	};
-+	refclk0_pins: refclk0-pin {
-+		function = "refclk0";
-+		pins = "PA28";
-+	};
-+	timer3_pins: timer3-pins {
-+		function = "timer3";
-+		pins = "PB0", "PB1";
-+	};
-+	timer4_pins: timer4-pins {
-+		function = "timer4";
-+		pins = "PB2", "PB3";
-+	};
-+	timer6_ext_pins: timer6-ext-pins {
-+		function = "timer6";
-+		pins = "PB4", "PB5", "PB6", "PB7";
-+	};
-+	timer6_ext_input_pins: timer6-ext-input-pins {
-+		function = "timer6";
-+		pins = "PB4", "PB5";
-+	};
-+	timer6_ext_incap_a_pins: timer6-ext-incap-a-pin {
-+		function = "timer6";
-+		pins = "PB4";
-+	};
-+	timer6_ext_incap_b_pins: timer6-ext-incap-b-pin {
-+		function = "timer6";
-+		pins = "PB5";
-+	};
-+	can2_pins: can2-pins {
-+		function = "can2";
-+		pins = "PB10", "PB11";
-+	};
-+	uart2_pins: uart2-pins {
-+		function = "uart2";
-+		pins = "PB8", "PB9";
-+	};
-+	spi2_pins: spi2-pins {
-+		function = "spi2";
-+		pins = "PB12", "PB13", "PB14", "PB15", "PB16";
-+	};
-+	spi3_pins: spi3-pins {
-+		function = "spi3";
-+		pins = "PB17", "PB18", "PB19", "PB20", "PB21";
-+	};
-+	spi3_slave_pins: spi3-slave-pins {
-+		function = "spi3";
-+		pins = "PB18", "PB19", "PB20";
-+	};
-+	mclk0_pins: mclk0-pin {
-+		function = "mclk0";
-+		pins = "PB22";
-+	};
-+};
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-index 76935f237ab5..8d4f65ec912d 100644
---- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-+++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-@@ -79,6 +79,8 @@ uart0: serial@800000 {
- 			clocks  = <&uart_clk>, <&occ_periph>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&reset 0 10>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart0_pins>;
- 		};
- 
- 		uart1: serial@900000 {
-@@ -90,6 +92,8 @@ uart1: serial@900000 {
- 			clocks  = <&uart_clk>, <&occ_periph>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&reset 0 11>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart1_pins>;
- 		};
- 
- 		uart2: serial@a00000 {
-@@ -101,6 +105,8 @@ uart2: serial@a00000 {
- 			clocks  = <&uart_clk>, <&occ_periph>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&reset 0 12>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart2_pins>;
- 		};
- 
- 		olb: system-controller@e00000 {
-@@ -125,6 +131,11 @@ clocks: clock-controller@e0002c {
- 				clocks = <&xtal>;
- 				clock-names = "ref";
- 			};
-+
-+			pinctrl: pinctrl@e000b0 {
-+				compatible = "mobileye,eyeq5-pinctrl";
-+				reg = <0x0b0 0x30>;
-+			};
- 		};
- 
- 		gic: interrupt-controller@140000 {
-@@ -149,3 +160,5 @@ timer {
- 		};
- 	};
- };
-+
-+#include "eyeq5-pins.dtsi"
+                        Geert
 
--- 
-2.43.0
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
