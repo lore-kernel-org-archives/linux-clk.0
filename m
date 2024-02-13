@@ -1,43 +1,44 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2089.outbound.protection.outlook.com [40.92.42.89])
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2052.outbound.protection.outlook.com [40.92.42.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F9D22EE3;
-	Tue, 13 Feb 2024 08:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C3422F02;
+	Tue, 13 Feb 2024 08:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707812504; cv=fail; b=VPDxtJjOJeKNPCbGGZN8MYlgouNLnwOAeVVNHIRVKRrCB6gdNrpaA3Gn+COFqnwCerIgdGwjXPwwXQ1ZVX6rzU4+mtwRLPhYtpr83imKhr/QhZE7V4OJ71hm2NGeq8NrANVgxEkmcfHNAEZKjexUzys02+9PhceCxVvY4YtObfg=
+	t=1707812565; cv=fail; b=jC9BQxmiKeAL9QkUYYy1EUizL/YVpauqqHDGpY+nThvkLQRh/Nq/OwOUIljWfr+hyLrBXINz7tRfNEjx1gUpTdROpoxL19cxlBYojugwEkoO9AZSVbLu5/plCJgFDB9pxnxXYeT5fUvH7yAZD1xM9FLX91xGLqmXenEwxRCFnqs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707812504; c=relaxed/simple;
-	bh=TJMQ9b1tleWzB3EubV76b3sc1s3JXdlsf2ZDkXHgXJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Tama3bKtuk55yWo+5xVcRLZmsuAu8mWG7LIPr2gUzwRqFxsiRi1RIsURsCb+opmEF023ZN7ftIX/j/wLOZW0fBxls05YIdGhELwBhAzREfImNWKqrCvYJkc6KWebqGr7S5bynjXco7arYCkqdWbG3vZl5vaCjoG3NIQgH4tUemA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=rfxBzUPS; arc=fail smtp.client-ip=40.92.42.89
+	s=arc-20240116; t=1707812565; c=relaxed/simple;
+	bh=WFqeXNneRsNzrrKti1n7b62ShuPEORM6XjF0PEekPVE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mUTlmkRTf7OE80OY1SLs+vs24dfy6lHGQfk3lJ2ZGMip+xb4JfiLgKP1R9EyBRjO8lRmspgql2HjMqUAWpJqXgzVSqMv6GfQoL5b/L+YYoOYfjBiu/8F0m2LEiSjH6gtvcZiONoFqrs+69WQILerBbEMcGKcmzDEPep/o1F/UGs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=sGTkDRcU; arc=fail smtp.client-ip=40.92.42.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="rfxBzUPS"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="sGTkDRcU"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F1VEYMqONYCwE5tkvAX7qCgegRd2PA/Gp1C4Tdp9qpkn59oYcnurk3lScOzRhGSGgczVI699eKDHruRwleGYWeblx0eai77ymaPJISNb4eDm+W88A7exYHGrJfoZRM+MvMVlII3TbYYF4gW6dr/Xu11VEqehDvBDN3fJpJZBL03RJKhGW5RbnJHXPZfp4oTS6Ueg4vQrTfgFl2EgbCESRF40J3+8f2JquiyGcC/dsSlFPocj4tVzh8o2zKw0XOkVqb7mg80SgV6LkMdteZdu9TE+ELyDV0HjSuv079Tjz5fOzGnCg3rICfC9N0IWYlIzw+CwXyfz0quP+K83T5GEQQ==
+ b=LWKyS9p0hn/auePnGHT/2magocLL9Ivk30HCefuI7DQbys/4DfPf0kXXUC7ZSxKrPjK/NCyXh/Chm9j9LNk//DLXRyOAGE2cYW45hp+glEYCM2AkvKMbC5/OnOZJ8q18bsi6YoGA960LHGRXe6fRBicnLdEeAzsiExeGb3vkvTg0SVBqaeTgyIQ8xURHBdECy7rVbHuoCB5Gk298Kxfm1FR+fIIRSyOCqtAmPUI3Kf4DW2H8/aj+uOQ1AZgkbcaJaJE47ik8PlZ2UudDxYz5+6YyUqljQSfnVv7rY90xB1zg+XZGRpHjBLW6taN8Vd16VnJgt720NsLnQbWCDZtFtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HEt50qoic42jLe4F/Hv1osOVrSwMApuYOG5cQBkRpcA=;
- b=eanjEHN33LYMCYwzBzo3QybizHsVTcHlUjXFE5BgFvx3/HY0ZWPdhu1HukV5QIaqa0f90p+sBVxZnJz7EV9Xlw/VC+y7zKg9PY4rYv/DND9od0CBYf5zSVrA3AVqtfD1vwnZixecJa1blbatNPOfpob8xZjH7GMQAAVNPqx4xJjWlnA3jdO1+vSuxVv+R8yWFzUAOA/tcxSR7GhsOfGv/Lw+qFoe6oB43PqdWxN4mqjJA/oyD37vb/Z6SNpqcGX9UmIGPBBTvbSyWfODDZNkpKLMqVZn0ifYsongtbMnksFs8d6EBqpkzoeL84BgcU/zurzS+WYl0+O3W15R6jG2lg==
+ bh=Ba6FFyAPx8QK1pdJ0ILtPfj2w4jgDiOlPi+/vb1AilE=;
+ b=O4Cj0hQoKYS6SFhgRzw0TI9namSMqF45ZQh215Y8//tValM0Cuh3T64cUNNUk4ahUYp1HaGvonFkSK5CSsXSI++aaoS26IgU+sj74XrStF/TAXD+equBchsYsP6WzKONVNljhbaOC5BYRSRnpYHU55kPO36hjYmTekV+ajyY4aa9ekF5YsbD+eQScF6r8X+TaHNAAtsknCYM8+JgKkODSge6FAE/Ee+p5Sza0UhE8DxD2dKxZHGe6Z3kkXzXiQ5R4dF+RpDrFl+u0xwxXvB6qjqhzPTfNWGddpk2jmeEbVWMVWi1TVSuP827ljWpwnmpvEdzg5yyMx0B2VdGdNMx5w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HEt50qoic42jLe4F/Hv1osOVrSwMApuYOG5cQBkRpcA=;
- b=rfxBzUPSqOHHJPSYgI/VICBk55ke1sjtwEfMeIbmDEb+Z8EuWb9LvD4uGwf80SvL2T1CW7GKy9KjArZOzt+gi897kce6jwr/p3ZmiIyBhVEB7fso4Xp+G21mc9wQpEALbt8S+cTcjdHZEyt/DmcQL21uqGE85bB0tUjrF2nU99TqtOsY+VR3G3t5v5s5Zb6RflbsnEafATKawbDUmX1egoDgq6h635yx0dQtJ4P2ZvgARy1VKf6MmHnZQx/CHBRKBv7uj9i+/EJo1CUQShr4nyQCrTijdj0BxfBf0G5vWJishf3ly99uCWCFxk5MiFe/dUdUZpRfVenYQ+DbjpOq1g==
+ bh=Ba6FFyAPx8QK1pdJ0ILtPfj2w4jgDiOlPi+/vb1AilE=;
+ b=sGTkDRcUGoQyzWOZS/P6HY65CZ5NSayClcr5cX9P/W6NoZR+nTtBG14Z2j+ikOKrSZ07XjZEV2IITiIoBrB47qTTRaaxIixJzIsL/WGk3AIJdC6yOPcmWT0bA2XZKjgyn/UJ+R91MIGkr1bjvWXzMxjFwGDCUYgf/SzWDtvTIibA/thyZHOzGuAHMVI2MXgj1UI5IDzU2tZaKFXGS4wUl9bmUheL5ZjmAhTNVdwrytaMIkL5ORz6ow8K/rKIfx1nY7LHoqB5n6VaKvLF/JA1c33ub8fAkSr/WsbOypjK3C2vzim/Ox/0aA1NLdRSaA6tXJYEOrOA6kegzTcGbQ+NAw==
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
  by DS7PR20MB3776.namprd20.prod.outlook.com (2603:10b6:5:3ab::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.25; Tue, 13 Feb
- 2024 08:21:40 +0000
+ 2024 08:22:41 +0000
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::406a:664b:b8bc:1e6b]) by IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::406a:664b:b8bc:1e6b%2]) with mapi id 15.20.7270.036; Tue, 13 Feb 2024
- 08:21:40 +0000
+ 08:22:41 +0000
 From: Inochi Amaoto <inochiama@outlook.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -57,20 +58,23 @@ Cc: Jisheng Zhang <jszhang@kernel.org>,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v8 0/8] riscv: sophgo: add clock support for Sophgo CV1800/SG2000 SoCs
-Date: Tue, 13 Feb 2024 16:21:42 +0800
+	linux-riscv@lists.infradead.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v8 1/8] dt-bindings: clock: sophgo: Add clock controller of SG2000 series SoC
+Date: Tue, 13 Feb 2024 16:22:33 +0800
 Message-ID:
- <IA1PR20MB4953366482FEBFC5E7F6F34BBB4F2@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953EB8372891EAABED7EF9DBB4F2@IA1PR20MB4953.namprd20.prod.outlook.com>
 X-Mailer: git-send-email 2.43.1
+In-Reply-To: <IA1PR20MB4953366482FEBFC5E7F6F34BBB4F2@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <IA1PR20MB4953366482FEBFC5E7F6F34BBB4F2@IA1PR20MB4953.namprd20.prod.outlook.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-TMN: [8n6PzKHk2oiCnzp0EMVkK68fepHk6tva0ajc7E5F+7CR1eIb1ywgNgRxdkCWaV09]
-X-ClientProxiedBy: SG2PR01CA0109.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::13) To IA1PR20MB4953.namprd20.prod.outlook.com
+X-TMN: [cvnftW3s6JgOaeghsdBHGaKHOOCULzuR80ipTX9+BppPlpSRhmExIsx/+z/CYVhc]
+X-ClientProxiedBy: TY2PR02CA0047.apcprd02.prod.outlook.com
+ (2603:1096:404:a6::35) To IA1PR20MB4953.namprd20.prod.outlook.com
  (2603:10b6:208:3af::19)
 X-Microsoft-Original-Message-ID:
- <20240213082143.591393-1-inochiama@outlook.com>
+ <20240213082243.591875-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -80,40 +84,40 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|DS7PR20MB3776:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3abc961b-867e-4029-529e-08dc2c6ccddb
+X-MS-Office365-Filtering-Correlation-Id: 0f8ddabc-83df-4446-988c-08dc2c6cf26e
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	NWMHQ+DHQAw+NcPXCGc7lhY3W0xvKvWf6A6oCaOD7m7pcRHFZLT9EfOOceVC2kMiYVldi02TzJB6lsRS1NxyNQSvkzx6/fH5dM9j237cMOvGAQpgH+gkD7BD6CChEXE2nOhAfLqZNMgMM6ODOU87Cb5Xw8SGIYZkGv2eyZn96oleT148Hjb/kRAP6kW7Sx9ycjVXQLJcF5SUsn1h0bG6aYRWrnCXyYyroq5eM3nRah14IWWPxUdM7pNVUc5b1rZlJnqviolCPX4WH5tAnsQCsgxf/CiW6IW7fzCq0iEk2P71nLz8/FD75hnPaLduooJw1estNcjocfy4E9IwLz9zmxtrF7sohdVPMsNRc2GzI8UAb+gbdnuRNWxxw4JpN/ro92UJ9R0p2LxsSlHQsIpEGnNw4WXGfMw/U9wCJKOYPX1Eq6fMJgyV0VWJA1/9hpKyqUkfg3Zf8PZZwj0G1ASSe8ToqyanTmaoZsygtfeERuj4DrUPmGS4l+4jAvTiteQ39yKEJLevt0mDlf47TLVHqxqbY7pDjlRl4Doixt0FyrXzwWa6dn7Y98x4OwHrzvzPn5qdvWyS2BqE0p+OD+vYyAMTdYyZHbZUwmNsAasutD43rxdPH4SmRNOihi2t3pq0
+	fdjXCMNwuTy1CJKB6KEBO7PwZJpAT9e7D8pfoxZsqrVJzi972EGqDnIXQ2v02LDB3TxZR3upTzP21sBTFxuSs6+Jz8E1ZBEtMDvgTuIQJFJAFZYyh/6XU4ha4IJPgnhBdr3FiO2DYIKtcjyYSB7dniOdgcHo+t1xaVwDtjavzD3KJSVJrzOrL822TVhYrjb9JMMT5OKTXFuWmtwyuZc1objvosWzIOTeI8KtdGXeh6KMx+rEw1/qQfRqDiiwW6sc1Yg7Ub18IV7BpW3lWJlnf7kQfGNMeDaUTSXJUmjw2DE55ZNAgM+n/2yF8Tr5Iyfkcs+XleEq4FybVBmQhhERGONf1AxC3PHWc5VyWGhmK5HSWkfXHCXS2x0IQGmei+XQw+E0SC+shV4Zzol0NIqYx/LuNe3Ut8mng/HU7TpEdhsjmkWvqmduEn73VIXU/v0qBGGDIvywNCPSjm2IR9rniC0MqGGopry9m1owgqgvxzZjaO3LspcnwPP7RQS9GXb09lviISLhKNuAbAGSkfhlPx6WnOPl8DThzZieOKSWK7VUDZ5dRvfyrauyXqnfnnEIXm7PalGXP6t8K9OZIi2qjFk2NJGkS22YSQIW9CyWfDpl4vsAdzKUF/EfQrLoQPvPwde1cWmKKN1JTJpKs15/toe8DgYeGzCJusb4N/b4XXo=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?O98qB0I5T0BPZ1Eu/KR6DvjDjiLUjUZq22vbpnTk/HWN3upBKt4AmFqIfYft?=
- =?us-ascii?Q?pzsAVzzS/mU9NUj1gYr8ohBmrqcgIsASHN8kYTR7gf9L6mjmG5uAmnisDnfG?=
- =?us-ascii?Q?bbodGvHXTB93lGr6GJg8SZnqpaRnAtdgTP5YZ/lSuS7bao8oo2EAgskgsSm8?=
- =?us-ascii?Q?wZTcfgMjacvGQMW9CIbAd3d02+jQxYIdpZI7rieqITmvuVG9Vd+KkhcBKuzI?=
- =?us-ascii?Q?IsgHI3XiMJWTcAAsBePIiXKDuSpXIu1COZqFc9CXRgMB927J3LufckJ4wKJK?=
- =?us-ascii?Q?1ZrCZpyGdtbrxlMq9yE38NOhmesmPq7TNkRnlnPln7kSdjSSzURul/iNuFH/?=
- =?us-ascii?Q?qB3D46imRySPb2PLEqUmMTJsJpqDRraGpY5lhX+neftT94AjvYCYdEo9smvz?=
- =?us-ascii?Q?Od6MFLXdVNWXqSFwe0baa6taY+lwy39L6iQ3HelgOoX8YbgPl+RJPVM6pfVm?=
- =?us-ascii?Q?VQrHNkN1ctGhzerX+uHt8pspMTdLgzhNKjnSEUOyaM5rkXndzQCZwk5+0HGg?=
- =?us-ascii?Q?3TOObbEatqtUr8XJrdfn2ELKasoe+6dqkDD2DQnXY63XJ+dKUt1FTiizdw6L?=
- =?us-ascii?Q?uhs3/TDpucCt+SBGDfkuiLHFy4D1LcFRHxf9RGaOh/ltJ6ZqX9d6RsRF04wR?=
- =?us-ascii?Q?D/i0XHdVZg7WZ1YZM35hx3Nw4Jg8tQfVePAddrRqF1/9T+Teh3WtSLjVXtDj?=
- =?us-ascii?Q?gNbekVekKuytDMuyAdvpPlipsshT54DCoqD7a2lFbBN9XNkZ3bJYH30oqn3V?=
- =?us-ascii?Q?9sGdN711DU9LxmVdDRUILjy3X2qK8qOQDGS+Vt+ldZguJjE0lPb63DcIRk7k?=
- =?us-ascii?Q?HZpyjhvrkdh2MVCP8oy/B9Bp1E+cPgOteF+EtVBmc97e7Px4ltycpKg+/udv?=
- =?us-ascii?Q?1PqeIrYlILkVi+0tOD95DJcsztX5Zwm+9tpWoq3HqSnDpu39SyQ4Sz/IPGlu?=
- =?us-ascii?Q?sKtmKByruXXJrqyfsl98MjZYkQwgsItZnzl88n7cfuiL4FmcoGPtF+Rl4pG4?=
- =?us-ascii?Q?0FSy8mD45I9Snd7KGsMnAZbKqB5NW0NTFERYHho6PiREJbdexBu2Cbyup0yw?=
- =?us-ascii?Q?5E62hq8wMAKFnHGOD3Npb1V8qniFqXWIdb6Di2Vo+q4qRw8QYjaeTf6NVr3n?=
- =?us-ascii?Q?yR2YxPxsiOr0b/YlPeJYb0F3zkKuqOd3r/mURmS9PTeDLRhPXUDZ8UXZ3eSd?=
- =?us-ascii?Q?WNa9juw/JeYUC3birKdinnvUq0/0WCN3Wz9WpLA5UjyduiPpqThFMKmLJmZU?=
- =?us-ascii?Q?kJ8xmiepNsTi90DFNvtND+qmvNorB7d54WjIVuf8iVuaTGwO5lHrWSRNugwA?=
- =?us-ascii?Q?9HU=3D?=
+	=?us-ascii?Q?BnMvyy2p3m2aeVyx3LOlMUH4os67DlRxoTaGdua3tbR7eoRdkyM61jWKObGh?=
+ =?us-ascii?Q?DJFZFxivylqSQVxeke+kIMlNLDq7n+GlZ0rUikPrp9JkjH++ETzZI/76sWJK?=
+ =?us-ascii?Q?90lxeEA8wv49w1pjZ34ZfR6MupddoYcXyic7GLAofhkszPjYpZxgg2FnN6/c?=
+ =?us-ascii?Q?58wyqWDGSSzrsMc2Tj2nZEKIAFkHI4i1oD4vq3ufy0070y+QUmKQil1MPzmf?=
+ =?us-ascii?Q?bz/Q3aKF90uMMwn7IA077Irgt4rHIH8DajhG/84hvysO+e/b9OmtuD6436OE?=
+ =?us-ascii?Q?ibGRmEzv0bWdmighlqsVqBWxC/hRSe8oOghyq1GfWz1y+OtvpAqjBrKAeTtz?=
+ =?us-ascii?Q?9LD6eXKzbylRUsNouee1qdhHhgEhxIEj2OrKQtAonB/yyZPxyP85TuMLKgH0?=
+ =?us-ascii?Q?oOZ0GrX00b81R0dmxa4Zx1Xgy3q3ceGhF+2OXg9kKsl89yP5B76GrTQAAfhp?=
+ =?us-ascii?Q?eKE59UYiDXQ1CyeAVLVnH0lpRPkcLG7/fGnwqXrfEBau1Uf+Krn3H/JxsM2v?=
+ =?us-ascii?Q?VKO9m57M5TT0BkZPfC/kP+jyS/9x7+8ytpHNihrBtR8bdBDuTdJeSgMn7ktZ?=
+ =?us-ascii?Q?dFuKnrZwyz43dgWAnLgJo5KDlEj15uLmoUntCcKcbjbvhHHCL1mcQho6WtH7?=
+ =?us-ascii?Q?rAKe5cT2ERjQuadFFf40Dt82SXt3SzxdaFZsoi2Zc4XRQxAr85RNm08Yn6GZ?=
+ =?us-ascii?Q?nxN9MP4zKEGD8HawmjpZuB6AZqIPuxN1Csc2Ggvl6SruNzaXTdiQ6AaHRWLi?=
+ =?us-ascii?Q?x/mR/qNDpZKqv3ekz56BWkUeBucR1g5CBlcEK60kehGXiavllWx+YrGUBww8?=
+ =?us-ascii?Q?D2azCir1OlyOr8td6GakrLtT6CbQCvv/y6sTwWxbKcRx5pVJkb37RzZLyhQw?=
+ =?us-ascii?Q?vSG359qw/i/1AizDtBOa6W2MHF5vo0nhr3MJb9260qAVsuEyVsmHy9jPkn4n?=
+ =?us-ascii?Q?Y4m/0bOzFainAZ0mN4OvvjNhReq47i9wUigvUoGiwze2NbJj2NPH7MAOAxTW?=
+ =?us-ascii?Q?mqXgNNpx+ZLI5pDcr2Gkhryt9Oy2kLF/+XEQ3DXhz2HmAmi6nFNyGyh8PHQE?=
+ =?us-ascii?Q?uxGthURiB9vpEaaVW2DQcYYqmbGswrfdXkc9cIKBbvUjk3W2WsYSco85Rdj3?=
+ =?us-ascii?Q?gid66i8PHXxc3VBbv4GUWOL6NCy9gNnwGstvrCo17QCy2YFUxBAUsCPZ8eLg?=
+ =?us-ascii?Q?FlQbwPEIIzrH8e2+xtvcHrNMwuXvmLTRsSaE/zDrQrpEXV1vyg5eb3wZahcN?=
+ =?us-ascii?Q?FmexnInqrGewHRELKFb1lfxAMRZFSLtA8FhL53R5l+B1Gu644NKsWTV7+7Sf?=
+ =?us-ascii?Q?3N8=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3abc961b-867e-4029-529e-08dc2c6ccddb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f8ddabc-83df-4446-988c-08dc2c6cf26e
 X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2024 08:21:40.3788
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2024 08:22:41.6700
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -121,78 +125,40 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR20MB3776
 
-Add clock controller support for the Sophgo CV1800B, CV1812H and SG2000.
+SG2000 series SoC has the same clock as CV1810 series, but the clock
+related to A53 is functional in SG2000 series. So a new compatible
+string is needed for the new SoC.
 
-Changed from v7:
-1. fix unused variables warnings in patch 3 of v7
-2. fix wrong pointer type in patch 3 of v7
-3. move the clk_disp_vip_parents variable to the patch 5 to avoid warning
+Add definition for the clock controller of the SG2000 series SoC.
 
-Changed from v6:
-1. fix dead lock when setting rate.
-2. split the driver patch into several patch for easy reading.
+Link: https://github.com/sophgo/sophgo-doc/releases/tag/sg2000-datasheet-v1.0-alpha
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+---
+ Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Changed from v5:
-1. rebased to mainline master tree
-2. add SG2000 clock support.
-3. fix document link
+diff --git a/Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml b/Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml
+index c1dc24673c0d..59ef41adb539 100644
+--- a/Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml
++++ b/Documentation/devicetree/bindings/clock/sophgo,cv1800-clk.yaml
+@@ -4,7 +4,7 @@
+ $id: http://devicetree.org/schemas/clock/sophgo,cv1800-clk.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
 
-Changed from v4:
-1. improve code for patch 2
-2. remove the already applied bindings
-https://lore.kernel.org/all/IA1PR20MB49535E448097F6FFC1218C39BB90A@IA1PR20MB4953.namprd20.prod.outlook.com/
+-title: Sophgo CV1800 Series Clock Controller
++title: Sophgo CV1800/SG2000 Series Clock Controller
 
-Changed from v3:
-1. improve comment of patch 3
-2. cleanup the include of patch 2
+ maintainers:
+   - Inochi Amaoto <inochiama@outlook.com>
+@@ -14,6 +14,7 @@ properties:
+     enum:
+       - sophgo,cv1800-clk
+       - sophgo,cv1810-clk
++      - sophgo,sg2000-clk
 
-Changed from v2:
-1. remove clock-names from bindings.
-2. remove clock-frequency node of DT from previous patch.
-3. change some unused clock to bypass mode to avoid unlockable PLL.
-
-Changed from v1:
-1. fix license issues.
-
-Inochi Amaoto (8):
-  dt-bindings: clock: sophgo: Add clock controller of SG2000 series SoC
-  clk: sophgo: Add CV1800/SG2000 series clock controller driver skeleton
-  clk: sophgo: implement clk_ops for CV1800 series clock controller
-    driver
-  clk: sophgo: Add clock support for CV1800 SoC
-  clk: sophgo: Add clock support for CV1810 SoC
-  clk: sophgo: Add clock support for SG2000 SoC
-  riscv: dts: sophgo: add clock generator for Sophgo CV1800 series SoC
-  riscv: dts: sophgo: add uart clock for Sophgo CV1800 series SoC
-
- .../bindings/clock/sophgo,cv1800-clk.yaml     |    3 +-
- arch/riscv/boot/dts/sophgo/cv1800b.dtsi       |    4 +
- arch/riscv/boot/dts/sophgo/cv1812h.dtsi       |    4 +
- arch/riscv/boot/dts/sophgo/cv18xx.dtsi        |   22 +-
- drivers/clk/Kconfig                           |    1 +
- drivers/clk/Makefile                          |    1 +
- drivers/clk/sophgo/Kconfig                    |   12 +
- drivers/clk/sophgo/Makefile                   |    7 +
- drivers/clk/sophgo/clk-cv1800.c               | 1541 +++++++++++++++++
- drivers/clk/sophgo/clk-cv1800.h               |  123 ++
- drivers/clk/sophgo/clk-cv18xx-common.c        |   66 +
- drivers/clk/sophgo/clk-cv18xx-common.h        |   81 +
- drivers/clk/sophgo/clk-cv18xx-ip.c            |  887 ++++++++++
- drivers/clk/sophgo/clk-cv18xx-ip.h            |  261 +++
- drivers/clk/sophgo/clk-cv18xx-pll.c           |  420 +++++
- drivers/clk/sophgo/clk-cv18xx-pll.h           |  118 ++
- 16 files changed, 3545 insertions(+), 6 deletions(-)
- create mode 100644 drivers/clk/sophgo/Kconfig
- create mode 100644 drivers/clk/sophgo/Makefile
- create mode 100644 drivers/clk/sophgo/clk-cv1800.c
- create mode 100644 drivers/clk/sophgo/clk-cv1800.h
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.c
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-common.h
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.c
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-ip.h
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.c
- create mode 100644 drivers/clk/sophgo/clk-cv18xx-pll.h
-
+   reg:
+     maxItems: 1
 --
 2.43.1
 
