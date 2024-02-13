@@ -1,146 +1,142 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2021.outbound.protection.outlook.com [40.92.22.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F57822319;
-	Tue, 13 Feb 2024 08:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707812828; cv=none; b=LEJ9G+6tDODOrBhGjuDRB2yorw/ipmdiLkmyRjiFWdmMPjESOZyfm/wt07efpV0giFA7quEAiQ5vcuZOBCv2GlKqBMqeTdEpIVfcibWO1Eohl8y36YepBYWlWsNq5MVhojOFA9KyYQjw3VwWzSxNIFrBL6/uS0UTnbbogS6Xa6o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707812828; c=relaxed/simple;
-	bh=uQ3pvkYlbb9sP+1HniO8vjtexme1WQGKUWPzjjcS9jU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qJlklJ8uSpP9RmqECUYC9ITcoIkZiYEtIWT1YQWouA5MLbV3D3HizcxABRSbH3NT4LSF4iRZtUnivWJ+lS0YBBDFNkUDfhHXLaEoKw2xsn+P7RyoraWzeKd3cOEbIMDKiVS4w2NPiTm/4W3sBle2f3o6SSfRV/vYNC/HMEmfPx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JEOBt5OX; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502C721A0A;
+	Tue, 13 Feb 2024 08:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707812873; cv=fail; b=ed62utTNxmSsKHyw3cfV3Oy+SaOOAZiR+M5SRGPl1lliJ2eh102YrceXSVSLsidsuv/9RVQgFr/e1E/P0+1ZbW+cmLHQ57cBgX6k5Bw3IJ1r/jPvXdLc0HoBC2zVszj5gfX1swb9qB6KWY7nXowQNPsJbMBFjo3RBAdd2a39F9M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707812873; c=relaxed/simple;
+	bh=Slxe8Ifxk4dI3e0L991fFbJ29Fv+8l6ZMbrXlQER2/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ff6aczpfIa0D20iopqxKHXk5KPaJiGVoY2dN80SAE0taeZrUrfOSC1ErxrcAc7G54nYJUSWBcsuaN1i8qvef0IJ8cjmgKmxsANUo3WgxcVay4gT8vBidl43tJBYPkBRnhNIt57JK1JWAk1mIlp5HEnQuRe4ellZUjVLRio/ivzg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=sTzHE16t; arc=fail smtp.client-ip=40.92.22.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JEOBt5OX"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 41D8Qr3E049651;
-	Tue, 13 Feb 2024 02:26:53 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1707812813;
-	bh=efVT6VYP6+c1CNm4+amsfIbNPIkqQ++4RigN9/iTUGI=;
-	h=From:To:CC:Subject:Date;
-	b=JEOBt5OXFXIq0UCpmKVle7JORkfKWb+EKI8MpCpJO2mmXPaROubeP6qSnjOtL4Ynp
-	 KymtsCniLld8mUfa2k00racz+VCxvElKUh2YyKjNlLojP/0sQm6V1gB7TOGv6bWcM7
-	 eXhVXr3O8u7+2U5zsJY1SfMEFcT3McYePOhJ07HU=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 41D8QrB1010740
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 13 Feb 2024 02:26:53 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 13
- Feb 2024 02:26:52 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 13 Feb 2024 02:26:52 -0600
-Received: from udit-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (udit-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.18])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 41D8Qm5k102902;
-	Tue, 13 Feb 2024 02:26:49 -0600
-From: Udit Kumar <u-kumar1@ti.com>
-To: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>, <chandru@ti.com>,
-        <rishabh@ti.com>, <kamlesh@ti.com>, <francesco@dolcini.it>
-CC: <vigneshr@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>
-Subject: [PATCH v4] clk: keystone: sci-clk: Adding support for non contiguous clocks
-Date: Tue, 13 Feb 2024 13:56:40 +0530
-Message-ID: <20240213082640.457316-1-u-kumar1@ti.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="sTzHE16t"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aExYkJcxVz/X25gAZbktpT1nAknVJEO9+1q6661+y+9YxbI34SnGKgNtwUcXWsebIh8p/MMJ07jJ/Z6HnxKtpzGyTX3/1RE/rPxRBbMyl1veZEdDDBF/d1c1Ioc7HSy+06JcZLpFOrAtTdeEgJrQAcZVoIupBK9LiWIB5mwQDjpjIRieilbTRuFJP0YIInguMyQcYbZ3X27rYhdyObuweiz5iVUxbefpwVE3jPYthz6urSMYxSNOCuozDO4f6F9/CcmWSR8C5iscrBHfmSutrMkj0EQoKia7c7WpX95Zgff3WAhm3LMnw6UkcBaPaCg9LCqKuJ1poaJBHSWPX0A++g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Slxe8Ifxk4dI3e0L991fFbJ29Fv+8l6ZMbrXlQER2/k=;
+ b=hF+p3bTAKvMK9G5AeOLWa5R6W5jMKrLDRJkAQc8x64i/LKYz/HfKac+38cRsnbSIfTMCC85QjSLhZ2F4jckiNj6Zu+dNPgDayJ/1yRrpRKKm6A1YtW+PkBvWDy5KZKufWUbXChIkR2u//aM0II1zFgKBbU86L4znOOGGp6rfXeDwbnNn0npjLeGpWIv/jW48wVMiW5aeB9n+PxAUcHZi0b+6GKdMR4HDuilWoITt5Odsfao3gBBWfOHRGYvCZ64RKXBHCmZfgl814ANbJGeN08CQidMhZov8i+PGlhD98cDclLrRlHLSgXQ+Vx+jwKfBUgYTpQBT8mInTPmJkP87kw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Slxe8Ifxk4dI3e0L991fFbJ29Fv+8l6ZMbrXlQER2/k=;
+ b=sTzHE16tPy4k/w36CcZtrhUQweGitMJb2wrCRxluNYno6b5tU56NagWWpgtHy9BSCGgsBqtC8CT3o/WepkYjF70ty74bAtY7UUZ78fuWPVwVilXf+nw/VRC2CJvATBdyHkUimUcmgdhFdu8rarsZzogvQ+y2GnBhhexkWX/uDhX3cPxmvyQh/CjJ6v5tyyWPT24RaAeLCp7wY1DeYxmTmwjNcyUv8pIWt9dfo2zK2cs2U6LNsmqlI+XXKw4m7DrEe4CMUKgVm9YGJ93/mD8fnFeY1OS4N1RQDI3U5ulpsC9iy5xfxi0eUsmoFPb4YbL83X687MXri0U0I3oicXmzKQ==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by DS7PR20MB3776.namprd20.prod.outlook.com (2603:10b6:5:3ab::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.25; Tue, 13 Feb
+ 2024 08:27:48 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::406a:664b:b8bc:1e6b]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::406a:664b:b8bc:1e6b%2]) with mapi id 15.20.7270.036; Tue, 13 Feb 2024
+ 08:27:48 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: Inochi Amaoto <inochiama@outlook.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Liu Gui <kenneth.liu@sophgo.com>,
+	Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
+	dlan@gentoo.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 3/8] clk: sophgo: implement clk_ops for CV1800 series clock controller driver
+Date: Tue, 13 Feb 2024 16:27:40 +0800
+Message-ID:
+ <IA1PR20MB495356A648B06702B3BA9FF3BB4F2@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.43.1
+In-Reply-To: <20240212-list-grumble-819f7988aaad@wendy>
+References: <20240212-list-grumble-819f7988aaad@wendy>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [8BAhYj7SrFmZCx7s+Yv60qkSlhwm4n76KPnu1+SHYfzrG3WTYeOEQ/nOIGMzEI34]
+X-ClientProxiedBy: TYBP286CA0029.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:404:10a::17) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <20240213082741.608683-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|DS7PR20MB3776:EE_
+X-MS-Office365-Filtering-Correlation-Id: aad7f232-fcd1-4140-ea99-08dc2c6da93f
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	6V5tr74vDc8g7Cv4y6A4piCIPRorKcI6uWyK2cuwAEm065tY3c0JkfEtDQyESbrRgGlpGATyp5Z9CITjmuq2R0qGrtigFhtSEOaJze2CtNKRW5n66aaWS+np92HfS5E11hwfyDD6WuLh5LOZFoShgXCDC8AXWxZ+i7/BJ+xkBvClCsvejk2UrkGbHD2Q4Whgxwa0AqANcYxjj9tn+1Ig+lI6Acf5I5MzZ85ftHUckOE+9V7coCoGWK60zsuzF4AEwvVlSE9Ky4BFttTaEW9+4bgujKx9b8NwBXMwJyEyAxGMZnSNy6Aq0uUJMYzNMJ+dBKRBmo4PSd69EnCgoM077Bk3Kaqf1xwe6bm+6gviix8NlAwZKUypFMafjdh8IukR2KBFnKUScMF7unwFjo4mAtTfZ3qg3A8BNCWZjMQdmQwmLvYJfPW3qvnxcP98AyQjj5Kmr4Nu7XYt5MBP5kUOKtI2vdKstxGswYzMbhF/kxlYY5O32BWpY5cveT+YsyDse5Sn+I/dgkcXb5v/JSQ9M5hmrj1+Xj18zj234QGRl55HzqqkqVEreWH4oakBePItV3RVexodhHG3w1iZ+da5WL6TcTMhHpWOb5LLIPy2vxhuf3vbnZwl/UotSAPfOWb5
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?139tMaxSgwNS1FUxVIKQ2//JSYAj/EIj17Dp/uci7kY/I56cm9gwl5JqxN0q?=
+ =?us-ascii?Q?1vQuLHDrTdveRVY2kufuuirFRSUJlMzhxjx02F1klYSWukAlfozojvzYDmPk?=
+ =?us-ascii?Q?CeAo0jRmayKL/8Ly2NvvYzwYQfhy2T+iyMfaoaihBNRzjR/oXn1fN79bbnoD?=
+ =?us-ascii?Q?sjjV02RaAxMrnVynvzeNxpXUK5QXiz0klyfBXa8VjsVX77oUMC9yhdDa7fbc?=
+ =?us-ascii?Q?9E8p3TFla6UDQwumuHoPWnC34cv5L+x6u70SLxInrdhEJ7YvQGxm7xh5B1+1?=
+ =?us-ascii?Q?WvFQTEGQGL7gc5u0MXdfzmzOEjy7bJXCBoRpWdmfAYv/t6KrCtM8Fw7YGse3?=
+ =?us-ascii?Q?X+N/L0AkABr9t4BeBSWTGsvWNRj1h6HCJzOr+izKo8aOTvtdAd2qCA5vd8D8?=
+ =?us-ascii?Q?i9piau/dInbDGesgmyeFNB52jn0b9cgHPwHZC5bQsJu/EKWAY6xxa5Q7Y0TO?=
+ =?us-ascii?Q?fXziNKYrZgvblPYfdh8tVrrK0kReXYAnqPe7onVlDkPfJ9mJ6WUIvrkubXDf?=
+ =?us-ascii?Q?IHfqudcMGU7c6DQxZBlOxR0CrpK08goFqfAKbqVuHB0OCIf+doCuawiteYDv?=
+ =?us-ascii?Q?TanFE2LQQV+skTjZSgkLhL1KpdNwadrpuYGtf1s0HQzwbx6zJGft8LDwUadb?=
+ =?us-ascii?Q?P+PJyIkiyymnxnqOWgGBrE4JAKtDm7Xehp61MK9f4kKSzYuVlX0dGZahSfV5?=
+ =?us-ascii?Q?+xXS4sbgq5rIYv8nYIEmKYlvyfRUKTjqh3UptNE2h8O/oBH1j//jW7BQO5NG?=
+ =?us-ascii?Q?PMZ0zDsaJnu5LhW91Xy7qhaKbMeHGnTudnOAqEOKu9qAbrbuW0VR9FJBdMV3?=
+ =?us-ascii?Q?kJxeGribI+k3OMbqrG9c7SP6mvbSI4hsCWt5hzjVcuNVP0H9ptlBPeTBjc7h?=
+ =?us-ascii?Q?nV7XmZSucByE8I2UiWq4T7ZdS9KNrCgoDspQpCngUdaVAjEv6p1wM6+JF3pf?=
+ =?us-ascii?Q?/ZDZ54MDQUBMJx1rLoEaFWtb85IQ8BWjBMYvrgqOY7HHx+c6oYaqt5gaSTNT?=
+ =?us-ascii?Q?DcQybz3YjL8Os3qfeBfLxDQX/+Ob2kUz0mMMypL4iLpn4AFgn6y0y3RYcwmD?=
+ =?us-ascii?Q?ZSazfaEHBigClZuB89ekpis4i+kLFBUBOOFJ8O9wplrKi5LcqDgugX22408z?=
+ =?us-ascii?Q?PBj9ssgzL/Sdb0tlb/rJ+btY06tesl8ICHR5vdeVcJLKRwxar8bxId85iGAm?=
+ =?us-ascii?Q?24kPPIsHCSSgWuOO6N/lo/e6ADKXZo3xTOjwPHRNk0rxNML2dnPu0PAvFLhz?=
+ =?us-ascii?Q?bZcwLe9foWtsQ9VWpxVgF1J0DVWmsXMrdfDhGNkDz+ortiTy/zCINGbr1iE1?=
+ =?us-ascii?Q?3Q8=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aad7f232-fcd1-4140-ea99-08dc2c6da93f
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2024 08:27:48.4191
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR20MB3776
 
-Most of clocks and their parents are defined in contiguous range,
-But in few cases, there is gap in clock numbers[0].
-Driver assumes clocks to be in contiguous range, and add their clock
-ids incrementally.
+>On 64-bit with clang:
+>drivers/clk/sophgo/clk-cv18xx-ip.c:745:6: warning: variable 'flags' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+>drivers/clk/sophgo/clk-cv18xx-ip.c:745:6: warning: variable 'flags' is used uninitialized whenever '||' condition is true [-Wsometimes-uninitialized]
+>on 32-bit there's also:
+>drivers/clk/sophgo/clk-cv18xx-pll.c:28:2: warning: comparison of distinct pointer types ('typeof ((rate)) *' (aka 'unsigned long *') and 'uint64_t *' (aka 'unsigned long long *')) [-Wcompare-distinct-pointer-types]
+>drivers/clk/sophgo/clk-cv18xx-pll.c:28:2: error: incompatible pointer types passing 'unsigned long *' to parameter of type 'uint64_t *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
+>
+>Cheers,
+>Conor.
+>
 
-New firmware started returning error while calling get_freq and is_on
-API for non-available clock ids.
+Thanks for your test report, It seems that I have made some mistake while
+splitting this patch. I have fixed this in the new one.
 
-In this fix, driver checks and adds only valid clock ids.
-
-[0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
-Section Clocks for NAVSS0_CPTS_0 Device, clock id 12-15 not present.
-
-Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
-Signed-off-by: Udit Kumar <u-kumar1@ti.com>
----
-Changelog
-Changes in v4
-- Added only incremental chanegs as per v3 discussion
-- Updated commit message
-- v3 was Reviewed-by, Dropping Reviewed-by as logic is changed
-Link to v3
-https://lore.kernel.org/all/20240207091100.4001428-1-u-kumar1@ti.com/ 
-
-Changes in v3
-- instead of get_freq, is_auto API is used to check validilty of clock
-- Address comments of v2, to have preindex increment
-Link to v2 https://lore.kernel.org/all/20240206104357.3803517-1-u-kumar1@ti.com/
-
-Changes in v2
-- Updated commit message
-- Simplified logic for valid clock id
-link to v1 https://lore.kernel.org/all/20240205044557.3340848-1-u-kumar1@ti.com/
-
-
-P.S
-Firmawre returns total num_parents count including non available ids.
-For above device id NAVSS0_CPTS_0, number of parents clocks are 16
-i.e from id 2 to 17. But out of these ids few are not valid.
-So driver adds only valid clock ids out ot total.
-
-Original logs
-https://gist.github.com/uditkumarti/de4b36b21247fb36725ad909ce4812f6#file-original-logs
-Line 2630 for error
-
-Logs with fix v4
-https://gist.github.com/uditkumarti/f25482a5e18e918010b790cffb39f572
-Line 2640
-
-
- drivers/clk/keystone/sci-clk.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-index 35fe197dd303..eb2ef44869b2 100644
---- a/drivers/clk/keystone/sci-clk.c
-+++ b/drivers/clk/keystone/sci-clk.c
-@@ -516,6 +516,7 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
- 	struct sci_clk *sci_clk, *prev;
- 	int num_clks = 0;
- 	int num_parents;
-+	bool state;
- 	int clk_id;
- 	const char * const clk_names[] = {
- 		"clocks", "assigned-clocks", "assigned-clock-parents", NULL
-@@ -586,6 +587,15 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
- 				clk_id = args.args[1] + 1;
- 
- 				while (num_parents--) {
-+					/* Check if this clock id is valid */
-+					ret = provider->ops->is_auto(provider->sci,
-+						sci_clk->dev_id, clk_id, &state);
-+
-+					if (ret) {
-+						clk_id++;
-+						continue;
-+					}
-+
- 					sci_clk = devm_kzalloc(dev,
- 							       sizeof(*sci_clk),
- 							       GFP_KERNEL);
--- 
-2.34.1
-
+Regards,
+Inochi.
