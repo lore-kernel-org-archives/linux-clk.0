@@ -1,130 +1,238 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4A4535DA;
-	Wed, 14 Feb 2024 14:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F9112C53C;
+	Wed, 14 Feb 2024 18:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707921878; cv=none; b=K/Zr3CPkxjrSBUISYnllwGHne/vQbBK5pflhawXYbr1ehnTwesGcxXQP3tmURahrpN1QTumJNPov+GG3fOrWsWIOd4/yV+ydfKT12eR2HKhHQRuxfeCEPlU9jlRhdI6hodTucKHGrb+aSHnk913CcmqsEeeB9w3MIm8Ze5lIx24=
+	t=1707935445; cv=none; b=fHv8LJs2CGhCq+Lz6zilPMMN1QiNkNXyOAYrDut3KgD2lgoAew/UmmDN0buMRVv5FBL/3tFTWpFhQrQYLvVe4+yLGYh+HvkXGaAB/wJmgflDK8cAZf6N52Z4xT/XGR5CPBGiQzjPOUh5eVolCD1TAzAC+2ynxb+MXPp+FW+Jsds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707921878; c=relaxed/simple;
-	bh=/aCJdNcQ2gUxVbvYr+aiPG/bK475wx4EPI5asZy5xw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7gFScb9CIwF+mGJPkEba9SjaOt3T0lrfeNLRxv0yMd9mtCIFVCESn+mRZsn4uXSJqcXSQ8u97Qex2tKEacz2tWVajno5oQcQyuT3TCilXfjpTzBxqRSTbpSwUnOW5SKKFoyamQOsePQMIeYIU7CuSv+5xbquCHE42ZwdTobDkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xoeUcrDv; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xoeUcrDv"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0tpb0RNPezxVKElZqD1Rek43u032J0ugCVH6syrQd1I=; b=xoeUcrDvq4K+OUZK+djhAC7gJ1
-	11TLVVHjWpUL4i6Z6jFB971SBtiREh9bHQ/wNyHswz2ICvD7uGd2px2KTu/3+0e0xca47GMxoE1wA
-	BMlc076ALUy9PHehfLJpfAiWjvdKIj5d7ccFN3wWgrUDJSO65JXRZkOh413JJSdRrLYk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1raGV5-007nGX-4G; Wed, 14 Feb 2024 15:44:39 +0100
-Date: Wed, 14 Feb 2024 15:44:39 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	s=arc-20240116; t=1707935445; c=relaxed/simple;
+	bh=FAXe14bgrUJ605crID4nOzEAT9unDU7UAMXUqo6EjIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WqZzYCorCSX9YwG9lBP1auGnmTRoeFK/TZ9gHJnBQ5kWwEL4a8de0RqVsWfHKY7YIeHeBJqKrgVYdniXdO9D/J5N3JBo0ndefSwtUUHggml9VPjQQWAmprXS/8SjGAVTNi4jnGf/ruAuT6pp3t0R3pDKRbN4AUfA6NbtdKWAq/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D31D21FB;
+	Wed, 14 Feb 2024 10:31:23 -0800 (PST)
+Received: from pluto.fritz.box (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C9AC83F7B4;
+	Wed, 14 Feb 2024 10:30:40 -0800 (PST)
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 2/8] clk: qcom: ipq5332: enable few nssnoc clocks in
- driver probe
-Message-ID: <17e2400e-6881-4e9e-90c2-9c4f77a0d41d@lunn.ch>
-References: <20240122-ipq5332-nsscc-v4-0-19fa30019770@quicinc.com>
- <20240122-ipq5332-nsscc-v4-2-19fa30019770@quicinc.com>
- <7a69a68d-44c2-4589-b286-466d2f2a0809@lunn.ch>
- <11fda059-3d8d-4030-922a-8fef16349a65@quicinc.com>
+Cc: sudeep.holla@arm.com,
+	james.quinlan@broadcom.com,
+	f.fainelli@gmail.com,
+	vincent.guittot@linaro.org,
+	peng.fan@oss.nxp.com,
+	michal.simek@amd.com,
+	quic_sibis@quicinc.com,
+	quic_nkela@quicinc.com,
+	souvik.chakravarty@arm.com,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 6/7] clk: scmi: Allocate CLK operations dynamically
+Date: Wed, 14 Feb 2024 18:30:05 +0000
+Message-ID: <20240214183006.3403207-7-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240214183006.3403207-1-cristian.marussi@arm.com>
+References: <20240214183006.3403207-1-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11fda059-3d8d-4030-922a-8fef16349a65@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 14, 2024 at 02:49:41PM +0530, Kathiravan Thirumoorthy wrote:
-> 
-> 
-> On 1/26/2024 1:35 AM, Andrew Lunn wrote:
-> > On Mon, Jan 22, 2024 at 11:26:58AM +0530, Kathiravan Thirumoorthy wrote:
-> > > gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk are
-> > > enabled by default and it's RCG is properly configured by bootloader.
-> > 
-> > Which bootloader? Mainline barebox?
-> 
-> 
-> Thanks for taking time to review the patches. I couldn't get time to respond
-> back, sorry for the delay.
-> 
-> I was referring to the U-boot which is delivered as part of the QSDK. I will
-> call it out explicitly in the next patch.
+SCMI Clocks descriptors expose and increasing number of properties that in
+turn lead to a different set of supported CLK operations to be associated
+dynamically with a clock.
 
-I've never used QSDK u-boot, so i can only make comments based on my
-experience with other vendors build of u-boot. That experience is, its
-broken for my use cases, and i try to replace it as soon as possible
-with upstream.
+Providing statically pre-defined CLK operations structs for all the
+possible combinations of allowed properties is cumbersome and error-prone.
 
-I generally want to TFTP boot the kernel and the DT blob. Sometimes
-vendor u-boot has networking disabled. Or the TFTP client is
-missing. If it is there, the IP addresses are fixed, and i don't want
-to modify my network to make it compatible with the vendor
-requirements. If the IP addresses can be configured, sometimes there
-is no FLASH support so its not possible to actually write the
-configuration to FLASH so that it does the right thing on reboot
-etc...
+Allocate per-clock operations descriptor dynamically and populate it with
+the strictly needed set of operations depending on the advertised clock
+properties.
 
-Often the vendor u-boot is a black box, no sources. Can you give me a
-git URL for the u-boot in QSDK? If the sources are open, i could at
-least rebuild it with everything turned on.
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: linux-clk@vger.kernel.org
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+---
+ drivers/clk/clk-scmi.c | 129 ++++++++++++++++++++++-------------------
+ 1 file changed, 70 insertions(+), 59 deletions(-)
 
-But still, it is better that Linux makes no assumptions about what the
-boot loader has done. That makes it much easier to change the
-bootloader.
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+index 5747b6d651f0..b91a0dbd2fe0 100644
+--- a/drivers/clk/clk-scmi.c
++++ b/drivers/clk/clk-scmi.c
+@@ -158,51 +158,6 @@ static int scmi_clk_atomic_is_enabled(struct clk_hw *hw)
+ 	return !!enabled;
+ }
+ 
+-/*
+- * We can provide enable/disable/is_enabled atomic callbacks only if the
+- * underlying SCMI transport for an SCMI instance is configured to handle
+- * SCMI commands in an atomic manner.
+- *
+- * When no SCMI atomic transport support is available we instead provide only
+- * the prepare/unprepare API, as allowed by the clock framework when atomic
+- * calls are not available.
+- *
+- * Two distinct sets of clk_ops are provided since we could have multiple SCMI
+- * instances with different underlying transport quality, so they cannot be
+- * shared.
+- */
+-static const struct clk_ops scmi_clk_ops = {
+-	.recalc_rate = scmi_clk_recalc_rate,
+-	.round_rate = scmi_clk_round_rate,
+-	.set_rate = scmi_clk_set_rate,
+-	.prepare = scmi_clk_enable,
+-	.unprepare = scmi_clk_disable,
+-	.set_parent = scmi_clk_set_parent,
+-	.get_parent = scmi_clk_get_parent,
+-	.determine_rate = scmi_clk_determine_rate,
+-};
+-
+-static const struct clk_ops scmi_atomic_clk_ops = {
+-	.recalc_rate = scmi_clk_recalc_rate,
+-	.round_rate = scmi_clk_round_rate,
+-	.set_rate = scmi_clk_set_rate,
+-	.enable = scmi_clk_atomic_enable,
+-	.disable = scmi_clk_atomic_disable,
+-	.is_enabled = scmi_clk_atomic_is_enabled,
+-	.set_parent = scmi_clk_set_parent,
+-	.get_parent = scmi_clk_get_parent,
+-	.determine_rate = scmi_clk_determine_rate,
+-};
+-
+-static const struct clk_ops scmi_no_state_ctrl_clk_ops = {
+-	.recalc_rate = scmi_clk_recalc_rate,
+-	.round_rate = scmi_clk_round_rate,
+-	.set_rate = scmi_clk_set_rate,
+-	.set_parent = scmi_clk_set_parent,
+-	.get_parent = scmi_clk_get_parent,
+-	.determine_rate = scmi_clk_determine_rate,
+-};
+-
+ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
+ 			     const struct clk_ops *scmi_ops)
+ {
+@@ -239,6 +194,71 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
+ 	return ret;
+ }
+ 
++/**
++ * scmi_clk_ops_alloc() - Alloc and configure CLK ops
++ * @sclk: A reference to an SCMI clock descriptor
++ * @atomic_capable: A flag to indicate if atomic mode is supported by the
++ *		    transport
++ * @atomic_threshold: Platform atomic threshold value
++ *
++ * Allocate and configure a proper set of CLK operations depending on the
++ * specific SCMI clock characteristics and platform atomic operation capability.
++ *
++ * We can provide enable/disable/is_enabled atomic callbacks only if the
++ * underlying SCMI transport for an SCMI instance is configured to handle
++ * SCMI commands in an atomic manner.
++ *
++ * When no SCMI atomic transport support is available we instead provide only
++ * the prepare/unprepare API, as allowed by the clock framework when atomic
++ * calls are not available.
++ *
++ * Return: A pointer to the allocated and configured clk_ops on Success,
++ *	   NULL otherwise.
++ */
++static const struct clk_ops *
++scmi_clk_ops_alloc(struct scmi_clk *sclk, bool atomic_capable,
++		   unsigned int atomic_threshold)
++{
++	const struct scmi_clock_info *ci = sclk->info;
++	struct clk_ops *ops;
++
++	ops = devm_kzalloc(sclk->dev, sizeof(*ops), GFP_KERNEL);
++	if (!ops)
++		return NULL;
++
++	/*
++	 * Note that when transport is atomic but SCMI protocol did not
++	 * specify (or support) an enable_latency associated with a
++	 * clock, we default to use atomic operations mode.
++	 */
++	if (!ci->state_ctrl_forbidden) {
++		if (atomic_capable && ci->enable_latency <= atomic_threshold) {
++			ops->enable = scmi_clk_atomic_enable;
++			ops->disable = scmi_clk_atomic_disable;
++		} else {
++			ops->prepare = scmi_clk_enable;
++			ops->unprepare = scmi_clk_disable;
++		}
++	}
++
++	if (atomic_capable)
++		ops->is_enabled = scmi_clk_atomic_is_enabled;
++
++	/* Rate ops */
++	ops->recalc_rate = scmi_clk_recalc_rate;
++	ops->round_rate = scmi_clk_round_rate;
++	ops->determine_rate = scmi_clk_determine_rate;
++	if (!ci->rate_ctrl_forbidden)
++		ops->set_rate = scmi_clk_set_rate;
++
++	/* Parent ops */
++	ops->get_parent = scmi_clk_get_parent;
++	if (!ci->parent_ctrl_forbidden)
++		ops->set_parent = scmi_clk_set_parent;
++
++	return ops;
++}
++
+ static int scmi_clocks_probe(struct scmi_device *sdev)
+ {
+ 	int idx, count, err;
+@@ -294,18 +314,9 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 		sclk->ph = ph;
+ 		sclk->dev = dev;
+ 
+-		/*
+-		 * Note that when transport is atomic but SCMI protocol did not
+-		 * specify (or support) an enable_latency associated with a
+-		 * clock, we default to use atomic operations mode.
+-		 */
+-		if (sclk->info->state_ctrl_forbidden)
+-			scmi_ops = &scmi_no_state_ctrl_clk_ops;
+-		else if (is_atomic &&
+-			 sclk->info->enable_latency <= atomic_threshold)
+-			scmi_ops = &scmi_atomic_clk_ops;
+-		else
+-			scmi_ops = &scmi_clk_ops;
++		scmi_ops = scmi_clk_ops_alloc(sclk, is_atomic, atomic_threshold);
++		if (!scmi_ops)
++			return -ENOMEM;
+ 
+ 		/* Initialize clock parent data. */
+ 		if (sclk->info->num_parents > 0) {
+@@ -324,13 +335,13 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 		if (err) {
+ 			dev_err(dev, "failed to register clock %d\n", idx);
+ 			devm_kfree(dev, sclk->parent_data);
++			devm_kfree(dev, scmi_ops);
+ 			devm_kfree(dev, sclk);
+ 			hws[idx] = NULL;
+ 		} else {
+ 			dev_dbg(dev, "Registered clock:%s%s\n",
+ 				sclk->info->name,
+-				scmi_ops == &scmi_atomic_clk_ops ?
+-				" (atomic ops)" : "");
++				scmi_ops->enable ? " (atomic ops)" : "");
+ 			hws[idx] = &sclk->hw;
+ 		}
+ 	}
+-- 
+2.43.0
 
-> > > Some of the NSS clocks needs these clocks to be enabled. To avoid
-> > > these clocks being disabled by clock framework, drop these entries
-> > > from the clock table and enable it in the driver probe itself.
-> > 
-> > If they are critical clocks, i would expect a device to reference
-> > them. The CCF only disabled unused clocks in late_initcall_sync(),
-> > which means all drivers should of probed and taken a reference on any
-> > clocks they require.
-> 
-> 
-> Some of the NSSCC clocks are enabled by bootloaders and CCF disables the
-> same (because currently there are no consumers for these clocks available in
-> the tree. These clocks are consumed by the Networking drivers which are
-> being upstreamed).
-
-If there is no network drivers, you don't need clocks to the
-networking hardware. So CCF turning them off seems correct.
-
-Once you have actual drivers, this should solve itself, the drivers
-will consume the clocks.
-
-> However looking back, gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk,
-> gcc_nssnoc_nsscc_clk are consumed by the networking drivers only. So is it
-> okay to drop these clocks from the GCC driver and add it back once the
-> actual consumer needs it?
-
-But why should you remove them. If nothing is using them, they should
-be turned off.
-
-   Andrew
