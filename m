@@ -1,48 +1,48 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAE2BA38;
-	Wed, 14 Feb 2024 04:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5EAC147;
+	Wed, 14 Feb 2024 05:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707884989; cv=none; b=nOXY4GdYhdWJVOUmIIb0pyysCspPIwvKlaEuqXVwb+Di505rV5JHZ1QnpHDT1NYlE2Vwz5aSGqbCym6yKiVkjug0xizqacxzaotfJYyG44ATQLNh6ZD8ZdOW9VXsxpTcMVnazKou6utrJmqvyHn0vEyfo7W+jVmrvpKlaC77ITk=
+	t=1707888564; cv=none; b=YfHPsjIPGCEs1zczkZQY20vQMzHHcRznpbD0EJrBpAkMc4QPYMQLtlsRbFXNOpM+N5kpFrCvdrkCrjSVAxYenni8NWN0afO7tkg6cDlMjh+7mzcQS8Be2eI0p9/X+qOdxE43cAgcfeDL1SKZZc+D4vVi0s94ALETcAstMDWHCNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707884989; c=relaxed/simple;
-	bh=soNF9FVM5OrcEyfvV//2qdMFKYHZZo58NagGsnNR5MM=;
+	s=arc-20240116; t=1707888564; c=relaxed/simple;
+	bh=e5MFXVDA99pVGosvPaTfbiU4tvvZtjOYEdi2onLkq+U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LM0pnXh0VMTL6Vvf+v5ngaUvuf6lCyNTvd+j7VqZpXw55SDfwyi4eMUJGiuJRmGnOw7NK4DHkqSAU9SOo58Dhz+gwxOOecL6YaXJpK2MujHCXbyy38caspQo26fxkjgilKoNWD4P/fud6jghmrXAT++g/pX6dD4gfkfySNuur+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bM5FP0xN; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=Wagzm21afgJdZwL5DexbhQYFODm0QqvHwIAxLJscdJrSKnbvcHV/sUIwh43H07y4a9kw40c6zspfAYdumyT29lAISSu8iIdTPEezRahOPeG/wIYE4bdhf0/24L32Pc9g6R/SDFlzMXZEb15HXzHmmA05YOjRl8lGl2p18tb3Odo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B+5aC3bN; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bM5FP0xN"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41E40DsC014695;
-	Wed, 14 Feb 2024 04:29:25 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B+5aC3bN"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41E45xOe021314;
+	Wed, 14 Feb 2024 05:29:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	message-id:date:mime-version:subject:to:cc:references:from
 	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=E5rxHYHkB0OjFcatv+zmGPh1ez6bAKXIDbqU3Ulp4h0=; b=bM
-	5FP0xNVbs3/IcLl3ivU6BpGneoeQ8za+9/QBG3p37KKG22nYE6OGaLaWdx04sRzs
-	uPulD2S9cqDC33ShH0VpgqFZUkZtuo0TICiL0tYBCR5HaenLokDjuPl7PRLs16oI
-	WRzgH9BZnHpEUGoyuF1W4b0Zv+uRE3LJqPRtzyRfOSnvAd1FiNnaJxDSzS6pTovm
-	o/DDMZ1Rkdd5Rjnek9Luhcn0crb3kVWhEUXVmOnBo3k9pnvkA3uS6Ryl3UgY9aJ1
-	vTXQvKrNqHYZtRsDl8vsvS6rrx473cRr0y5kgGSubbL4Vm+j/2mnpuP95g8gJqTi
-	I7NhQhbw8ktfgBvSNTJw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w8jrj8ahd-1
+	qcppdkim1; bh=KjRtQkKMERuiUp95ugofOfndlSqcIPUZu7TkvxhOkDQ=; b=B+
+	5aC3bNtI7U9ueaOrfNOrs4dBF+NA2LR11RZJ3qshBG+DQN0SjaujGIGM4wNNc/cU
+	J8POo4VQFcyT6CbdnSq1bQ4IqIPzS9NWOWhsoI8wIZ3fYi18wTvPyUiLcCobzBle
+	C4ORXgGedh9COjS0qboTve+50DzMl5060M411ID524VbIFPCZ8FzISexNMHu7PoU
+	LEm5X9Riox5ooYGelaVQRXhDXaqMbpe6spUK6C5RJTmg7GeG0WjOPiovhmoZaJng
+	uNeA0D3K4Wi6oDTGHKRdeOQGKec09pmasAcZ7A8LGpQPBNcSP5Nu1LUBQCsK9Czj
+	/7ZvSpylIqKXpkRMfflw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w8k9agbua-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 04:29:25 +0000 (GMT)
+	Wed, 14 Feb 2024 05:29:12 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41E4TN2n002441
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41E5TBGD015035
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 04:29:23 GMT
+	Wed, 14 Feb 2024 05:29:11 GMT
 Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 13 Feb
- 2024 20:29:16 -0800
-Message-ID: <a1c2641f-80c0-4e6e-9c44-ef7209da97a5@quicinc.com>
-Date: Wed, 14 Feb 2024 09:59:13 +0530
+ 2024 21:29:05 -0800
+Message-ID: <6cb25cb0-9885-4b83-beb8-0270e21c978c@quicinc.com>
+Date: Wed, 14 Feb 2024 10:59:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,229 +50,238 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/5] PM: domains: Allow devices attached to genpd to be
- managed by HW
+Subject: Re: [PATCH 2/5] clk: qcom: videocc-sm8550: Add support for SM8650
+ videocc
 Content-Language: en-US
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-media@vger.kernel.org>
-References: <20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org>
- <20240122-gdsc-hwctrl-v4-1-9061e8a7aa07@linaro.org>
- <tax3c6o5qjegy6tv3zbgrd5rencfvypr3zg7twxfrmdngscp74@n44ei3q63g64>
- <CAPDyKFpdtrWbzNksLoY++aOY7Ltyt1HhtLZo8bj8sQ05-4Sq0g@mail.gmail.com>
- <l7icfezpajren25545n4cjtqehhividt5b2dxnxgetdsshc3k3@tdws423qdblk>
- <CAPDyKFp1vg2+-pHJ_idkdhb_zZUMpq7W17DnCCGj0eTwd4jFbQ@mail.gmail.com>
- <87b7967f-d8c4-426e-92ed-5a418c702481@quicinc.com>
- <CAPDyKFqy0osJRTU1mL0Ew_3pnYOe5z20ZWNrew8B6t99UFO0pg@mail.gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Ajit Pandey" <quic_ajipan@quicinc.com>
+References: <20240206113145.31096-1-quic_jkona@quicinc.com>
+ <20240206113145.31096-3-quic_jkona@quicinc.com>
+ <CAA8EJpqbKQS7Bp28xNZ0twu7BFLdOES9qS5xBvoonux8Ma4q6Q@mail.gmail.com>
+ <e90522c1-7a2d-40ff-bf4e-c8f974722ddf@quicinc.com>
+ <CAA8EJpqCDOE_5vg+4ew8H0HbhQM1w8reqU6Pu0MAYJtMw8zXUw@mail.gmail.com>
+ <d88f0f42-c9ec-4638-8090-055bc4806574@quicinc.com>
+ <CAA8EJpq9AE_B9rvXRa1Q803yWzmwZxwiF_hwokq8XJZgJy59PA@mail.gmail.com>
 From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <CAPDyKFqy0osJRTU1mL0Ew_3pnYOe5z20ZWNrew8B6t99UFO0pg@mail.gmail.com>
+In-Reply-To: <CAA8EJpq9AE_B9rvXRa1Q803yWzmwZxwiF_hwokq8XJZgJy59PA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3WKGYU3flknvPdKbxmR4CBffYFs3Jo6N
-X-Proofpoint-ORIG-GUID: 3WKGYU3flknvPdKbxmR4CBffYFs3Jo6N
+X-Proofpoint-ORIG-GUID: MsbA6hO9HeUoQ6iC2JscR4_etaij4rnl
+X-Proofpoint-GUID: MsbA6hO9HeUoQ6iC2JscR4_etaij4rnl
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-02-13_16,2024-02-12_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 impostorscore=0 bulkscore=0 lowpriorityscore=0
- suspectscore=0 mlxlogscore=999 mlxscore=0 spamscore=0 phishscore=0
- adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2401310000 definitions=main-2402140031
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
+ mlxscore=0 spamscore=0 malwarescore=0 phishscore=0 bulkscore=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401310000 definitions=main-2402140041
 
 
 
-On 2/13/2024 7:21 PM, Ulf Hansson wrote:
-> On Tue, 13 Feb 2024 at 14:10, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+On 2/12/2024 6:48 PM, Dmitry Baryshkov wrote:
+> On Mon, 12 Feb 2024 at 15:07, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
 >>
 >>
 >>
->> On 2/2/2024 5:59 PM, Ulf Hansson wrote:
->>> On Fri, 2 Feb 2024 at 00:51, Bjorn Andersson <andersson@kernel.org> wrote:
+>> On 2/7/2024 12:49 PM, Dmitry Baryshkov wrote:
+>>> On Wed, 7 Feb 2024 at 08:59, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
 >>>>
->>>> On Wed, Jan 31, 2024 at 01:12:00PM +0100, Ulf Hansson wrote:
->>>>> On Wed, 31 Jan 2024 at 02:09, Bjorn Andersson <andersson@kernel.org> wrote:
+>>>>
+>>>>
+>>>> On 2/6/2024 5:24 PM, Dmitry Baryshkov wrote:
+>>>>> On Tue, 6 Feb 2024 at 13:39, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
 >>>>>>
->>>>>> On Mon, Jan 22, 2024 at 10:47:01AM +0200, Abel Vesa wrote:
->>>>>>> From: Ulf Hansson <ulf.hansson@linaro.org>
->>>>>>>
->>>>>>> Some power-domains may be capable of relying on the HW to control the power
->>>>>>> for a device that's hooked up to it. Typically, for these kinds of
->>>>>>> configurations the consumer driver should be able to change the behavior of
->>>>>>> power domain at runtime, control the power domain in SW mode for certain
->>>>>>> configurations and handover the control to HW mode for other usecases.
->>>>>>>
->>>>>>> To allow a consumer driver to change the behaviour of the PM domain for its
->>>>>>> device, let's provide a new function, dev_pm_genpd_set_hwmode(). Moreover,
->>>>>>> let's add a corresponding optional genpd callback, ->set_hwmode_dev(),
->>>>>>> which the genpd provider should implement if it can support switching
->>>>>>> between HW controlled mode and SW controlled mode. Similarly, add the
->>>>>>> dev_pm_genpd_get_hwmode() to allow consumers to read the current mode and
->>>>>>> its corresponding optional genpd callback, ->get_hwmode_dev(), which the
->>>>>>> genpd provider can also implement for reading back the mode from the
->>>>>>> hardware.
->>>>>>>
->>>>>>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->>>>>>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>>>> ---
->>>>>>>    drivers/pmdomain/core.c   | 69 +++++++++++++++++++++++++++++++++++++++++++++++
->>>>>>>    include/linux/pm_domain.h | 17 ++++++++++++
->>>>>>>    2 files changed, 86 insertions(+)
->>>>>>>
->>>>>>> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
->>>>>>> index a1f6cba3ae6c..41b6411d0ef5 100644
->>>>>>> --- a/drivers/pmdomain/core.c
->>>>>>> +++ b/drivers/pmdomain/core.c
->>>>>>> @@ -548,6 +548,75 @@ void dev_pm_genpd_synced_poweroff(struct device *dev)
->>>>>>>    }
->>>>>>>    EXPORT_SYMBOL_GPL(dev_pm_genpd_synced_poweroff);
->>>>>>>
->>>>>>> +/**
->>>>>>> + * dev_pm_genpd_set_hwmode - Set the HW mode for the device and its PM domain.
->>>>>>
->>>>>> This isn't proper kernel-doc
+>>>>>> Add support to the SM8650 video clock controller by extending the
+>>>>>> SM8550 video clock controller, which is mostly identical but SM8650
+>>>>>> has few additional clocks and minor differences.
 >>>>>
->>>>> Sorry, I didn't quite get that. What is wrong?
+>>>>> In the past we tried merging similar clock controllers. In the end
+>>>>> this results in the ugly source code. Please consider submitting a
+>>>>> separate driver.
 >>>>>
 >>>>
->>>> https://docs.kernel.org/doc-guide/kernel-doc.html#function-documentation
->>>> says that there should be () after the function name, and below there
->>>> should be a Return:
+>>>> Thanks Dmitry for your review. SM8650 has only few clock additions and
+>>>> minor changes compared to SM8550, so I believe it is better to reuse
+>>>> this existing driver and extend it.
 >>>
->>> Thanks for the pointers!
+>>> I'd say, the final decision is on Bjorn and Konrad as maintainers.
 >>>
 >>>>
 >>>>>>
->>>>>>> + *
->>>>>>> + * @dev: Device for which the HW-mode should be changed.
->>>>>>> + * @enable: Value to set or unset the HW-mode.
->>>>>>> + *
->>>>>>> + * Some PM domains can rely on HW signals to control the power for a device. To
->>>>>>> + * allow a consumer driver to switch the behaviour for its device in runtime,
->>>>>>> + * which may be beneficial from a latency or energy point of view, this function
->>>>>>> + * may be called.
->>>>>>> + *
->>>>>>> + * It is assumed that the users guarantee that the genpd wouldn't be detached
->>>>>>> + * while this routine is getting called.
->>>>>>> + *
->>>>>>> + * Returns 0 on success and negative error values on failures.
->>>>>>> + */
->>>>>>> +int dev_pm_genpd_set_hwmode(struct device *dev, bool enable)
->>>>>>> +{
->>>>>>> +     struct generic_pm_domain *genpd;
->>>>>>> +     int ret = 0;
->>>>>>> +
->>>>>>> +     genpd = dev_to_genpd_safe(dev);
->>>>>>> +     if (!genpd)
->>>>>>> +             return -ENODEV;
->>>>>>> +
->>>>>>> +     if (!genpd->set_hwmode_dev)
->>>>>>> +             return -EOPNOTSUPP;
->>>>>>> +
->>>>>>> +     genpd_lock(genpd);
->>>>>>> +
->>>>>>> +     if (dev_gpd_data(dev)->hw_mode == enable)
+>>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>>>> ---
+>>>>>>     drivers/clk/qcom/videocc-sm8550.c | 160 +++++++++++++++++++++++++++++-
+>>>>>>     1 file changed, 156 insertions(+), 4 deletions(-)
 >>>>>>
->>>>>> Between this and the gdsc patch, the hw_mode state might not match the
->>>>>> hardware state at boot.
+>>>>>> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
+>>>>>> index f3c9dfaee968..cdc08f5900fc 100644
+>>>>>> --- a/drivers/clk/qcom/videocc-sm8550.c
+>>>>>> +++ b/drivers/clk/qcom/videocc-sm8550.c
+>>>>>> @@ -1,6 +1,6 @@
+>>>>>>     // SPDX-License-Identifier: GPL-2.0-only
+>>>>>>     /*
+>>>>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>>>      */
 >>>>>>
->>>>>> With hw_mode defaulting to false, your first dev_pm_genpd_set_hwmode(,
->>>>>> false) will not bring control to SW - which might be fatal.
+>>>>>>     #include <linux/clk-provider.h>
 >>>>>
->>>>> Right, good point.
+>>>>> [skipping]
 >>>>>
->>>>> I think we have two ways to deal with this:
->>>>> 1) If the provider is supporting ->get_hwmode_dev(), we can let
->>>>> genpd_add_device() invoke it to synchronize the state.
->>>>
->>>> I'd suggest that we skip the optimization for now and just let the
->>>> update hit the driver on each call.
->>>
->>> Okay.
->>>
->>>>
->>>>> 2) If the provider doesn't support ->get_hwmode_dev() we need to call
->>>>> ->set_hwmode_dev() to allow an initial state to be set.
+>>>>>>     static struct gdsc video_cc_mvs0c_gdsc = {
+>>>>>>            .gdscr = 0x804c,
+>>>>>>            .en_rest_wait_val = 0x2,
+>>>>>> @@ -354,15 +481,20 @@ static struct clk_regmap *video_cc_sm8550_clocks[] = {
+>>>>>>            [VIDEO_CC_MVS0_CLK] = &video_cc_mvs0_clk.clkr,
+>>>>>>            [VIDEO_CC_MVS0_CLK_SRC] = &video_cc_mvs0_clk_src.clkr,
+>>>>>>            [VIDEO_CC_MVS0_DIV_CLK_SRC] = &video_cc_mvs0_div_clk_src.clkr,
+>>>>>> +       [VIDEO_CC_MVS0_SHIFT_CLK] = &video_cc_mvs0_shift_clk.clkr,
+>>>>>>            [VIDEO_CC_MVS0C_CLK] = &video_cc_mvs0c_clk.clkr,
+>>>>>>            [VIDEO_CC_MVS0C_DIV2_DIV_CLK_SRC] = &video_cc_mvs0c_div2_div_clk_src.clkr,
+>>>>>> +       [VIDEO_CC_MVS0C_SHIFT_CLK] = &video_cc_mvs0c_shift_clk.clkr,
+>>>>>>            [VIDEO_CC_MVS1_CLK] = &video_cc_mvs1_clk.clkr,
+>>>>>>            [VIDEO_CC_MVS1_CLK_SRC] = &video_cc_mvs1_clk_src.clkr,
+>>>>>>            [VIDEO_CC_MVS1_DIV_CLK_SRC] = &video_cc_mvs1_div_clk_src.clkr,
+>>>>>> +       [VIDEO_CC_MVS1_SHIFT_CLK] = &video_cc_mvs1_shift_clk.clkr,
+>>>>>>            [VIDEO_CC_MVS1C_CLK] = &video_cc_mvs1c_clk.clkr,
+>>>>>>            [VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC] = &video_cc_mvs1c_div2_div_clk_src.clkr,
+>>>>>> +       [VIDEO_CC_MVS1C_SHIFT_CLK] = &video_cc_mvs1c_shift_clk.clkr,
+>>>>>>            [VIDEO_CC_PLL0] = &video_cc_pll0.clkr,
+>>>>>>            [VIDEO_CC_PLL1] = &video_cc_pll1.clkr,
+>>>>>> +       [VIDEO_CC_XO_CLK_SRC] = &video_cc_xo_clk_src.clkr,
+>>>>>>     };
+>>>>>>
+>>>>>>     static struct gdsc *video_cc_sm8550_gdscs[] = {
+>>>>>> @@ -380,6 +512,7 @@ static const struct qcom_reset_map video_cc_sm8550_resets[] = {
+>>>>>>            [CVP_VIDEO_CC_MVS1C_BCR] = { 0x8074 },
+>>>>>>            [VIDEO_CC_MVS0C_CLK_ARES] = { 0x8064, 2 },
+>>>>>>            [VIDEO_CC_MVS1C_CLK_ARES] = { 0x8090, 2 },
+>>>>>> +       [VIDEO_CC_XO_CLK_ARES] = { 0x8124, 2 },
 >>>>>
->>>>> The question is then, if we need to allow ->get_hwmode_dev() to be
->>>>> optional, if the ->set_hwmode_dev() is supported - or if we can
->>>>> require it. What's your thoughts around this?
+>>>>> Is this reset applicable to videocc-sm8550?
 >>>>>
 >>>>
->>>> Iiuc this resource can be shared between multiple clients, and we're
->>>> in either case returning the shared state. That would mean a client
->>>> acting upon the returned value, is subject to races.
+>>>> SM8550 also has above reset support in hardware, hence it is safe to
+>>>> model above reset for both SM8550 and SM8650.
 >>>
->>> Not sure I understand this, but I also don't have in-depth knowledge
->>> of how the HW works.
->>>
->>> Isn't the HW mode set on a per device basis?
->>>
->>>>
->>>> I'm therefore inclined to say that we shouldn't have a getter, other
->>>> than for debugging purposes, in which case reading the HW-state or
->>>> failing would be reasonable outcomes.
->>>
->>> If you only want this for debug purposes, it seems better to keep it
->>> closer to the rpmh code, rather than adding generic callbacks to the
->>> genpd interface.
->>>
->>> So to conclude, you think having a ->set_hwmode_dev() callback should
->>> be sufficient and no caching of the current state?
->>>
->>> Abel, what's your thoughts around this?
+>>> Then, separate commit, Fixes tag.
 >>>
 >>
->> We believe it is good to have get_hwmode_dev() callback supported from
->> GenPD, since if multiple devices share a GenPD, and if one device moves
->> the GenPD to HW mode, the other device won't be aware of it and second
->> device's dev_gpd_data(dev)->hw_mode will still be false.
+>> Sure, will separate and add Fixes tag in next series.
 >>
->> If we have this dev_pm_genpd_get_hwmode() API supported and if we assign
->> dev_gpd_data(dev)->hw_mode after getting the mode from get_hwmode_dev()
->> callback, consumer drivers can use this API to sync the actual HW mode
->> of the GenPD.
+>>>>
+>>>>>>     };
+>>>>>>
+>>>>>>     static const struct regmap_config video_cc_sm8550_regmap_config = {
+>>>>>> @@ -402,6 +535,7 @@ static struct qcom_cc_desc video_cc_sm8550_desc = {
+>>>>>>
+>>>>>>     static const struct of_device_id video_cc_sm8550_match_table[] = {
+>>>>>>            { .compatible = "qcom,sm8550-videocc" },
+>>>>>> +       { .compatible = "qcom,sm8650-videocc" },
+>>>>>>            { }
+>>>>>>     };
+>>>>>>     MODULE_DEVICE_TABLE(of, video_cc_sm8550_match_table);
+>>>>>> @@ -410,6 +544,7 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+>>>>>>     {
+>>>>>>            struct regmap *regmap;
+>>>>>>            int ret;
+>>>>>> +       u32 offset;
+>>>>>>
+>>>>>>            ret = devm_pm_runtime_enable(&pdev->dev);
+>>>>>>            if (ret)
+>>>>>> @@ -425,6 +560,23 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+>>>>>>                    return PTR_ERR(regmap);
+>>>>>>            }
+>>>>>>
+>>>>>> +       if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8550-videocc")) {
+>>>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS0_SHIFT_CLK] = NULL;
+>>>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS0C_SHIFT_CLK] = NULL;
+>>>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS1_SHIFT_CLK] = NULL;
+>>>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS1C_SHIFT_CLK] = NULL;
+>>>>>> +               video_cc_sm8550_clocks[VIDEO_CC_XO_CLK_SRC] = NULL;
+>>>>>
+>>>>> Please invert the logic. Make video_cc_sm8550_clocks reflect SM8550
+>>>>> and patch in new clocks in the SM8650-specific branch below.
+>>>>>
+>>>>
+>>>> Sure, will add these clocks as NULL in video_cc_sm8550_clocks and patch
+>>>> in new clocks here for SM8650. Then we can remove above check for SM8550.
+>>>
+>>> No need to set them to NULL, it is the default value. Just add them to
+>>> the sm8650 branch.
+>>>
+>>
+>> The video_cc_sm8550_clocks[] array size is fixed and has memory
+>> allocated only for current sm8550 clocks. To be able to accommodate
+>> sm8650 clocks in the same array, we need to initialize the clocks to
+>> NULL as below snippet to increase the array size.
+>>
+>> static struct clk_regmap *video_cc_sm8550_clocks[] = {
+>> .....
+>>          [VIDEO_CC_XO_CLK_SRC] = NULL,
+>> }
 > 
-> Hmm, I thought the HW mode was being set on a per device basis, via
-> its PM domain. Did I get that wrong?
-> 
-> Are you saying there could be multiple devices sharing the same PM
-> domain and thus also sharing the same HW mode? In that case, it sure
-> sounds like we have synchronization issues to deal with too.
+> The question/comment was regarding video_cc_sm8550_probe() rather than
+> video_cc_sm8550_clocks.
 > 
 
-Sorry my bad, currently we don't have usecase where multiple devices 
-sharing the same PM domain that have HW control support, so there is no 
-synchronization issue.
-
-But it would be good to have .get_hwmode_dev() callback for consumer 
-drivers to query the actual GenPD mode from HW, whenever they require it.
+Ok thanks, will update the change as per above comments in next series.
 
 Thanks,
 Jagadeesh
 
+>>>>
+>>>>>> +               offset = 0x8140;
+>>>>>> +       } else  if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8650-videocc")) {
+>>>>>> +               video_cc_pll0_config.l = 0x1e;
+>>>>>> +               video_cc_pll0_config.alpha = 0xa000;
+>>>>>> +               video_cc_pll1_config.l = 0x2b;
+>>>>>> +               video_cc_pll1_config.alpha = 0xc000;
+>>>>>> +               video_cc_mvs0_clk_src.freq_tbl = ftbl_video_cc_mvs0_clk_src_sm8650;
+>>>>>> +               video_cc_mvs1_clk_src.freq_tbl = ftbl_video_cc_mvs1_clk_src_sm8650;
+>>>>>> +               offset = 0x8150;
+>>>>>> +       }
+>>>>>> +
+>>>>>>            clk_lucid_ole_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
+>>>>>>            clk_lucid_ole_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
+>>>>>>
+>>>>>> @@ -435,7 +587,7 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+>>>>>>             *      video_cc_xo_clk
+>>>>>>             */
+>>>>>>            regmap_update_bits(regmap, 0x80f4, BIT(0), BIT(0));
+>>>>>> -       regmap_update_bits(regmap, 0x8140, BIT(0), BIT(0));
+>>>>>> +       regmap_update_bits(regmap, offset, BIT(0), BIT(0));
+>>>>>>            regmap_update_bits(regmap, 0x8124, BIT(0), BIT(0));
+>>>>>>
+>>>>>>            ret = qcom_cc_really_probe(pdev, &video_cc_sm8550_desc, regmap);
+>>>>>> --
+>>>>>> 2.43.0
+>>>>>>
+>>>>>>
+>>>>>
+>>>>>
+>>>
+>>>
+>>>
+> 
+> 
+> 
