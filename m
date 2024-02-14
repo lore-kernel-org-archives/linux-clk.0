@@ -1,114 +1,130 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2217535CC;
-	Wed, 14 Feb 2024 13:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4A4535DA;
+	Wed, 14 Feb 2024 14:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707918304; cv=none; b=o8ksdi8KC/vh+RtPxBi2eeJJRJIaq6hjaMFou9wEI79s4cLTKMxRTfy3locyJA5T0/FyfDzE/h+8vSQBrofgwB/q5jPSdiqc8H8vmOdyDDXIkHYZX7PtqfgHnZdB2+Bpx5ELmZMJ32mykoRfTlyg8VTLDwI1nKe4WEFAJcGt8JY=
+	t=1707921878; cv=none; b=K/Zr3CPkxjrSBUISYnllwGHne/vQbBK5pflhawXYbr1ehnTwesGcxXQP3tmURahrpN1QTumJNPov+GG3fOrWsWIOd4/yV+ydfKT12eR2HKhHQRuxfeCEPlU9jlRhdI6hodTucKHGrb+aSHnk913CcmqsEeeB9w3MIm8Ze5lIx24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707918304; c=relaxed/simple;
-	bh=nBaPHkIVuR7flloYS8LASWXQTdbgs8T21toFeIe4v44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HPyBryDIkrzsH1VLb7p7lArcKFeO8CZrW0X6acxFIn4wotsMcHnX0wrWhBkMT6DCgh5Bo+SpOQ/YNfK3XpSzYscJLy567dInb1z1TEgc8xiiTEsSjRqHDZQpva+JAOrRQpLOWYSjCEC1FjBrEDLC+Mx182ysrnT6aIBRwRAzKRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dc25e12cc63so689443276.0;
-        Wed, 14 Feb 2024 05:45:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707918301; x=1708523101;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wQOeNstt3RXI2238CFLQ3UHnfov62fpAyks7O9zYyRg=;
-        b=kmlNYrqlETRWZJRn22AHVUZ0V6imMaeRhiRJ1G84MABqZoRU5QOoC0ZZsvH+5RtsGN
-         Q1a0l7s+3WVj0uhprnDVJpsifCIntpHaXUKUk15Seh2mYKQA/dqXYgQMyyxzC4hj7VO8
-         k6RAGfAZOjbpULJ/iFPWhRFd44I3Kvk2aMrVqZ1XEzmrtVx8axgXqGodWJeER4lfaAsl
-         qKAqJnz5ksjgrDyXc8qP3gvuTCIuyLQxc45dUGoqKZKz2DSOP7CnacZ6VYyBQXD3zaKG
-         1uPpve8fYBgyBYXMtPfE4CJzcHwloXR1ub2VipF34spWWIFVeOHk7LcCWGsvJUa2AtW1
-         rxSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGAGlKBjkOke50/wqyjNAa2Fy/NjUKWfc+0rS6w7lfHV3K2AnbCZ3a1MsGs5FWjk/kPfIa3cvBAWAjSizWDX0lpcZfkP/twAradmYATs+syOysP5B2ypF1YIoqkG6k3EVonhOpmZTCc45JhS4=
-X-Gm-Message-State: AOJu0YwB2fEXu8V1nHoo7lUh1UJTbRQblQ+7djlbEqU1bx8v9NE/3MLp
-	PN7hbBuXZAKxlGNHaTEq1RKmyh5c+resFHgqwXOPbRl4pmc+XlASBCIUZrkuX/I=
-X-Google-Smtp-Source: AGHT+IF7FH4BbqaP1kGi4Gz9RPNsvgnsg27vQs+YgjE8987qcFR9paID9/NfSuxBYMC218fpaNSgvw==
-X-Received: by 2002:a25:35d4:0:b0:dc7:46da:77ce with SMTP id c203-20020a2535d4000000b00dc746da77cemr1391584yba.4.1707918301246;
-        Wed, 14 Feb 2024 05:45:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWcTjOQzQ/72YjtewU75IAtYXjZVssHn2XajqJQvQ97v7paE7bh9Euai07S+ZBZr2rgYkclm3H08BbZTMptWwtTeU2PS++cHiun4Uio1k2txEH4dtlt2ud2SAAyUyL14HgANEY3/mTY+a+7js4=
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id j124-20020a0df982000000b00607ac837eb5sm190378ywf.13.2024.02.14.05.45.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Feb 2024 05:45:01 -0800 (PST)
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dcc6fc978ddso698140276.0;
-        Wed, 14 Feb 2024 05:45:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVXi5xr4qFerdKlUfetoInytUzMfXVOuMPfthehFC+LsAmbp6pAOIZn3DekzxyGgA/XWBPBuX0ZLxHmBLNxpljj4W2boftYHfSTD6NKCfX/x8fnWAHr85afNCHxNWioLX+RBQCuH+pfuwACHic=
-X-Received: by 2002:a05:6902:2589:b0:dc2:23b1:eaef with SMTP id
- du9-20020a056902258900b00dc223b1eaefmr1691995ybb.18.1707918300880; Wed, 14
- Feb 2024 05:45:00 -0800 (PST)
+	s=arc-20240116; t=1707921878; c=relaxed/simple;
+	bh=/aCJdNcQ2gUxVbvYr+aiPG/bK475wx4EPI5asZy5xw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7gFScb9CIwF+mGJPkEba9SjaOt3T0lrfeNLRxv0yMd9mtCIFVCESn+mRZsn4uXSJqcXSQ8u97Qex2tKEacz2tWVajno5oQcQyuT3TCilXfjpTzBxqRSTbpSwUnOW5SKKFoyamQOsePQMIeYIU7CuSv+5xbquCHE42ZwdTobDkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xoeUcrDv; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xoeUcrDv"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0tpb0RNPezxVKElZqD1Rek43u032J0ugCVH6syrQd1I=; b=xoeUcrDvq4K+OUZK+djhAC7gJ1
+	11TLVVHjWpUL4i6Z6jFB971SBtiREh9bHQ/wNyHswz2ICvD7uGd2px2KTu/3+0e0xca47GMxoE1wA
+	BMlc076ALUy9PHehfLJpfAiWjvdKIj5d7ccFN3wWgrUDJSO65JXRZkOh413JJSdRrLYk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1raGV5-007nGX-4G; Wed, 14 Feb 2024 15:44:39 +0100
+Date: Wed, 14 Feb 2024 15:44:39 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 2/8] clk: qcom: ipq5332: enable few nssnoc clocks in
+ driver probe
+Message-ID: <17e2400e-6881-4e9e-90c2-9c4f77a0d41d@lunn.ch>
+References: <20240122-ipq5332-nsscc-v4-0-19fa30019770@quicinc.com>
+ <20240122-ipq5332-nsscc-v4-2-19fa30019770@quicinc.com>
+ <7a69a68d-44c2-4589-b286-466d2f2a0809@lunn.ch>
+ <11fda059-3d8d-4030-922a-8fef16349a65@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3a604a6924043775c2ed0630b1c5c29be2d1a5b9.1707915642.git.geert+renesas@glider.be>
- <Zcy70FoMmAenmy1A@shikoro>
-In-Reply-To: <Zcy70FoMmAenmy1A@shikoro>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Feb 2024 14:44:49 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVGsEGBTTYZ4o+__uvupOvR8QDSWrEk2e4AB6Vwkn_Acg@mail.gmail.com>
-Message-ID: <CAMuHMdVGsEGBTTYZ4o+__uvupOvR8QDSWrEk2e4AB6Vwkn_Acg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a779h0: Add SDHI clock
-To: Wolfram Sang <wsa@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Cong Dang <cong.dang.xn@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11fda059-3d8d-4030-922a-8fef16349a65@quicinc.com>
 
-Hi Wolfram,
+On Wed, Feb 14, 2024 at 02:49:41PM +0530, Kathiravan Thirumoorthy wrote:
+> 
+> 
+> On 1/26/2024 1:35 AM, Andrew Lunn wrote:
+> > On Mon, Jan 22, 2024 at 11:26:58AM +0530, Kathiravan Thirumoorthy wrote:
+> > > gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk are
+> > > enabled by default and it's RCG is properly configured by bootloader.
+> > 
+> > Which bootloader? Mainline barebox?
+> 
+> 
+> Thanks for taking time to review the patches. I couldn't get time to respond
+> back, sorry for the delay.
+> 
+> I was referring to the U-boot which is delivered as part of the QSDK. I will
+> call it out explicitly in the next patch.
 
-On Wed, Feb 14, 2024 at 2:10=E2=80=AFPM Wolfram Sang <wsa@kernel.org> wrote=
-:
-> On Wed, Feb 14, 2024 at 02:01:34PM +0100, Geert Uytterhoeven wrote:
-> > From: Cong Dang <cong.dang.xn@renesas.com>
-> >
-> > Add the SDHI module clock, which is used by the SD Card/MMC Interface o=
-n
-> > the Renesas R-Car V4M (R8A779H0) SoC.
-> >
-> > Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> > +     DEF_MOD("sdhi0",        706,    R8A779H0_CLK_SD0),
->
-> I assume this is correct because you got it to work, so:
->
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> But documentation is unclear, the diagram above the table says sdhi0 is
-> 707 while the table says 706. I guess you reported this already?
+I've never used QSDK u-boot, so i can only make comments based on my
+experience with other vendors build of u-boot. That experience is, its
+broken for my use cases, and i try to replace it as soon as possible
+with upstream.
 
-Thanks, I had missed that inconsistency.
+I generally want to TFTP boot the kernel and the DT blob. Sometimes
+vendor u-boot has networking disabled. Or the TFTP client is
+missing. If it is there, the IP addresses are fixed, and i don't want
+to modify my network to make it compatible with the vendor
+requirements. If the IP addresses can be configured, sometimes there
+is no FLASH support so its not possible to actually write the
+configuration to FLASH so that it does the right thing on reboot
+etc...
 
-After adding a dummy module clock for 707 to the clock driver, so
-unused 707 gets disabled during late boot, eMMC still works.
-After exchanging 706 and 707 in both the clock driver and the .dtsi,
-ee140000.mmc times out waiting for SD bus idle.
+Often the vendor u-boot is a black box, no sources. Can you give me a
+git URL for the u-boot in QSDK? If the sources are open, i could at
+least rebuild it with everything turned on.
 
-So 706 must be correct.
-I will report the documentation issue.
+But still, it is better that Linux makes no assumptions about what the
+boot loader has done. That makes it much easier to change the
+bootloader.
 
-Gr{oetje,eeting}s,
+> > > Some of the NSS clocks needs these clocks to be enabled. To avoid
+> > > these clocks being disabled by clock framework, drop these entries
+> > > from the clock table and enable it in the driver probe itself.
+> > 
+> > If they are critical clocks, i would expect a device to reference
+> > them. The CCF only disabled unused clocks in late_initcall_sync(),
+> > which means all drivers should of probed and taken a reference on any
+> > clocks they require.
+> 
+> 
+> Some of the NSSCC clocks are enabled by bootloaders and CCF disables the
+> same (because currently there are no consumers for these clocks available in
+> the tree. These clocks are consumed by the Networking drivers which are
+> being upstreamed).
 
-                        Geert
+If there is no network drivers, you don't need clocks to the
+networking hardware. So CCF turning them off seems correct.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Once you have actual drivers, this should solve itself, the drivers
+will consume the clocks.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> However looking back, gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk,
+> gcc_nssnoc_nsscc_clk are consumed by the networking drivers only. So is it
+> okay to drop these clocks from the GCC driver and add it back once the
+> actual consumer needs it?
+
+But why should you remove them. If nothing is using them, they should
+be turned off.
+
+   Andrew
