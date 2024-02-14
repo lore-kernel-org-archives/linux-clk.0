@@ -1,129 +1,145 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F6F1FB4;
-	Wed, 14 Feb 2024 08:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B9F12B7B;
+	Wed, 14 Feb 2024 09:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707899757; cv=none; b=UbFnK8Vi0f5jWtlJEbkEr9DfffSkwpZn4u3oiGmjmb6CA+0j8SHwx6aEvKdiof+f2f2xv2ioGzljcrxu+mhdmrnLOhLr3wZoGBSdC2jmCqyz83CWROp+EAp7T0p0Dm0gvodY5t6TRwUll9Dov9l2z/XZvir96ykV4MzRnjSc8Ac=
+	t=1707902405; cv=none; b=V36/r+zuuGLQuecs7K+h7Ykci7agRy4u2jx8MqrUG6sh7br5s0bVql4HEpUjTLy76eVur4N979bBgWOAVQji0naC0Y7P+TMp5WxfaFbkR/wSCI0E/ZU86tQMhUM70X3fcPDcSLxRMEXPBAYVYgvTiqaZqrpHaytAck+cCuLIpww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707899757; c=relaxed/simple;
-	bh=G80kAQT7MwVwK+q1TP/+PTGwSsJM0oWNxYt1TUSDTHI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oF/tTNCVkuinR2elC5/4Ia3A9XIOWXf9w2sIDsePWYG00FGIq4+PZnJQSL3tcmqNUq0ZPBo6arl2LShG74t+ChvI+mWRShkHoGfaP/NjdrE7TIKgB7xemV2HcTCw8qCZULnGriN8LKJWtzu38Y71Y+mfBEFzFQZ2IjAR36IIHP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6002317a427so47028387b3.2;
-        Wed, 14 Feb 2024 00:35:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707899752; x=1708504552;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qhJlZCcRgqTba1suffIYy/S2Gadkij2N+hd17VddZnM=;
-        b=jJsXIHH49ymdhbGiJixJ1GSrgia1NrYlyFYPK9YnoFrhsKCJugbGNHQ3Ql3iXmld+S
-         ngRbnr4tsfF6C4uUVrdIZFu3Ca5r7i3RmK6sYYXpBbsggDp/0QiUIYF2V5sIyOBBizzo
-         otgOsDuR/ZDJjl5C7H2QA3heL0i5k0YjkkkphbmAsUi3kTRXS6r1ntGWbKV5Pn3vCUWL
-         zqM8GCuyN1X4olwQogNCxH3HTckv++deQqSppuXOotvo2eHzgsdLd1qmWwlK8QhbckcD
-         xp19ANDgL7vycqVnnBT2vPfBkQprOzzk6CB092rpIU0qDKUUVoWZS5kfgOB5L5QZvJvn
-         bqew==
-X-Forwarded-Encrypted: i=1; AJvYcCUzyaCqxu5lUt17dZpJCUa9VkbcB/gdvOQncj89xLJwmha6S8pS5v4Lx8XCtGnBebzAUqIpWSHUu7gRnDVPgzT9luxjKNIDJIXSy9avPwbBEv8QgGaygvL+aW2GNc4gULufQ9CWoeSzHsFzolxKB1N5gZ1yaikBsDqwnvVLdW80aobXcL0tfIzHeU/PCWGdWpt5vPTwrkHDxErSELj+AI4ym74=
-X-Gm-Message-State: AOJu0Yyg34SrO+qm85Ro3xhFkxJgcd27pLXqne+y0o0IquabArU+4v/s
-	IyR5gYhQIB4yBqbQBhhcMWhzIlibZw9/tOvoaM3LwfDm1Z+4V8wKo/zO07RtPIo=
-X-Google-Smtp-Source: AGHT+IH7w6QLIfgNrszxlKE78XNWCSjjYGNraAZ+ea8wcrBoeplhrbDLb1PeWFSNcChTQ9MtT6UNyQ==
-X-Received: by 2002:a81:84c9:0:b0:604:b08c:348d with SMTP id u192-20020a8184c9000000b00604b08c348dmr1615046ywf.1.1707899752108;
-        Wed, 14 Feb 2024 00:35:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU3kB/B5WZaBOwFU458Gbikm7YLFToDCMZIMHGgWLNsYimJ2f7WNBDN7+QBURGuTfpBmRxmZn2Zimovo5ZG/7tI4vByX0m3jJ8oP7M2OBERHad12czrvX2DOBLkCRrHqaX1eyTYDSDCp9je9LhimRIAfQ3ONgzN1Cpml6Aeaoy7WWg+4iglDTG2OGKT/SMctbwacGPoAgVAwnXyoD6Ss3sfb3g=
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id b81-20020a0dd954000000b006078ad0243csm689386ywe.59.2024.02.14.00.35.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Feb 2024 00:35:51 -0800 (PST)
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dcc4de7d901so1484144276.0;
-        Wed, 14 Feb 2024 00:35:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUqaqHeHdPWCke88qqVKNUCTowy6wOKw/w0Pk0Bsd4JbzaUNGvC5rtcqvpCVJImgluMjXM6TS+bEEgjgAf9hty/YhFGjly7qP19Fw0ajUq3zfsErADyyyvaSCOZUHM7+XCBm+iZ/flNlTQa/VMLhFHKxwvgKAPiHa3fka3XhMv2rIY96bax4SPzciAFnE+lhmMU1Cz4NY4KlKP3GbFTdNWl/mo=
-X-Received: by 2002:a25:c7c9:0:b0:dc6:ff12:1a21 with SMTP id
- w192-20020a25c7c9000000b00dc6ff121a21mr1674869ybe.31.1707899751143; Wed, 14
- Feb 2024 00:35:51 -0800 (PST)
+	s=arc-20240116; t=1707902405; c=relaxed/simple;
+	bh=2fMXcYcvWxaz1npIo1pKnK5llUMcCFybitnqrZX3Ang=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Bg3TggqnIQzHfXIaozk+6ZufROki9jdJKauLbJMjfQY6Wazs5NhKUtGbHhl3Lq5b07bZPhMQI5iiXrNIfI3U4Xwsmj6VXF5Yox3G8pw1V5TD14CkZFRJepkIqoWkbJ2saZsCn4ynX7I8BHj45rJUJTihS+xbgUAt7K9DwlppyNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HUxMlD7v; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HUxMlD7v"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41E7kG5f024087;
+	Wed, 14 Feb 2024 09:19:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=Rmqg+vYr2399W1bV/8QxckiS9s0iEj0WPITAUROA/Tk=; b=HU
+	xMlD7vkMY5bV3o13nV3teuOeBqdIDgzH4WnJaEGBOdHlzRP66cjto+G7tpDDbQm7
+	kxX3NqRwAVBaXotKNmSbh+AIPRRBfAPOYgTHIzcaQ3wzg5bn3TiIGYFWAnp2tTAH
+	lI2BTZrv9AwIBBeB0xtofUV4EvdvUB4Fii5GCIUdPlITWrStD00D+42Aog7HBwpk
+	oPN4QOuTHxOpBB0diGmaLDIRfs7HgLkU6RwOpHvBO/i1At64WX935yL3o/8mEF2v
+	ZcLkl16LqcyB3DV0vtl55vOsKhk80nOSW+hqw9wHhR9a9r8PY6SLE8XkKj2U+2mj
+	xYVK59hD+1bgsPVOSoHA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w8jrj8rfh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Feb 2024 09:19:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41E9JorD026448
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Feb 2024 09:19:50 GMT
+Received: from [10.201.2.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 14 Feb
+ 2024 01:19:44 -0800
+Message-ID: <11fda059-3d8d-4030-922a-8fef16349a65@quicinc.com>
+Date: Wed, 14 Feb 2024 14:49:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1706194617.git.geert+renesas@glider.be> <CAPDyKFpxaEUHvKKb+spxV6HG2P2gLx5qM1mLPxJie+PdkmTL4w@mail.gmail.com>
- <CAMuHMdUswhJ3BQLnOQZC7X7qc7SFCqsr9Uy65LfBT_BNWfyhFQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUswhJ3BQLnOQZC7X7qc7SFCqsr9Uy65LfBT_BNWfyhFQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Feb 2024 09:35:38 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX1tjgPJ8t+XoASuMvzvSognu7q2=aGfBO8r77JsbR82w@mail.gmail.com>
-Message-ID: <CAMuHMdX1tjgPJ8t+XoASuMvzvSognu7q2=aGfBO8r77JsbR82w@mail.gmail.com>
-Subject: Re: [PATCH v2 00/15] arm64: renesas: Add R-Car V4M and Gray Hawk
- Single support
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Cong Dang <cong.dang.xn@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
-	Hai Pham <hai.pham.ud@renesas.com>, Linh Phung <linh.phung.jy@renesas.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/8] clk: qcom: ipq5332: enable few nssnoc clocks in
+ driver probe
+Content-Language: en-US
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin
+ Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20240122-ipq5332-nsscc-v4-0-19fa30019770@quicinc.com>
+ <20240122-ipq5332-nsscc-v4-2-19fa30019770@quicinc.com>
+ <7a69a68d-44c2-4589-b286-466d2f2a0809@lunn.ch>
+From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <7a69a68d-44c2-4589-b286-466d2f2a0809@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YNUVd4LGqR4M-i4n7A4gWk_p2qnpAhr4
+X-Proofpoint-ORIG-GUID: YNUVd4LGqR4M-i4n7A4gWk_p2qnpAhr4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-14_02,2024-02-12_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 impostorscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 mlxlogscore=734 mlxscore=0 spamscore=0 phishscore=0
+ adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2401310000 definitions=main-2402140071
 
-Hi Ulf,
 
-On Wed, Jan 31, 2024 at 3:56=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
-> On Tue, Jan 30, 2024 at 2:11=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> > On Thu, 25 Jan 2024 at 16:34, Geert Uytterhoeven
-> > <geert+renesas@glider.be> wrote:
-> > > This patch series adds initial support for the Renesas R-Car V4M
-> > > (R8A779G0) SoC and the Renesas Gray Hawk Single development board.
-> > >
-> > > As both driver code and DTS have hard dependencies on DT binding
-> > > definitions, most patches in this series are supposed to go in throug=
-h
-> > > the renesas-devel and/or renesas-clk trees, using a shared branch for=
- DT
-> > > binding definitions, as usual.  For the PM domain patches (03, 04, 09=
-),
-> > > Ulf already offered to apply these to his pmdomain tree, and provide =
-an
-> > > immutable "dt" branch, to be pulled in my renesas-devel tree.
-> >
-> > Patch 3,4 and 9 (I dropped the copyright line in patch9, as pointed
-> > out by Niklas) applied for next, thanks!
-> >
-> > Patch 3,4 are also available at the immutable dt branch for you to pull=
- in.
->
-> Thank you!
->
-> I have pulled the immutable branch, added the remaining DT binding
-> definitions, and queued all remaining patches.
 
-It looks like you have applied copies of all commits on the "dt"
-branch to the "next"
-branch, so now there are two copies?
+On 1/26/2024 1:35 AM, Andrew Lunn wrote:
+> On Mon, Jan 22, 2024 at 11:26:58AM +0530, Kathiravan Thirumoorthy wrote:
+>> gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk are
+>> enabled by default and it's RCG is properly configured by bootloader.
+> 
+> Which bootloader? Mainline barebox?
 
-See the output of "git range-diff v6.8-rc1..pmdomain/dt
-v6.8-rc4..pmdomain/next".
 
-Gr{oetje,eeting}s,
+Thanks for taking time to review the patches. I couldn't get time to 
+respond back, sorry for the delay.
 
-                        Geert
+I was referring to the U-boot which is delivered as part of the QSDK. I 
+will call it out explicitly in the next patch.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> 
+>> Some of the NSS clocks needs these clocks to be enabled. To avoid
+>> these clocks being disabled by clock framework, drop these entries
+>> from the clock table and enable it in the driver probe itself.
+> 
+> If they are critical clocks, i would expect a device to reference
+> them. The CCF only disabled unused clocks in late_initcall_sync(),
+> which means all drivers should of probed and taken a reference on any
+> clocks they require.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
+Some of the NSSCC clocks are enabled by bootloaders and CCF disables the 
+same (because currently there are no consumers for these clocks 
+available in the tree. These clocks are consumed by the Networking 
+drivers which are being upstreamed). To access the NSSCC clocks, 
+gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk clocks 
+needs to be enabled, else system is going to reboot. To prevent this, I 
+enabled it in probe.
+
+However looking back, gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, 
+gcc_nssnoc_nsscc_clk are consumed by the networking drivers only. So is 
+it okay to drop these clocks from the GCC driver and add it back once 
+the actual consumer needs it? So that we don't have to enable it in probe.
+
+Please let me know your thoughts.
+
+
+> 
+> Please correctly describe the clock tree in device tree, not hide
+> clocks because your DT description is not complete.
+> 
+>      Andrew
+> 
+> ---
+> pw-bot: cr
