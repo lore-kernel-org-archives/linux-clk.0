@@ -1,190 +1,82 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730F01170F;
-	Wed, 14 Feb 2024 06:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.237.72.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7F611706;
+	Wed, 14 Feb 2024 07:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.237.72.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707891203; cv=none; b=L3lgx8dR02QkFKKxkujZgLT+Yw0k5dvq+fE9r/6oNxg6oRQfvsrhcB8SKGbDg4UR17Z6CnPcQ7W38rcjwF0TURK0IqHCY/tjEDfEiMdLZnL2+ZrvlvDfwrbcaA9H1EJM6gS8lpobodBRl11c8ZeLpkMSluwm8PAIEb6CHlMaN+k=
+	t=1707896561; cv=none; b=jpYPRtihctQxwlR2zyhdzX7CZLoPLEJJ+rLcop8s+OPNoJFqP9KtYtwuCXc1pKBmBCyP0i4PWI4NXkWOAAXvyYHDKRG//ZvK5M9VU3cJwywVt4jR1rYh5HsFdCGd2mqtY94n54IjnMNXAoWfDboTih7q+lIUwscqeUHXzD8LnG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707891203; c=relaxed/simple;
-	bh=LgpLA72Yy2DgXq7fM3U+hFO1U9oOC9qFq5Ar4+afhHM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CtADk41/jbdbby1oCAkuTFDXqkme58D+BB+Dx0BoqEvGp9gwSySQSHFt0Ncn0j8bR6g68tjJQkJ6Q3IhZPKu3sRvRrWP3+4LAXpEfXXSfeftR08J+4h6Ymn1Uf6XsOJ/ET48AJnMVdNhoAysdivBv/F6eYm/QNHpAoIqZMSEU1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DqBXR9n0; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqBXR9n0"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a3cf64f33b3so183967166b.3;
-        Tue, 13 Feb 2024 22:13:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707891199; x=1708495999; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0EDbWqws9cGFaTSgQ7d/JTeQtcU5zOGhJZiE31yQ40s=;
-        b=DqBXR9n0CAqjQowmqGaMPYUUWDChm7x04czGafI75QcwuOVxVid8cx4KnRoHfor+zy
-         PQix2J1Dlb1a7o4qwJlgJjE6qPXqBCJDybD8CwMp8ru/T+HBvTiMbZDpSvuhyq+t4tkD
-         /RQ+Ht/O/v6z3fNwxviLv4osIq+I8X3ui4/UikdFFOuts6pPyRaFzW0db6sbEMoVAVQX
-         piy3vhpT2wBi4wsgY7gZSK1ZQiprCz1oM/4OLTSSl9GIDNoF9gxN80IA+tpNBE+zPzyO
-         fGR51GGVHvNQp9kRc9LssGUO4bCK2IbDKZwjeoENDQHoo1uxY4dqQrwi61cMBf5wwRv/
-         rlFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707891199; x=1708495999;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0EDbWqws9cGFaTSgQ7d/JTeQtcU5zOGhJZiE31yQ40s=;
-        b=fZqTWlagEEATziC/OcwHd1rxQ+VO9EDpFOpuETYwy+nLRWIOsBWjE6DwDY8KkkI6Y0
-         NkmBOBfQd3BLRefKaIzN8AfNxV3P50nJtfiltXr+TmW+hHYCbP0NHXXokTvW3IEYg+0y
-         dWb3tf3sYtgfYv4+F+Ekzq0wmYXCbhMfs/Xottx0hf/7G966Tn86aL7Ydo8wNuYAKiUQ
-         52BaTDj8GC+JVmrEaf4tG4x2eIZz3mH8T7cTndCTXWhwjxNvX4Ja34EQAcH9sD66BOAb
-         mkOeQq43C3+S56tdjI0ylQ9Np7ThOWn5vTHW0Yb2/QN+aYcHA/iSmPxfs+17rlpj4r1F
-         CzdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoO1NtVEhLxSYK/OGKonqN6Fc0nRNh/enGbCewMilFQBsVumuye2Wsqvv1Qz+yBFdUfNScwaaTDbzD9+HeIuTt2IQ6FFoPfM2z4ZocJRd6mTvR5L53mfMB5ETeEX+S2mAB2O0Xc8UXvE4WG1nTfxUqSJfiJurubT22hjwFLQwHHmIhVw==
-X-Gm-Message-State: AOJu0YwfN/jkyA2kituIqHulfBUqVyd6BeL0eLiXsylvoEb7mkLf4xyU
-	NELvOZFCR5o9pppiFGVMppi2e7zr6Ru8pXj0WF3StXmBi7uTw0e1
-X-Google-Smtp-Source: AGHT+IGcdc9MhMF2QCYXKDqgHAb2iQpgiSM62KSdnvoJCUvMTwnehra+UAazTEfsrpPrGHVZ7N5lZg==
-X-Received: by 2002:a17:906:4a8e:b0:a3d:4dec:26f7 with SMTP id x14-20020a1709064a8e00b00a3d4dec26f7mr338386eju.6.1707891199525;
-        Tue, 13 Feb 2024 22:13:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWyN8G4qtIV202cD4o9ZwYJxigXomwvuwD44sYYENvf/P+NZwmHwC+mlVJd32ng0LnLOo9xX0nuFr/NU8vNqFrz1ovgcR8wX1qhe7TG0oBhaDIMxI72PveuU+FovLjBEjxV3p7D6LjZUGfZAOIJIQIPEu8V/Wnz6UiXHisSL5JdnwfTAWPeVR5p2K9YINIb6WWGS5OzzSRTBVmp6ss8jeiU17vEeY/gOX3eDR7DitLuGjk6NTbvX0dp8Mfz81Yy3mPEnBvnboRjx64eSXmpoB+euFmIldHnVa/qec9QCz6iZFrKRjAEWaOTMdRzTqDazEH5WhWuNxCUq9sFDPr6JWBdYcjY9dwaGRMViSQ9zfWsIo6BFWJY9iTUk9asxQuaKIvajlRHSiGuMbit17oxV64VTTIIQA64qPVNvfJzERtbiVXb/lg/rELNSmEr6XH6z7I0Fc3ceJOGl2CnlbCg4jGyjQhXih9QZn+YCd89S3vkyDOicm/XoFyHiPWvYhm/x3ARWvFaGc/0c5cJGlzD3xiGTlV3MhM6SgOkrGTB63eTTeZ2byCN5NMiG5/XH/28JI891Gy4FBixopGm17QS0EgZ1mMH/wFkjY/h
-Received: from localhost.lan (031011218106.poznan.vectranet.pl. [31.11.218.106])
-        by smtp.gmail.com with ESMTPSA id ca23-20020a170906a3d700b00a3caccb8f66sm1980163ejb.44.2024.02.13.22.13.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Feb 2024 22:13:19 -0800 (PST)
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1707896561; c=relaxed/simple;
+	bh=KsUQZovNZ1Mq26qTNCJ02kvNZqNLKyNEdqfRIzw9Mxw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=MMcDNKo+vJ/jTMvr7CcyovoRXvhksncB3TkeB98J6sNtn2vim1M7IrRxvz9OD1uwJ6zwxFSStv6jqeD1ePxL6XYeqLnXYLMkcuZ0dRPPqS3iAr0QZdXZFHIh2U9X6JMGnQTWvAiVjNBeiyIrBqTw2CG2Ps2BoOUUON6A1YhU0iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=52.237.72.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from ubuntu.localdomain (unknown [218.12.18.71])
+	by mail-app4 (Coremail) with SMTP id cS_KCgAXEH6_bMxl4x1EAQ--.55591S2;
+	Wed, 14 Feb 2024 15:33:31 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: linux-kernel@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	michal.simek@amd.com,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH V4 3/3] dt-bindings: clock: mediatek: convert SSUSBSYS to the json-schema clock
-Date: Wed, 14 Feb 2024 07:12:33 +0100
-Message-Id: <20240214061233.24645-4-zajec5@gmail.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20240214061233.24645-1-zajec5@gmail.com>
-References: <20240214061233.24645-1-zajec5@gmail.com>
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH] clk: zynq: Prevent null pointer dereference caused by kmalloc failure
+Date: Wed, 14 Feb 2024 15:33:18 +0800
+Message-Id: <20240214073318.82573-1-duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:cS_KCgAXEH6_bMxl4x1EAQ--.55591S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw1fAw17KFykXF1Utr48Crg_yoWDCwb_Gw
+	48X3srC34rA3s5A3Z7AF4xuFZIvF1Fvr1vvFnaq343A34UZr1rWryI9ws3Ar4fJrWFkryD
+	Cr1kKrZYyr10vjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbcAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
+	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUYCJmUUUUU
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwMLAWXLulEB4QAnsI
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-From: Rafał Miłecki <rafal@milecki.pl>
+The kmalloc in zynq_clk_setup will return null if the
+physical memory has run out. As a result, if we use
+snprintf to write data to the null address, the null
+pointer dereference bug will happen.
 
-This helps validating DTS files. Introduced changes:
-1. Documented "reg" property
-2. Dropped "syscon" as it was incorrectly used
-3. Adjusted nodename, "compatible" and "reg" in example
+The required memory is only 11 bytes, so this patch
+adds a "__GFP_NOFAIL" flag in kmalloc in order that
+the kmalloc will never return with failure.
 
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Fixes: 0ee52b157b8e ("clk: zynq: Add clock controller driver")
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
 ---
- .../arm/mediatek/mediatek,ssusbsys.txt        | 25 -----------
- .../clock/mediatek,mt7622-ssusbsys.yaml       | 45 +++++++++++++++++++
- 2 files changed, 45 insertions(+), 25 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
- create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7622-ssusbsys.yaml
+ drivers/clk/zynq/clkc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
-deleted file mode 100644
-index 7cb02c930613..000000000000
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--MediaTek SSUSBSYS controller
--============================
--
--The MediaTek SSUSBSYS controller provides various clocks to the system.
--
--Required Properties:
--
--- compatible: Should be:
--	- "mediatek,mt7622-ssusbsys", "syscon"
--	- "mediatek,mt7629-ssusbsys", "syscon"
--- #clock-cells: Must be 1
--- #reset-cells: Must be 1
--
--The SSUSBSYS controller uses the common clk binding from
--Documentation/devicetree/bindings/clock/clock-bindings.txt
--The available clocks are defined in dt-bindings/clock/mt*-clk.h.
--
--Example:
--
--ssusbsys: ssusbsys@1a000000 {
--	compatible = "mediatek,mt7622-ssusbsys", "syscon";
--	reg = <0 0x1a000000 0 0x1000>;
--	#clock-cells = <1>;
--	#reset-cells = <1>;
--};
-diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7622-ssusbsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7622-ssusbsys.yaml
-new file mode 100644
-index 000000000000..da93eccdcfc1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/mediatek,mt7622-ssusbsys.yaml
-@@ -0,0 +1,45 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/mediatek,mt7622-ssusbsys.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek SSUSBSYS clock and reset controller
-+
-+description:
-+  The MediaTek SSUSBSYS controller provides various clocks to the system.
-+
-+maintainers:
-+  - Matthias Brugger <matthias.bgg@gmail.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - mediatek,mt7622-ssusbsys
-+      - mediatek,mt7629-ssusbsys
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+    description: The available clocks are defined in dt-bindings/clock/mt*-clk.h
-+
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - reg
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@1a000000 {
-+        compatible = "mediatek,mt7622-ssusbsys";
-+        reg = <0x1a000000 0x1000>;
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+    };
+diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
+index 7bdeaff2bfd..7621c2f0046 100644
+--- a/drivers/clk/zynq/clkc.c
++++ b/drivers/clk/zynq/clkc.c
+@@ -427,7 +427,7 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 			SLCR_GEM1_CLK_CTRL, 0, 0, &gem1clk_lock);
+ 
+ 	tmp = strlen("mio_clk_00x");
+-	clk_name = kmalloc(tmp, GFP_KERNEL);
++	clk_name = kmalloc(tmp, GFP_KERNEL | __GFP_NOFAIL);
+ 	for (i = 0; i < NUM_MIO_PINS; i++) {
+ 		int idx;
+ 
 -- 
-2.35.3
+2.17.1
 
