@@ -1,287 +1,85 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5EAC147;
-	Wed, 14 Feb 2024 05:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF4A10A01;
+	Wed, 14 Feb 2024 05:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707888564; cv=none; b=YfHPsjIPGCEs1zczkZQY20vQMzHHcRznpbD0EJrBpAkMc4QPYMQLtlsRbFXNOpM+N5kpFrCvdrkCrjSVAxYenni8NWN0afO7tkg6cDlMjh+7mzcQS8Be2eI0p9/X+qOdxE43cAgcfeDL1SKZZc+D4vVi0s94ALETcAstMDWHCNM=
+	t=1707889285; cv=none; b=HN7QYvPDokGgOukh7Tk1IjR55vM7R7uMTdJ+kS1QzrIzhEa/vgiCg95f+G+jhK5BZ+h+s85aOJpFH3J2+MU+axQd234BxqdQU9DO7IG5ceVFDqoJPwHj5eUbGs7iTsUptUZjVbjB36+pl+gQqx2a6c52dA8KE2DS2UfnGbJlhx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707888564; c=relaxed/simple;
-	bh=e5MFXVDA99pVGosvPaTfbiU4tvvZtjOYEdi2onLkq+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Wagzm21afgJdZwL5DexbhQYFODm0QqvHwIAxLJscdJrSKnbvcHV/sUIwh43H07y4a9kw40c6zspfAYdumyT29lAISSu8iIdTPEezRahOPeG/wIYE4bdhf0/24L32Pc9g6R/SDFlzMXZEb15HXzHmmA05YOjRl8lGl2p18tb3Odo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B+5aC3bN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1707889285; c=relaxed/simple;
+	bh=0tB7VxJceoDK157Ny7pJ8vSDYDHhGqWHtOd2r/BfMP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nnAi9OKcZmpgyskZk8wcWWUemharfdV/ek/gqqd7J1xBMTtHElRQcYybh1KxzZu3FyYAnSnJ9v0CpJ/uhLDF8yd0hD9jGENkfPbZtObW9F0ItwV+388qOWvrE+zDXxam37ORczll1RateOlq60ctWXs730hlyWPC+ISDmfABHp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=VUYoomvE; arc=none smtp.client-ip=74.50.62.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=atomide.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B+5aC3bN"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41E45xOe021314;
-	Wed, 14 Feb 2024 05:29:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=KjRtQkKMERuiUp95ugofOfndlSqcIPUZu7TkvxhOkDQ=; b=B+
-	5aC3bNtI7U9ueaOrfNOrs4dBF+NA2LR11RZJ3qshBG+DQN0SjaujGIGM4wNNc/cU
-	J8POo4VQFcyT6CbdnSq1bQ4IqIPzS9NWOWhsoI8wIZ3fYi18wTvPyUiLcCobzBle
-	C4ORXgGedh9COjS0qboTve+50DzMl5060M411ID524VbIFPCZ8FzISexNMHu7PoU
-	LEm5X9Riox5ooYGelaVQRXhDXaqMbpe6spUK6C5RJTmg7GeG0WjOPiovhmoZaJng
-	uNeA0D3K4Wi6oDTGHKRdeOQGKec09pmasAcZ7A8LGpQPBNcSP5Nu1LUBQCsK9Czj
-	/7ZvSpylIqKXpkRMfflw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w8k9agbua-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 05:29:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41E5TBGD015035
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 05:29:11 GMT
-Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 13 Feb
- 2024 21:29:05 -0800
-Message-ID: <6cb25cb0-9885-4b83-beb8-0270e21c978c@quicinc.com>
-Date: Wed, 14 Feb 2024 10:59:01 +0530
+	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="VUYoomvE"
+Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
+	by mail5.25mail.st (Postfix) with ESMTPSA id 703546033F;
+	Wed, 14 Feb 2024 05:40:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
+	s=25mailst; t=1707889281;
+	bh=0tB7VxJceoDK157Ny7pJ8vSDYDHhGqWHtOd2r/BfMP8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VUYoomvE8Cwk0XGNeZ3c6zwZWKCG69N8YKgq17BJtb8pHTJI4KnJkyTVzuCotVrb/
+	 citEi6ETPSGHO1a9GnsVAQaXOrrwccNTfNRQG8A0vr4qN9984LfgQei/H+Gk3bmuwh
+	 Ju7DEtjGeBb/9gfEdL0iPrg6oA7n4l8aJI7qUV0GNi9PVb62OFrT7FAFoBkK8TkgW7
+	 D6JUuv2Vw/TUKhtFZNj91uUSk2J7O6h4k0jqluq8sidfoPzbh1eItFWtnOjqSaaMqV
+	 yTn12EqlzxNj/gorUdj5UfVoVm0ZWOr85JbYGXZvBdmJzkosqYWafc0ntEnHKvF5xi
+	 kH5xM3mf9tmTg==
+Date: Wed, 14 Feb 2024 07:40:44 +0200
+From: Tony Lindgren <tony@atomide.com>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/4] Use reg instead of ti,bit-shift for clksel
+Message-ID: <20240214054044.GK52537@atomide.com>
+References: <20240213105730.5287-1-tony@atomide.com>
+ <20240214001140.2abe0d80@aktux>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] clk: qcom: videocc-sm8550: Add support for SM8650
- videocc
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Ajit Pandey" <quic_ajipan@quicinc.com>
-References: <20240206113145.31096-1-quic_jkona@quicinc.com>
- <20240206113145.31096-3-quic_jkona@quicinc.com>
- <CAA8EJpqbKQS7Bp28xNZ0twu7BFLdOES9qS5xBvoonux8Ma4q6Q@mail.gmail.com>
- <e90522c1-7a2d-40ff-bf4e-c8f974722ddf@quicinc.com>
- <CAA8EJpqCDOE_5vg+4ew8H0HbhQM1w8reqU6Pu0MAYJtMw8zXUw@mail.gmail.com>
- <d88f0f42-c9ec-4638-8090-055bc4806574@quicinc.com>
- <CAA8EJpq9AE_B9rvXRa1Q803yWzmwZxwiF_hwokq8XJZgJy59PA@mail.gmail.com>
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <CAA8EJpq9AE_B9rvXRa1Q803yWzmwZxwiF_hwokq8XJZgJy59PA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: MsbA6hO9HeUoQ6iC2JscR4_etaij4rnl
-X-Proofpoint-GUID: MsbA6hO9HeUoQ6iC2JscR4_etaij4rnl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-13_16,2024-02-12_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
- mlxscore=0 spamscore=0 malwarescore=0 phishscore=0 bulkscore=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401310000 definitions=main-2402140041
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240214001140.2abe0d80@aktux>
 
-
-
-On 2/12/2024 6:48 PM, Dmitry Baryshkov wrote:
-> On Mon, 12 Feb 2024 at 15:07, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->>
->>
->>
->> On 2/7/2024 12:49 PM, Dmitry Baryshkov wrote:
->>> On Wed, 7 Feb 2024 at 08:59, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->>>>
->>>>
->>>>
->>>> On 2/6/2024 5:24 PM, Dmitry Baryshkov wrote:
->>>>> On Tue, 6 Feb 2024 at 13:39, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->>>>>>
->>>>>> Add support to the SM8650 video clock controller by extending the
->>>>>> SM8550 video clock controller, which is mostly identical but SM8650
->>>>>> has few additional clocks and minor differences.
->>>>>
->>>>> In the past we tried merging similar clock controllers. In the end
->>>>> this results in the ugly source code. Please consider submitting a
->>>>> separate driver.
->>>>>
->>>>
->>>> Thanks Dmitry for your review. SM8650 has only few clock additions and
->>>> minor changes compared to SM8550, so I believe it is better to reuse
->>>> this existing driver and extend it.
->>>
->>> I'd say, the final decision is on Bjorn and Konrad as maintainers.
->>>
->>>>
->>>>>>
->>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>>>> ---
->>>>>>     drivers/clk/qcom/videocc-sm8550.c | 160 +++++++++++++++++++++++++++++-
->>>>>>     1 file changed, 156 insertions(+), 4 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
->>>>>> index f3c9dfaee968..cdc08f5900fc 100644
->>>>>> --- a/drivers/clk/qcom/videocc-sm8550.c
->>>>>> +++ b/drivers/clk/qcom/videocc-sm8550.c
->>>>>> @@ -1,6 +1,6 @@
->>>>>>     // SPDX-License-Identifier: GPL-2.0-only
->>>>>>     /*
->>>>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
->>>>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>>>>>      */
->>>>>>
->>>>>>     #include <linux/clk-provider.h>
->>>>>
->>>>> [skipping]
->>>>>
->>>>>>     static struct gdsc video_cc_mvs0c_gdsc = {
->>>>>>            .gdscr = 0x804c,
->>>>>>            .en_rest_wait_val = 0x2,
->>>>>> @@ -354,15 +481,20 @@ static struct clk_regmap *video_cc_sm8550_clocks[] = {
->>>>>>            [VIDEO_CC_MVS0_CLK] = &video_cc_mvs0_clk.clkr,
->>>>>>            [VIDEO_CC_MVS0_CLK_SRC] = &video_cc_mvs0_clk_src.clkr,
->>>>>>            [VIDEO_CC_MVS0_DIV_CLK_SRC] = &video_cc_mvs0_div_clk_src.clkr,
->>>>>> +       [VIDEO_CC_MVS0_SHIFT_CLK] = &video_cc_mvs0_shift_clk.clkr,
->>>>>>            [VIDEO_CC_MVS0C_CLK] = &video_cc_mvs0c_clk.clkr,
->>>>>>            [VIDEO_CC_MVS0C_DIV2_DIV_CLK_SRC] = &video_cc_mvs0c_div2_div_clk_src.clkr,
->>>>>> +       [VIDEO_CC_MVS0C_SHIFT_CLK] = &video_cc_mvs0c_shift_clk.clkr,
->>>>>>            [VIDEO_CC_MVS1_CLK] = &video_cc_mvs1_clk.clkr,
->>>>>>            [VIDEO_CC_MVS1_CLK_SRC] = &video_cc_mvs1_clk_src.clkr,
->>>>>>            [VIDEO_CC_MVS1_DIV_CLK_SRC] = &video_cc_mvs1_div_clk_src.clkr,
->>>>>> +       [VIDEO_CC_MVS1_SHIFT_CLK] = &video_cc_mvs1_shift_clk.clkr,
->>>>>>            [VIDEO_CC_MVS1C_CLK] = &video_cc_mvs1c_clk.clkr,
->>>>>>            [VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC] = &video_cc_mvs1c_div2_div_clk_src.clkr,
->>>>>> +       [VIDEO_CC_MVS1C_SHIFT_CLK] = &video_cc_mvs1c_shift_clk.clkr,
->>>>>>            [VIDEO_CC_PLL0] = &video_cc_pll0.clkr,
->>>>>>            [VIDEO_CC_PLL1] = &video_cc_pll1.clkr,
->>>>>> +       [VIDEO_CC_XO_CLK_SRC] = &video_cc_xo_clk_src.clkr,
->>>>>>     };
->>>>>>
->>>>>>     static struct gdsc *video_cc_sm8550_gdscs[] = {
->>>>>> @@ -380,6 +512,7 @@ static const struct qcom_reset_map video_cc_sm8550_resets[] = {
->>>>>>            [CVP_VIDEO_CC_MVS1C_BCR] = { 0x8074 },
->>>>>>            [VIDEO_CC_MVS0C_CLK_ARES] = { 0x8064, 2 },
->>>>>>            [VIDEO_CC_MVS1C_CLK_ARES] = { 0x8090, 2 },
->>>>>> +       [VIDEO_CC_XO_CLK_ARES] = { 0x8124, 2 },
->>>>>
->>>>> Is this reset applicable to videocc-sm8550?
->>>>>
->>>>
->>>> SM8550 also has above reset support in hardware, hence it is safe to
->>>> model above reset for both SM8550 and SM8650.
->>>
->>> Then, separate commit, Fixes tag.
->>>
->>
->> Sure, will separate and add Fixes tag in next series.
->>
->>>>
->>>>>>     };
->>>>>>
->>>>>>     static const struct regmap_config video_cc_sm8550_regmap_config = {
->>>>>> @@ -402,6 +535,7 @@ static struct qcom_cc_desc video_cc_sm8550_desc = {
->>>>>>
->>>>>>     static const struct of_device_id video_cc_sm8550_match_table[] = {
->>>>>>            { .compatible = "qcom,sm8550-videocc" },
->>>>>> +       { .compatible = "qcom,sm8650-videocc" },
->>>>>>            { }
->>>>>>     };
->>>>>>     MODULE_DEVICE_TABLE(of, video_cc_sm8550_match_table);
->>>>>> @@ -410,6 +544,7 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
->>>>>>     {
->>>>>>            struct regmap *regmap;
->>>>>>            int ret;
->>>>>> +       u32 offset;
->>>>>>
->>>>>>            ret = devm_pm_runtime_enable(&pdev->dev);
->>>>>>            if (ret)
->>>>>> @@ -425,6 +560,23 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
->>>>>>                    return PTR_ERR(regmap);
->>>>>>            }
->>>>>>
->>>>>> +       if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8550-videocc")) {
->>>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS0_SHIFT_CLK] = NULL;
->>>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS0C_SHIFT_CLK] = NULL;
->>>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS1_SHIFT_CLK] = NULL;
->>>>>> +               video_cc_sm8550_clocks[VIDEO_CC_MVS1C_SHIFT_CLK] = NULL;
->>>>>> +               video_cc_sm8550_clocks[VIDEO_CC_XO_CLK_SRC] = NULL;
->>>>>
->>>>> Please invert the logic. Make video_cc_sm8550_clocks reflect SM8550
->>>>> and patch in new clocks in the SM8650-specific branch below.
->>>>>
->>>>
->>>> Sure, will add these clocks as NULL in video_cc_sm8550_clocks and patch
->>>> in new clocks here for SM8650. Then we can remove above check for SM8550.
->>>
->>> No need to set them to NULL, it is the default value. Just add them to
->>> the sm8650 branch.
->>>
->>
->> The video_cc_sm8550_clocks[] array size is fixed and has memory
->> allocated only for current sm8550 clocks. To be able to accommodate
->> sm8650 clocks in the same array, we need to initialize the clocks to
->> NULL as below snippet to increase the array size.
->>
->> static struct clk_regmap *video_cc_sm8550_clocks[] = {
->> .....
->>          [VIDEO_CC_XO_CLK_SRC] = NULL,
->> }
+* Andreas Kemnade <andreas@kemnade.info> [240213 23:11]:
+> On Tue, 13 Feb 2024 12:56:40 +0200
+> Tony Lindgren <tony@atomide.com> wrote:
 > 
-> The question/comment was regarding video_cc_sm8550_probe() rather than
-> video_cc_sm8550_clocks.
+> > Hi all,
+> > 
+> > This series updates the clksel clocks to use the standard reg property
+> > instead of ti,bit-shift.
+> > 
+> > I'd like to apply these before we make further use of the clksel clocks
+> > to reduce the dtb check warnings.
+> > 
 > 
+> hmm, we still have ti,bit-shift if these clocks are not used below a ti,clksel.
+> Just wondering, can we completely deorbit ti,bit-shift if we used #address-cells = <2>;
+> in those cases? I wait a bit with further txt->yaml conversions until
+> this is settled.
 
-Ok thanks, will update the change as per above comments in next series.
+No need to wait on the yaml conversion I think :) How about just tag the
+ti,bit-shift property as deprecated? And add a comment saying it is only
+needed for the remaining unconnected clocks.
 
-Thanks,
-Jagadeesh
+Eventually we can move all the component clocks under clksel clocks, or the
+related clock such as the dpll clock for the clkdcoldo clocks.
 
->>>>
->>>>>> +               offset = 0x8140;
->>>>>> +       } else  if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8650-videocc")) {
->>>>>> +               video_cc_pll0_config.l = 0x1e;
->>>>>> +               video_cc_pll0_config.alpha = 0xa000;
->>>>>> +               video_cc_pll1_config.l = 0x2b;
->>>>>> +               video_cc_pll1_config.alpha = 0xc000;
->>>>>> +               video_cc_mvs0_clk_src.freq_tbl = ftbl_video_cc_mvs0_clk_src_sm8650;
->>>>>> +               video_cc_mvs1_clk_src.freq_tbl = ftbl_video_cc_mvs1_clk_src_sm8650;
->>>>>> +               offset = 0x8150;
->>>>>> +       }
->>>>>> +
->>>>>>            clk_lucid_ole_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
->>>>>>            clk_lucid_ole_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
->>>>>>
->>>>>> @@ -435,7 +587,7 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
->>>>>>             *      video_cc_xo_clk
->>>>>>             */
->>>>>>            regmap_update_bits(regmap, 0x80f4, BIT(0), BIT(0));
->>>>>> -       regmap_update_bits(regmap, 0x8140, BIT(0), BIT(0));
->>>>>> +       regmap_update_bits(regmap, offset, BIT(0), BIT(0));
->>>>>>            regmap_update_bits(regmap, 0x8124, BIT(0), BIT(0));
->>>>>>
->>>>>>            ret = qcom_cc_really_probe(pdev, &video_cc_sm8550_desc, regmap);
->>>>>> --
->>>>>> 2.43.0
->>>>>>
->>>>>>
->>>>>
->>>>>
->>>
->>>
->>>
-> 
-> 
-> 
+Regards,
+
+Tony
+
+
