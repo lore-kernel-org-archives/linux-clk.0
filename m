@@ -1,129 +1,128 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B81E12B69;
-	Wed, 14 Feb 2024 09:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBAD12B98
+	for <linux-clk@vger.kernel.org>; Wed, 14 Feb 2024 09:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707902906; cv=none; b=TW3aUzdaFmVhiGk2I9vx58K0NhzWd9Dl5snZjnuoUhUEkdeZDFDZ86Nsa1rueHAbvXVdlhkjFljzz4HsJkm+9Yz2DXGiE6D5BJuxBHOhwcclGSTWts7foe8w0ObmVCzhI8NVPzV41QEwaFlekwCD2xJ3vfxFodsZ9kCJu8BHEh8=
+	t=1707903052; cv=none; b=DG25Wr1YufoIYAXhRneSH4MXfW9+bise1SpxCTNtytm+QWZSamJtAEJAVuhhPAzb51aRoKUBUS8+aapLti4Fj8U9WKGtX4SMaLAOdfFXALt606XiBtyRPIMdND3zPo3m++K88fFbiyZjVrxK46CCobQz2kNZcT4lQWNUpXS1b9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707902906; c=relaxed/simple;
-	bh=7iDIf20OmeYQc9dtbnkqUEwyJYpR4gtKqSRf663dNIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PSWoDah7acCBmIulnwSNs5KmIDeuQWSsTZjTcn+fShKCMv9InxVb+t05CMPXy3pXj7fyqAd0X6YeV2CluT8+TtwABWT8IybB0ayO81MxJ/ifIaYy6a0/wqHpg5BnayWmM4QxFlFfSXEQEhdKVFVBW+LBB0pYWV/mabjDG0fmahs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I3MEEXdc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1707903052; c=relaxed/simple;
+	bh=bEsQlPE5RIAyD7pBQ/6WMKh5pZq8CVxEwmmLdDNEVLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SyXX1QWJoaszZm7hBBEOYP9a6natq8i+G+40TwmhhXLY9hDqZCAww6pjwsIBMtj5UIArRTPJfiI5ZylnxKYUtT1zFrjh/i9+QaB1t3Puy9SIew/s+6/7QiIK5PuY/2fktIXF++lahSRLfemrx4zc0zdw6skr3/oBJMu5oN4JWRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VyPm8dBT; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I3MEEXdc"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41E9JAMv029873;
-	Wed, 14 Feb 2024 09:28:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=tYik73OUjCMVd31RdndFP6ddzTr57qI1pHLEgBgKThc=; b=I3
-	MEEXdcLmdU/9k3O3XySDXQzIz+4kU/FvgF9wSHQHkusA+YvOSd5hBORh+CpojDvE
-	RhNSeE5qaIxqkTTPTDw3bip0dIsQkK138qL7dzav1fEXKk257xBt+jxrArcMPv1q
-	pv4WTqr20YSgD2Fzbe1P2odJfdVQ5K6JLrky/bWsDHDd7/aYxwXfAh7o6qhNvy24
-	vvLUgJX6gJW2n8TCmkrIyOWBX5LLXXccuK7jM69oysbo8cw2+szFycn5dxpNuUGR
-	iSi3Wy8RyjmZ1rrgBKkMWLJGzBRO7jUJixaZBBfX5XcdFmSJNB4qVRUYiBDmAGd9
-	d6qL8JszJVBMeKYhKysg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w8eks987a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 09:28:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41E9SDfW001639
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 09:28:13 GMT
-Received: from [10.201.2.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 14 Feb
- 2024 01:28:07 -0800
-Message-ID: <222b330d-ecc0-4755-b1b5-674e11dcec5c@quicinc.com>
-Date: Wed, 14 Feb 2024 14:58:04 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VyPm8dBT"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-60777552d72so21204337b3.1
+        for <linux-clk@vger.kernel.org>; Wed, 14 Feb 2024 01:30:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1707903050; x=1708507850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zr9eNuCtqZel8i0NQyKBthfU107AzSAzEz24uVU7ovk=;
+        b=VyPm8dBTwtJOJcnEV19T16Jitucke3DHFcGcggItadQ397qvHlRFG2TSgSNqgBjaGM
+         EQiczKzBRvtZOd4D+6ztGSuuMIywxXmJG3i/CoWhLAqwzhXoI7qjm8tI/nOUgDiZK36l
+         N1Maod7/LxE8sbHsxbs0WQ+KDG8D53LBM3CKYc9QDDWh0egXTOipQHrHhtVaByL7i8e3
+         hmo3RQDwSNdxuyxBb4ZpmYALCIWwmHVBIsxK4NcXkjAW9p3rNwqHhD72YnDZxc5SrH+4
+         SJq8+cLWScWUxrMbKafkVWEor99WQe6fG6J06S8dFcqvTsd9APNHUXouJRwaSOSMdCkH
+         1RPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707903050; x=1708507850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zr9eNuCtqZel8i0NQyKBthfU107AzSAzEz24uVU7ovk=;
+        b=uoPse1PPhxQWUqHCBY0CvCbKtzIvnZtZw0dveWFdiajfcevKfW0H9Psk/9MElwUaFq
+         BW9Llq75ZY4Whux+/IU5IOzWrfVyL0EshYUgaVNgCjrfM1TNsU1da7qMSo7cSiuCNdKF
+         NPvwCW+3g5qv+ApSv1DmRZrlRqAA66tDW8sBAg5C19VKJJuzKM5farto1uDMqFgcF/Bn
+         jVPiOdK1aQco2s7ZQqMMHLZ+G3JBWv7F0CEhrtSqsTg824JSZr4ZMiZN/y2+85KMRZiu
+         akf2uH6LwXOKhme8LBjmQIXEvPHoQRJussnMISDPP4wwbhvPOsNuJXo2zWjWs6vZ4y22
+         GTnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNg8ow9p5RBfwfo9wn0V0iJxJ1ubbuChWVOv6Gdx9CT6uABJP16S4qGsrmTesSL4t8x8in2mFE6JV4azsRijg4KhuOJQ0AWuGs
+X-Gm-Message-State: AOJu0YwJ8jbLyr5hxKBL29cJIMKeTRUtsvuGVHJZbKh8223cMkYY0mXy
+	cqFXf/og+6Dv23VaKhs1FArIaoquOn0TzvIbEId+/2BSSr2akQl0bSRQVfYKPPGO3uU+NzAUuxB
+	bmKvgiXsNkOUjqzxaRuZIGxJgp4UOgDZ7ESLWjA==
+X-Google-Smtp-Source: AGHT+IGvoZw4u7rELrvqF5+2wOW0HhuqkxVUe4rIjn5LzGwT489C+Zi0funewTKGDJ9HADdmYQDCZZXsijEcutUDh8A=
+X-Received: by 2002:a81:91c3:0:b0:607:78b8:2a57 with SMTP id
+ i186-20020a8191c3000000b0060778b82a57mr1986509ywg.24.1707903049918; Wed, 14
+ Feb 2024 01:30:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/8] clk: qcom: ipq5332: add gpll0_out_aux clock
-Content-Language: en-US
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Catalin
- Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20240122-ipq5332-nsscc-v4-0-19fa30019770@quicinc.com>
- <20240122-ipq5332-nsscc-v4-4-19fa30019770@quicinc.com>
- <635f5e41-1ca2-4b4e-86a5-fdb8f7b27ef9@lunn.ch>
-From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-In-Reply-To: <635f5e41-1ca2-4b4e-86a5-fdb8f7b27ef9@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: k1yxsMlcmMEIAr4Giot05SLm1J4TKlmk
-X-Proofpoint-GUID: k1yxsMlcmMEIAr4Giot05SLm1J4TKlmk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-14_03,2024-02-12_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 phishscore=0 adultscore=0 malwarescore=0 suspectscore=0
- spamscore=0 mlxlogscore=891 impostorscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401310000 definitions=main-2402140073
+References: <cover.1706194617.git.geert+renesas@glider.be> <CAPDyKFpxaEUHvKKb+spxV6HG2P2gLx5qM1mLPxJie+PdkmTL4w@mail.gmail.com>
+ <CAMuHMdUswhJ3BQLnOQZC7X7qc7SFCqsr9Uy65LfBT_BNWfyhFQ@mail.gmail.com> <CAMuHMdX1tjgPJ8t+XoASuMvzvSognu7q2=aGfBO8r77JsbR82w@mail.gmail.com>
+In-Reply-To: <CAMuHMdX1tjgPJ8t+XoASuMvzvSognu7q2=aGfBO8r77JsbR82w@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 14 Feb 2024 10:30:13 +0100
+Message-ID: <CAPDyKFrTZPv+9sVtCgB2i+U-kS4R+qC_r3q_hQ-dVbHM4yDyKQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/15] arm64: renesas: Add R-Car V4M and Gray Hawk
+ Single support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Cong Dang <cong.dang.xn@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
+	Hai Pham <hai.pham.ud@renesas.com>, Linh Phung <linh.phung.jy@renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 14 Feb 2024 at 09:35, Geert Uytterhoeven <geert@linux-m68k.org> wro=
+te:
+>
+> Hi Ulf,
+>
+> On Wed, Jan 31, 2024 at 3:56=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Tue, Jan 30, 2024 at 2:11=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro=
+.org> wrote:
+> > > On Thu, 25 Jan 2024 at 16:34, Geert Uytterhoeven
+> > > <geert+renesas@glider.be> wrote:
+> > > > This patch series adds initial support for the Renesas R-Car V4M
+> > > > (R8A779G0) SoC and the Renesas Gray Hawk Single development board.
+> > > >
+> > > > As both driver code and DTS have hard dependencies on DT binding
+> > > > definitions, most patches in this series are supposed to go in thro=
+ugh
+> > > > the renesas-devel and/or renesas-clk trees, using a shared branch f=
+or DT
+> > > > binding definitions, as usual.  For the PM domain patches (03, 04, =
+09),
+> > > > Ulf already offered to apply these to his pmdomain tree, and provid=
+e an
+> > > > immutable "dt" branch, to be pulled in my renesas-devel tree.
+> > >
+> > > Patch 3,4 and 9 (I dropped the copyright line in patch9, as pointed
+> > > out by Niklas) applied for next, thanks!
+> > >
+> > > Patch 3,4 are also available at the immutable dt branch for you to pu=
+ll in.
+> >
+> > Thank you!
+> >
+> > I have pulled the immutable branch, added the remaining DT binding
+> > definitions, and queued all remaining patches.
+>
+> It looks like you have applied copies of all commits on the "dt"
+> branch to the "next"
+> branch, so now there are two copies?
+>
+> See the output of "git range-diff v6.8-rc1..pmdomain/dt
+> v6.8-rc4..pmdomain/next".
 
+I screwed up - and thanks for pointing this out! Problem is taken care of n=
+ow.
 
-On 1/26/2024 1:41 AM, Andrew Lunn wrote:
-> On Mon, Jan 22, 2024 at 11:27:00AM +0530, Kathiravan Thirumoorthy wrote:
->> Add support for gpll0_out_aux clock which acts as the parent for
->> certain networking subsystem (NSS) clocks.
-> 
-> This answers the question i asked for the previous patch.
-> 
-> Why did you split this into two patches?
-
-
-driver and binding patch should be separate patches, else checkpatch 
-will complain it.
-
-> 
-> Please also give a more detailed description, rather than the vague
-> 'certain networking subsystem (NSS) clocks'
-
-
-Sure, will call out the clock names explicitly in the next spin.
-
-> 
-> If you device tree and drivers are correct, i should be able to work
-> out what the clock tree looks like, so there is no point trying to
-> hide the information.
-
-
-Clocks which are part of the NSSCC are used by the Networking drivers 
-which are in the pipeline for upstream. Once the networking patches are 
-submitted in the list, we should be able to get the clear picture of the 
-clock tree.
-
-
-> 
->       Andrew
+Kind regards
+Uffe
