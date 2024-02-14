@@ -1,171 +1,121 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5267911185;
-	Wed, 14 Feb 2024 05:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D6B6127;
+	Wed, 14 Feb 2024 06:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707890345; cv=none; b=gVcSIfFu0MWlzk9nmMkRwV6Tg0fuT1NYKwJAXr+ZNxBVFZ5/gZV6GvxV2f1rcfkIj95WUMQroodh4Fryk3wgvfpigkRTWC7h2Fh+9kVqkkKo4AYfmyxpvdNkhuJ9fJanYa6ePX7k4P79vV3UeG+Lb4uAgIgg8nJ6YXOR/mN/oXE=
+	t=1707891197; cv=none; b=KdlowNDx+u/PxGuyHpERIpsnlAQnixGhCfD3LvpfJ+nNnLpa3j1GDW423qLAUOkdSLUmJO34GOIvvxQ+LmxbGk2iTIxsXgs7WsAy0rkZRn4ILCti+ZF4f8Tvg3H+Kxail4tyq+FIZtb7c/T37o7M/0Io/y/xlPX9+uJ8UB9n7hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707890345; c=relaxed/simple;
-	bh=yt5cR8sRNfxAE2BrcvV/xTGqOwh/nhpAq4LH4WO4HXM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Tw2t07Xdowt3vi0YVV94H/xaipGQ7MaRt2L0ugtp/IlU+Lh9juR3Klq3f8ppNRUjpFiUvdPhPuyb8OR7bbhsLFsrPe3kx590Y5F3Pprq52fynDYYDMEKRKW6/9rxw1KFe6+RWgCBhPl0bHVXw45JAs+DO8E/lmoSTrd8VZp409s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KacCDt4v; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1707891197; c=relaxed/simple;
+	bh=aCtWF2R5N/VsVQP3Wx2k7IGmH6gqYXNS9IoSQ6Dm0uU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=teTf9paK71EFbVMmkfvJ2Va2XR89M8r6ugEXHCNNtqUj8eV4/NArs07URRU04eFl8ri7vXG0x5Qs9E0wGg7vB8reSSCC7ODTZk5botIaqp0QeziBgotSrqGltC72G8B7yFnS9HAh2yG8dZvkgL6nphL2dmnJ7PPo7TLX6R9c/W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DB48cppC; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KacCDt4v"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41E5GV8m032216;
-	Wed, 14 Feb 2024 05:58:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=UPUbFMGxqekMpGyBpqMvhSAyTmMWs4IW1Gxf/FboSgA=; b=Ka
-	cCDt4vb9wrO5W1TMbxSDFfEHPw1esmd95Q8d4SVfIKuz2PCloskuHM1SwPsfSuPJ
-	wjeTBR+ZUSewIcrvqgFxJ+TNNOZmfp4YucPDIAId/PzvIE9zgQDv8w8Sg7LS19uj
-	xeFCrSSaSgOemGEjrI7nLgxG2DoRKLXN0KxWNAai/zwutlgtkzer+tUaWes+a0IK
-	1cM2e00qeFibqiuWG4K94P+Mgmbwy76QVDY2Q/Tex6fHV8fEkfszmmLSAVkrKeUM
-	huhCk0m/2enzmb9kwcQ3hPIcSbgwyP6eqjRyNYio3lzSwoSnlWNTofNSroi1jXBk
-	otAY76kHiZ6FxQsDc1QQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w88gq1w1e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 05:58:58 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41E5wv9W022502
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 05:58:57 GMT
-Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 13 Feb
- 2024 21:58:51 -0800
-Message-ID: <28db06e1-e5a3-4b49-bb7a-fb3fbfe5e5d0@quicinc.com>
-Date: Wed, 14 Feb 2024 11:28:48 +0530
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DB48cppC"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a26f73732c5so721270566b.3;
+        Tue, 13 Feb 2024 22:13:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707891193; x=1708495993; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RnNCrv7ZbOWP1fIz2vfcI4PrAv6LiZGSm+ggFT58wVc=;
+        b=DB48cppCPEfYwe90pz3tyM4H3bZCP20LAZ6p+ZAz+fZchCM/0kqcsWp5te+gxcVUdV
+         9mgMvTU4RSVLlVWoQ0zKhqIAE8x8qiYqHWX2bkonl5E/LMsXRCFetxkKKe6j8B06SI3R
+         UzF622UOAYBK3vYcwrk2BxNquasrrN1y1S03/yTIDBLKcYSI0358+bVWOajlkOiFEmBe
+         Xy2ThcmoetX7VJzK4JOPpyjXspR79hgbUzDCxKDeNY/1bA9gRfMm/oj0Gjpvt9ocCV+A
+         LhjObAW0Gple9AQnZh1WjyKIAChP2RJrbtHN3Iw8xwdsj+wb78CoTSc6WP6NTPkP7kwt
+         j/NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707891193; x=1708495993;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RnNCrv7ZbOWP1fIz2vfcI4PrAv6LiZGSm+ggFT58wVc=;
+        b=dSR5hBAOouf5Q0WPgs1Z4wh7SFWpZ8PM4j7UC3z3ae1KuX1X9iShZHKEwF5mpYYk9A
+         P42GPm00hQKVsJkuAtdXS9ljmc1+oKpj54YPoExb/240g92drjWzG/PDaPFbxFes6ijm
+         pFglJ6Fg1jdAEEzqfN8W5awqKyzGcib/F1WHZWWNHiDOy0P7Nz/ya0YyPlb/wFcpxO5w
+         yAC4tHeF7VDkZHbi5gUfIX6iLlHVRnJ+IK9DSNlAW7trxYEtHJZPzbocjKyiqQ+463QZ
+         26B8MeyvWi+9vCcHKzSlQOvwTivdudYvKQy04JxaRg2rW512fNDC9/2xg5Y5uhKV4iiV
+         sNiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZekDv25it6U3SC3E5ovq4xX5ekorCDfAVylgDOai4PiRrBbVY/KidMuFdkX4FbsEHP8gTY9LRnkwHv353+m4YeJaGhaEdD1CLDrs7+e2kQoNqGZ0Ev6D0u8GMg2zPU9/e9YGwT0lzRVI1jmGd4DDSYP/aEpzhOZIyIo/UsWJtNFg/Bg==
+X-Gm-Message-State: AOJu0YyW7YHeUXksbnAi8TNyIr67tXdEKiLyMKWayHWvrmGkv2MMiwJ+
+	HnlFO/0BtRMStWKHMAU0+ntRABnKuOxouFtnKRvzEGSPqD6QTlXM
+X-Google-Smtp-Source: AGHT+IGtPX37JYV5kM5O1SmKeozWVK6PqGYRhd1jozFU7jlXt8xqzmH3Q6m+kVq6dlwn3Ej5MDo1lg==
+X-Received: by 2002:a17:906:56c2:b0:a3c:bfcd:bed2 with SMTP id an2-20020a17090656c200b00a3cbfcdbed2mr941828ejc.31.1707891193342;
+        Tue, 13 Feb 2024 22:13:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXN0uKAweA5H+rNvQuNJvpZiek0Sy5TsEDjXpufOSG1llQF1SgDxoOZ2B8rY4Y4umzFVaZaihgHYLqjYhubf6a9mlKOoydC4oRyRUhZzWaNesZgoG21hU8y7tkMnv70RJPQNsFYtteoYGlOT0eSHTQzdOUK6ifMfGhGyrJVLFT7qmtk1KzTf5VEiIpKdMWWfrQBo/9Ehq2nIUFn6nf49bYhNZSmSSikwKmPWxnaFE/PycGRqyGpZeQjkJ/YBuCXbwbHZLAgYOaWFd9AziCcy3ET4W7jIJrss26XKj4Fg+oVgy8d9Up1py+UpPPnEn7l6hc94ZmovlXt3gmque/MaHD8IiBcZi3icgXcCj7HhM5qmKaupSGrNyv0eMzwuHPMycsgIO0Qfk2OPnBZEh5aS2PG/k4eeumlkUNC1LRrJ9b2GORy2BVG/C6ETgTGg9C/GPCh+BSXprk3/OWKKiqxDEHwDvCQCggDFrFmTvsyQ5tbDOQv8nuHGx0XwRDw+J7YrwMOCEVLS4PFTpcZXhQE7eFsQYwa3A6YvJXP1cK3OGEQ/N3+o8eHHG6n4g==
+Received: from localhost.lan (031011218106.poznan.vectranet.pl. [31.11.218.106])
+        by smtp.gmail.com with ESMTPSA id ca23-20020a170906a3d700b00a3caccb8f66sm1980163ejb.44.2024.02.13.22.13.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Feb 2024 22:13:12 -0800 (PST)
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
+Subject: [PATCH V4 0/3] dt-bindings: clock: mediatek: convert MT7622-related bindings to the json-schema
+Date: Wed, 14 Feb 2024 07:12:30 +0100
+Message-Id: <20240214061233.24645-1-zajec5@gmail.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] clk: qcom: camcc-sm8650: Add camera clock controller
- driver for SM8650
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Michael
- Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Ajit Pandey" <quic_ajipan@quicinc.com>
-References: <20240206113145.31096-1-quic_jkona@quicinc.com>
- <20240206113145.31096-5-quic_jkona@quicinc.com>
- <edc9fa59-5f39-4f47-8647-242a9b0a8cb4@linaro.org>
- <e5c484cc-7624-40fd-a527-8cfcbf7784fe@quicinc.com>
- <CAA8EJpqjU-RDwPH6xGLa7xzcyxmU+86mX0X+DL09SJ0uVB5_CQ@mail.gmail.com>
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <CAA8EJpqjU-RDwPH6xGLa7xzcyxmU+86mX0X+DL09SJ0uVB5_CQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sPJKVCWJu9w7pdcXYn3piAzit1h7TF6M
-X-Proofpoint-ORIG-GUID: sPJKVCWJu9w7pdcXYn3piAzit1h7TF6M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-13_16,2024-02-12_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- suspectscore=0 impostorscore=0 clxscore=1015 bulkscore=0 phishscore=0
- priorityscore=1501 mlxscore=0 lowpriorityscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401310000 definitions=main-2402140045
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+From: Rafał Miłecki <rafal@milecki.pl>
 
+There are more MediaTek bindings to convert but for now I focused on
+those used by MT7622.
 
-On 2/12/2024 6:46 PM, Dmitry Baryshkov wrote:
-> On Mon, 12 Feb 2024 at 15:09, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->>
->>
->>
->> On 2/7/2024 6:41 PM, Bryan O'Donoghue wrote:
->>> On 06/02/2024 11:31, Jagadeesh Kona wrote:
->>>> Add support for the camera clock controller for camera clients to be
->>>> able to request for camcc clocks on SM8650 platform.
->>>>
->>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>
->>>> +static struct clk_rcg2 cam_cc_mclk1_clk_src = {
->>>> +    .cmd_rcgr = 0x1501c,
->>>> +    .mnd_width = 8,
->>>> +    .hid_width = 5,
->>>> +    .parent_map = cam_cc_parent_map_1,
->>>> +    .freq_tbl = ftbl_cam_cc_mclk0_clk_src,
->>>> +    .clkr.hw.init = &(const struct clk_init_data) {
->>>> +        .name = "cam_cc_mclk1_clk_src",
->>>> +        .parent_data = cam_cc_parent_data_1,
->>>> +        .num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
->>>> +        .flags = CLK_SET_RATE_PARENT,
->>>> +        .ops = &clk_rcg2_shared_ops,
->>>
->>> Nice.
->>>
->>> I compared this to WIP for x1e80100 which looks nearly register
->>> compatible. Use of the shared_ops indicates to me you've thought about
->>> which clocks should not be switched all the way off.
->>>
->>
->> Thanks Bryan for your review, We want all RCG's to be parked at safe
->> config(XO) when they are disabled, hence using shared ops for all the
->> RCG's.
-> 
-> What is the reason for parking it instead of fully disabling the clock?
-> 
+V2: Move bindings to /clock/
+    Use clock-controller@ nodenames
+    Drop incorrectly specified "syscon"
 
-We don't do anything explicit in RCG disable, normally when all branch 
-clocks are disabled, RCG gets disabled in HW. But as per the HW design 
-recommendation, RCG needs to be parked at a safe clock source(XO) during 
-disable path, hence we use shared_ops to achieve the same. After parking 
-at XO, RCG gets disabled as all the branches are disabled.
+V3: Update titles of all 3 bindings
+    Simplify HIFSYS compatbile (drop "items:")
 
-Thanks,
-Jagadeesh
+V4: Use "clock: " prefix in subjects
+    Send including clock maintainers
 
->>
->>
->>>> +static struct platform_driver cam_cc_sm8650_driver = {
->>>> +    .probe = cam_cc_sm8650_probe,
->>>> +    .driver = {
->>>> +        .name = "cam_cc-sm8650",
->>>
->>> That said .. please fix the name here "cam_cc-sm8650". The title of your
->>> series is "camcc-sm8650" which IMO is a much more appropriate name.
->>>
->>> The admixture of hyphen "-" and underscore "_" is some kind of
->>> tokenisation sin.
->>>
->>
->> Sure, will fix this in next series.
->>
->> Thanks,
->> Jagadeesh
->>
->>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>
-> 
-> 
+Rafał Miłecki (3):
+  dt-bindings: clock: mediatek: convert hifsys to the json-schema clock
+  dt-bindings: clock: mediatek: convert PCIESYS to the json-schema clock
+  dt-bindings: clock: mediatek: convert SSUSBSYS to the json-schema
+    clock
+
+ .../bindings/arm/mediatek/mediatek,hifsys.txt | 26 ----------
+ .../arm/mediatek/mediatek,pciesys.txt         | 25 ----------
+ .../arm/mediatek/mediatek,ssusbsys.txt        | 25 ----------
+ .../clock/mediatek,mt2701-hifsys.yaml         | 50 +++++++++++++++++++
+ .../clock/mediatek,mt7622-pciesys.yaml        | 45 +++++++++++++++++
+ .../clock/mediatek,mt7622-ssusbsys.yaml       | 45 +++++++++++++++++
+ 6 files changed, 140 insertions(+), 76 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+ delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
+ delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7622-ssusbsys.yaml
+
+-- 
+2.35.3
+
