@@ -1,92 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A50053385;
-	Wed, 14 Feb 2024 13:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2217535CC;
+	Wed, 14 Feb 2024 13:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707916256; cv=none; b=U+gwyJdtipwDlE3MrqKPecZv11Le/smALKRuUbbL3eABg7ikgGvF4BVU8Vbjcmf2VfI45u11PF3wzKv3fQIhtfUrizgUoy5c9hJqLIrW4U+6VqwwgoaYzQc6uJmCBIdTFSMm1dlfSiBJbHkEavOR7KzTK6/fT8rY9GuThOvf+6c=
+	t=1707918304; cv=none; b=o8ksdi8KC/vh+RtPxBi2eeJJRJIaq6hjaMFou9wEI79s4cLTKMxRTfy3locyJA5T0/FyfDzE/h+8vSQBrofgwB/q5jPSdiqc8H8vmOdyDDXIkHYZX7PtqfgHnZdB2+Bpx5ELmZMJ32mykoRfTlyg8VTLDwI1nKe4WEFAJcGt8JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707916256; c=relaxed/simple;
-	bh=MI+AdkSBlJTSKIEXqFz2Z6RhgIQoxWZQv4ZxLFl4Vu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lKutFZ/ogItBXP6ovfUHRud9FtJ4lKhkKGTXMUJH4rVynR5xntmChP7/sdVua67OF1PNIsUHEAWzcVl2sMI4r9WaAqicGsJJ9h68Ka4dzAvvfbci+atfRHVgB40mJH6mZgSeyQWPc7KfdEhYFOXbcX9xEza5DfqEaqU8hqcdvwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cG1SQlKO; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cG1SQlKO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F1EBC433F1;
-	Wed, 14 Feb 2024 13:10:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707916255;
-	bh=MI+AdkSBlJTSKIEXqFz2Z6RhgIQoxWZQv4ZxLFl4Vu4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cG1SQlKOq/ZBgBjfD5d9v6OaKvypGx9lyVKi9bayP1S+mtgJsOFWvo8iW4Z3m8ZwV
-	 MNJwJsdlqnKO8plg0T81dU1BsN7QtsvL8rdJptfjtGN+/2L4FfjqMdpsIC9hl5rCsH
-	 U/55QayARyD0f5M6Nz4eGmebpauaz+U4wQKzdtLl4R4qDSf9cBnbkkdaeQoMkwsLPp
-	 9XemNG2kmS4how+pmy59GaP4vkI+aeuB8U7SnMp5cCdfMY11MerrbQi7GBgrp+XH8B
-	 I2knA5PtcuQG0PNYRZltv5BalyUV5AyyU1Lzr15+HILHUL/LBnzyg9P9kcKe/0Rnn6
-	 pUyjBiRgoTm5Q==
-Date: Wed, 14 Feb 2024 14:10:51 +0100
-From: Wolfram Sang <wsa@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, Cong Dang <cong.dang.xn@renesas.com>
-Subject: Re: [PATCH] clk: renesas: r8a779h0: Add SYS-DMAC clocks
-Message-ID: <Zcy72255L5J1WwWZ@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, Cong Dang <cong.dang.xn@renesas.com>
-References: <0285ef5d0c0c9d232e196559c9130ab46733d7f7.1707915706.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1707918304; c=relaxed/simple;
+	bh=nBaPHkIVuR7flloYS8LASWXQTdbgs8T21toFeIe4v44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HPyBryDIkrzsH1VLb7p7lArcKFeO8CZrW0X6acxFIn4wotsMcHnX0wrWhBkMT6DCgh5Bo+SpOQ/YNfK3XpSzYscJLy567dInb1z1TEgc8xiiTEsSjRqHDZQpva+JAOrRQpLOWYSjCEC1FjBrEDLC+Mx182ysrnT6aIBRwRAzKRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dc25e12cc63so689443276.0;
+        Wed, 14 Feb 2024 05:45:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707918301; x=1708523101;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wQOeNstt3RXI2238CFLQ3UHnfov62fpAyks7O9zYyRg=;
+        b=kmlNYrqlETRWZJRn22AHVUZ0V6imMaeRhiRJ1G84MABqZoRU5QOoC0ZZsvH+5RtsGN
+         Q1a0l7s+3WVj0uhprnDVJpsifCIntpHaXUKUk15Seh2mYKQA/dqXYgQMyyxzC4hj7VO8
+         k6RAGfAZOjbpULJ/iFPWhRFd44I3Kvk2aMrVqZ1XEzmrtVx8axgXqGodWJeER4lfaAsl
+         qKAqJnz5ksjgrDyXc8qP3gvuTCIuyLQxc45dUGoqKZKz2DSOP7CnacZ6VYyBQXD3zaKG
+         1uPpve8fYBgyBYXMtPfE4CJzcHwloXR1ub2VipF34spWWIFVeOHk7LcCWGsvJUa2AtW1
+         rxSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGAGlKBjkOke50/wqyjNAa2Fy/NjUKWfc+0rS6w7lfHV3K2AnbCZ3a1MsGs5FWjk/kPfIa3cvBAWAjSizWDX0lpcZfkP/twAradmYATs+syOysP5B2ypF1YIoqkG6k3EVonhOpmZTCc45JhS4=
+X-Gm-Message-State: AOJu0YwB2fEXu8V1nHoo7lUh1UJTbRQblQ+7djlbEqU1bx8v9NE/3MLp
+	PN7hbBuXZAKxlGNHaTEq1RKmyh5c+resFHgqwXOPbRl4pmc+XlASBCIUZrkuX/I=
+X-Google-Smtp-Source: AGHT+IF7FH4BbqaP1kGi4Gz9RPNsvgnsg27vQs+YgjE8987qcFR9paID9/NfSuxBYMC218fpaNSgvw==
+X-Received: by 2002:a25:35d4:0:b0:dc7:46da:77ce with SMTP id c203-20020a2535d4000000b00dc746da77cemr1391584yba.4.1707918301246;
+        Wed, 14 Feb 2024 05:45:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWcTjOQzQ/72YjtewU75IAtYXjZVssHn2XajqJQvQ97v7paE7bh9Euai07S+ZBZr2rgYkclm3H08BbZTMptWwtTeU2PS++cHiun4Uio1k2txEH4dtlt2ud2SAAyUyL14HgANEY3/mTY+a+7js4=
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id j124-20020a0df982000000b00607ac837eb5sm190378ywf.13.2024.02.14.05.45.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Feb 2024 05:45:01 -0800 (PST)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dcc6fc978ddso698140276.0;
+        Wed, 14 Feb 2024 05:45:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVXi5xr4qFerdKlUfetoInytUzMfXVOuMPfthehFC+LsAmbp6pAOIZn3DekzxyGgA/XWBPBuX0ZLxHmBLNxpljj4W2boftYHfSTD6NKCfX/x8fnWAHr85afNCHxNWioLX+RBQCuH+pfuwACHic=
+X-Received: by 2002:a05:6902:2589:b0:dc2:23b1:eaef with SMTP id
+ du9-20020a056902258900b00dc223b1eaefmr1691995ybb.18.1707918300880; Wed, 14
+ Feb 2024 05:45:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gRKP5Gqt3BnccmVt"
-Content-Disposition: inline
-In-Reply-To: <0285ef5d0c0c9d232e196559c9130ab46733d7f7.1707915706.git.geert+renesas@glider.be>
-
-
---gRKP5Gqt3BnccmVt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <3a604a6924043775c2ed0630b1c5c29be2d1a5b9.1707915642.git.geert+renesas@glider.be>
+ <Zcy70FoMmAenmy1A@shikoro>
+In-Reply-To: <Zcy70FoMmAenmy1A@shikoro>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Feb 2024 14:44:49 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVGsEGBTTYZ4o+__uvupOvR8QDSWrEk2e4AB6Vwkn_Acg@mail.gmail.com>
+Message-ID: <CAMuHMdVGsEGBTTYZ4o+__uvupOvR8QDSWrEk2e4AB6Vwkn_Acg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a779h0: Add SDHI clock
+To: Wolfram Sang <wsa@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Cong Dang <cong.dang.xn@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 14, 2024 at 02:02:16PM +0100, Geert Uytterhoeven wrote:
-> From: Cong Dang <cong.dang.xn@renesas.com>
->=20
-> Add the module clocks used by the Direct Memory Access Controllers for
-> System (SYS-DMAC) on the Renesas R-Car V4M (R8A779H0) SoC.
->=20
-> Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Wolfram,
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Wed, Feb 14, 2024 at 2:10=E2=80=AFPM Wolfram Sang <wsa@kernel.org> wrote=
+:
+> On Wed, Feb 14, 2024 at 02:01:34PM +0100, Geert Uytterhoeven wrote:
+> > From: Cong Dang <cong.dang.xn@renesas.com>
+> >
+> > Add the SDHI module clock, which is used by the SD Card/MMC Interface o=
+n
+> > the Renesas R-Car V4M (R8A779H0) SoC.
+> >
+> > Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> > +     DEF_MOD("sdhi0",        706,    R8A779H0_CLK_SD0),
+>
+> I assume this is correct because you got it to work, so:
+>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> But documentation is unclear, the diagram above the table says sdhi0 is
+> 707 while the table says 706. I guess you reported this already?
 
+Thanks, I had missed that inconsistency.
 
---gRKP5Gqt3BnccmVt
-Content-Type: application/pgp-signature; name="signature.asc"
+After adding a dummy module clock for 707 to the clock driver, so
+unused 707 gets disabled during late boot, eMMC still works.
+After exchanging 706 and 707 in both the clock driver and the .dtsi,
+ee140000.mmc times out waiting for SD bus idle.
 
------BEGIN PGP SIGNATURE-----
+So 706 must be correct.
+I will report the documentation issue.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmXMu9sACgkQFA3kzBSg
-KbZp3Q//XRAADThmOhKwBslhWnZ9M5u/fnKJqFmhvYstI2C1mGldEL33Lx+TPDks
-NUD9dGcPKyqVGASZe1Umx/KrAhv3+kEFAJ6Yx8FES1ZKGXe1DQ+k+w3tITcsmdsr
-opGpKrn1H44d5H8j7LUz8SgVIsZ8rvyCmBzYKyH4+fFPUn3noHsfgDmWNxAIeDRl
-JvjSdToo9uQrzr27HFHHEWPj+eXZLj9qNgdL4HCLCLlfUAdg0w7YZ85/ofCBC0r4
-6jyYcj0kPEzN9qs82v/tO3x3vu3rT+9ECcMhIA6G56Ii0INUtC/723ZMq070pg7n
-2FTckgmJsToU9VSdlHCpv0BvKVLs7hCjBk8eWt6OkgraxOHv1vs/NqHhFPkaPgIg
-H6SsVqtoVEUTb/eo26Zwui+FPZ+LS/j2+V50/0H5x2+a5TWSzVZIgx/Vqi4ifLO4
-h6mechrPS2liC8fpoz/CsAD/Rpfk0BS+NHL0U9MV6C4jgYGuLhNu6OMiYZs5iYYg
-3YfmJl/bQnGMcNtDfnldskY5W/VPLkX3c+/LkZoh9kAmj9IoNpAOmvOD1L9cMF2/
-/I3gYm6drOvQNAe+SxKAjUWnxP6wox/nanmpU7MhBm+3lulHR2p6OX0EmDkEAPpF
-2OVWxcG3giULFgnH2KJO3UDTOvdM8cEMOt57l1kceXgur5N9C1c=
-=LFPd
------END PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
---gRKP5Gqt3BnccmVt--
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
