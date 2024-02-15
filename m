@@ -1,127 +1,106 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C270412EBFB;
-	Wed, 14 Feb 2024 18:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E869017742
+	for <linux-clk@vger.kernel.org>; Thu, 15 Feb 2024 09:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707935447; cv=none; b=o63yIyBWFqCrx08kbAqijk9srrW2klSPNWfKpyJUtN9QfIooqvd3Ek2I9rFERAwkJjm4W2AmJBf3+6b9yfBjYCH03a87XSh/E6zWdMasY+rlgEbQO+o9Cm/VEGILIKyxr6N1lvDLK8OrMBZOn8dJBYEf0Zj051uO+lGqAI7UPe8=
+	t=1707989947; cv=none; b=tadst9Imrd2yHUr/yQDkyGDIrOxB2OZYbXXuIQt1U/IIzO9Fry27TeOiYw0rOrIDgbEJX69IiGE8MCnFv1NR1JxOPo+jHdcGHTjO+cOiNaGCj/tEkWrWdirfh25oGlbwgCCp3uvH17TMUBwVAw6JbmsEEMSgOaUPd4Lq9IdustI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707935447; c=relaxed/simple;
-	bh=WYEne98DDgqD6wOMHk6cJ+Hy4mmBoGUxdY4E2T7jmSo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hVS4eoL602I4gi4Cqc8urm0eL2PWMEDOnU0oI3PLteoHzmepv+bKkB1eMd5nNS6ys3MRYGKuGW9EC0y124YIBUbt7wyq1g5V6uOUhE5Q63FgjEQWAe+zW3lHJ6J+D2CN20ruRmLXPUsJF09ufZZlJ4sxrPOjomdHSB2bCP0f2lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 28EA7DA7;
-	Wed, 14 Feb 2024 10:31:26 -0800 (PST)
-Received: from pluto.fritz.box (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20E533F7B4;
-	Wed, 14 Feb 2024 10:30:43 -0800 (PST)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: sudeep.holla@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	quic_sibis@quicinc.com,
-	quic_nkela@quicinc.com,
-	souvik.chakravarty@arm.com,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 7/7] clk: scmi: Support get/set duty_cycle operations
-Date: Wed, 14 Feb 2024 18:30:06 +0000
-Message-ID: <20240214183006.3403207-8-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240214183006.3403207-1-cristian.marussi@arm.com>
-References: <20240214183006.3403207-1-cristian.marussi@arm.com>
+	s=arc-20240116; t=1707989947; c=relaxed/simple;
+	bh=95fi5nN2of9hvh6FP5F11X6NqmJtqoQQdCWXMbLqazw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pK4+SZkzEO/erNFK+hlj234q6O7Afpo51koFHewEZDI01dexMqKsDingT9sjFEv4eIQDF50r5ou/7uyb00UkCQKsWUGqKLklQWw+mGT7mNQH8J13cwBCBWhWOYESKjYm1SBvQO5RQl0x5FExop8Fo6+fOeZaVi68C9YYwRl7asc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1raYCs-000389-AU; Thu, 15 Feb 2024 10:39:02 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1raYCq-000rCz-TR; Thu, 15 Feb 2024 10:39:00 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1raYCq-005HC9-2e;
+	Thu, 15 Feb 2024 10:39:00 +0100
+Date: Thu, 15 Feb 2024 10:39:00 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: kernel@pengutronix.de, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Maxime Ripard <mripard@kernel.org>
+Subject: Re: [PATCH v2] clk: Add a devm variant of clk_rate_exclusive_get()
+Message-ID: <a2v3qm3erl7lfsmg445zyhihvtybbeis4ntrsdlqdf5wpjlyy5@bc7k5zyvzeyz>
+References: <20240104225512.1124519-2-u.kleine-koenig@pengutronix.de>
+ <f4noroegkbikrsjeisqlel46cu54emhnndtncnj4shygsbcaem@lixfb7ezeo5t>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5gtjxiskaykm4wii"
+Content-Disposition: inline
+In-Reply-To: <f4noroegkbikrsjeisqlel46cu54emhnndtncnj4shygsbcaem@lixfb7ezeo5t>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-Provide the CLK framework callbacks related to get/set clock duty cycle if
-the relared SCMI clock supports OEM extended configurations.
 
-CC: Michael Turquette <mturquette@baylibre.com>
-CC: Stephen Boyd <sboyd@kernel.org>
-CC: linux-clk@vger.kernel.org
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
- drivers/clk/clk-scmi.c | 45 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+--5gtjxiskaykm4wii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index b91a0dbd2fe0..9d3b1e749226 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -158,6 +158,45 @@ static int scmi_clk_atomic_is_enabled(struct clk_hw *hw)
- 	return !!enabled;
- }
- 
-+static int scmi_clk_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-+{
-+	int ret;
-+	u32 val;
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	ret = scmi_proto_clk_ops->config_oem_get(clk->ph, clk->id,
-+						 SCMI_CLOCK_CFG_DUTY_CYCLE,
-+						 &val, NULL, false);
-+	if (!ret) {
-+		duty->num = val;
-+		duty->den = 100;
-+	} else {
-+		dev_warn(clk->dev,
-+			 "Failed to get duty cycle for clock ID %d\n", clk->id);
-+	}
-+
-+	return ret;
-+}
-+
-+static int scmi_clk_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-+{
-+	int ret;
-+	u32 val;
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	/* SCMI OEM Duty Cycle is expressed as a percentage */
-+	val = (duty->num * 100) / duty->den;
-+	ret = scmi_proto_clk_ops->config_oem_set(clk->ph, clk->id,
-+						 SCMI_CLOCK_CFG_DUTY_CYCLE,
-+						 val, false);
-+	if (ret)
-+		dev_warn(clk->dev,
-+			 "Failed to set duty cycle(%u/%u) for clock ID %d\n",
-+			 duty->num, duty->den, clk->id);
-+
-+	return ret;
-+}
-+
- static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
- 			     const struct clk_ops *scmi_ops)
- {
-@@ -256,6 +295,12 @@ scmi_clk_ops_alloc(struct scmi_clk *sclk, bool atomic_capable,
- 	if (!ci->parent_ctrl_forbidden)
- 		ops->set_parent = scmi_clk_set_parent;
- 
-+	/* Duty cycle */
-+	if (ci->extended_config) {
-+		ops->get_duty_cycle = scmi_clk_get_duty_cycle;
-+		ops->set_duty_cycle = scmi_clk_set_duty_cycle;
-+	}
-+
- 	return ops;
- }
- 
--- 
-2.43.0
+Hello,
 
+On Thu, Jan 25, 2024 at 10:44:45PM +0100, Uwe Kleine-K=F6nig wrote:
+> On Thu, Jan 04, 2024 at 11:55:11PM +0100, Uwe Kleine-K=F6nig wrote:
+> > This allows to simplify drivers that use clk_rate_exclusive_get()
+> > in their probe routine as calling clk_rate_exclusive_put() is cared for
+> > automatically.
+> >=20
+> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> > ---
+> > Changes since (implicit) v1, sent with Message-Id:
+> > 744a6371f94fe96f527eea6e52a600914e6fb6b5.1702403904.git.u.kleine-koenig=
+@pengutronix.de:
+>=20
+> Given that I'm not the only one waiting for this change (see
+> https://lore.kernel.org/linux-i2c/20240119072223.3986183-1-alexander.stei=
+n@ew.tq-group.com)
+> here comes a gentil ping. It would be great to get this patch into next
+> now the merge window is closed.
+
+Is there a chance to get this into next and then v6.9-rc1?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--5gtjxiskaykm4wii
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmXN264ACgkQj4D7WH0S
+/k5HLwf/ZCge2QT8dBTWBs2PkqjfiWCw+sdZ81BNUtWS4lW/E4FeEYDfJT0s1dwx
+4n2HuwfXMItQ5HiTeECCcfQwmiDDeQ3KXKFBXX0+wMBMDpjRuLfmR9UXmyHQlYui
+5HFYSfSzoNq7XogbtfVyrCYHCd40wlv93+dHk4d7B0Pz7njRja1v8xG4S6ebZbvO
+2kzJtJ2AGxbNCEHwPNgceLwPfOFhHHTg6l8NT2xGz6jCGnsOF52rsl0TKPmZpuwT
+PDqzzMyuDMqpxDkIv3dw7rvD1sY3sHqsG9awzSCJ+6OXOpoF3l9ql6cBu9bAQN9v
+/mdaf/Ox/HV2plvt8Zyl1YQfXZJ7TA==
+=ArFk
+-----END PGP SIGNATURE-----
+
+--5gtjxiskaykm4wii--
