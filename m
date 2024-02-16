@@ -1,198 +1,161 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77B812FF6B
-	for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 16:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B741132461;
+	Fri, 16 Feb 2024 17:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708100805; cv=none; b=h/M+MRlCc5u43GR5VsH/IPdFn2VBrWmZFKwDGLQsm2zQPyLDs78Edli6oA3YhbGoIcp561cotToYx/4fMCUgD4JdPQIjqu4fWi/r4u1jPg9zFgeBDu+Jvssyahm2Rtpa4LKedfeNmnA0vzXVK5zprIFV5/P7xAi3Efklb/ccsNE=
+	t=1708103391; cv=none; b=WIb/+rwFhCcFW3RCkyAcjcY6gbY1wI+Qq1DRhxetEL+V/Tpi4VmOfkpn41H+doaEmwFICeRC/wuqOoBJduGjddYyT0sJgd++xdn/ZNi6iFAz4jTfAwEfrZjq1qDpolRnHoKEBPLOmreACBTJ3yg2Qha4tZEX3ZBFM7hWMZk7Ozo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708100805; c=relaxed/simple;
-	bh=LcZm2kWHQ4w78fgPQiXn6fezOQZ4PZIfAqO2QKgVre4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p8iudjvC1wx3HFfZy5CrQArIYvafcGWnqONg0cobpSBHmEJ4nFoNXfw5EnUBqoU7yRz0V1K6NcmZGm0fl49+Ub33lRsgBQZPgYf8KagdPVVezXzjLbaqLSs/XMvH8CPtA1QEKD8o3yHMfSRjuhyZ0kbR9T4itxoI+qW8pa9rZFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GTlNlHgB; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708103391; c=relaxed/simple;
+	bh=id7Qb0uLD+1WFfUYgcQvzLQnvah3UPDv2V4cZ0mna8E=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFYiiQ6bz/u9r6SNIQ7cJAFv08R8shwM/wrMdE0U/sraletXRMEsPV+kkeB7qX8rS6eIuRZxVvuCZsoE0/CfcxLBx77HKlGZDhoRuHyeTOp+Jj7gltLpgeWkdoLmG5tWSrjayWhNFVuX+cpYziSOnpuIJ8JOKBGjY5ZNcPodDZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wV+xkORD; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GTlNlHgB"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dcd7c526cc0so2444489276.1
-        for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 08:26:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708100803; x=1708705603; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=44tIHP3e27m9mssG+F+MhxgHY8yrYPkp9JDOgoTDz6k=;
-        b=GTlNlHgBjngckS2bqahEVfaHLmZT7hItTbsRUPRkylEaTS3U0rg1cZ7MBDcSDzQVW6
-         HnCoAEOq4cKV0xelIa8Hr4kciMMYPmKat7L2Bav7DXzj1VAmVJxgFrs1rJsNP0Rxc8Rx
-         Tk3L8+4lVEkBhWSMGN4kapsJR00FXmEhddi4HgdtTSFuhdAthJRmW+p8ZQZvgCmJP/JE
-         7VBoyM4eR1yOOCRt3/SNR/2H1VD8DKnV0IH5KvzcoQv+fej3ML3ddZEExOv7xlQ8GNOi
-         QeptJG7C3epNKhif52dnDqQLFqmeAD8iySp0sz+2lGFz7X+BYCnbAWwnX3EAGfb0TBQ0
-         JKwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708100803; x=1708705603;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=44tIHP3e27m9mssG+F+MhxgHY8yrYPkp9JDOgoTDz6k=;
-        b=aagvSNgQZTem3SwwerqV4uUT8BCCdDktSg6SA8AFmYJLqI7mz9beuA9mR2kYhWLKHo
-         IFp0ybBwkapJEwbOHEi6xIY+VWs+lTbzMeVHKO1UPj1+wYOMdIdgdpOIYcw/RI1uxAiB
-         e3XG1RrbSCBU5HUnYtFXrDYEt4w1nl7urUa7jA226G2ojAEINpNmmzmEd4bP4Yn1x5ni
-         ZMR5XWEbextjfDsUirBeiBNUCVGfB7qrufGBvFB+hvRWAAvVCsaBaLSU+nAJK3rcqxno
-         wZkG4U8nN6K3m9w7ApExzs5M+7u1LtbTrkREWyp7jtZL4wyhkcxWw0m3IB0MmCr/7USs
-         QISQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUc0kb+hiTD7KUZRWWWY9LDh2tQk6raivuEp9Ht3aLVqdhaLSes0de/ECkcwClA6JjqwGrE3m+68FxsyVpTqEwSsJNRExqYwgn3
-X-Gm-Message-State: AOJu0YxwAAHphg1Y95Vp9imQw/BD1mok6GMkWvpxEjm+ADuTj3aki8x1
-	T8wwglwKI//7onihidhbwRZGG4/ZrqLYWZe9xeoiRMI78P4efnm+hwzSSIIJCHkUE+nSMhr/BQ6
-	OKRaghixIq0koReYIj+/0uRnjkTOJ8e88ztBMAQ==
-X-Google-Smtp-Source: AGHT+IFuPYMq3HZ+E6QHC5yDkivYMMpl37gr1Cmwb52o7W8sSopxMnfNkn0jZFsKmhZQB/3N98O6EzewnPB6rpzvq84=
-X-Received: by 2002:a25:2002:0:b0:dcc:9e88:b1a with SMTP id
- g2-20020a252002000000b00dcc9e880b1amr4736884ybg.7.1708100802770; Fri, 16 Feb
- 2024 08:26:42 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wV+xkORD"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 41GH9U7h032772;
+	Fri, 16 Feb 2024 11:09:30 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1708103370;
+	bh=O9tDOl2PHm42EpIYjzIon6CdzywBxeNsoi7ymBAtfvA=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=wV+xkORDStCjpVYjAzP9AQmpE5i4aJR8fYlxblNX4EBLsbs+K0SAOINCu0fnqIYFD
+	 gmbxGYydVivu/SBtpWd5fMBzPERHI+UBgCisS90sUH/CRgFqtF27kX9ZWF5GTSZvwo
+	 ruYkbzaCIAJUGSs9Nsz35cmtr/sPoDkZpkfZuwD4=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 41GH9UG4126974
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 16 Feb 2024 11:09:30 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 16
+ Feb 2024 11:09:30 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 16 Feb 2024 11:09:30 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 41GH9Uhd066950;
+	Fri, 16 Feb 2024 11:09:30 -0600
+Date: Fri, 16 Feb 2024 11:09:30 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Udit Kumar <u-kumar1@ti.com>
+CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <chandru@ti.com>,
+        <rishabh@ti.com>, <kamlesh@ti.com>, <francesco@dolcini.it>,
+        <vigneshr@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4] clk: keystone: sci-clk: Adding support for non
+ contiguous clocks
+Message-ID: <20240216170930.cp5rg2iieaqogrwa@selected>
+References: <20240213082640.457316-1-u-kumar1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240122-ipq5332-nsscc-v4-0-19fa30019770@quicinc.com>
- <20240122-ipq5332-nsscc-v4-2-19fa30019770@quicinc.com> <7a69a68d-44c2-4589-b286-466d2f2a0809@lunn.ch>
- <11fda059-3d8d-4030-922a-8fef16349a65@quicinc.com> <17e2400e-6881-4e9e-90c2-9c4f77a0d41d@lunn.ch>
- <8c9ee34c-a97b-4acf-a093-9ac2afc28d0e@quicinc.com>
-In-Reply-To: <8c9ee34c-a97b-4acf-a093-9ac2afc28d0e@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 16 Feb 2024 18:26:31 +0200
-Message-ID: <CAA8EJppe6aNf2WJ5BvaX8SPTbuaEwzRm74F8QKyFtbmnGQt=1w@mail.gmail.com>
-Subject: Re: [PATCH v4 2/8] clk: qcom: ipq5332: enable few nssnoc clocks in
- driver probe
-To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240213082640.457316-1-u-kumar1@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, 16 Feb 2024 at 17:33, Kathiravan Thirumoorthy
-<quic_kathirav@quicinc.com> wrote:
->
->
->
-> On 2/14/2024 8:14 PM, Andrew Lunn wrote:
-> > On Wed, Feb 14, 2024 at 02:49:41PM +0530, Kathiravan Thirumoorthy wrote:
-> >>
-> >>
-> >> On 1/26/2024 1:35 AM, Andrew Lunn wrote:
-> >>> On Mon, Jan 22, 2024 at 11:26:58AM +0530, Kathiravan Thirumoorthy wrote:
-> >>>> gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk are
-> >>>> enabled by default and it's RCG is properly configured by bootloader.
-> >>>
-> >>> Which bootloader? Mainline barebox?
-> >>
-> >>
-> >> Thanks for taking time to review the patches. I couldn't get time to respond
-> >> back, sorry for the delay.
-> >>
-> >> I was referring to the U-boot which is delivered as part of the QSDK. I will
-> >> call it out explicitly in the next patch.
-> >
-> > I've never used QSDK u-boot, so i can only make comments based on my
-> > experience with other vendors build of u-boot. That experience is, its
-> > broken for my use cases, and i try to replace it as soon as possible
-> > with upstream.
-> >
-> > I generally want to TFTP boot the kernel and the DT blob. Sometimes
-> > vendor u-boot has networking disabled. Or the TFTP client is
-> > missing. If it is there, the IP addresses are fixed, and i don't want
-> > to modify my network to make it compatible with the vendor
-> > requirements. If the IP addresses can be configured, sometimes there
-> > is no FLASH support so its not possible to actually write the
-> > configuration to FLASH so that it does the right thing on reboot
-> > etc...
-> >
-> > Often the vendor u-boot is a black box, no sources. Can you give me a
-> > git URL for the u-boot in QSDK? If the sources are open, i could at
-> > least rebuild it with everything turned on.
->
->
-> You can get the source at
-> https://git.codelinaro.org/clo/qsdk/oss/boot/u-boot-2016/-/tree/NHSS.QSDK.12.2?ref_type=heads
->
-> You should be able to TFTP the images, write into the flash and
-> configure the IP and so on...
->
->
-> >
-> > But still, it is better that Linux makes no assumptions about what the
-> > boot loader has done. That makes it much easier to change the
-> > bootloader.
-> >
-> >>>> Some of the NSS clocks needs these clocks to be enabled. To avoid
-> >>>> these clocks being disabled by clock framework, drop these entries
-> >>>> from the clock table and enable it in the driver probe itself.
-> >>>
-> >>> If they are critical clocks, i would expect a device to reference
-> >>> them. The CCF only disabled unused clocks in late_initcall_sync(),
-> >>> which means all drivers should of probed and taken a reference on any
-> >>> clocks they require.
-> >>
-> >>
-> >> Some of the NSSCC clocks are enabled by bootloaders and CCF disables the
-> >> same (because currently there are no consumers for these clocks available in
-> >> the tree. These clocks are consumed by the Networking drivers which are
-> >> being upstreamed).
-> >
-> > If there is no network drivers, you don't need clocks to the
-> > networking hardware. So CCF turning them off seems correct.
->
->
-> Yeah agree with your comments.
->
-> QSDK's u-boot enables the network support, so the required NSSCC clocks
-> are turned ON and left it in ON state. CCF tries to disables the unused
-> NSSCC clocks but system goes for reboot.
->
->
-> Reason being, to access the NSSCC clocks, these GCC clocks
-> (gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk)
-> should be turned ON. But CCF disables these clocks as well due to the
-> lack of consumer.
+On 13:56-20240213, Udit Kumar wrote:
+> Most of clocks and their parents are defined in contiguous range,
+> But in few cases, there is gap in clock numbers[0].
+> Driver assumes clocks to be in contiguous range, and add their clock
+> ids incrementally.
+> 
+> New firmware started returning error while calling get_freq and is_on
+> API for non-available clock ids.
+> 
+> In this fix, driver checks and adds only valid clock ids.
+> 
+> [0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
+> Section Clocks for NAVSS0_CPTS_0 Device, clock id 12-15 not present.
+> 
+> Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
+> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+> ---
+> Changelog
+> Changes in v4
+> - Added only incremental chanegs as per v3 discussion
+> - Updated commit message
+> - v3 was Reviewed-by, Dropping Reviewed-by as logic is changed
+> Link to v3
+> https://lore.kernel.org/all/20240207091100.4001428-1-u-kumar1@ti.com/ 
+> 
+> Changes in v3
+> - instead of get_freq, is_auto API is used to check validilty of clock
+> - Address comments of v2, to have preindex increment
+> Link to v2 https://lore.kernel.org/all/20240206104357.3803517-1-u-kumar1@ti.com/
+> 
+> Changes in v2
+> - Updated commit message
+> - Simplified logic for valid clock id
+> link to v1 https://lore.kernel.org/all/20240205044557.3340848-1-u-kumar1@ti.com/
+> 
+> 
+> P.S
+> Firmawre returns total num_parents count including non available ids.
+> For above device id NAVSS0_CPTS_0, number of parents clocks are 16
+> i.e from id 2 to 17. But out of these ids few are not valid.
+> So driver adds only valid clock ids out ot total.
+> 
+> Original logs
+> https://gist.github.com/uditkumarti/de4b36b21247fb36725ad909ce4812f6#file-original-logs
+> Line 2630 for error
+> 
+> Logs with fix v4
+> https://gist.github.com/uditkumarti/f25482a5e18e918010b790cffb39f572
+> Line 2640
+> 
+> 
+>  drivers/clk/keystone/sci-clk.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+> index 35fe197dd303..eb2ef44869b2 100644
+> --- a/drivers/clk/keystone/sci-clk.c
+> +++ b/drivers/clk/keystone/sci-clk.c
+> @@ -516,6 +516,7 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+>  	struct sci_clk *sci_clk, *prev;
+>  	int num_clks = 0;
+>  	int num_parents;
+> +	bool state;
+>  	int clk_id;
+>  	const char * const clk_names[] = {
+>  		"clocks", "assigned-clocks", "assigned-clock-parents", NULL
+> @@ -586,6 +587,15 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
+>  				clk_id = args.args[1] + 1;
+>  
+>  				while (num_parents--) {
+> +					/* Check if this clock id is valid */
+> +					ret = provider->ops->is_auto(provider->sci,
+> +						sci_clk->dev_id, clk_id, &state);
+> +
+> +					if (ret) {
+> +						clk_id++;
+> +						continue;
+> +					}
+> +
 
-This means that NSSCC is also a consumer of those clocks. Please fix
-both DT and nsscc driver to handle NSSNOC clocks.
 
-> > Once you have actual drivers, this should solve itself, the drivers
-> > will consume the clocks.
->
->
-> Given that, NSSCC is being built as module, there is no issue in booting
-> the kernel. But if you do insmod of the nsscc-ipq5332.ko, system will
-> reset.
->
-> Without the networking drivers, there is no need to install this module.
-> And as you stated, once the drivers are available, there will be no issues.
->
-> So can I explain the shortcomings of installing this module without the
-> networking drivers in cover letter and drop this patch all together?
+Thanks. This makes more sense.
 
-No. Using allyesconfig or allmodconfig and installing the full modules
-set should work.
-
-> >> However looking back, gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk,
-> >> gcc_nssnoc_nsscc_clk are consumed by the networking drivers only. So is it
-> >> okay to drop these clocks from the GCC driver and add it back once the
-> >> actual consumer needs it?
-> >
-> > But why should you remove them. If nothing is using them, they should
-> > be turned off.
-> >
-> >     Andrew
->
-
+Reviewed-by: Nishanth Menon <nm@ti.com>
+>  					sci_clk = devm_kzalloc(dev,
+>  							       sizeof(*sci_clk),
+>  							       GFP_KERNEL);
+> -- 
+> 2.34.1
+> 
 
 -- 
-With best wishes
-Dmitry
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
