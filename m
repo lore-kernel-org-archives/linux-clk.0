@@ -1,70 +1,70 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FEB12DDBE;
-	Fri, 16 Feb 2024 14:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EF812AAD9;
+	Fri, 16 Feb 2024 14:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708092762; cv=none; b=p7Hq+SoVRjl0OW0rx6JrqvtxiW062rrK15MKNQvOb5lkOa1Ftxk/7cOgHz2cZGPManeEjqDn/aBZPQ2lUAiDuosG7JffeEZupeyK4+NCl2j3b8Ot4WhYXm6ljy5MDqaZPVHuLP6xccGOceiQ0wrxuRLcKppNmq7C1hxr+tYKpcc=
+	t=1708093043; cv=none; b=Bte5FLNe0WjHV0sKXnP5AKZmsZffr1oeLNjREMRX1F4NGZZkPIRTfU2abhnuH5eTg0isLlJOw8ii5rniG/pkZOKKgY+CC2kXMB2227ERHQWCaFn8/uFu9/qC1G5UI6pCAqcZJg6/h/b24eNrT3tjSNoWdjGsD0gG/H0yTksAVDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708092762; c=relaxed/simple;
-	bh=8MQbPyWOcudw5n4vO0msx8tDd2p7vySEFcdrj+SXoyc=;
+	s=arc-20240116; t=1708093043; c=relaxed/simple;
+	bh=vnnX13x217W0dtrq5eN5tm48xaIUCso8yaskfIG6//g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OmsBYghE7qpnlc0oMbu8vPCHRxu6CmJGhsdzMXH+vdw+fp2JeBKi/9hAoWzwY+3YkhOy40/Gmw/aLZMhqFzx+F+6qShzhdH7Qzwug/1DHqY0ZXFUa6LpC5pACGUsuXYa1sFb2OqNYvW9i8ipSMVM5D2k/Ab+gV8xBqS/6GSXqn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
+	 To:Cc:Content-Type; b=W79VJdn/iB8pakyAtprWru0PHG478E+tbQyFgpqwPprOnUt9BNtTwX3EdQLiNt1D25q/k1YNckhphlwfiMxrBKAdQv9HYdvgfzgmPnmJYeFv83sZE+H6bEKYSfuB8/0kP+LV1gf80jr6CW0J+7dobVaFfIc807GWLIdm+3HEXsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-60495209415so20687357b3.3;
-        Fri, 16 Feb 2024 06:12:40 -0800 (PST)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dcc4de7d901so1750265276.0;
+        Fri, 16 Feb 2024 06:17:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708092757; x=1708697557;
+        d=1e100.net; s=20230601; t=1708093040; x=1708697840;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JCEAJzYERTZa1lUHsnan5I6epPyLItD9aG9FckH/eVU=;
-        b=F0mHNe/N22Fp5P2yZ9D8y/IR0sOecYMQFh0yo47MRkQf9a90TepI7Fy4AUcto7JGMP
-         eT3oNOXWdx3rba/r2QM2bqrGqmzXqx8uHKuHcAkMNuiV9wmjTa6wq4xp/1WeAO8CrTBq
-         GIBvo9V1mqcANPL2dnaSdpyt5nxhSBPulg38DPKLMyuqBbSYvk6PdVhqi6SkjVV4mIn+
-         0Mctb0Vv51SuaHcHsLR+X4jOLoUTDejoxkoXFlhNkkeiIMmSlZJXRkle35XUV6MWuEii
-         f4mj0QZkfiR1nULjRSRpOP6mT/OxcwVTvu8CcDSKHXnirAlvJD0GTx6/fZ/7GNTneMPs
-         Ldig==
-X-Forwarded-Encrypted: i=1; AJvYcCXXovpBezyPCKmBZxuGXIM+mlCres9PdQ1Gfw7MtDiJsGBD4LXeQuyZDX+suOwgbOD357QOGwysVLo1sTV8pDYswzsculLALolFGT0vBiz5FRVCYyZYIpSZdRJnlGzEStpX0Ny93N1SyOhxlgwElR8qi98fCnRUmrJUEd7U6gyCHwPHJ9cpC5fG2hhlERN6/YI8XWzzSlmj23Gd0y7J8EyBgE3+opQo
-X-Gm-Message-State: AOJu0YxPz1oO5pkKz+dwV0PA89xke0OGDqMUR8lUfF38YTwtL+iY9F+N
-	qTEa+oZGfwd6776mpMLYNx5X2o8wQPVt/ZSIw60+c2Znwqnotq/QeoTTXTV710g=
-X-Google-Smtp-Source: AGHT+IHIOQQWsmsjWFk35auBK6b9+DKc5Oz3MKbcenOeCu3nroL5aruwbMK9JUNQCpChEQO/AWpgXw==
-X-Received: by 2002:a81:c310:0:b0:607:ffb2:fc0d with SMTP id r16-20020a81c310000000b00607ffb2fc0dmr1230646ywk.15.1708092757174;
-        Fri, 16 Feb 2024 06:12:37 -0800 (PST)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id h123-20020a0dde81000000b006040d34e58csm354646ywe.74.2024.02.16.06.12.36
+        bh=uKVA6eT9vMZObsICtCU8wuFH8FzY1FdTCqpK118q1IE=;
+        b=jeiZubz0wHT7KtCwHje/dmKYMH4ygfyWQ2hf4Y5ugqJkknctK9roCmReGGcybJHxKf
+         nxotCHVm0sUXogIzn4LMQ1TcIDohvGSzIdzavLe5StFUJTAsVD8DDjjW9rG5w//3b5NX
+         VsvXPtLFQBop/nk4X1xU1VqPlhvj7MdJFGs71Ygsn2QvuydiHdZqSt5VixuKobEFbyWw
+         PHxdS3rGYnFAGvtbVP+cCgaQMxkFLq2kPB0K59JyGVo0RftrIero+68w2ytV0AjtD88n
+         Echo95Gqx/UHAmoANz6YSFqOyGYs7jtP0u7VokijH3Rt3cFwTyb49vgEnG+eISC6p84S
+         kV4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVggaW4V9dOKZs7Ytf/+SOuZzD8TKnLNZZYTPJ3bYCWmEiVNkyqUy6shGYXYKkpsTawIMM6Vmsyw38yFkEroAC+Rw7bTEyqffLiW9DLAds6fEv+VmNSClnNXHkxDd5mO6q0GP+5sm9akSZNqii1Of3UO81qct0OeeEnCpgDh/5JFcUjduL1CzQ1BoR+nXpCx5cfOyc8lMG5e86yQB44tgAWHK+zASVs
+X-Gm-Message-State: AOJu0YwUUHFRu7DxLoCUAgJF+AcpXrJjCa9Y6+AYX8SaJoGXFrzX0RvV
+	Gc+VF5H22NGnYfYr6HFM0pPsCy0DoaBNOudmiv5E7LtePRdyxWWrwM459RbMo5k=
+X-Google-Smtp-Source: AGHT+IG/Oru5dUhXk6y8B8iKzzYWbDCIUS8FnmkleBuV6MuMOU6dv7iExXsIBfeg9P1hSsSVNMwHHQ==
+X-Received: by 2002:a25:b048:0:b0:dc7:4859:6f1 with SMTP id e8-20020a25b048000000b00dc7485906f1mr4901047ybj.33.1708093040325;
+        Fri, 16 Feb 2024 06:17:20 -0800 (PST)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id 4-20020a250104000000b00dc7496891f1sm330044ybb.54.2024.02.16.06.17.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Feb 2024 06:12:36 -0800 (PST)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dcbc6a6808fso2140309276.2;
-        Fri, 16 Feb 2024 06:12:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXDjxiIOI7rm5SINuzEbtrc6vMVIOlivW028R2U2v60zcchNLWnFOI257Fe+MsO5TuP0HFaZdL3GeL6o0L6diA18+sJzbkwEVV0C++iQ57TKQo8VLQ23ExUkxbgE7He7lEeB2rTsnlOQGcyLNwA3dHjQKAtbA9RLSKuYvx68AiF4eg0LztEEuRN3plymVQJ/4wShsNwKplt7LQNt8ggSLRMaI2XbvOs
-X-Received: by 2002:a25:7209:0:b0:dcc:32cb:cb3b with SMTP id
- n9-20020a257209000000b00dcc32cbcb3bmr4968431ybc.44.1708092755767; Fri, 16 Feb
- 2024 06:12:35 -0800 (PST)
+        Fri, 16 Feb 2024 06:17:20 -0800 (PST)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcd7c526cc0so2237243276.1;
+        Fri, 16 Feb 2024 06:17:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUAZMpm5+ECPyUxMHqTOGgVvRP0Y/+Gj7KVNwTNrSke0AancPmMddxySziL+Km1qNsCVzX/l4loxRRt8mEakFhaBBLvEI/FjpGRwcymEU1rcQrjIROrppsn73VbCdt3dpBfAfNKb/e5QPx3/Sa/9QaobjrSvyIuHJasp3xf/Io69zMXMIPpDP1KtsgJeZ4ZQthQeiYxZaZbF5E0Uqdd5Td+Xq0c7E1F
+X-Received: by 2002:a25:b904:0:b0:dc7:8c3a:4e42 with SMTP id
+ x4-20020a25b904000000b00dc78c3a4e42mr4580893ybj.30.1708093039976; Fri, 16 Feb
+ 2024 06:17:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com> <20240208124300.2740313-18-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240208124300.2740313-18-claudiu.beznea.uj@bp.renesas.com>
+References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com> <20240208124300.2740313-13-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240208124300.2740313-13-claudiu.beznea.uj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 16 Feb 2024 15:12:23 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWKrr6B62pe6ptibbPB733qGmL38A0eigXqqOOKN9HYXA@mail.gmail.com>
-Message-ID: <CAMuHMdWKrr6B62pe6ptibbPB733qGmL38A0eigXqqOOKN9HYXA@mail.gmail.com>
-Subject: Re: [PATCH 17/17] arm64: dts: renesas: r9a09g011: Update
- #power-domain-cells = <1>
+Date: Fri, 16 Feb 2024 15:17:08 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX3=KJ6=qOW__KxWisj7Fguwr=SdP7XGvFD+BKgZbRo9A@mail.gmail.com>
+Message-ID: <CAMuHMdX3=KJ6=qOW__KxWisj7Fguwr=SdP7XGvFD+BKgZbRo9A@mail.gmail.com>
+Subject: Re: [PATCH 12/17] arm64: dts: renesas: rzg3s-smarc-som: Guard the
+ ethernet IRQ GPIOs with proper flags
 To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, 
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -75,26 +75,33 @@ On Thu, Feb 8, 2024 at 1:44=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
 rote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> Update CPG #power-domain-cells =3D <1> and move all the IPs to be part of=
- the
-> always on power domain as the driver has been modified to support multipl=
-e
-> power domains.
+> Ethernet IRQ GPIOs are marked as gpio-hog. Thus, these GPIOs are requeste=
+d
+> at probe w/o considering if there are other peripherals that needs them.
+> The Ethernet IRQ GPIOs are shared w/ SDHI2. Selection b/w Ethernet and
+> SDHI2 is done through a hardware switch. To avoid scenarios where one wan=
+ts
+> to boot with SDHI2 support and some SDHI pins are not propertly configure=
+d
+> because of gpio-hog guard Ethernet IRQ GPIO with proper build flag.
 >
+> Fixes: 932ff0c802c6 ("arm64: dts: renesas: rzg3s-smarc-som: Enable the Et=
+hernet interfaces")
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Thanks for your patch!
+Thanks for your patch! (which was well-hidden between non-fixes ;-)
 
-As RZ/V2M uses the Internal Power Domain Controller (PMC), which
-is not yet supported by the driver, I'd rather defer this until all
-domains are handled by the driver.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.9.
+
+As Ethernet is enabled by default, I think there is no need to fast-track
+this for v6.8.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
-
---
+--=20
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
 .org
 
