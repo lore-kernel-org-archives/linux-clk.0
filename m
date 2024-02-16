@@ -1,91 +1,90 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD9477F19;
-	Fri, 16 Feb 2024 12:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68451292F2;
+	Fri, 16 Feb 2024 13:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708087701; cv=none; b=BRT3XEdcgrjH03os8Jv2FB4l96b99hO8InGkfHsciE1CraZB67Ea9ErUeg52xxkkwePZ5Dh54FPnNwPOVOc032L2QlVcIml2kszx15LZdpGfvifn7b/tyCJstSZBV04A1vjYfCmktk18xG51Idql7+P+8gg6wJHpZ5sDncLvBY0=
+	t=1708089077; cv=none; b=roFGJ1mYgTMfFD1GdGxVr5WhtZx+ZdTWs0EO63wpZXh8ssw3JX2LWjLAYFV1nBBhiRa1FqquRbhGatCLVcs1/Aq1JrIdJn5qwKphHql2BFnuR9y73LRDrzQuklCudRsAijWirY5Wvwmfe37WUxgk+CGO0s6kSEmPZOM/61CHukA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708087701; c=relaxed/simple;
-	bh=ltOuHVrVTKLOnrB7B0KVPfUJ1r7SOLDqXbub8Kj3btc=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=NqThNQyIzvUIo72IGXGwmjnv+VLKyzD7vxAzwGfRK5fAwkVHoKM7PRclUPQC2kXDVEKNqrsFgBuxLf3MD/3lS8p9loqPZ3xp305SScjeAcdPgg5AQ/adst8bnPG7RC0Cu0rhQjcAy6IlYc3s6XFZzrPI4d5R8HvNsLZIVNHLXjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from hamburger.collabora.co.uk (hamburger.collabora.co.uk [IPv6:2a01:4f8:1c1b:c794::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id 4636B3780626;
-	Fri, 16 Feb 2024 12:48:10 +0000 (UTC)
-From: "Shreeya Patel" <shreeya.patel@collabora.com>
-In-Reply-To: <237e690a-2f49-4046-b054-3a878eed6748@linaro.org>
+	s=arc-20240116; t=1708089077; c=relaxed/simple;
+	bh=LAAp7Osd1gjjfHEdbUnOHNw1THfhBG7mbln6+EHSQYY=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=KJ71wT0r/ifIhU0xikXgI6WeS1FN3ySwJMEx1KuR0h9/Zx0/CaXdE6boODCdSNg+np+JvG+NevMuGgebm78Sx1zV4iV3jlMDnXFQwveytYqIL0R/WpJhMIGtSMdZaq5YiMQNbxeAlH9t4m2U2oSPL6MDtWZkiCzmyfm4CMKRDTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2lqtOjv; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2lqtOjv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28851C433C7;
+	Fri, 16 Feb 2024 13:11:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708089077;
+	bh=LAAp7Osd1gjjfHEdbUnOHNw1THfhBG7mbln6+EHSQYY=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=W2lqtOjviTGvuy/SZQ8Hmi2zmEN+9d9HUPTHVi/gpwu6V5xCnhidnMyPLetzivGNr
+	 v0TGRrS0sDEaO63FPIDu8Q465eTQUO7rs0LQtrMyI2IhgAsS1kO0AFfGVZd6kEpRHx
+	 epSnv4yTzkX19f67WTal7EBX0VoH9qcz5Kw3e38YLnl8p6+FxbWVQFGV5g9GAJJ+sj
+	 PUo6oV9RYlBvqcDTpXlAS6TcxxXDe7YUThpcDxJ7tU0nf7EldwnAW8eQU3XVgBFdOd
+	 oyLvaVQD8fXFzHBYfqK0PZ8JeDerRCjk+rN2hCb7nCkmJXFfc9rfHHvaI8fSaXGqpI
+	 q32WJPuBnwlxQ==
+Date: Fri, 16 Feb 2024 07:11:16 -0600
 Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240216094922.257674-1-shreeya.patel@collabora.com>
- <20240216094922.257674-2-shreeya.patel@collabora.com> <237e690a-2f49-4046-b054-3a878eed6748@linaro.org>
-Date: Fri, 16 Feb 2024 12:48:10 +0000
-Cc: heiko@sntech.de, mchehab@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com, dmitry.osipenko@collabora.com, sebastian.reichel@collabora.com, shawn.wen@rock-chips.com, kernel@collabora.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-dt@vger.kernel.org, linux-arm@lists.infradead.org
-To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <30d2-65cf5980-3-2ec9f500@242931553>
-Subject: =?utf-8?q?Re=3A?= [PATCH 1/4] =?utf-8?q?clk=3A?==?utf-8?q?_rockchip=3A?=
- =?utf-8?q?_rst-rk3588=3A?= Add BIU reset
-User-Agent: SOGoMail 5.9.1
-Content-Transfer-Encoding: quoted-printable
+From: Rob Herring <robh@kernel.org>
+To: Yang Xiwen <forbidden405@outlook.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ David Yang <mmyangfl@gmail.com>, Rob Herring <robh+dt@kernel.org>, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+In-Reply-To: <20240216-clk-mv200-v1-4-a29ace29e636@outlook.com>
+References: <20240216-clk-mv200-v1-0-a29ace29e636@outlook.com>
+ <20240216-clk-mv200-v1-4-a29ace29e636@outlook.com>
+Message-Id: <170808907492.2771271.5272601820598116325.robh@kernel.org>
+Subject: Re: [PATCH RFC 4/4] dt-binding: clock:
+ hisilicon,clock-reset-controller: add Hi3798MV200 SoC support
 
-On Friday, February 16, 2024 15:33 IST, Krzysztof Kozlowski <krzysztof.=
-kozlowski@linaro.org> wrote:
 
-> On 16/02/2024 10:49, Shreeya Patel wrote:
-> > Export hdmirx=5Fbiu soft reset id which is required by the hdmirx c=
-ontroller.
-> >=20
-> > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> > ---
-> >  drivers/clk/rockchip/rst-rk3588.c               | 1 +
-> >  include/dt-bindings/reset/rockchip,rk3588-cru.h | 2 ++
->=20
-> Please run scripts/checkpatch.pl and fix reported warnings. Some
-> warnings can be ignored, but the code here looks like it needs a fix.
-> Feel free to get in touch if the warning is not clear.
->=20
-> Please do internal review. The internal Collabora review would tell y=
-ou:
-> YOU MUST run checkpatch. Then you see errors, so why do you send patc=
-h
-> with errors to the mailing list?
->=20
+On Fri, 16 Feb 2024 19:37:54 +0800, Yang Xiwen wrote:
+> This SoC is similar to Hi3798CV200.
+> 
+> Also document the specific DLL regs and add an example for it.
+> 
+> Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
+> ---
+>  .../clock/hisilicon,clock-reset-generator.yaml     | 36 ++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
 
-I am sorry but what errors are you talking about?
-I don't see any errors reported by checkpatch :-
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-shreeya@shreeya:~/collabora/rd/rockchip/torvalds$ ./scripts/checkpatch.=
-pl hdmirx/0001-clk-rockchip-rst-rk3588-Add-BIU-reset.patch
-WARNING: DT binding docs and includes should be a separate patch. See: =
-Documentation/devicetree/bindings/submitting-patches.rst
+yamllint warnings/errors:
 
-total: 0 errors, 1 warnings, 13 lines checked
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/hisilicon,clock-reset-generator.example.dtb: /example-2/clock-reset-controller@8a22000/sap-dll@39c: failed to match any schema with compatible: ['hisilicon,sdmmc-sap-dll', 'syscon', 'simple-mfd']
+Documentation/devicetree/bindings/clock/hisilicon,clock-reset-generator.example.dtb: /example-2/clock-reset-controller@8a22000/sap-dll@3a4: failed to match any schema with compatible: ['hisilicon,sdmmc-sap-dll', 'syscon', 'simple-mfd']
+Documentation/devicetree/bindings/clock/hisilicon,clock-reset-generator.example.dtb: /example-2/clock-reset-controller@8a22000/sap-dll@3ac: failed to match any schema with compatible: ['hisilicon,sdmmc-sap-dll', 'syscon', 'simple-mfd']
 
-NOTE: For some of the reported defects, checkpatch may be able to
-      mechanically convert to the typical style using --fix or --fix-in=
-place.
+doc reference errors (make refcheckdocs):
 
-hdmirx-v1-1602/0001-clk-rockchip-rst-rk3588-Add-BIU-reset.patch has sty=
-le problems, please review.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240216-clk-mv200-v1-4-a29ace29e636@outlook.com
 
-I see the above warning but that looks like a false positive to me.
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-> Best regards,
-> Krzysztof
->=20
-> =5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=
-=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F
-> Kernel mailing list -- kernel@mailman.collabora.com
-> To unsubscribe send an email to kernel-leave@mailman.collabora.com
-> This list is managed by https://mailman.collabora.com
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
