@@ -1,59 +1,59 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FE11B7E5
-	for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 08:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F901B94C
+	for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 08:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708070989; cv=none; b=gb4mFhskHRBoPHkul3sVELqq/OTcKt0Dfplgz1DHtz3Q5vq4D63l/IiDucKws62Ll+cZjuDSLcDjXDkVEMrvjw9dUG6vikA7MQkU7dDVaX3jYvt8BkJGWVr1tZMJQd+B4sxTgRA4pWSQS5mkxZ2gmACXkmJQ/uoZpFdVAchG5A0=
+	t=1708071093; cv=none; b=Rw6nC1ciLROxfiNB/8RP/hAyMKqssAZKdtcT8QXTpJwLCLk/0SWOGGK408vqkjKdD8wbQVJhhG/ECTNdnhGy4lY3HtOIUgaosUIC08jm3Vk0BqjtARjZjFD2E2GBcvvsdWzjW1o5yHKJDMydd01jQqqYGzkdGuP/pVUVuE/YZMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708070989; c=relaxed/simple;
-	bh=Bi/WNp7PeLyqEslHVaOjoC4gFVwkPAgURekl3x1Bwr8=;
+	s=arc-20240116; t=1708071093; c=relaxed/simple;
+	bh=KDZmKU36NUtXZcL9fJXHV2Vh6u143fv1XXUJsWQbws4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M7LWk2HBV6wiI4J81z1FVA9hkp55wTfTB6e+ZRm3KO2th4AWIc60tMwu+N3BXUCEP73qAtr1i4kHnC5j/T4w0nqN4oHp4bSrYt0ategnXgMq1Ywr1S2/bv8Heifo+qQ+3+UziJoSPgogRn6k3TTsXpPPaxWTrmYuAxK6xKPT04E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VUTlP9Wl; arc=none smtp.client-ip=209.85.218.41
+	 In-Reply-To:Content-Type; b=cQ08WOpVxrFBIu5naDucFY+7SALScAV3fFowD1t0cjgVbPVCK37+lT6bgnbx0lJu7ttsmRvpyrar5WdBNGwdBiXWm4SOKGCcMTfIbrHduQfPIMQebLsupQBro8EdTuF7fz59BRLMYy6EAn1ksRkZZ70LEbCA8Lg/9OrD4VD0F9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JOdHpLou; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VUTlP9Wl"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a3d002bc6f7so162288566b.3
-        for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 00:09:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JOdHpLou"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a3de25186fbso32431366b.0
+        for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 00:11:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708070986; x=1708675786; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708071090; x=1708675890; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=WwCRdKBm5GucB6Cv2dQydvaWuqeC0A8WDAYf7dCeUrY=;
-        b=VUTlP9WlvsIN0jANsI2mKTn9yPtKztdzBZ79t4WQqkUN+kQFRhoBdnP4nL7b38YrYQ
-         NYaLVtMBpzzE8GtBudbKSBXKrTkvpMcF5+wdNLEaaIn3jsAT5ct2qQwlXIhuE31/t9H7
-         1954EJc5NeMlBkEtzBragP/fxGiUxYpdOgA0i78jBwaIASrjuKPaw0B+xiSmr3kez+97
-         QO7iAC27z5EfFSjzJRxHyzDjVePXGoQGAXJHUNJvNyKIi6c93ojQr6Wk3VKU7H6NmSi6
-         ZCVZbpCo+oDXYCwbPs7/28n9Pv8SCKV+/jHKyzeGQO6qTIyV6ZoPFRF2MK7RzLY1SjD8
-         B+Lw==
+        bh=10xWFeEadbzLEQb32PI22tz1cUwySXyLGYGfrCyh77o=;
+        b=JOdHpLouhmE7bfMuq0tdbzW9lH/RiCqwYZCif7CTAlda94dnnNkk3LUf1dgk+vKxEx
+         fkmwiWH981nhgB7lWwwqWhOFj7jVSvAkg8VIiqWZ277YpQHwMz+Gdp/csn94vUYcfBq/
+         1h7EJ+hg2u7AZZeGPuiyp9YbJSv0cp96DWuVt5hrvlQ/Ix323RhFyGCmdAm0DWxmYMSj
+         OeFJSZMoLTJE7XAhBL8UaABrzk7g+Rg3VGe9alA2yhyJJ6oPXfLxtko7Ka/M6conqPZj
+         qviaDsfRlpwGCGc85oMw8jsS0jfWRTVSznbA5J+/IJJ4+2egyjy4B3YJuD1+Sa93Jq6k
+         iIfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708070986; x=1708675786;
+        d=1e100.net; s=20230601; t=1708071090; x=1708675890;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwCRdKBm5GucB6Cv2dQydvaWuqeC0A8WDAYf7dCeUrY=;
-        b=mVTJLUwZxVxn7TXOzLnt6fGkSzoO4mMxTKKT6Rm2xzkqa90c4MB7NL909AdkgSbr0A
-         VUGRsTbYfcqZLMqJifMnlgf31hV2ZhykCEBDwAEowRuW4waIfB5kJFfwruh2vcJOYYVI
-         NDXMlDo1XUljbNXNuhCord777qKdUH1WyUm0Oywf7J9CWNo7TULD1t48pdPgWmZe9ewG
-         ceW6c67+GPGhOZiQPdgTvzFzfIsZQJZV0OXFd9+YyhuT2CEli7rDYAbFUP7m8cdCRihY
-         xeyXZ65lO8zK7UVSDw0/wCODL8M6+1hUXRqNpoSyeJk/M/58F+J7pOUfzUeYIM5Fibh8
-         36dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbkGXW6O3T/COY0SSIHRfvJuJXxMGVQvK30zvNZMNSypHKTEXabihzMo3FCUTjfPtgoFKZjImFA086jcZeSmjXDxd6X5TpYKnz
-X-Gm-Message-State: AOJu0Yy6YDVhi/aXqbILtg7bE8aoHRVHe1BgTdD2pO2B0dLjwlsMEfbN
-	BhSPv8UGWB6Y3ZGzenMXKiC21rxIpZGWYODrB0z/iaDY6eyE8fOnFuY1pE2O554=
-X-Google-Smtp-Source: AGHT+IFz2bvWcXxlIMraJJQvlsrXOxXIyT8bn5rY+xsBdXgA0UtwBANanCurUKYMaAsHX3rEOV7Pmw==
-X-Received: by 2002:a17:906:a897:b0:a3d:e54d:7d97 with SMTP id ha23-20020a170906a89700b00a3de54d7d97mr454036ejb.75.1708070986061;
-        Fri, 16 Feb 2024 00:09:46 -0800 (PST)
+        bh=10xWFeEadbzLEQb32PI22tz1cUwySXyLGYGfrCyh77o=;
+        b=ulmw94NfUyoH5fCrya8+PZwQgedJ9e3Oug0HaJxod1u56ErWqdXh6fr4EjRBVUWCSF
+         WIAHrQ6q9Ce7Z0mue2p4wrnOedjwlHea1IjlVKVTm2T52sDOH5r6TicgPWCfAleTvgrf
+         KAoN4jT5AuQUrs26SLezwuv6ncC2ffbs5FSrayZ3DFW5FP0Ft+jq1A5VeqSIUdrezQb4
+         iDMmPGKfRPJ8xx7wwEF8QdAKpFGn/0s5xBQuos7OpbTuiNxvAw0e8CgIuyjEvB26+wQi
+         mdxzkRcjKZqkf/DmIFzdQNuZ1WgHbxJSusFVLhZOWiurVBZJX7KGS9vPvseE8aMYHCIk
+         5v+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWk7//ANkrbg3R7+xMLCblIGa7mM43KNfn5mpmQIGd3IoNLT7d7w+yLOyb1Jb6KQctCYUnIZi39fQnPmtnA/NRowvhy2Rw2jEwz
+X-Gm-Message-State: AOJu0Yz6+dkCF+tOT8DB27jkVRnBonu0e4ZGinwJAsqz2+MI3nb4TxP0
+	Kbl25rcC6kkg1hEvx77GGDldgS7muFXR7/aOPOlDiCHurLzdZm0+QSPfnq33oW8=
+X-Google-Smtp-Source: AGHT+IGe5UTf79Tnrcj3yEFlHjoP3ukJ1AS7IbgKPHyTFMeLuDp7EouHJZ91pfVFNVbRkt5KeqjgUw==
+X-Received: by 2002:a17:906:5594:b0:a3d:37a4:a7e6 with SMTP id y20-20020a170906559400b00a3d37a4a7e6mr2610153ejp.21.1708071090298;
+        Fri, 16 Feb 2024 00:11:30 -0800 (PST)
 Received: from [192.168.0.22] ([78.10.207.130])
-        by smtp.gmail.com with ESMTPSA id s15-20020a17090699cf00b00a3bd8a34b1bsm1319130ejn.164.2024.02.16.00.09.44
+        by smtp.gmail.com with ESMTPSA id vk5-20020a170907cbc500b00a3d60daaa72sm1318662ejc.41.2024.02.16.00.11.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Feb 2024 00:09:45 -0800 (PST)
-Message-ID: <3600c556-ccb3-40a8-9c53-a718a97468ae@linaro.org>
-Date: Fri, 16 Feb 2024 09:09:44 +0100
+        Fri, 16 Feb 2024 00:11:29 -0800 (PST)
+Message-ID: <8f37e6c5-0834-442a-a974-6f9bae82f1cf@linaro.org>
+Date: Fri, 16 Feb 2024 09:11:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,7 +61,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/33] fsi: aspeed: Add AST2700 support
+Subject: Re: [PATCH 26/33] ARM: dts: aspeed: FSI interrupt support
 Content-Language: en-US
 To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
 Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
@@ -70,7 +70,7 @@ Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
  sboyd@kernel.org, mturquette@baylibre.com, robh@kernel.org,
  krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
 References: <20240215220759.976998-1-eajames@linux.ibm.com>
- <20240215220759.976998-11-eajames@linux.ibm.com>
+ <20240215220759.976998-27-eajames@linux.ibm.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -116,36 +116,20 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240215220759.976998-11-eajames@linux.ibm.com>
+In-Reply-To: <20240215220759.976998-27-eajames@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 15/02/2024 23:07, Eddie James wrote:
-> AST2700 requires a few bits set differently in the OPB retry
-> counter register, so add some match data and set the register
-> accordingly.
+> Enable FSI interrupt controllers for AST2600 and P10BMC hub master.
 > 
 > Signed-off-by: Eddie James <eajames@linux.ibm.com>
 > ---
->  drivers/fsi/fsi-master-aspeed.c | 28 +++++++++++++++++++++++++---
+>  arch/arm/boot/dts/aspeed/aspeed-g6.dtsi        | 4 ++++
+>  arch/arm/boot/dts/aspeed/ibm-power10-dual.dtsi | 2 ++
+>  2 files changed, 6 insertions(+)
 
-
-> +
->  static const struct of_device_id fsi_master_aspeed_match[] = {
-> -	{ .compatible = "aspeed,ast2600-fsi-master" },
-> +	{
-> +		.compatible = "aspeed,ast2600-fsi-master",
-> +		.data = &fsi_master_ast2600_data,
-> +	},
-> +	{
-> +		.compatible = "aspeed,ast2700-fsi-master",
-
-Undocumented. Really, you do not have checkpatch in IBM?
-
-Please run scripts/checkpatch.pl and fix reported warnings. Some
-warnings can be ignored, but the code here looks like it needs a fix.
-Feel free to get in touch if the warning is not clear.
-
+Don't mix DTS with driver code.
 
 Best regards,
 Krzysztof
