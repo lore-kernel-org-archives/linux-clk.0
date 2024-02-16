@@ -1,130 +1,119 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A28135A73;
-	Fri, 16 Feb 2024 19:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FA4135A5B
+	for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 19:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708111127; cv=none; b=SpaayeapfYX+pZICbO/pVXZ5YEG31sz8bnfCFo9m0n4xg30xp1riNvKebyJXzk9gfzxCRara75PK6xjuZ/r7H67gIKKwIO53DUCr91kjwtBXBN/NPHac55O1p9KpWN3p9ivVCrJWuRpIYMqmYT7vYt6IKwYdzBWVZDNNsTeXS84=
+	t=1708111800; cv=none; b=Zm0D35HLxlV7aaodn8FDUaWhcOgOY/JWm9BGs2fwCgE2y9joRfj4sWlKR5rVD/VSV0gThRMw3tRVRX9e/EJeNDeK9bKb7YmJ5XVfI4w8t5mJmJdHWmbqHw95stsUputNQGaw1yS56QSqO+RIXP7pmoBtqFSggst+dRJ7FXdj/t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708111127; c=relaxed/simple;
-	bh=2Jhhh9ICggAF5bLuB5D2MLLnslAhKlyRqkv8sny2Ytg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UR2zWfXXJ4yqAJon/DqROw/UmyEDb4UYCbeyx/ySaCeatfJ7I0tZA2zBW/fZKRrb15e1f+FhUT8JceA3hCXAZq93U6yNo4uKnCKezQFEqCXAVPtGF091GQuC2kMzppjqjSuLd6eAcdEqVfsDECy+pg7fQmSNjHgHbiX7E+jLELc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gAqdyzcJ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1708111800; c=relaxed/simple;
+	bh=5CLkz15pA3C0PAyuM4OD/Khdbnbhn8Jnj6R4gv2p/Lg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=h7GIXYucew4MbSyK3cKb3ynyW4jq0VqdGB6c8kqmoMh3Z6Owcwk9yLWYLR9er7BEcV+D5h+hLQkZZN1T4StNJYU8MqMUxKBRnVZKDPSKZAPsFygTUWgcjk88ma0ef8y/ATd7i5NFkDC7NjXsJOIJTR2u1HXHtOpPRAU9cYHXT1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=V1iJodVa; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gAqdyzcJ"
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41GIvF22022224;
-	Fri, 16 Feb 2024 19:18:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=wQ7cNoLiknZDmwS2Em7PNRkOjFwYxd3dHjovbtNrxUQ=;
- b=gAqdyzcJY9lqgK5tNxEFFWSf7lLIcYj1ZKTPdvdYdbUE85elYvPEB3rIjvTxPsm6FGgb
- vY1RU23R8jfPhAj9sufnA60seoix47kRDitmMp92sk0Bf+/vTGlRhF0U8vys3jS+rGGt
- e7rGfNwDIk2jY/gaj1uT8KiymPI0rP/9DYbSJCIxe7B5ttQiLx0zZkTeulJSd0L1c2MW
- 2GmfrdSclQbnLexqzrW0ufHvunX/PY56uBa96yGS+sXNJMc+VTNRj3StcAad3EmHRSQA
- Ka3vdJbHu72mCrFv9lzMw3h2ho+7TNSymhXGp2rjN7q1+E2FtoC7WUSlurOyPTu9dQvU UA== 
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wadecgedg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Feb 2024 19:18:34 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41GJFltf016203;
-	Fri, 16 Feb 2024 19:18:33 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3w6myn56v2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Feb 2024 19:18:33 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41GJIUka18678328
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 16 Feb 2024 19:18:33 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8EB0A58061;
-	Fri, 16 Feb 2024 19:18:30 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4215158055;
-	Fri, 16 Feb 2024 19:18:30 +0000 (GMT)
-Received: from [9.61.14.18] (unknown [9.61.14.18])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 16 Feb 2024 19:18:30 +0000 (GMT)
-Message-ID: <18f09f37-8a95-4166-9a2c-5ab094589781@linux.ibm.com>
-Date: Fri, 16 Feb 2024 13:18:30 -0600
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="V1iJodVa"
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6e432beab47so515365a34.1
+        for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 11:29:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1708111798; x=1708716598; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cjtHHDVg1EP31BktP6Ck1iG9AHnmh+yzE4yzLtOxWPg=;
+        b=V1iJodVa54Vr8BAocvhUA5kxxu93qf5MjhnBZgy15x1EYltuXb03vhwAhtbCfVr3xL
+         V7msnCAEyj2aelZNqyllKjK9jhmmFwAcVEnulVfcOlMPpwhjVzK3SJeDJJRnT9Y2xKGx
+         rnt+LrJ3KXGZFuuwNSPJSzdeRCdLEJTWix7qGMdx42FCgWJt6fmQDa+z2R8iJwkyLQuA
+         +JGoySpshR1PpZR+7lvhewrtF+TL/DNFLwrkG1HhFoIsCTBl5idFk42qgqe/6+OMwUjL
+         +7o6YchxRB75kcH17F5xsN9du/ZjDojh90ktr7D1/2iJ8pxvc21zYdXT5oDa/YhhIv3B
+         2KQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708111798; x=1708716598;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cjtHHDVg1EP31BktP6Ck1iG9AHnmh+yzE4yzLtOxWPg=;
+        b=cf249Hohu7bhdorcVnfyWShC7emTreu4MqcnLEPUV0RfHr/v1M0mUiNn+oIIZn5UzA
+         0sON+op5gN9vxhX4+5gAbWXqKnzcKhYR8IlfY6iQthAYcS0pY+p0OfVlcMEemS87KV/F
+         xeS0PraljFF+Zyr6+vN3hVGuWAgBwOWw2G7tThnT5fFkCdZbejpsfnSIjdeF3CW/GBGZ
+         9WScpMWVGC+rzOj2F4vGR7KmySFcnNH3eUosQstV587NuLRyHRMk1wEvLE7dWY85gSiS
+         NKHA38xO9ziTRlNm/pHEoAX4GGqclBz663RhKQGxF11ppeAXpRE/gIBvDKs//CXE5XIW
+         Y0pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsue4PPpLhQnkfSg5qoGliTqkeUs35+/oFQP6aHbrRm9ZfCJ2Vel17EuA3Fuv7RS1dkhBY4d9o4aFrndSoYEEUS8GPZkCAfwPy
+X-Gm-Message-State: AOJu0YzzbPPXPcKGwn6ygjAzwGev1kh0oPkVJbI5mSW4M5xd0uiqLNY1
+	2LTItYGmNSWnVBMOgxFiYYWn0g5UL0upd1aIh4tpmn7ugOwmhKejzUCxj5yMCAg=
+X-Google-Smtp-Source: AGHT+IFEYuJ0J4q6Ri7W8LG928weSbYRDzhIjrV39IhvTbn+aiKejHqcf79FSbmpyPZyQyd4jTYPuQ==
+X-Received: by 2002:a05:6358:5389:b0:178:dac3:2b99 with SMTP id z9-20020a056358538900b00178dac32b99mr6283861rwe.1.1708111796945;
+        Fri, 16 Feb 2024 11:29:56 -0800 (PST)
+Received: from nicolas-tpx395.localdomain ([2606:6d00:11:3354::7a9])
+        by smtp.gmail.com with ESMTPSA id p6-20020ac84606000000b0042dc7edf2f4sm206963qtn.45.2024.02.16.11.29.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Feb 2024 11:29:56 -0800 (PST)
+Message-ID: <8d68a49a35799d1686d9b674ce4edfd91c68850b.camel@ndufresne.ca>
+Subject: Re: [PATCH 1/4] clk: rockchip: rst-rk3588: Add BIU reset
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Shreeya Patel
+	 <shreeya.patel@collabora.com>, heiko@sntech.de, mchehab@kernel.org, 
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	jose.abreu@synopsys.com, nelson.costa@synopsys.com, 
+	dmitry.osipenko@collabora.com, sebastian.reichel@collabora.com, 
+	shawn.wen@rock-chips.com
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-dt@vger.kernel.org, 
+	linux-arm@lists.infradead.org
+Date: Fri, 16 Feb 2024 14:29:55 -0500
+In-Reply-To: <237e690a-2f49-4046-b054-3a878eed6748@linaro.org>
+References: <20240216094922.257674-1-shreeya.patel@collabora.com>
+	 <20240216094922.257674-2-shreeya.patel@collabora.com>
+	 <237e690a-2f49-4046-b054-3a878eed6748@linaro.org>
+Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 (3.50.3-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/33] fsi: aspeed: Add AST2700 support
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-fsi@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        andi.shyti@kernel.org, alistair@popple.id.au, joel@jms.id.au,
-        jk@ozlabs.org, sboyd@kernel.org, mturquette@baylibre.com,
-        robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org
-References: <20240215220759.976998-1-eajames@linux.ibm.com>
- <20240215220759.976998-11-eajames@linux.ibm.com>
- <3600c556-ccb3-40a8-9c53-a718a97468ae@linaro.org>
-From: Eddie James <eajames@linux.ibm.com>
-In-Reply-To: <3600c556-ccb3-40a8-9c53-a718a97468ae@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: lN1N6RTLy6D58WBsPeYXE0nRw7yPH5_I
-X-Proofpoint-ORIG-GUID: lN1N6RTLy6D58WBsPeYXE0nRw7yPH5_I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-16_18,2024-02-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- phishscore=0 clxscore=1015 adultscore=0 impostorscore=0 mlxscore=0
- priorityscore=1501 mlxlogscore=999 malwarescore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2402160150
 
-
-On 2/16/24 02:09, Krzysztof Kozlowski wrote:
-> On 15/02/2024 23:07, Eddie James wrote:
->> AST2700 requires a few bits set differently in the OPB retry
->> counter register, so add some match data and set the register
->> accordingly.
->>
->> Signed-off-by: Eddie James <eajames@linux.ibm.com>
->> ---
->>   drivers/fsi/fsi-master-aspeed.c | 28 +++++++++++++++++++++++++---
->
->> +
->>   static const struct of_device_id fsi_master_aspeed_match[] = {
->> -	{ .compatible = "aspeed,ast2600-fsi-master" },
->> +	{
->> +		.compatible = "aspeed,ast2600-fsi-master",
->> +		.data = &fsi_master_ast2600_data,
->> +	},
->> +	{
->> +		.compatible = "aspeed,ast2700-fsi-master",
-> Undocumented. Really, you do not have checkpatch in IBM?
->
+Le vendredi 16 f=C3=A9vrier 2024 =C3=A0 11:03 +0100, Krzysztof Kozlowski a =
+=C3=A9crit=C2=A0:
+> On 16/02/2024 10:49, Shreeya Patel wrote:
+> > Export hdmirx_biu soft reset id which is required by the hdmirx control=
+ler.
+> >=20
+> > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> > ---
+> >  drivers/clk/rockchip/rst-rk3588.c               | 1 +
+> >  include/dt-bindings/reset/rockchip,rk3588-cru.h | 2 ++
+>=20
 > Please run scripts/checkpatch.pl and fix reported warnings. Some
 > warnings can be ignored, but the code here looks like it needs a fix.
 > Feel free to get in touch if the warning is not clear.
+>=20
+> Please do internal review. The internal Collabora review would tell you:
+> YOU MUST run checkpatch. Then you see errors, so why do you send patch
+> with errors to the mailing list?
 
+Mistakes helps you learn. Meanwhile, I've triggered our temporary CI which
+hopefully will catch this and some more for a better v2. Shreeya, I don't t=
+hink
+this includes any DT automated checks, this is on you.
 
-I ran checkpatch. There are several FSI drivers with undocumented 
-compatible strings, and the Aspeed master documentation isn't in yaml 
-format, so that would require an update too. Therefore I ignored the 
-warning - my mistake. I will document it in v2.
+https://gitlab.collabora.com/linux/build-scripts/-/pipelines/85935
 
-
->
->
+>=20
 > Best regards,
 > Krzysztof
->
+>=20
+>=20
+
