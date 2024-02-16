@@ -1,59 +1,59 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC1E78695
-	for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 13:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65802129A61
+	for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 13:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708089245; cv=none; b=RjP0xKEw3UmUm1sEDtY2XXAzf1Redx0STMRljQAs3DFtEbjHlnkxtHGZoXniSN2LIsaDGpjGhg+InJlXGuOBVLv26Cbm5bwS8KZH2X9X7O2g2iPJw9biCAEOFH+H/1+Jkd0f/Cc4ykRUisCbgpdCIHCrClV8KetWL5dZoB8WZP8=
+	t=1708089266; cv=none; b=N536XBRZuAeP4OIhTn805fOs/bmHnp+8yVCzUYFt3QBqoxjuPNvVL/52AvPmsVvBS3PBEW11NgEGSdmAjg7EmWEIR7W/r05gBX5GsMlcfmKd4DD5NF71LxO1dIg7CG+kVBnvykz9jv+Sxt0WBVN8QM3HXYv6qj2vOxujGxL4t6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708089245; c=relaxed/simple;
-	bh=nM9GaWKfFAoq+/qqTqmoUGUpnBAspUurESVzdl8uIJA=;
+	s=arc-20240116; t=1708089266; c=relaxed/simple;
+	bh=WCFV0eSzOLt6nbhwEFQzXSyzChaGD//MIFoBbZtPqRI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Eiz5KLWXEPO5y26r4gi/dqXeU56NVLGlFQgsiTQT6V0JL1T3fGi0oph37NjO3gkojST1gV2XhwDj/6G9oiUgZVLroqYHaE5V2qlYdlad3x0WNg/vIZ2Jj0143lBz62HHzYDxTn6FfCt2tdxwQavVgZy3F+PseEs/YfMkLNVvOHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T1HYX+iC; arc=none smtp.client-ip=209.85.218.50
+	 In-Reply-To:Content-Type; b=SHYgaldY+2+JX25lnl4AxYWj4y48Rn2DIaIPu6bpP+S805ZqnGeU2zldA16NaWVjNnO853kTazO6Z4FW+pMu3GEa5977DC6IQ3iUNTeKVljmKdoYcv6A5zbJHBqKTq2APZ3L1vZc0tkt9v6iTZTmGUPWFAcFn/Sfk2gNV5dOG0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IQFERp+8; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T1HYX+iC"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a3ddc13bbb3so108529866b.0
-        for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 05:14:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IQFERp+8"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a3cfacf0eadso230121366b.2
+        for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 05:14:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708089241; x=1708694041; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708089262; x=1708694062; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EbSwL6nsTbc1tx6YWr9QAKsxz4e0BHcI/QIK8egHm0k=;
-        b=T1HYX+iCtloa46Igr34lbcbUv0drNzfeqWaAkZdVia8xMlEP3enQOFay5tCPggcSg6
-         ymOTuwUDlPMKE//PIt6bhDscjEYPuFi/wFdUo6UJi8ACQtAceRA7AioN504fgOt/PRES
-         JcqTIF4tuokvzcnxsHH8Yl4vzEynFVBs9J9sf+bJK8gunT6KVUrHIyk+rLmnXkXV8Kjz
-         3ib4ixeZsszhRJiBTJ+AALPHLbFvPp60x9SmsQWSC5RBCIWa8CccJjOW0iZYFj9i6QeU
-         0tVVLao50spda7olpgEzpkzYCJ52kJhDiQzeDrLvetGMNmPbYMZs39CQXFm1MCC3UAYr
-         6GpQ==
+        bh=j22lIKEVAgMLyOGkczWpjtPNmMRzlqW2cemi+GZEHgI=;
+        b=IQFERp+8tCFO80sdxbrsdwdQXo/dJk/Wzw+2atXROhyhYVZGpayPiNQWf4QO1nw+Kf
+         sKpyOzNJruv+tDHvahIoA6VilVPJ/cytV1mQnMYYtHt78GDM80uo7LpgVUETu5AWxde1
+         7QnGE18zYJh9v0y/h+jB6N2Rt4+LV/zWIFLPZajx9/91SqGkSHhyqZNaq10p4X6H5mmy
+         /+5unn8nRaBEw7+qxExYiGugNApVnacawxM/PyabiPsZhuLsJO+GGHwlPhyLzXcW8ns7
+         O71XFt2o/PzoIrtpEaz4kCRnt/EgUdqZTaD+CijqWNZckLmtR7DDvPetBk2fN0ksoaOR
+         aSHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708089241; x=1708694041;
+        d=1e100.net; s=20230601; t=1708089262; x=1708694062;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EbSwL6nsTbc1tx6YWr9QAKsxz4e0BHcI/QIK8egHm0k=;
-        b=kP6FJgmsHLoCHOR/nj/DaeNi7/hXv06DRaIWU/Qwc+Ow2g+DvNeB5gw7+50CdJkkj9
-         MgRfbWDq3Y9CxEhxVp3FK2kq1bgGRdPmUFDSOKeWvF/CwaYem0PHwx2BnQMOjJDEU7Te
-         Hpj46bBvjJ3hnW81FAMXKts6FsuoRhoIYbGcotJARrlHJgT6BfZMxY0KuHpYVnAPpO7e
-         IQET5XrrgRDOHZLcS9OlPdsNQXCnj7JzfJ+MlPfuiwITelvs3GhZ0179dapdmlrdjbdD
-         FfgZBZ7VesODJ/9LjjcjlTZXFX7/gX7qSem0FfBkrCRe5devTZ7+7wMBSkkWy6nPHHpD
-         6F4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVsPYUWIERq6dyQsxhqEaR6SJmvmN+5XauwB5rfNPkUyEupBwF/zhxCCk75/9U5goN0W+jKoIk8ho5W5ewS7LasKaHxIKyZ7sw6
-X-Gm-Message-State: AOJu0YyhrqnjEKM1JxuB3YkG5bnA+ZX484mzgmf3QmX9UeADLANyc7C9
-	IdR7Z+DR0HVG5y10BaxodOCvPEfyzq7Ug4S4uiKxALbwahfWSRRgdasw39T0x3U=
-X-Google-Smtp-Source: AGHT+IEtxyXtiQBQSFUysXLDsk7ys/qDhXp0LyOf8hsqFZZ1LHheaM1oRROnTJZ7orzww/V6ue2T1g==
-X-Received: by 2002:a17:906:c10f:b0:a38:107a:94e9 with SMTP id do15-20020a170906c10f00b00a38107a94e9mr8542900ejc.2.1708089240874;
-        Fri, 16 Feb 2024 05:14:00 -0800 (PST)
+        bh=j22lIKEVAgMLyOGkczWpjtPNmMRzlqW2cemi+GZEHgI=;
+        b=CyHGlguiTi2YKHj/UlNJIdoxvAyvvz0esUK0xunCU7FI7AnkBcDC7rErEIk7TlRmdK
+         5CDDrrr9krpVZA8iA73h9/UFpXrSFT8bg1bZJjwgFwQ6AAH/RBjUM3oDZXU0J5KgOi0Y
+         SE66TIMivhTq63bE2TZuccfUsM4J87Gq+X/oUELDA6yhiZup8gOE7KgirbpTShsAQ60B
+         KzBG7BQqoad4aBYkiaHewutEIwfaACnJ/4v/oJpPLf74qkyjkGDhtkvYNM0+falyaCaW
+         95p92kyGHuf6Rovjuw6rAKZzJSIjFO2cBIfkdKNUrIktw1ePtgUiC9ATqlqbbmk31GFG
+         Umjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVptp9byPcgMY8sQ92CE6ZhxeQRsN6uUcxg0pgzGiSnzbaW/ISemvkvfQ9q+z35r4r/8SPvYen5gxRFgCvpdAmjcGgoSd/qlBg
+X-Gm-Message-State: AOJu0YwAbRqSlFbzAxudZPkMFextHXw0wYkbvOd06xqlggC4eRrIakhP
+	NhyHJLNkdheao7pJy5sBIqO0Dxrg/x3g2+5R+wjBS8TPp2lPU6hA9oYYFgbfp8Q=
+X-Google-Smtp-Source: AGHT+IFh7dyug9qbNy3LjbZgxEiOzZPj3putNdmsYOprTY724BkprjjYvlxuyOeTlcP3ZzoNXZe+og==
+X-Received: by 2002:a17:906:79d8:b0:a3d:1df3:9d35 with SMTP id m24-20020a17090679d800b00a3d1df39d35mr3091712ejo.23.1708089262643;
+        Fri, 16 Feb 2024 05:14:22 -0800 (PST)
 Received: from [192.168.192.135] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id i26-20020a170906251a00b00a3ce36ce4f9sm1534655ejb.83.2024.02.16.05.13.59
+        by smtp.gmail.com with ESMTPSA id i26-20020a170906251a00b00a3ce36ce4f9sm1534655ejb.83.2024.02.16.05.14.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Feb 2024 05:14:00 -0800 (PST)
-Message-ID: <153daeb9-5a53-443c-a3eb-c2282c8c6a41@linaro.org>
-Date: Fri, 16 Feb 2024 14:13:58 +0100
+        Fri, 16 Feb 2024 05:14:22 -0800 (PST)
+Message-ID: <928f2d8d-d079-4f82-85db-741646268094@linaro.org>
+Date: Fri, 16 Feb 2024 14:14:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,8 +61,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] clk: qcom: drop the SC7180 Modem subsystem clock
- driver
+Subject: Re: [PATCH 2/2] dt-bindings: clk: qcom: drop the SC7180 Modem
+ subsystem clock controller
 Content-Language: en-US
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
  Bjorn Andersson <andersson@kernel.org>,
@@ -71,10 +71,9 @@ To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
  Conor Dooley <conor+dt@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, Sibi Sankar <quic_sibis@quicinc.com>,
- Nikita Travkin <nikita@trvn.ru>
+ devicetree@vger.kernel.org, Sibi Sankar <quic_sibis@quicinc.com>
 References: <20240216-drop-sc7180-mss-v1-0-0a8dc8d71c0c@linaro.org>
- <20240216-drop-sc7180-mss-v1-1-0a8dc8d71c0c@linaro.org>
+ <20240216-drop-sc7180-mss-v1-2-0a8dc8d71c0c@linaro.org>
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -111,27 +110,22 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240216-drop-sc7180-mss-v1-1-0a8dc8d71c0c@linaro.org>
+In-Reply-To: <20240216-drop-sc7180-mss-v1-2-0a8dc8d71c0c@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 16.02.2024 12:14, Dmitry Baryshkov wrote:
-> This driver has never been used in the DT files merged to the kernel.
-> According to Sibi, it only worked on the pre-production devices. For the
-> production devices this functionality has been moved to the firmware.
+> This clock controller has never been used in the DT files merged to the
+> kernel. According to Sibi, it only worked on the pre-production devices.
+> For the production devices this functionality has been moved to the
+> firmware.
 > 
-> Drop the driver to remove possible confusion.
+> Drop the bindings now after dropping the driver itself.
 > 
 > Cc: Sibi Sankar <quic_sibis@quicinc.com>
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
 
-Thanks for spotting this..
-
-It'd be worth to keep in mind this existed (+CC Nikita), as it may be
-useful for people tinkering with replacing TZ..
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+I'd say it's fine to keep the bindings (for hw)
 
 Konrad
-
