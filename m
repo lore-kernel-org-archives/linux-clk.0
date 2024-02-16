@@ -1,112 +1,206 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EF812AAD9;
-	Fri, 16 Feb 2024 14:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FFD12F590;
+	Fri, 16 Feb 2024 15:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708093043; cv=none; b=Bte5FLNe0WjHV0sKXnP5AKZmsZffr1oeLNjREMRX1F4NGZZkPIRTfU2abhnuH5eTg0isLlJOw8ii5rniG/pkZOKKgY+CC2kXMB2227ERHQWCaFn8/uFu9/qC1G5UI6pCAqcZJg6/h/b24eNrT3tjSNoWdjGsD0gG/H0yTksAVDM=
+	t=1708097006; cv=none; b=ls34K3/w3/znfcRno5yy7GGuifyGBVqeK3KP+/yIXyU+IRnnEP2sE4GTxIGjjOIizjcwQxtDI7I3AY1AxezsiaZjhORXhMk6jlbBYbb1nVOXO7BRzE1+Ayfgxdh4B+EHJbjEgF+BwDJLny6G6Z+i/w2/Fn7Ww5bxpMZmUF6Q2IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708093043; c=relaxed/simple;
-	bh=vnnX13x217W0dtrq5eN5tm48xaIUCso8yaskfIG6//g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W79VJdn/iB8pakyAtprWru0PHG478E+tbQyFgpqwPprOnUt9BNtTwX3EdQLiNt1D25q/k1YNckhphlwfiMxrBKAdQv9HYdvgfzgmPnmJYeFv83sZE+H6bEKYSfuB8/0kP+LV1gf80jr6CW0J+7dobVaFfIc807GWLIdm+3HEXsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dcc4de7d901so1750265276.0;
-        Fri, 16 Feb 2024 06:17:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708093040; x=1708697840;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uKVA6eT9vMZObsICtCU8wuFH8FzY1FdTCqpK118q1IE=;
-        b=jeiZubz0wHT7KtCwHje/dmKYMH4ygfyWQ2hf4Y5ugqJkknctK9roCmReGGcybJHxKf
-         nxotCHVm0sUXogIzn4LMQ1TcIDohvGSzIdzavLe5StFUJTAsVD8DDjjW9rG5w//3b5NX
-         VsvXPtLFQBop/nk4X1xU1VqPlhvj7MdJFGs71Ygsn2QvuydiHdZqSt5VixuKobEFbyWw
-         PHxdS3rGYnFAGvtbVP+cCgaQMxkFLq2kPB0K59JyGVo0RftrIero+68w2ytV0AjtD88n
-         Echo95Gqx/UHAmoANz6YSFqOyGYs7jtP0u7VokijH3Rt3cFwTyb49vgEnG+eISC6p84S
-         kV4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVggaW4V9dOKZs7Ytf/+SOuZzD8TKnLNZZYTPJ3bYCWmEiVNkyqUy6shGYXYKkpsTawIMM6Vmsyw38yFkEroAC+Rw7bTEyqffLiW9DLAds6fEv+VmNSClnNXHkxDd5mO6q0GP+5sm9akSZNqii1Of3UO81qct0OeeEnCpgDh/5JFcUjduL1CzQ1BoR+nXpCx5cfOyc8lMG5e86yQB44tgAWHK+zASVs
-X-Gm-Message-State: AOJu0YwUUHFRu7DxLoCUAgJF+AcpXrJjCa9Y6+AYX8SaJoGXFrzX0RvV
-	Gc+VF5H22NGnYfYr6HFM0pPsCy0DoaBNOudmiv5E7LtePRdyxWWrwM459RbMo5k=
-X-Google-Smtp-Source: AGHT+IG/Oru5dUhXk6y8B8iKzzYWbDCIUS8FnmkleBuV6MuMOU6dv7iExXsIBfeg9P1hSsSVNMwHHQ==
-X-Received: by 2002:a25:b048:0:b0:dc7:4859:6f1 with SMTP id e8-20020a25b048000000b00dc7485906f1mr4901047ybj.33.1708093040325;
-        Fri, 16 Feb 2024 06:17:20 -0800 (PST)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id 4-20020a250104000000b00dc7496891f1sm330044ybb.54.2024.02.16.06.17.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Feb 2024 06:17:20 -0800 (PST)
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcd7c526cc0so2237243276.1;
-        Fri, 16 Feb 2024 06:17:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUAZMpm5+ECPyUxMHqTOGgVvRP0Y/+Gj7KVNwTNrSke0AancPmMddxySziL+Km1qNsCVzX/l4loxRRt8mEakFhaBBLvEI/FjpGRwcymEU1rcQrjIROrppsn73VbCdt3dpBfAfNKb/e5QPx3/Sa/9QaobjrSvyIuHJasp3xf/Io69zMXMIPpDP1KtsgJeZ4ZQthQeiYxZaZbF5E0Uqdd5Td+Xq0c7E1F
-X-Received: by 2002:a25:b904:0:b0:dc7:8c3a:4e42 with SMTP id
- x4-20020a25b904000000b00dc78c3a4e42mr4580893ybj.30.1708093039976; Fri, 16 Feb
- 2024 06:17:19 -0800 (PST)
+	s=arc-20240116; t=1708097006; c=relaxed/simple;
+	bh=Xx5jSFVmR8kKsbKaSAkT+6yVkSDIJYlTfxO/EtUuVWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KWdlNH7TkeaNbAdWfjfiIWeg8dG9I12ZOAOwcPFkaB4zS0UV7LNKc2gdOptzp8aU4jRHy5qDGxwxt1bGMcskbqLzugtOZG5YcCIeNokw5swW5wDlq6V4D5YWUmkCPIpb5feL8NcZ0zqqNTpWv/wolHWalX9Xeg1n4jXz7Wpp5DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HBRTcxo9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HBRTcxo9"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41GEAWsI009953;
+	Fri, 16 Feb 2024 15:22:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=uIq/Agw0yupQT4M4DimqqSBPa70+vSSr+DSeONVRZJ0=; b=HB
+	RTcxo9hbAG52xOOWunETTnrcmN70eacSwyRX0O+bLrNCKOJYrUmtmvDx2sbM+bwH
+	eh209jlA2T0jKd+70J4jJWS4skSRu3hUGVn0JI0d1w3HUWka8VFPa6bfLKcU1y7w
+	vTFFgDbbq6tZFKgFdr2tlY9WAgLSXCPK9EOXbVT0qnOi6vJlb9cYgnHQ/ATy5RWc
+	c2Cl0h2FR0Gf+n4jfTCC5V/lVghWebbKH4OlB/LF3qdQfy+KTHAVNWqsH/jpqPwm
+	LvEp4kYAFcL3aDHjVX6WYIpiV2z/OZ44zCwNFlpCOS0ec+ATjTUtEwiCYlsevkfB
+	H9Yzb0CrPSIPKh9OsgGA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3w9fkfbw56-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Feb 2024 15:22:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41GFMsDd003794
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Feb 2024 15:22:54 GMT
+Received: from [10.216.32.60] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Fri, 16 Feb
+ 2024 07:22:48 -0800
+Message-ID: <8c9ee34c-a97b-4acf-a093-9ac2afc28d0e@quicinc.com>
+Date: Fri, 16 Feb 2024 20:52:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com> <20240208124300.2740313-13-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240208124300.2740313-13-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 16 Feb 2024 15:17:08 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX3=KJ6=qOW__KxWisj7Fguwr=SdP7XGvFD+BKgZbRo9A@mail.gmail.com>
-Message-ID: <CAMuHMdX3=KJ6=qOW__KxWisj7Fguwr=SdP7XGvFD+BKgZbRo9A@mail.gmail.com>
-Subject: Re: [PATCH 12/17] arm64: dts: renesas: rzg3s-smarc-som: Guard the
- ethernet IRQ GPIOs with proper flags
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/8] clk: qcom: ipq5332: enable few nssnoc clocks in
+ driver probe
+Content-Language: en-US
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin
+ Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20240122-ipq5332-nsscc-v4-0-19fa30019770@quicinc.com>
+ <20240122-ipq5332-nsscc-v4-2-19fa30019770@quicinc.com>
+ <7a69a68d-44c2-4589-b286-466d2f2a0809@lunn.ch>
+ <11fda059-3d8d-4030-922a-8fef16349a65@quicinc.com>
+ <17e2400e-6881-4e9e-90c2-9c4f77a0d41d@lunn.ch>
+From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <17e2400e-6881-4e9e-90c2-9c4f77a0d41d@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9F9jTJZpwa9-J3H6FxCCvQ93vX9fb8bx
+X-Proofpoint-GUID: 9F9jTJZpwa9-J3H6FxCCvQ93vX9fb8bx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-16_15,2024-02-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ adultscore=0 lowpriorityscore=0 impostorscore=0 mlxlogscore=999
+ spamscore=0 bulkscore=0 suspectscore=0 mlxscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401310000 definitions=main-2402160122
 
-Hi Claudiu,
 
-On Thu, Feb 8, 2024 at 1:44=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
-rote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Ethernet IRQ GPIOs are marked as gpio-hog. Thus, these GPIOs are requeste=
-d
-> at probe w/o considering if there are other peripherals that needs them.
-> The Ethernet IRQ GPIOs are shared w/ SDHI2. Selection b/w Ethernet and
-> SDHI2 is done through a hardware switch. To avoid scenarios where one wan=
-ts
-> to boot with SDHI2 support and some SDHI pins are not propertly configure=
-d
-> because of gpio-hog guard Ethernet IRQ GPIO with proper build flag.
->
-> Fixes: 932ff0c802c6 ("arm64: dts: renesas: rzg3s-smarc-som: Enable the Et=
-hernet interfaces")
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Thanks for your patch! (which was well-hidden between non-fixes ;-)
+On 2/14/2024 8:14 PM, Andrew Lunn wrote:
+> On Wed, Feb 14, 2024 at 02:49:41PM +0530, Kathiravan Thirumoorthy wrote:
+>>
+>>
+>> On 1/26/2024 1:35 AM, Andrew Lunn wrote:
+>>> On Mon, Jan 22, 2024 at 11:26:58AM +0530, Kathiravan Thirumoorthy wrote:
+>>>> gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk are
+>>>> enabled by default and it's RCG is properly configured by bootloader.
+>>>
+>>> Which bootloader? Mainline barebox?
+>>
+>>
+>> Thanks for taking time to review the patches. I couldn't get time to respond
+>> back, sorry for the delay.
+>>
+>> I was referring to the U-boot which is delivered as part of the QSDK. I will
+>> call it out explicitly in the next patch.
+> 
+> I've never used QSDK u-boot, so i can only make comments based on my
+> experience with other vendors build of u-boot. That experience is, its
+> broken for my use cases, and i try to replace it as soon as possible
+> with upstream.
+> 
+> I generally want to TFTP boot the kernel and the DT blob. Sometimes
+> vendor u-boot has networking disabled. Or the TFTP client is
+> missing. If it is there, the IP addresses are fixed, and i don't want
+> to modify my network to make it compatible with the vendor
+> requirements. If the IP addresses can be configured, sometimes there
+> is no FLASH support so its not possible to actually write the
+> configuration to FLASH so that it does the right thing on reboot
+> etc...
+> 
+> Often the vendor u-boot is a black box, no sources. Can you give me a
+> git URL for the u-boot in QSDK? If the sources are open, i could at
+> least rebuild it with everything turned on.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.9.
 
-As Ethernet is enabled by default, I think there is no need to fast-track
-this for v6.8.
+You can get the source at 
+https://git.codelinaro.org/clo/qsdk/oss/boot/u-boot-2016/-/tree/NHSS.QSDK.12.2?ref_type=heads
 
-Gr{oetje,eeting}s,
+You should be able to TFTP the images, write into the flash and 
+configure the IP and so on...
 
-                        Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> 
+> But still, it is better that Linux makes no assumptions about what the
+> boot loader has done. That makes it much easier to change the
+> bootloader.
+> 
+>>>> Some of the NSS clocks needs these clocks to be enabled. To avoid
+>>>> these clocks being disabled by clock framework, drop these entries
+>>>> from the clock table and enable it in the driver probe itself.
+>>>
+>>> If they are critical clocks, i would expect a device to reference
+>>> them. The CCF only disabled unused clocks in late_initcall_sync(),
+>>> which means all drivers should of probed and taken a reference on any
+>>> clocks they require.
+>>
+>>
+>> Some of the NSSCC clocks are enabled by bootloaders and CCF disables the
+>> same (because currently there are no consumers for these clocks available in
+>> the tree. These clocks are consumed by the Networking drivers which are
+>> being upstreamed).
+> 
+> If there is no network drivers, you don't need clocks to the
+> networking hardware. So CCF turning them off seems correct.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
+Yeah agree with your comments.
+
+QSDK's u-boot enables the network support, so the required NSSCC clocks 
+are turned ON and left it in ON state. CCF tries to disables the unused 
+NSSCC clocks but system goes for reboot.
+
+
+Reason being, to access the NSSCC clocks, these GCC clocks 
+(gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk)
+should be turned ON. But CCF disables these clocks as well due to the 
+lack of consumer.
+
+
+> 
+> Once you have actual drivers, this should solve itself, the drivers
+> will consume the clocks.
+
+
+Given that, NSSCC is being built as module, there is no issue in booting 
+the kernel. But if you do insmod of the nsscc-ipq5332.ko, system will 
+reset.
+
+Without the networking drivers, there is no need to install this module. 
+And as you stated, once the drivers are available, there will be no issues.
+
+So can I explain the shortcomings of installing this module without the 
+networking drivers in cover letter and drop this patch all together?
+
+
+
+> 
+>> However looking back, gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk,
+>> gcc_nssnoc_nsscc_clk are consumed by the networking drivers only. So is it
+>> okay to drop these clocks from the GCC driver and add it back once the
+>> actual consumer needs it?
+> 
+> But why should you remove them. If nothing is using them, they should
+> be turned off.
+> 
+>     Andrew
