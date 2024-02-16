@@ -1,161 +1,118 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B741132461;
-	Fri, 16 Feb 2024 17:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E51133422
+	for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 17:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708103391; cv=none; b=WIb/+rwFhCcFW3RCkyAcjcY6gbY1wI+Qq1DRhxetEL+V/Tpi4VmOfkpn41H+doaEmwFICeRC/wuqOoBJduGjddYyT0sJgd++xdn/ZNi6iFAz4jTfAwEfrZjq1qDpolRnHoKEBPLOmreACBTJ3yg2Qha4tZEX3ZBFM7hWMZk7Ozo=
+	t=1708103728; cv=none; b=XALnPJlMvf/E39LBtEMJXUwUCnu/zaSvd/1kMl7sJA0vUijR+knnX8AgRhbOQ23sVCHyWoXFNO/BH447I1qsmVtniwXxBtBAc5Vk132OslmD+wTk9TxIutJp/MmSnhvpTBUgqCt0LTDOUWexnjKan1fyB2Ua5by4EOle02dEaeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708103391; c=relaxed/simple;
-	bh=id7Qb0uLD+1WFfUYgcQvzLQnvah3UPDv2V4cZ0mna8E=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFYiiQ6bz/u9r6SNIQ7cJAFv08R8shwM/wrMdE0U/sraletXRMEsPV+kkeB7qX8rS6eIuRZxVvuCZsoE0/CfcxLBx77HKlGZDhoRuHyeTOp+Jj7gltLpgeWkdoLmG5tWSrjayWhNFVuX+cpYziSOnpuIJ8JOKBGjY5ZNcPodDZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wV+xkORD; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1708103728; c=relaxed/simple;
+	bh=2I8OV5Za1AWND85vJD0b2TxUNUIbm60J0z8NTNeSk40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B2tlY/2273EX7fpkrXM5mhvprDMutfSRXtoyBslcqTGdT2XaQNywILkoHhS6daNmGvsy3W6t13v/r1dsjl13JaxoYbG18Q+AJzC3fV0f21Z0l9fFyVjc7x1P/FsvW6DSwN3s7p/dyHqkUVK7Rulb5/QwrEWzUVH4Y4PNnP40m3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qWNZQlSC; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wV+xkORD"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 41GH9U7h032772;
-	Fri, 16 Feb 2024 11:09:30 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1708103370;
-	bh=O9tDOl2PHm42EpIYjzIon6CdzywBxeNsoi7ymBAtfvA=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=wV+xkORDStCjpVYjAzP9AQmpE5i4aJR8fYlxblNX4EBLsbs+K0SAOINCu0fnqIYFD
-	 gmbxGYydVivu/SBtpWd5fMBzPERHI+UBgCisS90sUH/CRgFqtF27kX9ZWF5GTSZvwo
-	 ruYkbzaCIAJUGSs9Nsz35cmtr/sPoDkZpkfZuwD4=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 41GH9UG4126974
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 16 Feb 2024 11:09:30 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 16
- Feb 2024 11:09:30 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 16 Feb 2024 11:09:30 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 41GH9Uhd066950;
-	Fri, 16 Feb 2024 11:09:30 -0600
-Date: Fri, 16 Feb 2024 11:09:30 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Udit Kumar <u-kumar1@ti.com>
-CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <chandru@ti.com>,
-        <rishabh@ti.com>, <kamlesh@ti.com>, <francesco@dolcini.it>,
-        <vigneshr@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v4] clk: keystone: sci-clk: Adding support for non
- contiguous clocks
-Message-ID: <20240216170930.cp5rg2iieaqogrwa@selected>
-References: <20240213082640.457316-1-u-kumar1@ti.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qWNZQlSC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1708103725;
+	bh=2I8OV5Za1AWND85vJD0b2TxUNUIbm60J0z8NTNeSk40=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qWNZQlSCD02bukeBtx4pELL3MaKZ1YF1NpDC7EBXOqhSGNyy+o48OS82nEgHFFxX8
+	 McphMtGLfkikW0LxVe1kUcc8JQs8ke+oMQrwx64NOaT6kImFsVh+tuscP6tnRn50Qn
+	 TARPbV4jrDIQeF8Nb+i8k9KVVY3hhadxsXuVvAO+mYMwugC+HmRcRRVXNNu7782h2q
+	 x1xR6A2Q2Hpz1zp5W4r19veTJWG+Yy7KI28O9sEa+zj7W1v3eCRXihF+Wy6Ro2numC
+	 L6HxjqRdYLLeDIsTwhXigyc8AagyhqEr+chyQpmj+OG3V4XC8+d7772ItAmmhWEymC
+	 UALgzTIzh1MzA==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 359703782042;
+	Fri, 16 Feb 2024 17:15:25 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id C8CA31062D86; Fri, 16 Feb 2024 18:15:24 +0100 (CET)
+Date: Fri, 16 Feb 2024 18:15:24 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v8 0/7] rockchip: clk: improve GATE_LINK support
+Message-ID: <jh6ykinp6q45qzldujkvwmo6cnmuukhmzflq6jvpjtehbktzbw@ouuslnejf33p>
+References: <20240126182919.48402-1-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zxzppxu33phddue3"
 Content-Disposition: inline
-In-Reply-To: <20240213082640.457316-1-u-kumar1@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-
-On 13:56-20240213, Udit Kumar wrote:
-> Most of clocks and their parents are defined in contiguous range,
-> But in few cases, there is gap in clock numbers[0].
-> Driver assumes clocks to be in contiguous range, and add their clock
-> ids incrementally.
-> 
-> New firmware started returning error while calling get_freq and is_on
-> API for non-available clock ids.
-> 
-> In this fix, driver checks and adds only valid clock ids.
-> 
-> [0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
-> Section Clocks for NAVSS0_CPTS_0 Device, clock id 12-15 not present.
-> 
-> Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically probing clocks")
-> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
-> ---
-> Changelog
-> Changes in v4
-> - Added only incremental chanegs as per v3 discussion
-> - Updated commit message
-> - v3 was Reviewed-by, Dropping Reviewed-by as logic is changed
-> Link to v3
-> https://lore.kernel.org/all/20240207091100.4001428-1-u-kumar1@ti.com/ 
-> 
-> Changes in v3
-> - instead of get_freq, is_auto API is used to check validilty of clock
-> - Address comments of v2, to have preindex increment
-> Link to v2 https://lore.kernel.org/all/20240206104357.3803517-1-u-kumar1@ti.com/
-> 
-> Changes in v2
-> - Updated commit message
-> - Simplified logic for valid clock id
-> link to v1 https://lore.kernel.org/all/20240205044557.3340848-1-u-kumar1@ti.com/
-> 
-> 
-> P.S
-> Firmawre returns total num_parents count including non available ids.
-> For above device id NAVSS0_CPTS_0, number of parents clocks are 16
-> i.e from id 2 to 17. But out of these ids few are not valid.
-> So driver adds only valid clock ids out ot total.
-> 
-> Original logs
-> https://gist.github.com/uditkumarti/de4b36b21247fb36725ad909ce4812f6#file-original-logs
-> Line 2630 for error
-> 
-> Logs with fix v4
-> https://gist.github.com/uditkumarti/f25482a5e18e918010b790cffb39f572
-> Line 2640
-> 
-> 
->  drivers/clk/keystone/sci-clk.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-> index 35fe197dd303..eb2ef44869b2 100644
-> --- a/drivers/clk/keystone/sci-clk.c
-> +++ b/drivers/clk/keystone/sci-clk.c
-> @@ -516,6 +516,7 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
->  	struct sci_clk *sci_clk, *prev;
->  	int num_clks = 0;
->  	int num_parents;
-> +	bool state;
->  	int clk_id;
->  	const char * const clk_names[] = {
->  		"clocks", "assigned-clocks", "assigned-clock-parents", NULL
-> @@ -586,6 +587,15 @@ static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
->  				clk_id = args.args[1] + 1;
->  
->  				while (num_parents--) {
-> +					/* Check if this clock id is valid */
-> +					ret = provider->ops->is_auto(provider->sci,
-> +						sci_clk->dev_id, clk_id, &state);
-> +
-> +					if (ret) {
-> +						clk_id++;
-> +						continue;
-> +					}
-> +
+In-Reply-To: <20240126182919.48402-1-sebastian.reichel@collabora.com>
 
 
-Thanks. This makes more sense.
+--zxzppxu33phddue3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Nishanth Menon <nm@ti.com>
->  					sci_clk = devm_kzalloc(dev,
->  							       sizeof(*sci_clk),
->  							       GFP_KERNEL);
-> -- 
-> 2.34.1
-> 
+Hi,
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+On Fri, Jan 26, 2024 at 07:18:21PM +0100, Sebastian Reichel wrote:
+> This is a follow-up for Elaine's series. These patches are written from
+> scratch, though. There are two parts:
+>=20
+> part 1:
+> Elaine's series used to contain patches for the VO1GRF handling, but they=
+ were
+> dropped at some point because of the CLK_NR_CLKS feedback from the DT
+> maintainers. I added some code, that should hopefully fix everyones conce=
+rns by
+> figuring out the right number at runtime. I also moved the correct handli=
+ng of
+> pclk_vo0grf/pclk_vo1grf before proper handling of GATE_LINK clocks, so th=
+at it
+> can be merged ASAP. These patches are needed for HDMI RX/TX support on RK=
+3588.
+>=20
+> part 2:
+> For proper GATE_LINK support I tried implementing the suggestion from Ste=
+phen
+> Boyd to use clk PM operations by creating MFD dynamically. This required =
+some
+> restructuring, since CLK_OF_DECLARE() is called before devices are availa=
+ble.
+> All of this can be found in the last patch of this series.
+
+Any comments? It would be great if at least part 1 gets into v6.9.
+That should be easy to review and unblocks further work.
+
+Greetings,
+
+-- Sebastian
+
+--zxzppxu33phddue3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmXPmBwACgkQ2O7X88g7
++ppVQA//TarEYULVrOVAgyQdDuxfiGe4i5Ot5hRB7iF48whStXQ4i/lCWZpetNBe
+Vw4oxoq2LSRXrBCIY4IVMx2hCplTeuTWLDbTkZv7UaAjjAYrOuw6xqamBK6VRK0C
+EfnjHHHoKxc+jdg/f2pGdI33ftyO2YOQgUNkpVtjw3xwnYj1gRwBgnOnETP4BR2f
+HlDQmF3NTF5lto7p1KETEWU01X5h549WXSX9p9NmhDJh8NmaLD0UvQU0e4MqqBG1
+DTq5eNbK50kRg3bol6vSRqrYgHnTmFgS+ArCQx/mUWk1QeaQbbIuAQPvKmzWO6d5
+VVtZgiGQ1rfCfGrLBIF+mte+V9cOcCWh8Og7NdTXSTUtaGFNk2qQRTJZQvcpehLn
+8PsFdZQkNe3b+Wyajij1WYb2NAzKdhvgkvfvgq/jdrcR5o4ph/weVmwdZRqZybXQ
+QtvaOkqxcz0Lx3Mwuy2FzB9GYzmGWU7iAKVZ9B8Fo+iu9L7d2vmDOiASZ8WfpQQK
+WmjmOiLK2lfly/PdYYc0SJMRSz7zBwFPqPIyL8l+y4bADO2hFfW25bTZUuLCiuGb
+pqD1zFtMWV44C0uVDH7vQNb8bGC4G+gt5xxiohf251A2JElV8JtHBi6oZmcHhzxP
+TwYZ1QNu/aXs7RyxcS3HPfajLz1vCCAECDCsNRkdHAOF6gb4pb8=
+=KXJq
+-----END PGP SIGNATURE-----
+
+--zxzppxu33phddue3--
