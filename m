@@ -1,119 +1,174 @@
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FA4135A5B
-	for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 19:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD31D44369
+	for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 22:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708111800; cv=none; b=Zm0D35HLxlV7aaodn8FDUaWhcOgOY/JWm9BGs2fwCgE2y9joRfj4sWlKR5rVD/VSV0gThRMw3tRVRX9e/EJeNDeK9bKb7YmJ5XVfI4w8t5mJmJdHWmbqHw95stsUputNQGaw1yS56QSqO+RIXP7pmoBtqFSggst+dRJ7FXdj/t4=
+	t=1708122769; cv=none; b=dpkWzv/xH6ShIPHNxj2Yp4sWgyaRGssRwQC24rqoXjeJFFWp6A5Z8ZNr3gdfHV88DE+gGUvtE2+JyUlsbqdMZTmQI/pFYOFiUcNJWy+0p5IRaFys/PebOx7TKbT2vAQjAi1z311p2SXtw3zLwBZzWXjL8H2EQj3G5jHSKUG0TKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708111800; c=relaxed/simple;
-	bh=5CLkz15pA3C0PAyuM4OD/Khdbnbhn8Jnj6R4gv2p/Lg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h7GIXYucew4MbSyK3cKb3ynyW4jq0VqdGB6c8kqmoMh3Z6Owcwk9yLWYLR9er7BEcV+D5h+hLQkZZN1T4StNJYU8MqMUxKBRnVZKDPSKZAPsFygTUWgcjk88ma0ef8y/ATd7i5NFkDC7NjXsJOIJTR2u1HXHtOpPRAU9cYHXT1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=V1iJodVa; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+	s=arc-20240116; t=1708122769; c=relaxed/simple;
+	bh=bJXbMlyr3+7OgLAhAoFw6DwWmRsb5c7TniueV2APaRE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ajz5Ht1c3ZGu9TVjVyPKlZ3eBWH0a6OBNicmRovZjeqh4UlGJBXADnLu7YbAgyjAROqVUJj2iDPKHzhk0W1FbVFbxv6qi7xeZXxp+5fz50Vq0U4CB56bdB3clmd8IK7SVpfF1EeY4ZMAGRJE6cj2hTB6Hqg12/pwm9KndgxULQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WGp9viQL; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="V1iJodVa"
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6e432beab47so515365a34.1
-        for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 11:29:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WGp9viQL"
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3c0449eaadaso2323172b6e.1
+        for <linux-clk@vger.kernel.org>; Fri, 16 Feb 2024 14:32:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1708111798; x=1708716598; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cjtHHDVg1EP31BktP6Ck1iG9AHnmh+yzE4yzLtOxWPg=;
-        b=V1iJodVa54Vr8BAocvhUA5kxxu93qf5MjhnBZgy15x1EYltuXb03vhwAhtbCfVr3xL
-         V7msnCAEyj2aelZNqyllKjK9jhmmFwAcVEnulVfcOlMPpwhjVzK3SJeDJJRnT9Y2xKGx
-         rnt+LrJ3KXGZFuuwNSPJSzdeRCdLEJTWix7qGMdx42FCgWJt6fmQDa+z2R8iJwkyLQuA
-         +JGoySpshR1PpZR+7lvhewrtF+TL/DNFLwrkG1HhFoIsCTBl5idFk42qgqe/6+OMwUjL
-         +7o6YchxRB75kcH17F5xsN9du/ZjDojh90ktr7D1/2iJ8pxvc21zYdXT5oDa/YhhIv3B
-         2KQA==
+        d=linaro.org; s=google; t=1708122766; x=1708727566; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kHTYIdNR7kys2A/utNtL/i8pf8YMUUwp1NermvOPClE=;
+        b=WGp9viQLhEF8SDke4sBkWwz8WW5WR6zWI4EJNqcb3V67hZPHrT/xu8RgeM383QaF+0
+         lxz88mF6RRtXi+BtMuTKJdug58kH2P/Ovy1++R8nOShlWSMCLA/rqp1A1D1janCgRobD
+         tlc/SfN6yx/sB3LPGV4B/GCFO8ATPVu7PUmiPPaQQJNTrE978zOPJcO6tywFw5OTDGgz
+         Kxg+yL+dIzYgf2Db0NyIay/ecqRRgg3v8+hF5Njbh2M7+NVy9UoL3eprYPVl4WuRhD3P
+         gGdHXA7D3cWup0MKGYOJZIimYANqI7vzVd0gN4zgmuuLCCj/LsQTDXn8kpt698zFyh/V
+         lVzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708111798; x=1708716598;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cjtHHDVg1EP31BktP6Ck1iG9AHnmh+yzE4yzLtOxWPg=;
-        b=cf249Hohu7bhdorcVnfyWShC7emTreu4MqcnLEPUV0RfHr/v1M0mUiNn+oIIZn5UzA
-         0sON+op5gN9vxhX4+5gAbWXqKnzcKhYR8IlfY6iQthAYcS0pY+p0OfVlcMEemS87KV/F
-         xeS0PraljFF+Zyr6+vN3hVGuWAgBwOWw2G7tThnT5fFkCdZbejpsfnSIjdeF3CW/GBGZ
-         9WScpMWVGC+rzOj2F4vGR7KmySFcnNH3eUosQstV587NuLRyHRMk1wEvLE7dWY85gSiS
-         NKHA38xO9ziTRlNm/pHEoAX4GGqclBz663RhKQGxF11ppeAXpRE/gIBvDKs//CXE5XIW
-         Y0pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsue4PPpLhQnkfSg5qoGliTqkeUs35+/oFQP6aHbrRm9ZfCJ2Vel17EuA3Fuv7RS1dkhBY4d9o4aFrndSoYEEUS8GPZkCAfwPy
-X-Gm-Message-State: AOJu0YzzbPPXPcKGwn6ygjAzwGev1kh0oPkVJbI5mSW4M5xd0uiqLNY1
-	2LTItYGmNSWnVBMOgxFiYYWn0g5UL0upd1aIh4tpmn7ugOwmhKejzUCxj5yMCAg=
-X-Google-Smtp-Source: AGHT+IFEYuJ0J4q6Ri7W8LG928weSbYRDzhIjrV39IhvTbn+aiKejHqcf79FSbmpyPZyQyd4jTYPuQ==
-X-Received: by 2002:a05:6358:5389:b0:178:dac3:2b99 with SMTP id z9-20020a056358538900b00178dac32b99mr6283861rwe.1.1708111796945;
-        Fri, 16 Feb 2024 11:29:56 -0800 (PST)
-Received: from nicolas-tpx395.localdomain ([2606:6d00:11:3354::7a9])
-        by smtp.gmail.com with ESMTPSA id p6-20020ac84606000000b0042dc7edf2f4sm206963qtn.45.2024.02.16.11.29.55
+        d=1e100.net; s=20230601; t=1708122766; x=1708727566;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kHTYIdNR7kys2A/utNtL/i8pf8YMUUwp1NermvOPClE=;
+        b=bTQXSe2I1zPRlut1Vqq9sWcMsrYk3T+POwq0wAwIhA0PYLrAKr/sgmV0s9ZrjKaM5C
+         /egIzuWKYRoZhrVLMDNTe/7Mj8F97K9On9oYBRRRGZ8EZAIGJCkaeMUxRaRdDSKEWkn+
+         xyhQrd5+3dgsHd0lxG3VOGmMMIFjpWaXJpSvoLNyAbyYgIYNs5KBhjmcE5k73SYMndxO
+         BXmABsB3jrnmkBkXqbLU4z+JikrvSfhbs9u8Wwl4lzFy8gV1fXUWvpSDM3dL3ZrraHCU
+         xLQ+kbwsEN8BgAe7AjEfPHy+MWPvDHKJYYwzWbPjbgpUtoTskt50oEh+e1DICjQCVOrf
+         8Jyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNpHyvmnRjhoj9iV+Ah2dlvLz9pC4YJs7fIpGysMV2oXxebaOaX4/VAL9arIzl15Quhi/gwDZAhQBslOo5pecF8EPjoEe/B0Ui
+X-Gm-Message-State: AOJu0YzYxGfTy6QbvAGRfDoxI+8I9656qqoHnM/1VVvIuAm7Sb6Xdy6b
+	who4ZSSCx+ZuWHG+x9o1UI2MZPUZ7Wi6vOJN4puC3votoweBYZOhvoi3+QAjyyE=
+X-Google-Smtp-Source: AGHT+IFZ5qApavg7upJPRo6/wr5ec1xuG8yUN72eSx6NMpyH+uoGXiQImeQDOsCtto82hbvFIjqikA==
+X-Received: by 2002:a05:6808:238f:b0:3c0:35a1:742c with SMTP id bp15-20020a056808238f00b003c035a1742cmr7615895oib.41.1708122765783;
+        Fri, 16 Feb 2024 14:32:45 -0800 (PST)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id s9-20020a0568080b0900b003c0408e5b06sm126274oij.55.2024.02.16.14.32.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Feb 2024 11:29:56 -0800 (PST)
-Message-ID: <8d68a49a35799d1686d9b674ce4edfd91c68850b.camel@ndufresne.ca>
-Subject: Re: [PATCH 1/4] clk: rockchip: rst-rk3588: Add BIU reset
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Shreeya Patel
-	 <shreeya.patel@collabora.com>, heiko@sntech.de, mchehab@kernel.org, 
-	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	jose.abreu@synopsys.com, nelson.costa@synopsys.com, 
-	dmitry.osipenko@collabora.com, sebastian.reichel@collabora.com, 
-	shawn.wen@rock-chips.com
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-dt@vger.kernel.org, 
-	linux-arm@lists.infradead.org
-Date: Fri, 16 Feb 2024 14:29:55 -0500
-In-Reply-To: <237e690a-2f49-4046-b054-3a878eed6748@linaro.org>
-References: <20240216094922.257674-1-shreeya.patel@collabora.com>
-	 <20240216094922.257674-2-shreeya.patel@collabora.com>
-	 <237e690a-2f49-4046-b054-3a878eed6748@linaro.org>
-Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 (3.50.3-1.fc39) 
+        Fri, 16 Feb 2024 14:32:45 -0800 (PST)
+From: Sam Protsenko <semen.protsenko@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/16] clk: samsung: Add CPU clocks for Exynos850
+Date: Fri, 16 Feb 2024 16:32:29 -0600
+Message-Id: <20240216223245.12273-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Le vendredi 16 f=C3=A9vrier 2024 =C3=A0 11:03 +0100, Krzysztof Kozlowski a =
-=C3=A9crit=C2=A0:
-> On 16/02/2024 10:49, Shreeya Patel wrote:
-> > Export hdmirx_biu soft reset id which is required by the hdmirx control=
-ler.
-> >=20
-> > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> > ---
-> >  drivers/clk/rockchip/rst-rk3588.c               | 1 +
-> >  include/dt-bindings/reset/rockchip,rk3588-cru.h | 2 ++
->=20
-> Please run scripts/checkpatch.pl and fix reported warnings. Some
-> warnings can be ignored, but the code here looks like it needs a fix.
-> Feel free to get in touch if the warning is not clear.
->=20
-> Please do internal review. The internal Collabora review would tell you:
-> YOU MUST run checkpatch. Then you see errors, so why do you send patch
-> with errors to the mailing list?
+The series implements CPU clock support for Exynos850, adds CPU CMUs to
+the clock driver and enables those in dts. This is the first step
+towards cpufreq implementation.
 
-Mistakes helps you learn. Meanwhile, I've triggered our temporary CI which
-hopefully will catch this and some more for a better v2. Shreeya, I don't t=
-hink
-this includes any DT automated checks, this is on you.
+The breakup by patch:
 
-https://gitlab.collabora.com/linux/build-scripts/-/pipelines/85935
+  * Patch 01: Add bindings
+  * Patches 02..12: Prepare clk-cpu.c for Exynos850 support
+  * Patch 13: Add Exynos850 support
+  * Patch 14: Init PLLs to be in manual mode
+  * Patch 15: Add CPU CMUs in Exynos850 clock driver
+  * Patch 16: Add CPU CMUs and clocks in Exynos850 dtsi
 
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
+If possible, all patches should go through Krzysztof's tree. As
+inter-series dependencies go:
+
+  * All driver changes (patch 02..15) must be taken together following
+    the order established in this series
+  * Patch 16 (dts changes) depends on patch 01 (bindings additions)
+  * Patch 15 (driver changes) depends on patch 01 (bindings additions)
+
+The series was tested on E850-96 board, via DebugFS with
+CLOCK_ALLOW_WRITE_DEBUGFS enabled, by setting different CPU clock rates,
+like this:
+
+  # cd /sys/kernel/debug/clk/cluster0_clk/
+  # cat clk_rate
+  1053000000
+  # echo 10000000 > clk_rate
+  # cat clk_rate
+  130000000
+
+Of course, DVFS/cpufreq is not implemented yet, so the CPU can't be
+overclocked too much right now, and the cpufreq interface is not
+available too. As per the TRM, the CPU operates at a voltage level of
+0.65 V, 0.75 V, 0.85 V and 1.05 V. When the voltage is 0.85 V, A55
+quad-core operates at 1.6 GHz and CoreSight at 200 MHz.
+
+To check the actual frequency, the "perf" tool was used:
+
+  # perf stat sleep 1
+
+And to check that on a particular CPU core:
+
+  # taskset -c 4 perf stat sleep 1
+
+Some takeaways:
+
+  * Max functional frequency right now is 1.586 GHz
+  * 1.742 GHz or more leads to the system freeze, as it requires
+    more voltage to be operational
+  * Max possible frequency: 2.210 GHz
+  * The lowest possible frequency: 130 MHz
+  * Default boot up frequency: 1.053 GHz
+
+Sam Protsenko (16):
+  dt-bindings: clock: exynos850: Add CMU_CPUCLK0 and CMU_CPUCL1
+  clk: samsung: Improve clk-cpu.c style
+  clk: samsung: Pull struct exynos_cpuclk into clk-cpu.c
+  clk: samsung: Reduce params count in exynos_register_cpu_clock()
+  clk: samsung: Use single CPU clock notifier callback for all chips
+  clk: samsung: Group CPU clock functions by chip
+  clk: samsung: Pass actual clock controller base address to CPU_CLK()
+  clk: samsung: Use clk.h as a single header for Samsung CCF
+  clk: samsung: Pass register layout type explicitly to CLK_CPU()
+  clk: samsung: Keep CPU clock chip specific data in a dedicated struct
+  clk: samsung: Keep register offsets in chip specific structure
+  clk: samsung: Pass mask to wait_until_mux_stable()
+  clk: samsung: Add CPU clock support for Exynos850
+  clk: samsung: Implement manual PLL control for ARM64 SoCs
+  clk: samsung: exynos850: Add CMU_CPUCL0 and CMU_CPUCL1
+  arm64: dts: exynos: Add CPU clocks
+
+ .../clock/samsung,exynos850-clock.yaml        |  42 ++
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     |  26 +
+ drivers/clk/samsung/clk-cpu.c                 | 565 +++++++++++++-----
+ drivers/clk/samsung/clk-cpu.h                 |  53 +-
+ drivers/clk/samsung/clk-exynos-arm64.c        |  44 +-
+ drivers/clk/samsung/clk-exynos3250.c          |   4 +-
+ drivers/clk/samsung/clk-exynos4.c             |  10 +-
+ drivers/clk/samsung/clk-exynos5250.c          |   6 +-
+ drivers/clk/samsung/clk-exynos5260.c          |   1 -
+ drivers/clk/samsung/clk-exynos5420.c          |  17 +-
+ drivers/clk/samsung/clk-exynos5433.c          |  12 +-
+ drivers/clk/samsung/clk-exynos850.c           | 440 +++++++++++++-
+ drivers/clk/samsung/clk-pll.c                 |   2 +-
+ drivers/clk/samsung/clk-s3c64xx.c             |   1 -
+ drivers/clk/samsung/clk-s5pv210.c             |   1 -
+ drivers/clk/samsung/clk.h                     |   9 +-
+ include/dt-bindings/clock/exynos850.h         |  54 ++
+ 17 files changed, 1042 insertions(+), 245 deletions(-)
+
+-- 
+2.39.2
 
