@@ -1,60 +1,59 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58011CAB3
-	for <linux-clk@vger.kernel.org>; Sat, 17 Feb 2024 08:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1FC1D55E
+	for <linux-clk@vger.kernel.org>; Sat, 17 Feb 2024 10:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708157879; cv=none; b=Uoi9gxwFLUYCgMzoW68yGXZfvV2dunWyCbLVpGd85l92kVVxWfilttqBgj0SxD1kgq3AsK/yTtzMP6AIxyX4bicyTKH+RVQpk+PVzaV78xKuUZFRgoI6i5R7Q5PzYj3t+ZLnDmWpCF8j7NTFZ64raDoEkBIdpZnl5JD+/X6oJ6I=
+	t=1708164594; cv=none; b=PB+vTGnfawhvFm5JQxi56jIRO1+YyZaMp0Ky8Whq9Lce6puEOV9rwsy3jXeL/+t+pwXlgUwAlRTlVzrN3Zqb74pMsVc0fIKAqqIZk4BAql6pynvWmZCatPZ7BPMMjuJevsSO1bVwcnki1282xLClsmd3OEdGvFqA+HsJwgVvAmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708157879; c=relaxed/simple;
-	bh=mZPD6pl61ru1tRN9uYvlKR/Si6aRgYiz1L+8pU5DljQ=;
+	s=arc-20240116; t=1708164594; c=relaxed/simple;
+	bh=TJsv/F2TQ5TYlDHV0iNebO2l7DVGJkdI+czZCvVOGS8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C4sE/a4HGh2iJB4JT+RhLzOnZ8y4cMDcHQ4nI+suGGzBxzddO1ue2npUGby/Z2g5ByQE/BCfeSWFuwZWX7sD6KowO1wDtYBo19P0RkOqIZEVeLmsDtq84OjdOJq41D/VRPk2wSW8GRu1R3bs3RAKoGGddRkaY9DFQDSsqSsE9tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AWlU2Jb0; arc=none smtp.client-ip=209.85.218.46
+	 In-Reply-To:Content-Type; b=gDYRcFtSLtmbun7boUDO+EUkq7fdHqVRIKCLxOEYEvkz5qb9lnImvzBltOVIJ+/zJz7ZSQ9V+Yy3rWhxiJJq/khL642kilJ3SjZAFHyFj82JRzeow5uVy5vYXJi7O38edhanXvPQFQh9kG9tCGIxfc7OXBLVOo2mHbvR2fMdrKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LnM38muP; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AWlU2Jb0"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a2f22bfb4e6so349833966b.0
-        for <linux-clk@vger.kernel.org>; Sat, 17 Feb 2024 00:17:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LnM38muP"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a3e05775ab9so105210766b.2
+        for <linux-clk@vger.kernel.org>; Sat, 17 Feb 2024 02:09:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708157876; x=1708762676; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708164590; x=1708769390; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=CwPOpkqVqxfLP/r0/a1aV4i2KCiMxSxp2/IT7KltBkI=;
-        b=AWlU2Jb0Z/6dy0nQqWYHSGZRXExLezL5cpDcDs08FqkJsSD+49yBxp3OV4woxW08xE
-         BNM9hx3AZePfgs/2k/UjNDyWapKawmECzWQVC2te7fkFfVUkjg0H8qtgZ+MPNM6Zk4cO
-         eLm49as1MrIUFLARVkrBszKZgjAPYZcR+lUzVy7rBxozczdP3IQ0yRxQxfEoqGWFwNSv
-         4hD45Xi5nDxUCzyG8/xBvqDVEkDZfMq13MSn8U9Aboo36gjJidZeF/aCaPOytQtTzcTZ
-         GriTeU+FnJ5APxPlnQd4XfQgQJ4nicQ4w9tfBUw2ySzglfn82UxrE/73sKWBD3wL4VcZ
-         6fmw==
+        bh=Kuue9t68w2WLZ8b1AL0+yxLWHYBW3bgJNX88GQnQoag=;
+        b=LnM38muPW/8R9uSWcVp+6enq2hr0SVjPz2slQk801qYGVY/9nB9/8dDCN439VuUe1O
+         wsVpxpRo+wUksMp6+TaOcc2nV6crJarFTLiDrnxREcGW7+1AjxsN/E8RRKq2s0YgpsNS
+         5Wevnjy5AwuTpqoNy/uaqrT8QwI82bgBayYTwnR6L9j+nYzfLp160WcTDyVstUMQfBYb
+         HiYitEflkIpXzRG30D+Y7eXHrxb1EHil8Q8dPHSqXdvy3LhyAxdYeleeu855y6ya1sTB
+         Ge/JpGTmQcp5j2c+01+awkLhLXe0gvIIHQIzllU5661dS9XcRu0wDzWKCjHES3FjZQbM
+         v4Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708157876; x=1708762676;
+        d=1e100.net; s=20230601; t=1708164590; x=1708769390;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CwPOpkqVqxfLP/r0/a1aV4i2KCiMxSxp2/IT7KltBkI=;
-        b=vv57XW34gsTYEwS8VpSdhojlOhlEPzSTDUkFv7Bz2poSdrc00Rib4ouiB2D2PfOxN8
-         ZaBr5aIjrNnKHACXROvV73LHVrwo/wknCrM90yqDyjj3dEEblpmx6DcXeVSAJSNio1Ad
-         F4VAHQithwfOA2Q82GvkeQm6XHLYyIsHSg8eVmkm8/WBJj0g4u4yjGRC3OoD5wsQnLJ0
-         GHG5VizzmNqMh+WULGbTxkiUaiaHldIm7pE5TfJeHagK0YvZsWa51mW2eurMKAIjY7Zf
-         oCin7JTqexuKvM/1WjKzFahlCp1uTgZ3gv59XVBnBPYbbs046M/AuB/DMVF1BO7ggQ4z
-         7XHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqLXcP2prnXQJSaNP8i2NyETa5fs3UAfsMZuVNStaedcLKXo5Csco/Cv88UIvRhUEAalhgJOR2pgky5krGsPlf7g5DTraoaS3i
-X-Gm-Message-State: AOJu0Yx3l0gJ7TKMOlHSa30BEkGiguQukkQJLuB2VeekxZjim4O83gUW
-	ck1UH4H9haa4H8JD66M3BW70G67gos5gIsyFMTM8MBQoXBwAAjS1f27Yf5+lry04cK1dxBQcyLq
-	6
-X-Google-Smtp-Source: AGHT+IGGyO604nMOa87jDhCkt+7xpP/CbQmeT7tQGtKi7mJxmegXZxtKs15Kc/7W6mnDxGwYMk+joA==
-X-Received: by 2002:a17:906:fb9a:b0:a3d:f468:74dc with SMTP id lr26-20020a170906fb9a00b00a3df46874dcmr2241626ejb.34.1708157876107;
-        Sat, 17 Feb 2024 00:17:56 -0800 (PST)
+        bh=Kuue9t68w2WLZ8b1AL0+yxLWHYBW3bgJNX88GQnQoag=;
+        b=uQvJDpdeHDuAXEgetTQtAKLYArptLKP9wPcHVju53nJp0Cm1GAYCYVJ5Ygqckjdlr5
+         v3E/RQU8BspgAfmimuv+i/doJh3C/rTqT0bAGtF3YLo6EXmUhZOapT3z/uVBJF/z+5Uo
+         8BmuaBY9fRXS+dO958Nv12s7Unvw1tLbS4O/iFvaewaROSZRpTt1eJ1N4bCvb94K4aPG
+         yHCpnuX17CKRDjrKqyle/zGB+1ZvN6UdYFByhZDmpbsFXWBi82xVCA10AN7vnW/onhQc
+         iqBpGRi1cgc+PkbIG58f4vxRwyCY9DiWn7nS1ecTnVl4kLcfql8A/6RrbVDd6e5dxebh
+         EU+w==
+X-Forwarded-Encrypted: i=1; AJvYcCW6AebVrZ6MTPdM6e7wdZqXkAQo/o6MCilDIfBGX7ZgdJxhEOrd90RD5DsRIciequUZvVVtEkcBKf95px/FibsLyAOKhlt7Bcz3
+X-Gm-Message-State: AOJu0Yy6q8VVARTsrxYZpGqEjoryWC9JGWNjL8vA70MuxoCpC6YkR2ls
+	j/mfoW5ZccyvBfXBDTA8dMAtIUgrocRyi0W5v4uluaviZy8SGROzJI5i31Ai6kk=
+X-Google-Smtp-Source: AGHT+IF/5ZU/FzDNRXPp3L22MuSvR+etIB4vQ3N1+i9WLqr45JPBllRnRca34fK3ggJMoq7IIJtbJQ==
+X-Received: by 2002:a17:906:a40c:b0:a3e:28ae:9311 with SMTP id l12-20020a170906a40c00b00a3e28ae9311mr557003ejz.40.1708164590664;
+        Sat, 17 Feb 2024 02:09:50 -0800 (PST)
 Received: from [192.168.0.22] ([78.10.207.130])
-        by smtp.gmail.com with ESMTPSA id th7-20020a1709078e0700b00a3e059c5c5fsm757086ejc.188.2024.02.17.00.17.54
+        by smtp.gmail.com with ESMTPSA id xg11-20020a170907320b00b00a3d83cff358sm839206ejb.70.2024.02.17.02.09.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 17 Feb 2024 00:17:55 -0800 (PST)
-Message-ID: <0c2f4d92-afa9-46f1-844e-994bd45924ef@linaro.org>
-Date: Sat, 17 Feb 2024 09:17:53 +0100
+        Sat, 17 Feb 2024 02:09:50 -0800 (PST)
+Message-ID: <f4bb8f90-96cd-4121-bc88-6abaef68f4d1@linaro.org>
+Date: Sat, 17 Feb 2024 11:09:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,23 +61,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] clk: rockchip: rst-rk3588: Add BIU reset
+Subject: Re: [PATCH RFC 1/4] dt-binding: clock: histb-clock: Add missing
+ common clock and Hi3798MV200 specific clock definition
 Content-Language: en-US
-To: Shreeya Patel <shreeya.patel@collabora.com>
-Cc: heiko@sntech.de, mchehab@kernel.org, robh@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- jose.abreu@synopsys.com, nelson.costa@synopsys.com,
- dmitry.osipenko@collabora.com, sebastian.reichel@collabora.com,
- shawn.wen@rock-chips.com, kernel@collabora.com,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-dt@vger.kernel.org, linux-arm@lists.infradead.org
-References: <20240216094922.257674-1-shreeya.patel@collabora.com>
- <20240216094922.257674-2-shreeya.patel@collabora.com>
- <237e690a-2f49-4046-b054-3a878eed6748@linaro.org>
- <30d2-65cf5980-3-2ec9f500@242931553>
+To: forbidden405@outlook.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240216-clk-mv200-v1-0-a29ace29e636@outlook.com>
+ <20240216-clk-mv200-v1-1-a29ace29e636@outlook.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -124,49 +117,21 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <30d2-65cf5980-3-2ec9f500@242931553>
+In-Reply-To: <20240216-clk-mv200-v1-1-a29ace29e636@outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/02/2024 13:48, Shreeya Patel wrote:
-> On Friday, February 16, 2024 15:33 IST, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+On 16/02/2024 12:37, Yang Xiwen via B4 Relay wrote:
+> From: Yang Xiwen <forbidden405@outlook.com>
 > 
->> On 16/02/2024 10:49, Shreeya Patel wrote:
->>> Export hdmirx_biu soft reset id which is required by the hdmirx controller.
->>>
->>> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
->>> ---
->>>  drivers/clk/rockchip/rst-rk3588.c               | 1 +
->>>  include/dt-bindings/reset/rockchip,rk3588-cru.h | 2 ++
->>
->> Please run scripts/checkpatch.pl and fix reported warnings. Some
->> warnings can be ignored, but the code here looks like it needs a fix.
->> Feel free to get in touch if the warning is not clear.
->>
->> Please do internal review. The internal Collabora review would tell you:
->> YOU MUST run checkpatch. Then you see errors, so why do you send patch
->> with errors to the mailing list?
->>
-> 
-> I am sorry but what errors are you talking about?
-> I don't see any errors reported by checkpatch :-
-> 
-> shreeya@shreeya:~/collabora/rd/rockchip/torvalds$ ./scripts/checkpatch.pl hdmirx/0001-clk-rockchip-rst-rk3588-Add-BIU-reset.patch
-> WARNING: DT binding docs and includes should be a separate patch. See: Documentation/devicetree/bindings/submitting-patches.rst
+> According to the datasheet, some clocks are missing, add their
+> definitions first.
 
-Here.
+So now all your patches avoid our filters... no, fix your subjects.
 
-> 
-> total: 0 errors, 1 warnings, 13 lines checked
-> 
-> NOTE: For some of the reported defects, checkpatch may be able to
->       mechanically convert to the typical style using --fix or --fix-inplace.
-> 
-> hdmirx-v1-1602/0001-clk-rockchip-rst-rk3588-Add-BIU-reset.patch has style problems, please review.
-> 
-> I see the above warning but that looks like a false positive to me.
-
-Why for your patch it would be false positive and for all others would not?
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching.
 
 Best regards,
 Krzysztof
