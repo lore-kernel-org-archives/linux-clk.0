@@ -1,93 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7097AE57;
-	Sat, 17 Feb 2024 12:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78F87C6E9;
+	Sat, 17 Feb 2024 15:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708174337; cv=none; b=Ec951hLrDV66uQRyp4iRCf93Kvs+HALIONmiT4Oy78AXXOaweSx7F4m9WroeIWDB+3HiEqNntodJ+f1oFE+qALLg1IORRiX3OuIdpRtNILLXuKFUQOnGHGV4k9L8cvnloKi6BBhxxKklyrjOIgn01RO8+VwmoMcAa/2vA7LZVEs=
+	t=1708184538; cv=none; b=llu153PFxjaCvLdBk3vTcMCaRvPQg/Oggxigpa3HNFaXjXAzEvGcEqyyayMAgOLNTb3BSObHKR5ajcEh2Xj4fKPufgZVDgSuJcUzubNB0jxcSbJkFyxPtEK14smTL5l5OuOiDjw/1drNhqtGg6ZyjarS+NipQzc92GB4NECICXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708174337; c=relaxed/simple;
-	bh=FkHfs215i/8Z+eaYHNR3iHYK2NPUkkxq76nnfgbpp0E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o9UBEzEV+2+n9rMG4Nj3hkpvi/D0FgpHkVIpW7VPd1GMRZ5txObdyDN0zUr56I+BJlPSwP29nvZGcrVUA/KKTFkOS60R/J+6G1klTfT4RZbhwEWgTycTJ2cnLoNzL9TUyhMEhGOhCSzvKSLhZzQ7L/9+0TN9HJfLmYJzVtDBEoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AHsVHxvc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708184538; c=relaxed/simple;
+	bh=mf3hDra+Fy4zUND3zQIsgb1RjqWyn4ZuEPxH5lcJZkw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iE/7Nb+J1bxIYNl4Ri5tTeXlbv4HdlIdJzZLehn6hs2EDmBP2Jm2wvUOVVBWrqgUEcTmUMEY7Bm0zjW9h+2Xg+ZWprc6or522979toZ0sDMaN4ojShoJo2fWQ/pORrJT0TL44e7Au9llFXzQuoHb7VBVLqjky6Gs7LfUeBKXg28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aeT28H24; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AHsVHxvc"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B993DC43330;
-	Sat, 17 Feb 2024 12:52:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708174336;
-	bh=FkHfs215i/8Z+eaYHNR3iHYK2NPUkkxq76nnfgbpp0E=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=AHsVHxvcNWcWhTsxnyRo3rxdG/ab9GMn1Jh+uIgU0w3S0erYLBaQ8NH1uXxXbQntB
-	 Jt13a3H2VLsTo/kTaya+DXpRHSRdOK+yYzbhO/XhnRXiQGlmQ+1MdHEG66nkizYl5E
-	 giJSq4JBPFJED9HATAPKdQpe7qg6LFbwXOizBLtCsb6MFwtBs2OK1EY+ecJYkUgCfU
-	 Kj/IytmdeOQpAWLdouXqjzkbMuzbacvU2N9wmgTDoWU8FwvwsWmVyMycRo08uACC2n
-	 DSsLzUj+F0yWLGW6eiIBOSeFy0lhl07ew2RFftbcU8bWOGKqeipihRvi5BZvXgl46f
-	 Fg3HoNsjs29Xw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B4AC5475B;
-	Sat, 17 Feb 2024 12:52:16 +0000 (UTC)
-From: Yang Xiwen via B4 Relay <devnull+forbidden405.outlook.com@kernel.org>
-Date: Sat, 17 Feb 2024 20:52:09 +0800
-Subject: [PATCH RFC v2 4/5] dt-bindings: mfd: syscon: Add
- hisilicon,sdmmc-sap-dll compatible
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aeT28H24"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41HF1SD4015101;
+	Sat, 17 Feb 2024 15:41:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=uRvSSOLaUrymb3axaLkFU+WolmKzsir5LJxjFERnvVs=; b=ae
+	T28H24onaZXEW0FyP5W7AwGLHRjWT8eI9u8Fp+066b0/3xqPC0ETAwZnvK6M3yrF
+	nAI2cpe6vD2emXsKfMhASCOiMgiCgxhSCcmUEpXONzk+lXwZZnT8XTVtf9lvkJdg
+	sJsQUUHteHy89UC5dz6EnKx1MJcEToV+G2q58iGJXljh1qbjaDP5HLQmMwZJ+wAZ
+	xbkpPD+vWkWQ5Qx1MdHg5xDkZIxAo6xAgRk2MZ7PJ8VksmjRH0GhjdjWvhk2m9+b
+	hIJ+O1DfHEiqoVGt8gYpRp4QAgBviS3Aif+OxuLQUmnRd1fKRomzSURDyvGI8WB9
+	0zCTGaP+FO+9g4KCoUEg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wav1ar7vk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 17 Feb 2024 15:41:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41HFfcOq027708
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 17 Feb 2024 15:41:38 GMT
+Received: from [10.216.61.130] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Sat, 17 Feb
+ 2024 07:41:29 -0800
+Message-ID: <6c64a7fa-2cc4-4791-8af1-1a4972c3856b@quicinc.com>
+Date: Sat, 17 Feb 2024 21:11:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/8] clk: qcom: ipq5332: enable few nssnoc clocks in
+ driver probe
+Content-Language: en-US
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin
+ Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20240122-ipq5332-nsscc-v4-0-19fa30019770@quicinc.com>
+ <20240122-ipq5332-nsscc-v4-2-19fa30019770@quicinc.com>
+ <7a69a68d-44c2-4589-b286-466d2f2a0809@lunn.ch>
+ <11fda059-3d8d-4030-922a-8fef16349a65@quicinc.com>
+ <17e2400e-6881-4e9e-90c2-9c4f77a0d41d@lunn.ch>
+ <8c9ee34c-a97b-4acf-a093-9ac2afc28d0e@quicinc.com>
+ <9638a213-76a5-4a72-b6b2-018ae50305be@lunn.ch>
+From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <9638a213-76a5-4a72-b6b2-018ae50305be@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240217-clk-mv200-v2-4-b782e4eb66f7@outlook.com>
-References: <20240217-clk-mv200-v2-0-b782e4eb66f7@outlook.com>
-In-Reply-To: <20240217-clk-mv200-v2-0-b782e4eb66f7@outlook.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Yang Xiwen <forbidden405@outlook.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1708174332; l=904;
- i=forbidden405@outlook.com; s=20230724; h=from:subject:message-id;
- bh=hib8+Rqu7vbvM/wf1lKjdv6MYEK2HbXcsYxRmMDXhQ8=;
- b=TbKhd4smlf4/y17TROgnbw6vhFb4reum+h1UK3DTNNalQKvaZIeuQOlGKC8YwkciwyqNv68OV
- C7ldoY7k6UaBsftg8OQkEKyg4sn69Vygm+RdKlNM9gg6j6eSlSN5HGM
-X-Developer-Key: i=forbidden405@outlook.com; a=ed25519;
- pk=qOD5jhp891/Xzc+H/PZ8LWVSWE3O/XCQnAg+5vdU2IU=
-X-Endpoint-Received:
- by B4 Relay for forbidden405@outlook.com/20230724 with auth_id=67
-X-Original-From: Yang Xiwen <forbidden405@outlook.com>
-Reply-To: <forbidden405@outlook.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: nnsRYfpaZ0jSHZgxDP72f9t45hp5W49A
+X-Proofpoint-GUID: nnsRYfpaZ0jSHZgxDP72f9t45hp5W49A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-17_13,2024-02-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 mlxlogscore=716 mlxscore=0 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401310000 definitions=main-2402170128
 
-From: Yang Xiwen <forbidden405@outlook.com>
 
-Add hisilicon,sdmmc-sap-dll compatible. This is a 8 bytes range with two
-registers. Mainly used for precise sample phase selection during eMMC
-tuning.
 
-Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
----
- Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
- 1 file changed, 1 insertion(+)
+On 2/16/2024 10:46 PM, Andrew Lunn wrote:
+>> You can get the source at https://git.codelinaro.org/clo/qsdk/oss/boot/u-boot-2016/-/tree/NHSS.QSDK.12.2?ref_type=heads
+> 
+> Cool, thanks. But is it really u-boot from 2016?
 
-diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
-index 084b5c2a2a3c..c685d4b36ea4 100644
---- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-+++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-@@ -47,6 +47,7 @@ properties:
-               - hisilicon,hi6220-sramctrl
-               - hisilicon,pcie-sas-subctrl
-               - hisilicon,peri-subctrl
-+              - hisilicon,sdmmc-sap-dll
-               - hpe,gxp-sysreg
-               - intel,lgm-syscon
-               - loongson,ls1b-syscon
 
--- 
-2.43.0
+Yes, it is. If you want to try on IPQ95xx / IPQ53xx SoCs, you can also 
+use the 2023's u-boot, which is available at [1].
 
+[1] 
+https://git.codelinaro.org/clo/qsdk/oss/boot/u-boot/-/tree/NHSS.QSDK.12.4.5?ref_type=heads
+
+> 
+>> Yeah agree with your comments.
+>>
+>> QSDK's u-boot enables the network support, so the required NSSCC clocks are
+>> turned ON and left it in ON state. CCF tries to disables the unused NSSCC
+>> clocks but system goes for reboot.
+>>
+>> Reason being, to access the NSSCC clocks, these GCC clocks
+>> (gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk)
+>> should be turned ON. But CCF disables these clocks as well due to the lack
+>> of consumer.
+> 
+> So there is your solution, make NSSCC a consumer of the clocks it
+> actually consumes. If it needs these clocks, it should get and enable
+> them.
+
+
+Thanks for the suggestion. I will include these clocks in NSSCC DT node 
+and enable the same in the NSSCC driver probe.
+
+
+> 	Andrew
