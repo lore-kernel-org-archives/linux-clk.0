@@ -1,79 +1,157 @@
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B7C1C27;
-	Sun, 18 Feb 2024 03:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4940E184F;
+	Sun, 18 Feb 2024 04:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708227256; cv=none; b=ngxWj/i1VMqWlsfh8Z5CZO06mn68xoxUq9gEVmmQ+ZRjUU12pzsJnyec11boJ4Pjtv22jzTmV6KaSN1aSlTIazMlT+6sFrnaKiVi7j1Z5E3kvrKoNfvDcndas0oqhr6kLHtN6/QBclOx2Qwjg+7IJZ3Z+EOef+nLv+W4pWMIHug=
+	t=1708230571; cv=none; b=RonNOwIsivME/iFsd9SWYlmFxJNYggzqWxCa5xfct9rP+0yN1RVXqVc6Zbfqnjl/pP3v8tXrvtCBGV9ajHUXccvZ2fEYFFdwZ8O/unUTjzHBWjsCYMs2ksT4ehKyybSUbVawp7dRiJTfePFB76RPteyUZ5ssSM7XA+Sq90tisB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708227256; c=relaxed/simple;
-	bh=CxVKwUGLo7LecTQYrgFuAB5EEisKCsHAp17IP4LnF4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ul4SK1VFx147ZY7kzk1Oeap9evRJvnnvCF0jCmtxgTvKXBUvAHGBxrQ7XhOtGaxVHpBzCbp8P/Xy77DXhzzBmxlOrqxZiIaUQgOgP8YQtOdOg+3So/WWFIQldN89hdt7L1kdfQPlpvgbhP493J8EDJ98K0Dpig5SkDcUj0oMgLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.96.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1rbXaP-00054G-35;
-	Sun, 18 Feb 2024 03:11:26 +0000
-Date: Sun, 18 Feb 2024 03:11:15 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Rob Herring <robh@kernel.org>, Jianhui Zhao <zhaojh329@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: John Crispin <john@phrozen.org>, Steven Liu <steven.liu@mediatek.com>
-Subject: [PATCH] clk: mediatek: mt7981-topckgen: flag SGM_REG_SEL as critical
-Message-ID: <fc157139e6b7f8dfb6430ac7191ba754027705e8.1708221995.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1708230571; c=relaxed/simple;
+	bh=lLzvN+0UA7nYVUd9h0btrwR1+ARJGyAx88D7zo5odmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=juWURbg6v7kcZHZpoFwTTbu60ng6cYrTJiqYln/9LrR+HBnC7/RR078wDQp36QYazPUUKP3eN+9NKqid0D4xPAavn9K26j/1qiGHxZ3Epqfr1PvvIiixCHsJnI1x5xHzV5bVz035DG2NDWJtSTyFMwn++RjeLByK8k8DuYSmE1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SnDxKL27; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SnDxKL27"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41I4R2Zf019929;
+	Sun, 18 Feb 2024 04:29:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=cwAA9VhFh41lHklFAVgJT+Qaw4CK5FsdcTXPz98BgOk=; b=Sn
+	DxKL27h+Z+Gs9DI0fMst5fvp20MESRBpdIW//17kQIoHpA4+xoQhk6+TsvwXi0+A
+	60JxHlyfZ/S02kDzzgf9/RbvnmjaPj55UssYHAT2vOATy28te6i1h1gjIwInuu7j
+	Vpn3x3QaZlAhCz1std74Vo6kC334T7PkZloVeNMqzond/rCuOb65TEdIwCYC+2lH
+	1exrSe3LDlc4jg5OpP4XRuaiLdNFNkrbi+t8wdFLJO8n3drw1qwhtw1GAc1Mrtgz
+	MSxU+foEZyoSPlsmELAgdVAnxTQEQ5vqCCbh+yJHb/9R/2oxmb20z3947dypGI+v
+	AoQHHaiLkr2Y/sqvJRbQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wam4q1cg5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 18 Feb 2024 04:29:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41I4TEFr018329
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 18 Feb 2024 04:29:14 GMT
+Received: from [10.216.61.130] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Sat, 17 Feb
+ 2024 20:29:08 -0800
+Message-ID: <d518dbc1-41aa-46f9-b549-c95a33b06ee0@quicinc.com>
+Date: Sun, 18 Feb 2024 09:59:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/8] clk: qcom: ipq5332: enable few nssnoc clocks in
+ driver probe
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Andrew Lunn <andrew@lunn.ch>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20240122-ipq5332-nsscc-v4-0-19fa30019770@quicinc.com>
+ <20240122-ipq5332-nsscc-v4-2-19fa30019770@quicinc.com>
+ <7a69a68d-44c2-4589-b286-466d2f2a0809@lunn.ch>
+ <11fda059-3d8d-4030-922a-8fef16349a65@quicinc.com>
+ <17e2400e-6881-4e9e-90c2-9c4f77a0d41d@lunn.ch>
+ <8c9ee34c-a97b-4acf-a093-9ac2afc28d0e@quicinc.com>
+ <CAA8EJppe6aNf2WJ5BvaX8SPTbuaEwzRm74F8QKyFtbmnGQt=1w@mail.gmail.com>
+ <74f585c2-d220-4324-96eb-1a945fef9608@quicinc.com>
+ <CAA8EJppuNRB9fhjimg4SUR2PydX7-KLWSb9H-nC-oSMYVOME-Q@mail.gmail.com>
+From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <CAA8EJppuNRB9fhjimg4SUR2PydX7-KLWSb9H-nC-oSMYVOME-Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: wpntqkDePuxxvfTymCOCn_FH2diCd_32
+X-Proofpoint-GUID: wpntqkDePuxxvfTymCOCn_FH2diCd_32
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-18_02,2024-02-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 clxscore=1015 suspectscore=0 bulkscore=0
+ spamscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
+ mlxlogscore=670 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401310000 definitions=main-2402180031
 
-Without the SGM_REG_SEL clock enabled the cpu freezes if trying to
-access registers used by MT7981 clock drivers itself.
-Mark SGM_REG_SEL as critical to make sure it is always enabled to
-prevent freezes on boot even if the Ethernet driver which prepares
-and enables the clock is not loaded or probed at a later point.
 
-Fixes: 813c3b53b55b ("clk: mediatek: add MT7981 clock support")
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
- drivers/clk/mediatek/clk-mt7981-topckgen.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt7981-topckgen.c b/drivers/clk/mediatek/clk-mt7981-topckgen.c
-index 682f4ca9e89ad..493aa11d3a175 100644
---- a/drivers/clk/mediatek/clk-mt7981-topckgen.c
-+++ b/drivers/clk/mediatek/clk-mt7981-topckgen.c
-@@ -357,8 +357,9 @@ static const struct mtk_mux top_muxes[] = {
- 	MUX_GATE_CLR_SET_UPD(CLK_TOP_SGM_325M_SEL, "sgm_325m_sel",
- 			     sgm_325m_parents, 0x050, 0x054, 0x058, 8, 1, 15,
- 			     0x1C0, 21),
--	MUX_GATE_CLR_SET_UPD(CLK_TOP_SGM_REG_SEL, "sgm_reg_sel", sgm_reg_parents,
--			     0x050, 0x054, 0x058, 16, 1, 23, 0x1C0, 22),
-+	MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_SGM_REG_SEL, "sgm_reg_sel", sgm_reg_parents,
-+				   0x050, 0x054, 0x058, 16, 1, 23, 0x1C0, 22,
-+				   CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
- 	MUX_GATE_CLR_SET_UPD(CLK_TOP_EIP97B_SEL, "eip97b_sel", eip97b_parents,
- 			     0x050, 0x054, 0x058, 24, 3, 31, 0x1C0, 23),
- 	/* CLK_CFG_6 */
--- 
-2.43.0
+On 2/17/2024 10:15 PM, Dmitry Baryshkov wrote:
+> On Sat, 17 Feb 2024 at 17:45, Kathiravan Thirumoorthy
+> <quic_kathirav@quicinc.com> wrote:
+>>
+>>
+>> <snip>
+>>
+>>>> Reason being, to access the NSSCC clocks, these GCC clocks
+>>>> (gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk)
+>>>> should be turned ON. But CCF disables these clocks as well due to the
+>>>> lack of consumer.
+>>>
+>>> This means that NSSCC is also a consumer of those clocks. Please fix
+>>> both DT and nsscc driver to handle NSSNOC clocks.
+>>
+>>
+>> Thanks Dmitry. I shall include these clocks in the NSSCC DT node and
+>> enable the same in the NSSCC driver probe.
+> 
+> Or use them through pm_clk. This might be better, as the system
+> doesn't need these clocks if NSSCC is suspended.
 
+
+IPQ53XX SoC doesn't support the PM(suspend / resume) functionality, so 
+that, can I enable these clocks in NSSCC driver probe itself?
+
+
+> 
+>>
+>>>
+>>>>> Once you have actual drivers, this should solve itself, the drivers
+>>>>> will consume the clocks.
+>>>>
+>>>>
+>>>> Given that, NSSCC is being built as module, there is no issue in booting
+>>>> the kernel. But if you do insmod of the nsscc-ipq5332.ko, system will
+>>>> reset.
+>>>>
+>>>> Without the networking drivers, there is no need to install this module.
+>>>> And as you stated, once the drivers are available, there will be no issues.
+>>>>
+>>>> So can I explain the shortcomings of installing this module without the
+>>>> networking drivers in cover letter and drop this patch all together?
+>>>
+>>> No. Using allyesconfig or allmodconfig and installing the full modules
+>>> set should work.
+>>>
+>>
+>>
+>> Okay, Got it. Thanks for the information.
+>>
+>> <snip>
+> 
+> 
+> 
