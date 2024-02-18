@@ -1,137 +1,139 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F65E12E7A;
-	Sun, 18 Feb 2024 08:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6E68C1A;
+	Sun, 18 Feb 2024 20:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708244981; cv=none; b=L/iYxBbyAvW0MA5HFhIR9d0koAEhsPDaXbyx2j6A34fUzOMUZhz6w+SlzfoflpnlyZrs0Vkzihofsms2epcGGgHPx9cECNxgg3LaBFhxxjxQkLjKLIt5C/c91Jt3aD1jOA/Ht/GYGKzyKpMfB7gToPkGMfWIXb1AIt/zXGsLBeI=
+	t=1708289864; cv=none; b=Mk872mxhgg0nVzx5M24qpNXfhHrkfeA0BD9Ho+fbzdssZl1Rd4kTmZtz2H4KJovPAWLbb6aqS1SxwCLl40pgfqhPfKkMGM41jpIghzKTZH4SJ36ZcYqvBZXaCM03HBC9gnQIYuk1nHUXCbsRdR7cZ8P19cIcg3ovK9L7nF5H/N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708244981; c=relaxed/simple;
-	bh=jZcTtCZH0obhcvEN8pLDKD99bxA5SkFp4NpD0xiDXhk=;
-	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Fwmn4vptDcQd7QYbqk5tIz8BXCukahjzSJhb1mAYSM4o97UVWQO2s3Oo/OhGa0eYmdFqW9OBzF/SzJcPcfZFgzqfgTNFkrgfg2xageSWiL2WzjYRkR8ziQFZ45ClhqD9JDfL5OA98qCeRy8e7Wv8zBkwulx4OwhJbh3pq7nZAkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev; spf=pass smtp.mailfrom=oltmanns.dev; dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b=g9lcu2oS; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
+	s=arc-20240116; t=1708289864; c=relaxed/simple;
+	bh=XyVBAYojIXNfiY2h5khy0cciLOneIIfR/qnxl+XbJoo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4yxas7ZQRSeog6L2oX4gfrDQVZRj7/yucbBL56jYYKDZi6R9a+++OKGRv4C5dGJft/P08VHu4eEdpCaIHLwLvAKTs1uRuzM0zDkF3Ny7F+mHjgtotSCJTfhZ42SS+nUtucXRwSx3HG3ysaMfsSKqoySCVqO7+6idYPejWH0yOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boLrqGdB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="g9lcu2oS"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4TczNn46Snz9sTN;
-	Sun, 18 Feb 2024 09:29:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-	s=MBO0001; t=1708244969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xpPRlAGo3UCIb/pniYUufEMkCBvpDmyH0z7zQJYnmCE=;
-	b=g9lcu2oSUYVaqvRC7RSidQDG9k6eVMXMgQM/7PR0OOg/MKXB924LWdAQtLX/XzWfz4cBeR
-	qs/7vQOhsueqHlu37Mi2duYMpNIvf0V5Hhl93idD1WVskzdbjNxGPtRrBCgciwMpdWxFUL
-	RZqsvJAlxS3C0tceHtmvP8MgSx1EdQnmFHb2t/EQvIJd6Kc/irWNmYaTLnzP5zm3t6c6Kb
-	HMKdzQ6Bg/9IYXfGWVUcdduK3+PQ2Q3gtHOmNjtaWLVR23sxX2bMBtzKGgs21QqHQ9sSFQ
-	tA3GtSzFfZCOC+vw1lwScAneLRvH/L7Cib0kWbLj/blALD5YdXuIymbhi7KYlA==
-References: <20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev>
- <20240205-pinephone-pll-fixes-v2-3-96a46a2d8c9b@oltmanns.dev>
- <exb2lvjcozak5fayrgyenrd3ntii4jfxgvqork4klyz5pky2aq@dj2zyw5su6pv>
-From: Frank Oltmanns <frank@oltmanns.dev>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Guido
- =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, Purism Kernel Team
- <kernel@puri.sm>, Ondrej
- Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>, Jessica
- Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] clk: sunxi-ng: nkm: Support minimum and maximum
- rate
-In-reply-to: <exb2lvjcozak5fayrgyenrd3ntii4jfxgvqork4klyz5pky2aq@dj2zyw5su6pv>
-Date: Sun, 18 Feb 2024 09:29:15 +0100
-Message-ID: <874je6b2g4.fsf@oltmanns.dev>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boLrqGdB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54CE2C433C7;
+	Sun, 18 Feb 2024 20:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708289863;
+	bh=XyVBAYojIXNfiY2h5khy0cciLOneIIfR/qnxl+XbJoo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=boLrqGdBCCwHGrRftYmqxJcR0wK5yt4RCIfbW1668yL3eLRFO2vBkLCt9uYOuXf1Y
+	 zaqU5kWIWkJOXwmrXXzn11QDtuoR2M4msb7nwyoTu23dpXbAiGs50L/XLtkHN99f+W
+	 BXMxXO34FImMWejvGZnhvuFbMJoCWZnV26YkPalCzWs1rt/7r9a2jzsAF4FrAP7Ewl
+	 zMsi1splTyPQWKCc3OiPFj7b+JNp5gBP8JXpiTTVMatIAW3gdKjj3fI9I1+jeuCso2
+	 JTxfnHVGkMnI2lRXz8Nje3mRL04oVzCVQwndSeVDzKoh6y7DXjfHJobxGliJOtpWLy
+	 tdyTSu6DKFVFA==
+Date: Sun, 18 Feb 2024 14:57:41 -0600
+From: Rob Herring <robh@kernel.org>
+To: Yang Xiwen <forbidden405@outlook.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, David Yang <mmyangfl@gmail.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 4/4] dt-binding: clock:
+ hisilicon,clock-reset-controller: add Hi3798MV200 SoC support
+Message-ID: <20240218205741.GA1561527-robh@kernel.org>
+References: <20240216-clk-mv200-v1-0-a29ace29e636@outlook.com>
+ <20240216-clk-mv200-v1-4-a29ace29e636@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 4TczNn46Snz9sTN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240216-clk-mv200-v1-4-a29ace29e636@outlook.com>
 
-Hi Maxime,
+On Fri, Feb 16, 2024 at 07:37:54PM +0800, Yang Xiwen wrote:
+> This SoC is similar to Hi3798CV200.
+> 
+> Also document the specific DLL regs and add an example for it.
+> 
+> Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
+> ---
+>  .../clock/hisilicon,clock-reset-generator.yaml     | 36 ++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/hisilicon,clock-reset-generator.yaml b/Documentation/devicetree/bindings/clock/hisilicon,clock-reset-generator.yaml
+> index d37cd892473e..8ee844574eda 100644
+> --- a/Documentation/devicetree/bindings/clock/hisilicon,clock-reset-generator.yaml
+> +++ b/Documentation/devicetree/bindings/clock/hisilicon,clock-reset-generator.yaml
+> @@ -44,12 +44,17 @@ properties:
+>            - hisilicon,hi3519-crg
+>            - hisilicon,hi3798cv200-crg
+>            - hisilicon,hi3798cv200-sysctrl
+> +          - hisilicon,hi3798mv200-crg
+> +          - hisilicon,hi3798mv200-sysctrl
+>        - const: syscon
+>        - const: simple-mfd
+>  
+>    reg:
+>      maxItems: 1
+>  
+> +  ranges:
+> +    maxItems: 1
+> +
+>    '#clock-cells':
+>      const: 1
+>  
+> @@ -87,6 +92,12 @@ properties:
+>      description: |
+>        Reset controller for Hi3798CV200 GMAC module
+>  
+> +patternProperties:
+> +  '.*-dll@[0-9a-f]+':
+> +    type: object
+> +    description: |
+> +      eMMC/SD delay-locked-loop (DLL) register subnode
+> +
+>  required:
+>    - compatible
+>    - '#clock-cells'
+> @@ -137,3 +148,28 @@ examples:
+>              #clock-cells = <1>;
+>          };
+>      };
+> +  - |
+> +    crg: clock-reset-controller@8a22000 {
+> +        compatible = "hisilicon,hi3798mv200-crg", "syscon", "simple-mfd";
+> +        reg = <0x8a22000 0x1000>;
+> +        ranges = <0x0 0x8a22000 0x1000>;
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        #clock-cells = <1>;
+> +        #reset-cells = <2>;
+> +
+> +        emmc_sap_dll: sap-dll@39c {
+> +            compatible = "hisilicon,sdmmc-sap-dll", "syscon", "simple-mfd";
 
-On 2024-02-08 at 13:16:27 +0100, Maxime Ripard <mripard@kernel.org> wrote:
-> [[PGP Signed Part:Undecided]]
-> On Mon, Feb 05, 2024 at 04:22:26PM +0100, Frank Oltmanns wrote:
->> According to the Allwinner User Manual, the Allwinner A64 requires
->> PLL-MIPI to run at 500MHz-1.4GHz. Add support for that to ccu_nkm.
->>
->> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
->> ---
->>  drivers/clk/sunxi-ng/ccu_nkm.c | 13 +++++++++++++
->>  drivers/clk/sunxi-ng/ccu_nkm.h |  2 ++
->>  2 files changed, 15 insertions(+)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
->> index 1168d894d636..7d135908d6e0 100644
->> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
->> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
->> @@ -181,6 +181,12 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
->>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->>  		rate *= nkm->fixed_post_div;
->>
->> +	if (nkm->min_rate && rate < nkm->min_rate)
->> +		rate = nkm->min_rate;
->> +
->> +	if (nkm->max_rate && rate > nkm->max_rate)
->> +		rate = nkm->max_rate;
->> +
->
-> This is provided by the clock range already. If you call
-> clk_hw_set_rate_range, it should work just fine.
+No child nodes, not a simple-mfd.
 
-I have to admit, that I don't know that much about sunxi-ng or the CCF
-and therefore humbly request some guidance.
+> +            reg = <0x39c 0x8>;
 
-I've looked at other examples of clk_hw_set_rate_range() usage and it
-seems there is not a lot of adoption for this functionality even though
-it was already introduced mid-2015. This makes me wonder, why that is.
+I imagine you are linking to this node from the SD host controller node 
+with some custom property. Instead of defining the register address 
+here, link to the parent node (&crg) instead and make the offset the 2nd 
+cell.
 
-Anyhow, it seems in all examples I found, clk_hw_set_rate_range() is
-called immediately after registering the clk_hw. So, in the case of
-sunxi-ng, we'd need to do that in sunxi_ccu_probe, which is a common
-function for all sunxi-ng clock types. Correct?
-
-If so, surely, you don't want me to introduce clock type specific code
-to a common function, so I assume you want min_rate and max_rate to
-become members of struct ccu_common. Correct?
-
-If so, since there already are some clock types in sunxi-ng that support
-having a minimum and maximum rate, these clocks should be refactored
-eventually. Correct?
-
-Finally, in sunxi-ng there is a feature of having a fixed_post_div (see,
-e.g., the first to lines of the diff above). It seems to me that CCF
-cannot know about these post_divs, so we'd also need to transfer the
-fixed_post_div to ccu_common and use that when calling
-clk_hw_set_rate_range. Correct?
-
-The fact that you casually dropped the two sentences above and me
-deducing you want a somewhat large refactoring of the functionality for
-sunxi-ng, makes me wonder if I completely misunderstood your request.
-
-Best regards,
-  Frank
-
->
-> Maxime
->
-> [[End of PGP Signed Part]]
+> +        };
+> +
+> +        sdio0_sap_dll: sap-dll@3a4 {
+> +            compatible = "hisilicon,sdmmc-sap-dll", "syscon", "simple-mfd";
+> +            reg = <0x3a4 0x8>;
+> +        };
+> +
+> +        sdio1_sap_dll: sap-dll@3ac {
+> +            compatible = "hisilicon,sdmmc-sap-dll", "syscon", "simple-mfd";
+> +            reg = <0x3ac 0x8>;
+> +        };
+> +    };
+> 
+> -- 
+> 2.43.0
+> 
