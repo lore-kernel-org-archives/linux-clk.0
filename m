@@ -1,206 +1,79 @@
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6CE5677;
-	Sun, 18 Feb 2024 02:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B7C1C27;
+	Sun, 18 Feb 2024 03:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708224756; cv=none; b=SxicewdjO1mJadeTJdrNtUwfc149TEH+Bv82qjG1eHJzFZmue2B4f8qMlW08dCYiedJD2ECXyZHM3XpBdfY14eDNVLiL8Rpptc8aibf7Niywn4npita+2b2z9wZuGeDWhK0DxP28Kh6/wA/wAKKL4SvQsKvZANOSgmUf3EIxm5o=
+	t=1708227256; cv=none; b=ngxWj/i1VMqWlsfh8Z5CZO06mn68xoxUq9gEVmmQ+ZRjUU12pzsJnyec11boJ4Pjtv22jzTmV6KaSN1aSlTIazMlT+6sFrnaKiVi7j1Z5E3kvrKoNfvDcndas0oqhr6kLHtN6/QBclOx2Qwjg+7IJZ3Z+EOef+nLv+W4pWMIHug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708224756; c=relaxed/simple;
-	bh=FePf3EyOVTsisp4gCWFACVV6RZHdDOhtdVjERgnF8VM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lfgLZUlpzWKuA3veQYIlsdkW/O3pu9iwhK/EXEO7DVUSr6PrrlAxj+XnFgWHFsOGKO7f+vu+8xHw+OBgg8Akv+9gcfCPKgvKb+rSYAFaLjm9XVFUBlAyTmzWausBYsxtkducNdODLQDK47XXcKTnVMghCUm/guNg5tuKVkJTfMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V5bxRjg5; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V5bxRjg5"
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6e2e6b405aaso1149259a34.3;
-        Sat, 17 Feb 2024 18:52:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708224754; x=1708829554; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l3n19RkNDdq8dbMgQjlCr52ofvg6XvVFhLZ4eyMaEeA=;
-        b=V5bxRjg5icsIEz9KlHXReDIXuom532qoIVtJDvwaqkaq9zgRBIjbAzWkA2bvBFE2QT
-         xg+/XZlnG5pSWCD6vu1UoNhT7ScyUi2PPlvc3K7anWAIVUi/bS6teL1m1WgSe+sj1HF2
-         OqCP1vI1Ej6zZ5zEx6++ixDFKo1uH5dQH8l7t+WnURVleoIHXCtLPLAaXcEJNQUv9NX6
-         tJ1CicPVIbnq6dMkA6hmSJzf2VLePZwvfv2mDdSvcKXoIFozPWwXLVtNiyzmFhmGQp41
-         WRPBihXbHb7ZFNSG3+L3jmlj8S9xF54p/7wY/leXw5RnW0VJGo0R1iEqRM7RdkQw7Kqw
-         wJiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708224754; x=1708829554;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l3n19RkNDdq8dbMgQjlCr52ofvg6XvVFhLZ4eyMaEeA=;
-        b=ZWUjR9B4E6QtHzED6vpjIeUqIBS+9kkyY4EcudOaNal6/LTzo8YrL6W+mCFCDD03jP
-         qpQz9ssbK4u3SUDopWw/RLNsyt/xIaaniQcDTW85ZE/Tb4k80VYmAbGcf7IBErlLs2g9
-         IoLSGQHF3DwnALnVW/FBh+cstdMih0UZhD0JqMW7Z19kbkWQRxYlraR4cFSYmiKt2R4x
-         h0ufDAUaChdv+kj/XHm3qKPil4VVosSCMvS+K9n7gzjsd9WX/lNH+irW+/R8In40fONt
-         MJNBmKjtEHGVs3CJT+X0O6oL9j4eskWXKiZjzWvulgYZW2ouul3fehUX3Gxbe79HLLzi
-         /a6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWn0ZTZroaNbLhdBc8UDKv1AyMDdzBbJUGj+g8v33YHWg+J4iJW6YD0tNsCfLHPOqmZMNUZx/j+k7/A8sxm0pI3g4bqIQi3DqNF5UxZW6YBtj3IqIpm2N+Hjo5lKbfAbOCG6zZhVpNObYb2tAaZV2OJQHmWBru+nkpKjm8Iux5CVmcFYw==
-X-Gm-Message-State: AOJu0YyhcTO6rDavHCcw72gt9Zb8vE0lwvZ5kSdIZ7bDMEYr1ATjVfUC
-	RTKX83f4QR0HdnxjC4PO8q1zE3Wb1tiVh9zfM8psGGuWIxw7ieHv
-X-Google-Smtp-Source: AGHT+IEeVIqfdYbflCRrTg3/7Jkh/cxWMWj69qHzmn3fE+cLdGKkNtKHAdwy21byuai9OMmNLmxB4w==
-X-Received: by 2002:a9d:6415:0:b0:6e2:e50b:7ac5 with SMTP id h21-20020a9d6415000000b006e2e50b7ac5mr8331462otl.17.1708224753896;
-        Sat, 17 Feb 2024 18:52:33 -0800 (PST)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id d7-20020a4a9187000000b0059d97d9f75fsm549603ooh.14.2024.02.17.18.52.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Feb 2024 18:52:33 -0800 (PST)
-From: Chen Wang <unicornxw@gmail.com>
-To: aou@eecs.berkeley.edu,
-	chao.wei@sophgo.com,
-	conor@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	mturquette@baylibre.com,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	richardcochran@gmail.com,
-	robh+dt@kernel.org,
-	sboyd@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	guoren@kernel.org,
-	jszhang@kernel.org,
-	inochiama@outlook.com,
-	samuel.holland@sifive.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v10 5/5] riscv: dts: add clock generator for Sophgo SG2042 SoC
-Date: Sun, 18 Feb 2024 10:52:26 +0800
-Message-Id: <dc899c89e5c30e2267965f185b52d6dded4eb1ac.1708223519.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1708223519.git.unicorn_wang@outlook.com>
-References: <cover.1708223519.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1708227256; c=relaxed/simple;
+	bh=CxVKwUGLo7LecTQYrgFuAB5EEisKCsHAp17IP4LnF4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ul4SK1VFx147ZY7kzk1Oeap9evRJvnnvCF0jCmtxgTvKXBUvAHGBxrQ7XhOtGaxVHpBzCbp8P/Xy77DXhzzBmxlOrqxZiIaUQgOgP8YQtOdOg+3So/WWFIQldN89hdt7L1kdfQPlpvgbhP493J8EDJ98K0Dpig5SkDcUj0oMgLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.96.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1rbXaP-00054G-35;
+	Sun, 18 Feb 2024 03:11:26 +0000
+Date: Sun, 18 Feb 2024 03:11:15 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Rob Herring <robh@kernel.org>, Jianhui Zhao <zhaojh329@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: John Crispin <john@phrozen.org>, Steven Liu <steven.liu@mediatek.com>
+Subject: [PATCH] clk: mediatek: mt7981-topckgen: flag SGM_REG_SEL as critical
+Message-ID: <fc157139e6b7f8dfb6430ac7191ba754027705e8.1708221995.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Chen Wang <unicorn_wang@outlook.com>
+Without the SGM_REG_SEL clock enabled the cpu freezes if trying to
+access registers used by MT7981 clock drivers itself.
+Mark SGM_REG_SEL as critical to make sure it is always enabled to
+prevent freezes on boot even if the Ethernet driver which prepares
+and enables the clock is not loaded or probed at a later point.
 
-Add clock generator node to device tree for SG2042, and enable clock for
-uart.
-
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+Fixes: 813c3b53b55b ("clk: mediatek: add MT7981 clock support")
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 ---
- .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  | 12 +++++
- arch/riscv/boot/dts/sophgo/sg2042.dtsi        | 48 +++++++++++++++++++
- 2 files changed, 60 insertions(+)
+ drivers/clk/mediatek/clk-mt7981-topckgen.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-index 49b4b9c2c101..80cb017974d8 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-+++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-@@ -14,6 +14,18 @@ chosen {
- 	};
- };
- 
-+&cgi_main {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll0 {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll1 {
-+	clock-frequency = <25000000>;
-+};
-+
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index ead1cc35d88b..e70c43e2ccbe 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -5,6 +5,9 @@
- 
- /dts-v1/;
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/clock/sophgo,sg2042-pll.h>
-+#include <dt-bindings/clock/sophgo,sg2042-rpgate.h>
-+#include <dt-bindings/clock/sophgo,sg2042-clkgen.h>
- 
- #include "sg2042-cpus.dtsi"
- 
-@@ -18,12 +21,54 @@ aliases {
- 		serial0 = &uart0;
- 	};
- 
-+	cgi_main: oscillator0 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_main";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll0: oscillator1 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll0";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll1: oscillator2 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll1";
-+		#clock-cells = <0>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		ranges;
- 
-+		pllclk: clock-controller@70300100c0 {
-+			compatible = "sophgo,sg2042-pll";
-+			reg = <0x70 0x300100c0 0x0 0x40>;
-+			clocks = <&cgi_main>, <&cgi_dpll0>, <&cgi_dpll1>;
-+			#clock-cells = <1>;
-+		};
-+
-+		rpgate: clock-controller@7030010368 {
-+			compatible = "sophgo,sg2042-rpgate";
-+			reg = <0x70 0x30010368 0x0 0x98>;
-+			clocks = <&clkgen GATE_CLK_RP_CPU_NORMAL>;
-+			#clock-cells = <1>;
-+		};
-+
-+		clkgen: clock-controller@7030012000 {
-+			compatible = "sophgo,sg2042-clkgen";
-+			reg = <0x70 0x30012000 0x0 0x1000>;
-+			clocks = <&pllclk MPLL_CLK>,
-+				 <&pllclk FPLL_CLK>,
-+				 <&pllclk DPLL0_CLK>,
-+				 <&pllclk DPLL1_CLK>;
-+			#clock-cells = <1>;
-+		};
-+
- 		clint_mswi: interrupt-controller@7094000000 {
- 			compatible = "sophgo,sg2042-aclint-mswi", "thead,c900-aclint-mswi";
- 			reg = <0x00000070 0x94000000 0x00000000 0x00004000>;
-@@ -333,6 +378,9 @@ uart0: serial@7040000000 {
- 			interrupt-parent = <&intc>;
- 			interrupts = <112 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <500000000>;
-+			clocks = <&clkgen GATE_CLK_UART_500M>,
-+				 <&clkgen GATE_CLK_APB_UART>;
-+			clock-names = "baudclk", "apb_pclk";
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			status = "disabled";
+diff --git a/drivers/clk/mediatek/clk-mt7981-topckgen.c b/drivers/clk/mediatek/clk-mt7981-topckgen.c
+index 682f4ca9e89ad..493aa11d3a175 100644
+--- a/drivers/clk/mediatek/clk-mt7981-topckgen.c
++++ b/drivers/clk/mediatek/clk-mt7981-topckgen.c
+@@ -357,8 +357,9 @@ static const struct mtk_mux top_muxes[] = {
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_SGM_325M_SEL, "sgm_325m_sel",
+ 			     sgm_325m_parents, 0x050, 0x054, 0x058, 8, 1, 15,
+ 			     0x1C0, 21),
+-	MUX_GATE_CLR_SET_UPD(CLK_TOP_SGM_REG_SEL, "sgm_reg_sel", sgm_reg_parents,
+-			     0x050, 0x054, 0x058, 16, 1, 23, 0x1C0, 22),
++	MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_SGM_REG_SEL, "sgm_reg_sel", sgm_reg_parents,
++				   0x050, 0x054, 0x058, 16, 1, 23, 0x1C0, 22,
++				   CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_EIP97B_SEL, "eip97b_sel", eip97b_parents,
+ 			     0x050, 0x054, 0x058, 24, 3, 31, 0x1C0, 23),
+ 	/* CLK_CFG_6 */
 -- 
-2.25.1
+2.43.0
 
