@@ -1,188 +1,236 @@
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2077.outbound.protection.outlook.com [40.107.21.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931CEEDD;
-	Sun, 18 Feb 2024 02:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708222790; cv=fail; b=mSphUB8uCvPoGmmV3z1AoNhHah4DEtlZD5SHFYcdBE+ru5GmNYBVD+NmkmtV24SD8FeKO118DU075Q3tAPJhhrUgpsrCP2PHu93LAAkyeAjSprFIG9NLZdYT2vhIccOyCyaLTfmdLmku1A7OefrqK75YPGcVgeWJ0YRlN3mYNYk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708222790; c=relaxed/simple;
-	bh=rLR3MIZu+o/aA6eYs2tgMlNVayQehlrBySjlNJoU6r8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=d1zdrVlJQh2UyaU7/LfCqskQcxbv6nN8Qqn+73ynDcGZqDkGf+aVdzR9SnfC510HdWiZ+TXtA42KM7HcIX47A+/xsuxo0JJXlMQ/pxYhykgZgFUMEPkAT/61wFKu+A6B6CIzFQMA8pNy18Jf+DPsU6SQs7aKToclPgINCZOQrF4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=OZ5ZqHn/; arc=fail smtp.client-ip=40.107.21.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9FEA34;
+	Sun, 18 Feb 2024 02:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708224637; cv=none; b=KJfEE8uhN7M6+ovGYuB1puhIkhsGev+JJw8QonB86hdPyIgm9KioMwrCHRBi7gdgPPNtDfEnB+OjxUyXm119jAS8FvzpsPWPLcTDqedEKkl72BLIXI9w+4DIBTuOS1BN7jQCCUm7ZIKyss6FvVI9+YTbql1vC1PrKYD/qVy1kpc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708224637; c=relaxed/simple;
+	bh=csKVS05VZ1LdlT61/289CqczHlFQReN3S/4Vivuc8gU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=syupwjIwg4hZMLUKYewHxeMQHQRyhERuMQvFNlm0nXYYZrwLXyPjzBAiQ7oKVxiDluilnjO7ltICDijTl2gcnExcOMZqPdi8pw80cjPRt4GR0HZIVvNxvYyMfgVGGctBqkwRtbw4aGEpb+qMi0FK8Bta/LFn0DlxEq8dpTiHeVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=but6+eIr; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OZ5ZqHn/"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ny5b4cDck7wgKo5xsHn6EGWeCrLfp9xYCBW8ISgn8YpaKQYMXqW1jPj5oRTXLDbVm62rg1YsJfBgbZ6yFUq3HC7J+n4kFNK2XfAI8tXUwA45iBmgvZAf9naHrPFtoKdzvqRoJb5f6O9EgFkYlWGBw8l+rQMIKaYWayVuzfFRkIJV6jP7Ps0F9QMJWk7fmSRlf6sEDnkXZG4/0PQ+e5kRc9i8B4RvHg/ZXSTOJivXICU/tJ3B/DjpE6l+SQItOl4dJDmF673NSvzhJhxyfatH7KgAHYARNmGo0we/sm8GTeH/mkjadpGEELiI3LfR2lPKIA74XK1528mmeZXJnpl8ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XUFzU5tMZji+fheQI4MwejMk5u2g0MxxAB0UUSVuXVw=;
- b=T/snmOteQhOOzjlQ+4FPXQscmp0HgxaMmiu1a3pxXpdLN1cw/dYkZ6v7jEricBVCfJ5/Mb76HGkWkiqKB6tm3cJ6qBKcaPpOWgQpxDsOfHKsTUzQcmsLIrRdWGDbUalsurVNLkBUTNpx3bVIAjJY9boXrFxgxElBy4y0YeCQ/QiDwCL+j9FXbgKXynNjC+khomhQtyHQFSm2Ao9sliPUfU5gibLgsmE0qN8Ost1MqZJvJjfNonuLO0PJEm0xL3G3im2rUKxHBxV4W8AL80/JGsR6W/w4kjXKrZ4fET+kxhmKJt9wifr/oHgo+A6M7uTKiG6skeoo6PtYYLgd03rRTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XUFzU5tMZji+fheQI4MwejMk5u2g0MxxAB0UUSVuXVw=;
- b=OZ5ZqHn/rTp1FSIvgWdVvnG5nnHS2imeCvPT4LMfaJoIfDKheyJLIZX+LNMeDVY3kJv7f9VdK2HcLCi2TMnO6eRVbBhaq6iI6eGYAgEgl3YFt6ej3TWeyM+vx2tz7b45lxYErECookpFSMNQt1eKOdwEPrbcBsCwG6Yis2sbAfI=
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by AM9PR04MB8763.eurprd04.prod.outlook.com (2603:10a6:20b:40a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.29; Sun, 18 Feb
- 2024 02:19:45 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::4ac3:3559:4200:38e1]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::4ac3:3559:4200:38e1%4]) with mapi id 15.20.7292.033; Sun, 18 Feb 2024
- 02:19:45 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Sudeep Holla <sudeep.holla@arm.com>, "Peng Fan (OSS)"
-	<peng.fan@oss.nxp.com>, "sboyd@kernel.org" <sboyd@kernel.org>
-CC: "cristian.marussi@arm.com" <cristian.marussi@arm.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH V4 2/2] clk: scmi: support state_ctrl_forbidden
-Thread-Topic: [PATCH V4 2/2] clk: scmi: support state_ctrl_forbidden
-Thread-Index: AQHaTFmmql8ovfOyiECAB0+XRIDNZrDnQZ8AgChHR/A=
-Date: Sun, 18 Feb 2024 02:19:45 +0000
-Message-ID:
- <DU0PR04MB941784A5A667756BD1CC584288522@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <20240121110901.1414856-1-peng.fan@oss.nxp.com>
- <20240121110901.1414856-2-peng.fan@oss.nxp.com> <Za-fTES4owsmmxgO@bogus>
-In-Reply-To: <Za-fTES4owsmmxgO@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|AM9PR04MB8763:EE_
-x-ms-office365-filtering-correlation-id: 69ef42ce-36cc-4296-0dc2-08dc302812d9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- O/gtwYZSxH1U37b2robv7iSgV5BtzThM3H0z8717yyXWJPTEIGR0mEsDZAXq3iM1PRAGGZ0qGfVoBIxmVvYK0sY40GX+1h8GvRsOOQaq6iirWw21wdIoyZ1aPVPY2DXTDRtcu9x1hhNBtj5biOEtXR9v8SC3PUMYbP1x+24IAgFfW2Amlas3yPTI+cBBAE3l25i5E8aK+26IFhlsrNvkZ/SwsVoCY56WOzo6ofhRyrhPL0/v1HLGyJs9KBvgMAnCngodiqB81a6hXHh77RbcUaguZzrSZrDGfCxo60XSyEIcneeY1L1uOpjpNn6uXTPZYNgsdUcjxUKP5uGJRqOm37JROgtAXUttEcose8fiJh84uqRClPuv6uLOSLkpZO9kPTLZeLrOPBzqRdrPI3HvOXhjbzIe9AyeAtSX8EBqjLEluPqGBILIuSVNM88qlFT604529PEHwlWeKm9YiMDuKY+FSN2knoLuIFPhekBfsAlHhrdl+b2ghBQVdoSN0qK8lynY7vTeI6+bJ7H2a8aheTY01jIarmk+EZW4DfSbr+TmALn1WTCWN5eOYuQKQja0g7maCuMRof+3/pXAQkOFJfQt1wJ3Gk0L1sRt3mXETkFz9SDM3h9yQsKZO4a8mVet
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(346002)(396003)(366004)(136003)(39860400002)(230922051799003)(451199024)(1800799012)(64100799003)(186009)(122000001)(83380400001)(38100700002)(66476007)(76116006)(66946007)(66556008)(44832011)(8676002)(52536014)(64756008)(8936002)(2906002)(66446008)(5660300002)(41300700001)(26005)(9686003)(316002)(71200400001)(478600001)(54906003)(110136005)(7696005)(6506007)(38070700009)(86362001)(4326008)(33656002)(55016003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?D8JflmW59l9yVHdTsCwkFBiEFQ2bNvQ3l7i0oApOncJq+AMN8ACRZp0f7/tZ?=
- =?us-ascii?Q?hH31AUyl/kc/Nl/QGo8ao/o2aw7NZ3ooFX+cPoDn2L5YP9XYYabdKUArprVL?=
- =?us-ascii?Q?vjLdmhkqXwbBMDdEITXYFzg7QQnlSBcwpBe2+QhJqcQMQniL6XEkbZSvV3NY?=
- =?us-ascii?Q?EUUIC3rm73RZ+O/2NYeLDrSSXQqdwm8/DD8z2w76iHMu0YGbNLFzoiSFkUQb?=
- =?us-ascii?Q?ohmb5vaL+VC0uzoyl98929vG1TAhAyCT/2lz6UEfMhRyhnHhPYTBoaM/0wRm?=
- =?us-ascii?Q?zYYAmrKhrgHdZSW1kdp1atMZsCzIja0nq7hQi3f/gpkeQcc9d/3kSMiuyjRY?=
- =?us-ascii?Q?m+FW+AxXvbqIzI3OayBfmHRJzqRcJgj2G/ZKe4owiU86tvQq+4rIurQhVHJn?=
- =?us-ascii?Q?u5fBJNIzwcd/O87bUswS//xZRot4EFfkBm06UcvOLTKg6sQNLMQj5onRytGb?=
- =?us-ascii?Q?vt5yN1czd/F1bQ2Huv9ZPLlZLnk5ka7dgUbDQBSqcia+QUAEEGwNtb3I1VXq?=
- =?us-ascii?Q?5eVTr2Y61Wv5wqJ8gH561yrzr1tMTxEoEqytxrc3Zwewzou++puKG33r5ap5?=
- =?us-ascii?Q?xe/7K77P58VblyTAATJ8f7KIDqYkB2tvx8CVTfTPchpx7NJu30ih6a+zKGAa?=
- =?us-ascii?Q?zCsT+tKPckcyxzyEpoJez4b+0fl9/mz4a7X8oBFluLEZTGfRMtGkJDyPgaG2?=
- =?us-ascii?Q?6cGa1WXgejmbrLDv/lAtXQ5foSN/lJ1MDrX9sHaycd/MdqXxkYGg2EDX+H0D?=
- =?us-ascii?Q?DCFLS7rGfHQvivAuK4jhGmqI83ExF0lhOt0uh1Z8mC0G1VYUe/CnpRFDgb+Y?=
- =?us-ascii?Q?vI2yo+ZsMggVa6eNg12LkBRf3KGrqGk7lVGmzvSLAngPFCEU9pmhSM/WfTNY?=
- =?us-ascii?Q?mh05KImWRz8dcqC5W2P9YKnJuYydVFSSTUPWL1iqP3a7Dj84Dd3YwVSqRhG0?=
- =?us-ascii?Q?s708ThR6XQdlWKbl4dz6eJJenM6LVmqqO4T2/DScegfcPPDiAFLDTMmX4uhg?=
- =?us-ascii?Q?L9oL7f0kPixqEYA9ZIvLiew26LeQwH3OqBKIcbW3ke88/HLqBDU+mdnPhsD6?=
- =?us-ascii?Q?UdcoTKfNd+3wsmL++EceJ7OBGGjMGjy9lWun9PLY9OUMA9MPohJJcyV38/Mb?=
- =?us-ascii?Q?+wPLQj/naV1HIvA++f0JYnwJiV+LAxe07Hp/4870C+HvQk7D98i3ItnKVaqx?=
- =?us-ascii?Q?oFQ3WW84AvQ/z5Nd7zVh93mK3i96I9Il8Pc7HPF/P4j+NUcgzlZ8QEkPqW+8?=
- =?us-ascii?Q?rzUvSs3g9HbQEjXJr7TbR86FwsJJEcGz0ONW18jrpdm0vYZOJMt4ZXmkAEbc?=
- =?us-ascii?Q?/L6wkrvqh7B3G8q9r1RU+BH0Z7fvWP98/LTJ5I5tJnY9zzVETH/xIN1NLHrf?=
- =?us-ascii?Q?Q3+S9a8RwGzOYAem7LpG3UqXGXc1KCWgmm6Zfhf168R+4cg20EAOH4Xlk5r1?=
- =?us-ascii?Q?pgcnuGR6QLwSltzokkFcEQOA631Pg7CdSMzlPU3zvz6kB1oW+p0LyHQU03EK?=
- =?us-ascii?Q?KEsVAHSwS4QzNM/f9P8hNBthfSX7AXuNHoSeLpM2Qa67A8Edc62QJ4CDt3ML?=
- =?us-ascii?Q?JdTb/eqOIhoNJCdYLEs=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="but6+eIr"
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-21e95f4ed73so283410fac.0;
+        Sat, 17 Feb 2024 18:50:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708224635; x=1708829435; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nAJ5ltGfAiLD6zWuVubqrGKYwXO9kCBenaTuBOXA/Uo=;
+        b=but6+eIrNl+hXx09Ge84/t4zeHz1Qj2l7GudrYQ/rVE2rbB/WT9Ipv7LenVCCebftj
+         N3tPOWwEKvhNaYSgAaosucbj9HUCzpF4QPkgUB2qvdrnpSdogIoGMBZp9DU2RFO3rvC2
+         XwLWWObIhezWcP3eoSSatD4j8Rpa2XZ/R/oW8DcvGoqZqjfTLYOINzrYlWsXnA71Aq5D
+         L0Eg3xdMlpZv1SZc0V2kAGsviPNBFPos2tJcHQFcQ0eWm+9eRe/maGGGOuX8JzVltVJ5
+         WMW5KSJZu+6LZJ8rcB01EenW9cDeO9Z+Tf5ESJtQnbVuo2v2NJDoXC/ymFRJS+Qh/trF
+         A5qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708224635; x=1708829435;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nAJ5ltGfAiLD6zWuVubqrGKYwXO9kCBenaTuBOXA/Uo=;
+        b=If7aaIaik2RGHMCKrp/DvOqcXlHWejqZryG8+Xkbdxad3YU90Axj/QnBy1SjssqZyX
+         s/YvewlapJlHkxtiQ8nXME5KaDIVRnkFrSdwpiuYXwYcsbYJqv3oMFeI3qT3nOARLnLs
+         p25EOA+WCxMyz+18CZtCK6kbg29x3xKHc4NbGK4Zxu/lKVOFjfPdP7qjPeFz8iwtS/s6
+         Zq1O/AfWQh9mGDtCcGiJM6nDljnaPX5hejKM3o+Dfz7z5/YOisJY+vm+lPszhfpKzyhc
+         aXHGN42cpF2Bmt2aV4v3u7/TTMQRIByACIK6XtaYTHpqmYbCJONtJvr2imweV5HhY8EI
+         icow==
+X-Forwarded-Encrypted: i=1; AJvYcCWlG2Oqtf4U7HwgJ+qkxQJlgkXJS28W3ekpT3ybM9vBc9rYiZAwAUwVTNP+UZOyRJsQ70BjYJzE8Lq+45BtAY6dTSNizYsI8jA3MskDJMh3J/Kx0nsdF5Xytu1sDNdy9E89z+5car5xKjMtgDIoSzd92od37wX7s1rUzp/s84xHt+/6Ig==
+X-Gm-Message-State: AOJu0YwEjPArbri3L0Riw993ZoJ2HzGhnCKaM8e5Z9H5qIsRvXP2LLZ0
+	/yFSeGwAVSNnIEsMPQxNrF8KGrKlb36FX+jqxj2wgoFTgMPnJqH0
+X-Google-Smtp-Source: AGHT+IEZdWRSv6OyEylfT18OqTojeVi3763UrXEQaBYtIT8k8y19STYJnEqc1AWmgd13V+RGI5e++Q==
+X-Received: by 2002:a05:6870:440e:b0:219:aa92:a4de with SMTP id u14-20020a056870440e00b00219aa92a4demr10225680oah.21.1708224634539;
+        Sat, 17 Feb 2024 18:50:34 -0800 (PST)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id oz21-20020a056871789500b0021a12cae134sm745615oac.48.2024.02.17.18.50.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Feb 2024 18:50:34 -0800 (PST)
+From: Chen Wang <unicornxw@gmail.com>
+To: aou@eecs.berkeley.edu,
+	chao.wei@sophgo.com,
+	conor@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	mturquette@baylibre.com,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	richardcochran@gmail.com,
+	robh+dt@kernel.org,
+	sboyd@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	guoren@kernel.org,
+	jszhang@kernel.org,
+	inochiama@outlook.com,
+	samuel.holland@sifive.com
+Cc: Chen Wang <unicorn_wang@outlook.com>
+Subject: [PATCH v10 0/5] riscv: sophgo: add clock support for sg2042
+Date: Sun, 18 Feb 2024 10:50:25 +0800
+Message-Id: <cover.1708223519.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69ef42ce-36cc-4296-0dc2-08dc302812d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2024 02:19:45.2275
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: p5qefS9uQ3YiQRZAyiSdx+IY0xIMy6wb9X22oISyb+/Y3OXzeRjQQzpNDUfz0o5CnKD2ui9X0A1LuGw0MOIkIA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8763
+Content-Transfer-Encoding: 8bit
 
-> Subject: Re: [PATCH V4 2/2] clk: scmi: support state_ctrl_forbidden
->=20
-> On Sun, Jan 21, 2024 at 07:09:01PM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > Some clocks may exported to linux, while those clocks are not allowed
-> > to configure by Linux. For example:
-> >
-> > SYS_CLK1-----
-> >              \
-> > 	     --MUX--->MMC1_CLK
-> >              /
-> > SYS_CLK2-----
-> >
-> > MMC1 needs set parent, so SYS_CLK1 and SYS_CLK2 are exported to Linux,
-> > then the clk propagation will touch SYS_CLK1 or SYS_CLK2.
-> > So we need bypass the failure for SYS_CLK1 or SYS_CLK2 when enable the
-> > clock of MMC1, adding scmi_no_state_ctrl_clk_ops to use software
-> > enable counter, while not calling scmi api.
-> >
->=20
-> I would rewrite the commit message something like:
-> "
->     clk: scmi: Add support for forbidden clock state controls
->=20
->     Some clocks may be exported to OS agent, while certain configurations=
-/
->     access to those clocks are restricted to the OS agent by the SCMI pla=
-tform
->     firmware. For example:
->=20
->     SYS_CLK1-----
->                  \
->                  --MUX--->MMC1_CLK
->                  /
->     SYS_CLK2-----
->=20
->     MMC1_CLK needs to set parent as part of it initialisation and enablin=
-g.
->     SYS_CLK1 and SYS_CLK2 are exported to the OS agent. The clk propagati=
-on
->     will access SYS_CLK1 or SYS_CLK2 based on the configuration. However,
->     we need bypass the failure to access SYS_CLK1 or SYS_CLK2 when
-> MMC1_CLK
->     is accessed and enabled.
->=20
->     Add a separate scmi_no_state_ctrl clk_ops where the calls to the SCMI
->     platform firmware are avoided if the access is not permitted.
-> "
-> No need to repost.
->=20
-> I need Stephen's ack to take this together with scmi clk changes.
+From: Chen Wang <unicorn_wang@outlook.com>
 
-Stephen,=20
-
-would you please ack if you are ok?
+This series adds clock controller support for sophgo sg2042.
 
 Thanks,
-Peng.
+Chen
 
->=20
-> --
-> Regards,
-> Sudeep
+---
+
+Changes in v10:
+
+  The patch series is based on v6.8-rc4.
+
+  Add input clocks for rpgate & clkgen.
+
+Changes in v9:
+  The patch series is based on v6.8-rc2. You can simply review or test the
+  patches at the link [10].
+
+  From this version, drop the system-controller node due to there is no actual
+  device corresponding to it in IC design. SYS_CTRL is just a registers segment
+  defined on TRM for misc functions. Now three clock-controllers are defined for
+  SG2042, the control registers of the three clock-controllers are scattered in
+  different memory address spaces:
+  - the first one is for pll clocks;
+  - the second one is for gate clocks for RP subsystem;
+  - the third one is for div/mux, and gate clocks working for other subsystem
+    than RP subsystem.
+
+Changes in v8:
+  The patch series is based on v6.7. You can simply review or test the
+  patches at the link [9].
+  
+  In this version, the main change is to split one clock provider into two.
+  Strictly follow the hardware instructions, in the memoymap, the control
+  registers of some clocks are defined in the SYS_CTRL segment, and the
+  control registers of other clocks are defined in the CLOCK segment.
+  Therefore, the new design defines two clock controllers, one as a child
+  node of the system control and the other as an independent clock controller
+  node.
+
+  This modification involves a major modification to the binding files, so
+  the reviewed-by tags has been deleted.
+
+Changes in v7:
+  The patch series is based on v6.7. You can simply review or test the
+  patches at the link [8].
+  - fixed initval issue.
+  - fixed pll clk crash issue.
+  - fixed warning reported by <lkp@intel.com>
+  - code optimization as per review comments.
+  - code cleanup and style improvements as per review comments and checkpatch
+    with "--strict"
+
+Changes in v6:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [7].
+  - fixed some warnings/errors reported by kernel test robot <lkp@intel.com>.
+
+Changes in v5:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [6].
+  - dt-bindings: improved yaml, such as:
+    - add vendor prefix for system-ctrl property for clock generator.
+    - Add explanation for system-ctrl property.
+  - move sophgo,sg2042-clkgen.yaml to directly under clock folder.
+  - fixed bugs for driver Makefile/Kconfig
+  - continue cleaning-up debug print for driver code.
+
+Changes in v4:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [5].
+  - dt-bindings: fixed a dt_binding_check error.
+
+Changes in v3:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [3].
+  - DTS: don't use syscon but define sg2042 specific system control node. More
+    background info can read [4].
+  - Updating minor issues in dt-bindings as per input from reviews.
+
+Changes in v2:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [2].
+  - Squashed the patch adding clock definitions with the patch adding the
+    binding for the clock controller.
+  - Updating dt-binding for syscon, remove oneOf for property compatible;
+    define clock controller as child of syscon.
+  - DTS changes: merge sg2042-clock.dtsi into sg2042.dtsi; move clock-frequency
+    property of osc to board devicethree due to the oscillator is outside the
+    SoC.
+  - Fixed some bugs in driver code during testing, including removing warnings
+    for rv32_defconfig.
+  - Updated MAINTAINERS info.
+
+Changes in v1:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [1].
+
+Link: https://lore.kernel.org/linux-riscv/cover.1699879741.git.unicorn_wang@outlook.com/ [1]
+Link: https://lore.kernel.org/linux-riscv/cover.1701044106.git.unicorn_wang@outlook.com/ [2]
+Link: https://lore.kernel.org/linux-riscv/cover.1701691923.git.unicorn_wang@outlook.com/ [3]
+Link: https://lore.kernel.org/linux-riscv/MA0P287MB03329AE180378E1A2E034374FE82A@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM/ [4]
+Link: https://lore.kernel.org/linux-riscv/cover.1701734442.git.unicorn_wang@outlook.com/ [5]
+Link: https://lore.kernel.org/linux-riscv/cover.1701938395.git.unicorn_wang@outlook.com/ [6]
+Link: https://lore.kernel.org/linux-riscv/cover.1701997033.git.unicorn_wang@outlook.com/ [7]
+Link: https://lore.kernel.org/linux-riscv/cover.1704694903.git.unicorn_wang@outlook.com/ [8]
+Link: https://lore.kernel.org/linux-riscv/cover.1705388518.git.unicorn_wang@outlook.com/ [9]
+Link: https://lore.kernel.org/linux-riscv/cover.1706854074.git.unicorn_wang@outlook.com/ [10]
+
+---
+
+Chen Wang (5):
+  dt-bindings: clock: sophgo: add pll clocks for SG2042
+  dt-bindings: clock: sophgo: add RP gate clocks for SG2042
+  dt-bindings: clock: sophgo: add clkgen for SG2042
+  clk: sophgo: Add SG2042 clock driver
+  riscv: dts: add clock generator for Sophgo SG2042 SoC
+
+ .../bindings/clock/sophgo,sg2042-clkgen.yaml  |   49 +
+ .../bindings/clock/sophgo,sg2042-pll.yaml     |   45 +
+ .../bindings/clock/sophgo,sg2042-rpgate.yaml  |   43 +
+ .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |   12 +
+ arch/riscv/boot/dts/sophgo/sg2042.dtsi        |   48 +
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/sophgo/Kconfig                    |    8 +
+ drivers/clk/sophgo/Makefile                   |    2 +
+ drivers/clk/sophgo/clk-sophgo-sg2042.c        | 1401 +++++++++++++++++
+ drivers/clk/sophgo/clk-sophgo-sg2042.h        |  233 +++
+ .../dt-bindings/clock/sophgo,sg2042-clkgen.h  |  111 ++
+ include/dt-bindings/clock/sophgo,sg2042-pll.h |   14 +
+ .../dt-bindings/clock/sophgo,sg2042-rpgate.h  |   58 +
+ 14 files changed, 2026 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-pll.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-rpgate.yaml
+ create mode 100644 drivers/clk/sophgo/Kconfig
+ create mode 100644 drivers/clk/sophgo/Makefile
+ create mode 100644 drivers/clk/sophgo/clk-sophgo-sg2042.c
+ create mode 100644 drivers/clk/sophgo/clk-sophgo-sg2042.h
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2042-clkgen.h
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2042-pll.h
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2042-rpgate.h
+
+
+base-commit: 841c35169323cd833294798e58b9bf63fa4fa1de
+-- 
+2.25.1
+
