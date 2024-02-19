@@ -1,195 +1,74 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFAD374FF
-	for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 14:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A7937700
+	for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 14:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708354429; cv=none; b=pVlZLl2xYJhAFxTYj6CwYDeJy1EnJxm+kfxlz9BAAKGRQTC4eSBxG7k6qRuOwZYTrSyTjA4bAim47/kZBsKfiFicxmzOeptmU/k+j4cbors9zFJvKX04NniKZ5U2+JzGJergzm3AT7911UVdKhWlDme1keB84I+0RSwMNEfVXMs=
+	t=1708354457; cv=none; b=jXGBXSQt3YS2LTc2Ma23F+M/6+qPsZhWAKfT2Ca9LdKMqDahu32gV0+LPrkpYdTdeh+HtD/surxKBeC87ZJd7s5AYmdE0SDMGEyclGN1ieo0ejgNrMxii5TT+2jQ+FGF3LExjwSwnPZECjRJFSSxsMqh+sPZ+e06Iipf2F22LCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708354429; c=relaxed/simple;
-	bh=A4nq5x7Ib9yQ12vGKrkxl7Fvyza54Vi2OAWKmupXEmU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IURDGDTuKHMV5jrKXpJQkY5jpAtaesoNtdynTA6hSsHHMZZppW4he2bVWXWHZLenN0m6jNpisrgHdoEjaw3sw2lPnaDef9rVzkHdBZjg7QoRJaz/s0MqdOGtADAQjwwU8rsvYYDfYUW/LKaN//F1aFpABPjmEZUeM6PyNx9sUQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wPoO9OlU; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wPoO9OlU"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6080beb19ddso20142367b3.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 06:53:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708354426; x=1708959226; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uHNd0ZyJA4gTbxBaC9YDXwkG/RiI5KMLPKGCG7+Wzlo=;
-        b=wPoO9OlUVufnAf15roXstTKVzMAu1tMpxJ9G7/TfjFY+zenB/R5GIxdFNmUPiTBQQc
-         hZ6TTce2WQZs0gTrX/tD3FURpVVNgXQsW3qGCbFsRmYmFhS8thhbcz+fceb9nXx1zsD5
-         Zr9RSbKWq8X60QPHrKGCAEyRp0pzgYkUfG7z5axKU+bzIoUkZzkyQG8rnf2LnQhRL7OV
-         IRSMFmxxruv4xTnrHEkT0ybTOKD/GKLAYxShmC3DeXKifv2J0jgD27Oy35/GAITsNXCy
-         ajw43y1MenblC4WRwNMEhfJpwR1bShRS4HeLwRbyslzuYStTD8/wseZeH92JO5jLhnPJ
-         /ofA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708354426; x=1708959226;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uHNd0ZyJA4gTbxBaC9YDXwkG/RiI5KMLPKGCG7+Wzlo=;
-        b=hplSRYrzCc1Jl9tj0zI3tq3dZnXB2uxz9WKeiUWYyH1TbyvLp7FjuMwRjmwKRWSXC6
-         922WruTwDn0/7zkb8yz1R/q8DGGtGsRj7G6ocU4jpiRvxFDnc5xObMsu18kzWYUkHoJK
-         bZ9T/uvfczBMm3lzCpV3I4xwALFqO2ujK16iP2/pHK+dv13hyOXrk9IP2vgYuejKnMK0
-         13HP0+EyR8usgEz/HyLQRdInu9ROnyqsbe+ifRXbHYz7MP3eNp3JFAzdE6YDSaXMW0SH
-         /sHh714dSHod1VfSJX2FmMwPvqJBNTj55YWV1gGNooD//1vu07woy/NKooFMqlgFg+ef
-         lwww==
-X-Forwarded-Encrypted: i=1; AJvYcCVXbBMsjMR1jXem6jz43IPg40GuI8lzpcEaE8TbS2qFvVsxVzWKlYX6o0efTqVC6zy79wZruiPv/rUEjcNUWF/YBNY5DDgz8aQ6
-X-Gm-Message-State: AOJu0YxoHvmrTDeZK5ebVJO+ICs+MTiGD9qnTergUnCHPHDaaP5XLLss
-	BMBT0Q15aTOeyP+pCu2Tam6GuAPa2b6tJk/BQSPNgR2uFPjwg4tYsCHMB5dQWrbozovJ/4/n/uG
-	UrmpuOWArNA+HVia+jwm/mO02J4MjTGqJfi59uA==
-X-Google-Smtp-Source: AGHT+IHY/le6C7LNc0DIav/5O65P9EcFeh1YIyPzIjc+EV5s2EcaI1Ea6U5pWMuSdfWLBVIgW0qC8w2mR4a/yKRxOBo=
-X-Received: by 2002:a81:5287:0:b0:607:9d63:f5f5 with SMTP id
- g129-20020a815287000000b006079d63f5f5mr12422677ywb.12.1708354426245; Mon, 19
- Feb 2024 06:53:46 -0800 (PST)
+	s=arc-20240116; t=1708354457; c=relaxed/simple;
+	bh=tF4pglNP5nBOlAMGxEoCXi1cGb2jkE3GNB+g4iJEE8w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zn+xs7/I/w+xq68Nkg+ckwshnI8OYFBlThkOp0XStCm9bptAfmtY+QSCy4MsngDQKiAkihNTm/4XoQ0DdPPO/+qDNxQlTgIBWPBtKmxQnHvLLuRKEa1AnFJQtDPW/N8rKv6wlABkQunYmAEDWvoYnC+lzbr+AveoxaB4DJFuGNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:a66f:1f5b:42c8:e3c5])
+	by andre.telenet-ops.be with bizsmtp
+	id p2uB2B00T1N8lK5012uBwG; Mon, 19 Feb 2024 15:54:12 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rc51v-0016fA-SV;
+	Mon, 19 Feb 2024 15:54:11 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rc523-007QfY-Jr;
+	Mon, 19 Feb 2024 15:54:11 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Cong Dang <cong.dang.xn@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a779h0: Add RPC-IF clock
+Date: Mon, 19 Feb 2024 15:54:09 +0100
+Message-Id: <07a72378ca64b44341af960f042a6efd41d10dc3.1708354355.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240219-topic-rb1_gpu-v1-0-d260fa854707@linaro.org> <20240219-topic-rb1_gpu-v1-3-d260fa854707@linaro.org>
-In-Reply-To: <20240219-topic-rb1_gpu-v1-3-d260fa854707@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 19 Feb 2024 16:53:35 +0200
-Message-ID: <CAA8EJpq8XvQm9B3RZq9PNMqA5VAqKUyVn5qt8-WEYMQMWniDZA@mail.gmail.com>
-Subject: Re: [PATCH 3/8] clk: qcom: clk-alpha-pll: Add HUAYRA_2290 support
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-kernel@lists.infradead.org, 
-	iommu@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 19 Feb 2024 at 15:36, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> Commit 134b55b7e19f ("clk: qcom: support Huayra type Alpha PLL")
-> introduced an entry to the alpha offsets array, but diving into QCM2290
-> downstream and some documentation, it turned out that the name Huayra
-> apparently has been used quite liberally across many chips, even with
-> noticeably different hardware.
->
-> Introduce another set of offsets and a new configure function for the
-> Huayra PLL found on QCM2290. This is required e.g. for the consumers
-> of GPUCC_PLL0 to properly start.
->
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 45 ++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/qcom/clk-alpha-pll.h |  3 +++
->  2 files changed, 48 insertions(+)
->
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 8a412ef47e16..61b5abd13782 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -244,6 +244,19 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
->                 [PLL_OFF_OPMODE] = 0x30,
->                 [PLL_OFF_STATUS] = 0x3c,
->         },
-> +       [CLK_ALPHA_PLL_TYPE_HUAYRA_2290] =  {
-> +               [PLL_OFF_L_VAL] = 0x04,
-> +               [PLL_OFF_ALPHA_VAL] = 0x08,
-> +               [PLL_OFF_USER_CTL] = 0x0c,
-> +               [PLL_OFF_CONFIG_CTL] = 0x10,
-> +               [PLL_OFF_CONFIG_CTL_U] = 0x14,
-> +               [PLL_OFF_CONFIG_CTL_U1] = 0x18,
-> +               [PLL_OFF_TEST_CTL] = 0x1c,
-> +               [PLL_OFF_TEST_CTL_U] = 0x20,
-> +               [PLL_OFF_TEST_CTL_U1] = 0x24,
-> +               [PLL_OFF_OPMODE] = 0x28,
-> +               [PLL_OFF_STATUS] = 0x38,
-> +       },
+From: Cong Dang <cong.dang.xn@renesas.com>
 
-Can you please move them next to the standard huayra PLL regs?
+Add the module clock used by the SPI Multi I/O Bus Controller (RPC-IF)
+on the Renesas R-Car V4M (R8A779H0) SoC.
 
->  };
->  EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
->
-> @@ -779,6 +792,38 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
->         return clamp(rate, min_freq, max_freq);
->  }
->
-> +void clk_huayra_2290_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-> +                                  const struct alpha_pll_config *config)
-> +{
-> +       clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL(pll), config->config_ctl_val);
-> +       clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U(pll), config->config_ctl_hi_val);
-> +       clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U1(pll), config->config_ctl_hi1_val);
-> +       clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
-> +       clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
-> +       clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll), config->test_ctl_hi1_val);
-> +       clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l);
-> +       clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), config->alpha);
-> +       clk_alpha_pll_write_config(regmap, PLL_USER_CTL(pll), config->user_ctl_val);
-> +
-> +       /* Set PLL_BYPASSNL */
-> +       regmap_update_bits(regmap, PLL_MODE(pll), PLL_BYPASSNL, PLL_BYPASSNL);
-> +
-> +       /* Wait 5 us between setting BYPASS and deasserting reset */
-> +       mb();
-> +       udelay(5);
-> +
-> +       /* Take PLL out from reset state */
-> +       regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
-> +
-> +       /* Wait 50us for PLL_LOCK_DET bit to go high */
-> +       mb();
-> +       usleep_range(50, 55);
-> +
-> +       /* Enable PLL output */
-> +       regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, PLL_OUTCTRL);
-> +}
-> +EXPORT_SYMBOL(clk_huayra_2290_pll_configure);
-> +
->  static unsigned long
->  alpha_huayra_pll_calc_rate(u64 prate, u32 l, u32 a)
->  {
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-> index fb6d50263bb9..91d3d6f19eae 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.h
-> +++ b/drivers/clk/qcom/clk-alpha-pll.h
-> @@ -29,6 +29,7 @@ enum {
->         CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
->         CLK_ALPHA_PLL_TYPE_STROMER,
->         CLK_ALPHA_PLL_TYPE_STROMER_PLUS,
-> +       CLK_ALPHA_PLL_TYPE_HUAYRA_2290,
+Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk for v6.9.
 
-Also next to standard huayra PLL, please.
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->         CLK_ALPHA_PLL_TYPE_MAX,
->  };
->
-> @@ -191,6 +192,8 @@ extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
->
->  void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->                              const struct alpha_pll_config *config);
-> +void clk_huayra_2290_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-> +                                  const struct alpha_pll_config *config);
->  void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->                                 const struct alpha_pll_config *config);
->  void clk_trion_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->
-> --
-> 2.43.2
->
-
-
+diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+index 92359306dc0df544..71f67a1c86d80f4c 100644
+--- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+@@ -184,6 +184,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
+ 	DEF_MOD("i2c1",		519,	R8A779H0_CLK_S0D6_PER),
+ 	DEF_MOD("i2c2",		520,	R8A779H0_CLK_S0D6_PER),
+ 	DEF_MOD("i2c3",		521,	R8A779H0_CLK_S0D6_PER),
++	DEF_MOD("rpc-if",	629,	R8A779H0_CLK_RPCD2),
+ 	DEF_MOD("sdhi0",	706,	R8A779H0_CLK_SD0),
+ 	DEF_MOD("sydm1",	709,	R8A779H0_CLK_S0D6_PER),
+ 	DEF_MOD("sydm2",	710,	R8A779H0_CLK_S0D6_PER),
 -- 
-With best wishes
-Dmitry
+2.34.1
+
