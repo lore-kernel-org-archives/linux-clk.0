@@ -1,59 +1,59 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E462110B
-	for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 08:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0672F5E
+	for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 08:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708331157; cv=none; b=fVoMs5Ariv+1V0hkiM6vEL5cN4VeT0PrTXPVGGWMspCSmZbWzN+bRKxHzL0LBHMZx4tauYtfQvBKrR0NjEDddaN20ARDu5tlqXrh+IQ5EVIQFsWbwBnxWCPXTgffDOsjDIq28fbu2qOinxL88NCACU+Ur768v9ngGi4NGOKDcGo=
+	t=1708331368; cv=none; b=dhynkqH1YwPGK6w3NKEBlkxTVfnK1UE2Khc36gERVA34zH4RuPvia7YklgevAGT/zCA5mLhZ838RNc4oJJKqtjXL9C06zSe+p6njM8RnobMkBlsSea7MBeiOMRprjpZtbsFcxQ0fwZFn7iRnzfvdyBMUh3J+Bok9Jn7KxAk2kII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708331157; c=relaxed/simple;
-	bh=Bo5S8xr0Ve5PB6xmg+OHUlU5Qpa2kehTBcF2IBBqPM8=;
+	s=arc-20240116; t=1708331368; c=relaxed/simple;
+	bh=uhdC6JFPIGg+KsZnoOpAWCewl/MoAdPwQ2M0i3DpJNw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AEvzTofWKb2JwuHXV72oqa/Rq/httzl9urXUPiw/OrUfKlMyLoTmvv14CQKz5TUsOdnya+G1d+hYTUomCMIflxV8M0gV8BcZq+y8pTCnA9efsyBY5xpSM3AA5Abpk8bPzvg1j76P9i+COcMU8CZ5UDbKuwwXotW3TIgdZ8edOgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VG2RGTKa; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:Content-Type; b=i93s5LLTfTVwuZlBHv7OxzhlZl4EvvR1hz1LsI2GBXf8tnetyU5ubkr5bkVpiAWQUT1/5QnICq+OL0Objqy7B0BHU0+9hHKMzcHDN9foykSKeFyKbGnA9cC7OIL7UMpQRrjTv0cULAIWa7+zzWVtdRyQ3OnygSuAOagueQRy+AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=UgrZj6Ky; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VG2RGTKa"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-41241f64c6bso20365035e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 00:25:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="UgrZj6Ky"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2d22b8801b9so24923531fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 00:29:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1708331154; x=1708935954; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1708331365; x=1708936165; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=THU6glyGzZOjGWrBiKmvVasWAwiX7vB5lqswuej4FLE=;
-        b=VG2RGTKag/UlPuTV3qj04CJIbYfZ//y/RdY+Eka01J+XqP4XA7zdp7IEtnuzi9LYQZ
-         N7J4jb0HpNZiWuutrqH10MY7q07/ki0VwrQU3eDA8xoIQdpwYxTaNmW8sFJ9xSuKHCK+
-         k5mUxuKcnxhbkTTPTyMV4hKSGpO/V+3pVc2i/n9XlC9IytLPZSd4ZctIPiWZtdI1Paqb
-         bE0oCsuORhMJNbvxx1wtiZH7qeRGdyrkGmCToXtWIUk+5OkqolYFC7PC8DkPauLpdQYC
-         z0KLrW4QL+ZA3we1lLxUyExuZFTCjHiBUPwzFQD10gfe/CiLP2CveVvjLsZhrYf/Jlax
-         JdwA==
+        bh=kWUWsnfwYVJB3NeJPGabmiQoX5d4BCcDZFFFL55Cbcc=;
+        b=UgrZj6KyMkIoaNrtRt8adIqFsfchFQmxiPgEzEAZfss5rCWyQz8DPmeSQJx+lhag6k
+         oCYw2YhOVynEz64c99AxdBZUSq9SB7eS8iwGgBDWzsLS8eiBhHACusWTSzvzZIXwNOma
+         l0mhn52QL9uKoIUA0DYj/gMtQiYo0FZlwwrNGZnoApK0pe9S/JPbdI+fJqgFfyHQ42LM
+         iDtTZF6Ryi2px9OlbcnGokaNnKqtHBRplEn7cArxAUK8/DaJsvyUG7n1fh0O5yseIE8M
+         yiC6EJkzm+OOYsCSoG70aF8D9fVH7mQqDeFOpL65q3DolO+26L7F431domELyjncqnws
+         0uAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708331154; x=1708935954;
+        d=1e100.net; s=20230601; t=1708331365; x=1708936165;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=THU6glyGzZOjGWrBiKmvVasWAwiX7vB5lqswuej4FLE=;
-        b=Xq87W3Z7vgnBskrnO24FLcpnzOZIFhuWIhTdobnG2o/kg1b51EPuTpOX0HADx7wk+5
-         wiTa9oMD1zo8fffBVNMZZUvXdjvtlkfbK/k5uWfJ9SGjO+CspG0797C42U5jO3PrOb4f
-         Ixq/OLziOBiX/NHxcYsOUHdEd4b8nzbrLvxklO+nUIqJb/B8FAHgddGgkBUgVXjIQyXz
-         TgPsDAq7WcCv8QYJ+qHAA5KfzUm6iav+1BUzsRd9yudx0CqVGondby0I6pRCd9gK604f
-         C2WcQkuB4YwVp1pIvbdnnyi/9fLI7uxkzhZkeICVQNFh1v2I+mFnugz2rTvr6+hIiYoi
-         gWrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe3oVa97ZK79SmHw2dHe/KQePR6Fve5VMTja1uv2YeZGlXVu80qzNs2hPMTWk/u9JR1oOrDh3KtaEk0LyTSJOxLfD4pua6hv2n
-X-Gm-Message-State: AOJu0YwxAgcA2x8lr7W/X33dOSAMtu91jIjYZZONdFY1Hx32/3qz1rTH
-	SvE556z8wdtPezgmuKhwCWalFwq/BiEnUnL5K4sv67qkJE7ZsQRFWIro1mqLtMQ=
-X-Google-Smtp-Source: AGHT+IF9L/CaymxUFdiz527jMYT6eakK5vqvOw31jhwzGW9Ykq8Lf7BMYyEPxr5CsmTss8mE4dWNgQ==
-X-Received: by 2002:a05:600c:4f83:b0:411:fbfa:959f with SMTP id n3-20020a05600c4f8300b00411fbfa959fmr8412572wmq.27.1708331154076;
-        Mon, 19 Feb 2024 00:25:54 -0800 (PST)
+        bh=kWUWsnfwYVJB3NeJPGabmiQoX5d4BCcDZFFFL55Cbcc=;
+        b=qpMgsjuTMvCNFN6WKPmKxLGQzIFhMffGpTIvxheEGBihJSxwaNlCrsdXcmHMfjGUNP
+         ilpPbf7Jvz26WY9cfaeHdd4BWsJO7vRyd1HFB+KAMuTHjJJ8bS1mjmN/3DGs2ber2J2R
+         SyddveGGOPRysosGNMdPDKYvws1pnirvGN+h/Xe7DpH+kykNKpvNHKywHXDscEqjWsWJ
+         KaymSrHinhXIVxzzWGPuDTWixGENwKFyq1q3SuIRDL9S+6kK6MufdFQqaL+LmXFsK+P/
+         h2DEH3Lbnn6B3i/zUrwHMRLnbsIId+Hg2y0dXiNYiVAdwhhxKMr4i3j+3KyttPxwnpRt
+         BJpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHnWMZCCdSRuXut/Y1EFadXQf6UzFV5hnxEFyMPy81Vrv+czR1WFokNSpeURYWn5SlC1fFRHB0/H0vyLWYnzgLqWOS9SgTGnAf
+X-Gm-Message-State: AOJu0Yz0JOmEUMmncElqZIJRHHRN2rWWkemqpW/g43+4CDJBHm3UfNnl
+	Zhr97CPQc8YCpjG8v3MV+F7Sx7lkHH9WLfpiCsM6Rl7TWjdfIzAxdJCD23HJYTc=
+X-Google-Smtp-Source: AGHT+IGJbZ1oXtdXJ0tTWHvHxj794/54tKPc/gXozHxyRNAZCzrqi/Be9hQAFy18RTkyv7AzQAYNmA==
+X-Received: by 2002:a05:651c:604:b0:2d2:4314:8c06 with SMTP id k4-20020a05651c060400b002d243148c06mr47798lje.15.1708331365518;
+        Mon, 19 Feb 2024 00:29:25 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.20])
-        by smtp.gmail.com with ESMTPSA id l14-20020a7bc44e000000b00411d1ce4f9dsm10468796wmi.34.2024.02.19.00.25.52
+        by smtp.gmail.com with ESMTPSA id g2-20020a2e9382000000b002d09bdb7e1fsm983394ljh.24.2024.02.19.00.29.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Feb 2024 00:25:53 -0800 (PST)
-Message-ID: <a71a36fe-d70f-46a4-85fd-edd07c7a5bcb@tuxon.dev>
-Date: Mon, 19 Feb 2024 10:25:52 +0200
+        Mon, 19 Feb 2024 00:29:24 -0800 (PST)
+Message-ID: <3c47c45d-be37-415b-b38c-2185a2108d40@tuxon.dev>
+Date: Mon, 19 Feb 2024 10:29:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,8 +61,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/17] clk: renesas: r9a07g043: Add initial support for
- power domains
+Subject: Re: [PATCH 12/17] arm64: dts: renesas: rzg3s-smarc-som: Guard the
+ ethernet IRQ GPIOs with proper flags
 Content-Language: en-US
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
@@ -73,42 +73,49 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
  Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com>
- <20240208124300.2740313-9-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdV=qpVCokRW1vGDS3_ZF3RE0nVcNi9URXMNS6bUtxqTZA@mail.gmail.com>
+ <20240208124300.2740313-13-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdX3=KJ6=qOW__KxWisj7Fguwr=SdP7XGvFD+BKgZbRo9A@mail.gmail.com>
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdV=qpVCokRW1vGDS3_ZF3RE0nVcNi9URXMNS6bUtxqTZA@mail.gmail.com>
+In-Reply-To: <CAMuHMdX3=KJ6=qOW__KxWisj7Fguwr=SdP7XGvFD+BKgZbRo9A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 
 
-On 16.02.2024 16:09, Geert Uytterhoeven wrote:
+On 16.02.2024 16:17, Geert Uytterhoeven wrote:
 > Hi Claudiu,
 > 
 > On Thu, Feb 8, 2024 at 1:44 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
 >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>
->> Instantiate always-on power domain for R9A07G043 SoC. At the moment, all
->> the IPs are part of this domain.
+>> Ethernet IRQ GPIOs are marked as gpio-hog. Thus, these GPIOs are requested
+>> at probe w/o considering if there are other peripherals that needs them.
+>> The Ethernet IRQ GPIOs are shared w/ SDHI2. Selection b/w Ethernet and
+>> SDHI2 is done through a hardware switch. To avoid scenarios where one wants
+>> to boot with SDHI2 support and some SDHI pins are not propertly configured
+>> because of gpio-hog guard Ethernet IRQ GPIO with proper build flag.
 >>
+>> Fixes: 932ff0c802c6 ("arm64: dts: renesas: rzg3s-smarc-som: Enable the Ethernet interfaces")
 >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Thanks for your patch!
-> 
-> As not all IPs are part of the always-on domain, I'd rather defer this
-> until all domains are handled in the driver.
+> Thanks for your patch! (which was well-hidden between non-fixes ;-)
 
-ok
+Sorry about that.
+
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-devel for v6.9.
+> 
+> As Ethernet is enabled by default, I think there is no need to fast-track
+> this for v6.8.
+
+Right!
+
+Thank you,
+Claudiu Beznea
 
 > 
 > Gr{oetje,eeting}s,
 > 
 >                         Geert
 > 
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
