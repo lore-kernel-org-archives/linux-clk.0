@@ -1,59 +1,59 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FC020B12
-	for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 07:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591058F5A
+	for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 07:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708328222; cv=none; b=EAQFDilErUXKWBzk4yS2kFVCoEgLGnYjfnEFtuaDDunUTW9iJRGLnVOYe+84wX3pgGQEyFAqOag/IE9ZwqD63fPWSlEKIiyKZpUUdR7zjBGwzBHFpBmFOt7Yv+pjsV40eCXbOBK9KAGK1s6LDgrqsspAJHQtJ+9FQHaCklMTEfw=
+	t=1708328378; cv=none; b=AyR0ToiSjDGWTBKbcdjC+e5KrUsdLe736QhZJ10CyoqF5/lbm5uwsVy83vDH0JIcBv/66U2khqPeOqWc7DMHqTGlvyCkTzy07ZJFYFNRpwXhgfYjfpvJ/AWgYChZyeYcf6PdTQrgSnhAl5mw619/CIuu0F3vZKeSCeY1wnGBR9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708328222; c=relaxed/simple;
-	bh=30e0PiSWhXN+1/mrmwX+jgY2/XnTypbZ+oimDofzoCY=;
+	s=arc-20240116; t=1708328378; c=relaxed/simple;
+	bh=TJbq3thR54sD0Wi77iVig095+YH5xo0jhAJ9BMhF3rU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HIpJJu7GBxCy+xo6JAmijZDojL/LIdeaY9FonyHAcLMPlGBXTd73C8Fl3f9Q9l+/TKjo1UU6rNnlvhbVZRLUiroRiG7OvEvgJh6EX4unpO72O01KyDQxNGbONdhisSfjJSyZL/QDcMzIOVUCeLF9zeBZh+nw5vuorFN+EbZyVTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OviAPIbL; arc=none smtp.client-ip=209.85.167.45
+	 In-Reply-To:Content-Type; b=Em98Ojbm1Zb4y8H/x0MRLEy9g8z/GaYtxB9REWuuWD0wyKtb5ZC4tG8PDxAu9HIfnXL7WIBLBO56Faqyl9k6HCe6NoXAlw526IQ6vdRWbELP4aLG3yYmsGcU2+f4oqmdNT22cgZA98OYgbU9ugLN7esRpBnjgxJbvpWV5XxZsjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QDMMKoUZ; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OviAPIbL"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-512bd533be0so108724e87.0
-        for <linux-clk@vger.kernel.org>; Sun, 18 Feb 2024 23:37:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QDMMKoUZ"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4125eabb8f4so12141525e9.3
+        for <linux-clk@vger.kernel.org>; Sun, 18 Feb 2024 23:39:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1708328219; x=1708933019; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1708328376; x=1708933176; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=KZKyFQ6cSp7LJWXpDL9YbFwutlq73FoMYcAlibyNYzc=;
-        b=OviAPIbLmXSlM9YjuT+VzRzlP4mwg0TfmipdZj/nXQF7NBtC6SMyBA5na7KScCUN1I
-         FTKCe9fGdh9x4zhskWXZ/CxbzTv3A4a7JyIYs6VeUJuoOTx2B5iWHZgWPuYBSKR+qvfO
-         ixoIw985pggih160UhJwQa0TTCJQw5FUpXs//XOn2JfYkEl07e56zLAjmOwnxIwElRKO
-         KURvitS32qjV6TrfrxtB73XNEL+qmRXfOw9hgs3aKxt3zom7KNzRw9ie2uFv0PTKXCnD
-         sQhoo0EKnfvQ2UnUrx3lZXTRShHGRp4pElDDLPHGs9CDKVLbe+McOVxh9bVD9ccT/XxE
-         veQw==
+        bh=Ztvukbsw2DpPqYv6GrnPegXCQAC9j1Oi6plVvewLB6I=;
+        b=QDMMKoUZTVRK0dilXQCZcu+/FjOvoyjuTFVl0cqo4krhYmz+4zNEl+kXDY0QtwCKrw
+         o0eQG4YLZcZ2/kbOf2LGjAfqH9GFb764//2dZeNd+sBGM4y6Q+dhbNIUbdtyGbYi7RD+
+         YXACWNMoXqB40ERO74m0IKZ0PIRb18e5ezWgyN+EnDg5C+dk1UGCMFxsfe1/SQGL7fqT
+         +ZjLKX3dARp/EAvTz1oPYdmi2ck+2X3HyD+zBvODEMnVHIqPDq0faUhF+QygVcMfrHnl
+         o9XZjpmmuPMnjXUrMaAWKTS2H57XukCPPPS4pvj1e6VNj4TzoCB9t8OAQBE6MtMugRp1
+         2THQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708328219; x=1708933019;
+        d=1e100.net; s=20230601; t=1708328376; x=1708933176;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KZKyFQ6cSp7LJWXpDL9YbFwutlq73FoMYcAlibyNYzc=;
-        b=lMQk++Po9T4aFlAY87Q0EE/xglP6P+Uhe4cFPMhybIIRujaEvCOqV6olTYVKjm0g4Q
-         6rm0w3d8OxuV1rkEubsQ0NpE7ogX1XpW6lvEnHkUJV35tVNU7mqcNYx4IKkhuE45tblF
-         UBlBhvHJnlHy3gSvpuAW8zFF11yvCQpRrjlHiZLQDKq1ykn8cJVnmp/+PIlDr0LaAEXK
-         Pzd4ZlS6MUpZ57Z9e6mCEyGwfop5WprPZ8pasd7Q+xvrU2b2fExS1aTmrsqrDj/GP1Sb
-         Jb567wbxs7UF1HwiG2V4sPaBF1G14q3Y52ITTgJiUIS0gMnc9PW+K1n9X+YKMhfO9E/F
-         b1wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwY2wSTBCYQcdGmV9+QkKK+VytXVPV/4LaUWhnz9x0QSBnfdX6eFpIe9Wa5Uz2wowEJQ/ZxS/GukQwqXQfWcqDcGXsv63ZU9tM
-X-Gm-Message-State: AOJu0YwRef54RagGmE/y/StAlJXOWbJ+zhWGqJHvxnQTB8qutzaOjNcD
-	3FbJMpRcshQTh+UjyHY70Tjfd9Mpvbvlz6iaPAubjuldHfusAhaWBFMBqzIDjI4=
-X-Google-Smtp-Source: AGHT+IGLlnSbXEfT/nz2ZRTz3Bukdz93vaxjL6h+T1orH0nNTKmUP+vrTRlindEMbWk6USyL3b+mLQ==
-X-Received: by 2002:a05:6512:6d4:b0:511:e296:e563 with SMTP id u20-20020a05651206d400b00511e296e563mr8756725lff.2.1708328218821;
-        Sun, 18 Feb 2024 23:36:58 -0800 (PST)
+        bh=Ztvukbsw2DpPqYv6GrnPegXCQAC9j1Oi6plVvewLB6I=;
+        b=iDar8OfTrs6P7Gc3u2j6/u8pzZQXPaMn60BImr2TPq9ka+uWy0DKY/4cOZWznIfctJ
+         TmXoqtRkvvgsBmoH9Gv005/w3V2t2zt3avkhTCgZtY0MoTb2TMjyPrJo+4BYkRK4DrSd
+         HgnCVBHC3PkGSGx/yIQxNuLHI3tanSZHM33itIr0fZ2+7jzfZU1PnBhIh7/nJJFoY6/7
+         A0IjsUVYzLwTdkpESwbfcDVANm1iHMLFI93iNOhIOwNtJTr3vB0mzMzMH1HUnj9qIWDM
+         MLwLcHbp0d6AV4jccAOCqXIQB8CrxU5Sl8mgWPrajkVlnOGah9Yhx2UF2L0cxjkOB9tm
+         ILdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgP53RLcKtUbV2bY3zpmPSjoVerpEej8Aw90zHpZySExi8RgujRqlpY8FC82FpRLTSMR7sKsn9sTm5fmvk4p0eSvl4P4kvnni1
+X-Gm-Message-State: AOJu0YyT1U3xO64mCetvjmdcak/qegsSvWI+qYBiI60YJ8JPIYByud+3
+	ednCn6rHkHrfDPFBfK7URnLLbLrEC4YOqBED8aEADCpdykr65qfQrQ8eGv1tYRA=
+X-Google-Smtp-Source: AGHT+IHzTk4jAkU4Cb4x2j5R1eZYxapWDSX9BdPNE/TAg6w2jAWj8XsoaKg0OzZkL2HOPDbGsXDXjw==
+X-Received: by 2002:a05:600c:354a:b0:412:5b86:2f2c with SMTP id i10-20020a05600c354a00b004125b862f2cmr3647927wmq.14.1708328375766;
+        Sun, 18 Feb 2024 23:39:35 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.20])
-        by smtp.gmail.com with ESMTPSA id l20-20020a05600c1d1400b0041256ab5becsm7617445wms.26.2024.02.18.23.36.57
+        by smtp.gmail.com with ESMTPSA id k35-20020a05600c1ca300b00412393ddac2sm10715749wms.6.2024.02.18.23.39.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Feb 2024 23:36:58 -0800 (PST)
-Message-ID: <e7a6a1c9-ba29-4103-a2f7-310c1cee1f17@tuxon.dev>
-Date: Mon, 19 Feb 2024 09:36:56 +0200
+        Sun, 18 Feb 2024 23:39:35 -0800 (PST)
+Message-ID: <c6bea32e-5169-4181-ab42-a8f7f35594b2@tuxon.dev>
+Date: Mon, 19 Feb 2024 09:39:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,8 +61,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/17] dt-bindings: clock: r9a07g043-cpg: Add power domain
- IDs
+Subject: Re: [PATCH 05/17] dt-bindings: clock: r9a09g011-cpg: Add always-on
+ power domain IDs
 Content-Language: en-US
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
@@ -73,101 +73,45 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
  Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com>
- <20240208124300.2740313-2-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdUCB3GQxGPxG35rebN2yrKYBnZDzORaEEOuZb3aMgrf6g@mail.gmail.com>
+ <20240208124300.2740313-6-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdVbCYfaM6Zi5AZhj+yc8vySFdCDFF3x1rgbV9Y5xh4LSA@mail.gmail.com>
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdUCB3GQxGPxG35rebN2yrKYBnZDzORaEEOuZb3aMgrf6g@mail.gmail.com>
+In-Reply-To: <CAMuHMdVbCYfaM6Zi5AZhj+yc8vySFdCDFF3x1rgbV9Y5xh4LSA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi, Geert,
 
-On 16.02.2024 16:01, Geert Uytterhoeven wrote:
+
+On 16.02.2024 16:03, Geert Uytterhoeven wrote:
 > Hi Claudiu,
 > 
 > On Thu, Feb 8, 2024 at 1:43 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
 >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>
->> Add power domain IDs for RZ/G2UL (R9A07G043) SoC.
+>> Add always-on power domain ID for RZ/V2M (R9A09G011) SoC.
 >>
 >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
 > Thanks for your patch!
 > 
->> --- a/include/dt-bindings/clock/r9a07g043-cpg.h
->> +++ b/include/dt-bindings/clock/r9a07g043-cpg.h
->> @@ -200,5 +200,53 @@
->>  #define R9A07G043_AX45MP_CORE0_RESETN  78      /* RZ/Five Only */
->>  #define R9A07G043_IAX45_RESETN         79      /* RZ/Five Only */
+>> --- a/include/dt-bindings/clock/r9a09g011-cpg.h
+>> +++ b/include/dt-bindings/clock/r9a09g011-cpg.h
+>> @@ -349,4 +349,7 @@
+>>  #define R9A09G011_DDI_RESET            93
+>>  #define R9A09G011_DDI_RESETN_APB       94
 >>
 >> +/* Power domain IDs. */
->> +#define R9A07G043_PD_ALWAYS_ON         0
->> +#define R9A07G043_PD_GIC               1
+>> +#define R9A09G011_PD_ALWAYS_ON         0
 > 
-> As this file is shared between RZ/G2UL and RZ/Five, R9A07G043_PD_GIC
-> needs an "/* RZ/G2UL Only */" comment
+> RZ/V2M has many more power domains, but they are not controlled through
+> CPG_BUS_*_MSTOP registers, but by the Internal Power Domain Controller
+> (PMC).
 
-Ok. I'll re-checked it and update. Likewise for the rest of your below points.
+I wasn't aware of that. I'll be checking it.
 
 > 
->> +#define R9A07G043_PD_IA55              2
->> +#define R9A07G043_PD_MHU               3
->> +#define R9A07G043_PD_CORESIGHT         4
->> +#define R9A07G043_PD_SYC               5
-> 
-> Likewise for the four above.
-> 
->> +#define R9A07G043_PD_DMAC              6
->> +#define R9A07G043_PD_GTM0              7
->> +#define R9A07G043_PD_GTM1              8
->> +#define R9A07G043_PD_GTM2              9
->> +#define R9A07G043_PD_MTU               10
->> +#define R9A07G043_PD_POE3              11
->> +#define R9A07G043_PD_WDT0              12
->> +#define R9A07G043_PD_SPI               13
->> +#define R9A07G043_PD_SDHI0             14
->> +#define R9A07G043_PD_SDHI1             15
->> +#define R9A07G043_PD_ISU               16
->> +#define R9A07G043_PD_CRU               17
->> +#define R9A07G043_PD_LCDC              18
-> 
-> Likewise for the three above.
-> 
->> +#define R9A07G043_PD_SSI0              19
->> +#define R9A07G043_PD_SSI1              20
->> +#define R9A07G043_PD_SSI2              21
->> +#define R9A07G043_PD_SSI3              22
->> +#define R9A07G043_PD_SRC               23
->> +#define R9A07G043_PD_USB0              24
->> +#define R9A07G043_PD_USB1              25
->> +#define R9A07G043_PD_USB_PHY           26
->> +#define R9A07G043_PD_ETHER0            27
->> +#define R9A07G043_PD_ETHER1            28
->> +#define R9A07G043_PD_I2C0              29
->> +#define R9A07G043_PD_I2C1              30
->> +#define R9A07G043_PD_I2C2              31
->> +#define R9A07G043_PD_I2C3              32
->> +#define R9A07G043_PD_SCIF0             33
->> +#define R9A07G043_PD_SCIF1             34
->> +#define R9A07G043_PD_SCIF2             35
->> +#define R9A07G043_PD_SCIF3             36
->> +#define R9A07G043_PD_SCIF4             37
->> +#define R9A07G043_PD_SCI0              38
->> +#define R9A07G043_PD_SCI1              39
->> +#define R9A07G043_PD_IRDA              40
->> +#define R9A07G043_PD_RSPI0             41
->> +#define R9A07G043_PD_RSPI1             42
->> +#define R9A07G043_PD_RSPI2             43
->> +#define R9A07G043_PD_CANFD             44
->> +#define R9A07G043_PD_ADC               45
->> +#define R9A07G043_PD_TSU               46
->>
->>  #endif /* __DT_BINDINGS_CLOCK_R9A07G043_CPG_H__ */
-> 
-> In addition, you need definitions for the modules that are only
-> present on RZ/Five, e.g.
-> 
->     #define R9A07G043_PD_PLIC               47    /* RZ/Five Only */
+>> +
+>>  #endif /* __DT_BINDINGS_CLOCK_R9A09G011_CPG_H__ */
 > 
 > Gr{oetje,eeting}s,
 > 
