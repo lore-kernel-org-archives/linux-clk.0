@@ -1,107 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41CA51C5F;
-	Mon, 19 Feb 2024 19:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF57F53819
+	for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 21:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708372793; cv=none; b=KNkksXIHq/MhqtwzfCmsU8CXZfK9h3esD5inWuTYmCqwjfMvCelKPxJIgrgvubu49uGb/fUXYuidOUdXLgWLeahB4701QvY+1Ibh3RZpg+2vqundziDkR95hD+cOGCzXUuDeEKx8mrxq/blzCsk5PYr/e/xvLMBTJnhWUJfcccs=
+	t=1708378669; cv=none; b=Uua0mfF1oKbhI2GufLVKqHjJr8do7FxzPd16DRcgYm3Tkc8/nCe3NPDDFn/JDV0vwjMK0oDdu9032zP8m97cbvqAWnoSX+lmqVRjLQjeFtNsGjut48fZ8F2Ho6zYdHLoNSU4BezaY3pc98k/3mBYXtRY/WBvFqwFRngTTEniDJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708372793; c=relaxed/simple;
-	bh=jPhUX7fseszIBa5Cz4g6HtJ32wY5HpFdNrxQegeyAcU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ArHSECXTkq2JES8kPX3VAlMjUlMNHzk5uhi7yzGimFcbzz1AchmAbiomr2fk9gc1vXlRylCvT8qUqZ221EGkz+dvgkAzhdvVmRFsR7/ce0lJ3uvIt0K1kZzzXfjPoBuNDfeL1NW0LsqNapA3nVLjV0kKgmeQJKYo6hVv2HVxD/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rennXjGT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708378669; c=relaxed/simple;
+	bh=mVdCOLa4vNpEE/e67IyWO1/E8dm4wo/8XueEHdZSyXs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JdIY4gyBqr+DlgfUzqyf14WsyQRqyh4zFAGlZAR2lINjAcw25gNbez61v+upXmiknTQldQ+5FPAXtA487tOzk6O77anBVNv83PliOS21aDVtGSSHi1DQvegup9iDRoQqd8LHvVWdfhVQMDwniMHsfFvMZwgOBHLFdFR6JNlW3n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=foYTcq9B; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rennXjGT"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 569EBC43390;
-	Mon, 19 Feb 2024 19:59:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708372793;
-	bh=jPhUX7fseszIBa5Cz4g6HtJ32wY5HpFdNrxQegeyAcU=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=rennXjGTcaDY/TDQzC7c3u7zSQ44dXdcvGGfTfQB2u6ZEEW+5Z6gMZysAAAp0iBcB
-	 kD9V0lmIUQIdYUZBZpof+tjWHQpcdZpTm84UPP4mwsby14/Xh+FXDpuIZ5I8RHiAQ8
-	 AEN3pbFBU0p634Q9TucB9q2jIT/90ByGB/8A88uSKaWe0ScsueACbFngOV0EAmI3Wk
-	 kqjtGNEqLKj3PadrpV/b+6tZEl1dQ5g9+RJ9DtuzSAp/a922HEQTeWBZPwmLHJuGHe
-	 xBoKDeBpTOfT6G96xaCVMFnhQxkWa86HX+aBydZm6bKemxiorQ37KPWKXIc8OuO/Le
-	 r6Fjmpv/1vdGg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 469C7C48BC3;
-	Mon, 19 Feb 2024 19:59:53 +0000 (UTC)
-From: Yang Xiwen via B4 Relay <devnull+forbidden405.outlook.com@kernel.org>
-Date: Tue, 20 Feb 2024 03:59:51 +0800
-Subject: [PATCH RESEND] clk: set initial best mux parent to current parent
- when determining rate
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="foYTcq9B"
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7c3e01a7fdeso206481639f.1
+        for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 13:37:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1708378667; x=1708983467; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pu6g5yftLiVv7gzZzzrLLgus4wextVLz0oNREySNgzU=;
+        b=foYTcq9BJFEyzGvO4dXcoPau5Z8Dlq93k+4KO20BK3kWfqB9OkkpmhxG47N9ADRR9V
+         IkTfD8zeLHZ5OmqA1hPPwVtdjt8iOY2f2cNxe6LVS7KD7PQ+eyjAHWPPXgFCUWQS0AM0
+         0ascitmgGnQ7PNnwDy/S6pp6RCwx/pEnesdvCPZK44bhEWMlxjy08J9tc4OYCiA5/XmW
+         mxsnG/y74+LyOjDCIOaGsapCSHSd4cUVIgUtwcw5RTm120y91YLRrURIy4FX3tNAGTa/
+         tAV3p1n+1ml/VMdYCRB2W8hRI35joPmm5ruXT+OdXgaLOfu6r4DUIZkHDMB0jeFVCbiK
+         u9LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708378667; x=1708983467;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pu6g5yftLiVv7gzZzzrLLgus4wextVLz0oNREySNgzU=;
+        b=O9IQw5aI8VzM0zZQK53NmWrgWoIZ5Dl7LGg+pbK2BQRA20lasGuB5Ss8vHUPC/oAxI
+         +/uRTB4CjsjH9nuRvxnW1VPVbGkn11Ww2ZWun/H9xPtfpU8u6FKOsuyW3N/97veQY+pK
+         WiVAO0izXxzomPOLiSWCC0AnWbg1/xqyaxBR37KrRhJwiaJhF3PXhDSplKy5OoSxIUuz
+         9IzJzHMDMpp2QT/blXK5kk0SctmmjGBCcdWDM6L5SxsWVTNXpAz23QlzvVqyUYGXKJ3Q
+         6GbprCTfQRSbK2e7DWOijhk0CuycQV9vVUOwooi9711a0+27haNuZFgtWKwCGCSzrfGq
+         yzrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJySpFshdS4wtpTcmakfdFL0tfHWYGqMkUQVwO8kbYJ15xx75b8aZTVNpDHXZe32izsX/rFJP0SVZWt2X10uLM/hrfSpy05LVy
+X-Gm-Message-State: AOJu0Yy/D2ciF/0+Yx4AybBiXSyBwk8pdhO+LiEoJQur0/Ep55Q41lJq
+	2G2I4LER5AGQNXrdy/fQwab44MqP8Y/kFO8Urkrg+dSTnANHz962L7BRCbhbgOE=
+X-Google-Smtp-Source: AGHT+IHHodfPh8+zZHa5pC68NadfSM5VyTFrqakTzatd2R6WfLeoBbHIC1ajK3I9MAE4ena3DfCGhQ==
+X-Received: by 2002:a6b:6e0d:0:b0:7c7:61cd:ff52 with SMTP id d13-20020a6b6e0d000000b007c761cdff52mr118392ioh.19.1708378666899;
+        Mon, 19 Feb 2024 13:37:46 -0800 (PST)
+Received: from [192.168.192.135] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
+        by smtp.gmail.com with ESMTPSA id s8-20020a02cf28000000b004742a4647edsm614498jar.159.2024.02.19.13.37.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Feb 2024 13:37:46 -0800 (PST)
+Message-ID: <b73e329a-02a4-46e0-bda4-5d5fae0a1180@linaro.org>
+Date: Mon, 19 Feb 2024 22:37:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] arm64: dts: qcom: qrb2210-rb1: Enable the GPU
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org
+References: <20240219-topic-rb1_gpu-v1-0-d260fa854707@linaro.org>
+ <20240219-topic-rb1_gpu-v1-8-d260fa854707@linaro.org>
+ <CAA8EJppPvXfkz=wVca8aFBhFaVUe9+OiVzcQUq7D8zPbK+T1FQ@mail.gmail.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <CAA8EJppPvXfkz=wVca8aFBhFaVUe9+OiVzcQUq7D8zPbK+T1FQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240220-mux-v1-1-3ee0807ec219@outlook.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Yang Xiwen <forbidden405@outlook.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1708372793; l=1451;
- i=forbidden405@outlook.com; s=20230724; h=from:subject:message-id;
- bh=fggch9mxMQ8SzPlFXnQcVvzDJCD3ro+vLZXoDYu1RGE=;
- b=K0K7C5//41mDeCsJpdfDjHd3GisENzOiqi+JFzD56RKu1hD13WdtTBCyC9JVc/ZoWoU2bXhfi
- hvk+d/xORxzDWdGIgmJtDjbupDM9vfr5aPKfaG5zFF1x6olZjKdqkcI
-X-Developer-Key: i=forbidden405@outlook.com; a=ed25519;
- pk=qOD5jhp891/Xzc+H/PZ8LWVSWE3O/XCQnAg+5vdU2IU=
-X-Endpoint-Received:
- by B4 Relay for forbidden405@outlook.com/20230724 with auth_id=67
-X-Original-From: Yang Xiwen <forbidden405@outlook.com>
-Reply-To: <forbidden405@outlook.com>
 
-From: Yang Xiwen <forbidden405@outlook.com>
+On 19.02.2024 15:49, Dmitry Baryshkov wrote:
+> On Mon, 19 Feb 2024 at 15:36, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>> Enable the A702 GPU (also marketed as "3D accelerator by qcom [1], lol).
+> 
+> Is it not?
 
-Originally, the initial clock rate is hardcoded to 0, this can lead to
-some problem when setting a very small rate with CLK_MUX_ROUND_NEAREST.
+Sure, every electronic device is also a heater, I suppose.. I found
+this wording extremely funny though
 
-For example, if the lowest possible rate privided by the mux is 1000Hz,
-setting a rate below 500Hz will fail, because no clock can provide a
-better rate than the non-existant 0. But it should succeed with 1000Hz
-being set.
+> 
+>>
+>> [1] https://docs.qualcomm.com/bundle/publicresource/87-61720-1_REV_A_QUALCOMM_ROBOTICS_RB1_PLATFORM__QUALCOMM_QRB2210__PRODUCT_BRIEF.pdf
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> 
+> With the exception of the commit message:
 
-Setting the initial best parent to current parent could solve this bug
-very well.
+:(
 
-Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
----
-This is actually a v2 of [1], but seems too simple to have a unittest.
-It's tested in a mmc host driver.
+Konrad
 
-[1]: https://lore.kernel.org/linux-clk/20230421-clk-v3-1-9ff79e7e7fed@outlook.com/
----
- drivers/clk/clk.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 2253c154a824..d98cebd7ff03 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -649,6 +649,10 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 
- 	/* find the parent that can provide the fastest rate <= rate */
- 	num_parents = core->num_parents;
-+	if (core->parent) {
-+		best_parent = core->parent;
-+		best = clk_core_get_rate_nolock(best_parent);
-+	}
- 	for (i = 0; i < num_parents; i++) {
- 		unsigned long parent_rate;
- 
-
----
-base-commit: 8d3dea210042f54b952b481838c1e7dfc4ec751d
-change-id: 20240215-mux-6db8b3714590
-
-Best regards,
--- 
-Yang Xiwen <forbidden405@outlook.com>
-
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+>> ---
+>>  arch/arm64/boot/dts/qcom/qrb2210-rb1.dts | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+> 
+> 
