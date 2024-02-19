@@ -1,59 +1,59 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B743770C
-	for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 15:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527C33E46B
+	for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 16:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708354891; cv=none; b=MoSUQgl5GZU0ZUz4WhZX36qsl/24Fzfw1i6e4/SrHmUvrRi/YE3XkDS8HMlx3BEq7ru3j54qlkwcmgNlLjGNEolmv2duorBBzfasMturYPNUgKdImrJJDSXSR6QtIg8yO8LSjf9JanggFtvTwC667V8+TIAwhW5sSWf+2BbbNi4=
+	t=1708359579; cv=none; b=W9fOuz5fYZcHfpZiIrVUHBBZXxgJOSLFBGtMQ0+yAFE2Ytsv7NrMQN/q9pwOGvDfEBeNGZ374wHX8iOWM3SyjBXXUUewb54JvxONWTgzbvIh+H2cLLNxxqvrUU8Vykt4h6wKV+F7QcwV4Hx9oBIG55hJHf/TCeJeQUzVG3ecy+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708354891; c=relaxed/simple;
-	bh=aJSHj9HniTFFT8SjDNG5w7VAxxQZAl9isd1Hc/vf8go=;
+	s=arc-20240116; t=1708359579; c=relaxed/simple;
+	bh=DClpZ40MTNZHw3nDv4Skbkwxx8Xmy6FQUZVUNGGsU3Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TIuts9FzllIYdyiK/ntC2GvXBFrxffm1BincD6n9dqbnDGyw4lPJgSB1+ESrmZbQCESLV4x4zVPnLz+Tt9XfUeiaUothGmZpxeB6SORvoDT2PhcAyW3aAvzjfWzcVj1OWOQYpMxA0MgQ5pwvNBvBGbqCypZDxm+blSlJSL9ay/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m4vTzgp4; arc=none smtp.client-ip=209.85.167.52
+	 In-Reply-To:Content-Type; b=QmppbQ3SljTS+oYxX5zjGHqTIfJimA6uFEWezpA4CIei3zeFmQtqTbOcGTAuXa8oZblcatWtmixb9I9j0goQg32vBA7o0bbOhjnaOcYEz3i2fdA9gHun7xtgp4K+qHdkpY2QpwGqPhI9olHgikK8O9mydD801nO1FdkF67LE5IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ih+JfgFS; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m4vTzgp4"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-511ac32fe38so6658655e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 07:01:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ih+JfgFS"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-512bd533be0so881499e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 08:19:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708354888; x=1708959688; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708359574; x=1708964374; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Fyijmgv5Xc4qQW7NoJwHILZpg0h1x8EzSZbjwL/lNv4=;
-        b=m4vTzgp47AOCFEdLQKQxMk7QxGa3ImA3QUtkjrLgDTdUCJTd2SrPOZLaFEWnLttnOw
-         TxS8RefLO5o6seFte09/ANegznVTsDnAi18G/D2Zoy/g/IDjaZa7q9w8oVl4YJnG1YIs
-         QUx4EIwg6kYoK0S3Cakg8x1154LbfHA6rDvHezxcSlGY4FxXgb3qHT0T7oJRNUK9oX/J
-         Mqn6L/rNCW9HBKscT5WdAA0YMlaj2YVw4LRo2VHpcoSuBtDxPssRlOPCKS8J9/lhO7lE
-         uTzVq/S2PBh8WY3B02eLmeSzCLNXHCQ1fFyHKVlVj1cZwttcIwl08uscEpeXQdyLXgwt
-         oTsg==
+        bh=6DL+oqveQWECDpgQ0VTAyFOqMlMmDEOhr/BFaSUzMz4=;
+        b=ih+JfgFSlVEiauNs3n9sy8CkSLP130Y0cxpporXtM3wSKwtnHaPEUvQcyUe8jY1Jaq
+         AjjFW5IfI7ml2HkjjvNaq0VW8ICwS76+Q/s1AfxpHWdIrf3BF3pCJQJDhG/1/cXDHAs/
+         iVZi5bX/lD3BzMfOrMvIQnHLiuUZ9cs28lxS4AOqyLTnW07VvxStuGWYMPCzVDYgXtz6
+         LIu5efGkmPePwzXHIp9ZruOB4q2w4DME60HIGkxdJxaS2DHGJ5pyhOfLrlk41lvG64It
+         mhR4XTTdStdtFgMHHW9+ODCwCtxHytPfcW+drYuP6nzhOVPm12ireqvyXLX42zRDgklH
+         h0AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708354888; x=1708959688;
+        d=1e100.net; s=20230601; t=1708359574; x=1708964374;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fyijmgv5Xc4qQW7NoJwHILZpg0h1x8EzSZbjwL/lNv4=;
-        b=lCMll+Wo3xxDyLGQb/XkTuPklub+QJfS2Wv8J6HDXg/F9My2+fiiykZIPQ6+eCjPnv
-         azK6uMnN+qfXGO1delpskYlmj6OaO8upl4HSQ3y13ZtEqEv/95CypY+lVeO+3Wpq7iHi
-         qOKXDe3sb/uEd3yzsPUlLTJTg63kpmLf26gSIp3l+eMXUPYPOLZXoF8gL2I0JkXNCUae
-         8REq+Mu8tIArBASg1h+modOppkM9axUxK+fC3Z7INmC41GX5/E1Ec4+jEfiY3JFuU5ZA
-         pDVwNukj0Vh7fKzLJljOKn4uZSMfPhvfplgvijeC1fbYCURrsi4q4toPRztrFkPXK+mt
-         EA9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXF7DZrlgCsCplQrAzyWU7lzk6jRYHfHCGUsmb7cgNBIsjvMQC1TXCfDsHYIO88ys7TxG3QbCFzpNkQE1IrO5Lyfd2XBXNulrad
-X-Gm-Message-State: AOJu0YwOuXPiqLQywniOhWrrzgR2ctIjIDkcDbeaOQWzt9GBDqUoJObq
-	jZVqXiVxrgpBUOCwq/zqX+sWvw4SpMX9QPzQgWmhiyKcALcT69fl+PHhjN6NvYs=
-X-Google-Smtp-Source: AGHT+IEDIsdQG1UPM3EDDLCecc5t85EINjACXNa3VncuUkRCHIvhrLnC9PhHvBMOJnz+odgxDTjuCw==
-X-Received: by 2002:a05:6512:2385:b0:512:a9af:8c5e with SMTP id c5-20020a056512238500b00512a9af8c5emr5129683lfv.8.1708354887871;
-        Mon, 19 Feb 2024 07:01:27 -0800 (PST)
+        bh=6DL+oqveQWECDpgQ0VTAyFOqMlMmDEOhr/BFaSUzMz4=;
+        b=BXLyC+Tueh9Si7bl2cbEIRsrZGc8b7JF0wMnmhdokaITMWSuitLbtDACB7SJ9phILH
+         6MoQF7VvstpPIyuBe+/QLvWLQ68El27+sQAZDdz0ydFGxI5a0/fE8cacCg7PRv/CybhY
+         bQLHmRISHFmm2jcN5Ao4k9iyTBnSTHTfesptU9zkhtHYbLZv+6IkTUiOe+/BKZjb0Sst
+         GWUhLBUUscA9X/vyKpIDMxzJoVuyRLnuZZjIfiT7gZIrDTJcoCPsd63YpkraNvh7Bcyu
+         1SzPlTw7/SCDfMybvE5x2vPYgFeLFx+KbUJOrGFrmI+IwtPV4wb8UyifnYQlm6LQUanQ
+         3czg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4Kv4TtSxEsp+mzosymNw0im7W0vtiX5UXyzynWDj09t6yQtocGpbfqOlE0L1ewcOvPTK14vJ1weeXkV2Xk7OrGRUGGntiW5JH
+X-Gm-Message-State: AOJu0YzPIVMG/EX57EQ32JBO4s84TkgmO0t5/2O57GGmpmdrod/i+w8n
+	fcV8mF0zt7pI4GGi8CE46fYFapC8Ba7iS1lIPMCiuTlHDmOxWk3PiKzDcAsgS+g=
+X-Google-Smtp-Source: AGHT+IFQ2opSuuYTmsOjzFMhCC39iWUgy5X+Db8xLWS/jtRskILGyDr5ahl6E2lb7e15xXUgcbrbRA==
+X-Received: by 2002:ac2:546c:0:b0:511:6a0b:1035 with SMTP id e12-20020ac2546c000000b005116a0b1035mr7874145lfn.17.1708359574198;
+        Mon, 19 Feb 2024 08:19:34 -0800 (PST)
 Received: from [192.168.192.135] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id ek23-20020a056402371700b0055edfb81384sm2716963edb.60.2024.02.19.07.01.25
+        by smtp.gmail.com with ESMTPSA id u6-20020a170906408600b00a3e70fec6a0sm1708761ejj.171.2024.02.19.08.19.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Feb 2024 07:01:27 -0800 (PST)
-Message-ID: <d212b700-aedb-4653-80e4-36320b33e51e@linaro.org>
-Date: Mon, 19 Feb 2024 16:01:23 +0100
+        Mon, 19 Feb 2024 08:19:33 -0800 (PST)
+Message-ID: <c78db7e1-65b5-4276-bb77-d43b1e22fd84@linaro.org>
+Date: Mon, 19 Feb 2024 17:19:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,15 +63,14 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 3/8] clk: qcom: clk-alpha-pll: Add HUAYRA_2290 support
 Content-Language: en-US
-To: Andrew Halaney <ahalaney@redhat.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
  Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
  Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
  David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
  Marijn Suijten <marijn.suijten@somainline.org>,
  linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
@@ -81,7 +80,7 @@ Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
  freedreno@lists.freedesktop.org
 References: <20240219-topic-rb1_gpu-v1-0-d260fa854707@linaro.org>
  <20240219-topic-rb1_gpu-v1-3-d260fa854707@linaro.org>
- <u7beg6ui3i6nxoaulc3o7ghfkvcsy46ps53k3jynrurdwn6o7o@ppyqoz4jsotc>
+ <CAA8EJpq8XvQm9B3RZq9PNMqA5VAqKUyVn5qt8-WEYMQMWniDZA@mail.gmail.com>
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -118,12 +117,13 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <u7beg6ui3i6nxoaulc3o7ghfkvcsy46ps53k3jynrurdwn6o7o@ppyqoz4jsotc>
+In-Reply-To: <CAA8EJpq8XvQm9B3RZq9PNMqA5VAqKUyVn5qt8-WEYMQMWniDZA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19.02.2024 15:54, Andrew Halaney wrote:
-> On Mon, Feb 19, 2024 at 02:35:48PM +0100, Konrad Dybcio wrote:
+On 19.02.2024 15:53, Dmitry Baryshkov wrote:
+> On Mon, 19 Feb 2024 at 15:36, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
 >> Commit 134b55b7e19f ("clk: qcom: support Huayra type Alpha PLL")
 >> introduced an entry to the alpha offsets array, but diving into QCM2290
 >> downstream and some documentation, it turned out that the name Huayra
@@ -145,87 +145,25 @@ On 19.02.2024 15:54, Andrew Halaney wrote:
 >> --- a/drivers/clk/qcom/clk-alpha-pll.c
 >> +++ b/drivers/clk/qcom/clk-alpha-pll.c
 >> @@ -244,6 +244,19 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
->>  		[PLL_OFF_OPMODE] = 0x30,
->>  		[PLL_OFF_STATUS] = 0x3c,
->>  	},
->> +	[CLK_ALPHA_PLL_TYPE_HUAYRA_2290] =  {
->> +		[PLL_OFF_L_VAL] = 0x04,
->> +		[PLL_OFF_ALPHA_VAL] = 0x08,
->> +		[PLL_OFF_USER_CTL] = 0x0c,
->> +		[PLL_OFF_CONFIG_CTL] = 0x10,
->> +		[PLL_OFF_CONFIG_CTL_U] = 0x14,
->> +		[PLL_OFF_CONFIG_CTL_U1] = 0x18,
->> +		[PLL_OFF_TEST_CTL] = 0x1c,
->> +		[PLL_OFF_TEST_CTL_U] = 0x20,
->> +		[PLL_OFF_TEST_CTL_U1] = 0x24,
->> +		[PLL_OFF_OPMODE] = 0x28,
->> +		[PLL_OFF_STATUS] = 0x38,
->> +	},
->>  };
->>  EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
->>  
->> @@ -779,6 +792,38 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
->>  	return clamp(rate, min_freq, max_freq);
->>  }
->>  
->> +void clk_huayra_2290_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->> +				   const struct alpha_pll_config *config)
->> +{
->> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL(pll), config->config_ctl_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U(pll), config->config_ctl_hi_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U1(pll), config->config_ctl_hi1_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll), config->test_ctl_hi1_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l);
->> +	clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), config->alpha);
->> +	clk_alpha_pll_write_config(regmap, PLL_USER_CTL(pll), config->user_ctl_val);
->> +
->> +	/* Set PLL_BYPASSNL */
->> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_BYPASSNL, PLL_BYPASSNL);
->> +
->> +	/* Wait 5 us between setting BYPASS and deasserting reset */
->> +	mb();
->> +	udelay(5);
->> +
->> +	/* Take PLL out from reset state */
->> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
->> +
->> +	/* Wait 50us for PLL_LOCK_DET bit to go high */
->> +	mb();
->> +	usleep_range(50, 55);
+>>                 [PLL_OFF_OPMODE] = 0x30,
+>>                 [PLL_OFF_STATUS] = 0x3c,
+>>         },
+>> +       [CLK_ALPHA_PLL_TYPE_HUAYRA_2290] =  {
+>> +               [PLL_OFF_L_VAL] = 0x04,
+>> +               [PLL_OFF_ALPHA_VAL] = 0x08,
+>> +               [PLL_OFF_USER_CTL] = 0x0c,
+>> +               [PLL_OFF_CONFIG_CTL] = 0x10,
+>> +               [PLL_OFF_CONFIG_CTL_U] = 0x14,
+>> +               [PLL_OFF_CONFIG_CTL_U1] = 0x18,
+>> +               [PLL_OFF_TEST_CTL] = 0x1c,
+>> +               [PLL_OFF_TEST_CTL_U] = 0x20,
+>> +               [PLL_OFF_TEST_CTL_U1] = 0x24,
+>> +               [PLL_OFF_OPMODE] = 0x28,
+>> +               [PLL_OFF_STATUS] = 0x38,
+>> +       },
 > 
-> I *think* you'd want to use a read to ensure your write goes through
-> prior to your sleep... from memory-barriers.txt:
-> 
-> 	5. A readX() by a CPU thread from the peripheral will complete before
-> 	   any subsequent delay() loop can begin execution on the same thread.
-> 	   This ensures that two MMIO register writes by the CPU to a peripheral
-> 	   will arrive at least 1us apart if the first write is immediately read
-> 	   back with readX() and udelay(1) is called prior to the second
-> 	   writeX():
-> 
-> 		writel(42, DEVICE_REGISTER_0); // Arrives at the device...
-> 		readl(DEVICE_REGISTER_0);
-> 		udelay(1);
-> 		writel(42, DEVICE_REGISTER_1); // ...at least 1us before this.
-> 
-> also https://youtu.be/i6DayghhA8Q?si=7lp0be35q1HRmlnV&t=1677
-> for more references on this topic.
+> Can you please move them next to the standard huayra PLL regs?
 
-I mentioned this feels very iffy in the cover letter, but it's a combination
-of two things:
-
-1. i followed what qualcomm downstream code did
-
-2. qualcomm downstream code is not known for being always correct
-
-
-
-I suppose a readback would be the correct solution, but then it should be
-done for all similar calls in this driver.
-
-Although this code has shipped in literally hundreds of millions of devices
-and it didn't explode badly :P (i'm not defending it, though)
+Sure, no prob
 
 Konrad
