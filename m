@@ -1,152 +1,119 @@
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF57F53819
-	for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 21:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA57535C6
+	for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 22:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708378669; cv=none; b=Uua0mfF1oKbhI2GufLVKqHjJr8do7FxzPd16DRcgYm3Tkc8/nCe3NPDDFn/JDV0vwjMK0oDdu9032zP8m97cbvqAWnoSX+lmqVRjLQjeFtNsGjut48fZ8F2Ho6zYdHLoNSU4BezaY3pc98k/3mBYXtRY/WBvFqwFRngTTEniDJQ=
+	t=1708380989; cv=none; b=oJxH9UMd1s1yWGkCOhE8LjI4GcQD7AQdKLgD17OnAt3/CCabNErxi+DQm2IG5PP3YVhr2cGdiNRNg4RcWucwnJanAl8aJClvTltwVpKiJFChYB+r29xAOH16vIu8A7UR5rNDDeyxjlrN/xPWbw9FyYZ35IgmpAMYYDQvBL5wOIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708378669; c=relaxed/simple;
-	bh=mVdCOLa4vNpEE/e67IyWO1/E8dm4wo/8XueEHdZSyXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JdIY4gyBqr+DlgfUzqyf14WsyQRqyh4zFAGlZAR2lINjAcw25gNbez61v+upXmiknTQldQ+5FPAXtA487tOzk6O77anBVNv83PliOS21aDVtGSSHi1DQvegup9iDRoQqd8LHvVWdfhVQMDwniMHsfFvMZwgOBHLFdFR6JNlW3n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=foYTcq9B; arc=none smtp.client-ip=209.85.166.50
+	s=arc-20240116; t=1708380989; c=relaxed/simple;
+	bh=zSVu9prVWtzcMIX8nr93vi35ZuujWLtnr1gGDj9Uwf4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dv2OXzxK5kcBdJdJd+ybj6S93FvP7hm0+Zmso1GqB41NVuRWn3BNrewJLXKSgZpc1fnP38xcMm5z7syGHVe3MuHVpohvzKhG0azh5s5CiSiqSkecujpdZxMegpqaABBv1zr+I7UexaqHknRsuBq7ME+iH8wu1UMBfhL30grP8tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LFXS3m3m; arc=none smtp.client-ip=209.85.128.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="foYTcq9B"
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7c3e01a7fdeso206481639f.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 13:37:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LFXS3m3m"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6002317a427so39555087b3.2
+        for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2024 14:16:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708378667; x=1708983467; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pu6g5yftLiVv7gzZzzrLLgus4wextVLz0oNREySNgzU=;
-        b=foYTcq9BJFEyzGvO4dXcoPau5Z8Dlq93k+4KO20BK3kWfqB9OkkpmhxG47N9ADRR9V
-         IkTfD8zeLHZ5OmqA1hPPwVtdjt8iOY2f2cNxe6LVS7KD7PQ+eyjAHWPPXgFCUWQS0AM0
-         0ascitmgGnQ7PNnwDy/S6pp6RCwx/pEnesdvCPZK44bhEWMlxjy08J9tc4OYCiA5/XmW
-         mxsnG/y74+LyOjDCIOaGsapCSHSd4cUVIgUtwcw5RTm120y91YLRrURIy4FX3tNAGTa/
-         tAV3p1n+1ml/VMdYCRB2W8hRI35joPmm5ruXT+OdXgaLOfu6r4DUIZkHDMB0jeFVCbiK
-         u9LQ==
+        d=linaro.org; s=google; t=1708380987; x=1708985787; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vuTySsKzEO2OmI0ErX6jaDfKcwaUj4TjQngL5AX3Egg=;
+        b=LFXS3m3mZ5DyEmSD/fxit91P67Eo0tb+8jNuArAoueVpuWcfMqpFd9DDw9qAhMGHGi
+         YX8ig0Amc8Dq40HrO7xtLUkt162i6WB63kIK6ciXeH30SfxmIWMmg868PfUEWprtd//K
+         JTfXi63Oatnv18+1vKC/TeolvQiu3f313gUMu65lrAHfW1N2qPBBZ1STikU3gAbm6Ree
+         KBj36cgnI+sJq1WyYI9ohPDHMYSuvWnjUJ+hQwXoueWi4McpLcSReffxkWC5aymBCHCT
+         uxyn4JTVDKZTJuHS4FBDp0Pf7PnAuDqEJHrXpQv22Ollhm4k35/ULdH91Csa6LNCjgUY
+         2XxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708378667; x=1708983467;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pu6g5yftLiVv7gzZzzrLLgus4wextVLz0oNREySNgzU=;
-        b=O9IQw5aI8VzM0zZQK53NmWrgWoIZ5Dl7LGg+pbK2BQRA20lasGuB5Ss8vHUPC/oAxI
-         +/uRTB4CjsjH9nuRvxnW1VPVbGkn11Ww2ZWun/H9xPtfpU8u6FKOsuyW3N/97veQY+pK
-         WiVAO0izXxzomPOLiSWCC0AnWbg1/xqyaxBR37KrRhJwiaJhF3PXhDSplKy5OoSxIUuz
-         9IzJzHMDMpp2QT/blXK5kk0SctmmjGBCcdWDM6L5SxsWVTNXpAz23QlzvVqyUYGXKJ3Q
-         6GbprCTfQRSbK2e7DWOijhk0CuycQV9vVUOwooi9711a0+27haNuZFgtWKwCGCSzrfGq
-         yzrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJySpFshdS4wtpTcmakfdFL0tfHWYGqMkUQVwO8kbYJ15xx75b8aZTVNpDHXZe32izsX/rFJP0SVZWt2X10uLM/hrfSpy05LVy
-X-Gm-Message-State: AOJu0Yy/D2ciF/0+Yx4AybBiXSyBwk8pdhO+LiEoJQur0/Ep55Q41lJq
-	2G2I4LER5AGQNXrdy/fQwab44MqP8Y/kFO8Urkrg+dSTnANHz962L7BRCbhbgOE=
-X-Google-Smtp-Source: AGHT+IHHodfPh8+zZHa5pC68NadfSM5VyTFrqakTzatd2R6WfLeoBbHIC1ajK3I9MAE4ena3DfCGhQ==
-X-Received: by 2002:a6b:6e0d:0:b0:7c7:61cd:ff52 with SMTP id d13-20020a6b6e0d000000b007c761cdff52mr118392ioh.19.1708378666899;
-        Mon, 19 Feb 2024 13:37:46 -0800 (PST)
-Received: from [192.168.192.135] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id s8-20020a02cf28000000b004742a4647edsm614498jar.159.2024.02.19.13.37.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Feb 2024 13:37:46 -0800 (PST)
-Message-ID: <b73e329a-02a4-46e0-bda4-5d5fae0a1180@linaro.org>
-Date: Mon, 19 Feb 2024 22:37:39 +0100
+        d=1e100.net; s=20230601; t=1708380987; x=1708985787;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vuTySsKzEO2OmI0ErX6jaDfKcwaUj4TjQngL5AX3Egg=;
+        b=qbwczYgSciT968iXw/1aPi6Mt4PUYLcBeALP6RNQ8So7Hhih1Pq/T1RP7wy61JcysW
+         EdJEOjl1MCuX3/GG63VcZNTNU7VdhD2GLTA46vaOMrgVpyrwQig82h+UUJhlgLlj1sPd
+         q/kloQysRReqHV6x4XbdVEmikhWfkozdt/zINlE2hIPUlToVCqlNCxuoyFtGZZ5PrUuW
+         AIdQjIfVYattjUjTjJbXaEZJum9V4qopWQP4y8WLezWy8Tzo1DdcN1zcnYHG1ZQIHL+F
+         fqJBJ4RCZ9smbmJ894TF06MO8g5FS9qN5h1RC/ry92S49sHdCyrfXRnEYNSCtbhGB9ZD
+         /0QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXWJ6xqj7o9Odh1K4n/K3ccgjHm5WEgDRffHmfSGMM7MOvPsByDzXeh64JL1BkiXK6f4QTG+CszbMCd8qi0LT8EgahoVbwJrgx
+X-Gm-Message-State: AOJu0YxVmbgPobwQX2Rm9EJ9U6MZMmrtVdDXvvPOIBFzKA8QwQMo0UYc
+	Wh5XGSOSooQ8PVdpRfWpodPTsiZRPBMOQ5TlCfXPBD6ozah5bJK+qgaJQ3qgxPf6UUgaxBgTiVV
+	ytWay6qv4k9F7PJyFsaZLGa9sKuCXgKwjbzzdwQ==
+X-Google-Smtp-Source: AGHT+IH0q4G0NXDEX6RVYpZcdEntLJmn3kJY/UlQlPbUsZWH3aZT8Y8yzl3n5AhYDOYefhK8BUnY9HP1u6mwOkNWfWE=
+X-Received: by 2002:a81:431f:0:b0:608:e2f:e3d2 with SMTP id
+ q31-20020a81431f000000b006080e2fe3d2mr6514646ywa.22.1708380987231; Mon, 19
+ Feb 2024 14:16:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] arm64: dts: qcom: qrb2210-rb1: Enable the GPU
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org
 References: <20240219-topic-rb1_gpu-v1-0-d260fa854707@linaro.org>
- <20240219-topic-rb1_gpu-v1-8-d260fa854707@linaro.org>
- <CAA8EJppPvXfkz=wVca8aFBhFaVUe9+OiVzcQUq7D8zPbK+T1FQ@mail.gmail.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CAA8EJppPvXfkz=wVca8aFBhFaVUe9+OiVzcQUq7D8zPbK+T1FQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <20240219-topic-rb1_gpu-v1-8-d260fa854707@linaro.org> <CAA8EJppPvXfkz=wVca8aFBhFaVUe9+OiVzcQUq7D8zPbK+T1FQ@mail.gmail.com>
+ <b73e329a-02a4-46e0-bda4-5d5fae0a1180@linaro.org>
+In-Reply-To: <b73e329a-02a4-46e0-bda4-5d5fae0a1180@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 20 Feb 2024 00:16:16 +0200
+Message-ID: <CAA8EJpqxYdjKx54Oph3=+H-42+cKpw=t=5GGJq54FVcOa26TDQ@mail.gmail.com>
+Subject: Re: [PATCH 8/8] arm64: dts: qcom: qrb2210-rb1: Enable the GPU
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-kernel@lists.infradead.org, 
+	iommu@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 19.02.2024 15:49, Dmitry Baryshkov wrote:
-> On Mon, 19 Feb 2024 at 15:36, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>
->> Enable the A702 GPU (also marketed as "3D accelerator by qcom [1], lol).
-> 
-> Is it not?
+On Mon, 19 Feb 2024 at 23:37, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>
+> On 19.02.2024 15:49, Dmitry Baryshkov wrote:
+> > On Mon, 19 Feb 2024 at 15:36, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+> >>
+> >> Enable the A702 GPU (also marketed as "3D accelerator by qcom [1], lol).
+> >
+> > Is it not?
+>
+> Sure, every electronic device is also a heater, I suppose.. I found
+> this wording extremely funny though
 
-Sure, every electronic device is also a heater, I suppose.. I found
-this wording extremely funny though
+3D accelerator is a bit outdated term, but it's still valid. Well,
+unless using A702 makes 3D applications run slower than when using
+llvmpipe.
 
-> 
->>
->> [1] https://docs.qualcomm.com/bundle/publicresource/87-61720-1_REV_A_QUALCOMM_ROBOTICS_RB1_PLATFORM__QUALCOMM_QRB2210__PRODUCT_BRIEF.pdf
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> With the exception of the commit message:
+> >> [1] https://docs.qualcomm.com/bundle/publicresource/87-61720-1_REV_A_QUALCOMM_ROBOTICS_RB1_PLATFORM__QUALCOMM_QRB2210__PRODUCT_BRIEF.pdf
+> >> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> >
+> > With the exception of the commit message:
+>
+> :(
+>
+> Konrad
+>
+> >
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >
+> >> ---
+> >>  arch/arm64/boot/dts/qcom/qrb2210-rb1.dts | 8 ++++++++
+> >>  1 file changed, 8 insertions(+)
+> >
+> >
 
-:(
 
-Konrad
 
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
->> ---
->>  arch/arm64/boot/dts/qcom/qrb2210-rb1.dts | 8 ++++++++
->>  1 file changed, 8 insertions(+)
-> 
-> 
+-- 
+With best wishes
+Dmitry
