@@ -1,59 +1,59 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7398657CA
-	for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 10:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A98657DB
+	for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 10:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708426613; cv=none; b=jCKCq2r+kypwpfpMr6wiVbyDG2Kp3f76lk9dmDTFJK6AJITmhdHytu8/l4eqhcKYhZxaanj6AXY91I4wCGjZV5OoWu8oWfZoDCtApXy7353GgeC0BGNXs64E2omFdDnnQdj854A0QDWLcTa5n8cWRV4hKckZW8wMhKXctkadSQA=
+	t=1708426777; cv=none; b=tYeP9Z8rZH1ppX+uW135YVTKm2MzuQUjZ0AXhfg6NMhvmYDS1TdEOF3+lIzhgwWABBxpiaHmkLFyKbWBJg6nWBENL8R96quk4hKzCcnPaBpAZykjWCqAPMRXB9rNp/Mkok8dQ8+xeiUbsSmrgG9rEdbTHshv5LfCQR/OWRu1Dn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708426613; c=relaxed/simple;
-	bh=nWQ92AIuovPEq7nxx7/tay/7jvNblznRUaxt3Xz4H/M=;
+	s=arc-20240116; t=1708426777; c=relaxed/simple;
+	bh=g6dH5OPPvurQW89iZP3iNgRMNXyt8SpUEaAql9TeqdE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XWfAHrL90Gl1f71ggufPZ9S6btAfICuH+rCf0fhqv4tU7r0Kuwp0SiP5g579R0BiNtmFGMqZKo4j8ygEkeJI3hOym3ijryCNtX2JHYUdQjTWSbeUb6It9vueI4TK56vDxKjPhISYTzsVZZw7/3g3lrnm71SMIphuRFXggcH2KZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uqopVx7G; arc=none smtp.client-ip=209.85.221.48
+	 In-Reply-To:Content-Type; b=HDvlC2CFeGY8UGpjcsxXoNn0AadwEqMKKN2/28wfY7GfUUjftOv9TU5V5odqaxllb3w67ecORx935QG/a63sZUHV8ulUFnNB5Vjx/gJ5MkEK6siUsA4RZldip6uEofplCmwxPcILwCgS+iEhE7ymcADxIRABu1PT7I2sP1T6Xsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kyCCxx/x; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uqopVx7G"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-33d36736d4eso1759886f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 02:56:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kyCCxx/x"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4126fe50a1cso2715605e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 02:59:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708426610; x=1709031410; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708426774; x=1709031574; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6FwM7K8WiwUEU7a9HGJEH4r3DrCZNFS2j+599+gDIDY=;
-        b=uqopVx7Gcthi8/fQA2mO959WcvRhmCIT3r3pDQMtHNSDkkK4rXjL4qXqiDe6aeiadu
-         SucoWUg3FyEFn1vtJfefoSe/MyNBy1zydnadMPjo+U551JoJfiOJm+3C4oYvZMiaBvyD
-         ti3z/5adppthUIQQZ6dtD9zXyRChqz80T/4Lfgl56h7MqHpBxAuAGQmi3NXhwgxxjsbj
-         UzilPHWZ7FfbkFhkaPLP5NibJSMnahUfAZwQJVjMb4oFQARP4N2Q17knMkYZWVZRo/bz
-         4h746ydI7DrRjM6j6Kzs2eWWpxk/c6COB7Ohnee0HH4MmPq9MJePWQ0iK691QfsJ8U3S
-         TbnQ==
+        bh=uF7mgOt/d46QgIPg4uY3jRzW28nws+KnyVyRH9CsNdg=;
+        b=kyCCxx/xu5/fkRG0Jm0Xg62ie/7ylq6r/uc6DkobCwtUCxgf36Pvnl20di8FKYnhVk
+         OFn2jMONjwWhG5rKrs0caQD5FHR9I7nnDijzjNbWFP5RWBd7hMmdsashehiDX8JzQOCD
+         1+P/GzPS6StKd3D5CADCRi2mU8r1ZAdb+6aoYHETcNbFm4oJxpL96iW93xITc3GAvS3l
+         4kJiJKy1bdiZycF9Sxad5XVXBaH1Hc/MNeWrG9lMgyYCZJWbsnZKFR6IFgBKu+hQa51L
+         XutQZ8iDVeH6BLB2fE//W0/F9pC6JHe6bPCEzJWuVPW8Y4lbUP7bRGeNti9bsvGEVPkF
+         WIuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708426610; x=1709031410;
+        d=1e100.net; s=20230601; t=1708426774; x=1709031574;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6FwM7K8WiwUEU7a9HGJEH4r3DrCZNFS2j+599+gDIDY=;
-        b=Ih8lvdBh4y1y1NB0nqkYLE5yCEUaPIEMZym4C/Cssiq2YtRzhcIIr5kj8cucl4nWug
-         vJ5oHJwu6ZlPPNVVFgai+cACMaR6foZzxePvodYUNy9Hpx2AAq6abyMKz0WwvcpUMeuC
-         PqPM59RzKbWNF5Lb2EBWy9v/lKVqsPPAeK6AIEDvTm3af++jpg1cSN6JjcHg0IjV1PE3
-         VJ7f/2IXSEPkMeDsMhDBN/bWua1+kNPH708EeN2HgiIx2mKsMdexNBA6gURoNdar8+ii
-         mkA5lvEUEliS2aAw5HTL/mX/NMFlGwBIzh+BxPD/I5bYFc+g84DJiNcVgTaibChfzYSG
-         ehNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXF5JpyX2BEVvVTE33r3lzqQyyM1Q5PMjCZbxLaEpExBC0Jc5QZa3ngHxhBizhUMeNeAGXhq7Og59iie5lDfYGmcKx3jlQrKpMH
-X-Gm-Message-State: AOJu0Yyzhl4P7SpyRorZ7wtSIb/x5OuBsS+qLaBocsvfZ6h/H3aqvp30
-	9yeDY6VbpT9JRR7raz0HUJURlpgRITnzwnNGbA0ZVowflFXosj61gDERVn8ZdXs=
-X-Google-Smtp-Source: AGHT+IEifoW2VfhCdiEiYcUvBgw89zA4PAjhkrY6kCn0VZDOabUK2dWA2kNdlTsGGEtNrjbxcsiZ/A==
-X-Received: by 2002:a05:6000:1a8a:b0:33d:3a00:554d with SMTP id f10-20020a0560001a8a00b0033d3a00554dmr6143760wry.8.1708426610238;
-        Tue, 20 Feb 2024 02:56:50 -0800 (PST)
+        bh=uF7mgOt/d46QgIPg4uY3jRzW28nws+KnyVyRH9CsNdg=;
+        b=cq0ktdoVwp0xAxQLD3eHEsseEXNR6gUz/t99RJhuN/YHM3NJRMM+G+Hjs04nYBcZxy
+         FIeBWeO5OBgpC9uWHmuwAFWcmQo66zqc7qNyhliORMZYLOJgfJWoHx6xiKge4SqFwA6j
+         bxWHCQEjOLdGNqnN+AYJzjO12byC0Cp2FfUs9k8tdHTO3wgWnDD3uusJZXkZxuLZCwgj
+         kSoKqsBfZ2FExvtOE6AETv0RHwFy5OQyfVMTtRtaDfHqTm0xu6M4l+tRiUzQoTHaG/VO
+         oBrku3Yq6mpqqCNx8yt0CQLrI3QXpNC1ejpf82rWLLcHgH11wIxxuMjzVmpzZ1Bxu+Pm
+         6/Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHgI2VFqoDCfF4jzyNaqle2v62juTo0P3k9+vvnz+8MuWVy38OY5RHZJA3idwQSd2wM9azmO6iUDjYjKfo/HQWJWGj9+mdR5dB
+X-Gm-Message-State: AOJu0YzbuaDCjq/y47P1jdpE8dMxihu+dRiRvyJqJ2etN2Y1gozbqAgQ
+	Uu4Hfo1cKNbo5So1LIlowAY9yEt2y66CYqgMiYH+AOBisZXK1TPymGMuEmQQeG8=
+X-Google-Smtp-Source: AGHT+IHY1+cRHKPB0CuniAq91NZoLHR7SQvLrwb80gvuidEDI3lyX01cORfCDqEnSwFbGme8z8FVBQ==
+X-Received: by 2002:a05:600c:470c:b0:412:7058:eaa3 with SMTP id v12-20020a05600c470c00b004127058eaa3mr758048wmo.27.1708426774376;
+        Tue, 20 Feb 2024 02:59:34 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id h7-20020a056000000700b0033ce214a97csm13052019wrx.17.2024.02.20.02.56.49
+        by smtp.gmail.com with ESMTPSA id n22-20020a05600c4f9600b00411a6ce0f99sm14439503wmq.24.2024.02.20.02.59.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Feb 2024 02:56:49 -0800 (PST)
-Message-ID: <25fde6ca-e1f4-4ca7-a534-efaae8a2a324@linaro.org>
-Date: Tue, 20 Feb 2024 11:56:48 +0100
+        Tue, 20 Feb 2024 02:59:33 -0800 (PST)
+Message-ID: <d2dbbbc2-7ce6-4aca-b9ab-590e4131fed1@linaro.org>
+Date: Tue, 20 Feb 2024 11:59:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,21 +61,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/16] clk: samsung: Pass register layout type explicitly
- to CLK_CPU()
+Subject: Re: [PATCH RFC v2 3/5] dt-bindings: clock: merge all hisilicon clock
+ bindings to hisilicon,clock-reset-generator
 Content-Language: en-US
-To: Sam Protsenko <semen.protsenko@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+To: Yang Xiwen <forbidden405@outlook.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240216223245.12273-1-semen.protsenko@linaro.org>
- <20240216223245.12273-10-semen.protsenko@linaro.org>
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240217-clk-mv200-v2-0-b782e4eb66f7@outlook.com>
+ <20240217-clk-mv200-v2-3-b782e4eb66f7@outlook.com>
+ <32d0a9c5-6c4b-4d85-bcbe-6192c63ba5fc@linaro.org>
+ <SEZPR06MB69598A635C5AB1397348ED3296502@SEZPR06MB6959.apcprd06.prod.outlook.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -121,42 +120,27 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240216223245.12273-10-semen.protsenko@linaro.org>
+In-Reply-To: <SEZPR06MB69598A635C5AB1397348ED3296502@SEZPR06MB6959.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/02/2024 23:32, Sam Protsenko wrote:
-> Make it more obvious which register layout should be used for a CPU
-> clock. It prepares clk-cpu.c for adding new chips support.
+On 20/02/2024 11:52, Yang Xiwen wrote:
+> On 2/20/2024 6:14 PM, Krzysztof Kozlowski wrote:
+>> On 17/02/2024 13:52, Yang Xiwen via B4 Relay wrote:
+>>> From: Yang Xiwen <forbidden405@outlook.com>
+>>>
+>>> We don't need so many separated and duplicated dt-binding files. Merge
+>>> them all and convert them to YAML.
+>> What was exactly duplicated? You created unspecific, lose binding...
 > 
-> No functional change.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  drivers/clk/samsung/clk-cpu.c        |  2 +-
->  drivers/clk/samsung/clk-cpu.h        | 12 ++++++++++--
->  drivers/clk/samsung/clk-exynos3250.c |  2 +-
->  drivers/clk/samsung/clk-exynos4.c    |  6 +++---
->  drivers/clk/samsung/clk-exynos5250.c |  3 ++-
->  drivers/clk/samsung/clk-exynos5420.c |  8 ++++----
->  drivers/clk/samsung/clk-exynos5433.c |  8 ++++----
->  drivers/clk/samsung/clk.h            |  4 +++-
->  8 files changed, 28 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-> index 4c46416281a3..21998c89b96d 100644
-> --- a/drivers/clk/samsung/clk-cpu.c
-> +++ b/drivers/clk/samsung/clk-cpu.c
-> @@ -464,7 +464,7 @@ static int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
->  	cpuclk->lock = &ctx->lock;
->  	cpuclk->flags = clk_data->flags;
->  	cpuclk->clk_nb.notifier_call = exynos_cpuclk_notifier_cb;
-> -	if (clk_data->flags & CLK_CPU_HAS_E5433_REGS_LAYOUT) {
-> +	if (clk_data->reg_layout == CPUCLK_LAYOUT_E5433) {
+> You can take at the drivers at drivers/clk/hisilicon. All of them use 
+> the same sets of APIs to register a few clocks and resets. That's why i 
+> think they should be merged.
 
-Why flags cannot work for it and we need one more property? The point of
-flags is to customize the variant entirely. You basically split now
-flags into flags A and flags B.
+Drivers don't really matter for bindings. That's not a valid argument.
+
+Creating invalid combinations and lose bindings is not the answer to
+duplication of few parts.
 
 Best regards,
 Krzysztof
