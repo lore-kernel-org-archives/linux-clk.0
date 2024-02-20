@@ -1,114 +1,97 @@
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5D476C9C;
-	Tue, 20 Feb 2024 17:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3970076C89;
+	Tue, 20 Feb 2024 19:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708450595; cv=none; b=Fecn16lq1PbIcfIo+Uy6zOas08rqhU9J3PbUIQhfj+tS9Up+zNPlImqTnc2V7KHvtkvmCqpD9A+o2qy8wOzuAWb6v82+r/d5v8mcYIrmumIsheIa63dAj51typJBzMaHt8ke/VaNJ6VsRfBfVgv9c0QYewHYn+EsRRjjmAo05jk=
+	t=1708457540; cv=none; b=kj48IhTlWYgSa7Npbf8P0O0E/SW/UqEUa4pHEOwv0Swf0kI9i4EMVdxIgrR2yOqGUVti9hLCjm3RtSeg18xz4F1pllP8yLp4N07Z4csULToNGMIzEfvPLzxhJnQiUY965WhfFfqckpG+VyIM86qBiNu+irrUkPTyLkWoKR0hs74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708450595; c=relaxed/simple;
-	bh=cmTEJiha2tFDubjqRfGi+KdNyZivDUyjm8JbT+qL5uo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Fd7yUt1K1RV4WwWm8rav8eZkBsjhBJopH3XV0mOxV2S5b9SeTYb1IL8SXoz3LJEo6KmFyX6vEAOoJMg+mAiWrNOjn0oTI9Be1knAAUiV3LEC2R4vZF33QAciOwDIQraK2ld0+Ou5qLzrjPr8O+XYP/uRx6O9ZKNmLSv7sB7JIKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=NMO8NtBn; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="NMO8NtBn"
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 3789F100322;
-	Tue, 20 Feb 2024 20:36:22 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 3789F100322
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1708450582;
-	bh=CT2QMXS2awc1UaugLcYawqtrm8RuYnHBK31jT43QizI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=NMO8NtBn7IkhhTHIh+4qe3rb8AJgePA80AUDKl2Jh0f9msCkzvOsYcsI+orVuKYw3
-	 KkLezKeEuOlsZzYNQC788a1Lg/g7HHZxF4VTu5Ic6f/RF2zobGj0JpUBj5H+k+aE0b
-	 c0WwZ+scGjZcW4Na2zSk2Rir4nWJWLiGiamhMCaHIa3KHh3Ivjv/ZRoyBGIgwe7VwO
-	 jqIsOmbFPWRpsESeF0mxOq2Cu71rHvsb+TfEOcl8jdN0He0SBwzf60QcyXy0Q1HVWk
-	 CpeSnvelkUGEDXQYp1IVVzXLNxH9+nRQVWgo5EtfrxRChM2ikxbUzDuaaI3jx58ZlS
-	 vKQr3zKgkpMfg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Tue, 20 Feb 2024 20:36:22 +0300 (MSK)
-Received: from [172.28.64.15] (100.64.160.123) by
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 20 Feb 2024 20:36:21 +0300
-Message-ID: <a25ff51d-d328-43d8-98af-91598c1ef23d@salutedevices.com>
-Date: Tue, 20 Feb 2024 20:34:52 +0300
+	s=arc-20240116; t=1708457540; c=relaxed/simple;
+	bh=SszpkFbrTiSepHEcHv73HAL06XFg+t2SIWPqKACl370=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MUnBD9mHIqEebK09DL7igig7i/8DcI4vS8VHIvUTCfgz69QhP0yUSbtLD/HFdUXhFGlSJpb5+CJceZyM+RWd5/E5R7ySxQpuYLEebEQfdjfS4mq7ies9Jci9n6Y2gZK/vhT2qLAm9o4UqX/dzYIBamx6G+PVABCttLRLipLGN2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcbcea9c261so5163126276.3;
+        Tue, 20 Feb 2024 11:32:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708457536; x=1709062336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X8GTO+lAF2fk+HfBG0cHdMNOcQxsEjyIPCBMHPyZPUI=;
+        b=NGRAX49KSziWe7IwSTyfSzSriq+I9fgFwCTTx7iTsNEYMwXnNjE688X/j4sFNFX9NU
+         Y4pgLVFjuUF4AvZM2fBbduFvccMlqYDbUl8jPkSTJMT9gGMj8MdClKB7hq7xXkzCopyt
+         sCJoSGSr2vZ5UvVd+3gTJEOO1WoZ9y3T7r82imAsCMwC95717guwRXVkapEbCIhBnlUD
+         so8KfQRDPuumN+oJTXPyPgC2CVWHB+umuCuuwlvhcQDG20kc0kFaqB2i0Ny3dFCe24DJ
+         9S7QdlA1AcJf0V3kmbK+oavIwPeCCEKfm/Vg1rZOAsotRBepyTt67IZJqw2ZSEZ1wBbg
+         QAYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXckgdN7x8onE6LXo372cwzG9Cz6HSFEZBr4aDnv78WhUe8oN39T/MeJkvzRS9hvJDXZQFqe1R33lRRfBGwMQGpGR2TU9hYBj0i+92XNKehn38AUA7a4K4PG2Uvczz1uaoPrE6N6rNTpHHadlyuqr+31QNacYorT9zI7fcZyQ6fHz0GDn48/YVnxcr7lT3Une4bCTDOekmYSrJRE0UliRgElp+Uq/zo
+X-Gm-Message-State: AOJu0Ywh4Ab5jlf4LLfy/KM5S72gCvq/ISrXqWPWNBSsh4uKWB4dylzD
+	CakQ+1y5SzDMEv4CwejD0Exv4F4WzyD/bKfllUXoo4VOYYgIYD4HiYCiv44rUz8=
+X-Google-Smtp-Source: AGHT+IH35SgJjhhvE6ygmBqJXW9fKhgfVPETCcK8MhgFj+AM2c/QiztJnHB22XJUV+dlK/YdSoqodA==
+X-Received: by 2002:a05:6902:118c:b0:dc6:ff12:13d7 with SMTP id m12-20020a056902118c00b00dc6ff1213d7mr12988060ybu.60.1708457535550;
+        Tue, 20 Feb 2024 11:32:15 -0800 (PST)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id p9-20020a257409000000b00dcdb990f93bsm2026571ybc.64.2024.02.20.11.32.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Feb 2024 11:32:14 -0800 (PST)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6079d44b02bso36943237b3.3;
+        Tue, 20 Feb 2024 11:32:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX3DAu4yMSYYqJ0SLTJPVKCBMuasBY1H8KxvqMnUJDBLTAdHAC7ikiusU+6p2WOfjHqKOj4HHwyyEIe8N5qECWQm/fjKFg42kcpLwed0AWViw3SDifqI0kcFTPz6i939EUGeiujVEsiaw4WN6MFDa4kTxCgqziLuQwrdw7BWaGGOyfx7GkG4pjhpiFnzCcHuJW8ZdcnZeTGuCp8Q63LNFdutVmiaeTt
+X-Received: by 2002:a81:9817:0:b0:607:87cd:9394 with SMTP id
+ p23-20020a819817000000b0060787cd9394mr12513129ywg.11.1708457534400; Tue, 20
+ Feb 2024 11:32:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: allow to skip clk_core_req_round_rate_nolock()
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <kernel@salutedevices.com>
-References: <20240126201433.1830600-1-jan.dakinevich@salutedevices.com>
-Content-Language: en-US
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <20240126201433.1830600-1-jan.dakinevich@salutedevices.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 183586 [Feb 20 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.3
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 7 0.3.7 6d6bf5bd8eea7373134f756a2fd73e9456bb7d1a, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;100.64.160.123:7.1.2;127.0.0.199:7.1.2;sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/20 16:18:00 #23712592
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com> <20240208124300.2740313-8-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240208124300.2740313-8-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2024 20:32:01 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU+WRJLLH4zUvAnsfNtgUxsNGe1bCKLu+98BC6K0d6Rgg@mail.gmail.com>
+Message-ID: <CAMuHMdU+WRJLLH4zUvAnsfNtgUxsNGe1bCKLu+98BC6K0d6Rgg@mail.gmail.com>
+Subject: Re: [PATCH 07/17] clk: renesas: rzg2l: Extend power domain support
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Please take a look at this patch.
+Hi Claudiu,
 
-On 1/26/24 23:14, Jan Dakinevich wrote:
-> Calling of clk_core_req_round_rate_nolock() can be time-consuming in a
-> case of deep hierarchy with multiple dividers/parents. But if the clock
-> already has exactly the same rate as desired, there is no need to
-> determine how it could be rounded.
-> 
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-> ---
->   drivers/clk/clk.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 2253c154a824..04f0ddced932 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2423,6 +2423,12 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->   	if (!core)
->   		return 0;
->   
-> +	/* skip calculation of rounded rate if the clock already has exactly
-> +	 * the same rate as desired
-> +	 */
-> +	if (req_rate == clk_core_get_rate_nolock(core))
-> +		return 0;
-> +
->   	rate = clk_core_req_round_rate_nolock(core, req_rate);
->   
->   	/* bail early if nothing to do */
+On Thu, Feb 8, 2024 at 1:44=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
+rote:
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
 
--- 
-Best regards
-Jan Dakinevich
+> +static struct generic_pm_domain *
+> +rzg2l_cpg_pm_domain_xlate(struct of_phandle_args *spec, void *data)
+
+As of commit 4d0824608a636b64 ("pmdomain: core: constify of_phandle_args
+in xlate") in next-20240215 and later the first parameter needs to
+be const.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
