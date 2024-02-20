@@ -1,42 +1,42 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA66626C6;
-	Tue, 20 Feb 2024 10:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFAE762178;
+	Tue, 20 Feb 2024 10:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708425831; cv=none; b=NS8Af+Pi48/hvxuqMTNVswKasYmpi1qvlzj4gut/x4KPnKgpEBkHuiU3paYOOiRuAI5byx1OuZ9HYgY6dB9vPi4ghpfQbw+H6p7Gp37x6q8Ylq+dBnycUcn7QUImZUQakNMg5XX6L/iViYm1z0Le1s5FxYZOftCiOM+ts6QxCqE=
+	t=1708425832; cv=none; b=prpszjHAdsBKwUNPDePVDKJJCTTn3SrzElNM9nQbnB9lBpvUs0nvrlQjgMeV3bteBhRHuqb86129YvVnbhLyIC+bWyn8iLXArIJiFcbsTpjKUGCfepsiaCd9Gf29E4K1UEHx+//vbQv/9xTOKeSgsgyjM8RQ/Yem63JQC0XX07o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708425831; c=relaxed/simple;
-	bh=xR+waViZbIHoeeUUPDFUbXsbVqEikabY6gu0aDYi7x0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ghpegpe0ODlpZiPmrSzpiMVRXzwY8w1EN11t0lwd9+qz3A3sD4fESB78kpXb5V4/ACNeBNUToEy/mEyOfyGK63zUwuzrY6jYViOwLc+9luaCBqvPJ4W57QKghFq12evoOnS1Uj9maiaQUdPann/YyDSQWDyuN7XuFbSHwlilVcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+	s=arc-20240116; t=1708425832; c=relaxed/simple;
+	bh=gJNDcnnI5rP7McNDysSXsx8zm9W44QaG4sKI/u39w2Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r5KfhBMM9qVg6oz0vIRU+IC9cLA0yo4F5RwPAc0oCBRQawONWeKEy0KFpqfmjQdh7EY4xZCax74O3CqycK7+D5b7kLZcnB/bVP8ImimFNc0KHw11LZtqxLtApu6Ngr70nxb8shjBSLxv9O/mBJgq5TJHRiLP8Z5vjPwbN/XInh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 X-IronPort-AV: E=Sophos;i="6.06,172,1705330800"; 
-   d="scan'208";a="194579410"
+   d="scan'208";a="198515560"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 20 Feb 2024 19:43:47 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 20 Feb 2024 19:43:43 +0900
 Received: from localhost.localdomain (unknown [10.226.92.246])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 976D64001942;
-	Tue, 20 Feb 2024 19:43:43 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B40E24001942;
+	Tue, 20 Feb 2024 19:43:38 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
 	Russell King <linux@armlinux.org.uk>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>,
+	linux-media@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/3] clk: Update API documentation related to clock disable
-Date: Tue, 20 Feb 2024 10:43:34 +0000
-Message-Id: <20240220104336.260194-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 0/3] Add clk_poll_disable_unprepare()
+Date: Tue, 20 Feb 2024 10:43:33 +0000
+Message-Id: <20240220104336.260194-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240220104336.260194-1-biju.das.jz@bp.renesas.com>
-References: <20240220104336.260194-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,63 +45,45 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The API's related to clk disable operation does not explicitly
-states the synchoronous or asynchrous behaviour as it is driver
-dependent. So make this part clear in API documentation.
+Currently documentation related to disabling of clock do not state
+it is synchronous or asynchronous clock gating. So, make it clear it is
+driver dependent.
 
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v2:
- * New patch.
----
- drivers/clk/clk.c            | 3 ++-
- include/linux/clk-provider.h | 3 ++-
- include/linux/clk.h          | 3 ++-
- 3 files changed, 6 insertions(+), 3 deletions(-)
+The clk_disable_unprepare() doesn't guarantee that a clock is gated after
+the execution as it is driver dependent. The Renesas and most of the other
+platforms don't wait until clock is stopped because of performance reason.
+But these platforms wait while turning on the clock.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 2253c154a824..9a09f51f4af1 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -988,7 +988,8 @@ static void clk_core_unprepare_lock(struct clk_core *core)
-  * if the operation may sleep.  One example is a clk which is accessed over
-  * I2c.  In the complex case a clk gate operation may require a fast and a slow
-  * part.  It is this reason that clk_unprepare and clk_disable are not mutually
-- * exclusive.  In fact clk_disable must be called before clk_unprepare.
-+ * exclusive.  In fact clk_disable must be called before clk_unprepare.  The
-+ * synchronous or asynchronous clock gating operation is driver dependent.
-  */
- void clk_unprepare(struct clk *clk)
- {
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 1293c38ddb7f..50cd0f8d37cb 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -113,7 +113,8 @@ struct clk_duty {
-  *		sleep.
-  *
-  * @disable:	Disable the clock atomically. Called with enable_lock held.
-- *		This function must not sleep.
-+ *		This function must not sleep. The synchronous or asynchronous
-+ *		disabling of the clock is driver dependent.
-  *
-  * @is_enabled:	Queries the hardware to determine if the clock is enabled.
-  *		This function must not sleep. Optional, if this op is not
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 06f1b292f8a0..e6acec5d8dbe 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -653,7 +653,8 @@ int __must_check clk_bulk_enable(int num_clks,
-  * @clk: clock source
-  *
-  * Inform the system that a clock source is no longer required by
-- * a driver and may be shut down.
-+ * a driver and may be shut down. It is not guaranteed to ever actually
-+ * be stopped, that will be driver dependent.
-  *
-  * May be called from atomic contexts.
-  *
+The normal case for shutting down the clock is unbind/close/suspend or
+error paths in the driver. Not waiting for the shutting down the clock
+will improve the suspend time.
+
+But on RZ/G2L Camera Data Receiving Unit (CRU) IP, initially the vclk is
+on. Before enabling link reception, we need to wait for vclk to be off
+and after enabling reception, we need to turn the vlck on. Special cases
+like this requires a sync API for clock gating.
+
+Add clk_poll_disable_unprepare() to poll the clock gate operation that
+guarantees gating of clk after the execution.
+
+RFC->v2:
+ * Updated cover letter description and header.
+ * Created patch#1 for updating existing documentation.
+ * Renamed clk_disable_unprepare_sync()-->clk_poll_disable_unprepare()
+ * Redesigned to make use of __clk_is_enabled() to poll the clock gating.
+
+Biju Das (3):
+  clk: Update API documentation related to clock disable
+  clk: Add clk_poll_disable_unprepare()
+  media: platform: rzg2l-cru: rzg2l-video: Use
+    clk_poll_disable_unprepare()
+
+ drivers/clk/clk.c                             | 26 +++++++++-
+ .../platform/renesas/rzg2l-cru/rzg2l-csi2.c   |  5 +-
+ include/linux/clk-provider.h                  |  3 +-
+ include/linux/clk.h                           | 49 ++++++++++++++++++-
+ 4 files changed, 79 insertions(+), 4 deletions(-)
+
 -- 
 2.25.1
 
