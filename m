@@ -1,59 +1,59 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284D1664B7
-	for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 10:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8296D657AA
+	for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 10:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708426409; cv=none; b=Zru+Sd1v+eeF46evrgvRBPgSUlZpxIvfhypz7PmBeIMsBdbv72oHLevQtEf61ffMWJbxoR7rw/7vkD9kAXEpjmEWLvCuNbn79y6HBsJU5ehux0VBEXj8/hWVspHhjllAF3TNYFX3whMXXKjekPKrY8IRPDeTwv6crDPJ5JWFnCk=
+	t=1708426512; cv=none; b=lSLAZYRJOxIqlQEZxyFcIxnNqdMuDMLCcmSH/rKq5g5/YH4BIRI5gUcuCCOgZcJxqe3BVewRPUYOspN5SudaUSuyWWtwCG5imUJz7HNlJEQJSqIsotu5sN90I+UUuO/tm692VH4lV/dObbittzAAc3DCXqtgQOZl+weOaJ+7/uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708426409; c=relaxed/simple;
-	bh=8vi6GmLWUFu13gK8croE2S4F5cWVZeaaePrUfRm5924=;
+	s=arc-20240116; t=1708426512; c=relaxed/simple;
+	bh=4Qymb8xpXRLPO9CBZR4kTmMSejuopPSldKwl9NT/rpE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sgx1oh6TUvqkqEprsttkaMVmCe0EYGfwVhMsrMZrlfPHENLy7MI5mBLQOpwa8lDdrg9K2z3VhyPjnwU9XnRPtYx3KmWTHwVruh3VcPUxV6luRrvRvLMirRTrXOGTnxodaFXcyawGMT51zOSJweO49QX4Gf1fO60KF9hWStdXNXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MV5SHB88; arc=none smtp.client-ip=209.85.208.181
+	 In-Reply-To:Content-Type; b=Hnnw/tPYzLVt5sduDbrE6ihTJdagboZEDJTnQqGerrD9VSIr7f5mnfCzanz+XcmfUNZxBqDFp1F1ud8KZ0++DDAcEuasvUV4ygKY0lBeRj2/eMpu2QXOmW7W5sNfwHgXPtln3EcCvoa0b/W0qoykOUnTu8EbvLRSUq93rigJ3uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R0zmDoFz; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MV5SHB88"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2d180d6bd32so57365881fa.1
-        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 02:53:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R0zmDoFz"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2d0e520362cso53752181fa.2
+        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 02:55:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708426405; x=1709031205; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708426509; x=1709031309; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8vi6GmLWUFu13gK8croE2S4F5cWVZeaaePrUfRm5924=;
-        b=MV5SHB88xAxe0hPoZKkkkxb66tVTWvjnFGrvE/bsMJ+lYDgglOg8gmNAEmxewMwg6C
-         w83CpvmJCDvx9/MeUk/qgoVA2xmYZKikjvuB2hX57dUyxkRsVsMpbv5R3ycESIfdqqOd
-         pIF2FEjfuahANLaoStX6dthVl7SpO4UgG4+5FpgKOh6J8GPbYrxwtY1BjGaLJkmfTo+s
-         OziDrJrwNE2KUZTqi+dF0RZy39ZDSEvr2hFwNmwHWDCz7UqnprLGK8kx/MopXAKEnpQ/
-         Fy7p7JKsLlbITkYI+hWiyHQyG3olgHoxcD1PSAzIPkhpHp878NYP0ldhuvQqb0DvxfMu
-         rErg==
+        bh=4Qymb8xpXRLPO9CBZR4kTmMSejuopPSldKwl9NT/rpE=;
+        b=R0zmDoFzS8p1XYmt6YVoP5rm26g5Q3KGtk2szZ79is3yA/7UNrr33DZk2joIAmeaXR
+         oBqbsYL1BW6PYA4yTiYkqlV6aBpJ4WeYoiE19S0TYu3C8ZgnnneOR31qvobNsBXPwxAQ
+         GymWvE7PiEBwlmHhLrchlISRE1nn5CwMY7wDGIeSfo04knHcy3VrA50crNOidDcvCErj
+         OHBXWINxxxN8TWknV53WLO7ETEkuRTt8T8JZa96DdkIWbyQtY9YjLRmVPtleGW1wbFDO
+         HapDv6it1CNhIFaDuXXY1JEYt0Ard20mDieL63WUphEcl/FlRHPf8dBh07Jo1x6qIc8l
+         2S4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708426405; x=1709031205;
+        d=1e100.net; s=20230601; t=1708426509; x=1709031309;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8vi6GmLWUFu13gK8croE2S4F5cWVZeaaePrUfRm5924=;
-        b=U1taSt6q49JemYD9SomV+r2FtGlus4NVdsimaCj/6GeFJwN6oWB18BdOL+HB33bBSh
-         7z/iSnZ1C4Sfo23PZdRjtLpqG0iS9e7GQRlAtERo3F6sMV/LQYBKDcyZMjA/Oc9PCvFY
-         c392Djas0pZhMgJfw/RP7vFzJ0qJrpHddeNF9pl9qMZwTqLe7otshKcEsbeU7vquB7wJ
-         rQ66zolqYIHArjYr+kya32qoBBGm88W4DyG25tX7xv3TGEbeJwI6CGPJMH9DZ1fvUEx0
-         er9zH/VlDMsH+DN0dXk2a+X81P70xlT9Y6oNm4+QtEOseDpge6vrDliKtsNR4YeLLdtS
-         Itkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDLgVXVwVNYCfbMHlt668FfTzAsMkiSws58hDtcxGVehj+VIYoi23aDX0dDNe/bY/1mfWJBx6GVtKLT2JPBkVDOZ+vZCYY8fdj
-X-Gm-Message-State: AOJu0Yy3QjTeb86s63ptRyKkoYCzl/xYVH0n7IQMIHpxb1oiXsivQ4QF
-	nFyd8VUjOvGNqvVkyYpQ/tmXrbwkKhb1PTgNDbjaL/yDtUWoF8kuuIdmzrdLWtw=
-X-Google-Smtp-Source: AGHT+IGj/7AXoisMK+BCkKwotSzF6x35dkD2gVUI9ij4ByeXOMxpFwLG6GP50Kx7b4hnuJNfmyQRUg==
-X-Received: by 2002:a2e:be9d:0:b0:2d2:2aec:108f with SMTP id a29-20020a2ebe9d000000b002d22aec108fmr6573949ljr.47.1708426405349;
-        Tue, 20 Feb 2024 02:53:25 -0800 (PST)
+        bh=4Qymb8xpXRLPO9CBZR4kTmMSejuopPSldKwl9NT/rpE=;
+        b=JC3QaPCWhGU5r5oljM2qc2GKnag2TVpHOpD6Tuu92MP+ZT0IzFFb3sll2KSZhJEyzY
+         QcAzmeLgGvSfmrPcoa0vRNRgKuW9li98Sx7DHjT2RP5KkjOMbRNKrw4+XbaiQTAmQZ3L
+         Yub6DtB8JGM/HZ/kQhsh1+URcbFsO7Dl0OSuRGpAgrE7308RRLLDZOIHmOlXQGqNXk6E
+         V2tq/BUsR/YZqWZg2dpOIambc2xyg0npuZz2/h+lpAoNYageXbcDkN9K3iOchTQ2k+b8
+         FgnQKHKFS/uepqDNEVvXnjxUO9NgAUhzojt9H97hfgzHIsO2TZcDNudgT27TZ2EZyklM
+         gzOg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYRGElMskE9K2eCIbDr1yFxdSdPDza0qFNMKxyF16yEsg2FpMrc/w2rs/9Mi4zh+AzDFhQXmLyf4ip7sEBzHGHo8ecMndYMjFw
+X-Gm-Message-State: AOJu0Yy/nSxlceFWxx1/PPVmbzznuWEdtKpEuKd81WTMz/MwbY464cG0
+	bsRo1xF0GZWGUnXXlvCcHKv9F+GKT/+po4Wij5xXi/LcorSLmgVOWvJcdHm7i8Q=
+X-Google-Smtp-Source: AGHT+IHmpV09Ze+2Fdm7ZG0WXEV+ZNrKtTRB16WFljNPgRLu1Vpv1ycvqxx3g2WgK4pNuI6DyG4fuQ==
+X-Received: by 2002:a05:651c:610:b0:2d2:2948:afb with SMTP id k16-20020a05651c061000b002d229480afbmr4762402lje.24.1708426508728;
+        Tue, 20 Feb 2024 02:55:08 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id z17-20020a1c4c11000000b004127057d6b9sm1013957wmf.35.2024.02.20.02.53.23
+        by smtp.gmail.com with ESMTPSA id h7-20020a056000000700b0033ce214a97csm13052019wrx.17.2024.02.20.02.55.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Feb 2024 02:53:24 -0800 (PST)
-Message-ID: <8c1f0a4f-8a8b-41e7-b7f1-4c5a38ec7c1a@linaro.org>
-Date: Tue, 20 Feb 2024 11:53:22 +0100
+        Tue, 20 Feb 2024 02:55:08 -0800 (PST)
+Message-ID: <96ded232-d6c8-48b2-a8f0-1714601ae516@linaro.org>
+Date: Tue, 20 Feb 2024 11:55:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,8 +61,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/16] clk: samsung: Pass actual clock controller base
- address to CPU_CLK()
+Subject: Re: [PATCH 08/16] clk: samsung: Use clk.h as a single header for
+ Samsung CCF
 Content-Language: en-US
 To: Sam Protsenko <semen.protsenko@linaro.org>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -75,7 +75,7 @@ Cc: Alim Akhtar <alim.akhtar@samsung.com>,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20240216223245.12273-1-semen.protsenko@linaro.org>
- <20240216223245.12273-8-semen.protsenko@linaro.org>
+ <20240216223245.12273-9-semen.protsenko@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -121,39 +121,21 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240216223245.12273-8-semen.protsenko@linaro.org>
+In-Reply-To: <20240216223245.12273-9-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 16/02/2024 23:32, Sam Protsenko wrote:
-> The documentation for struct exynos_cpuclk says .ctrl_base field should
-> contain the controller base address. But in reality all Exynos clock
-> drivers are passing CPU_SRC register address via CPU_CLK() macro, which
-> in turn gets assigned to mentioned .ctrl_base field. Because CPU_SRC
-> address usually already has 0x200 offset from controller's base, all
-> other register offsets in clk-cpu.c (like DIVs and MUXes) are specified
-> as offsets from CPU_SRC offset, and not from controller's base. That
-> makes things confusing and not consistent with register offsets provided
-> in Exynis clock drivers, also breaking the contract for .ctrl_base field
+> Make both CPU and PLL clock headers to be included indirectly via clk.h.
+> All Samsung clock drivers already include clk.h, which provides API for
+> Samsung CCF clocks like muxes, gates, etc. Both CPU and PLL Samsung
+> clock are not that different. It makes sense to only use both clk-cpu.h
+> and clk-pll.h internally for Samsung CCF framework, and make clk.h the
+> facade for Samsung CCF. This way all clock drivers only have to include
+> clk.h.
 
-Typo: Exynos
-
-> as described in struct exynos_cpuclk doc. Rework all register offsets in
-> clk-cpu.c to be actual offsets from controller's base, and fix offsets
-> provided to CPU_CLK() macro in all Exynos clock drivers.
-
-Change is fine and makes sense on devices having separate CPU clock
-controller. That's not the case for:
-1. Exynos3250: dedicated CPU clock controller space, but we merged it
-into one driver/binding.
-2. Exynos4 and 5250: no obvious dedicated CPU clock controller, but
-register layout suggests that there is such, just not explicit.
-
-In all these cases you provide not the correct offset against explicit
-or implicit CPU base, but from main clock controller base.
-
-Mention it briefly in above commit msg.
-
+Each header and unit file should include only what's necessary, so this
+change is contradictory with basic rule.
 
 Best regards,
 Krzysztof
