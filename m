@@ -1,205 +1,270 @@
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01olkn2028.outbound.protection.outlook.com [40.92.52.28])
+Received: from smtp54.i.mail.ru (smtp54.i.mail.ru [95.163.41.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBC876411;
-	Tue, 20 Feb 2024 16:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.52.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708446710; cv=fail; b=eZwCGc9P0aTTN6D9ABiA1AIOUVNBqjOIVdaeXD9teyMZrsUd+PfAqPbrO6hv3ACGRYX60uL3qYZMY/RPmGbT11ECtCs2U1lgrYRchZIK6ASJjRqXwhZTbKG+TEA3TjEKTBTgEVzWGiyIDoARJay8OU4ynRIXoX8xR1LO/+g8JKg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708446710; c=relaxed/simple;
-	bh=7YOck/NxMQxrlBI9q20jI1pvhINZ4xkLyYgO+q/uleE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tNuiPaAuTZ7skXu8yk94E6URHAeE7OpZ4FaXFo8jop3WQGJoCuJvWF06M06ZizkBqd+c2GfzUK+YeuRdxWzdPphe6ppHmo/EDtWHgM4s1S8hhN3hpLU/Lj5br+0Po00e4ztsEsw85uWIDql0Uf4Ova6JDUvSEHwl47ZIwOk2hy0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=BHawSkBn; arc=fail smtp.client-ip=40.92.52.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B819D69D01;
+	Tue, 20 Feb 2024 16:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.163.41.89
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708447980; cv=none; b=ubcf9Lo8NPpc2RDkU0AEU737Af5IwQ8hmfwebqxFL8keBaZJ0GZyIYfBmFp/BBvpX2NTk7k4SBHBUmMXLsZz4HXEQ5eiKomPXAej9TTV7rMnYIZmCI/ju0Z6bW5Dl0sO+e6XJ531mIVwQQFIfPIMKvUd8POxJnX/VNrcZ/vmIxg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708447980; c=relaxed/simple;
+	bh=l7SFpQhbw6SePjwOm2i/2LpLRNoK2liXFOknTeCtwyM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BRQivHeAH980etX5lB3xUaWuZaqlDJMp4f9VW1CmkxcSISmU0O4JgJIC7NnvkatjjmUr2orprIvzEQUCwPfm8JdNsuJ55fn/eVkRa8gjXSImEk6MeoPS9+mwOnC3LgVaai5LOOK6VrkrFFcjC4J43k/MprTeznPoIRX7/zigWxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=Bbo36STV; arc=none smtp.client-ip=95.163.41.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="BHawSkBn"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k9bS/oQf93oa+5otTKIu4V32knFfRdv2VBNebTinFo848434QlYXOXzsrFKrtAvvTcyWpEUhTMIbySr4BcAju05rY+fdebznNugf8OpIm/1Plxu9+YvUmBbgGEluWmON310xiwbegIL9TLIBg0YKJmMuIQH3ITWqxDhuPcPdQIIq02O3zBNMQcBzrpsqc1hlIGIg+srzQpg1c9t6h/mZ/sNHUUQCYUS29BU5iNScaZrMhwT5zIkQoBgd/dCel4r+KCApMHekYWZQTSB0sgZzPGugj0SkU7LlzAZcOBFcUQ8hoeXdK0vpIgyY3Wa1fYe/DE70dddrekfJk8SXO1v8Zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LqOGDqe4Ez+6BjBGQOarR2sOHE4vtvljEThoQeXdcJQ=;
- b=C37HQeOyZZXdNXuya1cS7Gq7SX7ZXsgN0pOcxZnoW423RPOmefF/KSvARBjiceHP2Z8n7B0stJsNMYy2XofIlnjXFLmIlxcE8qY+No8y57Avve9jTlG/QLhjqk0Q/TU/a7VkURFz4sW3rG93VJ5+y/hJQvAAOd4N6aqsAdlI8yaSJ4pA4TQ/+BtpYLTktHRVFkVZk2mmPHiJTykCp91saVLtLpmAweq0js7dLGjF1Q05I/0XMmqSUtM9g7nmlogxGKbAKnCXd/te/fgRP9LcXabQpsAkqb7RRKVlSXBxkCrVFK07q0HbV6VzezMT3kZwQKb+eTy5bJSazLJLOQNTDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LqOGDqe4Ez+6BjBGQOarR2sOHE4vtvljEThoQeXdcJQ=;
- b=BHawSkBnkbJSeulrzqz9kUas5gBR4D1xcEz9oclxwowTnB9Hi1dhGVz0SRvHbwHRhzHmBePPDhhQ2f3BdYm31H3vHs5Qsq3LOzvdP3VU0FSXY+JZxbrbjox25rq1Iy1jdzme+PTTTjfP/TTTKmekA/hm8u97a8SxfdbtdNvEJxHAzh+ca9k1esp4tt7pIMdcyLLsPj2RijH8BqPtatUJjgGzK9BbuqTKsYVWSjeh2wo6yKgfBahY+hYIZLW2YYIxOmEsJqeY+Cl5eml7xDt47NwSifTSsJaZR3bPKU+gynvChgREjdM1r1Ihl2vBaTOrLu5WNsKWRezehM4PtdXn5Q==
-Received: from SEZPR06MB6959.apcprd06.prod.outlook.com (2603:1096:101:1ed::14)
- by TYZPR06MB6047.apcprd06.prod.outlook.com (2603:1096:400:33e::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.34; Tue, 20 Feb
- 2024 16:31:44 +0000
-Received: from SEZPR06MB6959.apcprd06.prod.outlook.com
- ([fe80::53da:a8a:83cb:b9ad]) by SEZPR06MB6959.apcprd06.prod.outlook.com
- ([fe80::53da:a8a:83cb:b9ad%4]) with mapi id 15.20.7292.036; Tue, 20 Feb 2024
- 16:31:44 +0000
-Message-ID:
- <SEZPR06MB695996DD12D23D13D3579A8996502@SEZPR06MB6959.apcprd06.prod.outlook.com>
-Date: Wed, 21 Feb 2024 00:31:39 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 1/5] dt-bindings: clock: histb-clock: Add missing
- common clock and Hi3798MV200 specific clock definition
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240217-clk-mv200-v2-0-b782e4eb66f7@outlook.com>
- <20240217-clk-mv200-v2-1-b782e4eb66f7@outlook.com>
- <875b706f-801a-4a4c-8806-411a67c5a5e7@linaro.org>
- <SEZPR06MB6959456E59D84C15F0C1B88396502@SEZPR06MB6959.apcprd06.prod.outlook.com>
- <90e0dc10-8514-4827-998f-15b4d45d874e@linaro.org>
- <SEZPR06MB69594CBF0625989A5C54DC9096502@SEZPR06MB6959.apcprd06.prod.outlook.com>
- <3b6ab055-360b-4f73-8d11-8f52b272b7a8@linaro.org>
-From: Yang Xiwen <forbidden405@outlook.com>
-In-Reply-To: <3b6ab055-360b-4f73-8d11-8f52b272b7a8@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [RU54GzIbO8XQmYdk8o5OyrWX3GVod0cxss6FTpO9WqXACNOpwEnNt2a2klcuR/0e]
-X-ClientProxiedBy: TYBP286CA0011.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:404:ce::23) To SEZPR06MB6959.apcprd06.prod.outlook.com
- (2603:1096:101:1ed::14)
-X-Microsoft-Original-Message-ID:
- <6b11d560-a5fd-4da4-b0b6-108e5425fe1c@outlook.com>
+	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="Bbo36STV"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
+	; s=mailru; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
+	X-Cloud-Ids:Disposition-Notification-To;
+	bh=hCg350n+JEevpHfKu9TM4FH+RAcMDQ2ro8+v9e7z7GM=; t=1708447977; x=1708537977; 
+	b=Bbo36STV/C857y3roE0EQMkw5GsLJhXcUf6AYcFKXSh84gHsUw5mxShCaLacNeX5SaR5cTIqHdt
+	cA1VsetjD7lrC1Ordm66Ii19mJq+vY0vJg6qsrZoRukjr+gMF3/IR3nbBDpdVvOKX4VQDmZHdlhaq
+	0LPHx2G1T9kt8ODHUz4=;
+Received: by smtp54.i.mail.ru with esmtpa (envelope-from <danila@jiaxyga.com>)
+	id 1rcTMU-0000000GhgU-2LJk; Tue, 20 Feb 2024 19:52:55 +0300
+From: Danila Tikhonov <danila@jiaxyga.com>
+To: andersson@kernel.org,
+	konrad.dybcio@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	david@mainlining.org,
+	adrian@travitia.xyz
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danila Tikhonov <danila@jiaxyga.com>
+Subject: [PATCH 5/8] dt-bindings: clock: qcom: Add SM7150 CAMCC clocks
+Date: Tue, 20 Feb 2024 19:52:37 +0300
+Message-ID: <20240220165240.154716-6-danila@jiaxyga.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20240220165240.154716-1-danila@jiaxyga.com>
+References: <20240220165240.154716-1-danila@jiaxyga.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB6959:EE_|TYZPR06MB6047:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53a87025-9879-4be7-adda-08dc32316cb9
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	8lT4LZU2WBp7raKgCPz4fGGJ84/4ux668VWzzzgdkEESB8cYnujsj7Zl+YbpyFgTbaZ2Jm1xlZdiErlem2Wsv1Ze7Ok/RSgCq6oRv9A6J0d7r7h33Q7+eWOBMkqZNgvFGXh/c/+p+S6b8HbmS9V8hOOZcS/j8gNawUgqcy+FE4iLqRDRkBwIcW5JbFOXIp25HmugEkjTu8/xeenySZmgIIt1+uMQPvDqvX9F2PG2k2FxxbIdPYbLdgJ/Isk0zGvtUsJk+yRMrjVio0oEzNokOjyPUrREc7F4TTst7kQJomI3w/8Pm4pzMS94y3a97Xlfz5I7uvaTn1VhBshS5DM/wQIDpJPHuve6OMmyW8J8X8+VoDdn21/UY771br79f7Jccknw+QL8eReZiR0btIsE5ChxzPjfktsG3mPrhldxMm94BqXcUeOfculZ0fSGJs5Sed2QpblPJuJzD5T6stUqnuyFN4HALGI0q9oAUWltaHnIR5qDQ879C4G4GWeKRCkbABJwf4sCW2TRI2GpwFxhDK8i4/kFvaSNbpxBlb/z16IOSdCT1N40BNTNHg5nbkOq
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a0VKcDBFS1lmZnlCS2JyeDFjUkxXUVFUVFM1TU5EOWdrQ08wYkR3clc3aktI?=
- =?utf-8?B?WUFVcEJnRUNZa2tLSnVqNFBjQ0RLa1QxYUl0NDZGZU81ekdtdHdjOGp6Z05Q?=
- =?utf-8?B?Zm0yRkh5dzlQWUZZRFRRU3NBNVNOR3hRZlMwc0YyUzN0VmRIeXUvc2twbWIx?=
- =?utf-8?B?Q1U5OTJ5ZitQZEs1Uk9pWXdyUlJLWmlySU9iNHFTZGllZHNMQVlQdm5keitG?=
- =?utf-8?B?aWcrODQ5c2hCOTRMVkEwVlJna1l6NXNFV1RCZWQ1ZkhHQ2dHZ01KYUd5bks3?=
- =?utf-8?B?S1V5S0tsbkFtY0pIREwwSFpqSEdRYkNDMy83ZDBVbnh2ay8yVTM4aFdlNmN2?=
- =?utf-8?B?R29QMFc1ZTJ0K1VRbEU0VjhCVEJ5TUtMeE5VSXRJMVBLejJtdVZVVVRueDNw?=
- =?utf-8?B?Z2JIcDgrY0pxdUY1Rm1vSElhRTZybHB5MEhOSjZrMnlOSFQxMWE1L1p1YTg5?=
- =?utf-8?B?TzRFZ3lISjE3YmJLNC9YWjdkUmRGYmZ4Q2U4ZEVGNW5MRndkazh6Nm00b0VP?=
- =?utf-8?B?Q2JkNjhTclFrVUlwTytUTlQrOTdEM3M4RnVzSzNIYzltOFBFanNLYjFRVzlG?=
- =?utf-8?B?bjNxN3ZhcThtNVdJRHdnNHZtaWxYVFIyckc4aktxNHhIUER6bEpHZXBpY081?=
- =?utf-8?B?ckl6UlR0S0RKT2ZLcTFrN3Y0Skx1bnJ6cVRxK29GbXY5U2ZnR2NUdkxLVEdY?=
- =?utf-8?B?T0lVRmlCbkZZeEt1aURpMWI0cVpRUEZHVWQ4M1dheXl3VUVpZXplY2JjSHg2?=
- =?utf-8?B?TENONk1YaTlJNTY1OWNIeDlGK0tubzNvTW1kTzFGOXhMWGgraFRGYTRaTFds?=
- =?utf-8?B?UkpyUndKSFJUTGU1aUVtRFRlMTV1Z21uSXEyL00xaWVTMThaTnJpMnNqaGti?=
- =?utf-8?B?eG1RQ0U4cXZEbFVEUG95NXhmSnBDRHh1TFJ6VXBzWTdrR3NEOUNLdS92aVQ0?=
- =?utf-8?B?VmEwQ3RCRmZxTzFwODNTWE8remRrNkdmVnlnOVBZUXFCdDE0YUprdmNrWSs2?=
- =?utf-8?B?NXNtVmRpUXZLeFgrL3BDaW1zWmhsMWpWakVPc2k3S0E5OXFabGJFdG91elly?=
- =?utf-8?B?Q3BGUUdrZG03d2EranFIM3VEcGFMdXJ1YVE0NkZCY3MrUlArZUxBTEIrcmFO?=
- =?utf-8?B?NXh5L0FBOW5qVEpQRThaRS82Ty80OE5TRzcybzZmRnVJNEd1UnA1Ty81MjFH?=
- =?utf-8?B?QUpKYUZSZG9xbmtVQzIwbnp3bG52b3VqUURQVi9BSXFMZzFNbEV3ZWY1OWxw?=
- =?utf-8?B?enk0ZXpBejZnQkg5QkUyd0lOeEx5NjdSVmh5SHREQmRzWHlvdTBYMXJWSDhR?=
- =?utf-8?B?WUhYOWNyOGI2bnV1bml5dXJiNnMxaHNyVEkxMmtZSFFIR296bHQ2QmFGWHBT?=
- =?utf-8?B?MDloYmp5clViWUFmQUhwc215L25QeHYvVFU4Nmp5ZjZZRXRLeGZKcGxhWktS?=
- =?utf-8?B?aW10Y0U0ajlYa3BZbjlCMG5URGZ1TExycXdwM1psc0dkRk84MG9iRnYveWlz?=
- =?utf-8?B?clVxeEFGZjB5enRyZkh6V0QydnhuNHdtbGMyRHJ6N0VLUjdFcDcrdlMvcWtx?=
- =?utf-8?B?T2w3aU5nWC9CV0o1RldMM2ZCWnRFck1oQ2pLU0REMlVWaEYwR2pWcGlwYUxa?=
- =?utf-8?B?Y1pGOHhEcEptcUMrSnVOWlBxeThESzdjQ01mQm5tNXVwSDVDUFMydWFxaWlu?=
- =?utf-8?B?Y0FGSVhOMXdQaVVHM3IwUk9RdDhXaVcvK2dTdUMzVXQ4N1RoQ3dlU1NTWnFl?=
- =?utf-8?Q?+LnDGGLi4msQuYBjN41BYXeeu6vaETjR28h+cXn?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53a87025-9879-4be7-adda-08dc32316cb9
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB6959.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2024 16:31:44.0037
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6047
+Content-Transfer-Encoding: 8bit
+Authentication-Results: smtp54.i.mail.ru; auth=pass smtp.auth=danila@jiaxyga.com smtp.mailfrom=danila@jiaxyga.com
+X-Mailru-Src: smtp
+X-4EC0790: 10
+X-7564579A: 646B95376F6C166E
+X-77F55803: 4F1203BC0FB41BD9001F8F2F6BAD20216FAE178C97F62E8BCB89B89319DA15CC00894C459B0CD1B930D32AFAFE664F0B40A02D48E7B53F4A103FE687D70D84BEEAC3EACB7F7CF7DDE1C7414A75FA687D
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE740ED6E8A51A4BC6EEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F790063742A7510D47EF3C8B8638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D86E6F8F86BE2CFFF4CF466CB8E830073EF6E4E15C06CE43DBCC7F00164DA146DAFE8445B8C89999728AA50765F790063765D76192D7FB77C9389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC80839144E5BB460BAF6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA73AA81AA40904B5D9A18204E546F3947C724336BCC0EE1BA803F1AB874ED890284AD6D5ED66289B523666184CF4C3C14F6136E347CC761E07725E5C173C3A84C3E4E4C6D06EECBC45BA3038C0950A5D36B5C8C57E37DE458B330BD67F2E7D9AF16D1867E19FE14079C09775C1D3CA48CFED8438A78DFE0A9E1DD303D21008E298D5E8D9A59859A8B6B372FE9A2E580EFC725E5C173C3A84C33A60492226029A77089D37D7C0E48F6C5571747095F342E88FB05168BE4CE3AF
+X-C1DE0DAB: 0D63561A33F958A52EB04C5E82EAA5015002B1117B3ED69619D16998361557C992B673A2F5DDD7E7823CB91A9FED034534781492E4B8EEAD3B90412627F530F9A71A35648BE338CE9510FB958DCE06DB58C12E6D310A6D53A16EC4B4EECACEB3
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF3FED46C3ACD6F73ED3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF728A2848334A6442D00B234958B0B5DD5B985B44823DE3244AE63E04343CD514DDCE95BB4BF576A6F1AD97FD9824DBCDF83C14C228CD2018C96C255941595840D58718203108B480146D90F64BF3396102C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojiWfz0I2sVCnP8GoQlAWD7w==
+X-Mailru-Sender: 9EB879F2C80682A09F26F806C739498132FA18D1217A7BFE0D8E165B5AC4796CFE00E7EA783AF305DBE5843F163867CD2C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
 
-On 2/21/2024 12:25 AM, Krzysztof Kozlowski wrote:
-> On 20/02/2024 17:19, Yang Xiwen wrote:
->> On 2/21/2024 12:13 AM, Krzysztof Kozlowski wrote:
->>> On 20/02/2024 15:06, Yang Xiwen wrote:
->>>> On 2/20/2024 6:10 PM, Krzysztof Kozlowski wrote:
->>>>> On 17/02/2024 13:52, Yang Xiwen via B4 Relay wrote:
->>>>>> From: Yang Xiwen <forbidden405@outlook.com>
->>>>>>
->>>>>> According to the datasheet, some clocks are missing, add their
->>>>>> definitions first.
->>>>>>
->>>>>> Some aliases for hi3798mv200 are also introduced.
->>>>>>
->>>>>> Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
->>>>>> ---
->>>>>>     include/dt-bindings/clock/histb-clock.h | 21 +++++++++++++++++++++
->>>>>>     1 file changed, 21 insertions(+)
->>>>>>
->>>>>> diff --git a/include/dt-bindings/clock/histb-clock.h b/include/dt-bindings/clock/histb-clock.h
->>>>>> index e64e5770ada6..68a53053586a 100644
->>>>>> --- a/include/dt-bindings/clock/histb-clock.h
->>>>>> +++ b/include/dt-bindings/clock/histb-clock.h
->>>>>> @@ -58,6 +58,27 @@
->>>>>>     #define HISTB_USB3_UTMI_CLK1		48
->>>>>>     #define HISTB_USB3_PIPE_CLK1		49
->>>>>>     #define HISTB_USB3_SUSPEND_CLK1		50
->>>>>> +#define HISTB_SDIO1_BIU_CLK		51
->>>>>> +#define HISTB_SDIO1_CIU_CLK		52
->>>>>> +#define HISTB_SDIO1_DRV_CLK		53
->>>>>> +#define HISTB_SDIO1_SAMPLE_CLK		54
->>>>>> +#define HISTB_ETH0_PHY_CLK		55
->>>>>> +#define HISTB_ETH1_PHY_CLK		56
->>>>>> +#define HISTB_WDG0_CLK			57
->>>>>> +#define HISTB_USB2_UTMI0_CLK		HISTB_USB2_UTMI_CLK
->>>>> Why? It's anyway placed oddly, the entries are ordered by number/value.
->>>> So this is somewhat broken at the beginning. It named after
->>>> histb-clock.h but actually they are all clocks for Hi3798CV200 SoC. For
->>>> Hi3798MV200(also a HiSTB SoC), there is one additional UTMI clock.
->>>>
->>>>
->>>> What solution do you prefer? rename UTMI_CLK to UTMI0_CLK, add UTMI1_CLK
->>>> after it and increment all the indexes after it? Then the diff would be
->>>> very ugly.
->>> I still don't understand what is the problem you are trying to solve
->>> here. Your commit msg says add missing ID, but that ID -
->>> HISTB_USB2_UTMI_CLK - is already there.
->>>
->>> I also do not get why there is a need to rename anything.
->>
->> Because there are two USB2_UTMI_CLKs in total, at least for Hi3798MV200.
->> UTMI1 is missing here. For other HiSTB SoCs, there could be even more.
-> My comment was under UTMI0. We do not talk about UTMI1...
->
->>
->> If we add USB2_UTMI1_CLK, it looks silly to keep USB2_UTMI_CLK without
->> renaming it to UTMI0. Just like all the other clocks. E.g.
->> I2Cn_CLK(n=0,1,2,3,4) etc.., so the same for USB2_UTMI_CLK.
-> Then place it next to old name and explain why it is deprecated with
-> comment.
+Add device tree bindings for the camera clock controller on Qualcomm
+SM7150 platform.
 
+Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+---
+ .../bindings/clock/qcom,sm7150-camcc.yaml     |  60 ++++++++++
+ include/dt-bindings/clock/qcom,sm7150-camcc.h | 113 ++++++++++++++++++
+ 2 files changed, 173 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm7150-camcc.yaml
+ create mode 100644 include/dt-bindings/clock/qcom,sm7150-camcc.h
 
-Do we need to keep the old name? I can fix all the users (only 
-hi3798cv200.dtsi) in next version and drop this name directly. Is that 
-okay? Should i insert UTMI1_CLK to the middle and re-index all the 
-macros after it? Or simply add it to the tail?
-
-
->
-> Best regards,
-> Krzysztof
->
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm7150-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm7150-camcc.yaml
+new file mode 100644
+index 000000000000..7be4b10c430c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,sm7150-camcc.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,sm7150-camcc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Camera Clock & Reset Controller on SM7150
++
++maintainers:
++  - Danila Tikhonov <danila@jiaxyga.com>
++  - David Wronek <david@mainlining.org>
++  - Jens Reidel <adrian@travitia.xyz>
++
++description: |
++  Qualcomm camera clock control module provides the clocks, resets and power
++  domains on SM7150.
++
++  See also:: include/dt-bindings/clock/qcom,sm7150-camcc.h
++
++properties:
++  compatible:
++    const: qcom,sm7150-camcc
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Board XO Active-Only source
++      - description: Sleep clock source
++
++  power-domains:
++    maxItems: 1
++    description:
++      CX power domain.
++
++required:
++  - compatible
++  - clocks
++  - power-domains
++
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/power/qcom,rpmhpd.h>
++    clock-controller@ad00000 {
++      compatible = "qcom,sm7150-camcc";
++      reg = <0xad00000 0x10000>;
++      clocks = <&rpmhcc RPMH_CXO_CLK>,
++               <&rpmhcc RPMH_CXO_CLK_A>,
++               <&sleep_clk>;
++      power-domains = <&rpmhpd RPMHPD_CX>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,sm7150-camcc.h b/include/dt-bindings/clock/qcom,sm7150-camcc.h
+new file mode 100644
+index 000000000000..cc187e40fbc0
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,sm7150-camcc.h
+@@ -0,0 +1,113 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2024, Danila Tikhonov <danila@jiaxyga.com>
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_CAM_CC_SM7150_H
++#define _DT_BINDINGS_CLK_QCOM_CAM_CC_SM7150_H
++
++/* Hardware clocks */
++#define CAM_CC_PLL0_OUT_EVEN					0
++#define CAM_CC_PLL0_OUT_ODD					1
++#define CAM_CC_PLL1_OUT_EVEN					2
++#define CAM_CC_PLL2_OUT_EARLY					3
++#define CAM_CC_PLL3_OUT_EVEN					4
++#define CAM_CC_PLL4_OUT_EVEN					5
++
++/* CAM_CC clock registers */
++#define CAM_CC_PLL0						6
++#define CAM_CC_PLL1						7
++#define CAM_CC_PLL2						8
++#define CAM_CC_PLL2_OUT_AUX					9
++#define CAM_CC_PLL2_OUT_MAIN					10
++#define CAM_CC_PLL3						11
++#define CAM_CC_PLL4						12
++#define CAM_CC_BPS_AHB_CLK					13
++#define CAM_CC_BPS_AREG_CLK					14
++#define CAM_CC_BPS_AXI_CLK					15
++#define CAM_CC_BPS_CLK						16
++#define CAM_CC_BPS_CLK_SRC					17
++#define CAM_CC_CAMNOC_AXI_CLK					18
++#define CAM_CC_CAMNOC_AXI_CLK_SRC				19
++#define CAM_CC_CAMNOC_DCD_XO_CLK				20
++#define CAM_CC_CCI_0_CLK					21
++#define CAM_CC_CCI_0_CLK_SRC					22
++#define CAM_CC_CCI_1_CLK					23
++#define CAM_CC_CCI_1_CLK_SRC					24
++#define CAM_CC_CORE_AHB_CLK					25
++#define CAM_CC_CPAS_AHB_CLK					26
++#define CAM_CC_CPHY_RX_CLK_SRC					27
++#define CAM_CC_CSI0PHYTIMER_CLK					28
++#define CAM_CC_CSI0PHYTIMER_CLK_SRC				29
++#define CAM_CC_CSI1PHYTIMER_CLK					30
++#define CAM_CC_CSI1PHYTIMER_CLK_SRC				31
++#define CAM_CC_CSI2PHYTIMER_CLK					32
++#define CAM_CC_CSI2PHYTIMER_CLK_SRC				33
++#define CAM_CC_CSI3PHYTIMER_CLK					34
++#define CAM_CC_CSI3PHYTIMER_CLK_SRC				35
++#define CAM_CC_CSIPHY0_CLK					36
++#define CAM_CC_CSIPHY1_CLK					37
++#define CAM_CC_CSIPHY2_CLK					38
++#define CAM_CC_CSIPHY3_CLK					39
++#define CAM_CC_FAST_AHB_CLK_SRC					40
++#define CAM_CC_FD_CORE_CLK					41
++#define CAM_CC_FD_CORE_CLK_SRC					42
++#define CAM_CC_FD_CORE_UAR_CLK					43
++#define CAM_CC_ICP_AHB_CLK					44
++#define CAM_CC_ICP_CLK						45
++#define CAM_CC_ICP_CLK_SRC					46
++#define CAM_CC_IFE_0_AXI_CLK					47
++#define CAM_CC_IFE_0_CLK					48
++#define CAM_CC_IFE_0_CLK_SRC					49
++#define CAM_CC_IFE_0_CPHY_RX_CLK				50
++#define CAM_CC_IFE_0_CSID_CLK					51
++#define CAM_CC_IFE_0_CSID_CLK_SRC				52
++#define CAM_CC_IFE_0_DSP_CLK					53
++#define CAM_CC_IFE_1_AXI_CLK					54
++#define CAM_CC_IFE_1_CLK					55
++#define CAM_CC_IFE_1_CLK_SRC					56
++#define CAM_CC_IFE_1_CPHY_RX_CLK				57
++#define CAM_CC_IFE_1_CSID_CLK					58
++#define CAM_CC_IFE_1_CSID_CLK_SRC				59
++#define CAM_CC_IFE_1_DSP_CLK					60
++#define CAM_CC_IFE_LITE_CLK					61
++#define CAM_CC_IFE_LITE_CLK_SRC					62
++#define CAM_CC_IFE_LITE_CPHY_RX_CLK				63
++#define CAM_CC_IFE_LITE_CSID_CLK				64
++#define CAM_CC_IFE_LITE_CSID_CLK_SRC				65
++#define CAM_CC_IPE_0_AHB_CLK					66
++#define CAM_CC_IPE_0_AREG_CLK					67
++#define CAM_CC_IPE_0_AXI_CLK					68
++#define CAM_CC_IPE_0_CLK					69
++#define CAM_CC_IPE_0_CLK_SRC					70
++#define CAM_CC_IPE_1_AHB_CLK					71
++#define CAM_CC_IPE_1_AREG_CLK					72
++#define CAM_CC_IPE_1_AXI_CLK					73
++#define CAM_CC_IPE_1_CLK					74
++#define CAM_CC_JPEG_CLK						75
++#define CAM_CC_JPEG_CLK_SRC					76
++#define CAM_CC_LRME_CLK						77
++#define CAM_CC_LRME_CLK_SRC					78
++#define CAM_CC_MCLK0_CLK					79
++#define CAM_CC_MCLK0_CLK_SRC					80
++#define CAM_CC_MCLK1_CLK					81
++#define CAM_CC_MCLK1_CLK_SRC					82
++#define CAM_CC_MCLK2_CLK					83
++#define CAM_CC_MCLK2_CLK_SRC					84
++#define CAM_CC_MCLK3_CLK					85
++#define CAM_CC_MCLK3_CLK_SRC					86
++#define CAM_CC_SLEEP_CLK					87
++#define CAM_CC_SLEEP_CLK_SRC					88
++#define CAM_CC_SLOW_AHB_CLK_SRC					89
++#define CAM_CC_XO_CLK_SRC					90
++
++/* CAM_CC GDSCRs */
++#define CAM_CC_BPS_GDSC						0
++#define CAM_CC_IFE_0_GDSC					1
++#define CAM_CC_IFE_1_GDSC					2
++#define CAM_CC_IPE_0_GDSC					3
++#define CAM_CC_IPE_1_GDSC					4
++#define CAM_CC_TITAN_TOP_GDSC					5
++
++#endif
 -- 
-Regards,
-Yang Xiwen
+2.43.2
 
