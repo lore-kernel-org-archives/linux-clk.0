@@ -1,59 +1,59 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A98657DB
-	for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 10:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1346465BA3
+	for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 11:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708426777; cv=none; b=tYeP9Z8rZH1ppX+uW135YVTKm2MzuQUjZ0AXhfg6NMhvmYDS1TdEOF3+lIzhgwWABBxpiaHmkLFyKbWBJg6nWBENL8R96quk4hKzCcnPaBpAZykjWCqAPMRXB9rNp/Mkok8dQ8+xeiUbsSmrgG9rEdbTHshv5LfCQR/OWRu1Dn8=
+	t=1708427079; cv=none; b=t6Bm4n8mBNPMmirwgqixlOZnYMSxP2gADagLeSljvEq4ZdcPDnjOfck1F5F+gcso2E3v+xGstxefC7XVCXuI251QQBvwbXxEoM1hMIjRzC/tcFGbp8smbULdAIEcePtXIS6Ycj5P2dmgWzMJiz1wyVKrpOqSiYLReViwoPRknco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708426777; c=relaxed/simple;
-	bh=g6dH5OPPvurQW89iZP3iNgRMNXyt8SpUEaAql9TeqdE=;
+	s=arc-20240116; t=1708427079; c=relaxed/simple;
+	bh=wDvrFsF4EpABPwyh8ywfuGjb9qWMW1yuCO2kiRh4dLs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HDvlC2CFeGY8UGpjcsxXoNn0AadwEqMKKN2/28wfY7GfUUjftOv9TU5V5odqaxllb3w67ecORx935QG/a63sZUHV8ulUFnNB5Vjx/gJ5MkEK6siUsA4RZldip6uEofplCmwxPcILwCgS+iEhE7ymcADxIRABu1PT7I2sP1T6Xsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kyCCxx/x; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:Content-Type; b=fZxBytLA2zIgMJZQy7l8F2WN3YvraXtl61wVh8uAcu6m/nrCaAWrnOMLoGMqMKAMpXMMUvHRyHK9U3jQrK24/vq/RV8Ve4/i6mKy4eLcza9eOZdTIAVj4Dx9QGXjyUntFKzQqhuFZlvU8GhYDsjfcFtugzPLC4P90BnP43l+vyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V4VvsFG0; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kyCCxx/x"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4126fe50a1cso2715605e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 02:59:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V4VvsFG0"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2d0e520362cso53842471fa.2
+        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 03:04:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708426774; x=1709031574; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708427076; x=1709031876; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uF7mgOt/d46QgIPg4uY3jRzW28nws+KnyVyRH9CsNdg=;
-        b=kyCCxx/xu5/fkRG0Jm0Xg62ie/7ylq6r/uc6DkobCwtUCxgf36Pvnl20di8FKYnhVk
-         OFn2jMONjwWhG5rKrs0caQD5FHR9I7nnDijzjNbWFP5RWBd7hMmdsashehiDX8JzQOCD
-         1+P/GzPS6StKd3D5CADCRi2mU8r1ZAdb+6aoYHETcNbFm4oJxpL96iW93xITc3GAvS3l
-         4kJiJKy1bdiZycF9Sxad5XVXBaH1Hc/MNeWrG9lMgyYCZJWbsnZKFR6IFgBKu+hQa51L
-         XutQZ8iDVeH6BLB2fE//W0/F9pC6JHe6bPCEzJWuVPW8Y4lbUP7bRGeNti9bsvGEVPkF
-         WIuA==
+        bh=NbSygiAeGP6BEwln1frKBLnsOivRpqfkZfCGYmRwuys=;
+        b=V4VvsFG00ZznYjMCnQkSifluLCGbMCtUYfeZ6kRqs8xtksd1S9mxTXKlCXGt8A0KcT
+         3xCjCSe0cRfnw5k5mqzZndWA+nK/9PnFQDdV4LgtlaxhZrip6H2V+8cO9pAFQBDkx368
+         viakFuFraXH2pcR35TQMLoVfa31JDJE8Z+UavRHT0ve5JeGkOcNLE+A5Amk7JLzOFaDl
+         nOPiMZDSAU6AJ0dNqJ9g2JOotOYOjtAmqGAje7nKlEYWD9a1tXj3nzCxeexMvM/zikEb
+         afQSyzyz+sp435GffmAJk5SSEaGU8FwGk8gSdBIbds9X1qFYBqX+gCVkPRl3xWpupj85
+         yUXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708426774; x=1709031574;
+        d=1e100.net; s=20230601; t=1708427076; x=1709031876;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uF7mgOt/d46QgIPg4uY3jRzW28nws+KnyVyRH9CsNdg=;
-        b=cq0ktdoVwp0xAxQLD3eHEsseEXNR6gUz/t99RJhuN/YHM3NJRMM+G+Hjs04nYBcZxy
-         FIeBWeO5OBgpC9uWHmuwAFWcmQo66zqc7qNyhliORMZYLOJgfJWoHx6xiKge4SqFwA6j
-         bxWHCQEjOLdGNqnN+AYJzjO12byC0Cp2FfUs9k8tdHTO3wgWnDD3uusJZXkZxuLZCwgj
-         kSoKqsBfZ2FExvtOE6AETv0RHwFy5OQyfVMTtRtaDfHqTm0xu6M4l+tRiUzQoTHaG/VO
-         oBrku3Yq6mpqqCNx8yt0CQLrI3QXpNC1ejpf82rWLLcHgH11wIxxuMjzVmpzZ1Bxu+Pm
-         6/Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHgI2VFqoDCfF4jzyNaqle2v62juTo0P3k9+vvnz+8MuWVy38OY5RHZJA3idwQSd2wM9azmO6iUDjYjKfo/HQWJWGj9+mdR5dB
-X-Gm-Message-State: AOJu0YzbuaDCjq/y47P1jdpE8dMxihu+dRiRvyJqJ2etN2Y1gozbqAgQ
-	Uu4Hfo1cKNbo5So1LIlowAY9yEt2y66CYqgMiYH+AOBisZXK1TPymGMuEmQQeG8=
-X-Google-Smtp-Source: AGHT+IHY1+cRHKPB0CuniAq91NZoLHR7SQvLrwb80gvuidEDI3lyX01cORfCDqEnSwFbGme8z8FVBQ==
-X-Received: by 2002:a05:600c:470c:b0:412:7058:eaa3 with SMTP id v12-20020a05600c470c00b004127058eaa3mr758048wmo.27.1708426774376;
-        Tue, 20 Feb 2024 02:59:34 -0800 (PST)
+        bh=NbSygiAeGP6BEwln1frKBLnsOivRpqfkZfCGYmRwuys=;
+        b=wBwBSfPKjGATjvLhfn/6mRtWHe8//fEebfcC8muH8eQD4G5qOn05nLFaNuF8l8q1wN
+         0KTtxoy/6PtrOJaAXBP0Pb/ILJfJzERIjwNjop3elngSEb3NNhcqdCmx816HTALKL33x
+         u7TNEf0XxcH7UbmvoAgtmcRBmao4qyOh8UpOVz/9+MUATzV/u46w53Gk6H/Pxh5IDxGK
+         PyDdaxHkw7RwwXvZ4Vi6Z/mZW0ZBDJnixmAHKOmIN9JKlaukeb9zTmq06vJXSBtSsSXc
+         MTobG9qCxjjqcCg1lJsgfaBFJ0ZF4nIZK1YnSpxB/lncCHQvVfpFj/V16amdOvbrJcxA
+         TJSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVk+09KErFvmaAlRC+ePKRSgHRRRwmij8Sea0+QLGn6WW3NvMluT5gdXIPssyDEAoDvJVsmGE/jXW9CIeQQJm1VAUy6PxT7ClI9
+X-Gm-Message-State: AOJu0YzMBxjjKGU/mIsB83rb3pbNqXZ8AfLdK+Y/Aek3WtCqvWzNhgR3
+	qJV1Ge/DvnL050ldDAy/2UOXBRuYD4DUWQwV+kdL0EPnwGeDCETJPu4+3Cxws0A=
+X-Google-Smtp-Source: AGHT+IGQONEzPBM/dxfA9vAn42RRAyX636D98yzJL/U2/Q8EcAbk6K4xwaa2GHt1Q/DqkBcGdtLDtA==
+X-Received: by 2002:a2e:a686:0:b0:2cd:706a:8ec8 with SMTP id q6-20020a2ea686000000b002cd706a8ec8mr8964202lje.10.1708427076228;
+        Tue, 20 Feb 2024 03:04:36 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id n22-20020a05600c4f9600b00411a6ce0f99sm14439503wmq.24.2024.02.20.02.59.33
+        by smtp.gmail.com with ESMTPSA id az19-20020adfe193000000b0033d6ff7f9edsm1074787wrb.95.2024.02.20.03.04.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Feb 2024 02:59:33 -0800 (PST)
-Message-ID: <d2dbbbc2-7ce6-4aca-b9ab-590e4131fed1@linaro.org>
-Date: Tue, 20 Feb 2024 11:59:32 +0100
+        Tue, 20 Feb 2024 03:04:35 -0800 (PST)
+Message-ID: <ce515530-428a-4a21-8c56-5a497cc8130a@linaro.org>
+Date: Tue, 20 Feb 2024 12:04:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,20 +61,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 3/5] dt-bindings: clock: merge all hisilicon clock
- bindings to hisilicon,clock-reset-generator
+Subject: Re: [PATCH 11/16] clk: samsung: Keep register offsets in chip
+ specific structure
 Content-Language: en-US
-To: Yang Xiwen <forbidden405@outlook.com>,
+To: Sam Protsenko <semen.protsenko@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240217-clk-mv200-v2-0-b782e4eb66f7@outlook.com>
- <20240217-clk-mv200-v2-3-b782e4eb66f7@outlook.com>
- <32d0a9c5-6c4b-4d85-bcbe-6192c63ba5fc@linaro.org>
- <SEZPR06MB69598A635C5AB1397348ED3296502@SEZPR06MB6959.apcprd06.prod.outlook.com>
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240216223245.12273-1-semen.protsenko@linaro.org>
+ <20240216223245.12273-12-semen.protsenko@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -120,27 +121,55 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <SEZPR06MB69598A635C5AB1397348ED3296502@SEZPR06MB6959.apcprd06.prod.outlook.com>
+In-Reply-To: <20240216223245.12273-12-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/02/2024 11:52, Yang Xiwen wrote:
-> On 2/20/2024 6:14 PM, Krzysztof Kozlowski wrote:
->> On 17/02/2024 13:52, Yang Xiwen via B4 Relay wrote:
->>> From: Yang Xiwen <forbidden405@outlook.com>
->>>
->>> We don't need so many separated and duplicated dt-binding files. Merge
->>> them all and convert them to YAML.
->> What was exactly duplicated? You created unspecific, lose binding...
+On 16/02/2024 23:32, Sam Protsenko wrote:
+> Abstract CPU clock registers by keeping their offsets in a dedicated
+> chip specific structure to accommodate for oncoming Exynos850 support,
+> which has different offsets for cluster 0 and cluster 1. This rework
+> also makes it possible to use exynos_set_safe_div() for all chips, so
+> exynos5433_set_safe_div() is removed here to reduce the code
+> duplication.
 > 
-> You can take at the drivers at drivers/clk/hisilicon. All of them use 
-> the same sets of APIs to register a few clocks and resets. That's why i 
-> think they should be merged.
 
-Drivers don't really matter for bindings. That's not a valid argument.
+So that's the answer why you could not use flags anymore - you need an
+enum, not a bitmap. Such short explanation should be in previous commits
+justifying moving reg layout to new property.
 
-Creating invalid combinations and lose bindings is not the answer to
-duplication of few parts.
+> No functional change.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  drivers/clk/samsung/clk-cpu.c | 156 +++++++++++++++++++---------------
+>  1 file changed, 86 insertions(+), 70 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+> index 04394d2166c9..744b609c222d 100644
+> --- a/drivers/clk/samsung/clk-cpu.c
+> +++ b/drivers/clk/samsung/clk-cpu.c
+> @@ -44,12 +44,14 @@ typedef int (*exynos_rate_change_fn_t)(struct clk_notifier_data *ndata,
+>  
+>  /**
+>   * struct exynos_cpuclk_chip - Chip specific data for CPU clock
+> + * @regs: register offsets for CPU related clocks
+>   * @pre_rate_cb: callback to run before CPU clock rate change
+>   * @post_rate_cb: callback to run after CPU clock rate change
+>   */
+>  struct exynos_cpuclk_chip {
+> -	exynos_rate_change_fn_t	pre_rate_cb;
+> -	exynos_rate_change_fn_t	post_rate_cb;
+> +	const void				* const regs;
+
+Why this is void?
+
+> +	exynos_rate_change_fn_t			pre_rate_cb;
+> +	exynos_rate_change_fn_t			post_rate_cb;
+>  };
+>  
+
+
 
 Best regards,
 Krzysztof
