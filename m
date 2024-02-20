@@ -1,337 +1,197 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01olkn2071.outbound.protection.outlook.com [40.92.107.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAAE6A8AC;
-	Tue, 20 Feb 2024 13:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708437227; cv=none; b=RMpGy7+slyiNQ2Jdwywe9Z4g3ErKPx4NHeUOW7PuCfHmen0ziix8iHK7LgkT1ePYT5nRiUZvKJ7HPcWSpSjV+aNEo1iREm0w3+iDEV9GUnzjDRwFDUubaYzsgQIRyUJ2BXfriQ4KhRiuS7BVkWxFyo4SnsoWpAc/caGgxYICO74=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708437227; c=relaxed/simple;
-	bh=zFDRMNa3e8QJEc1cf0XB3qPW7Boc9PCSl2ePK0ePn3s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H920U1dmuKq243BRy/l/Kh1EDY+NPkC1Hp2iqcdiSYwAFWm/Ue0Hv/dAKf4EcB1XwOmT3bS5bWzyXdxi8J+jeTiYrZ33bCkYNQdM7lSCiMVg0RT+CcIRvP2CUoujnSOdF7RCJwbq6xhnLMkyNSovdhL2L/5SiAT8fe/Zl2QN+Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WUCw8bjr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E37369D0D;
+	Tue, 20 Feb 2024 14:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.107.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708438020; cv=fail; b=j4+avhGIYVBUJXFrRJpqlVpIJucD1Qx/VDwxNhPVuZ39WKNjkJlxz5FNYmc83rPa/RTWowRbw19BATVGOEV65fEVjhOKOWVGsfYZj9jxjiQcck3CE+TO5eVdwUKQv0FNBQpTHjaRx70pYWKbTEwMQcI+qQHKQjHHCDgtEpd88ww=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708438020; c=relaxed/simple;
+	bh=4mLskrfR+uaiNfeTrMMg5bcnIT4OHOgm1y2941aBHNY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Sf/cbfqNzdYSiyyBIBg2G+0N49EbrrQuUiBdv6+E0QS668irkDRV56BH5zn0DSalGAG4oSwQf1aXU8yK60xyq53upZ+C8Jz//x+N1GcN7Sv1JwgNCRPX0a4ar7NCM+TxJ5C0Rq0rTPJ9QQS7QDwkxOF7DzrTMthNE8egTpHoeOc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Ko5dDD+x; arc=fail smtp.client-ip=40.92.107.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WUCw8bjr"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41KDkGgX020547;
-	Tue, 20 Feb 2024 13:53:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	qcppdkim1; bh=2CeXBb6brcOzX90tGDoZylSI7pjaeUjja6xSoBj0seU=; b=WU
-	Cw8bjrYp62DyTV5Ff1TMnGuI5BEZ1mZppXcLZwq/mLzM7SUK94CRXfH2nJ7PYMqE
-	CjAhgmcuGPcjMNQoqsEYOYqUvEk1/X9jXRXYtHIQ7oVfEAKprJ+1cGRUUFxR+3NV
-	TLfnEXFc33b+7twWp8sSShfldbiB5Ks3fX4V9ukIg1hBzw4VyUHgYDPhgYder5GZ
-	jLeCEenLEl4VqlHaODxkbB4FrlykO+LydJ+jK3of21dl+x9GYXMZATCYJGWA8PFf
-	7t+BCAR5lZyVCZnvTXIVAr2K1kqRcna/yUZmGvEEJn55l6ENSlqheLnq8ufojlDF
-	Dy5g5SjHnpPJoLX1Xp4g==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wckv9h5mc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Feb 2024 13:53:40 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41KDrNKW005095
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Feb 2024 13:53:23 GMT
-Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 20 Feb 2024 05:53:17 -0800
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Jagadeesh Kona
-	<quic_jkona@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: [PATCH V2 4/6] dt-bindings: clock: qcom: Add SM8650 camera clock controller
-Date: Tue, 20 Feb 2024 19:21:19 +0530
-Message-ID: <20240220135121.22578-5-quic_jkona@quicinc.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240220135121.22578-1-quic_jkona@quicinc.com>
-References: <20240220135121.22578-1-quic_jkona@quicinc.com>
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Ko5dDD+x"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=B8rLCYhv2M0yoTw2zU6eSevhkQEZrtv8dMGKQ8QdrgzSTT6baqK9WdKfKnBe92uwF7yThqqqs2hPtX+bKKgE1GdVnafp+gTWVSjsXNjhHQlYqYFOUpZZjKoSS6zmSTY5u4/yXqAu/6bsnziacuKcGa1rb3g6yYbyuKp3jywasNBp4viZOYagKMOCXbiZwVrTfBn1qqY37l6an5Dnq4WbZPD6vPnj2WbEu/l5MqIvPlvKFePq122j6jqQS6Jnn+ITabSRvknTz5Qy2jJoFavJ4J93MkULTfseHEOnrXcQKNZpnsvcnkEsobd4wF9lM4TGy15bKmJQDf3kumbua5vzSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oXXWqHHfB/J9gTzI6qfC5SyY8Kcp+ZSokUn6VRBhFUA=;
+ b=MnHA+k6qkB1GpfqKsmRLZi6N9Rcr+FeRHBeLkR4XoUtkeGD4JS5sJALO89+++N2GcKDBPcO/LUp6s/KF6D+kwtgWJqaRFP9wVu8tH7glkJRGYTtd5aO1A9HCP1vS0w8GsGClJ+rUC84AOSRs4YNPvYFXkDB8B+KBrWojxjrN6lzkczFFft691N0l5wn8H0ZxMEXwQxlYdn45nLuJsSmewfMt6ndaJI1Y1Bdpok9EHAW82hlMi7HiTLotbBB31/a86D/XS3lnZ7jZxiSCi2bhIyKQD0sPXQZS6BbpiCqiQH7BKBJVHLAFYvMBY3SEFF/0uJ9Bp5w9tbxlln/C9aJ7fQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oXXWqHHfB/J9gTzI6qfC5SyY8Kcp+ZSokUn6VRBhFUA=;
+ b=Ko5dDD+xXCKW0CTfUGXtsiDqEgdZD3b5a/5QE+xE9OJn5Ag4Rt7icrR3CDw/1ypZoHDlTX1lN17J6ann1wjgYRYKRcw6oMea0OvNjjvGVe9yapyQ0EBCBkDac3xjpGVBMNqiXYIU5FxkejHJ0LzowO0N9X4sBxgqfKYQOE0gCKbms6/yggvpz3kHJkiZSNNC56X26nfEW5bVh55Dy0sRVE2TbQiSe6Rp+woWP7q83GwLypCm8qAdPfTKcaPj2/Ed7vnQV2B5ZuN2F4TIx9kuaAlQlzwbJFNWaA6NwOKvboRRyHuN9CVwHk7VRJzK9WIAXCf8OybzdbwhlwHFWRTZbg==
+Received: from SEZPR06MB6959.apcprd06.prod.outlook.com (2603:1096:101:1ed::14)
+ by KL1PR0601MB4308.apcprd06.prod.outlook.com (2603:1096:820:6c::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.39; Tue, 20 Feb
+ 2024 14:06:51 +0000
+Received: from SEZPR06MB6959.apcprd06.prod.outlook.com
+ ([fe80::53da:a8a:83cb:b9ad]) by SEZPR06MB6959.apcprd06.prod.outlook.com
+ ([fe80::53da:a8a:83cb:b9ad%4]) with mapi id 15.20.7292.036; Tue, 20 Feb 2024
+ 14:06:51 +0000
+Message-ID:
+ <SEZPR06MB6959456E59D84C15F0C1B88396502@SEZPR06MB6959.apcprd06.prod.outlook.com>
+Date: Tue, 20 Feb 2024 22:06:45 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 1/5] dt-bindings: clock: histb-clock: Add missing
+ common clock and Hi3798MV200 specific clock definition
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240217-clk-mv200-v2-0-b782e4eb66f7@outlook.com>
+ <20240217-clk-mv200-v2-1-b782e4eb66f7@outlook.com>
+ <875b706f-801a-4a4c-8806-411a67c5a5e7@linaro.org>
+From: Yang Xiwen <forbidden405@outlook.com>
+In-Reply-To: <875b706f-801a-4a4c-8806-411a67c5a5e7@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [tn8y/u+QRvkIZNpt7l6pj8o2Au1Bn+ProamVa+PVLSRKYBUFms3Ncg7e0t8YKq3P]
+X-ClientProxiedBy: TYCP301CA0064.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:7d::16) To SEZPR06MB6959.apcprd06.prod.outlook.com
+ (2603:1096:101:1ed::14)
+X-Microsoft-Original-Message-ID:
+ <e83e3faf-3ff0-4467-8408-b08e54ac773c@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Z1YZYmbI8fpKhgRSgnoSFsOCVZY6-lqL
-X-Proofpoint-GUID: Z1YZYmbI8fpKhgRSgnoSFsOCVZY6-lqL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-20_06,2024-02-20_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015 adultscore=0
- mlxlogscore=999 impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401310000 definitions=main-2402200100
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB6959:EE_|KL1PR0601MB4308:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7cc4acd-8b23-46b4-a279-08dc321d2f5b
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	RttOD51mK8tJsXHB8WnThFmYIVydte+ExoqjzqZ+5H93lPmY0ydls6MdRHL9qW1nZWRXd5A1MT6W8pFDhoSJHTEii6fdJ/FOYXSzkqcg0wAwJUNrQ27a00qcXfk6Elo2V4hC9zgcCbjtS/Z8MPyXKumSXkbus33ZErr6FzeDuufiQ6ouplk5hqdpJSTmZmUfTSblymkn9Q4ntAF29yq3L8CR56g8rbDFQUJ7v1dWMMG18wTfWnB5Wj6hBKrG1m4qB4ZVu4pznO67se8osrlg36vUXMiq4MWNiR/9xMoND/rmn2SumeWDFdKE2CoR6Tdf5KMLUYTcP5QnX87txIKeTIl/v14ggvRL8kIFb6Q4bduFWWbDxvl54fknL0ucCLn5gzL+oyVnrhuIFTDFAATTFHjx/wdm0PCnngEuoXA1YcAwez5lP7x60Ejfu5xqkLDyxzT3aPTSu1Haw5yvDpHqeWvOVrlp1R/wI0Skc3nlPg9GYirDRWOVQ6TcDD/6LEUhIHBOZdB2eOL1VYYPkcd2DAvsWhXMIAjEVvnTzrPgaIo/PBO/Yqi/z5ITSYJ1qzeZ
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NVJ0MHAzRGh5RmpaNWlIUWs1MmdmYnJHRHNQRkJuTVBFTTMrZkQ4ZzNUd0pt?=
+ =?utf-8?B?MlBFdm9TZ0NTWkxEZEdMdXhiRFhlZURLV2E1eThZaGljMWhDajdpT0w4TWR1?=
+ =?utf-8?B?TEZPMFA2MFFCWG9LcWpEVEtJM0tCQnFrcVFpYWc2RW1vd3puYnYxRG9Kdis3?=
+ =?utf-8?B?WVl2YlVwSW1obmZkQWFkOEJBZVNCQzF2eStOU3ZSRDFvZTBYbmJsektZdUs5?=
+ =?utf-8?B?YVUrYXNuRGVoWjRYNnBjZnYwbE94ZFoxTkx2QjB2MzlmZ20rQldIS1I1ZTNu?=
+ =?utf-8?B?VFNxRzd2WklYNnR2Uk1iQk02M1FzSi80b1drMFhxR2JyekYvR2E0UlVmaFpz?=
+ =?utf-8?B?bWlyd1o3dkZka214c3YzdUlrUWhPQWZ1ZFNYcy9vVzgvb1Bzckx1clNHU3ZH?=
+ =?utf-8?B?R2tXOURnSG1uajhyWWE4VU1ud09selZRa09NTFp6cTNaeHJjUUtseTZSTE8x?=
+ =?utf-8?B?cDI1d0JzNk1NdVpFVWhHRUljT3o4MSs1T0U3d3RKUWcyM2hDWDA4V3FXd2Nw?=
+ =?utf-8?B?VFlmQ2RPNDZkYlp0TjVoSm54ZVZ4amU1ZGZjWm9reDFEdWwyb3pTZUFCSHl0?=
+ =?utf-8?B?V0hoMWsyeWFuaGZRS1RoMFY0QWYwakRlT3pTQUI0VTBnRHMvK09LcE1LYVVu?=
+ =?utf-8?B?NkxiY0p3Qk5UbkhXYkx5Q0d0MmRpSlhWcWdUOEpGK2RJNEJ0UFRDUGx1UGYw?=
+ =?utf-8?B?SlRpWWZvdi9KRU54VVJRM2Y1ajRpTC9wUTlhaEtFRHhXcVU0NFZNU2xjNzdz?=
+ =?utf-8?B?NFJrNHIranVOVTFYeXdGRVJBNHNMbkErMWlxYXppVkhiYW5kcHpWZTVLL25u?=
+ =?utf-8?B?YlhaUXZselduRnRQV1VCY3JVV2NpVmpwVk80L1pLaHovckt4RUpUS1l2dTNa?=
+ =?utf-8?B?a3dHVTloT1ZHZ2JVNmtodm13aFgyb1g0blpiZWtMYURQLzJHZUtoQ3pjODFT?=
+ =?utf-8?B?bWdKL29wQUlzRDRTeHBWaFJuVldVbHVtUGlsYkh6TWplakg5WUt4WU0xQlJL?=
+ =?utf-8?B?YlJGKzE1WndweE5Jd1FyNmtlRnJaRC9QV0xhMmR3M3FnVW5RWHNGQUgvN3B5?=
+ =?utf-8?B?d05SSHgwSXZvTEpDdVVERy9mV0pMSHFNZDc0am1VRDVzTmZXdEl3TVNyNEZm?=
+ =?utf-8?B?eFZMWmZ4d3VGOXBoWXBjUmJJLzB1alhjZ1Z6K05Rb21rV05UUHRqMmd6VUps?=
+ =?utf-8?B?NVdYOEhQb3lXSUtIeFFWYis3cDkwM284MnRST0ZZd0kwT0E4anJMeExRUjhL?=
+ =?utf-8?B?dEhKK0hJYWs2MEdJMndRK0NSV3dqTUZDS3c3aU40WDVXclRTYVNFSGFCNjdY?=
+ =?utf-8?B?SFNxK1JROW0ySXZvekF6OVB0SmU1V2hTT1BjNzFkd0F5U29MQ0YyRW5iR0hx?=
+ =?utf-8?B?VHhHQU5ZblRkRnc2OHNqaVlLbkFrNE1vdE1MeVpQWCtmMlA2bUxJODBMMVpY?=
+ =?utf-8?B?VnJwaWJ0RnBWQml4cEdCcUJKZ3ZMb3hRSVdlb2tIZnFLTEllVGFUZWRpcDhz?=
+ =?utf-8?B?dnBieXhNaGpsbXo4bEd2WXlHcGFwZjd3eGo3bHhWWkIvNXJRcjhkRVpNeVNv?=
+ =?utf-8?B?UEdOZnRFSXRXUk9LVHVRMHdYVi8vSmF1WnZWNmNXNXA3OUlGM2plckhsZUd4?=
+ =?utf-8?B?eDRDN3JUTjlpVnMvTUNxY0p2SCt0NFhFZUNhV2ZzYXlzaTdzb3VwZDJYWG04?=
+ =?utf-8?B?aUZUbW5Ba2VGcGVCQWF3NDEyZUpsd3hhLzZlNk4ydTFQU2hDTGZhemhhcE1v?=
+ =?utf-8?Q?pMaFGkHSzBHuLPKgFMg9Zuf7KEmU+LsM8b+5nWq?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7cc4acd-8b23-46b4-a279-08dc321d2f5b
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB6959.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2024 14:06:51.1248
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB4308
 
-Add device tree bindings for the camera clock controller on
-Qualcomm SM8650 platform.
+On 2/20/2024 6:10 PM, Krzysztof Kozlowski wrote:
+> On 17/02/2024 13:52, Yang Xiwen via B4 Relay wrote:
+>> From: Yang Xiwen <forbidden405@outlook.com>
+>>
+>> According to the datasheet, some clocks are missing, add their
+>> definitions first.
+>>
+>> Some aliases for hi3798mv200 are also introduced.
+>>
+>> Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
+>> ---
+>>   include/dt-bindings/clock/histb-clock.h | 21 +++++++++++++++++++++
+>>   1 file changed, 21 insertions(+)
+>>
+>> diff --git a/include/dt-bindings/clock/histb-clock.h b/include/dt-bindings/clock/histb-clock.h
+>> index e64e5770ada6..68a53053586a 100644
+>> --- a/include/dt-bindings/clock/histb-clock.h
+>> +++ b/include/dt-bindings/clock/histb-clock.h
+>> @@ -58,6 +58,27 @@
+>>   #define HISTB_USB3_UTMI_CLK1		48
+>>   #define HISTB_USB3_PIPE_CLK1		49
+>>   #define HISTB_USB3_SUSPEND_CLK1		50
+>> +#define HISTB_SDIO1_BIU_CLK		51
+>> +#define HISTB_SDIO1_CIU_CLK		52
+>> +#define HISTB_SDIO1_DRV_CLK		53
+>> +#define HISTB_SDIO1_SAMPLE_CLK		54
+>> +#define HISTB_ETH0_PHY_CLK		55
+>> +#define HISTB_ETH1_PHY_CLK		56
+>> +#define HISTB_WDG0_CLK			57
+>> +#define HISTB_USB2_UTMI0_CLK		HISTB_USB2_UTMI_CLK
+> Why? It's anyway placed oddly, the entries are ordered by number/value.
 
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/clock/qcom,sm8450-camcc.yaml     |   3 +
- include/dt-bindings/clock/qcom,sm8650-camcc.h | 195 ++++++++++++++++++
- 2 files changed, 198 insertions(+)
- create mode 100644 include/dt-bindings/clock/qcom,sm8650-camcc.h
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-index fa0e5b6b02b8..fcf6a50b6c01 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-@@ -8,6 +8,7 @@ title: Qualcomm Camera Clock & Reset Controller on SM8450
- 
- maintainers:
-   - Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-+  - Jagadeesh Kona <quic_jkona@quicinc.com>
- 
- description: |
-   Qualcomm camera clock control module provides the clocks, resets and power
-@@ -18,6 +19,7 @@ description: |
-     include/dt-bindings/clock/qcom,sm8550-camcc.h
-     include/dt-bindings/clock/qcom,sc8280xp-camcc.h
-     include/dt-bindings/clock/qcom,x1e80100-camcc.h
-+    include/dt-bindings/clock/qcom,sm8650-camcc.h
- 
- allOf:
-   - $ref: qcom,gcc.yaml#
-@@ -29,6 +31,7 @@ properties:
-       - qcom,sm8450-camcc
-       - qcom,sm8550-camcc
-       - qcom,x1e80100-camcc
-+      - qcom,sm8650-camcc
- 
-   clocks:
-     items:
-diff --git a/include/dt-bindings/clock/qcom,sm8650-camcc.h b/include/dt-bindings/clock/qcom,sm8650-camcc.h
-new file mode 100644
-index 000000000000..df73bf35f4bf
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,sm8650-camcc.h
-@@ -0,0 +1,195 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_CAM_CC_SM8650_H
-+#define _DT_BINDINGS_CLK_QCOM_CAM_CC_SM8650_H
-+
-+/* CAM_CC clocks */
-+#define CAM_CC_BPS_AHB_CLK					0
-+#define CAM_CC_BPS_CLK						1
-+#define CAM_CC_BPS_CLK_SRC					2
-+#define CAM_CC_BPS_FAST_AHB_CLK					3
-+#define CAM_CC_BPS_SHIFT_CLK					4
-+#define CAM_CC_CAMNOC_AXI_NRT_CLK				5
-+#define CAM_CC_CAMNOC_AXI_RT_CLK				6
-+#define CAM_CC_CAMNOC_AXI_RT_CLK_SRC				7
-+#define CAM_CC_CAMNOC_DCD_XO_CLK				8
-+#define CAM_CC_CAMNOC_XO_CLK					9
-+#define CAM_CC_CCI_0_CLK					10
-+#define CAM_CC_CCI_0_CLK_SRC					11
-+#define CAM_CC_CCI_1_CLK					12
-+#define CAM_CC_CCI_1_CLK_SRC					13
-+#define CAM_CC_CCI_2_CLK					14
-+#define CAM_CC_CCI_2_CLK_SRC					15
-+#define CAM_CC_CORE_AHB_CLK					16
-+#define CAM_CC_CPAS_AHB_CLK					17
-+#define CAM_CC_CPAS_BPS_CLK					18
-+#define CAM_CC_CPAS_CRE_CLK					19
-+#define CAM_CC_CPAS_FAST_AHB_CLK				20
-+#define CAM_CC_CPAS_IFE_0_CLK					21
-+#define CAM_CC_CPAS_IFE_1_CLK					22
-+#define CAM_CC_CPAS_IFE_2_CLK					23
-+#define CAM_CC_CPAS_IFE_LITE_CLK				24
-+#define CAM_CC_CPAS_IPE_NPS_CLK					25
-+#define CAM_CC_CPAS_SBI_CLK					26
-+#define CAM_CC_CPAS_SFE_0_CLK					27
-+#define CAM_CC_CPAS_SFE_1_CLK					28
-+#define CAM_CC_CPAS_SFE_2_CLK					29
-+#define CAM_CC_CPHY_RX_CLK_SRC					30
-+#define CAM_CC_CRE_AHB_CLK					31
-+#define CAM_CC_CRE_CLK						32
-+#define CAM_CC_CRE_CLK_SRC					33
-+#define CAM_CC_CSI0PHYTIMER_CLK					34
-+#define CAM_CC_CSI0PHYTIMER_CLK_SRC				35
-+#define CAM_CC_CSI1PHYTIMER_CLK					36
-+#define CAM_CC_CSI1PHYTIMER_CLK_SRC				37
-+#define CAM_CC_CSI2PHYTIMER_CLK					38
-+#define CAM_CC_CSI2PHYTIMER_CLK_SRC				39
-+#define CAM_CC_CSI3PHYTIMER_CLK					40
-+#define CAM_CC_CSI3PHYTIMER_CLK_SRC				41
-+#define CAM_CC_CSI4PHYTIMER_CLK					42
-+#define CAM_CC_CSI4PHYTIMER_CLK_SRC				43
-+#define CAM_CC_CSI5PHYTIMER_CLK					44
-+#define CAM_CC_CSI5PHYTIMER_CLK_SRC				45
-+#define CAM_CC_CSI6PHYTIMER_CLK					46
-+#define CAM_CC_CSI6PHYTIMER_CLK_SRC				47
-+#define CAM_CC_CSI7PHYTIMER_CLK					48
-+#define CAM_CC_CSI7PHYTIMER_CLK_SRC				49
-+#define CAM_CC_CSID_CLK						50
-+#define CAM_CC_CSID_CLK_SRC					51
-+#define CAM_CC_CSID_CSIPHY_RX_CLK				52
-+#define CAM_CC_CSIPHY0_CLK					53
-+#define CAM_CC_CSIPHY1_CLK					54
-+#define CAM_CC_CSIPHY2_CLK					55
-+#define CAM_CC_CSIPHY3_CLK					56
-+#define CAM_CC_CSIPHY4_CLK					57
-+#define CAM_CC_CSIPHY5_CLK					58
-+#define CAM_CC_CSIPHY6_CLK					59
-+#define CAM_CC_CSIPHY7_CLK					60
-+#define CAM_CC_DRV_AHB_CLK					61
-+#define CAM_CC_DRV_XO_CLK					62
-+#define CAM_CC_FAST_AHB_CLK_SRC					63
-+#define CAM_CC_GDSC_CLK						64
-+#define CAM_CC_ICP_AHB_CLK					65
-+#define CAM_CC_ICP_CLK						66
-+#define CAM_CC_ICP_CLK_SRC					67
-+#define CAM_CC_IFE_0_CLK					68
-+#define CAM_CC_IFE_0_CLK_SRC					69
-+#define CAM_CC_IFE_0_FAST_AHB_CLK				70
-+#define CAM_CC_IFE_0_SHIFT_CLK					71
-+#define CAM_CC_IFE_1_CLK					72
-+#define CAM_CC_IFE_1_CLK_SRC					73
-+#define CAM_CC_IFE_1_FAST_AHB_CLK				74
-+#define CAM_CC_IFE_1_SHIFT_CLK					75
-+#define CAM_CC_IFE_2_CLK					76
-+#define CAM_CC_IFE_2_CLK_SRC					77
-+#define CAM_CC_IFE_2_FAST_AHB_CLK				78
-+#define CAM_CC_IFE_2_SHIFT_CLK					79
-+#define CAM_CC_IFE_LITE_AHB_CLK					80
-+#define CAM_CC_IFE_LITE_CLK					81
-+#define CAM_CC_IFE_LITE_CLK_SRC					82
-+#define CAM_CC_IFE_LITE_CPHY_RX_CLK				83
-+#define CAM_CC_IFE_LITE_CSID_CLK				84
-+#define CAM_CC_IFE_LITE_CSID_CLK_SRC				85
-+#define CAM_CC_IPE_NPS_AHB_CLK					86
-+#define CAM_CC_IPE_NPS_CLK					87
-+#define CAM_CC_IPE_NPS_CLK_SRC					88
-+#define CAM_CC_IPE_NPS_FAST_AHB_CLK				89
-+#define CAM_CC_IPE_PPS_CLK					90
-+#define CAM_CC_IPE_PPS_FAST_AHB_CLK				91
-+#define CAM_CC_IPE_SHIFT_CLK					92
-+#define CAM_CC_JPEG_1_CLK					93
-+#define CAM_CC_JPEG_CLK						94
-+#define CAM_CC_JPEG_CLK_SRC					95
-+#define CAM_CC_MCLK0_CLK					96
-+#define CAM_CC_MCLK0_CLK_SRC					97
-+#define CAM_CC_MCLK1_CLK					98
-+#define CAM_CC_MCLK1_CLK_SRC					99
-+#define CAM_CC_MCLK2_CLK					100
-+#define CAM_CC_MCLK2_CLK_SRC					101
-+#define CAM_CC_MCLK3_CLK					102
-+#define CAM_CC_MCLK3_CLK_SRC					103
-+#define CAM_CC_MCLK4_CLK					104
-+#define CAM_CC_MCLK4_CLK_SRC					105
-+#define CAM_CC_MCLK5_CLK					106
-+#define CAM_CC_MCLK5_CLK_SRC					107
-+#define CAM_CC_MCLK6_CLK					108
-+#define CAM_CC_MCLK6_CLK_SRC					109
-+#define CAM_CC_MCLK7_CLK					110
-+#define CAM_CC_MCLK7_CLK_SRC					111
-+#define CAM_CC_PLL0						112
-+#define CAM_CC_PLL0_OUT_EVEN					113
-+#define CAM_CC_PLL0_OUT_ODD					114
-+#define CAM_CC_PLL1						115
-+#define CAM_CC_PLL1_OUT_EVEN					116
-+#define CAM_CC_PLL2						117
-+#define CAM_CC_PLL3						118
-+#define CAM_CC_PLL3_OUT_EVEN					119
-+#define CAM_CC_PLL4						120
-+#define CAM_CC_PLL4_OUT_EVEN					121
-+#define CAM_CC_PLL5						122
-+#define CAM_CC_PLL5_OUT_EVEN					123
-+#define CAM_CC_PLL6						124
-+#define CAM_CC_PLL6_OUT_EVEN					125
-+#define CAM_CC_PLL7						126
-+#define CAM_CC_PLL7_OUT_EVEN					127
-+#define CAM_CC_PLL8						128
-+#define CAM_CC_PLL8_OUT_EVEN					129
-+#define CAM_CC_PLL9						130
-+#define CAM_CC_PLL9_OUT_EVEN					131
-+#define CAM_CC_PLL9_OUT_ODD					132
-+#define CAM_CC_PLL10						133
-+#define CAM_CC_PLL10_OUT_EVEN					134
-+#define CAM_CC_QDSS_DEBUG_CLK					135
-+#define CAM_CC_QDSS_DEBUG_CLK_SRC				136
-+#define CAM_CC_QDSS_DEBUG_XO_CLK				137
-+#define CAM_CC_SBI_CLK						138
-+#define CAM_CC_SBI_FAST_AHB_CLK					139
-+#define CAM_CC_SBI_SHIFT_CLK					140
-+#define CAM_CC_SFE_0_CLK					141
-+#define CAM_CC_SFE_0_CLK_SRC					142
-+#define CAM_CC_SFE_0_FAST_AHB_CLK				143
-+#define CAM_CC_SFE_0_SHIFT_CLK					144
-+#define CAM_CC_SFE_1_CLK					145
-+#define CAM_CC_SFE_1_CLK_SRC					146
-+#define CAM_CC_SFE_1_FAST_AHB_CLK				147
-+#define CAM_CC_SFE_1_SHIFT_CLK					148
-+#define CAM_CC_SFE_2_CLK					149
-+#define CAM_CC_SFE_2_CLK_SRC					150
-+#define CAM_CC_SFE_2_FAST_AHB_CLK				151
-+#define CAM_CC_SFE_2_SHIFT_CLK					152
-+#define CAM_CC_SLEEP_CLK					153
-+#define CAM_CC_SLEEP_CLK_SRC					154
-+#define CAM_CC_SLOW_AHB_CLK_SRC					155
-+#define CAM_CC_TITAN_TOP_SHIFT_CLK				156
-+#define CAM_CC_XO_CLK_SRC					157
-+
-+/* CAM_CC power domains */
-+#define CAM_CC_TITAN_TOP_GDSC					0
-+#define CAM_CC_BPS_GDSC						1
-+#define CAM_CC_IFE_0_GDSC					2
-+#define CAM_CC_IFE_1_GDSC					3
-+#define CAM_CC_IFE_2_GDSC					4
-+#define CAM_CC_IPE_0_GDSC					5
-+#define CAM_CC_SBI_GDSC						6
-+#define CAM_CC_SFE_0_GDSC					7
-+#define CAM_CC_SFE_1_GDSC					8
-+#define CAM_CC_SFE_2_GDSC					9
-+
-+/* CAM_CC resets */
-+#define CAM_CC_BPS_BCR						0
-+#define CAM_CC_DRV_BCR						1
-+#define CAM_CC_ICP_BCR						2
-+#define CAM_CC_IFE_0_BCR					3
-+#define CAM_CC_IFE_1_BCR					4
-+#define CAM_CC_IFE_2_BCR					5
-+#define CAM_CC_IPE_0_BCR					6
-+#define CAM_CC_QDSS_DEBUG_BCR					7
-+#define CAM_CC_SBI_BCR						8
-+#define CAM_CC_SFE_0_BCR					9
-+#define CAM_CC_SFE_1_BCR					10
-+#define CAM_CC_SFE_2_BCR					11
-+
-+#endif
+So this is somewhat broken at the beginning. It named after 
+histb-clock.h but actually they are all clocks for Hi3798CV200 SoC. For 
+Hi3798MV200(also a HiSTB SoC), there is one additional UTMI clock.
+
+
+What solution do you prefer? rename UTMI_CLK to UTMI0_CLK, add UTMI1_CLK 
+after it and increment all the indexes after it? Then the diff would be 
+very ugly.
+
+
+>
+>> +#define HISTB_USB2_UTMI1_CLK		58
+>> +#define HISTB_USB3_REF_CLK		59
+>> +#define HISTB_USB3_GM_CLK		60
+>> +#define HISTB_USB3_GS_CLK		61
+>> +
+>> +/* Hi3798MV200 specific clocks */
+>> +
+>> +// reuse clocks of histb
+> Don't mix comment styles.
+>
+>> +#define HI3798MV200_GMAC_CLK		HISTB_ETH0_MAC_CLK
+>> +#define HI3798MV200_GMACIF_CLK		HISTB_ETH0_MACIF_CLK
+>> +#define HI3798MV200_FEMAC_CLK		HISTB_ETH1_MAC_CLK
+>> +#define HI3798MV200_FEMACIF_CLK		HISTB_ETH1_MACIF_CLK
+>> +#define HI3798MV200_FEPHY_CLK		HISTB_ETH1_PHY_CLK
+> I don't understand what do you want to achieve here. Clock IDs start
+> from 0 or 1.
+>
+>
+>
+> Best regards,
+> Krzysztof
+>
+
 -- 
-2.43.0
+Regards,
+Yang Xiwen
 
