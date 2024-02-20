@@ -1,339 +1,160 @@
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01olkn2081.outbound.protection.outlook.com [40.92.53.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC57657AA;
-	Tue, 20 Feb 2024 10:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.53.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708426379; cv=fail; b=kxyqvU3dw3le9YGGy4lhafjysJtQ9EyaDoHiU2dEq0wnQsWK6cb7c4lDHoEPWI87mGWzSCfMlJJI0f1ZwOSgyLtikovZWA6NjPYg7CogFU4EKtJ1AakdwXDFgx3l4G25gYLxB1614DcIOhx2fabhceTj2XNdmb6gQl8lB8+qLCQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708426379; c=relaxed/simple;
-	bh=ZhHHGesvdqaZPld8Ft15pqw3ryR9gwVQfDwwQYBQf0E=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oTsJDbaHZRndIIC9X9dCLAB+TqnM8eKR/5eM91gaQxqOjvPZ3mJT6mbqSoP6HpaMpISxxd07vpNWKWGNpk3irvglOf8S2Mz2Z4gynJheaBfUy3Cvbf3XqYcLrKawBCzANwTkxwZb7nACGlH26Luph0ejzPWErae/C6ivLjZVtvA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=CcGPwSce; arc=fail smtp.client-ip=40.92.53.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284D1664B7
+	for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 10:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708426409; cv=none; b=Zru+Sd1v+eeF46evrgvRBPgSUlZpxIvfhypz7PmBeIMsBdbv72oHLevQtEf61ffMWJbxoR7rw/7vkD9kAXEpjmEWLvCuNbn79y6HBsJU5ehux0VBEXj8/hWVspHhjllAF3TNYFX3whMXXKjekPKrY8IRPDeTwv6crDPJ5JWFnCk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708426409; c=relaxed/simple;
+	bh=8vi6GmLWUFu13gK8croE2S4F5cWVZeaaePrUfRm5924=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sgx1oh6TUvqkqEprsttkaMVmCe0EYGfwVhMsrMZrlfPHENLy7MI5mBLQOpwa8lDdrg9K2z3VhyPjnwU9XnRPtYx3KmWTHwVruh3VcPUxV6luRrvRvLMirRTrXOGTnxodaFXcyawGMT51zOSJweO49QX4Gf1fO60KF9hWStdXNXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MV5SHB88; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="CcGPwSce"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j8UlFQc08YXnpTw28F9TBZw/U8rHrpFp6vnZ7qeFvDRoR1szB5SEXTjp+Tha+62chsCQqBuA75d4TPJEwX3QWoG3B5kdND7TtO/BddpXfDeYh9k2wI8AZZKLSHjY6DekjEpgK57nFf3TYpVT5wyWOzKUFmNkEU+RkNDvz7kT7ljhmB7395KwN1/7azjTBWBrIcy9lHYrn1W2vf0AFvVOQ0xtcPRhIHK9Tsj3Ewj0JCKogGvy6QEH9ZJ4b/wUQKQM8wgr8KQouV0J3IuzACZu16T5S/hI2uEj1JJCzHw/E3VZh21kRAzuOLIs3knvrJ5+1TI5zPPS7e4eYnPcqtR0pw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iMv92itRY0o6p0wb8AiKlbfrhyLTYWLeGEXSVxhwToI=;
- b=BQA+IeEsgloPvN5mITq3psySH7zYQKSfn7yVgfriTL/99XQh12roXuac1dMgTHTSYUvR4/lXeYQVMkWky1J+u9OpZBNJIhbcBoa3FKRxlX6uS8mS4XYlOd4N919hKmk+Szx81b+MTtBGZY7dDJfhEcSSO8lo4uNk4Zm6gwmNKhQQbOwJgVO9D6RAlW/Kp7I2j2tFXIw8luV8L8MVTLDyPIdzArLhuFhTA/AJ2BRHLtm37Dp1MVWaMzZmHpvB7hJzZlHJoiG73hTJVG7ChsybcnpPjw74I98dX1KWt3mRwK1tl34hKWUkKr2L3xf+CEgtMhchiKldLYltDhZoxEPe3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iMv92itRY0o6p0wb8AiKlbfrhyLTYWLeGEXSVxhwToI=;
- b=CcGPwSceFHuMX4mI4mN3Tb2wfElFmQxLhpuhWSjlCPBaHw3PT6w7wg2niGLza5uF8p0pMmBwY0RUcKwo6gHKmqfJuVVsyRc5r1Gp+UkXBdAwC5+2joWJNf7R/lgdqzwMhBRwr/w3OFvWW868c1g5djQ8vqEApraPGSSJa1biAio4l68LjUMqsm1j9j6K6s7oXheUaXFJYruK7ZrGbtlzFzRFFXuh8ColVdcDUSEOQ+ahOPZL+ufjkI+JkbNK3nJu+Ylb86DnMvjQo+G930vsjsHBJAj/nwJtgWQnJHfOG0tr4H29zWc8H9ENKYfQPpCCi5e0Js/qXyQ0UpN+VtN9fA==
-Received: from SEZPR06MB6959.apcprd06.prod.outlook.com (2603:1096:101:1ed::14)
- by KL1PR0601MB4050.apcprd06.prod.outlook.com (2603:1096:820:2a::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.26; Tue, 20 Feb
- 2024 10:52:52 +0000
-Received: from SEZPR06MB6959.apcprd06.prod.outlook.com
- ([fe80::53da:a8a:83cb:b9ad]) by SEZPR06MB6959.apcprd06.prod.outlook.com
- ([fe80::53da:a8a:83cb:b9ad%4]) with mapi id 15.20.7292.036; Tue, 20 Feb 2024
- 10:52:52 +0000
-Message-ID:
- <SEZPR06MB69598A635C5AB1397348ED3296502@SEZPR06MB6959.apcprd06.prod.outlook.com>
-Date: Tue, 20 Feb 2024 18:52:43 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 3/5] dt-bindings: clock: merge all hisilicon clock
- bindings to hisilicon,clock-reset-generator
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240217-clk-mv200-v2-0-b782e4eb66f7@outlook.com>
- <20240217-clk-mv200-v2-3-b782e4eb66f7@outlook.com>
- <32d0a9c5-6c4b-4d85-bcbe-6192c63ba5fc@linaro.org>
-From: Yang Xiwen <forbidden405@outlook.com>
-In-Reply-To: <32d0a9c5-6c4b-4d85-bcbe-6192c63ba5fc@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [68h07m5q7bwGaa9exOyOBAcJh+6CpModUGzfwJyts9eLAQmSUqHBoYKVcKFssJPi]
-X-ClientProxiedBy: TYAPR01CA0018.jpnprd01.prod.outlook.com (2603:1096:404::30)
- To SEZPR06MB6959.apcprd06.prod.outlook.com (2603:1096:101:1ed::14)
-X-Microsoft-Original-Message-ID:
- <3a312f97-7644-490d-963d-5afc099314c7@outlook.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MV5SHB88"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2d180d6bd32so57365881fa.1
+        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 02:53:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1708426405; x=1709031205; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8vi6GmLWUFu13gK8croE2S4F5cWVZeaaePrUfRm5924=;
+        b=MV5SHB88xAxe0hPoZKkkkxb66tVTWvjnFGrvE/bsMJ+lYDgglOg8gmNAEmxewMwg6C
+         w83CpvmJCDvx9/MeUk/qgoVA2xmYZKikjvuB2hX57dUyxkRsVsMpbv5R3ycESIfdqqOd
+         pIF2FEjfuahANLaoStX6dthVl7SpO4UgG4+5FpgKOh6J8GPbYrxwtY1BjGaLJkmfTo+s
+         OziDrJrwNE2KUZTqi+dF0RZy39ZDSEvr2hFwNmwHWDCz7UqnprLGK8kx/MopXAKEnpQ/
+         Fy7p7JKsLlbITkYI+hWiyHQyG3olgHoxcD1PSAzIPkhpHp878NYP0ldhuvQqb0DvxfMu
+         rErg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708426405; x=1709031205;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8vi6GmLWUFu13gK8croE2S4F5cWVZeaaePrUfRm5924=;
+        b=U1taSt6q49JemYD9SomV+r2FtGlus4NVdsimaCj/6GeFJwN6oWB18BdOL+HB33bBSh
+         7z/iSnZ1C4Sfo23PZdRjtLpqG0iS9e7GQRlAtERo3F6sMV/LQYBKDcyZMjA/Oc9PCvFY
+         c392Djas0pZhMgJfw/RP7vFzJ0qJrpHddeNF9pl9qMZwTqLe7otshKcEsbeU7vquB7wJ
+         rQ66zolqYIHArjYr+kya32qoBBGm88W4DyG25tX7xv3TGEbeJwI6CGPJMH9DZ1fvUEx0
+         er9zH/VlDMsH+DN0dXk2a+X81P70xlT9Y6oNm4+QtEOseDpge6vrDliKtsNR4YeLLdtS
+         Itkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDLgVXVwVNYCfbMHlt668FfTzAsMkiSws58hDtcxGVehj+VIYoi23aDX0dDNe/bY/1mfWJBx6GVtKLT2JPBkVDOZ+vZCYY8fdj
+X-Gm-Message-State: AOJu0Yy3QjTeb86s63ptRyKkoYCzl/xYVH0n7IQMIHpxb1oiXsivQ4QF
+	nFyd8VUjOvGNqvVkyYpQ/tmXrbwkKhb1PTgNDbjaL/yDtUWoF8kuuIdmzrdLWtw=
+X-Google-Smtp-Source: AGHT+IGj/7AXoisMK+BCkKwotSzF6x35dkD2gVUI9ij4ByeXOMxpFwLG6GP50Kx7b4hnuJNfmyQRUg==
+X-Received: by 2002:a2e:be9d:0:b0:2d2:2aec:108f with SMTP id a29-20020a2ebe9d000000b002d22aec108fmr6573949ljr.47.1708426405349;
+        Tue, 20 Feb 2024 02:53:25 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.222.116])
+        by smtp.gmail.com with ESMTPSA id z17-20020a1c4c11000000b004127057d6b9sm1013957wmf.35.2024.02.20.02.53.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Feb 2024 02:53:24 -0800 (PST)
+Message-ID: <8c1f0a4f-8a8b-41e7-b7f1-4c5a38ec7c1a@linaro.org>
+Date: Tue, 20 Feb 2024 11:53:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB6959:EE_|KL1PR0601MB4050:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6d4e21e9-140c-4175-a102-08dc320215c0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	eBVtIV+tjwbbQ0U8D7puSXj7tkkByZWLELDA2EmHS1QoYNAYN/yXhkfwv4QSqjrONyRHMWixmYk+vYOi6mRuNoB61+99ZDP2f4QHqbXf+yM3Qa9XO4sTtI96FC3BrYovpNiU+586xBtOAvT6TrWTsrwl+A97TvREwjyTf2+XR44hJSV/gN4KQE4HGZlJrvRwO7qz2K9BgJrCyKxUdSjsRUjLTdet2+NYT02YYH3c6Tg/3RnmHOZ3IsQ1mkU7lgCaQPl3MwGsqlqWQ33mgGKrHss+ex/6hkSjXhrhln44a/u6MU/JWJEu8zB0cLiDg7lXmaLikMTyl+cbLhyCnvEuW5rUsMJWe59HBO4KTeSfbvBK1J6eYK6j2T8LjA3brhl86oHa13HNyaUCt2lVD23T6P74j4uEXvSxBSjZj19dLIUYPd36M2+jOPBkPGfBb1pjZw5tocVh0kJ8lZrBV9qEXLU0tTu+xKRCIOITrlWACCeS2JgM/oHWx7iBHI0YlN7LYkLpTHSxXumq7WH+qTFV+sZAgBzYZGgR4Zscgvoe3E5JPD3PkwtStIg0WUiM5OsiI2E3kjwc3dYYQ4Zy8/mv5oFKns98sDu2ypke8CUvYW8=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dVBIdlhoOGdDaTRIbDh5V3FlZW1PMTJhaWpkcUFqOUFFajZwM2VOMmpKdnJO?=
- =?utf-8?B?eFpiNUI0SWJlVlpnZWpTZWFrODhmMnVveGFvdlFWTkprcis0dUlOUjVORHVK?=
- =?utf-8?B?UDkzYnRrUWcxQjVnQ0NOVXV1cEx5ZVJCTzZVWmRQWDg3ZWVOSk0ycE14Mm5h?=
- =?utf-8?B?SWZTa0NiYmlYMGFEQ0poRjBxYTJoSGdCUU9VamZNY1g0cVQ3ZWNhTlNQQmdU?=
- =?utf-8?B?MjRzNkV2VG1qU3FQWE1lSDdTRnRleEtYaThaZnZIYUpFTkxxajVLaHZGNTZq?=
- =?utf-8?B?NUpmclp2RVZRS2tFcXBDR0xoQjNDdVZhZzBwcmtrSStWcWlPL29EV0NXdUZQ?=
- =?utf-8?B?dnk1R1EwUFdqYnNGRGRQamdJa2Ixc2dpWU93Y0ZUdnJadHdHN0hWM092MHRW?=
- =?utf-8?B?Vm9FUi9tTmY4aVBnVDBxdkIzVmxvekR3eTNmNFpUcEpodVJ5VTdPZjNTS3JO?=
- =?utf-8?B?OVpXSGNtVHNhdm5tOWs2OW1xcHhYckVBVFJ4T1p3clA5VDd2SHgyUTVTZ2FP?=
- =?utf-8?B?UUJZcVowL1JGUE93Q2NiKzZqZWRHVEdZRUNSM0xNWHlGUWVycnhpVlptVytu?=
- =?utf-8?B?OEhCc0lvTTdwYTVHak1FSUVCaVdRRFRGKytJY0RXNC9LRjZjL0lkdVZFNHZQ?=
- =?utf-8?B?QVNxSWMrMm9wQ0ZSMnJ5eHBYNysyNjVUZG43d2JSazJQWUpibGk3MUljcXpW?=
- =?utf-8?B?ZEU3ZUhuK2Y3UkE1bWhlNllzUGlybHEwZXpMeWIveTlhb1h4YzViRng1aGRt?=
- =?utf-8?B?cFZlTzlmMWJzM2hiTExoV0dVTFhlRTlLbFBqTXlXMkpLL25kRERtYjMxalIy?=
- =?utf-8?B?cnZaTEdzTU52NldyNzRDOXY1UXFmRlJWckttV1JMekNueE93UlhmQVhLUVpS?=
- =?utf-8?B?WW82M0t2My9HbFF5WCtQU2g3djJFYStyTi9SYjJESEZESWJoMnRKcU1xM2ZY?=
- =?utf-8?B?endJRWlwZzZKS2txQ3p2R2RNYjBwa2dqaGgyZlBnd095SzNiM204MVM3dXcr?=
- =?utf-8?B?YVNiblMxRFlnZXZGNFRyaDJKakNtRmN6d282YlVxVUI2ZTk4VUE0MWplSHp4?=
- =?utf-8?B?L0FweWNPTWJLK2xRNEFkZE1MR0xwRlBtOXlDejc2WWNiTUluZUoySkF6dkVl?=
- =?utf-8?B?c2g1K0tsZEYzdkRMcmc4QzRUSVhrdk5uTDdFUDdrcTJHSzNwSlN0SDQzRlhv?=
- =?utf-8?B?TllxVVQ2UnZkRlpyNUxDQmFRQkJJbG1LY2tRay8zamxUWmZQY25XSDczTFI5?=
- =?utf-8?B?MGkwaGowUEkwNXptY0xkV1p0YUsyMEZCZHBlWlBTNnVDMmVlMTlYbmVFZlBx?=
- =?utf-8?B?VDZEUktKUkhQSC8wTzNLNmNBSFl5RForaXc1M2tnU1c1K3RweWo1MWxGb01I?=
- =?utf-8?B?MGNuQXNhald6amwyVUFiK2VQbnhNVDhmU2s0OFZyTTFpYnN5azcvOUR1NUp5?=
- =?utf-8?B?RlpuNEppcFB4R3dGSjZtYlFWNG5sZjVWUERickxmcWUxMzlkZEI4bS9waTN6?=
- =?utf-8?B?UzYxWlRHMy91YUEvSm5MNDlkQ29VekxmWkF6Qm5ib1hhd00ySG1HazVEOW5P?=
- =?utf-8?B?ZFBXVG1wZlFiaVdGVXMrZkNqUFhicHN3azRkbW1NR0N5bUZhZ2M0alNHL1FV?=
- =?utf-8?B?QmFKSklFRlR4cDRiNURldklpYXZXTFNHUDdqMlY5V3BWSVpuMm94c3FocUo2?=
- =?utf-8?B?bWxiZHU2SFJuOWZ5dFZyRG1qSzgxd1RPZ29iVHNKbXBWTnJueXBrWjBScmVu?=
- =?utf-8?Q?nuUrsTU4Ax2x9lAHt4TIn2b+bfliqWTEgBPoqqL?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d4e21e9-140c-4175-a102-08dc320215c0
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB6959.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2024 10:52:51.7841
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB4050
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/16] clk: samsung: Pass actual clock controller base
+ address to CPU_CLK()
+Content-Language: en-US
+To: Sam Protsenko <semen.protsenko@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240216223245.12273-1-semen.protsenko@linaro.org>
+ <20240216223245.12273-8-semen.protsenko@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240216223245.12273-8-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2/20/2024 6:14 PM, Krzysztof Kozlowski wrote:
-> On 17/02/2024 13:52, Yang Xiwen via B4 Relay wrote:
->> From: Yang Xiwen <forbidden405@outlook.com>
->>
->> We don't need so many separated and duplicated dt-binding files. Merge
->> them all and convert them to YAML.
-> What was exactly duplicated? You created unspecific, lose binding...
+On 16/02/2024 23:32, Sam Protsenko wrote:
+> The documentation for struct exynos_cpuclk says .ctrl_base field should
+> contain the controller base address. But in reality all Exynos clock
+> drivers are passing CPU_SRC register address via CPU_CLK() macro, which
+> in turn gets assigned to mentioned .ctrl_base field. Because CPU_SRC
+> address usually already has 0x200 offset from controller's base, all
+> other register offsets in clk-cpu.c (like DIVs and MUXes) are specified
+> as offsets from CPU_SRC offset, and not from controller's base. That
+> makes things confusing and not consistent with register offsets provided
+> in Exynis clock drivers, also breaking the contract for .ctrl_base field
 
-You can take at the drivers at drivers/clk/hisilicon. All of them use 
-the same sets of APIs to register a few clocks and resets. That's why i 
-think they should be merged.
+Typo: Exynos
 
+> as described in struct exynos_cpuclk doc. Rework all register offsets in
+> clk-cpu.c to be actual offsets from controller's base, and fix offsets
+> provided to CPU_CLK() macro in all Exynos clock drivers.
 
->
-> Why this is RFC? RFC means we should not review.
->
->> Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
->> ---
->>   .../devicetree/bindings/clock/hi3660-clock.txt     |  47 -------
->>   .../devicetree/bindings/clock/hi3670-clock.txt     |  43 -------
->>   .../devicetree/bindings/clock/hi6220-clock.txt     |  52 --------
->>   .../devicetree/bindings/clock/hisi-crg.txt         |  50 --------
->>   .../clock/hisilicon,clock-reset-generator.yaml     | 139 +++++++++++++++++++++
->>   .../clock/hisilicon,hi3559av100-clock.yaml         |  59 ---------
->>   6 files changed, 139 insertions(+), 251 deletions(-)
->>
->
->> diff --git a/Documentation/devicetree/bindings/clock/hisilicon,clock-reset-generator.yaml b/Documentation/devicetree/bindings/clock/hisilicon,clock-reset-generator.yaml
->> new file mode 100644
->> index 000000000000..d37cd892473e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/hisilicon,clock-reset-generator.yaml
->> @@ -0,0 +1,139 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/hisilicon,clock-reset-generator.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Hisilicon SOC Clock and Reset Generator (CRG) module
->> +
->> +maintainers:
->> +  - Yang Xiwen <forbidden405@foxmail.com>
->> +
->> +description: |
->> +  Hisilicon SOC clock control module which supports the clocks, resets and
->> +  power domains on various SoCs.
->> +
->> +properties:
->> +  compatible:
->> +    minItems: 1
-> No, it does not work like that. Compatibles are fixed, not fluid. It's
-> quite a hint that your merging is wrong approach.
->
->
->> +    items:
->> +      - enum:
->> +          - hisilicon,hi3559av100-clock
->> +          - hisilicon,hi3559av100-shub-clock
->> +          - hisilicon,hi3660-crgctrl
->> +          - hisilicon,hi3660-pctrl
->> +          - hisilicon,hi3660-pmuctrl
->> +          - hisilicon,hi3660-sctrl
->> +          - hisilicon,hi3660-iomcu
->> +          - hisilicon,hi3660-stub-clk
->> +          - hisilicon,hi3670-crgctrl
->> +          - hisilicon,hi3670-pctrl
->> +          - hisilicon,hi3670-pmuctrl
->> +          - hisilicon,hi3670-sctrl
->> +          - hisilicon,hi3670-iomcu
->> +          - hisilicon,hi3670-media1-crg
->> +          - hisilicon,hi3670-media2-crg
->> +          - hisilicon,hi6220-acpu-sctrl
->> +          - hisilicon,hi6220-aoctrl
->> +          - hisilicon,hi6220-sysctrl
->> +          - hisilicon,hi6220-mediactrl
->> +          - hisilicon,hi6220-pmctrl
->> +          - hisilicon,hi6220-stub-clk
->> +          - hisilicon,hi3516cv300-crg
->> +          - hisilicon,hi3516cv300-sysctrl
->> +          - hisilicon,hi3519-crg
->> +          - hisilicon,hi3798cv200-crg
->> +          - hisilicon,hi3798cv200-sysctrl
->> +      - const: syscon
->> +      - const: simple-mfd
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +  '#reset-cells':
->> +    enum: [1, 2]
->> +    description: |
-> Previous bindings has only 2. Your patch is difficult to review and
-> understand.
->
->> +      First cell is reset request register offset.
->> +      Second cell is bit offset in reset request register.
-> All of these are reset controllers? I doubt.
->
->> +
->> +  '#address-cells':
->> +    const: 1
->> +
->> +  '#size-cells':
->> +    const: 1
-> All of these have children? No, sorry, but this merging does not make
-> any sense.
->
->> +
->> +  mboxes:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description: |
->> +      Phandle to the mailbox for sending msg to MCU
->> +      (See ../mailbox/hisilicon,hi3660-mailbox.txt for more info)
->> +
->> +  mbox-names:
->> +    $ref: /schemas/types.yaml#/definitions/string-array
->> +    description: |
->> +      Names of the mailboxes.
->> +
->> +  hisilicon,hi6220-clk-sram:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description: |
->> +      Phandle to the syscon managing the SoC internal sram
->> +      the driver needs using the sram to pass parameters for frequency change.
->> +
->> +  reset-controller:
->> +    type: object
->> +    description: |
->> +      Reset controller for Hi3798CV200 GMAC module
->> +
->> +required:
->> +  - compatible
->> +  - '#clock-cells'
->> +
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          not:
->> +            contains:
->> +              enum:
->> +                - hisilicon,hi3798cv200-crg
->> +    then:
->> +      properties:
->> +        reset-controller: false
->> +  - oneOf:
->> +      - required:
->> +          - hisilicon,hi6220-clk-sram
->> +      - required:
->> +          - reg
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/hi3559av100-clock.h>
->> +    soc {
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +
->> +        clock-controller@12010000 {
->> +            compatible = "hisilicon,hi3559av100-clock";
->> +            #clock-cells = <1>;
->> +            #reset-cells = <2>;
->> +            reg = <0x0 0x12010000 0x0 0x10000>;
->> +        };
->> +    };
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/clock/hi3660-clock.h>
->> +    soc {
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +
->> +        clock-controller@fff35000 {
->> +            compatible = "hisilicon,hi3660-crgctrl", "syscon";
->> +            reg = <0x0 0xfff35000 0x0 0x1000>;
->> +            #clock-cells = <1>;
->> +        };
->> +    };
->> diff --git a/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml b/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
->> deleted file mode 100644
->> index 3ceb29cec704..000000000000
->> --- a/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
->> +++ /dev/null
->> @@ -1,59 +0,0 @@
->> -# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> -%YAML 1.2
->> ----
->> -$id: http://devicetree.org/schemas/clock/hisilicon,hi3559av100-clock.yaml#
->> -$schema: http://devicetree.org/meta-schemas/core.yaml#
-> NAK, not related patch.
+Change is fine and makes sense on devices having separate CPU clock
+controller. That's not the case for:
+1. Exynos3250: dedicated CPU clock controller space, but we merged it
+into one driver/binding.
+2. Exynos4 and 5250: no obvious dedicated CPU clock controller, but
+register layout suggests that there is such, just not explicit.
+
+In all these cases you provide not the correct offset against explicit
+or implicit CPU base, but from main clock controller base.
+
+Mention it briefly in above commit msg.
 
 
-Okay. I'll revert most of the changes here. Maybe i should only convert 
-hisi-crg.txt to yaml. That's what i really cares.
-
-
->
-> Please split all your patches into logical chunks.
->
-> Please read submitting-patches *BEFORE SENDING* further submissions.
->
-> Best regards,
-> Krzysztof
->
-
--- 
-Regards,
-Yang Xiwen
+Best regards,
+Krzysztof
 
