@@ -1,162 +1,159 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3525CDE6
-	for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 08:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45E95B676
+	for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 08:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708417871; cv=none; b=oBZXs3WbSmH1g05sn51ljATj/vG/TIgmfN1ePvG3CZi20fahDSYoL0XyYOHwapfkIO9ZZvEs4ncWANhgzSscqv0MIdz28ckgM16VjW9u6wtcacSwJ/XlAa4QnzQV4tH/4FXgvWDEwfSjBcbYAVwIMbYOzstT/VIRmdi8Tk6Q+fA=
+	t=1708418315; cv=none; b=OJ1/EuH5JDTg3IC/1NEyP/V83ehcqhjutiZrxTUTHy3HcKCYK9iROWiiyIvSomwSmvxHRHlGqp3aWcGJIpTlg4Hu0bQX0+d0tZb2wS0gBTLyK0KsL7Mhw+os93oA+6eQd1KatlLPYpgM07MD5c+eDrHdnsXZn+6DsPDy+QbazXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708417871; c=relaxed/simple;
-	bh=z+ya6S79kXt1F9acGghW+fwOJyEHYJ6/iTaudsflj6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Lj6nXYNDFhzfzSe8XLTnBXUjXnCWmD3Gc7zpPETYrhDqUZVDtCJwdnLyqvgHf7kI+OhT9vfO2402VwVuNGT30e0czucRSNVevjvl3AsQVZ44ULXecdGPZKym+E9yQF8GFrbBXOp921E5r7FwsHuDpVRRYjND/AKH1HBZcs6aTsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X4FXMmre; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1708418315; c=relaxed/simple;
+	bh=ALQjbo7dedlRuzpfkpxyD61RWnylLXK6v03q2r6nC0M=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gE9EuaPeGhThcSVeouQ7eznYqGQWEygVr4Glq1uSjwaQGDza6TWflSRzMMTvUrOKIvRxK6l22+zyGYedZgIvepmYjK99+DRG5ABs9eA5k+cEOHgnzWcqK5x2UzBvvx3h6SKnO1c/v/1vjHpNEGs8FSmfS+FB1oIuV3zJPq1NZoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VD4gUbH7; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X4FXMmre"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-563d56ee65cso4836067a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 00:31:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VD4gUbH7"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a3e7f7b3d95so237717366b.3
+        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 00:38:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708417868; x=1709022668; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2ab/JTj1QFpZ37QZKffvrycyGpJUjaXceXuFCIRH5HM=;
-        b=X4FXMmrevDccWxZ+z5eEyJDh7wDCkUl7CUdQQs7BtWySGj85VgrrSkhiMzrJJ9ssO/
-         wbwaB43/WQeKgaoIEUf21p2r0YPWtGZyBps8PTgiZzsXVBnTtS1asBUIFq2DgBuXmHaG
-         EbAbOcZKPUygNB+c4+XNZ1W+gUjtdD3QRLh8C+I+f1FB+wyHWSiI0tty7jawd8zkfP1B
-         S2nlDey73VGsm9denBjY5Jm65HvEPhREmDHjYBO47MufiVhAbRXTXfJS+EcRTi2ho+6P
-         7MU23z42OEJMbDmwOT/lapVKA7itvXNwwPRpAoxLByauO0Y/IrMmGPrqWRNoDZtXhHUx
-         6g5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708417868; x=1709022668;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1708418312; x=1709023112; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2ab/JTj1QFpZ37QZKffvrycyGpJUjaXceXuFCIRH5HM=;
-        b=KuvXY8LuFJqLQk3m+d4IcSoXrOsKbcHHJS56IQoYfxqxHu6EnnPZdJ8odQrvNrnJy6
-         44aJ8wNXSta0sMvLsCN2kZ8loVZewSNOIhRdmUCSky6Idp8v/OXe7LRRd+iSV8Sc/s8l
-         Dbb15HqoXmLy8jqsJrKTKmXZ5sCncMSSXrLWerxmuzIVKhCA1zQ8i/c2/wwrifAUOsTO
-         Qjm1fpG5bYKMJPB6Y2NF3rCs/TO/kTpnaJ6hwrWth8DeuVwQNbr7xo81QOlG+F+U5cSG
-         ywz+tHXLE63sisFqt/RS1TT0hK2If4OEjAFuEhgf3IhBFp2U6Ux63d53MAEO3Je9ewvw
-         gp1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUxUFE2R0GIXtnhLiuvEZdcmoaAnmdU7HIyl3LhBbxDIKzYwy2oQvZ8t3j+zPZcbTbvjMSABZkWyrlgPNjA8vi1S5WaXzQjID10
-X-Gm-Message-State: AOJu0YwuSfY7FbqKonXj1gTvTkuUaQaCSvzqVHrZS+z/AgYLX2rpheWL
-	4Iw06xkhRSc6r/c0HNn2/hfuuiIX75in+g5pBDGX38QLK/E+4diIEcG16ArJtCw=
-X-Google-Smtp-Source: AGHT+IGAaEhaVOGHApuf34csO4rKG4tigNNuFaXUxWuI/pXCnkkn8Z9Z0GKlxKZe6WSivDK0AuUr0A==
-X-Received: by 2002:a17:906:60f:b0:a3e:b8ac:288f with SMTP id s15-20020a170906060f00b00a3eb8ac288fmr2516737ejb.4.1708417867681;
-        Tue, 20 Feb 2024 00:31:07 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id tz3-20020a170907c78300b00a3e0b7e7217sm3633463ejc.48.2024.02.20.00.31.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Feb 2024 00:31:07 -0800 (PST)
-Date: Tue, 20 Feb 2024 11:31:03 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Eddie James <eajames@linux.ibm.com>,
-	linux-fsi@lists.ozlabs.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	andi.shyti@kernel.org, eajames@linux.ibm.com, alistair@popple.id.au,
-	joel@jms.id.au, jk@ozlabs.org, sboyd@kernel.org,
-	mturquette@baylibre.com, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Subject: Re: [PATCH 12/33] fsi: core: Allow cfam device type aliases
-Message-ID: <13393c19-6de5-427d-8b4a-2e50cfe9459f@moroto.mountain>
+        bh=kJGa4Iif74KIq28HuBx0obq22VL2V9cwPjQcH9f77gk=;
+        b=VD4gUbH7tcAAKtcwMJBpqOMorZhIomyKNkeVENdcaKW2LwK+/sTkuWGUpJ48rpiCkR
+         iZ4rii2OwLqr8DHU1NgJWqBjWfoEA7ccFXC6jpmoqIPJOsaBzLeOE8vtpQd9SOCOMikB
+         9WUjM6Um5YJFlmHH6doe94jdtAaNyiPXLBjyZrS5CMzc6zrqrd+TzEVgtjdNzQGkip7I
+         4/v+0xnNlL1IuNUoMHDWmhtMrxSgBXd7TByxSdN1u4AEdRj8gJH3qwEil/7CaUm+tJCj
+         OHVu6IbV8su0kteERUvjZmFNims7ObQtXEuBpSQ4NZ2sr93AakJ2Sl0I4ir/z0ktoiNT
+         s0vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708418312; x=1709023112;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :references:cc:to:content-language:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kJGa4Iif74KIq28HuBx0obq22VL2V9cwPjQcH9f77gk=;
+        b=L+RaBRsa5bGa+EPW3cy2SEUH6/+ntHu/eEam0Kw2N3QoFXaMZz0/xqO56SO/DNFlxk
+         YXQHjGHBLKXDADtrER333rVyfS4EUvUfQ7rWHdujyMYp5cnu1CtQSDU9FD/M6rVmql83
+         lgtMyMaTpEv+6bcfnXaOVOHFe1ndKSznYr9WC1qCBwMTMjFpFN7V6S5UTGCfdOLFFJSl
+         wPQqJ2aj2QM800WECF2iPaggDjSV+2d8e1SaHmXZSw96bdnBXaPHhEG78J6QmKAjn+xv
+         1y1Xq6coURB/1qyuLvUIT6Y8UFoS0pbJsb0AZ/gpcFNjFOVrizEPmAJtS3p57qBqEVyv
+         S2lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ9AW+SA2+FUvjCb1TpzearWYfHVLqREaS1jdAl1K3kY1s4sQTxchVvxT+TnXxGpU9V4zlLOv9JS5/ZLkF9kFhFi/lgsEBgqJQ
+X-Gm-Message-State: AOJu0Yw2H1VARttWIUP+THYFp1y/a+CzjAFRzZge3Qew/juwJTQ57l5A
+	c7QCCw98R/49kttO7MTg5VXsLKcmV3tK7ut9zbx3C305AsF2Vy9E2R/NUBbSFFY=
+X-Google-Smtp-Source: AGHT+IG5sof+uEBFLugZ3URqtm9eYBKvIS7ypPMXhjAaCDviRIT2l26ljktZ4RfQuw9pU3z3NdDz/g==
+X-Received: by 2002:a17:906:ce4a:b0:a3e:720a:b961 with SMTP id se10-20020a170906ce4a00b00a3e720ab961mr4048248ejb.34.1708418312170;
+        Tue, 20 Feb 2024 00:38:32 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:bd84:e8aa:cf30:cb6e? ([2a01:e0a:982:cbb0:bd84:e8aa:cf30:cb6e])
+        by smtp.gmail.com with ESMTPSA id n5-20020a05600c294500b00410df4bf22esm13596294wmd.38.2024.02.20.00.38.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Feb 2024 00:38:31 -0800 (PST)
+Message-ID: <90290e71-6d85-4aaa-af5b-79c44bc786ef@linaro.org>
+Date: Tue, 20 Feb 2024 09:38:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240215220759.976998-13-eajames@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 8/8] arm64: dts: qcom: qrb2210-rb1: Enable the GPU
+Content-Language: en-US, fr
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org
+References: <20240219-topic-rb1_gpu-v1-0-d260fa854707@linaro.org>
+ <20240219-topic-rb1_gpu-v1-8-d260fa854707@linaro.org>
+ <CAA8EJppPvXfkz=wVca8aFBhFaVUe9+OiVzcQUq7D8zPbK+T1FQ@mail.gmail.com>
+ <b73e329a-02a4-46e0-bda4-5d5fae0a1180@linaro.org>
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro Developer Services
+In-Reply-To: <b73e329a-02a4-46e0-bda4-5d5fae0a1180@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Eddie,
+On 19/02/2024 22:37, Konrad Dybcio wrote:
+> On 19.02.2024 15:49, Dmitry Baryshkov wrote:
+>> On Mon, 19 Feb 2024 at 15:36, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>>
+>>> Enable the A702 GPU (also marketed as "3D accelerator by qcom [1], lol).
+>>
+>> Is it not?
+> 
+> Sure, every electronic device is also a heater, I suppose.. I found
+> this wording extremely funny though
 
-kernel test robot noticed the following build warnings:
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+GPU (Graphics Processing Unit) isn't accurate either since it can also run compute shaders do to non graphics processing,
+so 3D Accelerator isn't that different.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Eddie-James/dt-bindings-clock-ast2600-Add-FSI-clock/20240216-061934
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
-patch link:    https://lore.kernel.org/r/20240215220759.976998-13-eajames%40linux.ibm.com
-patch subject: [PATCH 12/33] fsi: core: Allow cfam device type aliases
-config: arm64-randconfig-r081-20240216 (https://download.01.org/0day-ci/archive/20240220/202402201532.dvENQrDs-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 36adfec155de366d722f2bac8ff9162289dcf06c)
+A proper term would be Vectorized Mathematical Computing Complex or something similar.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202402201532.dvENQrDs-lkp@intel.com/
+Neil
 
-smatch warnings:
-drivers/fsi/fsi-core.c:919 __fsi_get_new_minor() error: testing array offset 'type' after use.
-
-vim +/type +919 drivers/fsi/fsi-core.c
-
-3f4ac5b0b27f16 Eddie James            2024-02-15  894  static int __fsi_get_new_minor(struct fsi_slave *slave, struct device_node *np,
-3f4ac5b0b27f16 Eddie James            2024-02-15  895  			       enum fsi_dev_type type, dev_t *out_dev, int *out_index)
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  896  {
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  897  	int cid = slave->chip_id;
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  898  	int id;
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  899  
-3f4ac5b0b27f16 Eddie James            2024-02-15  900  	if (np) {
-3f4ac5b0b27f16 Eddie James            2024-02-15  901  		int aid = of_alias_get_id(np, fsi_dev_type_names[type]);
-                                                                                                                 ^^^^
-if type >= 4 we are in trouble
-
-3f4ac5b0b27f16 Eddie James            2024-02-15  902  
-3f4ac5b0b27f16 Eddie James            2024-02-15  903  		if (aid >= 0) {
-3f4ac5b0b27f16 Eddie James            2024-02-15  904  			/* Use the same scheme as the legacy numbers. */
-3f4ac5b0b27f16 Eddie James            2024-02-15  905  			id = (aid << 2) | type;
-3f4ac5b0b27f16 Eddie James            2024-02-15  906  			id = ida_alloc_range(&fsi_minor_ida, id, id, GFP_KERNEL);
-3f4ac5b0b27f16 Eddie James            2024-02-15  907  			if (id >= 0) {
-3f4ac5b0b27f16 Eddie James            2024-02-15  908  				*out_index = aid;
-3f4ac5b0b27f16 Eddie James            2024-02-15  909  				*out_dev = fsi_base_dev + id;
-3f4ac5b0b27f16 Eddie James            2024-02-15  910  				return 0;
-3f4ac5b0b27f16 Eddie James            2024-02-15  911  			}
-3f4ac5b0b27f16 Eddie James            2024-02-15  912  
-3f4ac5b0b27f16 Eddie James            2024-02-15  913  			if (id != -ENOSPC)
-3f4ac5b0b27f16 Eddie James            2024-02-15  914  				return id;
-3f4ac5b0b27f16 Eddie James            2024-02-15  915  		}
-3f4ac5b0b27f16 Eddie James            2024-02-15  916  	}
-3f4ac5b0b27f16 Eddie James            2024-02-15  917  
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  918  	/* Check if we qualify for legacy numbering */
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20 @919  	if (cid >= 0 && cid < 16 && type < 4) {
-                                                                                    ^^^^^^^^
-checked too late
-
-641511bfcc5e01 Eddie James            2023-06-12  920  		/*
-641511bfcc5e01 Eddie James            2023-06-12  921  		 * Try reserving the legacy number, which has 0 - 0x3f reserved
-641511bfcc5e01 Eddie James            2023-06-12  922  		 * in the ida range. cid goes up to 0xf and type contains two
-641511bfcc5e01 Eddie James            2023-06-12  923  		 * bits, so construct the id with the below two bit shift.
-641511bfcc5e01 Eddie James            2023-06-12  924  		 */
-641511bfcc5e01 Eddie James            2023-06-12  925  		id = (cid << 2) | type;
-85f4e899de32ba Eddie James            2023-06-12  926  		id = ida_alloc_range(&fsi_minor_ida, id, id, GFP_KERNEL);
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  927  		if (id >= 0) {
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  928  			*out_index = fsi_adjust_index(cid);
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  929  			*out_dev = fsi_base_dev + id;
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  930  			return 0;
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  931  		}
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  932  		/* Other failure */
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  933  		if (id != -ENOSPC)
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  934  			return id;
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  935  		/* Fallback to non-legacy allocation */
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  936  	}
-85f4e899de32ba Eddie James            2023-06-12  937  	id = ida_alloc_range(&fsi_minor_ida, FSI_CHAR_LEGACY_TOP,
-85f4e899de32ba Eddie James            2023-06-12  938  			     FSI_CHAR_MAX_DEVICES - 1, GFP_KERNEL);
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  939  	if (id < 0)
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  940  		return id;
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  941  	*out_index = fsi_adjust_index(id);
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  942  	*out_dev = fsi_base_dev + id;
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  943  	return 0;
-0ab5fe5374743d Benjamin Herrenschmidt 2018-06-20  944  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+>>
+>>>
+>>> [1] https://docs.qualcomm.com/bundle/publicresource/87-61720-1_REV_A_QUALCOMM_ROBOTICS_RB1_PLATFORM__QUALCOMM_QRB2210__PRODUCT_BRIEF.pdf
+>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>
+>> With the exception of the commit message:
+> 
+> :(
+> 
+> Konrad
+> 
+>>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/qrb2210-rb1.dts | 8 ++++++++
+>>>   1 file changed, 8 insertions(+)
+>>
+>>
+> 
 
