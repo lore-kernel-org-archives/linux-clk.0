@@ -1,59 +1,59 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F179612E7
-	for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 10:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33A960DFC
+	for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 10:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708423825; cv=none; b=NEUNK6yZPYAk6Q4Cu4pn/e+JuOLMsp/1LW2tSe+KYeA3+9xwW89HXsvb3ubDqqV5mk/nXyLU6qlAR+asxHwEWrEZy4yGEHcyrCX6LKq7EosAxF0va9TpNGJbJUqn4Uyph0mpuT6TzeKzBALkA8a48pXMQhzzRVJGgouuk5xUsb8=
+	t=1708423882; cv=none; b=qQtE1Zwc4g5RbFaQ4YqUGqT5ZK2bzO+1qaVZgAVkm1rn8vUf3Td40HtITMczWdUbtiCc6XP9zGYtstqdk+Qr7qiL13lS5qdLLx/cEqNOEfiWIC9/WGBh81ossATGnnFBOa+IEyH5khVJRmzcb/4VCMoJbfyW6mt6ruGLo+K1s38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708423825; c=relaxed/simple;
-	bh=cSee2MHwUQSWAtYJ7PIHgJTkTGS6VO4I5SKQOP/wUJs=;
+	s=arc-20240116; t=1708423882; c=relaxed/simple;
+	bh=367XaILFO8rZ3wKjkG2ZciIgggCgKEiatsLpqhi/xE0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h7uHrKaPVToCmRSx1q1/fj+rkNf0ok8dDpKuuu+gPfcXYasZRseZVfa4nApBiJenMcWyZwPVguyOgBKt3v3SHttaLsRmRzLbZjIk7BY8NFtlhCibuvLmAWWaKzM/pZZ+4v1s6SHIVU2MFuh2NxgtC6S7lcsV3HWAQ9zXZJ5Jy/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M1dcRABd; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:Content-Type; b=A96Z1ZV+DGJN5+ZNlFZckztH23wD9qBHJ0TZUCUEW5xULEoipSSNfZqcsTP/C5mW6WUXZyJYYtLaAHJolwwL6aOzDNAVkuFOsSz+HsElU08ulPxeMf6UB/V2cTH3peIaCirnd3WGBnZl4PPjFGUtT7EyYc5x+s3QWXCmGYs+aAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lSGEQ9Wu; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M1dcRABd"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4127077ee20so1511295e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 02:10:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lSGEQ9Wu"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4125cf71eecso19995505e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 02:11:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708423821; x=1709028621; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708423879; x=1709028679; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=y/8AZULZ7XSFUyo0VoqNWIxSqHbvtO5lOFpI88SV+9c=;
-        b=M1dcRABdlQ3kZ/1RVZwB0huCpd/gHdmImUdGREHytp5RtXLP0N/gD+vOuNJgIavY16
-         g+DI2MgOWSs8k3KA8ytCLQvIFLCCBEIiJ0BIEfLfQbUKMMCqVAfyLNtbbyfXdLb3wv8W
-         DlkhwNrjwCVGs9gViywr854OYOOsuRtLB1Yzt2/kgSM+77OF6mL1ZVX3Jvfoayn4+fs1
-         G3FmtcQxKQZvBbNpUyHv44y67ZZ0+V5axO2Qv5klz91Y0UD0npiL6qIHrFIvuUlt8xAk
-         xJPNyRrcrmUfYd+SKym8XiaN5EzuqSN8E5Y3ct1KgY4KhAdqPCzEDszH/lyZbIPLNui5
-         +WWQ==
+        bh=9cEevSpcHYR0bJRJ2Pii3xbCZBo/9gOWZM9i89Gz/54=;
+        b=lSGEQ9WunQGqcHSaGpXI7LWwDsbGvCa0nbs5CsfAlHIQYo+TSFa90POavErwZVn/TO
+         fq4y41EXZYHwfgfc/qkb9fjGcncFBsYtTDIe0xeT1aWwb5zqyA+R4hH7AosZ4snNRm4P
+         kqvpzbyHhTXqdWtxH12n9b7+MH4xxg1Fuc3JqygExLsxTzXkyDz6uYHCnZHXxJ+idRHp
+         Z+cg9mc3PZQw9RqIhpjZ9h5LuJQ+8jit92K/R1KNIY7Z1QkKmvofLTTlD0MGVJY8sxak
+         Js2nmvQ0yJ3oLv1VJ0uQWVzjAxM6/gc+12vcJJKitv3F+as4DVuNnalW3tgQpXO35nCd
+         eFPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708423821; x=1709028621;
+        d=1e100.net; s=20230601; t=1708423879; x=1709028679;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y/8AZULZ7XSFUyo0VoqNWIxSqHbvtO5lOFpI88SV+9c=;
-        b=M2PYeJ25ATS/P5sijigYrRkt0iaFECbN8Jn/myNZ28TU3N6md3d7MSIfT/5KzlWGSC
-         Tn5Mdrni5fqV8EgYmE42feTf8tA8Gw1vVzZ61w0SatyU9JUw9Qw2PsWUAkSTmgpzEBKo
-         TkAB/xrVxEG0IXuS6Z2EFhg8bqhpB5qypM6JZ8Z3UeyHCbHu1sSmTXUNRJrrJ5DCW8YQ
-         kiYMWPQrDtk5d/TzJH0P3Cx5TgYueTTA7rbT3pg5l9U9QXXIuQ6n7r04esREetIx/tlH
-         9dP1h3VivQbt+XC1NGFuUfwHeA9lG5GrEyRrtxIFo/x8gdOcL9ivgPYcTkjovpVUGsho
-         I6Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkgnPI13ywBb+tdbUAeGnDrPUBhvOuE00g5p+4C90UxzPVBfbaDsZf+/XPGgESOaMmWzHZ0m4LXu0qi7+zRNsX5/0QRsA541MU
-X-Gm-Message-State: AOJu0YzokXDbza6w8l+9VfGrvF3vIlcK1eJP/QagtGFaCpZwwOFGwSOG
-	/tbHTDM/CzGO+KJRoMakI/XjNxTqIiLNaesIbwP8Ss5En1wrfVR8VT64LGhoOb4=
-X-Google-Smtp-Source: AGHT+IGRdLhP5HmVgrcUhIe4LKpzhAasGmy1OF0IdQgi3GpP6nk9Q59uIrMTOb6NjZlcMjACzIPaDg==
-X-Received: by 2002:a05:600c:4f53:b0:412:5f58:53a5 with SMTP id m19-20020a05600c4f5300b004125f5853a5mr5253705wmq.24.1708423821359;
-        Tue, 20 Feb 2024 02:10:21 -0800 (PST)
+        bh=9cEevSpcHYR0bJRJ2Pii3xbCZBo/9gOWZM9i89Gz/54=;
+        b=c61/AgoX5nwphM03xkoJy6yg6eVvqFSwkOPM/GIMYpzKhSXw4jPqjEuuJcljklZB3y
+         4t/7D6tVRtvparUS98ihZQuxZF1GKYgL5RBOTtiUCpJj8W3yhnqmyr+kx1qf65khp3Ka
+         uKx7mJXqdNtdWRueqOca43OzMeuEsnzxh6RYH3oGezOmKTkcKzB/W+SpK43y3U2DPlMl
+         GREqzRbO3+nzLuSi2lHvqck+W7L0GI+WymCx0IOCw+gIQ9yGNZk1B+/z4o09XIFszsPT
+         VeZJYt6jN+KQjb7nlUaEdOcWmx7x1BeWVNpNvvHXobW3steT2DGUAyoxTTuBIPWvIVj4
+         NB1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWJyB09VvsfBJaINo4Iey7qvWc8buCwz7kLld3MwYoGB2Aa64zIUFm8JVzySXEmgzyN35QeuVugP5P/jhEAB6W437wQrpqQSlmW
+X-Gm-Message-State: AOJu0YzGV1OPGJmaOTBZ0hgurgz0QeclrwDv/TNO+5ZjPy4qxA3WeDtE
+	Ss1mMgqs/+XTfKTtHh1FANJv8NJrhz9FuSPrfYIOW3kXGXIiQtlfQFfwlq1Sp/k=
+X-Google-Smtp-Source: AGHT+IEgixbH4lu/2UTycb5gNIqO7D1deuu3v4xgduPKcH9f1PaM4TPLidljmACIVMP6934aAfDefg==
+X-Received: by 2002:a05:600c:310f:b0:412:68a1:1020 with SMTP id g15-20020a05600c310f00b0041268a11020mr3082774wmo.17.1708423879131;
+        Tue, 20 Feb 2024 02:11:19 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id s8-20020a7bc388000000b00412260889d9sm14022129wmj.1.2024.02.20.02.10.20
+        by smtp.gmail.com with ESMTPSA id s8-20020a7bc388000000b00412260889d9sm14022129wmj.1.2024.02.20.02.11.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Feb 2024 02:10:20 -0800 (PST)
-Message-ID: <875b706f-801a-4a4c-8806-411a67c5a5e7@linaro.org>
-Date: Tue, 20 Feb 2024 11:10:19 +0100
+        Tue, 20 Feb 2024 02:11:18 -0800 (PST)
+Message-ID: <31188f64-7c6b-4279-a2d7-8b5133b1d485@linaro.org>
+Date: Tue, 20 Feb 2024 11:11:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,8 +61,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 1/5] dt-bindings: clock: histb-clock: Add missing
- common clock and Hi3798MV200 specific clock definition
+Subject: Re: [PATCH RFC v2 2/5] clk: hisilicon: add CRG driver for Hi3798MV200
+ SoC
 Content-Language: en-US
 To: forbidden405@outlook.com, Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
@@ -71,7 +71,7 @@ To: forbidden405@outlook.com, Michael Turquette <mturquette@baylibre.com>,
 Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20240217-clk-mv200-v2-0-b782e4eb66f7@outlook.com>
- <20240217-clk-mv200-v2-1-b782e4eb66f7@outlook.com>
+ <20240217-clk-mv200-v2-2-b782e4eb66f7@outlook.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -117,63 +117,25 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240217-clk-mv200-v2-1-b782e4eb66f7@outlook.com>
+In-Reply-To: <20240217-clk-mv200-v2-2-b782e4eb66f7@outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 17/02/2024 13:52, Yang Xiwen via B4 Relay wrote:
-> From: Yang Xiwen <forbidden405@outlook.com>
-> 
-> According to the datasheet, some clocks are missing, add their
-> definitions first.
-> 
-> Some aliases for hi3798mv200 are also introduced.
-> 
-> Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
-> ---
->  include/dt-bindings/clock/histb-clock.h | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/histb-clock.h b/include/dt-bindings/clock/histb-clock.h
-> index e64e5770ada6..68a53053586a 100644
-> --- a/include/dt-bindings/clock/histb-clock.h
-> +++ b/include/dt-bindings/clock/histb-clock.h
-> @@ -58,6 +58,27 @@
->  #define HISTB_USB3_UTMI_CLK1		48
->  #define HISTB_USB3_PIPE_CLK1		49
->  #define HISTB_USB3_SUSPEND_CLK1		50
-> +#define HISTB_SDIO1_BIU_CLK		51
-> +#define HISTB_SDIO1_CIU_CLK		52
-> +#define HISTB_SDIO1_DRV_CLK		53
-> +#define HISTB_SDIO1_SAMPLE_CLK		54
-> +#define HISTB_ETH0_PHY_CLK		55
-> +#define HISTB_ETH1_PHY_CLK		56
-> +#define HISTB_WDG0_CLK			57
-> +#define HISTB_USB2_UTMI0_CLK		HISTB_USB2_UTMI_CLK
-
-Why? It's anyway placed oddly, the entries are ordered by number/value.
-
-> +#define HISTB_USB2_UTMI1_CLK		58
-> +#define HISTB_USB3_REF_CLK		59
-> +#define HISTB_USB3_GM_CLK		60
-> +#define HISTB_USB3_GS_CLK		61
 > +
-> +/* Hi3798MV200 specific clocks */
+> +static const struct hisi_crg_funcs hi3798mv200_sysctrl_funcs = {
+> +	.register_clks = hi3798mv200_sysctrl_clk_register,
+> +	.unregister_clks = hi3798mv200_sysctrl_clk_unregister,
+> +};
 > +
-> +// reuse clocks of histb
+> +static const struct of_device_id hi3798mv200_crg_match_table[] = {
+> +	{ .compatible = "hisilicon,hi3798mv200-crg",
+> +		.data = &hi3798mv200_crg_funcs },
+> +	{ .compatible = "hisilicon,hi3798mv200-sysctrl",
+> +		.data = &hi3798mv200_sysctrl_funcs },
 
-Don't mix comment styles.
-
-> +#define HI3798MV200_GMAC_CLK		HISTB_ETH0_MAC_CLK
-> +#define HI3798MV200_GMACIF_CLK		HISTB_ETH0_MACIF_CLK
-> +#define HI3798MV200_FEMAC_CLK		HISTB_ETH1_MAC_CLK
-> +#define HI3798MV200_FEMACIF_CLK		HISTB_ETH1_MACIF_CLK
-> +#define HI3798MV200_FEPHY_CLK		HISTB_ETH1_PHY_CLK
-
-I don't understand what do you want to achieve here. Clock IDs start
-from 0 or 1.
-
-
+These are undocumented compatibles. Run checkpatch or properly order
+your patchset.
 
 Best regards,
 Krzysztof
