@@ -1,247 +1,105 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533343BB4C;
-	Wed, 21 Feb 2024 20:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AAA8172F
+	for <linux-clk@vger.kernel.org>; Wed, 21 Feb 2024 23:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708548952; cv=none; b=iEMOaD8mHJiaJyENX3vTguO62dlUMR2Q0BCXtANcItGjwe98vDFLoB1gd113rtj6vM6uJLpLp2UGlyWJX6CF8GZynJQO4OUT+uJkJhtM3g0wHuGofjWjVREqdHnDpAp6MfauTh2mwZo2aM9mEbwlx3LVpVmzMZYE7HpuWzQPoJg=
+	t=1708556884; cv=none; b=mgwlWKLPjqw/oTXNeW7oBz2aOHTmtM0DfvHuyOSGr6I2+r4H+41OYTnZl3RAagcG/FancQwsXn80C364QtGl2xwIkgeJ2HsX/Bb6RSlnm9c+CDE4Ip4EN0ix9osDpRp0vtDWp0WCUGPG+r5IjXfER7h/aY+uF2xVKXJ3xVDDbGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708548952; c=relaxed/simple;
-	bh=rHfeQb45HtkUG7g1SRcqejqfXqfz6MTlodE8sg4okTI=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=OtNjebns7/mI+bcgej4f7jrI04p2HTE6MXqDdm7heDi5cRfxkQ4OInUsodVclIyCWUvT4zUR1wn6uR1gtEgn/PWM1gNXR6VDqBS2zNHnw8C9V3TuzpB7eYiCEq+L5KmFsn8WEEJRFppBuRBA/Qheh6s57MWIPKf7aSg16cS+Jl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id BB61937820D2;
-	Wed, 21 Feb 2024 20:55:46 +0000 (UTC)
-From: "Shreeya Patel" <shreeya.patel@collabora.com>
-In-Reply-To: <fd3b7ab7-3702-412f-947a-95396dbe1f4c@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240216094922.257674-1-shreeya.patel@collabora.com>
- <20240216094922.257674-3-shreeya.patel@collabora.com> <fd3b7ab7-3702-412f-947a-95396dbe1f4c@linaro.org>
-Date: Wed, 21 Feb 2024 20:55:46 +0000
-Cc: heiko@sntech.de, mchehab@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com, dmitry.osipenko@collabora.com, sebastian.reichel@collabora.com, shawn.wen@rock-chips.com, kernel@collabora.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-dt@vger.kernel.org, linux-arm@lists.infradead.org
-To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1708556884; c=relaxed/simple;
+	bh=lVVt4cd6uaVryAH57NfvJaB+/vJBBdplCM95n6hzzPI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BXD7gCSh8oaRu4cBcLdYVSbS+Hn8JjD7bwexL/lsnitub/ntLf43dY0HG8xy2xqAGHKJvdyJqJCVG0+DVGZ3VkNmt66B/mugo6wjsj7qFmH34Eb5cp0DLK2bXvGpDW6/uQMa7bEHZ6ozG5FWWwCGCd33NB7b+3Qp/s+TsHtXJ1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LJ907JAM; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LJ907JAM"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dcdb210cb6aso8043889276.2
+        for <linux-clk@vger.kernel.org>; Wed, 21 Feb 2024 15:08:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1708556881; x=1709161681; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kYBbmRXDC5OSdjJgBE1Q6+6CYsK20VTrcWQxbaA18DI=;
+        b=LJ907JAM0KZ3rh+wX/0fGafmuf+VI8G8mlYpSpCEbJ3D73rwPzzznxccPb6Q3Efh/p
+         4Gh9RK/mWNrHsUzncuC+Rbr7HlRc95FVleY6x1+9Cwt/e6wRD13xxLQbv/Ke/I5Z5+Wd
+         tLg7ruRbFD9qaom30VkhQ0LcINRX+sfrGJjIGju7BAemEoOU7xOOrcV0+JRsjEHl7Wcd
+         OJzYqY6oOZl3jOmPdHIw82a70AkyzMYufmpbkeJcJO/F12KThYvKCoBO1HBLRu+LqUnV
+         i4H5Yr2V9GX8XCeRJStmk7Sg5GMzxdXtlVOUWZeovAOpZ/FR3RQJi3BaMAarqAokWni8
+         rQew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708556881; x=1709161681;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kYBbmRXDC5OSdjJgBE1Q6+6CYsK20VTrcWQxbaA18DI=;
+        b=Nusi9OpoOgXoVyVFmYz5kwM297uomYDlEwilmZpqENZU9chYcOj8DqV9ks8IF69DQG
+         6majXc7J+ayk/+U1Mem6IGycriErOChDEgP1iwMCaxYublppAkJ1ZXuJT+EXXZWrV4VN
+         423pWOy6aPtZNBOcmOd4wgeZE1hse5ZdOzKJtR5Vvf3cBLLW7iyukSZ6yQCz8R0inPIx
+         ehuKP5h5FVXprRmplrDQbPQ4ZdaibDWsVBmrxgnIxuLGunqAhP0falthL2XiaPh+CeAu
+         VOvQjiryubylWTUpLbAldUBCdOwnvEdJcvx4KGndB5bgV9XHSGdxHoU3NviH4/FwlcW3
+         O2Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl2T1oOgbQ5cItOeRQ7wGICXkXl//GzVL7vq/Maty0HjtPpD79bVequb6OnWVz/ryptngaciK9nAqjgps+Hh0WBHYR+uxJ0Q8z
+X-Gm-Message-State: AOJu0YzoD++fMZokUZTKRWSVl5W9zTvooT1KA0qNpwjK4IlL0Ub6L11B
+	dq8ChdNV9EUDub4z3Cac6z2kKqryDwQCqBaMTcHqRy3dYoRo2OkqpZR5cg1sBD3p7gRJ/a4Yrc6
+	XZjYKjpk/hIhAogkshkgosPs79pMrOG8PLAq63Q==
+X-Google-Smtp-Source: AGHT+IELSuez3wnkWzi8gUjXrk1ECFLfUvg+ZkAvG67cVdS+sTX65l5nPJGAnEdTxvcHLOGMpEqSWoalBsmdwXNDC2c=
+X-Received: by 2002:a5b:f06:0:b0:dc6:8534:bb06 with SMTP id
+ x6-20020a5b0f06000000b00dc68534bb06mr807288ybr.17.1708556881671; Wed, 21 Feb
+ 2024 15:08:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1048c3-65d66380-b-49a25c80@188726434>
-Subject: =?utf-8?q?Re=3A?= [PATCH 2/4] =?utf-8?q?dt-bindings=3A?=
- =?utf-8?q?_media=3A?= Document bindings for HDMI RX Controller
-User-Agent: SOGoMail 5.9.1
+References: <20240216223245.12273-1-semen.protsenko@linaro.org> <29090d97-9118-4765-a4fd-3bbe271a39bd@linaro.org>
+In-Reply-To: <29090d97-9118-4765-a4fd-3bbe271a39bd@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 21 Feb 2024 17:07:50 -0600
+Message-ID: <CAPLW+4kmoCoqO=+zXbVw7VsGc-VB2At91ZnJfyTDRtVFmN4aiQ@mail.gmail.com>
+Subject: Re: [PATCH 00/16] clk: samsung: Add CPU clocks for Exynos850
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Friday, February 16, 2024 15:31 IST, Krzysztof Kozlowski <krzysztof.=
-kozlowski@linaro.org> wrote:
+On Tue, Feb 20, 2024 at 5:07=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 16/02/2024 23:32, Sam Protsenko wrote:
+> > The series implements CPU clock support for Exynos850, adds CPU CMUs to
+> > the clock driver and enables those in dts. This is the first step
+> > towards cpufreq implementation.
+> >
+> > The breakup by patch:
+> >
+> >   * Patch 01: Add bindings
+> >   * Patches 02..12: Prepare clk-cpu.c for Exynos850 support
+> >   * Patch 13: Add Exynos850 support
+> >   * Patch 14: Init PLLs to be in manual mode
+> >   * Patch 15: Add CPU CMUs in Exynos850 clock driver
+> >   * Patch 16: Add CPU CMUs and clocks in Exynos850 dtsi
+>
+> This crossed the threshold for a patch bomb, which is in general fine
+> for me, but then please put v2 changelog in each patch's changelog. If
+> the patch did not change, annotate it as well. It's not possible to keep
+> jumping between cover letter and individual patches.
+>
 
-> On 16/02/2024 10:49, Shreeya Patel wrote:
-> > Document bindings for the Synopsys DesignWare HDMI RX Controller.
-> >=20
-> > Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
->=20
-> A nit, subject: drop second/last, redundant "bindings for". The
-> "dt-bindings" prefix is already stating that these are bindings.
-> See also:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/device=
-tree/bindings/submitting-patches.rst#L18
->=20
-> > ---
-> >  .../bindings/media/snps,dw-hdmi-rx.yaml       | 128 ++++++++++++++=
-++++
-> >  1 file changed, 128 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/media/snps,dw=
--hdmi-rx.yaml
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/media/snps,dw-hdmi-r=
-x.yaml b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
-> > new file mode 100644
-> > index 000000000000..a70d96b548ee
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
-> > @@ -0,0 +1,128 @@
-> > +# SPDX-License-Identifier: (GPL-3.0 OR BSD-2-Clause)
->=20
-> Use license checkpatch tells you.
->=20
-> > +# Device Tree bindings for Synopsys DesignWare HDMI RX Controller
-> > +
-> > +---
-> > +$id: http://devicetree.org/schemas/media/snps,dw-hdmi-rx.yaml#
->=20
-> Why this is a media, not display? Does RX means input? Lack of hardwa=
-re
-> description does not help?
->=20
+The above list is not a change log, I just tried to show that patches
+02..12 are cleanups. I'll reword this in v2 to make it less confusing.
+And as usual I'll keep the changelog for each patch separately. Thanks
+for the review!
 
-Yes, RX means input and this binding doc is for the HDMI INPUT controll=
-er.
-I'll add some description in v2
-
->=20
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Synopsys DesignWare HDMI RX Controller
-> > +
-> > +maintainers:
-> > +  - Shreeya Patel <shreeya.patel@collabora.com>
-> > +
->=20
-> description:
->=20
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - const: rockchip,rk3588-hdmirx-ctrler
-> > +      - const: snps,dw-hdmi-rx
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 3
-> > +
-> > +  interrupt-names:
-> > +    items:
-> > +      - const: cec
-> > +      - const: hdmi
-> > +      - const: dma
-> > +
-> > +  clocks:
-> > +    maxItems: 7
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: aclk
-> > +      - const: audio
-> > +      - const: cr=5Fpara
-> > +      - const: pclk
-> > +      - const: ref
-> > +      - const: hclk=5Fs=5Fhdmirx
-> > +      - const: hclk=5Fvo1
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> > +  resets:
-> > +    maxItems: 4
-> > +
-> > +  reset-names:
-> > +    items:
-> > +      - const: rst=5Fa
-> > +      - const: rst=5Fp
-> > +      - const: rst=5Fref
-> > +      - const: rst=5Fbiu
->=20
-> Drop rest=5F prefix
->=20
-> > +
-> > +  pinctrl-names:
-> > +    const: default
->=20
-> Drop
->=20
-> > +
-> > +  memory-region:
-> > +    maxItems: 1
-> > +
-> > +  hdmirx-5v-detection-gpios:
-> > +    description: GPIO specifier for 5V detection.
->=20
-> Detection of what? Isn't this HPD?
->=20
-> > +    maxItems: 1
-> > +
-> > +  rockchip,grf:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description:
-> > +      The phandle of the syscon node for the GRF register.
->=20
-> Instead describe what for. Basically 80% of your description is
-> redundant and only "GRF register" brings some information.
->=20
->=20
-> > +
-> > +  rockchip,vo1=5Fgrf:
->=20
-> No underscores.
->=20
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description:
-> > +      The phandle of the syscon node for the VO1 GRF register.
->=20
-> Same problem.
->=20
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +  - interrupt-names
-> > +  - clocks
-> > +  - clock-names
-> > +  - power-domains
-> > +  - resets
-> > +  - pinctrl-0
-> > +  - pinctrl-names
->=20
-> Why? Drop.
->=20
-> > +  - hdmirx-5v-detection-gpios
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +    #include <dt-bindings/power/rk3588-power.h>
-> > +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
-> > +    hdmirx=5Fctrler: hdmirx-controller@fdee0000 {
->=20
-> What is hdmirx-controller? Isn't this just hdmi@?
->=20
-
-Writing just hdmi would imply hdmi output I think so that name
-will not be appropriate here.
-
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-de=
-vicetree-basics.html#generic-names-recommendation
->=20
-
-This documentation doesn't have any generic name for HDMI INPUT
-but maybe we can use the name hdmi-receiver like some other existing
-binding has it here :-
-Documentation/devicetree/bindings/media/i2c/tda1997x.txt
-
-Thanks,
-Shreeya Patel
->=20
-> > +      compatible =3D "rockchip,rk3588-hdmirx-ctrler", "snps,dw-hdm=
-i-rx";
-> > +      reg =3D <0x0 0xfdee0000 0x0 0x6000>;
-> > +      interrupts =3D <GIC=5FSPI 177 IRQ=5FTYPE=5FLEVEL=5FHIGH 0>,
-> > +                   <GIC=5FSPI 436 IRQ=5FTYPE=5FLEVEL=5FHIGH 0>,
-> > +                   <GIC=5FSPI 179 IRQ=5FTYPE=5FLEVEL=5FHIGH 0>;
->=20
->=20
->=20
 > Best regards,
 > Krzysztof
->=20
-> =5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=
-=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F
-> Kernel mailing list -- kernel@mailman.collabora.com
-> To unsubscribe send an email to kernel-leave@mailman.collabora.com
-> This list is managed by https://mailman.collabora.com
-
+>
