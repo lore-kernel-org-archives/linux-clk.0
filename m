@@ -1,151 +1,162 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C533EA89;
-	Wed, 21 Feb 2024 10:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727E93C2F
+	for <linux-clk@vger.kernel.org>; Wed, 21 Feb 2024 13:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708511944; cv=none; b=btukBm1I69ugESYaI8ulyj+rYYohEc0baGJxy5LuyoME8GpRqbtkuiVczmGrgxmWEs6GhotO/zmK6Rg2jZlIJoG+wD2gFCFYz/VTbCXvZ1KXCyHOAJO0HKRAPiE0Jcp8i9qtcATBNECd1ue+jaem29pUB8aACh1LO/Exlv0+pbM=
+	t=1708522542; cv=none; b=ZRKwgAGLGdfkh4KkV00RC0XZH5yOpV+kcjK1cx4z8B7ElwRge+oCtia8lr/JM1W4xYp7ympcmINWpgcfm+ctOXx4hjs43hL8V4dElD0SgYrPT0JiV37Epv1e6XuO6F9OF/Dh/gdWlP8ccQrzGfPhAqeSC/Ana7P9AdVczg7bfRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708511944; c=relaxed/simple;
-	bh=3T2LRJtiW3mZfk/PunFIogOMmmkLZ7ysF+8gTpzPau4=;
-	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MX3HsSVlcOCgZIdiWlVw02fCfHwRFcQS7USH4BbbFzXwzq9xLmNtpBI4AHS824CMdH44eOQEG2bakBfL9AlD1NeBaTZ408pe2AqFNlxphuaU5Ygm3J9v/yHnRIxJ4h6JWcbXX4yoWCviyrdW2CRqB6/zI9N56GV2uHObueNU1uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev; spf=pass smtp.mailfrom=oltmanns.dev; dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b=NVUrtqwk; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
+	s=arc-20240116; t=1708522542; c=relaxed/simple;
+	bh=bW3BcyOo3zOnh0jsWjwvNDury7C7SRom46TGw5ILpoQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e1jEIzB6PzisBg0OJPw2jm5MrnsNovZ5KKsckE0uxSNMz6+pMFSFlKc1PcE4BsGt2yhow/Eze8NwBr+WEvHCacmwDp7x5kXpS5e11ntgIc79zPK/xgQOk+hOs8EBNu4S78iyljCug486PAK/2Rf7R0g8R3ek00AdN72eSqTsujI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=q6oTz0rC; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="NVUrtqwk"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Tft6g64Lkz9tln;
-	Wed, 21 Feb 2024 11:38:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-	s=MBO0001; t=1708511931;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VOqX0GOQZZOiGD9BoiPl4P99i5/2V8G3vmiVhpwmjpo=;
-	b=NVUrtqwknw/O3TZyiGfvfpG0IBx7JJpeIshlUGI/ALrW+famIowinN8F9Ti3bU4Kb+DskP
-	y775xaFPKAqf07Z9jufvCZ/AuUTAM4pXCgmXlgUugQZxZI4mmfx/4UJIb3CWj7JIytAhQg
-	l3cMMRBSKwmkaUjCkZVPwc9QSZ0W96DsujRbPvrZTUclXWsJ2NVejTPx9Ud7DDCgLM69Gb
-	4oAYCyVx0a/ZfDI7wBynT1H/fvIHe24aB5hJFSRro6uKd6bhUTPnwEiiZrZqz68LsxqWry
-	p64VobbPssd93ohFph+mesCr7BNyXCE5h4LrsNcuswhXvQdIQyv57qnfdnQpWw==
-References: <20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev>
- <20240205-pinephone-pll-fixes-v2-3-96a46a2d8c9b@oltmanns.dev>
-From: Frank Oltmanns <frank@oltmanns.dev>
-To: Jernej Skrabec <jernej.skrabec@gmail.com>, Maxime Ripard
- <mripard@kernel.org>, Diego Roversi <diegor@tiscali.it>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
- <samuel@sholland.org>, Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>,
- Purism Kernel Team
- <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] clk: sunxi-ng: nkm: Support minimum and maximum
- rate
-In-reply-to: <20240205-pinephone-pll-fixes-v2-3-96a46a2d8c9b@oltmanns.dev>
-Date: Wed, 21 Feb 2024 11:38:39 +0100
-Message-ID: <8734tmhzkg.fsf@oltmanns.dev>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="q6oTz0rC"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-564d9b0e96dso2179044a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 21 Feb 2024 05:35:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1708522538; x=1709127338; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M85MKNxHpEwF31wKePTUoYXDesnkz6TsPaxXuG5yiJk=;
+        b=q6oTz0rCssN3AQmE/IAWE65Jb2ML4ZrxtmR/MCtu3ETsrEeKGBuib/bduTJhBTVNgQ
+         cqALLEDQ6SiDrK3qhoMSQWQ1UWe3uPzeM51774MSh3DPNRxJWVlgzQEqY8Jb8CSdJn2I
+         X35TEMn+QS0voS0xAVCcZ+kQSM3mqOdLDhMFSUYNQeP4QMC95DcwC6B4576Opt1ZPLAZ
+         sseEfI/bPZSjB0gIMknQNNwcUJQnJy3ym0OzCSsvTrTsCodK8Fbik+k/puqwiDEoZDqe
+         HOZj6Qn4D2bcsl1TJQxHXN1CjjWgE68OgTHhAMJZI7NV34kOBQdHN8ILg1Ml7KUrwdj/
+         zDKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708522538; x=1709127338;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M85MKNxHpEwF31wKePTUoYXDesnkz6TsPaxXuG5yiJk=;
+        b=qH8kn6l//2DObyf/MwzNie14D1dWYXi3mL2AIm49yO1lyXjUpAjdPkZle0zbe9w+Do
+         zbxh0b6ccEI1bsr5/qJuy/0ALJRazPGJTUwQQ8Ip0l9qOagjhxPu1BAqJli4u8MPyXR+
+         Ju1QriFXYopAeVW59M2rkdwP4OGRm9LTuRxaYnYrdKLML55tYcXZOTaQtL+YkBHPU2Zw
+         1RiHRrDxQ9BJ9vRirrRL8RZb2V1RJxcikHLVTPiW7U4JobWmYDsUg15xPW/ds3PzC3wE
+         Gr9gIZnOjefkLDx91m+k63Khq8iqD++9rwvWl8ubLikpZ7ym639WpkeZdYtQNXJ3BIUw
+         pBJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwq4KYu6nDsNdCUB1Dyc+dJLubFcLipt5/E1vQYPvKY4c+bc5UvO3XHcC1+8n58z4uY5xGFvLVYjLJx6/2LPnJVUlThwrxL69P
+X-Gm-Message-State: AOJu0YxW5XzKAZ92sxK3IWNn/ROwe3n3W/wrO/57qqq71MutNajpsWTK
+	PIPHmqIa2lcLxOWTKnVxnGQNAxvR8dccN+NmxZgBlqsBmNMasNb89GLlgL1g+aI=
+X-Google-Smtp-Source: AGHT+IFjTAniUsouIQiZg5/1w3zu99rfqHzwO1yDcSTT+S18LBkfM8M18UxyzOt56YfOrmlo+CFdnQ==
+X-Received: by 2002:a17:906:16da:b0:a3e:7dbe:298b with SMTP id t26-20020a17090616da00b00a3e7dbe298bmr6580101ejd.24.1708522537598;
+        Wed, 21 Feb 2024 05:35:37 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.20])
+        by smtp.gmail.com with ESMTPSA id g16-20020a170906c19000b00a3cee88ddc7sm5044547ejz.147.2024.02.21.05.35.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Feb 2024 05:35:37 -0800 (PST)
+Message-ID: <1a3c9ec5-69b9-4f55-bdf6-628fcf2b0268@tuxon.dev>
+Date: Wed, 21 Feb 2024 15:35:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 4Tft6g64Lkz9tln
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/17] clk: renesas: r9a08g045: Add support for power
+ domains
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ magnus.damm@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240208124300.2740313-11-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUn6j8aZ+7iahrovWC8oWLiijqH=+cUDjYwdL3tWiuhDg@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdUn6j8aZ+7iahrovWC8oWLiijqH=+cUDjYwdL3tWiuhDg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Jernej,
-hi Maxime,
+Hi, Geert,
 
-On 2024-02-05 at 16:22:26 +0100, Frank Oltmanns <frank@oltmanns.dev> wrote:
-> According to the Allwinner User Manual, the Allwinner A64 requires
-> PLL-MIPI to run at 500MHz-1.4GHz. Add support for that to ccu_nkm.
+On 16.02.2024 16:10, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Thu, Feb 8, 2024 at 1:44 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Instantiate power domains for the currently enabled IPs of R9A08G045 SoC.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/drivers/clk/renesas/r9a08g045-cpg.c
+>> +++ b/drivers/clk/renesas/r9a08g045-cpg.c
+>> @@ -240,6 +240,28 @@ static const unsigned int r9a08g045_crit_mod_clks[] __initconst = {
+>>         MOD_CLK_BASE + R9A08G045_DMAC_ACLK,
+>>  };
+>>
+>> +static const struct rzg2l_cpg_pm_domain_init_data r9a08g045_pm_domains[] = {
+>> +       DEF_PD("always-on",     R9A08G045_PD_ALWAYS_ON, 0, 0,
+>> +                               RZG2L_PD_F_PARENT | RZG2L_PD_F_ALWAYS_ON),
+>> +       DEF_PD("gic",           R9A08G045_PD_GIC, MSTOP(ACPU, BIT(3)), PWRDN(IP1, 2),
+> 
+> My docs document only bit 0 of the CPG_BUS_ACPU_MSTOP register.
 
-I should point out that limiting PLL-MIPI also fixes a regression
-that was introduced in 6.5, specifically
-ca1170b69968233b34d26432245eddf7d265186b "clk: sunxi-ng: a64: force
-select PLL_MIPI in TCON0 mux". This has been bisected and reported by
-Diego [1].
+Indeed, mine, too. I took as reference the table "Registers for Module
+Standby Mode". I asked for clarifications. The TF-A software also uses
+BIT(3) for setting this.
 
-I don't know the procedure (yet), but probably the fix (if and when
-accepted) should be backported at least to 6.6 (first broken LTS), 6.7
-(stable), and 6.8 (next stable).
+> 
+>> +                               RZG2L_PD_F_ALWAYS_ON),
+>> +       DEF_PD("ia55",          R9A08G045_PD_IA55, MSTOP(PERI_CPU, BIT(13)), PWRDN(IP1, 3),
+>> +                               RZG2L_PD_F_ALWAYS_ON),
+>> +       DEF_PD("dmac",          R9A08G045_PD_DMAC, MSTOP(REG1, GENMASK(3, 0)), 0,
+>> +                               RZG2L_PD_F_ALWAYS_ON),
+>> +       DEF_PD("ddr",           R9A08G045_PD_DDR, MSTOP(PERI_DDR, BIT(1)), PWRDN(IP2, 0),
+> 
+> Only BIT(1)? My docs suggest GENMASK(1, 0).
 
-My suggestion:
- - In V3 of this series, I will reorder the patches, so that what is now
-   PATCH 3 and 4 becomes 1 and 2 respectively, so that they can be
-   applied to 6.6 more easily.
- - Maxime, IIUC you requested some refactoring for handling the rate
-   limits [2]. I propose, we use my current proposal as-is, and I will
-   do a follow-up series for the refactoring.
+I wanted to keep PHY separated but there's no reason for doing that,
+AFAICT. I'll update it.
 
-Please let me know how you would like me to proceed.
+> 
+>> +                               RZG2L_PD_F_ALWAYS_ON),
+>> +       DEF_PD("tzcddr",        R9A08G045_PD_TZCDDR, MSTOP(TZCDDR, GENMASK(2, 0)),
+>> +                               PWRDN(IP2, 1), RZG2L_PD_F_ALWAYS_ON),
+>> +       DEF_PD("otfde_ddr",     R9A08G045_PD_OTFDE_DDR, 0, PWRDN(IP2, 2), RZG2L_PD_F_ALWAYS_ON),
+> 
+> MSTOP(PERI_CPU2, BIT(2))?
 
-Thanks,
-  Frank
+OK.
 
-[1]: https://groups.google.com/g/linux-sunxi/c/Rh-Uqqa66bw
-[2]: https://lore.kernel.org/all/exb2lvjcozak5fayrgyenrd3ntii4jfxgvqork4klyz5pky2aq@dj2zyw5su6pv/
+Thank you,
+Claudiu Beznea
 
->
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> ---
->  drivers/clk/sunxi-ng/ccu_nkm.c | 13 +++++++++++++
->  drivers/clk/sunxi-ng/ccu_nkm.h |  2 ++
->  2 files changed, 15 insertions(+)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-> index 1168d894d636..7d135908d6e0 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> @@ -181,6 +181,12 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
->  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->  		rate *= nkm->fixed_post_div;
->
-> +	if (nkm->min_rate && rate < nkm->min_rate)
-> +		rate = nkm->min_rate;
-> +
-> +	if (nkm->max_rate && rate > nkm->max_rate)
-> +		rate = nkm->max_rate;
-> +
->  	if (!clk_hw_can_set_rate_parent(&nkm->common.hw))
->  		rate = ccu_nkm_find_best(*parent_rate, rate, &_nkm, &nkm->common);
->  	else
-> @@ -220,6 +226,13 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
->  	_nkm.min_m = 1;
->  	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
->
-> +
-> +	if (nkm->min_rate && rate < nkm->min_rate)
-> +		rate = nkm->min_rate;
-> +
-> +	if (nkm->max_rate && rate > nkm->max_rate)
-> +		rate = nkm->max_rate;
-> +
->  	ccu_nkm_find_best(parent_rate, rate, &_nkm, &nkm->common);
->
->  	spin_lock_irqsave(nkm->common.lock, flags);
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
-> index c409212ee40e..358a9df6b6a0 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
-> @@ -27,6 +27,8 @@ struct ccu_nkm {
->  	struct ccu_mux_internal	mux;
->
->  	unsigned int		fixed_post_div;
-> +	unsigned long		min_rate;
-> +	unsigned long		max_rate;
->  	unsigned long		max_m_n_ratio;
->  	unsigned long		min_parent_m_ratio;
+> 
+>> +       DEF_PD("sdhi0",         R9A08G045_PD_SDHI0, MSTOP(PERI_COM, BIT(0)), PWRDN(IP1, 13), 0),
+>> +       DEF_PD("sdhi1",         R9A08G045_PD_SDHI1, MSTOP(PERI_COM, BIT(1)), PWRDN(IP1, 14), 0),
+>> +       DEF_PD("sdhi2",         R9A08G045_PD_SDHI2, MSTOP(PERI_COM, BIT(11)), PWRDN(IP1, 15), 0),
+>> +       DEF_PD("eth0",          R9A08G045_PD_ETHER0, MSTOP(PERI_COM, BIT(2)), PWRDN(IP1, 11), 0),
+>> +       DEF_PD("eth1",          R9A08G045_PD_ETHER1, MSTOP(PERI_COM, BIT(3)), PWRDN(IP1, 12), 0),
+>> +       DEF_PD("scif0",         R9A08G045_PD_SCIF0, MSTOP(MCPU2, BIT(1)), 0, 0),
+>> +};
+>> +
+> 
+> The rest LGTM.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
