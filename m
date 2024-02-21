@@ -1,97 +1,106 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3970076C89;
-	Tue, 20 Feb 2024 19:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC1E39FD7
+	for <linux-clk@vger.kernel.org>; Wed, 21 Feb 2024 06:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708457540; cv=none; b=kj48IhTlWYgSa7Npbf8P0O0E/SW/UqEUa4pHEOwv0Swf0kI9i4EMVdxIgrR2yOqGUVti9hLCjm3RtSeg18xz4F1pllP8yLp4N07Z4csULToNGMIzEfvPLzxhJnQiUY965WhfFfqckpG+VyIM86qBiNu+irrUkPTyLkWoKR0hs74=
+	t=1708496101; cv=none; b=n/CoX0V+RvjfRbNuP2WkO6vPv0UCuB5PKR7jnJvvGdzdsfIFi1tKo9i+uLtk5kH8xII/2ZpVtRbmsPwGx6D0d5nfyQCWAdayAdh4m3Xzr4EU5j2hyJzdM7a3CAjpg1r6VBRpxpbO9W2IUwEhGou26uK3zenLR+vSan1EyswBVmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708457540; c=relaxed/simple;
-	bh=SszpkFbrTiSepHEcHv73HAL06XFg+t2SIWPqKACl370=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MUnBD9mHIqEebK09DL7igig7i/8DcI4vS8VHIvUTCfgz69QhP0yUSbtLD/HFdUXhFGlSJpb5+CJceZyM+RWd5/E5R7ySxQpuYLEebEQfdjfS4mq7ies9Jci9n6Y2gZK/vhT2qLAm9o4UqX/dzYIBamx6G+PVABCttLRLipLGN2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcbcea9c261so5163126276.3;
-        Tue, 20 Feb 2024 11:32:18 -0800 (PST)
+	s=arc-20240116; t=1708496101; c=relaxed/simple;
+	bh=MmK4ilW9HQCrj0ekAd4lRBQ2BMR8Ib1Yk8fmOio2KAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mrwh8E6Cfy0K5Roxx5tI41B4fEqOYCQTW5e1c/Yu+ISRqgfsKBYAgJe9wOEXMBg6P9mzrIuZ72ckb3nmlNJzdiavDQJang01ytkUPB/hEdcRH1CcMjNdsqTCDxRXkNEA8ZWIEht9qJnWDp0HLBlZGKxWR6uIbDNe87QYuoQc6kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=BEUYEi2H; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="BEUYEi2H"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-564fe0273e4so200765a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2024 22:14:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1708496098; x=1709100898; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TK3Wur+Ze9Z4Yt7si29B1E6PfnCzOWp0cMuA39AeGfw=;
+        b=BEUYEi2H34s/sFc8JGQQmzGrhxjB4OSsuld23ik063I2h7FyfgL8F6sG6fTIA+fRvT
+         XpviEeg9NIexbcKduu9ow2M8bil1gioLamOVk8jhIla1tj2YwxpPRHGU3KFSf2JmhvwN
+         CORsByJoxEX5gj1NfsPAsfRn+n6fALXhpahyLcJQKfYWQgrmI13Bk7+gn0w9Vy78HtfQ
+         wQSMuqBGAGh0le5DV6BRDL+2t2bxdK0jyBS/2R1kzpMaUB+rrtZU0ucvpi3WHncG2gVV
+         1QQxSH8hdfXKZAh6cXmusbKO0DG5RxwB2uKQ2HilFpH1TlXfKirrIznXkKksSFvLWpvy
+         z0IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708457536; x=1709062336;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X8GTO+lAF2fk+HfBG0cHdMNOcQxsEjyIPCBMHPyZPUI=;
-        b=NGRAX49KSziWe7IwSTyfSzSriq+I9fgFwCTTx7iTsNEYMwXnNjE688X/j4sFNFX9NU
-         Y4pgLVFjuUF4AvZM2fBbduFvccMlqYDbUl8jPkSTJMT9gGMj8MdClKB7hq7xXkzCopyt
-         sCJoSGSr2vZ5UvVd+3gTJEOO1WoZ9y3T7r82imAsCMwC95717guwRXVkapEbCIhBnlUD
-         so8KfQRDPuumN+oJTXPyPgC2CVWHB+umuCuuwlvhcQDG20kc0kFaqB2i0Ny3dFCe24DJ
-         9S7QdlA1AcJf0V3kmbK+oavIwPeCCEKfm/Vg1rZOAsotRBepyTt67IZJqw2ZSEZ1wBbg
-         QAYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXckgdN7x8onE6LXo372cwzG9Cz6HSFEZBr4aDnv78WhUe8oN39T/MeJkvzRS9hvJDXZQFqe1R33lRRfBGwMQGpGR2TU9hYBj0i+92XNKehn38AUA7a4K4PG2Uvczz1uaoPrE6N6rNTpHHadlyuqr+31QNacYorT9zI7fcZyQ6fHz0GDn48/YVnxcr7lT3Une4bCTDOekmYSrJRE0UliRgElp+Uq/zo
-X-Gm-Message-State: AOJu0Ywh4Ab5jlf4LLfy/KM5S72gCvq/ISrXqWPWNBSsh4uKWB4dylzD
-	CakQ+1y5SzDMEv4CwejD0Exv4F4WzyD/bKfllUXoo4VOYYgIYD4HiYCiv44rUz8=
-X-Google-Smtp-Source: AGHT+IH35SgJjhhvE6ygmBqJXW9fKhgfVPETCcK8MhgFj+AM2c/QiztJnHB22XJUV+dlK/YdSoqodA==
-X-Received: by 2002:a05:6902:118c:b0:dc6:ff12:13d7 with SMTP id m12-20020a056902118c00b00dc6ff1213d7mr12988060ybu.60.1708457535550;
-        Tue, 20 Feb 2024 11:32:15 -0800 (PST)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id p9-20020a257409000000b00dcdb990f93bsm2026571ybc.64.2024.02.20.11.32.14
+        d=1e100.net; s=20230601; t=1708496098; x=1709100898;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TK3Wur+Ze9Z4Yt7si29B1E6PfnCzOWp0cMuA39AeGfw=;
+        b=QeFuz5g78OKQgUHlsaFZu9CM2JAPLSx3Nol6TNUgucXERYj8J1mX6pnHoJzxpjhji6
+         IJDAGJreWAZzzaKK8Iawc2zfs3UzKA5VnOMKWknp6z26lffQsniJStYFP5C5hmeFRd0E
+         ouaxfq9Y44tP8uYksKngQ1nnSw63F9YOMYezKZ/p0yJGDCIcDeiS94nqkHk73OsxmHfc
+         4UtDYSlJw8nFVejs2FcQEoBmf95vtLnWR3vjtHvz2H+E9rNNyT5o99QCHBXTD0m4+R9i
+         ZCz4Bv2SVhFhLLT1/nJjTiOW+HbiP6ixvTGn3LFYLh9OJJemRiMdb7pVp6mJIzjTAhxl
+         lQFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVq9fIKM5QbZqpGv4oUCcCITauFFPF92Ot93YMP8pnmsxW17bX5IF+dAtd+6uDAO4Yh3Mnd+TBiG0P2uUfEmweRhaEkqGFYQZh1
+X-Gm-Message-State: AOJu0YxaJ4v+sFOrhowiixvGkWEHaCfbZQgH18QldFLiJrlqW642yEwf
+	g/Puj4XcTVoGgPWUJYEoLk40K41/+vooBwe9h5EJn5tsq6oY1RPLGMi4mvEDu9m2aVcUqs8xdCV
+	4
+X-Google-Smtp-Source: AGHT+IHJgCqkyCT0BdpiQsv+Wg7+W7Zmg9TNZj+V1thWG6ry+4L227ijh2oJSVuNrkH3E0x0tobFOw==
+X-Received: by 2002:a05:6402:1502:b0:561:e4aa:ef2c with SMTP id f2-20020a056402150200b00561e4aaef2cmr12951195edw.32.1708496097796;
+        Tue, 20 Feb 2024 22:14:57 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.20])
+        by smtp.gmail.com with ESMTPSA id h14-20020a056402094e00b005644221a3desm3389815edz.3.2024.02.20.22.14.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Feb 2024 11:32:14 -0800 (PST)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6079d44b02bso36943237b3.3;
-        Tue, 20 Feb 2024 11:32:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX3DAu4yMSYYqJ0SLTJPVKCBMuasBY1H8KxvqMnUJDBLTAdHAC7ikiusU+6p2WOfjHqKOj4HHwyyEIe8N5qECWQm/fjKFg42kcpLwed0AWViw3SDifqI0kcFTPz6i939EUGeiujVEsiaw4WN6MFDa4kTxCgqziLuQwrdw7BWaGGOyfx7GkG4pjhpiFnzCcHuJW8ZdcnZeTGuCp8Q63LNFdutVmiaeTt
-X-Received: by 2002:a81:9817:0:b0:607:87cd:9394 with SMTP id
- p23-20020a819817000000b0060787cd9394mr12513129ywg.11.1708457534400; Tue, 20
- Feb 2024 11:32:14 -0800 (PST)
+        Tue, 20 Feb 2024 22:14:57 -0800 (PST)
+Message-ID: <046416da-58de-4fc4-ae01-d83f63c038f9@tuxon.dev>
+Date: Wed, 21 Feb 2024 08:14:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com> <20240208124300.2740313-8-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240208124300.2740313-8-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Feb 2024 20:32:01 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU+WRJLLH4zUvAnsfNtgUxsNGe1bCKLu+98BC6K0d6Rgg@mail.gmail.com>
-Message-ID: <CAMuHMdU+WRJLLH4zUvAnsfNtgUxsNGe1bCKLu+98BC6K0d6Rgg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 07/17] clk: renesas: rzg2l: Extend power domain support
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ magnus.damm@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240208124300.2740313-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240208124300.2740313-8-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdU+WRJLLH4zUvAnsfNtgUxsNGe1bCKLu+98BC6K0d6Rgg@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdU+WRJLLH4zUvAnsfNtgUxsNGe1bCKLu+98BC6K0d6Rgg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Claudiu,
+Hi, Geert,
 
-On Thu, Feb 8, 2024 at 1:44=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
-rote:
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+On 20.02.2024 21:32, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Thu, Feb 8, 2024 at 1:44 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> --- a/drivers/clk/renesas/rzg2l-cpg.c
+>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> 
+>> +static struct generic_pm_domain *
+>> +rzg2l_cpg_pm_domain_xlate(struct of_phandle_args *spec, void *data)
+> 
+> As of commit 4d0824608a636b64 ("pmdomain: core: constify of_phandle_args
+> in xlate") in next-20240215 and later the first parameter needs to
+> be const.
 
-> +static struct generic_pm_domain *
-> +rzg2l_cpg_pm_domain_xlate(struct of_phandle_args *spec, void *data)
+Indeed, I noticed that. Thank you for pointing it.
 
-As of commit 4d0824608a636b64 ("pmdomain: core: constify of_phandle_args
-in xlate") in next-20240215 and later the first parameter needs to
-be const.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
