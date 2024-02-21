@@ -1,38 +1,37 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9DA839EA;
-	Wed, 21 Feb 2024 16:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6EE84FD8;
+	Wed, 21 Feb 2024 18:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708533682; cv=none; b=K0k/46oW6boN+CYZRWV2T7BlfZ29FyRQxass+jCtwcYcJhreUzFF3Sy108DQ2xEvMvcwh9IH4aDgFDQO1s7zEXd5s2bv85eGyUzEdtBM9zMbvrKlvcyq+UC9gf1yRCIkGspcU/akbCkc30Mz0eVcy5Zex97p0dwfWlYFd5BBoEI=
+	t=1708539737; cv=none; b=kp1YPF/LslHebxwqexeNZCzLX8pQFZ/Qs6oEyWvkahdX0R3AV5WdrgN3+uCOS9aEufLNkzWzHR3N5NYnG3RIKLdoPSXMiAApnbuGhzEa4BgETtgWNWsQvLPrE2M2J2VegB7Y0EnUV/aUzn6ugz3llMTk0f3YQ2qSdr1rWOH8T80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708533682; c=relaxed/simple;
-	bh=9m5EheU4d2kYLN7XPOS+yJFs0DWkYRSbnky/8bpWpQE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AeDtSOx/eup2wCzr4n4g9JId7TNEu2uNi3SBAMJEDdMkTsPpRL/gj3Y+zA8hO/vmYFFQjJlYzYkVT2B56FFE4KM5BOtvISmY6FzkxlbFx3GEOQILYmzhCs5Hnj+MqevkpSUp0UkomQLbGsCrfn5Av5dh2EOAcG8WLa3s6DEyzqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKJkOO4G; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708539737; c=relaxed/simple;
+	bh=633I1E2LHcb6ImHJ2+htpqw4h6Bkm0555N9hxRvvXVA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r03CetstfPHjp2CtqiGdSsCuovOxRh1x5TgBSeHK9OqLNAtFIfGMX3HNP8+M9iylMdX9J97QHxS8a6aPiz/6koGTr3++t6FxNwhjO5ueGjJ2bEK+8gdvXP25f1dSxH47qaCP+dITYeRHHaCLzsdQXuFdiIcjxc07Ro4R22/506I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GXgPn8V2; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKJkOO4G"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7B789C4167D;
-	Wed, 21 Feb 2024 16:41:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708533681;
-	bh=9m5EheU4d2kYLN7XPOS+yJFs0DWkYRSbnky/8bpWpQE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=OKJkOO4GYmDAFmWIHPp6UL2WwmCelBK6S+cDKXicr75El5ynu0V8kdHQxlWqDPuNh
-	 AJMrqMvp4p+LMF+woJ4/NSw0HHchTA3hRHEqBMCGt9kpp6OObsiZoQXCaSxRBpmtc1
-	 LyUiBjpV6DOh3Sj/SweUBPEaUKEMRsthOjTV2cSwalwQ3hE2qmojIR7Zjyfm8oxrg1
-	 aPkR0XyXQb7Aqrk4nbe2jYOLnaMOxfns4ORp0TEMQcvJ49V8MZkPA3b0XBrA/M7uC8
-	 3IffJyT0dne4G+RKbPqhEu5542msefqrK2iyCkdochBBYuUCXJPmW/o0//zVlCjHXX
-	 /3Rvu8g58gXnw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C795C48BEB;
-	Wed, 21 Feb 2024 16:41:21 +0000 (UTC)
-From: Yang Xiwen via B4 Relay <devnull+forbidden405.outlook.com@kernel.org>
-Date: Thu, 22 Feb 2024 00:41:10 +0800
-Subject: [PATCH v3 7/8] dt-bindings: clock: hisilicon: add clock
- definitions for Hi3798MV200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GXgPn8V2"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EE27F1C0008;
+	Wed, 21 Feb 2024 18:22:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1708539732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IpJVacaKh6VV2SUgh3k36CE+SCXTY9oO9NzwW+GWlw4=;
+	b=GXgPn8V29n+V5DRd0NScpfGpzzyV+HzmMjfrDgeIGeud9ZSQbXP0bDWj2vEFfcjPrhrSsY
+	CvS4b1qFLMMsjgobGY6J7fd8abiCTTvSJJN38x2uflDdTupvZ3pwDrgJ/IpjfhtcNIKhAG
+	XYThlSBr5lTMBUSUuXvqL3INC+4gJG8MkocIJr8DYvXvsNsIzo6ajNebzuFe45mnT09sdW
+	COreEE5VIrNhLxtr61zSRdwCtzUg9Vxt4ctWKpbhNgTegwMdaFeeW42AT7BL7QunEywXBq
+	3bCVO0QlLjd+0+iDDVHMq0TEMLZOCtRSCrCPcXTv0IhwmveP3rVjPiXD5XY16g==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v7 00/14] Add support for Mobileye EyeQ5 system controller
+Date: Wed, 21 Feb 2024 19:22:08 +0100
+Message-Id: <20240221-mbly-clk-v7-0-31d4ce3630c3@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,224 +39,259 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240222-clk-mv200-v3-7-f30795b50318@outlook.com>
-References: <20240222-clk-mv200-v3-0-f30795b50318@outlook.com>
-In-Reply-To: <20240222-clk-mv200-v3-0-f30795b50318@outlook.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFA/1mUC/3XQwU7EIBAG4FfZcBYzwwAFT76H8QAUXGK3Ne2mc
+ bPpu0vXmLJWDxyG8P38cGVTHHOc2NPhysY45ykPfRmahwMLR9e/RZ7bMjMBgrAsfvLdhYfunZs
+ mRBWExASGleMfY0z58xb18lrmY57Ow3i5Jc+47n6HIMEWMiMHbrRPiLZpkeKzH4Zzl/vHMJzW1
+ H+Ipwiq1d766P4kAs0vImXpKxFMAn1H1rKz2AoK0VRUFOrKXV5TIANpT+mHSsD6g2YqlKzwgOC
+ NMLinsqKEFZXrG0MLoBBa7WBP1UYF2IqqQhNYGaOKFo3bU11RFBXVhQapk8NkyZC9p8uyfAGc6
+ bReLwIAAA==
+To: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Yang Xiwen <forbidden405@outlook.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1708533664; l=8314;
- i=forbidden405@outlook.com; s=20230724; h=from:subject:message-id;
- bh=/Zx9rOJCxdEvcDD/AuxMNiUuDXM5Wsl3T+6VUT3KaKI=;
- b=whs7v2aNA0BTocw7m1gSeDckVZqWdslWxZg7LAUDiTwV3Or3n/F14jLDBLokICyKG1Hx0CBeu
- GPdhxQR2L/OBcgDENNwEr4ZpvlDRaBgSi2O3tpYPQN+SGk99X1gYG6U
-X-Developer-Key: i=forbidden405@outlook.com; a=ed25519;
- pk=qOD5jhp891/Xzc+H/PZ8LWVSWE3O/XCQnAg+5vdU2IU=
-X-Endpoint-Received:
- by B4 Relay for forbidden405@outlook.com/20230724 with auth_id=67
-X-Original-From: Yang Xiwen <forbidden405@outlook.com>
-Reply-To: <forbidden405@outlook.com>
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Rob Herring <robh@kernel.org>
+X-Mailer: b4 0.13.0
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-From: Yang Xiwen <forbidden405@outlook.com>
+Hi,
 
-Add clock definitions for core CRG and mcu CRG for Hi3798MV200 SoC.
+The goal of this series is to add clk, reset and pinctrl support for the
+Mobileye EyeQ5 platform [0]. Control of those is grouped inside a
+system controller block called "OLB".
 
-Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
+About clocks, we replaced the 10 fixed clocks from the initial platform
+support series [0] by 10 read-only fixed-factor PLLs provided by our
+clock driver. We also provide one table-based divider clock for OSPI.
+Two PLLs (for GIC timer & UARTs) are required at of_clk_init() so those
+are registered first, the rest comes at platform device probe.
+
+Resets are split in three domains, all dealt with by the same device.
+They have some behavior differences:
+ - We busy-wait on the first two for hardware LBIST reasons (logic
+   built-in self-test).
+ - Domains 0 & 2 work in a bit-per-reset fashion while domain 1 works in
+   a register-per-reset fashion.
+
+Pin control is about controlling bias, drive strength and muxing. The
+latter allows two functions per pin; the first function is always GPIO
+while the second one is pin-dependent. There exists two banks, both
+handled by a single driver instance. Each pin maps to one pin group.
+That makes pin & group indexes the same, simplifying logic.
+
+The patch adding the system-controller dt-bindings ("dt-bindings: soc:
+mobileye: add EyeQ5 OLB system controller") is dependent on the three
+controllers dt-bindings:
+ - dt-bindings: clock: mobileye,eyeq5-clk: add bindings
+ - dt-bindings: reset: mobileye,eyeq5-reset: add bindings
+ - dt-bindings: pinctrl: mobileye,eyeq5-pinctrl: add bindings
+
+The parent is v6.8-rc5 with both [1] and [0] series applied on top. Both
+series are in mips-next [2].
+
+Here is the patch list, split by subsystems:
+
+- clk:
+   [PATCH v7 01/14] clk: fixed-factor: add optional accuracy support
+   [PATCH v7 02/14] clk: fixed-factor: add fwname-based constructor functions
+   [PATCH v7 03/14] dt-bindings: clock: mobileye,eyeq5-clk: add bindings
+   [PATCH v7 07/14] clk: eyeq5: add platform driver, and init routine at of_clk_init()
+- pinctrl:
+   [PATCH v7 05/14] dt-bindings: pinctrl: mobileye,eyeq5-pinctrl: add bindings
+   [PATCH v7 09/14] pinctrl: eyeq5: add platform driver
+- reset:
+   [PATCH v7 04/14] dt-bindings: reset: mobileye,eyeq5-reset: add bindings
+   [PATCH v7 08/14] reset: eyeq5: add platform driver
+- MIPS: (note: dependent on the [0] series)
+   [PATCH v7 06/14] dt-bindings: soc: mobileye: add EyeQ5 OLB system controller
+   [PATCH v7 10/14] MAINTAINERS: Map OLB files to Mobileye SoCs
+   [PATCH v7 11/14] MIPS: mobileye: eyeq5: add OLB syscon node
+   [PATCH v7 12/14] MIPS: mobileye: eyeq5: use OLB clocks controller node
+   [PATCH v7 13/14] MIPS: mobileye: eyeq5: add OLB reset controller node
+   [PATCH v7 14/14] MIPS: mobileye: eyeq5: add pinctrl node & pinmux function nodes
+
+Thanks all for the previous feedback!
+
+Have a nice day,
+Théo Lebrun
+
+[0]: https://lore.kernel.org/lkml/20240216174227.409400-1-gregory.clement@bootlin.com/
+[1]: https://lore.kernel.org/linux-mips/20240209-regname-v1-0-2125efa016ef@flygoat.com/
+[2]: https://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/log/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- .../dt-bindings/clock/hisilicon,hi3798mv200-crg.h  | 150 +++++++++++++++++++++
- .../clock/hisilicon,hi3798mv200-sysctrl.h          |  21 +++
- 2 files changed, 171 insertions(+)
+Changes in v7:
+- pinctrl: use dev_err_probe() and lower first letter of messages.
+- Move all MAINTAINERS changes to a separate patch aimed at the MIPS
+  tree. This means clk/reset/pinctrl can take patches independently.
+- Apply two Reviewed-by: Linus Walleij.
+- Link to v6: https://lore.kernel.org/r/20240212-mbly-clk-v6-0-c46fa1f93839@bootlin.com
 
-diff --git a/include/dt-bindings/clock/hisilicon,hi3798mv200-crg.h b/include/dt-bindings/clock/hisilicon,hi3798mv200-crg.h
-new file mode 100644
-index 000000000000..bf6b6b855724
---- /dev/null
-+++ b/include/dt-bindings/clock/hisilicon,hi3798mv200-crg.h
-@@ -0,0 +1,150 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2024 Yang Xiwen <forbidden405@outlook.com>
-+ */
-+
-+#ifndef __DTS_HI3798MV200_CRG_H
-+#define __DTS_HI3798MV200_CRG_H
-+
-+/* clocks provided by core CRG */
-+#define HI3798MV200_OSC_CLK			0
-+#define HI3798MV200_APB_CLK			1
-+#define HI3798MV200_AHB_CLK			2
-+#define HI3798MV200_APLL_CLK			3
-+#define HI3798MV200_BPLL_CLK			4
-+#define HI3798MV200_DPLL_CLK			5
-+#define HI3798MV200_VPLL_CLK			6
-+#define HI3798MV200_HPLL_CLK			7
-+#define HI3798MV200_EPLL_CLK			8
-+#define HI3798MV200_QPLL_CLK			9
-+#define HI3798MV200_PERI_DIV_CLK		10
-+#define HI3798MV200_CORE_BUS_CLK                11
-+#define HI3798MV200_MDE0_BUS_CLK                12
-+#define HI3798MV200_MDE1_BUS_CLK                13
-+#define HI3798MV200_MDE2_BUS_CLK                14
-+#define HI3798MV200_MDE3_BUS_CLK                15
-+/* UART1 does not exist */
-+#define HI3798MV200_UART2_CLK			16
-+#define HI3798MV200_UART3_CLK			17
-+#define HI3798MV200_I2C0_CLK			18
-+#define HI3798MV200_I2C1_CLK			19
-+#define HI3798MV200_I2C2_CLK			20
-+#define HI3798MV200_SPI0_CLK			21
-+#define HI3798MV200_SCI0_CLK			22
-+#define HI3798MV200_SCI1_CLK			23
-+#define HI3798MV200_VDH_CLK                     24
-+#define HI3798MV200_VDH_DSP_CLK                 25
-+#define HI3798MV200_JPGD_CLK                    26
-+#define HI3798MV200_PGD_CLK                     27
-+#define HI3798MV200_BPD_CLK                     28
-+#define HI3798MV200_VENV_CLK                    29
-+#define HI3798MV200_VENV_AXI_CLK                30
-+#define HI3798MV200_JPGE_CLK                    31
-+#define HI3798MV200_TDE_CLK                     32
-+#define HI3798MV200_SDIO0_BIU_CLK		33
-+#define HI3798MV200_SDIO0_CIU_CLK		34
-+#define HI3798MV200_SDIO0_DRV_CLK		35
-+#define HI3798MV200_SDIO0_SAMPLE_CLK		36
-+#define HI3798MV200_MMC_BIU_CLK			37
-+#define HI3798MV200_MMC_CIU_CLK			38
-+#define HI3798MV200_MMC_DRV_CLK			39
-+#define HI3798MV200_MMC_SAMPLE_CLK		40
-+#define HI3798MV200_SATA_CLK                    41
-+#define HI3798MV200_SATA_RX_CLK                 42
-+#define HI3798MV200_SATA_CKO_ALIVE_CLK          43
-+#define HI3798MV200_SATA_TX_CLK                 44
-+#define HI3798MV200_USB3_BUS_CLK		45
-+#define HI3798MV200_USB3_REF_CLK		46
-+#define HI3798MV200_USB3_SUSPEND_CLK		47
-+#define HI3798MV200_USB3_PIPE_CLK		48
-+#define HI3798MV200_USB3_UTMI_CLK		49
-+#define HI3798MV200_USB3_GS_CLK			50
-+#define HI3798MV200_USB3_GM_CLK			51
-+#define HI3798MV200_USB2_BUS_CLK		52
-+#define HI3798MV200_USB2_48M_CLK		53
-+#define HI3798MV200_USB2_12M_CLK		54
-+#define HI3798MV200_USB2_OTG_UTMI_CLK		55
-+#define HI3798MV200_USB2_HST_PHY_CLK		56
-+#define HI3798MV200_USB2_UTMI0_CLK		57
-+#define HI3798MV200_USB2_UTMI1_CLK		58
-+#define HI3798MV200_USB2_PHY1_REF_CLK		59
-+#define HI3798MV200_USB2_PHY2_REF_CLK		60
-+#define HI3798MV200_SHA0_CLK                    61
-+#define HI3798MV200_SHA1_CLK                    62
-+#define HI3798MV200_PMC_CLK                     63
-+#define HI3798MV200_GSF_CLK                     64
-+#define HI3798MV200_GMAC_CLK                    65
-+#define HI3798MV200_EXT_NETPHY_CLK              66
-+#define HI3798MV200_ETH_BUS_CLK                 67
-+#define HI3798MV200_ETH_CLK                     68
-+#define HI3798MV200_GPU_CLK                     69
-+#define HI3798MV200_VO_BUS                      70
-+#define HI3798MV200_VO_SD                       71
-+#define HI3798MV200_VO_SDATE                    72
-+#define HI3798MV200_VDAC_CH0_CLK                73
-+#define HI3798MV200_VO_HD                       74
-+#define HI3798MV200_VDP_CLK                     75
-+#define HI3798MV200_VDP_CFG_CLK                 76
-+#define HI3798MV200_VPSS_CLK                    77
-+#define HI3798MV200_PVR_BUS_CLK                 78
-+#define HI3798MV200_PVR_DMX_CLK                 79
-+#define HI3798MV200_PVR_27M_CLK                 80
-+#define HI3798MV200_PVR_TSI1_CLK                81
-+#define HI3798MV200_PVR_TSI2_CLK                82
-+#define HI3798MV200_PVR_TSI3_CLK                83
-+#define HI3798MV200_PVR_TSI4_CLK                84
-+#define HI3798MV200_PVR_TS0_CLK                 85
-+#define HI3798MV200_PVR_TSOUT0_CLK              86
-+#define HI3798MV200_HDMITX_SSC_CLK              87
-+#define HI3798MV200_HDMITX_SSC_BYPASS_CLK       88
-+#define HI3798MV200_HDMITX_CTRL_24M_CLK         89
-+#define HI3798MV200_HDMITX_CTRL_CEC_CLK         90
-+#define HI3798MV200_HDMITX_CTRL_60M_CLK         91
-+#define HI3798MV200_HDMITX_CTRL_AS_CLK          92
-+#define HI3798MV200_HDMITX_PHY_TMDS_CLK         93
-+#define HI3798MV200_ADAC_CLK                    94
-+#define HI3798MV200_AIAO_CLK                    95
-+#define HI3798MV200_VDAC_CHOP_CLK               96
-+#define HI3798MV200_WDG0_CLK                    97
-+#define HI3798MV200_COMBPHY_CLK			98
-+#define HI3798MV200_PCIE_BUS_CLK		99
-+#define HI3798MV200_PCIE_SYS_CLK		100
-+#define HI3798MV200_PCIE_PIPE_CLK		101
-+#define HI3798MV200_PCIE_AUX_CLK		102
-+#define HI3798MV200_SDIO1_BIU_CLK		103
-+#define HI3798MV200_SDIO1_CIU_CLK		104
-+#define HI3798MV200_SDIO1_DRV_CLK		105
-+#define HI3798MV200_SDIO1_SAMPLE_CLK		106
-+#define HI3798MV200_VENC_SMMU_CLK               107
-+#define HI3798MV200_TDE_SMMU_CLK                108
-+#define HI3798MV200_JPGD_SMMU_CLK               109
-+#define HI3798MV200_VDH_SMMU_CLK                110
-+#define HI3798MV200_VDP_SMMU_CLK                111
-+#define HI3798MV200_VPSS_SMMU_CLK               112
-+#define HI3798MV200_PGD_SMMU_CLK                113
-+#define HI3798MV200_VO_BP_CLK                   114
-+#define HI3798MV200_VDP_G4_CLK                  115
-+#define HI3798MV200_VDP_V3_CLK                  116
-+#define HI3798MV200_VDP_SD_CLK                  117
-+#define HI3798MV200_VDP_WBC_CP_CLK              118
-+#define HI3798MV200_VDP_WBC_GP_CLK              119
-+#define HI3798MV200_VDP_WBC_HD_CLK              120
-+#define HI3798MV200_VDP_G3_CLK                  121
-+#define HI3798MV200_VDP_G1_CLK                  122
-+#define HI3798MV200_VDP_G0_CLK                  123
-+#define HI3798MV200_VDP_V1_CLK                  124
-+#define HI3798MV200_VDP_V0_CLK                  125
-+#define HI3798MV200_VDP_HD_CLK                  126
-+#define HI3798MV200_CIPHER_SMMU_CLK             127
-+#define HI3798MV200_FMC_CLK			128
-+#define HI3798MV200_FEPHY_CLK			129
-+#define HI3798MV200_DMAC_CLK			130
-+#define HI3798MV200_GZIP_CLK                    131
-+#define HI3798MV200_GZIP_AXI_CLK                132
-+#define HI3798MV200_GZIP_APB_CLK                133
-+#define HI3798MV200_PM_CLK                      134
-+#define HI3798MV200_FRACDIV_CLK			135
-+
-+#define HI3798MV200_CRG_CLK_COUNT		136
-+
-+#endif	/* __DTS_HI3798MV200_CRG_H */
-diff --git a/include/dt-bindings/clock/hisilicon,hi3798mv200-sysctrl.h b/include/dt-bindings/clock/hisilicon,hi3798mv200-sysctrl.h
-new file mode 100644
-index 000000000000..82411d28a8c7
---- /dev/null
-+++ b/include/dt-bindings/clock/hisilicon,hi3798mv200-sysctrl.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2024 Yang Xiwen <forbidden405@outlook.com>
-+ */
-+
-+#ifndef __DTS_HI3798MV200_SYSCTRL_H
-+#define __DTS_HI3798MV200_SYSCTRL_H
-+
-+/* clocks provided by mcu CRG */
-+#define HI3798MV200_MCU_BUS_CLK			0
-+#define HI3798MV200_MCE_CLK			1
-+#define HI3798MV200_IR_CLK			2
-+#define HI3798MV200_TIMER01_CLK			3
-+#define HI3798MV200_LEDC_CLK			4
-+#define HI3798MV200_UART0_CLK			5
-+#define HI3798MV200_WIFI_CLK			6
-+#define HI3798MV200_LSADC_CLK			7
-+
-+#define HI3798MV200_SYSCTRL_CLK_COUNT		8
-+
-+#endif	/* __DTS_HI3798MV200_SYSCTRL_H */
+Changes in v6:
+- bindings/clk: remove minItems in reg.
+- bindings/reset: remove minItems in reg.
+- bindings/syscon: unify quotes (use single quotes everywhere).
+- bindings: apply three Reviewed-By tags from Krzysztof.
+- Rebased onto v6.8-rc5. No related changes. Tested on EyeQ5 hardware.
+- Link to v5: https://lore.kernel.org/r/20240209-mbly-clk-v5-0-f094ee5e918a@bootlin.com
 
+Changes in v5:
+- pinctrl: fix pin/offset distinction, add eq5p_pin_to_offset() helper,
+  rename eq5p_pin_offset_to_bank() to eq5p_pin_to_bank(), rename
+  eq5p_readl_bit() to eq5p_test_bit(), remove old <linux/mfd/syscon.h>
+  include, add defensive check in eq5p_test_bit().
+- dt-bindings/MIPS: OLB example (dt-bindings) and devicetree: fix
+  ordering of nodes and properties, fix register casing.
+- dt-bindings: add pin group node example to OLB dt-bindings.
+- MIPS: squashed "MIPS: mobileye: eyeq5: add reset properties to UARTs"
+  into "MIPS: mobileye: eyeq5: add OLB reset controller node".
+- MIPS: squashed "MIPS: mobileye: eyeq5: add pinctrl properties to UART
+  nodes" into "MIPS: mobileye: eyeq5: add pinctrl node & pinmux
+  function nodes".
+- MIPS: rebased onto V7 of [0], meaning we now introduce the OLB syscon
+  node in DT in this series rather than modifying it.
+- Apply Reviewed-by from Rob onto "dt-bindings: pinctrl:
+  mobileye,eyeq5-pinctrl: add bindings".
+- dt-bindings: Drop "dt-bindings: pinctrl: allow pin controller device
+  without unit address".
+- dt-bindings: I did NOT apply Krzysztof's Reviewed-By trailers from v3
+  as I am not sure he acked the changes made in V4.
+- Link to v4: https://lore.kernel.org/r/20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com
+
+Changes in v4:
+- Have the three drivers access MMIO directly rather than through the
+  syscon & regmap.
+- pinctrl: Make the pin controller handle both banks using a single
+  instance.
+- pinctrl/dt-bindings: Add if/else for each function, to strictly define
+  possible functions.
+- clk: Changing to direct MMIO means we can use
+  clk_hw_register_divider_table_parent_hw() for the OSPI table-based
+  divider clock.
+- Use builtin_platform_driver() for platform driver registering instead
+  of manual initcalls.
+- reset: follow Philipp & Krzysztof's feedback:
+  - Use container_of() to get private struct.
+  - Use '_withlock' suffix instead of the underscore prefix.
+  - Use udelay() instead of the non-standard __udelay().
+  - Remove useless checks.
+  - Use mutex guards.
+  - Remove the ->reset() implementation.
+  - Use devres variants for kzalloc() and reset_controller_register().
+- Other small changes following feedback from reviewers. dt-bindings
+  whitespace for pinctrl.yaml, fix pinctrl driver dt-bindings
+  description, improve clk driver commit header, etc.
+- Link to v3: https://lore.kernel.org/r/20240123-mbly-clk-v3-0-392b010b8281@bootlin.com
+
+Changes in v3:
+- Unified the three series into one.
+- clk: split driver into two for clocks registered at of_clk_init() and
+  clocks registered at platform device probe.
+- reset/bindings: drop reset dt-bindings header & add comment in driver
+  to document known valid resets in each domain.
+- pinctrl/bindings: fix pinctrl.yaml to allow non unit addresses for pin
+  controller devices.
+- all/bindings: remove possibility to use `mobileye,olb` phandle to get
+  syscon. All three drivers use their parent node as syscon/regmap.
+- MIPS/bindings: fix bindings for OLB. Have single example in parent,
+  removing all examples in child.
+- all: drop the "probed" logs.
+- Link to v2: https://lore.kernel.org/r/20231227-mbly-clk-v2-0-a05db63c380f@bootlin.com
+
+Changes in v2:
+- Drop [PATCH 1/5] that was taken by Stephen for clk-next.
+- Add accuracy support to fixed-factor that is enabled with a flag.
+  Register prototypes were added to exploit this feature.
+- Add fw_name support to fixed-factor. This allows pointing to parent
+  clocks using the value in `clock-names` in the DT. Register
+  prototypes were added for that.
+- Bindings were modified to be less dumb: a binding was added for OLB
+  and the clock-controller is a child property of it. Removed the
+  possibility of pointing to OLB using a phandle. $nodename is the
+  generic `clock-controller` and not custom `clocks`. Fix dt-bindings
+  examples.
+- Fix commit message for the driver patch. Add details, remove useless
+  fluff.
+- Squash both driver commits together.
+- Declare a platform_driver instead of using CLK_OF_DECLARE_DRIVER. This
+  also means using `dev_*` for logging, removing `pr_fmt`. We add a
+  pointer to device in the private structure.
+- Use fixed-factor instead of fixed-rate for PLLs. We don't grab a
+  reference to the parent clk, instead using newly added fixed-factor
+  register prototypes and fwname.
+- NULL is not an error when registering PLLs anymore.
+- Now checking the return value of of_clk_add_hw_provider for errors.
+- Fix includes.
+- Remove defensive conditional at start of eq5c_pll_parse_registers.
+- Rename clk_hw_to_ospi_priv to clk_to_priv to avoid confusion: it is
+  not part of the clk_hw_* family of symbols.
+- Fix negative returns in eq5c_ospi_div_set_rate. It was a typo
+  highlighted by Stephen Boyd.
+- Declare eq5c_ospi_div_ops as static.
+- In devicetree, move the OLB node prior to the UARTs, as platform
+  device probe scheduling is dependent on devicetree ordering. This is
+  required to declare the driver as a platform driver, else it
+  CLK_OF_DECLARE_DRIVER is required.
+- In device, create a core0-timer-clk fixed clock to feed to the GIC
+  timer. It requires a clock earlier than platform bus type init.
+- Link to v1: https://lore.kernel.org/r/20231218-mbly-clk-v1-0-44ce54108f06@bootlin.com
+
+---
+Théo Lebrun (14):
+      clk: fixed-factor: add optional accuracy support
+      clk: fixed-factor: add fwname-based constructor functions
+      dt-bindings: clock: mobileye,eyeq5-clk: add bindings
+      dt-bindings: reset: mobileye,eyeq5-reset: add bindings
+      dt-bindings: pinctrl: mobileye,eyeq5-pinctrl: add bindings
+      dt-bindings: soc: mobileye: add EyeQ5 OLB system controller
+      clk: eyeq5: add platform driver, and init routine at of_clk_init()
+      reset: eyeq5: add platform driver
+      pinctrl: eyeq5: add platform driver
+      MAINTAINERS: Map OLB files to Mobileye SoCs
+      MIPS: mobileye: eyeq5: add OLB syscon node
+      MIPS: mobileye: eyeq5: use OLB clocks controller node
+      MIPS: mobileye: eyeq5: add OLB reset controller node
+      MIPS: mobileye: eyeq5: add pinctrl node & pinmux function nodes
+
+ .../bindings/clock/mobileye,eyeq5-clk.yaml         |  51 ++
+ .../bindings/pinctrl/mobileye,eyeq5-pinctrl.yaml   | 242 +++++++++
+ .../bindings/reset/mobileye,eyeq5-reset.yaml       |  43 ++
+ .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  |  94 ++++
+ MAINTAINERS                                        |   8 +
+ .../{eyeq5-fixed-clocks.dtsi => eyeq5-clocks.dtsi} |  54 +-
+ arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi        | 125 +++++
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  42 +-
+ drivers/clk/Kconfig                                |  11 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-eyeq5.c                            | 289 +++++++++++
+ drivers/clk/clk-fixed-factor.c                     | 103 +++-
+ drivers/pinctrl/Kconfig                            |  15 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-eyeq5.c                    | 577 +++++++++++++++++++++
+ drivers/reset/Kconfig                              |  12 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-eyeq5.c                        | 342 ++++++++++++
+ include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  22 +
+ include/linux/clk-provider.h                       |  26 +-
+ 20 files changed, 2003 insertions(+), 56 deletions(-)
+---
+base-commit: 96ba7d34f557251d2416ff93c205003eba3cf3db
+change-id: 20231023-mbly-clk-87ce5c241f08
+
+Best regards,
 -- 
-2.43.0
+Théo Lebrun <theo.lebrun@bootlin.com>
 
