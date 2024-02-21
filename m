@@ -1,99 +1,157 @@
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693217CF0F;
-	Wed, 21 Feb 2024 16:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D7E79DAE;
+	Wed, 21 Feb 2024 16:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708531725; cv=none; b=L6gckjtGF/gPJrGToby9VZZqlJ3ftZUEpHEk5LAyGroMUChc4SEOHK+vd5GgAZEctE9bqWsoUeTS+/k+m5or0zL3oK5iy63DwhkpWk0AQTEr0hwfcrzAFXgNUC491JFa1IZ7PL1tnykZ9i7lDYZL7naWtzjrvTJbbVDv6RDZaDM=
+	t=1708533681; cv=none; b=G09L3rnymfBJ+QGK9YehSYfz6DRJbgGl1DVY/KLHWDNJ86djIZ0a6uTAR7r0DIsb3QcmCDNUnaJ5fk6liONsvfflUzZ6FA0STyROPhC1Ab60xvZ+I9lJHk/Yv1JO3Qdsw5fh7kv/+mRwpiiP7Ad1CoznfZFNQzx0CWhuXglp0Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708531725; c=relaxed/simple;
-	bh=agprbSGbPZoCczSp1znYQDm8799YwPtnW91lWAItujs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=aWCktr9xKenW+qd/MGpP3uXqIpMCB+8pb947m+JoOWBw2r9dJ9XFVN0krswwSNQrFWCpl/TUQy7ORMYpG/7fg6HsxIJDvLxpfDw14jFtxi0877Dwm1W7iysv4KqsWwljVZM5G0ZmYhHHWLQ0cZdnTUHHLvvcsRvwlXh0QDnFz+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pTK8jozu; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1708533681; c=relaxed/simple;
+	bh=X+fk+3XslbjTnKyRgSxAmue6mFFlJmgxgQznW4Xq0rA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Ba5jOdrsV0lhqm2ZPwk3TaimOXPR+qMah904Tv1rWGBam1X4/WMV28D8OeUiN92qFNTf42mHa7jzq7ygG2pi/Jk1HCUCe8gEQ2FFJe6maJWBpGQXfoj1ojFVUUkH/7OOfr4MdovreD9do1arPB9+yz4eKqz5Wea0nIka0CPl1L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RP/ftiom; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pTK8jozu"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4DC042000E;
-	Wed, 21 Feb 2024 16:08:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1708531721;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=agprbSGbPZoCczSp1znYQDm8799YwPtnW91lWAItujs=;
-	b=pTK8jozu8k4/WDxcqFSdFKy72Usic303GcMiSwr16cFPMLB4CKL+kvRqhMFRfQo20IP6fZ
-	2ndTzp11Lb7NnUbXTjPeRhb0M91Ac1ooojzwkzLBam7yCAbuuM00hravHyre2SQGe8MDYx
-	9hE6/hKfkS03iSNnDUZWl8v6D0oq93X7HAf2K/ma1dKUY9ocLQgfcOOjjxR1QTxYPk01DZ
-	eaLTkDn6on9itqPDS9x4WV85Ihm8dH71JsOo6ZXxGIppwx+pbPrM0wEkX+nQt2+AjTgBuT
-	dG8xIa35ZuCAV9Lchrb/RjhQ5hoNN7AcCXqyRiuj2Da/Q7fgps/2SxZRlArYeA==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RP/ftiom"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 39F83C433C7;
+	Wed, 21 Feb 2024 16:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708533681;
+	bh=X+fk+3XslbjTnKyRgSxAmue6mFFlJmgxgQznW4Xq0rA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=RP/ftiomqnenfJJKvEKnXjwk+n89r33RqZ+GmIjqZGEWupqGtH40WAD1wVolJYPr0
+	 voXiLHMRCaxx4xLolZwChucC0QugReyxuxxjk5r7OWavKrQPCIS2JrHujN7SJcor7C
+	 PR4jyKrWTjj8ULnHQCF/hNBPlZfvlPLgtNwaBBFXHP3lRjpDGMFee6de26vQIPdGJz
+	 HjqunMH6hDx5S+Cj/JbJQIDLOX0DY2rrVLfQDLXZVK+XTufqfRz5M557bF55kvIcsJ
+	 cL1Bxz6VO40PcBsY1UygcwtVWNluUEcq8GXUKbINtoF+nlm4YeEjxdKVAyak/fXi+P
+	 R0HIdzw7X7acw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 225A3C5478A;
+	Wed, 21 Feb 2024 16:41:21 +0000 (UTC)
+From: Yang Xiwen via B4 Relay <devnull+forbidden405.outlook.com@kernel.org>
+Date: Thu, 22 Feb 2024 00:41:04 +0800
+Subject: [PATCH v3 1/8] dt-bindings: clock: convert hisi-crg.txt to YAML
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 21 Feb 2024 17:08:40 +0100
-Message-Id: <CZAVY4NPY4H6.1KJI4UPRUM21C@bootlin.com>
-Subject: Re: [PATCH v6 05/13] dt-bindings: pinctrl: mobileye,eyeq5-pinctrl:
- add bindings
-Cc: "Gregory CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh+dt@kernel.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, "Philipp Zabel"
- <p.zabel@pengutronix.de>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, <linux-mips@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, <linux-gpio@vger.kernel.org>, "Rob Herring"
- <robh@kernel.org>
-To: "Linus Walleij" <linus.walleij@linaro.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.15.2
-References: <20240212-mbly-clk-v6-0-c46fa1f93839@bootlin.com>
- <20240212-mbly-clk-v6-5-c46fa1f93839@bootlin.com>
- <CACRpkdYNe=2w10uB1mUgs2Lgg1TRiSF=bOa45OH5Lcz6+G6FEg@mail.gmail.com>
-In-Reply-To: <CACRpkdYNe=2w10uB1mUgs2Lgg1TRiSF=bOa45OH5Lcz6+G6FEg@mail.gmail.com>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240222-clk-mv200-v3-1-f30795b50318@outlook.com>
+References: <20240222-clk-mv200-v3-0-f30795b50318@outlook.com>
+In-Reply-To: <20240222-clk-mv200-v3-0-f30795b50318@outlook.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Yang Xiwen <forbidden405@outlook.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1708533664; l=2410;
+ i=forbidden405@outlook.com; s=20230724; h=from:subject:message-id;
+ bh=e4ZAxJ8Lbk3HDBssdHe1QUVePLSWlZsNs3s4SArOgJI=;
+ b=o0WcTEzhdU8xHqE/WOiTDhMlymGeAJSbT0qbwwa5mbHfJSLvNwLBA6ccO8D9OH4BioeTEAAGN
+ HxVrA4cSw0tBzTfglLHLXYj3jscBdrScWngkPryQiHRP/8l7zCccLUQ
+X-Developer-Key: i=forbidden405@outlook.com; a=ed25519;
+ pk=qOD5jhp891/Xzc+H/PZ8LWVSWE3O/XCQnAg+5vdU2IU=
+X-Endpoint-Received:
+ by B4 Relay for forbidden405@outlook.com/20230724 with auth_id=67
+X-Original-From: Yang Xiwen <forbidden405@outlook.com>
+Reply-To: <forbidden405@outlook.com>
 
-Hello,
+From: Yang Xiwen <forbidden405@outlook.com>
 
-On Wed Feb 21, 2024 at 2:38 PM CET, Linus Walleij wrote:
-> On Mon, Feb 12, 2024 at 2:44=E2=80=AFPM Th=C3=A9o Lebrun <theo.lebrun@boo=
-tlin.com> wrote:
->
-> > Add dt-schema type bindings for the Mobileye EyeQ5 pin controller.
-> >
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->
-> I tried to just apply the pin control patches to the pin control tree, bu=
-t I
-> can't because of all collisions in MAINTAINERS.
->
-> If you move all MAINTAINERS business to the SoC-wide patch I can
-> apply the pin control stuff directly, but maybe you wanna keep the
-> series together and merge on an all-or-nothing basis?
+Also rename to hisilicon,hisi-crg.yaml. While at it, add "syscon" and
+"simple-mfd" compatibles to match the existing dts.
 
-I'm all in for making the series slimmer over time. MAINTAINERS changes
-will be moved.
+Add reset-controller subnode for hisilicon,hi3798cv200-crg to match the
+existing hi3798cv200.dtsi.
 
-Thanks,
+Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
+---
+ .../bindings/clock/hisilicon,hisi-crg.yaml         | 69 ++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/Documentation/devicetree/bindings/clock/hisilicon,hisi-crg.yaml b/Documentation/devicetree/bindings/clock/hisilicon,hisi-crg.yaml
+new file mode 100644
+index 000000000000..2cf21cb5ff27
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/hisilicon,hisi-crg.yaml
+@@ -0,0 +1,69 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/hisilicon,hisi-crg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Hisilicon SOC Clock and Reset Generator (CRG) module
++
++maintainers:
++  - Yang Xiwen <forbidden405@foxmail.com>
++
++description: |
++  Hisilicon SOC clock control module which supports the clocks, resets and
++  power domains on various SoCs.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - hisilicon,hi3516cv300-crg
++          - hisilicon,hi3516cv300-sysctrl
++          - hisilicon,hi3519-crg
++          - hisilicon,hi3798cv200-crg
++          - hisilicon,hi3798cv200-sysctrl
++      - const: syscon
++      - const: simple-mfd
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 2
++    description: |
++      First cell is reset request register offset.
++      Second cell is bit offset in reset request register.
++
++  reset-controller:
++    type: object
++    description: |
++      Reset controller for Hi3798CV200 GMAC module
++
++required:
++  - compatible
++  - '#clock-cells'
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          not:
++            contains:
++              const: hisilicon,hi3798cv200-crg
++    then:
++      properties:
++        reset-controller: false
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-reset-controller@12010000 {
++        compatible = "hisilicon,hi3519-crg", "syscon", "simple-mfd";
++        reg = <0x12010000 0x10000>;
++        #clock-cells = <1>;
++        #reset-cells = <2>;
++    };
 
-------------------------------------------------------------------------
+-- 
+2.43.0
 
