@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042B379D0;
-	Thu, 22 Feb 2024 05:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAD16FBE;
+	Thu, 22 Feb 2024 05:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708578954; cv=none; b=mDHOMDzhByNL+EdShCRFyXBl7WFlHUHto3B2TQ8v4nI2QKgvtYGW/QJQO9xUrJCgoq0Hgza+x2cTMi4B9PIIZwa2EbCR7U1AHnZltjOF+5ufYr9CJSF32K536frGD+8flv+rTtbB5Nx6nTo6a+wunQEYtJoUIA0+ikPIJiQ3b5o=
+	t=1708580175; cv=none; b=mIagZEdbz5Oa5qS4YZl7gs7/Uo3+Us1y3CxZs0c0v+mW9C6yzkCOzjr8fLuU+zfz4nKFAx073Ev4JNUfhYOSdhVB47upHljWA71DvQXK+fv/Bc4NypRfD9uYzwD86PaJUN9sgyfcKrloLj5uyhkqGmfww6g382NWujDuo09fNqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708578954; c=relaxed/simple;
-	bh=dg6U0qZ25gCXqk858bopVDGf9rfG4vTej3zkDRCwC/A=;
+	s=arc-20240116; t=1708580175; c=relaxed/simple;
+	bh=ZKuX5+xYAEWUs36SnlYmDzgNCCJN5ePNHibRbrCTwas=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ixRvkR/MbjBfR5hhEt9pd6R5H9jIASzWRmLJk1E5DS5n5PVv2oTe28fPIhUKbTPCZD0Bce/Ve1GK9JFXM5d+ZWonDutqg8vA6+38ciYJKG/E62yPRBJGPloZqhUceLStSyzYBvza7k5oS9sMNnlrPIuL7bBXWKftIg1MPKS2M5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGnnCNS3; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Ai5BID6OWMG+WAiPjWf9B87ca3nlsPjDcXNd2Tq70KoInW9qTbKBTdUns2fkb0qCqSB6IjGYH3XIvMeZQ+1Rls5q4OQg0gPczZ3VoVFPKm8w6++aQK8J4IA3x5zM8Q9TbnTtSv0tHBsO+HhAkkvT7P+OTICzXHZwVp3tZ01lpA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHs3P6oU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGnnCNS3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68856C43394;
-	Thu, 22 Feb 2024 05:15:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHs3P6oU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1724EC433F1;
+	Thu, 22 Feb 2024 05:36:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708578953;
-	bh=dg6U0qZ25gCXqk858bopVDGf9rfG4vTej3zkDRCwC/A=;
+	s=k20201202; t=1708580175;
+	bh=ZKuX5+xYAEWUs36SnlYmDzgNCCJN5ePNHibRbrCTwas=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=DGnnCNS3dCWCww6KW4/YC2drMrIeD2TAd1rimsesAR6Ob/19ZnT5ixKc1cQHB9Qy7
-	 fXH85WEUzIV0Woyp0FMnjbnrXK5wKj63Mq6Rxq0mlWpUROMCPN3WCCQiCKYIxoqbUh
-	 5mLDu9G0PP6yft/8+o536pVosutxWvUC88CGQRQ4D6skE0UAD+vW0qKdbdpS6rkWQw
-	 l9xPGaz9X9k/1p8DS46OFWiisASpSxyUClzoa9mD2zlVNgD7pxgrss6hr/R6Gd8g2+
-	 39u0PKD0dS736pGeiLrf4ltFc3rShrJ7J5zI78OY+z979LHsz+pIEx4tgUotW37jDo
-	 15BR+fssXPyow==
-Message-ID: <610d7c44517bfe3b218a6d057a08ac7a.sboyd@kernel.org>
+	b=jHs3P6oUk+p4XiiM7mMECNwtjM1DSz1rASSdYy3vsJKO7hDlvDtxjn7o10qCELTsc
+	 wAAKzn7KWLtvBDvJ5rSW8+CCwlWdJYO1o8X6rkiRWUxh8MsWd55i4zKhQHnZTHXQrF
+	 WxtRPDsZnpUlNbbDiFnqUb7TxzLI9FSydAzyNBKDnmy/SlimfIWSBF6RboO9wuei5P
+	 dVKPMhwFkxR3C9zrhvMqp1yPpVlaF7pUZv815lnLgx3C1aN6zlrpnAtkj6PjgAQ873
+	 TJjFHZW1N4am6Ly0bOSEW7ePGV6C8nDJsNbPIs11SnanFXsIwPbppWpZ3FHu6Ghh6b
+	 wYHVHCRxR3UsQ==
+Message-ID: <f2e3fa8683ccb3880fd1852598f0f3df.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,24 +35,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240220084046.23786-2-shradha.t@samsung.com>
-References: <20240220084046.23786-1-shradha.t@samsung.com> <CGME20240220084120epcas5p1e8980539667c3d9da20f49fc645d8f4c@epcas5p1.samsung.com> <20240220084046.23786-2-shradha.t@samsung.com>
-Subject: Re: [PATCH v6 1/2] clk: Provide managed helper to get and enable bulk clocks
+In-Reply-To: <20240216140132.2108665-1-colin.i.king@gmail.com>
+References: <20240216140132.2108665-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] clk: cdce925: Remove redundant assignment to variable 'rate'
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: mturquette@baylibre.com, jingoohan1@gmail.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com, krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, linux@armlinux.org.uk, m.szyprowski@samsung.com, manivannan.sadhasivam@linaro.org, pankaj.dubey@samsung.com, gost.dev@samsung.com, Shradha Todi <shradha.t@samsung.com>
-To: Shradha Todi <shradha.t@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Date: Wed, 21 Feb 2024 21:15:51 -0800
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.i.king@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Date: Wed, 21 Feb 2024 21:36:12 -0800
 User-Agent: alot/0.10
 
-Quoting Shradha Todi (2024-02-20 00:40:45)
-> Provide a managed devm_clk_bulk* wrapper to get and enable all
-> bulk clocks in order to simplify drivers that keeps all clocks
-> enabled for the time of driver operation.
+Quoting Colin Ian King (2024-02-16 06:01:32)
+> The variable 'rate' being assigned a value that is never read, the
+> assignment is redundant and can be removed.
 >=20
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> Cleans up clang scan build warning:
+> drivers/clk/clk-cdce925.c:104:3: warning: Value stored to 'rate' is
+> never read [deadcode.DeadStores]
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
 
 Applied to clk-next
