@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD911775B;
-	Thu, 22 Feb 2024 04:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088AB1388;
+	Thu, 22 Feb 2024 04:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708576055; cv=none; b=dAmWzxPjJXcEkqk8EMEa2F5D+Yv64XRqL9uxibdoA0eF5pbvbxF9bgI5Tbq/MgObje/BeZxnAG0e6UzCFj7Or70foRXYMLg1by4ZD0z/jGqOYZ0Fyx9DGQ0nhFTdY//vibRptvf+YJQPt7AKZU7WSil6nDpjlm1KKZOpaEgPZaQ=
+	t=1708577507; cv=none; b=AR3HG8DHWEBOWrLL7ht9UjB3yU10/36C3ACX8n9NChwVTAEzRTV+Cr3HuPdk8YaejwiXf06xppiCKm6O5GsgA5b71qnvJyHVok+L30W4WpFQgIY1Q7yEg9RbbtpzAEe/x3zsrQbS8gKbhDk4DqTfHYCl8y0CNRauNb2zjegKyv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708576055; c=relaxed/simple;
-	bh=oFSGpvFms3hEQid0nl1slnjolsRI31AFhOlPP3m17wA=;
+	s=arc-20240116; t=1708577507; c=relaxed/simple;
+	bh=Kqm4qtGh5X7VQ2ZIzlQV4yJvQ+ZhC2H7zx2PY73LdsA=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=HGWvfBferquwfSN8yHc0ZnX8CU82xEljaSHTU6RThPINtpQrg/wUQ/03JgvVZNMVT9wur1fReBURl0eGZR0Q1SzD4piqbbQd9D63rSkh4rfHhPhzCIQOdBd9R6wqQYQ288c88VjhyWc58D7N5FamJkERGUwkD/uFD6EB69D3dXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=degz5bbf; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=ptSepewFnPK3XZ/pOBhv4+/EGxMwmFnzc7J5gFcxZu6mkxV3VYNjypXCv2lnx0/osHq/7d2IASGFF1pniuxo0pHMD/kDW/rIAMYsMzxAB5Dc5ffxONyC7vsKTj+HfgFoonPJCL0SaSpUyW+JafDwvUT0dtBl6SVbOUrIeTmLl5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YcQqu2kN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="degz5bbf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A34DBC433F1;
-	Thu, 22 Feb 2024 04:27:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcQqu2kN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89818C433C7;
+	Thu, 22 Feb 2024 04:51:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708576054;
-	bh=oFSGpvFms3hEQid0nl1slnjolsRI31AFhOlPP3m17wA=;
+	s=k20201202; t=1708577506;
+	bh=Kqm4qtGh5X7VQ2ZIzlQV4yJvQ+ZhC2H7zx2PY73LdsA=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=degz5bbfCmTaX8+5xbK3rWriaahvDIWKfVNKagSXqfrDwnJYzezNaMrFgFKzQVhPO
-	 OXlyXwpvl5c2miPkr3w9BXgN/by/UynCS9BaSNGeO2fC6O18AAYU8SsqSLGdcqlao0
-	 SMabx0q4vSAu82azyCa1AOq5qfnqbej1qBz7pz7ji1T3RRZTmi5kuBUHBs0DTDrGh/
-	 0GX8E9pPELXyU1acG/xtKhEQ4hkTOjzk66sY9Eq/P1wrfKavrZYFUhcebc3kw0whiA
-	 2iYk4dvQkZ51w3wGKLWecb3as1adaWETmS/n6aHcObe+1VaTW4lYCQH0JHzo53/J+3
-	 EwMiMFyKbEAgQ==
-Message-ID: <61113ffd54a32399ebdc31fc1a57912f.sboyd@kernel.org>
+	b=YcQqu2kNN29T3Z51lNh60xwqsX+awcPkZ/MZumOPOcqIigGS17IrY2Ti7kaSaG2Uk
+	 dkiSUP0r6hgqIEIE5tVlNPnxEwVQw9sLskiVekU+ERNuN6SomAfEunI9MSGpH8bXrT
+	 /CWtzElONcF7v+TunxLiH3nNyQdLwVieANCz8oY+anTozViOtQl/G7R+ax3h5Ec6XH
+	 OlivNVgikog5occyxMUlgBhaYf4GBQi66KEAqMiw+0jHAaqTzUWpvJBSLgS6FNHAiI
+	 KxOTAidH3G833mzG5HEVXCyPHyNPFSFx8DwtFN44rjc3d3BBtEojH9e5iZeJ/xiJqj
+	 F02ZZJsDMKdGQ==
+Message-ID: <17ab00b5cbf2b9aefa7ee99daf305f46.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,31 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240121142946.2796-1-erick.archer@gmx.com>
-References: <20240121142946.2796-1-erick.archer@gmx.com>
-Subject: Re: [PATCH] clk: hisilicon: Use devm_kcalloc() instead of devm_kzalloc()
+In-Reply-To: <6cd6af61e5a91598068227f1f68cfcfde1507453.1704615011.git.christophe.jaillet@wanadoo.fr>
+References: <6cd6af61e5a91598068227f1f68cfcfde1507453.1704615011.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] clk: mediatek: mt8135: Fix an error handling path in clk_mt8135_apmixed_probe()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Erick Archer <erick.archer@gmx.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-To: Conor Dooley <conor.dooley@microchip.com>, Dinh Nguyen <dinguyen@kernel.org>, Erick Archer <erick.archer@gmx.com>, Gustavo A. R. Silva <gustavoars@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>, Nick Alcock <nick.alcock@oracle.com>, Rob Herring <robh@kernel.org>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Date: Wed, 21 Feb 2024 20:27:32 -0800
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>
+Date: Wed, 21 Feb 2024 20:51:44 -0800
 User-Agent: alot/0.10
 
-Quoting Erick Archer (2024-01-21 06:29:46)
-> As noted in the "Deprecated Interfaces, Language Features, Attributes,
-> and Conventions" documentation [1], size calculations (especially
-> multiplication) should not be performed in memory allocator (or similar)
-> function arguments due to the risk of them overflowing. This could lead
-> to values wrapping around and a smaller allocation being made than the
-> caller was expecting. Using those allocations could lead to linear
-> overflows of heap memory and other misbehaviors.
+Quoting Christophe JAILLET (2024-01-07 00:12:17)
+> If an error occurs after mtk_alloc_clk_data(), mtk_free_clk_data() should
+> be called, as already done in the remove function.
 >=20
-> So, use the purpose specific devm_kcalloc() function instead of the
-> argument size * count in the devm_kzalloc() function.
->=20
-> Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-c=
-oded-arithmetic-in-allocator-arguments [1]
-> Link: https://github.com/KSPP/linux/issues/162
-> Signed-off-by: Erick Archer <erick.archer@gmx.com>
+> Fixes: 54b7026f011e ("clk: mediatek: mt8135-apmixedsys: Convert to platfo=
+rm_driver and module")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
 
 Applied to clk-next
