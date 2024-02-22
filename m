@@ -1,57 +1,57 @@
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C993224F2
-	for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 03:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635EB20B02
+	for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 03:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708570970; cv=none; b=UBbf5h4XFWP1hN7wwfRhjewNmq14frXhrt3d+s0gHSrfgrKctJ+gm06taN6J5c7fR/qDYhMMWMqsOqXEE6P7yMAhU3ADaTA2X/L/beFOby858mpV57VGYo7g11QeInhIuEXPSOMME2MXClMW9I8L4ITJKhr/Nr9THmoWgYKrRZU=
+	t=1708570971; cv=none; b=QAIbX9AzwAHiWk9Fb3NKaUGakE1jPj2X65FkF/uDSRQl6s+ylWgPQuJzVAJcw6CBlc82NFCyozX8PCepUDPAPoIqzCJUwIp38z4DOTGeUiyNVJHPXZNqoLCJ3d2WbmBfCx2zKuZhkA1s/KdsLM3PFbZDpzNIvSJ+3cHcoXIpm1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708570970; c=relaxed/simple;
-	bh=r6h1NTeFTkbjAGya8zua/jcWtSX1k++dA2oUrhCyAv0=;
+	s=arc-20240116; t=1708570971; c=relaxed/simple;
+	bh=mF6ovrjw7+9sFKQNzXZPHWylrbwz4f8h18NF4imFlcE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nxAuGItieNr0nwbCPPGJVO41DNNZKjSPjFSIkkl4zLk5CrwR6T7iacHlyjhH+sf+9A2PG8wvf/wUwrErnnKaUE4EQCkMMkSC2w+1zfLk5+rJLaXJ5JT8WKHs45R0eU3VufuuYfqYTBFVrZpagQiQA39k6ajOxjVT8y04m184BtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=scZRBduR; arc=none smtp.client-ip=209.85.167.180
+	 MIME-Version; b=IwqatZzhqyeDpwEwlm5BCq8XrQXPL/UB6LV+fgiyBYjKCU2i2vjhR8p1TlndfZiNhwUB9JoECCV+vfBGrDfbA2t9T3k8nOec/gyRsYQ1rA/ishXDRU3X+0uYHPkBXAXkbbTedAQkplRwXXCaHGMyQKTg0kgnn3AecvIV5S4FZO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g8GV2oq0; arc=none smtp.client-ip=209.85.160.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="scZRBduR"
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3c0467b94c6so4628780b6e.0
-        for <linux-clk@vger.kernel.org>; Wed, 21 Feb 2024 19:02:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g8GV2oq0"
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-21e6be74db4so3404527fac.2
+        for <linux-clk@vger.kernel.org>; Wed, 21 Feb 2024 19:02:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708570967; x=1709175767; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708570965; x=1709175765; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7FVV9XkzNkckGF5r8p15gninEMa0F9j2UMwTU7X9t5U=;
-        b=scZRBduRa515C5gQ60zOEJASctFC4+FOyPMXT6OFTaWZQO0PNNlZIiFTHlD3b5spHU
-         o3uMSi7tWHsEhcUkWauWZXFGdI0F8Ef0g/X7VgrcM2789owNsubqrHKmH23xTDXYAGjv
-         T+Tl8+5oCOuXizo752X8sSyWGggGClU3LZyQ4+tsdZyLo8cX4DWurdvtNQ5Cr8TM7OOS
-         ph9b6zCZGRBylEhfYCp+I3ObpQGSwKNjYMle6jiM4Z0ISzKv722DHtzDLc/moZitLJ/S
-         P8RhQYG2BIlJp/EHA0j5AofZuUqbxhae+ohNzi2D2yYZKBd/avhcB3GV9i0Ko7gspTQo
-         a4uA==
+        bh=Gr/yHix3JzjuluFq1TtfZCC5Pd9Qq4G1cyD4GVYOtnc=;
+        b=g8GV2oq0OafQLL8s5jXqterG++eOEomrUj6w5eQ8McKLidRxLCFOGC7yh9yRQd7lm1
+         fXNJcjsSjE+G656uPTBK4xLNOv52Ul3ruflQsIu/YJhTUljhfrDD3OBaU0mH3X8lTuHX
+         4Mj6iMIqIf46QFXIUxpGrfNkcECTqrVlKVntamEiZoulzTCfvEXrfxTFbMSkC24L5o5A
+         yM8UDLgNgoclmrD7ZVMC4l1F8ayKWlcSS2WFzOpaI90WBUgLwGXFUKE4SyscvPGamJZm
+         6lxZNBOWjO264uSGoCk1AQheCfLdGs3PlWYFm2T95qEucENqL8GJnlrh3JmcojwRSnYE
+         PnYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708570967; x=1709175767;
+        d=1e100.net; s=20230601; t=1708570965; x=1709175765;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7FVV9XkzNkckGF5r8p15gninEMa0F9j2UMwTU7X9t5U=;
-        b=OPH72ogZozWBRAO0z3cAJz867MhaGRg22vyFNFWi5WGa4Dv0lvseo/8MPrNXIeOXGz
-         E7CsRcX4En560jyNEZf8tS+cs/ngb3srKecYKEE+AANP6xmCIrmMwjeA8Pe/EM6ZGftE
-         kRlZIBTM4oIS6ugWB8xOiyjuCQyOrf0imyTJGSEWUUpRWgtoHL886zyn2ufHBSxcMcwu
-         r4kLvAHjBs6acyXDddyl17Xlp0u0jwHunY5fEJJur8rkVRZ6ow2q4iUk1PuOyBB65jS2
-         g8C6JxP9pgMC9t+MnH0+Pl37syeCeEepkkkfDikslpNYvglLCY8SyMN0PQeBxIEJkOWO
-         DKRw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3PISHeB+YCs7rfQwwD40FxilWqS3Lx/dxkb3sSL/NJ8WfzrjSY6FzfgRDPYJqr0bfr8E3QfFhWQYsrQQPPDCp50eZaVf5drtY
-X-Gm-Message-State: AOJu0YxLbRnJGMPyzzK/eKCcs4gvUkJme6eC/GTFEbjr+J6A32yNpZJ0
-	FemxI5YIzv0h/TSoXr1IazblIr934DeVCn3BuT9cX1LzL0r9HlGj8M7XsNIjfq4=
-X-Google-Smtp-Source: AGHT+IFDqLwUZKoz0hGjxt5wtidJ2c+JHpOH/RWc0W4xfJqMkTkS0kRod9I9+S/Y+Pj5xpFpNXgpIg==
-X-Received: by 2002:a05:6808:1249:b0:3c1:7c2b:8d51 with SMTP id o9-20020a056808124900b003c17c2b8d51mr229612oiv.54.1708570967058;
-        Wed, 21 Feb 2024 19:02:47 -0800 (PST)
+        bh=Gr/yHix3JzjuluFq1TtfZCC5Pd9Qq4G1cyD4GVYOtnc=;
+        b=R8f52C3tojZGh/8dMy7ZTiUv1f7nOZKFi1ToBiu+kAC8slUwndzceJVSAIhDJrTJEt
+         Ffmdt043vEB6pf2U4mBnNuvZHtbqlsmmOKLldtS36g2qtuboHnsa+YgIAq07gu0qgto4
+         aaGTZZLp/eol19xb+aV4nPBVDdMJvrUBNo+sTgwq7m95C7qbfoYjbuIh6gQMeZQQ9PL2
+         H+ww+KfeQlDIBW18h+y7tP1XvrHWmbhLk5IPWwQnjm9mIZPuqCPWFxK40TxquZOHlEjb
+         58w4LP5sbVk7xdn6jY6CkGvjl6iXOHBhWBFK+jCt3brBqxYOVzj15p4huG1hJlYtIO/V
+         VMFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWmrh4Zx0D7NNDrOKMq6y2r8wlZSpX7ISIXzxDodUp4nCyFntp7+V3gaJUoE5PqIRb/RNhpKX6dyWpbNm81YQvLYxy3eHnuAcb
+X-Gm-Message-State: AOJu0YwwO4zYoAgZIpPWRpCQqZzwJUpOrXAa8/L66ihp3xpGyl54sMBa
+	bTmhI7md+VoiUPsyyUYfrQh5l5243dNDfIZxrP/vdqpEdfRctJUlwA5hp8Y2GK0=
+X-Google-Smtp-Source: AGHT+IFHuTnKt7JYDZvxQi+WgqtjmOJmqsoXRWbTXMzeK2gAjybtMBRv5ln2nAtoh8f1dwanim8zMA==
+X-Received: by 2002:a05:6871:1ca:b0:21e:635c:a5b8 with SMTP id q10-20020a05687101ca00b0021e635ca5b8mr17215407oad.26.1708570965242;
+        Wed, 21 Feb 2024 19:02:45 -0800 (PST)
 Received: from localhost ([136.62.192.75])
-        by smtp.gmail.com with ESMTPSA id l26-20020aca191a000000b003c16b1d3862sm640909oii.50.2024.02.21.19.02.46
+        by smtp.gmail.com with ESMTPSA id sk14-20020a056871800e00b0021ec89a1a2asm1937031oab.32.2024.02.21.19.02.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Feb 2024 19:02:46 -0800 (PST)
+        Wed, 21 Feb 2024 19:02:44 -0800 (PST)
 From: Sam Protsenko <semen.protsenko@linaro.org>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -67,9 +67,9 @@ Cc: Alim Akhtar <alim.akhtar@samsung.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/15] clk: samsung: Implement manual PLL control for ARM64 SoCs
-Date: Wed, 21 Feb 2024 21:02:33 -0600
-Message-Id: <20240222030235.27815-14-semen.protsenko@linaro.org>
+Subject: [PATCH v2 11/15] clk: samsung: Pass mask to wait_until_mux_stable()
+Date: Wed, 21 Feb 2024 21:02:31 -0600
+Message-Id: <20240222030235.27815-12-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240222030235.27815-1-semen.protsenko@linaro.org>
 References: <20240222030235.27815-1-semen.protsenko@linaro.org>
@@ -81,160 +81,80 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some ARM64 Exynos chips are capable to control PLL clocks automatically.
-For those chips, whether the PLL is controlled automatically or manually
-is chosen in PLL_CON1 register with next bits:
+Make it possible to use wait_until_mux_stable() for MUX registers where
+the mask is different from MUX_MASK (e.g. in upcoming CPU clock
+implementation for Exynos850).
 
-    [28]  ENABLE_AUTOMATIC_CLKGATING
-    [1]   MANUAL_PLL_CTRL
-    [0]   AUTO_PLL_CTRL
-
-The bl2 bootloader sets 0x10000001 value for some PLL_CON1 registers,
-which means any attempt to control those PLLs manually (e.g.
-disabling/enabling those PLLs or changing MUX parent clocks) would lead
-to PLL lock timeout with error message like this:
-
-    Could not lock PLL ...
-
-At the moment, all Samsung clock drivers implement manual clock control.
-So in order to make it possible to control PLLs, corresponding PLL_CON1
-registers should be set to 0x2 first.
-
-Some older ARM64 chips don't implement the automatic clock control
-though. It also might be desirable to configure some PLLs for manual
-control, while keeping the default configuration for the rest. So it'd
-convenient to choose this PLL mode for each CMU separately. Introduce
-.manual_plls field to CMU structure to choose the PLL control mode.
-Because it'll be initialized with "false" in all existing CMU
-structures by default, it won't affect any existing clock drivers,
-allowing for this feature to be enabled gradually when it's needed with
-no change for the rest of users. In case .manual_plls is set, set
-PLL_CON1 registers to manual control, akin to what's already done for
-gate clocks in exynos_arm64_init_clocks(). Of course, PLL_CON1 registers
-should be added to corresponding struct samsung_cmu_info::clk_regs array
-to make sure they get initialized.
-
-No functional change. This patch adds a feature, but doesn't enable it
-for any users.
+No functional change.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
 Changes in v2:
   - none
 
- drivers/clk/samsung/clk-exynos-arm64.c | 44 +++++++++++++++++---------
- drivers/clk/samsung/clk.h              |  4 +++
- 2 files changed, 33 insertions(+), 15 deletions(-)
+ drivers/clk/samsung/clk-cpu.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
-index 6fb7194df7ab..55490209b9a9 100644
---- a/drivers/clk/samsung/clk-exynos-arm64.c
-+++ b/drivers/clk/samsung/clk-exynos-arm64.c
-@@ -25,6 +25,19 @@
- #define GATE_OFF_START		0x2000
- #define GATE_OFF_END		0x2fff
- 
-+/* PLL CON register offsets range */
-+#define PLL_CON_START		0x100
-+#define PLL_CON_END		0x600
-+
-+/* PLL register bits */
-+#define PLL_CON1_MANUAL		BIT(1)
-+
-+/* Helper macros to check for particular clock regiter by its offset */
-+#define IS_GATE_REG(o)		((o) >= GATE_OFF_START && (o) <= GATE_OFF_END)
-+#define IS_PLL_CONx_REG(o)	((o) >= PLL_CON_START && (o) <= PLL_CON_END)
-+#define IS_PLL_CON1_REG(o)	\
-+	(IS_PLL_CONx_REG(o) && ((o) & 0xf) == 0x4 && !((o) & 0x10))
-+
- struct exynos_arm64_cmu_data {
- 	struct samsung_clk_reg_dump *clk_save;
- 	unsigned int nr_clk_save;
-@@ -40,15 +53,16 @@ struct exynos_arm64_cmu_data {
- 
- /**
-  * exynos_arm64_init_clocks - Set clocks initial configuration
-- * @np:			CMU device tree node with "reg" property (CMU addr)
-- * @reg_offs:		Register offsets array for clocks to init
-- * @reg_offs_len:	Number of register offsets in reg_offs array
-+ * @np:		CMU device tree node with "reg" property (CMU addr)
-+ * @cmu:	CMU data
-  *
-- * Set manual control mode for all gate clocks.
-+ * Set manual control mode for all gate and PLL clocks.
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 93e961855875..89b24fd5d0a9 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -135,16 +135,16 @@ static void wait_until_divider_stable(void __iomem *div_reg, unsigned long mask)
+  * value was changed.
   */
- static void __init exynos_arm64_init_clocks(struct device_node *np,
--		const unsigned long *reg_offs, size_t reg_offs_len)
-+					    const struct samsung_cmu_info *cmu)
+ static void wait_until_mux_stable(void __iomem *mux_reg, u32 mux_pos,
+-				  unsigned long mux_value)
++				  unsigned long mask, unsigned long mux_value)
  {
-+	const unsigned long *reg_offs = cmu->clk_regs;
-+	size_t reg_offs_len = cmu->nr_clk_regs;
- 	void __iomem *reg_base;
- 	size_t i;
+ 	unsigned long timeout = jiffies + msecs_to_jiffies(MAX_STAB_TIME);
  
-@@ -60,14 +74,14 @@ static void __init exynos_arm64_init_clocks(struct device_node *np,
- 		void __iomem *reg = reg_base + reg_offs[i];
- 		u32 val;
+ 	do {
+-		if (((readl(mux_reg) >> mux_pos) & MUX_MASK) == mux_value)
++		if (((readl(mux_reg) >> mux_pos) & mask) == mux_value)
+ 			return;
+ 	} while (time_before(jiffies, timeout));
  
--		/* Modify only gate clock registers */
--		if (reg_offs[i] < GATE_OFF_START || reg_offs[i] > GATE_OFF_END)
--			continue;
--
--		val = readl(reg);
--		val |= GATE_MANUAL;
--		val &= ~GATE_ENABLE_HWACG;
--		writel(val, reg);
-+		if (cmu->manual_plls && IS_PLL_CON1_REG(reg_offs[i])) {
-+			writel(PLL_CON1_MANUAL, reg);
-+		} else if (IS_GATE_REG(reg_offs[i])) {
-+			val = readl(reg);
-+			val |= GATE_MANUAL;
-+			val &= ~GATE_ENABLE_HWACG;
-+			writel(val, reg);
-+		}
- 	}
+-	if (((readl(mux_reg) >> mux_pos) & MUX_MASK) == mux_value)
++	if (((readl(mux_reg) >> mux_pos) & mask) == mux_value)
+ 		return;
  
- 	iounmap(reg_base);
-@@ -177,7 +191,7 @@ void __init exynos_arm64_register_cmu(struct device *dev,
- 		pr_err("%s: could not enable bus clock %s; err = %d\n",
- 		       __func__, cmu->clk_name, err);
+ 	pr_err("%s: re-parenting mux timed-out\n", __func__);
+@@ -249,7 +249,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+ 	/* select sclk_mpll as the alternate parent */
+ 	mux_reg = readl(base + regs->mux_sel);
+ 	writel(mux_reg | (1 << 16), base + regs->mux_sel);
+-	wait_until_mux_stable(base + regs->mux_stat, 16, 2);
++	wait_until_mux_stable(base + regs->mux_stat, 16, MUX_MASK, 2);
  
--	exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
-+	exynos_arm64_init_clocks(np, cmu);
- 	samsung_cmu_register_one(np, cmu);
- }
+ 	/* alternate parent is active now. set the dividers */
+ 	writel(div0, base + regs->div_cpu0);
+@@ -290,7 +290,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+ 	/* select mout_apll as the alternate parent */
+ 	mux_reg = readl(base + regs->mux_sel);
+ 	writel(mux_reg & ~(1 << 16), base + regs->mux_sel);
+-	wait_until_mux_stable(base + regs->mux_stat, 16, 1);
++	wait_until_mux_stable(base + regs->mux_stat, 16, MUX_MASK, 1);
  
-@@ -224,7 +238,7 @@ int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
- 		       __func__, cmu->clk_name, ret);
+ 	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+ 		div |= (cfg_data->div0 & E4210_DIV0_ATB_MASK);
+@@ -362,7 +362,7 @@ static int exynos5433_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+ 	/* select the alternate parent */
+ 	mux_reg = readl(base + regs->mux_sel);
+ 	writel(mux_reg | 1, base + regs->mux_sel);
+-	wait_until_mux_stable(base + regs->mux_stat, 0, 2);
++	wait_until_mux_stable(base + regs->mux_stat, 0, MUX_MASK, 2);
  
- 	if (set_manual)
--		exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
-+		exynos_arm64_init_clocks(np, cmu);
+ 	/* alternate parent is active now. set the dividers */
+ 	writel(div0, base + regs->div_cpu0);
+@@ -390,7 +390,7 @@ static int exynos5433_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+ 	/* select apll as the alternate parent */
+ 	mux_reg = readl(base + regs->mux_sel);
+ 	writel(mux_reg & ~1, base + regs->mux_sel);
+-	wait_until_mux_stable(base + regs->mux_stat, 0, 1);
++	wait_until_mux_stable(base + regs->mux_stat, 0, MUX_MASK, 1);
  
- 	reg_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(reg_base))
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index a763309e6f12..a70bd7cce39f 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -330,6 +330,7 @@ struct samsung_clock_reg_cache {
-  * @suspend_regs: list of clock registers to set before suspend
-  * @nr_suspend_regs: count of clock registers in @suspend_regs
-  * @clk_name: name of the parent clock needed for CMU register access
-+ * @manual_plls: Enable manual control for PLL clocks
-  */
- struct samsung_cmu_info {
- 	const struct samsung_pll_clock *pll_clks;
-@@ -354,6 +355,9 @@ struct samsung_cmu_info {
- 	const struct samsung_clk_reg_dump *suspend_regs;
- 	unsigned int nr_suspend_regs;
- 	const char *clk_name;
-+
-+	/* ARM64 Exynos CMUs */
-+	bool manual_plls;
- };
- 
- struct samsung_clk_provider *samsung_clk_init(struct device *dev,
+ 	exynos_set_safe_div(cpuclk, div, div_mask);
+ 	spin_unlock_irqrestore(cpuclk->lock, flags);
 -- 
 2.39.2
 
