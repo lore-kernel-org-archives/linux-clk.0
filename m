@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27797462;
-	Thu, 22 Feb 2024 05:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042B379D0;
+	Thu, 22 Feb 2024 05:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708578716; cv=none; b=luwUGLkv4hFbO3Mpvgw1yqY9SDL0lfgzQfBtr2eqg8p9ZxewhldQ2BtdtCTsRiGaLDKx+KWy16Bk240bI/81bEbAUlefhF+iozQ5qscwmuIvvxkJw2VmAQpJsvzPDBfaGePBt3TkgZwjcEoqlAOhcW3qQAz72vO8/f/ure5OBSM=
+	t=1708578954; cv=none; b=mDHOMDzhByNL+EdShCRFyXBl7WFlHUHto3B2TQ8v4nI2QKgvtYGW/QJQO9xUrJCgoq0Hgza+x2cTMi4B9PIIZwa2EbCR7U1AHnZltjOF+5ufYr9CJSF32K536frGD+8flv+rTtbB5Nx6nTo6a+wunQEYtJoUIA0+ikPIJiQ3b5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708578716; c=relaxed/simple;
-	bh=3GN/Xp+CwCVPckrw6i6HLhIzhwF2l3BRHJ0yeWWZE2Q=;
+	s=arc-20240116; t=1708578954; c=relaxed/simple;
+	bh=dg6U0qZ25gCXqk858bopVDGf9rfG4vTej3zkDRCwC/A=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=LgdhTekenmgBjdv4i2Dljaai0MouxwnFCfjblAVsKFWAkXiwNo8V+K71Tecr7UhLoDp7wozmaWhIH459FbVpi1daFwocbXJ+QHsig79SH5H7/sgYMDbf4D9UKmMKZ25RfdOwNzrbd1dpPe+1CDJvQV0d6IjNK0GfnjQffZLUKxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LSqY0f2/; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=ixRvkR/MbjBfR5hhEt9pd6R5H9jIASzWRmLJk1E5DS5n5PVv2oTe28fPIhUKbTPCZD0Bce/Ve1GK9JFXM5d+ZWonDutqg8vA6+38ciYJKG/E62yPRBJGPloZqhUceLStSyzYBvza7k5oS9sMNnlrPIuL7bBXWKftIg1MPKS2M5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGnnCNS3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSqY0f2/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13AC0C433F1;
-	Thu, 22 Feb 2024 05:11:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGnnCNS3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68856C43394;
+	Thu, 22 Feb 2024 05:15:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708578716;
-	bh=3GN/Xp+CwCVPckrw6i6HLhIzhwF2l3BRHJ0yeWWZE2Q=;
+	s=k20201202; t=1708578953;
+	bh=dg6U0qZ25gCXqk858bopVDGf9rfG4vTej3zkDRCwC/A=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=LSqY0f2/GgR8ra4tTWTD+DYASpQf19MMZoIsAHAm3TBTnzAfpi5wJ+NuMPb0F7vqD
-	 QBSyNjKaiSa2pI7VqOmvtcbfEzghicxun/Hml6X6sBomOX9BFM23MFqgYd8EH7Pne0
-	 aNf75sv3ZflB2dfuxnSu/m4szmtpKI75cFvdlv6fIGekZ6VE68FXPbgb/gNbsxYfsn
-	 S3VFuyGbd4hfd3SOC/d8g70Z1mGGht6ItMlHrYSOgCH5647OcI3+5woF6RK0qA3ze0
-	 jqvWE2bdI9uzgXE+OtT/QAfeAm/gvz6NmdR7mEHpdG3M5kw0uZh40QapM/0LJzNF2p
-	 EUF6fs1nb1xPQ==
-Message-ID: <1c1cf894cab0b81ed2af953ec30890ed.sboyd@kernel.org>
+	b=DGnnCNS3dCWCww6KW4/YC2drMrIeD2TAd1rimsesAR6Ob/19ZnT5ixKc1cQHB9Qy7
+	 fXH85WEUzIV0Woyp0FMnjbnrXK5wKj63Mq6Rxq0mlWpUROMCPN3WCCQiCKYIxoqbUh
+	 5mLDu9G0PP6yft/8+o536pVosutxWvUC88CGQRQ4D6skE0UAD+vW0qKdbdpS6rkWQw
+	 l9xPGaz9X9k/1p8DS46OFWiisASpSxyUClzoa9mD2zlVNgD7pxgrss6hr/R6Gd8g2+
+	 39u0PKD0dS736pGeiLrf4ltFc3rShrJ7J5zI78OY+z979LHsz+pIEx4tgUotW37jDo
+	 15BR+fssXPyow==
+Message-ID: <610d7c44517bfe3b218a6d057a08ac7a.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,26 +35,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240213105730.5287-2-tony@atomide.com>
-References: <20240213105730.5287-1-tony@atomide.com> <20240213105730.5287-2-tony@atomide.com>
-Subject: Re: [PATCH 1/4] clk: ti: Handle possible address in the node name
+In-Reply-To: <20240220084046.23786-2-shradha.t@samsung.com>
+References: <20240220084046.23786-1-shradha.t@samsung.com> <CGME20240220084120epcas5p1e8980539667c3d9da20f49fc645d8f4c@epcas5p1.samsung.com> <20240220084046.23786-2-shradha.t@samsung.com>
+Subject: Re: [PATCH v6 1/2] clk: Provide managed helper to get and enable bulk clocks
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Andreas Kemnade <andreas@kemnade.info>, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-To: =?utf-8?q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Tero Kristo <kristo@kernel.org>, Tony Lindgren <tony@atomide.com>
-Date: Wed, 21 Feb 2024 21:11:54 -0800
+Cc: mturquette@baylibre.com, jingoohan1@gmail.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com, krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, linux@armlinux.org.uk, m.szyprowski@samsung.com, manivannan.sadhasivam@linaro.org, pankaj.dubey@samsung.com, gost.dev@samsung.com, Shradha Todi <shradha.t@samsung.com>
+To: Shradha Todi <shradha.t@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Date: Wed, 21 Feb 2024 21:15:51 -0800
 User-Agent: alot/0.10
 
-Quoting Tony Lindgren (2024-02-13 02:56:41)
-> In order to use #address-cells =3D <1> and start making use of the
-> standard reg property, let's prepare things to ignore the possible
-> address in the clock node name.
+Quoting Shradha Todi (2024-02-20 00:40:45)
+> Provide a managed devm_clk_bulk* wrapper to get and enable all
+> bulk clocks in order to simplify drivers that keeps all clocks
+> enabled for the time of driver operation.
 >=20
-> Unless the clock-output-names property is used, the legacy clocks still
-> fall back to matching the clock data based on the node name.
->=20
-> We use cleanup.h to simplify the return path for freeing tmp.
->=20
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
