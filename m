@@ -1,59 +1,59 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD99615B98C
-	for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 18:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3250914B80C
+	for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 18:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708625920; cv=none; b=SXATSV7iS01oI09+OGve1ZM9gbGcl1xNihnEDU6eZVt1BgecaybJGwppRFyNYI/JSoj1Ls14DuREHbSUAlv1fE/QWckI9eNcBTEY5vsnHmYiKmk+gjjcPtW8S2OYTkMqZSRNSHX5b3NL2YWB/C90y5gC9KUcc0s0job8QHTf4Ug=
+	t=1708625960; cv=none; b=eDsBej7IJ431ZZYw9bksKv/wowv37r0eF37djEIUEVkRkp++Gp1kyYyv4z7lBaq84tBLuRLLq+oBm9Io4ZhYbJyodhhOjkUwVZp0+Yt2SayF0ZojnBxwuy/kPGm3H9LY4IC34oLuWz0nG4GZ/rvuKVGgzcIBCyanYwVMrvAew7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708625920; c=relaxed/simple;
-	bh=lKTjjX840ZhP7xXnWdjJ0mssW7wDkPLLNHqkrVKU9Tg=;
+	s=arc-20240116; t=1708625960; c=relaxed/simple;
+	bh=8Lm3P+RDepHiTO8L626GHQbPCca4fo/i8jkGkEUCadY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ggjExLrxeST6Q8eEKjdkWwNsu1YB2xnNE0g5uMTDgbXP2mprRYiXPBqZJPQYv2tRYQFj7C4MwYheJZHE+CTan1ydA3Xaje5pujs3IMcbhcfvMT890k+8jXIhgk+ielXfbevOdMsKbR9hYJEOWPcPSF9Hlt92E7keWKJV7XY/xbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jL8gx44E; arc=none smtp.client-ip=209.85.208.41
+	 In-Reply-To:Content-Type; b=LwNXN7FfuM7O3pdY2r1mKxqpKNxnc9Boi3LWrbVwJ/qVpwmREY17TTQ097+aebDL6FJCa8u19deHagLpUKqejqUmqF3ohKGfFb/Wj8mUoFKZiWzr7BAyupFKCaFTS4t+/9Lhrnj2pVQ1ODylzdmLoCUjFyKyes5mh3qbbjSQ9g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H1m+0TQz; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jL8gx44E"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5645960cd56so6845119a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 10:18:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H1m+0TQz"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a2a17f3217aso1396666b.2
+        for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 10:19:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708625917; x=1709230717; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708625957; x=1709230757; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=d+X7v0o+8TmsinJHgaqYvlkWeXCyoa+AFdDkjxQ30WE=;
-        b=jL8gx44ESFVZiHe6uN5EKdc/IQPl7IbMmQ2Qn4CptY3YaWXse3gHvJB/zfttSprQ6x
-         q1aE4jM6XdNlewB+103EG32moNpzSEOHTrjoO7YvbUSHtdcgz/zjRQmO4HumdfUlf98n
-         OGXzLw5r4NE6ivSelnzkGyaAAR1bTHSQCQGdXSYN86NwHfegfbXn6gF37V1YODw+D4ED
-         LK6fntqaf9jEkD0vve/5tLMEu4HnMXU7jgS8NHms3qwq7Hxl7+2dNwyWzmSTS0+8A9rk
-         91jQUO2VC6kvhdmNk8ZuBp9vyA4siXaHah2sV7cV9MU7yPKLKQDngHDZjppg6OyNMewr
-         PotA==
+        bh=Fnt7mBEcQTg1itf/UcmVLmTBAuiQOtUjoqGvfpujsU4=;
+        b=H1m+0TQzXaffHGVnhKAlWGPADS4NFrco1V9FUtBi6RWt3rSZNPldOZK3hk9FVa67tO
+         TZ+zIpDRTTQqQRisk/gLc0wrb62RdjmQ7eNjCSWNT6zCZBpXUZk1LLTf0vCaFmnwRCW2
+         M5/PlLzmknh8VPej+WG34a7qqay6PJKsqC+c/TNdVjWflWIEAt8q1Iiex2zkzSSo4+bZ
+         oUEfiUR9qa20cXYKnMvEShhybqCxwHQSRKy3q4QvzT7XFW5xbj0vSckq9/Ci2noSuz1K
+         CDnXihM2kNs7ECGlhWVxoJgrhw++rjkmkb1gbxeYcLf6IwA1UdNO/qBBDwidVVUbmLnh
+         mw3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708625917; x=1709230717;
+        d=1e100.net; s=20230601; t=1708625957; x=1709230757;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+X7v0o+8TmsinJHgaqYvlkWeXCyoa+AFdDkjxQ30WE=;
-        b=trJn9CDgXRHSHk1BECrXz5LuYDMrGoxOQdb089iRGQc89ypyoXi66FcGtk759G3Kxt
-         9Ru0Fh2A0BOJ9bpr0vaDbQ+3FoaS0+eXaUIClmRnGe9PlJwdCcuLw3SkXzFHg8yKsT1q
-         KJVGjnRrU6d9eoSuyBr3NcjFA0Xepc6CrAZS5W8vZLMcbTgCGsWg9D2HnVOYrrDpBRWN
-         n4vlbpKQ1bfhjRmwnnO5HqYoChF9tBCClvU7CQtRLJcAc9VLFH19n41BiJcRGOmxFtQB
-         vg+NwtJpMaiebNL997dSqD2K8upsLIzOvgr/v541c1SCjtiMknnIhpCXIxQhC40oxQiE
-         YXnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6nb8MQwGq/PlwQHofdafafEi6wExt7s1aDVN5niZntGx3horKFL/+9h9F1/+QedP+R0Ay9Y4RdM9/mB3l2PxqURulo4rpe6Ay
-X-Gm-Message-State: AOJu0YyIQTpISnomL9aWDA1Iyqmyj9V+Sf4mzCeQ60mD3Bbj7BBBhqHu
-	2Qsov3a61r/36B1L/84KDfwmm64cbCxf+9s8Xj24thVSIIBeKU38xaxJtfcQTbM=
-X-Google-Smtp-Source: AGHT+IE2lI8oLedvZhwg7H4BUJ9pBUtr/yU8QeGokCefE5VHo+u5PynH2RyUNtTUJcw1nYI9ioAsVQ==
-X-Received: by 2002:a17:906:168a:b0:a3e:f04c:5dfa with SMTP id s10-20020a170906168a00b00a3ef04c5dfamr6716898ejd.62.1708625917056;
-        Thu, 22 Feb 2024 10:18:37 -0800 (PST)
+        bh=Fnt7mBEcQTg1itf/UcmVLmTBAuiQOtUjoqGvfpujsU4=;
+        b=PsGvEcJ1uJQEx3qSZ+wWx2AqXnUeMqApJ6AfgPUVHMccCxZmevk5h1R+Hzqmt/bKWI
+         Kq7kmpsEovrZvOAfR9ajUwlhU26/VnlC60HfE3MhXbhQ6eucVHiHSmLU5XqK3uS8ksAl
+         04cslG+BhVB5kOEqLmjFxdzZyEJmxdwifSxrD0GueicukOfFnfUiaTd4KsM6snUSuXGk
+         fUSij1Y2tnPs9MC7nMhv4elloh3n/VnkiXFfZP+qmYmCKjNDsjwyd78aITDZ781KxMK1
+         0Yt7wGeAeqTOp4vshhYbaPxFsiibsGkZ1w/gZ+FtHK6IrfT8M2re/Htcx8+hmCrQAGeu
+         lpyA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2dK+4JWvaRPHSVkA3DlgC4R8qUB47NWcYwI87Dy/kgr7HMPkPIUpu5ulcQAfqdQd+eJE7TxvVvq/nO2eyz32bl6fvdYh4DaT/
+X-Gm-Message-State: AOJu0Yy1F/DUgu1kR9W36xKxeNiqv58FQ1Rkinl/7DsrpP2MzBBfgzjt
+	dGqE5spknQzRNY+QIe12e23xZ3DTbP7igHnQ4YhZgmgdwQv6TrTq0iHv1C6cMYQ=
+X-Google-Smtp-Source: AGHT+IGt759iDgX+1kiQPkkQGa4sZQSdTpZEZf451omHQcL2RwDX8ZdPK9kXpIYsnquNTOvEw8AEEw==
+X-Received: by 2002:a17:906:168a:b0:a3e:f04c:5dfa with SMTP id s10-20020a170906168a00b00a3ef04c5dfamr6718126ejd.62.1708625957604;
+        Thu, 22 Feb 2024 10:19:17 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id j20-20020a170906411400b00a3efdb625cesm2762457ejk.124.2024.02.22.10.18.35
+        by smtp.gmail.com with ESMTPSA id j20-20020a170906411400b00a3efdb625cesm2762457ejk.124.2024.02.22.10.19.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Feb 2024 10:18:36 -0800 (PST)
-Message-ID: <367ca75b-26f1-49cb-a74a-1222195716ca@linaro.org>
-Date: Thu, 22 Feb 2024 19:18:34 +0100
+        Thu, 22 Feb 2024 10:19:17 -0800 (PST)
+Message-ID: <b46048ee-60d5-4f3f-8267-c977e912da28@linaro.org>
+Date: Thu, 22 Feb 2024 19:19:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,20 +61,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/8] ARM: dts: hisilicon: add missing compatibles to
- CRG node
+Subject: Re: [PATCH v3 3/8] dt-bindings: clock: histb-clock: split into two
+ header files
 Content-Language: en-US
-To: Yang Xiwen <forbidden405@outlook.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+To: forbidden405@outlook.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
  Conor Dooley <conor+dt@kernel.org>
 Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20240222-clk-mv200-v3-0-f30795b50318@outlook.com>
- <20240222-clk-mv200-v3-2-f30795b50318@outlook.com>
- <2085057c-0000-4e0d-a633-c84e939313d6@linaro.org>
- <SEZPR06MB6959274FCF19F70B45589F4196562@SEZPR06MB6959.apcprd06.prod.outlook.com>
+ <20240222-clk-mv200-v3-3-f30795b50318@outlook.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -120,32 +117,30 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <SEZPR06MB6959274FCF19F70B45589F4196562@SEZPR06MB6959.apcprd06.prod.outlook.com>
+In-Reply-To: <20240222-clk-mv200-v3-3-f30795b50318@outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/02/2024 19:13, Yang Xiwen wrote:
-> On 2/23/2024 2:08 AM, Krzysztof Kozlowski wrote:
->> On 21/02/2024 17:41, Yang Xiwen via B4 Relay wrote:
->>> From: Yang Xiwen <forbidden405@outlook.com>
->>>
->>> Add "syscon" and "simple-mfd" compatibles to CRG node due to recent
->>> binding changes.
->> Why? You claimed you added them in the bindings because DTS has them. In
->> DTS you claim reason is: binding has them.
->>
->> That's confusing.
-> 
-> 
-> Because the old txt based binding claimed there should not be a "syscon" 
-> and "simple-mfd".
-> 
-> 
-> But it exists in hi3798cv200.dtsi. And i think it does no harm to be 
-> there. So should i do it in two commits?
+On 21/02/2024 17:41, Yang Xiwen via B4 Relay wrote:
+> +#endif	/* __DTS_HI3798CV200_SYSCTRL_H */
+> diff --git a/include/dt-bindings/clock/histb-clock.h b/include/dt-bindings/clock/histb-clock.h
+> index e64e5770ada6..56b39eb99d2c 100644
+> --- a/include/dt-bindings/clock/histb-clock.h
+> +++ b/include/dt-bindings/clock/histb-clock.h
+> @@ -1,70 +1,13 @@
+>  /* SPDX-License-Identifier: GPL-2.0-or-later */
+>  /*
+> - * Copyright (c) 2016 HiSilicon Technologies Co., Ltd.
+> + * DEPRECATED
+> + *
+> + * Each CRG driver should have its own clock number definitions header file.
+> + * This file is only reserved for backward compatibility for Hi3798CV200
+>   */
+>  
+> -#ifndef __DTS_HISTB_CLOCK_H
+> -#define __DTS_HISTB_CLOCK_H
 
-hi3798cv200 is not hi3519, is it? You are adding simple-mfd to one SoC
-because some other has it? I don't see reason to do that. Er, why?
+These should stay.
 
 Best regards,
 Krzysztof
