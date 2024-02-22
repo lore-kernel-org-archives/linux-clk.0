@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4A212B70;
-	Thu, 22 Feb 2024 05:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779011774E;
+	Thu, 22 Feb 2024 05:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708580779; cv=none; b=jHq0pBK318MQRvJmT7+NmGewmSMY8SOewJK6qJGFrMkcC/uZmGfrWZLL5xaFmRTCwVSWWBquTqBNC4X5Hhx3whE5wwBjj9Y52aVLs5Rr0ZTHVeDKGgQl2TKlwEvMY5G2rfwVFbvAUWS6d1eztZaVv7HhkLFhGcdwa0NpuM7vawE=
+	t=1708580875; cv=none; b=J4XQV+VEqGJ56V1+uXXNBmbtpMAapNJZO/8Q1WtR4bhOFKIumhi637qcJs7sXON2xYr/fGqKolajSH5wXHi1EpUj4v0NpNq+mA27jyrqIYRrw1EAkZ58GsPSC2NCchdiaRhrsuji/reuFGRzd6H8W65cExDQdLnaWnBFmxFumiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708580779; c=relaxed/simple;
-	bh=rEo0owgvvOA+g8GumezPSzk2nZFNTPpvIw/utFsAdhk=;
+	s=arc-20240116; t=1708580875; c=relaxed/simple;
+	bh=CZBQusAEPZzirySR4HRSFLmNExR4Ta2IwqTYf1J6PxA=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=tiuwIYVfkrYxM60MsT70D9Prj1lP5ax4uTk/bxgaIdqI9WKNMWHJljTbf2ox9bPmZKHTNEEvaqarGz9u/LMX+VP2NXRnS2r95x5Y8J0apXF8H96t1FxGN9YzvmZSVYpK3qtIhJe0TSv79gcZQek6MclGXRpAJuQnpvWXO1sP98Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFoCPecI; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=g+SkfXJhc8sLZVocQ69X0hjpA9ulYY0hGD2pRw6zbq0DyoG/wM5dBJ7+hcIugHML7h7moklFRUieaX0pT1ZZYVCEXgdXwTdwQiA3WW2pxMOurOd6reBz2nOdvm9/X4j++r+Q23xDvRGahbElkneGEMsondFg7DBTjMV7S9YYUZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFpxj/tU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFoCPecI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B11C433F1;
-	Thu, 22 Feb 2024 05:46:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFpxj/tU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1EFEC433F1;
+	Thu, 22 Feb 2024 05:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708580779;
-	bh=rEo0owgvvOA+g8GumezPSzk2nZFNTPpvIw/utFsAdhk=;
+	s=k20201202; t=1708580875;
+	bh=CZBQusAEPZzirySR4HRSFLmNExR4Ta2IwqTYf1J6PxA=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=EFoCPecIWiE31P8q54+6r7EzV1y2GyHTafjJJno1Px4l+5MYXHYRMMg4bod/skQya
-	 FohIGPemeLgd0fGD7qsnefVoNrEaqHG+R8oMl4gyiQy4yk3Ix9+osXmMdcs1zwZXBR
-	 OBFl/Dmu+T0vdcY3B5hul2goM/I71C2e4Xr6i3EMDxYdh/42oURIu1MXYAzLN//ak/
-	 XQTtS5enm6WNT8fJ65geGaSenfXrIBMmQI7VJK+uaqEmKDTeMnV/9+o1hsHvcrVvpN
-	 wBHNs4cRK9Q3gUtOsgFXviWTmfrgq9M3EjXiqvkvRA2vZaKAd6QvXtkSRGIvMFUucu
-	 w9ug53PcP9OOA==
-Message-ID: <637b5d6b3fd2e4aaff3813f11c0e3800.sboyd@kernel.org>
+	b=pFpxj/tUONUnhsbXgbJmQ28rgdo3Z0bVFV2Jyhm93zG5QYIqnHnKLjkjzBkmajlRq
+	 D1FLpX4zHRGuiMmNlKblFqovKu7e8iQSjH/S7e0DOyK8hBo875B/s1pLw2k04kGig2
+	 s27zWFXdcQhVkATwD+LQKB6PHHZvWeVWpm6J3KR0wF4tQSk286xYMAq1oFsrsxSiM8
+	 BrZ/F+jhEn5Vkd/aBK9fcezs6W1MoUVuUzZ6sym+gF9wZUShGSe0n2lvVeyIqXtwip
+	 GYvC1QlNTEr4d/Y4uoaPe57BmlNVPZGYYLby8d8dIMyLJuDvlT1vINux5kA9ZKYNth
+	 3miqqaASnjttA==
+Message-ID: <fec39068daedde34528aa987ded5d2d8.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,20 +35,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240215220759.976998-3-eajames@linux.ibm.com>
-References: <20240215220759.976998-1-eajames@linux.ibm.com> <20240215220759.976998-3-eajames@linux.ibm.com>
-Subject: Re: [PATCH 02/33] clk: ast2600: Add FSI parent clock with correct rate
+In-Reply-To: <20240115001255.4124-1-rdunlap@infradead.org>
+References: <20240115001255.4124-1-rdunlap@infradead.org>
+Subject: Re: [PATCH] clk: keystone: sci-clk: match func name comment to actual
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, andi.shyti@kernel.org, eajames@linux.ibm.com, alistair@popple.id.au, joel@jms.id.au, jk@ozlabs.org, mturquette@baylibre.com, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
-Date: Wed, 21 Feb 2024 21:46:17 -0800
+Cc: Randy Dunlap <rdunlap@infradead.org>, Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Date: Wed, 21 Feb 2024 21:47:52 -0800
 User-Agent: alot/0.10
 
-Quoting Eddie James (2024-02-15 14:07:28)
-> In order to calculate correct FSI bus clocks, the FSI clock must
-> correctly calculate the rate from the parent (APLL / 4).
+Quoting Randy Dunlap (2024-01-14 16:12:55)
+> Correct the function name in the kernel-doc comment to match the
+> actual function name to avoid a kernel-doc warning:
 >=20
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> drivers/clk/keystone/sci-clk.c:287: warning: expecting prototype for _sci=
+_clk_get(). Prototype was for _sci_clk_build() instead
+>=20
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Tero Kristo <kristo@kernel.org>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
 > ---
 
 Applied to clk-next
