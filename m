@@ -1,142 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862A118657;
-	Thu, 22 Feb 2024 10:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F59112C809;
+	Thu, 22 Feb 2024 12:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708597794; cv=none; b=NZEIvIqEeNmxnln9Lf1RkrxYmrPbaGfjry+nRXlm+glMciteVa6VNK8JEP/woB5zstmV/xxcJllEDEwjbePXjL7PC4PhxIN4loR2rY0okG+VvrUpzmDhVUprqYazEIiWuXnp0w6q9vTSgxvKr0u7JUQlVbs+haRWzvNR7OgXpDY=
+	t=1708605208; cv=none; b=Ox40SG7+9hEkHx+fTxTwJaZGzxPOVZ8jwwxoMTFvhLmr8xTGWiC7e/QCywBw0hvDkXtzY7IPhV6WwG1gu11Ul2NtIC5PUS4hTTRyMb2pBHGpcW7PCly4RCC9U5AhNEGftYysQFaD2EkcWWMKesgP4Yu1GwsBr//lyEbBZ3dBkE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708597794; c=relaxed/simple;
-	bh=Wzsp+43YqM+LlxN0cpsEdEREeR6hPbCyLnqKwXy8YPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YicjJGAARkMssK75v+eKJ7/HNVyMBHxbKASrrKMg/APAi5OTV2EkFRr3u4fWK6BjWxroJbYMa1Ihzw1CK2q9ROSfRpXQ6EU1RQix1YZ4WadJOAvGiFkrkm43hAV9awydBHRbg5Wsomy3ZiBTnX9RcO4t2Bq3TOzcSqRI4ix/MGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLpeCnbB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708605208; c=relaxed/simple;
+	bh=d8IBLOsOQdtQiFzfCa4rzkp7M8N0SMED9bMMxXfaXt0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SaGJgzjU82NHyHYyeEDv4l0vw1vQbi94UpTlBNwObOWtESdK7GvuU4MPWrTKHb0HjuO1w0KypgEYDkuAWMcmPuQzWvumK+qcsApCpq27y0+UkVjVwyUiDVJkLz2uddZaT5FBHCoaADUdeNjubWXilkMaz2YvVzK1cvHI/T4Ts9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au; spf=pass smtp.mailfrom=gmail.com; dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b=YWB9i1QA; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLpeCnbB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86506C433F1;
-	Thu, 22 Feb 2024 10:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708597794;
-	bh=Wzsp+43YqM+LlxN0cpsEdEREeR6hPbCyLnqKwXy8YPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GLpeCnbBnu29hs6MZNOozG2jG6b1fFuTJVhE3nvd7tjl6OJrs/6etqCnvwC1gydFc
-	 fZaiIs07i5pfwnXJ+lyW5Irfyo1A4zz85pj1wabeJ7hHUqk2KOdpUel/X2TixStzQz
-	 V58Kw1xhT+bVoCZNonvGZgNysqVEW/SraW2A6pjK7nU1YpFwSWACfR/7CkFRkFf7mE
-	 OPikCWYMo91ZsmfU/RQ/POBakSS1xVnR7T2/P/ZpO+odkg+uBRfP4f62sytseG05jY
-	 P0L90QvV7eZlk0m9ZoDBIDUf8lS9dwxaWtHQuXvP5xb8VBZaX1IWZFRjlm6KMap4uX
-	 Ng7/DDdFyaRkg==
-Date: Thu, 22 Feb 2024 11:29:51 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Frank Oltmanns <frank@oltmanns.dev>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] drm/panel: st7703: Drive XBD599 panel at higher
- clock rate
-Message-ID: <ia7e7gqozltl5wkfdvwtf2rw2ko2dt67qxtuqbavsroyv4ifys@x4mbulqhhri5>
-References: <20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev>
- <20240205-pinephone-pll-fixes-v2-5-96a46a2d8c9b@oltmanns.dev>
- <poua4bzyciiwt65sqjf2whqfdumvoe4h3bkjpf64px2vwgumrf@sai73byg2iju>
- <87sf1zxb0s.fsf@oltmanns.dev>
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="YWB9i1QA"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5654621d62dso506948a12.3;
+        Thu, 22 Feb 2024 04:33:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google; t=1708605204; x=1709210004; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MG0vDESW85KfZHlebYHCzgubjC4U6RsUx6p93ih8in8=;
+        b=YWB9i1QAvS0jYzldpgC0URUHG+SesrEkacobvGZkjC27D4BwDl6o5hYfD1ivHzbcXw
+         w6D/9TRTL4J5mHC8+1Td+QsmI9DS1q3jUIWzcJtF+6EUtYlcd29aocivANCbPmssRdZd
+         Cct2yexxyP4S0EPWQf0X22YLOyIqMaTNmAjIw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708605204; x=1709210004;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MG0vDESW85KfZHlebYHCzgubjC4U6RsUx6p93ih8in8=;
+        b=sBJAu7i28EJ91wZlDh5GAjDk8gsBwtPtoV7vwyaGqHfNDCZDx0mIoiE6bfv1kDC5SM
+         oUrBUYJWsKzXpNBpy7YaOdAxvx6mfnkfiHzeOzor6EBvHDtwjyYJR88970njP9cfQnAU
+         HBlALS/AidfkidcnUug/JqpROeb6ZQnEkxkxoghYzj5BGs3K8hTEUCTy3vqyDiOP98+D
+         ZOwpGp79roP1N7PLZw1BcpKTD8ooazEfFVmZyzkBG7GayDABEf0t4rAzHqNvGR/+0bvN
+         hvQm3LoP/rL9SVX2yt4y+QkxD3NcycXqqAOCpcU8hv20+KXaGBbjCkhFwalq0X6LHSX0
+         AseQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU62+GX9H9D3cWCSplXeq1H/37Q/J5iBd/GMlOrcKb2LDaMTiBJ4iRcma+NIPBwuRDZgbzqtNI0/HbPvD6QzEo4/npLJ2pSRVwbeXdJOjipuF+iYQKdEjFBRBPymCNw37J4+xexeYeL3q9dORPVj1cOStVQJ0eZF2SHLjSqd8Ir/4v+hxhq6ElGGA+6lCdVKZ5RwjRJSlk4BmouHwNUvA==
+X-Gm-Message-State: AOJu0YwsX+DHZ4MGwJrtD6nRnDsc0wCoMDLVLctLNW53WtXr8R70BvVy
+	r0/uuEWh96BVZvP6dyl+LHbh9hITAZu+JXdwLagrPW8sw0RCmh3DAh9kiF34CnCnnbGEu39FRuW
+	JrkljmJ98PIHOOXtRDhgBwKvEwfc=
+X-Google-Smtp-Source: AGHT+IFNrhrORPsfM/GgVwQUISFHcEt4aCj/nGl8kGj58IUCD9NdG07mYT8c4lWWTr3+YPEzqcaJIS6qW4w1k5sANc0=
+X-Received: by 2002:a17:906:c5a:b0:a3e:d2ea:ff5e with SMTP id
+ t26-20020a1709060c5a00b00a3ed2eaff5emr9620337ejf.58.1708605204290; Thu, 22
+ Feb 2024 04:33:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bml6dpjoov3orz5g"
-Content-Disposition: inline
-In-Reply-To: <87sf1zxb0s.fsf@oltmanns.dev>
+References: <20240215220759.976998-1-eajames@linux.ibm.com>
+ <20240215220759.976998-8-eajames@linux.ibm.com> <67ea1daa-72a5-4dc0-b766-34a99052dabb@linaro.org>
+ <8649af3d-c7f9-452b-a8c4-921fe5fa30f8@linux.ibm.com>
+In-Reply-To: <8649af3d-c7f9-452b-a8c4-921fe5fa30f8@linux.ibm.com>
+From: Joel Stanley <joel@jms.id.au>
+Date: Thu, 22 Feb 2024 23:03:11 +1030
+Message-ID: <CACPK8XdZ6twg=d5tHKh0OuDXsHDuD8kjhcPVxRTn3y9N75hERg@mail.gmail.com>
+Subject: Re: [PATCH 07/33] ARM: dts: aspeed: p10 and tacoma: Set FSI clock frequency
+To: Eddie James <eajames@linux.ibm.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-fsi@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, andi.shyti@kernel.org, 
+	alistair@popple.id.au, jk@ozlabs.org, sboyd@kernel.org, 
+	mturquette@baylibre.com, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	conor+dt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
---bml6dpjoov3orz5g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Feb 11, 2024 at 04:42:43PM +0100, Frank Oltmanns wrote:
->=20
-> On 2024-02-08 at 20:05:08 +0100, Maxime Ripard <mripard@kernel.org> wrote:
-> > [[PGP Signed Part:Undecided]]
-> > Hi Frank,
-> >
-> > On Mon, Feb 05, 2024 at 04:22:28PM +0100, Frank Oltmanns wrote:
-> >> This panel is used in the pinephone that runs on a Allwinner A64 SOC.
-> >> The SOC requires pll-mipi to run at more than 500 MHz.
+On Sat, 17 Feb 2024 at 05:44, Eddie James <eajames@linux.ibm.com> wrote:
+>
+>
+> On 2/16/24 02:08, Krzysztof Kozlowski wrote:
+> > On 15/02/2024 23:07, Eddie James wrote:
+> >> Now that the driver doesn't hardcode the clock divider, set it
+> >> in the device tree.
 > >>
-> >> This is the relevant clock tree:
-> >>  pll-mipi
-> >>     tcon0
-> >>        tcon-data-clock
-> >>
-> >> tcon-data-clock has to run at 1/4 the DSI per-lane bit rate. The XBD599
-> >> has 24 bpp and 4 lanes. Therefore, the resulting requested
-> >> tcon-data-clock rate is:
-> >>     crtc_clock * 1000 * (24 / 4) / 4
-> >>
-> >> tcon-data-clock runs at tcon0 / 4 (fixed divisor), so it requests a
-> >> parent rate of
-> >>     4 * (crtc_clock * 1000 * (24 / 4) / 4)
-> >>
-> >> Since tcon0 is a ccu_mux, the rate of tcon0 equals the rate of pll-mip=
-i.
-> >>
-> >> pll-mipi's constraint to run at 500MHz or higher forces us to have a
-> >> crtc_clock >=3D 83333 kHz if we want a 60 Hz vertical refresh rate.
-> >>
-> >> Change [hv]sync_(start|end) so that we reach a clock rate of 83502 kHz
-> >> so that it is high enough to align with pll-pipi limits.
-> >>
-> >> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> >
-> > That commit log is great, but it's kind of off-topic. It's a panel
-> > driver, it can be used on any MIPI-DSI controller, the only relevant
-> > information there should be the panel timings required in the datasheet.
-> >
-> > The PLL setup is something for the MIPI-DSI driver to adjust, not for
-> > the panel to care for.
-> >
->=20
-> I absolutely agree. It even was the reason for my submission of a
-> sunxi-ng patch series last year that was accepted, to make pll-mipi more
-> flexible. :)
->=20
-> The only remaining option I currently see for adjusting the sunxi-ng
-> driver to further accomodate the panel, is trying to use a higher
-> divisor than 4 for calculating tcon-data-clock from tcon0. I remember
-> reading a discussion about this, but as far as I remember that proposal
-> was rejected (by you, IIRC).
->=20
-> While I appreciate other suggestion as well, I'll look into options for
-> using a different divisor than 4.
+> >> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> >> ---
+> >>   arch/arm/boot/dts/aspeed/aspeed-bmc-opp-tacoma.dts | 1 +
+> >>   arch/arm/boot/dts/aspeed/ibm-power10-dual.dtsi     | 1 +
+> >>   2 files changed, 2 insertions(+)
+> > Please do not mix DTS patches with driver code. DTS goes to the end
+> > because driver code CANNOT depend on it (there are exceptions but it was
+> > not explained here).
 
-Like I said, I'm not against the patch at all, it looks great to me on
-principle. I just think you should completely rephrase the commit log
-using the datasheet as the only reliable source of the display timings.
-Whether sun4i can work around the panel requirements is something
-completely orthogonal to the discussion, and thus the commit log.
-
-Maxime
-
---bml6dpjoov3orz5g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZdciHgAKCRDj7w1vZxhR
-xfJ1APsGJxlhH6N9Zf5Bg18E9npao1trsNfER/3ulA49l/e3zQEArlyYygxuPvKn
-3nkhyF0YeukoDf5065tfHAeU7wy1JQA=
-=mdeZ
------END PGP SIGNATURE-----
-
---bml6dpjoov3orz5g--
+No, this is fine. Please continue sending the patches in logical order
+as you see fit.
