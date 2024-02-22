@@ -1,124 +1,160 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51BD1799E;
-	Thu, 22 Feb 2024 09:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3193C481;
+	Thu, 22 Feb 2024 10:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708595731; cv=none; b=MRYZnIeUgVdTqoGCjjFT0Cdzwh+L8Q8L/MRZng5KyXN5sQmUPoVe5Swd+CsaCASusbAupEU/EoTqHxiiCg48bAZWbseeG7b2fXEWjhhYJkCgdQ0vfEtOpwP+hb5t83A5PjjYdEr5RP1UCpfNQZMpGrazBD6q2W0rTevGm8/bUKo=
+	t=1708597566; cv=none; b=mDgJFf9t9QJXo2MYwew5grWbe8S/MJXcF7irBRVCDIOLLHW3m9TI0QoDoG+1E98VSheC9orbv4UPJwRMStfles/Q+aYGNhHTmzDFOavABtQmzQ0rAdXSjpmW6tunF62ZZGIHJ6B4arRWF254bEDAYECfVPj9hVzEd0YU0YSQKyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708595731; c=relaxed/simple;
-	bh=zUT+seqiqb4QBcPutc6UO7JPuLUYjnGX3rqt10DwDoY=;
+	s=arc-20240116; t=1708597566; c=relaxed/simple;
+	bh=C5DPs1TcjLjs6ZDKjoVkY+BUT+jRjaN7GiNU8pWZYA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hmhEbjDj/pKEWVifCjmLY5UuytXKo7bV/RNLs4bhNKXLwSOOiiBR7lD8jbHFLhmVaW7ldpdplxP5UUN0rDpqVgYuUd1qOpAl6KFq8YSVt3UI5xrNNJKXspUNREuc/6M1gkNrlF2UZpDvOJqHMHGOrSC1/rob54yjGgLj4k+NrEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 33559C15;
-	Thu, 22 Feb 2024 01:56:07 -0800 (PST)
-Received: from pluto (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 99F803F766;
-	Thu, 22 Feb 2024 01:55:27 -0800 (PST)
-Date: Thu, 22 Feb 2024 09:55:25 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V4 2/2] clk: scmi: support state_ctrl_forbidden
-Message-ID: <ZdcaDYqWcF2XWoLE@pluto>
-References: <20240121110901.1414856-1-peng.fan@oss.nxp.com>
- <20240121110901.1414856-2-peng.fan@oss.nxp.com>
- <20240222094153.2nxvefa44y5ikutm@bogus>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jj+mcBhM6Lg4XlTnBIdFMRsNJDjrJiTJGNICH39NQjifw6oiLKMvD//0wf2KHZYGYaMkUC2BsD6ebhd0vhCAUeHu1vxK0hCrpkWQ7O+iBGKOz9b+ij2urgFW5SFUjpKBiQUspbsq/CSP3uDuwIBuWTzTem3j/V0gflUOe8Sjcrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kxttw6OI; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kxttw6OI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C466C433F1;
+	Thu, 22 Feb 2024 10:26:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708597566;
+	bh=C5DPs1TcjLjs6ZDKjoVkY+BUT+jRjaN7GiNU8pWZYA8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kxttw6OIm01Rb9mT8fkBwjc3CFksX9rBo3NfSD0JjTxVvmXKbzkVXMXnUHdRLcg0C
+	 +C6uGjnlieQizZfaY6+hyS0UfsuQssNpvGUcDdPKTkaTr54xN/BA8iCfXP4VGwLqvK
+	 dl/edARIVtGsLb011Jg4+PPYrrGn+m5ntYqVRs1Ta2adzPiBZI5vMLuFQxAJrfuX+5
+	 5tq9nUYKJap7Y3PM7rnJOVG5GXkYCB+28YMHAbt2IuxYXuT4PLNEV69qaMtpTV7uDf
+	 u3QDCcJjm2h3sPGv0mVwXdbdYmgQG5D8PhsWciunNQg9GPUcTXfzbGPdpidBC79z6X
+	 al629d1dgQlJw==
+Date: Thu, 22 Feb 2024 11:26:03 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Frank Oltmanns <frank@oltmanns.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] clk: sunxi-ng: nkm: Support minimum and maximum
+ rate
+Message-ID: <3kbqdgbfn2nioch3gvofvj7pzx7f5gkuwx77u5nkgxao6qo654@3nvjifkrxcjb>
+References: <20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev>
+ <20240205-pinephone-pll-fixes-v2-3-96a46a2d8c9b@oltmanns.dev>
+ <exb2lvjcozak5fayrgyenrd3ntii4jfxgvqork4klyz5pky2aq@dj2zyw5su6pv>
+ <874je6b2g4.fsf@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5tmnnujq4ct6ko4m"
+Content-Disposition: inline
+In-Reply-To: <874je6b2g4.fsf@oltmanns.dev>
+
+
+--5tmnnujq4ct6ko4m
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240222094153.2nxvefa44y5ikutm@bogus>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 22, 2024 at 09:41:53AM +0000, Sudeep Holla wrote:
-> On Sun, Jan 21, 2024 at 07:09:01PM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> > 
-> > Some clocks may exported to linux, while those clocks are not allowed
-> > to configure by Linux. For example:
-> > 
-> > SYS_CLK1-----
-> >              \
-> > 	     --MUX--->MMC1_CLK
-> >              /
-> > SYS_CLK2-----
-> > 
-> > MMC1 needs set parent, so SYS_CLK1 and SYS_CLK2 are exported to Linux,
-> > then the clk propagation will touch SYS_CLK1 or SYS_CLK2.
-> > So we need bypass the failure for SYS_CLK1 or SYS_CLK2 when enable
-> > the clock of MMC1, adding scmi_no_state_ctrl_clk_ops to use software
-> > enable counter, while not calling scmi api.
-> > 
-> > Co-developed-by: Cristian Marussi <cristian.marussi@arm.com>
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> > 
-> > V4:
-> >  Add scmi_no_state_ctrl_clk_ops per Cristian
-> >  Add Cristian's tag
-> > 
-> > V3:
-> >  Add check in atomic enable
-> > 
-> > V2:
-> >  New. Take Cristian's suggestion
-> > 
-> >  drivers/clk/clk-scmi.c | 15 +++++++++++++--
-> >  1 file changed, 13 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> > index 8cbe24789c24..5747b6d651f0 100644
-> > --- a/drivers/clk/clk-scmi.c
-> > +++ b/drivers/clk/clk-scmi.c
-> > @@ -194,6 +194,15 @@ static const struct clk_ops scmi_atomic_clk_ops = {
-> >  	.determine_rate = scmi_clk_determine_rate,
-> >  };
-> >  
-> > +static const struct clk_ops scmi_no_state_ctrl_clk_ops = {
-> > +	.recalc_rate = scmi_clk_recalc_rate,
-> > +	.round_rate = scmi_clk_round_rate,
-> > +	.set_rate = scmi_clk_set_rate,
-> > +	.set_parent = scmi_clk_set_parent,
-> > +	.get_parent = scmi_clk_get_parent,
-> > +	.determine_rate = scmi_clk_determine_rate,
-> > +};
-> > +
-> >  static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
-> >  			     const struct clk_ops *scmi_ops)
-> >  {
-> > @@ -290,8 +299,10 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
-> >  		 * specify (or support) an enable_latency associated with a
-> >  		 * clock, we default to use atomic operations mode.
-> >  		 */
-> > -		if (is_atomic &&
-> > -		    sclk->info->enable_latency <= atomic_threshold)
-> > +		if (sclk->info->state_ctrl_forbidden)
-> > +			scmi_ops = &scmi_no_state_ctrl_clk_ops;
-> 
-> With this, even if is_atomic and latency matches, we won't allow
-> atomic operations ? One reason why it gets tricky and as Cristian 
-> mentioned elsewhere we need dynamic assignment of these ops IMO.
-> Let me know if I am getting things wrong here ?
+Hi,
 
-It is fine that we wont allow atomic ops either since state_ctrl_forbidden
-means the server will reject any enable/disable action, atomic or
-not...what I missed here, though, is that we lost also is_enabled indeed,
-which could be provided even if state_ctrl_forbidden BUT only if atomic
-is supported...so yes this will need an additional atomic/non_atomic
-split of this static ops...and so the need for dynamic allocation I was
-saying elsewhere....indeed the is_enabled case is handled correctly
-again with my pending clk dynamic allocation of ops patch.
+On Sun, Feb 18, 2024 at 09:29:15AM +0100, Frank Oltmanns wrote:
+> Hi Maxime,
+>=20
+> On 2024-02-08 at 13:16:27 +0100, Maxime Ripard <mripard@kernel.org> wrote:
+> > [[PGP Signed Part:Undecided]]
+> > On Mon, Feb 05, 2024 at 04:22:26PM +0100, Frank Oltmanns wrote:
+> >> According to the Allwinner User Manual, the Allwinner A64 requires
+> >> PLL-MIPI to run at 500MHz-1.4GHz. Add support for that to ccu_nkm.
+> >>
+> >> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> >> ---
+> >>  drivers/clk/sunxi-ng/ccu_nkm.c | 13 +++++++++++++
+> >>  drivers/clk/sunxi-ng/ccu_nkm.h |  2 ++
+> >>  2 files changed, 15 insertions(+)
+> >>
+> >> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu=
+_nkm.c
+> >> index 1168d894d636..7d135908d6e0 100644
+> >> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> >> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> >> @@ -181,6 +181,12 @@ static unsigned long ccu_nkm_round_rate(struct cc=
+u_mux_internal *mux,
+> >>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> >>  		rate *=3D nkm->fixed_post_div;
+> >>
+> >> +	if (nkm->min_rate && rate < nkm->min_rate)
+> >> +		rate =3D nkm->min_rate;
+> >> +
+> >> +	if (nkm->max_rate && rate > nkm->max_rate)
+> >> +		rate =3D nkm->max_rate;
+> >> +
+> >
+> > This is provided by the clock range already. If you call
+> > clk_hw_set_rate_range, it should work just fine.
+>=20
+> I have to admit, that I don't know that much about sunxi-ng or the CCF
+> and therefore humbly request some guidance.
+>=20
+> I've looked at other examples of clk_hw_set_rate_range() usage and it
+> seems there is not a lot of adoption for this functionality even though
+> it was already introduced mid-2015. This makes me wonder, why that is.
 
-My bad, thanks for spotting this Sudeep!
-Cristian
+There's no reason, really. I would expect a big part of it to be "if it
+works don't fix it" :)
+
+> Anyhow, it seems in all examples I found, clk_hw_set_rate_range() is
+> called immediately after registering the clk_hw. So, in the case of
+> sunxi-ng, we'd need to do that in sunxi_ccu_probe, which is a common
+> function for all sunxi-ng clock types. Correct?
+
+Yup.
+
+> If so, surely, you don't want me to introduce clock type specific code
+> to a common function, so I assume you want min_rate and max_rate to
+> become members of struct ccu_common. Correct?
+
+Yes, that would be reasonable indeed.
+
+> If so, since there already are some clock types in sunxi-ng that support
+> having a minimum and maximum rate, these clocks should be refactored
+> eventually. Correct?
+
+I guess. I don't consider it to be a pre-requisite to your patch though.
+
+> Finally, in sunxi-ng there is a feature of having a fixed_post_div (see,
+> e.g., the first to lines of the diff above). It seems to me that CCF
+> cannot know about these post_divs, so we'd also need to transfer the
+> fixed_post_div to ccu_common and use that when calling
+> clk_hw_set_rate_range. Correct?
+
+Not really, no. The fixed post divider is an additional divider that
+needs to be considered for the clock rate.
+
+See the A64's periph0 PLL for example. Its fixed post divider is 2, and
+its rate is 24MHz * N * K / 2. The rate should be bounded by its minimal
+and maximal rate taking the post divider into account. The CCF doesn't
+have to know about it.
+
+Maxime
+
+--5tmnnujq4ct6ko4m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZdchOgAKCRDj7w1vZxhR
+xeYcAQD8kfuph/bvW3AkRtRhUQiaaX8I5NZXLMQKI8xcnhEbcAD+Ld8/FcBSyHu3
+/mny/ZO6Y0sXVbHPtYWYHq9nH0sHGA8=
+=noRe
+-----END PGP SIGNATURE-----
+
+--5tmnnujq4ct6ko4m--
