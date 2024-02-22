@@ -1,60 +1,59 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32CC1586FE
-	for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 18:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1297E155A57
+	for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 18:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708625224; cv=none; b=W4/ffEwCRVxT8lsIklHLPekGDlvllFGJFx3vjoNBVbbXUC4zyu7iXOiUDw6EXFvHh8alKsm/chHPD4sysKVXQWZtr4iA7vnWpFC0UowJd2DTlMxtbD9/IEyeUbLveTJYvIYjpV9kXRnuVzLLVBHuzquwsJ0oh/1OG9cA7k/7UmE=
+	t=1708625316; cv=none; b=V/NpUuL5VA6xJ3sLnpVgzX93J5ML07Ohbt0wnmDI/hvW29lmalte7DwV5rALKb8+Le96Yuh7e6hap7UCakBSBDTAWlj/wQ1KOGvdYQmrmc8f17JurUzi2VFNAdiJwj6hVoBB0VU7UApDzFErEHOEYFoF6TilenrYxgXHiqU9FCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708625224; c=relaxed/simple;
-	bh=mVONycJc5PpTK8Bq86d/+2PZp5FR1VeL5UFB0+tQC/M=;
+	s=arc-20240116; t=1708625316; c=relaxed/simple;
+	bh=VRFlQqvVoGp3nuUxvIQLh2Bai2d6yzp6WNMhq8r2y9Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u3LADD9amZ5Jrj+cTVY61OJhwXB1r1vto0o4WBMqZZawS9CftfgDHLPsGuOH3q4BNypoiBi0/os6zeSJj3aHrAPjW2Ff5ifA/2kVgSgHCaL+AoUqYdxiqhN1wsbXC3Z9OgPfzEUmTlhI/w/WBjPsf7HWLzSVUucdc0SmCZmrZkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zQ5YAM7X; arc=none smtp.client-ip=209.85.218.53
+	 In-Reply-To:Content-Type; b=RJ4s27GgqdUM0yhbdetw1mB2zDiSSV2oWE60hIGNv2vwaKnlTXaYqt50TQl5MZcgiEE+3yMBQPns+ho2iab6dCjXABbfcVfioVyyM6Q9lYCFzQwXUQT5afNSTejWg249CZCDANj2be9PSQX7ktaKwZtQFrAJIucyrlXXLVQfow4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rEoZnrlT; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zQ5YAM7X"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a3566c0309fso1378966b.1
-        for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 10:07:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rEoZnrlT"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a3e7f7b3d95so180666b.3
+        for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 10:08:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708625221; x=1709230021; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=H7MEkFfomwndTH0+wr7dalSjoavVgLoT8CmyCpVBmUk=;
-        b=zQ5YAM7X+QyHPGXqn+KoP2c40jijD++gHPQvZfXtD7zJ818nUI7aBG41lohaVsv8nd
-         Ng5XvZXZcoFanjwDZUYR73/Zadc7n8VPnSmCNfx6HhayXfOdXh3ipJKTXXRMps2Ye7ug
-         bIcrN7qCINFeNHTrNP2cBYnGxbXSLkJg2o2pU+stDxx99AW6w7k2gjI2RghzjCd4JJEj
-         lX1vkoi4JE23/3mrqo9l3ZDI6rZyNuTcxcSCKSagk73FoopYKL8n/t3/ia1ACj+INQh/
-         +fZoXY2EyNCbocAlQvo23bDAUkvc7VIas6iAfEzQhk1xmuyg5PNuR7SP+REWlhvt4u89
-         IRDQ==
+        d=linaro.org; s=google; t=1708625313; x=1709230113; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dmWx+fxLo3pLoL2+YEpTXgJU3Hxg24L1di2ToSpxoQs=;
+        b=rEoZnrlTBjqbXSsiXm3czCrAl5aiDA60Hh+1fYkWxQ1NOVXjZxIr55C5O6yG4N45t0
+         smvq5T54wpO9Gf+/yKp7OCszrfBRgQa8j+NbdOjtKN+McGDFZJhJGbEjz+lq7hU1oh51
+         aUaxTJbRjqIlDBJ/iJqJkUDCf2yjJ6b6DMhLToOQpWAIIQW7Pi7EdeOz3icDWrVfesy0
+         BdA1Z8zYXFKdWvmabp1aDmFULINwGKClcZu12KKHGFQAWGdf3RT2mxKYZyb5vcLgM+ED
+         555cHofDaKvQdKdVQy78nHZvq1Ppy7MULFmClHqHqFEf8axN5unIMf30Sm9X8hF/SpkM
+         rghA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708625221; x=1709230021;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H7MEkFfomwndTH0+wr7dalSjoavVgLoT8CmyCpVBmUk=;
-        b=kWUg3pjjjeFgV6QmR6LUU0kZdvIIJbuDqLVTdP2Jf0t/6v8xeXw7GJXliVEMpC2LW5
-         8ordtaCwWlv9twpqVrA0G2D1JHlZSZ41mzGCCm1UIlHsP8xP+WwYxXGnnRQF0LTGtuUb
-         kxSzh5Jl8CmLIAYLyuOpfInLIKg/Pe6TJ0SCJ89LTH76A07dQMLwVgvLmc0rD9STq/7w
-         MUJZ4oqoEvzbrGgJB8m/OPv+leMVkY2G6eDASKlk0rRHFPBHbxKPT3r9wBJgYjDuYUMT
-         v9RahPQEiNDjjI/Z5eaNcofOsG70CGtd1ZyW1cfR0UgM3AJlazAFtvt/t6R+6ygHjJxu
-         VcTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYkRoVKCpUbcotocTK1sp9wHGw91W6Ul5nqC5a32rSTDAd8fp9Ak79D5vy8i7dYIa3wZDOC+zSsqR/aZtoIjVoiHoimONhX9bS
-X-Gm-Message-State: AOJu0YzMwNjFUd1tu99eybzjo00Wa3Sl19maV8sWP89558RRB53gnm5w
-	nycjokLvtOzWoDfAxKtYdkUAkzPBjMRgf0vtfX76L/M6aBeyjG3QQuIqZlPd2oo=
-X-Google-Smtp-Source: AGHT+IEjmD4ALMlUxrdfxmnPt+2Fm9owb8fToDuSi1t6SPBQPsQdIdt5D367lHZDyFAxfOEJoWi4lQ==
-X-Received: by 2002:a17:906:16da:b0:a3e:7dbe:298b with SMTP id t26-20020a17090616da00b00a3e7dbe298bmr9139446ejd.24.1708625220771;
-        Thu, 22 Feb 2024 10:07:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708625313; x=1709230113;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dmWx+fxLo3pLoL2+YEpTXgJU3Hxg24L1di2ToSpxoQs=;
+        b=jXZqEVig5jk1Mu9s1T4VXfnRjLkARiEtxaP0PDZ+JO3dLYHlwMlJ0+SPgHJa4GEbNi
+         AxmT+RcdtbNTMKzVeGH5d5ccw0m+e0mPuOYzGl1atVy68Vt4EBZnLRWr1qN2EMi9MQme
+         evgmXtIC0dexjNYIjPK7i5K+sMpZEcT6oBFmjgtlBXuVyoVNVeBMCsQgUx3Jyr2RWV5W
+         xXv68dWsZoexh+7wWzY2uZ1ibGmY9MOkqYswr6wXP1uBrJp0+y5up5m4vkoEH7WGLpLc
+         T9hkvUnUvNSM8CrGuVj7PsiafFXIoaZNxfH+NvJKweGlYA1b0r8eWkLO7to4L2QeaM//
+         HG9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUT7AGUY/Dq0D+ubJFOCQUzhXPiWSKf36Atqu+Hklg0eiIc9GTyhtyINJA3akpnVkHHH7hmnlRAOkPPEkDyYAaHKiZ7A64bfsbC
+X-Gm-Message-State: AOJu0YyGJM1/KweqPDpa03aMW0r5l6EBqHnS7oGN6jz/ei2qrMFtRV04
+	rE9K8uf4Y0QjhQL/IPMKNoJnL6ljAVnaFROSvdja9anEhVBXmZnp8jvOCsntSTQ=
+X-Google-Smtp-Source: AGHT+IG9zPpNZUlvs16bYIj0c66f1KNngiT7ts8pWlr3T7K+BHwY3nQDuqiPysTk5BQHVQQ540l8wg==
+X-Received: by 2002:a17:907:1044:b0:a3e:590f:6348 with SMTP id oy4-20020a170907104400b00a3e590f6348mr10415252ejb.41.1708625313267;
+        Thu, 22 Feb 2024 10:08:33 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id r8-20020a170906364800b00a3e4e7ad9dbsm5220799ejb.68.2024.02.22.10.06.59
+        by smtp.gmail.com with ESMTPSA id r8-20020a170906364800b00a3e4e7ad9dbsm5220799ejb.68.2024.02.22.10.08.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Feb 2024 10:07:00 -0800 (PST)
-Message-ID: <f6dd8194-979a-4409-a300-f1eccba7fce7@linaro.org>
-Date: Thu, 22 Feb 2024 19:06:58 +0100
+        Thu, 22 Feb 2024 10:08:32 -0800 (PST)
+Message-ID: <2085057c-0000-4e0d-a633-c84e939313d6@linaro.org>
+Date: Thu, 22 Feb 2024 19:08:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,7 +61,9 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] dt-bindings: clock: convert hisi-crg.txt to YAML
+Subject: Re: [PATCH v3 2/8] ARM: dts: hisilicon: add missing compatibles to
+ CRG node
+Content-Language: en-US
 To: forbidden405@outlook.com, Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -70,8 +71,7 @@ To: forbidden405@outlook.com, Michael Turquette <mturquette@baylibre.com>,
 Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20240222-clk-mv200-v3-0-f30795b50318@outlook.com>
- <20240222-clk-mv200-v3-1-f30795b50318@outlook.com>
-Content-Language: en-US
+ <20240222-clk-mv200-v3-2-f30795b50318@outlook.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -117,24 +117,41 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240222-clk-mv200-v3-1-f30795b50318@outlook.com>
+In-Reply-To: <20240222-clk-mv200-v3-2-f30795b50318@outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 21/02/2024 17:41, Yang Xiwen via B4 Relay wrote:
 > From: Yang Xiwen <forbidden405@outlook.com>
 > 
-> Also rename to hisilicon,hisi-crg.yaml. While at it, add "syscon" and
-> "simple-mfd" compatibles to match the existing dts.
-> 
-> Add reset-controller subnode for hisilicon,hi3798cv200-crg to match the
-> existing hi3798cv200.dtsi.
+> Add "syscon" and "simple-mfd" compatibles to CRG node due to recent
+> binding changes.
+
+Why? You claimed you added them in the bindings because DTS has them. In
+DTS you claim reason is: binding has them.
+
+That's confusing.
+
 > 
 > Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
 > ---
->  .../bindings/clock/hisilicon,hisi-crg.yaml         | 69 ++++++++++++++++++++++
+>  arch/arm/boot/dts/hisilicon/hi3519.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/hisilicon/hi3519.dtsi b/arch/arm/boot/dts/hisilicon/hi3519.dtsi
+> index a42b71cdc5d7..da46e01b8fdc 100644
+> --- a/arch/arm/boot/dts/hisilicon/hi3519.dtsi
+> +++ b/arch/arm/boot/dts/hisilicon/hi3519.dtsi
+> @@ -35,7 +35,7 @@ clk_3m: clk_3m {
+>  	};
+>  
+>  	crg: clock-reset-controller@12010000 {
+> -		compatible = "hisilicon,hi3519-crg";
+> +		compatible = "hisilicon,hi3519-crg", "syscon", "simple-mfd";
 
-I don't see any conversion here.
+Why? This does not make much sense. No children here, no usage as syscon.
+
+
 
 Best regards,
 Krzysztof
