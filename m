@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B27E79F5;
-	Thu, 22 Feb 2024 04:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14D210E6;
+	Thu, 22 Feb 2024 05:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708577858; cv=none; b=rhvpnYk5K45r9RzwlVJpD0CRdyZeNDFRsqk3N1qtVdSSdaorgCoLnvHOrB8wSdKsxRD6PHpm+LddTWEm6NzgUCnMlfKku6z0FkTDkPLAXCHGRlmtbxB/kwCFdongfp43b8cuOTI6WaXT7sr/tA+VVy2Ehj5kEPqIJCmq6MXWQNM=
+	t=1708578155; cv=none; b=q9TnAQyTXwENvfmkKeE2RhG4l2jjWwmi38R9eMCaQlZOdAbqyogkrwwpU2SnXK3N+Uf6BvPsHdNdHQEZ+Dg/URdq7kM42QqJERdQm0A0UbpwghmKUQvs9mtfD9Xqw8+nIHrkHXfIGTdZAFJzl/hfXQM2flD/CMoY6x6VGdrAB4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708577858; c=relaxed/simple;
-	bh=LD1a12Iwotseh8k/EGNm4xpZFXAbJSrLwQ+zzlGmHig=;
+	s=arc-20240116; t=1708578155; c=relaxed/simple;
+	bh=V/H8ZH5cCurKQ8BQRm5x3d74U9mlF3EMQATdNzjS3U0=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=K+W5Vhz7xeeQKU3khysJDd4ZYR8nnhUsoNHG9YEoZLzYcIZeuqu4PhoECNM7nQYKtJVN9EMv5i1hTdtlusgM7VVbQIaUdLtJc/I8MbA1UnY3wYrkyVeYDaDcDapigZH/h1fYmyjhajchKdhcRGK71pFsc8Fm/gMD10DWzl5ZXTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mpf0+kip; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=MxN8C/UugANKM3lWQPwjpZaOb+l48QPhE8GCADfkA81O/qrgAzvAJrTiQ3Ze9OHdobWydVVNxUV6nAJTsuXLBV+0eqMmWZVmJ5EUH2syv8qAN6/tTGj8tWQaXjsxXhaC274vgNTx96z50HFpEXBpXeZPrcGWcvla6U4vfl+eDVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EtQRxNMT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mpf0+kip"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA6D5C433C7;
-	Thu, 22 Feb 2024 04:57:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EtQRxNMT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F9F1C433C7;
+	Thu, 22 Feb 2024 05:02:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708577858;
-	bh=LD1a12Iwotseh8k/EGNm4xpZFXAbJSrLwQ+zzlGmHig=;
+	s=k20201202; t=1708578155;
+	bh=V/H8ZH5cCurKQ8BQRm5x3d74U9mlF3EMQATdNzjS3U0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=mpf0+kip2Qpa8fBNhkgu10pfovZVp/XhCe3so/ZwGXGy7ouvjKVJSMbPqbQT4HoEY
-	 IYL4sO8wl/gNLWWHIpnLytePYJekOwa4Yni42JKIZbDhz3YoiF/w7eZvOxoIYDja6a
-	 Hlfw06K0Fk7+eomJ35IRKRz+VppDF4ANsbkhDrcDN8tcxc6TT12DuAbcj/KNTKaRrm
-	 R9eKvy60DoccYwdeqNsG9orebBpOuaUpglOm1ZM5WVxlix+N8Ax2ACtkV7bAKoE9dv
-	 oWhVdTkq7BomERG4a+sVYZd8KjoJFVDTaJyrOuiW1fqCMclCWqWRIbQAq7vxpLCVvQ
-	 mj1pTVptYMXcQ==
-Message-ID: <f631feddb58950b63ecb21e2353e5892.sboyd@kernel.org>
+	b=EtQRxNMTek721ifTOvr80UuXi/VVvCszQwwcPClFgnqTkUn2ZyvqNzu6xTbhyhoAP
+	 ZCjAxhxqTaeNrGH0dKcuQPzhdhV6JLAUbiPUlij0l6lqu38AdIWGqSQ2pn9DscqTa4
+	 nPxHrUcfdnelyxZxmmpS5bH1Hl50GaJyFqsgT9FHrMaNHQWmcaigMclnVucGjIHcZh
+	 ucYG08V0p4U3n7kbzhmr1+Ygr3QKbYBiSkauVqIweqWMu/GFxKyNNEDXsg/KaGeloR
+	 sG9PbyN8wHjl3ADNsUMiTHDRbKcpaNVvIzwinp+8FWVVd86Tm0A9ssjWoRbAlswC85
+	 AOvfpmEQB8iPQ==
+Message-ID: <d788965caa6347c989c1cc6f9d20d48e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,25 +35,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240214061233.24645-4-zajec5@gmail.com>
-References: <20240214061233.24645-1-zajec5@gmail.com> <20240214061233.24645-4-zajec5@gmail.com>
-Subject: Re: [PATCH V4 3/3] dt-bindings: clock: mediatek: convert SSUSBSYS to the json-schema clock
+In-Reply-To: <20240201182409.39878-3-linux@fw-web.de>
+References: <20240201182409.39878-1-linux@fw-web.de> <20240201182409.39878-3-linux@fw-web.de>
+Subject: Re: [PATCH v4 2/2] clk: mediatek: add infracfg reset controller for mt7988
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Russell King <linux@armlinux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, Rob Herring <robh@kernel.org>
-Date: Wed, 21 Feb 2024 20:57:35 -0800
+Cc: Frank Wunderlich <frank-w@public-files.de>, Sam Shih <sam.shih@mediatek.com>, Daniel Golle <daniel@makrotopia.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Conor Dooley <conor+dt@kernel.org>, Frank Wunderlich <linux@fw-web.de>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>
+Date: Wed, 21 Feb 2024 21:02:32 -0800
 User-Agent: alot/0.10
 
-Quoting Rafa=C5=82 Mi=C5=82ecki (2024-02-13 22:12:33)
-> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+Quoting Frank Wunderlich (2024-02-01 10:24:09)
+> From: Frank Wunderlich <frank-w@public-files.de>
 >=20
-> This helps validating DTS files. Introduced changes:
-> 1. Documented "reg" property
-> 2. Dropped "syscon" as it was incorrectly used
-> 3. Adjusted nodename, "compatible" and "reg" in example
+> Infracfg can also operate as reset controller, add support for it.
 >=20
-> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
 ora.com>
 > ---
