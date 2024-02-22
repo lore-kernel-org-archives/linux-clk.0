@@ -1,196 +1,119 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586EE17988
-	for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 07:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89BC17F3;
+	Thu, 22 Feb 2024 08:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708588027; cv=none; b=YDmZeMy4goHXg1zc9+jYg7EcO+gofdDTfDvHLmdAEBrZmRSM8kPM/miJrcyNAvp94CHwtdJ0wx7SiXm4vCvs/tdsIAfNVqS3V7VU4G0vShYTFrWod7yxjizTNqYVknM5slxYHJqIRZGS2IwwxacG1PI5H8MUBBeRHkQPzsYQxj0=
+	t=1708590529; cv=none; b=X4PZJWVpMdLC1y7S0YzTdHjUEVoyqrl4GD2JquKIUslkkUpXqg6IwxrNAQ8hoKZwE6yZEIg3Jtu9N/mViiXd0xEOxQfPlaQL7YSF3Dfyjm8Xjlr6ct0OSN7FXaU8qYOLrNBF3hleTIrtUOoc4w2nEVzUC2WNcM4icH9cfmNlFS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708588027; c=relaxed/simple;
-	bh=wJBFHsQ66055reSqqi6It9R23VoGCCMweYpA5lfJPPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mm1e7hoUYu6Uc+ppkYS1sPk2pnPrx3bgXKjqHc0c6Yit7YC1JGtG0kHxUr7kZUxzSZwzlYrn0urKHdh8xsoncry/Q/V8NagdtBvvOCxnH+KCKxWNcVl7vfjsjCVNfGmkiaGXk1WYuy47FzL5p9/2RLsdC72QnoLKAZFeTSgTHv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZd6dWj8; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZd6dWj8"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-55f279dca99so1822875a12.3
-        for <linux-clk@vger.kernel.org>; Wed, 21 Feb 2024 23:47:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708588023; x=1709192823; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nPtrn2AJlyFrVhVFg0+RrmhVpSvDXT3cdrnrFrP+YME=;
-        b=KZd6dWj8oajx4mmh73rFm4tmgT8rw3VlKZ8M+ZrEA5Q5+Vk4vorG6AVsd8qeuBTuj0
-         BJzrInvGlthTuTG2wBZjz6k5xOIPNeGQx6gcV3vn4z/UtArlS1W5Pr6ZjwyRPVowyDIg
-         oZBf+/kwBguitF1jt5fT1booHVtL4ytuAuscKIy5YTQdX+L9aHYM2vSnVWg0lg25K1Wa
-         dimSqJ7cD3ATqcp/0dS4TnWwSG9gXAr8v0ZnlMGjj7ZmoNLnAyK16qYlByeZfaXVJZAN
-         CGcDJfih4bd2YlWhbV35p74GaxFv4l8XUaG2rKTUbs8HECI71HrXS/xMmbYJ4O8IuSYH
-         WMcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708588023; x=1709192823;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nPtrn2AJlyFrVhVFg0+RrmhVpSvDXT3cdrnrFrP+YME=;
-        b=VQ1OyPlpJ05dU9MyghU6bjfEQhkqETKX4UnLdf/NEp1DQ+LX4JzI5Uy8mNLRyWqlkt
-         QhcANnXuRbkfO7BEYfY8s0i9TAsjBq8viPzdvRbAdw0cmaLPH6cSr60Qk32GsLxcZD71
-         HWPXvtaFTDixi+HtLyGF11HBR9JdD7ANVBkqS9z2leVKuR07mLEJ9BfNxoC+1pYA+Op9
-         9Wu06DvABwHycDwXBV2u/ha1vCU/U7LzuopFeQKC05777Gw1VJkfTlSRfLC0DoZjbcfc
-         3v9w67jZY9teLX5DKwEChBuM4/JXDw6RT3QpEC+QXGp6KMBhQ6VrcyjtSX+enn5h8gfy
-         esLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWD3kg2WLY1tEEZp5hIWJ516hAhBeHqwbt+KoJoyg5lrLUtBZ+/lCUAAnUqlxcaa05JSGsorkTfkXTR8S9Nq+lzHnB/FF70gQE2
-X-Gm-Message-State: AOJu0Yz1+T4djVoxwRb9IPpCkrwx0a/DPfLkZSOBkupHk1RxY8eMFrZ/
-	cWSM4xfOZymsSTJy39RyYMkyB9NJdo7aXBEdLAOFBiSYRe7014v+RIK37dM7rVQ=
-X-Google-Smtp-Source: AGHT+IHSrLKY+pxwdrtKyhvCh2pr+Bjwrjzz/crpqYDIb/F9FwG/huwkjS75Xvr395MFitR+p8cBmQ==
-X-Received: by 2002:a05:6402:288:b0:565:2fe2:905b with SMTP id l8-20020a056402028800b005652fe2905bmr719464edv.6.1708588023656;
-        Wed, 21 Feb 2024 23:47:03 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id h10-20020a0564020e0a00b005641bab8db3sm5128141edh.86.2024.02.21.23.47.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Feb 2024 23:47:03 -0800 (PST)
-Message-ID: <c4f7e3cb-db9b-48be-883e-33878d2510e8@linaro.org>
-Date: Thu, 22 Feb 2024 08:47:01 +0100
+	s=arc-20240116; t=1708590529; c=relaxed/simple;
+	bh=TS189Amvyy2CvqLVwG3evt8PDz3DhxOZrY0WmQ8O+TA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WdueeDKrIEB4IYwVPcoIoALwEq1U9yaW+4n15dnAxqLhAm3MSGY8t9U12j80oQ/hs2AIBRTVCK716bNcavC3Kv9ecmJKu0ky8ct+l9gmXnvLrkbp7UWOHMtOpIuTUTh2ghDtVWdQTquPUQzouODQUHr5KdFGtQQDktBpMoXzsa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F4561007;
+	Thu, 22 Feb 2024 00:29:24 -0800 (PST)
+Received: from pluto (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53D6A3F762;
+	Thu, 22 Feb 2024 00:28:44 -0800 (PST)
+Date: Thu, 22 Feb 2024 08:28:41 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	sudeep.holla@arm.com, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
+	quic_nkela@quicinc.com, souvik.chakravarty@arm.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 6/7] clk: scmi: Allocate CLK operations dynamically
+Message-ID: <ZdcFuV0KQDXTH8L8@pluto>
+References: <20240214183006.3403207-1-cristian.marussi@arm.com>
+ <20240214183006.3403207-7-cristian.marussi@arm.com>
+ <500e265eb7c6a03a40e0067c8806e059.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/16] clk: samsung: Keep register offsets in chip
- specific structure
-Content-Language: en-US
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240216223245.12273-1-semen.protsenko@linaro.org>
- <20240216223245.12273-12-semen.protsenko@linaro.org>
- <ce515530-428a-4a21-8c56-5a497cc8130a@linaro.org>
- <CAPLW+4=kpk=Vg=nX-hVxcCS0OttC6xmyUcB005tmX+vtUF9TLA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAPLW+4=kpk=Vg=nX-hVxcCS0OttC6xmyUcB005tmX+vtUF9TLA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <500e265eb7c6a03a40e0067c8806e059.sboyd@kernel.org>
 
-On 22/02/2024 01:42, Sam Protsenko wrote:
-> On Tue, Feb 20, 2024 at 5:04 AM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 16/02/2024 23:32, Sam Protsenko wrote:
->>> Abstract CPU clock registers by keeping their offsets in a dedicated
->>> chip specific structure to accommodate for oncoming Exynos850 support,
->>> which has different offsets for cluster 0 and cluster 1. This rework
->>> also makes it possible to use exynos_set_safe_div() for all chips, so
->>> exynos5433_set_safe_div() is removed here to reduce the code
->>> duplication.
->>>
->>
->> So that's the answer why you could not use flags anymore - you need an
->> enum, not a bitmap. Such short explanation should be in previous commits
->> justifying moving reg layout to new property.
-> 
-> Will do, thanks.
-> 
->>
->>> No functional change.
->>>
->>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->>> ---
->>>  drivers/clk/samsung/clk-cpu.c | 156 +++++++++++++++++++---------------
->>>  1 file changed, 86 insertions(+), 70 deletions(-)
->>>
->>> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
->>> index 04394d2166c9..744b609c222d 100644
->>> --- a/drivers/clk/samsung/clk-cpu.c
->>> +++ b/drivers/clk/samsung/clk-cpu.c
->>> @@ -44,12 +44,14 @@ typedef int (*exynos_rate_change_fn_t)(struct clk_notifier_data *ndata,
->>>
->>>  /**
->>>   * struct exynos_cpuclk_chip - Chip specific data for CPU clock
->>> + * @regs: register offsets for CPU related clocks
->>>   * @pre_rate_cb: callback to run before CPU clock rate change
->>>   * @post_rate_cb: callback to run after CPU clock rate change
->>>   */
->>>  struct exynos_cpuclk_chip {
->>> -     exynos_rate_change_fn_t pre_rate_cb;
->>> -     exynos_rate_change_fn_t post_rate_cb;
->>> +     const void                              * const regs;
->>
->> Why this is void?
->>
-> 
-> Different chips can have very different register layout. For example,
-> older Exynos chips usually keep multiple CPU divider ratios in one
-> single register, whereas more modern chips have a dedicated register
-> for each divider clock. Also, old chips usually split divider ratio vs
-> DIV clock status between different registers, but in modern chips they
-> both live in one single register. Having (void *) makes it possible to
-> keep pointers to different structures, and each function for the
-> particular chip can "know" which exactly structure is stored there,
-> casting (void *) to a needed type. Another way to do that would be to
-> have "one-size-fits-all" structure with all possible registers for all
-> possible chips. I don't know, I just didn't like that for a couple of
-> reasons, so decided to go with (void *).
-> 
-> I'll add some explanation in the commit message in v2.
+On Wed, Feb 21, 2024 at 09:44:14PM -0800, Stephen Boyd wrote:
+> Quoting Cristian Marussi (2024-02-14 10:30:05)
+> > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> > index 5747b6d651f0..b91a0dbd2fe0 100644
+> > --- a/drivers/clk/clk-scmi.c
+> > +++ b/drivers/clk/clk-scmi.c
+> > @@ -158,51 +158,6 @@ static int scmi_clk_atomic_is_enabled(struct clk_hw *hw)
+> >         return !!enabled;
+> >  }
+> >  
 
-Currently the one-size-fits-all seems feasible, even if few fields are
-not matching, so I would prefer to go this approach.
+Hi Stephen,
 
-Best regards,
-Krzysztof
+thanks for having a look.
 
+> > -/*
+> > - * We can provide enable/disable/is_enabled atomic callbacks only if the
+> > - * underlying SCMI transport for an SCMI instance is configured to handle
+> > - * SCMI commands in an atomic manner.
+> > - *
+> > - * When no SCMI atomic transport support is available we instead provide only
+> > - * the prepare/unprepare API, as allowed by the clock framework when atomic
+> > - * calls are not available.
+> > - *
+> > - * Two distinct sets of clk_ops are provided since we could have multiple SCMI
+> > - * instances with different underlying transport quality, so they cannot be
+> > - * shared.
+> > - */
+> > -static const struct clk_ops scmi_clk_ops = {
+> > -       .recalc_rate = scmi_clk_recalc_rate,
+> > -       .round_rate = scmi_clk_round_rate,
+> > -       .set_rate = scmi_clk_set_rate,
+> > -       .prepare = scmi_clk_enable,
+> > -       .unprepare = scmi_clk_disable,
+> > -       .set_parent = scmi_clk_set_parent,
+> > -       .get_parent = scmi_clk_get_parent,
+> > -       .determine_rate = scmi_clk_determine_rate,
+> > -};
+> > -
+> > -static const struct clk_ops scmi_atomic_clk_ops = {
+> 
+> It's not great to move these function pointer structs out of RO memory
+> to RW. I'm also not convinced that it's any better to construct them at
+> runtime. Isn't there a constant set of possible clk configurations? Or
+> why can't we simply add some failures to the clk_ops functions instead?
+
+Well, the real clock devices managed by the SCMI server can be a of
+varying nature and so the minimum set of possible clk configurations
+to cover will amount to all the possible combinations of supported ops
+regarding the specific clock properties (i.e. .set_parent / .set_rate /
+.enable / .get/set_duty_cycle / atomic_capability ... for now)...we
+simply cannot know in advance what the backend SCMI server is handling.
+
+These seemed to me too much in number (and growing) to be pre-allocated
+in all possible combinations. (and mostly wasted since you dont really
+probably use all combinations all the time)
+
+Moreover, SCMI latest spec now exposes some clock properties (or not) to
+be able avoid even sending an actual SCMI message that we know will be
+denied all the time; one option is that we return an error,, as you said,
+but what is the point (I thought) to provide at all a clk-callback that
+we know upfront will fail to be executed every time ? (and some consumer
+drivers have been reported by partners not to be happy with these errors)
+
+What I think could be optimized here instead, and I will try in the next
+respin, it is that now I am allocating one set of custom ops for each clock
+at the end, even if exactly the same ops are provided since the clock
+capabilities are the same; I could instead allocate dynamically and fill only
+one single set of ops for each distinct set of combinations, so as to avoid
+useless duplication and use only the miminum strict amount of RW memory
+needed.
+
+Thanks,
+Cristian
