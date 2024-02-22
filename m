@@ -1,63 +1,62 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CF56AF86;
-	Thu, 22 Feb 2024 19:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C62137933;
+	Thu, 22 Feb 2024 23:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708631485; cv=none; b=k+slqZwNzaTjDet3a+uPR4aiDI/8+WBz8rZe7y/MFalpcezCYJQTAUmipWVhcX1zmQw1TGV7ecZZS1x1M+Jhcwsy9c/iOep5lPSDeeoYr+ExOEuuG2buW4DWXAmeSLSu3EPqCHldaUM6S9x3tsFjP/3/5ySwX3ZUgwov7vTria8=
+	t=1708644052; cv=none; b=HEcq6ODCK1wWO6jw5VLS0nKKDFbcsTqbd6pR/QQmGi4yW5AB47LoavFztkiza8PMTECwaGQLUcmwjgWOmYUj2zB/+nkK8bIsgRPv4Zldmj8aU1DViKBflWR8MlcyWi5sqcD7NnJSC7OV9uP/G0Dck5gDaDtme4KprZa+8rehb8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708631485; c=relaxed/simple;
-	bh=SzwwYFuLR6ZQog8lwwldYZZygr7tXCbPVaY0n40RI1E=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=dEjlhOZmIVqdOwSRmr/dFOFe4tU5edLcejhxjsbIfEO+cf6T18HVOgH0gFaxlY/uNz+tWS9nY1ypqjlkIenBquKXJ8bLd7DSXTA/LgvTd5nHbpIkAeXrZvnXhAM5/5Uk60Ntmgl0SMMDiKKexVeGJvunUclxrddoa4OHAZ8Q/E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjQ+j8cr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708644052; c=relaxed/simple;
+	bh=Y6o9VsjyTfZlt/ma3RPwq/TFdMyO1XRt/4IORTwFDy0=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=SwTQR+A2PxdeBawb1EID2TL7qEEl21pShpnwxl5iZ2H8XY6vTdHm+blvmXIaBv6F6ip15ND0VoSgThJqHYj1424has7UfVEDNWCxuMmrqUUERt4tY8oafo3PQNJDcBof/FxqxbM8ybTU4hYApeSAgPAjRsyEMCfEhoRgbwAm7JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4/nyA5B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjQ+j8cr"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4B05AC433F1;
-	Thu, 22 Feb 2024 19:51:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4/nyA5B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E16C8C433C7;
+	Thu, 22 Feb 2024 23:20:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708631485;
-	bh=SzwwYFuLR6ZQog8lwwldYZZygr7tXCbPVaY0n40RI1E=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=OjQ+j8crwhbOIvhblfbJZZYCvT1V29VU84N/6cVuw1eWP1qawTlnAzkeeLIOYTa3Y
-	 ZXrrcGcN9RC/u69FizSgz5NFLnmpsCvdIMJK+HFzGgjlisOsupMXdXSzDgV+UzzEcz
-	 QPKY6LXgUXoiewaivCyUEpD4WbHGlA2j3PfH5egDyckA+VUdLUXecyXoMp7zrPrdPn
-	 4eCFQfwBhKdaiOfT/0iRwYP/2JyRzgGQ08GDNMTk2KIYh+cnnInkkfneVJasQJW06b
-	 kGIGwgttZHFQgVYjB5M4q7NC4ovUNFfoggQATK5V4eg079+v9ueptCkqduBXr6X/RG
-	 nCuTAjVtuWx6Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 372F7C04E32;
-	Thu, 22 Feb 2024 19:51:25 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v6.8-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240222064521.2538149-1-sboyd@kernel.org>
-References: <20240222064521.2538149-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240222064521.2538149-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: cc976dbc492c2bf67d8225845b609ea72e292128
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 88953761b94df7dc9bfc46591a8975401689b057
-Message-Id: <170863148520.11658.7094787355205911363.pr-tracker-bot@kernel.org>
-Date: Thu, 22 Feb 2024 19:51:25 +0000
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1708644052;
+	bh=Y6o9VsjyTfZlt/ma3RPwq/TFdMyO1XRt/4IORTwFDy0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=L4/nyA5B3xHgkBMZCAKK8tZodBCng8xc5aBKftryCDGHYUE4LwIywUXsACUZaSPkP
+	 a8eHL/07HPfMIgQ9cRwdYP3kqEt9m9Jd/6BzYYVo2VwQs2lCvXXOM/km7WKCyEt/Dz
+	 MeORyVyf3Sg86ZaPkelEmgUK+AICfFuKUMe0hsophLShjQwQosOm7gTPwvqbZYyNKZ
+	 GjnrIOb7IYMuWn9RFj6NBbe8zH5Tl8PU9FGgxhEl/Y9baO+1ih39j/jTO1xmvhmVj4
+	 OzXxd/b+G7Yz7X6kcXapWS33amTt2jJQiW6nFl9aDDBnbnsgspbm2rCGFa87AupdKf
+	 oAU4tLbfeS9PA==
+Message-ID: <c79909e4e55badc8f094d2ff8c4d34ca.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240126201433.1830600-1-jan.dakinevich@salutedevices.com>
+References: <20240126201433.1830600-1-jan.dakinevich@salutedevices.com>
+Subject: Re: [PATCH] clk: allow to skip clk_core_req_round_rate_nolock()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: kernel@salutedevices.com, Jan Dakinevich <jan.dakinevich@salutedevices.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 22 Feb 2024 15:20:49 -0800
+User-Agent: alot/0.10
 
-The pull request you sent on Wed, 21 Feb 2024 22:45:21 -0800:
+Quoting Jan Dakinevich (2024-01-26 12:14:33)
+> Calling of clk_core_req_round_rate_nolock() can be time-consuming in a
+> case of deep hierarchy with multiple dividers/parents. But if the clock
+> already has exactly the same rate as desired, there is no need to
+> determine how it could be rounded.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+What exactly are you trying to avoid? Is this an optimization or a bug
+fix? TL;DR: I'm unlikely to apply this patch.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/88953761b94df7dc9bfc46591a8975401689b057
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I could see some driver implementing round_rate()/determine_rate() in a
+way that rounds the rate passed in, so that even if the rate is what the
+clk is running at _right now_, it still wants to change it to something
+else, or at least call down into the driver to call the set_rate clk_op.
+Applying this patch will break that. The contract is that
+clk_set_rate(rate) =3D=3D clk_set_rate(clk_round_rate(rate)). It doesn't
+look like anything needs to change.
