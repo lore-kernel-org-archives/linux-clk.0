@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E901C14;
-	Thu, 22 Feb 2024 05:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5DE14A96;
+	Thu, 22 Feb 2024 06:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708581599; cv=none; b=Hr6nX0Fpre1L2Y9uKmMuxfSuerWxgowMSx//tR2Wx9PxV5c3IlQHlTMRV+J3S3430lrUJ3x3fOZEg5peyRx5xSl4s3UQc9YwYuSE+mE/4YEvGgXMsWt8YzFUnmhzkCalncz9Q3t646qN4Evx3JS1sZTC3tkgfSs2//JNk7Z11uc=
+	t=1708582368; cv=none; b=grPUCswCwsRE/nFf4ZXWw5gKws4gNKq/IAKLX1Xm57tS9Jn4VxOo4IyTYN0p5lu48f3Pny8nHcwp4oX9e6xQjkRcvdrvNl3MXIfedJQygbkPzGKIyZ4gSVLcDAKQNnJtsPzVvsDguf64xSuERzBvFfIiOthRAJlj6qQkcoyStjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708581599; c=relaxed/simple;
-	bh=7eMHPhOOazEN/LI/SRIKFgefJe4Iax6HASQmBhZazhk=;
+	s=arc-20240116; t=1708582368; c=relaxed/simple;
+	bh=AMZ9L9h77qL2qKSyUaf9Y7pkPFgHKjt6oguMDxLm5/s=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=dTC1fr8qolDga79cGJz63V3hce/16MSuQtzpdM1cK7/Di5qwtEPYJ8JMWbNgKUfr3uVONFANt9T/tLsW4OIaEWbLr24rF4fpILkPTfC2id8yc4uF++BnNjwOymzhSHJPFh4t+R/mYDOmtexC6GOlHLRK9bUbb5utqN4znfdSMUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOsIuMsd; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=k0AIQxo8VK7Ui3yznLDPuhY862RmGVjRA3Uss3S92ztjpylH8OE3taVKiL/Bbvob9jM0KVsvgYnmylv2EKPKcO4Qpr1kP4DngVWrxrkQXZC5kNfsdqdLYnMIyulF/0SQoY77X7w7oYYdp+Vutwj6URL7QuzB57mzNSOF5nK6p1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kB/tSz2+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOsIuMsd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F712C433C7;
-	Thu, 22 Feb 2024 05:59:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kB/tSz2+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3342FC433C7;
+	Thu, 22 Feb 2024 06:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708581599;
-	bh=7eMHPhOOazEN/LI/SRIKFgefJe4Iax6HASQmBhZazhk=;
+	s=k20201202; t=1708582368;
+	bh=AMZ9L9h77qL2qKSyUaf9Y7pkPFgHKjt6oguMDxLm5/s=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=WOsIuMsdS8XnfulUu3hNg4DQZZ8rlbajlYCOctbDa1SI59lAjk5/hzQ4NwNUaSsEE
-	 9AeNzDn7fGId6k2pJnVEdkxhjfSOM9SgTQNf4IP/4anQjpKztbrA3RJlDJ2i7mfXAG
-	 7Oz7i77y3gYFiCkaN2j7JYrLQ6ruMFgB6Ib1ES+NLwOCfSMjOa/zWfCqDvv5l8IOTc
-	 rKIX3CXrdBzBISR0mrNDkyCJlp8X21zJGQYLlftc6ljL/RgaLNYdSGXuGiJV2LPUU/
-	 FaZ73TJcr+OJI+HE3xj9FMoNblOO3VHAPfZEUC+Pm5hibRzDcWEm6gzZq0ykVr69E5
-	 5DvmhGrxgthRA==
-Message-ID: <689300ed3176274c5150cf101eb53ca3.sboyd@kernel.org>
+	b=kB/tSz2+DwGggX08LhXeIHcG0PebeGdf9oeSQXvQ/Wz/LW/bcRG1GoJFbqkr01dQl
+	 aD4W3uau/rFWoUj91xTlnYvR6TsBqDG9xKb//rSoCmTCmC07N2Da8WLDLhsvlE46gA
+	 5/liaHzWjof3RrnWn9ZvzlGuQAqYs4IbmzrHf+K6MFNHzvDPPNRZBVL1f9ACiSa4C7
+	 Gvh0QX5z/wClAATiH02u7F1SZcyMobKlEFS9wwg7FmSWAX5qGLinrFYAX5QZObZupo
+	 5IYPzyBa9FelXtBkUZD/XPNorXVzrOHbCRBBn24PtGnqbDKE4DCv1tfudjhNLJvpd6
+	 GFw/l8i4TUsSA==
+Message-ID: <5b2d83e343fa218c791d468a863a6c65.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,33 +35,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240213082640.457316-1-u-kumar1@ti.com>
-References: <20240213082640.457316-1-u-kumar1@ti.com>
-Subject: Re: [PATCH v4] clk: keystone: sci-clk: Adding support for non contiguous clocks
+In-Reply-To: <20240221-mbly-clk-v7-1-31d4ce3630c3@bootlin.com>
+References: <20240221-mbly-clk-v7-0-31d4ce3630c3@bootlin.com> <20240221-mbly-clk-v7-1-31d4ce3630c3@bootlin.com>
+Subject: Re: [PATCH v7 01/14] clk: fixed-factor: add optional accuracy support
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: vigneshr@ti.com, mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Udit Kumar <u-kumar1@ti.com>
-To: Udit Kumar <u-kumar1@ti.com>, chandru@ti.com, francesco@dolcini.it, kamlesh@ti.com, kristo@kernel.org, nm@ti.com, rishabh@ti.com, ssantosh@kernel.org
-Date: Wed, 21 Feb 2024 21:59:57 -0800
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+To: Conor Dooley <conor+dt@kernel.org>, Gregory CLEMENT <gregory.clement@bootlin.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, Rob Herring <robh+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+Date: Wed, 21 Feb 2024 22:12:46 -0800
 User-Agent: alot/0.10
 
-Quoting Udit Kumar (2024-02-13 00:26:40)
-> Most of clocks and their parents are defined in contiguous range,
-> But in few cases, there is gap in clock numbers[0].
-> Driver assumes clocks to be in contiguous range, and add their clock
-> ids incrementally.
+Quoting Th=C3=A9o Lebrun (2024-02-21 10:22:09)
+> Fixed factor clock reports the parent clock accuracy. Add flags and acc
+> fields to `struct clk_fixed_factor` to support setting a fixed
+> accuracy. The default if no flag is set is not changed: use the parent
+> clock accuracy.
 >=20
-> New firmware started returning error while calling get_freq and is_on
-> API for non-available clock ids.
->=20
-> In this fix, driver checks and adds only valid clock ids.
->=20
-> [0] https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.ht=
-ml
-> Section Clocks for NAVSS0_CPTS_0 Device, clock id 12-15 not present.
->=20
-> Fixes: 3c13933c6033 ("clk: keystone: sci-clk: add support for dynamically=
- probing clocks")
-> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
 > ---
 
 Applied to clk-next
+
+Please consider adding a test.
