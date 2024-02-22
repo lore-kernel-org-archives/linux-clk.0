@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB8454903;
-	Thu, 22 Feb 2024 19:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3199954910;
+	Thu, 22 Feb 2024 19:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708630837; cv=none; b=jfGMcrakyD2ctqpgHNkQ6TmirP0vgkmGH04yuMI34NYbZsDb+X1sdSGfQPnlKXZEmOpeM3m68DJtSEmduIEcbFPQe+TqG5utUMz5YWuvZ5UlKsqt4GXdbF7IbiiN1HhvoDD/s1Me68Ufb9Ps9uWgHjzXrcRejpDl8gWWatFDcYc=
+	t=1708630837; cv=none; b=IJQNxGhtPWbEj/nm8CCrdGJHk+/cBqv30tnXKog3JKoQOzgzxOp6/3fEvFPHAsk31IZgfnrIPfr4gVecg7aa4Qd+f/XT/Eskwl5Bbfc4yJc5s1DifxBGfAoTsygJcM7In1+Nce6Zy6ixj6qSzPD9nQ+X5wR/UgikKPT7elsDon8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1708630837; c=relaxed/simple;
-	bh=iXlnN86FBtHze7pc7TT1EzncHtGJddooON9T6JhruhI=;
+	bh=uvgjDgyr2mOgCCPMtw6TqBlBBsSGCf6QAlqQ67J+xZ0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=deRLA6o5Qbu5zbdkRZ5CtQv+JQPsQCa09iJyjbmCGAYcW1hNldfOA07fTRXaGHdhtMCX72QXKnP7NAPKW7PId1ipA8A3RxOqu3o/AFvRrhNxQTkI5byRnI9skvglfiba5M4A+vmcuQC1T0RSzdIWkxCWf2vD0hLw+P1PoEZEDO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NbtvCt7m; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=UpradkDJPbPaGzZgzwo+RytQpVgNIhFqKGb5d1fK3AUK6g/2+kK6Ekct6UMGIoC9AmFbgXFfyx+TuZ8Fu1h4p7w3lE4zBBS1efb00Iei+R+C5qRCiOpO3PYgYHbF0gli8UQGs9BsiUMQy36PalRqNb88JxGId8vW9107pLYUicc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eupYjtqa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbtvCt7m"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AD043C43399;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eupYjtqa"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CDB8AC4166B;
 	Thu, 22 Feb 2024 19:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1708630836;
-	bh=iXlnN86FBtHze7pc7TT1EzncHtGJddooON9T6JhruhI=;
+	bh=uvgjDgyr2mOgCCPMtw6TqBlBBsSGCf6QAlqQ67J+xZ0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NbtvCt7mxbWeKYgLzxg/4Iq87LHwNpDdPwU5U2kfLQkOGNzj9WReowrolZ2M5BXK/
-	 u6BTgfNObdXqbK3/74mSUUSxJa6mPXP/MACO7LT2bu5ZAK/3X+mp8IGgQdH31FaO6i
-	 sn9GjPzH2kAN3VASw92tKp4QY6/LgUHJl1ZFGyFHLx1vuF1o1yeOWhgCuv+qCLIgm7
-	 z84VzXEXHm3k1MTRZIgTMke6WhXK5SMcaMTcQAGTmVV1tlD3R/3CFT2u2mCytGgNty
-	 y6B8ICkchbLe6B51IF8Fe5cMghX0BVD//TU0iSgFunL8HLtn69vtbZKJ+0lqnwQgIS
-	 z2rOPJrzz6yqQ==
+	b=eupYjtqa3Zyf7mZhH06Mkuy5oJCuPdnRwtvg7lDsBVDbpvSdL8Ab+Rp8HDdOTJJc0
+	 bD4iskMqxEzngGqALc2+4HHfSPJWLZdMe7Lg6ZuSWPhgUt4F+Qkb/7I0pdILaGQHag
+	 E5QEA6WwhKYnWIp/zeBR4Ke6AuNniGnXR2xSXu/S6zY6IUM4LRWBJNnfNrqbrbHEf3
+	 VO5JSb1nDKDuOATn9HzeLYw0J60C2NctomnAWppoYmvtb+688PxfkM6yzm4uF11Gwk
+	 sJx69akeW7Hl950jwyyV7zOFUJBfFfwFpvzjdpaXejpRnHBEJ6VhIvMOd9B7xaqGli
+	 lglj7vOdzEYLw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96757C54791;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5783C54E4C;
 	Thu, 22 Feb 2024 19:40:36 +0000 (UTC)
 From: Yang Xiwen via B4 Relay <devnull+forbidden405.outlook.com@kernel.org>
-Date: Fri, 23 Feb 2024 03:40:13 +0800
-Subject: [PATCH v4 3/7] arm64: dts: hisilicon: fix include path
+Date: Fri, 23 Feb 2024 03:40:15 +0800
+Subject: [PATCH v4 5/7] dt-bindings: clock:
+ hisilicon,clock-reset-controller: add Hi3798MV200 SoC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240223-clk-mv200-v4-3-3e37e501d407@outlook.com>
+Message-Id: <20240223-clk-mv200-v4-5-3e37e501d407@outlook.com>
 References: <20240223-clk-mv200-v4-0-3e37e501d407@outlook.com>
 In-Reply-To: <20240223-clk-mv200-v4-0-3e37e501d407@outlook.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -51,11 +52,11 @@ Cc: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Yang Xiwen <forbidden405@outlook.com>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1708630834; l=950;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1708630834; l=875;
  i=forbidden405@outlook.com; s=20230724; h=from:subject:message-id;
- bh=zO+w8jqaXi8Ww2B8vF6SfS+3nCbKAcDggVh4EP/9jpU=;
- b=GQbYW/EM0P0h70DzyqB6wWmefJ25pcQ7J+yd9DwnP1g3Pp4D5SYE4CMGcqVDgeKwhXGkV0V+B
- XuiDlmGfNmNDHZLdZgBizLY5L/KP5gFLzTweeKIObhjTT19TKFTcIUE
+ bh=gv2xXV2PHkOmWiSsfnHxLP0K9i/ux85MGELzPj9FllI=;
+ b=+jf7ao5QN80YG7oizQRY6/67M5d7pTHi916Qvz3LG2uMbbsCM9BOs5gy33kanq12qiKnHQFry
+ uCvI6sBVzF7BwNXweipxYeUp7rSAXXCiSU4tXN5htron68OH2B5xyxi
 X-Developer-Key: i=forbidden405@outlook.com; a=ed25519;
  pk=qOD5jhp891/Xzc+H/PZ8LWVSWE3O/XCQnAg+5vdU2IU=
 X-Endpoint-Received:
@@ -65,28 +66,26 @@ Reply-To: <forbidden405@outlook.com>
 
 From: Yang Xiwen <forbidden405@outlook.com>
 
-The generic histb-clock.h header is now deprecated. Fix it by including
-individual binding header files directly instead.
+This SoC is similar to Hi3798CV200.
 
 Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
 ---
- arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/clock/hisilicon,hisi-crg.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi b/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi
-index ed1b5a7a6067..1e6a8a8829b1 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi
-@@ -5,7 +5,8 @@
-  * Copyright (c) 2016-2017 HiSilicon Technologies Co., Ltd.
-  */
+diff --git a/Documentation/devicetree/bindings/clock/hisilicon,hisi-crg.yaml b/Documentation/devicetree/bindings/clock/hisilicon,hisi-crg.yaml
+index 251156905a7b..a4af12aa3f08 100644
+--- a/Documentation/devicetree/bindings/clock/hisilicon,hisi-crg.yaml
++++ b/Documentation/devicetree/bindings/clock/hisilicon,hisi-crg.yaml
+@@ -23,6 +23,8 @@ properties:
+               - hisilicon,hi3798cv200-sysctrl
+               - hisilicon,hi3516cv300-crg
+               - hisilicon,hi3516cv300-sysctrl
++              - hisilicon,hi3798mv200-crg
++              - hisilicon,hi3798mv200-sysctrl
+           - const: syscon
+           - const: simple-mfd
  
--#include <dt-bindings/clock/histb-clock.h>
-+#include <dt-bindings/clock/hisilicon,hi3798cv200-crg.h>
-+#include <dt-bindings/clock/hisilicon,hi3798cv200-sysctrl.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/phy/phy.h>
 
 -- 
 2.43.0
