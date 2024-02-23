@@ -1,100 +1,101 @@
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4C65DF1E;
-	Fri, 23 Feb 2024 10:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A9076911
+	for <linux-clk@vger.kernel.org>; Fri, 23 Feb 2024 11:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708684266; cv=none; b=VDlowCdedomEvgn0hs6JaOjDPDH9+UB81Pkm6X1Bq9PtzY3HfyCf8pRcOiEXEDJPudf3y8M9SgLIAMwkQWDKACFkbteCKeV63SrQJXndxzhBD6/iZHrxr2n/KfNHjVLwX3IhE/cJ44kmf0JDlf+4lthbdyh9TPmiWrZ2WtzLaXM=
+	t=1708687727; cv=none; b=iacpveoqPtwU1hQe5DSuSPxPcC8KEJy2qOSQ17nMBf7o1jfimmTxPxbr0Mk2zdHbR/9zwOyAXLG34taLuyq8lskL9n914ylbrD16LWvBcwYLFd46vuTlVSy/NsyW5zIpltSIuaj9xvbGctq7jP5nXPOCRwbr4qcRfZ1VYT4Wo/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708684266; c=relaxed/simple;
-	bh=D6bO7OzGqUljgDA4twduTq9DME6Aa10LBuM5fRsAoS8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=XicILzr3zEKI+Cp3fafJYyd0bcJ3EWf0+2qGB68OQoSiO9/HDC1M69mNRVRs7XONc1/7BoS/oS0Y+Fh1bbdQrR0jX22Zdgj/G6RcCDakuM3oeTuN1dGnfHOyKCgPg+zC/eBbW3tP5yVVUHzwXnTzaB+qW77qXsV6gHrhsYsYpqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3555B1A1317;
-	Fri, 23 Feb 2024 11:31:03 +0100 (CET)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F2BC21A132A;
-	Fri, 23 Feb 2024 11:31:02 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 30370183AC0A;
-	Fri, 23 Feb 2024 18:31:01 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	linux-imx@nxp.com,
-	shengjiu.wang@gmail.com,
-	marex@denx.de,
-	m.felsch@pengutronix.de
+	s=arc-20240116; t=1708687727; c=relaxed/simple;
+	bh=iHQBtZGMPGgdTEXB9sIO8udB6zO09cjsGmfLlAaOME0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PpZB2i2IdnALSjXg7CbrLeRrhmPktGwkd/XnoUQJu06tYQQHnoT9NQ+Qagd5ylIr8Mch2Pg6cnEk8VW7Uz4zDaSInD7P5jtGin70lg4iaB3UQjr/fx+iLKIjalt/TYrYUy5qIx2wLh0mloMpbAgGKIqw41+1P4Ng2WPNmpUQyW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6f61:ab26:80d6:d9d4])
+	by xavier.telenet-ops.be with bizsmtp
+	id qbUj2B00R2itsqh01bUjqo; Fri, 23 Feb 2024 12:28:43 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rdTjH-001P4D-BU;
+	Fri, 23 Feb 2024 12:28:43 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rdTjP-00D0VP-LD;
+	Fri, 23 Feb 2024 12:28:43 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
 Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: imx: imx8mp: Fix SAI_MCLK_SEL definition
-Date: Fri, 23 Feb 2024 18:15:51 +0800
-Message-Id: <1708683351-8504-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.9 (take two)
+Date: Fri, 23 Feb 2024 12:28:42 +0100
+Message-Id: <cover.1708687321.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-There is SAI1, SAI2, SAI3, SAI5, SAI6, SAI7 existing in this block
-control, the order is discontinuous. The definition of SAI_MCLK_SEL(n)
-is not match with the usage of CLK_SAIn(n).
+	Hi Mike, Stephen,
 
-So define SAI##n##_MCLK_SEL separately to fix the issue.
+The following changes since commit 5aaa139b9a03e1a43484a73248c6353a9c4d95c6:
 
-Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- drivers/clk/imx/clk-imx8mp-audiomix.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+  clk: renesas: r8a779h0: Add I2C clocks (2024-02-06 11:20:12 +0100)
 
-diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-index e4300df88f1a..55ed211a5e0b 100644
---- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-+++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -18,7 +18,12 @@
- 
- #define CLKEN0			0x000
- #define CLKEN1			0x004
--#define SAI_MCLK_SEL(n)		(0x300 + 4 * (n))	/* n in 0..5 */
-+#define SAI1_MCLK_SEL		0x300
-+#define SAI2_MCLK_SEL		0x304
-+#define SAI3_MCLK_SEL		0x308
-+#define SAI5_MCLK_SEL		0x30C
-+#define SAI6_MCLK_SEL		0x310
-+#define SAI7_MCLK_SEL		0x314
- #define PDM_SEL			0x318
- #define SAI_PLL_GNRL_CTL	0x400
- 
-@@ -95,13 +100,13 @@ static const struct clk_parent_data clk_imx8mp_audiomix_pll_bypass_sels[] = {
- 		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK1_SEL, {},		\
- 		clk_imx8mp_audiomix_sai##n##_mclk1_parents,		\
- 		ARRAY_SIZE(clk_imx8mp_audiomix_sai##n##_mclk1_parents), \
--		SAI_MCLK_SEL(n), 1, 0					\
-+		SAI##n##_MCLK_SEL, 1, 0					\
- 	}, {								\
- 		"sai"__stringify(n)"_mclk2_sel",			\
- 		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK2_SEL, {},		\
- 		clk_imx8mp_audiomix_sai_mclk2_parents,			\
- 		ARRAY_SIZE(clk_imx8mp_audiomix_sai_mclk2_parents),	\
--		SAI_MCLK_SEL(n), 4, 1					\
-+		SAI##n##_MCLK_SEL, 4, 1					\
- 	}, {								\
- 		"sai"__stringify(n)"_ipg_cg",				\
- 		IMX8MP_CLK_AUDIOMIX_SAI##n##_IPG,			\
--- 
-2.34.1
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.9-tag2
+
+for you to fetch changes up to 81a7a88a98062ffcd8d7d5ac3b540a96dbff5490:
+
+  clk: renesas: r8a779h0: Add RPC-IF clock (2024-02-20 11:37:34 +0100)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v6.9 (take two)
+
+  - Add Ethernet, SDHI, DMA, and HyperFLASH/QSPI (RPC-IF) clocks on
+    R-Car V4M,
+  - Miscellaneous fixes and improvements.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Claudiu Beznea (2):
+      clk: renesas: r9a07g04[34]: Use SEL_SDHI1_STS status configuration for SD1 mux
+      clk: renesas: r9a07g04[34]: Fix typo for sel_shdi variable
+
+Cong Dang (4):
+      clk: renesas: r8a779h0: Add EtherAVB clocks
+      clk: renesas: r8a779h0: Add SDHI clock
+      clk: renesas: r8a779h0: Add SYS-DMAC clocks
+      clk: renesas: r8a779h0: Add RPC-IF clock
+
+Geert Uytterhoeven (2):
+      clk: renesas: r8a779g0: Correct PFC/GPIO parent clocks
+      clk: renesas: r8a779f0: Correct PFC/GPIO parent clock
+
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c       |  2 +-
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c       | 11 ++++++-----
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c       |  7 +++++++
+ drivers/clk/renesas/r9a07g043-cpg.c           |  6 +++---
+ drivers/clk/renesas/r9a07g044-cpg.c           |  6 +++---
+ include/dt-bindings/clock/r8a779g0-cpg-mssr.h |  1 +
+ 6 files changed, 21 insertions(+), 12 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
