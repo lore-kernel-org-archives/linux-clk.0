@@ -1,101 +1,106 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A9076911
-	for <linux-clk@vger.kernel.org>; Fri, 23 Feb 2024 11:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311927EF0F;
+	Fri, 23 Feb 2024 13:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708687727; cv=none; b=iacpveoqPtwU1hQe5DSuSPxPcC8KEJy2qOSQ17nMBf7o1jfimmTxPxbr0Mk2zdHbR/9zwOyAXLG34taLuyq8lskL9n914ylbrD16LWvBcwYLFd46vuTlVSy/NsyW5zIpltSIuaj9xvbGctq7jP5nXPOCRwbr4qcRfZ1VYT4Wo/c=
+	t=1708695809; cv=none; b=AcraqjkbARxbcue9bwCIKtPep/P8tSgneIvStSM2pkHKKqWDczBh1kNQiPdIHAP/hcYX75YwUaD9tkY5cGLqLA+nJcJboEv/Zbl5mSnNMqGRgydshT3w0EEOkk+oxgu+7sPpohkk4AhyJbFULSgBnv891K9HstFB3tO+Q/ZLezE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708687727; c=relaxed/simple;
-	bh=iHQBtZGMPGgdTEXB9sIO8udB6zO09cjsGmfLlAaOME0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PpZB2i2IdnALSjXg7CbrLeRrhmPktGwkd/XnoUQJu06tYQQHnoT9NQ+Qagd5ylIr8Mch2Pg6cnEk8VW7Uz4zDaSInD7P5jtGin70lg4iaB3UQjr/fx+iLKIjalt/TYrYUy5qIx2wLh0mloMpbAgGKIqw41+1P4Ng2WPNmpUQyW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6f61:ab26:80d6:d9d4])
-	by xavier.telenet-ops.be with bizsmtp
-	id qbUj2B00R2itsqh01bUjqo; Fri, 23 Feb 2024 12:28:43 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rdTjH-001P4D-BU;
-	Fri, 23 Feb 2024 12:28:43 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rdTjP-00D0VP-LD;
-	Fri, 23 Feb 2024 12:28:43 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.9 (take two)
-Date: Fri, 23 Feb 2024 12:28:42 +0100
-Message-Id: <cover.1708687321.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1708695809; c=relaxed/simple;
+	bh=pSgrbhzYE2cxqddJbCuPtMoPkUisQmEruojDvLw93ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LAeZpCwO1WcXz3SWZrpfML42qiuMPVgHW2nqaO6bNLlObEjscz8m4hOdu/sc2h2QqpI1qkL0CqHDaGQWETGwajM2LaHKM2BLq2J+bR+rcV01txVB56lpgmeK7b1f9rVtMGcaFBC1fZ5TWpnRxCFz/OA7sQHuWfUcf0Nj9WDcE58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNa4UFnF; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNa4UFnF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90F49C433F1;
+	Fri, 23 Feb 2024 13:43:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708695808;
+	bh=pSgrbhzYE2cxqddJbCuPtMoPkUisQmEruojDvLw93ow=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oNa4UFnF40pNA4TqsoRYAYRpCUaS7oHjiPuJ30ZXDzAo5T3alPLZolU/sAppysKGE
+	 b2SMvrWj1GGMlIjqaQwiocQ647afQCJBK9win8Y/KD9B0lZ9raWdfX9rpUH5qLxnnY
+	 J8nwSdFwmaRPfOqTlwnKyVSzcdKr6XnLVLnhxttQc2q6ORXiitz/GnoeHM52aOi0N+
+	 g6pKC/yZjm/dGql3Z6UAmblAjaVUg4yr8qvnsFvcyu32AsKvkLsQfpZRiQNMFxf0yI
+	 TCho5zO+IR4Gfl5gSNoUHue1vnBs9iF01YCEdrllo3DQpRpnOIgt4oZ+3VpBK2eKPb
+	 zOYCb+2iXB0RA==
+Date: Fri, 23 Feb 2024 06:43:26 -0700
+From: Rob Herring <robh@kernel.org>
+To: Danila Tikhonov <danila@jiaxyga.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com,
+	sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, david@mainlining.org, adrian@travitia.xyz,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/8] dt-bindings: clock: qcom,sm7150-gcc: Add missing CX
+ power domain
+Message-ID: <20240223134326.GA1754133-robh@kernel.org>
+References: <20240220165240.154716-1-danila@jiaxyga.com>
+ <20240220165240.154716-2-danila@jiaxyga.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240220165240.154716-2-danila@jiaxyga.com>
 
-	Hi Mike, Stephen,
+On Tue, Feb 20, 2024 at 07:52:33PM +0300, Danila Tikhonov wrote:
+> SM7150 GCC expected two power domains - CX and CX_AO. Currently only
+> one is supported, so add the missing CX.
 
-The following changes since commit 5aaa139b9a03e1a43484a73248c6353a9c4d95c6:
+This makes no sense. You had 0 and now you have 1 power domain, not 2. 
+Where is CX_AO.
 
-  clk: renesas: r8a779h0: Add I2C clocks (2024-02-06 11:20:12 +0100)
+> 
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,sm7150-gcc.yaml        | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml
+> index 0eb76d9d51c4..1360e9d1d6ee 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml
+> @@ -27,9 +27,15 @@ properties:
+>        - description: Board XO Active-Only source
+>        - description: Sleep clock source
+>  
+> +  power-domains:
+> +    maxItems: 1
+> +    description:
+> +      CX power domain.
+> +
+>  required:
+>    - compatible
+>    - clocks
+> +  - power-domains
 
-are available in the Git repository at:
+Adding new required properties is an ABI break. If that is fine, you 
+must say why in the commit message.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.9-tag2
-
-for you to fetch changes up to 81a7a88a98062ffcd8d7d5ac3b540a96dbff5490:
-
-  clk: renesas: r8a779h0: Add RPC-IF clock (2024-02-20 11:37:34 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.9 (take two)
-
-  - Add Ethernet, SDHI, DMA, and HyperFLASH/QSPI (RPC-IF) clocks on
-    R-Car V4M,
-  - Miscellaneous fixes and improvements.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Claudiu Beznea (2):
-      clk: renesas: r9a07g04[34]: Use SEL_SDHI1_STS status configuration for SD1 mux
-      clk: renesas: r9a07g04[34]: Fix typo for sel_shdi variable
-
-Cong Dang (4):
-      clk: renesas: r8a779h0: Add EtherAVB clocks
-      clk: renesas: r8a779h0: Add SDHI clock
-      clk: renesas: r8a779h0: Add SYS-DMAC clocks
-      clk: renesas: r8a779h0: Add RPC-IF clock
-
-Geert Uytterhoeven (2):
-      clk: renesas: r8a779g0: Correct PFC/GPIO parent clocks
-      clk: renesas: r8a779f0: Correct PFC/GPIO parent clock
-
- drivers/clk/renesas/r8a779f0-cpg-mssr.c       |  2 +-
- drivers/clk/renesas/r8a779g0-cpg-mssr.c       | 11 ++++++-----
- drivers/clk/renesas/r8a779h0-cpg-mssr.c       |  7 +++++++
- drivers/clk/renesas/r9a07g043-cpg.c           |  6 +++---
- drivers/clk/renesas/r9a07g044-cpg.c           |  6 +++---
- include/dt-bindings/clock/r8a779g0-cpg-mssr.h |  1 +
- 6 files changed, 21 insertions(+), 12 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+>  
+>  allOf:
+>    - $ref: qcom,gcc.yaml#
+> @@ -39,12 +45,14 @@ unevaluatedProperties: false
+>  examples:
+>    - |
+>      #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/power/qcom,rpmhpd.h>
+>      clock-controller@100000 {
+>        compatible = "qcom,sm7150-gcc";
+>        reg = <0x00100000 0x001f0000>;
+>        clocks = <&rpmhcc RPMH_CXO_CLK>,
+>                 <&rpmhcc RPMH_CXO_CLK_A>,
+>                 <&sleep_clk>;
+> +      power-domains = <&rpmhpd RPMHPD_CX>;
+>        #clock-cells = <1>;
+>        #reset-cells = <1>;
+>        #power-domain-cells = <1>;
+> -- 
+> 2.43.2
+> 
