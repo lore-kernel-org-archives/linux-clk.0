@@ -1,64 +1,64 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210FFCA73
-	for <linux-clk@vger.kernel.org>; Fri, 23 Feb 2024 04:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191F5C8DE
+	for <linux-clk@vger.kernel.org>; Fri, 23 Feb 2024 04:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708662463; cv=none; b=mT46qcJgo/9yFXu/xTWwT8DPXSCqtWU6YmPQp+iWCNVuw+ee7a3CK8DrvyYKr4dgKXqFwAER/Eau+2UXIZVwISovtxvTTCAO0j58KhJ4+vfHnIOfh2CSPBlByjfwb3ImHlB5voLmYUmOzvXxveMCBnBz8XEnqy1dq2dZjC97v4Q=
+	t=1708663433; cv=none; b=NfRSFdUOQ0RcxE5sHPh94lcGns+lHgMlfRO+9UztCIeV6ejfK/EfJq7k+nZ9oeBuuzeUx2wPIOOWnI/MmQZCI0qnD0uZ3OqTWGdo0cqey4HUXbwqS+kPNsSpYaJXc8tpPjoHWtAZciHYBqjgvzuSfyBWhSV1UnMePzg7gE8B5iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708662463; c=relaxed/simple;
-	bh=+U7/HUm+newXNawm3OIBe64OPniGPxcNgU8MBN03388=;
+	s=arc-20240116; t=1708663433; c=relaxed/simple;
+	bh=Ca4fxX1YOQIc9IaTljm5TL6Wj+BZP/Dp47VTszaskxg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DupqotT7jzWCfShWdA7gNuF96kdc7X2UT4Tjrtihbw41X1Tub9LeYAdGmfA48V3sMq0tw2ZYtbp9Mvd5xyRd+M12BgBUoLgas2luryN9HiItnqkYkdXN5F+m6ujFOjG4wYD/QkM0gCkNaUjhVWT8LxxrzJOUhkDTgRd7Zp5jP8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=J+KzbLHJ; arc=none smtp.client-ip=209.85.167.42
+	 To:Cc:Content-Type; b=tiAX+5EIfxuUWzDwO4iQPVtlIY1gSCi/tZgzJxP+arl/+E1joBSV9RKIcQy/OzJaqTiqHsWpDUkv6BS6qYT4qrW/Z+3iwGNeYjU4bHCPI+tb4+xfgpCOGUb82zzqhNBtaYthvsT+R7C8bkRK8AKFQZz9QZRKrJTiTAYoW6pa75g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b76Xqx/F; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J+KzbLHJ"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-512be6fda52so776421e87.0
-        for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 20:27:41 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b76Xqx/F"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-512aafb3ca8so500646e87.3
+        for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2024 20:43:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1708662460; x=1709267260; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1708663430; x=1709268230; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XDgHpddbeDRitK+X3PotUxSVopTporXEfeUFX+IG05I=;
-        b=J+KzbLHJQDrRBTrBZBcixyMd5z8cghwc8fcRb4f18HHLEV9t/VvAj8TUhOjTqjORRh
-         cpv124oXOAO/J2YhimrKunBZwEU0hXQbDxfsHWMVPj4icVEzJxD2ilIIjwrz65VPbEiV
-         gRYNULB9dS9NCIwtnWQczAvtFv51l8PYzO0As=
+        bh=oBx7MOkn9wW9DxztfWR4DG5bZ9dZsBTrKJsnaVTaV5I=;
+        b=b76Xqx/Fd4fzyl8ovMUOV499M5dh2vDT5nCpZ7S7dYHGX5yRGIB7Dkr3rrGhgp/zIJ
+         WQwu+BWTTlA+NcZv01ZT9lwh22qwk5c4suPxymiEYPF7toQomjQIIfLHRhVUOrJGrE2d
+         4J/1k2MZ/HNPPFkuxAiqZf/ZWcU0pCOOLaUxw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708662460; x=1709267260;
+        d=1e100.net; s=20230601; t=1708663430; x=1709268230;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XDgHpddbeDRitK+X3PotUxSVopTporXEfeUFX+IG05I=;
-        b=MJCIKb+8mk1MnNe8QSznDkgMBstw75W+HiOtt4IZdZAie6FyR/rfjK2ZhpTnbeaubO
-         Ts8+wJGfOF363+lLWtjSv9d/EFaChEXrqIO1JK9PMt+JKppmeiEBPqgCq2BLhwaNId87
-         svfxuwn19cpeDj5fLzhIeNFnW+Kl5ZSNLqQyJTHct0rPNhUvE4LVcdiMzvWd7VgDQ88k
-         e77db0So/DvhznVTxOuPtCCK3A5Hq4t6WO9osuphlSDulN5EBzNQbvX+DZNq5lRzx5KD
-         yM8hZ2uVYXEL9AcT5xrJTDBkry0L3dc01c/CpYz+UW7K0ZBalIBxZN2MOXS1PX/XJ293
-         W/mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNzSjUbG6uB9R/EWPtjaCNgTkTAL/0VtEVuvrMO5xPT2AwVIPqMyJz2O1rS6RdCe23ba3iB2u3uLvyB2zqTSQ9PZNTuCRJh7f+
-X-Gm-Message-State: AOJu0YxPOhJJgdRfB6ik4wZVFLHHjpIFK3xfKdLHkGq/fIke7/I9XQZ0
-	NjaMmNT8eJwkI8yST9Sltv+w74dhkajiYmgQo53PCQhMU08FX2NR0fTuNIcfUJnHc5bQyMiZzdr
-	ddJ5+HVk7nnMUdO11v80csP+YzNrYl26rlyIR
-X-Google-Smtp-Source: AGHT+IG1gpB6olc4CmFRKGnaml07scqjkk6frDritOolB30oK3tyv/MOjQ+fLmmeie41GBXOwScJywtfR3U5/7Iy6Hw=
-X-Received: by 2002:ac2:4249:0:b0:512:c1ba:9115 with SMTP id
- m9-20020ac24249000000b00512c1ba9115mr562755lfl.57.1708662460080; Thu, 22 Feb
- 2024 20:27:40 -0800 (PST)
+        bh=oBx7MOkn9wW9DxztfWR4DG5bZ9dZsBTrKJsnaVTaV5I=;
+        b=nXhSzBZCNlHAGU+lYuwfHrs5yrDQyx4BEn1Z9TV2jzKpj28Yb4jJba+WNxYwV4yb0H
+         VB1ioSFSOFn/EB6ul98PmK6rfpU0M9QvP9Ujni4PTiTgnyHdvJmRix/3W5QclSaAnd3Y
+         YNtOBrIKEYprvCUZF4HFiO7b8CbgPtaQQIqOVvNynDeyJEYXHG2RPfpuScrAh7T7MTHG
+         6IOjvVhY1pp1rteAgJ8sSSDhn6AYThF0fMmDGa6HnlZvnEv8JGBHDqCjYCVrSLpZ8TJE
+         OaHWLCmvNvZvq/05Nr0lJPAMmNzxEQrkl59QJS4LwbTaY09LtPw/txsv5bhGyLVJnfSh
+         jBZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQDInpUbcIOUwxKezMR5/QQ1YSnOaw91XSvqSRyl2x4FcMm8PrY3+Xz/c206OLHhYDzXyMrLt2DaV6tLR4dvnx4fqlZVj6egvA
+X-Gm-Message-State: AOJu0Yx8SRZJsCJbBmijP1SJ8D/p8AlNwrkQbCnsCivHfdDVEbPU4wbA
+	dgNEeho8b9m172dYed2R2SlIyst1eYAhN8Juf3hrUwEXcgS/zcE1YbhmDdAuhhsOeCKM2AE0bCK
+	y32FjGm+MwDOA4GJ3x+yrW16tXPJdDLhv8fK6
+X-Google-Smtp-Source: AGHT+IF5QOowQOFza4xh4jiRjjWLNuX1rVomW/9NM2WmASfwoESsVYQHmb/UIiIOu30QnLkqolbWhZLkQamy3+pnN3M=
+X-Received: by 2002:ac2:5984:0:b0:512:e091:cb1b with SMTP id
+ w4-20020ac25984000000b00512e091cb1bmr566669lfn.13.1708663430207; Thu, 22 Feb
+ 2024 20:43:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240108081834.408403-1-treapking@chromium.org>
-In-Reply-To: <20240108081834.408403-1-treapking@chromium.org>
+References: <20240108081834.408403-1-treapking@chromium.org> <20240108081834.408403-2-treapking@chromium.org>
+In-Reply-To: <20240108081834.408403-2-treapking@chromium.org>
 From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 23 Feb 2024 12:27:28 +0800
-Message-ID: <CAGXv+5EnBt+7WrNb-QyziEaCihvjhFVf2tpzk=XyAoeELqucaw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: mediatek: Introduce need_pm_runtime to mtk_clk_desc
+Date: Fri, 23 Feb 2024 12:43:39 +0800
+Message-ID: <CAGXv+5GoAauw77wVXx6SXsSma9zP_A1vXLRo=GH2ptjvY=kLgA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: mediatek: mt8183: Enable need_runtime_pm on mt8183-mfgcfg
 To: Pin-yen Lin <treapking@chromium.org>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Matthias Brugger <matthias.bgg@gmail.com>, 
@@ -71,104 +71,59 @@ Content-Transfer-Encoding: quoted-printable
 On Mon, Jan 8, 2024 at 4:18=E2=80=AFPM Pin-yen Lin <treapking@chromium.org>=
  wrote:
 >
-> Introduce a new need_pm_runtime variable to mtk_clk_desc to indicate
-> this clock controller needs runtime PM for its operations.
-> Also do a runtime PM get on the clock controller during the
-> probing stage to workaround a possible deadlock.
+> mt8183-mfgcfg has a mutual dependency with genpd during the probing
+> stage, so enable need_runtim_pm to prevent a deadlock in the following
+> call stack:
 >
+> CPU0:  genpd_lock --> clk_prepare_lock
+> genpd_power_off_work_fn()
+>  genpd_lock()
+>  generic_pm_domain::power_off()
+>     clk_unprepare()
+>       clk_prepare_lock()
+>
+> CPU1: clk_prepare_lock --> genpd_lock
+> clk_register()
+>   __clk_core_init()
+>     clk_prepare_lock()
+>     clk_pm_runtime_get()
+>       genpd_lock()
+>
+> Do a runtime PM get at the probe function to make sure clk_register()
+> won't acquire the genpd lock.
+>
+> Fixes: acddfc2c261b ("clk: mediatek: Add MT8183 clock support")
 > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
 
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
-The patch itself looks fine.
+Note that this compliments a patch [1] adding the power domain for the mfgc=
+fg
+clock controller node, which has been floating around for almost 3 years.
 
-Besides the MT8183 MFG clock issues, we do actually need this for the
-MT8192 ADSP clock. Its power domain is not enabled by default.
+[1] https://lore.kernel.org/linux-mediatek/20210414073108.3899082-1-ikjn@ch=
+romium.org/
 
 > ---
 >
-> Changes in v3:
-> - Update the commit message and the comments before runtime PM call
+> (no changes since v1)
 >
-> Changes in v2:
-> - Fix the order of error handling
-> - Update the commit message and add a comment before the runtime PM call
+>  drivers/clk/mediatek/clk-mt8183-mfgcfg.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
->  drivers/clk/mediatek/clk-mtk.c | 19 +++++++++++++++++++
->  drivers/clk/mediatek/clk-mtk.h |  2 ++
->  2 files changed, 21 insertions(+)
->
-> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mt=
-k.c
-> index 2e55368dc4d8..ba1d1c495bc2 100644
-> --- a/drivers/clk/mediatek/clk-mtk.c
-> +++ b/drivers/clk/mediatek/clk-mtk.c
-> @@ -13,6 +13,7 @@
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/slab.h>
->
->  #include "clk-mtk.h"
-> @@ -494,6 +495,18 @@ static int __mtk_clk_simple_probe(struct platform_de=
-vice *pdev,
->                         return IS_ERR(base) ? PTR_ERR(base) : -ENOMEM;
->         }
->
-> +
-> +       if (mcd->need_runtime_pm) {
-> +               devm_pm_runtime_enable(&pdev->dev);
-> +               /*
-> +                * Do a pm_runtime_resume_and_get() to workaround a possi=
-ble
-> +                * deadlock between clk_register() and the genpd framewor=
-k.
-> +                */
-> +               r =3D pm_runtime_resume_and_get(&pdev->dev);
-> +               if (r)
-> +                       return r;
-> +       }
-> +
->         /* Calculate how many clk_hw_onecell_data entries to allocate */
->         num_clks =3D mcd->num_clks + mcd->num_composite_clks;
->         num_clks +=3D mcd->num_fixed_clks + mcd->num_factor_clks;
-> @@ -574,6 +587,9 @@ static int __mtk_clk_simple_probe(struct platform_dev=
-ice *pdev,
->                         goto unregister_clks;
->         }
->
-> +       if (mcd->need_runtime_pm)
-> +               pm_runtime_put(&pdev->dev);
-> +
->         return r;
->
->  unregister_clks:
-> @@ -604,6 +620,9 @@ static int __mtk_clk_simple_probe(struct platform_dev=
-ice *pdev,
->  free_base:
->         if (mcd->shared_io && base)
->                 iounmap(base);
-> +
-> +       if (mcd->need_runtime_pm)
-> +               pm_runtime_put(&pdev->dev);
->         return r;
->  }
->
-> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mt=
-k.h
-> index 22096501a60a..c17fe1c2d732 100644
-> --- a/drivers/clk/mediatek/clk-mtk.h
-> +++ b/drivers/clk/mediatek/clk-mtk.h
-> @@ -237,6 +237,8 @@ struct mtk_clk_desc {
->
->         int (*clk_notifier_func)(struct device *dev, struct clk *clk);
->         unsigned int mfg_clk_idx;
-> +
-> +       bool need_runtime_pm;
+> diff --git a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c b/drivers/clk/media=
+tek/clk-mt8183-mfgcfg.c
+> index ba504e19d420..62d876e150e1 100644
+> --- a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
+> +++ b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
+> @@ -29,6 +29,7 @@ static const struct mtk_gate mfg_clks[] =3D {
+>  static const struct mtk_clk_desc mfg_desc =3D {
+>         .clks =3D mfg_clks,
+>         .num_clks =3D ARRAY_SIZE(mfg_clks),
+> +       .need_runtime_pm =3D true,
 >  };
 >
->  int mtk_clk_pdev_probe(struct platform_device *pdev);
+>  static const struct of_device_id of_match_clk_mt8183_mfg[] =3D {
 > --
 > 2.43.0.472.g3155946c3a-goog
 >
