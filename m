@@ -1,141 +1,115 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897CA143C63;
-	Fri, 23 Feb 2024 21:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92751428A;
+	Fri, 23 Feb 2024 22:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708724949; cv=none; b=dEKyHQOBqXMv+LB8JomRjceC8cnYdP/A2mlZh499kQqNE/qxGPFhzJU8pJeCNsLjuTcBpS2gQI6yt30nWpzC4BLO8c6fsrrqfpMhJmnZyzxHVLdrf1N0YfPcYQpxqwarEmD7vUPy2DJLr+SUPl9q/vXnvspfQ4q2gTY4bhymFBg=
+	t=1708728556; cv=none; b=Z5TxJyMy/fpVSRkstIebkeIYJtU4w8brvyhmYXChkvS3OvRXSf21a7s26jI8s4ljO4Q3P00d3bpAl1A2ohbrrIC+JnHJfumZK+G/z0aFiVpE+eYQdXZINJP31HE2xTWSndwkkK8QOR4u1gJiuRsi9d2KwFe07mYG27D4ru682Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708724949; c=relaxed/simple;
-	bh=6SBVEVhGe14XSlEdjUuk3BF9ZIWoWFHmX0bNpDG5K8c=;
+	s=arc-20240116; t=1708728556; c=relaxed/simple;
+	bh=BneJaexN6bxax2QSYZ41yzv4sfBJcOWFqW2K4d+gM6c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=opJIj51Ea+Grr1hjnugiLWbiP7hHExZaWg6T6ap7smlg9mEfV0mHFby9G5KZxYVhm06ywXCZRu4Q7KGD+8p8c9369F2Uz+zjB4XYv6637xvAafmkys3WjPYEuVUfsN8S8x9/GO5FZjnP3+9hG6PvbT53iy4PaTaq5MLVqicARB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=q5MbD4G6; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+	 In-Reply-To:Content-Type; b=FEHGNKvfCiH1Go8d/K0qQ997luk7RgUd52WuvuB0SoprISi+JRwxRJNP4A2C3rK+oGZDE73dFnRq1U7UZsuDDLofzeaPN4oXUXEy5xzmzdCVvlNkfQggfrwr4MpRm4XjfrNG9tknPgKyIN+kbh3oZnrwi3mFoiIv0OnaYJKr7Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qew1ha+z; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="q5MbD4G6"
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 9EDAB120004;
-	Sat, 24 Feb 2024 00:49:00 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 9EDAB120004
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1708724940;
-	bh=LuXzDQesO0b7s03KMrS/BJMWiJPrhOHKPc+5IUUDRMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=q5MbD4G6MeOiwWzMZjjrknD5OdzsMSPM8jkxEd1eYvknvAwt7zbOitmzbmTyuuobq
-	 pQUnqOd1X9JOhOejFGHWc6NsIurcnBwYMdclTjD4zeE/RVuTbQjVxi8moI2AsD59Bu
-	 U279J5LFTw0rna//7/xIe4jl0FLoD1TpSN/JXUG/reMdcfLXjHUh0j54I5fAUC5ZOY
-	 pQp8PAIaj+/39UwnWZRXZ3nFHum7bKc+FFu8WAhs+oVHudhY7JdL7wlGK2697bOO1M
-	 sTF+TT7XPX96Rxf1S7givW/nOuNMhJ6MyCDdDXnvqObhOONQvByIC00neVuHuo/bJG
-	 LJj6RrzOIBHoQ==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Sat, 24 Feb 2024 00:49:00 +0300 (MSK)
-Received: from [172.28.226.86] (100.64.160.123) by
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sat, 24 Feb 2024 00:49:00 +0300
-Message-ID: <9922942e-ea9e-4cdb-a091-5b8ea0a180d8@salutedevices.com>
-Date: Sat, 24 Feb 2024 00:47:35 +0300
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qew1ha+z"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41NLwboI019276;
+	Fri, 23 Feb 2024 22:48:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=K+EhGOBFAOwInduVtZkvCxg9hFwWnwlqCf5W7sd/NdU=; b=Qe
+	w1ha+zQFfefKt1PgJZA671PJegduTk1YJOJMHvwGEpaeAnsLbsCC44i71BnxopFk
+	Ci+QPetBkpF+0bNS8D2nkofhj/U6aSTwfkfMECelhti6c+RivM+PdKm7u3cL5+e5
+	YeZLDJT3suQjM+Oicou9UvrP6b6G3CY7pEtpENkCZ+mho93AjHBAQgoRr89YUaRJ
+	TJeHcj+q3s++qMMiysD0vKeoLWF1+59DeKaPYXLGsx/FCFkqiztpfCH4gTaL8HMh
+	e+Uy61GudVuqT+4E+Aib7ShlswtIdF2E6JsbXTfVV90t0r7DoHpAHVcaIjp6WDq3
+	fTtKtzvbVacya3Sq16QQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wer8mssky-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Feb 2024 22:48:52 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41NMmpQ9006083
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Feb 2024 22:48:51 GMT
+Received: from [10.110.70.241] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Fri, 23 Feb
+ 2024 14:48:50 -0800
+Message-ID: <605d9e50-d61b-b0ce-1664-00554ba70b41@quicinc.com>
+Date: Fri, 23 Feb 2024 14:48:49 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: allow to skip clk_core_req_round_rate_nolock()
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 2/7] clk: qcom: clk-alpha-pll: Add HUAYRA_2290 support
 Content-Language: en-US
-To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <kernel@salutedevices.com>
-References: <20240126201433.1830600-1-jan.dakinevich@salutedevices.com>
- <c79909e4e55badc8f094d2ff8c4d34ca.sboyd@kernel.org>
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <c79909e4e55badc8f094d2ff8c4d34ca.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Clark
+	<robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, "David
+ Airlie" <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+CC: Marijn Suijten <marijn.suijten@somainline.org>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>
+References: <20240219-topic-rb1_gpu-v2-0-2d3d6a0db040@linaro.org>
+ <20240219-topic-rb1_gpu-v2-2-2d3d6a0db040@linaro.org>
+From: Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <20240219-topic-rb1_gpu-v2-2-2d3d6a0db040@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 183695 [Feb 23 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.3
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 7 0.3.7 6d6bf5bd8eea7373134f756a2fd73e9456bb7d1a, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2;sberdevices.ru:5.0.1,7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/23 20:04:00 #23774084
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nmwHTNyTCNAaftUm0O5wFymUBF5x3hm_
+X-Proofpoint-ORIG-GUID: nmwHTNyTCNAaftUm0O5wFymUBF5x3hm_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-23_06,2024-02-23_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ adultscore=0 malwarescore=0 bulkscore=0 clxscore=1011 mlxscore=0
+ impostorscore=0 mlxlogscore=901 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2402120000 definitions=main-2402230163
 
+On 2/23/2024 1:21 PM, Konrad Dybcio wrote:
+> +	/* Wait 50us for PLL_LOCK_DET bit to go high */
+> +	usleep_range(50, 55);
+> +
+> +	/* Enable PLL output */
+> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, PLL_OUTCTRL);
+> +}
+> +EXPORT_SYMBOL(clk_huayra_2290_pll_configure);
 
-
-On 2/23/24 02:20, Stephen Boyd wrote:
-> Quoting Jan Dakinevich (2024-01-26 12:14:33)
->> Calling of clk_core_req_round_rate_nolock() can be time-consuming in a
->> case of deep hierarchy with multiple dividers/parents. But if the clock
->> already has exactly the same rate as desired, there is no need to
->> determine how it could be rounded.
-> 
-> What exactly are you trying to avoid? Is this an optimization or a bug
-> fix? TL;DR: I'm unlikely to apply this patch.
-> 
-
-It is an optimization, not a bug. The problem is that 
-clk_core_req_round_rate_nolock() is quite expensive, and I faced with 
-cases, where it takes tens and hundreds milliseconds (depending on SoC).
-
-As I see, it is irremovable feature of clk_core_req_round_rate_nolock() 
-design itself. Lets imagine, we have some clock, and its parent is a 
-divider. When clk_core_req_round_rate_nolock() is being called the 
-execution is walked through the following path:
-
-clk_core_determine_round_nolock
-  core->ops->determine_rate
-    divider_determine_rate
-     clk_divider_bestdiv
-
-Inside clk_divider_bestdiv() for each possible divider 
-clk_hw_round_rate() is called for parent of the clock, which in turn 
-calls clk_core_determine_round_nolock().
-
-So, each divider and multiplexer in clock path multiplies many times an 
-amount of iteration required to execute 
-clk_core_req_round_rate_nolock(). When there are a lot of them the time 
-consumed by clk_core_req_round_rate_nolock() becomes sufficient.
-
-> I could see some driver implementing round_rate()/determine_rate() in a
-> way that rounds the rate passed in, so that even if the rate is what the
-> clk is running at _right now_, it still wants to change it to something
-> else, or at least call down into the driver to call the set_rate clk_op.
-> Applying this patch will break that. The contract is that
-> clk_set_rate(rate) == clk_set_rate(clk_round_rate(rate)). It doesn't
-> look like anything needs to change.
-
-If I am not mistaken, clocks's rate is either equal to its parent rate 
-or calculated by ->recalc_rate(). I suppose, this callback should return 
-valid rate value that is based on current clock parameters.
-
-Now, suppose the clock has rate "rateA" and we called clk_set_rate() to 
-set "rateA", but clk_core_req_round_rate_nolock() inside clk_set_rate() 
-rounds it to "rateB". Thus, although the clock is able to run on desired 
-rate (and actually run on it), ->determine_rate() and ->round_rate() are 
-unable to choose clocks's parameters for that value. Is it correct 
-behavior for clock driver?
-
-
+Please use EXPORT_SYMBOL_GPL. 
 
 -- 
-Best regards
-Jan Dakinevich
+---Trilok Soni
+
