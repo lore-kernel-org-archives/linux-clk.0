@@ -1,144 +1,184 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61B020DE8
-	for <linux-clk@vger.kernel.org>; Sat, 24 Feb 2024 10:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F0421A0A;
+	Sat, 24 Feb 2024 10:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708770035; cv=none; b=PxeIfdMOR908EEUAlk4HJ7l/LZFXN0u8zI/6WYDl/Nd9DJ8Esaf5Lvsz1F/jG8tE9zkWVlpyuHnz4kmMFqSbnEw2Kv4kkILNhDeCHcfDtYEDAQvKY9b0Qgk8ojeguTphRPRk+bQUiSaNnOx8PWAGAE55OM+5+BQeflK/WF/Gtxk=
+	t=1708771512; cv=none; b=YL5xOXOBsgPHLBXUczVcvjFjoYtrjjNeOIeKNw3WS9/eCWvv3seJZ0bqilEbTPWyd8y/rAOmqMvvPGoaC6jJE0c5EjKBmDdqyJT0CN9yPuSw6wMVKrdXDQ1sEPqClxXE4ms5OaPQjh17xl9dIX9jR/oNe1XiBvxLU2ah2owhZbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708770035; c=relaxed/simple;
-	bh=YuENufFZlkquVDgBO8dU5fPnVLvolpMSzEAzC6ycgJ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EZYry+/npdVReax+EXsPxlhy58S7S+pQPRTSMkG6zor+KkFK4Cknkcyncer80+3vxkWp4FWmIVPKLt+evnlxkYPxErzVPpgCaaYRUdlkFTbx76L3JS2MajLqdvqXBzZz6b+RAsmo9Cg0y4veoO3fgj+1qq9kNcOyUpl5p2vhezw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m+twM2BJ; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708771512; c=relaxed/simple;
+	bh=5svl/D2cmebuOMxgI6OVmNsXDJ7Bg4jtKgMY2jlkomw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQoKOuKbgXqqQ3ANeFa3mB9+/AWfUBribwcMuil807ACgX+/FfswVKluiCHjjCUrQPF/LphDY1t2F8FMA7A7mhP54yM9cDho4UVibcbcwyy9jBxWVWTfeG4hC2A1OFn4v1ZHvuOYtKcm0FMg2lwIqugW9xblUJF0lKTj5NLfzgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lFOsAdzu; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m+twM2BJ"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-565b86c9943so86974a12.1
-        for <linux-clk@vger.kernel.org>; Sat, 24 Feb 2024 02:20:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFOsAdzu"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1d934c8f8f7so15013695ad.2;
+        Sat, 24 Feb 2024 02:45:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708770032; x=1709374832; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6vNTny4pXEvjs6cRGbtYbmBpJ/7oEEZ1oHIPJLYTMGc=;
-        b=m+twM2BJ7n/KxBVGLyA2LPOjLDBDe8FKl4EJkw99fgbD0CX9t5cZML6NEJ32YK52pl
-         QpBPM8p6omegeqTPa4DqWuW31S/aoflB3AqQ3EbOQXMXTcx3W6V0EZkcVNIg/Kj0H6VQ
-         PJUCJa3SfnhBr7kSTEROgVwoaSIvDzsDj2ec61ZR1ocV4hJNgWSBeDKO7eSJEp+blYiP
-         REhdPeoQag5wKSAXbggjckAdX164m6DivnQxuK/f79MU53gYoPInIP1RqTbAck+Bh2uc
-         blArVX0IMnHSmgNsdx2JGeiqDYTjbTWl7gVj7tVJOKpSGQJ/+NNA0nzdLpXJ4gvxgM83
-         fxbA==
+        d=gmail.com; s=20230601; t=1708771510; x=1709376310; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XVqOjvQSDEDKq31auMq76nWKFY0pe+j+Ca5udl4+VwU=;
+        b=lFOsAdzu2PzGKlSknYTx3LvcOJXMe340niA+mO8cdHCHaELj/VqMBbD3P2M/IxGoVi
+         Qc1sxCKu0RYTxKTvgkA9cuTXhEY7G3iTqNFG4erUZFdvpph3pj1bRt95yglKNnE6eTkx
+         bjqqMWRMj/p+mIiYwYPNYEktyZQcg1ZG9oz5+MJMAW/4R+Gq95klXFsvft7wGZq6ybg4
+         6LRFVvadYXdYw4JTJkbNWvpB2zJLO0XEQKEuYLakbGijWy6xZMZxtel0tNmHncPlPJyK
+         LWKzpDkOxRQ/Cvk3G0oKlYj4EynL4z18WtTAFJyUCMADmNhN51D8V5GCc2McfkdtUcZY
+         6Oag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708770032; x=1709374832;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6vNTny4pXEvjs6cRGbtYbmBpJ/7oEEZ1oHIPJLYTMGc=;
-        b=TbXNuZNEZ13/C6Y3LMlrYVm1jBXyf+q9quX330oKyK9Q0a8p/FZ/Q9ryJxrXC65VsT
-         OeIRFTJ5GhGBsGB4dSUfu2rwwWr/uK+q7opvyFVDSk16KpCiQ0AuGOxPZx/g/qWfI8kh
-         veByF6fiE1CXKjjnbIMslWKAScHzPUoBWmZCXP64YSM35tcbD+vvr2a8jElnKV5BQ2bv
-         w6zWuJWSqgiYwy/5Xh1b8dKT4DmsdEpsIzDfn19YbxE8kkhG6+aUkMDFH7JuiGrlIMUm
-         SemDIxIfgyW1FdIYKwcw9wrk7RA2XrQHSzKjZX6EGudHCw0kZteUL/35jIzx5lM0IRVt
-         N4vg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+YY5ncB6hEBqqQWlsr6dar1jrTM3npxNNNe1cJFXLngqOajtRmygHsZvIH4c39OIXJ4a/nfqTCdKx1zvV7Uxc3KZfSTO2lYQp
-X-Gm-Message-State: AOJu0YxJEJbuL+U1Cw240r2TxXDK6fyH7KUR+aeXEtxnch+yxDjatX5A
-	TR0fzcsV7wlQeObcanklc53BrzuAClqITX/egxFuI2WOiq8q2Ef0i6en1AMFT8I=
-X-Google-Smtp-Source: AGHT+IF3zlbidJ8Y4ckq/68GuEwgnY31iAGOnONoOCQuXMzjrT09Tf8KnvgKz/qSnMzCwBuDwHnjCQ==
-X-Received: by 2002:a17:906:2844:b0:a3f:adad:9ce1 with SMTP id s4-20020a170906284400b00a3fadad9ce1mr1848309ejc.18.1708770032416;
-        Sat, 24 Feb 2024 02:20:32 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id k10-20020a17090646ca00b00a3d004237ebsm447339ejs.212.2024.02.24.02.20.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Feb 2024 02:20:31 -0800 (PST)
-Message-ID: <133c1185-8e13-4471-8e00-8968b38df970@linaro.org>
-Date: Sat, 24 Feb 2024 11:20:29 +0100
+        d=1e100.net; s=20230601; t=1708771510; x=1709376310;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XVqOjvQSDEDKq31auMq76nWKFY0pe+j+Ca5udl4+VwU=;
+        b=SuUpNc7QbHjKJGwJHOAf7TlfoUx7ArHJ2QdTFaH+5po/BttgiAe5DWSOtrVywwiZrT
+         YV+Dh4M5pweth6VUdyGH8eMsuXTDQpnLfvtAIhyD5tHPCDmA0zUK3qwGYDWffE0VuD/f
+         zMJz9LGj2ZjjHmaRQQWSPJ+ihix2/X4Hs5Tltfh11vWCLLH2ZeEA3VowihwHjDDukTTk
+         KtjldgMrICA/02ro/mwK2buxFboX9GQNbzw11B82019EfjBqx/Uc+b/OYKiWV3X0cHBk
+         mcTmO4SjI7paKM+rcZco4uWUv/gsm+KaOSPKiUoEWcxIZh4BkMGimkJseW311xaswxBK
+         jZ7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVQGZqrfVt/AbUYlmV64bZuuyDd+/EgNiBonHm56culPncv3EjoTKiRWxFPY3mAapRRFY02X3+cywMQvW2f5WLtZHOIhll1pUZzH6Uqx3OPuWgGWqTDywYaUVBEATex7XGvlzO+SYgZva0lK4Gr0KwpIbeRFekqqpJ2pdvQNq3OfTsDSA==
+X-Gm-Message-State: AOJu0YyCJx45OeI4DOomFXj8AEQXnxrpkRIcvtz8bTSAtrZEHfro8lBb
+	AMghfvtM+bkTP7e4ZgX/SDG0JQoMgbMdIF2h0ZtEtOQgO0+Nym2i
+X-Google-Smtp-Source: AGHT+IGTCcw1nPo5uilPjR3XkAVmnW1KGl5IrYp5yQPGFpjcH9vaGA0Owygfz8dt8AbR2tyHeqGzQw==
+X-Received: by 2002:a17:903:2607:b0:1db:c6a0:d023 with SMTP id jd7-20020a170903260700b001dbc6a0d023mr1849674plb.8.1708771510260;
+        Sat, 24 Feb 2024 02:45:10 -0800 (PST)
+Received: from linux-8mug (220-129-204-58.dynamic-ip.hinet.net. [220.129.204.58])
+        by smtp.gmail.com with ESMTPSA id ko8-20020a17090307c800b001db3361bc1dsm795726plb.102.2024.02.24.02.45.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Feb 2024 02:45:09 -0800 (PST)
+Date: Sat, 24 Feb 2024 18:44:55 +0800
+From: Chester Lin <chester62515@gmail.com>
+To: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
+Cc: Andreas Farber <afaerber@suse.de>, Matthias Brugger <mbrugger@suse.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, NXP S32 Linux Team <s32@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
+	Ciprian Costea <ciprianmarian.costea@nxp.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: s32g: add uSDHC node
+Message-ID: <ZdnIp8PPtfbuIzwP@linux-8mug>
+References: <20240122140602.1006813-1-ghennadi.procopciuc@oss.nxp.com>
+ <20240122140602.1006813-3-ghennadi.procopciuc@oss.nxp.com>
+ <ZdmnQTtUxOEUy06L@linux-8mug>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] dt-bindings: clock: Add Qcom QCM2290 GPUCC
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org
-References: <20240219-topic-rb1_gpu-v2-0-2d3d6a0db040@linaro.org>
- <20240219-topic-rb1_gpu-v2-1-2d3d6a0db040@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240219-topic-rb1_gpu-v2-1-2d3d6a0db040@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZdmnQTtUxOEUy06L@linux-8mug>
 
-On 23/02/2024 22:21, Konrad Dybcio wrote:
-> Add device tree bindings for graphics clock controller for Qualcomm
-> Technology Inc's QCM2290 SoCs.
+Hi Ghennadi,
+
+On Sat, Feb 24, 2024 at 04:22:30PM +0800, Chester Lin wrote:
+> Hi Ghennadi,
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
+> On Mon, Jan 22, 2024 at 04:06:01PM +0200, Ghennadi Procopciuc wrote:
+> > From: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> > 
+> > Add the uSDHC node for the boards that are based on S32G SoCs.
+> > 
+> > Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+> > Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/s32g2.dtsi        | 10 ++++++++++
+> >  arch/arm64/boot/dts/freescale/s32g274a-evb.dts  |  6 +++++-
+> >  arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts |  6 +++++-
+> >  3 files changed, 20 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> > index ef1a1d61f2ba..fc19ae2e8d3b 100644
+> > --- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> > @@ -138,6 +138,16 @@ uart2: serial@402bc000 {
+> >  			status = "disabled";
+> >  		};
+> >  
+> > +		usdhc0: mmc@402f0000 {
+> > +			compatible = "nxp,s32g2-usdhc";
+> > +			reg = <0x402f0000 0x1000>;
+> > +			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks = <&clks 32>, <&clks 31>, <&clks 33>;
+> 
+> Same as I have mentioned in [PATCH v2 1/2], could we have fixed dt-bindings to
+> replace with these raw clock id values (32, 31, 33)?
+> 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Just found the previous review discussion in v1:
+https://lore.kernel.org/all/f54d947c-58dc-498f-8871-b472f97be4a8@oss.nxp.com/
 
-Best regards,
-Krzysztof
+What I'm worried is that, could these raw clock IDs be rearranged in the
+downstream TF-A? If so it would cause ABI inconsistency and clock issues
+since the kernel is not aware of any raw ID changes in downstream TF-A.
 
+Chester
+
+> > +			clock-names = "ipg", "ahb", "per";
+> > +			bus-width = <8>;
+> > +			status = "disabled";
+> > +		};
+> > +
+> >  		gic: interrupt-controller@50800000 {
+> >  			compatible = "arm,gic-v3";
+> >  			reg = <0x50800000 0x10000>,
+> > diff --git a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
+> > index 9118d8d2ee01..00070c949e2a 100644
+> > --- a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
+> > +++ b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
+> > @@ -1,7 +1,7 @@
+> >  // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+> >  /*
+> >   * Copyright (c) 2021 SUSE LLC
+> > - * Copyright (c) 2019-2021 NXP
+> > + * Copyright 2019-2021, 2024 NXP
+> >   */
+> >  
+> >  /dts-v1/;
+> > @@ -32,3 +32,7 @@ memory@80000000 {
+> >  &uart0 {
+> >  	status = "okay";
+> >  };
+> > +
+> > +&usdhc0 {
+> > +	status = "okay";
+> > +};
+> > diff --git a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
+> > index e05ee854cdf5..b3fc12899cae 100644
+> > --- a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
+> > +++ b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
+> > @@ -1,7 +1,7 @@
+> >  // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+> >  /*
+> >   * Copyright (c) 2021 SUSE LLC
+> > - * Copyright (c) 2019-2021 NXP
+> > + * Copyright 2019-2021, 2024 NXP
+> >   */
+> >  
+> >  /dts-v1/;
+> > @@ -38,3 +38,7 @@ &uart0 {
+> >  &uart1 {
+> >  	status = "okay";
+> >  };
+> > +
+> > +&usdhc0 {
+> > +	status = "okay";
+> > +};
+> > -- 
+> > 2.43.0
+> > 
