@@ -1,340 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fallback18.i.mail.ru (fallback18.i.mail.ru [79.137.243.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFD88488;
-	Sat, 24 Feb 2024 16:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C31B2907;
+	Sat, 24 Feb 2024 17:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708793774; cv=none; b=HqTPDdD6AsMjo/jX1wXNpm2Ghw5TED1sxZW+GshKSX/9sW/zukzIBylyfJc2xHiHYicUrKrNxkRrykamHAIvsJh083ngkVnOD+LIV3b01cpVYr+f7N3uB/rwUK3rSBqXQ82GTpQARtve3KYTLq36gZEezBIXb2MX0vW2GnZXpCo=
+	t=1708796437; cv=none; b=JKxoohMmnXfanQ40X+VxoLNcFKbOATR18H1Wd2n8gaE4OJub6md4++rNedw2lkXxkoLCJlNF5ONL6XO/nkgDmTorUlNtUuVwIXhVUe0PcVqq9Sh3v8X5XUfIV+ybRPxshIOQ+qmWZCU4fWvmhdCnXQkN2sULnaR8TTWk8rBbQes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708793774; c=relaxed/simple;
-	bh=3/raq+B4QXWUT34cUDo7y4OvDKI5+FlYPmWUBoWlrnI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FdSorFFGRWU3qETnCBy5DaeJjbNqEc0YesdLROyenoM8N09DioUyVWADplP0U0ThszTdpkwfLaaMyvPvHaV7RTZ2pnCmMqQIzT7+JFb1yrcLsM+upJVd2/K2n9AYj8ax9TAHmGyr+iDwRQusnQs4CSpXDgWGjyHY5N35ATQaagA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqiV0yaV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708796437; c=relaxed/simple;
+	bh=fDMEk8Y8BUSddpB0CL0sJuy0R7wSWTVb3OGo1T3NpwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IgT/7nKD5aYX/6enfuojDCn0v8MD6cAuqF/ldiQOwNNP2z05eK7JXCQ80jojIxi/gp17YvFKYqZpAue3LqwbP/Cvb4Nz7yzygSos9xXBQe/JYxFlNNCr5Dltmapz4Pi2Krtq2iyxZcxsOdKM1C45czmsPKM2FqHVgymo7PjhCP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=NN2e8PY1; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=rrFmY8PC; arc=none smtp.client-ip=79.137.243.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqiV0yaV"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1AD46C43390;
-	Sat, 24 Feb 2024 16:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708793774;
-	bh=3/raq+B4QXWUT34cUDo7y4OvDKI5+FlYPmWUBoWlrnI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RqiV0yaVtwg+B6yeJ2jZ0ZL+lFZDf8JTXOebX8R0GnDgf0Q/OQIJQNhkhwRlsfpRL
-	 rskwxCFb9uh8fuu4qfeV23EotOAMCUlR438IW41RqQbmZBfYHK9s/zM0ShzwMQAPzY
-	 kvymx3JdKYGGL3mo+rfbn00y6/tks6LRJcifYZiDM+8DKkJYOJYea5gQChBnIgKdt3
-	 aeFiSX/GRFSaFZCGK95DFZS1j1hQ8htKUgNNLEhK82ObQtagGII0F9Fidj3orGA11g
-	 lFx9Lmrf7YzFVtCiPETfntgnDF5aVwfE/wmRaiRgT1n+Din7W2l785gjz/TfqdKruf
-	 5AM4L9DByHQYA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 008EBC48BF6;
-	Sat, 24 Feb 2024 16:56:14 +0000 (UTC)
-From: Yang Xiwen via B4 Relay <devnull+forbidden405.outlook.com@kernel.org>
-Date: Sun, 25 Feb 2024 00:56:10 +0800
-Subject: [PATCH RFC 2/2] clk: hisilicon: add support for PLL
+	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="NN2e8PY1";
+	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="rrFmY8PC"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com; s=mailru;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=NZlZ41PWoY10NTwPBwi3u8tkeC3b7GE4N5B8Qh4FhKg=;
+	t=1708796434;x=1708886434; 
+	b=NN2e8PY1Oo30JK2NMhWAx5LEUAQYWPLj0BqS8jwXQKbuvCVzVj//ZbFKWOmi/7PO9MyTF5LvoqTLbYMrJfKTrr8Y2XW33Gh9JOji3RoNWZ/8CoRZcsQrsDX15o3MuQcBCZVrhWgX157VrnA/J/lEdNt+WUUYq8uiLTknD2kNtok=;
+Received: from [10.12.4.4] (port=55914 helo=smtp16.i.mail.ru)
+	by fallback18.i.mail.ru with esmtp (envelope-from <danila@jiaxyga.com>)
+	id 1rdw0f-00D4sm-SK; Sat, 24 Feb 2024 20:40:26 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
+	; s=mailru; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:Sender:Reply-To:To
+	:Cc:Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+	List-Archive:X-Cloud-Ids:Disposition-Notification-To;
+	bh=NZlZ41PWoY10NTwPBwi3u8tkeC3b7GE4N5B8Qh4FhKg=; t=1708796425; x=1708886425; 
+	b=rrFmY8PC+ZcXKCUmYvfpKfsvtFKXCwriDVuz2Iajt0QEhe+EYVBAsDykiWnLPGnbYq4C7Mh8X0q
+	T+k1fEeJ/BG3MO/qTMf9mJlw6SreoK40j1BfNJABEs/WF3UpfsoakNvAnzB23jaiq1pKdKUoogwUT
+	SmglTM+VVKzuonsMAfM=;
+Received: by smtp16.i.mail.ru with esmtpa (envelope-from <danila@jiaxyga.com>)
+	id 1rdw0O-0000000FrSl-42LU; Sat, 24 Feb 2024 20:40:09 +0300
+Message-ID: <b6b1ca6c-a035-48e0-a00e-5dc8602fbc2c@jiaxyga.com>
+Date: Sat, 24 Feb 2024 20:39:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] dt-bindings: clock: qcom,sm7150-gcc: Add missing CX
+ power domain
+To: Rob Herring <robh@kernel.org>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com,
+ sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ david@mainlining.org, adrian@travitia.xyz, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, danila@jiaxyga.com
+References: <20240220165240.154716-1-danila@jiaxyga.com>
+ <20240220165240.154716-2-danila@jiaxyga.com>
+ <20240223134326.GA1754133-robh@kernel.org>
+Content-Language: en-US
+From: Danila Tikhonov <danila@jiaxyga.com>
+In-Reply-To: <20240223134326.GA1754133-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240225-pll-v1-2-fad6511479c6@outlook.com>
-References: <20240225-pll-v1-0-fad6511479c6@outlook.com>
-In-Reply-To: <20240225-pll-v1-0-fad6511479c6@outlook.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: David Yang <mmyangfl@gmail.com>, 
- Igor Opaniuk <igor.opaniuk@foundries.io>, 
- Jorge Ramirez-Ortiz Gmail <jorge.ramirez.ortiz@gmail.com>, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Yang Xiwen <forbidden405@outlook.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1708793775; l=8081;
- i=forbidden405@outlook.com; s=20230724; h=from:subject:message-id;
- bh=oWwFpaJNUWlczClxS/GMcg8U81/j+wConETIKYXB4HI=;
- b=SbAmG842lGDN06+28a5FjrBNA6W9Av+1wuA5R7l59KKOLImNzqhUCqtmNrevecQ1eX3Gu8hzz
- sS4jqFq9gcuCxPCYQuYRKv1fSEgwtN0uJ9SkY0DstM7eJQABvtDeHSy
-X-Developer-Key: i=forbidden405@outlook.com; a=ed25519;
- pk=qOD5jhp891/Xzc+H/PZ8LWVSWE3O/XCQnAg+5vdU2IU=
-X-Endpoint-Received:
- by B4 Relay for forbidden405@outlook.com/20230724 with auth_id=67
-X-Original-From: Yang Xiwen <forbidden405@outlook.com>
-Reply-To: <forbidden405@outlook.com>
+X-Mailru-Src: smtp
+X-4EC0790: 10
+X-7564579A: B8F34718100C35BD
+X-77F55803: 4F1203BC0FB41BD90B4B6FE9E606E496001A0598D795A9C6213CDC86F011827800894C459B0CD1B9E780AA6270C90A000BC106B1BA2A903A79C46FDF478BC8AFB84BF0AFE90D153D08E1323863CD3BC3
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7FBB2043146276655EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637352A1F9739ED04D38638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D818C2464CF3196D541439CBB6E4E571BF2336D2463C584508CC7F00164DA146DAFE8445B8C89999728AA50765F790063706586D6E6283AEAE389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC80A9EC8C3488E7643F6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA73AA81AA40904B5D9A18204E546F3947C65B78C30F681404DAD7EC71F1DB884274AD6D5ED66289B523666184CF4C3C14F6136E347CC761E07725E5C173C3A84C3AB0F6CBF05E7489EBA3038C0950A5D36B5C8C57E37DE458B330BD67F2E7D9AF16D1867E19FE14079C09775C1D3CA48CFE478A468B35FE7671DD303D21008E298D5E8D9A59859A8B6B372FE9A2E580EFC725E5C173C3A84C3599D44434B8B609035872C767BF85DA2F004C90652538430E4A6367B16DE6309
+X-C1DE0DAB: 0D63561A33F958A526A3B2091198FECE5002B1117B3ED6969DF2DB6257C06E1492212597CCBD6D77823CB91A9FED034534781492E4B8EEADE0C144949FACE77EBDAD6C7F3747799A
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF3FED46C3ACD6F73ED3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CFCEED2BF02269DD0E3D5F71C81901E817AB490117DD87735BC7236528F9A318D80070534DE2CB11AA0C89D780EEF94DBEB9A5EB713C7DBAED7E378A2EF2DA948D85E260128EE50220146D90F64BF3396102C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojwdILGyOHXysraY2qjWq5Gw==
+X-Mailru-Sender: 9EB879F2C80682A09F26F806C73949810169F23919D57D8795D4C5B18C328FC06C3504F3D618BD3DB953E569AED4F6AC2C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
+X-7564579A: B8F34718100C35BD
+X-77F55803: 6242723A09DB00B4034D5F20A9B85C2AB6229DD1E4B911208906FDE8ED063C9768F3CF0E9FE49B699BF400D6A2E293305FF1814030CDAA46FFDC3180A5F77F4E4BAE3D0DDDF504F8
+X-7FA49CB5: 0D63561A33F958A593C1A6E8A4F10E98EE1BEA082E0E2CC26773F59CFDEEDA398941B15DA834481FA18204E546F3947CB6FBD635917D924DF6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F79006370A32D918A17158F1389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C3CFFA1D17DE4BDB9A35872C767BF85DA2F004C90652538430E4A6367B16DE6309
+X-87b9d050: 1
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojwdILGyOHXyv33ho+fqcn7A==
+X-Mailru-MI: 8000000000000800
+X-Mras: Ok
 
-From: Yang Xiwen <forbidden405@outlook.com>
+On 2/23/24 16:43, Rob Herring wrote:
+> On Tue, Feb 20, 2024 at 07:52:33PM +0300, Danila Tikhonov wrote:
+>> SM7150 GCC expected two power domains - CX and CX_AO. Currently only
+>> one is supported, so add the missing CX.
+> This makes no sense. You had 0 and now you have 1 power domain, not 2.
+> Where is CX_AO.
+>
+Konrad Dybcio and Dmitry Baryshkov informed me on IRC that currently
+only one power-domain is supported. Otherwise both will be ignored. If
+we add both, it will cause confusion.
+>> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,sm7150-gcc.yaml        | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml
+>> index 0eb76d9d51c4..1360e9d1d6ee 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml
+>> @@ -27,9 +27,15 @@ properties:
+>>         - description: Board XO Active-Only source
+>>         - description: Sleep clock source
+>>   
+>> +  power-domains:
+>> +    maxItems: 1
+>> +    description:
+>> +      CX power domain.
+>> +
+>>   required:
+>>     - compatible
+>>     - clocks
+>> +  - power-domains
+> Adding new required properties is an ABI break. If that is fine, you
+> must say why in the commit message.
+I think everything is fine. The DTs for the SM7150 are not yet upstream.
+We have been using this parameter for a very long time in our community
+fork. So there should be no problems.
+I am not sure what else could be added to the commit message. The loss
+of power domains was simply my fault.
+I think waiting for the support of two power domains is a good solution.
+However, for now, I can simply drop this patch for next version.
 
-Add support for PLL used by various HiSilicon SoCs
-
-Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
 ---
- drivers/clk/hisilicon/Makefile  |   2 +-
- drivers/clk/hisilicon/clk-pll.c | 171 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/hisilicon/clk.c     |  24 ++++++
- drivers/clk/hisilicon/clk.h     |  12 +++
- 4 files changed, 208 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
-index 2978e56cb876..5e4d54b4cdd3 100644
---- a/drivers/clk/hisilicon/Makefile
-+++ b/drivers/clk/hisilicon/Makefile
-@@ -3,7 +3,7 @@
- # Hisilicon Clock specific Makefile
- #
- 
--obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o clk-hisi-phase.o
-+obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o clk-hisi-phase.o clk-pll.o
- 
- obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
- obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
-diff --git a/drivers/clk/hisilicon/clk-pll.c b/drivers/clk/hisilicon/clk-pll.c
-new file mode 100644
-index 000000000000..c5c07a65fcf4
---- /dev/null
-+++ b/drivers/clk/hisilicon/clk-pll.c
-@@ -0,0 +1,171 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * PLL driver for HiSilicon SoCs
-+ *
-+ * Copyright 2024 (c) Yang Xiwen <forbidden405@outlook.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+
-+#include "clk.h"
-+
-+/* PLL has two conf regs in total */
-+#define HISI_PLL_CFG(n)		((n) * 4)
-+
-+/* reg 0 definitions */
-+#define HISI_PLL_FRAC		GENMASK(23, 0)
-+#define HISI_PLL_POSTDIV1	GENMASK(26, 24)
-+#define HISI_PLL_POSTDIV2	GENMASK(30, 28)
-+
-+/* reg 1 definitions */
-+#define HISI_PLL_FBDIV		GENMASK(11, 0)
-+#define HISI_PLL_REFDIV		GENMASK(17, 12)
-+#define HISI_PLL_PD		BIT(20)
-+#define HISI_PLL_FOUTVCOPD	BIT(21)
-+#define HISI_PLL_FOUT4PHASEPD	BIT(22)
-+#define HISI_PLL_FOUTPOSTDIVPD	BIT(23)
-+#define HISI_PLL_DACPD		BIT(24)
-+#define HISI_PLL_DSMPD		BIT(25)
-+#define HISI_PLL_BYPASS		BIT(26)
-+
-+/*
-+ * Datasheet said the maximum is 3.2GHz,
-+ * but tests show it can be very high
-+ *
-+ * Leave some margin here (8 GHz should be fine)
-+ */
-+#define HISI_PLL_FOUTVCO_MAX_RATE	8000000000
-+/* 800 MHz */
-+#define HISI_PLL_FOUTVCO_MIN_RATE	800000000
-+
-+struct hisi_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+	u8		postdiv1, postdiv2, refdiv;
-+	u32		divisor;
-+};
-+
-+#define to_hisi_pll(_hw) container_of(_hw, struct hisi_pll, hw)
-+
-+static int hisi_pll_prepare(struct clk_hw *hw)
-+{
-+	struct hisi_pll *pll = to_hisi_pll(hw);
-+	u32 reg;
-+
-+	reg = readl(pll->base + HISI_PLL_CFG(0));
-+	pll->postdiv1 = FIELD_GET(HISI_PLL_POSTDIV1, reg);
-+	pll->postdiv2 = FIELD_GET(HISI_PLL_POSTDIV2, reg);
-+	// We don't use frac, clear it
-+	reg &= ~HISI_PLL_FRAC;
-+	writel(reg, pll->base + HISI_PLL_CFG(0));
-+
-+	reg = readl(pll->base + HISI_PLL_CFG(1));
-+	pll->refdiv = FIELD_GET(HISI_PLL_REFDIV, reg);
-+
-+	pll->divisor = pll->refdiv * pll->postdiv1 * pll->postdiv2;
-+
-+	// return -EINVAL if boot loader does not init PLL correctly
-+	if (pll->divisor == 0) {
-+		pr_err("%s: PLLs are not initialized by boot loader correctly!\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int hisi_pll_set_rate(struct clk_hw *hw, ulong rate, ulong parent_rate)
-+{
-+	struct hisi_pll *pll = to_hisi_pll(hw);
-+	u64 fbdiv = rate * pll->divisor;
-+	u32 reg;
-+
-+	do_div(fbdiv, parent_rate);
-+
-+	reg = readl(pll->base + HISI_PLL_CFG(1));
-+	reg &= ~HISI_PLL_FBDIV;
-+	reg |= FIELD_PREP(HISI_PLL_FBDIV, fbdiv);
-+	writel(reg, pll->base + HISI_PLL_CFG(1));
-+
-+	/* TODO: wait for PLL lock? */
-+
-+	return 0;
-+}
-+
-+static int hisi_pll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-+{
-+	struct hisi_pll *pll = to_hisi_pll(hw);
-+	u64 vco, ref_rate = req->best_parent_rate;
-+
-+	if (ref_rate == 0)
-+		return -EINVAL;
-+
-+	do_div(ref_rate, pll->refdiv);
-+	vco = clamp(req->rate * (pll->postdiv1 * pll->postdiv2),
-+		    HISI_PLL_FOUTVCO_MIN_RATE, HISI_PLL_FOUTVCO_MAX_RATE);
-+	vco = rounddown(vco, ref_rate);
-+	if (vco < HISI_PLL_FOUTVCO_MIN_RATE)
-+		vco += ref_rate;
-+
-+	do_div(vco, pll->postdiv1 * pll->postdiv2);
-+	req->rate = vco;
-+
-+	return 0;
-+}
-+
-+static ulong hisi_pll_recalc_rate(struct clk_hw *hw, ulong parent_rate)
-+{
-+	struct hisi_pll *pll = to_hisi_pll(hw);
-+	u32 reg, fbdiv;
-+
-+	reg = readl(pll->base + HISI_PLL_CFG(1));
-+	fbdiv = FIELD_GET(HISI_PLL_FBDIV, reg);
-+	parent_rate *= fbdiv;
-+	do_div(parent_rate, pll->divisor);
-+
-+	return parent_rate;
-+}
-+
-+static const struct clk_ops hisi_pll_ops = {
-+	.prepare	= hisi_pll_prepare,
-+	.set_rate	= hisi_pll_set_rate,
-+	.determine_rate	= hisi_pll_determine_rate,
-+	.recalc_rate	= hisi_pll_recalc_rate,
-+};
-+
-+/*
-+ * devm_hisi_pll_register - register a HiSilicon PLL
-+ *
-+ * @dev: clk provider
-+ * @name: clock name
-+ * @parent_name: parent clock, usually 24MHz OSC
-+ * #flags: CCF common flags
-+ * @reg: register address
-+ */
-+struct clk *devm_clk_register_hisi_pll(struct device *dev, const char *name, const char *parent,
-+				       unsigned int flags, void __iomem *reg)
-+{
-+	struct hisi_pll *pll;
-+	struct clk_init_data init;
-+
-+	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (!parent)
-+		return ERR_PTR(-EINVAL);
-+
-+	init.name = name;
-+	init.ops = &hisi_pll_ops;
-+	init.flags = flags;
-+	init.parent_names = &parent;
-+	init.num_parents = 1;
-+
-+	pll->base = reg;
-+	pll->hw.init = &init;
-+
-+	return devm_clk_register(dev, &pll->hw);
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_register_hisi_pll);
-diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-index 09368fd32bef..0e9b0f13b494 100644
---- a/drivers/clk/hisilicon/clk.c
-+++ b/drivers/clk/hisilicon/clk.c
-@@ -341,3 +341,27 @@ void __init hi6220_clk_register_divider(const struct hi6220_divider_clock *clks,
- 		data->clk_data.clks[clks[i].id] = clk;
- 	}
- }
-+
-+int hisi_clk_register_pll(struct device *dev, const struct hisi_pll_clock *clks,
-+			  int nums, struct hisi_clock_data *data)
-+{
-+	struct clk *clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		clk = devm_clk_register_hisi_pll(dev, clks[i].name, clks[i].parent_name,
-+						 clks[i].flags, base + clks[i].offset);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			return PTR_ERR(clk);
-+		}
-+
-+
-+		data->clk_data.clks[clks[i].id] = clk;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(hisi_clk_register_pll);
-diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
-index 7a9b42e1b027..8c59f3927152 100644
---- a/drivers/clk/hisilicon/clk.h
-+++ b/drivers/clk/hisilicon/clk.h
-@@ -103,6 +103,14 @@ struct hisi_gate_clock {
- 	const char		*alias;
- };
- 
-+struct hisi_pll_clock {
-+	unsigned int		id;
-+	const char		*name;
-+	const char		*parent_name;
-+	unsigned long		flags;
-+	unsigned long		offset;
-+};
-+
- struct clk *hisi_register_clkgate_sep(struct device *, const char *,
- 				const char *, unsigned long,
- 				void __iomem *, u8,
-@@ -122,6 +130,8 @@ int hisi_clk_register_mux(const struct hisi_mux_clock *, int,
- struct clk *clk_register_hisi_phase(struct device *dev,
- 				const struct hisi_phase_clock *clks,
- 				void __iomem *base, spinlock_t *lock);
-+struct clk *devm_clk_register_hisi_pll(struct device *dev, const char *name, const char *parent,
-+				       unsigned int flags, void __iomem *reg);
- int hisi_clk_register_phase(struct device *dev,
- 				const struct hisi_phase_clock *clks,
- 				int nums, struct hisi_clock_data *data);
-@@ -133,6 +143,8 @@ void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
- 				int, struct hisi_clock_data *);
- void hi6220_clk_register_divider(const struct hi6220_divider_clock *,
- 				int, struct hisi_clock_data *);
-+int hisi_clk_register_pll(struct device *dev, const struct hisi_pll_clock *clks,
-+			  int nums, struct hisi_clock_data *data);
- 
- #define hisi_clk_unregister(type) \
- static inline \
-
--- 
-2.43.0
-
+Best wishes
+Danila
