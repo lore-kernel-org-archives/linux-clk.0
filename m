@@ -1,81 +1,171 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5302907;
-	Sat, 24 Feb 2024 20:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549F7481A5
+	for <linux-clk@vger.kernel.org>; Sat, 24 Feb 2024 20:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708805192; cv=none; b=CCgCKI7hfArDFL/FRuINY7GDECDOH2Kv+Y+LnOyQR24gzacuc1IIdkZhBHhAeFdEg1XI4TyDzw8Sy5wKouXqSFUD/atordFu5p69mIH+Q3afEVTeccwZZ2RE0igF4Nub10j93R9ogpcdbE+vqAd9sXn9Gc5NR4je1IXluWqm3HQ=
+	t=1708806057; cv=none; b=YPeZrlL0kdNmeriNVtP8ZeNduaprYarruNH02Nmdln/wUkS/rT8z6lS9vIwXjiQUlqTfq/zBixgKf6T7iTt0Rt1fRGCe+eqzUGsZhZCgp7tzbh9XMUzq3oW4TYwqrbxs0aZPl9yiUd0XdcPbL5RZVIRKPOy0SBb7hHTEE1WUcJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708805192; c=relaxed/simple;
-	bh=4puK0De6XWcEEa6zuGMHGuAYnNyMd0c5eVc6rbiv46Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e+AiT7DYTN+UC5tYjnDWRtwthEiH/pGIvHye2jQjlS3N9Wob0pdWwY9COhdqoBQr90fX4zr/HLF0Z45TDOJsjRSf6dbMxhUfPq+t+dUurVfjBeQUSYfDGeBgDNNgHMe63YOr8mAEjz09cRTriKYVtSzIcqplP1LoVNLaY4Ene9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkejUbsj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708806057; c=relaxed/simple;
+	bh=20ejiDKTsTpcZrPqXuhNtaCBoYDI0evQiQurarPLh1k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dmz8tmO6j/r6bfO06kzYIMxnUck8VxmcBv5CkDW76BRIRxB5k6HC8LT1ysmGDo7aHT0+9npG8HH55KvxSAngMj2gSNCOe/Xy5V9MX1oyNgjSRHk3AHCFe2QWHZevMOTMWAsNCxJBOkv1MaBOdCS0hYonxuYOeArgGc6ovIiloJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nAv7CU9k; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkejUbsj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B51BC433C7;
-	Sat, 24 Feb 2024 20:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708805191;
-	bh=4puK0De6XWcEEa6zuGMHGuAYnNyMd0c5eVc6rbiv46Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TkejUbsjQ0HMil2N7Xb9fFYxL4s5QXUrT9Uusg2Uvxc2FYOM0tAVE3M11JyHWw/7E
-	 fYAUk3NzXzYjsq3of8XKqh+b+0+Fkll6ZeD5Q1cirG9Dkv0CHPHZrYgj0WQK+9gQZK
-	 A1VPBfIjpYhCLhgpGa/vHKSMiFS0NKGhlC3irWYdmwPck4AceZXDlbRquv5/b5sVhg
-	 7HXZTfEqNyESSAoYxwdyOHiqs+pxqFhwKJXr0dAIF9daZb6PAXHxiVpQsradIYLkr9
-	 3ADHtNrcVfrq/RLv7fCuinURuWMQRjyutoBabM6gUU/dV1kvr4hdWSgZEvwwe3XA0N
-	 /nSV6GtXJD49w==
-Date: Sat, 24 Feb 2024 20:06:26 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nAv7CU9k"
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-218642337c9so879666fac.3
+        for <linux-clk@vger.kernel.org>; Sat, 24 Feb 2024 12:20:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1708806054; x=1709410854; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nGannrirxDLyEcw4QNj/PlGVunpR8oUL3gw2gn1CCdI=;
+        b=nAv7CU9kDPnMub9OtRBm+UFNkpcDV/ql/rIZHiOEcwJ259eSOYYPzj9IKRV3PD1cY+
+         evoAHTHe8XxII5ynSn8mI3MM8xiRLxf3E/w8LspR9s3nAFOjoLOrt2Mey/CRhyc3XdO8
+         2AXdKy0HXYLUoR0thQnx0MXYS0j/TOXHBLb4SaLGmNQP0TF8nwi3/sZltUPA1060DONj
+         Jkjn9wVYh4fPibcNuL4kEuYnkkNpKW0K4hX5/hQAVqO4qUqH33rU6OA9lDB4m3V+z9LJ
+         tjr4HTQ7UtyhKUAu5CHcElS5Ho8+OHhq0vnORz5cUmGp065pl8VoXDAQ0E9JHZC3RAar
+         id6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708806054; x=1709410854;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nGannrirxDLyEcw4QNj/PlGVunpR8oUL3gw2gn1CCdI=;
+        b=mT9984djd9YWvKfryHlTIh+WtcmM2lQIe9m+dkLW0y207g4MvFIBZNAVV75q7Jl4VO
+         MyUbW/gX9R6D5mdAV7yCWZmGBnLfJlh1pLVDMV9tyZ82RbDQf8xa62eUAfu9NtSKmhoa
+         34O/TsxWq/wkX7AYc+sqnnRgG8GNDzyT+ytCeUedlc/3eISn3bXY/6j21POQg2sRmPuA
+         c8dcxyTgpD9Sia8CkD9+GAwk1AgE47GinDI5eyhxckKzfBdwNvjeveWHm/phfs1hRtDi
+         4jNCM0b6AO1HP2J96tAvAezoRaMHSAU/cpeDecNttg1L/oU5vfwNjGsNAoshfLMCqeAf
+         OQHg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5dxGnM6Rb2ruJwEqzYxbApO7H1xIzHIwRIUdGA17Je7EKZnbaUPUEVt5JOfUlkEZkhMbns1PIqOGjJxefEjoc8djozlUNLJPJ
+X-Gm-Message-State: AOJu0Yz4pncFMNOHtbFATBusIZmH+blYycAQg9dTcPD+ukvglEpGBVZw
+	YqDaE1zlWUr91Q1fNTgOd7FbYHm1KSe3tBa9vlMPt8+jaOsmKvUxv7YaYPiTfBs=
+X-Google-Smtp-Source: AGHT+IE2dY97kRAepcW5IQOAJvCI6fuBC0RU49Fd8Ug20+7FPGijjsTJfx0+d2Ygnyzbi+gveHFkmw==
+X-Received: by 2002:a05:6871:5287:b0:21e:e97:a4cb with SMTP id hu7-20020a056871528700b0021e0e97a4cbmr4296920oac.1.1708806054416;
+        Sat, 24 Feb 2024 12:20:54 -0800 (PST)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id hu15-20020a056871528f00b0021ec89a1a2asm585542oac.32.2024.02.24.12.20.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Feb 2024 12:20:54 -0800 (PST)
+From: Sam Protsenko <semen.protsenko@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 22/39] dt-bindings: clk: at91: add sam9x7 clock
- controller
-Message-ID: <20240224-fragile-unwed-f1e69bbcbaed@spud>
-References: <20240223171342.669133-1-varshini.rajendran@microchip.com>
- <20240223172741.672694-1-varshini.rajendran@microchip.com>
+Subject: [PATCH v3 00/15] clk: samsung: Add CPU clocks for Exynos850
+Date: Sat, 24 Feb 2024 14:20:38 -0600
+Message-Id: <20240224202053.25313-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="08K8WuCJjwZ2Dt+C"
-Content-Disposition: inline
-In-Reply-To: <20240223172741.672694-1-varshini.rajendran@microchip.com>
+Content-Transfer-Encoding: 8bit
 
+The series implements CPU clock support for Exynos850, adds CPU CMUs to
+the clock driver and enables those in dts. This is the first step
+towards cpufreq implementation.
 
---08K8WuCJjwZ2Dt+C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If possible, all patches should go through Krzysztof's tree. As
+inter-series dependencies go:
 
-On Fri, Feb 23, 2024 at 10:57:41PM +0530, Varshini Rajendran wrote:
-> Add bindings for SAM9X7's pmc.
->=20
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+  * All driver changes (patch 02..14) must be taken together following
+    the order established in this series
+  * Patch 15 (dts changes) depends on patch 01 (bindings additions)
+  * Patch 14 (driver changes) depends on patch 01 (bindings additions)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+The series was tested on E850-96 board, via DebugFS with
+CLOCK_ALLOW_WRITE_DEBUGFS enabled, by setting different CPU clock rates,
+like this:
 
-Cheers,
-Conor.
+  # cd /sys/kernel/debug/clk/cluster0_clk/
+  # cat clk_rate
+  1053000000
+  # echo 10000000 > clk_rate
+  # cat clk_rate
+  130000000
 
---08K8WuCJjwZ2Dt+C
-Content-Type: application/pgp-signature; name="signature.asc"
+Of course, DVFS/cpufreq is not implemented yet, so the CPU can't be
+overclocked too much right now, and the cpufreq interface is not
+available too. As per the TRM, the CPU operates at a voltage level of
+0.65 V, 0.75 V, 0.85 V and 1.05 V. When the voltage is 0.85 V, A55
+quad-core operates at 1.6 GHz and CoreSight at 200 MHz.
 
------BEGIN PGP SIGNATURE-----
+To check the actual frequency, the "perf" tool was used:
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZdpMQgAKCRB4tDGHoIJi
-0sOYAPwJwBXEIQ5PHPUQbIROCI93F1KOx91fogdH+/0eLF29bwEArakcTRztZuJr
-h9mQ5H70ST/gzqOIGy4XIal57rqTdgo=
-=2T/O
------END PGP SIGNATURE-----
+  # perf stat sleep 1
 
---08K8WuCJjwZ2Dt+C--
+And to check that on a particular CPU core:
+
+  # taskset -c 4 perf stat sleep 1
+
+Some takeaways:
+
+  * Max functional frequency right now is 1.586 GHz
+  * 1.742 GHz or more leads to the system freeze, as it requires
+    more voltage to be operational
+  * Max possible frequency: 2.210 GHz
+  * The lowest possible frequency: 130 MHz
+  * Default boot up frequency: 1.053 GHz
+
+Changes in v3:
+  - Merged struct exynos850_cpuclk_regs fields into struct
+    exynos_cpuclk_regs ("one-size-fits-all" approach)
+
+Changes in v2:
+  - Removed confusing "breakup by patch" list from patch #0 commit
+    message
+  - Dropped the patch for making clk.h a single included header
+  - Rebased the series on top of the latest linux-next
+  - See per-patch changes in each patch's changelog
+
+Sam Protsenko (15):
+  dt-bindings: clock: exynos850: Add CMU_CPUCLK0 and CMU_CPUCL1
+  clk: samsung: Improve clk-cpu.c style
+  clk: samsung: Pull struct exynos_cpuclk into clk-cpu.c
+  clk: samsung: Reduce params count in exynos_register_cpu_clock()
+  clk: samsung: Use single CPU clock notifier callback for all chips
+  clk: samsung: Group CPU clock functions by chip
+  clk: samsung: Pass actual CPU clock registers base to CPU_CLK()
+  clk: samsung: Pass register layout type explicitly to CLK_CPU()
+  clk: samsung: Keep CPU clock chip specific data in a dedicated struct
+  clk: samsung: Keep register offsets in chip specific structure
+  clk: samsung: Pass mask to wait_until_mux_stable()
+  clk: samsung: Add CPU clock support for Exynos850
+  clk: samsung: Implement manual PLL control for ARM64 SoCs
+  clk: samsung: exynos850: Add CMU_CPUCL0 and CMU_CPUCL1
+  arm64: dts: exynos: Add CPU clocks for Exynos850
+
+ .../clock/samsung,exynos850-clock.yaml        |  42 ++
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     |  26 +
+ drivers/clk/samsung/clk-cpu.c                 | 556 +++++++++++++-----
+ drivers/clk/samsung/clk-cpu.h                 |  53 +-
+ drivers/clk/samsung/clk-exynos-arm64.c        |  44 +-
+ drivers/clk/samsung/clk-exynos3250.c          |   2 +-
+ drivers/clk/samsung/clk-exynos4.c             |   9 +-
+ drivers/clk/samsung/clk-exynos5250.c          |   5 +-
+ drivers/clk/samsung/clk-exynos5420.c          |  16 +-
+ drivers/clk/samsung/clk-exynos5433.c          |  10 +-
+ drivers/clk/samsung/clk-exynos850.c           | 440 +++++++++++++-
+ drivers/clk/samsung/clk.h                     |   9 +-
+ include/dt-bindings/clock/exynos850.h         |  54 ++
+ 13 files changed, 1034 insertions(+), 232 deletions(-)
+
+-- 
+2.39.2
+
