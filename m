@@ -1,112 +1,164 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7579F23BF;
-	Sat, 24 Feb 2024 01:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2681400B;
+	Sat, 24 Feb 2024 08:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708737553; cv=none; b=e7378TQsdXd1L6BUxPy62hU37FMkHsrV+sn/NCr9JeZBOCl3zWs4SBtxJczkefvKOS7S2d1xbonxItQYlyG9WPi4vNEwMGicoT3p7tT0KZB/9akoEZ5YJqr4RDN6yUF6FgnoMkFm6H7uBFhNhbfWvhrvKA1lK+KYYX79aLOSN5U=
+	t=1708762485; cv=none; b=sM4GyO8l+1aoAcTvYqDXQx55j0Fskd58Eb6IXPWe/S+B9olY2pd3kud58hX6fvVQNczQxKs6cafiIlwRgXfQB28pnYHwP763YuJZEGbKxKBzOlq38tU3SQTYQVw9wouJC/cr4nwlgrUlFZLcHDxdRi8O1tAH9M9RsSDl/dDiRSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708737553; c=relaxed/simple;
-	bh=0W8qjJDpYcgYroDsZAHS1ygwFOJj7ZrezH6oMeip5ik=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Iwd8YPN/o0YuuBIpQjzcHLXtDfkR+tePZNQDip86CpbBpF7CaGHo09oTkQektsAjM3ldm3qRb4FOehMgtvqwRr8R8SGar3qyQ5Muoxl2nDLTaLD5HMlqicP8TuN73nxkj9tuS7hbHKh97D5S7Hxhw9yOOJvDLaV/G2kxWMfB0g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ff/ekrVk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708762485; c=relaxed/simple;
+	bh=Qhz9N/fmoRItK8W7Ipwzkn/wGHgDt+GnC9r4h0Wl+7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZebBevVcBzzvDFW3lXkOKiha0+doyIeUWiKSuSdq04h1nbNjtZ1KhjhVbMpavqui8VVYyxRTs2UlH/9NfoSr5TZmdMpgwqYlK0/xZf+BQWLuoXAr2yBwmhGbdBFgA5woRMr1gxfjYRQyMY8oWK66UFIlnPKUZ789wxNY3ykMU/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pnv9z4lQ; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ff/ekrVk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 506E6C433C7;
-	Sat, 24 Feb 2024 01:18:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708737553;
-	bh=0W8qjJDpYcgYroDsZAHS1ygwFOJj7ZrezH6oMeip5ik=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=Ff/ekrVkMNWJBDGkpsP/ovqQh2yy1ijB5ftoTK+/UMaqJWDxNbNOKDQ24y0qlURiT
-	 N86GGDRMnW5AEO+3RHaO2XaXOYxDA4ibfnVDmk9OplY/pQbkQdRWg0E13BTRhyo/Ey
-	 E7GKyzybhjWoin88WA6LDL8n39i41+9gmBImeMju6zTBmw38Z6z8mKdPpWm1Cai1Dh
-	 tLR7TBInqGjbW6nemQL6B37MrpxV1aa2e6/jocEVz4mmQME8ahbk6OREfwpjeHQwqx
-	 7OGusmZWog/eiFdepXGySC4Gi90Xc7Qb6ZzLMm5U/Vj7pI5DjSk+10zDXroo9bbYdH
-	 4E1uvU+UVBQNg==
-From: Mark Brown <broonie@kernel.org>
-To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
- conor+dt@kernel.org, nicolas.ferre@microchip.com, 
- alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
- mturquette@baylibre.com, sboyd@kernel.org, herbert@gondor.apana.org.au, 
- davem@davemloft.net, andi.shyti@kernel.org, tglx@linutronix.de, 
- tudor.ambarus@linaro.org, miquel.raynal@bootlin.com, richard@nod.at, 
- vigneshr@ti.com, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
- linus.walleij@linaro.org, sre@kernel.org, u.kleine-koenig@pengutronix.de, 
- p.zabel@pengutronix.de, olivia@selenic.com, radu_nicolae.pirea@upb.ro, 
- richard.genoud@gmail.com, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
- lgirdwood@gmail.com, wim@linux-watchdog.org, linux@roeck-us.net, 
- linux@armlinux.org.uk, andrei.simion@microchip.com, 
- mihai.sain@microchip.com, andre.przywara@arm.com, neil.armstrong@linaro.org, 
- tony@atomide.com, durai.manickamkr@microchip.com, geert+renesas@glider.be, 
- arnd@arndb.de, Jason@zx2c4.com, rdunlap@infradead.org, rientjes@google.com, 
- vbabka@suse.cz, mripard@kernel.org, codrin.ciubotariu@microchip.com, 
- eugen.hristev@collabora.com, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org, 
- linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org, 
- netdev@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org, 
- linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org, 
- linux-serial@vger.kernel.org, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, linux-watchdog@vger.kernel.org, 
- Varshini Rajendran <varshini.rajendran@microchip.com>
-In-Reply-To: <20240223171342.669133-1-varshini.rajendran@microchip.com>
-References: <20240223171342.669133-1-varshini.rajendran@microchip.com>
-Subject: Re: (subset) [PATCH v4 00/39] Add support for sam9x7 SoC family
-Message-Id: <170873753899.4074329.1874365978346259745.b4-ty@kernel.org>
-Date: Sat, 24 Feb 2024 01:18:58 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pnv9z4lQ"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6e4ca46ab04so747916b3a.3;
+        Sat, 24 Feb 2024 00:14:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708762483; x=1709367283; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Li+1ch1KmBlW/URGhiU4Afn1fK88RrMkohfrJAlOTqA=;
+        b=Pnv9z4lQp5WhBwTfiRGK2M/ojsXboTOjc3kjPDv3b0oqS/NEfWxl7tX+BcQJFTW0t9
+         yDUTt1Adwctm6AwA0XuPKhmvfsLJVrz9EciQc8+CypqzvO+tfCJq8gGMy6YUcrsgAaBT
+         Gi0N8+yoEpN51t1K9HJbHUTSShHwm7ply3TSjSNgwxGPo/PhiuLv7Vdekg4clIm2unZt
+         qQW5O7NfdVK2hde5RhbolgVqDHSpc2lH79xkdAgE7SLIxWlyUDMlHrzSdav06aFtUYFk
+         aBjZTcRUVTW6ibhkrZ8xKLPvIJ5XB3WWNSP7/C7Em1Zmnxm/rtFlRvv5ZxGTRvCMUovD
+         qKUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708762483; x=1709367283;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Li+1ch1KmBlW/URGhiU4Afn1fK88RrMkohfrJAlOTqA=;
+        b=EU7uzZvTMGCqolHNZM9d0AebY2SR5MjTj4FXAnAIIwuI+tvNiitiOKTyKH/oERIzP+
+         L5zragIGCIhMJQYYus8B+b7uSlatEfi/tcFuGpL02FkNfN/ktTtbofyMSb8UCM2m3cVM
+         c19HuLtOBPim1K0I/FP68eF31G4olDV58hMyKYkDcOubjnMDCf7Rej3f4C3EG/l1oYeZ
+         a9jB6Hb7PZlm5B+eQ+v7nOk8VW+YqCpYYqsVpJW4cyqf7iKa3Gs6Mz/fjc+q0tJHi87D
+         rY0clHbRnXbsmgUOS4rnDyIMqU0C7SCZvevRn+zy/HmOpB6btGw4uVGxYAIkG4Cy9pWe
+         HlSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDHkvEildx0yORAQlJc0x1fNsJlGIi3klSrP8P/demHoPXcyJ38EgnHC6YiqeAaIcUSUkX+rf+G9tEQ+pvIPHuk0CQxYjm+KjlDqzTx5UyBPKcOYqYdZNjE5ZFZPBFCojCchqI6/SChWgAa9fj09YvEbRfzaks1cp4CzyKHD57qTyYZw==
+X-Gm-Message-State: AOJu0YxA+tjBh5SaqJAmWa3HMOcXfY2ba+5SXFbBg0eXjN5xyPCXnGg8
+	Hzmo9p3jnun09zg8C/NE7AuQmp3EctGgDTDV9wJRxy70k5VUnXqD
+X-Google-Smtp-Source: AGHT+IFAhkrYbVSfRBTZ/EXXjiDnKExGzM6P/79vWS26AYFoZIC/I3bnnsgAxFkQCVZs+EDNz4NvsA==
+X-Received: by 2002:a05:6a21:33a9:b0:19c:90fc:f0d3 with SMTP id yy41-20020a056a2133a900b0019c90fcf0d3mr2936969pzb.46.1708762483141;
+        Sat, 24 Feb 2024 00:14:43 -0800 (PST)
+Received: from linux-8mug (220-129-204-58.dynamic-ip.hinet.net. [220.129.204.58])
+        by smtp.gmail.com with ESMTPSA id dj8-20020a17090ad2c800b00297138f0496sm2802436pjb.31.2024.02.24.00.14.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Feb 2024 00:14:42 -0800 (PST)
+Date: Sat, 24 Feb 2024 16:14:21 +0800
+From: Chester Lin <chester62515@gmail.com>
+To: Matthias Brugger <mbrugger@suse.com>
+Cc: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+	Andreas Farber <afaerber@suse.de>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, NXP S32 Linux Team <s32@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
+	Catalin Udma <catalin-dan.udma@nxp.com>
+Subject: Re: [PATCH v2 1/2] arm64: dts: s32g: add SCMI firmware node
+Message-ID: <ZdmlXYq962azlVRe@linux-8mug>
+References: <20240122140602.1006813-1-ghennadi.procopciuc@oss.nxp.com>
+ <20240122140602.1006813-2-ghennadi.procopciuc@oss.nxp.com>
+ <94742ebd-bc3a-4726-9ba7-5954203e4da1@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-0438c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <94742ebd-bc3a-4726-9ba7-5954203e4da1@suse.com>
 
-On Fri, 23 Feb 2024 22:43:42 +0530, Varshini Rajendran wrote:
-> This patch series adds support for the new SoC family - sam9x7.
->  - The device tree, configs and drivers are added
->  - Clock driver for sam9x7 is added
->  - Support for basic peripherals is added
->  - Target board SAM9X75 Curiosity is added
+Hi Ghennadi,
+
+On Mon, Jan 22, 2024 at 03:39:09PM +0100, Matthias Brugger wrote:
 > 
->  Changes in v4:
->  --------------
 > 
-> [...]
+> On 22/01/2024 15:06, Ghennadi Procopciuc wrote:
+> > From: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> > 
+> > Linux controls the clocks over SCMI on S32G SoCs. Therefore,
+> > add the SCMI device tree node and the reserved region for SCMI
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[13/39] ASoC: dt-bindings: atmel-classd: add sam9x7 compatible
-        commit: 89f3180d5915d4ea40e044ee102cd5c1ec81e7ef
-[17/39] ASoC: dt-bindings: microchip: add sam9x7
-        commit: c06a7a8e885753a024163bbb0dfd7349e8054643
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Is there any dt-binding required to match the SCMI clock IDs declared in
+SCMI? I assume that s32g series will need fixed dt-bindings for clocks to make
+sure there will be no kabi issue in the future.
 
 Thanks,
-Mark
+Chester
 
+> > messages.
+> > 
+> > Signed-off-by: Catalin Udma <catalin-dan.udma@nxp.com>
+> > Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> 
+> Reviewed-by: Matthias Brugger <mbrugger@suse.com>
+> 
+> > ---
+> >   arch/arm64/boot/dts/freescale/s32g2.dtsi | 27 +++++++++++++++++++++++-
+> >   1 file changed, 26 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> > index 5ac1cc9ff50e..ef1a1d61f2ba 100644
+> > --- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> > @@ -3,7 +3,7 @@
+> >    * NXP S32G2 SoC family
+> >    *
+> >    * Copyright (c) 2021 SUSE LLC
+> > - * Copyright (c) 2017-2021 NXP
+> > + * Copyright 2017-2021, 2024 NXP
+> >    */
+> >   #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > @@ -14,6 +14,18 @@ / {
+> >   	#address-cells = <2>;
+> >   	#size-cells = <2>;
+> > +	reserved-memory  {
+> > +		#address-cells = <2>;
+> > +		#size-cells = <2>;
+> > +		ranges;
+> > +
+> > +		scmi_buf: shm@d0000000 {
+> > +			compatible = "arm,scmi-shmem";
+> > +			reg = <0x0 0xd0000000 0x0 0x80>;
+> > +			no-map;
+> > +		};
+> > +	};
+> > +
+> >   	cpus {
+> >   		#address-cells = <1>;
+> >   		#size-cells = <0>;
+> > @@ -77,6 +89,19 @@ timer {
+> >   	};
+> >   	firmware {
+> > +		scmi {
+> > +			compatible = "arm,scmi-smc";
+> > +			arm,smc-id = <0xc20000fe>;
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +			shmem = <&scmi_buf>;
+> > +
+> > +			clks: protocol@14 {
+> > +				reg = <0x14>;
+> > +				#clock-cells = <1>;
+> > +			};
+> > +		};
+> > +
+> >   		psci {
+> >   			compatible = "arm,psci-1.0";
+> >   			method = "smc";
