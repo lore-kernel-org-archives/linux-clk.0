@@ -1,120 +1,103 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD7B1B81E;
-	Sun, 25 Feb 2024 18:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9EFD2FE
+	for <linux-clk@vger.kernel.org>; Sun, 25 Feb 2024 21:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708884420; cv=none; b=SHzTJZdApuPJjQymMycMgAb+b3brW24f2LmYH2Tm8MQkSYMs+y2kVn8o9c4ulrcuiM1jhBmyp6xmzr+XP64LQ3Hw3e5vZtjpNo8HMS3vmX8W/3LABSrTAj892CdX3IRNR08VCnqwuqBu9/67SNes4LY6kuMI8bPHXfT0lWL67Q0=
+	t=1708894817; cv=none; b=G6x5Sa3Y1V5tlKVLuH2D9kF6dvXDv9O4UH+EOMd+ZrK1Hpc+4MF5ZQO9VnnMvHDDzvjYztQxzOFIrrNvzawf7/hiW7wB4ynkc9lgA0fcH+k9s+I793iFXuT2zU6GW0EJSU6lN3MlG257tSJjT6V1B8zyrb9uyl8C3hneojOKC5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708884420; c=relaxed/simple;
-	bh=t9TH3IO25i1kABmwESoqJSXOGpunpKDuFCDvVlM+yrk=;
+	s=arc-20240116; t=1708894817; c=relaxed/simple;
+	bh=RGnNJIFh2RlxUmTf+Jzt1Dq2dHc/VwgJ5UcUdS+OMfs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LzR4tp3ZaYyiyAqzyEj1bwgpw0hr8TVDv7QWoDThhCp6UzZ4US3mTo/rRD3N7GrimJ11V6S+i2TJffXOdRIsoipaF3DLy5cnn5rAEqVgYQZOaaLa2ME+gSfCF1539/863giZgWT2Z1u57Y3lEWfQZ9AuyMs0x/P6k9iclaQg7i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJk3G/t/; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=iqowgWk7ahc8zAq5eylaBynaYAnU2IAcsMCWDR2ZNxvgDNdx/RKCknoX2ZWSuW6A4cKd5uX+RYjmt0W0grJtaGhSgU/rpGeQUR8Qt1AoT8NVjs04GHiiQCoj6kDiYx9QtedP7okGfimKTDk0ZJ4MJDJbEBQ6bvpk9CD4w2E5Jfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NE9GVINS; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJk3G/t/"
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcd9e34430cso2524772276.1;
-        Sun, 25 Feb 2024 10:06:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NE9GVINS"
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3c15b7b36bbso968017b6e.1
+        for <linux-clk@vger.kernel.org>; Sun, 25 Feb 2024 13:00:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708884418; x=1709489218; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708894814; x=1709499614; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UyB5v20Xvkeo8vLOJ5G7Ayw3XFpy9UxBMT1oM+PlACI=;
-        b=QJk3G/t/tSpXjTrNWAoYGQMlwyHV2ltR0Vnmk+7L+vObELPIH50GGigV6RQd8WPZKe
-         4BKM5hnvIdwTXRpEBTMXRoFTzeGhVapL5qen11OkzTuMTkfKxqEnaaHcOJCIzejTxhKE
-         gFIqZLCDh8uqQDqJE+Uha5T17qJzQFfui7DCEEAnl4pHcFdeZf7smLx8tRaUM8uc1AOf
-         8avm8huruiC6zfcAI2qPSBxEumz0IsjdZQ+bSRbMmP+MSgTtvifxnRCpxJmT9sopSxyA
-         m9jBsOzrgmBj8ahClSuSfH3CYjy/luXHkImE0MgcmZEX6m0pTwsQrFBLPFoZuxgWZaic
-         SPTQ==
+        bh=VTc8BgiqrwORqW1mws8ASxivs+vKldj5oWJyp0R6vLI=;
+        b=NE9GVINS2qFWfiUWKyBakvO4wSHMySBRMVSl/MVDHDdNLpNtzJROtAt6+GAEqDList
+         dykR5RVt9CnLS3MmZhTCkXA03N+Rn2RvPMYCwdRLaLf8fBucaHfPPxAlP2MqUcKhzqsk
+         syPQNUFDv+HX/78LHiZmwzca56SLwgpPpiDpVCblAoX03h2U3fSKh6mFUWLquq8bSIeq
+         h6wNAgdvgkBUflvgyjE86qgoo6TkSWqELDAvHHSKYV5F7vPIGH7by2enLNcURZiaqZUa
+         SLMoc55IDiOmm0CMAk+QRCvSRSMGRzNQkdSZnnYMvyf+0xSqLmWdNhM+BwyoeEak+sFu
+         FJJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708884418; x=1709489218;
+        d=1e100.net; s=20230601; t=1708894814; x=1709499614;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UyB5v20Xvkeo8vLOJ5G7Ayw3XFpy9UxBMT1oM+PlACI=;
-        b=QD+EtY/bRiIiqIslAeawZgbkqDzPv7AzN60pkvskruO/EdIgvvlVf+YEN0AeRrbbP1
-         JaSytUJwvQh0n97QtCCI0gU2M1gAjkaODGkNKp2lleoRBdCF1V7gt93mkSo3yb9JtOR/
-         WHLRqitrKdDE6rffkSh8pAgwtD9WjPumeP1qpReFNE5dqyJq1z16DmKKNfc2MakyCrj/
-         Mwmxu0G5M7CpSEy969Wz9tVIvPaI8YMPWrC4m5x784XUehvsq0vhxAaW3lM5bE5dVZ9f
-         dQBJznKXQcWYlJdlDwRyuB2hiw0HRbi2YrgfPodXsWVuvZJ4PyjrUT8I+N5XZyoW0NVi
-         Gw3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUlRsLmB2J/231pyEL4atMrCwO+KZ6EPX9hNUMujAxO5/zoO6pF39/pG7kLFi+5jfG+X9YLRrwW0u0Z71QZNPp4DxTEg27oCAdtwyc85jY+Oc2f6n4NjgylVJ69KW0R7uIjo+CKPlZ4TbBYIZ6lNcrXearGsKsQjKO3Bvs5ZOJ/IP55Lw==
-X-Gm-Message-State: AOJu0YxxfN4KYMsyoHcGjRJ7WkXdbCy6mjGvMUSyVOLT0oQ4LT8WeTiY
-	kpz+u8EzAIw+IG20V4OIQmPlpVChbsOSCY9q35oq3rbCOC6PNNEH4AZjXMKKPLkqfrHCQZkUIIb
-	NE9BlQ6a/U+2dRsKROg7hR4zS04M=
-X-Google-Smtp-Source: AGHT+IG+svL+R0QQtjbfole4iAKAk0sCbIV/24aVRBshgzy9tOplCpuFeVEJTnIBol1v6+b0OREk9APWtD3AvDe4zXI=
-X-Received: by 2002:a25:9012:0:b0:dcf:464d:8ec3 with SMTP id
- s18-20020a259012000000b00dcf464d8ec3mr2767391ybl.3.1708884418030; Sun, 25 Feb
- 2024 10:06:58 -0800 (PST)
+        bh=VTc8BgiqrwORqW1mws8ASxivs+vKldj5oWJyp0R6vLI=;
+        b=Sa1fvjVdk6f2WUnsK2brqBbCMzHhYQODbL/ROGI9jnmgirXsXsdMI1kf4WNrPEJZXq
+         Qpa5XE6S5lCxjfh+/iXTGXk3Zd0FM35Jpo/7DClHK8EtndJGqpj+48sYTXScG3ao1gR8
+         Sts/TktL7WSvBcSMa4v/MefkKWSA111F0ppLPSbs/y2jyAGmSA5S4//bX1KPAA/aMY2X
+         rzhd4jJnWAPWM865D1Nxe7NQ85jaJdXFj2SLtmS0uzunwuKLcYsk+YbS2GU3CiwS+c5h
+         OZ3/YZeh/m42EzOEcoak/J6Rqt13TF6lnevSa0j4OmJ7UMuFWQJTQCeAdElVddU4Td/4
+         Urfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtpi7pjcIS8+1W0H2gtxENV8yWNk5XLNKchQCRLAq81tpiGS1oZQJz1s60k4NoeG67jd/Nfzrnhegf05kwuwK4jeriYj6dYbps
+X-Gm-Message-State: AOJu0Yw29/78/bhcJ7vzztklki9FuQxFyRtIcmSCujRmrY86aDD3Pk6s
+	HjuNYr9ZWp5jo41WlJvHQbMtcSr/dNv3YfVo41zs99YyQ+B7dtKWrGtT0O0D8mCeOPc0E3yrq24
+	Pg2qLWrGqMPEaY5WreJAPKb21auDbmf2UJ2wl+w==
+X-Google-Smtp-Source: AGHT+IFdc0B7r0WWDHCZB3fKTckGL+wqd/Gdd8YziT9x9zVc2VZGhoIvTE0GCz3w3kcIFq43L0vVQvGlTDRZpVyRJWE=
+X-Received: by 2002:a05:6808:2085:b0:3c1:51c1:f4ee with SMTP id
+ s5-20020a056808208500b003c151c1f4eemr7018711oiw.48.1708894813963; Sun, 25 Feb
+ 2024 13:00:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131182653.2673554-1-tmaimon77@gmail.com> <20240131182653.2673554-2-tmaimon77@gmail.com>
- <bea8b72f61caaeac0ce112b57c28297b.sboyd@kernel.org>
-In-Reply-To: <bea8b72f61caaeac0ce112b57c28297b.sboyd@kernel.org>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Sun, 25 Feb 2024 20:06:47 +0200
-Message-ID: <CAP6Zq1jtYAg11EDrhJtzEOM+trKSpLuSbHPOx5ON93UDtr9JVg@mail.gmail.com>
-Subject: Re: [PATCH v23 1/3] dt-bindings: clock: npcm845: Add reference 25m
- clock property
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: benjaminfair@google.com, joel@jms.id.au, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, robh+dt@kernel.org, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, openbmc@lists.ozlabs.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
+References: <20240225-gcc-ipq5018-register-fixes-v1-0-3c191404d9f0@gmail.com> <20240225-gcc-ipq5018-register-fixes-v1-1-3c191404d9f0@gmail.com>
+In-Reply-To: <20240225-gcc-ipq5018-register-fixes-v1-1-3c191404d9f0@gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sun, 25 Feb 2024 23:00:02 +0200
+Message-ID: <CAA8EJpqX5kwiQdPsSbJM=-7hd6mqwOSw_=7zyWOWQOi4=QYFJw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: qcom: gcc-ipq5018: fix 'enable_reg' offset of 'gcc_gmac0_sys_clk'
+To: Gabor Juhos <j4g8y7@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, Varadarajan Narayanan <quic_varada@quicinc.com>, 
+	Sricharan Ramabadhran <quic_srichara@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Stephen,
-
-The plan is for both the clock and reset will be under only the memory
-region handle like
-                sysctrl: system-controller@f0801000 {
-                        compatible = "syscon", "simple-mfd";
-                        reg = <0x0 0xf0801000 0x0 0x1000>;
-
-                        rstc: reset-controller {
-                                compatible = "nuvoton,npcm845-reset";
-                                reg = <0x0 0xf0801000 0x0 0xC4>;
-                                #reset-cells = <2>;
-                                nuvoton,sysgcr = <&gcr>;
-                        };
-
-                        clk: clock-controller {
-                                compatible = "nuvoton,npcm845-clk";
-                                #clock-cells = <1>;
-                                clocks = <&refclk>;
-                                clock-names = "refclk";
-                        };
-                };
-
-is it problematic?
-
-But this commit is not related to it.
-
-Thanks,
-
-Tomer
-
-On Thu, 22 Feb 2024 at 07:58, Stephen Boyd <sboyd@kernel.org> wrote:
+On Sun, 25 Feb 2024 at 19:33, Gabor Juhos <j4g8y7@gmail.com> wrote:
 >
-> Quoting Tomer Maimon (2024-01-31 10:26:51)
-> > diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> > index b901ca13cd25..7060891d0c32 100644
-> > --- a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> > @@ -44,6 +54,8 @@ examples:
-> >              compatible = "nuvoton,npcm845-clk";
-> >              reg = <0x0 0xf0801000 0x0 0x1000>;
-> >              #clock-cells = <1>;
-> > +            clocks = <&refclk>;
-> > +            clock-names = "refclk";
+> The value of the 'enable_reg' field in the 'gcc_gmac0_sys_clk'
+> clock definition seems wrong as it is greater than the
+> 'max_register' value defined in the regmap configuration.
+> Additionally, all other gmac specific branch clock definitions
+> within the driver uses the same value both for the 'enable_reg'
+> and for the 'halt_reg' fields.
 >
-> The driver seems to want this to be a child of the mfd syscon. Is that
-> right?
+> Due to the lack of documentation the correct value is not known.
+> Looking into the downstream driver does not help either, as that
+> uses the same (presumably wrong) value [1].
+>
+> Nevertheless, change the 'enable_reg' field of 'gcc_gmac0_sys_clk'
+> to use the value from the 'halt_reg' field so it follows the pattern
+> used in other gmac clock definitions. The change is based on the
+> assumption that the register layout of this clock is the same
+> as the other gmac clocks.
+>
+> 1. https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-ipq-5.4/-/blob/NHSS.QSDK.12.4.r4/drivers/clk/qcom/gcc-ipq5018.c?ref_type=heads#L1889
+>
+> Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> ---
+>  drivers/clk/qcom/gcc-ipq5018.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+--
+With best wishes
+Dmitry
