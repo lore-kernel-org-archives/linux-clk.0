@@ -1,36 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEE65FDC9;
-	Mon, 26 Feb 2024 12:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9EA1CFA7;
+	Mon, 26 Feb 2024 12:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708950425; cv=none; b=NvoudjKPSQPm9xnWY3Kp4pg4/dqgh+UTPBKkoatHIerN7HxPVZDjLj8hrskcY7CwOGa5EHyPW8JP+Apysk6q0YchlwnTtY3ZnFekAMLE2zYMVPvBGpbGdI1JjgREcaZV5RBioTSAjCUKh3VrHqgD/7QDicT06Q3BiL5FB1DHA7E=
+	t=1708950841; cv=none; b=NNJuhDOqClrCVJHW3CHqzMXl6+zORJdIUpUt18dSykJ+5p5lpIKnd6NlHIhSBji/xtESpavAgWjtI4YxBTIzW9EVOGJWPfw6aOvNqSLYfP7T9zO8rVqFo8e9jf05JuUbSURZfU8cTjPOhRQZP9VTi63GoyHYQVe8ShrQPMR1js4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708950425; c=relaxed/simple;
-	bh=AiTob3EyomDbHqxrhBdROP9px/lXNwdwN0SwFHxSlRo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=gmwKudiipnXYuughyf23mibFTov0TpFqX+Nf/Mq6dDh6Agp0G6voVI4lXQCgfvMWN7I8iOWSX6W8+HEgOcURP9pk8R89b4JKvPnAXKnkCJudEN3vdbyOQ+J0DRBpoAnzQO7KuOO3p+2cOujsDsL6qpogCgbSglLz9pkECAHRXp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WVEnr1VO; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1708950841; c=relaxed/simple;
+	bh=yTKK6qTVp/S8l1CYnLD9a4Jr8ZrucjT94QlJdY1OCxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E4jwoP3iReEFbsMFISLft/Qi+Mn5ZH5EG8yWCfGC3bMWWS0MScbqS59Do0lVJ2CDXK6Z5lNtiFwhGgHyrA3CeKiGXg+PvQdFXcPVKS/GTEIokuae2UHLQg6PpvVLQ+LfcW0B2C052hReCgjDdkT43TWVgwcMCvwCNyGlmO/UwRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jsmsxXwV; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WVEnr1VO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1708950388; x=1709555188; i=markus.elfring@web.de;
-	bh=AiTob3EyomDbHqxrhBdROP9px/lXNwdwN0SwFHxSlRo=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=WVEnr1VOy9OmqfLrLvzSiPG79RUIqy3RDn3/9N/rX1b449uEfGtRSLXr+gwfWGxJ
-	 Is7Mn4cgexiHpp88XYNL78IGqifZFQMxLYAd0bWNepUIw5cT68Bfk0RU67rebLrwf
-	 FL+tn/aIZ/gCvqxas0FCAy3sKaeS0ehvVmtfj8gyoojas6MJYbP70HVOniAVniDDp
-	 dt7sMFDcYpCMKE90qhEIET8JUt74sr2inkGjLSnQEgNkjfucsmTuU2Id/9I+qTjPq
-	 JOfgv46V7CozGVawvowwQCtBc65QjnjusFVMbw2v4f8zuKV3U+fDWj9b9W3p9Dbac
-	 T1PhxUnwiqWGMkexLA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MyO0u-1qg2v21sjc-00yjfO; Mon, 26
- Feb 2024 13:26:28 +0100
-Message-ID: <6a64e7b3-b1ce-46c4-9c85-89f731aee592@web.de>
-Date: Mon, 26 Feb 2024 13:26:26 +0100
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jsmsxXwV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1708950838;
+	bh=yTKK6qTVp/S8l1CYnLD9a4Jr8ZrucjT94QlJdY1OCxw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jsmsxXwVeXseXIYn86JQZ679HZED+QL5moQjh1DVj9GbMGu5KYHlE4tY0t1xFylXu
+	 OKksilY4tr5zFGMmMaQUyt3yDZGNiqy3vMMcS/Y+HdUoS0C0hYFBIV8cQ3eKUT7hqn
+	 xMBHfjl4y+CnUJMvC3dhRFr4vuRGUrWDsMylvifSwcVJNtyEto65c/rc0p58TNFq34
+	 rTABcNH/qNCicSUQzUaIZ8+zhxMtGwHzMvIKAhSZksCdTduBs14HdfYdPDfIvs7x7H
+	 PotQQlaIrTwAzMPbdLa1mY4wQis4X1G8MRcBmYCZzlVRh0GVadxzIGENsQeRLc8weh
+	 hOUDq3V1f69iw==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 414BB37803EE;
+	Mon, 26 Feb 2024 12:33:57 +0000 (UTC)
+Message-ID: <7866fd9b-6f68-402d-abdf-087b1088d28b@collabora.com>
+Date: Mon, 26 Feb 2024 13:33:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -38,76 +42,32 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Chen-Yu Tsai <wenst@chromium.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] clk: mediatek: clk-mt8173-apmixedsys: Use common error
+Subject: Re: [PATCH] clk: mediatek: clk-mt8173-apmixedsys: Use common error
  handling code in clk_mt8173_apmixed_probe()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:bm+GNw6iiB1HHEoqFeJwVo62AjB7FYz+H2KwR+YJafiQRiiUoxa
- daeyxI3TEr2cZRMFWSuX14vUsAto6LdUYXx20Gdp7oWXW1CnxcTpVPNuvGhWQ1/MZs80v4A
- UTmHhV+XZuBgnK/Q59kxJzrSOujRBIJwEWp/TeA/wAPC18hM1r1tizN3bGYjEKPLX2o9rbm
- vx3rgUlR53vh1gPCSgW8Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mVXFJr6Rark=;DtHOcRN9Q898fo0ZyCJ9xyhJV0o
- qk60ihFXfSrxr7lunJN7IITYBYhL1HPLwyQz9UeOovSxg5PG0daQynupiTbx5Z3GiPegFG0B2
- O1WPXl41/Yowd+Zrh3RCrliLcZOmHSI708p1Ao+t5apXwX7lYAzuKi7vprrwQG7dT7eQnKx/Q
- /xxC9tvFyfXiJB9JcUmSVxNFFakzYbsbyJMI1nxKfQMaHBsB3wC6Ghy0XUrJrmLTpqpwVJQAO
- rGkcYCmBCQLAS/NY6m0JTBdjMe2FoauWcG9E7Surgsd/Bz4eeFMKfn2HD6CryGyTM7O7giGdf
- do+kFBMY9ixbXux5doJl5YClyG5VtHOuE26KPq4tUsKueMHLc6z1ikkKJzS2/QihnGLkQNIXm
- QYeHk+JdSdEjdaom56lomznxv9/FJQjA6EfYnhKwKgpaBma7KWaMkcNKcmV2z4SOA8Yqx7bCj
- khNCe+ZGacs9GKwSUf98VHN0mGRgQywnbsclVLM4QhIY5irpv1yIPeuyEPygtba93Tl+a66ge
- eJkdY22ZMFm8uLO9tjkaanIEOVsF+ndhVnyXOpKGmbBDzbeLF3gzhGQ28IK5/kxbJ/bclya7c
- YWFrNVU21pKGbvvjjtpL9oI1xzT4R4hU0WCDO1Gjfj4Spdqx2f98Qmc5l2wgUka16ORM55xDK
- uIJiEuOibfgbKy6fnD+nrnmo6ZlEs8MIBIvSwp82/8kaDPaW9I0oyGKRzArrbyZvl18/RjsPT
- OQbmVR6fXcol3ggDMn6iKLK7a3Efk07c9LB5WOfGBENmkwCxXf6eAMbmZuEbs6GAPnke4k2pQ
- CiWvTSkD9IaXIlHb+EtrNqPSIGoHhUzENnhF8a/UAnnFs=
+Content-Language: en-US
+To: Markus Elfring <Markus.Elfring@web.de>, linux-clk@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Chen-Yu Tsai <wenst@chromium.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <6a64e7b3-b1ce-46c4-9c85-89f731aee592@web.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <6a64e7b3-b1ce-46c4-9c85-89f731aee592@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 26 Feb 2024 13:10:37 +0100
+Il 26/02/24 13:26, Markus Elfring ha scritto:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 26 Feb 2024 13:10:37 +0100
+> 
+> Add a label so that a bit of exception handling can be better reused
+> at the end of this function implementation.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Add a label so that a bit of exception handling can be better reused
-at the end of this function implementation.
+Reviewed-by: AngeloGiaocchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/me=
-diatek/clk-mt8173-apmixedsys.c
-index 1bbb21ab1786..6cab483b8e1e 100644
-=2D-- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-@@ -152,8 +152,8 @@ static int clk_mt8173_apmixed_probe(struct platform_de=
-vice *pdev)
-
- 	clk_data =3D mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
- 	if (IS_ERR_OR_NULL(clk_data)) {
--		iounmap(base);
--		return -ENOMEM;
-+		r =3D -ENOMEM;
-+		goto unmap_io;
- 	}
-
- 	fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
-@@ -188,6 +188,7 @@ static int clk_mt8173_apmixed_probe(struct platform_de=
-vice *pdev)
- 				  ARRAY_SIZE(pllfhs), clk_data);
- free_clk_data:
- 	mtk_free_clk_data(clk_data);
-+unmap_io:
- 	iounmap(base);
- 	return r;
- }
-=2D-
-2.43.2
 
