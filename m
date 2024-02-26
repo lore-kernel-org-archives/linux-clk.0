@@ -1,68 +1,75 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A398379941
-	for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 09:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA65E7CF22
+	for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 09:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708938274; cv=none; b=apL35yhaL9IaJKIUhktH2S3b6nmear/iIfdEE5qCz73bn0ePH6/QaHGcesvFGPL9avjsmmMDCvWGzerfU45c2WZPSRGzLV4xwSZfiZZALydYypBcp8WUYkEgzwym2c9Enzrl3ApG7MaqTv+WtLJoe96oaoT1CBYgmpHHWsGr55A=
+	t=1708938530; cv=none; b=PYZbu0V9ymuP1vF/zc+KcUh/bUzbFbLPwqtaFVviUVAzW4CMdnVVT30NO6aWg7TKcgO9aReahSxc/DcRTm8wVRbdLIL08JXvy4mUAh6bkpxRD9YomZRMoS2SIzSwpCKz+V16ShVWRoVnOXq0vJIrw7I5cVHYdh/RqtMBuq28zNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708938274; c=relaxed/simple;
-	bh=Jm7acJD9o2mBJ7G+eOxNpeNfksyPwS+AXcvG2TmDrwo=;
+	s=arc-20240116; t=1708938530; c=relaxed/simple;
+	bh=EYsI1LZBbncUTAmOuyIJu18BxVT7+WsLgQQ665eJbx8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVaIZJXXDZ5mH5g3pA1qLStWVEyVUFe2Wi/+w6aLc5V4JESVMR0FP0XOU7fpDNemnwMAQGOSViJy0B5A98o7SblMgb+w/GpSgTzFkhV46QZYYieMiTl6x37I7T9jz5iwRw4jCe7zPWXEzuvZSRS7ABr3QLmA7/CqHj0xjpGR970=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lg53u2nu; arc=none smtp.client-ip=209.85.208.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=LEpnqtMQXX4ET5vJAoK8u0lScn6p3uqYyTR4Ica8unm+f1cWQnnnhM6LLZVGw7zL/WSc4rFM+BCsypJeezJte9tkDPhPzbK4JWUkQ7zWpOfa/Z1urWrh4O9KeJCvX6OelOOoTEa/6xRuS+t84Ldr1jvWG4OsCWZDQEMcz/gwaFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p7YTWwNA; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lg53u2nu"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-563f675be29so2806728a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 01:04:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p7YTWwNA"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a3e7ce7dac9so302990766b.1
+        for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 01:08:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708938271; x=1709543071; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708938527; x=1709543327; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XK97/Ais5pPf/X1///jyXhhD+o5dKRJYFfX0RVnBU80=;
-        b=Lg53u2nuGkywoA58JgAtYB6JuoZZaUhNyaJVG1KTw0PBjK4goxNg01uM3Zc+h+6dId
-         DBlHTfnKCt+XSg71HoUoZoCt3irpmeYzmHIaSf9pYIAeotbSf9xxO3LvcnDdIIM9FZ1Q
-         ujSpeU/tj5UG4Kjr+DZxrJ5auWQfhIwsK5O2ukIKNXcI9OxAcI244d5L0iowMEOPGKf9
-         HTuUYZyvsKoHKsXHwNq7woDDI+FjrxLLO8P9km35uBX0yNupA0aKkAdVBw39wssyCsfM
-         9+5k6EprHbw3fwWVF/EsaHRF3vl5P0VWOAreddCWPi0eSMe5yf+hiKQ4aRYDdz5wrs5h
-         mFSQ==
+        bh=Qb7IMhmTx8i/LWrPoon1dHgEvMAM2d9dC3jvsSmDack=;
+        b=p7YTWwNADtrTOtROPYHYM80rzl8P8jveEuXWbqM5Sa3N1So0M6Wzu+7M42xYiI9maT
+         gQFRliPpYMg+9JvndrjlY8JUiBOcfRRcib8BSm01jJ49ah8epIzYv1OYfZ3swG00nYED
+         PA1b59ptbShUi27/HtHI7+yUF5EPuL/Lho80yvRgEO+VPp+hi6664ynX7VF/P8Aigm+O
+         anZL8rquabXr1QumZqSJVdp66xE0v9AwV45yenaYZpSfQCHq90xe8HV6aBOY8I2RNfee
+         2Z3JgIWWQNxpzS34UVMux7c8K6o9U0fwwvQC2bRUq+eb3EFK9oHp2W6Lf4i1jUjJgtog
+         ghMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708938271; x=1709543071;
+        d=1e100.net; s=20230601; t=1708938527; x=1709543327;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XK97/Ais5pPf/X1///jyXhhD+o5dKRJYFfX0RVnBU80=;
-        b=NGeUqocnMPmHuYYKvKvg4COnUDDJycU4y4Fd6hFDuhZTBUb1u1cZsZTB5krmOPHKuP
-         Q06zHSgoVdWvXhJ+zURuVEdBoSgFwXChWOMltpfg9PSsQPHfxTUvItJr1Sxls/RhufpS
-         N3kU+VdyIfXH/N32Yh/5HG3BU4ZKQ2Bv1efPoj0crjsMeyLi1WsPSxxlxyACnXq1rL2S
-         JxOAGfsICqjVrECw6p9/3Jg+dDFi/kcEmddUFm/PKcLGwlw6NCZRxUGZHLo6q5VyxyUN
-         Ra5WU25fJeeQ9B0MFst3TOW5L8MzGNcC/hr4sqVpUtsTH1A4Pbun8ip1xYwA8EBAZhNj
-         I7OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXR6EVPFe9sQ1t1jGXNCFPqbTl/i6ePXOV/29UMt30AHAVUSbtsfl1vJgIx36xcNzV1czNd1TB2D0tre7MNr160vGfsQGi400ye
-X-Gm-Message-State: AOJu0YzYkXKC0v6kvh/86M+scv+gsJ340Oy87C8OX+ejHmACAAlC834B
-	8XhUmEhYTVt8IBPo/+F8R/KjfWt3ydKPL006QYsQ9qgzZItXHPxp8i8nD8tVP8Y=
-X-Google-Smtp-Source: AGHT+IEP31lrkAYgXHTXfaTNGbJ5RbfHTcM0xJ2Z+InoGeeBiYd/7OfA29vMJCRwdLnHEOFQNbp6Rw==
-X-Received: by 2002:a17:906:c2d8:b0:a43:2fa9:c05b with SMTP id ch24-20020a170906c2d800b00a432fa9c05bmr1842731ejb.41.1708938270828;
-        Mon, 26 Feb 2024 01:04:30 -0800 (PST)
+        bh=Qb7IMhmTx8i/LWrPoon1dHgEvMAM2d9dC3jvsSmDack=;
+        b=m5kcaXxEICE+ncnPIksxrMLOcrQYtovXBf39DAvdhBdo8u2GUYx/+AtUAry7esZJ9L
+         iQtp6P/9/zvGA7F2k+tpJ6wKToesSNNtGWHcSISs/H0Yyz284lXY2DaCbg3+kgS9U1OJ
+         LQ1ORP3VVWTMtfboSQnGNSl2bAHDRyZrgYgq5qoruKL+5G5YBqgle2RyrHdxQ8HkVKj8
+         hkg1O+B9C9+twSKUJgddEGtHCuNzqUsAv4lmPaCtaxg0UYgyXwN+vRr6MCvYeKHd7Mrh
+         KclPIAjH61j084FZEVD30aj6JXJ2nKODvWFtYOPZgpYEDdmuT3Jbk4W2t5sf222129Gx
+         1RKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWy1MbfhtLILqmR65W8bp3aV4QK5a7jfAN+8XPQzQmjHixVDkwCZNRmU/0xIce/Dtghal7Q3HT+tPkYW1RGDbRDASzHE3DMFXq
+X-Gm-Message-State: AOJu0Yw7y7QOBZ8KdXq6xBXbLRqt49npP06NtKaiZZ4daQ8Pars4XJmk
+	XuXZ7jtDrDWRvNCAw3ProcuYyZYQswJW/gukwTMu+H6Nqvrq7ttSUIBSRi2SxVo=
+X-Google-Smtp-Source: AGHT+IGVsp94PJy2lJJy9tQfk213eQD624g7GpkEcfnnu1vD2Yeon47oJ/XPJ3LVLVJW8gQV50qSVw==
+X-Received: by 2002:a17:906:e0d6:b0:a43:8468:ac0a with SMTP id gl22-20020a170906e0d600b00a438468ac0amr100945ejb.71.1708938527001;
+        Mon, 26 Feb 2024 01:08:47 -0800 (PST)
 Received: from linaro.org ([188.24.162.93])
-        by smtp.gmail.com with ESMTPSA id i20-20020a1709061cd400b00a3f2bf468b9sm2244445ejh.173.2024.02.26.01.04.29
+        by smtp.gmail.com with ESMTPSA id f19-20020a170906085300b00a3fce8c0f99sm2227363ejd.191.2024.02.26.01.08.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Feb 2024 01:04:30 -0800 (PST)
-Date: Mon, 26 Feb 2024 11:04:28 +0200
+        Mon, 26 Feb 2024 01:08:46 -0800 (PST)
+Date: Mon, 26 Feb 2024 11:08:44 +0200
 From: Abel Vesa <abel.vesa@linaro.org>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-	shengjiu.wang@gmail.com, marex@denx.de, m.felsch@pengutronix.de,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: imx8mp: Fix SAI_MCLK_SEL definition
-Message-ID: <ZdxUHAg2UZOU/s4h@linaro.org>
-References: <1708683351-8504-1-git-send-email-shengjiu.wang@nxp.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel@pengutronix.de, linux-imx@nxp.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Subject: Re: clk: imx: scu: Use common error handling code in
+ __imx_clk_gpr_scu()
+Message-ID: <ZdxVHLce6mk975Zp@linaro.org>
+References: <20231210171907.3410922-1-visitorckw@gmail.com>
+ <0e906ec6-fe73-4dbd-b555-a2c03b6e1030@web.de>
+ <Zb04UUeE/cU9HtKZ@linaro.org>
+ <1a3c05b8-45f8-4205-8cb5-3b8f2d791877@web.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,58 +78,21 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1708683351-8504-1-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <1a3c05b8-45f8-4205-8cb5-3b8f2d791877@web.de>
 
-On 24-02-23 18:15:51, Shengjiu Wang wrote:
-> There is SAI1, SAI2, SAI3, SAI5, SAI6, SAI7 existing in this block
-> control, the order is discontinuous. The definition of SAI_MCLK_SEL(n)
-> is not match with the usage of CLK_SAIn(n).
+On 24-02-02 21:21:19, Markus Elfring wrote:
+> >> Use another label so that a bit of exception handling can be better reused
+> >> at the end of this function.
+> >
+> > Please don't send patches as reply to other(s) patches.
 > 
-> So define SAI##n##_MCLK_SEL separately to fix the issue.
+> This is a general possibility to connect an information sources with
+> a corresponding change idea.
+> Will the acceptance grow for the presented source code transformation?
 > 
-> Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Nope, please don't do that. The b4 tool will pick up the old patch if
+you do this.
 
-> ---
->  drivers/clk/imx/clk-imx8mp-audiomix.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> index e4300df88f1a..55ed211a5e0b 100644
-> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> @@ -18,7 +18,12 @@
->  
->  #define CLKEN0			0x000
->  #define CLKEN1			0x004
-> -#define SAI_MCLK_SEL(n)		(0x300 + 4 * (n))	/* n in 0..5 */
-> +#define SAI1_MCLK_SEL		0x300
-> +#define SAI2_MCLK_SEL		0x304
-> +#define SAI3_MCLK_SEL		0x308
-> +#define SAI5_MCLK_SEL		0x30C
-> +#define SAI6_MCLK_SEL		0x310
-> +#define SAI7_MCLK_SEL		0x314
->  #define PDM_SEL			0x318
->  #define SAI_PLL_GNRL_CTL	0x400
->  
-> @@ -95,13 +100,13 @@ static const struct clk_parent_data clk_imx8mp_audiomix_pll_bypass_sels[] = {
->  		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK1_SEL, {},		\
->  		clk_imx8mp_audiomix_sai##n##_mclk1_parents,		\
->  		ARRAY_SIZE(clk_imx8mp_audiomix_sai##n##_mclk1_parents), \
-> -		SAI_MCLK_SEL(n), 1, 0					\
-> +		SAI##n##_MCLK_SEL, 1, 0					\
->  	}, {								\
->  		"sai"__stringify(n)"_mclk2_sel",			\
->  		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK2_SEL, {},		\
->  		clk_imx8mp_audiomix_sai_mclk2_parents,			\
->  		ARRAY_SIZE(clk_imx8mp_audiomix_sai_mclk2_parents),	\
-> -		SAI_MCLK_SEL(n), 4, 1					\
-> +		SAI##n##_MCLK_SEL, 4, 1					\
->  	}, {								\
->  		"sai"__stringify(n)"_ipg_cg",				\
->  		IMX8MP_CLK_AUDIOMIX_SAI##n##_IPG,			\
-> -- 
-> 2.34.1
-> 
+> Regards,
+> Markus
