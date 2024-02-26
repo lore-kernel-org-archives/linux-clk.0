@@ -1,72 +1,90 @@
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC33C2206B;
-	Mon, 26 Feb 2024 10:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB471CFA8
+	for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 11:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708944892; cv=none; b=A9fe1DbRJuvi1r3VGfXUv8or0yE2OV8Ipl2H+mi3+xoq51AX71WY3RlObegSm2AmOWr9NPhfdtkad2DAbQz3v8rtFPVu5xct2lMHT3zK/3tAIBlOHrP4aLyFppOil8NroRW88GTersjXXWN0xGaNVIspsh3J5RCNjMUCRPDyK/4=
+	t=1708945524; cv=none; b=YvK1VhNlp+nl7yluOTeyzH8nOw9eUGlAhLtjgaGMIknkUCDAk2zZG3GClg3xhFPzrxTGyFzcV9+L9SpJDRiFAOuKBKUW6IAlJHMHOrUIOjEfJ7DBWcX7mt3vbO8fYby96Xak+pSYI7qgsFdZr6MDor0u5Hyh/sFKzAweSX6amVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708944892; c=relaxed/simple;
-	bh=YIwSNAafJiqNweT7ikfqNMKQNYGFU3GBRMLIFdVHe9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ix9hUXGHxaBzWkAvr3LP6m5UZeEODVUTsnQS3pdj0gS7B3Jcaq9/uY2IbbjNX5rGkYipOo6vkgyxiaDoW7CREqHrXwDm0ywNPdx7T+BPLHsfAZC7J6tHKof+1CzndZECecpJDAVxBwfScQAPrcJH2H7vNa0uvMqu0GdaX8rCy9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=wlTuwqC0; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="wlTuwqC0"
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 213CF1FA1B;
-	Mon, 26 Feb 2024 11:54:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1708944880;
-	bh=q3t+9DN4ngdFtdrD/shw1T/iqqp+imBFrdQtbCvoMSk=; h=From:To:Subject;
-	b=wlTuwqC0H1O/peAc9lJ9z0cg3MH3qww3bF5PPCHKa/gsvJoHlJh6BeX6Yh1F/8JWN
-	 Gqy2TGXS7OigX0xx5ZjAZh8CUmLp1FRsV5HfS9g7FbYxQ4yUsdWO9eX58ccXUwu54G
-	 vhbbUewQ4cICT9YHsOUnSUZynO5pMgPkz2PNolQ9DoeEm6GnMZuIK4n2Nh58Gif3eK
-	 r3FSAz42CvOntdJVqU7Lb1htcNWEula22vbsU/EsgAF+PC611jRL6WQ1aQ4IlXOTLv
-	 yAtSDYjdIQ8/XTQ1WVQFDO8bTlnK99k8jVsYcHBGTYaDfHeGcmjWIxV7ixiWCNMMc9
-	 oHvte4g8izPFg==
-Date: Mon, 26 Feb 2024 11:54:35 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Udit Kumar <u-kumar1@ti.com>
-Cc: nm@ti.com, kristo@kernel.org, ssantosh@kernel.org, chandru@ti.com,
-	rishabh@ti.com, kamlesh@ti.com, francesco@dolcini.it,
-	vigneshr@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4] clk: keystone: sci-clk: Adding support for non
- contiguous clocks
-Message-ID: <20240226105435.GA11908@francesco-nb>
-References: <20240213082640.457316-1-u-kumar1@ti.com>
+	s=arc-20240116; t=1708945524; c=relaxed/simple;
+	bh=yLtQ/+RgVEkDmhivdlgaIQBj90rcXGFslKcpEwaRft4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l7+P76Yz6K2RJP9xIZZ+0TrEVQRMKqjVMHn7YFZgKJuxqOdQLR1iXK8HCdr6CIwrSvZjfjEnVDSxwOXJaX85vXUPefudU6rRG+/l2dmSZWIsuSHTBLlo9sPpG9CeUiXmScIwQBchlzOt8QaNUozI+mPL2WlYzfZQROx/6gQei1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4TjyLg2DkSz4x1PD
+	for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 11:59:55 +0100 (CET)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7662:e968:947d:f3d0])
+	by andre.telenet-ops.be with bizsmtp
+	id rmzn2B0075Kh3Z501mznLG; Mon, 26 Feb 2024 11:59:47 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1reYht-001lUq-KN;
+	Mon, 26 Feb 2024 11:59:47 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1reYi3-004Euk-2r;
+	Mon, 26 Feb 2024 11:59:47 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: clock: r9a07g043-cpg: Annotate RZ/G2UL-only core clocks
+Date: Mon, 26 Feb 2024 11:59:45 +0100
+Message-Id: <ffcdcd479c76b92f67481836a33ec86e97f85634.1708944903.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240213082640.457316-1-u-kumar1@ti.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 13, 2024 at 01:56:40PM +0530, Udit Kumar wrote:
-> Most of clocks and their parents are defined in contiguous range,
-> But in few cases, there is gap in clock numbers[0].
-> Driver assumes clocks to be in contiguous range, and add their clock
-> ids incrementally.
-> 
-> New firmware started returning error while calling get_freq and is_on
-> API for non-available clock ids.
+The M2 (CRU main clock), M3 (LCDC Video Clock), and AT (Cortex-A55 Debug
+clock) core clocks are only present on RZ/G2UL, not on RZ/Five.
 
-Is this the kind of errors I should expect in such situation?
+Annotate this in the comments, like is already done for module clocks
+and resets.
 
-ti-sci-clk 44043000.system-controller:clock-controller: recalc-rate failed for dev=13, clk=7, ret=-19
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk for v6.10.
 
-If this is the case, I feel like this patch should be back-ported to
-stable kernels.
+ include/dt-bindings/clock/r9a07g043-cpg.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Any malfunction because of these errors or just some noise in the logs?
-
-Francesco
+diff --git a/include/dt-bindings/clock/r9a07g043-cpg.h b/include/dt-bindings/clock/r9a07g043-cpg.h
+index 77cde8effdc73c6f..a64139fec81520bf 100644
+--- a/include/dt-bindings/clock/r9a07g043-cpg.h
++++ b/include/dt-bindings/clock/r9a07g043-cpg.h
+@@ -16,15 +16,15 @@
+ #define R9A07G043_CLK_SD0		5
+ #define R9A07G043_CLK_SD1		6
+ #define R9A07G043_CLK_M0		7
+-#define R9A07G043_CLK_M2		8
+-#define R9A07G043_CLK_M3		9
++#define R9A07G043_CLK_M2		8	/* RZ/G2UL Only */
++#define R9A07G043_CLK_M3		9	/* RZ/G2UL Only */
+ #define R9A07G043_CLK_HP		10
+ #define R9A07G043_CLK_TSU		11
+ #define R9A07G043_CLK_ZT		12
+ #define R9A07G043_CLK_P0		13
+ #define R9A07G043_CLK_P1		14
+ #define R9A07G043_CLK_P2		15
+-#define R9A07G043_CLK_AT		16
++#define R9A07G043_CLK_AT		16	/* RZ/G2UL Only */
+ #define R9A07G043_OSCCLK		17
+ #define R9A07G043_CLK_P0_DIV2		18
+ 
+-- 
+2.34.1
 
