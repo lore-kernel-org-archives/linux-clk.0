@@ -1,72 +1,69 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B841CF80
-	for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 09:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0B01DA58
+	for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 09:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708938989; cv=none; b=rzDiW6r+pPXA/1752bUSLCdi9i0/A+NEEhKYyVOhmBIZr/FwVVYjHZHRQUe1xbuEPPLQ5hqaPFKzedZYN0S7VlHesi2aEUBSQ3SLIPToazpLdPJ8vzjQ8EzJuDiuO0pzVsyXSNeDPpNMmNzc2lydOPp3BuaiuOzkqOjEqstW/FM=
+	t=1708939012; cv=none; b=TrSXHaJY9Q4KJswI1SgnEA7eIiWqtrU0KICXwpoXGCH5KaVwD5yEeFvQjq7l0J+sluqHciVBHgPvHkjbe9XSPZKa/D9Pwx7J9778kecyZjpxxWfedFH3JTbbJrRmcCj0W25ayJNoDUT20WJVLQnkIpWLxIpY4Y24UlGjA2kBPnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708938989; c=relaxed/simple;
-	bh=u2D1K14aSbuHQlYPlwf4/XUKp9ima91ZltaPpSb69vQ=;
+	s=arc-20240116; t=1708939012; c=relaxed/simple;
+	bh=Upp2iFcc875yCuJA5X9ShBlOF4WCgv9wR6a1vPVlUjE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AmKSZzGQKRDK45i6WtUwdBDnp7isUnTrS2IbDVooo0saSVOyCLLdUeZ/JnDWvaCJSw+n+5HM9Fr2f6ouEFyjVuej2gsXZaY4QoZcB70aQBftcDspGRvEmYt+JPv9N5354ebx2dTKgSfFLO9gy1+nFrqJ7rNaCZE4i7eHJwJ2yGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TTF/xT18; arc=none smtp.client-ip=209.85.218.53
+	 MIME-Version:Content-Type; b=Bg0QvHrS06f3xsNvduPqxi70SRDdjeDpGEtl1VJM+IGOZwGZOSVaoserc4U8/yqDcroWrMeB9VxgiQ7v4Kz8YHxe70VvboFoukZME76o8gnLvpxxFouLwhL/RThHhBFDnBXPXPV8ZQnCPOzQQr/t16eG9BbMTTY3UMWbOa9DELg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ic073+E3; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TTF/xT18"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a3f893ad5f4so396770466b.2
-        for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 01:16:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ic073+E3"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3e4765c86eso329767666b.0
+        for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 01:16:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708938986; x=1709543786; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708939009; x=1709543809; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q52e/ahqP4T6pWmT8jNQjktGuVz+xJCyCIgv15kYLW0=;
-        b=TTF/xT18ttL7w3NE/WATQKpUb1vEcT2wNAVqyvvlXGiClSWuUP35FkzBXf+1o8aLvi
-         Oani2opPgFLnjc0fGpfcJ5pVlWg678QxNsCp8Hu4sQ2HdCLjjZ2zKcQED3NxWvfVI4xI
-         rHTwar/4ZrMbXZz3m0OplzztlluOkSNOtb9KQfWPT7Lp+ImDqtay1w3IExqIliASmNBn
-         JJ+sBC4qxMrm0ZEXiIWdlGxrwNtD0mU8qh9V+Qdmku0Gu66Ow9hEDyfVXXS6ltxPzoK7
-         UZAeOIaJ/YHgDAYmDk9W/Tvdof342dYv9p7p5CleVL+4KFBUC8jCr1t3uDTobcQX6e92
-         pRkA==
+        bh=JMmWZOmsO0vyhq4eNQPTY608ecp9OvqMQOtT08KRhk8=;
+        b=ic073+E3eft5HhZVlZT0LmN2JXx3kQv+clDS8krEa1fTxt6G8qnc/9zSvadM9SSlQ+
+         x9IydCGoG6gJwpG8k9Sb6jZlGBxI/KcmUz2aSXfZualiuGjocjGebCN42zgwge/PUcZm
+         3z76Ld3SxpGQtW7LxQSrQRSBhQZjQFjWtmbDSIZ2ACEYQk0WlypuOyLGZS/FuN4w88a9
+         hNFFo7Et9b4TrxMmZN22yQMW3uTO+2H5wcdzShuqAKSqPZUKfnkSfofOQ6Z1LhASnaJL
+         gNJPwQn7DmViTvJwtqL/XD6gTl8fiK4BoFatjMDv/KP/5sqNTqgcYjcDvb/nAObtvT0E
+         WuNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708938986; x=1709543786;
+        d=1e100.net; s=20230601; t=1708939009; x=1709543809;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q52e/ahqP4T6pWmT8jNQjktGuVz+xJCyCIgv15kYLW0=;
-        b=Wwuu704hBGZe63tzSN20E8E2BfolmHjBFrvqBdhQNwgomRUn50DLgbnxcQ7/bZmOCo
-         9kKNsRlrYNSWI2A20sXrSqboUeePHlfE6wT6ALZuz7ernvhCcWTLQp5iJRWv7ImGFwBr
-         +oMLb65+w09AKivEz91LYHTwg3u7nHJfAuQ0pLCk0xKqGT7LrlyYCaDEifspFyf/WDpu
-         z3JhwxL36/27H9UbyQ8zPto5zVxzblditX5iVlHF5D3qNGByuUuxz6id9lxBIpSY1PUU
-         R0Dxt+GQ62cajTrxdLyBF8H3vL0BvXa11bFu34t8jI7Ps7w0tsX8aO7xQ3H652HwNWVb
-         yoBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeYwKiUeB1B2p9rZEFckC7h0sg4bdSc7xImeTvpshNEgXDnoaIFeQ1i102nBhcTadL+BPT60k3jwkvQ30JRlPCM/m3Mu2k8ONQ
-X-Gm-Message-State: AOJu0Yxgq2V6C7ldJgc67d8+/R/j4RmaKIcboo3+aB6TVYDY9Md9xnmX
-	UrS6n+BHYQ2IMUPzImI+jwvqrpY2jRHMGOT+7JI0BZ0siRAboDLpKa7U+p4AyS4=
-X-Google-Smtp-Source: AGHT+IHCJnITCwMOFBnEouaFM5+XWHwJ6u2WI0iCbuf0+DskJlC6ES88lu/X8WYpnPi+CJgpZf4dBg==
-X-Received: by 2002:a17:906:f6d4:b0:a43:277b:96b4 with SMTP id jo20-20020a170906f6d400b00a43277b96b4mr427569ejb.57.1708938986160;
-        Mon, 26 Feb 2024 01:16:26 -0800 (PST)
+        bh=JMmWZOmsO0vyhq4eNQPTY608ecp9OvqMQOtT08KRhk8=;
+        b=N6/TrRBNUubfbAnNPs5NoPwx+YypHsHNc7DnddfYjgDv70S/ClBJVvN8q4MNQQQevZ
+         gM6ffb8j94zRM4aq4eeM5g40DD6zpVGPZOU0g0M+RQ4oNDhNL/VDuUt+b2KDoZXjr4Oe
+         GtYWX94wSXZ1f7XkP7/tfM/ggjJ3AJvfQIQFCLjiN01RKN95NiydU1MWx7Zf+eCSWkr6
+         YEc+aurP1Rx2jEmyHRFsgsn0qGM3q9sx24nUExfacHwGxO2gw4JURhn+hnbLqEgV+HW4
+         bhqU8XY2qVkU3MlURuenXXXsYole3W0hDGbiY5w2xxRDzt+wmcM0KrocSW00q3cKnZ+K
+         FgJA==
+X-Gm-Message-State: AOJu0YxEb6Aql+05GfW7clvO+3eiD6jriRBG0cm6L+xgU5JHoPg1asJl
+	ablY0H9O30qgBHAbNIuc1fbxClbl2S6WEtenHQS8/om4ZX8oahwWhPFQzn1J9I0=
+X-Google-Smtp-Source: AGHT+IEyIbiGGcmhV5IKj2JAF5rpef/IBwu4K0kyDJ0jA11wqSHhARelVSGWrrVgdR5wuJbi84CiMg==
+X-Received: by 2002:a17:906:408f:b0:a3f:d927:4c0d with SMTP id u15-20020a170906408f00b00a3fd9274c0dmr3937942ejj.26.1708939009689;
+        Mon, 26 Feb 2024 01:16:49 -0800 (PST)
 Received: from [127.0.1.1] ([188.24.162.93])
-        by smtp.gmail.com with ESMTPSA id r18-20020a170906365200b00a3efa4e033asm2202076ejb.151.2024.02.26.01.16.24
+        by smtp.gmail.com with ESMTPSA id ts4-20020a170907c5c400b00a3ef17464b1sm2225053ejc.9.2024.02.26.01.16.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Feb 2024 01:16:25 -0800 (PST)
+        Mon, 26 Feb 2024 01:16:49 -0800 (PST)
 From: Abel Vesa <abel.vesa@linaro.org>
-To: Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, kernel@pengutronix.de, linux-imx@nxp.com, 
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- kernel-janitors@vger.kernel.org, Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr, 
- Kuan-Wei Chiu <visitorckw@gmail.com>
-In-Reply-To: <01446ce9-c0e8-4467-8b2d-fd736bc5b8e4@web.de>
-References: <01446ce9-c0e8-4467-8b2d-fd736bc5b8e4@web.de>
-Subject: Re: [PATCH] clk: imx: scu: Use common error handling code in
- imx_clk_scu_alloc_dev()
-Message-Id: <170893898492.1768204.4132765783691588048.b4-ty@linaro.org>
-Date: Mon, 26 Feb 2024 11:16:24 +0200
+To: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, 
+ sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+ kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, 
+ shengjiu.wang@gmail.com, marex@denx.de, m.felsch@pengutronix.de, 
+ Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <1708683351-8504-1-git-send-email-shengjiu.wang@nxp.com>
+References: <1708683351-8504-1-git-send-email-shengjiu.wang@nxp.com>
+Subject: Re: [PATCH] clk: imx: imx8mp: Fix SAI_MCLK_SEL definition
+Message-Id: <170893900836.1770969.7795991183882277509.b4-ty@linaro.org>
+Date: Mon, 26 Feb 2024 11:16:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,16 +75,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Fri, 22 Dec 2023 13:03:08 +0100, Markus Elfring wrote:
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
+On Fri, 23 Feb 2024 18:15:51 +0800, Shengjiu Wang wrote:
+> There is SAI1, SAI2, SAI3, SAI5, SAI6, SAI7 existing in this block
+> control, the order is discontinuous. The definition of SAI_MCLK_SEL(n)
+> is not match with the usage of CLK_SAIn(n).
+> 
+> So define SAI##n##_MCLK_SEL separately to fix the issue.
 > 
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] clk: imx: scu: Use common error handling code in imx_clk_scu_alloc_dev()
-      commit: e4818d3b3f621e996b5a1d1a4913d11ccf769c24
+[1/1] clk: imx: imx8mp: Fix SAI_MCLK_SEL definition
+      commit: 13269dc6c70444528f0093585e3559cd2f38850a
 
 Best regards,
 -- 
