@@ -1,61 +1,71 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E021E498;
-	Mon, 26 Feb 2024 15:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3465D12C55E
+	for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 16:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708960358; cv=none; b=BCiQnBb1pydiIm9Uq9wc1KyA1W1robbD9IxyfzRgCgqQLH7gh7fYjKZ91/D/kyWjV8rRabaTcONCtreQr5DiofqV008q3klNF/pWkSzTk/r2JID/+qrygm6FX9jKfFaze5OLSE2gtw6/Tzdbaw6gwqKzVKa4ynoMG/daIanA6Ek=
+	t=1708963946; cv=none; b=d1wlf5U99MVy/j4NLbVEglwBXCKrBFVc/hbWT+6CiwUNGyskpY+lUAU5kK8krURbX/LfH522VhZttZubRG46TKT9zRvEDd14OUCtIl98GPkoq0fURHE6cbxLI75nshEAUNCQ5xTi0u7t7OEZ8dnUAdsFBikoBiM1caJ8uJHpmxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708960358; c=relaxed/simple;
-	bh=p/wyrwKVlNK4WhB2eT+NE9IKehJPl+cCxb+H/wAZwrk=;
+	s=arc-20240116; t=1708963946; c=relaxed/simple;
+	bh=a6f7tH+OqrI8hsygIm05fQcRkKGxUj/pum2GnIuoRvs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bf29tEzQ5ncOoqZXxLXs8DQF6KDIg1fDqOrE+TvKk1pZ8b+A+hTS0vXEzI4qWPTFtvttMM256Uftm8l3IZwVd+vLZc03ZkCdn5FI7yunoGNOjCXZMvVOT3MR0jMMdvI0hUqMqhgSevJ4KhOcZIRRnLKlLS80WWdn2Dzisv5JmOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L3ndgiBa; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=pJE5E3JqYFSL1G+A+U/YWcN8X7hzEN8f1OHPhNznBkq6RAzoyjxVsP2ne81Z1TGDkJBJzY4frIRHO9o3z7vlrHwnHJo8beWIOlVa7c2fP3WOIhsDm3RuIbO5D+1Ju04dtSEaIKVhgW+a5wi8cwfDQwgjiP33gRTtJ1Y8Esz7l/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BoRS2yBQ; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L3ndgiBa"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1708960357; x=1740496357;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=p/wyrwKVlNK4WhB2eT+NE9IKehJPl+cCxb+H/wAZwrk=;
-  b=L3ndgiBaPGddz8OXMd599OmCi1ZrhlH1VocSMJ3JkaGWuMTRZXG36BJ9
-   77ily0QnlaylS96D52r3g/8VcP4QSJnW4Pa0rDb3+xjldK4NlQt/nRSDe
-   +NNNkmAl7KJn1wGvEiqY6o0v+WartlK6KrNbYKfzW3GwzZAgdsnOt9JTg
-   mILKFcqq4ALMpyuukPkQOdlzhLPiyHxiCHhhIQ+988guLjonytehDu9fg
-   E8YLWqpSDFZOqYaZSoXg1+B4azQhSTYielV+G3yGwanNWZhoKsHD+Z9rZ
-   qs8HIAAfx6m4zj8txAlN/T0kehDL8Yw2RWgKyi/ZEQaDZmVlBFHlObOdY
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10995"; a="3107990"
-X-IronPort-AV: E=Sophos;i="6.06,185,1705392000"; 
-   d="scan'208";a="3107990"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2024 07:12:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10995"; a="913875991"
-X-IronPort-AV: E=Sophos;i="6.06,185,1705392000"; 
-   d="scan'208";a="913875991"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2024 07:12:34 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1reced-00000007iFh-2zHT;
-	Mon, 26 Feb 2024 17:12:31 +0200
-Date: Mon, 26 Feb 2024 17:12:31 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Michael J. Ruhl" <michael.j.ruhl@intel.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: Re: [PATCH v3] clkdev: Update clkdev id usage to allow for longer
- names
-Message-ID: <ZdyqX_nMKVuTG2Gy@smile.fi.intel.com>
-References: <20240223202556.2194021-1-michael.j.ruhl@intel.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BoRS2yBQ"
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5a04fb5e689so1665979eaf.1
+        for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 08:12:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1708963942; x=1709568742; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5sH6z9nrzqVNTL38OQhoDAwWJzK93pXYFPgmQuEUCcY=;
+        b=BoRS2yBQ1FIjCzXe3Am2ozDjd3R7N9NAiJC1hWk9JYXOnorAh5dgaVcrrCuX3qzaAb
+         bmOWwsK+A4uJnnUfIEoe4BYki7CgvY/ejWPgaB7Dw02NDMsmqwRenfzVpUmm/H/EpDW/
+         I/PjgplIDH5Ld/WFgRp/hihvBa3mwqwiS6Iyizq1zvc40oE/ir1RsVddHzl1cQFMmXDE
+         WOA1XJqA+nMW8KNueKX64MqlWrHnP4kl2Z/aHcRIVOau4X7G4RbMAqjdDlHLH6lsPK2+
+         XqMRfNbdIDn0WS5LBRF/wndbTKXPEA6gl1UaIbQw1XRHQ8tZh8rgTkweQ8qKV6cpzPhA
+         +0UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708963942; x=1709568742;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5sH6z9nrzqVNTL38OQhoDAwWJzK93pXYFPgmQuEUCcY=;
+        b=HyH01C8yt0JkKCp3QAyPJ+6Ea9H01lxBiIvdr02ojnU0RkOmtH0fncqjruMhqbh+Nj
+         zUdfMz2kIG6VybYNaLh3ZxtuCmGorsBaE36oxBbbDDiN7vo4E9b5GOteKWVugaVAGNSB
+         DpA3TA2M1a8STx5mY68h+GVaYteVNBXVUIsoqe+dd9YLCJQllvEF6GIrFxj22VoSStve
+         Ph6IzUVnUboMdyugY3IP4M37AOhCgaxFHQQ/2HfhDylbO0db6ojPQbTw1J3Y4xVI6uP/
+         kfQcgzJdVRTlynlBEYeTjvDI//PS0gkH7p5K0Bh62lWONlp0UomSDICDBc9YSFHUlcxA
+         AhWA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8FfvOBAsa42XJ8Sfm/WcZtdse/A6rLtx5vyQH0l22gyubcjXNVcXhRyaYmkEpz08vCjv9Cfj+7acSsaxTGcCjWBQWj3/BQLSE
+X-Gm-Message-State: AOJu0YwOQs87o44k7GzUj/LkQUjndIETQi6Ut3bQ6BZ1Kr7ENWzmsVkq
+	Mz4eSDQuwBh9ekmGKeGKVoxOhu66zooFuSCxTijE9RBr7U3SvOFpSceULPOv6o8=
+X-Google-Smtp-Source: AGHT+IFjUb+c/fFWRXoZFCN25O2SmDpaUNvFqFasQHJGd7CEyCqvLCJr1Pd5sypoEjZ6QljgaKYLNw==
+X-Received: by 2002:a05:6358:6f0c:b0:17b:b532:80be with SMTP id r12-20020a0563586f0c00b0017bb53280bemr1375921rwn.25.1708963942241;
+        Mon, 26 Feb 2024 08:12:22 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:360c:e16d:91ef:5fec])
+        by smtp.gmail.com with ESMTPSA id d18-20020a63d652000000b005cfbdf71baasm3591736pgj.47.2024.02.26.08.12.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Feb 2024 08:12:21 -0800 (PST)
+Date: Mon, 26 Feb 2024 09:12:19 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 3/3] dt-bindings: remoteproc: ti,davinci: remove unstable
+ remark
+Message-ID: <Zdy4YwD9LNmq7hth@p14s>
+References: <20240224091236.10146-1-krzysztof.kozlowski@linaro.org>
+ <20240224091236.10146-3-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,32 +74,36 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240223202556.2194021-1-michael.j.ruhl@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240224091236.10146-3-krzysztof.kozlowski@linaro.org>
 
-On Fri, Feb 23, 2024 at 03:25:56PM -0500, Michael J. Ruhl wrote:
-> clkdev DEV ID information is limited to an array of 20 bytes
-> (MAX_DEV_ID).  It is possible that the ID could be longer than
-> that.  If so, the lookup will fail because the "real ID" will
-> not match the copied value.
+On Sat, Feb 24, 2024 at 10:12:36AM +0100, Krzysztof Kozlowski wrote:
+> TI Davinci remoteproc bindings were marked as work-in-progress /
+> unstable in 2017 in commit ae67b8007816 ("dt-bindings: remoteproc: Add
+> bindings for Davinci DSP processors"). Almost seven years is enough, so
+> drop the "unstable" remark and expect usual ABI rules.
 > 
-> For instance, generating a device name for the I2C Designware
-> module using the PCI ID can result in a name of:
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/remoteproc/ti,davinci-rproc.txt        | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
-> i2c_designware.39424
-> 
-> clkdev_create() will store:
-> 
-> i2c_designware.3942
-> 
-> The stored name is one off and will not match correctly during probe.
-> 
-> Increase the size of the ID to allow for a longer name.
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
+> index 25f8658e216f..48a49c516b62 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
+> @@ -1,9 +1,6 @@
+>  TI Davinci DSP devices
+>  =======================
+>  
+> -Binding status: Unstable - Subject to changes for DT representation of clocks
+> -			   and resets
+> -
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>  The TI Davinci family of SoCs usually contains a TI DSP Core sub-system that
+>  is used to offload some of the processor-intensive tasks or algorithms, for
+>  achieving various system level goals.
+> -- 
+> 2.34.1
+> 
