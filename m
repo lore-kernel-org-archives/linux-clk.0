@@ -1,190 +1,117 @@
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B85812CD8F;
-	Mon, 26 Feb 2024 16:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DDB12DD89;
+	Mon, 26 Feb 2024 16:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708964494; cv=none; b=GxiKgcysqFOkPLUZ1IuqCrnetpUoELtOWW0CA2OaDWNihd5GNpCPX7ykqw+HBJAEqvsp1Mu3JGsSwOdJj/pJ8/WmRqWgSgJjJHf7L54HCe9KAOZMd4aVznNAB4TwPKZwJ7DPEE8x7orlX9qNeluKcXtHbhIbPozpl06u501Zwbo=
+	t=1708966444; cv=none; b=Auh7ofS/97LeT03Qt45z6OqyhPke9YSLbkmk6eIwDg0sxnIaIViCy1rMBsJQQZB1CkcV6sGyiv8/0L5U6vpEUHk4TMV/QFV3BqeypfLi5I2ud54zW74HIgUhHCLc8NhfP4MXzzmRcM9uLRirIY9jiZ5mG+Z3NmQVmMGgPvlA5Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708964494; c=relaxed/simple;
-	bh=K8Zp0ZPKDcwcP3G/KRjzFIjbZsJkztFYeVAPVMu3ls8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jaU+dAw9IG0T/+RjLslPCJ7CMFdSiuBrrhI72cj3fpSklsy21NYfI+fvGZlOvcGF68NsUMTzQpXLYKREu/FFRm2xD7HsAA8QZh6locuNSWUuiBlup6DertHPu6G7c5BnAMmRtE+uHQfYUQnA+aniDLr2OjAVlCSnxACdAS8qLNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1708966444; c=relaxed/simple;
+	bh=ZNQwic6Q4fKlDucDcdzUqvIVEiifAuRRooU0/hV0Klk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mIyMOF0614i5W4gpeR0W7ategiLTsMaxlG43vkWOyJDZMeWd1TFbuqKmbqnz0Yz6ORBBT4M5Ma3Zlt/vz2lzeD2MhsuhgTp4LDUnUAPI0IkgTP1UstReyzvAbyK1JC3UII2CpVkOzS6Blpn0Bx/AZhmJjklqhF4UPyS/krASodw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBj/g1qD; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dc6d9a8815fso3012295276.3;
-        Mon, 26 Feb 2024 08:21:31 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBj/g1qD"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-412a9a61545so2540325e9.2;
+        Mon, 26 Feb 2024 08:54:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708966441; x=1709571241; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2HPPIy1QnGtbZ8hqGOhoaCumwF0HMr9TMO/f05RDRGg=;
+        b=nBj/g1qDw7tifEhwzI+NcaSEgwMBbwDTLJKhWSSh+ZfS13CLVpd0sjstsXE3qZ7hOv
+         N/SNswmVjXsR7/dPQ1yzhQWsdM67MtASUApQzjEs1ih7tQy0caI21VyCe7VxnQXFCd/d
+         g7lvHioLouZlazvMK6UV5/yVHvSogcBEhoocNS9txYmQscF2jfrfynR9cJICaZS+Ilqg
+         6FAsKPVY0E44zhUm5Neyp7CSJecUCAbri/JfreUGeD6dZdQe3hjjQdS1Gsi5ozgD2fc3
+         lgSxEIcbB1emG2gV7NVFCUdHoP+KV3wGrxCzyz6x7i7QX/NISRxYuD2RPKCCdHimZIiL
+         JHaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708964488; x=1709569288;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AnNfNm5GP8AlHR3LpO3OZDALnBwQPt1VpdE5YdvyhHU=;
-        b=FVnpkMWODbp4c5fW2UFshr2DOS6ND2QSWBJ96wrSUsYfNeHmiEw68PeRPLajn1WFVJ
-         3A4auSk7dBLYT9PHhzXsQN3UvDp6ciDmKi+gpjZuVoypDpQLbPOdFxB3n8QjBl0k1ttZ
-         4ibqSJPlm4m0oqQ4vJQLJJtJyblmBFtXOIkuXsYjKmLDsZDlZ6sD0CZrqQJg/XiI9Qrr
-         XIrxk/xfYEnGoOG3yEbOQj/6XAA9Ed8zaWXYAQap8o/4yd8PLAsYJyasNfssnhMckVYb
-         2ujHhjbPlrnu2jESuNXNyiPZmDgE4mWnxLZJ/HE/ZF0H6fjb1XshkNcf3wAGPjRjBjLF
-         54Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXShRe8maavP53tYStEtKgKz8neu6AFmiEHZbDSs9yJtoXLB4o7X9SClhCyoRJ8rBHsWoIqbytyflsmm4zqC3O0ODnLbpceL4cufCRJHxcc85/B7dGm7yTnfiOYgmLadxLBw16O1S7b9eGVGPAtD+1cR2iEN7455fW2gxdoEbfmqy8cYw06Fys01Uyhp/G+SYxO2rNJ3XfZLWe6oXVn5qdl9ip4VrfHfUWSBMlx+W+SE7wObjWdP4ze1KdB9FFzu6/0YsoFQQEqJAyVq9jmiZyU8/TjnyBlqKDhSfz51+jBIEyqQM3aw11XR5w+cRlrnXqzg9vWD+A4KDSB25a5KVOMQBxQn5vN4ZqwPW/YX6qouFgWPMgMWeA=
-X-Gm-Message-State: AOJu0Yy81+JK7ge34eIBYzpFD03VtP5Vd5q6Ycx9FBePAsB5SV3AzXcP
-	JmiSQ6cvCelDrJLZTBOV3YYbvkTB8kwmYhi7qKICdWVAa00tLrnIoK5OVq5T42w=
-X-Google-Smtp-Source: AGHT+IEJFJN64SqcZMHnkcdm3I6piTKl+/O4wLy59UNIzTaX9D/pCnztcN4qJmRcfE8aCJx/sq4G5Q==
-X-Received: by 2002:a25:ae4f:0:b0:dcd:6722:c728 with SMTP id g15-20020a25ae4f000000b00dcd6722c728mr5196743ybe.14.1708964487740;
-        Mon, 26 Feb 2024 08:21:27 -0800 (PST)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id t13-20020a25aa8d000000b00dcc620f4139sm1019289ybi.14.2024.02.26.08.21.26
+        d=1e100.net; s=20230601; t=1708966441; x=1709571241;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2HPPIy1QnGtbZ8hqGOhoaCumwF0HMr9TMO/f05RDRGg=;
+        b=cXwfZGJt2IbNQTIX4uAWgo2pic/zJ9b3ZMGsv6wpivhghnnIF2uQ24kGi4/Qf7IW5B
+         RGQVf2H+tdVQy+BbesvBNgV+0H9XEUInZbOJTu2esC7uZ5W3EWq/x4e+vFw9FglFwPhT
+         xZFp+noafUyYu3FUMCx5/V9tCEtYRazQNQqjot8NpraNRAH8O+ZY96SkMVyQua60b9eU
+         1lcnRrnWV9Q5vZmACKNk6E13PfKjj2my59epU6fEsfoexdg0YlVPcKCOJMv/leSFC5Ey
+         MeeBNRqzKGSSBUY6p6J4QUCJCkNA/tzhQm95h6bln46xcIiOFZm/CI4sx7sgKrU9zC38
+         ZYUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXukbY48VOMaeilyLDLiGdT1UJMscwbKRN491W+DXteaMNHHwAgdjD8k9ZHn3IIba1ZT8XXsGmRr0OPuiipk2Ivyr8B4eTY/cmmsPNuYhkR8P8029AfY8NKuLJmFa0kjT3g54eviwTUiH+3YrbYqSbAaxGRPAIZSxYwRhfSnuGv0AXPEBJ7Lg==
+X-Gm-Message-State: AOJu0YzzT/HoiUD38vM3H9Gc0AAWSCrNP+jrw1TkwKwX5jNJ9XZGBRpK
+	Zgk3JvkhBp7XG2yEUMH2JLD9+keAzhbP1Sn1ILM3edwe7R5BmLt0
+X-Google-Smtp-Source: AGHT+IFULOO+jCUAYFp5qbKzSMcX16UMqfYHtTO/+6bq/fN0LtwyBaFdfm66ExHXFcWipMfETdlqoA==
+X-Received: by 2002:adf:e4c1:0:b0:33d:409b:5738 with SMTP id v1-20020adfe4c1000000b0033d409b5738mr5420964wrm.26.1708966440976;
+        Mon, 26 Feb 2024 08:54:00 -0800 (PST)
+Received: from [192.168.20.170] (57657817.catv.pool.telekom.hu. [87.101.120.23])
+        by smtp.gmail.com with ESMTPSA id f14-20020adff98e000000b0033cf60e268fsm8792121wrr.116.2024.02.26.08.53.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Feb 2024 08:21:27 -0800 (PST)
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dc23bf7e5aaso3149877276.0;
-        Mon, 26 Feb 2024 08:21:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVqq+jjHfFEPR//OoVVvagRJjk2vjYlnHtyaHvCkOTs+ZFsF6i2R9w6bPoez1blin2aatCtHOQT9jQYIElkQ9XMjM9QNds8HM8FC3tlEEH9+Yi9Xgmrd9nwPw+GjrHL2P2liAGPfbKQf/35XswvsVHxtSDT/8iWz6gCPatMAF/8swgyF+Kaf15fxCjtMXc+SyGjkj04rv8XYMbPZk1keuKBa2brkuHCjSCpJvOpJhsuRu8RsF4ZbZ/3+GUzSpybSWmZSiHFZ8PUn2uIWKWeG7SID418BORxF8mxGgfXlukUXRHQRIJjgqiJWTjI5W7tkkmEpMZICjZRFqfhifFTZag09MAiRGnJus0GfeYjxe+V5h7j3PNIttU=
-X-Received: by 2002:a25:360b:0:b0:dcc:35ca:aac4 with SMTP id
- d11-20020a25360b000000b00dcc35caaac4mr5201494yba.51.1708964485283; Mon, 26
- Feb 2024 08:21:25 -0800 (PST)
+        Mon, 26 Feb 2024 08:54:00 -0800 (PST)
+Message-ID: <dfa465bf-e0d5-461e-98cc-6c8d6558e8f0@gmail.com>
+Date: Mon, 26 Feb 2024 17:53:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1704788539.git.ysato@users.sourceforge.jp> <e5d965a1ba1447466c4a70c95b1e3aa8c1aebe4b.1704788539.git.ysato@users.sourceforge.jp>
-In-Reply-To: <e5d965a1ba1447466c4a70c95b1e3aa8c1aebe4b.1704788539.git.ysato@users.sourceforge.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Feb 2024 17:21:13 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVyz4mbExe8ZzPkVxEujYBhCBBrh88n8D6ykcZyy3=SEA@mail.gmail.com>
-Message-ID: <CAMuHMdVyz4mbExe8ZzPkVxEujYBhCBBrh88n8D6ykcZyy3=SEA@mail.gmail.com>
-Subject: Re: [DO NOT MERGE v6 02/37] sh: Kconfig unified OF supported targets.
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, 
-	Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko@sntech.de>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Chris Morgan <macromorgan@hotmail.com>, 
-	Yang Xiwen <forbidden405@foxmail.com>, Sebastian Reichel <sre@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	David Rientjes <rientjes@google.com>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] clk: qcom: gcc-ipq5018: fix 'enable_reg' offset of
+ 'gcc_gmac0_sys_clk'
+Content-Language: hu
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
+ Varadarajan Narayanan <quic_varada@quicinc.com>,
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240225-gcc-ipq5018-register-fixes-v1-0-3c191404d9f0@gmail.com>
+ <20240225-gcc-ipq5018-register-fixes-v1-1-3c191404d9f0@gmail.com>
+ <CAA8EJpqX5kwiQdPsSbJM=-7hd6mqwOSw_=7zyWOWQOi4=QYFJw@mail.gmail.com>
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <CAA8EJpqX5kwiQdPsSbJM=-7hd6mqwOSw_=7zyWOWQOi4=QYFJw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Sato-san,
+2024. 02. 25. 22:00 keltezéssel, Dmitry Baryshkov írta:
+> On Sun, 25 Feb 2024 at 19:33, Gabor Juhos <j4g8y7@gmail.com> wrote:
+>>
+>> The value of the 'enable_reg' field in the 'gcc_gmac0_sys_clk'
+>> clock definition seems wrong as it is greater than the
+>> 'max_register' value defined in the regmap configuration.
+>> Additionally, all other gmac specific branch clock definitions
+>> within the driver uses the same value both for the 'enable_reg'
+>> and for the 'halt_reg' fields.
+>>
+>> Due to the lack of documentation the correct value is not known.
+>> Looking into the downstream driver does not help either, as that
+>> uses the same (presumably wrong) value [1].
+>>
+>> Nevertheless, change the 'enable_reg' field of 'gcc_gmac0_sys_clk'
+>> to use the value from the 'halt_reg' field so it follows the pattern
+>> used in other gmac clock definitions. The change is based on the
+>> assumption that the register layout of this clock is the same
+>> as the other gmac clocks.
+>>
+>> 1. https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-ipq-5.4/-/blob/NHSS.QSDK.12.4.r4/drivers/clk/qcom/gcc-ipq5018.c?ref_type=heads#L1889
+>>
+>> Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
+>> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+>> ---
+>>  drivers/clk/qcom/gcc-ipq5018.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-On Tue, Jan 9, 2024 at 9:23=E2=80=AFAM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> Targets that support OF should be treated as one board.
->
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+Thank you for the review!
 
-Thanks for your patch!
-
-> --- a/arch/sh/Kconfig
-> +++ b/arch/sh/Kconfig
-> @@ -710,6 +710,7 @@ choice
->         prompt "Kernel command line"
->         optional
->         default CMDLINE_OVERWRITE
-> +       depends on !OF || USE_BUILTIN_DTB
-
-This is still useful in the generic OF case.
-
-I think it would be good to model this similar to what arm/arm64/riscv
-are using (from bootloader / extend / force).
-
->         help
->           Setting this option allows the kernel command line arguments
->           to be set.
-> diff --git a/arch/sh/boards/Kconfig b/arch/sh/boards/Kconfig
-> index 109bec4dad94..e7e52779ef62 100644
-> --- a/arch/sh/boards/Kconfig
-> +++ b/arch/sh/boards/Kconfig
-> @@ -19,16 +19,9 @@ config SH_DEVICE_TREE
->         select TIMER_OF
->         select COMMON_CLK
->         select GENERIC_CALIBRATE_DELAY
-> -
-> -config SH_JCORE_SOC
-> -       bool "J-Core SoC"
-> -       select SH_DEVICE_TREE
-> -       select CLKSRC_JCORE_PIT
-> -       select JCORE_AIC
-> -       depends on CPU_J2
-> -       help
-> -         Select this option to include drivers core components of the
-> -         J-Core SoC, including interrupt controllers and timers.
-> +       select GENERIC_IRQ_CHIP
-> +       select SYS_SUPPORTS_PCI
-> +       select GENERIC_PCI_IOMAP if PCI
->
->  config SH_SOLUTION_ENGINE
->         bool "SolutionEngine"
-> @@ -293,6 +286,7 @@ config SH_LANDISK
->         bool "LANDISK"
->         depends on CPU_SUBTYPE_SH7751R
->         select HAVE_PCI
-> +       select SYS_SUPPORTS_PCI
->         help
->           I-O DATA DEVICE, INC. "LANDISK Series" support.
->
-> @@ -369,6 +363,16 @@ config SH_APSH4AD0A
->         help
->           Select AP-SH4AD-0A if configuring for an ALPHAPROJECT AP-SH4AD-=
-0A.
->
-> +config SH_OF_BOARD
-> +       bool "General Open Firmware boards"
-> +       select SH_DEVICE_TREE
-> +       select CLKSRC_JCORE_PIT if CPU_J2
-> +       select JCORE_AIC if CPU_J2
-
-Please move these selects to CPU_J2 instead...
-
-> +       select HAVE_PCI if CPU_SUBTYPE_SH7751R
-
-... and this to CPU_SUBTYPE_SH7751R, else it will become
-a long unmaintainable list soon...
-
-> +       help
-> +         This board means general OF supported targets.
-> +
-> +
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Regards,
+Gabor
