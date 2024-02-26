@@ -1,126 +1,72 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CCC52F70;
-	Mon, 26 Feb 2024 09:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC33C2206B;
+	Mon, 26 Feb 2024 10:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708941564; cv=none; b=njfjvBdfP1ftpWqYPwXWZgHw0UQVcw4PHoJBOVurw68rqco1w/VPyMVaLo/QTRnoIuFnIGmmIyK2J9YXpPRHE58Gj079HWiP9clL3NDjIjWVEwaSGKMgusnpFHPBhknRksDBWXel2nkjYAQYmY94QFFMboGj2hjl7xjPxWQZYPk=
+	t=1708944892; cv=none; b=A9fe1DbRJuvi1r3VGfXUv8or0yE2OV8Ipl2H+mi3+xoq51AX71WY3RlObegSm2AmOWr9NPhfdtkad2DAbQz3v8rtFPVu5xct2lMHT3zK/3tAIBlOHrP4aLyFppOil8NroRW88GTersjXXWN0xGaNVIspsh3J5RCNjMUCRPDyK/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708941564; c=relaxed/simple;
-	bh=PqbQ7HhDnfUCKp8V4bv/aDNGTxhql4LdRBtRHErU/Sw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u683YRAV0EgKjq4NK95scGNMkYvdmbGfYKZsU4rjNe6KLMXSmrCLq566stBs04Ib7j1TYgDMpymeaAtWtqthIRrZLyDGiLgE4aaDoO9t1DBNpb7BBlPEORLXk5V9zF3krlhbqQd2h1942X/jXe4YHopEIoPYE/kjAApNzoHFZBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JHIIIzGD; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1708944892; c=relaxed/simple;
+	bh=YIwSNAafJiqNweT7ikfqNMKQNYGFU3GBRMLIFdVHe9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ix9hUXGHxaBzWkAvr3LP6m5UZeEODVUTsnQS3pdj0gS7B3Jcaq9/uY2IbbjNX5rGkYipOo6vkgyxiaDoW7CREqHrXwDm0ywNPdx7T+BPLHsfAZC7J6tHKof+1CzndZECecpJDAVxBwfScQAPrcJH2H7vNa0uvMqu0GdaX8rCy9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=wlTuwqC0; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JHIIIzGD"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41Q9jkwX006747;
-	Mon, 26 Feb 2024 09:59:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=4UEp5bOsLRvDxev+6NWFj3DIo3zIv0AWoJ4gIkyLEx4=; b=JH
-	IIIzGDgaCQErqpguwomzCa+1bFkkydUItX91Rt3f8xnzT5XGtsX8G73eDZ8OlCBR
-	gjxyqrQ7ohxhNQlsAIylasfiiizhdGR/7W+vpuNAaGCHFWl//wSf/myoSNbHfWRK
-	tBx4HmNj8HhUJzuvrCjt6Rb1Pn3u9HgNyvNGDaVY/0wTEUVJYeFmh+XeAB+6a9hj
-	HvePj37HDjFb+Xkzx6kZ9ZiI7CGlLp8zvc4/cKFrsgPIZ02JnHgPIr2YMHOx6qZl
-	I6VrrqqYwh2+7JurYiL2h6kMbvToTs5SpRfaVao0Ys823RQdsT+FGqgiCuuIrsqb
-	ZbczYMgi8jAr9MLaQ4mg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wgkxq0hp8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Feb 2024 09:59:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41Q9xG1e021960
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Feb 2024 09:59:16 GMT
-Received: from [10.201.2.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 26 Feb
- 2024 01:59:12 -0800
-Message-ID: <3c1b3102-1817-4211-8d9a-aa56d05d7e6a@quicinc.com>
-Date: Mon, 26 Feb 2024 15:29:09 +0530
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="wlTuwqC0"
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 213CF1FA1B;
+	Mon, 26 Feb 2024 11:54:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1708944880;
+	bh=q3t+9DN4ngdFtdrD/shw1T/iqqp+imBFrdQtbCvoMSk=; h=From:To:Subject;
+	b=wlTuwqC0H1O/peAc9lJ9z0cg3MH3qww3bF5PPCHKa/gsvJoHlJh6BeX6Yh1F/8JWN
+	 Gqy2TGXS7OigX0xx5ZjAZh8CUmLp1FRsV5HfS9g7FbYxQ4yUsdWO9eX58ccXUwu54G
+	 vhbbUewQ4cICT9YHsOUnSUZynO5pMgPkz2PNolQ9DoeEm6GnMZuIK4n2Nh58Gif3eK
+	 r3FSAz42CvOntdJVqU7Lb1htcNWEula22vbsU/EsgAF+PC611jRL6WQ1aQ4IlXOTLv
+	 yAtSDYjdIQ8/XTQ1WVQFDO8bTlnK99k8jVsYcHBGTYaDfHeGcmjWIxV7ixiWCNMMc9
+	 oHvte4g8izPFg==
+Date: Mon, 26 Feb 2024 11:54:35 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Udit Kumar <u-kumar1@ti.com>
+Cc: nm@ti.com, kristo@kernel.org, ssantosh@kernel.org, chandru@ti.com,
+	rishabh@ti.com, kamlesh@ti.com, francesco@dolcini.it,
+	vigneshr@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4] clk: keystone: sci-clk: Adding support for non
+ contiguous clocks
+Message-ID: <20240226105435.GA11908@francesco-nb>
+References: <20240213082640.457316-1-u-kumar1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] clk: qcom: gcc-ipq5018: fix register offset for
- GCC_UBI0_AXI_ARES reset
-Content-Language: en-US
-To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Gokul Sriram
- Palanisamy" <quic_gokulsri@quicinc.com>,
-        Varadarajan Narayanan
-	<quic_varada@quicinc.com>,
-        Sricharan Ramabadhran <quic_srichara@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240225-gcc-ipq5018-register-fixes-v1-0-3c191404d9f0@gmail.com>
- <20240225-gcc-ipq5018-register-fixes-v1-3-3c191404d9f0@gmail.com>
-From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-In-Reply-To: <20240225-gcc-ipq5018-register-fixes-v1-3-3c191404d9f0@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 5in7-8T2oh3cMbMIYNrRhgewU0-869Ov
-X-Proofpoint-GUID: 5in7-8T2oh3cMbMIYNrRhgewU0-869Ov
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-26_07,2024-02-23_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- priorityscore=1501 lowpriorityscore=0 adultscore=0 clxscore=1015
- malwarescore=0 mlxlogscore=999 suspectscore=0 spamscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2402120000 definitions=main-2402260075
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240213082640.457316-1-u-kumar1@ti.com>
 
-
-
-On 2/25/2024 11:02 PM, Gabor Juhos wrote:
-> The current register offset used for the GCC_UBI0_AXI_ARES reset
-> seems wrong. Or at least, the downstream driver uses [1] the same
-> offset which is used for other the GCC_UBI0_*_ARES resets.
+On Tue, Feb 13, 2024 at 01:56:40PM +0530, Udit Kumar wrote:
+> Most of clocks and their parents are defined in contiguous range,
+> But in few cases, there is gap in clock numbers[0].
+> Driver assumes clocks to be in contiguous range, and add their clock
+> ids incrementally.
 > 
-> Change the code to use the same offset used in the downstream
-> driver and also specify the reset bit explicitly to use the
-> same format as the followup entries.
-> 
-> 1. https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-ipq-5.4/-/blob/NHSS.QSDK.12.4.r4/drivers/clk/qcom/gcc-ipq5018.c?ref_type=heads#L3773
+> New firmware started returning error while calling get_freq and is_on
+> API for non-available clock ids.
 
+Is this the kind of errors I should expect in such situation?
 
-Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+ti-sci-clk 44043000.system-controller:clock-controller: recalc-rate failed for dev=13, clk=7, ret=-19
 
+If this is the case, I feel like this patch should be back-ported to
+stable kernels.
 
-> 
-> Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
-> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
-> ---
->   drivers/clk/qcom/gcc-ipq5018.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-ipq5018.c b/drivers/clk/qcom/gcc-ipq5018.c
-> index 5e81cfa77293a..e2bd54826a4ce 100644
-> --- a/drivers/clk/qcom/gcc-ipq5018.c
-> +++ b/drivers/clk/qcom/gcc-ipq5018.c
-> @@ -3632,7 +3632,7 @@ static const struct qcom_reset_map gcc_ipq5018_resets[] = {
->   	[GCC_SYSTEM_NOC_BCR] = { 0x26000, 0 },
->   	[GCC_TCSR_BCR] = { 0x28000, 0 },
->   	[GCC_TLMM_BCR] = { 0x34000, 0 },
-> -	[GCC_UBI0_AXI_ARES] = { 0x680},
-> +	[GCC_UBI0_AXI_ARES] = { 0x68010, 0 },
->   	[GCC_UBI0_AHB_ARES] = { 0x68010, 1 },
->   	[GCC_UBI0_NC_AXI_ARES] = { 0x68010, 2 },
->   	[GCC_UBI0_DBG_ARES] = { 0x68010, 3 },
-> 
+Any malfunction because of these errors or just some noise in the logs?
+
+Francesco
+
