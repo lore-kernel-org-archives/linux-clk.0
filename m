@@ -1,90 +1,172 @@
-Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB471CFA8
-	for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 11:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0BD1CF8F;
+	Mon, 26 Feb 2024 11:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708945524; cv=none; b=YvK1VhNlp+nl7yluOTeyzH8nOw9eUGlAhLtjgaGMIknkUCDAk2zZG3GClg3xhFPzrxTGyFzcV9+L9SpJDRiFAOuKBKUW6IAlJHMHOrUIOjEfJ7DBWcX7mt3vbO8fYby96Xak+pSYI7qgsFdZr6MDor0u5Hyh/sFKzAweSX6amVY=
+	t=1708946175; cv=none; b=kdA8dfrxjVm82KPAouxJreHZtEA7vrFn8m08i4Fy6IMMtz1Cpq+etT9DbulNfV9QFj5WiOun5d7Eax2pZ+qNsbRNgPp2JSGl+m/4Ds0gC7b50RKQo4Y7I1zpGXp4jDPIkT+AZdH+uprtzTl5g4XoHKCGmeHPEYQYp+/JsS1ccb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708945524; c=relaxed/simple;
-	bh=yLtQ/+RgVEkDmhivdlgaIQBj90rcXGFslKcpEwaRft4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l7+P76Yz6K2RJP9xIZZ+0TrEVQRMKqjVMHn7YFZgKJuxqOdQLR1iXK8HCdr6CIwrSvZjfjEnVDSxwOXJaX85vXUPefudU6rRG+/l2dmSZWIsuSHTBLlo9sPpG9CeUiXmScIwQBchlzOt8QaNUozI+mPL2WlYzfZQROx/6gQei1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4TjyLg2DkSz4x1PD
-	for <linux-clk@vger.kernel.org>; Mon, 26 Feb 2024 11:59:55 +0100 (CET)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:7662:e968:947d:f3d0])
-	by andre.telenet-ops.be with bizsmtp
-	id rmzn2B0075Kh3Z501mznLG; Mon, 26 Feb 2024 11:59:47 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1reYht-001lUq-KN;
-	Mon, 26 Feb 2024 11:59:47 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1reYi3-004Euk-2r;
-	Mon, 26 Feb 2024 11:59:47 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: clock: r9a07g043-cpg: Annotate RZ/G2UL-only core clocks
-Date: Mon, 26 Feb 2024 11:59:45 +0100
-Message-Id: <ffcdcd479c76b92f67481836a33ec86e97f85634.1708944903.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1708946175; c=relaxed/simple;
+	bh=rbz5V7dAp9UKMWAJ4NGuXVlKWd6zmgzIZmH1IQn+dU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Au+BkK8TXI3NDyCx+I5xCEYniG82MEA9NYQWwrFAUVApRiTgxeWsawtSVylcS9E82MtTl9xwB6hkc/XE3yR+ddS66pf/Z2Pa+uTQ+nLQ8akIS88VXZrnPzaSL4Y9OCQhcMl8q9I5Z4lWEk5hLHnWsK8pxBWUoY+bkGmm9peLW2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fYY39ux/; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fYY39ux/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1708946172;
+	bh=rbz5V7dAp9UKMWAJ4NGuXVlKWd6zmgzIZmH1IQn+dU8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fYY39ux/ltUowjNs1wv42h9v43ezzKaVupXe98joJu0hgeKUs2czrOscxzdORgCdZ
+	 IFV2243rdAeXgBtotTPscvVH86qVHBtgVOyrdb7VUtkxPwT1q5ziFR0+NIb+IDcfU1
+	 4pZI6L8JJXikYDsbh1UwI/xr5S8wKKkQNq8/+z/g6o5pN1IBjBqOidmvvFv5Ropu96
+	 U+NEySA/0sP1Yid5WGkDCObo/XSg/lgrppi5LNCPTtP3vOJ7HGmBN2wbzVsf+PKOOQ
+	 km5Xvo3XaTW5FeD6o5AIdhFZnVi4mfNrI4pDL4A/iPLCEewonNNCtzpsFFr4vZfNk5
+	 8ZqdJ9Nktpmrg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 53D663780022;
+	Mon, 26 Feb 2024 11:16:11 +0000 (UTC)
+Message-ID: <e0e6febf-1045-49f8-a200-8bc095b0fa50@collabora.com>
+Date: Mon, 26 Feb 2024 12:16:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] clk: mediatek: Introduce need_pm_runtime to
+ mtk_clk_desc
+Content-Language: en-US
+To: Chen-Yu Tsai <wenst@chromium.org>, Pin-yen Lin <treapking@chromium.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Weiyi Lu <weiyi.lu@mediatek.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240108081834.408403-1-treapking@chromium.org>
+ <CAGXv+5EnBt+7WrNb-QyziEaCihvjhFVf2tpzk=XyAoeELqucaw@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <CAGXv+5EnBt+7WrNb-QyziEaCihvjhFVf2tpzk=XyAoeELqucaw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The M2 (CRU main clock), M3 (LCDC Video Clock), and AT (Cortex-A55 Debug
-clock) core clocks are only present on RZ/G2UL, not on RZ/Five.
+Il 23/02/24 05:27, Chen-Yu Tsai ha scritto:
+> On Mon, Jan 8, 2024 at 4:18 PM Pin-yen Lin <treapking@chromium.org> wrote:
+>>
+>> Introduce a new need_pm_runtime variable to mtk_clk_desc to indicate
+>> this clock controller needs runtime PM for its operations.
+>> Also do a runtime PM get on the clock controller during the
+>> probing stage to workaround a possible deadlock.
+>>
+>> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> 
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> 
+> The patch itself looks fine.
+> 
+> Besides the MT8183 MFG clock issues, we do actually need this for the
+> MT8192 ADSP clock. Its power domain is not enabled by default.
+> 
 
-Annotate this in the comments, like is already done for module clocks
-and resets.
+...but on MT8195 the ADSP clock works - because the ADSP node exists.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk for v6.10.
+This poses a question: should we make clock controllers depend on power domains,
+or should we keep everything powered off (hence clocks down - no power consumption)
+*unless* the user exists?
 
- include/dt-bindings/clock/r9a07g043-cpg.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+For the second one, this means that the *device* gets the power domain (adsp), and
+not the clock controller (which clocks are effectively useless if there's no user).
 
-diff --git a/include/dt-bindings/clock/r9a07g043-cpg.h b/include/dt-bindings/clock/r9a07g043-cpg.h
-index 77cde8effdc73c6f..a64139fec81520bf 100644
---- a/include/dt-bindings/clock/r9a07g043-cpg.h
-+++ b/include/dt-bindings/clock/r9a07g043-cpg.h
-@@ -16,15 +16,15 @@
- #define R9A07G043_CLK_SD0		5
- #define R9A07G043_CLK_SD1		6
- #define R9A07G043_CLK_M0		7
--#define R9A07G043_CLK_M2		8
--#define R9A07G043_CLK_M3		9
-+#define R9A07G043_CLK_M2		8	/* RZ/G2UL Only */
-+#define R9A07G043_CLK_M3		9	/* RZ/G2UL Only */
- #define R9A07G043_CLK_HP		10
- #define R9A07G043_CLK_TSU		11
- #define R9A07G043_CLK_ZT		12
- #define R9A07G043_CLK_P0		13
- #define R9A07G043_CLK_P1		14
- #define R9A07G043_CLK_P2		15
--#define R9A07G043_CLK_AT		16
-+#define R9A07G043_CLK_AT		16	/* RZ/G2UL Only */
- #define R9A07G043_OSCCLK		17
- #define R9A07G043_CLK_P0_DIV2		18
- 
--- 
-2.34.1
+Angelo
+
+>> ---
+>>
+>> Changes in v3:
+>> - Update the commit message and the comments before runtime PM call
+>>
+>> Changes in v2:
+>> - Fix the order of error handling
+>> - Update the commit message and add a comment before the runtime PM call
+>>
+>>   drivers/clk/mediatek/clk-mtk.c | 19 +++++++++++++++++++
+>>   drivers/clk/mediatek/clk-mtk.h |  2 ++
+>>   2 files changed, 21 insertions(+)
+>>
+>> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+>> index 2e55368dc4d8..ba1d1c495bc2 100644
+>> --- a/drivers/clk/mediatek/clk-mtk.c
+>> +++ b/drivers/clk/mediatek/clk-mtk.c
+>> @@ -13,6 +13,7 @@
+>>   #include <linux/of.h>
+>>   #include <linux/of_address.h>
+>>   #include <linux/platform_device.h>
+>> +#include <linux/pm_runtime.h>
+>>   #include <linux/slab.h>
+>>
+>>   #include "clk-mtk.h"
+>> @@ -494,6 +495,18 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+>>                          return IS_ERR(base) ? PTR_ERR(base) : -ENOMEM;
+>>          }
+>>
+>> +
+>> +       if (mcd->need_runtime_pm) {
+>> +               devm_pm_runtime_enable(&pdev->dev);
+>> +               /*
+>> +                * Do a pm_runtime_resume_and_get() to workaround a possible
+>> +                * deadlock between clk_register() and the genpd framework.
+>> +                */
+>> +               r = pm_runtime_resume_and_get(&pdev->dev);
+>> +               if (r)
+>> +                       return r;
+>> +       }
+>> +
+>>          /* Calculate how many clk_hw_onecell_data entries to allocate */
+>>          num_clks = mcd->num_clks + mcd->num_composite_clks;
+>>          num_clks += mcd->num_fixed_clks + mcd->num_factor_clks;
+>> @@ -574,6 +587,9 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+>>                          goto unregister_clks;
+>>          }
+>>
+>> +       if (mcd->need_runtime_pm)
+>> +               pm_runtime_put(&pdev->dev);
+>> +
+>>          return r;
+>>
+>>   unregister_clks:
+>> @@ -604,6 +620,9 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+>>   free_base:
+>>          if (mcd->shared_io && base)
+>>                  iounmap(base);
+>> +
+>> +       if (mcd->need_runtime_pm)
+>> +               pm_runtime_put(&pdev->dev);
+>>          return r;
+>>   }
+>>
+>> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+>> index 22096501a60a..c17fe1c2d732 100644
+>> --- a/drivers/clk/mediatek/clk-mtk.h
+>> +++ b/drivers/clk/mediatek/clk-mtk.h
+>> @@ -237,6 +237,8 @@ struct mtk_clk_desc {
+>>
+>>          int (*clk_notifier_func)(struct device *dev, struct clk *clk);
+>>          unsigned int mfg_clk_idx;
+>> +
+>> +       bool need_runtime_pm;
+>>   };
+>>
+>>   int mtk_clk_pdev_probe(struct platform_device *pdev);
+>> --
+>> 2.43.0.472.g3155946c3a-goog
+>>
+
+
 
