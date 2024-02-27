@@ -1,65 +1,64 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892CF14E2C6;
-	Tue, 27 Feb 2024 22:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF16255E40;
+	Tue, 27 Feb 2024 23:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709072745; cv=none; b=vGJBo5OIqgqitRAzSuNyhUjEscHrQ/DS19CFLndMM0aKcdeaT4dhWJC5wnFCXOHssRKnl4+QJfk/DO8mXBG1BwfrL2NHoxnnFi15lc7UezZKc8DFT0dCqd3GozvE7zBNup2z53B4ETg17ycEavwgU2Y6S2Xu4hD3xYVqFQ+OU+M=
+	t=1709075607; cv=none; b=B8s/mVHco+eT+25NT/nEC0qeOntO2B1ji6W2fH/sQFWBuALZElUBmMVJqGTvGWzxX/0Te1X5j2QyCr3M4CjizWXKSwmn7K4nfytitXH7CDrRP26vRSEUh7lrkaHeZjsB+/S0gOdMohVTXWIi+bUEWkIf6u5wUxUYWo82nJffXj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709072745; c=relaxed/simple;
-	bh=cU0N8EL3WP2/OTKGm2lv5gr1b7Yfr2gWywwErVAJ6kU=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ZgnJjIZaAPpd/ME2ZedDLmnnxvVjT4o5qlHgTfnfmiRP9Cp1WZcTiZXbRqtgENlTTLCKwJ5MBO9IeOxLGWsMBHGgWfdJ2lcHNkmPGNzKWLVVpUnJvu7ttqExln1kLSSDzMoy1rBeC96scVp/o0HalAJm1I/q4lJGjbjn7SWR0ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxQXMH+z; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxQXMH+z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED44BC43390;
-	Tue, 27 Feb 2024 22:25:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709072745;
-	bh=cU0N8EL3WP2/OTKGm2lv5gr1b7Yfr2gWywwErVAJ6kU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=YxQXMH+zIfWKfEYNyjzcJ4PNSrMKJ808/OekqlxvfSzM5qTs2vGOmKUEUvQZrTxGA
-	 AGqbiElpvLjrvR6hmThwRUCNNnEC0NpWuo10z0KuKiFmeBTBacryQwRAn1xQSXI+DT
-	 2NTZxraitBnfrMBBflb465pHIUFbjFyR25imlOgHgjsb3bY8csICuy+vrxSMUdO/7A
-	 Y9PQbsW8VN6tuHfGLtpTQTBJkSzRkIsxHr5xKlh4cNpXGeec/elEZV16eNc2a0On6c
-	 XGM3CvdL+8V3owUrSv7ATMJWuin5aBnO1DsxjCPBK28PlPsqElpTKQd1HFnhFL9taL
-	 umo9O+SE0hDiw==
-Message-ID: <0d784de32455c026ecc0c4ec1e844667.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1709075607; c=relaxed/simple;
+	bh=iqlzanjjoDzr969gMl+yTwN1UP8rWB7P+HuMBTc2AOU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cNxl9Pys+QCu2BSTdrMhEhFSSzWoN/EQ3j9NLPxkYEsGqaLhRBlcBLf76Lt/u4Zlo8tfCp/68wrWffMK2xGUBFcWJUNQXzdJIqQgLEDO1fUPRKWKdiglHbE/XEnkZFzd6glNDAvtj+Kcs7B0AQDybja9ALpIsnu4PskUl3QtRFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b6c.versanet.de ([83.135.91.108] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1rf6dW-0002LS-Qq; Wed, 28 Feb 2024 00:13:22 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Ond=C5=99ej=20Jirman?= <megi@xff.cz>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>
+Subject: Re: [PATCH] clk: rk3399: Allow to set rate of clk_i2s0_frac's parent
+Date: Wed, 28 Feb 2024 00:13:18 +0100
+Message-Id: <170907558758.800427.1636847983598079220.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240217193439.1762213-1-megi@xff.cz>
+References: <20240217193439.1762213-1-megi@xff.cz>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240227110416.259133-1-abel.vesa@linaro.org>
-References: <20240227110416.259133-1-abel.vesa@linaro.org>
-Subject: Re: [GIT PULL] clk: imx: Updates for v6.9
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette <mturquette@baylibre.com>
-Date: Tue, 27 Feb 2024 14:25:42 -0800
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Quoting Abel Vesa (2024-02-27 03:04:16)
-> The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd3=
-3d:
->=20
->   Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
-clk-imx-6.9
->=20
-> for you to fetch changes up to 13269dc6c70444528f0093585e3559cd2f38850a:
->=20
->   clk: imx: imx8mp: Fix SAI_MCLK_SEL definition (2024-02-26 11:05:58 +020=
-0)
->=20
-> ----------------------------------------------------------------
+On Sat, 17 Feb 2024 20:34:38 +0100, Ondřej Jirman wrote:
+> From: Ondrej Jirman <megi@xff.cz>
+> 
+> Otherwise when when clk_i2s0 muxes to clk_i2s0_div which requires
+> setting high divider value on clk_i2s0_div, and then muxes back to
+> clk_i2s0_frac, clk_i2s0_frac would have no way to change the
+> clk_i2s0_div's divider ratio back to 1 so that it can satisfy the
+> condition for m/n > 20 for fractional division to work correctly.
+> 
+> [...]
 
-Thanks. Pulled into clk-next
+Applied, thanks!
+
+[1/1] clk: rk3399: Allow to set rate of clk_i2s0_frac's parent
+      commit: 1361d75503fccc0e6b3ecbcd5bb53bbdfdc52f0a
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
