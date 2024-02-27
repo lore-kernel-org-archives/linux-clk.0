@@ -1,347 +1,115 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCCD4B5C1;
-	Tue, 27 Feb 2024 18:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2264D4F896;
+	Tue, 27 Feb 2024 18:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709057709; cv=none; b=XHW9xwV5U9raIC45w3lKNzFDzExGIfHR6V5J0qQLlGKaKcqHkF4b9gt2Gh2UdSkf9DODnAut5CHFm+onmZN/7YrxQte7BejwlS/hrkHscvA+QvAAYuUHybU2WAS7q7WvR5ti9N2MBj9hIpY+iIRIsKzYAu7Fm2Fan8KHNpbz14o=
+	t=1709059706; cv=none; b=YLLPKGjvNGtfqe6En1Kt+QT7ZvIeHAagE5BGVTtXnb9ExDYIMKWy9AEbsE2C3YQ0drXkx1Zf6jyr2POqTxY+DmzDlyAVq8OnhCJRNBDelHB+6lXl5NOWmi13jWShWUwFUZUauDL5BbboNP/AdIczO37ygYyfBmc8SVfl72wEbiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709057709; c=relaxed/simple;
-	bh=oQ5lgEqM93Az2/mBkEVI2NmWaWp+Sl8k1tCKiDAjuCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UWK8joj2TBXrDvF1Xq8/m2ne/jCz1Ig1VEGmsFCfQlYACgc2x3dHsQi6wbmExksAWiDhttV9kqQxBO0ZzGkyKLypg0NU9QysneF42NRtDtnt0Axce3KbOIEIbVzCVWFCOEQLy18mA2UlK7HTUWjD0e0ed64J+UvmK93RkQc1K2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dpfRyXaU; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dpfRyXaU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709057707; x=1740593707;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=oQ5lgEqM93Az2/mBkEVI2NmWaWp+Sl8k1tCKiDAjuCg=;
-  b=dpfRyXaUygx7JYCjSDyXrQpRxIoDErLwIfVbhqgoVCbc69TlGWNJAAIi
-   fHmGNMLX85ikuZ8VKKcMomtzTlY24THZnayavZaSDUBkVrolteB8bScq4
-   H6oyg+5MvsgmNLwZsW4k93l3ut1khIctQIXNxseUxHWyEzHl+Rl5U+LB1
-   5pn7CnrorWsAB+Oa6he/0L0CUE0SFPxNYSKbSpG9nEaC++uI00cuhIYpy
-   qHucIQE45D7yGtKhIa5U2fUCGiP8nPQdOFbwPCZqpDO75cs3eOWekPU2b
-   14zz7A6fvLL0UhMxLqRItVcwX4pbMuq/y9LfEHELzrISZehh/TrtK++tD
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10996"; a="3580188"
-X-IronPort-AV: E=Sophos;i="6.06,188,1705392000"; 
-   d="scan'208";a="3580188"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2024 10:15:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10996"; a="913918908"
-X-IronPort-AV: E=Sophos;i="6.06,188,1705392000"; 
-   d="scan'208";a="913918908"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2024 10:15:01 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1rf1yj-000000081Ib-3XYd;
-	Tue, 27 Feb 2024 20:14:57 +0200
-Date: Tue, 27 Feb 2024 20:14:57 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v8 05/10] pinctrl: eyeq5: add platform driver
-Message-ID: <Zd4moVd_-bY6Z_kL@smile.fi.intel.com>
-References: <20240227-mbly-clk-v8-0-c57fbda7664a@bootlin.com>
- <20240227-mbly-clk-v8-5-c57fbda7664a@bootlin.com>
+	s=arc-20240116; t=1709059706; c=relaxed/simple;
+	bh=K6sBGdbZzNVAu30o0m9zj5R6b0ZvSIScFMAacNUig9k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A9L8f+yCZiWrsb9KFzREKfCR9sCKBAgVji3Y2ouVkSSIBu0BUatdVNH9K9JNvfIRINxvuaQIgo2se0RQ792Ypy7pa3E16+nSKk/XZuY0a5/lQCcxA1qSJo8gYWpsgic6ATP7+KIQZTo8eRsXxOGZI3zThVdxV1vOSmVtfYxmZ4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-607e54b6cf5so636757b3.0;
+        Tue, 27 Feb 2024 10:48:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709059703; x=1709664503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZBLgqi5po9yo82z/olqeDeT73/ia9ZIG/TwGXRPLny8=;
+        b=duqhZPgkWmeoxbNs7ktjq+XRA1m9gLxuWC99Ub1nfIbCpbiohp88opEaFLo/haU3L7
+         7pAMS52PDb6kwRYcmk2P0EckVMrTw58qhZZN1Mkd0kV8c9YOUJjQfkqBVm+v9ZnMa01c
+         sGO3Dxtsn4FGRxpEkt4VTt3f8SIQRqZPk1ClMCh4wF2Z4rbJl9Ch5jb3hVIlN6hUK9QX
+         bb1VnYXh42KcjJrvk/c0uPVLDjMzDPETwrERa4M629O0LrPufFbIa+zK5Ljov/wdR1MW
+         yBkTU9jFYsZXa62aukcdgsO3ty5ulYVMxwLQ40FsZJg2pS8tAgyvhuPxVCXEzPw0qmWk
+         rCmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWu7F2I90K4SWitxrjT90gyrCacDx0G9zUeRvajk8JusIFZj3CT2sDk0VgoVSZk7u8zUf4EXpZTpmFxVVcu4BuofNYWplGVMeeauFIxmTiEIFh2b69Y94WZzFtpWJOQKv8MXduGzS5mugpVsq1WA4n1302hVeS08nxRo33RXV1xNuivKJwVoRc1XwyjZYttQNQTiJy8CH+GhVfZiHJKq+B5mfiPWV4U42WEofHVe8CD6wjENqnVKJCNRSbDRUzyphPveQwpqtdUTlpEDsILjKXGedwCJpJKB2k0Lb4nfBaDjlUaqN0JvpX0xWLZa5kkbcoK1gAeFzg7YjEjvTODzNis7AlCNH88bEuZ6qwcyUsz6OEGEwMEbGo=
+X-Gm-Message-State: AOJu0YxW6cXm9QGzKfil3bq9p9KV44qxAz2yeSDQBprfSlR+t0INSkIm
+	KtJgkItIbKgqdA9Ys0846GGIF4vMxK9hah65qk2QLV3enx+p2+A2M9JiojLThQc9ww==
+X-Google-Smtp-Source: AGHT+IHp4ttFqyGxEuYRKTECeut2dpV2OBGlwHOfXPHFmeefIycTWfO9rwvdcCsBB23ujkYLAW1KtA==
+X-Received: by 2002:a81:84d7:0:b0:609:106b:5bbb with SMTP id u206-20020a8184d7000000b00609106b5bbbmr183556ywf.9.1709059703123;
+        Tue, 27 Feb 2024 10:48:23 -0800 (PST)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id d199-20020a0ddbd0000000b0060867d09de2sm1909370ywe.29.2024.02.27.10.48.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Feb 2024 10:48:23 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dbed179f0faso56062276.1;
+        Tue, 27 Feb 2024 10:48:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXfuBPDJb2rm861gPTQwoiwXHdP1paOOqnalj+4pZEw0ubdMsjI0JKEuYXJAFnyQ2XOAP78A2M/j3AFM9Q5B8oIvzRfTIXTy1F0rQ0YDw4VsHPad8VRXx8jN+A682GpBQgC7XVuF+IbnX7hx3ttVRqvdWzvWnTZIxlpJPrr8nscLSlTl9/EsRNtQWA3eRh9aZjC8VODywahcnXGX2hmNJItGTEgMFjravnW2YOdwmgHitMo8EIL2JeGyE6KYFH/YIJZXQM96KLW9LXWrGoxzmuvVf4ny74n3JEasqbyXWws0UKPeFp6IDnqfOSTORYkzcNDilElpLtNSuwOvuVBIx0/ZL2jN0dXSh9cDdNthCM39asos+vE2mc=
+X-Received: by 2002:a25:414a:0:b0:dc7:494e:ff33 with SMTP id
+ o71-20020a25414a000000b00dc7494eff33mr220625yba.7.1709059702806; Tue, 27 Feb
+ 2024 10:48:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240227-mbly-clk-v8-5-c57fbda7664a@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Tue, Feb 27, 2024 at 03:55:26PM +0100, Théo Lebrun wrote:
-> Add the Mobileye EyeQ5 pin controller driver. It might grow to add later
-> support of other platforms from Mobileye. It belongs to a syscon region
-> called OLB.
-> 
-> Existing pins and their function live statically in the driver code
-> rather than in the devicetree, see compatible match data.
-
-...
-
-> +config PINCTRL_EYEQ5
-> +	bool "Mobileye EyeQ5 pinctrl driver"
-
-Can't be a module?
-
-> +	depends on OF
-
-It's even not needed for this software as far as I can tell from the code.
-
-> +	depends on MACH_EYEQ5 || COMPILE_TEST
-> +	select PINMUX
-> +	select GENERIC_PINCONF
-> +	select MFD_SYSCON
-> +	default MACH_EYEQ5
-> +	help
-> +	  Pin controller driver for the Mobileye EyeQ5 platform. It does both
-> +	  pin config & pin muxing. It does not handle GPIO.
-> +
-> +	  Pin muxing supports two functions for each pin: first is GPIO, second
-> +	  is pin-dependent. Pin config is about bias & drive strength.
-
-...
-
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/pinctrl/pinconf-generic.h>
-> +#include <linux/pinctrl/pinconf.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <linux/pinctrl/pinmux.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/seq_file.h>
-
-Semi-random list of the inclusions. Please, fix it.
-While doing that, group out pinctrl/* ones as it's done in other drivers.
-
-> +#include "core.h"
-> +#include "pinctrl-utils.h"
-
-...
-
-> +struct eq5p_function {
-> +	const char		*name;
-> +	const char * const	*groups;
-> +	unsigned int		ngroups;
-> +};
-
-We have struct pinfunction, use it instead.
-
-...
-
-> +static const char * const gpio_groups[] = {
-> +	/* Bank A */
-> +	"PA0", "PA1", "PA2", "PA3", "PA4", "PA5", "PA6", "PA7", "PA8", "PA9",
-> +	"PA10", "PA11", "PA12", "PA13", "PA14", "PA15", "PA16", "PA17", "PA18",
-> +	"PA19", "PA20", "PA21", "PA22", "PA23", "PA24", "PA25", "PA26", "PA27",
-> +	"PA28",
-
-For all arrays like this, please split them on 4/8/10/16 items per line as it's
-much easier to count and refer by index when reading the code.
-
-> +	/* Bank B */
-> +	"PB0", "PB1", "PB2", "PB3", "PB4", "PB5", "PB6", "PB7", "PB8", "PB9",
-> +	"PB10", "PB11", "PB12", "PB13", "PB14", "PB15", "PB16", "PB17", "PB18",
-> +	"PB19", "PB20", "PB21", "PB22",
-> +};
-
-...
-
-> +#define FUNCTION(a, b) { .name = a, .groups = b, .ngroups = ARRAY_SIZE(b) }
-
-Use PINCTRL_PINFUNCTION() instead.
-
-...
-
-> +static bool eq5p_test_bit(const struct eq5p_pinctrl *pctrl,
-> +			  enum eq5p_bank bank, enum eq5p_regs reg, int offset)
-> +{
-> +	u32 val = readl(pctrl->base + eq5p_regs[bank][reg]);
-
-> +	if (WARN_ON(offset > 31))
-> +		return false;
-
-When this condition can be true?
-
-> +	return (val & BIT(offset)) != 0;
-> +}
-
-...
-
-> +static int eq5p_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
-> +			    unsigned long *config);
-
-Can't you avoid forward declarations?
-
-...
-
-> +	if (!eq5p_test_bit(pctrl, bank, EQ5P_IOCR, offset)) {
-
-What's wrong with positive conditional?
-
-
-> +	} else {
-
-> +	}
-
-...
-
-> +static const struct pinctrl_ops eq5p_pinctrl_ops = {
-> +	.get_groups_count	= eq5p_pinctrl_get_groups_count,
-> +	.get_group_name		= eq5p_pinctrl_get_group_name,
-> +	.get_group_pins		= eq5p_pinctrl_get_group_pins,
-> +	.pin_dbg_show		= eq5p_pinctrl_pin_dbg_show,
-
-> +	.dt_node_to_map		= pinconf_generic_dt_node_to_map_pin,
-> +	.dt_free_map		= pinctrl_utils_free_map,
-
-ifdef is missing for these... But the question is, isn't these a default when
-OF is in use?
-
-> +};
-
-...
-
-> +	dev_dbg(pctldev->dev, "%s: func=%s group=%s\n", __func__, func_name,
-> +		group_name);
-
-Drop __func__ from all debug messages. With Dynamic Debug enabled (which is
-often the case) we can do it at run-time).
-
-...
-
-> +	mask = BIT(offset);
-> +	val = is_gpio ? 0 : U32_MAX;
-
-I think you meant something else (semantically) than U32_MAX.
-Perhaps GENMASK(31, 0)?
-
-...
-
-> +static int eq5p_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
-> +			    unsigned long *config)
-> +{
-> +	enum pin_config_param param = pinconf_to_config_param(*config);
-> +	struct eq5p_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-> +	unsigned int offset = eq5p_pin_to_offset(pin);
-> +	enum eq5p_bank bank = eq5p_pin_to_bank(pin);
-> +	u32 val_ds, arg = 0;
-
-What's arg assignment for?
-
-> +	bool pd, pu;
-> +
-> +	pd = eq5p_test_bit(pctrl, bank, EQ5P_PD, offset);
-> +	pu = eq5p_test_bit(pctrl, bank, EQ5P_PU, offset);
-> +
-> +	switch (param) {
-> +	case PIN_CONFIG_BIAS_DISABLE:
-> +		arg = !(pd || pu);
-> +		break;
-> +	case PIN_CONFIG_BIAS_PULL_DOWN:
-> +		arg = pd;
-> +		break;
-> +	case PIN_CONFIG_BIAS_PULL_UP:
-> +		arg = pu;
-> +		break;
-> +	case PIN_CONFIG_DRIVE_STRENGTH:
-> +		offset *= 2; /* two bits per pin */
-> +		if (offset >= 32) {
-> +			val_ds = readl(pctrl->base + eq5p_regs[bank][EQ5P_DS_HIGH]);
-> +			offset -= 32;
-> +		} else {
-> +			val_ds = readl(pctrl->base + eq5p_regs[bank][EQ5P_DS_LOW]);
-> +		}
-
-I'm wondering why you can't use your helpers before multiplication?
-
-> +		arg = (val_ds >> offset) & 0b11;
-
-GENMASK(1, 0)
-
-> +		break;
-> +	default:
-> +		return -ENOTSUPP;
-> +	}
-> +
-> +	*config = pinconf_to_config_packed(param, arg);
-> +	return 0;
-> +}
-
-...
-
-> +static int eq5p_pinconf_set_drive_strength(struct pinctrl_dev *pctldev,
-> +					   unsigned int pin, u32 arg)
-> +{
-> +	struct eq5p_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-> +	unsigned int offset = eq5p_pin_to_offset(pin);
-> +	enum eq5p_bank bank = eq5p_pin_to_bank(pin);
-> +	unsigned int reg;
-> +	u32 mask, val;
-> +
-> +	if (arg > 3) {
-
-Magic number.
-
-> +		dev_err(pctldev->dev, "Unsupported drive strength: %u\n", arg);
-> +		return -EINVAL;
-> +	}
-> +
-> +	offset *= 2; /* two bits per pin */
-> +
-> +	if (offset >= 32) {
-> +		reg = EQ5P_DS_HIGH;
-> +		offset -= 32;
-> +	} else {
-> +		reg = EQ5P_DS_LOW;
-> +	}
-
-> +	mask = 0b11 << offset;
-> +	val = arg << offset;
-> +	eq5p_update_bits(pctrl, bank, reg, mask, val);
-
-Similar comments as per previous function.
-
-> +	return 0;
-> +}
-
-...
-
-> +static const struct of_device_id eq5p_match[] = {
-> +	{ .compatible = "mobileye,eyeq5-pinctrl" },
-> +	{},
-
-No comma in the terminator entry.
-
-> +};
-
-No MODULE_DEVICE_TABLE()?
-
-> +static struct platform_driver eq5p_driver = {
-> +	.driver = {
-> +		.name = "eyeq5-pinctrl",
-> +		.of_match_table = eq5p_match,
-> +	},
-> +	.probe = eq5p_probe,
-> +};
-
-> +
-
-Unneeded blank line.
-
-> +builtin_platform_driver(eq5p_driver);
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+References: <cover.1704788539.git.ysato@users.sourceforge.jp> <f1f58604dd76520005c12479fada0b70ac210f89.1704788539.git.ysato@users.sourceforge.jp>
+In-Reply-To: <f1f58604dd76520005c12479fada0b70ac210f89.1704788539.git.ysato@users.sourceforge.jp>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 27 Feb 2024 19:48:10 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUxZzBD0WRhx07MYdLvamg+1twRvAxGMRM5+4-pYeDTRQ@mail.gmail.com>
+Message-ID: <CAMuHMdUxZzBD0WRhx07MYdLvamg+1twRvAxGMRM5+4-pYeDTRQ@mail.gmail.com>
+Subject: Re: [DO NOT MERGE v6 34/37] sh: Add dtbs target support.
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, 
+	Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko@sntech.de>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Chris Morgan <macromorgan@hotmail.com>, 
+	Yang Xiwen <forbidden405@foxmail.com>, Sebastian Reichel <sre@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	David Rientjes <rientjes@google.com>, Baoquan He <bhe@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
+	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jan 9, 2024 at 9:24=E2=80=AFAM Yoshinori Sato
+<ysato@users.sourceforge.jp> wrote:
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
