@@ -1,145 +1,85 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E481714DFF4;
-	Tue, 27 Feb 2024 19:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A799951C4C;
+	Tue, 27 Feb 2024 21:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709063346; cv=none; b=KqJFQR8R69YR7gjnFiV9Xu86HSz+j6kmW3LpBLswx0n4+r6gE+XAaVxFgaYoz2pPwLXRu779TWcFa0P1XORrPjhVc6wCi2KY4Ss1bTxPTVggHzr5DZspDZINFPem4RZodqVApa0oZeEe66ds/kzBt35Rf7yYlvn40/mR9LSBEcc=
+	t=1709068621; cv=none; b=t47FJ2pRtbPcbaEnuAFkFbhWDkyAN8C1iDGcaoT0s5Hhg5paqkJB4N4MeVWWRA6mJ7Es6Cyr7gdrPEjtSocgQh0FqiP5Y3VzngswVHlIDBT2a8fDJ9/dT+lSG782Y/wXxJwkabArOQq0qgw8+vDpfx0mj5I/3rg4vCaAti12Hzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709063346; c=relaxed/simple;
-	bh=H4n1v0imyYH87DK6eE+niRDrOat3zcjgMIz1xRaJW0c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KbcKlgblp87sxQGDELEm+TeEk6CcV+xeNRApuIiiCWFs8Hpf8sfIbUZHYdftFF43FRdB7jNbwUvhgsNCzUq+OD7q2DzjvwsMTB6Xko5thx9qADTSoXx0qVHa5aYEsugPnBxaeYY+0oAeRVoXWfAgXAL1hjgqT2yF6Ob1Q0DuuuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02F52DA7;
-	Tue, 27 Feb 2024 11:49:43 -0800 (PST)
-Received: from pluto.. (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E06773F762;
-	Tue, 27 Feb 2024 11:49:01 -0800 (PST)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: sudeep.holla@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	quic_sibis@quicinc.com,
-	quic_nkela@quicinc.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	souvik.chakravarty@arm.com,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 5/5] clk: scmi: Add support for get/set duty_cycle operations
-Date: Tue, 27 Feb 2024 19:48:12 +0000
-Message-ID: <20240227194812.1209532-6-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240227194812.1209532-1-cristian.marussi@arm.com>
-References: <20240227194812.1209532-1-cristian.marussi@arm.com>
+	s=arc-20240116; t=1709068621; c=relaxed/simple;
+	bh=2rqAKlRCAAyEc+DozMwqJ3AxIegAjAmc1Bv0FpH7pMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pDxYZ9QwJa2shZoHzwIkuDv9qK0xja7ZufnWrzq0Cr3GWZd2c+wH0KGvYHm2illbHE5jsV2uq7yVnCdNnj4Nep8h/421vUCrrAUUW6JNGM4QmXxD9Gu2iLjUyV/9TLLyy6UFBPBHXlPxlXl8LTZAjzcmdDccy6NWuTKgYysNOZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b6c.versanet.de ([83.135.91.108] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1rf4op-0001Cx-FU; Tue, 27 Feb 2024 22:16:55 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	kernel@collabora.com,
+	huangtao@rock-chips.com,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	linux-rockchip@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	andy.yan@rock-chips.com
+Subject: Re: (subset) [PATCH v8 0/7] rockchip: clk: improve GATE_LINK support
+Date: Tue, 27 Feb 2024 22:16:53 +0100
+Message-Id: <170906852031.753268.5145089861354297384.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240126182919.48402-1-sebastian.reichel@collabora.com>
+References: <20240126182919.48402-1-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Provide the CLK framework callbacks related to get/set clock duty cycle if
-the related SCMI clock supports OEM extended configurations.
+On Fri, 26 Jan 2024 19:18:21 +0100, Sebastian Reichel wrote:
+> This is a follow-up for Elaine's series. These patches are written from
+> scratch, though. There are two parts:
+> 
+> part 1:
+> Elaine's series used to contain patches for the VO1GRF handling, but they were
+> dropped at some point because of the CLK_NR_CLKS feedback from the DT
+> maintainers. I added some code, that should hopefully fix everyones concerns by
+> figuring out the right number at runtime. I also moved the correct handling of
+> pclk_vo0grf/pclk_vo1grf before proper handling of GATE_LINK clocks, so that it
+> can be merged ASAP. These patches are needed for HDMI RX/TX support on RK3588.
+> 
+> [...]
 
-CC: Michael Turquette <mturquette@baylibre.com>
-CC: Stephen Boyd <sboyd@kernel.org>
-CC: linux-clk@vger.kernel.org
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
- drivers/clk/clk-scmi.c | 49 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+Applied, thanks!
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index 87e968b6c095..86ef7c553ddd 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -21,6 +21,7 @@ enum scmi_clk_feats {
- 	SCMI_CLK_STATE_CTRL_FORBIDDEN,
- 	SCMI_CLK_RATE_CTRL_FORBIDDEN,
- 	SCMI_CLK_PARENT_CTRL_FORBIDDEN,
-+	SCMI_CLK_DUTY_CYCLE_SUPPORTED,
- 	SCMI_CLK_MAX_FEATS
- };
- 
-@@ -169,6 +170,45 @@ static int scmi_clk_atomic_is_enabled(struct clk_hw *hw)
- 	return !!enabled;
- }
- 
-+static int scmi_clk_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-+{
-+	int ret;
-+	u32 val;
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	ret = scmi_proto_clk_ops->config_oem_get(clk->ph, clk->id,
-+						 SCMI_CLOCK_CFG_DUTY_CYCLE,
-+						 &val, NULL, false);
-+	if (!ret) {
-+		duty->num = val;
-+		duty->den = 100;
-+	} else {
-+		dev_warn(clk->dev,
-+			 "Failed to get duty cycle for clock ID %d\n", clk->id);
-+	}
-+
-+	return ret;
-+}
-+
-+static int scmi_clk_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-+{
-+	int ret;
-+	u32 val;
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	/* SCMI OEM Duty Cycle is expressed as a percentage */
-+	val = (duty->num * 100) / duty->den;
-+	ret = scmi_proto_clk_ops->config_oem_set(clk->ph, clk->id,
-+						 SCMI_CLOCK_CFG_DUTY_CYCLE,
-+						 val, false);
-+	if (ret)
-+		dev_warn(clk->dev,
-+			 "Failed to set duty cycle(%u/%u) for clock ID %d\n",
-+			 duty->num, duty->den, clk->id);
-+
-+	return ret;
-+}
-+
- static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
- 			     const struct clk_ops *scmi_ops)
- {
-@@ -258,6 +298,12 @@ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
- 	if (!(feats_key & BIT(SCMI_CLK_PARENT_CTRL_FORBIDDEN)))
- 		ops->set_parent = scmi_clk_set_parent;
- 
-+	/* Duty cycle */
-+	if (feats_key & BIT(SCMI_CLK_DUTY_CYCLE_SUPPORTED)) {
-+		ops->get_duty_cycle = scmi_clk_get_duty_cycle;
-+		ops->set_duty_cycle = scmi_clk_set_duty_cycle;
-+	}
-+
- 	return ops;
- }
- 
-@@ -306,6 +352,9 @@ scmi_clk_ops_select(struct scmi_clk *sclk, bool atomic_capable,
- 	if (ci->parent_ctrl_forbidden)
- 		feats_key |= BIT(SCMI_CLK_PARENT_CTRL_FORBIDDEN);
- 
-+	if (ci->extended_config)
-+		feats_key |= BIT(SCMI_CLK_DUTY_CYCLE_SUPPORTED);
-+
- 	/* Lookup previously allocated ops */
- 	ops = clk_ops_db[feats_key];
- 	if (!ops) {
+[1/7] clk: rockchip: rk3588: fix CLK_NR_CLKS usage
+      commit: 2dc66a5ab2c6fb532fbb16107ee7efcb0effbfa5
+[2/7] dt-bindings: clock: rk3588: drop CLK_NR_CLKS
+      commit: 11a29dc2e41ead2be78cfa9d532edf924b461acc
+[3/7] dt-bindings: clock: rk3588: add missing PCLK_VO1GRF
+      commit: c81798cf9dd2f324934585b2b52a0398caefb88e
+
+First part that needs to be shared between clock-tree
+and the devicetree change I sent out some minutes ago [0]
+
+
+[0] https://lore.kernel.org/linux-rockchip/20240227210521.724754-1-heiko@sntech.de
+
+
+Best regards,
 -- 
-2.43.0
-
+Heiko Stuebner <heiko@sntech.de>
