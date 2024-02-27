@@ -1,99 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82DE1B7E9;
-	Tue, 27 Feb 2024 03:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1FC54672
+	for <linux-clk@vger.kernel.org>; Tue, 27 Feb 2024 07:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709004031; cv=none; b=IxOTh+BGCwLXRjyeSUUJ+fwuC9FS+tvqptP0Z0GB66+ezn9s+klu1NofDh7doMEljRFM7pxAg7rb655uPrPDDKw5iQHFpq9E9pAUTYBRg8d5zsZGzlcmqMYhBzRG6YvGqIQmOvS+wXVGrN4ISPHCSi3eS1OtpWsTIvkrJ2J1rXk=
+	t=1709019544; cv=none; b=YBFTItDai+SvJQ+fD/A2hwXP4hItd8Sn4aTzSKMiZerKvrlXTBiHT7tHFutft2OtG6vPZcfarvkSWO9dzJSjc0MkDzvQAH6i+0sb8vNiLlYTCWgjcMQHmGn7VoRrlR06FjSZ+zom1m8Veq9M69M7S3U7/T+SrxCC0Ui24w9EWb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709004031; c=relaxed/simple;
-	bh=aEWeFJ2eAgzcvr+OaHdaIiM7TBOw2JHpdO912FAxBrQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=HiDNt3fnVXuGP2LZk9qZX6eq0d0c0aHWyi4s/80M34OXbJbLQ0J+BReyCNw8eAKY9rCvr6VjJ7pN8M4WAekOtB54cMsOofMp24ivlAhmBNBf5UmI1QFYq+WU5u3l5DwZNV0a4VpiDqu6rL8hyOpmG68YqCbm5Pz0yNEydiltP6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGZalQiN; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGZalQiN"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 601C6C433F1;
-	Tue, 27 Feb 2024 03:20:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709004030;
-	bh=aEWeFJ2eAgzcvr+OaHdaIiM7TBOw2JHpdO912FAxBrQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=GGZalQiNOWNgvr31MEFJ81Scx/q8IuKaZAqiPFZE+SD8pSdQWwG3CioqZpDlRQUAD
-	 jKvVifURv7BOpc25WdOU3fYy6BfTMtetonGpoamgfDO3hXxtvjNyuDx94vkioJxfvV
-	 MubNjVgf5u85jr4mrAuCzosl1CeEkeDYgrDKshVma4vowdYyZfX9/uNolq5oS00HY6
-	 VdQ/8vtg8n+7bDwLjb5y8Yg2i9Qutge32EjMjVf5A2q9l0zWeu9yL5HgzRZ4UWdsvX
-	 1U/1FgMqGQhy/VrktEoQPhkUCFsQrCXfoN9l9KW3KzU1jxRXAX9mECe7VQa53IR0gn
-	 sUUzlKI2AvVrA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3DB28D88FB2;
-	Tue, 27 Feb 2024 03:20:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1709019544; c=relaxed/simple;
+	bh=5bM6/TbEseMrHcQY+p2rxrVxolAj6mAGNSGiPP3s+p8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jI5uc3ASf9FIZjUG107u3eumozcoNDQvVkK31Nt5UOpkivnC1028kR2iMKhgwFDbKKg1/dIphf97BS44hwJbNm0Fh22Ddgtau2bF/R2bFOojCDje5bfKnv+WQmnts3ejt5WwhccRJUcdvgR7/H6P5X2hVBFtWKuRatGRNfQKudA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1res3D-00049D-SY; Tue, 27 Feb 2024 08:38:55 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1res3C-0039EX-BB; Tue, 27 Feb 2024 08:38:54 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1res3C-00CIrj-0q;
+	Tue, 27 Feb 2024 08:38:54 +0100
+Date: Tue, 27 Feb 2024 08:38:54 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	kernel@pengutronix.de, Maxime Ripard <mripard@kernel.org>
+Subject: Re: [PATCH v2] clk: Add a devm variant of clk_rate_exclusive_get()
+Message-ID: <n25yhjcopyon7yuo2l6t6akklrfz4l3flcfl34aycdlr7x4yaf@ta53zqedauzo>
+References: <20240104225512.1124519-2-u.kleine-koenig@pengutronix.de>
+ <f4noroegkbikrsjeisqlel46cu54emhnndtncnj4shygsbcaem@lixfb7ezeo5t>
+ <a2v3qm3erl7lfsmg445zyhihvtybbeis4ntrsdlqdf5wpjlyy5@bc7k5zyvzeyz>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 00/39] Add support for sam9x7 SoC family
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <170900403024.25082.9031028983461362329.git-patchwork-notify@kernel.org>
-Date: Tue, 27 Feb 2024 03:20:30 +0000
-References: <20240223171342.669133-1-varshini.rajendran@microchip.com>
-In-Reply-To: <20240223171342.669133-1-varshini.rajendran@microchip.com>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
- mturquette@baylibre.com, sboyd@kernel.org, herbert@gondor.apana.org.au,
- davem@davemloft.net, andi.shyti@kernel.org, tglx@linutronix.de,
- tudor.ambarus@linaro.org, miquel.raynal@bootlin.com, richard@nod.at,
- vigneshr@ti.com, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linus.walleij@linaro.org, sre@kernel.org, u.kleine-koenig@pengutronix.de,
- p.zabel@pengutronix.de, olivia@selenic.com, radu_nicolae.pirea@upb.ro,
- richard.genoud@gmail.com, gregkh@linuxfoundation.org, jirislaby@kernel.org,
- lgirdwood@gmail.com, broonie@kernel.org, wim@linux-watchdog.org,
- linux@roeck-us.net, linux@armlinux.org.uk, andrei.simion@microchip.com,
- mihai.sain@microchip.com, andre.przywara@arm.com, neil.armstrong@linaro.org,
- tony@atomide.com, durai.manickamkr@microchip.com, geert+renesas@glider.be,
- arnd@arndb.de, Jason@zx2c4.com, rdunlap@infradead.org, rientjes@google.com,
- vbabka@suse.cz, mripard@kernel.org, codrin.ciubotariu@microchip.com,
- eugen.hristev@collabora.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
- netdev@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-watchdog@vger.kernel.org
-
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 23 Feb 2024 22:43:42 +0530 you wrote:
-> This patch series adds support for the new SoC family - sam9x7.
->  - The device tree, configs and drivers are added
->  - Clock driver for sam9x7 is added
->  - Support for basic peripherals is added
->  - Target board SAM9X75 Curiosity is added
-> 
->  Changes in v4:
-> 
-> [...]
-
-Here is the summary with links:
-  - [v4,01/39] dt-bindings: net: cdns,macb: add sam9x7 ethernet interface
-    https://git.kernel.org/netdev/net-next/c/5c237967e632
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="el57atpm4xfb4nzp"
+Content-Disposition: inline
+In-Reply-To: <a2v3qm3erl7lfsmg445zyhihvtybbeis4ntrsdlqdf5wpjlyy5@bc7k5zyvzeyz>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
 
+--el57atpm4xfb4nzp
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+On Thu, Feb 15, 2024 at 10:39:00AM +0100, Uwe Kleine-K=F6nig wrote:
+> On Thu, Jan 25, 2024 at 10:44:45PM +0100, Uwe Kleine-K=F6nig wrote:
+> > On Thu, Jan 04, 2024 at 11:55:11PM +0100, Uwe Kleine-K=F6nig wrote:
+> > > This allows to simplify drivers that use clk_rate_exclusive_get()
+> > > in their probe routine as calling clk_rate_exclusive_put() is cared f=
+or
+> > > automatically.
+> > >=20
+> > > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> > > ---
+> > > Changes since (implicit) v1, sent with Message-Id:
+> > > 744a6371f94fe96f527eea6e52a600914e6fb6b5.1702403904.git.u.kleine-koen=
+ig@pengutronix.de:
+> >=20
+> > Given that I'm not the only one waiting for this change (see
+> > https://lore.kernel.org/linux-i2c/20240119072223.3986183-1-alexander.st=
+ein@ew.tq-group.com)
+> > here comes a gentil ping. It would be great to get this patch into next
+> > now the merge window is closed.
+>=20
+> Is there a chance to get this into next and then v6.9-rc1?
+
+I wonder if this patch is still on someone's radar and why it wasn't
+applied yet. Does it need an ack by Russell before Stephen picks it up?
+Is it too complicated and needs more time to review? Can someone please
+comment what the stopper is here?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--el57atpm4xfb4nzp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmXdkY0ACgkQj4D7WH0S
+/k4cTAf9HT6L2MtgqVawPPK57URKIBN7dGt7UHl14PPe2ao91ugvb9rjpV+S0Ugn
+CrOu4OirDTTb9Wh7WhpS/nsEiO0tRadgMgOkMd0skxCetsEv+4ZAmQaTo3LAWQw5
+vcaoVjUqXSBez/TIiLxjmtzoDqjbsqSVYH5vPB7YEn5tPKgNvzGFAwBUmcnBOeuv
+d2aZ2+UvZbRHTS2YAKZhkLBAzEFmPmVFp0mP9bhASPEWXRat1y1gT5DRWgZ7t2D8
+H7q1UwgfZo0Kuns7gXBloik0AAcFufPPDJy8W3Xbt8yOGJBEmNTBOyY27ZlV1Dyl
+ohR3k4ernOm2yH/Ky5IBN4NrPoKUyQ==
+=UGap
+-----END PGP SIGNATURE-----
+
+--el57atpm4xfb4nzp--
