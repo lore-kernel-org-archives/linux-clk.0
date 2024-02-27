@@ -1,242 +1,73 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C32135A75;
-	Tue, 27 Feb 2024 09:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F97137C4C;
+	Tue, 27 Feb 2024 10:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709026570; cv=none; b=VW0HqdBOSmqFDJQGvqgIfpDf6yOpXcq5d6BLjDgMkr87imtzZY5WAStNc1sXGEvRbbGum3AlfpH7qA9wpcJg1oPG5rwq9pn5RnPXjhiIVpk1xLhqmTgCwwPB6qXUI0qKuWi0FM+UjF5dbKk5JeY8ukMxLJQulj5M6N+Okio9EOI=
+	t=1709028664; cv=none; b=fmViEgCDVwww9ZMKlRzk+XvsvsWExr+A1i8OBE8n+g8cKNOUTGwBWRax5zRdkMgsFBTp1tgziaQmj7BiBJfRWxjOIU59AMpCQkjIcABMm8YdpY0jEyhVQG5C/wyEFt57Q+SGIUeuO3NYAQsoLGRQBjJ/M7/fwbqe3ofEOsBMw38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709026570; c=relaxed/simple;
-	bh=MhYVNg3tJ0IQHv/hOZ7VtURMqMSSJ5mJG7kxElOUwa8=;
+	s=arc-20240116; t=1709028664; c=relaxed/simple;
+	bh=Q29CPa5vEr5QpJf4/e5PnJkinSzjOGGgvQ3q+BgSUQk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CX5QNsq8yoSt/WEWi5/Z65GCbtsqQZ4vTpRrc3Im+XtYy3JQBFDKbqZQs/n4g74Mx8DOgz3l9rKTsBl+EMdwrlliNn/F1CpeEhRLNrK971tXJo23S4E/YGW+mGRviojmwrxNl5sYk0FpPI/eai4Hrs9ZgG9uM94abMCdoLTy/bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S9pdjQPp; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZNPYObbW6a6VHQq3Hij944ttIAezuW/slq2KNPMx87X/uNBeC1tJ1Kv8d7zmq2q3skp/zsQxdDcuNVcvrgAkmWKK7f4rIesiXd5wi/pUa13FsbEZ1cAlzj1JZf1Z3grIebkJNPasJapQ+CtirVZZXi+hsrNDVBy4EH9zE+3PPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSsI7Av8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S9pdjQPp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709026568; x=1740562568;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=MhYVNg3tJ0IQHv/hOZ7VtURMqMSSJ5mJG7kxElOUwa8=;
-  b=S9pdjQPpTs+nwjHs5CRlHVjxotHEx4yXhNU2Eo/DN47R0V9R0xQ3uKJa
-   zBT3NhP+p8Gh9x20nDhnG5Il0Rfy4ucwlzkGDb3+rJ6vtZ6xa4GUyrkzh
-   pNEfGhONhgVGUexjUoWOTmdmqnZgwL9zYb3v6mTtUsUAiAoscWnSUX9Po
-   6DBpWd6xu2LtqySu5Gd6/ANmxxm1YeaIUhdqPOJc2TSqacma3e/Fv2vW2
-   9OYe1GnMBlHoXf9Vm64CK2zEzZDsPbJ/KFY1AqGKhLVMVO5kB4uTK8r9u
-   oX5KinQMzWRCrBkTnV1e3QOtd4Fu6kiUdNyl89ON2En3THs240043iJpv
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10996"; a="6306964"
-X-IronPort-AV: E=Sophos;i="6.06,187,1705392000"; 
-   d="scan'208";a="6306964"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2024 01:36:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,187,1705392000"; 
-   d="scan'208";a="7327747"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2024 01:36:05 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 7E3D411F855;
-	Tue, 27 Feb 2024 11:36:01 +0200 (EET)
-Date: Tue, 27 Feb 2024 09:36:01 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] clk: Add clk_poll_disable_unprepare()
-Message-ID: <Zd2tAYNfhd6itOQr@kekkonen.localdomain>
-References: <20240220104336.260194-1-biju.das.jz@bp.renesas.com>
- <20240220104336.260194-3-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSsI7Av8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C7A1C433C7;
+	Tue, 27 Feb 2024 10:10:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709028664;
+	bh=Q29CPa5vEr5QpJf4/e5PnJkinSzjOGGgvQ3q+BgSUQk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fSsI7Av8QnF7sgdMK78349upV4ZYcCdGzrX0KWLYJqZxbDWdBDf5zvbK0tO2FricU
+	 8eXY5S6PFywcWHEZ8hvJG60rZYRUyK/kS+vsVCkREZJh6YoBgmKuBjLc79GM7hQN1J
+	 vnS9/LffgFYO+Bray3g2Hp7GXy/HnYXXdbWy9Zw3OK7ABKwMYn7EdGl5nHdMfWU7YR
+	 SMyNx3oY488XRzZhTTiJIvebzSO1C+8Ex8VURuEou76CeoNJBHykd1ce+YzK94EXry
+	 J2Jjcfmn0YtSBeUC8oetDg0Zgw/EfGycoJsQuICDVkFZIi5p/dlrdiVuN/M/rqQd7H
+	 AbUPfCOI/iSIQ==
+Date: Tue, 27 Feb 2024 10:10:56 +0000
+From: Will Deacon <will@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v2 0/7] A702 support
+Message-ID: <20240227101055.GA13753@willie-the-truck>
+References: <20240219-topic-rb1_gpu-v2-0-2d3d6a0db040@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240220104336.260194-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20240219-topic-rb1_gpu-v2-0-2d3d6a0db040@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi Biju,
-
-Thanks for the patchset.
-
-On Tue, Feb 20, 2024 at 10:43:35AM +0000, Biju Das wrote:
-> The clk_disable_unprepare() doesn't guarantee that a clock is gated after
-> the execution as it is driver dependent. The Renesas and most of the other
-> platforms don't wait until clock is stopped because of performance reason.
-> But these platforms wait while turning on the clock.
+On Fri, Feb 23, 2024 at 10:21:36PM +0100, Konrad Dybcio wrote:
+> Bit of a megaseries, bunched together for your testing convenience..
+> Needs mesa!27665 [1] on the userland part, kmscube happily spins.
 > 
-> The normal case for shutting down the clock is unbind/close/suspend or
-> error paths in the driver. Not waiting for the shutting down the clock
-> will improve the suspend time.
+> I'm feeling quite lukewarm about the memory barriers in patch 3..
 > 
-> But on RZ/G2L Camera Data Receiving Unit (CRU) IP, initially the vclk is
-> on. Before enabling link reception, we need to wait for vclk to be off
-> and after enabling reception, we need to turn the vlck on. Special cases
-> like this requires a sync API for clock gating.
-> 
-> Add clk_poll_disable_unprepare() to poll the clock gate operation that
-> guarantees gating of clk after the execution.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> RFC->v2:
->  * Renamed clk_disable_unprepare_sync()-->clk_poll_disable_unprepare()
->  * Redesigned to make use of __clk_is_enabled() to poll the clock gating.
-> ---
->  drivers/clk/clk.c   | 23 +++++++++++++++++++++++
->  include/linux/clk.h | 46 +++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 69 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 9a09f51f4af1..0e66b7180388 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -13,6 +13,7 @@
->  #include <linux/mutex.h>
->  #include <linux/spinlock.h>
->  #include <linux/err.h>
-> +#include <linux/iopoll.h>
->  #include <linux/list.h>
->  #include <linux/slab.h>
->  #include <linux/of.h>
-> @@ -1138,6 +1139,28 @@ void clk_disable(struct clk *clk)
->  }
->  EXPORT_SYMBOL_GPL(clk_disable);
->  
-> +/**
-> + * clk_poll_disabled - poll for clock gating.
-> + * @clk: the clk that is going to stop
-> + * @sleep_us: Maximum time to sleep between reads in us (0
-> + *            tight-loops).  Should be less than ~20ms since usleep_range
-> + *            is used (see Documentation/timers/timers-howto.rst).
-> + * @timeout_us: Timeout in us, 0 means never timeout
-> + *
-> + * It polls for a clk to be stopped.
-> + */
-> +int clk_poll_disabled(struct clk *clk, unsigned long sleep_us, u64 timeout_us)
-> +{
-> +	bool status;
-> +
-> +	if (IS_ERR_OR_NULL(clk))
-> +		return 0;
-> +
-> +	return read_poll_timeout(__clk_is_enabled, status, !status, sleep_us,
-> +				 timeout_us, false, clk);
+> Patch 1 for Will/smmu, 5-6 for drm/msm, rest for qcom
 
-This API is a bit problematic as anything else in the system could enable
-or disable the clock while polling happens. I think you should add a
-warning that this may only be used if the user is the sole user of the
-clock in the system (which is of course hard to guarantee in a general
-case) and has not increased the enable count (or has decremented it again
-to zero).
+I'm guessing you don't really expect me to take the clock bindings?!
 
-I'd perhaps go as far as do WARN_ON(enable count non-zero) and return
-an error code (-EBUSY).
-
-> +}
-> +EXPORT_SYMBOL_GPL(clk_poll_disabled);
-> +
->  static int clk_core_enable(struct clk_core *core)
->  {
->  	int ret = 0;
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index e6acec5d8dbe..2d63a12214e5 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -665,6 +665,20 @@ int __must_check clk_bulk_enable(int num_clks,
->   */
->  void clk_disable(struct clk *clk);
->  
-> +/**
-> + * clk_poll_disabled - inform the system whether the clock source is stopped.
-> + * @clk: clock source
-> + * @sleep_us: Maximum time to sleep between reads in us (0
-> + *            tight-loops).  Should be less than ~20ms since usleep_range
-> + *            is used (see Documentation/timers/timers-howto.rst).
-> + * @timeout_us: Timeout in us, 0 means never timeout
-> + *
-> + * Poll for clock gating and Inform the system about it's status.
-> + *
-> + * Context: May sleep.
-> + */
-> +int clk_poll_disabled(struct clk *clk, unsigned long sleep_us, u64 timeout_us);
-> +
->  /**
->   * clk_bulk_disable - inform the system when the set of clks is no
->   *		      longer required.
-> @@ -996,6 +1010,11 @@ static inline int __must_check clk_bulk_enable(int num_clks,
->  
->  static inline void clk_disable(struct clk *clk) {}
->  
-> +static inline int clk_poll_disabled(struct clk *clk, unsigned long sleep_us,
-> +				    u64 timeout_us)
-> +{
-> +	return 0;
-> +}
->  
->  static inline void clk_bulk_disable(int num_clks,
->  				    const struct clk_bulk_data *clks) {}
-> @@ -1087,6 +1106,33 @@ static inline void clk_disable_unprepare(struct clk *clk)
->  	clk_unprepare(clk);
->  }
->  
-> +/**
-> + * clk_poll_disable_unprepare - Poll clk_disable_unprepare
-> + * @clk: clock source
-> + * @sleep_us: Maximum time to sleep between reads in us (0
-> + *            tight-loops).  Should be less than ~20ms since usleep_range
-> + *            is used (see Documentation/timers/timers-howto.rst).
-> + * @timeout_us: Timeout in us, 0 means never timeout
-> + *
-> + * Context: May sleep.
-> + *
-> + * This function polls until the clock has stopped.
-> + *
-> + * Returns success (0) or negative errno.
-> + */
-> +static inline int clk_poll_disable_unprepare(struct clk *clk,
-> +					     unsigned long sleep_us,
-> +					     u64 timeout_us)
-> +{
-> +	int ret;
-> +
-> +	clk_disable(clk);
-> +	ret = clk_poll_disabled(clk, sleep_us, timeout_us);
-> +	clk_unprepare(clk);
-
-How about clocks that are generated by devices to which access always
-sleeps, such as I²C devices? I presume they're actually stopped in
-clk_unprepare() as clk_disable() may not sleep. They also can't implement
-is_enabled as it cannot sleep either.
-
-It seems to depend on the implementation on what they do. The runtime PM
-function used is pm_runtime_put_sync(), so you may have a guarantee the
-device is powered off but ONLY if it had no other users and had runtime PM
-enabled.
-
-So perhaps return an error if there's no is_enabled() callback?
-
-> +
-> +	return ret;
-> +}
-> +
->  static inline int __must_check
->  clk_bulk_prepare_enable(int num_clks, const struct clk_bulk_data *clks)
->  {
-
--- 
-Regards,
-
-Sakari Ailus
+Will
