@@ -1,84 +1,66 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B42414F9D4;
-	Tue, 27 Feb 2024 21:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A91F14A4C1;
+	Tue, 27 Feb 2024 22:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709069301; cv=none; b=bIQic2eJpq+scu6O//iNsJAC4xlrMAYpnrPPNB2PZoLDVV/70bQQUpH2ORa1UD87f8PJRbpYk0z1E1+wlcwOOjvPfPfky6iyHS9VpJgG8OYcNZ4mQZw2AcmDj94zph3dt+VW/2quFTdeL5rSrVMmRmC+/qcmU1vj74ji4g20NnI=
+	t=1709072111; cv=none; b=S41GXO/k8bC0dIb25y2VIgFJ3KmMZLyAvhqupJsP2ABhEXcVd1Mv+xRZivDLKrSXdJxzz3MvA3OjwlQEvYJvbjtBGWh9kWX5BPFwvEwnkZaRwHsDl1ZBfsf6Sc2B0FlQ2pN0aUwGQVXlLgeeHI9yMj1HrrdDOv4/Jmq1XFvuKD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709069301; c=relaxed/simple;
-	bh=Q4z6M3YcE/VFHljn4TjZ6phRk+ZDqjugl4BK6oRqISo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iy3Sxwt4ngrF/izKQcMrH0ZkxMTMn6UQYOJwqZfXvCtyINS+LAIMZk01bp1pvKthaNFTbROH9rqNWoO0ayu39Pm3hnZNitt3imvsRJmjSpHyqxMo5BTx1SnU6zRD5t7p4p1HvhjSHKrNTW8MhSHcdLmsUfLZ7hEIdy1kY4KVLi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b6c.versanet.de ([83.135.91.108] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1rf4zg-0001JV-J8; Tue, 27 Feb 2024 22:28:08 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	andy.yan@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	Kever Yang <kever.yang@rock-chips.com>,
-	kernel@collabora.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	huangtao@rock-chips.com,
-	devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH v8 0/7] rockchip: clk: improve GATE_LINK support
-Date: Tue, 27 Feb 2024 22:28:06 +0100
-Message-Id: <170906921352.760270.17022081132871097984.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240126182919.48402-1-sebastian.reichel@collabora.com>
-References: <20240126182919.48402-1-sebastian.reichel@collabora.com>
+	s=arc-20240116; t=1709072111; c=relaxed/simple;
+	bh=old29fqwWQlSYALVQwaXhWRH7AU02kmQcLAYDQ6bwSg=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=RZKqvHT5JlfM1OXijgo5u8Zk6ihPG6eJJKi2ESxQIxW3fITlQlMdX0JIx5AIVKcVhW1l2o9H6JVv8a+ndWkWwwC5rvGDb9XGGEILjtMvwyPOyzwbJIDXFiRPOnkycNQeMIAESeyTw6vbp7q2tDhtaOvz1XgsESNxsysTBDMeWgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syy9rMI2; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syy9rMI2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D5C9C433F1;
+	Tue, 27 Feb 2024 22:15:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709072109;
+	bh=old29fqwWQlSYALVQwaXhWRH7AU02kmQcLAYDQ6bwSg=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=syy9rMI2VV7MhUBHf3/ebtgyWyT7DFlbzdyXmg23GvTr1L5M2iDV5dIK8wEg8mhyd
+	 J7D/OpmKXv1AJZAJFZqH5frhDF1QfT+yEnGlZvJXZ8+Hcv0HTGFM598DhMMtQ7AEqe
+	 ouc55BWOrD5wVOurZ2UNn6fBnhyjl6PYwURtpdVzfN1j71NQU116Rbxc/UwbCQlTG3
+	 e/nXKDcGpYZI8SlO7nOZLKwEHwIsevHRXkrPcaMVsCgKjES8XNdYhxAV/Oautr4GNH
+	 y7WqkpgNd2IYH+dxWSoPshYslN/E9fixbBVEaAaDkCpL60TO2UaXfew6L9mVQCuPOZ
+	 uJ8lqCtblxA8A==
+Message-ID: <4936880745fcb0dd5ce15cf3508d9b83.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1708687321.git.geert+renesas@glider.be>
+References: <cover.1708687321.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.9 (take two)
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Tue, 27 Feb 2024 14:15:07 -0800
+User-Agent: alot/0.10
 
-On Fri, 26 Jan 2024 19:18:21 +0100, Sebastian Reichel wrote:
-> This is a follow-up for Elaine's series. These patches are written from
-> scratch, though. There are two parts:
-> 
-> part 1:
-> Elaine's series used to contain patches for the VO1GRF handling, but they were
-> dropped at some point because of the CLK_NR_CLKS feedback from the DT
-> maintainers. I added some code, that should hopefully fix everyones concerns by
-> figuring out the right number at runtime. I also moved the correct handling of
-> pclk_vo0grf/pclk_vo1grf before proper handling of GATE_LINK clocks, so that it
-> can be merged ASAP. These patches are needed for HDMI RX/TX support on RK3588.
-> 
-> [...]
+Quoting Geert Uytterhoeven (2024-02-23 03:28:42)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit 5aaa139b9a03e1a43484a73248c6353a9c4d95=
+c6:
+>=20
+>   clk: renesas: r8a779h0: Add I2C clocks (2024-02-06 11:20:12 +0100)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.9-tag2
+>=20
+> for you to fetch changes up to 81a7a88a98062ffcd8d7d5ac3b540a96dbff5490:
+>=20
+>   clk: renesas: r8a779h0: Add RPC-IF clock (2024-02-20 11:37:34 +0100)
+>=20
+> ----------------------------------------------------------------
 
-Applied, thanks!
-
-[4/7] clk: rockchip: rk3588: fix pclk_vo0grf and pclk_vo1grf
-      commit: 326be62eaf2e89767b7b9223f88eaf3c041b98d2
-[5/7] clk: rockchip: rk3588: fix indent
-      commit: 2a6e4710672242281347103b64e01693aa823a29
-[6/7] clk: rockchip: rk3588: use linked clock ID for GATE_LINK
-      commit: dae3e57000fb2d6f491e3ee2956f5918326d6b72
-
-2nd part of the very easy and obvious clock patches that make
-sense on their own already.
-
-Now I just need to look at the final piece of the puzzle :-) .
-
-
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Thanks. Pulled into clk-next
