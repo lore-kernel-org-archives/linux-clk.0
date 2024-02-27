@@ -1,129 +1,181 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2030.outbound.protection.outlook.com [40.92.103.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A37130AF9;
-	Mon, 26 Feb 2024 20:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708978091; cv=none; b=dBj/+2cPxDYRwUI6Yxa9tmQEiCCuaCoUWWNzfMoIEKEIZJ1fxv4gUqeRzL98MLgDqoGN9Dvm0hOimlpSoKwpyp+jTBGR8nRa28n2ZzMd2RnV4WuD51f+PknzlJ0+iXIwJRqpqASbX6eID1CqTEbp8OteeK/InLXDbdAOwLKbOJY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708978091; c=relaxed/simple;
-	bh=P8qiXwV5MVkQofH+MaxU2bpzvzo39pZRh7erGITANy8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VmiyH3zJbqFjcMNHkVtcQxSTnGg/FOIAIMBOwaKWdMEzmSicizGnrsW3gk1QsrsNBdKQuXv1cn1N9IGQLpVDQBnIc7EFaD9UpuOLQG4M/LSw/GiZRgiwRudAsLMMMSRlWPQN7PJiGOE4h44JhPaAJ5mLizYD2KfPGMYAhM9bELo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gojY79tj; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5A623B1;
+	Tue, 27 Feb 2024 01:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708996194; cv=fail; b=gRFbJFZ5QqUp2Z4/eSUNvayUFM5HOL37qpMRXb+bTjWzhLGex00XjGV1spLU0sSonh5dGtX3zr/G5nj+NDz0c7Nb70cvKkHGnCsICn2QtqUcHeF1zrV0kZNxt+hTYq6JPMu/ry6tuMxPDwtRTbvFyu93J5HS3xNy5CJdhzZ+FWI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708996194; c=relaxed/simple;
+	bh=N4wtrGoA39k7iaUMNC+F3XNjvyF2dLZF3rtz8DC+w4U=;
+	h=Message-ID:Date:Subject:From:To:References:Cc:In-Reply-To:
+	 Content-Type:MIME-Version; b=XdspPSYOBNZUzy6IcBeE6sd3mc1mC/NeLv7kWjxnhxfNAYb4RL+diCcGmEPkv2JgOJbZMMgwPof1aG7nijEHSdQunLcEAmb7nQ4Kf3HJfan4UlmjQcrvwaPYHalY4vfJ760fW+CRMlmoY54Hpc4A5m6DNOcQzSFT0slMbvXzj6w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Asl02ldA; arc=fail smtp.client-ip=40.92.103.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gojY79tj"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-513031ce058so347463e87.1;
-        Mon, 26 Feb 2024 12:08:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708978088; x=1709582888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P8qiXwV5MVkQofH+MaxU2bpzvzo39pZRh7erGITANy8=;
-        b=gojY79tjAm2te8csrQvul2HLJ3Cm4IbcT6r4O8ttRYYEjoSkMQ8tHMslEw2aUpziW7
-         qbs3q0czftfq/Ip345C2RtmrH+yQY+d6BMQ8TrCzPxQf2qZpaHUacnBtKZMVqVgPRb0a
-         VAW1pB6D6j4nF7ATFJm4DtWlsB5FhiGKhTjTeATrXGBM3H7aWJg/xmvJDktXWPMka/AN
-         +txUEdsp6ppJN/vmG0UnjpQj4XD4XCsCWl1/w+NqZBbXHLUSvKij+Fd64u3LrhcT8VEk
-         vtwnSMMRo96kbeND8RhmC/BrczRnQKrGRS56t9S1IuskQbKsAguHfYEvrr+5LK14Cx5M
-         5o1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708978088; x=1709582888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P8qiXwV5MVkQofH+MaxU2bpzvzo39pZRh7erGITANy8=;
-        b=YMx2v07RVzP6yql/RCFnVA7bc7FUowrKd2MZZMG6f9KsIdM+G3gxp4E07kIKCc5fr6
-         eHwsV5aE9UDbYNvigvE9+VdvgomAWCoCDHQTxHZWfnbhu8W+AbJ4Z+FooyN5qx+FYvPc
-         reKXgvcUn8V4tjhikCdbTaQP0lnaLHHVy2ulrU8QfiSBYFhQdj5Ov4dUyQlLN4jxafLt
-         1FRkP3WYzRS+I6BfUrufJ+azt3fkHh34B5XhXhFqk3wjgTEc19+vv0o090fbVq2RQvHh
-         XONTzwGkFS5CVnXHuMszavWZf2r75ureBLCsqH+k9so26Aeufmi/rpkLKvoViO7qJ7A9
-         EQGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGUKv6ZB5s4BtHSKk1zdiSq/oaaEXtW0MekYYddzyTQpULd39TttRpOSh6l1I7LtsyhEUwg1aktfBbW/yRE1P3nrDlqGnC6KINuckkf0Ua4DrJKmCxFC3nV3Pt0BwfcEFiHbkozjgZ/q9kajDZ1FrNwQKvQgAEAQjo5HdCmZUu8FUZpw==
-X-Gm-Message-State: AOJu0YySsDqlJnXeagRpipxo0kkCo1F612qfMTd/UCdmSd9ZA9agI7mo
-	a43ureMskD9gf7J76GzcDYpNsLqJmf3ItUWAOyyk1T9GCzblSMdlwFmgAg+iXSaXIvJEfmeFaaF
-	g0sTcmY1Yg9FzjG7JY6irRFQLSpE=
-X-Google-Smtp-Source: AGHT+IFpmJYBm2bJLEhvPMIHTu7tdzlLyLLX59ipQuXs0/4omd7yWBrPgt5GQRSg5HsFGvCU9oJ/g+VP5Bvtf6W0Osw=
-X-Received: by 2002:a05:6512:3087:b0:512:e1c3:5ab with SMTP id
- z7-20020a056512308700b00512e1c305abmr5473467lfd.45.1708978088002; Mon, 26 Feb
- 2024 12:08:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Asl02ldA"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=E3hPkGe2ig4VUKuSMxDgJQV6yNDrpOk2U+S7fLpniJAfIMd51adicDLOUBCSe2OfMPLMOaB2UJCIWq2AaVhd+foqc7CdxNmTiZIHWgNbRWGDIgSMYXdG32ecDoTe8A3wHgu/7HALAgDeCDEhKpcmIX/FJ+3Ylf0yAmtBMgqXxcMr8PQ4hsIr1YNfb934whScm2FwJDiPlvAvOs8zpXaUVmsP7cO4u7enIvhkpb32lianYeE3aONLeYr8tf2h4bDqx6dCfCB78vwO88W0PHwpUrxr7eGjzj+1JR56gvaF8DucYNQWGdmONLnbwVfxpLPX7O955UZ446vF6gz5iGwV+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VEFW7z3hcdaOooNGB9OZ1hY6Rk6BSpKhU+YfzSoqnsk=;
+ b=hKgRbTjpLrXeFhZBeEuUul4ZcsPI6KliGn1veUAaSZ4xYCUX2Wpjd58m4Cvn19ANiULVczqFvRtC2XpqxMbIFmrH1Yl6fdUC9o8Qca5xzZ1i8CcTiN7FH1lecw8uf35METqVtzL6+zy7PdUp3PRYAgBWsJtkBsNoyntsfbgAGMNTpjozbOC05Xmmj0yUZiSENwGgbNC0HPE5V9Cdp2+mM0qaIksafURObYjGLFRH/omDO4Ntidrva/UnmJ2eIdSRGdTO6TXPfaMNWEoD7fmPO7gplto//9tEWt9tbP0UEwSjEgLynptQFYGwwf9fCJLee+BDO5QpHpSvTNoVYJRl1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VEFW7z3hcdaOooNGB9OZ1hY6Rk6BSpKhU+YfzSoqnsk=;
+ b=Asl02ldAhSb3Ar5giASxjRCP/lYL77X4JO7bZXblZ/85U3vaJFrPwMZL3XyOZt6lBqm89UrfLzHN84YpzbFZO1NvKmq/FA8PBntRfL38a00jLDYy1MNeUaYzIRQBuVIvDmTmJVmF7GtKBLf4yAQ58WfJcfv2oApPau2MDEg2CsTk5ZsV+d5lnLseawRLR6E+QUFYPV9ItzNXHNtoVZgbK8dPWUBYRRhadRDVeYN+88HaWPVT/wSy9aati4tXHlyFloSCvIxHJaHy2dkApgB/Ak+DwJHKTneKQCB9aDpNPo+/XMIAT3w5eYUMjQHP22nynsYkQyu9jfsfWzM+RFkYwQ==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by MA0P287MB2235.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:101::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.36; Tue, 27 Feb
+ 2024 01:09:44 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::8473:67b4:9a2a:3a69]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::8473:67b4:9a2a:3a69%7]) with mapi id 15.20.7316.032; Tue, 27 Feb 2024
+ 01:09:44 +0000
+Message-ID:
+ <MA0P287MB28224A3BAA6CA0D4833B5C30FE592@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Tue, 27 Feb 2024 09:09:35 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 4/5] clk: sophgo: Add SG2042 clock driver
+From: Chen Wang <unicorn_wang@outlook.com>
+To: Stephen Boyd <sboyd@kernel.org>
+References: <cover.1708397315.git.unicorn_wang@outlook.com>
+ <d7c74c2cfa410850c044ff2879720db06c2f8272.1708397315.git.unicorn_wang@outlook.com>
+ <MA0P287MB282275AB71CC3A7E2F3792B2FE552@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Cc: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
+ chao.wei@sophgo.com, conor@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, guoren@kernel.org,
+ jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
+In-Reply-To: <MA0P287MB282275AB71CC3A7E2F3792B2FE552@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TMN: [0mChtVThbM5wabG7JeN6mGo7R5US1Jek]
+X-ClientProxiedBy: TYCP286CA0290.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c8::7) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <16630cc7-3c6f-4950-98cc-700e8f3b58dd@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev>
- <87r0h8n64g.fsf@oltmanns.dev> <875xybr93t.fsf@oltmanns.dev> <3546609.iIbC2pHGDl@jernej-laptop>
-In-Reply-To: <3546609.iIbC2pHGDl@jernej-laptop>
-From: Erico Nunes <nunes.erico@gmail.com>
-Date: Mon, 26 Feb 2024 21:07:55 +0100
-Message-ID: <CAK4VdL0oHE72_fJpoL1oQs4y=xP=8MPQq_6DHsARWVZUdQ3qCw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] Pinephone video out fixes (flipping between two frames)
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>, 
-	Maxime Ripard <mripard@kernel.org>, Frank Oltmanns <frank@oltmanns.dev>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
-	Purism Kernel Team <kernel@puri.sm>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|MA0P287MB2235:EE_
+X-MS-Office365-Filtering-Correlation-Id: b649b014-d85b-4a70-4289-08dc3730c7c5
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	ylba+/GJ7Jn9CX3gYcl8vHFzQI6sPi91Aqg2yxcjWYTzY/9aw5/IiV3PGJ2XR5Wnc1t1YW93ar7iCoiblfcfR0eU4RcxDAPCdZm7Fb+6Ly6YK49S/IhAb/GL8M4Wh4fux7tV7pw6d3YdBhZMyYiovlxOIA7EcdcDlE0MitZlAImS1lwY5RwYuky1ASPG8Qfky4V24Wrm89ZWCXZk5IFdY6T2UVYGDjDuD9j/YYU64C3PfbyVJIK64tzhf9hEbwR4vA4uv1pSWGXNSAm5BIcwePXontcL+kEbjGAzZkmcnrcsgRUwuR7+Q5TFW8Qenqf14OYg+x5TBC5t995/FG37Ni0hWVeD6YjGJehR4ewzSoFXFBRdRZ2kLjk0DHG8E7EewvpBkJZoFlMCFDSBcm3BioXwksU/RL8AOSRBPzMYopT1X/xpXyVX3wUjsUmITFbGZoTLKWsNKDVCSbOIHJYy3nKWywWUXDEfoOnqqHEwqVZ5A/Wr67FxmgzFGhClfL/YuXaKVf4jtA1l/H7Tc6jLy/PxuP2gzBRTmERyrLvqujGaa2d02KIAdiyLSahbkNHVd1eVPeQxFR++lFUqdOp3Xhg9JNFEuXR1888jFCl/gZsNOUMHvezYG2oUabUZuXTKxXJ/WxLn4/bGBKUaFp2Q05I6wuOokpRa6QQT3+K0uWI=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MDh6WmZQVGlqcjVqdFJuWjlkTGhyZFU5dzRIZ0IxRXd5VFg2eHN2S1JWeGVW?=
+ =?utf-8?B?Z0ZZSm14SkthUmZyQXVLRXVkbDhOdWF1THpuYXlFaDU3eFJXQTRsTzZ0RkNY?=
+ =?utf-8?B?T1VHRi9xb21nUlpvdDhFNDZMTDJSeTU3WVV3YWZrM0orQXhvSXBuT2N0Z2N6?=
+ =?utf-8?B?RERjdktrWEhad1hHbU5KRTdQK280cWxiL2YrOEpobTlJYzEwOFUxNTI0Tmtj?=
+ =?utf-8?B?VlVpOURna3l2SUFCTmI0WVhWZC91SFd0c01ZMjBFYUQ4ejllUFY4dGRTWlA1?=
+ =?utf-8?B?enN3TUN2UzltUjN5QjJYUVArT2gwakF3QnArWW9NTE9QbzllOTRXWk16RnMv?=
+ =?utf-8?B?TTlaam8yRGFNSnZJK2VCd0dVckhqYkkvdEgvTzhuUUYwVzh5WTliK2FwdjBy?=
+ =?utf-8?B?RHdxOVpqUTJ1eWQ5bUx5d041VTN6SUlHUFp1ZVpSOVJMdGY0RXA1MGtIeElS?=
+ =?utf-8?B?RS9QRUtVc1B1Zm1LMzhtWU9MeWY2UUlaRmxpTW01eFRic05adkV0SXlIdG9z?=
+ =?utf-8?B?TlczNVBEZDd4YnBDYkd6RFJ1V1k2ekdSWU9uTDhuSWdCMjQvOXJ1T1JPeHcy?=
+ =?utf-8?B?TzQ1RmFRekNvTzdjWTBkdGtqbVRtWnlaenZnSndldXZkY2ZDZWthdmYyQlRY?=
+ =?utf-8?B?UkpkbFRhMmtvbWtNczhCaTVGWWhrckUvYmNFNkUxMnN2MWdxTzJ1WjgyQndQ?=
+ =?utf-8?B?bXlXenpyd2o0VTRsWWowTWZ5ZldGUCtzdFViVWM2YjNIb3kwMEw3MkVuQzky?=
+ =?utf-8?B?cHU5OEltOUpqZUtwZWoveFh4ZzZxc2E2S1RtR3JHbFlYcFV2SXNYMzhiZ2tF?=
+ =?utf-8?B?S2cyNHFqOVRyWXFiZjMwQmNVQWx6YXIwUmdIanpIRFNxUzVsdTVCc3lWRXFk?=
+ =?utf-8?B?clJhN0RkekoxSFQ0N2VtUWxTUU5EV3Q5SkZ0ZFEzaDRCTlFNdDl1ekNLdHJo?=
+ =?utf-8?B?V2xoYko4ejllS3dvUzJFSkxnbVJQYnV4aGltdncyQVJpUkRFbm8zTHdKVzRG?=
+ =?utf-8?B?S1ZwN1g3cGhJcHBYbXFQMXhIdHA1OVVwYWQzaWtIVG1XNmZNTG9rNmcyYW9P?=
+ =?utf-8?B?N1VMeVRBN1UrR050OEZ6bDhXSTNEU3pwV0ZqQ25pOUZBMm9LUTBuLzlVZnMx?=
+ =?utf-8?B?RWV3QmJ4MkNtWklITS9BMkcrNGNIQUhQZlA2OVVKTkdPTG5nMVovS2ZvOUNX?=
+ =?utf-8?B?cWt2SUd6VDFJcjRmVjFwdWFSNkxZRWh2aGo4ZHJBd0Q4c2E4cXBiV3NTWXpW?=
+ =?utf-8?B?WjdLRDJucThCN1QxMXhubmd5V1BpT0NEMVE5b1laaHYrYk9lbTRKRlVXSm9s?=
+ =?utf-8?B?NUV2NHlyRkZHOVVFL3Y4akd0eldVbWg2L0NxYVlJTHJuS2NGdkRXcDhNazVE?=
+ =?utf-8?B?SFp0b2JiY1V4YzBqWmJIMlpLZFg4cUYwSXlkRFJteU10WjY2V2s1Q1kxcUgy?=
+ =?utf-8?B?K1VodUovSE53cUo1OERJSnVVRUUrTSsrUk1lcFJpSTAwSWhKM3FDa2MzRlIr?=
+ =?utf-8?B?Nys0cjlyekFwMlE3VExpck1zWTRpYVJKTFNWVDRmWnEyS25qS0RMTzFmWi9y?=
+ =?utf-8?B?RUFOa1F4OHkvRk9jZjd1K0ZzRWpkMzVnUkQxWHpmQk83WjdBMGFBYkJrSDRV?=
+ =?utf-8?B?NkdLWWdybENXdGw5ZkFvWWpKSXB6eTFBa0NvdlVGNUU3cnRzMUs2TFdmMWdT?=
+ =?utf-8?Q?ApvHLxtuCX+AGUESLmDh?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b649b014-d85b-4a70-4289-08dc3730c7c5
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2024 01:09:44.6152
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB2235
 
-Hello,
+Ping ~~~
 
-On Mon, Feb 26, 2024 at 6:29=E2=80=AFPM Jernej =C5=A0krabec <jernej.skrabec=
-@gmail.com> wrote:
+Hi, Stepen,
+
+Can you please have a review of this, any question please feel free let 
+me know.
+
+BTW, if it is ok for you, will you pick this driver patch together with 
+the bindings for v6.9? Bindings related patches have been reviewed by 
+Rob, and I can handle the other stuff such as dts.
+
+Thanks,
+
+Chen
+
+On 2024/2/23 11:01, Chen Wang wrote:
+> Ping ~~~
 >
-> Dne ponedeljek, 26. februar 2024 ob 08:13:42 CET je Frank Oltmanns napisa=
-l(a):
-> > It seems to me that all options for changing the GPU's rate in a stable
-> > manner have been exhausted. There seems to be no common interpretation
-> > what the phrase "Clock output of PLL_GPU can be used for GPU;and dynami=
-c
-> > frequency scaling is not supported" in the Allwinner A64 manual (chapte=
-r
-> > 3.3.3) means.
-> >
-> > The BSP uses a fixed rate of 432 MHz. Unless one of you has a clever
-> > idea, I suggest to remove the OPPs from the device tree and set the GPU
-> > to 432 MHz.
-> >
-> > What are your thoughts on that?
+> On 2024/2/20 11:09, Chen Wang wrote:
+>> From: Chen Wang <unicorn_wang@outlook.com>
+>>
+>> Add a driver for the SOPHGO SG2042 clocks.
+>>
+>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>> ---
+>>   drivers/clk/Kconfig                    |    1 +
+>>   drivers/clk/Makefile                   |    1 +
+>>   drivers/clk/sophgo/Kconfig             |    8 +
+>>   drivers/clk/sophgo/Makefile            |    2 +
+>>   drivers/clk/sophgo/clk-sophgo-sg2042.c | 1401 ++++++++++++++++++++++++
+>>   drivers/clk/sophgo/clk-sophgo-sg2042.h |  233 ++++
+>>   6 files changed, 1646 insertions(+)
+>>   create mode 100644 drivers/clk/sophgo/Kconfig
+>>   create mode 100644 drivers/clk/sophgo/Makefile
+>>   create mode 100644 drivers/clk/sophgo/clk-sophgo-sg2042.c
+>>   create mode 100644 drivers/clk/sophgo/clk-sophgo-sg2042.h
+> [......]
 >
-> I can't find original source of these points. So I'm good with removing
-> them. But instead of fully removing table, you can just leave one point a=
-nd
-> it should work.
-
-I had posted in
-https://gitlab.freedesktop.org/mesa/mesa/-/issues/8410#note_2216628
-that I also noticed the A64 datasheet specifically claims that except
-for PLL_CPUX and PLL_DDR1, other PLLs don't support frequency scaling.
-I was never able to find any evidence that it is actually supposed to
-work anyway (perhaps it was hope?). Since you also looked in the BSP
-and there is still no evidence that it is supported, I support that we
-should likely just remove the OPPs.
-
-Also, I wanted to point out that my series
-https://patchwork.freedesktop.org/series/128856/#rev2 was merged to
-lima recently. That was the root cause of the "flipping between two
-frames" issue that people most probably hit. I highly recommend that
-people using the Pinephone update their kernel to include those fixes
-to fix that issue. As you mentioned about that symptom here, I just
-wanted to point out that it wouldn't be possible to fix the "flipping
-frames" issue with just fixes to A64 clock, it does need lima driver
-fixes.
-
-Thanks
-
-Erico
+> Hi, Stephen,
+>
+> Can you please have a review of this, any question please feel free 
+> let me know.
+>
+> BTW, if it is ok for you, will you pick this driver patch together 
+> with the bindings for v6.9? Bindings related patches have been 
+> reviewed by Rob, and I can handle the other stuff such as dts.
+>
+> Thanks,
+>
+> Chen
+>
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
