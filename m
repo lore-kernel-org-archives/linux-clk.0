@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A91F14A4C1;
-	Tue, 27 Feb 2024 22:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAD714EFDB;
+	Tue, 27 Feb 2024 22:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709072111; cv=none; b=S41GXO/k8bC0dIb25y2VIgFJ3KmMZLyAvhqupJsP2ABhEXcVd1Mv+xRZivDLKrSXdJxzz3MvA3OjwlQEvYJvbjtBGWh9kWX5BPFwvEwnkZaRwHsDl1ZBfsf6Sc2B0FlQ2pN0aUwGQVXlLgeeHI9yMj1HrrdDOv4/Jmq1XFvuKD4=
+	t=1709072173; cv=none; b=pYmr2p61rtQ5901T4n/GhlAdH03S5usoW2EpexVKd55LiO82JRfSWRJOGN8ih6PXznqCbCxvHN7fZFaXr8IT18Tux805bwUwlNWYLHHIftI5tKBQmLAX3oPP1YvnXxys4SMnhWNtA+nsBTp1rNqtSauxk0mjs4mjvB1N6yK2ozk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709072111; c=relaxed/simple;
-	bh=old29fqwWQlSYALVQwaXhWRH7AU02kmQcLAYDQ6bwSg=;
+	s=arc-20240116; t=1709072173; c=relaxed/simple;
+	bh=uyYLVulc78GDNb1a68pf6zhpTwp2AsJBaMEVtZDyGDY=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=RZKqvHT5JlfM1OXijgo5u8Zk6ihPG6eJJKi2ESxQIxW3fITlQlMdX0JIx5AIVKcVhW1l2o9H6JVv8a+ndWkWwwC5rvGDb9XGGEILjtMvwyPOyzwbJIDXFiRPOnkycNQeMIAESeyTw6vbp7q2tDhtaOvz1XgsESNxsysTBDMeWgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syy9rMI2; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Ylw0raLbpQAYeqdiISdNconCtGJS9sngg1RQyWXAFuqfEievMghIOHQMpLymKd/T2bLHTuLHVbbxMwmlHaiOcrQaZcAp7YB4SAzHkR+bRcDTMwk8Rs25VeM5xjT3s2S3v/flHBijPDa2I3MTXFGEE7KFn1HKKM2pb5ixDoPX1y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jln/qEpc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syy9rMI2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D5C9C433F1;
-	Tue, 27 Feb 2024 22:15:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jln/qEpc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D412AC433F1;
+	Tue, 27 Feb 2024 22:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709072109;
-	bh=old29fqwWQlSYALVQwaXhWRH7AU02kmQcLAYDQ6bwSg=;
+	s=k20201202; t=1709072173;
+	bh=uyYLVulc78GDNb1a68pf6zhpTwp2AsJBaMEVtZDyGDY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=syy9rMI2VV7MhUBHf3/ebtgyWyT7DFlbzdyXmg23GvTr1L5M2iDV5dIK8wEg8mhyd
-	 J7D/OpmKXv1AJZAJFZqH5frhDF1QfT+yEnGlZvJXZ8+Hcv0HTGFM598DhMMtQ7AEqe
-	 ouc55BWOrD5wVOurZ2UNn6fBnhyjl6PYwURtpdVzfN1j71NQU116Rbxc/UwbCQlTG3
-	 e/nXKDcGpYZI8SlO7nOZLKwEHwIsevHRXkrPcaMVsCgKjES8XNdYhxAV/Oautr4GNH
-	 y7WqkpgNd2IYH+dxWSoPshYslN/E9fixbBVEaAaDkCpL60TO2UaXfew6L9mVQCuPOZ
-	 uJ8lqCtblxA8A==
-Message-ID: <4936880745fcb0dd5ce15cf3508d9b83.sboyd@kernel.org>
+	b=jln/qEpcGSjgfOU/P+1yc3MZ5avDx4GWqhzTSvTaKjK/CYMvlaa04LAok1XBoNg37
+	 +CoozH2H703gMrmBh/9HBMdLPweskWTQsYf1tLNcQdGzoaT6WU7xK8Ymv5HGKyDsEL
+	 0Z/V8qOFWcPKapuOLHNdBn/nmPQ9XHobHPiOhJdw7ZfMaFaSgRbdIuUJptaQ/Qg6AE
+	 1gGZXg4jv8ODaP1UwYnlQe03Goans7K8SdH9S34AMjATsGOA/3NZLTLYwBsZaZf95Z
+	 m/WPLxxMWL7nWeh+k6Jg7YnCsAqlkMuwlVWMNj3wGB7Lri3JeM32yMXxscIMYHLSin
+	 vVVcYLjSJmKlg==
+Message-ID: <a6340294903b32bf48416b4b6396d9c1.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,31 +35,36 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1708687321.git.geert+renesas@glider.be>
-References: <cover.1708687321.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.9 (take two)
+In-Reply-To: <20240223205605.GA8950@jernej-laptop>
+References: <20240223205605.GA8950@jernej-laptop>
+Subject: Re: [GIT PULL] Allwinner clock changes for 6.9
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 27 Feb 2024 14:15:07 -0800
+Cc: wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev
+To: Jernej Skrabec <jernej@kernel.org>, mturquette@baylibre.com
+Date: Tue, 27 Feb 2024 14:16:10 -0800
 User-Agent: alot/0.10
 
-Quoting Geert Uytterhoeven (2024-02-23 03:28:42)
->         Hi Mike, Stephen,
+Quoting Jernej Skrabec (2024-02-23 12:56:05)
+> Hi!
 >=20
-> The following changes since commit 5aaa139b9a03e1a43484a73248c6353a9c4d95=
-c6:
+> Please pull following clock changes for 6.9.
 >=20
->   clk: renesas: r8a779h0: Add I2C clocks (2024-02-06 11:20:12 +0100)
+> Best regards,
+> Jernej
+>=20
+> The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd3=
+3d:
+>=20
+>   Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.9-tag2
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
+nxi-clk-for-6.9-1
 >=20
-> for you to fetch changes up to 81a7a88a98062ffcd8d7d5ac3b540a96dbff5490:
+> for you to fetch changes up to aed6d713187b8c47af40c0b39462e21e2737e307:
 >=20
->   clk: renesas: r8a779h0: Add RPC-IF clock (2024-02-20 11:37:34 +0100)
+>   clk: sunxi: usb: fix kernel-doc warnings (2024-01-23 21:47:54 +0100)
 >=20
 > ----------------------------------------------------------------
 
