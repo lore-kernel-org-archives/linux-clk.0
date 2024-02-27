@@ -1,212 +1,341 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5181DFD6;
-	Tue, 27 Feb 2024 16:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AFA47A7D;
+	Tue, 27 Feb 2024 17:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709052444; cv=none; b=WQFGZl+cuNEBwBj4IFf+kE7DCvmnubYzZIglvKeZIInJSeODIVg4cMSsh8Z3S6RI7shA6z8a3IPIUKeFNnBcxXhOGQSk3v55sLf5KysyZCRQi94AvGiIYMy6SGcMsGUzPR19dttAEa/oJCnINQEK6jeMUGmWB5eDsWL0HWwpT4c=
+	t=1709053928; cv=none; b=rPL/ery3XZ2iSbEKOho2Fp3Zv1AKq0RuskiHqMBIer9DqzzVT3r4j1VTy040D5orJpJKoi7NaBT/i6TFa81qX0XFiqYGEK8hbQMCSIcEJ5Nn5Ds1gY991QbL36jssYAur3+PqUqVTP99cUe/VG8PDefPXjsD59Nd8QTsCu03IMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709052444; c=relaxed/simple;
-	bh=w+3Y27YFvPohbGAsamVSlkBcsUGcGXiVR3IZlJQZcl8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rWUyPNTWnRfXdGMBpdiQ7L1T0TuxwX7CPD8J5zbeeesOq/PLcf+78q8X2DoIE8oy+7cz/q4i6WFYzWvj0gpMifiU6eh5omtxZ0FfRMpDy6JGQ856qtGvHUQvtFo33fNKMDYNwK/ctwvTS/EDdbE1g55VO7qxxzL+Ad51v8z1Ock=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6091e12b01fso17512147b3.2;
-        Tue, 27 Feb 2024 08:47:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709052440; x=1709657240;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HZPoTNL+iADoSj5Qyix6GRoCmMKDXGJWybMxRcvYTvA=;
-        b=u+PC83ET0ano0JGM0XxB7c01cKkwDPee53JedTeitWLd+m5870KxUaGFr56cxWit2W
-         dknGEdZvHv5ck76TR+uTUZ6yQu2adhMe6XbHYY2A4Rb4pjAumYeqry/nASoVaUuNHlQ2
-         G1E+Hdp1P5gICXX175hn9hrGTpSZE4W9vsqa7fTrB5+lB2pCPpvS6Tm3kxZYdoJ380Iv
-         r0o+U0OkW/dL/wHBDMs9y/gwRNuoGb13HYC+NhZr6H2dpJce/ad2QQ9pjGKSeg4T/ENP
-         6IZXWoZHc4An/jLE1t+FJQEoP5P13be870+x8tGAIxrZS7pDUVaYv0GsFsHOKhF5iBmL
-         a5rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDKWiMafiu7gT7P6D8TZ4lmdb+OypLZ1F4zLrGD0b8Iucm/b4BKwv4ahodTw4Aw/N5JquCs/VcuyQ0bUAsj05BvP7Th5wlZKBGA2pNPg3PgIzNxVaXx0CNtg/n6vR+GWKO99D0tFztcqayGLZOKczGfIS70ToEOjM0epscuWd2q1p5IcbBhcotwFvzfJYenQTHP4oSEfJFbmsbvFG9FV0Ef2yTn2IgxdWiWuJ82S+DDlmtMfboAIuC9MJGoapf3YiBVVjJAVlw9149WINqSzynvyZMYZLlYPu7rCO7WyUgK+PGRc+yG4McYLBMOY2jJtDFCYKGxsQphMLB5MTRO1exQbAbPjlxIVFxY7vjr5rfVQV4lkifX7U=
-X-Gm-Message-State: AOJu0YxkYPBELvroJp9EWJY6Ol4X4vIIR+LI/4MuTg9UXfqs5nGkg9fu
-	w9cabhlKNQxMouDmh0z4OlcA/2nOQMAOh6ryTdgGfouFVkGNUf0fyLjw33i/QtfGFQ==
-X-Google-Smtp-Source: AGHT+IE+nv3CE4y1cjaVYeX9JpQUcMNcntVQUbk+ZU6No1lwBk51gEU/n8rpgO9TkqFgRMP4P3cAnA==
-X-Received: by 2002:a25:4656:0:b0:dcd:741f:490a with SMTP id t83-20020a254656000000b00dcd741f490amr47506yba.7.1709052440289;
-        Tue, 27 Feb 2024 08:47:20 -0800 (PST)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id g13-20020a256b0d000000b00dcd25ce965esm1453441ybc.41.2024.02.27.08.47.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Feb 2024 08:47:17 -0800 (PST)
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dcbc6a6808fso3801463276.2;
-        Tue, 27 Feb 2024 08:47:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUnw6ABU3AatoOzEqVzSRXCrVhNUn4LIXE7EI9/Z7g56MFmlRck9Y5cKb9GUQLh7WqGWhOs3U92R5WG4r+s8VHMw6mgrMXdZD6GMh9AsouF5gk3FL7aja7eDY3Ki8gAFb9f5GAO4CoDL1xjnMb0fKSJ+KPmBJb35nv350Yr3sj6LkDQWKtD/PUWGe8ryUMQJ3nMmjViqdpK5X8edoE3HGyHY3QtFux/zXzxDLQrZiGn0aYHHxNirbWdXak9LP2K5C86O346bzxJRkULhJav15BDZRgKhlZtqp3vdfKD8TiuW391FkcyMjpU4K6ydcnKMIr5ojICr0WEIw+6tTPSJuJwl9eMzHukH7KohBnhHIKiuCTDhKJBcRA=
-X-Received: by 2002:a25:81cd:0:b0:dc7:776b:5e4a with SMTP id
- n13-20020a2581cd000000b00dc7776b5e4amr10070ybm.56.1709052436589; Tue, 27 Feb
- 2024 08:47:16 -0800 (PST)
+	s=arc-20240116; t=1709053928; c=relaxed/simple;
+	bh=4o7yMAvYJyQcMeGv3WKMeln+uo+IYka9fWH0EbkQvCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZSmmRlYx/VOx6tPNRHqlMPXkLr+4pcrksWdSszKCfwLa178LL/NQkvekkuqefEiT+kEqeka/VYu5Ftdlxh0t2Dfh+UmJLATJMSofN0M4xUJAYR9x3lh8SxGAgLV6JY7Apy/GMEQeTVOwve5/JKKi8PR23lCUzjsTAnlxxjhSCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nVED4zJo; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nVED4zJo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709053927; x=1740589927;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=4o7yMAvYJyQcMeGv3WKMeln+uo+IYka9fWH0EbkQvCc=;
+  b=nVED4zJoL5aLyk4cuI/OvRhyOQWkggtWuES7Bac4AFxdne6UhGXk9H1Y
+   Y3rg72Ea0pnNgd6nkYEdEpbFXtzWzADXh0AT+S3cRmSA+Yy4vIDL+/vmP
+   cJRIPdPIissthWWr48DiJwx8szfd1P6XAqtvb2rGVWWdC0CIT7EX9OIa7
+   wOatHqX99ClPxVDb0BctKblWla6wBHBbI78Av/irpB8Ts6cIz3iV9bGnE
+   bYQTvEs6+nNnpZtYLe+7t5WECk2heLWmUwsoFF3HboJlrq1EaLRFTIgmw
+   ym1qvZgL16ZAfTkQ9to2lVCGqq0d35ezC/7/m9xIXYFK1NhWbmEfjm23b
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10996"; a="7219492"
+X-IronPort-AV: E=Sophos;i="6.06,188,1705392000"; 
+   d="scan'208";a="7219492"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2024 09:12:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10996"; a="913917380"
+X-IronPort-AV: E=Sophos;i="6.06,188,1705392000"; 
+   d="scan'208";a="913917380"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2024 09:12:00 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1rf0zl-000000080L1-1443;
+	Tue, 27 Feb 2024 19:11:57 +0200
+Date: Tue, 27 Feb 2024 19:11:56 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v8 03/10] clk: eyeq5: add platform driver, and init
+ routine at of_clk_init()
+Message-ID: <Zd4X3NnBoEl0wu2H@smile.fi.intel.com>
+References: <20240227-mbly-clk-v8-0-c57fbda7664a@bootlin.com>
+ <20240227-mbly-clk-v8-3-c57fbda7664a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1704788539.git.ysato@users.sourceforge.jp> <8dd000fd9040804ec520b76de1b026747e16fc2c.1704788539.git.ysato@users.sourceforge.jp>
-In-Reply-To: <8dd000fd9040804ec520b76de1b026747e16fc2c.1704788539.git.ysato@users.sourceforge.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 27 Feb 2024 17:47:05 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVsJ+VvfcV4UncRsq6mTUcR2njFL4XC+mJuA9hZ-GJAaw@mail.gmail.com>
-Message-ID: <CAMuHMdVsJ+VvfcV4UncRsq6mTUcR2njFL4XC+mJuA9hZ-GJAaw@mail.gmail.com>
-Subject: Re: [DO NOT MERGE v6 13/37] dt-bindings: clock: sh7750-cpg: Add
- renesas,sh7750-cpg header.
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, 
-	Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko@sntech.de>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Chris Morgan <macromorgan@hotmail.com>, 
-	Yang Xiwen <forbidden405@foxmail.com>, Sebastian Reichel <sre@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	David Rientjes <rientjes@google.com>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Bin Meng <bmeng@tinylab.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240227-mbly-clk-v8-3-c57fbda7664a@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Sato-san,
+On Tue, Feb 27, 2024 at 03:55:24PM +0100, Théo Lebrun wrote:
+> Add the Mobileye EyeQ5 clock controller driver. It might grow to add
+> support for other platforms from Mobileye.
+> 
+> It handles 10 read-only PLLs derived from the main crystal on board. It
 
-Thanks for your patch!
+If you wrap 'It' to the next line, overall text will look better.
 
-On Tue, Jan 9, 2024 at 9:24=E2=80=AFAM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> SH7750 CPG Clock output define.
+> exposes a table-based divider clock used for OSPI. Other platform
+> clocks are not configurable and therefore kept as fixed-factor
+> devicetree nodes.
+> 
+> Two PLLs are required early on and are therefore registered at
+> of_clk_init(). Those are pll-cpu for the GIC timer and pll-per for the
 
-Please improve the patch description.
+Ditto for 'the'
 
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> UARTs.
 
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-cpg.yaml
-> @@ -0,0 +1,103 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/renesas,sh7750-cpg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+...
+
+> +config COMMON_CLK_EYEQ5
+> +	bool "Clock driver for the Mobileye EyeQ5 platform"
+
+> +	depends on OF
+
+Since it's a functional dependency, why not allow compile test without OF being
+enabled?
+
+> +	depends on MACH_EYEQ5 || COMPILE_TEST
+> +	default MACH_EYEQ5
+> +	help
+> +	  This driver provides the clocks found on the Mobileye EyeQ5 SoC. Its
+> +	  registers live in a shared register region called OLB. It provides 10
+> +	  read-only PLLs derived from the main crystal clock which must be constant
+> +	  and one divider clock based on one PLL.
+
+...
+
+> +#include <linux/array_size.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+
++ errno.h (yes, you need both)
+
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+
++ overflow.h
+
+> +#include <linux/platform_device.h>
+> +#include <linux/printk.h>
+> +#include <linux/slab.h>
+> +#include <linux/types.h>
+
+...
+
+> +struct eq5c_pll {
+> +	int		index;
+
+Index can be negative? Any comment about this case?
+
+> +	const char	*name;
+> +	u32		reg;	/* next 8 bytes are r0 and r1 */
+
+Not sure this comments gives any clarification to a mere reader of the code.
+Perhaps you want to name this as reg64 (at least it will show that you have
+8 bytes, but I have no clue what is the semantic relationship between r0 and
+r1, it's quite cryptic to me). Or maybe it should be reg_0_1?
+
+> +};
+
+...
+
+> +static int eq5c_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+
+> +	struct device_node *np = dev->of_node;
+
+It's used only once. Why not just use dev->of_node there?
+
+> +	void __iomem *base_plls, *base_ospi;
+> +	struct clk_hw *hw;
+> +	int i;
 > +
-> +title: Renesas SH7750/7751 Clock Pulse Generator (CPG)
+> +	/* Return potential error from eq5c_init(). */
+> +	if (IS_ERR(eq5c_clk_data))
+> +		return PTR_ERR(eq5c_clk_data);
+
+> +	/* Return an error if eq5c_init() did not get called. */
+> +	else if (!eq5c_clk_data)
+
+Redundant 'else'
+
+> +		return -EINVAL;
+
+I didn't get. If eq5c_init() was finished successfully, why do you need to
+seems repeat what it already done? What did I miss?
+
+> +	base_plls = devm_platform_ioremap_resource_byname(pdev, "plls");
+> +	if (IS_ERR(base_plls))
+> +		return PTR_ERR(base_plls);
 > +
-> +maintainers:
-> +  - Yoshinori Sato <ysato@users.sourceforge.jp>
+> +	base_ospi = devm_platform_ioremap_resource_byname(pdev, "ospi");
+> +	if (IS_ERR(base_ospi))
+> +		return PTR_ERR(base_ospi);
 > +
-> +description:
-> +  The Clock Pulse Generator (CPG) generates core clocks for the SoC.  It
-> +  includes PLLs, and variable ratio dividers.
+> +	for (i = 0; i < ARRAY_SIZE(eq5c_plls); i++) {
+> +		const struct eq5c_pll *pll = &eq5c_plls[i];
+> +		unsigned long mult, div, acc;
+> +		u32 r0, r1;
+> +		int ret;
 > +
-> +  The CPG may also provide a Clock Domain for SoC devices, in combinatio=
-n with
-> +  the CPG Module Stop (MSTP) Clocks.
+> +		r0 = readl(base_plls + pll->reg);
+> +		r1 = readl(base_plls + pll->reg + sizeof(r0));
 > +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - renesas,sh7750-cpg             # SH7750
-> +      - renesas,sh7750s-cpg            # SH775S
-> +      - renesas,sh7750r-cpg            # SH7750R
-> +      - renesas,sh7751-cpg             # SH7751
-> +      - renesas,sh7751r-cpg            # SH7751R
+> +		ret = eq5c_pll_parse_registers(r0, r1, &mult, &div, &acc);
+> +		if (ret) {
+> +			dev_warn(dev, "failed parsing state of %s\n", pll->name);
+> +			eq5c_clk_data->hws[pll->index] = ERR_PTR(ret);
+> +			continue;
+> +		}
 > +
-> +  reg: true
+> +		hw = clk_hw_register_fixed_factor_with_accuracy_fwname(dev, np,
+> +				pll->name, "ref", 0, mult, div, acc);
+> +		eq5c_clk_data->hws[pll->index] = hw;
+> +		if (IS_ERR(hw))
+
+> +			dev_err_probe(dev, PTR_ERR(hw), "failed registering %s\n",
+> +				      pll->name);
+
+Missed return statement?
+
+> +	}
 > +
-> +  reg-names: true
+> +	hw = clk_hw_register_divider_table_parent_hw(dev, EQ5C_OSPI_DIV_CLK_NAME,
+> +			eq5c_clk_data->hws[EQ5C_PLL_PER], 0,
+> +			base_ospi, 0, EQ5C_OSPI_DIV_WIDTH, 0,
+> +			eq5c_ospi_div_table, NULL);
+> +	eq5c_clk_data->hws[EQ5C_DIV_OSPI] = hw;
+> +	if (IS_ERR(hw))
+> +		dev_err_probe(dev, PTR_ERR(hw), "failed registering %s\n",
+> +			      EQ5C_OSPI_DIV_CLK_NAME);
+
+Ditto.
+
+> +	return 0;
+> +}
+
+> +static void __init eq5c_init(struct device_node *np)
+> +{
+> +	void __iomem *base_plls, *base_ospi;
+> +	int index_plls, index_ospi;
+> +	int i, ret;
+
+Why is i signed?
+
+> +	eq5c_clk_data = kzalloc(struct_size(eq5c_clk_data, hws, EQ5C_NB_CLKS),
+> +				GFP_KERNEL);
+> +	if (!eq5c_clk_data) {
+> +		ret = -ENOMEM;
+> +		goto err;
+> +	}
 > +
-> +  clocks: true
-
-  clocks:
-    maxItems: 1
-
+> +	eq5c_clk_data->num = EQ5C_NB_CLKS;
 > +
-> +  clock-names: true
+> +	/*
+> +	 * Mark all clocks as deferred. We register some now and others at
+> +	 * platform device probe.
+> +	 */
+> +	for (i = 0; i < EQ5C_NB_CLKS; i++)
+> +		eq5c_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
 
-  clock-names:
-      const: extal
+> +	index_plls = of_property_match_string(np, "reg-names", "plls");
+> +	if (index_plls < 0) {
+> +		ret = index_plls;
+> +		goto err;
+> +	}
 
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/sh7750-cpg.h>
-> +    cpg: clock-controller@ffc00000 {
-> +        #clock-cells =3D <1>;
-> +        #power-domain-cells =3D <0>;
-> +        compatible =3D "renesas,sh7751r-cpg";
-> +        clocks =3D <&xtal>;
-> +        clock-names =3D "xtal";
+Better pattern is to avoid the output pollution in the error case. Hence
 
-"extal"
+	ret = of_property_match_string(np, "reg-names", "plls");
+	if (ret < 0)
+		goto err;
+	index_plls = ret;
 
-"xtal" is an output pin, connected to a crystal resonator.
-"extal" is the clock input put (either crystal resonator or exteral
-clock input.
+> +	index_ospi = of_property_match_string(np, "reg-names", "ospi");
+> +	if (index_ospi < 0) {
+> +		ret = index_ospi;
+> +		goto err;
+> +	}
 
-> +        reg =3D <0xffc00000 20>, <0xfe0a0000 16>;
-> +        reg-names =3D "FRQCR", "CLKSTP00";
-> +        renesas,mode =3D <0>;
-> +    };
-> diff --git a/include/dt-bindings/clock/sh7750-cpg.h b/include/dt-bindings=
-/clock/sh7750-cpg.h
-> new file mode 100644
-> index 000000000000..17d5a8076aac
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/sh7750-cpg.h
-> @@ -0,0 +1,26 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> + *
-> + * Copyright 2023 Yoshinori Sato
-> + */
+Ditto.
+
+> +	base_plls = of_iomap(np, index_plls);
+> +	base_ospi = of_iomap(np, index_ospi);
+> +	if (!base_plls || !base_ospi) {
+> +		ret = -ENODEV;
+> +		goto err;
+> +	}
+
+> +	for (i = 0; i < ARRAY_SIZE(eq5c_early_plls); i++) {
+> +		const struct eq5c_pll *pll = &eq5c_early_plls[i];
+> +		unsigned long mult, div, acc;
+> +		struct clk_hw *hw;
+> +		u32 r0, r1;
 > +
-> +#ifndef __DT_BINDINGS_CLOCK_SH7750_H__
-> +#define __DT_BINDINGS_CLOCK_SH7750_H__
+> +		r0 = readl(base_plls + pll->reg);
+> +		r1 = readl(base_plls + pll->reg + sizeof(r0));
 > +
-> +#define SH7750_CPG_PLLOUT      0
+> +		ret = eq5c_pll_parse_registers(r0, r1, &mult, &div, &acc);
+> +		if (ret) {
+> +			pr_warn("failed parsing state of %s\n", pll->name);
+> +			eq5c_clk_data->hws[pll->index] = ERR_PTR(ret);
+> +			continue;
+> +		}
 > +
-> +#define SH7750_CPG_FCK         1
+> +		hw = clk_hw_register_fixed_factor_with_accuracy_fwname(NULL,
+> +				np, pll->name, "ref", 0, mult, div, acc);
+> +		eq5c_clk_data->hws[pll->index] = hw;
+> +		if (IS_ERR(hw))
+> +			pr_err("failed registering %s: %ld\n",
 
-PCK?
+%pe ?
 
-> +#define SH7750_CPG_BCK         2
-> +#define SH7750_CPG_ICK         3
+> +			       pll->name, PTR_ERR(hw));
 
-Gr{oetje,eeting}s,
+Is the error not critical? Is it fine? How is it supposed to work at such
+circumstances?
 
-                        Geert
+> +	}
+> +
+> +	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, eq5c_clk_data);
+> +	if (ret) {
+> +		pr_err("failed registering clk provider: %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	return;
+> +
+> +err:
+> +	kfree(eq5c_clk_data);
+> +	/* Signal to platform driver probe that we failed init. */
+> +	eq5c_clk_data = ERR_PTR(ret);
+> +}
+> +
+> +CLK_OF_DECLARE_DRIVER(eq5c, "mobileye,eyeq5-clk", eq5c_init);
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-- 
+With Best Regards,
+Andy Shevchenko
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
