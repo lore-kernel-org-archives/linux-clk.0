@@ -1,35 +1,35 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC503FB82;
-	Wed, 28 Feb 2024 17:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CBE40845;
+	Wed, 28 Feb 2024 18:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709139899; cv=none; b=r766KZ5BvMw0Fw37YWGorgkMVQwmxV0v/QlmLlKJe+x90G0U4oy0az4QrjaujazVQo5TABshzR7g+5IRxV3N18rE19sLlimwkCeAADFC1jnRMfz79BS2BHCWIfGJSvCXcNUU6pIqyB/oFbBVzYSRkXSXBmauwa9Wy9F6BcwAJBQ=
+	t=1709144125; cv=none; b=PygKRKsQZjdn+HB08SbTx08eKWZRHR9nk7pV1HcSONWQpy9J0iwnL/d39+uK9n0YGn4ka4EpBPjLZ390oikExXYTmOyd4ks4cZn8YIRG9HQXkXAxLnE9LYkWRThJtizGFiXlQHzLRewZ3rGeEhsO6z+IlnPhbrlcAX+QB/FBy9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709139899; c=relaxed/simple;
-	bh=44x5yDcOLSCbcSbnsWN3XwhRRPVfXIBZAjD6hjXZx+U=;
+	s=arc-20240116; t=1709144125; c=relaxed/simple;
+	bh=3zoZeon8Er00fPoyYR7FKoG9wvQMXgKJldR2no22xGc=;
 	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=UDhH1LQlk0yc+EX4FJ1WHmf3toxiWmR43m1kuec9Np3yEoIzcaHy3KM5Cymzjhg45WWDZPNKERi6h8l9jgidM7CsslWrHTuMv8GjBfIzGuQ7U88wdjH4oHAEQlsAczM/ahXxa70gCJCmPzOWkJAnql/n0mcAR9O2abFEIlgol08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iBfKunRp; arc=none smtp.client-ip=217.70.183.198
+	 References:In-Reply-To; b=Mp2a7jyUmcZH2e+5tCM5ShUC+379KmU5HUqaNRKsSrtbeihT6w9TjfnHN958nz0C6aaFPYgYgtpysD5TeyOYuHDdWvjYa+TI3Af779OU4bf/jX50J2XRYkZbseNO0PW/yilRxQKMiShaugu39HRRWwp5hkQjpS7S+ekMNNTCzvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hUeXU0Dc; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iBfKunRp"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 89A0BC0008;
-	Wed, 28 Feb 2024 17:04:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hUeXU0Dc"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B24D0E0004;
+	Wed, 28 Feb 2024 18:15:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1709139888;
+	t=1709144114;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vCBAaabth7lAvvtJBPFWrOiPFUdycHNsNEJADPl3zuo=;
-	b=iBfKunRpv70S9wYQ7RV+vXOCFrhSr/wioOineNSxRoS8gzIJ7dP9cBopMwVt8SikHz4pmx
-	lnIvETzRCKqMbdO+bzwtUwjeaNz/cLX86KFW0GWzf/AXxKk0vNC3Y70ThSU7WnDc/JqhpK
-	rCMvQ8bJ+rjxe0V1WdPbKDZtSdGubAc+cSD4P16wSf+x/AO4ZC89zCX4f02MYOuA0YPAbQ
-	V3Lfw9vpxx4dV1bcNNd8MlwuwWnNnhrqJ8lbRKACwcD67WtzfyrFWVUextxAhObLvDjkn4
-	RaDLe0Z2o4OdJs+zXK0fAjps8rOUWppPw8BfJds4sYHHGiZ2BeU99k6pMXiiuQ==
+	bh=AEgpRUNUfdg/AqiT2bihKk1UxwLOVFdlGxOh9RWqINU=;
+	b=hUeXU0Dcz0oN5vPtmTZkmUoqledoV215cMP44ULFKJnKlxmq66q0nhu0rJ7XsFcBie/HVn
+	Fgr58C1Y/wR8o18KkMvVq6aPRltmvfplwtYKt6Vc8TrBc00P2QAYWorY7wArPdmV8SsIwz
+	ResjbJ/pBjntbYRRl0KHnAnZJB27Aw/phutESczR7m6ZukGea+RcuHFVYhflADsFLOYkFB
+	1Ne9TyHhAEPe3bXjY1R4FFrnI8PHmZy9cVevTfN6aQUbWocIBkR8tZLYcp/IGN/Ulkvh0b
+	8eJpEciQ6J00GoGUhdT4MPWhswO/WmVYHf3NHF7pOkoNHFSQ4n4DllZpx47plg==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -38,8 +38,8 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 28 Feb 2024 18:04:47 +0100
-Message-Id: <CZGVIWR4H4DE.3M5H3H99X0QPT@bootlin.com>
+Date: Wed, 28 Feb 2024 19:15:12 +0100
+Message-Id: <CZGX0TSYLOH4.DZHG351R9KFZ@bootlin.com>
 Cc: "Gregory CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
  <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
  <robh+dt@kernel.org>, "Krzysztof Kozlowski"
@@ -54,143 +54,311 @@ Cc: "Gregory CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
  <tawfik.bayouk@mobileye.com>, <linux-gpio@vger.kernel.org>
 To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v8 04/10] reset: eyeq5: add platform driver
+Subject: Re: [PATCH v8 05/10] pinctrl: eyeq5: add platform driver
 X-Mailer: aerc 0.15.2
 References: <20240227-mbly-clk-v8-0-c57fbda7664a@bootlin.com>
- <20240227-mbly-clk-v8-4-c57fbda7664a@bootlin.com>
- <Zd4bbCsY54XEnvJM@smile.fi.intel.com>
-In-Reply-To: <Zd4bbCsY54XEnvJM@smile.fi.intel.com>
+ <20240227-mbly-clk-v8-5-c57fbda7664a@bootlin.com>
+ <Zd4moVd_-bY6Z_kL@smile.fi.intel.com>
+In-Reply-To: <Zd4moVd_-bY6Z_kL@smile.fi.intel.com>
 X-GND-Sasl: theo.lebrun@bootlin.com
 
 Hello,
 
-I won't be answering to straight forward comments.
-
-On Tue Feb 27, 2024 at 6:27 PM CET, Andy Shevchenko wrote:
-> On Tue, Feb 27, 2024 at 03:55:25PM +0100, Th=C3=A9o Lebrun wrote:
-> > Add the Mobileye EyeQ5 reset controller driver. It belongs to a syscon
-> > region called OLB. It might grow to add later support of other
-> > platforms from Mobileye.
+On Tue Feb 27, 2024 at 7:14 PM CET, Andy Shevchenko wrote:
+> On Tue, Feb 27, 2024 at 03:55:26PM +0100, Th=C3=A9o Lebrun wrote:
+> > Add the Mobileye EyeQ5 pin controller driver. It might grow to add late=
+r
+> > support of other platforms from Mobileye. It belongs to a syscon region
+> > called OLB.
+> >=20
+> > Existing pins and their function live statically in the driver code
+> > rather than in the devicetree, see compatible match data.
 >
 > ...
 >
-> The inclusion block is a semi-random. Please, follow IWYU principle.
+> > +config PINCTRL_EYEQ5
+> > +	bool "Mobileye EyeQ5 pinctrl driver"
 >
-> + array_size.h
-> + bits.h
-> + bug.h
-> + container_of.h
+> Can't be a module?
+
+It theory it could, I however do not see why that would be done. Pinctrl
+is essential to the platform capabilities. The platform is an embedded
+one and performance-oriented; boot-time is important and no user will
+ever want to load pinctrl as a module.
+
 >
-> > +#include <linux/cleanup.h>
-> > +#include <linux/delay.h>
+> > +	depends on OF
 >
-> + device.h
-> + err.h
-> + io.h
-> + lockdep.h
->
-> + mod_devicetable.h
->
-> > +#include <linux/mutex.h>
->
+> It's even not needed for this software as far as I can tell from the code=
+.
+
+Indeed looks like it. Will try that out and remove the dependency if it
+works as expected.
+
+[...]
+
 > > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
 > > +#include <linux/of_device.h>
->
-> Are all of them in use?
->
+> > +#include <linux/pinctrl/pinconf-generic.h>
+> > +#include <linux/pinctrl/pinconf.h>
+> > +#include <linux/pinctrl/pinctrl.h>
+> > +#include <linux/pinctrl/pinmux.h>
 > > +#include <linux/platform_device.h>
-> > +#include <linux/reset-controller.h>
+> > +#include <linux/seq_file.h>
 >
-> + types.h
+> Semi-random list of the inclusions. Please, fix it.
+> While doing that, group out pinctrl/* ones as it's done in other drivers.
 
-I'm adding yours + errno.h + init.h (for THIS_MODULE) + slab.h (for GFP
-flags). I'm removing unused of_address.h and of_device.h.
+Here is my new list:
 
-delay.h will be removed and iopoll.h will be added based on changes
-following your comments.
+#include <linux/array_size.h>
+#include <linux/bits.h>
+#include <linux/bug.h>
+#include <linux/device.h>
+#include <linux/err.h>
+#include <linux/errno.h>
+#include <linux/io.h>
+#include <linux/mod_devicetable.h>
+#include <linux/platform_device.h>
+#include <linux/seq_file.h>
+#include <linux/slab.h>
+#include <linux/types.h>
+
+#include <linux/pinctrl/pinconf-generic.h>
+#include <linux/pinctrl/pinconf.h>
+#include <linux/pinctrl/pinctrl.h>
+#include <linux/pinctrl/pinmux.h>
+
+#include "core.h"
+#include "pinctrl-utils.h"
 
 [...]
 
-> > +static int eq5r_deassert(struct reset_controller_dev *rcdev, unsigned =
-long id)
+> > +static bool eq5p_test_bit(const struct eq5p_pinctrl *pctrl,
+> > +			  enum eq5p_bank bank, enum eq5p_regs reg, int offset)
 > > +{
-> > +	struct eq5r_private *priv =3D rcdev_to_priv(rcdev);
-> > +	u32 offset =3D id & GENMASK(7, 0);
-> > +	u32 domain =3D id >> 8;
+> > +	u32 val =3D readl(pctrl->base + eq5p_regs[bank][reg]);
 >
-> Perhaps
+> > +	if (WARN_ON(offset > 31))
+> > +		return false;
 >
-> 	u32 offset =3D (id & GENMASK(7, 0)) >> 0;
-> 	u32 domain =3D (id & GENMASK(31, 8)) >> 8;
->
-> for better understanding the split?
+> When this condition can be true?
 
-Do the additional zero-bit-shift and GENMASK() help understanding? My
-brain needs time to parse them to then notice they do nothing and
-simplify the code in my head, back to the original version.
+If there is a bug in the code. Defensive programming.
 
-I personally like the simplest version (the original one). But otherwise
-FIELD_GET() with two globally-defined masks could be a solution as
-well. I still prefer the original version better. Less symbols, less
-complexity.
+There is this subtle conversion of pin numbers =3D> offset inside of a
+bank. If one function forgets doing this then eq5p_test_bit() gets
+called with a pin number.
+
+In this GPIO series I fixed such a bug in a 10 year old driver:
+https://lore.kernel.org/lkml/20240228-mbly-gpio-v2-5-3ba757474006@bootlin.c=
+om/
+
+The whole "if it can happen it will happen" mantra. We'll get a warning
+in the logs using pinctrl-eyeq5.
+
+>
+> > +	return (val & BIT(offset)) !=3D 0;
+> > +}
+>
+> ...
+>
+> > +static int eq5p_pinconf_get(struct pinctrl_dev *pctldev, unsigned int =
+pin,
+> > +			    unsigned long *config);
+>
+> Can't you avoid forward declarations?
+
+Yes, will do so.
+
+>
+> ...
+>
+> > +	if (!eq5p_test_bit(pctrl, bank, EQ5P_IOCR, offset)) {
+>
+> What's wrong with positive conditional?
+
+Nothing. In my mind GPIO was first, other was second. Will change.
+
+>
+>
+> > +	} else {
+>
+> > +	}
+>
+> ...
+>
+> > +static const struct pinctrl_ops eq5p_pinctrl_ops =3D {
+> > +	.get_groups_count	=3D eq5p_pinctrl_get_groups_count,
+> > +	.get_group_name		=3D eq5p_pinctrl_get_group_name,
+> > +	.get_group_pins		=3D eq5p_pinctrl_get_group_pins,
+> > +	.pin_dbg_show		=3D eq5p_pinctrl_pin_dbg_show,
+>
+> > +	.dt_node_to_map		=3D pinconf_generic_dt_node_to_map_pin,
+> > +	.dt_free_map		=3D pinctrl_utils_free_map,
+>
+> ifdef is missing for these... But the question is, isn't these a default =
+when
+> OF is in use?
+
+Doesn't look like it is. In drivers/pinctrl/devicetree.c:
+
+	static int dt_to_map_one_config(struct pinctrl *p,
+					struct pinctrl_dev *hog_pctldev,
+					const char *statename,
+					struct device_node *np_config)
+	{
+		// ...
+
+		/*
+		 * Call pinctrl driver to parse device tree node, and
+		 * generate mapping table entries
+		 */
+		ops =3D pctldev->desc->pctlops;
+		if (!ops->dt_node_to_map) {
+			dev_err(p->dev, "pctldev %s doesn't support DT\n",
+				dev_name(pctldev->dev));
+			return -ENODEV;
+		}
+
+		// ...
+	}
+
+And I see nowhere that puts a value if ->dt_node_to_map is empty.
+
+For dt_free_map, it is an optional value. If the field is NULL nothing
+is done. See dt_free_map() in the same file.
 
 [...]
 
-> > +	struct eq5r_private *priv;
-> > +	int ret, i;
+> > +	mask =3D BIT(offset);
+> > +	val =3D is_gpio ? 0 : U32_MAX;
 >
-> Why is i signed?
+> I think you meant something else (semantically) than U32_MAX.
+> Perhaps GENMASK(31, 0)?
 
-No reason, will switch to unsigned int.
+To me the semantic of U32_MAX is the same. I see where you are coming
+from. A better alternative however would be:
 
->
-> > +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > +	if (!priv)
-> > +		return -ENOMEM;
-> > +
-> > +	priv->base_d0 =3D devm_platform_ioremap_resource_byname(pdev, "d0");
-> > +	if (IS_ERR(priv->base_d0))
-> > +		return PTR_ERR(priv->base_d0);
-> > +
-> > +	priv->base_d1 =3D devm_platform_ioremap_resource_byname(pdev, "d1");
-> > +	if (IS_ERR(priv->base_d1))
-> > +		return PTR_ERR(priv->base_d1);
-> > +
-> > +	priv->base_d2 =3D devm_platform_ioremap_resource_byname(pdev, "d2");
-> > +	if (IS_ERR(priv->base_d2))
-> > +		return PTR_ERR(priv->base_d2);
-> > +
-> > +	for (i =3D 0; i < EQ5R_DOMAIN_COUNT; i++)
-> > +		mutex_init(&priv->mutexes[i]);
-> > +
-> > +	priv->rcdev.ops =3D &eq5r_ops;
-> > +	priv->rcdev.owner =3D THIS_MODULE;
-> > +	priv->rcdev.dev =3D dev;
->
-> > +	priv->rcdev.of_node =3D np;
->
-> It's better to use device_set_node().
+	mask =3D BIT(offset);
+	val =3D is_gpio ? 0 : mask;
 
-I don't see how device_set_node() can help? It works on struct device
-pointers. Here priv->rcdev is a reset_controller_dev struct. There are
-no users of device_set_node() in drivers/reset/.
+That way the desire is clear and the code is simpler.
 
 >
-> > +	priv->rcdev.of_reset_n_cells =3D 2;
-> > +	priv->rcdev.of_xlate =3D eq5r_of_xlate;
+> ...
+>
+> > +static int eq5p_pinconf_get(struct pinctrl_dev *pctldev, unsigned int =
+pin,
+> > +			    unsigned long *config)
+> > +{
+> > +	enum pin_config_param param =3D pinconf_to_config_param(*config);
+> > +	struct eq5p_pinctrl *pctrl =3D pinctrl_dev_get_drvdata(pctldev);
+> > +	unsigned int offset =3D eq5p_pin_to_offset(pin);
+> > +	enum eq5p_bank bank =3D eq5p_pin_to_bank(pin);
+> > +	u32 val_ds, arg =3D 0;
+>
+> What's arg assignment for?
+
+No reason indeed. Will remove the assignment.
+
+>
+> > +	bool pd, pu;
 > > +
-> > +	priv->rcdev.nr_resets =3D 0;
-> > +	for (i =3D 0; i < EQ5R_DOMAIN_COUNT; i++)
+> > +	pd =3D eq5p_test_bit(pctrl, bank, EQ5P_PD, offset);
+> > +	pu =3D eq5p_test_bit(pctrl, bank, EQ5P_PU, offset);
+> > +
+> > +	switch (param) {
+> > +	case PIN_CONFIG_BIAS_DISABLE:
+> > +		arg =3D !(pd || pu);
+> > +		break;
+> > +	case PIN_CONFIG_BIAS_PULL_DOWN:
+> > +		arg =3D pd;
+> > +		break;
+> > +	case PIN_CONFIG_BIAS_PULL_UP:
+> > +		arg =3D pu;
+> > +		break;
+> > +	case PIN_CONFIG_DRIVE_STRENGTH:
+> > +		offset *=3D 2; /* two bits per pin */
+> > +		if (offset >=3D 32) {
+> > +			val_ds =3D readl(pctrl->base + eq5p_regs[bank][EQ5P_DS_HIGH]);
+> > +			offset -=3D 32;
+> > +		} else {
+> > +			val_ds =3D readl(pctrl->base + eq5p_regs[bank][EQ5P_DS_LOW]);
+> > +		}
 >
-> > +		priv->rcdev.nr_resets +=3D __builtin_popcount(eq5r_valid_masks[i]);
+> I'm wondering why you can't use your helpers before multiplication?
+
+I'm unsure what helpers you are talking about?
+
+If the question is about why multiply before if-condition: I feel like
+multiplying first allows having the if condition be "offset >=3D 32".
+That explicits why we readl HIGH vs LOW regs.
+
+[...]
+
 >
-> Please, use corresponding hweightXX() API.
+> > +static int eq5p_pinconf_set_drive_strength(struct pinctrl_dev *pctldev=
+,
+> > +					   unsigned int pin, u32 arg)
+> > +{
+> > +	struct eq5p_pinctrl *pctrl =3D pinctrl_dev_get_drvdata(pctldev);
+> > +	unsigned int offset =3D eq5p_pin_to_offset(pin);
+> > +	enum eq5p_bank bank =3D eq5p_pin_to_bank(pin);
+> > +	unsigned int reg;
+> > +	u32 mask, val;
+> > +
+> > +	if (arg > 3) {
+>
+> Magic number.
 
-Noted. I did not find this keyword even though I searched quite a bit
-for it. "popcount" sounds more logical to me. :-)
+Would 0b11 explicit why? The value is two bits wide, so 0 thru 3.
 
-Thanks for the review Andy!
+>
+> > +		dev_err(pctldev->dev, "Unsupported drive strength: %u\n", arg);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	offset *=3D 2; /* two bits per pin */
+> > +
+> > +	if (offset >=3D 32) {
+> > +		reg =3D EQ5P_DS_HIGH;
+> > +		offset -=3D 32;
+> > +	} else {
+> > +		reg =3D EQ5P_DS_LOW;
+> > +	}
+>
+> > +	mask =3D 0b11 << offset;
+> > +	val =3D arg << offset;
+> > +	eq5p_update_bits(pctrl, bank, reg, mask, val);
+>
+> Similar comments as per previous function.
+
+So GENMASK(1, 0) rather than 0b11. Or GENMASK(offset+1, offset).
+
+Something else?
+
+>
+> > +	return 0;
+> > +}
+>
+> ...
+>
+> > +static const struct of_device_id eq5p_match[] =3D {
+> > +	{ .compatible =3D "mobileye,eyeq5-pinctrl" },
+> > +	{},
+>
+> No comma in the terminator entry.
+>
+> > +};
+>
+> No MODULE_DEVICE_TABLE()?
+
+It is an oversight. Will be added.
+
+Thanks for the review Andy.
+
+Have a nice day,
 
 --
 Th=C3=A9o Lebrun, Bootlin
