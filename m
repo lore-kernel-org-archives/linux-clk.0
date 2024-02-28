@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2471E1361AE;
-	Wed, 28 Feb 2024 22:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890341361A3;
+	Wed, 28 Feb 2024 22:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709158491; cv=none; b=TUIvgnB/E/aDTUcDbwnRwOo0M6Qmm83zd+4bXPkkmZNx1xSE0llBSsl9v64kOF/0jstV8WzgrD059iGL7rMJ+ICKCatKSmEoNYIDpuO7JG8JvDOnzcm9kRDwHThGlySPLQ2af4fSm95lCC1Gy1415LtLXDqU2qdMib97HlYQSyo=
+	t=1709158686; cv=none; b=oKCqi2/Qo0AY+FWjh9Xm1fxv0FnqA5E5Bb6iSoX6q8p+G5WyJr1qRgLud+7gQzW/dBDS17TX9IOtjKi6yrtW3j878l6DWs6a93RH5qJ5jqfyOBvWvMGkCo6sq9JS9ZgNNjYnlynAefyPP8MrablYknZUyuneNiSdxQYkTABL+o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709158491; c=relaxed/simple;
-	bh=EFKm7abarpkXzv8/wcmcMD5nBO5+BHxOxUJcwzjgsmc=;
+	s=arc-20240116; t=1709158686; c=relaxed/simple;
+	bh=XgRBeERvVGVRTMKOSp0B+k8IqLT4mFYWBW+Ok+EN2DY=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=gRqZGj+PFWF3b5FKE0YEOeICfQFB9wqVUJVpJDRj7847CICskLBjFuH87uRpYrNrppO2bdZ9P+2KcB/I4jAhUn5jNDzYGE/dXq3C+pUZsTtfj9df00PcG66Lt6AHD200tTgEEfuy3aNkamEFz6dTGR8vmRB5UaKUP1P/l7GcnOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwNdZ/f6; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Bz1gpzGBO2Srj/CEej96d6glVY74JzfSZubyk4SF/OKhPXXp70Ur/mQntdt7etNNVsrp3ZKa1d1WxqS7Ify4a/j4MIG3e/DR1lDG848pEffzI6Fch+IEYdrtIKK6MgUowoGpsAuMdHeDT6nHvyTxLJAgwHF2MkciDpHbzXu7jok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kn6KZG+V; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwNdZ/f6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94C7FC433C7;
-	Wed, 28 Feb 2024 22:14:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kn6KZG+V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15252C433F1;
+	Wed, 28 Feb 2024 22:18:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709158490;
-	bh=EFKm7abarpkXzv8/wcmcMD5nBO5+BHxOxUJcwzjgsmc=;
+	s=k20201202; t=1709158686;
+	bh=XgRBeERvVGVRTMKOSp0B+k8IqLT4mFYWBW+Ok+EN2DY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=KwNdZ/f6BmKcNXsuczUcBIPmBZQaWK+bL2u14JVCKX8g9xnhU3MiMKtMrsgclTLIi
-	 BbvHVZlisvOq4RcFlCEUez6ketYN+LRYhYFoOD5byuzQxPOZNr738Jjiw+ABbNnrta
-	 wpiyJWMWWqPS7N8dKdF0Es4K531SHeHrNHNFlejtN2eNKVWMb6PjiikNT90NVlypFK
-	 RF3DpHUf6KuZP8lxIsYmNMIn6G02nrBiEqf5AQGRMJaERhwUsE8kVag/4a5Qeg8N6S
-	 XTWnQDv6vpctF6Zij1LQ4YekhhFojMZGQaYif0QXX8FUAy7JQkRc/F4zorJaY2Q36J
-	 JZ+FKAK/8l5rA==
-Message-ID: <24963d5f5a964f7620a4aa1cf5769d62.sboyd@kernel.org>
+	b=kn6KZG+Vo9H4uSUtWN/Ywm+W5t5mRmUSu3k9ZH+K3+uqq/kvsbHZnqY4LYfPY/h8Y
+	 lIKUBFxU4WV4+V3F1d5FugkOWz9puNZlgBu2WX1+Ej8rOaHjyxVxgD+M+8bIuNnIgl
+	 UqQf/CRzIFaGFb3aF1T5BNfVYBSeXUzmLxmOZHSn8sF1FYYDmwZibZYAZekzOLB+kf
+	 j8hms/IgHk5aLwFfRtV9KyB0/NigVAXa0nEQ1CbG+6dycDdp/0SPNRjgGuYdqER3w5
+	 5FvSizj73YbMEVlSrDZasqDhsHirKEzaKCHdt9e6lO8d2D+X2ZM2Nd+SUeq3ioRjwb
+	 tqfy9isPUs6sQ==
+Message-ID: <d81a0e5a477f03c248111f515ae2e3be.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,36 +35,78 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240223202556.2194021-1-michael.j.ruhl@intel.com>
-References: <20240223202556.2194021-1-michael.j.ruhl@intel.com>
-Subject: Re: [PATCH v3] clkdev: Update clkdev id usage to allow for longer names
+In-Reply-To: <20240228082649.1633083-1-peng.fan@oss.nxp.com>
+References: <20240228082649.1633083-1-peng.fan@oss.nxp.com>
+Subject: Re: [PATCH] clk: imx: lpcg-scu: SW workaround for errata (e10858)
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, andriy.shevchenko@linux.intel.com, Michael J. Ruhl <michael.j.ruhl@intel.com>, Russell King <rmk+kernel@armlinux.org.uk>
-To: Michael J. Ruhl <michael.j.ruhl@intel.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 28 Feb 2024 14:14:48 -0800
+Cc: imx@lists.linux.dev, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+To: Peng Fan (OSS) <peng.fan@oss.nxp.com>, abelvesa@kernel.org, festevam@gmail.com, kernel@pengutronix.de, mturquette@baylibre.com, s.hauer@pengutronix.de, shawnguo@kernel.org
+Date: Wed, 28 Feb 2024 14:18:03 -0800
 User-Agent: alot/0.10
 
-Quoting Michael J. Ruhl (2024-02-23 12:25:56)
-> clkdev DEV ID information is limited to an array of 20 bytes
-> (MAX_DEV_ID).  It is possible that the ID could be longer than
-> that.  If so, the lookup will fail because the "real ID" will
-> not match the copied value.
->=20
-> For instance, generating a device name for the I2C Designware
-> module using the PCI ID can result in a name of:
->=20
-> i2c_designware.39424
->=20
-> clkdev_create() will store:
->=20
-> i2c_designware.3942
->=20
-> The stored name is one off and will not match correctly during probe.
->=20
-> Increase the size of the ID to allow for a longer name.
->=20
-> Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-> ---
+Quoting Peng Fan (OSS) (2024-02-28 00:26:49)
+> diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-sc=
+u.c
+> index dd5abd09f3e2..b30d0f8b5bca 100644
+> --- a/drivers/clk/imx/clk-lpcg-scu.c
+> +++ b/drivers/clk/imx/clk-lpcg-scu.c
+> @@ -6,6 +6,7 @@
+> =20
+>  #include <linux/bits.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+>  #include <linux/slab.h>
+> @@ -41,6 +42,31 @@ struct clk_lpcg_scu {
+> =20
+>  #define to_clk_lpcg_scu(_hw) container_of(_hw, struct clk_lpcg_scu, hw)
+> =20
+> +/* e10858 -LPCG clock gating register synchronization errata */
+> +static void do_lpcg_workaround(u32 rate, void __iomem *reg, u32 val)
 
-Applied to clk-next
+unsigned long rate
+
+> +{
+> +       writel(val, reg);
+> +
+> +       if (rate >=3D 24000000 || rate =3D=3D 0) {
+> +               u32 reg1;
+
+Please declare this variable at the start of the function.
+
+> +
+> +               /*
+> +                * The time taken to access the LPCG registers from the A=
+P core
+> +                * through the interconnect is longer than the minimum de=
+lay
+> +                * of 4 clock cycles required by the errata.
+> +                * Adding a readl will provide sufficient delay to prevent
+> +                * back-to-back writes.
+> +                */
+> +               reg1 =3D readl(reg);
+> +       } else {
+> +               /*
+> +                * For clocks running below 24MHz, wait a minimum of
+> +                * 4 clock cycles.
+> +                */
+> +               ndelay(4 * (DIV_ROUND_UP(1000000000, rate)));
+> +       }
+> +}
+> +
+>  static int clk_lpcg_scu_enable(struct clk_hw *hw)
+>  {
+>         struct clk_lpcg_scu *clk =3D to_clk_lpcg_scu(hw);
+> @@ -57,7 +83,8 @@ static int clk_lpcg_scu_enable(struct clk_hw *hw)
+>                 val |=3D CLK_GATE_SCU_LPCG_HW_SEL;
+> =20
+>         reg |=3D val << clk->bit_idx;
+> -       writel(reg, clk->reg);
+> +
+> +       do_lpcg_workaround(clk_hw_get_rate(hw), clk->reg, reg);
+
+I'd prefer the name had 'writel' in it somewhere.
+> =20
+>         spin_unlock_irqrestore(&imx_lpcg_scu_lock, flags);
+>
