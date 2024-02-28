@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066EB7291D;
-	Wed, 28 Feb 2024 23:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2DA13D2E6;
+	Wed, 28 Feb 2024 23:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709161244; cv=none; b=VgBpzQ6aL8jTN98XQqym4tSGmQR3+jGg0LapIdArKY+zAopKVcfmANLJiz6cqVuIfl+l4SJEp+sOcfH/ZYXZpvQUTaQv+yNcJbOgotcqXPCgZ4BWx7OJa2DIN4U0668pdArnWj881FRYEEsLl8RNr2YwOf86D8m3FhZW9N45eGo=
+	t=1709161628; cv=none; b=VHiISjWazDsiyeijwSwRYuFvHUs1Zd1aRPAyZN7Gg/OYLT3n/qsP1zbQkqXr/wJO8rrkjbGCkUoRWoY+CZO30FJtEIqTQoqQmaTWWCaw0EMtQD6lKe6wIS6JtTxv2tOfA+a8iVD7D4Uuu+xi3PO538XgGSbyDblksO0+v3ThEmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709161244; c=relaxed/simple;
-	bh=cbr6b/G3lRERbyX93hkq9IWLhpeAc9lzDtXfqhVGFco=;
+	s=arc-20240116; t=1709161628; c=relaxed/simple;
+	bh=aR4XOGShLBiKaiFwyckrNuJndPej+Cz0PLltPRgtO/0=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=KBzo+kvaklLy4jGNihTvqZhEAwy75ZriYy6DGATyciClVhPkExwf5X9eTG5TNQzqF9pm/ATeaJNoetuEW6T1QzJ63CPoSdSjlx6qKy0pnTjwl35CHXl9vlXBjld/ogDWtuCKX46LLRczAn4zlsQj9cd+oIoxpqMSbXm41KARiQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3GTIYrO; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=I2dkAQ+sqxUSMwIjMXHMGCOu56Gg+OpRd5V6MYFqO1IWq04eys70/AiPXxt7bBHEaZjzspR6AG0p3QMYDwzfeaIe0uOLFoixigPwzSazTE2wUXoHR3X77v4Is7uhdwnQdAZdqGfuK5dpPL9EtTyLnKBkgqoQmAxnbB+9FDJfaUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGDMpXEL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3GTIYrO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 700C5C43390;
-	Wed, 28 Feb 2024 23:00:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGDMpXEL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55CF8C433C7;
+	Wed, 28 Feb 2024 23:07:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709161243;
-	bh=cbr6b/G3lRERbyX93hkq9IWLhpeAc9lzDtXfqhVGFco=;
+	s=k20201202; t=1709161627;
+	bh=aR4XOGShLBiKaiFwyckrNuJndPej+Cz0PLltPRgtO/0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=k3GTIYrO6vj2o4GWm99HLI3oqmnSpulORl0SqrKI6PEqfzBnHbZ3ZVq6+DiMdpp6e
-	 v0DkzUczvx33Xs+3qhJUPOa8HlYD8d8XiSfNsF/2vaIo7Hbzf05DbIm/Ub4+U9qsXg
-	 hxBANzGu7+AYgrqkHLGbFRdnZEKHhd75TSXdi4vE3YJ0weoU+uxOQwKDN8fbruMgH4
-	 JrOJZ53mjP+m62AXvrYLSHvMcMMTRQp9XkbrWWd/JoOw9pzSVevFuu084aWhV17a69
-	 aDUHTm8wn5vbsvg+5eTd1uM4sJT2zU1Xbuo8KAaMGT5BGAYtz9yg562MBhZWY14xGj
-	 oE/JTTnW0aY9g==
-Message-ID: <1cffc4a5c769f0dc041871cfb9be0950.sboyd@kernel.org>
+	b=SGDMpXELHbumNnj2vOipRsbXBpmiviivWs4gnnCaTcxPqWkKBayyehjUyhwqhySRN
+	 9UAB8ACDCTBUxi0BAgtivVkCW/NXy+UeiEJa9v3Huivqwj/yfc6VVXqsBXPJndte+5
+	 6oGKfrhX+ncpcGWdA7pLNTJvR1u9jfL8GL4C6e/j244TAOj1qZXq+66UNWYfYBGrTX
+	 JLa74Ah9kl2vqRV+xNbmzlOhMEmqNVjBzseoIfYjty0wbl+a+Pa7ZGR32+PIH4dqVp
+	 A6Feiw6ZcEC6ljZJGDNKpPe/m5dmj3kWwSP/2+baG4bR4qL3wIVuFTe3s4SqOtFbBa
+	 WL/OOIqdqJinw==
+Message-ID: <f0a90f14993aa0fddb87e658be43341b.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,23 +35,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240224091236.10146-1-krzysztof.kozlowski@linaro.org>
-References: <20240224091236.10146-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/3] dt-bindings: clock: keystone: remove unstable remark
+In-Reply-To: <20240214073318.82573-1-duoming@zju.edu.cn>
+References: <20240214073318.82573-1-duoming@zju.edu.cn>
+Subject: Re: [PATCH] clk: zynq: Prevent null pointer dereference caused by kmalloc failure
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Date: Wed, 28 Feb 2024 15:00:41 -0800
+Cc: mturquette@baylibre.com, michal.simek@amd.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Duoming Zhou <duoming@zju.edu.cn>
+To: Duoming Zhou <duoming@zju.edu.cn>, linux-kernel@vger.kernel.org
+Date: Wed, 28 Feb 2024 15:07:05 -0800
 User-Agent: alot/0.10
 
-Quoting Krzysztof Kozlowski (2024-02-24 01:12:34)
-> Keystone clock controller bindings were marked as work-in-progress /
-> unstable in 2013 in commit b9e0d40c0d83 ("clk: keystone: add Keystone
-> PLL clock driver") and commit 7affe5685c96 ("clk: keystone: Add gate
-> control clock driver") Almost eleven years is enough, so drop the
-> "unstable" remark and expect usual ABI rules.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+Quoting Duoming Zhou (2024-02-13 23:33:18)
+> diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
+> index 7bdeaff2bfd..7621c2f0046 100644
+> --- a/drivers/clk/zynq/clkc.c
+> +++ b/drivers/clk/zynq/clkc.c
+> @@ -427,7 +427,7 @@ static void __init zynq_clk_setup(struct device_node =
+*np)
+>                         SLCR_GEM1_CLK_CTRL, 0, 0, &gem1clk_lock);
+> =20
+>         tmp =3D strlen("mio_clk_00x");
+> -       clk_name =3D kmalloc(tmp, GFP_KERNEL);
+> +       clk_name =3D kmalloc(tmp, GFP_KERNEL | __GFP_NOFAIL);
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Just make a stack variable please. __GFP_NOFAIL is a bad code smell.
+
+>         for (i =3D 0; i < NUM_MIO_PINS; i++) {
+>                 int idx;
+>
