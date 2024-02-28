@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2DA13D2E6;
-	Wed, 28 Feb 2024 23:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270AF22EF4;
+	Wed, 28 Feb 2024 23:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709161628; cv=none; b=VHiISjWazDsiyeijwSwRYuFvHUs1Zd1aRPAyZN7Gg/OYLT3n/qsP1zbQkqXr/wJO8rrkjbGCkUoRWoY+CZO30FJtEIqTQoqQmaTWWCaw0EMtQD6lKe6wIS6JtTxv2tOfA+a8iVD7D4Uuu+xi3PO538XgGSbyDblksO0+v3ThEmI=
+	t=1709162355; cv=none; b=WW0GYMrqsTypa7rjwBIt0hWiSq3MjBNxE/oqXzwYVRbuLYmsJCt8z6CAQRONny6Sa4exxRVReT0n7R+Mkc8qFaP9YwTbQ7HSKQaRWENm9l3NRYEpkaK4yLaTwWtL9Tc197GxNJ50utPDNdhJN2dAePhQzijUAJIAoSA+A1FfIaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709161628; c=relaxed/simple;
-	bh=aR4XOGShLBiKaiFwyckrNuJndPej+Cz0PLltPRgtO/0=;
+	s=arc-20240116; t=1709162355; c=relaxed/simple;
+	bh=7z1aSxlpZRea/mqk7Ubs0g2+jXbwBM6SEk0zk2oB+m0=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=I2dkAQ+sqxUSMwIjMXHMGCOu56Gg+OpRd5V6MYFqO1IWq04eys70/AiPXxt7bBHEaZjzspR6AG0p3QMYDwzfeaIe0uOLFoixigPwzSazTE2wUXoHR3X77v4Is7uhdwnQdAZdqGfuK5dpPL9EtTyLnKBkgqoQmAxnbB+9FDJfaUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGDMpXEL; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=EXNoIVhapXqsAs9yqT/578gV3i3EMi1BYsB+dE0/xJIbcjjZLdXYCDaod8CyA8RhoSCjS/nH4uKJg8wAeMSTMhn90VvbWLUx3uecaJtag5oOItdJmt7Al/y/U39rrmOabJFUXXnD0MF+/wS3t0SoAFhB/ptbvTsNjJbYrAkAo8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DS8Tad3r; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGDMpXEL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55CF8C433C7;
-	Wed, 28 Feb 2024 23:07:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DS8Tad3r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86126C433F1;
+	Wed, 28 Feb 2024 23:19:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709161627;
-	bh=aR4XOGShLBiKaiFwyckrNuJndPej+Cz0PLltPRgtO/0=;
+	s=k20201202; t=1709162354;
+	bh=7z1aSxlpZRea/mqk7Ubs0g2+jXbwBM6SEk0zk2oB+m0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=SGDMpXELHbumNnj2vOipRsbXBpmiviivWs4gnnCaTcxPqWkKBayyehjUyhwqhySRN
-	 9UAB8ACDCTBUxi0BAgtivVkCW/NXy+UeiEJa9v3Huivqwj/yfc6VVXqsBXPJndte+5
-	 6oGKfrhX+ncpcGWdA7pLNTJvR1u9jfL8GL4C6e/j244TAOj1qZXq+66UNWYfYBGrTX
-	 JLa74Ah9kl2vqRV+xNbmzlOhMEmqNVjBzseoIfYjty0wbl+a+Pa7ZGR32+PIH4dqVp
-	 A6Feiw6ZcEC6ljZJGDNKpPe/m5dmj3kWwSP/2+baG4bR4qL3wIVuFTe3s4SqOtFbBa
-	 WL/OOIqdqJinw==
-Message-ID: <f0a90f14993aa0fddb87e658be43341b.sboyd@kernel.org>
+	b=DS8Tad3r2Pvak3Yl6xPw0Tw5GfdCXTW/iB++hxmpL4UJf4f3lwcwh4TTf/p2RlFat
+	 /vlHG+Hd+8NE1v/+uHvU9vzvU3arXNbymb/q3rvHpO8/avqCHseaO1PxBRDGxIyEnt
+	 mzv8h1Samq9INrB4TaNQrEnOILBwSKRqyLC7RZp/q/9xplNgc7nc1xlkCIKIscK3t0
+	 biL+JSBI/zh1L4lZF/2eB9MjhW2iYVlgCTvsNB6Vl6PywbSF9JU20GK8O8hMXKGR5F
+	 Otj/XhJwMnodZBtqr8X9C+TKdKia0f2WDcv+TczK+lmEQAO5CivjnHHxImCXn4D/Fg
+	 M/DYSxJKkVSMg==
+Message-ID: <526d995da0aa9595ada040e8c6950e34.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,30 +35,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240214073318.82573-1-duoming@zju.edu.cn>
-References: <20240214073318.82573-1-duoming@zju.edu.cn>
-Subject: Re: [PATCH] clk: zynq: Prevent null pointer dereference caused by kmalloc failure
+In-Reply-To: <20240115054739.4988-1-rdunlap@infradead.org>
+References: <20240115054739.4988-1-rdunlap@infradead.org>
+Subject: Re: [PATCH] clk: ti: dpll3xxx: use correct function names in kernel-doc
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: mturquette@baylibre.com, michal.simek@amd.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Duoming Zhou <duoming@zju.edu.cn>
-To: Duoming Zhou <duoming@zju.edu.cn>, linux-kernel@vger.kernel.org
-Date: Wed, 28 Feb 2024 15:07:05 -0800
+Cc: Randy Dunlap <rdunlap@infradead.org>, Tero Kristo <kristo@kernel.org>, linux-omap@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Date: Wed, 28 Feb 2024 15:19:12 -0800
 User-Agent: alot/0.10
 
-Quoting Duoming Zhou (2024-02-13 23:33:18)
-> diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
-> index 7bdeaff2bfd..7621c2f0046 100644
-> --- a/drivers/clk/zynq/clkc.c
-> +++ b/drivers/clk/zynq/clkc.c
-> @@ -427,7 +427,7 @@ static void __init zynq_clk_setup(struct device_node =
-*np)
->                         SLCR_GEM1_CLK_CTRL, 0, 0, &gem1clk_lock);
-> =20
->         tmp =3D strlen("mio_clk_00x");
-> -       clk_name =3D kmalloc(tmp, GFP_KERNEL);
-> +       clk_name =3D kmalloc(tmp, GFP_KERNEL | __GFP_NOFAIL);
+Quoting Randy Dunlap (2024-01-14 21:47:39)
+> Use function names that match the implementation in kernel-doc comments
+> to avoid kernel-doc warnings:
+>=20
+> dpll3xxx.c:938: warning: expecting prototype for omap3_non_core_dpll_save=
+_context(). Prototype was for omap3_noncore_dpll_save_context() instead
+> dpll3xxx.c:967: warning: expecting prototype for omap3_core_dpll_restore_=
+context(). Prototype was for omap3_noncore_dpll_restore_context() instead
+>=20
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Tero Kristo <kristo@kernel.org>
+> Cc: linux-omap@vger.kernel.org
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> ---
 
-Just make a stack variable please. __GFP_NOFAIL is a bad code smell.
-
->         for (i =3D 0; i < NUM_MIO_PINS; i++) {
->                 int idx;
->
+Applied to clk-next
