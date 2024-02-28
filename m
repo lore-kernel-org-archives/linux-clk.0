@@ -1,110 +1,199 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCE615CD6E;
-	Wed, 28 Feb 2024 15:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC503FB82;
+	Wed, 28 Feb 2024 17:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709135630; cv=none; b=Rc0iRWJ8YCDxdaHLxX9hgYK8K709KlFkfOAISTfaQjH7oN0+j8Ij4fEv1EilEi6MSwi4eAwJTo7vzhjbjwYAn5/h2Z9unKzPvj8adcZHinh4IYDYY5ItE9k3IfBE6lPv5WCfIYGIvsaoZWw0fzwfPXH1SqQepR4YS1/KJpNy6T0=
+	t=1709139899; cv=none; b=r766KZ5BvMw0Fw37YWGorgkMVQwmxV0v/QlmLlKJe+x90G0U4oy0az4QrjaujazVQo5TABshzR7g+5IRxV3N18rE19sLlimwkCeAADFC1jnRMfz79BS2BHCWIfGJSvCXcNUU6pIqyB/oFbBVzYSRkXSXBmauwa9Wy9F6BcwAJBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709135630; c=relaxed/simple;
-	bh=vxRLRVprDDB/c/3M41BNMbhxG1UwYXmCdbjUbmB3KKE=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=N9Wr/wmzXUbn8xDF9Uds8NtC7iTGnjmBuOuTOtXQX0ugoeRjV7PBjhdjyNXpsuLa91uqToBkLDkAqehOi2OFTWKgSPvRZ2mtn/PRVqb4oU54k7tLY/DgghAzgw0VwOZFXs+MSs489mwhE8zxum4BwtJzHm4oo/Q3KyVWaaGHA7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fH/VpNsC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709139899; c=relaxed/simple;
+	bh=44x5yDcOLSCbcSbnsWN3XwhRRPVfXIBZAjD6hjXZx+U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=UDhH1LQlk0yc+EX4FJ1WHmf3toxiWmR43m1kuec9Np3yEoIzcaHy3KM5Cymzjhg45WWDZPNKERi6h8l9jgidM7CsslWrHTuMv8GjBfIzGuQ7U88wdjH4oHAEQlsAczM/ahXxa70gCJCmPzOWkJAnql/n0mcAR9O2abFEIlgol08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iBfKunRp; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fH/VpNsC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C4CC433F1;
-	Wed, 28 Feb 2024 15:53:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709135629;
-	bh=vxRLRVprDDB/c/3M41BNMbhxG1UwYXmCdbjUbmB3KKE=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=fH/VpNsCC6yrehn5cwmf2mjsgU1Ga7kLFvddPlrtSi5Jr4CqpQYnnimGO6HSWNh3O
-	 P1sksEi+taf0EXpKgvTWOTnRbkQja9l+bSOOMPcaOGxOgSq88KAUk6A8OE94ZgekUk
-	 PKdQLGs/2dsH+cPT3ecRVpohSJXMsiWDkMudBu1wj0oL9BuvtO87S4FKrMnmaXAGxp
-	 SG4Uzyv1B5O67FmVmHVGx4IRrSCy5EQ9LvQB1aqs1ZQfSHMSBrY3mVj+nFOJNScIHn
-	 h/H6FZUVqL4iXcGgFr9D757QehRG1OTvDYME//d5Zi8AqSrdF6Nofkun3/EW0W2f+w
-	 hJcYB3olR0OOg==
-From: Mark Brown <broonie@kernel.org>
-To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
- conor+dt@kernel.org, nicolas.ferre@microchip.com, 
- alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
- mturquette@baylibre.com, sboyd@kernel.org, herbert@gondor.apana.org.au, 
- davem@davemloft.net, andi.shyti@kernel.org, tglx@linutronix.de, 
- tudor.ambarus@linaro.org, miquel.raynal@bootlin.com, richard@nod.at, 
- vigneshr@ti.com, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
- linus.walleij@linaro.org, sre@kernel.org, u.kleine-koenig@pengutronix.de, 
- p.zabel@pengutronix.de, olivia@selenic.com, radu_nicolae.pirea@upb.ro, 
- richard.genoud@gmail.com, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
- lgirdwood@gmail.com, wim@linux-watchdog.org, linux@roeck-us.net, 
- linux@armlinux.org.uk, andrei.simion@microchip.com, 
- mihai.sain@microchip.com, andre.przywara@arm.com, neil.armstrong@linaro.org, 
- tony@atomide.com, durai.manickamkr@microchip.com, geert+renesas@glider.be, 
- arnd@arndb.de, Jason@zx2c4.com, rdunlap@infradead.org, rientjes@google.com, 
- vbabka@suse.cz, mripard@kernel.org, codrin.ciubotariu@microchip.com, 
- eugen.hristev@collabora.com, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org, 
- linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org, 
- netdev@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org, 
- linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org, 
- linux-serial@vger.kernel.org, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, linux-watchdog@vger.kernel.org, 
- Varshini Rajendran <varshini.rajendran@microchip.com>
-In-Reply-To: <20240223171342.669133-1-varshini.rajendran@microchip.com>
-References: <20240223171342.669133-1-varshini.rajendran@microchip.com>
-Subject: Re: (subset) [PATCH v4 00/39] Add support for sam9x7 SoC family
-Message-Id: <170913561744.333382.15677696645878162142.b4-ty@kernel.org>
-Date: Wed, 28 Feb 2024 15:53:37 +0000
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iBfKunRp"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 89A0BC0008;
+	Wed, 28 Feb 2024 17:04:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1709139888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vCBAaabth7lAvvtJBPFWrOiPFUdycHNsNEJADPl3zuo=;
+	b=iBfKunRpv70S9wYQ7RV+vXOCFrhSr/wioOineNSxRoS8gzIJ7dP9cBopMwVt8SikHz4pmx
+	lnIvETzRCKqMbdO+bzwtUwjeaNz/cLX86KFW0GWzf/AXxKk0vNC3Y70ThSU7WnDc/JqhpK
+	rCMvQ8bJ+rjxe0V1WdPbKDZtSdGubAc+cSD4P16wSf+x/AO4ZC89zCX4f02MYOuA0YPAbQ
+	V3Lfw9vpxx4dV1bcNNd8MlwuwWnNnhrqJ8lbRKACwcD67WtzfyrFWVUextxAhObLvDjkn4
+	RaDLe0Z2o4OdJs+zXK0fAjps8rOUWppPw8BfJds4sYHHGiZ2BeU99k6pMXiiuQ==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-a684c
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 28 Feb 2024 18:04:47 +0100
+Message-Id: <CZGVIWR4H4DE.3M5H3H99X0QPT@bootlin.com>
+Cc: "Gregory CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
+ <robh+dt@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>, "Linus Walleij"
+ <linus.walleij@linaro.org>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?=
+ <rafal@milecki.pl>, "Philipp Zabel" <p.zabel@pengutronix.de>, "Vladimir
+ Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ <linux-mips@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, <linux-gpio@vger.kernel.org>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v8 04/10] reset: eyeq5: add platform driver
+X-Mailer: aerc 0.15.2
+References: <20240227-mbly-clk-v8-0-c57fbda7664a@bootlin.com>
+ <20240227-mbly-clk-v8-4-c57fbda7664a@bootlin.com>
+ <Zd4bbCsY54XEnvJM@smile.fi.intel.com>
+In-Reply-To: <Zd4bbCsY54XEnvJM@smile.fi.intel.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Fri, 23 Feb 2024 22:43:42 +0530, Varshini Rajendran wrote:
-> This patch series adds support for the new SoC family - sam9x7.
->  - The device tree, configs and drivers are added
->  - Clock driver for sam9x7 is added
->  - Support for basic peripherals is added
->  - Target board SAM9X75 Curiosity is added
-> 
->  Changes in v4:
->  --------------
-> 
-> [...]
+Hello,
 
-Applied to
+I won't be answering to straight forward comments.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+On Tue Feb 27, 2024 at 6:27 PM CET, Andy Shevchenko wrote:
+> On Tue, Feb 27, 2024 at 03:55:25PM +0100, Th=C3=A9o Lebrun wrote:
+> > Add the Mobileye EyeQ5 reset controller driver. It belongs to a syscon
+> > region called OLB. It might grow to add later support of other
+> > platforms from Mobileye.
+>
+> ...
+>
+> The inclusion block is a semi-random. Please, follow IWYU principle.
+>
+> + array_size.h
+> + bits.h
+> + bug.h
+> + container_of.h
+>
+> > +#include <linux/cleanup.h>
+> > +#include <linux/delay.h>
+>
+> + device.h
+> + err.h
+> + io.h
+> + lockdep.h
+>
+> + mod_devicetable.h
+>
+> > +#include <linux/mutex.h>
+>
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/of_device.h>
+>
+> Are all of them in use?
+>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/reset-controller.h>
+>
+> + types.h
 
-Thanks!
+I'm adding yours + errno.h + init.h (for THIS_MODULE) + slab.h (for GFP
+flags). I'm removing unused of_address.h and of_device.h.
 
-[16/39] spi: dt-bindings: atmel,at91rm9200-spi: remove 9x60 compatible from list
-        commit: 666db8fd4265f938795004838d2a9335ce7b9da1
+delay.h will be removed and iopoll.h will be added based on changes
+following your comments.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+[...]
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> > +static int eq5r_deassert(struct reset_controller_dev *rcdev, unsigned =
+long id)
+> > +{
+> > +	struct eq5r_private *priv =3D rcdev_to_priv(rcdev);
+> > +	u32 offset =3D id & GENMASK(7, 0);
+> > +	u32 domain =3D id >> 8;
+>
+> Perhaps
+>
+> 	u32 offset =3D (id & GENMASK(7, 0)) >> 0;
+> 	u32 domain =3D (id & GENMASK(31, 8)) >> 8;
+>
+> for better understanding the split?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Do the additional zero-bit-shift and GENMASK() help understanding? My
+brain needs time to parse them to then notice they do nothing and
+simplify the code in my head, back to the original version.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+I personally like the simplest version (the original one). But otherwise
+FIELD_GET() with two globally-defined masks could be a solution as
+well. I still prefer the original version better. Less symbols, less
+complexity.
 
-Thanks,
-Mark
+[...]
+
+> > +	struct eq5r_private *priv;
+> > +	int ret, i;
+>
+> Why is i signed?
+
+No reason, will switch to unsigned int.
+
+>
+> > +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +	if (!priv)
+> > +		return -ENOMEM;
+> > +
+> > +	priv->base_d0 =3D devm_platform_ioremap_resource_byname(pdev, "d0");
+> > +	if (IS_ERR(priv->base_d0))
+> > +		return PTR_ERR(priv->base_d0);
+> > +
+> > +	priv->base_d1 =3D devm_platform_ioremap_resource_byname(pdev, "d1");
+> > +	if (IS_ERR(priv->base_d1))
+> > +		return PTR_ERR(priv->base_d1);
+> > +
+> > +	priv->base_d2 =3D devm_platform_ioremap_resource_byname(pdev, "d2");
+> > +	if (IS_ERR(priv->base_d2))
+> > +		return PTR_ERR(priv->base_d2);
+> > +
+> > +	for (i =3D 0; i < EQ5R_DOMAIN_COUNT; i++)
+> > +		mutex_init(&priv->mutexes[i]);
+> > +
+> > +	priv->rcdev.ops =3D &eq5r_ops;
+> > +	priv->rcdev.owner =3D THIS_MODULE;
+> > +	priv->rcdev.dev =3D dev;
+>
+> > +	priv->rcdev.of_node =3D np;
+>
+> It's better to use device_set_node().
+
+I don't see how device_set_node() can help? It works on struct device
+pointers. Here priv->rcdev is a reset_controller_dev struct. There are
+no users of device_set_node() in drivers/reset/.
+
+>
+> > +	priv->rcdev.of_reset_n_cells =3D 2;
+> > +	priv->rcdev.of_xlate =3D eq5r_of_xlate;
+> > +
+> > +	priv->rcdev.nr_resets =3D 0;
+> > +	for (i =3D 0; i < EQ5R_DOMAIN_COUNT; i++)
+>
+> > +		priv->rcdev.nr_resets +=3D __builtin_popcount(eq5r_valid_masks[i]);
+>
+> Please, use corresponding hweightXX() API.
+
+Noted. I did not find this keyword even though I searched quite a bit
+for it. "popcount" sounds more logical to me. :-)
+
+Thanks for the review Andy!
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
