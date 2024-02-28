@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757E61361B0;
-	Wed, 28 Feb 2024 22:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153C51361C4;
+	Wed, 28 Feb 2024 22:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709160481; cv=none; b=RoyqUpJ4luGNhIhMri+iWP+WkRXP4xFAvOOAILFLcVC1anS9MO40hDqfvy+EFDu9lhpDKaBOpkss6Ke53qxN1kQkOtE1quISIZqOdK3jF4kHHj1rmWbSXm49XnmO4Cy8EwNc/3IM6ykjWpQcQb8ZD2Xnp+KpgfiWBYHMZkXY66k=
+	t=1709160768; cv=none; b=QAIWOPEs1D7CbuHCtU1bqfCtlhTFGvqHMqwnaALYIWshfoV2enOH/cpDbXR6dHYmZ4GOOvOvj8gJoo1pocWaFLTLefT6FOdNe3LKWYgFLpIhG8aNmq1empLbQ3nVh0aj4+A+kGk3waw6od18CK0SzXzJEK9mY61kxmF1GV0cqC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709160481; c=relaxed/simple;
-	bh=imNeDCybnQTqCSixbtIV0f49WNytkR9qirQh/BflgTg=;
+	s=arc-20240116; t=1709160768; c=relaxed/simple;
+	bh=rp5tVm36pOFi7dx64Dt/TsUDvBpUSC1wYSU105mX2PU=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=MPjZlbjzsShYHr2tCFAnkQ6SZzQ0nE+2hqV2ahw5nK8trYhtWOQBZi46oex4z/JJPkJn35V5vTlIgfS2euGbD2D2uijeHaRLk+q6lC3Q7O0LPXpEU9Z6ig40656FIHLaj7Hf+l8IsQgjw8Q1VduAxViicG79V74YPR/bOrrS5pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQCD9vb1; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=V5FH5TtXzAeFrn4iRK6qaBsmc/ZrqkbTRttSWzwjhUukF3fcXaN4Vr67rmnwBkX8S2imW+/HWhOLgSe/Sk0abVDkkknGbnehgnbrWXF6v/SJZGBU5X3fICSK5KqBGBDz/Z5fOF/0uxbDJmxgsnVxAGgtlfubryrEK9ZJioE4HTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ig2DdpEH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQCD9vb1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA43CC433F1;
-	Wed, 28 Feb 2024 22:48:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ig2DdpEH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9538C433C7;
+	Wed, 28 Feb 2024 22:52:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709160481;
-	bh=imNeDCybnQTqCSixbtIV0f49WNytkR9qirQh/BflgTg=;
+	s=k20201202; t=1709160767;
+	bh=rp5tVm36pOFi7dx64Dt/TsUDvBpUSC1wYSU105mX2PU=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=rQCD9vb1vr8YHCT/cgkG3W7cl4iANHxlC78YiqJYGmoVBGqQiEb+hTHozvMqU6wZU
-	 ASxO/ZoEKOmJqEd9cagY1syCwVISUecVoZBAimrvdm76l2hPsYHp89/lFlmiyBp/Sc
-	 eHAEd7hznx95l2X+bOVA8UybOZfH3P057IOz1nPtsHctrCp3QUC6ITFbPcq4o0v7Gb
-	 /IOGef/PdArRlTZRdlCRt/GfXzIXqwGTDL5RZ0slMm1aNqJzJtwk4VifL4MjgprKDd
-	 pbRTcOEl4IbYDzkkDAjCZpAhZmuMCdDnOCFgZ/PN3+xVbPZ8j+dEvVxTjInyMGPST9
-	 i7+aa6QfDAI+w==
-Message-ID: <8acf846e767884978f3bb98646433551.sboyd@kernel.org>
+	b=Ig2DdpEHakycymqnNy15snbZp0I4HbIi4BpEasJXH1D3fcloMOav5lrFBgx6S2JBv
+	 b5F+KzrIRvVT71I4eLFIgLH9uStyNgE99TftvtIW151BfnD9nyb/o4bEVtKOvW/hZS
+	 QKiNwHG8uz1pywAghTvmTXfSbB0dZ2dmV3WzX74Y0HGM+H1NA1yUUVWBI0M21aOCgB
+	 Rwq4ZhHvO/54OzQyYr9b1EMRZ43cWC8tO34YAQ8Y9gMIUM1ryL6V/vEQ4VHxNE3OHL
+	 fLRgKF+8eeyEy2cytGn8pbbDEst5mrNBZ4D76FOjAdhXtnr3r+NOAPJyX9x3zLamUt
+	 geE7IiDwdnmxw==
+Message-ID: <db086a936b9583a9caca3117f830fedb.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,181 +35,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAP6Zq1g5gwXvYzO5fnHxG-6__gSCpNBY7VeEPyr4Qtijya6EfQ@mail.gmail.com>
-References: <20240131182653.2673554-1-tmaimon77@gmail.com> <20240131182653.2673554-4-tmaimon77@gmail.com> <74e003c6d80611ddd826ac21f48b4b3a.sboyd@kernel.org> <CAP6Zq1g5gwXvYzO5fnHxG-6__gSCpNBY7VeEPyr4Qtijya6EfQ@mail.gmail.com>
-Subject: Re: [PATCH v23 3/3] clk: npcm8xx: add clock controller
+In-Reply-To: <20240223134347.3908301-1-colin.i.king@gmail.com>
+References: <20240223134347.3908301-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] clk: clocking-wizard: Remove redundant initialization of pointer div_addr
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: benjaminfair@google.com, joel@jms.id.au, krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, robh+dt@kernel.org, tali.perry1@gmail.com, venture@google.com, yuenn@google.com, openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-To: Tomer Maimon <tmaimon77@gmail.com>
-Date: Wed, 28 Feb 2024 14:47:58 -0800
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin Ian King <colin.i.king@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Date: Wed, 28 Feb 2024 14:52:45 -0800
 User-Agent: alot/0.10
 
-Quoting Tomer Maimon (2024-02-25 10:00:35)
-> Hi Stephen,
+Quoting Colin Ian King (2024-02-23 05:43:47)
+> The pointer div_addr is being assigned a value that is never used, it is
+> being re-assigned a different value near the end of the function where
+> it is being read in the next statement. The initialization is redundant
+> and can be removed.
 >=20
-> On Thu, 22 Feb 2024 at 07:58, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Tomer Maimon (2024-01-31 10:26:53)
-> > > diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
-> > > new file mode 100644
-> > > index 000000000000..eacb579d30af
-> > > --- /dev/null
-> > > +++ b/drivers/clk/clk-npcm8xx.c
-> > > @@ -0,0 +1,509 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Nuvoton NPCM8xx Clock Generator
-> > > + * All the clocks are initialized by the bootloader, so this driver =
-allows only
-> > [...]
-> > > +
-> > > +/* external clock definition */
-> > > +#define NPCM8XX_CLK_S_REFCLK   "refclk"
-> > > +
-> > > +/* pll definition */
-> > > +#define NPCM8XX_CLK_S_PLL0     "pll0"
-> > > +#define NPCM8XX_CLK_S_PLL1     "pll1"
-> > > +#define NPCM8XX_CLK_S_PLL2     "pll2"
-> > > +#define NPCM8XX_CLK_S_PLL_GFX  "pll_gfx"
-> > > +
-> > > +/* early divider definition */
-> > > +#define NPCM8XX_CLK_S_PLL2_DIV2                "pll2_div2"
-> > > +#define NPCM8XX_CLK_S_PLL_GFX_DIV2     "pll_gfx_div2"
-> > > +#define NPCM8XX_CLK_S_PLL1_DIV2                "pll1_div2"
-> > > +
-> > > +/* mux definition */
-> > > +#define NPCM8XX_CLK_S_CPU_MUX     "cpu_mux"
-> > > +
-> > > +/* div definition */
-> > > +#define NPCM8XX_CLK_S_TH          "th"
-> > > +#define NPCM8XX_CLK_S_AXI         "axi"
-> >
-> > Please inline all these string #defines to the place they're used.
-> The version V21 you mention using define only when the definition is
-> used more than once
-> https://www.spinics.net/lists/kernel/msg5045826.html
-> Should I remove all the string definitions and add the string to the arra=
-y?
-
-If it's a clk name for a clk registered in this file it should be
-inlined. Is that the case for everything besides refclk? And even refclk
-could be inlined so that we don't have to jump to the definition of a
-string.
-
-> > > +
-> > > +static unsigned long npcm8xx_clk_div_get_parent(struct clk_hw *hw,
-> > > +                                               unsigned long parent_=
-rate)
-> > > +{
-> > > +       struct npcm8xx_clk *div =3D to_npcm8xx_clk(hw);
-> > > +       unsigned int val;
-> > > +
-> > > +       regmap_read(div->clk_regmap, div->offset, &val);
-> > > +       val =3D val >> div->shift;
-> > > +       val &=3D clk_div_mask(div->width);
-> > > +
-> > > +       return divider_recalc_rate(hw, parent_rate, val, NULL, div->f=
-lags,
-> > > +                                  div->width);
-> > > +}
-> > > +
-> > > +static const struct clk_ops npcm8xx_clk_div_ops =3D {
-> > > +       .recalc_rate =3D npcm8xx_clk_div_get_parent,
-> > > +};
-> > > +
-> > > +static int npcm8xx_clk_probe(struct platform_device *pdev)
-> > > +{
-> > > +       struct device_node *parent_np =3D of_get_parent(pdev->dev.of_=
-node);
-> >
-> > The parent of this device is not a syscon.
-> Once I have registered the map that handles both reset and the clock
-> in general is syscon, this is why we will modify the DTS so the clock
-> and the reset will be under syscon father node
->                 sysctrl: system-controller@f0801000 {
->                         compatible =3D "syscon", "simple-mfd";
->                         reg =3D <0x0 0xf0801000 0x0 0x1000>;
+> Cleans up clang scan build warning:
+> drivers/clk/xilinx/clk-xlnx-clock-wizard.c:501:16: warning: Value stored
+> to 'div_addr' during its initialization is never read [deadcode.DeadStore=
+s]
 >=20
->                         rstc: reset-controller {
->                                 compatible =3D "nuvoton,npcm845-reset";
->                                 reg =3D <0x0 0xf0801000 0x0 0xC4>;
->                                 #reset-cells =3D <2>;
->                                 nuvoton,sysgcr =3D <&gcr>;
->                         };
->=20
->                         clk: clock-controller {
->                                 compatible =3D "nuvoton,npcm845-clk";
->                                 #clock-cells =3D <1>;
->                                 clocks =3D <&refclk>;
->                                 clock-names =3D "refclk";
->                         };
->                 };
-> You can see other drivers that using the same method like
-> https://elixir.bootlin.com/linux/v6.8-rc5/source/Documentation/devicetree=
-/bindings/clock/socionext,uniphier-clock.yaml
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
-You will need a similar file like
-Documentation/devicetree/bindings/soc/socionext/socionext,uniphier-perictrl=
-.yaml
-then to describe the child nodes.
-
-Socionext may not be the best example to follow. I generally try to
-avoid syscon and simply put #reset-cells and #clock-cells in the node
-for the device. You can use the auxiliary bus to register drivers for
-clk and reset and put them into the resepective driver directories.
-Avoid syscon means random drivers can't reach into the device with a
-regmap handle and read/write registers that they're not supposed to.
-
-> >
-> > > +       struct clk_hw_onecell_data *npcm8xx_clk_data;
-> > > +       struct device *dev =3D &pdev->dev;
-> > > +       struct regmap *clk_regmap;
-> > > +       struct clk_hw *hw;
-> > > +       unsigned int i;
-> > > +
-> > > +       npcm8xx_clk_data =3D devm_kzalloc(dev, struct_size(npcm8xx_cl=
-k_data, hws,
-> > > +                                                        NPCM8XX_NUM_=
-CLOCKS),
-> > > +                                       GFP_KERNEL);
-> > > +       if (!npcm8xx_clk_data)
-> > > +               return -ENOMEM;
-> > > +
-> > > +       clk_regmap =3D syscon_node_to_regmap(parent_np);
-> > > +       of_node_put(parent_np);
-> >
-> > Is there another binding update that is going to move this node to be a
-> > child of the syscon?
-> >
-> >                 gcr: system-controller@f0800000 {
-> >                         compatible =3D "nuvoton,npcm845-gcr", "syscon";
-> >                         reg =3D <0x0 0xf0800000 0x0 0x1000>;
-> >                 };
-> No, sorry but I'm not going to use the GCR node the handle the clock
-> and reset modules, the GCR has different memory space.
-> the clock driver will have the following device tree
-
-What does the reset driver use the CGR node for? The driver looks like
-it's using it to control USB phy resets.
-
->                sysctrl: system-controller@f0801000 {
->                         compatible =3D "syscon", "simple-mfd";
->                         reg =3D <0x0 0xf0801000 0x0 0x1000>;
->=20
->                         rstc: reset-controller {
->                                 compatible =3D "nuvoton,npcm845-reset";
->                                 reg =3D <0x0 0xf0801000 0x0 0xC4>;
-
-This isn't a valid reg property for a child node like this.
-
->                                 #reset-cells =3D <2>;
->                                 nuvoton,sysgcr =3D <&gcr>;
->                         };
->=20
->                         clk: clock-controller {
->                                 compatible =3D "nuvoton,npcm845-clk";
->                                 #clock-cells =3D <1>;
->                                 clocks =3D <&refclk>;
->                                 clock-names =3D "refclk";
->                         };
->                 };
+Applied to clk-next
