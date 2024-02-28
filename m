@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9739386241
-	for <linux-clk@vger.kernel.org>; Wed, 28 Feb 2024 21:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2471E1361AE;
+	Wed, 28 Feb 2024 22:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709157573; cv=none; b=lUo5zNzv1Cb8TFrfKgD0b7vWiVmdzrSW0wak+K1lehAfFB9cLTOiNT7d0j3cv1GD9UQ3RxkfQG46jJHrLkbDeuQFkIl5+3nCVxUOk7iP0NWEVPvNkSK4UOQ5TOMrwVQBGvCdJXIz6NbzjmsYLvBNn/2+xGqKqM/pBpaX6cPBVZ8=
+	t=1709158491; cv=none; b=TUIvgnB/E/aDTUcDbwnRwOo0M6Qmm83zd+4bXPkkmZNx1xSE0llBSsl9v64kOF/0jstV8WzgrD059iGL7rMJ+ICKCatKSmEoNYIDpuO7JG8JvDOnzcm9kRDwHThGlySPLQ2af4fSm95lCC1Gy1415LtLXDqU2qdMib97HlYQSyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709157573; c=relaxed/simple;
-	bh=MiBk1miMfpbCTAE6/v5GmbIq1g6eyhk1G5oZN/8HAC0=;
+	s=arc-20240116; t=1709158491; c=relaxed/simple;
+	bh=EFKm7abarpkXzv8/wcmcMD5nBO5+BHxOxUJcwzjgsmc=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=q1P1ONOJBws+1sFwwEAzqRTSOviX1d1SAI+vUeX39A0yKgA/zgfIl/yarooqdKOQxMXuA6ZDEObRLyZhnF9tWO0F9GMECkLFHbViZGublrulWZk+DA0CtCNkWUK3CeEaaDR7XCwML4kxJHuyBhuIQQCWSF/5npMl74EkMeaHZq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkBZM1bz; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=gRqZGj+PFWF3b5FKE0YEOeICfQFB9wqVUJVpJDRj7847CICskLBjFuH87uRpYrNrppO2bdZ9P+2KcB/I4jAhUn5jNDzYGE/dXq3C+pUZsTtfj9df00PcG66Lt6AHD200tTgEEfuy3aNkamEFz6dTGR8vmRB5UaKUP1P/l7GcnOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwNdZ/f6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkBZM1bz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00F6EC433F1;
-	Wed, 28 Feb 2024 21:59:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwNdZ/f6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94C7FC433C7;
+	Wed, 28 Feb 2024 22:14:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709157573;
-	bh=MiBk1miMfpbCTAE6/v5GmbIq1g6eyhk1G5oZN/8HAC0=;
+	s=k20201202; t=1709158490;
+	bh=EFKm7abarpkXzv8/wcmcMD5nBO5+BHxOxUJcwzjgsmc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jkBZM1bzFm0CIlDuNyIQurZDJ4/6k++brmWhSk7b8ABNM6SAM3udmwFi0gH1z5d/P
-	 kLuYjCsV9FH+kX+5VWKnNWT7GFLDFNc7r50XAciPTVbemyYsobBuZyM5G8y84UcLGZ
-	 0qQAHj+lpro4QroGIoukCQoVqJpgT4VjE42VI+AAUeAn707JeODg2yEey699Fs38ye
-	 b8s/nmQ4QoaGUuhmoiZLWR1WMdGwgjY+iLDdFKGkcVS7XmhnZu49y/DbEEXBSRNqxG
-	 RuQ7CYgfp1MEKKgtU801tGnnnSiPhCgy43B8z/aZKDw4os79FGJTSkaKsbMSYhergQ
-	 8PFSanxsaizCQ==
-Message-ID: <6ef4172aeae6ea47b56fd012de653932.sboyd@kernel.org>
+	b=KwNdZ/f6BmKcNXsuczUcBIPmBZQaWK+bL2u14JVCKX8g9xnhU3MiMKtMrsgclTLIi
+	 BbvHVZlisvOq4RcFlCEUez6ketYN+LRYhYFoOD5byuzQxPOZNr738Jjiw+ABbNnrta
+	 wpiyJWMWWqPS7N8dKdF0Es4K531SHeHrNHNFlejtN2eNKVWMb6PjiikNT90NVlypFK
+	 RF3DpHUf6KuZP8lxIsYmNMIn6G02nrBiEqf5AQGRMJaERhwUsE8kVag/4a5Qeg8N6S
+	 XTWnQDv6vpctF6Zij1LQ4YekhhFojMZGQaYif0QXX8FUAy7JQkRc/F4zorJaY2Q36J
+	 JZ+FKAK/8l5rA==
+Message-ID: <24963d5f5a964f7620a4aa1cf5769d62.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,54 +35,36 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4130821.6PsWsQAL7t@diego>
-References: <4130821.6PsWsQAL7t@diego>
-Subject: Re: [GIT PULL] Rockchip clock changes for 6.9 #1
+In-Reply-To: <20240223202556.2194021-1-michael.j.ruhl@intel.com>
+References: <20240223202556.2194021-1-michael.j.ruhl@intel.com>
+Subject: Re: [PATCH v3] clkdev: Update clkdev id usage to allow for longer names
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Wed, 28 Feb 2024 13:59:30 -0800
+Cc: Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, andriy.shevchenko@linux.intel.com, Michael J. Ruhl <michael.j.ruhl@intel.com>, Russell King <rmk+kernel@armlinux.org.uk>
+To: Michael J. Ruhl <michael.j.ruhl@intel.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 28 Feb 2024 14:14:48 -0800
 User-Agent: alot/0.10
 
-Quoting Heiko Stuebner (2024-02-28 00:33:17)
-> Hi Mike, Stephen,
+Quoting Michael J. Ruhl (2024-02-23 12:25:56)
+> clkdev DEV ID information is limited to an array of 20 bytes
+> (MAX_DEV_ID).  It is possible that the ID could be longer than
+> that.  If so, the lookup will fail because the "real ID" will
+> not match the copied value.
 >=20
-> please find below a pull-request with some Rockchip clock changes for 6.9
+> For instance, generating a device name for the I2C Designware
+> module using the PCI ID can result in a name of:
 >=20
-> I guess the most interesting change is the removal of the CLK_NR_CLKS
-> constant from the rk3588 binding. While it was nice to define the upper
-> limit of clocks for array-search purposes, it was noted that changing this
-> when adding new clocks actually breaks the ABI.
+> i2c_designware.39424
 >=20
-> Thankfully Sebastian invested the time to find a solution to not need that
-> constant in the driver anymore.
+> clkdev_create() will store:
 >=20
-> That change also got the needed review by dt-maintainers and people
-> also checked the usage in i.e. u-boot, so it's better to do this now than
-> later :-) .
+> i2c_designware.3942
 >=20
+> The stored name is one off and will not match correctly during probe.
 >=20
-> Please pull.
+> Increase the size of the ID to allow for a longer name.
 >=20
-> Thanks
-> Heiko
->=20
->=20
-> The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd3=
-3d:
->=20
->   Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
-tags/v6.9-rockchip-clk1
->=20
-> for you to fetch changes up to 1361d75503fccc0e6b3ecbcd5bb53bbdfdc52f0a:
->=20
->   clk: rockchip: rk3399: Allow to set rate of clk_i2s0_frac's parent (202=
-4-02-27 23:45:53 +0100)
->=20
-> ----------------------------------------------------------------
+> Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
