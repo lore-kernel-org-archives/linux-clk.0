@@ -1,104 +1,128 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE8F2D61B
-	for <linux-clk@vger.kernel.org>; Wed, 28 Feb 2024 08:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05F514DFEC;
+	Wed, 28 Feb 2024 14:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709109204; cv=none; b=kSaohfkBpGdnVJDLXexYNZAIcNxEXud7Y4GxudPHVtWGuHNbGj1fXr027aawWg8Pj6HoLipdXPSs3ZjSuaz2qzRU9EUijtBzGzNYba6Uszsuwi2WmNZtZf0TU77IVM1hputAecP8rnfaewkW+UFkfQGaUB19VSUKNkVJXPqkGqY=
+	t=1709129397; cv=none; b=VJQUzlpbFSwGyMaVEDjsUjY49uPmmSsctAYi5IM5bWI93Ro1XMcQyTjLeYKUjuLRgfIMGAXqsF03rL3IvxyJPsTatqxn2uSNYqTKohuRNdNXqBvXfc2N/pLSj2PbnV+XBIFCwFKxXlgGD5HJsoTOTzxCDKQf5LKlsEd+779iatM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709109204; c=relaxed/simple;
-	bh=2G3WDbEm4Z8W3oJpPV8afr0EGY9eG1A5cwSw98YFeI0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oJ3QwrADdgn33RjOQEA9VcmjwhkhS7DgASxXQ5SOal8eD5CIlWUMkH3gefnJd1cFaOnJnahRBq8Ee70CpjcCyp0TlJleVi8W0DnDCzzRwXzEiHtysJHXG2KQ3c6NdI3tl8NM2cgYH52998Mkj9Tf1GAjQGtLAaY1Q7Fgyn/9fDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b6c.versanet.de ([83.135.91.108] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1rfFNO-0007e7-0U; Wed, 28 Feb 2024 09:33:18 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock changes for 6.9 #1
-Date: Wed, 28 Feb 2024 09:33:17 +0100
-Message-ID: <4130821.6PsWsQAL7t@diego>
+	s=arc-20240116; t=1709129397; c=relaxed/simple;
+	bh=zi3a7WfmF7xz9jF+a+/dTYIv2tudbxNO9bYJhYApnzc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=ajEOHRkffrt/F2X/SoI1MjMkEjMaZjYuIdu1P873YJnNLhyeLagWBoSHOHEScm1mCzRmZhhQ7UNxRGuXAan9NG1vf9/QZ/zWckWOEiSZXC+MwG9FKuKASzRTTq/599j/ZrPFLxZbJciLLUSanF87oaHI7szU3najZtWxOE5wlg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gmI4s1wk; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gmI4s1wk"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 76AFA40005;
+	Wed, 28 Feb 2024 14:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1709129387;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=puqEcgLYqO4kSzlmDT1lfSiSE31NVMpyJtiG4ww78PM=;
+	b=gmI4s1wk+Tj5gPLF+YDaTM6UQxYm/c92oIwgbV6hRXLmPx4jzrmTbMiScHOJqapnckd/tX
+	L65N6a5jBnPnMjnBhY4qEgnTFtroYXRWBbi44BuZ0ZWTNoQeyty89WLqRhRp9nKUsHTY/e
+	s76HPhEhrbPhVkTI14tBc3L/a8yqJ62Vba+3yCJ0wsi3xD6h32OIdsOOC5TbXqWjIZHPq/
+	WCff3oNNpJp4/f9AC8U49kH2hcRgwgBtDfEiObN9pfHxGYn+Cm0NuSddNSUY1u/073HNEQ
+	rlpq4rNOOpbJNeLhpW0QyiOVqhmDLKncD93HCaZ+pDXpnprhYrrNNzJT+dPzFw==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 28 Feb 2024 15:09:46 +0100
+Message-Id: <CZGRSWQT1FZ0.2YQ0R8UD86L2U@bootlin.com>
+Cc: <linux-gpio@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, "Linus Walleij"
+ <linus.walleij@linaro.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@linaro.org>, "Stephen Boyd" <sboyd@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, "Rob Herring" <robh+dt@kernel.org>, "Philipp
+ Zabel" <p.zabel@pengutronix.de>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?=
+ <rafal@milecki.pl>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Michael Turquette" <mturquette@baylibre.com>
+To: "Rob Herring" <robh@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v8 02/10] dt-bindings: soc: mobileye: add EyeQ5 OLB
+ system controller
+X-Mailer: aerc 0.15.2
+References: <20240227-mbly-clk-v8-0-c57fbda7664a@bootlin.com>
+ <20240227-mbly-clk-v8-2-c57fbda7664a@bootlin.com>
+ <170905191234.4042659.13935993184407860612.robh@kernel.org>
+In-Reply-To: <170905191234.4042659.13935993184407860612.robh@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Hi Mike, Stephen,
+Hello,
 
-please find below a pull-request with some Rockchip clock changes for 6.9
+On Tue Feb 27, 2024 at 5:38 PM CET, Rob Herring wrote:
+> On Tue, 27 Feb 2024 15:55:23 +0100, Th=C3=A9o Lebrun wrote:
+> > Add documentation to describe the "Other Logic Block" syscon.
+> >=20
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> > ---
+> >  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 94 ++++++++++++++=
+++++++++
+> >  1 file changed, 94 insertions(+)
+> >=20
+>
+> My bot found errors running 'make DT_CHECKER_FLAGS=3D-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>
+> yamllint warnings/errors:
+>
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/s=
+oc/mobileye/mobileye,eyeq5-olb.yaml:
+> Error in referenced schema matching $id: http://devicetree.org/schemas/cl=
+ock/mobileye,eyeq5-clk.yaml
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/s=
+oc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@e00000: clock=
+-controller@2c: False schema does not allow {'compatible': ['mobileye,eyeq5=
+-clk'], 'reg': [[44, 80], [284, 4]], 'reg-names': ['plls', 'ospi'], '#clock=
+-cells': [[1]], 'clocks': [[4294967295]], 'clock-names': ['ref']}
+> 	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eye=
+q5-olb.yaml#
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/s=
+oc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@e00000: reset=
+-controller@0: False schema does not allow {'compatible': ['mobileye,eyeq5-=
+reset'], 'reg': [[0, 12], [512, 52], [288, 4]], 'reg-names': ['d0', 'd1', '=
+d2'], '#reset-cells': [[2]]}
+> 	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eye=
+q5-olb.yaml#
+> Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example=
+.dtb: /example-0/soc/system-controller@e00000/reset-controller@0: failed to=
+ match any schema with compatible: ['mobileye,eyeq5-reset']
+> Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example=
+.dtb: /example-0/soc/system-controller@e00000/clock-controller@2c: failed t=
+o match any schema with compatible: ['mobileye,eyeq5-clk']
 
-I guess the most interesting change is the removal of the CLK_NR_CLKS
-constant from the rk3588 binding. While it was nice to define the upper
-limit of clocks for array-search purposes, it was noted that changing this
-when adding new clocks actually breaks the ABI.
+This series depends on 4 patches from previous revisions that got taken
+into clk-next. Those are v6.8-rc1..clk-mobileye on the clk remote [0].
 
-Thankfully Sebastian invested the time to find a solution to not need that
-constant in the driver anymore.
+Without the 4 patches I've reproduced the above warning; it disappears
+once they are applied.
 
-That change also got the needed review by dt-maintainers and people
-also checked the usage in i.e. u-boot, so it's better to do this now than
-later :-) .
+Have a nice day,
 
+[0]: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=
+=3Dclk-mobileye
 
-Please pull.
-
-Thanks
-Heiko
-
-
-The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
-
-  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v6.9-rockchip-clk1
-
-for you to fetch changes up to 1361d75503fccc0e6b3ecbcd5bb53bbdfdc52f0a:
-
-  clk: rockchip: rk3399: Allow to set rate of clk_i2s0_frac's parent (2024-02-27 23:45:53 +0100)
-
-----------------------------------------------------------------
-New pll-rate for rk3568, i2s rate improvements for rk3399,
-rk3588 syscon clock fixes and removal of overall clock-number
-from the rk3588 binding header and a prerequisite for later
-improvements to the rk3588 linked clocks.
-
-----------------------------------------------------------------
-Chris Morgan (1):
-      clk: rockchip: rk3568: Add PLL rate for 128MHz
-
-Heiko Stuebner (1):
-      Merge branch 'v6.9-shared/clkids' into v6.9-clk/next
-
-Ondrej Jirman (1):
-      clk: rockchip: rk3399: Allow to set rate of clk_i2s0_frac's parent
-
-Sebastian Reichel (6):
-      clk: rockchip: rk3588: fix CLK_NR_CLKS usage
-      dt-bindings: clock: rk3588: drop CLK_NR_CLKS
-      dt-bindings: clock: rk3588: add missing PCLK_VO1GRF
-      clk: rockchip: rk3588: fix pclk_vo0grf and pclk_vo1grf
-      clk: rockchip: rk3588: fix indent
-      clk: rockchip: rk3588: use linked clock ID for GATE_LINK
-
- drivers/clk/rockchip/clk-rk3399.c               |  6 +--
- drivers/clk/rockchip/clk-rk3568.c               |  1 +
- drivers/clk/rockchip/clk-rk3588.c               | 55 +++++++++++++------------
- drivers/clk/rockchip/clk.c                      | 17 ++++++++
- drivers/clk/rockchip/clk.h                      |  2 +
- include/dt-bindings/clock/rockchip,rk3588-cru.h |  3 +-
- 6 files changed, 52 insertions(+), 32 deletions(-)
-
-
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
