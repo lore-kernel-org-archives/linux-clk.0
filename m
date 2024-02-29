@@ -1,178 +1,158 @@
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307D675804;
-	Thu, 29 Feb 2024 15:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B18757E7;
+	Thu, 29 Feb 2024 17:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709222255; cv=none; b=PIlZLxL7YvwHcGE7XKJ8Ht6sXefjuozFFg+qM9BcjER0wCUuANufYVxXjH4SUTiSp4Ph6tnx18VGKcCbTPauSvKMivZdL0shH/hwgOWa65JC1X8TMyyfE8EmWY6OFTcwqbKM6rKwXQCi9FXo4J/2/4D5NwTLM+ezifnv9RUqeSg=
+	t=1709229211; cv=none; b=WEnaFtMGsgz01xaq9cIfW9P8Ava7C2LBuMblkaWe+ANjmlohasSYGxik8hL9w+UZyjGRICS6D5ACJ66JXuCOaZ+78fVAV2TALNxf1F4gtKZodPW/7+zZkZJdtmEPjHcgwbIU7fkD2qZQjjsW55UZjQzAvVb+uYHyVoQF5V7Frw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709222255; c=relaxed/simple;
-	bh=sFsNQxS7brdxwEsklayRsbufGneKwtsUTYwjiHMc954=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=ufD/p4fxF4uf1FU5E8MbxXtqXWHhWnO2sII0bhL51+JUrfOs0xdRjU1u3ayHhE4s+cHXyWIkdWuOn/m09c76C0iiGIvRDDNNg32xF6PoygjQZBnFd95kYPkMmg0yTveLJUJHU1hdPWUgicapD1vdJADyLz0ao+jPs6G8umRAmiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=V+FmJchc; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1709229211; c=relaxed/simple;
+	bh=IZ8tXHi4D6VeM3kc0kx68z1bYQSTMxGuNMx6zsNFNB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RYXJ5JzfsrXOKyPKPaOZfC+frCzhJTMmVpwoZmD6WQWn46MtsESRzlFzVRPXNJr6v6XgXzfuxNma5IYyOUrDWDMymO1Ah2cQtF/WbxjsSQyzuiIR+X6EKRswxiFq3Uy2R+GXjvlL6Air+wTg+IT9AT5Co81bq/4+GSOMYQdIlvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DYGYvzwN; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="V+FmJchc"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A4972E000B;
-	Thu, 29 Feb 2024 15:57:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1709222249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WY80iH9fh79QQiobQmVPwLIwtM3+k6Frks10vv068uo=;
-	b=V+FmJchcpAF5sSRylTCJK8wTE8z/XZBs15KZpFk7BIav4fWPIVumCP4FjKFWsv0OPi0TXc
-	wfGdEvMXbUZjPMXXy9sQwMfLykQU/AkzyKyF76+n6lsI7lC3DubaHVTKZ2fhekMCGgI+Fj
-	IGuZIXOfpXKDEKN/8hZ9uwDSPMtaotTlXj1hzQz2ygNp5/TkgKkd/NOjBb3TBQEZ8iWgBj
-	EWfqKfc7ZsLruaaPMryNf9ON1wmZjijDm5vXv03TqAmPLGO/b4x57smhxx+lIeZjnlmTHz
-	wnIIUl4uxWcwg8JjXLt+b+9f1NQiSf+quBMRKQc3wkDo12g2L7MC5mt31eWU+g==
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DYGYvzwN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709229209; x=1740765209;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IZ8tXHi4D6VeM3kc0kx68z1bYQSTMxGuNMx6zsNFNB0=;
+  b=DYGYvzwNfmxpq7ObKabx3RVT+vH5D36T5LzWrArpkzqj2/KUc4irIBPj
+   cGq202ta97rlS3PMXi9aoHB84NMrRe18my66Ff+UQYf4pDbS+uwPyk6f/
+   8m2kIQAYccR22eHSD4YSxm4H6tO8N1clT/4Zptzt7BcpZe8vX9nIJHCBt
+   5xeTpcFQr8F/IyEL+e0LTVNFlrUK3R4GQBYgtcnc5hrtLtO2jCgPAxdmY
+   OPbSU2j/m2om5QW0owi2It8+w2PeozaJp1BPQacj2FSGTcLg8MlQW37nX
+   bfg6NN15QGUKCTMHFNkFDKGtu4FJeaudn6n2UMGI3pRZB/YH/4VM4D6wR
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10999"; a="21177108"
+X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
+   d="scan'208";a="21177108"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 09:53:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
+   d="scan'208";a="12511155"
+Received: from lkp-server02.sh.intel.com (HELO 3c78fa4d504c) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 29 Feb 2024 09:53:23 -0800
+Received: from kbuild by 3c78fa4d504c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rfkav-000DAD-0q;
+	Thu, 29 Feb 2024 17:53:21 +0000
+Date: Fri, 1 Mar 2024 01:52:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 2/2] clk: imx: add i.MX95 BLK CTL clk driver
+Message-ID: <202403010142.5gu9hKpX-lkp@intel.com>
+References: <20240228-imx95-blk-ctl-v1-2-9b5ae3c14d83@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 29 Feb 2024 16:57:28 +0100
-Message-Id: <CZHOPWYS6IBQ.RFB7JANYC769@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v8 03/10] clk: eyeq5: add platform driver, and init
- routine at of_clk_init()
-Cc: "Gregory CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh+dt@kernel.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>, "Linus Walleij"
- <linus.walleij@linaro.org>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?=
- <rafal@milecki.pl>, "Philipp Zabel" <p.zabel@pengutronix.de>, "Vladimir
- Kondratiev" <vladimir.kondratiev@mobileye.com>,
- <linux-mips@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, <linux-gpio@vger.kernel.org>
-To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
-X-Mailer: aerc 0.15.2
-References: <20240227-mbly-clk-v8-0-c57fbda7664a@bootlin.com>
- <20240227-mbly-clk-v8-3-c57fbda7664a@bootlin.com>
- <Zd4X3NnBoEl0wu2H@smile.fi.intel.com>
- <CZGSB2O8P572.28HK6WFT43N6S@bootlin.com>
- <ZeBnX2upNRN0xXH4@smile.fi.intel.com>
- <CZHMSNWMH4KJ.2J6ZMWKMSZYH2@bootlin.com>
- <ZeCbvgWY6x1o17Kq@smile.fi.intel.com>
- <CZHOCV35A23S.14HL07U73EH6X@bootlin.com>
- <ZeCnZ0Py62EyKI9Z@smile.fi.intel.com>
-In-Reply-To: <ZeCnZ0Py62EyKI9Z@smile.fi.intel.com>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240228-imx95-blk-ctl-v1-2-9b5ae3c14d83@nxp.com>
 
-Hello,
+Hi Peng,
 
-On Thu Feb 29, 2024 at 4:48 PM CET, Andy Shevchenko wrote:
-> On Thu, Feb 29, 2024 at 04:40:25PM +0100, Th=C3=A9o Lebrun wrote:
-> > On Thu Feb 29, 2024 at 3:59 PM CET, Andy Shevchenko wrote:
-> > > On Thu, Feb 29, 2024 at 03:27:01PM +0100, Th=C3=A9o Lebrun wrote:
-> > > > On Wed, Feb 28, 2024 at 03:33:29PM +0100, Th=C3=A9o Lebrun wrote:
-> > > > > On Tue Feb 27, 2024 at 6:11 PM CET, Andy Shevchenko wrote:
-> > > > > > On Tue, Feb 27, 2024 at 03:55:24PM +0100, Th=C3=A9o Lebrun wrot=
-e:
->
-> [...]
->
-> > > > > > > > +	u32		reg;	/* next 8 bytes are r0 and r1 */
-> > > > > > >
-> > > > > > > Not sure this comments gives any clarification to a mere read=
-er of the code.
-> > > > > > > Perhaps you want to name this as reg64 (at least it will show=
- that you have
-> > > > > > > 8 bytes, but I have no clue what is the semantic relationship=
- between r0 and
-> > > > > > > r1, it's quite cryptic to me). Or maybe it should be reg_0_1?
-> > > > > >=20
-> > > > > > Clocks are defined by two 32-bit registers. We only store the f=
-irst
-> > > > > > register offset because they always follow each other.
-> > > > >
-> > > > > > I like the reg64 name and will remove the comment. This straigh=
-t forward
-> > > > > > code is found in the rest of the code, I don't think it is anyt=
-hing
-> > > > > > hard to understand (ie does not need a comment):
-> > > > > >=20
-> > > > > > 	u32 r0 =3D readl(base_plls + pll->reg);
-> > > > > > 	u32 r1 =3D readl(base_plls + pll->reg + sizeof(r0));
-> > > > >
-> > > > > Btw, why readq()/writeq() (with probably the inclusion of io-64-n=
-onatomic-lo-hi.h)
-> > > > > can be used in this case? It will be much better overall and be a=
-ligned with
-> > > > > reg64 name.
-> > > >=20
-> > > > The doc talks in terms of 32-bit registers. I do not see a reason t=
-o
-> > > > work in 64-bit. If we get a 64-bit value that we need to split we n=
-eed
-> > > > to think about the endianness of our platform, which makes things m=
-ore
-> > > > complex than just reading both values independently.
-> > >
-> > > 1) Would be nice to test on the real HW to confirm it doesn't accept =
-64-bit IO.
-> >=20
-> > Just tested, it works. No error on the memory bus. And checked assembly
-> > generated was a single 64-bit instructions.
-> >=20
-> > It might not work on other hardware revisions though. I can't remember
-> > if memory bus is changing across them.
-> >=20
-> > > 2) Still I see a benefit from using lo_hi_readq() and friends directl=
-y.
-> >=20
-> > So it is:
-> >=20
-> > 	u32 r0 =3D readl(base_plls + pll->reg64);
-> > 	u32 r1 =3D readl(base_plls + pll->reg64 + sizeof(r0));
-> >=20
-> > vs:
-> >=20
-> > 	u64 r =3D lo_hi_readq(base_plls + pll->regs64);
->
-> > 	u32 r0 =3D r;
-> > 	u32 r1 =3D r >> 32;
->
-> It depends to the semantics of these two. How hard do they coupled to eac=
-h
-> other semantically? I.o.w. can they always be considered as 64-bit regist=
-er
-> with the respective bitfields? (And note FIELD_GET() here is your friend.=
-)
+kernel test robot noticed the following build errors:
 
-OLB (the memory region) has always been described as a list of 32-bit
-registers. The semantics lean in the camp of two readl().
+[auto build test ERROR on 22ba90670a51a18c6b36d285fddf92b9887c0bc3]
 
-> > One is straight forward, the other uses an obscure helper that code
-> > readers must understand and follows that with bit manipulation.
->
-> [...]
->
-> > There are two errors to handle, that makes a mess out of the code.
-> > Having a little bit of repetition but straight forward code is nicer in
-> > my opinion. At least we tried!
->
-> Yes! Perhaps you can add a couple of words into commit message to explain
-> this detail of implementation (that code in two parts is not so identical
-> to be easily deduplicated).
+url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan-OSS/dt-bindindgs-clock-support-NXP-i-MX95-BLK-CTL-module/20240228-122408
+base:   22ba90670a51a18c6b36d285fddf92b9887c0bc3
+patch link:    https://lore.kernel.org/r/20240228-imx95-blk-ctl-v1-2-9b5ae3c14d83%40nxp.com
+patch subject: [PATCH 2/2] clk: imx: add i.MX95 BLK CTL clk driver
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240301/202403010142.5gu9hKpX-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 325f51237252e6dab8e4e1ea1fa7acbb4faee1cd)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240301/202403010142.5gu9hKpX-lkp@intel.com/reproduce)
 
-Yes, will do. I get why from a reader's point-of-view it looks like
-duplicate code.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202403010142.5gu9hKpX-lkp@intel.com/
 
-Thanks,
+All errors (new ones prefixed by >>):
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+   In file included from drivers/clk/imx/clk-imx95-blk-ctl.c:13:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     547 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/clk/imx/clk-imx95-blk-ctl.c:13:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/clk/imx/clk-imx95-blk-ctl.c:13:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     584 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/clk/imx/clk-imx95-blk-ctl.c:425:25: error: use of undeclared identifier 'imx95_blk_ctl_match'; did you mean 'imx95_bc_of_match'?
+     425 | MODULE_DEVICE_TABLE(of, imx95_blk_ctl_match);
+         |                         ^~~~~~~~~~~~~~~~~~~
+         |                         imx95_bc_of_match
+   include/linux/module.h:244:15: note: expanded from macro 'MODULE_DEVICE_TABLE'
+     244 | extern typeof(name) __mod_##type##__##name##_device_table               \
+         |               ^
+   drivers/clk/imx/clk-imx95-blk-ctl.c:416:34: note: 'imx95_bc_of_match' declared here
+     416 | static const struct of_device_id imx95_bc_of_match[] = {
+         |                                  ^
+   6 warnings and 1 error generated.
 
+
+vim +425 drivers/clk/imx/clk-imx95-blk-ctl.c
+
+   415	
+   416	static const struct of_device_id imx95_bc_of_match[] = {
+   417		{ .compatible = "nxp,imx95-cameramix-csr", .data = &camblk_dev_data },
+   418		{ .compatible = "nxp,imx95-display-master-csr", },
+   419		{ .compatible = "nxp,imx95-dispmix-lvds-csr", .data = &lvds_csr_dev_data },
+   420		{ .compatible = "nxp,imx95-dispmix-csr", .data = &dispmix_csr_dev_data },
+   421		{ .compatible = "nxp,imx95-netcmix-blk-ctrl", },
+   422		{ .compatible = "nxp,imx95-vpumix-csr", .data = &vpublk_dev_data },
+   423		{ /* Sentinel */ },
+   424	};
+ > 425	MODULE_DEVICE_TABLE(of, imx95_blk_ctl_match);
+   426	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
