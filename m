@@ -1,104 +1,306 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F5C63408;
-	Thu, 29 Feb 2024 10:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A377D111E
+	for <linux-clk@vger.kernel.org>; Thu, 29 Feb 2024 10:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709201358; cv=none; b=Im48sKjodaL6V2AwHS1zM5o63cNfaLH/uLD0v43BxqMJo+RDf7Fy4Xjj5GE+nGCyu7qssWOa9aM1aCsAT5TsiRzRIyKtIpkMJewLFacubbAU/k4XlCEQhhr2UhMzwXYoo0QUcFDoWWvZXOAeDox7jTsJa1I43iPY1+Y3FhNTgBU=
+	t=1709202858; cv=none; b=h6O4ytX3wQkOIKZM/6VoQIL1BlnGxMH3kPh23QGCJWaPyhe5TYmXwmNxXnL/TtA1I7PiTxAWTbtxFyIXtNF+vYsCV9BXLZP+H/t0woGR/Pca2eYaAvws6QJtwf0CbNOCvwZRDFy8JwXLLttEFYl6nTjcRsyaxTRS/epoVG9GeKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709201358; c=relaxed/simple;
-	bh=8bR6PwZBq4qbVJA3nu9uxIqMtWjtSXCP92eEOytRYyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eTWGWuy8glQWK24AoNQM28JA8FXgBNbditrvBGhSaraBVSeEmiHdKrJVXtRVWMfWv4pKPAQXfNwGrdTariEG8HsSGH+/+6bDlauyAh8x5ZlRfRp33KCJT2XmXbbwJ7UORXcjtAIU7e+fPnQsa4OL0KmKegvpv8Ae3OWrmdC9No8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9978D1FB;
-	Thu, 29 Feb 2024 02:09:53 -0800 (PST)
-Received: from pluto (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F29D73F762;
-	Thu, 29 Feb 2024 02:09:12 -0800 (PST)
-Date: Thu, 29 Feb 2024 10:09:10 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	sudeep.holla@arm.com, james.quinlan@broadcom.com,
-	f.fainelli@gmail.com, vincent.guittot@linaro.org,
-	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
-	quic_nkela@quicinc.com, souvik.chakravarty@arm.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 6/7] clk: scmi: Allocate CLK operations dynamically
-Message-ID: <ZeBXxjKiDMT2YPtP@pluto>
-References: <20240214183006.3403207-1-cristian.marussi@arm.com>
- <20240214183006.3403207-7-cristian.marussi@arm.com>
- <500e265eb7c6a03a40e0067c8806e059.sboyd@kernel.org>
- <ZdcFuV0KQDXTH8L8@pluto>
- <1d0baf6dbaa1c2ca6594f9a2bcade2c4.sboyd@kernel.org>
+	s=arc-20240116; t=1709202858; c=relaxed/simple;
+	bh=GgnUOEffRZJ42r2OeGvZTo9UXmfKm4tTxUBXBAl7ztw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I2cq0ZNXgM03fpbavAkiqUFNnbMGA0oJCxlcyTbE8zvP1jkV7tJyR4S+0yMqFs5WDzuhO6R0p4UCSbppAHGPETVcST3PBv+hNjsEJW59XwE6oK0B0Tk2JyKAOpKogg2AO60r/vhnXCowkzyQ7DuTT+CpTyoeJ34fUVuvAJdWO/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mD4ISzz+; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mD4ISzz+"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2d22b8801b9so9463051fa.0
+        for <linux-clk@vger.kernel.org>; Thu, 29 Feb 2024 02:34:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1709202855; x=1709807655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QWZLhJtXrXREGkrkVHASBqM4/svUa094tHpDRDPD6v0=;
+        b=mD4ISzz+CVkN2N+yqGMERL0VOBx5jGqUBwZDe1pMIZc/Gc+RCjWD0u2MaNPZZN87Js
+         svqbP6fu6vhM9a0uqtk3F07K3OZVYAcIG1KpNU/4NzHaSyVVa3/i75CFG6OQWQGe4971
+         /UfDbzgqjd2Jm8w2ylcO6OJNR0pvr4Da/qgBQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709202855; x=1709807655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QWZLhJtXrXREGkrkVHASBqM4/svUa094tHpDRDPD6v0=;
+        b=Mn64wtlyoUmfASothg9qj+sJdmZALigsCT5F85f4rPsLqWpgaoQy60E9utb9CtRLUZ
+         hINcHLj/lxT+apse8gZv6i5k4jN7/A9dmd0Grfi/N4lk5uW5vRK9E2ISM4wv/Y0XhtNt
+         MdCxKGqbbJ0HC2mjqj7tw4FEAFmIUNvwxEA6jWyoOJdwBEmxCNKqYoVg4423EA+xpu5C
+         qO21rAh+3bbDPeubP20ewrvg2rIXT7eIc558Zu4Xy4kSdO1M1aooAbx76Nd+384Xa+rt
+         89SQGehKvNZGTVgjg2imw+ALwc73SMCYpENDiEX5l9K58NNjbqWGlDjoGDir0wXBnwK0
+         7u0w==
+X-Forwarded-Encrypted: i=1; AJvYcCX8qKU2ddaqgJFRLmFl02YWBZItSTdnkIkmEvb6U4S47/Tqs/OCgED1+X0+9AvB/Zkhx0JMRLZ8gYN82c1ZpdnmwyHaM6SS7CtC
+X-Gm-Message-State: AOJu0Yz/a/kefAZQxdVe5QDrmvyoyNu6uqE5+DRcdT2DT5Tguqtq0uaI
+	h5k33o7UUxYwDw39NswEoq2cmSznSsf1H0PmuwMgMMf2vCMzHy1IQRhoPSUCm/P39HyAyYPJnCN
+	oZj6lpLb3jxT+G2rkBsd1kDhBv3Ws/+O6lxYG
+X-Google-Smtp-Source: AGHT+IELVLBuIjaHjgQS6YTzenmUUL0wJhr5x7w//aBk4NGvQfMzL/tLB7zOQ0ThYx2rN5H+hKvedRKUhGpFkSxdgmI=
+X-Received: by 2002:a2e:9490:0:b0:2d2:5129:4ffd with SMTP id
+ c16-20020a2e9490000000b002d251294ffdmr1046646ljh.53.1709202854811; Thu, 29
+ Feb 2024 02:34:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1d0baf6dbaa1c2ca6594f9a2bcade2c4.sboyd@kernel.org>
+References: <20240108081834.408403-1-treapking@chromium.org>
+ <CAGXv+5EnBt+7WrNb-QyziEaCihvjhFVf2tpzk=XyAoeELqucaw@mail.gmail.com>
+ <e0e6febf-1045-49f8-a200-8bc095b0fa50@collabora.com> <CAGXv+5F5YFRKjaXu_XbXrUhqKL0NSRyt6tniQYfhRh+fsaxqmg@mail.gmail.com>
+ <cc74422d-962f-4da5-867b-158a71db1a7b@collabora.com>
+In-Reply-To: <cc74422d-962f-4da5-867b-158a71db1a7b@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 29 Feb 2024 18:34:03 +0800
+Message-ID: <CAGXv+5EyRROsh_=J1Fg4K+ZgfkERF4dh4R6WoGw9MnTBMNUCgQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] clk: mediatek: Introduce need_pm_runtime to mtk_clk_desc
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Pin-yen Lin <treapking@chromium.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Weiyi Lu <weiyi.lu@mediatek.com>, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 28, 2024 at 06:20:34PM -0800, Stephen Boyd wrote:
-> Quoting Cristian Marussi (2024-02-22 00:28:41)
-> > On Wed, Feb 21, 2024 at 09:44:14PM -0800, Stephen Boyd wrote:
-> > > 
-> > > It's not great to move these function pointer structs out of RO memory
-> > > to RW. I'm also not convinced that it's any better to construct them at
-> > > runtime. Isn't there a constant set of possible clk configurations? Or
-> > > why can't we simply add some failures to the clk_ops functions instead?
-> > 
-> > Well, the real clock devices managed by the SCMI server can be a of
-> 
-> SCMI is a server!? :)
-> 
+On Thu, Feb 29, 2024 at 5:45=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 29/02/24 08:17, Chen-Yu Tsai ha scritto:
+> > On Mon, Feb 26, 2024 at 7:16=E2=80=AFPM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com> wrote:
+> >>
+> >> Il 23/02/24 05:27, Chen-Yu Tsai ha scritto:
+> >>> On Mon, Jan 8, 2024 at 4:18=E2=80=AFPM Pin-yen Lin <treapking@chromiu=
+m.org> wrote:
+> >>>>
+> >>>> Introduce a new need_pm_runtime variable to mtk_clk_desc to indicate
+> >>>> this clock controller needs runtime PM for its operations.
+> >>>> Also do a runtime PM get on the clock controller during the
+> >>>> probing stage to workaround a possible deadlock.
+> >>>>
+> >>>> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> >>>
+> >>> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> >>>
+> >>> The patch itself looks fine.
+> >>>
+> >>> Besides the MT8183 MFG clock issues, we do actually need this for the
+> >>> MT8192 ADSP clock. Its power domain is not enabled by default.
+> >>>
+> >>
+> >> ...but on MT8195 the ADSP clock works - because the ADSP node exists.
+> >
+> > That's an indirect dependency that should not be relied on. Say the clo=
+ck
+> > driver probed but the ADSP hasn't, and you try to read out the current
+> > status. What would happen?
+> >
+> > - Read out works fine, because the power domain is default on, and hasn=
+'t
+> >    been turned off by late cleanup
+> > - Read out is bogus (but you can't tell)
+> > - Read out hangs.
+> >
+> > The third is what happens on MT8192. There's still some issues on that
+> > front, as even after I applied the ADSP power domain patches from Media=
+Tek,
+> > the readout was still hanging.
+> >
+>
+> That MT8192 lockup story is getting crazy in my head... anyway, besides t=
+hat,
+> I get the point - I was somehow ignoring the fact that kernel modules do =
+exist.
+>
+> Eh, sorry about that :-)
+>
+> >> This poses a question: should we make clock controllers depend on powe=
+r domains,
+> >> or should we keep everything powered off (hence clocks down - no power=
+ consumption)
+> >> *unless* the user exists?
+> >
+> > That's a policy discussion separate from actual hardware dependencies.
+> > *If* the clock controller needs the power domain to be active for the
+> > registers to be accessed, the clock controller *must* have a direct
+> > dependency on the power domain.
+> >
+>
+> I admit I should've worded that better.
+>
+> "should we make clock controllers depend on power domains" was actually i=
+mplying
+> "IF those need one" :-)
+>
+> I really wonder if - at this point - it's simply a better idea to not res=
+trict
+> the call to devm_pm_runtime_enable/resume_and_get to `need_runtime_pm =3D=
+=3D true`.
+>
+> Do we really need to exclude that on other clock controllers that don't h=
+ave
+> any power domain dependency? Any side effect?
+>
+> Saying this because if we can avoid yet another per-SoC flag I'm really h=
+appy,
+> as readability is also impacted and besides - if we ever find out that on=
+e of
+> those need a power domain in the future, we'll need just one commit and j=
+ust
+> only in the devicetree, instead of enabling a flag in driver X as well as=
+ that,
+> avoiding some (potentially unnecessary) noise... I guess.
+>
+> P.S.: I just noticed that the return value for the devm_pm_runtime_enable=
+() call
+>        is not being checked!
+>
+> .......
+>
+> In short....
+>
+> Chen-Yu, at this point, do you have any reason why we wouldn't be able an=
+d/or it
+> wouldn't be a good idea to just avoid adding the `need_runtime_pm` flag (=
+meaning
+> that we perform pm_runtime calls for all clock drivers unconditionally)?
+>
+> If this is about longer boot time, I don't think that it's going to be mo=
+re than
+> a millisecond or two, so that should be completely ignorable.
 
-...well the platform fw act as a server in the client-server SCMI
-model...so...I know these days it's cooler to be "serverless" but..hey...
-...at least is not a BO2k server :P
+I think it's just more of a "don't enable features you don't need" thing.
+We already ran into a weird deadlock, which is why the devm_pm_runtime_enab=
+le()
+call has that comment.
 
-> > varying nature and so the minimum set of possible clk configurations
-> > to cover will amount to all the possible combinations of supported ops
-> > regarding the specific clock properties (i.e. .set_parent / .set_rate /
-> > .enable / .get/set_duty_cycle / atomic_capability ... for now)...we
-> > simply cannot know in advance what the backend SCMI server is handling.
-> > 
-> > These seemed to me too much in number (and growing) to be pre-allocated
-> > in all possible combinations. (and mostly wasted since you dont really
-> > probably use all combinations all the time)
-> > 
-> > Moreover, SCMI latest spec now exposes some clock properties (or not) to
-> > be able avoid even sending an actual SCMI message that we know will be
-> > denied all the time; one option is that we return an error,, as you said,
-> > but what is the point (I thought) to provide at all a clk-callback that
-> > we know upfront will fail to be executed every time ? (and some consumer
-> > drivers have been reported by partners not to be happy with these errors)
-> > 
-> > What I think could be optimized here instead, and I will try in the next
-> > respin, it is that now I am allocating one set of custom ops for each clock
-> > at the end, even if exactly the same ops are provided since the clock
-> > capabilities are the same; I could instead allocate dynamically and fill only
-> > one single set of ops for each distinct set of combinations, so as to avoid
-> > useless duplication and use only the miminum strict amount of RW memory
-> > needed.
-> > 
-> 
-> Yes please don't allocate a clk_op per clk. And, please add these
-> answers to the commit text so that we know why it's not possible to know
-> all combinations or fail clk_ops calls.
+I don't think anyone has actually looked at it. As you said it shouldn't be
+much, at least during boot time. It's one call per clock controller.
 
-Sure I posted this series a couple of days ago about this rework:
+> Can you please do a test for that, or should I?
 
-	https://lore.kernel.org/linux-arm-kernel/20240227194812.1209532-1-cristian.marussi@arm.com/
+The earliest I can work on it would be some time next week. Does that work
+for you?
 
-with a bit of context in the cover-letter and in the commit...but I can
-add more commenting of course if needed.
+ChenYu
 
-Thanks for the review,
-Cristian
+> Cheers
+> Angelo
+>
+> >> For the second one, this means that the *device* gets the power domain=
+ (adsp), and
+> >> not the clock controller (which clocks are effectively useless if ther=
+e's no user).
+> >
+> > No. See my previous paragraph.
+> >
+> > ChenYu
+> >
+> >> Angelo
+> >>
+> >>>> ---
+> >>>>
+> >>>> Changes in v3:
+> >>>> - Update the commit message and the comments before runtime PM call
+> >>>>
+> >>>> Changes in v2:
+> >>>> - Fix the order of error handling
+> >>>> - Update the commit message and add a comment before the runtime PM =
+call
+> >>>>
+> >>>>    drivers/clk/mediatek/clk-mtk.c | 19 +++++++++++++++++++
+> >>>>    drivers/clk/mediatek/clk-mtk.h |  2 ++
+> >>>>    2 files changed, 21 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/c=
+lk-mtk.c
+> >>>> index 2e55368dc4d8..ba1d1c495bc2 100644
+> >>>> --- a/drivers/clk/mediatek/clk-mtk.c
+> >>>> +++ b/drivers/clk/mediatek/clk-mtk.c
+> >>>> @@ -13,6 +13,7 @@
+> >>>>    #include <linux/of.h>
+> >>>>    #include <linux/of_address.h>
+> >>>>    #include <linux/platform_device.h>
+> >>>> +#include <linux/pm_runtime.h>
+> >>>>    #include <linux/slab.h>
+> >>>>
+> >>>>    #include "clk-mtk.h"
+> >>>> @@ -494,6 +495,18 @@ static int __mtk_clk_simple_probe(struct platfo=
+rm_device *pdev,
+> >>>>                           return IS_ERR(base) ? PTR_ERR(base) : -ENO=
+MEM;
+> >>>>           }
+> >>>>
+> >>>> +
+> >>>> +       if (mcd->need_runtime_pm) {
+> >>>> +               devm_pm_runtime_enable(&pdev->dev);
+> >>>> +               /*
+> >>>> +                * Do a pm_runtime_resume_and_get() to workaround a =
+possible
+> >>>> +                * deadlock between clk_register() and the genpd fra=
+mework.
+> >>>> +                */
+> >>>> +               r =3D pm_runtime_resume_and_get(&pdev->dev);
+> >>>> +               if (r)
+> >>>> +                       return r;
+> >>>> +       }
+> >>>> +
+> >>>>           /* Calculate how many clk_hw_onecell_data entries to alloc=
+ate */
+> >>>>           num_clks =3D mcd->num_clks + mcd->num_composite_clks;
+> >>>>           num_clks +=3D mcd->num_fixed_clks + mcd->num_factor_clks;
+> >>>> @@ -574,6 +587,9 @@ static int __mtk_clk_simple_probe(struct platfor=
+m_device *pdev,
+> >>>>                           goto unregister_clks;
+> >>>>           }
+> >>>>
+> >>>> +       if (mcd->need_runtime_pm)
+> >>>> +               pm_runtime_put(&pdev->dev);
+> >>>> +
+> >>>>           return r;
+> >>>>
+> >>>>    unregister_clks:
+> >>>> @@ -604,6 +620,9 @@ static int __mtk_clk_simple_probe(struct platfor=
+m_device *pdev,
+> >>>>    free_base:
+> >>>>           if (mcd->shared_io && base)
+> >>>>                   iounmap(base);
+> >>>> +
+> >>>> +       if (mcd->need_runtime_pm)
+> >>>> +               pm_runtime_put(&pdev->dev);
+> >>>>           return r;
+> >>>>    }
+> >>>>
+> >>>> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/c=
+lk-mtk.h
+> >>>> index 22096501a60a..c17fe1c2d732 100644
+> >>>> --- a/drivers/clk/mediatek/clk-mtk.h
+> >>>> +++ b/drivers/clk/mediatek/clk-mtk.h
+> >>>> @@ -237,6 +237,8 @@ struct mtk_clk_desc {
+> >>>>
+> >>>>           int (*clk_notifier_func)(struct device *dev, struct clk *c=
+lk);
+> >>>>           unsigned int mfg_clk_idx;
+> >>>> +
+> >>>> +       bool need_runtime_pm;
+> >>>>    };
+> >>>>
+> >>>>    int mtk_clk_pdev_probe(struct platform_device *pdev);
+> >>>> --
+> >>>> 2.43.0.472.g3155946c3a-goog
+> >>>>
+> >>
+> >>
+> >>
+>
+>
+>
