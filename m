@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875F236B00;
-	Thu, 29 Feb 2024 02:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6A43612E;
+	Thu, 29 Feb 2024 02:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709172988; cv=none; b=Y5zERrmrroRrqfEsy+e0rhpp+1eZvCJW+ZcwRo42F7yfsKKZapg6xv8/NZo9TtuwjH9UovVWmNktEV5NeLkpZUVC5k/S903wy3SuM9BXlgWe6ZmNF2nP7CZgyN4OuFl4D7BzdruXxp1IA0Wugha6UjE53MRMEN+hfQY9N/gAQcU=
+	t=1709173237; cv=none; b=edkEY/PZCC7G3pjDs18rgrjaK0/+Y7f/B4wXxQE++SQNg2qilQs2rRXcaKP/IIUFF1iV5JEtPBcasyDkBcKVDT3m/uyDGp5kxJFatNXECkNp4TI9etVyaIBA5bMgOy2iiHHBTHMqHiLANhLnD5ESZUmo9XGu2THeU1VgV7qwRxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709172988; c=relaxed/simple;
-	bh=YREW50Mm9XizXo3Vg/YslHDwW+mx1PNC7jtuWaFg0Og=;
+	s=arc-20240116; t=1709173237; c=relaxed/simple;
+	bh=ndHU4Gl3W3V+sGQ4tm5lbUz87+Cesf9e9pD+O9WP5iE=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=NEmXu1dQlOD5TQ+otfNa5xHCvHN3bkmI9877gE2MWtfFnnWP0J0nf0c8+ekL0/OOwM+hG8YOFslJqvy5bmTRDorWobEt0WhQUMsZAsUUpJ4kmm8c3RbAko2dNTb6GIC+31jHxfp/FN5bE3AoXypCwgQS41g8+TKKvPBSD4QJzGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzubYY1D; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=FUcGDf8v4MMThVVttn0jSi2aCsJ37Gr5TU5VSQWR5QHuBv0AoPuh1952oaG7RA04olnni+nyGBHTYVdG3XqPVgS6EpvgVrtDpdFBC5aal6MxrKDWsWB3ZqTktld9M0MfDuXCbYk9uSWR0e0K1rja5U2zfi3uClQay1YN66saixo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMlLiRWC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzubYY1D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05B4BC43390;
-	Thu, 29 Feb 2024 02:16:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMlLiRWC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABA4CC433F1;
+	Thu, 29 Feb 2024 02:20:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709172987;
-	bh=YREW50Mm9XizXo3Vg/YslHDwW+mx1PNC7jtuWaFg0Og=;
+	s=k20201202; t=1709173236;
+	bh=ndHU4Gl3W3V+sGQ4tm5lbUz87+Cesf9e9pD+O9WP5iE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=SzubYY1DA+zhhrxp2Mg+Lfzw2OlCQL7NDf0xc1Tem4Nyoahhnnn0Yv5jnWdiQZLgV
-	 lryrljDAnssddQ4XoFhjBM0NVLBIHz6ijKMKhHDSEwIphU2sMRUEKuKxqlVwl7SlBs
-	 s1N2ySkzySaHatpuow//fODH/lcrgCgvGNOoWsGmZ8aneHzx+EwVlHiNkbdOkLMsuA
-	 KnYmfwZj59tx46ceWYi6FRtHzd1oy8J1aalOiut2k7cyOMirHZ/wE28IU5EKxAlFln
-	 Nl1TLXlRsuwZd/T49d4UbwOPfLAwaNvZLtxSR5Nm3t3j8QU4lolDuMFX7HCSYpchuu
-	 5fjFHxwd7O5cA==
-Message-ID: <e4c1e89450aa91ec684a48797bb5d132.sboyd@kernel.org>
+	b=SMlLiRWCRXf9UeJ6EIl+4DGlqM+J1wHQwlRmSRroWC4rI18MdpO6BkwgVtEfeOvna
+	 uDTBbtJNi9BMgFzrHZRKPnPOSko+gCLz8ZJIV4gzqW7uC6+BfbLjj0EyH5RIRx0lgt
+	 oPv23BBBaS9QnG/FQgO/walRsP+KSKy8HSjy4RlVwSCy6l2srhc3M4uLYMAp22OWrU
+	 pdFmUCDGRiCNV6AdTI8u51/NYVb3bgdD1PK9k/dZF8gq6UflzQNysr6+dDwa8Fn7wt
+	 m4VBBZm0js7S/RZhwabX3uFqqdmMse9BS0Ule8yJvbALIgnWVzmJExI1fec7z4Wz5E
+	 bq7bmxQUUivVw==
+Message-ID: <1d0baf6dbaa1c2ca6594f9a2bcade2c4.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,92 +35,56 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <9922942e-ea9e-4cdb-a091-5b8ea0a180d8@salutedevices.com>
-References: <20240126201433.1830600-1-jan.dakinevich@salutedevices.com> <c79909e4e55badc8f094d2ff8c4d34ca.sboyd@kernel.org> <9922942e-ea9e-4cdb-a091-5b8ea0a180d8@salutedevices.com>
-Subject: Re: [PATCH] clk: allow to skip clk_core_req_round_rate_nolock()
+In-Reply-To: <ZdcFuV0KQDXTH8L8@pluto>
+References: <20240214183006.3403207-1-cristian.marussi@arm.com> <20240214183006.3403207-7-cristian.marussi@arm.com> <500e265eb7c6a03a40e0067c8806e059.sboyd@kernel.org> <ZdcFuV0KQDXTH8L8@pluto>
+Subject: Re: [PATCH 6/7] clk: scmi: Allocate CLK operations dynamically
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: kernel@salutedevices.com
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 28 Feb 2024 18:16:24 -0800
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, sudeep.holla@arm.com, james.quinlan@broadcom.com, f.fainelli@gmail.com, vincent.guittot@linaro.org, peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com, quic_nkela@quicinc.com, souvik.chakravarty@arm.com, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+To: Cristian Marussi <cristian.marussi@arm.com>
+Date: Wed, 28 Feb 2024 18:20:34 -0800
 User-Agent: alot/0.10
 
-Quoting Jan Dakinevich (2024-02-23 13:47:35)
->=20
->=20
-> On 2/23/24 02:20, Stephen Boyd wrote:
-> > Quoting Jan Dakinevich (2024-01-26 12:14:33)
-> >> Calling of clk_core_req_round_rate_nolock() can be time-consuming in a
-> >> case of deep hierarchy with multiple dividers/parents. But if the clock
-> >> already has exactly the same rate as desired, there is no need to
-> >> determine how it could be rounded.
+Quoting Cristian Marussi (2024-02-22 00:28:41)
+> On Wed, Feb 21, 2024 at 09:44:14PM -0800, Stephen Boyd wrote:
 > >=20
-> > What exactly are you trying to avoid? Is this an optimization or a bug
-> > fix? TL;DR: I'm unlikely to apply this patch.
-> >=20
+> > It's not great to move these function pointer structs out of RO memory
+> > to RW. I'm also not convinced that it's any better to construct them at
+> > runtime. Isn't there a constant set of possible clk configurations? Or
+> > why can't we simply add some failures to the clk_ops functions instead?
 >=20
-> It is an optimization, not a bug. The problem is that=20
-> clk_core_req_round_rate_nolock() is quite expensive, and I faced with=20
-> cases, where it takes tens and hundreds milliseconds (depending on SoC).
->=20
-> As I see, it is irremovable feature of clk_core_req_round_rate_nolock()=20
-> design itself. Lets imagine, we have some clock, and its parent is a=20
-> divider. When clk_core_req_round_rate_nolock() is being called the=20
-> execution is walked through the following path:
->=20
-> clk_core_determine_round_nolock
->   core->ops->determine_rate
->     divider_determine_rate
->      clk_divider_bestdiv
->=20
-> Inside clk_divider_bestdiv() for each possible divider=20
-> clk_hw_round_rate() is called for parent of the clock, which in turn=20
-> calls clk_core_determine_round_nolock().
->=20
-> So, each divider and multiplexer in clock path multiplies many times an=20
-> amount of iteration required to execute=20
-> clk_core_req_round_rate_nolock(). When there are a lot of them the time=20
-> consumed by clk_core_req_round_rate_nolock() becomes sufficient.
+> Well, the real clock devices managed by the SCMI server can be a of
 
-Do you have a more concrete example? I wonder if perhaps you've split up
-the clk hardware into multipliers and dividers, when they really could
-all be combined into one clk that does all the math at once without
-traversing the tree. But if the problem is really just that the
-clk_divider_bestdiv() implementation is slow then that's good to know.
+SCMI is a server!? :)
 
+> varying nature and so the minimum set of possible clk configurations
+> to cover will amount to all the possible combinations of supported ops
+> regarding the specific clock properties (i.e. .set_parent / .set_rate /
+> .enable / .get/set_duty_cycle / atomic_capability ... for now)...we
+> simply cannot know in advance what the backend SCMI server is handling.
 >=20
-> > I could see some driver implementing round_rate()/determine_rate() in a
-> > way that rounds the rate passed in, so that even if the rate is what the
-> > clk is running at _right now_, it still wants to change it to something
-> > else, or at least call down into the driver to call the set_rate clk_op.
-> > Applying this patch will break that. The contract is that
-> > clk_set_rate(rate) =3D=3D clk_set_rate(clk_round_rate(rate)). It doesn't
-> > look like anything needs to change.
+> These seemed to me too much in number (and growing) to be pre-allocated
+> in all possible combinations. (and mostly wasted since you dont really
+> probably use all combinations all the time)
 >=20
-> If I am not mistaken, clocks's rate is either equal to its parent rate=20
-> or calculated by ->recalc_rate(). I suppose, this callback should return =
-
-> valid rate value that is based on current clock parameters.
+> Moreover, SCMI latest spec now exposes some clock properties (or not) to
+> be able avoid even sending an actual SCMI message that we know will be
+> denied all the time; one option is that we return an error,, as you said,
+> but what is the point (I thought) to provide at all a clk-callback that
+> we know upfront will fail to be executed every time ? (and some consumer
+> drivers have been reported by partners not to be happy with these errors)
 >=20
-> Now, suppose the clock has rate "rateA" and we called clk_set_rate() to=20
-> set "rateA", but clk_core_req_round_rate_nolock() inside clk_set_rate()=20
-> rounds it to "rateB". Thus, although the clock is able to run on desired =
-
-> rate (and actually run on it), ->determine_rate() and ->round_rate() are =
-
-> unable to choose clocks's parameters for that value. Is it correct=20
-> behavior for clock driver?
+> What I think could be optimized here instead, and I will try in the next
+> respin, it is that now I am allocating one set of custom ops for each clo=
+ck
+> at the end, even if exactly the same ops are provided since the clock
+> capabilities are the same; I could instead allocate dynamically and fill =
+only
+> one single set of ops for each distinct set of combinations, so as to avo=
+id
+> useless duplication and use only the miminum strict amount of RW memory
+> needed.
 >=20
 
-It's not really a question for the clk framework. If the clk driver
-wants to round rateA to rateB then it can. It could be that the
-recalc_rate() clk_op calculates a slightly different rate than what
-round_rate() clk op did, because maybe the driver has frequency tables
-and the rate the clk runs at is something like 933333Hz but the driver
-just says that's 930000Hz for simplicity. If that happens, recalc_rate()
-gives us the "true" rate, while round_rate() gives us the "approximate"
-rate. Either way, the set_rate() clk_op knows that 930000Hz means set
-some clk rate, even if that doesn't match what recalc_rate() returns
-once the rate is changed.
-
-This is very much a real case, because this is essentially how the qcom
-clk driver works.
+Yes please don't allocate a clk_op per clk. And, please add these
+answers to the commit text so that we know why it's not possible to know
+all combinations or fail clk_ops calls.
