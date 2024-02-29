@@ -1,108 +1,95 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A689D7D3E9;
-	Thu, 29 Feb 2024 13:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94FF1369B1;
+	Thu, 29 Feb 2024 14:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.164.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709214793; cv=none; b=TbkDKkblNA+vHb3wnE847Upk6AE2adwr2mFErjmoZjnGoa4Wb8OgBziIw0Qj5uv4SUUXMzZZHXxlSnwjwhVGqItkk7LFs8zklxgyTHQDAi2KXb6pcZKzxGvbVAED27CuADtZWbBS3cvKHkGK0pxhSjiG9EFdDVE30pJCJvqT+Do=
+	t=1709216210; cv=none; b=lE+v5Dpmeyf7US7eStKerFq48JhDrRNEKAj5NzccCxeJ5oFNhm0zLB08Ner8tQ5emRleWn+R9+M3KBF3we23Bg1JJDiQd8peQwV6K+PEhP2U6eqVXXs2o3M5fzq7xjXrJ43xgPk8c0KTIxuo5HeZOD0vZX+6tDWrWWLjdyyoyas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709214793; c=relaxed/simple;
-	bh=soFEyKKUiQuYWMqoVH6cYWp/GwAL18MTf6JPCEiXDwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWeXvgWv1SerI7HqwEzqHjJh/8QjstEoWPnhdpxqQ63yEvynQqOgzVYskatMEbV8/XEXSxJPqFSfaTD5X3PN9EVU62baocIq2RSO8udF94pFOk9lkT4RNPr1VQx7xt0wqy1YMAcceUm+IB4NlZS+tnwwr33pNZ8Cz6bS5czKZZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n2VhQ/al; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n2VhQ/al"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709214792; x=1740750792;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=soFEyKKUiQuYWMqoVH6cYWp/GwAL18MTf6JPCEiXDwI=;
-  b=n2VhQ/alU/f0f1i19lHLauU46xFDGthOUsyjJEi8nRNws8VP0GYbANzC
-   bhwYIATTyrvu0/djievbOn3DXWenqQeodnwHjCeGYr72sTP6nx5I+9gDF
-   otuhcjN5JW9IauxB6hpDKmmHBy1ahiRFWT6zJA5IHiR0xxHWl/GM2yyk6
-   dN/Evvm8DbtdO2gZZdjwI/WXpz2pe2yBAnx0Edc36gDkzO6TYT2mGtAPk
-   oBUb4Po50V5ff6BjQg4M8UMkbs0Uh6BkCO6OYlmcPY29H33NXXqBswzMF
-   U3vCEtQcbU4EsQ/IjpAxzfeVw6ZsPZ47TG+4BAdRcpjD9YrgSFePKAki/
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10998"; a="14835702"
-X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
-   d="scan'208";a="14835702"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 05:53:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10998"; a="913982643"
-X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
-   d="scan'208";a="913982643"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 05:53:06 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1rfgqN-00000008gQI-1TA4;
-	Thu, 29 Feb 2024 15:53:03 +0200
-Date: Thu, 29 Feb 2024 15:53:03 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v8 04/10] reset: eyeq5: add platform driver
-Message-ID: <ZeCMP4pKdoAj3s3C@smile.fi.intel.com>
-References: <20240227-mbly-clk-v8-0-c57fbda7664a@bootlin.com>
- <20240227-mbly-clk-v8-4-c57fbda7664a@bootlin.com>
- <Zd4bbCsY54XEnvJM@smile.fi.intel.com>
- <CZGVIWR4H4DE.3M5H3H99X0QPT@bootlin.com>
- <ZeBo4N204gLO0eUd@smile.fi.intel.com>
- <CZHK1ZCSROM5.X4WYN7SAZJTH@bootlin.com>
- <ZeCLS17PhKPuGvkm@smile.fi.intel.com>
+	s=arc-20240116; t=1709216210; c=relaxed/simple;
+	bh=IiHMd0CdDYG2am8hQDdzVW//agDYXAOBur9FTHPc0Es=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=i/hjIDpitI2vkGqsDt/DmTNZ6a/+SB4oa4PSW/MPo+IHOIXHwPZOzYq5m0u9V2XhFYQtZzWMIwmb6Imy+go5LasfFqU/N4lj1/Geuwhbg5gNQTXow7U+orMeKlCR6ZRcm7m0b/xYXc/owyehzgKr/ZKymC3yiOuKeDHbfYYR+N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=162.243.164.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from duoming$zju.edu.cn ( [218.12.19.137] ) by
+ ajax-webmail-mail-app3 (Coremail) ; Thu, 29 Feb 2024 22:16:28 +0800
+ (GMT+08:00)
+Date: Thu, 29 Feb 2024 22:16:28 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: duoming@zju.edu.cn
+To: "Michal Simek" <michal.simek@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH v2] clk: zynq: Prevent null pointer dereference caused
+ by kmalloc failure
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT5 build
+ 20231205(37e20f0e) Copyright (c) 2002-2024 www.mailtech.cn
+ mispb-4df6dc2c-e274-4d1c-b502-72c5c3dfa9ce-zj.edu.cn
+In-Reply-To: <2b274111-e65a-4b99-8f07-220324f1e214@amd.com>
+References: <20240229122250.24786-1-duoming@zju.edu.cn>
+ <2b274111-e65a-4b99-8f07-220324f1e214@amd.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZeCLS17PhKPuGvkm@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Message-ID: <365f9a90.55b0.18df5394935.Coremail.duoming@zju.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:cC_KCgC3nzu9keBl2cS2AQ--.42939W
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwQGAWXfgNMR9AAYsU
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Thu, Feb 29, 2024 at 03:48:59PM +0200, Andy Shevchenko wrote:
-> On Thu, Feb 29, 2024 at 01:18:08PM +0100, Théo Lebrun wrote:
-
-...
-
-> The downside is that you will need to include property.h for this only thing.
-> And I don't see other code that can be converted to fwnode right away here.
-
-I meant here
-
-	device_set_node(..., dev_fwnode(parent));
-
-On the second thought it can survive probably without it in a form
-
-	device_set_node(..., of_fwnode_handle(parent->of_node));
-
-but this does not fully solve the fundamental problem with accessing of_node.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+T24gVGh1LCAyOSBGZWIgMjAyNCAxMzo0NTo1NCArMDEwMCBNaWNoYWwgU2ltZWsgd3JvdGU6Cj4g
+PiBUaGUga21hbGxvYygpIGluIHp5bnFfY2xrX3NldHVwKCkgd2lsbCByZXR1cm4gbnVsbCBpZiB0
+aGUKPiA+IHBoeXNpY2FsIG1lbW9yeSBoYXMgcnVuIG91dC4gQXMgYSByZXN1bHQsIGlmIHdlIHVz
+ZSBzbnByaW50Zgo+ID4gdG8gd3JpdGUgZGF0YSB0byB0aGUgbnVsbCBhZGRyZXNzLCB0aGUgbnVs
+bCBwb2ludGVyIGRlcmVmZXJlbmNlCj4gPiBidWcgd2lsbCBoYXBwZW4uCj4gPiAKPiA+IFRoaXMg
+cGF0Y2ggYWRkcyBhIHN0YWNrIHZhcmlhYmxlIHRvIHJlcGxhY2UgdGhlIGttYWxsb2MoKS4KPiA+
+IAo+ID4gRml4ZXM6IDBlZTUyYjE1N2I4ZSAoImNsazogenlucTogQWRkIGNsb2NrIGNvbnRyb2xs
+ZXIgZHJpdmVyIikKPiA+IFNpZ25lZC1vZmYtYnk6IER1b21pbmcgWmhvdSA8ZHVvbWluZ0B6anUu
+ZWR1LmNuPgo+ID4gLS0tCj4gPiBDaGFuZ2VzIGluIHYyOgo+ID4gICAgLSBVc2Ugc3RhY2sgdmFy
+aWFibGUgdG8gcmVwbGFjZSBrbWFsbG9jKCkuCj4gPiAKPiA+ICAgZHJpdmVycy9jbGsvenlucS9j
+bGtjLmMgfCAzICstLQo+ID4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDIgZGVs
+ZXRpb25zKC0pCj4gPiAKPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay96eW5xL2Nsa2MuYyBi
+L2RyaXZlcnMvY2xrL3p5bnEvY2xrYy5jCj4gPiBpbmRleCA3YmRlYWZmMmJmZC4uZTRjNGM5YWRm
+NzkgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL2Nsay96eW5xL2Nsa2MuYwo+ID4gKysrIGIvZHJp
+dmVycy9jbGsvenlucS9jbGtjLmMKPiA+IEBAIC00MjcsNyArNDI3LDcgQEAgc3RhdGljIHZvaWQg
+X19pbml0IHp5bnFfY2xrX3NldHVwKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnApCj4gPiAgIAkJCVNM
+Q1JfR0VNMV9DTEtfQ1RSTCwgMCwgMCwgJmdlbTFjbGtfbG9jayk7Cj4gPiAgIAo+ID4gICAJdG1w
+ID0gc3RybGVuKCJtaW9fY2xrXzAweCIpOwo+ID4gLQljbGtfbmFtZSA9IGttYWxsb2ModG1wLCBH
+RlBfS0VSTkVMKTsKPiA+ICsJY2hhciBjbGtfbmFtZVt0bXBdOwo+IAo+IEkga25vdyB0aGF0IFN0
+ZXBoZW4gYXNrZWQgZm9yIGl0IGJ1dCB2YXJpYWJsZSB3aXRoIHZhcmlhYmxlIGxlbmd0aCBpbiB0
+aGUgbWlkZGxlIAo+IG9mIGNvZGUgZG9lc24ndCBsb29rIGdvb2Qgb3IgdXNlZnVsLgo+IEkgd291
+bGQgYWxsb2NhdGUgcmF0aGVyIGJpZ2dlciBhcnJheSBvbiBzdGFjayB3aXRoIHNpemUgYmlnZ2Vy
+IHRoYW4gbWF4IGxlbmd0aCAKPiB3aGljaCB3aWxsIHVzZSBpdC4KClRoZSBsZW5ndGggb2YgIm1p
+b19jbGtfMDB4IiBpcyAxMSBieXRlcywgYW5kIHRoZSBrZXJuZWwgd2lsbCBhbGxvYyAxNiBieXRl
+cyB0byBpdC4KSSB1c2UgYSBsb2NhbCB2YXJpYWJsZSB3aG9zZSBzaXplIGlzIDE2IGJ5dGVzIHRv
+IHJlcGxhY2UgaXQuIFRoZSBkZXRhaWwgaXMgc2hvd24KYmVsb3c6CgpkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9jbGsvenlucS9jbGtjLmMgYi9kcml2ZXJzL2Nsay96eW5xL2Nsa2MuYwppbmRleCA3YmRl
+YWZmMmJmZC4uODFkNTMwZTMzNTcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvY2xrL3p5bnEvY2xrYy5j
+CisrKyBiL2RyaXZlcnMvY2xrL3p5bnEvY2xrYy5jCkBAIC0yMTUsNyArMjE1LDcgQEAgc3RhdGlj
+IHZvaWQgX19pbml0IHp5bnFfY2xrX3NldHVwKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnApCiAgICAg
+ICAgaW50IGk7CiAgICAgICAgdTMyIHRtcDsKICAgICAgICBpbnQgcmV0OwotICAgICAgIGNoYXIg
+KmNsa19uYW1lOworICAgICAgIGNoYXIgY2xrX25hbWVbMTZdOwogICAgICAgIHVuc2lnbmVkIGlu
+dCBmY2xrX2VuYWJsZSA9IDA7CiAgICAgICAgY29uc3QgY2hhciAqY2xrX291dHB1dF9uYW1lW2Ns
+a19tYXhdOwogICAgICAgIGNvbnN0IGNoYXIgKmNwdV9wYXJlbnRzWzRdOwpAQCAtNDI3LDcgKzQy
+Nyw2IEBAIHN0YXRpYyB2b2lkIF9faW5pdCB6eW5xX2Nsa19zZXR1cChzdHJ1Y3QgZGV2aWNlX25v
+ZGUgKm5wKQogICAgICAgICAgICAgICAgICAgICAgICBTTENSX0dFTTFfQ0xLX0NUUkwsIDAsIDAs
+ICZnZW0xY2xrX2xvY2spOwoKICAgICAgICB0bXAgPSBzdHJsZW4oIm1pb19jbGtfMDB4Iik7Ci0g
+ICAgICAgY2xrX25hbWUgPSBrbWFsbG9jKHRtcCwgR0ZQX0tFUk5FTCk7CiAgICAgICAgZm9yIChp
+ID0gMDsgaSA8IE5VTV9NSU9fUElOUzsgaSsrKSB7CiAgICAgICAgICAgICAgICBpbnQgaWR4OwoK
+QEAgLTQzOSw3ICs0MzgsNiBAQCBzdGF0aWMgdm9pZCBfX2luaXQgenlucV9jbGtfc2V0dXAoc3Ry
+dWN0IGRldmljZV9ub2RlICpucCkKICAgICAgICAgICAgICAgIGVsc2UKICAgICAgICAgICAgICAg
+ICAgICAgICAgY2FuX21pb19tdXhfcGFyZW50c1tpXSA9IGR1bW15X25tOwogICAgICAgIH0KLSAg
+ICAgICBrZnJlZShjbGtfbmFtZSk7CiAgICAgICAgY2xrX3JlZ2lzdGVyX211eChOVUxMLCAiY2Fu
+X211eCIsIHBlcmlwaF9wYXJlbnRzLCA0LAogICAgICAgICAgICAgICAgICAgICAgICBDTEtfU0VU
+X1JBVEVfTk9fUkVQQVJFTlQsIFNMQ1JfQ0FOX0NMS19DVFJMLCA0LCAyLCAwLAogICAgICAgICAg
+ICAgICAgICAgICAgICAmY2FuY2xrX2xvY2spOwoKRG8geW91IHRoaW5rIHRoZSBhYm92ZSBpcyBi
+ZXR0ZXI/CgpCZXN0IHJlZ2FyZHMsCkR1b21pbmcgWmhvdQ==
