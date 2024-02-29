@@ -1,51 +1,49 @@
 Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C22E2CCB4;
-	Thu, 29 Feb 2024 05:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05FC42A9F;
+	Thu, 29 Feb 2024 07:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709185723; cv=none; b=pLhEQTAcMu5yAYIZ5F5wErJdaH0+4d8I/sCzNE79FXPtW1hrcDNYMYg2If5lfGrerEhI3Cof9fg7O5iemRJLA035+0xMs9wn9wa4eZP1T3dwLicY2UK+gFKKThQ1yUcct92IEMW+mofMyz5S4uoqPBjpUjz8k0bFZcf3hajFb5Q=
+	t=1709190420; cv=none; b=DbY8U56m7F6emjLPxvAkfVgXvwdBeKTUMZVXJ+1yqGR/DVT2lAfwdVjGSe29vUp6dWpGL5UpN0C6eUmQHHvaEnocQAXgi7H6Bogvxr85c/s//j0PNl264OuIF6D6IqFCvAzTMV3khesuCJmCdQiaPkoqNqMTkHrO0Nz/JxCx56Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709185723; c=relaxed/simple;
-	bh=tDQKgdaHcpbkKuo/kf6JeayU7YHnwAHOd5IVTL7HkJk=;
+	s=arc-20240116; t=1709190420; c=relaxed/simple;
+	bh=qyRnLPnhTL8rUNU/3pfTivd17CPsvJprQn8qnx/kGDw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jVifNoZvsPhcKE7mstAniAkfq27SZE1HcBPLN2lulqlRC6dseNTcNeA1z8DljxAoCDC41oBd0f7NXZDZcq0XcWwwvClbE+g5zZIy82RAgncpyA4vDILpLC+PzSbqEnqu8IvOoliL+B/sQqNGNOApxcELhq3NKUq8sQDqdiTWojg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=sF65JYxY; arc=none smtp.client-ip=74.50.62.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=mrp1tqNLk89YOUtmIE1TXDy/p2JLzMAtCT9nLuWfkkfbqkYnfxtY9JSCtyDyoLddQggZ1HbymTZE76U04yAIqynsuqiu7KBp2Nl6ARXEGc+uiIGMskt4kDe6AWBoHZjOM/NizPuemw1CABSxJOzX78j35ou7ZrGDzrsXJzs3u3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=ZMoJRLIo; arc=none smtp.client-ip=74.50.62.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=atomide.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="sF65JYxY"
+	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="ZMoJRLIo"
 Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
-	by mail5.25mail.st (Postfix) with ESMTPSA id 5ED7C6045F;
-	Thu, 29 Feb 2024 05:48:13 +0000 (UTC)
+	by mail5.25mail.st (Postfix) with ESMTPSA id 88427604CD;
+	Thu, 29 Feb 2024 07:06:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
-	s=25mailst; t=1709185718;
-	bh=tDQKgdaHcpbkKuo/kf6JeayU7YHnwAHOd5IVTL7HkJk=;
+	s=25mailst; t=1709190412;
+	bh=qyRnLPnhTL8rUNU/3pfTivd17CPsvJprQn8qnx/kGDw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sF65JYxYrDt48aFF3Agq0mdF9wwwsusp4wAkXtttjH+J2wUdGDAxBJd1nvjHF/G+a
-	 znvPAaCDDywsOK41KhnW55QfJO57e9CsVXIcVUQOwU4LG+CRcc16YUiuGRsrBvoYmo
-	 bachV/qV5xsgTi+FB9PmKXn5aP7K7bLOkscBGKNJMuPi4xz9bJPBwmK5Sk7XuvqFiM
-	 hDBjOpwLq7XCngakzPcu/potKcsYrdFo6kAubuVl8DaIjRcUNAzVWsu3Ie36/85iXz
-	 wkIkkgb/bCMBERxV8ms1/tUuF1qZ5NWQf4QtniMoBxDpzBttO3qUSMtZg/U0KlBSER
-	 fJgO9wx07V/NQ==
-Date: Thu, 29 Feb 2024 07:48:10 +0200
+	b=ZMoJRLIovy6WQbCr4hua3LFutykRxTJ8iJqHbxNzY4VQ3K4Dv7jwCId2lRZETHozG
+	 W3nmgG4HniKR7KY9urcv8R1KAjU0bStM/bLPMUKwrhvVjHcyz8jPipRhKNVNtLDakr
+	 S95yDZZatFBoy2GWT+RubQUbzmp7TEeGIImx3akbHfVxEUBiSV/nVC4IoHqzHXc2kA
+	 zkkNATjXLjIiyIrCHlt+p2PVjdDWaGmfH8WFYhupfFXjL9VqsKPS5R8ECi5Ig0c0qx
+	 i6YYc3nCCEABsArBzfsniHKbC2u3U0VANg9FM3ANiPFIJIfL7fw1ruuY2ntqMGuFjh
+	 Onb5Rr6/10Ong==
+Date: Thu, 29 Feb 2024 09:06:26 +0200
 From: Tony Lindgren <tony@atomide.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: clock: ti: remove unstable remark
-Message-ID: <20240229054810.GG52537@atomide.com>
-References: <20240224091236.10146-1-krzysztof.kozlowski@linaro.org>
- <20240224091236.10146-2-krzysztof.kozlowski@linaro.org>
- <2df72cc0d2be877c1f6eda8ebcf79508.sboyd@kernel.org>
+	Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/4] Use reg instead of ti,bit-shift for clksel
+Message-ID: <20240229070626.GH52537@atomide.com>
+References: <20240213105730.5287-1-tony@atomide.com>
+ <20240214001140.2abe0d80@aktux>
+ <20240214054044.GK52537@atomide.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,22 +52,42 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2df72cc0d2be877c1f6eda8ebcf79508.sboyd@kernel.org>
+In-Reply-To: <20240214054044.GK52537@atomide.com>
 
-* Stephen Boyd <sboyd@kernel.org> [240228 22:59]:
-> +Tony
-> 
-> Quoting Krzysztof Kozlowski (2024-02-24 01:12:35)
-> > Several TI SoC clock bindings were marked as work-in-progress / unstable
-> > between 2013-2016, for example in commit f60b1ea5ea7a ("CLK: TI: add
-> > support for gate clock").  It was enough of time to consider them stable
-> > and expect usual ABI rules.
+* Tony Lindgren <tony@atomide.com> [240214 05:41]:
+> * Andreas Kemnade <andreas@kemnade.info> [240213 23:11]:
+> > On Tue, 13 Feb 2024 12:56:40 +0200
+> > Tony Lindgren <tony@atomide.com> wrote:
 > > 
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > ---
+> > > Hi all,
+> > > 
+> > > This series updates the clksel clocks to use the standard reg property
+> > > instead of ti,bit-shift.
+> > > 
+> > > I'd like to apply these before we make further use of the clksel clocks
+> > > to reduce the dtb check warnings.
+> > > 
+> > 
+> > hmm, we still have ti,bit-shift if these clocks are not used below a ti,clksel.
+> > Just wondering, can we completely deorbit ti,bit-shift if we used #address-cells = <2>;
+> > in those cases? I wait a bit with further txt->yaml conversions until
+> > this is settled.
 > 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> No need to wait on the yaml conversion I think :) How about just tag the
+> ti,bit-shift property as deprecated? And add a comment saying it is only
+> needed for the remaining unconnected clocks.
+> 
+> Eventually we can move all the component clocks under clksel clocks, or the
+> related clock such as the dpll clock for the clkdcoldo clocks.
 
-Makes sense to me:
+Oh and yes, using #clock-cells = <2> would be nice eventually :) I think
+the clkcel binding already supports that. But that still leaves the issue
+of unconnected composite clocks.. I'm pretty sure they all have some real
+parent like clksel for dpll though.
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+If you had some good idea in mind for the #address-cells = <2> for the
+remaining unconnected composite clocks maybe clarify it a bit.
+
+Regards,
+
+Tony
