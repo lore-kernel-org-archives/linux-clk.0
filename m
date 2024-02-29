@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270AF22EF4;
-	Wed, 28 Feb 2024 23:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6FD2E415
+	for <linux-clk@vger.kernel.org>; Thu, 29 Feb 2024 01:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709162355; cv=none; b=WW0GYMrqsTypa7rjwBIt0hWiSq3MjBNxE/oqXzwYVRbuLYmsJCt8z6CAQRONny6Sa4exxRVReT0n7R+Mkc8qFaP9YwTbQ7HSKQaRWENm9l3NRYEpkaK4yLaTwWtL9Tc197GxNJ50utPDNdhJN2dAePhQzijUAJIAoSA+A1FfIaA=
+	t=1709168597; cv=none; b=g8CHaMhbCkrR887GjZ0S0AfuL0d7TDu1a7k1hIZP3azDXm85DhaRJSiiuFLeSptc9hhRD77tcKuEu9CxbReQQk3+SKNRNhbXRE4/fWHK3BIzIfYPKJKs2zJVqH9a+59fIfF6NWaPImc3yQBq8sVXfU2Opg8YMn19rxTWXUAYFPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709162355; c=relaxed/simple;
-	bh=7z1aSxlpZRea/mqk7Ubs0g2+jXbwBM6SEk0zk2oB+m0=;
+	s=arc-20240116; t=1709168597; c=relaxed/simple;
+	bh=ptQH1dSLUS8Z0QW11kE0YWrg2GJOAi5+mQ1OGjU15J4=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=EXNoIVhapXqsAs9yqT/578gV3i3EMi1BYsB+dE0/xJIbcjjZLdXYCDaod8CyA8RhoSCjS/nH4uKJg8wAeMSTMhn90VvbWLUx3uecaJtag5oOItdJmt7Al/y/U39rrmOabJFUXXnD0MF+/wS3t0SoAFhB/ptbvTsNjJbYrAkAo8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DS8Tad3r; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=lDQQY9QNi+Nn6LvKSAiHLZYbath//r7ypNsVj8NDrNXJvSv0Yf/XqRzO18/fnpxW3b6q9frXIaEWYS1nprlUQXoWWsFtG+Fl9feBwZss6cz2h8U9tV22GeLMgVes+dTks4EJr0v50df7K1tzLeBPNElUNIT5zICZZzIRpqN+e9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5R+gMQt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DS8Tad3r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86126C433F1;
-	Wed, 28 Feb 2024 23:19:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5R+gMQt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D1C7C433F1;
+	Thu, 29 Feb 2024 01:03:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709162354;
-	bh=7z1aSxlpZRea/mqk7Ubs0g2+jXbwBM6SEk0zk2oB+m0=;
+	s=k20201202; t=1709168596;
+	bh=ptQH1dSLUS8Z0QW11kE0YWrg2GJOAi5+mQ1OGjU15J4=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=DS8Tad3r2Pvak3Yl6xPw0Tw5GfdCXTW/iB++hxmpL4UJf4f3lwcwh4TTf/p2RlFat
-	 /vlHG+Hd+8NE1v/+uHvU9vzvU3arXNbymb/q3rvHpO8/avqCHseaO1PxBRDGxIyEnt
-	 mzv8h1Samq9INrB4TaNQrEnOILBwSKRqyLC7RZp/q/9xplNgc7nc1xlkCIKIscK3t0
-	 biL+JSBI/zh1L4lZF/2eB9MjhW2iYVlgCTvsNB6Vl6PywbSF9JU20GK8O8hMXKGR5F
-	 Otj/XhJwMnodZBtqr8X9C+TKdKia0f2WDcv+TczK+lmEQAO5CivjnHHxImCXn4D/Fg
-	 M/DYSxJKkVSMg==
-Message-ID: <526d995da0aa9595ada040e8c6950e34.sboyd@kernel.org>
+	b=X5R+gMQtRzuflFVq/jdWIq70zK6yzFKP911wFutZIGpjBXy1DVJDJHeQ/ActE/cRw
+	 Q9SqhzB41xsLyl262imyN8Ym5nM9eB5uSHnYN2+qUx/j3OcQjlNGBZdD1xvUNsrRRD
+	 mOSPZk9Yh/K6l1PsuWmSNJOL2G9TDQy9Z4lNH4PKz7R1eD2copaC6AkOGhryeqFB2q
+	 1wdSgOBtsgqmoUCQL3aunXywMFKFFhapbL77716mP6VgElOtxblfxUg1W9sSvaTCC4
+	 eSVo0A7yQp14tteTjWqSOs7KEIm2V5c3FTJGwqNy5VwlfzqAkb0nh2qpEcg4EXh5J0
+	 HTHqrtT00gaFw==
+Message-ID: <66b2815288c4b4bae67af458b2589dc9.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,30 +35,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240115054739.4988-1-rdunlap@infradead.org>
-References: <20240115054739.4988-1-rdunlap@infradead.org>
-Subject: Re: [PATCH] clk: ti: dpll3xxx: use correct function names in kernel-doc
+In-Reply-To: <20240104225512.1124519-2-u.kleine-koenig@pengutronix.de>
+References: <20240104225512.1124519-2-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v2] clk: Add a devm variant of clk_rate_exclusive_get()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Tero Kristo <kristo@kernel.org>, linux-omap@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Date: Wed, 28 Feb 2024 15:19:12 -0800
+Cc: kernel@pengutronix.de, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Maxime Ripard <mripard@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Date: Wed, 28 Feb 2024 17:03:14 -0800
 User-Agent: alot/0.10
 
-Quoting Randy Dunlap (2024-01-14 21:47:39)
-> Use function names that match the implementation in kernel-doc comments
-> to avoid kernel-doc warnings:
+Quoting Uwe Kleine-K=C3=B6nig (2024-01-04 14:55:11)
+> This allows to simplify drivers that use clk_rate_exclusive_get()
+> in their probe routine as calling clk_rate_exclusive_put() is cared for
+> automatically.
 >=20
-> dpll3xxx.c:938: warning: expecting prototype for omap3_non_core_dpll_save=
-_context(). Prototype was for omap3_noncore_dpll_save_context() instead
-> dpll3xxx.c:967: warning: expecting prototype for omap3_core_dpll_restore_=
-context(). Prototype was for omap3_noncore_dpll_restore_context() instead
->=20
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Tero Kristo <kristo@kernel.org>
-> Cc: linux-omap@vger.kernel.org
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 > ---
 
 Applied to clk-next
