@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6A43612E;
-	Thu, 29 Feb 2024 02:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D9536AFF;
+	Thu, 29 Feb 2024 02:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709173237; cv=none; b=edkEY/PZCC7G3pjDs18rgrjaK0/+Y7f/B4wXxQE++SQNg2qilQs2rRXcaKP/IIUFF1iV5JEtPBcasyDkBcKVDT3m/uyDGp5kxJFatNXECkNp4TI9etVyaIBA5bMgOy2iiHHBTHMqHiLANhLnD5ESZUmo9XGu2THeU1VgV7qwRxo=
+	t=1709173521; cv=none; b=mzkXXhJgMhfoo6Vg4vKawJB5XrpdS5XHBdasKI8sMAkMTf6PDtGJGzkNMNQ6D++xXkYlYFgweZeaO2wZQpyG2WVasZwF5Bj2C/E9Rrq7n9FJxb9WtzWhpiJF+8ZcO6DTCl6+I96ameAWJKX+pNTzhujR4mxFnXhmNrHWAvGxTBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709173237; c=relaxed/simple;
-	bh=ndHU4Gl3W3V+sGQ4tm5lbUz87+Cesf9e9pD+O9WP5iE=;
+	s=arc-20240116; t=1709173521; c=relaxed/simple;
+	bh=UUh7OtZMUzTLBTUCodbE+kumzzkS37Zl5mKx4qDLAik=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=FUcGDf8v4MMThVVttn0jSi2aCsJ37Gr5TU5VSQWR5QHuBv0AoPuh1952oaG7RA04olnni+nyGBHTYVdG3XqPVgS6EpvgVrtDpdFBC5aal6MxrKDWsWB3ZqTktld9M0MfDuXCbYk9uSWR0e0K1rja5U2zfi3uClQay1YN66saixo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMlLiRWC; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Bs1247f/ePCwqlpMHftuwimZCbwkX9iHPsYNzGfq2GeWe+y7NrJGIfS+ySAZtBGKKSFxhwiX/TVdmzb+1wKjGaF9UKMREFfVUf/57pgAGYXSuVRhuVEexPH2hIMx95KRI7jk3+hSg1LP/Wh6o/yVW5vcMHvClzfUPJoERQtnX/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwOLrFOm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMlLiRWC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABA4CC433F1;
-	Thu, 29 Feb 2024 02:20:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwOLrFOm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DF04C433C7;
+	Thu, 29 Feb 2024 02:25:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709173236;
-	bh=ndHU4Gl3W3V+sGQ4tm5lbUz87+Cesf9e9pD+O9WP5iE=;
+	s=k20201202; t=1709173520;
+	bh=UUh7OtZMUzTLBTUCodbE+kumzzkS37Zl5mKx4qDLAik=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=SMlLiRWCRXf9UeJ6EIl+4DGlqM+J1wHQwlRmSRroWC4rI18MdpO6BkwgVtEfeOvna
-	 uDTBbtJNi9BMgFzrHZRKPnPOSko+gCLz8ZJIV4gzqW7uC6+BfbLjj0EyH5RIRx0lgt
-	 oPv23BBBaS9QnG/FQgO/walRsP+KSKy8HSjy4RlVwSCy6l2srhc3M4uLYMAp22OWrU
-	 pdFmUCDGRiCNV6AdTI8u51/NYVb3bgdD1PK9k/dZF8gq6UflzQNysr6+dDwa8Fn7wt
-	 m4VBBZm0js7S/RZhwabX3uFqqdmMse9BS0Ule8yJvbALIgnWVzmJExI1fec7z4Wz5E
-	 bq7bmxQUUivVw==
-Message-ID: <1d0baf6dbaa1c2ca6594f9a2bcade2c4.sboyd@kernel.org>
+	b=gwOLrFOm75NZsUJPAZOW4Y/OTPCsRdCOcUqoJvcLHHAR189Rq3h2ihzQL2dRGVojH
+	 nhygq+kJdcz5fxW0j4Z5X4w/xLm/enn4KbROVyW/4LMBPYjsDToZgFLHw+fy4t9bE3
+	 2f6zKTguhxYv65wOjLNTwTeyR94SRcT2n00B9CA/S4yLDoWCHuADMM6MTPH6WDClg4
+	 CxLKRReGTKaxNGPzlm+15aP7F+16MLYjbXFp3VAafuOQSDkU1yk8geSTJtcAjnmmfO
+	 hwFBbh4xQlvKjTtJEgk8C2+J/ZrahkOeq7sOxs/K6C522VDFyusk2CtJryL0O9exvu
+	 7dmH83qnZWD1A==
+Message-ID: <f8bcec654f618f8639a882bf70273618.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,56 +35,98 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZdcFuV0KQDXTH8L8@pluto>
-References: <20240214183006.3403207-1-cristian.marussi@arm.com> <20240214183006.3403207-7-cristian.marussi@arm.com> <500e265eb7c6a03a40e0067c8806e059.sboyd@kernel.org> <ZdcFuV0KQDXTH8L8@pluto>
-Subject: Re: [PATCH 6/7] clk: scmi: Allocate CLK operations dynamically
+In-Reply-To: <SEZPR06MB69597E78EA08D5BDF66DBEBC965F2@SEZPR06MB6959.apcprd06.prod.outlook.com>
+References: <20240224-mux-v1-1-608cc704ef43@outlook.com> <0db752d31016823ccd3799925255a74a.sboyd@kernel.org> <SEZPR06MB69597E78EA08D5BDF66DBEBC965F2@SEZPR06MB6959.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH RESEND] clk: set initial best mux parent to current parent when determining rate
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, sudeep.holla@arm.com, james.quinlan@broadcom.com, f.fainelli@gmail.com, vincent.guittot@linaro.org, peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com, quic_nkela@quicinc.com, souvik.chakravarty@arm.com, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-To: Cristian Marussi <cristian.marussi@arm.com>
-Date: Wed, 28 Feb 2024 18:20:34 -0800
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Yang Xiwen <forbidden405@outlook.com>, Yang Xiwen via B4 Relay <devnull+forbidden405.outlook.com@kernel.org>
+Date: Wed, 28 Feb 2024 18:25:18 -0800
 User-Agent: alot/0.10
 
-Quoting Cristian Marussi (2024-02-22 00:28:41)
-> On Wed, Feb 21, 2024 at 09:44:14PM -0800, Stephen Boyd wrote:
+Quoting Yang Xiwen (2024-02-28 18:13:04)
+> On 2/29/2024 9:58 AM, Stephen Boyd wrote:
+> > Quoting Yang Xiwen via B4 Relay (2024-02-23 09:18:52)
+> >> From: Yang Xiwen <forbidden405@outlook.com>
+> >>
+> >> Originally, the initial clock rate is hardcoded to 0, this can lead to
+> >> some problem when setting a very small rate with CLK_MUX_ROUND_NEAREST.
 > >=20
-> > It's not great to move these function pointer structs out of RO memory
-> > to RW. I'm also not convinced that it's any better to construct them at
-> > runtime. Isn't there a constant set of possible clk configurations? Or
-> > why can't we simply add some failures to the clk_ops functions instead?
+> > Did you mean CLK_MUX_ROUND_CLOSEST?
 >=20
-> Well, the real clock devices managed by the SCMI server can be a of
+> You are right :).
+>=20
+> >=20
+> >>
+> >> For example, if the lowest possible rate privided by the mux is 1000Hz,
+> >=20
+> > s/privided/provided/
+> >=20
+> >> setting a rate below 500Hz will fail, because no clock can provide a
+> >> better rate than the non-existant 0. But it should succeed with 1000Hz
+> >> being set.
+> >>
+> >> Setting the initial best parent to current parent could solve this bug
+> >> very well.
+> >>
+> >> Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
+> >> ---
+> >> This is actually a v2 of [1], but seems too simple to have a unittest.
+> >> It's tested in a mmc host driver.
+> >=20
+> > It's not too simple for a unittest.
+> >=20
+> >>
+> >> [1]: https://lore.kernel.org/linux-clk/20230421-clk-v3-1-9ff79e7e7fed@=
+outlook.com/
+> >=20
+> > In that thread I asked you to please Cc Maxime. Please do that.
+> >=20
+> >> ---
+> >>  drivers/clk/clk.c | 4 ++++
+> >>  1 file changed, 4 insertions(+)
+> >>
+> >> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> >> index 2253c154a824..d98cebd7ff03 100644
+> >> --- a/drivers/clk/clk.c
+> >> +++ b/drivers/clk/clk.c
+> >> @@ -649,6 +649,10 @@ int clk_mux_determine_rate_flags(struct clk_hw *h=
+w,
+> >> =20
+> >>         /* find the parent that can provide the fastest rate <=3D rate=
+ */
+> >>         num_parents =3D core->num_parents;
+> >> +       if (core->parent) {
+> >> +               best_parent =3D core->parent;
+> >> +               best =3D clk_core_get_rate_nolock(best_parent);
+> >> +       }
+> >=20
+> > Is the problem that we're not using abs_diff()?
+>=20
+>=20
+> No, i think. It has nothing to do with the code here. It's because of
+> the initial best_parent/best_parent_rate.
 
-SCMI is a server!? :)
+Alright.
 
-> varying nature and so the minimum set of possible clk configurations
-> to cover will amount to all the possible combinations of supported ops
-> regarding the specific clock properties (i.e. .set_parent / .set_rate /
-> .enable / .get/set_duty_cycle / atomic_capability ... for now)...we
-> simply cannot know in advance what the backend SCMI server is handling.
 >=20
-> These seemed to me too much in number (and growing) to be pre-allocated
-> in all possible combinations. (and mostly wasted since you dont really
-> probably use all combinations all the time)
+> >=20
+> > ----8<----
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index a3bc7fb90d0f..91023345595f 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -542,7 +542,7 @@ static bool mux_is_better_rate(unsigned long rate, =
+unsigned long now,
+> >                          unsigned long best, unsigned long flags)
+> >  {
+> >       if (flags & CLK_MUX_ROUND_CLOSEST)
+> > -             return abs(now - rate) < abs(best - rate);
+> > +             return abs_diff(now, rate) < abs_diff(best, rate);
 >=20
-> Moreover, SCMI latest spec now exposes some clock properties (or not) to
-> be able avoid even sending an actual SCMI message that we know will be
-> denied all the time; one option is that we return an error,, as you said,
-> but what is the point (I thought) to provide at all a clk-callback that
-> we know upfront will fail to be executed every time ? (and some consumer
-> drivers have been reported by partners not to be happy with these errors)
->=20
-> What I think could be optimized here instead, and I will try in the next
-> respin, it is that now I am allocating one set of custom ops for each clo=
-ck
-> at the end, even if exactly the same ops are provided since the clock
-> capabilities are the same; I could instead allocate dynamically and fill =
-only
-> one single set of ops for each distinct set of combinations, so as to avo=
-id
-> useless duplication and use only the miminum strict amount of RW memory
-> needed.
->=20
+> Without this patch, the initial `best` rate would be always 0. This is
+> wrong for most cases, 0Hz might (usually) be unavailable. We should use
+> a valid rate(i.e. current rate) initially.
 
-Yes please don't allocate a clk_op per clk. And, please add these
-answers to the commit text so that we know why it's not possible to know
-all combinations or fail clk_ops calls.
+Ok. But you set best to the parent rate. So why not use 'core->rate'
+directly as 'best'?
