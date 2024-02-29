@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6FD2E415
-	for <linux-clk@vger.kernel.org>; Thu, 29 Feb 2024 01:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC2D2E405;
+	Thu, 29 Feb 2024 01:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709168597; cv=none; b=g8CHaMhbCkrR887GjZ0S0AfuL0d7TDu1a7k1hIZP3azDXm85DhaRJSiiuFLeSptc9hhRD77tcKuEu9CxbReQQk3+SKNRNhbXRE4/fWHK3BIzIfYPKJKs2zJVqH9a+59fIfF6NWaPImc3yQBq8sVXfU2Opg8YMn19rxTWXUAYFPU=
+	t=1709170949; cv=none; b=sQvIPOY5kxvwQLvPHVqN2Ig56/3NY2UHJfVwO35wHl046rxqztJUAj24KQ07/7+th1rxlUGb+/CFtAOsPHEWX6nAg5kp235E9DUUw1/VOEKqvlXMsr2hQgMLwTtQAqwmGBsgSrb3IwjhaOGTuIFFqJSYEVL9NE4svKhtt767V44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709168597; c=relaxed/simple;
-	bh=ptQH1dSLUS8Z0QW11kE0YWrg2GJOAi5+mQ1OGjU15J4=;
+	s=arc-20240116; t=1709170949; c=relaxed/simple;
+	bh=Re6qXz3o/b8SvRuyQAdXe/GP8greLRsmO3K6B3cgElE=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=lDQQY9QNi+Nn6LvKSAiHLZYbath//r7ypNsVj8NDrNXJvSv0Yf/XqRzO18/fnpxW3b6q9frXIaEWYS1nprlUQXoWWsFtG+Fl9feBwZss6cz2h8U9tV22GeLMgVes+dTks4EJr0v50df7K1tzLeBPNElUNIT5zICZZzIRpqN+e9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5R+gMQt; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=ti8c37rbQRDDWWd9vLk4P7eCycRIweCzTe2z7zHmGktj/l9BMAElCKzeBkqxn8PPvWhcZOexKbF9XsQT6ZKkTsryyvl8GHxAnQLddSU7zIOBETDomLjcaRnaRpC17GjqBXWuWCf7Z7EF3EkSrIjTH2cNq7pGFO5ruFU3TiJleC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8peBKae; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5R+gMQt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D1C7C433F1;
-	Thu, 29 Feb 2024 01:03:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8peBKae"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7CB4C433F1;
+	Thu, 29 Feb 2024 01:42:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709168596;
-	bh=ptQH1dSLUS8Z0QW11kE0YWrg2GJOAi5+mQ1OGjU15J4=;
+	s=k20201202; t=1709170949;
+	bh=Re6qXz3o/b8SvRuyQAdXe/GP8greLRsmO3K6B3cgElE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=X5R+gMQtRzuflFVq/jdWIq70zK6yzFKP911wFutZIGpjBXy1DVJDJHeQ/ActE/cRw
-	 Q9SqhzB41xsLyl262imyN8Ym5nM9eB5uSHnYN2+qUx/j3OcQjlNGBZdD1xvUNsrRRD
-	 mOSPZk9Yh/K6l1PsuWmSNJOL2G9TDQy9Z4lNH4PKz7R1eD2copaC6AkOGhryeqFB2q
-	 1wdSgOBtsgqmoUCQL3aunXywMFKFFhapbL77716mP6VgElOtxblfxUg1W9sSvaTCC4
-	 eSVo0A7yQp14tteTjWqSOs7KEIm2V5c3FTJGwqNy5VwlfzqAkb0nh2qpEcg4EXh5J0
-	 HTHqrtT00gaFw==
-Message-ID: <66b2815288c4b4bae67af458b2589dc9.sboyd@kernel.org>
+	b=r8peBKaeaFaNJML2f3KZ8Zp/77o6uF3WFFMSeBwTR0voty8TBptajgEw5VN+0PwNe
+	 kBrkWX4E7m9aMEEgJg87EV8dUZUzzgwq1BSquJ3G2ejZT2NFJgxJ4JHykgIwOYYTV0
+	 2SJA/b8CSdUUiVd1cFqoCqdGuS8BlVy1Z0Zci+ZB4LSs4JL9aDL7TRjSx07TInLdp9
+	 g9Zd1qswqO8tWvYQT33KGAFZuhu/OsJvMqbeITggNz9FS+4UmqmTLPXQJDdwfdNji7
+	 aszT2fx6ts30CsneTRPdLFPSLHWOutY1vVb72jBbnCF8iryxyu0JJ7jGBBFHG+Ox1B
+	 PG+asZt3CeZ2Q==
+Message-ID: <74bf05834dcd1a39da804f19f2a809fc.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,21 +35,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240104225512.1124519-2-u.kleine-koenig@pengutronix.de>
-References: <20240104225512.1124519-2-u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v2] clk: Add a devm variant of clk_rate_exclusive_get()
+In-Reply-To: <6a64e7b3-b1ce-46c4-9c85-89f731aee592@web.de>
+References: <6a64e7b3-b1ce-46c4-9c85-89f731aee592@web.de>
+Subject: Re: [PATCH] clk: mediatek: clk-mt8173-apmixedsys: Use common error handling code in clk_mt8173_apmixed_probe()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: kernel@pengutronix.de, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Maxime Ripard <mripard@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Date: Wed, 28 Feb 2024 17:03:14 -0800
+Cc: LKML <linux-kernel@vger.kernel.org>
+To: Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, Markus Elfring <Markus.Elfring@web.de>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org
+Date: Wed, 28 Feb 2024 17:42:26 -0800
 User-Agent: alot/0.10
 
-Quoting Uwe Kleine-K=C3=B6nig (2024-01-04 14:55:11)
-> This allows to simplify drivers that use clk_rate_exclusive_get()
-> in their probe routine as calling clk_rate_exclusive_put() is cared for
-> automatically.
+Quoting Markus Elfring (2024-02-26 04:26:26)
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 26 Feb 2024 13:10:37 +0100
 >=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> Add a label so that a bit of exception handling can be better reused
+> at the end of this function implementation.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
 
 Applied to clk-next
