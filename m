@@ -1,205 +1,126 @@
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazolkn19012005.outbound.protection.outlook.com [52.103.64.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21251364D2;
-	Thu, 29 Feb 2024 02:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.64.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709172796; cv=fail; b=sQeegtwSkOwKUJbXE9YMvlmXhTckrx7J6i8s4c+C9kViPjgfiv3wrR2YxZ+d2NeOU+AWrU3p9GELQLnJO5qF75icIavhO2OSa01GrRLPGsiuLMnYF7cJhO24LcM1pDbYw/IQp6jiVnexjKJVzUXhsmrqq0bJuzoifYiR/d7nx48=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709172796; c=relaxed/simple;
-	bh=wbi4srXdKHrjmv14pdnng9DUZlWPOnDlrYoVMA1M4Jo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tSGDMbO01N+RiCkoETxDcaQC8UeKiI4fmz+VRdAiu9IBstCIsp6w/+BfACU41+hFoIyF5yZom+fnrT123KNGAq3qgsOS7gnWAJoQ2xHeQPZhosssqyDsvPcn5i3XinhDDgVRAfbzEJMdXMhEoadgjh9EvuFRIwp7bZsPtxD16Hw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=H8KxVPLe; arc=fail smtp.client-ip=52.103.64.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875F236B00;
+	Thu, 29 Feb 2024 02:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709172988; cv=none; b=Y5zERrmrroRrqfEsy+e0rhpp+1eZvCJW+ZcwRo42F7yfsKKZapg6xv8/NZo9TtuwjH9UovVWmNktEV5NeLkpZUVC5k/S903wy3SuM9BXlgWe6ZmNF2nP7CZgyN4OuFl4D7BzdruXxp1IA0Wugha6UjE53MRMEN+hfQY9N/gAQcU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709172988; c=relaxed/simple;
+	bh=YREW50Mm9XizXo3Vg/YslHDwW+mx1PNC7jtuWaFg0Og=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=NEmXu1dQlOD5TQ+otfNa5xHCvHN3bkmI9877gE2MWtfFnnWP0J0nf0c8+ekL0/OOwM+hG8YOFslJqvy5bmTRDorWobEt0WhQUMsZAsUUpJ4kmm8c3RbAko2dNTb6GIC+31jHxfp/FN5bE3AoXypCwgQS41g8+TKKvPBSD4QJzGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzubYY1D; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="H8KxVPLe"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I4vX3Ip5EDSWlYj84GOntbZJQX6dp6ugzohjMcjhcRhvaxnY5itQfa6cToWpvONPzJndyrucQv2LkJ2Y9rAhAy0QE/iekVudrC1w7UMNOrVkMhZEV1J5yP5/Ib/WPWXQVpi/HSoaGLPdJuGuKOwN9S0zNDuF8sDxqBt9F7qPFhkd+152+NcLqHqsAailC3BQZyXmoLJ67nLl5XNQdDSGKv6XF2FNSsXdFwTETSG+u7uw4GgVw1k0nOsqKYZwczoYn9gvgmeNti+RFbCjFUgfstK1y8TqvQLhcY9s9/3hCk6ohBzPzpijyHoYizP/zQkfObcef24g0P1ZAR/8B3GDOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uqBYaFC5VZzEwZ6JjvrVcXpOLfE04WcvcEvHIG0mrtA=;
- b=BfFRjTgsxyPd6sMOLNH/iFJyT16ViVLBg+yGs2L4y38mDkVDp6X6GQ1Y1L3an0CON6jAHjCbZseg0xtGxs3tBYoLNwlvGFQpCP0mcjOuqWuJ8g0fYJDI+k2Qlbnm17WfrLrIUlCkb+GDuslHddJon0xPn1WS3pO4wJ4yBWYf0ovE5LPmm0T/aZz1O4T3rs8NMOFlqtkZEgcvYbD/u6dBvh/t9yObzCHOTeoq1AQPtXUK5/0P77bGQRHVo4U7u3iq2nHJd8JpTaTJIpThzZwyy01vFeiaxeQsFSChFMq9Bj72sHrnCwEFe14VoijPmkq9TM3ndn6XWR0T5V1/SbLrkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uqBYaFC5VZzEwZ6JjvrVcXpOLfE04WcvcEvHIG0mrtA=;
- b=H8KxVPLe4Co4rkYnzQBpSsCK3V9hrleLKML93EaBmjKjrcEmrGvMA480ioE0XlYTSw2wVMi6N9nei5Q1SlfnNcRrZNajrcXA8GGkdFgd1Yuxnz8hCBp/rm+17MTmIr2sioGfvfUCtGCa85Mp5vnSbcMtVy1d2TzNGjnIvzCCFTcvZ8ihOAcHx2CiX8q5yzGeKXV6/FU0MwFkHxgclryqPSD3r5SNqtMULaJVzRw8J6gsLHTJl83/B3/VZezdDBO2BZXFoY6NUpCQh67Zi50DcIydbgmyGgUYNjVFyMDnXPBqBqo5GtIlp3Xnch60CDKMwVEi9h5akK+e+5cIdh9RVw==
-Received: from SEZPR06MB6959.apcprd06.prod.outlook.com (2603:1096:101:1ed::14)
- by SEZPR06MB6874.apcprd06.prod.outlook.com (2603:1096:101:18d::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.41; Thu, 29 Feb
- 2024 02:13:10 +0000
-Received: from SEZPR06MB6959.apcprd06.prod.outlook.com
- ([fe80::53da:a8a:83cb:b9ad]) by SEZPR06MB6959.apcprd06.prod.outlook.com
- ([fe80::53da:a8a:83cb:b9ad%4]) with mapi id 15.20.7316.035; Thu, 29 Feb 2024
- 02:13:10 +0000
-Message-ID:
- <SEZPR06MB69597E78EA08D5BDF66DBEBC965F2@SEZPR06MB6959.apcprd06.prod.outlook.com>
-Date: Thu, 29 Feb 2024 10:13:04 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] clk: set initial best mux parent to current parent
- when determining rate
-Content-Language: en-US
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Yang Xiwen via B4 Relay <devnull+forbidden405.outlook.com@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240224-mux-v1-1-608cc704ef43@outlook.com>
- <0db752d31016823ccd3799925255a74a.sboyd@kernel.org>
-From: Yang Xiwen <forbidden405@outlook.com>
-In-Reply-To: <0db752d31016823ccd3799925255a74a.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TMN: [6su2EQ3dWBncFc+3eQ9kVG5T8raO4FBGT4BrUSzE2msZNvijy5tkdg96tPHEN7H9]
-X-ClientProxiedBy: KL1P15301CA0063.APCP153.PROD.OUTLOOK.COM
- (2603:1096:820:3d::21) To SEZPR06MB6959.apcprd06.prod.outlook.com
- (2603:1096:101:1ed::14)
-X-Microsoft-Original-Message-ID:
- <f6589fbe-a861-47b8-b1cc-221df9be3da3@outlook.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzubYY1D"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05B4BC43390;
+	Thu, 29 Feb 2024 02:16:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709172987;
+	bh=YREW50Mm9XizXo3Vg/YslHDwW+mx1PNC7jtuWaFg0Og=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=SzubYY1DA+zhhrxp2Mg+Lfzw2OlCQL7NDf0xc1Tem4Nyoahhnnn0Yv5jnWdiQZLgV
+	 lryrljDAnssddQ4XoFhjBM0NVLBIHz6ijKMKhHDSEwIphU2sMRUEKuKxqlVwl7SlBs
+	 s1N2ySkzySaHatpuow//fODH/lcrgCgvGNOoWsGmZ8aneHzx+EwVlHiNkbdOkLMsuA
+	 KnYmfwZj59tx46ceWYi6FRtHzd1oy8J1aalOiut2k7cyOMirHZ/wE28IU5EKxAlFln
+	 Nl1TLXlRsuwZd/T49d4UbwOPfLAwaNvZLtxSR5Nm3t3j8QU4lolDuMFX7HCSYpchuu
+	 5fjFHxwd7O5cA==
+Message-ID: <e4c1e89450aa91ec684a48797bb5d132.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB6959:EE_|SEZPR06MB6874:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ffd0150-c678-4aa2-4290-08dc38cbf98a
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	tzoF4E5crxx5D+9uCcNWiFgZjadLwxFfixniygDxM18Y76rhcBm0F8w05w6dsg11csde1MQg0WI6+90NnzOc66MWBoUe+1ilbwEpdxnqhdNy8JOlyTExItOavOlX/28qqAIyrKW/9S3QdV2HVZXMOEyHadV7wvtELbAO+sSZG/aMTRIH+LkiCaOuGMEm7WBS+DIGLg9TP4VhbVlaxNbNulmGX4d+9xuURdjXU3iEThkpiKEjMLs0G5A3f/JSJoBgtO2lwI48LpGYd3hsJgBE+qqVZeo9x72q4IieHAILxWB+cZHqysybeKGXX0UwAWG0cP1VRnUy9A3kLGDW+at/4zJJelywQfDRYmU6mdXc1/4Rp5hKzL7kh8DIGuiOfmsesZfg799OnGtTygRGdUZlb1MLZkZUwQnrRPCk70TbtPG/2SwjlZN0KQnJOzh0U+3Ikw0Ei6fFPDj1VUGBhy1nrdExs3P/yqYs/zgTLJwKGKWHsgHJPYdcqhcUtakxKUkXirRnK29fQ6NZ/c9L1MlOoAbd2C3NuCmUzS1kRtFXplBz/ykO/KpRW1oI2Pw56gJSEWyAorrcsHVcrR1YoNrBMkFD6/eJsvLIPZA3weO048ikAXGeqi74U0nwddK3vbl94HytL0topse+5tBFqIFdaht/GgSYL0iMjrcma9qJPdU=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aDF2TDcxZ2wva1JReE1yQmxvZm5icnBFSmEySllOMFRNVkZzb05SblIxbDNN?=
- =?utf-8?B?czRYMk02Q1hkbUczakYycXllWXRXZ3BVTGpyVTBIb1hQdkoybTVXOE9KTnZP?=
- =?utf-8?B?MlJ2KzNLYWpXblJyMkpPTFg1THpxSzUrcTNmdmIyYnNJODYxM2lOYUZZeGxE?=
- =?utf-8?B?aThFSmNiczA5WjdXQTZWM2NoVDlEZEFEbHVhVzRpRENBUDcyT2xjRGlQcmky?=
- =?utf-8?B?TUVqSWZEbkVKM3NoNnZxaTNnQVI1VXl1NE1UNmtScE9pOEplVnJkWU5vWWtM?=
- =?utf-8?B?ZWdBWUJYZ2pESWgwRHZ1S1hBQ1k3Tk1ObkJ2enNNeHVaWWZFeVpWU0dMWGlq?=
- =?utf-8?B?c2FIazJla2tySXhiaTk3aW9DTGlOQnFkd3J1R3NESjNGb2NRVzB0SGlEMmN3?=
- =?utf-8?B?YkNFc1RsS2hSYzJURVhZS3MrSVorMm9pdHVYVVgyaFlJazk0cWhudmRiangy?=
- =?utf-8?B?NjV1bU1jODV5QTA1c2RUV3RXOENPczFlVjBHZnZHZWdmeE9VTWg2eGxRbS9G?=
- =?utf-8?B?a3VLcVRlMjRBay9zWHZ0MGNMTVg2N1RhQ0VtWmxEbnMwM2gxcVFuc29NajVo?=
- =?utf-8?B?Vm9aUVowK25pbVUveHZGR01wcEhjLzIwVWUyYThyTWthaE0rS1k3V0lIenlF?=
- =?utf-8?B?b1dTZ1I2STM0TjRzbzJCdzYzVnBQdmFpNGhVUDZDZi9pSFBUMWpDeHg3SG1Z?=
- =?utf-8?B?UmRlbjZXNy8veHV0RUZDaU1qaXp5TjNhMHI0OEQ5Rm94ai9vTUx2SFZxTEpI?=
- =?utf-8?B?QkdRWU1vL2I4LzgwaUJ0MGxFUHVtRXJnS3pTem5UY0NDWVM1MDF4MnE5TzJx?=
- =?utf-8?B?bFJ6ZUNUR0RGUTkwRU01NkJqWHIwTWtmd21NNzBsTHVSaW96MHRwT3BwVGdq?=
- =?utf-8?B?bGRrUWhFNmRhMzJrNDdEdW5MNU1CdUlpei9LbkpUUml4Y2ZvUUZDUnpUb3VJ?=
- =?utf-8?B?YTRyOFQ4NlJwMS81VHZMTzBMazdVbkxIZUs3YkQzM3ZpUXBMcHNoaEZ4cWh4?=
- =?utf-8?B?QVJ0bnE4blAzWGY5azlOd0ZacHAvTU95cGQyUnpLaU5ha2RHaUNIM0Z6YTBS?=
- =?utf-8?B?TnZVeFZaMjFqUEwyY2R0TXBYN3JlejZtdFdPNE0zQ3VVVUlDYnFZeGxERWw4?=
- =?utf-8?B?L0ZRNkR6cWl5UVduNmliZWdZK05lRitJQUtsWmJrODBnWmQyUTI4WkYvUmFx?=
- =?utf-8?B?U2k2cFhEazB0S0J2TzZKY3doOVZlWkVjd0lpV1hEdW9FWDdtcUR0TW9GQThw?=
- =?utf-8?B?di9veGpoakovRUxqU1ltdTBoSzdTeXhjN292bE9XNVJvV0xoNjRWRHhVY21x?=
- =?utf-8?B?SnRROVV0eEtUY3dBczU3UGdBQUNOMGw2NVJDQWp1MkxDK3dMZzFadjNxaTkv?=
- =?utf-8?B?anpML1ZhTnFCaWVCNGFLZHJMdFpTZ0FNTEFLWVpMTlg2MUJhQnpkVDNqOFlW?=
- =?utf-8?B?aVNyeG41dzlwS3BadndNZHBUdDhGbWFIVVg2dWxDVlJWRXNZUGdRQ1VWMXEv?=
- =?utf-8?B?MThEakVOMWVwRnIwT3U0amV5QWY3REpPZ2kzTnBGUnFZVUtlVmpzTHRIeTFL?=
- =?utf-8?B?dzBPL1dYSnBzWTZudVVEVHVMc0hHSVk2Nk03WVBSNEswQy81NXdtY2JxOUph?=
- =?utf-8?B?N0JXTzRoSFgzdnYxNzZWTE1jajQ0Q0h6MDEvY2t6WEdsa1pTdTFndEhvWUhs?=
- =?utf-8?B?Tm5RNXhYdStGNWV6ekZOdGFsMXdadzZJOXdZKzg5aElxTjFRNTdCL25kRzFR?=
- =?utf-8?Q?JPcLGSfRfMTfHF9SwpGcCcpGXp0uoJlwB16cF4Z?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ffd0150-c678-4aa2-4290-08dc38cbf98a
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB6959.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Feb 2024 02:13:09.7916
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6874
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <9922942e-ea9e-4cdb-a091-5b8ea0a180d8@salutedevices.com>
+References: <20240126201433.1830600-1-jan.dakinevich@salutedevices.com> <c79909e4e55badc8f094d2ff8c4d34ca.sboyd@kernel.org> <9922942e-ea9e-4cdb-a091-5b8ea0a180d8@salutedevices.com>
+Subject: Re: [PATCH] clk: allow to skip clk_core_req_round_rate_nolock()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: kernel@salutedevices.com
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 28 Feb 2024 18:16:24 -0800
+User-Agent: alot/0.10
 
-On 2/29/2024 9:58 AM, Stephen Boyd wrote:
-> Quoting Yang Xiwen via B4 Relay (2024-02-23 09:18:52)
->> From: Yang Xiwen <forbidden405@outlook.com>
->>
->> Originally, the initial clock rate is hardcoded to 0, this can lead to
->> some problem when setting a very small rate with CLK_MUX_ROUND_NEAREST.
-> 
-> Did you mean CLK_MUX_ROUND_CLOSEST?
+Quoting Jan Dakinevich (2024-02-23 13:47:35)
+>=20
+>=20
+> On 2/23/24 02:20, Stephen Boyd wrote:
+> > Quoting Jan Dakinevich (2024-01-26 12:14:33)
+> >> Calling of clk_core_req_round_rate_nolock() can be time-consuming in a
+> >> case of deep hierarchy with multiple dividers/parents. But if the clock
+> >> already has exactly the same rate as desired, there is no need to
+> >> determine how it could be rounded.
+> >=20
+> > What exactly are you trying to avoid? Is this an optimization or a bug
+> > fix? TL;DR: I'm unlikely to apply this patch.
+> >=20
+>=20
+> It is an optimization, not a bug. The problem is that=20
+> clk_core_req_round_rate_nolock() is quite expensive, and I faced with=20
+> cases, where it takes tens and hundreds milliseconds (depending on SoC).
+>=20
+> As I see, it is irremovable feature of clk_core_req_round_rate_nolock()=20
+> design itself. Lets imagine, we have some clock, and its parent is a=20
+> divider. When clk_core_req_round_rate_nolock() is being called the=20
+> execution is walked through the following path:
+>=20
+> clk_core_determine_round_nolock
+>   core->ops->determine_rate
+>     divider_determine_rate
+>      clk_divider_bestdiv
+>=20
+> Inside clk_divider_bestdiv() for each possible divider=20
+> clk_hw_round_rate() is called for parent of the clock, which in turn=20
+> calls clk_core_determine_round_nolock().
+>=20
+> So, each divider and multiplexer in clock path multiplies many times an=20
+> amount of iteration required to execute=20
+> clk_core_req_round_rate_nolock(). When there are a lot of them the time=20
+> consumed by clk_core_req_round_rate_nolock() becomes sufficient.
 
-You are right :).
+Do you have a more concrete example? I wonder if perhaps you've split up
+the clk hardware into multipliers and dividers, when they really could
+all be combined into one clk that does all the math at once without
+traversing the tree. But if the problem is really just that the
+clk_divider_bestdiv() implementation is slow then that's good to know.
 
-> 
->>
->> For example, if the lowest possible rate privided by the mux is 1000Hz,
-> 
-> s/privided/provided/
-> 
->> setting a rate below 500Hz will fail, because no clock can provide a
->> better rate than the non-existant 0. But it should succeed with 1000Hz
->> being set.
->>
->> Setting the initial best parent to current parent could solve this bug
->> very well.
->>
->> Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
->> ---
->> This is actually a v2 of [1], but seems too simple to have a unittest.
->> It's tested in a mmc host driver.
-> 
-> It's not too simple for a unittest.
-> 
->>
->> [1]: https://lore.kernel.org/linux-clk/20230421-clk-v3-1-9ff79e7e7fed@outlook.com/
-> 
-> In that thread I asked you to please Cc Maxime. Please do that.
-> 
->> ---
->>  drivers/clk/clk.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 2253c154a824..d98cebd7ff03 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -649,6 +649,10 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
->>  
->>         /* find the parent that can provide the fastest rate <= rate */
->>         num_parents = core->num_parents;
->> +       if (core->parent) {
->> +               best_parent = core->parent;
->> +               best = clk_core_get_rate_nolock(best_parent);
->> +       }
-> 
-> Is the problem that we're not using abs_diff()?
+>=20
+> > I could see some driver implementing round_rate()/determine_rate() in a
+> > way that rounds the rate passed in, so that even if the rate is what the
+> > clk is running at _right now_, it still wants to change it to something
+> > else, or at least call down into the driver to call the set_rate clk_op.
+> > Applying this patch will break that. The contract is that
+> > clk_set_rate(rate) =3D=3D clk_set_rate(clk_round_rate(rate)). It doesn't
+> > look like anything needs to change.
+>=20
+> If I am not mistaken, clocks's rate is either equal to its parent rate=20
+> or calculated by ->recalc_rate(). I suppose, this callback should return =
 
+> valid rate value that is based on current clock parameters.
+>=20
+> Now, suppose the clock has rate "rateA" and we called clk_set_rate() to=20
+> set "rateA", but clk_core_req_round_rate_nolock() inside clk_set_rate()=20
+> rounds it to "rateB". Thus, although the clock is able to run on desired =
 
-No, i think. It has nothing to do with the code here. It's because of
-the initial best_parent/best_parent_rate.
+> rate (and actually run on it), ->determine_rate() and ->round_rate() are =
 
-> 
-> ----8<----
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index a3bc7fb90d0f..91023345595f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -542,7 +542,7 @@ static bool mux_is_better_rate(unsigned long rate, unsigned long now,
->  			   unsigned long best, unsigned long flags)
->  {
->  	if (flags & CLK_MUX_ROUND_CLOSEST)
-> -		return abs(now - rate) < abs(best - rate);
-> +		return abs_diff(now, rate) < abs_diff(best, rate);
+> unable to choose clocks's parameters for that value. Is it correct=20
+> behavior for clock driver?
+>=20
 
-Without this patch, the initial `best` rate would be always 0. This is
-wrong for most cases, 0Hz might (usually) be unavailable. We should use
-a valid rate(i.e. current rate) initially.
+It's not really a question for the clk framework. If the clk driver
+wants to round rateA to rateB then it can. It could be that the
+recalc_rate() clk_op calculates a slightly different rate than what
+round_rate() clk op did, because maybe the driver has frequency tables
+and the rate the clk runs at is something like 933333Hz but the driver
+just says that's 930000Hz for simplicity. If that happens, recalc_rate()
+gives us the "true" rate, while round_rate() gives us the "approximate"
+rate. Either way, the set_rate() clk_op knows that 930000Hz means set
+some clk rate, even if that doesn't match what recalc_rate() returns
+once the rate is changed.
 
->
->  	return now <= rate && now > best;
->  }
-
--- 
-Best regards,
-Yang Xiwen
-
+This is very much a real case, because this is essentially how the qcom
+clk driver works.
