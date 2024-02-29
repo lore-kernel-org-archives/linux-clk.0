@@ -1,194 +1,92 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDE17D3E8
-	for <linux-clk@vger.kernel.org>; Thu, 29 Feb 2024 12:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+Received: from zg8tmtu5ljg5lje1ms4xmtka.icoremail.net (zg8tmtu5ljg5lje1ms4xmtka.icoremail.net [159.89.151.119])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95ADF1FA3;
+	Thu, 29 Feb 2024 12:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.89.151.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709209233; cv=none; b=eCaGjj6/z4SR7sZTFpqyGcj4OW0oCQBR8WO/rDGrk09JbZGjE/RI6YJQCSIHNcbV52gkxsvrG0Ltd2QfOWjQyCbvqkDuaqOMFVaTruDxhNc1rvj7xOUDU2Md16BFwWauRApMivepkowzvpzVIyNiDh3bQ049cMY7/+KSJVmF5D8=
+	t=1709209403; cv=none; b=g1INh+KN79+oRDQEAOTuFvypDU3bKSuVX+Kxvt94Kaj5FiL2H7erJ8fzhoQ33kNZUUzNYwF/bNeItSdyB6SfoAm+Zwapds5U0QBIE2AAO9ml7i4zbnEKma/t3XEx+1SMchK1DkhZKa6z180azGKR56zWH99i98i8AcICS7jqrCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709209233; c=relaxed/simple;
-	bh=UQ1X6gx0yrcSeyqfMpTJ9ZRbI+mwyYwp88EM0UE5IkI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lw/IaItKFC2zW+AwkXbqTX/MjjyKLyz21E53+2pR6Q5qlykWY0QIoa/gL1nICicKqZksDRE6BKDxE6iI/hwxZDBS9/sd8T7edSDNuAjoHS7JEcgCcXDfWaMhbHWVtP+ertY3jhLRO3nhmhmy38xCUZFh9Gl0MZCzTA1QyEdI2mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uVYN6Drp; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uVYN6Drp"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2d27fef509eso9835781fa.3
-        for <linux-clk@vger.kernel.org>; Thu, 29 Feb 2024 04:20:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709209229; x=1709814029; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PTrYNsYNh8I34xuhimzvwxZF3tuFQv+C2Kfyp8x97Ys=;
-        b=uVYN6DrplSMp6CufbXfTVN9c1d1bkUXI1ktZk5N/5/KkWfvJDK7S2Cla5oEGIpoQf8
-         7dEn9oI5hxFfRKjmybS8qzdTE5ZkzgTriQ1Gbb9MXiS+2KxzAjqGVqzTJe+kxMsDsQiv
-         SCx1IOkAyo1XRBdZVw+b1eRQRCHNVzSea3kb6immuNhXLSKpjcH0tbTx/gkwvAckKxgF
-         OSOGHOcI11xf8I2xJ19qskSBrEuYcdaZTCHmKhts/XwSgrboM6v1m9uYFaiVl74QjIbk
-         AwwZj4CKBi2Ac5vTEK4GKPpPRBjOMroAFJ5lVBLCQSwEHsLp+PsVU5mU3/Qp7oa4BuRm
-         2zOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709209229; x=1709814029;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PTrYNsYNh8I34xuhimzvwxZF3tuFQv+C2Kfyp8x97Ys=;
-        b=WInP7D1Tbh6iyvQ2Slcdai9nuROHte7oa9lRs5Oq6jTC49GReITvaLvvghUFAIYJI+
-         E/Ig3jju5BmO/ktW/7bLVsnJxa2o4FZgfX5+3PDkMLGI/PGkb0RT0C2Kz0TggBPIgc/G
-         RGfooPIRYzvA+CbIdb6JVWlMVxxN/DM/zoj+dHxG9w1oW0v2co369YsvuG4P3B8ONJZ2
-         0rpdfS91pzdtWKipp2xh2diyqyrAhARtjruzmbAHUpSez+kVOXQaW+/EMSgU+6gmDABi
-         Z6enzfjEiFfixPHqc1NY6KXfKV31w0gIFd566y2LF5rsIgxNm6ghVV1+LLNZEZ0Nqhw0
-         QQmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUuaVn6rMHz9BrgygM2tS+eepjh5ZWVNUpKDQJFoHLZ6OuZ9hfe8a5W0slbn22G4Ut1CteRfpslhQ8zHckVK9K1n2pBaEDpzi8A
-X-Gm-Message-State: AOJu0YwgEQKhj7EGxCYsna0Ft/MeKXElojLVIxsNl6avdKnOsRBFI09c
-	h9zUyedf9K0oXI9j2r/GQm11xd3J1zI+sT2BBQ4BgO/hytGUUQwgMg2KEaMeKms=
-X-Google-Smtp-Source: AGHT+IG5UiSVq5mBgc9t2q/+o5O401BiVvP3eHJmsBW0nCTwxZdBFBBUMxtUQLlE4voKSVwaJyaZGQ==
-X-Received: by 2002:a2e:90d6:0:b0:2d3:e77:7801 with SMTP id o22-20020a2e90d6000000b002d30e777801mr748640ljg.3.1709209229369;
-        Thu, 29 Feb 2024 04:20:29 -0800 (PST)
-Received: from ta2.c.googlers.com.com (110.121.148.146.bc.googleusercontent.com. [146.148.121.110])
-        by smtp.gmail.com with ESMTPSA id dx14-20020a05600c63ce00b004129f28e2cdsm5009121wmb.3.2024.02.29.04.20.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Feb 2024 04:20:28 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: krzysztof.kozlowski@linaro.org,
-	s.nawrocki@samsung.com,
-	cw00.choi@samsung.com,
-	semen.protsenko@linaro.org
-Cc: alim.akhtar@samsung.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	peter.griffin@linaro.org,
-	andre.draszik@linaro.org,
-	linux-samsung-soc@vger.kernel.org,
+	s=arc-20240116; t=1709209403; c=relaxed/simple;
+	bh=9bw/tOBzuEyt2UgNj6zGFgbsv+CXBbuZyMtRZjhVKOo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=CfIY7rytnW+w7SQdcswZG4d0CsZseydDTv720BjceV11cZPOmeh8bmZE3KnjiqUJAmCobRR7MU70CVftpEaciC0jNFaclixxzXhDz1PmdgLgSHlxHpqA8vfz5bRrj+mxByR5whTT3uYWYbUDx0Qne26ametgesSwX73fE7Y+dBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=159.89.151.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from ubuntu.localdomain (unknown [218.12.19.137])
+	by mail-app2 (Coremail) with SMTP id by_KCgB3uKcbd+BlOY1oAg--.37484S2;
+	Thu, 29 Feb 2024 20:23:00 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	willmcvicker@google.com,
-	kernel-team@android.com,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH 4/4] clk: samsung: exynos850: fix propagation of SPI IPCLK rate
-Date: Thu, 29 Feb 2024 12:20:21 +0000
-Message-ID: <20240229122021.1901785-5-tudor.ambarus@linaro.org>
-X-Mailer: git-send-email 2.44.0.278.ge034bb2e1d-goog
-In-Reply-To: <20240229122021.1901785-1-tudor.ambarus@linaro.org>
-References: <20240229122021.1901785-1-tudor.ambarus@linaro.org>
+	michal.simek@amd.com,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH v2] clk: zynq: Prevent null pointer dereference caused by kmalloc failure
+Date: Thu, 29 Feb 2024 20:22:50 +0800
+Message-Id: <20240229122250.24786-1-duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:by_KCgB3uKcbd+BlOY1oAg--.37484S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrtw1fCr1xCFW3XF1fKFy3urg_yoW8JF1xpF
+	WxWrn0yF4DWr4qgFZrCFyxZrWS9ay7Wa42g34Iq34vvrn8JFWUWFW5CF95ZF18XrWfWFW3
+	tF4Utr48W3WUC3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUr2-eDU
+	UUU
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwIGAWXfgNMODgAmsJ
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Fix propagation of SPI IPCLK rate by allowing MUX reparenting for the
-dedicated USI MUX clocks. Since these muxes feed just the USI blocks,
-reparenting of the muxes do not affect other IPs.
+The kmalloc() in zynq_clk_setup() will return null if the
+physical memory has run out. As a result, if we use snprintf
+to write data to the null address, the null pointer dereference
+bug will happen.
 
-Do not propagate the rate change the from USI muxes to the common bus
-dividers (dout_apm_bus and dout_peri_ip). The leaf clocks (HSI2C, I3C)
-that are derived from the common bus dividers are no longer affected by
-the SPI clock rate change.
+This patch adds a stack variable to replace the kmalloc().
 
-This change involves the following clock path propagation:
-
-usi_spi_0:
-    Clock                  Div range    MUX Selection
-    ---------------------------------------------------------------------
-    gout_spi0_ipclk        -            -
-    dout_peri_spi0         /1..32       -
-    mout_peri_spi_user     -            { oscclk (26 MHz), dout_peri_ip }
-
-    *Note that the clock rate is no longer propagated to dout_peri_ip.
-
-usi_cmgp0:
-
-    Clock                  Div range    MUX Selection
-    ---------------------------------------------------------------------
-    gout_cmgp_usi0_ipclk   -           -
-    dout_cmgp_usi0         /1..32      -
-    mout_cmgp_usi0         -           { clk_rco_cmgp (49.152 MHz)
-                                         gout_clkcmu_cmgp_bus }
-
-    *Note that the clock rate is no longer propagated to
-     gout_clkcmu_cmgp_bus and dout_apm_bus.
-
-usi_cmgp1:
-
-    Clock                  Div range   MUX Selection
-    ---------------------------------------------------------------------
-    gout_cmgp_usi1_ipclk   -           -
-    dout_cmgp_usi1         /1..32      -
-    mout_cmgp_usi1         -           { clk_rco_cmgp (49.152 MHz)
-                                         gout_clkcmu_cmgp_bus }
-
-    *Note that the clock rate is no longer propagated to
-     gout_clkcmu_cmgp_bus and dout_apm_bus.
-
-This comes with no significant clock range modification. Before this
-patch the claimed clock ranges are:
-
-    SPI0:   200 kHz ... 49.9 MHz
-    SPI1/2: 400 kHz ... 49.9 MHz
-
-After this patch the clock ranges are:
-    SPI0:   203.125 kHz ... 49.9 MHz
-    SPI1/2: 384 kHz     ... 49.9 MHz
-
-For SPI1/2 we get an even lower frequency than what was before. For SPI0
-the benefit of not modifying common bus clocks, thus other leaf IP nodes
-is greater than the change in frequency from 200 to ~203 KHz.
-
-Not tested, the patch was written solely by reading the code.
-
-Fixes: 67c15187d491 ("clk: samsung: exynos850: Propagate SPI IPCLK rate change")
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Fixes: 0ee52b157b8e ("clk: zynq: Add clock controller driver")
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
 ---
- drivers/clk/samsung/clk-exynos850.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+Changes in v2:
+  - Use stack variable to replace kmalloc().
 
-diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-index 82cfa22c0788..42b4b4075aeb 100644
---- a/drivers/clk/samsung/clk-exynos850.c
-+++ b/drivers/clk/samsung/clk-exynos850.c
-@@ -605,7 +605,7 @@ static const struct samsung_div_clock apm_div_clks[] __initconst = {
+ drivers/clk/zynq/clkc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
+index 7bdeaff2bfd..e4c4c9adf79 100644
+--- a/drivers/clk/zynq/clkc.c
++++ b/drivers/clk/zynq/clkc.c
+@@ -427,7 +427,7 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 			SLCR_GEM1_CLK_CTRL, 0, 0, &gem1clk_lock);
  
- static const struct samsung_gate_clock apm_gate_clks[] __initconst = {
- 	GATE(CLK_GOUT_CLKCMU_CMGP_BUS, "gout_clkcmu_cmgp_bus", "dout_apm_bus",
--	     CLK_CON_GAT_CLKCMU_CMGP_BUS, 21, CLK_SET_RATE_PARENT, 0),
-+	     CLK_CON_GAT_CLKCMU_CMGP_BUS, 21, 0, 0),
- 	GATE(CLK_GOUT_CLKCMU_CHUB_BUS, "gout_clkcmu_chub_bus",
- 	     "mout_clkcmu_chub_bus",
- 	     CLK_CON_GAT_GATE_CLKCMU_CHUB_BUS, 21, 0, 0),
-@@ -974,10 +974,10 @@ static const struct samsung_fixed_rate_clock cmgp_fixed_clks[] __initconst = {
- static const struct samsung_mux_clock cmgp_mux_clks[] __initconst = {
- 	MUX(CLK_MOUT_CMGP_ADC, "mout_cmgp_adc", mout_cmgp_adc_p,
- 	    CLK_CON_MUX_CLK_CMGP_ADC, 0, 1),
--	MUX_F(CLK_MOUT_CMGP_USI0, "mout_cmgp_usi0", mout_cmgp_usi0_p,
--	      CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP0, 0, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(CLK_MOUT_CMGP_USI1, "mout_cmgp_usi1", mout_cmgp_usi1_p,
--	      CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP1, 0, 1, CLK_SET_RATE_PARENT, 0),
-+	nMUX(CLK_MOUT_CMGP_USI0, "mout_cmgp_usi0", mout_cmgp_usi0_p,
-+	     CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP0, 0, 1),
-+	nMUX(CLK_MOUT_CMGP_USI1, "mout_cmgp_usi1", mout_cmgp_usi1_p,
-+	     CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP1, 0, 1),
- };
+ 	tmp = strlen("mio_clk_00x");
+-	clk_name = kmalloc(tmp, GFP_KERNEL);
++	char clk_name[tmp];
+ 	for (i = 0; i < NUM_MIO_PINS; i++) {
+ 		int idx;
  
- static const struct samsung_div_clock cmgp_div_clks[] __initconst = {
-@@ -1557,9 +1557,8 @@ static const struct samsung_mux_clock peri_mux_clks[] __initconst = {
- 	    mout_peri_uart_user_p, PLL_CON0_MUX_CLKCMU_PERI_UART_USER, 4, 1),
- 	MUX(CLK_MOUT_PERI_HSI2C_USER, "mout_peri_hsi2c_user",
- 	    mout_peri_hsi2c_user_p, PLL_CON0_MUX_CLKCMU_PERI_HSI2C_USER, 4, 1),
--	MUX_F(CLK_MOUT_PERI_SPI_USER, "mout_peri_spi_user",
--	      mout_peri_spi_user_p, PLL_CON0_MUX_CLKCMU_PERI_SPI_USER, 4, 1,
--	      CLK_SET_RATE_PARENT, 0),
-+	nMUX(CLK_MOUT_PERI_SPI_USER, "mout_peri_spi_user",
-+	     mout_peri_spi_user_p, PLL_CON0_MUX_CLKCMU_PERI_SPI_USER, 4, 1),
- };
- 
- static const struct samsung_div_clock peri_div_clks[] __initconst = {
+@@ -439,7 +439,6 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 		else
+ 			can_mio_mux_parents[i] = dummy_nm;
+ 	}
+-	kfree(clk_name);
+ 	clk_register_mux(NULL, "can_mux", periph_parents, 4,
+ 			CLK_SET_RATE_NO_REPARENT, SLCR_CAN_CLK_CTRL, 4, 2, 0,
+ 			&canclk_lock);
 -- 
-2.44.0.278.ge034bb2e1d-goog
+2.17.1
 
