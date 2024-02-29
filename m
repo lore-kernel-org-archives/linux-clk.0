@@ -1,272 +1,175 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380E779DA4;
-	Thu, 29 Feb 2024 10:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B665A79DA7;
+	Thu, 29 Feb 2024 11:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709202999; cv=none; b=lu8Vgj54yiWWe50fWb4cytv+p3AGYHemIuGqP6bfJM+1OuF0ayS6kROEtdMhf980SANMbKI8x7q82rBXSc2zmXKHED+jVCaG2qSbYL1KTu1VaSgYJFJJdptqql7gf7FTumoT8Ee0+ijm1hufFFoyZvO7PpNxNqeK5qPkZjxj9Tc=
+	t=1709205355; cv=none; b=EHiSUCvlaena6Yq7MXgnPJs5zx+t3ijTzBZq8XAHIy0xC6KMJgGorEJfhGPvKY7Z1xjpaZAJRomrsIkSsMDKF4rNZQ+l/yzgMWx6CkxGvUygV70apeFvTLrzbn8in0aBRppQSekVpTcxs51lMneLUiXFHgDZzrNReKqGqEU8qIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709202999; c=relaxed/simple;
-	bh=3aSzZhGz+bpRWbINAdnEu5co1kMfKQnkYjethc3a530=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HPCtKGIcBqlXDbHjAtEAKFR40W3haMZzrj40e9AbanIEsaOJl7iKJIvCwxOwBF69xBUCDqVZP8HRoiDXUk4SK/LVaYMDXKbsgsIgRqWmXeEx06QBlpy4b1SDwKwb4cTctzjIQBbs/M/+uuRGQQ3hJmGxhknC6n/JbiDvmXB0xf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=s3MDGWeD; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1709205355; c=relaxed/simple;
+	bh=kSg5s07sAS2oPjs5L+tzUrFY7l5odKVVpQ4QLkplBxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MeevtkXlwWE4qSIuT4sCXMhIDbvVQlvdNi/2Dczk/JvOQJX4m9WnepGiugZSrUh6Pkg2TIipsxJ6kWCSrZ90GLiQYnBGk5Y/ZveJafP9P3VG+QCscts+tNljByErCfqwlqYKSoeLuTTNxz6ip9OqmHr46erLZPvESif9HGS6Z00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JYRn2x1v; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="s3MDGWeD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1709202996;
-	bh=3aSzZhGz+bpRWbINAdnEu5co1kMfKQnkYjethc3a530=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=s3MDGWeDkPkdarXIbAj9oa1fTy4TyYyv1ES/5Qccvw4OYaontwWZw5LVY3yNIfSHC
-	 p2/GPav+EaFfbFglfPuhzt8m1XYa7kDXcugOyCdQx3FS8tVobd5Cp14+esygYMdbm+
-	 UCpIX/2M+JlRGf6A1eDfAR59/l/qGxQTvbisXNBtrBsDJfaFeYTjaujsH33hbBrHlD
-	 +tsgfwyW8V5xdXREtR4Ym4wcI/RCPPTcOBZuHPG35+f2H61Dpra3FYR6i/1WtjHJy2
-	 +tQKbA+JWmqg5/lNLT9y+MkwSZ2fU1MDYgE+08zstDChJ0iqbvEMcAw5iQTErYUi5r
-	 XmGrAsA9qEkWg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BB4913780029;
-	Thu, 29 Feb 2024 10:36:35 +0000 (UTC)
-Message-ID: <dfdc6a65-3ccf-463c-95df-093f3c2fefd3@collabora.com>
-Date: Thu, 29 Feb 2024 11:36:34 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JYRn2x1v"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709205353; x=1740741353;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=kSg5s07sAS2oPjs5L+tzUrFY7l5odKVVpQ4QLkplBxc=;
+  b=JYRn2x1vTptOgQeYPetNDNCHpwzcEWRdJy0ZH0OC5OdO+iEt8vt66Wv7
+   i2iFdgTSTSfj6dg7+0WUmUrOldIHaj+thFHRv+VwSpLJEMZRaVfqJDyrE
+   djL+nIHModY5YjyHFdiGf8ZASk28TrsyU0bGu/eXdu/2z+rSXjWPS3kBv
+   yc3RvSElyOKB2OFiP9yX1H+Fc6C1ofh7FUL66s2GKPykYBfLgMOu77p4A
+   CFGC2cGcnHAsPqWJMDpgWIveQsRDXmVrlolDGRGNL28YC3xSlhoSKPVdM
+   eINYbmt95wAC3oh/uMPjESLe2lXPQZZeAtq29W9+lvE6b1Aq2dY0bC++i
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10998"; a="3791382"
+X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
+   d="scan'208";a="3791382"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 03:15:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10998"; a="913979423"
+X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
+   d="scan'208";a="913979423"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 03:15:47 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1rfeO8-00000008eOC-0rnF;
+	Thu, 29 Feb 2024 13:15:44 +0200
+Date: Thu, 29 Feb 2024 13:15:43 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v8 03/10] clk: eyeq5: add platform driver, and init
+ routine at of_clk_init()
+Message-ID: <ZeBnX2upNRN0xXH4@smile.fi.intel.com>
+References: <20240227-mbly-clk-v8-0-c57fbda7664a@bootlin.com>
+ <20240227-mbly-clk-v8-3-c57fbda7664a@bootlin.com>
+ <Zd4X3NnBoEl0wu2H@smile.fi.intel.com>
+ <CZGSB2O8P572.28HK6WFT43N6S@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] clk: mediatek: Introduce need_pm_runtime to
- mtk_clk_desc
-Content-Language: en-US
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Pin-yen Lin <treapking@chromium.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Weiyi Lu <weiyi.lu@mediatek.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240108081834.408403-1-treapking@chromium.org>
- <CAGXv+5EnBt+7WrNb-QyziEaCihvjhFVf2tpzk=XyAoeELqucaw@mail.gmail.com>
- <e0e6febf-1045-49f8-a200-8bc095b0fa50@collabora.com>
- <CAGXv+5F5YFRKjaXu_XbXrUhqKL0NSRyt6tniQYfhRh+fsaxqmg@mail.gmail.com>
- <cc74422d-962f-4da5-867b-158a71db1a7b@collabora.com>
- <CAGXv+5EyRROsh_=J1Fg4K+ZgfkERF4dh4R6WoGw9MnTBMNUCgQ@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5EyRROsh_=J1Fg4K+ZgfkERF4dh4R6WoGw9MnTBMNUCgQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CZGSB2O8P572.28HK6WFT43N6S@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Il 29/02/24 11:34, Chen-Yu Tsai ha scritto:
-> On Thu, Feb 29, 2024 at 5:45â€¯PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 29/02/24 08:17, Chen-Yu Tsai ha scritto:
->>> On Mon, Feb 26, 2024 at 7:16â€¯PM AngeloGioacchino Del Regno
->>> <angelogioacchino.delregno@collabora.com> wrote:
->>>>
->>>> Il 23/02/24 05:27, Chen-Yu Tsai ha scritto:
->>>>> On Mon, Jan 8, 2024 at 4:18â€¯PM Pin-yen Lin <treapking@chromium.org> wrote:
->>>>>>
->>>>>> Introduce a new need_pm_runtime variable to mtk_clk_desc to indicate
->>>>>> this clock controller needs runtime PM for its operations.
->>>>>> Also do a runtime PM get on the clock controller during the
->>>>>> probing stage to workaround a possible deadlock.
->>>>>>
->>>>>> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
->>>>>
->>>>> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
->>>>>
->>>>> The patch itself looks fine.
->>>>>
->>>>> Besides the MT8183 MFG clock issues, we do actually need this for the
->>>>> MT8192 ADSP clock. Its power domain is not enabled by default.
->>>>>
->>>>
->>>> ...but on MT8195 the ADSP clock works - because the ADSP node exists.
->>>
->>> That's an indirect dependency that should not be relied on. Say the clock
->>> driver probed but the ADSP hasn't, and you try to read out the current
->>> status. What would happen?
->>>
->>> - Read out works fine, because the power domain is default on, and hasn't
->>>     been turned off by late cleanup
->>> - Read out is bogus (but you can't tell)
->>> - Read out hangs.
->>>
->>> The third is what happens on MT8192. There's still some issues on that
->>> front, as even after I applied the ADSP power domain patches from MediaTek,
->>> the readout was still hanging.
->>>
->>
->> That MT8192 lockup story is getting crazy in my head... anyway, besides that,
->> I get the point - I was somehow ignoring the fact that kernel modules do exist.
->>
->> Eh, sorry about that :-)
->>
->>>> This poses a question: should we make clock controllers depend on power domains,
->>>> or should we keep everything powered off (hence clocks down - no power consumption)
->>>> *unless* the user exists?
->>>
->>> That's a policy discussion separate from actual hardware dependencies.
->>> *If* the clock controller needs the power domain to be active for the
->>> registers to be accessed, the clock controller *must* have a direct
->>> dependency on the power domain.
->>>
->>
->> I admit I should've worded that better.
->>
->> "should we make clock controllers depend on power domains" was actually implying
->> "IF those need one" :-)
->>
->> I really wonder if - at this point - it's simply a better idea to not restrict
->> the call to devm_pm_runtime_enable/resume_and_get to `need_runtime_pm == true`.
->>
->> Do we really need to exclude that on other clock controllers that don't have
->> any power domain dependency? Any side effect?
->>
->> Saying this because if we can avoid yet another per-SoC flag I'm really happy,
->> as readability is also impacted and besides - if we ever find out that one of
->> those need a power domain in the future, we'll need just one commit and just
->> only in the devicetree, instead of enabling a flag in driver X as well as that,
->> avoiding some (potentially unnecessary) noise... I guess.
->>
->> P.S.: I just noticed that the return value for the devm_pm_runtime_enable() call
->>         is not being checked!
->>
->> .......
->>
->> In short....
->>
->> Chen-Yu, at this point, do you have any reason why we wouldn't be able and/or it
->> wouldn't be a good idea to just avoid adding the `need_runtime_pm` flag (meaning
->> that we perform pm_runtime calls for all clock drivers unconditionally)?
->>
->> If this is about longer boot time, I don't think that it's going to be more than
->> a millisecond or two, so that should be completely ignorable.
-> 
-> I think it's just more of a "don't enable features you don't need" thing.
-> We already ran into a weird deadlock, which is why the devm_pm_runtime_enable()
-> call has that comment.
-> 
-> I don't think anyone has actually looked at it. As you said it shouldn't be
-> much, at least during boot time. It's one call per clock controller.
-> 
->> Can you please do a test for that, or should I?
-> 
-> The earliest I can work on it would be some time next week. Does that work
-> for you?
-> 
+On Wed, Feb 28, 2024 at 03:33:29PM +0100, Théo Lebrun wrote:
+> On Tue Feb 27, 2024 at 6:11 PM CET, Andy Shevchenko wrote:
+> > On Tue, Feb 27, 2024 at 03:55:24PM +0100, Théo Lebrun wrote:
 
-The earliest I'd be able to work on this myself would be at the end of next
-week if not later.. so yes, please take your time, no worries.
+[...]
 
-Thank you!
-
-> ChenYu
+> > > +	depends on OF
+> >
+> > Since it's a functional dependency, why not allow compile test without OF
+> > being enabled?
 > 
->> Cheers
->> Angelo
->>
->>>> For the second one, this means that the *device* gets the power domain (adsp), and
->>>> not the clock controller (which clocks are effectively useless if there's no user).
->>>
->>> No. See my previous paragraph.
->>>
->>> ChenYu
->>>
->>>> Angelo
->>>>
->>>>>> ---
->>>>>>
->>>>>> Changes in v3:
->>>>>> - Update the commit message and the comments before runtime PM call
->>>>>>
->>>>>> Changes in v2:
->>>>>> - Fix the order of error handling
->>>>>> - Update the commit message and add a comment before the runtime PM call
->>>>>>
->>>>>>     drivers/clk/mediatek/clk-mtk.c | 19 +++++++++++++++++++
->>>>>>     drivers/clk/mediatek/clk-mtk.h |  2 ++
->>>>>>     2 files changed, 21 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
->>>>>> index 2e55368dc4d8..ba1d1c495bc2 100644
->>>>>> --- a/drivers/clk/mediatek/clk-mtk.c
->>>>>> +++ b/drivers/clk/mediatek/clk-mtk.c
->>>>>> @@ -13,6 +13,7 @@
->>>>>>     #include <linux/of.h>
->>>>>>     #include <linux/of_address.h>
->>>>>>     #include <linux/platform_device.h>
->>>>>> +#include <linux/pm_runtime.h>
->>>>>>     #include <linux/slab.h>
->>>>>>
->>>>>>     #include "clk-mtk.h"
->>>>>> @@ -494,6 +495,18 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
->>>>>>                            return IS_ERR(base) ? PTR_ERR(base) : -ENOMEM;
->>>>>>            }
->>>>>>
->>>>>> +
->>>>>> +       if (mcd->need_runtime_pm) {
->>>>>> +               devm_pm_runtime_enable(&pdev->dev);
->>>>>> +               /*
->>>>>> +                * Do a pm_runtime_resume_and_get() to workaround a possible
->>>>>> +                * deadlock between clk_register() and the genpd framework.
->>>>>> +                */
->>>>>> +               r = pm_runtime_resume_and_get(&pdev->dev);
->>>>>> +               if (r)
->>>>>> +                       return r;
->>>>>> +       }
->>>>>> +
->>>>>>            /* Calculate how many clk_hw_onecell_data entries to allocate */
->>>>>>            num_clks = mcd->num_clks + mcd->num_composite_clks;
->>>>>>            num_clks += mcd->num_fixed_clks + mcd->num_factor_clks;
->>>>>> @@ -574,6 +587,9 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
->>>>>>                            goto unregister_clks;
->>>>>>            }
->>>>>>
->>>>>> +       if (mcd->need_runtime_pm)
->>>>>> +               pm_runtime_put(&pdev->dev);
->>>>>> +
->>>>>>            return r;
->>>>>>
->>>>>>     unregister_clks:
->>>>>> @@ -604,6 +620,9 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
->>>>>>     free_base:
->>>>>>            if (mcd->shared_io && base)
->>>>>>                    iounmap(base);
->>>>>> +
->>>>>> +       if (mcd->need_runtime_pm)
->>>>>> +               pm_runtime_put(&pdev->dev);
->>>>>>            return r;
->>>>>>     }
->>>>>>
->>>>>> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
->>>>>> index 22096501a60a..c17fe1c2d732 100644
->>>>>> --- a/drivers/clk/mediatek/clk-mtk.h
->>>>>> +++ b/drivers/clk/mediatek/clk-mtk.h
->>>>>> @@ -237,6 +237,8 @@ struct mtk_clk_desc {
->>>>>>
->>>>>>            int (*clk_notifier_func)(struct device *dev, struct clk *clk);
->>>>>>            unsigned int mfg_clk_idx;
->>>>>> +
->>>>>> +       bool need_runtime_pm;
->>>>>>     };
->>>>>>
->>>>>>     int mtk_clk_pdev_probe(struct platform_device *pdev);
->>>>>> --
->>>>>> 2.43.0.472.g3155946c3a-goog
->>>>>>
->>>>
->>>>
->>>>
->>
->>
->>
+> I'd do this then:
+> 
+> 	depends on OF || COMPILE_TEST
+> 
+> Which is better than removing the depend line. I wouldn't want the
+> kernel to build fine with OF=n even though we need it. OK for you?
+
+Yes!
+
+[...]
+
+> > > +	u32		reg;	/* next 8 bytes are r0 and r1 */
+> >
+> > Not sure this comments gives any clarification to a mere reader of the code.
+> > Perhaps you want to name this as reg64 (at least it will show that you have
+> > 8 bytes, but I have no clue what is the semantic relationship between r0 and
+> > r1, it's quite cryptic to me). Or maybe it should be reg_0_1?
+> 
+> Clocks are defined by two 32-bit registers. We only store the first
+> register offset because they always follow each other.
+
+> I like the reg64 name and will remove the comment. This straight forward
+> code is found in the rest of the code, I don't think it is anything
+> hard to understand (ie does not need a comment):
+> 
+> 	u32 r0 = readl(base_plls + pll->reg);
+> 	u32 r1 = readl(base_plls + pll->reg + sizeof(r0));
+
+Btw, why readq()/writeq() (with probably the inclusion of io-64-nonatomic-lo-hi.h)
+can be used in this case? It will be much better overall and be aligned with
+reg64 name.
+
+[...]
+
+> > I didn't get. If eq5c_init() was finished successfully, why do you need to
+> > seems repeat what it already done? What did I miss?
+> 
+> The key here is that eq5c_init() iterates on eq5c_early_plls[] while
+> eq5c_probe() iterates on eq5c_plls[]. I've tried to hint at this in the
+> commit message:
+> 
+> > Two PLLs are required early on and are therefore registered at
+> > of_clk_init(). Those are pll-cpu for the GIC timer and pll-per for the
+> > UARTs.
+> 
+> Doing everything in eq5c_init() is not clean because we expect all new
+> clock provider drivers to be standard platform drivers. Doing
+> everything from a platform driver probe doesn't work because some
+> clocks are required earlier than platform bus init. We therefore do a
+> mix.
+
+Am I missing something or these two pieces are using the same IO resources?
+This looks like a lot of code duplication without clear benefit. Perhaps
+you can have a helper?
+
+> This has been approved by Stephen Boyd in this email:
+> https://lore.kernel.org/lkml/fa32e6fae168e10d42051b89197855e9.sboyd@kernel.org/
+
+OK!
+
+[...]
+
+> > > +		eq5c_clk_data->hws[pll->index] = hw;
+> > > +		if (IS_ERR(hw))
+> >
+> > > +			dev_err_probe(dev, PTR_ERR(hw), "failed registering %s\n",
+> > > +				      pll->name);
+> >
+> > Missed return statement?
+> 
+> No, we still try to register all clocks even if one failed. I guess we
+> can call this being optimistic.
+
+But how critical these clocks are? I believe we should panic it we have no
+critical calls be available. Otherwise, why '_err_'? Shouldn't be dev_warn()?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
