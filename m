@@ -1,154 +1,205 @@
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01olkn2097.outbound.protection.outlook.com [40.92.53.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F394D364D4
-	for <linux-clk@vger.kernel.org>; Fri,  1 Mar 2024 01:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709257884; cv=none; b=kl9rGHEi6FafUlavSqTzg58WY9RdB3qeyid3vvXvTEZ9Ty6OfA6sPOlCRg8PJdaDjtfqiRaa24czp4yU70DB11Mnf70AsZgdR6Q1gCArT5kKyZwIm0Qv33HnfvxE/I97fyzQzFLC252KJc442FCT/R29scoOT7HBvRfTTevI0jQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709257884; c=relaxed/simple;
-	bh=ynSp4BOfTgMg4ogCAHRZ6Dvo2D19rcIObO4Ct27E17o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Z/XNP3Qi96pZZSEsHK7bw1uOIPkqj7odcKOMsnSbPMLbprGL85V1VEXYfkev/q3sXPV11ANvdQFfQAJC2XuA88h6sBIUYSX16AOrLWghFObjZDS3q2K2hkLlvhYQkhgMKh51vx2/XmenWSjHFBrX2dOwb71JJcbhyt3peetuULg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ip3sHbMI; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873E82B9C1;
+	Fri,  1 Mar 2024 01:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.53.97
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709258321; cv=fail; b=R6HBAWlxlaLWq91OFKOvi9KzbTM3t0T8Ozmm880yCJWUbUaOve906ZBu/V0fjYMeNR6MS0ZYrB/b8CY711ybYwuxMZQibA0WJu6CVVRWLDF3fHcyuzckzleHD/NBT4jt0FcAJdz/0RocSgXvmHOm55Nd/UlcRmLEsuOl0+1CKJk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709258321; c=relaxed/simple;
+	bh=rZvSlYV6HcCtWcv+iwRpKOw3hWixFsUzYHtHHvFWXFk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PsHCxd92CpeAeWUxUQ9wnzCEyp8oNrtgAUYoG9njWFnCpCJrvNTUpdoJGJtFGP24Ro9BLaNyC9GBhMp2CYz9bLD5go1gKRfNKwYsgX3hOWKHd50RWEDTOPO7mY2qqUWOJNGyhpyKXHSCQc1vyPHT9fTH+91mrZxVej6pAqcX6Tc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=OgZOQFO7; arc=fail smtp.client-ip=40.92.53.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ip3sHbMI"
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-204235d0913so928924fac.1
-        for <linux-clk@vger.kernel.org>; Thu, 29 Feb 2024 17:51:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709257881; x=1709862681; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jiCxGhizFNRcTB4tNXp2x/NDTlkj4gUJN/57L1mqhmQ=;
-        b=ip3sHbMIeDpLc+d7dIDNdl/wjOF6EJevj8yb8S5qkEDlbgJTpvzANadccJvdqAAHvO
-         0tHBJ3v4M0ap6FxpNPRC7yhEY0zvX4ZeoLWdvnDUc2JcQVgnTc5xGEk1JFoGxnVhiCH3
-         uHftbM+ng70tOuRNx1czxCs7nq2TSWw21goVD0jkawQS00TpQiaYYR3S1toCy/lRwe0S
-         5IdC37gY6GOvx2OvIyhlUtZhBmgofvMqfXJUAzjvoInMsFz63R4PH6OpsrwaJg88dmRq
-         m1BrDlgmo7N3MRB0m+RmMhwv5rLHPYSvtcBb2VFnOB+4J6sGLkswIvw10SAGxeFHhAYK
-         Dl1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709257881; x=1709862681;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jiCxGhizFNRcTB4tNXp2x/NDTlkj4gUJN/57L1mqhmQ=;
-        b=kvPYiJZFu89GODBw0Yh8iPy/vvwRQD5epLEweExu4sVKwB8AapiKV6HrnNibIfNMAB
-         sHtLqpUTSky8o7KqR3Y8TfCFt4Rsolu6TZUdlH+s21iCe3Tj1HpPxTK2/xFmm1xjIsoZ
-         MGpC0xc/nz4FtB4k9dxgxNrCEQWr4LDEYgPQ05Y/5hkiQyRwXqQxgzG+DlGx7zb58DYc
-         OzpxvBmd/CcSHc8UB/Zd5cP9GJv3x9QcqnV7bnKtuMco0R+6Gx2Pg0BoNk3jyJqth9IH
-         5kPBYPg+Ybbojp4XDrPQJGqnvGB+uKr3neQi6E/6hkdB3Wk0/ZHTUEvlUVT0jgb9hfUV
-         JiAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLCUKlCqi1MkVAOxQkx8gjwF56JESPOYlKlregqSaAti+L8/Pj+a6YzMPwV9OaUdT3A4C3EqK3+AJ9pbKF6h7lR/+GCISDszW4
-X-Gm-Message-State: AOJu0Yzq7m3s96mxtCzvhXztA0x7Q+EKMbLU8I8ZUxq0mlVAk7S0buad
-	vIk+zojNQQAipCl4hRlztMyYN1QGnUZb6Gc0VxZlhf2tQu7zp2MylHmaAXtaDyQ=
-X-Google-Smtp-Source: AGHT+IGW/xHch8VdSjPLbyRX6s/pcxfNLRl0cQAlv9++DNTkn4NVmJyqUvzA/3mFGDn1HZks1resxA==
-X-Received: by 2002:a05:6870:b001:b0:21e:e9bd:afa9 with SMTP id y1-20020a056870b00100b0021ee9bdafa9mr296486oae.21.1709257881008;
-        Thu, 29 Feb 2024 17:51:21 -0800 (PST)
-Received: from localhost ([136.62.192.75])
-        by smtp.gmail.com with ESMTPSA id wo6-20020a056871a98600b0021fe6bbf8c2sm767017oab.31.2024.02.29.17.51.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Feb 2024 17:51:20 -0800 (PST)
-From: Sam Protsenko <semen.protsenko@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] arm64: dts: exynos: Add CPU clocks for Exynos850
-Date: Thu, 29 Feb 2024 19:51:18 -0600
-Message-Id: <20240301015118.30072-3-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240301015118.30072-1-semen.protsenko@linaro.org>
-References: <20240301015118.30072-1-semen.protsenko@linaro.org>
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="OgZOQFO7"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GsV5sYPR2D07AfocgZy3a5mHr1A+HCwBvVEpxkB2TkJ7XWH36VkH2xi7D2Vppn6Hg/YW35f+HQJ5w55p4v51SmZ7iauhiTbjKEKU3/xR07ZdvRIL8JnzxwX8hz12hyRkyaKcmUpNwqM86EQSu+NR5wb0s4N1p9xYUmlckFM8CF3kQdeWsNbiS8TDhTkAGQiAHDYcmRPYkcZHcmS0rZsc8P7Enoj98MWQ0uo0GQbGA/uepm3bfiZsRBGE+7QgFRr3a644uudI3nmZVHn1VnYadDPLSneT+IjVmUcLyWWCZzkUbCVC/fc4+Crw0A6/3OtxHE5jO9dYRYxIVdrPucfHWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MReEBCaK6j1eAmbr1081BBmobBSTY/ehrHO7J5aa+XA=;
+ b=MJOF1LQOohsj4mp7xpPiTGWkZPJTPVgHLgLk41Q6Zl9FqneAL4LDrrrvsmYEWgPO41N3f6PKV6hCTv/3wCiAg4QcAaSUYXfUAL3zXve0CcC66j/SfESZ66DCeTaZKSkKGF2/ICkQr1Ua55vnyeySPMMgolmGX90kYhDSp3esRU/yWYwwOF+mCRMJeJNtEGtTY8/m2Q79ZBkqZBoqavFAgErNmPBFq4JrXTI4AAGyqMG19Kh+INm6pt3Z929yB35BoQUVMuuz30Ns39j9CCuRqVGlRHoa0HPG2NPeQFUG3cHTQEzOuqvgiIipwOSENIV84nfint7vqCyyXmfzlIY3Yw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MReEBCaK6j1eAmbr1081BBmobBSTY/ehrHO7J5aa+XA=;
+ b=OgZOQFO7FvtTVMUqWo8a1vBIUfkGpTWVSBYbyg1OzjPhKcg8sUr2y3j0+IaJhK6ZnA8J262dlu9bvNhnLLSwVADa6hY03dptg0TeuKalz8FM+lj+bjZVEpEQL9xFSo50FaHWZam1r/2ZnXTkLdlZ/uUQr9EW8PI1Jdqh/5mFVUjNSctJR39pSa1Zuldj6HrPL/o7Kv+ISp9uWiRnjH6L4Cqd1I/cewptY4xUb2+zFCpzKLRkW9cb8ftS6KfuHNTc49LxVsmH3vqh3VuQOrIMRFD8YEuVW0jAy2q58TLSqAZYEwcDRpf1WrNrjZDs/PxtPLtx8Wfis37c3fo5Ce2NRQ==
+Received: from SEZPR06MB6959.apcprd06.prod.outlook.com (2603:1096:101:1ed::14)
+ by TYZPR06MB7213.apcprd06.prod.outlook.com (2603:1096:405:b9::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7339.32; Fri, 1 Mar
+ 2024 01:58:35 +0000
+Received: from SEZPR06MB6959.apcprd06.prod.outlook.com
+ ([fe80::53da:a8a:83cb:b9ad]) by SEZPR06MB6959.apcprd06.prod.outlook.com
+ ([fe80::53da:a8a:83cb:b9ad%4]) with mapi id 15.20.7316.035; Fri, 1 Mar 2024
+ 01:58:35 +0000
+Message-ID:
+ <SEZPR06MB695999603791369002D13378965E2@SEZPR06MB6959.apcprd06.prod.outlook.com>
+Date: Fri, 1 Mar 2024 09:58:27 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] clk: set initial best mux parent to current parent
+ when determining rate
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Yang Xiwen via B4 Relay <devnull+forbidden405.outlook.com@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240224-mux-v1-1-608cc704ef43@outlook.com>
+ <0db752d31016823ccd3799925255a74a.sboyd@kernel.org>
+ <SEZPR06MB69597E78EA08D5BDF66DBEBC965F2@SEZPR06MB6959.apcprd06.prod.outlook.com>
+ <f8bcec654f618f8639a882bf70273618.sboyd@kernel.org>
+ <SEZPR06MB69598A991B4CCF633E764CE7965F2@SEZPR06MB6959.apcprd06.prod.outlook.com>
+ <97787cc46d663b08b2e571841fb1bd6b.sboyd@kernel.org>
+Content-Language: en-US
+From: Yang Xiwen <forbidden405@outlook.com>
+In-Reply-To: <97787cc46d663b08b2e571841fb1bd6b.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TMN: [ZINPAzGLqJcoe2rluRLX+KQJXwIOa9CSuwe3Zzj/m6lSbNkXjbh8frZUxMeuIGd6]
+X-ClientProxiedBy: SI1PR02CA0051.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::6) To SEZPR06MB6959.apcprd06.prod.outlook.com
+ (2603:1096:101:1ed::14)
+X-Microsoft-Original-Message-ID:
+ <3044d405-933b-496c-bf2a-969984b72dfc@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB6959:EE_|TYZPR06MB7213:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60cdc4ce-bdfa-44a3-42d4-08dc39931a5b
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	mQ6lxzUmDOllMtqVqx1HdV/vSHEXiqROTOdNCra5eCmGMYJTOSc4kQsHbcmy0f03imAMgEjrSgcERlj94B/oVt7duGl0xuzTvvGRNtK2Hh/PZ9AlKGTQsn5VWBwL1eLUTKiqbtvUNpbNS1aVl2Nnh7C4b0DhF5nYW+9l6f9dgK7scYP4zlgeHJ7ljmUCRHeumzUsAdgSmZ9x6Lml/OMvundINPvc42rfYQWhv8HMA9xNiev7smSuwHvJZArNeg9ROEArf8BqvGGA6tifBwyfBBxjON0egf3czOjUwE/w3aaKN8jzU/COAShp8TuY4Dun09ey0B+uUuTXlMpXFSuYbYjlQiVvWwivRSuWrHXdyhHlFgEWoKkrXkfwR+EvQMde1AxLyIQkyTHQDPA7rhijzubABwHsYP1aC6DzU+j/8PC3cMgG+6IdWGFhO9vNSYMEjYCvoekq5fKRw40hahZJdy3253qqNDoe5AAiOUEY9I/hrpObfjh2IrTjlAcHPU4/wAoU9icFPLg9FJkvqyBq9I4Np5Zo9Qkp4xTKJanJy55QYHa11fHm9WitAFbjUJ9W
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NElkdDVaTk9Ydmg5dGJkdVI1TGY1STJXWk1IU3JMRld5RDZPSjlxQzBnaFNL?=
+ =?utf-8?B?SFZxNDhET09Hb1JJVHQ0YVRxWkpzbGtRcFc0SVM3NzQyd3UrOTE4VUo4eUpR?=
+ =?utf-8?B?VTNOZVhhWGFyYUFtV0ZjL0NtM0tlRGM2L21EZkI1SUgrVFh5YldhVzdnSGpO?=
+ =?utf-8?B?czdtVjhOYm1lVmtUNkxtQVBsOStCVWs1OG9JMVcwUERkWFI3dkdoU2FtQVph?=
+ =?utf-8?B?NXdYWmxUZzRTU0YxL0c3bU9vSVg5K1N3M0s1VFYxc1FHbllJTEhyUHE4M0tT?=
+ =?utf-8?B?YVRrcmNUM00vMG9oZkE4dTRSTVlJQUNzTDloWTgrcXVHZTJJb2plbiszL3p2?=
+ =?utf-8?B?azQwMkE1RHNVSkV0bk0vdUpMVG12TEhOSmh3WUNJdzdXbi9VUU5aVkI3WFU3?=
+ =?utf-8?B?WVZCakVtVFZ2UksvM0dxMnp0em9NVStEOHJFK3RmdzBOR2dyaVFjR0FzUllL?=
+ =?utf-8?B?UU15SitqQkt6Rit5NDFmaEhJd3Z0OCttQ1FkSitMMFZCUUtCY1ZNbXpjbVdD?=
+ =?utf-8?B?K0FNbVpiek1QdisrNkdtdldycEVVQldRQXlVWUZmNUs4NTk1YXNqWStkOW9m?=
+ =?utf-8?B?U3UrbGtyTnk2dXNiMGptSW1aVTdGT2hPcWdTWG9kQXRTaWJZRkVXMmZRQWtI?=
+ =?utf-8?B?TGpRVTZyZGJIaXk4Z29TRks4VlZVUFVPMHE4SEJyanI2Nm1zMHhWVHMwUE50?=
+ =?utf-8?B?d3IrT2Yrb0hyaDBQamJCNlFKd1VnbStvZDF4ZVpOWFNXRXNjUnB6bmFjRDIy?=
+ =?utf-8?B?c1B6VERSU1JLSXRqbXB1UmRxZWl3VUVaQlQ5YVlOMVVnOHZzQTRQWjNiMzFT?=
+ =?utf-8?B?NEcxVzJXczluakhYSGk0aUtNTVZVaVBuMXJuTkQzangrWmhocWt2M01SNlpZ?=
+ =?utf-8?B?MkVTVkdBbkxreHBkL0lBZUh3MDdlMlhQV1czSWg5RXZBMjBpTFNvN0RMcW1B?=
+ =?utf-8?B?THVYellkeW5NcGtwVFgvUFd5ZDVFMGF0dS9peWxPbi9GM1UyRzdFcmhZN0o2?=
+ =?utf-8?B?c0pnbEcvQ0dWalRVdkpydnYvWU91amFRRWpiTmNNSGo0cU5WdTBMZE5ldk4y?=
+ =?utf-8?B?WHF4UURtYTQyVHZvWWZacTRETWZGTFVFdENiYXB3bURmM3VrcDk1SllMTzZO?=
+ =?utf-8?B?MmZVb2p6cjZqNlh5d1lnU1hQYUcxdWVGalBKS0pkZEtXcUpEa1JDaVR2ZGtY?=
+ =?utf-8?B?MUcvdktXS3pqekZidExVaUpocEs4S2FOZ1NjYVFtcWFkUDVoZDQ0RE92NHFY?=
+ =?utf-8?B?UXNsT25sT1JhMlhCVzFIQVQvb1lOWUt3SlpOMXJSUVVsT0NMS2MzYmNuWlZB?=
+ =?utf-8?B?bklmODAwL0YrOEFUbTVSQU5Ya3BQTVYzUi9DMWtFQkdQT3RIWW1aTW95anFX?=
+ =?utf-8?B?SDZranQ3N0NNOG9sb29XYi9LajQ1NjMySW5aQjhEK0d3ODBOSnd3UElsVGVH?=
+ =?utf-8?B?YXh5K0ZYOUd2SkxxN1JXOGJDM3EyQnl1cWlhbEtYSytaclI0ZjdJYkhlZkZL?=
+ =?utf-8?B?QS9ISGJnQXBMQi9Ra1huZUpGQURLTWRZUXZQZ2dBYlF3VlQ2dkxQU0IxS1FO?=
+ =?utf-8?B?cjdHYUlEM3pjdUh6d2FVZHBqM1NMOUw5cG40RGxTMHBzcCsxOVBnT1cwQmRT?=
+ =?utf-8?B?VkpLY0lQQXFjWDhDZ0R0V2hVeTRsUlNiSys1VEUxcVVaRGlGUFdQN2taWGI5?=
+ =?utf-8?B?VGRaTjhRWUw2R2lQZGJuNkEwUWs3VEh1QmJDcmp1OEc4eURYYWk3V1djSVd6?=
+ =?utf-8?Q?P/NCRm44CwmfZFxzFkgzM69vkCc1FhJDJT++QtD?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60cdc4ce-bdfa-44a3-42d4-08dc39931a5b
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB6959.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Mar 2024 01:58:34.7404
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB7213
 
-Define CPU cluster 0 and CPU cluster 1 CMUs, which generate CPU clocks,
-and add corresponding CPU clocks to CPU nodes.
+On 3/1/2024 9:42 AM, Stephen Boyd wrote:
+> Quoting Yang Xiwen (2024-02-28 18:33:11)
+>> On 2/29/2024 10:25 AM, Stephen Boyd wrote:
+>>>>>
+>>>>> Is the problem that we're not using abs_diff()?
+>>>>
+>>>>
+>>>> No, i think. It has nothing to do with the code here. It's because of
+>>>> the initial best_parent/best_parent_rate.
+>>>
+>>> Alright.
+> 
+> I will have to fix this as well in a different patch.
+> 
+>>>
+>>>>
+>>>>>
+>>>>> ----8<----
+>>>>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>>>>> index a3bc7fb90d0f..91023345595f 100644
+>>>>> --- a/drivers/clk/clk.c
+>>>>> +++ b/drivers/clk/clk.c
+>>>>> @@ -542,7 +542,7 @@ static bool mux_is_better_rate(unsigned long rate, unsigned long now,
+>>>>>                          unsigned long best, unsigned long flags)
+>>>>>  {
+>>>>>       if (flags & CLK_MUX_ROUND_CLOSEST)
+>>>>> -             return abs(now - rate) < abs(best - rate);
+>>>>> +             return abs_diff(now, rate) < abs_diff(best, rate);
+>>>>
+>>>> Without this patch, the initial `best` rate would be always 0. This is
+>>>> wrong for most cases, 0Hz might (usually) be unavailable. We should use
+>>>> a valid rate(i.e. current rate) initially.
+>>>
+>>> Ok. But you set best to the parent rate. So why not use 'core->rate'
+>>> directly as 'best'?
+>>
+>>
+>> I can't remember exactly. I just add this piece of code and found it's
+>> working. Is this field already filled prior to setting rate? Anyway,
+>> your suggestion is very reasonable. Maybe dear clk maintainers can fix
+>> it as i'm not familiar with clk core code.
+> 
+> Yes the 'struct clk_rate_request' is pre-filled with many details,
+> including the rate of the clk and the current parent rate and parent hw
+> pointer. I'm pretty sure you're trying to fix this fixme from clk_test.c
+> 
+> static const struct clk_ops clk_dummy_single_parent_ops = {
+> 	/*
+> 	 * FIXME: Even though we should probably be able to use
+> 	 * __clk_mux_determine_rate() here, if we use it and call
+> 	 * clk_round_rate() or clk_set_rate() with a rate lower than
+> 	 * what all the parents can provide, it will return -EINVAL.
+> 	 *
+> 	 * This is due to the fact that it has the undocumented
+> 	 * behaviour to always pick up the closest rate higher than the
+> 	 * requested rate. If we get something lower, it thus considers
+> 	 * that it's not acceptable and will return an error.
+> 	 *
+> 	 * It's somewhat inconsistent and creates a weird threshold
+> 	 * between rates above the parent rate which would be rounded to
+> 	 * what the parent can provide, but rates below will simply
+> 	 * return an error.
+> 	 */
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes in v4:
-  - none
+If CLK_MUX_ROUND_CLOSEST is not specified, I think both setting lowest
+possible rate and returning -EINVAL are okay, just as documented(It will
+ONLY return a rate lower or equal to the rate requested). But if
+CLK_MUX_ROUND_CLOSEST is specified, the behavior would be wrong in no doubt.
 
-Changes in v3:
-  - none
+I don't know which behavior consumers would expect. Maybe some consumer
+code has already been relying on this (undocumented) behavior.
 
-Changes in v2:
-  - Added "for Exynos850" part to the commit title
+This patch indeed also has an influence on clocks without
+CLK_MUX_ROUND_CLOSEST. So you are right, I'll have to fix doc for
+clk_mux_determine_rate too.
 
- arch/arm64/boot/dts/exynos/exynos850.dtsi | 26 +++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-index 2ba67c3d0681..0706c8534ceb 100644
---- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-@@ -93,6 +93,8 @@ cpu0: cpu@0 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0>;
- 			enable-method = "psci";
-+			clocks = <&cmu_cpucl0 CLK_CLUSTER0_SCLK>;
-+			clock-names = "cluster0_clk";
- 		};
- 		cpu1: cpu@1 {
- 			device_type = "cpu";
-@@ -117,6 +119,8 @@ cpu4: cpu@100 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x100>;
- 			enable-method = "psci";
-+			clocks = <&cmu_cpucl1 CLK_CLUSTER1_SCLK>;
-+			clock-names = "cluster1_clk";
- 		};
- 		cpu5: cpu@101 {
- 			device_type = "cpu";
-@@ -254,6 +258,28 @@ cmu_peri: clock-controller@10030000 {
- 				      "dout_peri_uart", "dout_peri_ip";
- 		};
- 
-+		cmu_cpucl1: clock-controller@10800000 {
-+			compatible = "samsung,exynos850-cmu-cpucl1";
-+			reg = <0x10800000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&oscclk>, <&cmu_top CLK_DOUT_CPUCL1_SWITCH>,
-+				 <&cmu_top CLK_DOUT_CPUCL1_DBG>;
-+			clock-names = "oscclk", "dout_cpucl1_switch",
-+				      "dout_cpucl1_dbg";
-+		};
-+
-+		cmu_cpucl0: clock-controller@10900000 {
-+			compatible = "samsung,exynos850-cmu-cpucl0";
-+			reg = <0x10900000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&oscclk>, <&cmu_top CLK_DOUT_CPUCL0_SWITCH>,
-+				 <&cmu_top CLK_DOUT_CPUCL0_DBG>;
-+			clock-names = "oscclk", "dout_cpucl0_switch",
-+				      "dout_cpucl0_dbg";
-+		};
-+
- 		cmu_g3d: clock-controller@11400000 {
- 			compatible = "samsung,exynos850-cmu-g3d";
- 			reg = <0x11400000 0x8000>;
 -- 
-2.39.2
+Best regards,
+Yang Xiwen
 
