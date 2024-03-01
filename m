@@ -1,261 +1,197 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4881710EF;
-	Thu, 29 Feb 2024 21:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85CA64B
+	for <linux-clk@vger.kernel.org>; Fri,  1 Mar 2024 00:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709242199; cv=none; b=cpG6Sw5TXgYPP7cBjAcI+PXqYK+BNvTFG+0TRfBHIgVeYZfSTWN/T0VmuML8q1etpdKC9IheNkjSym85k9DMHjUuV9DhYbaYo5m6w5/gagC5n7loMSl+FauKQWRNOVH8LSloCrOWVWMo8m/SO39eN4/q7yut9m8ZuBSvARuvE/8=
+	t=1709252040; cv=none; b=JXzvTf3xEE5uocwddj3QCBMJHimQhR3/pTYJb7G/5t8H6oXOP2eusurHnOuFzOxuC/OoJRl15JwF2dV3QHnjJrUysfZ7MHQhIt9v+Mh9IGsUqAupruwK8rsfYze/rokSlOCJO0GGidYwjxsxQTZH7tn5teqZBXHwjRlcmZpmtPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709242199; c=relaxed/simple;
-	bh=JSQSuvS3BqiY4vOYlLKAwjqAcvmXdSlmgBMi42ABiiQ=;
+	s=arc-20240116; t=1709252040; c=relaxed/simple;
+	bh=B77zXAY7NX+hLCgtlHoHQZKOlzjnqvlnrS5iyu5Gmzo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d7y4tUDcqHkXPcmTwsHL+C/Dqi3h0KqGAsrEzS5IN7kRBrRbUYO1qH4XylYgCkwkOlsLoSf0iB2CKgZJDQoYiTnnICBIGM6zeyefH1jSuitc7QEivaHq8tsqgCSdn3b9o/vXO2NFqTfWrfL9d5E6ZbNrPRvCOG9mrV2/JD2ypwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ie2ajNe6; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=JTERW88DVRnrz3k2D28Fj+rxmuuLN5sQT4ir+u9J3DNhVFk1CU6U/S9AxnQoSS5cHOghBqNEeV+2EIiqFwysEZ9VxYx5tB/arrb/R+xeo54CbsHHsBDaNz+YGiRo53/xbRiRYmSxlInChJKUhx/vnxnm4zy+YYtOksMnDu9nokA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rb2xw5py; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ie2ajNe6"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dcc80d6006aso1564549276.0;
-        Thu, 29 Feb 2024 13:29:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rb2xw5py"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dc742543119so1696529276.0
+        for <linux-clk@vger.kernel.org>; Thu, 29 Feb 2024 16:13:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709242197; x=1709846997; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=k5wMxH4vAYTGAMz+PGH6whMCr3IUt1BUKWwQdJ4jqjo=;
-        b=ie2ajNe60SOO/5XVW2TBw9Q2cpuuWDvVk/ain6zf4vu/ZLqhhY/XF8XK+NNLfECi84
-         lNLZlkGmX+a+630n53PPjE0f12xTcYT8u14Nd0noQIroenh3a9LgzFvv/ZKf7EDueKuO
-         OjX7JoBh5cuHVnOKkt/nwSPKWLYHakgPSAeTYBi+Ga/Goq+we0p80mwIDG4HV1LglSAJ
-         Uq50ev8hdxLYHybcfVuS8XLD2W0ZJyoEBP/WbyzNVH2DtvJaUu5NKKrdw9ej3d1F4VoS
-         +TcbxCq22d1/Qtnbx+2J+6U9+8ZkCX9os+rvsykw+c5Ju1uxIWIUj3hJb4Lzx7u2RYP/
-         D4rQ==
+        d=linaro.org; s=google; t=1709252038; x=1709856838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fLlphw7nE1d10G8LoA31OXvx3bAVEuRzrK0UD0ow18Y=;
+        b=Rb2xw5pyhleWT1kVIMdUvrKruRecKdZUMVewKkL4g37A+Zf3uPR8CEgGrilDeg+g2H
+         brrpt7/UJPSKWAssHfZad7uP9DWXUO4zhPGXktWp1sm86QIGI7yVEnQNdIw2I+rvBy+J
+         HxgnZKoCpFUg1g+hLYcG/ZZ+ljP9JqBMRM3i1qPkOmUjVJ8tFsrWqTilNR88a9m5rsis
+         8vybPZyGrk52N8vhc2BPBjH27oH1cN7Z7TGYjC5u6iqLjIutDGBxrkWwpAdFnS1GrpUu
+         hWOv++ZyF6MoCJAqPPR7ajkGL48576lkOaKv0ZgVtsNsxiooT9PXM4RcUjMAZr2osm6x
+         5i9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709242197; x=1709846997;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k5wMxH4vAYTGAMz+PGH6whMCr3IUt1BUKWwQdJ4jqjo=;
-        b=LWC+bMMet7ZWyzniF/Y5l4F3QrNaDwv/nJZBzjs8qwthFXLDDw+XXjNHpL+/tV9axO
-         UYZIwPv0wTP83nc8YVOpRTZi4lIWh07R+ek8pJGOn6n2HnNlmz3LPMXMBIm0tXSYcmHU
-         zmxPF2N4tY5QUq70rObZHSEBZT/LRI1kkZzKtKr/pqitF3erhHLNmQY5NzHNAObyAg1E
-         CihzH1OdCGaQoH3jpAYzF+yvkiUIC3RgX2uLqa9yi4fPPx0RheEu4Tleie9DfsoP6PBX
-         IECm+qOfSK8ggQy3Lfnr3JmvlTT8D+l0ECOi5Z1E1ktxi6jMkQGAEXJOga+BzKPswNM7
-         KYsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEk/zGj2rAKo/tkdGJuYT5l5aL7DgaUW3rkTaVPXHmC0sxzCKSwUlFGVySm4WbY174ELbg4xVsd24zA6nV/BOoEgP8gyMFj2C4LN77TV9MQRrC+E2LcQ0bk8g3rb/H4zrxwr4smy9BQ2zkLkbWNPULtOtMhg5MSAd7POhB4z1gg8+O8Q==
-X-Gm-Message-State: AOJu0YwCRNZUT6OujxYQr531jov9PlMhUZTH2dMLg3ahjHhpTLYswYlM
-	M0lBlAx6q5ZciRPb5X+LiibWqoBUkulAnQhRfgy1nWzsyOOp9KWr6VJrTMEot7+S0cBb1SxDTCz
-	YtddgPduTlr2L7cJSZ1le8tInaHE=
-X-Google-Smtp-Source: AGHT+IGJEqoh4kjQJcuPZHN/0agzOnRCd/TPqM9BiXAsCE07qzvqycF30395DpFhfdkJ1SxZn3C4ld3yFmxmRXDP60I=
-X-Received: by 2002:a25:16c5:0:b0:dcc:f0a:e495 with SMTP id
- 188-20020a2516c5000000b00dcc0f0ae495mr3238209ybw.3.1709242197196; Thu, 29 Feb
- 2024 13:29:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709252038; x=1709856838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fLlphw7nE1d10G8LoA31OXvx3bAVEuRzrK0UD0ow18Y=;
+        b=F4sEqwHKFORyv0kooNloGui1obI8Kc9HwnPTcwEeb+DXpS6+s2SpAQ7+noz5UF7kjv
+         7AOcakgwd4y1z7UKzUCTZ4FDisy3qVHLFv8OVcEsCAL6xCU86krDmotj9K/eJK9zFnv/
+         s/1vSfy3+bs1fT58m80TrCTp0t5qqKp+wewUhIvHkGSe+pbfhjuXFqVA0aKBVOvENUs4
+         rGrm8gZzOFCkv8K19HIREeQmYEJUGG5MHQz9XHh+s9oFD/RhruWuwsYuWI7QiLcRvcjr
+         nT0oAy0uU024QY/abp0/71mrtQ9zdpS+2h77wsPUpMQQWv6/XLjL0qk6smAW/lPpJrtX
+         P00A==
+X-Forwarded-Encrypted: i=1; AJvYcCVfQyUg5rgc1YJoUHHUclkp1tEuGcL66gq94VGJj1YbDVgBRu1127IWy5oo4MshFqa03U0HfuYBbGwTvo9eJJ1FNWy2WVVFNcpJ
+X-Gm-Message-State: AOJu0YxE5yE2HzQvjYZvUgS0Tf0c2BsKaT/+US7pWq1Zww3BxWQycf3Y
+	ViZYRQqP3/e6oE1zBCgLZnlJl44LyOXktXFoIXHbmZM2upV1qTrCeGDuy9eft/sMsN2II6qU5WG
+	1TvP4aG3PmdDW848Rze7/nqdBJKHx/8eENenNYw==
+X-Google-Smtp-Source: AGHT+IH770lzA7jOGiVJV3Rk4QvcMP4AclSBKAf8hM1iddLpLpGemJ0dFBPptvXum0NpWEymHDWNu52zo/kwKvbgXZc=
+X-Received: by 2002:a5b:4c4:0:b0:dc2:3279:fde5 with SMTP id
+ u4-20020a5b04c4000000b00dc23279fde5mr36453ybp.22.1709252037815; Thu, 29 Feb
+ 2024 16:13:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131182653.2673554-1-tmaimon77@gmail.com> <20240131182653.2673554-4-tmaimon77@gmail.com>
- <74e003c6d80611ddd826ac21f48b4b3a.sboyd@kernel.org> <CAP6Zq1g5gwXvYzO5fnHxG-6__gSCpNBY7VeEPyr4Qtijya6EfQ@mail.gmail.com>
- <8acf846e767884978f3bb98646433551.sboyd@kernel.org>
-In-Reply-To: <8acf846e767884978f3bb98646433551.sboyd@kernel.org>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Thu, 29 Feb 2024 23:29:46 +0200
-Message-ID: <CAP6Zq1htKQ5v0tH9HGRejnKwJ5ZauUWG_CzYUKegkVL4Ek8UxA@mail.gmail.com>
-Subject: Re: [PATCH v23 3/3] clk: npcm8xx: add clock controller
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: benjaminfair@google.com, joel@jms.id.au, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, robh+dt@kernel.org, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, openbmc@lists.ozlabs.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
+References: <20240229122021.1901785-1-tudor.ambarus@linaro.org> <20240229122021.1901785-5-tudor.ambarus@linaro.org>
+In-Reply-To: <20240229122021.1901785-5-tudor.ambarus@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Thu, 29 Feb 2024 18:13:46 -0600
+Message-ID: <CAPLW+4=jSr6ZsB7XekXsiUBm0SmVpVFnqpgjViuF3=HpT4gRAg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] clk: samsung: exynos850: fix propagation of SPI IPCLK rate
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: krzysztof.kozlowski@linaro.org, s.nawrocki@samsung.com, 
+	cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, peter.griffin@linaro.org, andre.draszik@linaro.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	willmcvicker@google.com, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+On Thu, Feb 29, 2024 at 6:20=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+.org> wrote:
+>
+> Fix propagation of SPI IPCLK rate by allowing MUX reparenting for the
+> dedicated USI MUX clocks. Since these muxes feed just the USI blocks,
+> reparenting of the muxes do not affect other IPs.
+>
 
-Thanks for your reply.
+It was actually done for a reason (at least in case of clk-exynos850
+driver). Those top-level MUXes use CLK_SET_RATE_NO_REPARENT flag via
+MUX() / MUX_F() macros to avoid re-parenting. See below for the
+explanation on why.
 
-On Thu, 29 Feb 2024 at 00:48, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Tomer Maimon (2024-02-25 10:00:35)
-> > Hi Stephen,
-> >
-> > On Thu, 22 Feb 2024 at 07:58, Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Quoting Tomer Maimon (2024-01-31 10:26:53)
-> > > > diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
-> > > > new file mode 100644
-> > > > index 000000000000..eacb579d30af
-> > > > --- /dev/null
-> > > > +++ b/drivers/clk/clk-npcm8xx.c
-> > > > @@ -0,0 +1,509 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +/*
-> > > > + * Nuvoton NPCM8xx Clock Generator
-> > > > + * All the clocks are initialized by the bootloader, so this driver allows only
-> > > [...]
-> > > > +
-> > > > +/* external clock definition */
-> > > > +#define NPCM8XX_CLK_S_REFCLK   "refclk"
-> > > > +
-> > > > +/* pll definition */
-> > > > +#define NPCM8XX_CLK_S_PLL0     "pll0"
-> > > > +#define NPCM8XX_CLK_S_PLL1     "pll1"
-> > > > +#define NPCM8XX_CLK_S_PLL2     "pll2"
-> > > > +#define NPCM8XX_CLK_S_PLL_GFX  "pll_gfx"
-> > > > +
-> > > > +/* early divider definition */
-> > > > +#define NPCM8XX_CLK_S_PLL2_DIV2                "pll2_div2"
-> > > > +#define NPCM8XX_CLK_S_PLL_GFX_DIV2     "pll_gfx_div2"
-> > > > +#define NPCM8XX_CLK_S_PLL1_DIV2                "pll1_div2"
-> > > > +
-> > > > +/* mux definition */
-> > > > +#define NPCM8XX_CLK_S_CPU_MUX     "cpu_mux"
-> > > > +
-> > > > +/* div definition */
-> > > > +#define NPCM8XX_CLK_S_TH          "th"
-> > > > +#define NPCM8XX_CLK_S_AXI         "axi"
-> > >
-> > > Please inline all these string #defines to the place they're used.
-> > The version V21 you mention using define only when the definition is
-> > used more than once
-> > https://www.spinics.net/lists/kernel/msg5045826.html
-> > Should I remove all the string definitions and add the string to the array?
->
-> If it's a clk name for a clk registered in this file it should be
-> inlined. Is that the case for everything besides refclk? And even refclk
-> could be inlined so that we don't have to jump to the definition of a
-> string.
-I will add the string in the clock arrays and remove all the string definitions.
->
-> > > > +
-> > > > +static unsigned long npcm8xx_clk_div_get_parent(struct clk_hw *hw,
-> > > > +                                               unsigned long parent_rate)
-> > > > +{
-> > > > +       struct npcm8xx_clk *div = to_npcm8xx_clk(hw);
-> > > > +       unsigned int val;
-> > > > +
-> > > > +       regmap_read(div->clk_regmap, div->offset, &val);
-> > > > +       val = val >> div->shift;
-> > > > +       val &= clk_div_mask(div->width);
-> > > > +
-> > > > +       return divider_recalc_rate(hw, parent_rate, val, NULL, div->flags,
-> > > > +                                  div->width);
-> > > > +}
-> > > > +
-> > > > +static const struct clk_ops npcm8xx_clk_div_ops = {
-> > > > +       .recalc_rate = npcm8xx_clk_div_get_parent,
-> > > > +};
-> > > > +
-> > > > +static int npcm8xx_clk_probe(struct platform_device *pdev)
-> > > > +{
-> > > > +       struct device_node *parent_np = of_get_parent(pdev->dev.of_node);
-> > >
-> > > The parent of this device is not a syscon.
-> > Once I have registered the map that handles both reset and the clock
-> > in general is syscon, this is why we will modify the DTS so the clock
-> > and the reset will be under syscon father node
-> >                 sysctrl: system-controller@f0801000 {
-> >                         compatible = "syscon", "simple-mfd";
-> >                         reg = <0x0 0xf0801000 0x0 0x1000>;
-> >
-> >                         rstc: reset-controller {
-> >                                 compatible = "nuvoton,npcm845-reset";
-> >                                 reg = <0x0 0xf0801000 0x0 0xC4>;
-> >                                 #reset-cells = <2>;
-> >                                 nuvoton,sysgcr = <&gcr>;
-> >                         };
-> >
-> >                         clk: clock-controller {
-> >                                 compatible = "nuvoton,npcm845-clk";
-> >                                 #clock-cells = <1>;
-> >                                 clocks = <&refclk>;
-> >                                 clock-names = "refclk";
-> >                         };
-> >                 };
-> > You can see other drivers that using the same method like
-> > https://elixir.bootlin.com/linux/v6.8-rc5/source/Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml
->
-> You will need a similar file like
-> Documentation/devicetree/bindings/soc/socionext/socionext,uniphier-perictrl.yaml
-> then to describe the child nodes.
-I can do it.
->
-> Socionext may not be the best example to follow. I generally try to
-> avoid syscon and simply put #reset-cells and #clock-cells in the node
-If I remove syscon I can't use syscon_node_to_regmap function, What
-should I use If I remove syscon? auxiliary bus? something else?
-> for the device. You can use the auxiliary bus to register drivers for
-> clk and reset and put them into the resepective driver directories.
-I little bit confused, what is an auxiliary bus to register drivers,
-can you provide me an example?
-> Avoid syscon means random drivers can't reach into the device with a
-> regmap handle and read/write registers that they're not supposed to.
-Indeed, but the drivers could use the reset and clock memory map only
-if the module is also a child node.
+> Do not propagate the rate change the from USI muxes to the common bus
+> dividers (dout_apm_bus and dout_peri_ip). The leaf clocks (HSI2C, I3C)
 
-Please let me know what is your preferred way to handle it:
-1. stick with syscon and upstream-defined documentation for the rst clk syscon.
-2. avoid syscon and use an auxiliary bus, appreciate if you could give
-me an example of how it should be done.
-3. Avoid sycon and handle it differently.
->
-> > >
-> > > > +       struct clk_hw_onecell_data *npcm8xx_clk_data;
-> > > > +       struct device *dev = &pdev->dev;
-> > > > +       struct regmap *clk_regmap;
-> > > > +       struct clk_hw *hw;
-> > > > +       unsigned int i;
-> > > > +
-> > > > +       npcm8xx_clk_data = devm_kzalloc(dev, struct_size(npcm8xx_clk_data, hws,
-> > > > +                                                        NPCM8XX_NUM_CLOCKS),
-> > > > +                                       GFP_KERNEL);
-> > > > +       if (!npcm8xx_clk_data)
-> > > > +               return -ENOMEM;
-> > > > +
-> > > > +       clk_regmap = syscon_node_to_regmap(parent_np);
-> > > > +       of_node_put(parent_np);
-> > >
-> > > Is there another binding update that is going to move this node to be a
-> > > child of the syscon?
-> > >
-> > >                 gcr: system-controller@f0800000 {
-> > >                         compatible = "nuvoton,npcm845-gcr", "syscon";
-> > >                         reg = <0x0 0xf0800000 0x0 0x1000>;
-> > >                 };
-> > No, sorry but I'm not going to use the GCR node the handle the clock
-> > and reset modules, the GCR has different memory space.
-> > the clock driver will have the following device tree
->
-> What does the reset driver use the CGR node for? The driver looks like
-> it's using it to control USB phy resets.
-Yes, the USB PHY reset is handled through the GCR registers.
->
-> >                sysctrl: system-controller@f0801000 {
-> >                         compatible = "syscon", "simple-mfd";
-> >                         reg = <0x0 0xf0801000 0x0 0x1000>;
-> >
-> >                         rstc: reset-controller {
-> >                                 compatible = "nuvoton,npcm845-reset";
-> >                                 reg = <0x0 0xf0801000 0x0 0xC4>;
->
-> This isn't a valid reg property for a child node like this.
-O.K.
->
-> >                                 #reset-cells = <2>;
-> >                                 nuvoton,sysgcr = <&gcr>;
-> >                         };
-> >
-> >                         clk: clock-controller {
-> >                                 compatible = "nuvoton,npcm845-clk";
-> >                                 #clock-cells = <1>;
-> >                                 clocks = <&refclk>;
-> >                                 clock-names = "refclk";
-> >                         };
-> >                 };
+The propagation to those dividers was implemented intentionally,
+because AFAIU this is precisely their purpose. Not using those for the
+derivation of HSI2C/SPI clock rates makes them effectively useless,
+which as I understand wasn't the HW designer's intention. It's all
+explained in details in the commit message of the patch which adds
+this propagation.
 
-Appreciate your guidance!
+> that are derived from the common bus dividers are no longer affected by
+> the SPI clock rate change.
+>
+> This change involves the following clock path propagation:
+>
+> usi_spi_0:
+>     Clock                  Div range    MUX Selection
+>     ---------------------------------------------------------------------
+>     gout_spi0_ipclk        -            -
+>     dout_peri_spi0         /1..32       -
+>     mout_peri_spi_user     -            { oscclk (26 MHz), dout_peri_ip }
 
-Thanks,
+AFAIK, the OSCCLK only purpose is to be used during suspend (PM
+state). When implementing clk-exynos850.c I specifically avoided using
+OSCCLK clock for the regular use-cases, and I believe other existing
+Exynos clock drivers don't use OSCCLK during normal operation too.
+It's easy to see from the clock diagrams in the TRM: all CMUs have
+top-level MUXes that have two parents (normal clock and OSCCLK). In
+fact, the TRM mentions it:
 
-Tomer
+    "All CMUs have MUXs to change the OSCCLK during power-down mode"
+
+Even if OSCCLK can be used in some cases for driving HW blocks, the
+top-level MUXes are not related to those cases.
+
+>
+>     *Note that the clock rate is no longer propagated to dout_peri_ip.
+>
+> usi_cmgp0:
+>
+>     Clock                  Div range    MUX Selection
+>     ---------------------------------------------------------------------
+>     gout_cmgp_usi0_ipclk   -           -
+>     dout_cmgp_usi0         /1..32      -
+>     mout_cmgp_usi0         -           { clk_rco_cmgp (49.152 MHz)
+
+I'm not sure the RCO should be used during normal operation either.
+RCO purpose seems to be similar OSCCLK -- to serve as a substitute
+clock during suspend, or maybe for calibration/debugging purposes. But
+from the clock diagram it's clear they are not intended for the
+regular operation. The only difference from OSSCLK is the frequency,
+which is usually 49.152 MHz or 24.576 MHz for RCO (basically multiples
+of 32,768 Hz), which hints those clocks are designed to drive some 1
+Hz (1 sec) based timers.
+
+>                                          gout_clkcmu_cmgp_bus }
+>
+>     *Note that the clock rate is no longer propagated to
+>      gout_clkcmu_cmgp_bus and dout_apm_bus.
+>
+> usi_cmgp1:
+>
+>     Clock                  Div range   MUX Selection
+>     ---------------------------------------------------------------------
+>     gout_cmgp_usi1_ipclk   -           -
+>     dout_cmgp_usi1         /1..32      -
+>     mout_cmgp_usi1         -           { clk_rco_cmgp (49.152 MHz)
+>                                          gout_clkcmu_cmgp_bus }
+>
+>     *Note that the clock rate is no longer propagated to
+>      gout_clkcmu_cmgp_bus and dout_apm_bus.
+>
+> This comes with no significant clock range modification. Before this
+> patch the claimed clock ranges are:
+>
+>     SPI0:   200 kHz ... 49.9 MHz
+>     SPI1/2: 400 kHz ... 49.9 MHz
+>
+> After this patch the clock ranges are:
+>     SPI0:   203.125 kHz ... 49.9 MHz
+>     SPI1/2: 384 kHz     ... 49.9 MHz
+>
+
+So as I see it, instead of using dividers designed exactly for the
+purpose of changing I2C/SPI clock rates this patch instead uses OSCCLK
+clock, which is not intended for normal I2C/SPI operation.
+
+> For SPI1/2 we get an even lower frequency than what was before. For SPI0
+> the benefit of not modifying common bus clocks, thus other leaf IP nodes
+> is greater than the change in frequency from 200 to ~203 KHz.
+>
+> Not tested, the patch was written solely by reading the code.
+>
+> Fixes: 67c15187d491 ("clk: samsung: exynos850: Propagate SPI IPCLK rate c=
+hange")
+
+I fail to see how this patch fixes anything. Instead it looks to me it
+replaces the (already) correctly implemented logic with incorrect one.
+The SPI clocks are already functional and work exactly as intended
+without this patch. The motivation was explained in commit
+67c15187d491 ("clk: samsung: exynos850: Propagate SPI IPCLK rate
+change"), which was thoroughly tested on E850-96 for all 3 SPI
+instances, for all possible DMA/IRQ/polling combinations, with all
+possible clock frequencies, and it seems to cover all possible SPI
+cases. This patch seems to just change the behavior to something else
+without solid examples of how the already implemented scheme (where I
+specifically avoided doing what's done in this patch) could be broken
+or sub-optimal.
+
+[snip]
