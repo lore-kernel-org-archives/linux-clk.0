@@ -1,45 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D6C5810C;
-	Fri,  1 Mar 2024 21:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1410459153;
+	Fri,  1 Mar 2024 22:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709328399; cv=none; b=ZBgb7tfBDIp63wgZ0i5Majxa45U/ZAADE75Dozt1+7w4ulpLGipuXBNyn17Sk7QpnT11JOUTfEyrGAX3UUyptsS3VVZpKHtHihLBUDISSIS4c9f2ECJp6MgTV3KZLKMYZ9qH5NRkaDRib+gj4bgENnOhkV8SpQNYLE6qzyvm3uk=
+	t=1709332874; cv=none; b=We9IOpXHQtQxyjltnEqJ2wTEzZr6iKwSKUHKe/9lFGHvBAzNgISoE5WiKuNh12If0yo7xfohq6dgC/zJWKnaTDy48TxX96b4azxZBD10Kl5DDvSTUeoWYPTHEdmRpiui9gNWxZQpaQ9ESI4SFM9hisysRZtCvT7OvaMH9Esgc9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709328399; c=relaxed/simple;
-	bh=aM1m7Tc6gmh3QqrzFtLm2I/l6fRMcyxvti7AKcZMJdM=;
+	s=arc-20240116; t=1709332874; c=relaxed/simple;
+	bh=vlOuCkGmkheWT9n61b+IziMhBGZnJ60QhUZiQ8nqpCE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RMZ9IFLMYv7o2+2QZGUSMqLWXHXI9j9WpuSixlA4RHRXxs0ArCDLwD4FcgAr7tFQE8/4MA8gyh4o+OefbSJldunB1lYW7x3+VTstnUblY6N4RuQe37Sj09j7L8tWD07InKpA0RjqLZT20OIfyDb/AopQP0MhZvtAo3hu2AZLl+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McJ0P1P1; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=arUwkYmugqPHCoIkwQWEkZ88HZs19XSILymvp98xn/c19xHHxQPOqI7Ypq5Y9fNB75kDAOWRe1m2QqsqZAdw9i3yXpkT+erx9OcADkgC9Fr/ZoikQutQS8OBwj6pnxaXeBhOPG/Bgm8CjWT+faPByVQkmLS1s7NR6k9yY2UA1j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDPu608k; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McJ0P1P1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B54C433C7;
-	Fri,  1 Mar 2024 21:26:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDPu608k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD8E6C433C7;
+	Fri,  1 Mar 2024 22:41:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709328398;
-	bh=aM1m7Tc6gmh3QqrzFtLm2I/l6fRMcyxvti7AKcZMJdM=;
+	s=k20201202; t=1709332873;
+	bh=vlOuCkGmkheWT9n61b+IziMhBGZnJ60QhUZiQ8nqpCE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=McJ0P1P1Xqg6PtBhxAtmq+nxXisb0NL/qIAasGQTUBPz576osIqK+0rWGhBbOs5pE
-	 ZfdXepJWU2r7wHbMT4iIqZ+P3f9rAG0j36VV7zyikslHmPNd3PxGby9VgHwvfScucE
-	 V3bIG+notlUQK8qsDz6yJ+qNLOMb6Y1QjtdTPC203Tywmk1Jr6T8PgkKEl1KwB6zJP
-	 q2DrEgVb5x+SthecxbX6JkDjLU1l2/GLljsg8nAyRTemDyF7crNGdePZi3EIUi/TCr
-	 wrz719XdnqQKhFqUuoMY1pmUrggWzix+gGACs8CqyWwWZ6NCtDrht2uD0nEJysaWur
-	 d54eNby07nrrA==
-Date: Fri, 1 Mar 2024 15:26:35 -0600
+	b=WDPu608kl/K4Nr43O9mvKW/xvdBcnLalYB9vQAgeHpC2wjB1iRB0D6COEU9aAmIxM
+	 rhQOuqzlF11ZSdozA7jnFo2+a3oya14KaliZ0DTQGuYazY4/if2aQ78kMP1/O1t04s
+	 GODvljmXFZU7qv2pgVXZfXlmZElR5Q632bWwzoxfqPhtDKGdHte7aaMc1h97UzQ59t
+	 EZuvRzQA/e7uZonn8pspjf1Fa9xUlPBQpJwlRHMdsbRfDttEry9gKVLEGznMPU7AVj
+	 M+m+0BIghx7yhdB8U2ZxEDWpjGayA8444HzLTwVQBFKbR6Q7TeQMfI+nRB0+LvxCNJ
+	 WH5cVYcb5CKTw==
+Date: Fri, 1 Mar 2024 16:41:11 -0600
 From: Rob Herring <robh@kernel.org>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	mturquette@baylibre.com, claudiu.beznea@tuxon.dev,
-	krzysztof.kozlowski+dt@linaro.org, alexandre.belloni@bootlin.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org, nicolas.ferre@microchip.com,
-	conor+dt@kernel.org, sboyd@kernel.org
-Subject: Re: [PATCH v4 26/39] dt-bindings: clock: at91: Allow PLLs to be
- exported and referenced in DT
-Message-ID: <170932839461.3066401.7560967756154066315.robh@kernel.org>
-References: <20240223171342.669133-1-varshini.rajendran@microchip.com>
- <20240223172822.672902-1-varshini.rajendran@microchip.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, devicetree@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH] dt-bindings: clock: r9a07g043-cpg: Annotate RZ/G2UL-only
+ core clocks
+Message-ID: <170933287127.3191406.4855978246818214435.robh@kernel.org>
+References: <ffcdcd479c76b92f67481836a33ec86e97f85634.1708944903.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,17 +46,22 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240223172822.672902-1-varshini.rajendran@microchip.com>
+In-Reply-To: <ffcdcd479c76b92f67481836a33ec86e97f85634.1708944903.git.geert+renesas@glider.be>
 
 
-On Fri, 23 Feb 2024 22:58:22 +0530, Varshini Rajendran wrote:
-> Allow PLLADIV2 and LVDSPLL to be referenced as a PMC_TYPE_CORE
-> clock from phandle in DT for sam9x7 SoC family.
+On Mon, 26 Feb 2024 11:59:45 +0100, Geert Uytterhoeven wrote:
+> The M2 (CRU main clock), M3 (LCDC Video Clock), and AT (Cortex-A55 Debug
+> clock) core clocks are only present on RZ/G2UL, not on RZ/Five.
 > 
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> Annotate this in the comments, like is already done for module clocks
+> and resets.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  include/dt-bindings/clock/at91.h | 4 ++++
->  1 file changed, 4 insertions(+)
+> To be queued in renesas-clk for v6.10.
+> 
+>  include/dt-bindings/clock/r9a07g043-cpg.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
