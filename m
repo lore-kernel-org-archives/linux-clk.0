@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EE32B9B9;
-	Fri,  1 Mar 2024 01:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47AD39FCE;
+	Fri,  1 Mar 2024 01:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709256165; cv=none; b=a4r4Z8mVimmWg68+ApERYI3bvGAhajlBqZeZNq1SIBZMDWlDqRbmIkz2t95n549wlQYQwhV0cgCfXv+JuP6CpcEvkTwSgMlHTnVSw6mdiz7eDvTZz+PzMPoRAI66p8ISv5wiHGC1x2cW1obtPjtR3MQc6bbeCNnPx9R1RrmPsQc=
+	t=1709256793; cv=none; b=dPW1Va2j+QeUXvK0YWj+mvRDOyBETbV+ruHf9xHGrXWGNp+p12Ai/PyUo/e2NhoqN/nB4QWyHk0FM5PKUxYHD5zJqHu3TfV2hsS8AXf3oRD2oRNk80VH7aLNrBYvjh7+fqMmr8VFQ9wpepaB7vALp1rBdwRp34u2jbGxOmFiU+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709256165; c=relaxed/simple;
-	bh=Oee51/suQ1XPnx1xnNg/uLW6h0O1NUHrmn4Zq4TJUTA=;
+	s=arc-20240116; t=1709256793; c=relaxed/simple;
+	bh=EPalguZMNI5Njq+cA0Z5vHIwAsvdVkw9Z6GsK4GJQw4=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ZvKv+4145UnxF9zGBHFSW1W3ZOQAj8JCywty6UvU64zUdKy+UbSCa8KK1LcODxde8cDmkWN+qy1/DnO1ERPnWCZh/cYoJW71V7Yb/UvJ/y038+e5FeejYwooDkH7ZaLHmzELI8MFTsmRAGW/N64rMPY9vnDvVTiTNf1GOxdKvM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QiOYsPfa; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=kZxJMcbUL5KqgOb1h60k6G6iW1+qkAnU8vF38V8Xdp+deL8b0FVpXlussYuIsJXaWz6/+3EEqxrx+7LbzBhIhkfc88qOZ+6jEkfUMKJy3l7jxkQDWWk2ZmoE3L6GEbUDyIL26z6NbajTxLhODReg/32RYSHBANzvyuNeLEAeRMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQdmN5Xf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiOYsPfa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7FCBC433C7;
-	Fri,  1 Mar 2024 01:22:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQdmN5Xf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C741C433C7;
+	Fri,  1 Mar 2024 01:33:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709256164;
-	bh=Oee51/suQ1XPnx1xnNg/uLW6h0O1NUHrmn4Zq4TJUTA=;
+	s=k20201202; t=1709256792;
+	bh=EPalguZMNI5Njq+cA0Z5vHIwAsvdVkw9Z6GsK4GJQw4=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=QiOYsPfa02DeluqZmfBpByGi6OJyt+mmB5tzn/xV8/Lz+biLAHDCwu+8cAPwLnzoy
-	 +BizdOR3mQLv+cPQLomp1VZgOYyqaizYDOBoofmmbcD/e2zTgksewypcIcc4I6o3bG
-	 zdqVbSVG1KcuFIui4o5fxz6tSa7Wf6hAMoDELe9TOsBebQ9e4Z9ZGxCtzeOL/MsdUs
-	 +fDx042osRa2rN8kbl4BnTGIaVYI16qTItE3ZsmK8BCLmxP00v50Wuc7sMMLaN3BV6
-	 Ti+CoC4Q4SX8ty9/ZIuQlYc6vEn1wEIGS6Hf1gSOHEGnSlHVKpS+HYzYgSVLf63c1d
-	 dED2W+YqmCHGQ==
-Message-ID: <856febae4f00b1129f695cf3c75dd380.sboyd@kernel.org>
+	b=sQdmN5XfBeohDiRuXg5jE9JTzQsZoaXW1+rWjcvDXhcqo0t0yVw0gar/D1ZB3nu26
+	 cxMusPCGjm08abajYAE0U4MgNR/V1Pmdi6uNjsxzyN8Dvmd5v1OKTv8Mgn4oPmRvfY
+	 cvjHN8ZXEuY+1TRGf4c3uJXbrWDefmvYHzsal6HdPNkTd8tjf+5QLYwLgisTBAj8ZO
+	 zjE02xJbtMd+6zJ4HnXG+ifBOHEICZqbQ5+CqgFTI6n/2DO6bC9Of+e5wmBaoP7ljc
+	 3DT7VI6hBdI1CPLWeH7NBcTakqp2ujqHIn6kmrYFNCRR56K4MdAY7f2PvhQOQiHn6s
+	 fNisvaChiDmVg==
+Message-ID: <cd72dbb31387cd4e2551189d8d10d3a6.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,62 +35,40 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <365f9a90.55b0.18df5394935.Coremail.duoming@zju.edu.cn>
-References: <20240229122250.24786-1-duoming@zju.edu.cn> <2b274111-e65a-4b99-8f07-220324f1e214@amd.com> <365f9a90.55b0.18df5394935.Coremail.duoming@zju.edu.cn>
-Subject: Re: [PATCH v2] clk: zynq: Prevent null pointer dereference caused by kmalloc failure
+In-Reply-To: <CZHOCV35A23S.14HL07U73EH6X@bootlin.com>
+References: <20240227-mbly-clk-v8-0-c57fbda7664a@bootlin.com> <20240227-mbly-clk-v8-3-c57fbda7664a@bootlin.com> <Zd4X3NnBoEl0wu2H@smile.fi.intel.com> <CZGSB2O8P572.28HK6WFT43N6S@bootlin.com> <ZeBnX2upNRN0xXH4@smile.fi.intel.com> <CZHMSNWMH4KJ.2J6ZMWKMSZYH2@bootlin.com> <ZeCbvgWY6x1o17Kq@smile.fi.intel.com> <CZHOCV35A23S.14HL07U73EH6X@bootlin.com>
+Subject: Re: [PATCH v8 03/10] clk: eyeq5: add platform driver, and init routine at of_clk_init()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, mturquette@baylibre.com
-To: Michal Simek <michal.simek@amd.com>, duoming@zju.edu.cn
-Date: Thu, 29 Feb 2024 17:22:42 -0800
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Linus Walleij <linus.walleij@linaro.org>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, Philipp Zabel <p.zabel@pengutronix.de>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@intel.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+Date: Thu, 29 Feb 2024 17:33:10 -0800
 User-Agent: alot/0.10
 
-Quoting duoming@zju.edu.cn (2024-02-29 06:16:28)
-> On Thu, 29 Feb 2024 13:45:54 +0100 Michal Simek wrote:
+Quoting Th=C3=A9o Lebrun (2024-02-29 07:40:25)
+> Hello,
 >=20
-> The length of "mio_clk_00x" is 11 bytes, and the kernel will alloc 16 byt=
-es to it.
-> I use a local variable whose size is 16 bytes to replace it. The detail i=
-s shown
-> below:
+> On Thu Feb 29, 2024 at 3:59 PM CET, Andy Shevchenko wrote:
+> > On Thu, Feb 29, 2024 at 03:27:01PM +0100, Th=C3=A9o Lebrun wrote:
+> > > On Wed, Feb 28, 2024 at 03:33:29PM +0100, Th=C3=A9o Lebrun wrote:
+> > > > On Tue Feb 27, 2024 at 6:11 PM CET, Andy Shevchenko wrote:
+> > > > > On Tue, Feb 27, 2024 at 03:55:24PM +0100, Th=C3=A9o Lebrun wrote:
 >=20
-> diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
-> index 7bdeaff2bfd..81d530e3357 100644
-> --- a/drivers/clk/zynq/clkc.c
-> +++ b/drivers/clk/zynq/clkc.c
-> @@ -215,7 +215,7 @@ static void __init zynq_clk_setup(struct device_node =
-*np)
->         int i;
->         u32 tmp;
->         int ret;
-> -       char *clk_name;
-> +       char clk_name[16];
->         unsigned int fclk_enable =3D 0;
->         const char *clk_output_name[clk_max];
->         const char *cpu_parents[4];
-> @@ -427,7 +427,6 @@ static void __init zynq_clk_setup(struct device_node =
-*np)
->                         SLCR_GEM1_CLK_CTRL, 0, 0, &gem1clk_lock);
+> > 2) Still I see a benefit from using lo_hi_readq() and friends directly.
 >=20
->         tmp =3D strlen("mio_clk_00x");
-
-Is tmp used now?
-
-> -       clk_name =3D kmalloc(tmp, GFP_KERNEL);
->         for (i =3D 0; i < NUM_MIO_PINS; i++) {
->                 int idx;
+> So it is:
 >=20
-> @@ -439,7 +438,6 @@ static void __init zynq_clk_setup(struct device_node =
-*np)
->                 else
->                         can_mio_mux_parents[i] =3D dummy_nm;
->         }
-> -       kfree(clk_name);
->         clk_register_mux(NULL, "can_mux", periph_parents, 4,
->                         CLK_SET_RATE_NO_REPARENT, SLCR_CAN_CLK_CTRL, 4, 2=
-, 0,
->                         &canclk_lock);
+>         u32 r0 =3D readl(base_plls + pll->reg64);
+>         u32 r1 =3D readl(base_plls + pll->reg64 + sizeof(r0));
 >=20
-> Do you think the above is better?
+> vs:
+>=20
+>         u64 r =3D lo_hi_readq(base_plls + pll->regs64);
+>         u32 r0 =3D r;
+>         u32 r1 =3D r >> 32;
+>=20
+> One is straight forward, the other uses an obscure helper that code
+> readers must understand and follows that with bit manipulation.
 >=20
 
-It's getting there.
+Just use readq() and include the correct header please. We know what
+readq() is in the kernel.
