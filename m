@@ -1,262 +1,344 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2071.outbound.protection.outlook.com [40.107.113.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B32973194;
-	Fri,  1 Mar 2024 16:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709310149; cv=none; b=hcf+QBQz1Dy8pA7PwGeqiIRUWcxK1Zln3hwFjPBKhPQhZSBBrBetqMKL8LElasmOuhFJfW6oa8LhrZV+j+XsiFlIEu8xA6kjxF2TvREj7nzwKagcgK0z8CaHKfsWs9hye+IZ6KCBpjxubIxDOTXrS7LuAFwLs9HHGhiCDLczNV4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709310149; c=relaxed/simple;
-	bh=AAJTdXRM0Re+DCVXVGJxubzVOx467C+c5nb+jYksNi8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ficdRmrzqANMzLvG6TiH2xQaLflsgR1JTXTO4lgJfQCNHLfkcsWzCNL/mDLOwEp4zKJ+adtM6aS40biG/dnIuKTv7l1J/BqIVlAZIsF7WI32Wk2e5Q5EhfQ15DC5ZJmwl4xLqaGoqcfibKio/XeLsWTMAt9Oac8J75u+8tNgguw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=p4Nw1dwx; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C2476025;
+	Fri,  1 Mar 2024 16:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.113.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709310303; cv=fail; b=CMA/En0kKxqBlv5CsWtreU0gbmpwRhEhMRisYJ87mudQuQdIb441PDiyddFbfQ2GHkcBhpqV8heI8mzhm6K1D0ePKMKvjqXUdx2A48cECuHdmCCX2d/tKSA4J24mH/giBpJWZsdY3L32M49FGsFh5PLW+ify5H8OOsFOqRKJXzI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709310303; c=relaxed/simple;
+	bh=wX4C6AlXO6eC3pWRptSO/PARlpqOsILiYhGJjwpv3ao=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qEtu4Sj1vXiE6jxpxYsXKZslZiBtaU3dyL1Lsh3W0n3ki01L3xwltLiLkhyNBkns1AbGqkii1MIVe6i3Gi3f6yuFL4VJgE7T3ve1OFVoy0SPYJ25kDOt/7LV/ik8wQWk/017/4QAQLr3Ux/SY2WTT3YtnpE9KImcr3BS9GPBi20=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=WEp8dacT; arc=fail smtp.client-ip=40.107.113.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="p4Nw1dwx"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F2160C0003;
-	Fri,  1 Mar 2024 16:22:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1709310145;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aqd7RNSKgF1eQYnYzns3slAE3h9undBdrUHi47AKr1g=;
-	b=p4Nw1dwx23jlXzuZVNDHLnva4yWkgtDcYdTPeU0/3rHKCFnYFPqJn58/Ds1SyDAP6TGe8c
-	jZ1lZ7YX4LIrQ2HGGkXEy90vbfOV9qE0hMv6WM/OVYkQFnyfzHYQtORxOFuUOC281mf/tW
-	UQqfPauPpxdSFb2Y8GGr2PVS921W7MV0qtVymwN8ZiJZvQidy/IuARUun2gGmpD7M3bDPy
-	8nEQq0V0WalT4xSNJBzHTNvwxnQGTjZpzC4bDL8si2wqGIsLO78po3k0NBMiqp/KkTBO00
-	oxGJsy7ZYZDjsjedCjohjn/UGolU60gaeiYBvGn7+jKwag+ieWFBhlc2ksL2qw==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Fri, 01 Mar 2024 17:22:22 +0100
-Subject: [PATCH v9 9/9] MIPS: mobileye: eyeq5: add pinctrl node & pinmux
- function nodes
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="WEp8dacT"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Aq7lFofKg4ybd/JBMyNi1ULt6+Zm/HO7dUHJYigjZfpdzM37ZgMLmhJRpxqwn6TXlN2c+0NKlWVXEP1v0G4FQm5PrixjalpL8hyF5hppo3hZSAJzoTM4tjjTPBurHPoNuM5bTMagwkcKHq66lgwRsEClz/HkfbfniumDBxNdrr7pdLPWyMXcYpnMGkGqrN2g5iBYIZWiOXkQrEJEusJk2c2alRnPgQP8fANz6kXrDEaoyAOikhw1X53dbJYrUesmwQMYvx7dR6t2M1eo/VlRWtRup4WcgQT/4dneXXvS66cprkCoZBEo30ekh0tabRe7bKgJ5L4Su5du/64r/WIelg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b6PPUDDueF0t9p7oyeQ3LfauMoTx5gUnRVdtWe/9LLc=;
+ b=ew+RvUNPF0tPhvJfuNDcyJstkFdD02bs7FHRAVAhebU4WeOiB/tvTIbODEsHOzw7e6QlWdJ/qXjvL4vKCESK5gCAycyua6HpM/fg8A5bJvMAOhR+nkyKp/EEIQ5kfo4k5P71Z6ovy+IQ0eEVFUoahW9tSx3H3m3Bsl0uUhRoIRUiif1qFg56J+aSwfSy5dJvwVShLlBBblbh/NZdCjjS95LOLnyQoMPKtnajR2qM5ptVUhTxtu6OFjY2gWPqOek8kxT0SQPad5F/0FN41AclpYcCiNQviCuZQuaCpczhwTpTlRthfvoAHnAtNppNlQg7oPd2DvpUEwi9cOdxGyb2nA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b6PPUDDueF0t9p7oyeQ3LfauMoTx5gUnRVdtWe/9LLc=;
+ b=WEp8dacTtSEKbfT8wM4lnRoym00iV1BCpmrWtMXkLzXidior6cC6j0J+kd3qqRhhVrdHAQZhMyHA0AUYipfCOGQIw86QaNijJiPBhcjDj6yiaT5luHnUqgoEt8K/PZ/ck3n5vp4VWtTf+zrFz8/jQs4oGQ4p15Gq5SRWiS6nGz8=
+Received: from TYCPR01MB11269.jpnprd01.prod.outlook.com
+ (2603:1096:400:3c0::10) by TY3PR01MB11114.jpnprd01.prod.outlook.com
+ (2603:1096:400:3d3::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7339.32; Fri, 1 Mar
+ 2024 16:24:56 +0000
+Received: from TYCPR01MB11269.jpnprd01.prod.outlook.com
+ ([fe80::6719:535a:7217:9f0]) by TYCPR01MB11269.jpnprd01.prod.outlook.com
+ ([fe80::6719:535a:7217:9f0%3]) with mapi id 15.20.7316.039; Fri, 1 Mar 2024
+ 16:24:55 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Russell King <linux@armlinux.org.uk>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, biju.das.au
+	<biju.das.au@gmail.com>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2 2/3] clk: Add clk_poll_disable_unprepare()
+Thread-Topic: [PATCH v2 2/3] clk: Add clk_poll_disable_unprepare()
+Thread-Index: AQHaY+mykIiwcxUgTUeXBuFGi92Y1bEd+OyAgAUnrPA=
+Date: Fri, 1 Mar 2024 16:24:55 +0000
+Message-ID:
+ <TYCPR01MB11269421A563EC308871B63CF865E2@TYCPR01MB11269.jpnprd01.prod.outlook.com>
+References: <20240220104336.260194-1-biju.das.jz@bp.renesas.com>
+ <20240220104336.260194-3-biju.das.jz@bp.renesas.com>
+ <Zd2tAYNfhd6itOQr@kekkonen.localdomain>
+In-Reply-To: <Zd2tAYNfhd6itOQr@kekkonen.localdomain>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB11269:EE_|TY3PR01MB11114:EE_
+x-ms-office365-filtering-correlation-id: 702fa186-1f88-4024-23f0-08dc3a0c21a7
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ Rs9tvJE2P6OTXgIysAi7KoLbY1DphZN+56gOMWYgfEmf6bxLYgX/gGeAXPGmUTOl6Izu65PSJKpd+PS95S/R/vnG80P73EDR01kBqWN38SAQ08ZCduD+rrsOC/aS8jVUUwd/o6d84BnkL7bF3Crx5GYbsEjzmG/8b0peMRgT0BdTeRmJZVUsJKExV2hMAYUJT2JiaAJpehxxm3zR6KB+wNZD8ivwOlFzEfyqm9Quxqlehm7ybMTO2b5s7Ux96/5cP4qKewRSNFeHXilJZ5GYfVFb1QJblIaFQ+YvtwAnBYMZJjJVNbwyMZ0cA2zluClRsG0Wr5G0dhDyr+RK3A9/mIYPgTR/OSvdtuK3o9wzS3fGKQigrYcyRUjkJ52rhVc/hMQAdf4Ygmze8UNA/sF0PxA2lkDUxrWGlLBSVxybP7FiwWehBNeucTtz/NnGQuXqOxoG0vcSbAi6qmHXErfaa9YMYhjiEbKUTEIs7Fdq16AziqAwIpk52oyXI7doGfJtr13DRFMtsJwFlymUbXb6pwhqiOJdxn0phCRpp2sVW9ANp/5cfsPOAraysbIJ2Ih7TecGWyyiU6EImibBhZ4ezrCGPlyO5GNlQOJd8xc4hzImtXAALRdiroky9DXYrXfRsa4gdu0jQyRa7ZVS4v62QO7yTca115C9ocaxYMH61ksJxU313NLeesYRH44qNeOCBuF4S444q0IryjaYA7Fjb9Y/dZ8pfvdxmxt4idB3VnI=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11269.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?gzOvxSTSnRL1TOJnUXqTHlbDRw0V4tbUkqr3U9sOUeTm7SRcID1eTmXv6u?=
+ =?iso-8859-1?Q?ZwLU2a9ZBIXo+IErkUTvmjuXVyA7XkLUkAxdT3B9s7sSj3pegE/S1TpQuR?=
+ =?iso-8859-1?Q?m+Rj80rGdhuofGqqo76bb1uFdJaaRKsTY0A3DJM3obamGdfloIOVN3Y3x4?=
+ =?iso-8859-1?Q?xFBiQKWTB9QIGsOT6VqhyCPmS+3Msi2a9LXJlQT78OYSdju5HQjaG4y1sJ?=
+ =?iso-8859-1?Q?KfZ+Bpzt39CFKB4I/1/+VhZE6eYufvWG9fLS9M++QfwWwwjUcHNPRmcSRK?=
+ =?iso-8859-1?Q?pIEDZBcyTVLjArIW9qGCbWA36Dv60hz85IHX7dvDuScJ3a2/aeaYg/43E/?=
+ =?iso-8859-1?Q?3jYlWJ2EAGBpG8e/Xt0XPz1C4dhd38QNKZywevzwDJQq3BbiQEfDLrpLM5?=
+ =?iso-8859-1?Q?Dt2hmyKiyCkEDZrkULZT/ml7TMzVSXlAQnkSaaWf7yI4Y0517xholiJl7b?=
+ =?iso-8859-1?Q?xtpyCHl2lHKuL8JthiSTbygMe4FZVR+bvPPBhBk05uPEHJnnKqGY9vftmf?=
+ =?iso-8859-1?Q?B79G0TyduFimghn5WscezBex7EXcKHCRDOHteFEeAH39QQfKoMXk7YKwqu?=
+ =?iso-8859-1?Q?eI3nBD4Uli9IQFLK7Jv85loYukFHjrQE5QG1NskAZjiuiqEBdLUfiilmd3?=
+ =?iso-8859-1?Q?R63IoISZYlSi8LTx5PBdkvgLVybG5Ma9eZABqu4vci1a+OKPWlB6hbuzZu?=
+ =?iso-8859-1?Q?T0+ncMD3TGpt33wBWHV8t524LWcL80x2QU/6gsy4sr5KJiss6iNeqpjINY?=
+ =?iso-8859-1?Q?8lwdyhJmRrvu2iI8bYag7vPsN941YBEwE2eKLN0rPp4b9dJCnd1Phkr5zb?=
+ =?iso-8859-1?Q?jEkJPowbFMC0VGZLlxgQYCy6fMeb9sNK/D4PHpHND3r5PWWTX4tGWeytVN?=
+ =?iso-8859-1?Q?zMaHBe/cLvdhAbmxLA6d+v0rVR6cTfRpuMoMiu8JqxTpUD1AXLHG8pd0WB?=
+ =?iso-8859-1?Q?HssnThubxCvNX3RSm4ZVDgnwLRrgLueu2tkPS5HhsArpQQpFKTeKpDTMeV?=
+ =?iso-8859-1?Q?+UlM38ehYv8s2voHNgdurQoe1DixWVUJOUTvBABbxzsUhXBsndLsujgSKM?=
+ =?iso-8859-1?Q?esXKg4PI5V9QiyoGJ2Jp7NAHIz0ZbW1QSLILSmLzFG2F/B+d5rAl6MysHx?=
+ =?iso-8859-1?Q?qWCgFglfh935xWQxN0zv61rDjpzcQPDA819R1HG3VhYvH7Pp5N9smhJyLY?=
+ =?iso-8859-1?Q?cBsXEz4piOhVc02viePD9yEjE/gvjZwewhAYSp8+F0hI/cGuRXdsHh8Prz?=
+ =?iso-8859-1?Q?p/EWIFzrUv6ZBXYgk/2zgKGKugjzpam1Kcm5eVH7OAC20X8enO7Vv5O31M?=
+ =?iso-8859-1?Q?auztk1Lok4srZ8w6QsWyQRigcIKNEaJ6pncxuZw/UBoyWhjVsh+nIlNVZK?=
+ =?iso-8859-1?Q?lU+odMsW+TzBRDreZZ2Wwl0fxVzr0KuluOw8qkPPF0OsbRFS+pivkLYU+W?=
+ =?iso-8859-1?Q?ttrJjxQn2J4DVNfxXrN7u/H7l6AZw0llKNEEVx6pzeSSXraRp/ozN40k4n?=
+ =?iso-8859-1?Q?3qXLNA+QjBxBSNt1xjP+A6vy1Whs0dJBw9UFtbDFXvc5QCk2gIJiiktPNB?=
+ =?iso-8859-1?Q?biAKfi0t1eTnvREjrZ1vurAOzENUFv+95MjagqmSvs91GJtVfBSTmxjTDd?=
+ =?iso-8859-1?Q?J9nHgaouaefpABK8w16aC2UNRR7tEX+lg8UBZ0TaBx8GxXJphsWNkNtQ?=
+ =?iso-8859-1?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240301-mbly-clk-v9-9-cbf06eb88708@bootlin.com>
-References: <20240301-mbly-clk-v9-0-cbf06eb88708@bootlin.com>
-In-Reply-To: <20240301-mbly-clk-v9-0-cbf06eb88708@bootlin.com>
-To: Gregory CLEMENT <gregory.clement@bootlin.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.13.0
-X-GND-Sasl: theo.lebrun@bootlin.com
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11269.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 702fa186-1f88-4024-23f0-08dc3a0c21a7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2024 16:24:55.8275
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: COrAdKoij//Nm8sjf/nSEFhofLbxV+dxpLEVTHNKxzff13/s0ZMVU5yDC6oQhpLbQw5dFPPKcueuJJrx2P/O2V3nsO5b6qwrQoTw0jKCphM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11114
 
-Pins on this platform have two functions: GPIO or something-else. We
-create function nodes for each something-else based on functions.
+Hi Sakari Ailus,
 
-UART nodes are present in the platform devicetree. Add pinctrl to them
-now that the pin controller is supported.
+Thanks for the feedback.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi | 125 ++++++++++++++++++++++++++++
- arch/mips/boot/dts/mobileye/eyeq5.dtsi      |  13 +++
- 2 files changed, 138 insertions(+)
+> -----Original Message-----
+> From: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Sent: Tuesday, February 27, 2024 9:36 AM
+> Subject: Re: [PATCH v2 2/3] clk: Add clk_poll_disable_unprepare()
+>=20
+> Hi Biju,
+>=20
+> Thanks for the patchset.
+>=20
+> On Tue, Feb 20, 2024 at 10:43:35AM +0000, Biju Das wrote:
+> > The clk_disable_unprepare() doesn't guarantee that a clock is gated
+> > after the execution as it is driver dependent. The Renesas and most of
+> > the other platforms don't wait until clock is stopped because of perfor=
+mance reason.
+> > But these platforms wait while turning on the clock.
+> >
+> > The normal case for shutting down the clock is unbind/close/suspend or
+> > error paths in the driver. Not waiting for the shutting down the clock
+> > will improve the suspend time.
+> >
+> > But on RZ/G2L Camera Data Receiving Unit (CRU) IP, initially the vclk
+> > is on. Before enabling link reception, we need to wait for vclk to be
+> > off and after enabling reception, we need to turn the vlck on. Special
+> > cases like this requires a sync API for clock gating.
+> >
+> > Add clk_poll_disable_unprepare() to poll the clock gate operation that
+> > guarantees gating of clk after the execution.
+> >
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > ---
+> > RFC->v2:
+> >  * Renamed clk_disable_unprepare_sync()-->clk_poll_disable_unprepare()
+> >  * Redesigned to make use of __clk_is_enabled() to poll the clock gatin=
+g.
+> > ---
+> >  drivers/clk/clk.c   | 23 +++++++++++++++++++++++
+> >  include/linux/clk.h | 46
+> > +++++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 69 insertions(+)
+> >
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c index
+> > 9a09f51f4af1..0e66b7180388 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/mutex.h>
+> >  #include <linux/spinlock.h>
+> >  #include <linux/err.h>
+> > +#include <linux/iopoll.h>
+> >  #include <linux/list.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/of.h>
+> > @@ -1138,6 +1139,28 @@ void clk_disable(struct clk *clk)  }
+> > EXPORT_SYMBOL_GPL(clk_disable);
+> >
+> > +/**
+> > + * clk_poll_disabled - poll for clock gating.
+> > + * @clk: the clk that is going to stop
+> > + * @sleep_us: Maximum time to sleep between reads in us (0
+> > + *            tight-loops).  Should be less than ~20ms since usleep_ra=
+nge
+> > + *            is used (see Documentation/timers/timers-howto.rst).
+> > + * @timeout_us: Timeout in us, 0 means never timeout
+> > + *
+> > + * It polls for a clk to be stopped.
+> > + */
+> > +int clk_poll_disabled(struct clk *clk, unsigned long sleep_us, u64
+> > +timeout_us) {
+> > +	bool status;
+> > +
+> > +	if (IS_ERR_OR_NULL(clk))
+> > +		return 0;
+> > +
+> > +	return read_poll_timeout(__clk_is_enabled, status, !status, sleep_us,
+> > +				 timeout_us, false, clk);
+>=20
+> This API is a bit problematic as anything else in the system could enable=
+ or disable the clock while
+> polling happens. I think you should add a warning that this may only be u=
+sed if the user is the sole
+> user of the clock in the system (which is of course hard to guarantee in =
+a general
+> case) and has not increased the enable count (or has decremented it again=
+ to zero).
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi b/arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi
-new file mode 100644
-index 000000000000..42acda13e57a
---- /dev/null
-+++ b/arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi
-@@ -0,0 +1,125 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+Agreed.
+
+>=20
+> I'd perhaps go as far as do WARN_ON(enable count non-zero) and return an =
+error code (-EBUSY).
+
+OK, the below code should cover the above case and below one right?
+
++       if (!clk->core->ops->is_enabled)
++           return -EOPNOTSUPP;
 +
-+/*
-+ * Default pin configuration for Mobileye EyeQ5 boards. We mostly create one
-+ * pin configuration node per function.
-+ */
++       if (WARN(__clk_get_enable_count(clk), "clk is in use\n"))
++               return -EBUSY;
 +
-+&pinctrl {
-+	timer0_pins: timer0-pins {
-+		function = "timer0";
-+		pins = "PA0", "PA1";
-+	};
-+	timer1_pins: timer1-pins {
-+		function = "timer1";
-+		pins = "PA2", "PA3";
-+	};
-+	timer2_pins: timer2-pins {
-+		function = "timer2";
-+		pins = "PA4", "PA5";
-+	};
-+	pps0_pins: pps0-pin {
-+		function = "timer2";
-+		pins = "PA4";
-+	};
-+	pps1_pins: pps1-pin {
-+		function = "timer2";
-+		pins = "PA5";
-+	};
-+	timer5_ext_pins: timer5-ext-pins {
-+		function = "timer5";
-+		pins = "PA6", "PA7", "PA8", "PA9";
-+	};
-+	timer5_ext_input_pins: timer5-ext-input-pins {
-+		function = "timer5";
-+		pins = "PA6", "PA7";
-+	};
-+	timer5_ext_incap_a_pins: timer5-ext-incap-a-pin {
-+		function = "timer5";
-+		pins = "PA6";
-+	};
-+	timer5_ext_incap_b_pins: timer5-ext-incap-b-pin {
-+		function = "timer5";
-+		pins = "PA7";
-+	};
-+	can0_pins: can0-pins {
-+		function = "can0";
-+		pins = "PA14", "PA15";
-+	};
-+	can1_pins: can1-pins {
-+		function = "can1";
-+		pins = "PA16", "PA17";
-+	};
-+	uart0_pins: uart0-pins {
-+		function = "uart0";
-+		pins = "PA10", "PA11";
-+	};
-+	uart1_pins: uart1-pins {
-+		function = "uart1";
-+		pins = "PA12", "PA13";
-+	};
-+	spi0_pins: spi0-pins {
-+		function = "spi0";
-+		pins = "PA18", "PA19", "PA20", "PA21", "PA22";
-+	};
-+	spi1_pins: spi1-pins {
-+		function = "spi1";
-+		pins = "PA23", "PA24", "PA25", "PA26", "PA27";
-+	};
-+	spi1_slave_pins: spi1-slave-pins {
-+		function = "spi1";
-+		pins = "PA24", "PA25", "PA26";
-+	};
-+	refclk0_pins: refclk0-pin {
-+		function = "refclk0";
-+		pins = "PA28";
-+	};
-+	timer3_pins: timer3-pins {
-+		function = "timer3";
-+		pins = "PB0", "PB1";
-+	};
-+	timer4_pins: timer4-pins {
-+		function = "timer4";
-+		pins = "PB2", "PB3";
-+	};
-+	timer6_ext_pins: timer6-ext-pins {
-+		function = "timer6";
-+		pins = "PB4", "PB5", "PB6", "PB7";
-+	};
-+	timer6_ext_input_pins: timer6-ext-input-pins {
-+		function = "timer6";
-+		pins = "PB4", "PB5";
-+	};
-+	timer6_ext_incap_a_pins: timer6-ext-incap-a-pin {
-+		function = "timer6";
-+		pins = "PB4";
-+	};
-+	timer6_ext_incap_b_pins: timer6-ext-incap-b-pin {
-+		function = "timer6";
-+		pins = "PB5";
-+	};
-+	can2_pins: can2-pins {
-+		function = "can2";
-+		pins = "PB10", "PB11";
-+	};
-+	uart2_pins: uart2-pins {
-+		function = "uart2";
-+		pins = "PB8", "PB9";
-+	};
-+	spi2_pins: spi2-pins {
-+		function = "spi2";
-+		pins = "PB12", "PB13", "PB14", "PB15", "PB16";
-+	};
-+	spi3_pins: spi3-pins {
-+		function = "spi3";
-+		pins = "PB17", "PB18", "PB19", "PB20", "PB21";
-+	};
-+	spi3_slave_pins: spi3-slave-pins {
-+		function = "spi3";
-+		pins = "PB18", "PB19", "PB20";
-+	};
-+	mclk0_pins: mclk0-pin {
-+		function = "mclk0";
-+		pins = "PB22";
-+	};
-+};
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-index 76935f237ab5..8d4f65ec912d 100644
---- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-+++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-@@ -79,6 +79,8 @@ uart0: serial@800000 {
- 			clocks  = <&uart_clk>, <&occ_periph>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&reset 0 10>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart0_pins>;
- 		};
- 
- 		uart1: serial@900000 {
-@@ -90,6 +92,8 @@ uart1: serial@900000 {
- 			clocks  = <&uart_clk>, <&occ_periph>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&reset 0 11>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart1_pins>;
- 		};
- 
- 		uart2: serial@a00000 {
-@@ -101,6 +105,8 @@ uart2: serial@a00000 {
- 			clocks  = <&uart_clk>, <&occ_periph>;
- 			clock-names = "uartclk", "apb_pclk";
- 			resets = <&reset 0 12>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart2_pins>;
- 		};
- 
- 		olb: system-controller@e00000 {
-@@ -125,6 +131,11 @@ clocks: clock-controller@e0002c {
- 				clocks = <&xtal>;
- 				clock-names = "ref";
- 			};
-+
-+			pinctrl: pinctrl@e000b0 {
-+				compatible = "mobileye,eyeq5-pinctrl";
-+				reg = <0x0b0 0x30>;
-+			};
- 		};
- 
- 		gic: interrupt-controller@140000 {
-@@ -149,3 +160,5 @@ timer {
- 		};
- 	};
- };
-+
-+#include "eyeq5-pins.dtsi"
 
--- 
-2.44.0
+>=20
+> > +}
+> > +EXPORT_SYMBOL_GPL(clk_poll_disabled);
+> > +
+> >  static int clk_core_enable(struct clk_core *core)  {
+> >  	int ret =3D 0;
+> > diff --git a/include/linux/clk.h b/include/linux/clk.h index
+> > e6acec5d8dbe..2d63a12214e5 100644
+> > --- a/include/linux/clk.h
+> > +++ b/include/linux/clk.h
+> > @@ -665,6 +665,20 @@ int __must_check clk_bulk_enable(int num_clks,
+> >   */
+> >  void clk_disable(struct clk *clk);
+> >
+> > +/**
+> > + * clk_poll_disabled - inform the system whether the clock source is s=
+topped.
+> > + * @clk: clock source
+> > + * @sleep_us: Maximum time to sleep between reads in us (0
+> > + *            tight-loops).  Should be less than ~20ms since usleep_ra=
+nge
+> > + *            is used (see Documentation/timers/timers-howto.rst).
+> > + * @timeout_us: Timeout in us, 0 means never timeout
+> > + *
+> > + * Poll for clock gating and Inform the system about it's status.
+> > + *
+> > + * Context: May sleep.
+> > + */
+> > +int clk_poll_disabled(struct clk *clk, unsigned long sleep_us, u64
+> > +timeout_us);
+> > +
+> >  /**
+> >   * clk_bulk_disable - inform the system when the set of clks is no
+> >   *		      longer required.
+> > @@ -996,6 +1010,11 @@ static inline int __must_check
+> > clk_bulk_enable(int num_clks,
+> >
+> >  static inline void clk_disable(struct clk *clk) {}
+> >
+> > +static inline int clk_poll_disabled(struct clk *clk, unsigned long sle=
+ep_us,
+> > +				    u64 timeout_us)
+> > +{
+> > +	return 0;
+> > +}
+> >
+> >  static inline void clk_bulk_disable(int num_clks,
+> >  				    const struct clk_bulk_data *clks) {} @@ -1087,6 +1106,33 @@
+> > static inline void clk_disable_unprepare(struct clk *clk)
+> >  	clk_unprepare(clk);
+> >  }
+> >
+> > +/**
+> > + * clk_poll_disable_unprepare - Poll clk_disable_unprepare
+> > + * @clk: clock source
+> > + * @sleep_us: Maximum time to sleep between reads in us (0
+> > + *            tight-loops).  Should be less than ~20ms since usleep_ra=
+nge
+> > + *            is used (see Documentation/timers/timers-howto.rst).
+> > + * @timeout_us: Timeout in us, 0 means never timeout
+> > + *
+> > + * Context: May sleep.
+> > + *
+> > + * This function polls until the clock has stopped.
+> > + *
+> > + * Returns success (0) or negative errno.
+> > + */
+> > +static inline int clk_poll_disable_unprepare(struct clk *clk,
+> > +					     unsigned long sleep_us,
+> > +					     u64 timeout_us)
+> > +{
+> > +	int ret;
+> > +
+> > +	clk_disable(clk);
+> > +	ret =3D clk_poll_disabled(clk, sleep_us, timeout_us);
+> > +	clk_unprepare(clk);
+>=20
+> How about clocks that are generated by devices to which access always sle=
+eps, such as I=B2C devices? I
+> presume they're actually stopped in
+> clk_unprepare() as clk_disable() may not sleep. They also can't implement=
+ is_enabled as it cannot
+> sleep either.
+>=20
+> It seems to depend on the implementation on what they do. The runtime PM =
+function used is
+> pm_runtime_put_sync(), so you may have a guarantee the device is powered =
+off but ONLY if it had no
+> other users and had runtime PM enabled.
 
+Even in RPM case, at the end, it comes down to enable count. So, the check =
+you mentioned
+for enabled_could should be fine??
+
+>=20
+> So perhaps return an error if there's no is_enabled() callback?
+
+OK, This will be taken care inside clk_poll_disabled().
+
+Cheers,
+Biju
+
+>=20
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >  static inline int __must_check
+> >  clk_bulk_prepare_enable(int num_clks, const struct clk_bulk_data
+> > *clks)  {
+>=20
