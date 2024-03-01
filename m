@@ -1,101 +1,122 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E396EB45
-	for <linux-clk@vger.kernel.org>; Fri,  1 Mar 2024 11:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B250B4086B;
+	Fri,  1 Mar 2024 13:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709293038; cv=none; b=s7hiv9hXnsyFxffvBBFhMYcKnuJVUbqZBBn9QUG/pYll9X6YTVZIlB0O/3zSdCXSUkGEHn7Kwyfx2J7K+AxvIY+omdrMnQg3SjbRS9kL19aTffSdW7pDYoVbNfi25O/BcCwgbJylQH32LpB/p3Wjgj7jXYcJ6h5ilIupH9nqFx4=
+	t=1709300227; cv=none; b=EdLsED8YB5SBOUt1MKHKhwZgwXrhjufcVhYrEql70K/1crWJM1LxtI/3DeUDuEUQUNUlTuP5QUorCaqPzrIJCnS4y1stNQVlsTmuE3EwEKr4yLhBmhOopAZdkvIGcjxy7LbUUfkB+Jfq+p3YDHLQNLYSv/qSRkgN9IlURbH9V14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709293038; c=relaxed/simple;
-	bh=Xs4ZVJB6wLE9HE7TW3IWqGWp1lPpqviFYf5aMywwQbo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g2/e7pPEJANnERR2kzTm1YUeFjm3S+7QEepm6pwkecWIkdsKIFgBtfMkMKUDtSAFl9Fsr2d4+caiK7lE/0X7R6mbY0aaFYxgzSPl+dHDxfgNMWUjPo7iLVyj0m/TByXpm6Sg/jnz9Sg+6LnMaUXS4BQCZBccDWIltJLZWcEIRII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1rg1C9-0007q4-67; Fri, 01 Mar 2024 12:36:53 +0100
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1rg1C7-003lng-Dp; Fri, 01 Mar 2024 12:36:51 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1rg1C7-0005Sl-19;
-	Fri, 01 Mar 2024 12:36:51 +0100
-Message-ID: <8fc7999c37f0dab7ab5d1166bba0192ab6e102d6.camel@pengutronix.de>
-Subject: Re: [PATCH v8 04/10] reset: eyeq5: add platform driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: =?ISO-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>, Gregory
- CLEMENT <gregory.clement@bootlin.com>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Linus Walleij
- <linus.walleij@linaro.org>,  =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?=
- <rafal@milecki.pl>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-  linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-  linux-gpio@vger.kernel.org
-Date: Fri, 01 Mar 2024 12:36:51 +0100
-In-Reply-To: <ZeCkkoNMioo-VOC6@smile.fi.intel.com>
-References: <20240227-mbly-clk-v8-0-c57fbda7664a@bootlin.com>
-	 <20240227-mbly-clk-v8-4-c57fbda7664a@bootlin.com>
-	 <Zd4bbCsY54XEnvJM@smile.fi.intel.com>
-	 <CZGVIWR4H4DE.3M5H3H99X0QPT@bootlin.com>
-	 <ZeBo4N204gLO0eUd@smile.fi.intel.com>
-	 <CZHK1ZCSROM5.X4WYN7SAZJTH@bootlin.com>
-	 <ZeCLS17PhKPuGvkm@smile.fi.intel.com>
-	 <959414f110463d5de87c84a986c7894a03afcf4e.camel@pengutronix.de>
-	 <ZeCkkoNMioo-VOC6@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1709300227; c=relaxed/simple;
+	bh=BD5t+SGYCOkw0plPMwDOQ7kt+s0BaaClnOZQvqVXnUU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GI3LjpWJwlwTa0WpxgggUQ6yoAJKzS2thJHA8XM6p/kc0LBdkYYS7UGAcPHmpMuqevODqYTocIga14Nrq7YDMAuHn0bzqCaeBCKFNYCnVEXIIW5+Z0seAnPbtHK9GG6aNAgpH5VxeZAqhmwwxENhQH+zYI7Oxf9oIIMrRRq0XWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A1PEcL76; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1PEcL76"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2d29aad15a5so24366281fa.3;
+        Fri, 01 Mar 2024 05:37:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709300224; x=1709905024; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hYsIdn7slyGMRDx06FHVOcl6wKc/Fc3obP8a4mN3HAc=;
+        b=A1PEcL76j9W4I3O2nLdHJaUNb4b9ezkTZcSSyxxGht5UYwrlVq0xTpx3tXKZjhvokq
+         5QqgS0V1P2uAjowo3Im3/cg5vnZQZOZRFgisBhaV8mF3rwNNQ8C9SzZpFvqezhb/g3jY
+         YvVgUqsorctQE02ES/z2UaLo0+zl+nuCLwjVJlDSIf6k25rmnNkXtQ6bRq8qQ+su6ah0
+         FSBSP5m61x9XJfkSfJk1y9BeULUB0rVCzHvD7y4OsVWTGYA+30yjWZag8iGny6QGanDv
+         T3/wZeWcrbK+e6z8sxwC9wS3SWIDq9bt0NyOOWXjlJHDmrZi2MKLKzXUknyptejC4vUc
+         BeqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709300224; x=1709905024;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hYsIdn7slyGMRDx06FHVOcl6wKc/Fc3obP8a4mN3HAc=;
+        b=ULrqtGP1d8575paNle/0ykYoIWLIaRGcc0H5Q3fFKjODE/KBybacOysJtOZ1TVyQTj
+         7lXwbjBtUrHIt7aKlKAysePxEbVZrJxyiyRRqDiJk5EpsG7NoQqzP8xfFk6V+6xWTeoQ
+         6uFR9vlsYoaopZOCxnP8+B7vEO5NGVdLvh6LaMRkIso2A8BD4GCaW1phAACCCV1+xH+o
+         D9GW2HBlG4DX113Sz2xM5oTE3xywiKPrA9KctnwWcq2Rj8oXnMDQXfEJTeVq8AU6ZX9k
+         kWy029kyBJzaJ2Iy2dwaS4II5UHkUZSay6Ce/7Sp4CrT6PMnZc2aVp7zQOeia2h1/4HN
+         xmqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWE0gs02pDtqBEV2quawihvyEdD778OPywnbv9A0L6S607XajhgAP83BYWtgAoy3vbwWOTDlodzRawQZoPM9fAWqiz9xiV31k2LPEfEJEg0iAjxBsQs8KXrmfv68gR5yFh/ykHzVslfNAgPZGE8IvX13yctLWusKj9pqsDHWtNy1RLsxzNxug==
+X-Gm-Message-State: AOJu0YyIIe+K/uQbezyTMTwim/aa19IpP0M4LlZBVnaMM+eQsMxCEqK6
+	YOdpe3wzdgurmp3WDUyC4ryI9wIDgismI4TsIiqQBzTFEiYMR25F
+X-Google-Smtp-Source: AGHT+IGUua/IpBGrUHpqPiS6tgGusCvvqcS0npwzCB0lIe8UuNXMyDq5nK1uJo2d0pe3K3btRMw1cg==
+X-Received: by 2002:a05:6512:3a85:b0:513:360d:fe7b with SMTP id q5-20020a0565123a8500b00513360dfe7bmr413678lfu.51.1709300223616;
+        Fri, 01 Mar 2024 05:37:03 -0800 (PST)
+Received: from [192.168.20.170] (57657817.catv.pool.telekom.hu. [87.101.120.23])
+        by smtp.gmail.com with ESMTPSA id k40-20020a05600c1ca800b00412b643b5a3sm5474992wms.11.2024.03.01.05.37.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Mar 2024 05:37:02 -0800 (PST)
+Message-ID: <91b36da5-637d-4156-8be4-5aed55fc3c5d@gmail.com>
+Date: Fri, 1 Mar 2024 14:37:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] clk: qcom: gcc-ipq5018: fix terminating of frequency
+ table arrays
+Content-Language: hu
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+ Varadarajan Narayanan <quic_varada@quicinc.com>,
+ Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
+ Devi Priya <quic_devipriy@quicinc.com>, Anusha Rao
+ <quic_anusha@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Georgi Djakov <gdjakov@mm-sol.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240229-freq-table-terminator-v1-0-074334f0905c@gmail.com>
+ <20240229-freq-table-terminator-v1-1-074334f0905c@gmail.com>
+ <ZeGic5cG8lneKJXp@hovoldconsulting.com>
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <ZeGic5cG8lneKJXp@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Do, 2024-02-29 at 17:36 +0200, Andy Shevchenko wrote:
-> On Thu, Feb 29, 2024 at 04:28:42PM +0100, Philipp Zabel wrote:
-> > On Do, 2024-02-29 at 15:48 +0200, Andy Shevchenko wrote:
-> > > [...] And then I elaborated that entire reset framework should
-> > > rather move towards fwnode.
-> >=20
-> > For context, there have been initial patches for this, that turned out
-> > not to be necessary later on:
-> >=20
-> > https://lore.kernel.org/lkml/20220324141237.297207-1-clement.leger@boot=
-lin.com/
-> >=20
-> > At this point, there still is no real use case for non-DT reset
-> > controls on the horizon.
->=20
-> I can argue on that if we have something like reset-gpio (and we have a s=
-uch).
+Hi Johan,
 
-I've just sent out the pull request containing this, thank you for the
-reminder.
+2024. 03. 01. 10:40 keltezéssel, Johan Hovold írta:
+> On Thu, Feb 29, 2024 at 07:07:46PM +0100, Gabor Juhos wrote:
+>> The frequency table arrays are supposed to be terminated with an
+>> empty element. Add such entry to the end of the arrays where it
+>> is missing in order to avoid possible out-of-bound access when
+>> the table is traversed by functions like qcom_find_freq() or
+>> qcom_find_freq_floor().
+>>
+>> Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
+> 
+> Good find!
+> 
+> Looks like these should be backported to the stable kernels as well so
+> someone should add:
+> 
+> Cc: stable@vger.kernel.org
+> 
+> to all patches except possibly the sc8280xp one (that camera clock
+> controller was added in 6.8-rc1 so that patch does not need it in case
+> you can these fixes in before 6.8 is released).
 
-> With this in place the ACPI can also provide descriptions for that.
+You are right maybe, although I did not find strong enough reasons for adding
+the stable tags.
 
-Yes, an ACPI based device with shared GPIO resets (it is bound to
-happen at some point...) would provide a reason to support ACPI GPIOs
-in the reset framework.
+Only the changes of the gcc-ipq5018 driver has been tested on real hardware the
+others are not. So those does not fit into the "It must be obviously correct and
+tested." rule.
 
-regards
-Philipp
+Since the support for the IPQ5018 platform is quite incomplete as several
+drivers are missing even in 6.8-rc6, it is quite unlikely that anyone uses a
+stable kernel for something serious on such boards. Hence backporting the
+gcc-ipq5018 changes would not help too much in itself.
 
+Regards,
+Gabor
