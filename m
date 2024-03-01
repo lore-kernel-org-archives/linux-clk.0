@@ -1,92 +1,113 @@
 Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.237.72.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20B969970;
-	Fri,  1 Mar 2024 07:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E6669E04;
+	Fri,  1 Mar 2024 08:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.237.72.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709279707; cv=none; b=Bah/cI7r/Ls3FKZ4l2xg0ENoUtMucGNSxV2j37dAwHjdfgxLe6oejFus7+oNe3M7UFnZaix7wl1T9r4eTfdZ538nhb2hYTB3TrYCME+xHs6C5fXK3iUwHc+zjHuDi49JGlzpRFB9CPz7GC9ey0kG720+jBKDC5Rueh30NKLSdqE=
+	t=1709282699; cv=none; b=nz8R+vaPPIcNNuHU4xuHwBEeGJ6a1zB6rAAhgwrKglYL9DukrI3O/uETtHRtgVGveR7Ea82hXt1WtSRHrIEhr8yL85K8vYK1oWqemk02EM+mqdXzLbP0jb5UZ1t8jrgrCzIgqG/Y7yZFI9Hj0THiBnN5yVfW5XV48eSEBxo+Ghk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709279707; c=relaxed/simple;
-	bh=8NkpBVC+MabeDFH3e6ECmrbv+y6feqbj/r6iS6j6HI8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=aVljp4H0kxI+wZLFlvGqVvOApZFAQoiBLqJRZcknk6JqOemkm5CxY15m8C72ukchrfrcQUNWWwF52ZXIdS3/zbKsKHNYIhijIPDgi/H35wIT66TQXzOcm9BJnLglxYdrMxp5fryApamebYas+zgWo2Od16z1QGiW/VnU0heZAT0=
+	s=arc-20240116; t=1709282699; c=relaxed/simple;
+	bh=MSl3qouA9Em17NHJkvcD9Pim1E7a+VZjVpD0WGutwrE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=ncTeqBtzLQBnygjFngA7zMEJh6mgHntAz/fWRmgMJCTorVQ6P5yGL0vY9aiu1cmljSuatNaRqrwU+9HnOp4NdfVHtCjj4rjMTFftuLDAmmYf5Sptegm4ZQVzbarEw0EioG2Jm1DHjo122r1l40stJ7OYbdyU1s30beDsJ4Ef8sg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=52.237.72.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from duoming$zju.edu.cn ( [106.117.76.127] ) by
- ajax-webmail-mail-app4 (Coremail) ; Fri, 1 Mar 2024 15:54:49 +0800
- (GMT+08:00)
-Date: Fri, 1 Mar 2024 15:54:49 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: duoming@zju.edu.cn
-To: "Michal Simek" <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org
-Subject: Re: [PATCH v3] clk: zynq: Prevent null pointer dereference caused
- by kmalloc failure
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT5 build
- 20231205(37e20f0e) Copyright (c) 2002-2024 www.mailtech.cn
- mispb-4df6dc2c-e274-4d1c-b502-72c5c3dfa9ce-zj.edu.cn
-In-Reply-To: <1aa8e326-2bec-4324-a767-29e34b0e103d@amd.com>
-References: <20240301070336.13700-1-duoming@zju.edu.cn>
- <d9b6d49e-9485-4733-a2d6-615bcc8f6ef3@amd.com>
- <74fd8b9e.6331.18df8e68c36.Coremail.duoming@zju.edu.cn>
- <1aa8e326-2bec-4324-a767-29e34b0e103d@amd.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+Received: from ubuntu.localdomain (unknown [106.117.76.127])
+	by mail-app2 (Coremail) with SMTP id by_KCgDnKqp2leFlV9txAg--.2261S2;
+	Fri, 01 Mar 2024 16:44:46 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	michal.simek@amd.com,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH v4] clk: zynq: Prevent null pointer dereference caused by kmalloc failure
+Date: Fri,  1 Mar 2024 16:44:37 +0800
+Message-Id: <20240301084437.16084-1-duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:by_KCgDnKqp2leFlV9txAg--.2261S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7urW7Jr43Aw4ktF1ftF13Arb_yoW8uF13pF
+	WxG3s0yF4jgF4qgan2kF18ZFyS9a12gay7Kw15tws2vFn8JayUJr45CF95ZF18XrW8uaya
+	vF1q9r18u3WUAF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvq14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26rxl
+	6s0DM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
+	6r1DMxkIecxEwVAFwVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JUa38nUUUUU=
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwIHAWXg0lML4wAZsy
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <3a25ab6d.6440.18df9023c49.Coremail.duoming@zju.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:cS_KCgB3dYXKieFlw+nBAQ--.35672W
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwMHAWXg0lMLXwAMsa
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
 
-T24gRnJpLCAxIE1hciAyMDI0IDA4OjMwOjA1ICswMTAwIE1pY2hhbCBTaW1layB3cm90ZToKPiA+
-Pj4gVGhlIGttYWxsb2MoKSBpbiB6eW5xX2Nsa19zZXR1cCgpIHdpbGwgcmV0dXJuIG51bGwgaWYg
-dGhlCj4gPj4+IHBoeXNpY2FsIG1lbW9yeSBoYXMgcnVuIG91dC4gQXMgYSByZXN1bHQsIGlmIHdl
-IHVzZSBzbnByaW50ZigpCj4gPj4+IHRvIHdyaXRlIGRhdGEgdG8gdGhlIG51bGwgYWRkcmVzcywg
-dGhlIG51bGwgcG9pbnRlciBkZXJlZmVyZW5jZQo+ID4+PiBidWcgd2lsbCBoYXBwZW4uCj4gPj4+
-Cj4gPj4+IFRoaXMgcGF0Y2ggdXNlcyBhIHN0YWNrIHZhcmlhYmxlIHRvIHJlcGxhY2UgdGhlIGtt
-YWxsb2MoKS4KPiA+Pj4KPiA+Pj4gRml4ZXM6IDBlZTUyYjE1N2I4ZSAoImNsazogenlucTogQWRk
-IGNsb2NrIGNvbnRyb2xsZXIgZHJpdmVyIikKPiA+Pj4gU2lnbmVkLW9mZi1ieTogRHVvbWluZyBa
-aG91IDxkdW9taW5nQHpqdS5lZHUuY24+Cj4gPj4+IC0tLQo+ID4+PiBDaGFuZ2VzIGluIHYzOgo+
-ID4+PiAgICAgLSBQdXQgc3RhY2sgdmFyaWFibGUgaW4gdGhlIGhlYWQgb2YgdGhlIGZ1bmN0aW9u
-IGFuZCByZW1vdmUgdmFyaWFibGUgdG1wLgo+ID4+Pgo+ID4+PiAgICBkcml2ZXJzL2Nsay96eW5x
-L2Nsa2MuYyB8IDcgKystLS0tLQo+ID4+PiAgICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25z
-KCspLCA1IGRlbGV0aW9ucygtKQo+ID4+Pgo+ID4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsv
-enlucS9jbGtjLmMgYi9kcml2ZXJzL2Nsay96eW5xL2Nsa2MuYwo+ID4+PiBpbmRleCA3YmRlYWZm
-MmJmZC4uNDU0Nzk2NTNjM2IgMTAwNjQ0Cj4gPj4+IC0tLSBhL2RyaXZlcnMvY2xrL3p5bnEvY2xr
-Yy5jCj4gPj4+ICsrKyBiL2RyaXZlcnMvY2xrL3p5bnEvY2xrYy5jCj4gPj4+IEBAIC0yMTUsNyAr
-MjE1LDcgQEAgc3RhdGljIHZvaWQgX19pbml0IHp5bnFfY2xrX3NldHVwKHN0cnVjdCBkZXZpY2Vf
-bm9kZSAqbnApCj4gPj4+ICAgIAlpbnQgaTsKPiA+Pj4gICAgCXUzMiB0bXA7Cj4gPj4+ICAgIAlp
-bnQgcmV0Owo+ID4+PiAtCWNoYXIgKmNsa19uYW1lOwo+ID4+PiArCWNoYXIgY2xrX25hbWVbMTZd
-Owo+ID4+PiAgICAJdW5zaWduZWQgaW50IGZjbGtfZW5hYmxlID0gMDsKPiA+Pj4gICAgCWNvbnN0
-IGNoYXIgKmNsa19vdXRwdXRfbmFtZVtjbGtfbWF4XTsKPiA+Pj4gICAgCWNvbnN0IGNoYXIgKmNw
-dV9wYXJlbnRzWzRdOwo+ID4+PiBAQCAtNDI2LDEyICs0MjYsMTAgQEAgc3RhdGljIHZvaWQgX19p
-bml0IHp5bnFfY2xrX3NldHVwKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnApCj4gPj4+ICAgIAkJCSJn
-ZW0xX2VtaW9fbXV4IiwgQ0xLX1NFVF9SQVRFX1BBUkVOVCwKPiA+Pj4gICAgCQkJU0xDUl9HRU0x
-X0NMS19DVFJMLCAwLCAwLCAmZ2VtMWNsa19sb2NrKTsKPiA+Pj4gICAgCj4gPj4+IC0JdG1wID0g
-c3RybGVuKCJtaW9fY2xrXzAweCIpOwo+ID4+PiAtCWNsa19uYW1lID0ga21hbGxvYyh0bXAsIEdG
-UF9LRVJORUwpOwo+ID4+PiAgICAJZm9yIChpID0gMDsgaSA8IE5VTV9NSU9fUElOUzsgaSsrKSB7
-Cj4gPj4+ICAgIAkJaW50IGlkeDsKPiA+Pj4gICAgCj4gPj4+IC0JCXNucHJpbnRmKGNsa19uYW1l
-LCB0bXAsICJtaW9fY2xrXyUyLjJkIiwgaSk7Cj4gPj4+ICsJCXNucHJpbnRmKGNsa19uYW1lLCAx
-NiwgIm1pb19jbGtfJTIuMmQiLCBpKTsKPiA+Pgo+ID4+IEkgd291bGQgcHJlZmVyIHRvIHVzZSBt
-YWNyby9kZWZpbmUgaWYgdGhhdCB2YWx1ZXMgaGFzIHRvIG1hdGNoIGFuZCBoYXZlIGNvbm5lY3Rp
-b24uCj4gPiAKPiA+IFRoZSBvcmlnaW4gY29kZSAiY2xrX25hbWUgPSBrbWFsbG9jKHRtcCwgR0ZQ
-X0tFUk5FTCkiIGFsbG9jYXRlcyAxNiBieXRlcywgc28gSSBzZXQKPiA+IHRoZSBzaXplIG9mIHN0
-YWNrIHZhcmlhYmxlIGNsa19uYW1lIHRvIDE2IGJ5dGVzLgo+ID4gCj4gPiBEbyB5b3UgdGhpbmsg
-aWYgd2UgdXNlICIjZGVmaW5lIENMS19OQU1FX0xFTiAxNiIgaXMgYmV0dGVyPwo+IAo+IG5hbWUg
-aXMgZmluZSBmb3IgbWUuIFdoYXQgbWFjcm8gZ2l2ZXMgeW91IGlzIHRoYXQgeW91IGtub3cgdGhh
-dCBudW1iZXIgMTYgZnJvbSAKPiBhcnJheSBzaXplIGlzIHRoZSBzYW1lIG51bWJlciAxNiB3aGlj
-aCB5b3UgYXJlIGNoZWNraW5nLgo+IEl0IGlzIGNsZWFyIGZyb20geW91ciBwYXRjaCBidXQgc29t
-ZSB0aW1lIGZyb20gbm93IHNvbWVvbmUgY2FuIGNoYW5nZSBqdXN0IG9uZSAKPiBwYXJ0IG9mIGNv
-ZGUgd2l0aG91dCBsb29raW5nIGF0IGNvbm5lY3Rpb24uCgpUaGFuayB5b3UgZm9yIHlvdXIgc3Vn
-Z2VzdGlvbnMhIEkgd2lsbCB1c2UgIkNMS19OQU1FX0xFTiIgdG8gcmVwbGFjZSB0aGUgMTYuCgpC
-ZXN0IHJlZ2FyZHMsCkR1b21pbmcgWmhvdQ==
+The kmalloc() in zynq_clk_setup() will return null if the
+physical memory has run out. As a result, if we use snprintf()
+to write data to the null address, the null pointer dereference
+bug will happen.
+
+This patch uses a stack variable to replace the kmalloc().
+
+Fixes: 0ee52b157b8e ("clk: zynq: Add clock controller driver")
+Suggested-by: Michal Simek <michal.simek@amd.com>
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+---
+ drivers/clk/zynq/clkc.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
+index 7bdeaff2bfd..c28d3dacf0f 100644
+--- a/drivers/clk/zynq/clkc.c
++++ b/drivers/clk/zynq/clkc.c
+@@ -42,6 +42,7 @@ static void __iomem *zynq_clkc_base;
+ #define SLCR_SWDT_CLK_SEL		(zynq_clkc_base + 0x204)
+ 
+ #define NUM_MIO_PINS	54
++#define CLK_NAME_LEN	16
+ 
+ #define DBG_CLK_CTRL_CLKACT_TRC		BIT(0)
+ #define DBG_CLK_CTRL_CPU_1XCLKACT	BIT(1)
+@@ -215,7 +216,7 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 	int i;
+ 	u32 tmp;
+ 	int ret;
+-	char *clk_name;
++	char clk_name[CLK_NAME_LEN];
+ 	unsigned int fclk_enable = 0;
+ 	const char *clk_output_name[clk_max];
+ 	const char *cpu_parents[4];
+@@ -426,12 +427,10 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 			"gem1_emio_mux", CLK_SET_RATE_PARENT,
+ 			SLCR_GEM1_CLK_CTRL, 0, 0, &gem1clk_lock);
+ 
+-	tmp = strlen("mio_clk_00x");
+-	clk_name = kmalloc(tmp, GFP_KERNEL);
+ 	for (i = 0; i < NUM_MIO_PINS; i++) {
+ 		int idx;
+ 
+-		snprintf(clk_name, tmp, "mio_clk_%2.2d", i);
++		snprintf(clk_name, CLK_NAME_LEN, "mio_clk_%2.2d", i);
+ 		idx = of_property_match_string(np, "clock-names", clk_name);
+ 		if (idx >= 0)
+ 			can_mio_mux_parents[i] = of_clk_get_parent_name(np,
+@@ -439,7 +438,6 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 		else
+ 			can_mio_mux_parents[i] = dummy_nm;
+ 	}
+-	kfree(clk_name);
+ 	clk_register_mux(NULL, "can_mux", periph_parents, 4,
+ 			CLK_SET_RATE_NO_REPARENT, SLCR_CAN_CLK_CTRL, 4, 2, 0,
+ 			&canclk_lock);
+-- 
+2.17.1
+
