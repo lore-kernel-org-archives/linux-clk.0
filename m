@@ -1,98 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD4D376EB;
-	Sat,  2 Mar 2024 18:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA953FE2A;
+	Sat,  2 Mar 2024 19:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709404907; cv=none; b=tVpHUjdm/Zx9xZxeuCpabyjfxz+hEyzXNO1eRWWUajdBMl0viiZbULaNcp4eugiBAsPszNHRcNWWTVm3Xt35lCCdVEY9rmJ6VI4ysFrQUebbwQwQss9eTfolXQfUDkAkNRPlAedlkxWx38EZLintyBuFEwxxIeOvcgf3YlCs6vc=
+	t=1709407107; cv=none; b=jNWc5o6UUReH5cgPwXD0TeUvyD+4y68OS3Hz3z+BDnGDi+etpk6//9S3cZi6qcnlUkZsLkv2bG6hHX2LdxP5Rcd+ehWQJqsp/ghV9A1y875atpziw2hMofQB/EIICaXqCTBv/C16VxjQeC2CELMOwj5iodgW5erBOISPY7CbRpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709404907; c=relaxed/simple;
-	bh=LVXdkM0Nxq6bVW0IsDj2dHOFAaUWxzw+WVZYqgrnLvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PI5TQh9BJTTPSBE2I4XzbRBkaCDESZhedZkjmJvt+VncVkdQUJ7Bawecr9A2pOpZff0Smb6rEfWaJaPGhiHypiKQFg/ojMGjbVQGRCZC0Euwyo+8jQgllQ0QQElksz08xSdneyLgak3yRnbMaFJ9bOum39sS44b08Z6Sl04lCOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVx2aGn1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709407107; c=relaxed/simple;
+	bh=Wk6ntCjlPsAts86m9vzbnmY7O2BjJa1dq1qUTFVePM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Oqp0/gM6+r3gGgApGTxR6SU793/sUJ4BYU/fRHMkZq3uK65n70uNAZON5SZeA779QT4crWhNxnDs8TLMudZCHdkd8EW3aZms7Q5w2kCwcpLFLDeFtqPwt7Wno/7PIIQJhOYSbG7qWXcp8k7Nv2L536sl8YFNQ8zebCcWEdrb35Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=PejlC6B9; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVx2aGn1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 276F5C433C7;
-	Sat,  2 Mar 2024 18:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709404907;
-	bh=LVXdkM0Nxq6bVW0IsDj2dHOFAaUWxzw+WVZYqgrnLvs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TVx2aGn12Ppv2HW9eOqIN8bs40TVMQ///mkMRM/ewkk29DnDj87Qn+QsVgR8ozbqg
-	 B4WcYL6P3FEV6H7+ae797s2XxDnCJd4lcahrNwAPsof3Uwd8vGZUwMWOdV41hsCg2N
-	 Ppj7K5liIo5MuJbS5XDF10CDpx5IchWxbr/ryfYWyavfRP3P3sQsDSjB/7VkvIequh
-	 4EKUiRC8af7rGk6CoBp8owGojk5yK0PRVLaafUijxJ61vJ38k5KNc5Z2rcCf7HrGXo
-	 ktmQp5XvbepgWHkdKfuBaj/MlBP5Cq6qEC1+mHUnFsA6KafYWNqy7Z7F18BnWZz1sA
-	 CsdQ4NGO3CzgA==
-Date: Sat, 2 Mar 2024 12:41:44 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Gabor Juhos <j4g8y7@gmail.com>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
-	Varadarajan Narayanan <quic_varada@quicinc.com>, Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, 
-	Devi Priya <quic_devipriy@quicinc.com>, Anusha Rao <quic_anusha@quicinc.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Georgi Djakov <gdjakov@mm-sol.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] clk: qcom: gcc-ipq5018: fix terminating of frequency
- table arrays
-Message-ID: <35zcbdj7sk6y7cdpqs7s3exsouzftzlgj6lvuglnyvuxfshvgs@m7rz5owrinud>
-References: <20240229-freq-table-terminator-v1-0-074334f0905c@gmail.com>
- <20240229-freq-table-terminator-v1-1-074334f0905c@gmail.com>
- <ZeGic5cG8lneKJXp@hovoldconsulting.com>
- <91b36da5-637d-4156-8be4-5aed55fc3c5d@gmail.com>
- <ZeHgI2nsADrkecC8@hovoldconsulting.com>
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="PejlC6B9"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KM1TopTRXtLKN5oONX1Ztk1pd6ed32mzkDGzZN+rujY=; b=PejlC6B9YRD/fiQG8n+nRdIjna
+	kpTyimgzTR7Lv9KaKWFXoRdy8epOrVj8s+jvEvBKYn4kyFZtlNhxOeWizSfVk8uIKfJhGzdtD6VmE
+	szEbJROb/2NQV8fB9Ns80NhHorsNsZlG5K97pZ1FBqBPrCAR3rY8Z+pHxdr79sggXqQUAvrV1vUJh
+	SpHKJNPWKMoKtmQe53IJIZ/Q8ChF/m35OAc8H1w6AwOhyTpM/jfGhA47QFI6a11IF1XTGahAlgMb4
+	CXiZ6jXJrJnv1NSspmPV1r/n/V61e7Pe/0BJP9jmDwAxPFbq0opeILqtKz5gRUnVz5+EopZ9fENyq
+	U0ht6rLg==;
+Received: from p200301077700b1001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:107:7700:b100:1a3d:a2ff:febf:d33a] helo=aktux)
+	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <andreas@kemnade.info>)
+	id 1rgUsB-009xx8-Qc; Sat, 02 Mar 2024 20:18:15 +0100
+Date: Sat, 2 Mar 2024 20:18:13 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Tony Lindgren <tony@atomide.com>
+Cc: =?UTF-8?B?QmVub8OudA==?= Cousson <bcousson@baylibre.com>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Tero Kristo <kristo@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/4] Use reg instead of ti,bit-shift for clksel
+Message-ID: <20240302201813.06fc09d7@aktux>
+In-Reply-To: <20240229070626.GH52537@atomide.com>
+References: <20240213105730.5287-1-tony@atomide.com>
+	<20240214001140.2abe0d80@aktux>
+	<20240214054044.GK52537@atomide.com>
+	<20240229070626.GH52537@atomide.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZeHgI2nsADrkecC8@hovoldconsulting.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 01, 2024 at 03:03:15PM +0100, Johan Hovold wrote:
-> On Fri, Mar 01, 2024 at 02:37:01PM +0100, Gabor Juhos wrote:
-> > Hi Johan,
+Hi Tony,
+
+On Thu, 29 Feb 2024 09:06:26 +0200
+Tony Lindgren <tony@atomide.com> wrote:
+
+> * Tony Lindgren <tony@atomide.com> [240214 05:41]:
+> > * Andreas Kemnade <andreas@kemnade.info> [240213 23:11]:  
+> > > On Tue, 13 Feb 2024 12:56:40 +0200
+> > > Tony Lindgren <tony@atomide.com> wrote:
+> > >   
+> > > > Hi all,
+> > > > 
+> > > > This series updates the clksel clocks to use the standard reg property
+> > > > instead of ti,bit-shift.
+> > > > 
+> > > > I'd like to apply these before we make further use of the clksel clocks
+> > > > to reduce the dtb check warnings.
+> > > >   
+> > > 
+> > > hmm, we still have ti,bit-shift if these clocks are not used below a ti,clksel.
+> > > Just wondering, can we completely deorbit ti,bit-shift if we used #address-cells = <2>;
+> > > in those cases? I wait a bit with further txt->yaml conversions until
+> > > this is settled.  
 > > 
-> > 2024. 03. 01. 10:40 keltezéssel, Johan Hovold írta:
-> > > On Thu, Feb 29, 2024 at 07:07:46PM +0100, Gabor Juhos wrote:
-> > >> The frequency table arrays are supposed to be terminated with an
-> > >> empty element. Add such entry to the end of the arrays where it
-> > >> is missing in order to avoid possible out-of-bound access when
-> > >> the table is traversed by functions like qcom_find_freq() or
-> > >> qcom_find_freq_floor().
-> > >>
-> > >> Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
-> > > 
-> > > Good find!
-> > > 
-> > > Looks like these should be backported to the stable kernels as well so
-> > > someone should add:
-> > > 
-> > > Cc: stable@vger.kernel.org
-> > > 
-> > > to all patches except possibly the sc8280xp one (that camera clock
-> > > controller was added in 6.8-rc1 so that patch does not need it in case
-> > > you can these fixes in before 6.8 is released).
+> > No need to wait on the yaml conversion I think :) How about just tag the
+> > ti,bit-shift property as deprecated? And add a comment saying it is only
+> > needed for the remaining unconnected clocks.
 > > 
-> > You are right maybe, although I did not find strong enough reasons for adding
-> > the stable tags.
-> > 
-> > Only the changes of the gcc-ipq5018 driver has been tested on real hardware the
-> > others are not. So those does not fit into the "It must be obviously correct and
-> > tested." rule.
+> > Eventually we can move all the component clocks under clksel clocks, or the
+> > related clock such as the dpll clock for the clkdcoldo clocks.  
 > 
-> Since this looks like a straight-forward and obviously correct fix for a
-> bug which could have bad consequences, not being able to test each patch
-> on actual hardware is not a problem.
+> Oh and yes, using #clock-cells = <2> would be nice eventually :) I think
+> the clkcel binding already supports that. But that still leaves the issue
+> of unconnected composite clocks.. I'm pretty sure they all have some real
+> parent like clksel for dpll though.
 > 
+> If you had some good idea in mind for the #address-cells = <2> for the
+> remaining unconnected composite clocks maybe clarify it a bit.
+> 
+I was just wondering whether we could do reg = <register bit> then.
 
-I agree, and I'm adding the Cc: stable while applying the patches.
-
-Thanks,
-Bjorn
+Regards,
+Andreas
