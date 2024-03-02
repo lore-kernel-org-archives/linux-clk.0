@@ -1,189 +1,164 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DD35F47D
-	for <linux-clk@vger.kernel.org>; Fri,  1 Mar 2024 23:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD1710E5
+	for <linux-clk@vger.kernel.org>; Sat,  2 Mar 2024 00:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709337378; cv=none; b=O9rFOQ/u6hQrYRacSfixwQA8Al1uGUQmiE8qgtp4HJOqxG0ra/9k3CtHbPxgogQ/PGfb0W3YiDnzm9pdPwFvEKMnqKKnjOSUezJ4jzZJxLOUDxpmfpJq4hLDfAmRhE+ZvxlAsHxvIhZoE1xZ7M5V2nXCnyl1rEvpji54T8BWjpM=
+	t=1709340742; cv=none; b=tKLGAHEJGXHS7wq+tGO4BsYGZfCOPa1ClSbzZejLWWM5HWn2QcXUo0I2kGSzVlJeJvyQgBN33A6jrYXI146hnr38b3f+wgItzHuLRtv6uusrox86FP/HxmmGsyKf4aHhZfrOeAklpQZ7TsQBriJgABOyW2C34lzBoJiLcB9Gdlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709337378; c=relaxed/simple;
-	bh=QkJ1xdbAMKMnvRj2AyuRDjj1b4wJiMw5P0RDMBnY9oU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CKkmQQA7q6OnodWAltbsEPraZINzNYLEqGAxd1zmhGlO0zPNdSXHqV6tMmXvwLZg0AgDOJroBS0PColEUfSMEylM1+GYlcK+BmKkfJB4TDreUGsP5V7dLKBl+rA9OgC7V4MnYrhckGkOyiK5/ANLAl3sO4GnWvqdvhcC8ODLPRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GNZYa/8h; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1709340742; c=relaxed/simple;
+	bh=0C4Zm8OGD2wfa7rKSsJh/pDqxaTcLeGVRBWYQhY3gq4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cHPag65iMtRCymN0AoR+ZfpeTAbNEXJUuMFx1cVeuK2CRGSEjMcaL7h28oia+nYzergZ2otTjYO6tcMz7sq2L4rNguIxPXyWuWO6ZvQ1HysxMRgAK2UEbJZnEP0qfQZ7RYROMhMRCIbRWE0pf5AgjR7khCoJEO14Lj9fVR/ndcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=elo9Eaus; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GNZYa/8h"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a43dba50bb7so388430566b.0
-        for <linux-clk@vger.kernel.org>; Fri, 01 Mar 2024 15:56:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="elo9Eaus"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-33e162b1b71so1553073f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 01 Mar 2024 16:52:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709337375; x=1709942175; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q4bK4AfVct1aRZS5U/svuHPQiO8tDHE4H8kEQpOUhsU=;
-        b=GNZYa/8hpS4M9OvFHilyIiXdDnT5EiUEIpVBKxYG43sktF0tNX3ZO1PA81Xrlrd6IR
-         r4yvMGsguHDtxFbm3ouLMSs9knIqyI6ZlWjvqlkGoKx3ns0TlPpLolBlwJ9I7SdMF1kO
-         lKJHzb7fnXSAnaqOik9GCFoJPYNQTuA4F0/hp+GMAEoAxVHj98MzuD+cclg8YNNA2gjo
-         l68auxY1tfz/1iNQkJK8yprcxceGAm+XwtP7FukQS1CXpO9JlRAYip6771aZnwouQeMU
-         lxmQPglumgg6Ymmm92pSB1Zse03VMbvH06iSFu8M/vuUohXKHj71Vyrfah2IhV1gSqwT
-         0Ffw==
+        d=linaro.org; s=google; t=1709340739; x=1709945539; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a9sPafuVPRUfRRjJtneI0u4WaRjeYFBIK+DPgThslvo=;
+        b=elo9EausOnn2W8q0h5yVNuOzbQB8GqUHoUKOyFjfdgl8+aw3JjKHkJYMR/X2FeZG+5
+         PkIe703TcjtRCYQHs+NCk8s8fin2FYZW9X/M3jU5w+v1HMMg29A4pekCymaluWW5dfhU
+         9vLnqKfwInaQnsDmRwloELc6wwbZwxLMPn0IwdBHbC/uigweMctUX0jDmrFcPP8jViPK
+         DWMOEZSjxdKeNLLieyz157o/5B0Y4gbNptcxQLeYR+O7aXd2mrjyztkLwb1nxBMGuokU
+         Arq2E3bBlVmHKbYImGf+7FnmBrYx9nYXae1HzH3ihUjou3/pklKXBtpF2RVuyJrCYxCY
+         vC0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709337375; x=1709942175;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q4bK4AfVct1aRZS5U/svuHPQiO8tDHE4H8kEQpOUhsU=;
-        b=BQ3huG2bSG5m8bC4MK/n/D79L1OQAP8rjPLBL8DOVuv+sKoVH9frh57BcTrPn3o9+6
-         oehiPm6htkY0AFYNuZtTcxWME5M7Uc7yk9O2fS3Mp5wjcdFuXSo47/6p8D1XM0Z7+Sit
-         ugX5NstXED/k+G8LDoO/jdSrsG7i3T6RUMbhE5DfoOcz2jhWyY37JvLPd2KceoJ0s1mo
-         binyEZ8IVtF8FC/LtzbHpBet3Go1suf6M0Gqk/qZE/I3zLd98elNIJ+Cu3ow58nvSVSd
-         aetkrdA9eRN4jtkU8X097i+3ibLp6Ps4E9U8/8w/DSH23XPRPVv+12HnVCXdx9muKB+4
-         dCHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV17wpDQZhi6g+Oizar8wBl91bD8eQ4yCktI5V09RZv5hcekUaCgzvV9ucqwuGypxOVWj9Iu1VyWHmE+DNiwFzxyUyEoH7WSpUM
-X-Gm-Message-State: AOJu0YzqSzZ635uFbmVK/GxJVWnLzboGk4RiJKaq5WQhL9k/KCF53prP
-	Ew5nNvPKl6va9rlDAtndteRvDPWfHEqS/Di5fc9Sl2oTCHK1VmhnUZAPoydbLKtwDfYFiNKyhAw
-	jJNM=
-X-Google-Smtp-Source: AGHT+IEHYTRyWRSIxB3bWILGlwC2NxaxqTT4jgrqo6fjDX/ZTPRKNg4OMrKKdvcN0EakUO8IrGKa+g==
-X-Received: by 2002:a17:906:7191:b0:a44:c896:6751 with SMTP id h17-20020a170906719100b00a44c8966751mr503841ejk.67.1709337375411;
-        Fri, 01 Mar 2024 15:56:15 -0800 (PST)
-Received: from [192.168.216.32] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id v23-20020a1709067d9700b00a42ee62b634sm2141583ejo.106.2024.03.01.15.56.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Mar 2024 15:56:14 -0800 (PST)
-Message-ID: <630bb10a-2197-4573-a6d5-01fa6650c315@linaro.org>
-Date: Sat, 2 Mar 2024 00:56:11 +0100
+        d=1e100.net; s=20230601; t=1709340739; x=1709945539;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a9sPafuVPRUfRRjJtneI0u4WaRjeYFBIK+DPgThslvo=;
+        b=kcEyrB7wjZURBaXIjWsXFhe3eM0dHrNKzYigsX8l29Pn9+j0lGIQ/Uvk9zQahwgtmp
+         k8XlHFLWshxw/PHHt9Gu06NfqIg7+7fiwC/7mc/mK8tP9mrlgsWEZ25qxWmMYCxP11v8
+         kklkyHHkGcZMWBaf8BnBeVKUDc/saUplUYSyzwrn7v/u16SgHs4aVi/RSwZSocTu1Bro
+         LvZ1QoIeVNCNbnVVCSufoiLTFOtPaqEPlje7DxIUZK9lwDU/tEZ06KdPs0vhoRsE7bne
+         h6GudhxJFvRSAeLzyL8gtlj337BswTFu8ZF8lKw6e9XzfykD0XroDV3sNoOZAshssVc8
+         RGmg==
+X-Gm-Message-State: AOJu0YwuYOq2y7dcgM5DLa1uSAPKivchzPrIk8aJB17KsGUJxX4KeGiW
+	M5XgEMEJVlGTROUfaWFboFGDk9NRRjE9OJX2H89A5uiY2XBLV8IRXSKIbBs4JrZrCYuDFl1eLki
+	9
+X-Google-Smtp-Source: AGHT+IExhlzd1a3eeQt3bEx+BU8uO2oDv4HUyKfUsSEmcZ5/ICcYgs8bVYtR8fJONOUdojX4VxamaQ==
+X-Received: by 2002:a5d:6252:0:b0:33d:3099:e67b with SMTP id m18-20020a5d6252000000b0033d3099e67bmr2184473wrv.63.1709340738969;
+        Fri, 01 Mar 2024 16:52:18 -0800 (PST)
+Received: from [127.0.1.1] ([176.61.106.68])
+        by smtp.gmail.com with ESMTPSA id f15-20020adffccf000000b0033dedd63382sm5865501wrs.101.2024.03.01.16.52.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Mar 2024 16:52:18 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH 0/2] clk: Fix a core error path and missing qcom
+ camcc-x1e80100 enum
+Date: Sat, 02 Mar 2024 00:52:13 +0000
+Message-Id: <20240302-linux-next-24-03-01-simple-clock-fixes-v1-0-25f348a5982b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] clk: qcom: clk-alpha-pll: Add support for Regera PLL
- ops
-Content-Language: en-US
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240229-camcc-support-sm8150-v1-0-8c28c6c87990@quicinc.com>
- <20240229-camcc-support-sm8150-v1-2-8c28c6c87990@quicinc.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
- BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
- HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
- TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
- zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
- MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
- t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
- UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
- aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
- kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
- Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
- R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
- BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
- yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
- xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
- 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
- GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
- mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
- x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
- BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
- mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
- Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
- xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
- AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
- 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
- jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
- cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
- jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
- cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
- bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
- YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
- bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
- nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
- izWDgYvmBE8=
-In-Reply-To: <20240229-camcc-support-sm8150-v1-2-8c28c6c87990@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD544mUC/x2M0QrCMAwAf2Xk2UCWVkR/RXyQNtNg7UajUhj79
+ wUf7w5uBZOmYnAZVmjyU9O5OoyHAdLzXh+Cmp2BiSMFGrFo/Xas0j/IESmgO9P3UgRTmdMLJ+1
+ imNPpGFk45DOBz5Ym/+Cv623bdgSXYDV4AAAA
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.14-dev
 
-On 29.02.2024 06:38, Satya Priya Kakitapalli wrote:
-> From: Taniya Das <quic_tdas@quicinc.com>
-> 
-> Regera PLL ops are required to control the Regera PLL from clock
-> controller drivers, thus add support for the same.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
+Using x1e80100-camcc on a recent kernel I discovered the following NULL
+pointer dereference.
 
-[...]
+[    1.347567] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+[    1.347569] Mem abort info:
+[    1.347569]   ESR = 0x0000000096000004
+[    1.347570]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    1.347572]   SET = 0, FnV = 0
+[    1.347572]   EA = 0, S1PTW = 0
+[    1.347573]   FSC = 0x04: level 0 translation fault
+[    1.347574] Data abort info:
+[    1.347575]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[    1.347576]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    1.347576]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    1.347577] [0000000000000000] user address but active_mm is swapper
+[    1.347579] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+[    1.347580] Modules linked in:
+[    1.347583] CPU: 1 PID: 80 Comm: kworker/u49:1 Not tainted 6.8.0-rc6-next-20240228-00163-gbe6ae77b72b2 #26
+[    1.347586] Hardware name: Qualcomm CRD, BIOS 6.0.230809.BOOT.MXF.2.4-00174-HAMOA-1 08/ 9/2023
+[    1.347587] Workqueue: events_unbound deferred_probe_work_func
+[    1.347595] pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+[    1.347597] pc : clk_core_get+0xe0/0x110
+[    1.347601] lr : clk_core_get+0x108/0x110
+[    1.347603] sp : ffff800080353940
+[    1.347604] x29: ffff8000803539a0 x28: 0000000000000000 x27: ffffb0aa57c4e2e0
+[    1.347607] x26: ffffb0aa57c4e240 x25: ffff4cbd0511e4c8 x24: 0000000000000000
+[    1.347609] x23: ffffb0aa583c3440 x22: 0000000000000000 x21: ffff4cc07e1d2ab8
+[    1.347612] x20: 0000000000000000 x19: ffff4cbd00e28ac0 x18: 0000000000000001
+[    1.347614] x17: 0000000000000018 x16: 0000000000000034 x15: 0000000000000002
+[    1.347616] x14: ffffb0aa58fc6498 x13: ffffb0aa58293000 x12: 696669746f6e5f6b
+[    1.347619] x11: 0000000ad6d076a3 x10: ffffb0aa58c600fb x9 : 0000000000000008
+[    1.347621] x8 : 0101010101010101 x7 : 00000000736c6c65 x6 : 0080f0e8e16e646c
+[    1.347624] x5 : ffff800080353958 x4 : 0000000000000000 x3 : ffff4cbd00d09100
+[    1.347626] x2 : 0000000000000000 x1 : ffff4cbd00d09100 x0 : 0000000000000000
+[    1.347628] Call trace:
+[    1.347630]  clk_core_get+0xe0/0x110
+[    1.347631]  clk_core_get_parent_by_index+0xc8/0xe0
+[    1.347634]  __clk_register+0x1f0/0x864
+[    1.347636]  devm_clk_hw_register+0x5c/0xd4
+[    1.347639]  devm_clk_register_regmap+0x44/0x84
+[    1.347642]  qcom_cc_really_probe+0x1b4/0x25c
+[    1.347644]  cam_cc_x1e80100_probe+0x14c/0x1c8
+[    1.347646]  platform_probe+0x68/0xc8
+[    1.347649]  really_probe+0x148/0x2b0
+[    1.347651]  __driver_probe_device+0x78/0x12c
+[    1.347654]  driver_probe_device+0x40/0x118
+[    1.347656]  __device_attach_driver+0xb8/0x134
+[    1.347658]  bus_for_each_drv+0x88/0xe8
+[    1.347661]  __device_attach+0xa0/0x190
+[    1.347664]  device_initial_probe+0x14/0x20
+[    1.347666]  bus_probe_device+0xac/0xb0
+[    1.347668]  deferred_probe_work_func+0x88/0xc0
+[    1.347670]  process_one_work+0x148/0x29c
+[    1.347675]  worker_thread+0x2fc/0x40c
+[    1.347678]  kthread+0x110/0x114
+[    1.347681]  ret_from_fork+0x10/0x20
+[    1.347684] Code: aa1303e0 97fff96f b140041f 54fffd08 (f9400000) 
+[    1.347686] ---[ end trace 0000000000000000 ]---
 
+The first patch fixes the NULL dereference by checking hw before returning
+hw->core.
 
-> +static int clk_regera_pll_enable(struct clk_hw *hw)
+The second patch addresses the cause of the NULL pointer, which is the DT
+implied indexing is not fully captured in camcc-x1e80100.c.
 
-This function is 1:1 clk_zonda_pll_enable() logic-wise, except for
-the `if (val & ZONDA_STAY_IN_CFA)` part. Would it be an issue on
-Regera?
+Obviously the above NULL deref wouldn't occur with the second patch applied
+however reading the description of clk_core_get() it appears to want to
+return NULL but currently cannot do so, so check for hw and return a NULL
+if hw is NULL instead of dereferencing hw.
 
-> +static void clk_regera_pll_disable(struct clk_hw *hw)
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (2):
+      clk: Fix clk_core_get NULL dereference
+      clk: qcom: camcc-x1e80100: Fix missing DT_IFACE enum in x1e80100 camcc
 
-This again is clk_zonda_pll_disable(), except the very last value written
-to PLL_OPMODE is different. Could you commonize them?
+ drivers/clk/clk.c                 | 3 +++
+ drivers/clk/qcom/camcc-x1e80100.c | 1 +
+ 2 files changed, 4 insertions(+)
+---
+base-commit: 1870cdc0e8dee32e3c221704a2977898ba4c10e8
+change-id: 20240301-linux-next-24-03-01-simple-clock-fixes-dc7542e23d90
 
-
-> +
-> +static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate,
-> +									u32 *l)
-
-(Ugly wrapping, please touch it up)
-
-..should it apply to zonda as the name suggests? Also, any explanations?
-
-> +	u64 remainder, quotient;
-> +
-> +	quotient = rate;
-> +	remainder = do_div(quotient, prate);
-> +	*l = quotient;
-> +
-> +	if ((remainder * 2) / prate)
-> +		*l = *l + 1;
-> +}
-> +
-> +static int clk_regera_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				  unsigned long prate)
-> +{
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> +	unsigned long rrate;
-> +	u32 l, alpha_width = pll_alpha_width(pll);
-> +	u64 a;
-> +	int ret;
-> +
-> +	rrate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
-> +
-> +	ret = alpha_pll_check_rate_margin(hw, rrate, rate);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (a && (a & BIT(15)))
-
-What is BIT(15)?
-
-Also, the left part of the condition is totally bogus, if a is 0 then
-a & BIT(15) will surely be zero as well.
-
-Konrad
-
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
