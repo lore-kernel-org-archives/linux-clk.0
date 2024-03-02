@@ -1,130 +1,85 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF16320B;
-	Sat,  2 Mar 2024 02:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8CF376;
+	Sat,  2 Mar 2024 11:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709344919; cv=none; b=rlOuLVy0Q9MLO6vDnqL8UozdJ8Q9xyKZC0V75w8Fi1V5FwY8uJXvUmNbDVUNU6po2b8Cd6wa7BOrvg5Rtttxc2F6ero7PdXFLODoLJ3uZ1H61/bN90e7MltS87iyIml083GT5KGcmFcW3HHLuOkrj58C1xuxXmwEFuEc/AY+nPM=
+	t=1709379747; cv=none; b=J+DfQcJ3/srqAtB5JDAC0fYLo+UKHPG9Wtl0YkTI7B4/gCG9m4YaROMtHKiLMxrSatAB/9cdUWRSu8vpeh9lsHSlHnppfzWRw9IGA45fm6QsI4+lwcOpD7AkwBAdLvH9sidgSrzZrbtLk9JmiVyelqT/M3eNLoGW7OclYrvT1bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709344919; c=relaxed/simple;
-	bh=LIqKAURAPbbMEH2j4IdH6pzC43kT8Yy0pz8xS+NLjPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jzrHwTHRAXd47HYnKXiaD/LYYMdwxPTD0f9EVDtgyVDrvHVyvQXU+On/Uhs+f8PObWV/KMk6uuV6NLauGPye3VXJNO7kMZDk6jRS2Z8kvO/8gL2cYOu6WI2kv5vU6cZzpFSOcfugh5bEKAY9e4mSorytZCzuAkgSrexh41nQFPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZFeNkD1; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1709379747; c=relaxed/simple;
+	bh=8T1xxnqxA4Cn7ZALmW7k2vXmJDpc3Ja/SWJ6xwaLSSU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sb8e5h/71CWHatm/BPRZIgTGXjZapWA82aUwk73829pAi14yN1TFhoMNMa4b2+uM26EfyQsQt/tPKP5AEhmS5Yw6hV0tUBYhFaYtljQwcflWi5o8DIw+t+NAXCnLGWsw/pPeCbaoOy+gklrxlmX53PdYazxi0V056jNCRyd5msE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZFeNkD1"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1dc29f1956cso24467105ad.0;
-        Fri, 01 Mar 2024 18:01:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709344917; x=1709949717; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I/ES75OINXio6Jg14hlcZ63hcfEZjDHEPfBn7kPat2w=;
-        b=gZFeNkD1jh81FZsWO7bRMVx9fh3lps8yGyzqReTdx5PrkKz7gUyHvCuAYOTMXE9VHS
-         Dlk84omO0G0lQKHcBdJLaZ32jVCgc1awBLTnKah8N+fX3dzfHspEDqamWxNpVWP4hbEj
-         UPyOiMKtedIKTVdvBjhAQlYeeiz0K8Kw01b9BmW8FOMW+LhYAkXpl3dlJ4CzLydxxova
-         v513n/pN2HxgMk/bvCQqZu9m8FfRbSpb3jDLb8197xIhPmWdRE/ZL+A65EI150CTLnj1
-         qtPI2Zw3uVbeg4H9c24cn7LOKA+ICAsIMhBzp1iVhA2npxVSptRuzvaBDDA2ftRDZkNr
-         mx9Q==
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-364f794f237so16020815ab.1;
+        Sat, 02 Mar 2024 03:42:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709344917; x=1709949717;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I/ES75OINXio6Jg14hlcZ63hcfEZjDHEPfBn7kPat2w=;
-        b=vsyVaPNW2ZocX7CdA+Lr+J5J9/KnKu08CsT5EZHBK6iDwLiyNxiYv99izpKX5IkG6R
-         kgdwOpGg7od4VtI1YWJETSjaTzwu8YqLbNUfVuQS3VT6aVzp1eAX/vOVm8zs9rN3fEQk
-         wZ0WdTJq6kXbZON26oXpnfd+LJUdnIE6GaQcJQ4jLx2/pDzq6Dn/t4n4UF55hyXdp/k8
-         CQ+aLu2o7F5c+ZURl6jow2scsd3tZ62iitjr9XqJDUPhDRPFnmW0V5y5RNYpFWUIBu0a
-         /YgKpymS/JwxLMQR3+XiNuRYVr5ZgpiV1wgeop6Iyrq2M23Ta0az5Tt0nYs/2Rdibz6H
-         x6vg==
-X-Forwarded-Encrypted: i=1; AJvYcCVX9wxgwrDCVhdcjC1RdtHRhOCzZaS/cVS+rfty46RFwEAYuLE0MphrrgHqXcxJcjvX7xlmCaKYquQn4uhIxjtviPmJUoCsFQMP0kbbekQv9imUgSz4+SDh+r1sNjdtl+w0uYLXffRUp72IlGYdq5D9Gf+awNagQ0ZCtlEIU+Rfcsx0WA==
-X-Gm-Message-State: AOJu0YxlqTzawE+U0WkKcUg4KAqx9Rzk2mZUyT3FdDH0W7KBTAHPkaGH
-	f1NumeSPZ7aUDVtSq6rzWssiVBujCjVAG2HD+TN/juYrDjLj2naG
-X-Google-Smtp-Source: AGHT+IG/wQLDc3mJzbkZUilzgPH70FoHHXwvpIEuQUi67d1EuWHrRCL2C71gorxmluFqJf5/NEsxfA==
-X-Received: by 2002:a17:903:32c8:b0:1dc:fadb:4b1a with SMTP id i8-20020a17090332c800b001dcfadb4b1amr563181plr.54.1709344917098;
-        Fri, 01 Mar 2024 18:01:57 -0800 (PST)
-Received: from linux-8mug (111-248-209-112.dynamic-ip.hinet.net. [111.248.209.112])
-        by smtp.gmail.com with ESMTPSA id im22-20020a170902bb1600b001dcd00165a6sm4181614plb.208.2024.03.01.18.01.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Mar 2024 18:01:56 -0800 (PST)
-Date: Sat, 2 Mar 2024 10:01:51 +0800
-From: Chester Lin <chester62515@gmail.com>
-To: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
-Cc: Andreas Farber <afaerber@suse.de>, Matthias Brugger <mbrugger@suse.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, NXP S32 Linux Team <s32@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-Subject: Re: [PATCH v2 0/2] add uSDHC and SCMI nodes to the S32G2 SoC
-Message-ID: <ZeKIjyFF0ftnr19q@linux-8mug>
-References: <20240122140602.1006813-1-ghennadi.procopciuc@oss.nxp.com>
- <a7a55dc6-c204-4aad-adff-9806d3302b6b@oss.nxp.com>
+        d=1e100.net; s=20230601; t=1709379744; x=1709984544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8T1xxnqxA4Cn7ZALmW7k2vXmJDpc3Ja/SWJ6xwaLSSU=;
+        b=GYfBSgJyOUG5dIrxsx7F7ngSAdY0uR67Kr4S2ArzeptoF1DnE5doFfGuBiNxkAGc5C
+         NQjmk8tvSl7BtMWwVfeBVVnhNGI8/qXtIbIOplfFqqfX2gKL/RH03KTdMgMjWmINYbI0
+         UWXx2lZkPB6T1Rrrvnjt4M+91kdWU9nrwd47xFn6fCpetZSZl5OyCvjezUcValhi94MS
+         FdP2MtEXCvp9RgZSqESKBXtj7+LqznIpkX56zGUlFxHA4vjQHLAJarOrUnvSxg//jg8U
+         FIhs546Ok8RSy7BmJHYK+7M8nbYtHRHCFkXE+3K1py35pOFFvmayzyNAtRGKoye3RAPy
+         g+0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVu2W28iIQHc0gbW4l69djqD8RFLYgaxM/AgdRiSwQCjRG1RLhMYE78tI3hntHshS7A6dSV3MQ0GnjU4+WRfl3WNN57I07U06DnUD2WR6Z9PyXmI1uWIHRmUnfARzIVZtnQ/FSj8i7k
+X-Gm-Message-State: AOJu0YzvANwD1eX52s60ok8o010RR+uFhGcK8YO+GCSvayCT/aKSeL4q
+	EaHWAoPprdmDvlcZqpJj0tpo4iGl5QQvPB+pZhZ4rKPcUZyxHymLW5iGZ4kMCsg=
+X-Google-Smtp-Source: AGHT+IFs99ciz34AgjU6tYTk8CBGIC0GwTWWtLgku/rr7RbRwZVEX4po93RZ7o6KdJhKXMJF9GaRxg==
+X-Received: by 2002:a05:6e02:144c:b0:363:d9eb:c2e0 with SMTP id p12-20020a056e02144c00b00363d9ebc2e0mr5361535ilo.28.1709379744409;
+        Sat, 02 Mar 2024 03:42:24 -0800 (PST)
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com. [209.85.210.173])
+        by smtp.gmail.com with ESMTPSA id fh8-20020a056a00390800b006e4e600d15esm4374906pfb.160.2024.03.02.03.42.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Mar 2024 03:42:24 -0800 (PST)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6da4a923b1bso2630985b3a.2;
+        Sat, 02 Mar 2024 03:42:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVsQBV9jd5jNQGYjVjM4ZoJ6XgRr/hQCEyxco9yrnDkHB7M4UgS9lyTuGDCiCwMD8RcOZDVFwYzBxQbvyxfW2z2meahrLDl5rutxeYwQpOGl+ObYV5lMp7ZvAs5ekidl+NoUwiy4mkM
+X-Received: by 2002:a05:6a20:8e01:b0:1a1:e75:477c with SMTP id
+ y1-20020a056a208e0100b001a10e75477cmr5238403pzj.9.1709379743994; Sat, 02 Mar
+ 2024 03:42:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7a55dc6-c204-4aad-adff-9806d3302b6b@oss.nxp.com>
+References: <20231013181712.2128037-1-jernej.skrabec@gmail.com>
+In-Reply-To: <20231013181712.2128037-1-jernej.skrabec@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 2 Mar 2024 19:42:11 +0800
+X-Gmail-Original-Message-ID: <CAGb2v651T28yrkaAbX3ckV8gEsYXdGgHMgCb3Jdmbej2OnNyLQ@mail.gmail.com>
+Message-ID: <CAGb2v651T28yrkaAbX3ckV8gEsYXdGgHMgCb3Jdmbej2OnNyLQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: h6: Reparent CPUX during PLL CPUX rate change
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: samuel@sholland.org, sboyd@kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Chad Wagner <wagnerch42@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sat, Oct 14, 2023 at 2:17=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
+l.com> wrote:
+>
+> While PLL CPUX clock rate change when CPU is running from it works in
+> vast majority of cases, now and then it causes instability. This leads
+> to system crashes and other undefined behaviour. After a lot of testing
+> (30+ hours) while also doing a lot of frequency switches, we can't
+> observe any instability issues anymore when doing reparenting to stable
+> clock like 24 MHz oscillator.
+>
+> Fixes: 524353ea480b ("clk: sunxi-ng: add support for the Allwinner H6 CCU=
+")
+> Reported-by: Chad Wagner <wagnerch42@gmail.com>
+> Link: https://forum.libreelec.tv/thread/27295-orange-pi-3-lts-freezes/
+> Tested-by: Chad Wagner <wagnerch42@gmail.com>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-On Thu, Feb 08, 2024 at 11:34:58AM +0200, Ghennadi Procopciuc wrote:
-> On 1/22/24 16:05, Ghennadi Procopciuc wrote:
-> > From: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> > 
-> > This patchset adds device tree support for S32G2 SCMI firmware and uSDHC
-> > node. The SCMI clock IDs are based on a downstream version of the TF-A
-> > stored on GitHub [0].
-> > 
-> > I can send the patches individually if you prefer that instead of
-> > submitting them all at once.??
-> > 
-> > [0] https://github.com/nxp-auto-linux/arm-trusted-firmware
-> > 
-> > Changes in v2:
-> >  - The SCMI clock bindings header has been removed.
-> > 
-> > Ghennadi Procopciuc (2):
-> >   arm64: dts: s32g: add SCMI firmware node
-> >   arm64: dts: s32g: add uSDHC node
-> > 
-> >  arch/arm64/boot/dts/freescale/s32g2.dtsi      | 37 ++++++++++++++++++-
-> >  .../arm64/boot/dts/freescale/s32g274a-evb.dts |  6 ++-
-> >  .../boot/dts/freescale/s32g274a-rdb2.dts      |  6 ++-
-> >  3 files changed, 46 insertions(+), 3 deletions(-)
-> > 
-> Hi Chester,
-> 
-> I want to confirm if you are open to accepting the proposed changes for
-> ARM/NXP S32G architecture, given your maintainer role. Please let me
-> know if any revisions or adaptations are required.
-> 
-
-These patches look good to me.
-
-Hi Shawn,
-
-Per the discussion in another thread, could you help to apply these two
-through the imx tree? Thanks!
-
-Chester
-
-> Regards,
-> Ghennadi
-> 
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
