@@ -1,99 +1,98 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB821A5A2
-	for <linux-clk@vger.kernel.org>; Sat,  2 Mar 2024 18:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD4D376EB;
+	Sat,  2 Mar 2024 18:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709402890; cv=none; b=WKcBM1hXzsHTuG4NMfi9Nu4wrhCHy/y+IdBYk44K1h7yZqONykSF2NjbvU6vrBnrvpySKGJAyI+jUjX5C1bdHLAgQ3eF1u1CipheDhNgP4mFlgsUbOx6SrcSIkI4/1ZUGqiJuoZneFzGJmUUwKRHpCj6lskdVoDBzBBdRVISEo4=
+	t=1709404907; cv=none; b=tVpHUjdm/Zx9xZxeuCpabyjfxz+hEyzXNO1eRWWUajdBMl0viiZbULaNcp4eugiBAsPszNHRcNWWTVm3Xt35lCCdVEY9rmJ6VI4ysFrQUebbwQwQss9eTfolXQfUDkAkNRPlAedlkxWx38EZLintyBuFEwxxIeOvcgf3YlCs6vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709402890; c=relaxed/simple;
-	bh=9ehYOdJ1WKxeEsu3TjXulCHO8H7sfOL9hDGT0+rkSnA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IUoeOj7hroS4U5AfuZB0zRBFZwTqqDYLb4rMWbaVR8iKVXHxjHAL3OJkiOFcxrqOaEFRtrPUC2VsWmll733/i7WDIFJxQjyui9ER6JLOJ0QfI83Cyo1WRBCTPQWhjpb/9MzPUAkjbLJgP1YAAb5nYVdZIhpIJ5p+I7P3TdHnnpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LLmVXcgm; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1709404907; c=relaxed/simple;
+	bh=LVXdkM0Nxq6bVW0IsDj2dHOFAaUWxzw+WVZYqgrnLvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PI5TQh9BJTTPSBE2I4XzbRBkaCDESZhedZkjmJvt+VncVkdQUJ7Bawecr9A2pOpZff0Smb6rEfWaJaPGhiHypiKQFg/ojMGjbVQGRCZC0Euwyo+8jQgllQ0QQElksz08xSdneyLgak3yRnbMaFJ9bOum39sS44b08Z6Sl04lCOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVx2aGn1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LLmVXcgm"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-412d537a91bso3578945e9.1
-        for <linux-clk@vger.kernel.org>; Sat, 02 Mar 2024 10:08:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1709402885; x=1710007685; darn=vger.kernel.org;
-        h=mime-version:message-id:date:subject:cc:to:from:user-agent:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SLF4zBiiy5eYRgAOdWp9waqGpl1ho9XW/EYUvyzsnOk=;
-        b=LLmVXcgmYKMXNW6SJAjGZQVeVyzrl7jWZ/JW9/3Z4Tb0c7843ytRyWkCocnAxN5rru
-         /++pMzex5Ff1xGpgomHTg52zYSBW6lADv7GufC0qE36hAN5iTOmXPwmKMG5LR7Lhx4+Y
-         loskRxRBY3zoArKUyDulou7A1iCfJf9zTxeZImxoE1v+tJM01+eDlhvFFPAhG+oIKTrf
-         zXaV7MrLBhxa8MNmGL3xMJy8H9V1ddhTba72IvHPkmgX7PiebgieU0jA3LtvFGEmg+Ie
-         hNhcuWz/mpaYouOjgg1VCQAl90Fzh2BU+AAgJKnKwC2s4HlOKXs7U1XkSAeIjMSAvY76
-         k2bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709402885; x=1710007685;
-        h=mime-version:message-id:date:subject:cc:to:from:user-agent
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SLF4zBiiy5eYRgAOdWp9waqGpl1ho9XW/EYUvyzsnOk=;
-        b=uuzaWI5mRmlfOEshzeBMli7PPGljb/IPuzO3MuUCVftO3O30xiZjBSV0VW0Hk5hklx
-         NlD86vDznV6XtwWlkhDPjQj+biSJKQm6oRDL+OWnN3uYn/6zSuhiduOTlnZSb1cGsIQF
-         MhIw3+7q1GLTLR5tjpGEgY1YK7glhaqoZGjliq+ph+/JM9jt3YV0Kto03JIRbMbkXwxj
-         da9cxyg/G7dmU62uaUw3K+VjeSoGAGbZcFwQpmXKEyxzWM8Otf4Hass/DAOE7qMJ/znM
-         5yq3nVaeqsfUsr1so5WC8ce7g/vdzC4W6SmztQIaqaeArUVZlZbn5UJiD5bAgL/Jhm1A
-         CLHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKUU+6QKuFwTPySsj21+iEatsKsTnfaObFrWtH9n3seRxsX03a2aMlnuSs0gh9szkNYv6AATfuvNKCM0gNIAKw5MGJsP/3O4hR
-X-Gm-Message-State: AOJu0YxYjnRwLahy5kIJQhgdCILyJLXynDbP4oyDrZU1C+HfFaocN5e8
-	QgPEzJQs6o512ejH4FfiaZniIeJnX8AM5oLSnidxKtV9lbkg/B01SsK0A9IBXyA=
-X-Google-Smtp-Source: AGHT+IEbL3jTWkPW+uo1Ej4/lozCj4JVhQZyiD+Ne6++oEHswf94tzRS6s3mj9W8ZGpuyzV3P3Y73A==
-X-Received: by 2002:a05:600c:500d:b0:412:cc3b:dcc7 with SMTP id n13-20020a05600c500d00b00412cc3bdcc7mr3266201wmr.8.1709402884509;
-        Sat, 02 Mar 2024 10:08:04 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:605b:c894:d600:8038])
-        by smtp.gmail.com with ESMTPSA id n6-20020a05600c4f8600b0041273fc463csm12496889wmq.17.2024.03.02.10.08.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Mar 2024 10:08:04 -0800 (PST)
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, kevin hilman
- <khilman@kernel.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "linux-amlogic@lists.infradead.org"
- <linux-amlogic@lists.infradead.org>
-Subject: [GIT PULL] clk: meson: amlogic clock updates for v6.9
-Date: Sat, 02 Mar 2024 19:04:03 +0100
-Message-ID: <1jle70se0s.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVx2aGn1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 276F5C433C7;
+	Sat,  2 Mar 2024 18:41:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709404907;
+	bh=LVXdkM0Nxq6bVW0IsDj2dHOFAaUWxzw+WVZYqgrnLvs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TVx2aGn12Ppv2HW9eOqIN8bs40TVMQ///mkMRM/ewkk29DnDj87Qn+QsVgR8ozbqg
+	 B4WcYL6P3FEV6H7+ae797s2XxDnCJd4lcahrNwAPsof3Uwd8vGZUwMWOdV41hsCg2N
+	 Ppj7K5liIo5MuJbS5XDF10CDpx5IchWxbr/ryfYWyavfRP3P3sQsDSjB/7VkvIequh
+	 4EKUiRC8af7rGk6CoBp8owGojk5yK0PRVLaafUijxJ61vJ38k5KNc5Z2rcCf7HrGXo
+	 ktmQp5XvbepgWHkdKfuBaj/MlBP5Cq6qEC1+mHUnFsA6KafYWNqy7Z7F18BnWZz1sA
+	 CsdQ4NGO3CzgA==
+Date: Sat, 2 Mar 2024 12:41:44 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Gabor Juhos <j4g8y7@gmail.com>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+	Varadarajan Narayanan <quic_varada@quicinc.com>, Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, 
+	Devi Priya <quic_devipriy@quicinc.com>, Anusha Rao <quic_anusha@quicinc.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Georgi Djakov <gdjakov@mm-sol.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] clk: qcom: gcc-ipq5018: fix terminating of frequency
+ table arrays
+Message-ID: <35zcbdj7sk6y7cdpqs7s3exsouzftzlgj6lvuglnyvuxfshvgs@m7rz5owrinud>
+References: <20240229-freq-table-terminator-v1-0-074334f0905c@gmail.com>
+ <20240229-freq-table-terminator-v1-1-074334f0905c@gmail.com>
+ <ZeGic5cG8lneKJXp@hovoldconsulting.com>
+ <91b36da5-637d-4156-8be4-5aed55fc3c5d@gmail.com>
+ <ZeHgI2nsADrkecC8@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZeHgI2nsADrkecC8@hovoldconsulting.com>
 
+On Fri, Mar 01, 2024 at 03:03:15PM +0100, Johan Hovold wrote:
+> On Fri, Mar 01, 2024 at 02:37:01PM +0100, Gabor Juhos wrote:
+> > Hi Johan,
+> > 
+> > 2024. 03. 01. 10:40 keltezéssel, Johan Hovold írta:
+> > > On Thu, Feb 29, 2024 at 07:07:46PM +0100, Gabor Juhos wrote:
+> > >> The frequency table arrays are supposed to be terminated with an
+> > >> empty element. Add such entry to the end of the arrays where it
+> > >> is missing in order to avoid possible out-of-bound access when
+> > >> the table is traversed by functions like qcom_find_freq() or
+> > >> qcom_find_freq_floor().
+> > >>
+> > >> Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
+> > > 
+> > > Good find!
+> > > 
+> > > Looks like these should be backported to the stable kernels as well so
+> > > someone should add:
+> > > 
+> > > Cc: stable@vger.kernel.org
+> > > 
+> > > to all patches except possibly the sc8280xp one (that camera clock
+> > > controller was added in 6.8-rc1 so that patch does not need it in case
+> > > you can these fixes in before 6.8 is released).
+> > 
+> > You are right maybe, although I did not find strong enough reasons for adding
+> > the stable tags.
+> > 
+> > Only the changes of the gcc-ipq5018 driver has been tested on real hardware the
+> > others are not. So those does not fit into the "It must be obviously correct and
+> > tested." rule.
+> 
+> Since this looks like a straight-forward and obviously correct fix for a
+> bug which could have bad consequences, not being able to test each patch
+> on actual hardware is not a problem.
+> 
 
-Hi Stephen,
+I agree, and I'm adding the Cc: stable while applying the patches.
 
-Here is the amlogic clock update for v6.9.
-There is just a single fix for an Oops happening on the axg when listing
-the clocks through debugfs.
-
-The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
-
-  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
-
-are available in the Git repository at:
-
-  https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.9-1
-
-for you to fetch changes up to ba535bce57e71463a86f8b33a0ea88c26e3a6418:
-
-  clk: meson: Add missing clocks to axg_clk_regmaps (2024-02-05 10:06:21 +0100)
-
-----------------------------------------------------------------
-Amlogic clock updates for v6.9
-
-* Fix clock listing Oops on axg
-
-----------------------------------------------------------------
-Igor Prusov (1):
-      clk: meson: Add missing clocks to axg_clk_regmaps
-
- drivers/clk/meson/axg.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks,
+Bjorn
