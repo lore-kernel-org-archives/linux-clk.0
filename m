@@ -1,31 +1,33 @@
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8FC7F
-	for <linux-clk@vger.kernel.org>; Sun,  3 Mar 2024 12:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A461B664
+	for <linux-clk@vger.kernel.org>; Sun,  3 Mar 2024 12:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709467666; cv=none; b=CzYuYFXAbX1Yt+TyXmfqiQcCcVDQK6vWkbPXBri0x/U3H+fFpKtZmvahtNOX1qTURYGsjqa5TyMcuf3x6iX8y1fwElPPK6fCfDRuhFuYs5NnxpLT9lTKt8WNDRL9mGFN0/SN3gwCvivvw2nS3NR8Kycuhe0Z3K9pWbcvE2HMoXg=
+	t=1709468062; cv=none; b=LlvB50sMUvIkjQF0Xw2DhdPVe51vHnDwe+Z78bCYDVMhGrqyxLevG4Awdn3CccvTGVmVId03L3fThxNkoAsE2aWqyor2RGBU5Dtb1fPhPLdbLTi8HQem5U8qL8dVYWRX8g6coHo2XOaYHzzoNsIRahm7wVA+mbtLCBnnA0mTMvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709467666; c=relaxed/simple;
-	bh=8TfYbH/Sb4JWApIFsRo+aPKWTwj/9+8x40iu73tFba4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SjDb6G2KQbBz0VYSRwu6s/SFOMO9bf/k4kY02JkfjoIiESUStIbOoUVYEl0hP9S1dHoYk9iAajpaQNhpQPRkFng7hadmpAfGKNf9+Ox9LRb6h99MlMO9GaSijLYcOR3qKGwFZ55lx2vg2XK6jMRvy2V+o5UJsVvSLigb2R/73eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+	s=arc-20240116; t=1709468062; c=relaxed/simple;
+	bh=ueeAezcywm5cI/6F2f6lA2+yuhtrVFvftQ3aZWTbDfo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BVcrwhINfq6ttj6ypLHLZsmHXS10SYTHftjxRra6/J+laKcpsQoir7Cia7rhzJZ1MEfbqMZhVE/XXpOyBSDvoifcZWdiR8gG9cbWn1N778c5wTL0Sf8B3C21EnbcqeJlPfGlRR1LfDlR8QWQAVS7pRZp6xsU0Wp7OlYP0tCzymI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-26-217.elisa-laajakaista.fi [88.113.26.217])
-	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-	id 9ef0446a-d956-11ee-a9de-005056bdf889;
-	Sun, 03 Mar 2024 14:07:35 +0200 (EET)
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id 8b2a64d2-d957-11ee-b972-005056bdfda7;
+	Sun, 03 Mar 2024 14:14:11 +0200 (EET)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
 To: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Heiko Stuebner <heiko@sntech.de>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v1 1/1] clk: fractional-divider: Use bit operations consistently
-Date: Sun,  3 Mar 2024 14:07:32 +0200
-Message-ID: <20240303120732.240355-1-andy.shevchenko@gmail.com>
+Subject: [PATCH v1 1/1] clk: fractional-divider: Move mask calculations out of lock
+Date: Sun,  3 Mar 2024 14:14:10 +0200
+Message-ID: <20240303121410.240761-1-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,42 +37,36 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use BIT() where makes sense. This alings usage of bit operations
-in the same pieces of code. Moreover, strictly speaking by the
-letter of the C standard, left shift of 1 by 31 bits is UB (undefined
-behaviour), switching to BIT() addresses that as well.
+There is no need to calculate masks under the lock taken.
+Move them out of it.
 
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/clk/clk-fractional-divider.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/clk-fractional-divider.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index 5067e067e906..a0178182fc72 100644
+index a0178182fc72..da057172cc90 100644
 --- a/drivers/clk/clk-fractional-divider.c
 +++ b/drivers/clk/clk-fractional-divider.c
-@@ -140,8 +140,8 @@ void clk_fractional_divider_general_approximation(struct clk_hw *hw,
+@@ -195,14 +195,14 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		n--;
  	}
  
- 	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
--		max_m = 1 << fd->mwidth;
--		max_n = 1 << fd->nwidth;
-+		max_m = BIT(fd->mwidth);
-+		max_n = BIT(fd->nwidth);
- 	} else {
- 		max_m = GENMASK(fd->mwidth - 1, 0);
- 		max_n = GENMASK(fd->nwidth - 1, 0);
-@@ -182,8 +182,8 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
- 	u32 val;
++	mmask = GENMASK(fd->mwidth - 1, 0) << fd->mshift;
++	nmask = GENMASK(fd->nwidth - 1, 0) << fd->nshift;
++
+ 	if (fd->lock)
+ 		spin_lock_irqsave(fd->lock, flags);
+ 	else
+ 		__acquire(fd->lock);
  
- 	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
--		max_m = 1 << fd->mwidth;
--		max_n = 1 << fd->nwidth;
-+		max_m = BIT(fd->mwidth);
-+		max_n = BIT(fd->nwidth);
- 	} else {
- 		max_m = GENMASK(fd->mwidth - 1, 0);
- 		max_n = GENMASK(fd->nwidth - 1, 0);
+-	mmask = GENMASK(fd->mwidth - 1, 0) << fd->mshift;
+-	nmask = GENMASK(fd->nwidth - 1, 0) << fd->nshift;
+-
+ 	val = clk_fd_readl(fd);
+ 	val &= ~(mmask | nmask);
+ 	val |= (m << fd->mshift) | (n << fd->nshift);
 -- 
 2.44.0
 
