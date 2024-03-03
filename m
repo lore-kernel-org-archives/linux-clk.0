@@ -1,130 +1,76 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DF763C;
-	Sun,  3 Mar 2024 01:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8FC7F
+	for <linux-clk@vger.kernel.org>; Sun,  3 Mar 2024 12:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709430191; cv=none; b=H2TiJfq3f0KNDA+o+R2NyTKZn3cVKSrNUeW5aAS/DQck1xbjXvJu8h+RsixWxVzJenJiiF3wbGgeQO3H+ZvjXGbUFJHmO/tQ/U0e7ze7QkBEHMnGbVamlDKDTP26fQIPSpoJqWODHpWaaq7UJDMMCV10xU5fjZ0B2IyYhhu9xnM=
+	t=1709467666; cv=none; b=CzYuYFXAbX1Yt+TyXmfqiQcCcVDQK6vWkbPXBri0x/U3H+fFpKtZmvahtNOX1qTURYGsjqa5TyMcuf3x6iX8y1fwElPPK6fCfDRuhFuYs5NnxpLT9lTKt8WNDRL9mGFN0/SN3gwCvivvw2nS3NR8Kycuhe0Z3K9pWbcvE2HMoXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709430191; c=relaxed/simple;
-	bh=bPtaNql4S+FrAHjRxxcQH2iuVQisNn3g9p6ODBEDHVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shMfmVOktPAyWD5l+IqJddpHYg4Y4lXpo1DMWwmWvaXMuZGGlbwhvvdwgnZkjfwk1ROyxp0HrSbUquyj38h2jLu+5q4cDrLE0TT44NdG4S8zfGAT3LCKI2Vwg6JAogLuiKhtDx6tjInMn8Yro2Zidx6wYokAZvUzDm89I2sC/TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NN8ctIDa; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NN8ctIDa"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709430190; x=1740966190;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bPtaNql4S+FrAHjRxxcQH2iuVQisNn3g9p6ODBEDHVU=;
-  b=NN8ctIDaNi0LvPfqsxqd52+hM0rOJKU2lKZd50EWWf20VmU7DRIIXW9u
-   7pCju84EZxrTgKlNN4Sas6w4+pTVyh7yX6ZzHY6uColmmOq5sqJg015DW
-   NWgRolD3BwTDxcNbslHzeSYakE8I3YwWbQzE8KG6pHX8LerhtEauR56kq
-   lMjJusOXPPaDK6tmZMrzKP1etQfAJmQrK5KGVqJF4K3P4C30zJYOdnDAn
-   2yw6X8AWaQcdXbexAYPMhDQDpW7JA0Fo2WjBAAsZQA3ffRIAL7r1TQzHO
-   KGyGTVpncRJnSUP0OphahOXT512ccPpm4r6rychV+JjIzCje6Wceeg5Nl
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11001"; a="4114457"
-X-IronPort-AV: E=Sophos;i="6.06,200,1705392000"; 
-   d="scan'208";a="4114457"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2024 17:43:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,200,1705392000"; 
-   d="scan'208";a="8722174"
-Received: from lkp-server01.sh.intel.com (HELO b21307750695) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 02 Mar 2024 17:43:05 -0800
-Received: from kbuild by b21307750695 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rgasY-0000QO-20;
-	Sun, 03 Mar 2024 01:43:02 +0000
-Date: Sun, 3 Mar 2024 09:42:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 2/2] clk: imx: add i.MX95 BLK CTL clk driver
-Message-ID: <202403030856.IfA30QpA-lkp@intel.com>
-References: <20240228-imx95-blk-ctl-v1-2-9b5ae3c14d83@nxp.com>
+	s=arc-20240116; t=1709467666; c=relaxed/simple;
+	bh=8TfYbH/Sb4JWApIFsRo+aPKWTwj/9+8x40iu73tFba4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SjDb6G2KQbBz0VYSRwu6s/SFOMO9bf/k4kY02JkfjoIiESUStIbOoUVYEl0hP9S1dHoYk9iAajpaQNhpQPRkFng7hadmpAfGKNf9+Ox9LRb6h99MlMO9GaSijLYcOR3qKGwFZ55lx2vg2XK6jMRvy2V+o5UJsVvSLigb2R/73eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-217.elisa-laajakaista.fi [88.113.26.217])
+	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+	id 9ef0446a-d956-11ee-a9de-005056bdf889;
+	Sun, 03 Mar 2024 14:07:35 +0200 (EET)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v1 1/1] clk: fractional-divider: Use bit operations consistently
+Date: Sun,  3 Mar 2024 14:07:32 +0200
+Message-ID: <20240303120732.240355-1-andy.shevchenko@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240228-imx95-blk-ctl-v1-2-9b5ae3c14d83@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Peng,
+Use BIT() where makes sense. This alings usage of bit operations
+in the same pieces of code. Moreover, strictly speaking by the
+letter of the C standard, left shift of 1 by 31 bits is UB (undefined
+behaviour), switching to BIT() addresses that as well.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/clk/clk-fractional-divider.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-[auto build test ERROR on 22ba90670a51a18c6b36d285fddf92b9887c0bc3]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan-OSS/dt-bindindgs-clock-support-NXP-i-MX95-BLK-CTL-module/20240228-122408
-base:   22ba90670a51a18c6b36d285fddf92b9887c0bc3
-patch link:    https://lore.kernel.org/r/20240228-imx95-blk-ctl-v1-2-9b5ae3c14d83%40nxp.com
-patch subject: [PATCH 2/2] clk: imx: add i.MX95 BLK CTL clk driver
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240303/202403030856.IfA30QpA-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240303/202403030856.IfA30QpA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202403030856.IfA30QpA-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/device/driver.h:21,
-                    from include/linux/device.h:32,
-                    from include/linux/pm_runtime.h:11,
-                    from drivers/clk/imx/clk-imx95-blk-ctl.c:9:
->> drivers/clk/imx/clk-imx95-blk-ctl.c:425:25: error: 'imx95_blk_ctl_match' undeclared here (not in a function); did you mean 'imx95_bc_of_match'?
-     425 | MODULE_DEVICE_TABLE(of, imx95_blk_ctl_match);
-         |                         ^~~~~~~~~~~~~~~~~~~
-   include/linux/module.h:244:15: note: in definition of macro 'MODULE_DEVICE_TABLE'
-     244 | extern typeof(name) __mod_##type##__##name##_device_table               \
-         |               ^~~~
->> include/linux/module.h:244:21: error: '__mod_of__imx95_blk_ctl_match_device_table' aliased to undefined symbol 'imx95_blk_ctl_match'
-     244 | extern typeof(name) __mod_##type##__##name##_device_table               \
-         |                     ^~~~~~
-   drivers/clk/imx/clk-imx95-blk-ctl.c:425:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
-     425 | MODULE_DEVICE_TABLE(of, imx95_blk_ctl_match);
-         | ^~~~~~~~~~~~~~~~~~~
-
-
-vim +425 drivers/clk/imx/clk-imx95-blk-ctl.c
-
-   415	
-   416	static const struct of_device_id imx95_bc_of_match[] = {
-   417		{ .compatible = "nxp,imx95-cameramix-csr", .data = &camblk_dev_data },
-   418		{ .compatible = "nxp,imx95-display-master-csr", },
-   419		{ .compatible = "nxp,imx95-dispmix-lvds-csr", .data = &lvds_csr_dev_data },
-   420		{ .compatible = "nxp,imx95-dispmix-csr", .data = &dispmix_csr_dev_data },
-   421		{ .compatible = "nxp,imx95-netcmix-blk-ctrl", },
-   422		{ .compatible = "nxp,imx95-vpumix-csr", .data = &vpublk_dev_data },
-   423		{ /* Sentinel */ },
-   424	};
- > 425	MODULE_DEVICE_TABLE(of, imx95_blk_ctl_match);
-   426	
-
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 5067e067e906..a0178182fc72 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -140,8 +140,8 @@ void clk_fractional_divider_general_approximation(struct clk_hw *hw,
+ 	}
+ 
+ 	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
+-		max_m = 1 << fd->mwidth;
+-		max_n = 1 << fd->nwidth;
++		max_m = BIT(fd->mwidth);
++		max_n = BIT(fd->nwidth);
+ 	} else {
+ 		max_m = GENMASK(fd->mwidth - 1, 0);
+ 		max_n = GENMASK(fd->nwidth - 1, 0);
+@@ -182,8 +182,8 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 val;
+ 
+ 	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
+-		max_m = 1 << fd->mwidth;
+-		max_n = 1 << fd->nwidth;
++		max_m = BIT(fd->mwidth);
++		max_n = BIT(fd->nwidth);
+ 	} else {
+ 		max_m = GENMASK(fd->mwidth - 1, 0);
+ 		max_n = GENMASK(fd->nwidth - 1, 0);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.44.0
+
