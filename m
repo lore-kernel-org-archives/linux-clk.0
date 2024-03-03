@@ -1,105 +1,130 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA953FE2A;
-	Sat,  2 Mar 2024 19:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DF763C;
+	Sun,  3 Mar 2024 01:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709407107; cv=none; b=jNWc5o6UUReH5cgPwXD0TeUvyD+4y68OS3Hz3z+BDnGDi+etpk6//9S3cZi6qcnlUkZsLkv2bG6hHX2LdxP5Rcd+ehWQJqsp/ghV9A1y875atpziw2hMofQB/EIICaXqCTBv/C16VxjQeC2CELMOwj5iodgW5erBOISPY7CbRpY=
+	t=1709430191; cv=none; b=H2TiJfq3f0KNDA+o+R2NyTKZn3cVKSrNUeW5aAS/DQck1xbjXvJu8h+RsixWxVzJenJiiF3wbGgeQO3H+ZvjXGbUFJHmO/tQ/U0e7ze7QkBEHMnGbVamlDKDTP26fQIPSpoJqWODHpWaaq7UJDMMCV10xU5fjZ0B2IyYhhu9xnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709407107; c=relaxed/simple;
-	bh=Wk6ntCjlPsAts86m9vzbnmY7O2BjJa1dq1qUTFVePM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Oqp0/gM6+r3gGgApGTxR6SU793/sUJ4BYU/fRHMkZq3uK65n70uNAZON5SZeA779QT4crWhNxnDs8TLMudZCHdkd8EW3aZms7Q5w2kCwcpLFLDeFtqPwt7Wno/7PIIQJhOYSbG7qWXcp8k7Nv2L536sl8YFNQ8zebCcWEdrb35Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=PejlC6B9; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1709430191; c=relaxed/simple;
+	bh=bPtaNql4S+FrAHjRxxcQH2iuVQisNn3g9p6ODBEDHVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=shMfmVOktPAyWD5l+IqJddpHYg4Y4lXpo1DMWwmWvaXMuZGGlbwhvvdwgnZkjfwk1ROyxp0HrSbUquyj38h2jLu+5q4cDrLE0TT44NdG4S8zfGAT3LCKI2Vwg6JAogLuiKhtDx6tjInMn8Yro2Zidx6wYokAZvUzDm89I2sC/TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NN8ctIDa; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="PejlC6B9"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KM1TopTRXtLKN5oONX1Ztk1pd6ed32mzkDGzZN+rujY=; b=PejlC6B9YRD/fiQG8n+nRdIjna
-	kpTyimgzTR7Lv9KaKWFXoRdy8epOrVj8s+jvEvBKYn4kyFZtlNhxOeWizSfVk8uIKfJhGzdtD6VmE
-	szEbJROb/2NQV8fB9Ns80NhHorsNsZlG5K97pZ1FBqBPrCAR3rY8Z+pHxdr79sggXqQUAvrV1vUJh
-	SpHKJNPWKMoKtmQe53IJIZ/Q8ChF/m35OAc8H1w6AwOhyTpM/jfGhA47QFI6a11IF1XTGahAlgMb4
-	CXiZ6jXJrJnv1NSspmPV1r/n/V61e7Pe/0BJP9jmDwAxPFbq0opeILqtKz5gRUnVz5+EopZ9fENyq
-	U0ht6rLg==;
-Received: from p200301077700b1001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:107:7700:b100:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <andreas@kemnade.info>)
-	id 1rgUsB-009xx8-Qc; Sat, 02 Mar 2024 20:18:15 +0100
-Date: Sat, 2 Mar 2024 20:18:13 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Tony Lindgren <tony@atomide.com>
-Cc: =?UTF-8?B?QmVub8OudA==?= Cousson <bcousson@baylibre.com>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Tero Kristo <kristo@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/4] Use reg instead of ti,bit-shift for clksel
-Message-ID: <20240302201813.06fc09d7@aktux>
-In-Reply-To: <20240229070626.GH52537@atomide.com>
-References: <20240213105730.5287-1-tony@atomide.com>
-	<20240214001140.2abe0d80@aktux>
-	<20240214054044.GK52537@atomide.com>
-	<20240229070626.GH52537@atomide.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NN8ctIDa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709430190; x=1740966190;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bPtaNql4S+FrAHjRxxcQH2iuVQisNn3g9p6ODBEDHVU=;
+  b=NN8ctIDaNi0LvPfqsxqd52+hM0rOJKU2lKZd50EWWf20VmU7DRIIXW9u
+   7pCju84EZxrTgKlNN4Sas6w4+pTVyh7yX6ZzHY6uColmmOq5sqJg015DW
+   NWgRolD3BwTDxcNbslHzeSYakE8I3YwWbQzE8KG6pHX8LerhtEauR56kq
+   lMjJusOXPPaDK6tmZMrzKP1etQfAJmQrK5KGVqJF4K3P4C30zJYOdnDAn
+   2yw6X8AWaQcdXbexAYPMhDQDpW7JA0Fo2WjBAAsZQA3ffRIAL7r1TQzHO
+   KGyGTVpncRJnSUP0OphahOXT512ccPpm4r6rychV+JjIzCje6Wceeg5Nl
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11001"; a="4114457"
+X-IronPort-AV: E=Sophos;i="6.06,200,1705392000"; 
+   d="scan'208";a="4114457"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2024 17:43:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,200,1705392000"; 
+   d="scan'208";a="8722174"
+Received: from lkp-server01.sh.intel.com (HELO b21307750695) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 02 Mar 2024 17:43:05 -0800
+Received: from kbuild by b21307750695 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rgasY-0000QO-20;
+	Sun, 03 Mar 2024 01:43:02 +0000
+Date: Sun, 3 Mar 2024 09:42:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 2/2] clk: imx: add i.MX95 BLK CTL clk driver
+Message-ID: <202403030856.IfA30QpA-lkp@intel.com>
+References: <20240228-imx95-blk-ctl-v1-2-9b5ae3c14d83@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240228-imx95-blk-ctl-v1-2-9b5ae3c14d83@nxp.com>
 
-Hi Tony,
+Hi Peng,
 
-On Thu, 29 Feb 2024 09:06:26 +0200
-Tony Lindgren <tony@atomide.com> wrote:
+kernel test robot noticed the following build errors:
 
-> * Tony Lindgren <tony@atomide.com> [240214 05:41]:
-> > * Andreas Kemnade <andreas@kemnade.info> [240213 23:11]:  
-> > > On Tue, 13 Feb 2024 12:56:40 +0200
-> > > Tony Lindgren <tony@atomide.com> wrote:
-> > >   
-> > > > Hi all,
-> > > > 
-> > > > This series updates the clksel clocks to use the standard reg property
-> > > > instead of ti,bit-shift.
-> > > > 
-> > > > I'd like to apply these before we make further use of the clksel clocks
-> > > > to reduce the dtb check warnings.
-> > > >   
-> > > 
-> > > hmm, we still have ti,bit-shift if these clocks are not used below a ti,clksel.
-> > > Just wondering, can we completely deorbit ti,bit-shift if we used #address-cells = <2>;
-> > > in those cases? I wait a bit with further txt->yaml conversions until
-> > > this is settled.  
-> > 
-> > No need to wait on the yaml conversion I think :) How about just tag the
-> > ti,bit-shift property as deprecated? And add a comment saying it is only
-> > needed for the remaining unconnected clocks.
-> > 
-> > Eventually we can move all the component clocks under clksel clocks, or the
-> > related clock such as the dpll clock for the clkdcoldo clocks.  
-> 
-> Oh and yes, using #clock-cells = <2> would be nice eventually :) I think
-> the clkcel binding already supports that. But that still leaves the issue
-> of unconnected composite clocks.. I'm pretty sure they all have some real
-> parent like clksel for dpll though.
-> 
-> If you had some good idea in mind for the #address-cells = <2> for the
-> remaining unconnected composite clocks maybe clarify it a bit.
-> 
-I was just wondering whether we could do reg = <register bit> then.
+[auto build test ERROR on 22ba90670a51a18c6b36d285fddf92b9887c0bc3]
 
-Regards,
-Andreas
+url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan-OSS/dt-bindindgs-clock-support-NXP-i-MX95-BLK-CTL-module/20240228-122408
+base:   22ba90670a51a18c6b36d285fddf92b9887c0bc3
+patch link:    https://lore.kernel.org/r/20240228-imx95-blk-ctl-v1-2-9b5ae3c14d83%40nxp.com
+patch subject: [PATCH 2/2] clk: imx: add i.MX95 BLK CTL clk driver
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240303/202403030856.IfA30QpA-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240303/202403030856.IfA30QpA-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202403030856.IfA30QpA-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/device/driver.h:21,
+                    from include/linux/device.h:32,
+                    from include/linux/pm_runtime.h:11,
+                    from drivers/clk/imx/clk-imx95-blk-ctl.c:9:
+>> drivers/clk/imx/clk-imx95-blk-ctl.c:425:25: error: 'imx95_blk_ctl_match' undeclared here (not in a function); did you mean 'imx95_bc_of_match'?
+     425 | MODULE_DEVICE_TABLE(of, imx95_blk_ctl_match);
+         |                         ^~~~~~~~~~~~~~~~~~~
+   include/linux/module.h:244:15: note: in definition of macro 'MODULE_DEVICE_TABLE'
+     244 | extern typeof(name) __mod_##type##__##name##_device_table               \
+         |               ^~~~
+>> include/linux/module.h:244:21: error: '__mod_of__imx95_blk_ctl_match_device_table' aliased to undefined symbol 'imx95_blk_ctl_match'
+     244 | extern typeof(name) __mod_##type##__##name##_device_table               \
+         |                     ^~~~~~
+   drivers/clk/imx/clk-imx95-blk-ctl.c:425:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
+     425 | MODULE_DEVICE_TABLE(of, imx95_blk_ctl_match);
+         | ^~~~~~~~~~~~~~~~~~~
+
+
+vim +425 drivers/clk/imx/clk-imx95-blk-ctl.c
+
+   415	
+   416	static const struct of_device_id imx95_bc_of_match[] = {
+   417		{ .compatible = "nxp,imx95-cameramix-csr", .data = &camblk_dev_data },
+   418		{ .compatible = "nxp,imx95-display-master-csr", },
+   419		{ .compatible = "nxp,imx95-dispmix-lvds-csr", .data = &lvds_csr_dev_data },
+   420		{ .compatible = "nxp,imx95-dispmix-csr", .data = &dispmix_csr_dev_data },
+   421		{ .compatible = "nxp,imx95-netcmix-blk-ctrl", },
+   422		{ .compatible = "nxp,imx95-vpumix-csr", .data = &vpublk_dev_data },
+   423		{ /* Sentinel */ },
+   424	};
+ > 425	MODULE_DEVICE_TABLE(of, imx95_blk_ctl_match);
+   426	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
