@@ -1,77 +1,85 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5F933F6
-	for <linux-clk@vger.kernel.org>; Mon,  4 Mar 2024 03:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D2712E4F;
+	Mon,  4 Mar 2024 07:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709522912; cv=none; b=LSEW2Zy7QmD4bMACJ4QiOmen3/zYOCjwda4IN0m/T/1GyFNvBhRAFcDoQrJDvJadKHhsXzVlzlhqkUBt/e3hESeALRsLCZ/vzdLJpkSDan7GPd4G3aDd6La9TEY4Ylt3YpbZXES/u6yS8Iy9x8IWkf2Nj1/8brvnXnroYzSaroY=
+	t=1709535967; cv=none; b=eH4EgF5ytNbOGDupki1QMCSgfdthbVSbV3JLZ5MMXcBB9FiNflkriQJaiGb+Ck8otFEJ1nWciNlRlYagwo0b20JTLjFjCXI8nTZm99/K7HfgMZXApxxHEAdbBqmmV+aVHHrmE3xAY5x5uGcAMuTwJzoBRi0XHgY6ZQRyoPr3DNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709522912; c=relaxed/simple;
-	bh=zaCqbDv2/XlXGPllAK525n20UKA8SvXsWmlKlBE+yKo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EAZuXnI1Z1a/IW4wt9LxJk2Tc725jl/BxGXffocYPWuAm+7s9rMGzCjbUVmbcdhX3jmulBSsDCJRzmwW05BeiTeK5uT2FDU/8ClGZmrc6kcwR0iDLEI0pzK9XwodGt5AT3bgRFyJwusy1qOCdtxO2C5QFzLdgPYsoCL6cXbd8Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hbuelRFg; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hbuelRFg"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2d21cdbc85bso46955891fa.2
-        for <linux-clk@vger.kernel.org>; Sun, 03 Mar 2024 19:28:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1709522909; x=1710127709; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zaCqbDv2/XlXGPllAK525n20UKA8SvXsWmlKlBE+yKo=;
-        b=hbuelRFgOZHnVHd7ezvCqL5nmlDLAbP2+aRSYeEGPIIdIWg20iN1XchCOLNAvROCkn
-         0VEkmgLACDfNPoPtmLDLoeSBMEhEKxbP43GrKzhGJCjZmIFNYX9dPLQEodX3Rm6tZ59T
-         F1HQCbH5RIJTFwhn8wisfhjp7Rf3PtauKCymI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709522909; x=1710127709;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zaCqbDv2/XlXGPllAK525n20UKA8SvXsWmlKlBE+yKo=;
-        b=TtA4vfpR+s1+6Xc1Uip6pjB1vMF/FhftK1nvDEIaTNR7+6vGhUBzWy8mok0F0LSV1i
-         beRQz/VLRXsIzlHOKMP+VZ3jK+L+Zu035Jo21ZdXzx99pGigUsMXGZ/sBfjpvvThdPoE
-         9AN8DYy/s1CorTYjcJdKaoBihe5RWKDJV8QZIMQi0OtiVxSiP9hwKsR3FWOEh6cdnDLj
-         Jk0os/NdAXI6TeJB0xtYssnlpteyEiK2KOqyqOQaG+g7mrkLvUQQe7YgGxLRLeVjVA3O
-         KjkNjVdgKvSNBLJLgTUTFMGP1YZ0kodLp9T4w6hPhhSrPRMm4xo7AASMxWudH8mK/KAe
-         Ytdw==
-X-Gm-Message-State: AOJu0YwGIRvr1t1u3oCHdbqSFfkQyKkMUpSYI43pYHB5pSKaagAQhlZF
-	AM9trUrqgvo0m9t8zUsY7H6bJhHRFrMwqFzumjGL2YrRn5pictEHWpdJmWTej9pWEnF/Sl1huAy
-	bHEDZ8ZIpgOKILu58WfXAktADv7NkbvxV2eDfY5UIRjNmlMmWvQ==
-X-Google-Smtp-Source: AGHT+IEX83GLBNJB+QNwcFIXMoTZkODExcCHERXmVIl8aUNac2twIKfR5WnaqYIhJt/pNZJVY/YxZji44acT0blrZBU=
-X-Received: by 2002:a2e:81c6:0:b0:2d2:3fac:5fc7 with SMTP id
- s6-20020a2e81c6000000b002d23fac5fc7mr5106312ljg.45.1709522909066; Sun, 03 Mar
- 2024 19:28:29 -0800 (PST)
+	s=arc-20240116; t=1709535967; c=relaxed/simple;
+	bh=UY3jYcbaW813smmZuxZqveKa67RKQsYjT1xCWMoDsKs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=as7lxgLjj1xpb9QFAx/sR3f45ZELErVCmzQYwAFgAs9U/ocGfV+FJjnSZ9GT3OfVgTzpVlj10CJ+w6niDtez/f17m2P6jeyHD1Wo1ZIlDJ7DyMs1uBqWWfChIq1rD5bhLmPB+gnw1OzMYFmCEfElUUsGoqnr7ZITHjZlOXlmgpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875a9e.versanet.de ([83.135.90.158] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1rh2OZ-0006L9-Ks; Mon, 04 Mar 2024 08:05:55 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject:
+ Re: [PATCH v1 1/1] clk: fractional-divider: Move mask calculations out of
+ lock
+Date: Mon, 04 Mar 2024 08:05:54 +0100
+Message-ID: <2254891.Dhsi8hcfAM@diego>
+In-Reply-To: <20240303121410.240761-1-andy.shevchenko@gmail.com>
+References: <20240303121410.240761-1-andy.shevchenko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240303121410.240761-1-andy.shevchenko@gmail.com>
-In-Reply-To: <20240303121410.240761-1-andy.shevchenko@gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Mon, 4 Mar 2024 11:28:17 +0800
-Message-ID: <CAGXv+5HvpUpkXSZ1W+-sCiYaz6dv1d66q-j44hU0VMMwLFnF9A@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] clk: fractional-divider: Move mask calculations
- out of lock
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Heiko Stuebner <heiko@sntech.de>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Sun, Mar 3, 2024 at 8:14=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
+Am Sonntag, 3. M=E4rz 2024, 13:14:10 CET schrieb Andy Shevchenko:
 > There is no need to calculate masks under the lock taken.
 > Move them out of it.
->
+>=20
 > Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+> ---
+>  drivers/clk/clk-fractional-divider.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fract=
+ional-divider.c
+> index a0178182fc72..da057172cc90 100644
+> --- a/drivers/clk/clk-fractional-divider.c
+> +++ b/drivers/clk/clk-fractional-divider.c
+> @@ -195,14 +195,14 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsig=
+ned long rate,
+>  		n--;
+>  	}
+> =20
+> +	mmask =3D GENMASK(fd->mwidth - 1, 0) << fd->mshift;
+> +	nmask =3D GENMASK(fd->nwidth - 1, 0) << fd->nshift;
+> +
+>  	if (fd->lock)
+>  		spin_lock_irqsave(fd->lock, flags);
+>  	else
+>  		__acquire(fd->lock);
+> =20
+> -	mmask =3D GENMASK(fd->mwidth - 1, 0) << fd->mshift;
+> -	nmask =3D GENMASK(fd->nwidth - 1, 0) << fd->nshift;
+> -
+>  	val =3D clk_fd_readl(fd);
+>  	val &=3D ~(mmask | nmask);
+>  	val |=3D (m << fd->mshift) | (n << fd->nshift);
+>=20
+
+
+
+
