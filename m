@@ -1,89 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDE279DB5;
-	Sun,  3 Mar 2024 19:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A22F4416
+	for <linux-clk@vger.kernel.org>; Mon,  4 Mar 2024 03:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709495425; cv=none; b=C491nMHhgra9VVgHmVZm1aOGXrcSTnR0lhNrUFr3AfAfUxNJMxBwR/KqPwXGywwo18Uzkf5UEevOvaJ5/IVAIk0cbiPsBCIeKux86TVXo9Ke0JyGtMktVtQ1hB/bkLt7BrEOY7BshHxL0RmhtdMVYR5stXbR2mQn5De+S1sCUZw=
+	t=1709522690; cv=none; b=WHbEkjv3KJMPkVAg+C3fsxKRnI/TyMNiSRHcR0QjgjS0XsQKYFhxDC/r12w83haiNCHRS+aINqGoxnXhNvo01eBMwLDaMTKox6D+UyHPYtwTmy/KzJnvYNCxvdUJi8GWBpvDzjVvQjDTR5NWiV2PVwJkaPxCXlSMqb17/pTnIK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709495425; c=relaxed/simple;
-	bh=iBwmipl1/hUhuGVHK7DoLKTJPzEyRbBjJNTKDMKdf3k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mbc7mCYjiQOaUUTiiUBqYo7b+W2W9GCNq1Yg+B7gFlr0ePfTmi8YyrJwEVZruOrWFxj45opstMevxSnxC+xdHzcB21kCDqWaumEvWYpdsKiHRf9L6+KLY37zsyTw8tg58oh8Y+6OM7zYoPFU5r895HcunynJ9SrEbAtjjcDY6YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hgp6oR0f; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709522690; c=relaxed/simple;
+	bh=BzTSepAuqFk2iwTMwG1megTwsCGBNZgyhxfUaw1EYww=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UBMzynMfujVgkRGWzdkyuTrLpwl8qPWTf7me/ucwnWPBDzAte5xK4VLlgkH8SGUrtR0qZC0fnWngIel+lfdJfXbQxVhShKhrhfH0QjYtlwtjFNEd6c6alvfGy2q1TW2eUFiner6IzTbKotwF2NSGNjAAnxCLzU2opaLgDudTh9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KhB8Z4At; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgp6oR0f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B12EC43390;
-	Sun,  3 Mar 2024 19:50:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709495425;
-	bh=iBwmipl1/hUhuGVHK7DoLKTJPzEyRbBjJNTKDMKdf3k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hgp6oR0f6qoUMm2JArOqNP4pvydYZAefJXdnWKl8XqqDd2KBhQNKpOJyg35KMqd4i
-	 W43aVj85k7sAOpVZ7+rTVy2BcGDdk94PXh+8JKgudm95hvM9auiG4381d1emUsli/F
-	 atyrrMMt1l/VVnm/GnqbDHhzFPUPpdDx4CAxRVXNo2FTVxp6gan9DPq2AM0wb57K/X
-	 1UtciSXM3CT69U4sykcFBuPmw6+fehfznoy3bO2/XLkkbDynQuT210K1nNu/CzDX+D
-	 BUGoud6zgVc15DdsCixoggBy7BVV9plivGlZOavLfGEL2DL9eed0IEE0or9gfN+kPJ
-	 kAYeO807eDRsA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-	Varadarajan Narayanan <quic_varada@quicinc.com>,
-	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
-	Devi Priya <quic_devipriy@quicinc.com>,
-	Anusha Rao <quic_anusha@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Georgi Djakov <gdjakov@mm-sol.com>,
-	Gabor Juhos <j4g8y7@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] clk: qcom: fix frequency table termination in several drivers
-Date: Sun,  3 Mar 2024 13:50:19 -0600
-Message-ID: <170949540959.78121.7121935387305237731.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240229-freq-table-terminator-v1-0-074334f0905c@gmail.com>
-References: <20240229-freq-table-terminator-v1-0-074334f0905c@gmail.com>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KhB8Z4At"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2d208be133bso52450601fa.2
+        for <linux-clk@vger.kernel.org>; Sun, 03 Mar 2024 19:24:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1709522687; x=1710127487; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BzTSepAuqFk2iwTMwG1megTwsCGBNZgyhxfUaw1EYww=;
+        b=KhB8Z4AthnVazVBZVAEjV1VhR6ABdg/FOZhEbUSSUCto9mw3eNQwZHBiJGRv+JnpiA
+         g8LCBQrPhmsMkO9oqSLJrnMzf0kF9Hx8aUwW4PiNGYrVYA3CMPQrQzcsRepHvkUNNZmK
+         OwiQigh+IphXWBA6AgCvD1SXR7wVUTh7M/nOQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709522687; x=1710127487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BzTSepAuqFk2iwTMwG1megTwsCGBNZgyhxfUaw1EYww=;
+        b=bnRH7m2yF/MuJge0zrUgfumaYpAUBO+vjlq3to7PNCrWYlbg1xgaJQEg6C1cSy2o8u
+         i8ARdMZXoaxYPuKqk+jNKAgOMszbhc7skGcYmY+Msx8zSY6MKTe+R4t68OklLeBjfhoJ
+         +UqSvs0IuBYdKxmeNKivQCbWyOT14UyMlPs/CtUHbSOnM3S8573IQJfOWs7q7E8UuBfN
+         Uhy9Js5RypzeW7hhHU3XdVRuHH1wdBYvKyl/zVV3RB98QFQ3HNMFo0okaB3r0P4/CY51
+         uvLTGqdD0W5b5HpBtOEk1zTA3PPTHSVmUhQdWyI88wiDN8f2nGGhb7YqjMN2TnPygZns
+         6S4A==
+X-Gm-Message-State: AOJu0Yw+IVTPkYHZizzk1pkTp5ZPpJoAOU7LHvGtiQxsnpmxDSaR7icR
+	GldjhQXko8OEQDbaN2dkUAstRAqw1NFq9SC970VjZXhVDWZQsgflC1ujxujsgC2W/F5ia9jo/cX
+	/sRhKvvvMXwhRZHubMLgYfTHQg4XC1oq1s7z+C7/4TiJAQ+8=
+X-Google-Smtp-Source: AGHT+IEaehJcwv8Ql2bnEZCwMAwZ5eA5JpRBQx0Zydi4rfkUwXK43iue/SyplevfR5G+84KJ52NkA76SuR5iNQSwni0=
+X-Received: by 2002:a2e:720c:0:b0:2d2:f429:3a93 with SMTP id
+ n12-20020a2e720c000000b002d2f4293a93mr5725775ljc.42.1709522686619; Sun, 03
+ Mar 2024 19:24:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240303120732.240355-1-andy.shevchenko@gmail.com>
+In-Reply-To: <20240303120732.240355-1-andy.shevchenko@gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Mon, 4 Mar 2024 11:24:35 +0800
+Message-ID: <CAGXv+5H-xLEO8A2=BbYEOzZyX9x+-0tnkV-s60x6iYTjntGw_g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] clk: fractional-divider: Use bit operations consistently
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Mar 3, 2024 at 8:07=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> Use BIT() where makes sense. This alings usage of bit operations
+> in the same pieces of code. Moreover, strictly speaking by the
+> letter of the C standard, left shift of 1 by 31 bits is UB (undefined
+> behaviour), switching to BIT() addresses that as well.
+>
+> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-On Thu, 29 Feb 2024 19:07:45 +0100, Gabor Juhos wrote:
-> Add missing terminating entry to frequency table arrays in
-> several drivers. There are separate independent patches for
-> each affected driver.
-> 
-> The series is based on v6.8-rc6.
-> 
-> 
-> [...]
-
-Applied, thanks!
-
-[1/7] clk: qcom: gcc-ipq5018: fix terminating of frequency table arrays
-      commit: 90ad946fff70f312b8d23226afc38c13ddd88c4b
-[2/7] clk: qcom: gcc-ipq6018: fix terminating of frequency table arrays
-      commit: cdbc6e2d8108bc47895e5a901cfcaf799b00ca8d
-[3/7] clk: qcom: gcc-ipq8074: fix terminating of frequency table arrays
-      commit: 1040ef5ed95d6fd2628bad387d78a61633e09429
-[4/7] clk: qcom: gcc-ipq9574: fix terminating of frequency table arrays
-      commit: bd2b6395671d823caa38d8e4d752de2448ae61e1
-[5/7] clk: qcom: camcc-sc8280xp: fix terminating of frequency table arrays
-      commit: 6a3d70f7802a98e6c28a74f997a264118b9f50cd
-[6/7] clk: qcom: mmcc-apq8084: fix terminating of frequency table arrays
-      commit: a903cfd38d8dee7e754fb89fd1bebed99e28003d
-[7/7] clk: qcom: mmcc-msm8974: fix terminating of frequency table arrays
-      commit: e2c02a85bf53ae86d79b5fccf0a75ac0b78e0c96
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
