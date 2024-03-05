@@ -1,196 +1,247 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BAA5D46C
-	for <linux-clk@vger.kernel.org>; Tue,  5 Mar 2024 10:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C016E85622;
+	Tue,  5 Mar 2024 12:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709636382; cv=none; b=OOLP32hCcoHaUFs2drgNpQMyZ9k4VXXxqiBrfFoLjq2yId841pA87Uml0ZEZvkadE327dIUI2eMpemQENw4QXSpO12U5HTHpqr0Hk07FCrPwkEpqgE5pFPDAT90bG5Ktlns2/1BNDrsSc4MELLJZuBlEXRPZA9B/YihmX0lxJ0s=
+	t=1709642251; cv=none; b=CBE/Q0Y1d4XrSEvaoJB/a6/MEZ5TNbWLFGesKIzMuq0xVm9ImUYPT/rBIv3UCk1x89qf49mHLnLEQ0t0Ysrmsi0qExJ8Uxi+HPnlbzi46bh4kXQqgEUY2w1oM2Bjc+9Y2x/2yYqd2XqRJXwNHqZkxdRFX2DdhzxfO0wC2tS3Lh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709636382; c=relaxed/simple;
-	bh=c6MqmODdMYlBmjDOlDN8R/k8inYLZPi4Xy3tALiXFbE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fhnd4EoBC/fndJkzUxFz2rQSnyJXTlyBTxzj7ri0vJ3DBdzzEf9JreScXJYeBugR0UHeJzPHX3AZXe2811a/v9VNCBHrfXVxGut/IR0h1R4d/kB1927yotchfZqlf35I6EKSEusPFZ3Vpc3xFqCLjD66/GUVnphCNTKFoHZBWv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SlpJ/pna; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1709642251; c=relaxed/simple;
+	bh=pgSq1kfVnnk2Pr4PTMWv7JMy/t2P4mm4me2LnFSOsME=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mN8yiwSS/m/xhfZOpqu8eRKKJUgVHMRLnD9dXGw7gps7RU21vXtowxShO5oK6IblGSkb0/jRnW66wUIpuwX56elsGazJH9Ryq0133WOCv93oi5TC+nP8MNA6jLDNFCPJ//FLvHGIH/+aK14eBnEbg23nBmv4HZZtlTXR+NLUeyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=1vClw+TP; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SlpJ/pna"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709636380;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Nn7QLWui+E10V2dPVlHH/YfClJTC485Sk93yFLmpHY=;
-	b=SlpJ/pna7BkB5u/9MCK3NYlqZKU2kVq+vH4BeRGhot7kXlKcO0aaigTlyYXGDAMW7Y91kG
-	mPC7aOLbjaDgM2mb1N8XnXWuWBrlBG7uFdzNDNl0mHuOlOR7y4zgTxR+R1XvzGjkhCpoiR
-	MaCH1555hQoEOVgfLewJ5KZE5JrZw14=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-16-aRF07tVvPAafwZACZEdWzQ-1; Tue, 05 Mar 2024 05:59:36 -0500
-X-MC-Unique: aRF07tVvPAafwZACZEdWzQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="1vClw+TP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1709642246;
+	bh=pgSq1kfVnnk2Pr4PTMWv7JMy/t2P4mm4me2LnFSOsME=;
+	h=From:To:Cc:Subject:Date:From;
+	b=1vClw+TPCsWNJCR/ChoVjaXZ1W455pSGWGsZaHRHCbE7EDplIAJ0DVQXL8S53uyRG
+	 tuJR8oiPy4YW6fwnIwZtbTjrkMEi6IIU27JcZYBD0AOynqkvg3ESYk5GyBlvX/JwpJ
+	 KBUqCaZdUEAnyIrZ8esJ0o6+9N+yvyGz5C2GwTFlbdrLts4WdbFAS/V9pJ5PFWoSGx
+	 cbWUedLHtzbX+batuW1n2f5UL2wfm5y2lF8XWzb23KcbKUwdeClm8rFEdgo5d5ZimK
+	 +lXb+4KkXmZbX/ieBD8aI+dROCsJhwWaAN4TLvWsodQZyj92fsXIfJIAXIC75HlaDe
+	 GkPlpMgcc/bnQ==
+Received: from shreeya.shreeya (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 10601800264;
-	Tue,  5 Mar 2024 10:59:36 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.39.194.213])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 3C4F11C060D6;
-	Tue,  5 Mar 2024 10:59:34 +0000 (UTC)
-From: Hans de Goede <hdegoede@redhat.com>
-To: Johannes Stezenbach <js@sig21.net>,
-	Takashi Iwai <tiwai@suse.de>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	platform-driver-x86@vger.kernel.org,
-	x86@kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 5/5] x86/platform/atom: Check state of Punit managed devices on s2idle
-Date: Tue,  5 Mar 2024 11:59:15 +0100
-Message-ID: <20240305105915.76242-6-hdegoede@redhat.com>
-In-Reply-To: <20240305105915.76242-1-hdegoede@redhat.com>
-References: <20240305105915.76242-1-hdegoede@redhat.com>
+	(Authenticated sender: shreeya)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A073F378020D;
+	Tue,  5 Mar 2024 12:37:18 +0000 (UTC)
+From: Shreeya Patel <shreeya.patel@collabora.com>
+To: heiko@sntech.de,
+	mchehab@kernel.org,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de,
+	jose.abreu@synopsys.com,
+	nelson.costa@synopsys.com,
+	dmitry.osipenko@collabora.com,
+	sebastian.reichel@collabora.com,
+	shawn.wen@rock-chips.com,
+	nicolas.dufresne@collabora.com,
+	hverkuil@xs4all.nl,
+	hverkuil-cisco@xs4all.nl
+Cc: kernel@collabora.com,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm@lists.infradead.org,
+	Shreeya Patel <shreeya.patel@collabora.com>
+Subject: [PATCH v2 0/6] Add Synopsys DesignWare HDMI RX Controller
+Date: Tue,  5 Mar 2024 18:06:42 +0530
+Message-Id: <20240305123648.8847-1-shreeya.patel@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-From: Johannes Stezenbach <js@sig21.net>
+This series implements support for the Synopsys DesignWare
+HDMI RX Controller, being compliant with standard HDMI 1.4b
+and HDMI 2.0.
 
-For the Bay Trail or Cherry Trail SoC to enter the S0i3 power-level
-at s2idle suspend requires most of the hw-blocks / devices in the SoC
-to be in D3 when entering s2idle suspend.
+Features that are currently supported by the HDMI RX driver
+have been tested on rock5b board using a HDMI to micro-HDMI cable.
+It is recommended to use a good quality cable as there were
+multiple issues seen during testing the driver.
 
-If some devices are not in D3 then the SoC will stay in a higher
-power state, consuming much more power from the battery then in S0i3.
+Please note the below information :-
+* While testing the driver on rock5b we noticed that the binary BL31
+from Rockchip contains some unknown code to get the HDMI-RX PHY
+access working. With TF-A BL31, the HDMI-RX PHY doesn't work as
+expected since there are no interrupts seen for rk_hdmirx-hdmi
+leading to some failures in the driver [0].
+* We have tested the working of OBS studio with HDMIRX driver and
+there were no issues seen.
 
-Use the new acpi_s2idle_dev_ops and acpi_register_lps0_dev()
-functionality to register a new s2idle check function which checks that
-all hardware blocks in the North complex (controlled by Punit) are in
-a state that allows the SoC to enter S0i3 and prints an error message
-for any device in D0.
+[0] https://gitlab.collabora.com/hardware-enablement/rockchip-3588/trusted-firmware-a/-/issues/1
 
-Signed-off-by: Johannes Stezenbach <js@sig21.net>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-[hdegoede: Use acpi_s2idle_dev_ops]
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v3:
-- Reword commit message
-- Add punit_s2idle_check_[un]register() helper functions
----
- arch/x86/platform/atom/punit_atom_debug.c | 54 ++++++++++++++++++++++-
- 1 file changed, 53 insertions(+), 1 deletion(-)
+To test the HDMI RX Controller driver, following example commands can be used :-
 
-diff --git a/arch/x86/platform/atom/punit_atom_debug.c b/arch/x86/platform/atom/punit_atom_debug.c
-index f8ed5f66cd20..6b9c6deca8ba 100644
---- a/arch/x86/platform/atom/punit_atom_debug.c
-+++ b/arch/x86/platform/atom/punit_atom_debug.c
-@@ -7,6 +7,9 @@
-  * Copyright (c) 2015, Intel Corporation.
-  */
- 
-+#define pr_fmt(fmt) "punit_atom: " fmt
-+
-+#include <linux/acpi.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/device.h>
-@@ -117,6 +120,51 @@ static void punit_dbgfs_unregister(void)
- 	debugfs_remove_recursive(punit_dbg_file);
- }
- 
-+#if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
-+static const struct punit_device *punit_dev;
-+
-+static void punit_s2idle_check(void)
-+{
-+	const struct punit_device *punit_devp;
-+	u32 punit_pwr_status, dstate;
-+	int status;
-+
-+	for (punit_devp = punit_dev; punit_devp->name; punit_devp++) {
-+		/* Skip MIO, it is on till the very last moment */
-+		if (punit_devp->reg == MIO_SS_PM)
-+			continue;
-+
-+		status = iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ,
-+				       punit_devp->reg, &punit_pwr_status);
-+		if (status) {
-+			pr_err("%s read failed\n", punit_devp->name);
-+		} else  {
-+			dstate = (punit_pwr_status >> punit_devp->sss_pos) & 3;
-+			if (!dstate)
-+				pr_err("%s is in D0 prior to s2idle\n", punit_devp->name);
-+		}
-+	}
-+}
-+
-+static struct acpi_s2idle_dev_ops punit_s2idle_ops = {
-+	.check = punit_s2idle_check,
-+};
-+
-+static void punit_s2idle_check_register(struct punit_device *punit_device)
-+{
-+	punit_dev = punit_device;
-+	acpi_register_lps0_dev(&punit_s2idle_ops);
-+}
-+
-+static void punit_s2idle_check_unregister(void)
-+{
-+	acpi_unregister_lps0_dev(&punit_s2idle_ops);
-+}
-+#else
-+static void punit_s2idle_check_register(struct punit_device *punit_device) {}
-+static void punit_s2idle_check_unregister(void) {}
-+#endif
-+
- #define X86_MATCH(model, data)						 \
- 	X86_MATCH_VENDOR_FAM_MODEL_FEATURE(INTEL, 6, INTEL_FAM6_##model, \
- 					   X86_FEATURE_MWAIT, data)
-@@ -131,19 +179,23 @@ MODULE_DEVICE_TABLE(x86cpu, intel_punit_cpu_ids);
- 
- static int __init punit_atom_debug_init(void)
- {
-+	struct punit_device *punit_device;
- 	const struct x86_cpu_id *id;
- 
- 	id = x86_match_cpu(intel_punit_cpu_ids);
- 	if (!id)
- 		return -ENODEV;
- 
--	punit_dbgfs_register((struct punit_device *)id->driver_data);
-+	punit_device = (struct punit_device *)id->driver_data;
-+	punit_dbgfs_register(punit_device);
-+	punit_s2idle_check_register(punit_device);
- 
- 	return 0;
- }
- 
- static void __exit punit_atom_debug_exit(void)
- {
-+	punit_s2idle_check_unregister();
- 	punit_dbgfs_unregister();
- }
- 
+root@debian-rockchip-rock5b-rk3588:~# v4l2-ctl --verbose -d /dev/video0 \
+--set-fmt-video=width=1920,height=1080,pixelformat='BGR3' --stream-mmap=4 \
+--stream-skip=3 --stream-count=100 --stream-to=/home/hdmiin4k.raw --stream-poll
+
+root@debian-rockchip-rock5b-rk3588:~# ffmpeg -f rawvideo -vcodec rawvideo \
+-s 1920x1080 -r 60 -pix_fmt bgr24 -i /home/hdmiin4k.raw output.mkv
+
+
+Following is the v4l2-compliance test result :-
+
+root@debian-rockchip-rock5b-rk3588:~# v4l2-compliance -d /dev/video0
+v4l2-compliance 1.27.0-5174, 64 bits, 64-bit time_t
+v4l2-compliance SHA: d700deb14368 2024-01-18 12:19:05
+
+Compliance test for snps_hdmirx device /dev/video0:
+
+Driver Info:
+        Driver name      : snps_hdmirx
+        Card type        : snps_hdmirx
+        Bus info         : platform: snps_hdmirx
+        Driver version   : 6.8.0
+        Capabilities     : 0x84201000
+                Video Capture Multiplanar
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x04201000
+                Video Capture Multiplanar
+                Streaming
+                Extended Pix Format
+
+Required ioctls:
+        test VIDIOC_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/video0 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
+        test VIDIOC_DV_TIMINGS_CAP: OK
+        test VIDIOC_G/S_EDID: OK
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 2 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Total for snps_hdmirx device /dev/video0: 46, Succeeded: 46, Failed: 0, Warnings: 0
+
+Changes in v2 :-
+  - Fix checkpatch --strict warnings
+  - Move the dt-binding include file changes in a separate patch
+  - Add a description for the hardware in the dt-bindings file
+  - Rename resets, vo1 grf and HPD properties
+  - Add a proper description for grf and vo1-grf phandles in the
+    bindings
+  - Rename the HDMI RX node name to hdmi-receiver
+  - Include gpio header file in binding example to fix the
+    dt_binding_check failure
+  - Move hdmirx_cma node to the rk3588.dtsi file
+  - Add an entry to MAINTAINERS file for the HDMIRX driver
+
+Shreeya Patel (6):
+  dt-bindings: reset: Define reset id used for HDMI Receiver
+  clk: rockchip: rst-rk3588: Add reset line for HDMI Receiver
+  dt-bindings: media: Document HDMI RX Controller
+  arm64: dts: rockchip: Add device tree support for HDMI RX Controller
+  media: platform: synopsys: Add support for hdmi input driver
+  MAINTAINERS: Add entry for Synopsys DesignWare HDMI RX Driver
+
+ .../bindings/media/snps,dw-hdmi-rx.yaml       |  132 +
+ MAINTAINERS                                   |    8 +
+ .../boot/dts/rockchip/rk3588-pinctrl.dtsi     |   41 +
+ arch/arm64/boot/dts/rockchip/rk3588.dtsi      |   55 +
+ drivers/clk/rockchip/rst-rk3588.c             |    1 +
+ drivers/media/platform/Kconfig                |    1 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/synopsys/Kconfig       |    3 +
+ drivers/media/platform/synopsys/Makefile      |    2 +
+ .../media/platform/synopsys/hdmirx/Kconfig    |   18 +
+ .../media/platform/synopsys/hdmirx/Makefile   |    4 +
+ .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2856 +++++++++++++++++
+ .../platform/synopsys/hdmirx/snps_hdmirx.h    |  393 +++
+ .../synopsys/hdmirx/snps_hdmirx_cec.c         |  289 ++
+ .../synopsys/hdmirx/snps_hdmirx_cec.h         |   46 +
+ .../dt-bindings/reset/rockchip,rk3588-cru.h   |    2 +
+ 16 files changed, 3852 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+ create mode 100644 drivers/media/platform/synopsys/Kconfig
+ create mode 100644 drivers/media/platform/synopsys/Makefile
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
+
 -- 
-2.43.2
+2.39.2
 
