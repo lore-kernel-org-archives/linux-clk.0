@@ -1,125 +1,145 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5F94DA1F
-	for <linux-clk@vger.kernel.org>; Tue,  5 Mar 2024 08:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBC054BF0
+	for <linux-clk@vger.kernel.org>; Tue,  5 Mar 2024 10:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709628637; cv=none; b=Br7sGi64OoSHNAtfIqf+pPPVrrIAflNo/C0qZ7SlH4YEuRixOVfK/+iXZqyQiMRLHS3Z2glqPo5lgzAYDYdynCrPIiHQzio2U1//3UF4APXRvXktjniNGbKCm3gvhQYsMw1duNSuYnPuLeA4IY1cmZJAdzMN72/ZxlMhosntu8Y=
+	t=1709636370; cv=none; b=i5MUkx12Cgf97NBgE6VeTvD7j+CwE3MUdKqRcT2Cn8epI39RjbMNwLK9dMAz+TJbK8YCoNkmAGJAIXQoMUac6Yeb+vFg+lsQRy+s7VQATNZ6OAwtOfClMiFr3AjDzYOsb82Zjo94rDZgg/lNPev59zIdJVbk3kafyVIGPfugGPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709628637; c=relaxed/simple;
-	bh=/qaRgOCPIEFkrZRFeRFcZiqUAPgGaXs8wvM/tEPQzCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lhEQl6L5RZupsndSofzGmfTWtFeXQVjW4x0wn0SGkpVhffpHgqoPYi6ie1RxCGvnOBiiOmhj6fGltHTv2SMo4ayzEiTR0gUCPsrdO39z1yAftrBgSJmK4mAAt4XcvZXumFUh1nD1GRfoc4cBb8dvppcs6bj4FxtBvT9jOZ//QMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wgB85y0s; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709636370; c=relaxed/simple;
+	bh=sbz7IAGhakqXhD/4oACaPyAsY+nGzfa4LRS4j8yFcXU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=udSjmEYAqBJqQxgEjBmSuwjIa+SowR9Bf0usNeZgDUAU4F7JYZc04ZBtmWH5y5CBooqPqQZEDNQN1T/vveKhvurBfaNL0hZ5rYCgXWQgq0hJy/bjEdwQ5HG1AWDK3qKCtqeMOYkHQ57UKBwzY98dgtcedQbOKNIQjKdJe0kJXBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h04EdIsS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wgB85y0s"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3f893ad5f4so800376766b.2
-        for <linux-clk@vger.kernel.org>; Tue, 05 Mar 2024 00:50:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709628634; x=1710233434; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jT7ZsmNph1HICQhGYk/X5PZRUWWUGk3/PHQvVwvJTOo=;
-        b=wgB85y0s6rf4i2vIzrgObujA09hgoBt7adI9IZOTwi6FrRA3PMf5vJ1An2UTkwImsU
-         Py6ZjRaJJnJebSDWj3EmZq9+uUAp1+cMTmlyYOCzD5bhdAPTdZpX52Y0BKKIBVD35571
-         bOs0aK7sVzcqTsaFRjYipop4g9HDrbo098GQ5TpomE6nI1oHeU6GtT6O3lSrcP0/KAdi
-         Ptd3+vHAqD/wd2kngPt9owa7iEyo/yazTT7OnHd8qkKwUrOY7MgIbGdngUs9Lcbaqr40
-         PjzUYwxQ1o6T3NfcqPUkMRM5Iwj+bfb621d0+/sLHgbHnVFSgvDRa1PpZ9v51iX9nqt8
-         ATrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709628634; x=1710233434;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jT7ZsmNph1HICQhGYk/X5PZRUWWUGk3/PHQvVwvJTOo=;
-        b=COFcFD6mKKq12b5DuVgsWb75ZjU5S6mjVb3kFU3aZ6v4Tj0sUrXve3P2pegKmum+S9
-         lRHlHzLgiTjHOhT4GcaFxwG3BXKQ7/f7GqMOs6oZdm+ufu1rM2AUj81PIWt9ez/cInoI
-         lAQf41MjTB/5uMsd0gLzsmIEvyPu2z3wSg6V8gpRJykAnxTs0aivFzD3kJT9xZqGAXPM
-         QBEefD3X4uOiVq/+J3zZFjKizLbEydKxgvO52zZ+5YsSKaTiiqN4rFe/40t5un7YUjsX
-         12rj+27sf28tdCP+YiKj6TA9oeFscDWwfAnaerIPctirbw5uBPbb1sfMbU79RgSwEq08
-         Gg3g==
-X-Gm-Message-State: AOJu0YztLoEQ9ZWrnnaTrJPai73HtZ6pxk1oYpI/W+qcB4BFrLZ8KzZE
-	XD19wbZv8I/TvS6lgDGFZ0US6SssnbbrkcXzQ+5yqTYZRd+VWMlTKUYzrm63MdU=
-X-Google-Smtp-Source: AGHT+IHJS+2LhiDD7zxJqHM589abVoaxutSaB3e9mIWp3cLj6gDlecOCLPFEcxg3I6gVnMuHzHEJSQ==
-X-Received: by 2002:a17:906:c06:b0:a44:1978:c73f with SMTP id s6-20020a1709060c0600b00a441978c73fmr7660917ejf.61.1709628633846;
-        Tue, 05 Mar 2024 00:50:33 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ef5-20020a17090697c500b00a449cb924dbsm4457506ejb.124.2024.03.05.00.50.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 00:50:33 -0800 (PST)
-Date: Tue, 5 Mar 2024 11:50:29 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, jingoohan1@gmail.com, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-	linux@armlinux.org.uk, m.szyprowski@samsung.com,
-	manivannan.sadhasivam@linaro.org, pankaj.dubey@samsung.com,
-	gost.dev@samsung.com
-Subject: Re: [PATCH v6 1/2] clk: Provide managed helper to get and enable
- bulk clocks
-Message-ID: <f00eed31-4baf-4d5c-934d-8223d1ab554d@moroto.mountain>
-References: <20240220084046.23786-1-shradha.t@samsung.com>
- <CGME20240220084120epcas5p1e8980539667c3d9da20f49fc645d8f4c@epcas5p1.samsung.com>
- <20240220084046.23786-2-shradha.t@samsung.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h04EdIsS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709636368;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zmbK6AYcLZL6yFYyf+OP5nnp9BHT1LGiXivEh+rb0mg=;
+	b=h04EdIsSu2SM5mpb1gJulyF+Hx/Pi+en5c6pf8hO8dinS+ZlVL7ZNI6mbMH3hfL2WqbY5t
+	8Rdz/Qt5NYB802hKFB9SuQZ6s2X36Hpz9XcnL7Rd08MPvJnr1TkNa8XngB91nJu6aWG2iZ
+	ZYEdAgpD1kIPBmKRO142/Uk3fsVP7a8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-480-xvDmXPDsP7GheBPv6FTcPg-1; Tue, 05 Mar 2024 05:59:26 -0500
+X-MC-Unique: xvDmXPDsP7GheBPv6FTcPg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 05BD580F7EC;
+	Tue,  5 Mar 2024 10:59:26 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.39.194.213])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id DA4FD1C060DC;
+	Tue,  5 Mar 2024 10:59:23 +0000 (UTC)
+From: Hans de Goede <hdegoede@redhat.com>
+To: Johannes Stezenbach <js@sig21.net>,
+	Takashi Iwai <tiwai@suse.de>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
+	x86@kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 0/5] x86: atom-punit/-pmc s2idle device state checks
+Date: Tue,  5 Mar 2024 11:59:10 +0100
+Message-ID: <20240305105915.76242-1-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240220084046.23786-2-shradha.t@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-On Tue, Feb 20, 2024 at 02:10:45PM +0530, Shradha Todi wrote:
-> +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
-> +					      struct clk_bulk_data **clks)
-> +{
-> +	struct clk_bulk_devres *devres;
-> +	int ret;
-> +
-> +	devres = devres_alloc(devm_clk_bulk_release_all_enable,
-> +			      sizeof(*devres), GFP_KERNEL);
-> +	if (!devres)
-> +		return -ENOMEM;
-> +
-> +	ret = clk_bulk_get_all(dev, &devres->clks);
-> +	if (ret > 0) {
+Hi All,
 
-I feel like this should be >= instead of >.  There aren't any callers
-of this function yet so we can't see what's in *clks at the start but
-it's easy to imagine a situation where it's bad data.
+Here is v4 of this patch series to add S0ix related s2idle
+checks to the pmc_atom and punit_atom code.
 
-> +		*clks = devres->clks;
-> +		devres->num_clks = ret;
-> +	} else {
-> +		devres_free(devres);
-> +		return ret;
+Changes in v4:
+- Add pmc_s2idle_check_register() helper which is a stub when
+  CONFIG_SUSPEND is not set to avoid needing more then 1 ifdef
+- Add a couple of Acked-by and Reviewed-by tags
 
-When clk_bulk_get_all() returns zero then we return success here.
+Patches 1/5 and 5/5 have Acked-by-s from the clk resp. x86 maintainers to
+be merged through the pdx86 tree together with the rest of the series.
 
-regards,
-dan carpenter
+Ilpo, I believe that this is ready for merging now. It would be great if
+you can still pick this up for the 6.9 cycle. OTOH there is no big rush
+to get these debug patches for older platforms merged. So postponing
+them to the next cycle is fine too.
 
-> +	}
-> +
-> +	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
-> +	if (!ret) {
-> +		devres_add(dev, devres);
-> +	} else {
-> +		clk_bulk_put_all(devres->num_clks, devres->clks);
-> +		devres_free(devres);
-> +	}
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
-> +
+Below is the previous cover-letter of v3 with some more background info:
+
+These patches are an upstream submission of a patch titled:
+"Intel Atom suspend: add debug check for S0ix blockers"
+
+Which I have been carrying in my personal kernel tree for years now.
+This code originally comes from the latte-l-oss branch of:
+https://github.com/MiCode/Xiaomi_Kernel_OpenSource
+
+And has been posted on upstream mailinglists before by
+Johannes Stezenbach, whose authorship I have kept for
+the 2 base patches and has been reposted by Takashi Iwai
+and at one point in time I picked this up from Takashi's
+reposting as can be seen from the S-o-b lines. Unfortunately
+I cannot find the original postings, so I have no link to
+those.
+
+The original version of this added some ugly hooks into
+the intel_idle driver which I presume is why these patches
+never got anywhere upstream.
+
+With the new acpi_s2idle_dev_ops and acpi_register_lps0_dev()
+functionality this functionality can now be implemented cleanly
+and that is what this patch-series does.
+
+Changes in v3:
+- Reword commit message of patch 3/5 and 5/5
+- Drop confusing /* Low Part */ and /* High Part */ comments in pmc_atom.c
+- Add punit_s2idle_check_[un]register() helper functions
+
+Changes in v2:
+- Move CLK reg defines to include/linux/platform_data/x86/pmc_atom.h
+- Drop duplicated "pmc_atom: " prefix from logged messages
+
+Regards,
+
+Hans
+
+
+Hans de Goede (3):
+  clk: x86: Move clk-pmc-atom register defines to
+    include/linux/platform_data/x86/pmc_atom.h
+  platform/x86: pmc_atom: Annotate d3_sts register bit defines
+  platform/x86: pmc_atom: Check state of PMC clocks on s2idle
+
+Johannes Stezenbach (2):
+  platform/x86: pmc_atom: Check state of PMC managed devices on s2idle
+  x86/platform/atom: Check state of Punit managed devices on s2idle
+
+ arch/x86/platform/atom/punit_atom_debug.c  | 54 ++++++++++++++-
+ drivers/clk/x86/clk-pmc-atom.c             | 13 +---
+ drivers/platform/x86/pmc_atom.c            | 79 ++++++++++++++++++++++
+ include/linux/platform_data/x86/pmc_atom.h | 25 +++++--
+ 4 files changed, 152 insertions(+), 19 deletions(-)
+
+-- 
+2.43.2
 
