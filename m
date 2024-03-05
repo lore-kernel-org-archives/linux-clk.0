@@ -1,153 +1,181 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACD28663A;
-	Tue,  5 Mar 2024 14:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAC61F95E;
+	Tue,  5 Mar 2024 14:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709649916; cv=none; b=W6rU1OV/9xTf4vWoynKus+vDYGJEWZnCCbAt+Xu1QBVBY7Uu+2G5K6cyGZNCNlyhQJLNwWzvogx7GhZFbEvKWdgyyqeLdrSif0csCz9OmEHlrKrmqzvqbEWX+arIcb+/ogIPo7GxjH3ZBxO+rMNpOOjoiPSTKFSMPnCSB5LLgF8=
+	t=1709650195; cv=none; b=UJ9JVrSYY3mTB8uCJf1m/0WhHNNxIMACURxHrJ2t+7fOL1HFJVBeTvpmCCY+a7Uk1AoxutsAeAmHlms5uBVrBt2ln0zaVqgL/wfE3U5ZAi6ydBXET8M859oDWl0mrGnJOCxj4WomJ2GFP+gmFx+6Rnkfqwz4SKGKk/y4AvK2B88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709649916; c=relaxed/simple;
-	bh=tetQCxG8iPLLeYy5u22XyaGe6rMdgCMO7OFx8pAFHyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LXV2Ozq+aQ4m2aJWRAamDLOngCH3SJvvnJhA1Ik7TFNhMIhhhRlcNDfB+HGDpxm/IedHGGFkP9Dqa/nWZb4SAWiBI0fhA2SZnKzVFoS/hAmHJXLRtQauNnyf03h+Gc/A4HDx+kXdErOxKu3MK0OpWdEufsdOeqVK9WGUeZLEKN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6087396e405so55074917b3.0;
-        Tue, 05 Mar 2024 06:45:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709649913; x=1710254713;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9i6CwydHdc4za10aM3u8vcYxRtgXXdjZlKPLkkrrifs=;
-        b=HVBTgNVQjDsv+3ITkjy19c329XBPsWSIANZajwn988IwbqmKlusOmr7LDBTLwCzDDH
-         ptJtyiOZC96plA+gKvbU/jerszX79EzJzcv9YrfBmwwn2V+LlT8NmBKYSIMFGXactFIH
-         d0KebV4ZNuyKvr1moeqdPbRQw+D4v85jKvdcrepjdrmBtotlmyywZN4DFWotOTERII5P
-         HhITtxDYcNlpxBHtXD77voG1lA3vS0UJLv4heMhXyyEtobV3p8J1XjnYCcq3hmga/t/r
-         rppb2MHnPz9EdsdnOPmjVmbR348ZNk6sU7LJ2zS7Urls2RIpyzd5zMmukROKVrWoX2W5
-         MCaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyHTe3E/mlUTXb5OgWrTNx22vfmCa7r4xRqcKJMxBZAyht1gJhATPYrpmHjmeqh9NDmLlbMhJRD7M1QJl1XK0g4i/XXXDC884MQF4A+sXmgjFh72+QTOgN0O19YCHlWEApL7LmT0IytZ7LFWWxVy/z5BD2aK0XqEDXzd3YXk11vppqfw==
-X-Gm-Message-State: AOJu0Ywiy9epuI16FWLtYrl2Sh9Cj7s20jq81vqEY5rQQrP1sECw9T7V
-	cE2lUG7lr81cVP4d0p4SieAkNTPnwdKQLeeR1DpYzxyhRpH0PUCL6AF47rW/pkQ=
-X-Google-Smtp-Source: AGHT+IH2uJ0PB5iGWa3Pxy8t4zIKB0Bssu9oR5KhruM+s+08ReQDS50EYAC9a8nhanR2J7oB4pzi6g==
-X-Received: by 2002:a25:bfd0:0:b0:dcd:9a9b:8d7e with SMTP id q16-20020a25bfd0000000b00dcd9a9b8d7emr1907695ybm.9.1709649913115;
-        Tue, 05 Mar 2024 06:45:13 -0800 (PST)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id e72-20020a25694b000000b00dc701e0bdbcsm2755061ybc.44.2024.03.05.06.45.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Mar 2024 06:45:11 -0800 (PST)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6087396e405so55074577b3.0;
-        Tue, 05 Mar 2024 06:45:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVRL+SNdr8xdyNvwp7D+nFHxRex0CEYwGjXqoLdnxqRAXkmlheqVB3h10ThpVzorTNOL2VPd+cBbalXyTarhCg+wuoaRujQRZu6qpGc4DWVCi4umleTO9Rog0/xEjcsTMMCGC1ndpIFOcTj5fHYs3ZaLlX7jSK+QWrMoD9ZAGTWCtFWoQ==
-X-Received: by 2002:a25:aa85:0:b0:dc6:cf8e:8f97 with SMTP id
- t5-20020a25aa85000000b00dc6cf8e8f97mr2212248ybi.27.1709649911607; Tue, 05 Mar
- 2024 06:45:11 -0800 (PST)
+	s=arc-20240116; t=1709650195; c=relaxed/simple;
+	bh=JrCH6EgXFgvmU54XTv3OGayoRVJM9AhD1jxlXOStzVg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i2JN4QmpyuocRYHMfYPzLgRA/dorJe0atwUTzV/WfbjZ/SZCmaE10QCH5cw23Yg0KzE2V6ptt3d8DYpqYoWi4bVg5jMNMaac1C3HhZrvMUnXiia/wqL2kj7supMW3IkmMQ577hYbzIoAHaRC6QQNeqit+I9K18B+BCfYFAYpcRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875a9e.versanet.de ([83.135.90.158] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1rhVVj-0006jN-HS; Tue, 05 Mar 2024 15:11:15 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: mchehab@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ dmitry.osipenko@collabora.com, sebastian.reichel@collabora.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com, hverkuil@xs4all.nl,
+ hverkuil-cisco@xs4all.nl, Shreeya Patel <shreeya.patel@collabora.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm@lists.infradead.org,
+ Shreeya Patel <shreeya.patel@collabora.com>
+Subject:
+ Re: [PATCH v2 4/6] arm64: dts: rockchip: Add device tree support for HDMI RX
+ Controller
+Date: Tue, 05 Mar 2024 15:11:14 +0100
+Message-ID: <7657358.31r3eYUQgx@diego>
+In-Reply-To: <20240305123648.8847-5-shreeya.patel@collabora.com>
+References:
+ <20240305123648.8847-1-shreeya.patel@collabora.com>
+ <20240305123648.8847-5-shreeya.patel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240213144638.341509-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240213144638.341509-1-krzysztof.kozlowski@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Mar 2024 15:44:59 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWw0dteXO2jw4cwGvzKcL6vmnb96C=qgPgUqNDMtF6X0Q@mail.gmail.com>
-Message-ID: <CAMuHMdWw0dteXO2jw4cwGvzKcL6vmnb96C=qgPgUqNDMtF6X0Q@mail.gmail.com>
-Subject: Re: [PATCH] riscv: dts: starfive: replace underscores in node names
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-Hi Krzysztof
+Hi,
 
-On Tue, Feb 13, 2024 at 3:48=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> Underscores should not be used in node names (dtc with W=3D2 warns about
-> them), so replace them with hyphens.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks for your patch, which is now commit f03606470886e781 ("riscv:
-dts: starfive: replace underscores in node names") in v6.8-rc6.
+Am Dienstag, 5. M=E4rz 2024, 13:36:46 CET schrieb Shreeya Patel:
+> Add device tree support for Synopsys DesignWare HDMI RX
+> Controller.
+>=20
+> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> ---
+> Changes in v2 :-
+>   - Fix some of the checkpatch errors and warnings
+>   - Rename resets, vo1-grf and HPD
+>   - Move hdmirx_cma node to the rk3588.dtsi file
+>=20
+>  .../boot/dts/rockchip/rk3588-pinctrl.dtsi     | 41 ++++++++++++++
+>  arch/arm64/boot/dts/rockchip/rk3588.dtsi      | 55 +++++++++++++++++++
+>  2 files changed, 96 insertions(+)
 
-This causes e.g. BeagleV Starlight to hang during boot without any
-output.  Booting with "earlycon" reveals:
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588.dtsi b/arch/arm64/boot/d=
+ts/rockchip/rk3588.dtsi
+> index 5519c1430cb7..8adb98b99701 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588.dtsi
+> @@ -7,6 +7,24 @@
+>  #include "rk3588-pinctrl.dtsi"
+> =20
+>  / {
+> +	reserved-memory {
+> +		#address-cells =3D <2>;
+> +		#size-cells =3D <2>;
+> +		ranges;
 
-    dw-apb-uart 12440000.serial: error -EINVAL: clock rate not defined
-    dw-apb-uart: probe of 12440000.serial failed with error -22
+add blank line here
 
-and indeed, p->uartclk =3D 0.
+> +		/*
+> +		 * The 4k HDMI capture controller works only with 32bit
+> +		 * phys addresses and doesn't support IOMMU. HDMI RX CMA
+> +		 * must be reserved below 4GB.
+> +		 */
+> +		hdmirx_cma: hdmirx_cma {
 
-> --- a/arch/riscv/boot/dts/starfive/jh7100.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7100.dtsi
-> @@ -113,28 +113,28 @@ cpu_crit {
->                 };
->         };
->
-> -       osc_sys: osc_sys {
-> +       osc_sys: osc-sys {
->                 compatible =3D "fixed-clock";
->                 #clock-cells =3D <0>;
->                 /* This value must be overridden by the board */
->                 clock-frequency =3D <0>;
->         };
->
-> -       osc_aud: osc_aud {
-> +       osc_aud: osc-aud {
->                 compatible =3D "fixed-clock";
->                 #clock-cells =3D <0>;
->                 /* This value must be overridden by the board */
->                 clock-frequency =3D <0>;
->         };
->
-> -       gmac_rmii_ref: gmac_rmii_ref {
-> +       gmac_rmii_ref: gmac-rmii-ref {
->                 compatible =3D "fixed-clock";
->                 #clock-cells =3D <0>;
->                 /* Should be overridden by the board when needed */
->                 clock-frequency =3D <0>;
->         };
->
-> -       gmac_gr_mii_rxclk: gmac_gr_mii_rxclk {
-> +       gmac_gr_mii_rxclk: gmac-gr-mii-rxclk {
->                 compatible =3D "fixed-clock";
->                 #clock-cells =3D <0>;
->                 /* Should be overridden by the board when needed */
+phandles use "_", but node-names "-"
 
-The clock driver relies on the clock names, which are (in the absence
-of clock-output-names properties) identical to the actual node names:
+> +			compatible =3D "shared-dma-pool";
+> +			alloc-ranges =3D <0x0 0x0 0x0 0xffffffff>;
+> +			size =3D <0x0 (160 * 0x100000)>; /* 160MiB */
 
-drivers/clk/starfive/clk-starfive-jh7100.c:    parents[i].fw_name =3D "osc_=
-sys";
-drivers/clk/starfive/clk-starfive-jh7100.c:    parents[i].fw_name =3D "osc_=
-aud";
-drivers/clk/starfive/clk-starfive-jh7100.c:    parents[i].fw_name =3D
-"gmac_rmii_ref";
-drivers/clk/starfive/clk-starfive-jh7100.c:    parents[i].fw_name =3D
-"gmac_gr_mii_rxclk";
+The comment above that node, could elaborate where the value of 160MB
+originates from. I assume it is to hold n-times of 4K frames or whatever,
+but it would be helpful for people to be able to read that.
 
-Hence these clocks can no longer be found, and all children have a
-zero clock rate, causing the breakage.
 
-Gr{oetje,eeting}s,
+> +			no-map;
+> +			status =3D "disabled";
+> +		};
+> +	};
+> +
+>  	pcie30_phy_grf: syscon@fd5b8000 {
+>  		compatible =3D "rockchip,rk3588-pcie3-phy-grf", "syscon";
+>  		reg =3D <0x0 0xfd5b8000 0x0 0x10000>;
+> @@ -85,6 +103,38 @@ i2s10_8ch: i2s@fde00000 {
+>  		status =3D "disabled";
+>  	};
+> =20
+> +	hdmi_receiver: hdmi-receiver@fdee0000 {
 
-                        Geert
+Maybe rename the label to "hdmirx:" ... that way in a board enabling the
+cma region, both nodes would stay close to each other?
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> +		compatible =3D "rockchip,rk3588-hdmirx-ctrler", "snps,dw-hdmi-rx";
+> +		reg =3D <0x0 0xfdee0000 0x0 0x6000>;
+> +		power-domains =3D <&power RK3588_PD_VO1>;
+> +		rockchip,grf =3D <&sys_grf>;
+> +		rockchip,vo1-grf =3D <&vo1_grf>;
+> +		interrupts =3D <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH 0>,
+> +			     <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH 0>,
+> +			     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		interrupt-names =3D "cec", "hdmi", "dma";
+> +		clocks =3D <&cru ACLK_HDMIRX>,
+> +			 <&cru CLK_HDMIRX_AUD>,
+> +			 <&cru CLK_CR_PARA>,
+> +			 <&cru PCLK_HDMIRX>,
+> +			 <&cru CLK_HDMIRX_REF>,
+> +			 <&cru PCLK_S_HDMIRX>,
+> +			 <&cru HCLK_VO1>;
+> +		clock-names =3D "aclk",
+> +			      "audio",
+> +			      "cr_para",
+> +			      "pclk",
+> +			      "ref",
+> +			      "hclk_s_hdmirx",
+> +			      "hclk_vo1";
+
+the driver uses of_reserved_mem_device_init(), so doesn't this node need
+a "memory-region =3D <&hdmirx_cma>; or similar?
+
+
+> +		resets =3D <&cru SRST_A_HDMIRX>, <&cru SRST_P_HDMIRX>,
+> +			 <&cru SRST_HDMIRX_REF>, <&cru SRST_A_HDMIRX_BIU>;
+> +		reset-names =3D "axi", "apb", "ref", "biu";
+> +		pinctrl-0 =3D <&hdmim1_rx>;
+> +		pinctrl-names =3D "default";
+> +		status =3D "disabled";
+> +	};
+> +
+>  	pcie3x4: pcie@fe150000 {
+>  		compatible =3D "rockchip,rk3588-pcie", "rockchip,rk3568-pcie";
+>  		#address-cells =3D <3>;
+> @@ -339,3 +389,8 @@ pcie30phy: phy@fee80000 {
+>  		status =3D "disabled";
+>  	};
+>  };
+> +
+> +&hdmirx_cma {
+> +	status =3D "okay";
+> +};
+
+I'd assume a board that enables &hdmi_receiver would also enable hdmirx_cma
+and not the soc dtsi for _all_ boards?
+
+
+Thanks
+Heiko
+
+
