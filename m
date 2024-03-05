@@ -1,140 +1,168 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344E42595
-	for <linux-clk@vger.kernel.org>; Tue,  5 Mar 2024 06:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187387D3F6
+	for <linux-clk@vger.kernel.org>; Tue,  5 Mar 2024 07:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709620893; cv=none; b=kHUVm5uJFlEFaZ7nY7MPyRxcVcnWN4xvFm+yLkC5zkvjcRNUmV/AbsbcUOU8P6bus61PlufFcmbUnmhpudl540NXxuZAQfHfL/rAaFMYpvpIB+fzQpy3OOzYD/6Ib26myTZnCeU22FFW5ZcVk571dxIx74O51jw9l5ZBwqv47os=
+	t=1709622872; cv=none; b=pQvqS6hL+VYNhVim0k1qfAaclNgNIvOPPKoW9nhLWwVhwflnxsLIZfwSygrBscpq3bGoPh4brC8L4gWibgMz9B2CvxoWJR0B0nt3c+X6Gq8/neC2avowv22aIbRphaq3t8r+ZjeLSFoQ+Mx3DCxL5FHYbc8Bci+EsxYEqZbma/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709620893; c=relaxed/simple;
-	bh=Ps/VJqEyp7guXeJPu2FrOwduSl73CHpkzvjzkVsVtTU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tzW1/3j2gqOBz9yy9tz5Wudl7/cvcHUyGdrS+1fdXt5YvT+YYYwcDcbCUBjKkI60O8AMuoAeOI8U7NcbDRZAbsBNjT0NP/5vLK620KOcPI8sZgnT1zrsYpWRXAPCLUHk3dj1OrVR6dQ/dsQvTcAlj2LyVfN6ndZMzvD37MasttQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cmTAEMHn; arc=none smtp.client-ip=209.85.219.182
+	s=arc-20240116; t=1709622872; c=relaxed/simple;
+	bh=8zx9t+nH72OZA2vYjFxrFWKNuMr2mmTTLimbqw0qty4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wf3ZYSmgmM7bWNgJ08IYBtrV/MPwKMG8gkaGvw7Jd2GUlVjbHtomOqc1xrCcW9HoHutY5vInbuYkn7W4ZgKjveltB4zBVmBDsPjO+4aJLRwlh5C/IdTt3k9kjZGMSV328nY39/ojf0O+d4vgw/LQ+EYgOmAHA2ZNXxgIe4J3GCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BLolHZHW; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cmTAEMHn"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dc6d24737d7so5138482276.0
-        for <linux-clk@vger.kernel.org>; Mon, 04 Mar 2024 22:41:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BLolHZHW"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-513181719easo3543411e87.3
+        for <linux-clk@vger.kernel.org>; Mon, 04 Mar 2024 23:14:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709620891; x=1710225691; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ccg/Lc70kvp90dYd+ZbmISgOfdv3HBJZ65KNlm+3N78=;
-        b=cmTAEMHnM+IvXsUZliiWRWExCL3kxOKkN5wLTtToV09GgSRz2VwJnHzzkpVzgNW/h8
-         hWJ5qvyeir3KPc9B9jtkbqfjxtvqHk1noXwdg9HV0M+Orld8w3bSE89IsQyot1AHQ1Un
-         d9GOHfzoowjdsis8t1L5ROH+xQ5bUAziO93pMUziLnuKTJ6uU5KeVoIDnYVzWykEzYtN
-         FFQsrGNLkNtX9VGYdigky1g/5mv/nDBDTP0WGq0HQBdj2NlwlRNCkEwrRFtqQK2cEW8M
-         28saLrbaWtv0goWzopKOp/9lN78g/HWU2GJWbJ7VLApQwtotb0+J0X3nTquWatMHewGo
-         6sYA==
+        d=linaro.org; s=google; t=1709622869; x=1710227669; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PJOEpSfM7W5q1u08Hp4JeXt1WjIFUvsNQIjWvP89284=;
+        b=BLolHZHWYNhorfoV5ZgAittAmfqmJfkF80mKtJcEmRufKHkTqsRFDFgnhveNvbTr3J
+         8mVHmuwTrnPA3xKyexCVSlrHnikSTJ841oA+MYAfiJuZgkq46eriwcYdAUEgOFalueRX
+         283Fd5rinOmQg26MNeHfxw3LDR/7ep4/f+dSymzeNMjuYHIO7DVJGjJZgd5eJmkF4/JV
+         S56nJcCXlwtWGd3x9Rip3yAyIFKRJ7hSyLpDF5VxAiioqfLUeM+n1VIRcBv+0ElPAQjU
+         dyrJ8g1Sf/gaeZw6AMYv4ZKJEw8qlzYLGEFUCWgb+XNyWgtiWw9AGeHNqXhee9njDlkW
+         76lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709620891; x=1710225691;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ccg/Lc70kvp90dYd+ZbmISgOfdv3HBJZ65KNlm+3N78=;
-        b=Q9UPXg4qtSgi4g/AQFwS0jgnwOvdZKj0OcImX/DtusZlIZ2YXJUGvvo2wPBXOTmB6Q
-         r5SczMXy8Kc1LcJathyxjSLHpA39lS2LQKDcOm+KfhzKG6CV9wckammbNI8YEmUVWowq
-         N+ABHCGxtDuFC3kG8oG0K8AD0snOfaZcdrqRGiJS0lYJ1/ScJb3j2CgG32EovLdP7vw8
-         9YDSdd8cwsR+blU96LuHxKRpHNKMfuqx+5MYktBykYEG8NnbPSsgwDnrBRdG6oO6NQQ7
-         Y0W7Q6FycRccgr2mnKOaYQlLJ7SaHKSecbEAYFG7/kEypYzB8YtJwxaTfej/amZhTUtl
-         aHiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnJxN+1+sdeNatMLgPWw/PTNODr1Lt4kM5dX7ZDJ2Uy7jQBOuHMv5LKPmNZi/YSvzkrw2Uy/zLbehSn3nVjp/E8o63+ZZ36qjf
-X-Gm-Message-State: AOJu0YxI93HwJtxTdLxwYNVzcocYndApW30eN7/MSBxF+psr9haUboo7
-	gXukMvDe2ClDpxw/SwozLdQWvJf9xbJskai3kZ4uFXYIwW+uyNUdLwtca9ywsF15iccv8sNtGtc
-	9BCnhMWY3sADJIc5YYTwwoYZ9gUHK3uUkR/hg6w==
-X-Google-Smtp-Source: AGHT+IGRNcWGc+ovIvoeKHsS2bsRGRrdE1GgYvwR+P/OeZcykFPfCL7rKLURH+3X2nQAEd3t1oe4qRWeuBF8ZkkOBug=
-X-Received: by 2002:a05:6902:305:b0:dcf:bc57:cd61 with SMTP id
- b5-20020a056902030500b00dcfbc57cd61mr8363686ybs.50.1709620891239; Mon, 04 Mar
- 2024 22:41:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709622869; x=1710227669;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PJOEpSfM7W5q1u08Hp4JeXt1WjIFUvsNQIjWvP89284=;
+        b=Rfqt4m4YfTk04GD/MUDlsN6ciKV5nj8NTpd9oUsVGx9FReKf5AKCMPJ01xScC3PiVI
+         oATqS0/QhnXpSlsH5TPfuIZIv7k6x7ZQGwcL5kTvy3lXEWnHGkCcelTNC+jlx/2mjYKb
+         1oyUd+CbRnloBbD9JZHhbYZxzjqTgPwa3Od7V/kQC7PzfNOEF7PCukw1+xIZhOVsWYvV
+         P8MTGTYHdVvUmAUFUaHOqdTl6PM45LnFpMABJhtTMP27s6UCi2Uv/qUwCxg46ZMfE15j
+         gUm14qlzfTpGO6JIm1oiDsbnMZpyJWHN+6V8vARpOso1BJl0qI9eFIkyBOvYlLmkQVfn
+         RqjA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9abitmqJi/KrH9Ox+2/7KIgWd6DJS5Bdekr3WvsfKa/RnhbmWuj6mi5dVu22hElM6NK5HrlvP9RXV9yD/JRzqsihepHYxEkmN
+X-Gm-Message-State: AOJu0YznZQDAmSPkjrCWLrqM08feAfca//43tqe+nCZp5hEIYzvscp2w
+	2K3yPjO6KFVoGjToUlKxCll8xdeGxBuUspjrTK2OGzJXlVUqRv+GJHIEuyI1Vwg=
+X-Google-Smtp-Source: AGHT+IHp7CcumrNQVRnYzlCRiXUg8lu+RHMCE8Y1XizPlq7rAPckHF7i1dAaJAU1OL50XXyaeagM+A==
+X-Received: by 2002:a05:6512:282c:b0:513:5217:6201 with SMTP id cf44-20020a056512282c00b0051352176201mr823592lfb.59.1709622869242;
+        Mon, 04 Mar 2024 23:14:29 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.222.97])
+        by smtp.gmail.com with ESMTPSA id p5-20020a1709060dc500b00a4537466591sm2234731eji.32.2024.03.04.23.14.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Mar 2024 23:14:28 -0800 (PST)
+Message-ID: <58cdfa7c-5483-4193-a5de-bb5fa72de637@linaro.org>
+Date: Tue, 5 Mar 2024 08:14:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240122-ipq5332-nsscc-v4-0-19fa30019770@quicinc.com>
- <20240122-ipq5332-nsscc-v4-2-19fa30019770@quicinc.com> <7a69a68d-44c2-4589-b286-466d2f2a0809@lunn.ch>
- <11fda059-3d8d-4030-922a-8fef16349a65@quicinc.com> <17e2400e-6881-4e9e-90c2-9c4f77a0d41d@lunn.ch>
- <8c9ee34c-a97b-4acf-a093-9ac2afc28d0e@quicinc.com> <CAA8EJppe6aNf2WJ5BvaX8SPTbuaEwzRm74F8QKyFtbmnGQt=1w@mail.gmail.com>
- <74f585c2-d220-4324-96eb-1a945fef9608@quicinc.com> <CAA8EJppuNRB9fhjimg4SUR2PydX7-KLWSb9H-nC-oSMYVOME-Q@mail.gmail.com>
- <d518dbc1-41aa-46f9-b549-c95a33b06ee0@quicinc.com> <CAA8EJppP_bAPRH7Upnq8dO7__xQPOJ6F_Lc-fpRAcutKKzk0eA@mail.gmail.com>
- <3a6d301d-16f6-4a11-8be5-6bbb6eb501f4@quicinc.com>
-In-Reply-To: <3a6d301d-16f6-4a11-8be5-6bbb6eb501f4@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 5 Mar 2024 08:41:19 +0200
-Message-ID: <CAA8EJpq2x-1mbBApGH5CiGZqCVhdP97pveZupdJyGQGo3MT8-Q@mail.gmail.com>
-Subject: Re: [PATCH v4 2/8] clk: qcom: ipq5332: enable few nssnoc clocks in
- driver probe
-To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindindgs: clock: support NXP i.MX95 BLK CTL
+ module
+Content-Language: en-US
+To: Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>,
+ "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240228-imx95-blk-ctl-v3-0-40ceba01a211@nxp.com>
+ <20240228-imx95-blk-ctl-v3-1-40ceba01a211@nxp.com>
+ <20240304143916.GA181628-robh@kernel.org>
+ <DU0PR04MB941740A36E953A0E1AD690EC88222@DU0PR04MB9417.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <DU0PR04MB941740A36E953A0E1AD690EC88222@DU0PR04MB9417.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 23 Feb 2024 at 12:18, Kathiravan Thirumoorthy
-<quic_kathirav@quicinc.com> wrote:
->
->
->
-> On 2/19/2024 3:53 PM, Dmitry Baryshkov wrote:
-> > On Sun, 18 Feb 2024 at 06:29, Kathiravan Thirumoorthy
-> > <quic_kathirav@quicinc.com> wrote:
-> >>
-> >>
-> >>
-> >> On 2/17/2024 10:15 PM, Dmitry Baryshkov wrote:
-> >>> On Sat, 17 Feb 2024 at 17:45, Kathiravan Thirumoorthy
-> >>> <quic_kathirav@quicinc.com> wrote:
-> >>>>
-> >>>>
-> >>>> <snip>
-> >>>>
-> >>>>>> Reason being, to access the NSSCC clocks, these GCC clocks
-> >>>>>> (gcc_snoc_nssnoc_clk, gcc_snoc_nssnoc_1_clk, gcc_nssnoc_nsscc_clk)
-> >>>>>> should be turned ON. But CCF disables these clocks as well due to the
-> >>>>>> lack of consumer.
-> >>>>>
-> >>>>> This means that NSSCC is also a consumer of those clocks. Please fix
-> >>>>> both DT and nsscc driver to handle NSSNOC clocks.
-> >>>>
-> >>>>
-> >>>> Thanks Dmitry. I shall include these clocks in the NSSCC DT node and
-> >>>> enable the same in the NSSCC driver probe.
-> >>>
-> >>> Or use them through pm_clk. This might be better, as the system
-> >>> doesn't need these clocks if NSSCC is suspended.
-> >>
-> >>
-> >> IPQ53XX SoC doesn't support the PM(suspend / resume) functionality, so
-> >> that, can I enable these clocks in NSSCC driver probe itself?
-> >
-> > There is a difference between PM (suspend/resume) and runtime PM.
-> >
-> >
->
-> Thanks Dmitry. IIUC your question correctly, runtime PM for the
-> peripherals are not supported (except CPU cores which supports DVFS).
-> Since these are router based products, once system is powered on, all
-> the peripherals are configured to the required frequency and it will be
-> never go into low power modes.
->
-> Please let me know if this answers your questions.
+On 05/03/2024 05:13, Peng Fan wrote:
+>>> +
+>>> +examples:
+>>> +  # Clock Control Module node:
+>>> +  - |
+>>> +    #include <dt-bindings/clock/nxp,imx95-clock.h>
+>>> +
+>>> +    syscon@4c410000 {
+>>
+>> clock-controller@...
+> 
+> But this is a syscon, using clock-controller will trigger dt
+> check warning.
 
-It seems there is a misunderstanding somewhere. Runtime PM allows the
-Linux kernel to disable temporary unused devices at runtime. E.g. if
-the NSS is switched off, the kernel can switch NSSCC off too, cutting
-the power. It has nothing to do with the frequency of the device /
-clock or with the product being a router or a mobile device.
+Which warning?
 
+>>
+>> As that is the main feature/function.
+>>
+>>> +      compatible = "nxp,imx95-vpumix-csr", "syscon";
+>>> +      reg = <0x4c410000 0x10000>;
+>>> +      #clock-cells = <1>;
+>>
+>> Please make the example as full as possible. For example, add mux-controller
+>> node. Do some of the blocks not have mux ctrl?
+> 
+> Yes. The blk ctrl is not just for clock, some registers has mux ctrl,
+> such as Pixel_link_sel.
 
--- 
-With best wishes
-Dmitry
+Then mux-controller should not be allowed for them.
+
+Best regards,
+Krzysztof
+
