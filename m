@@ -1,48 +1,48 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53025BAE3;
-	Wed,  6 Mar 2024 06:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397855BAF4;
+	Wed,  6 Mar 2024 06:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709708071; cv=none; b=XD9csXkR1MrTBzYTg+XMvkK3oqnDudPICnvZBIBdEggeKsGqW3DKrOvhMGBpYLilgraRS+5Xhy9OJ5uLRFpiTGbQHbjHUVHB1xnvo3qA8sS59HVtcO5JaUOdKB+OAZRyfvL+rpevRGNc7kXENftHgzSbSNn2IV3Vxa7hyHfpSZc=
+	t=1709708168; cv=none; b=a5ZwcfT6mj7j3pATjt4MbPSkPA5RLn1a9JAFAih99ZTwogIyzsNbxRjUo0jGmwEnLe3RYj75kzTYfQxhvEXZHWb+tlu7k/vzcRyzk6qiJnQ8SdshXhTbB4cBfAdNFYMJcXqkEvfFc/IYJxDrWf0zSiUcVTYyz40wwGeAdEpwA7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709708071; c=relaxed/simple;
-	bh=1qOQKAvtCcJsCaaHkuSKtoPNz2L4Fkp99UoD/Zm9yLE=;
+	s=arc-20240116; t=1709708168; c=relaxed/simple;
+	bh=QjcOrepbQHC8fIYf7Px8Un6fYcP3Bq2zoSJm62LQO9w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kxr6e50mPkoDZIO+uLktnDhGagTEH2FKnXGM8akJIYsecS5f0Od5RYlNoktty/hkFvsB2Ui1g/9zzZAYEZRT4I58flMakusqNNBl5m+ZNMBM56END3sL1+T5qp22HvOnlsTEUPpnAESQeA96KHElQeAa7ewwlEmGcs+2VGtPKPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IMjf5h+X; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=JY+oeqxIsgYY8BI1U268EkWXGCdEZHoXpwsVU3gQIbfrrFoZHeZlNhrY80LqK7kSRrLsExrBs0ML+Z0COBGI8pbJmb3aGHi5RI4Uwp9XLl1WGQdsv2XkjDohU3kgHjlVKRkuEwnUZwHKhJUHraVURG1DnsXAFz3f+47pQQvFfrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jXtO6eJM; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IMjf5h+X"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4266nOqd002518;
-	Wed, 6 Mar 2024 06:54:25 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jXtO6eJM"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4266a4cu030167;
+	Wed, 6 Mar 2024 06:56:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	message-id:date:mime-version:subject:to:cc:references:from
 	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=GZoPrU/aBoJp7mFkb4ZVSLyBPiyrfEwQQRuH2k+moas=; b=IM
-	jf5h+XB9KoIqD0tXrhYKvUWWjrbkGAxtkMkr7lgg4UDyP4ejOf8eDva4dQ5ZM9id
-	ln6eNnJxoS/hZQtVcvjZoMaDq9pd5nxARZabEBMQCVyZmLl+HJ/lkKyfhuRaT69m
-	nZPzcSGg3VMheiT20/JL3gTpCTTILXWU0MgV2X7q0NViGFih0HiGWOlowELXE5b+
-	VXbwXTfEHRpjviQ+Wjm2UyUgTLA61Htx0pwWy3MiJih4FxbnBnju6LLL94LseUi6
-	fM/pe6Xg8w7Zgq6MO1MCLNzRvsdqYxTJZmnm37A6Ph00vsVuXw7QBd0bMz8LVME/
-	9kbo6sJXCk1sNa6yhtiQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wpepc8jtu-1
+	qcppdkim1; bh=C4y2rlJJYtglNLfRP1S9jhRCiJcMrsC4EZswpwMcb4U=; b=jX
+	tO6eJM3VbCLn6RjJC/648fI+/TJl1EAzLIAWUoiGMMpCdp80uNC5X67c+cs7sY5/
+	UpwRjHAeNuwQIlyWyXkdFJz52SNwAtlC/kEmJc8v7uhyHfVJ2oos72x4HHVAdR/B
+	UvMF/OdaJDA8obf4hwpGCTvyXqYqxxkpklDipjNuBANJJll0k7aMiDa9iyfftI/q
+	ugXInwgAz1JHypB/2wsS191kpJzFcFcJH5/Gs/vJQjUpK7LHmZR7M9lN7VloWhz7
+	UlYlsJ3abGQTBx7aK6Obp6Oa/MdPhAZpXu6IR1TiyUc+8bvzDHNnCISEMeJIRIZA
+	k+50WQ/IsT20Y+/8MwFw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wp00x2jyq-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Mar 2024 06:54:25 +0000 (GMT)
+	Wed, 06 Mar 2024 06:56:01 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4266sOPN001388
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4266u0VG015981
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Mar 2024 06:54:24 GMT
+	Wed, 6 Mar 2024 06:56:00 GMT
 Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 5 Mar
- 2024 22:54:20 -0800
-Message-ID: <09ef8087-83ee-4dc3-b6a3-6c22d88c637d@quicinc.com>
-Date: Wed, 6 Mar 2024 12:24:17 +0530
+ 2024 22:55:57 -0800
+Message-ID: <9aa21da0-ad93-41f7-8ac1-b496a049a32c@quicinc.com>
+Date: Wed, 6 Mar 2024 12:25:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,8 +50,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] clk: qcom: sc7280: Update the transition delay for
- GDSC
+Subject: Re: [PATCH 2/5] clk: qcom: lpassaudiocc-sc7280: Add support to skip
+ PLL configuration
 Content-Language: en-US
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 CC: Stephen Boyd <sboyd@kernel.org>,
@@ -67,65 +67,64 @@ CC: Stephen Boyd <sboyd@kernel.org>,
         <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>
 References: <20240208062836.19767-1-quic_tdas@quicinc.com>
- <20240208062836.19767-4-quic_tdas@quicinc.com>
- <CAA8EJpoN5Q66Svq8fkCUDHbsGoYT0COOSH4vueyL1-Jk0AhkVw@mail.gmail.com>
+ <20240208062836.19767-3-quic_tdas@quicinc.com>
+ <CAA8EJpq2MpZitzspd9RksTY7WWKAaLwvb30x8ArBfed5Ee8buA@mail.gmail.com>
 From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <CAA8EJpoN5Q66Svq8fkCUDHbsGoYT0COOSH4vueyL1-Jk0AhkVw@mail.gmail.com>
+In-Reply-To: <CAA8EJpq2MpZitzspd9RksTY7WWKAaLwvb30x8ArBfed5Ee8buA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jpcDdzTHVYITwsgdGHFZP9-BuNfn_kBI
-X-Proofpoint-ORIG-GUID: jpcDdzTHVYITwsgdGHFZP9-BuNfn_kBI
+X-Proofpoint-ORIG-GUID: twarsJlJD0j01NBMa86r2OasQyQSP7hP
+X-Proofpoint-GUID: twarsJlJD0j01NBMa86r2OasQyQSP7hP
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-03-06_04,2024-03-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- bulkscore=0 phishscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
- mlxlogscore=999 adultscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2402120000
- definitions=main-2403060054
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999
+ impostorscore=0 phishscore=0 adultscore=0 malwarescore=0 spamscore=0
+ bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2402120000 definitions=main-2403060053
 
-Thanks for your review.
+Thanks for your review Dmitry.
 
-On 2/8/2024 12:33 PM, Dmitry Baryshkov wrote:
+On 2/8/2024 12:32 PM, Dmitry Baryshkov wrote:
 > On Thu, 8 Feb 2024 at 08:29, Taniya Das <quic_tdas@quicinc.com> wrote:
 >>
->> The GDSC default values are being updated and they can cause issues
->> in the GDSC FSM state.
+>> The PLL configuration needs to be skipped when remoteproc brings the
+>> LPASS out of reset.
 > 
-> It reads as if new values can cause issues with the FSM.
-
-Ah, sure, will update. The new values will resolve the FSM stability issues.
-
+> Why?
 > 
->> While at it also update the force mem core
->> for UFS ICE clock.
+
+On QCM6490 boards, the HLOS is not given access to program the PLL of 
+Low Power Audio Subsystem. Also on these boards the per-requisite of a 
+GDSC is not available. Thus we need to skip the PLL programming.
+
+I will update the commit text in my next series.
+
+>>
+>> Also update the lpassaudio_cc_reset regmap name and max register to handle
+>> the regmap conflict warning between lpassaudio_cc_reset and lpassaudio_cc.
 > 
 > Separate patch, please.
 > 
 
-Sure, will post in the next series.
+Yes, I will take care.
 
 >>
->> Fixes: fae7617bb142 ("clk: qcom: Add video clock controller driver for SC7280")
->> Fixes: 1daec8cfebc2 ("clk: qcom: camcc: Add camera clock controller driver for SC7280")
->> Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
->> Fixes: 3e0f01d6c7e7 ("clk: qcom: Add graphics clock controller driver for SC7280")
+>> Fixes: a9dd26639d05 ("clk: qcom: lpass: Add support for LPASS clock controller for SC7280")
 >> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 >> ---
->>   drivers/clk/qcom/camcc-sc7280.c   | 19 +++++++++++++++++++
->>   drivers/clk/qcom/gcc-sc7280.c     | 13 +++++++++++++
->>   drivers/clk/qcom/gpucc-sc7280.c   |  7 +++++++
->>   drivers/clk/qcom/videocc-sc7280.c |  7 +++++++
->>   4 files changed, 46 insertions(+)
+>>   drivers/clk/qcom/lpassaudiocc-sc7280.c | 14 ++++++++++----
+>>   1 file changed, 10 insertions(+), 4 deletions(-)
 >>
->> diff --git a/drivers/clk/qcom/camcc-sc7280.c b/drivers/clk/qcom/camcc-sc7280.c
->> index 49f046ea857c..4849b0e8c846 100644
->> --- a/drivers/clk/qcom/camcc-sc7280.c
->> +++ b/drivers/clk/qcom/camcc-sc7280.c
+>> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>> index c43d0b1af7f7..2619a8ced9d5 100644
+>> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
 >> @@ -1,6 +1,7 @@
 >>   // SPDX-License-Identifier: GPL-2.0-only
 >>   /*
@@ -134,182 +133,34 @@ Sure, will post in the next series.
 >>    */
 >>
 >>   #include <linux/clk-provider.h>
->> @@ -2247,6 +2248,9 @@ static struct clk_branch cam_cc_sleep_clk = {
+>> @@ -766,11 +767,13 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>>                  goto exit;
+>>          }
 >>
->>   static struct gdsc cam_cc_titan_top_gdsc = {
->>          .gdscr = 0xc194,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0xf,
->>          .pd = {
->>                  .name = "cam_cc_titan_top_gdsc",
->>          },
->> @@ -2256,6 +2260,9 @@ static struct gdsc cam_cc_titan_top_gdsc = {
+>> -       clk_zonda_pll_configure(&lpass_audio_cc_pll, regmap, &lpass_audio_cc_pll_config);
+>> +       if (!of_property_read_bool(pdev->dev.of_node, "qcom,adsp-skip-pll")) {
+>> +               clk_zonda_pll_configure(&lpass_audio_cc_pll, regmap, &lpass_audio_cc_pll_config);
 >>
->>   static struct gdsc cam_cc_bps_gdsc = {
->>          .gdscr = 0x7004,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0xf,
->>          .pd = {
->>                  .name = "cam_cc_bps_gdsc",
->>          },
->> @@ -2265,6 +2272,9 @@ static struct gdsc cam_cc_bps_gdsc = {
+>> -       /* PLL settings */
+>> -       regmap_write(regmap, 0x4, 0x3b);
+>> -       regmap_write(regmap, 0x8, 0xff05);
+>> +               /* PLL settings */
+>> +               regmap_write(regmap, 0x4, 0x3b);
+>> +               regmap_write(regmap, 0x8, 0xff05);
+>> +       }
 >>
->>   static struct gdsc cam_cc_ife_0_gdsc = {
->>          .gdscr = 0xa004,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0xf,
->>          .pd = {
->>                  .name = "cam_cc_ife_0_gdsc",
->>          },
->> @@ -2274,6 +2284,9 @@ static struct gdsc cam_cc_ife_0_gdsc = {
+>>          ret = qcom_cc_really_probe(pdev, &lpass_audio_cc_sc7280_desc, regmap);
+>>          if (ret) {
+>> @@ -778,6 +781,9 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>>                  goto exit;
+>>          }
 >>
->>   static struct gdsc cam_cc_ife_1_gdsc = {
->>          .gdscr = 0xb004,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0xf,
->>          .pd = {
->>                  .name = "cam_cc_ife_1_gdsc",
->>          },
->> @@ -2283,6 +2296,9 @@ static struct gdsc cam_cc_ife_1_gdsc = {
->>
->>   static struct gdsc cam_cc_ife_2_gdsc = {
->>          .gdscr = 0xb070,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0xf,
->>          .pd = {
->>                  .name = "cam_cc_ife_2_gdsc",
->>          },
->> @@ -2292,6 +2308,9 @@ static struct gdsc cam_cc_ife_2_gdsc = {
->>
->>   static struct gdsc cam_cc_ipe_0_gdsc = {
->>          .gdscr = 0x8004,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0xf,
->>          .pd = {
->>                  .name = "cam_cc_ipe_0_gdsc",
->>          },
->> diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
->> index 2b661df5de26..5f3bfb6f4fbb 100644
->> --- a/drivers/clk/qcom/gcc-sc7280.c
->> +++ b/drivers/clk/qcom/gcc-sc7280.c
->> @@ -1,6 +1,7 @@
->>   // SPDX-License-Identifier: GPL-2.0-only
->>   /*
->>    * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>    */
->>
->>   #include <linux/clk-provider.h>
->> @@ -3094,6 +3095,9 @@ static struct clk_branch gcc_wpss_rscp_clk = {
->>
->>   static struct gdsc gcc_pcie_0_gdsc = {
->>          .gdscr = 0x6b004,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0xf,
->>          .pd = {
->>                  .name = "gcc_pcie_0_gdsc",
->>          },
->> @@ -3112,6 +3116,9 @@ static struct gdsc gcc_pcie_1_gdsc = {
->>
->>   static struct gdsc gcc_ufs_phy_gdsc = {
->>          .gdscr = 0x77004,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0xf,
->>          .pd = {
->>                  .name = "gcc_ufs_phy_gdsc",
->>          },
->> @@ -3121,6 +3128,9 @@ static struct gdsc gcc_ufs_phy_gdsc = {
->>
->>   static struct gdsc gcc_usb30_prim_gdsc = {
->>          .gdscr = 0xf004,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0xf,
->>          .pd = {
->>                  .name = "gcc_usb30_prim_gdsc",
->>          },
->> @@ -3467,6 +3477,9 @@ static int gcc_sc7280_probe(struct platform_device *pdev)
->>          regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
->>          regmap_update_bits(regmap, 0x7100C, BIT(13), BIT(13));
->>
->> +       /* FORCE_MEM_CORE_ON for ufs phy ice core clocks */
->> +       qcom_branch_set_force_mem_core(regmap, gcc_ufs_phy_ice_core_clk, true);
+>> +       lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc_reset";
+>> +       lpass_audio_cc_sc7280_regmap_config.max_register = 0xc8;
 >> +
->>          ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
->>                          ARRAY_SIZE(gcc_dfs_clocks));
->>          if (ret)
->> diff --git a/drivers/clk/qcom/gpucc-sc7280.c b/drivers/clk/qcom/gpucc-sc7280.c
->> index 1490cd45a654..0eea4cf7954d 100644
->> --- a/drivers/clk/qcom/gpucc-sc7280.c
->> +++ b/drivers/clk/qcom/gpucc-sc7280.c
->> @@ -1,6 +1,7 @@
->>   // SPDX-License-Identifier: GPL-2.0-only
->>   /*
->>    * Copyright (c) 2021, The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>    */
->>
->>   #include <linux/clk-provider.h>
->> @@ -379,6 +380,9 @@ static struct clk_branch gpu_cc_sleep_clk = {
->>
->>   static struct gdsc cx_gdsc = {
->>          .gdscr = 0x106c,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0x2,
->>          .gds_hw_ctrl = 0x1540,
->>          .pd = {
->>                  .name = "cx_gdsc",
->> @@ -389,6 +393,9 @@ static struct gdsc cx_gdsc = {
->>
->>   static struct gdsc gx_gdsc = {
->>          .gdscr = 0x100c,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0x2,
->>          .clamp_io_ctrl = 0x1508,
->>          .pd = {
->>                  .name = "gx_gdsc",
->> diff --git a/drivers/clk/qcom/videocc-sc7280.c b/drivers/clk/qcom/videocc-sc7280.c
->> index 615695d82319..b07895c459e8 100644
->> --- a/drivers/clk/qcom/videocc-sc7280.c
->> +++ b/drivers/clk/qcom/videocc-sc7280.c
->> @@ -1,6 +1,7 @@
->>   // SPDX-License-Identifier: GPL-2.0-only
->>   /*
->>    * Copyright (c) 2021, The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>    */
->>
->>   #include <linux/clk-provider.h>
->> @@ -232,6 +233,9 @@ static struct clk_branch video_cc_venus_ahb_clk = {
->>
->>   static struct gdsc mvs0_gdsc = {
->>          .gdscr = 0x3004,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0x6,
->>          .pd = {
->>                  .name = "mvs0_gdsc",
->>          },
->> @@ -241,6 +245,9 @@ static struct gdsc mvs0_gdsc = {
->>
->>   static struct gdsc mvsc_gdsc = {
->>          .gdscr = 0x2004,
->> +       .en_rest_wait_val = 0x2,
->> +       .en_few_wait_val = 0x2,
->> +       .clk_dis_wait_val = 0x6,
->>          .pd = {
->>                  .name = "mvsc_gdsc",
->>          },
+>>          ret = qcom_cc_probe_by_index(pdev, 1, &lpass_audio_cc_reset_sc7280_desc);
+>>          if (ret) {
+>>                  dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC Resets\n");
 >> --
 >> 2.17.1
 >>
