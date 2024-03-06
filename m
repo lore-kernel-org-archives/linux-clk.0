@@ -1,209 +1,117 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B09A7F7D3
-	for <linux-clk@vger.kernel.org>; Wed,  6 Mar 2024 12:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAB5823B4
+	for <linux-clk@vger.kernel.org>; Wed,  6 Mar 2024 12:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709727208; cv=none; b=db8Q8JYVfPILIcwKWium9ZwiOhV3HvIEMEE4IOaZSfpvUBnDPI/lyx1u3KyqdXLJbmYY2hy9B4hSR9506VB1n8lvi2fqiFlfBwrCUnNykJihGCWVkxx9rjjvFumMFop2TKfYqtJhSfanZOkKnmayXqBiiZ9SX6GhVRzynOaLmL8=
+	t=1709728245; cv=none; b=WDWEzI9MCrChUcyfQ1W+7mXABaOMmYDDS1xq+gNxRlP0f7AhB4G02Uwk0h3HNVfiPaNXvLRVfp8wYkSktp8/PEkAM5lP2n5kZO2/klS98JwEd2GQkAPgilvG923eCDzRuwTt0hsYb+Gu3XsnHh+G3ESmyJtZ9e3QW4NhtAguhOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709727208; c=relaxed/simple;
-	bh=MvQWTMYzbR7pSSNPtXrU0pZYKoIJ+SgRUhNdIt6jGjg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=n5NKmlTXCBW/2ZKfOZcxTjqdAeyKvjk8Hh34obM2UBm22Tagg9QCqveCFWEzdim8LJliwSHxc7hNDBOG+T91ap4nUBOS6vtb7wjOtgokTlDexMOIr0hjx4A3ayEjgehRJFLr/79Fak8ZVw3Ga4i1dA/9UHqvdPt8xj1qW7RM0qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bhDodZOL; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1709728245; c=relaxed/simple;
+	bh=PTcII2kQV2pmaV0bp5yVc1A3TkusgNPV9AvWwya2aM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+eMgYZy1GmViG/78c0pCYMxqpfqYOXKYSUkVHf4RUudxQc0317a575bRuWfyMZRjftVcjxNGPemz5hNcDQeAnhnxBwhL7ibeWEghQKO9mHhi85jcMWciURZtiSAp9AuvUIKjzn8qvTMTR0ouVX3MGWKbfHQlULWXwEhOXPwPas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=QxQExzBL; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bhDodZOL"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240306121318epoutp043df4b98896b025783742028f93f987d0~6K9Qw92XP1510315103epoutp04T
-	for <linux-clk@vger.kernel.org>; Wed,  6 Mar 2024 12:13:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240306121318epoutp043df4b98896b025783742028f93f987d0~6K9Qw92XP1510315103epoutp04T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1709727198;
-	bh=WTQ15VypupqP8VXJmmdKI+HBcUQn7Q0FdOahxVlCL5Q=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=bhDodZOL5GHRl6QNmRlQvbmmZ8mxapoCFy7ev0q1057BdCSiTV6exNPL9FjMuaTWT
-	 PRn2744KUFFmWRmmffLSihx1+AqnHoHA/TK1FnNDWPjy6Ir7BaXAv/nk6zdH/ZVUPP
-	 U+hK+4+L2AOPoV4DyHiV35SAlS+hPEgaAbZBHtas=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240306121318epcas5p46d8921f3096590ae7e8b27e08f1f0a0e~6K9QQ5BhA2378723787epcas5p4E;
-	Wed,  6 Mar 2024 12:13:18 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4TqWY84pFhz4x9Pv; Wed,  6 Mar
-	2024 12:13:16 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E0.62.09634.CDD58E56; Wed,  6 Mar 2024 21:13:16 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240306121316epcas5p2dd93d2a62d83e2bae45ef4fcfb7362f5~6K9OKiGjh1360113601epcas5p2_;
-	Wed,  6 Mar 2024 12:13:16 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240306121316epsmtrp17a3a8dcd902734f3b463752b5ef267a5~6K9OJjFBD1302513025epsmtrp1g;
-	Wed,  6 Mar 2024 12:13:16 +0000 (GMT)
-X-AuditID: b6c32a49-159fd700000025a2-af-65e85ddc69fc
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	09.63.08817.BDD58E56; Wed,  6 Mar 2024 21:13:15 +0900 (KST)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240306121311epsmtip1a9216d1eb53f803e079c054ed232e15a~6K9J5QBtm2312523125epsmtip1O;
-	Wed,  6 Mar 2024 12:13:11 +0000 (GMT)
-From: "Shradha Todi" <shradha.t@samsung.com>
-To: "'Dan Carpenter'" <dan.carpenter@linaro.org>
-Cc: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <jingoohan1@gmail.com>, <lpieralisi@kernel.org>,
-	<kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-	<krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
-	<linux@armlinux.org.uk>, <m.szyprowski@samsung.com>,
-	<manivannan.sadhasivam@linaro.org>, <pankaj.dubey@samsung.com>,
-	<gost.dev@samsung.com>
-In-Reply-To: <f00eed31-4baf-4d5c-934d-8223d1ab554d@moroto.mountain>
-Subject: RE: [PATCH v6 1/2] clk: Provide managed helper to get and enable
- bulk clocks
-Date: Wed, 6 Mar 2024 17:43:03 +0530
-Message-ID: <022301da6fbf$aae4f7e0$00aee7a0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="QxQExzBL"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51336ab1fb7so5747701e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 06 Mar 2024 04:30:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech.se; s=google; t=1709728240; x=1710333040; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FWwYydqmepf5IjC8UK5UPiYxznThwpO9On1HRbhq+ho=;
+        b=QxQExzBLlSRev0RIX7Ljc8LtvdR/VLPbDslsHYt7v/XVD5QDPrDllTvjlaB8TUNvOP
+         O9xFlrlt34yHyZe3ooJxYCaYXeeeleoDPveXOWZEIsjWyBjyOhhTshEXQDEuAH/wz+OS
+         DmultETQ5tVLlbgjeO6gBjlOcVaSsoU835ekuwwm180/Xgnt9oIovXRR9NwDuKh+VfGT
+         PHdauLue2e/yTETgiZXNp/K1hZ0knnxAz5YltRoSxmcrdwM3UmMv4acYAQFX8iAj56QN
+         U83J+00/h2pXrFRqjREWK+uU85BQw53VbS+31BiAPz8edQnIU7bfGk8lqXs1G7TPl/Ls
+         BAkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709728240; x=1710333040;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FWwYydqmepf5IjC8UK5UPiYxznThwpO9On1HRbhq+ho=;
+        b=KIWR3V7TKFHMtGn4Pt9Dt5JZiiVPcRJc1Y3+U6FylRnEbZ8oZETLPRt0ZSYGZzybK/
+         7lvpF9E7/SPNcX/3Q/fQyKSMszoOL0/FTHxZCI7sCY9GRgaguqhU7Q4Oy1pUORrSSnqC
+         SKDY/XvmrnmGkURLq0E4yqCLB+C3taf7QqeQMVB0OvS2oetZOeCsusoUFzac0jXQDYa+
+         eYByXZk+3Yr595/hiDn6WPeV1V1VmdxQUL5xPlpTOxBPUxeveXZbb5ycsDmIQXcWS6BC
+         7XpSfx+F3O+Z7s09mGARoTqmTTxJMgF4aO2SajD46dHfm+hyPiOikLOVPGpywQW1TMN4
+         mOMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdgewFIJ7kvkuEPTmupdjws0ncaSkxC7sDkLc1PR0B8nTiGDW6PFd8m6pcBKF4tQ+tvyHH68WGktnaY8Hdpuw2kTLIC/xKHi0a
+X-Gm-Message-State: AOJu0YyL+8AYedkpGN06tSv5c5Rlh3URsNUUegIdR3dWVZanIPghnUfv
+	quPhw5pkvLksnSOJEDdRsdsVyId+X7O2KyKXJYAN1/hFl9ILV7e6jharmbj1QrY=
+X-Google-Smtp-Source: AGHT+IFzQxkuAqjr7PtbZ+hs10zWX5jwQjG+s5deSaQKkphYRc/ItJqyZozL2B6+P0S18GrP9IEDhA==
+X-Received: by 2002:a19:f016:0:b0:513:1551:f0 with SMTP id p22-20020a19f016000000b00513155100f0mr3119939lfc.42.1709728239546;
+        Wed, 06 Mar 2024 04:30:39 -0800 (PST)
+Received: from localhost (h-46-59-36-113.A463.priv.bahnhof.se. [46.59.36.113])
+        by smtp.gmail.com with ESMTPSA id c8-20020a056512074800b005130d251b57sm2624706lfs.166.2024.03.06.04.30.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Mar 2024 04:30:39 -0800 (PST)
+Date: Wed, 6 Mar 2024 13:30:38 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a779h0: Add thermal clock
+Message-ID: <20240306123038.GA3396349@ragnatech.se>
+References: <befac3e8342cd552f580d34be863ef84403c541f.1709722056.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQH2hJCcwYDjJDqbclltz640cKP7jQL/AcmgAaOboDkDexFUCLCxgc9A
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0xTVxjN62v7CoPxBhguxG317UeECbSjhcsi4AKaN6YGsjgXg6lv8GyR
-	/lp/6GAkIKEykK1ixkYLVNDGAIYRWioUYbDiYHNBZUA3MiA4cEOJAxRMQHFreXXjv/N995yc
-	73z3Xh4avMyN4OUqdbRGSckJrj/76kBkZPTk0XlacPcOH85YrnKhtUQGlywGDE70O1mwacWE
-	wd4FBwaLK59woG3WzYHLldMcONpdx4XDliEurLn1HQu6qnsRWPq0lA1br09hcKq0nANHbuyF
-	Fx0rGPynpwuDz9zt7D2h5Kh7BCUXfzNgpNM8hZENNj1paynnkpPuHi45N/YNi7Rbi8gvO1oQ
-	8pHtlQz/I3m7ZTSVQ2v4tDJblZOrlCYR738gSZWI4wXCaGEiTCD4SkpBJxFp+zOi9+XKPeEI
-	/klKrve0MiitlohN3q1R6XU0X6bS6pIIWp0jV4vUMVpKodUrpTFKWveOUCB4W+whHsuT2S58
-	rJ4P+bT7tAUtRlaDKhA/HsBFoHn2K3YF4s8Lxq8hoOFsGcYUDxHwc1UXhykeI+D7v43s55K1
-	y4u+g14EjN+5wmWKeQTc6h/GvCwuvgvMjT1FvTgUF4AldzvqJaF4PRv0j5dvkvzwVPCnu4nl
-	xSH4YVC2+JDrxWz8ddBq79jsB+KJoH71Dw6DXwI/meY2x0DxV0HngzqUGYkP1u5e5jBm+4DF
-	8S2L4YSBH9YqN40BXusHnH3TLEaQBn6/edEnDgH3hzowBkeAe8YzPiwFzfYaH0cOHtutPm0K
-	6B+r8wzB8xhEgrbuWMbrRfDFkzmWtw3wQPD5mWCG/RpY2ejxbS4cWAZHOQwmQe3GDewcssO8
-	JZl5SzLzlgTm/80aEHYLEk6rtQoprRWrhUr61H8Xnq1S2JDNtx/1XhcyNbMU40JYPMSFAB5K
-	hAYWrs/RwYE5VH4BrVFJNHo5rXUhYs+6q9CIbdkqz+dR6iRCUaJAFB8fL0qMixcSYYELhvqc
-	YFxK6eg8mlbTmuc6Fs8vopjlPN7X112AlvwSjpvpo9d3haVY9oObhfnOKKNpo3P2XfbJ9MHC
-	9pS4rimVZEhITBgPH7p/ujFoukK7ai9q+pHq3xZq7UytPhBRf2xHQkl6QBhbVyh6OXln821F
-	46meRiuYyBJHG4ySQ1X2EEf6lemeIwS8ECA9aN3eNqCJTB8OeqFWWBWwvpxlGHkjoywzzDEt
-	1H8ofrNlT2HsbSz2gOlE3M7M85c4Q/L8kYTt6WnrJ/aeXVgrMznvXUpx9ZpnDraajhuanpFZ
-	mX99Nrlh/JpnbnRzEmHRR82DKnoypIR6q3Rko616dgzrcP06sGyihbJrDx4ln3dwxj/JVBTM
-	1hBsrYwSRqEaLfUvVaqDpYQEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsWy7bCSnO7t2BepBlN7LSwezNvGZrGkKcPi
-	w7xWdoubB3YyWaz4MpPdYu/rrewWDT2/WS02Pb7GavGx5x6rxeVdc9gszs47zmYx4/w+JotD
-	U/cyWrT8aWGxWHvkLrvF3ZZOVouLp1wtFm39wm7xf88Odot/1zayOIh4XL52kdnj/Y1Wdo+d
-	s+6yeyzYVOqxaVUnm8eda3vYPJ5cmc7ksXlJvUffllWMHp83yQVwRXHZpKTmZJalFunbJXBl
-	bJqfVPBCuGJX4zzmBsav/F2MnBwSAiYSP5e9Z+1i5OIQEtjNKLFuyS0miISkxOeL66BsYYmV
-	/56zg9hCAs8YJe7/UQSx2QR0JJ5c+cMMYosIGEh8uLaRGWQQs8BGFok5n/awQEz9xCjxs2kt
-	I0gVp4CzxLNrK8CmCguESnRN2QI2lUVARWLt5i1gcV4BS4m5Xx+xQtiCEidnPgEaxAE0VU+i
-	bSPYGGYBeYntb+cwQxynIPHz6TJWiCPcJOZthTiaWUBc4ujPHuYJjMKzkEyahTBpFpJJs5B0
-	LGBkWcUomVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERz3Wlo7GPes+qB3iJGJg/EQowQH
-	s5IIb82vJ6lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeb+97k0REkhPLEnNTk0tSC2CyTJxcEo1
-	MKkXvuir5VvLqlqaYK5TfqST/fTc7652zlNPa9Rt9tHxZD/Qvi24fRf37N/6b//8/fjw9cRF
-	0tL7+80mXNn6wD/504cd+XE187aIyou/Yfx5i+/qrMn9ApMjZ+o1GUz8WVz1KNV9dqIgJ2NF
-	9Kq+qy85w6q2ztymNPtg9Y4LdZuNivqWXl90e2FH+LUfZ8QXRS/b8nZKb/60Lws3xPO+eBvn
-	o7//xa6PkziuFM00++L9a6eC5HW3CT/23gizf8Ltsz6Fw+PuA/4+9ewStl1bVYS/e4pdXbUj
-	OLSveK6U97qQVYFTroTxcTefORH2cL9idMn0Gf4bV9xQ2nZUSI3F3vF9N+c3lwL7G61zK78p
-	BbYosRRnJBpqMRcVJwIAvC2ismoDAAA=
-X-CMS-MailID: 20240306121316epcas5p2dd93d2a62d83e2bae45ef4fcfb7362f5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240220084120epcas5p1e8980539667c3d9da20f49fc645d8f4c
-References: <20240220084046.23786-1-shradha.t@samsung.com>
-	<CGME20240220084120epcas5p1e8980539667c3d9da20f49fc645d8f4c@epcas5p1.samsung.com>
-	<20240220084046.23786-2-shradha.t@samsung.com>
-	<f00eed31-4baf-4d5c-934d-8223d1ab554d@moroto.mountain>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <befac3e8342cd552f580d34be863ef84403c541f.1709722056.git.geert+renesas@glider.be>
 
+Hi Geert,
 
+Thanks for your patch.
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: 05 March 2024 14:20
-> To: Shradha Todi <shradha.t@samsung.com>
-> Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
-> soc@vger.kernel.org; mturquette@baylibre.com; sboyd@kernel.org;
-> jingoohan1@gmail.com; lpieralisi@kernel.org; kw@linux.com; robh@kernel.org;
-> bhelgaas@google.com; krzysztof.kozlowski@linaro.org;
-> alim.akhtar@samsung.com; linux@armlinux.org.uk;
-> m.szyprowski@samsung.com; manivannan.sadhasivam@linaro.org;
-> pankaj.dubey@samsung.com; gost.dev@samsung.com
-> Subject: Re: [PATCH v6 1/2] clk: Provide managed helper to get and enable bulk
-> clocks
+On 2024-03-06 11:52:04 +0100, Geert Uytterhoeven wrote:
+> Add the module clock used by the Thermal Sensor/Chip Internal Voltage
+> Monitor/Core Voltage Monitor (THS/CIVM/CVM) on the Renesas R-Car V4M
+> (R8A779H0) SoC.
 > 
-> On Tue, Feb 20, 2024 at 02:10:45PM +0530, Shradha Todi wrote:
-> > +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
-> > +					      struct clk_bulk_data **clks) {
-> > +	struct clk_bulk_devres *devres;
-> > +	int ret;
-> > +
-> > +	devres = devres_alloc(devm_clk_bulk_release_all_enable,
-> > +			      sizeof(*devres), GFP_KERNEL);
-> > +	if (!devres)
-> > +		return -ENOMEM;
-> > +
-> > +	ret = clk_bulk_get_all(dev, &devres->clks);
-> > +	if (ret > 0) {
+> Based on a patch in the BSP by Cong Dang.
 > 
-> I feel like this should be >= instead of >.  There aren't any callers of this
-function
-> yet so we can't see what's in *clks at the start but it's easy to imagine a
-situation
-> where it's bad data.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+> To be queued in renesas-clk for v6.10.
+> 
+> Changes compared to the BSP:
+>   - Rename "thermal" to "tsc2:tsc1".
+> ---
+>  drivers/clk/renesas/r8a779h0-cpg-mssr.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+> index 71f67a1c86d80f4c..5c48e645f0c3197d 100644
+> --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+> @@ -192,6 +192,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
+>  	DEF_MOD("pfc0",		915,	R8A779H0_CLK_CP),
+>  	DEF_MOD("pfc1",		916,	R8A779H0_CLK_CP),
+>  	DEF_MOD("pfc2",		917,	R8A779H0_CLK_CP),
+> +	DEF_MOD("tsc2:tsc1",	919,	R8A779H0_CLK_CL16M),
+>  };
+>  
+>  /*
+> -- 
+> 2.34.1
 > 
 
-Reference for this piece of code has been taken from devm_clk_bulk_get_all()
-which
-has multiple callers, so it's safe. If we make this >=, it will hold on to the
-devres node
-even though there are no clocks.
-
-> > +		*clks = devres->clks;
-> > +		devres->num_clks = ret;
-> > +	} else {
-> > +		devres_free(devres);
-> > +		return ret;
-> 
-> When clk_bulk_get_all() returns zero then we return success here.
-> 
-
-Yes, we are returning success in case there are no clocks as well. In case there
-are no
-clocks defined in the DT-node, then it is assumed that the driver does not need
-any
-clock manipulation for driver operation. So the intention here is to continue
-without
-throwing error.
-
-> regards,
-> dan carpenter
-> 
-> > +	}
-> > +
-> > +	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
-> > +	if (!ret) {
-> > +		devres_add(dev, devres);
-> > +	} else {
-> > +		clk_bulk_put_all(devres->num_clks, devres->clks);
-> > +		devres_free(devres);
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
-> > +
-
-
+-- 
+Kind Regards,
+Niklas Söderlund
