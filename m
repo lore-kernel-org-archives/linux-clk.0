@@ -1,274 +1,210 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16E95CDD1
-	for <linux-clk@vger.kernel.org>; Wed,  6 Mar 2024 07:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E802374A;
+	Wed,  6 Mar 2024 08:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709711700; cv=none; b=DpVdsnvX+vNZ/LpW6HD80ioeZkHPCxRL4ewzMfzUVw/qCvxxTClGkXx7h+u83qGS502vKM4Mug/qKaGe1LgZo3JxwEkD7uYJwlJx27Y7XtjDLfZ0fQLwqPAQKyQZauZdlRBrp8PFnU0t2Fvo9yxPPsSd2Po7WxfkuZgTII2+0B8=
+	t=1709713919; cv=none; b=p0WqknyWE438g3yzBuFiNu3ytK2rdcbTNHHSye5VwKbOhEM4WfjIb/nSb/ZkG6P5hINk7ZGtCIo12C2fk4qu+A0EJ0eLeTIt8qR+xHRLNNdi013Ex/Iy0SucyHraDuqxi/C4eHNuvb01NrEK/rlted3kf9os4H7d7qnFjCaZ7QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709711700; c=relaxed/simple;
-	bh=aT6s0q5bNZmLH0H67V3Rmd03U6ydDKJGdwsvi8oJU4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AHte5hDIDImtlQuVOakjhoSTr464yxUzQIr7rBgok2IxoEAfTZA05cXblux/TlvzbFJvCNPyGHguyUTPZOB0Tra5SDrX/VIT2afKkF8WX6SFyWuM3/J9OOdkNQIwSebt3lr3hNLQq+u0qdD9rUl/WHqQXDymzGvSlg1iYm77pQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yj3YcQBw; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709713919; c=relaxed/simple;
+	bh=vTXlzKfVuR7thkMypOhy/ZsOpYaW4JBviEC5G7CKrTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JqyzJvJXfJHFmQxIDkUo+Qw+23FmJW1GsMUsmefw2+lRWbmByKW3DY5ENV5PcuMBsU6/05N55niPwf+hpzcWQ8PhxvNwUNR+nlX6vS+5t7XJnieoN7b9q9CiVYcASFP/ROwnlT5KIUl9t1KW6mZArXliGMG2nvdI8x3cD+g+154=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dPhwLhU0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yj3YcQBw"
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-607e60d01b2so38119677b3.1
-        for <linux-clk@vger.kernel.org>; Tue, 05 Mar 2024 23:54:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709711698; x=1710316498; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oaqc2+YsVlkwTXLD92MDRabesdqHp1t+roUWHws0dpU=;
-        b=yj3YcQBwTLqn8Fa7NGx2FMKbSAXSOHK7qE79PsFAY/hwfZOXAL1dssqFTWuj5yqaYT
-         YwFiRsk/GHCiscbaHwzKiKhveKPzcPZGGPR4P1jeTCvSrubm8hTxCVZXZKtkjD6Qfwyi
-         x7yLRLHiHTuHXooNvAryB6mr9t7cBxDFHUK1uQVU+qP8SdmLjTmgL+SMbB+26lG2SKoF
-         kMxwYt/uoZHEOEawhVZKypK5dZFrc0g4JvuhX/b26UK/5zvoCEAW7FFy6crWNlvk/428
-         IgcIc4Dh0wolFPR0+HNLFw6rT+aE8yJm3tZfjbqoqGUsC8BlFPk0IRY5puIqAiH7vgQT
-         8aeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709711698; x=1710316498;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Oaqc2+YsVlkwTXLD92MDRabesdqHp1t+roUWHws0dpU=;
-        b=iU/pWlPzaef/RYGmnOftdChvtY72esVJ9Qp76lLDD4fwQ/lMsogkVBWFInsBtf9O7O
-         NXdVN68tRxs0YI+v4Gm1uK/YOGUmjbrBjBAVYEG6j3vW0l2KTks0IJwSVZrJELZbvVmA
-         e+T9EXI8igK74Vp/Au/iraxsWi9cCarhV9c/2E1+WcCY6boYAIw35mXWSHBfXoaLgeaM
-         eFStmkqADDqPNXOEeJYqNvSTD9UwmhL3OL77wv/UuK0tbZF2Z9NzX0nVlMfmtZ0ZcFMv
-         mAGYbKNKo9wVi+YtXz/N2eSQXTRMBgDRFwvJ+22X1+WC7IFcWQZA3EDSf9IANhUwjs3v
-         JCQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvXGac7l8rjaQRUO5XQasi/mmAs65cwaFZKDxyBsCTlxrN3filhWn/7FawvX7Bhk1QIOI7azVAxw2U94+LHU25oAHz4Pix6ICL
-X-Gm-Message-State: AOJu0YwTjh+JneXLd7x+y/2aV0tv+Ffd/hzOz4Se0umN2+Q/OtE/lxsC
-	FrSfjfTYXnrAaHOyIIUw7ESLgcIU9iHhsXZkIIN7zArmI+ksnH+TWxrdBPPPNyl0ETKNXCT48F4
-	16pTRMMQEPpZbC6bXGcA9MYuiWhSLAqJdoP3LgQ==
-X-Google-Smtp-Source: AGHT+IFf6CQyXJ+whmnzlK1ODq/y1Ys63CxSasCbI+U9PAjJqwXjwr+48Gj5y2n/jtEAXtzENi50bxb8GZluWwdTbu0=
-X-Received: by 2002:a81:4c44:0:b0:607:cb4e:eb41 with SMTP id
- z65-20020a814c44000000b00607cb4eeb41mr11946522ywa.35.1709711697939; Tue, 05
- Mar 2024 23:54:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dPhwLhU0"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4265xoNr020249;
+	Wed, 6 Mar 2024 08:31:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=q86A9onL0rmqEe1iKRvRqZ3S28SROOVGnLJLR6S1sK8=; b=dP
+	hwLhU0DBVyiGKqk04VPPE3RpjYgMykQp1nBuELT+S39/R73q0nIH/igEsvThZiSO
+	75C4Mxr3MajWXQ/bmUYgAGTHkN+esMTKFLrzEp3w0ym+7y72zwkSM65fm6hchiSg
+	e2pOVMioIX1Ak+XlEEPIareL1RyLu8py6MoQ01AbalBFVF6IereriEUcUU583Bmo
+	wNc4o4sBM0R2gYi1NF9eelPoi0QmvuOy3YXOnemh9crMlyJVp0t+U3a4V8nG2Qiv
+	/5W3KyoPcxgx6XOREDD4eLbqS4GpAH9H9KlA0m/Bk9VjggbhZe2MtY00YpXpXb/Q
+	Rnjud3N7N3H7J9xb3yEQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wpgdsrhht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Mar 2024 08:31:20 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4268VJIl012146
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 6 Mar 2024 08:31:19 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 6 Mar
+ 2024 00:31:13 -0800
+Message-ID: <83fd1995-a06e-b76a-d91b-de1c1a6ab0ea@quicinc.com>
+Date: Wed, 6 Mar 2024 14:00:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240208062836.19767-1-quic_tdas@quicinc.com> <20240208062836.19767-6-quic_tdas@quicinc.com>
- <CAA8EJpq4YfX+1mYBS3AMWFp+7pYGdY6bvTUGsvYeqfNOo1KbAg@mail.gmail.com> <c7ddbb39-a9df-485b-87d3-2ad992f24086@quicinc.com>
-In-Reply-To: <c7ddbb39-a9df-485b-87d3-2ad992f24086@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 6 Mar 2024 09:54:46 +0200
-Message-ID: <CAA8EJppzv-zk1h5JxGMS41BtJmZ9OULZ_kK_--oZUsjAKNAjZw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: Update protected clocks list for
- qcm6490 variants
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-On Wed, 6 Mar 2024 at 08:54, Taniya Das <quic_tdas@quicinc.com> wrote:
->
-> Thanks for your review Dmitry.
->
-> On 2/8/2024 12:44 PM, Dmitry Baryshkov wrote:
-> > On Thu, 8 Feb 2024 at 08:29, Taniya Das <quic_tdas@quicinc.com> wrote:
-> >>
-> >> Certain clocks are not accessible on QCM6490-IDP and QCS6490-RB3GEN2 boards
-> >> thus require them to be marked protected.
-> >>
-> >> Also disable the LPASS nodes which are not to be used.
-> >>
-> >> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> >> ---
-> >>   arch/arm64/boot/dts/qcom/qcm6490-idp.dts     | 54 +++++++++++++++++++-
-> >>   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 50 +++++++++++++++++-
-> >>   2 files changed, 102 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> >> index 03e97e27d16d..425e4b87490b 100644
-> >> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> >> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> >> @@ -1,6 +1,6 @@
-> >>   // SPDX-License-Identifier: BSD-3-Clause
-> >>   /*
-> >> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> >> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> >>    */
-> >>
-> >>   /dts-v1/;
-> >> @@ -415,6 +415,58 @@
-> >>          };
-> >>   };
-> >>
-> >> +&gcc {
-> >> +       protected-clocks = <GCC_AGGRE_NOC_PCIE_1_AXI_CLK> ,<GCC_PCIE_1_AUX_CLK>,
-> >> +                       <GCC_PCIE_1_AUX_CLK_SRC>, <GCC_PCIE_1_CFG_AHB_CLK>,
-> >> +                       <GCC_PCIE_1_MSTR_AXI_CLK>, <GCC_PCIE_1_PHY_RCHNG_CLK_SRC>,
-> >> +                       <GCC_PCIE_1_PIPE_CLK>, <GCC_PCIE_1_PIPE_CLK_SRC>,
-> >> +                       <GCC_PCIE_1_SLV_AXI_CLK>, <GCC_PCIE_1_SLV_Q2A_AXI_CLK>,
-> >> +                       <GCC_QSPI_CNOC_PERIPH_AHB_CLK>, <GCC_QSPI_CORE_CLK>,
-> >> +                       <GCC_QSPI_CORE_CLK_SRC>,<GCC_USB30_SEC_MASTER_CLK>,
-> >> +                       <GCC_USB30_SEC_MASTER_CLK_SRC>, <GCC_USB30_SEC_MOCK_UTMI_CLK>,
-> >> +                       <GCC_USB30_SEC_MOCK_UTMI_CLK_SRC>,
-> >> +                       <GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC>, <GCC_USB30_SEC_SLEEP_CLK>,
-> >> +                       <GCC_USB3_SEC_PHY_AUX_CLK>, <GCC_USB3_SEC_PHY_AUX_CLK_SRC>,
-> >> +                       <GCC_USB3_SEC_PHY_COM_AUX_CLK>, <GCC_USB3_SEC_PHY_PIPE_CLK>,
-> >> +                       <GCC_USB3_SEC_PHY_PIPE_CLK_SRC>, <GCC_CFG_NOC_LPASS_CLK>,
-> >> +                       <GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>, <GCC_MSS_CFG_AHB_CLK>,
-> >> +                       <GCC_MSS_OFFLINE_AXI_CLK>, <GCC_MSS_SNOC_AXI_CLK>,
-> >> +                       <GCC_MSS_Q6_MEMNOC_AXI_CLK>, <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
-> >> +                       <GCC_SEC_CTRL_CLK_SRC>, <GCC_WPSS_AHB_CLK>,
-> >> +                       <GCC_WPSS_AHB_BDG_MST_CLK>, <GCC_WPSS_RSCP_CLK>;
-> >
-> > This looks like a huge variety of clocks. Are they really not
-> > accessible or are you trying to make Linux stay away from all those
-> > clocks to keep bootloader settings?
-> >
->
-> These clocks are protected and accessing them from Linux will cause Bus
-> error (NoC) and thus this list grows sometimes.
->
-> >> +};
-> >> +
-> >> +&lpasscc {
-> >> +       status = "disabled";
-> >> +};
-> >> +
-> >> +&lpass_audiocc {
-> >> +       qcom,adsp-skip-pll;
-> >> +       protected-clocks = <LPASS_AUDIO_CC_CDIV_RX_MCLK_DIV_CLK_SRC>,
-> >> +               <LPASS_AUDIO_CC_CODEC_MEM0_CLK>, <LPASS_AUDIO_CC_CODEC_MEM1_CLK>,
-> >> +               <LPASS_AUDIO_CC_CODEC_MEM2_CLK>, <LPASS_AUDIO_CC_CODEC_MEM_CLK>,
-> >> +               <LPASS_AUDIO_CC_EXT_MCLK0_CLK>, <LPASS_AUDIO_CC_EXT_MCLK0_CLK_SRC>,
-> >> +               <LPASS_AUDIO_CC_EXT_MCLK1_CLK>, <LPASS_AUDIO_CC_EXT_MCLK1_CLK_SRC>,
-> >> +               <LPASS_AUDIO_CC_PLL>, <LPASS_AUDIO_CC_PLL_OUT_AUX2>,
-> >> +               <LPASS_AUDIO_CC_PLL_OUT_AUX2_DIV_CLK_SRC>,
-> >> +               <LPASS_AUDIO_CC_PLL_OUT_MAIN_DIV_CLK_SRC>,
-> >> +               <LPASS_AUDIO_CC_RX_MCLK_2X_CLK>, <LPASS_AUDIO_CC_RX_MCLK_CLK>,
-> >> +               <LPASS_AUDIO_CC_RX_MCLK_CLK_SRC>;
-> >
-> > This almost looks like a separate compatible.
->
-> We need to use the reset from this controller, rest all will be
-> controlled via the Low Power Audio Firmware.
-
-Not "separate device", but "separate compatible".
-
->
-> >
-> >> +       /delete-property/ power-domains;
-> >> +};
-> >> +
-> >> +&lpass_aon {
-> >> +       status = "disabled";
-> >
-> > Should this be "reserved", controlled by ADSP? See how this was
-> > implemented in sc7180.dtsi / sc7180-trogdor.dtsi.
-> > Please consider inverting the logic. Generic ADSP implementation
-> > should be present in sc7280.dtsi and then the non-default ChromeOS
-> > implementation should be a part of sc7280-chrome-common.dtsi.
-> >
->
-> This I will take care in the next series.
->
-> >> +};
-> >> +
-> >> +&lpass_core {
-> >> +       status = "disabled";
-> >> +};
-> >> +
-> >> +&lpass_hm {
-> >> +       status = "disabled";
-> >> +};
-> >> +
-> >>   &qupv3_id_0 {
-> >>          status = "okay";
-> >>   };
-> >> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> >> index 8bb7d13d85f6..1398b84634c3 100644
-> >> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> >> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> >> @@ -1,6 +1,6 @@
-> >>   // SPDX-License-Identifier: BSD-3-Clause
-> >>   /*
-> >> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> >> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> >>    */
-> >>
-> >>   /dts-v1/;
-> >> @@ -413,6 +413,54 @@
-> >>          };
-> >>   };
-> >>
-> >> +&gcc {
-> >> +       protected-clocks = <GCC_QSPI_CNOC_PERIPH_AHB_CLK>, <GCC_QSPI_CORE_CLK>,
-> >> +                       <GCC_QSPI_CORE_CLK_SRC>,<GCC_USB30_SEC_MASTER_CLK>,
-> >> +                       <GCC_USB30_SEC_MASTER_CLK_SRC>, <GCC_USB30_SEC_MOCK_UTMI_CLK>,
-> >> +                       <GCC_USB30_SEC_MOCK_UTMI_CLK_SRC>,
-> >> +                       <GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC>, <GCC_USB30_SEC_SLEEP_CLK>,
-> >> +                       <GCC_USB3_SEC_PHY_AUX_CLK>, <GCC_USB3_SEC_PHY_AUX_CLK_SRC>,
-> >> +                       <GCC_USB3_SEC_PHY_COM_AUX_CLK>, <GCC_USB3_SEC_PHY_PIPE_CLK>,
-> >> +                       <GCC_USB3_SEC_PHY_PIPE_CLK_SRC>, <GCC_CFG_NOC_LPASS_CLK>,
-> >> +                       <GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>, <GCC_MSS_CFG_AHB_CLK>,
-> >> +                       <GCC_MSS_OFFLINE_AXI_CLK>, <GCC_MSS_SNOC_AXI_CLK>,
-> >> +                       <GCC_MSS_Q6_MEMNOC_AXI_CLK>, <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
-> >> +                       <GCC_SEC_CTRL_CLK_SRC>, <GCC_WPSS_AHB_CLK>,
-> >> +                       <GCC_WPSS_AHB_BDG_MST_CLK>, <GCC_WPSS_RSCP_CLK>;
-> >> +};
-> >> +
-> >> +&lpasscc {
-> >> +       status = "disabled";
-> >> +};
-> >> +
-> >> +&lpass_audiocc {
-> >> +       qcom,adsp-skip-pll;
-> >> +       protected-clocks = <LPASS_AUDIO_CC_CDIV_RX_MCLK_DIV_CLK_SRC>,
-> >> +               <LPASS_AUDIO_CC_CODEC_MEM0_CLK>, <LPASS_AUDIO_CC_CODEC_MEM1_CLK>,
-> >> +               <LPASS_AUDIO_CC_CODEC_MEM2_CLK>, <LPASS_AUDIO_CC_CODEC_MEM_CLK>,
-> >> +               <LPASS_AUDIO_CC_EXT_MCLK0_CLK>, <LPASS_AUDIO_CC_EXT_MCLK0_CLK_SRC>,
-> >> +               <LPASS_AUDIO_CC_EXT_MCLK1_CLK>, <LPASS_AUDIO_CC_EXT_MCLK1_CLK_SRC>,
-> >> +               <LPASS_AUDIO_CC_PLL>, <LPASS_AUDIO_CC_PLL_OUT_AUX2>,
-> >> +               <LPASS_AUDIO_CC_PLL_OUT_AUX2_DIV_CLK_SRC>,
-> >> +               <LPASS_AUDIO_CC_PLL_OUT_MAIN_DIV_CLK_SRC>,
-> >> +               <LPASS_AUDIO_CC_RX_MCLK_2X_CLK>, <LPASS_AUDIO_CC_RX_MCLK_CLK>,
-> >> +               <LPASS_AUDIO_CC_RX_MCLK_CLK_SRC>;
-> >> +       /delete-property/ power-domains;
-> >> +};
-> >> +
-> >> +&lpass_aon {
-> >> +       status = "disabled";
-> >> +};
-> >> +
-> >> +&lpass_core {
-> >> +       status = "disabled";
-> >> +};
-> >> +
-> >> +&lpass_hm {
-> >> +       status = "disabled";
-> >> +};
-> >> +
-> >> +
-> >>   &qupv3_id_0 {
-> >>          status = "okay";
-> >>   };
-> >> --
-> >> 2.17.1
-> >>
-> >>
-> >
-> >
->
-> --
-> Thanks & Regards,
-> Taniya Das.
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 4/5] clk: qcom: Add camera clock controller driver for
+ SM8150
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Michael
+ Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240229-camcc-support-sm8150-v1-0-8c28c6c87990@quicinc.com>
+ <20240229-camcc-support-sm8150-v1-4-8c28c6c87990@quicinc.com>
+ <18567989-fb60-49ae-92e6-94e1bc2fa1c7@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <18567989-fb60-49ae-92e6-94e1bc2fa1c7@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 488fqkA63x5DW3xa_wvVr61O3_z7-kd_
+X-Proofpoint-GUID: 488fqkA63x5DW3xa_wvVr61O3_z7-kd_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-06_04,2024-03-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 spamscore=0
+ adultscore=0 priorityscore=1501 phishscore=0 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2402120000
+ definitions=main-2403060067
 
 
+On 3/2/2024 9:43 PM, Bryan O'Donoghue wrote:
+> On 29/02/2024 5:38 a.m., Satya Priya Kakitapalli wrote:
+>> Add support for the camera clock controller for camera clients
+>> to be able to request for camcc clocks on SM8150 platform.
+>>
+>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+>> ---
+>
+>> +static int cam_cc_sm8150_probe(struct platform_device *pdev)
+>> +{
+>> +    struct regmap *regmap;
+>> +    int ret;
+>> +
+>> +    ret = devm_pm_runtime_enable(&pdev->dev);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = pm_runtime_resume_and_get(&pdev->dev);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    regmap = qcom_cc_map(pdev, &cam_cc_sm8150_desc);
+>> +    if (IS_ERR(regmap)) {
+>> +        pm_runtime_put(&pdev->dev);
+>> +        return PTR_ERR(regmap);
+>> +    }
+>> +
+>> +    clk_trion_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
+>> +    clk_trion_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
+>> +    clk_regera_pll_configure(&cam_cc_pll2, regmap, 
+>> &cam_cc_pll2_config);
+>> +    clk_trion_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
+>> +    clk_trion_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
+>> +
+>> +    /* Keep the critical clock always-on */
+>> +    qcom_branch_set_clk_en(regmap, 0xc1e4); /* cam_cc_gdsc_clk */
+>
+> Does this clock need to be specified this way ?
+>
 
--- 
-With best wishes
-Dmitry
+Yes, we need this clock to be always on.
+
+
+> drivers/clk/qcom/camcc-sc8280xp.c::camcc_gdsc_clk specifies the gdsc 
+> clock as a shared op clock.
+>
+> Actually it looks to be register compatible, please try defining 
+> titan_top_gdsc as per the example in 8280xp.
+>> +
+>> +    ret = qcom_cc_really_probe(pdev, &cam_cc_sm8150_desc, regmap);
+>> +
+>> +    pm_runtime_put(&pdev->dev);
+>> +
+>> +    return ret;
+>> +}
+>
+> So this is a pattern we keep repeating in the clock probe() functions 
+> which I am writing a series to address. There's no need to continue to 
+> replicate the bug in new code though.
+>
+> Only switch on always-on clocks if probe succeeds.
+>
+>     ret = qcom_cc_really_probe(pdev, &cam_cc_sm8150_desc, regmap);
+>     if (ret)
+>         goto probe_err;
+>
+>     qcom_branch_set_clk_en(regmap, 0xc1e4); /* cam_cc_gdsc_clk */
+>
+>     pm_runtime_put(&pdev->dev);
+>
+>     return 0;
+>
+> probe_err:
+>     pm_runtime_put_sync(&pdev->dev);
+>
+> Alternatively switch on the always-on clocks before the really_probe() 
+> but then roll back in a probe_err: goto
+>
+> probe_err:
+>     remap_bits_update(regmap, 0xc1e4, BIT(0), 0);
+>     pm_runtime_put_sync(&pdev->dev);
+>
+> There may be corner cases where always-on has to happen before 
+> really_probe() I suppose but as a general pattern the above should be 
+> how we go.
+>
+> Anyway I suspect the right thing to do is to define a 
+> titan_top_gdsc_clk with shared ops to "park" the GDSC clock to 19.2 
+> MHz instead of turning it off.
+>
+> You can get rid of the hard-coded always-on and indeed represent the 
+> clock in /sysfs - which is preferable IMO to just whacking registers 
+> to keep clocks always-on in probe anyway.
+>
+> Please try to define the titan_top_gdsc_clk as a shared_ops clock 
+> instead of hard coding to always on.
+>
+
+Defining the gdsc clk allows consumers to control it, we do not want 
+this clock to be disabled/controlled from consumers. Hence it is better 
+to not model this clock and just keep it always on from probe.
+
+
+> If that doesn't work for some reason, then please fix your always-on 
+> logic in probe() to only make the clock fixed on, if really_probe() 
+> succeeds.
+>
+
+Sure I'll do this.
+
+
+> ---
+> bod
