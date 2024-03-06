@@ -1,305 +1,266 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F413617E9;
-	Wed,  6 Mar 2024 03:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E3E12E78
+	for <linux-clk@vger.kernel.org>; Wed,  6 Mar 2024 04:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709696312; cv=none; b=pnYMPdhQIfPvBgYJILN6OSYVoXE7evqSYtKL3UftZDq1vn46vIlKMDYPJaVGns7sbFtQtGLawKN8STD9Mh2rLe3KE6NJel5u8WEtNL1GAqkzBJDcv2a/9Grl7wyQDhyX6hGV2tUCPdVB5r2ZDkCG4jHd6l/OO4XvLF+YkFpvUpA=
+	t=1709700579; cv=none; b=u7ZbBQyKNlXxq1YaA7CUB8cknIlMW7cc3O2QuSNjUo0MjPI2vOfMjwXydsZ1MxlGILQ5bC6Yd0jCMWT3SW41yQkwsSTS7tK3DDkl04Uy38J+XWpn05Jf8Vvim4KAEWHnidSOkRNdF6k8tdptT/4x0BAyiW5pqrVmI0e+6IyAduQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709696312; c=relaxed/simple;
-	bh=yMrYSlqS58RFfSGkzqsmFqJbtmN+p5CXeMYvDZ00yXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QcislrOJj1sdqz7HtnI0wGDwZG+FgVgmIlJm7gv8fCHV2heKBKh4qfuiYxB1feNWtMMUfp/ZHS5/gmCqN5YShxlhrFDBSK3nWm5ijaCHmbWwoRNA6P0x3TnrnhuIAVbG9M2LdnUxp+Kqg6SPqzttNvuvQ0PFYl55JqcOXvwJCmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2WFLe4U; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709700579; c=relaxed/simple;
+	bh=dcCd7e0xe1/zUt4IjtCnVX9tWxflV+CbGxf+YsozPFg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=MrcwNe7v9kBaCzx+v/ho6CxKookKj7xnSHSTx9X8+owfbO1ONEgRHktvHdaT0+5owby0ETq5+ArzMLQaaOqfda1kLnhCgCpjbUjX0T8UcNIyTjCuEtcp2etSqL1vwoeYaPBaBAREIlzu7wcrNeDmKMGmBpCd6bzL9MG6k4Sdp3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sai8k+7s; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2WFLe4U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 535F9C433F1;
-	Wed,  6 Mar 2024 03:38:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709696311;
-	bh=yMrYSlqS58RFfSGkzqsmFqJbtmN+p5CXeMYvDZ00yXk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=P2WFLe4Ut9gSekglSd1SZFDjeV8ev7VX3zF7k/EuVKkBbQPgeM+lL3C+DcFDkUsWy
-	 ipeP/50PTwocRuXHQHPxDUomuW2g1FIla/cdYJm0OiNFFDHvar4pNRampsRrzJxRE3
-	 5HO4rvEczu+6h+3jgfK19REDgachu7b2uETt+pr+KrViv+IrHK7RJnKxwSGT3q/MN0
-	 3830yjjGAKtyPlz1pZFgb6NDVb0t/cT6LW1Kz3SfRL3tp0xmsypOQiYLvsIN8Qfpwh
-	 7AYGuU1Wli/6qUWgUz0Ot6UVx6PDsG5//wykh8Y7IlM/6NFYiC7B+pvLnIGZCaaSwQ
-	 rVbmEGvZ5zt4A==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andy Gross <agross@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Gabor Juhos <j4g8y7@gmail.com>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Vladimir Lypak <vladimir.lypak@gmail.com>,
-	Amit Pundir <amit.pundir@linaro.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Jeffrey Hugo <quic_jhugo@quicinc.com>,
-	Mantas Pucka <mantas@8devices.com>
-Subject: [GIT PULL] Qualcomm clock updates for v6.9
-Date: Tue,  5 Mar 2024 19:43:25 -0800
-Message-ID: <20240306034326.2358489-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sai8k+7s"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240306044933epoutp033e734c78d04ac5cb9711825cbede6712~6E50FzJr01315913159epoutp03J
+	for <linux-clk@vger.kernel.org>; Wed,  6 Mar 2024 04:49:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240306044933epoutp033e734c78d04ac5cb9711825cbede6712~6E50FzJr01315913159epoutp03J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1709700573;
+	bh=dcCd7e0xe1/zUt4IjtCnVX9tWxflV+CbGxf+YsozPFg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=sai8k+7s21QSwcMfnmRT3w2gQaV52ajiv6g2b2yqAXzt10IttwjkpoRW7czq/VcZt
+	 XxDvdZ5n6YB6fzEUOjev94xaIWhcwRieTt0yVCoap7FLgf3mPKPCwVN6uy5mVrdP56
+	 pRETu0UBuTlLv+55LaP+IPvLpgJdOVcGPkAUTeIE=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240306044933epcas5p441c641ce1a58c982f14b46bcabbc1135~6E5zpyOhX0510405104epcas5p4C;
+	Wed,  6 Mar 2024 04:49:33 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4TqKj74yZVz4x9Px; Wed,  6 Mar
+	2024 04:49:31 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	01.50.10009.BD5F7E56; Wed,  6 Mar 2024 13:49:31 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240306044930epcas5p3014ecdf54086346dc1086bab96cccdd6~6E5xjAJqx0157201572epcas5p3D;
+	Wed,  6 Mar 2024 04:49:30 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240306044930epsmtrp21a3d5b90fc7426fedf185024ee92452f~6E5xh6Jki2822228222epsmtrp2i;
+	Wed,  6 Mar 2024 04:49:30 +0000 (GMT)
+X-AuditID: b6c32a4a-ff1ff70000002719-02-65e7f5db954a
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E1.0E.08755.AD5F7E56; Wed,  6 Mar 2024 13:49:30 +0900 (KST)
+Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240306044928epsmtip1bbfde040c44185536aebc5aa7ec61b80~6E5vm6T0Y2041420414epsmtip1R;
+	Wed,  6 Mar 2024 04:49:28 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Tudor Ambarus'" <tudor.ambarus@linaro.org>, "'Sylwester Nawrocki'"
+	<s.nawrocki@samsung.com>, "'Chanwoo Choi'" <cw00.choi@samsung.com>
+Cc: "'Sam Protsenko'" <semen.protsenko@linaro.org>, "'Krzysztof Kozlowski'"
+	<krzysztof.kozlowski@linaro.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	"'linux-arm-kernel'" <linux-arm-kernel@lists.infradead.org>, "'Peter
+ Griffin'" <peter.griffin@linaro.org>, =?utf-8?Q?'Andr=C3=A9_Draszik'?=
+	<andre.draszik@linaro.org>, "'William McVicker'" <willmcvicker@google.com>,
+	<kernel-team@android.com>
+In-Reply-To: <d508dfc1-bc28-4470-92aa-cf71915966f4@linaro.org>
+Subject: RE: samsung: clk: re-parent MUX to OSCCLK at run-time
+Date: Wed, 6 Mar 2024 10:19:27 +0530
+Message-ID: <324701da6f81$ad1379d0$073a6d70$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKxjg6/pX91DIw7ou3pXLvWj7BlkgJSyW8Wr2lJ2sA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmuu7tr89TDTYeV7TY8mozi8X1L89Z
+	LXZsF7HY+3oru8Wmx9dYLT723GO1uLxrDpvFjPP7mCw2zPjHYnH4TTurxfM+IPfTrTiLVZ/+
+	MzrwemzbvY3VY8GmUo871/aweWxeUu/Rt2UVo8fnTXIBbFHZNhmpiSmpRQqpecn5KZl56bZK
+	3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAVyoplCXmlAKFAhKLi5X07WyK8ktLUhUy
+	8otLbJVSC1JyCkwK9IoTc4tL89L18lJLrAwNDIxMgQoTsjOuN15iKfgXVNE5p7CBcUdAFyMn
+	h4SAicTbK3+Yuxi5OIQEdjNKLFi8mx3C+cQocW3LXUYI5xujxP9FN5hgWmZOWwtVtZdR4vrR
+	y1BVLxglVsw9zApSxSagK7FjcRsbiC0i0MsosXJXAEgRs8BZZomX7/rZQRKcAnYSXQ8vMYPY
+	wkD2+sO/wJpZBFQkWpbOY+li5ODgFbCUmHjZHSTMKyAocXLmExYQm1lAW2LZwtfMEBcpSPx8
+	uowVYpeVxNtlZ9ggasQlXh49wg5Rc4RDYudXfQjbRWL6t3aouLDEq+NboGwpic/v9rKBrJUQ
+	8JBY9EcKIpwh8Xb5ekYI217iwJU5YJcxC2hKrN+lD7GJT6L39xMmiE5eiY42IYhqVYnmd1dZ
+	IGxpiYnd3awQtofEryurmSYwKs5C8tcsJH/NQnL/LIRlCxhZVjFKphYU56anFpsWGOWllsNj
+	Ozk/dxMjOAVree1gfPjgg94hRiYOxkOMEhzMSiK8Nb+epArxpiRWVqUW5ccXleakFh9iNAWG
+	9URmKdHkfGAWyCuJNzSxNDAxMzMzsTQ2M1QS533dOjdFSCA9sSQ1OzW1ILUIpo+Jg1OqgSnv
+	Rk0Dz3WpZ7zMxRtWWP02dVlYtnvXzsCr2yJ4/BaySHF+mtCl3ZUne8a2mmuB1FlBkws+PnP5
+	j1j+yP3Lb2UxR3b6lm9zPpa8F78Z9oPbwP+A68VFxnGluftDigXrWpITN+/gW+A+q3XKSx7+
+	82m3J621L1h4w0sqR/xIQlrtl3RhpYKctChf2eWyz9J1lzLd2xTmoHSrjjvqxqqbYdPbVaU/
+	P/T9+2yle9harhW7w+rPRrxmla7wbC69kziL7fakuCUuR6d+CitozPrJKay6UCzd5dNZ8Uam
+	Q9vmb779Lvli0/sVuUyCyv4TK0sebP/AIV2z/sjTvF1JUs8s39w50Pnae87TKZ3ZSokRnEos
+	xRmJhlrMRcWJAJ/Jp+lKBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsWy7bCSnO6tr89TDZ7d0rXY8mozi8X1L89Z
+	LXZsF7HY+3oru8Wmx9dYLT723GO1uLxrDpvFjPP7mCw2zPjHYnH4TTurxfM+IPfTrTiLVZ/+
+	MzrwemzbvY3VY8GmUo871/aweWxeUu/Rt2UVo8fnTXIBbFFcNimpOZllqUX6dglcGUf6d7MX
+	9GpXvJr6kamB8aV4FyMnh4SAicTMaWvZuxi5OIQEdjNKtPy4xQyRkJa4vnECO4QtLLHy33Oo
+	omeMEqf3PwZLsAnoSuxY3MYGkhAR6GeUeNE5lRHEYRa4zCzRemMdE0QLUGbfiguMIC2cAnYS
+	XQ8vge0QBrLXH/7FCmKzCKhItCydx9LFyMHBK2ApMfGyO0iYV0BQ4uTMJywgNrOAtsTTm0/h
+	7GULX0OdqiDx8+kysDEiAlYSb5edYYOoEZd4efQI+wRG4VlIRs1CMmoWklGzkLQsYGRZxSiZ
+	WlCcm55bbFhgmJdarlecmFtcmpeul5yfu4kRHJFamjsYt6/6oHeIkYmD8RCjBAezkghvza8n
+	qUK8KYmVValF+fFFpTmpxYcYpTlYlMR5xV/0pggJpCeWpGanphakFsFkmTg4pRqYFKrfZHms
+	mWFTV6rCE+eekfhvljXf24Vubdscfqzjm/vIs+duZo382jAB7bjm8NTS5y/ZzmnVyz7/K1E2
+	ZWFFXP/PDx+c4sqSH0RtLrVJ5XxlcEZk6cPfbp5yUuvUNHN0/+W77K99uGLmvviYqebHVjKl
+	VPMUVVUYMZsz7ZxXtrm97nmytqlV85o7eyTP/21V/t5hfmKiwm2vy+tEM6zEDvv/FHbyO269
+	f/KDhnLXi+wPVnXui6r6k8W4OOF8O7uYdObsI3s+SYrOfDXTfcOPk14uTzgZRDrr9Gzf39FX
+	WNWn4rzhcqP70oNcJ8pYvgidSZuW8q9v2vHSFZk7lkyzDNrE3OLxZPJB5Sn71SKVWIozEg21
+	mIuKEwG+9SnwNwMAAA==
+X-CMS-MailID: 20240306044930epcas5p3014ecdf54086346dc1086bab96cccdd6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240306032013epcas5p4932674432fbb49f586ed9d00f006a9e8
+References: <CGME20240306032013epcas5p4932674432fbb49f586ed9d00f006a9e8@epcas5p4.samsung.com>
+	<d508dfc1-bc28-4470-92aa-cf71915966f4@linaro.org>
 
+Hi Tudor
 
-The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
-
-  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-6.9
-
-for you to fetch changes up to 7d474b43087aa356d714d39870c90d77fc6f1186:
-
-  clk: qcom: gcc-ipq5018: fix register offset for GCC_UBI0_AXI_ARES reset (2024-03-03 20:00:49 -0800)
-
-----------------------------------------------------------------
-Qualcomm clock updates for v6.9
-
-This introduces support for Display, TCSR, GPU, and Camera clock
-controllers for X1 Elite.
-
-A number of typos are fixes in the IPQ5018 GCC driver. IPQ6018 gains a
-definition of the "qdss_at" clock, which is needed for WiFi operation.
-
-Table termination is added where missing across a range of frequency
-tables in different drivers.
-
-MSM8953 gains support for missing MDSS, crypto, and SDCC resets, and the
-missing CLKREF clocks for UFS in SC8180X are added.
-
-A softdep on rpmhpd is introduces for SDM845 gcc to assist AOSP with
-module load order, to avoid significant delays during boot.
-
-In the SM8150 GCC driver video resets are added and QUPv3 RCGs are
-registered for DFS.
-
-The support for supplying GDSCs with an external regulator is corrected
-for the custom GPU GX "do-nothing" method. An external supply is then
-specified for GX in the SC8280XP GPU clock controller.
-
-Display, GPU, Video, and Camera clock controller drivers are switched to
-module_platform_driver(), as they are not needed earlier than that.
-
-A variety of Venus resets across many platforms require a longer delay
-than the current 1us, support for larger delays is added and custom
-delays are specified across more than a dozen clock drivers.
-
-The GDSC wait times are corrected for GDSCs in the display clock
-controller for SDM845.
-
-The unused SC7180 modem subsystem clock driver is dropped.
-
-----------------------------------------------------------------
-Abel Vesa (3):
-      dt-bindings: clock: Drop the SM8650 DISPCC dedicated schema
-      dt-bindings: clock: qcom: Document the X1E80100 TCSR Clock Controller
-      clk: qcom: Add TCSR clock driver for x1e80100
-
-Amit Pundir (1):
-      clk: qcom: gcc-sdm845: Add soft dependency on rpmhpd
-
-Bjorn Andersson (6):
-      dt-bindings: clock: qcom: Allow VDD_GFX supply to GX
-      clk: qcom: gdsc: Enable supply reglator in GPU GX handler
-      clk: qcom: gpucc-sc8280xp: Add external supply for GX gdsc
-      Merge branch '20240202-x1e80100-clock-controllers-v4-5-7fb08c861c7c@linaro.org' into clk-for-6.9
-      Merge branch '20240125-msm8953-mdss-reset-v2-1-fd7824559426@z3ntu.xyz' into clk-for-6.9
-      Merge branch '20240131-ufs-phy-clock-v3-3-58a49d2f4605@linaro.org' into clk-for-6.9
-
-Bryan O'Donoghue (1):
-      clk: qcom: camcc-x1e80100: Fix missing DT_IFACE enum in x1e80100 camcc
-
-Dmitry Baryshkov (6):
-      clk: qcom: camcc-*: switch to module_platform_driver
-      clk: qcom: dispcc-*: switch to module_platform_driver
-      clk: qcom: gpucc-*: switch to module_platform_driver
-      clk: qcom: videocc-*: switch to module_platform_driver
-      clk: qcom: drop the SC7180 Modem subsystem clock driver
-      dt-bindings: clk: qcom: drop the SC7180 Modem subsystem clock controller
-
-Gabor Juhos (10):
-      clk: qcom: gcc-ipq5018: fix terminating of frequency table arrays
-      clk: qcom: gcc-ipq6018: fix terminating of frequency table arrays
-      clk: qcom: gcc-ipq8074: fix terminating of frequency table arrays
-      clk: qcom: gcc-ipq9574: fix terminating of frequency table arrays
-      clk: qcom: camcc-sc8280xp: fix terminating of frequency table arrays
-      clk: qcom: mmcc-apq8084: fix terminating of frequency table arrays
-      clk: qcom: mmcc-msm8974: fix terminating of frequency table arrays
-      clk: qcom: gcc-ipq5018: fix 'enable_reg' offset of 'gcc_gmac0_sys_clk'
-      clk: qcom: gcc-ipq5018: fix 'halt_reg' offset of 'gcc_pcie1_pipe_clk'
-      clk: qcom: gcc-ipq5018: fix register offset for GCC_UBI0_AXI_ARES reset
-
-Jeffrey Hugo (1):
-      dt-bindings: clock: qcom: Fix @codeaurora email in Q6SSTOP
-
-Konrad Dybcio (21):
-      clk: qcom: reset: Increase max reset delay
-      clk: qcom: reset: Commonize the de/assert functions
-      clk: qcom: reset: Ensure write completion on reset de/assertion
-      clk: qcom: gcc-sa8775p: Set delay for Venus CLK resets
-      clk: qcom: gcc-sc8180x: Set delay for Venus CLK resets
-      clk: qcom: gcc-sc8280xp: Set delay for Venus CLK resets
-      clk: qcom: gcc-sm4450: Set delay for Venus CLK resets
-      clk: qcom: gcc-sm7150: Set delay for Venus CLK resets
-      clk: qcom: gcc-sm8250: Set delay for Venus CLK resets
-      clk: qcom: gcc-sm8350: Set delay for Venus CLK resets
-      clk: qcom: gcc-sm8450: Set delay for Venus CLK resets
-      clk: qcom: gcc-sm8550: Set delay for Venus CLK resets
-      clk: qcom: gcc-sm8650: Set delay for Venus CLK resets
-      clk: qcom: videocc-sm8150: Set delay for Venus CLK resets
-      clk: qcom: videocc-sm8250: Set delay for Venus CLK resets
-      clk: qcom: videocc-sm8350: Set delay for Venus CLK resets
-      clk: qcom: videocc-sm8450: Set delay for Venus CLK resets
-      clk: qcom: videocc-sm8550: Set delay for Venus CLK resets
-      clk: qcom: branch: Add a helper for setting the enable bit
-      clk: qcom: Use qcom_branch_set_clk_en()
-      clk: qcom: dispcc-sdm845: Adjust internal GDSC wait times
-
-Manivannan Sadhasivam (2):
-      dt-bindings: clock: qcom: Add missing UFS QREF clocks
-      clk: qcom: gcc-sc8180x: Add missing UFS QREF clocks
-
-Mantas Pucka (1):
-      clk: qcom: gcc-ipq6018: add qdss_at clock needed for wifi operation
-
-Rajendra Nayak (7):
-      dt-bindings: clock: qcom: Document the X1E80100 Display Clock Controller
-      dt-bindings: clock: qcom: Document the X1E80100 GPU Clock Controller
-      dt-bindings: clock: qcom: Document the X1E80100 Camera Clock Controller
-      clk: qcom: clk-alpha-pll: Add support for zonda ole pll configure
-      clk: qcom: Add dispcc clock driver for x1e80100
-      clk: qcom: Add GPU clock driver for x1e80100
-      clk: qcom: Add camcc clock driver for x1e80100
-
-Satya Priya Kakitapalli (4):
-      clk: qcom: gcc-sm8150: Register QUPv3 RCGs for DFS on SM8150
-      dt-bindings: clock: qcom,gcc-sm8150: Add gcc video resets for sm8150
-      clk: qcom: gcc-sm8150: Add gcc video resets for sm8150
-      clk: qcom: dispcc-sm8250: Make clk_init_data and pll_vco const
-
-Vladimir Lypak (2):
-      dt-bindings: clock: gcc-msm8953: add more resets
-      clk: qcom: gcc-msm8953: add more resets
-
- .../devicetree/bindings/clock/qcom,gpucc.yaml      |    9 +
- .../devicetree/bindings/clock/qcom,q6sstopcc.yaml  |    2 +-
- .../devicetree/bindings/clock/qcom,sc7180-mss.yaml |   61 -
- .../bindings/clock/qcom,sm8450-camcc.yaml          |    2 +
- .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
- .../bindings/clock/qcom,sm8550-dispcc.yaml         |    7 +-
- .../bindings/clock/qcom,sm8550-tcsr.yaml           |    1 +
- .../bindings/clock/qcom,sm8650-dispcc.yaml         |  106 -
- drivers/clk/qcom/Kconfig                           |   45 +-
- drivers/clk/qcom/Makefile                          |    5 +-
- drivers/clk/qcom/camcc-sc7180.c                    |   12 +-
- drivers/clk/qcom/camcc-sc7280.c                    |   12 +-
- drivers/clk/qcom/camcc-sc8280xp.c                  |   27 +-
- drivers/clk/qcom/camcc-sdm845.c                    |   12 +-
- drivers/clk/qcom/camcc-sm6350.c                    |   12 +-
- drivers/clk/qcom/camcc-sm8550.c                    |   10 +-
- drivers/clk/qcom/camcc-x1e80100.c                  | 2487 ++++++++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.c                   |   16 +
- drivers/clk/qcom/clk-alpha-pll.h                   |    4 +
- drivers/clk/qcom/clk-branch.h                      |    6 +
- drivers/clk/qcom/dispcc-qcm2290.c                  |   16 +-
- drivers/clk/qcom/dispcc-sc7180.c                   |   12 +-
- drivers/clk/qcom/dispcc-sc7280.c                   |   19 +-
- drivers/clk/qcom/dispcc-sc8280xp.c                 |   16 +-
- drivers/clk/qcom/dispcc-sdm845.c                   |   14 +-
- drivers/clk/qcom/dispcc-sm6115.c                   |    4 +-
- drivers/clk/qcom/dispcc-sm6125.c                   |   12 +-
- drivers/clk/qcom/dispcc-sm6350.c                   |   12 +-
- drivers/clk/qcom/dispcc-sm6375.c                   |   12 +-
- drivers/clk/qcom/dispcc-sm8250.c                   |  134 +-
- drivers/clk/qcom/dispcc-sm8450.c                   |   19 +-
- drivers/clk/qcom/dispcc-sm8550.c                   |   19 +-
- drivers/clk/qcom/dispcc-sm8650.c                   |   16 +-
- drivers/clk/qcom/dispcc-x1e80100.c                 | 1718 ++++++++++++++
- drivers/clk/qcom/gcc-ipq5018.c                     |    9 +-
- drivers/clk/qcom/gcc-ipq6018.c                     |   19 +
- drivers/clk/qcom/gcc-ipq8074.c                     |    2 +
- drivers/clk/qcom/gcc-ipq9574.c                     |    1 +
- drivers/clk/qcom/gcc-msm8953.c                     |    4 +
- drivers/clk/qcom/gcc-sa8775p.c                     |   29 +-
- drivers/clk/qcom/gcc-sc7180.c                      |   22 +-
- drivers/clk/qcom/gcc-sc7280.c                      |   20 +-
- drivers/clk/qcom/gcc-sc8180x.c                     |   62 +-
- drivers/clk/qcom/gcc-sc8280xp.c                    |   29 +-
- drivers/clk/qcom/gcc-sdm845.c                      |    1 +
- drivers/clk/qcom/gcc-sdx55.c                       |   12 +-
- drivers/clk/qcom/gcc-sdx65.c                       |   13 +-
- drivers/clk/qcom/gcc-sdx75.c                       |   10 +-
- drivers/clk/qcom/gcc-sm4450.c                      |   32 +-
- drivers/clk/qcom/gcc-sm6375.c                      |   11 +-
- drivers/clk/qcom/gcc-sm7150.c                      |   25 +-
- drivers/clk/qcom/gcc-sm8150.c                      |  352 +--
- drivers/clk/qcom/gcc-sm8250.c                      |   23 +-
- drivers/clk/qcom/gcc-sm8350.c                      |   24 +-
- drivers/clk/qcom/gcc-sm8450.c                      |   25 +-
- drivers/clk/qcom/gcc-sm8550.c                      |   25 +-
- drivers/clk/qcom/gcc-sm8650.c                      |   20 +-
- drivers/clk/qcom/gcc-x1e80100.c                    |   16 +-
- drivers/clk/qcom/gdsc.c                            |   12 +-
- drivers/clk/qcom/gpucc-sa8775p.c                   |   12 +-
- drivers/clk/qcom/gpucc-sc7180.c                    |   12 +-
- drivers/clk/qcom/gpucc-sc7280.c                    |   21 +-
- drivers/clk/qcom/gpucc-sc8280xp.c                  |   10 +-
- drivers/clk/qcom/gpucc-sdm845.c                    |   12 +-
- drivers/clk/qcom/gpucc-sm8150.c                    |   12 +-
- drivers/clk/qcom/gpucc-sm8250.c                    |   12 +-
- drivers/clk/qcom/gpucc-sm8350.c                    |   12 +-
- drivers/clk/qcom/gpucc-sm8550.c                    |   22 +-
- drivers/clk/qcom/gpucc-x1e80100.c                  |  656 ++++++
- drivers/clk/qcom/lpasscorecc-sc7180.c              |    7 +-
- drivers/clk/qcom/mmcc-apq8084.c                    |    2 +
- drivers/clk/qcom/mmcc-msm8974.c                    |    2 +
- drivers/clk/qcom/mss-sc7180.c                      |  140 --
- drivers/clk/qcom/reset.c                           |   27 +-
- drivers/clk/qcom/reset.h                           |    2 +-
- drivers/clk/qcom/tcsrcc-x1e80100.c                 |  285 +++
- drivers/clk/qcom/videocc-sc7180.c                  |   12 +-
- drivers/clk/qcom/videocc-sc7280.c                  |   12 +-
- drivers/clk/qcom/videocc-sdm845.c                  |   12 +-
- drivers/clk/qcom/videocc-sm8150.c                  |   14 +-
- drivers/clk/qcom/videocc-sm8250.c                  |   22 +-
- drivers/clk/qcom/videocc-sm8350.c                  |   14 +-
- drivers/clk/qcom/videocc-sm8450.c                  |   29 +-
- drivers/clk/qcom/videocc-sm8550.c                  |   29 +-
- include/dt-bindings/clock/qcom,gcc-msm8953.h       |    4 +
- include/dt-bindings/clock/qcom,gcc-sc8180x.h       |    2 +
- include/dt-bindings/clock/qcom,gcc-sm8150.h        |    3 +
- include/dt-bindings/clock/qcom,x1e80100-camcc.h    |  135 ++
- include/dt-bindings/clock/qcom,x1e80100-dispcc.h   |   98 +
- include/dt-bindings/clock/qcom,x1e80100-gpucc.h    |   41 +
- include/dt-bindings/clock/qcom,x1e80100-tcsr.h     |   23 +
- include/dt-bindings/reset/qcom,x1e80100-gpucc.h    |   19 +
- 92 files changed, 6176 insertions(+), 1198 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8650-dispcc.yaml
- create mode 100644 drivers/clk/qcom/camcc-x1e80100.c
- create mode 100644 drivers/clk/qcom/dispcc-x1e80100.c
- create mode 100644 drivers/clk/qcom/gpucc-x1e80100.c
- delete mode 100644 drivers/clk/qcom/mss-sc7180.c
- create mode 100644 drivers/clk/qcom/tcsrcc-x1e80100.c
- create mode 100644 include/dt-bindings/clock/qcom,x1e80100-camcc.h
- create mode 100644 include/dt-bindings/clock/qcom,x1e80100-dispcc.h
- create mode 100644 include/dt-bindings/clock/qcom,x1e80100-gpucc.h
- create mode 100644 include/dt-bindings/clock/qcom,x1e80100-tcsr.h
- create mode 100644 include/dt-bindings/reset/qcom,x1e80100-gpucc.h
+> -----Original Message-----
+> From: Tudor Ambarus <tudor.ambarus=40linaro.org>
+> Sent: Wednesday, March 6, 2024 8:50 AM
+> To: Sylwester Nawrocki <s.nawrocki=40samsung.com>; Chanwoo Choi
+> <cw00.choi=40samsung.com>; Alim Akhtar <alim.akhtar=40samsung.com>
+> Cc: Sam Protsenko <semen.protsenko=40linaro.org>; Krzysztof Kozlowski
+> <krzysztof.kozlowski=40linaro.org>; linux-samsung-soc=40vger.kernel.org;
+> linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-arm-ke=
+rnel
+> <linux-arm-kernel=40lists.infradead.org>; Peter Griffin
+> <peter.griffin=40linaro.org>; Andr=C3=A9=20Draszik=20<andre.draszik=40lin=
+aro.org>;=0D=0A>=20William=20McVicker=20<willmcvicker=40google.com>;=20kern=
+el-team=40android.com=0D=0A>=20Subject:=20samsung:=20clk:=20re-parent=20MUX=
+=20to=20OSCCLK=20at=20run-time=0D=0A>=20=0D=0A>=20Hi,=0D=0A>=20=0D=0A>=20Tr=
+ying=20to=20get=20some=20feedback=20from=20the=20samsung=20experts.=20Pleas=
+e=20consider=20the=0D=0A>=20following:=0D=0A>=20=0D=0A>=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20---------------=
+------------------------------=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20CMU_PERIC0=
+=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=7C=20=20MUX_USI=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=
+=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=
+=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=7C=20=20=7C=5C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=
+=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20OSCCLK=20---=7C->=7C=20=
+=5C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20=
+=20=5C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20=
+M=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20=
+U=20=7C-->=20DIV_CLK_PERIC0_USI*_=20-->=20GATE_USI=20=7C=0D=0A>=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=
+=20X=20=7C=20=20=20=20=20=20=20=20(1=20=7E=2016)=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20=20/=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20DIV_CLKCMU_PERIC0_IP=20=
+---=7C->=7C=20/=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=
+=20=20=20=20(1=20=7E=2016)=20=20=20=20=20=20=20=20=20=20=7C=20=7C=20=20=7C/=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=7C=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=7C=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=7C=20=20MUX_I3=
+C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=7C=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=7C=20=20=7C=5C=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20--=7C->=7C=20=5C=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20=20=5C=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20M=20=7C=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20U=20=7C-->=20DIV_C=
+LK_PERIC0_I3C=20-->=20GATE_I3C=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20X=20=7C=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20=20/=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20OSCCLK=20---=7C->=7C=20/=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=7C=20=20=7C/=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=7C=0D=0A>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20---------------------------------------------=
+=0D=0A>=20=0D=0A>=20Is=20it=20fine=20to=20re-parent=20the=20MUX_USI=20from=
+=20above=20to=20OSCCLK=20at=20run-time,=0D=0A=0D=0AI=20am=20not=20aware=20o=
+f=20the=20exact=20SOC/HW=20you=20are=20working=20on.=20=0D=0AIt=20depends=
+=20on=20the=20CMU=20design=20about=20how=20to=20achieve=20low=20power=20mod=
+e=20and=20clock=20gating=20for=20an=20IP/Block.=20=0D=0A=0D=0AIn=20theory=
+=20and=20looking=20at=20your=20clock=20diagram=20above,=20it=20is=20ok=20to=
+=20switch=20to=20OSCCLK=20=20for=20MUX_USI.=0D=0A=0D=0AIf=20you=20can=20jus=
+t=20use=20GATE_USI=20clock=20to=20clock=20gate=20USI=20IP,=20you=20will=20h=
+ave=20a=20low=20power=20for=20USI=20(of=20course=20there=20will=20be=20a=20=
+leakage=20current=20still=20drawn).=0D=0AIs=20that=20what=20you=20want=20to=
+=20achieve=20(low=20power=20mode)?=20Or=20you=20are=20looking=20to=20get=20=
+lowest=20possible=20operating=20clock=20for=20USI=20IP?=0D=0A=0D=0AYou=20ne=
+ed=20to=20takecare=20about=20if=20that=20clock=20is=20being=20shared=20with=
+=20any=20other=20IP,=0D=0Aso=20unless=20all=20the=20IPs=20which=20consume=
+=20this=20clock,=20goes=20into=20idle=20state,=20you=20can=20avoid=20MUX_US=
+I=20change=20to=20OSCCLK.=0D=0A=0D=0A=0D=0A>=20during=20normal=20operation=
+=20mode?=20Experimentally=20I=20determined=20that=20it's=20fine,=0D=0A>=20b=
+ut=20the=20datasheet=20that=20I'm=20reading=20mentions=20OSCCLK=20just=20in=
+=20the=20low-power=0D=0A>=20mode=20context:=0D=0A>=20i/=20CMU=20...=20=22Co=
+mmunicates=20with=20Power=20Management=20Unit=20(PMU)=20to=20stop=0D=0A>=20=
+clocks=20or=20switch=20OSC=20clock=20before=20entering=20a=20Low-Power=20mo=
+de=20to=20reduce=0D=0A>=20power=20consumption=20by=20minimizing=20clock=20t=
+oggling=22.=0D=0A>=20ii/=20=22All=20CMUs=20have=20MUXs=20to=20change=20the=
+=20OSCCLK=20during=20power-down=20mode=22.=0D=0A>=20=0D=0A>=20Re-parenting=
+=20the=20MUX=20to=20OSCCLK=20allows=20lower=20clock=20rates=20for=20the=20U=
+SI=20blocks=0D=0A>=20than=20the=20DIV_CLK_PERIC0_USI=20can=20offer.=20For=
+=20a=20USI=20clock=20rate=20below=0D=0A>=206.25=20MHz=20I=20have=20to=20eit=
+her=20reparent=20MUX_USI=20to=20OSCCLK,=20or=20to=20propagate=20the=0D=0A>=
+=20clock=20rate=20to=20the=20common=20divider=20DIV_CLKCMU_PERIC0_IP.=20I=
+=20find=20the=0D=0A>=20propagation=20to=20the=20common=20DIV=20less=20desir=
+able=20as=20a=20low=20USI=20clock=20rate=20affects=0D=0A>=20I3C=20by=20lowe=
+ring=20its=20clock=20rate=20too.=20Worse,=20if=20the=20common=20bus=20divid=
+er=20is=20not=0D=0A>=20protected=20(using=20CLK_SET_RATE_GATE),=20USI=20can=
+=20lower=20the=20I3C=20clock=20rate=0D=0A>=20without=20I3C=20noticing.=0D=
+=0A>=20=0D=0A>=20Either=20re-parenting=20the=20MUX_USI=20to=20OSCCLK,=20or=
+=20propagating=20the=20clock=20rate=20to=0D=0A>=20DIV_CLKCMU_PERIC0_IP=20al=
+lows=20the=20same=20clock=20ranges.=20The=20first=20with=20the=0D=0A>=20ben=
+efit=20of=20not=20affecting=20the=20clock=20rate=20of=20I3C=20for=20USI=20c=
+lock=20rates=20below=0D=0A>=206.25=20MHz.=20Is=20it=20fine=20to=20re-parent=
+=20MUX_USI=20to=20OSCCLK=20at=20run-time?=0D=0A>=20=0D=0A>=20If=20no=20feed=
+back=20is=20received=20I=20lean=20towards=20propagating=20the=20USI=20clock=
+=20rate=20to=20the=0D=0A>=20common=20divider,=20but=20by=20protecting=20it=
+=20with=20CLK_SET_RATE_GATE.=0D=0A>=20=0D=0A>=20Feel=20free=20to=20add=20in=
+=20To:=20or=20Cc:=20whoever=20might=20be=20interested.=20Thanks,=20ta=0D=0A=
+=0D=0A
