@@ -1,100 +1,160 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2071.outbound.protection.outlook.com [40.107.22.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAA34DA1B;
-	Wed,  6 Mar 2024 15:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709737504; cv=none; b=svFjOc3JZPELSsDhsEJ1vhLeqcRn2+7WLbEa6TDCF/PQfYCTVy0bR+jAZALYrLi0FdP2cUg284sbvGQN41GWD9ZoGegiyW8IY6yS3pqtW1cxLrwdm0SxsbczAKs0Gt54J1v82aRuJ0K6v1gvYluCcEehKWLerMZAHh9GjzEYfsA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709737504; c=relaxed/simple;
-	bh=43GXM3Q8D5bmb35Ep8tlcjDpUea4lF28uw+na04zbs4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G0NQQ1Dr79QY6fhVtLqcTEUByxt/u4EZ/xKCG+kl0L+WFrWPDtdu6EiMIZ3opD9zPLjmQf+iEhF9Jabs0OpcesTu1HHUH/+9jxFBAqoghpQwd083yJO5d0TGIGMdHixgyzP5OiuIuMHD33Xwz84l/humotdmoj26pPSPdR61C7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GACM9Jef; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F451428FE;
+	Wed,  6 Mar 2024 18:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709748282; cv=fail; b=cDtbHzEJkOXth9I5YFiKscO/26cZVMEXq9SQ4xE+xAVG6ig2f5gGDAVM93oBaYGRP0UwMDLNzU7Yy/HrKJyPRytcYysfSKqp+PY+VD60jjku+U44isG7YlOUJ/UT3iCr6u4JNPaqhyQP7UH01jj57gUpZ4TQLWwomiz04hrR4iY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709748282; c=relaxed/simple;
+	bh=UsKa7tIHLMp1wTklpMNWN3DRQsBwbxmdf8XPj5b9WYk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tkhS1hx0tNdDghswLnz5TxjI1jKcmVru/h42DXHa+iMtLJwQ+mWAY6qaG/+qPgm/uOLjGBSSNnF2ESFMiqaYP8jvB5b0WqIn8vTuVvx9l6Ldwku31UewXtP2WhV/oGG3ndknFOilhGZFLWb6KPL4AJF1jq/+3DXmcwCPtQ3DIvM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=lLtgrr+L; arc=fail smtp.client-ip=40.107.22.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GACM9Jef"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2d27fef509eso15026861fa.3;
-        Wed, 06 Mar 2024 07:05:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709737500; x=1710342300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=43GXM3Q8D5bmb35Ep8tlcjDpUea4lF28uw+na04zbs4=;
-        b=GACM9Jeff0j7GoLB4xVUPVP+86w0aLRcXzamDygWt27SsIl1TzR+xOiEeWxfQeKNmm
-         0jwKEunR8h+uaeVosAhnlve9v1vlBnMxbsg8FeXu1rXlwWrTQmQ7xFfw5C355kqlk5mH
-         ddVQI485gtMYGEDRc7E4fE+0Uv6+X+rEckNk9LfjYnvF8a65d8q6rWHW3U+cFQ2SWUbE
-         BjjQx3o510VzRDiHkYPRJt+h94O6JH3/yQ8SkEtcnLL/FMK8btmYP9Vxcil95ojs+Xfa
-         VDUIk8mfv2YY9ePNVgRjNPbWG4oCbeR6hbRnOleAaY+1gEXfT7Vretr7iOMT9/9HCjEM
-         oVVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709737500; x=1710342300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=43GXM3Q8D5bmb35Ep8tlcjDpUea4lF28uw+na04zbs4=;
-        b=bJq0m54zMDAMTU+Giw3PxPSjMaPvKAT6pxxxg9IP8Q4JaEPZsev40gbCSkqNFsGP8g
-         Eqtng9Cbfsz86mxXeYooC+8KPFJft2EDCGNSXjn+KUruh5lUpI8Cu0swzeU0rUmkLnp4
-         XVlV/LMjf6kiegYHS0AKXZf8Op8xu0CSODL+di3MPEJwHjwVF/ekr/HT2M4Q8xaDgA0y
-         tg7tqT/QLAw4wkS4pXvUFVBlGl23j6P1QS2xEoEHkslb74ge9NvwgkRXQ4cRAvSdL6Rb
-         qzNHWNck2eW9u0EKKwlioQQQlBvcRyc26V8gwhtzVqxXwS7ll2wAVrF/T1fvZ23o0OHl
-         Ullg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPANWaJgCnPprfA9BM6FUlZ0y9AoR3Q4mlFtyvLKkGt/Iym5O0KpeF/35H8e7mP/onWsPBlTZDAb28Vz/sCSsAA4hLf2cjCcv6FRnlAc2Ticqhequ2LCn2TzyFOeH2a+35QfToWuTewYkFru/edWo2dYkGky9RteVM/5IDFKr/0m/43A==
-X-Gm-Message-State: AOJu0YzN3C74m7h5pwVwjHi0zJrmYfxAKra77fZKTTtjCNQI49B5waNN
-	uaUCbPgOiP0VBcaO8DA/dH1ELRb8mIYBFxLNdZ12utMzpJAjFnxzlkZjkzJ+Spa5G0NofMkqpok
-	7l9N7/oiviYD5D8e4MVD7IARfZvA=
-X-Google-Smtp-Source: AGHT+IEEVeDiNEpHKSHTjKvhESMzneWqkwWwVGe8WoB74soHvGsOkOKPL5fYMktXsrfWue5FRmqbdFaGULj6kEl+Zug=
-X-Received: by 2002:a2e:a99f:0:b0:2d3:87b:7e9e with SMTP id
- x31-20020a2ea99f000000b002d3087b7e9emr4317395ljq.39.1709737500066; Wed, 06
- Mar 2024 07:05:00 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="lLtgrr+L"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MIPK5qfm8EkJWWrcthuDRCUo1p103UON4IEXI5NZRyT2iXIyrsb+InW/kIEdYmC5SOo6qfm4Yr+2K39hsDMbq4iBllgWl6UKj2nvbFl5Lloo0xburunreei0YAWov3ZHi1Z+Cm0Se04bHk0NlwhAPfX7RjooMa5FBir1XP1y2N/iDMdvY7wmRDJDKsuzsHAtfiLptIbbD+mB6qj8/6L0vhZL+vVWMmW6uMquL7X/IdS7C+pPq+Keo9AT3NgBViGzqnIjQX6ZS2yt/UAHesJqfRYydfAyhKBdI/yc5y7LZFvmHhTKRNUA4I8Irar8lAd38BHp2jEOQU5mpnWhFgIelA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O6v2HbHcgkKbexa8oZfX/H/QR+qOB904iEZZ7iuZxbk=;
+ b=PHElU38tAsXhSsDadAwWMhP4yZ8M/kkY4KHGXS5iDkZhxXkXYdZrCV4np4Sfe4y8UJ36tNIAUcvoEFocAVWR28HGIuCD0IqOvAGZWV2jfidd7eAWq4qdqY0pNgxNScXmC4vse6jbA8sWbHQ3sLifIhr0KR+nse5pYrRT03fpCgJ/oRwGyMsA9dyMkBOaODSAP5cSUYOpSGTIaq2nYKX1hErFt6gbYAz0j8tDKjnXSy2FBvem8WGyj2HojqgqPlEc2WfJcal+s1Xzpe5KZjL2uZo1bBOxqyU6Vukanc9zmTWKrvux3pheE6+KdgDaNXumfEGL46XzAlcrEUSYITuX6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=leica-geosystems.com; dmarc=pass (p=reject sp=reject pct=100)
+ action=none header.from=leica-geosystems.com; dkim=none (message not signed);
+ arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O6v2HbHcgkKbexa8oZfX/H/QR+qOB904iEZZ7iuZxbk=;
+ b=lLtgrr+L13E+XDA0O9wy/lsXNdlD25TWZg7T4m54q1U/MReQnFK563TB3rRI4hevcl5q5bK85vVv81R58dsF4F80+GBfMA1WAFPdrkvDlr3fDj/9XXOWiiGwqMS3/SOm26ermoCR8D/xwYd6+mN9+MxG8OFbSuHlqqXb/ezEVjM=
+Received: from DB9PR02CA0015.eurprd02.prod.outlook.com (2603:10a6:10:1d9::20)
+ by DB9PR06MB7467.eurprd06.prod.outlook.com (2603:10a6:10:262::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.24; Wed, 6 Mar
+ 2024 18:04:37 +0000
+Received: from DB5PEPF00014B99.eurprd02.prod.outlook.com
+ (2603:10a6:10:1d9:cafe::2c) by DB9PR02CA0015.outlook.office365.com
+ (2603:10a6:10:1d9::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7339.39 via Frontend
+ Transport; Wed, 6 Mar 2024 18:04:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
+ smtp.mailfrom=leica-geosystems.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=leica-geosystems.com;
+Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com
+ designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
+ client-ip=193.8.40.94; helo=hexagon.com; pr=C
+Received: from hexagon.com (193.8.40.94) by
+ DB5PEPF00014B99.mail.protection.outlook.com (10.167.8.166) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7362.11 via Frontend Transport; Wed, 6 Mar 2024 18:04:37 +0000
+Received: from aherlnxbspsrv01.lgs-net.com ([10.60.34.116]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
+	 Wed, 6 Mar 2024 19:04:36 +0100
+From: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bsp-development.geo@leica-geosystems.com,
+	m.felsch@pengutronix.de,
+	Catalin Popescu <catalin.popescu@leica-geosystems.com>
+Subject: [PATCH next] clk: rs9: fix wrong default value for clock amplitude
+Date: Wed,  6 Mar 2024 19:04:35 +0100
+Message-Id: <20240306180435.1033052-1-catalin.popescu@leica-geosystems.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240304-pinephone-pll-fixes-v3-0-94ab828f269a@oltmanns.dev> <20240304-pinephone-pll-fixes-v3-5-94ab828f269a@oltmanns.dev>
-In-Reply-To: <20240304-pinephone-pll-fixes-v3-5-94ab828f269a@oltmanns.dev>
-From: Erico Nunes <nunes.erico@gmail.com>
-Date: Wed, 6 Mar 2024 16:04:47 +0100
-Message-ID: <CAK4VdL0zWRg4hzUbuZsnabU53x3DrOiemH0tGnpbK9ECQvM1qg@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] arm64: dts: allwinner: a64: Run GPU at 432 MHz
-To: Frank Oltmanns <frank@oltmanns.dev>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
-	Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 06 Mar 2024 18:04:36.0986 (UTC) FILETIME=[C04B85A0:01DA6FF0]
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B99:EE_|DB9PR06MB7467:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 74e5f93b-8c9d-4df6-b236-08dc3e07e306
+X-SET-LOWER-SCL-SCANNER: YES
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	sOgseA4eA+1GlG18A/OgliOyuig5TC036hdusGnYimHE1dR7nVfflki90lYu09JuHhAuhFcV+nVjMJlPLIX67JE7IHnF3zMLIaoAtUJNlp4N9kr21X9fe7GAS39EltsUK1bV51F2oeikLX/KWOpHM9cEoBWATH8cSa5XeJ7dntG6tw8+SUJBNx7ZG33EncfmpVp1hK6C/bvgsGqXf0PK2fkFFd9i31Ctkjv426WdgmdEZeXvOyjlz46f/WEuCLJdFe1mvROeDUH59JKRnDRKJRnvD19HHDKSUi2xeOSqSmQEYyGWq7SvPMXijJZ+h+3FHJ5/FMMQO/BXuI9TN7nfkvA6hLjjiCKlMMzNIUkU4oSh5gB1uJbHRqf66sCHNpyDrnOyfcCpyZp2IsM+tr1KJ4Aq7t8Q4uAIJS5Zg5WPuUfHU22H9XSD9eDyoLOPpBPDC3lqo+QsBMLVIOzNaiHct5SQyQIz6p82fuCEwkIx3KdHZzjBW8Wq3q3HM5zgnDnCRXcLk9AU+l20M6pAvUPGlYfC7ueqFeGfWNkc+svjN4cYKb/KBCwam2x3RS5dlmHuDPByFYvi8hv+o66W5g8A9I+W+feNaRr8xvFgAC18Wox4/l1wvpn+vUnezoX9WE0v0kRewGlu5wY/vb+Yo9HM253GUkUN/qRvRl8la9jOXhMMdZRfYEXQOa79mogl8DZLvADHoh4bhs1foGlXI5pfLRjE2RcCLCV0MwxayVFghy4YcGpeo16JGuPeUANqklab
+X-Forefront-Antispam-Report:
+	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230031)(82310400014)(36860700004)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: leica-geosystems.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2024 18:04:37.3077
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74e5f93b-8c9d-4df6-b236-08dc3e07e306
+X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B99.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR06MB7467
 
-On Mon, Mar 4, 2024 at 6:01=E2=80=AFPM Frank Oltmanns <frank@oltmanns.dev> =
-wrote:
->
-> The Allwinner A64's GPU has currently three operating points. However,
-> the BSP runs the GPU fixed at 432 MHz. In addition, at least one of the
-> devices using that SoC - the pinephone - shows unstabilities (see link)
-> that can be circumvented by running the GPU at a fixed rate.
->
-> Therefore, remove the other two operating points from the GPU OPP table,
-> so that the GPU runs at a fixed rate of 432 MHz.
+According to 9FGV0241 & 9FGV0441 datasheets, the default value
+for the clock amplitude is 0.8V, while the driver was assuming
+0.7V.
 
-In addition to all of this, the A64 user manual does say explicitly
-that "dynamic frequency scaling is not supported" on PLL_GPU. So I
-think this is really needed for a reliable GPU experience on A64.
+Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+---
+ drivers/clk/clk-renesas-pcie.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Acked-by: Erico Nunes <nunes.erico@gmail.com>
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index 53e21ac302e6..4c3a5e4eb77a 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -25,10 +25,12 @@
+ #define RS9_REG_SS_AMP_0V7			0x1
+ #define RS9_REG_SS_AMP_0V8			0x2
+ #define RS9_REG_SS_AMP_0V9			0x3
++#define RS9_REG_SS_AMP_DEFAULT			RS9_REG_SS_AMP_0V8
+ #define RS9_REG_SS_AMP_MASK			0x3
+ #define RS9_REG_SS_SSC_100			0
+ #define RS9_REG_SS_SSC_M025			(1 << 3)
+ #define RS9_REG_SS_SSC_M050			(3 << 3)
++#define RS9_REG_SS_SSC_DEFAULT			RS9_REG_SS_SSC_100
+ #define RS9_REG_SS_SSC_MASK			(3 << 3)
+ #define RS9_REG_SS_SSC_LOCK			BIT(5)
+ #define RS9_REG_SR				0x2
+@@ -205,8 +207,8 @@ static int rs9_get_common_config(struct rs9_driver_data *rs9)
+ 	int ret;
+ 
+ 	/* Set defaults */
+-	rs9->pll_amplitude = RS9_REG_SS_AMP_0V7;
+-	rs9->pll_ssc = RS9_REG_SS_SSC_100;
++	rs9->pll_amplitude = RS9_REG_SS_AMP_DEFAULT;
++	rs9->pll_ssc = RS9_REG_SS_SSC_DEFAULT;
+ 
+ 	/* Output clock amplitude */
+ 	ret = of_property_read_u32(np, "renesas,out-amplitude-microvolt",
+@@ -247,13 +249,13 @@ static void rs9_update_config(struct rs9_driver_data *rs9)
+ 	int i;
+ 
+ 	/* If amplitude is non-default, update it. */
+-	if (rs9->pll_amplitude != RS9_REG_SS_AMP_0V7) {
++	if (rs9->pll_amplitude != RS9_REG_SS_AMP_DEFAULT) {
+ 		regmap_update_bits(rs9->regmap, RS9_REG_SS, RS9_REG_SS_AMP_MASK,
+ 				   rs9->pll_amplitude);
+ 	}
+ 
+ 	/* If SSC is non-default, update it. */
+-	if (rs9->pll_ssc != RS9_REG_SS_SSC_100) {
++	if (rs9->pll_ssc != RS9_REG_SS_SSC_DEFAULT) {
+ 		regmap_update_bits(rs9->regmap, RS9_REG_SS, RS9_REG_SS_SSC_MASK,
+ 				   rs9->pll_ssc);
+ 	}
 
-Thanks
+base-commit: 61996c073c9b070922ad3a36c981ca6ddbea19a5
+prerequisite-patch-id: 0000000000000000000000000000000000000000
+-- 
+2.34.1
 
-Erico
