@@ -1,160 +1,192 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2071.outbound.protection.outlook.com [40.107.22.71])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F451428FE;
-	Wed,  6 Mar 2024 18:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709748282; cv=fail; b=cDtbHzEJkOXth9I5YFiKscO/26cZVMEXq9SQ4xE+xAVG6ig2f5gGDAVM93oBaYGRP0UwMDLNzU7Yy/HrKJyPRytcYysfSKqp+PY+VD60jjku+U44isG7YlOUJ/UT3iCr6u4JNPaqhyQP7UH01jj57gUpZ4TQLWwomiz04hrR4iY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709748282; c=relaxed/simple;
-	bh=UsKa7tIHLMp1wTklpMNWN3DRQsBwbxmdf8XPj5b9WYk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tkhS1hx0tNdDghswLnz5TxjI1jKcmVru/h42DXHa+iMtLJwQ+mWAY6qaG/+qPgm/uOLjGBSSNnF2ESFMiqaYP8jvB5b0WqIn8vTuVvx9l6Ldwku31UewXtP2WhV/oGG3ndknFOilhGZFLWb6KPL4AJF1jq/+3DXmcwCPtQ3DIvM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=lLtgrr+L; arc=fail smtp.client-ip=40.107.22.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="lLtgrr+L"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MIPK5qfm8EkJWWrcthuDRCUo1p103UON4IEXI5NZRyT2iXIyrsb+InW/kIEdYmC5SOo6qfm4Yr+2K39hsDMbq4iBllgWl6UKj2nvbFl5Lloo0xburunreei0YAWov3ZHi1Z+Cm0Se04bHk0NlwhAPfX7RjooMa5FBir1XP1y2N/iDMdvY7wmRDJDKsuzsHAtfiLptIbbD+mB6qj8/6L0vhZL+vVWMmW6uMquL7X/IdS7C+pPq+Keo9AT3NgBViGzqnIjQX6ZS2yt/UAHesJqfRYydfAyhKBdI/yc5y7LZFvmHhTKRNUA4I8Irar8lAd38BHp2jEOQU5mpnWhFgIelA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O6v2HbHcgkKbexa8oZfX/H/QR+qOB904iEZZ7iuZxbk=;
- b=PHElU38tAsXhSsDadAwWMhP4yZ8M/kkY4KHGXS5iDkZhxXkXYdZrCV4np4Sfe4y8UJ36tNIAUcvoEFocAVWR28HGIuCD0IqOvAGZWV2jfidd7eAWq4qdqY0pNgxNScXmC4vse6jbA8sWbHQ3sLifIhr0KR+nse5pYrRT03fpCgJ/oRwGyMsA9dyMkBOaODSAP5cSUYOpSGTIaq2nYKX1hErFt6gbYAz0j8tDKjnXSy2FBvem8WGyj2HojqgqPlEc2WfJcal+s1Xzpe5KZjL2uZo1bBOxqyU6Vukanc9zmTWKrvux3pheE6+KdgDaNXumfEGL46XzAlcrEUSYITuX6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
- smtp.mailfrom=leica-geosystems.com; dmarc=pass (p=reject sp=reject pct=100)
- action=none header.from=leica-geosystems.com; dkim=none (message not signed);
- arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O6v2HbHcgkKbexa8oZfX/H/QR+qOB904iEZZ7iuZxbk=;
- b=lLtgrr+L13E+XDA0O9wy/lsXNdlD25TWZg7T4m54q1U/MReQnFK563TB3rRI4hevcl5q5bK85vVv81R58dsF4F80+GBfMA1WAFPdrkvDlr3fDj/9XXOWiiGwqMS3/SOm26ermoCR8D/xwYd6+mN9+MxG8OFbSuHlqqXb/ezEVjM=
-Received: from DB9PR02CA0015.eurprd02.prod.outlook.com (2603:10a6:10:1d9::20)
- by DB9PR06MB7467.eurprd06.prod.outlook.com (2603:10a6:10:262::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.24; Wed, 6 Mar
- 2024 18:04:37 +0000
-Received: from DB5PEPF00014B99.eurprd02.prod.outlook.com
- (2603:10a6:10:1d9:cafe::2c) by DB9PR02CA0015.outlook.office365.com
- (2603:10a6:10:1d9::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7339.39 via Frontend
- Transport; Wed, 6 Mar 2024 18:04:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
- smtp.mailfrom=leica-geosystems.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=leica-geosystems.com;
-Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com
- designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
- client-ip=193.8.40.94; helo=hexagon.com; pr=C
-Received: from hexagon.com (193.8.40.94) by
- DB5PEPF00014B99.mail.protection.outlook.com (10.167.8.166) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7362.11 via Frontend Transport; Wed, 6 Mar 2024 18:04:37 +0000
-Received: from aherlnxbspsrv01.lgs-net.com ([10.60.34.116]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
-	 Wed, 6 Mar 2024 19:04:36 +0100
-From: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bsp-development.geo@leica-geosystems.com,
-	m.felsch@pengutronix.de,
-	Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Subject: [PATCH next] clk: rs9: fix wrong default value for clock amplitude
-Date: Wed,  6 Mar 2024 19:04:35 +0100
-Message-Id: <20240306180435.1033052-1-catalin.popescu@leica-geosystems.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1342D692E6;
+	Wed,  6 Mar 2024 19:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709753310; cv=none; b=LXC09vLRyXFAxC8sV2TTKedzNUsAmZ6ecRIOcdkAbig7MjOxCXc9iEevIM7rhn7BwlaZS5mYCr7Ammm2ADlYmcw7VGyNWMiXd9NV8f7658foL+RtAH4T/+tpJNWFR3j3F988RuHEsKkKosGvp5uDgxMqWsIrkl9KNos/vcapjf4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709753310; c=relaxed/simple;
+	bh=CDUCX+fLbgrh7BbmfBBqG2J+zTPmFsBzl3wcitwg1ZI=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=Fsuf9ZSu6QAa4T/msAaS9/4HfHOutl0Uc6oK34EZ+0oXsjGasDsY36IBlgTvOrfCj6cLuKUydgX5AqlHc7bc7TXa4h8dNhpzkvi4UnUPj+n8ZUZ40/cMY2NNUtTk2uRGbJeAHIX9byIq8lOw9Xf01sXbjvBLILiRUnqRaJqf/6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id 4A61337820DA;
+	Wed,  6 Mar 2024 19:28:25 +0000 (UTC)
+From: "Shreeya Patel" <shreeya.patel@collabora.com>
+In-Reply-To: <6040170.44csPzL39Z@diego>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240305123648.8847-1-shreeya.patel@collabora.com>
+ <7657358.31r3eYUQgx@diego> <45138-65e76d00-9-580ee380@232156106> <6040170.44csPzL39Z@diego>
+Date: Wed, 06 Mar 2024 19:28:24 +0000
+Cc: mchehab@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com, dmitry.osipenko@collabora.com, sebastian.reichel@collabora.com, shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com, hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl, kernel@collabora.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm@lists.infradead.org
+To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 06 Mar 2024 18:04:36.0986 (UTC) FILETIME=[C04B85A0:01DA6FF0]
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5PEPF00014B99:EE_|DB9PR06MB7467:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 74e5f93b-8c9d-4df6-b236-08dc3e07e306
-X-SET-LOWER-SCL-SCANNER: YES
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	sOgseA4eA+1GlG18A/OgliOyuig5TC036hdusGnYimHE1dR7nVfflki90lYu09JuHhAuhFcV+nVjMJlPLIX67JE7IHnF3zMLIaoAtUJNlp4N9kr21X9fe7GAS39EltsUK1bV51F2oeikLX/KWOpHM9cEoBWATH8cSa5XeJ7dntG6tw8+SUJBNx7ZG33EncfmpVp1hK6C/bvgsGqXf0PK2fkFFd9i31Ctkjv426WdgmdEZeXvOyjlz46f/WEuCLJdFe1mvROeDUH59JKRnDRKJRnvD19HHDKSUi2xeOSqSmQEYyGWq7SvPMXijJZ+h+3FHJ5/FMMQO/BXuI9TN7nfkvA6hLjjiCKlMMzNIUkU4oSh5gB1uJbHRqf66sCHNpyDrnOyfcCpyZp2IsM+tr1KJ4Aq7t8Q4uAIJS5Zg5WPuUfHU22H9XSD9eDyoLOPpBPDC3lqo+QsBMLVIOzNaiHct5SQyQIz6p82fuCEwkIx3KdHZzjBW8Wq3q3HM5zgnDnCRXcLk9AU+l20M6pAvUPGlYfC7ueqFeGfWNkc+svjN4cYKb/KBCwam2x3RS5dlmHuDPByFYvi8hv+o66W5g8A9I+W+feNaRr8xvFgAC18Wox4/l1wvpn+vUnezoX9WE0v0kRewGlu5wY/vb+Yo9HM253GUkUN/qRvRl8la9jOXhMMdZRfYEXQOa79mogl8DZLvADHoh4bhs1foGlXI5pfLRjE2RcCLCV0MwxayVFghy4YcGpeo16JGuPeUANqklab
-X-Forefront-Antispam-Report:
-	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230031)(82310400014)(36860700004)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: leica-geosystems.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2024 18:04:37.3077
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74e5f93b-8c9d-4df6-b236-08dc3e07e306
-X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB5PEPF00014B99.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR06MB7467
+Message-ID: <ca099-65e8c400-33-2b230d40@237921438>
+Subject: =?utf-8?q?Re=3A?= [PATCH v2 4/6] =?utf-8?q?arm64=3A?==?utf-8?q?_dts=3A?=
+ =?utf-8?q?_rockchip=3A?= Add device tree support for HDMI RX Controller
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
 
-According to 9FGV0241 & 9FGV0441 datasheets, the default value
-for the clock amplitude is 0.8V, while the driver was assuming
-0.7V.
+On Wednesday, March 06, 2024 01:50 IST, Heiko St=C3=BCbner <heiko@sntec=
+h.de> wrote:
 
-Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
----
- drivers/clk/clk-renesas-pcie.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+> Hi again :-)
+>=20
+> Am Dienstag, 5. M=C3=A4rz 2024, 20:05:02 CET schrieb Shreeya Patel:
+> > On Tuesday, March 05, 2024 19:41 IST, Heiko St=C3=BCbner <heiko@snt=
+ech.de> wrote:
+> > > Am Dienstag, 5. M=C3=A4rz 2024, 13:36:46 CET schrieb Shreeya Pate=
+l:
+> > > > Add device tree support for Synopsys DesignWare HDMI RX
+> > > > Controller.
+> > > >=20
+> > > > Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> > > > Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> > > > Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> > > > Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> > > > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> > > > ---
+> > > > Changes in v2 :-
+> > > >   - Fix some of the checkpatch errors and warnings
+> > > >   - Rename resets, vo1-grf and HPD
+> > > >   - Move hdmirx=5Fcma node to the rk3588.dtsi file
+> > > >=20
+> > > >  .../boot/dts/rockchip/rk3588-pinctrl.dtsi     | 41 +++++++++++=
++++
+> > > >  arch/arm64/boot/dts/rockchip/rk3588.dtsi      | 55 +++++++++++=
+++++++++
+> > > >  2 files changed, 96 insertions(+)
+> > >=20
+> > > > diff --git a/arch/arm64/boot/dts/rockchip/rk3588.dtsi b/arch/ar=
+m64/boot/dts/rockchip/rk3588.dtsi
+> > > > index 5519c1430cb7..8adb98b99701 100644
+> > > > --- a/arch/arm64/boot/dts/rockchip/rk3588.dtsi
+> > > > +++ b/arch/arm64/boot/dts/rockchip/rk3588.dtsi
+> > > > @@ -7,6 +7,24 @@
+> > > >  #include "rk3588-pinctrl.dtsi"
+> > > > =20
+> > > >  / {
+> > > > +	reserved-memory {
+> > > > +		#address-cells =3D <2>;
+> > > > +		#size-cells =3D <2>;
+> > > > +		ranges;
+> > >=20
+> > > add blank line here
+> > >=20
+> > > > +		/*
+> > > > +		 * The 4k HDMI capture controller works only with 32bit
+> > > > +		 * phys addresses and doesn't support IOMMU. HDMI RX CMA
+> > > > +		 * must be reserved below 4GB.
+> > > > +		 */
+> > > > +		hdmirx=5Fcma: hdmirx=5Fcma {
+> > >=20
+> > > phandles use "=5F", but node-names "-"
+> > >=20
+> > > > +			compatible =3D "shared-dma-pool";
+> > > > +			alloc-ranges =3D <0x0 0x0 0x0 0xffffffff>;
+> > > > +			size =3D <0x0 (160 * 0x100000)>; /* 160MiB */
+> > >=20
+> > > The comment above that node, could elaborate where the value of 1=
+60MB
+> > > originates from. I assume it is to hold n-times of 4K frames or w=
+hatever,
+> > > but it would be helpful for people to be able to read that.
+> > >=20
+> >=20
+> > right, we did the following calculation to come up with this value =
+:-
+> > 3840 * 2160 * 4 (bytes/pix) * 2 (frames/buffer) / 1000 / 1000 =3D 6=
+6M
+> > and then we do the 2x times of this value to be on the safer side
+> > and support all practical use-cases.
+> >=20
+> > I'll add some more details to the comment in v3.
+>=20
+> thanks, that will be helpful for me and everybody reading the dts lat=
+er on
+>=20
+> >=20
+> > >=20
+> > > > +			no-map;
+> > > > +			status =3D "disabled";
+> > > > +		};
+> > > > +	};
+> > > > +
+> > > >  	pcie30=5Fphy=5Fgrf: syscon@fd5b8000 {
+> > > >  		compatible =3D "rockchip,rk3588-pcie3-phy-grf", "syscon";
+> > > >  		reg =3D <0x0 0xfd5b8000 0x0 0x10000>;
+> > > > @@ -85,6 +103,38 @@ i2s10=5F8ch: i2s@fde00000 {
+> > > >  		status =3D "disabled";
+> > > >  	};
+> > > > =20
+> > > > +	hdmi=5Freceiver: hdmi-receiver@fdee0000 {
+> > >=20
+> > > Maybe rename the label to "hdmirx:" ... that way in a board enabl=
+ing the
+> > > cma region, both nodes would stay close to each other?
+> > >=20
+> >=20
+> > Umm we already have receiver in the name so I am not sure if adding=
+ rx will be
+> > a good idea. I was trying to keep it consistent with the names used=
+ in other device tree files.
+> > In case you still feel otherwise then do let me know, I'll make the=
+ change.
+>=20
+> I'm somewhat partial to the actual name, I was more getting at simila=
+r
+> names to keep things together.
+>=20
+> General sorting rules are that &foo phandles are sorted alphabeticall=
+y
+> in board devicetrees.
+>=20
+> So having
+>=20
+> &hdmirx {
+> 	status =3D "okay";
+> };
+>=20
+> &hdmirx=5Fcma {
+> 	status =3D "okay";
+> };
+>=20
+> in the board dt, makes them stay together automatically ;-)
+>=20
+> So if it's hdmirx + hdmirx=5Fcma or hdmi=5Freceiver + hdmi=5Freceiver=
+=5Fcma
+> doesn't matter that much, just that they share a common basename.
+>=20
+>=20
+> I really want to stay away from allowing special rules for things as =
+much
+> as possible, because that becomes a neverending story, so it's
+> alphabetical sorting.
+>=20
+> But nothing prevents us from naming phandles in an intelligent way ;-=
+) .
+>=20
 
-diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-index 53e21ac302e6..4c3a5e4eb77a 100644
---- a/drivers/clk/clk-renesas-pcie.c
-+++ b/drivers/clk/clk-renesas-pcie.c
-@@ -25,10 +25,12 @@
- #define RS9_REG_SS_AMP_0V7			0x1
- #define RS9_REG_SS_AMP_0V8			0x2
- #define RS9_REG_SS_AMP_0V9			0x3
-+#define RS9_REG_SS_AMP_DEFAULT			RS9_REG_SS_AMP_0V8
- #define RS9_REG_SS_AMP_MASK			0x3
- #define RS9_REG_SS_SSC_100			0
- #define RS9_REG_SS_SSC_M025			(1 << 3)
- #define RS9_REG_SS_SSC_M050			(3 << 3)
-+#define RS9_REG_SS_SSC_DEFAULT			RS9_REG_SS_SSC_100
- #define RS9_REG_SS_SSC_MASK			(3 << 3)
- #define RS9_REG_SS_SSC_LOCK			BIT(5)
- #define RS9_REG_SR				0x2
-@@ -205,8 +207,8 @@ static int rs9_get_common_config(struct rs9_driver_data *rs9)
- 	int ret;
- 
- 	/* Set defaults */
--	rs9->pll_amplitude = RS9_REG_SS_AMP_0V7;
--	rs9->pll_ssc = RS9_REG_SS_SSC_100;
-+	rs9->pll_amplitude = RS9_REG_SS_AMP_DEFAULT;
-+	rs9->pll_ssc = RS9_REG_SS_SSC_DEFAULT;
- 
- 	/* Output clock amplitude */
- 	ret = of_property_read_u32(np, "renesas,out-amplitude-microvolt",
-@@ -247,13 +249,13 @@ static void rs9_update_config(struct rs9_driver_data *rs9)
- 	int i;
- 
- 	/* If amplitude is non-default, update it. */
--	if (rs9->pll_amplitude != RS9_REG_SS_AMP_0V7) {
-+	if (rs9->pll_amplitude != RS9_REG_SS_AMP_DEFAULT) {
- 		regmap_update_bits(rs9->regmap, RS9_REG_SS, RS9_REG_SS_AMP_MASK,
- 				   rs9->pll_amplitude);
- 	}
- 
- 	/* If SSC is non-default, update it. */
--	if (rs9->pll_ssc != RS9_REG_SS_SSC_100) {
-+	if (rs9->pll_ssc != RS9_REG_SS_SSC_DEFAULT) {
- 		regmap_update_bits(rs9->regmap, RS9_REG_SS, RS9_REG_SS_SSC_MASK,
- 				   rs9->pll_ssc);
- 	}
+Makes sense to me, I'll use hdmi=5Freceiver + hdmi=5Freceiver=5Fcma com=
+bination
+to keep it consistent.
 
-base-commit: 61996c073c9b070922ad3a36c981ca6ddbea19a5
-prerequisite-patch-id: 0000000000000000000000000000000000000000
--- 
-2.34.1
+Thanks,
+Shreeya Patel
+
+>=20
+> Thanks
+> Heiko
+>
 
