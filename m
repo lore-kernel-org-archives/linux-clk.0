@@ -1,343 +1,160 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01olkn2011.outbound.protection.outlook.com [40.92.53.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEB912AACF
-	for <linux-clk@vger.kernel.org>; Thu,  7 Mar 2024 11:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709809858; cv=none; b=O2o3xymjTEImZH+dgCpefWjnIZMEY+TBsReUQq0xDjTV4O9yeetQJD5h7lDIMR/0JJKqVaR5obeMyASntsH0mTJ3Cqym+VpTwPOy9lpQ5jo26VYf1Fzq7ejLeh5Vzs6aYrppFpmz6K1joLBKNyVYdj+cec4eyfLY9Se+ca0MQJU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709809858; c=relaxed/simple;
-	bh=+QUQ7yhNC21YVITWoj5dkN0llltsA5n33KngBbOyW9Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=otqosi0QV+tsxfvrxmD0cnoAZQmBd0yx76i1Cg9oy0VeVQ9fIlbmhxC5U7HstLeFNXZhnLi2PSN8u7recD0HhUor8DZ68h5J9nmOgJxLg7aeOGHNXRo/0E1trU6XSVTtQQ4T8aHVWsN+ncszXY9QpPx917z+0qZSNQMP4VuDdLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=O7arwrH+; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21E886AE9;
+	Thu,  7 Mar 2024 11:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.53.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709810294; cv=fail; b=rwbD2WBc8luZG1/QHmJVKCwn3WO1wMFNyG1x0GTvkHAGaU+HWm8Cf3Dmr7FkgxIVioNJ2zxfShPsK4yXC+emebd3Q08TU8vD5aXvtpJ3KLgMdSr2fH9Grgg7XBzjqi3l1JtDHaIKdvYqvrwXP50Ggh3oWni+zsUL00vVPa7RM7I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709810294; c=relaxed/simple;
+	bh=e1UtNccqSuekjuyKQELIOccWaiKk4Et1imD2EF53NUc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BfN+rE5IZuhrj07P1o3tjGgDc6MOufkGVlf9dmK4Ir0V7doxYZHv3zVEo9/u9S44FsXmkaobfdhq0c+cLLXKc6bIUBh+2LAeM98F+2/PggP9NrCJw9OKfMvZ8wS7Nn3s96a91et1WuknD+CjioRcgyY9P7Rn9yl4J5At0YGVc7c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=aPCuvyrz; arc=fail smtp.client-ip=40.92.53.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O7arwrH+"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1dc29f1956cso5548385ad.0
-        for <linux-clk@vger.kernel.org>; Thu, 07 Mar 2024 03:10:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1709809856; x=1710414656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2OrNnr6gHqc42Ky1FeFcCvehza56T+Pa8i2e3OFWYmw=;
-        b=O7arwrH+Ss+8IkBeHcgjhG9aSBMVkfw9MUc7kYTzSWuG9Bk+VknstQsBYatNoXYerl
-         tLb3snJMwldEpZ1DZ6tHluaN+FZNQXhCnahHfnnxgSS5GqRd097aZiBJ6LlRw2ds8+aS
-         A1uMvYNUIpt1YLTiQEAuy62P7WB3CsyCIH6zo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709809856; x=1710414656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2OrNnr6gHqc42Ky1FeFcCvehza56T+Pa8i2e3OFWYmw=;
-        b=D0IPlT6Ll5CvQ1KXAxe+FrHNMyF8q/kD0eqfTrP34Ga8guWijG7f71Nq5FOLMERhPw
-         KNndYdezGcLVMNTWSIIxpc/49QIrLeN660KAABbB8wgurokdLKLYMiMx6jU3JtWoMvdQ
-         +2oPWFX77IGv+NqtWDaoy2V9s3mHCIr+r95sJVZdOAQklq/lnWyiuk70ztzLvkCj6ccq
-         JNM1CqmM9mEBJs+TJoG71zz559nb++sOB2HP/srgJcNc1aSIYnAQtYXgB18d/QEgL0vh
-         FX0NgZ828gSrXfxBpyg9nyyEM4qg0dju1rz2qeYBkfBWhVM9TgxGJMQsfQ9jBpdXvKG+
-         5qEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVm4muYphDTsea/J10jUYmDYUwQq7MTeu2bwPwvcMtAtdDq5kAGs2+Z5itoWxWaoWks82KjuF7+c65rVNMNrz9k9bOdl6ijdDH0
-X-Gm-Message-State: AOJu0YzxjMR12+xWgI8DK0jtD9f5LSYXzYuAth5wUlWWGJ+6RTZ088nQ
-	loLCnH6VJ3ZVw8eTgTTKfRp4KHGJowYeUC2/o67+OxlVWHqf8LOBK8MAhWYxDS8zqZNrPiXGNhB
-	adEQ2jAEepulMQD6qEc6j/UBHy6jl86YfhQuL
-X-Google-Smtp-Source: AGHT+IFxA69w3fb5rTaHx0WWeDwNDwE8addr1vYQfdEOYmu/vTHtVI+D/+lM+o+ttEqHQRihTUFAaiYFNtKyeHldlLU=
-X-Received: by 2002:a17:902:e84d:b0:1db:c390:1fdc with SMTP id
- t13-20020a170902e84d00b001dbc3901fdcmr9601288plg.1.1709809855695; Thu, 07 Mar
- 2024 03:10:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="aPCuvyrz"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nvyyblgLqNMuJgRdTROnw8hWtap5qkncrkTH8/Yf7BkjPtBImcf+MZdIQ0HcMbEQZ5ElsC06ICI0naHrVyOH53jXlJu5n4MBd54JWySLVU2wyAR840BMHrjKYsd8akRRYp10s2ngV3T9kkGJRfkyAHkkICliZ3lfzKLxtyDJuTMoLMyRAko9PiyJ5NxrvircXJjyE2fhbKAKUQRqCCV4+xEohjZMNATZcoC/Xkj+olBB+4OYkh9gPKiJCljro0EOOx5m3KozIunVUiJ1SFR0lbkUxL7G+ZY3Es6wYrBj3UQwr8PqLiKiGTcSbJ2VqHJRoHblSJ5/C5PfCjnhzmm1wQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1OnX/BH6Xjawc0pDowAWuvFe/CmzILBKY/IW+PooznE=;
+ b=RJcUARw4rhF1Q/UrJ6TdHAQZdSJSeL/G5u6ZSrunVNv230cvVrBzVFwH5mNqYsMCIdXuipNbiXkQu/uvAB5d3ksEKIaHegAYDA3/4LgMLtSoaVpiJTKb4E8JHEX/FplXXO8NNnfbGz8Yjr5xt4OKuSvgiz8CWiur905LXXTB+Yh1q6Se2UItMcf2/W0AOOk8bz0/Bv29MmN+Oy//v/+TKLQdShfO7uLX6hlPbuXilk1Y+NFbkt7hoQqg+7YA+mbMvWwkjpgyeZkNGaGh2/yQukTEU3zWBCWrUrCQls4jzd3A1CBKulsc1/r2wRJNSB1lTpTmP9x2jTTu2QSzvC4JUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1OnX/BH6Xjawc0pDowAWuvFe/CmzILBKY/IW+PooznE=;
+ b=aPCuvyrz/EAlpHlm9g50c504dT8c1gTMQT+u3DCuovMqc27J7hba4vPWVidOjLw4PEYdA2xoILez6Qce/bD4rVBcycXLD82Z5FUKz/wgQTn9+sV1ReAi0gv9IFYmNC9iKzzO2eNcqi1zCB/HqE9liigwbKarQYUSG+gE9mL2SJ+NKAR42wZOe19q8i00gTazvVJn4xa1mXdawUq/r5Adk0JPGuWVMS1EBha/72jvxE8NPbHGMpCKmy6oQdCHuqj9ztzgL68eXaDRQu26Nc+KCP/3j6pQcHXDsFZdTFW9W0QJ1SOTrz3mX3PsnvWU7WIYhPZhr3fI0d8G2C52jUZIcA==
+Received: from SEZPR06MB6959.apcprd06.prod.outlook.com (2603:1096:101:1ed::14)
+ by TY0PR06MB5610.apcprd06.prod.outlook.com (2603:1096:400:328::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.24; Thu, 7 Mar
+ 2024 11:18:09 +0000
+Received: from SEZPR06MB6959.apcprd06.prod.outlook.com
+ ([fe80::aced:cbb9:4616:96d8]) by SEZPR06MB6959.apcprd06.prod.outlook.com
+ ([fe80::aced:cbb9:4616:96d8%2]) with mapi id 15.20.7339.035; Thu, 7 Mar 2024
+ 11:18:09 +0000
+Message-ID:
+ <SEZPR06MB6959882F5DA673456A3AA85D96202@SEZPR06MB6959.apcprd06.prod.outlook.com>
+Date: Thu, 7 Mar 2024 19:18:05 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] clk: set initial best mux parent to current parent
+ with CLK_MUX_ROUND_CLOSEST
+Content-Language: en-US
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240307-mux-v3-1-0885fc1ab2c9@outlook.com>
+ <20240307-hot-hummingbird-of-atheism-87503c@houat>
+From: Yang Xiwen <forbidden405@outlook.com>
+In-Reply-To: <20240307-hot-hummingbird-of-atheism-87503c@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [0GIMtF9n+AeMdnid0UXlEF+1JRk8/WqqWkBxfu4KD+oIeClG5dm7SX3ppXumtX2G]
+X-ClientProxiedBy: SI1PR02CA0042.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::17) To SEZPR06MB6959.apcprd06.prod.outlook.com
+ (2603:1096:101:1ed::14)
+X-Microsoft-Original-Message-ID:
+ <4502b9ff-d0bc-45f6-80d4-2e0ebc75061e@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240108081834.408403-1-treapking@chromium.org>
- <CAGXv+5EnBt+7WrNb-QyziEaCihvjhFVf2tpzk=XyAoeELqucaw@mail.gmail.com>
- <e0e6febf-1045-49f8-a200-8bc095b0fa50@collabora.com> <CAGXv+5F5YFRKjaXu_XbXrUhqKL0NSRyt6tniQYfhRh+fsaxqmg@mail.gmail.com>
- <cc74422d-962f-4da5-867b-158a71db1a7b@collabora.com> <CAGXv+5EyRROsh_=J1Fg4K+ZgfkERF4dh4R6WoGw9MnTBMNUCgQ@mail.gmail.com>
- <dfdc6a65-3ccf-463c-95df-093f3c2fefd3@collabora.com>
-In-Reply-To: <dfdc6a65-3ccf-463c-95df-093f3c2fefd3@collabora.com>
-From: Pin-yen Lin <treapking@chromium.org>
-Date: Thu, 7 Mar 2024 19:10:44 +0800
-Message-ID: <CAEXTbpcPfWQr4iuD2U0zgJUi+BF-rLfyF4iDDiQYBrrv9U=6Xg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: mediatek: Introduce need_pm_runtime to mtk_clk_desc
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Chen-Yu Tsai <wenst@chromium.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Weiyi Lu <weiyi.lu@mediatek.com>, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB6959:EE_|TY0PR06MB5610:EE_
+X-MS-Office365-Filtering-Correlation-Id: 43a4c4d5-c6be-49cc-a22a-08dc3e9844cd
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	PvySqgxivn9LzJbd3BpghVovMSIVW2F6IamyKeoBUxdmtLuFTRal9st9e8fRdwIhPv0W3JE3N8Tr8nbhV9wSOK75osuvIL2srZBBQieYlhnx8Neeu922yIAZvnpnjgyLS0zv11/o19oE7xYyA8z6SjYM6WrSvj2UxlxUDHNUNlZXYfOErJYo5b3iRA/01X9i61P4vU9OEF1E+s5f5+DsSRIM6uLiqAu2xNYwd85R4vvZ2kr+AxNLK2K6qzZZVc6cWkNCDltNTSypa3OIXYj2TGvT8zcJ2yH2lfI7BkK1H6SnAYsGXBtPCWNTO7Wh7apXGnvsozbblyPSih6rw4zNLMk/oJKHa+EqJ6xLx/AqwpeQplW3N61xXonYyb/eHGeV1ucL1GKBHOnWgeSizV/RlIYI4K75spWduGYtgxDG2cF8LYErgQIdiCCYJYCqADd9Q5lcWF9OKZhgXgAxhBl2uzo8XzZmzLzPmVkpkDi+uvYO7jKkYPeN2+hrr5tMAf16EHrp59izAuQMZFQLGYHwAtJntjb6HcEN0TIMwluY+FYCkozTiH6+M7khXR5DTZOe
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SjJEK0VlaXhJckNtZTkrdEpKUGZrWU5OUnFBd1RqU2J5Q3lodG0zR2ExQjkw?=
+ =?utf-8?B?cjhCQ2l0QlQ5UGNkVm5lZFpUZ2IxN240eWJSR0pqTk9QWWYyekdnY25VN1JJ?=
+ =?utf-8?B?V0hvdHBYUnczWWF2SWM1L3NVYkE4Sm9JZ2o5SUQ4N3h5aE1tWVdBM2phVGhI?=
+ =?utf-8?B?MmtUTWtGRFRIVUpPalZ4VEZiUjEyejRsRUhvR015dVlia3lqVnptOFgzMGsy?=
+ =?utf-8?B?czFXWXhCWUdVNmpmR3pHME54dlJXUE1VZFdZelEzVW9QamZMQmJHUDNBVzVv?=
+ =?utf-8?B?bEZtU0cwZ09xM0NJenRMS3g3bW0vMkVUTSsyNUI0dmlZUkp3bG1Tb3dPcVFz?=
+ =?utf-8?B?bHJWRlV2OURhWU5jbGxvbGhRNjhOVEtuTGRDTE1iSFYrWldxeGxFOWh4YktG?=
+ =?utf-8?B?UXJjMFd0Um5KdDVnelhOWDkxTnhsdDRvdDBFaEN3M28xdkhLcHBudm5PK2Zp?=
+ =?utf-8?B?QnZBL1lCOENSSE81cTRQZFVnMXBCVFJtb0tMdVgyYnV3YVBNNlVRUmVTRjNt?=
+ =?utf-8?B?VVRuWHVPWW51eThMQ2t5ZXViNUtvSTh4STVNQlBvZis0ZGFjWTNHWGgyOHBu?=
+ =?utf-8?B?OEhWT0ZySzJIZDNkMVlwaU90ODhIQlg5TnpSME9tRU5uWHVHS3VVMm9hbi9X?=
+ =?utf-8?B?YzcrQWpWRmhEbStwa3hzdjBrV3NacG1XZlRoZ0Q4TmRGeThDYmdkRWk1NjNL?=
+ =?utf-8?B?SFZ6aUo3TlNHZ1h4RXExWndUQ25KbUJPY0d2VTByUjdBRXVXQzl4dkFrQWtm?=
+ =?utf-8?B?eHdZVjBMeDVWZmpqVGNwZ3ZYVC9KbnRjV2VWdUpZWXNkb2R4T1hKbWJTdmxH?=
+ =?utf-8?B?VHlRbTluQVdDeDl0TVcvK21qTTExMUVKVEM5N3diU2dXZEY5WS91K1F2TmJ0?=
+ =?utf-8?B?Vi8zVjdkakxWVWdmckhEY1JZVHZQQkNJeWJYMHBZSGhQZTFmclR1UmJITG5Q?=
+ =?utf-8?B?clBkbzQrVDVwZzcvVURsTzgwOTVWcC92Z084RmsraENmMGJ2Nkh4aThhczZP?=
+ =?utf-8?B?YW1CMmpqRWJtWnNCKzFSUXpWS083cjhRWVVCT2U0L1BESENqMU9lTkxCUnp2?=
+ =?utf-8?B?RjdyWC9wMGhaTXdwN0lJLzAzRzMxc2NWbVhxcExQalBMT1FUOWRjaGtrWXo5?=
+ =?utf-8?B?dFRyMGxEcDZoSjVBY1pIVlZCSkxJSFN4WXRnOUMvMFY5TENNdEpEaEs0cWJP?=
+ =?utf-8?B?UTFGdWZKMnJOYm5FaE5GbVZwMlRISG9PQlN6T0JkVmFrM3hBbUhqWXpQMk4z?=
+ =?utf-8?B?dDBiZGF0QllVQ2g1aXpaNFloRWVuNTdMUm5mc3QyelZrdXJONDFYMHJsNTdh?=
+ =?utf-8?B?S0ljdkY5ck1OUUJ6bmRpK3hDeWc5dG84NEg5SGVpNGlvVjM4YTVRQ2xtMkYy?=
+ =?utf-8?B?UnZ4ZzhPSDJwb1BtRGJMOU1rbmpkZFBoeWp6dHJWRUE2TlVzcUF6eG1PTFhZ?=
+ =?utf-8?B?OXNqbnZvc2h1Mk9pRkVKc0gxSjMzb0d1VGVUc2ovbjJTMjhkemJaU0xSaW9X?=
+ =?utf-8?B?cDRkbUsreHZQdit0WE1mYnh1Q1laeW5BV0oycCsvc2VZbVE1OWNBeFlEZ0h2?=
+ =?utf-8?B?dXVLcmtoUEppQm5FeGFhYmJzL09Mejl1TllNN2JYVGhIaG85UkN4cExlZHRU?=
+ =?utf-8?B?NjV0blFyZWNVZEt3czVBSTlOam5QM0haKzlxMlBNTlUzcVNWWkJKL3pRVUFM?=
+ =?utf-8?B?RWVERXh0b3E2dXBDOXFOTnJJZ21wd1ZQUU9KR0YyVCtzeCtKUnBoSGQ1SkRX?=
+ =?utf-8?Q?H6uaLtMPRNNCwVC9jy/AqzPnDjq31dP7YPbXt3/?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43a4c4d5-c6be-49cc-a22a-08dc3e9844cd
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB6959.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2024 11:18:09.2298
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5610
 
-Hi Angelo and Chen-yu,
+On 3/7/2024 4:48 PM, Maxime Ripard wrote:
+> Hi,
+>
+> On Thu, Mar 07, 2024 at 10:03:50AM +0800, Yang Xiwen via B4 Relay wrote:
+>> From: Yang Xiwen <forbidden405@outlook.com>
+>>
+>> Originally, the initial clock rate is hardcoded to 0, this can lead to
+>> some problem when setting a very small rate with CLK_MUX_ROUND_CLOSEST.
+>>
+>> For example, if the lowest possible rate provided by the mux is 1000Hz,
+>> setting a rate below 500Hz will fail, because no clock can provide a
+>> better rate than the non-existant 0Hz. But it should succeed with 1000Hz
+>> being set.
+>>
+>> Setting the initial best parent to current parent could solve this bug.
+>>
+>> Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
+> I don't think it would be the way to go. The biggest issue to me is that
+> it's inconsistent, and only changing the behaviour for a given flag
+> doesn't solve that.
 
-I tried enabling the runtime PM regardless of the .need_pm_runtime
-flag, and my MT8183 device works well with that with no obvious boot
-regression.
 
-Should I send out another patch that always enables runtime PM in
-__mtk_clk_simple_probe()? Or is there anything I should test?
+I think the current behavior is odd but conforms to the document if 
+CLK_MUX_ROUND_CLOSEST is not specified. If i understand correctly, the 
+default behavior of mux clocks is to select the closest rate lower than 
+requested rate, and CLK_MUX_ROUND_CLOSEST removes the "lower than" 
+limitation, which is what this version tries to accomplish.
 
+
+>
+> And again, either way, we should document it. And run it through kernelci.
+>
+> Maxime
+
+
+-- 
 Regards,
-Pin-yen
+Yang Xiwen
 
-On Thu, Feb 29, 2024 at 6:36=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Il 29/02/24 11:34, Chen-Yu Tsai ha scritto:
-> > On Thu, Feb 29, 2024 at 5:45=E2=80=AFPM AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@collabora.com> wrote:
-> >>
-> >> Il 29/02/24 08:17, Chen-Yu Tsai ha scritto:
-> >>> On Mon, Feb 26, 2024 at 7:16=E2=80=AFPM AngeloGioacchino Del Regno
-> >>> <angelogioacchino.delregno@collabora.com> wrote:
-> >>>>
-> >>>> Il 23/02/24 05:27, Chen-Yu Tsai ha scritto:
-> >>>>> On Mon, Jan 8, 2024 at 4:18=E2=80=AFPM Pin-yen Lin <treapking@chrom=
-ium.org> wrote:
-> >>>>>>
-> >>>>>> Introduce a new need_pm_runtime variable to mtk_clk_desc to indica=
-te
-> >>>>>> this clock controller needs runtime PM for its operations.
-> >>>>>> Also do a runtime PM get on the clock controller during the
-> >>>>>> probing stage to workaround a possible deadlock.
-> >>>>>>
-> >>>>>> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> >>>>>
-> >>>>> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-> >>>>>
-> >>>>> The patch itself looks fine.
-> >>>>>
-> >>>>> Besides the MT8183 MFG clock issues, we do actually need this for t=
-he
-> >>>>> MT8192 ADSP clock. Its power domain is not enabled by default.
-> >>>>>
-> >>>>
-> >>>> ...but on MT8195 the ADSP clock works - because the ADSP node exists=
-.
-> >>>
-> >>> That's an indirect dependency that should not be relied on. Say the c=
-lock
-> >>> driver probed but the ADSP hasn't, and you try to read out the curren=
-t
-> >>> status. What would happen?
-> >>>
-> >>> - Read out works fine, because the power domain is default on, and ha=
-sn't
-> >>>     been turned off by late cleanup
-> >>> - Read out is bogus (but you can't tell)
-> >>> - Read out hangs.
-> >>>
-> >>> The third is what happens on MT8192. There's still some issues on tha=
-t
-> >>> front, as even after I applied the ADSP power domain patches from Med=
-iaTek,
-> >>> the readout was still hanging.
-> >>>
-> >>
-> >> That MT8192 lockup story is getting crazy in my head... anyway, beside=
-s that,
-> >> I get the point - I was somehow ignoring the fact that kernel modules =
-do exist.
-> >>
-> >> Eh, sorry about that :-)
-> >>
-> >>>> This poses a question: should we make clock controllers depend on po=
-wer domains,
-> >>>> or should we keep everything powered off (hence clocks down - no pow=
-er consumption)
-> >>>> *unless* the user exists?
-> >>>
-> >>> That's a policy discussion separate from actual hardware dependencies=
-.
-> >>> *If* the clock controller needs the power domain to be active for the
-> >>> registers to be accessed, the clock controller *must* have a direct
-> >>> dependency on the power domain.
-> >>>
-> >>
-> >> I admit I should've worded that better.
-> >>
-> >> "should we make clock controllers depend on power domains" was actuall=
-y implying
-> >> "IF those need one" :-)
-> >>
-> >> I really wonder if - at this point - it's simply a better idea to not =
-restrict
-> >> the call to devm_pm_runtime_enable/resume_and_get to `need_runtime_pm =
-=3D=3D true`.
-> >>
-> >> Do we really need to exclude that on other clock controllers that don'=
-t have
-> >> any power domain dependency? Any side effect?
-> >>
-> >> Saying this because if we can avoid yet another per-SoC flag I'm reall=
-y happy,
-> >> as readability is also impacted and besides - if we ever find out that=
- one of
-> >> those need a power domain in the future, we'll need just one commit an=
-d just
-> >> only in the devicetree, instead of enabling a flag in driver X as well=
- as that,
-> >> avoiding some (potentially unnecessary) noise... I guess.
-> >>
-> >> P.S.: I just noticed that the return value for the devm_pm_runtime_ena=
-ble() call
-> >>         is not being checked!
-> >>
-> >> .......
-> >>
-> >> In short....
-> >>
-> >> Chen-Yu, at this point, do you have any reason why we wouldn't be able=
- and/or it
-> >> wouldn't be a good idea to just avoid adding the `need_runtime_pm` fla=
-g (meaning
-> >> that we perform pm_runtime calls for all clock drivers unconditionally=
-)?
-> >>
-> >> If this is about longer boot time, I don't think that it's going to be=
- more than
-> >> a millisecond or two, so that should be completely ignorable.
-> >
-> > I think it's just more of a "don't enable features you don't need" thin=
-g.
-> > We already ran into a weird deadlock, which is why the devm_pm_runtime_=
-enable()
-> > call has that comment.
-> >
-> > I don't think anyone has actually looked at it. As you said it shouldn'=
-t be
-> > much, at least during boot time. It's one call per clock controller.
-> >
-> >> Can you please do a test for that, or should I?
-> >
-> > The earliest I can work on it would be some time next week. Does that w=
-ork
-> > for you?
-> >
->
-> The earliest I'd be able to work on this myself would be at the end of ne=
-xt
-> week if not later.. so yes, please take your time, no worries.
->
-> Thank you!
->
-> > ChenYu
-> >
-> >> Cheers
-> >> Angelo
-> >>
-> >>>> For the second one, this means that the *device* gets the power doma=
-in (adsp), and
-> >>>> not the clock controller (which clocks are effectively useless if th=
-ere's no user).
-> >>>
-> >>> No. See my previous paragraph.
-> >>>
-> >>> ChenYu
-> >>>
-> >>>> Angelo
-> >>>>
-> >>>>>> ---
-> >>>>>>
-> >>>>>> Changes in v3:
-> >>>>>> - Update the commit message and the comments before runtime PM cal=
-l
-> >>>>>>
-> >>>>>> Changes in v2:
-> >>>>>> - Fix the order of error handling
-> >>>>>> - Update the commit message and add a comment before the runtime P=
-M call
-> >>>>>>
-> >>>>>>     drivers/clk/mediatek/clk-mtk.c | 19 +++++++++++++++++++
-> >>>>>>     drivers/clk/mediatek/clk-mtk.h |  2 ++
-> >>>>>>     2 files changed, 21 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek=
-/clk-mtk.c
-> >>>>>> index 2e55368dc4d8..ba1d1c495bc2 100644
-> >>>>>> --- a/drivers/clk/mediatek/clk-mtk.c
-> >>>>>> +++ b/drivers/clk/mediatek/clk-mtk.c
-> >>>>>> @@ -13,6 +13,7 @@
-> >>>>>>     #include <linux/of.h>
-> >>>>>>     #include <linux/of_address.h>
-> >>>>>>     #include <linux/platform_device.h>
-> >>>>>> +#include <linux/pm_runtime.h>
-> >>>>>>     #include <linux/slab.h>
-> >>>>>>
-> >>>>>>     #include "clk-mtk.h"
-> >>>>>> @@ -494,6 +495,18 @@ static int __mtk_clk_simple_probe(struct plat=
-form_device *pdev,
-> >>>>>>                            return IS_ERR(base) ? PTR_ERR(base) : -=
-ENOMEM;
-> >>>>>>            }
-> >>>>>>
-> >>>>>> +
-> >>>>>> +       if (mcd->need_runtime_pm) {
-> >>>>>> +               devm_pm_runtime_enable(&pdev->dev);
-> >>>>>> +               /*
-> >>>>>> +                * Do a pm_runtime_resume_and_get() to workaround =
-a possible
-> >>>>>> +                * deadlock between clk_register() and the genpd f=
-ramework.
-> >>>>>> +                */
-> >>>>>> +               r =3D pm_runtime_resume_and_get(&pdev->dev);
-> >>>>>> +               if (r)
-> >>>>>> +                       return r;
-> >>>>>> +       }
-> >>>>>> +
-> >>>>>>            /* Calculate how many clk_hw_onecell_data entries to al=
-locate */
-> >>>>>>            num_clks =3D mcd->num_clks + mcd->num_composite_clks;
-> >>>>>>            num_clks +=3D mcd->num_fixed_clks + mcd->num_factor_clk=
-s;
-> >>>>>> @@ -574,6 +587,9 @@ static int __mtk_clk_simple_probe(struct platf=
-orm_device *pdev,
-> >>>>>>                            goto unregister_clks;
-> >>>>>>            }
-> >>>>>>
-> >>>>>> +       if (mcd->need_runtime_pm)
-> >>>>>> +               pm_runtime_put(&pdev->dev);
-> >>>>>> +
-> >>>>>>            return r;
-> >>>>>>
-> >>>>>>     unregister_clks:
-> >>>>>> @@ -604,6 +620,9 @@ static int __mtk_clk_simple_probe(struct platf=
-orm_device *pdev,
-> >>>>>>     free_base:
-> >>>>>>            if (mcd->shared_io && base)
-> >>>>>>                    iounmap(base);
-> >>>>>> +
-> >>>>>> +       if (mcd->need_runtime_pm)
-> >>>>>> +               pm_runtime_put(&pdev->dev);
-> >>>>>>            return r;
-> >>>>>>     }
-> >>>>>>
-> >>>>>> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek=
-/clk-mtk.h
-> >>>>>> index 22096501a60a..c17fe1c2d732 100644
-> >>>>>> --- a/drivers/clk/mediatek/clk-mtk.h
-> >>>>>> +++ b/drivers/clk/mediatek/clk-mtk.h
-> >>>>>> @@ -237,6 +237,8 @@ struct mtk_clk_desc {
-> >>>>>>
-> >>>>>>            int (*clk_notifier_func)(struct device *dev, struct clk=
- *clk);
-> >>>>>>            unsigned int mfg_clk_idx;
-> >>>>>> +
-> >>>>>> +       bool need_runtime_pm;
-> >>>>>>     };
-> >>>>>>
-> >>>>>>     int mtk_clk_pdev_probe(struct platform_device *pdev);
-> >>>>>> --
-> >>>>>> 2.43.0.472.g3155946c3a-goog
-> >>>>>>
-> >>>>
-> >>>>
-> >>>>
-> >>
-> >>
-> >>
->
