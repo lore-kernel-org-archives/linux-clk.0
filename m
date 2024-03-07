@@ -1,283 +1,141 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2118.outbound.protection.partner.outlook.cn [139.219.17.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECCD6139
-	for <linux-clk@vger.kernel.org>; Thu,  7 Mar 2024 02:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709777130; cv=none; b=t+t2FL0T4Yms/SOVfXwgdZbqXtg4x9N99k3B22ZmiRFkepd6ZUVW0LM8MMnO2oedYCAW3OBpbXpIG8s6UU96+cze92djA1ILcA2mbxT3RKVIcAWqkEx2Ew7H1HH/bpqJYdQpLm9SNviFGwLNnTz4or7mEk+MoSsKjF9JrcFTXDA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709777130; c=relaxed/simple;
-	bh=3Uo0mqyyxcagU7ODBaeoaCB6S7zSEzNxaJ8hwq57tGU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=UE9u4n9vVVdWaAYm1Ur0SdQB3Ntz+BVRE53R2koDiGQJZloHUf+b9uu7Sffb2pMfP93THxj+KDVTi5/bec9cWS3twaIQMOotoaRLrIgLGg+uGRED2y+6DYNCulbqCNZXuHD9ZywOSGv3hz/45LdZQDlNWntSiRO4vZCfVZ9ZkDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VDn1qX5N; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VDn1qX5N"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240307020520epoutp02dcdf5005d74c5de6d4e2173643013f93~6WTt0HT3g2686126861epoutp02d
-	for <linux-clk@vger.kernel.org>; Thu,  7 Mar 2024 02:05:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240307020520epoutp02dcdf5005d74c5de6d4e2173643013f93~6WTt0HT3g2686126861epoutp02d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1709777120;
-	bh=3Uo0mqyyxcagU7ODBaeoaCB6S7zSEzNxaJ8hwq57tGU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=VDn1qX5Nc1vBZajjWBKzgl9h+w+brPxHGJ6w/wjuY2jhzDnaOpCAUpfqxWNkuQfe4
-	 oGv1M7+VAoGEsiz6BleWDNxxmNYxGKNRfnAU+DvDFjCHSNUxmUFdGX0+5O6EPeB4OH
-	 1nQx8qyHaralpTvALm4cVGuEZhLhta5puFvGS1oc=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240307020519epcas5p43becbc9801ce213abd1ecc9c539839ff~6WTs9cQGk0419104191epcas5p44;
-	Thu,  7 Mar 2024 02:05:19 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Tqt1B2CqMz4x9Pt; Thu,  7 Mar
-	2024 02:05:18 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	18.D4.09672.ED029E56; Thu,  7 Mar 2024 11:05:18 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240307020517epcas5p3a7072addc92dfe8f7f408c701cf241bc~6WTrYoojm0456504565epcas5p32;
-	Thu,  7 Mar 2024 02:05:17 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240307020517epsmtrp2bc774932d72e6472e86a96ec9a1e7949~6WTrXv-052088420884epsmtrp2W;
-	Thu,  7 Mar 2024 02:05:17 +0000 (GMT)
-X-AuditID: b6c32a4b-60bfd700000025c8-d6-65e920de80f9
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	94.DE.08755.DD029E56; Thu,  7 Mar 2024 11:05:17 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240307020515epsmtip215c9f872498d33ad5208f5ccf093224f~6WTpdBulP1482014820epsmtip23;
-	Thu,  7 Mar 2024 02:05:15 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Tudor Ambarus'" <tudor.ambarus@linaro.org>, "'Sylwester Nawrocki'"
-	<s.nawrocki@samsung.com>, "'Chanwoo Choi'" <cw00.choi@samsung.com>
-Cc: "'Sam Protsenko'" <semen.protsenko@linaro.org>, "'Krzysztof Kozlowski'"
-	<krzysztof.kozlowski@linaro.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"'linux-arm-kernel'" <linux-arm-kernel@lists.infradead.org>, "'Peter
- Griffin'" <peter.griffin@linaro.org>, =?utf-8?Q?'Andr=C3=A9_Draszik'?=
-	<andre.draszik@linaro.org>, "'William McVicker'" <willmcvicker@google.com>,
-	<kernel-team@android.com>, <jaewon02.kim@samsung.com>
-In-Reply-To: <9732478c-c371-4db6-b8f2-5623ac733a0c@linaro.org>
-Subject: RE: samsung: clk: re-parent MUX to OSCCLK at run-time
-Date: Thu, 7 Mar 2024 07:35:14 +0530
-Message-ID: <33e001da7033$e6a13ae0$b3e3b0a0$@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999961FBB
+	for <linux-clk@vger.kernel.org>; Thu,  7 Mar 2024 02:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.118
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709778289; cv=fail; b=M/sXR9PFrgWsXY3Yp4eueQ5ypPsnOgd2e1hNU7Wk7ncUrE3U0/gezmMsaebKxDUG5ePUp9/oRtp6BD4/dI9gBppBLanwnTyRF4v3ah242AXEHBIomvksEdOvBic0prYbFc/zfMrUgKvc6MXuSXFtCO/mmi57m2XcvVIQMo7ri1A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709778289; c=relaxed/simple;
+	bh=RlvoR+UATFJ3TmQ0n7NOhGI3r/CvlKBUMUWowgU2ikM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HS1vmhVlySOUtcCYkuiq0bhj0IgFn73UZQwUi0ZdLt3kn3MSOqFOaADkBOEPHjBgHIPesQKzIlExQHIOD8jbuHn28obF28CINCuANWdPRXtOwrzdVonEltjFS8B9DCdMJZss+xHMcFs6eOAtfPMypKN9ac7UM3lng/Ae2NB4XhA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d8NyFhlbHtOldEfjSl8FYy7H9QU54r3PvqGpCDUKey2OTp6xee10MXNwg/4pwRaNMUAghwQ3dRbq6OyLUdYxLaM9UKsJpP91W0L/KLbnnO3xLVRhiIZ1ArVuJwBnOrqx37oUIhEUlDppR760Ngg3iZ0y3pt/fdoRaulHN6lpKVvea6fl2IjUrDeyFuUJKNZQU4Q1vK8gYDaWjszYyMFIOGbfMOo24XR3jLst9ZmXEDdhcH2U/CS8q0kvQq3JlX+Kp/vmRm4uyS5V+eAxGMr+1bMU53tcqF5BNH+4a54Rg2dXVmwh4Lwlv/5Ql4NwWydQ9CU1wcz/p/b4FOFEIkDBvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RlvoR+UATFJ3TmQ0n7NOhGI3r/CvlKBUMUWowgU2ikM=;
+ b=INoZaTm8LspVxB8LXwShR+ihrj5eG2+MqMNVrhvAG2oGxo71SdSFDk4Y8kNbyXA2mz3nN6qjDrj7B3oqnyIUE0qh6LnQezLSSMLSHySJb6IpTGLDgUi87NMRvVNiN2U4e5bXGNEFuXUzbBiiezK7DFdefwdyuPqSdArPDiifU4DG3HD2SX4V1pkobVw4pl6AmNh2YDtLrCF6vMEI+OIGb8FPyuOklh6j7EfEQOgcKkMSNxHOkDpHRk7rE+kIsREDrEwu5i+e6tDZd2jcKEwP12imo7UZKBDtB2aB0jk+FbQr4nlhZLyqEANHLoQLlAqo6g+eyEKZsdVPfoGjCrTjYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:7::14) by ZQ2PR01MB1308.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:12::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.53; Thu, 7 Mar
+ 2024 01:50:23 +0000
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ ([fe80::5de:15b9:3114:4f45]) by ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ ([fe80::5de:15b9:3114:4f45%4]) with mapi id 15.20.7316.051; Thu, 7 Mar 2024
+ 01:50:23 +0000
+From: Hal Feng <hal.feng@starfivetech.com>
+To: =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+CC: Emil Renner Berthing <kernel@esmil.dk>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: RE: [PATCH 2/3] clk: starfive: jh7110-isp: Convert to platform remove
+ callback returning void
+Thread-Topic: [PATCH 2/3] clk: starfive: jh7110-isp: Convert to platform
+ remove callback returning void
+Thread-Index: AQHab7KIi49JlSXte0K1B876cClBLrErgmyg
+Date: Thu, 7 Mar 2024 01:50:23 +0000
+Message-ID:
+ <ZQ2PR01MB130763E655905552A6D9E4CBE620A@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+References: <cover.1709721042.git.u.kleine-koenig@pengutronix.de>
+ <312ec7052c4e327c0b365e167a8e86b406cb7dfa.1709721042.git.u.kleine-koenig@pengutronix.de>
+In-Reply-To:
+ <312ec7052c4e327c0b365e167a8e86b406cb7dfa.1709721042.git.u.kleine-koenig@pengutronix.de>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1308:EE_
+x-ms-office365-filtering-correlation-id: dee5c95e-90dd-414a-9ebc-08dc3e48f412
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ fTHZu1MTsE0bSSRnbUBcIP4Zb3oIyMYTIUsxzWp9Q6Xry4KSMKpg4HAhcVWmI7nAELowxotiYRO3PzAemsSbVMkzIEQLYLF5N7q8vcdiJ+lsDu4U+dagRshhvnlGyLrrGeA8Ab7Y1HA93omADFcm95JP5edar9aOkCx1qH/nYt6vFythAsyiXaUSKE7CtsAKtT9QCGSHjiJFiOkKOHBy56jD5jZJ9e7/RI63o1EzqgoKaOTgo4kiVnN+VtyIPyxUViWuSYaXMi4KJ46TEqF3UTiQYKQVXA11vWepqwfSmRG+4fbOb6+2Cnff7X+Kkk33Vi6c2cBRrDX2MBSN7rcZERAszVKZVwKM1YJ4aOSuLEx+74I/RScWbKGTN4le0tiMq3KSoRBslHJMQK89mamUobciOQ27K/tWmLN5HGQbkW1mlnzqUqD6X5MFLsbMVs/b5+MnNszoeSnI5TYaaZA+ye6ezCsAxsUlmQ+eBGMGe0W6iIjVSxm6vHxh59A59ZtD+9woqz2EnVAzhX6OdiquzZA3ldMjs/18Zmi0u6/AdA4GvfkYhWBMOJdKwxm6HUAVvyKOAHDpeBOqBTQ/mb9jqcVmN+BA4SCAdj1bBh9duM1b0oj+vYqG1y1wRCi8F/Nb
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(41320700004)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?eWdvUkx2ME9zMVE3L0FQSUJRVTVFK0hLemljVXMrMmVLYkZUd0M4eldBNWxE?=
+ =?utf-8?B?TWlFSHBkNkIxK2R3MGl4ZGRpSlJTZGwzY1RIQ3hlNCtESXZ4amg0TUczWmhU?=
+ =?utf-8?B?NXhIN0N2YmxoQURqNnYzbzBzRXhPRWxweWZUNTFBK0VyenBtZFc2SEJudzVz?=
+ =?utf-8?B?di92NUZCZldoeGxwbWhwUk0vamxCMElvcW42V1hBTEhmQ0ZjSlQ1Y0FUTHRY?=
+ =?utf-8?B?L2NEVFNGeTJ4ODMwa3lCajBVNTJpdE4wc3VPYS9SMTEwSGNnSUtpYUNwSEpl?=
+ =?utf-8?B?MVN0VUlFN2R5YjJMVUVzbkh1Vmhnc1EzSHhTM0gyK1ZNblA2aHRYWFVkTW9M?=
+ =?utf-8?B?TWY0aFV0SkZsdGpJYi8wS1BndndSQVM2Yjl6S25sSWxFSHJQZnR0R05DNUFS?=
+ =?utf-8?B?aXNxTStQSFlaOW9Pd0x0eXAveVdTNW9YTndNWCtFbEcwczBKNDVNbkQwQVVp?=
+ =?utf-8?B?TjEvR21YaktBV1V4SzRJWFNiTTk0aGliZTM1dlRHNDNtUVMzNGp0bVd0OWFq?=
+ =?utf-8?B?ajREc1NkbTVvUU9NYmVQenNWVUE5U3ZBMFJtQ1kzKzRDK2t6aGp3dDFVNXM5?=
+ =?utf-8?B?Y29QOTRPT2ZhVStDV2NlOVpiR0RQU095WFR2K1FMajQyZ2dPem11SGFuVFJE?=
+ =?utf-8?B?NnFmNUhqVEdOTDhUbUl0UlA3UnJCamdaNTZ5MjI3QzhEQjdXWFJKak5MT3lW?=
+ =?utf-8?B?RmsyV254bEFGOTYrN0NOMlV5MDZsMVF1SUxlWS8xaVBLaFRSTXdTYThZdkdi?=
+ =?utf-8?B?dmZteWJwMHN6SkhramlUQlAwNFBpcjRUcUdCZ0ZaV001YnlBbkZjbkJib0ZI?=
+ =?utf-8?B?RmpmbitpOGhwWGxrWkhjWVJ1SkhsOUlBYkJObzZYSnUybWF6RERoL3VOZGgv?=
+ =?utf-8?B?Z3dsVVRWTG5hSUVNamExb3dJRG1xUktHTDdLUkM5ZlZXYXJNV2dYejM1eVpx?=
+ =?utf-8?B?Qm1rckdjOFAyQlRMeE9talgyM0lKMlVNWmFvU1hhbWpVdk96YmpqQXhxMVZB?=
+ =?utf-8?B?ZXpEWkVhUGhJdC9heDVQYUJkMy81VVZ3VnJpQjZ1UkpCdk1Zc0NjemNMMm9o?=
+ =?utf-8?B?OHhER3hRc1d0aUhaTUdIREhRZThBWEVEYXJhYVVDZ05tbkVFNzVqRGV3SHd0?=
+ =?utf-8?B?YzZxaHhMald5U2R0aFpncStsOEFWdURjcXZWcS9rcHI3SlhobEt3STYxRnps?=
+ =?utf-8?B?amNtZGx6ck02dFN3blZEWE13VmpFSk5OQXJGaEZqdWN1eXZCOXQxY2tNV1Q4?=
+ =?utf-8?B?UmRWMFRKVUdrUVlCS2hybzI2aTBiRjU5WVU1TEo2SUoycU9NN0MzR01pdkpx?=
+ =?utf-8?B?SDN5aTJ2QXNQSnRXMEx5SkFvOFdkRHlJZytpU2hESnVLQVk4L29oQm1rK2VO?=
+ =?utf-8?B?QTNBY2NVMFQ3VGJONGlOZ2ZOUFFVQUJJNm1vUHplVk52MmxDa1F2ZC9TdUt2?=
+ =?utf-8?B?NVVGNzVxbURpS0RIZFk5ekFBdER0QlRaU3RoWE5XUjNpcUI4aStrSnFWRHZB?=
+ =?utf-8?B?NUhHQVpqVnR4M2F4U2hKeWNDOGhWalVFczJ5Wm0zaGM0Qm52YndXTzdkZlJ2?=
+ =?utf-8?B?VG9Ham5HWk8yczd5eU5DRjdDb3JhMVVSZGp0VTF4NzVkR3YzQU5OM0tYRjg4?=
+ =?utf-8?B?bm5kVXRJcWU1Z3BOTXNaTmJoZ0JqOFdyVzBNMm96U1dSTHdYbzBZRVlGMkVG?=
+ =?utf-8?B?UjZZTkcwSW81eTBneVBsc0c1M0NmYUNZcGNGbGdkUXo5UExyRGVxVGFmZFdW?=
+ =?utf-8?B?VkhtUEZ0cWVZRDE0K3pCcTMxM0Z0SlhEdmhwTWo5aE01aGZwZ2FMOW1rZk02?=
+ =?utf-8?B?R3pabVJtVG1hQUZHUWZqWDhzUkphMm1XblRVeExQNTBVSHFKNkc3T0I2OXBF?=
+ =?utf-8?B?L2Vma0hTbElCcWZyNWx5RWdSR2FsenIrZDlJSnNzK1IySXBSamYzTFU1Mzdx?=
+ =?utf-8?B?ZzR3VTIwTWQxQVNxNHBnS1N4cjZVK1hHajdOWUk1bWw3d0VDeTJuYTZvUmJ1?=
+ =?utf-8?B?QitYK3pkOVNuemF5YTJGVE8va1hzUFgzNTRTczFNRmV0RHJzay8rVVJSZFgy?=
+ =?utf-8?B?c1hQYVhnajBJVkhBd2RySWhNWGtLMndOdS9yVkNQaXZFNk9TbDlOaXc0OTNt?=
+ =?utf-8?Q?pgU43lmlmKoW6EyvsErOdHNQd?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKxjg6/pX91DIw7ou3pXLvWj7BlkgJSyW8WAtnMGMgCuGwGCK8+IWrQ
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmlu49hZepBucWcFpsebWZxeL6l+es
-	FjsajgCJ7SIWe19vZbfY9Pgaq8XHnnusFpd3zWGzmHF+H5PFhhn/WCwOv2lntXjeB+R+uhVn
-	serTf0YHPo9tu7exeizYVOpx59oeNo/NS+o9+rasYvT4vEkugC0q2yYjNTEltUghNS85PyUz
-	L91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6FQlhbLEnFKgUEBicbGSvp1NUX5p
-	SapCRn5xia1SakFKToFJgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbG62uuBWdiKh6sf8DawPgi
-	souRk0NCwESiue05WxcjF4eQwG5Gid0fL0E5nxglHq49CuV8Y5R4fG8acxcjB1jLy/n+IN1C
-	AnsZJa7elYWoecEosevXIlaQBJuArsSOxW1sILaIQC+jxMpdASBFzAIvmSW+3j/JDJLgFLCT
-	aNxylwnEFgay1x/+BdbMIqAisXvmZ3YQm1fAUuJ12zQWCFtQ4uTMJ2A2s4C2xLKFr5khflCQ
-	+Pl0GSvEMjeJT9+fskPUiEu8PHqEHWSxhMAJDon5s+cwQTS4SLRfaGGFsIUlXh3fwg5hS0l8
-	freXDeJLD4lFf6QgwhkSb5evZ4Sw7SUOXJnDAlLCLKApsX6XPsQqPone30+YIDp5JTrahCCq
-	VSWa311lgbClJSZ2d0Mt9ZD4dWU10wRGxVlIHpuF5LFZSB6YhbBsASPLKkbJ1ILi3PTUYtMC
-	47zUcnhsJ+fnbmIEJ2Mt7x2Mjx580DvEyMTBeIhRgoNZSYTX9P2LVCHelMTKqtSi/Pii0pzU
-	4kOMpsDQnsgsJZqcD8wHeSXxhiaWBiZmZmYmlsZmhkrivK9b56YICaQnlqRmp6YWpBbB9DFx
-	cEo1MJlcvpHNJiH9n6tv8pYppy9M2/5zifhlFvn4pTEZjGkff3uHcJTzGme5iPz2Md8l9OL7
-	eZvyyo+KXju0iw8fVS35N1VB9vTWd3IaCyqZ9117u1hEJ1voldvWUumz975stzvwT6+y13bF
-	9hwhuZ4trzuZtYqS7L6ZbK6vlr0vO0+Ph7nL+QWHZLX9zpLYm1dKDWs65q2Q4NGvCX253dfO
-	m6Up9eqTJ1wyT6oe7K6JYptn6MefberEHpvxebeFBqez3b4rOx7xHQph/ba5nX8+7xL/M4Gd
-	KyTTvsizFTAznVkp3CyXN2/SQeY+s92+s11Ys6/q7T8bFsEjufia1FrVdU2NpZtZqybwzfXI
-	vlmvxFKckWioxVxUnAgALk2eV08EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsWy7bCSvO5dhZepBj/6dSy2vNrMYnH9y3NW
-	ix0NR4DEdhGLva+3sltsenyN1eJjzz1Wi8u75rBZzDi/j8liw4x/LBaH37SzWjzvA3I/3Yqz
-	WPXpP6MDn8e23dtYPRZsKvW4c20Pm8fmJfUefVtWMXp83iQXwBbFZZOSmpNZllqkb5fAldF5
-	8AVbwS3Dio6zDUwNjJNkuxg5OCQETCRezvfvYuTiEBLYzSix5n4jWxcjJ1BcWuL6xgnsELaw
-	xMp/z9khip4xSlye950FJMEmoCuxY3EbG0hCRKCfUeJF51RGEIdZ4COzxMlry1kgWt4zSnzu
-	uw/WwilgJ9G45S4TiC0MZK8//IsVxGYRUJHYPfMz2D5eAUuJ123TWCBsQYmTM5+A2cwC2hJP
-	bz6Fs5ctfM0McZ+CxM+ny8DmiAi4SXz6/pQdokZc4uXRI+wTGIVnIRk1C8moWUhGzULSsoCR
-	ZRWjZGpBcW56brFhgWFearlecWJucWleul5yfu4mRnBsamnuYNy+6oPeIUYmDsZDjBIczEoi
-	vKbvX6QK8aYkVlalFuXHF5XmpBYfYpTmYFES5xV/0ZsiJJCeWJKanZpakFoEk2Xi4JQCRsn9
-	Cs0wcx+hTTkLxD+eThMSipb8ZCt7b81hfp8TfVlfmP82Wnq/zKxK4d/Z9N79svm8T9zyVdWB
-	2xRbJmalf/8jxpEoUC73JmP54aRJEXZ9xgVKN9IDpudHRlb9ejQl4/3jKO9dCXPmddedMLxy
-	8L3lLw7pq0qx2SyWSsGuC6Q/pRpM+x92IuFju96fbE3RJW/vfNtrl/zk6YczX6a/ec41o086
-	z1x5iVTy9smLhfgyd31dyMZi/0I9itUq6lo367Xvl+zaL011nBHCs8viEUenVnfk7oerStvP
-	pOS7pbyv+VLV+bSi7b5xi7J6SqqnnJ7zfsUEzvbprFnHeNkaBHy+z/850UE/nvXao34lluKM
-	REMt5qLiRADa1BAaPAMAAA==
-X-CMS-MailID: 20240307020517epcas5p3a7072addc92dfe8f7f408c701cf241bc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240306032013epcas5p4932674432fbb49f586ed9d00f006a9e8
-References: <CGME20240306032013epcas5p4932674432fbb49f586ed9d00f006a9e8@epcas5p4.samsung.com>
-	<d508dfc1-bc28-4470-92aa-cf71915966f4@linaro.org>
-	<324701da6f81$ad1379d0$073a6d70$@samsung.com>
-	<9732478c-c371-4db6-b8f2-5623ac733a0c@linaro.org>
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: dee5c95e-90dd-414a-9ebc-08dc3e48f412
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2024 01:50:23.2773
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gZ4zpV6l9IxOgOIDGiDGsSGGahzQnV2ySHyNcxNOwl6Z4cDv0XSCooqu0hGq27g150x5m/ufsa1C8IY1ebu5qmZDh/IuUWSC/DfAFa8D8ik=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1308
 
-Hi Tudor
-
-> -----Original Message-----
-> From: Tudor Ambarus <tudor.ambarus=40linaro.org>
-> Sent: Wednesday, March 6, 2024 11:40 AM
-> To: Alim Akhtar <alim.akhtar=40samsung.com>; 'Sylwester Nawrocki'
-> <s.nawrocki=40samsung.com>; 'Chanwoo Choi' <cw00.choi=40samsung.com>
-> Cc: 'Sam Protsenko' <semen.protsenko=40linaro.org>; 'Krzysztof Kozlowski'
-> <krzysztof.kozlowski=40linaro.org>; linux-samsung-soc=40vger.kernel.org;
-> linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org; 'linux-arm-k=
-ernel'
-> <linux-arm-kernel=40lists.infradead.org>; 'Peter Griffin'
-> <peter.griffin=40linaro.org>; 'Andr=C3=A9=20Draszik'=20<andre.draszik=40l=
-inaro.org>;=0D=0A>=20'William=20McVicker'=20<willmcvicker=40google.com>;=20=
-kernel-team=40android.com;=0D=0A>=20jaewon02.kim=40samsung.com=0D=0A>=20Sub=
-ject:=20Re:=20samsung:=20clk:=20re-parent=20MUX=20to=20OSCCLK=20at=20run-ti=
-me=0D=0A>=20=0D=0A>=20=0D=0A>=20=0D=0A>=20On=203/6/24=2004:49,=20Alim=20Akh=
-tar=20wrote:=0D=0A>=20>=20Hi=20Tudor=0D=0A>=20=0D=0A>=20Hi=21=0D=0A>=20=0D=
-=0A>=20>=0D=0A>=20>>=20-----Original=20Message-----=0D=0A>=20>>=20From:=20T=
-udor=20Ambarus=20<tudor.ambarus=40linaro.org>=0D=0A>=20>>=20Sent:=20Wednesd=
-ay,=20March=206,=202024=208:50=20AM=0D=0A>=20>>=20To:=20Sylwester=20Nawrock=
-i=20<s.nawrocki=40samsung.com>;=20Chanwoo=20Choi=0D=0A>=20>>=20<cw00.choi=
-=40samsung.com>;=20Alim=20Akhtar=20<alim.akhtar=40samsung.com>=0D=0A>=20>>=
-=20Cc:=20Sam=20Protsenko=20<semen.protsenko=40linaro.org>;=20Krzysztof=20Ko=
-zlowski=0D=0A>=20>>=20<krzysztof.kozlowski=40linaro.org>;=20linux-samsung-s=
-oc=40vger.kernel.org;=0D=0A>=20>>=20linux-clk=40vger.kernel.org;=20linux-ke=
-rnel=40vger.kernel.org;=0D=0A>=20>>=20linux-arm-kernel=20<linux-arm-kernel=
-=40lists.infradead.org>;=20Peter=0D=0A>=20>>=20Griffin=20<peter.griffin=40l=
-inaro.org>;=20Andr=C3=A9=20Draszik=0D=0A>=20>>=20<andre.draszik=40linaro.or=
-g>;=20William=20McVicker=0D=0A>=20>>=20<willmcvicker=40google.com>;=20kerne=
-l-team=40android.com=0D=0A>=20>>=20Subject:=20samsung:=20clk:=20re-parent=
-=20MUX=20to=20OSCCLK=20at=20run-time=0D=0A>=20>>=0D=0A>=20>>=20Hi,=0D=0A>=
-=20>>=0D=0A>=20>>=20Trying=20to=20get=20some=20feedback=20from=20the=20sams=
-ung=20experts.=20Please=20consider=0D=0A>=20>>=20the=0D=0A>=20>>=20followin=
-g:=0D=0A>=20>>=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20---------------------------------------------=
-=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20CMU_PERIC0=20=20=20=7C=0D=0A>=20>>=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20>>=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=7C=20=20MUX_USI=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20>>=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20>>=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=
-=20=7C=5C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20>>=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20OSCCLK=20---=7C->=7C=20=5C=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20>>=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20=20=5C=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20>>=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20M=
-=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20>>=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20=
-U=20=7C-->=20DIV_CLK_PERIC0_USI*_=20-->=20GATE_USI=20=7C=0D=0A>=20>>=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=
-=20=7C=20X=20=7C=20=20=20=20=20=20=20=20(1=20=7E=2016)=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20>>=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20=
-=20/=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A>=20>>=20DIV_CLKCM=
-U_PERIC0_IP=20---=7C->=7C=20/=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=7C=0D=0A>=20>>=20=20=20=20=20(1=20=7E=2016)=20=20=20=20=20=20=20=20=20=20=
-=7C=20=7C=20=20=7C/=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=
-=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=7C=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=
-=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=7C=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=7C=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=7C=20=7C=20=20MUX_I3C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=0A=
->=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=7C=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=
-=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=7C=20=7C=20=20=7C=5C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=
-=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20--=7C->=7C=20=5C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=0D=
-=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=7C=20=20=7C=20=20=5C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=
-=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=7C=20=20=7C=20M=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=7C=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=7C=20=20=7C=20U=20=7C-->=20DIV_CLK_PERIC0_I3C=20-->=20GATE_=
-I3C=20=20=20=7C=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20X=20=7C=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=7C=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=7C=20=20=7C=20=20/=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=7C=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20OSCCLK=20---=7C->=7C=20/=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=
-=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=7C=20=20=7C/=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=7C=0D=0A>=20>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=7C=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=7C=0D=0A>=20>>=0D=0A>=20>>=20------------------------------------------=
----=0D=0A>=20>>=0D=0A>=20>>=20Is=20it=20fine=20to=20re-parent=20the=20MUX_U=
-SI=20from=20above=20to=20OSCCLK=20at=20run-time,=0D=0A>=20>=0D=0A>=20>=20I=
-=20am=20not=20aware=20of=20the=20exact=20SOC/HW=20you=20are=20working=20on.=
-=0D=0A>=20=0D=0A>=20I'm=20working=20with=20GS101.=20I'm=20interested=20in=
-=20exynos850=20as=20well.=0D=0A>=20=0D=0A>=20>=20It=20depends=20on=20the=20=
-CMU=20design=20about=20how=20to=20achieve=20low=20power=20mode=20and=0D=0A>=
-=20clock=20gating=20for=20an=20IP/Block.=0D=0A>=20>=0D=0A>=20>=20In=20theor=
-y=20and=20looking=20at=20your=20clock=20diagram=20above,=20it=20is=20ok=20t=
-o=20switch=20to=0D=0A>=20OSCCLK=20=20for=20MUX_USI.=0D=0A>=20>=0D=0A>=20>=
-=20If=20you=20can=20just=20use=20GATE_USI=20clock=20to=20clock=20gate=20USI=
-=20IP,=20you=20will=20have=20a=20low=0D=0A>=20power=20for=20USI=20(of=20cou=
-rse=20there=20will=20be=20a=20leakage=20current=20still=20drawn).=0D=0A>=20=
->=20Is=20that=20what=20you=20want=20to=20achieve=20(low=20power=20mode)?=20=
-Or=20you=20are=20looking=20to=0D=0A>=20get=20lowest=20possible=20operating=
-=20clock=20for=20USI=20IP?=0D=0A>=20=0D=0A>=20I'm=20trying=20to=20get=20the=
-=20lowest=20possible=20operating=20clock=20for=20the=20USI=20IP.=0D=0A>=20=
-=0D=0A>=20>=0D=0A>=20>=20You=20need=20to=20takecare=20about=20if=20that=20c=
-lock=20is=20being=20shared=20with=20any=0D=0A>=20>=20other=20IP,=0D=0A>=20=
-=0D=0A>=20It's=20not=20shared,=20the=20entire=20MUX=20USI,=20DIV,=20and=20G=
-ATE=20sequence=20is=20dedicated=0D=0A>=20per=20IP.=20GS101=20has=2015=20USI=
-=20blocks,=20each=20with=20its=20dedicated=20MUX-DIV-GATE=0D=0A>=20sequence=
-=20of=20clocks.=0D=0A>=20=0D=0A>=20>=20so=20unless=20all=20the=20IPs=20whic=
-h=20consume=20this=20clock,=20goes=20into=20idle=20state,=20you=20can=0D=0A=
->=20avoid=20MUX_USI=20change=20to=20OSCCLK.=0D=0A>=20=0D=0A>=20Since=20the=
-=20MUX=20USI=20is=20per=20IP,=20I=20guess=20I=20shouldn't=20be=20concerned=
-=20about=20this,=0D=0A>=20right?=0D=0AYes,=20that=20should=20be=20fine=0D=
-=0A=0D=0A>=20=0D=0A>=20I'm=20trying=20to=20find=20out=20if=20it's=20OK=20to=
-=20reparent=20the=20MUX=20to=20OSCCLK=20in=20normal=0D=0A>=20operation=20mo=
-de=20(not=20low=20power=20mode),=20in=20order=20to=20get=20the=20lowest=20p=
-ossible=0D=0A>=20operating=20clock=20for=20the=20USI=20IP.=20Would=20be=20g=
-reat=20if=20the=20decision=20is=20backed=20up=20by=0D=0A>=20some=20info=20f=
-rom=20datasheet.=20Unfortunately=20the=20datasheet=20that=20I=20have=20acce=
-ss=20to=0D=0A>=20it's=20not=20explicit.=0D=0A>=20=0D=0AUnfortunately,=20I=
-=20don't=20have=20access=20to=20either=20of=20the=20datasheets.=20So=20won'=
-t=20be=20able=20to=20provide=20input=20from=20datasheet.=0D=0ALooking=20at=
-=20your=20explanation=20above,=20like=20MUX=20USI=20is=20per=20IP,=20so=20i=
-t=20okay=20to=20switch=20to=20OSCCLK=20to=20get=20lowest=20possible=20clock=
-=20for=20USI.=0D=0AYou=20need=20to=20do=20some=20more=20regression=20test=
-=20with=20this=20change=20(I=20would=20still=20suggest=20to=20reach=20out=
-=20to=20GS101=20team=20to=20get=20the=20confirmation=20of=20any=20other=20s=
-ide=20effect)=0D=0AFor=20me,=20it=20looks=20ok=20to=20use=20OSCCLK=20for=20=
-USI=0D=0A=0D=0A>=20Thanks=20for=20the=20help=21=0D=0A>=20ta=0D=0A>=20=0D=0A=
->=20>=0D=0A=0D=0A
+PiBPbiAwNi4wMy4yNCAxODozOSwgVXdlIEtsZWluZS1Lw7ZuaWcgd3JvdGU6DQo+IA0KPiBUaGUg
+LnJlbW92ZSgpIGNhbGxiYWNrIGZvciBhIHBsYXRmb3JtIGRyaXZlciByZXR1cm5zIGFuIGludCB3
+aGljaCBtYWtlcyBtYW55DQo+IGRyaXZlciBhdXRob3JzIHdyb25nbHkgYXNzdW1lIGl0J3MgcG9z
+c2libGUgdG8gZG8gZXJyb3IgaGFuZGxpbmcgYnkgcmV0dXJuaW5nIGFuDQo+IGVycm9yIGNvZGUu
+IEhvd2V2ZXIgdGhlIHZhbHVlIHJldHVybmVkIGlzIGlnbm9yZWQgKGFwYXJ0IGZyb20gZW1pdHRp
+bmcgYQ0KPiB3YXJuaW5nKSBhbmQgdGhpcyB0eXBpY2FsbHkgcmVzdWx0cyBpbiByZXNvdXJjZSBs
+ZWFrcy4NCj4gDQo+IFRvIGltcHJvdmUgaGVyZSB0aGVyZSBpcyBhIHF1ZXN0IHRvIG1ha2UgdGhl
+IHJlbW92ZSBjYWxsYmFjayByZXR1cm4gdm9pZC4gSW4gdGhlDQo+IGZpcnN0IHN0ZXAgb2YgdGhp
+cyBxdWVzdCBhbGwgZHJpdmVycyBhcmUgY29udmVydGVkIHRvIC5yZW1vdmVfbmV3KCksIHdoaWNo
+IGFscmVhZHkNCj4gcmV0dXJucyB2b2lkLiBFdmVudHVhbGx5IGFmdGVyIGFsbCBkcml2ZXJzIGFy
+ZSBjb252ZXJ0ZWQsIC5yZW1vdmVfbmV3KCkgd2lsbCBiZQ0KPiByZW5hbWVkIHRvIC5yZW1vdmUo
+KS4NCj4gDQo+IFRyaXZpYWxseSBjb252ZXJ0IHRoaXMgZHJpdmVyIGZyb20gYWx3YXlzIHJldHVy
+bmluZyB6ZXJvIGluIHRoZSByZW1vdmUgY2FsbGJhY2sgdG8NCj4gdGhlIHZvaWQgcmV0dXJuaW5n
+IHZhcmlhbnQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBVd2UgS2xlaW5lLUvDtm5pZyA8dS5rbGVp
+bmUta29lbmlnQHBlbmd1dHJvbml4LmRlPg0KDQpSZXZpZXdlZC1ieTogSGFsIEZlbmcgPGhhbC5m
+ZW5nQHN0YXJmaXZldGVjaC5jb20+DQoNCg==
