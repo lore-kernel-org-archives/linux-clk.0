@@ -1,160 +1,310 @@
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01olkn2011.outbound.protection.outlook.com [40.92.53.11])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21E886AE9;
-	Thu,  7 Mar 2024 11:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.53.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709810294; cv=fail; b=rwbD2WBc8luZG1/QHmJVKCwn3WO1wMFNyG1x0GTvkHAGaU+HWm8Cf3Dmr7FkgxIVioNJ2zxfShPsK4yXC+emebd3Q08TU8vD5aXvtpJ3KLgMdSr2fH9Grgg7XBzjqi3l1JtDHaIKdvYqvrwXP50Ggh3oWni+zsUL00vVPa7RM7I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709810294; c=relaxed/simple;
-	bh=e1UtNccqSuekjuyKQELIOccWaiKk4Et1imD2EF53NUc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=BfN+rE5IZuhrj07P1o3tjGgDc6MOufkGVlf9dmK4Ir0V7doxYZHv3zVEo9/u9S44FsXmkaobfdhq0c+cLLXKc6bIUBh+2LAeM98F+2/PggP9NrCJw9OKfMvZ8wS7Nn3s96a91et1WuknD+CjioRcgyY9P7Rn9yl4J5At0YGVc7c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=aPCuvyrz; arc=fail smtp.client-ip=40.92.53.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128E6128378;
+	Thu,  7 Mar 2024 11:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709810561; cv=none; b=EYR/zLna6rGxyAmTy7FyKs5iiTlYPbA5XFuFfid0cGu0sgxYFmJmpeci8DQWsGV3GNrG3oca29wDNsCHGkCqGQ86z9Fpbe4CgbWT3hI+GpdJMjdpOYmcAsZjbAsnwPLQW4lbXqHu8IrG+e58WT+fqw3DrkdYJ2b24DypiJupKbI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709810561; c=relaxed/simple;
+	bh=aOnhWOVnEvZ2ycyiEsOeRE4tcDyIEgqZ90ugpgoKzbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BmKh9sBBtOAbmjwU0dFDy/v0NaoX0M0ZNXoXcSCiYksTN6yMoERTT+VM0NoyyHawUFxvX/qrHPbmH3hqLF1KJTca3V6/EQdjA1eVgDa05lO1Ib5KDSm+BqjQFf6Q1i5jBcq63lexPsd2/aCM+mlnhtKHL+wCUu32yqE5KUKN0S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mDONUzRs; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="aPCuvyrz"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nvyyblgLqNMuJgRdTROnw8hWtap5qkncrkTH8/Yf7BkjPtBImcf+MZdIQ0HcMbEQZ5ElsC06ICI0naHrVyOH53jXlJu5n4MBd54JWySLVU2wyAR840BMHrjKYsd8akRRYp10s2ngV3T9kkGJRfkyAHkkICliZ3lfzKLxtyDJuTMoLMyRAko9PiyJ5NxrvircXJjyE2fhbKAKUQRqCCV4+xEohjZMNATZcoC/Xkj+olBB+4OYkh9gPKiJCljro0EOOx5m3KozIunVUiJ1SFR0lbkUxL7G+ZY3Es6wYrBj3UQwr8PqLiKiGTcSbJ2VqHJRoHblSJ5/C5PfCjnhzmm1wQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1OnX/BH6Xjawc0pDowAWuvFe/CmzILBKY/IW+PooznE=;
- b=RJcUARw4rhF1Q/UrJ6TdHAQZdSJSeL/G5u6ZSrunVNv230cvVrBzVFwH5mNqYsMCIdXuipNbiXkQu/uvAB5d3ksEKIaHegAYDA3/4LgMLtSoaVpiJTKb4E8JHEX/FplXXO8NNnfbGz8Yjr5xt4OKuSvgiz8CWiur905LXXTB+Yh1q6Se2UItMcf2/W0AOOk8bz0/Bv29MmN+Oy//v/+TKLQdShfO7uLX6hlPbuXilk1Y+NFbkt7hoQqg+7YA+mbMvWwkjpgyeZkNGaGh2/yQukTEU3zWBCWrUrCQls4jzd3A1CBKulsc1/r2wRJNSB1lTpTmP9x2jTTu2QSzvC4JUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1OnX/BH6Xjawc0pDowAWuvFe/CmzILBKY/IW+PooznE=;
- b=aPCuvyrz/EAlpHlm9g50c504dT8c1gTMQT+u3DCuovMqc27J7hba4vPWVidOjLw4PEYdA2xoILez6Qce/bD4rVBcycXLD82Z5FUKz/wgQTn9+sV1ReAi0gv9IFYmNC9iKzzO2eNcqi1zCB/HqE9liigwbKarQYUSG+gE9mL2SJ+NKAR42wZOe19q8i00gTazvVJn4xa1mXdawUq/r5Adk0JPGuWVMS1EBha/72jvxE8NPbHGMpCKmy6oQdCHuqj9ztzgL68eXaDRQu26Nc+KCP/3j6pQcHXDsFZdTFW9W0QJ1SOTrz3mX3PsnvWU7WIYhPZhr3fI0d8G2C52jUZIcA==
-Received: from SEZPR06MB6959.apcprd06.prod.outlook.com (2603:1096:101:1ed::14)
- by TY0PR06MB5610.apcprd06.prod.outlook.com (2603:1096:400:328::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.24; Thu, 7 Mar
- 2024 11:18:09 +0000
-Received: from SEZPR06MB6959.apcprd06.prod.outlook.com
- ([fe80::aced:cbb9:4616:96d8]) by SEZPR06MB6959.apcprd06.prod.outlook.com
- ([fe80::aced:cbb9:4616:96d8%2]) with mapi id 15.20.7339.035; Thu, 7 Mar 2024
- 11:18:09 +0000
-Message-ID:
- <SEZPR06MB6959882F5DA673456A3AA85D96202@SEZPR06MB6959.apcprd06.prod.outlook.com>
-Date: Thu, 7 Mar 2024 19:18:05 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] clk: set initial best mux parent to current parent
- with CLK_MUX_ROUND_CLOSEST
-Content-Language: en-US
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240307-mux-v3-1-0885fc1ab2c9@outlook.com>
- <20240307-hot-hummingbird-of-atheism-87503c@houat>
-From: Yang Xiwen <forbidden405@outlook.com>
-In-Reply-To: <20240307-hot-hummingbird-of-atheism-87503c@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [0GIMtF9n+AeMdnid0UXlEF+1JRk8/WqqWkBxfu4KD+oIeClG5dm7SX3ppXumtX2G]
-X-ClientProxiedBy: SI1PR02CA0042.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::17) To SEZPR06MB6959.apcprd06.prod.outlook.com
- (2603:1096:101:1ed::14)
-X-Microsoft-Original-Message-ID:
- <4502b9ff-d0bc-45f6-80d4-2e0ebc75061e@outlook.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mDONUzRs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1709810558;
+	bh=aOnhWOVnEvZ2ycyiEsOeRE4tcDyIEgqZ90ugpgoKzbg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mDONUzRsaBEIRbjaAg0Wb171uCQpeRJ0LxkBAUeO2ahj0e95ZV13ElkqDRkEULEko
+	 Lm9jPu6agR8gF/szQDKyD4+PYVBoKGyqPb0zG35xpm/r1Ieqa54JflizEBTV42SFaN
+	 6ps8856Tb8CVymaAE0G9ll1MOiGRFBdqz4FV0YbCuB3Iox0xWPgO1evC0I4qY4MH1K
+	 tlWlow61Y1YCtpVJGbGroUabGWcTmx2D30c/OObtp6abPw3X//th5EhDtsFc5xNXaL
+	 6zBjfQZ2OLw8MqQCSnB3VzJV9ikgLOSY7Dp+k7lG2VIpd/cy5tFHF+RVdgXO5q0ZVm
+	 k2nh4rr2M0CKg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 92B2E37820EA;
+	Thu,  7 Mar 2024 11:22:37 +0000 (UTC)
+Message-ID: <90f3f4e2-ced5-4fae-b765-5b802f4895c8@collabora.com>
+Date: Thu, 7 Mar 2024 12:22:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB6959:EE_|TY0PR06MB5610:EE_
-X-MS-Office365-Filtering-Correlation-Id: 43a4c4d5-c6be-49cc-a22a-08dc3e9844cd
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	PvySqgxivn9LzJbd3BpghVovMSIVW2F6IamyKeoBUxdmtLuFTRal9st9e8fRdwIhPv0W3JE3N8Tr8nbhV9wSOK75osuvIL2srZBBQieYlhnx8Neeu922yIAZvnpnjgyLS0zv11/o19oE7xYyA8z6SjYM6WrSvj2UxlxUDHNUNlZXYfOErJYo5b3iRA/01X9i61P4vU9OEF1E+s5f5+DsSRIM6uLiqAu2xNYwd85R4vvZ2kr+AxNLK2K6qzZZVc6cWkNCDltNTSypa3OIXYj2TGvT8zcJ2yH2lfI7BkK1H6SnAYsGXBtPCWNTO7Wh7apXGnvsozbblyPSih6rw4zNLMk/oJKHa+EqJ6xLx/AqwpeQplW3N61xXonYyb/eHGeV1ucL1GKBHOnWgeSizV/RlIYI4K75spWduGYtgxDG2cF8LYErgQIdiCCYJYCqADd9Q5lcWF9OKZhgXgAxhBl2uzo8XzZmzLzPmVkpkDi+uvYO7jKkYPeN2+hrr5tMAf16EHrp59izAuQMZFQLGYHwAtJntjb6HcEN0TIMwluY+FYCkozTiH6+M7khXR5DTZOe
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SjJEK0VlaXhJckNtZTkrdEpKUGZrWU5OUnFBd1RqU2J5Q3lodG0zR2ExQjkw?=
- =?utf-8?B?cjhCQ2l0QlQ5UGNkVm5lZFpUZ2IxN240eWJSR0pqTk9QWWYyekdnY25VN1JJ?=
- =?utf-8?B?V0hvdHBYUnczWWF2SWM1L3NVYkE4Sm9JZ2o5SUQ4N3h5aE1tWVdBM2phVGhI?=
- =?utf-8?B?MmtUTWtGRFRIVUpPalZ4VEZiUjEyejRsRUhvR015dVlia3lqVnptOFgzMGsy?=
- =?utf-8?B?czFXWXhCWUdVNmpmR3pHME54dlJXUE1VZFdZelEzVW9QamZMQmJHUDNBVzVv?=
- =?utf-8?B?bEZtU0cwZ09xM0NJenRMS3g3bW0vMkVUTSsyNUI0dmlZUkp3bG1Tb3dPcVFz?=
- =?utf-8?B?bHJWRlV2OURhWU5jbGxvbGhRNjhOVEtuTGRDTE1iSFYrWldxeGxFOWh4YktG?=
- =?utf-8?B?UXJjMFd0Um5KdDVnelhOWDkxTnhsdDRvdDBFaEN3M28xdkhLcHBudm5PK2Zp?=
- =?utf-8?B?QnZBL1lCOENSSE81cTRQZFVnMXBCVFJtb0tMdVgyYnV3YVBNNlVRUmVTRjNt?=
- =?utf-8?B?VVRuWHVPWW51eThMQ2t5ZXViNUtvSTh4STVNQlBvZis0ZGFjWTNHWGgyOHBu?=
- =?utf-8?B?OEhWT0ZySzJIZDNkMVlwaU90ODhIQlg5TnpSME9tRU5uWHVHS3VVMm9hbi9X?=
- =?utf-8?B?YzcrQWpWRmhEbStwa3hzdjBrV3NacG1XZlRoZ0Q4TmRGeThDYmdkRWk1NjNL?=
- =?utf-8?B?SFZ6aUo3TlNHZ1h4RXExWndUQ25KbUJPY0d2VTByUjdBRXVXQzl4dkFrQWtm?=
- =?utf-8?B?eHdZVjBMeDVWZmpqVGNwZ3ZYVC9KbnRjV2VWdUpZWXNkb2R4T1hKbWJTdmxH?=
- =?utf-8?B?VHlRbTluQVdDeDl0TVcvK21qTTExMUVKVEM5N3diU2dXZEY5WS91K1F2TmJ0?=
- =?utf-8?B?Vi8zVjdkakxWVWdmckhEY1JZVHZQQkNJeWJYMHBZSGhQZTFmclR1UmJITG5Q?=
- =?utf-8?B?clBkbzQrVDVwZzcvVURsTzgwOTVWcC92Z084RmsraENmMGJ2Nkh4aThhczZP?=
- =?utf-8?B?YW1CMmpqRWJtWnNCKzFSUXpWS083cjhRWVVCT2U0L1BESENqMU9lTkxCUnp2?=
- =?utf-8?B?RjdyWC9wMGhaTXdwN0lJLzAzRzMxc2NWbVhxcExQalBMT1FUOWRjaGtrWXo5?=
- =?utf-8?B?dFRyMGxEcDZoSjVBY1pIVlZCSkxJSFN4WXRnOUMvMFY5TENNdEpEaEs0cWJP?=
- =?utf-8?B?UTFGdWZKMnJOYm5FaE5GbVZwMlRISG9PQlN6T0JkVmFrM3hBbUhqWXpQMk4z?=
- =?utf-8?B?dDBiZGF0QllVQ2g1aXpaNFloRWVuNTdMUm5mc3QyelZrdXJONDFYMHJsNTdh?=
- =?utf-8?B?S0ljdkY5ck1OUUJ6bmRpK3hDeWc5dG84NEg5SGVpNGlvVjM4YTVRQ2xtMkYy?=
- =?utf-8?B?UnZ4ZzhPSDJwb1BtRGJMOU1rbmpkZFBoeWp6dHJWRUE2TlVzcUF6eG1PTFhZ?=
- =?utf-8?B?OXNqbnZvc2h1Mk9pRkVKc0gxSjMzb0d1VGVUc2ovbjJTMjhkemJaU0xSaW9X?=
- =?utf-8?B?cDRkbUsreHZQdit0WE1mYnh1Q1laeW5BV0oycCsvc2VZbVE1OWNBeFlEZ0h2?=
- =?utf-8?B?dXVLcmtoUEppQm5FeGFhYmJzL09Mejl1TllNN2JYVGhIaG85UkN4cExlZHRU?=
- =?utf-8?B?NjV0blFyZWNVZEt3czVBSTlOam5QM0haKzlxMlBNTlUzcVNWWkJKL3pRVUFM?=
- =?utf-8?B?RWVERXh0b3E2dXBDOXFOTnJJZ21wd1ZQUU9KR0YyVCtzeCtKUnBoSGQ1SkRX?=
- =?utf-8?Q?H6uaLtMPRNNCwVC9jy/AqzPnDjq31dP7YPbXt3/?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43a4c4d5-c6be-49cc-a22a-08dc3e9844cd
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB6959.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2024 11:18:09.2298
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5610
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] clk: mediatek: Introduce need_pm_runtime to
+ mtk_clk_desc
+Content-Language: en-US
+To: Pin-yen Lin <treapking@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Weiyi Lu <weiyi.lu@mediatek.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240108081834.408403-1-treapking@chromium.org>
+ <CAGXv+5EnBt+7WrNb-QyziEaCihvjhFVf2tpzk=XyAoeELqucaw@mail.gmail.com>
+ <e0e6febf-1045-49f8-a200-8bc095b0fa50@collabora.com>
+ <CAGXv+5F5YFRKjaXu_XbXrUhqKL0NSRyt6tniQYfhRh+fsaxqmg@mail.gmail.com>
+ <cc74422d-962f-4da5-867b-158a71db1a7b@collabora.com>
+ <CAGXv+5EyRROsh_=J1Fg4K+ZgfkERF4dh4R6WoGw9MnTBMNUCgQ@mail.gmail.com>
+ <dfdc6a65-3ccf-463c-95df-093f3c2fefd3@collabora.com>
+ <CAEXTbpcPfWQr4iuD2U0zgJUi+BF-rLfyF4iDDiQYBrrv9U=6Xg@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <CAEXTbpcPfWQr4iuD2U0zgJUi+BF-rLfyF4iDDiQYBrrv9U=6Xg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 3/7/2024 4:48 PM, Maxime Ripard wrote:
-> Hi,
->
-> On Thu, Mar 07, 2024 at 10:03:50AM +0800, Yang Xiwen via B4 Relay wrote:
->> From: Yang Xiwen <forbidden405@outlook.com>
+Il 07/03/24 12:10, Pin-yen Lin ha scritto:
+> Hi Angelo and Chen-yu,
+> 
+> I tried enabling the runtime PM regardless of the .need_pm_runtime
+> flag, and my MT8183 device works well with that with no obvious boot
+> regression.
+> 
+> Should I send out another patch that always enables runtime PM in
+> __mtk_clk_simple_probe()? Or is there anything I should test?
+> 
+
+Hello Pin-yen,
+
+as I discussed with Chen-Yu - yes, we must make sure that this does not
+create any regression on machines running on other SoC models.
+
+I think it's unlikely that it does, but since the HW is available, being
+extremely careful with validating this change is a good idea :-)
+
+If you can/want to test before we do, sure, please send the new patch and,
+when you do, please say that you tested it and on which SoCs; as long as
+it's not just one SoC, that'll be good enough for me.
+
+P.S.: Please don't top-post!
+
+Cheers,
+Angelo
+
+> Regards,
+> Pin-yen
+> 
+> On Thu, Feb 29, 2024 at 6:36 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
 >>
->> Originally, the initial clock rate is hardcoded to 0, this can lead to
->> some problem when setting a very small rate with CLK_MUX_ROUND_CLOSEST.
+>> Il 29/02/24 11:34, Chen-Yu Tsai ha scritto:
+>>> On Thu, Feb 29, 2024 at 5:45 PM AngeloGioacchino Del Regno
+>>> <angelogioacchino.delregno@collabora.com> wrote:
+>>>>
+>>>> Il 29/02/24 08:17, Chen-Yu Tsai ha scritto:
+>>>>> On Mon, Feb 26, 2024 at 7:16 PM AngeloGioacchino Del Regno
+>>>>> <angelogioacchino.delregno@collabora.com> wrote:
+>>>>>>
+>>>>>> Il 23/02/24 05:27, Chen-Yu Tsai ha scritto:
+>>>>>>> On Mon, Jan 8, 2024 at 4:18 PM Pin-yen Lin <treapking@chromium.org> wrote:
+>>>>>>>>
+>>>>>>>> Introduce a new need_pm_runtime variable to mtk_clk_desc to indicate
+>>>>>>>> this clock controller needs runtime PM for its operations.
+>>>>>>>> Also do a runtime PM get on the clock controller during the
+>>>>>>>> probing stage to workaround a possible deadlock.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+>>>>>>>
+>>>>>>> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+>>>>>>>
+>>>>>>> The patch itself looks fine.
+>>>>>>>
+>>>>>>> Besides the MT8183 MFG clock issues, we do actually need this for the
+>>>>>>> MT8192 ADSP clock. Its power domain is not enabled by default.
+>>>>>>>
+>>>>>>
+>>>>>> ...but on MT8195 the ADSP clock works - because the ADSP node exists.
+>>>>>
+>>>>> That's an indirect dependency that should not be relied on. Say the clock
+>>>>> driver probed but the ADSP hasn't, and you try to read out the current
+>>>>> status. What would happen?
+>>>>>
+>>>>> - Read out works fine, because the power domain is default on, and hasn't
+>>>>>      been turned off by late cleanup
+>>>>> - Read out is bogus (but you can't tell)
+>>>>> - Read out hangs.
+>>>>>
+>>>>> The third is what happens on MT8192. There's still some issues on that
+>>>>> front, as even after I applied the ADSP power domain patches from MediaTek,
+>>>>> the readout was still hanging.
+>>>>>
+>>>>
+>>>> That MT8192 lockup story is getting crazy in my head... anyway, besides that,
+>>>> I get the point - I was somehow ignoring the fact that kernel modules do exist.
+>>>>
+>>>> Eh, sorry about that :-)
+>>>>
+>>>>>> This poses a question: should we make clock controllers depend on power domains,
+>>>>>> or should we keep everything powered off (hence clocks down - no power consumption)
+>>>>>> *unless* the user exists?
+>>>>>
+>>>>> That's a policy discussion separate from actual hardware dependencies.
+>>>>> *If* the clock controller needs the power domain to be active for the
+>>>>> registers to be accessed, the clock controller *must* have a direct
+>>>>> dependency on the power domain.
+>>>>>
+>>>>
+>>>> I admit I should've worded that better.
+>>>>
+>>>> "should we make clock controllers depend on power domains" was actually implying
+>>>> "IF those need one" :-)
+>>>>
+>>>> I really wonder if - at this point - it's simply a better idea to not restrict
+>>>> the call to devm_pm_runtime_enable/resume_and_get to `need_runtime_pm == true`.
+>>>>
+>>>> Do we really need to exclude that on other clock controllers that don't have
+>>>> any power domain dependency? Any side effect?
+>>>>
+>>>> Saying this because if we can avoid yet another per-SoC flag I'm really happy,
+>>>> as readability is also impacted and besides - if we ever find out that one of
+>>>> those need a power domain in the future, we'll need just one commit and just
+>>>> only in the devicetree, instead of enabling a flag in driver X as well as that,
+>>>> avoiding some (potentially unnecessary) noise... I guess.
+>>>>
+>>>> P.S.: I just noticed that the return value for the devm_pm_runtime_enable() call
+>>>>          is not being checked!
+>>>>
+>>>> .......
+>>>>
+>>>> In short....
+>>>>
+>>>> Chen-Yu, at this point, do you have any reason why we wouldn't be able and/or it
+>>>> wouldn't be a good idea to just avoid adding the `need_runtime_pm` flag (meaning
+>>>> that we perform pm_runtime calls for all clock drivers unconditionally)?
+>>>>
+>>>> If this is about longer boot time, I don't think that it's going to be more than
+>>>> a millisecond or two, so that should be completely ignorable.
+>>>
+>>> I think it's just more of a "don't enable features you don't need" thing.
+>>> We already ran into a weird deadlock, which is why the devm_pm_runtime_enable()
+>>> call has that comment.
+>>>
+>>> I don't think anyone has actually looked at it. As you said it shouldn't be
+>>> much, at least during boot time. It's one call per clock controller.
+>>>
+>>>> Can you please do a test for that, or should I?
+>>>
+>>> The earliest I can work on it would be some time next week. Does that work
+>>> for you?
+>>>
 >>
->> For example, if the lowest possible rate provided by the mux is 1000Hz,
->> setting a rate below 500Hz will fail, because no clock can provide a
->> better rate than the non-existant 0Hz. But it should succeed with 1000Hz
->> being set.
+>> The earliest I'd be able to work on this myself would be at the end of next
+>> week if not later.. so yes, please take your time, no worries.
 >>
->> Setting the initial best parent to current parent could solve this bug.
+>> Thank you!
 >>
->> Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
-> I don't think it would be the way to go. The biggest issue to me is that
-> it's inconsistent, and only changing the behaviour for a given flag
-> doesn't solve that.
+>>> ChenYu
+>>>
+>>>> Cheers
+>>>> Angelo
+>>>>
+>>>>>> For the second one, this means that the *device* gets the power domain (adsp), and
+>>>>>> not the clock controller (which clocks are effectively useless if there's no user).
+>>>>>
+>>>>> No. See my previous paragraph.
+>>>>>
+>>>>> ChenYu
+>>>>>
+>>>>>> Angelo
+>>>>>>
+>>>>>>>> ---
+>>>>>>>>
+>>>>>>>> Changes in v3:
+>>>>>>>> - Update the commit message and the comments before runtime PM call
+>>>>>>>>
+>>>>>>>> Changes in v2:
+>>>>>>>> - Fix the order of error handling
+>>>>>>>> - Update the commit message and add a comment before the runtime PM call
+>>>>>>>>
+>>>>>>>>      drivers/clk/mediatek/clk-mtk.c | 19 +++++++++++++++++++
+>>>>>>>>      drivers/clk/mediatek/clk-mtk.h |  2 ++
+>>>>>>>>      2 files changed, 21 insertions(+)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+>>>>>>>> index 2e55368dc4d8..ba1d1c495bc2 100644
+>>>>>>>> --- a/drivers/clk/mediatek/clk-mtk.c
+>>>>>>>> +++ b/drivers/clk/mediatek/clk-mtk.c
+>>>>>>>> @@ -13,6 +13,7 @@
+>>>>>>>>      #include <linux/of.h>
+>>>>>>>>      #include <linux/of_address.h>
+>>>>>>>>      #include <linux/platform_device.h>
+>>>>>>>> +#include <linux/pm_runtime.h>
+>>>>>>>>      #include <linux/slab.h>
+>>>>>>>>
+>>>>>>>>      #include "clk-mtk.h"
+>>>>>>>> @@ -494,6 +495,18 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+>>>>>>>>                             return IS_ERR(base) ? PTR_ERR(base) : -ENOMEM;
+>>>>>>>>             }
+>>>>>>>>
+>>>>>>>> +
+>>>>>>>> +       if (mcd->need_runtime_pm) {
+>>>>>>>> +               devm_pm_runtime_enable(&pdev->dev);
+>>>>>>>> +               /*
+>>>>>>>> +                * Do a pm_runtime_resume_and_get() to workaround a possible
+>>>>>>>> +                * deadlock between clk_register() and the genpd framework.
+>>>>>>>> +                */
+>>>>>>>> +               r = pm_runtime_resume_and_get(&pdev->dev);
+>>>>>>>> +               if (r)
+>>>>>>>> +                       return r;
+>>>>>>>> +       }
+>>>>>>>> +
+>>>>>>>>             /* Calculate how many clk_hw_onecell_data entries to allocate */
+>>>>>>>>             num_clks = mcd->num_clks + mcd->num_composite_clks;
+>>>>>>>>             num_clks += mcd->num_fixed_clks + mcd->num_factor_clks;
+>>>>>>>> @@ -574,6 +587,9 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+>>>>>>>>                             goto unregister_clks;
+>>>>>>>>             }
+>>>>>>>>
+>>>>>>>> +       if (mcd->need_runtime_pm)
+>>>>>>>> +               pm_runtime_put(&pdev->dev);
+>>>>>>>> +
+>>>>>>>>             return r;
+>>>>>>>>
+>>>>>>>>      unregister_clks:
+>>>>>>>> @@ -604,6 +620,9 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+>>>>>>>>      free_base:
+>>>>>>>>             if (mcd->shared_io && base)
+>>>>>>>>                     iounmap(base);
+>>>>>>>> +
+>>>>>>>> +       if (mcd->need_runtime_pm)
+>>>>>>>> +               pm_runtime_put(&pdev->dev);
+>>>>>>>>             return r;
+>>>>>>>>      }
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+>>>>>>>> index 22096501a60a..c17fe1c2d732 100644
+>>>>>>>> --- a/drivers/clk/mediatek/clk-mtk.h
+>>>>>>>> +++ b/drivers/clk/mediatek/clk-mtk.h
+>>>>>>>> @@ -237,6 +237,8 @@ struct mtk_clk_desc {
+>>>>>>>>
+>>>>>>>>             int (*clk_notifier_func)(struct device *dev, struct clk *clk);
+>>>>>>>>             unsigned int mfg_clk_idx;
+>>>>>>>> +
+>>>>>>>> +       bool need_runtime_pm;
+>>>>>>>>      };
+>>>>>>>>
+>>>>>>>>      int mtk_clk_pdev_probe(struct platform_device *pdev);
+>>>>>>>> --
+>>>>>>>> 2.43.0.472.g3155946c3a-goog
+>>>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>
+>>>>
+>>>>
+>>
 
 
-I think the current behavior is odd but conforms to the document if 
-CLK_MUX_ROUND_CLOSEST is not specified. If i understand correctly, the 
-default behavior of mux clocks is to select the closest rate lower than 
-requested rate, and CLK_MUX_ROUND_CLOSEST removes the "lower than" 
-limitation, which is what this version tries to accomplish.
-
-
->
-> And again, either way, we should document it. And run it through kernelci.
->
-> Maxime
-
-
--- 
-Regards,
-Yang Xiwen
 
