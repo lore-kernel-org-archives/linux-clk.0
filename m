@@ -1,106 +1,161 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8403535D7
-	for <linux-clk@vger.kernel.org>; Fri,  8 Mar 2024 10:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AD352F78;
+	Fri,  8 Mar 2024 10:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709892019; cv=none; b=Z4LU3+NBVaiSnSHo7i8DQu62XtMXZ+nhNe5Q2Z5sfVFE8K8sRir45VdY8qNIUuHLT8LS/X8KodDNPvze7QhGX0BO4ctT2kIacksr1xIowcnIseIhx4rHL9XQ8LhK2TW0hyK098qG1HtoPTXbEEz6mi9oZc2U6hcUWjD1qoMyAjQ=
+	t=1709894823; cv=none; b=R4uJTxke7nDnXeX5JtwydLtBjsP7KL904G8v9x6xB6cTWdnPqT7BamOytLqWsZyaAaHIJ4M80TNcZYanQoBc5lUdckg4UPTWpooDkTkOFfuliXzwTrtNXa1aI4GDliuLjdElUCxs3Q5V1eOC5jLhZyOnGRfU0v21YMrUCb/4u5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709892019; c=relaxed/simple;
-	bh=4Cq6hyG5V6lgV6GytS9TShPkv15tJRH6MPVRuTUffmE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IjjgBrVsJAMchGP2ieHEPN++19MDg0gDuZZVC05Wk1rCuoaCvnH3Nj3pO4uUjtho8kpB9x1LCN6VwFj8eeUJ2o9fN2c0g2JTNwUmdEU/oZjFeb0m+HlO81wef1F+exScRLVF5kK03aPSMhjQMhcqsVzj9US+EfcDEhCoI6M9tjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=X4g7syj0; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1709894823; c=relaxed/simple;
+	bh=qGuNmFIrWtA9X3fyhwALvI8fPjVC7Ln9CYT40Amik7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kkhUYOBjE0RJSdzaFrMRMGhI2vr33nfeQ65ajax82mTRr9hF4YZSRH9FP2L7GIs0VtFLICY1bsu+GbdW/CEuxhop5WiosxyUJ7zmktMToe3n+6aElaQNmKXdUJ81H//mANqWMYl4XhgY7J4g55Hwa82R9+zQu/MSNy1u2a2RNj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L3dNZ1t4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="X4g7syj0"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-413183f5e11so2294555e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 08 Mar 2024 02:00:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1709892015; x=1710496815; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dI+EkvO2k2itkQ+4Wvz3IcWpTJAxVhTrdZVR5FX373o=;
-        b=X4g7syj0anMmInLqZBNZyFK+FiJcYBFw+iVGJlBsxhWN2Gl3u6RU+KoYXx7YEwGcxO
-         3YUHPjEl8Z4k9SYSLYodvbkLSnKxypGmZKj/BPbUAfSrokanW0f6U6m5oD78BVEklJus
-         2ac+nBrgPgjBCJBZRTVp/dNCHbdiJHR/4FwFBDCbdgFSViksMKwciunhk1cv9qIlNw8A
-         BTeP/qaTldA8tbe4kaN0EfFofL8NxGV+KZLZirALG4LN+jagowfzrAVjpGUe+aFDZDzU
-         6vHNzu2AcmG6cN/srqdIYTZuct7gbAuo+8UvW8hk2r+Mz7pjdBZJAXyKzjj5gs2Gx4nb
-         u2Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709892015; x=1710496815;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dI+EkvO2k2itkQ+4Wvz3IcWpTJAxVhTrdZVR5FX373o=;
-        b=NsWOKU5iMCf7PsKk8Q9KMvEwe9WmClce4h1wSEpO1mkyKIaAnNa0eB+hVeQ59Em3Is
-         RrN8VXCKbyQ3AoGVjNgNDj1+Uw6YNnBaQBwYNyCIoga6/Vf4xpa7gwFx5V/99K3qX/aP
-         gOYAv9mJ0AONh0RC7gsq/l7oUpT/SJu3aof3uSRmIZ8hEu2gLvt0KamB37B+MfiBeTiv
-         s4JNfEMfljypqJjpi5f+S57RiruK+nL9V7G28eEJG//lqWOb3JetmpDkM+raBGqLyOXb
-         nOyW1izjrP/fch2UYYJqxg11HiriFUVINTdjEet89ltbTvh38I8KGpLaP4/jI+BVHv+8
-         d5fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMK35A9xyOyzHVMLSDKsiS4I+HDKNcEzmvo+OqvDVP8rnl+HNyReATT2P1EaMhcbQDsp9Q7XyfVMq+za2l0lzF9sVpKuUz0DEm
-X-Gm-Message-State: AOJu0YzYRHfu6wxq9CNqRO/G3f8ieFcM4qOTDNZpsVA63DhrEFEe6YeS
-	CwKW9elUQynPP1GChLiLP/Q+Fxbx7YnD/jwffYc4+NLc+4hgCMa8OJwX6dok3cs=
-X-Google-Smtp-Source: AGHT+IEQE/1qeUOESsKPVtciOgLw2DK/vi6tnQKiVvcoVyKfkCrPiYdEgieEq83fy8he0q1E6IQizA==
-X-Received: by 2002:a05:600c:1d12:b0:412:ef3b:6f0e with SMTP id l18-20020a05600c1d1200b00412ef3b6f0emr3969562wms.11.1709892014952;
-        Fri, 08 Mar 2024 02:00:14 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.38])
-        by smtp.gmail.com with ESMTPSA id gw18-20020a05600c851200b00412a31d2e2asm5446795wmb.32.2024.03.08.02.00.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Mar 2024 02:00:14 -0800 (PST)
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: sboyd@kernel.org,
-	linux-clk@vger.kernel.org
-Cc: nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	conor.dooley@microchip.com,
-	claudiu.beznea@tuxon.dev
-Subject: [GIT PULL] Microchip clock updates for v6.9
-Date: Fri,  8 Mar 2024 12:00:13 +0200
-Message-Id: <20240308100013.697607-1-claudiu.beznea@tuxon.dev>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L3dNZ1t4"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4281c37p021785;
+	Fri, 8 Mar 2024 10:46:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=TxLG4r38U4Rqr7eWXm57lb0YnIZAjlRbQoaRcINMcyg=; b=L3
+	dNZ1t4Fmf2oLy5IvbPxlNtF1v1fClf+2asThy47dVQU853+yNm3z33N3L1GOWItz
+	sA2yvwUKdJYrncaJvfQW/Zwb9hdY5DyTItkXUuVdl+AeiXnHxNb7/+64xoMsBewD
+	Xzvobrw6yFbfWs1Lyn5d3gIg/sGZkyv1/8lDCAXliLW7voX/VbAhx1ImnFlTSwlY
+	0SUt16zwWwNqCt8G7FDdQErxH7nIa2MGncWyZg2ZpVqJJ+Z7Hr/vPaM+ldJ0Dyy7
+	p0arcF5jUmQ9FCC/tOujnAuLUdPVKUDnlTwfXiWmRuEtFtwmkE9tRB25cjT19src
+	Hvzdrb7zTzqCTXsOJHQw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wqn8m1gv0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Mar 2024 10:46:24 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 428AkOUF015567
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 8 Mar 2024 10:46:24 GMT
+Received: from [10.216.7.18] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Fri, 8 Mar
+ 2024 02:46:18 -0800
+Message-ID: <e2627a99-307f-1e10-abfd-ce688cc2ec03@quicinc.com>
+Date: Fri, 8 Mar 2024 16:16:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 4/5] clk: qcom: Add camera clock controller driver for
+ SM8150
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Michael
+ Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240229-camcc-support-sm8150-v1-0-8c28c6c87990@quicinc.com>
+ <20240229-camcc-support-sm8150-v1-4-8c28c6c87990@quicinc.com>
+ <18567989-fb60-49ae-92e6-94e1bc2fa1c7@linaro.org>
+ <83fd1995-a06e-b76a-d91b-de1c1a6ab0ea@quicinc.com>
+ <4817a5b0-5407-4437-b94a-fc8a1bfcd25d@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <4817a5b0-5407-4437-b94a-fc8a1bfcd25d@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Vs23r503-2j_3oJbNZklU5g0YtVaVSnp
+X-Proofpoint-ORIG-GUID: Vs23r503-2j_3oJbNZklU5g0YtVaVSnp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-08_08,2024-03-06_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 impostorscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2402120000 definitions=main-2403080085
 
-The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
 
-  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
+On 3/6/2024 7:25 PM, Bryan O'Donoghue wrote:
+> On 06/03/2024 08:30, Satya Priya Kakitapalli (Temp) wrote:
+>>>
+>>> Anyway I suspect the right thing to do is to define a 
+>>> titan_top_gdsc_clk with shared ops to "park" the GDSC clock to 19.2 
+>>> MHz instead of turning it off.
+>>>
+>>> You can get rid of the hard-coded always-on and indeed represent the 
+>>> clock in /sysfs - which is preferable IMO to just whacking registers 
+>>> to keep clocks always-on in probe anyway.
+>>>
+>>> Please try to define the titan_top_gdsc_clk as a shared_ops clock 
+>>> instead of hard coding to always on.
+>>>
+>>
+>> Defining the gdsc clk allows consumers to control it, we do not want 
+>> this clock to be disabled/controlled from consumers. Hence it is 
+>> better to not model this clock and just keep it always on from probe.
+>
+> Not if you mark it critical
+>
 
-are available in the Git repository at:
+Marking the clock as critical keeps the associated power domain 
+always-on which impacts power. For this reason we are not using 
+CLK_IS_CRITICAL and instead making them always on from probe.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-6.9
 
-for you to fetch changes up to 72151193839e4fe222d0be9931f6ba3a94de7aa5:
-
-  clk: microchip: mpfs: convert MSSPLL outputs to clk_divider (2024-02-06 14:07:18 +0000)
-
-----------------------------------------------------------------
-Microchip clock updates for v6.9
-
-Polarfire:
-- MSSPLL hardware has 4 output clocks (the driver supported previously
-  only one output); each of these 4 outputs feed dividers and the output
-  of each divider feed individual hardware blocks (e.g. CAN, Crypto,
-  eMMC); individual hardware block drivers need to control there clocks
-  thus clock driver support was added for all MSSPLL output clocks.
-
-----------------------------------------------------------------
-Conor Dooley (6):
-      dt-bindings: clock: mpfs: add more MSSPLL output definitions
-      dt-bindings: can: mpfs: add missing required clock
-      clk: microchip: mpfs: split MSSPLL in two
-      clk: microchip: mpfs: setup for using other mss pll outputs
-      clk: microchip: mpfs: add missing MSSPLL outputs
-      clk: microchip: mpfs: convert MSSPLL outputs to clk_divider
-
- .../bindings/net/can/microchip,mpfs-can.yaml       |   6 +-
- drivers/clk/microchip/clk-mpfs.c                   | 154 ++++++++++++---------
- include/dt-bindings/clock/microchip,mpfs-clock.h   |   5 +
- 3 files changed, 96 insertions(+), 69 deletions(-)
+> static struct clk_branch cam_cc_gdsc_clk = {
+>         .halt_reg = 0xc1e4,
+>         .halt_check = BRANCH_HALT,
+>         .clkr = {
+>                 .enable_reg = 0xc1e4,
+>                 .enable_mask = BIT(0),
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "cam_cc_gdsc_clk",
+>                         .parent_hws = (const struct clk_hw*[]){
+>                                 &cam_cc_xo_clk_src.clkr.hw
+>                         },
+>                         .num_parents = 1,
+>                         .flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
+>                         .ops = &clk_branch2_ops,
+>                 },
+>         },
+> };
+>
+> and then add this to your camss clocks
+>
+> <&clock_camcc CAM_CC_GDSC_CLK>;
+>
+> The practice we have of just whacking clocks always-on in the probe() 
+> of the clock driver feels lazy to me, leaving the broken cleanups we 
+> have aside.
+>
+> As a user of the system I'd rather see correct/complete data in 
+> /sys/kernel/debug/clk/clk_summary
+>
+> Anyway I'm fine with setting the clock always on, I can always send 
+> out a series to address this bug-bear myself.
+>
+> So yeah just fix the cleanup and then please feel free to add my
+>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
