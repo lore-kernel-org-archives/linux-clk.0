@@ -1,109 +1,118 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD1D1CA8A
-	for <linux-clk@vger.kernel.org>; Fri,  8 Mar 2024 13:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4E817EF
+	for <linux-clk@vger.kernel.org>; Fri,  8 Mar 2024 13:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709903070; cv=none; b=uCi6FkuelOVhxT3Sorek6T2DJzUFY1MAxa2EzHzGPI3LMJgzLDWX0naKC7gfCdFY0TJ/F9p45hh7ZHpunIBea2CbUDKmoml42IwR/Wrek53/XXxRN2fNiSvvvrzolK+NwTJnDFv/D/kSnoJ/ZdmDQNyNPsjj/m3lyrgYW5hZzpA=
+	t=1709904468; cv=none; b=oT27bKdj95ccgTRPT08ri9f+lDdi5XCu2dOCzJULrnNkqxQH2eSa98vyhB84vclVehi0J0GQOgUHc3rCVWITBFKpa3ginFJOM80s0gBLeaQLMgwvQ8cPL6Y97txNKkd/oL53gRQAHRDi6r69QncZjhULdcvqo/x52dgvqWqA0i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709903070; c=relaxed/simple;
-	bh=yRWdVfpQxqHtySeHiXZsB0Tjfqjdc3FOYFaeh5FUKVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TxFsjC/HMZ6NaG8niAdfFMLO7xEiR8PxcAxVdVxsjmmFFuqKW20af3F66ZJPAFhMrpbQQn9DqJmL6mFTs34cMd/yx8AOTY6+XyBfjPjMz7BKfagws2YT4+Nr8PUCqdVcrkMiSaNuUBdUGPkXiBODb+wTVqOq6boGgemOxGleZWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Web9H/sb; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709904468; c=relaxed/simple;
+	bh=FTRAWBTwymVL386fALtUwj3KhMPwR7HCTYICtzgjwg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N0eEX+QuT1MWg/muyCFyUXQSnn6M9xibYp3GFlL3ZPPQKZor/ybmpti0FsHr8RR69uSbwy5HtquVZKNYBto8oVPAUMPfbnHozJKuW071IUV/NRN6E9PiIylPYUY8uzU7vY9do2EqJD6b8ledDw/7C18nt5rrn4Dwb9TMdjdzXfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=POVw4MKh; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Web9H/sb"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-33e6f9ce76aso596205f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 08 Mar 2024 05:04:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709903067; x=1710507867; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QQ57E0ArmK/bVUfP0mzi0MhsZFrvk857kv7W7dfFr2Y=;
-        b=Web9H/sbGFVzPeK2q4KjbOJ3YpE5RP1lRrxdMX1V5YQSrhYZpypHYccoZ/5PwoTacg
-         o2kHRszVATHZckNnJLMPCRMvK+9xhIWOh0BYaSzAH/gibpKbNYzsmQTaYM9kFvPW8yVn
-         zjtNOqKb5uv+ynLTEuJJHZ+4C02qAq1GTFQ2QIt5JryBRQAP6yXMp3eXrVcv5FMIZyy4
-         b1SS7+uKp1A79SPzC7V6Kpthy3nWyOI8qy5J8onb/HXS8/D1kb8SG1X2gwJbA0rTrhvI
-         xpI2KpK6FhYosMP5Yx1NW8Ou34Bkp8G3yEpquKoIkiQE1JCSIP7sR4yY1yWVBvFIjKsN
-         cFuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709903067; x=1710507867;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QQ57E0ArmK/bVUfP0mzi0MhsZFrvk857kv7W7dfFr2Y=;
-        b=OpjQGcWftpiRz02omDKH1gVDJVDaADu6A0Q45yFPgQpKW6G+BoQqzReeL/SEo+BVeh
-         sru03HnrkaAKN2YJkBPM+fvykL1I4OQmFweVcQtN1MCrPDdQQcmwEF9lb/LoM6VFMdQN
-         x4nPFa7QsW6G/nZ3vjieUb2BIhKxrAw4Om8up5wNM4QpWOWFqX8SEOODYAiuxChxN8mO
-         D5sRPozfF8qu61GlMhuzKQtBNZgNsoRO2U21QN+LHe9mGkj3WT4oacyWjvkHaZBhLzeG
-         90GegLHFcAkgcxvv/xtG5heJmifx5xd7NorTM9BEGRLESTPmoHvOwtZH0qcesdO8WDq5
-         0vZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkaWF9R5Jh51tCFAG2RHegn6pbKCk7ECme3dxRL9CuPQ/1mPQS2IjhTeUHIb5Oa2g525UdBajqkugBbsxm1InoFfHExfOBU0qd
-X-Gm-Message-State: AOJu0Yz2XSCwW9hEhAePSeBkBS2MQRy4Z4eIQsbDwf3RP0/hSUr5ryMO
-	AtS61xvtEWpMZ0R566AKx/UKvDR+VvKfAaYWKgqKo5bGYa8DcmbtVfM+bBlkAhY=
-X-Google-Smtp-Source: AGHT+IHCkwidEwgVLTE4ZqN7hKFvS6AkaL79HDNSUljGLcAHE0kLzs+LBju0bJVMOYhQqVw7bXiGkA==
-X-Received: by 2002:a05:6000:180c:b0:33d:be6f:7dcf with SMTP id m12-20020a056000180c00b0033dbe6f7dcfmr14295647wrh.24.1709903067129;
-        Fri, 08 Mar 2024 05:04:27 -0800 (PST)
-Received: from [192.168.0.102] ([176.61.106.68])
-        by smtp.gmail.com with ESMTPSA id f10-20020a5d58ea000000b0033d4cf751b2sm22772090wrd.33.2024.03.08.05.04.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Mar 2024 05:04:26 -0800 (PST)
-Message-ID: <291279e1-7abb-4614-91f3-af9ede349817@linaro.org>
-Date: Fri, 8 Mar 2024 13:04:25 +0000
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="POVw4MKh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1709904465;
+	bh=FTRAWBTwymVL386fALtUwj3KhMPwR7HCTYICtzgjwg0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=POVw4MKh2Jb3iCnepDbPEqn8uBO0+dBbZxwqHhLc0IyM9NYI39rs4y0hVslFaIrE0
+	 3o3Z9BJq2Pjw9l+/lQlCFkHrNvaANb327r6zwlhY+delZ3p9Cp24ArsSPxewnmAWYS
+	 xI3NrZHB8DNzvq+viZrnXcZi1hyyEuiwaOINvSvtG5kBYLaP/jort+mzMWXkNYIXye
+	 4ZGqYFZjE/yw936mYXJ1/P9hljmMU3hXIGl9LhJIk9K+TiKS5trxW6l5YqhCZUsMOb
+	 nsBpMpMbsPWDe7XvzChFarjTtK01qK24f4cqgiCZJhpUPBG88xUyF0m8P2gYJhLS59
+	 9e2KEujlpCwSQ==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1F5AB37810F1;
+	Fri,  8 Mar 2024 13:27:45 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id B363E1060B10; Fri,  8 Mar 2024 14:27:44 +0100 (CET)
+Date: Fri, 8 Mar 2024 14:27:44 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Ilya K <me@0upti.me>
+Cc: "andy.yan@rock-chips.com" <andy.yan@rock-chips.com>, 
+	"heiko@sntech.de" <heiko@sntech.de>, "huangtao@rock-chips.com" <huangtao@rock-chips.com>, 
+	"kernel@collabora.com" <kernel@collabora.com>, "kever.yang@rock-chips.com" <kever.yang@rock-chips.com>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
+	"sboyd@kernel.org" <sboyd@kernel.org>, "zhangqing@rock-chips.com" <zhangqing@rock-chips.com>
+Subject: Re: [PATCH v8 7/7] clk: rockchip: implement proper GATE_LINK support
+Message-ID: <uwr335fla4nfvv3mdppcoly6hcsayav26r4r6txmbwrb25ftw7@rxwjtan7evww>
+References: <1456131709882456@mail.yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] clk: qcom: Add camera clock controller driver for
- SM8150
-Content-Language: en-US
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240229-camcc-support-sm8150-v1-0-8c28c6c87990@quicinc.com>
- <20240229-camcc-support-sm8150-v1-4-8c28c6c87990@quicinc.com>
- <18567989-fb60-49ae-92e6-94e1bc2fa1c7@linaro.org>
- <83fd1995-a06e-b76a-d91b-de1c1a6ab0ea@quicinc.com>
- <4817a5b0-5407-4437-b94a-fc8a1bfcd25d@linaro.org>
- <e2627a99-307f-1e10-abfd-ce688cc2ec03@quicinc.com>
- <d893e8f8-66a7-4460-9468-0f3a359cece7@linaro.org>
- <35a7ad40-aaf4-476e-8582-b83bac284881@linaro.org>
- <c892f773-7716-4736-3499-5c8254e3618e@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <c892f773-7716-4736-3499-5c8254e3618e@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-On 08/03/2024 12:40, Satya Priya Kakitapalli (Temp) wrote:
-> 
-> If BIT(0) is set from probe, during any active usecase, the clock gets 
-> turned ON automatically when the power domain is turned ON.
-
-Sounds like a very dirty hack really doesn't it.
-
-Can you point out where ?
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="73sgraorjqr7grra"
+Content-Disposition: inline
+In-Reply-To: <1456131709882456@mail.yandex.ru>
 
 
-> But when we use CLK_IS_CRITICAL flag, the framework keeps the power 
-> domain ON and doesn't let the power domain to turn off even when there 
-> is no active usecase.
+--73sgraorjqr7grra
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
----
-bod
+[removed DT people from CC, since this is all about clocks now]
+
+Hello Ilya,
+
+On Fri, Mar 08, 2024 at 10:23:31AM +0300, Ilya K wrote:
+> This change seems to make my Orange Pi 5 (RK3588S) lock up on boot
+> :( Any suggestions on how to debug this? It doesn't really log
+> much...
+
+I suppose with this change you explicitly mean the last patch, which
+has not yet been applied? That patch effectively allows some clocks
+to be disabled, that have previously been marked as critical (and
+thus always-on).
+
+If that results in a boot lockup, I expect you have a peripheral
+driver, that does not enable a required clock (e.g. because of a
+missing clock reference).
+
+I assume you have a bunch of other patches applied on top of
+upstream and not just this one? In that case it might be sensible to
+first apply this patch, do a test boot (it hopefully boots). Then
+step-by-step re-add the other patches and check which one breaks
+when being combined with this patch.
+
+P.S.: I plan to send a v9 of this patch once 6.9-rc1 has been tagged
+and will split it, so that the removal of CLK_IS_CRITICAL is done in
+a separate patch.
+
+Greetings,
+
+-- Sebastian
+
+--73sgraorjqr7grra
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmXrEkYACgkQ2O7X88g7
++poj8BAAkgTQTuX2gUF/opfF38TkGqXLmP9Lash+wOIGQaBo67HrPCb5ykmPiCAE
+SAY3oxobY4X/H9y3hMxCuOEK7hbh3hRF14LRcB9fc8Bc7cBtvmVnxAHAe5W/ZvMG
+f2IXHJah83GcWtt2lY1q2YYa+GBARW4dQ8lmdY6UJm7oRiMhrMr55XDe1Zl0VNjh
+53XwercpOLlA6CslzS/SYhmcSMw72Wad/KHjCgB5o6r+Gyk26FVfD/mcWxaFxa/u
+PPRYoLbueUxaPgh96RjO/FgXE8eWEI38fnykFSgBLJx+9qIHZZYPWLIyUSJrgZoN
+trZPcnz6JbWwQDRNE4Cpe2rFLJbGjDez20lJqQeCPJB5yW0l9JqR5x1+AkseWbMY
+rSJCNUL4/X6b4o9midFGwbr1ycE9pP/Rr2OpBftBmI3GwCWokrEVuCRSc83q8nkY
+8JGQcE9LHyQYA2P8gGQjFvdKB0eyF+m2xy9OgrYEGHDOttvA6U+vpDnXVZaN/Dqc
+nThjn0QulcTYnjyFxO6PynrVy5REVoPQLn5HrS8wvgXmKd7Cj8aoCOcuL9CNeCAc
+hOFWLdSzqDEKGwjTBJdgOtq6PorHwAajV+ZRPD7stYT5XGkNC6CAP0USgovLODXb
+4Ao2LokVxOcDEqIgFoGy14ye3HkPlTmC4h2eXprb2KdaXqPZxOE=
+=ekYF
+-----END PGP SIGNATURE-----
+
+--73sgraorjqr7grra--
