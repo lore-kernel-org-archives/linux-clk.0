@@ -1,152 +1,130 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6959056464
-	for <linux-clk@vger.kernel.org>; Fri,  8 Mar 2024 11:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9ED11401F;
+	Fri,  8 Mar 2024 12:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709898857; cv=none; b=eFAAkyMY3VpR+emtKFV32YJrPbJ6fzsa0jzkvf9CbvT8C2HsywVKlRbeadb7za/b8eIg1bORpVZ04Mneh5shtJLp5jwH4E6VJlw9Ei66IhX3mhCTconwiWDORMjZS+oSaYHBrAkbaNMm0vvOI+xkFxCYDbUa/yaZpEHFKcJbn3M=
+	t=1709901657; cv=none; b=F119plIxYpgOXgYGHBEx12vzl6aZcjOj8EMZkX5NlFDdArn5VwD1bxrXLpS98X1zKcqixBYlkK+XMGrqeCZBTsDVanbOq86/Wj6wGcMvrLXAytj7LJIqP62OHHAGWEpEG4ReHi2ZmhO5IQM963RMNM+G5uAZk3n0TGw9kguu1eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709898857; c=relaxed/simple;
-	bh=/VQiwZdXPfh3lN8CjKQo7Bv5mXhm0CmkWNd807BkdSs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YG4/iHoqredb2V/yuDtyF3OCb8M1l7XhsWnpKh8IcyGrFrMqUJBUlux12IEacRVXG/6/O0e1KlWhAHzIFQ9F90FbHOuBMy0/HzwoQjyGET8NNwaFoPGaYdEkyY3Vb4FyeiYDC2wb/x+NKEE9mVF9ADIDsQRbeBZFnz6y2Kl2xQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wwSm0Wk2; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709901657; c=relaxed/simple;
+	bh=TXQf43677jxUXlB4nvGLV0dNq6iBGC44IlQLToNFB3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WE5g4/uP9Bb4qp8KIh/qSlRdCFl28XXZCZiHkZT3oQervv4jHTt50bfl2ZBY4GnYPDq6ShdeHRXPhTcL2ynygCEHu7qs7leSMXNcMh8Rx1fGNWUZ3ZY60tQL2Zd2TqGKUUClVhKtDYYWAsaOzXL+vBU0UXLC6HLLOP6ZaykR7i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BsOhAUd8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wwSm0Wk2"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dc238cb1b17so875771276.0
-        for <linux-clk@vger.kernel.org>; Fri, 08 Mar 2024 03:54:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709898853; x=1710503653; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AJqfP1AAZ8opcqsCNeYdbwalcWiPkzV/nLiirCz1Z4g=;
-        b=wwSm0Wk2Xe/XMv8xlVdYUiklz6GJj54etMW6TFGN3GZhBZsVhyTuLmH6KfZF7wXGxq
-         +83fx2rzRf3B8ftEf/dyB0UEf9lrN8L8us12rCwiNghkk6VpJvakoBQRHUYVkHmfme1U
-         dA/qeJ8sprIzxHZDtZVidvNH2R0njkhayVyl3fsDlbf/++J65WiDPuLVdKd447RpwD22
-         EUXdlvDxuckul9IGnVroqCpKpuJlKDLTI1WYAskbD/qP9Z8REJGLt+YGmgX8/NbP6iVi
-         9wh+iGfOtK5jRtgdr1Xqq4BUF0mJqsstP0FAWiDWf4n5m7JIPAVqxIkSVAYAUQcJJNh8
-         n3Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709898853; x=1710503653;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AJqfP1AAZ8opcqsCNeYdbwalcWiPkzV/nLiirCz1Z4g=;
-        b=QEdP1/CyFeS33+C6eaZsU6hEN7sDp6dRbeEk5GRlzRYuFfU1ssw/Q8kTGFjHN9U+ac
-         W/rI84Ke/VbVQSw/HhmarmBZZEd/NDTMvr0T3Zpi946WhFh2/WXFLe95HHBVSfPF/jTc
-         3Op7fNC95V0ZnL1NgcLkrBTTCC0mI/6PhoAxlq0HTO+nZqrA2Mdsxbpew7xYOLzxNiK0
-         RJ+rfBEqpuwHfQm5IS2Abquu2o3ggABL+c4uJOwpzmLu4E47/jJhcG/GpVXWx3heTbLJ
-         AnD2Hdc1PmH3hB53MXO7Mtcp88HjqJKetJF5ruu0NSSwqrgMWWBBrKDy1j2IA4/WOhNW
-         pDOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhvE3+F8O72AvCYpN6IlK5BImn6L/9xAZbqNCNOdNQdVT3U+huSyBBQlH84R2ZPCrP9Z+iHPcBMP9sASeH3ycDwePyjfMWB1+f
-X-Gm-Message-State: AOJu0YwjlE6ek8CR1LvmoZMLEjVaOWY4QcAflOLCqCu6rsXQKlL5sFwT
-	V1sF+d22GrWbk4m7QtoFoIl8fdDysaDn7IMVFd5SCVA5IkFExldDzkVBiEo5F8TTcbHt5wCWTEg
-	97fse5G6J4mgJHFEBV3zi07QQYo2ewiZDrC507Q==
-X-Google-Smtp-Source: AGHT+IGP2ARwJiuBZcymnXJV+Xt44d1Hys7QasIbFgms8QtGVNvpSeqesp2i1294OGHSHgDc7jaFfgX0Os/hrKIfuf0=
-X-Received: by 2002:a25:8b01:0:b0:dcb:be59:25e1 with SMTP id
- i1-20020a258b01000000b00dcbbe5925e1mr18074057ybl.30.1709898853391; Fri, 08
- Mar 2024 03:54:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BsOhAUd8"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 428CcZ1F014971;
+	Fri, 8 Mar 2024 12:40:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=Sq/Zwrv+WazCGKEBJzRevR1V5zj7d0L8M5WVZMEXUkc=; b=Bs
+	OhAUd8tAczaLhHnCnsNKjPHPfPvmN39vbv2CCVie2Vqd4qHTOjsQcJ+MLUIraCMR
+	jx9DvWzkLp9pavQVVn9XMEytclP6ciWZouSSExTN5pYCUsWhLbr8rLP7fTMBsZaO
+	qdBVWECkm6vwnDXcgVaNWdSq45DdL8/jymbHjA1ocCbqJUVsc9RD+DrpXFt8AF9/
+	dwF5bHB0AAbx8q8tSPVGzkPhAlPI87z4/cjWoNwDVltmzzej6ICqOz/CnF9Aybai
+	pEb8BtnEFrl+pMgul49uY5cE+JI1ZrEIKJWFUx8gg6/EscDT+niPwqNrjJLzfo2E
+	s1VgLt+opQhYYG70WVqQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wr2v28035-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Mar 2024 12:40:23 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 428CeMgG005063
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 8 Mar 2024 12:40:22 GMT
+Received: from [10.216.7.18] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Fri, 8 Mar
+ 2024 04:40:17 -0800
+Message-ID: <c892f773-7716-4736-3499-5c8254e3618e@quicinc.com>
+Date: Fri, 8 Mar 2024 18:10:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 4/5] clk: qcom: Add camera clock controller driver for
+ SM8150
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Michael
+ Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
 References: <20240229-camcc-support-sm8150-v1-0-8c28c6c87990@quicinc.com>
  <20240229-camcc-support-sm8150-v1-4-8c28c6c87990@quicinc.com>
- <18567989-fb60-49ae-92e6-94e1bc2fa1c7@linaro.org> <83fd1995-a06e-b76a-d91b-de1c1a6ab0ea@quicinc.com>
- <4817a5b0-5407-4437-b94a-fc8a1bfcd25d@linaro.org> <e2627a99-307f-1e10-abfd-ce688cc2ec03@quicinc.com>
-In-Reply-To: <e2627a99-307f-1e10-abfd-ce688cc2ec03@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 8 Mar 2024 13:54:02 +0200
-Message-ID: <CAA8EJpogCOQ4W26hkBm6v_yemZ2F30z2TsO5vLKLUqRKkfYxvg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] clk: qcom: Add camera clock controller driver for SM8150
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+ <18567989-fb60-49ae-92e6-94e1bc2fa1c7@linaro.org>
+ <83fd1995-a06e-b76a-d91b-de1c1a6ab0ea@quicinc.com>
+ <4817a5b0-5407-4437-b94a-fc8a1bfcd25d@linaro.org>
+ <e2627a99-307f-1e10-abfd-ce688cc2ec03@quicinc.com>
+ <d893e8f8-66a7-4460-9468-0f3a359cece7@linaro.org>
+ <35a7ad40-aaf4-476e-8582-b83bac284881@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <35a7ad40-aaf4-476e-8582-b83bac284881@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gj0eWI-wLGhCwWHvz_uph5XFsLxreoND
+X-Proofpoint-ORIG-GUID: gj0eWI-wLGhCwWHvz_uph5XFsLxreoND
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-08_08,2024-03-06_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 adultscore=0 malwarescore=0 mlxscore=0
+ mlxlogscore=856 priorityscore=1501 impostorscore=0 bulkscore=0
+ clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2402120000 definitions=main-2403080101
 
-On Fri, 8 Mar 2024 at 12:47, Satya Priya Kakitapalli (Temp)
-<quic_skakitap@quicinc.com> wrote:
->
->
-> On 3/6/2024 7:25 PM, Bryan O'Donoghue wrote:
-> > On 06/03/2024 08:30, Satya Priya Kakitapalli (Temp) wrote:
-> >>>
-> >>> Anyway I suspect the right thing to do is to define a
-> >>> titan_top_gdsc_clk with shared ops to "park" the GDSC clock to 19.2
-> >>> MHz instead of turning it off.
-> >>>
-> >>> You can get rid of the hard-coded always-on and indeed represent the
-> >>> clock in /sysfs - which is preferable IMO to just whacking registers
-> >>> to keep clocks always-on in probe anyway.
-> >>>
-> >>> Please try to define the titan_top_gdsc_clk as a shared_ops clock
-> >>> instead of hard coding to always on.
-> >>>
-> >>
-> >> Defining the gdsc clk allows consumers to control it, we do not want
-> >> this clock to be disabled/controlled from consumers. Hence it is
-> >> better to not model this clock and just keep it always on from probe.
-> >
-> > Not if you mark it critical
-> >
->
-> Marking the clock as critical keeps the associated power domain
-> always-on which impacts power. For this reason we are not using
-> CLK_IS_CRITICAL and instead making them always on from probe.
 
-Please consider using pm_clk instead. This is a cleaner solution
-compared to keeping the clocks always on.
-
-> > static struct clk_branch cam_cc_gdsc_clk = {
-> >         .halt_reg = 0xc1e4,
-> >         .halt_check = BRANCH_HALT,
-> >         .clkr = {
-> >                 .enable_reg = 0xc1e4,
-> >                 .enable_mask = BIT(0),
-> >                 .hw.init = &(struct clk_init_data){
-> >                         .name = "cam_cc_gdsc_clk",
-> >                         .parent_hws = (const struct clk_hw*[]){
-> >                                 &cam_cc_xo_clk_src.clkr.hw
-> >                         },
-> >                         .num_parents = 1,
-> >                         .flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
-> >                         .ops = &clk_branch2_ops,
-> >                 },
-> >         },
-> > };
-> >
-> > and then add this to your camss clocks
-> >
-> > <&clock_camcc CAM_CC_GDSC_CLK>;
-> >
-> > The practice we have of just whacking clocks always-on in the probe()
-> > of the clock driver feels lazy to me, leaving the broken cleanups we
-> > have aside.
-> >
-> > As a user of the system I'd rather see correct/complete data in
-> > /sys/kernel/debug/clk/clk_summary
-> >
-> > Anyway I'm fine with setting the clock always on, I can always send
-> > out a series to address this bug-bear myself.
-> >
-> > So yeah just fix the cleanup and then please feel free to add my
-> >
-> > Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+On 3/8/2024 4:29 PM, Bryan O'Donoghue wrote:
+> On 08/03/2024 10:58, Bryan O'Donoghue wrote:
+>> On 08/03/2024 10:46, Satya Priya Kakitapalli (Temp) wrote:
+>>>>
+>>>> Not if you mark it critical
+>>>>
+>>>
+>>> Marking the clock as critical keeps the associated power domain 
+>>> always-on which impacts power. For this reason we are not using 
+>>> CLK_IS_CRITICAL and instead making them always on from probe.
+>>
+>> How does the clock do anything _useful_ if the power-domain gets 
+>> switched off ?
+>>
+>> ---
+>> bod
+>
+> i.e. the clock can't be running "always-on" if it has no power..
 >
 
+If BIT(0) is set from probe, during any active usecase, the clock gets 
+turned ON automatically when the power domain is turned ON.
 
--- 
-With best wishes
-Dmitry
+But when we use CLK_IS_CRITICAL flag, the framework keeps the power 
+domain ON and doesn't let the power domain to turn off even when there 
+is no active usecase.
+
+
