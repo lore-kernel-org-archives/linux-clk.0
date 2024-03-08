@@ -1,104 +1,64 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A055D75D;
-	Fri,  8 Mar 2024 20:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B583D23769;
+	Fri,  8 Mar 2024 23:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709929814; cv=none; b=FhBTa4HhOQKMjWG6ccyCz5BBDB2Tj49a7akBD0e8oditMJOeWqKfmN4RXYIk5mCOX2NFXISsP4Wn8SJSKc32ks1hmNs5ceFcZiOAWCvMbIRuS/GSK3R0M/wXW2p78GU0k5AlzGeBIztoWWT3/Xsr2ET9HXkPywgaTwMmUh73vdY=
+	t=1709939949; cv=none; b=Mwz8D+Ar3GuhO2NUq0Z7qCTe3ToZOWy/mKRAk8rf2ta3JMAeUNn5rFfYOYzgJmJp6DH4+GAd+vKgoHY1cUi8iTRkp6548hyfJfIVJsVl29U0d1WcQF8Rm9MmbG4WVrJYJ/K72bTe9lWeBYA2FNN9nJYn5jUVx1nwuXB+POvhaxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709929814; c=relaxed/simple;
-	bh=/adHs8UdVF6eIv76YbhCdGPFqVNfYolXsQeI4oZE9uw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=N+3MqlCrSlHy1Uc52Z02W3MwiB7z4jQaNx+YwMNYb7Ladhny2L7o5UBg51Ns6RQLqhcBB0bZgqmE65i5Rp6LkNb4jNGL5P9qfPw2qPWbS5NNfeUIMSSRF3j0WZZXYzeXFOpgZ1yYv8E2rzGdUQNEcs6pOkaMq7hfNb5bLpXWUOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RQQeO/Wk; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1709939949; c=relaxed/simple;
+	bh=+cF2mN+9Kj2VFltEP7L8IqJfKKIdKlmHtc0CbN6Wsbw=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=NiSDtQ/hpN13CaErzKBL/dcQWfUPAuFjZ07RAzFiOQPWRg/jHqzsGpfMFpRCRLrlf1g9vjYKVeUM6vri9Vvz+4Stxkk4gBf0QyF6/h0zXlCWPdJUDJxbyC2Tn3FDGBfLjnA+r+kclNzkrPA+XMiajy2udgLlS3KSZdnmijiVDGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGiqm1gs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RQQeO/Wk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1709929809;
-	bh=/adHs8UdVF6eIv76YbhCdGPFqVNfYolXsQeI4oZE9uw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=RQQeO/Wkn6o2TdtidpJsJiobZy7eLnnr6sKKmHgzHO0Zb0Y+A4plHRqg1EgRL3PFj
-	 1ekGdr53uZC0Lhxg5V9x+62b0f/NLHyZJ8MPseS6h5zrlcfTMzHha3PF03vly4T9zG
-	 qfEEjmwO+SEZJSFdkrH4kiC4qy+dOSmZ5WHZRAHKe1DKAqnwvPHrS9s/KcdjDMK5wS
-	 4vcohAKqFfITslM8mP63r8EbsN74W8TiDR348XfO2R8mBGH2ABeB/WDtcIzLTHMAqB
-	 F4owS2OSZB8I0Nq4d3MMZ/w47OVX+HAZfIxs0WnVnncMPpw5o1HDUiAVz87CWA5IJU
-	 WfT1iTxJzUSjw==
-Received: from [192.168.1.26] (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9A09237820F2;
-	Fri,  8 Mar 2024 20:30:07 +0000 (UTC)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Fri, 08 Mar 2024 15:29:56 -0500
-Subject: [PATCH] clk: mediatek: pllfh: Don't log error for missing fhctl
- node
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGiqm1gs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E342C433F1;
+	Fri,  8 Mar 2024 23:19:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709939949;
+	bh=+cF2mN+9Kj2VFltEP7L8IqJfKKIdKlmHtc0CbN6Wsbw=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=BGiqm1gs/+q9tvApSAg3ar2NmXxyx7HVg9dnmYatLEdtF9VGLTrCEiDGFZKi28MV0
+	 b1eVxsR8QT4IjfDYNjzVYeafGRQkB9vZP0SxbUCMQkt+u4VmWM2jHQQHW15SVwCVbl
+	 TprnpeEPpSC+fdJC/VveZia3dsRoY5pkxezq3S0IiOcVmVscObDASZyOSkrR+aQEJZ
+	 +HnPqR+IsV1zx3zXAzgoouV3VR/JzB54Cjn2RC7QL8gdL0SzzS1Q9a2Fyl2O7KVFsw
+	 oIoEMFzbicWM3V7ZhNH/063QTqQO/EonPn6rI1y9BloqrOPPcj2aubtxewvvHZUnVS
+	 +bMQKQAiQBhBw==
+Message-ID: <0b30aad3c2f7676f0e34b2ec5f0a170b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240308-mtk-fhctl-no-node-error-v1-1-51e446eb149a@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAEN162UC/x2MSQqAMAwAvyI5G6gLVP2KeNA21aC2kooI4t8tw
- lzmMPNAJGGK0GUPCF0cOfgkRZ6BWUY/E7JNDqUqa1WpBvdzRbeYc0MfEpaQRIKgVa7Rk65bqw2
- k+hByfP/nfnjfD2fV3KxpAAAA
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Johnson Wang <johnson.wang@mediatek.com>, 
- Edward-JW Yang <edward-jw.yang@mediatek.com>, 
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ba373ce7341518216a4940e76ce61d759b912b3d.1709721042.git.u.kleine-koenig@pengutronix.de>
+References: <cover.1709721042.git.u.kleine-koenig@pengutronix.de> <ba373ce7341518216a4940e76ce61d759b912b3d.1709721042.git.u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 1/3] clk: imx: imx8-acm: Convert to platform remove callback returning void
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+To: Michael Turquette <mturquette@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Date: Fri, 08 Mar 2024 15:19:07 -0800
+User-Agent: alot/0.10
 
-Support for fhctl clocks in apmixedsys was introduced at a later point
-and to this moment only one mt6795 based platform has a fhctl DT node
-present. Therefore the fhctl support in apmixedsys should be seen as
-optional and not cause an error when it is missing.
+Quoting Uwe Kleine-K=C3=B6nig (2024-03-06 02:38:55)
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is ignored (apart
+> from emitting a warning) and this typically results in resource leaks.
+>=20
+> To improve here there is a quest to make the remove callback return
+> void. In the first step of this quest all drivers are converted to
+> .remove_new(), which already returns void. Eventually after all drivers
+> are converted, .remove_new() will be renamed to .remove().
+>=20
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
 
-Change the message's log level to warning. The warning level is chosen
-so that it will still alert the fact that fhctl support might be
-unintentionally missing, but without implying that this is necessarily
-an issue.
-
-Even if the FHCTL DT nodes are added to all current platforms moving
-forward, since those changes won't be backported, this ensures stable
-kernel releases won't have live with this error.
-
-Fixes: d7964de8a8ea ("clk: mediatek: Add new clock driver to handle FHCTL hardware")
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- drivers/clk/mediatek/clk-pllfh.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/mediatek/clk-pllfh.c b/drivers/clk/mediatek/clk-pllfh.c
-index 3a2b3f90be25..094ec8a26d66 100644
---- a/drivers/clk/mediatek/clk-pllfh.c
-+++ b/drivers/clk/mediatek/clk-pllfh.c
-@@ -68,7 +68,7 @@ void fhctl_parse_dt(const u8 *compatible_node, struct mtk_pllfh_data *pllfhs,
- 
- 	node = of_find_compatible_node(NULL, NULL, compatible_node);
- 	if (!node) {
--		pr_err("cannot find \"%s\"\n", compatible_node);
-+		pr_warn("cannot find \"%s\"\n", compatible_node);
- 		return;
- 	}
- 
-
----
-base-commit: 11afac187274a6177a7ac82997f8691c0f469e41
-change-id: 20240308-mtk-fhctl-no-node-error-d0f87b749d7c
-
-Best regards,
--- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+Applied to clk-next
