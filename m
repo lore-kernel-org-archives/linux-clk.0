@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D573BBC3
-	for <linux-clk@vger.kernel.org>; Fri,  8 Mar 2024 23:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CD11DA3A
+	for <linux-clk@vger.kernel.org>; Fri,  8 Mar 2024 23:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709939959; cv=none; b=oXexDVRH6HWxLBFp/7LBxjJQ95NfoYYcZ3vJar3b8WCm+Oiv0Ung8PoyAPOs+wtuPctCqSe0g3jlbgKreXuIeJpVNzz+yRQvkyIaBuc+uxdKeZGUvVD5QSveY+hSX813QSk840eX1tXy+yQOulqoc5cVQwaqsp8F9i1G305VhyE=
+	t=1709939968; cv=none; b=knxaRRu16TwGLA57uvjujT8mCfqKAlFy4LlttORwMe11RZQRvPOakexXLgPq3ygsflr78V0+o3Ob2CwDDSnYySlHWsCXp111xXhNinbMbdl6J8X03Yox8wZMxILAMNF7zxyH4p2MgbL96T37rbHxfliSg+AZdhCpRGQOU0/89jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709939959; c=relaxed/simple;
-	bh=Kl/CL3TPY5yYfZn3WiVNhbQLZegamTMFDTfFjD1PEKM=;
+	s=arc-20240116; t=1709939968; c=relaxed/simple;
+	bh=VfYcHYz37FfC8fIy0RYtV/u5XKQDIyLKS84NhSzFfVk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=i51j4M/nX7vJKFgmzdGuV0HXovF/LHK5S2DCVm4jVq57VIlCV19//YW4Ctu8qvr6v3htKXqdr6w0Valpifvk+1Uer6HcLtpOGN7pRKCH5wmxw96meeeiEZkD8rT6bEh0BdCOJkO0xXn3SM9XgSqu/xkwA2qXwae3dkxiTLHCSKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRKEz1uA; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=ugfkV97lYfq6XFVMZj/YMFd1eHcI98+CLM5UwR4eN68WO/5s3H6tbalSJ0O9nr02VOQ/T+0f1oz4gjyTnAkw09V7dY/sl5EeKXCuoZYQMQQRii5GGCPgQYQNuWY/mi52VEl4NMGp+P1j1suSvdeV0kmW8Fi7fe3iS+cjkN4QzzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0KPpjQP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRKEz1uA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02B62C433F1;
-	Fri,  8 Mar 2024 23:19:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0KPpjQP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C53C433C7;
+	Fri,  8 Mar 2024 23:19:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709939959;
-	bh=Kl/CL3TPY5yYfZn3WiVNhbQLZegamTMFDTfFjD1PEKM=;
+	s=k20201202; t=1709939968;
+	bh=VfYcHYz37FfC8fIy0RYtV/u5XKQDIyLKS84NhSzFfVk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=CRKEz1uAeB1DB9EP1GzNFpMOF3NvKbxjvsu3t7NNy8+Xl9ZzH2SJb3U/siVwc7GeQ
-	 6xqBZAAdXKOQLtzi0ffEZduJ4YoKoJKitz1ySpULagFX9VaX7d2ylUZe/x9WbeoEy8
-	 /5QzJ6WeFy3eMjuamJ+QTPDz5S3Ljbnatfyrb9oEsJdI6Ek2PyjQjPGuftCRB9BtXD
-	 8QU4K5O0HkHLSfNw5e90I5CpD1GpjI+/03YzuDzQ/W1ScCJjlhvvf/AJ33tIQp3Xio
-	 SL4FPzufMugmyV8D7UZTeDHgQCUP0n0h86MGevSwUblGv2KXdZm+kEmeq3OTLKDn6b
-	 u5K+F1Dt5ysvA==
-Message-ID: <49439db165555c6c03160cb18e30a362.sboyd@kernel.org>
+	b=p0KPpjQPjRCvwgA3jZ4nsrKDld3gXU1kxO8JR+7OSeinmhT8OvHnDmPmcDUHw6/6V
+	 qwByd1myCkacsA1W48+GTEtSWUbfQksMDAtvFdSyB/aZ72ia6j4l4DxhtAb8TjlDIw
+	 QYl/5RirF+iD8V+BvaJUWyGLmyYixn7+Y5URa39gUp0b8i1CvEZlQB+OWwenRT4dK1
+	 t8ym203c213BaS4nH7sdTrbPov+8Uej51nUn7IgxMRWAJdfZaUUKwQ1TuMVC2raEsy
+	 7JUIVQE8L8Hi/wtY5Opf8Pbc9z8yDWNKEAHoi3F2Z5qWWBWpVXYFiiiqksLEQuHJAm
+	 zPFh+qntJCFeA==
+Message-ID: <5f0d9608b698ff4aa898514d3e8b57aa.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,16 +35,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <312ec7052c4e327c0b365e167a8e86b406cb7dfa.1709721042.git.u.kleine-koenig@pengutronix.de>
-References: <cover.1709721042.git.u.kleine-koenig@pengutronix.de> <312ec7052c4e327c0b365e167a8e86b406cb7dfa.1709721042.git.u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 2/3] clk: starfive: jh7110-isp: Convert to platform remove callback returning void
+In-Reply-To: <90054b8b2e118bc04ec37e044d0ac518bb177cf4.1709721042.git.u.kleine-koenig@pengutronix.de>
+References: <cover.1709721042.git.u.kleine-koenig@pengutronix.de> <90054b8b2e118bc04ec37e044d0ac518bb177cf4.1709721042.git.u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 3/3] clk: starfive: jh7110-vout: Convert to platform remove callback returning void
 From: Stephen Boyd <sboyd@kernel.org>
 Cc: Emil Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, linux-clk@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
 To: Michael Turquette <mturquette@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Date: Fri, 08 Mar 2024 15:19:16 -0800
+Date: Fri, 08 Mar 2024 15:19:26 -0800
 User-Agent: alot/0.10
 
-Quoting Uwe Kleine-K=C3=B6nig (2024-03-06 02:38:56)
+Quoting Uwe Kleine-K=C3=B6nig (2024-03-06 02:38:57)
 > The .remove() callback for a platform driver returns an int which makes
 > many driver authors wrongly assume it's possible to do error handling by
 > returning an error code. However the value returned is ignored (apart
