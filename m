@@ -1,85 +1,179 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03193138480;
-	Thu,  7 Mar 2024 22:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9AD2C85C;
+	Fri,  8 Mar 2024 08:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709849951; cv=none; b=qp0BEenpGx1l31rjXIs1yGZg4mqewfsAg+c4y44MsAbAdDGlsSkMCdcbhykT3DlPmwwUiHZkZrd/06584cAYKi29QDb9pQDnNv2Rxr089XIiaJDQ4PJS2IFgsiO+PLKmqHmTofzn0FGQZygZS9qCLgx8GiKuESLupuClTR8/RGY=
+	t=1709886458; cv=none; b=nwbAA3V6FAYn9r9b1GCdTgfe4aYS6ucUaYX2iSQYx+wlcN9ra8YrsFxvn9po2WlopBs3VFky+mdUV4CZ7RWWqvP+LznXS6tTR1dpVURge/qbdHQTiYaii1x8qVtnc4K3k2lOxMmak2foGzrrNV2FnSL/KJ7Y+mlhhRswPcS83YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709849951; c=relaxed/simple;
-	bh=NAFhcgfMUP7spt7IIedCEfy35hhbhzwIEFEoh/NeEfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxJv4HfmS0uTz2sELb9FvMt9HayDJH8gqexBTvIitNWgP0bMnZSFJVbTWSPpp9+qRXprna6Uxzn879mlcRR5DcB26S3aTk6mAyEXnU/RPBUAdojlwJonfFsFn+BFVJAZkrmK2yH4D3Fn96MtRPnAx7hGeOycvx0wAfY0iUelfvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsbNL5fT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709886458; c=relaxed/simple;
+	bh=it+8N8x9nkiwam2Z6P8taeub+gmE2B4+vtKE+rvyjVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jNc7D9YvokIR3X+tNsw4iOo4FK850LjisOrZsNB957MjKvLKt+o/dz595R3dOaIu9WHWRpjb3tufCVdBXu6oQuALcQ3jG177twtaFE0okoQId2N8tKBH9m9xSOyf/PgFeHWZ0xA6ve/TEqgcEfWba352vYxOq+SfKLSAg4UQ8sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XmNiLN0f; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsbNL5fT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77D7AC433F1;
-	Thu,  7 Mar 2024 22:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709849950;
-	bh=NAFhcgfMUP7spt7IIedCEfy35hhbhzwIEFEoh/NeEfM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tsbNL5fTmJHEXUV4T3i+J45UyNghKGJh5J/Ee3Um2FXS43jCijoYt7WgveHk6nXF7
-	 LSNNzbv8qAp3G0+niY2F+7B/KpJ/ivwZtqQ60EDypwdYWblwwu5MAgbL97VeTnnWiZ
-	 183dRsQZFQmUSNODn/9CoN4z/1Lc3tk1wv8vxTDHXWeHuVu7JNpGDxFR+9Ko+GcH7k
-	 Jnp1ZPb/4jQdTWLaaYI53nic5WKN+E9NQ5z9cmEcvaC3O9XsJIONZNu76RPpnisyOD
-	 7kIlcWKao7IAByVD4vIimTF7wIvM+jV6qGDtfwMSpHX9yU9zP0wJ4eqvr0Cf1Mut87
-	 wPCOCxbkCBCTw==
-Date: Thu, 7 Mar 2024 16:19:07 -0600
-From: Rob Herring <robh@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: magnus.damm@gmail.com, devicetree@vger.kernel.org, conor+dt@kernel.org,
-	linux-clk@vger.kernel.org, geert+renesas@glider.be,
-	krzysztof.kozlowski+dt@linaro.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, sboyd@kernel.org,
-	linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] dt-bindings: clock: renesas,rzg2l-cpg: Update
- #power-domain-cells = <1> for RZ/G3S
-Message-ID: <170984994653.3258431.619276607715437902.robh@kernel.org>
-References: <20240307140728.190184-1-claudiu.beznea.uj@bp.renesas.com>
- <20240307140728.190184-6-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XmNiLN0f"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4281ir34024318;
+	Fri, 8 Mar 2024 08:27:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=TTXHftTjjsBsUWU4UrbQ62ok56w6+TCUiqaFxrq8KxM=; b=Xm
+	NiLN0fpd08l0sB184F/qADPtqfV6FGGtimrTbKXHM1xqE0R9j4puWAxwLdhpmbB+
+	3vlbDawEcmIOmhiga3GtN60QmLZA968XbI+6nRPNWC8WnKExn6EBt5VBlaj6GPOI
+	6DCdO0ubt6hw76NB39eEOtHJWkKFWzujX7gHlhQGViJCrIYaiv1KOBexjXvde9xt
+	4c1nrsC63fLj+IQAfHIatlEhUtY/FIjF4z7D74HEX/sDpJLp5GVyhEHh6DDmco2V
+	TQONb8cGN/GdZHF7eef+iUxW87+OZspXbbsaPUPJdP18KoxC5RSWokN4zUFB6zxs
+	MiiiA3rMJKz2nJPMCcNg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wqn8q17tw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Mar 2024 08:27:03 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4288R1Ou019589
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 8 Mar 2024 08:27:02 GMT
+Received: from [10.216.7.18] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Fri, 8 Mar
+ 2024 00:26:55 -0800
+Message-ID: <1e353c1a-e267-14d0-fdf4-36aea9062ed3@quicinc.com>
+Date: Fri, 8 Mar 2024 13:56:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240307140728.190184-6-claudiu.beznea.uj@bp.renesas.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 2/5] clk: qcom: clk-alpha-pll: Add support for Regera PLL
+ ops
+Content-Language: en-US
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>,
+        Abhishek Sahu <absahu@codeaurora.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240229-camcc-support-sm8150-v1-0-8c28c6c87990@quicinc.com>
+ <20240229-camcc-support-sm8150-v1-2-8c28c6c87990@quicinc.com>
+ <630bb10a-2197-4573-a6d5-01fa6650c315@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <630bb10a-2197-4573-a6d5-01fa6650c315@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: DeOmEczicIlX57jmsaIPHm2uetJ4bz6Q
+X-Proofpoint-ORIG-GUID: DeOmEczicIlX57jmsaIPHm2uetJ4bz6Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-08_06,2024-03-06_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ mlxlogscore=880 mlxscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ malwarescore=0 adultscore=0 impostorscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2402120000 definitions=main-2403080066
 
 
-On Thu, 07 Mar 2024 16:07:23 +0200, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> The driver will be modified (in the next commits) to be able to specify
-> individual power domain ID for each IP. The driver will still
-> support #power-domain-cells = <0>, thus, previous users are not
-> affected.
-> 
-> The #power-domain-cells = <1> has been instantiated only for RZ/G3S at
-> the moment as individual platform clock drivers need to be adapted for
-> this to be supported on the rest of the SoCs.
-> 
-> Also, the description for #power-domain-cells was updated with the links
-> to per-SoC power domain IDs.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
-> 
-> Changes in v2:
-> - updated patch title and description
-> - kept both 0 and 1 for #power-domain-cells as not all the drivers,
->   device trees are adpated with this series
-> - added a reference to dt-bindings/clock/r9a0*-cpg.h for power domain
->   specifiers
-> - dropped the changes from examples section
-> 
->  .../bindings/clock/renesas,rzg2l-cpg.yaml      | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
-> 
+On 3/2/2024 5:26 AM, Konrad Dybcio wrote:
+> On 29.02.2024 06:38, Satya Priya Kakitapalli wrote:
+>> From: Taniya Das <quic_tdas@quicinc.com>
+>>
+>> Regera PLL ops are required to control the Regera PLL from clock
+>> controller drivers, thus add support for the same.
+>>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+>> ---
+> [...]
+>
+>
+>> +static int clk_regera_pll_enable(struct clk_hw *hw)
+> This function is 1:1 clk_zonda_pll_enable() logic-wise, except for
+> the `if (val & ZONDA_STAY_IN_CFA)` part. Would it be an issue on
+> Regera?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
 
+Yes, that is only applicable for Zonda PLL, hence we cannot re-use the 
+same code for Regera.
+
+
+>> +static void clk_regera_pll_disable(struct clk_hw *hw)
+> This again is clk_zonda_pll_disable(), except the very last value written
+> to PLL_OPMODE is different. Could you commonize them?
+>
+
+This difference is there between Zonda and regera PLLs as per the HW 
+recommendation, hence we cannot re-use this.
+
+
+>> +
+>> +static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate,
+>> +									u32 *l)
+> (Ugly wrapping, please touch it up)
+>
+> ..should it apply to zonda as the name suggests? Also, any explanations?
+
+
+Yes, it is applicable for Zonda PLL as well, will update the Zonda pll 
+set rate in next post. The L value needs to be adjusted to handle the 16 
+bit signed alpha.
+
+
+>> +	u64 remainder, quotient;
+>> +
+>> +	quotient = rate;
+>> +	remainder = do_div(quotient, prate);
+>> +	*l = quotient;
+>> +
+>> +	if ((remainder * 2) / prate)
+>> +		*l = *l + 1;
+>> +}
+>> +
+>> +static int clk_regera_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +				  unsigned long prate)
+>> +{
+>> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+>> +	unsigned long rrate;
+>> +	u32 l, alpha_width = pll_alpha_width(pll);
+>> +	u64 a;
+>> +	int ret;
+>> +
+>> +	rrate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+>> +
+>> +	ret = alpha_pll_check_rate_margin(hw, rrate, rate);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	if (a && (a & BIT(15)))
+> What is BIT(15)?
+>
+> Also, the left part of the condition is totally bogus, if a is 0 then
+> a & BIT(15) will surely be zero as well.
+
+
+Sure, will correct this.
+
+
+> Konrad
+>
+>
