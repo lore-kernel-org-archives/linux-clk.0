@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD4DA29;
-	Sat,  9 Mar 2024 01:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77A417CB;
+	Sat,  9 Mar 2024 01:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709946438; cv=none; b=ARTQhqcsAVKd7lKX/cdYtsi+AmOYq2e1ouj1h1+WyQsxlYstG6vFA3QEIDloRdd+TXkXVUpHCX6mr3MQzG5ycxkupe8eUuXOnskxflAO8/wlSUN7U5hJ+dTwVBbj+bn7o2Te/07lqmigt0AfOvbTXBezERQTRAPH/pg65FIe1+w=
+	t=1709946940; cv=none; b=Th5QflzCu6bWr0iDEl3NvnI7hDBadACe+roctJim41Gr3+68RwYZRtip8PeoH945A0U/+yDvlSHXwOFa60sed3sFFDOwSRb6EbsJ7yduSjP9ven6ELRX6lfoZi+UMeDHPKQ7EtXWXedVtmddNKj4j6ITxdbKvmwZrS9XP2jyMaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709946438; c=relaxed/simple;
-	bh=0d4/5dhHEz7FfRUlkbZpqy7jl9lAa4LKfgGn/enTyDY=;
+	s=arc-20240116; t=1709946940; c=relaxed/simple;
+	bh=6FpOtmp2kBz26b298jFdBcFB423gt4wI31rfYPbCUpw=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=kQIGOB1mzUZRf+7lZEn4f+PY6W8v/VfixEXPjaRvoa0tAQr7xVZuZOaLDWCNot0yscpZKwoITMdohzVTkxa+NVnr22VsidfZSrY9/Jur606rC0ig43oYKpPi+nSL1VfA2gzVuulpe31laK3gbj2QktndM8N9hxKEku3ZwTdaPIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okwEMuhw; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=qDyy4cZdWBjYxmELIrnyu7W4Oc8+nhsBsrGMth+HkCeHSxY8OsoJjy9TEIpozlE9x90Sj41/JfILOhhoQ5GU6Jk1V8Cf84rtGOr+4+O/FTfxG/sjxlf7zBbegkOqEnCynL++17h6RTuWlMwNrWugYu+mvpkOEUwV8P+NlIiRlEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSfoDCHK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okwEMuhw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70763C433C7;
-	Sat,  9 Mar 2024 01:07:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSfoDCHK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6D0C43390;
+	Sat,  9 Mar 2024 01:15:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709946437;
-	bh=0d4/5dhHEz7FfRUlkbZpqy7jl9lAa4LKfgGn/enTyDY=;
+	s=k20201202; t=1709946939;
+	bh=6FpOtmp2kBz26b298jFdBcFB423gt4wI31rfYPbCUpw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=okwEMuhwqWPWKj7Bc/eTONvUO68oDHT6bA9A/EEuJ4W8wiU2iPiJXKiEJ90LBKz+r
-	 ESNK6uHoV/xvslVXrTjdnpaaG+YUP9zKn/2h016cu2PcGA9x2uQOjqDyz+SA3Z2szx
-	 eahM5W3gv/xPZH+F1q6IxeocqC7FafFIAhZd0EK3PP9IaX1X67WuAptJgSJioVvOMw
-	 4pru9/FIBrMIlfgR/FX7OujJTHjgCJVVxtJdhtw1HXbte11WCvHBwvNH98f1M7UaXF
-	 WOWqummPJl7rJmbzWhRXCJ0QGrhr98oh3n2Tzqk5BwZONYGmx6uYbD9XDDFXzI+I/2
-	 edcLpGE3H5hWw==
-Message-ID: <8c56e786b692bf9400c7f66b5d3e17b0.sboyd@kernel.org>
+	b=iSfoDCHKj9458BMTQrj+BKQCp6obRV93LKX/x/kR3vJMgahQaih8BLzvCcnbYGDyF
+	 7AO3ywHmlSX7OAWnUCbFjWqqWK0Bue8L8PMvlcBGk73+NJr2OT7LlUDPtCA4btCEQz
+	 8K7G3cjdGQDF4p3A2GbcMMgFYq0Ik0VrwGDUaZztWhXCu+iJN3CFY4766XSxlnEPkw
+	 VBSzpyM0kciwmpZq9B525gZHRJrF+EQed2MAyprnW1zCf9Z0yKDog1IC0sMpm9OYV7
+	 +UoCdyNE1C1tHP91mLgdeGpsuPEl9iJJfXKNsmYFjEn4Z0WubdAW2qxVBXIosRSeVx
+	 u0S9To04HfRBg==
+Message-ID: <0fa3332abcf4593376795f52ea145722.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,22 +35,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240303120732.240355-1-andy.shevchenko@gmail.com>
-References: <20240303120732.240355-1-andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v1 1/1] clk: fractional-divider: Use bit operations consistently
+In-Reply-To: <20240301084437.16084-1-duoming@zju.edu.cn>
+References: <20240301084437.16084-1-duoming@zju.edu.cn>
+Subject: Re: [PATCH v4] clk: zynq: Prevent null pointer dereference caused by kmalloc failure
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 08 Mar 2024 17:07:15 -0800
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, mturquette@baylibre.com, michal.simek@amd.com, Duoming Zhou <duoming@zju.edu.cn>
+To: Duoming Zhou <duoming@zju.edu.cn>, linux-kernel@vger.kernel.org
+Date: Fri, 08 Mar 2024 17:15:37 -0800
 User-Agent: alot/0.10
 
-Quoting Andy Shevchenko (2024-03-03 04:07:32)
-> Use BIT() where makes sense. This alings usage of bit operations
-> in the same pieces of code. Moreover, strictly speaking by the
-> letter of the C standard, left shift of 1 by 31 bits is UB (undefined
-> behaviour), switching to BIT() addresses that as well.
+Quoting Duoming Zhou (2024-03-01 00:44:37)
+> The kmalloc() in zynq_clk_setup() will return null if the
+> physical memory has run out. As a result, if we use snprintf()
+> to write data to the null address, the null pointer dereference
+> bug will happen.
 >=20
-> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> This patch uses a stack variable to replace the kmalloc().
+>=20
+> Fixes: 0ee52b157b8e ("clk: zynq: Add clock controller driver")
+> Suggested-by: Michal Simek <michal.simek@amd.com>
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
 > ---
 
 Applied to clk-next
