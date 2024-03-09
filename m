@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFA515AF;
-	Sat,  9 Mar 2024 01:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD4DA29;
+	Sat,  9 Mar 2024 01:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709946372; cv=none; b=ftMucAvdgLTO+S/wWiCaDIV8jcpbnevUbdUcIb56CmVr6qnRiL+LcbKPopBjju//Z2z2g9UP+7r4ImSKwJQIea/D2N46CGgJMmlQTG6lunWouA+hMZZ9S3jWk1kVipcK7YtAnfMDDlYRncHl1ITBgFc6o8yhVHTJcwjW5I7O+K0=
+	t=1709946438; cv=none; b=ARTQhqcsAVKd7lKX/cdYtsi+AmOYq2e1ouj1h1+WyQsxlYstG6vFA3QEIDloRdd+TXkXVUpHCX6mr3MQzG5ycxkupe8eUuXOnskxflAO8/wlSUN7U5hJ+dTwVBbj+bn7o2Te/07lqmigt0AfOvbTXBezERQTRAPH/pg65FIe1+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709946372; c=relaxed/simple;
-	bh=lREFPRi9v8Cfg8jashZ/rXxJfnbAtvwWICX/500teMI=;
+	s=arc-20240116; t=1709946438; c=relaxed/simple;
+	bh=0d4/5dhHEz7FfRUlkbZpqy7jl9lAa4LKfgGn/enTyDY=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Iya7yer4EX1vLwOPE4Eq5izEkVhogf6kCechwhjPt+nkcxRrPfY/tr3vacUJTU2YioJL7+qbQQiJakVzfOv/SDhUHZAa54nXj0bzob1sS60rYEEk4Z5/wlrTrEh6Ie8uVHwqdrE7SGJvmfrxHYCrHYcfjeup5HLG4PgIwA8ZjWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AnMD7Ljb; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=kQIGOB1mzUZRf+7lZEn4f+PY6W8v/VfixEXPjaRvoa0tAQr7xVZuZOaLDWCNot0yscpZKwoITMdohzVTkxa+NVnr22VsidfZSrY9/Jur606rC0ig43oYKpPi+nSL1VfA2gzVuulpe31laK3gbj2QktndM8N9hxKEku3ZwTdaPIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okwEMuhw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AnMD7Ljb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AACCC433F1;
-	Sat,  9 Mar 2024 01:06:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okwEMuhw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70763C433C7;
+	Sat,  9 Mar 2024 01:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709946371;
-	bh=lREFPRi9v8Cfg8jashZ/rXxJfnbAtvwWICX/500teMI=;
+	s=k20201202; t=1709946437;
+	bh=0d4/5dhHEz7FfRUlkbZpqy7jl9lAa4LKfgGn/enTyDY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=AnMD7Ljb/bWwLQLHeFoHolay53eZ+jAE0E/LgyknWXXz+brGzGIiVEEg6pEDJdrEW
-	 TsZjveV1LR15YbyJzSHOcwQNY1RYB7LLwMGOzbTboGIVoID6s8brknXDPG/5C75mUy
-	 80Uwt+HyCShbU8u35uM0hNZqydopewDPTCysW0PV/lxKzgGebBc4Wipp+B9NwUrh+p
-	 jQ9do/lNy1tV3f2rFPe1K5X1ZBChj8S1pZL4IA0JgmE6TD5pvJ6rD4dKs/mVTQZlX8
-	 eAlwDsuIw9j+Cqp2Rh2qcCDmChPmGlCoAK44qRCIUHol9IItu+Z94ptmuE94e/oNT1
-	 3lSlW+jdM8whQ==
-Message-ID: <384bf6c936fac50042389cc5f53c3199.sboyd@kernel.org>
+	b=okwEMuhwqWPWKj7Bc/eTONvUO68oDHT6bA9A/EEuJ4W8wiU2iPiJXKiEJ90LBKz+r
+	 ESNK6uHoV/xvslVXrTjdnpaaG+YUP9zKn/2h016cu2PcGA9x2uQOjqDyz+SA3Z2szx
+	 eahM5W3gv/xPZH+F1q6IxeocqC7FafFIAhZd0EK3PP9IaX1X67WuAptJgSJioVvOMw
+	 4pru9/FIBrMIlfgR/FX7OujJTHjgCJVVxtJdhtw1HXbte11WCvHBwvNH98f1M7UaXF
+	 WOWqummPJl7rJmbzWhRXCJ0QGrhr98oh3n2Tzqk5BwZONYGmx6uYbD9XDDFXzI+I/2
+	 edcLpGE3H5hWw==
+Message-ID: <8c56e786b692bf9400c7f66b5d3e17b0.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,47 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240303121410.240761-1-andy.shevchenko@gmail.com>
-References: <20240303121410.240761-1-andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v1 1/1] clk: fractional-divider: Move mask calculations out of lock
+In-Reply-To: <20240303120732.240355-1-andy.shevchenko@gmail.com>
+References: <20240303120732.240355-1-andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v1 1/1] clk: fractional-divider: Use bit operations consistently
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Heiko Stuebner <heiko@sntech.de>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
 To: Andy Shevchenko <andy.shevchenko@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 08 Mar 2024 17:06:09 -0800
+Date: Fri, 08 Mar 2024 17:07:15 -0800
 User-Agent: alot/0.10
 
-Quoting Andy Shevchenko (2024-03-03 04:14:10)
-> There is no need to calculate masks under the lock taken.
-> Move them out of it.
+Quoting Andy Shevchenko (2024-03-03 04:07:32)
+> Use BIT() where makes sense. This alings usage of bit operations
+> in the same pieces of code. Moreover, strictly speaking by the
+> letter of the C standard, left shift of 1 by 31 bits is UB (undefined
+> behaviour), switching to BIT() addresses that as well.
 >=20
 > Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 > ---
 
 Applied to clk-next
-
-> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fract=
-ional-divider.c
-> index a0178182fc72..da057172cc90 100644
-> --- a/drivers/clk/clk-fractional-divider.c
-> +++ b/drivers/clk/clk-fractional-divider.c
-> @@ -195,14 +195,14 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsig=
-ned long rate,
->                 n--;
->         }
-> =20
-> +       mmask =3D GENMASK(fd->mwidth - 1, 0) << fd->mshift;
-> +       nmask =3D GENMASK(fd->nwidth - 1, 0) << fd->nshift;
-> +
->         if (fd->lock)
->                 spin_lock_irqsave(fd->lock, flags);
->         else
->                 __acquire(fd->lock);
-> =20
-> -       mmask =3D GENMASK(fd->mwidth - 1, 0) << fd->mshift;
-> -       nmask =3D GENMASK(fd->nwidth - 1, 0) << fd->nshift;
-> -
->         val =3D clk_fd_readl(fd);
->         val &=3D ~(mmask | nmask);
->         val |=3D (m << fd->mshift) | (n << fd->nshift);
-
-Should we pre-calculate the mask and shift values too!?
