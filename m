@@ -1,158 +1,184 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAFA18AE4;
-	Sun, 10 Mar 2024 13:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38923987D;
+	Sun, 10 Mar 2024 19:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710077424; cv=none; b=QjeN6NRjj3AXhL0jANGZqDVm0xIF8S4ErsvodrovGCM3+YAMFk5VrZd1mEXwq9LFlmM0eXM3BffxEBo1D3jshIhQiOG71VFgwpW1mllWQDGbftRNvPpWX+6MSkYJ1a0Sqn+fZHVmhF/telPrwEwMzYRyaezVdnvrnOJQZoD5rZc=
+	t=1710098533; cv=none; b=OPWKJg4ADL9BALAD4UjQ1y6loOJochViYJwS+9M4/YLGHmDSUlztirvAYUcOSeKFrLNuqXQt1dr1LyQtbL56I0STjexSBj8l445AAokAJX7EfiCeEdOBiMnxqHzBFp3/YCd9vrYQY0PZGe3CvMeC1ArqxXegV6W+Pyj45hs0qXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710077424; c=relaxed/simple;
-	bh=dw/JY7X0b1qIdVh3YqU3FmxjxhhOr+GpN4Q08vUxodw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M3hzbRXlrbc64CaeVhFOJAUBu5HxzxKV/Uq8/3Q6Uk+e43p58s1Iw84DMtervXFrgmDdwbgbF/fgExKkH9NPp0WnuuT8uJUGFFeqxZhUEP9/ajMCELnAuY9tA1XQFlY8pBmrOTQTkRqqRIgJATrzldJVmZcBclR3Vbq01fYT4/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev; spf=pass smtp.mailfrom=oltmanns.dev; dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b=IcxkRY0Z; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
+	s=arc-20240116; t=1710098533; c=relaxed/simple;
+	bh=OXX/LbaU7GJrUUhq8phRnsYSS16aaUbuS71uc4P5kmk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AK3pe9vS+1AH0vD74zgutf6V1Q+ECDnVz/WNyEp8AnTHsXvSCnc4NoUNyzPheO7bdPZx3kzvYN5Zp4ZhUHfQ2P1KuVX84IEeNxlJ+JEB01ihG6SrPpAEHVeQV4y/o1Yixt3Wh+xt2p7fUITC2ZZfOwKNOPKD84j/zD40fkV369k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=V8TY9Ze+; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="IcxkRY0Z"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Tt0tp1rRlz9spD;
-	Sun, 10 Mar 2024 14:22:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-	s=MBO0001; t=1710076930;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7pDxrp57wx9o7KlpdNomdNkpvEajcJRh1HWy8ymb1TQ=;
-	b=IcxkRY0ZfCl+CWr6HBvQUc0iV8ZKtTO66RsauQCGeLaUidZo1DTj3oAFF0BRhU13NianJC
-	1rEyqW5NF+xKAGn69TPbf38fHNWUB3Kjs5aFKiKCrLxFXmCiV00sPvc/mh/+XyQKUlfchQ
-	RJY9VzLTUslf67dVSZbAkB22Q3EmSAs1jXnYwUlPApYOKpcPIsP0ilxbzBhki81LdR1P0x
-	2ZU+EnFEXR8dNa0NDrfRWYxpw4fxVWnzHjPsmAKlNBjD6HiZsjIUApGqMFU7rM/k5EchJy
-	5dLfwOB5VzTfdmlT/w5aywrW8a4n9ga/MtaS3Gfmr5f1sljsjxPI7QtSkNfDrA==
-From: Frank Oltmanns <frank@oltmanns.dev>
-Subject: [PATCH v4 0/5] Pinephone video out fixes (flipping between two
- frames)
-Date: Sun, 10 Mar 2024 14:21:10 +0100
-Message-Id: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="V8TY9Ze+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+	s=s31663417; t=1710098497; x=1710703297; i=j.neuschaefer@gmx.net;
+	bh=OXX/LbaU7GJrUUhq8phRnsYSS16aaUbuS71uc4P5kmk=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+	b=V8TY9Ze+YTe382UrgndqBxwz5hqS5fJLAI7fB8uRGo6fH4kZJ46feIMj4voZLID5
+	 RvGb1TLgm6bu7u1zpXpn2mclOvCiV+JeQ0W4iiMXLx2yFakyyWL3QPdxbA6RAK2bd
+	 XSHxqrHfTnN67JzdE/6F2ASRY4UUvAMnS0ynUvQirt56VVh3aSPIZ62JghDQ73ZVV
+	 wP0ICXm9S1ESLUz+ZVq9CGFS8ED5EqGGikhvWMuho0XeVv2c+XOqa4W8WDy3sxQLn
+	 VxAVA8c1l+oRywe61KOlc7+VgufHVB129Jyva1QA2o3m6DEImxWjDlN/N00K/sgP3
+	 RIN+BWvp5Npsc13HXQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([78.35.216.168]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Ma24y-1rMQLt175g-00VzLi; Sun, 10
+ Mar 2024 20:21:37 +0100
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: linux-clk@vger.kernel.org,
+	openbmc@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH v10 0/4] Nuvoton WPCM450 clock and reset driver
+Date: Sun, 10 Mar 2024 20:20:58 +0100
+Message-ID: <20240310192108.2747084-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMaz7WUC/33N0QrCIBQG4FcJrzP0aOa66j2iC6dnTVg65pBi7
- N1zgwhidPn/h/87E0k4eEzkvJvIgNknH0MJcr8jtjXhjtS7kgkwEBy4pr0P2LcxIO27jjb+iYk
- ya13jEE4CJSnLfsD1UIbXW8mtT2McXuuTzJf2v5c5ZRRB6FqhU87yS+zGhwkhHRxmspAZPoxkw
- I7bDBSmUkYqA07bqt5gxJcRTG4zYmGkqTXoBlRlfph5nt/WupvcRwEAAA==
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
- Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- Frank Oltmanns <frank@oltmanns.dev>, stable@vger.kernel.org, 
- Diego Roversi <diegor@tiscali.it>, Erico Nunes <nunes.erico@gmail.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3141; i=frank@oltmanns.dev;
- h=from:subject:message-id; bh=dw/JY7X0b1qIdVh3YqU3FmxjxhhOr+GpN4Q08vUxodw=;
- b=owEB7QES/pANAwAIAZppogiUStPHAcsmYgBl7bP5B8rBUL/f+zksM5cLQwOBM5UrlgbQZQd5X
- nem3BA//m+JAbMEAAEIAB0WIQQC/SV7f5DmuaVET5aaaaIIlErTxwUCZe2z+QAKCRCaaaIIlErT
- x+trC/4xNVjCoMGliDsJxBS1gmnUIXkpwRCAmpBcLNTFd06mbn5edQXj1n6fGGcsCyJUnVZg2ZM
- pTz4c4lenL+0cYZHrkNXk5sHZqDYEE1VKsV6kKqsSBS7/361lEZiwtmAu/2/yqWDQPGgVjqPX4u
- semTG1gvzKNvFu/Dhm1MSgO3VCvvfx8xX8hwiQXvSOOBoVNmfw7vtP+zO4w2wTyS9jWGI3Tq/ZB
- FyVozS8DcPf+ADw1z4cShXxU2lXMZIisKiXL0LD5edCE1iz7P55NJPYrz76okDbCYxmBBCZTY62
- OsMi3NkmCa2f4vtdsBtQ0Pdc7gSayyUQK5VV2Wm8fvr3L9me5Hta67WyC+Yo5bfEFQyJ37iD8yv
- dSwYAtfBeiuX6qywJvd/gXIVIA6St5vlfJRTAwZ9CZY0b0w8RdutOVJixFM+YkhnHIWy6yzTV5J
- y3qAwYR1XkIOc1iKk7fyniLzYpzDTCH0yBZW4cTTanNPJ5zfxsOF2TSJwSj6NKRuqMrQE=
-X-Developer-Key: i=frank@oltmanns.dev; a=openpgp;
- fpr=02FD257B7F90E6B9A5444F969A69A208944AD3C7
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:h8nNCU1eVa9eOlYmr5/DlSxu2gYJ2DGv4jpVv4LW9vCiALtYAFJ
+ ePH5GCBPDGmbpfjl/xbZ3kp8GxEbKydLT7w0Kq/oyB3Rx/wzYm71htKr4T5xcGPla7HQK/+
+ tYq8ZkPy2vB5zYTJUmCi0pV50mtVOHOx4kTa1e+0+cojYzWR16eQ4B88NkxGUA3rSKXrC5t
+ AnkhS6HcZ9Bk9aehLRDcg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4MR0BT5pui4=;WqG0QuHADYmx2iw2xGIjrJ4Annf
+ 073tj58pKE3mU7r2NStD9h6Z+DY/VoZYCYkkYrvQws6NB9vqNSvYITJQ3bvwYSWGa7Fj73iBU
+ d1wAxYJxpciLESc9KUwDIAnEQ9eP1HL20dbgdOSiBWGZQyKSqXAIgQZv4bllX3prOmWjDt8C3
+ EAM9Tv4HtOBTT2l4A1kNYWznIEX8t6bN17+J7XF+ZjQhDdmhChYJRNXXBTdIF9Ggu2VjrSHeh
+ EhPyG0w9ZKAgqMFoacd6H90hyZlwAbES64/ktzMay7cUqn6WYO5xp9e9l/h57ZDCttaw/C6IW
+ KMS75K5C4fLELU8aHkfB/hE+keyN+uQN3daJqQ9XhuIV28h3bkFdYC00aunvxWfSnh6WWfaS7
+ jZb25f9o4hkOPb6LmEbO8lOESS/a1BPesBWzUtSKZRuBgxFifMfhXxCKvRHqjIC5sstr4Vi3f
+ OumVoOQSXpcf+Wk+QZ0A9xyhue8vDaFV+A06omhawZ2MPDpIHzODPSNfEGGweC0IdxXorfMbp
+ urNvhx+sDUbrEjTrmLH3e6Z6Z+gnR+cJyr9sqv+oitXQecR8DhNoK2UYGAF2hfXvqgUq0/fiC
+ 66o6VOrWOv4EI4vTHcticMvsOfaH3IzNdAZ0kyPfE19XHB045idVNDcWAopLYgB/yvnGsv6XW
+ XiKDWlLfa5ew3FB3fxxKqjCeaQnB7TAW/Dt5eJCsc3t9x/PuT+01bL8XWox4xeJem5dNEhnID
+ qMJpLLNeYy6NoMLfIehSGgIt8UHEpwEAkMSaRgntN2j39DpwsunCiWjo0UvOCldd1nsE+8Zdh
+ 9If5m6mHPJbsT2tyLz2Icl2+VuzfzCxaEjKCQabqIPUjQ=
 
-On some pinephones the video output sometimes freezes (flips between two
-frames) [1]. It seems to be that the reason for this behaviour is that
-PLL-MIPI is outside its limits, and the GPU is not running at a fixed
-rate.
+This series adds support for the clock and reset controller in the Nuvoton
+WPCM450 SoC. This means that the clock rates for peripherals will be calcu=
+lated
+automatically based on the clock tree as it was preconfigured by the bootl=
+oader.
+The 24 MHz dummy clock, that is currently in the devicetree, is no longer =
+needed.
+Somewhat unfortunately, this also means that there is a breaking change on=
+ce
+the devicetree starts relying on the clock driver, but I find it acceptabl=
+e in
+this case, because WPCM450 is still at a somewhat early stage.
 
-In this patch series I propose the following changes:
-  1. sunxi-ng: Adhere to the following constraints given in the
-     Allwinner A64 Manual regarding PLL-MIPI:
-      * M/N <= 3
-      * (PLL_VIDEO0)/M >= 24MHz
-      * 500MHz <= clockrate <= 1400MHz
+v10:
+- A small tweak (using selected instead of extending an already-long
+  default line) in Kconfig, for better robustness
 
-  2. Remove two operating points from the A64 DTS OPPs, so that the GPU
-     runs at a fixed rate of 432 MHz.
+v9:
+- Various improvements to the driver
+- No longer use global clock names (and the clock-output-names property)
+  to refer to the reference clock, but instead rely on a phandle reference
 
-Note, that when pinning the GPU to 432 MHz the issue [1] completely
-disappears for me. I've searched the BSP and could not find any
-indication that supports the idea of having the three OPPs. The only
-frequency I found in the BPSs for A64 is 432 MHz, which has also proven
-stable for me.
+v8:
+- https://lore.kernel.org/lkml/20230428190226.1304326-1-j.neuschaefer@gmx.=
+net/
+- Use %pe throughout the driver
 
-I very much appreciate your feedback!
+v7:
+- Simplified the error handling, by largely removing resource
+  deallocation, which:
+  - was already incomplete
+  - would only happen in a case when the system is in pretty bad state
+    because the clock driver didn't initialize correctly (in other
+    words, the clock driver isn't optional enough that complex error
+    handling really pays off)
 
-[1] https://gitlab.com/postmarketOS/pmaports/-/issues/805
+v6:
+- Dropped all patches except the clock binding and the clock driver, becau=
+se
+  they have mostly been merged
+- Minor correction to how RESET_SIMPLE is selected
 
-Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
----
-Changes in v4:
-- sunxi-ng: common: Address review comments.
-- Link to v3: https://lore.kernel.org/r/20240304-pinephone-pll-fixes-v3-0-94ab828f269a@oltmanns.dev
+v5:
+- Dropped patch 2 (watchdog: npcm: Enable clock if provided), which
+  was since merged upstream
+- Added patch 2 (clocksource: timer-npcm7xx: Enable timer 1 clock before u=
+se) again,
+  because I wasn't able to find it in linux-next
+- Switched the driver to using struct clk_parent_data
+- Rebased on 6.1-rc3
 
-Changes in v3:
-- dts: Pin GPU to 432 MHz.
-- nkm and a64: Move minimum and maximum rate handling to the common part
-  of the sunxi-ng driver.
-- Removed st7703 patch from series.
-- Link to v2: https://lore.kernel.org/r/20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev
+v4:
+- Leave WDT clock running during after restart handler
+- Fix reset controller initialization
+- Dropped patch 2/7 (clocksource: timer-npcm7xx: Enable timer 1 clock befo=
+re use),
+  as it was applied by Daniel Lezcano
 
-Changes in v2:
-- dts: Increase minimum GPU frequency to 192 MHz.
-- nkm and a64: Add minimum and maximum rate for PLL-MIPI.
-- nkm: Use the same approach for skipping invalid rates in
-  ccu_nkm_find_best() as in ccu_nkm_find_best_with_parent_adj().
-- nkm: Improve names for ratio struct members and hence get rid of
-  describing comments.
-- nkm and a64: Correct description in the commit messages: M/N <= 3
-- Remove patches for nm as they were not needed.
-- st7703: Rework the commit message to cover more background for the
-  change.
-- Link to v1: https://lore.kernel.org/r/20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev
+v3:
+- https://lore.kernel.org/lkml/20220508194333.2170161-1-j.neuschaefer@gmx.=
+net/
+- Changed "refclk" string to "ref"
+- Fixed some dead code in the driver
+- Added clk_prepare_enable call to the watchdog restart handler
+- Added a few review tags
 
----
-Frank Oltmanns (5):
-      clk: sunxi-ng: common: Support minimum and maximum rate
-      clk: sunxi-ng: a64: Set minimum and maximum rate for PLL-MIPI
-      clk: sunxi-ng: nkm: Support constraints on m/n ratio and parent rate
-      clk: sunxi-ng: a64: Add constraints on PLL-MIPI's n/m ratio and parent rate
-      arm64: dts: allwinner: a64: Run GPU at 432 MHz
+v2:
+- https://lore.kernel.org/lkml/20220429172030.398011-1-j.neuschaefer@gmx.n=
+et/
+- various small improvements
 
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  8 --------
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c         | 14 +++++++++-----
- drivers/clk/sunxi-ng/ccu_common.c             | 19 +++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_common.h             |  3 +++
- drivers/clk/sunxi-ng/ccu_nkm.c                | 21 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_nkm.h                |  2 ++
- 6 files changed, 54 insertions(+), 13 deletions(-)
----
-base-commit: dcb6c8ee6acc6c347caec1e73fb900c0f4ff9806
-change-id: 20231218-pinephone-pll-fixes-0ccdfde273e4
+v1:
+- https://lore.kernel.org/lkml/20220422183012.444674-1-j.neuschaefer@gmx.n=
+et/
 
-Best regards,
--- 
-Frank Oltmanns <frank@oltmanns.dev>
+
+Jonathan Neusch=C3=A4fer (4):
+  dt-bindings: clock: Add Nuvoton WPCM450 clock/reset controller
+  ARM: dts: wpcm450: Remove clock-output-names from reference clock node
+  clk: wpcm450: Add Nuvoton WPCM450 clock/reset controller driver
+  ARM: dts: wpcm450: Switch clocks to clock controller
+
+ .../bindings/clock/nuvoton,wpcm450-clk.yaml   |  65 +++
+ .../arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi |  23 +-
+ drivers/clk/Makefile                          |   2 +-
+ drivers/clk/nuvoton/Kconfig                   |  10 +-
+ drivers/clk/nuvoton/Makefile                  |   1 +
+ drivers/clk/nuvoton/clk-wpcm450.c             | 372 ++++++++++++++++++
+ .../dt-bindings/clock/nuvoton,wpcm450-clk.h   |  67 ++++
+ 7 files changed, 525 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,wpcm45=
+0-clk.yaml
+ create mode 100644 drivers/clk/nuvoton/clk-wpcm450.c
+ create mode 100644 include/dt-bindings/clock/nuvoton,wpcm450-clk.h
+
+=2D-
+2.43.0
 
