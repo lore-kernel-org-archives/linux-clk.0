@@ -1,149 +1,116 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31B4EBE
-	for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2024 00:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571E2AD49
+	for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2024 05:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710117212; cv=none; b=HHs7IvH5YSpJjbBmdX/cTMMfE3es4MAFBQMZF6JqOSvvsY89m57YYH4N8OiMty+WxvAXKA1a40rhE2r+CLVUf9B0T2TObw0h9BkE484yGfD9hXG7buG5jEUh835v/oQLvGer3Xb6T1ZRAxgWr3uMG4tQr5SxXsBQLIc32riAnwo=
+	t=1710135187; cv=none; b=R27v1w0IPNPsYO8ZALA8LbZHXGACeQYnhZ5rNxtxT1Vmq0Sc2Wxx9cb/QjMHXgnSC1M5DdQixv4N8WyBbsxekVtMkeaklyMLI61xtYURrQSWGgC3553GXRTlvWZRqOgDfqoGrJ2wRo4BNXFMt8YKW+DZfrvr6Qkwwoh+L4H4BXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710117212; c=relaxed/simple;
-	bh=6x6qS+PKks1vssAtWEk+UCzHzvg/Y2i8NzHpUWJh/NA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YIr5u6vinqpMt69/6ItYgcomsbNmLdMDpfHRptMzjD3Q3rTNvfSpjo8nCK8xNvCsOITXpoDiQh9ijVcmKUQ4ac1lw3VqGshutVKHQQ5DBAn2CyFW1e819UysRo313GKROrF4FrRrreLnskRULjQfQ6hkJSJsS/uSQSDdkWjkSTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OQ/UuWHR; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1710135187; c=relaxed/simple;
+	bh=3j3nQTPIQgZmg6idrQtrVJE8ty71JiVFYrY1M4EVvWw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AoTjkaCQXKGgC+sRtiKOE66XdyzHTPEfLc9e2PkojMqcUyWLvUNkKfnymUfbhtbheu7JH4ajLr0R4jYfViJKgliz4XG8E7/ZhWBfs7ctuGkdkdujD1U0Ip/wbYE8rOgvQVAFljXE7J4HGU6FQFrle7uFq04+On1b9kc1Ts03DUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=MpP94/mV; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OQ/UuWHR"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-33e99b639e0so45674f8f.0
-        for <linux-clk@vger.kernel.org>; Sun, 10 Mar 2024 17:33:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MpP94/mV"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5133bd7eb47so4669588e87.3
+        for <linux-clk@vger.kernel.org>; Sun, 10 Mar 2024 22:33:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710117209; x=1710722009; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gmOvVR3ukklFbxgndRD6p5C3vHUYb9SXByhvwW6S0L4=;
-        b=OQ/UuWHR/H1urByBTKhgfsnxTBLFhqC24oxmUzFZx7iWryimnE6nYSjChDfsPARnC4
-         EbgNc+qwRtFe4WHQR6xdBy2UkpohNv35U7LyZOq6qUd/+gHhx3RJy8U/h++s5tQAgUFP
-         zLH/UJ0oN0EvnFAzeukaFFwnxP4M/AgtAz1/YKkWNPBmiMhhWMiGnA67Qbk+11EOKrkV
-         6zqeVE5ygz92s9j+j8q+NGu7oK+MfSYkZhJiNgrbDk7Jjgp8rH+Sduw9uP3XNNcmNwrt
-         bhM47UnheMoJlz6l0GKEibfUaTppDwgymzWlK+QsWtEw9MNa+/JssOVWlRpsmOFjQK5y
-         KaVA==
+        d=tuxon.dev; s=google; t=1710135183; x=1710739983; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xHbnC+Lc+LUPq49FUf6LJd/f3BeJuZ1d1Rd9dT+IFJ8=;
+        b=MpP94/mV5dIETmUF4pXLN3Lm0l21emjkW42EMwpNDAin1RFUN9tBuXOTJMwFqMK6CX
+         935bVRaFcOh92wPbQ3oFZIIXOW1erMaVwLlXBG++MkHazYzxXS96Sm3iG4F13uz5H0n4
+         Jd35Xo7YgVshe3I/gx8kSVWTvnq15DWd1U351eJFGfnFU49zcQEyIsOK2w4/ZHNKRp6a
+         wn+EKh5JKi/XRwKQdQk0ZTTQvG4zhVn7MP68Vjjg+9ixsME4vtGt1QrddGfLHktiOoCn
+         HWueWdYxeZWQalqRcRcsZ70QCUaZk9N02dHsexj1sIAMBGnq/oROsrUpven9LUYUs+Xp
+         Jaaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710117209; x=1710722009;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gmOvVR3ukklFbxgndRD6p5C3vHUYb9SXByhvwW6S0L4=;
-        b=oWjOLRZn6JFNqoDTKU8GDkhjpK7FGa/o92wDVFmFDwtDKwy0JvVr4r+RyiRkk68TEe
-         IAY7CO2dtFbSjUu6/vDP8BgtY3hjo34wFcE5HAY2VK5GbfySOQKDWRCaXXkA6qKC7cV6
-         ZJQRt88pRUzhDNrR0ir240vUHpzr9+yq0kDGN/jx0PK74dqSyJ/sYhr4Qs6HOuHMapOP
-         r2O5Ule6DVmPzRTQw32Z5FsBUnOMLPYCYWErYFwlPHvZBVP70JVlJ1uOqNHLycPt9A8d
-         kiyCPwfOso/AZRgydHUhrQ/8LF+GOEYDEcU25v8ZsefwyoN5inx7CzQDz6OG99hMekSW
-         vRgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxjqDXw0Qsf2sX8Qn7CqoH5Pt6+Txry79AxfmgRWksxRbk1JosUfl+5tfYjWzZKMbSc6xNMIU7mi+ptZk5JOzQ5AzfaRBiMBmt
-X-Gm-Message-State: AOJu0YwcvmzyrlpG+RC8jz5vDbdYlR9T6OIfZZUD7nzPQlfPAfdHXoeX
-	cmIh3OZ2G2LfhrCfnu/HSt6iUFMKZZ1RYvnR5huXRWY+8b3zFYj9r2vFdtgeirw=
-X-Google-Smtp-Source: AGHT+IGAOsSKPQLg9syKKDEivpOtvcSvGyYVNDz7m/SWNDIp2rQb3GsY0k/im7Dh+YgHiW31v6uUBw==
-X-Received: by 2002:a05:600c:3b23:b0:413:286c:4fcf with SMTP id m35-20020a05600c3b2300b00413286c4fcfmr1340405wms.32.1710117209267;
-        Sun, 10 Mar 2024 17:33:29 -0700 (PDT)
-Received: from [127.0.0.1] ([176.61.106.68])
-        by smtp.gmail.com with ESMTPSA id m38-20020a05600c3b2600b00412b6fbb9b5sm13881720wms.8.2024.03.10.17.33.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Mar 2024 17:33:28 -0700 (PDT)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Mon, 11 Mar 2024 00:33:26 +0000
-Subject: [PATCH 2/2] clk: qcom: camcc-x1e80100: Set titan_top_gdsc as the
- parent GDSC of subordinate GDSCs
+        d=1e100.net; s=20230601; t=1710135183; x=1710739983;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xHbnC+Lc+LUPq49FUf6LJd/f3BeJuZ1d1Rd9dT+IFJ8=;
+        b=ObUgUUqwjP/AlZ3p0mqSc6zeSlBtLmAj3nccPMCShe2PbwF4xG0sn8L850cQH/h4Jp
+         MljFIkBRjPshwQha/oq9Qcg2CXuOtYh4h8snevJGkraDDJq99j0o/RG6TEdSHF1nW7nK
+         Nn0gAGnCAB58AXxx1O2WmVt1GzUCrmXU+556PDL7LLRMlRbLsu78MybeAaX8ieffEccP
+         4K4DtvFa10ken/8OFyX9STAoPJ6TaZQcJfBYMEttWlFv+uJUVqPtruATJK5gqZirP+CC
+         jVWhM49U1J7xFD5pw0r5D10CcqOinpKXuvDgk9NlZkNV8V0365ttgCnA+2KizUTm/gOw
+         A88w==
+X-Forwarded-Encrypted: i=1; AJvYcCX08GX3UIBlaaj9Zl8P+AXnxu+B5iIMEu9zYC+VAiw7AP0VYPSnHzX4mLJ9lrO3r7oj+yPJhm8fg+hhi6DHIwxcE6D8JoHmRnMW
+X-Gm-Message-State: AOJu0Ywtp0YFrTkCdATZe1zCIIoaFr1PAvTlmBg8e/wUBL5UcQA0IsMd
+	OzCXSB0ADCJIsFPMmLL03BkDN7mOaLJL4ohda5+vL+HxuhWfZ+3TSdRO+LFOVnE=
+X-Google-Smtp-Source: AGHT+IHKHznMTZ58B3IQYLr5W4/d7ASDqFveZHeyayDkPSbuNMpZeKsob78akyJEO8Ad+NXS7lVhIQ==
+X-Received: by 2002:a05:6512:3188:b0:513:a7c4:f6e9 with SMTP id i8-20020a056512318800b00513a7c4f6e9mr1660381lfe.11.1710135183248;
+        Sun, 10 Mar 2024 22:33:03 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.38])
+        by smtp.gmail.com with ESMTPSA id je1-20020a05600c1f8100b00412c1d51a0dsm7705109wmb.45.2024.03.10.22.33.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Mar 2024 22:33:02 -0700 (PDT)
+Message-ID: <72901ead-400f-416d-a3f6-7fb06fd23786@tuxon.dev>
+Date: Mon, 11 Mar 2024 07:32:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 21/39] dt-bindings: clk: at91: add sam9x7
+Content-Language: en-US
+To: Varshini Rajendran <varshini.rajendran@microchip.com>,
+ mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240223171342.669133-1-varshini.rajendran@microchip.com>
+ <20240223172732.672645-1-varshini.rajendran@microchip.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240223172732.672645-1-varshini.rajendran@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240311-linux-next-camcc-fixes-v1-2-d126ae0b9350@linaro.org>
-References: <20240311-linux-next-camcc-fixes-v1-0-d126ae0b9350@linaro.org>
-In-Reply-To: <20240311-linux-next-camcc-fixes-v1-0-d126ae0b9350@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
- Abel Vesa <abel.vesa@linaro.org>, Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.13-dev-26615
 
-The Titan TOP GDSC is the parent GDSC for all other GDSCs in the CAMCC
-block. None of the subordinate blocks will switch on without the parent
-GDSC switched on.
+s/dt-bindings: clk: at91/dt-bindings: clocks: at91sam9x5-sckc
 
-Fixes: 76126a5129b5 ("clk: qcom: Add camcc clock driver for x1e80100")
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- drivers/clk/qcom/camcc-x1e80100.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+or
 
-diff --git a/drivers/clk/qcom/camcc-x1e80100.c b/drivers/clk/qcom/camcc-x1e80100.c
-index 46bb225906bff..d421da57697a2 100644
---- a/drivers/clk/qcom/camcc-x1e80100.c
-+++ b/drivers/clk/qcom/camcc-x1e80100.c
-@@ -2212,6 +2212,8 @@ static struct clk_branch cam_cc_sfe_0_fast_ahb_clk = {
- 	},
- };
- 
-+static struct gdsc cam_cc_titan_top_gdsc;
-+
- static struct gdsc cam_cc_bps_gdsc = {
- 	.gdscr = 0x10004,
- 	.en_rest_wait_val = 0x2,
-@@ -2221,6 +2223,7 @@ static struct gdsc cam_cc_bps_gdsc = {
- 		.name = "cam_cc_bps_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -2233,6 +2236,7 @@ static struct gdsc cam_cc_ife_0_gdsc = {
- 		.name = "cam_cc_ife_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -2245,6 +2249,7 @@ static struct gdsc cam_cc_ife_1_gdsc = {
- 		.name = "cam_cc_ife_1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -2257,6 +2262,7 @@ static struct gdsc cam_cc_ipe_0_gdsc = {
- 		.name = "cam_cc_ipe_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -2269,6 +2275,7 @@ static struct gdsc cam_cc_sfe_0_gdsc = {
- 		.name = "cam_cc_sfe_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
+s/dt-bindings: clk: at91/dt-bindings: clocks:  atmel,at91sam9x5-sckc
 
--- 
-2.43.1
+in patch title
 
+On 23.02.2024 19:27, Varshini Rajendran wrote:
+> Add bindings for SAM9X7's slow clock controller.
+> 
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> ---
+> Changes in v4:
+> - Added sam9x7 compatible as an enum with sama7g5 compatible as per the
+>   review comment
+> ---
+>  .../devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml      | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+> index 7be29877e6d2..ab81f0b55ad5 100644
+> --- a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+> @@ -18,7 +18,9 @@ properties:
+>            - atmel,sama5d4-sckc
+>            - microchip,sam9x60-sckc
+>        - items:
+> -          - const: microchip,sama7g5-sckc
+> +          - enum:
+> +              - microchip,sama7g5-sckc
+> +              - microchip,sam9x7-sckc
+
+Alphanumerically sorted?
+
+>            - const: microchip,sam9x60-sckc
+>  
+>    reg:
