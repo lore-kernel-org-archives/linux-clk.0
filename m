@@ -1,59 +1,59 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E3B8F4A
-	for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2024 05:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB11279C2
+	for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2024 05:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710135267; cv=none; b=O3R6ftVngLLAfgplJmGfmcd1DoKHDRp7LR+pFvmbAw9lO7QFoHsWTX392Cv/1D8Jjm/eQLBrwyK51jQ2riz6KTT3hXoOTJFeMsJXr2K28OdQqrV2LHWpevi+tjSLlJa699WrLjbgCeubR+zCi/RBuN4vSrFL5Hd5HbVBhzsHYJY=
+	t=1710136730; cv=none; b=r+p2f6RYVwDBK3LOGjAVhrCvcPaHi9hdlXMmuwfTOcIekXZVZOVMstCgGL3xdI2OK0J3EtgppXRXohkubMFtqdQTGV3+5ADMOFBzCP5qSTcROfoO2gUXpYlQ3T8mJzjS4huSvt7oT5bN4VTIwNoPuZ3iNNlJYbckm6qZoK7Pz0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710135267; c=relaxed/simple;
-	bh=X0HkFP3h4GAfoSzZlGBUPgNLOGch6w2kurP1T33TSNo=;
+	s=arc-20240116; t=1710136730; c=relaxed/simple;
+	bh=SNlJeHoSGuiC4YTmt7+n+q13/150/TRv48G3IjiVdqk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=lpOwtO0k8bCiOP+St4A9CpAo8upq8xKk6m+1LatfKCFRXX3nCzzzDIlzapzSYdBfXBooTU+I5tn7jfPGObUl+3hRWOijQaDKbc8efk94WNj+WQbVGkqZeAWpNA+NBBzct/WEA+f9DleAYuVHRqr+wvnQayqAABOJmPeLzQpXEV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=f8fgZUFH; arc=none smtp.client-ip=209.85.167.46
+	 In-Reply-To:Content-Type; b=FAAl82HydltKDVyyPOCJsqUaBUoSN2zcQhTOxj7fkRUMtMvlvzRZYi8TfZ8gt7W99k3zbIeITOPTn6csNBZQ7lMl2vhauzADwAE/wllVeOps6gkz1eFxP1w6meJC6gebFo4slWMr6d1eaS0O/sM5sUF0TE1WOaluaZVl9A8Z69Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ae0RyZBu; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="f8fgZUFH"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51380c106d9so2802960e87.3
-        for <linux-clk@vger.kernel.org>; Sun, 10 Mar 2024 22:34:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ae0RyZBu"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4132a436086so2971045e9.2
+        for <linux-clk@vger.kernel.org>; Sun, 10 Mar 2024 22:58:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1710135264; x=1710740064; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1710136726; x=1710741526; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=i4oFriuVpik3kxTE+F3ATr5sVhpxlaV2CyW7MSXr7XM=;
-        b=f8fgZUFHhci72dkMbq3RpMQnE5ZXBQhOqSPoOh898d+UlCWyt1TKvOA/RtQV/KWMKu
-         u7aZS/6EdZf8tedb+zW5Rh+WIVpp1UQSnxzqfBFSiknGqSb8Qekwf/iUpDQmeDIqq9/l
-         F6UNDCZLsdxUmpvSvESY/DX5FdnC3wLSZQlouvNClJZp3Beo6/cQ8ILv8Ds4J+5LJQW2
-         kz3Z8Mue9BoH3Tub4zcqxETYTxbjGdYaVV/eC5JcLwYLbvrA103GkWqARZtgellUwqm1
-         QpmlwpKqwWgWEwPd1KYPqJqwhq3A7pcwGYWjz4yX0VHVUU/T6Xn0yPRrGXDdZNhDpq1n
-         Io9w==
+        bh=N+/SGeTJ2In+PBSViijiZt2zPtoByX/MEX5Z46fSm+M=;
+        b=Ae0RyZBuchrgUwx52QKJfZJul5TiBj85ctPe/r7azQNqB26eCeUA+/BZIRfRe1d+Mn
+         rSdrWCZvZU47cWqrxw/nlFgBpKSHJSHrSa+qR6N2uUJpYh+YfKGFJZaGTBnik2rY9FD0
+         wL+mrYuFNGhjWhB/KMpQ6ylPIF+KWVQbBYezo1a/icpgt35ChY4fqSrbpcHdb7xpucrr
+         YGOgFSoWZF+/wMik884zuKUqD4G8Aeyja1PfRLyWFPDODtmf3kQ4BNFArLxKqxa0OeYv
+         PAHTG94g4ShUNzPEPoCh3bTgK8tlFodTvlW0ztwS9p5Q0Smkd9xXrbf5sb/gAs8z7bOg
+         CrWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710135264; x=1710740064;
+        d=1e100.net; s=20230601; t=1710136726; x=1710741526;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i4oFriuVpik3kxTE+F3ATr5sVhpxlaV2CyW7MSXr7XM=;
-        b=XIe0QmJPvXHo3pm/VjULfVwx9Ii43AYgR+jzvhzwH2j9aKtwn/K1Ue5czXcIQZT5kB
-         +TFnVy2rqHG7QdRO1zU0y5dhKRfMrFYb04NTA1ZGH1kpfU53kUXH5i6+S2i3zHi69Xym
-         COIxQofuDI+XSkGAJNNkzP8Q0hY3e9pbIIke2AtIgKQguFqt9ydAe+Te5EF/SLE6S/X1
-         1AT420a7uiSYfOgNIBY3s1v3jnfx7Dr9Kb3NO/65kwfDkYcDupYBbPNzcAueSiH375re
-         9yhG68SjHnVopOSdHJyWQcVbcN2ENXEmnNiNhxWeE3MnmRE+FsqqiOQoWTw1Q9+VzFY1
-         MT0g==
-X-Forwarded-Encrypted: i=1; AJvYcCX5iJriWEh8YWhJqm9BMmB7xZ76366LhwhL4BG+sKQM4NbNGqj1889JMbRN0p6lfIg+7wHCb4najONyHUiAjgy7dXaIMBfIXSlE
-X-Gm-Message-State: AOJu0YyqZxKKQErf6yFUDmR9meCOJOJE2kZ/Q2zGt5gM4+MACuyykKTu
-	OAIRRaaI3JD9wA9oz3EiMkOZhXuFozeou6a3HBvwq+pKXm2lkLtjLHEz6gWdlmQ=
-X-Google-Smtp-Source: AGHT+IHNRWI3XKfvnftfwOlSr4Ea/ajJim8mIIcLpfbErv0NVc6dNa6acmyhS9jZCbVdPf8ooIBdmg==
-X-Received: by 2002:a05:6512:2823:b0:513:42e:ddf0 with SMTP id cf35-20020a056512282300b00513042eddf0mr4948217lfb.36.1710135264238;
-        Sun, 10 Mar 2024 22:34:24 -0700 (PDT)
+        bh=N+/SGeTJ2In+PBSViijiZt2zPtoByX/MEX5Z46fSm+M=;
+        b=Rd/7ARZawwoqg4hXUGFucUM0zuLElGXWMLfTr7ymgsoX96ips4Xg06zyacfAqH00KH
+         cYnME5G31iE/KSAlWBdPBQ/0KWi8hPKrfGyUX5c/VfLQOm8JZ0Z7ghA03kkl87SB0ELY
+         ricraN0VJVFd6q4MWIEDAWqlcSsaQEWW0iP26wj+zoXlupLY5Pq2cSv7sWECAZ4HckNg
+         SCPtTB44SxQJB+NSFGA+AYzWZmGWj6bOWKL9WfoQ+kElDYPqI9hw206oDBoHKc8flVWE
+         x1NCO/1j1bhLKJUdRWrBOcuT6KI826tBAMVlLeEXVDSKJRZIqRRcIKEQx7hKkUuSKCTw
+         Q/nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVu/M1+2VdxD9YMQWTXrYz96fr4DT4sYLU7AGHlHPBz6EwCe7fG1yPyA4ybEr1ovIyw0D88AMaru7jcos9wbNTI2KzEROZgkgaC
+X-Gm-Message-State: AOJu0YyJOjuZ6BCsZb6wiV1LMEgMLydV4sD+Zev/BCQbXkkORpIvdvpY
+	LS5fC/Xp1P9OntftCwuLxeZGyA4wLOqE4ejdfZhigTkNLEsstXoe3AFFSnUQ3KU=
+X-Google-Smtp-Source: AGHT+IGAA4xdFAU+7CwwGo6hGmuRT2qEqlJxSkz/J/OB3B3wRCxURUF7dIhuGE4MoPPkxUsohLZtLw==
+X-Received: by 2002:a05:600c:4ecf:b0:413:1713:864 with SMTP id g15-20020a05600c4ecf00b0041317130864mr4585552wmq.33.1710136726197;
+        Sun, 10 Mar 2024 22:58:46 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.38])
-        by smtp.gmail.com with ESMTPSA id je1-20020a05600c1f8100b00412c1d51a0dsm7705109wmb.45.2024.03.10.22.34.23
+        by smtp.gmail.com with ESMTPSA id g13-20020a05600c310d00b004131bb71c07sm7820750wmo.11.2024.03.10.22.58.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Mar 2024 22:34:23 -0700 (PDT)
-Message-ID: <8c53aff9-eddf-47e3-939f-a1e2abb8d824@tuxon.dev>
-Date: Mon, 11 Mar 2024 07:34:22 +0200
+        Sun, 10 Mar 2024 22:58:45 -0700 (PDT)
+Message-ID: <01e96d4b-3038-498b-a9b2-2acac51f1d80@tuxon.dev>
+Date: Mon, 11 Mar 2024 07:58:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,142 +61,279 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 24/39] clk: at91: sam9x7: add support for HW PLL freq
- dividers
+Subject: Re: [PATCH v4 27/39] clk: at91: sam9x7: add sam9x7 pmc driver
 Content-Language: en-US
 To: Varshini Rajendran <varshini.rajendran@microchip.com>,
  mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, mripard@kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
+ alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20240223171342.669133-1-varshini.rajendran@microchip.com>
- <20240223172758.672796-1-varshini.rajendran@microchip.com>
+ <20240223172831.672953-1-varshini.rajendran@microchip.com>
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240223172758.672796-1-varshini.rajendran@microchip.com>
+In-Reply-To: <20240223172831.672953-1-varshini.rajendran@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 23.02.2024 19:27, Varshini Rajendran wrote:
-> Add support for hardware dividers for PLL IDs in sam9x7 SoC. The system
-> PLL - PLLA and the system PLL divided by 2 - PLLADIV2 with PLL ID 0 and
-> 4 respectively, both have a hardware divider /2. This has to taken into
-
-to be taken
-
-> account in the software to obtain the right frequencies. Support for the
-> same is added in the PLL driver.
-> 
-> fcorepllack -----> HW Div = 2 -+--> fpllack
->                                |
->                                +--> HW Div = 2 ---> fplladiv2ck
-> 
-> In this case the corepll freq is 1600 MHz. So, the plla freq is 800 MHz
-> after the hardware divider and the plladiv2 freq is 400 MHz after the
-> hardware divider (Given that the DIVPMC is 0).
-
-s/Given/given
-
+On 23.02.2024 19:28, Varshini Rajendran wrote:
+> Add a driver for the PMC clocks of sam9x7 Soc family.
 > 
 > Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
 > ---
->  drivers/clk/at91/clk-sam9x60-pll.c | 38 ++++++++++++++++++++++++++----
->  drivers/clk/at91/pmc.h             |  1 +
->  2 files changed, 34 insertions(+), 5 deletions(-)
+> Changes in v4:
+> - Changed variable name alloc_mem to clk_mux_buffer to be more
+>   suggestive
+> - Changed description of @f structure member appropriately
+> ---
+>  drivers/clk/at91/Makefile |   1 +
+>  drivers/clk/at91/sam9x7.c | 946 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 947 insertions(+)
+>  create mode 100644 drivers/clk/at91/sam9x7.c
 > 
-> diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
-> index b0314dfd7393..1f80759309c0 100644
-> --- a/drivers/clk/at91/clk-sam9x60-pll.c
-> +++ b/drivers/clk/at91/clk-sam9x60-pll.c
-> @@ -73,9 +73,15 @@ static unsigned long sam9x60_frac_pll_recalc_rate(struct clk_hw *hw,
->  {
->  	struct sam9x60_pll_core *core = to_sam9x60_pll_core(hw);
->  	struct sam9x60_frac *frac = to_sam9x60_frac(core);
-> +	unsigned long freq;
->  
-> -	return parent_rate * (frac->mul + 1) +
-> +	freq = parent_rate * (frac->mul + 1) +
->  		DIV_ROUND_CLOSEST_ULL((u64)parent_rate * frac->frac, (1 << 22));
+> diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+> index 89061b85e7d2..8e3684ba2c74 100644
+> --- a/drivers/clk/at91/Makefile
+> +++ b/drivers/clk/at91/Makefile
+> @@ -20,6 +20,7 @@ obj-$(CONFIG_SOC_AT91SAM9) += at91sam9260.o at91sam9rl.o at91sam9x5.o dt-compat.
+>  obj-$(CONFIG_SOC_AT91SAM9) += at91sam9g45.o dt-compat.o
+>  obj-$(CONFIG_SOC_AT91SAM9) += at91sam9n12.o at91sam9x5.o dt-compat.o
+>  obj-$(CONFIG_SOC_SAM9X60) += sam9x60.o
+> +obj-$(CONFIG_SOC_SAM9X7) += sam9x7.o
+>  obj-$(CONFIG_SOC_SAMA5D3) += sama5d3.o dt-compat.o
+>  obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o dt-compat.o
+>  obj-$(CONFIG_SOC_SAMA5D2) += sama5d2.o dt-compat.o
+> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+> new file mode 100644
+> index 000000000000..d03387d2e35a
+> --- /dev/null
+> +++ b/drivers/clk/at91/sam9x7.c
+> @@ -0,0 +1,946 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * SAM9X7 PMC code.
+> + *
+> + * Copyright (C) 2023 Microchip Technology Inc. and its subsidiaries
+> + *
+> + * Author: Varshini Rajendran <varshini.rajendran@microchip.com>
+> + *
+> + */
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/slab.h>
 > +
-> +	if (core->layout->div2)
-> +		freq >>= 1;
+> +#include <dt-bindings/clock/at91.h>
 > +
-> +	return freq;
->  }
->  
->  static int sam9x60_frac_pll_set(struct sam9x60_pll_core *core)
-> @@ -432,6 +438,12 @@ static unsigned long sam9x60_div_pll_recalc_rate(struct clk_hw *hw,
->  	return DIV_ROUND_CLOSEST_ULL(parent_rate, (div->div + 1));
->  }
->  
-> +static unsigned long sam9x60_fixed_div_pll_recalc_rate(struct clk_hw *hw,
-> +						       unsigned long parent_rate)
-> +{
-> +	return parent_rate >> 1;
-> +}
+> +#include "pmc.h"
 > +
->  static long sam9x60_div_pll_compute_div(struct sam9x60_pll_core *core,
->  					unsigned long *parent_rate,
->  					unsigned long rate)
-> @@ -606,6 +618,16 @@ static const struct clk_ops sam9x60_div_pll_ops_chg = {
->  	.restore_context = sam9x60_div_pll_restore_context,
->  };
->  
-> +static const struct clk_ops sam9x60_fixed_div_pll_ops = {
-> +	.prepare = sam9x60_div_pll_prepare,
-> +	.unprepare = sam9x60_div_pll_unprepare,
-> +	.is_prepared = sam9x60_div_pll_is_prepared,
-> +	.recalc_rate = sam9x60_fixed_div_pll_recalc_rate,
-> +	.round_rate = sam9x60_div_pll_round_rate,
-> +	.save_context = sam9x60_div_pll_save_context,
-> +	.restore_context = sam9x60_div_pll_restore_context,
+> +static DEFINE_SPINLOCK(pmc_pll_lock);
+> +static DEFINE_SPINLOCK(mck_lock);
+> +
+> +/**
+> + * enum pll_ids - PLL clocks identifiers
+> + * @PLL_ID_PLLA:	PLLA identifier
+> + * @PLL_ID_UPLL:	UPLL identifier
+> + * @PLL_ID_AUDIO:	Audio PLL identifier
+> + * @PLL_ID_LVDS:	LVDS PLL identifier
+> + * @PLL_ID_PLLA_DIV2:	PLLA DIV2 identifier
+> + * @PLL_ID_MAX:		Max PLL Identifier
+> + */
+> +enum pll_ids {
+> +	PLL_ID_PLLA,
+> +	PLL_ID_UPLL,
+> +	PLL_ID_AUDIO,
+> +	PLL_ID_LVDS,
+> +	PLL_ID_PLLA_DIV2,
+> +	PLL_ID_MAX,
 > +};
 > +
->  struct clk_hw * __init
->  sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
->  			      const char *name, const char *parent_name,
-> @@ -725,10 +747,16 @@ sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
->  	else
->  		init.parent_names = &parent_name;
->  	init.num_parents = 1;
-> -	if (flags & CLK_SET_RATE_GATE)
-> -		init.ops = &sam9x60_div_pll_ops;
-> -	else
-> -		init.ops = &sam9x60_div_pll_ops_chg;
+> +/**
+> + * enum pll_type - PLL type identifiers
+> + * @PLL_TYPE_FRAC:	fractional PLL identifier
+> + * @PLL_TYPE_DIV:	divider PLL identifier
+> + */
+> +enum pll_type {
+> +	PLL_TYPE_FRAC,
+> +	PLL_TYPE_DIV,
+> +};
 > +
-> +	if (layout->div2) {
-> +		init.ops = &sam9x60_fixed_div_pll_ops;
-> +	} else {
-> +		if (flags & CLK_SET_RATE_GATE)
-> +			init.ops = &sam9x60_div_pll_ops;
-> +		else
-> +			init.ops = &sam9x60_div_pll_ops_chg;
-> +	}
+> +static const struct clk_master_characteristics mck_characteristics = {
+> +	.output = { .min = 32000000, .max = 266666667 },
+> +	.divisors = { 1, 2, 4, 3, 5},
+> +	.have_div3_pres = 1,
+> +};
 > +
+> +static const struct clk_master_layout sam9x7_master_layout = {
+> +	.mask = 0x373,
+> +	.pres_shift = 4,
+> +	.offset = 0x28,
+> +};
+> +
+> +/* Fractional PLL core output range. */
+> +static const struct clk_range plla_core_outputs[] = {
+> +	{ .min = 375000000, .max = 1600000000 },
+> +};
+> +
+> +static const struct clk_range upll_core_outputs[] = {
+> +	{ .min = 600000000, .max = 1200000000 },
+> +};
+> +
+> +static const struct clk_range lvdspll_core_outputs[] = {
+> +	{ .min = 400000000, .max = 800000000 },
+> +};
+> +
+> +static const struct clk_range audiopll_core_outputs[] = {
+> +	{ .min = 400000000, .max = 800000000 },
+> +};
+> +
+> +static const struct clk_range plladiv2_core_outputs[] = {
+> +	{ .min = 375000000, .max = 1600000000 },
+> +};
+> +
+> +/* Fractional PLL output range. */
+> +static const struct clk_range plla_outputs[] = {
+> +	{ .min = 732421, .max = 800000000 },
+> +};
+> +
+> +static const struct clk_range upll_outputs[] = {
+> +	{ .min = 300000000, .max = 600000000 },
+> +};
+> +
+> +static const struct clk_range lvdspll_outputs[] = {
+> +	{ .min = 10000000, .max = 800000000 },
+> +};
+> +
+> +static const struct clk_range audiopll_outputs[] = {
+> +	{ .min = 10000000, .max = 800000000 },
+> +};
+> +
+> +static const struct clk_range plladiv2_outputs[] = {
+> +	{ .min = 366210, .max = 400000000 },
+> +};
+> +
+> +/* PLL characteristics. */
+> +static const struct clk_pll_characteristics plla_characteristics = {
+> +	.input = { .min = 20000000, .max = 50000000 },
+> +	.num_output = ARRAY_SIZE(plla_outputs),
+> +	.output = plla_outputs,
+> +	.core_output = plla_core_outputs,
+> +};
+> +
+> +static const struct clk_pll_characteristics upll_characteristics = {
+> +	.input = { .min = 20000000, .max = 50000000 },
+> +	.num_output = ARRAY_SIZE(upll_outputs),
+> +	.output = upll_outputs,
+> +	.core_output = upll_core_outputs,
+> +	.upll = true,
+> +};
+> +
+> +static const struct clk_pll_characteristics lvdspll_characteristics = {
+> +	.input = { .min = 20000000, .max = 50000000 },
+> +	.num_output = ARRAY_SIZE(lvdspll_outputs),
+> +	.output = lvdspll_outputs,
+> +	.core_output = lvdspll_core_outputs,
+> +};
+> +
+> +static const struct clk_pll_characteristics audiopll_characteristics = {
+> +	.input = { .min = 20000000, .max = 50000000 },
+> +	.num_output = ARRAY_SIZE(audiopll_outputs),
+> +	.output = audiopll_outputs,
+> +	.core_output = audiopll_core_outputs,
+> +};
+> +
+> +static const struct clk_pll_characteristics plladiv2_characteristics = {
+> +	.input = { .min = 20000000, .max = 50000000 },
+> +	.num_output = ARRAY_SIZE(plladiv2_outputs),
+> +	.output = plladiv2_outputs,
+> +	.core_output = plladiv2_core_outputs,
+> +};
+> +
+> +/* Layout for fractional PLL ID PLLA. */
+> +static const struct clk_pll_layout plla_frac_layout = {
+> +	.mul_mask = GENMASK(31, 24),
+> +	.frac_mask = GENMASK(21, 0),
+> +	.mul_shift = 24,
+> +	.frac_shift = 0,
+> +	.div2 = 1,
 
-can't it be something like:
+It seems to me that this is not taken into account (see below).
 
-	if (layout->div2)
-		// ...
-	else if (flags & CLK_SET_RATE_GATE)
-		// ...
-	else
-		//
+> +};
+> +
+> +/* Layout for fractional PLLs. */
+> +static const struct clk_pll_layout pll_frac_layout = {
+> +	.mul_mask = GENMASK(31, 24),
+> +	.frac_mask = GENMASK(21, 0),
+> +	.mul_shift = 24,
+> +	.frac_shift = 0,
+> +};
+> +
+> +/* Layout for DIV PLLs. */
+> +static const struct clk_pll_layout pll_divpmc_layout = {
+> +	.div_mask = GENMASK(7, 0),
+> +	.endiv_mask = BIT(29),
+> +	.div_shift = 0,
+> +	.endiv_shift = 29,
+> +};
+> +
+> +/* Layout for DIV PLL ID PLLADIV2. */
+> +static const struct clk_pll_layout plladiv2_divpmc_layout = {
+> +	.div_mask = GENMASK(7, 0),
+> +	.endiv_mask = BIT(29),
+> +	.div_shift = 0,
+> +	.endiv_shift = 29,
+> +	.div2 = 1,
+> +};
+> +
+> +/* Layout for DIVIO dividers. */
+> +static const struct clk_pll_layout pll_divio_layout = {
+> +	.div_mask	= GENMASK(19, 12),
+> +	.endiv_mask	= BIT(30),
+> +	.div_shift	= 12,
+> +	.endiv_shift	= 30,
+> +};
+> +
+> +/*
+> + * PLL clocks description
+> + * @n:		clock name
+> + * @p:		clock parent
+> + * @l:		clock layout
+> + * @t:		clock type
+> + * @c:		pll characteristics
+> + * @f:		clock flags
+> + * @eid:	export index in sam9x7->chws[] array
+> + */
+> +static const struct {
+> +	const char *n;
+> +	const char *p;
+> +	const struct clk_pll_layout *l;
+> +	u8 t;
+> +	const struct clk_pll_characteristics *c;
+> +	unsigned long f;
+> +	u8 eid;
+> +} sam9x7_plls[][PLL_ID_MAX] = {
+> +	[PLL_ID_PLLA] = {
+> +		{
+> +			.n = "plla_fracck",
+> +			.p = "mainck",
+> +			.l = &plla_frac_layout,
+> +			.t = PLL_TYPE_FRAC,
+> +			/*
+> +			 * This feeds plla_divpmcck which feeds CPU. It should
+> +			 * not be disabled.
+> +			 */
+> +			.f = CLK_IS_CRITICAL | CLK_SET_RATE_GATE,
+> +			.c = &plla_characteristics,
+> +		},
+> +
+> +		{
+> +			.n = "plla_divpmcck",
+> +			.p = "plla_fracck",
+> +			.l = &pll_divpmc_layout,
 
-?
->  	init.flags = flags;
->  
->  	div->core.id = id;
-> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-> index bb9da35198d9..91d1c6305d95 100644
-> --- a/drivers/clk/at91/pmc.h
-> +++ b/drivers/clk/at91/pmc.h
-> @@ -64,6 +64,7 @@ struct clk_pll_layout {
->  	u8 frac_shift;
->  	u8 div_shift;
->  	u8 endiv_shift;
-> +	u8 div2;
->  };
->  
->  extern const struct clk_pll_layout at91rm9200_pll_layout;
+You mentioned in "[PATCH v4 24/39] clk: at91: sam9x7: add support for HW
+PLL freq dividers" that this has div2 but it is registered w/ a layout that
+has .div2 = 0.
+
+
