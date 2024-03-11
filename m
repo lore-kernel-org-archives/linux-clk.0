@@ -1,83 +1,132 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B4E12E58;
-	Mon, 11 Mar 2024 09:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1F724A11;
+	Mon, 11 Mar 2024 09:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710147926; cv=none; b=SEVhujvuayoNqOATniou2vjtcMyWy6F8ya/snA28kgVh59zjoSZr/Jy0MVdh0iyPt5HwZ86jA8r38WNd6VpbkaxEvOY7eYoI6IWZWQov73zwLd4qfdp+XeVNJRkUMTAC3pYL/I2pwMSHZ9l70wQq8SO6n2SBsN+iBaHW8VNXeag=
+	t=1710149680; cv=none; b=EfNVKezCNN/V5aqO8dENyOGVqaw6GlpobHkjbr6dhXT9LxNLjJb0irdCoKmlQZ5d8JADpTWCIrXWfnuoKEGEKu2fRb3oIrdaebYzZh4FsjNfa1OUyynpGs0FvH+28yhR3XV35cx3xYevIEhOhwa1moTJlRd36Ae9PboQ9AUpQzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710147926; c=relaxed/simple;
-	bh=LXDSRxlCG5CCneQuaLmC2tK3UwO3onm86dAkvFUIKWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fx1dXZvXDUQ812+RVjKrzbYTDcVY7JKKmNnCXZrgIvE0j0Gf2roLA3zMf3LxdyeCXV2REfHypLpNo/aiaZqBdf/fxDlNgy6e6OtNgtUshPKUo4pg5ouJUg0puXK1jR/ThoZ0nECxN8lMZ4lOtuUEbBUtoGNCoAti7SKlvlX9nMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=F3gbBwhr; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1710149680; c=relaxed/simple;
+	bh=GW58phvo715vgZ4OLgOYs7GQ4friduHICarbzwJ+rBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dHae5ooqzuBUXL6wOtK8wsYqVGoUE7jcGgEaAYqOuefndcDXDKCPbp8rosqBlJAUginUBLN+0VFwhq6kJ6KoJoj1t25foFMvD6ItRy4CJ031oZQxVWGzA68qJFiAMkHuAYawXhJM8NDWLUZ31Dboq8FwPhsFmA06RK9WK8y5yuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHFfUwpU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="F3gbBwhr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1710147404;
-	bh=LXDSRxlCG5CCneQuaLmC2tK3UwO3onm86dAkvFUIKWQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F3gbBwhrhfInMUCcHzDvlAviU2qW0BhsNaWhd4AciDCfigP6s49NtcSLChisuolP1
-	 yRcwSCW3dcoWBlWr5pHM7+IstmJ7fvjmD1vZ4/Tcg31pRhtJUi4dpn0NdrD927/M3c
-	 n1x8GEY+ulYCLd0TfAi2WANCJUjZcpy96YAMBkfvnxB3XujRXIzW3zxYvExmMCTZuz
-	 yVdIKu9LydYr/kVSUX9PTGT0Tpbsl/dWOUUf7YkFdsDy645n/s2ZZ/5epYf8VV7Kdb
-	 wbIPwB04Wd0yl2Dq53EAhZG4v8IeQCfnBmZlfP8OPXNTHysWgiKtIgiijkaR22GFby
-	 37/lqySviz8KA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 790EE3780C21;
-	Mon, 11 Mar 2024 08:56:43 +0000 (UTC)
-Message-ID: <f7fb18dc-817e-4d93-94a8-a4b7493cc8a6@collabora.com>
-Date: Mon, 11 Mar 2024 09:56:42 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHFfUwpU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5225C433C7;
+	Mon, 11 Mar 2024 09:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710149680;
+	bh=GW58phvo715vgZ4OLgOYs7GQ4friduHICarbzwJ+rBw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lHFfUwpU47zvYKu1hM+D7aUyoNUYYWyhmbB6eARHFy7mu5sAOJc1buAuJqMCkkKDL
+	 IBzWEx0q2ekbVzVZxj9v9IA0ndIesT5VC0jZj2hQSZMLmOZCu0/Dmfqym4lDQJywes
+	 il1bRyUc9ckkTiDcsCAAuTLlQ4g5ElqZSuqovJp6bVE8WL7sZPEQ8N67wN3nP/GEYj
+	 EoC5AuEGnoa1Gnsfvr/mF/QHJ8+9orwM1kQoUQlyxFF1ecZjKu/WHs2N443Qf6KzqG
+	 Sm7hCOv61YIHPp9kqUf/lHkUrjxPz1am59gRu6Z5ttUD+ZsHzv29wDXKr4kZWFjZfq
+	 AzTdl7VcwIaQA==
+Date: Mon, 11 Mar 2024 10:34:37 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Yang Xiwen <forbidden405@outlook.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] clk: set initial best mux parent to current parent
+ with CLK_MUX_ROUND_CLOSEST
+Message-ID: <20240311-speedy-bat-of-art-4facfc@houat>
+References: <20240307-mux-v3-1-0885fc1ab2c9@outlook.com>
+ <20240307-hot-hummingbird-of-atheism-87503c@houat>
+ <SEZPR06MB6959882F5DA673456A3AA85D96202@SEZPR06MB6959.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: pllfh: Don't log error for missing fhctl
- node
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Johnson Wang <johnson.wang@mediatek.com>,
- Edward-JW Yang <edward-jw.yang@mediatek.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240308-mtk-fhctl-no-node-error-v1-1-51e446eb149a@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240308-mtk-fhctl-no-node-error-v1-1-51e446eb149a@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Il 08/03/24 21:29, Nícolas F. R. A. Prado ha scritto:
-> Support for fhctl clocks in apmixedsys was introduced at a later point
-> and to this moment only one mt6795 based platform has a fhctl DT node
-> present. Therefore the fhctl support in apmixedsys should be seen as
-> optional and not cause an error when it is missing.
-> 
-> Change the message's log level to warning. The warning level is chosen
-> so that it will still alert the fact that fhctl support might be
-> unintentionally missing, but without implying that this is necessarily
-> an issue.
-> 
-> Even if the FHCTL DT nodes are added to all current platforms moving
-> forward, since those changes won't be backported, this ensures stable
-> kernel releases won't have live with this error.
-> 
-> Fixes: d7964de8a8ea ("clk: mediatek: Add new clock driver to handle FHCTL hardware")
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bftwjk7fcovlmr3o"
+Content-Disposition: inline
+In-Reply-To: <SEZPR06MB6959882F5DA673456A3AA85D96202@SEZPR06MB6959.apcprd06.prod.outlook.com>
 
 
+--bftwjk7fcovlmr3o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Mar 07, 2024 at 07:18:05PM +0800, Yang Xiwen wrote:
+> On 3/7/2024 4:48 PM, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Thu, Mar 07, 2024 at 10:03:50AM +0800, Yang Xiwen via B4 Relay wrote:
+> > > From: Yang Xiwen <forbidden405@outlook.com>
+> > >=20
+> > > Originally, the initial clock rate is hardcoded to 0, this can lead to
+> > > some problem when setting a very small rate with CLK_MUX_ROUND_CLOSES=
+T.
+> > >=20
+> > > For example, if the lowest possible rate provided by the mux is 1000H=
+z,
+> > > setting a rate below 500Hz will fail, because no clock can provide a
+> > > better rate than the non-existant 0Hz. But it should succeed with 100=
+0Hz
+> > > being set.
+> > >=20
+> > > Setting the initial best parent to current parent could solve this bu=
+g.
+> > >=20
+> > > Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
+> > I don't think it would be the way to go. The biggest issue to me is that
+> > it's inconsistent, and only changing the behaviour for a given flag
+> > doesn't solve that.
+>=20
+>=20
+> I think the current behavior is odd but conforms to the document if
+> CLK_MUX_ROUND_CLOSEST is not specified.
+
+clk_mux_determine_rate_flags isn't documented, and the determine_rate
+clk_ops documentation doesn't mention it can return an error.
+
+> If i understand correctly, the default behavior of mux clocks is to
+> select the closest rate lower than requested rate, and
+> CLK_MUX_ROUND_CLOSEST removes the "lower than" limitation, which is
+> what this version tries to accomplish.
+
+The situation is not as clear-cut as you make it to be, unfortunately.
+The determine_rate clk_ops implementation states:
+
+  Given a target rate as input, returns the closest rate actually
+  supported by the clock, and optionally the parent clock that should be
+  used to provide the clock rate.
+
+So CLK_MUX_ROUND_CLOSEST shouldn't exist, because that's what
+determine_rate expects so it should always be there.
+
+Now, the "actually supported by the clock" can be interpreted in
+multiple ways, and most importantly, doesn't state what the behaviour is
+if we can't find a rate actually supported by the clock.
+
+But now, this situation has been ambiguous for a while and thus drivers
+kind of relied on that ambiguity.
+
+So the way to fix it up is:
+
+  - Assess what drivers are relying on
+  - Document the current behaviour in clk_ops determine_rate
+  - Make clk_mux_determine_rate_flags consistent with that
+  - Run that through kernelci to make sure we don't have any regression
+
+Maxime
+
+--bftwjk7fcovlmr3o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZe7QLAAKCRDj7w1vZxhR
+xRtAAP4jnq0AU2eBH/EQxTHEF/Kw0cZq4fwDzKSVbh0+2DnA3QD/bl06o0eOOtCO
+eXKHNHCmleWeqbn3XdXUpoe3JNQYFwc=
+=Bdd2
+-----END PGP SIGNATURE-----
+
+--bftwjk7fcovlmr3o--
