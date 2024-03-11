@@ -1,110 +1,127 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C89A57305;
-	Mon, 11 Mar 2024 18:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA42F56765;
+	Mon, 11 Mar 2024 20:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710182733; cv=none; b=uq9hYkXbkfEwHS0TFki6KxZnsQWOXaSc3h7sv9UCBTfo+zVdUH8Ja2yFO9IuL2utNaag0VygYEWKsFyUCNY4EVQ35SUe1V4Jo7/mjiSV7ag3/afE+0Mp3tyBKjW8FKgyYfURmabAUwJ75TtWj4xj1U/BqZ2evTtXTcyU4BLsG84=
+	t=1710188772; cv=none; b=LXllkeWrt9JISvsvUzLMVRC2IJO0wD4G11aw+m2JWhDQUGy4n10I5OcAYbtMMGR+n6KKopyRGcvbZqF4Sa0O6V75oXQEVj8PlPlDhtnxppUkUS1Mx35Dr8AB1lqMAFf5MjjHZQnn8h6D+BlVZo/Ox46BvR3RmBP+EH/cbuTZcVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710182733; c=relaxed/simple;
-	bh=9LJtDUa++5L/0htCXqrVzUKNW9ZT/zIfFgMw5goN8zM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=la0/zX5CRJTQktJYiP8APNWiTJjKT9YP8WTxfezHmQU/7OFCTK3WtLY3bq8DOi0o9gprKKUiNvgBQYZN0/VkvkZz65esijkSDrCZE1hyYRQWzfStZ9eGm5QSV6ZmbNRArNp6kll389SbTH9BIkROSZcpqKqxWYp1e19NNHRzbuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EfTuna3x; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1710188772; c=relaxed/simple;
+	bh=QPiPfOFecIX8WW823ElbpwpIzdwIS3P4yFEaWv7mkWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HuTMB1lfjzboZq39UCW/VNAjt9xAeipxTu5E26OoO3e36GLwFqnKYfGNElfW4TfccsdWUKdVqSLR8HJs/FC/Wa6dbc+CmKvFFCZqnUfV3U66baf5J3x1nhsO6C6vwdYiZa1fx5MyrOTkySYpu5YRR4Mw+ikIXTe8mDr/wu52U5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=SlvZYcvC; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EfTuna3x"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-33e8e9a4edaso2416397f8f.2;
-        Mon, 11 Mar 2024 11:45:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710182729; x=1710787529; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+/wN2D+MaKOxSfb6CYMeYZ7ckjJAc5THjmRM23dZSKc=;
-        b=EfTuna3xThlkSqWkHFR+M5M0xldW3xqLXMFljz6R7lMki1ccBlMKkxfdS1gHpPSslu
-         iS4FCrAKG/KxOCdObXdwbjscLCyEbKYO2sYVc1Z1tnroe65OB4GPhnhZgsAwQreqQKKg
-         w5LVwXuxTkhuT28i5dIHpg8v19spQuNWZ3W4uqB9ZgbbAzS7uFiL9gUl01lZHw5IZLWa
-         ocBuv6zLhtdQsQJvcAwwOt8fYrVYaZI7Ts9ztCqcsDY/NYoAJaQnGqcOm2KdHogfzrvb
-         la+WtKjbY8cmnbDQkJkbXQWCI0G8KHENqT4SPKjyEuQOSMkPQaczb+CxuCn4biIVe5wS
-         T5tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710182729; x=1710787529;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+/wN2D+MaKOxSfb6CYMeYZ7ckjJAc5THjmRM23dZSKc=;
-        b=Wm20Mo040tLQSw6siXObnsdDpU2yxP289q9SRfMQMV8Xd0QPGSuwoUWoISIWA7+paR
-         8ILddFuDZL8LrMB5mjAg4YR51vmw4aq7PLT7A7f5XsUhZfE8ALTl0ZkWH9h+VCSl6/xA
-         5t8DNNkmyKv7o7DEdbBTGRTNFKA0JYb9D6v6WRlzM1EeGyHqHYRrFGls/hyIolxY9JcY
-         r4QL2kf3W1PAcZcvbJSEU5jKBQSOPIdto6BHJ6+KuiT8DMga2iADM9wckvU8dusJRYRW
-         EgwSyrWXlghXsBebZ5JlPrb6Zo4AJJ3klUBmreX7wC6r9I1JMyxKM79W8RTqkIX/MdiW
-         MXqg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7KS0dNkLgiAQzmCwyJa2vepofiUtTAnOAyCn+HloZbhsC/z206AdIvIr7MeDwmqtp7m62hRHCzztMg60ef941OTYvWFleA05cek7Vn1va5yRACzB1Ldj9W7mO8vooaABIs8qWKLRC
-X-Gm-Message-State: AOJu0YyQCjqISCWMRL7VcnXuxkRS81lut1mnhZ+iY3NBnXaE+QRTIO/h
-	l5uxXL0yA4x3EaETbY4MROWktr9NYSVS1bHjCY5suZvcD06C1QJJ
-X-Google-Smtp-Source: AGHT+IGAJ96i+gxphR34ruDubqmoZjfTzNYw7TWmSW1NsrEds6c0DHD/QkKNwdacMJaCV7eItZvf+g==
-X-Received: by 2002:a5d:4d82:0:b0:33d:1656:21fa with SMTP id b2-20020a5d4d82000000b0033d165621famr927040wru.24.1710182729430;
-        Mon, 11 Mar 2024 11:45:29 -0700 (PDT)
-Received: from [192.168.20.102] (57657817.catv.pool.telekom.hu. [87.101.120.23])
-        by smtp.googlemail.com with ESMTPSA id a11-20020adff7cb000000b0033b48190e5esm7012080wrq.67.2024.03.11.11.45.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Mar 2024 11:45:29 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Mon, 11 Mar 2024 19:45:20 +0100
-Subject: [PATCH 2/2] clk: qcom: clk-alpha-pll: reorder Stromer register
- offsets
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="SlvZYcvC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+	s=s31663417; t=1710188732; x=1710793532; i=j.neuschaefer@gmx.net;
+	bh=QPiPfOFecIX8WW823ElbpwpIzdwIS3P4yFEaWv7mkWQ=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:
+	 In-Reply-To;
+	b=SlvZYcvCkWrZ+mCkQDpi2VBxJ/6L1ZAGXws1NOatgnsxdgSresSqQDnRea1mpSfH
+	 /B3VMAFjBIDD/dxDBRRA7fuOSaMBhgehXQlv87TSVOuhSpmqjahRWi74YKEfk/To6
+	 8Jc84Rygo3PdNz46PHxTeEW5XQf9m6tW0ZjCaKCI47yAZ/i4h2OnTsdnthrH89ZMU
+	 /MMqYRJEMsivVUFea0jt7x94CWGNwI7G3/hbO4kqw/rwtbgkeUe80dp0z2WeSXkwI
+	 N2BkrCfw77XHpHW1jtnITJ14M//ohYQ6cVympecDUxaM6pVefGABkdSNgujkaeLoJ
+	 3zSFQwNF1kyRVcrqLA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([78.35.216.168]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MTiTt-1rFhIH1KH7-00U0Ec; Mon, 11
+ Mar 2024 21:25:32 +0100
+Date: Mon, 11 Mar 2024 21:25:30 +0100
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v10 2/4] ARM: dts: wpcm450: Remove clock-output-names
+ from reference clock node
+Message-ID: <Ze9ouqs8iS-zAuhs@probook>
+References: <20240310192108.2747084-1-j.neuschaefer@gmx.net>
+ <20240310192108.2747084-3-j.neuschaefer@gmx.net>
+ <c7693ae1-b7e4-4960-b447-8373855d86b5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240311-alpha-pll-stromer-cleanup-v1-2-f7c0c5607cca@gmail.com>
-References: <20240311-alpha-pll-stromer-cleanup-v1-0-f7c0c5607cca@gmail.com>
-In-Reply-To: <20240311-alpha-pll-stromer-cleanup-v1-0-f7c0c5607cca@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Sricharan R <quic_srichara@quicinc.com>, 
- Kathiravan T <quic_kathirav@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.12.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VmXkit7k7mmW0jx/"
+Content-Disposition: inline
+In-Reply-To: <c7693ae1-b7e4-4960-b447-8373855d86b5@linaro.org>
+X-Provags-ID: V03:K1:DSV6Jxp9uHCDsY5cseqTnBTBiB0eztWVfRktYcb2oYcokvKRra4
+ 36xFfyFtmLnvtHLi/sbqt6v+EL0+kGVcr8gIMT4LDzL1YzQmcwibae2KSp14mMDRXhBPNRi
+ KR2OmTO5waIBc8yh627MVue5HiV2SBfwq7lspqqfqiw60IhHHYlp/b+V5CTf6X9dVxvPd5R
+ geY1m9M0ezesO6j/VJbeA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:oHssPTIrJ5Y=;KMxezZM62M1iUl8WK1u15cMTYGh
+ rLJyAi6oqjFl38zgWdeud0amqwS4UmrjUiUj+xW+L2aiszNson6b516TzVrE7ky4IZIy0+91E
+ Hbt7EjpGZpwVFR3G0AL7xh2imxXYRXcf52eVVK1WkXdBkRwRJralUustf6To2+vNmWxuSjIkA
+ A4D/JuY5Ddg+NUmNvRYMQFvguVSSGshydMtrEYmohIZIaXacuzEGNlb1d0AxVypavtVNtJwKb
+ V+xdwNEbo1KennbrXLmNBUhKwM845kEIZK73viAEdSDjtu0FGNHwO9khFKrJakUi/3OWltiCS
+ 5/J6s91Ycl6/0Wp6aWp+IJ5xeMybwAhYGI8LEqskFnGObFzqhKzpJE0hhlkNHNkufpCgtognP
+ ziQR/Nd949Vnb5gzwnHN6BxUnHFJSIlX1dZS613dgsECEiNJF+n2UactGeF6LCOYW/mHpazEl
+ CUbOwJ1d0ydDIkN9hXIjMKEmXHhEAvuYlOz3voUOV1MQQ6dBvKf3GiBDtVu3N52hlH4pVXUKd
+ hvCEA23pD/ax/xV8vkiYsmR4TCkxkGPpQKZGcTU2SK9+13dbm9sqnK6TeQBjQU+PeItq7LSsE
+ BNzpBdsXu4DuRppS/q5DBv+pDi220T40B06QuDmLQTLkwQ4ONTPeNwOwZL999ShsV/IHyPBti
+ +NVLu74DBgoXuWGIciAse2Kn/qQOcncRwSGIhHRhRSN2t1wuXSHHzF7QEyesqL+XqnAdWxfV9
+ +QbEFep3Tf8IX91ZEUWK15dOOyNdEG8rBjPsXdWm4NrMk4d7y20oVCQFSqRKxMcG1S/8ywXyg
+ X2h3pyvwEN6BhXfESFUll55803BOKZT4LlmmCJGDKioG0=
 
-The register offset arrays are ordered based on the register
-offsets for all PLLs but the Stromer. For consistency, reorder
-the Stromer specific array as well.
 
-No functional changes.
+--VmXkit7k7mmW0jx/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
- drivers/clk/qcom/clk-alpha-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Mar 11, 2024 at 07:50:22AM +0100, Krzysztof Kozlowski wrote:
+> On 10/03/2024 20:21, Jonathan Neusch=C3=A4fer wrote:
+> > This is not necessary anymore, because the clk-wpcm450 driver doesn't
+> > rely on global clock names anymore.
+> >=20
+>=20
+> Your commit msg should say: since which commit.
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 58ae732959803..55a77e36dc44c 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -212,9 +212,9 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_USER_CTL] = 0x18,
- 		[PLL_OFF_USER_CTL_U] = 0x1c,
- 		[PLL_OFF_CONFIG_CTL] = 0x20,
-+		[PLL_OFF_STATUS] = 0x28,
- 		[PLL_OFF_TEST_CTL] = 0x30,
- 		[PLL_OFF_TEST_CTL_U] = 0x34,
--		[PLL_OFF_STATUS] = 0x28,
- 	},
- 	[CLK_ALPHA_PLL_TYPE_STROMER_PLUS] =  {
- 		[PLL_OFF_L_VAL] = 0x04,
+Good point, I'll do that in the next iteration
 
--- 
-2.44.0
+--VmXkit7k7mmW0jx/
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmXvaE0ACgkQCDBEmo7z
+X9uzbg/9E4zYqzQDzzKwxco6TXOke7njucuOXl8f2KDunoXsBn/3CLtkyc4/JhtR
+RMwRHsCkAHMm9VSLdVtVR+ZDXZZ/y3dbKpGIauB7bIii0rHY3iv3Ut1DNKQtd71q
+ZpwTki+a+gJavU+eQiAzspIgtv2IHfsdZa/6jy3t4IqryAlbFK7J9rfC+iyxD7HV
+MVCyKQqGD5qDJQ4UWJOzcX4/72zqjDTRXw65xTf94mr12+Htx55hV/1SVnSgEELj
+++zkxvMQAbbrO3QTm0gk0WUJfUL4tD72jfTeLxFuzsqDYklRcrOOHaM+KjJnU1E0
+4xWNj44KaIUNM6olaYwdSdAk/byR7FByBV8ShE7bWAJHLBCO++L1UiyBqzm8UPNB
+ZVbP+RNdYBdm1Dd6qPZ2uAMV3Qc1RjGBXeDQ+Ecqx/zn1FFrDe9JnCcxnTfM3P9w
+EzclIhK0NtORnqY7B+SxW4SREOXt0tiGPNBZWQSVH5w6b9jlsXakRRdbRSs1d2ij
+bjhkX0sexsT1VxSJI/uAj2nZ4jMkn4OpRMkz50AxV1fYNJcTkjbIwcIrF5uzK69O
+IxsiMzl6YIXaVEVz0dY82ZycKOqtVHkiX7uVfk/HbfKlR0svz6sxHIfGRQkW4Kna
+Go5/WdMeKJwngPm0en45IFyQTVV7OjnsYJkycNqucp0Qoo4hReM=
+=Fu2N
+-----END PGP SIGNATURE-----
+
+--VmXkit7k7mmW0jx/--
