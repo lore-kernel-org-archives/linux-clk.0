@@ -1,59 +1,59 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB11279C2
-	for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2024 05:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8106BF9D8
+	for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2024 06:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710136730; cv=none; b=r+p2f6RYVwDBK3LOGjAVhrCvcPaHi9hdlXMmuwfTOcIekXZVZOVMstCgGL3xdI2OK0J3EtgppXRXohkubMFtqdQTGV3+5ADMOFBzCP5qSTcROfoO2gUXpYlQ3T8mJzjS4huSvt7oT5bN4VTIwNoPuZ3iNNlJYbckm6qZoK7Pz0I=
+	t=1710139828; cv=none; b=Mma0P49TH7Lp279f23YFfJxd+rsms/xcpTf/uoltGoW4vzr/bPecs7OVxFDIo+WPQwNrS8fDDFbI3eBrcDFH43m/IGrSDa6Kbn8twQe2e7Is24tCpS+ECTNARErKJ+zHVogpZH2MqW3aSGXAc6k+iwI+7ro/ivjCNzH8i2BsMws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710136730; c=relaxed/simple;
-	bh=SNlJeHoSGuiC4YTmt7+n+q13/150/TRv48G3IjiVdqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FAAl82HydltKDVyyPOCJsqUaBUoSN2zcQhTOxj7fkRUMtMvlvzRZYi8TfZ8gt7W99k3zbIeITOPTn6csNBZQ7lMl2vhauzADwAE/wllVeOps6gkz1eFxP1w6meJC6gebFo4slWMr6d1eaS0O/sM5sUF0TE1WOaluaZVl9A8Z69Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ae0RyZBu; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1710139828; c=relaxed/simple;
+	bh=kMMHWHsVeMooooSXExdq3OzKqJPtV/KRYk1xvQmfLdw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PB0WD3ZBpjRgCVAC8RNlayELgbYvZ+znJLcslprDVD34ifNUpeQQkBUy7Ls2MnavNeCmHzYmnbkq9rpc5O5DUl91NAAtkUeE4nfjJ4H7oAXCduC4MX03CKUcCTU9PDryI0M55NXbj02wcUKWfQBuXusQ5vnHY2A0dbrOc52okDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nh4U4Fe8; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ae0RyZBu"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4132a436086so2971045e9.2
-        for <linux-clk@vger.kernel.org>; Sun, 10 Mar 2024 22:58:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nh4U4Fe8"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2d33986dbc0so43120771fa.2
+        for <linux-clk@vger.kernel.org>; Sun, 10 Mar 2024 23:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1710136726; x=1710741526; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1710139825; x=1710744625; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=N+/SGeTJ2In+PBSViijiZt2zPtoByX/MEX5Z46fSm+M=;
-        b=Ae0RyZBuchrgUwx52QKJfZJul5TiBj85ctPe/r7azQNqB26eCeUA+/BZIRfRe1d+Mn
-         rSdrWCZvZU47cWqrxw/nlFgBpKSHJSHrSa+qR6N2uUJpYh+YfKGFJZaGTBnik2rY9FD0
-         wL+mrYuFNGhjWhB/KMpQ6ylPIF+KWVQbBYezo1a/icpgt35ChY4fqSrbpcHdb7xpucrr
-         YGOgFSoWZF+/wMik884zuKUqD4G8Aeyja1PfRLyWFPDODtmf3kQ4BNFArLxKqxa0OeYv
-         PAHTG94g4ShUNzPEPoCh3bTgK8tlFodTvlW0ztwS9p5Q0Smkd9xXrbf5sb/gAs8z7bOg
-         CrWg==
+        bh=GFx82oD96JfZcte/AwcSqFIzsVxyk8Oe1JgVwAOV2zU=;
+        b=Nh4U4Fe88kMcF0Z3uJR8NoXSvhJxiMmKKjhJmBPK6lHDkbJmnbtTnNgza4SbauL7un
+         fF89Z6Wc5a/5dycCvQf0//jFf5kJKQzc6eQvJ9fnbzGimVjJ/StW7Q94CnY41FKXkxkg
+         TbopDwxgXsmJE3Q6ERqdwKHVH1jdG59bo8wEeVSYBE1xHpVHZWChGTA4eG8T4tX2wCMj
+         7lcTVgv1UYjbc8qGMB6nlXikB3tISrfK2NmzGUKyhj5BZwWLqqL2bgnW717OiGesJKkI
+         TsAP+6/CemA1LvKihft3tEqIIlPfnH+Kqsr1aa8m1gb/bF16aik+4JKyYFn/GArjbRC2
+         EhsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710136726; x=1710741526;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1710139825; x=1710744625;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N+/SGeTJ2In+PBSViijiZt2zPtoByX/MEX5Z46fSm+M=;
-        b=Rd/7ARZawwoqg4hXUGFucUM0zuLElGXWMLfTr7ymgsoX96ips4Xg06zyacfAqH00KH
-         cYnME5G31iE/KSAlWBdPBQ/0KWi8hPKrfGyUX5c/VfLQOm8JZ0Z7ghA03kkl87SB0ELY
-         ricraN0VJVFd6q4MWIEDAWqlcSsaQEWW0iP26wj+zoXlupLY5Pq2cSv7sWECAZ4HckNg
-         SCPtTB44SxQJB+NSFGA+AYzWZmGWj6bOWKL9WfoQ+kElDYPqI9hw206oDBoHKc8flVWE
-         x1NCO/1j1bhLKJUdRWrBOcuT6KI826tBAMVlLeEXVDSKJRZIqRRcIKEQx7hKkUuSKCTw
-         Q/nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVu/M1+2VdxD9YMQWTXrYz96fr4DT4sYLU7AGHlHPBz6EwCe7fG1yPyA4ybEr1ovIyw0D88AMaru7jcos9wbNTI2KzEROZgkgaC
-X-Gm-Message-State: AOJu0YyJOjuZ6BCsZb6wiV1LMEgMLydV4sD+Zev/BCQbXkkORpIvdvpY
-	LS5fC/Xp1P9OntftCwuLxeZGyA4wLOqE4ejdfZhigTkNLEsstXoe3AFFSnUQ3KU=
-X-Google-Smtp-Source: AGHT+IGAA4xdFAU+7CwwGo6hGmuRT2qEqlJxSkz/J/OB3B3wRCxURUF7dIhuGE4MoPPkxUsohLZtLw==
-X-Received: by 2002:a05:600c:4ecf:b0:413:1713:864 with SMTP id g15-20020a05600c4ecf00b0041317130864mr4585552wmq.33.1710136726197;
-        Sun, 10 Mar 2024 22:58:46 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.38])
-        by smtp.gmail.com with ESMTPSA id g13-20020a05600c310d00b004131bb71c07sm7820750wmo.11.2024.03.10.22.58.45
+        bh=GFx82oD96JfZcte/AwcSqFIzsVxyk8Oe1JgVwAOV2zU=;
+        b=tFqjCs7h8fetCFmphHvfJrQi8AwPf9KEIyQR29y7hM/TnyreaGc8hB1Qt+w38uRAgf
+         GsDe8NMrkQfFJdJLdda0SLKD33os3E6FBD9w0E2m15MLQwKpm/rGX1LL9irMkYIF+rCv
+         mZkTn0ZCxhcnOoObtpEHslkS4i3ZDjZs/YmXO4jHUxkZQ6cNJ0VFp75RWUuWy89enyU5
+         LFHH92TqoFmHBBmX03XUSCFT1dy5v8I/EHkTgK+2yUAg4/Ch+sK8iHsZ/5+hJwKWWA14
+         HBUwFAb1nL8NerJBUB7AT0rQrz7819e7nGKDl2BneRgBesnCYUfDmym5H83SH/Al1RxT
+         yOWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTJtKUg6M0CHJQbQhdX40aW5wewiag4MDTHuImNR852I2BJoHIBNs8Dog6Z8IympqhAmpikpU9ZxKhkCnjk4N1HIYL1LDF+YYK
+X-Gm-Message-State: AOJu0Yxf0XYKsAfKtIg4A14IpChpjvRTGD8HFS6Qt/NatFeWMfsqzFnu
+	PN5IY01bzrhlgy9/yxg61X3xUZPNFwjZreJ0v9PY7nKJnAMrA4N1y2JeAgL8NAw=
+X-Google-Smtp-Source: AGHT+IGO1UwGe9IvtCiUP8qTbZqbE1nTvW/tAmQxde1dAgChlWJ9G5Fe1ECkajHs0KSOQzNAu655Ng==
+X-Received: by 2002:a2e:a37a:0:b0:2d2:acef:6aca with SMTP id i26-20020a2ea37a000000b002d2acef6acamr2936055ljn.41.1710139824642;
+        Sun, 10 Mar 2024 23:50:24 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.97])
+        by smtp.gmail.com with ESMTPSA id et8-20020a056402378800b00566a4dec01fsm2619934edb.11.2024.03.10.23.50.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Mar 2024 22:58:45 -0700 (PDT)
-Message-ID: <01e96d4b-3038-498b-a9b2-2acac51f1d80@tuxon.dev>
-Date: Mon, 11 Mar 2024 07:58:43 +0200
+        Sun, 10 Mar 2024 23:50:24 -0700 (PDT)
+Message-ID: <c7693ae1-b7e4-4960-b447-8373855d86b5@linaro.org>
+Date: Mon, 11 Mar 2024 07:50:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,279 +61,82 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 27/39] clk: at91: sam9x7: add sam9x7 pmc driver
+Subject: Re: [PATCH v10 2/4] ARM: dts: wpcm450: Remove clock-output-names from
+ reference clock node
 Content-Language: en-US
-To: Varshini Rajendran <varshini.rajendran@microchip.com>,
- mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240223171342.669133-1-varshini.rajendran@microchip.com>
- <20240223172831.672953-1-varshini.rajendran@microchip.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240223172831.672953-1-varshini.rajendran@microchip.com>
+To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+ linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
+ Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
+ Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Guenter Roeck <linux@roeck-us.net>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Conor Dooley <conor+dt@kernel.org>
+References: <20240310192108.2747084-1-j.neuschaefer@gmx.net>
+ <20240310192108.2747084-3-j.neuschaefer@gmx.net>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240310192108.2747084-3-j.neuschaefer@gmx.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-
-On 23.02.2024 19:28, Varshini Rajendran wrote:
-> Add a driver for the PMC clocks of sam9x7 Soc family.
+On 10/03/2024 20:21, Jonathan Neuschäfer wrote:
+> This is not necessary anymore, because the clk-wpcm450 driver doesn't
+> rely on global clock names anymore.
 > 
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-> ---
-> Changes in v4:
-> - Changed variable name alloc_mem to clk_mux_buffer to be more
->   suggestive
-> - Changed description of @f structure member appropriately
-> ---
->  drivers/clk/at91/Makefile |   1 +
->  drivers/clk/at91/sam9x7.c | 946 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 947 insertions(+)
->  create mode 100644 drivers/clk/at91/sam9x7.c
-> 
-> diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
-> index 89061b85e7d2..8e3684ba2c74 100644
-> --- a/drivers/clk/at91/Makefile
-> +++ b/drivers/clk/at91/Makefile
-> @@ -20,6 +20,7 @@ obj-$(CONFIG_SOC_AT91SAM9) += at91sam9260.o at91sam9rl.o at91sam9x5.o dt-compat.
->  obj-$(CONFIG_SOC_AT91SAM9) += at91sam9g45.o dt-compat.o
->  obj-$(CONFIG_SOC_AT91SAM9) += at91sam9n12.o at91sam9x5.o dt-compat.o
->  obj-$(CONFIG_SOC_SAM9X60) += sam9x60.o
-> +obj-$(CONFIG_SOC_SAM9X7) += sam9x7.o
->  obj-$(CONFIG_SOC_SAMA5D3) += sama5d3.o dt-compat.o
->  obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o dt-compat.o
->  obj-$(CONFIG_SOC_SAMA5D2) += sama5d2.o dt-compat.o
-> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
-> new file mode 100644
-> index 000000000000..d03387d2e35a
-> --- /dev/null
-> +++ b/drivers/clk/at91/sam9x7.c
-> @@ -0,0 +1,946 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * SAM9X7 PMC code.
-> + *
-> + * Copyright (C) 2023 Microchip Technology Inc. and its subsidiaries
-> + *
-> + * Author: Varshini Rajendran <varshini.rajendran@microchip.com>
-> + *
-> + */
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/slab.h>
-> +
-> +#include <dt-bindings/clock/at91.h>
-> +
-> +#include "pmc.h"
-> +
-> +static DEFINE_SPINLOCK(pmc_pll_lock);
-> +static DEFINE_SPINLOCK(mck_lock);
-> +
-> +/**
-> + * enum pll_ids - PLL clocks identifiers
-> + * @PLL_ID_PLLA:	PLLA identifier
-> + * @PLL_ID_UPLL:	UPLL identifier
-> + * @PLL_ID_AUDIO:	Audio PLL identifier
-> + * @PLL_ID_LVDS:	LVDS PLL identifier
-> + * @PLL_ID_PLLA_DIV2:	PLLA DIV2 identifier
-> + * @PLL_ID_MAX:		Max PLL Identifier
-> + */
-> +enum pll_ids {
-> +	PLL_ID_PLLA,
-> +	PLL_ID_UPLL,
-> +	PLL_ID_AUDIO,
-> +	PLL_ID_LVDS,
-> +	PLL_ID_PLLA_DIV2,
-> +	PLL_ID_MAX,
-> +};
-> +
-> +/**
-> + * enum pll_type - PLL type identifiers
-> + * @PLL_TYPE_FRAC:	fractional PLL identifier
-> + * @PLL_TYPE_DIV:	divider PLL identifier
-> + */
-> +enum pll_type {
-> +	PLL_TYPE_FRAC,
-> +	PLL_TYPE_DIV,
-> +};
-> +
-> +static const struct clk_master_characteristics mck_characteristics = {
-> +	.output = { .min = 32000000, .max = 266666667 },
-> +	.divisors = { 1, 2, 4, 3, 5},
-> +	.have_div3_pres = 1,
-> +};
-> +
-> +static const struct clk_master_layout sam9x7_master_layout = {
-> +	.mask = 0x373,
-> +	.pres_shift = 4,
-> +	.offset = 0x28,
-> +};
-> +
-> +/* Fractional PLL core output range. */
-> +static const struct clk_range plla_core_outputs[] = {
-> +	{ .min = 375000000, .max = 1600000000 },
-> +};
-> +
-> +static const struct clk_range upll_core_outputs[] = {
-> +	{ .min = 600000000, .max = 1200000000 },
-> +};
-> +
-> +static const struct clk_range lvdspll_core_outputs[] = {
-> +	{ .min = 400000000, .max = 800000000 },
-> +};
-> +
-> +static const struct clk_range audiopll_core_outputs[] = {
-> +	{ .min = 400000000, .max = 800000000 },
-> +};
-> +
-> +static const struct clk_range plladiv2_core_outputs[] = {
-> +	{ .min = 375000000, .max = 1600000000 },
-> +};
-> +
-> +/* Fractional PLL output range. */
-> +static const struct clk_range plla_outputs[] = {
-> +	{ .min = 732421, .max = 800000000 },
-> +};
-> +
-> +static const struct clk_range upll_outputs[] = {
-> +	{ .min = 300000000, .max = 600000000 },
-> +};
-> +
-> +static const struct clk_range lvdspll_outputs[] = {
-> +	{ .min = 10000000, .max = 800000000 },
-> +};
-> +
-> +static const struct clk_range audiopll_outputs[] = {
-> +	{ .min = 10000000, .max = 800000000 },
-> +};
-> +
-> +static const struct clk_range plladiv2_outputs[] = {
-> +	{ .min = 366210, .max = 400000000 },
-> +};
-> +
-> +/* PLL characteristics. */
-> +static const struct clk_pll_characteristics plla_characteristics = {
-> +	.input = { .min = 20000000, .max = 50000000 },
-> +	.num_output = ARRAY_SIZE(plla_outputs),
-> +	.output = plla_outputs,
-> +	.core_output = plla_core_outputs,
-> +};
-> +
-> +static const struct clk_pll_characteristics upll_characteristics = {
-> +	.input = { .min = 20000000, .max = 50000000 },
-> +	.num_output = ARRAY_SIZE(upll_outputs),
-> +	.output = upll_outputs,
-> +	.core_output = upll_core_outputs,
-> +	.upll = true,
-> +};
-> +
-> +static const struct clk_pll_characteristics lvdspll_characteristics = {
-> +	.input = { .min = 20000000, .max = 50000000 },
-> +	.num_output = ARRAY_SIZE(lvdspll_outputs),
-> +	.output = lvdspll_outputs,
-> +	.core_output = lvdspll_core_outputs,
-> +};
-> +
-> +static const struct clk_pll_characteristics audiopll_characteristics = {
-> +	.input = { .min = 20000000, .max = 50000000 },
-> +	.num_output = ARRAY_SIZE(audiopll_outputs),
-> +	.output = audiopll_outputs,
-> +	.core_output = audiopll_core_outputs,
-> +};
-> +
-> +static const struct clk_pll_characteristics plladiv2_characteristics = {
-> +	.input = { .min = 20000000, .max = 50000000 },
-> +	.num_output = ARRAY_SIZE(plladiv2_outputs),
-> +	.output = plladiv2_outputs,
-> +	.core_output = plladiv2_core_outputs,
-> +};
-> +
-> +/* Layout for fractional PLL ID PLLA. */
-> +static const struct clk_pll_layout plla_frac_layout = {
-> +	.mul_mask = GENMASK(31, 24),
-> +	.frac_mask = GENMASK(21, 0),
-> +	.mul_shift = 24,
-> +	.frac_shift = 0,
-> +	.div2 = 1,
 
-It seems to me that this is not taken into account (see below).
+Your commit msg should say: since which commit.
 
-> +};
-> +
-> +/* Layout for fractional PLLs. */
-> +static const struct clk_pll_layout pll_frac_layout = {
-> +	.mul_mask = GENMASK(31, 24),
-> +	.frac_mask = GENMASK(21, 0),
-> +	.mul_shift = 24,
-> +	.frac_shift = 0,
-> +};
-> +
-> +/* Layout for DIV PLLs. */
-> +static const struct clk_pll_layout pll_divpmc_layout = {
-> +	.div_mask = GENMASK(7, 0),
-> +	.endiv_mask = BIT(29),
-> +	.div_shift = 0,
-> +	.endiv_shift = 29,
-> +};
-> +
-> +/* Layout for DIV PLL ID PLLADIV2. */
-> +static const struct clk_pll_layout plladiv2_divpmc_layout = {
-> +	.div_mask = GENMASK(7, 0),
-> +	.endiv_mask = BIT(29),
-> +	.div_shift = 0,
-> +	.endiv_shift = 29,
-> +	.div2 = 1,
-> +};
-> +
-> +/* Layout for DIVIO dividers. */
-> +static const struct clk_pll_layout pll_divio_layout = {
-> +	.div_mask	= GENMASK(19, 12),
-> +	.endiv_mask	= BIT(30),
-> +	.div_shift	= 12,
-> +	.endiv_shift	= 30,
-> +};
-> +
-> +/*
-> + * PLL clocks description
-> + * @n:		clock name
-> + * @p:		clock parent
-> + * @l:		clock layout
-> + * @t:		clock type
-> + * @c:		pll characteristics
-> + * @f:		clock flags
-> + * @eid:	export index in sam9x7->chws[] array
-> + */
-> +static const struct {
-> +	const char *n;
-> +	const char *p;
-> +	const struct clk_pll_layout *l;
-> +	u8 t;
-> +	const struct clk_pll_characteristics *c;
-> +	unsigned long f;
-> +	u8 eid;
-> +} sam9x7_plls[][PLL_ID_MAX] = {
-> +	[PLL_ID_PLLA] = {
-> +		{
-> +			.n = "plla_fracck",
-> +			.p = "mainck",
-> +			.l = &plla_frac_layout,
-> +			.t = PLL_TYPE_FRAC,
-> +			/*
-> +			 * This feeds plla_divpmcck which feeds CPU. It should
-> +			 * not be disabled.
-> +			 */
-> +			.f = CLK_IS_CRITICAL | CLK_SET_RATE_GATE,
-> +			.c = &plla_characteristics,
-> +		},
-> +
-> +		{
-> +			.n = "plla_divpmcck",
-> +			.p = "plla_fracck",
-> +			.l = &pll_divpmc_layout,
-
-You mentioned in "[PATCH v4 24/39] clk: at91: sam9x7: add support for HW
-PLL freq dividers" that this has div2 but it is registered w/ a layout that
-has .div2 = 0.
-
+Best regards,
+Krzysztof
 
