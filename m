@@ -1,59 +1,60 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698EA946C
-	for <linux-clk@vger.kernel.org>; Tue, 12 Mar 2024 00:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E087B197
+	for <linux-clk@vger.kernel.org>; Tue, 12 Mar 2024 00:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710201717; cv=none; b=ZL9fOXFE8t14sNAOFyNYqqiTRXAUsFcdwEkcMI27sNCczI5E/ok50lXxeIAT7/+QZwQtojBP+n4tPbyv37OtJpSp5VELZH2vDmpwhv63tLw1lDTZuI7PF7N+/pvauAXbcTPkUDOhmTGxW/fHUp3eGXfMD3/zkwEtoANDpyFzbdc=
+	t=1710201743; cv=none; b=d/PJKjTnLOf10+/+vrn5chh/MQX7NEViRWUy+YBtaBeJugzqcRy9wNjnSu0wOxAZC/3zUc798IUJYMeCrWxK9F68PIn7waNfMGN7p4VAmwi9WHtmUV+lPX8Yiv5SFnco/fuf9LdVSF1uyI2f7xatYSici7gQ53qtMtvGps2Zk1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710201717; c=relaxed/simple;
-	bh=pyH0/Y2URKEgytRLvNHUUM77rWJEsFg7E7rffphV9Aw=;
+	s=arc-20240116; t=1710201743; c=relaxed/simple;
+	bh=stm9FGgtBV2ge3GNjRDSZm6tmd3vK8BCG9OQJOXsfWo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I5Vaq/E1zJuqMk64CsHegtVF7FFfa4ebi0cpHqZ7zdPtGPKdf1v1ehX+N7EUXPH0h8ndhZYYOxs7j/X2xagwbnTrxjVVkg0MmPrB+8CCN0GJjhaLY+ihyZbv4Z4zhK+AXya7ybE/1UFgiBtykMST5KRChX7FISwRAGbp6fss2Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o7cJD2kI; arc=none smtp.client-ip=209.85.167.53
+	 In-Reply-To:Content-Type; b=JqLXyhA67SqX3NddAt5BvuFBIHIVOD39feD/gRNrM5GyMv3U21q6P0HUSzE9nTmhw1M2XSJVv40zlI5AzXWBVSZsDNI5df5qT68CW8e7F0qprOL/vTnHIrt7f5dqynUSdwXl9UpyF9xU1JEz7EQSZ8rfFBilRvs9xakY3hkznrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bQJW+Eoh; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o7cJD2kI"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5131c0691feso6405235e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2024 17:01:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bQJW+Eoh"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-512ed314881so4364538e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2024 17:02:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710201712; x=1710806512; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710201740; x=1710806540; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bw8QHazMu9Fh3V9WPOJl1lKgsQ2oGU99VYSdMMQahiM=;
-        b=o7cJD2kIvinblBh6TOu6hpSVaCrK5BDfqQOvFXYQ0vb7DS/7NQ1Y5JnkJlEUIgbyvg
-         NeuNuF9zOdq8bTpjT7mJM+dLX9nP/obUgJtcOvfMKie35SaZFKo2NxT70vWmxk+DL98/
-         gyJZPTr9GLEPbi7qM6Z1CdjtX00dCNGNyWaLANUT06Mdhs4/bd+zByZpojOww/gXvI88
-         RFlVnUxGXeDsaN8y2Lv8HmZQrU/MU+IgAbLdVh7/hmEQLxY6AUps3uzyBg6g7lxobdde
-         Tuwgs6jl1BwDTCywIL3CvSZhxelVapRlm4AkMGatsbwLwF3/P2+FQNOpmC1Yc0sDkJc1
-         y+kg==
+        bh=aKmks8JoDmenSi0sINdl5p06voW43We5KTvM0ksBIog=;
+        b=bQJW+Eohk+8LDeMfvqAIuQT1x08/4Xx3qdJh3VzmcZgCHKCgnbk5UuyZWi1GLsDLoO
+         p4tjLoJpvV4lvyyR7u/sodNW8kCXSWyfsyVazXlJMIG6VsbB6X2pMFmBYFCkYvKCFS95
+         GNK8MMm452xvFa7hL4WtYA3/fJWbK/AQc1qjNuCeoI0rwxHtERhWP5h/9b5uHfXV/RvF
+         grDEtzjA70P8NQks077Pu3X1WGnX9Cvu6GlyuwhyETBN3EjSXzxeOt0GMmnMGYHRWqJC
+         po5cay8vNBwDSIWetPBQuW5tck7piwwsdGDCjqsmrS+F1cbmQ2Prj5eMTSIyIjG9vHgd
+         MCmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710201712; x=1710806512;
+        d=1e100.net; s=20230601; t=1710201740; x=1710806540;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bw8QHazMu9Fh3V9WPOJl1lKgsQ2oGU99VYSdMMQahiM=;
-        b=bqW7noil9bBZVhruTRU151MypLrTyanUKB/jMUstkrnZVK/Wo8QT7b+P5+TIxE8unx
-         yViExIEWaK0lt1cnbogKPbugUtaKc12ao6T6nNR+8umRbxC9OBPqYJn87srngPHOuCXC
-         xH45tIx3Vy9R1rmSwT55aZQ1cwhWF2Pc2V2zq1s9Ozr9jw/gdCGVP5FTDseuq44Y3Dwm
-         OOnwV7kSwHv2XCNs6wpWaDY7uf7LuK3wTvhSOrSNRF4yndd0OZg0DdsX16hrQAKOKqHd
-         ocQhdco80OVNJs7XjajjsavgchadGbRLcbjbeuWdhoXx4mVbEHy2xFnpiNG+Stbfm9KD
-         OwZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXncC2GV9T7qt5if4pKxpUT37kTeeaSCcRQAA0GRbBK9x6VAthpAwOvYSXICosuPtIBBmzgEaCrW+EzKMCg0kOz+uBAa4XoQ9CG
-X-Gm-Message-State: AOJu0YyjQD9kN+KVsFS2GGRWwJOCT2Aww5dd9wUUIvnIqrwg/MWke19R
-	hZu5cCHAsQmdhSRtegu8X/m7+wgnZIRR2PscpuTx6CSoHDsNspCG00hejkjffYQ=
-X-Google-Smtp-Source: AGHT+IGO6oDQSGxWvS/usMWsU07yYwr3deOSYyML/F6uaxC6z2eXxufqaTN6dfRzKOGFFdms/xGRWw==
-X-Received: by 2002:a19:5217:0:b0:513:9b96:a948 with SMTP id m23-20020a195217000000b005139b96a948mr4821569lfb.6.1710201712439;
-        Mon, 11 Mar 2024 17:01:52 -0700 (PDT)
+        bh=aKmks8JoDmenSi0sINdl5p06voW43We5KTvM0ksBIog=;
+        b=ZeyFyoBJPkUzTtsi+uzvn1Z3BaN68YaZwG/t5HmJHKdvzGgQyphAxzpLxFQP65ou4w
+         LiiL25lbWFTOv8R+CAS1R3l3szUKYSUqrYvE2ED1X2OZB/SKHvVujVAcEbS4RIv4vZOU
+         6dtBMzI944LRQXz5LgnkgLTYU5T+axXh5NNCk7ycURwXxVNiIqgUaIHHvKbb0skijEbj
+         VVjMCYHkHspHsS9qEzEWkqhNtDmTy1fLhiErwABw2FbRlDnXi5/lYM4piFwjTr2SkLgo
+         BsJKL6+8IINFpRiOboZeVsCP+SDBWUw2Fky080x31CQAaSQpHt2nornGRNPYuGlSlR4W
+         Ftyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVv9JMxjN7qQ+K1hBNhQLKsyXUbxMmBSOJFMNuTr8DF7pwcc0QtOdKS8G/GATLvDCyzmfANbGLwMx+HK7Te3yH6zRv+Lsvi1KyV
+X-Gm-Message-State: AOJu0YzG7uqx4CAsRE1C3eliwBaoeF7jyiKKUDCwsAfadF8bN3+mEi7P
+	zpduYpgzis25/0HBc5wZxUwr1flcZo+aCOxBR9kghIVGLd9kwXR5r9+Q3pYLjuKjLkgjlAS51kO
+	vjHU=
+X-Google-Smtp-Source: AGHT+IGL/R4b0JHYZrCQJFnWgkBE04O6Qt+nCajTqVhpdM9rnfO660gNoLAf2V5uXL5drRK9xoC+gw==
+X-Received: by 2002:ac2:5e22:0:b0:513:2d99:f9e5 with SMTP id o2-20020ac25e22000000b005132d99f9e5mr4597639lfg.36.1710201740018;
+        Mon, 11 Mar 2024 17:02:20 -0700 (PDT)
 Received: from [172.30.205.61] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id n16-20020ac24910000000b00512ebe62693sm1300360lfi.255.2024.03.11.17.01.50
+        by smtp.gmail.com with ESMTPSA id n16-20020ac24910000000b00512ebe62693sm1300360lfi.255.2024.03.11.17.02.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Mar 2024 17:01:52 -0700 (PDT)
-Message-ID: <301380ee-1c93-49b4-b4e1-3b1289e98a75@linaro.org>
-Date: Tue, 12 Mar 2024 01:01:50 +0100
+        Mon, 11 Mar 2024 17:02:19 -0700 (PDT)
+Message-ID: <0c3dc12e-f571-4562-95cf-3f4ca27aabd8@linaro.org>
+Date: Tue, 12 Mar 2024 01:02:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,8 +62,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] clk: qcom: clk-alpha-pll: remove invalid Stromer
- register offset
+Subject: Re: [PATCH 2/2] clk: qcom: clk-alpha-pll: reorder Stromer register
+ offsets
 Content-Language: en-US
 To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -72,36 +73,24 @@ To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20240311-alpha-pll-stromer-cleanup-v1-0-f7c0c5607cca@gmail.com>
- <20240311-alpha-pll-stromer-cleanup-v1-1-f7c0c5607cca@gmail.com>
+ <20240311-alpha-pll-stromer-cleanup-v1-2-f7c0c5607cca@gmail.com>
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240311-alpha-pll-stromer-cleanup-v1-1-f7c0c5607cca@gmail.com>
+In-Reply-To: <20240311-alpha-pll-stromer-cleanup-v1-2-f7c0c5607cca@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 3/11/24 19:45, Gabor Juhos wrote:
-> The offset of the CONFIG_CTL_U register defined for the Stromer
-> PLL is wrong. It is not aligned on a 4 bytes boundary which might
-> causes errors in regmap operations.
+> The register offset arrays are ordered based on the register
+> offsets for all PLLs but the Stromer. For consistency, reorder
+> the Stromer specific array as well.
 > 
-> Maybe the intention behind of using the 0xff value was to indicate
-> that the register is not implemented in the PLL, but this is not
-> verified anywhere in the code. Moreover, this value is not used
-> even in other register offset arrays despite that those PLLs also
-> have unimplemented registers.
+> No functional changes.
 > 
-> Additionally, on the Stromer PLLs the current code only touches
-> the CONFIG_CTL_U register if the result of pll_has_64bit_config()
-> is true which condition is not affected by the change.
-> 
-> Due to the reasons above, simply remove the CONFIG_CTL_U entry
-> from the Stromer specific array.
-> 
-> Fixes: e47a4f55f240 ("clk: qcom: clk-alpha-pll: Add support for Stromer PLLs")
 > Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
 > ---
 
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Konrad> 
+Konrad
