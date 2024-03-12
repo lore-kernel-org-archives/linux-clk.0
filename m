@@ -1,110 +1,236 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB47E7D3F8
-	for <linux-clk@vger.kernel.org>; Tue, 12 Mar 2024 16:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A881419B0
+	for <linux-clk@vger.kernel.org>; Tue, 12 Mar 2024 18:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710259946; cv=none; b=QPJZnkX2W9SdOoa+W2c4dPMKEBH7/akena7W31+VPvXOKr0mVVmTRliZ9Cw1SCmyMLrdERZySX6BzCqFrJEHbAYaabboj/279IGeIBp51x5bGH7C0HORuu/b5IHUKP5uO/rIgfbYKp6dQF8G1rDs2w2zYbX8qPeaNGtwxeseef4=
+	t=1710269442; cv=none; b=hF61Rn/FSi3kslLbfaq08/wBaHGY5bqwre6PCxcMnmIOD4vrR8VXsD/h562KWLWpI5GUen96t2FmuwBNgtI/CYrcf/15fuGiETRYLKcZu+Eq4qtzBPeAmWyb1FtGV7LmhwYwX9MNwD11Cj5H5V53yy+LbIUweEF2DTgmwp/lC6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710259946; c=relaxed/simple;
-	bh=rXaL0LJcdegT3oLCAhYYQ90a8sQqF6H95AJnSTlrKSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bY3h2Wv76w/kYtzCj9NvLEGjznckxiGBs3AWa2y990Coz2/3NdEjxF6f8ckER5OG3iq9pO2WPbIuixNxKOTlAnkFPADzmdPDjF27MbKBriAkFaSc7wQq963nCC8nYUeVt9RE6z/YhVsI7EjTfROMbb7O0qlWCSNupMBUNNcjMCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VkaKbl3O; arc=none smtp.client-ip=209.85.167.53
+	s=arc-20240116; t=1710269442; c=relaxed/simple;
+	bh=VXNVVnHLzcUMf+eMc1cXZF1qhCcY1ZICBw2e0CD90oU=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=GQPxwaumD7O826P2S6QXoeesauhivaI+fEcgt3OOzCs6aiBUx54ShLrDhxGpSz9C13o4nbW1pZy6MLP1qyiMoAQWn0Iw0qaF2JzZIJKnPFp5uydq3pCNFCZFp55GsbGY0P/09vrL0yq0KK7rVm/xx/X45UUhEs3u+g28Zg93NQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Icjz8BUa; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VkaKbl3O"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5131bec457eso118477e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 12 Mar 2024 09:12:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Icjz8BUa"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5131a9b3d5bso5729493e87.0
+        for <linux-clk@vger.kernel.org>; Tue, 12 Mar 2024 11:50:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710259942; x=1710864742; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zLG0VkRk9T+MqlwYSwMr85lswH7UeBe9EKEDGZIjNWM=;
-        b=VkaKbl3OsvXrFmg4E80Ozyosy3q8c7v0SYE5ZgaVP8kkVtVxnhBaXrSltAxKs7fieN
-         4iFYDNM/aKYLsliKygdYE5llmP5alF0YBHRVzAsn5ZbgF8yXkW33szIXxRN9aUt2I85W
-         FQty0IIldS6e+jyPuZ60jzeplo6g55x+Du6oD4BLrUSLC9+gha++YwMRPdChAdB88dLd
-         tq8F47vH1P+TDYQ7pkVKdLd633GU9BlVjfbuoUfZGpMJlqJFwW36Ty7s/nbqsankpES6
-         9XNqGezrepJHGBPwfAhbY1+eks1ZQ8vWvKT9pZUyGDIgENzEQ8p9TXV0Lo6q5edCDu4a
-         k51w==
+        d=linaro.org; s=google; t=1710269438; x=1710874238; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWmv8PROciGabllAPSqvA9F+FHYmPZHSjaaUfTtwxLQ=;
+        b=Icjz8BUayisfyD6eGg27vg1xvbZZpSUDXWgVXRI3XLbEG1XoTUuQ/g6NCdeq2S+Ona
+         W7nV1GOjyVyiswaaxOgVjcvElnr1rXQc3fqT954JwzbnAVH5KqmxqKgchKgCmp/34st7
+         KNtRRyJpyOteA3ZIZ8ear3MO5agCjyXVF0IC5nyt9Pi9E2MUw2MV4qvLZdLEyD5kujSS
+         6coBBc0cTw/taDGA2+YR2O0GNckvkoDgCDgTC0u+L2hj+2jMx9LT6boYa4lEQxCI0wMc
+         NNq+i7Zuh4X83lPpkI1TakLxShYp2zwUj/A92Ghz62IeMQ2CSPxtKiwdcbt/6q+59ZI3
+         h3rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710259942; x=1710864742;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zLG0VkRk9T+MqlwYSwMr85lswH7UeBe9EKEDGZIjNWM=;
-        b=EybYK86JkIMl3NjbVXoT5zQELzpzcuJkWpYnlovIWU9ajLjnbjfUery23MUQKrK3Xf
-         /8xjv4VlfZBlKReM94ikAXJ/jGsNCM+JBUYIICcLURrISNd2yQ+0WoTq6dLM7DtvB4WZ
-         r3+okVxjZtYkhgfd5v3q9wJdTpF2Nt93voG27qZYlzcPN6KwM5+6Nl2PuvSutLqwXFDs
-         mx6YqmFMg4MFTASEk91ZaHv9JNbPi5EkU4RVzCDpWsRIk4w2qRfwR+4+KPe46COruCYb
-         6HJF43pG6fyuVAulfogT5EFmNI4YV/ZqrNx6wH80Z7ydnJJeLFfWcNY2zDhLVvMOxQAn
-         P/bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEJKI1+2A/TLFaf28oUnNsh6VTJAKgt7wviiY0+9XZsRO697ilaIivTyNjcpcAmxYK4aBlHPOSBckwu/eZBZluMszjXuwt2kyT
-X-Gm-Message-State: AOJu0YzKX9wZOtNX5voq3e9LXUEfEJGmxnYAHzIsiAKPRs/so4K8d/4Y
-	GWCl5KVX8Q3pDKOr4kA63iYBmx/DZWeRFjgSpoSU91wIJFP2tDRt6JimSycWiqk=
-X-Google-Smtp-Source: AGHT+IHFOEHl33gs0on8qTVXiyJ+aHRxksDiQ505Q8fof/YGiXciDjx8sbsbVrPzSuDgBdzksPF1+g==
-X-Received: by 2002:ac2:4d0f:0:b0:513:488a:95af with SMTP id r15-20020ac24d0f000000b00513488a95afmr1774lfi.15.1710259942295;
-        Tue, 12 Mar 2024 09:12:22 -0700 (PDT)
-Received: from [87.246.221.205] (netpanel-87-246-221-205.pol.akademiki.lublin.pl. [87.246.221.205])
-        by smtp.gmail.com with ESMTPSA id o5-20020ac24945000000b0051321db6a0dsm1634984lfi.139.2024.03.12.09.12.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Mar 2024 09:12:21 -0700 (PDT)
-Message-ID: <83734790-85c5-446f-b353-f3765cb10d41@linaro.org>
-Date: Tue, 12 Mar 2024 17:12:19 +0100
+        d=1e100.net; s=20230601; t=1710269438; x=1710874238;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWmv8PROciGabllAPSqvA9F+FHYmPZHSjaaUfTtwxLQ=;
+        b=tFUn1IFWnRlIQix4m16xLtoOX/nY7sPCAq5F7zxBYZO6e3xy6gWTwR4q5NIjvp+Tw7
+         X/6J3Vg87y6BUXVTypeyVTEf03SAQKsM/uZFnIBnM1IOdskMaAH9EEPhI3V6pdfeoczY
+         MKmNKGoLdi8YXOGc0H0qj2QySAbGwh4Ygq91Aoc2tNPbuMOZSbM3vGLUe1FaOrl3AzTu
+         Z5VSfe/CwDq3oFJxxGOmYTCe3UhGf1T6cLdTUAzQ2LU40xoD5jcz+SLtxwqWtk4cRdbQ
+         3Uc5LbqMN7Hc7uRZEfkeAHZmqeCpUM3E3Wx8dNYnf0XbDvVOOVnRFjedGgHZqrFr38Tr
+         9+Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCXUOMfnmP03/YpHFHQRvJgAgCmW8OXrA79BAd6tPQR/xVg6SNmhFAGTRMYZlybRtnnNlR+AMhExfJFu2mKxFKF1A1lAHaMke+Np
+X-Gm-Message-State: AOJu0YxmigprKUkfwMV1vsJXC3IG/OAQSNykxVhuQ+78vEBwnm4wpQHA
+	5YUgy/4ahqVJkUQGVjzeU/gLVHgL7X5hwcyHl6Dgy9f5tAASPR9SV/H8MvgE0qg=
+X-Google-Smtp-Source: AGHT+IGxrhlnbqnZw+75kfh+yq+KarLg4EMELr26c6t+nZ26T7LkDm/X5ar7Kec8Nuoyw6XvydLALA==
+X-Received: by 2002:ac2:47fb:0:b0:513:588a:2614 with SMTP id b27-20020ac247fb000000b00513588a2614mr737193lfp.49.1710269438328;
+        Tue, 12 Mar 2024 11:50:38 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.97])
+        by smtp.gmail.com with ESMTPSA id j20-20020a05600c191400b0041339453775sm2557465wmq.48.2024.03.12.11.50.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Mar 2024 11:50:37 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] dt-bindings: clock: samsung,s3c6400-clock: convert to DT Schema
+Date: Tue, 12 Mar 2024 19:50:35 +0100
+Message-Id: <20240312185035.720491-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] clk: qcom: clk-alpha-pll: Add HUAYRA_2290 support
-Content-Language: en-US
-To: Trilok Soni <quic_tsoni@quicinc.com>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org
-References: <20240219-topic-rb1_gpu-v2-0-2d3d6a0db040@linaro.org>
- <20240219-topic-rb1_gpu-v2-2-2d3d6a0db040@linaro.org>
- <605d9e50-d61b-b0ce-1664-00554ba70b41@quicinc.com>
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <605d9e50-d61b-b0ce-1664-00554ba70b41@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Convert Samsung S3C6400/S3C6410 SoC clock controller bindings to DT
+schema.
 
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/clock/samsung,s3c6400-clock.yaml | 57 ++++++++++++++
+ .../bindings/clock/samsung,s3c64xx-clock.txt  | 76 -------------------
+ 2 files changed, 57 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
 
-On 2/23/24 23:48, Trilok Soni wrote:
-> On 2/23/2024 1:21 PM, Konrad Dybcio wrote:
->> +	/* Wait 50us for PLL_LOCK_DET bit to go high */
->> +	usleep_range(50, 55);
->> +
->> +	/* Enable PLL output */
->> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, PLL_OUTCTRL);
->> +}
->> +EXPORT_SYMBOL(clk_huayra_2290_pll_configure);
-> 
-> Please use EXPORT_SYMBOL_GPL.
+diff --git a/Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml
+new file mode 100644
+index 000000000000..d0660313c262
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml
+@@ -0,0 +1,57 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/samsung,s3c6400-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung S3C6400 SoC clock controller
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++
++description: |
++  There are several clocks that are generated outside the SoC. It is expected
++  that they are defined using standard clock bindings with following
++  clock-output-names:
++   - "fin_pll" - PLL input clock (xtal/extclk) - required,
++   - "xusbxti" - USB xtal - required,
++   - "iiscdclk0" - I2S0 codec clock - optional,
++   - "iiscdclk1" - I2S1 codec clock - optional,
++   - "iiscdclk2" - I2S2 codec clock - optional,
++   - "pcmcdclk0" - PCM0 codec clock - optional,
++   - "pcmcdclk1" - PCM1 codec clock - optional, only S3C6410.
++
++  All available clocks are defined as preprocessor macros in
++  include/dt-bindings/clock/samsung,s3c64xx-clock.h header.
++
++properties:
++  compatible:
++    enum:
++      - samsung,s3c6400-clock
++      - samsung,s3c6410-clock
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@7e00f000 {
++        compatible = "samsung,s3c6410-clock";
++        reg = <0x7e00f000 0x1000>;
++        #clock-cells = <1>;
++        clocks = <&fin_pll>;
++    };
+diff --git a/Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt b/Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
+deleted file mode 100644
+index 872ee8e0f041..000000000000
+--- a/Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
++++ /dev/null
+@@ -1,76 +0,0 @@
+-* Samsung S3C64xx Clock Controller
+-
+-The S3C64xx clock controller generates and supplies clock to various controllers
+-within the SoC. The clock binding described here is applicable to all SoCs in
+-the S3C64xx family.
+-
+-Required Properties:
+-
+-- compatible: should be one of the following.
+-  - "samsung,s3c6400-clock" - controller compatible with S3C6400 SoC.
+-  - "samsung,s3c6410-clock" - controller compatible with S3C6410 SoC.
+-
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-
+-- #clock-cells: should be 1.
+-
+-Each clock is assigned an identifier and client nodes can use this identifier
+-to specify the clock which they consume. Some of the clocks are available only
+-on a particular S3C64xx SoC and this is specified where applicable.
+-
+-All available clocks are defined as preprocessor macros in
+-dt-bindings/clock/samsung,s3c64xx-clock.h header and can be used in device
+-tree sources.
+-
+-External clocks:
+-
+-There are several clocks that are generated outside the SoC. It is expected
+-that they are defined using standard clock bindings with following
+-clock-output-names:
+- - "fin_pll" - PLL input clock (xtal/extclk) - required,
+- - "xusbxti" - USB xtal - required,
+- - "iiscdclk0" - I2S0 codec clock - optional,
+- - "iiscdclk1" - I2S1 codec clock - optional,
+- - "iiscdclk2" - I2S2 codec clock - optional,
+- - "pcmcdclk0" - PCM0 codec clock - optional,
+- - "pcmcdclk1" - PCM1 codec clock - optional, only S3C6410.
+-
+-Example: Clock controller node:
+-
+-	clock: clock-controller@7e00f000 {
+-		compatible = "samsung,s3c6410-clock";
+-		reg = <0x7e00f000 0x1000>;
+-		#clock-cells = <1>;
+-	};
+-
+-Example: Required external clocks:
+-
+-	fin_pll: clock-fin-pll {
+-		compatible = "fixed-clock";
+-		clock-output-names = "fin_pll";
+-		clock-frequency = <12000000>;
+-		#clock-cells = <0>;
+-	};
+-
+-	xusbxti: clock-xusbxti {
+-		compatible = "fixed-clock";
+-		clock-output-names = "xusbxti";
+-		clock-frequency = <48000000>;
+-		#clock-cells = <0>;
+-	};
+-
+-Example: UART controller node that consumes the clock generated by the clock
+-  controller (refer to the standard clock bindings for information about
+-  "clocks" and "clock-names" properties):
+-
+-		uart0: serial@7f005000 {
+-			compatible = "samsung,s3c6400-uart";
+-			reg = <0x7f005000 0x100>;
+-			interrupt-parent = <&vic1>;
+-			interrupts = <5>;
+-			clock-names = "uart", "clk_uart_baud2",
+-					"clk_uart_baud3";
+-			clocks = <&clock PCLK_UART0>, <&clocks PCLK_UART0>,
+-					<&clock SCLK_UART>;
+-		};
+-- 
+2.34.1
 
-Sure, I glanced over this!
-
-I've also noticed that it's a very common oversight.. would you be
-interested in extending scripts/checkpatch.pl to suggest the _GPL
-variant?
-
-Konrad
