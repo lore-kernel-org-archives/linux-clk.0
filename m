@@ -1,187 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4D533994;
-	Tue, 12 Mar 2024 10:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA7558207
+	for <linux-clk@vger.kernel.org>; Tue, 12 Mar 2024 11:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710238468; cv=none; b=YaWzvRw6XmOTKKB/mEw8Pf1CtBV8IuxDS4Eu9N2AmnBWP7YCtTy26E/FPF05me2dYoUGnVPm0rCoiAFbkkj1xJ3P+aey7kiOclxkaF57zkuUYhXtOdRqx1/8wfIHrKWgD4ZNuUl4D5Be5AJOe0nxv578WdnMgPwrdW0SiVXRKAY=
+	t=1710244378; cv=none; b=Nm1N24O+LNuH/1QV7sNXypaKWtpJtLeEpA/Vm3aYN4/6Bw/gNGQNMRAk9KqHQAyPqFsJI5Ao4pA1AD1WU5NJL7IPrOHPE8QCfQ3GQ05OhLd5E1Ah7jlQfoAZL0rab12u1m32HSX/1xGBJGU6yt71ODP5fE1IU/AKxFXNzhTH4Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710238468; c=relaxed/simple;
-	bh=deGSuTO/IIVTZiHgBMlj9IFCW5+u1+PeSwEs6uBEKjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dk4lM+4Jfk+ZM5mGeoEmpdQy3P+cvrw7Bos3AxGiSJVxEoDwRZUW6OGKVkLu7J84uKOECqPWaAIdZbsYUmVxBeznETCCi8rDbX3ACXrq8c8590wJXRs5XvOx4fduuL9QnSBlXY9cd6s3d7pRgL1qkB6YU6lRsjHPSOxi4bJqbEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t4DBF5bV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710244378; c=relaxed/simple;
+	bh=mTUm9ym/RSqft+KABMxetZ2udu3o3Kzzw4feTXppzQ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bOeB2l9PIsCa+oUTq3pWBqgwzGqVMKAgjfEU4QSIOZH2QvtRZ5czwZQs7iZ5QhEPCKuaoM71KTVWAYfMtKZZceB3v39XpKff1sY3HebeWPCaCQzZoJ5SFJ0TQiqBK4oM+e8NB+MZ8c0iWDiR3oFCzScibkHAfBSL4a9+F7sxdB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=M2W8Q4vl; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t4DBF5bV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16DC2C433F1;
-	Tue, 12 Mar 2024 10:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710238467;
-	bh=deGSuTO/IIVTZiHgBMlj9IFCW5+u1+PeSwEs6uBEKjw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t4DBF5bVK9DNslv7fZbI1VFs7q3DpCXlZeH6CfUDKoTHuLnFXprefuaazosNx0gqO
-	 9pZFWLX5bnG0eUXRnelqBYfWQ5iIn3acd6m17rpoyO8rBi0dwL+yioK2MwfgbkvCpJ
-	 j8i2yrfTIgJYGBF5PUjxp46etIvGco+SkKWbxBJE8Zpy0mhEI47nD36Bt2XHQaQUoq
-	 fxcM5H1RYuZI1RkgkN5mQGjbtMi/bSKHreiF5ASim0+gLRkfwhdiyuazi0/FfunT+m
-	 frOHe7kGa6yAbfDHpUBaR2d0ShTtpJF1JKnO8wxs68wChNLQ9yC8zxUEVrvfic6mi9
-	 dSLPcwVQlQCMg==
-Date: Tue, 12 Mar 2024 11:14:24 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Yang Xiwen <forbidden405@outlook.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Anderson <seanga2@gmail.com>, Lukasz Majewski <lukma@denx.de>, u-boot@lists.denx.de
-Subject: Re: [PATCH v3] clk: set initial best mux parent to current parent
- with CLK_MUX_ROUND_CLOSEST
-Message-ID: <20240312-helpful-judicious-monkey-ed27ba@houat>
-References: <20240307-mux-v3-1-0885fc1ab2c9@outlook.com>
- <20240307-hot-hummingbird-of-atheism-87503c@houat>
- <SEZPR06MB6959882F5DA673456A3AA85D96202@SEZPR06MB6959.apcprd06.prod.outlook.com>
- <20240311-speedy-bat-of-art-4facfc@houat>
- <SEZPR06MB69597C834C90FE1FBA1F1D83962B2@SEZPR06MB6959.apcprd06.prod.outlook.com>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M2W8Q4vl"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1dd8f7d50c6so16160705ad.0
+        for <linux-clk@vger.kernel.org>; Tue, 12 Mar 2024 04:52:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1710244376; x=1710849176; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=32L7EdHAuQ4WnOqivRSfbIvHEBBAYz+hzKyLr7KyYy4=;
+        b=M2W8Q4vlRPDFeM3hAAfZjbtUFJ1eHEkL7aEgnCmW0nH1voi1hbKB7nJ4aEWU6e+HeC
+         CU28L/Hx5xO38hQiL4yYHz1ENTkO2A8cxV2t58IINQa5kudPEK0nm7d/8dRugaYiKvjq
+         VXQ5rurA4PbrnLw8KxzSj0eGfQcDB4n7WtKDg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710244376; x=1710849176;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=32L7EdHAuQ4WnOqivRSfbIvHEBBAYz+hzKyLr7KyYy4=;
+        b=N69CHEbzwbogJHNQr7JnrrCMU80OLxHfesE96ojzqObnfDM97br6k313mt7NfWSmxm
+         dUj2uaBE9KpD9yapldYrA4TpXtrLOsV6FdI/TKS/vOZfPBRj5Z5diE0spscbCrAtOFrQ
+         HYYVX8Qa3aN1lztYn/YPHtfnVr58E62dNfXOAyKDEd9lqdS1QVHXHBK92QxTkhFnBNWi
+         1qdsNhNlICxLXW5+OZQtZZvTbRhB119gvUlfweMHEnb3IzbDBY672IZE1GsgOa9n1Fql
+         jybHy17y/4+tQGOKIaLVRrB01bGKz6noEyMjYDuWI9XWpcylUKb5csmd6Ob2TV3lnEWQ
+         8vhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLhnbTt91aSDWuR/Dau5fmLzrEY8okxfVZkBTWkeNyRwJF8Tgyp3Avk9EG3LoV7S+HL3WXGtpPcmG4PRz+ihaKwPMMb1zC8Wqu
+X-Gm-Message-State: AOJu0YxyFdpX/4pXESJj/IDDUWwL9db4yHk9k/rEu5qyl0zq/0iXbFoa
+	MjWFP2Cqwve1POZjsbcgsbBXs1Udyunlg9+xcardYzV16ilpnSwTtfpKv7/28Q==
+X-Google-Smtp-Source: AGHT+IFHW7gNc8FGsMt9K1fDNHiUJ5TT/QPfRrLz4t4aGJMOagv8xqOkZuJYIn0TiohOgI7RjlfCgg==
+X-Received: by 2002:a17:902:d2d2:b0:1dd:c227:4175 with SMTP id n18-20020a170902d2d200b001ddc2274175mr813268plc.8.1710244375852;
+        Tue, 12 Mar 2024 04:52:55 -0700 (PDT)
+Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:bae3:7b5f:7434:812e])
+        by smtp.gmail.com with ESMTPSA id b15-20020a170903228f00b001dd1bdee6d9sm6500179plh.31.2024.03.12.04.52.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Mar 2024 04:52:55 -0700 (PDT)
+From: Pin-yen Lin <treapking@chromium.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pin-yen Lin <treapking@chromium.org>,
+	Weiyi Lu <weiyi.lu@mediatek.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Bosi Zhang <u201911157@hust.edu.cn>,
+	Nicolas Boichat <drinkcat@chromium.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: [PATCH v4] clk: mediatek: Do a runtime PM get on controllers during probe
+Date: Tue, 12 Mar 2024 19:51:55 +0800
+Message-ID: <20240312115249.3341654-1-treapking@chromium.org>
+X-Mailer: git-send-email 2.44.0.278.ge034bb2e1d-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="awqbzhe5i5cs4dsy"
-Content-Disposition: inline
-In-Reply-To: <SEZPR06MB69597C834C90FE1FBA1F1D83962B2@SEZPR06MB6959.apcprd06.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
+mt8183-mfgcfg has a mutual dependency with genpd during the probing
+stage, which leads to a deadlock in the following call stack:
 
---awqbzhe5i5cs4dsy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+CPU0:  genpd_lock --> clk_prepare_lock
+genpd_power_off_work_fn()
+ genpd_lock()
+ generic_pm_domain::power_off()
+    clk_unprepare()
+      clk_prepare_lock()
 
-On Tue, Mar 12, 2024 at 04:52:29PM +0800, Yang Xiwen wrote:
-> On 3/11/2024 5:34 PM, Maxime Ripard wrote:
-> > On Thu, Mar 07, 2024 at 07:18:05PM +0800, Yang Xiwen wrote:
-> > > On 3/7/2024 4:48 PM, Maxime Ripard wrote:
-> > > > Hi,
-> > > >=20
-> > > > On Thu, Mar 07, 2024 at 10:03:50AM +0800, Yang Xiwen via B4 Relay w=
-rote:
-> > > > > From: Yang Xiwen <forbidden405@outlook.com>
-> > > > >=20
-> > > > > Originally, the initial clock rate is hardcoded to 0, this can le=
-ad to
-> > > > > some problem when setting a very small rate with CLK_MUX_ROUND_CL=
-OSEST.
-> > > > >=20
-> > > > > For example, if the lowest possible rate provided by the mux is 1=
-000Hz,
-> > > > > setting a rate below 500Hz will fail, because no clock can provid=
-e a
-> > > > > better rate than the non-existant 0Hz. But it should succeed with=
- 1000Hz
-> > > > > being set.
-> > > > >=20
-> > > > > Setting the initial best parent to current parent could solve thi=
-s bug.
-> > > > >=20
-> > > > > Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
-> > > > I don't think it would be the way to go. The biggest issue to me is=
- that
-> > > > it's inconsistent, and only changing the behaviour for a given flag
-> > > > doesn't solve that.
-> > >=20
-> > > I think the current behavior is odd but conforms to the document if
-> > > CLK_MUX_ROUND_CLOSEST is not specified.
-> > clk_mux_determine_rate_flags isn't documented, and the determine_rate
-> > clk_ops documentation doesn't mention it can return an error.
-> >=20
-> > > If i understand correctly, the default behavior of mux clocks is to
-> > > select the closest rate lower than requested rate, and
-> > > CLK_MUX_ROUND_CLOSEST removes the "lower than" limitation, which is
-> > > what this version tries to accomplish.
-> > The situation is not as clear-cut as you make it to be, unfortunately.
-> > The determine_rate clk_ops implementation states:
-> >=20
-> >    Given a target rate as input, returns the closest rate actually
-> >    supported by the clock, and optionally the parent clock that should =
-be
-> >    used to provide the clock rate.
-> >=20
-> > So CLK_MUX_ROUND_CLOSEST shouldn't exist, because that's what
-> > determine_rate expects so it should always be there.
-> >=20
-> > Now, the "actually supported by the clock" can be interpreted in
-> > multiple ways, and most importantly, doesn't state what the behaviour is
-> > if we can't find a rate actually supported by the clock.
-> >=20
-> > But now, this situation has been ambiguous for a while and thus drivers
-> > kind of relied on that ambiguity.
-> >=20
-> > So the way to fix it up is:
-> >=20
-> >    - Assess what drivers are relying on
-> >    - Document the current behaviour in clk_ops determine_rate
->=20
->=20
-> From my investigation, it's totally a mess, especially for platform clk
-> drivers (PLL). Some drivers always round down, the others round to neares=
-t,
-> with or without a specific flag to switch between them, depend on the
-> division functions they choose. Fixing all of them seems needs quite a lot
-> of time and would probably introduce some regressions.
+CPU1: clk_prepare_lock --> genpd_lock
+clk_register()
+  __clk_core_init()
+    clk_prepare_lock()
+    clk_pm_runtime_get()
+      genpd_lock()
 
-I agree it's a mess, but that's a mess you wanted to clean up in the
-first place :)
+Do a runtime PM get at the probe function to make sure clk_register()
+won't acquire the genpd lock. Instead of only modifying mt8183-mfgcfg,
+do this on all mediatek clock controller probings because we don't
+believe this would cause any regression.
 
-> We'd probably only have to say both rounding to nearest and rounding down
-> are acceptable, though either one is preferred.
->=20
->=20
-> >    - Make clk_mux_determine_rate_flags consistent with that
->=20
->=20
-> I think we must keep existing flags and document the current behavior
-> correctly because of the massive existing users of clk_mux.
->
-> That's why i'm going to only fix CLK_MUX_ROUND_CLOSEST users. Hopefully it
-> won't cause too many regressions.
+Verified on MT8183 and MT8192 Chromebooks.
 
-Which, without a documentation, makes it more of a mess.
+Fixes: acddfc2c261b ("clk: mediatek: Add MT8183 clock support")
+Signed-off-by: Pin-yen Lin <treapking@chromium.org>
 
->=20
-> >    - Run that through kernelci to make sure we don't have any regression
->=20
->=20
-> We don't. I run 'tools/testing/kunit/kunit.py run --kunitconfig
-> drivers/clk/.kunitconfig' each time before i send patches.
+---
+v3: https://lore.kernel.org/all/20240108081834.408403-1-treapking@chromium.org/
 
-That's kunit, not kernelci (https://linux.kernelci.org/job/)
+Changes in v4:
+- Remove the need_runtime_pm flag and apply this to all mtk controllers
 
->=20
-> Over all, it seems quite a lot of work here.
->
-> The situation here becomes even more complex when it comes to U-Boot clk
-> framework. They chose slightly different prototypes and stated
-> clk_set_rate() can fail with -ve. It's a great burden for clk driver auth=
-ors
-> and maintainers when they try to port their drivers to U-Boot. Let's Cc
-> U-Boot clk maintainers as well, and see how we can resolve the mess here.
+Changes in v3:
+- Update the commit message and the comments before runtime PM call
 
-I mean, eventually, that's on them. If U-Boot chose to have a
-somewhat-similar-but-not-really clock framework, there's nothing Linux
-can solve here, even though I definitely can see the frustration for the
-developpers that have to work on both.
+Changes in v2:
+- Fix the order of error handling
+- Update the commit message and add a comment before the runtime PM call
 
-Maxime
+ drivers/clk/mediatek/clk-mtk.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---awqbzhe5i5cs4dsy
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 2e55368dc4d8..bd37ab4d1a9b 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -13,6 +13,7 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ 
+ #include "clk-mtk.h"
+@@ -494,6 +495,16 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+ 			return IS_ERR(base) ? PTR_ERR(base) : -ENOMEM;
+ 	}
+ 
++
++	devm_pm_runtime_enable(&pdev->dev);
++	/*
++	 * Do a pm_runtime_resume_and_get() to workaround a possible
++	 * deadlock between clk_register() and the genpd framework.
++	 */
++	r = pm_runtime_resume_and_get(&pdev->dev);
++	if (r)
++		return r;
++
+ 	/* Calculate how many clk_hw_onecell_data entries to allocate */
+ 	num_clks = mcd->num_clks + mcd->num_composite_clks;
+ 	num_clks += mcd->num_fixed_clks + mcd->num_factor_clks;
+@@ -574,6 +585,8 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+ 			goto unregister_clks;
+ 	}
+ 
++	pm_runtime_put(&pdev->dev);
++
+ 	return r;
+ 
+ unregister_clks:
+@@ -604,6 +617,8 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+ free_base:
+ 	if (mcd->shared_io && base)
+ 		iounmap(base);
++
++	pm_runtime_put(&pdev->dev);
+ 	return r;
+ }
+ 
+-- 
+2.44.0.278.ge034bb2e1d-goog
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZfArAAAKCRDj7w1vZxhR
-xZZwAP4+EGMEUglD/WVBtX1qrmRSTf6/9dYDeoxuCpfOgBw9cQEAjPJ3jhtBOsFR
-RqxMxv5vLSy6XzxVLNAFL7q0DczXOQs=
-=iWre
------END PGP SIGNATURE-----
-
---awqbzhe5i5cs4dsy--
