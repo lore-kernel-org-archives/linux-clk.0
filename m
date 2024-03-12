@@ -1,127 +1,107 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA42F56765;
-	Mon, 11 Mar 2024 20:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698EA946C
+	for <linux-clk@vger.kernel.org>; Tue, 12 Mar 2024 00:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710188772; cv=none; b=LXllkeWrt9JISvsvUzLMVRC2IJO0wD4G11aw+m2JWhDQUGy4n10I5OcAYbtMMGR+n6KKopyRGcvbZqF4Sa0O6V75oXQEVj8PlPlDhtnxppUkUS1Mx35Dr8AB1lqMAFf5MjjHZQnn8h6D+BlVZo/Ox46BvR3RmBP+EH/cbuTZcVU=
+	t=1710201717; cv=none; b=ZL9fOXFE8t14sNAOFyNYqqiTRXAUsFcdwEkcMI27sNCczI5E/ok50lXxeIAT7/+QZwQtojBP+n4tPbyv37OtJpSp5VELZH2vDmpwhv63tLw1lDTZuI7PF7N+/pvauAXbcTPkUDOhmTGxW/fHUp3eGXfMD3/zkwEtoANDpyFzbdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710188772; c=relaxed/simple;
-	bh=QPiPfOFecIX8WW823ElbpwpIzdwIS3P4yFEaWv7mkWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HuTMB1lfjzboZq39UCW/VNAjt9xAeipxTu5E26OoO3e36GLwFqnKYfGNElfW4TfccsdWUKdVqSLR8HJs/FC/Wa6dbc+CmKvFFCZqnUfV3U66baf5J3x1nhsO6C6vwdYiZa1fx5MyrOTkySYpu5YRR4Mw+ikIXTe8mDr/wu52U5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=SlvZYcvC; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+	s=arc-20240116; t=1710201717; c=relaxed/simple;
+	bh=pyH0/Y2URKEgytRLvNHUUM77rWJEsFg7E7rffphV9Aw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I5Vaq/E1zJuqMk64CsHegtVF7FFfa4ebi0cpHqZ7zdPtGPKdf1v1ehX+N7EUXPH0h8ndhZYYOxs7j/X2xagwbnTrxjVVkg0MmPrB+8CCN0GJjhaLY+ihyZbv4Z4zhK+AXya7ybE/1UFgiBtykMST5KRChX7FISwRAGbp6fss2Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o7cJD2kI; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="SlvZYcvC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-	s=s31663417; t=1710188732; x=1710793532; i=j.neuschaefer@gmx.net;
-	bh=QPiPfOFecIX8WW823ElbpwpIzdwIS3P4yFEaWv7mkWQ=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:
-	 In-Reply-To;
-	b=SlvZYcvCkWrZ+mCkQDpi2VBxJ/6L1ZAGXws1NOatgnsxdgSresSqQDnRea1mpSfH
-	 /B3VMAFjBIDD/dxDBRRA7fuOSaMBhgehXQlv87TSVOuhSpmqjahRWi74YKEfk/To6
-	 8Jc84Rygo3PdNz46PHxTeEW5XQf9m6tW0ZjCaKCI47yAZ/i4h2OnTsdnthrH89ZMU
-	 /MMqYRJEMsivVUFea0jt7x94CWGNwI7G3/hbO4kqw/rwtbgkeUe80dp0z2WeSXkwI
-	 N2BkrCfw77XHpHW1jtnITJ14M//ohYQ6cVympecDUxaM6pVefGABkdSNgujkaeLoJ
-	 3zSFQwNF1kyRVcrqLA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([78.35.216.168]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MTiTt-1rFhIH1KH7-00U0Ec; Mon, 11
- Mar 2024 21:25:32 +0100
-Date: Mon, 11 Mar 2024 21:25:30 +0100
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v10 2/4] ARM: dts: wpcm450: Remove clock-output-names
- from reference clock node
-Message-ID: <Ze9ouqs8iS-zAuhs@probook>
-References: <20240310192108.2747084-1-j.neuschaefer@gmx.net>
- <20240310192108.2747084-3-j.neuschaefer@gmx.net>
- <c7693ae1-b7e4-4960-b447-8373855d86b5@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o7cJD2kI"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5131c0691feso6405235e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 11 Mar 2024 17:01:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1710201712; x=1710806512; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bw8QHazMu9Fh3V9WPOJl1lKgsQ2oGU99VYSdMMQahiM=;
+        b=o7cJD2kIvinblBh6TOu6hpSVaCrK5BDfqQOvFXYQ0vb7DS/7NQ1Y5JnkJlEUIgbyvg
+         NeuNuF9zOdq8bTpjT7mJM+dLX9nP/obUgJtcOvfMKie35SaZFKo2NxT70vWmxk+DL98/
+         gyJZPTr9GLEPbi7qM6Z1CdjtX00dCNGNyWaLANUT06Mdhs4/bd+zByZpojOww/gXvI88
+         RFlVnUxGXeDsaN8y2Lv8HmZQrU/MU+IgAbLdVh7/hmEQLxY6AUps3uzyBg6g7lxobdde
+         Tuwgs6jl1BwDTCywIL3CvSZhxelVapRlm4AkMGatsbwLwF3/P2+FQNOpmC1Yc0sDkJc1
+         y+kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710201712; x=1710806512;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bw8QHazMu9Fh3V9WPOJl1lKgsQ2oGU99VYSdMMQahiM=;
+        b=bqW7noil9bBZVhruTRU151MypLrTyanUKB/jMUstkrnZVK/Wo8QT7b+P5+TIxE8unx
+         yViExIEWaK0lt1cnbogKPbugUtaKc12ao6T6nNR+8umRbxC9OBPqYJn87srngPHOuCXC
+         xH45tIx3Vy9R1rmSwT55aZQ1cwhWF2Pc2V2zq1s9Ozr9jw/gdCGVP5FTDseuq44Y3Dwm
+         OOnwV7kSwHv2XCNs6wpWaDY7uf7LuK3wTvhSOrSNRF4yndd0OZg0DdsX16hrQAKOKqHd
+         ocQhdco80OVNJs7XjajjsavgchadGbRLcbjbeuWdhoXx4mVbEHy2xFnpiNG+Stbfm9KD
+         OwZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXncC2GV9T7qt5if4pKxpUT37kTeeaSCcRQAA0GRbBK9x6VAthpAwOvYSXICosuPtIBBmzgEaCrW+EzKMCg0kOz+uBAa4XoQ9CG
+X-Gm-Message-State: AOJu0YyjQD9kN+KVsFS2GGRWwJOCT2Aww5dd9wUUIvnIqrwg/MWke19R
+	hZu5cCHAsQmdhSRtegu8X/m7+wgnZIRR2PscpuTx6CSoHDsNspCG00hejkjffYQ=
+X-Google-Smtp-Source: AGHT+IGO6oDQSGxWvS/usMWsU07yYwr3deOSYyML/F6uaxC6z2eXxufqaTN6dfRzKOGFFdms/xGRWw==
+X-Received: by 2002:a19:5217:0:b0:513:9b96:a948 with SMTP id m23-20020a195217000000b005139b96a948mr4821569lfb.6.1710201712439;
+        Mon, 11 Mar 2024 17:01:52 -0700 (PDT)
+Received: from [172.30.205.61] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id n16-20020ac24910000000b00512ebe62693sm1300360lfi.255.2024.03.11.17.01.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Mar 2024 17:01:52 -0700 (PDT)
+Message-ID: <301380ee-1c93-49b4-b4e1-3b1289e98a75@linaro.org>
+Date: Tue, 12 Mar 2024 01:01:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="VmXkit7k7mmW0jx/"
-Content-Disposition: inline
-In-Reply-To: <c7693ae1-b7e4-4960-b447-8373855d86b5@linaro.org>
-X-Provags-ID: V03:K1:DSV6Jxp9uHCDsY5cseqTnBTBiB0eztWVfRktYcb2oYcokvKRra4
- 36xFfyFtmLnvtHLi/sbqt6v+EL0+kGVcr8gIMT4LDzL1YzQmcwibae2KSp14mMDRXhBPNRi
- KR2OmTO5waIBc8yh627MVue5HiV2SBfwq7lspqqfqiw60IhHHYlp/b+V5CTf6X9dVxvPd5R
- geY1m9M0ezesO6j/VJbeA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:oHssPTIrJ5Y=;KMxezZM62M1iUl8WK1u15cMTYGh
- rLJyAi6oqjFl38zgWdeud0amqwS4UmrjUiUj+xW+L2aiszNson6b516TzVrE7ky4IZIy0+91E
- Hbt7EjpGZpwVFR3G0AL7xh2imxXYRXcf52eVVK1WkXdBkRwRJralUustf6To2+vNmWxuSjIkA
- A4D/JuY5Ddg+NUmNvRYMQFvguVSSGshydMtrEYmohIZIaXacuzEGNlb1d0AxVypavtVNtJwKb
- V+xdwNEbo1KennbrXLmNBUhKwM845kEIZK73viAEdSDjtu0FGNHwO9khFKrJakUi/3OWltiCS
- 5/J6s91Ycl6/0Wp6aWp+IJ5xeMybwAhYGI8LEqskFnGObFzqhKzpJE0hhlkNHNkufpCgtognP
- ziQR/Nd949Vnb5gzwnHN6BxUnHFJSIlX1dZS613dgsECEiNJF+n2UactGeF6LCOYW/mHpazEl
- CUbOwJ1d0ydDIkN9hXIjMKEmXHhEAvuYlOz3voUOV1MQQ6dBvKf3GiBDtVu3N52hlH4pVXUKd
- hvCEA23pD/ax/xV8vkiYsmR4TCkxkGPpQKZGcTU2SK9+13dbm9sqnK6TeQBjQU+PeItq7LSsE
- BNzpBdsXu4DuRppS/q5DBv+pDi220T40B06QuDmLQTLkwQ4ONTPeNwOwZL999ShsV/IHyPBti
- +NVLu74DBgoXuWGIciAse2Kn/qQOcncRwSGIhHRhRSN2t1wuXSHHzF7QEyesqL+XqnAdWxfV9
- +QbEFep3Tf8IX91ZEUWK15dOOyNdEG8rBjPsXdWm4NrMk4d7y20oVCQFSqRKxMcG1S/8ywXyg
- X2h3pyvwEN6BhXfESFUll55803BOKZT4LlmmCJGDKioG0=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] clk: qcom: clk-alpha-pll: remove invalid Stromer
+ register offset
+Content-Language: en-US
+To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Varadarajan Narayanan <quic_varada@quicinc.com>,
+ Sricharan R <quic_srichara@quicinc.com>,
+ Kathiravan T <quic_kathirav@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240311-alpha-pll-stromer-cleanup-v1-0-f7c0c5607cca@gmail.com>
+ <20240311-alpha-pll-stromer-cleanup-v1-1-f7c0c5607cca@gmail.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240311-alpha-pll-stromer-cleanup-v1-1-f7c0c5607cca@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---VmXkit7k7mmW0jx/
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 11, 2024 at 07:50:22AM +0100, Krzysztof Kozlowski wrote:
-> On 10/03/2024 20:21, Jonathan Neusch=C3=A4fer wrote:
-> > This is not necessary anymore, because the clk-wpcm450 driver doesn't
-> > rely on global clock names anymore.
-> >=20
->=20
-> Your commit msg should say: since which commit.
+On 3/11/24 19:45, Gabor Juhos wrote:
+> The offset of the CONFIG_CTL_U register defined for the Stromer
+> PLL is wrong. It is not aligned on a 4 bytes boundary which might
+> causes errors in regmap operations.
+> 
+> Maybe the intention behind of using the 0xff value was to indicate
+> that the register is not implemented in the PLL, but this is not
+> verified anywhere in the code. Moreover, this value is not used
+> even in other register offset arrays despite that those PLLs also
+> have unimplemented registers.
+> 
+> Additionally, on the Stromer PLLs the current code only touches
+> the CONFIG_CTL_U register if the result of pll_has_64bit_config()
+> is true which condition is not affected by the change.
+> 
+> Due to the reasons above, simply remove the CONFIG_CTL_U entry
+> from the Stromer specific array.
+> 
+> Fixes: e47a4f55f240 ("clk: qcom: clk-alpha-pll: Add support for Stromer PLLs")
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> ---
 
-Good point, I'll do that in the next iteration
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
---VmXkit7k7mmW0jx/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmXvaE0ACgkQCDBEmo7z
-X9uzbg/9E4zYqzQDzzKwxco6TXOke7njucuOXl8f2KDunoXsBn/3CLtkyc4/JhtR
-RMwRHsCkAHMm9VSLdVtVR+ZDXZZ/y3dbKpGIauB7bIii0rHY3iv3Ut1DNKQtd71q
-ZpwTki+a+gJavU+eQiAzspIgtv2IHfsdZa/6jy3t4IqryAlbFK7J9rfC+iyxD7HV
-MVCyKQqGD5qDJQ4UWJOzcX4/72zqjDTRXw65xTf94mr12+Htx55hV/1SVnSgEELj
-++zkxvMQAbbrO3QTm0gk0WUJfUL4tD72jfTeLxFuzsqDYklRcrOOHaM+KjJnU1E0
-4xWNj44KaIUNM6olaYwdSdAk/byR7FByBV8ShE7bWAJHLBCO++L1UiyBqzm8UPNB
-ZVbP+RNdYBdm1Dd6qPZ2uAMV3Qc1RjGBXeDQ+Ecqx/zn1FFrDe9JnCcxnTfM3P9w
-EzclIhK0NtORnqY7B+SxW4SREOXt0tiGPNBZWQSVH5w6b9jlsXakRRdbRSs1d2ij
-bjhkX0sexsT1VxSJI/uAj2nZ4jMkn4OpRMkz50AxV1fYNJcTkjbIwcIrF5uzK69O
-IxsiMzl6YIXaVEVz0dY82ZycKOqtVHkiX7uVfk/HbfKlR0svz6sxHIfGRQkW4Kna
-Go5/WdMeKJwngPm0en45IFyQTVV7OjnsYJkycNqucp0Qoo4hReM=
-=Fu2N
------END PGP SIGNATURE-----
-
---VmXkit7k7mmW0jx/--
+Konrad> 
