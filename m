@@ -1,163 +1,128 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE315D460
-	for <linux-clk@vger.kernel.org>; Wed, 13 Mar 2024 16:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CCC13F452
+	for <linux-clk@vger.kernel.org>; Wed, 13 Mar 2024 17:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710348709; cv=none; b=I3epBLLU7MgBjhjRttTuDipYbMQaKj6Vqp7nCBMJ8vrH2R5Lr1OZLH6TkBCApKKWMDFPpAaT0EaJ7Lfotm/Rm3UfFhLiLz4HOBqg9w+57enjPmBM2CqXfGCjoHDFHMtyqrCYLYLgEWuW2bmY6TWc/LMaq5sh9ptPHWIxMu6Jp/8=
+	t=1710352437; cv=none; b=VoNDFuTc1K9M5yJ0yg5O/SccMainL2WKTWnzTFCpXvcsryCeQLn4UmXdUUDW8NAS/1qkIvrwAdBITPnVz/thsTJmPNRpeApBhJdL5KhWM9ILn0sJh72sDsNw7bOQ5aPGJ/sVbI1Qa5PJAERaRVz3yKu8jz+YrCkpLCD55xRySOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710348709; c=relaxed/simple;
-	bh=kHmNH4atjpPEguQSbWjBGituRrM0Qr3ZHM8xK8RZGlM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oI1DTMRuukCRqsS6aC3Z6SveHRZX6OabRcu0du7UvtZy21GK3LYeEglzS3YU+Ppp37TF1vg/VXYe8/5YAn5pGj9dvpgahlfDjxbkv8WaYekcpaRg3Y4LWw5W53JjwWbzqD+gDn54ZTKqYO9R1WGHvLC7Epmp+SP51LLaxWDnRAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GOppHXwS; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1710352437; c=relaxed/simple;
+	bh=m4MoUO1mvIPqt4fC1lB6nKiiGjCp4eGwXz6oqUc/OR0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WbCixnz795OAd6MtokVmvSqQWeZaWdz91vA9WaOQKtpViKuNRsWI2hk2trtqTZgnqfmrnXqSLeFWwwG7hZbAOGlFmYirSIP8tNMQV2s7Y2CDwIhklx3XyVjr9iXOaCnAePmvW1Han6I0ophVDei2ahGFky/gdEgNwEQHjZX6A+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YtilXYlL; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GOppHXwS"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-33d38c9ca5bso3689583f8f.2
-        for <linux-clk@vger.kernel.org>; Wed, 13 Mar 2024 09:51:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YtilXYlL"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-413ebcf13a5so638905e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 13 Mar 2024 10:53:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710348706; x=1710953506; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KeRaxUS3lCqKuFUraLSdrlCZg+6cVn+NjlXyt/cGFhI=;
-        b=GOppHXwS9ELxDlW6lL1W+JS806wqyQw+OBvgjbfcxKP+uwZb51IUJFELMs8B5akcxk
-         oHLkNgnfhNbAl52YQ/W8uUi9xA+zakrTXOdiNc/JhVbu1a4TbWILYoLsrwpOoCx/jpSF
-         HZBtYk8yoWfFr0BcAPzoOiDuvF3NkBeYiyicL6Vt5RQErco4tHMZVEeKFry+iBzwsr4/
-         WqVRj2rE3eQBpCEynXyog2eOSnAEUucBy/DgMNrbMDza+duZBHac3hPgNoII0y6pv8r+
-         Y4owc8EF7IF2+baIBqEG1xmixJj4p+JcrVyO4MExYcWx7UxGMpIUZyibX9v6E3cviLJz
-         XYxA==
+        d=linaro.org; s=google; t=1710352434; x=1710957234; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=izT/XW0GrmGVL6Tl66ecjkPXN9CJyhGJnGTtICjCD3M=;
+        b=YtilXYlLZ883k/3wcu1/eYrS6FgOJOBJfTT34FcrCWVND4zDBllNsKYffjUUaZ3OoQ
+         3U/BCFzqc+FQ4YPfFIMFBR9ZdnoFQA+5WSX/gRkhIGISb30IXHKZSFn21uR1LIaDoQvY
+         3FpDM+aNiRTznYxitnKSEcCkP3ZGLSi/LDVjzMUQoqrPhbVTSs05ZOJFLtC7vF63CTUV
+         OcugCGa62B1IyvOG6ppdQJ+cJ+C7kJyjnH4dIDlojuDaz+qrduBAUFSubRdccMg/OYPL
+         crD/KZMJZUR4UXVAjElqNxSE14T3IKWkOkfSOgR9TNbMbYy25+SzzVxcI6w4RsMEYPkj
+         tFqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710348706; x=1710953506;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KeRaxUS3lCqKuFUraLSdrlCZg+6cVn+NjlXyt/cGFhI=;
-        b=Y2IPNvh6/oaGrm78N3qJ3UkJcc356R1dkrlzyqDFYHBUR8HzHliO8WCrl336ZSx5/L
-         CWYBLIBAvIGdsip+Eo6SaFGTvXpGOz6ZVodWZysWfHfG3bCCx3DhNp+f4ywCiyPghsCq
-         TUS/vnknWcSKMboBDMrWKh/T0wO3homnEGx1ELlJ629hLt61rHq/nWMyS3Z1hFMNI5hq
-         YRWuTkQzblw1MsXTfq4Au0Fu46g1ON6zdLioVmyRcdRAkQyn9aY3L0WxVUIFDGl+3EEw
-         DES3E+MCmRiOca3hNCXkvyrQIQ9YPnz4Q6F3oERz8jYz6ag0XFC9ynKGKlQVEfaDrCam
-         sYqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXn7CYRj48OpNsjkLyCbD0/veSOJ2ZupOXLp8e6kyA68f4keC15M7PqaJ9ffd3WPHrRcI6jFUJDdro07N4r8QyJFGWq4OVz2fEC
-X-Gm-Message-State: AOJu0YyOvmWZ+FXgVKNY0ho74MCfX7tMBE8OtyDJNa6eNUXoUEmFZC8O
-	FmFf/2ZwCy1GGs9RMitLvFqENBtrF1SKGgBX7Eq78+II+Z5o+dYf1lp2O93dduw=
-X-Google-Smtp-Source: AGHT+IGNQEy1Yd2X6NGmcGSc9n36ODAa+4iNAF8HvsjuMyICqj9+19T+I/qPzSCc7nGEkqEeipCJog==
-X-Received: by 2002:a5d:44c8:0:b0:33d:a1c4:9c63 with SMTP id z8-20020a5d44c8000000b0033da1c49c63mr2177149wrr.49.1710348705653;
-        Wed, 13 Mar 2024 09:51:45 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id k8-20020a056000004800b0033d6bc17d0esm12136678wrx.74.2024.03.13.09.51.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Mar 2024 09:51:45 -0700 (PDT)
-Message-ID: <e8037775-78cf-4d18-9f8b-9dc5f497ad14@linaro.org>
-Date: Wed, 13 Mar 2024 17:51:43 +0100
+        d=1e100.net; s=20230601; t=1710352434; x=1710957234;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=izT/XW0GrmGVL6Tl66ecjkPXN9CJyhGJnGTtICjCD3M=;
+        b=dgplmSBn4AbtXPICzmMUNgCqi/CLfTJngmFgaB0k9wIoyTX8ac4SXra6YlgoefoF1r
+         C6UdjSZg5AS0JsXzc4bZGpkJLfZLFuL0/EtJytj2xfsl8+jSzRCZMFaE0+XuMAeAgGF7
+         1DYV/PobR1atwqefCHHbHwvkaAKfyDPGQpDWDCJkqM6KE1sAaJLP++LuNFyu17iaPfN4
+         tMPlYLGR8tvWS0JIZlKnak6Sq0TT/g40ym6imudvSzjcck/FyqXqsQywiRn4zzDNCXiM
+         6hkUkAiJng8M82d0+i7DimFoFLYirgmJOIvyyUhhVfzIzLigUXhOVPFyUlc3GTwNgqeb
+         u46Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUTdjXjMUNZSK3SGwTFgrvv5owa8kBhA3yKZM8HHq2VJJMc0SgWO7pXvIguqr0B47ZAANxGB0+5DpoVxLcsyVzLO4Nb6fdHxdvH
+X-Gm-Message-State: AOJu0Yx+XAr2gxS2NTAz81B6jiYEQMV4CAGFMNHe6e1qWx7eg61XHJc9
+	DZm0Ji4kmr0bvJYCsyfI85PIkDFBiWdyRGEy/HnL5zbj/lBsh023YiM9Gh1L0DA=
+X-Google-Smtp-Source: AGHT+IHaKy+zzPYoBf25HdN7N6UQcsD5sQuS2StMY4WAgYUHdmUfCSSe9fFJKEDwU62nzkDMfpNiMA==
+X-Received: by 2002:a05:600c:4e4b:b0:412:ed3f:1b4b with SMTP id e11-20020a05600c4e4b00b00412ed3f1b4bmr474221wmq.11.1710352434035;
+        Wed, 13 Mar 2024 10:53:54 -0700 (PDT)
+Received: from [127.0.0.1] ([176.61.106.68])
+        by smtp.gmail.com with ESMTPSA id u12-20020a5d6acc000000b0033e7a499deasm9914482wrw.109.2024.03.13.10.53.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Mar 2024 10:53:53 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v2 0/2] qcom: clk: camcc: Fix power-domain definitions on
+ x1e80100
+Date: Wed, 13 Mar 2024 17:53:51 +0000
+Message-Id: <20240313-linux-next-camcc-fixes-v2-0-9426da94ae37@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom: Update SM8150 videocc
- bindings
-Content-Language: en-US
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240313-videocc-sm8150-dt-node-v1-0-ae8ec3c822c2@quicinc.com>
- <20240313-videocc-sm8150-dt-node-v1-1-ae8ec3c822c2@quicinc.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240313-videocc-sm8150-dt-node-v1-1-ae8ec3c822c2@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC/o8WUC/3WNSw6CMBCGr0Jm7ZjOgERceQ/DopYRJtHWtEgwh
+ LtbSVy6/P7nAkmiSoJTsUCUSZMGn4F3BbjB+l5Qu8zAhitTksG7+teMXuYRnX04hzedJaGtjyV
+ zQ3XFBLn8jLIZuXtpMw+axhDf289EX/U3Sf8mJ0KDHXFtxVyb8mDOOWhj2IfYQ7uu6weicQ7mv
+ QAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Abel Vesa <abel.vesa@linaro.org>, Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.13-dev-26615
 
-On 13/03/2024 12:08, Satya Priya Kakitapalli wrote:
-> Update the videocc device tree bindings for sm8150 to align with the
-> latest convention.
+There are two problems with the upstream camcc implementation at the
+moment which this series addresses.
 
-Everything is an update. Please explain what you did and why. The "why"
-part you tried to cover but I just don't understand what is "align with
-the latest convention". What convention?
+1. The camcc block has two power-domains MXC and MMCX however, the yaml
+   description doesn't include MXC.
 
-> 
-> Fixes: 35d26e9292e2 ("dt-bindings: clock: Add YAML schemas for the QCOM VIDEOCC clock bindings")
+2. The code for the GDSC definitions for x1e80100 camcc fails to list
+   the titan_top_gdsc as the parent GDSC of the other GDSCs.
 
-What is the bug being fixed here?
+This series addresses both of those bugs. There is currently no upstream
+camcc dtsi for x1e80100 so the yaml change won't affect the ABI.
 
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Changes in v2:
+- Incorporates Krzysztof's comment on removing "phandle" description
+- Added Konrad's RB
+- Moves the location of the allOf
+  Editing the dtsi to test the yaml constraints showed the power-domains
+  were not being picked up but putting the allOf before the required
+  fixed that.
+- Listed the 8450, 8560 and 8280 under "-items" as testing shows
+  adding too many power-domains to the dtsi was not being picked up by
+  the automated checkers.
+- Tested with
+  Too many power-domains in sm8450
+  Zero power-domains in 8550
+  Too few power-domains in x1e80100
+- Link to v1: https://lore.kernel.org/r/20240311-linux-next-camcc-fixes-v1-0-d126ae0b9350@linaro.org
 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml | 1 +
->  Documentation/devicetree/bindings/clock/qcom,videocc.yaml        | 3 ---
->  2 files changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> index bad8f019a8d3..e00fdc8ceaa4 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> @@ -20,6 +20,7 @@ properties:
->      enum:
->        - qcom,sm8450-videocc
->        - qcom,sm8550-videocc
-> +      - qcom,sm8150-videocc
+---
+Bryan O'Donoghue (2):
+      dt-bindings: clock: qcom: Fix x1e80100 camcc power-domain declaration
+      clk: qcom: camcc-x1e80100: Set titan_top_gdsc as the parent GDSC of subordinate GDSCs
 
-Wrong order. Look at the place from where you copied it.
+ .../bindings/clock/qcom,sm8450-camcc.yaml          | 37 ++++++++++++++++++----
+ drivers/clk/qcom/camcc-x1e80100.c                  |  7 ++++
+ 2 files changed, 38 insertions(+), 6 deletions(-)
+---
+base-commit: 8ffc8b1bbd505e27e2c8439d326b6059c906c9dd
+change-id: 20240310-linux-next-camcc-fixes-a68322916421
 
 Best regards,
-Krzysztof
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
