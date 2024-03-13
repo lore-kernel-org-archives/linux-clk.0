@@ -1,119 +1,117 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D86E39860;
-	Wed, 13 Mar 2024 10:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC4D40C15;
+	Wed, 13 Mar 2024 11:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710324555; cv=none; b=tBK+fOMm5Uaoz+PM8pAO5GwhyUK5P2nj7pxSw8p1f6UEFkqpTEyXr14yojFNcs4EgqvyibbXs44zCSMt9N/TV/fp2WRcBiCqdlJ7n9p5E1cLww9l1l0jTnm2EMt8L9je1TZAukTgraCLZpsqWFw8Mg1ckzqH9nnczsPFBECT4ck=
+	t=1710328152; cv=none; b=DZY59NIzfR0o0/oI9dE/td/04Cgf4LqnA3kv1UpA4Ovpy9EKRcTexCOgFlu9KJQOQNpC4EAGYI+xXn1qmPU+/sCEP9zz47sLAqs4rKCAQYsKFjhja9EwYbXHg2Zmlohd4QPzKyZMNgW2ovOeX+nA7lQJN1qUhXRDWwc9euN5fic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710324555; c=relaxed/simple;
-	bh=fWGLhnxLEh7eGyNf4dii+sqAe5pXpPJ9tpcuMouGdHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cq9XIrJU30oLPkxgMFH4ruGfb0ppsCvtASm00Dn0fRG8GSmIhXNhmijq9TS04EZmyKlZRhyAsAl7qERinbpaTWtbJ2b5ewOZwVPI+7dSi2eFYc/cde3kJvX8d/69AVCOq4Qru0iLaRZ2kWlwHz418/bi3jFRqi1bKx25iLOje4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Qwx0mRY4; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1710328152; c=relaxed/simple;
+	bh=GdaNCXq0HLFb4IL9/uyDoTiLk6PDxVDs6bXsCPqOz60=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=pMKYp+nrzpnPCBmYPirM0ubnSYRghluNgBcmCMwyUN7s5a1V8ik6oSDi9dEj4xaXtzGdAQPnhO89/hwyC5IPxUpSMa5adZo1a2BT+7qXVpiUosjcwAYovxeB4oiVt6mcLWJwU5r6b1CF650arm7jao7uVL8tC1wiS29TCTy9FoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aFofx7of; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Qwx0mRY4"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dqscFof3UIk2f9tQdsmkjOVmktSh5/Fa3QHjZqZqyQQ=; b=Qwx0mRY4Q4QHwU75DoBroYRY8q
-	FFLCzsbtgdqoG2GoFm/PbyH3Aln5E+hgpBN9cgAGb39bcabXs7J5s6EMJsitA6hoHC7tC7pu1YAyB
-	geD/7sVzA9qXD/MV3lHiHuNJVY4aa5ziK69BPhnPqfo4f6BRNe/HOKpDUrLnsKbdcGf0/tuaLXvYl
-	vpIV/Id/Y1CHel5mzYm69GJrHkODL0iQ4URqFUWdLPWStVbIyER+OUwzBrxpsCPI+uvynp15Ogv9W
-	at6YrOyQxED8ZiPO5pp9XZF+/QcjsI1QDPwyeUZ/Gdh8s1ApS4pEvkqnR60Y4DW+22GAoAME911Gl
-	+Vaoi/Ow==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33378)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1rkLXn-0007X4-1k;
-	Wed, 13 Mar 2024 10:09:07 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1rkLXk-0004Pg-F8; Wed, 13 Mar 2024 10:09:04 +0000
-Date: Wed, 13 Mar 2024 10:09:04 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Duanqiang Wen <duanqiangwen@net-swift.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH clk] clk: clkdev: add error messages for name exceeding
- maximum length
-Message-ID: <ZfF7QE0Jqok2uKrL@shell.armlinux.org.uk>
-References: <20240313064252.50233-1-duanqiangwen@net-swift.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aFofx7of"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42DAkvI6020880;
+	Wed, 13 Mar 2024 11:09:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding:to:cc; s=qcppdkim1; bh=qyPDOYgs3/5W27
+	Ag5hEy2zRW2QCFYTxLo4jyReBXbLQ=; b=aFofx7ofiRZ9W6sG6boF9w4XFOw+V0
+	Glej0wfzjf/KeBT9wp/yHCOM9qlIj8QiQsoTnzoQkEIFTKsWyCoxdmBzfLXj1bwK
+	lvN+F6vASvb1WM3+HDhSCFsNgyzFFYFxk/P2rSCk6WHPzkeOQSJWNXv9Gh74L6pG
+	isOVKK+3icl1860ZWniM69JweW3Hu1lzDE9Q6SJA7j4ku70oSPWC9i1ttisLiiEJ
+	4EcM2rQzgJj3dwij70jbErxfXNEh7vnOhGuwxs8R0On+71SVWt49rCItLwiycr7/
+	o4u+SED+NQUvJ8cqS0Vw4TIMuOCPzUWLLkE1uN3qlgo/fctp3m/r7yGg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wuapeg1cv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Mar 2024 11:09:05 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42DB95Vm017940
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Mar 2024 11:09:05 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Wed, 13 Mar 2024 04:09:00 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [PATCH 0/3] Add DT support for video clock controller on SM8150
+Date: Wed, 13 Mar 2024 16:38:26 +0530
+Message-ID: <20240313-videocc-sm8150-dt-node-v1-0-ae8ec3c822c2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240313064252.50233-1-duanqiangwen@net-swift.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACqJ8WUC/x3MTQqAIBBA4avErBtQ++8q0aJ0rFmkoSFBdPek5
+ bd474FIgSnCWDwQKHFk7zJkWYDeF7cRsskGJVQtKtFjYkNea4xHLxuB5kLnDWFrZVut9aBspyH
+ HZyDL9z+e5vf9ADbQOndoAAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh
+ Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>
+X-Mailer: b4 0.12.4
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YISqd6W2NvhviUXcEwrLzB8IWin0pvms
+X-Proofpoint-GUID: YISqd6W2NvhviUXcEwrLzB8IWin0pvms
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-13_07,2024-03-12_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 suspectscore=0 clxscore=1015
+ impostorscore=0 mlxlogscore=703 spamscore=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2402120000 definitions=main-2403130083
 
-On Wed, Mar 13, 2024 at 02:42:52PM +0800, Duanqiang Wen wrote:
-> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-> index ee37d0be6877..620dc1e80b48 100644
-> --- a/drivers/clk/clkdev.c
-> +++ b/drivers/clk/clkdev.c
-> @@ -158,6 +158,9 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
->  	va_list ap)
->  {
->  	struct clk_lookup_alloc *cla;
-> +	struct device *dev;
-> +
-> +	dev = clk_hw_get_dev(hw);
+Also, add the index based lookup support and update the device tree
+bindings as per latest convention.
 
-Sorry, but no, clkdev should have minimal dependencies on CCF (it was
-designed to be completely independent). I'd prefer not to add this.
-Just print the formatted dev_fmt+ap and the con_id when reporting
-errors.
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+Satya Priya Kakitapalli (3):
+      dt-bindings: clock: qcom: Update SM8150 videocc bindings
+      clk: qcom: videocc-sm8150: Add index based clk lookup
+      arm64: dts: qcom: sm8150: Add video clock controller node
 
->  
->  	cla = kzalloc(sizeof(*cla), GFP_KERNEL);
->  	if (!cla)
-> @@ -165,11 +168,19 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
->  
->  	cla->cl.clk_hw = hw;
->  	if (con_id) {
-> +		if (strlen(dev_fmt) >= MAX_CON_ID) {
+ .../devicetree/bindings/clock/qcom,sm8450-videocc.yaml      |  1 +
+ Documentation/devicetree/bindings/clock/qcom,videocc.yaml   |  3 ---
+ arch/arm64/boot/dts/qcom/sa8155p.dtsi                       |  4 ++++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi                        | 13 +++++++++++++
+ drivers/clk/qcom/videocc-sm8150.c                           |  8 ++++++--
+ 5 files changed, 24 insertions(+), 5 deletions(-)
+---
+base-commit: 8ffc8b1bbd505e27e2c8439d326b6059c906c9dd
+change-id: 20240308-videocc-sm8150-dt-node-6f163b492f7c
 
-This is wrong (uses dev_fmt not con_id). Also, use sizeof(cla->con_id)
-to test against.
-
-> +			pr_err("%s:con_id string cannot be greater than 16 characters\n", dev_fmt);
-
-Cleanup?
-
-> +			return NULL;
-> +		}
->  		strscpy(cla->con_id, con_id, sizeof(cla->con_id));
->  		cla->cl.con_id = cla->con_id;
->  	}
->  
->  	if (dev_fmt) {
-> +		if (strlen(dev_fmt) >= MAX_DEV_ID) {
-
-This is also wrong. The length of the format string does not give any
-information on how long the resulting string actually is.
-
-> +			pr_err("%s:dev_id string cannot be greater than 20 characters\n", dev_fmt);
-
-Cleanup?
-
-> +			return NULL;
-> +		}
->  		vscnprintf(cla->dev_id, sizeof(cla->dev_id), dev_fmt, ap);
-
-Using vsnprintf() here and checking whether the return value is larger
-than sizeof(cla->dev_id) would be better.
-
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+
