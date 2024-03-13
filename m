@@ -1,236 +1,123 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A881419B0
-	for <linux-clk@vger.kernel.org>; Tue, 12 Mar 2024 18:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E365E65C;
+	Wed, 13 Mar 2024 04:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710269442; cv=none; b=hF61Rn/FSi3kslLbfaq08/wBaHGY5bqwre6PCxcMnmIOD4vrR8VXsD/h562KWLWpI5GUen96t2FmuwBNgtI/CYrcf/15fuGiETRYLKcZu+Eq4qtzBPeAmWyb1FtGV7LmhwYwX9MNwD11Cj5H5V53yy+LbIUweEF2DTgmwp/lC6k=
+	t=1710304035; cv=none; b=k6ZVGDUQvmQnwOvGDU8/a5eVvuOcU7SuQ1EWdCnUdh4wuTOquHZ6mv9cw6DDtpax9xggA3OctN2eZmwYBMvIMI+HMWgpyLBN77REBRS+KLjnBXzn8Ju5o2LYqfOh+JccC7KrfbLnDvAvSYtkvPjbvIuoT3yACyuSYp7qywcPNe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710269442; c=relaxed/simple;
-	bh=VXNVVnHLzcUMf+eMc1cXZF1qhCcY1ZICBw2e0CD90oU=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=GQPxwaumD7O826P2S6QXoeesauhivaI+fEcgt3OOzCs6aiBUx54ShLrDhxGpSz9C13o4nbW1pZy6MLP1qyiMoAQWn0Iw0qaF2JzZIJKnPFp5uydq3pCNFCZFp55GsbGY0P/09vrL0yq0KK7rVm/xx/X45UUhEs3u+g28Zg93NQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Icjz8BUa; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1710304035; c=relaxed/simple;
+	bh=RFRDpG5Td68f6Fw5cn/ZXvS9iR0pwkfieQGofQe5jeg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ptPfOV0nJQhCqnApt/zwb3uVFHSZAOFzqMDTFkwX+UoEJn1zUVXwzJyMiSHCEH9U2LQvLGxPbys5Z4fBmiedtpOAh6XfWDIZO2DOOLzwAuVblfsFl9FoDVV6jlyuH7ESyH7yvU6QnOdgbIxc7gzM8E8x2aglI6Uni8BsHwNIhT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n9KcuKFp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Icjz8BUa"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5131a9b3d5bso5729493e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 12 Mar 2024 11:50:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710269438; x=1710874238; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWmv8PROciGabllAPSqvA9F+FHYmPZHSjaaUfTtwxLQ=;
-        b=Icjz8BUayisfyD6eGg27vg1xvbZZpSUDXWgVXRI3XLbEG1XoTUuQ/g6NCdeq2S+Ona
-         W7nV1GOjyVyiswaaxOgVjcvElnr1rXQc3fqT954JwzbnAVH5KqmxqKgchKgCmp/34st7
-         KNtRRyJpyOteA3ZIZ8ear3MO5agCjyXVF0IC5nyt9Pi9E2MUw2MV4qvLZdLEyD5kujSS
-         6coBBc0cTw/taDGA2+YR2O0GNckvkoDgCDgTC0u+L2hj+2jMx9LT6boYa4lEQxCI0wMc
-         NNq+i7Zuh4X83lPpkI1TakLxShYp2zwUj/A92Ghz62IeMQ2CSPxtKiwdcbt/6q+59ZI3
-         h3rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710269438; x=1710874238;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWmv8PROciGabllAPSqvA9F+FHYmPZHSjaaUfTtwxLQ=;
-        b=tFUn1IFWnRlIQix4m16xLtoOX/nY7sPCAq5F7zxBYZO6e3xy6gWTwR4q5NIjvp+Tw7
-         X/6J3Vg87y6BUXVTypeyVTEf03SAQKsM/uZFnIBnM1IOdskMaAH9EEPhI3V6pdfeoczY
-         MKmNKGoLdi8YXOGc0H0qj2QySAbGwh4Ygq91Aoc2tNPbuMOZSbM3vGLUe1FaOrl3AzTu
-         Z5VSfe/CwDq3oFJxxGOmYTCe3UhGf1T6cLdTUAzQ2LU40xoD5jcz+SLtxwqWtk4cRdbQ
-         3Uc5LbqMN7Hc7uRZEfkeAHZmqeCpUM3E3Wx8dNYnf0XbDvVOOVnRFjedGgHZqrFr38Tr
-         9+Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCXUOMfnmP03/YpHFHQRvJgAgCmW8OXrA79BAd6tPQR/xVg6SNmhFAGTRMYZlybRtnnNlR+AMhExfJFu2mKxFKF1A1lAHaMke+Np
-X-Gm-Message-State: AOJu0YxmigprKUkfwMV1vsJXC3IG/OAQSNykxVhuQ+78vEBwnm4wpQHA
-	5YUgy/4ahqVJkUQGVjzeU/gLVHgL7X5hwcyHl6Dgy9f5tAASPR9SV/H8MvgE0qg=
-X-Google-Smtp-Source: AGHT+IGxrhlnbqnZw+75kfh+yq+KarLg4EMELr26c6t+nZ26T7LkDm/X5ar7Kec8Nuoyw6XvydLALA==
-X-Received: by 2002:ac2:47fb:0:b0:513:588a:2614 with SMTP id b27-20020ac247fb000000b00513588a2614mr737193lfp.49.1710269438328;
-        Tue, 12 Mar 2024 11:50:38 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id j20-20020a05600c191400b0041339453775sm2557465wmq.48.2024.03.12.11.50.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Mar 2024 11:50:37 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] dt-bindings: clock: samsung,s3c6400-clock: convert to DT Schema
-Date: Tue, 12 Mar 2024 19:50:35 +0100
-Message-Id: <20240312185035.720491-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n9KcuKFp"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42D1ARCL022857;
+	Wed, 13 Mar 2024 04:27:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=+82VzOw1lv5FIzC+UC5eKLpt50PCuzFKY5+brNawC8M=; b=n9
+	KcuKFplHW+ArWdvFXVy1oLpFuUGTn96X0WaYqhgx9PBzufo5cZ+/0F8B0NLXrkMA
+	8MFNAYzpcNXEevwscod/trwoD98j6dSvVrylnZrs/XPXsr13BXVeDXZnvsYYuwxC
+	sa+Mcjudle5JuAJSFOCD16bIMnmi8FBZG8VaXBPR9wQEMpNXQsccpAVn9Ide5V7z
+	n6cYbZQ1XzZcrz3D7U6fbaB7AXFTzImDhA7hMoCsH3lhChotVvqt/chN8JMHsbSl
+	q/E8LfFGmT6/t3e2YhhF+tUlkjQJ1eHUbreVDiqsfG+Zx/dIBWNelG8CUkbqYn57
+	g5aNMw9iPBGVTSWWH/RQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wtw3h0y4t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Mar 2024 04:27:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42D4QWf0012924
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Mar 2024 04:26:32 GMT
+Received: from [10.201.2.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 12 Mar
+ 2024 21:26:28 -0700
+Message-ID: <690cba7c-4362-4e19-8573-ab20b8119ae2@quicinc.com>
+Date: Wed, 13 Mar 2024 09:56:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: apss-ipq-pll: use stromer ops for IPQ5018 to
+ fix boot failure
+Content-Language: en-US
+To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Sricharan
+ Ramabadhran" <quic_srichara@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Gokul Sriram Palanisamy
+	<quic_gokulsri@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+References: <20240311-apss-ipq-pll-ipq5018-hang-v1-1-8ed42b7a904d@gmail.com>
+From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <20240311-apss-ipq-pll-ipq5018-hang-v1-1-8ed42b7a904d@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Uaj_-QNsnGVNrBV1qqwUJKtX_Oo3BZYT
+X-Proofpoint-GUID: Uaj_-QNsnGVNrBV1qqwUJKtX_Oo3BZYT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-13_04,2024-03-12_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 lowpriorityscore=0 mlxlogscore=833
+ spamscore=0 malwarescore=0 impostorscore=0 clxscore=1011 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2402120000 definitions=main-2403130031
 
-Convert Samsung S3C6400/S3C6410 SoC clock controller bindings to DT
-schema.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/clock/samsung,s3c6400-clock.yaml | 57 ++++++++++++++
- .../bindings/clock/samsung,s3c64xx-clock.txt  | 76 -------------------
- 2 files changed, 57 insertions(+), 76 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml
-new file mode 100644
-index 000000000000..d0660313c262
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml
-@@ -0,0 +1,57 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/samsung,s3c6400-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung S3C6400 SoC clock controller
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+
-+description: |
-+  There are several clocks that are generated outside the SoC. It is expected
-+  that they are defined using standard clock bindings with following
-+  clock-output-names:
-+   - "fin_pll" - PLL input clock (xtal/extclk) - required,
-+   - "xusbxti" - USB xtal - required,
-+   - "iiscdclk0" - I2S0 codec clock - optional,
-+   - "iiscdclk1" - I2S1 codec clock - optional,
-+   - "iiscdclk2" - I2S2 codec clock - optional,
-+   - "pcmcdclk0" - PCM0 codec clock - optional,
-+   - "pcmcdclk1" - PCM1 codec clock - optional, only S3C6410.
-+
-+  All available clocks are defined as preprocessor macros in
-+  include/dt-bindings/clock/samsung,s3c64xx-clock.h header.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,s3c6400-clock
-+      - samsung,s3c6410-clock
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@7e00f000 {
-+        compatible = "samsung,s3c6410-clock";
-+        reg = <0x7e00f000 0x1000>;
-+        #clock-cells = <1>;
-+        clocks = <&fin_pll>;
-+    };
-diff --git a/Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt b/Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
-deleted file mode 100644
-index 872ee8e0f041..000000000000
---- a/Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
-+++ /dev/null
-@@ -1,76 +0,0 @@
--* Samsung S3C64xx Clock Controller
--
--The S3C64xx clock controller generates and supplies clock to various controllers
--within the SoC. The clock binding described here is applicable to all SoCs in
--the S3C64xx family.
--
--Required Properties:
--
--- compatible: should be one of the following.
--  - "samsung,s3c6400-clock" - controller compatible with S3C6400 SoC.
--  - "samsung,s3c6410-clock" - controller compatible with S3C6410 SoC.
--
--- reg: physical base address of the controller and length of memory mapped
--  region.
--
--- #clock-cells: should be 1.
--
--Each clock is assigned an identifier and client nodes can use this identifier
--to specify the clock which they consume. Some of the clocks are available only
--on a particular S3C64xx SoC and this is specified where applicable.
--
--All available clocks are defined as preprocessor macros in
--dt-bindings/clock/samsung,s3c64xx-clock.h header and can be used in device
--tree sources.
--
--External clocks:
--
--There are several clocks that are generated outside the SoC. It is expected
--that they are defined using standard clock bindings with following
--clock-output-names:
-- - "fin_pll" - PLL input clock (xtal/extclk) - required,
-- - "xusbxti" - USB xtal - required,
-- - "iiscdclk0" - I2S0 codec clock - optional,
-- - "iiscdclk1" - I2S1 codec clock - optional,
-- - "iiscdclk2" - I2S2 codec clock - optional,
-- - "pcmcdclk0" - PCM0 codec clock - optional,
-- - "pcmcdclk1" - PCM1 codec clock - optional, only S3C6410.
--
--Example: Clock controller node:
--
--	clock: clock-controller@7e00f000 {
--		compatible = "samsung,s3c6410-clock";
--		reg = <0x7e00f000 0x1000>;
--		#clock-cells = <1>;
--	};
--
--Example: Required external clocks:
--
--	fin_pll: clock-fin-pll {
--		compatible = "fixed-clock";
--		clock-output-names = "fin_pll";
--		clock-frequency = <12000000>;
--		#clock-cells = <0>;
--	};
--
--	xusbxti: clock-xusbxti {
--		compatible = "fixed-clock";
--		clock-output-names = "xusbxti";
--		clock-frequency = <48000000>;
--		#clock-cells = <0>;
--	};
--
--Example: UART controller node that consumes the clock generated by the clock
--  controller (refer to the standard clock bindings for information about
--  "clocks" and "clock-names" properties):
--
--		uart0: serial@7f005000 {
--			compatible = "samsung,s3c6400-uart";
--			reg = <0x7f005000 0x100>;
--			interrupt-parent = <&vic1>;
--			interrupts = <5>;
--			clock-names = "uart", "clk_uart_baud2",
--					"clk_uart_baud3";
--			clocks = <&clock PCLK_UART0>, <&clocks PCLK_UART0>,
--					<&clock SCLK_UART>;
--		};
--- 
-2.34.1
+On 3/11/2024 8:36 PM, Gabor Juhos wrote:
+> Booting v6.8 results in a hang on various IPQ5018 based boards.
+> Investigating the problem showed that the hang happens when the
+> clk_alpha_pll_stromer_plus_set_rate() function tries to write
+> into the PLL_MODE register of the APSS PLL.
+> 
+> Checking the downstream code revealed that it uses [1] stromer
+> specific operations for IPQ5018, whereas in the current code
+> the stromer plus specific operations are used.
+> 
+> The ops in the 'ipq_pll_stromer_plus' clock definition can't be
+> changed since that is needed for IPQ5332, so add a new alpha pll
+> clock declaration which uses the correct stromer ops and use this
+> new clock for IPQ5018 to avoid the boot failure.
+> 
+> 1. https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-ipq-5.4/-/blob/NHSS.QSDK.12.4/drivers/clk/qcom/apss-ipq5018.c#L67
 
+
+Thanks for catching this!
+
+Tested-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+
+
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 50492f929486 ("clk: qcom: apss-ipq-pll: add support for IPQ5018")
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> ---
+> Based on v6.8.
+> ---
+>   drivers/clk/qcom/apss-ipq-pll.c | 20 +++++++++++++++++++-
+>   1 file changed, 19 insertions(+), 1 deletion(-)
