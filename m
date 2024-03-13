@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A1759175;
-	Wed, 13 Mar 2024 22:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F407459175;
+	Wed, 13 Mar 2024 22:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710367791; cv=none; b=oG7YoVhQ3bwtQRALFXOQ5ugq2wMHyk2oVWrEDP2+pcmCYTJpMNMEfRDh37ZcDWk7V8268HsiDBjIONrq4uY9KezBtxTNSIIkPc7lJB5lezudMGUDvr+XYEJbWEO+jZHguCVZz+HVwzX+hU7lxdgIML93DjJhNXuQGUpxfb4NVRE=
+	t=1710370659; cv=none; b=S2rjINgwizo6Y+CZsofDH9rTgOu6ABUSOw2mBGt9bm8t8lwwledjOk4cwiHxfm9Hpin7M67MxtMhcV6arwr+8sVTJAMLRoReBGQd3PckLe/T7mk7r+p2n8//jBIzqkDTw+Ys/cBuNJauXkasWt470p6qysKrvD/bYAmnNcxJsEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710367791; c=relaxed/simple;
-	bh=T63j2vgyYX9Cwz5H21b5fP+iNTyYvbmn0iKcyawREEc=;
+	s=arc-20240116; t=1710370659; c=relaxed/simple;
+	bh=fhEKMDp9mGMZ7v7bPio8nfMLeshVTznOT/0NauTYUDY=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=G6RQ5/tafl0FDO1Eg3nu2lEKFYv0V8AtmOe/XZ/kjD/JIe79heekFH9SuVNB92L5rB3URo+A7Ol4QH28T/22BAli3YhZgGWoAs4FhnZZKUydXExZnx096F2oDWtKcxjtzsunixeODT7r4fFAY45x7rA7jRqS28/HxA3ArS17uSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkP0XDDu; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=uUWXW4uvnBT1NXCDsCSefuZtmRwt1nlp5rooD3ti3a1E5dNYJrnFo1nawAkNwxnkz93R3RV6Jc2W5uRVSFekUzYq6H+p8E47Z6mWKeEvQZHElb1BabnDzaGWB8Urcocsg9B/sqTaH5eGJQAK2XHIqOaX02STmSSNIpWGyHsuZyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOGnVL1H; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkP0XDDu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31488C433F1;
-	Wed, 13 Mar 2024 22:09:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOGnVL1H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B495C433F1;
+	Wed, 13 Mar 2024 22:57:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710367791;
-	bh=T63j2vgyYX9Cwz5H21b5fP+iNTyYvbmn0iKcyawREEc=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=PkP0XDDuH74nKU1wtkUZJs2xM1fdkMQ02axfR1YNc13jNopN43G8p55NmcNxFhJkL
-	 xTeMIAN2EPMudLDPFvlvobM8DnK/B5eVuR/y5SxO9qmalUMtcgzkW6kLeqO5i/dbnC
-	 rFizWCb7Be+ZLjKUWQnZndKX94BJXHceg619KoE7Q5df4V25ictdN4NQE2GngqnEXB
-	 f2ZkPJWOFRrtV7UiYm9QGMz77mdk7k6SxtHa6xm4QeKDMeUEF5lws11DOZ/LVjWajU
-	 0W6Ntvm/CxLS2QhyXvTwyAwH5Tjq80fvWQl9ZqmkV/CxxaJY9NNfycqY7aFYmLZD2D
-	 n1n9OtIM2RPPQ==
-Message-ID: <5e8a0f9f37457d6d136f8b7382936a15.sboyd@kernel.org>
+	s=k20201202; t=1710370658;
+	bh=fhEKMDp9mGMZ7v7bPio8nfMLeshVTznOT/0NauTYUDY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=rOGnVL1HARPz334CSqeD1U/hcmfeFVCUSzsyrQONOhk9uuTXwqpI0QujUyKrHfOeA
+	 LrGmEhGYoQvzPDaTnW1JDY0IVJD9cL22uq5Z2APjbpsZYb7+wgupyQQpj5bCc+vbSm
+	 oEPs52em7h/MuXTFCJ4gDrLYq+RC0fM/bnihJejqCdZdMSRZkODqh1D/uOfPxRJ+ix
+	 1Rtk0kbqXQcgopZEm01GAND6dLF3C+xO3guehBXW9qLshmFuJwaxX6rjoa2WPoVTNX
+	 jIjwy40HpF/N4Fo7RGqpksYtQucksXgzaeEQyuKhf6WZh25PYFME5Dh11kjJr8/lBW
+	 +ODmL7RuAJYhg==
+Message-ID: <219f3eeba68fd0542d4954205c35bafa.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,19 +35,32 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240312185035.720491-1-krzysztof.kozlowski@linaro.org>
-References: <20240312185035.720491-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: clock: samsung,s3c6400-clock: convert to DT Schema
+In-Reply-To: <20240311-apss-ipq-pll-ipq5018-hang-v1-1-8ed42b7a904d@gmail.com>
+References: <20240311-apss-ipq-pll-ipq5018-hang-v1-1-8ed42b7a904d@gmail.com>
+Subject: Re: [PATCH] clk: qcom: apss-ipq-pll: use stromer ops for IPQ5018 to fix boot failure
 From: Stephen Boyd <sboyd@kernel.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Date: Wed, 13 Mar 2024 15:09:49 -0700
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Gabor Juhos <j4g8y7@gmail.com>, Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Date: Wed, 13 Mar 2024 15:57:36 -0700
 User-Agent: alot/0.10
 
-Quoting Krzysztof Kozlowski (2024-03-12 11:50:35)
-> Convert Samsung S3C6400/S3C6410 SoC clock controller bindings to DT
-> schema.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+Quoting Gabor Juhos (2024-03-11 08:06:36)
+> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-=
+pll.c
+> index 678b805f13d45..11f1ae59438f7 100644
+> --- a/drivers/clk/qcom/apss-ipq-pll.c
+> +++ b/drivers/clk/qcom/apss-ipq-pll.c
+> @@ -55,6 +55,24 @@ static struct clk_alpha_pll ipq_pll_huayra =3D {
+>         },
+>  };
+> =20
+> +static struct clk_alpha_pll ipq_pll_stromer =3D {
+> +       .offset =3D 0x0,
+> +       .regs =3D ipq_pll_offsets[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
+> +       .flags =3D SUPPORTS_DYNAMIC_UPDATE,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x0,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+const?
