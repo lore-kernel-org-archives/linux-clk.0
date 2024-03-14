@@ -1,172 +1,96 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA8446A2;
-	Thu, 14 Mar 2024 09:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005EE692FC;
+	Thu, 14 Mar 2024 09:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710407994; cv=none; b=jiREstPZolYNEjg2VqY82t/cGT1s9MlKGwV19COQi5ixXBnMPami3VGa4rG7CKC1dejnpS6ym9a8rZyGfkx3dvEZiOIww/lfjyYnxahmGcgBMZRjs1j9PIoMUltkrhcayjtggwZIu0exgJcDEl/XDa6VRHVOqEo/pQ8fkCQz7Fo=
+	t=1710409505; cv=none; b=GeKqylqnbXvr8N8AvfYOrwfXhDhQfRIZ9VVBIMKial6kDc5XuG+ST4j7KhfiB3Av0sJVsnJU18+G0OPpFXcr58wA6ybNupoDqkyX4jiKedgyLORtwSlS8Vhm4HtfH13IKcW8Hm9Wevbo4+qo2XQ4AOdOyXVS1sWcMrgBYMFpej4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710407994; c=relaxed/simple;
-	bh=CP1u2noOUsBFRb5fpWhhNZQ29Fcuc9a2yVFDxFUdOdA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KESsQcZMA2csXSasPNYaX4nx0ng2LyNWRBvTSrxr/u7/zc5p+uruOPtdu72t6OFqExadnaFr+Dicz8CFAISpPMq5Kk0jnvrzvZPRhHlXlfqcBb/+5pxIQ6+dpLd3utlHi/sd2UvUpXzgLp8NT0hpsNJCfprDJzfoqlPYiJzVSiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GRMeVH/T; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1710409505; c=relaxed/simple;
+	bh=pVZnehC/cbZZicGajuwvH1Tlz6noVProoLGDfyrCVrw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VLiqM93EwSeHFRDG/CBJNFKN8mep5PpEHAIRcSNzD3C9eV1K8ragqsh790JcLLIjNgn3A3BUL65NWBnHbef9G2n7k8vJF1NRXz9RbwAT1oiLCIDpmRFTJQlJSbQNs+p4BBugOB3JUHnZg4i1jrMMnf7kIylYUMAi/618ZJIAZnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fkUhM6GK; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GRMeVH/T"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42E4NGOr027956;
-	Thu, 14 Mar 2024 09:19:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=mgXw84NhW/F9M48Q9bgUvSF8HTOLcYB3vZ4Nsk4Zvaw=; b=GR
-	MeVH/TEMIYS/XS8KQYInBQZ9gWXoDyd10BbXwMUA8OvRzh3+t+TwVstjjcIMdv+M
-	WD2M+QAhd1pfmd3rjGk3mNmYqXMK1tH4sFtFy4HyjVce9NzkGDn8WRZVZDyITQCF
-	izJAbanIaihWj4M5hkr7Ujjv8ftDc8M2f8jF5GclHnu8bY32IOBNqtdDfYvGL65u
-	Cac3N3yt0D4HSyyy7MiPDvgs8TO6z2tiz4FH/wUw0FMP3LFrCIpc80O0RXxagRx+
-	AAo4L/vW7SbK4sU5iepKw7/9QrT0V4anXV50NsJLH64uQthUdltLYLr9COsOcjQv
-	j2I2Sos61E+4QRaGfgaw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wu9xattxh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Mar 2024 09:19:48 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42E9JlFA032641
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Mar 2024 09:19:47 GMT
-Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 14 Mar
- 2024 02:19:41 -0700
-Message-ID: <a09941ff-7b43-a964-1bd1-5321913be1a3@quicinc.com>
-Date: Thu, 14 Mar 2024 14:49:37 +0530
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fkUhM6GK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1710409501;
+	bh=pVZnehC/cbZZicGajuwvH1Tlz6noVProoLGDfyrCVrw=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=fkUhM6GK0jvq0Q9XSZTW3dzp3W8UbHMTC7pIxcGG6MKPFbucGLAY3sMt7+1Wihfi5
+	 RRQHko0vML9PtDPKRes+rMf0wXvmzqrQNYyHP40avy27aMP3alI4+hAEyLe/shtfx7
+	 GJTqjmY75I08n/OrQgk7irkJ0tCGjTLsBi1OfR9EZtZM7PefrpdA8/mE5xWUJROLnQ
+	 5TQDtOk9LCQCyIu3g2t6/qVhOmG0TBQmD1LGcd2ZnEpbnvdGX9w7LpLN6koSfCgtwO
+	 EoWMy0xxgvuvO4VLfezr562BFlVcPLizsVeUSM/7/V0aoMbYabSPjCWZ1qhK9KTsmc
+	 4yLHgrQDeKYAQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8516137820A3;
+	Thu, 14 Mar 2024 09:45:00 +0000 (UTC)
+Message-ID: <f0383126-99c4-4233-b222-597caacf43b9@collabora.com>
+Date: Thu, 14 Mar 2024 10:44:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom: Update SM8150 videocc
- bindings
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: mediatek: mt7988-infracfg: fix clocks for 2nd PCIe
+ port
+To: Daniel Golle <daniel@makrotopia.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Sam Shih <sam.shih@mediatek.com>, Frank Wunderlich
+ <frank-w@public-files.de>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <1da2506a51f970706bf4ec9509dd04e0471065e5.1710367453.git.daniel@makrotopia.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh
- Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20240313-videocc-sm8150-dt-node-v1-0-ae8ec3c822c2@quicinc.com>
- <20240313-videocc-sm8150-dt-node-v1-1-ae8ec3c822c2@quicinc.com>
- <CAA8EJpo63oRA07QNCdzJdHW_hJJWK6aj-LCpp-XwmPJYf0twZw@mail.gmail.com>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <CAA8EJpo63oRA07QNCdzJdHW_hJJWK6aj-LCpp-XwmPJYf0twZw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <1da2506a51f970706bf4ec9509dd04e0471065e5.1710367453.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eiZAt_OjynmwNLLB_loT5Cf7i1fNla2n
-X-Proofpoint-GUID: eiZAt_OjynmwNLLB_loT5Cf7i1fNla2n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-14_07,2024-03-13_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 impostorscore=0 adultscore=0 mlxlogscore=918 mlxscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2402120000
- definitions=main-2403140064
 
+Il 13/03/24 23:05, Daniel Golle ha scritto:
+> Due to what seems to be an undocumented oddity in MediaTek's MT7988
+> SoC design the CLK_INFRA_PCIE_PERI_26M_CK_P2 clock requires
+> CLK_INFRA_PCIE_PERI_26M_CK_P3 to be enabled.
+> 
+> This currently leads to PCIe port 2 not working in Linux.
+> 
+> Reflect the apparent relationship in the clk driver to make sure PCIe
+> port 2 of the MT7988 SoC works.
+> 
+> Fixes: 4b4719437d85f ("clk: mediatek: add drivers for MT7988 SoC")
+> Suggested-by: Sam Shih <sam.shih@mediatek.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-On 3/14/2024 12:50 AM, Dmitry Baryshkov wrote:
-> On Wed, 13 Mar 2024 at 13:11, Satya Priya Kakitapalli
-> <quic_skakitap@quicinc.com> wrote:
->> Update the videocc device tree bindings for sm8150 to align with the
->> latest convention.
-> But why? Bindings already exist. There is nothing wrong with them. And
-> sm8150 platform in general uses name-based lookup.
+That's funny. Anyway:
 
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-With the new index based lookup introduced we cannot use this bindings, 
-hence I moved to the sm8450-videocc bindings.
+> ---
+>   drivers/clk/mediatek/clk-mt7988-infracfg.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+> index 449041f8abbc9..c8c023afe3e5a 100644
+> --- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
+> +++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+> @@ -156,7 +156,7 @@ static const struct mtk_gate infra_clks[] = {
+>   	GATE_INFRA0(CLK_INFRA_PCIE_PERI_26M_CK_P1, "infra_pcie_peri_ck_26m_ck_p1",
+>   		    "csw_infra_f26m_sel", 8),
+>   	GATE_INFRA0(CLK_INFRA_PCIE_PERI_26M_CK_P2, "infra_pcie_peri_ck_26m_ck_p2",
+> -		    "csw_infra_f26m_sel", 9),
+> +		    "infra_pcie_peri_ck_26m_ck_p3", 9),
+>   	GATE_INFRA0(CLK_INFRA_PCIE_PERI_26M_CK_P3, "infra_pcie_peri_ck_26m_ck_p3",
+>   		    "csw_infra_f26m_sel", 10),
+>   	/* INFRA1 */
 
-
->> Fixes: 35d26e9292e2 ("dt-bindings: clock: Add YAML schemas for the QCOM VIDEOCC clock bindings")
-> It is not a fix, there is no bug that this commit is fixing.
-
-
-The clocks list needs to be fixed to add both XO and AHB clocks, and we 
-are adding required-opps property.
-
-
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
->>   Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml | 1 +
->>   Documentation/devicetree/bindings/clock/qcom,videocc.yaml        | 3 ---
->>   2 files changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->> index bad8f019a8d3..e00fdc8ceaa4 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->> @@ -20,6 +20,7 @@ properties:
->>       enum:
->>         - qcom,sm8450-videocc
->>         - qcom,sm8550-videocc
->> +      - qcom,sm8150-videocc
->>
->>     reg:
->>       maxItems: 1
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
->> index 6999e36ace1b..28d134ad9517 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
->> @@ -17,7 +17,6 @@ description: |
->>       include/dt-bindings/clock/qcom,videocc-sc7180.h
->>       include/dt-bindings/clock/qcom,videocc-sc7280.h
->>       include/dt-bindings/clock/qcom,videocc-sdm845.h
->> -    include/dt-bindings/clock/qcom,videocc-sm8150.h
->>       include/dt-bindings/clock/qcom,videocc-sm8250.h
->>
->>   properties:
->> @@ -26,7 +25,6 @@ properties:
->>         - qcom,sc7180-videocc
->>         - qcom,sc7280-videocc
->>         - qcom,sdm845-videocc
->> -      - qcom,sm8150-videocc
->>         - qcom,sm8250-videocc
->>
->>     clocks:
->> @@ -75,7 +73,6 @@ allOf:
->>             enum:
->>               - qcom,sc7180-videocc
->>               - qcom,sdm845-videocc
->> -            - qcom,sm8150-videocc
->>       then:
->>         properties:
->>           clocks:
->>
->> --
->> 2.25.1
->>
->>
->
