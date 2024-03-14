@@ -1,176 +1,135 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A27073520;
-	Thu, 14 Mar 2024 16:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C98745F1;
+	Thu, 14 Mar 2024 17:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710432981; cv=none; b=jis6cWpEEgzOBLsNVZfMSI78vob17Rq/EEOFGO+OhUPHPB2ic6P414N31CxuDq4iaCFGP2+CZ8kwophvT5sotDR12bjNaNXJDozdXwCM56DoY1rXj84G9Hs289W/Qg6UTd8UfGayTqhJjGvx8rSBi/S5Hniba1OPjwOPsXTzqKw=
+	t=1710437057; cv=none; b=jqXBqGjwDhL++KQ/+FkLhjkqI1oeH85gvVdEe0JDWyD+4KSgdrad/NkWKS+88AtmvH8N0UFR6T5TDXeTYUmrBl+QbdFr8sUJURmKjqAe14AcxTpbPwDJ02xJ5Kw778/rV40IUdJvw4jFDhQC9XhMjZ6QaDXaMiNhXFJlmelJ8jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710432981; c=relaxed/simple;
-	bh=KO5o8QznOOjPNp8jQSbFM7vBgxIXlAg3wTJmFiPXF4k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kc+sr3YHIozlgV3Y8l8FsYwD6oaPT4QllN9kgz2WKE9UoxvoAaB7JwSROYRxN/zRWCi2FetnZZxHMtCxWNkpi3yfhsiwoITn9XuyzxRjrBTusYnhn2IkIZG/6o4EVCOEore6Pda6CKox+CQbf2Bac7PK9GTm9zHg+4mPg5/L6Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1710437057; c=relaxed/simple;
+	bh=hUYQANzZPU+Zd5O3hvkp/pd5Gw+TRN/zpzfDb8/esSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kgy5ljURs3lo2Kr+gb4TH52sqW/x6DcVw3B7VZr65jZWpS21WH6ZfDI21jkaevTEKZ6/VYGIK+WE2E9CP7kh70+WwzHgI1/KmrR7EnxZ5MjrjjpAzGN1so1P6Mia2At5t6TwlUjybx8ORruimGprr7AHAO5TeJAzgaHdJ7AiwUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QN1Jiaq0; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-60a0599f631so10452357b3.2;
-        Thu, 14 Mar 2024 09:16:19 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QN1Jiaq0"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41312232c7aso14591355e9.0;
+        Thu, 14 Mar 2024 10:24:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1710437054; x=1711041854; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yHYpQHDVWIEkU9CUR0MvRqU6+tOD2fXJjwYTroSp9es=;
+        b=QN1Jiaq03BnAa0DOciOQNLMIfyy2ioQFyohMxDGseaI/VZPLuc5GDpFEZd6kW73jVy
+         LAcuDgcVTZY6jNZqbV96FRMAYid4IVZWEhKGH5Y56zFpxHY/5e/tJa8wyXf6VPL7kF8G
+         s47r+4UtXFYks8lEvTGhj0mgdpPsrjHpTQS0wVFrqmPmm19+eOqOgCYQRX9MhcAViN4/
+         kf6dd6H2V0ngokcsu+IUv5Jsii3NWDtNNeQS8/zB6PIpF55HozHYlWzERYksGeG1dwSo
+         ER8XNAuhWRSXM6ZKwzQk4pfADsqgJCMDGxbi9oga00kEkhrLi4VBs4WOyotaPsm3lab4
+         dhVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710432976; x=1711037776;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OigFCA6TWncj1dITIB+Ew0q0iS/FSFUD6r9Xvtt/yu4=;
-        b=Pcz00d3z6J9QBVjtQBsQEJxFOb3wWeyjTO0QSYSg88o8yJreiKt/exPaJ71sqQgouW
-         9er3tNSYImz80MysaoPvU+/gJ2m/QB+0RQQjWNRAKFrXvVKEtyFQTTIAAk9qbKesP4h9
-         NxwqMbs/n3bp/jIv8pe/nmsZgUNmtSwNi2PClJmonQzKswQy9yNRh9ZjGuoILkPHjfYg
-         ylfGbMYGdsh+aWqUFGlL7n4C9ZeXu5saL1KmCwHpl/ScELf6/GC5o0M5+ONy8z9R0cdd
-         AZhMNh6cw7dANraFva+lE9Ymb3lkh3tEf2QaqbcuDYUHuznMiYlRfIV47efpgBpFy6H8
-         BhgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXc4/jRsrqKNi6R+OEIa/VCEPKIg6G+ewNqFbUsFRF3pt4GNlt4/+9ndnKTlN0yK9J9SV67drxufgDlu0zrzfv1iq84XCZnlVifzL7nGuYn4C7pSB0pIOj53XMHR4zED5M4fMoYSu6d
-X-Gm-Message-State: AOJu0YyWtXFhRHmVUCsjPj7Sy1ZIxGxo/z3+JdJGxPnNx8RjExfVdU1o
-	9oxO0f2tROAbZj8w08o5V6PxGGeEODdYifmPyOn1E0aMvh+uTvmVC4l/fCuAY0w=
-X-Google-Smtp-Source: AGHT+IGYGhBpprP5uB9x66hWbZHdCv+HfaJjqtxgY381+Xy8kkNoiqekFKWdMEVrQysx4gCvX0t+5A==
-X-Received: by 2002:a0d:fb47:0:b0:609:6bfc:eb8f with SMTP id l68-20020a0dfb47000000b006096bfceb8fmr1939523ywf.48.1710432976627;
-        Thu, 14 Mar 2024 09:16:16 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id s17-20020a819f11000000b005fff0d150adsm319761ywn.122.2024.03.14.09.16.15
+        d=1e100.net; s=20230601; t=1710437054; x=1711041854;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yHYpQHDVWIEkU9CUR0MvRqU6+tOD2fXJjwYTroSp9es=;
+        b=j8Cfremgwxmgu5AhGHlwlha4KLOto+ZPLkLqWolThLZawj+uXvgc5Dl7T4ngRW9uCq
+         Nvh+yxgzzUy+gUIYZW+nmehZsERGb2pHqYrpI86H/oNhaq0fOYs9JUbLACRjfUNDShms
+         FfLFCjeOn/WerKbr4rH+VLaAN2EHrWVPM7cc8AisWmGBZET3P09uxjd76KDKmpDtrEJs
+         D7eOf+D518Mpx1fK5nVgn0j/18lCfDUSqI3MIcg3AjHk1qNGy3bCBG0IiJ23HuBxEark
+         J/dvkZYMti0tb+2dHIZz+/EfB+I1cwtx54dcu9JWoO9f/9j50ya46VLSWzqceaH4f6EB
+         hoJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxiYR1fwWrT7Uqqdti2euh4Q3MIDYQODpfR+UCRElpNzCa9NgfCkoUs2quxxono7RJ0YcW9713rfP/y/STo+6dbXpd/ivdPLyf+uGUAzOvfDFbyiRAPWZvor8++Kx3FHqsB/QdQrQyJ/Uh6fxYfMbIN61Ju7als0lDSPn3Ab+f
+X-Gm-Message-State: AOJu0Yy1uxZMA2kUntBs3A+3UeGILED6zFx+mEBCrBW7wuF5QCXjINAc
+	TaQFimkkysemS4U1BI0OS9Duqifmu7Qsc70DBioASMmc9UE8PyBZ
+X-Google-Smtp-Source: AGHT+IE1m63yzHQ+v/oXeyBNcaSZhNJeuWOk678+29ozFfuMnP5Muv+wpzL0qiJ5FGj7UzkcHJBtIA==
+X-Received: by 2002:a05:600c:3b07:b0:412:c379:606 with SMTP id m7-20020a05600c3b0700b00412c3790606mr3228741wms.2.1710437054264;
+        Thu, 14 Mar 2024 10:24:14 -0700 (PDT)
+Received: from [192.168.20.170] (57657817.catv.pool.telekom.hu. [87.101.120.23])
+        by smtp.gmail.com with ESMTPSA id jt23-20020a05600c569700b00412f4afab4csm3115697wmb.1.2024.03.14.10.24.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Mar 2024 09:16:15 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-60a0599f631so10451727b3.2;
-        Thu, 14 Mar 2024 09:16:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXSVNK9t50OkfW8riJu4xi5kpkQtHJG+sfthBxQjiSuDzs8L0M7wsehOP7bdKGH9NnyEsEqd+l3clDsDryhtHG0mIYQI6S0P1hzxQIBilahAOs3QnLqs5T6gG4mIwPdhyAAmXh2BwK5
-X-Received: by 2002:a81:bf4a:0:b0:60a:66d3:c021 with SMTP id
- s10-20020a81bf4a000000b0060a66d3c021mr2336021ywk.22.1710432974719; Thu, 14
- Mar 2024 09:16:14 -0700 (PDT)
+        Thu, 14 Mar 2024 10:24:13 -0700 (PDT)
+Message-ID: <05028fed-2462-4e0b-b686-bbacc23868d9@gmail.com>
+Date: Thu, 14 Mar 2024 18:24:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <898aa0925a9598d44721d00145015b215434cb3b.1710414195.git.geert@linux-m68k.org>
- <695ebdde-3dc3-41b1-b20b-f02c4ba1ae5d@sifive.com> <CAMuHMdURtL1u-MDXBhiwOfX+zBnuunZYvjt+3GMOp6Y6pj1Efw@mail.gmail.com>
- <42c3d591-abe5-4343-9a94-f1705430dcea@sifive.com>
-In-Reply-To: <42c3d591-abe5-4343-9a94-f1705430dcea@sifive.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Mar 2024 17:16:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWLuK=SvwW-MvmCc4hhPTChDzU6q6SPCFTzjGFe8oijig@mail.gmail.com>
-Message-ID: <CAMuHMdWLuK=SvwW-MvmCc4hhPTChDzU6q6SPCFTzjGFe8oijig@mail.gmail.com>
-Subject: Re: [PATCH] clk: starfive: jh7100: Use provided clocks instead of
- hardcoded names
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Emil Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Conor Dooley <conor.dooley@microchip.com>, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: apss-ipq-pll: use stromer ops for IPQ5018 to
+ fix boot failure
+Content-Language: hu
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240311-apss-ipq-pll-ipq5018-hang-v1-1-8ed42b7a904d@gmail.com>
+ <58f07908-127a-438d-84e2-e059f269859b@linaro.org>
+ <2b95a593-225e-47b1-8bda-03240eb0f81e@gmail.com>
+ <8affb3d8-6210-43e6-8cbb-de28bdcf326a@linaro.org>
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <8affb3d8-6210-43e6-8cbb-de28bdcf326a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Samuel,
+2024. 03. 14. 15:00 keltezéssel, Konrad Dybcio írta:
 
-On Thu, Mar 14, 2024 at 3:56=E2=80=AFPM Samuel Holland
-<samuel.holland@sifive.com> wrote:
-> On 2024-03-14 9:48 AM, Geert Uytterhoeven wrote:
-> > On Thu, Mar 14, 2024 at 3:32=E2=80=AFPM Samuel Holland
-> > <samuel.holland@sifive.com> wrote:
-> >> On 2024-03-14 6:05 AM, Geert Uytterhoeven wrote:
-> >>> The Starfive JH7100 clock driver does not use the DT "clocks" propert=
-y
-> >>> to find its external input clocks, but instead relies on the names of
-> >>> the actual external clock providers.  This is fragile, and caused
-> >>> breakage when sanitizing clock names in DT.
-> >>>
-> >>> Fix this by obtaining the external input clocks through the DT "clock=
-s"
-> >>> property, and using their clk_hw objects or corresponding name.
-> >>>
-> >>> Fixes: f03606470886 ("riscv: dts: starfive: replace underscores in no=
-de names")
-> >>> Fixes: 4210be668a09ee20 ("clk: starfive: Add JH7100 clock generator d=
-river")
-> >>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> >
-> >>> --- a/drivers/clk/starfive/clk-starfive-jh7100.c
-> >>> +++ b/drivers/clk/starfive/clk-starfive-jh7100.c
-> >
-> >>> @@ -298,13 +311,23 @@ static int __init clk_starfive_jh7100_probe(str=
-uct platform_device *pdev)
-> >>>       if (IS_ERR(priv->base))
-> >>>               return PTR_ERR(priv->base);
-> >>>
-> >>> +     for (idx =3D 0; idx < EXT_NUM_CLKS; idx++) {
-> >>> +             clk =3D devm_clk_get(&pdev->dev, jh7100_ext_clk[idx]);
-> >>> +             if (IS_ERR(clk))
-> >>> +                     return PTR_ERR(clk);
-> >>> +
-> >>> +             priv->ext[idx] =3D __clk_get_hw(clk);
-> >>> +     }
-> >>> +
-> >>> +     osc_sys =3D clk_hw_get_name(priv->ext[EXT_CLK_OSC_SYS]);
-> >>> +
-> >>>       priv->pll[0] =3D devm_clk_hw_register_fixed_factor(priv->dev, "=
-pll0_out",
-> >>> -                                                      "osc_sys", 0, =
-40, 1);
-> >>> +                                                      osc_sys, 0, 40=
-, 1);
-> >>>       if (IS_ERR(priv->pll[0]))
-> >>>               return PTR_ERR(priv->pll[0]);
-> >>>
-> >>>       priv->pll[1] =3D devm_clk_hw_register_fixed_factor(priv->dev, "=
-pll1_out",
-> >>> -                                                      "osc_sys", 0, =
-64, 1);
-> >>> +                                                      osc_sys, 0, 64=
-, 1);
-> >>
-> >> These should use devm_clk_hw_register_fixed_factor_parent_hw(). (Or yo=
-u could
-> >
-> > Thanks, I didn't know about that function!
-> >
-> >> define a devm_clk_hw_register_fixed_factor_fw_name() and drop the othe=
-r changes.)
-> >
-> > Sorry, I don't understand what you mean here?
->
-> In the loop below, the parents are already referenced via .fw_name. That =
-means
-> the string is the DT clock-names property value, not the Linux-internal c=
-lock
-> name (see clk_core_get()). These two function calls are the only ones tha=
-t
-> depend on the internal clock name. If you change them to use .fw_name as =
-well,
-> the clk_core_get() will do the right thing, and you don't need to manuall=
-y call
-> devm_clk_get().
+...
 
-Thank you, I wasn't aware these fw_name names were actually doing the
-right thing ;-)
+>>>> @@ -55,6 +55,24 @@ static struct clk_alpha_pll ipq_pll_huayra = {
+>>>>        },
+>>>>    };
+>>>>    +static struct clk_alpha_pll ipq_pll_stromer = {
+>>>> +    .offset = 0x0,
+>>>> +    .regs = ipq_pll_offsets[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
+>>>
+>>> CLK_ALPHA_PLL_TYPE_STROMER?
+>>
+>> I admit that using CLK_ALPHA_PLL_TYPE_STROMER would be less confusing. However
+>> 'ipq_pll_offsets' array has no entry for that enum, and given the fact that the
+>> CLK_ALPHA_PLL_TYPE_STROMER_PLUS entry uses the correct register offsets it makes
+>>   little sense to add another entry with the same offsets.
+>>
+>> Although the 'clk_alpha_pll_regs' in clk-alpha-pll.c has an entry for
+>> CLK_ALPHA_PLL_TYPE_STROMER, but the offsets defined there are not 'exactly' the
+>> same as the ones defined locally in 'ipq_pll_offsets'. They will be identical if
+>> [1] gets accepted but we are not there yet.
+> 
+> Oh, I completely overlooked that this driver has its own array.. Hm..
+> 
+> I suppose it would make sense to rename these indices to IPQ_PLL_x to
+> help avoid such confusion..
 
-Still, looking up by name is more expensive than just using the passed
-clk_hw.  As there are multiple occurrences of the four external
-clocks in the clocks table, thus involving multiple look-ups, I think
-it's better to use clk_hw everywhere.
 
-I will update for v2...
+Yes, that would work. To be honest, I have tried that already a few days ago,
+but then I had a better idea.
 
-Gr{oetje,eeting}s,
+It will be possible to use the entry from 'clk_alpha_pll_regs' for
+'ipq_pll_stromer' and for 'ipq_pll_stromer_plus'. To be precise, it would be
+usable already but for correctness it needs the series mentioned in my previous
+mail.
 
-                        Geert
+Then the local entry can be removed from 'ipq_pll_regs' entirely.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Once it is done, the 'ipq_pll_regs' can be converted to be an one-dimensional
+array containing the IPQ Huayra specific offsets only. Alternatively the
+remaining sole element can be moved into 'clk_alpha_pll_regs' array.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Additionally, the 'pll_type' field in the match data structure is redundant so
+that can be removed as well.
+
+This eliminates the need of a separate enum for IPQ specific indices.
+
+
+Regards,
+Gabor
+
