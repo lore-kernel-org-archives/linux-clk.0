@@ -1,147 +1,98 @@
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974C26F06E
-	for <linux-clk@vger.kernel.org>; Thu, 14 Mar 2024 14:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821C56EB74;
+	Thu, 14 Mar 2024 15:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710428220; cv=none; b=u9u8ClxHhPlCEDXYqTDY9/VBj9XPLvCu7RklDPoR6JuU+7TUhG1uX1B4UqtPDgc5i6R0AP2fHM2nN7DBk80NW5JAL1Q/Gkr3PKLD0QQSD6xg7Fwrvx9EBfe4M/Z+oMTb+RyXiUZobgAauefBYve0VaeeHCn+FbiYKGhyNyMdzGQ=
+	t=1710431947; cv=none; b=qA0dzEaJcTisWZnitxah/hjMqC+Fq11xnd00GEa+Zy8VW4D67E6633bB0LOnWDRAIClzuskR/bmYKtuM8cM+zX42LXc1lKzcRtgiveyx6NcPiS26omAxwjbXi3MY8r/friQZXyZv07w3l270JTC8/JHoru2ACdTS7dGQDyukRTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710428220; c=relaxed/simple;
-	bh=mEjE8q+E2HjRI9XzAhQ/CrCkar6G2FE6iHbSsPc+Gyk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VStdCtd14Lh3xp5CG9MQXBdiq/r1nySiG6Ohs+lS+Ry/fGRolAEB0+DQoWTDVKlkgHqodR5wwNi0t3f0CXLXdfCMn9Ljjua1WKWEU9x4v0WLGr3vtkbg5bxpx8mZAcG3j9k86PyTSL9MN17BZoz1X3M1TvAA22xlUd6GDP0t3aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=I000Ktnl; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="I000Ktnl"
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-690b24973beso16952496d6.0
-        for <linux-clk@vger.kernel.org>; Thu, 14 Mar 2024 07:56:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1710428216; x=1711033016; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lxoX+O1GlcPWe1RQwrLpQvGT+Ve/nhPsRMUh8z8RZIw=;
-        b=I000KtnlC+WQPyt2sorMY+b4lwHBUhE//+e65JTuH3bh7+kKKHwHsplZctFU44KbvN
-         MhwUpij8VB2qQ5pTUELjtdJKi9WCtnDIRRLs5jXRXPjM0nzB1NxvhrKybvOs1vITArdE
-         /hbcQQyaoJFIglEtcD/4bHRGr78L1/6nxEXfuhv9FW25xuwLd/bY/R9OIFeQj2AvSU33
-         QnKhDEm3gHxflRvyIhPJdBtH9yI3MZgPOd4EwqzSJ9qAym/C3xP+q53sTyO0PTAQ3xXd
-         U8qkc3mya5+Bd869q3x3skwHmVujYfHbfECs9ABpBht/yg0Hc1aVEN+A2PRW2gNRbfMP
-         Mwjg==
+	s=arc-20240116; t=1710431947; c=relaxed/simple;
+	bh=qLm7sdMyTp87kkhCt/5MhF2kdOOR6nFZ2M5qYMfYhE4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J26fjwqAnZX6f6QkgDEnQ9/mOBhVqqXt1+f06EKrdEZ6wTxTlTSmFSAj0Ql4tNaISwTdffIuvP9DdCQDs0rGpIW2+joGhtUsZGf6FWpwwWOlJN3gnQ+qYkUEpG5v6Pvd/h1pzVExn26iStiDR1DEEUkC4o+2I6WA0ISt7PX97iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-60cc4124a39so11309267b3.3;
+        Thu, 14 Mar 2024 08:59:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710428216; x=1711033016;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lxoX+O1GlcPWe1RQwrLpQvGT+Ve/nhPsRMUh8z8RZIw=;
-        b=jGszJ1n6npxrInHUifh7LePrDMkJO+o70S6iNVrGVTPWzVibhxANv9sIYl6iA8z+Bc
-         aUzPR2ob4NIJupmSMxlEcrqdChrNcWMgvkXxv8x3Z4TpAj5PKpa/7E5MhLUa8xHDfAfr
-         +kzNxWLzcebhot6Dq0p6KPrayYXcgy7NNNYSDFhGd/o01/nbBdJOdpeRB2MdGXXbBwCK
-         kX+2gKxjWTaHGrhCC3c1Wbpe7mBm+6xofe3F8OnlxS5+JndF6noypC0Z9zh9TozPFy4i
-         w5TYYKSo90a1sdifrQa1cCP+lIUjHTpvpze9eVIWT4wVcsvAbFgjKkBueZeXVBxESzwb
-         a7qA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTpEH8eVHRGS4TMTsJnOXjQv2HFjCMDBlPLheE2wKHJKdEeaG7YeLum2IX6+soFueikNMKPVV1LlwKeSMJ7a6SThUjAdcWufdt
-X-Gm-Message-State: AOJu0Yy6a7TootbuEacCnlW54aNDDUnQznMsVddz7VYfR55b29EikoNh
-	H3S/2JT8FsuNP451+XV3Jj4UnZ+b/wRxRij/R1t32wo1YEFJrK32VeTWQsj476g=
-X-Google-Smtp-Source: AGHT+IFH2laVemU8OwQ32YK+QaEsKZgxeEvMnGkMRQp09IuyzZ5ZeOZGACdxlplPgoNSEue7cq6fGw==
-X-Received: by 2002:ad4:4ea1:0:b0:68f:dde4:fb12 with SMTP id ed1-20020ad44ea1000000b0068fdde4fb12mr4915051qvb.9.1710428216556;
-        Thu, 14 Mar 2024 07:56:56 -0700 (PDT)
-Received: from [100.64.0.1] ([170.85.8.192])
-        by smtp.gmail.com with ESMTPSA id s12-20020a05622a018c00b0042f068d3d8asm871706qtw.43.2024.03.14.07.56.55
+        d=1e100.net; s=20230601; t=1710431943; x=1711036743;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WGo5y059xssa9oMgtCF+hT1vb68q8rGTMUHno6LSTBk=;
+        b=FFuNwaqo4NpZErGsUumZa4cIh1IA0ICrZqyltAH8bUZLhv/HI5e4cLxfmUabtoUvjs
+         oGkdCLywOIwY7+/thWo3Sm4ErYOjsBiobwpRYOWIOWGLX8OsJmz+AvyvbYizhGCvHpvc
+         BrTE4oTIk2tWWD3q1aHuZwQpT9xpJ7psLiXwT2UH7/hQIxoZhuTw4uYRJwajpqcBOGUK
+         Ef8x1znICqPh0s3V5mqTO0vqdPr9/uu973/CGamsSt1LGn637w0Cw4u3ZOjX1s2/pd5m
+         rTa8zB1nZsr5fcdkV+pw9MkqzUnjyC7S46bYj+TK72Z7ZCqjU2UGIxU3j4pHJ8VVhhU2
+         O+kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURGXGVV4B731YJ3lv786jVh7JUr5BrzXcqEFoh3UUmLzUKW7tp+LjibGNJbWv1zfXyhhOBbEAd4Q8XXCrphas8zNeUJfgMpXEZKbQEFIlFL5Qwytlp8bXfA/2mm9ZUUNaEtTm+tFhTvVCvl7YuA+xh86Nj8UZDsWPV0v6xqqLQxPqfqVr3b7RI5Nb+jjs/XITlNlEGSmO6zoK6J5Nv0F5FMy8wRd/Y
+X-Gm-Message-State: AOJu0YxO64FkWBSw4xsKWfYAjk405XOisJveA5zC8OI+VNXjy5SspEUj
+	nOAD93asyJkhxDLwMCN2dKnoTiayTd1agZPvD3NV9obpu7DgFgT3emjLhT9rm/8=
+X-Google-Smtp-Source: AGHT+IH3mWZnB00yzBl/P+4vpCgvy1TqognMcOx1eiqXCS8bhJRS8l8FzburGf5wIcSmP2v0Dja31g==
+X-Received: by 2002:a81:89c3:0:b0:60a:1e17:2623 with SMTP id z186-20020a8189c3000000b0060a1e172623mr2166957ywf.51.1710431943646;
+        Thu, 14 Mar 2024 08:59:03 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id w64-20020a814943000000b0060a2c381287sm325163ywa.125.2024.03.14.08.59.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Mar 2024 07:56:56 -0700 (PDT)
-Message-ID: <42c3d591-abe5-4343-9a94-f1705430dcea@sifive.com>
-Date: Thu, 14 Mar 2024 09:56:54 -0500
+        Thu, 14 Mar 2024 08:59:03 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-609eb3e5a56so12810697b3.1;
+        Thu, 14 Mar 2024 08:59:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWCHolDbsLYXxjJEPZCH1Wmwn7mxZRBqJRmKOvt3cY8Sa+cykDHHC6TOXUiUFwoAYOLmwNAwn7q1xOSveluKR5xYclrAYOW7ULEtlMVfPXpGXHIttjtK+EJBoyDl9mmX/azL0tL/s+FhH3OEZclR41pEu1aIyM0wkCE9kYiyLvcB39L+J5SaGqXzVt0Jr5RQwLG6OxPLm7Lc5eMNlRAjXYl5h5SrnM3
+X-Received: by 2002:a25:8541:0:b0:dcc:d196:a573 with SMTP id
+ f1-20020a258541000000b00dccd196a573mr1902447ybn.36.1710431943159; Thu, 14 Mar
+ 2024 08:59:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: starfive: jh7100: Use provided clocks instead of
- hardcoded names
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
- <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Conor Dooley <conor.dooley@microchip.com>,
- Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <898aa0925a9598d44721d00145015b215434cb3b.1710414195.git.geert@linux-m68k.org>
- <695ebdde-3dc3-41b1-b20b-f02c4ba1ae5d@sifive.com>
- <CAMuHMdURtL1u-MDXBhiwOfX+zBnuunZYvjt+3GMOp6Y6pj1Efw@mail.gmail.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <CAMuHMdURtL1u-MDXBhiwOfX+zBnuunZYvjt+3GMOp6Y6pj1Efw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240307140728.190184-1-claudiu.beznea.uj@bp.renesas.com> <20240307140728.190184-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240307140728.190184-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 14 Mar 2024 16:58:50 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVaKF=4Uu074j9X5Q62OsDZ7q0tXaFazxTP5+TFD51hEg@mail.gmail.com>
+Message-ID: <CAMuHMdVaKF=4Uu074j9X5Q62OsDZ7q0tXaFazxTP5+TFD51hEg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] dt-bindings: clock: r9a07g043-cpg: Add power
+ domain IDs
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+On Thu, Mar 7, 2024 at 3:07=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
+rote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add power domain IDs for RZ/G2UL (R9A07G043) SoC.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v2:
+> - added "RZ/G2UL Only" comments to some defines
+> - added RZ/Five specific defines
 
-On 2024-03-14 9:48 AM, Geert Uytterhoeven wrote:
-> On Thu, Mar 14, 2024 at 3:32 PM Samuel Holland
-> <samuel.holland@sifive.com> wrote:
->> On 2024-03-14 6:05 AM, Geert Uytterhoeven wrote:
->>> The Starfive JH7100 clock driver does not use the DT "clocks" property
->>> to find its external input clocks, but instead relies on the names of
->>> the actual external clock providers.  This is fragile, and caused
->>> breakage when sanitizing clock names in DT.
->>>
->>> Fix this by obtaining the external input clocks through the DT "clocks"
->>> property, and using their clk_hw objects or corresponding name.
->>>
->>> Fixes: f03606470886 ("riscv: dts: starfive: replace underscores in node names")
->>> Fixes: 4210be668a09ee20 ("clk: starfive: Add JH7100 clock generator driver")
->>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> 
->>> --- a/drivers/clk/starfive/clk-starfive-jh7100.c
->>> +++ b/drivers/clk/starfive/clk-starfive-jh7100.c
-> 
->>> @@ -298,13 +311,23 @@ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
->>>       if (IS_ERR(priv->base))
->>>               return PTR_ERR(priv->base);
->>>
->>> +     for (idx = 0; idx < EXT_NUM_CLKS; idx++) {
->>> +             clk = devm_clk_get(&pdev->dev, jh7100_ext_clk[idx]);
->>> +             if (IS_ERR(clk))
->>> +                     return PTR_ERR(clk);
->>> +
->>> +             priv->ext[idx] = __clk_get_hw(clk);
->>> +     }
->>> +
->>> +     osc_sys = clk_hw_get_name(priv->ext[EXT_CLK_OSC_SYS]);
->>> +
->>>       priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
->>> -                                                      "osc_sys", 0, 40, 1);
->>> +                                                      osc_sys, 0, 40, 1);
->>>       if (IS_ERR(priv->pll[0]))
->>>               return PTR_ERR(priv->pll[0]);
->>>
->>>       priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
->>> -                                                      "osc_sys", 0, 64, 1);
->>> +                                                      osc_sys, 0, 64, 1);
->>
->> These should use devm_clk_hw_register_fixed_factor_parent_hw(). (Or you could
-> 
-> Thanks, I didn't know about that function!
-> 
->> define a devm_clk_hw_register_fixed_factor_fw_name() and drop the other changes.)
-> 
-> Sorry, I don't understand what you mean here?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-In the loop below, the parents are already referenced via .fw_name. That means
-the string is the DT clock-names property value, not the Linux-internal clock
-name (see clk_core_get()). These two function calls are the only ones that
-depend on the internal clock name. If you change them to use .fw_name as well,
-the clk_core_get() will do the right thing, and you don't need to manually call
-devm_clk_get().
+Gr{oetje,eeting}s,
 
-Regards,
-Samuel
+                        Geert
 
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
