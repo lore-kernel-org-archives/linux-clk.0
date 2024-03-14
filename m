@@ -1,66 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-usa2.onexmail.com (smtp-usa2.onexmail.com [35.173.142.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F407459175;
-	Wed, 13 Mar 2024 22:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50757E1;
+	Thu, 14 Mar 2024 02:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.173.142.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710370659; cv=none; b=S2rjINgwizo6Y+CZsofDH9rTgOu6ABUSOw2mBGt9bm8t8lwwledjOk4cwiHxfm9Hpin7M67MxtMhcV6arwr+8sVTJAMLRoReBGQd3PckLe/T7mk7r+p2n8//jBIzqkDTw+Ys/cBuNJauXkasWt470p6qysKrvD/bYAmnNcxJsEU=
+	t=1710384270; cv=none; b=GBgKcQg3vvFqOtqWR/pSvRJFRPG9budwnPZj/pKO0T+On1kZdMEuRK8Nqahm0eR4ewoY+tpzylvypY2F6awkri6Db6agriLZsOCxrEDXSYplmhZ7UhyFlr+5+fE99KrmJT2Xa8NgRmNxYVscCc+rWACv4jPineEmntws4O4HbII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710370659; c=relaxed/simple;
-	bh=fhEKMDp9mGMZ7v7bPio8nfMLeshVTznOT/0NauTYUDY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=uUWXW4uvnBT1NXCDsCSefuZtmRwt1nlp5rooD3ti3a1E5dNYJrnFo1nawAkNwxnkz93R3RV6Jc2W5uRVSFekUzYq6H+p8E47Z6mWKeEvQZHElb1BabnDzaGWB8Urcocsg9B/sqTaH5eGJQAK2XHIqOaX02STmSSNIpWGyHsuZyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOGnVL1H; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOGnVL1H"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B495C433F1;
-	Wed, 13 Mar 2024 22:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710370658;
-	bh=fhEKMDp9mGMZ7v7bPio8nfMLeshVTznOT/0NauTYUDY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=rOGnVL1HARPz334CSqeD1U/hcmfeFVCUSzsyrQONOhk9uuTXwqpI0QujUyKrHfOeA
-	 LrGmEhGYoQvzPDaTnW1JDY0IVJD9cL22uq5Z2APjbpsZYb7+wgupyQQpj5bCc+vbSm
-	 oEPs52em7h/MuXTFCJ4gDrLYq+RC0fM/bnihJejqCdZdMSRZkODqh1D/uOfPxRJ+ix
-	 1Rtk0kbqXQcgopZEm01GAND6dLF3C+xO3guehBXW9qLshmFuJwaxX6rjoa2WPoVTNX
-	 jIjwy40HpF/N4Fo7RGqpksYtQucksXgzaeEQyuKhf6WZh25PYFME5Dh11kjJr8/lBW
-	 +ODmL7RuAJYhg==
-Message-ID: <219f3eeba68fd0542d4954205c35bafa.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1710384270; c=relaxed/simple;
+	bh=l8iu1FS1llWJp4Vcw9klrMoX1ziiITXm9GBj4WRdg48=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ik2NdzrQdsgrBJA/tAXN/Vp4Rixid3xnRUjVlfDDxzTKJdnRGNNEe24mKIdDBJyb2Zw2iTiCSozlglzJkSCGI02eFj82ST99fyXXsMfze3pbRfpSKNPoBzU4BOxkozwPvE2MA9hjKuP7SaeqeO5MkHF6X69enrOqoIM6e5H8o4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=net-swift.com; spf=pass smtp.mailfrom=net-swift.com; arc=none smtp.client-ip=35.173.142.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=net-swift.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=net-swift.com
+X-QQ-mid: bizesmtp75t1710384019tre3hm0f
+X-QQ-Originating-IP: kjtrMLjRWfwclM7ul6HM/HtMROnmPBRF+sD2mVJJjWE=
+Received: from localhost.trustnetic.com ( [122.235.245.139])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 14 Mar 2024 10:40:16 +0800 (CST)
+X-QQ-SSF: 01400000000000E0E000000A0000000
+X-QQ-FEAT: q+EIYT+FhZprz3u6HhqywydU8Ynlc6kZxkmUS4rmGnP3jBpMzr/kW7CaJG8e3
+	Q5sRMFpKLJPUV1dU/cnzYdEl+nuvJDIEew9twaNpD60vuy5yRdnw++GmkmYcaoW67ArFatj
+	HobfhqWSDec6297dwwheeMie3ZFlvocvII0RQbmDhygkZCCZgKxOhoMeqJeoO8QfOGUDAJh
+	82KkTYE4bVN8fzPIhie7IdlxDP2lSJz2FosUYJ+SnP24TWiU1GGcRKcqoG7JWuQ6GZLIb+K
+	5MZfR4nnYlDoalXKryGxQsQ3Yd6TQwODrDcHd79OJwtyESY5lzJUOaht5btfgMbouUsBqDS
+	wiGNdbm9ObckeQCQvXmlXIKdL7rmz+zaxad+vKYWpmnAahy8h+Gwijo1ZyQD69vR+cpM1rE
+X-QQ-GoodBg: 2
+X-BIZMAIL-ID: 910203287647298116
+From: Duanqiang Wen <duanqiangwen@net-swift.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux@armlinux.org.uk,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Duanqiang Wen <duanqiangwen@net-swift.com>
+Subject: [PATCH clk v2] clk: clkdev: add error messages for name exceeding maximum length
+Date: Thu, 14 Mar 2024 10:39:09 +0800
+Message-Id: <20240314023909.871105-1-duanqiangwen@net-swift.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240311-apss-ipq-pll-ipq5018-hang-v1-1-8ed42b7a904d@gmail.com>
-References: <20240311-apss-ipq-pll-ipq5018-hang-v1-1-8ed42b7a904d@gmail.com>
-Subject: Re: [PATCH] clk: qcom: apss-ipq-pll: use stromer ops for IPQ5018 to fix boot failure
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Gabor Juhos <j4g8y7@gmail.com>, Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Date: Wed, 13 Mar 2024 15:57:36 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:net-swift.com:qybglogicsvrsz:qybglogicsvrsz3a-1
 
-Quoting Gabor Juhos (2024-03-11 08:06:36)
-> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-=
-pll.c
-> index 678b805f13d45..11f1ae59438f7 100644
-> --- a/drivers/clk/qcom/apss-ipq-pll.c
-> +++ b/drivers/clk/qcom/apss-ipq-pll.c
-> @@ -55,6 +55,24 @@ static struct clk_alpha_pll ipq_pll_huayra =3D {
->         },
->  };
-> =20
-> +static struct clk_alpha_pll ipq_pll_stromer =3D {
-> +       .offset =3D 0x0,
-> +       .regs =3D ipq_pll_offsets[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
-> +       .flags =3D SUPPORTS_DYNAMIC_UPDATE,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x0,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
+if one device register clkdev with dev_id or con_id
+greater than maximum length, clkdev_create functions
+will not return err, but clk_find functions will not
+match the device, it's difficult to identify issues
+for developers.So add error messages for dev_id greater
+than 20 characters and con_id greater than 16 characters.
 
-const?
+eg. clkdev_create(clk, NULL, "i2c_designware.16796")
+it will create clk_lookup with dev_id "i2c_designware.1679",
+because clk_name exceeds dev_id maximum, but clkdev_create not
+return err. when driver call clk_find functions, use "i2c_desig
+nware.16796" to find clk, it will return failed,but I don't know
+where the problem is. It took a long time to find the problem.
+
+Signed-off-by: Duanqiang Wen <duanqiangwen@net-swift.com>
+---
+ drivers/clk/clkdev.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index ee37d0be6877..2d24ea232dc7 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -165,11 +165,21 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
+ 
+ 	cla->cl.clk_hw = hw;
+ 	if (con_id) {
++		if (strlen(dev_fmt) >= MAX_CON_ID) {
++			pr_err("%s:con_id cannot be greater than %d characters\n",
++					dev_fmt, MAX_CON_ID);
++			return NULL;
++		}
+ 		strscpy(cla->con_id, con_id, sizeof(cla->con_id));
+ 		cla->cl.con_id = cla->con_id;
+ 	}
+ 
+ 	if (dev_fmt) {
++		if (strlen(dev_fmt) >= MAX_DEV_ID) {
++			pr_err("%s:dev_id cannot be greater than %d characters\n",
++					dev_fmt, MAX_DEV_ID);
++			return NULL;
++		}
+ 		vscnprintf(cla->dev_id, sizeof(cla->dev_id), dev_fmt, ap);
+ 		cla->cl.dev_id = cla->dev_id;
+ 	}
+-- 
+2.27.0
+
