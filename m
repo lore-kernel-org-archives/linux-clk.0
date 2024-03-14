@@ -1,163 +1,185 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F07923CE
-	for <linux-clk@vger.kernel.org>; Thu, 14 Mar 2024 10:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CE06BB2F
+	for <linux-clk@vger.kernel.org>; Thu, 14 Mar 2024 11:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710411312; cv=none; b=oohdDcfd85PuwSjssAQzk32miMDTO2T5AomEn7HTnTxtXBN3BT3/AHHjWdolHb1YBD9rYC5UZ2yDa97pDUTpuaR/LOv1K/R8x6ELvKr60ObS40lul/uyROwu+rvKlmVijX1IWnh1OhMQKDanawIyuilC8PPG+Baxg3pDUkZvpe4=
+	t=1710414650; cv=none; b=fszA3yp8fu5GeRRpcCePeOo61tqs8kJjcUEVV6nT+P2JqJg49j2wsUrilUMoNwzeIgrBvyGx+a69fx5peXAKYUjAOkqFz7wW5K/VVqaRXK617CLCyPeCwfrodsQ0+I4ZL2z0+cTubYWR1ewfFLjZznFpd1ZXbf9IWmDe26iKMIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710411312; c=relaxed/simple;
-	bh=e2hMg1PcRj/if0h8E4gfrvv9mpOExDFnx1LdFeRRap4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WPO0do2OJltYCQyjQa+tnOgVPhTzTN/Ltyd9AEQoD4nh/D20S4bAwHQU14Lq1C8oGcOoEtmc3VmqJaCu9Hbwz6Jo58Zwij+rbFwk5HwYpZkB3vAOvO5hkEgL5/emBLRnV6Z08paLheUO+R1MdRQH8RbmfVSDwG7eCqymFj/i5y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XxJMxkdJ; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XxJMxkdJ"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-413f7a5bf11so1237825e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 14 Mar 2024 03:15:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710411309; x=1711016109; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t7/LwgM4aaqGh3YYtB4JlSHRqD8NOvEpoMUFC+HxinQ=;
-        b=XxJMxkdJO+ETZyPhe3Ap/2ajIN20IHA3xaJML8EsuZ1Ryn71+NFssXacDs3vabp060
-         5sYIJODoFuAVQkZ+y5UF7SxJW5fJJ8o9s3V4IR2WvwUVaJiDCSVPOcy5N+OX3pUasRHK
-         jxiBotOaJF4qZmGCFmPnFo8SB7ctGSMdNihS2xxo9Vk5sAtxDQQ+1CrFRG5H982j7Ur/
-         FJxVDfpubL3G6Frl1SJDU0QACHLnAdApIzwpHkKlqzmLHMPcOw8aYuAAOvzoPZ5vAfOo
-         9h2m5TohnezhCwcjXu1BQltEGJLsQMmnPRknJ3lv0/FKaG1gWAYKtGSKl2SHa4ceWXZ0
-         hAFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710411309; x=1711016109;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t7/LwgM4aaqGh3YYtB4JlSHRqD8NOvEpoMUFC+HxinQ=;
-        b=Tk8BZ+CKPECSyB4EJXnwTKcA5LlmEYnlrluASRJ9rGr8v8kI4D7iDyD4VWaoT4AiGn
-         saYVIUFXoRZM4hQU3gbvH/69nZBUbhWjv7TX3Z4v5SVyomu7qL5AgQaeaABXcMirwfzV
-         1G3HmmAh8N9APPumbsFwN498juwZf6Pycv2IirCxPzPel/bYl+DZoTzq7L0AWekilptc
-         BxBJsintyPMo+2ZGt4IiFlK9jfGRUbS2lho21h/qpIGK2dp7fN24blfPCaAGTgvxJtiN
-         F7Z0jhRJ92YYVvwwNhBJ8Rb4ItQvTVxul7UgecM0iOvrKXY13fkV8wQXAtvSp4L8yoTC
-         3W4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU+MRfdd+fyZzRTtctmri+mCYCM5qDzAxr1tCuIEd8PhK2/QRGzOcrd3RM/Yzb1Rp/m/czS8Zq7MFcau2fBQIAJ93VeAUwR12F6
-X-Gm-Message-State: AOJu0YwPwPCzZgbwaM7SGGI9rpQGrGxI0ZIeBIBisqNQfnADW6r+hE4Q
-	EAZUhLDLIQWh03iVs5JVN04vYu+TRpcCpS5wsg3bvdv69r/k3m0+N9EUiDNP7oQ=
-X-Google-Smtp-Source: AGHT+IHbnSE7BF/cQ8UyDL4Hwsh1EghhNT1fgPx1aFHv6UbhkU0VaZDv4SBIaB18nPd1qiqduYvMXA==
-X-Received: by 2002:a05:600c:1c89:b0:413:1047:362f with SMTP id k9-20020a05600c1c8900b004131047362fmr1191898wms.30.1710411308990;
-        Thu, 14 Mar 2024 03:15:08 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id bi17-20020a05600c3d9100b00413f50e944fsm891595wmb.45.2024.03.14.03.15.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Mar 2024 03:15:07 -0700 (PDT)
-Message-ID: <c6a97c53-3220-413d-bc48-f23119c86ce3@linaro.org>
-Date: Thu, 14 Mar 2024 11:15:05 +0100
+	s=arc-20240116; t=1710414650; c=relaxed/simple;
+	bh=kNJD2vfdVNOWGd8yX3s8kD7ohIaKfeALYGkpdHnoD1w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SwGvNFknMCF1rjGdsbq9AUijjNO2rGP4oP7XpWiTfNPt2BTQy2IaLO+1VxzdbimNmr22wIydSpMkRg2qJUFH+ik1tttm9wxlpyi0hnkn0Ie8y+AYuPJ+PM9GeGmN7zugHm30tbi9QoGn91+0vwKBAx0gFjR413sfEzqxY37lJUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4TwPgF0yK3z4x71d
+	for <linux-clk@vger.kernel.org>; Thu, 14 Mar 2024 12:05:29 +0100 (CET)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
+	by laurent.telenet-ops.be with bizsmtp
+	id yb5G2B00R0SSLxL01b5GhH; Thu, 14 Mar 2024 12:05:21 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rkitO-003gBz-Tu;
+	Thu, 14 Mar 2024 12:05:16 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rkitg-00F90v-Fj;
+	Thu, 14 Mar 2024 12:05:16 +0100
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>,
+	linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] clk: starfive: jh7100: Use provided clocks instead of hardcoded names
+Date: Thu, 14 Mar 2024 12:05:13 +0100
+Message-Id: <898aa0925a9598d44721d00145015b215434cb3b.1710414195.git.geert@linux-m68k.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom: Update SM8150 videocc
- bindings
-Content-Language: en-US
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240313-videocc-sm8150-dt-node-v1-0-ae8ec3c822c2@quicinc.com>
- <20240313-videocc-sm8150-dt-node-v1-1-ae8ec3c822c2@quicinc.com>
- <e8037775-78cf-4d18-9f8b-9dc5f497ad14@linaro.org>
- <a69f6dda-f488-a1be-803d-258fb8c6cb7b@quicinc.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <a69f6dda-f488-a1be-803d-258fb8c6cb7b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 14/03/2024 10:13, Satya Priya Kakitapalli (Temp) wrote:
-> 
-> On 3/13/2024 10:21 PM, Krzysztof Kozlowski wrote:
->> On 13/03/2024 12:08, Satya Priya Kakitapalli wrote:
->>> Update the videocc device tree bindings for sm8150 to align with the
->>> latest convention.
->> Everything is an update. Please explain what you did and why. The "why"
->> part you tried to cover but I just don't understand what is "align with
->> the latest convention". What convention?
-> 
-> 
-> As per the recent upstream discussions, it is recommended to use 
-> index-based lookup instead of using clock names. The current bindings is 
-> not aligned with this, hence updating. I'll add the details to commit text.
+The Starfive JH7100 clock driver does not use the DT "clocks" property
+to find its external input clocks, but instead relies on the names of
+the actual external clock providers.  This is fragile, and caused
+breakage when sanitizing clock names in DT.
 
-Yes, please.
+Fix this by obtaining the external input clocks through the DT "clocks"
+property, and using their clk_hw objects or corresponding name.
 
-> 
-> 
->>> Fixes: 35d26e9292e2 ("dt-bindings: clock: Add YAML schemas for the QCOM VIDEOCC clock bindings")
->> What is the bug being fixed here?
-> 
-> 
-> There are 2 clocks required for this, AHB and XO. Only one clock is 
-> mentioned in the bindings for SM8150, this is one of the reasons to move 
-> to latest sm8450 bindings apart from clock names. Hence added a Fixes tag.
+Fixes: f03606470886 ("riscv: dts: starfive: replace underscores in node names")
+Fixes: 4210be668a09ee20 ("clk: starfive: Add JH7100 clock generator driver")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+After this is applied, the workaround in commit 7921e231f85a349d
+("riscv: dts: starfive: jh7100: fix root clock names") can be reverted.
+---
+ drivers/clk/starfive/clk-starfive-jh7100.c | 47 +++++++++++++++-------
+ drivers/clk/starfive/clk-starfive-jh71x0.h |  1 +
+ 2 files changed, 33 insertions(+), 15 deletions(-)
 
-This should be in the commit msg.
-
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/starfive/clk-starfive-jh7100.c b/drivers/clk/starfive/clk-starfive-jh7100.c
+index 0342db24c27e10df..08e6f03f2cfc36c1 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7100.c
++++ b/drivers/clk/starfive/clk-starfive-jh7100.c
+@@ -7,6 +7,7 @@
+  * Copyright (C) 2021 Emil Renner Berthing <kernel@esmil.dk>
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
+@@ -18,10 +19,18 @@
+ #include "clk-starfive-jh71x0.h"
+ 
+ /* external clocks */
+-#define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + 0)
+-#define JH7100_CLK_OSC_AUD		(JH7100_CLK_END + 1)
+-#define JH7100_CLK_GMAC_RMII_REF	(JH7100_CLK_END + 2)
+-#define JH7100_CLK_GMAC_GR_MII_RX	(JH7100_CLK_END + 3)
++enum {
++	EXT_CLK_OSC_SYS,
++	EXT_CLK_OSC_AUD,
++	EXT_CLK_GMAC_RMII_REF,
++	EXT_CLK_GMAC_GR_MII_RX,
++	EXT_NUM_CLKS
++};
++
++#define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + EXT_CLK_OSC_SYS)
++#define JH7100_CLK_OSC_AUD		(JH7100_CLK_END + EXT_CLK_OSC_AUD)
++#define JH7100_CLK_GMAC_RMII_REF	(JH7100_CLK_END + EXT_CLK_GMAC_RMII_REF)
++#define JH7100_CLK_GMAC_GR_MII_RX	(JH7100_CLK_END + EXT_CLK_GMAC_GR_MII_RX)
+ 
+ static const struct jh71x0_clk_data jh7100_clk_data[] __initconst = {
+ 	JH71X0__MUX(JH7100_CLK_CPUNDBUS_ROOT, "cpundbus_root", 0, 4,
+@@ -284,8 +293,12 @@ static struct clk_hw *jh7100_clk_get(struct of_phandle_args *clkspec, void *data
+ 
+ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
+ {
++	static const char *jh7100_ext_clk[EXT_NUM_CLKS] =
++		{ "osc_sys", "osc_aud", "gmac_rmii_ref", "gmac_gr_mii_rxclk" };
+ 	struct jh71x0_clk_priv *priv;
++	const char *osc_sys;
+ 	unsigned int idx;
++	struct clk *clk;
+ 	int ret;
+ 
+ 	priv = devm_kzalloc(&pdev->dev, struct_size(priv, reg, JH7100_CLK_PLL0_OUT), GFP_KERNEL);
+@@ -298,13 +311,23 @@ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+ 
++	for (idx = 0; idx < EXT_NUM_CLKS; idx++) {
++		clk = devm_clk_get(&pdev->dev, jh7100_ext_clk[idx]);
++		if (IS_ERR(clk))
++			return PTR_ERR(clk);
++
++		priv->ext[idx] = __clk_get_hw(clk);
++	}
++
++	osc_sys = clk_hw_get_name(priv->ext[EXT_CLK_OSC_SYS]);
++
+ 	priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
+-							 "osc_sys", 0, 40, 1);
++							 osc_sys, 0, 40, 1);
+ 	if (IS_ERR(priv->pll[0]))
+ 		return PTR_ERR(priv->pll[0]);
+ 
+ 	priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
+-							 "osc_sys", 0, 64, 1);
++							 osc_sys, 0, 64, 1);
+ 	if (IS_ERR(priv->pll[1]))
+ 		return PTR_ERR(priv->pll[1]);
+ 
+@@ -331,16 +354,10 @@ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
+ 
+ 			if (pidx < JH7100_CLK_PLL0_OUT)
+ 				parents[i].hw = &priv->reg[pidx].hw;
+-			else if (pidx < JH7100_CLK_END)
++			else if (pidx < JH7100_CLK_OSC_SYS)
+ 				parents[i].hw = priv->pll[pidx - JH7100_CLK_PLL0_OUT];
+-			else if (pidx == JH7100_CLK_OSC_SYS)
+-				parents[i].fw_name = "osc_sys";
+-			else if (pidx == JH7100_CLK_OSC_AUD)
+-				parents[i].fw_name = "osc_aud";
+-			else if (pidx == JH7100_CLK_GMAC_RMII_REF)
+-				parents[i].fw_name = "gmac_rmii_ref";
+-			else if (pidx == JH7100_CLK_GMAC_GR_MII_RX)
+-				parents[i].fw_name = "gmac_gr_mii_rxclk";
++			else if (pidx <= JH7100_CLK_GMAC_GR_MII_RX)
++				parents[i].hw = priv->ext[pidx - JH7100_CLK_OSC_SYS];
+ 		}
+ 
+ 		clk->hw.init = &init;
+diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
+index 23e052fc15495c41..4f46939179cd7418 100644
+--- a/drivers/clk/starfive/clk-starfive-jh71x0.h
++++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
+@@ -115,6 +115,7 @@ struct jh71x0_clk_priv {
+ 	struct device *dev;
+ 	void __iomem *base;
+ 	struct clk_hw *pll[3];
++	struct clk_hw *ext[4];
+ 	struct jh71x0_clk reg[];
+ };
+ 
+-- 
+2.34.1
 
