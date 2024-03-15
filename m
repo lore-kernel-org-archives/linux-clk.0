@@ -1,144 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E65D487AE;
-	Fri, 15 Mar 2024 17:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491CF48CCC;
+	Fri, 15 Mar 2024 17:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710523675; cv=none; b=eNrW4C1on1l16UdKjGg6l+1tpFP0lvtuORmGZomGuGfCM9ez8pHfXzCM0nFrxTMvclXc4bqnkei/AwAMXrZlVcTw5CopyO4M0mH5FsXD6JX2qkDIgyzQQTLfws/WgZM4FTLN4B47xpO5eGJJzb7u23JUE/UEuo4uPkQUGTeVGbM=
+	t=1710524384; cv=none; b=ZnqJDvOz3YXgY1dO4vk8NOqIoxgSgigPtrQh+4aPKZdUHUCyEE8emH4u1f/XPusLFmP05BtXdsGaA6kix/Y2TU/slwt0jYEivCTR9PVqI4i7hwoc/yx67VkemYDWVvteGaEYtMBihPlwVtwW3tAzOWxUMfX0adeuYfnV/zzssXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710523675; c=relaxed/simple;
-	bh=Kw+zYeSkcmJLO8XJO567cqAcyu+nQoYVc+rZOQHtzl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YimVdj2bWAaAnT0EgbO3Hi1kuMjqAfvpjZNHN8DcIX6UMfyt+jWOG/W4KBLq0oAoL2rJzKdclBEhe2Wy4DhAZykJrL1fn1UDolZ/u4iqcpqt6L+sQDHa3QJXjs1hCCyz7lfnTkcYrkT95XK8f/BdWvC094EoqX7e5WVkFek8yug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xbgyxnis; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710524384; c=relaxed/simple;
+	bh=ai18tQCxEsVNBTB9pI+Y1iMrP4vEbIDkN2V9bYFwEuE=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Ez4X+FMc16ueVkjgsEu0ASRhpJE+Py1Mj7ZK42mWmURBAUv7RWJkOubhaVLtnl+aG/VOw3PiqepgDwONykhrbNYVaduhb1ZxPUkeiE1AXwaTm+Kd5JUqDzWa8Xp8n57u01Ppn6k5pvz6WXjQl9DczDwzJwVoWfOs0AknfvdH8l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThLdkbyJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xbgyxnis"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C110C433C7;
-	Fri, 15 Mar 2024 17:27:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThLdkbyJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2CE9C433F1;
+	Fri, 15 Mar 2024 17:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710523675;
-	bh=Kw+zYeSkcmJLO8XJO567cqAcyu+nQoYVc+rZOQHtzl0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XbgyxnisTGyE7pcHm4B33tk0Y2Tr90fMPcHltV1rX/2+bquaVLZ0IJtaUscTacGy/
-	 ah32JkrIxFTSLUJtypaccV+ewm5NyLtUh+oc/4CHGR1rbV6QnVC8CB4HeW9IjZBIKy
-	 NMJtYyYnO0XmKREbqPMIFqKbvr9XOKB3oG0y2/Is3TxF/jTcNctS7tlPybS7pX0/7e
-	 fsqEdG8IU4fDBCwTEnkKeHAhUvjmE9y6biJWXhp54rLKMen2ogO0fq2wxLf++B5EBP
-	 Y7W9XCI+c8nxsrRxYgeQQdzkOAiQ+VMx0FjpYFNpPeetHXLG2pyN1IaSSQTQae8J0B
-	 daDpG1sW6u1XQ==
-Date: Fri, 15 Mar 2024 11:27:52 -0600
-From: Rob Herring <robh@kernel.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v4 4/6] dt-bindindgs: clock: nxp: support i.MX95 LVDS CSR
- module
-Message-ID: <20240315172752.GC1506658-robh@kernel.org>
-References: <20240314-imx95-blk-ctl-v4-0-d23de23b6ff2@nxp.com>
- <20240314-imx95-blk-ctl-v4-4-d23de23b6ff2@nxp.com>
+	s=k20201202; t=1710524383;
+	bh=ai18tQCxEsVNBTB9pI+Y1iMrP4vEbIDkN2V9bYFwEuE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ThLdkbyJzeqXntUTQRuID6VAibZEXVYVFM6dB+1fOnSd27f+XnR829DJjeNBCm1j+
+	 9SpPaxsqxbCGOllpEII3ySsorrIjPgVrzX/wHagrArgmzxZhBRrcR2QwlhkoPceqUI
+	 tmu8/g40EV8XycRGpPwTZDBbFeuTzVCzjNo63LGo35FhcgwAea7oYoFMqF/iKbHXsf
+	 uv/pfWhvhEpCfbDqZi71Pxkh5qCKYEg4ug16RDXIQcOivHGLjbfLXsfX/gTn5AizNK
+	 hWhFRYYPTHaN1Sw5kG2pATuVECNppdHAicbCp3u1EG2B0vOBFJlwjW+PzY6dkZGARD
+	 GuECh3L6Y/4Mg==
+Message-ID: <2688272d2763a36f401a08ca48c0eb24.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240314-imx95-blk-ctl-v4-4-d23de23b6ff2@nxp.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <104401da76cc$ccc772c0$66565840$@samsung.com>
+References: <20240220084046.23786-1-shradha.t@samsung.com> <CGME20240220084120epcas5p1e8980539667c3d9da20f49fc645d8f4c@epcas5p1.samsung.com> <20240220084046.23786-2-shradha.t@samsung.com> <f00eed31-4baf-4d5c-934d-8223d1ab554d@moroto.mountain> <022301da6fbf$aae4f7e0$00aee7a0$@samsung.com> <9927a3356ce54c626ab4733844a4385b.sboyd@kernel.org> <104401da76cc$ccc772c0$66565840$@samsung.com>
+Subject: RE: [PATCH v6 1/2] clk: Provide managed helper to get and enable bulk clocks
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com, jingoohan1@gmail.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com, krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, linux@armlinux.org.uk, m.szyprowski@samsung.com, manivannan.sadhasivam@linaro.org, pankaj.dubey@samsung.com, gost.dev@samsung.com
+To: 'Dan Carpenter' <dan.carpenter@linaro.org>, Shradha Todi <shradha.t@samsung.com>
+Date: Fri, 15 Mar 2024 10:39:41 -0700
+User-Agent: alot/0.10
 
-On Thu, Mar 14, 2024 at 09:25:13PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> The i.MX95 LVDS_CSR provides clock gate controls for the LVDS units, LVDS
-> PHY and Pixel Mapper blocks. Add dt-binding for it.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  .../bindings/clock/nxp,imx95-lvds-csr.yaml         | 50 ++++++++++++++++++++++
->  include/dt-bindings/clock/nxp,imx95-clock.h        |  7 +++
->  2 files changed, 57 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nxp,imx95-lvds-csr.yaml b/Documentation/devicetree/bindings/clock/nxp,imx95-lvds-csr.yaml
-> new file mode 100644
-> index 000000000000..e04f0ca4f588
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/nxp,imx95-lvds-csr.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/nxp,imx95-lvds-csr.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP i.MX95 Display LVDS Block Control
-> +
-> +maintainers:
-> +  - Peng Fan <peng.fan@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: nxp,imx95-lvds-csr
-> +      - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +    description:
-> +      The clock consumer should specify the desired clock by having the clock
-> +      ID in its "clocks" phandle cell. See
-> +      include/dt-bindings/clock/nxp,imx95-clock.h
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
+Quoting Shradha Todi (2024-03-15 04:34:44)
+> >=20
+> > Quoting Shradha Todi (2024-03-06 04:13:03)
+> > > >
+> > > > When clk_bulk_get_all() returns zero then we return success here.
+> > > >
+> > >
+> > > Yes, we are returning success in case there are no clocks as well. In
+> > > case there are no clocks defined in the DT-node, then it is assumed
+> > > that the driver does not need any clock manipulation for driver
+> > > operation. So the intention here is to continue without throwing
+> > > error.
+> >=20
+> > Maybe we shouldn't even return the clks to the caller. Do you have any =
+use for
+> > the clk pointers?
+>=20
+> The intention to return the clk pointers was in the case where caller wan=
+ts to
+> manipulate a particular clock in certain conditions. They can obtain the =
+clock pointer
+> and use clk_set_parent, clk_set_rate on those particular clocks.
+> But I understand that in that case users can use existing clk_bulk_get_al=
+l() API.
+> So, should I go ahead and send v7?
+>=20
 
-How are clocks and power-domains optional?
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    syscon@4c410000 {
-> +      compatible = "nxp,imx95-lvds-csr", "syscon";
-> +      reg = <0x4c410000 0x10000>;
-> +      #clock-cells = <1>;
-> +      clocks = <&scmi_clk 75>;
-> +      power-domains = <&scmi_devpd 13>;
-> +    };
-> +...
-> diff --git a/include/dt-bindings/clock/nxp,imx95-clock.h b/include/dt-bindings/clock/nxp,imx95-clock.h
-> index c671c4dbb4d5..e642a54c81a0 100644
-> --- a/include/dt-bindings/clock/nxp,imx95-clock.h
-> +++ b/include/dt-bindings/clock/nxp,imx95-clock.h
-> @@ -18,4 +18,11 @@
->  #define IMX95_CLK_CAMBLK_ISP			4
->  #define IMX95_CLK_CAMBLK_END			5
->  
-> +#define IMX95_CLK_DISPMIX_LVDS_PHY_DIV		0
-> +#define IMX95_CLK_DISPMIX_LVDS_CH0_GATE		1
-> +#define IMX95_CLK_DISPMIX_LVDS_CH1_GATE		2
-> +#define IMX95_CLK_DISPMIX_PIX_DI0_GATE		3
-> +#define IMX95_CLK_DISPMIX_PIX_DI1_GATE		4
-> +#define IMX95_CLK_DISPMIX_LVDS_CSR_END		5
-
-Same issue here.
+No, I think this is fine.
