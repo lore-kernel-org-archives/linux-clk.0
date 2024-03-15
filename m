@@ -1,133 +1,144 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A1E18E11
-	for <linux-clk@vger.kernel.org>; Fri, 15 Mar 2024 10:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D340B19470;
+	Fri, 15 Mar 2024 11:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710498311; cv=none; b=UMeqUL59WCm4fUn95RBKM0zAJPKFFRzUre6Biv54Rx1AyaE254/nqRQdPrGupiaUh24oGoF8B9iEQn3xyAm11cvDjbf/ZflaDVmTSw/ETXkEOBeY1YhpiLxcSEG0hf2aXTV2OpDInZDCI4CxgvAz3sLJ+/Ft8IklREpI41YA1X4=
+	t=1710501091; cv=none; b=CPEJD1T7ePAXL0v46gGWcBdSg9F3O6ItQddXfHnPOKtjXz+xHlMUOYuHgK0ULEpnQrIk/qgFTcCGiJmLoO14fX4P5DBY3QcGqAEY66mhaR263GusOOoIO4MScGjLTMeYGNFU8QiNimGY+HAsBCWbJxoJ0/nawVXQqHaOg8FC0pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710498311; c=relaxed/simple;
-	bh=NfFTjprpYpTx/YOcA395cb2tUELkt8+AWxFx0BohTVw=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=TK6cyQWWPJZ5uJDADZiikncN3p/ez7PmMpPwor8WyVlfivOvG7oPpjfxD63XcnXS88JVTCei81Foil59ATn2cIzk08EKZWInUwduUQseqOHaCXtDKdRcLN2k6omXjtzN37/acDB8P89NVLzGFzNHcVbM17/uoZRI1q/jUcfUgrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=scTyMV6t; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1710501091; c=relaxed/simple;
+	bh=Vf+L7jw0hVdyWsY+RKzSYBH+cZo3YYxSFHIk7xqh0xk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QmU+PZWlXUGdCBodN67ay/BiSPHH4bNjyA5MpmgORkVdf2ruMs5AhKJVaBYuu8Pa6WzviXcn43/ErjGy9rP0xnktVm2GJEj3gVjAsDbhD8feemhxyKm8ByYyKVav2rdILkma/XSN/JDQpmriIc0OWVblAGe9MTvs1VrBXBCMfhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l6nDnYbQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="scTyMV6t"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-33e570ef661so761792f8f.1
-        for <linux-clk@vger.kernel.org>; Fri, 15 Mar 2024 03:25:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1710498307; x=1711103107; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=I3EB/6PldhsbhWY9+bYWiu2w8/wr6W5dSP5c/9sIMoI=;
-        b=scTyMV6tGxpPlH+TE8fWNj5v3IY+5bAIEbQwmbIVNN3XGjo9GTZz+InJd/EjxhUuZq
-         Q9Ot2p8f+AOjQj6+U0vZhicYtDDqkq+P9saxDp5W48/Ueq1Ar2TaKf8LebWOrVL8Pqug
-         Jmj16tfoojVaZWL7EJcEzgolSUXHFVPP65f5DlSnRQGt5KeOjJYN2DSKmBodnc5K668f
-         P+R+lLYCxRO4Wqor3SqTkHfGN17d2n0vjk3RtNfPH1vbggffj+CgkGdnbROD6tAeXJTc
-         jC6eosvqjs0KjmhMfv2w2TGnCWtqJJopYJCCPYpHq0b3qIC/Jl7PUhWLs0FhV599qsaf
-         D8Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710498307; x=1711103107;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I3EB/6PldhsbhWY9+bYWiu2w8/wr6W5dSP5c/9sIMoI=;
-        b=mXJJlhGGeu6UCoj33/vc8aTozx3Nd2ZjTx7vrwK7LYZwn/rcU+O5exe2y1yP5WRrsz
-         ofwhTtqXER6Y/rx5Y91lwvcY/9RHQ2o+6p8IxG7/5vIpQgSVKU/kB0b6Dg8vKReTA2H/
-         Zi3D9D26TQYzTTayaMT4ZSk6G0DiLnlu99Ok6PebriZ8SWwNDINJrYyH74LQf2uAh/Fo
-         aNh2XpfHQ+7myNXzNVGENi1cld1BUDExhvlj3N7BUuadghrogwGg7v9Cr/Vpu13oqL/2
-         2an8kOhcUCu4RejJbz91s5r8gOnBVW/g3Wn9kgSRRdKAgoQUY+KPum9827SD26W4jkX4
-         2RIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBdYX6RbZF0syYgSjljMZeXikbJIkn6g+eI0K8M/x5O6VZ3SuWdNPs7SZMzSy0kpyPbsdcejyUZ2LkQ/qLuV9W+2E0vYxHhWGG
-X-Gm-Message-State: AOJu0YzPY4FRywrF9wTOKTNbtxNNPCO0DpSK4u2OrkUgCEMFSC2fSpcH
-	dFuHo9YjJny+rpOVRjT2DKqODwKwAComxYKea3YjT3+OhIBrYlhg/LK5coWNAH8=
-X-Google-Smtp-Source: AGHT+IGWDipfwojUVR3R0h/HAg8+ErMHQU1L9DU1QDqUHJY9+2A1t5wePivY0yDxiYGWnr60Q0NDnQ==
-X-Received: by 2002:a5d:4cc1:0:b0:33e:7f5c:732c with SMTP id c1-20020a5d4cc1000000b0033e7f5c732cmr3060666wrt.62.1710498307090;
-        Fri, 15 Mar 2024 03:25:07 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:8151:4d0a:14d8:1124])
-        by smtp.gmail.com with ESMTPSA id o14-20020adfe80e000000b0033e8c50fc3fsm2818997wrm.90.2024.03.15.03.25.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Mar 2024 03:25:06 -0700 (PDT)
-References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
- <20240314232201.2102178-14-jan.dakinevich@salutedevices.com>
- <ca80caab-2664-4797-a222-e14537eea440@linaro.org>
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman
- <khilman@baylibre.com>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
- kernel@salutedevices.com
-Subject: Re: [PATCH 13/25] ASoC: dt-bindings: meson: axg-pdm: document
- 'sysrate' property
-Date: Fri, 15 Mar 2024 11:22:59 +0100
-In-reply-to: <ca80caab-2664-4797-a222-e14537eea440@linaro.org>
-Message-ID: <1jil1nhjwd.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l6nDnYbQ"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42FArCZp030651;
+	Fri, 15 Mar 2024 11:11:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=vs5TCj9
+	Ay0TpFIyW+xfHqr89guPUxIhI8SgimdQNQUo=; b=l6nDnYbQN1jcABMM+HJ+fMI
+	FJfhdK7eOA+cXqGP+OQ9gRNjTIshALP1gkE40j7JqN+ilvbVVHKP7VxxWdpOB/ev
+	AnCvi0YAGLhMtv1TcqAsJZ8HUZD+80WLicQNxhdVJVZHBpfAq52Iq6zgcI02G0/U
+	sQ7u+PavAIYjxwsnTMAd/lDlSziF6bC1HhUsDoHuAkztEeeFJiqFIfe57DSGAVuF
+	FDVHaYLmPd5miL2DjdP9Q2UShWncfR7SGWIuRhJBOVmfsWJipGEXwE3VcSdgn3QQ
+	l+YugzHXOcsfpnfBRT92gt4rm+PWqp5expyVsAqZ09YE11b/NzJOXm8Njx0+G6w=
+	=
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wva0912w3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Mar 2024 11:11:11 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42FBBA2t025931
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Mar 2024 11:11:10 GMT
+Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Fri, 15 Mar 2024 04:11:03 -0700
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+        Kevin Hilman
+	<khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Pavel Machek
+	<pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Andy Gross <agross@kernel.org>, Stephen Boyd
+	<sboyd@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        "Vikash Garodia" <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abel Vesa
+	<abel.vesa@linaro.org>, Taniya Das <quic_tdas@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+Subject: [PATCH V5 0/5] PM: domains: Add control for switching back and forth to HW control
+Date: Fri, 15 Mar 2024 16:40:41 +0530
+Message-ID: <20240315111046.22136-1-quic_jkona@quicinc.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9zRqU3ZyzwdigTryvmfD36Jwfw1omQAC
+X-Proofpoint-ORIG-GUID: 9zRqU3ZyzwdigTryvmfD36Jwfw1omQAC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-14_13,2024-03-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ adultscore=0 mlxscore=0 malwarescore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 clxscore=1011 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2403140001 definitions=main-2403150091
 
+This series adds support for dev_pm_genpd_set_hwmode() and dev_pm_genpd_get_hwmode() APIs
+and support in gdsc provider drivers to register respective callbacks and venus consumer
+driver example using above API to switch the power domain(GDSC) to HW/SW modes dynamically
+at runtime.
 
-On Fri 15 Mar 2024 at 11:00, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Changes in V5:
+- Updated 1st patch as per V4 review comments to synchronize the initial HW mode state by
+  invoking ->get_hwmode_dev()callback in genpd_add_device()
+- With above change, SW cached hwmode will contain correct value initially, and it will be
+  updated everytime mode is changed in set_hwmode, hence updated dev_pm_genpd_get_hwmode()
+  to just return SW cached hwmode in 1st patch
+- Updated commit text for 1st, 3rd, 4th and 5th patches
+- Updated 3rd and 5th patches as per review comments received on V4 series
+- Added R-By tags received in older series to 1st and 2nd patches
 
-> On 15/03/2024 00:21, Jan Dakinevich wrote:
->> This option allow to redefine the rate of DSP system clock.
->
-> And why is it suitable for bindings? Describe the hardware, not what you
-> want to do in the driver.
->
->> 
->> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
->> ---
->>  Documentation/devicetree/bindings/sound/amlogic,axg-pdm.yaml | 4 ++++
->>  1 file changed, 4 insertions(+)
->> 
->> diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-pdm.yaml b/Documentation/devicetree/bindings/sound/amlogic,axg-pdm.yaml
->> index df21dd72fc65..d2f23a59a6b6 100644
->> --- a/Documentation/devicetree/bindings/sound/amlogic,axg-pdm.yaml
->> +++ b/Documentation/devicetree/bindings/sound/amlogic,axg-pdm.yaml
->> @@ -40,6 +40,10 @@ properties:
->>    resets:
->>      maxItems: 1
->>  
->> +  sysrate:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: redefine rate of DSP system clock
->
-> No vendor prefix, so is it a generic property? Also, missing unit
-> suffix, but more importantly I don't understand why this is a property
-> of hardware.
+Previous series:
+V4: https://lore.kernel.org/all/20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org/
+V3: https://lore.kernel.org/lkml/20230823114528.3677667-1-abel.vesa@linaro.org/ 
+V2: https://lore.kernel.org/lkml/20230816145741.1472721-1-abel.vesa@linaro.org/
+V1: https://lore.kernel.org/all/20230628105652.1670316-1-abel.vesa@linaro.org/
 
-+1.
+Abel Vesa (1):
+  PM: domains: Add the domain HW-managed mode to the summary
 
-The appropriate way to set rate of the clock before the driver take over
-is 'assigned-rate', if you need to customize this for different
-platform.
+Jagadeesh Kona (3):
+  clk: qcom: gdsc: Add set and get hwmode callbacks to switch GDSC mode
+  clk: qcom: Use HW_CTRL_TRIGGER flag to switch video GDSC to HW mode
+  venus: pm_helpers: Use dev_pm_genpd_set_hwmode to switch GDSC mode on
+    V6
 
-Then you don't have to deal with it in the device driver.
+Ulf Hansson (1):
+  PM: domains: Allow devices attached to genpd to be managed by HW
 
->
-> Best regards,
-> Krzysztof
-
+ drivers/clk/qcom/gdsc.c                       | 37 +++++++++
+ drivers/clk/qcom/gdsc.h                       |  1 +
+ drivers/clk/qcom/videocc-sc7280.c             |  2 +-
+ drivers/clk/qcom/videocc-sm8250.c             |  4 +-
+ .../media/platform/qcom/venus/pm_helpers.c    | 39 ++++++----
+ drivers/pmdomain/core.c                       | 78 ++++++++++++++++++-
+ include/linux/pm_domain.h                     | 17 ++++
+ 7 files changed, 157 insertions(+), 21 deletions(-)
 
 -- 
-Jerome
+2.43.0
+
