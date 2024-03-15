@@ -1,183 +1,182 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91464596F;
-	Fri, 15 Mar 2024 15:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D834144C64;
+	Fri, 15 Mar 2024 16:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710517843; cv=none; b=rBnz6FyxgNgdd8SBCNKzZ+iQXatubItz3A3PamDq9oX7014/QeOCk9LyfpbBZaQKAqol6HgQiAncBz3kbg4LIcW5D8/KEa/8Nx2vFou7I2HgbwyUnfDa7yzUtA1b9bDOvOY5xkEnJ5kukPIKAqaiy/MKpPuG/o+H0t0KMjSLZFM=
+	t=1710519420; cv=none; b=TawXyb6lsdB2W/IhMJRU5a4q1Rn9vyaP0M1yUpTPkrCDmEqElEuQ2LvYAn/nPO2iG2emBXrOb8U+/3gFABJzFwD/+nfPrHxq7OpO9iPqfVZiMFfd4ulo2h6l39S2OnIQUbdUKacLXmwksGQ7/Sb7z2vAcnI/pN4jpEhHZx3tTxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710517843; c=relaxed/simple;
-	bh=6q19b+fiofsjhkT1rQDSO2sq7lO0s2NotCj9IMtQRaY=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=ZZVmVLglcs6EOApVXFDeGyFJ2mH7rdeJntokn+CyWQWUIYFEIHyVJSsotYL8/QbM0AYpoKpy/CJwfpkzQC5SPzIGVqPkyb4DN41a9zVNiG9cOmaVCbJe7iiP2n20JNP7xV5FPZNK05Tp5UQ0tWxGFdKXtfb4qUHAnQQhZ34R2RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cATWngLj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710519420; c=relaxed/simple;
+	bh=IyytQBo2KIJF54NrANAyUTvbiB6Rzt4f4opggr/aZgE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BMT1MXcktiF3QztGfIYZtEdw+WFHBdwmV9+EWSQqwqUhXnhEAmS7CkbalnVveC4CMkyq4sC+2gnTJWZuzkP6/EgbuUonTa6ZPcLoxBM1du1l/i2T58Nqo9h+xa3mMD2JsJXFpz6gM9bfys6S7Quua7FJaEe3GXnTy8uOginRTOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IrvBXckd; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cATWngLj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33D25C433C7;
-	Fri, 15 Mar 2024 15:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710517842;
-	bh=6q19b+fiofsjhkT1rQDSO2sq7lO0s2NotCj9IMtQRaY=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=cATWngLj0V0uBL2vyvNEcza3aKIZ7Np98iE1Fp7ZewG/iAYpswJuJuFe9bH49wWaX
-	 mnvcdWiUR04/OvSJJ21K3bFM+mpakZDyZjGqOPSAQ1b0njzLjfININ6Qws+lc5B5vR
-	 itjqzDy9xjSTZuK3QOQ9I5yeawb4tbQjD5kCOKlSC5G2luE04THVWHO8dM498VfzAJ
-	 eLxGeBJfdwLQL6jCw2mcOTrOv8k22gs2tbX8UCHfeGLpnoionHOqrxLElqkflT3IWG
-	 FlXaVPlrwuMW0SCEcsynOuS5r9l44wpHCWu3QSG/0OOu0kTEm4j2X9qNt+w2NdnLcK
-	 zT4mBoBAl07Lw==
-Date: Fri, 15 Mar 2024 09:50:41 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IrvBXckd"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-565c6cf4819so5676788a12.1;
+        Fri, 15 Mar 2024 09:16:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1710519415; x=1711124215; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hq26cNsD7jowb3hRFtXkhmvH+pk4/HkmfGFyk+22HD0=;
+        b=IrvBXckdY6A/y/wKd+r8x33eovdCcnR2Uu31fUAFthMt1oxhncLc86ykoEje2Q6U9R
+         j8Fnh6ro9+L0NyNRS2xOeTpaedeyYsFm9pzOzkR1GeeCbcFCo8kRDCk33wwDJc27Cu5e
+         jfd5Xs8fSxDzgww3rHaaQW7HSlZgDfjXlsaniG3JrVtp2+RPPIF17jFW9GFQ6FVR9WTW
+         cA2DqyqLhkNvAMC+cp/M0aL6JQRVZAfvkdU5SEgys/JVo8pvhHcLn/Nakpf8y7hz3zpC
+         HHuulgXFngj+dAA7qJ1PRx+7ZV676/Gzvm44BGJDtVXZ9sc7a8b3CdB680/+UcGC6ots
+         Yf/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710519415; x=1711124215;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hq26cNsD7jowb3hRFtXkhmvH+pk4/HkmfGFyk+22HD0=;
+        b=Z6dDCr7zZ1t1eMUX8OMr6cIZVQ+TLb7fbVyhL1SKv0KfpBQW8hjBrydWLToc9P4Nnd
+         NIkU3lUEUQSlsJtSRQLTlU3m+pChS/oA9ognpcMAiD3Iwlt7gaYLSF/FITkY7RYoygtP
+         Wkcpm9ewB+XwZEO+DHM9jLrvSRG/Nx7AMr8zsJYB1Ywq0n1wdJlgtlITjfOtXJAkNJUF
+         XDqphcdIm9TcVE3SPdAIKDv9jAH9lVp6HnXwsCXPcaEn9xm/dGjISTZiQWKDxPQnqq6T
+         1XG0T+PRC12zIZga7Y4k6aU5u5T9oSBUWnt/N7zmnC1vfAjOxYLCzloRNBPySF0aEZ8m
+         QRXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUET8097kafvap4O3cu7+QNTGbJMbq8Hc8x05kozcPxB43sWSptiuUmn5Tfn/mM11Hn6Lk4fAdl9Gp/cP93oEouBDZ3WwZrP+iQezqGLhrjrDC//0C9yMwAFZxdYJpeviGTyOLEcqGoeDc+0dYGX+pu+/D3r2qtP7ckzCYDy8LF
+X-Gm-Message-State: AOJu0YxtDxHIKHg98vvrxj7IemRixNWW3AQjg23ywdL8v+9BzyhRRHSO
+	eYGdAMHmJQpd9GfVVZ6cMU8x+mdSw17jQEC970Wvsv7byVm33khg
+X-Google-Smtp-Source: AGHT+IFv/E9MBLkyKgj7qZIVTGEgGlu0AGvsb77hVYdllp23GXPaquSMaDb/YqvQ3JdCNN4cWhrsMw==
+X-Received: by 2002:a17:906:5a95:b0:a46:74fe:9177 with SMTP id l21-20020a1709065a9500b00a4674fe9177mr4056795ejq.21.1710519414942;
+        Fri, 15 Mar 2024 09:16:54 -0700 (PDT)
+Received: from [192.168.20.102] (57657817.catv.pool.telekom.hu. [87.101.120.23])
+        by smtp.googlemail.com with ESMTPSA id me17-20020a170906aed100b00a4679ce191csm1330205ejb.121.2024.03.15.09.16.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Mar 2024 09:16:54 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Fri, 15 Mar 2024 17:16:41 +0100
+Subject: [PATCH v2] clk: qcom: apss-ipq-pll: use stromer ops for IPQ5018 to
+ fix boot failure
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rob Herring <robh@kernel.org>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, alsa-devel@alsa-project.org, 
- Linus Walleij <linus.walleij@linaro.org>, Jaroslav Kysela <perex@perex.cz>, 
- linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
- Mark Brown <broonie@kernel.org>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- kernel@salutedevices.com, linux-amlogic@lists.infradead.org, 
- devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- linux-sound@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
- linux-gpio@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
-In-Reply-To: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
-References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
-Message-Id: <171051663959.1379925.16000374378934819942.robh@kernel.org>
-Subject: Re: [PATCH 00/25] Introduce support of audio for Amlogic A1 SoC
- family
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240315-apss-ipq-pll-ipq5018-hang-v2-1-6fe30ada2009@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAGh09GUC/42NTQ6CMBCFr0Jm7ZhOqRZceQ/DotICk/BTW0M0h
+ LvbcgJXL9/L+9kgusAuwq3YILiVIy9zAnkqoB3M3DtkmxikkEqURGh8jMj+hX4cs14EVZiTqJW
+ tTdUpTeUVUt8H1/Hn2H40iQeO7yV8j6uVsvvP6kpIWDmr5FObWih77yfD47ldJmj2ff8Boz155
+ 8IAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.12.3
 
+Booting v6.8 results in a hang on various IPQ5018 based boards.
+Investigating the problem showed that the hang happens when the
+clk_alpha_pll_stromer_plus_set_rate() function tries to write
+into the PLL_MODE register of the APSS PLL.
 
-On Fri, 15 Mar 2024 02:21:36 +0300, Jan Dakinevich wrote:
-> This series includes the following:
-> 
->  - new audio clock and reset controller data and adaptation for it of existing
->    code (patches 0001..0004);
-> 
->  - adaptation of existing audio components for A1 Soc (patches 0005..0021);
-> 
->  - handy cosmetics for dai-link naming (patches 0022..0023);
-> 
->  - integration of audio devices into common trees (patch 0024);
-> 
->  - audio support bring up on Amlogic ad402 reference board (patch 0025). This
->    patch is not actually checked on real hardware (because all ad402 that we had
->    were burned out). This patch is based on ad402's schematics and on experience
->    with our own hardware (which is very close to reference board);
-> 
-> Dmitry Rokosov (2):
->   ASoC: dt-bindings: meson: introduce link-name optional property
->   ASoC: meson: implement link-name optional property in meson card utils
-> 
-> Jan Dakinevich (23):
->   clk: meson: a1: restrict an amount of 'hifi_pll' params
->   clk: meson: axg: move reset controller's code to separate module
->   dt-bindings: clock: meson: add A1 audio clock and reset controller
->     bindings
->   clk: meson: a1: add the audio clock controller driver
->   ASoC: meson: codec-glue: add support for capture stream
->   ASoC: meson: g12a-toacodec: fix "Lane Select" width
->   ASoC: meson: g12a-toacodec: rework the definition of bits
->   ASoC: dt-bindings: meson: g12a-toacodec: add support for A1 SoC family
->   ASoC: meson: g12a-toacodec: add support for A1 SoC family
->   ASoC: meson: t9015: prepare to adding new platforms
->   ASoC: dt-bindings: meson: t9015: add support for A1 SoC family
->   ASoC: meson: t9015: add support for A1 SoC family
->   ASoC: dt-bindings: meson: axg-pdm: document 'sysrate' property
->   ASoC: meson: axg-pdm: introduce 'sysrate' property
->   pinctrl/meson: fix typo in PDM's pin name
->   ASoC: dt-bindings: meson: meson-axg-audio-arb: claim support of A1 SoC
->     family
->   ASoC: dt-bindings: meson: axg-fifo: claim support of A1 SoC family
->   ASoC: dt-bindings: meson: axg-pdm: claim support of A1 SoC family
->   ASoC: dt-bindings: meson: axg-sound-card: claim support of A1 SoC
->     family
->   ASoC: dt-bindings: meson: axg-tdm-formatters: claim support of A1 SoC
->     family
->   ASoC: dt-bindings: meson: axg-tdm-iface: claim support of A1 SoC
->     family
->   arm64: dts: meson: a1: add audio devices
->   arm64: dts: ad402: enable audio
-> 
->  .../bindings/clock/amlogic,a1-audio-clkc.yaml |  83 +++
->  .../reset/amlogic,meson-axg-audio-arb.yaml    |  10 +-
->  .../bindings/sound/amlogic,axg-fifo.yaml      |   8 +
->  .../bindings/sound/amlogic,axg-pdm.yaml       |   5 +
->  .../sound/amlogic,axg-sound-card.yaml         |  12 +-
->  .../sound/amlogic,axg-tdm-formatters.yaml     |  22 +-
->  .../bindings/sound/amlogic,axg-tdm-iface.yaml |   6 +-
->  .../bindings/sound/amlogic,g12a-toacodec.yaml |   1 +
->  .../bindings/sound/amlogic,gx-sound-card.yaml |   6 +
->  .../bindings/sound/amlogic,t9015.yaml         |   4 +-
->  .../arm64/boot/dts/amlogic/meson-a1-ad402.dts | 126 ++++
->  arch/arm64/boot/dts/amlogic/meson-a1.dtsi     | 471 +++++++++++++++
->  drivers/clk/meson/Kconfig                     |  18 +
->  drivers/clk/meson/Makefile                    |   2 +
->  drivers/clk/meson/a1-audio.c                  | 556 ++++++++++++++++++
->  drivers/clk/meson/a1-audio.h                  |  58 ++
->  drivers/clk/meson/a1-pll.c                    |   8 +-
->  drivers/clk/meson/axg-audio.c                 |  95 +--
->  drivers/clk/meson/meson-audio-rstc.c          | 109 ++++
->  drivers/clk/meson/meson-audio-rstc.h          |  12 +
->  drivers/pinctrl/meson/pinctrl-meson-a1.c      |   6 +-
->  .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 122 ++++
->  .../reset/amlogic,meson-a1-audio-reset.h      |  29 +
->  .../dt-bindings/sound/meson-g12a-toacodec.h   |   5 +
->  sound/soc/meson/axg-pdm.c                     |  10 +-
->  sound/soc/meson/g12a-toacodec.c               | 298 ++++++++--
->  sound/soc/meson/meson-card-utils.c            |  12 +-
->  sound/soc/meson/meson-codec-glue.c            | 174 ++++--
->  sound/soc/meson/meson-codec-glue.h            |  23 +
->  sound/soc/meson/t9015.c                       | 326 +++++++++-
->  30 files changed, 2394 insertions(+), 223 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml
->  create mode 100644 drivers/clk/meson/a1-audio.c
->  create mode 100644 drivers/clk/meson/a1-audio.h
->  create mode 100644 drivers/clk/meson/meson-audio-rstc.c
->  create mode 100644 drivers/clk/meson/meson-audio-rstc.h
->  create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
->  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
-> 
-> --
-> 2.34.1
-> 
-> 
-> 
+Checking the downstream code revealed that it uses [1] stromer
+specific operations for IPQ5018, whereas in the current code
+the stromer plus specific operations are used.
 
+The ops in the 'ipq_pll_stromer_plus' clock definition can't be
+changed since that is needed for IPQ5332, so add a new alpha pll
+clock declaration which uses the correct stromer ops and use this
+new clock for IPQ5018 to avoid the boot failure.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Also, change pll_type in 'ipq5018_pll_data' to
+CLK_ALPHA_PLL_TYPE_STROMER to better reflect that it is a Stromer
+PLL and change the apss_ipq_pll_probe() function accordingly.
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+1. https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-ipq-5.4/-/blob/NHSS.QSDK.12.4/drivers/clk/qcom/apss-ipq5018.c#L67
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+Cc: stable@vger.kernel.org
+Fixes: 50492f929486 ("clk: qcom: apss-ipq-pll: add support for IPQ5018")
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+Changes in v2:
+  - extend commit description due to the changes
+  - add a comment about why CLK_ALPHA_PLL_TYPE_STROMER_PLUS register offsets
+    are used
+  - constify hw clock init data (Stephen)
+  - change pll_type in ipq5018_pll_data to CLK_ALPHA_PLL_TYPE_STROMER (Konrad)
+  - Link to v1: https://lore.kernel.org/r/20240311-apss-ipq-pll-ipq5018-hang-v1-1-8ed42b7a904d@gmail.com
+---
+Based on v6.8.
+---
+ drivers/clk/qcom/apss-ipq-pll.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
-  pip3 install dtschema --upgrade
+diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
+index 678b805f13d45..dfffec2f06ae7 100644
+--- a/drivers/clk/qcom/apss-ipq-pll.c
++++ b/drivers/clk/qcom/apss-ipq-pll.c
+@@ -55,6 +55,29 @@ static struct clk_alpha_pll ipq_pll_huayra = {
+ 	},
+ };
+ 
++static struct clk_alpha_pll ipq_pll_stromer = {
++	.offset = 0x0,
++	/*
++	 * Reuse CLK_ALPHA_PLL_TYPE_STROMER_PLUS register offsets.
++	 * Although this is a bit confusing, but the offset values
++	 * are correct nevertheless.
++	 */
++	.regs = ipq_pll_offsets[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
++	.flags = SUPPORTS_DYNAMIC_UPDATE,
++	.clkr = {
++		.enable_reg = 0x0,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "a53pll",
++			.parent_data = &(const struct clk_parent_data) {
++				.fw_name = "xo",
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_stromer_ops,
++		},
++	},
++};
++
+ static struct clk_alpha_pll ipq_pll_stromer_plus = {
+ 	.offset = 0x0,
+ 	.regs = ipq_pll_offsets[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
+@@ -144,8 +167,8 @@ struct apss_pll_data {
+ };
+ 
+ static const struct apss_pll_data ipq5018_pll_data = {
+-	.pll_type = CLK_ALPHA_PLL_TYPE_STROMER_PLUS,
+-	.pll = &ipq_pll_stromer_plus,
++	.pll_type = CLK_ALPHA_PLL_TYPE_STROMER,
++	.pll = &ipq_pll_stromer,
+ 	.pll_config = &ipq5018_pll_config,
+ };
+ 
+@@ -203,7 +226,8 @@ static int apss_ipq_pll_probe(struct platform_device *pdev)
+ 
+ 	if (data->pll_type == CLK_ALPHA_PLL_TYPE_HUAYRA)
+ 		clk_alpha_pll_configure(data->pll, regmap, data->pll_config);
+-	else if (data->pll_type == CLK_ALPHA_PLL_TYPE_STROMER_PLUS)
++	else if (data->pll_type == CLK_ALPHA_PLL_TYPE_STROMER ||
++		 data->pll_type == CLK_ALPHA_PLL_TYPE_STROMER_PLUS)
+ 		clk_stromer_pll_configure(data->pll, regmap, data->pll_config);
+ 
+ 	ret = devm_clk_register_regmap(dev, &data->pll->clkr);
 
+---
+base-commit: e8f897f4afef0031fe618a8e94127a0934896aba
+change-id: 20240311-apss-ipq-pll-ipq5018-hang-74d9a8f47136
 
-New warnings running 'make CHECK_DTBS=y amlogic/meson-a1-ad402.dtb' for 20240314232201.2102178-1-jan.dakinevich@salutedevices.com:
-
-arch/arm64/boot/dts/amlogic/meson-a1-ad402.dtb: audio-controller@4800: 'power-domains' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/sound/amlogic,t9015.yaml#
-arch/arm64/boot/dts/amlogic/meson-a1-ad402.dtb: audio-controller@1000: Unevaluated properties are not allowed ('power-domains' was unexpected)
-	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-pdm.yaml#
-
-
-
-
+Best regards,
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
 
