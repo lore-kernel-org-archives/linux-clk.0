@@ -1,75 +1,115 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C1AE542;
-	Fri, 15 Mar 2024 22:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C08359B7C;
+	Fri, 15 Mar 2024 23:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710542477; cv=none; b=cl/RcBqkGxZUxsmZY/uXobYGvhjqlNrBzM5awDAMJKE8bo7M48tRDMARPaiEcIvC3KjvIeamrZk5XFgjR4b9P2M21aCSsg/QBlfbw+MzcMXQk0aOCsDPskwItu7/0J5XO6qOuNyVLKqtz8lbYhYGX/+61fWzDAIQjaHxfY0b/a8=
+	t=1710544791; cv=none; b=avMcd0IL2N2KPWV750XaP6YkkJiwg1cB6ffw4zFcVduRRJSn/Lx45JInbJ1ccMejh7i+xgw733oFLxQR2O/T6o9V3a34gm5rJnFKw/MWPOB2Obe5EUbf01A4zfPnsVbLjeH96bgn4BUwWlnrJBRDwlmchZ30g/q8F3ZkUIjHcOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710542477; c=relaxed/simple;
-	bh=+d8f7ozp1fczAC9vBPCNIiDBAqrIkkfS0UnjmlXtzwU=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=SCkQZ3EHZS67WOpkVPo0lY44zeMnJMXmLfv62UMABuIRvk1LgRmEIjzH8jTpMbGeATZdQusPkpHCc/Rg/GDXq+gKfP0L38orlm6JD1mEfNiBYdYptpz+8IgzSdwFrFcm66r/B1QI0fKKLmX7QLjc2kHRui/b2UuP8NmN9Nd3GVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8l9mfb6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710544791; c=relaxed/simple;
+	bh=jBWgkYqvqhVvrT8m7OLF+JmN106sgWSvhxbbqyPfUDI=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=e7ejf0F+DM36TGyUbuwCharOWMLtGXVJLCZF8tXcQQr28vp3tjtPw3SovVPrXF/t6t4MfrIZ+law2DT7Jdxqyys7AC08xXGCgYsAcBtBX7kzV2o5KpWrGJkx/VWeRCZZB45ZHhPJahqlSdwm0CUW+b6DuVE/eTr7j0K8j85gLt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVbH5fRe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8l9mfb6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A938EC433F1;
-	Fri, 15 Mar 2024 22:41:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVbH5fRe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D366C433F1;
+	Fri, 15 Mar 2024 23:19:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710542476;
-	bh=+d8f7ozp1fczAC9vBPCNIiDBAqrIkkfS0UnjmlXtzwU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=e8l9mfb65Jxs98ZTM68IIz8f57uo0DoJOlcSADkTgiKJGrRoguFcFGgrdtO94MZLL
-	 yUQ1Y8ExfoREnO7PParl5J7v1hNubPSVQjZeV3sk3Trk9waECS/1a0m/gYwjo+93PY
-	 1eOUeZVB8OBde9pSImLddiZaQX3oxyAt9rcHTCH3ekRglFIP9nNJZRz9Z0Uy9iHqB7
-	 nrfbj4PZVHBZWMLmECgMabXWu9KY4TymyOBUGuMrIV8WrUjlwAPvWC29iOm45MZt+5
-	 MPQrGyacW+5U+BAYTYlX4MBPCejDQzpxEfl2HXJJezJW1rh+4W0tldYBFcC1GxLi+0
-	 hIod0XdaiSTkg==
-Message-ID: <3cd275cb1f53a5fdfbf7028f233f4fd7.sboyd@kernel.org>
+	s=k20201202; t=1710544790;
+	bh=jBWgkYqvqhVvrT8m7OLF+JmN106sgWSvhxbbqyPfUDI=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=CVbH5fRerXnTKiVloaqImqoEZu0gtZV5dhBTBtdVFe7IITRZnp3YH3Nm265Meyl6b
+	 Hq0gD6iGzKSezqxwEXCyokTEUjRxFzFba/ooq9hRIgIfvWtTa/8Zspfoubyu/6+lIr
+	 DdZZIyf0o271jpS8VO8TjXCnzIawIzZJaUPgUm0F7VlCw8hFS76TuE8OINHwPXneZf
+	 rQ79E8HCSodoBeIF8tKehqrVyX2uFbR7Y40g2I988ZMJgw9Wg1840a8Ebj1H142ZbW
+	 2l2mwlCE9t4WbaxJ8YOQ9xhlQmE9IGl0GLYWVHCFQJQ958tdnrTE4gTSQ4jTb0FYvM
+	 QJ9OwANVCIeng==
+Date: Fri, 15 Mar 2024 17:19:49 -0600
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240315222754.22366-2-wafgo01@gmail.com>
-References: <20240315222754.22366-1-wafgo01@gmail.com> <20240315222754.22366-2-wafgo01@gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: S32G3: Introduce device tree for S32G-VNP-RDB3
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Wadim Mueller <wafgo01@gmail.com>, David S. Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Chester Lin <chester62515@gmail.com>, Andreas =?utf-8?q?F=C3=A4rber?= <afaerber@suse.de>, Matthias Brugger <mbrugger@suse.com>, NXP S32 Linux Team <s32@nxp.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Richard Cochran <richardcochran@gmail.com>, Simon Horman <horms@kernel.org>, Andrew Halaney <ahalaney@redhat.com>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Johannes Zink <j.zink@pengutronix.de>, Shenwei Wang <shenwei.wang@nxp.com>, Russell King (Oracle) <rmk+kernel@armlinux.org.uk>, Swee Leong Ching <leong.ching.swee@intel.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-clk@vger.kernel.org
+From: Rob Herring <robh@kernel.org>
 To: Wadim Mueller <wafgo01@gmail.com>
-Date: Fri, 15 Mar 2024 15:41:14 -0700
-User-Agent: alot/0.10
+Cc: =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+ Eric Dumazet <edumazet@google.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ Shenwei Wang <shenwei.wang@nxp.com>, Matthias Brugger <mbrugger@suse.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, 
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+ Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org, 
+ netdev@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, 
+ Johannes Zink <j.zink@pengutronix.de>, linux-clk@vger.kernel.org, 
+ Sascha Hauer <s.hauer@pengutronix.de>, NXP Linux Team <linux-imx@nxp.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Andrew Halaney <ahalaney@redhat.com>, Jose Abreu <joabreu@synopsys.com>, 
+ Swee Leong Ching <leong.ching.swee@intel.com>, 
+ Chester Lin <chester62515@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Paolo Abeni <pabeni@redhat.com>, NXP S32 Linux Team <s32@nxp.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
+ Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20240315222754.22366-4-wafgo01@gmail.com>
+References: <20240315222754.22366-1-wafgo01@gmail.com>
+ <20240315222754.22366-4-wafgo01@gmail.com>
+Message-Id: <171054478795.2084826.7994527965167081853.robh@kernel.org>
+Subject: Re: [PATCH 3/3] dt-bindings: net: add schema for NXP S32 dwmac
+ glue driver
 
-Quoting Wadim Mueller (2024-03-15 15:27:47)
-> diff --git a/include/dt-bindings/clock/nxp,s32-scmi-clock.h b/include/dt-=
-bindings/clock/nxp,s32-scmi-clock.h
-> new file mode 100644
-> index 000000000000..240022c1f109
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/nxp,s32-scmi-clock.h
-> @@ -0,0 +1,158 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause */
-> +
-> +#ifndef __DT_BINDINGS_NXP_SCMI_CLOCK_S32_H
-> +#define __DT_BINDINGS_NXP_SCMI_CLOCK_S32_H
-> +
-> +#define S32_SCMI_COMPLEX_CLK           0xFFFFFFFFU
-> +#define S32_SCMI_NOT_IMPLEMENTED_CLK   0xFFFFFFFEU
-> +
-> +#define S32_SCMI_CLK_BASE_ID           0U
-> +#define S32_SCMI_CLK(N)                        ((N) + S32_SCMI_CLK_BASE_=
-ID)
-> +#define S32_PLAT_SCMI_CLK(N)           ((N) + S32_SCMI_PLAT_CLK_BASE_ID)
 
-I think we've been recommending that scmi clk consumers simply list the
-number instead of making up defines for them.
+On Fri, 15 Mar 2024 23:27:49 +0100, Wadim Mueller wrote:
+> Add DT binding schema documentation for the NXP S32 dwmac glue driver. This documentation is based on the patchset originally provided by Chester Lin [1]. This commit is a re-send of [2] and [3].
+> 
+> [1] https://patchwork.kernel.org/project/netdevbpf/patch/20221031101052.14956-6-clin@suse.com/#25068228
+> [2] https://lore.kernel.org/lkml/20221031101052.14956-1-clin@suse.com/T/#me96c28bd0536de276dee941469ea084d51b42244
+> [3] https://lore.kernel.org/lkml/20221031101052.14956-1-clin@suse.com/T/#m887a1b34e612f8dc0d5b718e4d6834c083f1e245
+> 
+> Signed-off-by: Wadim Mueller <wafgo01@gmail.com>
+> ---
+>  .../bindings/net/nxp,s32-dwmac.yaml           | 130 ++++++++++++++++++
+>  .../devicetree/bindings/net/snps,dwmac.yaml   |   5 +-
+>  2 files changed, 133 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml
+> 
 
-> +
-> +#define S32_SCMI_CLK_VERSION_MAJOR     (1)
-> +#define S32_SCMI_CLK_VERSION_MINOR     (0)
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Why is this part of the dt binding?
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml:5:10: [error] string value is redundantly quoted with any quotes (quoted-strings)
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml: 'maintainers' is a required property
+	hint: Metaschema for devicetree binding documentation
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240315222754.22366-4-wafgo01@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
