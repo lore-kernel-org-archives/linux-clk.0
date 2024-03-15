@@ -1,109 +1,131 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E8236AED;
-	Fri, 15 Mar 2024 13:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AFF3CF6D;
+	Fri, 15 Mar 2024 15:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710509816; cv=none; b=QW1Dtb2yFi7mOa+9a+USvlQ3PxK+lGMgTlQsF17mUFik2YOtm8/z6icdGnDo9R361nRuS+iAmyfOZ4+aKrRBu1CkRbQDL4yBEym5tUdzK7h1y25FOXhCHzsXGMSIWkA98ivmwvjeW3aBhqw/hykvWEmXsGyLFN/tXnJjUy7zB1s=
+	t=1710515777; cv=none; b=Ye0u7Ss5Y1NYFjLy2r8zyF25LUaCYmvSN1DY9UVxIkEj6IzUZ6YBro0Sh95CwhzSSFlsgFkEDEcOHuRZgjWWc7dVIhDF/TTst066ZQkPI4CDPR19z5qMDLpnP26Bu513WrwLwRkfsChzM/eeKIvGvrAbwYwYJTFmv+IKm9aUsGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710509816; c=relaxed/simple;
-	bh=mnKx/USIAWKFowB3UECi37soYZOTeSdjE7YC6dui0gY=;
+	s=arc-20240116; t=1710515777; c=relaxed/simple;
+	bh=rW2HryGSEjzyD6FFEg2XJKkSr3CLQOCxWR3nI7wapa0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nQbgdKYHyu/lcRDgYQy6/uQJdqrpI4ceH+tiMPMEm6idfyntRHVuH1+X4ZOArh+vH/8k4mj9ZYLXQV4HzTQ1NV7TTu/sRC7lYSXudSWGR7JfhKVA8y1ACxJEyNKXsSIvKsyf6MhbSW+rgSwgBSeE/OUBd+rpL/oR24uuRUAL4nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBikQgWF; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=fnPblLscaFzGGRlDSiZ9cSIX4er4hCvTwd/k8Bz/AZYsv9p35obMMODAKOg7jGM70fXLx1/EjQlpsli9Q92AxN9LMyEY8hwuZxyvazp/hDb1gJWK6zX9F4rffsvoaapJ6icXcgB8k82nIg0CV8d34iOUizE1RTjTOZtDyDXDl78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pp7lWExy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBikQgWF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B990C433F1;
-	Fri, 15 Mar 2024 13:36:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pp7lWExy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 641E3C433F1;
+	Fri, 15 Mar 2024 15:16:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710509815;
-	bh=mnKx/USIAWKFowB3UECi37soYZOTeSdjE7YC6dui0gY=;
+	s=k20201202; t=1710515776;
+	bh=rW2HryGSEjzyD6FFEg2XJKkSr3CLQOCxWR3nI7wapa0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WBikQgWFYtKFSQn7AJHJtgle7tDUdFM0GNQ/6JqxAf0lxH6kRfm2hxTIXdG5E6Egy
-	 YAzTuwY1PjSj0ojy2bfIUYwcULJe3/38mYLHr+20Nw39reMae5OEJudFQOAYqJS1cG
-	 mjHGzUI/L69hkyZrBEUsb8oCQhOHCT3JZQ44vfSkw/OskPHgcBcH2rCpWA6LWBCF5E
-	 diWwtCdzYwAdPO346YhitMreYA0mq7RAR0VnKsuUT5V6yoGUgrZLjFm21Xpp4uFg52
-	 3KzbWdPKyTbVDmpXxzm5MDzWsiHQEt7QAGwNh5hjZUGzrkEU44uZ9fAbLix7zN5tme
-	 8jjsI9jEx/Dhw==
-Date: Fri, 15 Mar 2024 13:36:48 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
+	b=pp7lWExyYs0p6QUXGBUvtMo/qelfJaX913MzZnctePLBSTOregYZpaVKajIcFIFAF
+	 qOcltgdIXI2njthpjricvHzsMLTWSadOaeb39hK6dzzfQ/8JxLEyUkxZKjVj9T1Ubj
+	 oauz5bHHnMBz0yi9jBrxck+W9LUcwIQiTxT3cCWaR8jAPct/IEan6QfQe4vUnxeC3b
+	 l4RdD+AjrtxpxWrgcL8jt+lLcu5cFS0RBQ10DIO/uVBIuSBLoVgo5WqupbVh8PjapB
+	 N1MSK1FYx+j4+maqeqYK7111jx/QiiSKqkA341X6XYPPkSmeSaK/ZC2H+TudhEhAMM
+	 qaLNJ6r9L7VwQ==
+Date: Fri, 15 Mar 2024 09:16:13 -0600
+From: Rob Herring <robh@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
-	kernel@salutedevices.com
-Subject: Re: [PATCH 12/25] ASoC: meson: t9015: add support for A1 SoC family
-Message-ID: <5f8e8cd2-f9c4-4961-a85d-a0f3217294e6@sirena.org.uk>
-References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
- <20240314232201.2102178-13-jan.dakinevich@salutedevices.com>
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: qcom: Fix x1e80100 camcc
+ power-domain declaration
+Message-ID: <20240315151613.GA1256230-robh@kernel.org>
+References: <20240313-linux-next-camcc-fixes-v2-0-9426da94ae37@linaro.org>
+ <20240313-linux-next-camcc-fixes-v2-1-9426da94ae37@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4AHceM7kGoMGggFJ"
-Content-Disposition: inline
-In-Reply-To: <20240314232201.2102178-13-jan.dakinevich@salutedevices.com>
-X-Cookie: A well-known friend is a treasure.
-
-
---4AHceM7kGoMGggFJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240313-linux-next-camcc-fixes-v2-1-9426da94ae37@linaro.org>
 
-On Fri, Mar 15, 2024 at 02:21:48AM +0300, Jan Dakinevich wrote:
+On Wed, Mar 13, 2024 at 05:53:52PM +0000, Bryan O'Donoghue wrote:
+> camcc on x1e80100 requires two power domains MXC and MMCX. Define those as
+> part of the schema.
+> 
+> Fixes: 76126a5129b5 ("clk: qcom: Add camcc clock driver for x1e80100")
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  .../bindings/clock/qcom,sm8450-camcc.yaml          | 37 ++++++++++++++++++----
+>  1 file changed, 31 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> index fa0e5b6b02b81..1f62139426845 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> @@ -19,9 +19,6 @@ description: |
+>      include/dt-bindings/clock/qcom,sc8280xp-camcc.h
+>      include/dt-bindings/clock/qcom,x1e80100-camcc.h
+>  
+> -allOf:
+> -  - $ref: qcom,gcc.yaml#
+> -
+>  properties:
+>    compatible:
+>      enum:
+> @@ -38,9 +35,8 @@ properties:
+>        - description: Sleep clock source
+>  
+>    power-domains:
+> -    maxItems: 1
+> -    description:
+> -      A phandle and PM domain specifier for the MMCX power domain.
+> +    minItems: 1
+> +    maxItems: 2
+>  
+>    required-opps:
+>      maxItems: 1
+> @@ -50,6 +46,35 @@ properties:
+>    reg:
+>      maxItems: 1
+>  
+> +allOf:
+> +  - $ref: qcom,gcc.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sc8280xp-camcc
+> +              - qcom,sm8450-camcc
+> +              - qcom,sm8550-camcc
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          items:
+> +            - description: MMCX power domain.
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,x1e80100-camcc
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          items:
+> +            - description: MXC power domain.
+> +            - description: MMCX power domain.
 
-> +static const char * const a1_adc_mic_bias_level_txt[] = { "2.0V", "2.1V",
-> +	"2.3V", "2.5V", "2.8V" };
-> +static const unsigned int a1_adc_mic_bias_level_values[] = { 0, 1, 2, 3, 7 };
+Add new entries onto the end of existing ones. IOW, MMCX should always 
+be 1st. Then you can move the descriptions to the top level and just put 
+minItems or maxItems as appropriate here.
 
-Why would this be varied at runtime rather than being something fixed
-when the system is designed?
-
-> +static const char * const a1_adc_pga_txt[] = { "None", "Differential",
-> +	"Positive", "Negative" };
-> +static const unsigned int a1_adc_pga_right_values[] = { 0, PGAR_DIFF,
-> +	PGAR_POSITIVE, PGAR_NEGATIVE };
-> +static const unsigned int a1_adc_pga_left_values[] = { 0, PGAL_DIFF,
-> +	PGAL_POSITIVE, PGAL_NEGATIVE };
-
-Similarly here.
-
-> +	SOC_SINGLE("ADC Mic Bias Switch", LINEIN_CFG, MICBIAS_EN, 1, 0),
-> +	SOC_ENUM("ADC Mic Bias Level", a1_adc_mic_bias_level),
-
-Why would micbias be user controlled rather than a DAPM widget as
-normal?
-
---4AHceM7kGoMGggFJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmX0Tu8ACgkQJNaLcl1U
-h9B7RQf/eYxVKAjAigpYP4vgwBWRE/HosjdaaB5ogMo8PMSiXfacGnLx0ZtIpWa9
-i6saOA5iW9E/n7Et4JpmJ0J/fYdN7d5TkSlgYGwYP/ojBAChias0hOS7f+fHKvdM
-qH8C+20ovZC5RpNOZUjLmiwJ1WMJQrXgjYVTLpBHn23XPsf8fV3i+B5JEQzBJtXI
-px2DiSaV2iQ+nBmrZQEQo7KnJsQiLahPLQgr81xq5322lUfLN0+kRHrNGnqMU/Aw
-BW++2BV+mf6HXT8WKXrn2DeQByMpBN+jc7eeRDI7xIiB4iAWwpDL9Cn5HsSuYYvI
-ZdU3lU/s6CaDa3e5AyxYVatZ42Rx4Q==
-=sm4b
------END PGP SIGNATURE-----
-
---4AHceM7kGoMGggFJ--
+Rob
