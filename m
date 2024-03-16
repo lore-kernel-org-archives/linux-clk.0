@@ -1,115 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C08359B7C;
-	Fri, 15 Mar 2024 23:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C48179AE;
+	Sat, 16 Mar 2024 21:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710544791; cv=none; b=avMcd0IL2N2KPWV750XaP6YkkJiwg1cB6ffw4zFcVduRRJSn/Lx45JInbJ1ccMejh7i+xgw733oFLxQR2O/T6o9V3a34gm5rJnFKw/MWPOB2Obe5EUbf01A4zfPnsVbLjeH96bgn4BUwWlnrJBRDwlmchZ30g/q8F3ZkUIjHcOI=
+	t=1710624845; cv=none; b=t+k6GQNLAg/U62Yq9bUIvJ61HdeJYaeVRR1NU/rTtSaAz2Zgm7dTMBp4tDqknD6oMuSlL9y3DXqyXk+0lbawW+CBVgiWCLuMoPP6mXr4TBxlB+CX/7VjXPJPN1Yd6BitDXPq5W93WStLIe/XY2LP3hBEN0QGHAfloQU6SPhC6KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710544791; c=relaxed/simple;
-	bh=jBWgkYqvqhVvrT8m7OLF+JmN106sgWSvhxbbqyPfUDI=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=e7ejf0F+DM36TGyUbuwCharOWMLtGXVJLCZF8tXcQQr28vp3tjtPw3SovVPrXF/t6t4MfrIZ+law2DT7Jdxqyys7AC08xXGCgYsAcBtBX7kzV2o5KpWrGJkx/VWeRCZZB45ZHhPJahqlSdwm0CUW+b6DuVE/eTr7j0K8j85gLt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVbH5fRe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710624845; c=relaxed/simple;
+	bh=eGSHNYo6iTNwAWnvsKwGTlacpriiLssspZjHuMssVT0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z3zwsDx7/5QMq1szgsCUwVM0fX3GeeC6XpK7m0FSsXlGvqZ17ExBu18SJ6zCI4MmsMzu+MqCUpGvaW27mp7GvmKdTpTl1NxMEfxOeLs6x08DhPfgh55/U21D3aN3o7YVRKD2+MwDGTEePy7TzdCW0zqKA424RO/zsdenTRe/qvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6loINwz; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVbH5fRe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D366C433F1;
-	Fri, 15 Mar 2024 23:19:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710544790;
-	bh=jBWgkYqvqhVvrT8m7OLF+JmN106sgWSvhxbbqyPfUDI=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=CVbH5fRerXnTKiVloaqImqoEZu0gtZV5dhBTBtdVFe7IITRZnp3YH3Nm265Meyl6b
-	 Hq0gD6iGzKSezqxwEXCyokTEUjRxFzFba/ooq9hRIgIfvWtTa/8Zspfoubyu/6+lIr
-	 DdZZIyf0o271jpS8VO8TjXCnzIawIzZJaUPgUm0F7VlCw8hFS76TuE8OINHwPXneZf
-	 rQ79E8HCSodoBeIF8tKehqrVyX2uFbR7Y40g2I988ZMJgw9Wg1840a8Ebj1H142ZbW
-	 2l2mwlCE9t4WbaxJ8YOQ9xhlQmE9IGl0GLYWVHCFQJQ958tdnrTE4gTSQ4jTb0FYvM
-	 QJ9OwANVCIeng==
-Date: Fri, 15 Mar 2024 17:19:49 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6loINwz"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a466e53f8c0so409243866b.1;
+        Sat, 16 Mar 2024 14:34:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1710624842; x=1711229642; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3K3Xj+4K2+7t2UBVw1YNMS/5uNqg9Yzu7R/sU+HTXQk=;
+        b=G6loINwzMQ6Q4Q5OUVp1WJLdjArl/PzMybeQzY4qcisj9Sg1GVawaSmK94pLHzFjTV
+         DRwu3Nv15NfgS4QVAWVWDddkZbps2jEPMkJIWmL/OCtJWerFq+8AgbsBZD5Zgyy3Ufa3
+         mL57x2uL7O3j2pOydZh1454QxWuZBD93718k+t7VaWVHHP+uy1e9CjxuFWr+uTaiA7mG
+         lLuv1qxyU3bJFHZfeotGcC4E9dEeoEEgSUC0oXAvpeMw6avLnEOqw9EPg3RRsS5HKPJn
+         MjymsTtoPv11QSM09J6j7R0M7N8SVg8S0YXUU5FSjD/hkhkbGTnG5iMxwoe+vOeDCdKR
+         xm5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710624842; x=1711229642;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3K3Xj+4K2+7t2UBVw1YNMS/5uNqg9Yzu7R/sU+HTXQk=;
+        b=lMz9CTjjMdmVC6yJMZQCmPCBf1hOAsk+v0n3H49nuI7ZlztIoy5qr3ffwRBkaU2btW
+         Srtg5vprHlMWOUQFHmHR6KRTvLlA8sMbl/SDnP4MPN9rYEPvGqxu2IdFLOhYB4xbXFcu
+         8dNkRBKa2Z/Zx5oJ+FyMjKE0EU41+8Y5VngwMLtBIg9QVArFvRIwVPYnMUreb+SGrC52
+         ugLh13ozV1dOXH2K7QYrXJFFdnPfxs5NSXAVChG/Fv1BnRawbvnHlpcbO6IkGyHIwV+z
+         A7eK00zvauUanOttq7jGzeokzQoLvM4jbolZhnKrLk3TNyc8akoLhO4vjdx1J+JcarqQ
+         7yZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVta+R8zmo+/Z3DQ+FWc5NPSHwk76sJIypdUSTebMObDTmrjFesBCRR1VcET/TSfTmiDyn3jZpXB3admfQqtADrH5A7+HeDO4r1CShUyeS0Gl04fr1w377cBgi0tJCfomHMqXPyfKUynD8mHwPAlks5/WOJRm82F87k7WzIW3XvdfPsHpAKxrESPaZP2gQdc8AER8vuQqogdmmJHg==
+X-Gm-Message-State: AOJu0YyLVYbBalt5jGnp4pzTV875HoypxRRzoI5+LrSoYY2s6hAv8R1T
+	sANy797HdDAg5O18fMsx2NRxcm8d2YTembVc0ieIAFkxU9EJ6d4C
+X-Google-Smtp-Source: AGHT+IGh6hRlI2QPgnitjywTHfHqxMiHgBs2kiVtdspFsEmU+BIU4SDZtu1WpQjRFIVwATWylvGBoA==
+X-Received: by 2002:a17:906:bc8e:b0:a46:6433:2c2 with SMTP id lv14-20020a170906bc8e00b00a46643302c2mr5658917ejb.53.1710624842092;
+        Sat, 16 Mar 2024 14:34:02 -0700 (PDT)
+Received: from bhlegrsu.conti.de ([2a02:908:2525:6ea0::f845])
+        by smtp.gmail.com with ESMTPSA id bq8-20020a170906d0c800b00a46550ec5b1sm3115069ejb.32.2024.03.16.14.34.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Mar 2024 14:34:01 -0700 (PDT)
+From: Wadim Mueller <wafgo01@gmail.com>
+X-Google-Original-From: Wadim Mueller <wadim.mueller@continental.com>
+Date: Sat, 16 Mar 2024 22:34:00 +0100
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Wadim Mueller <wafgo01@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Chester Lin <chester62515@gmail.com>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Matthias Brugger <mbrugger@suse.com>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Johannes Zink <j.zink@pengutronix.de>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Swee Leong Ching <leong.ching.swee@intel.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] arm64: dts: S32G3: Introduce device tree for
+ S32G-VNP-RDB3
+Message-ID: <20240316213400.GA5628@bhlegrsu.conti.de>
+References: <20240315222754.22366-1-wafgo01@gmail.com>
+ <20240315222754.22366-2-wafgo01@gmail.com>
+ <3cd275cb1f53a5fdfbf7028f233f4fd7.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rob Herring <robh@kernel.org>
-To: Wadim Mueller <wafgo01@gmail.com>
-Cc: =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
- Eric Dumazet <edumazet@google.com>, Conor Dooley <conor+dt@kernel.org>, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>, 
- linux-stm32@st-md-mailman.stormreply.com, 
- Shenwei Wang <shenwei.wang@nxp.com>, Matthias Brugger <mbrugger@suse.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, 
- Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
- Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org, 
- netdev@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, 
- Johannes Zink <j.zink@pengutronix.de>, linux-clk@vger.kernel.org, 
- Sascha Hauer <s.hauer@pengutronix.de>, NXP Linux Team <linux-imx@nxp.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Andrew Halaney <ahalaney@redhat.com>, Jose Abreu <joabreu@synopsys.com>, 
- Swee Leong Ching <leong.ching.swee@intel.com>, 
- Chester Lin <chester62515@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Paolo Abeni <pabeni@redhat.com>, NXP S32 Linux Team <s32@nxp.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
- Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20240315222754.22366-4-wafgo01@gmail.com>
-References: <20240315222754.22366-1-wafgo01@gmail.com>
- <20240315222754.22366-4-wafgo01@gmail.com>
-Message-Id: <171054478795.2084826.7994527965167081853.robh@kernel.org>
-Subject: Re: [PATCH 3/3] dt-bindings: net: add schema for NXP S32 dwmac
- glue driver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3cd275cb1f53a5fdfbf7028f233f4fd7.sboyd@kernel.org>
 
-
-On Fri, 15 Mar 2024 23:27:49 +0100, Wadim Mueller wrote:
-> Add DT binding schema documentation for the NXP S32 dwmac glue driver. This documentation is based on the patchset originally provided by Chester Lin [1]. This commit is a re-send of [2] and [3].
+On Fri, Mar 15, 2024 at 03:41:14PM -0700, Stephen Boyd wrote:
+> Quoting Wadim Mueller (2024-03-15 15:27:47)
+> > diff --git a/include/dt-bindings/clock/nxp,s32-scmi-clock.h b/include/dt-bindings/clock/nxp,s32-scmi-clock.h
+> > new file mode 100644
+> > index 000000000000..240022c1f109
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/nxp,s32-scmi-clock.h
+> > @@ -0,0 +1,158 @@
+> > +/* SPDX-License-Identifier: BSD-3-Clause */
+> > +
+> > +#ifndef __DT_BINDINGS_NXP_SCMI_CLOCK_S32_H
+> > +#define __DT_BINDINGS_NXP_SCMI_CLOCK_S32_H
+> > +
+> > +#define S32_SCMI_COMPLEX_CLK           0xFFFFFFFFU
+> > +#define S32_SCMI_NOT_IMPLEMENTED_CLK   0xFFFFFFFEU
+> > +
+> > +#define S32_SCMI_CLK_BASE_ID           0U
+> > +#define S32_SCMI_CLK(N)                        ((N) + S32_SCMI_CLK_BASE_ID)
+> > +#define S32_PLAT_SCMI_CLK(N)           ((N) + S32_SCMI_PLAT_CLK_BASE_ID)
 > 
-> [1] https://patchwork.kernel.org/project/netdevbpf/patch/20221031101052.14956-6-clin@suse.com/#25068228
-> [2] https://lore.kernel.org/lkml/20221031101052.14956-1-clin@suse.com/T/#me96c28bd0536de276dee941469ea084d51b42244
-> [3] https://lore.kernel.org/lkml/20221031101052.14956-1-clin@suse.com/T/#m887a1b34e612f8dc0d5b718e4d6834c083f1e245
-> 
-> Signed-off-by: Wadim Mueller <wafgo01@gmail.com>
-> ---
->  .../bindings/net/nxp,s32-dwmac.yaml           | 130 ++++++++++++++++++
->  .../devicetree/bindings/net/snps,dwmac.yaml   |   5 +-
->  2 files changed, 133 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml
+> I think we've been recommending that scmi clk consumers simply list the
+> number instead of making up defines for them.
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+yes, that makes sense. Was not aware that this is the recommendation. I
+will get rid of this file completely, and instead hard code the numbers
+into the DT. Thanks for the hint.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml:5:10: [error] string value is redundantly quoted with any quotes (quoted-strings)
+> > +
+> > +#define S32_SCMI_CLK_VERSION_MAJOR     (1)
+> > +#define S32_SCMI_CLK_VERSION_MINOR     (0)
+> 
+> Why is this part of the dt binding?
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml: 'maintainers' is a required property
-	hint: Metaschema for devicetree binding documentation
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240315222754.22366-4-wafgo01@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+yes, this is stupid, you are right. Simply missed to delete it! As the
+file will be removed, it will be gone on the next spin. Thanks.
