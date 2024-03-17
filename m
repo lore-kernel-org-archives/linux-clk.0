@@ -1,60 +1,59 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C461179BD
-	for <linux-clk@vger.kernel.org>; Sun, 17 Mar 2024 14:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8C71C693
+	for <linux-clk@vger.kernel.org>; Sun, 17 Mar 2024 14:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710686767; cv=none; b=W57CbhIwFE52Xb+vqZAnan6wSTn56VF8lhIbw04ctnWocBIR9CrJa2dMCfj6+xQpbb+nppR78B1fFgT/KaYBwAzY4dd7JZxq37JsOCS0v4/mDIUAUDHW9cp06znBCSn1ClTxDSGb/UW+tPDM3oSCZRGDYQvdG1gLbsUEZj5qktU=
+	t=1710687063; cv=none; b=MfS3FS/4/2otogw6p32bZHuNYR8P0wMscXYUaV4cNUkz5IU6nKc6hJZlbdypc+6seh5n9dfuIZ88EWk4OXDHRGmiOceEXHnug1QMOZM1QvNWkUzlHfd6CMDRGE5VK/e8OrEpQH0Cr0Lj5gY5xn+wVxkUX2xVd+uCuWrgxxYcnXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710686767; c=relaxed/simple;
-	bh=1X2LtDUQjMqglYwuVSvpv1QX0Xslu7eK0Y7pY912diU=;
+	s=arc-20240116; t=1710687063; c=relaxed/simple;
+	bh=iaP6b8w9lrE8ipKBPTJXmKuSuzrUGzo7G9823oibSis=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kAsjQBGvEuMR2IEeiYENguGnTnSv2udcQAxoDEGF/GIpBz+xSH+UMa7mvbdqvWELasloiHXWi5nqzWDHEldb+rt3jmxgv8StG+hkg+mKZqM8Ye/QhgmYPpHMrmWcUOdp7KmSIPEmkSIy6hjPExJR+0WeacbQPw86aoIlW+92RWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yrpsWAFq; arc=none smtp.client-ip=209.85.218.52
+	 In-Reply-To:Content-Type; b=pOyQqmiUiHLDfiJt5PBRzGBzNB1n8TAWs+3CXA569j5Sbrx/kAkU+liQe1OQwL3naycYc/MN+ob5nj3F9n98Qeg4BxxuKjc5ralstU0yVAYvaLUvkDQ8yGNQlvIsyjEe05VJfOjppqL+Q4zXcQLVjGhUDtjxZ8kuqfvZ38jhchs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NNFPo6F/; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yrpsWAFq"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a4675aaa2e8so393793166b.0
-        for <linux-clk@vger.kernel.org>; Sun, 17 Mar 2024 07:46:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NNFPo6F/"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a449c5411e1so457928266b.1
+        for <linux-clk@vger.kernel.org>; Sun, 17 Mar 2024 07:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710686763; x=1711291563; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=m7AUOlK+Z0kCQipiPiIuL+asYzeOsNB2c/oldwYILwo=;
-        b=yrpsWAFq4SaPLjRPg+G59maHXy/lzhY0q8cPg0IuHDvi+N+a/qPaNaEonA2z0kuIla
-         QDHUb+6QXLupz3PIa9LmnCU7suk+C8AEjCu5j2bwJkJSkF+ucsMvxJbHNJEBR7EuA8FR
-         Uu6meakbrI372SCDNcffCBhHC78YaIAVS85S0Em6vNu0/UF9Gu71k6vnHBkn7rMytzUY
-         97H8G611A1xDo8rHFLtPrMjb7VHtKf3IzS9wYHT1nPMCigDMbqfEFfT4QjA4z0FU1Ovn
-         6Ie54h7TU6pfYEf0Zth58eBpFBBbwPYvuF/T/8SdKA59gHpA+EH4nFNRR/S7yR2XQTWh
-         H8pg==
+        d=linaro.org; s=google; t=1710687060; x=1711291860; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OzkgJIRc2tYmJ3Btk0xVIO9rDn0mpVtYOI9YDc2eSB4=;
+        b=NNFPo6F/jgZQNg2aYAeEdseRfPyNRRXXhCW/IoMScMjd3yj7rYGPHkaG3QnIdw0vqi
+         3lcHXO4XfDLZVfw16hDmwbU8z3SLqkuVVkNWbtwZL3u7UsulfD0quYX4s99GHNePIj5d
+         LgT5HjnYce6Iqaj1YbBZm2uZcU6bqhpTJqocJGUgknwoIxUmVw5R78OFtnQh1ml1xrtS
+         oeos2J5pyQw5XuZd2eerkzX1qnU8LMophtHgvXAYhEOm8zu9Kzlel1+yZy/peMb9/tUd
+         tciptpoedF41ms1sKONeT5WqvqPZNhgr44gBCvQF5UNxnILOEct0cCMjwpnCIQEHvgFM
+         9zPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710686763; x=1711291563;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m7AUOlK+Z0kCQipiPiIuL+asYzeOsNB2c/oldwYILwo=;
-        b=f32IZppfyeRXWpUIjvNgMjkhMI5smN1PbMwBfx3DOjl9WLJghmMJ6GMyNDwh+P2QEX
-         Ip5zCck4XLPyniWoK6kwrWSe8ZT8DW5FldeYCmVkQHMhq0NbGgW4iKP7r65lGzcvDGbB
-         yRLjhImJ2TuSHN6cbktu+zzoT+VaJftCm6G17+CD3pQ8YfNorwcOE2vmQyu2PT6v7iNY
-         qekqF9iN8bpFsbvYkY8wggmm0DFtAv3ppLENt1CeFjYv8fKvaJfqfyEkVcuRKn2cVyE/
-         yP43WF3uzJSc5DSlHDMfQsLxV4vYjwELxXbzpGratRamBFVWgx7i+LvLjszrVnp/tX+E
-         UaAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKgY6VHE6zg0hI59c0UUPtqN5ZGtLHD9QpUKOvWLrcE7DL9iS9NOPgn1dBQNQ6QKA3ZTYyT1caOR4SqS13X9Om1VaMGdtiVk/O
-X-Gm-Message-State: AOJu0Yxave5bAP69oAnMcx8CxR5b+ODjv3EwwEfDJn6WZSKW4+AhCggZ
-	zdmKSZ4GrI+kMqmgzUqodkdQqdcPz8w26IRIPmijk1ZzxCQLifsK6t+6xtoqJr8=
-X-Google-Smtp-Source: AGHT+IEipFXNHf59P5WluE7iQ/3kBfLs5PIin0P/xlpZa4GFaDZZm+qYCD/O/2Py3laPIHZi1RGFeA==
-X-Received: by 2002:a17:906:a44b:b0:a46:98fb:e81a with SMTP id cb11-20020a170906a44b00b00a4698fbe81amr3701052ejb.1.1710686763438;
-        Sun, 17 Mar 2024 07:46:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710687060; x=1711291860;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OzkgJIRc2tYmJ3Btk0xVIO9rDn0mpVtYOI9YDc2eSB4=;
+        b=vr0lxS0N78/vtKRJZluFy7yaAfv7CX50ichJfnFuyWnNjzI+uTrsg5ik6RN5t8WIaz
+         +K0zcLsaLsa4YEAxtX3oXc99iIse8IWCgHouf6DmfGLJF9ZLbyVA01BbZOJrBcKzZPd+
+         I97ZhCqIQt1CY+3R615X4geHxO/cKYwIpoibmUVmXtUDUSWB1wKjtSThkRE81zkeFfYh
+         yHrdKwynPB5lEuR8NLF/O12+NEpViSgy8emY8+y/0wkYgRmLrrlUdYTqYXMPMcMijgPN
+         xTF/8rXQmytQzfW/9b1hdXn75zFrihRaIM1LyU4vb1pVaO+1yj++pLedMdLyjPorJpBM
+         O/6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVcLBYwtZtTWWBla5qrx6DXMbZnJULYhFy8CzU8wuyVfAj5Kgw4QXX148SaXcIf2CdYcS8KOzry90dvWMLt5TxgLC8Qb1Ruwrz5
+X-Gm-Message-State: AOJu0Yx3I9AmSMHwGVcmIwj2PfWoA/w3HDUo4v43wauEpSRbbaqdUses
+	YU1rW1J0iqyKonRR1XizCJ9Sh7fd7xdEILhmZF3tje5CvajPXfQG1NHCkkpsnjU=
+X-Google-Smtp-Source: AGHT+IEh9mfhHobJDKbSW8F2c89QW3ynMelBgP21Gj4W8BGI1tkkbQZK51shego22/azCsTJcxmG0A==
+X-Received: by 2002:a17:906:c411:b0:a46:635b:bb3e with SMTP id u17-20020a170906c41100b00a46635bbb3emr5701615ejz.52.1710687059641;
+        Sun, 17 Mar 2024 07:50:59 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id s10-20020a1709060c0a00b00a44899a44ddsm3890789ejf.11.2024.03.17.07.46.01
+        by smtp.gmail.com with ESMTPSA id w13-20020a1709064a0d00b00a453b2261b4sm3797814eju.184.2024.03.17.07.50.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Mar 2024 07:46:02 -0700 (PDT)
-Message-ID: <83c5f475-6cc5-4084-a54e-1ed7c71735a0@linaro.org>
-Date: Sun, 17 Mar 2024 15:46:00 +0100
+        Sun, 17 Mar 2024 07:50:59 -0700 (PDT)
+Message-ID: <cc55daa1-0256-48d1-97a4-0f755fb4951b@linaro.org>
+Date: Sun, 17 Mar 2024 15:50:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,30 +61,37 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/25] ASoC: dt-bindings: meson: g12a-toacodec: add
- support for A1 SoC family
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-gpio@vger.kernel.org
-Cc: kernel@salutedevices.com
-References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
- <20240314232201.2102178-9-jan.dakinevich@salutedevices.com>
- <f91ea77c-8170-4ae6-850f-3d5715d83855@linaro.org>
- <5a541ea3-ac4b-4606-9b6a-b103084b30b5@salutedevices.com>
+Subject: Re: [PATCH 1/3] arm64: dts: S32G3: Introduce device tree for
+ S32G-VNP-RDB3
 Content-Language: en-US
+To: Wadim Mueller <wafgo01@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>,
+ Chester Lin <chester62515@gmail.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?=
+ <afaerber@suse.de>, Matthias Brugger <mbrugger@suse.com>,
+ NXP S32 Linux Team <s32@nxp.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
+ Simon Horman <horms@kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Johannes Zink <j.zink@pengutronix.de>, Shenwei Wang <shenwei.wang@nxp.com>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ Swee Leong Ching <leong.ching.swee@intel.com>,
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-clk@vger.kernel.org
+References: <20240315222754.22366-1-wafgo01@gmail.com>
+ <20240315222754.22366-2-wafgo01@gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -131,22 +137,482 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <5a541ea3-ac4b-4606-9b6a-b103084b30b5@salutedevices.com>
+In-Reply-To: <20240315222754.22366-2-wafgo01@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/03/2024 15:29, Jan Dakinevich wrote:
-> I mean the following... This commit adds new defines to
-> meson-g12a-toacodec.h header. These defines are used in the following way:
+On 15/03/2024 23:27, Wadim Mueller wrote:
+> This commit adds device tree support for the NXP S32G3-based
+> S32G-VNP-RDB3 Board (Vehicle Networking Platform - Reference Design Board) [1].
 > 
-> sound-dai = <&toacodec TOACODEC_IN_A>;
-> sound-dai = <&toacodec TOACODEC_CAPTURE_OUT_A>;
+> The S32G3 features an 8-core ARM Cortex-A53 based SoC developed by NXP.
 > 
-> So, can you make an advise how to call something like "&toacodec" to
-> which I declare new parameters.
+> The device tree files are derived from the official NXP downstream Linux tree [2].
+> 
+> This addition encompasses a limited selection of peripherals that are upstream-supported. Apart from the ARM System Modules (GIC, Generic Timer, etc.), the following IPs have been validated:
+> 
+>     UART: fsl-linflexuart
+>     SDHC: fsl-imx-esdhc
+>     Ethernet: synopsys gmac/stmac
+> 
+> Clock settings for the chip rely on ATF Firmware [3]. Pin control integration into the device tree is pending and currently relies on Firmware/U-Boot settings [4].
+> 
+> These changes were validated using the latest BSP39 Firmware/U-Boot from NXP [5].
+> 
+> The modifications enable booting the official Ubuntu 22.04 from NXP on
+> the RDB3 with default settings from the SD card and eMMC.
+> 
+> [1] https://www.nxp.com/design/design-center/designs/s32g3-vehicle-networking-reference-design:S32G-VNP-RDB3
+> [2] https://github.com/nxp-auto-linux/linux
+> [3] https://github.com/nxp-auto-linux/arm-trusted-firmware
+> [4] https://github.com/nxp-auto-linux/u-boot
+> [5] https://github.com/nxp-auto-linux/auto_yocto_bsp
+> 
+> Signed-off-by: Wadim Mueller <wafgo01@gmail.com>
+> ---
+>  arch/arm64/boot/dts/freescale/Makefile        |   1 +
+>  arch/arm64/boot/dts/freescale/s32g3.dtsi      | 352 ++++++++++++++++++
+>  .../boot/dts/freescale/s32g399a-rdb3.dts      |  57 +++
+>  .../dt-bindings/clock/nxp,s32-scmi-clock.h    | 158 ++++++++
 
-&toacodec is phandle but it is not really relevant here. You should
-explain what these defines are. DAI ids?
+Please run scripts/checkpatch.pl and fix reported warnings. Some
+warnings can be ignored, but the code here looks like it needs a fix.
+Feel free to get in touch if the warning is not clear.
+
+Bindings are not DTS.
+
+>  4 files changed, 568 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/s32g3.dtsi
+>  create mode 100644 arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
+>  create mode 100644 include/dt-bindings/clock/nxp,s32-scmi-clock.h
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> index 2cb0212b63c6..e701008dbc7b 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -252,3 +252,4 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw74xx-rpidsi.dtb
+>  dtb-$(CONFIG_ARCH_S32) += s32g274a-evb.dtb
+>  dtb-$(CONFIG_ARCH_S32) += s32g274a-rdb2.dtb
+>  dtb-$(CONFIG_ARCH_S32) += s32v234-evb.dtb
+> +dtb-$(CONFIG_ARCH_S32) += s32g399a-rdb3.dtb
+> diff --git a/arch/arm64/boot/dts/freescale/s32g3.dtsi b/arch/arm64/boot/dts/freescale/s32g3.dtsi
+> new file mode 100644
+> index 000000000000..481ddcfd3a6d
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
+> @@ -0,0 +1,352 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/nxp,s32-scmi-clock.h>
+> +/ {
+> +	compatible = "nxp,s32g3";
+
+Order your patches correctly. Bindings come before users.
+
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <0x02>;
+> +	#size-cells = <0x02>;
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu-map {
+> +			cluster0 {
+> +				core0 {
+> +					cpu = <&cpu0>;
+> +				};
+> +
+> +				core1 {
+> +					cpu = <&cpu1>;
+> +				};
+> +
+> +				core2 {
+> +					cpu = <&cpu2>;
+> +				};
+> +
+> +				core3 {
+> +					cpu = <&cpu3>;
+> +				};
+> +			};
+> +
+> +			cluster1 {
+> +				core0 {
+> +					cpu = <&cpu4>;
+> +				};
+> +
+> +				core1 {
+> +					cpu = <&cpu5>;
+> +				};
+> +
+> +				core2 {
+> +					cpu = <&cpu6>;
+> +				};
+> +
+> +				core3 {
+> +					cpu = <&cpu7>;
+> +				};
+> +			};
+> +		};
+> +
+> +		cpu0: cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x0>;
+> +			enable-method = "psci";
+> +			clocks = <&dfs S32_SCMI_CLK_A53>;
+> +			next-level-cache = <&cluster0_l2_cache>;
+> +			#cooling-cells = <2>;
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x1>;
+> +			enable-method = "psci";
+> +			clocks = <&dfs S32_SCMI_CLK_A53>;
+> +			next-level-cache = <&cluster0_l2_cache>;
+> +			#cooling-cells = <2>;
+> +		};
+> +
+> +		cpu2: cpu@2 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x2>;
+> +			enable-method = "psci";
+> +			clocks = <&dfs S32_SCMI_CLK_A53>;
+> +			next-level-cache = <&cluster0_l2_cache>;
+> +			#cooling-cells = <2>;
+> +		};
+> +
+> +		cpu3: cpu@3 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x3>;
+> +			enable-method = "psci";
+> +			clocks = <&dfs S32_SCMI_CLK_A53>;
+> +			next-level-cache = <&cluster0_l2_cache>;
+> +			#cooling-cells = <2>;
+> +		};
+> +
+> +		cpu4: cpu@100 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x100>;
+> +			enable-method = "psci";
+> +			clocks = <&dfs S32_SCMI_CLK_A53>;
+> +			next-level-cache = <&cluster1_l2_cache>;
+> +			#cooling-cells = <2>;
+> +		};
+> +
+> +		cpu5: cpu@101 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x101>;
+> +			enable-method = "psci";
+> +			clocks = <&dfs S32_SCMI_CLK_A53>;
+> +			next-level-cache = <&cluster1_l2_cache>;
+> +			#cooling-cells = <2>;
+> +		};
+> +
+> +		cpu6: cpu@102 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x102>;
+> +			enable-method = "psci";
+> +			clocks = <&dfs S32_SCMI_CLK_A53>;
+> +			next-level-cache = <&cluster1_l2_cache>;
+> +			#cooling-cells = <2>;
+> +		};
+> +
+> +		cpu7: cpu@103 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x103>;
+> +			enable-method = "psci";
+> +			clocks = <&dfs S32_SCMI_CLK_A53>;
+> +			next-level-cache = <&cluster1_l2_cache>;
+> +			#cooling-cells = <2>;
+> +		};
+> +
+> +		cluster0_l2_cache: l2-cache0 {
+
+l2-cache-0
+
+> +			compatible = "cache";
+> +			status = "okay";
+
+Why do you need it? It's enabled by default.
+
+Anyway it incomplete:
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+
+> +		};
+> +
+> +		cluster1_l2_cache: l2-cache1 {
+
+l2-cache-1
+
+> +			compatible = "cache";
+> +			status = "okay";
+> +		};
+> +	};
+> +
+> +	pmu {
+> +		compatible = "arm,cortex-a53-pmu";
+> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>, /* sec-phys */
+> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>, /* virt */
+> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>, /* hyp-virt */
+> +		             <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>, /* sec-phys */
+> +		             <GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>; /* phys */
+> +		always-on;
+> +	};
+> +
+> +	reserved-memory  {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		scmi_tx_buf: shm@d0000000 {
+> +			compatible = "arm,scmi-shmem";
+> +			reg = <0x0 0xd0000000 0x0 0x80>;
+> +			no-map;
+> +		};
+> +
+> +		scmi_rx_buf: shm@d0000080 {
+> +			compatible = "arm,scmi-shmem";
+> +			reg = <0x0 0xd0000080 0x0 0x80>;
+> +			no-map;
+> +		};
+> +	};
+> +
+> +	firmware {
+> +		scmi: scmi {
+> +			compatible = "arm,scmi-smc";
+> +			mbox-names = "tx", "rx";
+> +			shmem = <&scmi_tx_buf>, <&scmi_rx_buf>;
+> +			arm,smc-id = <0xc20000fe>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			status = "okay";
+
+Drop or explain why is it needed.
+
+> +			interrupts = <GIC_SPI 300 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "p2a_notif";
+> +
+> +			dfs: protocol@13 {
+> +				reg = <0x13>;
+> +				#clock-cells = <1>;
+> +			};
+> +
+> +			clks: protocol@14 {
+> +				reg = <0x14>;
+> +				#clock-cells = <1>;
+> +			};
+> +
+> +			reset: protocol@16 {
+> +				reg = <0x16>;
+> +				#reset-cells = <1>;
+> +			};
+> +
+> +			pinctrl_scmi: protocol@80 {
+> +				reg = <0x80>;
+> +				#pinctrl-cells = <2>;
+> +
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+> +		psci: psci {
+> +			compatible = "arm,psci-1.0";
+> +			method = "smc";
+> +		};
+> +	};
+> +
+> +	soc@0 {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0 0 0x80000000>;
+> +
+> +		uart0: serial@401c8000 {
+> +			compatible = "nxp,s32g3-linflexuart",
+> +				     "fsl,s32v234-linflexuart";
+> +			reg = <0x401c8000 0x3000>;
+> +			interrupts = <GIC_SPI 82 IRQ_TYPE_EDGE_RISING>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart1: serial@401cc000 {
+> +			compatible = "nxp,s32g3-linflexuart",
+> +				     "fsl,s32v234-linflexuart";
+> +			reg = <0x401cc000 0x3000>;
+> +			interrupts = <GIC_SPI 83 IRQ_TYPE_EDGE_RISING>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart2: serial@402bc000 {
+> +			compatible = "nxp,s32g3-linflexuart",
+> +				     "fsl,s32v234-linflexuart";
+> +			reg = <0x402bc000 0x3000>;
+> +			interrupts = <GIC_SPI 84 IRQ_TYPE_EDGE_RISING>;
+> +			status = "disabled";
+> +		};
+> +
+> +		gic: interrupt-controller@50800000 {
+> +			compatible = "arm,gic-v3";
+> +			#interrupt-cells = <3>;
+> +			interrupt-controller;
+> +			reg = <0x50800000 0x10000>,
+> +			      <0x50900000 0x200000>,
+> +			      <0x50400000 0x2000>,
+> +			      <0x50410000 0x2000>,
+> +			      <0x50420000 0x2000>;
+> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +			mbi-ranges = <167 16>;
+> +		};
+> +
+> +		qspi: spi@40134000 {
+
+Keep order by unit address.
+
+> +			compatible = "nxp,s32g3-qspi";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0x0 0x00000000 0x0 0x20000000>,
+> +				<0x0 0x40134000 0x0 0x1000>;
+> +			reg-names = "QuadSPI-memory", "QuadSPI";
+> +			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+> +			clock-names = "qspi_en", "qspi";
+> +			clocks = <&clks S32_SCMI_CLK_QSPI_FLASH1X>,
+> +				 <&clks S32_SCMI_CLK_QSPI_FLASH1X>;
+> +			spi-max-frequency = <200000000>;
+> +			spi-num-chipselects = <2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		usdhc0: mmc@402f0000 {
+> +			compatible = "nxp,s32g3-usdhc",
+> +			             "nxp,s32g2-usdhc";
+> +			reg = <0x402f0000 0x1000>;
+> +			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&clks S32_SCMI_CLK_USDHC_MODULE>,
+> +				 <&clks S32_SCMI_CLK_USDHC_AHB>,
+> +				 <&clks S32_SCMI_CLK_USDHC_CORE>;
+> +			clock-names = "ipg", "ahb", "per";
+> +			status = "disabled";
+> +		};
+> +
+> +		gmac0: ethernet@4033c000 {
+> +			status = "disabled";
+
+Random code... sorry, but status does not come first. Put it last and
+please read carefully DTS coding style.
+
+> +			compatible = "nxp,s32-dwmac";
+> +			reg = <0x4033c000 0x2000>, /* gmac IP */
+> +			      <0x4007c004 0x4>;    /* S32 CTRL_STS reg */
+> +			interrupt-parent = <&gic>;
+> +			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "macirq";
+> +			tx-fifo-depth = <20480>;
+> +			rx-fifo-depth = <20480>;
+> +			dma-coherent;
+> +			snps,mtl-rx-config = <&mtl_rx_setup_gmac0>;
+> +			snps,mtl-tx-config = <&mtl_tx_setup_gmac0>;
+> +			clocks = <&clks S32_SCMI_CLK_GMAC0_AXI>,
+> +				 <&clks S32_SCMI_CLK_GMAC0_AXI>,
+> +				 <&clks S32_SCMI_CLK_GMAC0_TX_SGMII>,
+> +				 <&clks S32_SCMI_CLK_GMAC0_TX_RGMII>,
+> +				 <&clks S32_SCMI_CLK_GMAC0_TX_RMII>,
+> +				 <&clks S32_SCMI_CLK_GMAC0_TX_MII>,
+> +				 <&clks S32_SCMI_CLK_GMAC0_RX_SGMII>,
+> +				 <&clks S32_SCMI_CLK_GMAC0_RX_RGMII>,
+> +				 <&clks S32_SCMI_CLK_GMAC0_RX_RMII>,
+> +				 <&clks S32_SCMI_CLK_GMAC0_RX_MII>,
+> +				 <&clks S32_SCMI_CLK_GMAC0_TS>;
+> +			clock-names = "stmmaceth", "pclk",
+> +				      "tx_sgmii", "tx_rgmii",
+> +				      "tx_rmii", "tx_mii",
+> +				      "rx_sgmii", "rx_rgmii",
+> +				      "rx_rmii", "rx_mii",
+> +				      "ptp_ref";
+> +
+> +			mtl_rx_setup_gmac0: rx-queues-config {
+> +				snps,rx-queues-to-use = <5>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				queue@0 {};
+> +				queue@1 {};
+> +				queue@2 {};
+> +				queue@3 {};
+> +				queue@4 {};
+> +			};
+> +
+> +			mtl_tx_setup_gmac0: tx-queues-config {
+> +				snps,tx-queues-to-use = <5>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				queue@0 {};
+> +				queue@1 {};
+> +				queue@2 {};
+> +				queue@3 {};
+> +				queue@4 {};
+> +			};
+> +
+> +			gmac0_mdio: mdio0 {
+
+mdio?
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+
+> +				compatible = "snps,dwmac-mdio";
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +			};
+> +		};
+> +
+> +	};
+> +};
+> diff --git a/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
+> new file mode 100644
+> index 000000000000..707b503c0165
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
+> @@ -0,0 +1,57 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * NXP S32G3 Reference Design Board 3 (S32G-VNP-RDB3)
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "s32g3.dtsi"
+> +
+> +/ {
+> +	model = "NXP S32G3 Reference Design Board 3 (S32G-VNP-RDB3)";
+> +	compatible = "nxp,s32g399a-rdb3", "nxp,s32g3";
+
+Missing bindings.
+
+
 
 Best regards,
 Krzysztof
