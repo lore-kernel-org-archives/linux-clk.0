@@ -1,57 +1,57 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE001CD2D;
-	Sun, 17 Mar 2024 19:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4591DA20;
+	Sun, 17 Mar 2024 19:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710702199; cv=none; b=NKISjVmwptydzPA5b9clSByQ97z0BOXRLTfenC8bxBmOZqGw9DMaCREL+PoWcui/k9xoEGyrcHR5RjYNGEA3oUiMLJnXYGsZepV7XkfW5OdxWSx41St8Var82ZORKk8mXXjlJoe5L1Su7ZYUhYtwQh8nTZ+r+PluC5xefszQErI=
+	t=1710702613; cv=none; b=KR2kpIn+yd7w7ZvpL5AGMDxGOqwzy2JAI+U7mJcHz9AWmsE7hg9VReIRNgOZ2fLMOAIxCVK3wgWGQEZY0gtliSAcGdua7b+f2Z5ggzQNjj9tqjeYC9vFqokeKd27BOAhwWTG6uzmpvl1J2jCY39T7IUpLDn3RDqeTlmSQfQpIrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710702199; c=relaxed/simple;
-	bh=jxULVwpCUVr9kQOyAisgtABRYa85JCUAZu0zVjCuxi0=;
+	s=arc-20240116; t=1710702613; c=relaxed/simple;
+	bh=m0Flx86hlt0ID5OEE6IkxZUX4ODTKKRFVINUHUA7ss0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5Q8eLuJSG5o9zJfoRGPfIlDo4zPY+cFElXkaY2xEUp5xbhZey/spQtQe7WTINaT9vB7WkttJaLU8bYbwIFd8O6mWG7SlN46U49NVL1EdFCtgOVDKUsJB6gzKd47UeVV1XRGq/ecps3x5hBJAh4295PR2jwd0kqLmj6WjIIp0fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xi1NLRde; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=C+YzSsoE6CpieiTPka65oYYCODPz5nKIiQ9urAkyc/GiyrDSFbHsahgzmk3vrULnJIuO5knN658a5vtK9cHKkFS1o0BDjtVntK1tKRIt2plxd/rLqIwbiZUSuZVjdFKB69V/y+RGHUBj5KUsh1IbJhZGuunl9BpWS1sBFHtYzcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rSi2XOPS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xi1NLRde"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF428C433C7;
-	Sun, 17 Mar 2024 19:03:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rSi2XOPS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E14C433F1;
+	Sun, 17 Mar 2024 19:10:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710702199;
-	bh=jxULVwpCUVr9kQOyAisgtABRYa85JCUAZu0zVjCuxi0=;
+	s=k20201202; t=1710702612;
+	bh=m0Flx86hlt0ID5OEE6IkxZUX4ODTKKRFVINUHUA7ss0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xi1NLRdeQz3riPNdP1ZHBPXe07dfHk/rdBMlDxr2BAuWQwtUOT7wvm3iubrbXXRN0
-	 3vowVuTwWxL1s7iACpQuBk/vkRcZCT/JJ5Z8c0tC3QPuziteHXLw3/Z8COb++V4GZ6
-	 2eyOGxxt+APWQCchtJO/NvGK5HaFgYvHfO0lBLoy0k/h0fGna/hRg7DfRtlUG4KMxh
-	 1rZDa2CW6huDD/xp9X1X85VVCwEm1JLvFApN8U15+hRS7536bgd+HACCcW/V9KWZgw
-	 u+cyv0lcIr6NEMbrcKFNSdZn6Qi22PoIuJVZ9TF7SQyVWhwOpcVhuQs3cnSvP1x8Fd
-	 JSiL782nMVAlg==
-Date: Sun, 17 Mar 2024 13:03:16 -0600
+	b=rSi2XOPSw4Fdzj6YPbJ7NmZItS9T42PBNe8meEGA9KvXJRseIYJNeFYApi1qVRjuF
+	 hIcM+uFWfRSLKPwIEl2GIBRnd/xqgU02SVSNm08VSB2uIpoHwsjOHvrYMOKlecUNqe
+	 sNLexeaItJBWTmeVgGgkG0bjOqiKxcdEeQSmeE9JPymngvyhmvUGJSw1r1ho26OeJA
+	 sx7OgUz6iWHYATK8MUlkVmE+L1E8nd3af5BCjQjAKDUMxsERP65WIi+VlffTIPxhwL
+	 T8mRlVfXX8byeWK2sL7DNvakNHAC6ae1At+0UorQOGPwMdLHUrvc2KEyio6w6lWTzT
+	 OpDtA+MjP4/2w==
+Date: Sun, 17 Mar 2024 13:10:10 -0600
 From: Rob Herring <robh@kernel.org>
 To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, kernel@salutedevices.com,
 	Conor Dooley <conor+dt@kernel.org>,
+	linux-amlogic@lists.infradead.org,
 	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kevin Hilman <khilman@baylibre.com>,
+	Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
 	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-sound@vger.kernel.org, alsa-devel@alsa-project.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
-	kernel@salutedevices.com
-Subject: Re: [PATCH 11/25] ASoC: dt-bindings: meson: t9015: add support for
- A1 SoC family
-Message-ID: <20240317190316.GA2071139-robh@kernel.org>
+	Stephen Boyd <sboyd@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH 16/25] ASoC: dt-bindings: meson: meson-axg-audio-arb:
+ claim support of A1 SoC family
+Message-ID: <171070260941.2083610.11098658927011018629.robh@kernel.org>
 References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
- <20240314232201.2102178-12-jan.dakinevich@salutedevices.com>
+ <20240314232201.2102178-17-jan.dakinevich@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,35 +60,18 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240314232201.2102178-12-jan.dakinevich@salutedevices.com>
+In-Reply-To: <20240314232201.2102178-17-jan.dakinevich@salutedevices.com>
 
-On Fri, Mar 15, 2024 at 02:21:47AM +0300, Jan Dakinevich wrote:
-> Add "amlogic,t9015-a1" compatible string.
 
-That's obvious from the diff. Perhaps what does 'a1' mean? What the 
-difference from the existing compatible?
-
+On Fri, 15 Mar 2024 02:21:52 +0300, Jan Dakinevich wrote:
+> Add "amlogic,meson-a1-audio-arb" compatible string alias to
+> "amlogic,meson-sm1-audio-arb".
 > 
 > Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 > ---
->  Documentation/devicetree/bindings/sound/amlogic,t9015.yaml | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  .../bindings/reset/amlogic,meson-axg-audio-arb.yaml    | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml b/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
-> index 5f5cccdbeb34..ee8bd57dbcf9 100644
-> --- a/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
-> +++ b/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
-> @@ -21,7 +21,9 @@ properties:
->  
->    compatible:
->      items:
-> -      - const: amlogic,t9015
-> +      - enum:
-> +          - amlogic,t9015
-> +          - amlogic,t9015-a1
->  
->    clocks:
->      items:
-> -- 
-> 2.34.1
-> 
+
+Acked-by: Rob Herring <robh@kernel.org>
+
