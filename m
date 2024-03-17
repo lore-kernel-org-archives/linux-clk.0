@@ -1,109 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C171367;
-	Sun, 17 Mar 2024 15:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC29B1CA81;
+	Sun, 17 Mar 2024 15:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710690556; cv=none; b=rYGK8X7aI5txe26rs+/+jPXjsiQ21V4l71ECaz3bmQEa5UZ8xkLOeYTj+pIz4JV10t27ixNkiDR9mHkD3x03Qj0KrScbbGsqWwolptfiIYhJ1zQEIhNZFWyA+WKQfll42vYH1cOz6XO1n69OTz5L33Gvp6NUCLVB3e37QoLOEn0=
+	t=1710690676; cv=none; b=LHprTrdV9GPNyrhAna5KirUWBHsPIytciIBDw0mFemAUgJ6xSW2kZZODH7ZTdMdJttIIpeKL5uEHmKmM4rLwi61TzFx5MY1T0uFvypbjGuLlQkzXwq+oe+mWlchwRwXAJHO+Z6Dz+Ny8i0+4pvqd50fmMOU5Rxd/zMTUrhimN+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710690556; c=relaxed/simple;
-	bh=LdpyYbYNuF+OR1AOEmZnwLSBboDczWS8oE9fk1CQDW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BFOzA6ZMjJv2EJjl+QJE7e3Od0oOWpz8gkLN182qJ73cMtUfEW89xqSLzgHVB1m3AyPcytVylTYiBXumly/iyoi6nAz0uV6ptZDQ+C1a+d6gVGav+1SL9LFBwFHhrCjGEdbRyzQrGTUESaOpIB6B3wRfhQ2TG8aeh4mG8X0ZGRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YM5e5iqM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710690676; c=relaxed/simple;
+	bh=Knbi8ECvoxJZzgUbotfa2HhgH5qH908FPV/fLMPvbss=;
+	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=RXZbWGMW2d3lK5nfjYu/NToO5BpHszwrBrqQnDtm8nOGWZJhwb7fuSCFKCaLuG10SOQ/7Br78iheOKQOK+Mtwfri9Za6Z7BZHEMhkQjAX/s9Nl+FXtKqWuqLJMXo6gWbUCKfy9nG1UfwZO7pom2eimbktlvJ0HvRv9dxb1EcbKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tv9K+v2x; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YM5e5iqM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 526C8C433C7;
-	Sun, 17 Mar 2024 15:49:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710690555;
-	bh=LdpyYbYNuF+OR1AOEmZnwLSBboDczWS8oE9fk1CQDW4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YM5e5iqMYeGrO8qd2LMXW8BhqELysmFBchVgtsfMhj2NE8pVuMHqqEO9m7aKxRr7C
-	 OCbrDamxynIRmGjtM/D2N/nmC/lozcrdJpFwQ5JZ22liB0JFyNwvypjyGVT6PpeZJv
-	 5Mr31Tm4M41Bop/EtYgd2YWmxjHBQ37qz5+TgVQhblTu22xfmbbzKqEK51Olct7itg
-	 UUL9djWjS4WPb19OLVup7vX5qNBPrKAhcEtQkNYzw1nSvO9lyTKpOqXrJQCG8SrUXD
-	 Ds2GIIogOIJzvACwLekK+XzT6Tmn/zj2WBQr6s7vPY51q+IZsapauvZyxHNKSQW4eU
-	 Q+xJir/xsO0Kw==
-Date: Sun, 17 Mar 2024 15:49:11 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: clock: samsung,s3c6400-clock: convert to DT
- Schema
-Message-ID: <20240317-jersey-trolling-d4678546e87d@spud>
-References: <20240312185035.720491-1-krzysztof.kozlowski@linaro.org>
- <20240317-curator-smoky-99568f9308bc@spud>
- <60039f49-a20d-49b9-8a3d-2ded499435a4@linaro.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tv9K+v2x"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2d47a92cfefso46804381fa.1;
+        Sun, 17 Mar 2024 08:51:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1710690673; x=1711295473; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:references:cc:to:from:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E6xHh0myDZ/4a+0J2/NsOabUugm5P6ZKzY67ZXaFfgI=;
+        b=Tv9K+v2x7+XLTZeLWB2UIAZe94IG8ZKkMT+9cpVFbWMtBrV/4GRH11/QebnqI017AO
+         Vol46K5IuJxP/OP+o+UEVbmf4qwe6zHd5umxwLEFoqHO2aAmWXqFig/Tn+UtNLbhomZ2
+         4TLcCjr7w3g0UEkB4dsJ6ndXBxVxsrUaqr7F20UPCV2E/YGVibOw2Sk83FwKm7PIIbph
+         yCRRiWTF4mbNN9fqku1TriUhZdtfDq4UnSh1Xs9EEL93+Jtlj4d8CQnrJJ0YSDZWofNE
+         q6IrKMkQhERLklHrTu2V3ikBTa10TEECmE3KO3gxxqqA+hEKtaKXkGHHDQ4HQ/mDMgMT
+         p/EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710690673; x=1711295473;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:references:cc:to:from:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E6xHh0myDZ/4a+0J2/NsOabUugm5P6ZKzY67ZXaFfgI=;
+        b=gr4g3nRnUA/2344qiU8Pn1e9WaJgzyVt6o8XIcXWYb2Qtmrq0Oc53sSm7JUAyt1Dpx
+         Jy6OdWIGryNEraTHFavuE3NzKJ8RlELyFa+pI0MPDyGSQmC2cwtpFNid2eApapiP8qX2
+         LIs0DiFlf+AlN2nldaiH2YpaGPIZP/Nn8B2Pe6oisXazTe1qWxWNCEetpXOCchrhVaWX
+         OBEpvHtXQ1HfTEjsX7CQ2VeZwzKdVJZj5LvqLEZ4DsCHrBDzOhRpbjhc721OGMneQ76o
+         gwnoyJdkL3XqC0SC0CGpgjcTHMZLdc60EtrBwPK22NmKF9oNUWFbBJe39FIoNrtla6zh
+         h8ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7bA9tYWjSuWB+YPN3lnXXR2G7xYsZqOE4B03lMv/P/dW1Imxj61HyP+E6guygUrZ+A47lOsjeDN9l6DyMLCPYUCOlXbetmwTi44SXYAnqzCa7J69kd3z2yIpvSEwbdPHnf1alvgToK2Ps5cQf+bVLJc653mprn+DC7VWtMN6i2OQE/Zjg4z55yaEjd4/QCIkEv7luz2Z0Fif6Sk7O2Q==
+X-Gm-Message-State: AOJu0YzDZsWYd5UdXdN1tWXmz1/tywWF8LbnjxVGkv8QGRY8yZAY88HN
+	zmoLJ0PWhUggGVSfWYSgFObtu8vX+TMEVtuur1wLpsuLNvCigDr+
+X-Google-Smtp-Source: AGHT+IGN3UivLHGlxSXapjlX6Y4g1qr5b2KnSwEX+5CCupeWG0w1xgNeNySKlc/nixI5uMbZyAJU2A==
+X-Received: by 2002:a19:384e:0:b0:513:cfd6:d151 with SMTP id d14-20020a19384e000000b00513cfd6d151mr5384671lfj.18.1710690672962;
+        Sun, 17 Mar 2024 08:51:12 -0700 (PDT)
+Received: from [192.168.1.105] ([178.176.78.158])
+        by smtp.gmail.com with ESMTPSA id q15-20020ac25a0f000000b00513e18a47a5sm491232lfn.130.2024.03.17.08.51.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Mar 2024 08:51:12 -0700 (PDT)
+Subject: Re: [PATCH v5 3/5] usb: gadget: udc: add Renesas RZ/N1 USBF
+ controller support
+From: Sergei Shtylyov <sergei.shtylyov@gmail.com>
+To: Herve Codina <herve.codina@bootlin.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Gareth Williams <gareth.williams.jx@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>
+References: <20230105152257.310642-1-herve.codina@bootlin.com>
+ <20230105152257.310642-4-herve.codina@bootlin.com>
+ <260e0089-0817-cf12-dfcd-c28263808518@gmail.com>
+Message-ID: <84b7d23d-0a94-3aab-71fb-01fc37039178@gmail.com>
+Date: Sun, 17 Mar 2024 18:51:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Kk6uFwGcxqpNcnbw"
-Content-Disposition: inline
-In-Reply-To: <60039f49-a20d-49b9-8a3d-2ded499435a4@linaro.org>
+In-Reply-To: <260e0089-0817-cf12-dfcd-c28263808518@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
+On 3/17/24 3:18 PM, Sergei Shtylyov wrote:
+[...]
 
---Kk6uFwGcxqpNcnbw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> Add support for the Renesas USBF controller.
+>> This controller is an USB2.0 UDC controller available in the
+>> Renesas r9a06g032 SoC (RZ/N1 family).
+> 
+>    I think I've done the NEC EC-4255 USBF driver for Robert Bosch
+> Car Multimedia, too bad it's never hit upstream... :-)
 
-On Sun, Mar 17, 2024 at 04:26:55PM +0100, Krzysztof Kozlowski wrote:
-> On 17/03/2024 16:23, Conor Dooley wrote:
-> > On Tue, Mar 12, 2024 at 07:50:35PM +0100, Krzysztof Kozlowski wrote:
-> >> Convert Samsung S3C6400/S3C6410 SoC clock controller bindings to DT
-> >> schema.
-> >=20
-> >> +description: |
-> >> +  There are several clocks that are generated outside the SoC. It is =
-expected
-> >> +  that they are defined using standard clock bindings with following
-> >> +  clock-output-names:
-> >> +   - "fin_pll" - PLL input clock (xtal/extclk) - required,
-> >> +   - "xusbxti" - USB xtal - required,
-> >> +   - "iiscdclk0" - I2S0 codec clock - optional,
-> >> +   - "iiscdclk1" - I2S1 codec clock - optional,
-> >> +   - "iiscdclk2" - I2S2 codec clock - optional,
-> >> +   - "pcmcdclk0" - PCM0 codec clock - optional,
-> >> +   - "pcmcdclk1" - PCM1 codec clock - optional, only S3C6410.
-> >=20
-> > I know you've only transfered this from the text binding, but what is
-> > the relevance of this to the binding for this clock controller? This
-> > seems to be describing some ?fixed? clocks that must be provided in
-> > addition to this controller. I guess there's probably no other suitable
-> > place to mention these?
->=20
-> To make it correct, these should be made clock inputs to the clock
-> controller, even if the driver does not take them, however that's
-> obsolete platform which might be removed from kernel this or next year,
-> so I don't want to spend time on it.
+   EC-4260, sorry; it was mostly known to us back then as NaviEngine
+(mid)...
 
-I think the comment should probably mention that these are the expected
-inputs, part of me thought that that was what you were getting at but I
-wasn't sure if instead they were inputs to some other IP on the SoC.
+>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
---Kk6uFwGcxqpNcnbw
-Content-Type: application/pgp-signature; name="signature.asc"
+[...]
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZfcQ9wAKCRB4tDGHoIJi
-0jbjAP0el+zfqXU/1GH/ci5i68AFLqupDHz+2uX0i/EiXkqgwgD9FSPzzbqPkxlg
-rMx2MTgf2+caqhXEviVOR/fol7xARgk=
-=QuI7
------END PGP SIGNATURE-----
-
---Kk6uFwGcxqpNcnbw--
+MBR, Sergey
