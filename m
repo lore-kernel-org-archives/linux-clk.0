@@ -1,162 +1,124 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD8E5A4C9;
-	Mon, 18 Mar 2024 22:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859BC5A4DC;
+	Mon, 18 Mar 2024 22:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710801535; cv=none; b=W9KVrL4r8CHnDr+hF2v8I45cunYiIFovBph/N/8Sgcl/J3s4dojVZv5e1gsGBWxH4NpP/gpfkSbfyq6tmkiWofVZaZnKzsyku07RyyNO0mJWOt1OyGHp64ysnun5h9eYgFa71BcnY04bKgBuWX4YKtUjln0c99dLEloqsa36E1w=
+	t=1710801852; cv=none; b=gMgSEuORreUXnaAIlZwHheSaIHb2+QLc6JVHAYTsHaZUMj684hyYvYOsovVCAzkLAtmJFnAzs93nlwGIrsiOAUDQX3YdzTCzlInBnTYo/B7hlElQBLBWNLPdBMdhG0gWjU62ipIfKNho8oNNOgBevFLnwiWONrSyua0ODx6X3mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710801535; c=relaxed/simple;
-	bh=iYYl/X3S1ud9BieZJR2iMwdKlvZTFaDy1KeuQBPhaNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3d4Z5n6vywmgz9X8L9HiuKAE4c3jDCEdKWKmVmJe8M3iRTxDJtpSKUTp+yELyKZKYrhVMFTia8q4Md9cEM/dLpLCKKC1LbCcXE9kGSHvzVw2OZsYdlF5SK+WytI4N7VCZ5gg1nzxK1o8ZYpN9xcZYV73zE5R3O5TQ5tgj2IQmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZAzSfiGC; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1710801852; c=relaxed/simple;
+	bh=QVvPe8HqF/hEu0sn46LH7OPfrbqHYTjl9rmwiW8KbI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uVj9PvVewUhPaDmvkI0QIke/avWTZcwWYjgWRG6tZtJiPwuWgDjmVNY3HfddwnXRugqqMUnmLS3SLvfJYuShWVgmFmaJZUOraSJdPfgXmxntiimbHjt+St+0JRv+TZoGqraxuZQQp8napN8vJ8eXRN61hmEQcMjmac9CVrOuY/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=WlS06RNI; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZAzSfiGC"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CF31A55;
-	Mon, 18 Mar 2024 23:38:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1710801505;
-	bh=iYYl/X3S1ud9BieZJR2iMwdKlvZTFaDy1KeuQBPhaNE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZAzSfiGCXXLENOsOXx2jcPJKN53TMzDp5fFMWfC6TYbIJMSWocR3tPRQZdYxyykGZ
-	 LzNSQdmdTsCktkYeg/yqM3OTD1mQ8i1HuebWUEvm3Lua4Cyj8hEiBDJzL0lXLgPHAV
-	 K3XOtquoBPf4HVkxNVc3vgDiLO3awS+coEBb3mp4=
-Date: Tue, 19 Mar 2024 00:38:48 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] clk: Update API documentation related to clock
- disable
-Message-ID: <20240318223848.GR13682@pendragon.ideasonboard.com>
-References: <20240318110842.41956-1-biju.das.jz@bp.renesas.com>
- <20240318110842.41956-2-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="WlS06RNI"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 6A2F1100011;
+	Tue, 19 Mar 2024 01:44:06 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 6A2F1100011
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1710801846;
+	bh=pa+89jrrCMIW8EjfG4aAgry+/vfLF62TIUqpulm7Y9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=WlS06RNIBTg0cU271+LYNhxdIVW8REnQkfL0Eq7bHWiEE2NaTUtuoRzgcod99PVOu
+	 90XcrVazKIOpMrrn2Lj5waYPR3pBMpoyE/svDsna6Hn/ncEAfIi4zZg45J34L38rKP
+	 lVo4tRAfocFgZCrdouhaItZsCLKbBfZq89MVAWFQJgD6s6aIvAf1uPVna8WJxugmor
+	 mr6LDxYqk7REZoeeNrR4tv0MyJNkhX43aJ/+u2MHK2TfgTH/luXpJhpJbSgoUEi8Ou
+	 ViJNVVN54rulbLvS7z84IQ4pLJeCbFV/tkIbru90+UwDb6C7lz+ie/jrcPfO/9lnvd
+	 wZ99a9nIdhl9w==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 19 Mar 2024 01:44:06 +0300 (MSK)
+Received: from [172.28.64.112] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Tue, 19 Mar 2024 01:44:05 +0300
+Message-ID: <bafa1669-e98f-4d45-b5cc-0c707df5ed52@salutedevices.com>
+Date: Tue, 19 Mar 2024 01:43:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240318110842.41956-2-biju.das.jz@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/25] ASoC: meson: t9015: add support for A1 SoC family
+Content-Language: en-US
+To: Mark Brown <broonie@kernel.org>
+CC: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
+	<jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liam Girdwood
+	<lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Jaroslav
+ Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <alsa-devel@alsa-project.org>,
+	<linux-sound@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<kernel@salutedevices.com>
+References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
+ <20240314232201.2102178-13-jan.dakinevich@salutedevices.com>
+ <5f8e8cd2-f9c4-4961-a85d-a0f3217294e6@sirena.org.uk>
+ <c4c0e3a3-eaa8-42c6-bbd3-e5c6993dc63b@salutedevices.com>
+ <30dadd4c-de10-43a7-baf8-8ddd49f5c80e@sirena.org.uk>
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+In-Reply-To: <30dadd4c-de10-43a7-baf8-8ddd49f5c80e@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 184250 [Mar 18 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 10 0.3.10 53c821b925e16276b831986eabc71d60ab82ee60, {Tracking_smtp_not_equal_from}, {Tracking_arrow_text}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;sberdevices.ru:7.1.1,5.0.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/03/18 20:02:00 #24276844
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi Biju,
 
-Thank you for the patch.
 
-On Mon, Mar 18, 2024 at 11:08:40AM +0000, Biju Das wrote:
+On 3/18/24 16:48, Mark Brown wrote:
+> On Sun, Mar 17, 2024 at 07:27:14PM +0300, Jan Dakinevich wrote:
 > 
-> The API's related to clk disable operation does not explicitly
-> states the synchoronous or asynchrous behaviour as it is driver
-
-s/synchoronous/synchronous/
-
-> dependent. So make this part clear in API documentation.
-
-You need to explain the rationale here, why asynchronous behaviour is
-preferred.
-
-> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v2->v3:
->  * No change.
-> v2:
->  * New patch.
-> ---
->  drivers/clk/clk.c            | 3 ++-
->  include/linux/clk-provider.h | 3 ++-
->  include/linux/clk.h          | 3 ++-
->  3 files changed, 6 insertions(+), 3 deletions(-)
+>> Both mic bias and ADC's input mode depends on schematics and should be
+>> configurable. What is the better way to give access to these parameters?
+>> Device tree?
 > 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 25371c91a58f..f5fa91a339d7 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1010,7 +1010,8 @@ static void clk_core_unprepare_lock(struct clk_core *core)
->   * if the operation may sleep.  One example is a clk which is accessed over
->   * I2c.  In the complex case a clk gate operation may require a fast and a slow
->   * part.  It is this reason that clk_unprepare and clk_disable are not mutually
-> - * exclusive.  In fact clk_disable must be called before clk_unprepare.
-> + * exclusive.  In fact clk_disable must be called before clk_unprepare.  The
-> + * synchronous or asynchronous clock gating operation is driver dependent.
+> Yes.
+> 
+>>>> +	SOC_SINGLE("ADC Mic Bias Switch", LINEIN_CFG, MICBIAS_EN, 1, 0),
+>>>> +	SOC_ENUM("ADC Mic Bias Level", a1_adc_mic_bias_level),
+> 
+>>> Why would micbias be user controlled rather than a DAPM widget as
+>>> normal?
+> 
+>> Yes, I could use SND_SOC_DAPM_SUPPLY, but it supports only raw values,
+>> and doesn't supports enums. Here, I want to use enum to restrict
+>> possible values, because only these values mentioned in the
+>> documentation that I have.
+> 
+> A supply is an on/off switch not an enum.  Users should not be selecting
+> values at all.
 
-If synchronous operation is not guaranteed, then it's asynchonous.
-Asynchronous doesn't mean slow, even an asynchronous provider can
-complete the disable operation before the function returns to the
-caller. All it means is that there's no guarantee of synchronous
-operation. I would document it as such:
-
- * This function is asynchronous, if may return before the clock provider 
- * completes the unprepare operation.
-
-However, below you're addressing the disable operation. Did you mean to
-patch the documentation for clk_prepare() instead ? Making
-clk_unprepare() asynchronous seems a bit weird, given that the function
-may sleep and is expected to take more time.
-
->   */
->  void clk_unprepare(struct clk *clk)
->  {
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 4a537260f655..5b493024e1ec 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -113,7 +113,8 @@ struct clk_duty {
->   *		sleep.
->   *
->   * @disable:	Disable the clock atomically. Called with enable_lock held.
-> - *		This function must not sleep.
-> + *		This function must not sleep. The synchronous or asynchronous
-> + *		disabling of the clock is driver dependent.
-
-As this is the documentation that targets clock providers, I would
-expand it and explain why a provider may want to make the disable
-operation not synchronous.
-
->   *
->   * @is_enabled:	Queries the hardware to determine if the clock is enabled.
->   *		This function must not sleep. Optional, if this op is not
-
-.is_enabled() should become mandatory if .disable() is not synchronous.
-The relationship between the two operations should be better explained.
-
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 00623f4de5e1..84b02518791f 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -681,7 +681,8 @@ int __must_check clk_bulk_enable(int num_clks,
->   * @clk: clock source
->   *
->   * Inform the system that a clock source is no longer required by
-> - * a driver and may be shut down.
-> + * a driver and may be shut down. It is not guaranteed to ever actually
-> + * be stopped, that will be driver dependent.
-
-This is the documentation of clk_bulk_disable(), you should address
-clk_disable() too. I've just noticed that both functions are documented
-in two places, in include/linux/clk.h, and in drivers/clk/. I wonder why
-that is. It sounds like it should be fixed, or you'll have to patch both
-documentation blocks.
-
-There's another issue that I'll raise in the review of 2/3.
-
->   *
->   * May be called from atomic contexts.
->   *
+Ok. For me it is great if I am free to move these kcontrols to device tree.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Best regards
+Jan Dakinevich
