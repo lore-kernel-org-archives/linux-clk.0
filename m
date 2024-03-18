@@ -1,59 +1,59 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB88428EC
-	for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 07:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4472422EFB
+	for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 07:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710747561; cv=none; b=EINdrJtuzQo1tu4oKTzCfjJ+nfpTnJAb8lXBRkcEsCqFNSNGgc+1HX4/D2iDWEBt6cR8iio2btW0o4wADzRTVw4ZBDUkH+wPHnw/mZyynUgxrxaxWh01LDqEpepjzT6CZl1MGH5B5RUlmanKKWZ0tjUHEf0amui68C3DIxXIv0w=
+	t=1710747719; cv=none; b=SMlwX/fA5Huv2vlxj1ka1JvpcsKoy3VDbHCWKNzwo34NTu7vKj/niC/9y5hLZUWGAJMTGTfDVZpEa0tIhe61xyodB+8W81yOLWkYa97EbkOIcbuJqTmefX44PEJiZLKMfqoVcXhUH2NN/sFtD417sbW8bGPRTp/gpGsmgpa+nZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710747561; c=relaxed/simple;
-	bh=hTD+DFmL9BqgDo+/sVwNvDWJ5y06rS+S7BZatmp9f8Y=;
+	s=arc-20240116; t=1710747719; c=relaxed/simple;
+	bh=PINzWdH0Ne7ORYZjAwoSX8t/RRcw1lLoN8REYVtAW7o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GiDTSgUHlK6zzOotP0WIDCUMHXDrb8ozRXAlLv256FfIgmUQ9Abg6ryZQI7oNKmRhkETB+Bnhbr9oUFzMPtf5LfhqrKMZWd39DwwPulKw1CeBJY36FEQm36TGxLDrvtclBT4duD+FJKmCKLCOwzE9Dn/IMe4GOvtRCFcXqnJUew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OEztGX0C; arc=none smtp.client-ip=209.85.208.43
+	 In-Reply-To:Content-Type; b=nlWK6MPHOE/KgaL3aWv8g7ePR3wM2Ezm2PqX6FvOwCJbz0uNvWKZ6fyvAplH/QKz6UZqXQ93NLx3YkZOSRNOMJC9W+/h48l/lX4abKav99SIdAg1YvH2y1ElH1nFr5FRZ6FSoLoBn0WL7upwFM9QWSOP1sUXPCKJEHLeQmtdQ1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mBfV+HVw; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OEztGX0C"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-56a2bb7d944so646505a12.3
-        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 00:39:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mBfV+HVw"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3ddc13bbb3so920050866b.0
+        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 00:41:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710747558; x=1711352358; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710747716; x=1711352516; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vpoJHq2kVU4cubYvHHTHZKWABpZl9dQPC/sCgzyCCfo=;
-        b=OEztGX0Crdn6wuuNL7cqqHeacl7mKxaGzGfXFvsE9FTSZWI+Aa5T0u5AwAyM2PxJW/
-         eB96b/WSgLK21UONdeUgCEV6VpyuO1Yjvo1UPsx5Kl06RES9fwgs2FNLzPKeGSnS+uSd
-         umM3fs3rSXG7vMsMorKaoOIix4OdWcnnm2dnkL5PHASYPqkoWIgEzEGY8Kyd9RsyNH5U
-         yPL7R5DXzhuw1KsMSaVavsKd51gDk+RG8cYDimXti47C+A72OfSRd/gevEf3S2IaLYQ6
-         iqA1OLuXQPpwvQigCfOiQulUGe40YmiplLyxCMsR/leJdzonZPQqYjKebpHsPIdJCLPG
-         37Mg==
+        bh=c72fdTUZtGgEqYLgWdMw4Z3JQurOW9liWuFGsNI6KVg=;
+        b=mBfV+HVwCgsHX52KuLR6rkiqPJQEahdfe+7kCtN9QFqzlIoP//KK/BO71WomHEn8rW
+         jDwjotzx5Wt0gX4XHjR3yEZgdEyLEMZVt4xQUQD1NNGuBnibkoS7ZcdOOuQxfpulWtvJ
+         +1GfvaMtVGRnZ4H+W1oXVCA91sIGS1Y3jCmYdYOZJnx1qlZn5+IxRDRltJ2IJ1dHZrDG
+         hq/EF3v9uT81K2NAWiecbEJ8whHNT1dde5EAxLofVi6zdReGI+090prmoPpt0kpoJpi+
+         UoFP2jFLou1UFyPFz+7Oe+y9zDJrcWQ/q2v+MT2erpuUNyaEflBQP51cTG8ZKOsBt726
+         itDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710747558; x=1711352358;
+        d=1e100.net; s=20230601; t=1710747716; x=1711352516;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vpoJHq2kVU4cubYvHHTHZKWABpZl9dQPC/sCgzyCCfo=;
-        b=gNR8+SKeKixObeJvUKFs/MMsUYVgCEX1HwKS6VcyOX9uEfPYPole7X7+OwKCWu8df+
-         hHxkFDSGxxj1HRFSyYoMwojtNpkzxTU99D36BSOj7tcf7c0L3HgSI26Iu5AE7JKcP3be
-         wodoAvClHlCj03ZIKIzVV36KOaD1mgPqVN/gQPykHrIt84aokLMFjx9grFJ8gCjA2u5W
-         hd3duMk46oh9sq4vdKo52s3jIvsywyFmFw2e83CBjBmCAUValN7yoySjzTWbundCyr+x
-         w4EOT/qEw2Idr0oSPnumj22uyGTgK/Vw0XMTFkH0MOdQ6avGTXMo15ek2o4oyHVr90dD
-         8+5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXCfgq5cZQE8FyOnYkZ2togaabs3jLtfWnHjO8wIKmU644/BmQwVm/16hiHy2WM0CvLeDmHxeXqYyfvVc6Xp7SFgRJruBXBl2J3
-X-Gm-Message-State: AOJu0YwAGifO30drrDHtdcTUxJKMUwbFIflz3zkLYnZxx1KbbXrcnToe
-	o+dB+f7p0v1nQFg/u6Yh+Bo4+MaM34C1Bck7qu05K8w1m6p0P1PnS7e+J/l+WgA=
-X-Google-Smtp-Source: AGHT+IFzRNxfhosEyI+rRgGgowaMy78jv75fcicSpz5Y5yLsGIrZvtYgBwFW7R2LulAEPEzO9jc+hw==
-X-Received: by 2002:a05:6402:2401:b0:568:a05e:eafd with SMTP id t1-20020a056402240100b00568a05eeafdmr9346676eda.39.1710747558031;
-        Mon, 18 Mar 2024 00:39:18 -0700 (PDT)
+        bh=c72fdTUZtGgEqYLgWdMw4Z3JQurOW9liWuFGsNI6KVg=;
+        b=L7coX2Ml1iMAZKy/Xj8r6iyMLiiYeGy7ggxQIUxUVmUf6AOnuPW8gGOI5uWk+ChKXm
+         6vjzsK57xmMMdjE2S2KViI7IK11Eei77z2cemVX2awkeQEMJtV8Sis4GttMq4nO8izbK
+         FOsYFeGvORkBo3RYTVfnkW+HT0V8LwGEmW2TM17KZajX+2SsBWZ76qs+83amwGSwCrhW
+         2d7jGCg9nRc8cZsH5zeptI+rOnMeuD/WwWFjAomPTA44gxZtn+zC/22JoO8bc4vV/iCp
+         398Vwy15ZsPF+VUPxBWJV5dMsYSzVCsqn62gr/tohQw2SAhFVRvsqbckjaGJ3m57N2WM
+         Yrrw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0yN7SNf6DMtJU5JHJkxLUgPpU3G7C6fqvoKD/LsAAze2xdt6ko3I4knEWRIkAcZQ8u7LV+TcPLKRWHvB72KsD/BvGigGbXGme
+X-Gm-Message-State: AOJu0Yx1kYFzFww0nEJ1eh9B/kSv4iE2idb4b8UHVwNArwRs4o+duGfM
+	8KuJmO65Jgm0VX3qy5CatuIjo8D0KuHIkmkOIXVvaTIlrO2fAcwm4vqcLaouiXo=
+X-Google-Smtp-Source: AGHT+IGksPpLOMb3TcnP90t1eD27JwWBE7KI1x8yQDxO+JrHME9wevbX26wxSebKQDpK5VYvLcqZyA==
+X-Received: by 2002:a17:906:e942:b0:a45:ab98:aec with SMTP id jw2-20020a170906e94200b00a45ab980aecmr9473404ejb.10.1710747715638;
+        Mon, 18 Mar 2024 00:41:55 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id g13-20020a056402428d00b005689f3d6936sm4350727edc.53.2024.03.18.00.39.14
+        by smtp.gmail.com with ESMTPSA id bn8-20020a170907268800b00a46be7fb6b8sm789126ejc.43.2024.03.18.00.41.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Mar 2024 00:39:17 -0700 (PDT)
-Message-ID: <85123b46-188c-47b3-88e9-3122ad67ec47@linaro.org>
-Date: Mon, 18 Mar 2024 08:39:13 +0100
+        Mon, 18 Mar 2024 00:41:55 -0700 (PDT)
+Message-ID: <b2793d2d-d0ae-406f-b024-06d3a327ed35@linaro.org>
+Date: Mon, 18 Mar 2024 08:41:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,11 +61,9 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] arm64: dts: S32G3: Introduce device tree for
- S32G-VNP-RDB3
+Subject: Re: [PATCH 2/3] net: stmmac: Add NXP S32 SoC family support
 Content-Language: en-US
-To: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- Wadim Mueller <wafgo01@gmail.com>
+To: Wadim Mueller <wafgo01@gmail.com>
 Cc: "David S. Miller" <davem@davemloft.net>,
  Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
  Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
@@ -82,7 +80,7 @@ Cc: "David S. Miller" <davem@davemloft.net>,
  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
- Simon Horman <horms@kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+ Andrew Halaney <ahalaney@redhat.com>, Simon Horman <horms@kernel.org>,
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
  Johannes Zink <j.zink@pengutronix.de>, Shenwei Wang <shenwei.wang@nxp.com>,
  "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
@@ -92,8 +90,9 @@ Cc: "David S. Miller" <davem@davemloft.net>,
  linux-arm-kernel@lists.infradead.org,
  linux-stm32@st-md-mailman.stormreply.com, linux-clk@vger.kernel.org
 References: <20240315222754.22366-1-wafgo01@gmail.com>
- <20240315222754.22366-2-wafgo01@gmail.com>
- <4e168fbc-8a13-4666-ab80-e3032f61ef38@oss.nxp.com>
+ <20240315222754.22366-3-wafgo01@gmail.com>
+ <2316e61d-ad7d-46fb-9f55-67964552855a@linaro.org>
+ <20240317232615.GB22886@bhlegrsu.conti.de>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -139,54 +138,83 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <4e168fbc-8a13-4666-ab80-e3032f61ef38@oss.nxp.com>
+In-Reply-To: <20240317232615.GB22886@bhlegrsu.conti.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/03/2024 08:32, Ghennadi Procopciuc wrote:
-> On 3/16/24 00:27, Wadim Mueller wrote:
->> This commit adds device tree support for the NXP S32G3-based
->> S32G-VNP-RDB3 Board (Vehicle Networking Platform - Reference Design Board) [1].
+On 18/03/2024 00:26, Wadim Mueller wrote:
+> On Sun, Mar 17, 2024 at 03:53:19PM +0100, Krzysztof Kozlowski wrote:
+>> On 15/03/2024 23:27, Wadim Mueller wrote:
+>>> Add support for NXP S32 SoC family's GMAC to the stmmac network driver. This driver implementation is based on the patchset originally contributed by Chester Lin [1], which itself draws heavily from NXP's downstream implementation [2]. The patchset was never merged.
+>>>
+>>> The S32G2/3 SoCs feature multiple Ethernet interfaces (PFE0, PFE1, PFE2, and GMAC) which can be routed through a SerDes Subsystem, supporting various interfaces such as SGMII and RGMII. However, the current Glue Code lacks support for SerDes routing and pinctrl handling, relying solely on correct settings in U-Boot. Clock settings for this SoC are managed by the ATF Firmware.
 >>
->> The S32G3 features an 8-core ARM Cortex-A53 based SoC developed by NXP.
 >>
->> The device tree files are derived from the official NXP downstream Linux tree [2].
+>> Please run scripts/checkpatch.pl and fix reported warnings. Some
+>> warnings can be ignored, but the code here looks like it needs a fix.
+>> Feel free to get in touch if the warning is not clear.
 >>
->> This addition encompasses a limited selection of peripherals that are upstream-supported. Apart from the ARM System Modules (GIC, Generic Timer, etc.), the following IPs have been validated:
+>> Read how commit msg should be wrapped.
 >>
->>     UART: fsl-linflexuart
->>     SDHC: fsl-imx-esdhc
->>     Ethernet: synopsys gmac/stmac
+>> Please wrap commit message according to Linux coding style / submission
+>> process (neither too early nor over the limit):
+>> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 >>
->> Clock settings for the chip rely on ATF Firmware [3]. Pin control integration into the device tree is pending and currently relies on Firmware/U-Boot settings [4].
+>>>
+>>> Changes made compared to [1]:
+>>>
+>>>     Rebased onto Linux 6.8-rc7
+>>>     Consolidated into a single commit
+>>>     Minor adjustments in naming and usage of dev_err()/dev_info()
+>>>
+>>> Test Environment:
+>>> The driver has been successfully tested on the official S32G-VNP-RDB3 Reference Design Board from NXP, utilizing an S32G3 SoC. The firmware and U-Boot used were from the BSP39 Release. The official BSP39 Ubuntu 22.04 Release was successfully booted. A network stress test using iperf [3] was also executed without issues.
+>>>
+>>> [1] https://patchwork.kernel.org/project/netdevbpf/patch/20221031101052.14956-6-clin@suse.com/#25068228
+>>> [2] https://github.com/nxp-auto-linux/linux/blob/release/bsp39.0-5.15.129-rt/drivers/net/ethernet/stmicro/stmmac/dwmac-s32cc.c
+>>> [3] https://linux.die.net/man/1/iperf
+>>> [4] https://github.com/nxp-auto-linux/u-boot
+>>> [5] https://github.com/nxp-auto-linux/arm-trusted-firmware
+>>>
+>>> Signed-off-by: Wadim Mueller <wafgo01@gmail.com>
+>>> ---
+>>>  drivers/net/ethernet/stmicro/stmmac/Kconfig   |  12 +
+>>>  drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
 >>
->> These changes were validated using the latest BSP39 Firmware/U-Boot from NXP [5].
+>> That's totally unrelated to DTS. Do not mix independent work in one
+>> patchset. This targets net-next, not SoC, so please send it as separate
+>> patchset when net-next reopens, so after merge window.
 >>
->> The modifications enable booting the official Ubuntu 22.04 from NXP on
->> the RDB3 with default settings from the SD card and eMMC.
->>
->> [1] https://www.nxp.com/design/design-center/designs/s32g3-vehicle-networking-reference-design:S32G-VNP-RDB3
->> [2] https://github.com/nxp-auto-linux/linux
->> [3] https://github.com/nxp-auto-linux/arm-trusted-firmware
->> [4] https://github.com/nxp-auto-linux/u-boot
->> [5] https://github.com/nxp-auto-linux/auto_yocto_bsp
->>
->> Signed-off-by: Wadim Mueller <wafgo01@gmail.com>
 > 
-> This patch seems to be heavily based on the downstream version of the
-> kernel. Many of the changes originate from NXP. Therefore, shouldn't the
-> authors also be mentioned here?
+> Let me try to explain why I was thinking that both should be part of the
+> same patchset. 
+> 
+> The DTS file patch [1/3] is refering to a NIC for which there is no
+> upstream driver (or lets call it better glue code for the real driver) available. 
 
-Let's say there are 100 commits with 100 authors in downstream. Do you
-expect to list them all? Please point to parts which are directly copied
-(with references to original commits).
+That's not valid reason. You only need to mention where the bindings are
+for dwmac.
 
-Anyway, Wadim's SoB is enough from DCO point of view. We do not keep
-authorship of downstream sources. If downstream cared, they would
-upstreamed it much earlier than the community.
+> 
+> This patch here is supposed to add support for this driver. So without this part the DT
+> node named "gmac0" of [1/3] is not of much use. Thats why I was thinking they
 
-However if original work has any copyright statements, they should be
-retained if this is indeed derivative work.
+Does not matter. DTS is independent description of hardware. Do you want
+to say that without driver support in Linux you could not add the DTS?
+No, that's irrelevant.
+
+
+> should be part of one patchset.
+> 
+> But your statement also totally makes sense to me.
+
+You unnecessary grow the CC list - it is already way too big (please
+trim it to maintainers only and CC lists) - and make applying more
+complicated, e.g. suggesting there is some dependency.
+
+DTS *must* go via arm-soc, not net-next, combining it here increases the
+risk it will go via wrong tree.
+
 
 Best regards,
 Krzysztof
