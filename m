@@ -1,207 +1,162 @@
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7777258211;
-	Mon, 18 Mar 2024 22:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD8E5A4C9;
+	Mon, 18 Mar 2024 22:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710801374; cv=none; b=MCbybFwcrHvy/o/ytnm+D7KF73KSR1fyTByyducFl+oi57Ht1GGgC4QvUKYAd51i0ftGemBiEmOSHlWAfSFCMb/qFbr7R/7fVRo+YmZRa6Wm150WeHr6y2qB0UwfHkTiA+F63/g9N+nN3LSUBR8YZcvxrDCFvJBT4s26TdrSCvA=
+	t=1710801535; cv=none; b=W9KVrL4r8CHnDr+hF2v8I45cunYiIFovBph/N/8Sgcl/J3s4dojVZv5e1gsGBWxH4NpP/gpfkSbfyq6tmkiWofVZaZnKzsyku07RyyNO0mJWOt1OyGHp64ysnun5h9eYgFa71BcnY04bKgBuWX4YKtUjln0c99dLEloqsa36E1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710801374; c=relaxed/simple;
-	bh=YvF7eLe7205wxa6RAenyAxtCB0M8C9fT9UInMrApoEY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P6K6d0w318cfQGCOSyGi9eovPsnQpZ8/B+xldTg6q9j3cqXS5HmeouFEG5+Uubtdo4Czi2b1unG42rW/JeKdQntguqsmzVLf80dFVC4Icie1QBZykYO2kRzY+KsBEQ6W2eblyCA41nxlLAxMWMseilnRLQouE8o3RgABRqAVmJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=J+aHlngq; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+	s=arc-20240116; t=1710801535; c=relaxed/simple;
+	bh=iYYl/X3S1ud9BieZJR2iMwdKlvZTFaDy1KeuQBPhaNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3d4Z5n6vywmgz9X8L9HiuKAE4c3jDCEdKWKmVmJe8M3iRTxDJtpSKUTp+yELyKZKYrhVMFTia8q4Md9cEM/dLpLCKKC1LbCcXE9kGSHvzVw2OZsYdlF5SK+WytI4N7VCZ5gg1nzxK1o8ZYpN9xcZYV73zE5R3O5TQ5tgj2IQmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZAzSfiGC; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="J+aHlngq"
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id E086310000A;
-	Tue, 19 Mar 2024 01:35:58 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E086310000A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1710801358;
-	bh=vPcHUQZVimBhgCl8L1f1HwLGGZYqomI6G5dUIYpgXh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=J+aHlngq9//OVD9HE6Ik14KAs5VWEg57NxJNYzD9iYiuWq45OZAyUMhJz0HXqfp1N
-	 aiWgMRNxojFULwjNsxw1oxwj7hMwOPIWhNFAlyRdUaWAJ2sjAO32yOD7eR08Ez2QTM
-	 Q1390IWLe4lfY9vuAS4IRRhEEkBZejw/XcxM+8ueUzJ6obYKcRjxt6ZKs3QyXMWYOA
-	 iziszeAinZ+nPhqlLhc+F20oqkJzqzxrltZ7KkYJuB+7HXer2DxAeDu1YIJ+JyduG5
-	 VM+jNFHlsLUB5UIEaMseXMz22VUxYZlykmEziDmnsVkAy1NUdPaNr/ocv17UQOkkTe
-	 jPBin7Ojeet1g==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Tue, 19 Mar 2024 01:35:58 +0300 (MSK)
-Received: from [172.28.64.112] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 19 Mar 2024 01:35:58 +0300
-Message-ID: <d4cfef9e-3cae-4f1a-90b3-33d5707596f9@salutedevices.com>
-Date: Tue, 19 Mar 2024 01:35:12 +0300
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZAzSfiGC"
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CF31A55;
+	Mon, 18 Mar 2024 23:38:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1710801505;
+	bh=iYYl/X3S1ud9BieZJR2iMwdKlvZTFaDy1KeuQBPhaNE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZAzSfiGCXXLENOsOXx2jcPJKN53TMzDp5fFMWfC6TYbIJMSWocR3tPRQZdYxyykGZ
+	 LzNSQdmdTsCktkYeg/yqM3OTD1mQ8i1HuebWUEvm3Lua4Cyj8hEiBDJzL0lXLgPHAV
+	 K3XOtquoBPf4HVkxNVc3vgDiLO3awS+coEBb3mp4=
+Date: Tue, 19 Mar 2024 00:38:48 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] clk: Update API documentation related to clock
+ disable
+Message-ID: <20240318223848.GR13682@pendragon.ideasonboard.com>
+References: <20240318110842.41956-1-biju.das.jz@bp.renesas.com>
+ <20240318110842.41956-2-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/25] clk: meson: a1: restrict an amount of 'hifi_pll'
- params
-Content-Language: en-US
-To: Jerome Brunet <jbrunet@baylibre.com>
-CC: Neil Armstrong <neil.armstrong@linaro.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <alsa-devel@alsa-project.org>,
-	<linux-sound@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<kernel@salutedevices.com>
-References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
- <20240314232201.2102178-2-jan.dakinevich@salutedevices.com>
- <1j8r2jj24k.fsf@starbuckisacylon.baylibre.com>
- <cbfd9c66-cca5-49f5-9468-43710c48518e@salutedevices.com>
- <1jedc7hlg4.fsf@starbuckisacylon.baylibre.com>
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <1jedc7hlg4.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 184250 [Mar 18 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 10 0.3.10 53c821b925e16276b831986eabc71d60ab82ee60, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;sberdevices.ru:7.1.1,5.0.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/03/18 20:02:00 #24276844
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240318110842.41956-2-biju.das.jz@bp.renesas.com>
 
+Hi Biju,
 
+Thank you for the patch.
 
-On 3/18/24 13:17, Jerome Brunet wrote:
+On Mon, Mar 18, 2024 at 11:08:40AM +0000, Biju Das wrote:
 > 
-> On Sun 17 Mar 2024 at 17:17, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
-> 
->> On 3/15/24 11:58, Jerome Brunet wrote:
->>>
->>> On Fri 15 Mar 2024 at 02:21, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
->>>
->>>> Existing values were insufficient to produce accurate clock for audio
->>>> devices. New values are safe and most suitable to produce 48000Hz sample
->>>> rate.
->>>
->>> The hifi pll is not about 48k only. I see no reason to restrict the PLL
->>> to a single setting.
->>>> You've provided no justification why the PLL driver can't reach the same
->>> setting for 48k. The setting below is just the crude part. the fine
->>> tuning is done done with the frac parameter so I doubt this provides a
->>> more accurate rate.
->>>
->>
->> You are right, it is not about 48k only. However, there are two issues.
->>
->> First, indeed, I could just extend the range of multipliers to 1..255.
-> 
-> Why 1..255 ? This is not what I'm pointing out
-> 
-> According to the datasheet - the range is 32 - 64, as currently
-> set in the driver.
-> 
+> The API's related to clk disable operation does not explicitly
+> states the synchoronous or asynchrous behaviour as it is driver
 
-Could you point where in the doc the range 32..64 is documented?
-Documentation that I have may be not so complete, but I don't see there
-any mention about it.
+s/synchoronous/synchronous/
 
-Anyway, range 32..64 of multipliers is not enough to produce accurate
-clock, and a need 128 for 48kHz.
+> dependent. So make this part clear in API documentation.
 
-> The change you have provided request a multipler of 128/5 = 25,6
-> If you put assigned-rate = 614400000 in DT, I see no reason can find the
-> same solution on its own.
-> 
+You need to explain the rationale here, why asynchronous behaviour is
+preferred.
 
-The reasoning is following. I don't know why 32..64 range was declared
-for this clock, and whether it would be safe to extend it and include
-128, which is required for 48kHz. But I know, that multiplier=128 is
-safe and works fine (together divider=5).
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v2->v3:
+>  * No change.
+> v2:
+>  * New patch.
+> ---
+>  drivers/clk/clk.c            | 3 ++-
+>  include/linux/clk-provider.h | 3 ++-
+>  include/linux/clk.h          | 3 ++-
+>  3 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 25371c91a58f..f5fa91a339d7 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1010,7 +1010,8 @@ static void clk_core_unprepare_lock(struct clk_core *core)
+>   * if the operation may sleep.  One example is a clk which is accessed over
+>   * I2c.  In the complex case a clk gate operation may require a fast and a slow
+>   * part.  It is this reason that clk_unprepare and clk_disable are not mutually
+> - * exclusive.  In fact clk_disable must be called before clk_unprepare.
+> + * exclusive.  In fact clk_disable must be called before clk_unprepare.  The
+> + * synchronous or asynchronous clock gating operation is driver dependent.
 
->> But I am unsure if hifi_pll is able to handle whole range of
->> mulptipliers. The value 128 is taken from Amlogic's branch, and I am
->> pretty sure that it works.
-> 
->>
->> Second, unfortunately frac parameter currently doesn't work. When frac
->> is used enabling of hifi_pll fails in meson_clk_pll_wait_lock(). I see
->> it when try to use 44100Hz and multipliers' range is set to 1..255. So,
->> support of other rates than 48k requires extra effort.
-> 
-> Then your change is even more problematic because it certainly does not
-> disable frac ... which you say is broken.
-> 
-> That parameter should be removed with a proper comment explaining why
-> you are disabling it. That type a limitation / known issue should be
-> mentionned in your change.
-> 
+If synchronous operation is not guaranteed, then it's asynchonous.
+Asynchronous doesn't mean slow, even an asynchronous provider can
+complete the disable operation before the function returns to the
+caller. All it means is that there's no guarantee of synchronous
+operation. I would document it as such:
 
-Handling of frac should not be removed, it should be fixed to achieve
-another rates. But that is not the goal of this commit.
+ * This function is asynchronous, if may return before the clock provider 
+ * completes the unprepare operation.
 
+However, below you're addressing the disable operation. Did you mean to
+patch the documentation for clk_prepare() instead ? Making
+clk_unprepare() asynchronous seems a bit weird, given that the function
+may sleep and is expected to take more time.
 
->>
->>>>
->>>> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
->>>> ---
->>>>  drivers/clk/meson/a1-pll.c | 8 ++++----
->>>>  1 file changed, 4 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
->>>> index 4325e8a6a3ef..00e06d03445b 100644
->>>> --- a/drivers/clk/meson/a1-pll.c
->>>> +++ b/drivers/clk/meson/a1-pll.c
->>>> @@ -74,9 +74,9 @@ static struct clk_regmap fixed_pll = {
->>>>  	},
->>>>  };
->>>>  
->>>> -static const struct pll_mult_range hifi_pll_mult_range = {
->>>> -	.min = 32,
->>>> -	.max = 64,
->>>> +static const struct pll_params_table hifi_pll_params_table[] = {
->>>> +	PLL_PARAMS(128, 5),
->>>> +	{ },
->>>>  };
->>>>  
->>>>  static const struct reg_sequence hifi_init_regs[] = {
->>>> @@ -124,7 +124,7 @@ static struct clk_regmap hifi_pll = {
->>>>  			.shift   = 6,
->>>>  			.width   = 1,
->>>>  		},
->>>> -		.range = &hifi_pll_mult_range,
->>>> +		.table = hifi_pll_params_table,
->>>>  		.init_regs = hifi_init_regs,
->>>>  		.init_count = ARRAY_SIZE(hifi_init_regs),
->>>>  	},
->>>
->>>
-> 
-> 
+>   */
+>  void clk_unprepare(struct clk *clk)
+>  {
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 4a537260f655..5b493024e1ec 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -113,7 +113,8 @@ struct clk_duty {
+>   *		sleep.
+>   *
+>   * @disable:	Disable the clock atomically. Called with enable_lock held.
+> - *		This function must not sleep.
+> + *		This function must not sleep. The synchronous or asynchronous
+> + *		disabling of the clock is driver dependent.
+
+As this is the documentation that targets clock providers, I would
+expand it and explain why a provider may want to make the disable
+operation not synchronous.
+
+>   *
+>   * @is_enabled:	Queries the hardware to determine if the clock is enabled.
+>   *		This function must not sleep. Optional, if this op is not
+
+.is_enabled() should become mandatory if .disable() is not synchronous.
+The relationship between the two operations should be better explained.
+
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 00623f4de5e1..84b02518791f 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -681,7 +681,8 @@ int __must_check clk_bulk_enable(int num_clks,
+>   * @clk: clock source
+>   *
+>   * Inform the system that a clock source is no longer required by
+> - * a driver and may be shut down.
+> + * a driver and may be shut down. It is not guaranteed to ever actually
+> + * be stopped, that will be driver dependent.
+
+This is the documentation of clk_bulk_disable(), you should address
+clk_disable() too. I've just noticed that both functions are documented
+in two places, in include/linux/clk.h, and in drivers/clk/. I wonder why
+that is. It sounds like it should be fixed, or you'll have to patch both
+documentation blocks.
+
+There's another issue that I'll raise in the review of 2/3.
+
+>   *
+>   * May be called from atomic contexts.
+>   *
 
 -- 
-Best regards
-Jan Dakinevich
+Regards,
+
+Laurent Pinchart
