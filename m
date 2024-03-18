@@ -1,197 +1,155 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20161E89E;
-	Mon, 18 Mar 2024 05:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94FD28E11;
+	Mon, 18 Mar 2024 06:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710740443; cv=none; b=KGy1O2rMeREqrUHx/R2dUW3HpUYmf0Rgd7h6vGOKn8DykYXlIEMIVAoe5AMHwNzsv66X1oP8QuLoLLT47GFnuuai+II6a6ECWKuPu7X2x6OBiiHF8r5xw9lxPz0X9egRUvoYxwPclxnWL7sAkaOdk6l5wnxx3/fF3Yhb6qeB76s=
+	t=1710741940; cv=none; b=mjxw8RSiv6bfkGJ/WORepVuA+aTo9vIrsdEMF6jQDo3wlvlBEQs6uidl4VN3wBkzCUwz6q5nL1BZm0TwPYUvuMGKdnGtOTJnIS2aWVBeR4VgfEn6jobvzxxNFWeJBDLsWmFoAxvqNIWS1uupUiQb3Gnqx+jev2LkpnGdXQOJWac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710740443; c=relaxed/simple;
-	bh=h/Ln9yPHtqlby+Fp6MUf3PS6y0nv61hhQvGCsQv9BhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kOBvvSXQMJMKTJq3z8aoDoTEO7RCA7pv5lwbiwIMGZKh3MPL81RgV43I7VWjSny6yEEjv2ythUelV3pSafjeltMmnAIzzMy3vpd8HbnhGxbp7JW1dLj/wuNNc/TNfEk2tE6GNvEy5Gj3qeL6j/hb63c1BFIjG8iwy1oQfmikR28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LxgE5pX+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1710741940; c=relaxed/simple;
+	bh=k+1F4DGdkmIP5BKndrQeSdoViUYt0iKqzHFCr1rNXyE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTvfQfc/v87KyHZMYu7VLntHws1IvVBDsC3EIpptVG4l8XW9brrrASBE2RqukbSz/gN6Peo0sPPqImgIB1/RDWtY1/JXroWNkU8R8AfmNoyEBoks7DOs/upQrQdj2u6YQNhHIYh1PNLYOcuqifkj7p/qzQH2WZm+Rp06BBMHylo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fYM4gLlY; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LxgE5pX+"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42I5dWbk022455;
-	Mon, 18 Mar 2024 05:40:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=SPiZIQTn+g32WTjYdojmq9ZTZLv8aPvVwv57pq3k6Xg=; b=Lx
-	gE5pX+0vB4K643dXvGWDy4A6xruBaRzDJN5kQ9ie1OG5+R+a0PqpJSciYMhvUpSU
-	plvjikMgISvjw50epftMGm2OFMQdKKr2fPkvAC3fVX4godl8XE3wYq88oLzD4iJF
-	1H/NlqDSiZVyd0Jo6YvPNB6fpFeWDtBMxKM2YPNk6bYj9qggXjEv9zwEe5RsoHNT
-	fhefp4F48ZttLXAR95R5MNOuvm69le0brl0WAg9iQVBpKg5/0az4JPyFT4QXaLcV
-	2pv9+YLAYAoC/dzLbZnBhYChCDI7XO5YFfSDx+izsZlNUMegN/0f1CiK6Ze0R7BI
-	5Zm0HXrvYJKMhpESYqDw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wwxtds4tb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Mar 2024 05:40:37 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42I5ea7q019434
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Mar 2024 05:40:36 GMT
-Received: from [10.216.55.168] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Sun, 17 Mar
- 2024 22:40:30 -0700
-Message-ID: <7d0e81fd-8cc2-46f2-bc12-759a0d48e3ae@quicinc.com>
-Date: Mon, 18 Mar 2024 11:09:52 +0530
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fYM4gLlY"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 42I65ICW118987;
+	Mon, 18 Mar 2024 01:05:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1710741919;
+	bh=fV9zpmrpCZiHMRmbkTtXXxqdU1tu4LBt/7BJp3jTS+0=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=fYM4gLlYWsh3CUC9Kco8/NZIZufuOsaLtV032G5E499q00xPWdJOYVR2D0vI4WQSY
+	 KUkBBgb8uq0PKlbsakTJiQQdj37O8gnsL6ZwkJrkzU/nFi0cshM9iCNkJjq1Jdzr5g
+	 rp91az2dtMZmApqTzgtB3RA7j9MkKhWUmS1gj+Ig=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 42I65IpT024513
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 18 Mar 2024 01:05:18 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 18
+ Mar 2024 01:05:18 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 18 Mar 2024 01:05:18 -0500
+Received: from localhost (dhruva.dhcp.ti.com [172.24.227.68])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 42I65HB3095934;
+	Mon, 18 Mar 2024 01:05:18 -0500
+Date: Mon, 18 Mar 2024 11:35:17 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+CC: "Rafael J . Wysocki" <rafael@kernel.org>,
+        Kevin Hilman
+	<khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Pavel Machek
+	<pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad
+ Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Andy Gross <agross@kernel.org>, Stephen Boyd
+	<sboyd@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Vikash
+ Garodia <quic_vgarodia@quicinc.com>,
+        "Bryan O'Donoghue"
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abel Vesa
+	<abel.vesa@linaro.org>, Taniya Das <quic_tdas@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, Imran Shaik <quic_imrashai@quicinc.com>,
+        Ajit
+ Pandey <quic_ajipan@quicinc.com>
+Subject: Re: [PATCH V5 2/5] PM: domains: Add the domain HW-managed mode to
+ the summary
+Message-ID: <20240318060517.d3cq4thijjp55xd6@dhruva>
+References: <20240315111046.22136-1-quic_jkona@quicinc.com>
+ <20240315111046.22136-3-quic_jkona@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: qcom: apss-ipq-pll: use stromer ops for IPQ5018
- to fix boot failure
-To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Sricharan
- Ramabadhran" <quic_srichara@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Gokul Sriram Palanisamy
-	<quic_gokulsri@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20240315-apss-ipq-pll-ipq5018-hang-v2-1-6fe30ada2009@gmail.com>
-Content-Language: en-US
-From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-In-Reply-To: <20240315-apss-ipq-pll-ipq5018-hang-v2-1-6fe30ada2009@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: VOi_2MVMftvGOeRjEnYMyJVyBiACw76m
-X-Proofpoint-ORIG-GUID: VOi_2MVMftvGOeRjEnYMyJVyBiACw76m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-17_12,2024-03-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 clxscore=1015
- impostorscore=0 malwarescore=0 suspectscore=0 adultscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2403140001 definitions=main-2403180041
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240315111046.22136-3-quic_jkona@quicinc.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+On Mar 15, 2024 at 16:40:43 +0530, Jagadeesh Kona wrote:
+> From: Abel Vesa <abel.vesa@linaro.org>
+> 
+> Now that genpd supports dynamically switching the control for an
+> attached device between hardware- and software-mode,  let's add this
+> information to the genpd summary in debugfs.
 
+"under managed by column" would be good to add as well
 
-On 3/15/2024 9:46 PM, Gabor Juhos wrote:
-> Booting v6.8 results in a hang on various IPQ5018 based boards.
-> Investigating the problem showed that the hang happens when the
-> clk_alpha_pll_stromer_plus_set_rate() function tries to write
-> into the PLL_MODE register of the APSS PLL.
 > 
-> Checking the downstream code revealed that it uses [1] stromer
-> specific operations for IPQ5018, whereas in the current code
-> the stromer plus specific operations are used.
-> 
-> The ops in the 'ipq_pll_stromer_plus' clock definition can't be
-> changed since that is needed for IPQ5332, so add a new alpha pll
-> clock declaration which uses the correct stromer ops and use this
-> new clock for IPQ5018 to avoid the boot failure.
-> 
-> Also, change pll_type in 'ipq5018_pll_data' to
-> CLK_ALPHA_PLL_TYPE_STROMER to better reflect that it is a Stromer
-> PLL and change the apss_ipq_pll_probe() function accordingly.
-> 
-> 1. https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-ipq-5.4/-/blob/NHSS.QSDK.12.4/drivers/clk/qcom/apss-ipq5018.c#L67
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 50492f929486 ("clk: qcom: apss-ipq-pll: add support for IPQ5018")
-> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> Suggested-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 > ---
-> Changes in v2:
->    - extend commit description due to the changes
->    - add a comment about why CLK_ALPHA_PLL_TYPE_STROMER_PLUS register offsets
->      are used
->    - constify hw clock init data (Stephen)
->    - change pll_type in ipq5018_pll_data to CLK_ALPHA_PLL_TYPE_STROMER (Konrad)
->    - Link to v1: https://lore.kernel.org/r/20240311-apss-ipq-pll-ipq5018-hang-v1-1-8ed42b7a904d@gmail.com
-
-
-I don't see a reason why my tags are dropped, nevertheless
-
-Tested-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-
-
-> ---
-> Based on v6.8.
-> ---
->   drivers/clk/qcom/apss-ipq-pll.c | 30 +++++++++++++++++++++++++++---
->   1 file changed, 27 insertions(+), 3 deletions(-)
+>  drivers/pmdomain/core.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
-> index 678b805f13d45..dfffec2f06ae7 100644
-> --- a/drivers/clk/qcom/apss-ipq-pll.c
-> +++ b/drivers/clk/qcom/apss-ipq-pll.c
-> @@ -55,6 +55,29 @@ static struct clk_alpha_pll ipq_pll_huayra = {
->   	},
->   };
->   
-> +static struct clk_alpha_pll ipq_pll_stromer = {
-> +	.offset = 0x0,
-> +	/*
-> +	 * Reuse CLK_ALPHA_PLL_TYPE_STROMER_PLUS register offsets.
-> +	 * Although this is a bit confusing, but the offset values
-> +	 * are correct nevertheless.
-> +	 */
-> +	.regs = ipq_pll_offsets[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
-> +	.flags = SUPPORTS_DYNAMIC_UPDATE,
-> +	.clkr = {
-> +		.enable_reg = 0x0,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "a53pll",
-> +			.parent_data = &(const struct clk_parent_data) {
-> +				.fw_name = "xo",
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_alpha_pll_stromer_ops,
-> +		},
-> +	},
-> +};
+> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> index 70d8634dd9e8..18a101215c9c 100644
+> --- a/drivers/pmdomain/core.c
+> +++ b/drivers/pmdomain/core.c
+> @@ -3173,6 +3173,15 @@ static void rtpm_status_str(struct seq_file *s, struct device *dev)
+>  	seq_printf(s, "%-25s  ", p);
+>  }
+>  
+> +static void mode_status_str(struct seq_file *s, struct device *dev)
+> +{
+> +	struct generic_pm_domain_data *gpd_data;
 > +
->   static struct clk_alpha_pll ipq_pll_stromer_plus = {
->   	.offset = 0x0,
->   	.regs = ipq_pll_offsets[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
-> @@ -144,8 +167,8 @@ struct apss_pll_data {
->   };
->   
->   static const struct apss_pll_data ipq5018_pll_data = {
-> -	.pll_type = CLK_ALPHA_PLL_TYPE_STROMER_PLUS,
-> -	.pll = &ipq_pll_stromer_plus,
-> +	.pll_type = CLK_ALPHA_PLL_TYPE_STROMER,
-> +	.pll = &ipq_pll_stromer,
->   	.pll_config = &ipq5018_pll_config,
->   };
->   
-> @@ -203,7 +226,8 @@ static int apss_ipq_pll_probe(struct platform_device *pdev)
->   
->   	if (data->pll_type == CLK_ALPHA_PLL_TYPE_HUAYRA)
->   		clk_alpha_pll_configure(data->pll, regmap, data->pll_config);
-> -	else if (data->pll_type == CLK_ALPHA_PLL_TYPE_STROMER_PLUS)
-> +	else if (data->pll_type == CLK_ALPHA_PLL_TYPE_STROMER ||
-> +		 data->pll_type == CLK_ALPHA_PLL_TYPE_STROMER_PLUS)
->   		clk_stromer_pll_configure(data->pll, regmap, data->pll_config);
->   
->   	ret = devm_clk_register_regmap(dev, &data->pll->clkr);
-> 
-> ---
-> base-commit: e8f897f4afef0031fe618a8e94127a0934896aba
-> change-id: 20240311-apss-ipq-pll-ipq5018-hang-74d9a8f47136
-> 
-> Best regards,
+> +	gpd_data = to_gpd_data(dev->power.subsys_data->domain_data);
+> +
+> +	seq_printf(s, "%20s", gpd_data->hw_mode ? "HW" : "SW");
+> +}
+> +
+>  static void perf_status_str(struct seq_file *s, struct device *dev)
+>  {
+>  	struct generic_pm_domain_data *gpd_data;
+> @@ -3231,6 +3240,7 @@ static int genpd_summary_one(struct seq_file *s,
+>  		seq_printf(s, "\n    %-50s  ", kobj_path);
+>  		rtpm_status_str(s, pm_data->dev);
+>  		perf_status_str(s, pm_data->dev);
+> +		mode_status_str(s, pm_data->dev);
+>  		kfree(kobj_path);
+>  	}
+>  
+> @@ -3247,8 +3257,8 @@ static int summary_show(struct seq_file *s, void *data)
+>  	int ret = 0;
+>  
+>  	seq_puts(s, "domain                          status          children                           performance\n");
+> -	seq_puts(s, "    /device                                             runtime status\n");
+> -	seq_puts(s, "----------------------------------------------------------------------------------------------\n");
+> +	seq_puts(s, "    /device                                             runtime status                           managed by\n");
+> +	seq_puts(s, "------------------------------------------------------------------------------------------------------------\n");
+
+LGTM,
+
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+
+-- 
+Best regards,
+Dhruva Gole <d-gole@ti.com>
