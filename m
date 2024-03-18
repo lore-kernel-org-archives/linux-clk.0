@@ -1,122 +1,84 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6E74EB30;
-	Mon, 18 Mar 2024 15:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E58D4F1E1;
+	Mon, 18 Mar 2024 15:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710774033; cv=none; b=cXHwezUdp+qHDJlMwk6wTF1CMTOQOfrWOLaXUndvMQYj0lZWWgnKnqB3jpPsx73Bqkz60Sq4w3Llp0Ar5PNFKS8DAyTi/umV0r1A4MhKw4NZyFJJ/5rPlKLnH2F687i7N8DB/m9SjRaniEFAxuZ4MQyWhrB72hZ3bR79RCz1wBw=
+	t=1710775096; cv=none; b=b/dJZ962fBcsYaI4ugHmJkGazEjVxSrV2JJesc1iFVKdTjiAuo37wyKyzRVGxFRbDFpXqmPeu/9j+WyBBDD9Gylu8E3V4qocI31NqGaoAdHGcFoTis1FGOywkzuzH3MnVQG63LqDmo0rzfUvPVq6RhnV5NoL4er6gKAWY5lKLMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710774033; c=relaxed/simple;
-	bh=XDxXBRDjarTtKROiMq/2wlgwNHkBLP7nSY+Gzs5Go28=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VNmqSHPuKr/7LdhaFXnr4wRG6wttJFM0/ldmVBa04S7ICbEhBjrJllSO6s4IDOmgSIcmqTF8D6XNRpU8+dpHi0bY4uyM+RdjkU8iRBpgqyXohl21mj7FogusmbQ8PdD/cj/DyPIUbtXJViYdDVIXmy4Xk3qvYjEH9nCrPYkQ5Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-609ff069a40so52247937b3.1;
-        Mon, 18 Mar 2024 08:00:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710774031; x=1711378831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hXPz6+0togvKFnM43qr9sOSa8N0BWel3JsRydDrzDrc=;
-        b=O34M3QeH9TFBpo/TjX3MS+ie6SBsI9c4uSAR8lLd70ju0GJ5fVL8velkeFbkI2umbo
-         DvHEKjE8QNKm2hi0PVLxzkKdimXhKTWtQBw67eTY0lkGL32/qdO7tOi0QqsGvMi8gFCB
-         FSwitXBDseyN1s5voKoKNAHE9IIoM9ntcZgZDGsmBE6vRXrNFQWEb7EpXsy8S/Q5h7Cv
-         YKLbV8Rg/HGOIaaOa0nduy9twSm4HXGqn9rWGwDuzvhvwy/5myOQWbLoWNJCdVl2y41P
-         B2Yj/51i9A3d+01dK140TMitmtcg+RTlDfVpddUAaO4QE51ef5SLBKyJ9npFjGOR8Kfm
-         VeBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUH/2fwGL5EnVDbsxkHtaJh0CyUU5ZT5zNkwLHa2UfCqz2Pc5EBvA2Yp0ez3bwuuv4OCgm5QwCJu17kdXuiLbJ2UZoQsOH85xdfxK3MuHdy2lo89liX4IIoGrPVNHJb5S9skBEfBcqZcw3IJwDXLH2pIxTiyDta8ZrmL2KnWhAJk1yntw==
-X-Gm-Message-State: AOJu0YwjbwKYiJuXzBWwMVwvggm55KIa3vFdGuDCX/7iw9xdb25so9xg
-	OFVdCq/sS9ii4y3GThgY0RqYHWvE7Ex/DQevOAvEPe4v+M8C1IQM4QPcJ6o5i95oyg==
-X-Google-Smtp-Source: AGHT+IHnJGFNqw3PdslviMvot3zB8cExfLW0Ine1evxhnZTs4rkG/kG+ucQCciHkDgPMgBaHTpBRjw==
-X-Received: by 2002:a05:6902:82:b0:dc2:2041:fc49 with SMTP id h2-20020a056902008200b00dc22041fc49mr7165193ybs.5.1710774031052;
-        Mon, 18 Mar 2024 08:00:31 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id b11-20020a252e4b000000b00dc7622402b9sm1773830ybn.43.2024.03.18.08.00.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Mar 2024 08:00:30 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dcc71031680so3878237276.2;
-        Mon, 18 Mar 2024 08:00:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWY1WP4nlk5BPBQVxtjsQcu9T+CnrqCY5HV53PlA7gs/s9x/rdc5qxF14nQQRVoasBmjMiyJgWrK1Gs7fGhCSLLi/lyxeujLBUhzj3LJxORFZ5bKJAsdv3E3e3gA4oesxudl1MRzMb3LphCYxCctGHYHsRPOe5VdiAv/IsSBh1U1oaOtg==
-X-Received: by 2002:a05:6902:389:b0:dc7:4b43:db3f with SMTP id
- f9-20020a056902038900b00dc74b43db3fmr7205706ybs.21.1710774029683; Mon, 18 Mar
- 2024 08:00:29 -0700 (PDT)
+	s=arc-20240116; t=1710775096; c=relaxed/simple;
+	bh=oC5+asc/QICklzkaAGgwcBOXlJD1QTbEuepLI6tiLK4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DfYOVcqluAXuwchRfpSf0mcDRiT7Fo+MSlzQtOP/0uvCKCRTWbueR3cQDHx0vMyDJWKqIr5ZQ0ttt1fNYBYkN5JVB9FWh6PkBl++BnOrJtruUHfkImEd9WJIaLcJP2Pr7AHlc1rDg2xiNgS18E0YvXqRw3vaJpFT4Oje+OlFCEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mDyoLoWO; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mDyoLoWO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66DB4C433F1;
+	Mon, 18 Mar 2024 15:18:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710775096;
+	bh=oC5+asc/QICklzkaAGgwcBOXlJD1QTbEuepLI6tiLK4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=mDyoLoWOWiCMEdXkx9n4YUsSumpF7e0vY4o0+dcywNoZYOFhQJu8b+BBfWUJNmVXW
+	 8qIKWvn/+20UknH5eve3jLM+/c0KsletfNrB0YU5do/uij0otwMNu+Bx9uSFmin/8U
+	 Chp/ydjf2qDxKbOoFiwuvrM5AtFWR9HbYbDkBo0qzwDnnitfjK6IGcTwUtjRMUvpg4
+	 DXKiUuXQ3EToJttPodl88lTjWY4ZazZb2sL+dZS+czu+gBpUA3t0VwRruaaKvgOPeM
+	 nwwHWkJi1hVy+iU1jnbVpL1Z2KMJlfA671AGWoQHVp8w/6oui+X4slGzDxSdv/a6C6
+	 +UxULlQSoRhnw==
+From: Nathan Chancellor <nathan@kernel.org>
+Subject: [PATCH 0/2] clk: qcom: Fix two driver Kconfig dependencies
+Date: Mon, 18 Mar 2024 08:18:09 -0700
+Message-Id: <20240318-fix-some-qcom-kconfig-deps-v1-0-ea0773e3df5a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240318114346.112935-1-tanure@linux.com> <20240318114346.112935-2-tanure@linux.com>
- <20240318145423.GA3993342-robh@kernel.org>
-In-Reply-To: <20240318145423.GA3993342-robh@kernel.org>
-Reply-To: tanure@linux.com
-From: Lucas Tanure <tanure@linux.com>
-Date: Mon, 18 Mar 2024 15:00:17 +0000
-X-Gmail-Original-Message-ID: <CAJX_Q+26Of3uwKMufDrngj5ciioqt0ne8gXD-jdmEdWTs4Ag+g@mail.gmail.com>
-Message-ID: <CAJX_Q+26Of3uwKMufDrngj5ciioqt0ne8gXD-jdmEdWTs4Ag+g@mail.gmail.com>
-Subject: Re: [RFC][PATCH 1/2] clk: meson: T7: add support for Amlogic T7 SoC
- PLL clock driver
-To: Rob Herring <robh@kernel.org>
-Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>, Yu Tu <yu.tu@amlogic.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADFb+GUC/x3MSwqAMAwA0atI1gb8FFGvIi40pjWIrTYggnh3i
+ 8sHwzygHIUV+uyByJeoBJ9Q5hnQOnnHKEsyVEVlirps0cqNGnbGk8KOGwVvxeHChyJRN3NnbFP
+ PE6TBETnV/3wY3/cDQTKEwWwAAAA=
+To: sboyd@kernel.org, andersson@kernel.org
+Cc: konrad.dybcio@linaro.org, mturquette@baylibre.com, 
+ bryan.odonoghue@linaro.org, neil.armstrong@linaro.org, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=919; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=oC5+asc/QICklzkaAGgwcBOXlJD1QTbEuepLI6tiLK4=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDKk/os3W/5/js5uf9dIj70fWxW9K/h8vOOhSxFT+q3TyL
+ +d13LNDOkpZGMS4GGTFFFmqH6seNzScc5bxxqlJMHNYmUCGMHBxCsBEYmQYGWZIrzavPbZ00eln
+ 4nzXusULZRc9r3fbff13z0XNXUpLar4yMjzdeSKaZc7qN4Kcfvkfuz5/e2ufbzl5lewq/jMXN3M
+ /1+EBAA==
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Mon, Mar 18, 2024 at 2:54=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Mon, Mar 18, 2024 at 11:43:45AM +0000, Lucas Tanure wrote:
-> > Add the T7 PLL clock controller driver in the T7 SoC family.
-> >
-> > This is RFC patch that enables SDCard, Ethernet and Clocking
-> > for Amlogic T7 soc.
-> > In this current state the patch doesn't work and gives a kernel
-> > panic when probing the meson-axg-mmc for the SDCard.
-> > DO NOT MERGE.
-> >
-> > Signed-off-by: Lucas Tanure <tanure@linux.com>
-> > ---
-> >  drivers/clk/meson/Kconfig                     |   25 +
-> >  drivers/clk/meson/Makefile                    |    2 +
-> >  drivers/clk/meson/t7-peripherals.c            | 6368 +++++++++++++++++
-> >  drivers/clk/meson/t7-peripherals.h            |  131 +
-> >  drivers/clk/meson/t7-pll.c                    | 1543 ++++
-> >  drivers/clk/meson/t7-pll.h                    |   83 +
-> >  .../clock/amlogic,t7-peripherals-clkc.h       |  410 ++
-> >  .../dt-bindings/clock/amlogic,t7-pll-clkc.h   |   69 +
-> >  8 files changed, 8631 insertions(+)
-> >  create mode 100644 drivers/clk/meson/t7-peripherals.c
-> >  create mode 100644 drivers/clk/meson/t7-peripherals.h
-> >  create mode 100644 drivers/clk/meson/t7-pll.c
-> >  create mode 100644 drivers/clk/meson/t7-pll.h
->
-> >  create mode 100644 include/dt-bindings/clock/amlogic,t7-peripherals-cl=
-kc.h
-> >  create mode 100644 include/dt-bindings/clock/amlogic,t7-pll-clkc.h
->
-> I'm assuming since this is an RFC you know these go in a separate patch
-> with the DT binding schema which is missing.
->
-> Rob
+This series fixes two Kconfig warnings that I recently saw crop up in my
+build tests because the dependencies for newly added drivers in 6.8 are
+not correct.
 
-Yes, This would be a few patches at least. The thing right now is to
-get it to work.
-I think some obscure thing is missing when setting up these clocks,
-and only Amlogic knows.
+This is now the fourth set of changes to avoid warnings of this nature
+for the exact same reason... is there anything that can be done to
+ensure this does not continue to happen? See
 
-After I have a working driver, I will submit a proper patch series
-with documentation for the drivers and device trees.
+  b6bcd1c0c27e ("clk: qcom: fix some Kconfig corner cases")
+  75d1d3a433f0 ("clk: qcom: Fix SM_GPUCC_8450 dependencies")
+  e8d66d02defd ("clk: qcom: Fix SM_CAMCC_8550 dependencies")
 
-Thanks
-Lucas Tanure
+---
+Nathan Chancellor (2):
+      clk: qcom: Fix SC_CAMCC_8280XP dependencies
+      clk: qcom: Fix SM_GPUCC_8650 dependencies
+
+ drivers/clk/qcom/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+---
+base-commit: 3066c521be9db14964d78c6c431c97a424468ded
+change-id: 20240318-fix-some-qcom-kconfig-deps-cc9be94f63ba
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
+
