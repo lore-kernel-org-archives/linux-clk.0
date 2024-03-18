@@ -1,59 +1,59 @@
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705C522F0E
-	for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 07:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C012557A
+	for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 07:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710748249; cv=none; b=sFEsF8Vp96wAkJtDa9OWcupSIRsZicoCFN7gTB3L8XjhGJlYNGKENkFXo42qfcG89aHOqbNwtLw2NxFrAhpQgV7HavALOInQJu/ZIAMYATfu9FmnEZ+ftXSeyN13V9r9yBOV3iIAMCVC7IGfhk+vufCgbfqnxlL4UA9hAtsn5uA=
+	t=1710748282; cv=none; b=sLUgWwtqntR7Ih/EuaF+79svd0bfR1qtuQdK/JNoYQ8aQYSmdghwu4loo2BV7P6TWsAcsxPqe3GZeTBc4p2Up5wtlFlYiymln6BUCib4uy+aqn87i1cZGRbfmrlinx0MF0FvCtLWMPHPRoLXQUgCrlJJho4H8NVU4PiwLvQZ7Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710748249; c=relaxed/simple;
-	bh=cOOQbcOfrPZoO+kNtTfEH/oL2BpLlMqm83CW3VCahBU=;
+	s=arc-20240116; t=1710748282; c=relaxed/simple;
+	bh=wHtL9uy/SOzPVWYubiPHD/tIPRGIRhTUagNcGMUnnMA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K+rYPRuc8UTwzVlM3PiIQNK9lCRbP49/vBjSHcR7jEnMegB1uJbpkLua9ADJxSNG9RVdGVTiNgIbv74PV8FJmrCM/MRb6QYypLnc2str3iwzrkcfJ3SFaNjqltSJO+VRUDm/xQHrz81Fs+mMXwxTjdULJpT7s/kQ571zwzYCX9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yM00K4j7; arc=none smtp.client-ip=209.85.161.43
+	 In-Reply-To:Content-Type; b=peQnhQiJWrTL0xk9vyZQQGAyaVomvhssydvSj3xMk1rpWxWJ08PjK4TA46T5jKWATZqySMVHKS1tl9jlPkbrU9iXvZayh2vH3/+2oguXWU+APrY/JGqSTrWBqQmxhaWtfDa2JLd0JaJ4EKfnk5hr7MFbwuRWXayShIdOV8DCOVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MSA/1oP7; arc=none smtp.client-ip=209.85.210.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yM00K4j7"
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5a49261093cso1060501eaf.3
-        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 00:50:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MSA/1oP7"
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6e6969855c8so250859a34.0
+        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 00:51:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710748246; x=1711353046; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710748280; x=1711353080; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=msvWNdxH82BdWMGAR7FPMGQI0XX5U4SO+ELzxfCBmRE=;
-        b=yM00K4j7aR8ehuMtp0H/AkahsNjov+6XsoPFLaj9sI2PSZgB1/CtP5HQyWJ+PeTiiY
-         G+LYU5/LxmpNYIIjtz5bVrg1vPmZ1GY+K0lhKy+eb8Fmq8amr7EK85+Y9zuHzZnlILhG
-         ckfFGuXAp1pteLSZO3LQRhZOf8YrFxnlsqfmjRn27LDsqmtIHE2LZjH7ElmiHdq4XcqO
-         XLB58wWzSvk+52aEsDVSYHdBfsOEqT58xJ7VWNdl9ooxD6BEczJu/YF3UpVUzX90E2Z1
-         aAm0Kh5UEUgywts53m9j8q40Zt5sPYZJns8XbEAFvsG9uwnu3O3D0aZLxgVH0pjEpaxB
-         zrRQ==
+        bh=yxJ40hH93uOPzDOKcsHmhDhBFFERK2ijCZpNS6c7vh4=;
+        b=MSA/1oP7EdOa9cHtaFp4FFCyWM0kEUde2jIodouY5E9MzykRqYFVJZf64xEUYgNEkQ
+         eOHlerJ+oPRlLEEqcOS74XXma/rqDHGsFzsmMqnQhAMiKofZ8MSAaM2EOls0jHLzKRzM
+         FuyYiUwGDU5mPHXGk98y6Paub4aIf5gW69Ae6lF0/wtBfcFreLBUV6diLrDRr8SJ6Usn
+         SVQxA2P0aP9/2Fnnunt7V99oaBkK1atgJ01xkT/XhIws7ByG80SzyxhvZwGMoIAiV2/2
+         Mm02x5zhGVS+ijHk+lxaG1X8VJa0Kgm2DA0hTe/6I1nIVxZek5nTlEFhX2ETgskAh33Z
+         /N/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710748246; x=1711353046;
+        d=1e100.net; s=20230601; t=1710748280; x=1711353080;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=msvWNdxH82BdWMGAR7FPMGQI0XX5U4SO+ELzxfCBmRE=;
-        b=qsZQZVc0QAET0l6QyIJMonoRJ7NVBwBEpGgIfmCdfk+htcreJG1tU3125HjcQgVXB5
-         gHY+sJkNvfUqVmX5NZgms+8u45u/9fVruZOir0Ilb0m5/W985V3c0SC0LBfBubozDPua
-         K+VhvO/Sh0HriMQgi2BKrCIWQ+T2oYUdyNRmA/ZyY7PYb77ea7FW8DVHewx99asnbLc2
-         Zf+/Ris+g0E/qnLUVDNwvZeDSsKEiuXaBg71NLmICXmPH/FxNsQ0VnaW76uW4W9BeUyk
-         vWGE5z5s7muBnBaiD730bwPb9ndgDDFJFixhn7GN+jbtXkxcrxjenPRZQlGKA5v079cI
-         7FlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvsT4vTKALwnizUaR+D8nieFG9jvjb0LQ+Eb+vwOLmmNBXvtM+80gPkWZllfsm+a2A9jxlgP1krLddCpinkhtJOqJYA0evFjuJ
-X-Gm-Message-State: AOJu0YyhjSm1QAttHp3PVnECZkFv9ZTHLTiEhZr7jscfGYLVOqvS3Ry+
-	YJfbQly22d6JOM6iihnUbUBjUqw+c9/wj4ZiZMJaZKu2xbW+kYgX1AyrwwDWTl4=
-X-Google-Smtp-Source: AGHT+IET/15EmthNhvNoBf8Nhi0bfFt0vzwX3/ztZnQ3uJIwu3g75eXIkY479AALs3WVNw+Cbozuaw==
-X-Received: by 2002:a4a:851c:0:b0:5a1:cefd:73d6 with SMTP id k28-20020a4a851c000000b005a1cefd73d6mr9520007ooh.7.1710748246716;
-        Mon, 18 Mar 2024 00:50:46 -0700 (PDT)
+        bh=yxJ40hH93uOPzDOKcsHmhDhBFFERK2ijCZpNS6c7vh4=;
+        b=Xlv2LDoJNVgert3w8LHiDhPvqu2AxdxZk0eHJsioZnsBoNaTgg2yvgEYVxLWyOC9m1
+         gPol/xVcgGoIxUa75TjriqQl/BHgzI4ImIgnBSGFHegnUgnu3AQ87imNS/HkfU/DLcX3
+         /oxfwkae/Eah3E+GoZlh4FrPfGUvhEAK6cwQNUj+iehAsPKIqNhYZ2UmollmholQRYqS
+         lGAkXspcNBF2y5UNP/iNzkelM4sjGcxldwuY0/r8LJI8RajmtsFcGfi2cDA+BzOM4n42
+         I4CQDWJkSeF0cCQLSsEl7GhUDhskVPeFRCaqUFkSrrBlOYc/RBjlQ66uVEHffh0Y7/o3
+         00xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRZnSF5ySZPNggKQftDIoyEt9TTGTQ2c2g11jH/9N4TY4WPkp8ZPTdIpLmXklhoD7ndKS+JPssDOELmKJOlz0PrwKmdDRBktIp
+X-Gm-Message-State: AOJu0Yygo2JJRFno/goZGO3FvIHqaTM51knGPm21PqqgUi6PgNvh1d3R
+	1Fajr6Ew/vTK1+g2uKTapJI5zfNEg109+I2wmTIgzFoTRPtFtA5ThdmsDpsKGn8=
+X-Google-Smtp-Source: AGHT+IH8PQZBsyjBvjMV2aCNJ8RZLK044tDduM3uefhE1cleq/3kO6FPGP2lwTJ/NGxBa9w5Gz4ryw==
+X-Received: by 2002:a4a:754a:0:b0:5a1:262e:c872 with SMTP id g10-20020a4a754a000000b005a1262ec872mr7936072oof.2.1710748279957;
+        Mon, 18 Mar 2024 00:51:19 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id bm8-20020a056820188800b005a4b2172e48sm420608oob.41.2024.03.18.00.50.42
+        by smtp.gmail.com with ESMTPSA id bm8-20020a056820188800b005a4b2172e48sm420608oob.41.2024.03.18.00.51.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Mar 2024 00:50:46 -0700 (PDT)
-Message-ID: <099d11b3-efb3-4e07-9243-1e8040937fdb@linaro.org>
-Date: Mon, 18 Mar 2024 08:50:42 +0100
+        Mon, 18 Mar 2024 00:51:19 -0700 (PDT)
+Message-ID: <9ffc0efd-c2bd-41ac-92d0-dd49d1b3896c@linaro.org>
+Date: Mon, 18 Mar 2024 08:51:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,8 +61,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] dt-bindings: clock: qcom: Add compatible for
- QCM6490 boards
+Subject: Re: [PATCH v2 2/8] clk: qcom: lpassaudiocc-sc7280: Add support for
+ LPASS resets for QCM6490
 Content-Language: en-US
 To: Taniya Das <quic_tdas@quicinc.com>, Stephen Boyd <sboyd@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>,
@@ -73,7 +73,7 @@ To: Taniya Das <quic_tdas@quicinc.com>, Stephen Boyd <sboyd@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org
 References: <20240318053555.20405-1-quic_tdas@quicinc.com>
- <20240318053555.20405-2-quic_tdas@quicinc.com>
+ <20240318053555.20405-3-quic_tdas@quicinc.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -119,31 +119,19 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240318053555.20405-2-quic_tdas@quicinc.com>
+In-Reply-To: <20240318053555.20405-3-quic_tdas@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 18/03/2024 06:35, Taniya Das wrote:
-> Add the new QCM6490 compatible to support the reset functionality for
-> Low Power Audio subsystem.
+> On the QCM6490 boards the LPASS firmware controls the complete clock
+> controller functionalities. But the LPASS resets are required to be from
+> the high level OS for the LPASS SW driver could assert/deassert the
+> audio resets.
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  .../devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml       | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
-> index deee5423d66e..861b41933525 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
-> @@ -30,6 +30,7 @@ properties:
->        - qcom,sc7280-lpassaudiocc
->        - qcom,sc7280-lpasscorecc
->        - qcom,sc7280-lpasshm
-> +      - qcom,qcm6490-lpassaudiocc
-> 
+> Fixes: a9dd26639d05 ("clk: qcom: lpass: Add support for LPASS clock controller for SC7280")
 
-... and open the binding, so you will see how incomplete this is.
+NAK, that's not a fix. Please explain what is the bug being fixed.
 
 Best regards,
 Krzysztof
