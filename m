@@ -1,100 +1,212 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50B74879B
-	for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 13:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091224E1B5
+	for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 14:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710769737; cv=none; b=afRN/VpwD9OhLVtEoHsdjh2OrzkAYOkB9BznXMBdI6SQKCYWYHWiUGl6UxbtynMfvNOWibD4L0FPE1zCI3w3i9pYsm4HJYyawG+qfT5eWnsNK4gL3IMqivg48cKowKJ41nOZM1Li7woUQM21IDIWF7Viu9Kintf4e43z6qWZS1Q=
+	t=1710770891; cv=none; b=jWLVYO4RH1TojxwQTHNwtOs9mBraFKE2ceGBiYVUX5Fv32JhXPlaberAGCLbYkabf6eKx8De4/zpGsgY4RLC5hyhi5+qVJdPKa4WGVcIhou8vDDUiAwN+SbHphMMvQUbo5laqCwgpSsn5Oc9gmxYdRkm5ZfQAoIjeBJLGX1yFHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710769737; c=relaxed/simple;
-	bh=R2UaOpKnY97aWVhZ/hgFlH9poNa+7COfnT3VW02GUGE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I/VjR5ZxNr1Wt/x5B9ElkACow46kfz9krb2V7c4KHY2kepOCj3AOykZfzMAuhgbjKdRR/KXKQfBaamzsl1BLAm5cO8jsu0josL4Tu8rtGvUxueQuX/qtE1Fi+w5MbKBAsDfowYPJumiGFZRIMhmogxApV7VnOEvxZ9UoEc+rk3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cZQKAkzU; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cZQKAkzU"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-60cbcd04de9so40335267b3.2
-        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 06:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710769734; x=1711374534; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=V3FYhI19+7mXvMPKmKsCyQbdJxb3cWwyAzFHyh7qwU8=;
-        b=cZQKAkzUxWZ3DiR2+CMXuDmMSWC1MZpfCZmvrHvdd3Lz6yu4xL0TUE6I8U2qJoQuqp
-         gR1C3iF8TrOC8gOKApo2HaV/oaE8gr2z/qe6U4B5A1hPrD5PoGxta9VsAwR2T8DI5wWv
-         l/Y7ve+R7fE9UWq/LljsR6glDc5e6FYQNLu1WRvETPB/eE+Z533dEnsZrdDC79oHAaFj
-         ascsj6lIhV5shoOLJXIAEcOjPpHQKFZskuv7QeLR0x1o/xH1BHMwqA4I2SWUD2UB4SBs
-         TzAFfOB9FyAHUNV7B1xyK/7WBPHcv4g4SIXNoEIyUaxo0ZC0r+KxoxE9M0PEcK0wyvUa
-         TWGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710769734; x=1711374534;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V3FYhI19+7mXvMPKmKsCyQbdJxb3cWwyAzFHyh7qwU8=;
-        b=qSL+6umCHQYez2GrlFBLKKCsr6DFG3pa24y734BMafsAIMpcKSVUibKaCdnMN6wvr6
-         aX+RWt37R5aCNLfW2qrvcDS2mXBlN8dQV+GpkW/NgOc61am2KJFdCoqhlXtGxK6uwpcm
-         uJ/Qi3+A4WksBUQ+mYcb1IuDm0IlKXxhCo0Xw7Od+e9r0a2HiDrIVVRnolTinS1oJByR
-         axjwAudX0+NR/l9yI8kZyUtThzb+pwmKzr7x7IF5uQQn/+FabaSZtWZ43RGIiToBKuQg
-         nDmFfaObNjwbZGp/l3aYyx4x/XzakJlK/9W0mBEwPu1wwUT9Ca7jvB/inomuo59P6mpy
-         haDA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2raYYQl4DpnuxJAfY0EPi6U4F41sPf0BrjDsVOIoN0oK5glpb8jey18V6dyKPLWr4EWCGPPQCwC3YglNqRCb1sBU90CxLzH0m
-X-Gm-Message-State: AOJu0YykArFKmpLvH/tGfkkYNtenjDtDsqT1RQkP8eL0eLKBigf2ndu7
-	+1E8AeYDM5xsnhAJ0CzDckrei7QKU2Z2RACZ8Ld3j+4I1od2gzB6M2Uy7TGg+52gX8gtNu4HdKt
-	m2kK5mUJLFlQJ4plEmLu5DxCQo4V5yRk+tGLLgA==
-X-Google-Smtp-Source: AGHT+IHIKdJh6Ea44QB/HJYggMw6MDwULWny87xsrwu5PR/MnhdaDTL0l9BRYsgBrUOoIuoSQyIdEFoMdSPlHuMn2yY=
-X-Received: by 2002:a25:db08:0:b0:dc7:4460:878a with SMTP id
- g8-20020a25db08000000b00dc74460878amr8986047ybf.3.1710769734613; Mon, 18 Mar
- 2024 06:48:54 -0700 (PDT)
+	s=arc-20240116; t=1710770891; c=relaxed/simple;
+	bh=wIFzDeOuz2b3HspmGucGQW0ZsPmRxHogsNZniaceIts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nKcEURXyxR5burI+ctD9VIhUX+NWe0MyNNQTHekeURXJk+Z4CxcHHIfutHmm9htGD9f7HFNVFUUTq2WkC+3OHj597DHtrogDuKV2nfYvsFV8U64S5zhNiR1e+rQo5G9A6/C2ryRfdVQYTUZdzubQufXN5Ooom1bBwh9PJ+9ac64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1rmDeR-0004iD-Oj; Mon, 18 Mar 2024 15:07:43 +0100
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1rmDeR-0075gE-0W; Mon, 18 Mar 2024 15:07:43 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1rmDeQ-005WWj-2y;
+	Mon, 18 Mar 2024 15:07:42 +0100
+Date: Mon, 18 Mar 2024 15:07:42 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 0/6] Add support i.MX95 BLK CTL module clock features
+Message-ID: <20240318140742.3pfn5h6wqhbtgbmj@pengutronix.de>
+References: <20240314-imx95-blk-ctl-v4-0-d23de23b6ff2@nxp.com>
+ <20240317155911.pdc32nsyxcdhs2t7@pengutronix.de>
+ <DU0PR04MB941725052D5E3EF78F67A1C5882D2@DU0PR04MB9417.eurprd04.prod.outlook.com>
+ <20240318095959.v5d7qeoci5v2dtkq@pengutronix.de>
+ <DU0PR04MB94177A4081547764F600635E882D2@DU0PR04MB9417.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240318-apss-ipq-pll-cleanup-v1-0-52f795429d5d@gmail.com> <20240318-apss-ipq-pll-cleanup-v1-1-52f795429d5d@gmail.com>
-In-Reply-To: <20240318-apss-ipq-pll-cleanup-v1-1-52f795429d5d@gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 18 Mar 2024 15:48:43 +0200
-Message-ID: <CAA8EJppE8Pt8XX-e9=b5g-4+GGbw8pEgg6Jyj--HDCmC1n5N1w@mail.gmail.com>
-Subject: Re: [PATCH 1/5] clk: qcom: apss-ipq-pll: reuse Stromer reg offsets
- from 'clk_alpha_pll_regs'
-To: Gabor Juhos <j4g8y7@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DU0PR04MB94177A4081547764F600635E882D2@DU0PR04MB9417.eurprd04.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Mon, 18 Mar 2024 at 13:20, Gabor Juhos <j4g8y7@gmail.com> wrote:
->
-> The register offset array defined locally for the
-> CLK_ALPHA_PLL_TYPE_STROMER_PLUS is the same as the
-> entry defined for CLK_ALPHA_PLL_TYPE_STROMER in the
-> 'clk_alpha_pll_regs' array.
->
-> To avoid code duplication, remove the local definition
-> and use the global one instead.
->
-> No functional changes.
->
-> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
-> ---
-> Depends on the following patches:
->  - "clk: qcom: apss-ipq-pll: use stromer ops for IPQ5018 to fix boot failure"
->    Link: https://lore.kernel.org/r/20240315-apss-ipq-pll-ipq5018-hang-v2-1-6fe30ada2009@gmail.com
->  - "clk: qcom: clk-alpha-pll: Stromer register cleanup"
->    Link: https://lore.kernel.org/r/20240311-alpha-pll-stromer-cleanup-v1-0-f7c0c5607cca@gmail.com
-> ---
->  drivers/clk/qcom/apss-ipq-pll.c | 24 ++++++------------------
->  1 file changed, 6 insertions(+), 18 deletions(-)
+On 24-03-18, Peng Fan wrote:
+> > Subject: Re: [PATCH v4 0/6] Add support i.MX95 BLK CTL module clock
+> > features
+> > 
+> > On 24-03-18, Peng Fan wrote:
+> > > Hi Marco,
+> > >
+> > > > Subject: Re: [PATCH v4 0/6] Add support i.MX95 BLK CTL module clock
+> > > > features
+> > > >
+> > > > Hi Peng,
+> > > >
+> > > > thank for the patchset.
+> > > >
+> > > > On 24-03-14, Peng Fan (OSS) wrote:
+> > > > > i.MX95's several MIXes has BLK CTL module which could be used for
+> > > > > clk settings, QoS settings, Misc settings for a MIX. This patchset
+> > > > > is to add the clk feature support, including dt-bindings
+> > > >
+> > > > I have to ask since there is almost no public documentation
+> > > > available yet. The
+> > > > i.MX95 does have an system-controller for managing pinmux settings
+> > > > and power-domains, right?
+> > >
+> > > Yes.
+> > >
+> > > If this is the case, why not making use of it via the
+> > > > standard scmi_pm_domain.c driver?
+> > >
+> > > The SCMI firmware not handle the BLK CTL stuff, but blk ctl stuff is a
+> > > mix of clk, qos, module specific things. It is not good for SCMI
+> > > firmare to handle it.
+> > 
+> > Currently most of the blk-ctrl users do use the blk-ctrl as power-domain
+> > consumer, except for the isi and the audio part. 
+> 
+> Yes, for i.MX8M.
+> 
+> > So as I said above the
+> > scmi_pm_domain.c should be able to supply this. The audio blk-ctrl could be
+> > abstracted via the clk-scmi.c driver. The ISI is another topic.
+> 
+> Pengutronix rejected the efforts for putting blk ctrl stuff in ATF for i.MX8M
+> before. So we take the kernel power domain approach to handle blk ctrl
+> clk gating.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+AFAIK the problem here was that your proposal had an layering violation
+even worse it was an layering inversion since the TF-A (lower layer)
+code updated CCM registers which were under control of Linux (upper
+layer).
 
+> > What you're are going to do here is to put pinctrl etc into SCMI firmware and
+> > power-control into Linux, which sound to me like an 50/50 approach and
+> > IMHO is rather sub-optimal. 
+> 
+> Now back to i.MX95 which supports function safety.
+> 
+> The SCMI firmware only handle CCM/SRC/GPC for clock/power, it not
+> handle blk ctrl.
 
--- 
-With best wishes
-Dmitry
+I know that.
+
+> The BLK CTRL registers are not only for clk gating, it has other
+> module specific functions.
+
+I suspected that this is the case for i.MX95 too :/
+
+> Moving BLK CTRL to SCMI firmware, means linux accessing module
+> specific functions needs go through vendor SCMI protocol.
+
+Right and here it's a bit complicated to have an proper interface.
+Therefore I'm not again the solution of keeping the blk-ctrl within
+Linux.
+
+> And BLK CTRL stuff is MIX level stuff, it is not SOC level stuff as
+> CCM which is system critical resource.
+
+Hm.. it's still SoC level albeit the area is more limited to specific
+functions like HSIO, MEDIA, GPU, ...
+
+> (BLK CTLR, I mean non system critical BLK CTRL, such as GPU,VPU,DISP)
+
+What's system critical is up to the system design but I get your point
+that having an safe DISP stack is not going to happen.
+
+> The other approach is to let ATF as SCMI server to handle BLK CTRL stuff,
+> But I not see benefits.
+
+How is that any different from putting it into the system-controller
+firmware.
+
+> > To quote your online available fact sheet:
+> > 
+> > 8<----------------------------------------------------------
+> > ENERGY FLEX ARCHITECTURE
+> > 
+> > The i,MX 95 family is designed to be configurable and scalable, with multiple
+> > heterogenous processing domains.
+> > This includes an application domain with up to 6 Arm Cortex A55 cores, a
+> > high-performance real-time domain with Arm Cortex M7, and low-
+> > power/safety domain with Arm Cortex M33, each able to access interfaces
+> > including CAN-FD, 10GbE networking, PCIe Gen 3 x1 interfaces, and
+> > accelerators such as V2X, ISP, and VPU.
+> > 8<----------------------------------------------------------
+> > 
+> > 8<----------------------------------------------------------
+> > HIGH-PERFORMANCE COMPUTE
+> > The i.MX 95 family capabilities include a multi-core application domain with
+> > up to six Arm Cortex(r)-A55 cores, as well as two independent real-time
+> > domains for safety/low-power, and high-performance real-time use,
+> > consisting of high-performance Arm Cortex-M7 and Arm Cortex-M33 CPUs,
+> > combining low-power, real-time, and high-performance processing. The i.MX
+> > 95 family is designed to enable ISO 26262 ASIL-B and SIL-2 IEC 61508
+> > compliant platforms, with the safety domain serving as a critical capability for
+> > many automotive and industrial applications.
+> > ...
+> > 8<----------------------------------------------------------
+> > 
+> > To me this sound like we can turn of the power/clock of an hardware block
+> > which was assigned to a core running SIL-2 certified software from an non-
+> > critical core running Linux if we follow that approach. Also the
+> > SIL-2 software requires the non-critical software to turn on the power of these
+> > hardware blocks. Is this correct?
+> 
+> Non-critical software not able to turn off power/clock of a critical resource in
+> safety software domain.
+> Safety software not require non-safety software to turn on power/clocks.
+
+Due to lack of documentation I don't know how you implemented this in
+HW/SW, also the system-design is telling us which parts should be seen
+as safe and which don't. However I get your point, VPUMIX is not going
+to be a part of the safe partition albeit it "could" due to complexity.
+
+> CCM/SRC/GPC is handled by SCMI firmware, agent w/o safety needs use
+> SCMI API to request SCMI firmware to enable clock/power for a module.
+> The SCMI firmware will check whether the agent is allowed to touch
+> a clock entry or a power entry.
+
+I got this. I still don't like the 50/50 approach but I also get your
+point about the GPR registers which is the only valid argument to me of
+not putting the blk-ctrl handling into the system-controller firmware.
+
+Regards,
+  Marco
