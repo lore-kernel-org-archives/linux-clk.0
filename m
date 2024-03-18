@@ -1,149 +1,144 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9698B56441;
-	Mon, 18 Mar 2024 18:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D913B19C
+	for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 20:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710786568; cv=none; b=mzgpx9qpdNRoH7wxFoAj2d++hOjkEs8GCgtwVot/G0dVuKe+fegwOTM0Bk/qw3CGPVemcVUlwNO+icWl9Rndp+gX4n6uqeVd37wMAyRxtLrGhwMlBbkx4n0sr8HTfHhWEjqADHINHJOwFsvO4cgwHb2XZwjs+SMc7umQX0ew6Tk=
+	t=1710793072; cv=none; b=FcCm04XLIyXRio3NEjMpFyoLGcoYOfxbzMtH7lQyHPh9JKuzymakVZ4GPtgrl86enywfLYMZ4Qk7JDPnAxti5gMyddFZGMp4+XNt6x1kWNxuHkQdMea10Ea0eANRFC+cECunmorVOC2B4dQY9wIdhCS11Nw2iJlCxfUhGvxtY4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710786568; c=relaxed/simple;
-	bh=P+e6SpsByxEpokuJCe+zvhHJRfVQau4vs2koLG4ed38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=crOC5dTnmvARzCh9xhpVgetihVHTbByPJxo811guvTUrSH9pzSq4KMYsbHyulEF+zU99NmEegqN44B55GRDcn4HpBj9IRW0ZOszIkftRiRBZ9h2jdY7+OAQ0aaPGTtQRj1kf9x6TN/2qVgFO+kYw4gBPfQgUbhgtI1CXaFltDmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LB/V+vgY; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1710793072; c=relaxed/simple;
+	bh=2a/s7mDDRqYelu3/00RIsORLQ/R2WRP9RJNEVPTqkgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RmvMIJUpliNW8LLoLu5zu3iAT0f1VvxJA+5yCC2fFtYcyRo+NGhcWbZKXkjmeEmK1xQIzBsOiH9+ym0bEAjsvzBvOFz4GGkoFxcrZoaXVgGjprPFaGU68QaMzgA+Vl8Cwo5UWsgMuACN+GP3OHwqNo+9nL3ue2TfRw+tIel+5aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Z3UVBVCZ; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LB/V+vgY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1710786566; x=1742322566;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P+e6SpsByxEpokuJCe+zvhHJRfVQau4vs2koLG4ed38=;
-  b=LB/V+vgY1PdQf1YWMrvwL79bDBjLNDctMXt1v9YoYrBWV1kr1kRvYkp0
-   CVHJ/x3e4GwVw+VsWnVoJpYDObhtNw1t5nSe3vWCqUXK59Rv2Whk2Dpzp
-   wqpxknrG9lB1cN1FENlRNISrhwg2iPnjIr9PKcUM0HZxj2wHHV3lIg0V4
-   A/x2dqGa/qUKTtYS5nKJgGRAg6LtxlBbmHDFkE8pGY3A7mihfCC7BuRDv
-   1twidcFIF6KE4rnlK9Kz8xQMQKTBgMOxkfL+MfHU3R2JleeIZmADQ6Udv
-   6tVttdj4F+cOq77CjVzPl74KzonTMGDI7c83eDvFbmxo9lTW5yPbZLfBA
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11017"; a="16259994"
-X-IronPort-AV: E=Sophos;i="6.07,135,1708416000"; 
-   d="scan'208";a="16259994"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2024 11:29:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,135,1708416000"; 
-   d="scan'208";a="13591343"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2024 11:29:23 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id BD9E711F984;
-	Mon, 18 Mar 2024 20:29:20 +0200 (EET)
-Date: Mon, 18 Mar 2024 18:29:20 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] clk: Update API documentation related to clock
- disable
-Message-ID: <ZfiIAMxR6QmFZmi1@kekkonen.localdomain>
-References: <20240318110842.41956-1-biju.das.jz@bp.renesas.com>
- <20240318110842.41956-2-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Z3UVBVCZ"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-55a179f5fa1so5556304a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 13:17:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1710793069; x=1711397869; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u1VK2UrvRK1GqfS+jZTcmyrPbAehgKhpyQhy7X6GkE8=;
+        b=Z3UVBVCZnDJ9Zvrv9Ei/oBLg+jd0/t7RdrbMVcUXIADSX+12Dvrv2GnDbIwme+9NtN
+         gcrLhsTCXLGHCwqQUn42Z74vgImQjKGG6pd5edE11i3kVE5SVW7van+dVBMaLxLqc2QQ
+         /Rapb3gGffmbxnFu7/9kz0Y37ssoFUoCxo517U4oM/GcWjmmp0rU1qa5kBmj3y3G0aki
+         OrU0lyRRLpxZav+NG3jSw4mxyv/HajZFzAkOL/Avcmcvcs1SOnTeJ7FiJAuT3LHt/Pxn
+         f0Gu5UmxKGBqP5AVoEuyozZWdUAgiNY8aq5IEQViOpoCMw48Ws2ESVxiLsS0ToNdCqdn
+         McnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710793069; x=1711397869;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u1VK2UrvRK1GqfS+jZTcmyrPbAehgKhpyQhy7X6GkE8=;
+        b=e0BZJF995mb6opYimrPE2sKDH2E6ESa6EIA9bBVPNNP5mOI0E9Ppfny2SpZdhm8Ya+
+         NHZlaIewPTH3jNFbJcpOXNHid1id6biY4NVIL/jCn+M3uKId/LitVmYPM7AVWlEjYJy8
+         9RxDgpOlENLDA+mZQ2b35Sgxxjyixrnk+ChNtYxGjEA94mVhPr34YK/3Bl7vYONb/ZKb
+         d4RgsO48zstzDrT0buIsqhIc856PrPEo4Tp3+tl0LklP78l16vS2Wjab65X9F8tQeJ+1
+         MR0UaCOw8MQVaeSlLCLYjkrS/JFnlMxJZftHMKfMmvYF5JNohhjE40okAueft09Y77ni
+         /hrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFVogGLMfW4xG8AZGB/lHvXXXw5z5Y3zEOMe/guTdCBDOi9N/N1OLn5My1NjugNb3XGBSfpWpAb1/yt50p6+0/RQec6iFQ0YA5
+X-Gm-Message-State: AOJu0YyKbyI1WVKuWfOf7ufEtkHSpcRYRuD4UzifUox6ySyavzmfAmYv
+	6JDLgaBLJV1UphCYtktbs2MYEYVO4ePpQsmH/DYgVsN+G8AH7vWe1MNg8yhjdqo=
+X-Google-Smtp-Source: AGHT+IF9T4xVGnEMDWOvmebwvh7RSH//MnjXmlytzIKhD9eeivlJmumrE3KnhdTbwCwawu0TsPm8Jg==
+X-Received: by 2002:a05:6402:4347:b0:568:1882:651f with SMTP id n7-20020a056402434700b005681882651fmr276209edc.25.1710793069043;
+        Mon, 18 Mar 2024 13:17:49 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id g18-20020a056402091200b00568b6f73491sm3513123edz.14.2024.03.18.13.17.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Mar 2024 13:17:48 -0700 (PDT)
+Message-ID: <c6704551-dae1-4536-8da2-ad4764d34503@tuxon.dev>
+Date: Mon, 18 Mar 2024 22:17:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240318110842.41956-2-biju.das.jz@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 27/39] clk: at91: sam9x7: add sam9x7 pmc driver
+Content-Language: en-US
+To: Varshini.Rajendran@microchip.com, mturquette@baylibre.com,
+ sboyd@kernel.org, Nicolas.Ferre@microchip.com,
+ alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240223171342.669133-1-varshini.rajendran@microchip.com>
+ <20240223172831.672953-1-varshini.rajendran@microchip.com>
+ <01e96d4b-3038-498b-a9b2-2acac51f1d80@tuxon.dev>
+ <e84994fc-7ec1-4d65-84f6-efc6a47b0c2f@microchip.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <e84994fc-7ec1-4d65-84f6-efc6a47b0c2f@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Biju,
 
-On Mon, Mar 18, 2024 at 11:08:40AM +0000, Biju Das wrote:
+
+On 18.03.2024 11:25, Varshini.Rajendran@microchip.com wrote:
+> Hi Claudiu,
 > 
-> The API's related to clk disable operation does not explicitly
-> states the synchoronous or asynchrous behaviour as it is driver
-> dependent. So make this part clear in API documentation.
+> On 11/03/24 11:28 am, claudiu beznea wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> On 23.02.2024 19:28, Varshini Rajendran wrote:
+>>> Add a driver for the PMC clocks of sam9x7 Soc family.
+>>>
+>>> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+>>> ---
+>>> Changes in v4:
+>>> - Changed variable name alloc_mem to clk_mux_buffer to be more
+>>>    suggestive
+>>> - Changed description of @f structure member appropriately
+>>> ---
+>>>   drivers/clk/at91/Makefile |   1 +
+>>>   drivers/clk/at91/sam9x7.c | 946 ++++++++++++++++++++++++++++++++++++++
+>>>   2 files changed, 947 insertions(+)
+>>>   create mode 100644 drivers/clk/at91/sam9x7.c
+>>>
+>>> diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+>>> index 89061b85e7d2..8e3684ba2c74 100644
+>>> --- a/drivers/clk/at91/Makefile
+>>> +++ b/drivers/clk/at91/Makefile
+[ ... ]
+
+>>> +static const struct {
+>>> +     const char *n;
+>>> +     const char *p;
+>>> +     const struct clk_pll_layout *l;
+>>> +     u8 t;
+>>> +     const struct clk_pll_characteristics *c;
+>>> +     unsigned long f;
+>>> +     u8 eid;
+>>> +} sam9x7_plls[][PLL_ID_MAX] = {
+>>> +     [PLL_ID_PLLA] = {
+>>> +             {
+>>> +                     .n = "plla_fracck",
+>>> +                     .p = "mainck",
+>>> +                     .l = &plla_frac_layout,
+>>> +                     .t = PLL_TYPE_FRAC,
+>>> +                     /*
+>>> +                      * This feeds plla_divpmcck which feeds CPU. It should
+>>> +                      * not be disabled.
+>>> +                      */
+>>> +                     .f = CLK_IS_CRITICAL | CLK_SET_RATE_GATE,
+>>> +                     .c = &plla_characteristics,
+>>> +             },
+>>> +
+>>> +             {
+>>> +                     .n = "plla_divpmcck",
+>>> +                     .p = "plla_fracck",
+>>> +                     .l = &pll_divpmc_layout,
+>>
+>> You mentioned in "[PATCH v4 24/39] clk: at91: sam9x7: add support for HW
+>> PLL freq dividers" that this has div2 but it is registered w/ a layout that
+>> has .div2 = 0.
 > 
-> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v2->v3:
->  * No change.
-> v2:
->  * New patch.
-> ---
->  drivers/clk/clk.c            | 3 ++-
->  include/linux/clk-provider.h | 3 ++-
->  include/linux/clk.h          | 3 ++-
->  3 files changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 25371c91a58f..f5fa91a339d7 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1010,7 +1010,8 @@ static void clk_core_unprepare_lock(struct clk_core *core)
->   * if the operation may sleep.  One example is a clk which is accessed over
->   * I2c.  In the complex case a clk gate operation may require a fast and a slow
->   * part.  It is this reason that clk_unprepare and clk_disable are not mutually
-> - * exclusive.  In fact clk_disable must be called before clk_unprepare.
-> + * exclusive.  In fact clk_disable must be called before clk_unprepare.  The
-> + * synchronous or asynchronous clock gating operation is driver dependent.
->   */
->  void clk_unprepare(struct clk *clk)
->  {
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 4a537260f655..5b493024e1ec 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -113,7 +113,8 @@ struct clk_duty {
->   *		sleep.
->   *
->   * @disable:	Disable the clock atomically. Called with enable_lock held.
-> - *		This function must not sleep.
-> + *		This function must not sleep. The synchronous or asynchronous
-> + *		disabling of the clock is driver dependent.
+> This is handled in the above plla_fracck fractional part as defined in 
+> the plla_frac_layout.
 
-s/driver\K/ and hardware/
+Ah, right. I missed the changes in sam9x60_frac_pll_recalc_rate().
 
-Same in the first chunk actually.
-
->   *
->   * @is_enabled:	Queries the hardware to determine if the clock is enabled.
->   *		This function must not sleep. Optional, if this op is not
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 00623f4de5e1..84b02518791f 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -681,7 +681,8 @@ int __must_check clk_bulk_enable(int num_clks,
->   * @clk: clock source
->   *
->   * Inform the system that a clock source is no longer required by
-> - * a driver and may be shut down.
-> + * a driver and may be shut down. It is not guaranteed to ever actually
-> + * be stopped, that will be driver dependent.
-
-I'd rephrase this, taking other users into account:
-
-	There's no guarantee that the clock stops within a particular time
-	window or at all, depending on other users of the clock as well as
-	the driver and hardware implementation.
-
->   *
->   * May be called from atomic contexts.
->   *
-
--- 
-Kind regards,
-
-Sakari Ailus
