@@ -1,58 +1,59 @@
 Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FB153370
-	for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 15:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC38537ED
+	for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 16:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710776675; cv=none; b=XHQ4GjIPqEgaNGqRo5BG1hRrODB4S56cNVSHWgYT8KtcsKZmBAry4+MNjbrOtGtQo+26p4jvQwX9aT3QD29ZRZ/QsJXhcwUp/njubzzdp965UNCkysdSog68leCyK2/uSARSF5bg10jYIFwvjVTJf/F+pDwRn89B49SaxYqTOB4=
+	t=1710778855; cv=none; b=bUjAal9m00TflChOR6InYIKlro8fP0s9VbzIqBnWz3Q5oyBBp8fM13lPfXHv6XBIK6kfbIzcO14rbyen+G6J7kSGktlBIkcbqzCFllO5K0KX+KsAW1qVp6uX7IBYh/SOL17sqO41c1AhLiDB998Wn+7nfL/0KNBZ4bnqJ7BCuIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710776675; c=relaxed/simple;
-	bh=gjmX/rNx4LwSVtgaz0pA95nMRvHWz6o0KY50wska20o=;
+	s=arc-20240116; t=1710778855; c=relaxed/simple;
+	bh=q5uwhRfOKAScbecYwo45a2W/WLF9DI4xkykbYKAKHPk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GNd7wtG7ylNtWTjjtg0k+lnA5EGjsA61JcQjvUPDXoXE1N1qkD5ZbcuxUFre6Ycnrkk04PrmDEtdHsKRLTuubfNItLjPOrnTomJLKa4R2oD5oPqyV51A8X5K+SOc2g8nB2Y0JXe/lDjMg2bJAb67gIj//7VXvq2itmywOBgZfoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SViv1wR/; arc=none smtp.client-ip=209.85.218.53
+	 In-Reply-To:Content-Type; b=Z+XhmU9Dybr7GDsUnOBIOPALYRzJRgfMaC2tLT5Jfw06osF+luQvawaosOweuX3Sb1quYqZ3CS14hQwsOaBvlKPOmo/T6gohjFaqc6Yj6JSt56LVsp9UqS0JrGv6K81ZEOurmmye/cIwXp4eLiKyIoyr5vc5UQqcvGTXfuxfScU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zWTfTRQW; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SViv1wR/"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a46b798842bso227258366b.1
-        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 08:44:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zWTfTRQW"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a46cc855600so138273066b.0
+        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 09:20:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710776672; x=1711381472; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710778852; x=1711383652; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UJD0rqTuJJvstnAD3y/K2yGiB+m+v++HHr2jpYK0hdg=;
-        b=SViv1wR/vI6EHSBTBmOFa93wb1//GHNmbSVfo0VTvgMfif0zcwu2ukG+OI7FOoS+NQ
-         f4uyTG+xNnBYix6u8OKwuR3SnfunI+cWtviDD8oWszmr7bUVr6ny+XsVdPmI7vGGlgpG
-         fisrH1T0IROKWrtt/QYOuNWzHsSVdgpNoWNgUOGrneZxr5f36aVoARBFqi3ZZ+cOxgxz
-         2/QeCHJNO3rrQpnsVRjwpvld4TKnyxWEDXHqLR8vEpNc3i57z371wk/bKNlaFI3PVU4/
-         tftwDeOAZOgxE1DWNQIrsCLvVSDtTt3d+mEO/K4czNbH4G9GR5jmILcDojsUkb+YjpEf
-         BBaA==
+        bh=21NjxnHPdisLRxxx599/zFXOTzoXjNX7zPWCZ0pTvyY=;
+        b=zWTfTRQWPqffEzWAPtSDcKHH8gnL/nE8fTApap9i0IAOvbwwfxrjf5t3emp0ZaQ9w/
+         n+nhGR8e0L/OsZBGBEvVCCUWyFx9WbEuApouknH7cDegp4gCBte2YYcVbVqc8uBAkS0M
+         /wCerczEYVSHFwf4yk9HrS1Lb1dmrgAhvqHi5tPX8x1R2zvyAj4WlNdjKVLtPhKR3bPN
+         83r/hS5G8dFNcVxr8g+ZK4pvBcr2njrabl3Eyww6aMjd/pcr7WfMAxnEAMf7RPOOK9eq
+         BtifWPPG0oDAQ1F/+6t3OpdeznwlejCNCC70Ds/4j57tVReY5L1PX8TiNcUq4gaTCIPR
+         iiCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710776672; x=1711381472;
+        d=1e100.net; s=20230601; t=1710778852; x=1711383652;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UJD0rqTuJJvstnAD3y/K2yGiB+m+v++HHr2jpYK0hdg=;
-        b=fZXFw3/MY922nUT7a6vAcCE/OiElsEF9viz5lm6aVpWHckvqGzIxYdYPUZeJvpE1CO
-         I+c4RZ4kidgQYYu6OcXnE5asHiPBUfY2AQAthOFsFkjjZwf+EbkYU88VsU1elKcQDAg9
-         vvkfNx14IiG1S3BqXleuuYChEfnHcVO/ZWUo0eUk+lxcSY2zCXSRoEO75kDiG/K8+hSw
-         2nWWyg6pM196WwTlHDBnCz1+mFhiQBVE6ovwE+WDo7zbGOSgRbjob+a2X3QamHoz83nt
-         ibE1avzEGcZesA5pSBh+8JPAtJABnYarB/CQvJgkk/I+uucMl8ms5zcJkbXBt0vW8BcG
-         C2sA==
-X-Gm-Message-State: AOJu0Yx65Fg8r79toPWi9Kd+m4GuGU5u+JRC6CE+Q8yZ6TlmyeiJxQbh
-	hQ+tPxC5zxhqxFLLN4+VFNdmEQvWoSmjGEDaoF/m6DEDgZHXSQsbajjBsMhjIGU=
-X-Google-Smtp-Source: AGHT+IHty+VhQgIxNrWFy8eSIWsgi3cT6KgWtz3UQiiAh6Sllvcibq73C4uy17ydhqGTpvF7gO46/w==
-X-Received: by 2002:a17:906:3941:b0:a46:a17b:7a37 with SMTP id g1-20020a170906394100b00a46a17b7a37mr24376eje.0.1710776671948;
-        Mon, 18 Mar 2024 08:44:31 -0700 (PDT)
+        bh=21NjxnHPdisLRxxx599/zFXOTzoXjNX7zPWCZ0pTvyY=;
+        b=hFVDPzrO9oDLzY/0hArDegrlAgJWB9pn9oFobnhLeTMhJFDpnrMCUpZnFMi9OjAPEu
+         5JqFIl9Tq0hm+HuJI81iM6+EDvLkyt63CU7V0b8ryKbsYHRpQiXIxefHfYOfe9mHwjLu
+         v17h6W8rBCwH7kByPtYwvCnOCt6L8g9OHUGgwpHqWUYfKmFTlowvoDN043DuOdSjJkgW
+         4lERXs3PA2wpIFyR2w8bUvNlT5D4FaQgfajV/6UFT7lbXagg55bFYAcyAcGyYLmFglPQ
+         hqy1jNptcfR/ArEE/IYOM0bZb5pskw8furfLtXYOoK4/fKCCtbhGhRMUzm558Vj6acg+
+         isZA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+Y0nnzezTFe8I1xcshIqMRf12jnopgLnwZ3Pw9paOlKm2b2kGIp5nOPELlwx0e6zU9h1n0AImrUcjGTkYfjIcyw+QrB5mYb8m
+X-Gm-Message-State: AOJu0YyJ8LEUAzOwQY6LkEBR0pdpgUkVI6O9W07WjCSjcA1TEm+ntAUP
+	VVYSPPWk+ufltFRWi+LCz632s0D1cElPsBDpFw9vanghoYG8gdFzJT3aRwz6hQs=
+X-Google-Smtp-Source: AGHT+IGMtswkicv00Hbjtf+WojTSxdNHuJs5gz+xImpkVVcBgpBuOFkmoNvDUfhN1DvxbLMvx3mY/g==
+X-Received: by 2002:a17:906:2348:b0:a44:1f3:e474 with SMTP id m8-20020a170906234800b00a4401f3e474mr7058523eja.23.1710778851905;
+        Mon, 18 Mar 2024 09:20:51 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id ck26-20020a170906c45a00b00a45cabd9b5asm4935001ejb.111.2024.03.18.08.44.30
+        by smtp.gmail.com with ESMTPSA id h12-20020a170906260c00b00a457a55b814sm5022073ejc.73.2024.03.18.09.20.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Mar 2024 08:44:31 -0700 (PDT)
-Message-ID: <00408b6d-8815-4bfc-a66e-1cd0b5bb8fc2@linaro.org>
-Date: Mon, 18 Mar 2024 16:44:29 +0100
+        Mon, 18 Mar 2024 09:20:51 -0700 (PDT)
+Message-ID: <c456f575-570f-40d6-9960-634da314e1d6@linaro.org>
+Date: Mon, 18 Mar 2024 17:20:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,28 +61,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] dt-bindindgs: clock: nxp: support i.MX95 Display
- CSR module
+Subject: Re: [PATCH] dt-bindings: clock: samsung,s3c6400-clock: convert to DT
+ Schema
 Content-Language: en-US
-To: Peng Fan <peng.fan@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Abel Vesa <abelvesa@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240314-imx95-blk-ctl-v4-0-d23de23b6ff2@nxp.com>
- <20240314-imx95-blk-ctl-v4-5-d23de23b6ff2@nxp.com>
- <b4fe2ffa-bd36-404a-9441-8781f0a81d26@linaro.org>
- <DU0PR04MB94170C3364CF2F522C515D00882D2@DU0PR04MB9417.eurprd04.prod.outlook.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240312185035.720491-1-krzysztof.kozlowski@linaro.org>
+ <20240317-curator-smoky-99568f9308bc@spud>
+ <60039f49-a20d-49b9-8a3d-2ded499435a4@linaro.org>
+ <20240317-jersey-trolling-d4678546e87d@spud>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -127,31 +121,46 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <DU0PR04MB94170C3364CF2F522C515D00882D2@DU0PR04MB9417.eurprd04.prod.outlook.com>
+In-Reply-To: <20240317-jersey-trolling-d4678546e87d@spud>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/03/2024 13:37, Peng Fan wrote:
->>> +
->>> +maintainers:
->>> +  - Peng Fan <peng.fan@nxp.com>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - const: nxp,imx95-display-csr
->>> +      - const: syscon
+On 17/03/2024 16:49, Conor Dooley wrote:
+> On Sun, Mar 17, 2024 at 04:26:55PM +0100, Krzysztof Kozlowski wrote:
+>> On 17/03/2024 16:23, Conor Dooley wrote:
+>>> On Tue, Mar 12, 2024 at 07:50:35PM +0100, Krzysztof Kozlowski wrote:
+>>>> Convert Samsung S3C6400/S3C6410 SoC clock controller bindings to DT
+>>>> schema.
+>>>
+>>>> +description: |
+>>>> +  There are several clocks that are generated outside the SoC. It is expected
+>>>> +  that they are defined using standard clock bindings with following
+>>>> +  clock-output-names:
+>>>> +   - "fin_pll" - PLL input clock (xtal/extclk) - required,
+>>>> +   - "xusbxti" - USB xtal - required,
+>>>> +   - "iiscdclk0" - I2S0 codec clock - optional,
+>>>> +   - "iiscdclk1" - I2S1 codec clock - optional,
+>>>> +   - "iiscdclk2" - I2S2 codec clock - optional,
+>>>> +   - "pcmcdclk0" - PCM0 codec clock - optional,
+>>>> +   - "pcmcdclk1" - PCM1 codec clock - optional, only S3C6410.
+>>>
+>>> I know you've only transfered this from the text binding, but what is
+>>> the relevance of this to the binding for this clock controller? This
+>>> seems to be describing some ?fixed? clocks that must be provided in
+>>> addition to this controller. I guess there's probably no other suitable
+>>> place to mention these?
 >>
->> Why do you create five different bindings with almost the same contents?
->> Do you plan to grow on them, like add more compatibles here? Otherwise all
->> this could be in one binding.
+>> To make it correct, these should be made clock inputs to the clock
+>> controller, even if the driver does not take them, however that's
+>> obsolete platform which might be removed from kernel this or next year,
+>> so I don't want to spend time on it.
 > 
-> The blk ctrls are for different functions.
-> 
-> We may expand the bindings to add more properties for the blk ctrls, but I
-> am not sure as of now. I could merge them into one binding except
+> I think the comment should probably mention that these are the expected
+> inputs, part of me thought that that was what you were getting at but I
+> wasn't sure if instead they were inputs to some other IP on the SoC.
 
-Bindings should be complete...
+I can change it, but just to emphasize: in half a year or next year we
+will probably remove entire platform, thus also this binding.
 
 Best regards,
 Krzysztof
