@@ -1,200 +1,103 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C13531A66;
-	Mon, 18 Mar 2024 11:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D4E2D043;
+	Mon, 18 Mar 2024 11:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710760140; cv=none; b=KRFWdvFgG1ek1WPdvs8X7R78/0E7cOfsrtFp4uUq6Qi21tQ9r41KdSNOaO7IFN/mk5VxHh4+xTGwzSvuryLW4OwV9dGnXCdLWmgP3Vqhmw3pCqOtdRNVwm/E2ra7J521X8TF0pvWqcxES+wZ3TXia0P2LbejmB+tosrgdTtu8BQ=
+	t=1710760804; cv=none; b=qIH7gwyOCWtrFMYo4Xd7FOUsrEKc9Wk1dvY8qtM36iE3SvzJj4MJk+BwC96KN56w6HSjm7GEclXyXCdW8XXVKrsR3Vh8vFnF++jLOjz8lftdanYXZ5s7dA3crs7In2/MJqINMtvtJxxRy+edxlAGLhA4K7ztjYEVkuzkWJmHTVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710760140; c=relaxed/simple;
-	bh=LlN5vmoU3X09UJUTYhEgLanrVuqPgYAw3c3N6czQY5g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=U6tXXcRTUwfF0O4bkL8TVTtS8ayAdrsDhX2/u/cXU3eWZoqYIILQ+F7gNn93kbpUYfPBkP3s4wNNkcjdIFmQr7jlkiGrNJGPw7S+IjG5aYoOcSz6zIx8H7MHm6BqW5NjdnqEdsaHF+fT6xudRYY038vR7CRQroLs0S0Uv0nFAnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.07,134,1708354800"; 
-   d="scan'208";a="202139682"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 18 Mar 2024 20:08:56 +0900
-Received: from localhost.localdomain (unknown [10.226.93.20])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 992114253BE5;
-	Mon, 18 Mar 2024 20:08:53 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 2/3] clk: Add clk_poll_disable_unprepare()
-Date: Mon, 18 Mar 2024 11:08:41 +0000
-Message-Id: <20240318110842.41956-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240318110842.41956-1-biju.das.jz@bp.renesas.com>
-References: <20240318110842.41956-1-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1710760804; c=relaxed/simple;
+	bh=BqJofWzBZ49ZnhpiMHa0n+HH/iMa54LnUvfzH7cFXIA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Y+c5/7y4rPU7wr7myhVXuumo06uZs0O5KPlfheFcz0G3AJbE6H/hmNJ4RXXdgeQejcf45s8/Dxk/ONhARGE3hmohbsFHZG29g9JBxmrIHqv3w8izPKeSJ5anJ5Wr74MIKczkEVFrpDte2NnrAR2ZR+DfXsEreju1P6O5rxYHtrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LT9X8kJt; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LT9X8kJt"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-512ed314881so2878540e87.2;
+        Mon, 18 Mar 2024 04:20:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1710760801; x=1711365601; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hQx6cVe56Px3+YlHXZYmXT77wEkrjM+Ro9npnPmCVyo=;
+        b=LT9X8kJtbIb6D/xn8IgCFgFfoA80B+B6j/my1xgOz67ye1JvbV6xLwhuUPcaEulgg4
+         ksEmZyka1eo7LojBHsxPjyM2AODR9crj6L+Kpj3ok35HlgR5lZkceP4aD9VnmiQ10DlS
+         5UwWZqQrqyfKOlCiWGR2ArUFpKT05KLjIiRgi/QcO/6z6HZJWNYs/n6Ot3ehsr6Zsgos
+         sALEHXzGXJr0JtrmDtkyXPepVF/pqbjb4UVrj1C18y2umPD3EwmSWNeLss2q7EgaN5YJ
+         i1euSAUbt4ifnxIixpuonAB2zN5XA6RwF9mXqyPbSwb/mNjTe0h3bAh2wUjyKbjh3PzB
+         /YQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710760801; x=1711365601;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hQx6cVe56Px3+YlHXZYmXT77wEkrjM+Ro9npnPmCVyo=;
+        b=AICzQjPWYA0AlkwSvQvO/R/2QIwS/nT9IaSwq3bXfPtoEdBLzMbtUroApqgWSJmr7b
+         GrhTWlFZsll6p2aHNE+1ZVwsTWrmSxjZ3VGcpN1qovjdHz2w3SQLaypB7zu82vL+Tdh+
+         X1AwDiuAdzmARyQgWl/mQytwTEMSl4YNeOwAlViE8XHalZ//XSPq5KCeRCNCWD7a4qD4
+         eLNV6nOiEoq5DOMyRhvV5YfdFINtDHYmfNat73Ij2fPXqIe4YKvOa8w5hIZ2cDyRu6FD
+         4xSwPw7Mh9mfIc/UNHNlVVEdHH9lavfJiL470gzKdCw47csO0hi3bDbgipQ3kZd8fk4p
+         ttSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5181hFmO1awXBnFsjAi/tL6FFmgF8ANri6y1rHry0RvRfzboUdcZXUya0t4eJulSVOe4NlCW8KaE+ArwfTxLV8ptYcyRLj0LKu1SpA0Hnkm0yxdEu7ibxwkr/97NJeEhvcQkMCoy9
+X-Gm-Message-State: AOJu0Yy7shC+efWvukVlTXe0MzpCr4eK5h45SniYJceQBMSvE1Jl0oJz
+	4wKfsbsk5+CBaCq3jFS3Qs42dSfNdUYUL/QAMCi5KEtsJT0uOqKs
+X-Google-Smtp-Source: AGHT+IFfwoIV5QQ7JwOWuzu5wAgYOBzxBaVbW5H7m2JiJzcJposCtLyphnpBDv1c8nwrpjlEy/GVgQ==
+X-Received: by 2002:a05:6512:3d88:b0:513:a833:cda2 with SMTP id k8-20020a0565123d8800b00513a833cda2mr9268859lfv.53.1710760801141;
+        Mon, 18 Mar 2024 04:20:01 -0700 (PDT)
+Received: from [192.168.20.102] (57657817.catv.pool.telekom.hu. [87.101.120.23])
+        by smtp.googlemail.com with ESMTPSA id az1-20020adfe181000000b0033ed7181fd1sm6650421wrb.62.2024.03.18.04.20.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Mar 2024 04:20:00 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Subject: [PATCH 0/5] clk: qcom: apss-ipq-pll: various cleanups
+Date: Mon, 18 Mar 2024 12:19:54 +0100
+Message-Id: <20240318-apss-ipq-pll-cleanup-v1-0-52f795429d5d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFoj+GUC/x3MTQqEMAxA4atI1hOw/oCdqwyzCJpqoNRMw4hQv
+ LvF5bd4r4BxFjZ4NwUyH2Kypwr3amDeKK2MslRD13ZD27sRSc1Q9IcaI86RKf0VybH3FPwyjQP
+ UVDMHOZ/t53tdN2NMnIJmAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.12.3
 
-The clk_disable_unprepare() doesn't guarantee that a clock is gated after
-the execution as it is driver dependent. The Renesas and most of the other
-platforms don't wait until clock is stopped because of performance reason.
-But these platforms wait while turning on the clock.
+This series contains a few patches to perform some cleanup in the
+apss-ipq-pll driver.
 
-The normal case for shutting down the clock is unbind/close/suspend or
-error paths in the driver. Not waiting for the shutting down the clock
-will improve the suspend time.
+The set is based on v6.8 and it depends on the following patches:
+  - "clk: qcom: apss-ipq-pll: use stromer ops for IPQ5018 to fix boot failure"
+     Link: https://lore.kernel.org/r/20240315-apss-ipq-pll-ipq5018-hang-v2-1-6fe30ada2009@gmail.com
+  - "clk: qcom: clk-alpha-pll: Stromer register cleanup"
+     Link: https://lore.kernel.org/r/20240311-alpha-pll-stromer-cleanup-v1-0-f7c0c5607cca@gmail.com
 
-But on RZ/G2L Camera Data Receiving Unit (CRU) IP, initially the vclk is
-on. Before enabling link reception, we need to wait for vclk to be off
-and after enabling reception, we need to turn the vlck on. Special cases
-like this requires a sync API for clock gating.
-
-Add clk_poll_disable_unprepare() to poll the clock gate operation that
-guarantees gating of clk after the execution.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
 ---
-v2->v3:
- * Added WARN_ON(enable count non-zero) and return an error code (-EBUSY),
-   if the user is not the sole user of the clock and the enable count is
-   non-zero.
- * Returned an error if there's no is_enabled() callback.
-RFC->v2:
- * Renamed clk_disable_unprepare_sync()-->clk_poll_disable_unprepare()
- * Redesigned to make use of __clk_is_enabled() to poll the clock gating.
----
- drivers/clk/clk.c   | 29 ++++++++++++++++++++++++++++
- include/linux/clk.h | 46 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 75 insertions(+)
+Gabor Juhos (5):
+      clk: qcom: apss-ipq-pll: reuse Stromer reg offsets from 'clk_alpha_pll_regs'
+      clk: qcom: apss-ipq-pll: use an 1-D array for Huayra pll register offsets
+      clk: qcom: apss-ipq-pll: remove 'pll_type' field from struct 'apss_pll_data'
+      clk: qcom: apss-ipq-pll: constify match data structures
+      clk: qcom: apss-ipq-pll: constify clk_init_data structures
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f5fa91a339d7..e10bb14c904d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -13,6 +13,7 @@
- #include <linux/mutex.h>
- #include <linux/spinlock.h>
- #include <linux/err.h>
-+#include <linux/iopoll.h>
- #include <linux/list.h>
- #include <linux/slab.h>
- #include <linux/of.h>
-@@ -1160,6 +1161,34 @@ void clk_disable(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(clk_disable);
- 
-+/**
-+ * clk_poll_disabled - poll for clock gating.
-+ * @clk: the clk that is going to stop
-+ * @sleep_us: Maximum time to sleep between reads in us (0
-+ *            tight-loops).  Should be less than ~20ms since usleep_range
-+ *            is used (see Documentation/timers/timers-howto.rst).
-+ * @timeout_us: Timeout in us, 0 means never timeout
-+ *
-+ * It polls for a clk to be stopped.
-+ */
-+int clk_poll_disabled(struct clk *clk, unsigned long sleep_us, u64 timeout_us)
-+{
-+	bool status;
-+
-+	if (IS_ERR_OR_NULL(clk))
-+		return 0;
-+
-+	if (!clk->core->ops->is_enabled)
-+		return -EOPNOTSUPP;
-+
-+	if (WARN(__clk_get_enable_count(clk), "clk is in use\n"))
-+		return -EBUSY;
-+
-+	return read_poll_timeout(__clk_is_enabled, status, !status, sleep_us,
-+				 timeout_us, false, clk);
-+}
-+EXPORT_SYMBOL_GPL(clk_poll_disabled);
-+
- static int clk_core_enable(struct clk_core *core)
- {
- 	int ret = 0;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 84b02518791f..7f714ecce0eb 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -693,6 +693,20 @@ int __must_check clk_bulk_enable(int num_clks,
-  */
- void clk_disable(struct clk *clk);
- 
-+/**
-+ * clk_poll_disabled - inform the system whether the clock source is stopped.
-+ * @clk: clock source
-+ * @sleep_us: Maximum time to sleep between reads in us (0
-+ *            tight-loops).  Should be less than ~20ms since usleep_range
-+ *            is used (see Documentation/timers/timers-howto.rst).
-+ * @timeout_us: Timeout in us, 0 means never timeout
-+ *
-+ * Poll for clock gating and Inform the system about it's status.
-+ *
-+ * Context: May sleep.
-+ */
-+int clk_poll_disabled(struct clk *clk, unsigned long sleep_us, u64 timeout_us);
-+
- /**
-  * clk_bulk_disable - inform the system when the set of clks is no
-  *		      longer required.
-@@ -1030,6 +1044,11 @@ static inline int __must_check clk_bulk_enable(int num_clks,
- 
- static inline void clk_disable(struct clk *clk) {}
- 
-+static inline int clk_poll_disabled(struct clk *clk, unsigned long sleep_us,
-+				    u64 timeout_us)
-+{
-+	return 0;
-+}
- 
- static inline void clk_bulk_disable(int num_clks,
- 				    const struct clk_bulk_data *clks) {}
-@@ -1121,6 +1140,33 @@ static inline void clk_disable_unprepare(struct clk *clk)
- 	clk_unprepare(clk);
- }
- 
-+/**
-+ * clk_poll_disable_unprepare - Poll clk_disable_unprepare
-+ * @clk: clock source
-+ * @sleep_us: Maximum time to sleep between reads in us (0
-+ *            tight-loops).  Should be less than ~20ms since usleep_range
-+ *            is used (see Documentation/timers/timers-howto.rst).
-+ * @timeout_us: Timeout in us, 0 means never timeout
-+ *
-+ * Context: May sleep.
-+ *
-+ * This function polls until the clock has stopped.
-+ *
-+ * Returns success (0) or negative errno.
-+ */
-+static inline int clk_poll_disable_unprepare(struct clk *clk,
-+					     unsigned long sleep_us,
-+					     u64 timeout_us)
-+{
-+	int ret;
-+
-+	clk_disable(clk);
-+	ret = clk_poll_disabled(clk, sleep_us, timeout_us);
-+	clk_unprepare(clk);
-+
-+	return ret;
-+}
-+
- static inline int __must_check
- clk_bulk_prepare_enable(int num_clks, const struct clk_bulk_data *clks)
- {
+ drivers/clk/qcom/apss-ipq-pll.c | 70 +++++++++++++++--------------------------
+ 1 file changed, 25 insertions(+), 45 deletions(-)
+---
+base-commit: 9b65bf93985e8bd5bc5476beef59ba56f3f99697
+change-id: 20240315-apss-ipq-pll-cleanup-a1e99af9d854
+
+Best regards,
 -- 
-2.25.1
+Gabor Juhos <j4g8y7@gmail.com>
 
