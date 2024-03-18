@@ -1,127 +1,116 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33661CA89;
-	Mon, 18 Mar 2024 07:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35ECD22069
+	for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 07:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710745771; cv=none; b=DNBbtI3J41DcqyrsNLUFNQ/4wK5GEBDw6parujusd4sPKv71xDJAEJ3u+59PG2Pkejoj6l0XXxrouyWecjS7ChV052JV5Icx0YSBImf50LyJMC8rE5W7yEBxXsXj64gO1SyTL73HVI8WvPFuUs2CEu/meRhV847LrM7XubgKRhg=
+	t=1710745896; cv=none; b=fWmVQH0kRn1psgtiqeFcxaiyfT3QiEq3qBBA/OUVlnvMe3tgf7B93KpqoCFZwgkA34osc8ttNgL5fNhLzk0a9g7jQ1uyfZ/gs/gFRVWf8OVk+rTJzDssSIzu68neDUFY2xgRzrYYvSTudCVC7zQzWETKMyA1CA4ezP7tJnm8yY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710745771; c=relaxed/simple;
-	bh=uuwFTLvyMNqlpKTyNz8SdpNe0H6SFIIuVGNRpJwqqGc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YcR1UTTBG77dSKEY9RwEyxbdza8G8TaWfkFQKETB8I541JIVsVK6sQg+GRNOcYH7mUTbbkOgJPeWbK5IIZg8zygD1iVJEZf9K7ENjmgDSCePzCuI9qxu8Xd1xcBGzcnZubrgRjD5xEeBelK/MVEXCt1/sM/EUYsMfUkWPyAgyvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YSB4ad8t; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1710745896; c=relaxed/simple;
+	bh=SrururavG+N20uLQV6wSNjtVq09E7FD8xFoRu1t6mQo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Ak5ZRLMDqTr6DRM8drz/UbJRQ8ZrIuwo+4g7W0i4cErsHBVJ+JsvqnssTqQQcpxaqQpWxW54Ph2KfLZewRbCiMPn3q1D7QELwPjvluE0InCZLJsCwSSCebxmo+kLSAUki1LHZX90iGZbEpc3VYPllQlfIrfSOE+fG1N/e9loNcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=bakgQLXM; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YSB4ad8t"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 42I63EYF085045;
-	Mon, 18 Mar 2024 01:03:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1710741794;
-	bh=eb0Ccz7HpZ5APiazpAPXMBC/gybVlUfHgyxFsx8OJ5c=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=YSB4ad8t69Xt6z8Q9rUY7EPVPxlrBq3REXebtcGlwp2Xm9RDgJhWweHPSkviZerXB
-	 sECEHphpbqVd6gYcEzGnykTJsRuqoFIEyjiUgvEoZmz51wvOS+gqLTJH9eanEIJrXb
-	 51pd1marzgijpu8vVM65WjCMxGNME2Yx2hb6+A9o=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 42I63EkG002963
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 18 Mar 2024 01:03:14 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 18
- Mar 2024 01:03:14 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 18 Mar 2024 01:03:14 -0500
-Received: from localhost (dhruva.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 42I63DLB033059;
-	Mon, 18 Mar 2024 01:03:14 -0500
-Date: Mon, 18 Mar 2024 11:33:12 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Jagadeesh Kona <quic_jkona@quicinc.com>
-CC: "Rafael J . Wysocki" <rafael@kernel.org>,
-        Kevin Hilman
-	<khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Pavel Machek
-	<pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad
- Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>, Stephen Boyd
-	<sboyd@kernel.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Vikash
- Garodia <quic_vgarodia@quicinc.com>,
-        "Bryan O'Donoghue"
-	<bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Abel Vesa
-	<abel.vesa@linaro.org>, Taniya Das <quic_tdas@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit
- Pandey <quic_ajipan@quicinc.com>
-Subject: Re: [PATCH V5 1/5] PM: domains: Allow devices attached to genpd to
- be managed by HW
-Message-ID: <20240318060312.z5pk4roz6uqhwosc@dhruva>
-References: <20240315111046.22136-1-quic_jkona@quicinc.com>
- <20240315111046.22136-2-quic_jkona@quicinc.com>
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="bakgQLXM"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-56acd06c016so381063a12.3
+        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 00:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1710745892; x=1711350692; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VeRv6wWUGO4049P3j2OySs144lGj+ZeTDqiDzx4NR1w=;
+        b=bakgQLXMLf7k6+t5tJnz60ny6stSr7FlrA8d9sdoTCbIlympuWa+KKZGNCQhVuJ7I8
+         /26gA+tDvfn32iJ7n7k+awVGYd1ExNW3up3VgGVDzBr9YPEPG5ZuxaWD0TRDDb+QV+8N
+         0iSxbBr+m/aGRlUuJZKqsA3i/HVWBd9HbWIN/epfIhW6EvxddHxX3UKqtrGMaqktb00Q
+         v/FoVgq9jsDE94lAx7E1gs1p3wmt8pjrip9nJZDDrpINkt7OrZFUD8/nnUm7c1HyPwmp
+         XOmShVREYwRBqHas3HgYSs76QdUME1dgy+beGUfxcx7EWZzcPkanoRLaUgUoMyEtrc3i
+         D4gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710745892; x=1711350692;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VeRv6wWUGO4049P3j2OySs144lGj+ZeTDqiDzx4NR1w=;
+        b=kuBMRDhYfBTub6fpJAZUw3M4NRzkc7h0PneI0s6JfxkZWbvtZ8ov1VbVDDYtIR6QXi
+         RbjNdkH6NTimXvFFunjjrhkmkMI+SId69xSJFqnIT2lA197EYLHeYGwhuxpeYOrKlhkW
+         FXPUnXYZpN+Tsu+QvbI5lgeoEH5tLaqhP5BgpEqz4G+egHANMrmbLq7QC7m+nK7KJCLY
+         BjbA11FdF2UR1D705Y4k1oR0enD9j+BrWLxHgnrVcPK4ziYevn7W+kDI8gKr7XZKDTW5
+         RFGsPNP+uJ1MHi9hKm7SVAm/W7nZ85Q9oePRUFRahbfWTVg4EKlOegyPT9pfRPgZQ9g8
+         6Y+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUuY0r4zLSz1ufkb60KomnFypW/fM1WdQt8TTGuPc00ZtWVCP9gd38WR2Z1eppDcOH1psRFqxwtenitYEZqs0lR67gdyInCZqlc
+X-Gm-Message-State: AOJu0Yx1POupx5i3d4KxbpHm0NKyj66DipfyltAoZWeYXuKIMFqXL/nX
+	MO8XLQgDr57CnwFJ/EZY+k7ycOhYpZACIEBfvO8MqVJDkGhZsCZ3duhKU+MDb3k=
+X-Google-Smtp-Source: AGHT+IFFvAoRVXiyVVbqmQ6QoDavb++Ps/7SqBBQhgnyqUgmFdd9+pMtZIjKJBie44OQFsvt+LH0CQ==
+X-Received: by 2002:a17:906:ef03:b0:a46:c01d:b595 with SMTP id f3-20020a170906ef0300b00a46c01db595mr1208577ejs.53.1710745892434;
+        Mon, 18 Mar 2024 00:11:32 -0700 (PDT)
+Received: from localhost (046125249120.public.t-mobile.at. [46.125.249.120])
+        by smtp.gmail.com with ESMTPSA id lx9-20020a170906af0900b00a4638693bbfsm4477665ejb.116.2024.03.18.00.11.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Mar 2024 00:11:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240315111046.22136-2-quic_jkona@quicinc.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 18 Mar 2024 08:11:30 +0100
+Message-Id: <CZWOT0K3AE2F.1BUND7M9Q5RXO@fairphone.com>
+Cc: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 1/8] dt-bindings: clock: qcom: Add compatible for
+ QCM6490 boards
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Taniya Das" <quic_tdas@quicinc.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ =?utf-8?q?Michael_Turquette_=C2=A0?= <mturquette@baylibre.com>, "Bjorn
+ Andersson" <andersson@kernel.org>, "Konrad Dybcio"
+ <konrad.dybcio@linaro.org>, "Rob Herring" <robh+dt@kernel.org>, "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley"
+ <conor+dt@kernel.org>
+X-Mailer: aerc 0.15.2
+References: <20240318053555.20405-1-quic_tdas@quicinc.com>
+ <20240318053555.20405-2-quic_tdas@quicinc.com>
+In-Reply-To: <20240318053555.20405-2-quic_tdas@quicinc.com>
 
-On Mar 15, 2024 at 16:40:42 +0530, Jagadeesh Kona wrote:
-> From: Ulf Hansson <ulf.hansson@linaro.org>
-> 
-> Some power-domains may be capable of relying on the HW to control the power
-> for a device that's hooked up to it. Typically, for these kinds of
-> configurations the consumer driver should be able to change the behavior of
-> power domain at runtime, control the power domain in SW mode for certain
-> configurations and handover the control to HW mode for other usecases.
-> 
-> To allow a consumer driver to change the behaviour of the PM domain for its
-> device, let's provide a new function, dev_pm_genpd_set_hwmode(). Moreover,
-> let's add a corresponding optional genpd callback, ->set_hwmode_dev(),
-> which the genpd provider should implement if it can support switching
-> between HW controlled mode and SW controlled mode. Similarly, add the
-> dev_pm_genpd_get_hwmode() to allow consumers to read the current mode and
-> its corresponding optional genpd callback, ->get_hwmode_dev(), which the
-> genpd provider can also implement to synchronize the initial HW mode
-> state in genpd_add_device() by reading back the mode from the hardware.
-> 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Mon Mar 18, 2024 at 6:35 AM CET, Taniya Das wrote:
+> Add the new QCM6490 compatible to support the reset functionality for
+> Low Power Audio subsystem.
+>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
->  drivers/pmdomain/core.c   | 64 +++++++++++++++++++++++++++++++++++++++
->  include/linux/pm_domain.h | 17 +++++++++++
->  2 files changed, 81 insertions(+)
-> 
+>  .../devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml       | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscor=
+ecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.=
+yaml
+> index deee5423d66e..861b41933525 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yam=
+l
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yam=
+l
+> @@ -30,6 +30,7 @@ properties:
+>        - qcom,sc7280-lpassaudiocc
+>        - qcom,sc7280-lpasscorecc
+>        - qcom,sc7280-lpasshm
+> +      - qcom,qcm6490-lpassaudiocc
 
-LGTM!
+So QCM6490 and SM7325 and SC7280 with non-CrOS firmware (maybe some WoA
+devices?) are supposed to use qcom,qcm6490-lpassaudiocc then? Is this
+what is intended?
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Regards
+Luca
 
--- 
-Best regards,
-Dhruva
+>
+>    power-domains:
+>      maxItems: 1
+> --
+> 2.17.1
+
