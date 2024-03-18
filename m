@@ -1,144 +1,274 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D913B19C
-	for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 20:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED62752F98;
+	Mon, 18 Mar 2024 20:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710793072; cv=none; b=FcCm04XLIyXRio3NEjMpFyoLGcoYOfxbzMtH7lQyHPh9JKuzymakVZ4GPtgrl86enywfLYMZ4Qk7JDPnAxti5gMyddFZGMp4+XNt6x1kWNxuHkQdMea10Ea0eANRFC+cECunmorVOC2B4dQY9wIdhCS11Nw2iJlCxfUhGvxtY4k=
+	t=1710795061; cv=none; b=izcC2TUfxexC9sNb6b8P+MKZAguysix7oi53QyAhHjrPpnWirNYwEvc28c65T03P94BgdrVLktwts3/6XmjXUQv0Kow4kIKpezzCsbj5Dx7dlSLkziE6ByMtOPcY15F9roWJHpQxeje4hhFY81RT1fbQ61afymfQfvaYR2qg40I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710793072; c=relaxed/simple;
-	bh=2a/s7mDDRqYelu3/00RIsORLQ/R2WRP9RJNEVPTqkgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RmvMIJUpliNW8LLoLu5zu3iAT0f1VvxJA+5yCC2fFtYcyRo+NGhcWbZKXkjmeEmK1xQIzBsOiH9+ym0bEAjsvzBvOFz4GGkoFxcrZoaXVgGjprPFaGU68QaMzgA+Vl8Cwo5UWsgMuACN+GP3OHwqNo+9nL3ue2TfRw+tIel+5aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Z3UVBVCZ; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1710795061; c=relaxed/simple;
+	bh=DQyXwkGCVcqn03gGGgc5pF7UkvAlzUUsxkvBry9vhTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=adU97unXwiV/wIFkCb6d3cU16o08/iGaDXLlyWFsdMgA4JV2TE7C20+UHzyRb4V/6L3jX1CY0hARm48CvUYQbWKm2s+4b9WtINLYw6iwFEySoIRKARFDxyr7gr40e4nkrv3ops3l0fucdPo8ZG+kChuoB/TjmTnaqe4lel69hpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=JvelUiUl; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Z3UVBVCZ"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-55a179f5fa1so5556304a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 18 Mar 2024 13:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1710793069; x=1711397869; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u1VK2UrvRK1GqfS+jZTcmyrPbAehgKhpyQhy7X6GkE8=;
-        b=Z3UVBVCZnDJ9Zvrv9Ei/oBLg+jd0/t7RdrbMVcUXIADSX+12Dvrv2GnDbIwme+9NtN
-         gcrLhsTCXLGHCwqQUn42Z74vgImQjKGG6pd5edE11i3kVE5SVW7van+dVBMaLxLqc2QQ
-         /Rapb3gGffmbxnFu7/9kz0Y37ssoFUoCxo517U4oM/GcWjmmp0rU1qa5kBmj3y3G0aki
-         OrU0lyRRLpxZav+NG3jSw4mxyv/HajZFzAkOL/Avcmcvcs1SOnTeJ7FiJAuT3LHt/Pxn
-         f0Gu5UmxKGBqP5AVoEuyozZWdUAgiNY8aq5IEQViOpoCMw48Ws2ESVxiLsS0ToNdCqdn
-         McnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710793069; x=1711397869;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u1VK2UrvRK1GqfS+jZTcmyrPbAehgKhpyQhy7X6GkE8=;
-        b=e0BZJF995mb6opYimrPE2sKDH2E6ESa6EIA9bBVPNNP5mOI0E9Ppfny2SpZdhm8Ya+
-         NHZlaIewPTH3jNFbJcpOXNHid1id6biY4NVIL/jCn+M3uKId/LitVmYPM7AVWlEjYJy8
-         9RxDgpOlENLDA+mZQ2b35Sgxxjyixrnk+ChNtYxGjEA94mVhPr34YK/3Bl7vYONb/ZKb
-         d4RgsO48zstzDrT0buIsqhIc856PrPEo4Tp3+tl0LklP78l16vS2Wjab65X9F8tQeJ+1
-         MR0UaCOw8MQVaeSlLCLYjkrS/JFnlMxJZftHMKfMmvYF5JNohhjE40okAueft09Y77ni
-         /hrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFVogGLMfW4xG8AZGB/lHvXXXw5z5Y3zEOMe/guTdCBDOi9N/N1OLn5My1NjugNb3XGBSfpWpAb1/yt50p6+0/RQec6iFQ0YA5
-X-Gm-Message-State: AOJu0YyKbyI1WVKuWfOf7ufEtkHSpcRYRuD4UzifUox6ySyavzmfAmYv
-	6JDLgaBLJV1UphCYtktbs2MYEYVO4ePpQsmH/DYgVsN+G8AH7vWe1MNg8yhjdqo=
-X-Google-Smtp-Source: AGHT+IF9T4xVGnEMDWOvmebwvh7RSH//MnjXmlytzIKhD9eeivlJmumrE3KnhdTbwCwawu0TsPm8Jg==
-X-Received: by 2002:a05:6402:4347:b0:568:1882:651f with SMTP id n7-20020a056402434700b005681882651fmr276209edc.25.1710793069043;
-        Mon, 18 Mar 2024 13:17:49 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id g18-20020a056402091200b00568b6f73491sm3513123edz.14.2024.03.18.13.17.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Mar 2024 13:17:48 -0700 (PDT)
-Message-ID: <c6704551-dae1-4536-8da2-ad4764d34503@tuxon.dev>
-Date: Mon, 18 Mar 2024 22:17:46 +0200
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JvelUiUl"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=V7hiweKCShqTkZVjRoBbzPoSakFvSACyYI9eRdobDaY=; b=JvelUiUlEPlnNSozIDXO9xVl79
+	Vs4SbJuFviGCjY4V59jwpJctAAgl/bbxuvkCTt8bNjpAbrnA/aZIbPTJEfgE0AA9FpnamA7sF7sJt
+	j4SWEbsy5Vwie22bOlRsk92UlWylNrCgyTskccbnJYgCIhiTjBaXOW7fIAbhCA3TxMgU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1rmJw1-00Adr6-5R; Mon, 18 Mar 2024 21:50:17 +0100
+Date: Mon, 18 Mar 2024 21:50:17 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Wadim Mueller <wafgo01@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Chester Lin <chester62515@gmail.com>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Matthias Brugger <mbrugger@suse.com>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Johannes Zink <j.zink@pengutronix.de>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Swee Leong Ching <leong.ching.swee@intel.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/3] net: stmmac: Add NXP S32 SoC family support
+Message-ID: <ddf5c4e2-16c2-4399-ae34-57114b8d4d21@lunn.ch>
+References: <20240315222754.22366-1-wafgo01@gmail.com>
+ <20240315222754.22366-3-wafgo01@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 27/39] clk: at91: sam9x7: add sam9x7 pmc driver
-Content-Language: en-US
-To: Varshini.Rajendran@microchip.com, mturquette@baylibre.com,
- sboyd@kernel.org, Nicolas.Ferre@microchip.com,
- alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240223171342.669133-1-varshini.rajendran@microchip.com>
- <20240223172831.672953-1-varshini.rajendran@microchip.com>
- <01e96d4b-3038-498b-a9b2-2acac51f1d80@tuxon.dev>
- <e84994fc-7ec1-4d65-84f6-efc6a47b0c2f@microchip.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <e84994fc-7ec1-4d65-84f6-efc6a47b0c2f@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240315222754.22366-3-wafgo01@gmail.com>
 
+On Fri, Mar 15, 2024 at 11:27:48PM +0100, Wadim Mueller wrote:
+> Add support for NXP S32 SoC family's GMAC to the stmmac network driver. This driver implementation is based on the patchset originally contributed by Chester Lin [1], which itself draws heavily from NXP's downstream implementation [2]. The patchset was never merged.
 
+Please wrap you commit message.
 
-On 18.03.2024 11:25, Varshini.Rajendran@microchip.com wrote:
-> Hi Claudiu,
-> 
-> On 11/03/24 11:28 am, claudiu beznea wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> On 23.02.2024 19:28, Varshini Rajendran wrote:
->>> Add a driver for the PMC clocks of sam9x7 Soc family.
->>>
->>> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
->>> ---
->>> Changes in v4:
->>> - Changed variable name alloc_mem to clk_mux_buffer to be more
->>>    suggestive
->>> - Changed description of @f structure member appropriately
->>> ---
->>>   drivers/clk/at91/Makefile |   1 +
->>>   drivers/clk/at91/sam9x7.c | 946 ++++++++++++++++++++++++++++++++++++++
->>>   2 files changed, 947 insertions(+)
->>>   create mode 100644 drivers/clk/at91/sam9x7.c
->>>
->>> diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
->>> index 89061b85e7d2..8e3684ba2c74 100644
->>> --- a/drivers/clk/at91/Makefile
->>> +++ b/drivers/clk/at91/Makefile
-[ ... ]
+ 
+> +#include <linux/device.h>
+> +#include <linux/ethtool.h>
 
->>> +static const struct {
->>> +     const char *n;
->>> +     const char *p;
->>> +     const struct clk_pll_layout *l;
->>> +     u8 t;
->>> +     const struct clk_pll_characteristics *c;
->>> +     unsigned long f;
->>> +     u8 eid;
->>> +} sam9x7_plls[][PLL_ID_MAX] = {
->>> +     [PLL_ID_PLLA] = {
->>> +             {
->>> +                     .n = "plla_fracck",
->>> +                     .p = "mainck",
->>> +                     .l = &plla_frac_layout,
->>> +                     .t = PLL_TYPE_FRAC,
->>> +                     /*
->>> +                      * This feeds plla_divpmcck which feeds CPU. It should
->>> +                      * not be disabled.
->>> +                      */
->>> +                     .f = CLK_IS_CRITICAL | CLK_SET_RATE_GATE,
->>> +                     .c = &plla_characteristics,
->>> +             },
->>> +
->>> +             {
->>> +                     .n = "plla_divpmcck",
->>> +                     .p = "plla_fracck",
->>> +                     .l = &pll_divpmc_layout,
->>
->> You mentioned in "[PATCH v4 24/39] clk: at91: sam9x7: add support for HW
->> PLL freq dividers" that this has div2 but it is registered w/ a layout that
->> has .div2 = 0.
-> 
-> This is handled in the above plla_fracck fractional part as defined in 
-> the plla_frac_layout.
+Is this one needed?
 
-Ah, right. I missed the changes in sam9x60_frac_pll_recalc_rate().
+> +static int s32_gmac_init(struct platform_device *pdev, void *priv)
+> +{
+> +	struct s32_priv_data *gmac = priv;
+> +	u32 intf_sel;
+> +	int ret;
+> +
+> +	if (gmac->tx_clk) {
+> +		ret = clk_prepare_enable(gmac->tx_clk);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "Can't set tx clock\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	if (gmac->rx_clk) {
+> +		ret = clk_prepare_enable(gmac->rx_clk);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "Can't set rx clock\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/* set interface mode */
+> +	if (gmac->ctrl_sts) {
+> +		switch (gmac->intf_mode) {
+> +		default:
+> +			dev_info(
+> +				&pdev->dev,
+> +				"unsupported mode %u, set the default phy mode.\n",
+> +				gmac->intf_mode);
+> +			fallthrough;
+
+I would actually return -EINVAL. There is no backwards compatibility
+needed here, so force that the mode is always specified.
+
+> +		case PHY_INTERFACE_MODE_SGMII:
+> +			dev_info(&pdev->dev, "phy mode set to SGMII\n");
+
+Please don't spam the kernel log. dev_dbg(). 
+
+> +static void s32_fix_speed(void *priv, unsigned int speed, unsigned int mode)
+> +{
+> +	struct s32_priv_data *gmac = priv;
+> +
+> +	if (!gmac->tx_clk || !gmac->rx_clk)
+> +		return;
+> +
+> +	/* SGMII mode doesn't support the clock reconfiguration */
+> +	if (gmac->intf_mode == PHY_INTERFACE_MODE_SGMII)
+> +		return;
+> +
+> +	switch (speed) {
+> +	case SPEED_1000:
+> +		dev_info(gmac->dev, "Set TX clock to 125M\n");
+
+more dev_dbg(). A driver should generally be silent, unless something
+goes wrong. It is also questionable if dev_dbg() should be used. Once
+the driver actually works, you can throw away a lot of debug
+prints. Do you expect problems here in the future?
+
+> +static int s32_config_cache_coherency(struct platform_device *pdev,
+> +				      struct plat_stmmacenet_data *plat_dat)
+> +{
+> +	plat_dat->axi4_ace_ctrl = devm_kzalloc(
+> +		&pdev->dev, sizeof(struct stmmac_axi4_ace_ctrl), GFP_KERNEL);
+> +
+> +	if (!plat_dat->axi4_ace_ctrl)
+> +		return -ENOMEM;
+> +
+> +	plat_dat->axi4_ace_ctrl->tx_ar_reg = (ACE_CONTROL_SIGNALS << 16) |
+> +					     (ACE_CONTROL_SIGNALS << 8) |
+> +					     ACE_CONTROL_SIGNALS;
+> +
+> +	plat_dat->axi4_ace_ctrl->rx_aw_reg =
+> +		(ACE_CONTROL_SIGNALS << 24) | (ACE_CONTROL_SIGNALS << 16) |
+> +		(ACE_CONTROL_SIGNALS << 8) | ACE_CONTROL_SIGNALS;
+> +
+> +	plat_dat->axi4_ace_ctrl->txrx_awar_reg =
+> +		(ACE_PROTECTION << 20) | (ACE_PROTECTION << 16) |
+> +		(ACE_CONTROL_SIGNALS << 8) | ACE_CONTROL_SIGNALS;
+
+This looks like magic. Can the various shifts be replaced my #defines?
+Comments added? This makes changes in some of the core code. So it
+might be better to have a prerequisite patch adding cache coherency
+control, with a good commit message explaining it.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int s32_dwmac_probe(struct platform_device *pdev)
+> +{
+> +	struct plat_stmmacenet_data *plat_dat;
+> +	struct stmmac_resources stmmac_res;
+> +	struct s32_priv_data *gmac;
+> +	struct resource *res;
+> +	const char *tx_clk, *rx_clk;
+> +	int ret;
+> +
+> +	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
+> +	if (ret)
+> +		return ret;
+> +
+> +	gmac = devm_kzalloc(&pdev->dev, sizeof(*gmac), GFP_KERNEL);
+> +	if (!gmac)
+> +		return PTR_ERR(gmac);
+> +
+> +	gmac->dev = &pdev->dev;
+> +
+> +	/* S32G control reg */
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +	gmac->ctrl_sts = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR_OR_NULL(gmac->ctrl_sts)) {
+> +		dev_err(&pdev->dev, "S32G config region is missing\n");
+> +		return PTR_ERR(gmac->ctrl_sts);
+> +	}
+> +
+> +	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
+> +	if (IS_ERR(plat_dat))
+> +		return PTR_ERR(plat_dat);
+> +
+> +	plat_dat->bsp_priv = gmac;
+> +
+> +	switch (plat_dat->phy_interface) {
+> +	case PHY_INTERFACE_MODE_SGMII:
+> +		tx_clk = "tx_sgmii";
+> +		rx_clk = "rx_sgmii";
+> +		break;
+> +	case PHY_INTERFACE_MODE_RGMII:
+> +	case PHY_INTERFACE_MODE_RGMII_ID:
+> +	case PHY_INTERFACE_MODE_RGMII_TXID:
+> +	case PHY_INTERFACE_MODE_RGMII_RXID:
+> +		tx_clk = "tx_rgmii";
+> +		rx_clk = "rx_rgmii";
+> +		break;
+> +	case PHY_INTERFACE_MODE_RMII:
+> +		tx_clk = "tx_rmii";
+> +		rx_clk = "rx_rmii";
+> +		break;
+> +	case PHY_INTERFACE_MODE_MII:
+> +		tx_clk = "tx_mii";
+> +		rx_clk = "rx_mii";
+> +		break;
+> +	default:
+> +		dev_err(&pdev->dev, "Not supported phy interface mode: [%s]\n",
+> +			phy_modes(plat_dat->phy_interface));
+> +		return -EINVAL;
+> +	};
+> +
+> +	gmac->intf_mode = plat_dat->phy_interface;
+> +
+> +	/* DMA cache coherency settings */
+> +	if (of_dma_is_coherent(pdev->dev.of_node)) {
+> +		ret = s32_config_cache_coherency(pdev, plat_dat);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	/* tx clock */
+> +	gmac->tx_clk = devm_clk_get(&pdev->dev, tx_clk);
+> +	if (IS_ERR(gmac->tx_clk)) {
+> +		dev_info(&pdev->dev, "tx clock not found\n");
+> +		gmac->tx_clk = NULL;
+
+Is the clock really optional?
+
+I would also print the name of the clock which is missing.
+
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -324,6 +324,10 @@ static void stmmac_clk_csr_set(struct stmmac_priv *priv)
+>  			priv->clk_csr = STMMAC_CSR_150_250M;
+>  		else if ((clk_rate >= CSR_F_250M) && (clk_rate <= CSR_F_300M))
+>  			priv->clk_csr = STMMAC_CSR_250_300M;
+> +		else if ((clk_rate >= CSR_F_300M) && (clk_rate < CSR_F_500M))
+> +			priv->clk_csr = STMMAC_CSR_300_500M;
+> +		else if ((clk_rate >= CSR_F_500M) && (clk_rate < CSR_F_800M))
+> +			priv->clk_csr = STMMAC_CSR_500_800M;
+
+Also seems like something which could be a patch of its own. Ideally
+you want lots of small patches which are obviously correct. Part of
+being obviously correct is the commit message, which is easier to
+write when the patch is small and only does one thing.
+
+      Andrew
 
