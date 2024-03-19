@@ -1,176 +1,227 @@
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2020.outbound.protection.outlook.com [40.92.103.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7852030A;
-	Tue, 19 Mar 2024 07:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710834064; cv=fail; b=Bfv5PDMsLc8hE/3aVP4ks78B+tkZ3suypGNVcknRaj2a+DTatpygbvQWpbUkPHQUx/LWOI1OZQ+B/GDN3mTM3zwN0WqFG3yaZxKywVJkT0beSXMv3r71RUrdB1A/kT81KsHgsqn7zUgi/2kXNBsOA+59HeXb347B+Y+Surmlrcw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710834064; c=relaxed/simple;
-	bh=tSQUtTX8fh38Go3RUODerRSlpoPFUFwcCJZSuhrWiGk=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dAgZinpfok90Mzt0qkftC/jN6t47L/WOXN8ZHHcqqmQBvc8dE1oWmpsBlMvQggZnxKgalAlF6sOqZdYcS2uTOGRLvZ7GFdLXgHRp5Yth37f2WNstdpcvKyxQpTf29+ifBzFOtIyXS9SIo/jM/eg31dGOM8qRXJCbtpUsPPI+PpY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=XYmddN3v; arc=fail smtp.client-ip=40.92.103.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2A0548EA
+	for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2024 08:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710836917; cv=none; b=M6s7pVUAiy9ssjw32w0RAVPSYxTYm0lZhVvVoqgc5cQq2kxT68W2fU0WoneuuOUVwq59qNzYaj2QQX6wEMgtb796rja/bvoxU8JNOgiot8RyIYS+NuKmZfG/Uh3FuJo5V9gBQxBUE9Rszxsro9IcoR+/yEo5eIeZEMKWEBT14Qk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710836917; c=relaxed/simple;
+	bh=wEOu2J6N3RicgE6VdikhaGkAHK9MlBxWFNBPisxCRwo=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=RZD80G8Ype8ESDnoXg88sSymIf3LJu6AjyHfiQeYVKLWV+lAp6+xzWfJkk7Useu3QvLavNavidxfRy5TM301ApuI75+lHyZbOlhWCcVsZusx/xz4YVo/7T/mM+/kPqkcmf+rUW50ghwCrwtAIICfcEsLD9i1sJWaXaw6rHmiKKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=oqQDhAkp; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="XYmddN3v"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KKIrV+94bQOX5HMuKYXkTWS9EkWYaN9Q9hF0NV9StgAxWAb6qJZFWz22WqU2cRATB58Dnmz72+ps6h3zxmxZl0Yk9UhDd7ixOMRZz/uAG5BizIymOqX0qzJwRrnadatRTyLZA8ddkUOG+Sdp69OI1nMqoOIWio8V/PfDWUX9NY3A7lrUW/+8qVUxQHa9D2FAKU9y9zxCZ0urSsjEtKoLYOj4Aexek7riclAyRhz6LOKK8ZlxwaTO8UQaS8xXiEbZZ0kmfWoBfeypZtjXJNG5TEHzoo1sMikIo4Twe3KbH/oi8IYxQocKU8p+wtqkDrbhpDh/HJtx19tQzhmGVF/UQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gONtz0GRW7/gri2iNvD60/GuVLuc01EbZ7qvr5+H8ZA=;
- b=bnoNsst9RGZmF3i/NUt4lTjSHGPQ9TySRz+mT7XrEjPIKMO4mZGxEk0lBoHUu5RSe1+iLUbkVIhFeSvNahzYhF1hxQGHHwIu7h5wiquq9OrjF219VQyW4czMxQcN0UW2oBAVjNdR0QenUct/ZPNt53B5o1Ax96j5GLcmjChWcT2E+V57Q3UCJTtMHLokqxVQExt4dMlR7OU5o/i20vNcuSFHfjGxZtnTGt9i3ft+QE47LVpqPNIV+ou7nEcFLW+p+2EhTZClf68VAvtHmEbwBiQnYHRLxcoIlv0WVQbOCw52irNCrUkh7hmc7KwMG8h0x46f9As5rRUL7jnYfxawvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gONtz0GRW7/gri2iNvD60/GuVLuc01EbZ7qvr5+H8ZA=;
- b=XYmddN3vMPeoPkMSIgvV6JGtkwd6RZHm2GSB6TMIuFocNDDe+LILt03mys9NO/VeDmUyAhjH7RFH2x5iUqBsDghzt43p0fQixX6CBbLy8Tc9Tm3e1RSo8hFlyG4htYaNnBsso+bFtSpxEC8azWRvCfd8cdpVNkYFFocek2MgfHHLO3TF7gBirXvHze5mqo7bf4N2dVws0vy2VlIHVT+yvNSgRat007Y7P0NrzQYVs4y45CjhTy7Pl1imt1irPwCLbe4G8epRzDFiTkQ91Aw7P0+dNe+DRDHxvw/55CCEOhaNugOKlpCYX0Y2e6jp3WtCd+9p/P9l/HPq0cEPqvSPEA==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PNXP287MB0031.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:c0::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.29; Tue, 19 Mar
- 2024 07:40:51 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::1bd4:64d4:daf5:ae42]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::1bd4:64d4:daf5:ae42%3]) with mapi id 15.20.7386.023; Tue, 19 Mar 2024
- 07:40:51 +0000
-Message-ID:
- <MA0P287MB28227C169B0DFB16B1AC762DFE2C2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Tue, 19 Mar 2024 15:40:46 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 4/5] clk: sophgo: Add SG2042 clock driver
-To: Stephen Boyd <sboyd@kernel.org>, Chen Wang <unicornxw@gmail.com>,
- aou@eecs.berkeley.edu, chao.wei@sophgo.com, conor@kernel.org,
- devicetree@vger.kernel.org, guoren@kernel.org, haijiao.liu@sophgo.com,
- inochiama@outlook.com, jszhang@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
- richardcochran@gmail.com, robh+dt@kernel.org, samuel.holland@sifive.com,
- xiaoguang.xing@sophgo.com
-References: <cover.1708397315.git.unicorn_wang@outlook.com>
- <d7c74c2cfa410850c044ff2879720db06c2f8272.1708397315.git.unicorn_wang@outlook.com>
- <47a83f766c85481b73c6e6dd3759d4d9.sboyd@kernel.org>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <47a83f766c85481b73c6e6dd3759d4d9.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [A3Cr4AZvhbYTRJRmg1jpqPysGDLJNTXQ]
-X-ClientProxiedBy: SI2PR02CA0038.apcprd02.prod.outlook.com
- (2603:1096:4:196::22) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <d00faf47-80b2-4e2c-ad65-00654a95d5ef@outlook.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="oqQDhAkp"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-41461c256c4so5873315e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2024 01:28:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1710836913; x=1711441713; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=hgFFAPN7B2IdqbSbHOUWcvyqPwWPHdQWlex71RuQvmY=;
+        b=oqQDhAkpgLw5OUssGrIeyW21nyYmJJfiZEzHuuJBv2Q+Teo8dmTaCaztY2Y5JCM4lI
+         OrjeHBZVNkizeBLsQ6o0vtAyBE3daTkROgs77VU5qAK9HSi7dMa2ypmLmCJhU8EyAKqM
+         1vz3J+bF7xJKd8XN4QSiWaU103vA/Qo5kuLbkIM8BvT4ArTM7CKHwbJLmdbLCmOeJwCT
+         +jkyoXRxHAHi31KJT4jkwL8idnVo28psaU0d/7m0n7oJdxMfEFziTNxWG7lwoTzcwCeH
+         MLmAM/aA/ylmz3Aqy8++f6N4E4eHxMeM8o5rLbYodh46bSJljU0f5g0mHK5kID0q7PkW
+         JAPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710836913; x=1711441713;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hgFFAPN7B2IdqbSbHOUWcvyqPwWPHdQWlex71RuQvmY=;
+        b=G+Uzbyb2HqM6z6/2QqRRhTUoq5CMRHbaNrTwhhPQrKdYiZLtzmCaDzbT7yi9YNSSVo
+         5C+i0cSVVq4hBNLUXnsvLOZDtDAfpRA53EdHVuAVer/PgBYYEahhGWnr2Lk2saGBGseI
+         u3zCaUzehS/+baZVgCkVAfAfty5+eIz8I87TO2L89O6RYknfZBLm+JqdvCChofr/1zZ5
+         0QaKD8BXspObBa3HeQblUmMCLkrpF4uxnmTlhFJuDhYEAD2yQstafDlOYxJxWHKHMWGt
+         WKxUY7m+y7LWFdXHd2UeIu1SI57TRr70ilIq1snHauxgQFDSQ9V4hi6RMpzlBpoEJpgh
+         oZcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUh1CsWe0mFvvDQnH5+pjE8UcPwMdQ1fODMULjXRZ52bxwFY9axstS5FcgEIEI+af6LRcjmkFNRgX7Tk2HubfobRoaekZJap8vs
+X-Gm-Message-State: AOJu0YxwR6ouod+qGl84XMPlZL9QbyBXJ9Q2o2cRAvPlIS+JAGGOwklz
+	7AbPl3dXstFEX2GQf2VNrIVP/H6GTizzhjkCsrmzmQ2OqdjcoY0wcntbh6cCFpY=
+X-Google-Smtp-Source: AGHT+IF8VeQ4xCRzE1F2nR3lm7Kyoo5lbqorbXz3zLlgIR0czhWjHZf4ZYDwVRGEa2XhkhvSTql6LA==
+X-Received: by 2002:adf:a358:0:b0:341:8666:ce2e with SMTP id d24-20020adfa358000000b003418666ce2emr913294wrb.0.1710836912716;
+        Tue, 19 Mar 2024 01:28:32 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:a757:fdcf:e3d7:eaed])
+        by smtp.gmail.com with ESMTPSA id ay25-20020a5d6f19000000b0033e3cb02cefsm11883313wrb.86.2024.03.19.01.28.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Mar 2024 01:28:32 -0700 (PDT)
+References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
+ <20240314232201.2102178-2-jan.dakinevich@salutedevices.com>
+ <1j8r2jj24k.fsf@starbuckisacylon.baylibre.com>
+ <cbfd9c66-cca5-49f5-9468-43710c48518e@salutedevices.com>
+ <1jedc7hlg4.fsf@starbuckisacylon.baylibre.com>
+ <d4cfef9e-3cae-4f1a-90b3-33d5707596f9@salutedevices.com>
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Kevin
+ Hilman <khilman@baylibre.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
+ kernel@salutedevices.com
+Subject: Re: [PATCH 01/25] clk: meson: a1: restrict an amount of 'hifi_pll'
+ params
+Date: Tue, 19 Mar 2024 09:21:27 +0100
+In-reply-to: <d4cfef9e-3cae-4f1a-90b3-33d5707596f9@salutedevices.com>
+Message-ID: <1jsf0mfwwg.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PNXP287MB0031:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5c0f22a8-1f3e-4c6a-cddc-08dc47e7e4f8
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	s1PYnEZFe7P1mfvb1a12viYf1xdlNFl/dqoBt4VNO9IQ+QdXgSVvqSiIaSdbM7moeRZlS4RPOPjm1WHLiZ6aIaZIjH0rMIuX0YHM7Bca8ADB824Tvbt9CZfSMny1uQ1G4iU4FWZZ763HDMUjpaDTjOJr9t8Z6w518ziZjAh/00hRU76x4IqWG0RmtJjOfr9zohMZz3teD1mplVIqKu4Jb81oCN6BFqJQB6xy4iZEUKG8axVsdjvI5GgOr73+cpBd6oGmwxxajoLgvlTPwI8x8WpCOwjb6H0wQqX6HEp28BThfAdw+TnJJ1+s08Ueta+5ps9yb7AAroXyM/LrAWPXoY/jzNRM9qHgQYdlWScXD+dGWX6vBXgMBumN2j2pY/XGNrkgEY1RR3tk1ATtVrGiusr7ZZeEUvuzqfD9y0XZ+nnAcLbiT/zRAY6Iiz4qMJA0avSFPZt05qlalhO7wDXRQQArC2juHnkYt1BDIROy+k3zerYv8XRSyYnW7mWQTrpNBuhaA/Bh46xNHFDo7JhW9I/2FKmgIQVqKAi5CFaq5Nmv4g7wax+F+j97bOXueCr2
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Mk1VTW9JOVd3ZUJiMFBobWNvOHZ6T3BaK1BFb1Q1bS9lYUh5WW9iMmc4eXhC?=
- =?utf-8?B?dE1jZUtuTUFCdm9oSStlUzFHbjhZR3c5SWM5dEdUeUMvb0tmdHMxSnNpK1pi?=
- =?utf-8?B?bDJlUmVicGpvQnQwMnQ5VWN4Q1NPU1NZak5zUnBlZGVuZ0hMVDJtcEp3OGYx?=
- =?utf-8?B?YTRaUmpueXZZZFBpSXI1TmJPV2t0dEtLaWY5QmtqNlY3UlJvbWp1NTB3eEJI?=
- =?utf-8?B?TTVSUEY4dWwrdFlicDBvTEhrLzlMKzNZMWNDTHNNY1lVZDQrZ2hQSTUxTi8r?=
- =?utf-8?B?R1JRQUN5S2luT3NoMy9vQ1RzbTl4NGE2SmtHelVQbyt4TDk1bHVEWnNvWmJO?=
- =?utf-8?B?cU1LcG0wTWlwRnNiOS9EMDZhWHJVNnZnNU5IMzAxZjlobnlvN2hHdlVJUzla?=
- =?utf-8?B?OG9yK0RwbEVaRzd4NkdIT1J5UTJCVFZvNnBRYlJzU1h0WFVwQlpHdFRraERo?=
- =?utf-8?B?eHltNzJweFN4dDQyMlVMdnhSd1dBMUJyNEpTNlpTTVVVekJ3WmEzVHV1Qk5E?=
- =?utf-8?B?N3ZpV244UzV5Wm50UytDc2lPajZ1SEQ3Uis2d2hoSGtQYUpBd3FzckNOcDZP?=
- =?utf-8?B?MTJrME5oTjdIODlrMHpCdU1peWx3ejJEL0dSak82K0hvRWg1VFgyZ1BXd1JX?=
- =?utf-8?B?VUo5c2phRnYwbTZubG10Mm9FMi9sbnp3aWhoRXRUQks2Zi9oeHVqUjFFeVRH?=
- =?utf-8?B?UTdoTFVaWHhpc2E2cWRUb2c4UVZjbjBEcGQyc0JqUnNXWnNuL2l5WWxlZ09F?=
- =?utf-8?B?OG5NZGY0dnNJMTNZSUlpUDROVkwzWlpnSkZhTWxod2V4cXhGSDJReVhFSUF6?=
- =?utf-8?B?QXJnT3VDbS9MdEtKaEgxYnNVM1M1Z0JuUnVvbVY2TXMra3g5VW0yYnR0UVVa?=
- =?utf-8?B?S1lJU2wvUTN1dHZHbmpHV05ScmVjRjYxTW5vUThDdTlObGQrNVlxSHAwa0hZ?=
- =?utf-8?B?UndyNFZ1T3VpYXVhakdaY2M1dU5tVXRIMGI4dnZKTFkxdFVYbWllSk9TcVdw?=
- =?utf-8?B?MUQreURLYnB1b0VuR0xtam16RmJiYUU1UlVSOGtMTUdFeFNTNk9pTnQ1cTda?=
- =?utf-8?B?bUxxUThKNGZNNzRHdlgwRkJ6K2k2cmloWWlOLy95ZVdVVTdFMFN5cVNacVNJ?=
- =?utf-8?B?dTRUZld5QnVFNDdPZG5HT2tYdjNQd3JNN3FIaWxTbkhTeWZTQXBuUzYxdW4y?=
- =?utf-8?B?cHk2dUczOEJTYStMVWJSNHY3NWNxOFR1bXdJVTlGRUxERWlSZmlQUndDb2sv?=
- =?utf-8?B?QzdqMnN2VS9DLy9RcjhSSmFIMmdhL2dFYzhSR3lmNmRsbmxsdjZ2UTBaWHFq?=
- =?utf-8?B?Qk5JL1FPQWtOOUoyZHdqVDB6V1IrNW81SmN3cUxPNUlQZnZMVFV6cWs5YnZI?=
- =?utf-8?B?VW04dUVsOHRaZTFEc1V2WVhLZlIzaXZOOWh5RHNKTk03Q2h0MzljQUJ6RmlJ?=
- =?utf-8?B?eERNS0NaajM3UzBwdmNIckhDZTBpZnBocVlYOU5LaWJMTGFmdmdKNU9UdS9G?=
- =?utf-8?B?ZjhvVkVaUE43bnpIbCtod3RFdU9lUzN5bnNPZXVtU3IvbUQyQUtuVm1QRFgx?=
- =?utf-8?B?UmZ0ODZIRGc0L1UxZ2Y5WmFPbDJOTERiZm1JUm5JTUxxRVM2WVNjc3AvNjBC?=
- =?utf-8?B?VEd0NHdLSlZZWWlRZVIwVDRHck0xQkk1N0tncThFUWNDKzJDWk5HVjVmQmtU?=
- =?utf-8?Q?q2MVy0Z3ThqSM7DwgwXO?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c0f22a8-1f3e-4c6a-cddc-08dc47e7e4f8
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2024 07:40:50.0948
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PNXP287MB0031
+Content-Type: text/plain
 
-Thank you Stephen for your carefully check and comments, I will improve 
-the code according to your inputs.
 
-I have some additional explanations for two of these points.
+On Tue 19 Mar 2024 at 01:35, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
 
-On 2024/3/9 10:11, Stephen Boyd wrote:
-
-[......]
-
->> +
->> +/*
->> + * Below array is the total combination lists of POSTDIV1 and POSTDIV2
->> + * for example:
->> + * postdiv1_2[0] = {2, 4, 8}
->> + *           ==> div1 = 2, div2 = 4 , div1 * div2 = 8
->> + * And POSTDIV_RESULT_INDEX point to 3rd element in the array
->> + */
->> +#define        POSTDIV_RESULT_INDEX    2
->> +static int postdiv1_2[][3] = {
-> const? And move it to the function scope.
+> On 3/18/24 13:17, Jerome Brunet wrote:
+>> 
+>> On Sun 17 Mar 2024 at 17:17, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
+>> 
+>>> On 3/15/24 11:58, Jerome Brunet wrote:
+>>>>
+>>>> On Fri 15 Mar 2024 at 02:21, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
+>>>>
+>>>>> Existing values were insufficient to produce accurate clock for audio
+>>>>> devices. New values are safe and most suitable to produce 48000Hz sample
+>>>>> rate.
+>>>>
+>>>> The hifi pll is not about 48k only. I see no reason to restrict the PLL
+>>>> to a single setting.
+>>>>> You've provided no justification why the PLL driver can't reach the same
+>>>> setting for 48k. The setting below is just the crude part. the fine
+>>>> tuning is done done with the frac parameter so I doubt this provides a
+>>>> more accurate rate.
+>>>>
+>>>
+>>> You are right, it is not about 48k only. However, there are two issues.
+>>>
+>>> First, indeed, I could just extend the range of multipliers to 1..255.
+>> 
+>> Why 1..255 ? This is not what I'm pointing out
+>> 
+>> According to the datasheet - the range is 32 - 64, as currently
+>> set in the driver.
+>> 
 >
->> +       {2, 4,  8}, {3, 3,  9}, {2, 5, 10}, {2, 6, 12},
->> +       {2, 7, 14}, {3, 5, 15}, {4, 4, 16}, {3, 6, 18},
->> +       {4, 5, 20}, {3, 7, 21}, {4, 6, 24}, {5, 5, 25},
->> +       {4, 7, 28}, {5, 6, 30}, {5, 7, 35}, {6, 6, 36},
->> +       {6, 7, 42}, {7, 7, 49}
-> It may be better to make it a struct with named members because I have
-> no idea what each element means.
-I plan to add some comments to explain the meaning of this array member. 
-This array is only used in this function, and I think it is somewhat 
-unnecessary to define a structure specifically for it. Adding some 
-comments will help everyone understand better.
+> Could you point where in the doc the range 32..64 is documented?
+> Documentation that I have may be not so complete, but I don't see there
+> any mention about it.
+>
+> Anyway, range 32..64 of multipliers is not enough to produce accurate
+> clock, and a need 128 for 48kHz.
 
-[......]
+A1 datasheet v0.4 - Section 7.6.3.2
 
->> +
->> +/*
->> + * Common data of clock-controller
->> + * Note: this structure will be used both by clkgen & sysclk.
->> + * @iobase: base address of clock-controller
->> + * @regmap: base address of clock-controller for pll, just due to PLL uses
->> + *  regmap while others use iomem.
->> + * @lock: clock register access lock
->> + * @onecell_data: used for adding providers.
->> + */
->> +struct sg2042_clk_data {
->> +       void __iomem *iobase;
-> Why not use a regmap for the iobase as well?
-I plan to unify it as iomem. Anyway, just use one method should be fine.
+>
+>> The change you have provided request a multipler of 128/5 = 25,6
+>> If you put assigned-rate = 614400000 in DT, I see no reason can find the
+>> same solution on its own.
+>> 
+>
+> The reasoning is following. I don't know why 32..64 range was declared
+> for this clock, and whether it would be safe to extend it and include
+> 128, which is required for 48kHz. But I know, that multiplier=128 is
+> safe and works fine (together divider=5).
 
-[......]
+You have not answer my remark.
+Mainline does not do everything like the AML SDK does. Saying you are
+copying it because you know it works (in your opinion) is not good
+enough.
 
+I'm telling you that your hack is not necessary and so far, you have not
+demonstrated that it is.
+
+Also the multiplier range in m/n, not m alone.
+
+>
+>>> But I am unsure if hifi_pll is able to handle whole range of
+>>> mulptipliers. The value 128 is taken from Amlogic's branch, and I am
+>>> pretty sure that it works.
+>> 
+>>>
+>>> Second, unfortunately frac parameter currently doesn't work. When frac
+>>> is used enabling of hifi_pll fails in meson_clk_pll_wait_lock(). I see
+>>> it when try to use 44100Hz and multipliers' range is set to 1..255. So,
+>>> support of other rates than 48k requires extra effort.
+>> 
+>> Then your change is even more problematic because it certainly does not
+>> disable frac ... which you say is broken.
+>> 
+>> That parameter should be removed with a proper comment explaining why
+>> you are disabling it. That type a limitation / known issue should be
+>> mentionned in your change.
+>> 
+>
+> Handling of frac should not be removed, it should be fixed to achieve
+> another rates. But that is not the goal of this commit.
+
+You argued that frac was broken and that was partly why you introduced
+this work around. I'm telling you this approach is incorrect.
+
+So either :
+* Remove frac for now, until it is fixed, because it is broken and add
+  comment clearly explaining that quirk.
+* Or fix it now.
+
+Your choice.
+
+>
+>
+>>>
+>>>>>
+>>>>> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+>>>>> ---
+>>>>>  drivers/clk/meson/a1-pll.c | 8 ++++----
+>>>>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+>>>>> index 4325e8a6a3ef..00e06d03445b 100644
+>>>>> --- a/drivers/clk/meson/a1-pll.c
+>>>>> +++ b/drivers/clk/meson/a1-pll.c
+>>>>> @@ -74,9 +74,9 @@ static struct clk_regmap fixed_pll = {
+>>>>>  	},
+>>>>>  };
+>>>>>  
+>>>>> -static const struct pll_mult_range hifi_pll_mult_range = {
+>>>>> -	.min = 32,
+>>>>> -	.max = 64,
+>>>>> +static const struct pll_params_table hifi_pll_params_table[] = {
+>>>>> +	PLL_PARAMS(128, 5),
+>>>>> +	{ },
+>>>>>  };
+>>>>>  
+>>>>>  static const struct reg_sequence hifi_init_regs[] = {
+>>>>> @@ -124,7 +124,7 @@ static struct clk_regmap hifi_pll = {
+>>>>>  			.shift   = 6,
+>>>>>  			.width   = 1,
+>>>>>  		},
+>>>>> -		.range = &hifi_pll_mult_range,
+>>>>> +		.table = hifi_pll_params_table,
+>>>>>  		.init_regs = hifi_init_regs,
+>>>>>  		.init_count = ARRAY_SIZE(hifi_init_regs),
+>>>>>  	},
+>>>>
+>>>>
+>> 
+>> 
+
+
+-- 
+Jerome
