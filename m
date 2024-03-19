@@ -1,259 +1,282 @@
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4B680BFD;
-	Tue, 19 Mar 2024 13:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E012263A
+	for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2024 18:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710856400; cv=none; b=YnbwmPywisBQPMi0F7R9IPfzTFmeqw833TjG+IFLYiJefq0YBBWEZUp6reGTfs3IbKrIGTnxxOJx+o8I2EM+5AV4MRgQOlE7jiPmtQR/W0/oCy61TY7VnelDiSmO7vI+MnLSSu0SZNi67aV5oqleE2P1h9kByF24g8ruu/PEj24=
+	t=1710874037; cv=none; b=igJc2LastR57ky5TT4rwECl11TaOY6vHHBZuQVZJ+afrLYRFr0AxFDa4+XkRKwKYibDtGdlK7SieqhnzB7Ayy+M3WSQFl0jZ7pxlrJKrXDc0/qBU11SZ96Yv3j1XqEW7rPnfuhBfzFqYwEwCCxJoKMuZ6Ka9UmGrB1Sr+GLFqtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710856400; c=relaxed/simple;
-	bh=OXZgPwWPdTNaxtMnH4myg+ToziRSNnXvhkwXx1ZufmU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M/8P5/w41ZhMAOV4Ao35XkNBYUaPLpnh59pm4ubf7gkptaZaCm7JzpL9lZSS4CLwPHxOBpFnC+yw3x+6C7QIXa3/FPeeIE9+WdqZcWA9l9C9h8Umqj6KGN1JpOgPUYWtG2kQdH5OF3HaOp2DqGsqeQ/2nk6EekG8Kzsc2qIztTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ZdXJ+IUo; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+	s=arc-20240116; t=1710874037; c=relaxed/simple;
+	bh=+6T83vgzF4M+f76SSlS8X08c5+c85AAPe3UsRbosQTM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CgV8f77xc1FiwbAh55VdzYDCaTmLlcKri1IEIuxxpOCSNfZ+1U09fxarUKGepzy4TtWE4z39fHo2TCbGJe8wsgKkaGCMcbioDPkyf3el75cG9fJm2wH6MToV2kzSeZ7agQusSkOgQFUOdAAaIaFha1sPCPgeiVrQkk2NWUpTkFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O4UXRN68; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ZdXJ+IUo"
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 0957D10000A;
-	Tue, 19 Mar 2024 16:53:12 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 0957D10000A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1710856392;
-	bh=cMQFR177UDppiHHa9pB9nbmCdpBrIycSstEw9RoGTQI=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=ZdXJ+IUoxafVJmHArgilqIq/xR+cA8woWE5N9r6qzBMaWFunn7syOsKx8qLG8PS9j
-	 vQ83YE4Sbd4e2GyM/LXFVj5CQEzYiLvCcu31GAteRYOud+OnUBzC23Uf/Xqzn91k3G
-	 ST/k5QpvS04ZBnytrGLzHPs3ec/4lGwCGF1I6Z0yPqQCyvYoG1ITUtXLW7gjQFLDOv
-	 oH3k8K5Ak8eAwJJDsOFfN4BFtfd2MH2RBk9JpLmvU0nmCx8BeYg+zHF8roQ5tmlLJ6
-	 CW/G29alyisg1jGq+assolGMSWPgFNCYosGKMcHu2B9G5KWPNSyYdnYJtcU7RobrrC
-	 IKjlAIup7GSgw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Tue, 19 Mar 2024 16:53:11 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 19 Mar
- 2024 16:53:11 +0300
-Date: Tue, 19 Mar 2024 16:53:11 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-CC: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
-	<conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman
-	<khilman@baylibre.com>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <alsa-devel@alsa-project.org>,
-	<linux-sound@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<kernel@salutedevices.com>
-Subject: Re: [PATCH 01/25] clk: meson: a1: restrict an amount of 'hifi_pll'
- params
-Message-ID: <20240319135311.xjpgkvgyczq4eymi@CAB-WSD-L081021>
-References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
- <20240314232201.2102178-2-jan.dakinevich@salutedevices.com>
- <1j8r2jj24k.fsf@starbuckisacylon.baylibre.com>
- <cbfd9c66-cca5-49f5-9468-43710c48518e@salutedevices.com>
- <1jedc7hlg4.fsf@starbuckisacylon.baylibre.com>
- <d4cfef9e-3cae-4f1a-90b3-33d5707596f9@salutedevices.com>
- <1jsf0mfwwg.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O4UXRN68"
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dc236729a2bso5658381276.0
+        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2024 11:47:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1710874035; x=1711478835; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+yETJkuJsleidnoVU1VURiPPCKkhUdvuJViHj8ytoVo=;
+        b=O4UXRN68YDZAQWOm1hrO4UGaHQImGrrkTLdonWKGDWZ1OKA4cDd5ItiY1B0eZ9TI5X
+         84u8+wFgPMKXpDqjY/MEBNjWfrVuN32HDkHBhJq0DA8sMqMbq3MLHMcHNX7dFOSmXjKO
+         hQDdmm4Stz1IPSufF5+41AH5wBcb0kLWkFzpBi6tb1KfyezkGKR3ssdHiJISl1QpOWLg
+         DOVz0aBkkDWP7zp+cAHZK5TmR08TmFfPjB4boUlWMPu0scDLvSIRdGXqUjJ1sZ6EyoIr
+         ffGkyYGAnQ7IZ9G4PXJD9OD11zyJi7mEgZHTOL9ceE4IwAV7tFql2uwvKSzjy27rz2fO
+         0Bmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710874035; x=1711478835;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+yETJkuJsleidnoVU1VURiPPCKkhUdvuJViHj8ytoVo=;
+        b=mxIApvXEFiBGsr+AVsdnPMFVamEH/iMDg5BbZho+yJT/Lw4p/3JNXCRC+gKAB/p99j
+         bFpB+BeLY/qwSWJoqYlfPRoztpFkSU4oTYxXCtMJqCXTdww62ogc40rW/DqylOvpj3wa
+         RaG2QFbqSL3cZq5bYCQmaW9ggGVfukqsZBC0bUpuVuTP6tim9UOB9wZPYUdRUgBXnut7
+         uz/RHC0pjMulZArsnQkHUGQfK4yqxkfh3QmOUeYaB9fQ5F/VGVPGXGQOjMSV/0SLxPfs
+         CQxzcpRZmUWsVZeNR/rLgn2itcbg6OiseFBj7ZVG/LbJ/+9TscGPgyKXFDCZo9DwCe41
+         0jdw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/k1MumW+u1/902dBiCbFE8qQMxXpmJEDuOhhlWJaxX9jRyfYQd/vOehoyOkfvJTzge6P/jUS0Jph7SMdDs3n57bcXd0EbtFBh
+X-Gm-Message-State: AOJu0YwQn7cYcHbZhMVYOVjWYBxF5wN5wVx3zRNL5w8ew4Gye34IgVIa
+	roeav7Z3PVwixv6NpW5SiMgH8/CvYdvau+eZnr5X+0gEauVg6ti++c05F/xeCDngSYPoWLq8KB6
+	QwoB0xOr74ATYB/5lT5PqeHwY5LwbJOwaJ85F2g==
+X-Google-Smtp-Source: AGHT+IGMULIlFhDFq57eyKDjNgk7qs9vLLxO6TKj43NJhJ7I/TS+DqIXKpFQOhwcgta7HS9GgDe5owb16IxuTP5lU/w=
+X-Received: by 2002:a25:830b:0:b0:dc6:ff32:aaea with SMTP id
+ s11-20020a25830b000000b00dc6ff32aaeamr13507330ybk.24.1710874034601; Tue, 19
+ Mar 2024 11:47:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1jsf0mfwwg.fsf@starbuckisacylon.baylibre.com>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 184265 [Mar 19 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 10 0.3.10 53c821b925e16276b831986eabc71d60ab82ee60, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, lore.kernel.org:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/03/19 13:26:00
-X-KSMG-LinksScanning: Clean, bases: 2024/03/19 13:26:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/03/19 01:36:00 #24282057
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20240301015118.30072-1-semen.protsenko@linaro.org>
+In-Reply-To: <20240301015118.30072-1-semen.protsenko@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Tue, 19 Mar 2024 13:47:03 -0500
+Message-ID: <CAPLW+4=_yD3ShU5DvLWFyEzVrVHNVCsB+4bVkP+x_boRmC-vEw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] clk: samsung: Implement manual PLL control for
+ ARM64 SoCs
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 19, 2024 at 09:21:27AM +0100, Jerome Brunet wrote:
-> 
-> On Tue 19 Mar 2024 at 01:35, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
-> 
-> > On 3/18/24 13:17, Jerome Brunet wrote:
-> >> 
-> >> On Sun 17 Mar 2024 at 17:17, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
-> >> 
-> >>> On 3/15/24 11:58, Jerome Brunet wrote:
-> >>>>
-> >>>> On Fri 15 Mar 2024 at 02:21, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
-> >>>>
-> >>>>> Existing values were insufficient to produce accurate clock for audio
-> >>>>> devices. New values are safe and most suitable to produce 48000Hz sample
-> >>>>> rate.
-> >>>>
-> >>>> The hifi pll is not about 48k only. I see no reason to restrict the PLL
-> >>>> to a single setting.
-> >>>>> You've provided no justification why the PLL driver can't reach the same
-> >>>> setting for 48k. The setting below is just the crude part. the fine
-> >>>> tuning is done done with the frac parameter so I doubt this provides a
-> >>>> more accurate rate.
-> >>>>
-> >>>
-> >>> You are right, it is not about 48k only. However, there are two issues.
-> >>>
-> >>> First, indeed, I could just extend the range of multipliers to 1..255.
-> >> 
-> >> Why 1..255 ? This is not what I'm pointing out
-> >> 
-> >> According to the datasheet - the range is 32 - 64, as currently
-> >> set in the driver.
-> >> 
-> >
-> > Could you point where in the doc the range 32..64 is documented?
-> > Documentation that I have may be not so complete, but I don't see there
-> > any mention about it.
-> >
-> > Anyway, range 32..64 of multipliers is not enough to produce accurate
-> > clock, and a need 128 for 48kHz.
-> 
-> A1 datasheet v0.4 - Section 7.6.3.2
-> 
-> >
-> >> The change you have provided request a multipler of 128/5 = 25,6
-> >> If you put assigned-rate = 614400000 in DT, I see no reason can find the
-> >> same solution on its own.
-> >> 
-> >
-> > The reasoning is following. I don't know why 32..64 range was declared
-> > for this clock, and whether it would be safe to extend it and include
-> > 128, which is required for 48kHz. But I know, that multiplier=128 is
-> > safe and works fine (together divider=5).
-> 
-> You have not answer my remark.
-> Mainline does not do everything like the AML SDK does. Saying you are
-> copying it because you know it works (in your opinion) is not good
-> enough.
-> 
-> I'm telling you that your hack is not necessary and so far, you have not
-> demonstrated that it is.
-> 
-> Also the multiplier range in m/n, not m alone.
-> 
-> >
-> >>> But I am unsure if hifi_pll is able to handle whole range of
-> >>> mulptipliers. The value 128 is taken from Amlogic's branch, and I am
-> >>> pretty sure that it works.
-> >> 
-> >>>
-> >>> Second, unfortunately frac parameter currently doesn't work. When frac
-> >>> is used enabling of hifi_pll fails in meson_clk_pll_wait_lock(). I see
-> >>> it when try to use 44100Hz and multipliers' range is set to 1..255. So,
-> >>> support of other rates than 48k requires extra effort.
-> >> 
-> >> Then your change is even more problematic because it certainly does not
-> >> disable frac ... which you say is broken.
-> >> 
-> >> That parameter should be removed with a proper comment explaining why
-> >> you are disabling it. That type a limitation / known issue should be
-> >> mentionned in your change.
-> >> 
-> >
-> > Handling of frac should not be removed, it should be fixed to achieve
-> > another rates. But that is not the goal of this commit.
-> 
-> You argued that frac was broken and that was partly why you introduced
-> this work around. I'm telling you this approach is incorrect.
-> 
-> So either :
-> * Remove frac for now, until it is fixed, because it is broken and add
->   comment clearly explaining that quirk.
-> * Or fix it now.
-> 
-> Your choice.
-> 
-> >
-> >
-> >>>
-> >>>>>
-> >>>>> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-> >>>>> ---
-> >>>>>  drivers/clk/meson/a1-pll.c | 8 ++++----
-> >>>>>  1 file changed, 4 insertions(+), 4 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
-> >>>>> index 4325e8a6a3ef..00e06d03445b 100644
-> >>>>> --- a/drivers/clk/meson/a1-pll.c
-> >>>>> +++ b/drivers/clk/meson/a1-pll.c
-> >>>>> @@ -74,9 +74,9 @@ static struct clk_regmap fixed_pll = {
-> >>>>>  	},
-> >>>>>  };
-> >>>>>  
-> >>>>> -static const struct pll_mult_range hifi_pll_mult_range = {
-> >>>>> -	.min = 32,
-> >>>>> -	.max = 64,
-> >>>>> +static const struct pll_params_table hifi_pll_params_table[] = {
-> >>>>> +	PLL_PARAMS(128, 5),
-> >>>>> +	{ },
-> >>>>>  };
-> >>>>>  
-> >>>>>  static const struct reg_sequence hifi_init_regs[] = {
-> >>>>> @@ -124,7 +124,7 @@ static struct clk_regmap hifi_pll = {
-> >>>>>  			.shift   = 6,
-> >>>>>  			.width   = 1,
-> >>>>>  		},
-> >>>>> -		.range = &hifi_pll_mult_range,
-> >>>>> +		.table = hifi_pll_params_table,
-> >>>>>  		.init_regs = hifi_init_regs,
-> >>>>>  		.init_count = ARRAY_SIZE(hifi_init_regs),
-> >>>>>  	},
-> >>>>
-> >>>>
-> >> 
-> >> 
-> 
-> 
-> -- 
-> Jerome
+On Thu, Feb 29, 2024 at 7:51=E2=80=AFPM Sam Protsenko
+<semen.protsenko@linaro.org> wrote:
+>
+> Some ARM64 Exynos chips are capable to control PLL clocks automatically.
+> For those chips, whether the PLL is controlled automatically or manually
+> is chosen in PLL_CON1 register with next bits:
+>
+>     [28]  ENABLE_AUTOMATIC_CLKGATING
+>     [1]   MANUAL_PLL_CTRL
+>     [0]   AUTO_PLL_CTRL
+>
+> The bl2 bootloader sets 0x10000001 value for some PLL_CON1 registers,
+> which means any attempt to control those PLLs manually (e.g.
+> disabling/enabling those PLLs or changing MUX parent clocks) would lead
+> to PLL lock timeout with error message like this:
+>
+>     Could not lock PLL ...
+>
+> At the moment, all Samsung clock drivers implement manual clock control.
+> So in order to make it possible to control PLLs, corresponding PLL_CON1
+> registers should be set to 0x2 first.
+>
+> Some older ARM64 chips don't implement the automatic clock control
+> though. It also might be desirable to configure some PLLs for manual
+> control, while keeping the default configuration for the rest. So it'd
+> convenient to choose this PLL mode for each CMU separately. Introduce
+> .manual_plls field to CMU structure to choose the PLL control mode.
+> Because it'll be initialized with "false" in all existing CMU
+> structures by default, it won't affect any existing clock drivers,
+> allowing for this feature to be enabled gradually when it's needed with
+> no change for the rest of users. In case .manual_plls is set, set
+> PLL_CON1 registers to manual control, akin to what's already done for
+> gate clocks in exynos_arm64_init_clocks(). Of course, PLL_CON1 registers
+> should be added to corresponding struct samsung_cmu_info::clk_regs array
+> to make sure they get initialized.
+>
+> No functional change. This patch adds a feature, but doesn't enable it
+> for any users.
+>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
 
-BTW, here Amlogic already mentioned all possible output audio rates for
-which hifipll can be used:
+Hi Krzysztof,
 
-https://lore.kernel.org/all/1569411888-98116-1-git-send-email-jian.hu@amlogic.com/T/#md7083b4f851ab97dfce43f8f6a3b266eb49ed329
+If it looks ok to you, can you please apply this series?
 
-```
-The audio working frequency are 44.1khz, 48khz and 192khz.
+    [PATCH 1/3] clk: samsung: Implement manual PLL control for ARM64 SoCs
+    [PATCH 2/3] clk: samsung: exynos850: Add CMU_CPUCL0 and CMU_CPUCL1
+    [PATCH 3/3] arm64: dts: exynos: Add CPU clocks for Exynos850
 
-614.4M can meet the three frequency.
+That concludes my efforts on CPU clock enablement in Exynos850.
 
-after the hifi pll, there are two dividers in Audio clock.
+Thanks!
 
-614.4M/3200 = 192khz
-
-614.4M/12800 = 48khz
-
-614,4M/13932 = 44.0999khz
-```
-
--- 
-Thank you,
-Dmitry
+> Changes in v4:
+>   - Turned register checking macros into static functions
+>
+> Changes in v3:
+>   - none
+>
+> Changes in v2:
+>   - none
+>
+>  drivers/clk/samsung/clk-exynos-arm64.c | 56 +++++++++++++++++++-------
+>  drivers/clk/samsung/clk.h              |  4 ++
+>  2 files changed, 45 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung=
+/clk-exynos-arm64.c
+> index 6fb7194df7ab..bf7de21f329e 100644
+> --- a/drivers/clk/samsung/clk-exynos-arm64.c
+> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
+> @@ -17,10 +17,17 @@
+>
+>  #include "clk-exynos-arm64.h"
+>
+> +/* PLL register bits */
+> +#define PLL_CON1_MANUAL                BIT(1)
+> +
+>  /* Gate register bits */
+>  #define GATE_MANUAL            BIT(20)
+>  #define GATE_ENABLE_HWACG      BIT(28)
+>
+> +/* PLL_CONx_PLL register offsets range */
+> +#define PLL_CON_OFF_START      0x100
+> +#define PLL_CON_OFF_END                0x600
+> +
+>  /* Gate register offsets range */
+>  #define GATE_OFF_START         0x2000
+>  #define GATE_OFF_END           0x2fff
+> @@ -38,17 +45,36 @@ struct exynos_arm64_cmu_data {
+>         struct samsung_clk_provider *ctx;
+>  };
+>
+> +/* Check if the register offset is a GATE register */
+> +static bool is_gate_reg(unsigned long off)
+> +{
+> +       return off >=3D GATE_OFF_START && off <=3D GATE_OFF_END;
+> +}
+> +
+> +/* Check if the register offset is a PLL_CONx register */
+> +static bool is_pll_conx_reg(unsigned long off)
+> +{
+> +       return off >=3D PLL_CON_OFF_START && off <=3D PLL_CON_OFF_END;
+> +}
+> +
+> +/* Check if the register offset is a PLL_CON1 register */
+> +static bool is_pll_con1_reg(unsigned long off)
+> +{
+> +       return is_pll_conx_reg(off) && (off & 0xf) =3D=3D 0x4 && !(off & =
+0x10);
+> +}
+> +
+>  /**
+>   * exynos_arm64_init_clocks - Set clocks initial configuration
+> - * @np:                        CMU device tree node with "reg" property =
+(CMU addr)
+> - * @reg_offs:          Register offsets array for clocks to init
+> - * @reg_offs_len:      Number of register offsets in reg_offs array
+> + * @np:                CMU device tree node with "reg" property (CMU add=
+r)
+> + * @cmu:       CMU data
+>   *
+> - * Set manual control mode for all gate clocks.
+> + * Set manual control mode for all gate and PLL clocks.
+>   */
+>  static void __init exynos_arm64_init_clocks(struct device_node *np,
+> -               const unsigned long *reg_offs, size_t reg_offs_len)
+> +                                           const struct samsung_cmu_info=
+ *cmu)
+>  {
+> +       const unsigned long *reg_offs =3D cmu->clk_regs;
+> +       size_t reg_offs_len =3D cmu->nr_clk_regs;
+>         void __iomem *reg_base;
+>         size_t i;
+>
+> @@ -60,14 +86,14 @@ static void __init exynos_arm64_init_clocks(struct de=
+vice_node *np,
+>                 void __iomem *reg =3D reg_base + reg_offs[i];
+>                 u32 val;
+>
+> -               /* Modify only gate clock registers */
+> -               if (reg_offs[i] < GATE_OFF_START || reg_offs[i] > GATE_OF=
+F_END)
+> -                       continue;
+> -
+> -               val =3D readl(reg);
+> -               val |=3D GATE_MANUAL;
+> -               val &=3D ~GATE_ENABLE_HWACG;
+> -               writel(val, reg);
+> +               if (cmu->manual_plls && is_pll_con1_reg(reg_offs[i])) {
+> +                       writel(PLL_CON1_MANUAL, reg);
+> +               } else if (is_gate_reg(reg_offs[i])) {
+> +                       val =3D readl(reg);
+> +                       val |=3D GATE_MANUAL;
+> +                       val &=3D ~GATE_ENABLE_HWACG;
+> +                       writel(val, reg);
+> +               }
+>         }
+>
+>         iounmap(reg_base);
+> @@ -177,7 +203,7 @@ void __init exynos_arm64_register_cmu(struct device *=
+dev,
+>                 pr_err("%s: could not enable bus clock %s; err =3D %d\n",
+>                        __func__, cmu->clk_name, err);
+>
+> -       exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
+> +       exynos_arm64_init_clocks(np, cmu);
+>         samsung_cmu_register_one(np, cmu);
+>  }
+>
+> @@ -224,7 +250,7 @@ int __init exynos_arm64_register_cmu_pm(struct platfo=
+rm_device *pdev,
+>                        __func__, cmu->clk_name, ret);
+>
+>         if (set_manual)
+> -               exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_r=
+egs);
+> +               exynos_arm64_init_clocks(np, cmu);
+>
+>         reg_base =3D devm_platform_ioremap_resource(pdev, 0);
+>         if (IS_ERR(reg_base))
+> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+> index a763309e6f12..a70bd7cce39f 100644
+> --- a/drivers/clk/samsung/clk.h
+> +++ b/drivers/clk/samsung/clk.h
+> @@ -330,6 +330,7 @@ struct samsung_clock_reg_cache {
+>   * @suspend_regs: list of clock registers to set before suspend
+>   * @nr_suspend_regs: count of clock registers in @suspend_regs
+>   * @clk_name: name of the parent clock needed for CMU register access
+> + * @manual_plls: Enable manual control for PLL clocks
+>   */
+>  struct samsung_cmu_info {
+>         const struct samsung_pll_clock *pll_clks;
+> @@ -354,6 +355,9 @@ struct samsung_cmu_info {
+>         const struct samsung_clk_reg_dump *suspend_regs;
+>         unsigned int nr_suspend_regs;
+>         const char *clk_name;
+> +
+> +       /* ARM64 Exynos CMUs */
+> +       bool manual_plls;
+>  };
+>
+>  struct samsung_clk_provider *samsung_clk_init(struct device *dev,
+> --
+> 2.39.2
+>
