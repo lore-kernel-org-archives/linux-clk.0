@@ -1,188 +1,159 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2056.outbound.protection.outlook.com [40.107.6.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004511EB51
-	for <linux-clk@vger.kernel.org>; Wed, 20 Mar 2024 07:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710919427; cv=none; b=HyKnqUHB/iGFFNaX64cDfRFEIrlTeuiYFR38w09ymEOXoOrSWqCPEE/6gH3V2cosweHASBHayNEY5VFYhBV7uI2OF+lorEBC95mMLeHBZbsiCzL0SRfUPqBLIe8OKHhSn3qdwF8a3fhG6mXc8mq9HldU2BMZMSwElJQLeExbsKE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710919427; c=relaxed/simple;
-	bh=EkqWs0W3q04YVqE2gPo5awQuY3J0Lng3bMWEGITru1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CgxRC5x2YR8N73BzPL5xLlQaK7LCA70xsu7YejwY1uT7J1LGiproxr43Sn2W4rchX9TvR/cDHIGOU3pkWrqOD2rH97nfIjgaN2ymnHj/qFZMbgXZVpOhFHDPSjJmqJrV8R6GJRO92x1bAi+K7PQEnIbFO5ZiHsPH7SoAyQ2fwhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OJleVZIZ; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5D82BD1F;
+	Wed, 20 Mar 2024 07:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710920340; cv=fail; b=dwB4QDAf/MzcvAyaQf+NDiWdUM8OF5XSjoxPPKblRhT8FqceaSng+K+YnGEGobP1hIWIWl3VozAe0yw/P0SD3vemuMbr8onYzuuXU0MvvGC0GPXevwbO/DLbqMMAtVxKDkGGSauYx68s+LkEYFWqkJuFtjTd2XdWHqpt2iC65qQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710920340; c=relaxed/simple;
+	bh=hYLl/iejsSKRnaFCvCjMhZO2N3479WKbqyQA/mD5gZw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Kbh7Zq9Cchpmj9kvO+K42d+RvLwO6c4UlpfwNK7/qe2Tn05imw+8Z0QoEX2XrLfTgTafZAEuXTuhD9Pjxyeofj7aCCUj8jSmqoJyjBpOGBXXuv1E5iWa6YrvkLzodzc5w2G15uyrD2kjRpGf2N4TKEN4XFB+foOEEtLWwKtmnmE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=VCb4JtfI; arc=fail smtp.client-ip=40.107.6.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OJleVZIZ"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-55a179f5fa1so7312594a12.0
-        for <linux-clk@vger.kernel.org>; Wed, 20 Mar 2024 00:23:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710919423; x=1711524223; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=i3jlY94/eeyZ6RcBk4RP2SNOK962GMXwjEvU51sOt6s=;
-        b=OJleVZIZCLEsZQWLXTg7B/L2QFjEJEuzof2ZZCL9xntszCLEPYL4XrfYLo61na3r9h
-         +9y/Q/gsmQlkQO/H7AKtCpQ2MEruK1jP/OZuMoFqrdcWtBDqA2J7t3MZbK3yzqxee5tD
-         /Zxf6n9g2oClipaY2/mNIv4VHT9mQrmarCrpM/gDj34vzDWQ6TVf6pJFmrOun/lJ9uoy
-         4+XksrDnI+m0IyBHx+M+RvOP2ZC01xD6xN7dqQ3hso3MNNnluBS5gAdYOyildx9Pqcqn
-         JrCcmHpklDqcoTOLnUqS+rwlu8EZgAMX7KD37d1fY24cHYufswoWZ+qxy3kI+feu/u1F
-         cKWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710919423; x=1711524223;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i3jlY94/eeyZ6RcBk4RP2SNOK962GMXwjEvU51sOt6s=;
-        b=HKZk7490QvIKmecvw5OpAXun0POR2koqHgwN7QDNo48XKcn0INHHfxiAthmM61Lc31
-         q4faQRG0B/Jqf7Slrr71lKL76ED8chOBZqs7UPEqjgqNZaGPCky2TrPZpQwDQfeDO3qa
-         GrRkNsFV4axo3pA0zzVLp+qLp02swCvouCpmbUlPaSgCbNmXjLZCoO0+N7EVM53RzqJE
-         UMaNYEa5Yj65YYC9AdJpcHvGeTk3DQJssvLLG4ham+yOR0AzxjONNgGzKAFzz0KP1C2D
-         kfVKtiU+0Qd3fYTZY7PGfLNTnegHx+Pg2F7oKMaklBvJnEpi0xvXn5yJqWncBBNT4+sf
-         p3gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUP2ts/D7s60po9TMe9/6XdnZaZjbrrr3kOZjv3SRXdSOCfu4KBYpA0SDWTpRp7KiuklblLbdsbJy48BZnEbqoJ6hK1lhVQIq6/
-X-Gm-Message-State: AOJu0YxzclDKjiNdxQqtUaYRtGYnZOigjje/nvt0+2NSBhEtIoREhiTC
-	nP0+GpOwWsrT8D7H+rlnzTPAELREmE2qHQOyN1dnXzzRR9RcXgqw0KAfsVyBWmk=
-X-Google-Smtp-Source: AGHT+IHfT2z0OxThuuxSUr06aWZGYCKZSymdnckDGx+Y83LSi19WiCYtHnyAy4GauWep8eYh4xrfgw==
-X-Received: by 2002:a17:906:c80a:b0:a45:c027:372 with SMTP id cx10-20020a170906c80a00b00a45c0270372mr676128ejb.68.1710919423329;
-        Wed, 20 Mar 2024 00:23:43 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id s10-20020a1709060c0a00b00a44899a44ddsm7038094ejf.11.2024.03.20.00.23.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Mar 2024 00:23:42 -0700 (PDT)
-Message-ID: <0ad9a94a-0fb6-4ff4-84bf-56ce0ff682f1@linaro.org>
-Date: Wed, 20 Mar 2024 08:23:41 +0100
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="VCb4JtfI"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=midFflO5gr1haeY8rH9Bxwp0cp2TrW/MBd2JAsdwF81D7Kejn7/F/Lhx61yTpRC7Gz7/yusRXNahN8CWS6K16Gf7n79rz3e0hiMIvvoKBVVoD7ezjw79GWw1Y8NwXdTblk3kHiqRujGNrpDt5YHl00zYXJC8wZtrwzAEqQDHF9Val3FRDwfYFg4QrLhDxYQ+MxIsDQzsokXXZFTUnjnM+3BBBm5kBjSdI8jYILMygWMtU5CfZhzRR1EF6iOikRWTLTd46as/bWhuYn9qa8L7ZJYUj4/otwrLnHopuNA4vSkEbOUG3Bb4sBWDv8FKbO7DrLHOuzFN6fd+i7pD9QMA6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eQVccdhgR/te4gh4jdPIpyU4qfeHCpBpgd1GjH26Kb4=;
+ b=e0ATqhumfxZy6n40MLwwXVCSDZM+t89S6LbAVXml+LFZcKrj2fvJz880pJolB15O5hRTTDm5qdX0asREQeW+mSlco6fj482/NMkft4+jJe/V0I2qA7dBWRJcWVjNYTcknL/a7VXKN9Rdqh3tq0LSEUMpczzNokKcjppYlZPKSmyLjtnGEEXCAImViKCW1wXHo0x0wLfz5wNS+LACr0ZbVaRxAhG3KGci1MH24BwV40zx+PaPUOLiVR0xQc/TyrFsILWKOBJKywAwKx9dEZeXPvioskREV6G/ftzFqoV4VQNxu8xse6EFH89EdXoXtNsfLto0FayWQyznbiVKsUOTiQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eQVccdhgR/te4gh4jdPIpyU4qfeHCpBpgd1GjH26Kb4=;
+ b=VCb4JtfIz0lIsYp7twu/WVyamRpBQe5KsXkivpBaDZ7cJI8WeOyVovRtaUxigjx1eUJZBRIdX6PyeC7elccgpC1w0kWnTclyqVL+51NZNcmSBroXHDEuC7huWQju/t3Ayi/xYPskbwJOflSV6KAAWxBzJhL9f9Ph5OhSfsDuxhI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU2PR04MB8582.eurprd04.prod.outlook.com (2603:10a6:10:2d9::24)
+ by VI1PR04MB6781.eurprd04.prod.outlook.com (2603:10a6:803:13d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.28; Wed, 20 Mar
+ 2024 07:38:53 +0000
+Received: from DU2PR04MB8582.eurprd04.prod.outlook.com
+ ([fe80::195c:9861:96a1:56ed]) by DU2PR04MB8582.eurprd04.prod.outlook.com
+ ([fe80::195c:9861:96a1:56ed%4]) with mapi id 15.20.7386.030; Wed, 20 Mar 2024
+ 07:38:52 +0000
+Message-ID: <b28ec298-c9c9-450c-bb5b-593945daddb9@oss.nxp.com>
+Date: Wed, 20 Mar 2024 09:38:48 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] add uSDHC and SCMI nodes to the S32G2 SoC
+Content-Language: en-US
+To: Chester Lin <chester62515@gmail.com>, Shawn Guo <shawnguo@kernel.org>
+Cc: Andreas Farber <afaerber@suse.de>, Matthias Brugger <mbrugger@suse.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, NXP S32 Linux Team <s32@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ NXP Linux Team <linux-imx@nxp.com>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+References: <20240122140602.1006813-1-ghennadi.procopciuc@oss.nxp.com>
+ <a7a55dc6-c204-4aad-adff-9806d3302b6b@oss.nxp.com>
+ <ZeKIjyFF0ftnr19q@linux-8mug>
+From: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
+In-Reply-To: <ZeKIjyFF0ftnr19q@linux-8mug>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1PR09CA0133.eurprd09.prod.outlook.com
+ (2603:10a6:803:12c::17) To DU2PR04MB8582.eurprd04.prod.outlook.com
+ (2603:10a6:10:2d9::24)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] clk: samsung: Implement manual PLL control for
- ARM64 SoCs
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240301015118.30072-1-semen.protsenko@linaro.org>
- <CAPLW+4=_yD3ShU5DvLWFyEzVrVHNVCsB+4bVkP+x_boRmC-vEw@mail.gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAPLW+4=_yD3ShU5DvLWFyEzVrVHNVCsB+4bVkP+x_boRmC-vEw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8582:EE_|VI1PR04MB6781:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd088db5-39b0-4b57-11d3-08dc48b0ca15
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	l96gioSluYoZV6Nnd5F0zyFqD6/0Uk+jhO4ctdbV6E8S9UaQusXenk5UoyPGHnfj4yRa/Du8wps2pUpGFvsYLJU1oB3ucaAeUzSbHOiQ92fQAYp+E1WXwVFlJ3+8vNXeNsibE34Klh4dfV+K+MOErrCQga1JRpf5Klh5vagLtXuGNaHjZR8wO45ZDi0ieCRGuKJgR8CacCl5sLjaBsVnikF/hdDX6i5pLIeCAe46JqaWKUAUQcR8OY2xOXBiVAMykogfzP85iNPDGX9Fguh/hhDN71MFh3Tn61ZnH/sRPAHly2szi4kzOy4O4DDVRyVC4s9gk8dISszeUpPJOh7mr4Z0gz4Xn4lu8kbBQGTDqJCqIKlRitQAC3X62IPlnHvomzs2O/kawZ53+8AmIOUNOY8Pp3xqX6hprBa2UyHM+KPwSfdV9cSaWo5+2agaORn3kUOD3TGzhkFWniUMAynG8wlKVDC9iQ4TG3jqXa4bwNqeWBsdW3K/r+fq1BTj0rJbGjRKM7js13Gy24gN3+jwBvcfo+dbhuC+hgXbyKqui/hv5/L8GTdZjUIqwykkq1+DzRQvVdCzRz1GIGCA8Ry0p7jDQYIb/zCF0iSRERO4bF2QhMGahgYT8hSY3x2e0rcnPtSIT8hTghDwcTuMBU8i2Zo7JHZciFjREBGWa4ZYCFk=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8582.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(366007)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NkZDNmkyaFJJNUdCME9LN2lMcWl0cjRTVnhJQWFvREkyRS85Rk5YMUlwTXRN?=
+ =?utf-8?B?MDdPT3crbmErT256WjA1Wk5rcWdpc2Y4b3cwMXRwR1dyenAzbk1PbXBmTC9O?=
+ =?utf-8?B?L1h2NEJiTWI5dGR3S0xOK2Y1MEwxUkpxS2NNUHVmTkhaYlFZYkNYcFQ5Mldy?=
+ =?utf-8?B?K05iZ2xKYUNMRG1rQUx4czFsb2JjWG5SLytIVSt5TUc4UURwdXp0aHNYenRw?=
+ =?utf-8?B?M0xXLzNMVHMvOHpGNjlxRHF0Y1dNUWV1aDB6VkhYalljVVhuOFo2RFcrQm9h?=
+ =?utf-8?B?UWVHUXEvVXFYTzZvTUdnMURpTUtZSnRSSXltNUFDaGk1T0RjWjVXbFZHWVo4?=
+ =?utf-8?B?ZXZzTm9SZjVSMTMwcDdVVUY3bm44a3VPUWVjZnZBZFU1WWtkYVBaY3pFWk1o?=
+ =?utf-8?B?MFUwVjExWlNPdWJLZWo1d2F2T1lmMmRhZ240aGJwVDRlV251dkhWdEREOFo4?=
+ =?utf-8?B?elFKRms1TmJtZ09EMWpERVlySXY1VU5qQW1sa2FQcDlQMFdWU2Fvb2ZpaENl?=
+ =?utf-8?B?NUlvaEkxK0Jac0ZVR1h2dGZVU0lINmEyWE5qN09SNDNCcUNacWNPb2FXY1F1?=
+ =?utf-8?B?a1dKbVc0cERDRjRSTCtZMzh1Z3lCK1JyT09PdmczbDR0eCtVN3ZpNFdsdEtT?=
+ =?utf-8?B?Z1dhQlpSRGhESnZlb0lla0cyOEZtSmVqaG9QVThTYUhVTk83M0tDM01XUndG?=
+ =?utf-8?B?ZnpNQ2hiNlM5QnVIUjFhSjlZYWNYVnBxVlM2YVVBUGFyMjB3d0JTdy94cXVD?=
+ =?utf-8?B?UHB0N01mcnhON2dhakpEc0xsZ2JmU3JDbm9abzkvTUgwczFyM1JmT1hJUTVq?=
+ =?utf-8?B?Q1FBR2RJVWFrN2Z5WFFzVGVKUitqQmpXVHV0RVYvOC9tTHd0d0NVNnM0WEE4?=
+ =?utf-8?B?UU5KTXpFMVRKUFdlMmxMRVEvMnIyZHVEMEVvdC9mY3hINjl4Tmd2dTAzbFFs?=
+ =?utf-8?B?UWJQZWt0aEJUUG9rVkdaRTNKQXJPdDRmL1dIemdXL3J6cHN4cGNkQ3ZJVmg1?=
+ =?utf-8?B?ZEZxYnQzVjA2bWkwYW5WSTA2enZad1pkSTNnZFhuTjlud1FlaXU5VFhSc1JR?=
+ =?utf-8?B?TFZXV3AyamRSZWk3enhmSkdUUzNLMGRBangxam1KT29FbXllcVF4SzA1dVlw?=
+ =?utf-8?B?RzV2VnF1anNoa1lMNklzUk1aNVZ5clRheTJ2OUlEK0Rpd0I4TXlyOE5lMTJV?=
+ =?utf-8?B?VmNQTFErQlFsdDhaRlpOQkxYZGVyRnNIS3JGVmYyaHdqLzQ2WC8wY2lBNG9h?=
+ =?utf-8?B?dlRaOStpanNVemVrSE5yQmtYMkpnNkFNV2ovc3dFdEszdm5Pd25wRXBCQVE2?=
+ =?utf-8?B?emtHelRqbU9wamYxcUhaeGlZc0pDL0NWM1hDemVmeWt0R0xBNlNFWGNLakRH?=
+ =?utf-8?B?S0lVVGRoVFlwUHhaWmdxWlc2clp4R2RmVG9iVDJPeTM5NmErbXlucEFqQTR2?=
+ =?utf-8?B?TDU5Y2YzTGd4MEFuY2xCbnZkUjZhVlJZdDZEVzNVQ0RYd1FHWk8zUnpDNUFI?=
+ =?utf-8?B?eDlGQlo5Mk1KZnh6cGdLS25Ha2wvQ3JZS0duQjdtdmZVTCtSRUZpYW5JY0pq?=
+ =?utf-8?B?S3dZOFI4cWswQVJpcjBDRkE4eml2d2x6QmsrVDlvN2F6UDh2bTF2ZjhkcUlV?=
+ =?utf-8?B?SW4wZnc4QjB0MWpBdlNGTTZlSjJERVJPd2ovNXNQbXZTeVE1empoRkd5Yjd6?=
+ =?utf-8?B?a05Dby9Dd3hyYldDb0o1VGx2LzZ5TmIyNnlhaWFuL1JDaGV4R0dZZ2prOVNZ?=
+ =?utf-8?B?SXVISXovUVZtcTkyRW40OUFrV3kvYVliYWRYUitzN1RqOHJVaCtYbk50Vi9n?=
+ =?utf-8?B?aXhyb3FBeWZMSTJjcW1rc296QUpWTThVbjhKLzlOZGlmc2dvZyswN0J1QytQ?=
+ =?utf-8?B?bGpmOE1VNFlvYVppU05TSWYxaGFzejVsSzRNNEZQSDRkelZWeGVIUmNEUU1S?=
+ =?utf-8?B?OHA4VEYvZFJieUlGU2xNdUliMEl6a1dnUzVuUDU3OTgxZ0pDNW0xUHh1cHla?=
+ =?utf-8?B?S2FnT3daZHF0R2l1d1hJUDAvcXRwUlhrZVNBeGY5QlNrNlJxNzFBN0djNXMr?=
+ =?utf-8?B?b3hXQllud2JkSGE0dCtnWURVcHR2TDRFQWs5TUFreE53dnJKZzVGUmErdWpu?=
+ =?utf-8?B?OUVPRmVtTGgyZnhsQnFXMHpmOHlaUTErZEpxTHgxeGl1eGVnWFR2Ylpyc3dV?=
+ =?utf-8?B?NUE9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd088db5-39b0-4b57-11d3-08dc48b0ca15
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8582.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2024 07:38:52.5896
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: C2iu/khkmOyA4DFtJ6eVnSPHHwAv23RjNK7Qe05tJjnaJ7owpeU4N4Wa/IRyrPVAJhOA5pOE9vz2VEu0VDhUn68F/wXS/Jjs6QHd53N+rsA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6781
 
-On 19/03/2024 19:47, Sam Protsenko wrote:
-> On Thu, Feb 29, 2024 at 7:51 PM Sam Protsenko
-> <semen.protsenko@linaro.org> wrote:
->>
->> Some ARM64 Exynos chips are capable to control PLL clocks automatically.
->> For those chips, whether the PLL is controlled automatically or manually
->> is chosen in PLL_CON1 register with next bits:
->>
->>     [28]  ENABLE_AUTOMATIC_CLKGATING
->>     [1]   MANUAL_PLL_CTRL
->>     [0]   AUTO_PLL_CTRL
->>
->> The bl2 bootloader sets 0x10000001 value for some PLL_CON1 registers,
->> which means any attempt to control those PLLs manually (e.g.
->> disabling/enabling those PLLs or changing MUX parent clocks) would lead
->> to PLL lock timeout with error message like this:
->>
->>     Could not lock PLL ...
->>
->> At the moment, all Samsung clock drivers implement manual clock control.
->> So in order to make it possible to control PLLs, corresponding PLL_CON1
->> registers should be set to 0x2 first.
->>
->> Some older ARM64 chips don't implement the automatic clock control
->> though. It also might be desirable to configure some PLLs for manual
->> control, while keeping the default configuration for the rest. So it'd
->> convenient to choose this PLL mode for each CMU separately. Introduce
->> .manual_plls field to CMU structure to choose the PLL control mode.
->> Because it'll be initialized with "false" in all existing CMU
->> structures by default, it won't affect any existing clock drivers,
->> allowing for this feature to be enabled gradually when it's needed with
->> no change for the rest of users. In case .manual_plls is set, set
->> PLL_CON1 registers to manual control, akin to what's already done for
->> gate clocks in exynos_arm64_init_clocks(). Of course, PLL_CON1 registers
->> should be added to corresponding struct samsung_cmu_info::clk_regs array
->> to make sure they get initialized.
->>
->> No functional change. This patch adds a feature, but doesn't enable it
->> for any users.
->>
->> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->> ---
+On 3/2/24 04:01, Chester Lin wrote:
+[...]
+> Hi Shawn,
 > 
-> Hi Krzysztof,
+> Per the discussion in another thread, could you help to apply these two
+> through the imx tree? Thanks!
 > 
-> If it looks ok to you, can you please apply this series?
-> 
->     [PATCH 1/3] clk: samsung: Implement manual PLL control for ARM64 SoCs
->     [PATCH 2/3] clk: samsung: exynos850: Add CMU_CPUCL0 and CMU_CPUCL1
->     [PATCH 3/3] arm64: dts: exynos: Add CPU clocks for Exynos850
-> 
-> That concludes my efforts on CPU clock enablement in Exynos850.
+> Chester
 
-Please do not ping during merge window, for anything else than fixes
-(and me only for fixes being serious regressions or serious issues, not
-for fixing something which never worked thus will not get to fixes
-branch). Not only me, but don't ping that way any of the maintainers.
+Hi Shawn,
 
-Best regards,
-Krzysztof
+I noticed that Chester's email was sent to you as a CC recipient, which
+may cause it to be filtered out based on your inbox rules. This is why I
+wanted to bring this thread to your attention and kindly ask you to
+confirm whether these patches will be pulled through the imx tree.
+
+Regards,
+Ghennadi
 
