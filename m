@@ -1,89 +1,225 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6833D984;
-	Wed, 20 Mar 2024 11:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2899A1DFD9
+	for <linux-clk@vger.kernel.org>; Wed, 20 Mar 2024 13:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710934431; cv=none; b=krGkB8PMItBPPH5U45+tP1xU9e8Ggafkg/0yOaUq71x1WF6+po4K18S9011UG/fBq8/PLV3SB1hIb0K9i6B+PulDCbRlQzsWtiFmBJOE+DIRiK6zjy1MMSTNe+oUSoz8Y1pm5Cv92EwnQYZT59h2jsgNgk/SIHP5HEkI6fF9G/w=
+	t=1710941511; cv=none; b=javYAAd5ctXtnhUpLQSin6GtGD+E19RPmrrERkv3ZPptKeCsyWYNn6ZetIgw/hpcmwzT838abpDqDJkcqUgVMpoTIQnzFpR21RjJ154R7KrWnW75PtNkQ1rC3/B7PSWJ4Kk5Qfw5g49sgdGuYdwCHQII0IrzDl7fPcK6LCBm7kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710934431; c=relaxed/simple;
-	bh=TM83wFJ2guz+/lEd7su3mafeUQuopsAVbb4NPytC03I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jV4JBMvok6ZGnCQ5HWVNuX6thXq2X0V9aVReYh1gpqOQUI/aMHMFEELEjUETuuQuzUCWGDjbQxG6CcFhiNyIrcEkUf92+kLtIzgNnTggG2T4DyET335EQ/SjptVAzuxvh9SNzEHUJuk7iJ7xmzTNsB7kWH1VhgZ010vWWjRsahk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-60a057b6601so65333277b3.2;
-        Wed, 20 Mar 2024 04:33:49 -0700 (PDT)
+	s=arc-20240116; t=1710941511; c=relaxed/simple;
+	bh=+o+Bd1ShI+PitQDick+IeNp1ApGzuHlNLLUqmXPTAt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EN4EoILm0SlyMn/LBG6MuIdIfKe5roB5Shq63nlpF9wv/49EkqEiLf8MiyeocGt3d7djMnqt4GsrzSqPlXxFrrTMyhRR/RzbmE2054qPjvb0IyntD7RCRrg/1TGP80B8bZV80THnNbpB9H0aKl/9vbPHsbSF1zP4tWcdy/qhW08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=mcB9V1iq; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="mcB9V1iq"
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7cc77e74b5cso127567239f.2
+        for <linux-clk@vger.kernel.org>; Wed, 20 Mar 2024 06:31:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1710941509; x=1711546309; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IYdYatrCiN+ZNudG0itP80RnPg8bYH9YQGS/b3nlFcg=;
+        b=mcB9V1iqtvTFKEbyWCgR9G8hQqrrOwIqcy7qjWTOU6ALM3FvgQkE4Q99m6cMN0B32l
+         KaWN7ykzhxiI2CndJETcvGzDb4O8IrbYgFi1Za/pRtefu9EqvVHKMHfNFXQHfw7LiQFW
+         ycqnLK1ezsYQ5u4ZjkOSLnFFaPIvYMwvhdFVFfUjmvHdnyC4SeRaALKfBHIlteIA5dJA
+         RqFBvcxF0Y0je80bsU/D5DdxYZ1UVQ95kFMxRq7uKQ4pX0iCYbxjI0Yb1dKyOBnvRU5P
+         +LycJ/BFuHxCtD1RoRB0vdNIrheVC5gs2Wr9UYoX4Vdriwi3Z+eYUOSIOGyOU5sX9qPe
+         zc0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710934428; x=1711539228;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SF8arMhnBafDCLx4QC8exH3xhVUS30LSGL4oZz18twc=;
-        b=O84MG1gKLPW3GXl5s5QAyK6FVv2cgW85noX/lbYBCmyk9eCF04qlfmc9H9sXuBcw41
-         qy3lHcC7GgsvbIVcAhCJojO1rXOsRM6Y69sbRDsYEEbKAwlPiEJ+Ci44KI9jA6ChjDQx
-         NgguWqVyOlXoEy75gXWma4bVQ/bIFARUoCD/8/+c/cWicIsX8uFzTxJ7nlDW/TNfu4lS
-         IhtncB8qUpYYa2azRG2ELAziTxYSsHsqYcEcOtEF6I2GabtkQLzMt5XYhkH8LjjItaXJ
-         xo5aUQxT+qHTa3y4WUbjbAvsOtd5CxaKVK4lk//dJwcfV36dRzgxfPl5ETIWCf5zwXSj
-         RSBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoiJQOrtr7WTMKAEiNJvGIbcOSlTSTRoVw1it7QLfF9zguqFF0cgn0IKnLT5lM0s0ZEW7Ijd11iMza9xt3h012v3x6w7VeE2Df2G865Vhu4puKvA9/3MwthMTK5ruXa9pQXvCApdEKQXhXQ3ZD2picdSHB00D/wTDJJVse9V36b2P456uxwkkuOkQ=
-X-Gm-Message-State: AOJu0Yxjbl57ayzn3jhiaNV43NeVjanObNi4XY9Z/IFWvkOzX/2+HmwJ
-	47TzOjtt8SInlmNMKlclu1A44UsxPtafsEdmDXjSQjPqQc1K8S5H3L0ZJecS5aY=
-X-Google-Smtp-Source: AGHT+IHxdcT3Vlq+G7b0AuOJ9BLn2cXROpmW03r7w+b2v9Phge8aSwlWx7KJIkp5FKZuXm164yUFRg==
-X-Received: by 2002:a25:8407:0:b0:dcb:fa70:c09 with SMTP id u7-20020a258407000000b00dcbfa700c09mr1222639ybk.28.1710934427893;
-        Wed, 20 Mar 2024 04:33:47 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id v139-20020a252f91000000b00dcbbea79ffcsm2639213ybv.42.2024.03.20.04.33.47
+        d=1e100.net; s=20230601; t=1710941509; x=1711546309;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IYdYatrCiN+ZNudG0itP80RnPg8bYH9YQGS/b3nlFcg=;
+        b=vOi2fKjecODcLP2i89/b5/VL8tuquB4ZB0JxpVrpxGfu28J/+HIVWfzm/YR/N0MhhB
+         L+ShVC1GxOieZPtVsYjtLiOCEQ/bQY4fHCx/eLD71G/4ak/0ieZIExr2SCr6G+5NSkoh
+         QQRSUJxDz5AH9lO/2U/xYN/IM5bJYeFdJ8iewYve9fCjBnKb+VUQLjZBwzTepyHzgV0d
+         IKDn1qYx0iVrYnUTQFGSC2/rsMz5GoO+YpYrium5AQnK6pKfZy5zc81tTxOqSAVo3qoO
+         dradnCC+PD4GisAAi616tg92p/lVI/JMg+KjzZbwyns7SgX81CMzFygwe0w2V4pOfyj6
+         gcKQ==
+X-Gm-Message-State: AOJu0YwOnqGdwf89qXv8cBozp/10giDRq7WxatZmxCHaZZtc7d8vjZIg
+	dDgTpCGwitavb++3xYphIHfaxgOqlXuJ2g+JVT9J4ckDpmtcQkjETir80Oi0eNs=
+X-Google-Smtp-Source: AGHT+IGoPCXNA3HRY8p2GtYz/53SBRtoENZxvjYaojzumY8ha+biNeqbSMxKdf8JSNNfmYOzAKSjBA==
+X-Received: by 2002:a05:6602:1d18:b0:7cc:652d:ce60 with SMTP id hh24-20020a0566021d1800b007cc652dce60mr11299708iob.20.1710941509203;
+        Wed, 20 Mar 2024 06:31:49 -0700 (PDT)
+Received: from [100.64.0.1] ([136.226.86.189])
+        by smtp.gmail.com with ESMTPSA id u11-20020a6be30b000000b007cf25fe77efsm18631ioc.15.2024.03.20.06.31.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Mar 2024 04:33:47 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-60a3c48e70fso71565767b3.1;
-        Wed, 20 Mar 2024 04:33:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX/WzYEFbV+Pst+iyHF+ECcqswfLxmQZyTWYcp1EYhgoLAFxXwGFAuQ6MMUq4AI/AVgzeGgfjvEVOvxeUHlp/oG5JR06YLVgGpBF72TA/vW8Nr2x42HM01gQMCi+vPxlU98mdRGsNnnOrAXpOUeLeCo3BAb3sJbHUS4TvhxfFgI1meZHElX8aUhdig=
-X-Received: by 2002:a81:9ace:0:b0:610:f5ca:8ac with SMTP id
- r197-20020a819ace000000b00610f5ca08acmr1288531ywg.11.1710934427270; Wed, 20
- Mar 2024 04:33:47 -0700 (PDT)
+        Wed, 20 Mar 2024 06:31:48 -0700 (PDT)
+Message-ID: <47bddec7-953d-4ea4-84f1-b0dcf0641baa@sifive.com>
+Date: Wed, 20 Mar 2024 08:31:47 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240320082831.9666-1-paul.barker.ct@bp.renesas.com> <20240320082831.9666-2-paul.barker.ct@bp.renesas.com>
-In-Reply-To: <20240320082831.9666-2-paul.barker.ct@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 20 Mar 2024 12:33:35 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX1iJVc1CzwE6P6-Fng8HeHwL8Eq3c_HQCMc=FoVqwJ=Q@mail.gmail.com>
-Message-ID: <CAMuHMdX1iJVc1CzwE6P6-Fng8HeHwL8Eq3c_HQCMc=FoVqwJ=Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: r9a07g044: Mark resets array as const
-To: Paul Barker <paul.barker.ct@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clk: starfive: jh7100: Use clk_hw for external input
+ clocks
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Emil Renner Berthing <kernel@esmil.dk>,
+ Hal Feng <hal.feng@starfivetech.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <beb746c7538a4ff720a25fd8f309da20d8d854ef.1710933713.git.geert@linux-m68k.org>
+From: Samuel Holland <samuel.holland@sifive.com>
+In-Reply-To: <beb746c7538a4ff720a25fd8f309da20d8d854ef.1710933713.git.geert@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 20, 2024 at 9:28=E2=80=AFAM Paul Barker
-<paul.barker.ct@bp.renesas.com> wrote:
-> The r9a07g044_resets array describes the reset signals in this SoC and
-> does not change at runtime.
->
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+On 2024-03-20 6:24 AM, Geert Uytterhoeven wrote:
+> The Starfive JH7100 clock driver does not use the DT "clocks" property
+> to find the external main input clock, but instead relies on the name of
+> the actual clock provider ("osc_sys").  This is fragile, and caused
+> breakage when sanitizing clock node names in DTS.
+> 
+> Fix this by obtaining the external main input clock using
+> devm_clk_get(), and passing the returned clk_hw object to
+> devm_clk_hw_register_fixed_factor_parent_hw().
+> 
+> While name-based look-up of the other external input clocks works as-is,
+> convert them to a similar clk_hw-based scheme to increase uniformity,
+> and to decrease the number of name-based look-ups.
+> 
+> Fixes: f03606470886 ("riscv: dts: starfive: replace underscores in node names")
+> Fixes: 4210be668a09ee20 ("clk: starfive: Add JH7100 clock generator driver")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> After this is applied, the workaround in commit 7921e231f85a349d
+> ("riscv: dts: starfive: jh7100: fix root clock names") can be reverted.
+> 
+> This is v2 of "[PATCH] clk: starfive: jh7100: Use provided clocks
+> instead of hardcoded names"
+> https://lore.kernel.org/r/898aa0925a9598d44721d00145015b215434cb3b.1710414195.git.geert@linux-m68k.org/
+> 
+> v2:
+>   - Use devm_clk_hw_register_fixed_factor_parent_hw(),
+>   - Drop no longer needed local osc_sys name.
+> ---
+>  drivers/clk/starfive/clk-starfive-jh7100.c | 48 ++++++++++++++--------
+>  drivers/clk/starfive/clk-starfive-jh71x0.h |  1 +
+>  2 files changed, 32 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/clk/starfive/clk-starfive-jh7100.c b/drivers/clk/starfive/clk-starfive-jh7100.c
+> index 0342db24c27e10df..ead5a7b14bab9045 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh7100.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh7100.c
+> @@ -7,6 +7,7 @@
+>   * Copyright (C) 2021 Emil Renner Berthing <kernel@esmil.dk>
+>   */
+>  
+> +#include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/device.h>
+>  #include <linux/init.h>
+> @@ -18,10 +19,18 @@
+>  #include "clk-starfive-jh71x0.h"
+>  
+>  /* external clocks */
+> -#define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + 0)
+> -#define JH7100_CLK_OSC_AUD		(JH7100_CLK_END + 1)
+> -#define JH7100_CLK_GMAC_RMII_REF	(JH7100_CLK_END + 2)
+> -#define JH7100_CLK_GMAC_GR_MII_RX	(JH7100_CLK_END + 3)
+> +enum {
+> +	EXT_CLK_OSC_SYS,
+> +	EXT_CLK_OSC_AUD,
+> +	EXT_CLK_GMAC_RMII_REF,
+> +	EXT_CLK_GMAC_GR_MII_RX,
+> +	EXT_NUM_CLKS
+> +};
+> +
+> +#define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + EXT_CLK_OSC_SYS)
+> +#define JH7100_CLK_OSC_AUD		(JH7100_CLK_END + EXT_CLK_OSC_AUD)
+> +#define JH7100_CLK_GMAC_RMII_REF	(JH7100_CLK_END + EXT_CLK_GMAC_RMII_REF)
+> +#define JH7100_CLK_GMAC_GR_MII_RX	(JH7100_CLK_END + EXT_CLK_GMAC_GR_MII_RX)
+>  
+>  static const struct jh71x0_clk_data jh7100_clk_data[] __initconst = {
+>  	JH71X0__MUX(JH7100_CLK_CPUNDBUS_ROOT, "cpundbus_root", 0, 4,
+> @@ -284,8 +293,11 @@ static struct clk_hw *jh7100_clk_get(struct of_phandle_args *clkspec, void *data
+>  
+>  static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
+>  {
+> +	static const char *jh7100_ext_clk[EXT_NUM_CLKS] =
+> +		{ "osc_sys", "osc_aud", "gmac_rmii_ref", "gmac_gr_mii_rxclk" };
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.10.
+This should be __initconst. Otherwise:
 
-Gr{oetje,eeting}s,
+Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
 
-                        Geert
+>  	struct jh71x0_clk_priv *priv;
+>  	unsigned int idx;
+> +	struct clk *clk;
+>  	int ret;
+>  
+>  	priv = devm_kzalloc(&pdev->dev, struct_size(priv, reg, JH7100_CLK_PLL0_OUT), GFP_KERNEL);
+> @@ -298,13 +310,21 @@ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
+>  	if (IS_ERR(priv->base))
+>  		return PTR_ERR(priv->base);
+>  
+> -	priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
+> -							 "osc_sys", 0, 40, 1);
+> +	for (idx = 0; idx < EXT_NUM_CLKS; idx++) {
+> +		clk = devm_clk_get(&pdev->dev, jh7100_ext_clk[idx]);
+> +		if (IS_ERR(clk))
+> +			return PTR_ERR(clk);
+> +
+> +		priv->ext[idx] = __clk_get_hw(clk);
+> +	}
+> +
+> +	priv->pll[0] = devm_clk_hw_register_fixed_factor_parent_hw(priv->dev,
+> +			"pll0_out", priv->ext[EXT_CLK_OSC_SYS], 0, 40, 1);
+>  	if (IS_ERR(priv->pll[0]))
+>  		return PTR_ERR(priv->pll[0]);
+>  
+> -	priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
+> -							 "osc_sys", 0, 64, 1);
+> +	priv->pll[1] = devm_clk_hw_register_fixed_factor_parent_hw(priv->dev,
+> +			"pll1_out", priv->ext[EXT_CLK_OSC_SYS], 0, 64, 1);
+>  	if (IS_ERR(priv->pll[1]))
+>  		return PTR_ERR(priv->pll[1]);
+>  
+> @@ -331,16 +351,10 @@ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
+>  
+>  			if (pidx < JH7100_CLK_PLL0_OUT)
+>  				parents[i].hw = &priv->reg[pidx].hw;
+> -			else if (pidx < JH7100_CLK_END)
+> +			else if (pidx < JH7100_CLK_OSC_SYS)
+>  				parents[i].hw = priv->pll[pidx - JH7100_CLK_PLL0_OUT];
+> -			else if (pidx == JH7100_CLK_OSC_SYS)
+> -				parents[i].fw_name = "osc_sys";
+> -			else if (pidx == JH7100_CLK_OSC_AUD)
+> -				parents[i].fw_name = "osc_aud";
+> -			else if (pidx == JH7100_CLK_GMAC_RMII_REF)
+> -				parents[i].fw_name = "gmac_rmii_ref";
+> -			else if (pidx == JH7100_CLK_GMAC_GR_MII_RX)
+> -				parents[i].fw_name = "gmac_gr_mii_rxclk";
+> +			else if (pidx <= JH7100_CLK_GMAC_GR_MII_RX)
+> +				parents[i].hw = priv->ext[pidx - JH7100_CLK_OSC_SYS];
+>  		}
+>  
+>  		clk->hw.init = &init;
+> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
+> index 23e052fc15495c41..4f46939179cd7418 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh71x0.h
+> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
+> @@ -115,6 +115,7 @@ struct jh71x0_clk_priv {
+>  	struct device *dev;
+>  	void __iomem *base;
+>  	struct clk_hw *pll[3];
+> +	struct clk_hw *ext[4];
+>  	struct jh71x0_clk reg[];
+>  };
+>  
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
