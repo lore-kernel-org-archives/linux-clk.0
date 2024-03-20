@@ -1,282 +1,300 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E012263A
-	for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2024 18:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B787D7464;
+	Wed, 20 Mar 2024 02:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710874037; cv=none; b=igJc2LastR57ky5TT4rwECl11TaOY6vHHBZuQVZJ+afrLYRFr0AxFDa4+XkRKwKYibDtGdlK7SieqhnzB7Ayy+M3WSQFl0jZ7pxlrJKrXDc0/qBU11SZ96Yv3j1XqEW7rPnfuhBfzFqYwEwCCxJoKMuZ6Ka9UmGrB1Sr+GLFqtk=
+	t=1710900702; cv=none; b=tEkMJQGBzVGPu8QZE8qikIKl1CNn+pEpD1D6V8sdfTy3L1ZEDIjKMIly4lH4TMmllHlragWRCmwvyCX7VWTiLzu6RpcPcWmTDiT/JMAm6wcntnt7KxRftmuzkBi9tULvreQlI30JkC4hR7lDITe1eoUopf0d+VOteOqjX5WHz7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710874037; c=relaxed/simple;
-	bh=+6T83vgzF4M+f76SSlS8X08c5+c85AAPe3UsRbosQTM=;
+	s=arc-20240116; t=1710900702; c=relaxed/simple;
+	bh=lzxLsMVdwcPAMXkHC3RNt0usmP7tGhKFAczR2Lqss+c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CgV8f77xc1FiwbAh55VdzYDCaTmLlcKri1IEIuxxpOCSNfZ+1U09fxarUKGepzy4TtWE4z39fHo2TCbGJe8wsgKkaGCMcbioDPkyf3el75cG9fJm2wH6MToV2kzSeZ7agQusSkOgQFUOdAAaIaFha1sPCPgeiVrQkk2NWUpTkFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O4UXRN68; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 To:Cc:Content-Type; b=RH1yranWQR49ZkaHa31GM0LBK48iarAkJGN/WCJbaGMan2+MxJrXVFdKDR9qHJl0HOJ+07UzNu8FkzNHHqm+sYpo0CMTsKCsoeFBIwN1qOKi3QU3rhfGdIFPF3zJG6ZcF431eaHs/scgmTFZ82BA6AIkV8zblGbvCDqgiO1vzTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jfS7L1tV; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O4UXRN68"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dc236729a2bso5658381276.0
-        for <linux-clk@vger.kernel.org>; Tue, 19 Mar 2024 11:47:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfS7L1tV"
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7cd06b9682aso76281839f.3;
+        Tue, 19 Mar 2024 19:11:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710874035; x=1711478835; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710900700; x=1711505500; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+yETJkuJsleidnoVU1VURiPPCKkhUdvuJViHj8ytoVo=;
-        b=O4UXRN68YDZAQWOm1hrO4UGaHQImGrrkTLdonWKGDWZ1OKA4cDd5ItiY1B0eZ9TI5X
-         84u8+wFgPMKXpDqjY/MEBNjWfrVuN32HDkHBhJq0DA8sMqMbq3MLHMcHNX7dFOSmXjKO
-         hQDdmm4Stz1IPSufF5+41AH5wBcb0kLWkFzpBi6tb1KfyezkGKR3ssdHiJISl1QpOWLg
-         DOVz0aBkkDWP7zp+cAHZK5TmR08TmFfPjB4boUlWMPu0scDLvSIRdGXqUjJ1sZ6EyoIr
-         ffGkyYGAnQ7IZ9G4PXJD9OD11zyJi7mEgZHTOL9ceE4IwAV7tFql2uwvKSzjy27rz2fO
-         0Bmg==
+        bh=E68i2axyuKVX+pAKCm1Dr5BpFi26SQMx7ONiMhlC3wI=;
+        b=jfS7L1tVrpbMKmvekv/LFGAiov7wTYrr2WOEf1EK+60uviGY/plVruko8naitXUHFX
+         Yoq8YO5B8wSt/CNwUsb1qS0qusf/0RqLBXiE5UzqrYaPVQ8IuPL5rHCqLDYuFfTKOuVq
+         brjlfeEdRNemCUr+ysIOoP4PJRAXqOrgtC79dvhi/lE7iKiEww4ApvMITj/MiI4ndk6r
+         9ELj+Azb73++UXkWFXCuY0wrF9nA90Olrv49m9P8pnojHWwPwplOXEV+Rf3bKfBeZgq4
+         bqR2Gv1DEtRJrA/YkDhFhCGnl6U1nxPNDjxpf2gHs7TY+0K3neCeHvEIrZACe0DX1fw5
+         Kw5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710874035; x=1711478835;
+        d=1e100.net; s=20230601; t=1710900700; x=1711505500;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+yETJkuJsleidnoVU1VURiPPCKkhUdvuJViHj8ytoVo=;
-        b=mxIApvXEFiBGsr+AVsdnPMFVamEH/iMDg5BbZho+yJT/Lw4p/3JNXCRC+gKAB/p99j
-         bFpB+BeLY/qwSWJoqYlfPRoztpFkSU4oTYxXCtMJqCXTdww62ogc40rW/DqylOvpj3wa
-         RaG2QFbqSL3cZq5bYCQmaW9ggGVfukqsZBC0bUpuVuTP6tim9UOB9wZPYUdRUgBXnut7
-         uz/RHC0pjMulZArsnQkHUGQfK4yqxkfh3QmOUeYaB9fQ5F/VGVPGXGQOjMSV/0SLxPfs
-         CQxzcpRZmUWsVZeNR/rLgn2itcbg6OiseFBj7ZVG/LbJ/+9TscGPgyKXFDCZo9DwCe41
-         0jdw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/k1MumW+u1/902dBiCbFE8qQMxXpmJEDuOhhlWJaxX9jRyfYQd/vOehoyOkfvJTzge6P/jUS0Jph7SMdDs3n57bcXd0EbtFBh
-X-Gm-Message-State: AOJu0YwQn7cYcHbZhMVYOVjWYBxF5wN5wVx3zRNL5w8ew4Gye34IgVIa
-	roeav7Z3PVwixv6NpW5SiMgH8/CvYdvau+eZnr5X+0gEauVg6ti++c05F/xeCDngSYPoWLq8KB6
-	QwoB0xOr74ATYB/5lT5PqeHwY5LwbJOwaJ85F2g==
-X-Google-Smtp-Source: AGHT+IGMULIlFhDFq57eyKDjNgk7qs9vLLxO6TKj43NJhJ7I/TS+DqIXKpFQOhwcgta7HS9GgDe5owb16IxuTP5lU/w=
-X-Received: by 2002:a25:830b:0:b0:dc6:ff32:aaea with SMTP id
- s11-20020a25830b000000b00dc6ff32aaeamr13507330ybk.24.1710874034601; Tue, 19
- Mar 2024 11:47:14 -0700 (PDT)
+        bh=E68i2axyuKVX+pAKCm1Dr5BpFi26SQMx7ONiMhlC3wI=;
+        b=TsI3SIO+oIn5YgC98UY8VxUVqAwp3SWqs/FgkzFbrE6CmNLrEGh5+Jf7FZq46F+buM
+         kelLl1jZQL+ZoBCl+vjXq8Ola5pwoLPwv5i4iyf0u9W8EPF4iGeQNtDE4vHdBWNSr6Y2
+         Xvxyio2vtqgZdkQGN8OOR0dGq+gwZlFG0iJHmcLl17bJnI27zq/CxxqKeO82d9e6bO2N
+         awRG4YVKPv/VwhuLR8WxRL+aj2Prt7KT8HIDuz5DuNVl4CMXAt6Kls0mYxNSPLFKBgnW
+         X7PbNuR1jbmy4ZovdaGPEbP7Kk5/lq2KZPDAdnNCJ4QY1l6kcPTk1b87UiJNZKd4x4Vg
+         hITQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEElFPENevxdRRSGnE6Pcx9Gl6v/cd4LoE9Whqn8l9foyCvKUYwzB/c4VjseSHOfLTKcecRho7lyxvvQo1v3oEP6mGasEnOIBBGvt3YRex7CiVdteOgrJ4LBhsksp9gihjU9SVnNBn
+X-Gm-Message-State: AOJu0YxP79TG3PPF6f8Qjc48t7d0QEUqgiS7AWM6IzOj6QnlxKpue+w7
+	STw4bNt8OgeZg2E7jebFGFaFDnlodgRkMrfgCrz3v6YnShknD5vHUkwCN9V3L01yPt+BgAKWLVt
+	GDc0yN2KxqAl4x7+dblrbGahS249xf9ymTmeKCg==
+X-Google-Smtp-Source: AGHT+IHhJev0TqCHoeBZ/G8P415iS43EsvpMRA02NklfIYZ/S018w7Eo+6OHjyyDm1Db/bDl/DI++n43myZ6cNddat8=
+X-Received: by 2002:a92:cbc2:0:b0:366:2f7d:d292 with SMTP id
+ s2-20020a92cbc2000000b003662f7dd292mr16561775ilq.6.1710900699697; Tue, 19 Mar
+ 2024 19:11:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301015118.30072-1-semen.protsenko@linaro.org>
-In-Reply-To: <20240301015118.30072-1-semen.protsenko@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 19 Mar 2024 13:47:03 -0500
-Message-ID: <CAPLW+4=_yD3ShU5DvLWFyEzVrVHNVCsB+4bVkP+x_boRmC-vEw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] clk: samsung: Implement manual PLL control for
- ARM64 SoCs
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1710743811-1698-1-git-send-email-shengjiu.wang@nxp.com>
+ <DU0PR04MB941745611C0FE10E847C4B25882D2@DU0PR04MB9417.eurprd04.prod.outlook.com>
+ <20240319073540.2zvwq7fvft3h6mbr@pengutronix.de>
+In-Reply-To: <20240319073540.2zvwq7fvft3h6mbr@pengutronix.de>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Wed, 20 Mar 2024 10:11:28 +0800
+Message-ID: <CAA+D8APofupb5UdnKuzwkvRhj544kQ8yKBU_84esTQDN=MKzBQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: imx8mp: Add pm_runtime support for power saving
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Peng Fan <peng.fan@nxp.com>, "S.J. Wang" <shengjiu.wang@nxp.com>, 
+	"abelvesa@kernel.org" <abelvesa@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
+	"sboyd@kernel.org" <sboyd@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
+	"festevam@gmail.com" <festevam@gmail.com>, dl-linux-imx <linux-imx@nxp.com>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 29, 2024 at 7:51=E2=80=AFPM Sam Protsenko
-<semen.protsenko@linaro.org> wrote:
+On Tue, Mar 19, 2024 at 3:35=E2=80=AFPM Marco Felsch <m.felsch@pengutronix.=
+de> wrote:
 >
-> Some ARM64 Exynos chips are capable to control PLL clocks automatically.
-> For those chips, whether the PLL is controlled automatically or manually
-> is chosen in PLL_CON1 register with next bits:
+> On 24-03-18, Peng Fan wrote:
+> > > Subject: [PATCH] clk: imx: imx8mp: Add pm_runtime support for power
+> > > saving
+> > >
+> > > Add pm_runtime support for power saving. In pm runtime suspend state =
+the
+> > > registers will be reseted, so add registers save in pm runtime suspen=
+d and
+> > > restore them in pm runtime resume.
 >
->     [28]  ENABLE_AUTOMATIC_CLKGATING
->     [1]   MANUAL_PLL_CTRL
->     [0]   AUTO_PLL_CTRL
->
-> The bl2 bootloader sets 0x10000001 value for some PLL_CON1 registers,
-> which means any attempt to control those PLLs manually (e.g.
-> disabling/enabling those PLLs or changing MUX parent clocks) would lead
-> to PLL lock timeout with error message like this:
->
->     Could not lock PLL ...
->
-> At the moment, all Samsung clock drivers implement manual clock control.
-> So in order to make it possible to control PLLs, corresponding PLL_CON1
-> registers should be set to 0x2 first.
->
-> Some older ARM64 chips don't implement the automatic clock control
-> though. It also might be desirable to configure some PLLs for manual
-> control, while keeping the default configuration for the rest. So it'd
-> convenient to choose this PLL mode for each CMU separately. Introduce
-> .manual_plls field to CMU structure to choose the PLL control mode.
-> Because it'll be initialized with "false" in all existing CMU
-> structures by default, it won't affect any existing clock drivers,
-> allowing for this feature to be enabled gradually when it's needed with
-> no change for the rest of users. In case .manual_plls is set, set
-> PLL_CON1 registers to manual control, akin to what's already done for
-> gate clocks in exynos_arm64_init_clocks(). Of course, PLL_CON1 registers
-> should be added to corresponding struct samsung_cmu_info::clk_regs array
-> to make sure they get initialized.
->
-> No functional change. This patch adds a feature, but doesn't enable it
-> for any users.
->
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
+> We had similar patches in our downstream repo but didn't upstream yet
+> since there was an clk-handing issue. IIRC the issue was regarding the
+> global clock-prepare lock and a circular dependency on it. Is this
+> resolved now?
 
-Hi Krzysztof,
+Seems I didn't meet the issue you mentioned.
 
-If it looks ok to you, can you please apply this series?
+But I found another issue with my implementation that the pm_runtime_enable
+need to move before the clk registered, Otherwise the core->rpm_enabled
+is not ture at clk registering.
 
-    [PATCH 1/3] clk: samsung: Implement manual PLL control for ARM64 SoCs
-    [PATCH 2/3] clk: samsung: exynos850: Add CMU_CPUCL0 and CMU_CPUCL1
-    [PATCH 3/3] arm64: dts: exynos: Add CPU clocks for Exynos850
+I will update in next version.
 
-That concludes my efforts on CPU clock enablement in Exynos850.
-
-Thanks!
-
-> Changes in v4:
->   - Turned register checking macros into static functions
+Best regards
+Shengjiu Wang
 >
-> Changes in v3:
->   - none
+> Regards,
+>   Marco
 >
-> Changes in v2:
->   - none
->
->  drivers/clk/samsung/clk-exynos-arm64.c | 56 +++++++++++++++++++-------
->  drivers/clk/samsung/clk.h              |  4 ++
->  2 files changed, 45 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung=
-/clk-exynos-arm64.c
-> index 6fb7194df7ab..bf7de21f329e 100644
-> --- a/drivers/clk/samsung/clk-exynos-arm64.c
-> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
-> @@ -17,10 +17,17 @@
->
->  #include "clk-exynos-arm64.h"
->
-> +/* PLL register bits */
-> +#define PLL_CON1_MANUAL                BIT(1)
-> +
->  /* Gate register bits */
->  #define GATE_MANUAL            BIT(20)
->  #define GATE_ENABLE_HWACG      BIT(28)
->
-> +/* PLL_CONx_PLL register offsets range */
-> +#define PLL_CON_OFF_START      0x100
-> +#define PLL_CON_OFF_END                0x600
-> +
->  /* Gate register offsets range */
->  #define GATE_OFF_START         0x2000
->  #define GATE_OFF_END           0x2fff
-> @@ -38,17 +45,36 @@ struct exynos_arm64_cmu_data {
->         struct samsung_clk_provider *ctx;
->  };
->
-> +/* Check if the register offset is a GATE register */
-> +static bool is_gate_reg(unsigned long off)
-> +{
-> +       return off >=3D GATE_OFF_START && off <=3D GATE_OFF_END;
-> +}
-> +
-> +/* Check if the register offset is a PLL_CONx register */
-> +static bool is_pll_conx_reg(unsigned long off)
-> +{
-> +       return off >=3D PLL_CON_OFF_START && off <=3D PLL_CON_OFF_END;
-> +}
-> +
-> +/* Check if the register offset is a PLL_CON1 register */
-> +static bool is_pll_con1_reg(unsigned long off)
-> +{
-> +       return is_pll_conx_reg(off) && (off & 0xf) =3D=3D 0x4 && !(off & =
-0x10);
-> +}
-> +
->  /**
->   * exynos_arm64_init_clocks - Set clocks initial configuration
-> - * @np:                        CMU device tree node with "reg" property =
-(CMU addr)
-> - * @reg_offs:          Register offsets array for clocks to init
-> - * @reg_offs_len:      Number of register offsets in reg_offs array
-> + * @np:                CMU device tree node with "reg" property (CMU add=
-r)
-> + * @cmu:       CMU data
->   *
-> - * Set manual control mode for all gate clocks.
-> + * Set manual control mode for all gate and PLL clocks.
->   */
->  static void __init exynos_arm64_init_clocks(struct device_node *np,
-> -               const unsigned long *reg_offs, size_t reg_offs_len)
-> +                                           const struct samsung_cmu_info=
- *cmu)
->  {
-> +       const unsigned long *reg_offs =3D cmu->clk_regs;
-> +       size_t reg_offs_len =3D cmu->nr_clk_regs;
->         void __iomem *reg_base;
->         size_t i;
->
-> @@ -60,14 +86,14 @@ static void __init exynos_arm64_init_clocks(struct de=
-vice_node *np,
->                 void __iomem *reg =3D reg_base + reg_offs[i];
->                 u32 val;
->
-> -               /* Modify only gate clock registers */
-> -               if (reg_offs[i] < GATE_OFF_START || reg_offs[i] > GATE_OF=
-F_END)
-> -                       continue;
-> -
-> -               val =3D readl(reg);
-> -               val |=3D GATE_MANUAL;
-> -               val &=3D ~GATE_ENABLE_HWACG;
-> -               writel(val, reg);
-> +               if (cmu->manual_plls && is_pll_con1_reg(reg_offs[i])) {
-> +                       writel(PLL_CON1_MANUAL, reg);
-> +               } else if (is_gate_reg(reg_offs[i])) {
-> +                       val =3D readl(reg);
-> +                       val |=3D GATE_MANUAL;
-> +                       val &=3D ~GATE_ENABLE_HWACG;
-> +                       writel(val, reg);
-> +               }
->         }
->
->         iounmap(reg_base);
-> @@ -177,7 +203,7 @@ void __init exynos_arm64_register_cmu(struct device *=
-dev,
->                 pr_err("%s: could not enable bus clock %s; err =3D %d\n",
->                        __func__, cmu->clk_name, err);
->
-> -       exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
-> +       exynos_arm64_init_clocks(np, cmu);
->         samsung_cmu_register_one(np, cmu);
->  }
->
-> @@ -224,7 +250,7 @@ int __init exynos_arm64_register_cmu_pm(struct platfo=
-rm_device *pdev,
->                        __func__, cmu->clk_name, ret);
->
->         if (set_manual)
-> -               exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_r=
-egs);
-> +               exynos_arm64_init_clocks(np, cmu);
->
->         reg_base =3D devm_platform_ioremap_resource(pdev, 0);
->         if (IS_ERR(reg_base))
-> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-> index a763309e6f12..a70bd7cce39f 100644
-> --- a/drivers/clk/samsung/clk.h
-> +++ b/drivers/clk/samsung/clk.h
-> @@ -330,6 +330,7 @@ struct samsung_clock_reg_cache {
->   * @suspend_regs: list of clock registers to set before suspend
->   * @nr_suspend_regs: count of clock registers in @suspend_regs
->   * @clk_name: name of the parent clock needed for CMU register access
-> + * @manual_plls: Enable manual control for PLL clocks
->   */
->  struct samsung_cmu_info {
->         const struct samsung_pll_clock *pll_clks;
-> @@ -354,6 +355,9 @@ struct samsung_cmu_info {
->         const struct samsung_clk_reg_dump *suspend_regs;
->         unsigned int nr_suspend_regs;
->         const char *clk_name;
-> +
-> +       /* ARM64 Exynos CMUs */
-> +       bool manual_plls;
->  };
->
->  struct samsung_clk_provider *samsung_clk_init(struct device *dev,
-> --
-> 2.39.2
->
+> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> >
+> > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >  drivers/clk/imx/clk-imx8mp-audiomix.c | 99 +++++++++++++++++++++++++=
++-
+> > >  1 file changed, 96 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/=
+clk-
+> > > imx8mp-audiomix.c
+> > > index 55ed211a5e0b..d2bf53e2aacf 100644
+> > > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > > @@ -7,10 +7,12 @@
+> > >
+> > >  #include <linux/clk-provider.h>
+> > >  #include <linux/device.h>
+> > > +#include <linux/io.h>
+> > >  #include <linux/mod_devicetable.h>
+> > >  #include <linux/module.h>
+> > >  #include <linux/of.h>
+> > >  #include <linux/platform_device.h>
+> > > +#include <linux/pm_runtime.h>
+> > >
+> > >  #include <dt-bindings/clock/imx8mp-clock.h>
+> > >
+> > > @@ -18,6 +20,7 @@
+> > >
+> > >  #define CLKEN0                     0x000
+> > >  #define CLKEN1                     0x004
+> > > +#define EARC                       0x200
+> > >  #define SAI1_MCLK_SEL              0x300
+> > >  #define SAI2_MCLK_SEL              0x304
+> > >  #define SAI3_MCLK_SEL              0x308
+> > > @@ -26,6 +29,12 @@
+> > >  #define SAI7_MCLK_SEL              0x314
+> > >  #define PDM_SEL                    0x318
+> > >  #define SAI_PLL_GNRL_CTL   0x400
+> > > +#define SAI_PLL_FDIVL_CTL0 0x404
+> > > +#define SAI_PLL_FDIVL_CTL1 0x408
+> > > +#define SAI_PLL_SSCG_CTL   0x40C
+> > > +#define SAI_PLL_MNIT_CTL   0x410
+> > > +#define IPG_LP_CTRL                0x504
+> > > +#define REGS_NUM           16
+> > >
+> > >  #define SAIn_MCLK1_PARENT(n)                                        =
+       \
+> > >  static const struct clk_parent_data                                 =
+       \
+> > > @@ -182,13 +191,65 @@ static struct clk_imx8mp_audiomix_sel sels[] =
+=3D {
+> > >     CLK_SAIn(7)
+> > >  };
+> > >
+> > > +struct clk_imx8mp_audiomix_regs {
+> > > +   u32 regs_num;
+> > > +   u32 regs_off[];
+> > > +};
+> > > +
+> > > +static const struct clk_imx8mp_audiomix_regs audiomix_regs =3D {
+> > > +   .regs_num =3D REGS_NUM,
+> > > +   .regs_off =3D {
+> > > +           CLKEN0,
+> > > +           CLKEN1,
+> > > +           EARC,
+> > > +           SAI1_MCLK_SEL,
+> > > +           SAI2_MCLK_SEL,
+> > > +           SAI3_MCLK_SEL,
+> > > +           SAI5_MCLK_SEL,
+> > > +           SAI6_MCLK_SEL,
+> > > +           SAI7_MCLK_SEL,
+> > > +           PDM_SEL,
+> > > +           SAI_PLL_GNRL_CTL,
+> > > +           SAI_PLL_FDIVL_CTL0,
+> > > +           SAI_PLL_FDIVL_CTL1,
+> > > +           SAI_PLL_SSCG_CTL,
+> > > +           SAI_PLL_MNIT_CTL,
+> > > +           IPG_LP_CTRL
+> > > +   },
+> > > +};
+> > > +
+> > > +struct clk_imx8mp_audiomix_drvdata {
+> > > +   void __iomem *base;
+> > > +   u32 regs_save[REGS_NUM];
+> > > +};
+> > > +
+> > > +static void clk_imx8mp_audiomix_save_restore(struct device *dev, boo=
+l
+> > > +save) {
+> > > +   struct clk_imx8mp_audiomix_drvdata *drvdata =3D
+> > > dev_get_drvdata(dev);
+> > > +   void __iomem *base =3D drvdata->base;
+> > > +   int i;
+> > > +
+> > > +   if (save) {
+> > > +           for (i =3D 0; i < audiomix_regs.regs_num; i++)
+> > > +                   drvdata->regs_save[i] =3D readl(base +
+> > > audiomix_regs.regs_off[i]);
+> > > +   } else {
+> > > +           for (i =3D 0; i < audiomix_regs.regs_num; i++)
+> > > +                   writel(drvdata->regs_save[i], base +
+> > > audiomix_regs.regs_off[i]);
+> > > +   }
+> > > +}
+> > > +
+> > >  static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)  =
+{
+> > > +   struct clk_imx8mp_audiomix_drvdata *drvdata;
+> > >     struct clk_hw_onecell_data *priv;
+> > >     struct device *dev =3D &pdev->dev;
+> > >     void __iomem *base;
+> > >     struct clk_hw *hw;
+> > > -   int i;
+> > > +   int i, ret;
+> > > +
+> > > +   drvdata =3D devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> > > +   if (!drvdata)
+> > > +           return -ENOMEM;
+> > >
+> > >     priv =3D devm_kzalloc(dev,
+> > >                         struct_size(priv, hws,
+> > > IMX8MP_CLK_AUDIOMIX_END), @@ -202,6 +263,9 @@ static int
+> > > clk_imx8mp_audiomix_probe(struct platform_device *pdev)
+> > >     if (IS_ERR(base))
+> > >             return PTR_ERR(base);
+> > >
+> > > +   drvdata->base =3D base;
+> > > +   dev_set_drvdata(dev, drvdata);
+> > > +
+> > >     for (i =3D 0; i < ARRAY_SIZE(sels); i++) {
+> > >             if (sels[i].num_parents =3D=3D 1) {
+> > >                     hw =3D devm_clk_hw_register_gate_parent_data(dev,
+> > > @@ -257,10 +321,38 @@ static int clk_imx8mp_audiomix_probe(struct
+> > > platform_device *pdev)
+> > >     if (IS_ERR(hw))
+> > >             return PTR_ERR(hw);
+> > >
+> > > -   return devm_of_clk_add_hw_provider(&pdev->dev,
+> > > of_clk_hw_onecell_get,
+> > > -                                      priv);
+> > > +   ret =3D devm_of_clk_add_hw_provider(&pdev->dev,
+> > > of_clk_hw_onecell_get,
+> > > +                                     priv);
+> > > +   if (ret)
+> > > +           return ret;
+> > > +
+> > > +   pm_runtime_enable(&pdev->dev);
+> > > +   clk_imx8mp_audiomix_save_restore(&pdev->dev, true);
+> > > +
+> > > +   return 0;
+> > >  }
+> > >
+> > > +static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev) {
+> > > +   clk_imx8mp_audiomix_save_restore(dev, true);
+> > > +
+> > > +   return 0;
+> > > +}
+> > > +
+> > > +static int clk_imx8mp_audiomix_runtime_resume(struct device *dev) {
+> > > +   clk_imx8mp_audiomix_save_restore(dev, false);
+> > > +
+> > > +   return 0;
+> > > +}
+> > > +
+> > > +static const struct dev_pm_ops clk_imx8mp_audiomix_pm_ops =3D {
+> > > +   SET_RUNTIME_PM_OPS(clk_imx8mp_audiomix_runtime_suspend,
+> > > +                      clk_imx8mp_audiomix_runtime_resume, NULL)
+> > > +   SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> > > +                                 pm_runtime_force_resume)
+> > > +};
+> > > +
+> > >  static const struct of_device_id clk_imx8mp_audiomix_of_match[] =3D =
+{
+> > >     { .compatible =3D "fsl,imx8mp-audio-blk-ctrl" },
+> > >     { /* sentinel */ }
+> > > @@ -272,6 +364,7 @@ static struct platform_driver
+> > > clk_imx8mp_audiomix_driver =3D {
+> > >     .driver =3D {
+> > >             .name =3D "imx8mp-audio-blk-ctrl",
+> > >             .of_match_table =3D clk_imx8mp_audiomix_of_match,
+> > > +           .pm =3D &clk_imx8mp_audiomix_pm_ops,
+> > >     },
+> > >  };
+> > >
+> > > --
+> > > 2.34.1
+> >
+> >
+> >
