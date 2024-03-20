@@ -1,149 +1,169 @@
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547464206A
-	for <linux-clk@vger.kernel.org>; Wed, 20 Mar 2024 14:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133B14E1D5;
+	Wed, 20 Mar 2024 15:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710946795; cv=none; b=n7MuOOVT1NW0f/dTWgCZJdWgzIiFrMxUcYHgb6RUBEU6e+vwxWUVj5XhqQqzROb+4fw2AlYW0hvM4z/eoW/K/3PWgc3u86BwGNR7l508bPRQ9dIZlaRiaWa5FgzWKA0gtPpKoH/41qmo+5O+WWE85sw546O6vULqAWTYMrJY5sc=
+	t=1710950130; cv=none; b=S++VMTfzJVinqOhZ3XoM/Po1hMIkyfbSqXJjbAqtTofNh7sTFF0uyKcY3mXJ7Wpgpytr2zaLgNX4PlVfKjTCyix0SAB7SmiImq9r8+u7x2X5fF4GJRaScCcNedaaXiQpktY12n7E1xNn9FM0Ob+/1yE0Da6hEc8lR6zAqNVKqr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710946795; c=relaxed/simple;
-	bh=f8Ql61R6HFww77P6kYzWw9QksZwLWDYVdIJJT/aYBV8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iakwl/ixjxxhe2IuOuMg2s8oNrXdyctqtXg4ep0FqRWXTPoqgxiEoQIYNPLMBTRYn5OuSPb3FmkszqFKhIpOb648E9e0SjccX1bjZA4njwXLX8B06vV+ytq4u/8jB7c9Ai/NzDQg1M7p+EmYP4T7sNTkiXjZMoPB+InTdj+Zj5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Du4D/XRD; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+	s=arc-20240116; t=1710950130; c=relaxed/simple;
+	bh=uz5YSWprNfbLYOxKpYNHjtfMySvV4RFWv4ndcLCY5AM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WfWr37fbg1hrCPSo+BWvN2RbymK8CU5QHVbMX906e1cAQPGzmgFfTwohB4HJs1gHoXyvk8OFz1MBQLzlgNoVa7LUWy87d90mkP60dZXccFmQlaHwQr9napzHzN1uJrRlB1ChO+eqM6HIEOwtqWefvqjGC5AY/QrBPZSlzy00+Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=XDydmRx5; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Du4D/XRD"
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3669fadea4cso19811715ab.2
-        for <linux-clk@vger.kernel.org>; Wed, 20 Mar 2024 07:59:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1710946793; x=1711551593; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uu3XrTQnPclK188rbkolek/Ountn/o+HfDpmNTirMmE=;
-        b=Du4D/XRDjmNzmL0ksykMcWP6cZZKd/0i9jZSlkQ6VZJHP72aGM+AJtRIy9rykeZ4NZ
-         /BZTPERX94PxoufN8Sssf8HVZzoyFgWkx9/CxZBS+dEvC0nQ66LV9Y8iCC9FTzu8hTQI
-         3Db2f/dMQhnlDt2PTpmej/MjFz9aVyAUJVddixqOKnETWTCzlLCzyBjKMuZTldgdOKDB
-         OUL3U3IvRJX50P9Rx/qIZQFhwMNbcVow0aN2wqg1rUVwVgyeuKQ4/DGiU7azKZAoklCH
-         FMeL0zLrKnNlaHL/szrpzsWTSzlnReFVxS6hX8X7TEnuxJnpvaZQVCbPk8EyQYGVCtRf
-         cmuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710946793; x=1711551593;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uu3XrTQnPclK188rbkolek/Ountn/o+HfDpmNTirMmE=;
-        b=XgPdAdB27kZIrKlpYsiBpIHQ9mpW5izuAkwmYSYsKuQuxYuvW+al8KV/lYBesxq/vU
-         bxkDZ+mijq8vh+mj996FzIdqSfhNGbVarIRfnm79XhG8Fj2C5r0+Sx0A7XZcOXcCgwmO
-         cLJJIkdgNxaZceX27ZQyKp9nfayiROA6cz3WTKcHA+yox28ER4448zSR2YYIWfN5tJa2
-         SW8QITF8SkazoqDq7YBKxWfbcE6ryWcddUMgfgrURDOWkr4tCka8Bl+0KydfKfnXTQ0j
-         WtI/u/a32Az5Jbj9TTGlf7pIAGj5Q9NjwDNq1rXelCwWpc9dN0V2Mf8r5Qt1sKswExJW
-         Wz2w==
-X-Gm-Message-State: AOJu0YyNnE9DilrfbBJFhaF+LObHAMB1WFLQlfr2g3mZyrp5E8i9CJGL
-	3uXpwTUM7ppYJkWKsMeaa4tBVV8F5Vc3g2Y47zoHbm/VOAK+hg/UOUCcFZK3hiY=
-X-Google-Smtp-Source: AGHT+IHYs3xz0pWt4lkNcOSOAn3q+vYaOoPxrg3Wre2/j0EachnEDYKI6x8jefgAtnsQtnh4JD77YQ==
-X-Received: by 2002:a05:6e02:1a8a:b0:366:c779:f955 with SMTP id k10-20020a056e021a8a00b00366c779f955mr12702751ilv.17.1710946793353;
-        Wed, 20 Mar 2024 07:59:53 -0700 (PDT)
-Received: from [100.64.0.1] ([136.226.86.189])
-        by smtp.gmail.com with ESMTPSA id a9-20020a92d109000000b00366895ef367sm3491581ilb.38.2024.03.20.07.59.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Mar 2024 07:59:52 -0700 (PDT)
-Message-ID: <0a807505-221c-4aa9-ac63-c442417f3030@sifive.com>
-Date: Wed, 20 Mar 2024 09:59:51 -0500
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="XDydmRx5"
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 0C270120015;
+	Wed, 20 Mar 2024 18:55:19 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 0C270120015
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1710950119;
+	bh=LsoQ3oF2kg2yK04bv75oYHFuvgq3Hd3YI9kmS9zzWiE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=XDydmRx53U4e4RBhlk3rasEQtc43OdENArhGOxnkb80H5xxbVbJv264GHZnQrNE52
+	 jhZbqmT+yk9H5HzRDmaYwzq6Ul5LJi5VA7DXxTqF8oE8mKowK6T33U2hjp7vqYqwlD
+	 yKmJ7mGPgdBwWhdLMqVjNofutV6RbKrCg982ivOv0xr6TrisyUKfZ3al6fe7qDK4PA
+	 Xp+H9fGda71a1R1OjE63WDhQE01uNQlLu6HSb3bxVJPZGaYiMdEVrwhciY+JLvL4Aa
+	 nsfAfgDdq5UvAR5AgiRFuy5bj9eJJ4Bx61fZn64YVj+pVQHX2Ih4aeZVibsEPSU553
+	 8tVbXtWfcC9Bg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed, 20 Mar 2024 18:55:18 +0300 (MSK)
+Received: from CAB-WSD-L081021.sberdevices.ru (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Wed, 20 Mar 2024 18:55:18 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+	<mturquette@baylibre.com>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <sboyd@kernel.org>
+CC: <kernel@salutedevices.com>, <rockosov@gmail.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	Dmitry Rokosov <ddrokosov@salutedevices.com>
+Subject: [PATCH v1 0/4] clk: meson: treewide: define maximum register in regmap config
+Date: Wed, 20 Mar 2024 18:54:44 +0300
+Message-ID: <20240320155512.3544-1-ddrokosov@salutedevices.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: starfive: jh7100: Use clk_hw for external input
- clocks
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, Emil Renner Berthing <kernel@esmil.dk>,
- Hal Feng <hal.feng@starfivetech.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor.dooley@microchip.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <beb746c7538a4ff720a25fd8f309da20d8d854ef.1710933713.git.geert@linux-m68k.org>
- <47bddec7-953d-4ea4-84f1-b0dcf0641baa@sifive.com>
- <CAMuHMdWP4R6Y6G0qzhMKJy1zJEeHE8a0XEK+Hs_D4wXB2i2BFA@mail.gmail.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <CAMuHMdWP4R6Y6G0qzhMKJy1zJEeHE8a0XEK+Hs_D4wXB2i2BFA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 184300 [Mar 20 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 10 0.3.10 53c821b925e16276b831986eabc71d60ab82ee60, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/03/20 06:45:00 #24314254
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi Geert,
+The 'max_register' field in the regmap_config is an optional value that
+specifies the maximum valid register address. If this value is not
+determined, the regmap debugfs API will not show the full regmap dump,
+but only show the first register value.
 
-On 2024-03-20 9:28 AM, Geert Uytterhoeven wrote:
-> On Wed, Mar 20, 2024 at 2:31 PM Samuel Holland
-> <samuel.holland@sifive.com> wrote:
->> On 2024-03-20 6:24 AM, Geert Uytterhoeven wrote:
->>> The Starfive JH7100 clock driver does not use the DT "clocks" property
->>> to find the external main input clock, but instead relies on the name of
->>> the actual clock provider ("osc_sys").  This is fragile, and caused
->>> breakage when sanitizing clock node names in DTS.
->>>
->>> Fix this by obtaining the external main input clock using
->>> devm_clk_get(), and passing the returned clk_hw object to
->>> devm_clk_hw_register_fixed_factor_parent_hw().
->>>
->>> While name-based look-up of the other external input clocks works as-is,
->>> convert them to a similar clk_hw-based scheme to increase uniformity,
->>> and to decrease the number of name-based look-ups.
->>>
->>> Fixes: f03606470886 ("riscv: dts: starfive: replace underscores in node names")
->>> Fixes: 4210be668a09ee20 ("clk: starfive: Add JH7100 clock generator driver")
->>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> 
-> 
->>> --- a/drivers/clk/starfive/clk-starfive-jh7100.c
->>> +++ b/drivers/clk/starfive/clk-starfive-jh7100.c
-> 
->>> @@ -284,8 +293,11 @@ static struct clk_hw *jh7100_clk_get(struct of_phandle_args *clkspec, void *data
->>>
->>>  static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
->>>  {
->>> +     static const char *jh7100_ext_clk[EXT_NUM_CLKS] =
->>> +             { "osc_sys", "osc_aud", "gmac_rmii_ref", "gmac_gr_mii_rxclk" };
->>
->> This should be __initconst. Otherwise:
-> 
-> With
-> 
->     -       static const char *jh7100_ext_clk[EXT_NUM_CLKS] =
->     +       static const char *jh7100_ext_clk[EXT_NUM_CLKS] __initconst =
-> 
-> I get:
-> 
->     drivers/clk/starfive/clk-starfive-jh7100.c: In function
-> ‘clk_starfive_jh7100_probe’:
->     drivers/clk/starfive/clk-starfive-jh7100.c:35:37: error:
-> ‘jh7100_clk_data’ causes a section type conflict with ‘jh7100_ext_clk’
->        35 | static const struct jh71x0_clk_data jh7100_clk_data[]
-> __initconst = {
->           |                                     ^~~~~~~~~~~~~~~
->     drivers/clk/starfive/clk-starfive-jh7100.c:296:28: note:
-> ‘jh7100_ext_clk’ was declared here
->       296 |         static const char *jh7100_ext_clk[EXT_NUM_CLKS]
-> __initconst =
->           |                            ^~~~~~~~~~~~~~
-> 
-> which is a bit strange...
-> What am I missing?
+Compare 'registers' debugfs file data on the A113L SoC-based board
+before the patch:
 
-I think you need to add another "const" covering the array itself:
+```
+~ # cat /sys/kernel/debug/regmap/fe007c80.pll-clock-controller/registers
+00: 14f10440
+```
 
-	static const char *const jh7100_ext_clk[EXT_NUM_CLKS] __initconst =
+and after the patch:
 
-Regards,
-Samuel
+```
+~ # cat /sys/kernel/debug/regmap/fe007c80.pll-clock-controller/registers
+00: 14f10440
+04: 01800000
+08: 00001100
+0c: 100a2300
+10: 00300000
+14: c000002b
+18: 00000000
+1c: 00000000
+20: 00000000
+24: 00000000
+28: 00000000
+2c: 00000000
+30: 00000000
+34: 00000000
+38: 00000000
+3c: 00000000
+40: 00000000
+44: 00000000
+48: 00000000
+4c: 00000000
+50: 00000000
+54: 00000000
+58: 00000000
+5c: 00000000
+60: 00000000
+64: 00000000
+68: 00000000
+6c: 00000000
+70: 00000000
+74: 00000000
+78: 00000000
+7c: 00000000
+80: 15f18432
+84: 01800000
+88: 00001100
+8c: 10022300
+90: 00300000
+94: c000001d
+98: 00000000
+9c: 00000000
+a0: 00000000
+a4: 00000000
+a8: 00000000
+ac: 00000000
+b0: 00000000
+b4: 00000000
+b8: 00000000
+bc: 00000000
+c0: 01f19480
+c4: 01800000
+c8: 00001100
+cc: 100a1100
+d0: 00302000
+d4: 00000020
+```
+
+Dmitry Rokosov (4):
+  clk: meson: a1: peripherals: determine maximum register in regmap
+    config
+  clk: meson: a1: pll: determine maximum register in regmap config
+  clk: meson: s4: peripherals: determine maximum register in regmap
+    config
+  clk: meson: s4: pll: determine maximum register in regmap config
+
+ drivers/clk/meson/a1-peripherals.c | 1 +
+ drivers/clk/meson/a1-pll.c         | 1 +
+ drivers/clk/meson/s4-peripherals.c | 1 +
+ drivers/clk/meson/s4-pll.c         | 1 +
+ 4 files changed, 4 insertions(+)
+
+-- 
+2.43.0
 
