@@ -1,119 +1,180 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9BB2837F;
-	Thu, 21 Mar 2024 08:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20D5446AE
+	for <linux-clk@vger.kernel.org>; Thu, 21 Mar 2024 09:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711011556; cv=none; b=lDpEWdn/OpqPIrbvDU7uQZYEZmn8ndkr8hOkr5a7CF8Y9j5ttG1tX54skLu6kaByI4oP++clbnp18+sv71jSug0fATWfRMNV+J7mUFbaTnVe0Ynh/aav/hQEre3NegJPT9FzngrdZ/b7o0jx6S/cmbTapu/nkyM5zIpTpx7BqRU=
+	t=1711011925; cv=none; b=p6yrZ1+KO8YN4avLdqKglmIiQGv0SjiXwh8IVI2Yc4+cZHLXoHd9gyLzmpCvy3eqdhywnns/ClfvYsbC+sVmL9WfQ4N4PtsWzPovTyIseS5JP2XeByiwYnZ4P6b5pQ4LGHJrpqKxezt5ANyaz9YUFKY1O7Y9ON/pqQIxXoW+Y+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711011556; c=relaxed/simple;
-	bh=NxDbZYgwH4jpjVelX1PrNVvVGA+QrJ3WUXZ1vKbEGXI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qBlLArkDQQyhV/zlu1TqQJlF6G54lhPUKl/l3dE0o8JeMr0FDhCfY4gB8O3SHir1/0l9tGf6nFrtEsQMZMS9bOZ/Mogd9ZJ7uCr0xmIL9d70WtLCEr75WxhvTOF3u9Xjf/1Xt3R+2TJv1xv/PUxJI/uGhL3UdxlZp4/xbnE7ds4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f9F5l2CB; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f9F5l2CB"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a46a7208eedso99928966b.0;
-        Thu, 21 Mar 2024 01:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711011552; x=1711616352; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=50OqpzaNnJv0r4pTaChj38doMx6VdmtBy+/lDzIFTC4=;
-        b=f9F5l2CB1TfcWEV4vZpYl1ojSdvlHOY4qcMY4F5nHeoxCIfIF34FbbZZ3lQTHVmsOl
-         pxSfJyVS+bDIB9pnOlHwqlpb8lYF2zgR4nT0Zv91cSxfFTMZVGMozItIZTZH1TKG7/A7
-         vpiixKafoLNt7RnThQmiLp1IFz/YQtggkayZrgg6jgffAwYjl3QyL76yAdd1XHYFq3+1
-         pdpsaxG9jWZ93C3c/AWsffsMLTg+K+00GwaFU2CS/l3ReayEUyJaa4tLey8Iifv0oXuu
-         g+oobw45r1kgPfIDlFwkQC0RG7if3ybXIVsnl/vPNaIczsALE6oRkQ91JB5f9YWL2NQU
-         1a1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711011552; x=1711616352;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=50OqpzaNnJv0r4pTaChj38doMx6VdmtBy+/lDzIFTC4=;
-        b=DcTn3nUhgLen8jkqudG3UMjOCzkBJppYwXf9sq+4O1XaW6ttVVRR+V7RRMbXQWAWtp
-         NTwQCGejaQsB8KAkmZ8kCpe7tI6mEgq/a39T2rktf46hDYWr3GwOJf7krKqiB7M0LlRi
-         empeVctTlNxDyzO14IGTcW6cxCJ/o4SBQ3GFAAR+J/CJukhQW3KGWZdSFWikp0ih2TLM
-         +k1x3Qpn/hHQyOVVZX4FpVO9fIUMIhzxiFqzVKa6ux3alVz9QJeKtptk0XcmpUPYT1nP
-         3xMeoK4IVw5ym/w4fkdxEiI9wETf25N0x3ssKC92lpY0MrnL8f+nOYMJCR6fdvxzXzbt
-         AoYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsRjJHjaoLk1jcdheuOy90RJ+zk2OaC2w752LgE2A8KEjIctYzbdgIc9Z2GXub4K1T9xqt4MAbPnvsU6PGBV/DLVacq8tmbtj3Zn/5Nr+vDpCO8NhUdGgLPFhcaJr2SAQXO4l9L1fc
-X-Gm-Message-State: AOJu0YwRw92ncdivZ5dUG+mcNfiERlvDoUWpRSFwHO2S833Xd7HrCvAk
-	U9tFT+8WOy/tLzKdgcTgE+vZvDSY+xCpaTy6oFv2KWlYHwpToZU+
-X-Google-Smtp-Source: AGHT+IHjSN1AJpIAG2e3sSoLMC5C2Cu5XoiqPCD4u42ssn18L9uLH9vYrvcZXsC4XrZGDxmYoknfRw==
-X-Received: by 2002:a17:907:3594:b0:a44:e34a:792f with SMTP id ao20-20020a170907359400b00a44e34a792fmr12557655ejc.15.1711011552419;
-        Thu, 21 Mar 2024 01:59:12 -0700 (PDT)
-Received: from [192.168.1.253] (57657817.catv.pool.telekom.hu. [87.101.120.23])
-        by smtp.googlemail.com with ESMTPSA id af3-20020a170906998300b00a469604c464sm6719582ejc.160.2024.03.21.01.59.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Mar 2024 01:59:11 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Thu, 21 Mar 2024 09:59:04 +0100
-Subject: [PATCH] clk: qcom: clk-alpha-pll: fix kerneldoc of struct
- clk_alpha_pll
+	s=arc-20240116; t=1711011925; c=relaxed/simple;
+	bh=9IyX9VQ0UZOYUm24nSmmirQeHR+zSjf33d/U4cQ9MiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nIQ64BqHiZUbWX9bUgaEFlJR7NpBSKgJiW25lVfjy7jmh8g81Q+GGeSeykq7PNhdsyFOD6jxWFTn0mvFknPyvH7cMv4ingRKQW/Yunmt1dINHko7Y2XpAJknYUUn4RbAPKLj6sigTq+dMt6m+ulD6AABiD19vQtzZzioB/ZSbck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1rnEM3-0003TV-Nk; Thu, 21 Mar 2024 10:04:55 +0100
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1rnEM2-007cVx-T9; Thu, 21 Mar 2024 10:04:54 +0100
+Received: from pengutronix.de (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 760542A8A7F;
+	Thu, 21 Mar 2024 09:04:54 +0000 (UTC)
+Date: Thu, 21 Mar 2024 10:04:53 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] clk: imx: imx8mp: Add pm_runtime support for power
+ saving
+Message-ID: <20240321-apply-swore-f9c17ad3a8d2-mkl@pengutronix.de>
+References: <1711010211-6825-1-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240321-alpha-pll-kerneldoc-v1-1-0d76926b72c3@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANf2+2UC/x3MQQqAIBBA0avErBuY1Iq6SrSQGmtITBQiiO6et
- HyL/x/InIQzjNUDiS/JcoaCpq5g2W3YGGUtBkXKkFYNWh93i9F7PDgF9uu5oOtb6oi0MUMLpYy
- Jndz/dZrf9wNx68ONZQAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.12.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7z4esfqbug4ywn5r"
+Content-Disposition: inline
+In-Reply-To: <1711010211-6825-1-git-send-email-shengjiu.wang@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-Add missing descriptions of the 'num_vco' and 'flags' members to
-clk_alpha_pll structure's documentation. Also reorder the member
-description entries to match the order of the declarations.
 
-Eliminates the following warnings:
-  drivers/clk/qcom/clk-alpha-pll.h:72: info: Scanning doc for struct clk_alpha_pll
-  drivers/clk/qcom/clk-alpha-pll.h:91: warning: Function parameter or struct member 'num_vco' not described in 'clk_alpha_pll'
-  drivers/clk/qcom/clk-alpha-pll.h:91: warning: Function parameter or struct member 'flags' not described in 'clk_alpha_pll'
+--7z4esfqbug4ywn5r
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No functional changes.
+On 21.03.2024 16:36:51, Shengjiu Wang wrote:
+> Add pm_runtime support for power saving. In pm runtime suspend
+> state the registers will be reseted, so add registers save
+> in pm runtime suspend and restore them in pm runtime resume.
+>=20
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> changes in v3:
+> - remove REGS_NUM, use the ARRAY_SIZE
+> - merge clk_imx8mp_audiomix_drvdata and clk_hw_onecell_data together.
 
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
-Based on v6.8.
----
- drivers/clk/qcom/clk-alpha-pll.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Look way nicer, but still room for improvement.
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index a1a75bb12fe88..19717246c8b6e 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -71,8 +71,10 @@ struct pll_vco {
- /**
-  * struct clk_alpha_pll - phase locked loop (PLL)
-  * @offset: base address of registers
-- * @vco_table: array of VCO settings
-  * @regs: alpha pll register map (see @clk_alpha_pll_regs)
-+ * @vco_table: array of VCO settings
-+ * @num_vco: number of VCO settings in @vco_table
-+ * @flags: bitmask to indicate features supported by the hardware
-  * @clkr: regmap clock handle
-  */
- struct clk_alpha_pll {
+> changes in v2:
+> - move pm_runtime_enable before the clk register
+>=20
+>  drivers/clk/imx/clk-imx8mp-audiomix.c | 157 ++++++++++++++++++++++----
+>  1 file changed, 136 insertions(+), 21 deletions(-)
+>=20
+> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-=
+imx8mp-audiomix.c
+> index 55ed211a5e0b..5ae33bce8ad8 100644
+> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> @@ -7,10 +7,12 @@
+> =20
+>  #include <linux/clk-provider.h>
+>  #include <linux/device.h>
+> +#include <linux/io.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> =20
+>  #include <dt-bindings/clock/imx8mp-clock.h>
+> =20
+> @@ -18,6 +20,7 @@
+> =20
+>  #define CLKEN0			0x000
+>  #define CLKEN1			0x004
+> +#define EARC			0x200
+>  #define SAI1_MCLK_SEL		0x300
+>  #define SAI2_MCLK_SEL		0x304
+>  #define SAI3_MCLK_SEL		0x308
+> @@ -26,6 +29,11 @@
+>  #define SAI7_MCLK_SEL		0x314
+>  #define PDM_SEL			0x318
+>  #define SAI_PLL_GNRL_CTL	0x400
+> +#define SAI_PLL_FDIVL_CTL0	0x404
+> +#define SAI_PLL_FDIVL_CTL1	0x408
+> +#define SAI_PLL_SSCG_CTL	0x40C
+> +#define SAI_PLL_MNIT_CTL	0x410
+> +#define IPG_LP_CTRL		0x504
+> =20
+>  #define SAIn_MCLK1_PARENT(n)						\
+>  static const struct clk_parent_data					\
+> @@ -182,26 +190,82 @@ static struct clk_imx8mp_audiomix_sel sels[] =3D {
+>  	CLK_SAIn(7)
+>  };
+> =20
+> +static const u16 audiomix_regs[] =3D {
+> +	CLKEN0,
+> +	CLKEN1,
+> +	EARC,
+> +	SAI1_MCLK_SEL,
+> +	SAI2_MCLK_SEL,
+> +	SAI3_MCLK_SEL,
+> +	SAI5_MCLK_SEL,
+> +	SAI6_MCLK_SEL,
+> +	SAI7_MCLK_SEL,
+> +	PDM_SEL,
+> +	SAI_PLL_GNRL_CTL,
+> +	SAI_PLL_FDIVL_CTL0,
+> +	SAI_PLL_FDIVL_CTL1,
+> +	SAI_PLL_SSCG_CTL,
+> +	SAI_PLL_MNIT_CTL,
+> +	IPG_LP_CTRL,
+> +};
+> +
+> +struct clk_imx8mp_audiomix_priv {
+> +	void __iomem *base;
+> +	struct clk_hw_onecell_data *clk_hw_data;
+> +	u32 regs_save[ARRAY_SIZE(audiomix_regs)];
 
----
-base-commit: e8f897f4afef0031fe618a8e94127a0934896aba
-change-id: 20240321-alpha-pll-kerneldoc-f75060034495
+Put the "struct clk_hw_onecell_data clk_hw_data" at the end of the
+struct. Then allocating should be easier and you don't need the
+additional pointer.
 
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
+Marc
 
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--7z4esfqbug4ywn5r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmX7+DMACgkQKDiiPnot
+vG8IVQf2O5/UkwGcC3bi6XlI+KC+dh+zm8EbiuYW62sdysCPOWaJiETytc186x/E
+YaABZOfWMeH+liQM/GCMIumSeixIEd4o3fY56edmW24lE3oUtEnDTsdEDLchMaOe
+5aLweRpoVbwlKyx17z0cB+ct64AvfsUP/F67kJLikpS/S5WNtpR9kupkLDypZ5Zt
+yXVwKsRHt095Krn2lHlaRBKV96cbwCmPQN+FWLhwjkUsUAlHyHoc9jHIfRN7cATQ
+hyMaJr/WOFfA58JQOUelntlnEp8Td/c+IwSHadD+aHOUUQ4jnW2jNuhx2dZh1jUS
+Kptm9jdx4XpV94CGDj5lFQLlUttl
+=tk43
+-----END PGP SIGNATURE-----
+
+--7z4esfqbug4ywn5r--
