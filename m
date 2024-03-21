@@ -1,109 +1,163 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F651E879;
-	Thu, 21 Mar 2024 15:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9625CB5
+	for <linux-clk@vger.kernel.org>; Thu, 21 Mar 2024 18:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711036267; cv=none; b=RUN/U7OXRfQjungU32Wted7uMEoVwa/oAb5SAYIIgj8VPYHSKZvtZq6o3t+7VS++xkyO7bBoTqsjBwDILb5IssHx2W4nmCjhSL3brE+qaCeToN9HnBOpJcmoKQWdMEBV5nsMY642pW5wRJ98z8UY5Gpx9IN2SQ+/zTJwKgEbUsw=
+	t=1711045907; cv=none; b=bQXpVx5Fn+mVB/r8MJ1Jt3sg0QR1tkQe3EcWiygxUxEuteo+XlcdvGSRiLqgBFhVY05xt0ZUfWYtuD0rkmXy4QzlGwtgMzVQvL6TaTksp9CLZgRZTBxmahFuXpWyN7zN1W/XRqic68XESpw3bVqMPmlSXE0s68viDK3q/B8LBxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711036267; c=relaxed/simple;
-	bh=NcoABh9qQqWyHeyP/BJpH8RDi7iEiqb/AKOW3kyJ7Hk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=enr9cjIK/XHfqpvKswRRpQZG8xQaFAXHEQpTtLhRfI0zPRd7J2x2s7NWFT1zbZQIacZl0nNe9OFLcIy6rD8Ec2JyOB8CoNDst2JFXAf4EAyZvWwa4mQcZOc8XWsLlBwG+ioWRBMmDgoEa8YNkC9V1wAnOohvaf8fOlJvjjCdzms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oBKDKkH3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1711045907; c=relaxed/simple;
+	bh=TFuP46Qyx1pxwBYCaCTCPf0SHLozPhSzhmuSdqJriLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VQvtor7cAZNb5JR0mqFSoZRed0rCLs4e6R/pD40K5UhIazLxEaG+tkeexyssnOH1WQrKlC+3cxB5b12bDzRn0Dxx+gNcMprPh9Qiajh+v8hODyHA5IiojzlReNA4+ooThzQLdh9y9DFrVnnq6Yj7H7jI+fKCKaZ4gfIMq8e/UlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nUEzEPV2; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oBKDKkH3"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42LFOW30010746;
-	Thu, 21 Mar 2024 15:50:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=FRj4LVlZr5NDfUAqAPS+X
-	NAuH+YYahtbNBB1SbEdMAM=; b=oBKDKkH38UMpT2lFxBJvGBHAI7ipNAdSu7t7d
-	xYezGRKPqmIGRvI9X+rvP5942Kq9O6LQ7V5NpoaxzaMH53PFRZP2Yvf34mUpiL8F
-	Mb+MCyUa2LCAU2UtYIA9BzaVVRcbq21eqd0V6XCaC7Aw22UgNWhOidTKpSgCuBkn
-	iYygFm7MNNdAOcuLjMZA4HSHMyZFqyXVVYxMgIo7NSC8VtcjqcxkfMuWnEpJsr2G
-	CW01W4OGJbcKRHzS5ma7EdsfzsLU64Jc5MN5d8MdMAdeqIWqbmn/sOQNQVhem/SO
-	U5RAwycD/5U8avMp2SDcN/u+OLLEuKVpxlDTtm6sMkosKlNfA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x0f1nhd6w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Mar 2024 15:50:58 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42LFovDG006831
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Mar 2024 15:50:57 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 21 Mar 2024 08:50:53 -0700
-Date: Thu, 21 Mar 2024 21:20:49 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Rob Herring <robh@kernel.org>
-CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <djakov@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: interconnect: Add Qualcomm IPQ9574
- support
-Message-ID: <ZfxXWaNzJoai6VpV@hu-varada-blr.qualcomm.com>
-References: <20240321043149.2739204-1-quic_varada@quicinc.com>
- <20240321043149.2739204-2-quic_varada@quicinc.com>
- <20240321143549.GA1679970-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nUEzEPV2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1711045898;
+	bh=TFuP46Qyx1pxwBYCaCTCPf0SHLozPhSzhmuSdqJriLc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nUEzEPV2AvPMYLXvoI91Dis+8/UnEo8SYxTG3Ba2msP5faCd0nwcIhWPLEujvwura
+	 /BnkLq2OyrmbihMskDQEWasHfVoH6Eehv/waS0crQ3MdSxm4V8XjcmoLxNV81w7DK8
+	 UUOdu0vCaS3H2D8aw+69XXBMjNJFvMB/hmEQq6scEULwnoapRtxvmJyDI0eywqeRTx
+	 UwbAz7ybcam0gzj3GpQkQDqB8BTddMwbd+ey9tWnKJJVV9PI0KdwexHOB3DUN1ZDq7
+	 pchbRo/CPWRv+o2nu7wu99c70fgjj6/rSQCA0MxCKUO57ZFHcYhQ3c8pQFMr3PTeGV
+	 MYTG8bP5h+SYg==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 42AD337820EF;
+	Thu, 21 Mar 2024 18:31:38 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id D518D1060709; Thu, 21 Mar 2024 19:31:37 +0100 (CET)
+Date: Thu, 21 Mar 2024 19:31:37 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Chad LeClair <leclair@gmail.com>
+Cc: Ilya K <me@0upti.me>, 
+	"andy.yan@rock-chips.com" <andy.yan@rock-chips.com>, "heiko@sntech.de" <heiko@sntech.de>, 
+	"huangtao@rock-chips.com" <huangtao@rock-chips.com>, "kernel@collabora.com" <kernel@collabora.com>, 
+	"kever.yang@rock-chips.com" <kever.yang@rock-chips.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
+	"sboyd@kernel.org" <sboyd@kernel.org>, "zhangqing@rock-chips.com" <zhangqing@rock-chips.com>
+Subject: Re: [PATCH v8 7/7] clk: rockchip: implement proper GATE_LINK support
+Message-ID: <vetdlmrlwx2bpwliof442zjiir7jy5irs737qu3v7qjhcvubn4@wslcvkis3tsf>
+References: <1456131709882456@mail.yandex.ru>
+ <uwr335fla4nfvv3mdppcoly6hcsayav26r4r6txmbwrb25ftw7@rxwjtan7evww>
+ <7f4b3f38-50ee-480f-a341-ab577e19bb32@gmail.com>
+ <2rsu6qa3pwbqic6b7ej6txa34jw4ztrnybzcfcfysue2mky37h@dyrdefbimzdn>
+ <97f8b9e7-983c-435e-8fad-11e71be158b8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ag6ifsp67kon5iv2"
 Content-Disposition: inline
-In-Reply-To: <20240321143549.GA1679970-robh@kernel.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: S01h8yhEomAX6KFUw1hiZzgJAvomdgE-
-X-Proofpoint-ORIG-GUID: S01h8yhEomAX6KFUw1hiZzgJAvomdgE-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-21_10,2024-03-21_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- bulkscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 spamscore=0
- suspectscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2403140001 definitions=main-2403210115
+In-Reply-To: <97f8b9e7-983c-435e-8fad-11e71be158b8@gmail.com>
 
-On Thu, Mar 21, 2024 at 09:35:49AM -0500, Rob Herring wrote:
-> On Thu, Mar 21, 2024 at 10:01:48AM +0530, Varadarajan Narayanan wrote:
-> > Add master/slave ids for Qualcomm IPQ9574 Network-On-Chip
-> > interfaces. This will be used by the gcc-ipq9574 driver
-> > that will for providing interconnect services using the
-> > icc-clk framework.
-> >
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> >  .../dt-bindings/interconnect/qcom,ipq9574.h   | 62 +++++++++++++++++++
-> >  1 file changed, 62 insertions(+)
-> >  create mode 100644 include/dt-bindings/interconnect/qcom,ipq9574.h
-> >
-> > diff --git a/include/dt-bindings/interconnect/qcom,ipq9574.h b/include/dt-bindings/interconnect/qcom,ipq9574.h
-> > new file mode 100644
-> > index 000000000000..96f79a86e8d2
-> > --- /dev/null
-> > +++ b/include/dt-bindings/interconnect/qcom,ipq9574.h
-> > @@ -0,0 +1,62 @@
-> > +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+
+--ag6ifsp67kon5iv2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Chad and Ilya,
+
+On Wed, Mar 20, 2024 at 10:50:48PM -0400, Chad LeClair wrote:
+> Sebastian,
+>=20
+> On 3/20/24 12:36, Sebastian Reichel wrote:
+>=20
+> > I also worked on a cleaner solution for the issue you described and
+> > integrated it in the patch adding proper gate clock support. So
+> > please also test with HCLK_NVM not being marked as CRITICAL.
+> >=20
+> > [0] https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linu=
+x/-/commits/rk3588-test
+> >=20
+> > If everything is fine I will prepare a v9.
+> >=20
+> >> Hope this additional data point helps!
+> >=20
+> > Thanks for the detailed analysis.
+> >=20
+> > Greetings,
+> >=20
+> > -- Sebastian
+>=20
+>=20
+> No luck unfortunately.  I still see the SFC dma timeouts.  It looks like
+> aclk_nvm_root is still getting disabled.  It now has both an enable count=
+ of 0
+> and a prepare count of 0.
 >
-> Where did you come up with GPL-2.0+? Every other qcom interconnect
-> header is GPL-2.0-only. Is your employer okay with GPLv3 AND after?
+> Unlike your previous version, I _do_ see the driver bound to the device a=
+nd
+> the rpm_resume() call finds its way to pm_clk_resume().  So it looks like
+> you resolved the original issue I was seeing.
+>=20
+> However, when I reach __pm_clk_enable() it looks like the clock entry (ce)
+> is not in a good state:
+>   (gdb) print *ce
+>   $3 =3D {node =3D {next =3D 0xffff0001f0ce1930, prev =3D 0xffff0001f0ce1=
+930}, con_id =3D
+>   0xffff0001f0a214f0 "aclk_nvm_root", clk =3D 0xfffffffffffffffe, status =
+=3D
+>   PCE_STATUS_ERROR, enabled_when_prepared =3D false}
+>=20
+> The immediate problem at hand is that ce->status is PCE_STATUS_ERROR so t=
+he=20
+> switch statement will take the default case and return without doing anyt=
+hing.=20
+> Also the ce->clk pointer looks like some sort of error pointer value so I=
+'m
+> wondering if something went wrong in the setup you were doing in=20
+> clk_gate_link_probe().
+>=20
+> Note: I ran to that same __pm_clk_enable() breakpoint for a number of of=
+=20
+> GATE_LINK clocks.  They all looked to be in that same bad state.  I put t=
+he=20
+> "aclk_nvm_root" one in the message here since that is the one that is mos=
+t=20
+> relevant to the discussion, but they all look to be broken in the same wa=
+y.
+>=20
+> Hopefully this gives you a hint as to what is going on.
 
-Oops. Will fix it in the next version.
+Ah, that was actually not setting up the clock links at all. Sorry
+about that. I reworked everything again and moved all the GATE_LINK
+code into the separate driver now. Please give it another try.
 
-Thanks
-Varada
+Greetings,
+
+-- Sebastian
+
+--ag6ifsp67kon5iv2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmX8fQIACgkQ2O7X88g7
++pp6tw//dOH9kkYRNrIBGF7Zee1CYz1GkqAz/32I2iMeU2zaZ1U1Qm/rfxn72PlS
+T+t8xJd0geqkzzfvE44haC1waSSQTswoxGsiXJB8l++0V+5QjLa2kikLMGaoiU+8
+n0If2j7KUJXssU8qRXvuOV2rTNTssuDxzz16fYe1BV3sbfCsgcI9Lq9ijFeUMcQF
+AWeqIQSKrqT0ru3NFIaT0RahnfiD7F52KnRjKAXyb9qyGJvBvK7zTzeeKwF77rK0
+fGDMeTX8lUrcP6fnPwttYv/Wt+jkn+1DXQaTfDQQMmzctZ3CkJrRQ6HtHp95G7z+
+9f2lwPDgOElffxKL1LG97mvFVyuwlIA6AFWjJ+ELDkErwqfQjb94RRDPfl5XTh/r
+HArKOUkZBQPA5Hzdxd8mdfHa1KLfypq5vJFI6v+6FV0hvOX6DpCe60DCuv7FOKdj
+YYxjnvaGmhd/XUpAPUZDrdoiG/9EaxIhW5j2nC61StQmGqiDeDcBxih1NTdDJsLo
+IlW37tp8UP42pYAzo4EW8MCsqnAIaLylPpG9upxAP7UEeHpe2TJod83fzJ9G1E2+
+zOIno7W4JP13iwsQRZttlcLKxxZQgGQS/7sPhGrX/d1Cmn/VQoQzhPLKMUS+KE77
+k4+T+p82TOEPUqdsQ7rxOKJdM2OcSpfc7KpC4azB/xt91nmozLE=
+=ubiI
+-----END PGP SIGNATURE-----
+
+--ag6ifsp67kon5iv2--
