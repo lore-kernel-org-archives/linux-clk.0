@@ -1,169 +1,139 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B202456B85
-	for <linux-clk@vger.kernel.org>; Thu, 21 Mar 2024 10:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D20F5821C;
+	Thu, 21 Mar 2024 11:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711017449; cv=none; b=T4GvWg/WNd2OkwMGD8AFuhQLlPfremAiPPJIGswP0PgkWRZGobirGyOQ4izMFapjz+mvlvG8u0R3gs/d8d+VVbH0GunvNxohL5Yf6AhARJbZ9PPDokgs4tOGJ1EJv4ATEFQaOxOs0wUvA7R+mH2/M3ISVllGcEz+gUWxgMSyqms=
+	t=1711020576; cv=none; b=hJLidDsWyqZ4t6hsRZHFQwhl7JpqtTMGvMRwWTxIgHR5caDKNIGwsV4BV7jIB1vfMOktCC/8vza+ofb+Q6KkRV0p6Gsf8mgSxMQwYMjQuP7ElWDiSZpsWS+IVZff77ZtEeyIlCySKEzd6SwLVd1Zgpzz197KFzcVKtR+mxu79Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711017449; c=relaxed/simple;
-	bh=Q5HIPUafMl6eXevlnHQ/URvfVcm3dyhh3w+1UjS8SKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EsR0oceWU1HVY5MJU4ejjiCbEswOrzbaxUko96e/uc0BAoTSAU76HvXl8/73geEGCKTFtHHuSOG9ZB2164vp1tLQlMwOnxzEkh7N1xZDQDcKhT1SSp+WByjg3Y2RH1P1/oOw9M9um/jwIOJ8xH6XKKeV5jWhm+rTPe8QsnLCybk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a1LcEzz/; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711020576; c=relaxed/simple;
+	bh=uL6O1JHZDqhY19AXXUj5funrzm7vJfF2V5x3ffL2ujU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TgneubEojX+dBGzWjFGXJrpLR6wU+8C5taoJlET5zCbws1oej7uQ2sCHKROD98Tae0GcqoRgli+CLo6mMfpDkxCYhs3tQ8bERyV98RERlmCsMdh/GGxdcd4tLy9GaXgqL0BxG/0w8960dPtcbNqP6uGmY1tcAUfWww3Sp90WWDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y8VKxyX3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a1LcEzz/"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-609f4d8551eso15072107b3.1
-        for <linux-clk@vger.kernel.org>; Thu, 21 Mar 2024 03:37:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711017447; x=1711622247; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rgS7vN2/6Af+74Byj9OlnJ0H2zeuQGC5P3Z2OCbZVfM=;
-        b=a1LcEzz/X2gNicqmhPQDL0qaKaEqhPmy3KaTuYNzEwowyPmBPMEcudiIYiTOdHpN9z
-         4vB9UM7pns9KfD4BYVw7HHxdmSdVxC4+QjLzPzRvJuQxgVZT9xhHZslwMZF5of9LCpFu
-         TDR8QBjnqsRAFK1FcRfju9rwbVz6vycJPH5Y+Nq9iTpgzjHpkoGWyS0cllfp3sUZ196l
-         X7bjBN6w05fflwitx2AH1B3qCd9lwS/fMtZefDz8EDhewWaIDLcN9piOqGv8zLsj9Hvi
-         S8WoeHgVpGstjC6Lf092Q5IVVQLEIVxAuddbE1Za9CmIbqeD2KDFaMuxnpJYaxxyN+n/
-         u0yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711017447; x=1711622247;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rgS7vN2/6Af+74Byj9OlnJ0H2zeuQGC5P3Z2OCbZVfM=;
-        b=LZ37MDtyKdivphG98YtJDxPjkw1gXw6R20ra5Hn4nltMJjyFIZ9iOi5IM6ePqwgTVL
-         dvBVdQlBWl6gjfJ8oM/Na8e+Vzp6YFdM2xdaudI4N0CF6fCjsaOVN9KQnGhz4nGhS6dV
-         VzHgTMvii7aa5b4nHuohL1OVZj4JjbWsXVwYTCwolyQuLeQ4/6qVjwPKhxn2u+UwEXRa
-         4TJ6voQpfqp2GzJ6/Z/DIk5pA+Z2OxJ51HpfBrm+gp6byf4vZ2Sxf7gGYmhxwNvRcU/x
-         XUvs2j5uaTuv1iVZcpRXnX3IETdXi475LiPvKLGoZnRwz1ZGlmmu/ZQlyVfMK20pl5Qv
-         rFjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdncg3bJW6oXBRtEyuqb05WPkNJxE6qsEpkt98fN5Lc/GPPMehco09XCj4YZB73AIEwMJxRF7bnN3LuZDigMkI3rL9hDG+0zrQ
-X-Gm-Message-State: AOJu0YzDfn1C2TDYxg0q6QmNqx7fB/2uOTgsZt76SD/nKacpWDDA87YG
-	QsDJ0xjksGYa9w3jpQdvF902Zbk80UeWIoQQosTaSApUYZ1DUBO46rnmyIloGsRjVtPVqfmtMRk
-	qGrbJlqa0GBVwepceAMmkJaHrVFf44BP3TSwieQ==
-X-Google-Smtp-Source: AGHT+IG2RUQPgEXkiyPfIu42ue8IopFBcxsPMrsI45xpnMh6qrZimyfxJTyJ0YmVvs0DIScxCwEfz3O2Hzr3FChTGMA=
-X-Received: by 2002:a25:808f:0:b0:dc6:d513:cd3 with SMTP id
- n15-20020a25808f000000b00dc6d5130cd3mr1365059ybk.31.1711017446673; Thu, 21
- Mar 2024 03:37:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y8VKxyX3"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42L7Z717002282;
+	Thu, 21 Mar 2024 11:29:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=7okcB99RuHJ+Ag1hDqSPyvTocXpjEnblUvaqIByGWWQ=; b=Y8
+	VKxyX3DVvn0rh75BWMOd9l42CrD5Ukxj6iqTB75vGBRtzn6AGQ1+mGCXsJMlPGRU
+	QXSuPNpspMbLIhdV22uQ/TYTTakdOLX4rW5pUr67gC/vipGES8B1vdQmNeR/YYoL
+	dzObCw37VTdzeVXJNdrJfmQqbUL3m0wdk6W0jHsl3Drsw7d0Ug/nDV/mxeTaY4L2
+	RbnOzAIqZyF1wq93bqJS+bCc3tunFLp+LHzxZCvEsXEd3wnq1hxBhI7LbgGZ7gPG
+	w5eq1+5DbdcIvtdqc5FnXcLXTApeP4CH+PQcQODBxCubFPV/rK9IsjJPFWFSVLOC
+	lsXdhPtMDvI3cY13sntw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x0f1ngpa1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 11:29:30 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42LBTJPJ013542
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 11:29:19 GMT
+Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 21 Mar
+ 2024 04:29:13 -0700
+Message-ID: <2fb1c144-afac-42f2-a4b8-4b5453d95274@quicinc.com>
+Date: Thu, 21 Mar 2024 16:58:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240321-apss-ipq-pll-cleanup-v2-0-201f3cf79fd4@gmail.com> <20240321-apss-ipq-pll-cleanup-v2-3-201f3cf79fd4@gmail.com>
-In-Reply-To: <20240321-apss-ipq-pll-cleanup-v2-3-201f3cf79fd4@gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 21 Mar 2024 12:37:15 +0200
-Message-ID: <CAA8EJprr4E1CM4f+eBzdRN41nm33xY-hRPQDn3peR94vLyJsYQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] clk: qcom: apss-ipq-pll: remove 'pll_type' field
- from struct 'apss_pll_data'
-To: Gabor Juhos <j4g8y7@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-On Thu, 21 Mar 2024 at 09:50, Gabor Juhos <j4g8y7@gmail.com> wrote:
->
-> The value of the 'pll_type' field of 'struct apps_pll_data'
-> is used only by the probe function to decide which config
-> function should be called for the actual PLL. However this
-> can be derived also from the 'pll' field  which makes the
-> 'pll_type' field redundant.
->
-> Additionally, the CLK_ALPHA_PLL_TYPE_* enumeration values
-> are meant to be used as indices to the 'clk_alpha_pll_regs'
-> array so using those to define the pll type in this driver
-> is misleading anyway.
->
-> Change the probe function to use the 'pll' field to determine
-> the configuration function to be used, and remove the
-> 'pll_type' field to simplify the code.
-
-I can't fully appreciate this idea. There can be cases when different
-PLL types share the set of ops. I think having a type is more
-versatile and makes the code more obvious.
-
->
-> No functional changes.
->
-> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
-> ---
-> Changes in v2:
->  - no changes
->  - Link to v1: https://lore.kernel.org/r/20240318-apss-ipq-pll-cleanup-v1-3-52f795429d5d@gmail.com
-> ---
->  drivers/clk/qcom/apss-ipq-pll.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
-> index 8cf17374a2e2a..816b0d1f8d8c8 100644
-> --- a/drivers/clk/qcom/apss-ipq-pll.c
-> +++ b/drivers/clk/qcom/apss-ipq-pll.c
-> @@ -131,37 +131,31 @@ static const struct alpha_pll_config ipq9574_pll_config = {
->  };
->
->  struct apss_pll_data {
-> -       int pll_type;
->         struct clk_alpha_pll *pll;
->         const struct alpha_pll_config *pll_config;
->  };
->
->  static const struct apss_pll_data ipq5018_pll_data = {
-> -       .pll_type = CLK_ALPHA_PLL_TYPE_STROMER,
->         .pll = &ipq_pll_stromer,
->         .pll_config = &ipq5018_pll_config,
->  };
->
->  static struct apss_pll_data ipq5332_pll_data = {
-> -       .pll_type = CLK_ALPHA_PLL_TYPE_STROMER_PLUS,
->         .pll = &ipq_pll_stromer_plus,
->         .pll_config = &ipq5332_pll_config,
->  };
->
->  static struct apss_pll_data ipq8074_pll_data = {
-> -       .pll_type = CLK_ALPHA_PLL_TYPE_HUAYRA,
->         .pll = &ipq_pll_huayra,
->         .pll_config = &ipq8074_pll_config,
->  };
->
->  static struct apss_pll_data ipq6018_pll_data = {
-> -       .pll_type = CLK_ALPHA_PLL_TYPE_HUAYRA,
->         .pll = &ipq_pll_huayra,
->         .pll_config = &ipq6018_pll_config,
->  };
->
->  static struct apss_pll_data ipq9574_pll_data = {
-> -       .pll_type = CLK_ALPHA_PLL_TYPE_HUAYRA,
->         .pll = &ipq_pll_huayra,
->         .pll_config = &ipq9574_pll_config,
->  };
-> @@ -194,10 +188,10 @@ static int apss_ipq_pll_probe(struct platform_device *pdev)
->         if (!data)
->                 return -ENODEV;
->
-> -       if (data->pll_type == CLK_ALPHA_PLL_TYPE_HUAYRA)
-> +       if (data->pll == &ipq_pll_huayra)
->                 clk_alpha_pll_configure(data->pll, regmap, data->pll_config);
-> -       else if (data->pll_type == CLK_ALPHA_PLL_TYPE_STROMER ||
-> -                data->pll_type == CLK_ALPHA_PLL_TYPE_STROMER_PLUS)
-> +       else if (data->pll == &ipq_pll_stromer ||
-> +                data->pll == &ipq_pll_stromer_plus)
->                 clk_stromer_pll_configure(data->pll, regmap, data->pll_config);
->
->         ret = devm_clk_register_regmap(dev, &data->pll->clkr);
->
-> --
-> 2.44.0
->
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 RESEND 4/6] dt-bindings: clock: qcom: Add SM8650 camera
+ clock controller
+To: Johan Hovold <johan@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+References: <20240321092529.13362-1-quic_jkona@quicinc.com>
+ <20240321092529.13362-5-quic_jkona@quicinc.com>
+ <ZfwJ1cgFLlWdj7xp@hovoldconsulting.com>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <ZfwJ1cgFLlWdj7xp@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 66cnI_-yPyEhFdhDcE9qq0an2MjVcn40
+X-Proofpoint-ORIG-GUID: 66cnI_-yPyEhFdhDcE9qq0an2MjVcn40
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-21_08,2024-03-18_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ bulkscore=0 mlxlogscore=969 adultscore=0 malwarescore=0 spamscore=0
+ suspectscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2403140001 definitions=main-2403210081
 
 
--- 
-With best wishes
-Dmitry
+
+On 3/21/2024 3:50 PM, Johan Hovold wrote:
+> On Thu, Mar 21, 2024 at 02:55:27PM +0530, Jagadeesh Kona wrote:
+>> Add device tree bindings for the camera clock controller on
+>> Qualcomm SM8650 platform.
+>>
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Did Krzysztof really review this version?
+> 
+
+Thanks Johan for your review.
+
+I carry forwarded the R-B tag from earlier version. Will fix the below 
+comments and post the next series.
+
+Thanks,
+Jagadeesh
+
+>> @@ -18,6 +19,7 @@ description: |
+>>       include/dt-bindings/clock/qcom,sm8550-camcc.h
+>>       include/dt-bindings/clock/qcom,sc8280xp-camcc.h
+>>       include/dt-bindings/clock/qcom,x1e80100-camcc.h
+>> +    include/dt-bindings/clock/qcom,sm8650-camcc.h
+> 
+> This does not look like alphabetical order.
+> 
+>>   allOf:
+>>     - $ref: qcom,gcc.yaml#
+>> @@ -29,6 +31,7 @@ properties:
+>>         - qcom,sm8450-camcc
+>>         - qcom,sm8550-camcc
+>>         - qcom,x1e80100-camcc
+>> +      - qcom,sm8650-camcc
+> 
+> And neither does this.
+> 
+> Johan
+> 
