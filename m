@@ -1,179 +1,157 @@
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A973E51C2A;
-	Thu, 21 Mar 2024 12:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D540F83CD6
+	for <linux-clk@vger.kernel.org>; Thu, 21 Mar 2024 13:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711024829; cv=none; b=XmdQlpWi/xTvpJD/pY/D4qYhToLGmsU2S8s8wPu+JSaeT/QTw6QPfAnVMpXK73rhta5eAAebKWEGmfarJubt9TwIE2kN4/DymoAA488fHFbVsI2VgSg0UFRYcH5RZlxx1SsxZ15HyLLw09j2QDs+XthocLD83L9AgRzbigZlC6o=
+	t=1711026443; cv=none; b=IEF4faomdZkLlpQuuZu/9iiSc2U9LR0vfsrXqW8tZy9Uf6AUOOicr8veggv98egE0CwPOVvX6Q651AgkHouIFd/BHULBk3zuhRME+eTa27OPRAbJZt6hilb1wp4na/cp1NyfuYqJOy7MnYiGUrh4QXP1VUlWzGoAokNTorQrVFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711024829; c=relaxed/simple;
-	bh=6mx7WIlTdb5LyDF4fXNgPqLo2nyDcbsYbdSQ/5pTVjo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lvFr/5XGnaIYOuS6eiaZUopdAnVDuQTOGZ8FCJ+3dacV1VLhecrS8jdwQnPpNHpgrXoGFkxjUIJhuxiCZ/OuXgE9w4ZBpoFvOaeTKKXWrHCJHMYWYdHvJNmysM38jQjEp3YOXNyKwv9toLuw7RvngDgrzg7lAOAoxBJONr+Ym+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SWbUGSbE; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1711026443; c=relaxed/simple;
+	bh=hhGg/kLafZzik18e0yuZRAqudROxSqJBe0bsh89ozC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QjbEJKF2cLPVPWKCch6mUKSd95rof4eHG6QMTxGxuoTjRDqhGzR5FVUYAtHc+CWvftTXXwxhmVQSjmj7dXkSSivVk8U0tjycoGuh4k0EP4fnVHkIz0VCwY49LDU3HqhwaTdv7yU0cmkYbJa2g4apBho5Bv6dXp8sqljTBDtHHAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bug6Il+4; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SWbUGSbE"
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3685ef364d8so4101205ab.2;
-        Thu, 21 Mar 2024 05:40:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bug6Il+4"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2cd3aea2621so2166831fa.1
+        for <linux-clk@vger.kernel.org>; Thu, 21 Mar 2024 06:07:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711024827; x=1711629627; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VOIhSHjqU/uh+K/PVvVE9nUt07cI81iCG0I2ew6bVhE=;
-        b=SWbUGSbEZMaaeSla9ZMEuJfIzi3oPtzsFogxRwry13uplsJFJ1maSv8adQHKXKxjuX
-         QadO9wRDfjC9kY1bUK7Sl+XZ5Lg4jN12t46boYbfI+ftMujX2lXPhq85pdZ3kyplCF30
-         /b61BPxETBVT4J/tRKoeJv/Zcf1li3D8rrQLykhX53tc00+3H0CxoULTFJIGvYHZgNmD
-         RILRJaVzmjLsPhqueU9mLqGND8wlLjTuT3hOHSvbigca0JddQHfJiU6yYpxaq3dccmMO
-         1cjYRsZYLHpsqeC55zrt7t/i2/1FJQkzwmVnuc0czLk1ntvauy75l9BnszKxXN5RbQ92
-         1fIA==
+        d=linaro.org; s=google; t=1711026439; x=1711631239; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PpYFgW1iaJYDPVGkoYpY5izRYfNLATGdserAWA3g6IQ=;
+        b=Bug6Il+4NTKk8CBgoR6V1ZD2ONSEvZ1RhZnK3WhKQY4e+OcmbvsdwuB2WXCdpWHPqC
+         IOlOXvW25JzJdNpUJiqD2Iz+8WTQbPFKkf8udf0eUchApPiRXjxULipYXRrUsQDttIZw
+         6HQRe4Minhwb1gxdHRmO/k8T2I95kMR8tuXMf6TXXa2ZcH2GTW5+nTCU7UxBTbFl593C
+         LkwiVCbq9NHRex6CkZhjKGqL0w+OlIGxlrGxW87I1jh+5genTjtRPNm1aijrSroqzyx5
+         mlo12Z6gegkbE89orNQjPmcMG/DxJ01Bdq6j+EHmsNpLOh4AvA8d+VM/otjsBb/OJbvd
+         wIpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711024827; x=1711629627;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VOIhSHjqU/uh+K/PVvVE9nUt07cI81iCG0I2ew6bVhE=;
-        b=MrS4+Kbaqx5flDzgrg586hwUjgps65I63IZl8eehocuGA4/gHHcbTpptBIe7CYueN7
-         keLsiyZqb+5clLa4kl0fHm5lQ8V52j8j4665Pdx7uJkckzpzsz+Q/pIHT7xqx2V9OOS6
-         8Ynhm3NHt+5cey9LMpFEijth4KwG2cZdIjhh1Ub/J+MbfR/ggajanh8MO3SeEXfuIQ8M
-         pxDWBkH/GzgzYvyD1W0VHn5cS4bW8xwiZrzJAkHWeq/gMMckIeHGQkGxSFMp7EQJar5C
-         VHXOj5sinnQ6F7ey+DDeoSxjMn6ZI7aqBR5o3xe0mCbrZ/kyn6qIEwWiEVem8p4ycZMf
-         NEbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDNxEKzb8yT8A3SRZEhJh54pQTw1WB1yZrq/nbIZJ6TceJNmp3fpxr8dqHqiWRLCM8+BNGR5hpcVGmSnscEYh7CIAgn+1S7/vsKGN3xyqZY/rK1UXwUBIRk2x03C1ntHDP7uEDpwnG
-X-Gm-Message-State: AOJu0YxnW2X+rG0NlfVO0ETsbv4xBo+7MGoRlTqMWsJKpiQHQ7x4y9Gz
-	jGUvTqNeWuphDgRC/r6rZqc3GiyTquUV/qvmjRuDraIFMnH/3hxFza2jZwSohoQ08T0LwSNu4++
-	kqNdn8cICuMNRDR2hIfaQ+ap8j3s=
-X-Google-Smtp-Source: AGHT+IEAUV9BwLUDGzC+8FO4q13KOefXX5peVfopsxrV6jsRagFbL4/3zLJ+TRtIIPu27WZ1m0DhtyuqIIa+b1mH5Io=
-X-Received: by 2002:a92:da48:0:b0:368:64cc:d3f3 with SMTP id
- p8-20020a92da48000000b0036864ccd3f3mr1893172ilq.17.1711024826729; Thu, 21 Mar
- 2024 05:40:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711026439; x=1711631239;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PpYFgW1iaJYDPVGkoYpY5izRYfNLATGdserAWA3g6IQ=;
+        b=a+1Tn1s9EaHqSuMjNB2u2aEZNCYHkM8z+7E5YqRiTKJDySn9PhV4JNSQlHTiuj7NUO
+         mjta603n6Hibpo3GlEv8r92uxlcpYTW42Vlx92zs0lDNfiG6Y3dojoMjn5sNqNFli8E0
+         ThFiA1FBVuuIA+Ri0Sex2tPxMVWqeZCMyJQ7SqAQdSPHhRX3v15HeC0/U4MrfbW83axt
+         wYLY+ySuDlw8K7HK9ysgKPViySrkNfHdSHjwyQWwUwVn2i/JXqx4UkAEcQ9KRDh87Plh
+         BQH2JnF16nn6lKHnJaLHOPtxSCqJdVcIUPOxcQfY1N4ZTRxqg85MvJX3mt6ocJYwiX2e
+         xENQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+grGMPFIZ9EAo/hKJsnDVzrx84D9/+U23oBKBd/RD1gTJBR3l0xRLAOda7XcYhHquuhdNlIRqVa23+ZS6pT33saZFb46giKGv
+X-Gm-Message-State: AOJu0YyUSzT9K0PXKzBbEXTnnFTf6qhAdozuyz0OUmYmEhuMzNzGm6TR
+	qAmV3mNZiQ8WJ437ehg7B2TeR1y7ukINP+zu+RxraG+9iNgZ6PejgEGtRt84hcY=
+X-Google-Smtp-Source: AGHT+IFH1wXhTD3fZziY+q36zFHrcckDRFBZpSoDgdwPnqIT45ZHsh53dPa5YueblHnDMCcACd7V9Q==
+X-Received: by 2002:a2e:9191:0:b0:2d6:a8f7:b999 with SMTP id f17-20020a2e9191000000b002d6a8f7b999mr248808ljg.4.1711026438999;
+        Thu, 21 Mar 2024 06:07:18 -0700 (PDT)
+Received: from [192.168.1.102] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id g5-20020a2e9cc5000000b002d689c6acddsm682277ljj.97.2024.03.21.06.07.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Mar 2024 06:07:18 -0700 (PDT)
+Message-ID: <0a7da687-18fb-437f-b33a-e4a1de20177e@linaro.org>
+Date: Thu, 21 Mar 2024 15:07:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1711010211-6825-1-git-send-email-shengjiu.wang@nxp.com> <20240321-apply-swore-f9c17ad3a8d2-mkl@pengutronix.de>
-In-Reply-To: <20240321-apply-swore-f9c17ad3a8d2-mkl@pengutronix.de>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Thu, 21 Mar 2024 20:40:15 +0800
-Message-ID: <CAA+D8AMh4rPuMFsNht9R=+V7BRf4By=r0guJcTSD0AFjz-gxEw@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: imx: imx8mp: Add pm_runtime support for power saving
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	linux-imx@nxp.com, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 RESEND 6/6] arm64: dts: qcom: sm8650: Add video and
+ camera clock controllers
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>
+References: <20240321092529.13362-1-quic_jkona@quicinc.com>
+ <20240321092529.13362-7-quic_jkona@quicinc.com>
+Content-Language: en-US
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20240321092529.13362-7-quic_jkona@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 21, 2024 at 5:04=E2=80=AFPM Marc Kleine-Budde <mkl@pengutronix.=
-de> wrote:
->
-> On 21.03.2024 16:36:51, Shengjiu Wang wrote:
-> > Add pm_runtime support for power saving. In pm runtime suspend
-> > state the registers will be reseted, so add registers save
-> > in pm runtime suspend and restore them in pm runtime resume.
-> >
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> > changes in v3:
-> > - remove REGS_NUM, use the ARRAY_SIZE
-> > - merge clk_imx8mp_audiomix_drvdata and clk_hw_onecell_data together.
->
-> Look way nicer, but still room for improvement.
->
-> > changes in v2:
-> > - move pm_runtime_enable before the clk register
-> >
-> >  drivers/clk/imx/clk-imx8mp-audiomix.c | 157 ++++++++++++++++++++++----
-> >  1 file changed, 136 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/cl=
-k-imx8mp-audiomix.c
-> > index 55ed211a5e0b..5ae33bce8ad8 100644
-> > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > @@ -7,10 +7,12 @@
-> >
-> >  #include <linux/clk-provider.h>
-> >  #include <linux/device.h>
-> > +#include <linux/io.h>
-> >  #include <linux/mod_devicetable.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> >  #include <linux/platform_device.h>
-> > +#include <linux/pm_runtime.h>
-> >
-> >  #include <dt-bindings/clock/imx8mp-clock.h>
-> >
-> > @@ -18,6 +20,7 @@
-> >
-> >  #define CLKEN0                       0x000
-> >  #define CLKEN1                       0x004
-> > +#define EARC                 0x200
-> >  #define SAI1_MCLK_SEL                0x300
-> >  #define SAI2_MCLK_SEL                0x304
-> >  #define SAI3_MCLK_SEL                0x308
-> > @@ -26,6 +29,11 @@
-> >  #define SAI7_MCLK_SEL                0x314
-> >  #define PDM_SEL                      0x318
-> >  #define SAI_PLL_GNRL_CTL     0x400
-> > +#define SAI_PLL_FDIVL_CTL0   0x404
-> > +#define SAI_PLL_FDIVL_CTL1   0x408
-> > +#define SAI_PLL_SSCG_CTL     0x40C
-> > +#define SAI_PLL_MNIT_CTL     0x410
-> > +#define IPG_LP_CTRL          0x504
-> >
-> >  #define SAIn_MCLK1_PARENT(n)                                         \
-> >  static const struct clk_parent_data                                  \
-> > @@ -182,26 +190,82 @@ static struct clk_imx8mp_audiomix_sel sels[] =3D =
-{
-> >       CLK_SAIn(7)
-> >  };
-> >
-> > +static const u16 audiomix_regs[] =3D {
-> > +     CLKEN0,
-> > +     CLKEN1,
-> > +     EARC,
-> > +     SAI1_MCLK_SEL,
-> > +     SAI2_MCLK_SEL,
-> > +     SAI3_MCLK_SEL,
-> > +     SAI5_MCLK_SEL,
-> > +     SAI6_MCLK_SEL,
-> > +     SAI7_MCLK_SEL,
-> > +     PDM_SEL,
-> > +     SAI_PLL_GNRL_CTL,
-> > +     SAI_PLL_FDIVL_CTL0,
-> > +     SAI_PLL_FDIVL_CTL1,
-> > +     SAI_PLL_SSCG_CTL,
-> > +     SAI_PLL_MNIT_CTL,
-> > +     IPG_LP_CTRL,
-> > +};
-> > +
-> > +struct clk_imx8mp_audiomix_priv {
-> > +     void __iomem *base;
-> > +     struct clk_hw_onecell_data *clk_hw_data;
-> > +     u32 regs_save[ARRAY_SIZE(audiomix_regs)];
->
-> Put the "struct clk_hw_onecell_data clk_hw_data" at the end of the
-> struct. Then allocating should be easier and you don't need the
-> additional pointer.
+Hello Jagadeesh,
 
-Ok, will do this change in next version.
+On 3/21/24 11:25, Jagadeesh Kona wrote:
+> Add device nodes for video and camera clock controllers on Qualcomm
+> SM8650 platform.
+> 
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> ---
+>   arch/arm64/boot/dts/qcom/sm8650.dtsi | 28 ++++++++++++++++++++++++++++
+>   1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> index 32c0a7b9aded..d862aa6be824 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> @@ -4,6 +4,8 @@
+>    */
+>   
+>   #include <dt-bindings/clock/qcom,rpmh.h>
+> +#include <dt-bindings/clock/qcom,sm8450-videocc.h>
+> +#include <dt-bindings/clock/qcom,sm8650-camcc.h>
+>   #include <dt-bindings/clock/qcom,sm8650-dispcc.h>
+>   #include <dt-bindings/clock/qcom,sm8650-gcc.h>
+>   #include <dt-bindings/clock/qcom,sm8650-gpucc.h>
+> @@ -3110,6 +3112,32 @@ opp-202000000 {
+>   			};
+>   		};
+>   
+> +		videocc: clock-controller@aaf0000 {
+> +			compatible = "qcom,sm8650-videocc";
+> +			reg = <0 0x0aaf0000 0 0x10000>;
+> +			clocks = <&bi_tcxo_div2>,
+> +				 <&gcc GCC_VIDEO_AHB_CLK>;
+> +			power-domains = <&rpmhpd RPMHPD_MMCX>;
+> +			required-opps = <&rpmhpd_opp_low_svs>;
 
-Best Regards
-Shengjiu Wang
->
-> Marc
->
-> --
-> Pengutronix e.K.                 | Marc Kleine-Budde          |
-> Embedded Linux                   | https://www.pengutronix.de |
-> Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Please add default status = "disabled";
+
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
+> +
+> +		camcc: clock-controller@ade0000 {
+> +			compatible = "qcom,sm8650-camcc";
+> +			reg = <0 0x0ade0000 0 0x20000>;
+> +			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+> +				 <&bi_tcxo_div2>,
+> +				 <&bi_tcxo_ao_div2>,
+> +				 <&sleep_clk>;
+> +			power-domains = <&rpmhpd RPMHPD_MMCX>;
+> +			required-opps = <&rpmhpd_opp_low_svs>;
+
+Please add default status = "disabled";
+
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
+> +
+>   		mdss: display-subsystem@ae00000 {
+>   			compatible = "qcom,sm8650-mdss";
+>   			reg = <0 0x0ae00000 0 0x1000>;
+
+After disabling the clock controllers
+
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+
+--
+Best wishes,
+Vladimir
