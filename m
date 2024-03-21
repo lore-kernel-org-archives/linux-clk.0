@@ -1,180 +1,133 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20D5446AE
-	for <linux-clk@vger.kernel.org>; Thu, 21 Mar 2024 09:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC7D2C6BB;
+	Thu, 21 Mar 2024 09:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711011925; cv=none; b=p6yrZ1+KO8YN4avLdqKglmIiQGv0SjiXwh8IVI2Yc4+cZHLXoHd9gyLzmpCvy3eqdhywnns/ClfvYsbC+sVmL9WfQ4N4PtsWzPovTyIseS5JP2XeByiwYnZ4P6b5pQ4LGHJrpqKxezt5ANyaz9YUFKY1O7Y9ON/pqQIxXoW+Y+k=
+	t=1711013171; cv=none; b=ewPl9hfrf7jHWAvJt7gFY2P9m3zzqsFjGjj/6HGkXUl3FuJswbitzC2yZYfCKzOA7+DWv6wlRM8gJRr21YM/gc+I+WVkzjp9nWkbIa+R2Z+5TltPoxn0KqMk8k/jtAaX5w1D8h0KNiLsYbiXIRR8CprsVlo8N1Rih6x0kgysanE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711011925; c=relaxed/simple;
-	bh=9IyX9VQ0UZOYUm24nSmmirQeHR+zSjf33d/U4cQ9MiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nIQ64BqHiZUbWX9bUgaEFlJR7NpBSKgJiW25lVfjy7jmh8g81Q+GGeSeykq7PNhdsyFOD6jxWFTn0mvFknPyvH7cMv4ingRKQW/Yunmt1dINHko7Y2XpAJknYUUn4RbAPKLj6sigTq+dMt6m+ulD6AABiD19vQtzZzioB/ZSbck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1rnEM3-0003TV-Nk; Thu, 21 Mar 2024 10:04:55 +0100
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1rnEM2-007cVx-T9; Thu, 21 Mar 2024 10:04:54 +0100
-Received: from pengutronix.de (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 760542A8A7F;
-	Thu, 21 Mar 2024 09:04:54 +0000 (UTC)
-Date: Thu, 21 Mar 2024 10:04:53 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, 
-	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] clk: imx: imx8mp: Add pm_runtime support for power
- saving
-Message-ID: <20240321-apply-swore-f9c17ad3a8d2-mkl@pengutronix.de>
-References: <1711010211-6825-1-git-send-email-shengjiu.wang@nxp.com>
+	s=arc-20240116; t=1711013171; c=relaxed/simple;
+	bh=PlwojYEi6pzpwOgwySUmkgmcNKbny4X/LINyRO/qUdg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dL3zqI2EpuOMBBwmdfju/o+L5Jd7Tak0LQG8Q6Q4M0FE1VOsjyt811poRZoJZN5WJdvGyqNp7s3GQH2QeUnPSSKPW+BvaZK45MCSqAfvzFQTE+XW5JL+kACk8VJOYjbqcKRyQIOYBfYmTeAMaPjgrvZQZamnzgFi0KuHB7QZJOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ePSFgGTy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ePSFgGTy"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42L6Y13Q026350;
+	Thu, 21 Mar 2024 09:26:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=oMwXO0z
+	PVmYR5tmzhdeivtbshlrazKGqDzHgj+QVUFg=; b=ePSFgGTyIP5Ad5Sji0VOOpf
+	2jvYmOVqe1Az4GMBHNI+b0SjGVdg34EG2rTQFl1XdHEPFz0kx4mTnGia6HkRoM1j
+	ChyCZTnf9KxSvB/2tSSmmRWhFxIBAiUR7Q4Pbzu86FVgD4CGX6zftoGOco6ZGn2c
+	5e7XYmAL492OwX952Q/K0z3hU/ho2Z/jz88xC5li8ht+N+NmszkDiBXAACSP/RPg
+	syxA7sWN6+OeZa74YZrijRwQTy8YWbMxDhAX9L820CnDH4YRTFj6Tv8ZBHzorC6R
+	Opq/YYiSfoCemx5+glzZ3L4kGEiOArhqE9YNNrjDZZovXDnOR0oyhQLgRGZgevg=
+	=
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x0fqxgb82-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 09:26:01 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42L9Q0Gx014554
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 09:26:00 GMT
+Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Thu, 21 Mar 2024 02:25:55 -0700
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Satya
+ Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>
+Subject: [PATCH V2 RESEND 0/6] Add support for videocc and camcc on SM8650
+Date: Thu, 21 Mar 2024 14:55:23 +0530
+Message-ID: <20240321092529.13362-1-quic_jkona@quicinc.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7z4esfqbug4ywn5r"
-Content-Disposition: inline
-In-Reply-To: <1711010211-6825-1-git-send-email-shengjiu.wang@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: cqkittiQ6jZQXccZFv4QU-qzkGe91f8j
+X-Proofpoint-GUID: cqkittiQ6jZQXccZFv4QU-qzkGe91f8j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-21_06,2024-03-18_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ clxscore=1011 lowpriorityscore=0 phishscore=0 mlxlogscore=999
+ suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2403140001 definitions=main-2403210064
 
+Add support for video and camera clock controllers on Qualcomm SM8650
+platform.
 
---7z4esfqbug4ywn5r
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is a RESEND of V2 series.
+Link to V2: https://lore.kernel.org/all/20240220135121.22578-1-quic_jkona@quicinc.com/
 
-On 21.03.2024 16:36:51, Shengjiu Wang wrote:
-> Add pm_runtime support for power saving. In pm runtime suspend
-> state the registers will be reseted, so add registers save
-> in pm runtime suspend and restore them in pm runtime resume.
->=20
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> changes in v3:
-> - remove REGS_NUM, use the ARRAY_SIZE
-> - merge clk_imx8mp_audiomix_drvdata and clk_hw_onecell_data together.
+Changes in V2:
+ - Updated commit text for videocc dt-bindings patch as Krzysztof suggested
+ - Moved videocc XO clk ares to a separate patch and added fixes tag as per
+   review comments
+ - Inverted the logic in videocc probe to add new SM8650 specific videocc
+   clocks based on SM8650 compatible string as Dmitry suggested
+ - Used module_platform_driver() for SM8650 camcc driver
+ - Updated driver name from cam_cc-sm8650 to camcc-sm8650 as Bryan suggested
+ - Used qcom_branch_set_clk_en() helper to enable clocks in camcc sm8650 probe
+ - Added Krzysztof and Bryan Reviewed-by tags to dt-bindings and camcc patches
+   received in V1
+ - Link to V1: https://lore.kernel.org/linux-kernel/20240206113145.31096-1-quic_jkona@quicinc.com/T/
 
-Look way nicer, but still room for improvement.
+Jagadeesh Kona (6):
+  dt-bindings: clock: qcom: Add SM8650 video clock controller
+  clk: qcom: videocc-sm8550: Add support for videocc XO clk ares
+  clk: qcom: videocc-sm8550: Add SM8650 video clock controller
+  dt-bindings: clock: qcom: Add SM8650 camera clock controller
+  clk: qcom: camcc-sm8650: Add SM8650 camera clock controller driver
+  arm64: dts: qcom: sm8650: Add video and camera clock controllers
 
-> changes in v2:
-> - move pm_runtime_enable before the clk register
->=20
->  drivers/clk/imx/clk-imx8mp-audiomix.c | 157 ++++++++++++++++++++++----
->  1 file changed, 136 insertions(+), 21 deletions(-)
->=20
-> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-=
-imx8mp-audiomix.c
-> index 55ed211a5e0b..5ae33bce8ad8 100644
-> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> @@ -7,10 +7,12 @@
-> =20
->  #include <linux/clk-provider.h>
->  #include <linux/device.h>
-> +#include <linux/io.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> =20
->  #include <dt-bindings/clock/imx8mp-clock.h>
-> =20
-> @@ -18,6 +20,7 @@
-> =20
->  #define CLKEN0			0x000
->  #define CLKEN1			0x004
-> +#define EARC			0x200
->  #define SAI1_MCLK_SEL		0x300
->  #define SAI2_MCLK_SEL		0x304
->  #define SAI3_MCLK_SEL		0x308
-> @@ -26,6 +29,11 @@
->  #define SAI7_MCLK_SEL		0x314
->  #define PDM_SEL			0x318
->  #define SAI_PLL_GNRL_CTL	0x400
-> +#define SAI_PLL_FDIVL_CTL0	0x404
-> +#define SAI_PLL_FDIVL_CTL1	0x408
-> +#define SAI_PLL_SSCG_CTL	0x40C
-> +#define SAI_PLL_MNIT_CTL	0x410
-> +#define IPG_LP_CTRL		0x504
-> =20
->  #define SAIn_MCLK1_PARENT(n)						\
->  static const struct clk_parent_data					\
-> @@ -182,26 +190,82 @@ static struct clk_imx8mp_audiomix_sel sels[] =3D {
->  	CLK_SAIn(7)
->  };
-> =20
-> +static const u16 audiomix_regs[] =3D {
-> +	CLKEN0,
-> +	CLKEN1,
-> +	EARC,
-> +	SAI1_MCLK_SEL,
-> +	SAI2_MCLK_SEL,
-> +	SAI3_MCLK_SEL,
-> +	SAI5_MCLK_SEL,
-> +	SAI6_MCLK_SEL,
-> +	SAI7_MCLK_SEL,
-> +	PDM_SEL,
-> +	SAI_PLL_GNRL_CTL,
-> +	SAI_PLL_FDIVL_CTL0,
-> +	SAI_PLL_FDIVL_CTL1,
-> +	SAI_PLL_SSCG_CTL,
-> +	SAI_PLL_MNIT_CTL,
-> +	IPG_LP_CTRL,
-> +};
-> +
-> +struct clk_imx8mp_audiomix_priv {
-> +	void __iomem *base;
-> +	struct clk_hw_onecell_data *clk_hw_data;
-> +	u32 regs_save[ARRAY_SIZE(audiomix_regs)];
+ .../bindings/clock/qcom,sm8450-camcc.yaml     |    3 +
+ .../bindings/clock/qcom,sm8450-videocc.yaml   |    4 +-
+ arch/arm64/boot/dts/qcom/sm8650.dtsi          |   28 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/camcc-sm8650.c               | 3591 +++++++++++++++++
+ drivers/clk/qcom/videocc-sm8550.c             |  154 +-
+ .../dt-bindings/clock/qcom,sm8450-videocc.h   |    8 +-
+ include/dt-bindings/clock/qcom,sm8650-camcc.h |  195 +
+ 9 files changed, 3986 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/clk/qcom/camcc-sm8650.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8650-camcc.h
 
-Put the "struct clk_hw_onecell_data clk_hw_data" at the end of the
-struct. Then allocating should be easier and you don't need the
-additional pointer.
+-- 
+2.43.0
 
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---7z4esfqbug4ywn5r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmX7+DMACgkQKDiiPnot
-vG8IVQf2O5/UkwGcC3bi6XlI+KC+dh+zm8EbiuYW62sdysCPOWaJiETytc186x/E
-YaABZOfWMeH+liQM/GCMIumSeixIEd4o3fY56edmW24lE3oUtEnDTsdEDLchMaOe
-5aLweRpoVbwlKyx17z0cB+ct64AvfsUP/F67kJLikpS/S5WNtpR9kupkLDypZ5Zt
-yXVwKsRHt095Krn2lHlaRBKV96cbwCmPQN+FWLhwjkUsUAlHyHoc9jHIfRN7cATQ
-hyMaJr/WOFfA58JQOUelntlnEp8Td/c+IwSHadD+aHOUUQ4jnW2jNuhx2dZh1jUS
-Kptm9jdx4XpV94CGDj5lFQLlUttl
-=tk43
------END PGP SIGNATURE-----
-
---7z4esfqbug4ywn5r--
