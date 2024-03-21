@@ -1,143 +1,100 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4991877
-	for <linux-clk@vger.kernel.org>; Thu, 21 Mar 2024 02:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697AA6FB9;
+	Thu, 21 Mar 2024 04:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710989453; cv=none; b=rMWY5I2hFT2HVl5jRUrHiSW58OTS9uTnNVtJW4spvefWFVLqaG37jg+L2hP1ijU4xT0wI91klGAGgDjmiHvneaKYTQFVyuVoVKX4Ehkjg+1UwXhJpwNGk5hwimI6FbwHvupaHaTo+0wYIGhrC59gSSbrcym2RqnmS4OScqHB5fk=
+	t=1710995558; cv=none; b=OsIScjcng2HQb/0ARGKqht2bGdPpS2iUHAa6As22oQ26z/aYVpAaLXZcTk2VQPb4hBu2XL20Rk8dahP2yGjIkHT/ZFB48YIBoxDwYwER2kbKgPwk6m/8NRJh2DhnshLEFfpbLX6IZBD+2rrLm2Zd0/ec8sYI8TRWguurowQTKAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710989453; c=relaxed/simple;
-	bh=rwCpQv+FsCYueI3IQzqEVo/ru8GfTJBLEGDy3NCxcoI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mnBGkj39gQDPO4WpaFpnj3djWNdVTsrU0ECyIrILGXka4lod9jsn44dpFCpoBOlJhty5VvS3xxnW5I7jc4T5lpBcOrrb7WxqfGNPrxmrFJ/4H1doS3z374QWblfinXsc4h/2E70myYN80oXJWq2XD8elpakNCqJtmA1a91xtq0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y9Ej3tq0; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1710995558; c=relaxed/simple;
+	bh=Og0wY5UlzS70CHhhOINPsqOxTR2TotlCmUAEXCZNn90=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nDVamSFbqeGbK4+EwRpEp40GtWWV1rKZ9/RRB86dxUaBt1u6tL999iD7kCpq/y2yAkQr02/yNbFFtYcmIHiAXfkxLl3xt2+kvyiy1Pv5Urlls1GS9suFNBR5l0/tRJOftcX++crXNNYHLj7e1raPKqyWKSEbzmW45RRZgdU3eWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V3135EqZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y9Ej3tq0"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6962950c6bfso5034156d6.2
-        for <linux-clk@vger.kernel.org>; Wed, 20 Mar 2024 19:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710989450; x=1711594250; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tDDe9OS1xTeoPX5iiKtUDiky31WpE/pim88cOHUf8Zo=;
-        b=Y9Ej3tq04aIVn8oUF9INo7AzYJrVw0E+b8FslJxrQAVd6OS7T2gmRE2xpcTdYTOhR6
-         /JNjQkmFI6RDNknkwW/dId8+vDn0ZWswWi2tZUCiRmALDxk4x1C912lMKn9jmSSNoRSP
-         GrcbOS4Q7uaqgQ3IPl5KPAWojQgddr7C84L5Q+qaNJlQ5P6U9WJkgCsSKqTM041pIZ8v
-         zpjYPZA5eLulmcVKdYKQN2rxnsz/fVYLcWFkjBnGJPO+jkEScyAl/uUnyg3TN2mua76s
-         NHZctycBjAAQsiYln50L9VKlSxAi9p5SI06QIReCmDRyUuyMqO109VNA7F3aCkRxS4Bz
-         PYqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710989450; x=1711594250;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tDDe9OS1xTeoPX5iiKtUDiky31WpE/pim88cOHUf8Zo=;
-        b=Yqe8AY9QlWAEPrYLEuro3LAgKVPcKYsbtiW68pMtodhxblkD3+nNNX8+1KdJfn0G7x
-         6HRLcTDsZ99xSEFEwHO0XCa8e3kRI/78cUauvXROqB3Rxo3c0+OxYv5UAuVVOlJpRegD
-         t4tzN/8+iO+t78GjWh/Xzo4oCWdyKRSk68/X08a9DdlFfJ9gZ0x2rkLB5F0kv530/KJk
-         lHdmVOIYtgCTPRzRb5sGlbATDRRLdsKQjqpVMBY0MAt6mcx/zOgSPaAmXQlpQBR5EOVe
-         tr1YEA8VudtEJ75y+RWNNn/0WuxudLJMMiCUXs3qmB9/h/ja92tPX3CGGgEkyBgFiO/z
-         By5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWjcIbP5PrSBPV3kEgS7cvp520WC1uiKUXb+RENfSmMjG9brctNWmrWaG3Z+fk8zx2pAqxrOegQ/3AwgHSEZSvI2Pe/zJ1/W5zD
-X-Gm-Message-State: AOJu0Yz6Sb9iC4aM95WJlMn6kQTI+MobKlYJJsD1FyKCBe5GMS++XEmL
-	tQbs9qcJlZ6EWyWENM+PpzeY2AZwmpMBVuPouKzfEhrd1++StlvB
-X-Google-Smtp-Source: AGHT+IFlvOZFQvtjt6LVKrlDVfAoBlkTQ6kW3LNR3jbbwBLxVKKVMkDubLpL3E89nMFwrovIq4omgQ==
-X-Received: by 2002:a05:6214:21a9:b0:691:639:2ddb with SMTP id t9-20020a05621421a900b0069106392ddbmr882062qvc.21.1710989450430;
-        Wed, 20 Mar 2024 19:50:50 -0700 (PDT)
-Received: from ?IPV6:2606:29c0:1000:2088:8b84:ea3:7f3d:8a76? ([2606:29c0:1000:2088:8b84:ea3:7f3d:8a76])
-        by smtp.gmail.com with ESMTPSA id jz5-20020a0562140e6500b006961cdc3f7csm4386261qvb.85.2024.03.20.19.50.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Mar 2024 19:50:49 -0700 (PDT)
-Message-ID: <97f8b9e7-983c-435e-8fad-11e71be158b8@gmail.com>
-Date: Wed, 20 Mar 2024 22:50:48 -0400
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V3135EqZ"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42L2Ve1o024624;
+	Thu, 21 Mar 2024 04:32:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=Aq6opX9
+	ZfKnMeslz2hJCg1tfG66b+q7ZXbIy3T/bUBg=; b=V3135EqZniO51MR/ZKUBCzM
+	PaORUt1vsQY2s53dSPCX6EDWT2Cd0hB4PZh4vzrFOKIufQeL/gkmbP9EBywaMi1T
+	4u6gxQHIhR94Oki2rDvibSbEyeMWo1pkIt9T6DL5HWEIFicAYz+osKWaUbTccswn
+	8L2nHaG/tURbxS5odl9X08WaQy/lm64P0gXxSgHPlPNuGyqnOL0kK2eHJdZkCOH5
+	Hrl6wGwsEHuX4d21McVb2w30JS5EduPGadQu02ef545yQPHIrtpOMFba6+lfzVet
+	cAThU74owNgcE7dyAnkO97jYlkZSkh8CQ2G9ibSnvl7zqo08FX2oofBi55A3hgg=
+	=
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x0c67g66y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 04:32:31 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42L4WU1p028817
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 04:32:30 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Wed, 20 Mar 2024 21:32:25 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <djakov@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH 0/2] Add interconnect driver for IPQ9574 SoC
+Date: Thu, 21 Mar 2024 10:01:47 +0530
+Message-ID: <20240321043149.2739204-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 7/7] clk: rockchip: implement proper GATE_LINK support
-Content-Language: en-US
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Ilya K <me@0upti.me>, "andy.yan@rock-chips.com"
- <andy.yan@rock-chips.com>, "heiko@sntech.de" <heiko@sntech.de>,
- "huangtao@rock-chips.com" <huangtao@rock-chips.com>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "kever.yang@rock-chips.com" <kever.yang@rock-chips.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "zhangqing@rock-chips.com" <zhangqing@rock-chips.com>
-References: <1456131709882456@mail.yandex.ru>
- <uwr335fla4nfvv3mdppcoly6hcsayav26r4r6txmbwrb25ftw7@rxwjtan7evww>
- <7f4b3f38-50ee-480f-a341-ab577e19bb32@gmail.com>
- <2rsu6qa3pwbqic6b7ej6txa34jw4ztrnybzcfcfysue2mky37h@dyrdefbimzdn>
-From: Chad LeClair <leclair@gmail.com>
-In-Reply-To: <2rsu6qa3pwbqic6b7ej6txa34jw4ztrnybzcfcfysue2mky37h@dyrdefbimzdn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: pfZfUli-0J_ceVpu3I7RDYAqHcSg7x_d
+X-Proofpoint-ORIG-GUID: pfZfUli-0J_ceVpu3I7RDYAqHcSg7x_d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-21_01,2024-03-18_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ mlxlogscore=999 lowpriorityscore=0 clxscore=1011 priorityscore=1501
+ phishscore=0 impostorscore=0 spamscore=0 suspectscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2403140001 definitions=main-2403210028
 
-Sebastian,
+MSM platforms manage NoC related clocks and scaling from RPM.
+However, in IPQ SoCs, RPM is not involved in managing NoC
+related clocks and there is no NoC scaling.
 
-On 3/20/24 12:36, Sebastian Reichel wrote:
+However, there is a requirement to enable some NoC interface
+clocks for the accessing the peripherals present in the
+system. Hence add a minimalistic interconnect driver that
+establishes a path from the processor/memory to those peripherals
+and vice versa.
 
-> I also worked on a cleaner solution for the issue you described and
-> integrated it in the patch adding proper gate clock support. So
-> please also test with HCLK_NVM not being marked as CRITICAL.
-> 
-> [0] https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/commits/rk3588-test
-> 
-> If everything is fine I will prepare a v9.
-> 
->> Hope this additional data point helps!
-> 
-> Thanks for the detailed analysis.
-> 
-> Greetings,
-> 
-> -- Sebastian
+Varadarajan Narayanan (2):
+  dt-bindings: interconnect: Add Qualcomm IPQ9574 support
+  clk: qcom: add IPQ9574 interconnect clocks support
 
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  2 +
+ drivers/clk/qcom/gcc-ipq9574.c                | 75 ++++++++++++++++++-
+ .../dt-bindings/interconnect/qcom,ipq9574.h   | 62 +++++++++++++++
+ 3 files changed, 138 insertions(+), 1 deletion(-)
+ create mode 100644 include/dt-bindings/interconnect/qcom,ipq9574.h
 
-No luck unfortunately.  I still see the SFC dma timeouts.  It looks like
-aclk_nvm_root is still getting disabled.  It now has both an enable count of 0
-and a prepare count of 0.
+-- 
+2.34.1
 
-Unlike your previous version, I _do_ see the driver bound to the device and
-the rpm_resume() call finds its way to pm_clk_resume().  So it looks like
-you resolved the original issue I was seeing.
-
-However, when I reach __pm_clk_enable() it looks like the clock entry (ce)
-is not in a good state:
-  (gdb) print *ce
-  $3 = {node = {next = 0xffff0001f0ce1930, prev = 0xffff0001f0ce1930}, con_id =
-  0xffff0001f0a214f0 "aclk_nvm_root", clk = 0xfffffffffffffffe, status =
-  PCE_STATUS_ERROR, enabled_when_prepared = false}
-
-The immediate problem at hand is that ce->status is PCE_STATUS_ERROR so the 
-switch statement will take the default case and return without doing anything. 
-Also the ce->clk pointer looks like some sort of error pointer value so I'm
-wondering if something went wrong in the setup you were doing in 
-clk_gate_link_probe().
-
-Note: I ran to that same __pm_clk_enable() breakpoint for a number of of 
-GATE_LINK clocks.  They all looked to be in that same bad state.  I put the 
-"aclk_nvm_root" one in the message here since that is the one that is most 
-relevant to the discussion, but they all look to be broken in the same way.
-
-Hopefully this gives you a hint as to what is going on.
-
-BTW, In case it is of interest to you or Ilya, I have my "working" tree
-available here: 
-  https://github.com/sesca128/linux-rk3588/tree/v6.8-rk3588-test
-
-My quick and dirty hack is at the tip of the branch. The rest is pretty 
-much your rk3588-test branch from a few days ago. 
-
---
-Chad LeClair
