@@ -1,59 +1,60 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91569376
-	for <linux-clk@vger.kernel.org>; Fri, 22 Mar 2024 00:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5228F7D
+	for <linux-clk@vger.kernel.org>; Fri, 22 Mar 2024 05:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711069064; cv=none; b=O5p92qO5CmBRUie8lWJE7vQKtWCL0BRcPNaaUJGvEumlkYbxITgT88gj//uoEtSNIFECjqfXVxs8S0t+u1ncpC/yOjVTZCz8VaGCdwoceA2+qYJBkvPSXAct6K/lfbXD7q/MLWtWA03JxSy74Nv04Rqn2k4/Zh/EaEeK9POipwc=
+	t=1711086338; cv=none; b=pzG8+InTqjX9dQHrD9n1usI6sczwOLomkhAJGF31jd3ESLRMKNmiHnuMuzSaNVpuWdAVxJIJdk0S5+gZpbS/cOuZLblrKNlSqn5f3rnmi11RT/s39vDDi1h9451yq2nDpwFdwKHfYef2F9UKWtTI/3yY1bxPKs3V0Dj8h8qqhIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711069064; c=relaxed/simple;
-	bh=RevR5eOTge8zeGDfDGwB4p/nUE4VH2riyxs2WTtFy0g=;
+	s=arc-20240116; t=1711086338; c=relaxed/simple;
+	bh=m+xtxXrjwcetnFQbzF9BIF47u1pNPnKMbu4D+kyqqkY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eGVaFiqzU5TItaLxHY5qL2dLztGW5gsMWaNTdfYiL85gH8hTS0c/PIhJcEoS+0srAfxvU5RWNVug0zmKEhd68fuA0bed1nmQxcjrIZIEyPNFW7Nt2AhYYTr65qLkRTAAsv1RaAwlU31LrO927RqXXgYkGSNzwVREohY2pqpW+RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WL5Jw/3c; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 In-Reply-To:Content-Type; b=MOjGdMDyBYOFVoS8WSbc15xSpopCfJ9M4YXbaoXxx1KlUd+Q7OSeG/AjNZL76buGHH0P4GAUV62u9/5gvtdOAMtPpNeMNDRJGQuCLuLQRF3yp979fXjNgYSoy22fmr7+ceshS7kj9mtNqHRbuRapIMWaTM0B/NAJvPpZ5HsPc5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aqtN94WJ; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WL5Jw/3c"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-430ccb3d65eso11690931cf.2
-        for <linux-clk@vger.kernel.org>; Thu, 21 Mar 2024 17:57:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aqtN94WJ"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-341b01dbebbso661497f8f.0
+        for <linux-clk@vger.kernel.org>; Thu, 21 Mar 2024 22:45:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711069061; x=1711673861; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9nC1qmkoOQNwjBOgTgEWpneXEGBCJVTyAYdBlacof6U=;
-        b=WL5Jw/3cEK/T+Jhws0OjxJzDduPvN8qVGrKxfJDQU5bG4KIcKKsJsdN2lQ0dZsgILM
-         nd+SpuLUREM//+NaT4b3MbAU0U79qabpIybb7gHlV3ZRwzSRpd1DfYZBA12hvWvrI0PM
-         egLsLmtSmvfsRALH1YsIN23Wb61sN/KIi5XAJXRJOVGg0fbK8bb3TCiqlJMSxckQ063j
-         UH8xgboR0PKqxTe4C8tbnMZKm80YU81fOYrqCkez0JaEO5Pw7MlKT0C0WDWDXgbUTGBz
-         Wd0w1G2KnObPuCiFg6RxF6wQgWgJSViIsIvKDAsSlKVkgXCbEBa156nt6gY4j9tDDIYn
-         h/hQ==
+        d=linaro.org; s=google; t=1711086336; x=1711691136; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=MkFAmC+2FK4ht3eTsZWzjqwcgcYA/tAPnTXmCidIbM4=;
+        b=aqtN94WJkgZa16Klhyj86sGvFzw6J7NI4ZbB2A0yqO7RLmdlS7Zwj4hubjUOCPSmPk
+         ACE8Vdwa2R8oUsQlZRj1N/Gxe2Kt51nyI9NBrjjoHGrl1NfDfegrQ+9w5Bavir1q1Vdp
+         YD6Bfqm5cK0Qr0kBgGmyAGiJui5JjAgdk0DiYChis0UiJkkuYNa3x5XBf9+gDjcvE8FI
+         YXERXnXg+ZrlRYhdvJxdEgdVktaauHsS612RqSrMvdZ/DCoK63ZTE2lkzPQRhK1bbRY0
+         UOLpgLEym3y7q2TUsTN6aZOvQ40Ukao/pAFBSXs3G1Yf4vzYGdkz8qYO9GEt46XTV2xk
+         Yx4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711069061; x=1711673861;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9nC1qmkoOQNwjBOgTgEWpneXEGBCJVTyAYdBlacof6U=;
-        b=s61fGBfR89/VWtDg91GI66didmyP9irWQoebRh6YriH7LD6csoy8iz0sZd0uw9GKiK
-         mrpbvf4F7r0+H0d9aR1RNo9gMljMYWj2ixbiREENnN5w/vF0Or1WGOjt7wVlamYy3sAE
-         UxcAjQkAoNXLwbFesdY38723bY114e+HGzk0aRKeIg+6Je7FG+7f4FAjqJHtM9k84BMH
-         BEcXhFXdu2i5qtThK48fFlfSyeT8dHCgj5iVqmHxDEWqN++NWjU+19Bz07ymP/Pgvjzm
-         OZEFfLYXtF4YyTJ1WmvcM06Za6lqccz1xO49EAfXMaIUm2OvCXFgphminjonO6ylXGtD
-         sdmw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9hDOXdjBJYTSrKk8iDeOhRmeIa42zSo18MVmND41yTT/D7+qVtTCDseKbDa4aOSp6YZhnnyVavdqGPe+b3LQEY3OS6CtYo+Pd
-X-Gm-Message-State: AOJu0YyIlTsj3EFtDroHPaG+ZRNEP0H3LWZTmoYHVT2YFbhEOS6gwHxW
-	rjuAtlL1/dOHDL68mG+4RmOwTtd8vj6A8cFiimFSsKxvcq+Z6P/l
-X-Google-Smtp-Source: AGHT+IF5ssHLkMqE4xoBhvM8+1w71t35288yowP6I/lpUjXEu1GcU5TJGd3UgHL9BD2uYNUkc314LA==
-X-Received: by 2002:a05:622a:2b0c:b0:431:30ba:e94c with SMTP id ha12-20020a05622a2b0c00b0043130bae94cmr169101qtb.64.1711069061343;
-        Thu, 21 Mar 2024 17:57:41 -0700 (PDT)
-Received: from ?IPV6:2606:29c0:1000:2088:97c5:2979:cbe1:b10e? ([2606:29c0:1000:2088:97c5:2979:cbe1:b10e])
-        by smtp.gmail.com with ESMTPSA id fj17-20020a05622a551100b00430c76f0c86sm412077qtb.80.2024.03.21.17.57.40
+        d=1e100.net; s=20230601; t=1711086336; x=1711691136;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MkFAmC+2FK4ht3eTsZWzjqwcgcYA/tAPnTXmCidIbM4=;
+        b=HY9Ji0HuqtdvmlpK40Cy1f6o1FJ/NJ/mMoo55vw/66SZKp+5x1gHWWQjxY4u0M6AVn
+         AmHNh+1eMRhOPmWk0tnhtaZc2cc7q0boRqbMGum35U3rlvJtzDEzwNxONF/1xQxzXs1N
+         +Cn1u8wCpMYvrdtsYO2d4BrGAwUiT0zCsAyqyp15iVvtWg8SkkGNPmh1tjt+3lYx/yMg
+         AaB+oXrjdCzR+29ZswFnedNQ+jLjHesOr8yjURXWPlI7nYcglPTr08u7ghEomHVMuK/b
+         +roiuqdzbVs76HfbTyyLXkEItKo62g/r41DkG5X4qDXzBEnE/y+Ems9qf3rllKdjL2lc
+         qEMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmVX9Nx+QEYC3xBWdR3AfYiuCT62FALw2+6unYgvzVxWLulqA9t6csI6e480f4GB4oE+780jspbBmdBkARh+yxYU8MDjZMrbMs
+X-Gm-Message-State: AOJu0Yz1jMrQKn9wYzwzM57H8MzVBzs2Lsf9EMlGkBX+NaGhsLllPloB
+	8SVh3CpqS3ss6gIO6igsESm8uuCUdTYe1JP2P94g0rl3JreMU8iAXaSyjVc3gO4=
+X-Google-Smtp-Source: AGHT+IG09f3nMQjPFTGhbvqw1bkRjjmxyDkfTjJR7qm/soiCrhTRjHLcsz6KrpBAj99xkB25s4o3Ww==
+X-Received: by 2002:adf:ec8f:0:b0:33e:cf4d:c583 with SMTP id z15-20020adfec8f000000b0033ecf4dc583mr892321wrn.16.1711086335711;
+        Thu, 21 Mar 2024 22:45:35 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.97])
+        by smtp.gmail.com with ESMTPSA id i23-20020a170906115700b00a46cc25b550sm639326eja.5.2024.03.21.22.45.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Mar 2024 17:57:40 -0700 (PDT)
-Message-ID: <d784378c-61e8-4f66-9260-6452893a44fc@gmail.com>
-Date: Thu, 21 Mar 2024 20:57:39 -0400
+        Thu, 21 Mar 2024 22:45:35 -0700 (PDT)
+Message-ID: <abd29b47-a8ab-4e2a-8147-d5d8ded98065@linaro.org>
+Date: Fri, 22 Mar 2024 06:45:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,86 +62,95 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 7/7] clk: rockchip: implement proper GATE_LINK support
+Subject: Re: [PATCH 2/2] clk: qcom: add IPQ9574 interconnect clocks support
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, djakov@kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20240321043149.2739204-1-quic_varada@quicinc.com>
+ <20240321043149.2739204-3-quic_varada@quicinc.com>
+ <4079ddcf-425d-4194-93b8-ee113864541e@linaro.org>
+ <ZfwEMUBdlQHYz/+h@hu-varada-blr.qualcomm.com>
 Content-Language: en-US
-To: Sebastian Reichel <sebastian.reichel@collabora.com>, Ilya K <me@0upti.me>
-Cc: "andy.yan@rock-chips.com" <andy.yan@rock-chips.com>,
- "heiko@sntech.de" <heiko@sntech.de>,
- "huangtao@rock-chips.com" <huangtao@rock-chips.com>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "kever.yang@rock-chips.com" <kever.yang@rock-chips.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "zhangqing@rock-chips.com" <zhangqing@rock-chips.com>
-References: <1456131709882456@mail.yandex.ru>
- <uwr335fla4nfvv3mdppcoly6hcsayav26r4r6txmbwrb25ftw7@rxwjtan7evww>
- <7f4b3f38-50ee-480f-a341-ab577e19bb32@gmail.com>
- <2rsu6qa3pwbqic6b7ej6txa34jw4ztrnybzcfcfysue2mky37h@dyrdefbimzdn>
- <97f8b9e7-983c-435e-8fad-11e71be158b8@gmail.com>
- <vetdlmrlwx2bpwliof442zjiir7jy5irs737qu3v7qjhcvubn4@wslcvkis3tsf>
- <5287754a-e488-4365-9e88-811eb028a91e@0upti.me>
- <qepnk6poq6md5hewkf6otcjgeuj5mkf63azwzjqe75gbyi4fxm@6s7vijaz76uq>
-From: Chad LeClair <leclair@gmail.com>
-In-Reply-To: <qepnk6poq6md5hewkf6otcjgeuj5mkf63azwzjqe75gbyi4fxm@6s7vijaz76uq>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <ZfwEMUBdlQHYz/+h@hu-varada-blr.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Sebastian,
-
-On 3/21/24 16:45, Sebastian Reichel wrote:
-> Hello Ilya,
-> 
-> On Thu, Mar 21, 2024 at 10:01:10PM +0300, Ilya K wrote:
->> On 2024-03-21 21:31, Sebastian Reichel wrote:
->>>
->>> Ah, that was actually not setting up the clock links at all. Sorry
->>> about that. I reworked everything again and moved all the GATE_LINK
->>> code into the separate driver now. Please give it another try.
->>>
->>> Greetings,
->>>
->>> -- Sebastian
+On 21/03/2024 10:56, Varadarajan Narayanan wrote:
+> On Thu, Mar 21, 2024 at 08:25:15AM +0100, Krzysztof Kozlowski wrote:
+>> On 21/03/2024 05:31, Varadarajan Narayanan wrote:
+>>> Unlike MSM platforms that manage NoC related clocks and scaling
+>>> from RPM, IPQ SoCs dont involve RPM in managing NoC related
+>>> clocks and there is no NoC scaling.
 >>
->> Applied this to my 6.8.1: https://github.com/K900/linux/tree/rk3588-test
->>
->> As far as I can tell, literally everything works now - it boots, runs, and I can read and write the flash even with ROCKCHIP_SFC=m.
->>
->> Thanks a lot for digging into this, y'all!
+>> If these are clocks, expose them as clocks, not as interconnects.
 > 
-> Great, thanks for testing. Can you check if it still works with
-> ROCKCHIP_SFC=m when applying the following additional change on
-> top of your tree?
+> Earlier IPQ9574 PCIe patches were NAK-ed when these were exposed
+> as clocks. Please refer to the following discussions
 > 
-> diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
-> index fea7e7fcc4a4..f0eb380b727c 100644
-> --- a/drivers/clk/rockchip/clk-rk3588.c
-> +++ b/drivers/clk/rockchip/clk-rk3588.c
-> @@ -2413,7 +2413,7 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
->  static struct rockchip_clk_branch rk3588_clk_branches[] = {
->         GATE_LINK(ACLK_ISP1_PRE, "aclk_isp1_pre", "aclk_isp1_root", ACLK_VI_ROOT, 0, RK3588_CLKGATE_CON(26), 6, GFLAGS),
->         GATE_LINK(HCLK_ISP1_PRE, "hclk_isp1_pre", "hclk_isp1_root", HCLK_VI_ROOT, 0, RK3588_CLKGATE_CON(26), 8, GFLAGS),
-> -       GATE_LINK(HCLK_NVM, "hclk_nvm", "hclk_nvm_root", ACLK_NVM_ROOT, CLK_IS_CRITICAL, RK3588_CLKGATE_CON(31), 2, GFLAGS),
-> +       GATE_LINK(HCLK_NVM, "hclk_nvm", "hclk_nvm_root", ACLK_NVM_ROOT, 0, RK3588_CLKGATE_CON(31), 2, GFLAGS),
->         GATE_LINK(ACLK_USB, "aclk_usb", "aclk_usb_root", ACLK_VO1USB_TOP_ROOT, 0, RK3588_CLKGATE_CON(42), 2, GFLAGS),
->         GATE_LINK(HCLK_USB, "hclk_usb", "hclk_usb_root", HCLK_VO1USB_TOP_ROOT, 0, RK3588_CLKGATE_CON(42), 3, GFLAGS),
->         GATE_LINK(ACLK_JPEG_DECODER_PRE, "aclk_jpeg_decoder_pre", "aclk_jpeg_decoder_root", ACLK_VDPU_ROOT, 0, RK3588_CLKGATE_CON(44), 7, GFLAGS),
+> https://lore.kernel.org/linux-arm-msm/CAA8EJpq0uawrOBHA8XHygEpGYF--HyxJWxKG44iiFdAZZz7O2w@mail.gmail.com/
+> https://lore.kernel.org/linux-arm-msm/CAA8EJppabK8j9T40waMv=t-1aksXfqJibWuS41GhruzLhpatrg@mail.gmail.com/
 > 
+> Dmitry had said
+> 	<quote>
+> 	I'd kindly suggest implementing the NoC attachment
+> 	properly. In the end, other Qualcomm platforms use ICC
+> 	drivers, so by following this pattern we will have more
+> 	common code paths.
+> 	</quote>
+> 
+> Hence posted these patches to get feedback.
 
-I can also report success with your latest tree.  It boots successfully and I
-am able to interact with the SFC flash.  Looking at the clk debug info I now
-see an enable value of 1 on aclk_nvm_root.
+Then explain the rationale in commit msg.
 
-It also cleaned up the power-controller error message I had been seeing on vo0.
-I just get the 'PM: genpd: Disabling unused power domains' message and no
-further power errors/warnings.  So looks good.
+Best regards,
+Krzysztof
 
-I also tried the patch in your most recent message (removing CLK_IS_CRITICAL
-from hclk_nvm).  My kernel is compiled ROCKCHIP_SFC=m. Everything still works
-as expected.
-
-So overall, looks great!  Thanks for all of your work on this!
-
---
-Chad LeClair
