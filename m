@@ -1,59 +1,59 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6070B2F58
-	for <linux-clk@vger.kernel.org>; Sat, 23 Mar 2024 00:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A0D15A4
+	for <linux-clk@vger.kernel.org>; Sat, 23 Mar 2024 00:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711153748; cv=none; b=iDC+2VfjxH8vTe4wHe3Cn/KQKtmmCSlEAgCUdVJ7DtH6xJQnpJvCLfkPfIsOa5V0tbhnAtBmVb2Uq+VQYis2kqn1oQn1CXAbW6247t5uxUklgcYvvwEIkubS0M0qP0OY0j6Su4ljCQvzBW7p53P7Ja+BZoVySlK7jR2J6IAwY/U=
+	t=1711153815; cv=none; b=l8cZ6N9/KSz82ofAbYdQ8J/lmXvgwnytwj5tWAdVckkJZ2DCWyH+qJe7bKkxJeKJ08MW1t1AMXEbOCZoB8Aq40WmXZXYe53lXpBWqCPz23JuYEDHcPZDLCxUta6QtZrrsAFrhzY1luWwp/zPr1LiDJ9qN4POuSLml1w6yV6VV1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711153748; c=relaxed/simple;
-	bh=cu2BNWH6WbgOzz3G19ecvxyJwG3OxcG4EYlK0MMkNkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GiuMx9N8sS5M6q0n3hfOwez5F/xmBTi1v1lLse8lJuiOfnXAAlpTWWutmDB3FJ6tqJDC1+e702WdGe0e7mygKuoFcR8sB9zKTWilpVJYM/Xosa03Wz5EeBQQfXpMf1YR7pDnJKdoRikMI+ZFPjsdmUSuWjmI0ODjjqz/ah0n5ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LbwIbGNJ; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1711153815; c=relaxed/simple;
+	bh=UUOccslls9bWqGPHH/Uz4rnWUl+sJn4l0Z+QSHJ/sCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KgZifj9GegmtQX+S9ItSwHZf7GX5IuOFtFKFJUap5MQcjycBKsBEO1X3KuQoee0GwjfyKVhfS166sYjB8Kj+nOpCTXaENdr/BEIer9at5FpSGsEZdI11koecpt6Ykoj4aoXcyJgPjEkzkI8Twq9Vzs3AftSxZwbm2MT13fhLHj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MaDVqlLv; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LbwIbGNJ"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a46cc947929so371798966b.1
-        for <linux-clk@vger.kernel.org>; Fri, 22 Mar 2024 17:29:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MaDVqlLv"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a3fb8b0b7acso292960166b.2
+        for <linux-clk@vger.kernel.org>; Fri, 22 Mar 2024 17:30:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711153744; x=1711758544; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1711153811; x=1711758611; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pZHRO2qwwFdcHjxfusuWGefIdyNkghgxbZHMsP8YFAY=;
-        b=LbwIbGNJWYjMDwJgWRKksv731Ki+VWEKBih6W145nIdPX9/iYzj6KRz9IWoeJqo2lJ
-         80Xd7wCAz2pTW6w/7+uyfu/oUxIB3EcfUt+Ie49bXkdRb/ZHO4Z5QLhgLp+5wCXl8L7T
-         Y2dME5jDf1H2Ks26yj1zBi5kI7AobYyFp2AHvypp6vCwLTqJi+crfx3HZDC+EfRqwWuz
-         HEDfmRgJAn68OXS6x5nq+blucy/V43RS4Q77CKfuQ5mKJVolTGrZNA/8bFRWyO9Dmcp8
-         aPZU290dsL9wYmDDJ2+TffCiwR9PqZ2ib6PIlOUXeiFOQJR/Lfp7bZBr9Q+zue0lIG8z
-         3H1w==
+        bh=TlA81QH4EST6rhr/ZPiqwpyWZfIvPJ7PtVKhA/bMf0A=;
+        b=MaDVqlLve3YMWBKVYPYvzFG2OvhSxX+c7F+eN/3IxCCg2YC9hWbS2j1Kt73BG9mLU1
+         Ah9YEPV49D2xUzE2wlaMFLXrmwN4kQnZ2wW6/Sb9pdJ7QV+6HFYISM3SYOckCDWGLhKO
+         Zh4+jyNOiNA8HXPXUWGo/nF7t8CiBm+gnp9Z9bwRcmxHwQvJpJo/6+yxAgZO4fZzrmsH
+         RYGb8NU8gp1jykuXMYg0GlGmK0VKbFnCGRdwtAXBZOtwom9Istarst9yc1QjJZig6mV9
+         atqId2j9lzq25smrkFKjrqxgkpWbAq1YJFEcDoWjT+UnnAN63ujD2CP8fQDCT0u2Ke8w
+         +i1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711153744; x=1711758544;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1711153812; x=1711758612;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pZHRO2qwwFdcHjxfusuWGefIdyNkghgxbZHMsP8YFAY=;
-        b=gCMpNszbdhCRCEOAhpUvwwUl60RivzMiVMeW5ztvs8/aRYf9BYkof+i6FwJ3xGY6SL
-         ji31AKSvtwXzF2cxOji2pogjN22EKZIg/CbIorCFmcnKuzcsqUuJAWDSyGd818PCZUBH
-         Z0S6zmIdtvccQaT3yi79kjT+OPFAQXtHNDQ8cPLxWZ8mqOAfW/t5Z+A84AiTsQO0ab7L
-         z+FycTDEwXBGvQW6tteXnofAxS3alWWux1egF7jqu+10eJTaw6FtalB7sAROaaWtQ29j
-         zRbsFGR4g/32mlYd3FFUmRN/S4T9JTti0/Q71VT8kMRWnHPqUnk9nhUwzxBIQvajC8qT
-         7hLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpPx8BrlsY8vLMBUSHPB09/OSScHNUo2zbFcU3msWyetlyUgoww1O5NAkD5u6M3fPJjcQPqWgpFPrWqfKNOCvJH3h9LjR9xXp/
-X-Gm-Message-State: AOJu0YzY3EM8XJ8YKeDSKC97eworwRoATalG8GmkkyQ9uCMoswyWyH3+
-	Ft/04jhnyP5ETi7N4EEIA3Wti8+bEcIpy1sG/QzazHl6E0/lhhkcQwrTKBAcFvY=
-X-Google-Smtp-Source: AGHT+IH80VKvG83Knpz7MvFUfHZwOkOG78oP7VguNp6EmF3SNCJdMugJ+coJOJkRZRWKNvRHv5kSkw==
-X-Received: by 2002:a17:906:f8c7:b0:a47:669:e2e9 with SMTP id lh7-20020a170906f8c700b00a470669e2e9mr614073ejb.77.1711153743797;
-        Fri, 22 Mar 2024 17:29:03 -0700 (PDT)
+        bh=TlA81QH4EST6rhr/ZPiqwpyWZfIvPJ7PtVKhA/bMf0A=;
+        b=SskvM9+wU+W4sotsNt/Rg4qs7PFKY9TLfifHJ3y8Z0Lh+VitI0gb4U0tz7/5KYwqjV
+         CD/RY+i+vFTDdGfP3JHdn1fbHdF8qEb9LOP40rjtz2lqxLcQ/8F+MXGTm+IT4/Uq3vU+
+         wAQZtnZJu7HbqViMtfbalm67v9yn8RsgNXdKwoP3J+DS0sZICiMDHIm3tMr1BZUrkHW4
+         /BYQrbMnxN3DmdWQt4mjXGOLlI5gj3sUXft+lavNVePlC4XJO4lE0nb89Tdyz9fDth9q
+         Kt5ftmvxv+suWgYcw0ysXdFkawrta7vPlQMXXtrtP+QMvvoz5YWawyY23q+fbyeI4TAk
+         JN9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOPd/opCHgrOqVsTRh1AhM0WThLoyBVsAyg6jY63HqBA2blU/8jnuuOcej8+QNSm4/eHtQZ2Hb7qTH2xBjBNqbjn9+XUIs1u48
+X-Gm-Message-State: AOJu0YxLFot4SrXR6pXWVpl3tOIliCi464gZPMexDavAWbTC0InJw/tI
+	rRgb4jfpeKESuxpVWrZ3jHMoKKeBtk9wx4iimoBC338UgKhHwcqMGCW+r+KHcNE=
+X-Google-Smtp-Source: AGHT+IFR6l3ekLMK6KAgDpURHhT7qDgT6vhTc7HiREcwOdRBPFHAwnCcF55GdLYt12nkvJxOWmvfag==
+X-Received: by 2002:a17:906:1348:b0:a44:1fcf:9b97 with SMTP id x8-20020a170906134800b00a441fcf9b97mr754255ejb.24.1711153811640;
+        Fri, 22 Mar 2024 17:30:11 -0700 (PDT)
 Received: from [192.168.92.47] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id e10-20020a170906504a00b00a4735e440e1sm351242ejk.97.2024.03.22.17.29.01
+        by smtp.gmail.com with ESMTPSA id e10-20020a170906504a00b00a4735e440e1sm351242ejk.97.2024.03.22.17.30.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Mar 2024 17:29:03 -0700 (PDT)
-Message-ID: <4b37a6e5-f917-4ead-9678-554a0d8f4660@linaro.org>
-Date: Sat, 23 Mar 2024 01:29:00 +0100
+        Fri, 22 Mar 2024 17:30:11 -0700 (PDT)
+Message-ID: <909591c5-d18a-4a9a-b276-c4a3b3c823f9@linaro.org>
+Date: Sat, 23 Mar 2024 01:30:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,16 +61,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: add IPQ9574 interconnect clocks support
+Subject: Re: [PATCH V2 RESEND 2/6] clk: qcom: videocc-sm8550: Add support for
+ videocc XO clk ares
 Content-Language: en-US
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
- robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, djakov@kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240321043149.2739204-1-quic_varada@quicinc.com>
- <20240321043149.2739204-3-quic_varada@quicinc.com>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>
+References: <20240321092529.13362-1-quic_jkona@quicinc.com>
+ <20240321092529.13362-3-quic_jkona@quicinc.com>
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -107,46 +115,21 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240321043149.2739204-3-quic_varada@quicinc.com>
+In-Reply-To: <20240321092529.13362-3-quic_jkona@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21.03.2024 05:31, Varadarajan Narayanan wrote:
-> Unlike MSM platforms that manage NoC related clocks and scaling
-> from RPM, IPQ SoCs dont involve RPM in managing NoC related
-> clocks and there is no NoC scaling.
+On 21.03.2024 10:25, Jagadeesh Kona wrote:
+> Add support for videocc XO clk ares for consumer drivers to be
+> able to request for this reset.
 > 
-> However, there is a requirement to enable some NoC interface
-> clocks for accessing the peripheral controllers present on
-> these NoCs.
-> 
-> Hence adding a minimalistic interconnect driver that can enable
-> the relevant clocks. This is similar to msm8996-cbf's usage of
-> icc-clk framework.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> Fixes: f53153a37969 ("clk: qcom: videocc-sm8550: Add video clock controller driver for SM8550")
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
 > ---
 
-[...]
+I think I might have asked already, but I'm assuming these resets
+are also there on 8550, since the hw seems to be mostly unchanged
 
-> @@ -9,9 +9,16 @@
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> +#if IS_ENABLED(CONFIG_INTERCONNECT)
-
-This is bad practice, especially given the reasoning for your changes.
-
-It's best if you add a dependency on interconnect to this driver,
-otherwise things will go into uncountable EPROBE_DEFERs if there are
-nodes consuming icc handles, but the supplier never registers.
-
-[...]
-
->  
->  static int gcc_ipq9574_probe(struct platform_device *pdev)
-
-..and that approach could save the probe func from the absolute mess it
-has become with this patch
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
