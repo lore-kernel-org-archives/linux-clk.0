@@ -1,147 +1,125 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E691A28C;
-	Sun, 24 Mar 2024 17:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D512519BA2;
+	Sun, 24 Mar 2024 17:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711300712; cv=none; b=I0CCrSbnqzZOSSzX2RiNrXo7B4GiKrXa84f8bY3ascluhe/EssTPqYrvWn/0DMJfm9u1YQaY/nDeAdVZnjCsNkvMPEdBmkTg67YIgAVQtb5r2Cx66JM+jNYH1nZDburQ7rWv3+Nh/kom+QuiNJdVVOeo0vaB0tphK+m6Hng75JI=
+	t=1711303173; cv=none; b=FwkT8uGZf9WskzBTkLj/4AofKEne3C173RZ5/1RdwZqgJaaTY72vUxbJo7i51pGO12beghiAoFGtXjdihsg78EPdmGBiQ8uzHMH+AJGdg3TS9VFJazaAyhsHRqqWXWieHImy2b3yxOJ0hlZIWow/BukW5YDaTNLBzCwQMbKaBmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711300712; c=relaxed/simple;
-	bh=q9gIEP+47uECqeW/Ab6DCR5xwIIg85b7ex64vT8DUD0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=J1bHiPl1Ec7NAcVHjD/uFqTacsUZV126DbVPMhhybtJOzQbej3RhKyHldB21b9IZ1hIDaSdrv01RY9ED8MPgLtX0t5uIJM4IX0FAhCmK4QPoE07nVVvGk1xj6MandYxrDAuEGB+p97V+dfgOt7A/3Aj28F66WNGMM+1VhBCjiFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnwcBzs1; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1711303173; c=relaxed/simple;
+	bh=vOzA/tKqPZp4+9Wm+5C8N3FOA99D7YrNR9zQplxWvkY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gfkuYpxVhVSYdk5OuEr/vdFlTvZmGoqzr1bQnkERc50S0XaSL6g/OdgXrP2uB+kHaEwfw5S0MZDFlKC1oDzSrjyE29ziNgD2PhKigOjfQ8HRrRSVl//roU7JTmjVk9/xWhZZjzldKxug87sLbp6/TzajEogUmqyOWmSVao2vduw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=u0RcmHdo; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnwcBzs1"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a46cd9e7fcaso421492766b.1;
-        Sun, 24 Mar 2024 10:18:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711300708; x=1711905508; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qv3QzY1Obj1+AIxrGHQYaon8YRfBj3KRvINfCBirAII=;
-        b=hnwcBzs1wzVl1zRyGgyaFK4t2QiNSSgQQRsS0a2e4TgOJs98YNT5/ynGhwHt6bqSbJ
-         a/xckbLnmQvaTQsKw9HSVud0OFTOZWEYEIeIhjpifXwEbFr1WA8hYu5vHZK43IC6HuHc
-         wYUwTPQcwMmoJsqinQhmuWoEMbuaaKx+QKoi7MujHlmHmxiy7CR4MARjkGOANjK5FL6w
-         eqbX3nx4WTxaHGguKvRaSiOeVIJzheiSD3F3smLgmelPO13dsmwdPKCyYUNfRXvR4aS6
-         LzxYvmRZmNlDDKBioJDVIqAOUHDT4vFduf9yYLlirwZIhmj+2XEE9KPuZ9BcNVuyLh2q
-         1PRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711300708; x=1711905508;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qv3QzY1Obj1+AIxrGHQYaon8YRfBj3KRvINfCBirAII=;
-        b=mnBfsdY8Xuy8jrHAGE4JkVAVcpRfkPHZOr7Q4ZtOCb2IIGEbq5o+ETDugT7F+BuOLJ
-         3T52+b7HjlgI34A24WeiVvLJzB2y0T+FAv2N8hRrosnFCtQikd31VPD5pXIeb41wnVfD
-         xMG4jcP8vHqoSWwT5/A7cFlmlGA463xglhI1WpQ0AU8iTqZSqjYbVjCc3BwSg6nOQ8yP
-         SnEeWvrg8s50vFK97jc+VAXIBUpzzshsfj4S2GQ2A4biOsW8uUU3C7tQm3xLDFsH5zYe
-         5nV9Vk4RAdITrYuAns2u97wim2jRbzb5CfMVmpvwzHR9bnSoppeO1CUZs66CCRtHgvSa
-         VASQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXBCoOGo4SAski2e7ZGMrUevoeiGeUPq0xEIgt64ZpChvLsm719P9Z70Jr1fyyQJIg9cPRI/FP+s/f+J6amHdeB6u4tFUbAVUQ+JsobUC4pDxaqVlsyrNWl3Ph8LPjhWUtLF5tfXsq2zzTLEjpjiRre6qtkIFXJBu0TiWlPrUf
-X-Gm-Message-State: AOJu0YxHY5uc+en+xrvJG+1Zqrg24PyAHUHVZI/UgRHwsn5HhlYaedif
-	jBi9xAk9iP63MBPbGdQCg+gpCu83xc37HYRh6shlwxEPr51EF7Rd
-X-Google-Smtp-Source: AGHT+IEZDmcoUwJAEqLTuNLP8RgK7by8mJvF0fIe2Y7XdL4rV57O3xXwgjqODfJ8McDaAFjb8J6LyQ==
-X-Received: by 2002:a17:907:2683:b0:a47:5231:754f with SMTP id bn3-20020a170907268300b00a475231754fmr1710790ejc.7.1711300708391;
-        Sun, 24 Mar 2024 10:18:28 -0700 (PDT)
-Received: from [192.168.1.253] (57657817.catv.pool.telekom.hu. [87.101.120.23])
-        by smtp.googlemail.com with ESMTPSA id w17-20020a170906385100b00a46d8e5a031sm2132983ejc.209.2024.03.24.10.18.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Mar 2024 10:18:27 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Sun, 24 Mar 2024 18:18:22 +0100
-Subject: [PATCH] qcom: clk: clk-alpha-pll: fix rate setting for Stromer
- PLLs
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="u0RcmHdo"
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 41699120003;
+	Sun, 24 Mar 2024 20:52:33 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 41699120003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1711302753;
+	bh=rPCKzwxY/P8E8hlP0ZyZIPxAhwhwOHS8SkfFEzDhMSE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=u0RcmHdomX0A7S94roBud3m3OftVEWIzyfo0+wLhUD5RNO2YIkm+Bu+sexbKz179I
+	 i5GpnTO/k7ENM3P7qRlc6B6vZqKFCKks80+FEUdIZzUFiLmcW4x9WMI4RwDatDFD+s
+	 74VhHD8YZCnqv3GTD0mCN/EuweCj7PqXiHaozecwcU+QA5GnFuJ1v8BlPSQH1zvKKd
+	 Ub+6IlO1kQcvkqML+hbN7VHMgEfmPuNcbPG0++Sw67iUPMk2tVUOvD8BGR6OOzMjZ3
+	 urrDZRZmxUZ0I5/8cNdc7ZI870Fc8Z7WiQRuHU+sxzLq25zcJtMwWOzVeay3zaRvL9
+	 zYYThkk6c+Khg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Sun, 24 Mar 2024 20:52:33 +0300 (MSK)
+Received: from [192.168.20.2] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Sun, 24 Mar 2024 20:52:32 +0300
+Message-ID: <2bc7976b-3910-4a44-a969-7b6bc5d72869@salutedevices.com>
+Date: Sun, 24 Mar 2024 20:51:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/25] ASoC: meson: g12a-toacodec: fix "Lane Select" width
+Content-Language: en-US
+To: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
+	<jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij
+	<linus.walleij@linaro.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>
+CC: <kernel@salutedevices.com>
+References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
+ <20240314232201.2102178-7-jan.dakinevich@salutedevices.com>
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+In-Reply-To: <20240314232201.2102178-7-jan.dakinevich@salutedevices.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240324-alpha-pll-fix-stromer-set-rate-v1-1-335b0b157219@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAF1gAGYC/x2NwQqDMBAFf0X23IV0DQr9ldJDqM+6kGrYDUUQ/
- 73B48Awc5DDFE6P7iDDT123tcH91tF7SesHrFNjkiAx9BI55bIkLjnzrDt7te0LY0dlSxUcR+n
- HAYPEOVCLFEPzrsHzdZ5/7KR2+XAAAAA=
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Sricharan R <quic_srichara@quicinc.com>, 
- Kathiravan T <quic_kathirav@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.13.0
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 184373 [Mar 24 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 11 0.3.11 5ecf9895443a5066245fcb91e8430edf92b1b594, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;sberdevices.ru:7.1.1,5.0.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/03/24 14:08:00 #24408963
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-The clk_alpha_pll_stromer_set_rate() function writes inproper
-values into the ALPHA_VAL{,_U} registers which results in wrong
-clock rates when the alpha value is used.
+Sorry, I screwed up. Original code is correct. I mixed up the maximum
+value and bit offset.
 
-The broken behaviour can be seen on IPQ5018 for example, when
-dynamic scaling sets the CPU frequency to 800000 KHz. In this
-case the CPU cores are running only at 792031 KHz:
+On 3/15/24 02:21, Jan Dakinevich wrote:
+> For both G12A and SM1 the width of "Lane Select" should be 2, not 3.
+> Otherwise, it overlaps with "Source".
+> 
+> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> ---
+>  sound/soc/meson/g12a-toacodec.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/meson/g12a-toacodec.c b/sound/soc/meson/g12a-toacodec.c
+> index 531bb8707a3e..b92de2235627 100644
+> --- a/sound/soc/meson/g12a-toacodec.c
+> +++ b/sound/soc/meson/g12a-toacodec.c
+> @@ -229,11 +229,11 @@ static const struct snd_soc_dapm_route g12a_toacodec_routes[] = {
+>  };
+>  
+>  static const struct snd_kcontrol_new g12a_toacodec_controls[] = {
+> -	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL, 3, 0),
+> +	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL, 2, 0),
+>  };
+>  
+>  static const struct snd_kcontrol_new sm1_toacodec_controls[] = {
+> -	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 3, 0),
+> +	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 2, 0),
+>  };
+>  
+>  static const struct snd_soc_component_driver g12a_toacodec_component_drv = {
 
-  # cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
-  800000
-  # cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq
-  792031
-
-This happens because the function ignores the fact that the alpha
-value calculated by the alpha_pll_round_rate() function is only
-32 bits wide which must be extended to 40 bits if it is used on
-a hardware which supports 40 bits wide values.
-
-Extend the clk_alpha_pll_stromer_set_rate() function to convert
-the alpha value to 40 bits before wrinting that into the registers
-in order to ensure that the hardware really uses the requested rate.
-
-After the change the CPU frequency is correct:
-
-  # cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
-  800000
-  # cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq
-  800000
-
-Cc: stable@vger.kernel.org
-Fixes: e47a4f55f240 ("clk: qcom: clk-alpha-pll: Add support for Stromer PLLs")
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
-Based on v6.8.
----
-Based on v6.8.
-
-Depends on the following patch:
-  https://lore.kernel.org/r/20240315-apss-ipq-pll-ipq5018-hang-v2-1-6fe30ada2009@gmail.com
----
- drivers/clk/qcom/clk-alpha-pll.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 05898d2a8b22c..4f5dba44411f6 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -2474,6 +2474,10 @@ static int clk_alpha_pll_stromer_set_rate(struct clk_hw *hw, unsigned long rate,
- 	rate = alpha_pll_round_rate(rate, prate, &l, &a, ALPHA_REG_BITWIDTH);
- 
- 	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
-+
-+	if (ALPHA_REG_BITWIDTH > ALPHA_BITWIDTH)
-+		a <<= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
-+
- 	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
- 	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
- 		     a >> ALPHA_BITWIDTH);
-
----
-base-commit: 97483adf4c6181df2f3d8fe7c2aa057443298080
-change-id: 20240324-alpha-pll-fix-stromer-set-rate-472376e624f0
-
-Best regards,
 -- 
-Gabor Juhos <j4g8y7@gmail.com>
-
+Best regards
+Jan Dakinevich
