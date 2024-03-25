@@ -1,59 +1,59 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E949E14AB8
-	for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 19:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE343D56D
+	for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 19:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711394582; cv=none; b=qu2Wjzw35NwzEABWjoF9Ju/BISKLgLlSvsRSdPpLlqRu5pTtyYDBC1nEPcKQavTYJ41Sr6jzTfB1dByqKe1WY3SkqGMbcwg1cxwRjbhcDo6LGk6phTyEvb+U22O+Lkhfaj+Tpv4dmYDkc3fWHoxZ2LFsi2HSL88G2+uG/USQJJQ=
+	t=1711394619; cv=none; b=Y0Tj0Rri9Woxd7ayQzeyQQxB5/Evn5Ges4Qc0z0ysh5uvpULuRkPQysSDEXJnjxE8uRwWtviVPIEAMKZS2AMBEOyf/hnfWXMnfZD5hvz5NZjlYTnF2iX1yVi45RCbzEYCGSD1K3/n7OLoK+u0tXJLvBete8MLFmyl6qB41b8Qm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711394582; c=relaxed/simple;
-	bh=ZQreLDvLGIrzkFGbwHef8At6nHP/2EFl/UmYsaPgXGI=;
+	s=arc-20240116; t=1711394619; c=relaxed/simple;
+	bh=7D3NRgIdXdTtbSrftyWly5E7nJkyl3Jr5gFwClhfQkE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VZQnRs4jws1E1e2YFDMQv8JCa0vLoq9b2zeZSAiTK6NlUUEwUgnlQFLX8kbJxfaYXNlMjW4riJ9m2iojDGJfNcAmbA1og8dpAQzIwFCljSoJbEnYkiH4h8+pE28ctO+9lYDoRPan6qM8bza/hPRqG88onsN9eX5dufr512bXMI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I4eDf158; arc=none smtp.client-ip=209.85.208.175
+	 In-Reply-To:Content-Type; b=HF3ZS0coAz0cwvgatdaxlcjEl7Prq4CfWTIDoTqh3Nr10FMlhqVKXGKBph9GPCkgXj5UlXr6XO75e4//AqByHHvSaxtFnm+bMizHjyw8Z3opD5LPGizMypQaiYxVFJYsg377NrrbqapCIFsi+XHSLE6KPgBK5xPL7clcnNAARCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vF8pgt8S; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4eDf158"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2d21cdbc85bso64611281fa.2
-        for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 12:22:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vF8pgt8S"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a4702457ccbso612274766b.3
+        for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 12:23:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711394578; x=1711999378; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1711394616; x=1711999416; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=YhkcMqTLNkLuPm50ozYV9EYYWkwPV3b0+RgksnZ0gjM=;
-        b=I4eDf158Kb+Ykr2vAIkP9V0czvdyongIFLp1rgiNuDNYWyDLPgMUsSiyjuffySlfM8
-         FWZG2ICcAT1dSs8AEImJGQjUvfED3XvsafwZOCDgZNFMWFBAGikpkExC/c20NWmGFR9F
-         8jtum2qmC5y/jqLCe2LQOq/YvoxnUZa3yZQEwwPknz34pipfNIOZeoqcb2WeYRfei8ih
-         EWmBvN+/VeBqPbPdr0W9hV+iwC86vHQbFG9TOPXDlTcuiiEhxdKkbD4bP97DByN8Y+8x
-         ROpsf5EbKMVjTAi2Xt+HNHNuBDbXuSHnRhcgAjcoSTrTeFxCSAulQhHaMULpG/oif1/6
-         Ux7Q==
+        bh=0tncltYs4IdUQLZ4vy2qR4yp6kvTj1LvUyOD65bMO8g=;
+        b=vF8pgt8SnFg39eBqUjsZbxkq4VYWMjvrhnSBjvgsF1/y6mMfA55Cy+qC44qh/gCyrJ
+         BBTi+Ja9FrIk4mqWdCSMyU09xuRuzwDMa66+8XRxQM+qrB3iqHdYGmQ2ZvJyo7xqh4mU
+         c5shxyiYZDbF0d+6Hfn+O8FfZ8KBcqvmCP7oqSbZOFhYEVKUFH0XFqav3Vte+AJEIw9t
+         HMRrLaMPgQcogDu0lAnlU4chUOErWL955tjx5ihsG2PxceNJHd4Cah7qLblvxXvEZyB5
+         eCfmrBJs01IF9qdGxUFInLOVyONwdUy00rF9QMRyKz21sJLXl/4BFJc7e6eHgem37nkJ
+         U1tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711394578; x=1711999378;
+        d=1e100.net; s=20230601; t=1711394616; x=1711999416;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YhkcMqTLNkLuPm50ozYV9EYYWkwPV3b0+RgksnZ0gjM=;
-        b=vJg4LwkjjPqGCBKhjVKNpNbFiE/hrX9OAeqahFd4X6nJuhJHLnVu20yI4IZYDwgNjw
-         7ejJJJ0isZ5gsRz6/OED5a2EgjioO72PEMCG7KpCIAgXI+/hkbbSI1rR8R2RZ337Sy0d
-         FfSX0zIWiawF7e4pjeo4yhnkS+8nYQPZ6aUXmyin+pLN6BWLG/grTgVlJFyfUBHu2dMc
-         Qo4CGpwVGIJXol7RFQUhbX8MpURsCinXOtjRdvUjiWcqAWiv5DNhDu5dadEZMMva0TQV
-         h1KQ1NnCfdTM04QjGLBpcqoCFkTohkFqNX0uhKyDub6jxQY5vpEclOoymkrqw3b2Xpmm
-         S4Uw==
-X-Gm-Message-State: AOJu0Yy7KOwTW224CCZnu5KPTb2UzanWFKewN6mxL6Hl8TdRv15d3ilj
-	ziZRrlM1IoF3nmkDwZODpxgb76kWPwfTY60hyp2VQma2oEOgYoTKQon7LlraG6A=
-X-Google-Smtp-Source: AGHT+IHgt2mz7H1qNHnVnVUYsH/mYp+h3FUJb9i4gOOJMqFMA3Zb6UHuOT65S3E9TZ1JDfScM+2PVA==
-X-Received: by 2002:a05:6512:2105:b0:515:9437:8f29 with SMTP id q5-20020a056512210500b0051594378f29mr4767070lfr.21.1711394578035;
-        Mon, 25 Mar 2024 12:22:58 -0700 (PDT)
+        bh=0tncltYs4IdUQLZ4vy2qR4yp6kvTj1LvUyOD65bMO8g=;
+        b=NKfaNVITf7yS/cEiRGCs/O57PkN2RqAnkMxPuamNU8h6MV+RJHMhK2BpIVA2nsj4o7
+         mmQ/AL/hyObcCzCIRSxev2thOy/CjmkhhWEx8FweNra8fSQzfXoWGZng7Nwu7awws/kK
+         blLZJNUBA5LOkKaWNZKm0cRyFg4E71rmuUikqL7RN1BgJVPgp2KA9B1Cx04MsziNwVcj
+         NYQ0zt/DaW8zE7uKtNfePRn1p1wyDKLDI2hyPxtSDRWLb0KXFUR9nxBoeTBUGR4LvCDy
+         YlKBsdx/1XZ3k2z8p312MK6BLANXvm5gBJrHJETvGU4FcO4NGLbbe28AN8l+L1W5SwBY
+         Zv3w==
+X-Gm-Message-State: AOJu0Yx78JiC13e8OMBzxx1MQkU24/Ff2YACM7Wop0dh1kpRKTSY+A6V
+	lvTU2Mx6qTmd/wMuQxLl9fsERQPWDHsy7ST0tdVABk2zOlnZzBDvs63UMOUoiU4=
+X-Google-Smtp-Source: AGHT+IHLTafF2h3aBSzwOpdOTshBPpDiOV8c7MvXZ1aTvmTDZyG5XdvVoRtOGuhb8tHI0OD231YCTg==
+X-Received: by 2002:a17:906:dacd:b0:a4d:2021:32e5 with SMTP id xi13-20020a170906dacd00b00a4d202132e5mr1477783ejb.50.1711394615917;
+        Mon, 25 Mar 2024 12:23:35 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.222.44])
-        by smtp.gmail.com with ESMTPSA id la2-20020a170907780200b00a4503a78dd5sm3369159ejc.17.2024.03.25.12.22.56
+        by smtp.gmail.com with ESMTPSA id o9-20020a170906774900b00a46a2ac0dbasm3346528ejn.197.2024.03.25.12.23.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Mar 2024 12:22:57 -0700 (PDT)
-Message-ID: <31b493d1-ad74-48c7-8585-9df323418ae3@linaro.org>
-Date: Mon, 25 Mar 2024 20:22:56 +0100
+        Mon, 25 Mar 2024 12:23:35 -0700 (PDT)
+Message-ID: <43bc1b42-b1ba-4543-a563-86eaefa34bd6@linaro.org>
+Date: Mon, 25 Mar 2024 20:23:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,7 +61,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] dt-bindings: clock: add i.MX95 clock header
+Subject: Re: [PATCH v5 2/4] dt-bindings: clock: support i.MX95 Display Master
+ CSR module
 To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -74,7 +75,7 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
 References: <20240324-imx95-blk-ctl-v5-0-7a706174078a@nxp.com>
- <20240324-imx95-blk-ctl-v5-3-7a706174078a@nxp.com>
+ <20240324-imx95-blk-ctl-v5-2-7a706174078a@nxp.com>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -121,42 +122,22 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240324-imx95-blk-ctl-v5-3-7a706174078a@nxp.com>
+In-Reply-To: <20240324-imx95-blk-ctl-v5-2-7a706174078a@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 24/03/2024 08:52, Peng Fan (OSS) wrote:
 > From: Peng Fan <peng.fan@nxp.com>
 > 
-> Add clock header for i.MX95 BLK CTL modules
+> i.MX95 DISPLAY_MASTER_CSR includes registers to control DSI clock settings,
+> clock gating, and pixel link select. Add dt-schema for it.
 > 
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  include/dt-bindings/clock/nxp,imx95-clock.h | 32 +++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/nxp,imx95-clock.h b/include/dt-bindings/clock/nxp,imx95-clock.h
-> new file mode 100644
-> index 000000000000..83fa3ffe78a8
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/nxp,imx95-clock.h
-> @@ -0,0 +1,32 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
-> +/*
-> + * Copyright 2024 NXP
-> + */
-> +
-> +#ifndef __DT_BINDINGS_CLOCK_IMX95_H
-> +#define __DT_BINDINGS_CLOCK_IMX95_H
-> +
-> +#define IMX95_CLK_VPUBLK_WAVE			0
-> +#define IMX95_CLK_VPUBLK_JPEG_ENC		1
-> +#define IMX95_CLK_VPUBLK_JPEG_DEC		2
-> +#define IMX95_CLK_VPUBLK_END			3
+>  .../clock/nxp,imx95-display-master-csr.yaml        | 64 ++++++++++++++++++++++
+>  1 file changed, 64 insertions(+)
 
-No improvements, so again: drop counting.
-
-Same in other places.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
