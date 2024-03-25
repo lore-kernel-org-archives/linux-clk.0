@@ -1,125 +1,92 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D512519BA2;
-	Sun, 24 Mar 2024 17:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B10C13F449;
+	Mon, 25 Mar 2024 02:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711303173; cv=none; b=FwkT8uGZf9WskzBTkLj/4AofKEne3C173RZ5/1RdwZqgJaaTY72vUxbJo7i51pGO12beghiAoFGtXjdihsg78EPdmGBiQ8uzHMH+AJGdg3TS9VFJazaAyhsHRqqWXWieHImy2b3yxOJ0hlZIWow/BukW5YDaTNLBzCwQMbKaBmU=
+	t=1711332236; cv=none; b=mIEj7QF+QcLyq//D2ni7s+DzwNLU264mCgkqtTHanHYh+r9fYqIPhQMuYi7iMRCFTzK2bNs7l12HYqbeIcl9BjZwzlqOJ8RmJWgFleUPkeWwDDWa+ciFgAGu+brRreLB9Z95rimFGKpQoMiN02ZI3MSORjccDHz9y748ny2hxU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711303173; c=relaxed/simple;
-	bh=vOzA/tKqPZp4+9Wm+5C8N3FOA99D7YrNR9zQplxWvkY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gfkuYpxVhVSYdk5OuEr/vdFlTvZmGoqzr1bQnkERc50S0XaSL6g/OdgXrP2uB+kHaEwfw5S0MZDFlKC1oDzSrjyE29ziNgD2PhKigOjfQ8HRrRSVl//roU7JTmjVk9/xWhZZjzldKxug87sLbp6/TzajEogUmqyOWmSVao2vduw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=u0RcmHdo; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+	s=arc-20240116; t=1711332236; c=relaxed/simple;
+	bh=UalUTF2iqRjxJm5BRWPYfnuu8z/bakUMFe6q3qjPta8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=lljC7ZyG22Mpn4uwk/IRbQyDS5EvU0FHkYxKjHGG4235DsyqrrV1Foa6Ck+P9S5EYBUAGracMTriO0JW4LGlWNfr4ohfuO9pPbWMN8Xb9+E2FZa7OC9V3p7fdA+MMN81uYU8tuF5PA5Hi3wDrUzCpQNBIzSyix8yfTIXdRjgUB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWcuIo6h; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="u0RcmHdo"
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 41699120003;
-	Sun, 24 Mar 2024 20:52:33 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 41699120003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1711302753;
-	bh=rPCKzwxY/P8E8hlP0ZyZIPxAhwhwOHS8SkfFEzDhMSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=u0RcmHdomX0A7S94roBud3m3OftVEWIzyfo0+wLhUD5RNO2YIkm+Bu+sexbKz179I
-	 i5GpnTO/k7ENM3P7qRlc6B6vZqKFCKks80+FEUdIZzUFiLmcW4x9WMI4RwDatDFD+s
-	 74VhHD8YZCnqv3GTD0mCN/EuweCj7PqXiHaozecwcU+QA5GnFuJ1v8BlPSQH1zvKKd
-	 Ub+6IlO1kQcvkqML+hbN7VHMgEfmPuNcbPG0++Sw67iUPMk2tVUOvD8BGR6OOzMjZ3
-	 urrDZRZmxUZ0I5/8cNdc7ZI870Fc8Z7WiQRuHU+sxzLq25zcJtMwWOzVeay3zaRvL9
-	 zYYThkk6c+Khg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Sun, 24 Mar 2024 20:52:33 +0300 (MSK)
-Received: from [192.168.20.2] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sun, 24 Mar 2024 20:52:32 +0300
-Message-ID: <2bc7976b-3910-4a44-a969-7b6bc5d72869@salutedevices.com>
-Date: Sun, 24 Mar 2024 20:51:04 +0300
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWcuIo6h"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e0025ef1efso22107095ad.1;
+        Sun, 24 Mar 2024 19:03:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711332235; x=1711937035; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UalUTF2iqRjxJm5BRWPYfnuu8z/bakUMFe6q3qjPta8=;
+        b=EWcuIo6hg0QvU7VUjXmSKkXtQPq1pOzSI8B1TbeB8YlUPK6vynd2UvlFrBpojVe5AX
+         2b0hULteCj/ooFU7awfpDnOr4syPBubix5SobxDkcVeiRwQs4e1kdDCX6WfVv8ny20jp
+         H08irRm4W8lmCujNTti3DIb8FTXH6hdDNGi6mbsfUaaDKvhlHkp67BVl6NbFDmlsySkZ
+         YOgIEsh2Qi3DzwFzpDOzOAklSNB/ZbnQsix5XkOphcVryZ1/Y8/aUVRa2WW5Nc9lBa7J
+         i+aIVSp/bT4h3VIeNukvIgiDf6uXl1+t8R/nanTVNlZ619gSrLZ2b785ZC8AdOZDKqaG
+         weZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711332235; x=1711937035;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UalUTF2iqRjxJm5BRWPYfnuu8z/bakUMFe6q3qjPta8=;
+        b=CZbc/+GVUI55xkZR0zutnCvjfy2vmiyWvIkC8c5c3L4r9u5lmFW8Mktv+w/LvBPto7
+         bPrTTDHbalYieuX1QgFVC/+kX1qZ2x0tdr39FvZ9NwyNGquUGbKHYqcQ5rFIHnKHUMtk
+         +i4ek2Jb5mrTgy7vv0PU8RAXqtstvNw7rCzxTgbZePLw4p6f14zDGpi2P/ZTZyAX2U9i
+         Zs7YvpfesO1idP9aDPjqNwvpQ7qIEFUjT1EJh1vKRcnIThZrW4yI/w9thOHXbDNEw5Xg
+         R0FoefItPtkojjcdPeo0qCeGJvtNHdG5LBCZeWsoF4APoQMNJmzkS1x1DrZjf0GuDrCw
+         BOPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5Bte9S1DBfkyiByvCXa7kB2CWm1xFrpuWxgMxDeOr6IvC69Dn8rmIqpTcIRGy0ncevPSurPJZCddq0aDYvzJ555Qi991+tDbv/wsLRqSbvBzyOaxSqw39JzAsEEIahNoietTAdvqxIRRewL6W9f5kyM9rqk0vPmRzgOBVLdXdsdrOTtQmXpi7ME3o95aUZkcSn9ZA2NiI9GE3hZD39ck=
+X-Gm-Message-State: AOJu0YzW+cu8xvGuY6iiqunI4kD/eqH7rxa23XICeryMOZPt2Dl40WRI
+	8l8RR5kwmA1tDMZPuQktLg7kRk3tqQFx8RtJZaTne8KB9ZxatKMZi1wmmC2F2QGczA==
+X-Google-Smtp-Source: AGHT+IFke4+IkGE9FkicVvdk3GsuRfMPNbkgBJVDWwxCLpUbSSpb694v2kg3JJXAMyLX+BgGZPyyHQ==
+X-Received: by 2002:a17:903:1d2:b0:1e0:c74c:dfcc with SMTP id e18-20020a17090301d200b001e0c74cdfccmr354616plh.57.1711332234623;
+        Sun, 24 Mar 2024 19:03:54 -0700 (PDT)
+Received: from gmail.com ([2a09:bac5:6249:183c::26a:10])
+        by smtp.gmail.com with ESMTPSA id m6-20020a170902db0600b001e0b287c1d2sm1985284plx.215.2024.03.24.19.03.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Mar 2024 19:03:54 -0700 (PDT)
+From: Qingfang Deng <dqfext@gmail.com>
+To: cyy@cyyself.name
+Cc: aou@eecs.berkeley.edu,
+	conor@kernel.org,
+	devicetree@vger.kernel.org,
+	dlemoal@kernel.org,
+	guoren@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	linus.walleij@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	mturquette@baylibre.com,
+	p.zabel@pengutronix.de,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	robh+dt@kernel.org,
+	sboyd@kernel.org
+Subject: Re: [PATCH v6 10/11] riscv: dts: add initial canmv-k230 and k230-evb dts
+Date: Mon, 25 Mar 2024 10:03:33 +0800
+Message-Id: <20240325020334.4033-1-dqfext@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <tencent_DF5D7CD182AFDA188E0FB80E314A21038D08@qq.com>
+References: <tencent_DF5D7CD182AFDA188E0FB80E314A21038D08@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/25] ASoC: meson: g12a-toacodec: fix "Lane Select" width
-Content-Language: en-US
-To: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
-	<jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij
-	<linus.walleij@linaro.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>
-CC: <kernel@salutedevices.com>
-References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
- <20240314232201.2102178-7-jan.dakinevich@salutedevices.com>
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <20240314232201.2102178-7-jan.dakinevich@salutedevices.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 184373 [Mar 24 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 11 0.3.11 5ecf9895443a5066245fcb91e8430edf92b1b594, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;sberdevices.ru:7.1.1,5.0.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/03/24 14:08:00 #24408963
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: 8bit
 
-Sorry, I screwed up. Original code is correct. I mixed up the maximum
-value and bit offset.
+Hi Yangyu,
 
-On 3/15/24 02:21, Jan Dakinevich wrote:
-> For both G12A and SM1 the width of "Lane Select" should be 2, not 3.
-> Otherwise, it overlaps with "Source".
-> 
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-> ---
->  sound/soc/meson/g12a-toacodec.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/meson/g12a-toacodec.c b/sound/soc/meson/g12a-toacodec.c
-> index 531bb8707a3e..b92de2235627 100644
-> --- a/sound/soc/meson/g12a-toacodec.c
-> +++ b/sound/soc/meson/g12a-toacodec.c
-> @@ -229,11 +229,11 @@ static const struct snd_soc_dapm_route g12a_toacodec_routes[] = {
->  };
->  
->  static const struct snd_kcontrol_new g12a_toacodec_controls[] = {
-> -	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL, 3, 0),
-> +	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL, 2, 0),
->  };
->  
->  static const struct snd_kcontrol_new sm1_toacodec_controls[] = {
-> -	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 3, 0),
-> +	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 2, 0),
->  };
->  
->  static const struct snd_soc_component_driver g12a_toacodec_component_drv = {
+> - Support for "zicbom" is tested by hand
 
--- 
-Best regards
-Jan Dakinevich
+C908 also supports zicbop and zicboz. You may add them as well.
