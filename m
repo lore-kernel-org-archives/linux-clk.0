@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB13818E0CA;
-	Mon, 25 Mar 2024 08:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB953153BFB;
+	Mon, 25 Mar 2024 08:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711354800; cv=none; b=D/zQ/TFzM5VK51NHnozyJs7Hkj2F9N5OYRAQ5Z0NDsYcoWeo2bkn7VI8SzWpfRhxoox/43JBOgTVStM+n5CkDKzjvW3Weo7eqt53wtCK2w+5t6OrYvxVBKfhtJ/zh/pM+Fhq962jUohut6NTfdMsLkt4a6IQ669+OKnpdoULN+o=
+	t=1711357134; cv=none; b=XPY+INgcuVOwP1sOyj/Hf6075nuvx1hdRsj8XYzWOsp2jLpRtBX6khYg5ciWR6aYY6P37KIY2U48cULu2vYUEeHrMfHTS+m32MDlNy+VWKJzrskxw+kZ6vpJhScdmxqsNJ5VwzjEBUrABSuM1q3DG1e4RBb+UXF10s88Fhvlebw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711354800; c=relaxed/simple;
-	bh=VUHc+tkUJVEFMl8ci6fuYuXOdzY9EDJ895oRdy4VAlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CdC8ZKMK1psPQOsHITCYAJmIG/xBJpVkt85Qxe0YHLXrkIojedULvNLaRJp50o+toS+l/Pj9+TxloX/MvwTzxfQ/rogelKbiYslTquTsLngxKyEHnFcCjcqLXT5zfcEIx4IT/5PSeLGt4E2j7QvS3TuHDF9eaTIx0UMgyu9CYgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=saVe5D7Y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711357134; c=relaxed/simple;
+	bh=3kNKmqcvjVl9nlFohKUhmUZ38lAcXqFMYW0taY9PxKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=azzh19sbivbktodqcLXw+Ym1iMFEwtYjlfP00Ht71uIPhpD0tQRkZ/VXB2F5QrwWz6VEh76yc3GGhQ3K1YPG9EsE5EUi6RGUfmRmtL/uyEdU5qhV8g8y3y3xJ8M1W62z4EzV4pflbOPt+bgDkj3JxjWSa9w0ZWx5MJ92ZSdrqvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oImfIzH4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="saVe5D7Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32B22C433C7;
-	Mon, 25 Mar 2024 08:20:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oImfIzH4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD60C433C7;
+	Mon, 25 Mar 2024 08:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711354800;
-	bh=VUHc+tkUJVEFMl8ci6fuYuXOdzY9EDJ895oRdy4VAlE=;
+	s=k20201202; t=1711357133;
+	bh=3kNKmqcvjVl9nlFohKUhmUZ38lAcXqFMYW0taY9PxKY=;
 	h=From:To:Cc:Subject:Date:From;
-	b=saVe5D7Y4O3+jJDgqxIrHPbSGo2YsWpd+AOxuhmE9oLb3lm54/OcNDzO81fMDSYDT
-	 ZCNfZRa2DuVfTNxu5jTjaivLtSorJD/eCSHDs0jageMy8yGJzfSjIaYfLJD2UKSdhF
-	 dqtj/C2L87IVILdRIrQ+OidJvolDuqjL1R57+YfD6imqNxvkjmeWhaK/YrEJjP88Ql
-	 5CdIl/4QAA2eBtUexAK5RE3CfQaNoVGG2U0/5SMnVR+HufB9rtTnMNoUoNyNV5lxYI
-	 GrhgtP5jLtMIs89n1nqSFLFxoYAHrYntCqKyFTAvCWKAnz7BIzsA6brtGIX0v8bnOJ
-	 DpI61KpZpYN2g==
+	b=oImfIzH4/qvEdDO3AwkDkR7EnD3/B2jEwyrx1KjwbLPqJBL4JJUdDOWCDz1OHLFn5
+	 +flteqqS+TY+iBHAQkqp6hlAjMT64I/p9vSwOCbfFHOfi97mm3m02BraIZOxMDijvH
+	 cFn7+1F1y4ySeq+m19i0DUQ0jlv2jCP4W4fI201zasC5Ulj17ZzJASVWXZUlXjBjkG
+	 kQO6EBv+9bvHjUcGLf1gu6gI7n091LENfmyK2cE3G7PZgIdGnH3ka5hDw1mTN3eBIT
+	 HCrsOFwZ/aT59EaShg422gResSK/054X1ytTYI0OCgx6AbNYZgE0+OMMIsVVoKZE9w
+	 deZWOnVsqVZeQ==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan+linaro@kernel.org>)
-	id 1rofYs-000000002qj-28tE;
-	Mon, 25 Mar 2024 09:20:06 +0100
+	id 1rogAV-000000006o6-3A6x;
+	Mon, 25 Mar 2024 09:58:59 +0100
 From: Johan Hovold <johan+linaro@kernel.org>
 To: Bjorn Andersson <andersson@kernel.org>
 Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -42,9 +42,9 @@ Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
 	linux-kernel@vger.kernel.org,
 	Johan Hovold <johan+linaro@kernel.org>
 Subject: [PATCH] clk: qcom: gdsc: treat optional supplies as optional
-Date: Mon, 25 Mar 2024 09:19:57 +0100
-Message-ID: <20240325081957.10946-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.43.2
+Date: Mon, 25 Mar 2024 09:58:35 +0100
+Message-ID: <20240325085835.26158-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -98,5 +98,5 @@ index e7a4068b9f39..df9618ab7eea 100644
  
  	data->num_domains = num;
 -- 
-2.43.2
+2.43.0
 
