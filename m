@@ -1,92 +1,91 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B10C13F449;
-	Mon, 25 Mar 2024 02:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B45116D331;
+	Mon, 25 Mar 2024 02:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711332236; cv=none; b=mIEj7QF+QcLyq//D2ni7s+DzwNLU264mCgkqtTHanHYh+r9fYqIPhQMuYi7iMRCFTzK2bNs7l12HYqbeIcl9BjZwzlqOJ8RmJWgFleUPkeWwDDWa+ciFgAGu+brRreLB9Z95rimFGKpQoMiN02ZI3MSORjccDHz9y748ny2hxU4=
+	t=1711335491; cv=none; b=TD21ixRKg9/EL7OWfinZ86pX1tCDntJQqAG5/Zcb9PMhk3jK2RsQXbwznP6+F2430/vyaaKLCi9qZeQInuzRRDHzc+yZRBYcWpF1sgW/TXcRYjqMJ4LSMeeoHJNQhlNa5RLdKlyyOtx0namvd6ai+QJM7mx8OqvB9TG5GlYGiOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711332236; c=relaxed/simple;
-	bh=UalUTF2iqRjxJm5BRWPYfnuu8z/bakUMFe6q3qjPta8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lljC7ZyG22Mpn4uwk/IRbQyDS5EvU0FHkYxKjHGG4235DsyqrrV1Foa6Ck+P9S5EYBUAGracMTriO0JW4LGlWNfr4ohfuO9pPbWMN8Xb9+E2FZa7OC9V3p7fdA+MMN81uYU8tuF5PA5Hi3wDrUzCpQNBIzSyix8yfTIXdRjgUB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWcuIo6h; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1711335491; c=relaxed/simple;
+	bh=6q3cSj7Dl84jVv87fRaGmOaKhY98faHtxDSaHySMMRs=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=IQOzb7nvCdu/ck/6kt6GS+h7iyWb4QJlQo9lt+SborbUuReXwpsHKLwtnH3S9BpaVOhERkeYYvFU38w8jUj92gGN5m/3bEj8YeJpjPd3UminvW+pxzNFyLauoTyos8xF/dTe6obaWgJa2wu0/NSQAm4ZrB4b1RT5PW/hNnPP1S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=V5v6aVgF; arc=none smtp.client-ip=203.205.221.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWcuIo6h"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e0025ef1efso22107095ad.1;
-        Sun, 24 Mar 2024 19:03:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711332235; x=1711937035; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UalUTF2iqRjxJm5BRWPYfnuu8z/bakUMFe6q3qjPta8=;
-        b=EWcuIo6hg0QvU7VUjXmSKkXtQPq1pOzSI8B1TbeB8YlUPK6vynd2UvlFrBpojVe5AX
-         2b0hULteCj/ooFU7awfpDnOr4syPBubix5SobxDkcVeiRwQs4e1kdDCX6WfVv8ny20jp
-         H08irRm4W8lmCujNTti3DIb8FTXH6hdDNGi6mbsfUaaDKvhlHkp67BVl6NbFDmlsySkZ
-         YOgIEsh2Qi3DzwFzpDOzOAklSNB/ZbnQsix5XkOphcVryZ1/Y8/aUVRa2WW5Nc9lBa7J
-         i+aIVSp/bT4h3VIeNukvIgiDf6uXl1+t8R/nanTVNlZ619gSrLZ2b785ZC8AdOZDKqaG
-         weZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711332235; x=1711937035;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UalUTF2iqRjxJm5BRWPYfnuu8z/bakUMFe6q3qjPta8=;
-        b=CZbc/+GVUI55xkZR0zutnCvjfy2vmiyWvIkC8c5c3L4r9u5lmFW8Mktv+w/LvBPto7
-         bPrTTDHbalYieuX1QgFVC/+kX1qZ2x0tdr39FvZ9NwyNGquUGbKHYqcQ5rFIHnKHUMtk
-         +i4ek2Jb5mrTgy7vv0PU8RAXqtstvNw7rCzxTgbZePLw4p6f14zDGpi2P/ZTZyAX2U9i
-         Zs7YvpfesO1idP9aDPjqNwvpQ7qIEFUjT1EJh1vKRcnIThZrW4yI/w9thOHXbDNEw5Xg
-         R0FoefItPtkojjcdPeo0qCeGJvtNHdG5LBCZeWsoF4APoQMNJmzkS1x1DrZjf0GuDrCw
-         BOPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5Bte9S1DBfkyiByvCXa7kB2CWm1xFrpuWxgMxDeOr6IvC69Dn8rmIqpTcIRGy0ncevPSurPJZCddq0aDYvzJ555Qi991+tDbv/wsLRqSbvBzyOaxSqw39JzAsEEIahNoietTAdvqxIRRewL6W9f5kyM9rqk0vPmRzgOBVLdXdsdrOTtQmXpi7ME3o95aUZkcSn9ZA2NiI9GE3hZD39ck=
-X-Gm-Message-State: AOJu0YzW+cu8xvGuY6iiqunI4kD/eqH7rxa23XICeryMOZPt2Dl40WRI
-	8l8RR5kwmA1tDMZPuQktLg7kRk3tqQFx8RtJZaTne8KB9ZxatKMZi1wmmC2F2QGczA==
-X-Google-Smtp-Source: AGHT+IFke4+IkGE9FkicVvdk3GsuRfMPNbkgBJVDWwxCLpUbSSpb694v2kg3JJXAMyLX+BgGZPyyHQ==
-X-Received: by 2002:a17:903:1d2:b0:1e0:c74c:dfcc with SMTP id e18-20020a17090301d200b001e0c74cdfccmr354616plh.57.1711332234623;
-        Sun, 24 Mar 2024 19:03:54 -0700 (PDT)
-Received: from gmail.com ([2a09:bac5:6249:183c::26a:10])
-        by smtp.gmail.com with ESMTPSA id m6-20020a170902db0600b001e0b287c1d2sm1985284plx.215.2024.03.24.19.03.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Mar 2024 19:03:54 -0700 (PDT)
-From: Qingfang Deng <dqfext@gmail.com>
-To: cyy@cyyself.name
-Cc: aou@eecs.berkeley.edu,
-	conor@kernel.org,
-	devicetree@vger.kernel.org,
-	dlemoal@kernel.org,
-	guoren@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	linus.walleij@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	mturquette@baylibre.com,
-	p.zabel@pengutronix.de,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robh+dt@kernel.org,
-	sboyd@kernel.org
-Subject: Re: [PATCH v6 10/11] riscv: dts: add initial canmv-k230 and k230-evb dts
-Date: Mon, 25 Mar 2024 10:03:33 +0800
-Message-Id: <20240325020334.4033-1-dqfext@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <tencent_DF5D7CD182AFDA188E0FB80E314A21038D08@qq.com>
-References: <tencent_DF5D7CD182AFDA188E0FB80E314A21038D08@qq.com>
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="V5v6aVgF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1711335477; bh=cUaB1Qlwp+5KOdt5XNJfaAEphVdI1Mx9/MaeC4ADKag=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=V5v6aVgF4PVWKrv5l409kP6cytZAnuD3qk7Yn045WLcliiOcGeCdKr5G0W5ohjw5+
+	 i3WQdOjRvmisBQznRZN/TfKxSmt/f9BhVRReYeigKhu15yTi1EaWKt8spvMXd57NOj
+	 1tlnoZr0W4hYMgoiXGsFx1Rrc7zZIASDG04t81Rg=
+Received: from smtpclient.apple ([2409:8934:1ed6:2f4f:d8d3:a43a:ef25:fb4f])
+	by newxmesmtplogicsvrsza7-0.qq.com (NewEsmtp) with SMTP
+	id E73A14B8; Mon, 25 Mar 2024 10:57:51 +0800
+X-QQ-mid: xmsmtpt1711335471td1lycwv1
+Message-ID: <tencent_3A313D213A8D897C9D8224DA538EAFB8B608@qq.com>
+X-QQ-XMAILINFO: MPaKaX623R7Y3L+KntZXBnA7NdwH6aw/GzZNsK/ATSLO+OirAumPXo7IHX44rn
+	 GlUXhRU+dDH0hFDeFjSi3zExYsNQYPEXIt3h0AF/6BhT8G3LJe+/aDv/iQYrLFNcouwOA4GDti1k
+	 UdzvNNI/tLPLMeSMm+uanZG1bbJ/6b0mnM2qU0PsDg9HMNTZFncfBVc08RD1KFFwfPgmyDV3Oyk6
+	 DTm6R1G2abAsPoKxxC6zq1/nKoVL7jeouOgbTZhTzp8GXa18R4V0K0e2ysXfQC05s116LyxZaNJ3
+	 whkyJb/t4U/FzCy+Z6wEYcIHslCq0+z9QrH2A3zzpkYAFo/BpGHMZDBz4C6+NJ5qqTyGB3ANrGI8
+	 eUisisKnAFldkFUDkJ2v+MIlnd01tGWRnHhPTFkle102pL+TG9axkqPYsF8oQ6ILmkU4790MYqsw
+	 9js3tZtkao92myJvumpfht8GhvBdeSLN12iK1rWdkS0wyQVNWXewjJY3DyDIJ/jNFByDFZ69UDfK
+	 fDLEcqb/FWUAVjv+DaCpbjq//miDlHRHGe8AvyELIZH3WJN8SZartS0pgofFSm3O8kXJ4Zx1SSrC
+	 urDurZLQaTGLfRHqIXDn6/6No9ZOnX7RElYKFqApALD4oIe9mxBtJGe72j7yvq2zXh2Mhaj4PQkH
+	 lPQOjFENbVkZYQpDyMOindBn8L3n4e6HqeG7HkGQqZd9X9XkIUn1vUOY7KiyjaLAGBYNB5lL4xep
+	 X76coa3VLbA/Vz8Dcpc3h+tbkrDBNH7FHXND1QuCNeVLmAlHo4p8WuVI+NnqTQ/9+gu3Rbs2NfCO
+	 3vdaDQpD8AEl7zHBDcJaPcOsYnGSd4IUQw9noVCRojyeqT0faerlyyW+iH++YNx06HGDXhQaTqjj
+	 wofz0R6fnvD7D9jFHDo8ZGyZpLX1hlPofnRE1jNMEfeS3DJ1taZ0V6aaANPUNQ8APY/9On6n+0K/
+	 BlChnb3z5IOR3kC5wrr62ihCzdnljsagZB4bjkiRZDlcwfGsWZrQ==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v6 10/11] riscv: dts: add initial canmv-k230 and k230-evb
+ dts
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <20240325020334.4033-1-dqfext@gmail.com>
+Date: Mon, 25 Mar 2024 10:57:40 +0800
+Cc: Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>,
+ devicetree@vger.kernel.org,
+ Damien Le Moal <dlemoal@kernel.org>,
+ Guo Ren <guoren@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ linus.walleij@linaro.org,
+ linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org,
+ mturquette@baylibre.com,
+ p.zabel@pengutronix.de,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ sboyd@kernel.org
+Content-Transfer-Encoding: 7bit
+X-OQ-MSGID: <ED3A5AAA-6A9F-4DA3-99E8-5F94C542F097@cyyself.name>
+References: <tencent_DF5D7CD182AFDA188E0FB80E314A21038D08@qq.com>
+ <20240325020334.4033-1-dqfext@gmail.com>
+To: Qingfang Deng <dqfext@gmail.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-Hi Yangyu,
+Thanks. I will add them at next revision.
 
-> - Support for "zicbom" is tested by hand
+> On Mar 25, 2024, at 10:03, Qingfang Deng <dqfext@gmail.com> wrote:
+> 
+> Hi Yangyu,
+> 
+>> - Support for "zicbom" is tested by hand
+> 
+> C908 also supports zicbop and zicboz. You may add them as well.
 
-C908 also supports zicbop and zicboz. You may add them as well.
