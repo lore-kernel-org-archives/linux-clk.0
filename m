@@ -1,61 +1,61 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AD91586FC
-	for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 11:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949B015217B
+	for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 11:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711365007; cv=none; b=Yr2d7W/ODEXG/RhZIzj4aOpnDw+Pu3KBAAQwxHJg52m/HmgK+A2mRqWvnoI03h3jBtGkHRkfgged4ZxO1/H8ySrraG/QR1CbGa4374w2KGKhNHuK5JLTMvx2umifXZUJZznAeRsK9tdncTTJwfn/zzeIg/elFDqFkVTssWLVdC8=
+	t=1711365000; cv=none; b=VuuOJWj9sqpL4xGv4DcqUAmydl2zOgBdra4isDP/vHDMpq8JbXToTvn3acNWyzvD4MFSUDBUT4mYEc/wxBqtBssXddCLwsMqBbCPGbl61Lo5tii90ZdckLFsyHyUWun0QvO9II5iPAquUFDyG3nSjZwgGg8XuO5owB4W0yeCWls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711365007; c=relaxed/simple;
-	bh=9ApsCGJ3JQMoGoKsprcommpaWFgc4kT+l13mpT5eszs=;
+	s=arc-20240116; t=1711365000; c=relaxed/simple;
+	bh=hnsfiSsJKInr4JylyhW7C8X4DcUP5JxEtf5koT8x+g4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=neBGUkZ9EMnpM/SiYBSDvKPla0G9OWi9UEBa/F3qAibOJRxspqyM/q9UtuqT+E3SAH87NnRVM8ipf+q94kqLBVxXEF47eKkdR+Wxy83LksNarR20VitwjgqhNXPsU3dYPdMKEcxRO0cijzY52bvGCcD3hcfSOJ6P/1ZkFviAess=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CNKvZ5h8; arc=none smtp.client-ip=209.85.218.54
+	 In-Reply-To:To:Cc; b=eLByP7zAPbWk7hnv7rXu3EC8yYAPDJE7ngl9cNUgNIJM4I7MQ+2V/iEf00uG0dqLIBV+6SZt+PBieugZ1ep1v8PxeycCz2av69F57j1biJMzxzr/Fx5q1BdDbjQPQFLBzse1M2x7baqgDzkmsUwR3Ka60A6bkcWy5SEIgnmeoyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OqZzTyzl; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CNKvZ5h8"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a46ba938de0so568592466b.3
-        for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 04:10:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OqZzTyzl"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-56c199469f3so501510a12.2
+        for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 04:09:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711365003; x=1711969803; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1711364997; x=1711969797; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Zhi0l8jMdnqWTUNp+ZpeHf7cFEI0rGOrDmm8MkWajPw=;
-        b=CNKvZ5h8SgWeW+7kRw6k0uvvpJzHYGxUBC/jSOu6I7reTlnI1NG+Sc3+zUp/57oFB/
-         sNPWpVYWmmRwiksAWRfZ66fTXNQLM5aMzOILhqGe0LfLxB7yHoa9GaZDL4rzZ9D4NcgT
-         vgktbqDSEhlk4ZUWVtHDyMlX9Cw2QJkdX5ETQ7zoOyVXKkOpGcFnfJl1v90lmpEQzhzO
-         jmUkySKzxOOB1yPx5hVy9m2Q7YzcGOwLtyLGgW3AvClr5Ul+jRpKhYwVIoMV61QhcIUj
-         Vkv6ytoQHMFPSBnTgOYSwI4ngTVIekxVQX8+A0og+D5/biHzkKRgpOwQ3vgL3IHqPGB/
-         dRIQ==
+        bh=ZkiDF6CyURpbjnTnlPpjl05T1hEzDiWol01BVqEjgn0=;
+        b=OqZzTyzlPSDtrzS3A8kWEfX6hk/0mDanMqjsH2PiWAy7ljlnwKtWbRD4ZasB+gcKy5
+         kewhrY1qAlOsG4PNv7yAtPft68jdP0vDR/Zncm+mbpgLtbq7lhTaCJbNIm22ONOM9Sdk
+         TQb0sNTBrYZK4UHvVLxLLRpjPp0PStybYNaG86PXgTIdbCk+pLhCAfAXDQnSo6131hU+
+         dZT9Up7MeMl/UdE93KLsJ8KqJNwDEqSbAjZNy9U/4LlivVkzJ/Sq+2wXKNUQNtO0kh55
+         s1uoiSOjh8UHo/h+iSPLruL18ZrMMlkPfdQmilYIG4IDJSCCajGwXwKH6vCDqkNxvfvA
+         nXdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711365003; x=1711969803;
+        d=1e100.net; s=20230601; t=1711364997; x=1711969797;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Zhi0l8jMdnqWTUNp+ZpeHf7cFEI0rGOrDmm8MkWajPw=;
-        b=TZkWclcvMZ3tz+2JpK2NTNz4PcsEDW6ujc57AItZHnvVtqPfi+fC+aPnPyJm1SVeDB
-         Z8jjeaIXAkMjqQ6soCstSQH8RMNGW3L50kyaiihEDuTGILwmkas12/daB/UofWs/BBtZ
-         bUH3YKoJS5c1vcug9LJessA0s+fFbHk5MG2DIpQ2/JmHhTr1vuEnnud0KPoipdn+PTKM
-         mDQ0MHrYZzPuPETxjPLR5MgbC6rfaP7xDQrmFTt0SL3uKfBGTct1efm/21UN5u2iBqmy
-         RRqso8XmkfixGs8AdM2g0/0eQXmGhV4qxDeeAB4TagYGhzLGobdZTM5HANSQKJvq2iEV
-         /sOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDRUhvxm5KQiVCMhB57EYyh8QB3FUfvgnAdvfczsVczOlytRTv9/E9QQSSZzyYeLVBasha32Q8geCSmmXpQVqDiCQeH2cUsqSb
-X-Gm-Message-State: AOJu0YwkDUL7jJtUU37u0aB/rqd7RBkHSgnqiVMuGgXvVcz3p1NGVr5y
-	mRum6sFV5hIP8xVnZPucl8KZdFMs+KsNVrjwKkQNxAofBOxLJccEwdEk6rT7Y48=
-X-Google-Smtp-Source: AGHT+IG3HZvEbegs5EIH73dbUnz5W4NvmMEAxSPKeO/1Yxlvv33KUz5P1TYnaBayQ8mJzM6wZHstXw==
-X-Received: by 2002:a17:907:6d0b:b0:a49:7078:582a with SMTP id sa11-20020a1709076d0b00b00a497078582amr2478783ejc.35.1711365002522;
-        Mon, 25 Mar 2024 04:10:02 -0700 (PDT)
+        bh=ZkiDF6CyURpbjnTnlPpjl05T1hEzDiWol01BVqEjgn0=;
+        b=kt/y3/7SkqiTc7sqTdcOTcjNp5zvr0ppn9usQXn24rC6JDh7pILDKoGIsg4VKCUHCa
+         lL6XrSbNKbBT1my+Shqbb0YqUyDvyvyVJJATdnWXg+RvGRwJFTWcUZs8PQ6s8gN5LtpC
+         RM2S7r8dFmV10esJOgIV1EvLEAjr6rNK0O8OiCESWoaTTHPIo2yK/LVyz49lAuz1wAs8
+         qQDd01fJ2e8RilMI+0UnrQcVfhtvakv/4QlDykrS03XNA3NuR1wphlECGrYLtI02zG2Z
+         UE3rCns4FcejzqfZ4HNFqIzyCyLABtAxDvt8tPn37xEoAkaFnbcAwacc2gP0EgDZ4BEi
+         /1yw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3Q8yrwYVhyUogHmJNaMyy2dgz146DwGltNc9oPQUZE/jJCBIsugtnqeHKUVx5C0hRSGiRjrOsywPI06PlXm9dfrohWRciNJ+K
+X-Gm-Message-State: AOJu0YxcDsZ/yUwdTSjmZPq4GO7wztovYvDC2ieuTE48NQyC8i/gLmBv
+	erH02MdjFVNWSONAc5D5ynapKMrjHn9rqx6/ZGMSVzJwqmnKidqa5VZFEeir2bo=
+X-Google-Smtp-Source: AGHT+IH9TSrIC7QtJmG03uKPHI/ELP1eaER4qsSJYwbOZWNokRrIEfgYq/tcfovPtsZPYh42Ua+sNg==
+X-Received: by 2002:a17:906:94e:b0:a46:b4c7:341c with SMTP id j14-20020a170906094e00b00a46b4c7341cmr4381705ejd.58.1711364996940;
+        Mon, 25 Mar 2024 04:09:56 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id bw26-20020a170906c1da00b00a4650ec48d0sm2972367ejb.140.2024.03.25.04.10.01
+        by smtp.gmail.com with ESMTPSA id bw26-20020a170906c1da00b00a4650ec48d0sm2972367ejb.140.2024.03.25.04.09.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Mar 2024 04:10:02 -0700 (PDT)
+        Mon, 25 Mar 2024 04:09:56 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 25 Mar 2024 12:09:53 +0100
-Subject: [PATCH v11 7/7] arm64: dts: amlogic: meson-g12b-bananapi-cm4: add
- support for MNT Reform2 with CM4 adaper
+Date: Mon, 25 Mar 2024 12:09:49 +0100
+Subject: [PATCH v11 3/7] clk: meson: g12a: make VCLK2 and ENCL clock path
+ configurable by CCF
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240325-amlogic-v6-4-upstream-dsi-ccf-vim3-v11-7-04f55de44604@linaro.org>
+Message-Id: <20240325-amlogic-v6-4-upstream-dsi-ccf-vim3-v11-3-04f55de44604@linaro.org>
 References: <20240325-amlogic-v6-4-upstream-dsi-ccf-vim3-v11-0-04f55de44604@linaro.org>
 In-Reply-To: <20240325-amlogic-v6-4-upstream-dsi-ccf-vim3-v11-0-04f55de44604@linaro.org>
 To: Rob Herring <robh@kernel.org>, 
@@ -82,438 +82,302 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- "Lukas F. Hartmann" <lukas@mntre.com>
+ Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9593;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8195;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=9ApsCGJ3JQMoGoKsprcommpaWFgc4kT+l13mpT5eszs=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmAVt+xJTaPofWk/WAXXJr0SUIjdXEb5furHzzV4f0
- xkGdKaOJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZgFbfgAKCRB33NvayMhJ0fiqEA
- DLMc8JY8FSmQe0SXFoZIkLsRi1prBPzAgTClokzx9meFBcjY6g/7nmjsCW0k0rRAWPQwvuwe7uXJXe
- vXOqP3YRYLDRj2E46b3+kbadw/vAfrdx1WYM4NvA+WhAkJiD+Bbam6Vo38GfLmp6pBxHAhHqcNUbur
- iEwTr+sizaodcCCbbiUt7Isu5gka19s3G2SHS6zpZVSsktI8M86Ve9cYK9PNpPYoDJVR3IWc+W79nB
- SC/mxxQGRTWGm7CbbiHJ9t9W5VP3/IY5kPiQuTBnyWozwiPi3hbozd/s1HKLSbu3a7MkFbM4D+Akpu
- WOBxCewu4R6xVZn9tDJCGqXwi3NNglnMhOHqC6xPrhU1JKPD/3ziv0c/cWA+lU9EE2vEZDqBYWXB3O
- 257fuhOnS2Oa4a+7vPYp1lzQJBjBWRTIQJkoAZOELdLgjlp6r7I+jbA+6wGAZRWOFvMY46OlWCrRMl
- k442mN91fxhFHUQLzM/+R7O3iWX0wD1L/2E3ThKW6n6G710i+yYhgGguOPUZhw3Ijcs2TidGD7cllW
- fX3Z8j+1xjBfW1i1mze+GI+TCiQCwvyrz6V2Pjsm/RtSiakfNSsNTOaBvqt7qDgEIRuWkWlEqDigto
- Bffp4gf8iESEwbbKB9hp/gD0hR0LIoYuDn6oXr/LeozhxY1nz6cP92+ukO4Q==
+ bh=hnsfiSsJKInr4JylyhW7C8X4DcUP5JxEtf5koT8x+g4=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmAVt9/A/6HByhZ4Me2YdPSbrWA7xwKr5A8fgQaIsI
+ 3xfHXWKJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZgFbfQAKCRB33NvayMhJ0eknEA
+ DL1fA1oGxXTuOcm2I7RkRz5exbQYM/tbnx0isdM53QjxzMylI8nV5lKJoIN3/hgV/Nr9VR48YeDmw0
+ VoYtLei4XZKjoqZks4k/zbr6IYyvHFlDep/eNtkqKMEQQD7efb6PWikhkcIWqghdWbhpJ0X+2LdoS4
+ 7pfXjiSZvDUJ1p71+ySAkSStVcvFfUI+aI1+2RMgf+OoJQgGDc6M2BhzS8N/aSgN78rDGwKAFV8gQM
+ XmHLvKIcK+G+qVNvTiMiC35TqUejT6J4olAm9euh9RM6K36GkIfL3p+sisaxwpTV4H+2YPYcQRbaoT
+ 1j0NBXfF6GVtnuf3ovWOcAY94lKnYLGPZwp49VqmauVrEd6PCpoyd/ToQR3udo4o9kIq0v90oQq5pS
+ ZX0sZ5zgeelWGWi5H+shGtj9zdMUHNJSoXxf/I2t0LySBkASh2iKMB+2CPjJsNzrXuTkOd/QTGiLq+
+ J84JEyELVcwD/JYiP4Nz3Fex7hURDQ6hEjAFP4DbdZqHeoL4S5GzMrsv1kyhzn8/n+N4iy2mOl8vT2
+ N+Av03kUON/yNrsYSZmDTG+FmC2iQ7CkUuQqOqDAsH0rgtBMz9hT09kMosRaB0jztO0l9pYFr3hBV0
+ 2Tl/RKBODngA0k6xakLKjJyIeygzVvaehfkP1tAGVg+3RbjdFDzujeUQdxbw==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-This adds a basic devicetree for the MNT Reform2 DIY laptop when using a
-CM4 adapter and a BPI-CM4 module.
+In order to setup the DSI clock, let's make the unused VCLK2 clock path
+configuration via CCF.
 
-Co-developed-by: Lukas F. Hartmann <lukas@mntre.com>
+The nocache option is removed from following clocks:
+- vclk2_sel
+- vclk2_input
+- vclk2_div
+- vclk2
+- vclk_div1
+- vclk2_div2_en
+- vclk2_div4_en
+- vclk2_div6_en
+- vclk2_div12_en
+- vclk2_div2
+- vclk2_div4
+- vclk2_div6
+- vclk2_div12
+- cts_encl_sel
+
+vclk2 and vclk2_div uses the newly introduced vclk regmap driver
+to handle the enable and reset bits.
+
+In order to set a rate on cts_encl via the vclk2 clock path,
+the NO_REPARENT flag is set on cts_encl_sel & vclk2_sel in order
+to keep CCF from selection a parent.
+The parents of cts_encl_sel & vclk2_sel are expected to be defined
+in DT or manually set by the display driver at some point.
+
+The following clock scheme is to be used for DSI:
+
+xtal
+\_ gp0_pll_dco
+   \_ gp0_pll
+      |- vclk2_sel
+      |  \_ vclk2_input
+      |     \_ vclk2_div
+      |        \_ vclk2
+      |           \_ vclk2_div1
+      |              \_ cts_encl_sel
+      |                 \_ cts_encl	-> to VPU LCD Encoder
+      |- mipi_dsi_pxclk_sel
+      \_ mipi_dsi_pxclk_div
+         \_ mipi_dsi_pxclk		-> to DSI controller
+
+The mipi_dsi_pxclk_div is set as bypass with a single /1 entry in div_table
+in order to use the same GP0 for mipi_dsi_pxclk and vclk2_input.
+
+The SET_RATE_PARENT is only set on the mipi_dsi_pxclk_sel clock so the
+DSI bitclock is the reference base clock to calculate the vclk2_div value
+when pixel clock is set on the cts_encl endpoint.
+
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- arch/arm64/boot/dts/amlogic/Makefile               |   1 +
- .../meson-g12b-bananapi-cm4-mnt-reform2.dts        | 384 +++++++++++++++++++++
- 2 files changed, 385 insertions(+)
+ drivers/clk/meson/Kconfig |  1 +
+ drivers/clk/meson/g12a.c  | 72 ++++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 53 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index bf723bec3e15..a89491bb72e8 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -18,6 +18,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-g12b-a311d-bananapi-m2s.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-a311d-khadas-vim3.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-a311d-khadas-vim3-ts050.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-bananapi-cm4-cm4io.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-g12b-bananapi-cm4-mnt-reform2.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-gsking-x.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-gtking-pro.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12b-gtking.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dts
-new file mode 100644
-index 000000000000..003efed529ba
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dts
-@@ -0,0 +1,384 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
-+ * Copyright 2023 MNT Research GmbH
-+ */
-+
-+/dts-v1/;
-+
-+#include "meson-g12b-bananapi-cm4.dtsi"
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
-+
-+/ {
-+	model = "MNT Reform 2 with BPI-CM4 Module";
-+	compatible = "mntre,reform2-cm4", "bananapi,bpi-cm4", "amlogic,a311d", "amlogic,g12b";
-+	chassis-type = "laptop";
-+
-+	aliases {
-+		ethernet0 = &ethmac;
-+		i2c0 = &i2c1;
-+		i2c1 = &i2c3;
-+	};
-+
-+	hdmi_connector: hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_tx_tmds_out>;
-+			};
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-blue {
-+			color = <LED_COLOR_ID_BLUE>;
-+			function = LED_FUNCTION_STATUS;
-+			gpios = <&gpio_ao GPIOAO_7 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led-green {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_STATUS;
-+			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	sound {
-+		compatible = "amlogic,axg-sound-card";
-+		model = "MNT-REFORM2-BPI-CM4";
-+		audio-widgets = "Headphone", "Headphone Jack",
-+				"Speaker", "External Speaker",
-+				"Microphone", "Mic Jack";
-+		audio-aux-devs = <&tdmout_a>, <&tdmout_b>, <&tdmin_b>;
-+		audio-routing =	"TDMOUT_A IN 0", "FRDDR_A OUT 0",
-+				"TDMOUT_A IN 1", "FRDDR_B OUT 0",
-+				"TDMOUT_A IN 2", "FRDDR_C OUT 0",
-+				"TDM_A Playback", "TDMOUT_A OUT",
-+				"TDMOUT_B IN 0", "FRDDR_A OUT 1",
-+				"TDMOUT_B IN 1", "FRDDR_B OUT 1",
-+				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
-+				"TDM_B Playback", "TDMOUT_B OUT",
-+				"TDMIN_B IN 1", "TDM_B Capture",
-+				"TDMIN_B IN 4", "TDM_B Loopback",
-+				"TODDR_A IN 1", "TDMIN_B OUT",
-+				"TODDR_B IN 1", "TDMIN_B OUT",
-+				"TODDR_C IN 1", "TDMIN_B OUT",
-+				"Headphone Jack", "HP_L",
-+				"Headphone Jack", "HP_R",
-+				"External Speaker", "SPK_LP",
-+				"External Speaker", "SPK_LN",
-+				"External Speaker", "SPK_RP",
-+				"External Speaker", "SPK_RN",
-+				"LINPUT1", "Mic Jack",
-+				"Mic Jack", "MICB";
-+
-+		assigned-clocks = <&clkc CLKID_MPLL2>,
-+					<&clkc CLKID_MPLL0>,
-+					<&clkc CLKID_MPLL1>;
-+		assigned-clock-parents = <0>, <0>, <0>;
-+		assigned-clock-rates = <294912000>,
-+				       <270950400>,
-+				       <393216000>;
-+
-+		dai-link-0 {
-+			sound-dai = <&frddr_a>;
-+		};
-+
-+		dai-link-1 {
-+			sound-dai = <&frddr_b>;
-+		};
-+
-+		dai-link-2 {
-+			sound-dai = <&frddr_c>;
-+		};
-+
-+		dai-link-3 {
-+			sound-dai = <&toddr_a>;
-+		};
-+
-+		dai-link-4 {
-+			sound-dai = <&toddr_b>;
-+		};
-+
-+		dai-link-5 {
-+			sound-dai = <&toddr_c>;
-+		};
-+
-+		/* 8ch hdmi interface */
-+		dai-link-6 {
-+			sound-dai = <&tdmif_a>;
-+			dai-format = "i2s";
-+			dai-tdm-slot-tx-mask-0 = <1 1>;
-+			dai-tdm-slot-tx-mask-1 = <1 1>;
-+			dai-tdm-slot-tx-mask-2 = <1 1>;
-+			dai-tdm-slot-tx-mask-3 = <1 1>;
-+			mclk-fs = <256>;
-+
-+			codec {
-+				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_A>;
-+			};
-+		};
-+
-+		/* Analog Audio */
-+		dai-link-7 {
-+			sound-dai = <&tdmif_b>;
-+			dai-format = "i2s";
-+			dai-tdm-slot-tx-mask-0 = <1 1>;
-+			mclk-fs = <256>;
-+
-+			codec {
-+				sound-dai = <&wm8960>;
-+			};
-+		};
-+
-+		/* hdmi glue */
-+		dai-link-8 {
-+			sound-dai = <&tohdmitx TOHDMITX_I2S_OUT>;
-+
-+			codec {
-+				sound-dai = <&hdmi_tx>;
-+			};
-+		};
-+	};
-+
-+	reg_main_1v8: regulator-main-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1V8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&reg_main_3v3>;
-+	};
-+
-+	reg_main_1v2: regulator-main-1v2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1V2";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		vin-supply = <&reg_main_5v>;
-+	};
-+
-+	reg_main_3v3: regulator-main-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	reg_main_5v: regulator-main-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+	};
-+
-+	reg_main_usb: regulator-main-usb {
-+		compatible = "regulator-fixed";
-+		regulator-name = "USB_PWR";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&reg_main_5v>;
-+	};
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm_AO_ab 0 10000 0>;
-+		power-supply = <&reg_main_usb>;
-+		enable-gpios = <&gpio 58 GPIO_ACTIVE_HIGH>;
-+		brightness-levels = <0 32 64 128 160 200 255>;
-+		default-brightness-level = <6>;
-+	};
-+
-+	panel {
-+		compatible = "innolux,n125hce-gn1";
-+		power-supply = <&reg_main_3v3>;
-+		backlight = <&backlight>;
-+		no-hpd;
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&edp_bridge_out>;
-+			};
-+		};
-+	};
-+
-+	clock_12288: clock_12288 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12288000>;
-+	};
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 8a9823789fa3..59a40a49f8e1 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -144,6 +144,7 @@ config COMMON_CLK_G12A
+ 	select COMMON_CLK_MESON_EE_CLKC
+ 	select COMMON_CLK_MESON_CPU_DYNDIV
+ 	select COMMON_CLK_MESON_VID_PLL_DIV
++	select COMMON_CLK_MESON_VCLK
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for the clock controller on Amlogic S905D2, S905X2 and S905Y2
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 90f4c6103014..083882e53b65 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -22,6 +22,7 @@
+ #include "clk-regmap.h"
+ #include "clk-cpu-dyndiv.h"
+ #include "vid-pll-div.h"
++#include "vclk.h"
+ #include "meson-eeclk.h"
+ #include "g12a.h"
+ 
+@@ -3165,7 +3166,7 @@ static struct clk_regmap g12a_vclk2_sel = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = g12a_vclk_parent_hws,
+ 		.num_parents = ARRAY_SIZE(g12a_vclk_parent_hws),
+-		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
++		.flags = CLK_SET_RATE_NO_REPARENT,
+ 	},
+ };
+ 
+@@ -3193,7 +3194,6 @@ static struct clk_regmap g12a_vclk2_input = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_sel.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
+@@ -3215,19 +3215,32 @@ static struct clk_regmap g12a_vclk_div = {
+ };
+ 
+ static struct clk_regmap g12a_vclk2_div = {
+-	.data = &(struct clk_regmap_div_data){
+-		.offset = HHI_VIID_CLK_DIV,
+-		.shift = 0,
+-		.width = 8,
++	.data = &(struct meson_vclk_div_data){
++		.div = {
++			.reg_off = HHI_VIID_CLK_DIV,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.enable = {
++			.reg_off = HHI_VIID_CLK_DIV,
++			.shift   = 16,
++			.width   = 1,
++		},
++		.reset = {
++			.reg_off = HHI_VIID_CLK_DIV,
++			.shift   = 17,
++			.width   = 1,
++		},
++		.flags = CLK_DIVIDER_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "vclk2_div",
+-		.ops = &clk_regmap_divider_ops,
++		.ops = &meson_vclk_div_ops,
+ 		.parent_hws = (const struct clk_hw *[]) {
+ 			&g12a_vclk2_input.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_GET_RATE_NOCACHE,
++		.flags = CLK_SET_RATE_GATE,
+ 	},
+ };
+ 
+@@ -3246,16 +3259,24 @@ static struct clk_regmap g12a_vclk = {
+ };
+ 
+ static struct clk_regmap g12a_vclk2 = {
+-	.data = &(struct clk_regmap_gate_data){
+-		.offset = HHI_VIID_CLK_CNTL,
+-		.bit_idx = 19,
++	.data = &(struct meson_vclk_gate_data){
++		.enable = {
++			.reg_off = HHI_VIID_CLK_CNTL,
++			.shift   = 19,
++			.width   = 1,
++		},
++		.reset = {
++			.reg_off = HHI_VIID_CLK_CNTL,
++			.shift   = 15,
++			.width   = 1,
++		},
+ 	},
+ 	.hw.init = &(struct clk_init_data) {
+ 		.name = "vclk2",
+-		.ops = &clk_regmap_gate_ops,
++		.ops = &meson_vclk_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3339,7 +3360,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3353,7 +3374,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3367,7 +3388,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3381,7 +3402,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3395,7 +3416,7 @@ static struct clk_regmap g12a_vclk2_div12_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3461,6 +3482,7 @@ static struct clk_fixed_factor g12a_vclk2_div2 = {
+ 			&g12a_vclk2_div2_en.hw
+ 		},
+ 		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3474,6 +3496,7 @@ static struct clk_fixed_factor g12a_vclk2_div4 = {
+ 			&g12a_vclk2_div4_en.hw
+ 		},
+ 		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3487,6 +3510,7 @@ static struct clk_fixed_factor g12a_vclk2_div6 = {
+ 			&g12a_vclk2_div6_en.hw
+ 		},
+ 		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3500,6 +3524,7 @@ static struct clk_fixed_factor g12a_vclk2_div12 = {
+ 			&g12a_vclk2_div12_en.hw
+ 		},
+ 		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -3561,7 +3586,7 @@ static struct clk_regmap g12a_cts_encl_sel = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = g12a_cts_parent_hws,
+ 		.num_parents = ARRAY_SIZE(g12a_cts_parent_hws),
+-		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
+ 	},
+ };
+ 
+@@ -3717,15 +3742,22 @@ static struct clk_regmap g12a_mipi_dsi_pxclk_sel = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = g12a_mipi_dsi_pxclk_parent_hws,
+ 		.num_parents = ARRAY_SIZE(g12a_mipi_dsi_pxclk_parent_hws),
+-		.flags = CLK_SET_RATE_NO_REPARENT,
++		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
++/* Force as bypass by forcing a single /1 table entry, and not rely of boot value */
++static const struct clk_div_table g12a_mipi_dsi_pxclk_div_table[] = {
++	{ .val = 0, .div = 1 },
++	{ /* sentinel */ },
 +};
 +
-+&mipi_analog_dphy {
-+	status = "okay";
-+};
-+
-+&mipi_dphy {
-+	status = "okay";
-+};
-+
-+&mipi_dsi {
-+	status = "okay";
-+
-+	assigned-clocks = <&clkc CLKID_GP0_PLL>,
-+			  <&clkc CLKID_MIPI_DSI_PXCLK_SEL>,
-+			  <&clkc CLKID_MIPI_DSI_PXCLK>,
-+			  <&clkc CLKID_CTS_ENCL_SEL>,
-+			  <&clkc CLKID_VCLK2_SEL>;
-+	assigned-clock-parents = <0>,
-+				 <&clkc CLKID_GP0_PLL>,
-+				 <0>,
-+				 <&clkc CLKID_VCLK2_DIV1>,
-+				 <&clkc CLKID_GP0_PLL>;
-+	assigned-clock-rates = <936000000>,
-+			       <0>,
-+			       <936000000>,
-+			       <0>,
-+			       <0>;
-+};
-+
-+&mipi_dsi_panel_port {
-+	mipi_dsi_out: endpoint {
-+		remote-endpoint = <&edp_bridge_in>;
-+	};
-+};
-+
-+&cecb_AO {
-+	status = "okay";
-+};
-+
-+&ethmac {
-+	status = "okay";
-+};
-+
-+&hdmi_tx {
-+	status = "okay";
-+};
-+
-+&hdmi_tx_tmds_port {
-+	hdmi_tx_tmds_out: endpoint {
-+		remote-endpoint = <&hdmi_connector_in>;
-+	};
-+};
-+
-+&pwm_AO_ab {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm_ao_a_pins>;
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+};
-+
-+&i2c3 {
-+	status = "okay";
-+
-+	edp_bridge: bridge@2c {
-+		compatible = "ti,sn65dsi86";
-+		reg = <0x2c>;
-+		enable-gpios = <&gpio GPIOX_10 GPIO_ACTIVE_HIGH>; // PIN_24 / GPIO8
-+		vccio-supply = <&reg_main_1v8>;
-+		vpll-supply = <&reg_main_1v8>;
-+		vcca-supply = <&reg_main_1v2>;
-+		vcc-supply = <&reg_main_1v2>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				edp_bridge_in: endpoint {
-+					remote-endpoint = <&mipi_dsi_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				edp_bridge_out: endpoint {
-+					remote-endpoint = <&panel_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+
-+	wm8960: codec@1a {
-+		compatible = "wlf,wm8960";
-+		reg = <0x1a>;
-+		clocks = <&clock_12288>;
-+		clock-names = "mclk";
-+		#sound-dai-cells = <0>;
-+		wlf,shared-lrclk;
-+	};
-+
-+	rtc@68 {
-+		compatible = "nxp,pcf8523";
-+		reg = <0x68>;
-+	};
-+};
-+
-+&pcie {
-+	status = "okay";
-+};
-+
-+&sd_emmc_b {
-+	status = "okay";
-+};
-+
-+&tdmif_a {
-+	status = "okay";
-+};
-+
-+&tdmout_a {
-+	status = "okay";
-+};
-+
-+&tdmif_b {
-+	pinctrl-0 = <&tdm_b_dout0_pins>, <&tdm_b_fs_pins>, <&tdm_b_sclk_pins>, <&tdm_b_din1_pins>;
-+	pinctrl-names = "default";
-+
-+	assigned-clocks = <&clkc_audio AUD_CLKID_TDM_SCLK_PAD1>,
-+			  <&clkc_audio AUD_CLKID_TDM_LRCLK_PAD1>;
-+	assigned-clock-parents = <&clkc_audio AUD_CLKID_MST_B_SCLK>,
-+				 <&clkc_audio AUD_CLKID_MST_B_LRCLK>;
-+	assigned-clock-rates = <0>, <0>;
-+};
-+
-+&tdmin_b {
-+	status = "okay";
-+};
-+
-+&toddr_a {
-+	status = "okay";
-+};
-+
-+&toddr_b {
-+	status = "okay";
-+};
-+
-+&toddr_c {
-+	status = "okay";
-+};
-+
-+&tohdmitx {
-+	status = "okay";
-+};
-+
-+&usb {
-+	dr_mode = "host";
-+
-+	status = "okay";
-+};
+ static struct clk_regmap g12a_mipi_dsi_pxclk_div = {
+ 	.data = &(struct clk_regmap_div_data){
+ 		.offset = HHI_MIPIDSI_PHY_CLK_CNTL,
+ 		.shift = 0,
+ 		.width = 7,
++		.table = g12a_mipi_dsi_pxclk_div_table,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mipi_dsi_pxclk_div",
 
 -- 
 2.34.1
