@@ -1,156 +1,115 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0C113FF5
-	for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 19:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540E812B77;
+	Mon, 25 Mar 2024 19:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711394754; cv=none; b=ct9SvWg+ZdEd6xWiwk11aYZ1yYNxuHkZwyp1/Egse1ZEGn9VJS+Gt0GjH2ThJfEHU7s5aAgztU5O198mTagPHqkKV7eNadSf2Og15p4t/mLJIrVSz7Rbvw8RyCB7vg2n3tSXjsbpNI7jfL5MHvBg6/VbjZdw3SJjw43Yd3hicuA=
+	t=1711395375; cv=none; b=FgSoL5qwIaT+nOCdLIFIneptO6506rL5GX4LVLPIm95C2hnlUGVfc7cavMMRTHLkIIGm3iZi5wTRSbC2zyeEpsKXvLYhwixKuyqDxu7aja5TrMJPyNPyx+Q4akMizYgBq0IzDRUBVy/rNky0MQ9RGU0Da9kWKmKmJjQDhCPSujc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711394754; c=relaxed/simple;
-	bh=5DbOdJAImQwBDGYJfLIXIMetxlpVfavR4QpR0eimEmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kjUJaHGqpZq+2SOsXEOiwWq7ytQhueZqJNbuPsYOtWHpgCtCrqh4q3Pik7js6xXDFc/Qxw/nN1uzYMBXmrydyjtkgm9yye82PYnwjWAzPvd//WNE6ertuuNkSlZThX12T8tpnEr7IdF3z3WlGa+6rzUV4rqo1XOpaQxPWsZL/No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L/7cYmFu; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711395375; c=relaxed/simple;
+	bh=ns2j/1xbq6BTPWqUJG3b2GwBYjyqRHljKR5mnkkMGU8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RR1+AY3EQCohRZgfNgXNzr0hziRh/H2LTPkc72ICxw0ehY7ukUlyan8lcinpWyzK6lkU2BvswOGOC/g23rG6ksUSVXp+p+Mj48jA9xUtSI+//RG5XUV0BZnLgUipL313E5f3MbkrCg1HR/ZJsNyC/1WL5OX2lyIxyjVuao9ITkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B697wdui; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L/7cYmFu"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-56899d9bf52so5984846a12.2
-        for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 12:25:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711394751; x=1711999551; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhzd9oDRoCpoYTYiG4L0KvJM6D9VmTbt9+sBGbPl95g=;
-        b=L/7cYmFuNINQ6/Ux4o+Pqz4tw36r2MyyDArPIJXu8uGDWUIzcTr6PX/dYVaMawjO/6
-         qMorpZL0P5+FXjDYmqeH5jFKeLFl1RPJ4RIPflMeuIbASZc/4YwlktHbxm5MJVJoMOvO
-         lN0IlfN9+twmx/yAYJjb3arfBdmRGS5pjHSo1LVPwxh6fIihbMW3RYTLKiQRxGsjdS+Y
-         3+rhX+3Bw7+joZLWIfBYFKWRva3RkDDr/wWgtjqaYuqg/Uku0RvdHMAqJWTYbXHc9QQO
-         u+4h9b6azfBgDuf/X+jQqzo1guZqqnl575oReDp9F0jIX36QYw26Yd261BWqynh8y1+W
-         z92w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711394751; x=1711999551;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zhzd9oDRoCpoYTYiG4L0KvJM6D9VmTbt9+sBGbPl95g=;
-        b=KI1XLB1ZihVmjCrZBikYEU+QqL88zeffgzCYkr2lYEXYnDQ1uz8ZYDjH7+2FUAzXmu
-         RV1ynLhvj1chRdMrsmfGUoF1F5WuL3UbO3xX3xLoeM2ZrgYDOoqIhzAzjvSSggrFXOkl
-         jYM+ISAFH074+8fMVxssZfsTcNUQGjRdSyRz5DJYwziYtea88kcNFZBlYJ7DOVIm9RP6
-         cnIAUwst/HRJtmu5t8Kvb3k11m/2qOUYE8HG9djfbCFK6C5J07AYqj1tXK8zEhn9N9x5
-         wXpt97VRonpy38GGPASAFB4KJ4bmBDTRO6aslRtOiVeq8z+rWP9YRTAgqpdr218UiqFm
-         vctw==
-X-Gm-Message-State: AOJu0YwtoC5GHgmIBx3NNzy/8BDY40qsSmIc8r0ORMrE2nPyfGj1AB43
-	QbD/wMGzRb5aShL08FDiajX4on2VSfOatFy7HvEHnx8aHs6Odr83etvLNQUHXVM=
-X-Google-Smtp-Source: AGHT+IGaqEwapwXOwuuWbSZJHdyAehHC7lud1KUaHHtdE9INmIa0bsatP/OKlSb+Xk/tqkfY5PNvpQ==
-X-Received: by 2002:a50:99d8:0:b0:568:3378:8fd4 with SMTP id n24-20020a5099d8000000b0056833788fd4mr6233029edb.11.1711394750684;
-        Mon, 25 Mar 2024 12:25:50 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.44])
-        by smtp.gmail.com with ESMTPSA id p24-20020a05640210d800b0056baacff45csm3250222edu.69.2024.03.25.12.25.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Mar 2024 12:25:50 -0700 (PDT)
-Message-ID: <d3770f5e-f3cc-40fd-a211-b229be46d974@linaro.org>
-Date: Mon, 25 Mar 2024 20:25:48 +0100
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B697wdui"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1711395371;
+	bh=ns2j/1xbq6BTPWqUJG3b2GwBYjyqRHljKR5mnkkMGU8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=B697wduiQcwgu9tNrSJ7sTGIjT+DrQVFCSufUafFKE2l1bNs/SwCIOwGpK2q5XNip
+	 9b25E+JFedcQ40kDC4v94I1hmIt74wohUdwEzrdmAHCbiNG9cTTbgmHtzNSBASHHYz
+	 7jGaiXmdQN+r92OptRwr/6U2zTnbXHCf4uBFBNZFwgueG21yfhClv1hU9EBcr6YUuO
+	 hlb1uK3eGr51f5Q2gUAFwbvjeWzEjZmYXBbAsOLcO7yUOkvUxQI1Yg+aPXE/qm8xMQ
+	 0zdfwS/6/vJ5lrFb1rhcMyYNA+0mNYWvJfpcpWT9NnRt7iLsbIW1w7Rf0ksA5Zfinr
+	 DWW5uQpqEXEnA==
+Received: from jupiter.universe (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 66AC83782082;
+	Mon, 25 Mar 2024 19:36:11 +0000 (UTC)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id 0F4364800CD; Mon, 25 Mar 2024 20:36:11 +0100 (CET)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Cc: Elaine Zhang <zhangqing@rock-chips.com>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	huangtao@rock-chips.com,
+	andy.yan@rock-chips.com,
+	Michal Tomek <mtdev79b@gmail.com>,
+	Ilya K <me@0upti.me>,
+	Chad LeClair <leclair@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	kernel@collabora.com
+Subject: [PATCH v9 0/7] rockchip: clk: add GATE_LINK support
+Date: Mon, 25 Mar 2024 20:33:31 +0100
+Message-ID: <20240325193609.237182-1-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/4] clk: imx: add i.MX95 BLK CTL clk driver
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-References: <20240324-imx95-blk-ctl-v5-0-7a706174078a@nxp.com>
- <20240324-imx95-blk-ctl-v5-4-7a706174078a@nxp.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240324-imx95-blk-ctl-v5-4-7a706174078a@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/03/2024 08:52, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
+Hi,
 
-...
+This implements proper GATE_LINK support following the suggestion from Stephen
+Boyd to use clk PM operations by creating MFD dynamically. This required some
+restructuring, since CLK_OF_DECLARE() is called before devices are available.
 
-> +
-> +static const struct of_device_id imx95_bc_of_match[] = {
-> +	{ .compatible = "nxp,imx95-camera-csr", .data = &camblk_dev_data },
-> +	{ .compatible = "nxp,imx95-display-master-csr", },
-> +	{ .compatible = "nxp,imx95-lvds-csr", .data = &lvds_csr_dev_data },
-> +	{ .compatible = "nxp,imx95-display-csr", .data = &dispmix_csr_dev_data },
-> +	{ .compatible = "nxp,imx95-vpu-csr", .data = &vpublk_dev_data },
-> +	{ /* Sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, imx95_bc_of_match);
-> +
-> +static struct platform_driver imx95_bc_driver = {
-> +	.probe = imx95_bc_probe,
-> +	.driver = {
-> +		.name = "imx95-blk-ctl",
-> +		.of_match_table = of_match_ptr(imx95_bc_of_match),
+Apart from improved power consumption, this fixes the runtime errors from the
+pmdomain driver (failed to set idle on domain '%s').
 
-Drop of_match_ptr(), causes warnings. From where did you copy such code?
-Which mainline driver has such pattern?
+Changes since PATCHv8:
+ * https://lore.kernel.org/linux-rockchip/20240126182919.48402-1-sebastian.reichel@collabora.com/
+ * rebased to v6.9-rc1
+ * dropped all merged patches (i.e. all but the last one)
+ * rewrote and split the final patch
+   - should be easier to review
+   - properly calls pm_clk_suspend/pm_clk_resume
+   - now works on Orange Pi
 
-Best regards,
-Krzysztof
+Changes since PATCHv7:
+ * https://lore.kernel.org/all/20231213185114.47565-1-sebastian.reichel@collabora.com/
+ * rebased to v6.8-rc1
+ * Collected Reviewed-by/Acked-by from Krzysztof Kozlowski for DT binding patches
+ * support nr_clk=0 in rockchip_clk_find_max_clk_id() for smatch
+
+Greetings,
+
+-- Sebstian
+
+Sebastian Reichel (7):
+  clk: rockchip: rk3588: drop unused code
+  clk: rockchip: handle missing clocks with -EPROBE_DEFER
+  clk: rockchip: rk3588: register GATE_LINK later
+  clk: rockchip: expose rockchip_clk_set_lookup
+  clk: rockchip: fix error for unknown clocks
+  clk: rockchip: implement linked gate clock support
+  clk: rockchip: rk3588: drop RK3588_LINKED_CLK
+
+ drivers/clk/rockchip/Makefile     |   1 +
+ drivers/clk/rockchip/clk-rk3588.c | 124 +++++++++++++-----------------
+ drivers/clk/rockchip/clk.c        |  71 ++++++++++++++---
+ drivers/clk/rockchip/clk.h        |  37 +++++++++
+ drivers/clk/rockchip/gate-link.c  |  99 ++++++++++++++++++++++++
+ 5 files changed, 251 insertions(+), 81 deletions(-)
+ create mode 100644 drivers/clk/rockchip/gate-link.c
+
+-- 
+2.43.0
 
