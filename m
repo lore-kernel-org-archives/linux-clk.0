@@ -1,75 +1,141 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CEEA50;
-	Mon, 25 Mar 2024 18:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4DB134BD
+	for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 19:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711392269; cv=none; b=F6NB1cy0YVge6SLuU0z8iRX6dKQHYOV5H/Cbw6JS9LNc+1llrLTzoU7R+SItsZ6RIseFu316rUM9U/xXNWvu7YuojjlSlN/phrJEGiV1GFwT6obZy2elHA4j0Zz5SGKcU7srw8jjfcQi0VQPdWvQpoN9se193+Qmxdu+DlOIFPU=
+	t=1711394490; cv=none; b=fRoyn9voYumdSmq1/hoIps/ou3g9Aqi9PE4dNijDSp0J8rCBx81lzFm5O+gjn7Od3HJcBOYYy3mkDmTfJE0G6GyIhUs4HKu161Rru17mwXF3kYr6AoQxLCdeD3DQ6/9ppn3AsbE5HuAuoGksObxVSz1ekFpP5UC0wBCglNey6yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711392269; c=relaxed/simple;
-	bh=KjVbKX/1JnTQ8KZWhFzZU8Xw/T8i1qrk1vDw7Qq3Mws=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=fZGYjc691XA+L7fcBj3/eU/FxqsrwgEhKrpcYUMi+xV+JeKfohti5a9bo7W8ivJ3JiBtb19cvndsfG0HzArQpn8kN990fbEH9S5rMEIoE3k1Lhf/SZmpo99zAfGBemYWejhekwfO7OhIdjLyzFqp/O3bCdll2+9AFULZ6NNmksg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jneoR6nW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711394490; c=relaxed/simple;
+	bh=VYRIildENsaBXvR73Y1yIYCKG+Egv5wNELgCKWLzyUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NgK66cDEKVRM/uM2fGFLxBh5OLFm1nFCr153GOTOw4tzxX3MAPMre5c61G5z42JgIRvUasnWF///VHDFhOfsZsJzOuOPncL3/XRu8PJumU4kxoURLCFWQo9HkXdmG9Ek3BSv5qPHlkW5K2YMVP/zisv1LhK9b6Bkqoi7yKDmAyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aSJvs0IV; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jneoR6nW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2500C433C7;
-	Mon, 25 Mar 2024 18:44:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711392268;
-	bh=KjVbKX/1JnTQ8KZWhFzZU8Xw/T8i1qrk1vDw7Qq3Mws=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jneoR6nWazV1lIQm6ihGRYD3oocADsEu2qxM9y0EsyA6kAnDvfMmppLBIJ1LUb3k7
-	 jzjSgjfPyugq476VFyifljkzRf6k+VPh2BAzjmFyspcCZpnpHbFvmSOUKTejhaihg7
-	 GVAUDewsHvnN6yK8s6HLnaC+EjMcWbj7CfQCVoSpv7IgcVp+BIASR+B0qfAzfVm1la
-	 14glH/x0UdADmnN0I5TupdRs9O8PIWh8QnsPECNkzOdwE3S9Z4PTEgIA4blbWzlTbN
-	 GDf6b1gV67xZZLAQKZFjSTh6GS93DERFuz9FdzjEW58X9FM2JNFI1PkYpO6SHSHSOR
-	 jcTuCGIDJvCLA==
-Message-ID: <6c8ed50511cbcbf07ef165d900c689e2.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aSJvs0IV"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-513d4559fb4so6375344e87.3
+        for <linux-clk@vger.kernel.org>; Mon, 25 Mar 2024 12:21:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711394487; x=1711999287; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=7aRdVW7qgX5bNi5oK/bW7TDpJ2AMVEjlX5d8Z7H+qH8=;
+        b=aSJvs0IV/g9UFspWMEOVVg4EVdV307eripfZBG6FHJ/LgDFtDnyHyer8K+n4WEVe9U
+         En2TzRJszJDRkVRWZ3A8uuh0gDbW2kRz3QL9u+n3RRDJ/5T8Vgn++0ECmWiigB0M2Ldb
+         3fjFMKF1gSCJKPCHJ69cPKcNn46j4WkGOwZqKT/cTWVJKh/sYsMemVBTtocdFK721ty3
+         GLfJ7gl5ThPAJZP4SNhpluP9DmrqvZM/lQrADq25i76Zq6FOErS8vxlHo4BIgTZ41FrQ
+         pHfS67pWHkNOoWUxksCEO0kouXHqzgwj1ItrmFtWyFVx+1jUNoakYyVhmK29n4WRhnGN
+         VMSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711394487; x=1711999287;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7aRdVW7qgX5bNi5oK/bW7TDpJ2AMVEjlX5d8Z7H+qH8=;
+        b=bavS98S88PZRxHz2+scD7MJz6hKKgPl5/FRx2qmJ9zrgLHrH1sAlC8iCwpNbeXZKB/
+         9tMnKZ/sP4HL3RypxjPv9siyOfKNuXtXc0iPGCvMa1ciQesOcbjDOxWIBRjzvRNlngL3
+         /B70tYpE29ySjdHK0Qbko2AL4HkSTCEU2p+Qk3jDOWUUNb6PI6zKoSx5h/zVjG7AOUGW
+         uXN01PYEg4jmqdi1RNGAE/9zYWPnVGkOxOOYwVv31t+qNSDffux8gCPtSaT3k78AZRUW
+         hdezINwFbCDGiLdtHtuFpAUNimgJpW7UxNUqFiK2BIkNjlMbRYHUCzCb18dJLbN6Bxw9
+         8SgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMnO3WcWN63nJW5i5wW4b7PNYdlnrsrxptPdslXoz2yILvuoEFiALDC6UGxtO4oIxwGyHQDJmTqnIupKvkVHQAiO0bXv0Hn5ph
+X-Gm-Message-State: AOJu0YydVO7ztKu+whK4nuPt2Tc9KYsZJANcDd3yfEYgDyYfpTfjIMo6
+	pelsaKQDHQ/YdrdOs5Sz99m9gUpWQ4i06CezALtYfyCxIHoGWKVtg8nSFqbPslI=
+X-Google-Smtp-Source: AGHT+IEyItUn9hdMpAk8rPYqPH5OSZ8RVw98PyI0tvTq+a/OYosBp+4XMzaXdqBEC6fwQvPpHMe5aQ==
+X-Received: by 2002:a05:6512:6d3:b0:515:8653:80d9 with SMTP id u19-20020a05651206d300b00515865380d9mr6475912lff.57.1711394486439;
+        Mon, 25 Mar 2024 12:21:26 -0700 (PDT)
+Received: from [192.168.92.47] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
+        by smtp.gmail.com with ESMTPSA id b4-20020a170906708400b00a46da83f7fdsm3368114ejk.145.2024.03.25.12.21.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Mar 2024 12:21:26 -0700 (PDT)
+Message-ID: <bf2c507d-2320-425e-8bc2-8a2858281559@linaro.org>
+Date: Mon, 25 Mar 2024 20:21:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240325184204.745706-1-sboyd@kernel.org>
-References: <20240325184204.745706-1-sboyd@kernel.org>
-Subject: Re: [PATCH v2 0/5] Fix a deadlock with clk_pm_runtime_get()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, linux-arm-msm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Taniya Das <quic_tdas@quicinc.com>, Ulf Hansson <ulf.hansson@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Date: Mon, 25 Mar 2024 11:44:26 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gdsc: treat optional supplies as optional
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Mark Brown <broonie@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240325081957.10946-1-johan+linaro@kernel.org>
+ <9b2a7e9f-dbb2-4acb-91a7-fcc64d5cfabd@sirena.org.uk>
+ <CAA8EJpqvYYCFRJVr732VORyHgpU-H2nif+n6hB6pJbXsqCH3_Q@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <CAA8EJpqvYYCFRJVr732VORyHgpU-H2nif+n6hB6pJbXsqCH3_Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Stephen Boyd (2024-03-25 11:41:54)
-> This patch series fixes a deadlock reported[1] on ChromeOS devices
-> (Qualcomm sc7180 Trogdor). To get there, we allow __clk_release() to run
-> without the prepare_lock held. Then we add runtime PM enabled clk_core
-> structs to a list that we iterate and enable runtime PM for each entry
-> before grabbing the prepare_lock to walk the clk tree. The details are
-> in patch #4.
->=20
-> The patch after that is based on the analysis in the disable unused
-> patch. We similarly resume devices from runtime suspend when walking the
-> clk tree for the debugfs clk_summary.
->=20
-> Unfortunately this doesn't fix all problems with the usage of runtime PM
-> in the clk framework. We still have a problem if preparing a clk happens
-> in parallel to the device providing that clk runtime resuming or
-> suspending. In that case, the task will go to sleep waiting for the
-> runtime PM state to change, and we'll deadlock. This is primarily a
-> problem with the global prepare_lock. I suspect we'll be able to fix
-> this by implementing per-clk locking, because then we will be able to
-> split up the big prepare_lock into smaller locks that don't deadlock on
-> some device runtime PM transitions.
->=20
-> I'll start working on that problem in earnest now because I'm worried
-> we're going to run into that problem very soon.
->=20
-> Changes from v1 (https://lore.kernel.org/r/):
+On 25.03.2024 3:10 PM, Dmitry Baryshkov wrote:
+> On Mon, 25 Mar 2024 at 16:01, Mark Brown <broonie@kernel.org> wrote:
+>>
+>> On Mon, Mar 25, 2024 at 09:19:57AM +0100, Johan Hovold wrote:
+>>> Since commit deebc79b28d6 ("clk: qcom: gpucc-sc8280xp: Add external
+>>> supply for GX gdsc") the GDSC supply must be treated as optional to
+>>> avoid warnings like:
+>>>
+>>>       gpu_cc-sc8280xp 3d90000.clock-controller: supply vdd-gfx not found, using dummy regulator
+>>>
+>>> on SC8280XP.
+>>
+>> Can this device actually run with the supply physically disconnected?
+> 
+> On SC8280XP this is supplied via power-domain instead of the supply.
 
-Oops this is https://lore.kernel.org/r/20240325054403.592298-1-sboyd@kernel=
-.org
+I think Dmitry is asking about this bit:
+
+if (ret != -ENODEV)
+	return ret;
+
+which is basically repeating the difference that _optional makes
+
+Konrad
