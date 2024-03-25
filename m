@@ -1,213 +1,123 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0E213D259;
-	Mon, 25 Mar 2024 07:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44504153565;
+	Mon, 25 Mar 2024 08:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711350082; cv=none; b=oxdC5dY++djNaVreIgBKeUd5/8nCyihGwcmqQlZxVwjRUvgDKLheQpVuMK32CLdTPciIiOrB0WAtPWoLW3/nsWq0+VgZcwA0mb91+HIo8qP4I/m+jLlUlVIU72Qmu1RBEgxB4/x1IwFI1x2p3JRA4RDhBQr4MEltvv8kLEZQZEg=
+	t=1711355510; cv=none; b=ODFj89dfArOnWQHEMtsz6lD8r5ww1Ja+qwKlf/2T1Bv7GKClK3WiQjxNHXeKo7cRk1IaDIMjqhyllWjxxrDNCVJDND6HzHrEzAvs5sfdVIR3YFXPrzCMFK+PK1K8ytAAbGJWQn5IHaIqCYyqnfONp2GAKBiUORuWSVYDUi3K2KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711350082; c=relaxed/simple;
-	bh=39aT+AQRfWjWTtHAwtOtgnUXvgvAKFQoJVQ0iAI6BW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Yzk2har6tleXsVZXN91/kSU/VsgRLFiflnQEEo2VsPSryPou7D1iAZHBdqFb2iAMvA3ia8+2Q1iKx+ordgOZYavCE6IulqRFZKZR3z74ky0hXfjAiMUyvFFFND64QZ5zs4lhPsLPAdqdwYz1bKNWV/SHyhQyETvmsVIo4F/H9Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UzhQSQUm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1711355510; c=relaxed/simple;
+	bh=VO7AN01rHdiWwam/sZMD7D9zeSM3KWBzcy0Oq/ITPjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=umVOsbxa3nNs2Og/n/NUgzyFrsRizlTzrdn7+LIVa+ifrvhLAC1IQ7rtH+8uPwM4xqMtaVbXipz+9mB1TBYIDVEai+BQOYJW4xxTY0XBXJck8ifXIEdAcYCzB6vcy99ZpS7zYsW+L2bmkQn2fNIDMI5yWE6X0wSKkrCoXBJpRMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uE/qlgkn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UzhQSQUm"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42P5PGRb001591;
-	Mon, 25 Mar 2024 07:01:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=TupEAa9JYXyHgfSua78cY31i0WdEXTbECXZFhdn+lPU=; b=Uz
-	hQSQUmr0OP99B9rsh8gp7HXHDcBCDDfXI6FpwfxTVaRryF0wQI4tAHjaXpx3BAhr
-	m718vJHr3hRygL9+HKmNr1XfhgVL1iWy2ywDQDFobuOeXasUPyn5SHqxMFxd2c1Y
-	MwfdpkEZx6lhGyHb5cjBsmexp/Q79WKVJYcG1a87VEwoh5drJQw42lClVzUabcqC
-	5+6hNbSYa9vINM0DTWIRI1UvB58XtK5Zc2baiXBJqNUXnnJIcIXXzsIIAl4OVnHq
-	wUcAXNBT0ETzOcGW3LIqXNUlijxpWzo+PDkH0xMQGRWKydvdcvJLIfLyY2QzSktG
-	ePH72+Q8X7isH62Dr8Gg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x319j8arn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Mar 2024 07:01:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42P71EqO001013
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Mar 2024 07:01:14 GMT
-Received: from [10.216.57.55] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 25 Mar
- 2024 00:01:07 -0700
-Message-ID: <10f46c19-4d02-4af6-a6b0-1549371d7be6@quicinc.com>
-Date: Mon, 25 Mar 2024 12:30:52 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uE/qlgkn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA13C433F1;
+	Mon, 25 Mar 2024 08:31:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711355509;
+	bh=VO7AN01rHdiWwam/sZMD7D9zeSM3KWBzcy0Oq/ITPjk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uE/qlgkn/5Kq3PRzCzI2HOOdIXEspU7f/S8yEEIOGNRuzPmtOTTsjrjEmyoQ2w7Jn
+	 dQnjwUNXrsKfZkj49+fqlqcmLPhYdOEg+L+D3I/eJEGd4TKABOOvpse3EUtZyCB5a8
+	 uWTp8d5i+Kp0lJ6mTxEaEnlnrk1Wl3RjArSjtQU9fchHt08PfAOKTuUWuiZh4JCvmx
+	 ijy2iiDZblGJ3QVv8zyOmznJCqmEceyeAzgojUQ4BUv1b+GH2yyBhtxHAq4+orXIqj
+	 XNUXuPojfPZCU1kqAQ+HRe+WGcxCW6bln2mZTErY6LIKupqczCqFfgt1Kksa5UMqxg
+	 C6x7KBNcMaSaA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1rofkJ-000000002xB-3WZA;
+	Mon, 25 Mar 2024 09:31:55 +0100
+Date: Mon, 25 Mar 2024 09:31:55 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Bjorn Andersson <quic_bjorande@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v4 2/8] clk: qcom: gdsc: Enable supply reglator in GPU GX
+ handler
+Message-ID: <ZgE2eyJ3q4gqd2VU@hovoldconsulting.com>
+References: <20240125-sa8295p-gpu-v4-0-7011c2a63037@quicinc.com>
+ <20240125-sa8295p-gpu-v4-2-7011c2a63037@quicinc.com>
+ <Zf25Sv2x9WaCFuIH@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 RESEND 1/6] dt-bindings: clock: qcom: Add SM8650 video
- clock controller
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-References: <20240321092529.13362-1-quic_jkona@quicinc.com>
- <20240321092529.13362-2-quic_jkona@quicinc.com>
- <CAA8EJppsMchthssctEgUf9q45j84cSLQ78Ur+vaA0Z7GEQi8+g@mail.gmail.com>
- <725471b1-46a9-43b0-bede-33f01c953d51@quicinc.com>
- <CAA8EJpqUdEXYFaqH3HZKsx0iucq3pLe3HoMNRLWhsBs27W16PA@mail.gmail.com>
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <CAA8EJpqUdEXYFaqH3HZKsx0iucq3pLe3HoMNRLWhsBs27W16PA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fe2XdN_i5YtJxtzsJjYa7kAgPZ8cv9X8
-X-Proofpoint-GUID: fe2XdN_i5YtJxtzsJjYa7kAgPZ8cv9X8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-25_04,2024-03-21_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxscore=0 impostorscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015
- adultscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2403210001
- definitions=main-2403250036
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zf25Sv2x9WaCFuIH@hovoldconsulting.com>
 
-
-
-On 3/25/2024 12:08 PM, Dmitry Baryshkov wrote:
-> On Mon, 25 Mar 2024 at 08:08, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->>
->>
->>
->> On 3/21/2024 6:42 PM, Dmitry Baryshkov wrote:
->>> On Thu, 21 Mar 2024 at 11:26, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->>>>
->>>> Extend device tree bindings of SM8450 videocc to add support
->>>> for SM8650 videocc. While it at, fix the incorrect header
->>>> include in sm8450 videocc yaml documentation.
->>>>
->>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>> ---
->>>>    .../devicetree/bindings/clock/qcom,sm8450-videocc.yaml    | 4 +++-
->>>>    include/dt-bindings/clock/qcom,sm8450-videocc.h           | 8 +++++++-
->>>>    2 files changed, 10 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>> index bad8f019a8d3..79f55620eb70 100644
->>>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>> @@ -8,18 +8,20 @@ title: Qualcomm Video Clock & Reset Controller on SM8450
->>>>
->>>>    maintainers:
->>>>      - Taniya Das <quic_tdas@quicinc.com>
->>>> +  - Jagadeesh Kona <quic_jkona@quicinc.com>
->>>>
->>>>    description: |
->>>>      Qualcomm video clock control module provides the clocks, resets and power
->>>>      domains on SM8450.
->>>>
->>>> -  See also:: include/dt-bindings/clock/qcom,videocc-sm8450.h
->>>> +  See also:: include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>
->>> This almost pleads to go to a separate patch. Fixes generally should
->>> be separated from the rest of the changes.
->>>
->>
->> Thanks Dmitry for your review.
->>
->> Sure, will separate this into a separate patch in next series.
->>
->>>>
->>>>    properties:
->>>>      compatible:
->>>>        enum:
->>>>          - qcom,sm8450-videocc
->>>>          - qcom,sm8550-videocc
->>>> +      - qcom,sm8650-videocc
->>>>
->>>>      reg:
->>>>        maxItems: 1
->>>> diff --git a/include/dt-bindings/clock/qcom,sm8450-videocc.h b/include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>> index 9d795adfe4eb..ecfebe52e4bb 100644
->>>> --- a/include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>> +++ b/include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>> @@ -1,6 +1,6 @@
->>>>    /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->>>>    /*
->>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>>>     */
->>>>
->>>>    #ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8450_H
->>>> @@ -19,6 +19,11 @@
->>>>    #define VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC                                9
->>>>    #define VIDEO_CC_PLL0                                          10
->>>>    #define VIDEO_CC_PLL1                                          11
->>>> +#define VIDEO_CC_MVS0_SHIFT_CLK                                        12
->>>> +#define VIDEO_CC_MVS0C_SHIFT_CLK                               13
->>>> +#define VIDEO_CC_MVS1_SHIFT_CLK                                        14
->>>> +#define VIDEO_CC_MVS1C_SHIFT_CLK                               15
->>>> +#define VIDEO_CC_XO_CLK_SRC                                    16
->>>
->>> Are these values applicable to sm8450?
->>>
->>
->> No, the shift clocks above are part of SM8650 only. To reuse the
->> existing SM8550 videocc driver for SM8650 and to register these shift
->> clocks for SM8650, I added them here.
+On Fri, Mar 22, 2024 at 06:00:58PM +0100, Johan Hovold wrote:
+> On Thu, Jan 25, 2024 at 01:05:08PM -0800, Bjorn Andersson wrote:
+> > The GX GDSC is modelled to aid the GMU in powering down the GPU in the
+> > event that the GPU crashes, so that it can be restarted again. But in
+> > the event that the power-domain is supplied through a dedicated
+> > regulator (in contrast to being a subdomin of another power-domain),
+> > something needs to turn that regulator on, both to make sure things are
+> > powered and to match the operation in gdsc_disable().
+> > 
+> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> > ---
+> >  drivers/clk/qcom/gdsc.c | 12 ++++++++++--
+> >  1 file changed, 10 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> > index 5358e28122ab..e7a4068b9f39 100644
+> > --- a/drivers/clk/qcom/gdsc.c
+> > +++ b/drivers/clk/qcom/gdsc.c
+> > @@ -557,7 +557,15 @@ void gdsc_unregister(struct gdsc_desc *desc)
+> >   */
+> >  int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
+> >  {
+> > -	/* Do nothing but give genpd the impression that we were successful */
+> > -	return 0;
+> > +	struct gdsc *sc = domain_to_gdsc(domain);
+> > +	int ret = 0;
+> > +
+> > +	/* Enable the parent supply, when controlled through the regulator framework. */
+> > +	if (sc->rsupply)
+> > +		ret = regulator_enable(sc->rsupply);
+> > +
+> > +	/* Do nothing with the GDSC itself */
+> > +
+> > +	return ret;
+> >  }
+> >  EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
 > 
-> At least it deserves a comment.
+> This patch (and series) is now in mainline as commit 9187ebb954ab ("clk:
+> qcom: gdsc: Enable supply reglator in GPU GX handler") and appears to be
+> involved in triggering the below lockdep splat on boot of the Lenovo
+> ThinkPad X13s.
 > 
+> Adding Ulf and the MSM DRM devs as well in case I blamed the wrong
+> change here.
 
-Yes, will add the comment in next series.
+I've now verified that applying this series on top of 6.8 also triggers
+the lockdep splat even if it is possible that it only exposed an
+existing issue.
 
-Thanks,
-Jagadeesh
+This is still a regression and also prevents using lockdep on these
+platforms, which can lead to further locking issues being introduced
+until this is fixed:
 
->>
->>>>
->>>>    /* VIDEO_CC power domains */
->>>>    #define VIDEO_CC_MVS0C_GDSC                                    0
->>>> @@ -34,5 +39,6 @@
->>>>    #define CVP_VIDEO_CC_MVS1C_BCR                                 4
->>>>    #define VIDEO_CC_MVS0C_CLK_ARES                                        5
->>>>    #define VIDEO_CC_MVS1C_CLK_ARES                                        6
->>>> +#define VIDEO_CC_XO_CLK_ARES                                   7
->>>>
->>>>    #endif
->>>> --
->>>> 2.43.0
->>>>
->>>>
->>>
->>>
-> 
-> 
-> 
+#regzbot ^introduced: 9187ebb954ab
+
+Johan
