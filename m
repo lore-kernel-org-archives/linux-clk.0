@@ -1,76 +1,137 @@
-Received: from mail-m603.netease.com (mail-m603.netease.com [210.79.60.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810CF82D8A;
-	Mon, 25 Mar 2024 05:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.79.60.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6D754906;
+	Mon, 25 Mar 2024 05:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711343528; cv=none; b=nEhwOSeDv7maXCRu1oUyoj1O+dwvb8weMXgG0b1XjewrsD1U7i1Bcu0F6x1OoQutImmvrhAIlIv14jSC19S5kUVy0uHmqyV46eTcW8JHGTyoo/2xHlaD9mcBpqBUBOonlcX9jzBJELbpAgX9nAu574bvPD+FWuzqJrwelj0vY9Q=
+	t=1711345447; cv=none; b=ME1IL00WPHqWh4HB+ED1CaK2kp9uPo5WJzLU5rlrHH0+lpOscX0YzsJ/7WOEvLxgtub4KEHCV9AvkFB/TEwmdqeT/iRWy9S7DJrS3OoHDE2YWxgybxB8s1ZqEjEWUfcVIiahc3Ucsy2827FxVJ1jH1tB0jms+CK9StLKsSc1KSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711343528; c=relaxed/simple;
-	bh=/0L7xsGt62dkaztuu5tiwX1KwkzZV+OEKc1C03nGwrY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Pr+vtfcDx1NMZn1PU+4xiOQzM00M8xwgPhbPlCJ+9Q8jxKicrvoPY3/6JKe5viSNovzsZWQdgQ5OFB5Ef9lr2g1UYaH4EZVK7Kk5Lk3Rx2Ixi3fE2k5AhyLN+N1NbAaVv3ORfvkN+VaEmxgNlIy6pG76GauPj43KnVzGOgp9PvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Cr8F266c; arc=none smtp.client-ip=210.79.60.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1711345447; c=relaxed/simple;
+	bh=JQLZlvK/niz9A5rF1vqEGVWJiWXrV5wGTOHqQFT/TfM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TXWRbs0QlVvoJyE/CmK+J9zovhrudhJ3y1wEWcbSxNt7BSWdJNq2HjFqcspJ2ZduoFpBq3tQDZC3WFCqnj1mKiE5mglF8v9s/RMpKKQqfcMjcSTgQvDKk5wvrtxvs/SU4fLSeAcxj7rbpr+7tslJmAn7fUaJzQXsA5wyPISBczQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9xG6cQ4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Cr8F266c"
-DKIM-Signature: a=rsa-sha256;
-	b=Cr8F266cslnVeJPW43tYw1VZzCe+7ZQ8hKsz6tY+cx1mPkbzRjP3mTNbcbKX7AkkrrxPqn0nn/ttQVFoeH0pe1msroUelpJjilWcQls+p0Xk9dT2Zxq8xWIFsy2xqWEj4jxu3SeC0MDDEQyUs22KZFIyu4s5YDW6C6Fy6ET6h1I=;
-	c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=YBEeTq7OGXH4yuF3fO8G/YM9YDxHqOm8d/+z2DqcRk0=;
-	h=date:mime-version:subject:message-id:from;
-Received: from localhost.localdomain (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 15AA57C0487;
-	Mon, 25 Mar 2024 12:16:44 +0800 (CST)
-From: Sugar Zhang <sugar.zhang@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Sugar Zhang <sugar.zhang@rock-chips.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9xG6cQ4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A59DC433C7;
+	Mon, 25 Mar 2024 05:44:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711345446;
+	bh=JQLZlvK/niz9A5rF1vqEGVWJiWXrV5wGTOHqQFT/TfM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=D9xG6cQ4hSOdAK1TZmWuUNztMjf3ep/9Jh6v0g2OytnLLIIdZFif3aKbqeU2A6flz
+	 WUgiN8Gd4PlYVGOD9Xy8Squz7LO9zUMh0i/agnfFvNLmOdYErXMKnc/kDQ+fXfC+oN
+	 72s8YFoafi9GAI2YJwRYCmKlfu+FghXhWIBDPrpEpdPP+vlqHz9oYyclUMCiXysneA
+	 DBoVHdW5JCMmp92YACqH8rYLgy5E7Rj+9nPCabMdv9CpbbDKH1D1GCOZpOOABrxrDy
+	 aWl0ig3aXfLCi6juHde1uFfeP9aKTkvMRy5FG4J8RiviL9UHMh1+WYHL4RiUjfk0iK
+	 ZRwz/th8YqoTQ==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/2] Patches for rockchip clk input / output switch
-Date: Mon, 25 Mar 2024 12:16:28 +0800
-Message-Id: <1711340191-69588-1-git-send-email-sugar.zhang@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0lMS1YfQk1DSE8eSU4YSx5VEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk1PSUxOVUpLS1VKQk
-	tLWQY+
-X-HM-Tid: 0a8e73d3328609d2kunm15aa57c0487
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pzo6TRw6PjMQAg0uMw4BNAoC
-	AhgKFDlVSlVKTEpKSE9LSUtOS09IVTMWGhIXVQgOHBoJVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlX
-	WRILWUFZTkNVSUlVTFVKSk9ZV1kIAVlBSUtPQjcG
+	patches@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>
+Subject: [PATCH 3/5] clk: Initialize struct clk_core kref earlier
+Date: Sun, 24 Mar 2024 22:44:00 -0700
+Message-ID: <20240325054403.592298-4-sboyd@kernel.org>
+X-Mailer: git-send-email 2.44.0.396.g6e790dbe36-goog
+In-Reply-To: <20240325054403.592298-1-sboyd@kernel.org>
+References: <20240325054403.592298-1-sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-These patches add support for rockchip clk input / output switch.
+Initialize this kref once we allocate memory for the struct clk_core so
+that we can reuse the release function to free any memory associated
+with the structure. This mostly consolidates code, but also clarifies
+that the kref lifetime exists once the container structure (struct
+clk_core) is allocated instead of leaving it in a half-baked state for
+most of __clk_core_init().
 
+Cc: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-Sugar Zhang (2):
-  clk: rockchip: Add support for clk input / output switch
-  dt-bindings: clock: rockchip: Add support for clk input / output
-    switch
-
- .../bindings/clock/rockchip,clk-out.yaml           | 107 +++++++++++++++++++++
- drivers/clk/rockchip/Kconfig                       |   6 ++
- drivers/clk/rockchip/Makefile                      |   2 +
- drivers/clk/rockchip/clk-out.c                     |  99 +++++++++++++++++++
- 4 files changed, 214 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml
- create mode 100644 drivers/clk/rockchip/clk-out.c
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9fc522c26de8..ee80b21f2824 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3959,8 +3959,6 @@ static int __clk_core_init(struct clk_core *core)
+ 	}
+ 
+ 	clk_core_reparent_orphans_nolock();
+-
+-	kref_init(&core->ref);
+ out:
+ 	clk_pm_runtime_put(core);
+ unlock:
+@@ -4189,6 +4187,16 @@ static void clk_core_free_parent_map(struct clk_core *core)
+ 	kfree(core->parents);
+ }
+ 
++/* Free memory allocated for a struct clk_core */
++static void __clk_release(struct kref *ref)
++{
++	struct clk_core *core = container_of(ref, struct clk_core, ref);
++
++	clk_core_free_parent_map(core);
++	kfree_const(core->name);
++	kfree(core);
++}
++
+ static struct clk *
+ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ {
+@@ -4209,6 +4217,8 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ 		goto fail_out;
+ 	}
+ 
++	kref_init(&core->ref);
++
+ 	core->name = kstrdup_const(init->name, GFP_KERNEL);
+ 	if (!core->name) {
+ 		ret = -ENOMEM;
+@@ -4263,12 +4273,10 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ 	hw->clk = NULL;
+ 
+ fail_create_clk:
+-	clk_core_free_parent_map(core);
+ fail_parents:
+ fail_ops:
+-	kfree_const(core->name);
+ fail_name:
+-	kfree(core);
++	kref_put(&core->ref, __clk_release);
+ fail_out:
+ 	return ERR_PTR(ret);
+ }
+@@ -4348,16 +4356,6 @@ int of_clk_hw_register(struct device_node *node, struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(of_clk_hw_register);
+ 
+-/* Free memory allocated for a clock. */
+-static void __clk_release(struct kref *ref)
+-{
+-	struct clk_core *core = container_of(ref, struct clk_core, ref);
+-
+-	clk_core_free_parent_map(core);
+-	kfree_const(core->name);
+-	kfree(core);
+-}
+-
+ /*
+  * Empty clk_ops for unregistered clocks. These are used temporarily
+  * after clk_unregister() was called on a clock and until last clock
 -- 
-2.7.4
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
 
