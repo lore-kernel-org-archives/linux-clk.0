@@ -1,123 +1,316 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m127225.xmail.ntesmail.com (mail-m127225.xmail.ntesmail.com [115.236.127.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44504153565;
-	Mon, 25 Mar 2024 08:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADC75D464;
+	Mon, 25 Mar 2024 08:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711355510; cv=none; b=ODFj89dfArOnWQHEMtsz6lD8r5ww1Ja+qwKlf/2T1Bv7GKClK3WiQjxNHXeKo7cRk1IaDIMjqhyllWjxxrDNCVJDND6HzHrEzAvs5sfdVIR3YFXPrzCMFK+PK1K8ytAAbGJWQn5IHaIqCYyqnfONp2GAKBiUORuWSVYDUi3K2KE=
+	t=1711355528; cv=none; b=bPUwIPFf6ZngoiEDxJNDSFDk36Y3R17dkMNPALi8dzL6DV8C7VVh/+SQffJpY7VwiHxU1TjR7J39XbXEFgd3j0Qkbn4cv9/WDJYIrk1Eyih3zBM+Xl58Djk1roQvwVaNuptZBWm/rreJ7wghvbxJ+0AHgfq6AlyVN+CMEmNCTwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711355510; c=relaxed/simple;
-	bh=VO7AN01rHdiWwam/sZMD7D9zeSM3KWBzcy0Oq/ITPjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=umVOsbxa3nNs2Og/n/NUgzyFrsRizlTzrdn7+LIVa+ifrvhLAC1IQ7rtH+8uPwM4xqMtaVbXipz+9mB1TBYIDVEai+BQOYJW4xxTY0XBXJck8ifXIEdAcYCzB6vcy99ZpS7zYsW+L2bmkQn2fNIDMI5yWE6X0wSKkrCoXBJpRMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uE/qlgkn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711355528; c=relaxed/simple;
+	bh=KD50ATroLq5wbiqV8KIwzZpaujxagamNMl0akgT1LWU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=UA0AFFwlvOzSFkcMeGZIUI2ApgF5IJMeo+CWIw8Er0BJwXpwD3ikp0szQLhYBgJyDaI+FQI+SO9p+8C2AxpkJiz7u9+hiAHDue/XHQ0HZaeKopw6YLqwwGFXBcALkG0bftsyPJl4iCykHYzFvIhw6Usw1FpIt0/+mOfOV2ZpPxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=S9r0f+9F; arc=none smtp.client-ip=115.236.127.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uE/qlgkn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA13C433F1;
-	Mon, 25 Mar 2024 08:31:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711355509;
-	bh=VO7AN01rHdiWwam/sZMD7D9zeSM3KWBzcy0Oq/ITPjk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uE/qlgkn/5Kq3PRzCzI2HOOdIXEspU7f/S8yEEIOGNRuzPmtOTTsjrjEmyoQ2w7Jn
-	 dQnjwUNXrsKfZkj49+fqlqcmLPhYdOEg+L+D3I/eJEGd4TKABOOvpse3EUtZyCB5a8
-	 uWTp8d5i+Kp0lJ6mTxEaEnlnrk1Wl3RjArSjtQU9fchHt08PfAOKTuUWuiZh4JCvmx
-	 ijy2iiDZblGJ3QVv8zyOmznJCqmEceyeAzgojUQ4BUv1b+GH2yyBhtxHAq4+orXIqj
-	 XNUXuPojfPZCU1kqAQ+HRe+WGcxCW6bln2mZTErY6LIKupqczCqFfgt1Kksa5UMqxg
-	 C6x7KBNcMaSaA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1rofkJ-000000002xB-3WZA;
-	Mon, 25 Mar 2024 09:31:55 +0100
-Date: Mon, 25 Mar 2024 09:31:55 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="S9r0f+9F"
+DKIM-Signature: a=rsa-sha256;
+	b=S9r0f+9FN3LtZ3BxW8+zASeX2mJRD5y9BDprcwER3SnJ+xFG9rwhIRCxSklTmFpxIhFxx3/CToiQVri3c/rLKgrUMobOgAKPhktClxFkhN+0UzbaWTXUcCzQjLK7fv7dw26KEKu8an/FIxniRKoc+pLV46mgUfNRnO5gREEqELY=;
+	c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=RTrYQS6npXaXjhs3epbhBAkTBe1y8Ij/m1SJhYUQASY=;
+	h=date:mime-version:subject:message-id:from;
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 4C7647C044A;
+	Mon, 25 Mar 2024 12:16:50 +0800 (CST)
+From: Sugar Zhang <sugar.zhang@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Sugar Zhang <sugar.zhang@rock-chips.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v4 2/8] clk: qcom: gdsc: Enable supply reglator in GPU GX
- handler
-Message-ID: <ZgE2eyJ3q4gqd2VU@hovoldconsulting.com>
-References: <20240125-sa8295p-gpu-v4-0-7011c2a63037@quicinc.com>
- <20240125-sa8295p-gpu-v4-2-7011c2a63037@quicinc.com>
- <Zf25Sv2x9WaCFuIH@hovoldconsulting.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] clk: rockchip: Add support for clk input / output switch
+Date: Mon, 25 Mar 2024 12:16:29 +0800
+Message-Id: <20240325121537.v1.1.Ibe8286bb98ea1fc3bc6421c30f6e46fc0b1b0d88@changeid>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1711340191-69588-1-git-send-email-sugar.zhang@rock-chips.com>
+References: <1711340191-69588-1-git-send-email-sugar.zhang@rock-chips.com>
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkIZTFZKGR4aTk1ISB8aTx5VEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlOQ1VJSVVMVUpKT1lXWRYaDxIVHRRZQVlPS0hVSk5DTUtIVUpLS1VKQl
+	kG
+X-HM-Tid: 0a8e73d34a1109d2kunm4c7647c044a
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OhA6UTo*HTMSOA0ZFQgKNBI3
+	GBRPCx5VSlVKTEpKSE9LSUpKSE9CVTMWGhIXVQgOHBoJVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlX
+	WRILWUFZTkNVSUlVTFVKSk9ZV1kIAVlBQk9DSjcG
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zf25Sv2x9WaCFuIH@hovoldconsulting.com>
 
-On Fri, Mar 22, 2024 at 06:00:58PM +0100, Johan Hovold wrote:
-> On Thu, Jan 25, 2024 at 01:05:08PM -0800, Bjorn Andersson wrote:
-> > The GX GDSC is modelled to aid the GMU in powering down the GPU in the
-> > event that the GPU crashes, so that it can be restarted again. But in
-> > the event that the power-domain is supplied through a dedicated
-> > regulator (in contrast to being a subdomin of another power-domain),
-> > something needs to turn that regulator on, both to make sure things are
-> > powered and to match the operation in gdsc_disable().
-> > 
-> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> > ---
-> >  drivers/clk/qcom/gdsc.c | 12 ++++++++++--
-> >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> > index 5358e28122ab..e7a4068b9f39 100644
-> > --- a/drivers/clk/qcom/gdsc.c
-> > +++ b/drivers/clk/qcom/gdsc.c
-> > @@ -557,7 +557,15 @@ void gdsc_unregister(struct gdsc_desc *desc)
-> >   */
-> >  int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
-> >  {
-> > -	/* Do nothing but give genpd the impression that we were successful */
-> > -	return 0;
-> > +	struct gdsc *sc = domain_to_gdsc(domain);
-> > +	int ret = 0;
-> > +
-> > +	/* Enable the parent supply, when controlled through the regulator framework. */
-> > +	if (sc->rsupply)
-> > +		ret = regulator_enable(sc->rsupply);
-> > +
-> > +	/* Do nothing with the GDSC itself */
-> > +
-> > +	return ret;
-> >  }
-> >  EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
-> 
-> This patch (and series) is now in mainline as commit 9187ebb954ab ("clk:
-> qcom: gdsc: Enable supply reglator in GPU GX handler") and appears to be
-> involved in triggering the below lockdep splat on boot of the Lenovo
-> ThinkPad X13s.
-> 
-> Adding Ulf and the MSM DRM devs as well in case I blamed the wrong
-> change here.
+This patch add support switch for clk-bidirection which located
+at GRF, such as SAIx_MCLK_{IN OUT} which share the same pin.
+and these config maybe located in many pieces of GRF,
+which hard to addressed in one single clk driver. so, we add
+this simple helper driver to address this situation.
 
-I've now verified that applying this series on top of 6.8 also triggers
-the lockdep splat even if it is possible that it only exposed an
-existing issue.
+In order to simplify implement and usage, and also for safety
+clk usage (avoid high freq glitch), we set all clk out as disabled
+(which means Input default for clk-bidrection) in the pre-stage,
+such boot-loader or init by HW default. And then set a safety freq
+before enable clk-out, such as "assign-clock-rates" or clk_set_rate
+in drivers.
 
-This is still a regression and also prevents using lockdep on these
-platforms, which can lead to further locking issues being introduced
-until this is fixed:
+e.g.
 
-#regzbot ^introduced: 9187ebb954ab
+1. mclk{out,in}_sai0 define:
 
-Johan
+  mclkin_sai0: mclkin-sai0 {
+      compatible = "fixed-clock";
+      #clock-cells = <0>;
+      clock-frequency = <12288000>;
+      clock-output-names = "mclk_sai0_from_io";
+  };
+
+  mclkout_sai0: mclkout-sai0@ff040070 {
+      compatible = "rockchip,clk-out";
+      reg = <0 0xff040070 0 0x4>;
+      clocks = <&cru MCLK_SAI0_OUT2IO>;
+      #clock-cells = <0>;
+      clock-output-names = "mclk_sai0_to_io";
+      rockchip,bit-shift = <4>;
+      //example with PD if reg access needed
+      power-domains = <&power RK3562_PD_VO>;
+  };
+
+Note:
+
+clock-output-names of mclkin_sai0 should equal to strings in drivers. such as:
+
+drivers/clk/rockchip/clk-rk3562.c:
+PNAME(clk_sai0_p) = { "clk_sai0_src", "clk_sai0_frac", "xin_osc0_half", "mclk_sai0_from_io" };
+
+2. mclkout_sai0 usage:
+
+  &ext_codec {
+      clocks = <&mclkout_sai0>;
+      clock-names = "mclk";
+      assigned-clocks = <&mclkout_sai0>;
+      assigned-clock-rates = <12288000>;
+      pinctrl-names = "default";
+      pinctrl-0 = <&i2s0m0_mclk>;
+  };
+
+  clk_summary on sai0 work:
+
+  cat /sys/kernel/debug/clk/clk_summary | egrep "pll|sai0"
+
+  clk_sai0_src                1        1        0  1188000000          0     0  50000
+    clk_sai0_frac             1        1        0    12288000          0     0  50000
+      clk_sai0                1        1        0    12288000          0     0  50000
+        mclk_sai0             1        1        0    12288000          0     0  50000
+          mclk_sai0_out2io    1        1        0    12288000          0     0  50000
+            mclk_sai0_to_io   1        1        0    12288000          0     0  50000
+
+  example with PD if reg access needed:
+
+  * PD status when mclk_sai0_to_io on:
+
+  cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+
+  domain                          status          children
+    /device                                                runtime status
+  ----------------------------------------------------------------------
+  ...
+
+  vo                              on
+    /devices/platform/clocks/ff040070.mclkout-sai0         active
+  ...
+
+  * PD status when mclk_sai0_to_io off:
+
+  cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+
+  domain                          status          children
+    /device                                                runtime status
+  ----------------------------------------------------------------------
+  ...
+
+  vo                              off-0
+    /devices/platform/clocks/ff040070.mclkout-sai0         suspended
+  ...
+
+3. mclkin_sai0 usage:
+
+  please override freq of mclkin as the real external clkin, such as:
+
+  &mclkin_sai0 {
+      clock-frequency = <24576000>;
+  }
+
+  &ext_codec {
+      clocks = <&mclkin_sai0>;
+      clock-names = "mclk";
+      assigned-clocks = <&cru CLK_SAI0>;
+      assigned-clock-parents = <&mclkin_sai0>;
+      pinctrl-names = "default";
+      pinctrl-0 = <&i2s0m0_mclk>;
+  };
+
+  clk_summary on sai0 work:
+
+  cat /sys/kernel/debug/clk/clk_summary | egrep "pll|sai0"
+
+  mclk_sai0_from_io          1        1        0    12288000          0     0  50000
+    clk_sai0                 1        1        0    12288000          0     0  50000
+      mclk_sai0              1        1        0    12288000          0     0  50000
+        mclk_sai0_out2io     0        0        0    12288000          0     0  50000
+          mclk_sai0_to_io    0        0        0    12288000          0     0  50000
+
+Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
+---
+
+ drivers/clk/rockchip/Kconfig   |  6 +++
+ drivers/clk/rockchip/Makefile  |  2 +
+ drivers/clk/rockchip/clk-out.c | 99 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 107 insertions(+)
+ create mode 100644 drivers/clk/rockchip/clk-out.c
+
+diff --git a/drivers/clk/rockchip/Kconfig b/drivers/clk/rockchip/Kconfig
+index 9aad869..0e7eee8 100644
+--- a/drivers/clk/rockchip/Kconfig
++++ b/drivers/clk/rockchip/Kconfig
+@@ -107,4 +107,10 @@ config CLK_RK3588
+ 	help
+ 	  Build the driver for RK3588 Clock Driver.
+ 
++config ROCKCHIP_CLK_OUT
++	tristate "Rockchip Clk Out / Input Switch"
++	default y
++	help
++	  Say y here to enable clk out / input switch.
++
+ endif
+diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+index 36894f6..30d6060 100644
+--- a/drivers/clk/rockchip/Makefile
++++ b/drivers/clk/rockchip/Makefile
+@@ -29,3 +29,5 @@ obj-$(CONFIG_CLK_RK3368)        += clk-rk3368.o
+ obj-$(CONFIG_CLK_RK3399)        += clk-rk3399.o
+ obj-$(CONFIG_CLK_RK3568)	+= clk-rk3568.o
+ obj-$(CONFIG_CLK_RK3588)	+= clk-rk3588.o rst-rk3588.o
++
++obj-$(CONFIG_ROCKCHIP_CLK_OUT)  += clk-out.o
+diff --git a/drivers/clk/rockchip/clk-out.c b/drivers/clk/rockchip/clk-out.c
+new file mode 100644
+index 0000000..22dcd98
+--- /dev/null
++++ b/drivers/clk/rockchip/clk-out.c
+@@ -0,0 +1,99 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (c) 2023 Rockchip Electronics Co., Ltd
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++
++static DEFINE_SPINLOCK(clk_out_lock);
++
++static int rockchip_clk_out_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *node = pdev->dev.of_node;
++	struct clk_hw *hw;
++	struct resource *res;
++	const char *clk_name = node->name;
++	const char *parent_name;
++	void __iomem *reg;
++	u32 shift = 0;
++	u8 clk_gate_flags = CLK_GATE_HIWORD_MASK;
++	int ret;
++
++	ret = device_property_read_string(dev, "clock-output-names", &clk_name);
++	if (ret)
++		return ret;
++
++	ret = device_property_read_u32(dev, "rockchip,bit-shift", &shift);
++	if (ret)
++		return ret;
++
++	if (device_property_read_bool(dev, "rockchip,bit-set-to-disable"))
++		clk_gate_flags |= CLK_GATE_SET_TO_DISABLE;
++
++	ret = of_clk_parent_fill(node, &parent_name, 1);
++	if (ret != 1)
++		return -EINVAL;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res)
++		return -ENOMEM;
++
++	reg = devm_ioremap(dev, res->start, resource_size(res));
++	if (!reg)
++		return -ENOMEM;
++
++	pm_runtime_enable(dev);
++
++	hw = clk_hw_register_gate(dev, clk_name, parent_name, CLK_SET_RATE_PARENT,
++				  reg, shift, clk_gate_flags, &clk_out_lock);
++	if (IS_ERR(hw)) {
++		ret = -EINVAL;
++		goto err_disable_pm_runtime;
++	}
++
++	of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw);
++
++	return 0;
++
++err_disable_pm_runtime:
++	pm_runtime_disable(dev);
++
++	return ret;
++}
++
++static int rockchip_clk_out_remove(struct platform_device *pdev)
++{
++	struct device_node *node = pdev->dev.of_node;
++
++	of_clk_del_provider(node);
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
++static const struct of_device_id rockchip_clk_out_match[] = {
++	{ .compatible = "rockchip,clk-out", },
++	{},
++};
++
++static struct platform_driver rockchip_clk_out_driver = {
++	.driver = {
++		.name = "rockchip-clk-out",
++		.of_match_table = rockchip_clk_out_match,
++	},
++	.probe = rockchip_clk_out_probe,
++	.remove = rockchip_clk_out_remove,
++};
++
++module_platform_driver(rockchip_clk_out_driver);
++
++MODULE_DESCRIPTION("Rockchip Clock Input-Output-Switch");
++MODULE_AUTHOR("Sugar Zhang <sugar.zhang@rock-chips.com>");
++MODULE_LICENSE("GPL");
++MODULE_DEVICE_TABLE(of, rockchip_clk_out_match);
+-- 
+2.7.4
+
