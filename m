@@ -1,177 +1,134 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B083E7442F
-	for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 20:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFF513D29F
+	for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 21:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711486290; cv=none; b=hZuQuXtVYO02Z9mhSTFew+3SCJlEbaPmxVX83CjY1jD6hXdAZU5E5Hz43oVEgiLF9CmnIliSGiJ35As6Zw2Yt4qw1gSeZLIBASgibb4lvTwAasjThLZYJDWt59EfLGllPwkvans7sVpNuoQc8vBjyXn/MVR+WAE0AUGBXl95cs8=
+	t=1711487317; cv=none; b=sMjWFWkZbinrLtlKw2/sbw+blPN1OZlTrof17wZp5egr+MF0ozF7gBbpUErfj4Sc4Vs7fKDtMXK3Jnv4sxr0iy4ZwlHBhktk9hpmQ28hDipY27ljJAUjFGq0ncuM7ZEMMvB3R/RO3ydyaFSVnJDb2srPObz+pbwVbt8R6wnQMVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711486290; c=relaxed/simple;
-	bh=LxOyp0NjGeH5uTcpz5vFvBjens4zOm830JN4rXrjxM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UvpBBX65z2J4R/plfCnrrGQY6R1jxRh9Tuav6AXz7NR3n5QFWm0a9DxtXHKcSksGJIFW+nKk4KXZu6od1BYRdFTQHCTvQPa7jdqjJxDRMePckyr3b32vzLvfFbPthy1RYErP+3sPDOtxioQm1YcCMCbCBGjoh1i79JK0JU/TBmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EQ0vf9yz; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1711487317; c=relaxed/simple;
+	bh=eR4CFXwJ/DV52t3rPx/eaHmXMF5jodelDrArYPO4NaE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kU5xTMc3dFhw/hqXQ4GG4qk1MhRr3weLgkJDZvfaxvOu7sThLlfB94cil4KsIzhBecUO7yBJ0NjbJ0AIfFGWcXncQdwKey3L0L5odBCWEYfT7iP4VgUsrlmXMAD4uxsyeW0oLAJlhsCLSyFvtrK/x8ZRiCUFvuQ901PbanVUe2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dF99zDRN; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EQ0vf9yz"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a46cd9e7fcaso719372366b.1
-        for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 13:51:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dF99zDRN"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a450bedffdfso699383966b.3
+        for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 14:08:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711486287; x=1712091087; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=mHOe/G5KYN7b17DIn2VPfNGGBUH/PrZyNCw0MGfKBTw=;
-        b=EQ0vf9yzxxV0jGL4q77k1dJmgBJkHryUgwawP/d+7xjGsW68fldEKTR2x8JNZlX9BX
-         9KsARVTWfRhrmkaTFPuFtcyCxXXvWKbBA3AavQiZ9WsexBrk3ZTaSQLyHSPzhUDzElET
-         TQTeYoNhbM6urDp4QiNsayCNviLZY05iqe1ygNrWlsgU1zSnDtwywFBcdbsnafHwHeAM
-         TdDI1h9GdAvOomjg0sSuIMSsAy5Ib1DvyOzTdKPf9Tt+a7Z+XzHq+Fpywn+utQVqdiuy
-         DNH+T+0uXLMpyVKjGEykS6EZ5FmthB9YlDf8Bzh+NFq8Vr1SqRidpiUbQ6SK0DnXr9Co
-         hKsQ==
+        d=linaro.org; s=google; t=1711487313; x=1712092113; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Owu1u/GIpsA8DH2n23id8Dq1ZdjynMYs9dLtlBfR+WM=;
+        b=dF99zDRNGTLjFQhUGaTfpB/Nn7mq/mWe9g29mmnpQcbwdjcQp+9T1j7s/aFrEIX0Wq
+         tW7iuFITKP2HSyNDzck+RY77GpeysE5VR3NfP1KlW+fUPcPozF46GJ3otVAZRFAJgq5+
+         lrPLIIU6Q+wkp1QNUJx1rRbnlBrUKpArufbotv4BTf0cl03bVNT+HhaGEAhwfRV91hOK
+         dwZUprZ155iKVxi65VQ6beNcl6fnDJDyXnDWVw4IZMrOZKEXBQwDVFRhWdVJxuuQlnL4
+         Lk9secORo9pf4sr/exh5jlGt9mzmeSIfJj3yTQIzWsJN8MJZ13T9nyn5YHZWil/oVFEI
+         UD5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711486287; x=1712091087;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mHOe/G5KYN7b17DIn2VPfNGGBUH/PrZyNCw0MGfKBTw=;
-        b=dQZO9s0j7jQwP55i0QWx0n4bj8eIO4xkO1LWUlGSgEGBmdrxVneVCx45YIRA6utAp0
-         7Mij8mLikkNsc5pdksfxTw33KdPNXSbiSxL6zvv/EfXcCcwoLaBfVHNhajaWw09KudVr
-         ssjc5rWJsc/cuSC5Dt9QTVvC7RW/EO4rNDBHayWSjb2VL2/zccyAjIgUzMTBcEPZ7MhR
-         z4vTGhsRZfYyuq9swPzCnT/6friFU6+2uIyjniNT3c1wTCeRHRO7LM/Q+hfQkMQG5e3s
-         5zxZxaiQdOniozuGHQ7vmQJWyYO/YX1Poo1vWkJdi545rq5XaPMLrLfNZenB7qUhHtY7
-         xIkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWffyG2LHQx2hICFsI3KSJGliZj4l/uZePAjUg3rUQFnyWUvX9++WAVGofBoec+PWGI2C3XRLxF4W5LHF5DIRleDJaGxgWMU9qJ
-X-Gm-Message-State: AOJu0YwDNCU1VeOuim491rGoEh4q1HmxE8Qif+qlkeRED+k6e4TMZ+1W
-	ZI//dw6AR9lOChoe0n6Wo/Qc0Vgfx4SP8G3br3RKRyP+UICqNIuNeP6Y6zDwy1Q=
-X-Google-Smtp-Source: AGHT+IEO6x339HcRMWYEWkSqK1A87Ti6i1dy4IluQnQL8ERZxsmTGhD7CN2Lj/e5gSaomLWEVvgZBw==
-X-Received: by 2002:a17:906:1d53:b0:a47:1f9d:8f17 with SMTP id o19-20020a1709061d5300b00a471f9d8f17mr9012058ejh.32.1711486286876;
-        Tue, 26 Mar 2024 13:51:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711487313; x=1712092113;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Owu1u/GIpsA8DH2n23id8Dq1ZdjynMYs9dLtlBfR+WM=;
+        b=kJWtzeQXeKyd5qZ+QgPPdyEZlyzYpk3oXRo/ZGVtQ7q/Q2ijppRRQ3V+6SZy7IdMjD
+         AlM7+W9+oUcRjJ7CynaJ7z7/JFlmzxsf/aSrgPBqev+dsm/Plsu+VrZjxxTCNS7r6ODr
+         ++HJkGyZvaTGtgIq64snc2BpbV7rEhi8sDXwsg+K2bTMT6AJP/IOsaG47pXq6jTJ5Knb
+         cN2h4YJh8hiYDwzgGZqxXzzJBDwMuWrNtRj4aOZW3OEmDmJ7gyICozoI/fdjv6tdIfnW
+         Oxk4sJJWEsHUiQ84/I1URx4JkMYQG5wJjNrTcGLls25PweXon4sbkSPAIwuCaRqvwvoD
+         UUjg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2iIUOkkQMAgoU571r4y6GonJNqIJ1p3Q6qpGbYf0yQfu9PlKNTGbCo/t9Zk8ea+3Bp6f9qYiI0knu0Wxzk0G0+BegGZJwZD18
+X-Gm-Message-State: AOJu0YyFpK9ukXW6LonaQUo2HTA7ZAJ5Ph3qt14sMfuv98gqiYXQJHea
+	ZD1ka3Bd3etYZqrxltw3CSVibtKtEuRTi78tVA/zI90WXaS6u2L2YxIUfCKVLfA=
+X-Google-Smtp-Source: AGHT+IHUSHvtxOlBEUCvFuSqIQshOTsg/TGRscOieh+BC9vJhFsjCZ9Yng6qFsSIz8pbTSvGhhlurA==
+X-Received: by 2002:a17:906:840b:b0:a46:1cc2:3b8c with SMTP id n11-20020a170906840b00b00a461cc23b8cmr1724623ejx.20.1711487313611;
+        Tue, 26 Mar 2024 14:08:33 -0700 (PDT)
 Received: from [192.168.92.47] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id du1-20020a17090772c100b00a4da28f42f1sm1746091ejc.177.2024.03.26.13.51.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Mar 2024 13:51:26 -0700 (PDT)
-Message-ID: <87af7b7e-9c2f-41e1-af97-01d3f29f5970@linaro.org>
-Date: Tue, 26 Mar 2024 21:51:24 +0100
+        by smtp.gmail.com with ESMTPSA id l19-20020a17090612d300b00a46cffe6d06sm4621697ejb.42.2024.03.26.14.08.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Mar 2024 14:08:33 -0700 (PDT)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH v3 0/5] A702 support
+Date: Tue, 26 Mar 2024 22:08:22 +0100
+Message-Id: <20240219-topic-rb1_gpu-v3-0-86f67786539a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: qcom: clk-alpha-pll: fix rate setting for Stromer
- PLLs
-To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Varadarajan Narayanan <quic_varada@quicinc.com>,
- Sricharan R <quic_srichara@quicinc.com>,
- Kathiravan T <quic_kathirav@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240326-alpha-pll-fix-stromer-set-rate-v2-1-48ae83af71c8@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240326-alpha-pll-fix-stromer-set-rate-v2-1-48ae83af71c8@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEY5A2YC/32NywrCMBQFf0WyNnKbxDa68j9EJK+2gZKUmzYop
+ f9u2p0LXc6BmbOQ5NC7RK6HhaDLPvkYCvDjgZhehc5RbwsTBkwAqy50iqM3FHX17MaZcmekqSU
+ HLgUpjlbJUY0qmL5YYR6GMo7oWv/aT+6Pwr1PU8T3/pmrbf2VzxUFalkNrZJn0UBzG3xQGE8RO
+ 7KlMvurs6Izy22twGoQ8KWv6/oBzvTXwf8AAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1711487311; l=1873;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=eR4CFXwJ/DV52t3rPx/eaHmXMF5jodelDrArYPO4NaE=;
+ b=n3FIqlObwZssCgMB9MvlRA7U0Iw4dopzKLC4ZwE7c2tuJxTaMx2C5Og9f+ra4VVX5yjR//Uqi
+ ZBueHO5uMqMCzG8PbwOOzyFbM4zqrqQSxQYGBoQoSlOwhSmRQZuvv8c
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On 26.03.2024 1:15 PM, Gabor Juhos wrote:
-> The clk_alpha_pll_stromer_set_rate() function writes inproper
-> values into the ALPHA_VAL{,_U} registers which results in wrong
-> clock rates when the alpha value is used.
-> 
-> The broken behaviour can be seen on IPQ5018 for example, when
-> dynamic scaling sets the CPU frequency to 800000 KHz. In this
-> case the CPU cores are running only at 792031 KHz:
-> 
->   # cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
->   800000
->   # cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq
->   792031
-> 
-> This happens because the function ignores the fact that the alpha
-> value calculated by the alpha_pll_round_rate() function is only
-> 32 bits wide which must be extended to 40 bits if it is used on
-> a hardware which supports 40 bits wide values.
-> 
-> Extend the clk_alpha_pll_stromer_set_rate() function to convert
-> the alpha value to 40 bits before wrinting that into the registers
-> in order to ensure that the hardware really uses the requested rate.
-> 
-> After the change the CPU frequency is correct:
-> 
->   # cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
->   800000
->   # cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq
->   800000
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: e47a4f55f240 ("clk: qcom: clk-alpha-pll: Add support for Stromer PLLs")
-> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
-> ---
-> Changes in v2:
->   - fix subject prefix
->   - rebase on v6.9-rc1
->   - Link to v1: https://lore.kernel.org/r/20240324-alpha-pll-fix-stromer-set-rate-v1-1-335b0b157219@gmail.com
-> 
-> Depends on the following patch:
->   https://lore.kernel.org/r/20240315-apss-ipq-pll-ipq5018-hang-v2-1-6fe30ada2009@gmail.com
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 8a412ef47e163..8e98198d4b4b6 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -2490,6 +2490,10 @@ static int clk_alpha_pll_stromer_set_rate(struct clk_hw *hw, unsigned long rate,
->  	rate = alpha_pll_round_rate(rate, prate, &l, &a, ALPHA_REG_BITWIDTH);
->  
->  	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
-> +
-> +	if (ALPHA_REG_BITWIDTH > ALPHA_BITWIDTH)
-> +		a <<= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Changes in v3:
+- Use EXPORT_SYMBOL_GPL in the alpha pll change
+- Drop applied patches
+- Pick up tags
+- Link to v2: https://lore.kernel.org/r/20240219-topic-rb1_gpu-v2-0-2d3d6a0db040@linaro.org
 
-Uh.. that's not right, this is comparing two constants
+Changes in v2:
+- Drop applied smmu-bindings patch
+- Fix the gpucc bindings patch to be even better
+- Reorder HUAYRA_2290 definitions near HUAYRA (..Add HUAYRA_2290
+  support..)
+- Replace weird memory barriers copypasted from msm-5.4 with readback to
+  ensure timely write completion (..Add HUAYRA_2290 support..)
+- Keep my super amazing commit message referencing the 3D accelerator
+  official naming (dts)
+- Pick up tags
+- Link to v1: https://lore.kernel.org/r/20240219-topic-rb1_gpu-v1-0-d260fa854707@linaro.org
 
-Did you mean to use pll_alpha_width()?
+---
+Konrad Dybcio (5):
+      dt-bindings: clock: Add Qcom QCM2290 GPUCC
+      clk: qcom: clk-alpha-pll: Add HUAYRA_2290 support
+      clk: qcom: Add QCM2290 GPU clock controller driver
+      arm64: dts: qcom: qcm2290: Add GPU nodes
+      arm64: dts: qcom: qrb2210-rb1: Enable the GPU
 
-Konrad
+ .../bindings/clock/qcom,qcm2290-gpucc.yaml         |  77 ++++
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi              | 154 ++++++++
+ arch/arm64/boot/dts/qcom/qrb2210-rb1.dts           |   8 +
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |  47 +++
+ drivers/clk/qcom/clk-alpha-pll.h                   |   3 +
+ drivers/clk/qcom/gpucc-qcm2290.c                   | 423 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,qcm2290-gpucc.h     |  32 ++
+ 9 files changed, 754 insertions(+)
+---
+base-commit: 084c8e315db34b59d38d06e684b1a0dd07d30287
+change-id: 20240219-topic-rb1_gpu-3ec8c6830384
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
