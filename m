@@ -1,88 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AB554747;
-	Tue, 26 Mar 2024 11:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010DF3D6B;
+	Tue, 26 Mar 2024 12:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711452258; cv=none; b=lBfvOoNXJGQ3amvwDIrrW+1Fe67c2y2frYSeNMWYOLexgerMIZKMDO4EssTqrRCtaTYz/6/Y88H/y+FItzYiXFSwSnQMy17sg8f+ZLbHFFpjQwJlhTWdD1I+omZZrSLSLqdwwfp3oEu+Q+xyCz1HKMPJ8ig6+Lcbb5+esyBORWc=
+	t=1711455241; cv=none; b=Pit/bh/SpekYUi/Xb43UKgLsjlQPZJqHZyei1YaI4oNqPPgBvcY4H4icur8KsPP476mDXSjkFZGmIHJnrk+qvLEAMitaltTHEdMIhriFIy2gzfd1FgdoWnCfiYTS6Ws3CfHhzzadX10eaPbQYhgG5QmGE69V7//57EOCFfZbRls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711452258; c=relaxed/simple;
-	bh=/ts1oCHhFSvAZEWne9JqXlu4VYc85iEvBKm2ILjRmrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPB4OD4osyTEnLV0mBpFvcKShNLsvCNtYh6BDUMqZ0zyUk2XOrO8zlnxHeuXx9/6Fbw8fWchKh4c50A5v7OsAVC40Oz2y1AkRDQMGfPA7fmjTYDHg0PweX+PhT/9CyHwD1fxb5GIhtNnGb+F/n63Si00FfOOlQ4vrOBil7S29vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+KMsQbL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711455241; c=relaxed/simple;
+	bh=SDBARoxk7abMKwPdFlku+guO0j3DKxUdt3hiFPYCreM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vD8EBstBXTiEiocJ0NY/Lu/p0IJV97oquv7Wq93maIbGTc4j7lvfaNCqz9/A6m2BAb70hq34bnleN02iM+srhUyI0cVR+dqo9RIyLv2V1fZjj38k1IzvvOWXIs4StAN/IC402QksKX/hVQ5mY4mdFV++VXD7wwTQZ1pBs3NfIW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cA/830tL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+KMsQbL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81402C433C7;
-	Tue, 26 Mar 2024 11:24:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711452258;
-	bh=/ts1oCHhFSvAZEWne9JqXlu4VYc85iEvBKm2ILjRmrU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h+KMsQbLe3QIgj367MyWgv5P+1m7BI409Cx0JKMdxTjjk5QhEW2B3KaJkihe0bmLW
-	 WLiEOQlpW66lXG0o6R7AGmD80bKx22DlVkkbFi4s5gj3XQPEt/Iq0iCQT0iyhZxpiw
-	 kfaegRebyCd7Uu5rxm919wVgcFqWotqoE26ookthJCTVj+f8ErZyqOogHqEnfX+Rc/
-	 KIZtzfdavI2Qpf1PDxS5zB8rjpa1IHATwtBgBZ1i763/X+TEbEtmfkNZm4Zme6N08j
-	 /Mn7yzDwcDsK5LJbnA6jBAmrgGYjpUzMCZQ8NgmQy8fbtuB/4WVU/ep46gJaR8gMeH
-	 3xVkZnPGT5wuA==
-Date: Tue, 26 Mar 2024 11:24:12 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gdsc: treat optional supplies as optional
-Message-ID: <6d9fdecc-c420-4247-88a6-1c1f98fd3fee@sirena.org.uk>
-References: <20240325081957.10946-1-johan+linaro@kernel.org>
- <9b2a7e9f-dbb2-4acb-91a7-fcc64d5cfabd@sirena.org.uk>
- <ZgJ2QHCYI4wfmfcr@hovoldconsulting.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cA/830tL"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42QAsfUQ003852;
+	Tue, 26 Mar 2024 12:13:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=jSzp/1+
+	p7LeTaQA7JKrMHf6fjsUPFL4GUfMuZ+BA1LA=; b=cA/830tLkU+YwBY1W1faxGx
+	J1+nyvJVq+KIkCRea5Kr7dgSTGZ61tF7QGga+Ozl/JLpqn1sUoBAag3O0wwIliiz
+	Tfs3OGgNbOEZDr5jpxZDc9iwo9Y6HZn4lhYJrRd3HWS+bDUXyIirQHJR+QiQV45+
+	54AHV0aCPXEyNf6rfn6Bq2IIWCJ++gls39C9DI6g2rISBAETY7mjRqUw1cId7Lbj
+	1dLDj6CTZO4USjiWjdSrkQPy2Cxk5Fc4vz+Aejxxuciqs+ACaRyTV470nJ/ISXzs
+	zdyW3RYWazbHb5rRKhRbzfTcePEaPjmlRiEwxHnr0iQDgfGCjqyDF5bunMD4Fqw=
+	=
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x3w0x88g6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Mar 2024 12:13:55 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42QCDsxt004800
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Mar 2024 12:13:54 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Tue, 26 Mar 2024 05:13:50 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <djakov@kernel.org>, <quic_anusha@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v3 0/3] Add interconnect driver for IPQ9574 SoC
+Date: Tue, 26 Mar 2024 17:43:09 +0530
+Message-ID: <20240326121312.1702701-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Hc8gQ3lqQskYPlfA"
-Content-Disposition: inline
-In-Reply-To: <ZgJ2QHCYI4wfmfcr@hovoldconsulting.com>
-X-Cookie: Equal bytes for women.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 13O6Ca3ngWZFw-ROFjecxSLR2dmBsl61
+X-Proofpoint-ORIG-GUID: 13O6Ca3ngWZFw-ROFjecxSLR2dmBsl61
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-26_06,2024-03-21_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ adultscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
+ clxscore=1015 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2403210001 definitions=main-2403260085
 
+MSM platforms manage NoC related clocks and scaling from RPM.
+However, in IPQ SoCs, RPM is not involved in managing NoC
+related clocks and there is no NoC scaling.
 
---Hc8gQ3lqQskYPlfA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+However, there is a requirement to enable some NoC interface
+clocks for the accessing the peripherals present in the
+system. Hence add a minimalistic interconnect driver that
+establishes a path from the processor/memory to those peripherals
+and vice versa.
 
-On Tue, Mar 26, 2024 at 08:16:16AM +0100, Johan Hovold wrote:
+---
+v3:
+qcom,ipq9574.h
+	Move 'first id' define to clock driver
+gcc-ipq9574.c:
+	Use indexed identifiers here to avoid confusion
+	Fix error messages and move code to common.c as it can be
+	shared with future SoCs
 
-> An alternative would have been to add new compatible strings for the
-> derivate platforms and only request the regulator for those as I
-> mentioned here:
+v2:
+qcom,ipq9574.h
+	Fix license identifier
+	Rename macros
+qcom,ipq9574-gcc.yaml
+	Include interconnect-cells
+gcc-ipq9574.c
+	Update commit log
+	Remove IS_ENABLED(CONFIG_INTERCONNECT) and auto select it from Kconfig
+ipq9574.dtsi
+	Moved to separate patch
+	Include interconnect-cells to clock controller node
+drivers/clk/qcom/Kconfig:
+	Auto select CONFIG_INTERCONNECT & CONFIG_INTERCONNECT_CLK
 
-> 	https://lore.kernel.org/all/ZgFGCGgbY-4Xd_2k@hovoldconsulting.com/
+Varadarajan Narayanan (3):
+  dt-bindings: interconnect: Add Qualcomm IPQ9574 support
+  clk: qcom: add IPQ9574 interconnect clocks support
+  arm64: dts: qcom: ipq9574: Add icc provider ability to gcc
 
-Ah, yes - that would be much better.
+ .../bindings/clock/qcom,ipq9574-gcc.yaml      |  3 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  2 +
+ drivers/clk/qcom/Kconfig                      |  2 +
+ drivers/clk/qcom/common.c                     | 30 +++++++++
+ drivers/clk/qcom/common.h                     |  2 +
+ drivers/clk/qcom/gcc-ipq9574.c                | 64 ++++++++++++++++++-
+ .../dt-bindings/interconnect/qcom,ipq9574.h   | 59 +++++++++++++++++
+ 7 files changed, 161 insertions(+), 1 deletion(-)
+ create mode 100644 include/dt-bindings/interconnect/qcom,ipq9574.h
 
---Hc8gQ3lqQskYPlfA
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.34.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmYCsFsACgkQJNaLcl1U
-h9CvMAf/TnvgweOOho7JYpCs6twOsPihnINiG68SDxShtJVTiJXg/XlJnIVEnr9F
-h48uPQmchUF4aY4drFH9haiWVGNHvm+bAbKGyNwt1pbfny7xIaXdgwVQXCW/rMf7
-FeGLB8vo6ial3N1YIWfHWW/8GjRms74XZmNd8GAspVNrtWrUcydP65FEK9csNmum
-5BgNTfYD9jLrrc4OgJPoHF3cNYi8YMPtNzOXnNI5eOwokk5G7BRNkkhnA1CvK+o5
-QHsAlUUEf65LmvODminV5zdSQNmtr/8MnNSSwykfcipg01Wuklic7D2oVM/z+85M
-YEPLGgu6/qgpayLd/F+gi1yFTtC6BQ==
-=mq/A
------END PGP SIGNATURE-----
-
---Hc8gQ3lqQskYPlfA--
