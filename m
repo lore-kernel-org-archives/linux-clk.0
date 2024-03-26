@@ -1,135 +1,105 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AC547A52;
-	Tue, 26 Mar 2024 08:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAEF43AA4
+	for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 09:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711443595; cv=none; b=An+i8LctJFUe7ZK++N5YsCatETY/p0JBtOCyKNlNv6X8ShIKAA0c9fdZCCa5VBjiaZeezQ/yC41/PN6g3fKYoaItaZY6k4rdWMaEVFtv/Ww/VAHQgrgK7/08qj2wllSI79vJWqCPYqR82zXqEZ8K9D6KEqPosgTr+vxzHyyTVGA=
+	t=1711443613; cv=none; b=rvHd3y1p3mc66mJ3I1ilPdKh/lXZv1OICXDhY40+kB67z8TX5l3yKQnsqcxabMXDIpviXkS3PGYTwHfYZ70B2aa2JN6hxJBBgyGUUBq+MgNFX2KNfa7WN4tF5fCTX7tvSqwNO986Q7d/M7T+AkboKyG38HYzMT5W3tygtP2DxNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711443595; c=relaxed/simple;
-	bh=4uDjqygHv4DTuZmqzarwUnS5AROPK4sqXpSLqkeaM10=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YdJrXeYyMka5Cjg7/QoaUKWcnRNH4l8J0EsUAJlWibzAGgTVVmKpebg5adC0zuW3zkuPtCnVsHZIFmdRFCQd04QMJJge9Jnm4k6AaFNzRttcciroXsS0cAvZve4rKS+6ydv/1Olm3rFd0KIgIUmoIW7LuBZPDMHsnadSYm250jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ctcqXrim; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1711443613; c=relaxed/simple;
+	bh=aeF2NGTij5If1PKU12QjxNSfCgLheAL5j7HQ6bmibUI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rlSDw92Bu40/lU/sTNG4Pe04vc+AsXpE42KPLEVaEdwKM7PxDqS5TTCNWZI3DJaVjcfGIY4NdWkzpN+eqXFJO13vBrd82drtWsDCYnZElV5YtPucuPmFpq4yHGvSMHaP3LX9pPJXCYh4LeBDKk++tviw2YV3LV9DJ/EesWvbCFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VhbUcvXP; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ctcqXrim"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42Q66XbV004610;
-	Tue, 26 Mar 2024 08:59:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=SbrMPaH2oADH1vwWJwZWD
-	SkzPzttEAqCuqJGgMzYDn4=; b=ctcqXrimT+81u4eT0KvX2YDhZ1BF6guYm1Z00
-	g/VjpSfog8sJRHOr+tDqlPHinBO/0H6/q5H7szlP0GfDqWVhWRsA78xr36hlkfUj
-	RfiDEnLIxFaxw622DuaOKHOtor5w7damxpnV5QyF11YbKPGCgNrc1CK/RpDOL/Cg
-	M9zoGygykXpnuTQuVKvo1BHTBJjPm7OV/3Y9InNCFUhOCJlDC+5YpH4Oi97QSpNq
-	mMBf90rWyeOCIhLI6VgFJ7blb6aSL4hqDyOgYiU1V1CrkSqWuHmHaTwvnbTxudzH
-	wIi5A++bT0IdMcGDJy+qtRM28m7OeuCk1yP5ky2gRNuH4kMqw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x3rt80fm5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Mar 2024 08:59:49 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42Q8xOTf009240
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Mar 2024 08:59:24 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 26 Mar 2024 01:59:19 -0700
-Date: Tue, 26 Mar 2024 14:29:16 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <djakov@kernel.org>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] dt-bindings: interconnect: Add Qualcomm IPQ9574
- support
-Message-ID: <ZgKOZGDxqGD8dmAn@hu-varada-blr.qualcomm.com>
-References: <20240325102036.95484-1-quic_varada@quicinc.com>
- <20240325102036.95484-3-quic_varada@quicinc.com>
- <4e7ff99f-f362-4d58-b2f0-ca2dc1fe4b55@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VhbUcvXP"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a468226e135so620360466b.0
+        for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 02:00:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711443608; x=1712048408; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F4Nl3F9buqLWWf/KucUiB+H6du4zgHC1jQU4GH+Nt64=;
+        b=VhbUcvXP0S1DEmFQ3hIPaQicYrk5YT7mVSDeN/EqmiOK7pfrNhzk6o2rjLNrErTPNs
+         TqR47sRnL8g/6Ftnuk+EPAGqaafus2/dT0CD+6qlw0dlHBQLuFeAfi/qRzbq2+p8zJ3d
+         xrrwNo9ZzDlDNA6M9SotqRtYg8ei8m6ms6C9qTvoBUtD1i1E4jcqK0MGkUidLjc4sbGo
+         jJP0sGtUOWTjxfc0QZKW7ZzmhZf/SPZSxzkgSJs7FOD0jIba3nlw6yiXZLgoeG6GqnHN
+         HTphWr1FZTR4QxnEWZYv9CiasG2dkQfB0mbnIsGcvlWhuHj8QBjZifGbMCpXoXwEzQPK
+         C53Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711443608; x=1712048408;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F4Nl3F9buqLWWf/KucUiB+H6du4zgHC1jQU4GH+Nt64=;
+        b=qYaj0JLG/bdvj3a8LZUCDgSgHFJEocmcZ6pa8F0VIklcs+QD0FZPdHWFLsJTczxZV+
+         9knKgYsKdXuzsjBt0zod34sL9D8Pf0nuL3C+fjJDUs2WAmj7PM0qhcWWApTkL9a6R6r2
+         N96LkMNuz8CDuu6EraVYq/K0wxM9AwjHoVW/X8OvVgbI0tMC/SB8ps7Sjee/Mp9bbVsB
+         HJzlm9gj9qejHvW9NKRQptRs4j27IZ6c2TyzDhb7VNhp/0sMPdnnet+S2D1do/C1om58
+         0V/0Ly67QojgnDX194o+OP6d01LcrfqcHC0JvGvaTR04U+4DpkaCS9l/eKmn0tb5xpJF
+         FogA==
+X-Forwarded-Encrypted: i=1; AJvYcCULV6YK5uoLM65UCr6WNfa2Mg8h1Pplll5BP5VP0ZWbV/eB6cU1nrfic0hL9PwF1uLi8ZGsZMMpphlLn5WNr3qLiVQVIn2X8TBo
+X-Gm-Message-State: AOJu0Yyr2UMu2zM29Wul298WsCSa8mf5tCwyEFlgE1ODvPMrv9FUMDOC
+	KVhYEszK8GSpAMBASvHsESdrT8BzN/DX718D2MnKKRKxmRg42iZEXIuMNIjKYDo=
+X-Google-Smtp-Source: AGHT+IGHbr/J30tOPNsBgLbO6NK9FwXqFdmdVip9nvl59imBHyDVqix+jCYmkJwMT7KQ8cMPh+dvZA==
+X-Received: by 2002:a17:907:7246:b0:a4d:f7ec:65bd with SMTP id ds6-20020a170907724600b00a4df7ec65bdmr437983ejc.41.1711443607808;
+        Tue, 26 Mar 2024 02:00:07 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.222.44])
+        by smtp.gmail.com with ESMTPSA id e25-20020a170906845900b00a4673706b4dsm4010129ejy.78.2024.03.26.02.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Mar 2024 02:00:06 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240301015118.30072-1-semen.protsenko@linaro.org>
+References: <20240301015118.30072-1-semen.protsenko@linaro.org>
+Subject: Re: [PATCH v4 1/3] clk: samsung: Implement manual PLL control for
+ ARM64 SoCs
+Message-Id: <171144360581.95110.13664376466376764034.b4-ty@linaro.org>
+Date: Tue, 26 Mar 2024 10:00:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <4e7ff99f-f362-4d58-b2f0-ca2dc1fe4b55@linaro.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: JNx53uo_Xs9A_D8dPCMbJA1vWSMfwqlj
-X-Proofpoint-ORIG-GUID: JNx53uo_Xs9A_D8dPCMbJA1vWSMfwqlj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-26_04,2024-03-21_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- priorityscore=1501 suspectscore=0 malwarescore=0 mlxscore=0 clxscore=1015
- spamscore=0 mlxlogscore=942 phishscore=0 lowpriorityscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2403210001
- definitions=main-2403260061
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Tue, Mar 26, 2024 at 07:49:00AM +0100, Krzysztof Kozlowski wrote:
-> On 25/03/2024 11:20, Varadarajan Narayanan wrote:
-> > Add master/slave ids for Qualcomm IPQ9574 Network-On-Chip
-> > interfaces. This will be used by the gcc-ipq9574 driver
-> > that will for providing interconnect services using the
-> > icc-clk framework.
-> >
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> > v2: Rename master slave macros
-> >     Fix license identifier
->
-> Both patches should be squashed. Header is parts of bindings and your
-> previous patch adds the interconnects, doesn't it?
->
->
-> > ---
-> >  .../dt-bindings/interconnect/qcom,ipq9574.h   | 62 +++++++++++++++++++
-> >  1 file changed, 62 insertions(+)
-> >  create mode 100644 include/dt-bindings/interconnect/qcom,ipq9574.h
-> >
-> > diff --git a/include/dt-bindings/interconnect/qcom,ipq9574.h b/include/dt-bindings/interconnect/qcom,ipq9574.h
-> > new file mode 100644
-> > index 000000000000..b7b32aa6bbb1
-> > --- /dev/null
-> > +++ b/include/dt-bindings/interconnect/qcom,ipq9574.h
-> > @@ -0,0 +1,62 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> > +#ifndef INTERCONNECT_QCOM_IPQ9574_H
-> > +#define INTERCONNECT_QCOM_IPQ9574_H
-> > +
-> > +#define IPQ_APPS_ID			9574	/* some unique value */
->
-> Why random unique values are bindings? Why this cannot be 0? Please
-> explain how this is used by DTS and driver.
 
-This 'id' is not used by the driver or DTS. It is a unique id that
-is initialized for the node by the interconnect driver framework.
-A random value was chosen such that it does not conflict with an
-already existing node id. Chose 9574 based on this comment from
-clk-cbf-msm8996.c
+On Thu, 29 Feb 2024 19:51:16 -0600, Sam Protsenko wrote:
+> Some ARM64 Exynos chips are capable to control PLL clocks automatically.
+> For those chips, whether the PLL is controlled automatically or manually
+> is chosen in PLL_CON1 register with next bits:
+> 
+>     [28]  ENABLE_AUTOMATIC_CLKGATING
+>     [1]   MANUAL_PLL_CTRL
+>     [0]   AUTO_PLL_CTRL
+> 
+> [...]
 
-	/* Random ID that doesn't clash with main qnoc and OSM */
-	#define CBF_MASTER_NODE 2000
+Applied, thanks!
 
-> > +#define IPQ_NSS_ID			(IPQ_APPS_ID * 2)
->
-> This does not seem right.
+[1/3] clk: samsung: Implement manual PLL control for ARM64 SoCs
+      https://git.kernel.org/krzk/linux/c/7fa37084061fef80dab81bc062c6ec0fa8c26b2d
+[2/3] clk: samsung: exynos850: Add CMU_CPUCL0 and CMU_CPUCL1
+      https://git.kernel.org/krzk/linux/c/dedf87341ad66fa6889fedcf610b6941d2d3bcb6
+[3/3] arm64: dts: exynos: Add CPU clocks for Exynos850
+      https://git.kernel.org/krzk/linux/c/704094c5981287c85dfdb0bf53abdfcdcc1f8597
 
-Doubled the NSS id so that APPS node ids dont clash.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks
-Varada
