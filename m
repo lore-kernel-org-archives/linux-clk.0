@@ -1,35 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102B375806;
-	Tue, 26 Mar 2024 14:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D627603B;
+	Tue, 26 Mar 2024 14:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711461693; cv=none; b=mTZrJ6ZbVpbVBdKzEKyTTILtamxArQrHXYtlSyxaTFopkGNHode0ugBuW5q+S/XAKupPm7P+t3k/7/9ZGjnFJySvgF5vcVNfkKjCwBNFheCt55l4sCo0TfnPjl1v4Jr9AajgdkF2R539hUPrPUqUsdqkzk83oDneUpgEBwZY0Zs=
+	t=1711461693; cv=none; b=FieJZKgVH7oQQBbCVTzCQUJWxf8H1nWEAudmPIilySFGyxYj3xayS3TCgu9IkWudVEXR0Y53T/YAYDIUo/3Gma+7wv1BbcYjz6+rjgIuzJkwi3FGc+0p8J9lQPSzrUwSvbou+KamMpmJprAx+uhKZX6VWfX2D2tRFxrnXt1OKi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1711461693; c=relaxed/simple;
-	bh=yz4Tw4H/56nETqXKR1UOj4GtHTZDq3JA8OzpkBRqe+c=;
+	bh=3YqcMcSeQrAJhFxyehRFqJm+kpoklrIhOsCDq/mQiJg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UCxbKWNm/0s1icjmlnSPAxygojWbPyt+YfIxpRtLYspzlLjgRgkgmSHJTLvAMk8GDpsG91tinCMcr6WCWGrljNQEcG60TtphYkI4M7OjU6ajRjskh5Cg6274TGtRg3pWSXUHpsLK4wAu2zAMsa5Oh4zPkI/pc0BM/6aFnV62ISA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEAw18pT; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=EwaiPwxWS4U9TU1aByluLFZhohTV8KO4SLMUGOy2OHeH52eVjfcF1eNOOAsfAXJB0du7ltT1h+qwq/x3Z7wxgmMy5cr49JZwpsGExrEe9sms2ADlXmJ8rXiLIw9LXB/Hby+4yI6icCznLX5uYeWLfLVZMzZCD1PGu46sZw5NI+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KrcqGyo3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEAw18pT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4673C43399;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KrcqGyo3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B044BC433B1;
 	Tue, 26 Mar 2024 14:01:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1711461692;
-	bh=yz4Tw4H/56nETqXKR1UOj4GtHTZDq3JA8OzpkBRqe+c=;
+	bh=3YqcMcSeQrAJhFxyehRFqJm+kpoklrIhOsCDq/mQiJg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HEAw18pTYLJaYmZyq5gRSq+pnu16Uc6Bt6e+P0nEyiQTXO2qzcq0LG+eLR2gd9Sls
-	 0RUA2Np3QPYdEGdlfW4zwxwEmGe1VLGpAB51cYxW0TWkGdY11tcHfLV5eR3ozeqNLd
-	 euGgktPEcr8Uq6+a195UF54987YoPj9OKI9gdJEow11I5w+op8DczisLxhSIffWXct
-	 W5vMzZTzhg45bjR4sfy71xiYmyCsO7mXr0xRXcR+auJBT9QnDQoAhAgCqySoqBz1id
-	 XchLCb4YUb+A8kJ1joOoXS6RvWMxMJckMygWvtnvCOwAwNVORu3d42/9T2+v98+5RF
-	 tEewqYiJkS/ug==
+	b=KrcqGyo3X5Uw4H9MVaz14s65PrNgYiJli1b8J62iU0vPDWMQcRje0CDGMRNJHcv/L
+	 zDEC97fo3KmH/yjcsCSlFreXdYXLNiqqcYmg8nBCS0i2oA6dfBQ2xKlztsyDscfCQi
+	 Mqg1aa7v92THqN8Io6Z3B/TlAEH9savCoiEvQDJ6ihrnF4V8j4Qe2oN0v8YlmCc3aa
+	 /YhFQhX9iPucFsKjCPeQITVgYWyFObwRuGaElK5+uZr5fBN2hfXmPx76Y5zlRJdydO
+	 VYoj0Z/+hPjD1VRBcRa9+iIwmQu9z1fg6dLZLMHR8LOAsvYYdHgYWSFgNHHI3N40xC
+	 Iihi8D3wLsp1w==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan+linaro@kernel.org>)
-	id 1rp7My-000000005Yr-3Rkg;
-	Tue, 26 Mar 2024 15:01:40 +0100
+	id 1rp7Mz-000000005Yx-0NM3;
+	Tue, 26 Mar 2024 15:01:41 +0100
 From: Johan Hovold <johan+linaro@kernel.org>
 To: Bjorn Andersson <andersson@kernel.org>
 Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -44,9 +44,9 @@ Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH 2/5] arm64: dts: qcom: sa8540p: use sa8540p gpucc compatible
-Date: Tue, 26 Mar 2024 15:01:05 +0100
-Message-ID: <20240326140108.21307-3-johan+linaro@kernel.org>
+Subject: [PATCH 5/5] arm64: dts: qcom: sa8540p: drop fallback gpucc compatible
+Date: Tue, 26 Mar 2024 15:01:08 +0100
+Message-ID: <20240326140108.21307-6-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240326140108.21307-1-johan+linaro@kernel.org>
 References: <20240326140108.21307-1-johan+linaro@kernel.org>
@@ -58,34 +58,28 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The SA8540P platform is closely related to SC8280XP but differs in that
-it uses an external supply for the GX power domain.
+Drop the fallback SC8280XP GPU clock controller compatible that was
+added temporarily to handle the transition to the new SA8540P
+compatible.
 
-Use the new SA8540P compatible string for the GPU clock controller so
-that the OS can determine which resources to look for.
-
-Note that a fallback SC8280XP compatible is added temporarily to avoid
-any temporary regressions for sa8295p-adp.
-
-Fixes: fd5821a1a83c ("arm64: dts: qcom: sa8540p: Drop gfx.lvl as power-domain for gpucc")
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/sa8540p.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/qcom/sa8540p.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/qcom/sa8540p.dtsi b/arch/arm64/boot/dts/qcom/sa8540p.dtsi
-index 23888029cc11..3b31a9ea3492 100644
+index 3b31a9ea3492..9c2e99d30d08 100644
 --- a/arch/arm64/boot/dts/qcom/sa8540p.dtsi
 +++ b/arch/arm64/boot/dts/qcom/sa8540p.dtsi
-@@ -168,6 +168,8 @@ opp-2592000000 {
+@@ -168,7 +168,7 @@ opp-2592000000 {
  };
  
  &gpucc {
-+	compatible = "qcom,sa8540p-gpucc", "qcom,sc8280xp-gpucc";
-+
+-	compatible = "qcom,sa8540p-gpucc", "qcom,sc8280xp-gpucc";
++	compatible = "qcom,sa8540p-gpucc";
+ 
  	/* SA8295P and SA8540P doesn't provide gfx.lvl */
  	/delete-property/ power-domains;
- 
 -- 
 2.43.0
 
