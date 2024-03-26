@@ -1,291 +1,123 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5456CDA8
-	for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 12:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C8664A9F;
+	Tue, 26 Mar 2024 12:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711456654; cv=none; b=iclVAiGrRypibx39X1im5srVEeiLios44xX/IrjEEbgND98HR48QeiZXRCgEU6cUG5tOCq64e2pHTDtjbM8+gvRSfLPFzH55/Tkne3FnsFxtCH0fFJ+abfil/Y7KoIWZWYKTFrTKIvxLr4N7H0yaLM18Tnw2t0skB6r8SjdPhrk=
+	t=1711457869; cv=none; b=AdH8w7nCvs4atvi3i/NeHDMhXQRGfx48Pl/Yp3JOh4doMcrUDU58bjgdHWUh9cUiLHakbKF71otxC03pr+suQlM4gg9lj+h7Fz7zh2IamkDTPYDCG6K5p8OkWGBc5XHKuWB9rDGtUVoRuzp9wBQaC2ugDwlLETAFfhroEC9IC8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711456654; c=relaxed/simple;
-	bh=aZna8YAluKUCCQIMbM5gnPGbSv5NGDwb7irWEMgmhI8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YrAAOXSHbkcjYnaNFCmBdzt1saSwbTQ+DnnD4OSnYRsKnuGJ/aWg3Xu4trAVoOkeMlNm8op2bEjNrevozYcu4f5xbJAoc++m/ZzzOx3OryMPL9vtHzWgP3VopqSUyInShziKKyiorLlAjxuO/S7aZA+ziP3J1NekRAcVTwhtrlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LJSKatIt; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711457869; c=relaxed/simple;
+	bh=sqD6EqXFvd/enjPcnY7ANK43uQDDtwncQvACChQ1Uj4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CIfarMdGksuKBdA0HgZGTPRmmVw3BGWtzMcdREgzJTz5+0ZWmn9CuqxJXmn/En/o+4v2uIvYcbmHO9Yqvgo5Ar3Xts1EsepYbRkQf0+BTA9pi9Tc9oaPiT1isb75PGtLbsweK6n3jjYwSDwK3Bbo+EKnh79bkDL7MS5rKIRoNJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXQyvHt+; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LJSKatIt"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-60a434ea806so60205507b3.3
-        for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 05:37:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXQyvHt+"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-56c2b4850d2so701946a12.2;
+        Tue, 26 Mar 2024 05:57:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711456651; x=1712061451; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dx8c0fzZpQ3t1HiVdbx5VhvTuw+jHpnajVV7Jh7hCH4=;
-        b=LJSKatItsQLN7YHPDFGJhhXI4gqLbCrrqu/mQtzkGHkl8Pjq+mzJqp1D287Dk6dynA
-         oV/eKFXS4ZR77jirL1MPV51dYZiNXUwQg7VTvcSHoucYzX1tAY1Z90CiAtuLHTWJ3WQk
-         sOKEzWaqCpQs9s26D2IydBh84bWjorqarZ7W6UflUbpe3Rb33xcIPqrDPjA/OLXto3jc
-         jZR5y22T2T8YoYikUWX9L58NERBZBI9MSREOEuN12sqHgoTw3VQi1wlU1HldL7w+U5bl
-         5WqktPfgOHYglRao42BJ1sVlKi0N/ELBoSES7qE90/wUO4XCl2z/k27Q+DsyrJe3Rgsu
-         Rw7w==
+        d=gmail.com; s=20230601; t=1711457866; x=1712062666; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w+z5xlEnY753ogoUGgfV6dsl7xTQJ2IF4qKaWrruJE8=;
+        b=VXQyvHt+hu8m+Gcojobs3/ZLSadOkdbZn75aODA6k4xygwBsLPPctCSNIH/ijMbLsn
+         77K6FBUWKelYL/26QJavkdCkV312WoCsJni2bTS3E9t97vsFxTZoWsB7ZaWzSzb2kuUJ
+         vxhccSWZLSBFNrbCDM5HaL/DBp0tnFpG0OAJEQScp3R2Y4Fi/wA44ef36YYB7NBJj2Kx
+         R/eW6xz99PTXsPJPnBjRnfN4r3vu1B/tdwzlP5+oXxLovzhq2WLqyD+yrQ7SqE9UEejI
+         WXqzkJSaYQRHpeAIdZFnxPZAD20OF2fpmmiVBLgsMgk7aEH7BE4uaajDAGrx2GhQaIoy
+         S3Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711456651; x=1712061451;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1711457866; x=1712062666;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Dx8c0fzZpQ3t1HiVdbx5VhvTuw+jHpnajVV7Jh7hCH4=;
-        b=GijRXCYVKaNRI0ZR67Jsmsyzf8RtCz2a/c3XZj1J6B9Sl3nfXL7FVbTpsZgnmU+DJB
-         v4glRdcyZCg5yI/1Ebmrmf7fAPIHl/LzFyUX2mlHk2hk36e8yrdBHyZqv1RqUT8qtKRq
-         gYw7BoQcagd16pbnbpUzb/L4OcWXKF56sr1QP3+kBrbTWVXY1hASYSJVAE9qFlJ2fwtS
-         XMQOSKKOLD+lxn3R7PFYn4lutvohQ2JECWozOkT0mJ03HBkGnycV7FbHixWW2l7rf6hE
-         rSWnf1zdvpKqJCWXdu2UP18PneUbNDx/IaHK/tEkI5rOi4W10pPMiha6Y8Ves0DAGNcP
-         ePIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCwrk+/aqbEntFQT4kUwnQdjqgFd9pkvS3dA5By0x46XWy2+7SVXpEBaEjFk68LcTQPjjQy+9EQxPXtv/EOZYzjwwthi4u0Cns
-X-Gm-Message-State: AOJu0Yx6uRDdOG3QAmYpEhnunCVrOu6lFs9zM/roblyYP/YDc2mJpR62
-	BzQh25nicpzhuQBmxSpzxDC8KNXfOHtDSk0HySXRFitsUZse66GgjDyapG+yBfyfxGSGk61TR6j
-	hEg0NUyantuB9sGKruXulPX3Sm7/CAwvZCW1pRQ==
-X-Google-Smtp-Source: AGHT+IHpG7/sHyh3c2zBPRtS76P8iuvz7AvVhRoJ/V1dq27C+XzkkwfvynwUMJxq+rlJ+gQeMJqbdkJYeim6vTxWmQk=
-X-Received: by 2002:a25:361c:0:b0:dda:a7a9:7b59 with SMTP id
- d28-20020a25361c000000b00ddaa7a97b59mr906996yba.50.1711456651465; Tue, 26 Mar
- 2024 05:37:31 -0700 (PDT)
+        bh=w+z5xlEnY753ogoUGgfV6dsl7xTQJ2IF4qKaWrruJE8=;
+        b=lxilMu+SNKo7tbcKVDHmHHqTu0K0I015fDiOxyFgXNBorALxfYtteUu7sJYeG6deYj
+         r+ewaKXa0Ed89ZKb5Rtz+hEFlfzZJv2sSutHR3c+4Ron6aFdxzxKTqBmHo4nRPCPtNkW
+         1ykTUt85kz2g867igds93INExKVz49cpBvCW0tkcPjzB8a/jJrZ31DvKBtlJY51auEHQ
+         Ayba2aoaZ+cWDNqyTyNqWh+eqwFij+O1SILQgIVUKn6AuG6laIuWEV9tDkoTG0t3X4rz
+         8PLiplBtOXRCM/K3G1Ukff/StsIUP9XZ/TY4FgR3ivni4GWfjmp/YFV+DtRbQ4dmk7Yw
+         ls6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVCmRn1kN8aUsruLDWRvXorVGaXjAyNQkwNIvwEJzQmh/q4VUjE6eUyGNG5aY22M+EfYgCfR+RAsgntkWMMSxHBADduHiB0Rutv/6+X1YI2mlOlvTZYkxc5og4t8K6bG/6F0YHT7HxP
+X-Gm-Message-State: AOJu0YzbolcuvTt8nradxnJ1hKCqk1k+6/9+Pglx1itsE3qPKkFqgYgC
+	BDA1FfxNO+vVdqUdmpxJwekJ1mLMy1GnWUjLF96bjmSysysDCcUpEXY6Xt2K
+X-Google-Smtp-Source: AGHT+IGga7RkoTlf92nxVW8fYxB97cuLl9KTN8U8WFz72JkGq8V2/AxJMP3h4upSKcT2dlH4i0+0tQ==
+X-Received: by 2002:a50:950e:0:b0:56c:4e2:5a4e with SMTP id u14-20020a50950e000000b0056c04e25a4emr2075634eda.1.1711457865977;
+        Tue, 26 Mar 2024 05:57:45 -0700 (PDT)
+Received: from [192.168.1.253] (57657817.catv.pool.telekom.hu. [87.101.120.23])
+        by smtp.googlemail.com with ESMTPSA id n1-20020aa7c781000000b0056bb65f4a1esm4101413eds.94.2024.03.26.05.57.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Mar 2024 05:57:45 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Subject: [PATCH v3 0/5] clk: qcom: apss-ipq-pll: various cleanups
+Date: Tue, 26 Mar 2024 13:57:37 +0100
+Message-Id: <20240326-apss-ipq-pll-cleanup-v3-0-15c4aeeb14ac@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240326121312.1702701-1-quic_varada@quicinc.com> <20240326121312.1702701-3-quic_varada@quicinc.com>
-In-Reply-To: <20240326121312.1702701-3-quic_varada@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 26 Mar 2024 14:37:20 +0200
-Message-ID: <CAA8EJpq5ng2K_Y481FbsjSXCaGM5_2+xkwWqFzfzXv2ZOBpMgw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] clk: qcom: add IPQ9574 interconnect clocks support
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	conor+dt@kernel.org, djakov@kernel.org, quic_anusha@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEHGAmYC/3XNTQrCMBCG4auUrB1ppgk2rryHuAj5aQNpGxMNS
+ undTQtCF7p8P5hnZpJMdCaRczWTaLJLbhpLNIeKqF6OnQGnSxOskdUN5SBDSuDCHYL3oLyR4zO
+ ApEYIaYVuOSPlNERj3Wtjr7fSvUuPKb63L5mu6xdsf4OZQg0c7UlwhkJzfekG6fxRTQNZwYw7B
+ OkfBAuCNbWNKpDVbI8sy/IBNZorH/0AAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.13.0
 
-On Tue, 26 Mar 2024 at 14:14, Varadarajan Narayanan
-<quic_varada@quicinc.com> wrote:
->
-> Unlike MSM platforms that manage NoC related clocks and scaling
-> from RPM, IPQ SoCs dont involve RPM in managing NoC related
-> clocks and there is no NoC scaling.
->
-> However, there is a requirement to enable some NoC interface
-> clocks for accessing the peripheral controllers present on
-> these NoCs. Though exposing these as normal clocks would work,
-> having a minimalistic interconnect driver to handle these clocks
-> would make it consistent with other Qualcomm platforms resulting
-> in common code paths. This is similar to msm8996-cbf's usage of
-> icc-clk framework.
->
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v3: Use indexed identifiers here to avoid confusion
->     Fix error messages and move to common.c
-> v2: Move DTS to separate patch
->     Update commit log
->     Auto select CONFIG_INTERCONNECT & CONFIG_INTERCONNECT_CLK to fix build error
-> ---
->  drivers/clk/qcom/Kconfig       |  2 ++
->  drivers/clk/qcom/common.c      | 30 ++++++++++++++++
->  drivers/clk/qcom/common.h      |  2 ++
->  drivers/clk/qcom/gcc-ipq9574.c | 64 +++++++++++++++++++++++++++++++++-
->  4 files changed, 97 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 8ab08e7b5b6c..af73a0b396eb 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -243,6 +243,8 @@ config IPQ_GCC_8074
->
->  config IPQ_GCC_9574
->         tristate "IPQ9574 Global Clock Controller"
-> +       select INTERCONNECT
-> +       select INTERCONNECT_CLK
->         help
->           Support for global clock controller on ipq9574 devices.
->           Say Y if you want to use peripheral devices such as UART, SPI,
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index 75f09e6e057e..b18d38509de5 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -8,6 +8,8 @@
->  #include <linux/regmap.h>
->  #include <linux/platform_device.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/interconnect-clk.h>
-> +#include <linux/interconnect-provider.h>
->  #include <linux/reset-controller.h>
->  #include <linux/of.h>
->
-> @@ -337,4 +339,32 @@ int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
->  }
->  EXPORT_SYMBOL_GPL(qcom_cc_probe_by_index);
->
-> +int qcom_cc_icc_register(struct device *dev, struct clk_regmap *clks[],
-> +                        int *noc_clks, int count, unsigned int first_id)
-> +{
-> +       struct icc_provider *provider;
-> +       struct icc_clk_data *icd;
-> +       int i;
-> +
-> +       icd = devm_kcalloc(dev, count, sizeof(*icd), GFP_KERNEL);
-> +       if (IS_ERR_OR_NULL(icd))
+This series contains a few patches to perform some cleanup in the
+apss-ipq-pll driver.
 
-Can devm_kcalloc return ERR?
+The set is based on v6.9-rc1 and it depends on the following patches:
+  - "clk: qcom: apss-ipq-pll: use stromer ops for IPQ5018 to fix boot failure"
+     Link: https://lore.kernel.org/r/20240315-apss-ipq-pll-ipq5018-hang-v2-1-6fe30ada2009@gmail.com
+  - "clk: qcom: clk-alpha-pll: Stromer register cleanup"
+     Link: https://lore.kernel.org/r/20240311-alpha-pll-stromer-cleanup-v1-0-f7c0c5607cca@gmail.com
 
-> +               return dev_err_probe(dev, PTR_ERR(icd),
-> +                                    "malloc for clock data failed\n");
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+Changes in v3:
+  - rebase on top of v6.9-rc1
+  - change patch 3 to use private values for pll_type instead of removing the 
+    field of struct apss_pll_data
+  - collect Reviewed-by tags
+  - Link to v2: https://lore.kernel.org/r/20240321-apss-ipq-pll-cleanup-v2-0-201f3cf79fd4@gmail.com
 
-So, this becomes dev_err_prove(dev, 0, "..."). returning 0. Not the
-expected result for the error case.
+Changes in v2:
+  - add a new patch at the end to remove the 'cbf_pll_regs' register map
+    from clk-cbf-8996.c
+  - change patch 2 to move huayra register map to clk-alpha-pll.c
+  - collect Reviewed-by tags
+  - Link to v1: https://lore.kernel.org/r/20240318-apss-ipq-pll-cleanup-v1-0-52f795429d5d@gmail.com
 
-> +
-> +       for (i = 0; i < count; i++) {
-> +               icd[i].clk = clks[noc_clks[i]]->hw.clk;
-> +               if (IS_ERR_OR_NULL(icd[i].clk))
-> +                       return dev_err_probe(dev, -ENOENT,
-> +                                            "%d clock not found\n", noc_clks[i]);
+---
+Gabor Juhos (5):
+      clk: qcom: apss-ipq-pll: reuse Stromer reg offsets from 'clk_alpha_pll_regs'
+      clk: qcom: apss-ipq-pll: move Huayra register map to 'clk_alpha_pll_regs'
+      clk: qcom: apss-ipq-pll: constify match data structures
+      clk: qcom: apss-ipq-pll: constify clk_init_data structures
+      clk: qcom: clk-cbf-8996: use HUAYRA_APPS register map for cbf_pll
 
-This is even better. Potential NULL pointer exception, then useless
-ERR_OR_NULL  and finally API abuse.
-Please use clk_hw_get_clk(), it is there for you.
+ drivers/clk/qcom/apss-ipq-pll.c  | 56 ++++++++++------------------------------
+ drivers/clk/qcom/clk-alpha-pll.c | 10 +++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  1 +
+ drivers/clk/qcom/clk-cbf-8996.c  | 13 +---------
+ 4 files changed, 25 insertions(+), 55 deletions(-)
+---
+base-commit: 9755120255d6e7b6480509e753e9aecd6171e04a
+change-id: 20240315-apss-ipq-pll-cleanup-a1e99af9d854
 
-> +               icd[i].name = clk_hw_get_name(&clks[noc_clks[i]]->hw);
-> +       }
-> +
-> +       provider = icc_clk_register(dev, first_id, count, icd);
-> +       if (IS_ERR_OR_NULL(provider))
-> +               return dev_err_probe(dev, PTR_ERR(provider),
-> +                                    "icc_clk_register failed\n");
-> +
-> +       return 0;
-> +}
-> +
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-> index 9c8f7b798d9f..4fce5e229fc1 100644
-> --- a/drivers/clk/qcom/common.h
-> +++ b/drivers/clk/qcom/common.h
-> @@ -65,5 +65,7 @@ extern int qcom_cc_probe(struct platform_device *pdev,
->                          const struct qcom_cc_desc *desc);
->  extern int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
->                                   const struct qcom_cc_desc *desc);
-> +int qcom_cc_icc_register(struct device *dev, struct clk_regmap *clks[],
-> +                        int *noc_clks, int count, unsigned int first_id);
-
-Add this function to the qcom_cc_probe() call stream. Change it to
-pass an array of clk_hw instead of passing indices.
-
->
->  #endif
-> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-> index 0a3f846695b8..c63c44b6740f 100644
-> --- a/drivers/clk/qcom/gcc-ipq9574.c
-> +++ b/drivers/clk/qcom/gcc-ipq9574.c
-> @@ -12,6 +12,7 @@
->
->  #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
->  #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
-> +#include <dt-bindings/interconnect/qcom,ipq9574.h>
->
->  #include "clk-alpha-pll.h"
->  #include "clk-branch.h"
-> @@ -4301,6 +4302,56 @@ static const struct qcom_reset_map gcc_ipq9574_resets[] = {
->         [GCC_WCSS_Q6_TBU_BCR] = { 0x12054, 0 },
->  };
->
-> +#define IPQ_APPS_ID                    9574    /* some unique value */
-> +
-> +enum {
-> +       ICC_ANOC_PCIE0,
-> +       ICC_SNOC_PCIE0,
-> +       ICC_ANOC_PCIE1,
-> +       ICC_SNOC_PCIE1,
-> +       ICC_ANOC_PCIE2,
-> +       ICC_SNOC_PCIE2,
-> +       ICC_ANOC_PCIE3,
-> +       ICC_SNOC_PCIE3,
-> +       ICC_SNOC_USB,
-> +       ICC_ANOC_USB_AXI,
-> +       ICC_NSSNOC_NSSCC,
-> +       ICC_NSSNOC_SNOC_0,
-> +       ICC_NSSNOC_SNOC_1,
-> +       ICC_NSSNOC_PCNOC_1,
-> +       ICC_NSSNOC_QOSGEN_REF,
-> +       ICC_NSSNOC_TIMEOUT_REF,
-> +       ICC_NSSNOC_XO_DCD,
-> +       ICC_NSSNOC_ATB,
-> +       ICC_MEM_NOC_NSSNOC,
-> +       ICC_NSSNOC_MEMNOC,
-> +       ICC_NSSNOC_MEM_NOC_1,
-> +};
-> +
-> +static int noc_clks[] = {
-> +       [ICC_ANOC_PCIE0] = GCC_ANOC_PCIE0_1LANE_M_CLK,
-> +       [ICC_SNOC_PCIE0] = GCC_SNOC_PCIE0_1LANE_S_CLK,
-> +       [ICC_ANOC_PCIE1] = GCC_ANOC_PCIE1_1LANE_M_CLK,
-> +       [ICC_SNOC_PCIE1] = GCC_SNOC_PCIE1_1LANE_S_CLK,
-> +       [ICC_ANOC_PCIE2] = GCC_ANOC_PCIE2_2LANE_M_CLK,
-> +       [ICC_SNOC_PCIE2] = GCC_SNOC_PCIE2_2LANE_S_CLK,
-> +       [ICC_ANOC_PCIE3] = GCC_ANOC_PCIE3_2LANE_M_CLK,
-> +       [ICC_SNOC_PCIE3] = GCC_SNOC_PCIE3_2LANE_S_CLK,
-> +       [ICC_SNOC_USB] = GCC_SNOC_USB_CLK,
-> +       [ICC_ANOC_USB_AXI] = GCC_ANOC_USB_AXI_CLK,
-> +       [ICC_NSSNOC_NSSCC] = GCC_NSSNOC_NSSCC_CLK,
-> +       [ICC_NSSNOC_SNOC_0] = GCC_NSSNOC_SNOC_CLK,
-> +       [ICC_NSSNOC_SNOC_1] = GCC_NSSNOC_SNOC_1_CLK,
-> +       [ICC_NSSNOC_PCNOC_1] = GCC_NSSNOC_PCNOC_1_CLK,
-> +       [ICC_NSSNOC_QOSGEN_REF] = GCC_NSSNOC_QOSGEN_REF_CLK,
-> +       [ICC_NSSNOC_TIMEOUT_REF] = GCC_NSSNOC_TIMEOUT_REF_CLK,
-> +       [ICC_NSSNOC_XO_DCD] = GCC_NSSNOC_XO_DCD_CLK,
-> +       [ICC_NSSNOC_ATB] = GCC_NSSNOC_ATB_CLK,
-> +       [ICC_MEM_NOC_NSSNOC] = GCC_MEM_NOC_NSSNOC_CLK,
-> +       [ICC_NSSNOC_MEMNOC] = GCC_NSSNOC_MEMNOC_CLK,
-> +       [ICC_NSSNOC_MEM_NOC_1] = GCC_NSSNOC_MEM_NOC_1_CLK,
-> +};
-> +
->  static const struct of_device_id gcc_ipq9574_match_table[] = {
->         { .compatible = "qcom,ipq9574-gcc" },
->         { }
-> @@ -4327,7 +4378,18 @@ static const struct qcom_cc_desc gcc_ipq9574_desc = {
->
->  static int gcc_ipq9574_probe(struct platform_device *pdev)
->  {
-> -       return qcom_cc_probe(pdev, &gcc_ipq9574_desc);
-> +       int ret;
-> +
-> +       ret = qcom_cc_probe(pdev, &gcc_ipq9574_desc);
-> +       if (ret)
-> +               return dev_err_probe(&pdev->dev, ret, "clock probe failed\n");
-> +
-> +       ret = qcom_cc_icc_register(&pdev->dev, gcc_ipq9574_clks, noc_clks,
-> +                                  ARRAY_SIZE(noc_clks), IPQ_APPS_ID);
-> +       if (ret)
-> +               return dev_err_probe(&pdev->dev, ret, "interconnect register failed\n");
-
-So, even if we had a useful message from the called function, it has
-become overridden with the useless "failed" message. Please don't do
-that.
-
-> +
-> +       return 0;
->  }
->
->  static struct platform_driver gcc_ipq9574_driver = {
-> --
-> 2.34.1
->
->
-
-
+Best regards,
 -- 
-With best wishes
-Dmitry
+Gabor Juhos <j4g8y7@gmail.com>
+
