@@ -1,179 +1,88 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6669667A01
-	for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 10:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AB554747;
+	Tue, 26 Mar 2024 11:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711448404; cv=none; b=RksOj03EwZoqB5/MDpvoqGj9+78H1XzqJbjEMSyEVN7SoRNwJdOxcbkVcbrhfNf0a/+THXs6ZhpszRdumQ8SI2DqgOG+BQWlCcmWrtEQHnd7p2XGANAUl0lLVcwZZ58p83lITD/KpiqCniPNetTGBLzqWwEs25Ry4Md22GFAxBg=
+	t=1711452258; cv=none; b=lBfvOoNXJGQ3amvwDIrrW+1Fe67c2y2frYSeNMWYOLexgerMIZKMDO4EssTqrRCtaTYz/6/Y88H/y+FItzYiXFSwSnQMy17sg8f+ZLbHFFpjQwJlhTWdD1I+omZZrSLSLqdwwfp3oEu+Q+xyCz1HKMPJ8ig6+Lcbb5+esyBORWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711448404; c=relaxed/simple;
-	bh=q5om1klt5Vblib09/KLSBK+RA4M8EjI0aAy/3rvo75o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LeOUyekdb+JlNQSW7+wRHD/XSMPjnUQNGwazxlixtmPbdqehzFwdNJZiRRnMetDAnEg3QlT4C4A0ik7E3WnBNd5cqgZP8GQghRpM3M7HIrWy0o2Ua+Ja+DH0kEEgf7yxhObA7Cth3kBVKIVL9hZWFmF00pO0LbjUyufD15HLi8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m/uPSkYp; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711452258; c=relaxed/simple;
+	bh=/ts1oCHhFSvAZEWne9JqXlu4VYc85iEvBKm2ILjRmrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPB4OD4osyTEnLV0mBpFvcKShNLsvCNtYh6BDUMqZ0zyUk2XOrO8zlnxHeuXx9/6Fbw8fWchKh4c50A5v7OsAVC40Oz2y1AkRDQMGfPA7fmjTYDHg0PweX+PhT/9CyHwD1fxb5GIhtNnGb+F/n63Si00FfOOlQ4vrOBil7S29vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+KMsQbL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m/uPSkYp"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a4702457ccbso682425066b.3
-        for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 03:20:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711448400; x=1712053200; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4RCPWhIUFPUN1OPlIQTyF7klcOBcvyvE4uNRkcfrCSQ=;
-        b=m/uPSkYpd3PoAGbjfXQT1+aFC1ynEXuKdz3dWrFZ9tcJD7lKi93f1OAmq+CIgAjRFs
-         fGV/CZ0/ijqRixzIvWBO80H/Puo25Q+dvSCx8wqJ13OXDckMJT7iQw2sunMCnRxHR/+P
-         fY2mia8inJeZ7gu2ba9Xqw2NyPhsBrtoX2uwsA7Vw3qmtWya/QIiJG66pWudELZz6pl7
-         Wz+b80CjWF1I1nt6cHSuy+cxwSOUShIHqNIYcjkVKh2eUQl0P/qNpJ6z77RwrDoNEN4p
-         mS9JAqNVdjjYM2gSHOU9cwut83Afbf70gbzn0GPhEknk+wucBh9vZ2cyJRIXhh4wv9pm
-         bdRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711448400; x=1712053200;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4RCPWhIUFPUN1OPlIQTyF7klcOBcvyvE4uNRkcfrCSQ=;
-        b=PyLkrNfPh80p/a7CNW4UjZbE7MYZDw8GDJzf01SHembKtRAoqNvxknY5065576zkvy
-         oNRuquspN7rv5EnPR0uli+fZk28CwE8TtFbIdf3JcD9Gs175wx21jpmnyGlXDWK6aLqo
-         0EVxIAnKKCxxox0U2dojqJWydHCdVtkfcSV2nqZHwgZN5GoRCzA4R1xVYlCBVlUuvgmz
-         xMoN9SoiTAD+ivtQPtz2K9i7aI0Qufht186y9EASFdx8KdUH+Pdz6ZYR11+OhpFgHNgw
-         zJtwLiQq+ExdXOD1u8hgyL+1mW4TOK0QM9j3xQBdMF/1dZzq9IodI7gjfA8uaRv4pqwM
-         JKnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoV5b+sVOcKO8R8nPF7q5a+EEZsqDeCqwX7Y4D7G60u64xEqVgEkPeWr1Aw/FuadCZ1ECXCe7MKUY/XUrpmDkV34RI2FlQmBjl
-X-Gm-Message-State: AOJu0YyExy0lsSsPQizs05uLXmsO+/0w6tx7DNBDEBRttM5s/TdM1659
-	JsVj8WvJfbdeV0HUzTHrZxnRiX191ezdGDHA5Fnu5aagFlWW1KSRNfNV3Gg16LY=
-X-Google-Smtp-Source: AGHT+IHqJmTV9fx0c6gDzeZ28VWO2ncjlRQQumCuqoIhZLOLhIufmQoAWrHWUAlkSONRG/VAPLaC/A==
-X-Received: by 2002:a17:906:2a10:b0:a46:e8c1:11ac with SMTP id j16-20020a1709062a1000b00a46e8c111acmr5996035eje.18.1711448399658;
-        Tue, 26 Mar 2024 03:19:59 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.44])
-        by smtp.gmail.com with ESMTPSA id wk15-20020a170907054f00b00a4a3600d2absm2067438ejb.172.2024.03.26.03.19.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Mar 2024 03:19:59 -0700 (PDT)
-Message-ID: <dc3e2cb4-f631-4611-8814-0dc04c5502f0@linaro.org>
-Date: Tue, 26 Mar 2024 11:19:54 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+KMsQbL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81402C433C7;
+	Tue, 26 Mar 2024 11:24:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711452258;
+	bh=/ts1oCHhFSvAZEWne9JqXlu4VYc85iEvBKm2ILjRmrU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h+KMsQbLe3QIgj367MyWgv5P+1m7BI409Cx0JKMdxTjjk5QhEW2B3KaJkihe0bmLW
+	 WLiEOQlpW66lXG0o6R7AGmD80bKx22DlVkkbFi4s5gj3XQPEt/Iq0iCQT0iyhZxpiw
+	 kfaegRebyCd7Uu5rxm919wVgcFqWotqoE26ookthJCTVj+f8ErZyqOogHqEnfX+Rc/
+	 KIZtzfdavI2Qpf1PDxS5zB8rjpa1IHATwtBgBZ1i763/X+TEbEtmfkNZm4Zme6N08j
+	 /Mn7yzDwcDsK5LJbnA6jBAmrgGYjpUzMCZQ8NgmQy8fbtuB/4WVU/ep46gJaR8gMeH
+	 3xVkZnPGT5wuA==
+Date: Tue, 26 Mar 2024 11:24:12 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gdsc: treat optional supplies as optional
+Message-ID: <6d9fdecc-c420-4247-88a6-1c1f98fd3fee@sirena.org.uk>
+References: <20240325081957.10946-1-johan+linaro@kernel.org>
+ <9b2a7e9f-dbb2-4acb-91a7-fcc64d5cfabd@sirena.org.uk>
+ <ZgJ2QHCYI4wfmfcr@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 00/38] ep93xx device tree conversion
-To: nikita.shubin@maquefel.me, Hartley Sweeten
- <hsweeten@visionengravers.com>,
- Alexander Sverdlin <alexander.sverdlin@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Lukasz Majewski <lukma@denx.de>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Mark Brown <broonie@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Damien Le Moal <dlemoal@kernel.org>, Sergey Shtylyov <s.shtylyov@omp.ru>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Ralf Baechle <ralf@linux-mips.org>,
- "Wu, Aaron" <Aaron.Wu@analog.com>, Lee Jones <lee@kernel.org>,
- Olof Johansson <olof@lixom.net>, Niklas Cassel <cassel@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
- netdev@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-ide@vger.kernel.org, linux-input@vger.kernel.org,
- linux-sound@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Andrew Lunn <andrew@lunn.ch>, Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20240326-ep93xx-v9-0-156e2ae5dfc8@maquefel.me>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240326-ep93xx-v9-0-156e2ae5dfc8@maquefel.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Hc8gQ3lqQskYPlfA"
+Content-Disposition: inline
+In-Reply-To: <ZgJ2QHCYI4wfmfcr@hovoldconsulting.com>
+X-Cookie: Equal bytes for women.
 
-On 26/03/2024 10:18, Nikita Shubin via B4 Relay wrote:
-> The goal is to recieve ACKs for all patches in series to merge it via Arnd branch.
-> 
-> Some changes since last version (v8):
-> 
-> - Most important, fixed bug in Device Tree resulting in CS4271 not working by Alexander Sverdlin.
-> - added #interrupt-cells to gpio nodes with interrupts-controller
-> - fixed some EOF in dtsi files
-> - fixed identation and type in ep93xx-keypad thanks to Andy Shevchenko
-> 
-> Stephen Boyd, Vinod Koul PLEASE! give some comments on following, couse i hadn't one for a couple of iterations already:
-> 
-> Following patches require attention from Stephen Boyd, as they were converted to aux_dev as suggested:
-> 
-> - ARM: ep93xx: add regmap aux_dev
-> - clk: ep93xx: add DT support for Cirrus EP93xx
-> 
-> Following patches require attention from Vinod Koul:
-> 
-> - dma: cirrus: Convert to DT for Cirrus EP93xx
-> - dma: cirrus: remove platform code
 
-A lot of this could have been already merged if you split it... Just
-saying...
+--Hc8gQ3lqQskYPlfA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-Krzysztof
+On Tue, Mar 26, 2024 at 08:16:16AM +0100, Johan Hovold wrote:
 
+> An alternative would have been to add new compatible strings for the
+> derivate platforms and only request the regulator for those as I
+> mentioned here:
+
+> 	https://lore.kernel.org/all/ZgFGCGgbY-4Xd_2k@hovoldconsulting.com/
+
+Ah, yes - that would be much better.
+
+--Hc8gQ3lqQskYPlfA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmYCsFsACgkQJNaLcl1U
+h9CvMAf/TnvgweOOho7JYpCs6twOsPihnINiG68SDxShtJVTiJXg/XlJnIVEnr9F
+h48uPQmchUF4aY4drFH9haiWVGNHvm+bAbKGyNwt1pbfny7xIaXdgwVQXCW/rMf7
+FeGLB8vo6ial3N1YIWfHWW/8GjRms74XZmNd8GAspVNrtWrUcydP65FEK9csNmum
+5BgNTfYD9jLrrc4OgJPoHF3cNYi8YMPtNzOXnNI5eOwokk5G7BRNkkhnA1CvK+o5
+QHsAlUUEf65LmvODminV5zdSQNmtr/8MnNSSwykfcipg01Wuklic7D2oVM/z+85M
+YEPLGgu6/qgpayLd/F+gi1yFTtC6BQ==
+=mq/A
+-----END PGP SIGNATURE-----
+
+--Hc8gQ3lqQskYPlfA--
