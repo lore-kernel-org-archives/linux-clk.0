@@ -1,60 +1,60 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3B317591
-	for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 20:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC0B811F9
+	for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 20:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711485922; cv=none; b=kwgsBTxKH8/44rnMGRc4XnwppI2JXr8aWCcqj/EKhPggxw1ylv1ly0VNK7z/DfrsvkHY3tQHnKcsVaQE1d/SO+64qKovZFxP+opRSplwML3jey1lRbk8WMNnU8e+6lgwfEM+CWjU/mqAwuftFAN2lpJwSXpQP98qFwsGQy7D0mM=
+	t=1711486118; cv=none; b=mrfvOIh7awF3jzoDnBMuUlhb1Jm7BeW8iHcktGomSLiqRivUOJhAxdisv1o7e747q38VGlYaLeP3TQCQaByjB4WEFpEKt7u9Dv+Nlx83LIgWrtTngy11e4z+gdYC1l0UAc++DDzHWcC0Q53n7YC+f9tvD8Ms468WKiM0ufJ55gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711485922; c=relaxed/simple;
-	bh=bKXbnOtJYrdlG3PHh8HDEB5z5LJ6iIjYT610bIiPvVI=;
+	s=arc-20240116; t=1711486118; c=relaxed/simple;
+	bh=urJyeXZnDDwgM5949YY+/cyU9zg6bB0ky9ypE7HM3A8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ogj0mMwTtmgmRdvR7gebjabdfOSZ/kLRMlVA0qLJWz8S8lUWmIOsVzyI37zghw6vH9alVJJ245jMQBbZTwNJvQyjNUmsFFAvu30mdQh7MuYT94cGAffnNpYZhYm09683b6v3qbVM9x21bDVBQhSYdZV6HPrUsZ/izKTjs42L/Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BGz+873r; arc=none smtp.client-ip=209.85.218.47
+	 In-Reply-To:Content-Type; b=pnusueZDNBpZGjrxDxDAvJHo6si3AaVnxebkv7RFeoOx3OJogQ5HilWEeZNH9RuGxrJ0zFRCn27sW7XkVRQXczZmJGIwr+WxJdfQQJvr7Z0ZH4SY94clxgknn2JHsFrrEzOFPH8c+bGKxmPSXTggJhqW57yzRRD+Vu2krfKoJeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yPsQ/qsz; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BGz+873r"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a44f2d894b7so736952266b.1
-        for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 13:45:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yPsQ/qsz"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a46ba938de0so805776166b.3
+        for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 13:48:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711485919; x=1712090719; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1711486115; x=1712090915; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=jd1p+UCPXhOO4ogs196NyusAYt2QT6k4NT43IJKJnyQ=;
-        b=BGz+873r+uYvWdeWTZ8hpSlv/pwErwgvtHrxMPcHqrYVVequGqx/igqnic9p2tiMf0
-         FFygYDx1PoVVvEeBqLFLMlcVzNpEa9zQiQq6zZX59GCOdCG9DluFtjSWkWbucsIKiJJn
-         sQvYhydH3LfMVGhObZ4tO1Y36gKvpUJSjwXDrO5VxL3jGweQiZYWFny8hYvEthHkWFYG
-         qkIbTJwIiTW8C7dNdeXltLTUljieiTGhfaW83VmTpT/mr1+bxe/aPPr/tD2S+fyN8+D+
-         FKQC3lm3y/HDLmvNcBG1g4eLbPiEIoLfTmro5hKXvm5nEBGT0rTlmk80MPNxri3KqF2R
-         ezcA==
+        bh=0x2T28eezAs91HOxMcg6JN1+2OrXJY88X4xpF1P2/yU=;
+        b=yPsQ/qszUeAfCV6/I+6h005OBMJJ2lWKK7CuGGfk3ldJ6bkUabY3QPzQHxzEU8Qkld
+         dgg+ZxjwHJ7fX9+hqpkGgNxSDQPvnu8JBQvC6OMES1MfXN4Ed/2mlFlRwCsDOpS0gHjz
+         Pb1hgSa/cLZuqYpPesiwWGMeFGHngctSvq3sMCraDfQyzVhA24yUFghVQkYhSKPurZwH
+         OYNO8/lJFVxPF8sr0KFUcwk+T1DKXZZqzNd/SgwSnXUyJ3snDUXvtZp28zOjVeqeoXQP
+         T6ehKDBHAPm7SIrSTTZ5l8v8p2MW9p7C670wUp2NdU+YQsyP2hCsW6d7Ua3OvHg3sXKg
+         NkIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711485919; x=1712090719;
+        d=1e100.net; s=20230601; t=1711486115; x=1712090915;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jd1p+UCPXhOO4ogs196NyusAYt2QT6k4NT43IJKJnyQ=;
-        b=UVjdL8mKawTS8kiI+WIrxNaOSTtb171wEd3+lRcH2cOOBrC/vOL7sR19g7DYeKgeDP
-         AuVQo+TOSNRix5eQouD+FxTyspfTxjJUCgVe/iRKHDCK1Cu7yGJ8Ov6W2Ppjy1/cO1j0
-         AfwbMykVnaLUTil/P3muGcD8rOPfo8vChkvqCYoPx6cAq9bM7i5c//oMVZLPIWDJAciO
-         4TtxrRqCMeqJI3JiJbRsA/nuG37EbkEReYeE9Tihi1DwK+2VtKhZ+VNH0f2PjKjqJt2F
-         npQS7vc6HyisUmjYgeMWtroCM4K7He691a+0shKbVIWP99eHpzyHKqSkXz9SF247qar1
-         1pnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXk8HB5EqeEW03/XgZ8neHPVr1JzYx/X7eoPRd+wotZ6RzxO3cT3S8gdO3F3n/R++v1RYvVx8Mj3o3CbqARRWL2VTIo2gFOwP2m
-X-Gm-Message-State: AOJu0Yy/RxJLpgQD4yvafxlxJto5IOld/75O7q7e3GvWTC8VDvzlv6cZ
-	Z6hLSxqlVwxNTjn3GwFaiw5UUd4O2kajIwVN9G9gv456GS3DyFc2YdREJlwIcwQ=
-X-Google-Smtp-Source: AGHT+IHTpSvPq0BzgDUrRfmAXwsJW68zOOnR0J+5B4NsMGX+LBaW748FkLH7jX/vwcpWP8uWJ9F2qQ==
-X-Received: by 2002:a17:906:716:b0:a47:53b2:2042 with SMTP id y22-20020a170906071600b00a4753b22042mr2891726ejb.2.1711485919021;
-        Tue, 26 Mar 2024 13:45:19 -0700 (PDT)
+        bh=0x2T28eezAs91HOxMcg6JN1+2OrXJY88X4xpF1P2/yU=;
+        b=Z9KKqsZSIIRGHZmBNeMITRIywjCfgazxAXrECKjFtLFFU+QbIZPFo5JWcji1LGsRVu
+         w8oLHNb31GJ7Y1y8Mg2g10TpE+ZOao7tUyKT2GxIh1Lz7OMNZq4YNMkHpdzj+ljv968Y
+         ciyWIDr/KqCNJCWJT66QzwhypbHguUgfi9N/HkSevwJzQ1jTHj5xUFNSVHt+zaij5TvO
+         xa3H2InI9+x7JkX/Yxiv+cMOgXpjkn8izw3plDNuA+sZBE1FpCtMqNKA7nY/4xivFn9r
+         YyPBfJ7RTYbXXtdPhpRYu6CyY+xKePuzmLIpgkI8aZb7ut0/IWBiJTT4t2CRBjrT/H7c
+         eZvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVelkCm9GnGGaHvfkrYZQgHnM/w7QB6ZsDpItSAk525C+Cc6zSMTa7F0Ha3rI//aszdbJLiET+yyAoG8fm/dNZatFmzRkYgwNYQ
+X-Gm-Message-State: AOJu0Yz0QQUqdXio4zwp9VE/kXGq1TihLVnJQ61QB1jr9WEHAf2inWPW
+	SH4CXfD/jYem9/rpNOYty8FByvwq1Mm1ruqplRHYoqs1FBuErqc5uiZDQs13ksc=
+X-Google-Smtp-Source: AGHT+IGSv5Yd1/jmwEVatb4Euh9npBW0MkL+XeEkC4x4F7lQauM2Jnw/aFhCjV6UMels6T2jsjpcVA==
+X-Received: by 2002:a17:906:eb0c:b0:a47:4ee6:9035 with SMTP id mb12-20020a170906eb0c00b00a474ee69035mr2583525ejb.29.1711486114654;
+        Tue, 26 Mar 2024 13:48:34 -0700 (PDT)
 Received: from [192.168.92.47] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id e21-20020a170906081500b00a4df251a601sm1203408ejd.77.2024.03.26.13.45.17
+        by smtp.gmail.com with ESMTPSA id qk6-20020a170906d9c600b00a466af74ef2sm4569474ejb.2.2024.03.26.13.48.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Mar 2024 13:45:18 -0700 (PDT)
-Message-ID: <e97918b3-ddc7-437c-a9e9-36131366a0e3@linaro.org>
-Date: Tue, 26 Mar 2024 21:45:16 +0100
+        Tue, 26 Mar 2024 13:48:34 -0700 (PDT)
+Message-ID: <d0633ae2-7f95-4dac-9f36-73886bf2e8dd@linaro.org>
+Date: Tue, 26 Mar 2024 21:48:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,18 +62,15 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] clk: qcom: gpucc-sc8280xp: make cc descriptor const
-To: Johan Hovold <johan+linaro@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+Subject: Re: [PATCH] clk: qcom: apss-ipq-pll: fix PLL rate for IPQ5018
+To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+ Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20240326140108.21307-1-johan+linaro@kernel.org>
- <20240326140108.21307-4-johan+linaro@kernel.org>
+References: <20240326-fix-ipq5018-apss-pll-rate-v1-1-82ab31c9da7e@gmail.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -111,15 +108,24 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240326140108.21307-4-johan+linaro@kernel.org>
+In-Reply-To: <20240326-fix-ipq5018-apss-pll-rate-v1-1-82ab31c9da7e@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26.03.2024 3:01 PM, Johan Hovold wrote:
-> Add the missing 'const' keyword to mark the Qualcomm clock controller
-> descriptor data as constant.
+On 26.03.2024 2:34 PM, Gabor Juhos wrote:
+> According to ipq5018.dtsi, the maximum supported rate by the
+> CPU is 1.008 GHz on the IPQ5018 platform, however the current
+> configuration of the PLL results in 1.2 GHz rate.
 > 
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> Change the 'L' value in the PLL configuration to limit the
+> rate to 1.008 GHz. The downstream kernel also uses the same
+> value [1]. Also add a comment to indicate the desired
+> frequency.
+> 
+> [1] https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-ipq-5.4/-/blob/NHSS.QSDK.12.4/drivers/clk/qcom/apss-ipq5018.c?ref_type=heads#L151
+> 
+> Fixes: 50492f929486 ("clk: qcom: apss-ipq-pll: add support for IPQ5018")
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
 > ---
 
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
