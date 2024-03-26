@@ -1,120 +1,118 @@
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53D613DBB3
-	for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 21:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D266D13DBA8;
+	Tue, 26 Mar 2024 22:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711487325; cv=none; b=tRImdLj6jerpCZYmTteMBnP1WOpcfu9BUos3V8lnfqznf4E+juKkZ5Iwfe6tU9b+Zt/xQT/dLobzqwF8Q2r6uCRnb7bXm0iw2C5iUU2LGMZ5nEWjC4fyldMIPv4JL1jklaNt8Muw2k6qxieg7uQt7p2fVWvXzzGKAUnSk7/s38w=
+	t=1711491410; cv=none; b=SczkwVPEGxyr4eJ1+AhOCHj0jcjUZy/cHj0TxfMoWd0dHOHUDnl5tyV5QXor8k/rasblS/rEi0RM7lZeH/7EM2pHmAamPNOrIyBMKD3rFskODm+jXG9+S4kedMIELOlIUY3jxZkzx84pQLaYK5aWpLLU6B7qZFM9raPuJGGKfhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711487325; c=relaxed/simple;
-	bh=mCf/bTGrYhIVVZWnC5IuKCe8qNqug2N56zzO/86GYUw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iLJzgZjIqEwChgdvpYbC6y6i3dtqI6Tl7JniJOZ/4YqEcMaAfuyripBCWHMWg8nXq916sa1iu2FF7O81oiARjRfdFHLu0ARf3XmUHssW2zE3wbFIAZMZMxo6xjcuO61om7+0rf+ju0SU7zJRXeyX21dTGRA3X8++Kz1L7dFwOV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bSl86VrA; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711491410; c=relaxed/simple;
+	bh=J0RnoOCSqOqlajOtrlqrGQ/DJiRxB7k7ItoWaD5DBwA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QyZ6rc9rgTvoQw+V1AXuvItmg0xVkjHUwuy6X8d3K9ORZpPWgmE+MYfnQfNGK5v+xRzj4idlIPNSQxd9TjpUjODWkI/mYr0PYkKbKMRtFDgh/0aXsdV1Xt+6wqula42fDdL9f1l4IBHm0qzBKxDhpBPqHNrpAW8nVtqB0+ISMGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VND7f/sE; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bSl86VrA"
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2d475b6609eso75435741fa.2
-        for <linux-clk@vger.kernel.org>; Tue, 26 Mar 2024 14:08:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VND7f/sE"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a2f22bfb4e6so798076366b.0;
+        Tue, 26 Mar 2024 15:16:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711487322; x=1712092122; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BCRKVJibLLQ4yVCmcxgTjymNUgecCXO5D8tWd3XLDOo=;
-        b=bSl86VrAzYvnumuMkUOwOKdBQK7GkcW4riS2r99EO8HSz17Vizup5PTV7AivT/lVbD
-         ATGg1OQSLJCeYByKrSCkPQrjDZ6582Bs7dm6gueGnuT52ewiVCVukZH40RTEQ8S7xH7d
-         NLdpiEnCzc/+7suLshzdorXAXVAbsR3Eu/NJcq+t72uPaT5OEeeLU77PWyU5oPQMbmuQ
-         tXPWgQpfv9cZOMIn4k9K/8riUtBsCLZC6eGJvNiQlRjgVOAgwqSaubPqprjO9QebYXoO
-         7oiNqu6wGMB+T/6TXIABDy1NYneECCWVAP0lgzeSfpDUdS2iRJKO9hxGOig+snO7LA6E
-         cPVA==
+        d=gmail.com; s=20230601; t=1711491407; x=1712096207; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YplBHOu9LgYYYqj2137kfj3IsGRSUTd9LNfjx3vcjjg=;
+        b=VND7f/sEDAFF7XvR5ueTwdplEJHudc8dVOmZi6EYUgqSK7gS77Mi2Ea4zFM9tQ5LrE
+         MvswvLp0qDXwnX31C+iC1dFIyH3vsEypr676SWSHv2ecasn/6eo3iY9+F1nr3uyLAlUD
+         sClPUKTi604GXEcfq97XKTYuWPhtyNkG3Kvom7D9KerN587y3BLuEiu2SoxDQPuB1ndq
+         /tGxWxGQ2hnNiF27xJ6Qhk1xLUlMq2uHhWW4R9h8cJec0AqkWZ7Y+JPewmcZNUrDvkl0
+         kDKySvZN+xe227lemoKG9XzemJdMEngaYQRnagQe64xLCzs/kbRnFloJvB5N20u5CduK
+         GQpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711487322; x=1712092122;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BCRKVJibLLQ4yVCmcxgTjymNUgecCXO5D8tWd3XLDOo=;
-        b=k8CtRjuDeJg8mfxCzqaKeOqWSGtZ1T7uI/pdYz4xeksBoDyiBtmFXnMdAPLVlvfiMn
-         YU2hn6aM1DLR9+kqgJUxVzm0kIKXIwPMvMwfvvKRM57OTik9L7VajB+3Henv5tN2/evY
-         +ZEWx80QVn7g7/m2YZ954VzvgiSwITgfeYSrVPsr37dMWmLK7ZnG3pAH7pAJ5UPli45D
-         IMRerW24Pb6R4Y7SBaYUlTilK4n4qYzlvWk+UeZMtJ9HyyVyVDviSyYQouw/YOK1ZJ8B
-         9nhljw7UtOGvEhG2f8SdJM8hFXuU6GyEyyXHdDWnvueuVgGKf8t5n/s7CNWn2/Ss2QMb
-         nrIA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3g7Yo85+V8QQBoRm61vABIh9ao5OeErNWGoYH7I/98CWSu3OFyi7indPrSV4PyzbPI7NEvWZEprCQCsAcXWwAvWFAIjwlen9v
-X-Gm-Message-State: AOJu0Yxcf+YBK9j9l9R1qamr+hTiL46ZWZ+Gh/hrk8EsFj4ujh9FYB3w
-	fFVF3/kZBwpB8AwQ+pT9VTDipUBMbraRakg260rFsCeJ+nyO8U72asdoqMvPVP4=
-X-Google-Smtp-Source: AGHT+IGTGNZKpviJEN8pv+U1aUTSHC/yaalgj2SyAQw9yZTAD8zmDwSBnctqneOnRGCf4mdA7HawFw==
-X-Received: by 2002:a19:e04f:0:b0:512:ee61:c32b with SMTP id g15-20020a19e04f000000b00512ee61c32bmr7948217lfj.43.1711487321879;
-        Tue, 26 Mar 2024 14:08:41 -0700 (PDT)
-Received: from [192.168.92.47] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id l19-20020a17090612d300b00a46cffe6d06sm4621697ejb.42.2024.03.26.14.08.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Mar 2024 14:08:41 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Tue, 26 Mar 2024 22:08:27 +0100
-Subject: [PATCH v3 5/5] arm64: dts: qcom: qrb2210-rb1: Enable the GPU
+        d=1e100.net; s=20230601; t=1711491407; x=1712096207;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YplBHOu9LgYYYqj2137kfj3IsGRSUTd9LNfjx3vcjjg=;
+        b=ai1QlrJhfbvLuRb7bT2bdNmMqpve2rW+TKWLktycLGXZCJX2mht3dXuMXf1pfo2AAU
+         qvESzLu8OD+CuMGmjVl1sYM32bb26inX22HDHiLBazxud1XJu1hRXfeOcSEbp0D4bHIx
+         l3QU/GGeaepMmsE8kRtNSk6mwJY+c8ph1TDdQwZ66njGP8ZgpmYBub9zexLORzcCNFaV
+         X5OODMU91F5wcDAMsKXmiK7z8qSW2GT6EODK0WK1xRyk34q0ggCjwNrKRpY3x3ZpGvKY
+         +4teTQ7qGBTlUK7/wAQbGJeaSebRr4uYPHNik50A0tV+x7jIuadpTbIxwvKmk+IejxSN
+         ja2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVI57Qu80ONvA0+kNtaXYj3qbKCvTkh4JaHUlwQlROveIPTGHAGy2n6eobxxpWiU2etUjoJlLVdZ8xIWbao6M+JMoAGSAwxm8ERaTAH508SEbLuxH+ZDwlboaUCqRC4ZabDJI3WjZWKXrGoQ7KoGL/HbhrqQSFvKdE5FDx+xSTd
+X-Gm-Message-State: AOJu0YwtAupbVw55DBuC5CnABHQ/vMTJVlwumXgkAY8UyLjGMz6Y0uy3
+	qVWqTAMM78ALNH/IBtiKkizKLYg+YUKyKy3Dw8Arv6H95K85JNrnlUgwfzY50YQ=
+X-Google-Smtp-Source: AGHT+IEMQ/FGGPjdWPwfIps8GVz+mdG3Mk7kmNLcwzNisJ9N/wYV9naSZ1NmkPkEuqFh+dHus6mQbA==
+X-Received: by 2002:a17:906:c111:b0:a47:4b76:6258 with SMTP id do17-20020a170906c11100b00a474b766258mr7482552ejc.25.1711491407123;
+        Tue, 26 Mar 2024 15:16:47 -0700 (PDT)
+Received: from [192.168.20.170] (57657817.catv.pool.telekom.hu. [87.101.120.23])
+        by smtp.gmail.com with ESMTPSA id l11-20020a170906414b00b00a46c39e6a47sm4724191ejk.148.2024.03.26.15.16.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Mar 2024 15:16:46 -0700 (PDT)
+Message-ID: <d81eb0dd-f1ee-4a54-aa04-9ebe8b8eff88@gmail.com>
+Date: Tue, 26 Mar 2024 23:16:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240219-topic-rb1_gpu-v3-5-86f67786539a@linaro.org>
-References: <20240219-topic-rb1_gpu-v3-0-86f67786539a@linaro.org>
-In-Reply-To: <20240219-topic-rb1_gpu-v3-0-86f67786539a@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1711487311; l=915;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=mCf/bTGrYhIVVZWnC5IuKCe8qNqug2N56zzO/86GYUw=;
- b=ddqMsNfNeNvixGsx0pFhAimc2uyI22UJVbkqFIijsDLdFwb7PSKxyRbTaVNF12ceQY5kGkvYr
- yDMRS4PAalMDaPHzlmj/8gczrQ0AevbaHPQL3B5p7AhQRMiBf2gs5vX
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clk: qcom: clk-alpha-pll: fix rate setting for Stromer
+ PLLs
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Varadarajan Narayanan <quic_varada@quicinc.com>,
+ Sricharan R <quic_srichara@quicinc.com>,
+ Kathiravan T <quic_kathirav@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240326-alpha-pll-fix-stromer-set-rate-v2-1-48ae83af71c8@gmail.com>
+ <87af7b7e-9c2f-41e1-af97-01d3f29f5970@linaro.org>
+Content-Language: hu
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <87af7b7e-9c2f-41e1-af97-01d3f29f5970@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Enable the A702 GPU (also marketed as "3D accelerator by qcom [1], lol).
+2024. 03. 26. 21:51 keltezéssel, Konrad Dybcio írta:
 
-[1] https://docs.qualcomm.com/bundle/publicresource/87-61720-1_REV_A_QUALCOMM_ROBOTICS_RB1_PLATFORM__QUALCOMM_QRB2210__PRODUCT_BRIEF.pdf
+...
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>> index 8a412ef47e163..8e98198d4b4b6 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -2490,6 +2490,10 @@ static int clk_alpha_pll_stromer_set_rate(struct clk_hw *hw, unsigned long rate,
+>>  	rate = alpha_pll_round_rate(rate, prate, &l, &a, ALPHA_REG_BITWIDTH);
+>>  
+>>  	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+>> +
+>> +	if (ALPHA_REG_BITWIDTH > ALPHA_BITWIDTH)
+>> +		a <<= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
+> 
+> Uh.. that's not right, this is comparing two constants
+> 
+> Did you mean to use pll_alpha_width()?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- arch/arm64/boot/dts/qcom/qrb2210-rb1.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+No, not in this patch at least.
 
-diff --git a/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts b/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts
-index fca341300521..c54ad9f02e76 100644
---- a/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts
-+++ b/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts
-@@ -199,6 +199,14 @@ &gpi_dma0 {
- 	status = "okay";
- };
- 
-+&gpu {
-+	status = "okay";
-+
-+	zap-shader {
-+		firmware-name = "qcom/qcm2290/a702_zap.mbn";
-+	};
-+};
-+
- &i2c2 {
- 	clock-frequency = <400000>;
- 	status = "okay";
+The clk_alpha_pll_stromer_set_rate() function assumes that the alpha register is
+40 bits wide, and currently it does not use pll_alpha_width() at all.
+Originally, I have converted the function to use it, but that made the change
+unnecessarily complex since it was a mix of a fix and of a rework.
 
--- 
-2.44.0
+The current patch is a simplified version of that, but i forgot to drop the
+comparison at the end of the process.
+
+In order to keep this fix as simple as possible and backportable to stable
+kernels, I would rather remove the comparison to reduce the change to a
+single-line addition. Then modifying the code to use pll_alpha_width() can be
+done in a separate change.
+
+Regards,
+Gabor
 
