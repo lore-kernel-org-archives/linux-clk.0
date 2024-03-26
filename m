@@ -1,100 +1,103 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D5F823BF;
-	Tue, 26 Mar 2024 06:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DDC1272BB;
+	Tue, 26 Mar 2024 07:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711436036; cv=none; b=BYGi42SnGvHWPJ35ED12KIjJhVy1n25Z6mGLVou3QplKV1x/tH30DECjBmzEHBW2Ibj/eLet5qnipvXAFy+DIZCwC408B77Mydh3mTLRCEtTk99H+lzfJATqzadYMaN27W0YYrjVfg+rTUe4o+XQ9OHvDK+jBuh0SBhrrHZyo74=
+	t=1711437370; cv=none; b=el+gHC39rZ05ZKFW+TlExneS+vTiZMdAoCA9I/vC3xcrodiXWWDNXRjDChPesB+glwwL7ubVtLOZnSUVO5tUFzG1kFGKB0DEmpE19dWalYVR3ZIQysash1dKwEPD5ytO9/u8viSnDek6ws3KarGTE/NfCKgoAe1Lmopl4FDlVdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711436036; c=relaxed/simple;
-	bh=T93oDLJVqmXjMft3p/o0gcTvmzd4o0CYgIVWkB1+goo=;
+	s=arc-20240116; t=1711437370; c=relaxed/simple;
+	bh=zwqUSfI04UE8e5qP1oXh410r6hlhmfLlE5LjHLpMUbE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YFy+qu/vjo9p2POQyimFtGkNIHhx6MV7N/djotpyvy0e8iJ4afNqKnriH2LxvoiT6uM83PJgP9A6IuLuZf6BkreItJCg8igxDsxG8/oWrkfP+1czPcN2lEYzBK9JpMah+LmMZtFYAI7fRQeayV+HVqNFRSk6etRho0GZ8lvj9rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BBNo5Xrc; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=nWTle9+obwFLWb5gFs4DrFuCIPZYbxC4HUVnCBoK3yRMrP5WrFG0zCu9gKXw5FOp0trLtcbXNjT9aSk760TIwyYDqWFlIYAebvg5FQe5Y0MUUUSQnAUx9gABKibG9ItCG2rZ18Q6uwNNUiX6nJ7B1o8MxbFkD6V5lFO+CKgjbYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIMWFDwh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BBNo5Xrc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1711436034; x=1742972034;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=T93oDLJVqmXjMft3p/o0gcTvmzd4o0CYgIVWkB1+goo=;
-  b=BBNo5Xrc8S1GuoUym+incVARZtH+VKRCrWCLi5JekqJohCWSjWbhX0u6
-   96V1bYgs9xz/EP38WG58H8Qax2P/kfiF+P/Fucv2itAWkc2qJh6hqYpaw
-   DRtkqa7orER+97JY3V19E4fYHcARv7JUgQf7vw3hSx7FwRA5neF3g495P
-   NU8SQReuu/1p2wXuJBFHSP8iR098UNJ+g5JBQULEeUcsBe7wjnHgeFA4b
-   vFjy9kUZayBUULwp9D2CZ8QUAupQ/YDNpncHl2HuWKX9qtRfeMlutmuGX
-   XrMuAPcqs0jPgiV7JWFORdI+x8q6H9RH6Jcxw3WwYOIj3XmVa1w+oj4iX
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11024"; a="10264706"
-X-IronPort-AV: E=Sophos;i="6.07,155,1708416000"; 
-   d="scan'208";a="10264706"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2024 23:53:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,155,1708416000"; 
-   d="scan'208";a="46870214"
-Received: from lkp-server01.sh.intel.com (HELO b21307750695) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 25 Mar 2024 23:53:51 -0700
-Received: from kbuild by b21307750695 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rp0gu-000NBW-0N;
-	Tue, 26 Mar 2024 06:53:48 +0000
-Date: Tue, 26 Mar 2024 14:53:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sugar Zhang <sugar.zhang@rock-chips.com>, heiko@sntech.de
-Cc: oe-kbuild-all@lists.linux.dev, linux-rockchip@lists.infradead.org,
-	Sugar Zhang <sugar.zhang@rock-chips.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIMWFDwh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB6FEC433C7;
+	Tue, 26 Mar 2024 07:16:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711437369;
+	bh=zwqUSfI04UE8e5qP1oXh410r6hlhmfLlE5LjHLpMUbE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vIMWFDwhVPa+AymD1PUhQa0EGJOt0Y28K72VuYZk6N35biR5xUlqug8ViKFoPU6j7
+	 UyHo2nGkr/hkrI/yuMNiRC9QIpoa+77oeoDNHYhx4l1+1OJozc6BODvfTZ1Yp+mbq0
+	 FG34nIuhSMCbv3GKygo7Uw8YfNobAFIwnX/NeYMFc1PiM6QOYps8pYrH6+lRb5psoS
+	 alL/8h3NEcKV7QGxFTB4zzgj0R0VYSmeGqgjvRvthlm5TY90tQvVl68zGfmOsYCOQ8
+	 7BCZx2dGI1HUCGFPSWBlUyy2fQ448N+eKEB8K1sZUtDyvB7ZK9nMNcThX0NmiDbYAP
+	 JQUyd3S1uHVKA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1rp12e-000000003rK-3eXh;
+	Tue, 26 Mar 2024 08:16:16 +0100
+Date: Tue, 26 Mar 2024 08:16:16 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] dt-bindings: clock: rockchip: Add support for clk
- input / output switch
-Message-ID: <202403261442.9P6rk3Wk-lkp@intel.com>
-References: <1711340191-69588-2-git-send-email-sugar.zhang@rock-chips.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gdsc: treat optional supplies as optional
+Message-ID: <ZgJ2QHCYI4wfmfcr@hovoldconsulting.com>
+References: <20240325081957.10946-1-johan+linaro@kernel.org>
+ <9b2a7e9f-dbb2-4acb-91a7-fcc64d5cfabd@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="AptyjpU+c6gakW3J"
+Content-Disposition: inline
+In-Reply-To: <9b2a7e9f-dbb2-4acb-91a7-fcc64d5cfabd@sirena.org.uk>
+
+
+--AptyjpU+c6gakW3J
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1711340191-69588-2-git-send-email-sugar.zhang@rock-chips.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sugar,
+On Mon, Mar 25, 2024 at 02:01:16PM +0000, Mark Brown wrote:
+> On Mon, Mar 25, 2024 at 09:19:57AM +0100, Johan Hovold wrote:
+> > Since commit deebc79b28d6 ("clk: qcom: gpucc-sc8280xp: Add external
+> > supply for GX gdsc") the GDSC supply must be treated as optional to
+> > avoid warnings like:
+> >=20
+> > 	gpu_cc-sc8280xp 3d90000.clock-controller: supply vdd-gfx not found, us=
+ing dummy regulator
+> >=20
+> > on SC8280XP.
+>=20
+> Can this device actually run with the supply physically disconnected?
 
-kernel test robot noticed the following build warnings:
+The gpucc-sc8280xp driver is used for both sc8280xp and a couple of
+derivative platforms. AFAIU only the latter use this supply, but the
+driver unfortunately currently cannot tell which platform it runs on and
+requests the vdd-gfx unconditionally.
 
-[auto build test WARNING on rockchip/for-next]
-[also build test WARNING on linus/master v6.9-rc1 next-20240325]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+An alternative would have been to add new compatible strings for the
+derivate platforms and only request the regulator for those as I
+mentioned here:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sugar-Zhang/clk-rockchip-Add-support-for-clk-input-output-switch/20240325-212211
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
-patch link:    https://lore.kernel.org/r/1711340191-69588-2-git-send-email-sugar.zhang%40rock-chips.com
-patch subject: [PATCH v1 2/2] dt-bindings: clock: rockchip: Add support for clk input / output switch
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240326/202403261442.9P6rk3Wk-lkp@intel.com/reproduce)
+	https://lore.kernel.org/all/ZgFGCGgbY-4Xd_2k@hovoldconsulting.com/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202403261442.9P6rk3Wk-lkp@intel.com/
+Johan
 
-dtcheck warnings: (new ones prefixed by >>)
->> Documentation/devicetree/bindings/clock/rockchip,clk-out.yaml: title: 'Rockchip Clock Out Control Module Binding' should not be valid under {'pattern': '([Bb]inding| [Ss]chema)'}
-   	hint: Everything is a binding/schema, no need to say it. Describe what hardware the binding is for.
-   	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+--AptyjpU+c6gakW3J
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQHbPq+cpGvN/peuzMLxc3C7H1lCAUCZgJ2PAAKCRALxc3C7H1l
+COOZAQCADSO0a33chhR+oOiBI4673E6MYzdBUKplSq2EznJXGgEAnKuJVq1IoKvU
+7jBOzeZ9Jr5Ks3R5/kkSKD0ziDDbJQ4=
+=DfH8
+-----END PGP SIGNATURE-----
+
+--AptyjpU+c6gakW3J--
