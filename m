@@ -1,132 +1,122 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD7B12F5AC
-	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 18:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6F41514F7
+	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 20:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711562530; cv=none; b=edrom4yy3SfT8OAvmMdNM5yFb6kwwsT5korSlZlFUoBoMEUFqKRQsYSzdYOlh3OrbAwVR8svEhvM4WFUT/JifCnNFfOKrsuasekswghAO/dth3LXRnUlxuEE38PfTCZydYR3zgBEavWdaWgC/TI+0ysZC7/HhOVmYn2P6q0YHtY=
+	t=1711571265; cv=none; b=P7y9kCPAg1nHKOv0zTkhf2Mv7AghviORrK26FtI+aBaBuytR/nmiP0vtqycchvvxnVDM6VwzVucga9QMRTJLeUARQOW016qhzPF/oCIy7zGvxn4VG1CVrQArw0vNtviDFwl09InqvGeE6s6KYO6mLSdXNkGiE75+yVbzQs2x/tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711562530; c=relaxed/simple;
-	bh=5u26rLbRQMp5PLZVa3f+ZWPCwDNex6/EPYjSFskA7uM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lrlh81FnhC/YUfY601OpE8PYzt2YumfvCvFBW9b25FPtZhPBIKIP0yw1Rgrt7DnMkrIlM4O/JUDE4X09gIXEuieeJk5MDTRX+EfFujgIFQm8bP5NmPDqJh9iHAf7VWDRX4A/CkxqVzdUiA748Ym90j8wOuNIIDLWK0Pz3ggOCsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KTAUPWts; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711571265; c=relaxed/simple;
+	bh=UAlyW1XBQGh1I1s4OhUVYVSvSBWjHao81V/7b/ey64s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bKDnDkp0qEXqM/ivYJb1qt9Sj45PtlMfkPVhfxxWoaqexQXnF8/t5PJt13B3ULI8V+rI00NFapUkmHKyXli+mzmY6Fs/hIU4TIZYzb0zhDgUeBMP/2IxdFlE1Dfq8QY82Su+HVVy83oYMsG6amPelBmDZwaPylsuAm8hstC2oUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UyyCT3Fh; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KTAUPWts"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-512bde3d197so28133e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 11:02:07 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UyyCT3Fh"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6e6b5432439so285851b3a.1
+        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 13:27:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711562526; x=1712167326; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hri8V3f2oTKyW4xHT2FPkWxO9/7KdTilVzTVJ704t1E=;
-        b=KTAUPWtswYqrRvXtf8YgLF93vACvJbM4wvBl0SVAofxcfEh/2qlrC/p4zFetXDDZrR
-         qVEVfQtKOK/1DhEgoWlLpWDdVUQDpnM4LFTQKE6X7SQFkRCnP/mfkZiSj9vhCLAD1MM1
-         OwyhbMD92sUKKvjGDFYFOc6GT7WXHxNx1aWbBkdqd975wVqd3SB1F+1VXT0mo4pahaZ0
-         B6mwf64kpoCFvbZgiAtVqagDNn8zzb0SCH2vneW0oSPLZ4A4pUPCz2vKVCrJP8knsO+b
-         3uMxCpA5lrSNBVFCPjYU7qrCFdyG2CXvCJIhkC44RSspN1UbBK0NPwljxxhqjlDo2NS5
-         NxjQ==
+        d=chromium.org; s=google; t=1711571264; x=1712176064; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LCVHzKM95nxrye1cfXoHnsCw/TjZEQVmmlga0bm4uZk=;
+        b=UyyCT3FhawgJwkSzxqzkwJSvoYbqqG2Elii0u1mUyG9X3kI0kfU7NSHJImc6evsGqM
+         1i/wYv0XszdtcF4Ci4+3hvGGK4oq26rzS4Ro++CNiogjw9fejAgHB/CkOz41G+5f8Se3
+         z9V/fgPojoJqal/z6AtKEh2omcAEHzECt/Zhc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711562526; x=1712167326;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hri8V3f2oTKyW4xHT2FPkWxO9/7KdTilVzTVJ704t1E=;
-        b=eJt2aNRV+29Aamv/OwB8al6jk2l4AS3ppQiWscZqKtMioa5COQog6dZyov/TCrvyx9
-         7iVYq4RQppCbHzz2EUf80BrsZVF4RVOVS38IguP9D4fAQgFQhvwx5DETbXdrA6/DHQUO
-         DY+Bn3kaoc2GsVbDwKrRYZe66lR0jTO30afUgxh8r6lWNAr63BC/+5vBvLOgIcavZeGU
-         mb5w9+XYEJBw445aCYL6Q/MYXfnLbmElVxpmx1ZO/8Gfr4Bx4IVDCNvsuo9Vyg2SgDHH
-         cf6sjgo67EJRVRJK5P1BDLZnH0PZQmAevgbTxOdNQ5znaKnEDFGEtU0wGrVMik/sisLy
-         /DXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAXvXzShxDX1SK3zY9Ys/ed63KI6rtxnzVRuRzgD8dfS3cPk3DVkipqUNzcD739gxzOefVd8AfP6ZmntI8UrewOO+ZbsjAeh1I
-X-Gm-Message-State: AOJu0YyvIFTr/VSENoy3LRn1HVamuG8DECtDVYWRC+l8cgHaFnxvJTq1
-	R8ER+DVP6R8XBtEYiInZeRoQvnOPUQ2p8PnB4Ikj0t8WEnmZXzDcKq+giezQr/w=
-X-Google-Smtp-Source: AGHT+IG3JpBB1fM/hLzE0DwDDSbEcJzbeI62ofpAg4XFckNPl+DeAabUlcVSdklCf/aUXYQC/mIqIQ==
-X-Received: by 2002:ac2:5f9a:0:b0:515:9475:513b with SMTP id r26-20020ac25f9a000000b005159475513bmr120135lfe.67.1711562526325;
-        Wed, 27 Mar 2024 11:02:06 -0700 (PDT)
-Received: from [192.168.92.47] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id w12-20020a170907270c00b00a469be48551sm5705878ejk.45.2024.03.27.11.02.04
+        d=1e100.net; s=20230601; t=1711571264; x=1712176064;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LCVHzKM95nxrye1cfXoHnsCw/TjZEQVmmlga0bm4uZk=;
+        b=FxPOWbrQP1DZWLJQYQzvutE2ufbszssbgc3fXGhBxspRlfI/WerAmICDwd+C9E6mbD
+         IkgN/qzoIi6AZ9+DNjTnLX22dxzEUltmPd3RpcqqH6rSw/VpvDbKqe5EKT+2RxuV/J1H
+         LuPvOVLDQuVSpDFP/ORQlqaGF92vR73keCJRBHJbqE6kONniXx0WjX0q6wFkFoObV9RT
+         WDgiRNdAjcXy7ijEA0+jW+8EKKNIoTWc0hEo4GoBjzioVSsvtnw5sFSAswbuLVL1tBy4
+         MIY0VATWjOD4eAI4J0qP035ybf7+PPmZk5a85Tg75JKzRiFx9eSCS1qbSmwzb7VmXDEg
+         1bpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQF0U8X6/QWSiQ20KtWaoEIwA3qix7EogvfwXAqEsqP3Ux8M0FKELZ20UVS8TObPvA+N9HxKmXWqsiwDWwe01xZ9uqD5ffVk/1
+X-Gm-Message-State: AOJu0YyTgY+hCPAHdNt7/i4i0pdTVcehTglM6QoIr6XrI44b3nDSZggp
+	DyQ0veE170j4oMae79rbPd4EGeU33qH7Y6Tm39MS3i5mItDTBjuQqCg4+s5ePg==
+X-Google-Smtp-Source: AGHT+IHA1C7H1G9I13NxUAKmeyvwBUmBLxBfdkaCF4Xl43hsabFFNBcw1oAA9mmdxMEWX6SsZ2Maiw==
+X-Received: by 2002:a05:6a20:7495:b0:1a3:683a:2cbd with SMTP id p21-20020a056a20749500b001a3683a2cbdmr1160699pzd.17.1711571263614;
+        Wed, 27 Mar 2024 13:27:43 -0700 (PDT)
+Received: from localhost (4.198.125.34.bc.googleusercontent.com. [34.125.198.4])
+        by smtp.gmail.com with UTF8SMTPSA id e3-20020aa78c43000000b006e56bf07483sm8303143pfd.77.2024.03.27.13.27.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Mar 2024 11:02:05 -0700 (PDT)
-Message-ID: <655defd9-ba4f-4839-8210-203e53405e5b@linaro.org>
-Date: Wed, 27 Mar 2024 19:02:02 +0100
+        Wed, 27 Mar 2024 13:27:42 -0700 (PDT)
+From: Stephen Boyd <swboyd@chromium.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Laura Nao <laura.nao@collabora.com>
+Subject: [PATCH 0/2] Fix a black screen on sc7180 Trogdor devices
+Date: Wed, 27 Mar 2024 13:27:36 -0700
+Message-ID: <20240327202740.3075378-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.44.0.478.gd926399ef9-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] clk: qcom: clk-cbf-8996: use HUAYRA_APPS register
- map for cbf_pll
-To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240326-apss-ipq-pll-cleanup-v3-0-15c4aeeb14ac@gmail.com>
- <20240326-apss-ipq-pll-cleanup-v3-5-15c4aeeb14ac@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240326-apss-ipq-pll-cleanup-v3-5-15c4aeeb14ac@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 26.03.2024 1:57 PM, Gabor Juhos wrote:
-> The register map used for 'cbf_pll' is the same as the one defined for
-> the CLK_ALPHA_PLL_TYPE_HUAYRA_APSS indice in the 'clk_alpha_pll_regs'
-> array.
-> 
-> Drop the local register map and use the global one instead to reduce
-> code duplication.
-> 
-> No functional changes intended. Compile tested only.
-> 
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
-> ---
+This patch series fixes a black screen seen at boot on Trogdor devices.
+The details of that problem are in the second patch, but the TL;DR is
+that shared RCGs report the wrong parent to the clk framework and shared
+RCGs never get turned off if they're left force enabled out of boot,
+wedging the display GDSC causing the display bridge to fail to probe
+because it can't turn on DSI.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+The first patch is basically a hack. It avoids a problem where the mdss
+driver probes, turns on and off the mdp clk, and hangs the rotator clk
+because the rotator clk is using the same parent. We don't care about
+this case on sc7180, so we simply disable the clk at driver probe so it
+can't get stuck on.
 
-Konrad
+The second patch fixes the shared RCG implementation so that the parent
+is properly reported and so that the force enable bit is cleared. Fixing
+the parent causes the problem that the first patch is avoiding, which is
+why that patch is first. Just applying this second patch will make it so
+that disabling the mdp clk disables the display pll that the rotator clk
+is also using, causing the rotator clk to be stuck on.
+
+This problem comes about because of a combination of issues. The clk
+framework doesn't handle the case where two clks share the same parent
+and are enabled at boot. The first clk to enable and disable will turn
+off the parent. The mdss driver doesn't stay out of runtime suspend
+while populating the child devices. In fact, of_platform_populate()
+triggers runtime resume and suspend of the mdss device multiple times
+while devices are being added. These patches side-step the larger issues
+here with the goal of fixing Trogdor in the short-term. Long-term we
+need to fix the clk framework and display driver so that shared parents
+aren't disabled during boot and so that mdss can't runtime suspend until
+the display pipeline/card is fully formed.
+
+Stephen Boyd (2):
+  clk: qcom: dispcc-sc7180: Force off rotator clk at probe
+  clk: qcom: Properly initialize shared RCGs upon registration
+
+ drivers/clk/qcom/clk-rcg2.c      | 19 +++++++++++++++++++
+ drivers/clk/qcom/dispcc-sc7180.c | 14 ++++++++++++++
+ 2 files changed, 33 insertions(+)
+
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Taniya Das <quic_tdas@quicinc.com>
+Cc: Laura Nao <laura.nao@collabora.com>
+
+base-commit: e8f897f4afef0031fe618a8e94127a0934896aba
+-- 
+https://chromeos.dev
+
