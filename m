@@ -1,197 +1,124 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288494AEDC
-	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 08:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C200535A0;
+	Wed, 27 Mar 2024 11:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711529655; cv=none; b=OH3rstmzXUIVL+3kzF+Nm8Ifu2cTcInyGMYkEtrAgEhgZkvDV73XHsp+fmA9WNVDfPYACs5GLWmduyz/yxniIfknlPavlY0E4HkkuOEgPEYUr9GfuaAx0/gfkF69pCtYovYwNtBxi8wvPNFXv4Qnzd/GTrfgBWSUI60DHDFpEVU=
+	t=1711537228; cv=none; b=bfmYehkuRglLB+xTS4i6cACdNrwgE603voAQWRwvrA5N31UzkVgETrEeUvvg1DQnQpxfiTLceQbgibjXp3dtl7asjIcb0h1sEifw7cKW74aSGMmMir7UmLeol8TKbkH6XHSY2ffi1CqfOE7ReBuBSzsrlOsXaN8y7L0bjqzpce0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711529655; c=relaxed/simple;
-	bh=hkf8WnDvTMlPg6vYOz0rZWJ004dc3isL15eaguR8UQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S2Y+lf79TmqwJZ9cpt5HMIlPZZKv7vJOU5ahjK5qOj+zWizQ1dGADgEJWDaYiPZtTjESAc4y9X/IZLUBMxDbGE7jRsH1w/lhpTMadwOyDMfmrZWxxOlkepN7fn9nVcLhnucb2EVKyOFyoEG9JNiGvFYfjfF1NQaV9/+v8FsJ78o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NxiMsAr8; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711537228; c=relaxed/simple;
+	bh=Ju32kgFLniZCS7dOELnk78OlOgWmgFWMWc/+6Cau/QE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iKIFWkquiivFLKjFyw/v2sL8+K5CyRUue/32R+6ZPI+1aeeZCiYEfGRpa/DoNIAzahdTXBfqY+SI8u3m2GndxSKU6qoYsBcbn3qOMMva7m2APedx0vaMVHYlv1GDAFTSfNwr2ZcyW8QZFih2bWDeM/HXSvZyIgei4t6Kf5+Yr/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eRRxfm6U; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NxiMsAr8"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-513d717269fso8034049e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 01:54:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRRxfm6U"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a4702457ccbso836072666b.3;
+        Wed, 27 Mar 2024 04:00:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711529652; x=1712134452; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q42Xx003fo9Z8ScGicRWE6228uDZ9drjWZazb7fWQns=;
-        b=NxiMsAr8rP/4p6fLTrXpJK7AjR24hFIM+Skt84C0lG1jA2q86kdzx2R8LgjJ+bM4ap
-         iSntd0SWNl5BtT/T73QUMAyz+w6RN3rv0Czr6Kegwojup0tgRbU99scHkgmQZ6kx14uH
-         Q3Mgj56ax2caak1/RfZMRLnulSHPTGILxXp4DpRebhS5hE6xhtv8lHHxoes4sLz3PuDl
-         aGLAZdWvJp4Gk5QPqHQgDqQ4hceMWtOAMAN/qvS3DpSPPu5HReG3AcX/jgWhTmrn0kjj
-         83WG0JXjM5X4ocI3ZMhz2Ug+Rg7nMpTnSddgUyY8RY0husqAKOZFCpcRukPeucvGnFXA
-         SU0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711529652; x=1712134452;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1711537225; x=1712142025; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q42Xx003fo9Z8ScGicRWE6228uDZ9drjWZazb7fWQns=;
-        b=lWBW3x3nASMkF/bEw8zIK38Rl+HRV8HfL2wK+QJOy5tQzqhhBueQ6jPUJJZGfMMQCu
-         X5erq56YN5xggPIJoKIQqnKWYggc8PkkfTl6qiFM40Iij5QmyUTnjApIcK3XSLz5PtCB
-         s8LNrr7I00DCU/5ZX04LFf1XpWoIZfsTw2hYSG9QmJA7g3+EjbJcT8Uy9W6F6OTMPbYd
-         5o6c/ZcydU+4Qbif4eypH18mnbQYhIiiYttBahRnvvcqg12Ce87Ji/UI36kTbnPPR7fU
-         UtWS62G/NxGzNO7KyQ40d6wZH3e0x0AeMwWF3xGRD9U+1nK9lm0BysgefM0wF2mTPyCq
-         MIuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKcZYG9s4l4w5vPU39xz+nF6MqThRieAS5wH9SKAkpKIHJ+OyhUEDbgeQTjU7KbSMoNuCKZZCtzWaPVaT+dUoi5eS/m9vbOcEb
-X-Gm-Message-State: AOJu0YwDae6rVlC+KLN6vqUFfAPwuHPIB/qMYfTUJRBoEIptScuFNS2X
-	aMq+El7oBFoS1pQtn70XHU/xqF5yWMBZGF3snZq1mUHajIhwgFCvcbignXLu0aA=
-X-Google-Smtp-Source: AGHT+IFGqdMX0eI8HzGYgZWnnEWT/3VvnRNpPIfN+vapB2rLZsqbXL0Ikzt3PaKKJIzPYNbY3akEsA==
-X-Received: by 2002:a05:6512:1395:b0:515:bf94:cd38 with SMTP id fc21-20020a056512139500b00515bf94cd38mr550686lfb.36.1711529652297;
-        Wed, 27 Mar 2024 01:54:12 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.205])
-        by smtp.gmail.com with ESMTPSA id ij5-20020a056402158500b0056c09fda4e6sm3651763edb.54.2024.03.27.01.54.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Mar 2024 01:54:11 -0700 (PDT)
-Message-ID: <7bed14be-2850-42b0-abb4-43aad25a19cb@linaro.org>
-Date: Wed, 27 Mar 2024 09:54:09 +0100
+        bh=Ju32kgFLniZCS7dOELnk78OlOgWmgFWMWc/+6Cau/QE=;
+        b=eRRxfm6ULxXicwNpUD4yD25kTvEweHiT/Q8W5sFaTIwC9pvEKcpccYAsxglQ00rjtU
+         4XCUJuGZW+LMrxDdCMAQ+aT8K0znkduayMLOge8pH0kufFVYPNR84nz66sgmoCtKQPvn
+         9cw/XQzCL+5wqP2WZEi3p9j+MreeGsFpLIwmjCAvH34jR2AWxARItZ1gibRdCHGITZ+B
+         jGypmhoPkNxkK5OEu6B9ajYv5tyjAivlf7FcHxd9YZG0dTHjrjKmuRbzMoA4rlAPJ+Br
+         n/AtqK6CDmnTIErZgvx4edG64YieBo2iN0nxvoUxkVw8PnHt1Q4cCeaNJKhpG4NA3ftx
+         Z++g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711537225; x=1712142025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ju32kgFLniZCS7dOELnk78OlOgWmgFWMWc/+6Cau/QE=;
+        b=MWjPYLsja431Jh9WJk3g3ZH2/NYmx36uuSvZW0xGGqmBiai7KifAKKbXrAe8ospOzQ
+         eBLEz9f0VSKrXWGkISWPdQrR0DsE7PCs+H4y+UD7Dc97cyXiwzT6M6j9dLqTngxKaZxq
+         0KTHpgLDpOtEY8AKXkmkS/JwnZrfAUs9NV8+Hrez5uFhNR91qvnQxP68LnY5VGXTNdYY
+         5RmJppfagpo0c3FwGm7n2WFmhdRhSjB6ER4N1mPl28GHstT2647MeBn7620Vme02oeVG
+         AkEfj1NjMcYrBNLqqSdnuk4TqsXCfvQhgD0D4al2wN0DmwIXngn0Mk4dfykXY6+sghwe
+         ccPA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2vuGUhFcUU31sEHQLwaikBQSe0rLjNsEwFGwBOOwIaZDJZQdPcNbe46TNfq0G528FiFSGoMgU0CimtEHKB+6jCWRPWrCp5sRK9UT5HdsaU1tYdnVH7bsTluw98ntH0RZcqRcPsUohbilSFqPRsFmEMFTNiXCEz/0XDhpiGMX8uLkoCPGv67ez3rqpFM4/j8uJPyIrApTAT2SLSbt5H8JnUVMPDlmyGK+mRyLWF4/iM8cMwwMv9DITnuBqf19zQ3aVv0a/VAQvCLpo1SVRoA168vYG+wQhjERKEEVnsXT7hiWTcRfjEN+aWFbwPGEkT+Tzo7rHVs7nWNW00Qnmx5DvXAv940NyNBHrLL1E9bk/W8/1tEJO6aZbs68v+GlGg1+i4BcLCk0aXIu980hC5Iiw8Y808TAC7rNVHbORsPpgqmESugKDuvKxnghpRaCY9d05kZJrdgrk/6BKPNN4gebsekUAA41isaXqgp9fLd+xUGljSKgBgOvH1Z2cD8a4NQ8zStssHyKx9J/MD5PHsdg7JvRykIUEbg==
+X-Gm-Message-State: AOJu0YyHbhkLC5p5YmSwAjMSsLyUSprRWOHKsmNw4LNPzh4vwqYLC9U3
+	Yf54EpplH/u/TcDgrzlvaiD8qG1N1iFrAugyWNcF+S3KnNWUGl2WTQnqreY0weC8JNfOab1CP34
+	LvSgUGQiALjN0g9xlV9Pzp7gn79M=
+X-Google-Smtp-Source: AGHT+IFELlWWydcIPiZzRfNkNJ0aiBtjYHAQu2rRkgw6Ipxw5ipMsk32+2Jcyp9P3eYXGgeptSDoDh0kCNzfCJ8MD0U=
+X-Received: by 2002:a17:906:2998:b0:a49:dfe7:834f with SMTP id
+ x24-20020a170906299800b00a49dfe7834fmr616671eje.59.1711537225336; Wed, 27 Mar
+ 2024 04:00:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: clock: qcom: add SA8540P gpucc
-To: Johan Hovold <johan@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240326140108.21307-1-johan+linaro@kernel.org>
- <20240326140108.21307-2-johan+linaro@kernel.org>
- <a6fbbfd3-516b-4269-b4b2-611979b62fd7@kernel.org>
- <ZgL6fE8bFx7H41kr@hovoldconsulting.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <ZgL6fE8bFx7H41kr@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240326-ep93xx-v9-0-156e2ae5dfc8@maquefel.me>
+ <dc3e2cb4-f631-4611-8814-0dc04c5502f0@linaro.org> <ZgLgY11N8dkpTZJB@smile.fi.intel.com>
+ <a16f45c9-747c-4a19-98a3-aa5f47ee5c4d@linaro.org>
+In-Reply-To: <a16f45c9-747c-4a19-98a3-aa5f47ee5c4d@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 27 Mar 2024 12:59:49 +0200
+Message-ID: <CAHp75VfdsRkGiJCUsiTj0p7SMaSkJqQeojNWT3tGz2W7JhwMmQ@mail.gmail.com>
+Subject: Re: [PATCH v9 00/38] ep93xx device tree conversion
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Andy Shevchenko <andy@kernel.org>, nikita.shubin@maquefel.me, 
+	Hartley Sweeten <hsweeten@visionengravers.com>, 
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Lukasz Majewski <lukma@denx.de>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Mark Brown <broonie@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Damien Le Moal <dlemoal@kernel.org>, 
+	Sergey Shtylyov <s.shtylyov@omp.ru>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Ralf Baechle <ralf@linux-mips.org>, "Wu, Aaron" <Aaron.Wu@analog.com>, Lee Jones <lee@kernel.org>, 
+	Olof Johansson <olof@lixom.net>, Niklas Cassel <cassel@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-spi@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, linux-ide@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-sound@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Andrew Lunn <andrew@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26/03/2024 17:40, Johan Hovold wrote:
-> On Tue, Mar 26, 2024 at 04:59:43PM +0100, Krzysztof Kozlowski wrote:
->> On 26/03/2024 15:01, Johan Hovold wrote:
->>> The SA8540P platform is closely related to SC8280XP but differs in that
->>> it uses an external supply for the GX power domain.
->>>
->>> Add a new compatible string for the SA8540P GPU clock controller so that
->>> the OS can determine which resources to look for.
->>>
->>> Fixes: e60b95d2b687 ("dt-bindings: clock: qcom: Allow VDD_GFX supply to GX")
->>
->> I don't get why adding new device support is a fix. Commit msg did not
->> help me to understand it.
-> 
-> Yeah, perhaps I could have expanded on the problem a bit more here.
-> 
-> Hopefully it's clear if you look at the cover letter, but the commit
-> referred to above should have added a new compatible for SA8540P which
-> uses the new supply so that the OS can determine when it should try to
-> look it up and when it is required.
-> 
-> The Fixes tag can also be dropped, I admit this is not clear-cut.
+On Wed, Mar 27, 2024 at 7:07=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 26/03/2024 15:49, Andy Shevchenko wrote:
+> > On Tue, Mar 26, 2024 at 11:19:54AM +0100, Krzysztof Kozlowski wrote:
+> >> On 26/03/2024 10:18, Nikita Shubin via B4 Relay wrote:
 
-Some sort of short explanation would be good in the commit msg, so Fixes
-can stay.
+...
 
-> 
->>> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
->>> ---
->>>  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
->>> index f57aceddac6b..5b385e4976b6 100644
->>> --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
->>> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
->>> @@ -28,6 +28,7 @@ properties:
->>>    compatible:
->>>      enum:
->>>        - qcom,sdm845-gpucc
->>> +      - qcom,sa8540p-gpucc
->>
->> This looks fine and pretty trivial, but I really do not understand why
->> skipping our list for automated testing.
->>
->> <standard letter>
-> ...
->> </standard letter>
-> 
-> Spare me the rant. This was obviously a mistake from reusing and
-> manually amending a git-send-email command from shell history and
-> failing to notice that this series also should have been CCed the
-> devicetree list.
+> >> A lot of this could have been already merged if you split it... Just
+> >> saying...
+> >
+> > But you able to apply DT schema patches if you wish.
+> > Just doing? :-)
+>
+> Me? Why? DT bindings are supposed to go via subsystem maintainers, not
+> DT tree.
 
-That's not a rant but a template. :) You know, some people don't Cc DT
-list on purpose, claiming "it is trivial patch and I already Cc'ed other
-mailing lists". I don't know what was the reason here.
+Okay, I never remembered this rule, thank you for clarifying.
 
-I forgot one more template to add:
+> Plus, I do not apply any bindings patches, except for managed
+> subsystems and none of them are touched here.
 
-P.S. This review might include comments based on templates. My intention
-is not to offend or patronize but streamline my review process. Thank
-you for understanding.
+Good to know!
 
-Best regards,
-Krzysztof
-
+--=20
+With Best Regards,
+Andy Shevchenko
