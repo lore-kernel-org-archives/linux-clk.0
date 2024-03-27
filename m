@@ -1,227 +1,129 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30C71534E7
-	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 20:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA9B17984
+	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 21:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711571269; cv=none; b=AMFDOviVVggviYNlUNMuRw+40cH2hTstDQOjnrYDO9QuLCHcvGzRyyLyqSMwsxxL6H7Gr1x6AP3uLPaNqZErQPLLKInMD54fBXhnviRlZNYD95XFZNUt+nEQZW0Af24uU/I5ESQrSMTT0iOvE1hm/3Dr+jZS/gsrnbrv3bkTmiY=
+	t=1711574058; cv=none; b=Msy9MdRp409OWWeYxqhYCQlEJooX6QVq1+jsay9+ekZOZ99XUokKXpUsnbFMMJwIEc51IkH4loH2sQKeK6PRCNnqf0JFf/I1nY+b5crAThTiZoZv4gvcxT3k1gMDBzW1zA2U/VJ1LHr/VXvAvtFrLh/q8jpa7xzvcBqyTPcR+ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711571269; c=relaxed/simple;
-	bh=XlLrWtTmg8s6/XeVCQZ9E5GXfb4dRX9E/Mp5HjCCdVQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g2/aD4mNRuQpQOimqi8XPMZoOmwP+fyoavjYQIaTXu6Kdjd2T3A6OfkRNvxs5XnP4u48WV1wo8sfPzw+fx8rQ5h54erlMYrfCFNQmLunYfP1Is62W2Yzj2mtoXlvCW4aSSM2npYAUfXAHK0QW9p9nZUEotfzlCx1FV9XBbcJz4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gvpuxGVa; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1711574058; c=relaxed/simple;
+	bh=n2ZUulc3Eq3AAzZI8Ftjfz81QNys3b1pF4B57iF/n3g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lZuBaH/uVPA1H1VQBwEv/8GGRnepBitQcbFTzzRw3561SWTVcKXgCQGazaH9jzVrdmt1nUI+Sqhimp5z5F6rz1H0POqcNJ2RMiF4tCdwBoTuAqIvDppIjbeFJNhsjh+hybzMfmfme3rHykZCLNmoIBRHTxPe13NuykI9yN3hIws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BJhJrezr; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gvpuxGVa"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6e6b54a28d0so237398b3a.2
-        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 13:27:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BJhJrezr"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-56c1922096cso348334a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 14:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1711571267; x=1712176067; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jlQlD7myWbCJBZn4zLaj3UQ5LgDpgVdZ5/7RcoFhMMk=;
-        b=gvpuxGVaHElUanW7cbHo1rE/Ey38pNklRGI4ge2eHGYcNOd8PmksDnhIU9wMQp8rAG
-         w0IM8ZJAjxd559ezNWlQG1ZlOJXzPOWnEMc3wt+x5sOiuEPZAeAm7c0YOuTiqgpDymJV
-         XanlG903bbsWTcnqCHe37NpqvJBa/LGXeKTz0=
+        d=linaro.org; s=google; t=1711574055; x=1712178855; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=n2ZUulc3Eq3AAzZI8Ftjfz81QNys3b1pF4B57iF/n3g=;
+        b=BJhJrezrdYYS1OO2DMwhrRK0/VCOK1243JgX+gqNqXK8guKqK9TuGPaRcuQGsE05oj
+         WOBpJkVf7//Hwx2famwzgYvzP85CgibefbVg01Pwf59VJDiKrhbzkszVy81LLbDWehQd
+         4TmSMXBwk+y+CNvxY/7cxM+K8m90YEnP+Oa7+Q5jPJPL54u4wwOnYKw/k2kFy9xuYDcS
+         vp5u98XUE1KD1EihEIoe99v41Hln716ZF7XmjlJm5jWhOAcvYhyPox6p56rvWQl2mw8X
+         BBDWHhIiPRTSzbsNtDkFcomvOkn66pLxDCNhhDYRoRg2WfsaCjTyIdpbD5oCNL1S0Ekn
+         Lq5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711571267; x=1712176067;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jlQlD7myWbCJBZn4zLaj3UQ5LgDpgVdZ5/7RcoFhMMk=;
-        b=tLXl7M2qPN2GcLD8X47te43EEQEbRs14KUMaprT44jTPkM6maPSXZUg+/TKrzmtCo6
-         CBBFOh1KUNIxfM0+2vl/Oz1h3bt9G1VyTpqD1gVsa8c35IanWVUs5GSjzTMIsVazoGxf
-         nO1V93zIXhtjVilOuetetJnztr7ZDRwD4226PP0lxZ3ZrPteifFMj7LMIag4835du4XL
-         vJFIDhtIpnmjKtJ09MuUbIC4/tbIaKthuZDHQmTjZ/kXPrBVSHGFPudL1GwrLLEJby9C
-         /EU5U2HyHJYRHb3peayYcpzq3b0GziRs3CIUwaCtzmglRI99XI8CkLJC4kgirXZC2ATS
-         cc+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWSBuAUNZ1RhhsfH81DhYbKAFScwZc24b66IyIgiSBk0LiiZ1Z0DvXms0Jb+O2Z+Zg3SSLsWKQ4deXBAwbLaOw35M1s0EdcGQGt
-X-Gm-Message-State: AOJu0YzvLT0JwQhsdvqGeykwQ7c3V9UW78+Gh5dIhScd8M0cu3hsTMvs
-	ZgvFmBCwq7d5kWOAHXc++IiBsPZXm9RWgKuq9XCImgVloBuGcskarVW196E09g==
-X-Google-Smtp-Source: AGHT+IFZUfMHq9peOune+htb5ZoHYhdcO8/RJ3COKKB5hswynLS0DibaW32eMRntBRlKzrHvHeFAuA==
-X-Received: by 2002:a05:6a00:3cd5:b0:6ea:baed:a136 with SMTP id ln21-20020a056a003cd500b006eabaeda136mr1128489pfb.8.1711571267067;
-        Wed, 27 Mar 2024 13:27:47 -0700 (PDT)
-Received: from localhost (4.198.125.34.bc.googleusercontent.com. [34.125.198.4])
-        by smtp.gmail.com with UTF8SMTPSA id y8-20020a62b508000000b006e319d8c752sm8234371pfe.150.2024.03.27.13.27.45
+        d=1e100.net; s=20230601; t=1711574055; x=1712178855;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n2ZUulc3Eq3AAzZI8Ftjfz81QNys3b1pF4B57iF/n3g=;
+        b=v4jrfWFB9grDX8IJtS8hIpCipUJ1NRi7sqe86FiBa5AgYjOaiPbZ9fFzBsSfvc4azl
+         4+ylHeYpr0nk05bqInRLfvkFtfRE+aZkKl06auloK/jounLgiM7XQ/ZnCUPW+1HCIP5z
+         ofhmxddQvUALKFrCUSkfajULqK7wPTsMveHOqEgS9EyZBfV1yrQFl6xqBZ+3No7A8zXo
+         Tw90XTKK0Rz9/p4ozn5CTTeycUh6zacEm/cAAbbKQA2uzOruye+ZItQCIfmY8D9iV/Gd
+         C5KVGnvS+CDBkk1pQ6GxC8vg8yqUX4oXm1a6l4m/07ez059in2lJnEDy9ON+BO5sykXP
+         H13Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW2SShB9/Zcs7EJl29l7oBVH97/lh1T9UDSgzoQyzgKeEsmv3vZvVP9wPMHPp7xruZiUyh/77EGjshTT2l6hBDB+DHwLJhnDcze
+X-Gm-Message-State: AOJu0YyR9GptUokovZ2/PAmPeYCJBvt6Z4QPmiLlSI4hCrMTfMxHmc/z
+	XafgTx3YJF1/P1XneWMZf7YrxcFAdaTsWyACTeRN2lNApojUMt5u+Kzcpwb8vYM=
+X-Google-Smtp-Source: AGHT+IE0ljPxnm4x1rpfPXYtNekRJT6Hwophjp4u4vEIGusaxfBHvkBco+v+6ad0FZuyCp//Ec9HNA==
+X-Received: by 2002:a50:cd04:0:b0:56b:9ef8:f630 with SMTP id z4-20020a50cd04000000b0056b9ef8f630mr733887edi.2.1711574054667;
+        Wed, 27 Mar 2024 14:14:14 -0700 (PDT)
+Received: from [192.168.92.47] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
+        by smtp.gmail.com with ESMTPSA id j17-20020aa7de91000000b0056bfb7004basm16259edv.90.2024.03.27.14.14.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Mar 2024 13:27:46 -0700 (PDT)
-From: Stephen Boyd <swboyd@chromium.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
-	Laura Nao <laura.nao@collabora.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Taniya Das <quic_tdas@quicinc.com>
-Subject: [PATCH 2/2] clk: qcom: Properly initialize shared RCGs upon registration
-Date: Wed, 27 Mar 2024 13:27:38 -0700
-Message-ID: <20240327202740.3075378-3-swboyd@chromium.org>
-X-Mailer: git-send-email 2.44.0.478.gd926399ef9-goog
-In-Reply-To: <20240327202740.3075378-1-swboyd@chromium.org>
-References: <20240327202740.3075378-1-swboyd@chromium.org>
+        Wed, 27 Mar 2024 14:14:14 -0700 (PDT)
+Message-ID: <c16777bd-9f17-4d13-bba5-110e6626afb4@linaro.org>
+Date: Wed, 27 Mar 2024 22:14:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] clk: qcom: gcc-sm7150: Make clk_init_data const
+ and various fixes
+To: Danila Tikhonov <danila@jiaxyga.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ david@mainlining.org, adrian@travitia.xyz
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240321202814.59835-1-danila@jiaxyga.com>
+ <20240321202814.59835-2-danila@jiaxyga.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240321202814.59835-2-danila@jiaxyga.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There's two problems with shared RCGs.
+On 21.03.2024 9:28 PM, Danila Tikhonov wrote:
+> - The clk_init_data structures are never modified, make
+> them const.
+> - Add missing comma
 
-The first problem is that they incorrectly report the parent after
-commit 703db1f5da1e ("clk: qcom: rcg2: Cache CFG register updates for
-parked RCGs"). That's because the cached CFG register value needs to be
-populated when the clk is registered. clk_rcg2_shared_enable() writes
-the cached CFG register value 'parked_cfg'. This value is initially zero
-due to static initializers. If a driver calls clk_enable() first before
-setting a rate or parent, it will set the parent to '0' which is
-(almost?) always XO, and may not reflect the real parent. In the worst
-case, this switches the RCG from sourcing a fast PLL to the slow crystal
-speed.
+Highly debatable given you're not expecting to enlarge this enum
 
-The second problem is that the force enable bit isn't cleared. The force
-enable bit is only used during parking and unparking of shared RCGs.
-Otherwise it shouldn't be set because it keeps the RCG enabled even when
-all the branches on the output of the RCG are disabled (the hardware has
-a feedback mechanism so that any child branches keep the RCG enabled
-when the branch enable bit is set). This problem wastes power if the clk
-is unused, and is harmful in the case that the clk framework disables
-the parent of the force enabled RCG. In the latter case, the GDSC the
-shared RCG is associated with will get wedged if the RCG's source clk is
-disabled and the GDSC tries to enable the RCG to do "housekeeping" while
-powering on.
+> - Add dependencies on "ARM64 or COMPILE_TEST"
 
-Both of these problems combined with incorrect runtime PM usage in the
-display driver lead to a black screen on Qualcomm sc7180 Trogdor
-chromebooks.  What happens is that the bootloader leaves the
-'disp_cc_mdss_rot_clk' enabled and the 'disp_cc_mdss_rot_clk_src' force
-enabled and parented to 'disp_cc_pll0'. The mdss driver probes and
-runtime suspends, disabling the mdss_gdsc which uses the
-'disp_cc_mdss_rot_clk_src' for "housekeeping". The
-'disp_cc_mdss_rot_clk' is disabled during late init because the clk is
-unused, but the parent 'disp_cc_mdss_rot_clk_src' is still force enabled
-because the force enable bit was never cleared. Then 'disp_cc_pll0' is
-disabled because it is also unused. That's because the clk framework
-believes the parent of the RCG is XO when it isn't. A child device of
-the mdss device (e.g. DSI) runtime resumes mdss which powers on the
-mdss_gdsc. This wedges the GDSC because 'disp_cc_mdss_rot_clk_src' is
-parented to 'disp_cc_pll0' and that PLL is off. With the GDSC wedged,
-mdss_runtime_resume() tries to enable 'disp_cc_mdss_mdp_clk' but it
-can't because the GDSC has wedged all the clks associated with the GDSC.
+Please split this up into two patches (or if you really care about
+that comma, I won't snitch on you if you squash it together with adding
+const specifiers)
 
- disp_cc_mdss_mdp_clk status stuck at 'off'
- WARNING: CPU: 1 PID: 81 at drivers/clk/qcom/clk-branch.c:87 clk_branch_toggle+0x114/0x168
- Modules linked in:
- CPU: 1 PID: 81 Comm: kworker/u16:4 Not tainted 6.7.0-g0dd3ee311255 #1 f5757d475795053fd2ad52247a070cd50dd046f2
- Hardware name: Google Lazor (rev1 - 2) with LTE (DT)
- Workqueue: events_unbound deferred_probe_work_func
- pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
- pc : clk_branch_toggle+0x114/0x168
- lr : clk_branch_toggle+0x110/0x168
- sp : ffffffc08084b670
- pmr_save: 00000060
- x29: ffffffc08084b680 x28: ffffff808006de00 x27: 0000000000000001
- x26: ffffff8080dbd4f4 x25: 0000000000000000 x24: 0000000000000000
- x23: 0000000000000000 x22: ffffffd838461198 x21: ffffffd838007997
- x20: ffffffd837541d5c x19: 0000000000000001 x18: 0000000000000004
- x17: 0000000000000000 x16: 0000000000000010 x15: ffffffd837070fac
- x14: 0000000000000003 x13: 0000000000000004 x12: 0000000000000001
- x11: c0000000ffffdfff x10: ffffffd838347aa0 x9 : 08dadf92e516c000
- x8 : 08dadf92e516c000 x7 : 0000000000000000 x6 : 0000000000000027
- x5 : ffffffd8385a61f2 x4 : 0000000000000000 x3 : ffffffc08084b398
- x2 : ffffffc08084b3a0 x1 : 00000000ffffdfff x0 : 00000000fffffff0
- Call trace:
-  clk_branch_toggle+0x114/0x168
-  clk_branch2_enable+0x24/0x30
-  clk_core_enable+0x5c/0x1c8
-  clk_enable+0x38/0x58
-  clk_bulk_enable+0x40/0xb0
-  mdss_runtime_resume+0x68/0x258
-  pm_generic_runtime_resume+0x30/0x44
-  __genpd_runtime_resume+0x30/0x80
-  genpd_runtime_resume+0x124/0x214
-  __rpm_callback+0x7c/0x15c
-  rpm_callback+0x30/0x88
-  rpm_resume+0x390/0x4d8
-  rpm_resume+0x43c/0x4d8
-  __pm_runtime_resume+0x54/0x98
-  __device_attach+0xe0/0x170
-  device_initial_probe+0x1c/0x28
-  bus_probe_device+0x48/0xa4
-  device_add+0x52c/0x6fc
-  mipi_dsi_device_register_full+0x104/0x1a8
-  devm_mipi_dsi_device_register_full+0x28/0x78
-  ti_sn_bridge_probe+0x1dc/0x2bc
-  auxiliary_bus_probe+0x4c/0x94
-  really_probe+0xf8/0x270
-  __driver_probe_device+0xa8/0x130
-  driver_probe_device+0x44/0x104
-  __device_attach_driver+0xa4/0xcc
-  bus_for_each_drv+0x94/0xe8
-  __device_attach+0xf8/0x170
-  device_initial_probe+0x1c/0x28
-  bus_probe_device+0x48/0xa4
-  deferred_probe_work_func+0x9c/0xd8
-  process_scheduled_works+0x1ac/0x4dc
-  worker_thread+0x110/0x320
-  kthread+0x100/0x120
-  ret_from_fork+0x10/0x20
-
-Fixes: 703db1f5da1e ("clk: qcom: rcg2: Cache CFG register updates for parked RCGs")
-Reported-by: Stephen Boyd <sboyd@kernel.org>
-Closes: https://lore.kernel.org/r/1290a5a0f7f584fcce722eeb2a1fd898.sboyd@kernel.org
-Closes: https://issuetracker.google.com/319956935
-Reported-by: Laura Nao <laura.nao@collabora.com>
-Closes: https://lore.kernel.org/r/20231218091806.7155-1-laura.nao@collabora.com
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Douglas Anderson <dianders@chromium.org>
-Cc: Taniya Das <quic_tdas@quicinc.com>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/clk/qcom/clk-rcg2.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 5183c74b074f..a150b4317d6f 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1138,7 +1138,26 @@ clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	return clk_rcg2_recalc_rate(hw, parent_rate);
- }
- 
-+static int clk_rcg2_shared_init(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/* Initialize cached cfg so the parent is reported properly */
-+	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &rcg->parked_cfg);
-+
-+	/*
-+	 * Clear any force enable of the RCG from boot. We rely on child clks
-+	 * (branches) to turn the RCG on/off in the hardware and only set the
-+	 * enable bit in the RCG when we want to make sure the clk stays on for
-+	 * parent switches or parking.
-+	 */
-+	clk_rcg2_clear_force_enable(hw);
-+
-+	return 0;
-+}
-+
- const struct clk_ops clk_rcg2_shared_ops = {
-+	.init = clk_rcg2_shared_init,
- 	.enable = clk_rcg2_shared_enable,
- 	.disable = clk_rcg2_shared_disable,
- 	.get_parent = clk_rcg2_shared_get_parent,
--- 
-https://chromeos.dev
-
+Konrad
