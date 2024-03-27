@@ -1,310 +1,197 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AA136B1D
-	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 08:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288494AEDC
+	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 08:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711529410; cv=none; b=Lq9Tt3OlXxwM7PKiB3rc0E4+6zJwzbZfFxeOnC4LNsO9c+DUfWmGYpvMXV107OKxWG4LLDbtH9VAF341cFLxCZmZp3BM6sJZ7GC8elE5thUA3HfaFmwmdFb5O/G3PHJD8TR8F27ErkogGKtP1uRel+kt0NLxHu68e0s5lgNQi2U=
+	t=1711529655; cv=none; b=OH3rstmzXUIVL+3kzF+Nm8Ifu2cTcInyGMYkEtrAgEhgZkvDV73XHsp+fmA9WNVDfPYACs5GLWmduyz/yxniIfknlPavlY0E4HkkuOEgPEYUr9GfuaAx0/gfkF69pCtYovYwNtBxi8wvPNFXv4Qnzd/GTrfgBWSUI60DHDFpEVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711529410; c=relaxed/simple;
-	bh=G1T8j6kmbh5YKnwus41DkuQV/P9KjTNsZ6i0EFzmw3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gi/aIZkCg6pzh8uE6kIAVaL+wLN5mjj64pIJIS6nKjz2cT0FdrwnfCU40Mq7PetyKpA94ihYJFhCo3rnFVTdmSsbUV0JXZF09FOAlQ1KGgYYXGG01ICDdo/4IynKYKq+teX3Y5uJmH2PeQzYciVwSfNv7UfzSIyTor8151ZEjVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rq5zoPr2; arc=none smtp.client-ip=209.85.219.171
+	s=arc-20240116; t=1711529655; c=relaxed/simple;
+	bh=hkf8WnDvTMlPg6vYOz0rZWJ004dc3isL15eaguR8UQc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S2Y+lf79TmqwJZ9cpt5HMIlPZZKv7vJOU5ahjK5qOj+zWizQ1dGADgEJWDaYiPZtTjESAc4y9X/IZLUBMxDbGE7jRsH1w/lhpTMadwOyDMfmrZWxxOlkepN7fn9nVcLhnucb2EVKyOFyoEG9JNiGvFYfjfF1NQaV9/+v8FsJ78o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NxiMsAr8; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rq5zoPr2"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-db3a09e96daso6048634276.3
-        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 01:50:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NxiMsAr8"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-513d717269fso8034049e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 01:54:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711529407; x=1712134207; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pLYlN16RyWsxEwBzjLz8ThQC9SQHV7u2gPr9C5zHFq8=;
-        b=Rq5zoPr2vFNS3kDEmj8NfosnY1yFn+nDuLgPdtu3u8ogbcqnfAT4xNf5v8J35D53QF
-         E1S+NKtzbm0ovV34T9i/NJvNg+3zhxNeSD1D5jGci6ltHW0rcmhqs8qzUtCl5f2rgL8b
-         f9VblLDCChd1kM1RPXHmBLc8zcPnqQENBUG9c4yRuNW9AgjMW30uoFFQHNwDOpr1bFnb
-         z3WnK9WheVbFJcciKmqFkUqTVeG/PWmxXqADYzo/FLLV4QJuqppFn8sR80dPcn3zqgei
-         MoBO2VRCz4xuhB6k2Elgajc/TZS8fjzQEADpysiuug6vyZdcVbIIuK78ARo2duZGsDDy
-         bKRg==
+        d=linaro.org; s=google; t=1711529652; x=1712134452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q42Xx003fo9Z8ScGicRWE6228uDZ9drjWZazb7fWQns=;
+        b=NxiMsAr8rP/4p6fLTrXpJK7AjR24hFIM+Skt84C0lG1jA2q86kdzx2R8LgjJ+bM4ap
+         iSntd0SWNl5BtT/T73QUMAyz+w6RN3rv0Czr6Kegwojup0tgRbU99scHkgmQZ6kx14uH
+         Q3Mgj56ax2caak1/RfZMRLnulSHPTGILxXp4DpRebhS5hE6xhtv8lHHxoes4sLz3PuDl
+         aGLAZdWvJp4Gk5QPqHQgDqQ4hceMWtOAMAN/qvS3DpSPPu5HReG3AcX/jgWhTmrn0kjj
+         83WG0JXjM5X4ocI3ZMhz2Ug+Rg7nMpTnSddgUyY8RY0husqAKOZFCpcRukPeucvGnFXA
+         SU0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711529407; x=1712134207;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pLYlN16RyWsxEwBzjLz8ThQC9SQHV7u2gPr9C5zHFq8=;
-        b=obgrMtS3sCFHk9hoO6dCeJrMPq7Ddeg7ZMV6B3yPmcXBEz3N7hWu01uB9OAzTnhPDq
-         vBCF0/WjTKKN0iT9j7k4z1yQPS9D/ctxzcUWh0hvzl+nhU+FKIz7YMP/DdD/X3jsCSPj
-         J9m79SCygy8pXXMaSRCORbmOSz/QeW6eObsxdc7y7+dFKvKOxhfJwI432YXI6+6zf6c5
-         rbCasRQEHTApq2y1fDnndwgLWqnpCb8FAyoHzbOPUK7UNokPJ0v7HxKIaUFnOc2S/7rO
-         rygpMopUshpdRw65lxWjQvnYkj3EVKUKqvA5OIyDP3TRfPHrNr7/dzo8avcJaLVoeAzQ
-         ps9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWIGN3RSePOJIOCTTe8+lwhe7neYk8wwWs+EflFzw8DeSOSMuKPMyvkwtvMII2BmKaSOELn+8H4XLjc+LoBWjEr5afWvJemR5EG
-X-Gm-Message-State: AOJu0YzGx07IdnKUTJouTgbRINmAHJO1DmEtEkXxI+nTYIKAGFbu6JaW
-	nCWIDF2PfB5gWfneH2Xx+JUt4AF3NGAMHtV8PMXsV2nzJlxeoPCQ2/Ni4KI13pUt5AdTa242wDu
-	t857DOj3r3oYLcwvNnSHdRKdaOz7F/nXYukJ1gQ==
-X-Google-Smtp-Source: AGHT+IEABw9Q0JdmDvKgiS8uA31+HMp3kqLbyi2CuT4KgMzzWprj2LtLDfwFy6/eU3DS2O0M+a/cPSxeZju9nn66sIY=
-X-Received: by 2002:a25:aa4b:0:b0:dc7:3166:ad25 with SMTP id
- s69-20020a25aa4b000000b00dc73166ad25mr414150ybi.25.1711529407085; Wed, 27 Mar
- 2024 01:50:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711529652; x=1712134452;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q42Xx003fo9Z8ScGicRWE6228uDZ9drjWZazb7fWQns=;
+        b=lWBW3x3nASMkF/bEw8zIK38Rl+HRV8HfL2wK+QJOy5tQzqhhBueQ6jPUJJZGfMMQCu
+         X5erq56YN5xggPIJoKIQqnKWYggc8PkkfTl6qiFM40Iij5QmyUTnjApIcK3XSLz5PtCB
+         s8LNrr7I00DCU/5ZX04LFf1XpWoIZfsTw2hYSG9QmJA7g3+EjbJcT8Uy9W6F6OTMPbYd
+         5o6c/ZcydU+4Qbif4eypH18mnbQYhIiiYttBahRnvvcqg12Ce87Ji/UI36kTbnPPR7fU
+         UtWS62G/NxGzNO7KyQ40d6wZH3e0x0AeMwWF3xGRD9U+1nK9lm0BysgefM0wF2mTPyCq
+         MIuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKcZYG9s4l4w5vPU39xz+nF6MqThRieAS5wH9SKAkpKIHJ+OyhUEDbgeQTjU7KbSMoNuCKZZCtzWaPVaT+dUoi5eS/m9vbOcEb
+X-Gm-Message-State: AOJu0YwDae6rVlC+KLN6vqUFfAPwuHPIB/qMYfTUJRBoEIptScuFNS2X
+	aMq+El7oBFoS1pQtn70XHU/xqF5yWMBZGF3snZq1mUHajIhwgFCvcbignXLu0aA=
+X-Google-Smtp-Source: AGHT+IFGqdMX0eI8HzGYgZWnnEWT/3VvnRNpPIfN+vapB2rLZsqbXL0Ikzt3PaKKJIzPYNbY3akEsA==
+X-Received: by 2002:a05:6512:1395:b0:515:bf94:cd38 with SMTP id fc21-20020a056512139500b00515bf94cd38mr550686lfb.36.1711529652297;
+        Wed, 27 Mar 2024 01:54:12 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.205])
+        by smtp.gmail.com with ESMTPSA id ij5-20020a056402158500b0056c09fda4e6sm3651763edb.54.2024.03.27.01.54.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Mar 2024 01:54:11 -0700 (PDT)
+Message-ID: <7bed14be-2850-42b0-abb4-43aad25a19cb@linaro.org>
+Date: Wed, 27 Mar 2024 09:54:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240327081850.2924870-1-quic_varada@quicinc.com> <20240327081850.2924870-3-quic_varada@quicinc.com>
-In-Reply-To: <20240327081850.2924870-3-quic_varada@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 27 Mar 2024 10:49:56 +0200
-Message-ID: <CAA8EJpoFw3Qyq+NRffe5HBUbCfdYv03oWgoUwkB6pbdVrF6LEg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] clk: qcom: add IPQ9574 interconnect clocks support
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	conor+dt@kernel.org, djakov@kernel.org, quic_anusha@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: clock: qcom: add SA8540P gpucc
+To: Johan Hovold <johan@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240326140108.21307-1-johan+linaro@kernel.org>
+ <20240326140108.21307-2-johan+linaro@kernel.org>
+ <a6fbbfd3-516b-4269-b4b2-611979b62fd7@kernel.org>
+ <ZgL6fE8bFx7H41kr@hovoldconsulting.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <ZgL6fE8bFx7H41kr@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 27 Mar 2024 at 10:21, Varadarajan Narayanan
-<quic_varada@quicinc.com> wrote:
->
-> Unlike MSM platforms that manage NoC related clocks and scaling
-> from RPM, IPQ SoCs dont involve RPM in managing NoC related
-> clocks and there is no NoC scaling.
->
-> However, there is a requirement to enable some NoC interface
-> clocks for accessing the peripheral controllers present on
-> these NoCs. Though exposing these as normal clocks would work,
-> having a minimalistic interconnect driver to handle these clocks
-> would make it consistent with other Qualcomm platforms resulting
-> in common code paths. This is similar to msm8996-cbf's usage of
-> icc-clk framework.
->
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v4: Use clk_hw instead of indices
->     Do icc register in qcom_cc_probe() call stream
->     Add icc clock info to qcom_cc_desc structure
-> v3: Use indexed identifiers here to avoid confusion
->     Fix error messages and move to common.c
-> v2: Move DTS to separate patch
->     Update commit log
->     Auto select CONFIG_INTERCONNECT & CONFIG_INTERCONNECT_CLK to fix build error
-> ---
->  drivers/clk/qcom/Kconfig       |  2 ++
->  drivers/clk/qcom/common.c      | 34 ++++++++++++++++++++-
->  drivers/clk/qcom/common.h      |  4 ++-
->  drivers/clk/qcom/gcc-ipq9574.c | 54 ++++++++++++++++++++++++++++++++++
+On 26/03/2024 17:40, Johan Hovold wrote:
+> On Tue, Mar 26, 2024 at 04:59:43PM +0100, Krzysztof Kozlowski wrote:
+>> On 26/03/2024 15:01, Johan Hovold wrote:
+>>> The SA8540P platform is closely related to SC8280XP but differs in that
+>>> it uses an external supply for the GX power domain.
+>>>
+>>> Add a new compatible string for the SA8540P GPU clock controller so that
+>>> the OS can determine which resources to look for.
+>>>
+>>> Fixes: e60b95d2b687 ("dt-bindings: clock: qcom: Allow VDD_GFX supply to GX")
+>>
+>> I don't get why adding new device support is a fix. Commit msg did not
+>> help me to understand it.
+> 
+> Yeah, perhaps I could have expanded on the problem a bit more here.
+> 
+> Hopefully it's clear if you look at the cover letter, but the commit
+> referred to above should have added a new compatible for SA8540P which
+> uses the new supply so that the OS can determine when it should try to
+> look it up and when it is required.
+> 
+> The Fixes tag can also be dropped, I admit this is not clear-cut.
 
-These changes must be separate.
+Some sort of short explanation would be good in the commit msg, so Fixes
+can stay.
 
->  4 files changed, 92 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 8ab08e7b5b6c..af73a0b396eb 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -243,6 +243,8 @@ config IPQ_GCC_8074
->
->  config IPQ_GCC_9574
->         tristate "IPQ9574 Global Clock Controller"
-> +       select INTERCONNECT
-> +       select INTERCONNECT_CLK
->         help
->           Support for global clock controller on ipq9574 devices.
->           Say Y if you want to use peripheral devices such as UART, SPI,
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index 75f09e6e057e..523d30d0ccbc 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -8,6 +8,8 @@
->  #include <linux/regmap.h>
->  #include <linux/platform_device.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/interconnect-clk.h>
-> +#include <linux/interconnect-provider.h>
->  #include <linux/reset-controller.h>
->  #include <linux/of.h>
->
-> @@ -234,6 +236,36 @@ static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
->         return cc->rclks[idx] ? &cc->rclks[idx]->hw : NULL;
->  }
->
-> +static int qcom_cc_icc_register(struct device *dev,
-> +                               const struct qcom_cc_desc *desc)
-> +{
-> +#if IS_ENABLED(CONFIG_INTERCONNECT_CLK)
+> 
+>>> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+>>> ---
+>>>  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>>> index f57aceddac6b..5b385e4976b6 100644
+>>> --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>>> @@ -28,6 +28,7 @@ properties:
+>>>    compatible:
+>>>      enum:
+>>>        - qcom,sdm845-gpucc
+>>> +      - qcom,sa8540p-gpucc
+>>
+>> This looks fine and pretty trivial, but I really do not understand why
+>> skipping our list for automated testing.
+>>
+>> <standard letter>
+> ...
+>> </standard letter>
+> 
+> Spare me the rant. This was obviously a mistake from reusing and
+> manually amending a git-send-email command from shell history and
+> failing to notice that this series also should have been CCed the
+> devicetree list.
 
-General recommendation is to avoid #ifs inside function code. Please
-move them outside and add an empty stub.
+That's not a rant but a template. :) You know, some people don't Cc DT
+list on purpose, claiming "it is trivial patch and I already Cc'ed other
+mailing lists". I don't know what was the reason here.
 
-> +       struct icc_provider *provider;
-> +       struct icc_clk_data *icd;
-> +       int i;
-> +
-> +       if (!desc->icc_hws)
-> +               return 0;
-> +
-> +       icd = devm_kcalloc(dev, desc->num_icc_hws, sizeof(*icd), GFP_KERNEL);
-> +       if (!icd)
-> +               return dev_err_probe(dev, -ENOMEM, "malloc for icc clock data failed\n");
+I forgot one more template to add:
 
-No need to.
+P.S. This review might include comments based on templates. My intention
+is not to offend or patronize but streamline my review process. Thank
+you for understanding.
 
-> +
-> +       for (i = 0; i < desc->num_icc_hws; i++) {
-> +               icd[i].clk = devm_clk_hw_get_clk(dev, desc->icc_hws[i], "");
+Best regards,
+Krzysztof
 
-Passing an empty string is not correct from the CCF point of view.
-
-> +               if (IS_ERR_OR_NULL(icd[i].clk))
-> +                       return dev_err_probe(dev, -ENOENT, "icc clock not found\n");
-
-No, just IS_ERR and PTR_ERR. Don't throw away the resulting code.
-In most of the case IS_ERR_OR_NULL is not correct. The function either
-returns NULL or returns an error pointer. It can not be both.
-
-> +               icd[i].name = clk_hw_get_name(desc->icc_hws[i]);
-> +       }
-> +
-> +       provider = icc_clk_register(dev, desc->first_id, desc->num_icc_hws, icd);
-> +       if (IS_ERR_OR_NULL(provider))
-
-just use PTR_ERR_OR_ZERO
-
-Also note that there is no qcom_cc_remove, so please add
-devm_icc_clk_register() and use it here:
-
-return PTR_ERR_OR_ZERO(devm_icc_clk_register(dev, ...));
-
-> +               return dev_err_probe(dev, PTR_ERR(provider),
-> +                                    "icc_clk_register failed\n");
-> +#endif
-> +       return 0;
-> +}
-> +
->  int qcom_cc_really_probe(struct platform_device *pdev,
->                          const struct qcom_cc_desc *desc, struct regmap *regmap)
->  {
-> @@ -303,7 +335,7 @@ int qcom_cc_really_probe(struct platform_device *pdev,
->         if (ret)
->                 return ret;
->
-> -       return 0;
-> +       return qcom_cc_icc_register(dev, desc);
->  }
->  EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
->
-> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-> index 9c8f7b798d9f..3c3a07f6dcb9 100644
-> --- a/drivers/clk/qcom/common.h
-> +++ b/drivers/clk/qcom/common.h
-> @@ -29,6 +29,9 @@ struct qcom_cc_desc {
->         size_t num_gdscs;
->         struct clk_hw **clk_hws;
->         size_t num_clk_hws;
-> +       struct clk_hw **icc_hws;
-> +       size_t num_icc_hws;
-> +       unsigned int first_id;
->  };
->
->  /**
-> @@ -65,5 +68,4 @@ extern int qcom_cc_probe(struct platform_device *pdev,
->                          const struct qcom_cc_desc *desc);
->  extern int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
->                                   const struct qcom_cc_desc *desc);
-> -
->  #endif
-> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-> index 0a3f846695b8..187fd9dcdf49 100644
-> --- a/drivers/clk/qcom/gcc-ipq9574.c
-> +++ b/drivers/clk/qcom/gcc-ipq9574.c
-> @@ -12,6 +12,7 @@
->
->  #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
->  #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
-> +#include <dt-bindings/interconnect/qcom,ipq9574.h>
->
->  #include "clk-alpha-pll.h"
->  #include "clk-branch.h"
-> @@ -4301,6 +4302,56 @@ static const struct qcom_reset_map gcc_ipq9574_resets[] = {
->         [GCC_WCSS_Q6_TBU_BCR] = { 0x12054, 0 },
->  };
->
-> +#define IPQ_APPS_ID                    9574    /* some unique value */
-> +
-> +enum {
-> +       ICC_ANOC_PCIE0,
-> +       ICC_SNOC_PCIE0,
-> +       ICC_ANOC_PCIE1,
-> +       ICC_SNOC_PCIE1,
-> +       ICC_ANOC_PCIE2,
-> +       ICC_SNOC_PCIE2,
-> +       ICC_ANOC_PCIE3,
-> +       ICC_SNOC_PCIE3,
-> +       ICC_SNOC_USB,
-> +       ICC_ANOC_USB_AXI,
-> +       ICC_NSSNOC_NSSCC,
-> +       ICC_NSSNOC_SNOC_0,
-> +       ICC_NSSNOC_SNOC_1,
-> +       ICC_NSSNOC_PCNOC_1,
-> +       ICC_NSSNOC_QOSGEN_REF,
-> +       ICC_NSSNOC_TIMEOUT_REF,
-> +       ICC_NSSNOC_XO_DCD,
-> +       ICC_NSSNOC_ATB,
-> +       ICC_MEM_NOC_NSSNOC,
-> +       ICC_NSSNOC_MEMNOC,
-> +       ICC_NSSNOC_MEM_NOC_1,
-> +};
-> +
-> +static struct clk_hw *icc_ipq9574_hws[] = {
-> +       [ICC_ANOC_PCIE0] = &gcc_anoc_pcie0_1lane_m_clk.clkr.hw,
-> +       [ICC_SNOC_PCIE0] = &gcc_anoc_pcie1_1lane_m_clk.clkr.hw,
-> +       [ICC_ANOC_PCIE1] = &gcc_anoc_pcie2_2lane_m_clk.clkr.hw,
-> +       [ICC_SNOC_PCIE1] = &gcc_anoc_pcie3_2lane_m_clk.clkr.hw,
-> +       [ICC_ANOC_PCIE2] = &gcc_snoc_pcie0_1lane_s_clk.clkr.hw,
-> +       [ICC_SNOC_PCIE2] = &gcc_snoc_pcie1_1lane_s_clk.clkr.hw,
-> +       [ICC_ANOC_PCIE3] = &gcc_snoc_pcie2_2lane_s_clk.clkr.hw,
-> +       [ICC_SNOC_PCIE3] = &gcc_snoc_pcie3_2lane_s_clk.clkr.hw,
-> +       [ICC_SNOC_USB] = &gcc_snoc_usb_clk.clkr.hw,
-> +       [ICC_ANOC_USB_AXI] = &gcc_anoc_usb_axi_clk.clkr.hw,
-> +       [ICC_NSSNOC_NSSCC] = &gcc_nssnoc_nsscc_clk.clkr.hw,
-> +       [ICC_NSSNOC_SNOC_0] = &gcc_nssnoc_snoc_clk.clkr.hw,
-> +       [ICC_NSSNOC_SNOC_1] = &gcc_nssnoc_snoc_1_clk.clkr.hw,
-> +       [ICC_NSSNOC_PCNOC_1] = &gcc_nssnoc_pcnoc_1_clk.clkr.hw,
-> +       [ICC_NSSNOC_QOSGEN_REF] = &gcc_nssnoc_qosgen_ref_clk.clkr.hw,
-> +       [ICC_NSSNOC_TIMEOUT_REF] = &gcc_nssnoc_timeout_ref_clk.clkr.hw,
-> +       [ICC_NSSNOC_XO_DCD] = &gcc_nssnoc_xo_dcd_clk.clkr.hw,
-> +       [ICC_NSSNOC_ATB] = &gcc_nssnoc_atb_clk.clkr.hw,
-> +       [ICC_MEM_NOC_NSSNOC] = &gcc_mem_noc_nssnoc_clk.clkr.hw,
-> +       [ICC_NSSNOC_MEMNOC] = &gcc_nssnoc_memnoc_clk.clkr.hw,
-> +       [ICC_NSSNOC_MEM_NOC_1] = &gcc_nssnoc_mem_noc_1_clk.clkr.hw,
-> +};
-> +
->  static const struct of_device_id gcc_ipq9574_match_table[] = {
->         { .compatible = "qcom,ipq9574-gcc" },
->         { }
-> @@ -4323,6 +4374,9 @@ static const struct qcom_cc_desc gcc_ipq9574_desc = {
->         .num_resets = ARRAY_SIZE(gcc_ipq9574_resets),
->         .clk_hws = gcc_ipq9574_hws,
->         .num_clk_hws = ARRAY_SIZE(gcc_ipq9574_hws),
-> +       .icc_hws = icc_ipq9574_hws,
-> +       .num_icc_hws = ARRAY_SIZE(icc_ipq9574_hws),
-> +       .first_id = IPQ_APPS_ID,
->  };
->
->  static int gcc_ipq9574_probe(struct platform_device *pdev)
-> --
-> 2.34.1
->
->
-
-
--- 
-With best wishes
-Dmitry
