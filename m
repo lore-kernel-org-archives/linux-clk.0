@@ -1,92 +1,130 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76DD63BF
-	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 07:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFC42C85C
+	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 08:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711524820; cv=none; b=hFrIyB8wh1nZpcQb2VNBng9ETAzBCu4VTAoAZFNu7ET0VlpSSvkk2QWI8sDF7p8U4+/rij6Nj5nakKA9tFMP/BWuJL+G+rMB4CneQr43pvdsG+1d4QUAKPkVEnyPQ85vNus+H49ct+KMKqD5I5hAWQDQ9d+3oWl4aOU4Cr69qKk=
+	t=1711526991; cv=none; b=LnkdEeLTqkgdUPBIcsjpXM//kwv5dbcgp343YnFC+BwaPy9rNEyMTHJ/qZ/nUaEg1yhbwUmwW8yHzSuIhgEZFqtwKxIso/YJltV9f4vrwkPfAxmRQcDyuhAwIGAtctIXnrz7YDsWlCPrtQJB06YUz8n/Whxj2WSj7Os8qxAdUBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711524820; c=relaxed/simple;
-	bh=uoumoqKQqUyiOY+Ng8vrdUIak7rvCh/zc7q2HaEm42c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mm1og+7JwxLYUhttjkN4L0u24Vm/DCd4dubatk7+7WQpCJTQ5lWHYiiFs8246w5ODblfgJplDLp3iR1/nrr9A4hVWODClAdREby9Wdlpo9pDXyAOrd8stJddRWGXQNLj6Y1sAp+/N1Lqh2SrBBQpzRdS30Ubpf1MtKAlbAC34oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rpNmk-0002G9-0c; Wed, 27 Mar 2024 08:33:22 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rpNmi-008lQm-V6; Wed, 27 Mar 2024 08:33:20 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rpNmi-00CGTR-2q;
-	Wed, 27 Mar 2024 08:33:20 +0100
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] clk: Provide !COMMON_CLK dummy for devm_clk_rate_exclusive_get()
-Date: Wed, 27 Mar 2024 08:33:10 +0100
-Message-ID: <20240327073310.520950-2-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <202403270305.ydvX9xq1-lkp@intel.com>
-References: <202403270305.ydvX9xq1-lkp@intel.com>
+	s=arc-20240116; t=1711526991; c=relaxed/simple;
+	bh=GPu0olZFo/3Df8UKJk+W9AS/4Etn7baYS1zdkvAVtIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Naj71ckxlbATkrtSuFcikEtOyKf+YPX4qzjRM4rK6gkTxPS+zO+JyuGSJ+Ir6vMIcqzfGJ1+3WaEz/YRv/yj9eGsKp5rhE0ON2gzakzyVU+Mvd+M6Z6g2Oh5ccJ0/G9wppg9G2huXyhJcjw8hTBSdNG3UF3yb+byQK86gja2sBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q3Pv/gQs; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q3Pv/gQs"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-41494aaa1c5so2050095e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 01:09:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711526987; x=1712131787; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=laN7yfiUrlW9A39+FpFCocbYRuO1xnHUno2fLpcSh5I=;
+        b=Q3Pv/gQsam2BY1ZZCrfrZ6Hlc9c1ZugUlFx8C2V5B26fyhQxDdIn48rWTzIhBsxkn/
+         6dlUizWBny8f/AE7DfduNSyquz8n2WUH2y59u9ULjekIZqux4+J1/ilV27JsjyxUyPQN
+         K8aEdiEciNBSFe88a5gE+bpwnwp2ev8d4bYtUPvEStwXedCBt8DqHFGdY/l96kWcc/4r
+         8iydzL9PQX+wqmvwr+E6d8ty2GoMUCYzenYzCIfONLBga7QlZvl5BWvyzDK70QR/4Zx8
+         4R4B2t6fJMDASk5Qk3QUFWOZY1ycksmlwfD2HSfVJ0IGoLiMDUMts7cw42+7M6xIBSJ7
+         uyfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711526987; x=1712131787;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=laN7yfiUrlW9A39+FpFCocbYRuO1xnHUno2fLpcSh5I=;
+        b=KgiPXbCvN870KAx0WIgnK/IMKSl+vhYXR5PVvjYAkgjhgauG24+0OcLwUrcc3BMFZL
+         UIKFZ8mdMOGNGu9MAUSizAWddw7ta83kShODMRda8IFt6JWrnRET/NxvsQE73ygQMDe/
+         M0W1W5JusocECSAIKqUwf9Tj8ZQKeNOqoXlO49VbLP59o8rk2WlbOBTEMi1L/UaRTaUO
+         I6WueCDHHcziIlyg8I8RbPVOzvr0ZHR0ba72OdemzDBI2xG8iGbUwMbPL0jbMUkuN5kY
+         Gz9oYsHdzZYLt298kXQimDIE6ShdzarM/K1VmVr7JmXv7366wiZ/bLmJtwgByf+0sfaN
+         GkGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqdV4y1ta9WD29fcivYYDz1k1pIVDy8t8VUNIyCOuySPs8PYfuqhom0iTOWcQQHvI+hLXs28wlnXdgNpp3Daa5lScrM7v+4hom
+X-Gm-Message-State: AOJu0Yx9glK5Dag0lMqbNk0Txas5qfXUN8yK8JPqFQq0ne5TlwJIDK7J
+	xTg0I3wRt8phMHI8B58eU1puwGgeuCGwmBU3EQSagTeEPO/AaWsFUUNWstNLaLs=
+X-Google-Smtp-Source: AGHT+IGEz+1d1jkgyoddachI7gTTbD9dQEkwNHSRq3xwokZx4P8MvimuzJLiHrnBk29XtEAHxjXt3Q==
+X-Received: by 2002:a05:600c:1c15:b0:414:21e:86e8 with SMTP id j21-20020a05600c1c1500b00414021e86e8mr410489wms.27.1711526986918;
+        Wed, 27 Mar 2024 01:09:46 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.252])
+        by smtp.gmail.com with ESMTPSA id q18-20020a05600c46d200b0041409db0349sm1334313wmo.48.2024.03.27.01.09.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Mar 2024 01:09:46 -0700 (PDT)
+Message-ID: <2b441832-9b3b-452f-8c63-444f29cbdd12@linaro.org>
+Date: Wed, 27 Mar 2024 08:09:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] clk: samsung: introduce nMUX for MUX clks that can
+ reparented
+Content-Language: en-US
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ peter.griffin@linaro.org, krzysztof.kozlowski@linaro.org
+Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ willmcvicker@google.com, kernel-team@android.com, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+ semen.protsenko@linaro.org, linux-clk@vger.kernel.org,
+ jaewon02.kim@samsung.com
+References: <20240326172813.801470-1-tudor.ambarus@linaro.org>
+ <20240326172813.801470-2-tudor.ambarus@linaro.org>
+ <c20452059e62d3b8c45efb8070223f10f0bd06ed.camel@linaro.org>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <c20452059e62d3b8c45efb8070223f10f0bd06ed.camel@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1082; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=uoumoqKQqUyiOY+Ng8vrdUIak7rvCh/zc7q2HaEm42c=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmA8u229hyJ+VZupW+Wqz6Kt09ZniAFiJKYE7tO tJHAz9zMGGJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZgPLtgAKCRCPgPtYfRL+ TmyrB/9CIWuBmGV0INTpNhI5M1a+p6YFNukW/EFxLvDNmgoxSvmh+YnlSbcuFMbHkw7Wpt3zGF8 5bbNZ4TWafQWfhTYa7J7DBuzGolbJv+/NdIyvA5TkV9UYo2t+WHOOSLqwF6FF9L/eOB0e9bV8SO OREgEK3zwKqQQxV51uozyWa2jwKN5wZmgRJBxE1og6/IQFHwiHDaqk/zW+arBWKh9PFtlM+6bcO qMdYeKH5qrdr1kMZ1a75Y4ah8FSGVMxaRbjze5bVlT8tEQAgnZXiTcN1N3bdP8ucmIX7zJpu0+K LaHu2fB4KLc244zcCy16mu+Tyrbzq4VToTqz7vwNgJ5l7cke
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-To be able to compile drivers using devm_clk_rate_exclusive_get() also
-on platforms without the common clk framework, add a dummy
-implementation that does the same as clk_rate_exclusive_get() in that
-case (i.e. nothing).
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202403270305.ydvX9xq1-lkp@intel.com/
-Fixes: b0cde62e4c54 ("clk: Add a devm variant of clk_rate_exclusive_get()")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- include/linux/clk.h | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 00623f4de5e1..0fa56d672532 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -286,6 +286,11 @@ static inline int clk_rate_exclusive_get(struct clk *clk)
- 	return 0;
- }
- 
-+static inline int devm_clk_rate_exclusive_get(struct device *dev, struct clk *clk)
-+{
-+	return 0;
-+}
-+
- static inline void clk_rate_exclusive_put(struct clk *clk) {}
- 
- #endif
+On 3/26/24 17:43, André Draszik wrote:
+> Hi Tudor,
+> 
 
-base-commit: 4cece764965020c22cff7665b18a012006359095
--- 
-2.43.0
+Hi, Andre'!
 
+> On Tue, 2024-03-26 at 17:28 +0000, Tudor Ambarus wrote:
+>> All samsung MUX clocks that are defined with MUX() set the
+>> CLK_SET_RATE_NO_REPARENT flag in __MUX(), which prevents MUXes to be
+>> reparented during clk_set_rate().
+>>
+>> Introduce nMUX() for MUX clocks that can be reparented.
+> 
+> What does n in nMUX stand for?
+
+I thought about using the common terminology, "n-to-1 multiplexer",
+where n is the number of select lines. I'm open to other suggestions if
+there are any. I should have specified the naming scheme in the commit
+message, will do in the next version.
+> 
+>> [...]
+>>  
+>> +/* Used by MUX clocks where reparenting is allowed. */
+>> +#define __nMUX(_id, cname, pnames, o, s, w, f, mf)		\
+>> +	{							\
+>> +		.id		= _id,				\
+>> +		.name		= cname,			\
+>> +		.parent_names	= pnames,			\
+>> +		.num_parents	= ARRAY_SIZE(pnames),		\
+>> +		.flags		= f,				\
+>> +		.offset		= o,				\
+>> +		.shift		= s,				\
+>> +		.width		= w,				\
+>> +		.mux_flags	= mf,				\
+>> +	}
+> 
+> You've duplicated __MUX() and removed the CLK_SET_RATE_NO_REPARENT
+> from flags - I think it would make sense to instead drop the flag
+> from the existing __MUX(), and adjust the only two existing users
+> of the macro, i.e. to add it in MUX() and MUX_F().
+> 
+
+Yes, I find the suggestion good. Will do in v3.
+
+Thanks,
+ta
