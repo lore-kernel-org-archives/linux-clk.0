@@ -1,130 +1,138 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFC42C85C
-	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 08:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8339724A08;
+	Wed, 27 Mar 2024 08:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711526991; cv=none; b=LnkdEeLTqkgdUPBIcsjpXM//kwv5dbcgp343YnFC+BwaPy9rNEyMTHJ/qZ/nUaEg1yhbwUmwW8yHzSuIhgEZFqtwKxIso/YJltV9f4vrwkPfAxmRQcDyuhAwIGAtctIXnrz7YDsWlCPrtQJB06YUz8n/Whxj2WSj7Os8qxAdUBM=
+	t=1711527619; cv=none; b=XSBzmdw22Zt+gq9ZMH5rF0qBCnhZBTwZRbRd1W6mbHBx+7ceEeUUENYEeOlEbfEfY0QLoOivrh+UEgffK6FIH0f4o/JnkrpmELveeYq8kst0Xxm0g2wZvpQVVG3JUdZ54hWy5kDt2KtTJK6Qrnc6alD4GsT9hbOiWWoy9YAlV8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711526991; c=relaxed/simple;
-	bh=GPu0olZFo/3Df8UKJk+W9AS/4Etn7baYS1zdkvAVtIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Naj71ckxlbATkrtSuFcikEtOyKf+YPX4qzjRM4rK6gkTxPS+zO+JyuGSJ+Ir6vMIcqzfGJ1+3WaEz/YRv/yj9eGsKp5rhE0ON2gzakzyVU+Mvd+M6Z6g2Oh5ccJ0/G9wppg9G2huXyhJcjw8hTBSdNG3UF3yb+byQK86gja2sBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q3Pv/gQs; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711527619; c=relaxed/simple;
+	bh=4/FAYLTXQmjxdLbvd49UrSfamwGUSPPlHwFEhSJo3Vk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JMIOkh0gBK/VdSRVZ1okzq17hrwP46oZQcIJfWPLzWHSt/GKu97K5/1TI/xLsY8ihEeKiFkyWXQS/ew5QSLGg58t2+Fif8FoCtEuRShiLmne3UrsfRKY8sO7AD4xVmMhGiafm/Kw4VKLYKgwJJE2tBLzBrdtfn+zorNrfwx6VSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YP/y5dru; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q3Pv/gQs"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-41494aaa1c5so2050095e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 01:09:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711526987; x=1712131787; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=laN7yfiUrlW9A39+FpFCocbYRuO1xnHUno2fLpcSh5I=;
-        b=Q3Pv/gQsam2BY1ZZCrfrZ6Hlc9c1ZugUlFx8C2V5B26fyhQxDdIn48rWTzIhBsxkn/
-         6dlUizWBny8f/AE7DfduNSyquz8n2WUH2y59u9ULjekIZqux4+J1/ilV27JsjyxUyPQN
-         K8aEdiEciNBSFe88a5gE+bpwnwp2ev8d4bYtUPvEStwXedCBt8DqHFGdY/l96kWcc/4r
-         8iydzL9PQX+wqmvwr+E6d8ty2GoMUCYzenYzCIfONLBga7QlZvl5BWvyzDK70QR/4Zx8
-         4R4B2t6fJMDASk5Qk3QUFWOZY1ycksmlwfD2HSfVJ0IGoLiMDUMts7cw42+7M6xIBSJ7
-         uyfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711526987; x=1712131787;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=laN7yfiUrlW9A39+FpFCocbYRuO1xnHUno2fLpcSh5I=;
-        b=KgiPXbCvN870KAx0WIgnK/IMKSl+vhYXR5PVvjYAkgjhgauG24+0OcLwUrcc3BMFZL
-         UIKFZ8mdMOGNGu9MAUSizAWddw7ta83kShODMRda8IFt6JWrnRET/NxvsQE73ygQMDe/
-         M0W1W5JusocECSAIKqUwf9Tj8ZQKeNOqoXlO49VbLP59o8rk2WlbOBTEMi1L/UaRTaUO
-         I6WueCDHHcziIlyg8I8RbPVOzvr0ZHR0ba72OdemzDBI2xG8iGbUwMbPL0jbMUkuN5kY
-         Gz9oYsHdzZYLt298kXQimDIE6ShdzarM/K1VmVr7JmXv7366wiZ/bLmJtwgByf+0sfaN
-         GkGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqdV4y1ta9WD29fcivYYDz1k1pIVDy8t8VUNIyCOuySPs8PYfuqhom0iTOWcQQHvI+hLXs28wlnXdgNpp3Daa5lScrM7v+4hom
-X-Gm-Message-State: AOJu0Yx9glK5Dag0lMqbNk0Txas5qfXUN8yK8JPqFQq0ne5TlwJIDK7J
-	xTg0I3wRt8phMHI8B58eU1puwGgeuCGwmBU3EQSagTeEPO/AaWsFUUNWstNLaLs=
-X-Google-Smtp-Source: AGHT+IGEz+1d1jkgyoddachI7gTTbD9dQEkwNHSRq3xwokZx4P8MvimuzJLiHrnBk29XtEAHxjXt3Q==
-X-Received: by 2002:a05:600c:1c15:b0:414:21e:86e8 with SMTP id j21-20020a05600c1c1500b00414021e86e8mr410489wms.27.1711526986918;
-        Wed, 27 Mar 2024 01:09:46 -0700 (PDT)
-Received: from [192.168.2.107] ([79.115.63.252])
-        by smtp.gmail.com with ESMTPSA id q18-20020a05600c46d200b0041409db0349sm1334313wmo.48.2024.03.27.01.09.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Mar 2024 01:09:46 -0700 (PDT)
-Message-ID: <2b441832-9b3b-452f-8c63-444f29cbdd12@linaro.org>
-Date: Wed, 27 Mar 2024 08:09:44 +0000
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YP/y5dru"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42R50LET014007;
+	Wed, 27 Mar 2024 08:20:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=b1Dw41b
+	QyXMFzFQyeT2fXuDbkes6K0mKY6009FjYA4A=; b=YP/y5druxh4iYbL1iEjAxxV
+	uaP1kHvKk3ITRsy6w9kbzVQxELJkin15wegn6twHhGcbTXoQKOK4DByYeJLZIcg9
+	cTkTrkdPFavN2sjDXat8YySl4yWCb+9vz0jk7J/7G4KtKOrWvyLiaSXGvRyoJ905
+	NkFT+e4Abjfj6rOqU6a5wchpJgHnUGnDhS6YkssKNYbV54VngKcGk0mXzA7mYjs0
+	BeXgc4PV46SdzNZiTELU8VtgXnvx09p1Ur3kNkMTJ36icULKyKvbO7CMdCleQ8Ms
+	4TKDR96kYUkUndDTPoMckZKFc7GqpRwZwooyFE5jiW3ud0JDLC/c97KtzC1i++g=
+	=
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x4784h3xk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Mar 2024 08:20:12 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42R8KBa0011202
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Mar 2024 08:20:11 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Wed, 27 Mar 2024 01:20:06 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <djakov@kernel.org>, <quic_anusha@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v3 0/3] Add interconnect driver for IPQ9574 SoC
+Date: Wed, 27 Mar 2024 13:48:47 +0530
+Message-ID: <20240327081850.2924870-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] clk: samsung: introduce nMUX for MUX clks that can
- reparented
-Content-Language: en-US
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- peter.griffin@linaro.org, krzysztof.kozlowski@linaro.org
-Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- willmcvicker@google.com, kernel-team@android.com, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
- semen.protsenko@linaro.org, linux-clk@vger.kernel.org,
- jaewon02.kim@samsung.com
-References: <20240326172813.801470-1-tudor.ambarus@linaro.org>
- <20240326172813.801470-2-tudor.ambarus@linaro.org>
- <c20452059e62d3b8c45efb8070223f10f0bd06ed.camel@linaro.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <c20452059e62d3b8c45efb8070223f10f0bd06ed.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nw6eIpLXHyDwPKBeEnbQC2t5bRa8E0vL
+X-Proofpoint-ORIG-GUID: nw6eIpLXHyDwPKBeEnbQC2t5bRa8E0vL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-27_04,2024-03-21_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 impostorscore=0 bulkscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2403210001 definitions=main-2403270054
 
+MSM platforms manage NoC related clocks and scaling from RPM.
+However, in IPQ SoCs, RPM is not involved in managing NoC
+related clocks and there is no NoC scaling.
 
+However, there is a requirement to enable some NoC interface
+clocks for the accessing the peripherals present in the
+system. Hence add a minimalistic interconnect driver that
+establishes a path from the processor/memory to those peripherals
+and vice versa.
 
-On 3/26/24 17:43, André Draszik wrote:
-> Hi Tudor,
-> 
+---
+v4:
+gcc-ipq9574.c
+	Use clk_hw instead of indices
+common.c
+	Do icc register in qcom_cc_probe() call stream
+common.h
+	Add icc clock info to qcom_cc_desc structure
 
-Hi, Andre'!
+v3:
+qcom,ipq9574.h
+	Move 'first id' define to clock driver
+gcc-ipq9574.c:
+	Use indexed identifiers here to avoid confusion
+	Fix error messages and move code to common.c as it can be
+	shared with future SoCs
 
-> On Tue, 2024-03-26 at 17:28 +0000, Tudor Ambarus wrote:
->> All samsung MUX clocks that are defined with MUX() set the
->> CLK_SET_RATE_NO_REPARENT flag in __MUX(), which prevents MUXes to be
->> reparented during clk_set_rate().
->>
->> Introduce nMUX() for MUX clocks that can be reparented.
-> 
-> What does n in nMUX stand for?
+v2:
+qcom,ipq9574.h
+	Fix license identifier
+	Rename macros
+qcom,ipq9574-gcc.yaml
+	Include interconnect-cells
+gcc-ipq9574.c
+	Update commit log
+	Remove IS_ENABLED(CONFIG_INTERCONNECT) and auto select it from Kconfig
+ipq9574.dtsi
+	Moved to separate patch
+	Include interconnect-cells to clock controller node
+drivers/clk/qcom/Kconfig:
+	Auto select CONFIG_INTERCONNECT & CONFIG_INTERCONNECT_CLK
 
-I thought about using the common terminology, "n-to-1 multiplexer",
-where n is the number of select lines. I'm open to other suggestions if
-there are any. I should have specified the naming scheme in the commit
-message, will do in the next version.
-> 
->> [...]
->>  
->> +/* Used by MUX clocks where reparenting is allowed. */
->> +#define __nMUX(_id, cname, pnames, o, s, w, f, mf)		\
->> +	{							\
->> +		.id		= _id,				\
->> +		.name		= cname,			\
->> +		.parent_names	= pnames,			\
->> +		.num_parents	= ARRAY_SIZE(pnames),		\
->> +		.flags		= f,				\
->> +		.offset		= o,				\
->> +		.shift		= s,				\
->> +		.width		= w,				\
->> +		.mux_flags	= mf,				\
->> +	}
-> 
-> You've duplicated __MUX() and removed the CLK_SET_RATE_NO_REPARENT
-> from flags - I think it would make sense to instead drop the flag
-> from the existing __MUX(), and adjust the only two existing users
-> of the macro, i.e. to add it in MUX() and MUX_F().
-> 
+Varadarajan Narayanan (3):
+  dt-bindings: interconnect: Add Qualcomm IPQ9574 support
+  clk: qcom: add IPQ9574 interconnect clocks support
+  arm64: dts: qcom: ipq9574: Add icc provider ability to gcc
 
-Yes, I find the suggestion good. Will do in v3.
+ .../bindings/clock/qcom,ipq9574-gcc.yaml      |  3 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  2 +
+ drivers/clk/qcom/Kconfig                      |  2 +
+ drivers/clk/qcom/common.c                     | 34 ++++++++++-
+ drivers/clk/qcom/common.h                     |  4 +-
+ drivers/clk/qcom/gcc-ipq9574.c                | 54 +++++++++++++++++
+ .../dt-bindings/interconnect/qcom,ipq9574.h   | 59 +++++++++++++++++++
+ 7 files changed, 156 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/interconnect/qcom,ipq9574.h
 
-Thanks,
-ta
+-- 
+2.34.1
+
