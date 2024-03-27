@@ -1,60 +1,60 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217C814F9FD
-	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 21:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6226538396
+	for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 21:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711574561; cv=none; b=M0GHe+/1ydzudhELM1m225LO0kESBAHIkmJuXVrrmXohoKzoflpSBjwkH+k62cAOpTU7FZEwQy9VYMWQ7gIUxNsW+ySYnGEdd1IVeGnj+2Anzp6xZ5QoOl7WqZGlAwqbTSt0Vknporqs6GyaZMIKFhzPhoG0soWeQPW23CQ6/AE=
+	t=1711575326; cv=none; b=rUMi4/EPSAui0JVleEEJ5p38x9Qmay6VvgbShHrg/5NRBFJOXjLBXoXcn7YHPpI3fXnQOgBaNqghWS51ZCr4rW6PVxQLvOJ4ofEwosZnaxkiTZSsxcwkCllJ4jBQgqhVVN8LhaKHUcYUhIsXy6Q2AGOm5FPpSm0RdxnCtkCd/XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711574561; c=relaxed/simple;
-	bh=zwXZFcizE/oIpPUenN3sh8/KZC9xUh/LaMK+UNjBwWc=;
+	s=arc-20240116; t=1711575326; c=relaxed/simple;
+	bh=+mFEMlvAqVMkCsEGCFmkDGui+zyKSuicrJikHtT9McQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XcH1MVgiC6bVNr2or7Sq+w59OikVUCdmTeokAv4tliAkGJ7WULHnqMOnW0iFCTrT4FiqCeoEaDCzVhoIo2Oes9DS+W9ChClSCA7Qq6+Z8iqzKEPIunC1S/OUESrtZUATtVspupXEqxp7/WQKGyR8eM63SPHBxS+IQ6n5mB6uZy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cXlcGQOX; arc=none smtp.client-ip=209.85.167.46
+	 In-Reply-To:Content-Type; b=K1Vj9fveXfyI9UHHPhsSSCgFmPH0+9lo6KaJvWi0a3TlyW8TB/rMpv2ZmusWiPi64J6pB/BvDm9SI3UomF2JMvaKp4+ccSqMzAEfk2u38qvM/rm6aoyr06s80q537nO4FWTRRXEbFAE050XUrw3T8pONtrTGcpvaRuZW30QcM9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IVUzGQGS; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cXlcGQOX"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5157af37806so300150e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 14:22:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IVUzGQGS"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a470d7f77eeso35634066b.3
+        for <linux-clk@vger.kernel.org>; Wed, 27 Mar 2024 14:35:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711574558; x=1712179358; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1711575323; x=1712180123; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=oALEYX4wCloumYcO5F1iTn4rufRV5N52BfWH35gQd8Q=;
-        b=cXlcGQOXOU7MVYsKaw5Vlbyn92Nfr6JHmueNUy5ed3JG762LMPvjM83Q6w+glKW6TO
-         t9omOW/aTUyfZt9D8z8SndbxJ9DeFhIm52+B1l0fKV6jzGUL4RULiVxIm/8BONpFC+7G
-         vnJeGt+qX6SnqAcqNhleSTKVsB6zhQ1TztdE+Obr3hD9Y8HqZ1Eqexu0FWW36bmTCmDz
-         ZhmotG1iT3/xa+8Tuxjooj1oXxtRX4pgWM5tuSrW+exk8ROEjEX+cCgfEixySc7kBCWl
-         1wfGHCYaddeTvKocxs17rk6MHdP7IGzDcnFpqeutBBH6lxWxlLJKfOgbqeJkX0cPijU/
-         eE9Q==
+        bh=mtRkYOvtkD8CRGf6enyfBa9Ua3p73vaQy/pW4ebjWWs=;
+        b=IVUzGQGSM52HsXFGwOQXam+2Fv3anv5GPj3hbMprtcZfiTCmaVruj2uuQur1ZCi2/f
+         gDCjXh8qNfhcRZkgLiXeC9fOfay0yUqqsA+9M8uNykZHV3ScocdqFStZq1rPXnfSdeBM
+         YqkthJGkd9QJxedfrG16r4KII1nkVaLLTmzRXTx/6LgEsgSHMYjhLkh/APtk42ABBFZc
+         U34erhzaD4d2BrVJizPvmFnndYf7shx/wGT6+NpoCt4GyuERTQuPC/WUUbpAmfh2JVAt
+         q9MhPBy6PIbqv+ZJr3vrY88MGPPweTAFWWdTnrFxz16W/2dM0PG7Bt2wTH5g98nYjdKz
+         Nrzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711574558; x=1712179358;
+        d=1e100.net; s=20230601; t=1711575323; x=1712180123;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oALEYX4wCloumYcO5F1iTn4rufRV5N52BfWH35gQd8Q=;
-        b=VF45L/s4F6WXUisUyTtrs+rtrorgXmJJeirDDMLLQ6hAsICjZmDFhtzIgXHh/dnDtx
-         +qArFJbugujQp171YV34UoZVWQjzcY/vc9Fs1E1DvqdidJycggvavMwqf1B7/maPKDC9
-         QaykaCEXPFWL6olBXItIrWBORJBmTCKAJ70SwAwRwo0zbjX1rH3y1SAo8kg8WFgtMj2F
-         VQr+0lnXHBr/UWnB+zXHZI03pkl3QggMtx0rJDegQDRFUpEu893tLIaLyj1wHP0QU2Hl
-         /PTJcUlGdE8LnEN9O4wqyti3TeZOL2uZfFGTK2Lu97CHswoBgrqAUtWiO5frrLt+Rtil
-         otYA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5pSn8+WVLXQJGbxjfee3RnInJjD6N4w+CDLZMdKrl/o77AfHDjBRPounZAVWvzyz7lP6iN3cXu6f+IRx1P+FSTfBDbA9bdV7X
-X-Gm-Message-State: AOJu0YwmMPNr0LsTHtUvhMEx2NacyuSgVJmNl9l2mIbGpYbcoYfPNRBK
-	j3jtTVMsxsuABdHmTsZKEOhDlyzLYP3LFTSG0JuqcEGgxnISmdKY3YPf6nFw00A=
-X-Google-Smtp-Source: AGHT+IGgeMEwtinQEW49E32+z5iIKlqj9TXhI5lxYCeye/JWxAG+NNeaLWLiRirjjwew7ciIrnLaLQ==
-X-Received: by 2002:ac2:5a0f:0:b0:512:f6a0:1311 with SMTP id q15-20020ac25a0f000000b00512f6a01311mr452086lfn.47.1711574558059;
-        Wed, 27 Mar 2024 14:22:38 -0700 (PDT)
+        bh=mtRkYOvtkD8CRGf6enyfBa9Ua3p73vaQy/pW4ebjWWs=;
+        b=X8fFpIaKDgbUkUTpjhMS4ENMnloPRRSpi0olKLKEoFMBy/nT8mKFzpmcNoOnJpYsA7
+         yUxrWRyYGukjvClVsGJVYX/X8EnQwWD4quwC0fM5Vv+K7xoM0NZUHt7U1KG5pC63DtUD
+         8x3Hl06tinac/ebUpWWTt1sJOwQN0mnZyHbGcJgsUEOTrAHCeu09h4s5giL9j3ZVxyrq
+         cB3u8rCyXxkKwxUV5eSvU940a0QenwS+nmt9/iehZl+meqDraDWvdUzJnB5zOOHEja3S
+         4EsNUZ9PytmonBBRisi139JlHCzttvITwyfa1zxVoXToTzGEKaljvpcXQlVoOD5YELN9
+         ED+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWzmBhadW8nj3NVjw/IHyYJl4GwVxNJGO350SThHr1gaMo5nwh7UJ9oq0GPhaTneZPEKEvmFAiTgqkhAJ6RIB92ZsQz2Wz7QtXI
+X-Gm-Message-State: AOJu0YySLdS4b+YRtbAixQoNlT7tKNY0BZoAb0B+JCvWtnHDCIc0qG+L
+	fBvL9khJUfBs8QbPIJ3QePUXTKJCcpIt13H3fJxBOe34J85ygBF17acI9/PKhb0=
+X-Google-Smtp-Source: AGHT+IHjmcsZl4Eh1IsMl4jaEEvLoILve2+XwzUApDWJWuqO3sIDGvCZtVo1PdiLOZNXpU3Bf+cP5g==
+X-Received: by 2002:a17:906:454e:b0:a47:22aa:f8e8 with SMTP id s14-20020a170906454e00b00a4722aaf8e8mr558097ejq.12.1711575322823;
+        Wed, 27 Mar 2024 14:35:22 -0700 (PDT)
 Received: from [192.168.92.47] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id jz7-20020a17090775e700b00a4576dd5a8csm5833405ejc.201.2024.03.27.14.22.36
+        by smtp.gmail.com with ESMTPSA id g14-20020a1709063b0e00b00a473774b027sm5858579ejf.207.2024.03.27.14.35.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Mar 2024 14:22:37 -0700 (PDT)
-Message-ID: <b8217de2-3276-4d98-ab17-f36058c633ca@linaro.org>
-Date: Wed, 27 Mar 2024 22:22:35 +0100
+        Wed, 27 Mar 2024 14:35:22 -0700 (PDT)
+Message-ID: <39b26447-80c2-4d71-b859-32b4a40cb31d@linaro.org>
+Date: Wed, 27 Mar 2024 22:35:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,16 +62,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/7] clk: qcom: Add Display Clock Controller driver for
- SM7150
-To: Danila Tikhonov <danila@jiaxyga.com>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- david@mainlining.org, adrian@travitia.xyz
+Subject: Re: [PATCH v2] clk: qcom: gcc-sm8150: De-register
+ gcc_cpuss_ahb_clk_src
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240321202814.59835-1-danila@jiaxyga.com>
- <20240321202814.59835-4-danila@jiaxyga.com>
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240213-gcc-ao-support-v2-1-fd2127e8d8f4@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -109,22 +113,25 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240321202814.59835-4-danila@jiaxyga.com>
+In-Reply-To: <20240213-gcc-ao-support-v2-1-fd2127e8d8f4@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21.03.2024 9:28 PM, Danila Tikhonov wrote:
-> Add support for the display clock controller found on SM7150.
+On 13.02.2024 7:47 AM, Satya Priya Kakitapalli wrote:
+> De-register the gcc_cpuss_ahb_clk_src and its branch clocks
+> as there is no rate setting happening on them.
 > 
-> Co-developed-by: David Wronek <david@mainlining.org>
-> Signed-off-by: David Wronek <david@mainlining.org>
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+> Remove gcc_cpuss_ahb_clk_src and its branch clocks.
+> ---
+> Changes in v2:
+> - As per Konrad's comments, de-register the gcc_cpuss_ahb_clk_src
+>   instead of adding AO support as no rate-setting is happening on it.
+> - Link to v1: https://lore.kernel.org/r/20240123-gcc-ao-support-v1-0-6c18d5310874@quicinc.com
 > ---
 
-Please drop CLK_GET_RATE_NOCACHE as it should not be necessary
-(the rate of the clocks in question should not change without the
-clock framework's knowledge)
-
-I think it looks good otherwise
+Could you please confirm that this clock is governed by something external
+like RPMh and needs no input whatshowever from HLOS?
 
 Konrad
