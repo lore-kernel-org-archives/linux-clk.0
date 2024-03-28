@@ -1,118 +1,162 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5991E861;
-	Thu, 28 Mar 2024 10:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D27054BCB
+	for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2024 11:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711620037; cv=none; b=bLhM2ZrPKbBhQMkNvEgtiXg+h6xEDRSduiczK+KoR/fbTTFG+k+hOWNpuJbgTA+ouGaCnFHe9+pfiIylWjfHn/KJEBjmqLOSRhSgT44ddUHctq04m8I2ve/XTCy8KnfSl1ggVqXrrPaQ5tlh0wK8Jt/YfY6eG8dkw2mhnilBasw=
+	t=1711624465; cv=none; b=orUlY1lKnfJu6mLXTpdRA9BE4UJI2c9cWJsDiPqRVPV5KgITs39/swDzmXLjnPINee1MXEr8HHQJf0+me/6klW18fE/mOqKzyXRn1YXTvVV3oZfXylMxIC6m+drwcGqpOoOfE2/WeJ/v3G+JaRYp65ifur+fDILgXC4WtwyR6e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711620037; c=relaxed/simple;
-	bh=Emrrp4t1Me2Gws3cn87MMVbQOlKKudRm3ej2wUakzUY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mtB/aPnp/lZtAFPIKnRXb75GYkTN6J/UW8jU+uFrZMUvi31CdHDk72TRCynMmGo6hfStIRk2sx1NznwZJmXZFyUK/ypiJAsNzJMQKNt7l3wU6sRbfLwwSJmkEXlKTVUIOhw8DC3LzybQq5eyZWIZevTjWNKnHtu7pG2m9+TmMW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l/zXdZcw; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1711624465; c=relaxed/simple;
+	bh=8YPbYAdeFXJMdfqc/yEaJhJyvb96epmPZhyIDWzonCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RJQZkFJj4NWWlTW0TGLZ+EncHzindoOcYKxYeUSJ+AzCl6BQe+4mZLxCd+3SmYFRHITKUyxwVxlt5w257m3ptrkP9CcjEz13DFNB9vLy8XXUMv7NkAMd6wXX6M9exgGr+kZUOUmfMTCA32jwapvIuDaoaigokjBBAu7vFp47PrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jwx0B4h/; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l/zXdZcw"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42S9xeaI014834;
-	Thu, 28 Mar 2024 10:00:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=PmY3Bf684EtzVI98XVg2D
-	Tqw4xfM4PdBGIOA1wwdRmo=; b=l/zXdZcw+h2F5vQ5dDfRqcf6ScXoZM8fhVlhe
-	SLpjxQvQt+S8UKJ4qcYpuuqP2AnEcYZHheTkl4MwDxJcY45F2S5kr+xpt5O5fP4E
-	cMWu/YTpBs+N0BXiFiCxtCIsezidVKA6Vg9P7GrwldWp5w2KxQK8f+e5cmzpcWdG
-	F3WmKQpxBKBo1w/GB5IRG0mgvCRDwms6IaRL8Dhjs49KwmeTrEM9omz+WXjv7oGy
-	2Puz2A3XAe2bJC6c6bi+WZkooTSBMNbuyaj/1kX81RNUhjei3Yesf7I7/KQYm3TP
-	/PiFLOFodjy668W5yWLUz/jjnLTgrkutDGYr+S12tEBQXyTVg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x53nxgpxw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Mar 2024 10:00:31 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42SA0Uej019574
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Mar 2024 10:00:30 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 28 Mar 2024 03:00:25 -0700
-Date: Thu, 28 Mar 2024 15:30:21 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <djakov@kernel.org>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v4 2/3] clk: qcom: add IPQ9574 interconnect clocks support
-Message-ID: <ZgU/tcAE7x4MBdx7@hu-varada-blr.qualcomm.com>
-References: <20240327081850.2924870-1-quic_varada@quicinc.com>
- <20240327081850.2924870-3-quic_varada@quicinc.com>
- <CAA8EJpoFw3Qyq+NRffe5HBUbCfdYv03oWgoUwkB6pbdVrF6LEg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jwx0B4h/"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a450bedffdfso94656266b.3
+        for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2024 04:14:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711624461; x=1712229261; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ALYFsv0MuJ1c6KwsM480AASud0mpy25y/UnPkQ1lfXY=;
+        b=jwx0B4h/K1Gww/9nWv+Ty/kmu/MyIWJkGdUZCLKM5qRx8BK6VnRCLkL0uCtjxDoVE4
+         oX+6hVElwVajr6G4wC57wKWOoTdt5yKZzqXVqUHgQz9DOZ+4LPU2ZVR4kiyANkvKvC8c
+         SXPn2ZbgQxAlgDLn7RFR1V1A+Ct2i2ELnPpDnEsqmdlsYE7C38UMrd/QCzHYVYZOK1uf
+         khv2F5aJf1z3P+S4nGtZqlJxW3622TRAGY9/wFNarOZjVzZ6bK6321SlxXSOBgy/lKGV
+         FMdH7yGWGd1LhQaJbbVjjAFkxTiGSWNtjn1U7RWEd/87BEmZM0l0OJ0sZYNs7j6FGF5p
+         Sctg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711624461; x=1712229261;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ALYFsv0MuJ1c6KwsM480AASud0mpy25y/UnPkQ1lfXY=;
+        b=neND258+Er6mkXUEfcIpqZpLlc21IJLSjYIvocBuopcLRt04O/+SMGliF2008uP2eD
+         m5Qeisf21XEVghSUt10cHcILEVqdhcPRzhu/8A7s6oy+h2Ik6g2zX25UTas2HZ+fNtxn
+         Ukovq0E+vP85EwGxfQvM6FvA82ej+GilACFG6kGzPtY3AYMPImDIubHo/3iDF4fcxEzV
+         Vw7LutMjqcZxeAa2nlvKj39341RA/35iEc7zShKPbzUnvBcDUOu3KHzVR5l9KqCeX47A
+         LGlNpl6gimwoTcC8Gs4lnx7Z5DFtO2UlVCv1XZseG2joXPVnOAedvCOIvaTEyZnYd/N5
+         pC7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWJon0Jfgmbtmhv0t2cxrHYlqcKCzfPqHAT8gBOOLR+xz1coaUssrDq6tSA5m720XmI4VlIiwD+ULJn3sENaV/lREHFAAmDvONI
+X-Gm-Message-State: AOJu0Ywi/VMeKr0jPUzZLakELZo3rck37W8k+OQuMsJSiE6HN7fbSU54
+	SPkPMFyrz+6baUXHHqSP0+gbNT9i5HXyg6KblPJqNR47f/W4l+drAmVLmRwpnjs=
+X-Google-Smtp-Source: AGHT+IFDoU7C6TXJhg0CHW0lwJhkfKI5Q9o5dn4LDPIkxj0MNry/BzsX7aYOMOrmAR4h840drOZ3gg==
+X-Received: by 2002:a17:906:b057:b0:a4d:b0e9:efb8 with SMTP id bj23-20020a170906b05700b00a4db0e9efb8mr1435796ejb.24.1711624461636;
+        Thu, 28 Mar 2024 04:14:21 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.1])
+        by smtp.gmail.com with ESMTPSA id ky14-20020a170907778e00b00a47459e7371sm632117ejc.79.2024.03.28.04.14.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Mar 2024 04:14:21 -0700 (PDT)
+Message-ID: <5e790f4a-0c31-49f7-8e0d-b87d592f2835@linaro.org>
+Date: Thu, 28 Mar 2024 11:14:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpoFw3Qyq+NRffe5HBUbCfdYv03oWgoUwkB6pbdVrF6LEg@mail.gmail.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mPntLGzbq1JEOFupbpa7dIGTRZFOS6Zp
-X-Proofpoint-ORIG-GUID: mPntLGzbq1JEOFupbpa7dIGTRZFOS6Zp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-28_09,2024-03-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=925 impostorscore=0 spamscore=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2403210001 definitions=main-2403280067
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] clk: samsung: introduce nMUX for MUX clks that can
+ reparented
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ peter.griffin@linaro.org
+Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com,
+ s.nawrocki@samsung.com, cw00.choi@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, semen.protsenko@linaro.org, linux-clk@vger.kernel.org,
+ jaewon02.kim@samsung.com
+References: <20240326172813.801470-1-tudor.ambarus@linaro.org>
+ <20240326172813.801470-2-tudor.ambarus@linaro.org>
+ <5af43398-70fc-4598-9453-6a52d758975e@linaro.org>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <5af43398-70fc-4598-9453-6a52d758975e@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 27, 2024 at 10:49:56AM +0200, Dmitry Baryshkov wrote:
-> On Wed, 27 Mar 2024 at 10:21, Varadarajan Narayanan
-> <quic_varada@quicinc.com> wrote:
-> >
-> > Unlike MSM platforms that manage NoC related clocks and scaling
-> > from RPM, IPQ SoCs dont involve RPM in managing NoC related
-> > clocks and there is no NoC scaling.
-> >
-> > However, there is a requirement to enable some NoC interface
-> > clocks for accessing the peripheral controllers present on
-> > these NoCs. Though exposing these as normal clocks would work,
-> > having a minimalistic interconnect driver to handle these clocks
-> > would make it consistent with other Qualcomm platforms resulting
-> > in common code paths. This is similar to msm8996-cbf's usage of
-> > icc-clk framework.
-> >
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> > v4: Use clk_hw instead of indices
-> >     Do icc register in qcom_cc_probe() call stream
-> >     Add icc clock info to qcom_cc_desc structure
-> > v3: Use indexed identifiers here to avoid confusion
-> >     Fix error messages and move to common.c
-> > v2: Move DTS to separate patch
-> >     Update commit log
-> >     Auto select CONFIG_INTERCONNECT & CONFIG_INTERCONNECT_CLK to fix build error
-> > ---
-> >  drivers/clk/qcom/Kconfig       |  2 ++
-> >  drivers/clk/qcom/common.c      | 34 ++++++++++++++++++++-
-> >  drivers/clk/qcom/common.h      |  4 ++-
-> >  drivers/clk/qcom/gcc-ipq9574.c | 54 ++++++++++++++++++++++++++++++++++
 
-Have addressed the comments and posted v5.
-Kindly review.
 
-Thanks
-Varada
+On 3/28/24 09:56, Krzysztof Kozlowski wrote:
+> On 26/03/2024 18:28, Tudor Ambarus wrote:
+>> All samsung MUX clocks that are defined with MUX() set the
+>> CLK_SET_RATE_NO_REPARENT flag in __MUX(), which prevents MUXes to be
+>> reparented during clk_set_rate().
+>>
+>> Introduce nMUX() for MUX clocks that can be reparented. One user of
+>> nMUX() will be GS101. GS101 defines MUX clocks that are dedicated for
+>> each instance of an IP (see MUX USI). The reparenting of these MUX clocks
+>> will not affect other instances of the same IP or different IPs
+>> altogether.
+>>
+>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> ---
+>>  drivers/clk/samsung/clk.h | 20 ++++++++++++++++++++
+>>  1 file changed, 20 insertions(+)
+>>
+>> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+>> index a70bd7cce39f..01f58b7686db 100644
+>> --- a/drivers/clk/samsung/clk.h
+>> +++ b/drivers/clk/samsung/clk.h
+>> @@ -146,6 +146,26 @@ struct samsung_mux_clock {
+>>  #define MUX_F(_id, cname, pnames, o, s, w, f, mf)		\
+>>  	__MUX(_id, cname, pnames, o, s, w, f, mf)
+>>  
+>> +/* Used by MUX clocks where reparenting is allowed. */
+> 
+> ...where reparenting on clock rate change is allowed
+> 
+> Because otherwise this suggest muxes cannot change :)
+
+Ok.
+> 
+> No need to resend just for this, I can fix it while applying. Still
+> waiting for some review, till EOD.
+> 
+
+Andre' suggested I can avoid defining __nMUX() by removing the
+CLK_SET_RATE_NO_REPARENT flag from __MUX() and instead add the flag in
+the MUX() and MUX_F() definitions. Something like this:
+
+
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index a70bd7cce39f..fb06caa71f0a 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -133,7 +133,7 @@ struct samsung_mux_clock {
+                .name           = cname,                        \
+                .parent_names   = pnames,                       \
+                .num_parents    = ARRAY_SIZE(pnames),           \
+-               .flags          = (f) | CLK_SET_RATE_NO_REPARENT, \
++               .flags          = f,                            \
+                .offset         = o,                            \
+                .shift          = s,                            \
+                .width          = w,                            \
+@@ -141,9 +141,16 @@ struct samsung_mux_clock {
+        }
+
+ #define MUX(_id, cname, pnames, o, s, w)                       \
+-       __MUX(_id, cname, pnames, o, s, w, 0, 0)
++       __MUX(_id, cname, pnames, o, s, w, CLK_SET_RATE_NO_REPARENT, 0)
+
+ #define MUX_F(_id, cname, pnames, o, s, w, f, mf)              \
++       __MUX(_id, cname, pnames, o, s, w, (f) |
+CLK_SET_RATE_NO_REPARENT, mf)
++
++/* Used by MUX clocks where reparenting on clock rate change is allowed. */
++#define nMUX(_id, cname, pnames, o, s, w)                      \
++       __MUX(_id, cname, pnames, o, s, w, 0, 0)
++
++#define nMUX_F(_id, cname, pnames, o, s, w, f, mf)             \
+        __MUX(_id, cname, pnames, o, s, w, f, mf)
+
+I find the suggestion fine. Will submit v3 in a min, addressing all the
+comments.
+
+Thanks,
+ta
