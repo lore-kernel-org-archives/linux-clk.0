@@ -1,61 +1,60 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E91157898
-	for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2024 09:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDD85024E
+	for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2024 09:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711616513; cv=none; b=GX8TUzBgE+eXEaTMfWpQYS9EJtG+jc5HWWfEFlK0Pv/wBrZbTeVbTGukcb4EW5JM1W6fGgAOXILTpD3oFdx+HQKH0PniqDllAH0cSYKyQUE4tft2KACufUCZCVDtbNE6yyAX4ajrx+5yUPJRn2f9PWyI0UXrmFotg0C63p8YDZM=
+	t=1711616576; cv=none; b=Ttp7xBgeCl5OyIHvaczFGm6sTj194rf4piT24GNQOKC0rmmZcxJa2rcy3CjpMTkh0k7Gf1n4NqnfmgdgUhHtMvilWUuQ94LgzYI7r9/yCN90VRRfypZtyvHZgAwTPnskeSX6rrHhrfMJLqp/suzhIFi2xeyMggXraohuMimKu3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711616513; c=relaxed/simple;
-	bh=dSvrPxa6WCXN3w4zl3cUnWipLNJXSrXaKQdnNQrMO1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=uQBKzIrhWEVFnuO/1S7VQuRCQoeRMYUBjIUaY9tjlcccayNjE5B/7RJ7OV8atmHUP5cNlonAXml9Rs2pRtMAytrtWF+anGwrXRfwMIaPSNbXMRdgD/hpr2kxVy1HoDyhzFaG2m0s5B+W6pwJKwyI+bjT9pHyeYL5PPCRtCVCPdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FVW2inD8; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1711616576; c=relaxed/simple;
+	bh=JjgYyUUaBl+PV0A5H1Z83FwloUk4nFkrY+/IViQuww4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=PXvo8kp2zQyZ9JNr8037tzJtXvdSKNqplhgof9XNkGYfhKhnF7U5rKZB6kflkyfFnkf2y4HVvG7iza0rWYzTWoETK0w6za61gDyuNr60eu8uKl8NmIcb/eFjMw+wD1+iiGsI8957DNsKxGon6jjesVpk5s1/wqnHApD3WTd+m60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rHeLh5Bc; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FVW2inD8"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-41495dcea8eso4801795e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2024 02:01:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rHeLh5Bc"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-33ddd1624beso432116f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2024 02:02:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711616507; x=1712221307; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ojQNUSQIFFG++1GZDeRJjvpciqnPUaIAnOJ9p1+1Mag=;
-        b=FVW2inD8k00FBxETFpOZqV4bRyB/zZoSHplfvzEq8J51PqwaOMJCXnZjrKcEL8nssP
-         bEr8ehXap4y+oO1eA2mygeywZOqLMowha2ksExauOOwiHpYrXMMp+3iZ4BaaDlkVrxjU
-         CLU+H7YF5oN+Tztjqa/LUaOge+rQqxK3rnXQ0d+JnOB93G9dWLHsMCVxo21ISauEm8vU
-         Z9KcdqJMT5mpH1bZreKrgRiwMo95Y+fmLMIWOqXO1jo3nXhcwxZKqb80h7pOtC9SJYbX
-         Jh3p9v1BTTWsasccT+wqQfbAmEoJYqx4W/t0AaU2Xxm5qPReyoYvI14eC1KBkVjqnvEo
-         nLVg==
+        d=linaro.org; s=google; t=1711616574; x=1712221374; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:to:from:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XwyOlwPxgHT1CPKSoF7aGCVLvwYoa/el57EZd9pYFDc=;
+        b=rHeLh5BcLOeODgxI/qGL5EC8NSwZRWLBzlm2CBxK68hLb5BH3wNuqicgLUtlpWlqQD
+         MOWcytTW90ovv+hCGAaXqR8tLtk5hn0yMozMvOVz4tOGf2KCBZXu3WhxiEqZDQq7C5fT
+         mbTx1yBoYqLWYiEghQUkrOxLMstWRGZ+j7tN5mgd1PdQBD4lyRmDSX/kKQsbXvWgSKy+
+         khJ3hXfBLl5I83fFdQvzqWLBjbNb4hR6iX9I7pf/T5GPSXncqvJbHrKbS80ooVx1/zB/
+         1HHtBe5q8IUWO+c8GqFpPSv2qDfmMOGp2Tn5bbEcubZ+0tZcPTUBPbPdvio/o4eR9vLA
+         71rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711616507; x=1712221307;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ojQNUSQIFFG++1GZDeRJjvpciqnPUaIAnOJ9p1+1Mag=;
-        b=MbZoLLCwVCmdIhBgntlHn14wW26d7wPMaPbu9b0K5rZnzJhZTgYi3SNrcQBitqCtlm
-         2LPQbzz9AwI4s6ySb/VVgtzt4wUf+r0mjHl4pgbLWwsEpJDug6f3I8aal33Q/eJA7HHZ
-         QB7oey+fhJFzu7G00JhUXgLZUOjexcncwhMf1k45blqzBz8G+OjUKxrtKA+mARYQHqMB
-         5H/H1IujVDk3QcOcGazvmldh7EQH6IKotcdI5VU/qPcDU2S9w7P5LoAKP7wnCxfmdS93
-         9o33ZMa0It0sN3nfgrgo3uLDVG8zQqnEa8LgJCsxCbMxJPCEYf0M5d+mZ/Sg/W2Ry3TY
-         tj4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVwsSIEkYyQYFLn3UIysVn6bcDgLtlM9ieeej1zaVI+uZMG9ZS8cGj6tuUdUtsWkH4GAPTThQRqTb1xXoJCtGt2vEK4ohu1kQ40
-X-Gm-Message-State: AOJu0Yw5qPI6/wDsO/FJRc0qZqScCRg+6NG6NXXn/AXSs2Ui9xEWtrxx
-	LFd/dp02LeUc2AaanWxzOsrEum0evgj35rsgu2K+V8mrOhkVQ95YCf4monyp6G41UF5yVwi3jVA
-	1
-X-Google-Smtp-Source: AGHT+IGEUgdRPIM5y9jOXcxiqCueL/Y86qKN+/+Jit5kxPav10LkDzha4OlzWPC1QuwzziLrP5yFMw==
-X-Received: by 2002:a05:600c:3505:b0:414:63c6:8665 with SMTP id h5-20020a05600c350500b0041463c68665mr2153970wmq.2.1711616507497;
-        Thu, 28 Mar 2024 02:01:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711616574; x=1712221374;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XwyOlwPxgHT1CPKSoF7aGCVLvwYoa/el57EZd9pYFDc=;
+        b=YJhpg/MuiTkzo9YsJf8w3UyPPUIRAb6fR8I6TINoDY4n/aMVhTAVEne6ZZrvl753Sr
+         UA6Orjg0J89JQcNUmjLmgxTQEEykXsjHxJohqevTEw3XQF22bH2xztjTR/2d3JIIL1fz
+         HXOMRg0sBO2gxlw16zHpffBZCN3CX949lXM+BmGV2b4xPndaTF+NobFfVRqYfoN6Ft+B
+         Wy251xmPra5B9Gd6/bMuqproUQMXiYcJO0aLSiBEvJcehzBU2zk7xLrZlRyG/ymKZYim
+         0w5zIVW3dohe+k3VfVdx1MRz6rI0EIVWf2jAf4WnOAHWkAK1gd8NObdDrjYwllbzh8jR
+         Iruw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZm+FiwUwmQj6jSv67Qrqz6NYmFXGdspHSQtNINaHn5sAjWm//tmq5OiucI/Bq0Vq2WPYxZJgLBvwrtRLclRh8k/cm0hpVzCs/
+X-Gm-Message-State: AOJu0YytygMiNp2kl3QMw1P31efupnla711oQgjeIwol0UvoGYZgOIUd
+	W/inn5oOW8BYYG/7TbpEF7RcLkybidHjXbTKWNAt6Sbz49p6IJZtKle446dw8rW0oHZ/IhppyJe
+	v
+X-Google-Smtp-Source: AGHT+IHC8oA9gMMFOLPH695/vtXHLDH9IwtCsO4DhH6tLwSZJzTxCgs6cAIrUulngfH3k8l6wwmcgQ==
+X-Received: by 2002:a05:6000:25c:b0:33d:8c9d:419 with SMTP id m28-20020a056000025c00b0033d8c9d0419mr1260042wrz.24.1711616573787;
+        Thu, 28 Mar 2024 02:02:53 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.148])
-        by smtp.gmail.com with ESMTPSA id iv16-20020a05600c549000b004146a1bf590sm4717532wmb.32.2024.03.28.02.01.45
+        by smtp.gmail.com with ESMTPSA id dq6-20020a0560000cc600b00341c3071c93sm1179989wrb.73.2024.03.28.02.02.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Mar 2024 02:01:46 -0700 (PDT)
-Message-ID: <cff5e036-7f7c-4270-be0c-f49b196a502b@linaro.org>
-Date: Thu, 28 Mar 2024 10:01:45 +0100
+        Thu, 28 Mar 2024 02:02:53 -0700 (PDT)
+Message-ID: <8568fb86-d0fb-4562-b8d1-2452a64a5354@linaro.org>
+Date: Thu, 28 Mar 2024 10:02:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,6 +64,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC PATCH v2 3/5] dt-bindings: clock: meson: document A1 SoC
  audio clock controller driver
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
  Neil Armstrong <neil.armstrong@linaro.org>,
  Jerome Brunet <jbrunet@baylibre.com>,
@@ -78,8 +78,8 @@ To: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20240328010831.884487-1-jan.dakinevich@salutedevices.com>
  <20240328010831.884487-4-jan.dakinevich@salutedevices.com>
+ <cff5e036-7f7c-4270-be0c-f49b196a502b@linaro.org>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -124,194 +124,36 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240328010831.884487-4-jan.dakinevich@salutedevices.com>
+In-Reply-To: <cff5e036-7f7c-4270-be0c-f49b196a502b@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/03/2024 02:08, Jan Dakinevich wrote:
-> Add device tree bindings for A1 SoC audio clock and reset controllers.
+On 28/03/2024 10:01, Krzysztof Kozlowski wrote:
+>> diff --git a/include/dt-bindings/clock/amlogic,a1-audio-clkc.h b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+>> new file mode 100644
+>> index 000000000000..b30df3b1ae08
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+>> @@ -0,0 +1,122 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+>> +/*
+>> + * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
+>> + *
+>> + * Author: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+>> + */
+>> +
+>> +#ifndef __A1_AUDIO_CLKC_BINDINGS_H
+>> +#define __A1_AUDIO_CLKC_BINDINGS_H
+>> +
+>> +#define AUD_CLKID_DDR_ARB		1
+>> +#define AUD_CLKID_TDMIN_A		2
+>> +#define AUD_CLKID_TDMIN_B		3
+>> +#define AUD_CLKID_TDMIN_LB		4
 > 
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-> ---
+> Why both clock controllers have the same clocks? This is confusing. It
+> seems you split same block into two!
 
-> +title: Amlogic A1 Audio Clock Control Unit and Reset Controller
-> +
-> +maintainers:
-> +  - Neil Armstrong <neil.armstrong@linaro.org>
-> +  - Jerome Brunet <jbrunet@baylibre.com>
-> +  - Jan Dakinevich <jan.dakinevich@salutedevices.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - amlogic,a1-audio-clkc
-> +      - amlogic,a1-audio2-clkc
-
-What is "2"?
-
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 6
-> +    maxItems: 7
-> +
-> +  clock-names:
-> +    minItems: 6
-> +    maxItems: 7
-> +
-> +required:
-> +  - compatible
-> +  - '#clock-cells'
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - amlogic,a1-audio-clkc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: input core clock
-> +            - description: input main peripheral bus clock
-> +            - description: input dds_in
-> +            - description: input fixed pll div2
-> +            - description: input fixed pll div3
-> +            - description: input hifi_pll
-> +            - description: input oscillator (usually at 24MHz)
-> +        clocks-names:
-> +          items:
-> +            - const: core
-> +            - const: pclk
-> +            - const: dds_in
-> +            - const: fclk_div2
-> +            - const: fclk_div3
-> +            - const: hifi_pll
-> +            - const: xtal
-> +      required:
-> +        - '#reset-cells'
-> +    else:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: input main peripheral bus clock
-> +            - description: input dds_in
-> +            - description: input fixed pll div2
-> +            - description: input fixed pll div3
-> +            - description: input hifi_pll
-> +            - description: input oscillator (usually at 24MHz)
-> +        clock-names:
-> +          items:
-> +            - const: pclk
-> +            - const: dds_in
-> +            - const: fclk_div2
-> +            - const: fclk_div3
-> +            - const: hifi_pll
-> +            - const: xtal
-
-#reset-cells: false
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
-> +    #include <dt-bindings/clock/amlogic,a1-peripherals-clkc.h>
-> +    #include <dt-bindings/clock/amlogic,a1-audio-clkc.h>
-> +    audio {
-
-If there is going to be any new version/resend:
-soc {
-
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        clkc_audio: audio-clock-controller@fe050000 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-So: clock-controller
-
-> +                compatible = "amlogic,a1-audio-clkc";
-> +                reg = <0x0 0xfe050000 0x0 0xb0>;
-> +                #clock-cells = <1>;
-> +                #reset-cells = <1>;
-> +                clocks = <&clkc_audio2 AUD2_CLKID_AUDIOTOP>,
-> +                         <&clkc_periphs CLKID_AUDIO>,
-> +                         <&clkc_periphs CLKID_DDS_IN>,
-> +                         <&clkc_pll CLKID_FCLK_DIV2>,
-> +                         <&clkc_pll CLKID_FCLK_DIV3>,
-> +                         <&clkc_pll CLKID_HIFI_PLL>,
-> +                         <&xtal>;
-> +                clock-names = "core",
-> +                              "pclk",
-> +                              "dds_in",
-> +                              "fclk_div2",
-> +                              "fclk_div3",
-> +                              "hifi_pll",
-> +                              "xtal";
-> +        };
-> +
-> +        clkc_audio2: audio-clock-controller@fe054800 {
-
-clock-controller
-(so I expect resend)
-
-> +                compatible = "amlogic,a1-audio2-clkc";
-> +                reg = <0x0 0xfe054800 0x0 0x20>;
-> +                #clock-cells = <1>;
-> +                clocks = <&clkc_periphs CLKID_AUDIO>,
-> +                         <&clkc_periphs CLKID_DDS_IN>,
-> +                         <&clkc_pll CLKID_FCLK_DIV2>,
-> +                         <&clkc_pll CLKID_FCLK_DIV3>,
-> +                         <&clkc_pll CLKID_HIFI_PLL>,
-> +                         <&xtal>;
-> +                clock-names = "pclk",
-> +                              "dds_in",
-> +                              "fclk_div2",
-> +                              "fclk_div3",
-> +                              "hifi_pll",
-> +                              "xtal";
-> +        };
-> +    };
-> diff --git a/include/dt-bindings/clock/amlogic,a1-audio-clkc.h b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
-> new file mode 100644
-> index 000000000000..b30df3b1ae08
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
-> @@ -0,0 +1,122 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-> +/*
-> + * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
-> + *
-> + * Author: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-> + */
-> +
-> +#ifndef __A1_AUDIO_CLKC_BINDINGS_H
-> +#define __A1_AUDIO_CLKC_BINDINGS_H
-> +
-> +#define AUD_CLKID_DDR_ARB		1
-> +#define AUD_CLKID_TDMIN_A		2
-> +#define AUD_CLKID_TDMIN_B		3
-> +#define AUD_CLKID_TDMIN_LB		4
-
-Why both clock controllers have the same clocks? This is confusing. It
-seems you split same block into two!
+Ah, no, I missed there are IDs for second clock controller. It's fine.
 
 Best regards,
 Krzysztof
