@@ -1,106 +1,67 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64981DDEE;
-	Thu, 28 Mar 2024 19:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218956519D;
+	Thu, 28 Mar 2024 21:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711655866; cv=none; b=eAPpgem1vKUyxbvdPUUQeQMpZWJB1aJxT68G2vjIbpbAcZqWWHo8HEWBIlq3Gj7K7NghRsHSdKJIAXcEBKnoIlbVqAc52N4//sF4kDkADmDNJMb7Kw1DkR0Us9VJ2LD3IHbi514NKpJ8viIZ78ExsXE9drvQhv9QC47HvWrqZ48=
+	t=1711660272; cv=none; b=sypmk18oLE4xGU7kabU0dfnwVVrcs+QMeZOvxjzCW6nHseh8zcvlNrqn4BdbPn8J1+PB1Fhng9wup4M0uPZsjFs7NTF5h61a+yVma5MzGsQatuI0IcEhg0GgmsrBSOIMQSCWltOl2d9902WqM7oU5xOsZ901nCtPeV07QNHihGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711655866; c=relaxed/simple;
-	bh=7JXe9YzedTYhE82EFXVYkzaD8exZPpH+SswVS252TeI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B3X/GIE0Po/dEixDhCGg42AL8ZgiJPVrLtjDCnoyuHtzSvnxnpm7pYhHWtx6Vzs8+P2GfoSZW3N+phnW4Z9PFlYes+JJ8oM7ikDYhKcBciITpqz44vUhGN7JLMZmC0Q2DFsgvz6yuzfXOP07UGPjnEcBJn756qhdNPnR+Fmzr8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ij6tDyPi; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+	s=arc-20240116; t=1711660272; c=relaxed/simple;
+	bh=z/Cuj9LA0Xa+ZmEp2IaF0jg2a2SqBYyo+Qx1gEBlZ4Q=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=nzUQbve3uGbYIL4bH9lt3vAeoZmpUQbTwh4MJNWrznL9PRFvLD3QQz2OrTgCS44YRa9LcGO1QAkdgKYUiWMdX2lQFDsauPehEZXKSv2+TOyOQH0A5m85rba6bCL7zwm2MYX5Lz9jS7dM5a+OJUjUCOGQajy8gmd3Nj1yQAEaDNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJb/PbFk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ij6tDyPi"
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 7C6FD120006;
-	Thu, 28 Mar 2024 22:57:42 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 7C6FD120006
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1711655862;
-	bh=J1/tsMz9G9CRvZryKckzyx/QA25/rYaJHeU8Rg8upNg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=ij6tDyPiW4C1258e7K6nBMoIU18H1z4zgXG+IH5DSnAgh11efPtYTZHRIcbHt8ZTi
-	 dRveYjM0c72rVRxPc/tcw52+vWVZnhpo+x5XTT6w/03PHZ2kaZNFeShkaTI3ZZMr7D
-	 2sNZFi/h/l7BBlo8ymuyWTSoB0VBtTf3hoDMmEnEWVJQa8n+8j7ka5+EX64qVBMWpf
-	 a/gUt5KekUo8fP7wZdF0a+IGsW8+nm1qL73SWvaL6uGkFXRXF0dXit/RAwpRA7m1H2
-	 Ztdabxe1yPChvhpCzpRCKFHKydbfVjOeZUR43A94qNRc3eg+VPKGPk8cnLK1gmU45f
-	 YjtE22mUplBJg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 28 Mar 2024 22:57:42 +0300 (MSK)
-Received: from CAB-WSD-L081021.sberdevices.ru (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 28 Mar 2024 22:57:41 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-	<mturquette@baylibre.com>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <sboyd@kernel.org>
-CC: <kernel@salutedevices.com>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Dmitry Rokosov <ddrokosov@salutedevices.com>
-Subject: [PATCH v1] clk: meson: pll: print out pll name when unable to lock it
-Date: Thu, 28 Mar 2024 22:57:29 +0300
-Message-ID: <20240328195733.30572-1-ddrokosov@salutedevices.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJb/PbFk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B615C433C7;
+	Thu, 28 Mar 2024 21:11:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711660271;
+	bh=z/Cuj9LA0Xa+ZmEp2IaF0jg2a2SqBYyo+Qx1gEBlZ4Q=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=dJb/PbFkhKeWQW3nrlKB/eUsLXiqQAybCDxyo6QVeBaJWG9uZ3Gk8JdHO0bx0EqWC
+	 JV4qreNyeLwvbrnJOvvQiSiUIPLUTFv7hq4KLCH2eRI1x2VmXdrKQgx5DhqwatvvD4
+	 RNFyc3NtRGHy4CA3LRYjIVkynsunONgoX0/VOuVdj/cCnJGHIldR8PUAe1rdk20Bns
+	 vxrbhVmpMm8n0fCy6dQyuHD4HyY43518l1bW4/yCYgXD+sryj2m9MzByL2mQiKLgoH
+	 98A3hzSQEPqpwBlAvltDkCxFQ4Dr8qVpxRFy34euNzdtVPK3ZkPPf+8Cx4YBvVlhP3
+	 RsX/RW9+mBlug==
+Message-ID: <8615090f3ccdfc6c7d8e3e0dc7f55e32.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 184478 [Mar 28 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 14 0.3.14 5a0c43d8a1c3c0e5b0916cc02a90d4b950c01f96, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;127.0.0.199:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/03/28 18:13:00 #24496606
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <tencent_4FC67CBE4B41306D52C71C5CEC989690FF07@qq.com>
+References: <tencent_2E60E33C1F88A090B6B3A332AE528C6B8806@qq.com> <tencent_4FC67CBE4B41306D52C71C5CEC989690FF07@qq.com>
+Subject: Re: [PATCH v1 3/5] clk: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Yangyu Chen <cyy@cyyself.name>
+To: Yangyu Chen <cyy@cyyself.name>, linux-riscv@lists.infradead.org
+Date: Thu, 28 Mar 2024 14:11:09 -0700
+User-Agent: alot/0.10
 
-In most meson systems, multiple PLLs are present, making it difficult to
-identify the specific PLL that fails to lock. To address this issue,
-print out the name of the PLL that cannot be locked.
+Quoting Yangyu Chen (2024-03-28 10:06:11)
+> Since SOC_FOO should be deprecated from patch [1], and cleanup for other
+> SoCs is already in the mailing list [2,3,4], we remove the use of
+> SOC_CANAAN and introduced SOC_CANAAN_K210 for K210-specific drivers,
+>=20
+> Thus, we replace its drivers depends on SOC_CANAAN_K210 and default select
+> when it has the symbol SOC_CANAAN_K210.
+>=20
+> [1] https://lore.kernel.org/linux-riscv/20221121221414.109965-1-conor@ker=
+nel.org/
+> [2] https://lore.kernel.org/linux-riscv/20240305-praying-clad-c4fbcaa7ed0=
+a@spud/
+> [3] https://lore.kernel.org/linux-riscv/20240305-fled-undrilled-41dc0c46b=
+b29@spud/
+> [4] https://lore.kernel.org/linux-riscv/20240305-stress-earflap-d7ddb8655=
+a4d@spud/
+>=20
+> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> ---
 
-Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
----
- drivers/clk/meson/clk-pll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 6fa7639a3050..78d17b2415af 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -436,8 +436,8 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	ret = meson_clk_pll_enable(hw);
- 	if (ret) {
--		pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
--			__func__, old_rate);
-+		pr_warn("%s: pll %s didn't lock, trying to set old rate %lu\n",
-+			__func__, clk_hw_get_name(hw), old_rate);
- 		/*
- 		 * FIXME: Do we really need/want this HACK ?
- 		 * It looks unsafe. what happens if the clock gets into a
--- 
-2.43.0
-
+Acked-by: Stephen Boyd <sboyd@kernel.org>
