@@ -1,150 +1,128 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AD264CE9
-	for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2024 09:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4C4134CB;
+	Thu, 28 Mar 2024 09:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711617277; cv=none; b=rOpFc3ft4Bdbghdo5N+OxJOXyelh55SU+yA2pz+fK/C6o3HABHsrSphP5DNCnpo3dORlscclGmhlbzVNpN7vUa/Z45zpkU5w26V+d9Ra0gQBobm1mnjppgLP2U4vzP9W60J/certiNXsd7H8sn0EoAm4UdU/dHntSJlyY7Olm0M=
+	t=1711617807; cv=none; b=N/L65/+/lOTP7AYG2GHzdqLtQAq9QcuLZGma3WbV7dgJCvxLbeVSXgu+7gQDlFJOIKF/hOW+01XliUiB+mKwAhj0sRK6MJAttoyWqusajx7JWb6u9ubNnnu0wOL1MvfLm+ZlEFegFfCITM/kXelqq2jrntTK0Bv5HcVubJYhS8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711617277; c=relaxed/simple;
-	bh=NvRgnweRNx8jfh9jFYr4kyG4aZ6/vwkHqoAX75g9yjI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=dFC2w+Euan4mDIvDugnol3i3AiRWZeNG6x+J/OSS6KFGdZs576GCyu3HVy9SsaTB9ilbUVGBJYG5H4TpR4Vaj6ipp0lNRIYqKrxrp4FGQmTBl1oxro1Fw1PkSZiVLOqBXbQM/jCDEKQbOo2ItA0CXzw90SfuAl6xNkoE7EMjsiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Tm5tMuo+; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1711617807; c=relaxed/simple;
+	bh=M8HHIKevIxc77HrQP75VS/7x/3zEwQAFlO5tgpeUBkM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=H/rUWp2AyRECnWP4D8vxkt55P+kAPj6ym5ItMrt6T8/exwjqH1+wnNoy475MJ4xmBFdjlaVPDbebdF6dGrDvQa/9XjKyE/Ke259EBAYbRz3ioqjQ3YkaQKXGlpKZ1SqWfmAjo0Tx4WvfnyQpH19QY3uuLRTQhJSquqxghovJeeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z92uH96+; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Tm5tMuo+"
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240328091427epoutp04c57f23b0f681b1da3285591ed224210d~A4tYbit8R2894828948epoutp04P
-	for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2024 09:14:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240328091427epoutp04c57f23b0f681b1da3285591ed224210d~A4tYbit8R2894828948epoutp04P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1711617267;
-	bh=XZNLfrC7sORfa/3+gXDEZEzLM/IoNByBCHeH72dhZic=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=Tm5tMuo+FJY5rsB83ByZrrMx+VImEmgMRCjIPNAPeAXuFJ0SUtIHt+HULf6glOQjf
-	 hRfkzhZstprXle+QJOclOCle6zzt71YjJU/TLr7dGcptE21k9APD4sR3RARVtbi4mJ
-	 X81PbJf3yI4fEHwjjYRN77oAuo41K2CrehFmO8b0=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20240328091426epcas2p208bab96ab52db40fb58d0091188f5057~A4tX1gJge3121631216epcas2p2B;
-	Thu, 28 Mar 2024 09:14:26 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.99]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4V4yXf4q51z4x9Q1; Thu, 28 Mar
-	2024 09:14:26 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BC.F0.09665.2F435066; Thu, 28 Mar 2024 18:14:26 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240328091426epcas2p4f227abb6cd7e710f49f4e61aa022f74f~A4tXDFxY13276532765epcas2p47;
-	Thu, 28 Mar 2024 09:14:26 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240328091426epsmtrp113175e5df09bfaf7961f2a532f0f0bfb~A4tXCUtKk0853508535epsmtrp1F;
-	Thu, 28 Mar 2024 09:14:26 +0000 (GMT)
-X-AuditID: b6c32a47-b9bfa700000025c1-d5-660534f247a8
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	48.8E.08390.1F435066; Thu, 28 Mar 2024 18:14:25 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240328091425epsmtip22419b86997fe6f36ca040526125ccc0d~A4tWyT-0B2411324113epsmtip2h;
-	Thu, 28 Mar 2024 09:14:25 +0000 (GMT)
-From: Jaewon Kim <jaewon02.kim@samsung.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jaewon
-	Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH] clk: samsung: exynosautov9: fix wrong pll clock id value
-Date: Thu, 28 Mar 2024 18:10:00 +0900
-Message-ID: <20240328091000.17660-1-jaewon02.kim@samsung.com>
-X-Mailer: git-send-email 2.43.2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z92uH96+"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-56c0a249bacso874572a12.1;
+        Thu, 28 Mar 2024 02:23:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711617804; x=1712222604; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=76sr1FMyUWOhL+InHmaTktpONdMRRLx62idYpcBzy94=;
+        b=Z92uH96+cRwbIomvybeQq9l6W3OBKxlX90Pq3UFWof8MqY0xGduHbdbAZDjFhqC25G
+         lvVj95n0miv7Kow8ENpZUjoUXo36RViVITn075mXS+Ap5nIdxJlXKWyKPW1ryrLpgTCe
+         haRh1arlX9lpVyi5KBgZgLndp6fugzYQKqmOt9fzAv8O4bPsQaVrnInUPNvAheoCSX6U
+         yBGb3w0qFFpCVKrbYdvw/RwQLtj/0hdJ7dsl/4n1nxjJ9s9NDLO6pwpovi/ygAv7GKhz
+         h9MjrEhKQAwEfJRHtfz3avlPUbOECl9yD7bFsrVJ+gOfxUHoNEEsO8vTWjuL8etHivCG
+         I+9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711617804; x=1712222604;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=76sr1FMyUWOhL+InHmaTktpONdMRRLx62idYpcBzy94=;
+        b=OJowfPo3OgoA191nI/GduJ0Mc1jak31XEWox4hmSHCRAlIAqK0EglXPYV+mYUCQw95
+         lLUj/0UtarlPI+qrYbMp3m/pNZ/JmNR6pyQvfz1ZXe1ESewvI+wyK6AL+87X0lYF5jjY
+         xd54/UnlfLOav5CHIgZ3d6z3zwbYm32ZcFfYqb58ZBjoESUspZuBxoGIVi/QiSV08h0L
+         JVTrdRZEojQrXyaO7szv4wyAuJ4TFTLa2glhwwwvVUOHeGxsETP9//j9IsHDYPHmp6m0
+         FgXk6mgHgGWQGSDLnS3RpavBuygZZnY15X58FStNCPRRjuGkkY5oFaGjcyICpEBJ/OJy
+         O0xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwZENPduc4IC1gILZwdZ77wDipaGNMdgl4+8pdQIa0H8IK+pn9Z5COueCy+ZRoEEIBxGFI3wJAavC6h0eZNuNckI5GiTYmctNuC9x4nkvXZ5DbYinMUCSdZYAl/To8vFEn5EYOaH5S
+X-Gm-Message-State: AOJu0Yz6PeKDEX8GL80TIwsbHfNIMbWJUgzEyam4x936NGEn9e4QY9RS
+	KGnQ7+c6JwBcJm+E4MxKrxcyAtbpcdRPKAmHUX2jRtM2cy6O7IAv
+X-Google-Smtp-Source: AGHT+IE3J5JOX1g8Ck4ra/FFcNf6SzeadCdYhTqGYRrbUyGiFt9NhynmUm7P+nLaZECE3OhvHzUDtA==
+X-Received: by 2002:a50:cdc2:0:b0:566:ab45:e6c5 with SMTP id h2-20020a50cdc2000000b00566ab45e6c5mr1733391edj.28.1711617803822;
+        Thu, 28 Mar 2024 02:23:23 -0700 (PDT)
+Received: from [192.168.20.102] (57657817.catv.pool.telekom.hu. [87.101.120.23])
+        by smtp.googlemail.com with ESMTPSA id cf2-20020a0564020b8200b0056b0af78d80sm609298edb.34.2024.03.28.02.23.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Mar 2024 02:23:23 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Subject: [PATCH v4 0/5] clk: qcom: apss-ipq-pll: various cleanups
+Date: Thu, 28 Mar 2024 10:23:09 +0100
+Message-Id: <20240328-apss-ipq-pll-cleanup-v4-0-eddbf617f0c8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOJsWRmVeSWpSXmKPExsWy7bCmhe4nE9Y0g/u/FS0ezNvGZnH9y3NW
-	ix0NR1gt9r7eym6x6fE1VouPPfdYLS7vmsNmMeP8PiaLi6dcLQ6/aWe1+HdtI4sDt8f7G63s
-	HptWdbJ53Lm2h81j85J6j74tqxg9Pm+SC2CLyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUz
-	MNQ1tLQwV1LIS8xNtVVy8QnQdcvMAbpOSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQ
-	klNgXqBXnJhbXJqXrpeXWmJlaGBgZApUmJCd0TvvDnvBO56KxXP/sjQwzuDuYuTkkBAwkXjU
-	18MIYgsJ7GCUmNBo18XIBWR/YpR49mwWK4TzjVFiY99iVpiOww0zGSESe4GqWr4wQTgfGSVO
-	969mBqliE9CW+L5+MVi7iEAbk8TTU9/BHGaB9YwS1x+cAKsSFvCUuL9tD5jNIqAqsf7CGTCb
-	V8BW4sWPo4wQ++Ql7p6ZBRUXlDg58wkLiM0MFG/eOpsZZKiEwEd2iXk9X9khGlwkzkzrgDpW
-	WOLV8S1QcSmJl/1tUHa+RNuVM1B2jcTGBZegltlLLDrzEyjOAbRAU2L9Ln0QU0JAWeLILai1
-	fBIdh/+yQ4R5JTrahCAa1STuTz3HBmHLSEw6spIJwvaQmLpoJTR8YyWOv/vPPoFRfhaSZ2Yh
-	eWYWwt4FjMyrGMVSC4pz01OLjQqM4bGanJ+7iRGcQrXcdzDOePtB7xAjEwfjIUYJDmYlEd6d
-	R1nShHhTEiurUovy44tKc1KLDzGaAoN3IrOUaHI+MInnlcQbmlgamJiZGZobmRqYK4nz3mud
-	myIkkJ5YkpqdmlqQWgTTx8TBKdXA1Ji8aUPLzrI3xp822E/KWZ+zeqbYoYX2AdfVVr/03nbB
-	IDv3pWG3m4PInv1tO7UO73/otHffOXWBB0pX3rkbbmkrrMl5przuz0auqcsP65Wuf8y2YBqb
-	+qyfy758f9RvxB04S+uKUmuWQfv6rdtXpTe+rT2TWxj99vhZpp8WDJa/jt1NjpEtk5nsd8/W
-	6Gjpxl0/lYuibk7kb1uiY73YNordylvih7Oiy+rU5KMXM4tTesK3vRAOuun1vOayHdune+fO
-	/bMP4b7WL2t+p/fc6vDiDMkrrld7mbp9XRx/1Eya+fbn5I+NzYe79x7p472vsSbx6Se+WMu7
-	B1je7/4esYcrgq36eRSDr/qf3xb3HymxFGckGmoxFxUnAgC56IwbKgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsWy7bCSvO5HE9Y0g22frCwezNvGZnH9y3NW
-	ix0NR1gt9r7eym6x6fE1VouPPfdYLS7vmsNmMeP8PiaLi6dcLQ6/aWe1+HdtI4sDt8f7G63s
-	HptWdbJ53Lm2h81j85J6j74tqxg9Pm+SC2CL4rJJSc3JLEst0rdL4MronXeHveAdT8XiuX9Z
-	GhhncHcxcnJICJhIHG6YydjFyMUhJLCbUeLUu15WiISMxPJnfWwQtrDE/ZYjrBBF7xklJj4+
-	xgKSYBPQlvi+fjFYQkSgi0liypE/bCAOs8BmRolHHw8zgVQJC3hK3N+2hxnEZhFQlVh/4QyY
-	zStgK/Hix1FGiBXyEnfPzIKKC0qcnPkEbAMzULx562zmCYx8s5CkZiFJLWBkWsUomVpQnJue
-	W2xYYJSXWq5XnJhbXJqXrpecn7uJERzYWlo7GPes+qB3iJGJg/EQowQHs5II786jLGlCvCmJ
-	lVWpRfnxRaU5qcWHGKU5WJTEeb+97k0REkhPLEnNTk0tSC2CyTJxcEo1MHU+/b9ynuxE/9ln
-	9Kc2HI9ceKZoTi+nnZG9sJqMuO9eh6yyvVOcZQ59z1h8Pl1E1UT8rc4f6YPlAdz/1LX+W6tc
-	4PZZ5X/LVeBMeEdtvsT0QsGTvU1vCzfkcbycvv/dnpnrJi2uCX4d8C9S4UpNSfmOcwZ1t3li
-	VBY77ZvwT13/t7Xlh+rsdb+inltdOr7niQx/ccQfCblyl0cuR6/8sCt04iwOTnn3OMXONLTi
-	d3LExGypjgeL/P/rPVE87Ndl5ZDzWY/rOlPuv8IDrCbrdpxd3azx6XJfx+YDqsA4nDontub1
-	x1Ctw/NPn3vOvHrltbxD6znaIhxSfbM/ant8exGz6r70r5Wnd202itdyUGIpzkg01GIuKk4E
-	AL+axcXbAgAA
-X-CMS-MailID: 20240328091426epcas2p4f227abb6cd7e710f49f4e61aa022f74f
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240328091426epcas2p4f227abb6cd7e710f49f4e61aa022f74f
-References: <CGME20240328091426epcas2p4f227abb6cd7e710f49f4e61aa022f74f@epcas2p4.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP02BWYC/3XN3wqCMBTH8VeRXbdw/8p11XtEF2s708HUtZUU4
+ rs3hUAiL78/OJ8zogTRQUKnYkQRBpdc3+XguwLpRnU1YGdyI1pSXjIisAopYRfuOHiPtQfVPQN
+ WBKRUVppKcJRPQwTrXgt7ueZuXHr08b18Gci8fsHqPzgQXGJB7VEKTqUR5ly3yvm97ls0gwNdI
+ ZRsIDQjtCSW6QxZw38RtkYOGwjLCBGaK4Ab4UqvkWmaPu+x4aZCAQAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.13.0
 
-All PLL id values of CMU_TOP were incorrectly set to FOUT_SHARED0_PLL.
-It modified to the correct PLL clock id value.
+This series contains a few patches to perform some cleanup in the
+apss-ipq-pll driver.
 
-Fixes: 6587c62f69dc ("clk: samsung: add top clock support for Exynos Auto v9 SoC")
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+The set is based on v6.9-rc1 and it depends on the following patches:
+  - "clk: qcom: apss-ipq-pll: use stromer ops for IPQ5018 to fix boot failure"
+     Link: https://lore.kernel.org/r/20240315-apss-ipq-pll-ipq5018-hang-v2-1-6fe30ada2009@gmail.com
+  - "clk: qcom: clk-alpha-pll: Stromer register cleanup"
+     Link: https://lore.kernel.org/r/20240311-alpha-pll-stromer-cleanup-v1-0-f7c0c5607cca@gmail.com
+
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
 ---
- drivers/clk/samsung/clk-exynosautov9.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changes in v4:
+  - fix a typo in the subject of patch 5
+  - collect Reviewed-by tags
+  - Link to v3: https://lore.kernel.org/r/20240326-apss-ipq-pll-cleanup-v3-0-15c4aeeb14ac@gmail.com
 
-diff --git a/drivers/clk/samsung/clk-exynosautov9.c b/drivers/clk/samsung/clk-exynosautov9.c
-index e9c06eb93e66..f04bacacab2c 100644
---- a/drivers/clk/samsung/clk-exynosautov9.c
-+++ b/drivers/clk/samsung/clk-exynosautov9.c
-@@ -352,13 +352,13 @@ static const struct samsung_pll_clock top_pll_clks[] __initconst = {
- 	/* CMU_TOP_PURECLKCOMP */
- 	PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
- 	    PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0, NULL),
--	PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared1_pll", "oscclk",
-+	PLL(pll_0822x, FOUT_SHARED1_PLL, "fout_shared1_pll", "oscclk",
- 	    PLL_LOCKTIME_PLL_SHARED1, PLL_CON3_PLL_SHARED1, NULL),
--	PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared2_pll", "oscclk",
-+	PLL(pll_0822x, FOUT_SHARED2_PLL, "fout_shared2_pll", "oscclk",
- 	    PLL_LOCKTIME_PLL_SHARED2, PLL_CON3_PLL_SHARED2, NULL),
--	PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared3_pll", "oscclk",
-+	PLL(pll_0822x, FOUT_SHARED3_PLL, "fout_shared3_pll", "oscclk",
- 	    PLL_LOCKTIME_PLL_SHARED3, PLL_CON3_PLL_SHARED3, NULL),
--	PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared4_pll", "oscclk",
-+	PLL(pll_0822x, FOUT_SHARED4_PLL, "fout_shared4_pll", "oscclk",
- 	    PLL_LOCKTIME_PLL_SHARED4, PLL_CON3_PLL_SHARED4, NULL),
- };
- 
+Changes in v3:
+  - rebase on top of v6.9-rc1
+  - change patch 3 to use private values for pll_type instead of removing the 
+    field of struct apss_pll_data
+  - collect Reviewed-by tags
+  - Link to v2: https://lore.kernel.org/r/20240321-apss-ipq-pll-cleanup-v2-0-201f3cf79fd4@gmail.com
+
+Changes in v2:
+  - add a new patch at the end to remove the 'cbf_pll_regs' register map
+    from clk-cbf-8996.c
+  - change patch 2 to move huayra register map to clk-alpha-pll.c
+  - collect Reviewed-by tags
+  - Link to v1: https://lore.kernel.org/r/20240318-apss-ipq-pll-cleanup-v1-0-52f795429d5d@gmail.com
+
+---
+Gabor Juhos (5):
+      clk: qcom: apss-ipq-pll: reuse Stromer reg offsets from 'clk_alpha_pll_regs'
+      clk: qcom: apss-ipq-pll: move Huayra register map to 'clk_alpha_pll_regs'
+      clk: qcom: apss-ipq-pll: constify match data structures
+      clk: qcom: apss-ipq-pll: constify clk_init_data structures
+      clk: qcom: clk-cbf-8996: use HUAYRA_APSS register map for cbf_pll
+
+ drivers/clk/qcom/apss-ipq-pll.c  | 56 ++++++++++------------------------------
+ drivers/clk/qcom/clk-alpha-pll.c | 10 +++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  1 +
+ drivers/clk/qcom/clk-cbf-8996.c  | 13 +---------
+ 4 files changed, 25 insertions(+), 55 deletions(-)
+---
+base-commit: 9755120255d6e7b6480509e753e9aecd6171e04a
+change-id: 20240315-apss-ipq-pll-cleanup-a1e99af9d854
+
+Best regards,
 -- 
-2.43.2
+Gabor Juhos <j4g8y7@gmail.com>
 
