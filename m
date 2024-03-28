@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AB6651B2;
-	Thu, 28 Mar 2024 21:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268091D68F;
+	Thu, 28 Mar 2024 22:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711662895; cv=none; b=Pk3PrVfu98ixZAlOcRihObjD7x25kqrmL0OEdXpmQ7mPS/Da0kHCf6nfXoFmTMpTBnbk0vU3ii56Wd7LxijjDpeVreDP7ix45wYac569G1gThD+9Qnoqi5kwEB2aWtRWjKMc5dR+xzg2f2+M316UC9CBcN6w8i2/fdibmIYsZ8o=
+	t=1711665360; cv=none; b=YGYen09pj+YbotcgifqRn16SJ2tUjvGQjhrL6WVxd1N4mKD4exhdAPAMoOasEkQreEzOm5f/b8Wk3De/fF/iD2mrWijh1zFe7NnhZ1Ca0+PDtqGTEHchvr0Ge2Lv8CiVNvHnoxnfuTuXZHNUi4a/zZl5mzKW5kbzQ2sgX7LUvrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711662895; c=relaxed/simple;
-	bh=LsTydrprTuBThTeqctYGN5ue6gnuxzroUgqiktF3q/c=;
+	s=arc-20240116; t=1711665360; c=relaxed/simple;
+	bh=rvKtehwqnoxcmSN8NJNR3HB3kRar7BGFCncNbtbOnyA=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=SElXwPXWnatNH9mcCHsxXABMHbGqWBvDd2gm0KwGOQz4mA1sJqWZOdpMzWgnpnSfGaZSsNfn2F2p2XxB448vBU/6af2Anczk0NuFl8+GeSBJ64rmh08aksg/ouJrktpf68pqyRzjkIjB0HfxXGrHzOXqzLO7lweo+fnVqMId4a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dm/ZHUab; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=rWu8pM8hR7Z3LNOFC+2xWFqisZeyP3uJ7hyRHp9PLRZVJ+YseCn8EEWh8n9UlnoLXkuFE/6zrMMUPYshUAX0T8QXSm2fiS0BM4xKhfLGIF9jGHAQCQ/H7Q7d4kt/T5pWkcJ9Svvm4byne8dxI1/Exa4WUq+x0LZMXG8MD2a7uAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISvWRiMA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dm/ZHUab"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC662C433F1;
-	Thu, 28 Mar 2024 21:54:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISvWRiMA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CA27C433F1;
+	Thu, 28 Mar 2024 22:35:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711662895;
-	bh=LsTydrprTuBThTeqctYGN5ue6gnuxzroUgqiktF3q/c=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=Dm/ZHUab21Urpoc/3Y53vRwsy1aPnZ7LrrtWFHTiNbtSyeqQji0KxGIoZDT5cJQZA
-	 3PSa1WYd1ZkifVPyuIGKi3AcjvzMULnrYeHdMHUg3SunZs1IzQhgn0S6np+mdUxR8O
-	 +OhOho7trzyz3KNhShMGBjim8sFmBeaeD3n+pXMs0CtPl6zSIxet8Te7R6kbH/Cyy2
-	 ZnIF2oN8azAFa4dIHuK2yygX5K45iX6j2ZERSHlv37ozTA1bBjqGtW55Kv7XCz5cF1
-	 qbl2eK5or2HeBm/iXiFQS+/l/zpM31ppMqHtfIzNcjUv99Z4YMAg1f3x7DQ7rNpK41
-	 AN4VgLqhosyfg==
-Message-ID: <80131262978e6e4799864cdfd0784fdf.sboyd@kernel.org>
+	s=k20201202; t=1711665359;
+	bh=rvKtehwqnoxcmSN8NJNR3HB3kRar7BGFCncNbtbOnyA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ISvWRiMAPRsPznDPIhk/gvq27KHn4eT3kzjQPlvdxCV5Lma7AiRhTS7Jtst4LnTUF
+	 RvgXgUQBB4glRDuFIlHq3qeAr6hoMUlIeve/zid2LADwCuekRHx+L3sKuxNnBQMQwk
+	 5S2G+Cp5yTkVtlq7Idxfy2XAaqmxYjbYiUGuoK511oT0CMxEdFcYG+FcjG2jk2lL76
+	 DYcEIuugn9YiBt2obFSG80G2LXW+9vj1C7z8DyPdJtTjKo8h+KRoGKZpEMCJwx8CM7
+	 Bu8VquHxxTE6+TcgBjmH3XbwgE/urw3AxPMApgL3iZygE+TWEmq2TKC8l+/+uetXw8
+	 ZrNlQ2t881+ug==
+Message-ID: <d95554f623f023a2f5499fa2f6f76567.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,110 +35,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240328075936.223461-4-quic_varada@quicinc.com>
-References: <20240328075936.223461-1-quic_varada@quicinc.com> <20240328075936.223461-4-quic_varada@quicinc.com>
-Subject: Re: [PATCH v5 3/5] clk: qcom: common: Add interconnect clocks support
+In-Reply-To: <20240327073310.520950-2-u.kleine-koenig@pengutronix.de>
+References: <202403270305.ydvX9xq1-lkp@intel.com> <20240327073310.520950-2-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] clk: Provide !COMMON_CLK dummy for devm_clk_rate_exclusive_get()
 From: Stephen Boyd <sboyd@kernel.org>
-To: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, djakov@kernel.org, dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, mturquette@baylibre.com, quic_anusha@quicinc.com, quic_varada@quicinc.com, robh@kernel.org
-Date: Thu, 28 Mar 2024 14:54:52 -0700
+Cc: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, kernel test robot <lkp@intel.com>
+To: Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Date: Thu, 28 Mar 2024 15:35:57 -0700
 User-Agent: alot/0.10
 
-Quoting Varadarajan Narayanan (2024-03-28 00:59:34)
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index 75f09e6e057e..9fa271812373 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -8,6 +8,8 @@
->  #include <linux/regmap.h>
->  #include <linux/platform_device.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/interconnect-clk.h>
-> +#include <linux/interconnect-provider.h>
+Quoting Uwe Kleine-K=C3=B6nig (2024-03-27 00:33:10)
+> To be able to compile drivers using devm_clk_rate_exclusive_get() also
+> on platforms without the common clk framework, add a dummy
+> implementation that does the same as clk_rate_exclusive_get() in that
+> case (i.e. nothing).
+>=20
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202403270305.ydvX9xq1-lkp@i=
+ntel.com/
+> Fixes: b0cde62e4c54 ("clk: Add a devm variant of clk_rate_exclusive_get()=
+")
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
 
-Do we need the second include?
-
->  #include <linux/reset-controller.h>
->  #include <linux/of.h>
-> =20
-> @@ -234,6 +236,41 @@ static struct clk_hw *qcom_cc_clk_hw_get(struct of_p=
-handle_args *clkspec,
->         return cc->rclks[idx] ? &cc->rclks[idx]->hw : NULL;
->  }
-> =20
-> +#if IS_ENABLED(CONFIG_INTERCONNECT_CLK)
-> +static int qcom_cc_icc_register(struct device *dev,
-> +                               const struct qcom_cc_desc *desc)
-> +{
-> +       struct icc_clk_data *icd;
-> +       int i;
-> +
-> +       if (!desc->icc_hws)
-> +               return 0;
-> +
-> +       icd =3D devm_kcalloc(dev, desc->num_icc_hws, sizeof(*icd), GFP_KE=
-RNEL);
-> +       if (!icd)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < desc->num_icc_hws; i++) {
-> +               icd[i].clk =3D devm_clk_hw_get_clk(dev, desc->icc_hws[i],=
- "qcom");
-
-Make the con_id "icc" instead please, so we know the consumer is
-icc_clk. Even better would be for the icc_clk device itself to be the
-one requesting with devm_clk_hw_get_clk() so that we associate the clk
-handle with the consumer device. It would also help us make it so that
-drivers defer probe until their clk isn't an orphan.
-
-> +               if (IS_ERR(icd[i].clk))
-> +                       return dev_err_probe(dev, PTR_ERR(icd[i].clk),
-> +                                            "get clock failed (%ld)\n",
-> +                                            PTR_ERR(icd[i].clk));
-> +
-> +               icd[i].name =3D clk_hw_get_name(desc->icc_hws[i]);
-> +       }
-> +
-> +       return PTR_ERR_OR_ZERO(devm_icc_clk_register(dev, desc->first_id,
-> +                                                    desc->num_icc_hws, i=
-cd));
-> +}
-> +#else
-> +static int qcom_cc_icc_register(struct device *dev,
-> +                               const struct qcom_cc_desc *desc)
-> +{
-> +       return 0;
-> +}
-
-Instead of this please have an
-
-	if (!IS_ENABLED(CONFIG_INTERCONNECT_CLK))
-		return 0;
-
-> +#endif
-> +
->  int qcom_cc_really_probe(struct platform_device *pdev,
->                          const struct qcom_cc_desc *desc, struct regmap *=
-regmap)
->  {
-> @@ -303,7 +340,7 @@ int qcom_cc_really_probe(struct platform_device *pdev,
->         if (ret)
->                 return ret;
-> =20
-> -       return 0;
-> +       return qcom_cc_icc_register(dev, desc);
->  }
->  EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
-> =20
-> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-> index 9c8f7b798d9f..d8ac26d83f3c 100644
-> --- a/drivers/clk/qcom/common.h
-> +++ b/drivers/clk/qcom/common.h
-> @@ -29,6 +29,9 @@ struct qcom_cc_desc {
->         size_t num_gdscs;
->         struct clk_hw **clk_hws;
->         size_t num_clk_hws;
-> +       struct clk_hw **icc_hws;
-> +       size_t num_icc_hws;
-> +       unsigned int first_id;
-
-'first_id' is gross.
+Applied to clk-fixes
