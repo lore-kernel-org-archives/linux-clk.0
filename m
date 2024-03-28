@@ -1,216 +1,118 @@
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out203-205-251-59.mail.qq.com (out203-205-251-59.mail.qq.com [203.205.251.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEFB137761
-	for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2024 16:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA513BBEB;
+	Thu, 28 Mar 2024 17:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.251.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711644015; cv=none; b=DggPh7S/egiegDLC5mmlZtNwKa+AIlN63T5qh/jbTL3mEzSwEk0tt6Pec/VAbg6x1yQ1tcVCbZHLtWj0uV/muSOb8k/Gu6KVvW7F4ECtUIY5DNuEN75exHHJL4qolJyu0OB0K0LGvMUCpgR2sgz+diJUy/THF8s6MJ8pwK0DxV8=
+	t=1711645549; cv=none; b=Se6/gMu5UcebWBOkJs2vgLvSp8Cnzf4YyU59JRuACeX6+6bpoglp+RoCXFQSqd8ssYEUjaq5PwZunqAqDDK3PaBTEg8DYmdqwMbzghBIQMp89i5SWDRyyhouEP3z6iTSe/Oq1Wo9PGb0hDyqRNlDGcmdQQ+cSaDcsLN622okIWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711644015; c=relaxed/simple;
-	bh=JukYux1lE2QutH9NWRSXKyGW55kBvsXf0kklaYf/Sz8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VTcKL7TbDEwv4eznJAUL3Pbc0G6XWCGEDzkJ5C/WTM2B5KI710IEqo+Yqv+ljBFu/c0HyFuaxsL7gqvVFnLdZwfi9/wWGEHf7TDYtG7FtWguYHzGLY7FQSjshlbVro/qtUx6to+txvd8pLrDZFKcA3oQ5bhNhKXVhXqsWfxQQFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nb/LoVgx; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1711645549; c=relaxed/simple;
+	bh=gJC9/6C1oV101Vj85n8xf1JyGlC/E4qL1YrA06etUf4=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=Jm2mShk19YIrISLWOXS8ns/PnSBYThTQxBxMqjUvEXWLPn/1fpLs3lPjp+rzA4OLJysVRgLdvk1o22ahEpDzJAszrcj/kCi9bK2fK3SfrfoSBtbKX2nYVHKfMo1DC0L8R0hBEjfU7hwrEvYE6pcTRB7iN10P9mb+n4XD2uq4xaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=pA7jMrWI; arc=none smtp.client-ip=203.205.251.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nb/LoVgx"
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3c3df13fe31so712147b6e.0
-        for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2024 09:40:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1711644011; x=1712248811; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JPv1IlNNd25MIWO2snW+UJ+Z3ASjHN9LM0c86t+nKQY=;
-        b=nb/LoVgxECTD/jgkpqdIR0iuQY6P4fPaxNuA92u13369jPFao+MV/T15iXw19tpQHv
-         Fg94Zom/hFeHwBj5J7HXQasUbv1KBr68FITnPkjZn0UAkzNyHzK2e1USNnBZkweYUQas
-         PA1+sTq0rmvmR1Xk2jqkPHBiVKCQkIgzKdZ4o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711644011; x=1712248811;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JPv1IlNNd25MIWO2snW+UJ+Z3ASjHN9LM0c86t+nKQY=;
-        b=O0/2/uiRfvLHh+7LAnFoH5KA0VW844RNUuoytOI/GwkrqPdJzgh3eCMtOSI5cVc1wJ
-         Ix0KqIKm9qJhlZjd7X3NncFtkBxRc0xok+hgwHeXTmTq2/Kzi+Jha9NrjcpYLJ9LVPbx
-         jbuL+N8/NLSmpWk+JLoqL71/pbtn0tWPevoeXHFKPE1M8Q5ipntxhelwUz99VWCo49SO
-         n+UZSk+lDsxvovOU7Sz9B+UNwW3RnMXU4t0sF/Xn432Sz8gjOO+rN6VXFKxteB4haexg
-         kuL6/NZkLD+tyUBCRk58QMSGHthVZfMXnVXXZjK2Bg4B2a8SAWR2T0nb2Tq4SEMh122t
-         46jg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbAZvnfUhN6WlIqe8Lmqfw49wBhxlvQA1uClJaDMp44r2yS5B37CHjt7qLt5gI2G3/ewbjhhP+YVmgrebWvGYX37O8SKONu7Wl
-X-Gm-Message-State: AOJu0YxLHlFCKriQ+t7xJL7EwBQZhS4oC0LrUlMnQoNJForv4VVHv0bG
-	wc7QwCJ6E+XBgV6SnmOEhCK0szXKE4Fg84bZAaEsh6sVEM/PYyOb/AWIacHYVCcQTfoeHZhVK1Q
-	=
-X-Google-Smtp-Source: AGHT+IFyNK6las5CKdzwlpoOHvztkWtV7QydhWL9mTK5DlntHlbkazx4VO7zyA6no0Cvor7Yt4af0w==
-X-Received: by 2002:a05:6808:2228:b0:3c3:dd8b:6259 with SMTP id bd40-20020a056808222800b003c3dd8b6259mr4224272oib.44.1711644011261;
-        Thu, 28 Mar 2024 09:40:11 -0700 (PDT)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com. [209.85.160.180])
-        by smtp.gmail.com with ESMTPSA id gf12-20020a056214250c00b00698d06df322sm236461qvb.122.2024.03.28.09.40.09
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Mar 2024 09:40:09 -0700 (PDT)
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-430d3fcc511so1291cf.1
-        for <linux-clk@vger.kernel.org>; Thu, 28 Mar 2024 09:40:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXDg4AuZ+nIdRH94c7avDYQ2HNf5QbKxOca69p5kDygEMjV2CiLfbeuIe8wNPernV1olUuaO3x9EWh0bsmZoaMVoQqyr5DcNfRD
-X-Received: by 2002:a05:622a:410a:b0:431:8151:e7c1 with SMTP id
- cc10-20020a05622a410a00b004318151e7c1mr379066qtb.4.1711644008766; Thu, 28 Mar
- 2024 09:40:08 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="pA7jMrWI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1711645537; bh=8ssu01htiYsJMJRjHgP4bblrXVq0qnGeiqD2k3sHcKg=;
+	h=From:To:Cc:Subject:Date;
+	b=pA7jMrWIuxQHr6YxFCLosUI6tQUdS37m6QxE24bg6NOKxXkzYKKStC1cKtdayabMt
+	 3dm5tYOJNiGLi6PRPBPwpE2/Detr7ja3bYudWcpe9cgn63FRehSN84bn+0oTteWMU9
+	 zsTsLiNT7tgS2VOihCcx/PErnEDg64WvhNxQA5wg=
+Received: from cyy-pc.lan ([240e:379:2277:8a00:7feb:196a:dd5b:c05f])
+	by newxmesmtplogicsvrsza1-0.qq.com (NewEsmtp) with SMTP
+	id 11335EFA; Fri, 29 Mar 2024 01:04:19 +0800
+X-QQ-mid: xmsmtpt1711645459tb1h7s37q
+Message-ID: <tencent_2E60E33C1F88A090B6B3A332AE528C6B8806@qq.com>
+X-QQ-XMAILINFO: ORuEwgb9eurk937hgCQc/4UpQ04yu+q4iEC8YqNyGIVokpunePyEspOAdrFfaD
+	 TAZUrsoAzBa67OyGvySF9OBMgKTkKIA8T9Hh4gpac+UcW8/4s8lQd7TSLbfRX04oJHBeBehpJkfd
+	 yfaeUq2t9XWRzewmbxDNmZnmNbLP0qX+UD/NwvtecOIdyIqwxui8BLG5InboZ6yxLJUzWx18OJaZ
+	 NInfgjkEajkg2BM2REbaOoWjRfEjruia2KRNVsPlJAq07Pf3d8zvtf73tlBgwJOi+FkldoXYgh2h
+	 w8cm0GXPJCQiCABsLHlJhR3UE4HV1eovUOFvp+8cfgJv+sXKzcDxPojDqRVeA3uhvkj1zmEdtWJ5
+	 WATnrSDp6GF4vwgZrQfZVpD1tcR/vLF62gE4KXr5PoUfbOzucC2qH2Fu5iWBGqlvazAO6MPD9JwC
+	 2e1PCvQJKcUdhJ9BXsZDw7GBRAY5uFPBasxEqEQqJVXjDYBZbvIk6dGK+Z79sRji0ZaaHfrFaIl6
+	 bTxdAcHvVxeooFqsHRn6Tu/UurCPRsVP9RD05M2SzsfydgKujJ1yZXmD8YTC+K6PmbBC+tQVRcLP
+	 FzMqCVelVo0RRmDRgM6ZnQS7rZ2jMxAjJ5hdHig09+STq9uLx9ttCE+ntZF0m4K4skbvjZT2cmW2
+	 JqFBLShKuoCiwkasVXJC3httmDVrxUWLnwLBfpl2povSQkyM2m+QjAj7jyxESOZW54MTRMuTuvZ9
+	 vve4pLChyAuYBQOmOtLXzgUkEectMa7nVL9xCuK9JfzmmZ+HNx07qcUoHQK5gVuXrsA9tsHLT3Ac
+	 frPaHmtg1waA/McJfGlhrLlS9LtG5cWUvX3kUHHXPVZ5Zg6M+uq5bAUzXbkyL/mzikYXO8aPQnjG
+	 88UNSETFrJ0WKvwOHTukplXk3KVJLDf38eukbzd+h0TMgFaI4DHnWcnCqgH/nc0L/6EIQZIc1rsz
+	 rHe+cUi8/DeoWlc8u8r3mEN5P63Q5VE2QVS/0iyLsEP6/UYJ46cW0iuvjx3UbtZw4LwejHYFCDI2
+	 uCQC8CZQ==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Yangyu Chen <cyy@cyyself.name>
+To: linux-riscv@lists.infradead.org
+Cc: Conor Dooley <conor@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Guo Ren <guoren@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-gpio@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yangyu Chen <cyy@cyyself.name>
+Subject: [PATCH v1 0/5] riscv: Kconfig.socs: Deprecate SOC_CANAAN and use SOC_CANAAN_K210 for K210
+Date: Fri, 29 Mar 2024 01:03:22 +0800
+X-OQ-MSGID: <20240328170322.119305-1-cyy@cyyself.name>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240327202740.3075378-1-swboyd@chromium.org>
-In-Reply-To: <20240327202740.3075378-1-swboyd@chromium.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 28 Mar 2024 09:39:54 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VLwa0AFsrXXxKGG+hcyW+h7u7-tyg3uoDB8M_XdPti_Q@mail.gmail.com>
-Message-ID: <CAD=FV=VLwa0AFsrXXxKGG+hcyW+h7u7-tyg3uoDB8M_XdPti_Q@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Fix a black screen on sc7180 Trogdor devices
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Laura Nao <laura.nao@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Since SOC_FOO should be deprecated from patch [1], and cleanup for other
+SoCs is already in the mailing list [2,3,4], so we deprecate the use of
+SOC_CANAAN and use ARCH_CANAAN for SoCs vendored by Canaan instead from now
+on.
 
-On Wed, Mar 27, 2024 at 1:27=E2=80=AFPM Stephen Boyd <swboyd@chromium.org> =
-wrote:
->
-> This patch series fixes a black screen seen at boot on Trogdor devices.
-> The details of that problem are in the second patch, but the TL;DR is
-> that shared RCGs report the wrong parent to the clk framework and shared
-> RCGs never get turned off if they're left force enabled out of boot,
-> wedging the display GDSC causing the display bridge to fail to probe
-> because it can't turn on DSI.
->
-> The first patch is basically a hack. It avoids a problem where the mdss
-> driver probes, turns on and off the mdp clk, and hangs the rotator clk
-> because the rotator clk is using the same parent. We don't care about
-> this case on sc7180, so we simply disable the clk at driver probe so it
-> can't get stuck on.
->
-> The second patch fixes the shared RCG implementation so that the parent
-> is properly reported and so that the force enable bit is cleared. Fixing
-> the parent causes the problem that the first patch is avoiding, which is
-> why that patch is first. Just applying this second patch will make it so
-> that disabling the mdp clk disables the display pll that the rotator clk
-> is also using, causing the rotator clk to be stuck on.
->
-> This problem comes about because of a combination of issues. The clk
-> framework doesn't handle the case where two clks share the same parent
-> and are enabled at boot. The first clk to enable and disable will turn
-> off the parent. The mdss driver doesn't stay out of runtime suspend
-> while populating the child devices. In fact, of_platform_populate()
-> triggers runtime resume and suspend of the mdss device multiple times
-> while devices are being added. These patches side-step the larger issues
-> here with the goal of fixing Trogdor in the short-term. Long-term we
-> need to fix the clk framework and display driver so that shared parents
-> aren't disabled during boot and so that mdss can't runtime suspend until
-> the display pipeline/card is fully formed.
->
-> Stephen Boyd (2):
->   clk: qcom: dispcc-sc7180: Force off rotator clk at probe
->   clk: qcom: Properly initialize shared RCGs upon registration
->
->  drivers/clk/qcom/clk-rcg2.c      | 19 +++++++++++++++++++
->  drivers/clk/qcom/dispcc-sc7180.c | 14 ++++++++++++++
->  2 files changed, 33 insertions(+)
+However, the K210 SoC is so special for NoMMU and built for loader.bin, if
+we share the ARCH_CANAAN symbol directly for K210 and other new SoCs which
+has MMU and no need for loader, it will confuse some users who may try to
+boot MMU Kernel on K210, but it will fail. Thus, this patch set renamed the
+original use of SOC_CANAAN to SOC_CANAAN_K210 for K210 SoC, as Damien
+suggested from the list [5]. Then, it made some adaptations for soc, clk,
+pinctrl, and reset drivers.
 
-I spent a bunch of time discussing this offline with Stephen and I'll
-try to summarize. Hopefully this isn't too much nonsense...
+Note: This patch set is used to prepare for Canaan K230 Support, which is
+on the mailing list [6]. The next revision for the K230 support patch will
+be based on this patch set.
 
-1. We'll likely land the patches downstream in ChromeOS for now while
-we're figuring things out since we're seeing actual breakages. Whether
-to land upstream is a question. The first patch is a bit of a hack but
-unlikely to cause any real problems. The second patch seems correct
-but it also feels like it's going to cause stuck clocks for a pile of
-other SoCs because we're not adding hacks similar to the sc7180 hack
-for all the other SoCs. I guess we could hope we get lucky or play
-whack-a-mole? ...or we try to find a more generic solution... Dunno
-what others think.
+[1] https://lore.kernel.org/linux-riscv/20221121221414.109965-1-conor@kernel.org/
+[2] https://lore.kernel.org/linux-riscv/20240305-praying-clad-c4fbcaa7ed0a@spud/
+[3] https://lore.kernel.org/linux-riscv/20240305-fled-undrilled-41dc0c46bb29@spud/
+[4] https://lore.kernel.org/linux-riscv/20240305-stress-earflap-d7ddb8655a4d@spud/
+[5] https://lore.kernel.org/linux-riscv/2b0511af-1b5b-4c90-a673-c9113bb58142@kernel.org/
+[6] https://lore.kernel.org/linux-riscv/tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com/
 
-2. One thing we talked about would be adding something like
-`CLK_OPS_PARENT_ENABLE_FOR_DISABLE` for all the RCGs. That should get
-rid of the actual error we're seeing. Essentially what we're seeing
-today is:
+Yangyu Chen (5):
+  riscv: Kconfig.socs: Split ARCH_CANAAN and SOC_CANAAN_K210
+  soc: canaan: Deprecate SOC_CANAAN and use SOC_CANAAN_K210 for K210
+  clk: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
+  pinctrl: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
+  reset: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
 
-* RCG1 is parented on a PLL
-* RCG2 is parented on the same PLL
-* RCG1, RCG2, and the PLL are left enabled by the BIOS
+ arch/riscv/Kconfig.socs                        | 10 ++++++++--
+ arch/riscv/Makefile                            |  2 +-
+ arch/riscv/configs/nommu_k210_defconfig        |  3 ++-
+ arch/riscv/configs/nommu_k210_sdcard_defconfig |  3 ++-
+ drivers/clk/Kconfig                            |  4 ++--
+ drivers/pinctrl/Kconfig                        |  4 ++--
+ drivers/reset/Kconfig                          |  4 ++--
+ drivers/soc/Makefile                           |  2 +-
+ drivers/soc/canaan/Kconfig                     |  4 ++--
+ 9 files changed, 22 insertions(+), 14 deletions(-)
 
-When we enable/disable RCG1 then the PLL turns off (since we propagate
-our disable to our parent and nothing else is keeping the PLL on). At
-this time RCG2 is implicitly off (it's not producing a clock) since
-its parent (the PLL) is off. ...but the hardware "force enable" bit
-for RCG2 is still set to on and the kernel still thinks the child of
-this clock is on.
+-- 
+2.43.0
 
-If, after this, we "disabled" a branch clock child of RCG2 (because
-it's unused and we get to the part of the kernel that disables unused
-clocks) then we were getting the error since you can't change the
-hardware "enable" bit for a branch clock if its parent is not
-clocking.
-
-...so `CLK_OPS_PARENT_ENABLE_FOR_DISABLE` would fix this specific case
-because we'd turn the PLL on for the duration of the "disable" call.
-
-...but there is still the concern here that there will be a period of
-time that the RCG2 child is "stuck" even if we're not paying attention
-to it. This would be the period of time between when we turned the PLL
-off and we got around to disabling the RCG2 child because it was
-unused. Stephen thought that perhaps something else in hardware
-(perhaps a GDSC) might notice that the RCG2 child's hardware "enable"
-bit was set and would assume that it was clocking. Then that other bit
-of hardware would be unhappy because no clock came out. This concern
-made us think that perhaps `CLK_OPS_PARENT_ENABLE_FOR_DISABLE` isn't
-the right way to go.
-
-3. Another idea was essentially to implement the long talked about
-idea of "handoff". Essentially check the state of the clocks at boot
-and if they're enabled then propagate the enable to our parents.
-
-If we implement this then it would solve the problem because RCG1 and
-RCG2 would add an implicit request for the PLL to be on. If we
-enable/disable RCG1 at boot then the PLL will still stay on because
-there's a request from RCG2. If/when we disable children of RCG2 then
-the PLL will lose its request but that's fine. In no cases will we
-have a hardware "enable" bit set without the parent.
-
-This seems solid and probably the right solution.
-
-
-Stephen was a bit concerned, though, because you don't know when all
-your children have been registered. If a child shows up after "disable
-unused" runs then you can get back into the situation again. That
-probably isn't concern for the immediate problem at hand because all
-the clocks involved show up in early boot, but it means that the
-problem is half solved and that's not super satisfying.
-
-To solve this, we need to overall solve the "disable_unused" problem
-to be at the right time, after everything has had a chance to probe.
-To me this feels a bit like the "sync state" problem with all the
-baggage involved there. Specifically (like sync state) I think it
-would have to be heavily based on analysis of the device tree and
-links and that has the standard problem where you never enter sync
-state when DT has a node "enabled" but you didn't happen to enable the
-relevant driver in your kernel config. ...though I guess we've "sorta"
-solved that with the timeout. NOTE: if I understand correctly this
-would only be possible if drivers are using "struct clk_parent_data"
-and not if they're just using global names to match clocks.
-
-I'll also note that in general I believe Stephen isn't a fan of
-"disable_unused", but (my opinion) is that it's important to have
-something in the kernel that disables unused clocks when everything is
-done loading. Without this we add a lot of complexity to the firmware
-to turn off all the clocks that the SoC might have had on by default
-and that's non-ideal.
-
--Doug
