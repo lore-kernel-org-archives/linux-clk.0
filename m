@@ -1,32 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268091D68F;
-	Thu, 28 Mar 2024 22:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A94FF9F5;
+	Fri, 29 Mar 2024 01:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711665360; cv=none; b=YGYen09pj+YbotcgifqRn16SJ2tUjvGQjhrL6WVxd1N4mKD4exhdAPAMoOasEkQreEzOm5f/b8Wk3De/fF/iD2mrWijh1zFe7NnhZ1Ca0+PDtqGTEHchvr0Ge2Lv8CiVNvHnoxnfuTuXZHNUi4a/zZl5mzKW5kbzQ2sgX7LUvrs=
+	t=1711674406; cv=none; b=Z0HqfjAlUWlM77iT4vC+sfYhMZeqB733XpuTzS7q7VRkKV2VgbjQbz7M6lnSCWNnscEfABjmHQPzeoXChENReBl38y9DNJGptEP3B2Lu0UREQek3XruTK6j7LDvo5C/Kuc1wCWUdd43iG7VPSOSEG+2ObQX11RzgTsZQS1odqUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711665360; c=relaxed/simple;
-	bh=rvKtehwqnoxcmSN8NJNR3HB3kRar7BGFCncNbtbOnyA=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=rWu8pM8hR7Z3LNOFC+2xWFqisZeyP3uJ7hyRHp9PLRZVJ+YseCn8EEWh8n9UlnoLXkuFE/6zrMMUPYshUAX0T8QXSm2fiS0BM4xKhfLGIF9jGHAQCQ/H7Q7d4kt/T5pWkcJ9Svvm4byne8dxI1/Exa4WUq+x0LZMXG8MD2a7uAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISvWRiMA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711674406; c=relaxed/simple;
+	bh=DMYOlN+V/xU+7yMkSGCmldEtFZxBdXtHIsaBi1vE/bI=;
+	h=Message-ID:Content-Type:MIME-Version:From:To:Cc:Subject:Date; b=UiyIzZJvGi40/yewNC00ovMi2aGembFrtdvTftlkNvYcY6x/jz6e7VlLHBl6vAe7H+zocScEbARKL2qjDWJxXdPwIFELNyPx84Y+Xv8nEivV+iuWsyZfXgvPyF/17xLnP3y43fpP19vBOKemgiqWVz5Z7DGJ/69Lc/bfflm2OiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DiNjuOuf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISvWRiMA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CA27C433F1;
-	Thu, 28 Mar 2024 22:35:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DiNjuOuf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D63C433F1;
+	Fri, 29 Mar 2024 01:06:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711665359;
-	bh=rvKtehwqnoxcmSN8NJNR3HB3kRar7BGFCncNbtbOnyA=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ISvWRiMAPRsPznDPIhk/gvq27KHn4eT3kzjQPlvdxCV5Lma7AiRhTS7Jtst4LnTUF
-	 RvgXgUQBB4glRDuFIlHq3qeAr6hoMUlIeve/zid2LADwCuekRHx+L3sKuxNnBQMQwk
-	 5S2G+Cp5yTkVtlq7Idxfy2XAaqmxYjbYiUGuoK511oT0CMxEdFcYG+FcjG2jk2lL76
-	 DYcEIuugn9YiBt2obFSG80G2LXW+9vj1C7z8DyPdJtTjKo8h+KRoGKZpEMCJwx8CM7
-	 Bu8VquHxxTE6+TcgBjmH3XbwgE/urw3AxPMApgL3iZygE+TWEmq2TKC8l+/+uetXw8
-	 ZrNlQ2t881+ug==
-Message-ID: <d95554f623f023a2f5499fa2f6f76567.sboyd@kernel.org>
+	s=k20201202; t=1711674405;
+	bh=DMYOlN+V/xU+7yMkSGCmldEtFZxBdXtHIsaBi1vE/bI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DiNjuOufITECihQO2wQ8Of6yEnAq+KqQh/g99p4Aq6lQSSsqg09Vefj7Y29aivse/
+	 NepX+2rlQl7DBzpYAAY10KiDE6zp4vcJXXh0ZkXBtdNKu+6h6SSzX01zN3cPa4pifp
+	 7TCmgTnSdLtNnplwsTjJG3Apyyvjy9G1WdZF/khTuUSK1EJn3arCxwjW4iQyZaF5/Z
+	 PwpPu/5WtdrkTUzjxhwtiLhMmH5/2qjzrXQyiCEBkokbH3jZSqBCDhL+lAkF96bgjH
+	 jCDoFRrhShKEl24POzeWnYq+AUvRwmgOKErgjpY5PSoMGH3uxqjtlO+N2GtWbyccJo
+	 pGJhF6wDLFd3w==
+Message-ID: <9ddf393a481f2caf3cdcb7b1a9e5c80c.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,27 +34,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240327073310.520950-2-u.kleine-koenig@pengutronix.de>
-References: <202403270305.ydvX9xq1-lkp@intel.com> <20240327073310.520950-2-u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] clk: Provide !COMMON_CLK dummy for devm_clk_rate_exclusive_get()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, kernel test robot <lkp@intel.com>
-To: Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Date: Thu, 28 Mar 2024 15:35:57 -0700
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: <linux-kernel@vger.kernel.org>, <linux-next@vger.kernel.org>, <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Add clk-fixes branch to pending-fixes
+Date: Thu, 28 Mar 2024 18:06:43 -0700
 User-Agent: alot/0.10
 
-Quoting Uwe Kleine-K=C3=B6nig (2024-03-27 00:33:10)
-> To be able to compile drivers using devm_clk_rate_exclusive_get() also
-> on platforms without the common clk framework, add a dummy
-> implementation that does the same as clk_rate_exclusive_get() in that
-> case (i.e. nothing).
->=20
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202403270305.ydvX9xq1-lkp@i=
-ntel.com/
-> Fixes: b0cde62e4c54 ("clk: Add a devm variant of clk_rate_exclusive_get()=
-")
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> ---
+Hi Stephen,
 
-Applied to clk-fixes
+Can you add the clk-fixes branch to linux-next's pending-fixes branch?
+Krzysztof mentioned that it wasn't in there and some CI uses that. The
+clk-fixes branch is always merged into the clk-next branch of clk.git
+and usually it is fully merged into Linus' tree before the next release.
+I accumulate clk framework and driver fixes on this branch and send code
+from here after the merge window closes.
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-fixes
