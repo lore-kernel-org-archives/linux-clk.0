@@ -1,209 +1,204 @@
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40023FE4F;
-	Fri, 29 Mar 2024 06:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B551869DF4;
+	Fri, 29 Mar 2024 10:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711693328; cv=none; b=MxosWAJEKyUeddgRfKGR3mfiQ1lfQIXbntw9dgRpSY9bDHhokvjuieqK19nI+0aJoBYkdq86qgOdrxDiAglnzch7EFVZ+FYpOu99fAwt0V4oAxlS+Hua2VNGCjkfyYhuRCh+dHv/SbHrxuet1JOoF2arvf2uElu8dofOs9CHJzM=
+	t=1711709321; cv=none; b=kfS4zVTdY/WK3LIB/FUY+goFuwpqvDx8CJFgBWZlbqqix90zdDZboci7sPSTXlSvaKROak/kMZDF6b30Z70xUzZx4gBEcr8JVWKFcK7mHa1mQecklPJbdNVUt9AtMxYjDEKzDUphVQG8DdBVFQk0+mFweVAxyjei7BsBRa+Nsb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711693328; c=relaxed/simple;
-	bh=Kct7Pjk1WKf/K8JXQ51OPs2q82g4Vs270HKxVBz7YVU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Jo7lW3EFuR5xPuWm57IShfDvcLYANwHJid6x4qxS30omsMbRpGEB9g95jWbCX5+LRBCJp+R4u76USE6xXFdVv1k1DyPtDtQpBsP61xHF8g8OYWOPpQ9dpDx+N6wBjWo+tW1uPTh8BquDeeDjNeTYiHmV1B2LmMo1XKX0hM2HiPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjLWRFHh; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1711709321; c=relaxed/simple;
+	bh=BezfkLUIoQfVoMQnu64WTtKfJYFHwMBtnDPgDuHAb50=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sfi2YF6/bzFu6IMAa5CS7Td1t1JjxLK45JGVGLDRgvPFYp6OY1d9WKaJU334GcGBa0kDG3QnxWV7pyagqGlmaZzNtAvcMJyVuAVPnJthZk6W53nbk1l6l5u+ltRRB2sr4VEsoelEmN8PBb7aHU0KMyPjbaM84HVq/VTS9mgjfZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VSNS8107; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjLWRFHh"
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-229d01e81f1so908904fac.2;
-        Thu, 28 Mar 2024 23:22:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711693326; x=1712298126; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YPRTTnRNGB6MC8MgLxeQqBqXiKf58UGvbzByUZNl4Io=;
-        b=PjLWRFHhQ4Sq9sICl9wBInuoY47OjDUJ/1bmz//xJAxEr65g50d8arXwBNPFXMv1E0
-         bGWbgzTt9GN0XJqcVpwHPcIxYOyvXgGOSCnBNYQ9kEvmMf+hzewcWRJ1PPkfeowocmtD
-         fbU4oyCQ3iTeMaoDgPUmLmsqL2IQKegStSCFKCpzNkORVm41TiJpWE9Qe1NYoMSEhU1f
-         qDs77YikekGwd2Uqru7nA9EmHHglxbd9gGjGC3S2QuZav1xGiwW3ZQGbtprZm9W60V0q
-         08uYjv+DLcEhtsBmJ6Ii3mWhm3LPTL+76mXHLVx6wTZs+vJL7I3FTUlDefl0GfRPn5R1
-         yd1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711693326; x=1712298126;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YPRTTnRNGB6MC8MgLxeQqBqXiKf58UGvbzByUZNl4Io=;
-        b=vXQstyyTCaO5Fj3MStaGgIc60Of3Hdk9iRwa9aQW2cQ8L2TN85N7icHmQFcAF89MUX
-         MgdxWvjQL6k/KZOjvpJvJs1JMQbaYuiC10biMOsbKoPLAh3oW3uNoO8BkilkC0PucXPf
-         7GPPZXIlslEYsUj0bUht6oq8kk1fjJNsOzrd4pzf0mP5fIVexFUBMkcOFjAN1C9p7EkL
-         M9HK1KLVUZpYhGa7IWTdy9UNrWFOMxKXkzf24swq6xvacPp+8Q52N0t+yfzDN/7SZIRt
-         eQW1OhmxUGf+BN+XjJZm0rhCGtDmKX7r1HIN/KQy1THnftIr6yL8+F4pYDysNVDNpYWm
-         +exg==
-X-Forwarded-Encrypted: i=1; AJvYcCWequJ4cTTcRSYgsbJsEnQs3ocowLmHWtnjOzrwjX0Ct5EvqwEvfCYCRmdgaQBXcxmXMR+xzdh9MrUk1CmPR8JHSKhpzumyH0x0CQVg5suomNacGaONRJ56+FvdCEkDCw8U6Q81iH+SW9zr20+lEUTTGOfYA51uJO/DEnY6LrrIX2Qwxw==
-X-Gm-Message-State: AOJu0Yyts/+CL324+E5u3G7AAyAJqs3zP5q/B6VnWL//i62CjMsv6raY
-	UkzXxN6xw16HTJLUNFoC2yZGBWa3R4z7McMgQFkaGcXayDfdyUMA
-X-Google-Smtp-Source: AGHT+IFfKEV6h5Gw0WJIq9oU8ZXTVVdJrpoffjn8gZvwWlpJ2sPuHTHLS00yMZSya2NF4n05nQWr6g==
-X-Received: by 2002:a05:6870:f68b:b0:22b:5bc1:66e7 with SMTP id el11-20020a056870f68b00b0022b5bc166e7mr1384174oab.11.1711693325826;
-        Thu, 28 Mar 2024 23:22:05 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id m40-20020a05683032a800b006e6bf2cc882sm521325ott.26.2024.03.28.23.22.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Mar 2024 23:22:05 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: aou@eecs.berkeley.edu,
-	chao.wei@sophgo.com,
-	conor@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	mturquette@baylibre.com,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	richardcochran@gmail.com,
-	robh+dt@kernel.org,
-	sboyd@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	guoren@kernel.org,
-	jszhang@kernel.org,
-	inochiama@outlook.com,
-	samuel.holland@sifive.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v13 5/5] riscv: dts: add clock generator for Sophgo SG2042 SoC
-Date: Fri, 29 Mar 2024 14:21:58 +0800
-Message-Id: <f4934589ebc3a393c270bb9e5ab7493f57af3c38.1711692169.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1711692169.git.unicorn_wang@outlook.com>
-References: <cover.1711692169.git.unicorn_wang@outlook.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VSNS8107"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42T7pCUO008287;
+	Fri, 29 Mar 2024 10:48:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=qcppdkim1; bh=AOcFCVlQixidLBpUiZJsE
+	HbwIXHHYvnLMJmcdbFLxII=; b=VSNS8107vcFw66O20qqghVaz0kE5kJJHCjQfy
+	6a3cQYqr44+/bV6ZghbvzUfuGxbHK7aFT1L08nkRQgm2ib3UlmXlLpRcTqjoZ3he
+	f73fEUy2ovNbifz9k6Qu60dzxT4bof7UYjqPFSMYM8PPJDJrG/HLMRQ1LrDgI50y
+	HQp6g6+THybePPOK9mMIu8sCAUKc4+SLSHveU5BLdpZeJQi807nXd5O9t7LtjzBs
+	jiljWNMzCGGKJkEClZs8GLwnhmw6nqf+E/YSpEQ99kpjy68dGXn7Gf17AzkD0tMx
+	oRB6E5iVMBZAKn2QV4iNRkpaVi+QWXnPwj3ih7kO1WUT4MWGg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x5sm6gf64-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Mar 2024 10:48:34 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42TAmWJI016710
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Mar 2024 10:48:32 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Fri, 29 Mar 2024 03:48:28 -0700
+Date: Fri, 29 Mar 2024 16:18:24 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: <andersson@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <djakov@kernel.org>,
+        <dmitry.baryshkov@linaro.org>, <konrad.dybcio@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <mturquette@baylibre.com>,
+        <quic_anusha@quicinc.com>, <robh@kernel.org>
+Subject: Re: [PATCH v5 3/5] clk: qcom: common: Add interconnect clocks support
+Message-ID: <ZgaceJT2FMsQVoPa@hu-varada-blr.qualcomm.com>
+References: <20240328075936.223461-1-quic_varada@quicinc.com>
+ <20240328075936.223461-4-quic_varada@quicinc.com>
+ <80131262978e6e4799864cdfd0784fdf.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <80131262978e6e4799864cdfd0784fdf.sboyd@kernel.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HQybzIkZ1Aavu6sA6qT7jMBWnIMsifQm
+X-Proofpoint-GUID: HQybzIkZ1Aavu6sA6qT7jMBWnIMsifQm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-29_09,2024-03-28_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=999 suspectscore=0
+ impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2403210001 definitions=main-2403290094
 
-From: Chen Wang <unicorn_wang@outlook.com>
+On Thu, Mar 28, 2024 at 02:54:52PM -0700, Stephen Boyd wrote:
+> Quoting Varadarajan Narayanan (2024-03-28 00:59:34)
+> > diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> > index 75f09e6e057e..9fa271812373 100644
+> > --- a/drivers/clk/qcom/common.c
+> > +++ b/drivers/clk/qcom/common.c
+> > @@ -8,6 +8,8 @@
+> >  #include <linux/regmap.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/clk-provider.h>
+> > +#include <linux/interconnect-clk.h>
+> > +#include <linux/interconnect-provider.h>
+>
+> Do we need the second include?
 
-Add clock generator node to device tree for SG2042, and enable clock for
-uart.
+Will remove.
 
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-Reviewed-by: Guo Ren <guoren@kernel.org>
----
- .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  | 12 +++++
- arch/riscv/boot/dts/sophgo/sg2042.dtsi        | 49 ++++++++++++++++++-
- 2 files changed, 60 insertions(+), 1 deletion(-)
+> >  #include <linux/reset-controller.h>
+> >  #include <linux/of.h>
+> >
+> > @@ -234,6 +236,41 @@ static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
+> >         return cc->rclks[idx] ? &cc->rclks[idx]->hw : NULL;
+> >  }
+> >
+> > +#if IS_ENABLED(CONFIG_INTERCONNECT_CLK)
+> > +static int qcom_cc_icc_register(struct device *dev,
+> > +                               const struct qcom_cc_desc *desc)
+> > +{
+> > +       struct icc_clk_data *icd;
+> > +       int i;
+> > +
+> > +       if (!desc->icc_hws)
+> > +               return 0;
+> > +
+> > +       icd = devm_kcalloc(dev, desc->num_icc_hws, sizeof(*icd), GFP_KERNEL);
+> > +       if (!icd)
+> > +               return -ENOMEM;
+> > +
+> > +       for (i = 0; i < desc->num_icc_hws; i++) {
+> > +               icd[i].clk = devm_clk_hw_get_clk(dev, desc->icc_hws[i], "qcom");
+>
+> Make the con_id "icc" instead please, so we know the consumer is
+> icc_clk.
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-index 49b4b9c2c101..80cb017974d8 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-+++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-@@ -14,6 +14,18 @@ chosen {
- 	};
- };
- 
-+&cgi_main {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll0 {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll1 {
-+	clock-frequency = <25000000>;
-+};
-+
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index 81fda312f988..8aab027cf730 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -4,8 +4,10 @@
-  */
- 
- /dts-v1/;
-+#include <dt-bindings/clock/sophgo,sg2042-clkgen.h>
-+#include <dt-bindings/clock/sophgo,sg2042-pll.h>
-+#include <dt-bindings/clock/sophgo,sg2042-rpgate.h>
- #include <dt-bindings/interrupt-controller/irq.h>
--
- #include <dt-bindings/reset/sophgo,sg2042-reset.h>
- 
- #include "sg2042-cpus.dtsi"
-@@ -20,12 +22,54 @@ aliases {
- 		serial0 = &uart0;
- 	};
- 
-+	cgi_main: oscillator0 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_main";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll0: oscillator1 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll0";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll1: oscillator2 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll1";
-+		#clock-cells = <0>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		ranges;
- 
-+		pllclk: clock-controller@70300100c0 {
-+			compatible = "sophgo,sg2042-pll";
-+			reg = <0x70 0x300100c0 0x0 0x40>;
-+			clocks = <&cgi_main>, <&cgi_dpll0>, <&cgi_dpll1>;
-+			#clock-cells = <1>;
-+		};
-+
-+		rpgate: clock-controller@7030010368 {
-+			compatible = "sophgo,sg2042-rpgate";
-+			reg = <0x70 0x30010368 0x0 0x98>;
-+			clocks = <&clkgen GATE_CLK_RP_CPU_NORMAL>;
-+			#clock-cells = <1>;
-+		};
-+
-+		clkgen: clock-controller@7030012000 {
-+			compatible = "sophgo,sg2042-clkgen";
-+			reg = <0x70 0x30012000 0x0 0x1000>;
-+			clocks = <&pllclk MPLL_CLK>,
-+				 <&pllclk FPLL_CLK>,
-+				 <&pllclk DPLL0_CLK>,
-+				 <&pllclk DPLL1_CLK>;
-+			#clock-cells = <1>;
-+		};
-+
- 		clint_mswi: interrupt-controller@7094000000 {
- 			compatible = "sophgo,sg2042-aclint-mswi", "thead,c900-aclint-mswi";
- 			reg = <0x00000070 0x94000000 0x00000000 0x00004000>;
-@@ -341,6 +385,9 @@ uart0: serial@7040000000 {
- 			interrupt-parent = <&intc>;
- 			interrupts = <112 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <500000000>;
-+			clocks = <&clkgen GATE_CLK_UART_500M>,
-+				 <&clkgen GATE_CLK_APB_UART>;
-+			clock-names = "baudclk", "apb_pclk";
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			resets = <&rstgen RST_UART0>;
--- 
-2.25.1
+Ok.
 
+> Even better would be for the icc_clk device itself to be the
+> one requesting with devm_clk_hw_get_clk() so that we associate the clk
+> handle with the consumer device. It would also help us make it so that
+> drivers defer probe until their clk isn't an orphan.
+
+Not sure if I understand the comments correctly.
+
+In one of the previous patches, had
+	icd[i].clk = clks[noc_clks[i]]->hw.clk;
+
+This was said to be error prone since the clock would not be
+ref counted. Hence used devm_clk_hw_get_clk before doing
+icc_clk_register.
+
+Now, are you suggesting to use the direct clock pointer
+and do a devm_clk_hw_get_clk from the consumer driver?
+This will take care of the refcounting. However, we will
+have to add these clock entries to the consumer DT node.
+Is this ok?
+
+> > +               if (IS_ERR(icd[i].clk))
+> > +                       return dev_err_probe(dev, PTR_ERR(icd[i].clk),
+> > +                                            "get clock failed (%ld)\n",
+> > +                                            PTR_ERR(icd[i].clk));
+> > +
+> > +               icd[i].name = clk_hw_get_name(desc->icc_hws[i]);
+> > +       }
+> > +
+> > +       return PTR_ERR_OR_ZERO(devm_icc_clk_register(dev, desc->first_id,
+> > +                                                    desc->num_icc_hws, icd));
+> > +}
+> > +#else
+> > +static int qcom_cc_icc_register(struct device *dev,
+> > +                               const struct qcom_cc_desc *desc)
+> > +{
+> > +       return 0;
+> > +}
+>
+> Instead of this please have an
+>
+> 	if (!IS_ENABLED(CONFIG_INTERCONNECT_CLK))
+> 		return 0;
+
+Ok.
+
+> > +#endif
+> > +
+> >  int qcom_cc_really_probe(struct platform_device *pdev,
+> >                          const struct qcom_cc_desc *desc, struct regmap *regmap)
+> >  {
+> > @@ -303,7 +340,7 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+> >         if (ret)
+> >                 return ret;
+> >
+> > -       return 0;
+> > +       return qcom_cc_icc_register(dev, desc);
+> >  }
+> >  EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
+> >
+> > diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+> > index 9c8f7b798d9f..d8ac26d83f3c 100644
+> > --- a/drivers/clk/qcom/common.h
+> > +++ b/drivers/clk/qcom/common.h
+> > @@ -29,6 +29,9 @@ struct qcom_cc_desc {
+> >         size_t num_gdscs;
+> >         struct clk_hw **clk_hws;
+> >         size_t num_clk_hws;
+> > +       struct clk_hw **icc_hws;
+> > +       size_t num_icc_hws;
+> > +       unsigned int first_id;
+>
+> 'first_id' is gross.
+
+will change it to 'icc_id'.
+
+Thanks
+Varada
