@@ -1,120 +1,268 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C983BBFD;
-	Fri, 29 Mar 2024 05:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1AE2AF0D;
+	Fri, 29 Mar 2024 06:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711691320; cv=none; b=PF4sZhhARuqVFfdWJYpeV3j2ijKdNB7pURSAlCR5DC40L8tEuXLAJNlmw8e7ToKgKV2XUIvkl6TT7M5akZSnNGps8ucEPOL4YCoD/vtxivl5FkR5zflu8QkHOIs8lb1e3bm3wwklOgnRqn5YBkWZtVLdnb+H0seoEqh+rbWcMkQ=
+	t=1711693168; cv=none; b=ABF83+Kk+BbtponiiFC+pUPzwmJmKnx1CNl6ebcZstn6ZPcfYYWbZZwJp3EhgNBOuP9dXZorC8GPqWxOOWqGNfNw/95xiD5fRhL06Ox3f5IIIoSwo8TnaoM00YHD0elSA2ZCPfpcjXlUHZ5MnKVMQ36v8bYvrOSpU6UFaVe+o5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711691320; c=relaxed/simple;
-	bh=qvcY6w0n6m27gqcAzYeE6OlzeN+znnWVJJsgLbLsT/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hlJn9tkbSUGN5+lethzGIIjACyBBVwKXsTUk7znq4iKpcvyTkXcKIVOG0o5rGKqwfbiEatKl9tUoLe/d1c9kIQqsvO4UkcTz+A4K6I1DBsG1ck/oQo5LUarzJq2UbSVKOH97ZPoGaZ0AnlGp+SZXgOJZO4GyGL6he5AKNzADFVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xu5IY2V3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1711693168; c=relaxed/simple;
+	bh=VukMf/wiLDIDXbjGSrP5Oubho/u+UwmvOnHB+Z6T88M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jW6Y8ElNj4O3RqVcJxykthOK2qXWNBACwr/o50DFCVXvk9tY/GlfQ3LA7dLQOZ8n8EG+lnw1XH3XQI22SH3J1C1sc8l5qYebU1Mo0Q07UWVYP5Fe9hn+MPXIltzdoOFtESlucIco/6BvxxYpBO7C+wvKIWVyzRzQ8NA0k+0lHdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gjYWp65O; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xu5IY2V3"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42T51Uwt019330;
-	Fri, 29 Mar 2024 05:48:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=JXKIUdVUxa4Tbw/Vyh4B+9mxuatZC7Y14h4N11zw6Fo=; b=Xu
-	5IY2V3xHsf1hih1amUl9ZXnZTyB0m+RNAYaHfUBfS7x4qTlZZfplbARHKuK9iVI4
-	SWKeoMx2QG/Zz1WEETCmKaawa83yf6t4JL0U6m2xXrATjmqwiF0gU/4033WZ1vR0
-	KZESPX/mee9WkNvatDp7em2WXbwx7aosGKu1shb/U1jBqtD4ncNPNw2s8L4p6c4p
-	WMVlQQza1/PqRVFiXu82Dc0iiGJhIZ5VuhE6hv7NpqWViNv6Q59xeFmACo16ZM5x
-	t9yqLd35aBFB6EAKtGapq34DiozZbxhrDFQ6zlOIxshbx/8L6dNJOJmp/FKnJJGm
-	wAIxk/faNCjQe/s36nrw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x575maf28-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Mar 2024 05:48:34 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42T5mXh0030504
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Mar 2024 05:48:33 GMT
-Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 28 Mar
- 2024 22:48:28 -0700
-Message-ID: <9bdee018-8439-42ab-057a-f3241a66f09d@quicinc.com>
-Date: Fri, 29 Mar 2024 11:18:24 +0530
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gjYWp65O"
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5a47cecb98bso1016894eaf.0;
+        Thu, 28 Mar 2024 23:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711693166; x=1712297966; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5qNysMUgsVj2NxCjAJDWpjxUroK4J5IHGWofoBiS2I=;
+        b=gjYWp65On+rjem2E2GY7we+wp53XYElhfYltS9GbWI0i3IulOG7DToUU2OIzdJS85b
+         4hatPPgd/RMX23r76LVEgCQU+APFHHd0VfXl5ci1rGfMFNoNztwMW79uAkvrhRr4GQO/
+         zAbwK22mDieALiE4up4VTJdwu1cbgbUCacJPmLEUjFmSH1J33Mv8qpDlZLTEMWtim6up
+         jIEtVEI/cLp+24PgTNFVC051niNnYJcSmzamvIzyyGOEgDnlE+hWi54JVpma62nBecS3
+         cTJetFJ4M8zElYXqWOLsdyrbfo4dKTVqq1Ow5hq1ec4joztYpm9Eau5sbXSyLWLRfm5J
+         HSVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711693166; x=1712297966;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a5qNysMUgsVj2NxCjAJDWpjxUroK4J5IHGWofoBiS2I=;
+        b=mrHTcwcZ+FZoSRb/JcHYhIBKIGUUQPe/8+o56+kJS09fDTNlIZ7GiWazOHsKC2nVsk
+         jiD8LgtkI0Hw7AbyMGfV4xoC0FHkuhxQeWp09ozVCMHWbXOaEOcY88p8yugTV//PxvGC
+         DJT6+yyATKDNmRDJhlACdOH/CqLN3gv2mV2+LTbQENMXf+BzDeO64NqtMjugIDHI9++/
+         nLepH4f3XYjWCvHCTNLDC4oVWFESU9ramSf+uoPYVz9eg0HkzFgyMNhtEK+8bjWvCaBR
+         irlyJmlFMGB09F6YvXQTBz55Infdd72Qsv1uqw0H4l7/mGJgqhvbOCfb9Nq3fh3VN6Yk
+         aZaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXb7kk2cPiky4VesnlCmu6PSopLMjFA9HlBrvpAbq4+2L7nDqCrw0fdJYq9t5vD1sr1Yakdjc03CUp2gHfidBT6ml68Ht9jRCB4nXtpNmyYZWzg2SxCMJjYjKnkznMb4I30AMzueRHZbmQhQ4blHT4deflZNB9MmyLEUSs+d5sYM/J8Jg==
+X-Gm-Message-State: AOJu0YwfEDTaFc47clawmvcrrfjumLkyOP1Q6mRdP2Z+nY5mVFtmXUVu
+	cl292/Y2f3BpmJdrZQagsr1+qiB3cH7k+rw2qW4HlH8JoqBq0gZm
+X-Google-Smtp-Source: AGHT+IHk6VzaNA2lIv3vIFW8C8LFFIujSkvYiNCcizw35NkGfN9PQceTEP2ZxvaVFI4GV2ltBo/iDA==
+X-Received: by 2002:a05:6820:208:b0:5a4:7696:6ba8 with SMTP id bw8-20020a056820020800b005a476966ba8mr1254453oob.7.1711693165742;
+        Thu, 28 Mar 2024 23:19:25 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id do4-20020a05682028c400b005a22f8ae2dfsm613352oob.34.2024.03.28.23.19.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Mar 2024 23:19:25 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: aou@eecs.berkeley.edu,
+	chao.wei@sophgo.com,
+	conor@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	mturquette@baylibre.com,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	richardcochran@gmail.com,
+	robh+dt@kernel.org,
+	sboyd@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	guoren@kernel.org,
+	jszhang@kernel.org,
+	inochiama@outlook.com,
+	samuel.holland@sifive.com
+Cc: Chen Wang <unicorn_wang@outlook.com>
+Subject: [PATCH v13 0/5] riscv: sophgo: add clock support for sg2042
+Date: Fri, 29 Mar 2024 14:19:16 +0800
+Message-Id: <cover.1711692169.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v2] clk: qcom: gcc-sm8150: De-register
- gcc_cpuss_ahb_clk_src
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>
-References: <20240213-gcc-ao-support-v2-1-fd2127e8d8f4@quicinc.com>
- <39b26447-80c2-4d71-b859-32b4a40cb31d@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <39b26447-80c2-4d71-b859-32b4a40cb31d@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Qc2vGYnsGXSOBRJZgUWG9GW3_CnPbO86
-X-Proofpoint-GUID: Qc2vGYnsGXSOBRJZgUWG9GW3_CnPbO86
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-29_04,2024-03-28_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- mlxscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
- clxscore=1011 impostorscore=0 phishscore=0 priorityscore=1501 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2403210001
- definitions=main-2403290046
+Content-Transfer-Encoding: 8bit
+
+From: Chen Wang <unicorn_wang@outlook.com>
+
+This series adds clock controller support for sophgo sg2042.
+
+Thanks,
+Chen
+
+---
+
+Changes in v13:
+
+  The patch series is based on v6.9-rc1. You can simply review or test the
+  patches at the link [13].
+
+  Just added a minor fix for clk driver which was missed in v12.
+
+Changes in v12:
+
+  The patch series is based on v6.9-rc1. 
+
+  Improved the dirvier code as per review comments from Stephen Boyd.
+  - Remove default y for CLK_SOPHGO_SG2042.
+  - Optimize sg2042_pll_get_postdiv_1_2, move postdiv1_2 to the function.
+    scope and add more explaniation.
+  - Optimize sg2042_get_pll_ctl_setting.
+  - Switch to platform driver.
+  - Use clk_hw for initialization of struct clks.
+  - Don't use ignore_unused when using critical.
+  - Other code cleanup as per input form the reviewers.
+
+Changes in v11:
+
+  The patch series is based on v6.8-rc5. You can simply review or test the
+  patches at the link [12].
+
+  Quick fixed some dt_binding_check errors reported by Rob.
+
+Changes in v10:
+
+  The patch series is based on v6.8-rc4. You can simply review or test the
+  patches at the link [11].
+
+  Add input clocks for rpgate & clkgen.
+
+Changes in v9:
+  The patch series is based on v6.8-rc2. You can simply review or test the
+  patches at the link [10].
+
+  From this version, drop the system-controller node due to there is no actual
+  device corresponding to it in IC design. SYS_CTRL is just a registers segment
+  defined on TRM for misc functions. Now three clock-controllers are defined for
+  SG2042, the control registers of the three clock-controllers are scattered in
+  different memory address spaces:
+  - the first one is for pll clocks;
+  - the second one is for gate clocks for RP subsystem;
+  - the third one is for div/mux, and gate clocks working for other subsystem
+    than RP subsystem.
+
+Changes in v8:
+  The patch series is based on v6.7. You can simply review or test the
+  patches at the link [9].
+  
+  In this version, the main change is to split one clock provider into two.
+  Strictly follow the hardware instructions, in the memoymap, the control
+  registers of some clocks are defined in the SYS_CTRL segment, and the
+  control registers of other clocks are defined in the CLOCK segment.
+  Therefore, the new design defines two clock controllers, one as a child
+  node of the system control and the other as an independent clock controller
+  node.
+
+  This modification involves a major modification to the binding files, so
+  the reviewed-by tags has been deleted.
+
+Changes in v7:
+  The patch series is based on v6.7. You can simply review or test the
+  patches at the link [8].
+  - fixed initval issue.
+  - fixed pll clk crash issue.
+  - fixed warning reported by <lkp@intel.com>
+  - code optimization as per review comments.
+  - code cleanup and style improvements as per review comments and checkpatch
+    with "--strict"
+
+Changes in v6:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [7].
+  - fixed some warnings/errors reported by kernel test robot <lkp@intel.com>.
+
+Changes in v5:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [6].
+  - dt-bindings: improved yaml, such as:
+    - add vendor prefix for system-ctrl property for clock generator.
+    - Add explanation for system-ctrl property.
+  - move sophgo,sg2042-clkgen.yaml to directly under clock folder.
+  - fixed bugs for driver Makefile/Kconfig
+  - continue cleaning-up debug print for driver code.
+
+Changes in v4:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [5].
+  - dt-bindings: fixed a dt_binding_check error.
+
+Changes in v3:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [3].
+  - DTS: don't use syscon but define sg2042 specific system control node. More
+    background info can read [4].
+  - Updating minor issues in dt-bindings as per input from reviews.
+
+Changes in v2:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [2].
+  - Squashed the patch adding clock definitions with the patch adding the
+    binding for the clock controller.
+  - Updating dt-binding for syscon, remove oneOf for property compatible;
+    define clock controller as child of syscon.
+  - DTS changes: merge sg2042-clock.dtsi into sg2042.dtsi; move clock-frequency
+    property of osc to board devicethree due to the oscillator is outside the
+    SoC.
+  - Fixed some bugs in driver code during testing, including removing warnings
+    for rv32_defconfig.
+  - Updated MAINTAINERS info.
+
+Changes in v1:
+  The patch series is based on v6.7-rc1. You can simply review or test the
+  patches at the link [1].
+
+Link: https://lore.kernel.org/linux-riscv/cover.1699879741.git.unicorn_wang@outlook.com/ [1]
+Link: https://lore.kernel.org/linux-riscv/cover.1701044106.git.unicorn_wang@outlook.com/ [2]
+Link: https://lore.kernel.org/linux-riscv/cover.1701691923.git.unicorn_wang@outlook.com/ [3]
+Link: https://lore.kernel.org/linux-riscv/MA0P287MB03329AE180378E1A2E034374FE82A@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM/ [4]
+Link: https://lore.kernel.org/linux-riscv/cover.1701734442.git.unicorn_wang@outlook.com/ [5]
+Link: https://lore.kernel.org/linux-riscv/cover.1701938395.git.unicorn_wang@outlook.com/ [6]
+Link: https://lore.kernel.org/linux-riscv/cover.1701997033.git.unicorn_wang@outlook.com/ [7]
+Link: https://lore.kernel.org/linux-riscv/cover.1704694903.git.unicorn_wang@outlook.com/ [8]
+Link: https://lore.kernel.org/linux-riscv/cover.1705388518.git.unicorn_wang@outlook.com/ [9]
+Link: https://lore.kernel.org/linux-riscv/cover.1706854074.git.unicorn_wang@outlook.com/ [10]
+Link: https://lore.kernel.org/linux-riscv/cover.1708223519.git.unicorn_wang@outlook.com/ [11]
+Link: https://lore.kernel.org/linux-riscv/cover.1708397315.git.unicorn_wang@outlook.com/ [12]
+Link: https://lore.kernel.org/linux-riscv/cover.1711527932.git.unicorn_wang@outlook.com/ [13]
+
+---
+
+Chen Wang (5):
+  dt-bindings: clock: sophgo: add pll clocks for SG2042
+  dt-bindings: clock: sophgo: add RP gate clocks for SG2042
+  dt-bindings: clock: sophgo: add clkgen for SG2042
+  clk: sophgo: Add SG2042 clock driver
+  riscv: dts: add clock generator for Sophgo SG2042 SoC
+
+ .../bindings/clock/sophgo,sg2042-clkgen.yaml  |   49 +
+ .../bindings/clock/sophgo,sg2042-pll.yaml     |   45 +
+ .../bindings/clock/sophgo,sg2042-rpgate.yaml  |   43 +
+ .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |   12 +
+ arch/riscv/boot/dts/sophgo/sg2042.dtsi        |   49 +-
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/sophgo/Kconfig                    |    7 +
+ drivers/clk/sophgo/Makefile                   |    2 +
+ drivers/clk/sophgo/clk-sophgo-sg2042.c        | 1410 +++++++++++++++++
+ drivers/clk/sophgo/clk-sophgo-sg2042.h        |  216 +++
+ .../dt-bindings/clock/sophgo,sg2042-clkgen.h  |  111 ++
+ include/dt-bindings/clock/sophgo,sg2042-pll.h |   14 +
+ .../dt-bindings/clock/sophgo,sg2042-rpgate.h  |   58 +
+ 14 files changed, 2017 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-pll.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-rpgate.yaml
+ create mode 100644 drivers/clk/sophgo/Kconfig
+ create mode 100644 drivers/clk/sophgo/Makefile
+ create mode 100644 drivers/clk/sophgo/clk-sophgo-sg2042.c
+ create mode 100644 drivers/clk/sophgo/clk-sophgo-sg2042.h
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2042-clkgen.h
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2042-pll.h
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2042-rpgate.h
 
 
-On 3/28/2024 3:05 AM, Konrad Dybcio wrote:
-> On 13.02.2024 7:47 AM, Satya Priya Kakitapalli wrote:
->> De-register the gcc_cpuss_ahb_clk_src and its branch clocks
->> as there is no rate setting happening on them.
->>
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
->> Remove gcc_cpuss_ahb_clk_src and its branch clocks.
->> ---
->> Changes in v2:
->> - As per Konrad's comments, de-register the gcc_cpuss_ahb_clk_src
->>    instead of adding AO support as no rate-setting is happening on it.
->> - Link to v1: https://lore.kernel.org/r/20240123-gcc-ao-support-v1-0-6c18d5310874@quicinc.com
->> ---
-> Could you please confirm that this clock is governed by something external
-> like RPMh and needs no input whatshowever from HLOS?
+base-commit: 4cece764965020c22cff7665b18a012006359095
+-- 
+2.25.1
 
-
-Yes, this clock is configured to a certain frequency and controlled from 
-boot loader and runs at the same frequency always. There is no use case 
-in HLOS which modifies this rate, hence removing the modelling doesn't 
-cause any issue.
-
-
-> Konrad
