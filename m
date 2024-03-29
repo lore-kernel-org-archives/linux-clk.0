@@ -1,44 +1,43 @@
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89906BB22;
-	Fri, 29 Mar 2024 20:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F761E525;
+	Fri, 29 Mar 2024 20:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711745960; cv=none; b=YzO1owsrRqCd/Yvc4XzO7kdVPPnHtPwMJSUKAJVal1L+ZDClB1NdJ12IJmDyTzsi7/krAMoYjt9+eYqtAU0IH5JxtllLPmYPyB3Z/NMaG1kdBjyLnbLd1O6ArKAhiru+wjup2G4bBfUiu65e+htN+0WU3uQ0SyGzWDtmbmIZRaQ=
+	t=1711745960; cv=none; b=H6ET4jDEqIAQ/zIdm9ynqjJuo+3kvz6bk+YrA7E4mMW6nuPqXVMkhnvJvOx9XORNhU1o6C3I2fMvgrD0ZQ6qxv9onuTFLN+9/s6vacyNZ/H6OZ7v2UE5cvQaiH0FJACSL08cQ3OCbP7i9VXJhF1SIk2sMseW3e79cuVQtn8MIsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1711745960; c=relaxed/simple;
-	bh=TJg16k9up5iAADLfXxJqpl2ySGKF8ytj+xyo5UoGrSw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l3Vj3hXJRZNRPaOtayWHTohbbFBajqfuPlJe4hm8O3Tz5QRUJy6IabFiCT6nx6+5XU2NF7FgUcyu84TLQ66xhAiw3OyoVtvK/C7LTCbDT8NqCBpIG3yrzkEcl0EpSVWKKpgQ24dpodvA5QqZFOppOfwFJrVtrqU71EF47eXocpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=iykvs8wd; arc=none smtp.client-ip=45.89.224.132
+	bh=YWAC2wA+Kd+qKnhUcgXMYIYrKor/44A1/U+fkl2ef5g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U2ahPocGzyCasfoiSh++TnrhRwNW0DrudfbTz49rnNHmqFplQg19HGeUVRr6Ym+cE3VmN5AkQIwiJ0RTsKaOrir23AREmCZM+CvgEqe7Ti6qLwbct3IV79uV9mDi60r74JRUtAdXEY2DWl19pidtVuKh4E5FJ/X2T+LMzSXkRpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=l9SKmEPd; arc=none smtp.client-ip=45.89.224.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="iykvs8wd"
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="l9SKmEPd"
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 9FDD6120019;
-	Fri, 29 Mar 2024 23:59:16 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 9FDD6120019
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 45A46120013;
+	Fri, 29 Mar 2024 23:59:13 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 45A46120013
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1711745956;
-	bh=xuKBJ+Bt7jmJARjlnxEbw3uFcDYRdaA63r8bHT466l4=;
+	s=mail; t=1711745953;
+	bh=OxJ2dy3C1oN4LgtG/PWU8dFWty4P+oUQ+lLO4Ynkoeg=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=iykvs8wdwCMKO0S65V/uYgb1g9MuFAgajGnAnFO1mAEfY5MpQPY2/WqC8AWRd9g4C
-	 OinbB8il+h4M7HkRr/7gOLzijNxz18pvWbTPcpDJ15vU8bPPSTYMKlAFAYm37xWgd4
-	 XzzK3DTSQtre7k2j+ifUoIJDdIgt09GxEw6BTNy29qmutxItgt09uFhWCG5Ng2r/jj
-	 KPdL8LzwRcb5vovY8LitwA2+ETkEO9twiYbNWvKfZuXtG6TrTbTKEg5AltPiXOvlFH
-	 PQZ+3EfFmtMq+zDUaBrn3wd60IHEm7rR4XuTVNdSA4PqSE+dGauSlEI46j/P9ZWOLh
-	 G7Gt3WnOg9EJw==
+	b=l9SKmEPdpfEI5v2eEmtiOx/ZDPfs7I6pR9soVAYdCj1Mk5MDhqzuZLiz6Oi8W0pR2
+	 i0n/kPvapasE/e/0XpdlI/RQ8Zv66aLJDBep9pD5VJyQ43a9bkMNuwYfibLI0xiwmo
+	 z0oYYP4oyxikiq2Pb4JGWkOojObgtMdBrmzjgzvjmpyty+g2PM67nj8NJq4kcBN7Dn
+	 AvMHfjnN59fq+x8vRUu9dbq55ijlFXSaFkWPLm6LiK5mxoHUAN9sQkdCbpHQZjtfLc
+	 95NOZ3GXDAiTDjUbBO/VFGu0RDmkOwUF+3jW5cAUr34sQAvIlcJ/+SHABPVMLj+pWa
+	 aW4tEYuVRhM9g==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 29 Mar 2024 23:59:16 +0300 (MSK)
+	Fri, 29 Mar 2024 23:59:13 +0300 (MSK)
 Received: from CAB-WSD-L081021.sberdevices.ru (100.64.160.123) by
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Fri, 29 Mar 2024 23:59:16 +0300
+ 15.2.1118.40; Fri, 29 Mar 2024 23:59:12 +0300
 From: Dmitry Rokosov <ddrokosov@salutedevices.com>
 To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
 	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
@@ -49,12 +48,10 @@ CC: <kernel@salutedevices.com>, <rockosov@gmail.com>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, Dmitry Rokosov
 	<ddrokosov@salutedevices.com>
-Subject: [PATCH v1 4/6] clk: meson: a1: peripherals: support 'sys_pll_div16' clock as GEN input
-Date: Fri, 29 Mar 2024 23:58:44 +0300
-Message-ID: <20240329205904.25002-5-ddrokosov@salutedevices.com>
+Subject: [PATCH v1 0/6] clk: meson: introduce Amlogic A1 SoC Family CPU clock controller driver
+Date: Fri, 29 Mar 2024 23:58:40 +0300
+Message-ID: <20240329205904.25002-1-ddrokosov@salutedevices.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240329205904.25002-1-ddrokosov@salutedevices.com>
-References: <20240329205904.25002-1-ddrokosov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,34 +79,105 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/03/29 16:52:00 #24511844
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-The clock 'sys_pll_div16' is one of the parents of the GEN clock. It is
-generated in the A1 PLL clock controller with a fixed factor.
+The CPU clock controller plays a general role in the Amlogic A1 SoC
+family by generating CPU clocks. As an APB slave module, it offers the
+capability to inherit the CPU clock from two sources: the internal fixed
+clock known as 'cpu fixed clock' and the external input provided by the
+A1 PLL clock controller, referred to as 'syspll'.
 
-Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
----
- drivers/clk/meson/a1-peripherals.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It is important for the driver to handle the cpu_clk rate switching
+effectively by transitioning to the CPU fixed clock to avoid any
+potential execution freezes.
 
-diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
-index 621af1e6e4b2..3c4452f2b146 100644
---- a/drivers/clk/meson/a1-peripherals.c
-+++ b/drivers/clk/meson/a1-peripherals.c
-@@ -747,13 +747,13 @@ static struct clk_regmap fclk_div2_divn = {
- };
- 
- /*
-- * the index 2 is sys_pll_div16, it will be implemented in the CPU clock driver,
-  * the index 4 is the clock measurement source, it's not supported yet
-  */
--static u32 gen_table[] = { 0, 1, 3, 5, 6, 7, 8 };
-+static u32 gen_table[] = { 0, 1, 2, 3, 5, 6, 7, 8 };
- static const struct clk_parent_data gen_parent_data[] = {
- 	{ .fw_name = "xtal", },
- 	{ .hw = &rtc.hw },
-+	{ .fw_name = "sys_pll_div16", },
- 	{ .fw_name = "hifi_pll", },
- 	{ .fw_name = "fclk_div2", },
- 	{ .fw_name = "fclk_div3", },
+Validation:
+* to double-check all clk flags, run the below helper script:
+
+```
+pushd /sys/kernel/debug/clk
+for f in *; do
+    if [[ -f "$f/clk_flags" ]]; then
+        flags="$(cat $f/clk_flags | awk '{$1=$1};1' | sed ':a;N;$!ba;s/\n/ | /g')"
+        echo -e "$f: $flags"
+    fi
+done
+popd
+```
+
+* to trace the current clks state, use the
+  '/sys/kernel/debug/clk/clk_dump' node with jq post-processing:
+
+```
+$ cat /sys/kernel/debug/clk/clk_dump | jq '.' > clk_dump.json
+```
+
+* to see the CPU clock hierarchy, use the
+'/sys/kernel/debug/clk/clk_summary' node with jq post-processing:
+
+```
+$ cat /sys/kernel/debug/clk/clk_summary | jq '.' > clk_dump.json
+```
+
+when cpu_clk is inherited from sys_pll, it should be:
+
+```
+syspll_in    1  1  0  24000000    0  0  50000  Y  deviceless                 no_connection_id
+  sys_pll    2  2  0  1200000000  0  0  50000  Y  deviceless                 no_connection_id
+    cpu_clk  1  1  0  1200000000  0  0  50000  Y  cpu0                       no_connection_id
+                                                  cpu0                       no_connection_id
+                                                  fd000000.clock-controller  dvfs
+                                                  deviceless                 no_connection_id
+```
+
+and from cpu fixed clock:
+
+```
+fclk_div3_div           1  1  0  512000000  0  0  50000  Y  deviceless                 no_connection_id
+  fclk_div3             4  4  0  512000000  0  0  50000  Y  deviceless                 no_connection_id
+    cpu_fsource_sel0    1  1  0  512000000  0  0  50000  Y  deviceless                 no_connection_id
+      cpu_fsource_div0  1  1  0  128000000  0  0  50000  Y  deviceless                 no_connection_id
+        cpu_fsel0       1  1  0  128000000  0  0  50000  Y  deviceless                 no_connection_id
+          cpu_fclk      1  1  0  128000000  0  0  50000  Y  deviceless                 no_connection_id
+            cpu_clk     1  1  0  128000000  0  0  50000  Y  cpu0                       no_connection_id
+                                                            cpu0                       no_connection_id
+                                                            fd000000.clock-controller  dvfs
+                                                            deviceless                 no_connection_id
+```
+
+* to debug cpu clk rate propagation and proper parent switching, compile
+  kernel with the following definition:
+    $ sed -i "s/undef CLOCK_ALLOW_WRITE_DEBUGFS/define CLOCK_ALLOW_WRITE_DEBUGFS/g" drivers/clk/clk.c
+  after that, clk_rate debug node for each clock will be available for
+  write operation
+
+Dmitry Rokosov (6):
+  dt-bindings: clock: meson: a1: pll: introduce new syspll bindings
+  clk: meson: a1: pll: support 'syspll' general-purpose PLL for CPU
+    clock
+  dt-bindings: clock: meson: a1: peripherals: support sys_pll_div16
+    input
+  clk: meson: a1: peripherals: support 'sys_pll_div16' clock as GEN
+    input
+  dt-bindings: clock: meson: add A1 CPU clock controller bindings
+  clk: meson: a1: add Amlogic A1 CPU clock controller driver
+
+ .../bindings/clock/amlogic,a1-cpu-clkc.yaml   |  64 ++++
+ .../clock/amlogic,a1-peripherals-clkc.yaml    |   5 +-
+ .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   7 +-
+ drivers/clk/meson/Kconfig                     |  10 +
+ drivers/clk/meson/Makefile                    |   1 +
+ drivers/clk/meson/a1-cpu.c                    | 324 ++++++++++++++++++
+ drivers/clk/meson/a1-cpu.h                    |  16 +
+ drivers/clk/meson/a1-peripherals.c            |   4 +-
+ drivers/clk/meson/a1-pll.c                    |  78 +++++
+ drivers/clk/meson/a1-pll.h                    |   6 +
+ .../dt-bindings/clock/amlogic,a1-cpu-clkc.h   |  19 +
+ .../dt-bindings/clock/amlogic,a1-pll-clkc.h   |   2 +
+ 12 files changed, 531 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
+ create mode 100644 drivers/clk/meson/a1-cpu.c
+ create mode 100644 drivers/clk/meson/a1-cpu.h
+ create mode 100644 include/dt-bindings/clock/amlogic,a1-cpu-clkc.h
+
 -- 
 2.43.0
 
