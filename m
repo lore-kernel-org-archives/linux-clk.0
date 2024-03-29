@@ -1,197 +1,413 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE4364C
-	for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2024 12:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB65033CD0
+	for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2024 12:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711714638; cv=none; b=ZQqnoqX0l1wYJ465g2w7lW16cOBMxU6RncMs6THOdRhtBI7nzimAL/F9dAgjFqMcCe844s//1Y7RJjS6IETzscHY6Qqp6sIj+I3nbDLZuOn1g7Y6ZCmbuhh/YYQ6OfUDx+PFj6Lz3R8/hZeKzwYm7uVZYIRMkNKZnS3ojrVwMws=
+	t=1711715132; cv=none; b=PeZFIdIA6pxOQfHxubEVop1K+mL6Brxm/FKXzf3O9sYzmklO0OSqS+EywR1SZWQQhXMxbkPNyx7xHkuUFJj47YjJ3wMFDwKLBtNpyGljjJUAjOWVeAGVQ74Mrhg9NFQjCv1kNflL6GuUqA/G2tODakv2N68uHYvjFUmunj0nj5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711714638; c=relaxed/simple;
-	bh=WByLMNgr1x5IXePaODf7nGGqH1BATk1KTcosojsIMeU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TQYZ46PhRnloa/VAIg3oKlfnYvoE9zDFjrSuwYcjTtc02VqHhIwB8zpdC5+CjgmjSPilvX2567g6WU+f1Iq1crgZW/vRWe828HA00y/m3CmJIYkzFBzLFHiBlnZ4761Z/i6MMaMQvpl/7mavI4gKmQRIXMpsrrW5WO8F/h/J+Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
-	by xavier.telenet-ops.be with bizsmtp
-	id 4cGz2C00D0SSLxL01cGzro; Fri, 29 Mar 2024 13:17:06 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rqB9u-005D19-E1;
-	Fri, 29 Mar 2024 13:16:59 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1rqBAJ-00203s-EC;
-	Fri, 29 Mar 2024 13:16:59 +0100
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH v3] clk: starfive: jh7100: Use clk_hw for external input clocks
-Date: Fri, 29 Mar 2024 13:16:58 +0100
-Message-Id: <2082b46ab08755b1b66e0630a61619acac9d883f.1711714613.git.geert@linux-m68k.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1711715132; c=relaxed/simple;
+	bh=NelZGEKds+EBq023LctmwuPyl43/TaGPfUIHaFdsz5g=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=QRWYLLjLSN6ya+bdfvgsM7U8U+OZMaf34NKhq1BCy5B8MeEp5s4OUt5uTgPJaan1Ua4wIkZPYQHlbgyuAD64MMWSMBgp5SbW4aJTpBmEqSstIgrWmuWavG3H4/nJpr8Q13HFfeDN+VGPwh3aszEj6+J7QPRCZ8T/MnDlTZMy8Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=oBg7LiAt; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="oBg7LiAt"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4149521d76aso13014195e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2024 05:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1711715127; x=1712319927; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=v5qG/U9hsJ2/TO+XX2A43xcvKBIjoRnJJOB0t5+Ne5Y=;
+        b=oBg7LiAtu6RzMiMuUa4ZsYdosNcWqz2cFPhga0A3558LRl6WDE2m08I5u/r8VciY0t
+         vklt6zuEOk+chy4Ot580bwl2j9b1XopRICkMazdy2rUy3bJlT4m+Pw+Z/znLkZPzt7As
+         6LGhH0VgIfz090Le9tEdO8F777H22qzNzRrAN8kBgtO+p7IVVbXuPYkR00p0e6ZYN4hL
+         VtU8pR2YOxN5cDYKrES5KLcJdzqb00D9HYvPlIGpFT0Co6aenGUHBDW+RKKMMH+24U/6
+         apPDZVxtw0rfOa6Bd97Q+In4jPS0ZhhAxhx1hWgTBoaJIPFjnr9fhLmHiu0AXfPnpJsZ
+         qQcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711715127; x=1712319927;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v5qG/U9hsJ2/TO+XX2A43xcvKBIjoRnJJOB0t5+Ne5Y=;
+        b=nFlLVqzeocwGnunYCLvSIoLUYOtwtT/fkOY5qlkCKZfd6SbHh3nSGi2c66SBez+elY
+         jpo40WAL6bYlg4AVVuXm7Yglm720QOmE3PXxGni6A71lNMVbnu/btW9k+cQg4SS3f9gu
+         jvCF5r5xPvZoHdYJsW0svnbpcm6qFRmF/JkmKU2BpSHZpCsEAC6uhsY55AyOmJDRJ/T8
+         TxbE84Ak+t8AiKTgZ3YLe+QZZmnSb8tfi7Z/+fozK7G9JD5NuCXBXKfFd/LFUbQlgeGN
+         1uXxNfIWIaHZO3KWddrIOdvqo2g1LOXt1FYZ16chebqYpHDqydpBAWzzvYgufjcBFtYk
+         zpfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXahMQflz3yQPHyThsIhJKSiIVmxMzanHMconlLoPfkAEF8WATFfp1oAmnGBcIuRJ/lXF7+U/TijFc6MPxVM0Mmw/2g6ONnx0r9
+X-Gm-Message-State: AOJu0YzvmltmfETPXi8JXzWsQAiM94jfnrDvHd94w88XShCsqLto9kpO
+	qr3qhDw9Xpu2y93RZKTNxfKPmOKSMrCoBAq07tnugCAh37lmfKy5DTa6gYGstKI=
+X-Google-Smtp-Source: AGHT+IEgCLpnEBM91litn3xLg9XE0cA1AC8ZTPG6wt4KklbQswbioFpnSNC6ORZQQuB7LHW5rqVu+A==
+X-Received: by 2002:a05:600c:4f45:b0:415:4b1a:683b with SMTP id m5-20020a05600c4f4500b004154b1a683bmr1722200wmq.41.1711715127266;
+        Fri, 29 Mar 2024 05:25:27 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:f8f5:63d4:de5b:e4de])
+        by smtp.gmail.com with ESMTPSA id p18-20020a05600c359200b0041543b57ca2sm5290108wmq.21.2024.03.29.05.25.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Mar 2024 05:25:26 -0700 (PDT)
+References: <20240328010831.884487-1-jan.dakinevich@salutedevices.com>
+ <20240328010831.884487-4-jan.dakinevich@salutedevices.com>
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
+ <jbrunet@baylibre.com>, Michael  Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob  Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Philipp Zabel
+ <p.zabel@pengutronix.de>, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH v2 3/5] dt-bindings: clock: meson: document A1 SoC
+ audio clock controller driver
+Date: Fri, 29 Mar 2024 13:24:09 +0100
+In-reply-to: <20240328010831.884487-4-jan.dakinevich@salutedevices.com>
+Message-ID: <1j4jcp9qdl.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The Starfive JH7100 clock driver does not use the DT "clocks" property
-to find the external main input clock, but instead relies on the name of
-the actual clock provider ("osc_sys").  This is fragile, and caused
-breakage when sanitizing clock node names in DTS.
 
-Fix this by obtaining the external main input clock using
-devm_clk_get(), and passing the returned clk_hw object to
-devm_clk_hw_register_fixed_factor_parent_hw().
+On Thu 28 Mar 2024 at 04:08, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
 
-While name-based look-up of the other external input clocks works as-is,
-convert them to a similar clk_hw-based scheme to increase uniformity,
-and to decrease the number of (multiple identical) name-based look-ups.
+> Add device tree bindings for A1 SoC audio clock and reset controllers.
+>
+> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> ---
+>  .../bindings/clock/amlogic,a1-audio-clkc.yaml | 141 ++++++++++++++++++
+>  .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 122 +++++++++++++++
+>  .../reset/amlogic,meson-a1-audio-reset.h      |  29 ++++
+>  3 files changed, 292 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml
+>  create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+>  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml
+> new file mode 100644
+> index 000000000000..1c9ef3292f3c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml
+> @@ -0,0 +1,141 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/amlogic,a1-audio-clkc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Amlogic A1 Audio Clock Control Unit and Reset Controller
+> +
+> +maintainers:
+> +  - Neil Armstrong <neil.armstrong@linaro.org>
+> +  - Jerome Brunet <jbrunet@baylibre.com>
+> +  - Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - amlogic,a1-audio-clkc
+> +      - amlogic,a1-audio2-clkc
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 6
+> +    maxItems: 7
+> +
+> +  clock-names:
+> +    minItems: 6
+> +    maxItems: 7
+> +
+> +required:
+> +  - compatible
+> +  - '#clock-cells'
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - amlogic,a1-audio-clkc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: input core clock
+> +            - description: input main peripheral bus clock
+> +            - description: input dds_in
+> +            - description: input fixed pll div2
+> +            - description: input fixed pll div3
+> +            - description: input hifi_pll
+> +            - description: input oscillator (usually at 24MHz)
+> +        clocks-names:
+> +          items:
+> +            - const: core
+> +            - const: pclk
+> +            - const: dds_in
+> +            - const: fclk_div2
+> +            - const: fclk_div3
+> +            - const: hifi_pll
+> +            - const: xtal
+> +      required:
+> +        - '#reset-cells'
+> +    else:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: input main peripheral bus clock
+> +            - description: input dds_in
+> +            - description: input fixed pll div2
+> +            - description: input fixed pll div3
+> +            - description: input hifi_pll
+> +            - description: input oscillator (usually at 24MHz)
+> +        clock-names:
+> +          items:
+> +            - const: pclk
+> +            - const: dds_in
+> +            - const: fclk_div2
+> +            - const: fclk_div3
+> +            - const: hifi_pll
+> +            - const: xtal
 
-Fixes: f03606470886 ("riscv: dts: starfive: replace underscores in node names")
-Fixes: 4210be668a09ee20 ("clk: starfive: Add JH7100 clock generator driver")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
----
-After this is applied, the workaround in commit 7921e231f85a349d
-("riscv: dts: starfive: jh7100: fix root clock names") can be reverted.
+All the optional slave clock inputs are missing from this dcoumentation..
+They need to be documentated as well
 
-v3:
-  - Add Reviewed-by,
-  - Make jh7100_ext_clk[] const/__initconst,
-  - Add "(multiple identical)".
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
+> +    #include <dt-bindings/clock/amlogic,a1-peripherals-clkc.h>
+> +    #include <dt-bindings/clock/amlogic,a1-audio-clkc.h>
+> +    audio {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        clkc_audio: audio-clock-controller@fe050000 {
+> +                compatible = "amlogic,a1-audio-clkc";
+> +                reg = <0x0 0xfe050000 0x0 0xb0>;
+> +                #clock-cells = <1>;
+> +                #reset-cells = <1>;
+> +                clocks = <&clkc_audio2 AUD2_CLKID_AUDIOTOP>,
+> +                         <&clkc_periphs CLKID_AUDIO>,
+> +                         <&clkc_periphs CLKID_DDS_IN>,
+> +                         <&clkc_pll CLKID_FCLK_DIV2>,
+> +                         <&clkc_pll CLKID_FCLK_DIV3>,
+> +                         <&clkc_pll CLKID_HIFI_PLL>,
+> +                         <&xtal>;
+> +                clock-names = "core",
+> +                              "pclk",
+> +                              "dds_in",
+> +                              "fclk_div2",
+> +                              "fclk_div3",
+> +                              "hifi_pll",
+> +                              "xtal";
+> +        };
+> +
+> +        clkc_audio2: audio-clock-controller@fe054800 {
+> +                compatible = "amlogic,a1-audio2-clkc";
+> +                reg = <0x0 0xfe054800 0x0 0x20>;
+> +                #clock-cells = <1>;
+> +                clocks = <&clkc_periphs CLKID_AUDIO>,
+> +                         <&clkc_periphs CLKID_DDS_IN>,
+> +                         <&clkc_pll CLKID_FCLK_DIV2>,
+> +                         <&clkc_pll CLKID_FCLK_DIV3>,
+> +                         <&clkc_pll CLKID_HIFI_PLL>,
+> +                         <&xtal>;
+> +                clock-names = "pclk",
+> +                              "dds_in",
+> +                              "fclk_div2",
+> +                              "fclk_div3",
+> +                              "hifi_pll",
+> +                              "xtal";
+> +        };
+> +    };
+> diff --git a/include/dt-bindings/clock/amlogic,a1-audio-clkc.h b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+> new file mode 100644
+> index 000000000000..b30df3b1ae08
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,a1-audio-clkc.h
+> @@ -0,0 +1,122 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/*
+> + * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
+> + *
+> + * Author: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> + */
+> +
+> +#ifndef __A1_AUDIO_CLKC_BINDINGS_H
+> +#define __A1_AUDIO_CLKC_BINDINGS_H
+> +
+> +#define AUD_CLKID_DDR_ARB		1
+> +#define AUD_CLKID_TDMIN_A		2
+> +#define AUD_CLKID_TDMIN_B		3
+> +#define AUD_CLKID_TDMIN_LB		4
+> +#define AUD_CLKID_LOOPBACK		5
+> +#define AUD_CLKID_TDMOUT_A		6
+> +#define AUD_CLKID_TDMOUT_B		7
+> +#define AUD_CLKID_FRDDR_A		8
+> +#define AUD_CLKID_FRDDR_B		9
+> +#define AUD_CLKID_TODDR_A		10
+> +#define AUD_CLKID_TODDR_B		11
+> +#define AUD_CLKID_SPDIFIN		12
+> +#define AUD_CLKID_RESAMPLE		13
+> +#define AUD_CLKID_EQDRC			14
+> +#define AUD_CLKID_LOCKER		15
+> +#define AUD_CLKID_MST_A_MCLK_SEL	16
+> +#define AUD_CLKID_MST_A_MCLK_DIV	17
+> +#define AUD_CLKID_MST_A_MCLK		18
+> +#define AUD_CLKID_MST_B_MCLK_SEL	19
+> +#define AUD_CLKID_MST_B_MCLK_DIV	20
+> +#define AUD_CLKID_MST_B_MCLK		21
+> +#define AUD_CLKID_MST_C_MCLK_SEL	22
+> +#define AUD_CLKID_MST_C_MCLK_DIV	23
+> +#define AUD_CLKID_MST_C_MCLK		24
+> +#define AUD_CLKID_MST_D_MCLK_SEL	25
+> +#define AUD_CLKID_MST_D_MCLK_DIV	26
+> +#define AUD_CLKID_MST_D_MCLK		27
+> +#define AUD_CLKID_SPDIFIN_CLK_SEL	28
+> +#define AUD_CLKID_SPDIFIN_CLK_DIV	29
+> +#define AUD_CLKID_SPDIFIN_CLK		30
+> +#define AUD_CLKID_RESAMPLE_CLK_SEL	31
+> +#define AUD_CLKID_RESAMPLE_CLK_DIV	32
+> +#define AUD_CLKID_RESAMPLE_CLK		33
+> +#define AUD_CLKID_LOCKER_IN_CLK_SEL	34
+> +#define AUD_CLKID_LOCKER_IN_CLK_DIV	35
+> +#define AUD_CLKID_LOCKER_IN_CLK		36
+> +#define AUD_CLKID_LOCKER_OUT_CLK_SEL	37
+> +#define AUD_CLKID_LOCKER_OUT_CLK_DIV	38
+> +#define AUD_CLKID_LOCKER_OUT_CLK	39
+> +#define AUD_CLKID_EQDRC_CLK_SEL		40
+> +#define AUD_CLKID_EQDRC_CLK_DIV		41
+> +#define AUD_CLKID_EQDRC_CLK		42
+> +#define AUD_CLKID_MST_A_SCLK_PRE_EN	43
+> +#define AUD_CLKID_MST_A_SCLK_DIV	44
+> +#define AUD_CLKID_MST_A_SCLK_POST_EN	45
+> +#define AUD_CLKID_MST_A_SCLK		46
+> +#define AUD_CLKID_MST_B_SCLK_PRE_EN	47
+> +#define AUD_CLKID_MST_B_SCLK_DIV	48
+> +#define AUD_CLKID_MST_B_SCLK_POST_EN	49
+> +#define AUD_CLKID_MST_B_SCLK		50
+> +#define AUD_CLKID_MST_C_SCLK_PRE_EN	51
+> +#define AUD_CLKID_MST_C_SCLK_DIV	52
+> +#define AUD_CLKID_MST_C_SCLK_POST_EN	53
+> +#define AUD_CLKID_MST_C_SCLK		54
+> +#define AUD_CLKID_MST_D_SCLK_PRE_EN	55
+> +#define AUD_CLKID_MST_D_SCLK_DIV	56
+> +#define AUD_CLKID_MST_D_SCLK_POST_EN	57
+> +#define AUD_CLKID_MST_D_SCLK		58
+> +#define AUD_CLKID_MST_A_LRCLK_DIV	59
+> +#define AUD_CLKID_MST_A_LRCLK		60
+> +#define AUD_CLKID_MST_B_LRCLK_DIV	61
+> +#define AUD_CLKID_MST_B_LRCLK		62
+> +#define AUD_CLKID_MST_C_LRCLK_DIV	63
+> +#define AUD_CLKID_MST_C_LRCLK		64
+> +#define AUD_CLKID_MST_D_LRCLK_DIV	65
+> +#define AUD_CLKID_MST_D_LRCLK		66
+> +#define AUD_CLKID_TDMIN_A_SCLK_SEL	67
+> +#define AUD_CLKID_TDMIN_A_SCLK_PRE_EN	68
+> +#define AUD_CLKID_TDMIN_A_SCLK_POST_EN	69
+> +#define AUD_CLKID_TDMIN_A_SCLK		70
+> +#define AUD_CLKID_TDMIN_A_LRCLK		71
+> +#define AUD_CLKID_TDMIN_B_SCLK_SEL	72
+> +#define AUD_CLKID_TDMIN_B_SCLK_PRE_EN	73
+> +#define AUD_CLKID_TDMIN_B_SCLK_POST_EN	74
+> +#define AUD_CLKID_TDMIN_B_SCLK		75
+> +#define AUD_CLKID_TDMIN_B_LRCLK		76
+> +#define AUD_CLKID_TDMIN_LB_SCLK_SEL	77
+> +#define AUD_CLKID_TDMIN_LB_SCLK_PRE_EN	78
+> +#define AUD_CLKID_TDMIN_LB_SCLK_POST_EN	79
+> +#define AUD_CLKID_TDMIN_LB_SCLK		80
+> +#define AUD_CLKID_TDMIN_LB_LRCLK	81
+> +#define AUD_CLKID_TDMOUT_A_SCLK_SEL	82
+> +#define AUD_CLKID_TDMOUT_A_SCLK_PRE_EN	83
+> +#define AUD_CLKID_TDMOUT_A_SCLK_POST_EN	84
+> +#define AUD_CLKID_TDMOUT_A_SCLK		85
+> +#define AUD_CLKID_TDMOUT_A_LRCLK	86
+> +#define AUD_CLKID_TDMOUT_B_SCLK_SEL	87
+> +#define AUD_CLKID_TDMOUT_B_SCLK_PRE_EN	88
+> +#define AUD_CLKID_TDMOUT_B_SCLK_POST_EN	89
+> +#define AUD_CLKID_TDMOUT_B_SCLK		90
+> +#define AUD_CLKID_TDMOUT_B_LRCLK	91
+> +
+> +#define AUD2_CLKID_DDR_ARB		1
+> +#define AUD2_CLKID_PDM			2
+> +#define AUD2_CLKID_TDMIN_VAD		3
+> +#define AUD2_CLKID_TODDR_VAD		4
+> +#define AUD2_CLKID_VAD			5
+> +#define AUD2_CLKID_AUDIOTOP		6
+> +#define AUD2_CLKID_VAD_MCLK_SEL		7
+> +#define AUD2_CLKID_VAD_MCLK_DIV		8
+> +#define AUD2_CLKID_VAD_MCLK		9
+> +#define AUD2_CLKID_VAD_CLK_SEL		10
+> +#define AUD2_CLKID_VAD_CLK_DIV		11
+> +#define AUD2_CLKID_VAD_CLK		12
+> +#define AUD2_CLKID_PDM_DCLK_SEL		13
+> +#define AUD2_CLKID_PDM_DCLK_DIV		14
+> +#define AUD2_CLKID_PDM_DCLK		15
+> +#define AUD2_CLKID_PDM_SYSCLK_SEL	16
+> +#define AUD2_CLKID_PDM_SYSCLK_DIV	17
+> +#define AUD2_CLKID_PDM_SYSCLK		18
+> +
+> +#endif /* __A1_AUDIO_CLKC_BINDINGS_H */
+> diff --git a/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h b/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
+> new file mode 100644
+> index 000000000000..653fddba1d8f
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
+> @@ -0,0 +1,29 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/*
+> + * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
+> + *
+> + * Author: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H
+> +#define _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H
+> +
+> +#define AUD_RESET_DDRARB	0
+> +#define AUD_RESET_TDMIN_A	1
+> +#define AUD_RESET_TDMIN_B	2
+> +#define AUD_RESET_TDMIN_LB	3
+> +#define AUD_RESET_LOOPBACK	4
+> +#define AUD_RESET_TDMOUT_A	5
+> +#define AUD_RESET_TDMOUT_B	6
+> +#define AUD_RESET_FRDDR_A	7
+> +#define AUD_RESET_FRDDR_B	8
+> +#define AUD_RESET_TODDR_A	9
+> +#define AUD_RESET_TODDR_B	10
+> +#define AUD_RESET_SPDIFIN	11
+> +#define AUD_RESET_RESAMPLE	12
+> +#define AUD_RESET_EQDRC		13
+> +#define AUD_RESET_LOCKER	14
+> +#define AUD_RESET_TOACODEC	30
+> +#define AUD_RESET_CLKTREE	31
+> +
+> +#endif /* _DT_BINDINGS_AMLOGIC_MESON_A1_AUDIO_RESET_H */
 
-v2:
-  - Use devm_clk_hw_register_fixed_factor_parent_hw(),
-  - Drop no longer needed local osc_sys name.
----
- drivers/clk/starfive/clk-starfive-jh7100.c | 48 ++++++++++++++--------
- drivers/clk/starfive/clk-starfive-jh71x0.h |  1 +
- 2 files changed, 32 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/clk/starfive/clk-starfive-jh7100.c b/drivers/clk/starfive/clk-starfive-jh7100.c
-index 0342db24c27e10df..bdff207aa1f766e6 100644
---- a/drivers/clk/starfive/clk-starfive-jh7100.c
-+++ b/drivers/clk/starfive/clk-starfive-jh7100.c
-@@ -7,6 +7,7 @@
-  * Copyright (C) 2021 Emil Renner Berthing <kernel@esmil.dk>
-  */
- 
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/init.h>
-@@ -18,10 +19,18 @@
- #include "clk-starfive-jh71x0.h"
- 
- /* external clocks */
--#define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + 0)
--#define JH7100_CLK_OSC_AUD		(JH7100_CLK_END + 1)
--#define JH7100_CLK_GMAC_RMII_REF	(JH7100_CLK_END + 2)
--#define JH7100_CLK_GMAC_GR_MII_RX	(JH7100_CLK_END + 3)
-+enum {
-+	EXT_CLK_OSC_SYS,
-+	EXT_CLK_OSC_AUD,
-+	EXT_CLK_GMAC_RMII_REF,
-+	EXT_CLK_GMAC_GR_MII_RX,
-+	EXT_NUM_CLKS
-+};
-+
-+#define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + EXT_CLK_OSC_SYS)
-+#define JH7100_CLK_OSC_AUD		(JH7100_CLK_END + EXT_CLK_OSC_AUD)
-+#define JH7100_CLK_GMAC_RMII_REF	(JH7100_CLK_END + EXT_CLK_GMAC_RMII_REF)
-+#define JH7100_CLK_GMAC_GR_MII_RX	(JH7100_CLK_END + EXT_CLK_GMAC_GR_MII_RX)
- 
- static const struct jh71x0_clk_data jh7100_clk_data[] __initconst = {
- 	JH71X0__MUX(JH7100_CLK_CPUNDBUS_ROOT, "cpundbus_root", 0, 4,
-@@ -284,8 +293,11 @@ static struct clk_hw *jh7100_clk_get(struct of_phandle_args *clkspec, void *data
- 
- static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
- {
-+	static const char * const jh7100_ext_clk[EXT_NUM_CLKS] __initconst =
-+		{ "osc_sys", "osc_aud", "gmac_rmii_ref", "gmac_gr_mii_rxclk" };
- 	struct jh71x0_clk_priv *priv;
- 	unsigned int idx;
-+	struct clk *clk;
- 	int ret;
- 
- 	priv = devm_kzalloc(&pdev->dev, struct_size(priv, reg, JH7100_CLK_PLL0_OUT), GFP_KERNEL);
-@@ -298,13 +310,21 @@ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
--	priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
--							 "osc_sys", 0, 40, 1);
-+	for (idx = 0; idx < EXT_NUM_CLKS; idx++) {
-+		clk = devm_clk_get(&pdev->dev, jh7100_ext_clk[idx]);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+
-+		priv->ext[idx] = __clk_get_hw(clk);
-+	}
-+
-+	priv->pll[0] = devm_clk_hw_register_fixed_factor_parent_hw(priv->dev,
-+			"pll0_out", priv->ext[EXT_CLK_OSC_SYS], 0, 40, 1);
- 	if (IS_ERR(priv->pll[0]))
- 		return PTR_ERR(priv->pll[0]);
- 
--	priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
--							 "osc_sys", 0, 64, 1);
-+	priv->pll[1] = devm_clk_hw_register_fixed_factor_parent_hw(priv->dev,
-+			"pll1_out", priv->ext[EXT_CLK_OSC_SYS], 0, 64, 1);
- 	if (IS_ERR(priv->pll[1]))
- 		return PTR_ERR(priv->pll[1]);
- 
-@@ -331,16 +351,10 @@ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
- 
- 			if (pidx < JH7100_CLK_PLL0_OUT)
- 				parents[i].hw = &priv->reg[pidx].hw;
--			else if (pidx < JH7100_CLK_END)
-+			else if (pidx < JH7100_CLK_OSC_SYS)
- 				parents[i].hw = priv->pll[pidx - JH7100_CLK_PLL0_OUT];
--			else if (pidx == JH7100_CLK_OSC_SYS)
--				parents[i].fw_name = "osc_sys";
--			else if (pidx == JH7100_CLK_OSC_AUD)
--				parents[i].fw_name = "osc_aud";
--			else if (pidx == JH7100_CLK_GMAC_RMII_REF)
--				parents[i].fw_name = "gmac_rmii_ref";
--			else if (pidx == JH7100_CLK_GMAC_GR_MII_RX)
--				parents[i].fw_name = "gmac_gr_mii_rxclk";
-+			else if (pidx <= JH7100_CLK_GMAC_GR_MII_RX)
-+				parents[i].hw = priv->ext[pidx - JH7100_CLK_OSC_SYS];
- 		}
- 
- 		clk->hw.init = &init;
-diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
-index 23e052fc15495c41..4f46939179cd7418 100644
---- a/drivers/clk/starfive/clk-starfive-jh71x0.h
-+++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
-@@ -115,6 +115,7 @@ struct jh71x0_clk_priv {
- 	struct device *dev;
- 	void __iomem *base;
- 	struct clk_hw *pll[3];
-+	struct clk_hw *ext[4];
- 	struct jh71x0_clk reg[];
- };
- 
 -- 
-2.34.1
-
+Jerome
