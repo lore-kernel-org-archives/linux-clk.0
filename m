@@ -1,169 +1,197 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570A68562E
-	for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2024 12:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE4364C
+	for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2024 12:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711714210; cv=none; b=L268m+GkXU4SwpxGZz2VRU19ME5c3nVeZf7Zc/JFnsyxBFm4bSS7rHNUertMCKovos8Cc9/6J0WlHhrBdOxyHxXdWnlFiJQaMxr+/5/Up3kUVRCip7AxoaM6Ebybtte2utSeTMz4L2qJDIFpOB6Aw648Ew261wVwzSGyp1LM/54=
+	t=1711714638; cv=none; b=ZQqnoqX0l1wYJ465g2w7lW16cOBMxU6RncMs6THOdRhtBI7nzimAL/F9dAgjFqMcCe844s//1Y7RJjS6IETzscHY6Qqp6sIj+I3nbDLZuOn1g7Y6ZCmbuhh/YYQ6OfUDx+PFj6Lz3R8/hZeKzwYm7uVZYIRMkNKZnS3ojrVwMws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711714210; c=relaxed/simple;
-	bh=90VA0QRkzFCHjjzptHhuCk6ko7WZh1MGGqvVdOqYNOs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NVlofG0JLR4WffGPBzRHKYi9oZSLU/ctIenGswsFhqaD1Pkr7rNiI9I1gBFbN+d6iAwI7/5jBmKBgkPJxn0nk9jLwbgDY7UeCKJF4wBExg6j/JTCHJZuX/706k/dfchQJ9Gl5qSUuNacwnL9mXLqqtsxq3ZOi8Gxz3CS7QAvMmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=arDsjhrv; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="arDsjhrv"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-341730bfc46so1321260f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 29 Mar 2024 05:10:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711714207; x=1712319007; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mx53Ho+h705KudOYprlwABkMXqM2QEFDHzS3aw4XkWw=;
-        b=arDsjhrvE5RqbQzdv6XELMnqzj8VC3DgRWYKDzacIhDAR12qM/BD+svNXoc5qFJzfp
-         AtUYEeKRzk4krEYjxlxDb2jRSb3Y5lrgS0lmXvkWBbYC/9U9pOO+byHbD6t2/Dz2M6pw
-         2SZEgHtTto6f5G+oiiFKXG8hGx6+1AewbSJQs1chhE3u7fIZab4NAKdK06Pm+SK9HGGb
-         H3jNzT2JbicdZL5VS8g+dxwGLg9mIoMHGP7jT1NLtnt52gI38sxlqgLVQKuY2MNKRXzy
-         GjYwT5VSCIn4SXbtx+fahRzroe1t8YtFS4WCm8OLEwvzORd2g5C+RjFAShD+hIdVLb0T
-         CCCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711714207; x=1712319007;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mx53Ho+h705KudOYprlwABkMXqM2QEFDHzS3aw4XkWw=;
-        b=f2EFLlBot77EuHfGlSSw9BfDbSbABjG4TIh6Hp9oI7Q7lf7p4jESiGEIRZJQkf6XGn
-         MeT/+WHp1XlVLd69WfCCYHskAEXMpoER0Ma7UedqjJ9lG/8BDjImXvCVB/hM2rmDkNqM
-         6pTeKaoAbHv4ut2xmqgNQmDihaHab70OCSssj13xfpJAd9xoWjMV+rezXi8iaUE6QMuq
-         YZDe8MYfD7c5sUqFxZM0j3ZZnFDWmxrKwBvdHX9Ha5+sycpNj043c0edjm/nNcwnIheH
-         RSl14E+SGqL4lYxpYPl+qojG3uv3B4ZrR7CZzujJs5Yg3sSeE4NBTBc+EO9/+a7kgJAs
-         WaNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXGd7K7ysNy2G08kV1WWi7tBnV8Klk8Zl1fepR/QYLGdgZLZmaKBdj9/bLb4f7GY5UP0dewAf4n6kHLdLsY1Nn4p1Ft3nke2cK
-X-Gm-Message-State: AOJu0YybETxJkI7GiymPlcMmd/vzVtJQXyAOP15ibP2F+LiN+R1ukbxf
-	Z+FJwP0HuXKxfCL8mmwejg14ip1TZuLsTj/ZJUgZjxG10oeXNNWST8eGH86Ab4c=
-X-Google-Smtp-Source: AGHT+IGdkUJHuyGcvFRg8PxzTiztlFrx/8w5tyad1ZYe4AJ+FrbuWcSdMKz+VAm+mVo5ZrWdNoqQRw==
-X-Received: by 2002:adf:fa50:0:b0:33e:6056:6b8b with SMTP id y16-20020adffa50000000b0033e60566b8bmr1386402wrr.7.1711714205279;
-        Fri, 29 Mar 2024 05:10:05 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.50])
-        by smtp.gmail.com with ESMTPSA id d14-20020adff84e000000b0033b66c2d61esm4010336wrq.48.2024.03.29.05.10.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Mar 2024 05:10:04 -0700 (PDT)
-Message-ID: <031d0a35-b192-4161-beef-97b89d5d1da6@linaro.org>
-Date: Fri, 29 Mar 2024 13:10:03 +0100
+	s=arc-20240116; t=1711714638; c=relaxed/simple;
+	bh=WByLMNgr1x5IXePaODf7nGGqH1BATk1KTcosojsIMeU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TQYZ46PhRnloa/VAIg3oKlfnYvoE9zDFjrSuwYcjTtc02VqHhIwB8zpdC5+CjgmjSPilvX2567g6WU+f1Iq1crgZW/vRWe828HA00y/m3CmJIYkzFBzLFHiBlnZ4761Z/i6MMaMQvpl/7mavI4gKmQRIXMpsrrW5WO8F/h/J+Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
+	by xavier.telenet-ops.be with bizsmtp
+	id 4cGz2C00D0SSLxL01cGzro; Fri, 29 Mar 2024 13:17:06 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rqB9u-005D19-E1;
+	Fri, 29 Mar 2024 13:16:59 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rqBAJ-00203s-EC;
+	Fri, 29 Mar 2024 13:16:59 +0100
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: [PATCH v3] clk: starfive: jh7100: Use clk_hw for external input clocks
+Date: Fri, 29 Mar 2024 13:16:58 +0100
+Message-Id: <2082b46ab08755b1b66e0630a61619acac9d883f.1711714613.git.geert@linux-m68k.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/5] clk: qcom: ipq9574: Use icc-clk for enabling NoC
- related clocks
-To: Varadarajan Narayanan <quic_varada@quicinc.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- djakov@kernel.org, dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org,
- krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, mturquette@baylibre.com, quic_anusha@quicinc.com,
- robh@kernel.org
-References: <20240328075936.223461-1-quic_varada@quicinc.com>
- <20240328075936.223461-5-quic_varada@quicinc.com>
- <95f4e99a60cc97770fc3cee850b62faf.sboyd@kernel.org>
- <ZgaeGZL7QXh75aSA@hu-varada-blr.qualcomm.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <ZgaeGZL7QXh75aSA@hu-varada-blr.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/03/2024 11:55, Varadarajan Narayanan wrote:
->>> +
->>> +enum {
->>> +       ICC_ANOC_PCIE0,
->>> +       ICC_SNOC_PCIE0,
->>> +       ICC_ANOC_PCIE1,
->>> +       ICC_SNOC_PCIE1,
->>> +       ICC_ANOC_PCIE2,
->>> +       ICC_SNOC_PCIE2,
->>> +       ICC_ANOC_PCIE3,
->>> +       ICC_SNOC_PCIE3,
->>> +       ICC_SNOC_USB,
->>> +       ICC_ANOC_USB_AXI,
->>> +       ICC_NSSNOC_NSSCC,
->>> +       ICC_NSSNOC_SNOC_0,
->>> +       ICC_NSSNOC_SNOC_1,
->>> +       ICC_NSSNOC_PCNOC_1,
->>> +       ICC_NSSNOC_QOSGEN_REF,
->>> +       ICC_NSSNOC_TIMEOUT_REF,
->>> +       ICC_NSSNOC_XO_DCD,
->>> +       ICC_NSSNOC_ATB,
->>> +       ICC_MEM_NOC_NSSNOC,
->>> +       ICC_NSSNOC_MEMNOC,
->>> +       ICC_NSSNOC_MEM_NOC_1,
->>> +};
->>
->> Are these supposed to be in a dt-binding header?
-> 
-> Since these don't directly relate to the ids in the dt-bindings
-> not sure if they will be permitted there. Will move and post a
-> new version and get feedback.
+The Starfive JH7100 clock driver does not use the DT "clocks" property
+to find the external main input clock, but instead relies on the name of
+the actual clock provider ("osc_sys").  This is fragile, and caused
+breakage when sanitizing clock node names in DTS.
 
-You can answer this by yourself by looking at your DTS. Do you use them
-as well in the DTS?
+Fix this by obtaining the external main input clock using
+devm_clk_get(), and passing the returned clk_hw object to
+devm_clk_hw_register_fixed_factor_parent_hw().
 
-It's a pity we see here only parts of DTS, instead of full interconnect
-usage.
+While name-based look-up of the other external input clocks works as-is,
+convert them to a similar clk_hw-based scheme to increase uniformity,
+and to decrease the number of (multiple identical) name-based look-ups.
 
-Best regards,
-Krzysztof
+Fixes: f03606470886 ("riscv: dts: starfive: replace underscores in node names")
+Fixes: 4210be668a09ee20 ("clk: starfive: Add JH7100 clock generator driver")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+---
+After this is applied, the workaround in commit 7921e231f85a349d
+("riscv: dts: starfive: jh7100: fix root clock names") can be reverted.
+
+v3:
+  - Add Reviewed-by,
+  - Make jh7100_ext_clk[] const/__initconst,
+  - Add "(multiple identical)".
+
+v2:
+  - Use devm_clk_hw_register_fixed_factor_parent_hw(),
+  - Drop no longer needed local osc_sys name.
+---
+ drivers/clk/starfive/clk-starfive-jh7100.c | 48 ++++++++++++++--------
+ drivers/clk/starfive/clk-starfive-jh71x0.h |  1 +
+ 2 files changed, 32 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/clk/starfive/clk-starfive-jh7100.c b/drivers/clk/starfive/clk-starfive-jh7100.c
+index 0342db24c27e10df..bdff207aa1f766e6 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7100.c
++++ b/drivers/clk/starfive/clk-starfive-jh7100.c
+@@ -7,6 +7,7 @@
+  * Copyright (C) 2021 Emil Renner Berthing <kernel@esmil.dk>
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
+@@ -18,10 +19,18 @@
+ #include "clk-starfive-jh71x0.h"
+ 
+ /* external clocks */
+-#define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + 0)
+-#define JH7100_CLK_OSC_AUD		(JH7100_CLK_END + 1)
+-#define JH7100_CLK_GMAC_RMII_REF	(JH7100_CLK_END + 2)
+-#define JH7100_CLK_GMAC_GR_MII_RX	(JH7100_CLK_END + 3)
++enum {
++	EXT_CLK_OSC_SYS,
++	EXT_CLK_OSC_AUD,
++	EXT_CLK_GMAC_RMII_REF,
++	EXT_CLK_GMAC_GR_MII_RX,
++	EXT_NUM_CLKS
++};
++
++#define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + EXT_CLK_OSC_SYS)
++#define JH7100_CLK_OSC_AUD		(JH7100_CLK_END + EXT_CLK_OSC_AUD)
++#define JH7100_CLK_GMAC_RMII_REF	(JH7100_CLK_END + EXT_CLK_GMAC_RMII_REF)
++#define JH7100_CLK_GMAC_GR_MII_RX	(JH7100_CLK_END + EXT_CLK_GMAC_GR_MII_RX)
+ 
+ static const struct jh71x0_clk_data jh7100_clk_data[] __initconst = {
+ 	JH71X0__MUX(JH7100_CLK_CPUNDBUS_ROOT, "cpundbus_root", 0, 4,
+@@ -284,8 +293,11 @@ static struct clk_hw *jh7100_clk_get(struct of_phandle_args *clkspec, void *data
+ 
+ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
+ {
++	static const char * const jh7100_ext_clk[EXT_NUM_CLKS] __initconst =
++		{ "osc_sys", "osc_aud", "gmac_rmii_ref", "gmac_gr_mii_rxclk" };
+ 	struct jh71x0_clk_priv *priv;
+ 	unsigned int idx;
++	struct clk *clk;
+ 	int ret;
+ 
+ 	priv = devm_kzalloc(&pdev->dev, struct_size(priv, reg, JH7100_CLK_PLL0_OUT), GFP_KERNEL);
+@@ -298,13 +310,21 @@ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+ 
+-	priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
+-							 "osc_sys", 0, 40, 1);
++	for (idx = 0; idx < EXT_NUM_CLKS; idx++) {
++		clk = devm_clk_get(&pdev->dev, jh7100_ext_clk[idx]);
++		if (IS_ERR(clk))
++			return PTR_ERR(clk);
++
++		priv->ext[idx] = __clk_get_hw(clk);
++	}
++
++	priv->pll[0] = devm_clk_hw_register_fixed_factor_parent_hw(priv->dev,
++			"pll0_out", priv->ext[EXT_CLK_OSC_SYS], 0, 40, 1);
+ 	if (IS_ERR(priv->pll[0]))
+ 		return PTR_ERR(priv->pll[0]);
+ 
+-	priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
+-							 "osc_sys", 0, 64, 1);
++	priv->pll[1] = devm_clk_hw_register_fixed_factor_parent_hw(priv->dev,
++			"pll1_out", priv->ext[EXT_CLK_OSC_SYS], 0, 64, 1);
+ 	if (IS_ERR(priv->pll[1]))
+ 		return PTR_ERR(priv->pll[1]);
+ 
+@@ -331,16 +351,10 @@ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
+ 
+ 			if (pidx < JH7100_CLK_PLL0_OUT)
+ 				parents[i].hw = &priv->reg[pidx].hw;
+-			else if (pidx < JH7100_CLK_END)
++			else if (pidx < JH7100_CLK_OSC_SYS)
+ 				parents[i].hw = priv->pll[pidx - JH7100_CLK_PLL0_OUT];
+-			else if (pidx == JH7100_CLK_OSC_SYS)
+-				parents[i].fw_name = "osc_sys";
+-			else if (pidx == JH7100_CLK_OSC_AUD)
+-				parents[i].fw_name = "osc_aud";
+-			else if (pidx == JH7100_CLK_GMAC_RMII_REF)
+-				parents[i].fw_name = "gmac_rmii_ref";
+-			else if (pidx == JH7100_CLK_GMAC_GR_MII_RX)
+-				parents[i].fw_name = "gmac_gr_mii_rxclk";
++			else if (pidx <= JH7100_CLK_GMAC_GR_MII_RX)
++				parents[i].hw = priv->ext[pidx - JH7100_CLK_OSC_SYS];
+ 		}
+ 
+ 		clk->hw.init = &init;
+diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
+index 23e052fc15495c41..4f46939179cd7418 100644
+--- a/drivers/clk/starfive/clk-starfive-jh71x0.h
++++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
+@@ -115,6 +115,7 @@ struct jh71x0_clk_priv {
+ 	struct device *dev;
+ 	void __iomem *base;
+ 	struct clk_hw *pll[3];
++	struct clk_hw *ext[4];
+ 	struct jh71x0_clk reg[];
+ };
+ 
+-- 
+2.34.1
 
