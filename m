@@ -1,132 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EB31860;
-	Sat, 30 Mar 2024 02:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD15E6FCA;
+	Sat, 30 Mar 2024 03:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711764271; cv=none; b=XsWg95HIlN7EJgJV5mWYzhYmplKucbNfVo7/iNcwHmkh5Rrok03kk/d+V1lgJ9SbqyqFDfNWMindDW+uL3jP4vyMi+D/wdUIJgX9y91rYKvpm+T/qRS1cIoVWIyJHPuDZU0Qx4lfAV24yuu7pjKLoWdxlgS/Hh5WRGISVxAk/JM=
+	t=1711770174; cv=none; b=GibU7U8kOG2IWmstob7vwNAVZKdLhylsKUoCb/eF+uiFizjx7f7VE+OThy9rowmhjmRzrvvV8jOp3pzf3JCbJyMmLjOUjF2WwQHoo3ZmdTPU8QR0XFSVhy9aef1fk7RudU3KCRql4Z35e4DYjHUsL8REgs22k2kreh8qX3o4744=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711764271; c=relaxed/simple;
-	bh=Wk28etsJV9OLppkXGrvdl2+DqrkI79w+XXntZj2FBbU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DpJVyPoE4hLYgDMYehFqNsy530rdjQePfJwcA8It7oX+iAY/CspLQ6zcm02tosx6KnOvBK5IApFxZpQXUGKPWL3v65MjAhi0ZrUwpmHaAFQpEjrUZXO3uTV/4NgZur8dtcX/Seu0wVUW13Ta/UjVbW/cHZaPM0Q8wX7B7iBmur8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwEfoq0W; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711770174; c=relaxed/simple;
+	bh=6LZDg9AGzn+18w9JxnNUfCqimi2ku7OLKcBAfPtPVho=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LWcUKcw9UWbrbxX7aEspgoVwbX2fDE4hliEIKEHuEdppDaU8uMRvu6Acun1dMhmvuvN1msEluY/ZNdl/7rN+R+QYntMysan5S3NzE09LSk1TUVKBqlEps6gCUl4/7AHZ7dIxFK6Vg9TLOakWY6XI5ny+wWFMhR+6y/SIPzDelj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ikJq0UNv; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwEfoq0W"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29834C43394;
-	Sat, 30 Mar 2024 02:04:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711764271;
-	bh=Wk28etsJV9OLppkXGrvdl2+DqrkI79w+XXntZj2FBbU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TwEfoq0WQ6BpJv7ip3oXNkO4gICUL7k8jsZTM5wR6Hbkpj+uf3yMrkjSITf8lg2oJ
-	 LSPBR7yGJJstQw2/ymzK1ScvD1UWNVkkPx1J+UKlIiEPNVNuzb3FgCbXIzK8QgsD+Q
-	 qXeoYWg+eso3HWrnPYQSJDHx25ite5Kr3qokAOlsUpfNvFzXX95rG5CkgYYPC+M7jg
-	 BS0g+xYWYyXJqqHKdhp9Kd2Me9dM43JzyhW7rPRdUB6RrVq5UZaCG2k/8mBjxo71RN
-	 Ea5ihAAyocKEcPn8iDAccLRzt3CVmyavPyWz1yU+Jii5W7M7x/T8qRE2Q4Tw2vmA9G
-	 k0+DqH8MTzVYQ==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-56c1922096cso3187880a12.0;
-        Fri, 29 Mar 2024 19:04:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUteDGZWoA6sK+H7DbS2bdDxnzA7X/zx/t/wniT+u3y0rrt2i6dgSQm/YtYYLIgGtCV2tbgXOoKmUaMOZJ1ESCFZQbcFdau1wwWJHu7yabGDApRpxszHhfR0SwSQGTCp8PDHMQrwncXaXgOKC7hKh1QRCuLv/x3ybOJLvXaFjGZ2LUXRQ==
-X-Gm-Message-State: AOJu0YxIWtexKfeZLPn+Ma9FdWM1LjUnkomRp+Vtv0ML0rpk4N87dr0x
-	EfIDbnrjIEuNyLc/hjv3vox/Dn46cpdYL02jPq2Ir8ShJMN58NSyKVuSmtCo0TwzSI0VeKLH5jC
-	qNPp+oZeFQ4kDMj3Fps64PYNcNDY=
-X-Google-Smtp-Source: AGHT+IEAADUQy1Sg8zrh0aqV8FJVSevq0sivP9tiRStv3WrBnwPhBx8S+J/NFVmwsTVNfNzXHqaKOtMTVuCQ2ahr0dM=
-X-Received: by 2002:a50:a44a:0:b0:56b:a155:4b39 with SMTP id
- v10-20020a50a44a000000b0056ba1554b39mr2573169edb.28.1711764269734; Fri, 29
- Mar 2024 19:04:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ikJq0UNv"
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-5d8b70b39efso1946660a12.0;
+        Fri, 29 Mar 2024 20:42:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711770172; x=1712374972; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7eK8Zgv2EhfHCDXrRMiPvvB5f0GCwGnM8ahhB988ODM=;
+        b=ikJq0UNvcUAgHmg5WxZ+Wu8FOb7HXSYOJngH8HgPgoogEPwEytRxeb7mUtHBeJfVcV
+         yRfhe2SWnLJ7+EER6510nOLLWcYSDfSTz8GJb++qxZqr0DfdxRU9t6V5C7Apfw7m85xq
+         jw/3bGtTv/k+s5nDqv8oszQSgRYI6V/D6HKIHaDW+nI6Z3T6RKoA8nePB7GOYlAqC+gt
+         Fz6OimQ4208JnZP+WK/GRe0FAtho4kQTaxXle+cWKbKvQhzub7qVLXe97VNZTnmZHwmj
+         cHCM12pOHrESGgKVlUrg3U/UmL5g77c5YKkCoJf7v5ieedeTLfOa2CMUH6/RDDFqNROB
+         NFmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711770172; x=1712374972;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7eK8Zgv2EhfHCDXrRMiPvvB5f0GCwGnM8ahhB988ODM=;
+        b=Dnbgl4Ch0xc4LYFl083vIxXm23mE2uFojBs68UuMRPPiExdmGv4SyNHIYWY+WQW9ur
+         Gx4v8cpajKjNDdAyFDbR8wy2kCDh0ZkF5cs/BSRz4UotWgqQErHGKPiiZUkLnwPYyWaM
+         xwOG3G5+J4LAcF+Hrc20XXm3dhyYmevyhtJLQUDTzMHkMddeiE5+wPzUuPUO+hT9Wlo2
+         q91ZvrAnNTS986fMAvPEyy1sLA3HsHsRBDf93X5IeDZk5KbPgx4BwEwQpxAVEh7JfL5b
+         U36M0IFBUcqPueLf1/dj57W+FK34FPonzwukIa4fwC5DtIVUkY2Z3TqmSKZwdZhuGR6f
+         IVnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ4iMpuWcFi+b9B2O5MW1IvSNOUwUZZkoz9B7oSJYZ8Zt+1HhmHmLAdUDxR5eCNpWnk2lelIoWsx93lXErtHUJv/w/TMeUbfqXysu9aVAo4NXq8Ly7DwtDVsLyVbzj6Yd2AAVa/pVm
+X-Gm-Message-State: AOJu0YzmQkc4+Bee7iZZWc1RSiuX/6juA5OuI0ZSl09bD2bHZT6dtDur
+	DAbV5c9IM4b+bvLKszAV3iFZ+waQCvZ8hRZOSqyKfA0/xO9fA7pS
+X-Google-Smtp-Source: AGHT+IHAXoLb+nPFUDEvaW5M8v4dfY8CJEkYn86kGpRDeawOoSSXbCym4HLbLuSb9Du35p3GP0Fb7A==
+X-Received: by 2002:a05:6a20:549f:b0:1a6:f8cf:1e23 with SMTP id i31-20020a056a20549f00b001a6f8cf1e23mr3351963pzk.41.1711770172099;
+        Fri, 29 Mar 2024 20:42:52 -0700 (PDT)
+Received: from ?IPV6:2600:8802:b00:ba1:cc2b:c45f:1699:a1c3? ([2600:8802:b00:ba1:cc2b:c45f:1699:a1c3])
+        by smtp.gmail.com with ESMTPSA id ev9-20020a17090aeac900b002a03d13fef5sm5849162pjb.7.2024.03.29.20.42.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Mar 2024 20:42:51 -0700 (PDT)
+Message-ID: <4e014c33-44d7-483c-a9be-b24bb82cd1aa@gmail.com>
+Date: Fri, 29 Mar 2024 20:42:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_2E60E33C1F88A090B6B3A332AE528C6B8806@qq.com> <tencent_9B2484D4343EF1ED092E6A1F3A66E206C40A@qq.com>
-In-Reply-To: <tencent_9B2484D4343EF1ED092E6A1F3A66E206C40A@qq.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Sat, 30 Mar 2024 10:04:17 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTR8cb842GWa9Lpxz4y62ZtMumECOps8ojnZQx0TJMRxnQ@mail.gmail.com>
-Message-ID: <CAJF2gTR8cb842GWa9Lpxz4y62ZtMumECOps8ojnZQx0TJMRxnQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/5] soc: canaan: Deprecate SOC_CANAAN and use
- SOC_CANAAN_K210 for K210
-To: Yangyu Chen <cyy@cyyself.name>
-Cc: linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>, 
-	Damien Le Moal <dlemoal@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Mar 29, 2024 at 6:00=E2=80=AFAM Yangyu Chen <cyy@cyyself.name> wrot=
-e:
->
-> Since SOC_FOO should be deprecated from patch [1], and cleanup for other
-> SoCs is already in the mailing list [2,3,4], we remove the use of
-> SOC_CANAAN and use ARCH_CANAAN for SoCs vendored by Canaan instead from n=
-ow
-> on. Thus, we should also change the Makefile here to use ARCH_CANAAN.
->
-> Then, since we have introduced SOC_CANAAN_K210 for K210-specific drivers,
-> we should replace its drivers depends on SOC_CANAAN_K210 and default sele=
-ct
-> when it has the symbol SOC_CANAAN_K210.
->
-> [1] https://lore.kernel.org/linux-riscv/20221121221414.109965-1-conor@ker=
-nel.org/
-> [2] https://lore.kernel.org/linux-riscv/20240305-praying-clad-c4fbcaa7ed0=
-a@spud/
-> [3] https://lore.kernel.org/linux-riscv/20240305-fled-undrilled-41dc0c46b=
-b29@spud/
-> [4] https://lore.kernel.org/linux-riscv/20240305-stress-earflap-d7ddb8655=
-a4d@spud/
->
-> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
-> ---
->  drivers/soc/Makefile       | 2 +-
->  drivers/soc/canaan/Kconfig | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-> index ba8f5b5460e1..fb2bd31387d0 100644
-> --- a/drivers/soc/Makefile
-> +++ b/drivers/soc/Makefile
-> @@ -7,7 +7,7 @@ obj-y                           +=3D apple/
->  obj-y                          +=3D aspeed/
->  obj-$(CONFIG_ARCH_AT91)                +=3D atmel/
->  obj-y                          +=3D bcm/
-> -obj-$(CONFIG_SOC_CANAAN)       +=3D canaan/
-> +obj-$(CONFIG_ARCH_CANAAN)      +=3D canaan/
->  obj-$(CONFIG_ARCH_DOVE)                +=3D dove/
->  obj-$(CONFIG_MACH_DOVE)                +=3D dove/
->  obj-y                          +=3D fsl/
-> diff --git a/drivers/soc/canaan/Kconfig b/drivers/soc/canaan/Kconfig
-> index 43ced2bf8444..3121d351fea6 100644
-> --- a/drivers/soc/canaan/Kconfig
-> +++ b/drivers/soc/canaan/Kconfig
-> @@ -2,9 +2,9 @@
->
->  config SOC_K210_SYSCTL
->         bool "Canaan Kendryte K210 SoC system controller"
-> -       depends on RISCV && SOC_CANAAN && OF
-> +       depends on RISCV && SOC_CANAAN_K210 && OF
->         depends on COMMON_CLK_K210
-> -       default SOC_CANAAN
-> +       default SOC_CANAAN_K210
->         select PM
->         select MFD_SYSCON
->         help
-> --
-> 2.43.0
->
-For coming k230:
-
-Acked-by: Guo Ren <guoren@kernel.org>
+User-Agent: Mozilla Thunderbird
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH v2 1/5] clk: scmi: Allocate CLK operations dynamically
+To: Cristian Marussi <cristian.marussi@arm.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+Cc: sudeep.holla@arm.com, james.quinlan@broadcom.com,
+ vincent.guittot@linaro.org, peng.fan@oss.nxp.com, michal.simek@amd.com,
+ quic_sibis@quicinc.com, quic_nkela@quicinc.com, souvik.chakravarty@arm.com,
+ mturquette@baylibre.com, sboyd@kernel.org
+References: <20240325210025.1448717-1-cristian.marussi@arm.com>
+ <20240325210025.1448717-2-cristian.marussi@arm.com>
+Content-Language: en-US
+In-Reply-To: <20240325210025.1448717-2-cristian.marussi@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---
-Best Regards
- Guo Ren
+
+On 25/03/2024 14:00, Cristian Marussi wrote:
+> SCMI Clocks descriptors expose an increasing number of properties, thing
+> which, in turn, leads to a varying set of supported CLK operations to be
+> associated with each clock.
+> 
+> Providing statically pre-defined CLK operations structs for all the
+> possible combinations of allowed clock features is becoming cumbersome and
+> error-prone.
+> 
+> Allocate the per-clock operations descriptors dynamically and populate it
+> with the strictly needed set of operations depending on the advertised
+> clock properties: one descriptor is created for each distinct combination
+> of clock operations, so minimizing the number of clk_ops structures to the
+> strictly minimum needed.
+> 
+> CC: Michael Turquette <mturquette@baylibre.com>
+> CC: Stephen Boyd <sboyd@kernel.org>
+> CC: linux-clk@vger.kernel.org
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
