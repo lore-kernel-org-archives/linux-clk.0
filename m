@@ -1,111 +1,132 @@
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A38A812;
-	Fri, 29 Mar 2024 22:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EB31860;
+	Sat, 30 Mar 2024 02:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711753059; cv=none; b=OG4WsOYOc9J6oyukw4AnGj3dp3Fau/6O+mjMrkdqySVrqNtEgYKXyqxc+jYLMfsewc48vIeIAU9PaKfV0lEX6YtiMqJp23smAE1Ov95Y9GABPjjJDs+6eEoF9z99t3wow2yMojOda65fnU/928+GpGTRE3SsGUg9WxTrLpjqvcw=
+	t=1711764271; cv=none; b=XsWg95HIlN7EJgJV5mWYzhYmplKucbNfVo7/iNcwHmkh5Rrok03kk/d+V1lgJ9SbqyqFDfNWMindDW+uL3jP4vyMi+D/wdUIJgX9y91rYKvpm+T/qRS1cIoVWIyJHPuDZU0Qx4lfAV24yuu7pjKLoWdxlgS/Hh5WRGISVxAk/JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711753059; c=relaxed/simple;
-	bh=chl7iEqHAbv3XJsJqUtQPaCHiV/EOzL/RghiPGmtOEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JAGEZZNHLV9Vrus0mt3rZZ8EkBlbJC4vi5WfKY5KBkMF2CuF+L9MRGE03j9Dse7h2fD33YyDAvzNnE/P6+BMAMQBhjgEBrnpHl/FPiHPHg0oqxmwNg2VoNZbqWeRKmWxoh8ud0t4PWcVmRSG1YPSlA1d1A2IQqBDPVydebcSFlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UTgakdsr; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+	s=arc-20240116; t=1711764271; c=relaxed/simple;
+	bh=Wk28etsJV9OLppkXGrvdl2+DqrkI79w+XXntZj2FBbU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DpJVyPoE4hLYgDMYehFqNsy530rdjQePfJwcA8It7oX+iAY/CspLQ6zcm02tosx6KnOvBK5IApFxZpQXUGKPWL3v65MjAhi0ZrUwpmHaAFQpEjrUZXO3uTV/4NgZur8dtcX/Seu0wVUW13Ta/UjVbW/cHZaPM0Q8wX7B7iBmur8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwEfoq0W; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UTgakdsr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1711753054;
-	bh=qEL1ifuANFv5AmN9R/0BEzKfumJK07AKLwgE20hwRUU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UTgakdsrR3EbkWZLxw5KUOgroOkjpR7cLiR+BLNXzEGLXkJ3WKQ0QikVSeDfQmwra
-	 /8z7Z2YsSy/rRB+iS14lFS3IuN1q3pZiEBHZDb9NFiRA1t6ex0UiTrJ3Z4U6Chv32f
-	 sGCK5r2VHypFTXgLMaYKp+U4LDIvReR5svJwFNvERAYDDIcjHa66z8t53XWqQhhqSJ
-	 GQi4GdHYW8c7nYq1taK/7Ey5JUnt/k5x0BTq+yZmvJpxAOmlTp6/CfRCrE2SFJa5rn
-	 9wJceNvvkRjDU9wUpGSg2RFjrrkwHSO2GL96j29+o+kqnmIA+4VwE7wwW2iHY20+gD
-	 v6T0z/zy3372Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4V5wlx3ts5z4wc3;
-	Sat, 30 Mar 2024 09:57:33 +1100 (AEDT)
-Date: Sat, 30 Mar 2024 09:57:32 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <linux-next@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: Add clk-fixes branch to pending-fixes
-Message-ID: <20240330095732.644ba298@canb.auug.org.au>
-In-Reply-To: <9ddf393a481f2caf3cdcb7b1a9e5c80c.sboyd@kernel.org>
-References: <9ddf393a481f2caf3cdcb7b1a9e5c80c.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwEfoq0W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29834C43394;
+	Sat, 30 Mar 2024 02:04:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711764271;
+	bh=Wk28etsJV9OLppkXGrvdl2+DqrkI79w+XXntZj2FBbU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TwEfoq0WQ6BpJv7ip3oXNkO4gICUL7k8jsZTM5wR6Hbkpj+uf3yMrkjSITf8lg2oJ
+	 LSPBR7yGJJstQw2/ymzK1ScvD1UWNVkkPx1J+UKlIiEPNVNuzb3FgCbXIzK8QgsD+Q
+	 qXeoYWg+eso3HWrnPYQSJDHx25ite5Kr3qokAOlsUpfNvFzXX95rG5CkgYYPC+M7jg
+	 BS0g+xYWYyXJqqHKdhp9Kd2Me9dM43JzyhW7rPRdUB6RrVq5UZaCG2k/8mBjxo71RN
+	 Ea5ihAAyocKEcPn8iDAccLRzt3CVmyavPyWz1yU+Jii5W7M7x/T8qRE2Q4Tw2vmA9G
+	 k0+DqH8MTzVYQ==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-56c1922096cso3187880a12.0;
+        Fri, 29 Mar 2024 19:04:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUteDGZWoA6sK+H7DbS2bdDxnzA7X/zx/t/wniT+u3y0rrt2i6dgSQm/YtYYLIgGtCV2tbgXOoKmUaMOZJ1ESCFZQbcFdau1wwWJHu7yabGDApRpxszHhfR0SwSQGTCp8PDHMQrwncXaXgOKC7hKh1QRCuLv/x3ybOJLvXaFjGZ2LUXRQ==
+X-Gm-Message-State: AOJu0YxIWtexKfeZLPn+Ma9FdWM1LjUnkomRp+Vtv0ML0rpk4N87dr0x
+	EfIDbnrjIEuNyLc/hjv3vox/Dn46cpdYL02jPq2Ir8ShJMN58NSyKVuSmtCo0TwzSI0VeKLH5jC
+	qNPp+oZeFQ4kDMj3Fps64PYNcNDY=
+X-Google-Smtp-Source: AGHT+IEAADUQy1Sg8zrh0aqV8FJVSevq0sivP9tiRStv3WrBnwPhBx8S+J/NFVmwsTVNfNzXHqaKOtMTVuCQ2ahr0dM=
+X-Received: by 2002:a50:a44a:0:b0:56b:a155:4b39 with SMTP id
+ v10-20020a50a44a000000b0056ba1554b39mr2573169edb.28.1711764269734; Fri, 29
+ Mar 2024 19:04:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/2jX3G98RUqKjTWcvsvue9nQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/2jX3G98RUqKjTWcvsvue9nQ
-Content-Type: text/plain; charset=US-ASCII
+References: <tencent_2E60E33C1F88A090B6B3A332AE528C6B8806@qq.com> <tencent_9B2484D4343EF1ED092E6A1F3A66E206C40A@qq.com>
+In-Reply-To: <tencent_9B2484D4343EF1ED092E6A1F3A66E206C40A@qq.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Sat, 30 Mar 2024 10:04:17 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTR8cb842GWa9Lpxz4y62ZtMumECOps8ojnZQx0TJMRxnQ@mail.gmail.com>
+Message-ID: <CAJF2gTR8cb842GWa9Lpxz4y62ZtMumECOps8ojnZQx0TJMRxnQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/5] soc: canaan: Deprecate SOC_CANAAN and use
+ SOC_CANAAN_K210 for K210
+To: Yangyu Chen <cyy@cyyself.name>
+Cc: linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>, 
+	Damien Le Moal <dlemoal@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
-
-On Thu, 28 Mar 2024 18:06:43 -0700 Stephen Boyd <sboyd@kernel.org> wrote:
+On Fri, Mar 29, 2024 at 6:00=E2=80=AFAM Yangyu Chen <cyy@cyyself.name> wrot=
+e:
 >
-> Can you add the clk-fixes branch to linux-next's pending-fixes branch?
-> Krzysztof mentioned that it wasn't in there and some CI uses that. The
-> clk-fixes branch is always merged into the clk-next branch of clk.git
-> and usually it is fully merged into Linus' tree before the next release.
-> I accumulate clk framework and driver fixes on this branch and send code
-> from here after the merge window closes.
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-fixes
+> Since SOC_FOO should be deprecated from patch [1], and cleanup for other
+> SoCs is already in the mailing list [2,3,4], we remove the use of
+> SOC_CANAAN and use ARCH_CANAAN for SoCs vendored by Canaan instead from n=
+ow
+> on. Thus, we should also change the Makefile here to use ARCH_CANAAN.
+>
+> Then, since we have introduced SOC_CANAAN_K210 for K210-specific drivers,
+> we should replace its drivers depends on SOC_CANAAN_K210 and default sele=
+ct
+> when it has the symbol SOC_CANAAN_K210.
+>
+> [1] https://lore.kernel.org/linux-riscv/20221121221414.109965-1-conor@ker=
+nel.org/
+> [2] https://lore.kernel.org/linux-riscv/20240305-praying-clad-c4fbcaa7ed0=
+a@spud/
+> [3] https://lore.kernel.org/linux-riscv/20240305-fled-undrilled-41dc0c46b=
+b29@spud/
+> [4] https://lore.kernel.org/linux-riscv/20240305-stress-earflap-d7ddb8655=
+a4d@spud/
+>
+> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> ---
+>  drivers/soc/Makefile       | 2 +-
+>  drivers/soc/canaan/Kconfig | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+> index ba8f5b5460e1..fb2bd31387d0 100644
+> --- a/drivers/soc/Makefile
+> +++ b/drivers/soc/Makefile
+> @@ -7,7 +7,7 @@ obj-y                           +=3D apple/
+>  obj-y                          +=3D aspeed/
+>  obj-$(CONFIG_ARCH_AT91)                +=3D atmel/
+>  obj-y                          +=3D bcm/
+> -obj-$(CONFIG_SOC_CANAAN)       +=3D canaan/
+> +obj-$(CONFIG_ARCH_CANAAN)      +=3D canaan/
+>  obj-$(CONFIG_ARCH_DOVE)                +=3D dove/
+>  obj-$(CONFIG_MACH_DOVE)                +=3D dove/
+>  obj-y                          +=3D fsl/
+> diff --git a/drivers/soc/canaan/Kconfig b/drivers/soc/canaan/Kconfig
+> index 43ced2bf8444..3121d351fea6 100644
+> --- a/drivers/soc/canaan/Kconfig
+> +++ b/drivers/soc/canaan/Kconfig
+> @@ -2,9 +2,9 @@
+>
+>  config SOC_K210_SYSCTL
+>         bool "Canaan Kendryte K210 SoC system controller"
+> -       depends on RISCV && SOC_CANAAN && OF
+> +       depends on RISCV && SOC_CANAAN_K210 && OF
+>         depends on COMMON_CLK_K210
+> -       default SOC_CANAAN
+> +       default SOC_CANAAN_K210
+>         select PM
+>         select MFD_SYSCON
+>         help
+> --
+> 2.43.0
+>
+For coming k230:
 
-Added from Tuesday.
+Acked-by: Guo Ren <guoren@kernel.org>
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/2jX3G98RUqKjTWcvsvue9nQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmYHR1wACgkQAVBC80lX
-0GzM4Qf+JK0mff1R2HHO4C8kWQxHj4T0oKZwFkdh5F6QRPDtHQ1q25RN0xJSYWFw
-EqP6uBT79acZzKFEiI9i0+gtqbp4rhw1wQSNzuF1wO/c9nvdwI/0TNbZdYFqjlKA
-nglA5WbshoBvWCYygXhCDy5DRh5wr6ukNuN2e5T4r8tEsAIjw5Fq2nNcCKFbDDjh
-h3vlIGo4ekzXUJ0NI8vlQfpJFtuTHqPG8B54mhYpE+QJomV15yhKGas+jMcAMHiD
-CKiKMU+fhuGog5C6JDEG+TFYHc8OOBrxpwJenfONDy97osLWHt33OfD4nWE5haFu
-PNnPZ2g4rK0miuXKNfflWbEAKyLjkg==
-=uy3o
------END PGP SIGNATURE-----
-
---Sig_/2jX3G98RUqKjTWcvsvue9nQ--
+--
+Best Regards
+ Guo Ren
