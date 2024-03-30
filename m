@@ -1,94 +1,156 @@
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5841BB642;
-	Sat, 30 Mar 2024 03:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7009EADF;
+	Sat, 30 Mar 2024 09:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711770249; cv=none; b=EM1xdZMwYu0HNKszHI+hqoalmf6vuFnjBEBS0z4FKI1M2TZ/etgyRzJ4quidmGvYj1FL1L58gCfCaT0Ifb8EjNl1h95ICpFjecnSuMEo87HZnHWWW2G0yU/3bn3MRowq4UGAbjMhMVomuUo+X2aMrwNbCAtqOlVnVmos7o5DueI=
+	t=1711791043; cv=none; b=Xk1D5/Kz3G29JBjVrvjgy0mtwRkdO4z8gjd7gFg4J0ly+xWxncuzmG0UQbOlVSQ61EFeS8eJ2n5oy4pZ+znvmw6uLsr09NulpVPPPo97UV/8qU6OZxdpreKjMBDwhgv+kyYLL3RPM4DCE2t/IbwVTYwb5xMbQRva20XTL+wevH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711770249; c=relaxed/simple;
-	bh=QdFTG23hbXU6axx+snIQYEAfo0yAVMQ85LzrTKrvjTI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hHUZGKhcVhVMp6EvyeaYHudQTcWtMGp+X5ZG5/7rb8P059Av/Fi4h2UHaXYEyecWC1GAmR24D0o18EPTEoWdwd4Is1myspESeTjfhXuvjQmiRV0Lmnbp+KdERACEUYpkJVoYz2sl53c6Lfa0g7YMak8CSLL3BhMEyTtBC3kQ+Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jPdy7BQj; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1711791043; c=relaxed/simple;
+	bh=O31tmMlYNDhIfcohA+3IDTmFUeZNs3Ca+9iLfjyJ85k=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGvbP1PmWOpvJZULGO9m+z6ijjKq3aOGr097bfH4W/honWRCbaya2ZKXt6qn/8+bNB7sObM6KcMp6/C8AttWqY+ASpmYpd2vN8xWPBCyTh95VP/ssft58lca1a6phO7b9YN4zzCPXzEQItnHeGhUm2/fZC19nve9Ubl7s2FgiXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k+gimahY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jPdy7BQj"
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-5d8b519e438so1805645a12.1;
-        Fri, 29 Mar 2024 20:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711770247; x=1712375047; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mZVCYA6fIZw7UVkEo5rDiYQNpX8Kx+zZ6SIOO647FO0=;
-        b=jPdy7BQjhHBEpRkgW0LOZESMJAErH7KB3U6+ZdZLUS6TWzfvgyLG+dp0xBgoBEHJV9
-         +kqttJg/Lo4Af2PsLp9XAI75RDvTFT562uc+g+2EmT1mPp3p7F4B+W2x/e3BPuQdIYVn
-         335jO7taqq32+SrGtPTiPpWXVnz0Y3IJdB5bSZHRFnkSdqXRMnV5iWM/5dkUx+phxIPQ
-         ljuSvJObT23erV3iHfRW1UAokbk7eXfau1XN2Ar+zlk3BSudP49Z8mFmlbMobzLEXtQ0
-         wTElQWFQcr5Ek10n5A9n9UHEz6BroD97vDMSAqwCeq1OfW3EFcD+dmGnXNRbqXrmE7BV
-         qJAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711770247; x=1712375047;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mZVCYA6fIZw7UVkEo5rDiYQNpX8Kx+zZ6SIOO647FO0=;
-        b=NLXRxamr+4WUtUio4gsQcnUojjszFExZVb0wT4v2aVODIZBZedgw2GVdAyCj9EdWO8
-         LmXJOoG/x+P7sWHYNf1xFfmhQMiVeg+thAMCnalXMYl7xx38CGXww4fJlrXtB3H6y0sC
-         r7AG72uwTViVjua0nBaEKG97jl85ZnfOFQgSk12Yu2N4uAOAS3CI6F7qJTTtjcQ6TB8+
-         Z4XD6KEo6/k9zalYBYwnYRJ9+jit8j4xfXHrK/rhOiEtQMj0gbDJAzR/4AWFqmVIFsdy
-         FeKSsi9Wkl9zRyRaJ0l3YViE1GRe4HjGIpw2ns95jPWdZPr4iGjWf5I1zC3ps09yZc0G
-         Vplg==
-X-Forwarded-Encrypted: i=1; AJvYcCVc+mx6C1oi5qavvwq/GoMH34GeJd5idzJfS8zXurlHJK8idpt+9i5HNWrOpCPY0P7Z43DyWt/CHNCyUqaPUQOx00VpjHfAZK4NrbzMz0WLXCyE2pjBYkCTsG4TpzYkXoCmgu/x83Nh
-X-Gm-Message-State: AOJu0YyIa4VqlJtUscV1knCeGN7xtroQJSun+1dFWTV06IN55txsi53w
-	F3BtKQgcQBZMR6kznYfI8PjQ9Nk/dXmm9MJhZdczuGLN2WjH1pbI
-X-Google-Smtp-Source: AGHT+IEmoSr88aI1tp+TOCDmnOMuadV/HCPsleSFk0SPWG5ugOkpDNxfajnHjrmIfHw/RxPRVD3dKw==
-X-Received: by 2002:a17:903:555:b0:1e2:577:f694 with SMTP id jo21-20020a170903055500b001e20577f694mr3836272plb.61.1711770247560;
-        Fri, 29 Mar 2024 20:44:07 -0700 (PDT)
-Received: from ?IPV6:2600:8802:b00:ba1:cc2b:c45f:1699:a1c3? ([2600:8802:b00:ba1:cc2b:c45f:1699:a1c3])
-        by smtp.gmail.com with ESMTPSA id w20-20020a1709027b9400b001dca3a65200sm4228337pll.228.2024.03.29.20.44.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Mar 2024 20:44:06 -0700 (PDT)
-Message-ID: <5e5c81af-a7c8-44b8-b5df-3153256fb928@gmail.com>
-Date: Fri, 29 Mar 2024 20:44:05 -0700
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k+gimahY"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42U8mGiO024176;
+	Sat, 30 Mar 2024 09:30:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=qcppdkim1; bh=BqN2enxxA0AlYVe5KnB8a
+	zdCJIlxTCplM68XTDaCFuY=; b=k+gimahYOblSKVY7s0EYR27OPf6KvbJUGFBB6
+	2CWILwFB/Y4oujnIO3WsqY0lShUOqKWDJ41JoneZ+WYiHxQT2u3LWl09brp2kvzS
+	t+YL+RB1j2St3Ris/8htcPLbYRpKoOEuDr9ASaJWV2mJZ88vVv71p8j7q0rQj1Ox
+	kUhIi/Nx4s8ZGflc5VEgdv8ZJFzp9k21Pw7key4divm+oA4xehHNOv5BqBQu4pWE
+	O03mIm8xfQ9LOqu8f0UPVLWWVfl5uQCKfVk0BJYSCkDhdcdhwgtmOYr+L3w3Wx0H
+	xmKrSDz7FTcbRXPCOkqox5W0PWZpcowIVF4WMQkUGOquBZ2Mg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x69pvrpx9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 30 Mar 2024 09:30:37 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42U9UZSZ030761
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 30 Mar 2024 09:30:35 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Sat, 30 Mar 2024 02:30:31 -0700
+Date: Sat, 30 Mar 2024 15:00:27 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Stephen Boyd <sboyd@kernel.org>, <andersson@kernel.org>,
+        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <djakov@kernel.org>, <dmitry.baryshkov@linaro.org>,
+        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <mturquette@baylibre.com>, <quic_anusha@quicinc.com>,
+        <robh@kernel.org>
+Subject: Re: [PATCH v5 4/5] clk: qcom: ipq9574: Use icc-clk for enabling NoC
+ related clocks
+Message-ID: <Zgfbs5SFN2cA0gSK@hu-varada-blr.qualcomm.com>
+References: <20240328075936.223461-1-quic_varada@quicinc.com>
+ <20240328075936.223461-5-quic_varada@quicinc.com>
+ <95f4e99a60cc97770fc3cee850b62faf.sboyd@kernel.org>
+ <ZgaeGZL7QXh75aSA@hu-varada-blr.qualcomm.com>
+ <031d0a35-b192-4161-beef-97b89d5d1da6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v2 5/5] clk: scmi: Add support for get/set duty_cycle
- operations
-To: Cristian Marussi <cristian.marussi@arm.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-Cc: sudeep.holla@arm.com, james.quinlan@broadcom.com,
- vincent.guittot@linaro.org, peng.fan@oss.nxp.com, michal.simek@amd.com,
- quic_sibis@quicinc.com, quic_nkela@quicinc.com, souvik.chakravarty@arm.com,
- mturquette@baylibre.com, sboyd@kernel.org
-References: <20240325210025.1448717-1-cristian.marussi@arm.com>
- <20240325210025.1448717-6-cristian.marussi@arm.com>
-Content-Language: en-US
-In-Reply-To: <20240325210025.1448717-6-cristian.marussi@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <031d0a35-b192-4161-beef-97b89d5d1da6@linaro.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: MCE8G2q1LBiie2LNQErgRJhK3oRwQD5V
+X-Proofpoint-GUID: MCE8G2q1LBiie2LNQErgRJhK3oRwQD5V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-30_05,2024-03-28_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=750 clxscore=1015 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2403210001 definitions=main-2403300077
 
+On Fri, Mar 29, 2024 at 01:10:03PM +0100, Krzysztof Kozlowski wrote:
+> On 29/03/2024 11:55, Varadarajan Narayanan wrote:
+> >>> +
+> >>> +enum {
+> >>> +       ICC_ANOC_PCIE0,
+> >>> +       ICC_SNOC_PCIE0,
+> >>> +       ICC_ANOC_PCIE1,
+> >>> +       ICC_SNOC_PCIE1,
+> >>> +       ICC_ANOC_PCIE2,
+> >>> +       ICC_SNOC_PCIE2,
+> >>> +       ICC_ANOC_PCIE3,
+> >>> +       ICC_SNOC_PCIE3,
+> >>> +       ICC_SNOC_USB,
+> >>> +       ICC_ANOC_USB_AXI,
+> >>> +       ICC_NSSNOC_NSSCC,
+> >>> +       ICC_NSSNOC_SNOC_0,
+> >>> +       ICC_NSSNOC_SNOC_1,
+> >>> +       ICC_NSSNOC_PCNOC_1,
+> >>> +       ICC_NSSNOC_QOSGEN_REF,
+> >>> +       ICC_NSSNOC_TIMEOUT_REF,
+> >>> +       ICC_NSSNOC_XO_DCD,
+> >>> +       ICC_NSSNOC_ATB,
+> >>> +       ICC_MEM_NOC_NSSNOC,
+> >>> +       ICC_NSSNOC_MEMNOC,
+> >>> +       ICC_NSSNOC_MEM_NOC_1,
+> >>> +};
+> >>
+> >> Are these supposed to be in a dt-binding header?
+> >
+> > Since these don't directly relate to the ids in the dt-bindings
+> > not sure if they will be permitted there. Will move and post a
+> > new version and get feedback.
+>
+> You can answer this by yourself by looking at your DTS. Do you use them
+> as well in the DTS?
 
+I can use them in the DTS. The icc-clk framework automatically
+creates master and slave nodes as 'n' and 'n+1'. Hence I can have
+something like this in the dt-bindings include file
 
-On 25/03/2024 14:00, Cristian Marussi wrote:
-> Provide the CLK framework callbacks related to get/set clock duty cycle if
-> the related SCMI clock supports OEM extended configurations.
-> 
-> CC: Michael Turquette <mturquette@baylibre.com>
-> CC: Stephen Boyd <sboyd@kernel.org>
-> CC: linux-clk@vger.kernel.org
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+	#define ICC_ANOC_PCIE0		0
+	#define ICC_SNOC_PCIE0		1
+		.
+		.
+		.
+	#define ICC_NSSNOC_MEM_NOC_1	20
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+	#define MASTER(x)	((ICC_ ## x) * 2)
+	#define SLAVE(x)	(MASTER(x) + 1)
+
+> It's a pity we see here only parts of DTS, instead of full interconnect
+> usage.
+
+Unfortunately cannot include the pcie dts changes with this
+patch, but you can refer to them at https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/
+
+The above macros will be used in the pcie node as follows
+
+pcie0: pci@28000000 {
+	compatible = "qcom,pcie-ipq9574";
+	. . .
+	interconnects = <&gcc MASTER(ANOC_PCIE0) &gcc SLAVE(ANOC_PCIE0)>,
+			<&gcc MASTER(SNOC_PCIE0) &gcc SLAVE(SNOC_PCIE0)>;
+	interconnect-names = "pcie-mem", "cpu-pcie";
+	. . .
+};
+
+Hope this is acceptable.
+
+Thanks
+Varada
