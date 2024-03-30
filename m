@@ -1,46 +1,46 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D684369A;
-	Sat, 30 Mar 2024 18:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B4741C73;
+	Sat, 30 Mar 2024 18:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711823370; cv=none; b=BlCYH4miFiChT5Qk1YsgyL9nKkarO4JD0w6t6WJF4iUgV5NrONwvb/m7FQyhN3U7T8W4lNVl1tkaWk2NlUc2CLTmzBn7K9TQYSwe+txGlRpWwiK+7FUVW5K5l2jOmAZcdaGx0AKMnPRbj2shOw+dXJkIBWTMkbd33ZqQi+m7GnY=
+	t=1711823372; cv=none; b=IyXttRZrRg8DrKdGTWZFOO9uPbp8iNnLPhjkSRU3L0gxVM8CzMlUdWqNyeK+1HoC5zssVOHOyO91woB9MIHe7FHaYD9y/PYahLUG5ePU9u9shR9nrr68X0UhtYIDSHMjsA7f8sBlD6LSvdu/bIe5kxhhQb+C5CST1WWOTb5BlqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711823370; c=relaxed/simple;
-	bh=Cbhf7LOtDxm8kXQrY3cn33odrNMLb2snExadHbiAGxQ=;
+	s=arc-20240116; t=1711823372; c=relaxed/simple;
+	bh=TTraymcZMKSjpxwroxBIVQa8pYTfWSLF+1OPvi7/yes=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ool/MiYOmXvR3EpEtrOUYX1mx1Vn8/xsMjBNUu+czlm35Sgivy2HiVWSzlqjxnmwKKsZCUzwP89kqlFSzgwZ6fANyg5VA1k7QnsycKY65jJ7aco3UbxVyvcDWhYTzhbbN6wbWGTmO2TQWyU4qNii4dVPfxb3UylOenzE8rU/4ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cwCfs920; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version:Content-Type; b=gdE8V33Vp4l6wEEjGEOqen5iou5c9kGBWehEJm6LeMgbAM8NfNKR3AGz7EXZThtd6pEmgX4ZDczTNdHQu33FTmV0YDT6Z4bA4ZatOEkf/M6RrZWIaOCJ9yLjNSQ4gwmbapXy1TK/HxyEbWXGJLvtmcAmc/MCzKucbbgaKTiUyOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q0jvgQ+k; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cwCfs920"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42UHp8Yu003789;
-	Sat, 30 Mar 2024 18:29:19 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q0jvgQ+k"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42UI3xgt021576;
+	Sat, 30 Mar 2024 18:29:26 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	from:to:cc:subject:date:message-id:in-reply-to:references
 	:mime-version:content-transfer-encoding:content-type; s=
-	qcppdkim1; bh=xqvzsZnF1LlgMc+oL0HG34IbDapDYKlJEYS6dCsjsSs=; b=cw
-	Cfs9208oocEe1Fqm8VJf5VNF8aXUb9T12xGFVTGjxHcz1nEmyx2SImMleH/P/Xbh
-	79O818fyaBY2+3PsRXE5jHNzG4Zz+KzgR1Mmj2zZ+s/4K+W6FIJWwordk2IROA1q
-	ze4JVVKa/u1R2LqTCmcQKLd5zBn0DZMs1JHDWE6J6N2mh3HeIwr8P2bvmMcV38ii
-	hfakXtnygHSSUm8vhZXaPDfoGJlqcOzD13C8dbOIpvnuIbbmaRILg1S79R0jP4MI
-	DaBJH08OOeNRovMkLqFY06k0DirVz62/ukx1QHJQgV00iXn05W/CX6vZtb3Pkoln
-	7BqAO1//BJkp55JGDIwA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x6c1dh5h7-1
+	qcppdkim1; bh=cuOK2o72VftTJ3Z+TgyfyKAuI/u25CVHD4a9cOlg+FQ=; b=Q0
+	jvgQ+klLahLErIq3+OE4CZ6prIlRGqF99ZiSQTkMk9jEhNgsTQhgyp7D0dMZzTmZ
+	+M5tXMEUDaAY37KTgnmH/phB+QtUbsN5jIsiZ1T5fRdLRHdPibCJah2UZC9EILK9
+	P3SeDmWPGAoK9J6NGB9QzxntWrx6U7DTQHRBSxWOaCeJHVZLnqx0stARv76HgOx0
+	51AooHHMhb6qAuoBMbp9P6+dU+FaDQfXf3/Vrl5zasZFcfH6WzE+fX26Tho1kvwg
+	jG+mUN446GmYXxihlDAy/3qyoLq7HKjfkvBan6JoH9IkGMhgymi86oqUBkM67I7T
+	Yw/KDfUf553EqbQuKriA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x6ab3s7pu-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 30 Mar 2024 18:29:19 +0000 (GMT)
+	Sat, 30 Mar 2024 18:29:26 +0000 (GMT)
 Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42UIT6sd027336
+	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42UITPrr024315
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 30 Mar 2024 18:29:06 GMT
+	Sat, 30 Mar 2024 18:29:25 GMT
 Received: from hu-ajipan-hyd.qualcomm.com (10.80.80.8) by
  nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sat, 30 Mar 2024 11:29:01 -0700
+ 15.2.1118.40; Sat, 30 Mar 2024 11:29:20 -0700
 From: Ajit Pandey <quic_ajipan@quicinc.com>
 To: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd
@@ -62,9 +62,9 @@ CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         "Satya Priya Kakitapalli"
 	<quic_skakitap@quicinc.com>,
         Ajit Pandey <quic_ajipan@quicinc.com>
-Subject: [PATCH 1/7] clk: qcom: clk-alpha-pll: Fix CAL_L_VAL override for LUCID EVO PLL
-Date: Sat, 30 Mar 2024 23:58:11 +0530
-Message-ID: <20240330182817.3272224-2-quic_ajipan@quicinc.com>
+Subject: [PATCH 4/7] dt-bindings: clock: qcom: Add CAMCC clocks for SM4450
+Date: Sat, 30 Mar 2024 23:58:14 +0530
+Message-ID: <20240330182817.3272224-5-quic_ajipan@quicinc.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240330182817.3272224-1-quic_ajipan@quicinc.com>
 References: <20240330182817.3272224-1-quic_ajipan@quicinc.com>
@@ -80,48 +80,209 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: lQ7NSYlB1sYhIgOvF87s8qaNmsMIxU9V
-X-Proofpoint-ORIG-GUID: lQ7NSYlB1sYhIgOvF87s8qaNmsMIxU9V
+X-Proofpoint-ORIG-GUID: rskmi8ZlajXFCyCfq-jVdQZqX-0KXaPy
+X-Proofpoint-GUID: rskmi8ZlajXFCyCfq-jVdQZqX-0KXaPy
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-03-30_13,2024-03-28_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- adultscore=0 clxscore=1015 bulkscore=0 mlxlogscore=999 impostorscore=0
- lowpriorityscore=0 malwarescore=0 priorityscore=1501 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0 clxscore=1015
+ priorityscore=1501 adultscore=0 phishscore=0 lowpriorityscore=0
+ mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2403210001 definitions=main-2403300151
 
-In LUCID EVO PLL CAL_L_VAL and L_VAL bitfields are part of single
-PLL_L_VAL register. Update for L_VAL bitfield values in PLL_L_VAL
-register using regmap_write() API in __alpha_pll_trion_set_rate
-callback will override LUCID EVO PLL initial configuration related
-to PLL_CAL_L_VAL bit fields in PLL_L_VAL register.
-
-Observed random PLL lock failures during PLL enable due to such
-override in PLL calibration value. Use regmap_update_bits() with
-L_VAL bitfield mask instead of regmap_write() API to update only
-PLL_L_VAL bitfields in __alpha_pll_trion_set_rate callback.
-
-Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces")
+Add support for qcom camera clock controller bindings
+for SMM4450 platform.
 
 Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/clock/qcom,sm4450-camcc.yaml     |  63 +++++++++++
+ include/dt-bindings/clock/qcom,sm4450-camcc.h | 106 ++++++++++++++++++
+ 2 files changed, 169 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-camcc.yaml
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-camcc.h
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 8a412ef47e16..81cabd28eabe 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -1656,7 +1656,7 @@ static int __alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (ret < 0)
- 		return ret;
- 
--	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
-+	regmap_update_bits(pll->clkr.regmap, PLL_L_VAL(pll), LUCID_EVO_PLL_L_VAL_MASK,  l);
- 	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
- 
- 	/* Latch the PLL input */
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm4450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm4450-camcc.yaml
+new file mode 100644
+index 000000000000..f54ce865880d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,sm4450-camcc.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,sm4450-camcc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Camera Clock & Reset Controller on SM4450
++
++maintainers:
++  - Ajit Pandey <quic_ajipan@quicinc.com>
++  - Taniya Das <quic_tdas@quicinc.com>
++
++description: |
++  Qualcomm camera clock control module provides the clocks, resets and power
++  domains on SM4450
++
++  See also:: include/dt-bindings/clock/qcom,sm4450-camcc.h
++
++properties:
++  compatible:
++    const: qcom,sm4450-camcc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Camera AHB clock source from GCC
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/clock/qcom,sm4450-gcc.h>
++    clock-controller@ade0000 {
++      compatible = "qcom,sm4450-camcc";
++      reg = <0x0ade0000 0x20000>;
++      clocks = <&rpmhcc RPMH_CXO_CLK>,
++               <&gcc GCC_CAMERA_AHB_CLK>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,sm4450-camcc.h b/include/dt-bindings/clock/qcom,sm4450-camcc.h
+new file mode 100644
+index 000000000000..bf077951bf1c
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,sm4450-camcc.h
+@@ -0,0 +1,106 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_CAM_CC_SM4450_H
++#define _DT_BINDINGS_CLK_QCOM_CAM_CC_SM4450_H
++
++/* CAM_CC clocks */
++#define CAM_CC_BPS_AHB_CLK					0
++#define CAM_CC_BPS_AREG_CLK					1
++#define CAM_CC_BPS_CLK						2
++#define CAM_CC_BPS_CLK_SRC					3
++#define CAM_CC_CAMNOC_ATB_CLK					4
++#define CAM_CC_CAMNOC_AXI_CLK					5
++#define CAM_CC_CAMNOC_AXI_CLK_SRC				6
++#define CAM_CC_CAMNOC_AXI_HF_CLK				7
++#define CAM_CC_CAMNOC_AXI_SF_CLK				8
++#define CAM_CC_CCI_0_CLK					9
++#define CAM_CC_CCI_0_CLK_SRC					10
++#define CAM_CC_CCI_1_CLK					11
++#define CAM_CC_CCI_1_CLK_SRC					12
++#define CAM_CC_CORE_AHB_CLK					13
++#define CAM_CC_CPAS_AHB_CLK					14
++#define CAM_CC_CPHY_RX_CLK_SRC					15
++#define CAM_CC_CRE_AHB_CLK					16
++#define CAM_CC_CRE_CLK						17
++#define CAM_CC_CRE_CLK_SRC					18
++#define CAM_CC_CSI0PHYTIMER_CLK					19
++#define CAM_CC_CSI0PHYTIMER_CLK_SRC				20
++#define CAM_CC_CSI1PHYTIMER_CLK					21
++#define CAM_CC_CSI1PHYTIMER_CLK_SRC				22
++#define CAM_CC_CSI2PHYTIMER_CLK					23
++#define CAM_CC_CSI2PHYTIMER_CLK_SRC				24
++#define CAM_CC_CSIPHY0_CLK					25
++#define CAM_CC_CSIPHY1_CLK					26
++#define CAM_CC_CSIPHY2_CLK					27
++#define CAM_CC_FAST_AHB_CLK_SRC					28
++#define CAM_CC_ICP_ATB_CLK					29
++#define CAM_CC_ICP_CLK						30
++#define CAM_CC_ICP_CLK_SRC					31
++#define CAM_CC_ICP_CTI_CLK					32
++#define CAM_CC_ICP_TS_CLK					33
++#define CAM_CC_MCLK0_CLK					34
++#define CAM_CC_MCLK0_CLK_SRC					35
++#define CAM_CC_MCLK1_CLK					36
++#define CAM_CC_MCLK1_CLK_SRC					37
++#define CAM_CC_MCLK2_CLK					38
++#define CAM_CC_MCLK2_CLK_SRC					39
++#define CAM_CC_MCLK3_CLK					40
++#define CAM_CC_MCLK3_CLK_SRC					41
++#define CAM_CC_OPE_0_AHB_CLK					42
++#define CAM_CC_OPE_0_AREG_CLK					43
++#define CAM_CC_OPE_0_CLK					44
++#define CAM_CC_OPE_0_CLK_SRC					45
++#define CAM_CC_PLL0						46
++#define CAM_CC_PLL0_OUT_EVEN					47
++#define CAM_CC_PLL0_OUT_ODD					48
++#define CAM_CC_PLL1						49
++#define CAM_CC_PLL1_OUT_EVEN					50
++#define CAM_CC_PLL2						51
++#define CAM_CC_PLL2_OUT_EVEN					52
++#define CAM_CC_PLL3						53
++#define CAM_CC_PLL3_OUT_EVEN					54
++#define CAM_CC_PLL4						55
++#define CAM_CC_PLL4_OUT_EVEN					56
++#define CAM_CC_SLOW_AHB_CLK_SRC					57
++#define CAM_CC_SOC_AHB_CLK					58
++#define CAM_CC_SYS_TMR_CLK					59
++#define CAM_CC_TFE_0_AHB_CLK					60
++#define CAM_CC_TFE_0_CLK					61
++#define CAM_CC_TFE_0_CLK_SRC					62
++#define CAM_CC_TFE_0_CPHY_RX_CLK				63
++#define CAM_CC_TFE_0_CSID_CLK					64
++#define CAM_CC_TFE_0_CSID_CLK_SRC				65
++#define CAM_CC_TFE_1_AHB_CLK					66
++#define CAM_CC_TFE_1_CLK					67
++#define CAM_CC_TFE_1_CLK_SRC					68
++#define CAM_CC_TFE_1_CPHY_RX_CLK				69
++#define CAM_CC_TFE_1_CSID_CLK					70
++#define CAM_CC_TFE_1_CSID_CLK_SRC				71
++
++/* CAM_CC power domains */
++#define CAM_CC_CAMSS_TOP_GDSC					0
++
++/* CAM_CC resets */
++#define CAM_CC_BPS_BCR						0
++#define CAM_CC_CAMNOC_BCR					1
++#define CAM_CC_CAMSS_TOP_BCR					2
++#define CAM_CC_CCI_0_BCR					3
++#define CAM_CC_CCI_1_BCR					4
++#define CAM_CC_CPAS_BCR						5
++#define CAM_CC_CRE_BCR						6
++#define CAM_CC_CSI0PHY_BCR					7
++#define CAM_CC_CSI1PHY_BCR					8
++#define CAM_CC_CSI2PHY_BCR					9
++#define CAM_CC_ICP_BCR						10
++#define CAM_CC_MCLK0_BCR					11
++#define CAM_CC_MCLK1_BCR					12
++#define CAM_CC_MCLK2_BCR					13
++#define CAM_CC_MCLK3_BCR					14
++#define CAM_CC_OPE_0_BCR					15
++#define CAM_CC_TFE_0_BCR					16
++#define CAM_CC_TFE_1_BCR					17
++
++#endif
 -- 
 2.25.1
 
