@@ -1,23 +1,23 @@
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEB8CA73;
-	Mon,  1 Apr 2024 08:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861F2D515;
+	Mon,  1 Apr 2024 08:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711959865; cv=none; b=rEj2hSb3Nzu66OAthotWaWVt7oJwxUyEsUtryNU1a06valbqIL2QxQjtskgeJ5606YEXfxhqOXKUwXI/u5MkYKudsfjXCTfPbkNhYC6sp082Z+MW9luyQo/45iR5DNwskDQ0ydp2K84sZCdmaKWRsP+zvT5vRK0jitzyfbHVqzM=
+	t=1711959869; cv=none; b=aLnp4XGg5usGXffgScFtRcUG1o2Oj09ftCzM/kgQLy3lxLzyqhTMs59/UIRbHtHT5yjdA0E9/0m029u8MpCFvhJtGMSMfqsiw3B1TaD41fC05GIokLkls6a91HWoiL+5QGLtpvyfejzxwa8U8g9xK44vEOzHBEkxVZ/zNDiAmbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711959865; c=relaxed/simple;
-	bh=POWtEBcgJvIVxTse4KGEElw27PRmCPHPNJThgQdCcHo=;
+	s=arc-20240116; t=1711959869; c=relaxed/simple;
+	bh=UHDVl3iRDdYI0DdjOOwUY+bd8BolB/6wHcZzUQYqok0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hc0S0Gy5Ax8WtFrktek9o/KCJsM0cAGpxofzgrPE4UWxZKUffBIhOw+wIWsDF8SOgKvJ3xrRwuBF5Qn8lTMG+dTWhlZ69doR5gKL7criLlJ8dofhKLkc+JL8hMj2znY+yuMsnnCVpJQVXt5OONfRS4XBEgtR4M1GjJU1+QwpMUQ=
+	 MIME-Version; b=I5Pz7ZC/3jljohMLZSEud40UWRKubrwSmYNrDrvSHjQIJuFFkmb3QzXduWWnx5UDwapcdKkSjMc3IxaJoyr1dcF+L49U+R4o8SRyRAOELE0Wo8PKDuNJiJP6mABGIyzQBSFTlpU0anCEcc5l0CZqCTpDMJ6A44vlCcIg+IjqYD8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
 Received: from loongson.cn (unknown [112.20.109.80])
-	by gateway (Coremail) with SMTP id _____8AxOOg2bwpm6OghAA--.58183S3;
-	Mon, 01 Apr 2024 16:24:22 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____8BxefA6bwpm+eghAA--.13929S3;
+	Mon, 01 Apr 2024 16:24:26 +0800 (CST)
 Received: from localhost.localdomain (unknown [112.20.109.80])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxGBI0bwpmFydwAA--.10364S2;
-	Mon, 01 Apr 2024 16:24:21 +0800 (CST)
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxGBI0bwpmFydwAA--.10364S3;
+	Mon, 01 Apr 2024 16:24:22 +0800 (CST)
 From: Binbin Zhou <zhoubinbin@loongson.cn>
 To: Binbin Zhou <zhoubb.aaron@gmail.com>,
 	Huacai Chen <chenhuacai@loongson.cn>,
@@ -33,10 +33,11 @@ Cc: Huacai Chen <chenhuacai@kernel.org>,
 	devicetree@vger.kernel.org,
 	Xuerui Wang <kernel@xen0n.name>,
 	loongarch@lists.linux.dev,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Subject: [PATCH v2 4/8] clk: clk-loongson2: Add Loongson-2K0500 clock support
-Date: Mon,  1 Apr 2024 16:24:16 +0800
-Message-ID: <3142fb197a2f1a1f78fd49a938ead4264371a04d.1711504700.git.zhoubinbin@loongson.cn>
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v2 5/8] dt-bindings: clock: loongson2: add Loongson-2K2000 compatible
+Date: Mon,  1 Apr 2024 16:24:17 +0800
+Message-ID: <23d0d2f02810828cb77b613b09b8da8375713c75.1711504700.git.zhoubinbin@loongson.cn>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1711504700.git.zhoubinbin@loongson.cn>
 References: <cover.1711504700.git.zhoubinbin@loongson.cn>
@@ -47,74 +48,46 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8BxGBI0bwpmFydwAA--.10364S2
+X-CM-TRANSID:AQAAf8BxGBI0bwpmFydwAA--.10364S3
 X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7KFWfKrWDWr13Cr45JF45XFc_yoW8KrW5pr
-	1fCw43G34rtF40grnxJ34Uuw43ZrW7Xasrtay2kr1Duan7JF10qF1FyF4xJFsxGryvyFy3
-	Zr4q9rsIka1UXrbCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
-	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
-	Wrv_ZF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
-	0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
+X-Coremail-Antispam: 1Uk129KBj9xXoWrZr17Cr17Wr43Jr4xGFy3Awc_yoW3Kwb_Aa
+	4xJ3WkXrs3AF1Fgw4qvFs7tw13ua9Fy3WakwnrAF1vy345Kay5tFykJ34akF97Wr43uw1f
+	ZF4kGrWfZrs7GosvyTuYvTs0mTUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbhxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JF0_JFyl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWr
+	XVW3AwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
+	0EwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
 	bVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUVWrXDUUUU
+	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0
+	I7IYx2IY67AKxVW7JVWDJwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWxJVW8Jr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8_9N7UUUUU==
 
-The Loongson-2K0500 and Loongson-2K1000 clock is similar, we add its
-support by different configurations.
+Add the devicetree compatible for Loongson-2K2000 clocks.
 
 Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- drivers/clk/clk-loongson2.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-index ff2ade6a471a..b5dd9d028826 100644
---- a/drivers/clk/clk-loongson2.c
-+++ b/drivers/clk/clk-loongson2.c
-@@ -90,6 +90,27 @@ struct loongson2_clk_board_info {
- 		.div_width	= _dwidth,			\
- 	}
+diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+index 83baee40e200..4f79cdb417ab 100644
+--- a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
++++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+@@ -18,6 +18,7 @@ properties:
+     enum:
+       - loongson,ls2k0500-clk
+       - loongson,ls2k-clk  # This is for Loongson-2K1000
++      - loongson,ls2k2000-clk
  
-+static const struct loongson2_clk_board_info ls2k0500_clks[] = {
-+	CLK_PLL(LOONGSON2_NODE_PLL,   "pll_node", 0,    16, 8, 8, 6),
-+	CLK_PLL(LOONGSON2_DDR_PLL,    "pll_ddr",  0x8,  16, 8, 8, 6),
-+	CLK_PLL(LOONGSON2_DC_PLL,     "pll_soc",  0x10, 16, 8, 8, 6),
-+	CLK_PLL(LOONGSON2_PIX0_PLL,   "pll_pix0", 0x18, 16, 8, 8, 6),
-+	CLK_PLL(LOONGSON2_PIX1_PLL,   "pll_pix1", 0x20, 16, 8, 8, 6),
-+	CLK_DIV(LOONGSON2_NODE_CLK,   "clk_node", "pll_node", 0,    24, 6),
-+	CLK_DIV(LOONGSON2_DDR_CLK,    "clk_ddr",  "pll_ddr",  0x8,  24, 6),
-+	CLK_DIV(LOONGSON2_HDA_CLK,    "clk_hda",  "pll_ddr",  0xc,  8,  6),
-+	CLK_DIV(LOONGSON2_GPU_CLK,    "clk_gpu",  "pll_soc",  0x10, 24, 6),
-+	CLK_DIV(LOONGSON2_DC_CLK,     "clk_sb",   "pll_soc",  0x14, 0,  6),
-+	CLK_DIV(LOONGSON2_GMAC_CLK,   "clk_gmac", "pll_soc",  0x14, 8,  6),
-+	CLK_DIV(LOONGSON2_PIX0_CLK,   "clk_pix0", "pll_pix0", 0x18, 24, 6),
-+	CLK_DIV(LOONGSON2_PIX1_CLK,   "clk_pix1", "pll_pix1", 0x20, 24, 6),
-+	CLK_SCALE(LOONGSON2_BOOT_CLK, "clk_boot", "clk_sb",   0x28, 8,  3),
-+	CLK_SCALE(LOONGSON2_SATA_CLK, "clk_sata", "clk_sb",   0x28, 12, 3),
-+	CLK_SCALE(LOONGSON2_USB_CLK,  "clk_usb",  "clk_sb",   0x28, 16, 3),
-+	CLK_SCALE(LOONGSON2_APB_CLK,  "clk_apb",  "clk_sb",   0x28, 20, 3),
-+	{ /* Sentinel */ },
-+};
-+
- static const struct loongson2_clk_board_info ls2k1000_clks[] = {
- 	CLK_PLL(LOONGSON2_NODE_PLL,   "pll_node", 0,    32, 10, 26, 6),
- 	CLK_PLL(LOONGSON2_DDR_PLL,    "pll_ddr",  0x10, 32, 10, 26, 6),
-@@ -261,6 +282,7 @@ static int loongson2_clk_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id loongson2_clk_match_table[] = {
-+	{ .compatible = "loongson,ls2k0500-clk", .data = &ls2k0500_clks },
- 	{ .compatible = "loongson,ls2k-clk", .data = &ls2k1000_clks },
- 	{ }
- };
+   reg:
+     maxItems: 1
 -- 
 2.43.0
 
