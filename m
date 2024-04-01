@@ -1,101 +1,133 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4CE08F5C;
-	Mon,  1 Apr 2024 17:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C82BA3F;
+	Mon,  1 Apr 2024 17:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711991838; cv=none; b=TtcTU822aySpSxZS/V73OdKLOJX1yWZ7gs3JBPAgtKIu72hRofnJJcHyj3tEk+lI11d+a9hdLlbt0lZNBI4vynH61RRN0mIZq8EwmHzuIV/yF6TW7CoOVkLKRazX5o72EMjPvkEPU/l8X6AFfxIgCUOxycNkmgFHHgrhhmPB+yI=
+	t=1711991984; cv=none; b=qK0mxDr52kIQgHIhd8jUYltLmwEGq+BoQoUyNPHnBJchdFwJf/qnzoU48TzuRmhPNT1WtUf+Lak8FbAJIcOpy+/rXTQIxgmRixcrm0qU5m/vST2zPENfOPDRc3d5DQlC5XN9uLzV3NnR2KvBw6PBEbqfgag7wsI1O5BwPas2HrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711991838; c=relaxed/simple;
-	bh=Xs8Q6CDyDIOEE03oPZLb/he7FAlRg+HMWx+Axg6xlnY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F1Cu+EKCJruAr4u69LDSvLvEnIy9h8ES5MTBhemsItS9v7T+37KD+QgmNYkrt1HySAKQUuPOypVNGYY/8JX1w7TEYVLCC60SbCnYVfaZOOGD1CTIdhWMrgBTvqr4gEwPRQBHsLKpri5QOITl2sD9uiMjK+BYVoY6Q6a8QaTt+HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WvUwOOqr; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1711991984; c=relaxed/simple;
+	bh=0nsGe2Ub4lpBuotazO/vhKf3p/hWT6uQuP5ChZjO+OA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A+yiHOlVxX4a8vbBvHJIuBa7qmj6rvX+gy5vBiEDj6rn2FVxFLFIi/+zg+Dm+CPI1o1bauD+KLMFT6EP26v5QZhH609U0RVx7X677QJpPGO8kD+KAOv01BTgA0QYDUnFIvEl9TBGMFlNJszabyN+q1WSBppDqf7nzCDWhhkwOok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=TAqmqURq; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WvUwOOqr"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-516a97b3139so1109840e87.2;
-        Mon, 01 Apr 2024 10:17:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711991834; x=1712596634; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lNGvPCSXiECHoP3UreuKKK40O4Mox4jdXXntNPnjoX4=;
-        b=WvUwOOqrk/iHUMPp61B5LbXc1HoKyPkur0bFy93qvaCz46PmMajb4tiK4iVEzx7vpf
-         LZiX55+3ur4e15Zcc1v6efwnSJDo3gbAPXk+lQRbruGwYiuKYqtfnbuoh0uBZ+tYaU4B
-         eLfDY8N3Kfhcymdes4EZiuV8p8r3Iz+R9KYs1rZwvDaYMuJX2l+lmmXS/FDxERIaDRqm
-         nKSmGmSWH1mOqMTXMr3OJWHmL2AbeBVAG95lFsLuNiDDmNFoEZafsJabKP2cnNEg2HX7
-         XOC3g3bieecVF3+mqU4S+SkCk6j39NTPMYc9fEJJD755GnG45WflIX6h6VuFkwTiGfOv
-         877A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711991834; x=1712596634;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lNGvPCSXiECHoP3UreuKKK40O4Mox4jdXXntNPnjoX4=;
-        b=hEb8cSC96q3RJqbnzjw89KMbQSHMBnXvCo8UPgb5Bm7IsLAd5XCFMv9tVig5S8sHZ5
-         OKXWdfL+aP463YXv9PAmoZ7s6ET/Tb+MNykekrLKp33arrh/LsWP+QNIfEGNGUFiI33z
-         4gBG1GZXhigYOMrNtOn4JNgNCTJueoRYGKgnCoXSR9bEQWBe/zI/c1IFwhW4tPHK9eOp
-         YvVwRaaLbsRgE96njYuihqg1XfzwCEOjHa64S8PYcv0KCdvLhQzHM20Inz0aVDRzIMPn
-         uytnn58vdudhLzIopyNyB9s1E1qbvHFWMYL+P6O0wxuc5icEUwACnQ4RI1CpNwFZjocr
-         RJ1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWggMF9Dgai4aaeQI8RC366hYqv74JOdlc3KUSFoFKkYz2Az6tIsB612zrHJyPTDa22PSmAIVGnJTrOQrvp3+JO65TXj+Po97fCGwMbOtnP6+hpYBjSzsHOfsrfSRqevb7MGxT/2JVml3yYN5l4m7vmO8PXnOiRh/UvjPNuDAByzsCPCesakw==
-X-Gm-Message-State: AOJu0YzX9Ekvirk/cgTYrbHxoJ0JK/mCI3A3PszO/2IMJtJEeFazPmm4
-	yQ/y27LMFfkZf702dbl/bqwATLG+Ns2Tgz8i0l8qjzENS465xkyYou2L7bLyG0Y=
-X-Google-Smtp-Source: AGHT+IFE1cBOnyqgKEuUC+S8xM0ABqAsAE+UMb9sHziXV/4h3sU6jqH0t2nkLVVigWdzn188zOSSTQ==
-X-Received: by 2002:a05:6512:3711:b0:513:172d:5b46 with SMTP id z17-20020a056512371100b00513172d5b46mr6264509lfr.39.1711991833982;
-        Mon, 01 Apr 2024 10:17:13 -0700 (PDT)
-Received: from localhost.localdomain (ccu40.neoplus.adsl.tpnet.pl. [83.30.144.40])
-        by smtp.gmail.com with ESMTPSA id g4-20020a17090669c400b00a4673706b4dsm5505600ejs.78.2024.04.01.10.17.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Apr 2024 10:17:13 -0700 (PDT)
-From: Adam Skladowski <a39.skl@gmail.com>
-To: 
-Cc: phone-devel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Adam Skladowski <a39.skl@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Andy Gross <agross@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] clk: qcom: smd-rpm: Restore msm8976 num_clk
-Date: Mon,  1 Apr 2024 19:16:39 +0200
-Message-Id: <20240401171641.8979-1-a39.skl@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="TAqmqURq"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 15BF1100007;
+	Mon,  1 Apr 2024 20:19:34 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 15BF1100007
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1711991974;
+	bh=qgJttL0sqx5Y2EBpQH+iH8vcd04Yw7u5T84Z9XbPqFM=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=TAqmqURqvD7ow4Z0XUa8pCQZuD55vH3SxZhO7JbiUeAJDYeaZudXp7hgZjOilOAsu
+	 eS/Z9RMCjXTPsw+JjJDDA9l2FuA/CtGf9zd552Xck00yMugZXW9u1XkHiHJ0VtvzZA
+	 92cpKqdqxRauvfYktX08lKGt7z8Gm47j4X1QwOexOjafnUKrsJlpXYlRxtoUT7zqOR
+	 unsZKHNA7fQvoyIO7nci19Qw8zyANIcrZ8NcS+s2jNkF4ei/kwVTHQfKnKjhSPIGQG
+	 W+1F2ObmO5ZznEWO4ev8YdB+ZHcbdyNCtBVdJkYcYisiA2xiM0eoacGTJ6CYLE5ERM
+	 MdTZYgIw9cC5Q==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon,  1 Apr 2024 20:19:33 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 1 Apr
+ 2024 20:19:33 +0300
+Date: Mon, 1 Apr 2024 20:19:33 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Rob Herring <robh@kernel.org>
+CC: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <kernel@salutedevices.com>,
+	<rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v1 3/6] dt-bindings: clock: meson: a1: peripherals:
+ support sys_pll_div16 input
+Message-ID: <20240401171933.bqmjsuanqsjvjosn@CAB-WSD-L081021>
+References: <20240329205904.25002-1-ddrokosov@salutedevices.com>
+ <20240329205904.25002-4-ddrokosov@salutedevices.com>
+ <20240401142136.GA559114-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240401142136.GA559114-robh@kernel.org>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 184515 [Apr 01 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 14 0.3.14 5a0c43d8a1c3c0e5b0916cc02a90d4b950c01f96, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/04/01 15:13:00 #24563578
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-During rework somehow msm8976 num_clk got removed, restore it.
+Hello Rob,
 
-Fixes: d6edc31f3a68 ("clk: qcom: smd-rpm: Separate out interconnect bus clocks")
-Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
----
- drivers/clk/qcom/clk-smd-rpm.c | 1 +
- 1 file changed, 1 insertion(+)
+Thank you for the quick review.
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 8602c02047d0..45c5255bcd11 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -768,6 +768,7 @@ static struct clk_smd_rpm *msm8976_clks[] = {
- 
- static const struct rpm_smd_clk_desc rpm_clk_msm8976 = {
- 	.clks = msm8976_clks,
-+	.num_clks = ARRAY_SIZE(msm8976_clks),
- 	.icc_clks = bimc_pcnoc_snoc_smmnoc_icc_clks,
- 	.num_icc_clks = ARRAY_SIZE(bimc_pcnoc_snoc_smmnoc_icc_clks),
- };
+On Mon, Apr 01, 2024 at 09:21:36AM -0500, Rob Herring wrote:
+> On Fri, Mar 29, 2024 at 11:58:43PM +0300, Dmitry Rokosov wrote:
+> > The 'sys_pll_div16' input clock is used as one of the sources for the
+> > GEN clock.
+> > 
+> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> > ---
+> >  .../bindings/clock/amlogic,a1-peripherals-clkc.yaml          | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
+> > index 6d84cee1bd75..f6668991ff1f 100644
+> > --- a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
+> > @@ -29,6 +29,7 @@ properties:
+> >        - description: input fixed pll div5
+> >        - description: input fixed pll div7
+> >        - description: input hifi pll
+> > +      - description: input sys pll div16
+> >        - description: input oscillator (usually at 24MHz)
+> >  
+> >    clock-names:
+> > @@ -38,6 +39,7 @@ properties:
+> >        - const: fclk_div5
+> >        - const: fclk_div7
+> >        - const: hifi_pll
+> > +      - const: sys_pll_div16
+> >        - const: xtal
+> 
+> And adding an entry in the middle is also an ABI break. New entries go 
+> on the end (and should be optional).
+
+The clock source sys_pll_div16, being one of the GEN clock parents,
+plays a crucial role and cannot be tagged as "optional". Unfortunately,
+it was not implemented earlier due to the cpu clock ctrl driver's
+pending status on the TODO list.
+
+I would greatly appreciate your advice on the best and simplest way to
+resolve this matter in an effective manner..
+
 -- 
-2.44.0
-
+Thank you,
+Dmitry
