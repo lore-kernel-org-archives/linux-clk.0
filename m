@@ -1,74 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE97240872;
-	Mon,  1 Apr 2024 14:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A898208D1;
+	Mon,  1 Apr 2024 15:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711983471; cv=none; b=oY7Lz22sV4q1Mgf9SONteHGSpw5cB7H/uXtI1B41wIwCL3dbD7ZVyPIELnT/h/OMbcKctruszcsATseqMd/tLGeri915Iw1bVGftrAzpFZC8pC35f82rNymRF2J+hIB/ZXQdWpXBRGNXQA5juIzT8V+OtN8R5ekAmEgJM0CFroo=
+	t=1711986089; cv=none; b=M03eAqiirt9E5jaMPjR66rcSmrsK9eF7RJNrkwd4FRzlanRkEMhXOePaRfv8FAcNy/g4WtjV2C/ZBPv2rstGWeHeifZP+PPOZfGEB08+lrjLrRSu7Pk38TxjoU4xHEPSS8OgHHGrUqfFO7B6XV1Z8FjRsPZd6F3chGkdMcztQwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711983471; c=relaxed/simple;
-	bh=s/Kq0rz7zLu9YXogoVE0wyeYA30vKKY0Jd2nsR5FfWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eunr/9dCJmDpahVCT8kz3s1fc7aD4i7oqwtDU00WWCpKCJw7zOoTRaJlwszbuiCHD2lH/6aR0uan9eaOHN/SLbF1yPCbO0bkzSHd4iBaUQbMdfX7aMDYh+DCSKrG5jChcr1YoQZX8YssiqFPciO58ao/hoUgtdVVcDKEGZyHoHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYEoLEsX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711986089; c=relaxed/simple;
+	bh=Y/Bj6IHFimK/L3bQZNyOgnhAWh2BT8FNakGZBoDEYtU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CLh5nl7WQC3lii1UhLkk/QEYKVSLWKnHYATk5wZhdxiuW0GjSQpjaV7Kk7XyjdkeV3oDmOtBMV900Rqyec7/BJ8nit0+rjtQPBYtdrglLEWh6AljpmGCThsjmIjwo5UHTQiiG3EJwmq14jGM0kl7XVeoUnfAD+zV6JFvQBmn6qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IDWpuH0V; arc=none smtp.client-ip=80.12.242.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYEoLEsX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 296C3C433C7;
-	Mon,  1 Apr 2024 14:57:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711983471;
-	bh=s/Kq0rz7zLu9YXogoVE0wyeYA30vKKY0Jd2nsR5FfWE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gYEoLEsXkFl7p10gvrZ1Wk5QHBxQVt+EFOdrWhph1e9/qsMyGexSBW6NZ1o1ruMN0
-	 alFvVY1mFnaOMYx/EiL3ikLRN1Drv0Vfv3BWicg2qPUaHmNnvFppBpgEUF+m+y1xDf
-	 6WXsYJf9iLDB/hKVCqsKvFSNeHKmo0NvhZFyz4pL5ZM14W8PWzbOZYOJ87z0K5SAXG
-	 SYxDA4MEMYO+pYyhOWBJ6sjaTeVNE5NUKmWwiwY485YvOM8vAw+yuYe8vAcLMBxkfC
-	 +Nv/PVRxS6w8SqOhin72KVz0oV+csNZj3QCEuRPDxvG6HD/+ZBVVc0GGxU3Aa+pAt/
-	 FUYPe1vdfDKvQ==
-Date: Mon, 1 Apr 2024 09:57:49 -0500
-From: Rob Herring <robh@kernel.org>
-To: Dmitry Rokosov <ddrokosov@salutedevices.com>
-Cc: sboyd@kernel.org, neil.armstrong@linaro.org, jbrunet@baylibre.com,
-	khilman@baylibre.com, rockosov@gmail.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	kernel@salutedevices.com, devicetree@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, robh+dt@kernel.org,
-	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
-	martin.blumenstingl@googlemail.com
-Subject: Re: [PATCH v1 5/6] dt-bindings: clock: meson: add A1 CPU clock
- controller bindings
-Message-ID: <171198346654.607486.15665713709092404506.robh@kernel.org>
-References: <20240329205904.25002-1-ddrokosov@salutedevices.com>
- <20240329205904.25002-6-ddrokosov@salutedevices.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IDWpuH0V"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id rJdfrt5eMFDStrJdfryokC; Mon, 01 Apr 2024 17:32:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1711985520;
+	bh=HXJxPRAT/1ovZ08zVcfoBlF6cHXXFiWjqhU7B+IHfPk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=IDWpuH0VtaQGNJrHB+Kmke7pWKxXeWu2l81BpKO/eq73sF1I/wnJZzDDo7zicuXwx
+	 0Q6v4yp2nvdWIddFwiNicKVu6gwe9fLKAtSQqr1JW/MZs3AzA8/71gvplrbLwVEbtv
+	 Lb177vNRMW/uOWMHzMeB2iRPqAjZ7jd1OMQn23I67ZxJNUkCgrprYtC+H5C12CAZZB
+	 8azL/WIP1/uoELoviK6YRM+LjgmMW50FF6e6gYs5IihxZFk+eP4l7IfSWjrZIJQJ2Z
+	 qHUzOAkf94+lViLj0ImVp7DT/5KTiIm0sX8rTGAfNr82XJUYN0h1Y7GFEdd1XX4OY5
+	 PX7McXIfyIAnQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 01 Apr 2024 17:32:00 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: nxp: Remove an unused field in struct lpc18xx_pll
+Date: Mon,  1 Apr 2024 17:31:53 +0200
+Message-ID: <6cfb0e5251c3a59a156e70bcf6a0cc74aa764faa.1711985490.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240329205904.25002-6-ddrokosov@salutedevices.com>
+Content-Transfer-Encoding: 8bit
 
+In "struct lpc18xx_pll", the 'lock' field is unused.
+Remove it.
 
-On Fri, 29 Mar 2024 23:58:45 +0300, Dmitry Rokosov wrote:
-> Add the documentation and dt bindings for Amlogic A1 CPU clock
-> controller.
-> 
-> This controller consists of the general 'cpu_clk' and two main parents:
-> 'cpu fixed clock' and 'syspll'. The 'cpu fixed clock' is an internal
-> fixed clock, while the 'syspll' serves as an external input from the A1
-> PLL clock controller.
-> 
-> Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> ---
->  .../bindings/clock/amlogic,a1-cpu-clkc.yaml   | 64 +++++++++++++++++++
->  .../dt-bindings/clock/amlogic,a1-cpu-clkc.h   | 19 ++++++
->  2 files changed, 83 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
->  create mode 100644 include/dt-bindings/clock/amlogic,a1-cpu-clkc.h
-> 
+Found with cppcheck, unusedStructMember.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+---
+ drivers/clk/nxp/clk-lpc18xx-cgu.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/nxp/clk-lpc18xx-cgu.c b/drivers/clk/nxp/clk-lpc18xx-cgu.c
+index 69ebf65081b8..81efa885069b 100644
+--- a/drivers/clk/nxp/clk-lpc18xx-cgu.c
++++ b/drivers/clk/nxp/clk-lpc18xx-cgu.c
+@@ -250,7 +250,6 @@ static struct lpc18xx_cgu_base_clk lpc18xx_cgu_base_clks[] = {
+ struct lpc18xx_pll {
+ 	struct		clk_hw hw;
+ 	void __iomem	*reg;
+-	spinlock_t	*lock;
+ 	u8		flags;
+ };
+ 
+-- 
+2.44.0
 
