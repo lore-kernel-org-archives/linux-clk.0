@@ -1,23 +1,23 @@
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80D1DDB7;
-	Mon,  1 Apr 2024 08:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081FAC139;
+	Mon,  1 Apr 2024 08:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711959870; cv=none; b=gbQomvYUyR8mPaxoKISCA0OmAERP6swGsqWRJhcV3G1+Jhg7y820AP4e0XXs5NRsTROS3p02A6mZHZQXL/gxzU1tdDYuUhZbBWeVnFhNLjjO3H87+3X1oq7Uo3uZL1tU4B76d3hWFfH8ymNS9dV831TkAL/MllySVTF6tUf09As=
+	t=1711959871; cv=none; b=IPmsd6D5Mqy1RrE4YzBDSdx9gllZcNZOOk/c1Kg2Cq2SZfByE0W7Avt6z0j+8LqFF5iE2BH62YDmkpaNW8Zh2HdGdqfeGPbxnt6r6dCVB5DcUqIefFPPQWddbD75YfuPjXqQkdJATAgY62a4SDwZ/cZHXzAqv7amgJDeh40c0Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711959870; c=relaxed/simple;
-	bh=p5Ei0pRudkJ70dgUX671etY5Qn39dG0h5raf+4rXBZM=;
+	s=arc-20240116; t=1711959871; c=relaxed/simple;
+	bh=GYww9kfeJ+eyr66yRrqRxz1t/y/ClPyRquMn7a5xRJE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F8cAp1BtYMq6mkPcoXxgYd/m+hL5HmzIQOS3uLvCXzGo6y5vZQ91tmWDWs+s5DVlGRsby6Qh+pQZ0puqW0vVKWmgf+zTMY52ZQjLoUQ3OkkS9k18GEyOFPpxPz7nGWI2Wy8IPWBj7sJ5WSPekrhoD8s/bajgKjtjVfbt9kD4PPc=
+	 MIME-Version; b=TOBNc2Fn2Xno6R/QzewRrRnF/drynr73pJPC3rwmbUHh9BEwZ/SYCkCe4M1ZHSQajGOqII15hsWlXJeck9dIsrccmgWCjS2IqRaoJorQQMQDOqdsy6fc5aSTj5VuF5LFEWe9IyxsnsFPKPqzN4cIf3k0YQB66s3v+xrTSBTq5G4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
 Received: from loongson.cn (unknown [112.20.109.80])
-	by gateway (Coremail) with SMTP id _____8Bx3+s5bwpm9ughAA--.12210S3;
-	Mon, 01 Apr 2024 16:24:25 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____8Cx77s7bwpmBOkhAA--.58421S3;
+	Mon, 01 Apr 2024 16:24:27 +0800 (CST)
 Received: from localhost.localdomain (unknown [112.20.109.80])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxGBI0bwpmFydwAA--.10364S4;
-	Mon, 01 Apr 2024 16:24:24 +0800 (CST)
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxGBI0bwpmFydwAA--.10364S5;
+	Mon, 01 Apr 2024 16:24:26 +0800 (CST)
 From: Binbin Zhou <zhoubinbin@loongson.cn>
 To: Binbin Zhou <zhoubb.aaron@gmail.com>,
 	Huacai Chen <chenhuacai@loongson.cn>,
@@ -34,9 +34,9 @@ Cc: Huacai Chen <chenhuacai@kernel.org>,
 	Xuerui Wang <kernel@xen0n.name>,
 	loongarch@lists.linux.dev,
 	Binbin Zhou <zhoubinbin@loongson.cn>
-Subject: [PATCH v2 6/8] clk: clk-loongson2: Add Loongson-2K2000 clock support
-Date: Mon,  1 Apr 2024 16:24:18 +0800
-Message-ID: <56364d6492c606fc0f96d2da7b0af12a15163ce7.1711504700.git.zhoubinbin@loongson.cn>
+Subject: [PATCH v2 7/8] LoongArch: dts: Add clock support to Loongson-2K0500
+Date: Mon,  1 Apr 2024 16:24:19 +0800
+Message-ID: <f238faa4600dc2b6d6b4904a65904fe41190abda.1711504700.git.zhoubinbin@loongson.cn>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1711504700.git.zhoubinbin@loongson.cn>
 References: <cover.1711504700.git.zhoubinbin@loongson.cn>
@@ -47,157 +47,137 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8BxGBI0bwpmFydwAA--.10364S4
+X-CM-TRANSID:AQAAf8BxGBI0bwpmFydwAA--.10364S5
 X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Xw1kKry7KrykKFyrZFWfXrc_yoW7WFWkpF
-	9Yy3yfKws5trsYgr95XryDCrZ3AF47X3ZrtanFkr4DZ3Z7tr1IgF4FyFWxGF45WrykJa43
-	Zw4q9r47Ca1UXwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+X-Coremail-Antispam: 1Uk129KBj93XoWxGw47Kry3Kry3GFy8Cw1UCFX_yoW5Cw1kpa
+	sF9rZrGrW09F1S9rZ8tFy8KFn5uF95CF97X3ZrCFWUGrsaqFyjvr48JFyfXF4rGr4fX34j
+	qF1Fv34jkF4DZabCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
 	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBvb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r126r13M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	0xBIdaVrnRJUUUBlb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
 	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
-	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
-	Wrv_ZF1lYx0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2
-	Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
-	z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Ar0_tr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j2Hq7UUUUU=
+	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E
+	14v26r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6x
+	kI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v2
+	6Fy26r45twAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0x
+	vY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE
+	7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I
+	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
+	cVC0I7IYx2IY67AKxVW7JVWDJwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0x
+	vE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWxJVW8Jr1lIxAIcVC2z280
+	aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0wqXPUUUUU==
 
-The Loongson-2K2000 and Loongson-2K1000 clock is similar, we add its
-support by different configurations.
+The module is supported, enable it.
+Also, add the dma node associated with it.
 
 Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
 ---
- drivers/clk/clk-loongson2.c | 72 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ .../boot/dts/loongson-2k0500-ref.dts          |  4 ++
+ arch/loongarch/boot/dts/loongson-2k0500.dtsi  | 57 ++++++++++++++++++-
+ 2 files changed, 58 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-index b5dd9d028826..0d82aeeadb45 100644
---- a/drivers/clk/clk-loongson2.c
-+++ b/drivers/clk/clk-loongson2.c
-@@ -22,6 +22,8 @@ enum loongson2_clk_type {
- 	CLK_TYPE_PLL,
- 	CLK_TYPE_SCALE,
- 	CLK_TYPE_DIVIDER,
-+	CLK_TYPE_GATE,
-+	CLK_TYPE_FIXED,
- 	CLK_TYPE_NONE,
+diff --git a/arch/loongarch/boot/dts/loongson-2k0500-ref.dts b/arch/loongarch/boot/dts/loongson-2k0500-ref.dts
+index 8aefb0c12672..62dad6297e82 100644
+--- a/arch/loongarch/boot/dts/loongson-2k0500-ref.dts
++++ b/arch/loongarch/boot/dts/loongson-2k0500-ref.dts
+@@ -41,6 +41,10 @@ linux,cma {
+ 	};
  };
  
-@@ -46,11 +48,13 @@ struct loongson2_clk_board_info {
- 	enum loongson2_clk_type type;
- 	const char *name;
- 	const char *parent_name;
-+	unsigned long fixed_rate;
- 	u8 reg_offset;
- 	u8 div_shift;
- 	u8 div_width;
- 	u8 mult_shift;
- 	u8 mult_width;
-+	u8 bit_idx;
- };
- 
- #define CLK_DIV(_id, _name, _pname, _offset, _dshift, _dwidth)	\
-@@ -90,6 +94,25 @@ struct loongson2_clk_board_info {
- 		.div_width	= _dwidth,			\
- 	}
- 
-+#define CLK_GATE(_id, _name, _pname, _offset, _bidx)		\
-+	{							\
-+		.id		= _id,				\
-+		.type		= CLK_TYPE_GATE,		\
-+		.name		= _name,			\
-+		.parent_name	= _pname,			\
-+		.reg_offset	= _offset,			\
-+		.bit_idx	= _bidx,			\
-+	}
-+
-+#define CLK_FIXED(_id, _name, _pname, _rate)			\
-+	{							\
-+		.id		= _id,				\
-+		.type		= CLK_TYPE_FIXED,		\
-+		.name		= _name,			\
-+		.parent_name	= _pname,			\
-+		.fixed_rate	= _rate,			\
-+	}
-+
- static const struct loongson2_clk_board_info ls2k0500_clks[] = {
- 	CLK_PLL(LOONGSON2_NODE_PLL,   "pll_node", 0,    16, 8, 8, 6),
- 	CLK_PLL(LOONGSON2_DDR_PLL,    "pll_ddr",  0x8,  16, 8, 8, 6),
-@@ -138,6 +161,44 @@ static const struct loongson2_clk_board_info ls2k1000_clks[] = {
- 	{ /* Sentinel */ },
- };
- 
-+static const struct loongson2_clk_board_info ls2k2000_clks[] = {
-+	CLK_PLL(LOONGSON2_DC_PLL,     "pll_0",    0,    21, 9, 32, 6),
-+	CLK_PLL(LOONGSON2_DDR_PLL,    "pll_1",    0x10, 21, 9, 32, 6),
-+	CLK_PLL(LOONGSON2_NODE_PLL,   "pll_2",    0x20, 21, 9, 32, 6),
-+	CLK_PLL(LOONGSON2_PIX0_PLL,   "pll_pix0", 0x30, 21, 9, 32, 6),
-+	CLK_PLL(LOONGSON2_PIX1_PLL,   "pll_pix1", 0x40, 21, 9, 32, 6),
-+	CLK_GATE(LOONGSON2_OUT0_GATE, "out0_gate", "pll_0",    0,    40),
-+	CLK_GATE(LOONGSON2_GMAC_GATE, "gmac_gate", "pll_0",    0,    41),
-+	CLK_GATE(LOONGSON2_RIO_GATE,  "rio_gate",  "pll_0",    0,    42),
-+	CLK_GATE(LOONGSON2_DC_GATE,   "dc_gate",   "pll_1",    0x10, 40),
-+	CLK_GATE(LOONGSON2_DDR_GATE,  "ddr_gate",  "pll_1",    0x10, 41),
-+	CLK_GATE(LOONGSON2_GPU_GATE,  "gpu_gate",  "pll_1",    0x10, 42),
-+	CLK_GATE(LOONGSON2_HDA_GATE,  "hda_gate",  "pll_2",    0x20, 40),
-+	CLK_GATE(LOONGSON2_NODE_GATE, "node_gate", "pll_2",    0x20, 41),
-+	CLK_GATE(LOONGSON2_EMMC_GATE, "emmc_gate", "pll_2",    0x20, 42),
-+	CLK_GATE(LOONGSON2_PIX0_GATE, "pix0_gate", "pll_pix0", 0x30, 40),
-+	CLK_GATE(LOONGSON2_PIX1_GATE, "pix1_gate", "pll_pix1", 0x40, 40),
-+	CLK_DIV(LOONGSON2_OUT0_CLK,   "clk_out0", "out0_gate", 0,    0,  6),
-+	CLK_DIV(LOONGSON2_GMAC_CLK,   "clk_gmac", "gmac_gate", 0,    7,  6),
-+	CLK_DIV(LOONGSON2_RIO_CLK,    "clk_rio",  "rio_gate",  0,    14, 6),
-+	CLK_DIV(LOONGSON2_DC_CLK,     "clk_dc",   "dc_gate",   0x10, 0,  6),
-+	CLK_DIV(LOONGSON2_GPU_CLK,    "clk_gpu",  "gpu_gate",  0x10, 7,  6),
-+	CLK_DIV(LOONGSON2_DDR_CLK,    "clk_ddr",  "ddr_gate",  0x10, 14, 6),
-+	CLK_DIV(LOONGSON2_HDA_CLK,    "clk_hda",  "hda_gate",  0x20, 0,  6),
-+	CLK_DIV(LOONGSON2_NODE_CLK,   "clk_node", "node_gate", 0x20, 7,  6),
-+	CLK_DIV(LOONGSON2_EMMC_CLK,   "clk_emmc", "emmc_gate", 0x20, 14, 6),
-+	CLK_DIV(LOONGSON2_PIX0_CLK,   "clk_pix0", "pll_pix0",  0x30, 0,  6),
-+	CLK_DIV(LOONGSON2_PIX1_CLK,   "clk_pix1", "pll_pix1",  0x40, 0,  6),
-+	CLK_SCALE(LOONGSON2_SATA_CLK, "clk_sata", "clk_out0",  0x50, 12, 3),
-+	CLK_SCALE(LOONGSON2_USB_CLK,  "clk_usb",  "clk_out0",  0x50, 16, 3),
-+	CLK_SCALE(LOONGSON2_APB_CLK,  "clk_apb",  "clk_node",  0x50, 20, 3),
-+	CLK_SCALE(LOONGSON2_BOOT_CLK, "clk_boot", NULL,        0x50, 23, 3),
-+	CLK_SCALE(LOONGSON2_DES_CLK,  "clk_des",  "clk_node",  0x50, 40, 3),
-+	CLK_SCALE(LOONGSON2_I2S_CLK,  "clk_i2s",  "clk_node",  0x50, 44, 3),
-+	CLK_FIXED(LOONGSON2_MISC_CLK, "clk_misc", NULL, 50000000),
-+	{ /* Sentinel */ },
++&clk {
++	status = "okay";
 +};
 +
- static inline struct loongson2_clk_data *to_loongson2_clk(struct clk_hw *hw)
- {
- 	return container_of(hw, struct loongson2_clk_data, hw);
-@@ -266,6 +327,16 @@ static int loongson2_clk_probe(struct platform_device *pdev)
- 							  CLK_DIVIDER_ONE_BASED,
- 							  &clp->clk_lock);
- 			break;
-+		case CLK_TYPE_GATE:
-+			hw = devm_clk_hw_register_gate(dev, p->name, p->parent_name, 0,
-+						       clp->base + p->reg_offset,
-+						       p->bit_idx, 0,
-+						       &clp->clk_lock);
-+			break;
-+		case CLK_TYPE_FIXED:
-+			hw = clk_hw_register_fixed_rate_parent_data(dev, p->name, pdata,
-+								    0, p->fixed_rate);
-+			break;
- 		default:
- 			return dev_err_probe(dev, -EINVAL, "Invalid clk type\n");
- 		}
-@@ -284,6 +355,7 @@ static int loongson2_clk_probe(struct platform_device *pdev)
- static const struct of_device_id loongson2_clk_match_table[] = {
- 	{ .compatible = "loongson,ls2k0500-clk", .data = &ls2k0500_clks },
- 	{ .compatible = "loongson,ls2k-clk", .data = &ls2k1000_clks },
-+	{ .compatible = "loongson,ls2k2000-clk", .data = &ls2k2000_clks },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, loongson2_clk_match_table);
+ &gmac0 {
+ 	status = "okay";
+ 
+diff --git a/arch/loongarch/boot/dts/loongson-2k0500.dtsi b/arch/loongarch/boot/dts/loongson-2k0500.dtsi
+index 444779c21034..413b83366367 100644
+--- a/arch/loongarch/boot/dts/loongson-2k0500.dtsi
++++ b/arch/loongarch/boot/dts/loongson-2k0500.dtsi
+@@ -6,6 +6,7 @@
+ /dts-v1/;
+ 
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/clock/loongson,ls2k-clk.h>
+ 
+ / {
+ 	#address-cells = <2>;
+@@ -19,14 +20,15 @@ cpu0: cpu@0 {
+ 			compatible = "loongson,la264";
+ 			device_type = "cpu";
+ 			reg = <0x0>;
+-			clocks = <&cpu_clk>;
++			clocks = <&clk LOONGSON2_NODE_CLK>;
+ 		};
+ 	};
+ 
+-	cpu_clk: cpu-clk {
++	ref_100m: clock-ref-100m {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+-		clock-frequency = <500000000>;
++		clock-frequency = <100000000>;
++		clock-output-names = "ref_100m";
+ 	};
+ 
+ 	cpuintc: interrupt-controller {
+@@ -52,6 +54,55 @@ isa@16400000 {
+ 			ranges = <1 0x0 0x0 0x16400000 0x4000>;
+ 		};
+ 
++		clk: clock-controller@1fe10400 {
++			compatible = "loongson,ls2k0500-clk";
++			reg = <0x0 0x1fe10400 0x0 0x2c>;
++			#clock-cells = <1>;
++			clocks = <&ref_100m>;
++			clock-names = "ref_100m";
++			status = "disabled";
++		};
++
++		dma-controller@1fe10c00 {
++			compatible = "loongson,ls2k0500-apbdma", "loongson,ls2k1000-apbdma";
++			reg = <0 0x1fe10c00 0 0x8>;
++			interrupt-parent = <&eiointc>;
++			interrupts = <67>;
++			clocks = <&clk LOONGSON2_APB_CLK>;
++			#dma-cells = <1>;
++			status = "disabled";
++		};
++
++		dma-controller@1fe10c10 {
++			compatible = "loongson,ls2k0500-apbdma", "loongson,ls2k1000-apbdma";
++			reg = <0 0x1fe10c10 0 0x8>;
++			interrupt-parent = <&eiointc>;
++			interrupts = <68>;
++			clocks = <&clk LOONGSON2_APB_CLK>;
++			#dma-cells = <1>;
++			status = "disabled";
++		};
++
++		dma-controller@1fe10c20 {
++			compatible = "loongson,ls2k0500-apbdma", "loongson,ls2k1000-apbdma";
++			reg = <0 0x1fe10c20 0 0x8>;
++			interrupt-parent = <&eiointc>;
++			interrupts = <69>;
++			clocks = <&clk LOONGSON2_APB_CLK>;
++			#dma-cells = <1>;
++			status = "disabled";
++		};
++
++		dma-controller@1fe10c30 {
++			compatible = "loongson,ls2k0500-apbdma", "loongson,ls2k1000-apbdma";
++			reg = <0 0x1fe10c30 0 0x8>;
++			interrupt-parent = <&eiointc>;
++			interrupts = <70>;
++			clocks = <&clk LOONGSON2_APB_CLK>;
++			#dma-cells = <1>;
++			status = "disabled";
++		};
++
+ 		liointc0: interrupt-controller@1fe11400 {
+ 			compatible = "loongson,liointc-2.0";
+ 			reg = <0x0 0x1fe11400 0x0 0x40>,
 -- 
 2.43.0
 
