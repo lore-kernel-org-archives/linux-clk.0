@@ -1,150 +1,178 @@
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2157C133;
-	Mon,  1 Apr 2024 08:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FCA10A12
+	for <linux-clk@vger.kernel.org>; Mon,  1 Apr 2024 09:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711959883; cv=none; b=a96s0j8LYB5R25YmPIiu0ZMlcJdoj8uRZ5GqL3EXJaP8i8fi3KmUWABjrS6xgq2L9/8sYDmVTde4XDnwOLKkvjQYeSrP0SgnJ3ZHUGfUK/RiyOFpb6B5J4NWPmAo5RhX1G+dc2KWgirWeBizfs5JNUVG7WRT/lpybzyxrsVxuX8=
+	t=1711965108; cv=none; b=qZINckC5rayiob5ZNL7OLEs7IhZ91DFnT4tcnItuEfAeV9xqat9xC1vwRvWB+NmtLab9cAJpZL23EAOm9/5BgyerOyNS+KGLYExhZnD2upqGz8Xi19kTnkYhbRDX345dygNyuuckwMHLg0m5zwGxUwBnq8x8rzKV/fz/eDJLdjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711959883; c=relaxed/simple;
-	bh=bGK/tjyPouBpcr/9GWxrGkfH7GWAsOMrSFXaKmZTAV0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G5oJvsg9e07+6FB7DZ6lAFJhwyFTSN9A6AUCYMFIjqFe0Sj4neSOwEMIU8ikFewe/Cc82o6etMi/pXYqePjGlUmFBb7HrgxRPJ+vatjEFtrDvEyVNgQnzf8wZ9JBbQuNKwGJotQkWVWeIcsphgTYUJENWuS4BDgyM/4DoPYDT8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [112.20.109.80])
-	by gateway (Coremail) with SMTP id _____8AxPOlHbwpmXOkhAA--.2470S3;
-	Mon, 01 Apr 2024 16:24:39 +0800 (CST)
-Received: from localhost.localdomain (unknown [112.20.109.80])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxNBFFbwpmiidwAA--.10346S2;
-	Mon, 01 Apr 2024 16:24:38 +0800 (CST)
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-To: Binbin Zhou <zhoubb.aaron@gmail.com>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	loongson-kernel@lists.loongnix.cn,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	loongarch@lists.linux.dev,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Subject: [PATCH v2 8/8] LoongArch: dts: Add clock support to Loongson-2K2000
-Date: Mon,  1 Apr 2024 16:24:31 +0800
-Message-ID: <6d80ee06d1df3942faad04f8332be01572b3237c.1711504700.git.zhoubinbin@loongson.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1711504700.git.zhoubinbin@loongson.cn>
-References: <cover.1711504700.git.zhoubinbin@loongson.cn>
+	s=arc-20240116; t=1711965108; c=relaxed/simple;
+	bh=Z/fDI7u4ASepE5PkwvvEezq2L8x53f4d2VHoI/MP91I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jpcHZ4hUJ7YJT6JPfRcTBjk5S7I86grTu9z5Vl8lcxSv6XGEIZsP9mC79CEragVM3/C6NaJ5F5ptmzWXNF5RmlymfG95IDom5NLHU5WvhTkK9k9cRQKBJtDC49kycqATGBOjBKEXjc+VqGKzUH5IHalBqRBEEAGL93vAbMRSOn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BMpYC52C; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BMpYC52C"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-56dc9955091so810505a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 01 Apr 2024 02:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711965104; x=1712569904; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dzql5prZwnt+vohd76RG25/DjYuQd5VmqrQyYq+ATkM=;
+        b=BMpYC52CsPF3LQ06ZKd440cTt+Aj180h4pF0Nc+X7uR2eZ4q4xC7XJXzAvoHNSqRfp
+         AEfBkchyK7IuNeBpAPm1bOz3ptjEqOKuu62E11ALYY2Ll6sq6xdrLTxWqjYpEdCfBWJx
+         JxyBzQELHUS5sCPXas8WQTPTk7tfBcx7A5x/1Xt0bDkKWm1TRudo6xz+MxWNjLaLdSlZ
+         Pf6i2mV2pxsCCqGzY0IqvcSZXyOFwcnatHJOYHOTVPf6ozIBA0cg5m+djuUpLOb4Ug3O
+         hMO2iHPppc5cdfXsFzSndZDxgIJwdgL4HaoDNEHBRGPZb9k/bDYuV9Gsf92uWWrjCjpG
+         lzNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711965104; x=1712569904;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dzql5prZwnt+vohd76RG25/DjYuQd5VmqrQyYq+ATkM=;
+        b=oIurx2471A1MTuq+rBsmXaVPeHiTn3mH7uIEb49RMSi61Q5v5AwTH45hQIBi14d4dj
+         KLg/PvklC42AU9AbiK1pUPlGl6SY5Ph+GMHO1YB1mzzyiHxKNc44GzEPbUktZkDn7Zxn
+         L49C6NQ1k082ryVqQ2SB+9hFT7/OjgDOqLFFMNyajjDzSulQriohKdi7E0fzYZPKr+Vs
+         8fxJw822yBsvln1hhHpDs4Kqw5P0egF7zBxF3v56lQxfSiJZGRTOZ0gyXfCo0pSq3qjX
+         pxZswwfeoWbfSFZZa+ItD4lZso9h318gF9e7KoUTNhpjONPjCwBR9l/XQGyuuDFmAiJd
+         j/7Q==
+X-Gm-Message-State: AOJu0YwCXOWAYMpE79y27tN/kospyczzoXjIQO95AKoObFpyziXasWHQ
+	MwD4SW+SRz+xpP8ArB9tpORTfRSG/rlBWvZDLUOLqIIM1hHnw+/sWpqG+bmEEZk=
+X-Google-Smtp-Source: AGHT+IExQYQm0NtAZHBPONy7nCXeQvXeh7zREgZ48G/YhMdHAfJzfcWm7cIICaIC6PIwA+ynBGZlzg==
+X-Received: by 2002:a17:906:1253:b0:a4d:ff5f:98ad with SMTP id u19-20020a170906125300b00a4dff5f98admr5550248eja.37.1711965103725;
+        Mon, 01 Apr 2024 02:51:43 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id gl20-20020a170906e0d400b00a46c39e6a47sm5158120ejb.148.2024.04.01.02.51.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Apr 2024 02:51:43 -0700 (PDT)
+Message-ID: <c5bc1d09-22f7-4e47-b87c-af412eb57278@linaro.org>
+Date: Mon, 1 Apr 2024 11:51:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8DxNBFFbwpmiidwAA--.10346S2
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7ur1xuFyxZFWUCw17CF13WrX_yoW8uw18p3
-	srCa1UKr409F1xur98trWUGF1kAF95AFnrWanIkFyUGwnIq34UZr18JF93tF4UXr4fX3yI
-	qrn5Gry29F4UuabCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBCb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6x
-	kI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v2
-	6Fy26r45twAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0x
-	vY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE
-	7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I
-	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
-	cVC0I7IYx2IY67AKxVW7JVWDJwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42
-	IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvEx4A2
-	jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUxNeODUUUU
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/4] dt-bindings: clock: add i.MX95 clock header
+To: Peng Fan <peng.fan@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240324-imx95-blk-ctl-v5-0-7a706174078a@nxp.com>
+ <20240324-imx95-blk-ctl-v5-3-7a706174078a@nxp.com>
+ <31b493d1-ad74-48c7-8585-9df323418ae3@linaro.org>
+ <DU0PR04MB9417AD4C2F5644FAE6D5A762883F2@DU0PR04MB9417.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <DU0PR04MB9417AD4C2F5644FAE6D5A762883F2@DU0PR04MB9417.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The module is supported, enable it.
+On 01/04/2024 09:26, Peng Fan wrote:
+>> Subject: Re: [PATCH v5 3/4] dt-bindings: clock: add i.MX95 clock header
+>>
+>> On 24/03/2024 08:52, Peng Fan (OSS) wrote:
+>>> From: Peng Fan <peng.fan@nxp.com>
+>>>
+>>> Add clock header for i.MX95 BLK CTL modules
+>>>
+>>> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>>> ---
+>>>  include/dt-bindings/clock/nxp,imx95-clock.h | 32
+>> +++++++++++++++++++++++++++++
+>>>  1 file changed, 32 insertions(+)
+>>>
+>>> diff --git a/include/dt-bindings/clock/nxp,imx95-clock.h b/include/dt-
+>> bindings/clock/nxp,imx95-clock.h
+>>> new file mode 100644
+>>> index 000000000000..83fa3ffe78a8
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/clock/nxp,imx95-clock.h
+>>> @@ -0,0 +1,32 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+>>> +/*
+>>> + * Copyright 2024 NXP
+>>> + */
+>>> +
+>>> +#ifndef __DT_BINDINGS_CLOCK_IMX95_H
+>>> +#define __DT_BINDINGS_CLOCK_IMX95_H
+>>> +
+>>> +#define IMX95_CLK_VPUBLK_WAVE			0
+>>> +#define IMX95_CLK_VPUBLK_JPEG_ENC		1
+>>> +#define IMX95_CLK_VPUBLK_JPEG_DEC		2
+>>> +#define IMX95_CLK_VPUBLK_END			3
+>>
+>> No improvements, so again: drop counting.
+> 
+> Could you please give more details on what you think needs
+> to be addressed here? I may overlook your comments before,
+> but I search v1-v4, not find comments on the headers,
+> except the one file name align with binding if 1:1 match.
 
-Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
----
- .../boot/dts/loongson-2k2000-ref.dts          |  4 ++++
- arch/loongarch/boot/dts/loongson-2k2000.dtsi  | 19 +++++++++++++++----
- 2 files changed, 19 insertions(+), 4 deletions(-)
+Drop all defines which count number of clocks.
 
-diff --git a/arch/loongarch/boot/dts/loongson-2k2000-ref.dts b/arch/loongarch/boot/dts/loongson-2k2000-ref.dts
-index dca91caf895e..a7af345b30ea 100644
---- a/arch/loongarch/boot/dts/loongson-2k2000-ref.dts
-+++ b/arch/loongarch/boot/dts/loongson-2k2000-ref.dts
-@@ -39,6 +39,10 @@ linux,cma {
- 	};
- };
- 
-+&clk {
-+	status = "okay";
-+};
-+
- &sata {
- 	status = "okay";
- };
-diff --git a/arch/loongarch/boot/dts/loongson-2k2000.dtsi b/arch/loongarch/boot/dts/loongson-2k2000.dtsi
-index a231949b5f55..605efaba7292 100644
---- a/arch/loongarch/boot/dts/loongson-2k2000.dtsi
-+++ b/arch/loongarch/boot/dts/loongson-2k2000.dtsi
-@@ -6,6 +6,7 @@
- /dts-v1/;
- 
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/clock/loongson,ls2k-clk.h>
- 
- / {
- 	#address-cells = <2>;
-@@ -19,21 +20,22 @@ cpu0: cpu@1 {
- 			compatible = "loongson,la364";
- 			device_type = "cpu";
- 			reg = <0x0>;
--			clocks = <&cpu_clk>;
-+			clocks = <&clk LOONGSON2_NODE_CLK>;
- 		};
- 
- 		cpu1: cpu@2 {
- 			compatible = "loongson,la364";
- 			device_type = "cpu";
- 			reg = <0x1>;
--			clocks = <&cpu_clk>;
-+			clocks = <&clk LOONGSON2_NODE_CLK>;
- 		};
- 	};
- 
--	cpu_clk: cpu-clk {
-+	ref_100m: clock-ref-100m {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
--		clock-frequency = <1400000000>;
-+		clock-frequency = <100000000>;
-+		clock-output-names = "ref_100m";
- 	};
- 
- 	cpuintc: interrupt-controller {
-@@ -51,6 +53,15 @@ bus@10000000 {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 
-+		clk: clock-controller@10010480 {
-+			compatible = "loongson,ls2k2000-clk";
-+			reg = <0x0 0x10010480 0x0 0x100>;
-+			#clock-cells = <1>;
-+			clocks = <&ref_100m>;
-+			clock-names = "ref_100m";
-+			status = "disabled";
-+		};
-+
- 		pmc: power-management@100d0000 {
- 			compatible = "loongson,ls2k2000-pmc", "loongson,ls2k0500-pmc", "syscon";
- 			reg = <0x0 0x100d0000 0x0 0x58>;
--- 
-2.43.0
+Best regards,
+Krzysztof
 
