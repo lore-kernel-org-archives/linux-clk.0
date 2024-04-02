@@ -1,266 +1,86 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C155217F3
-	for <linux-clk@vger.kernel.org>; Tue,  2 Apr 2024 14:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072D812BE8C
+	for <linux-clk@vger.kernel.org>; Tue,  2 Apr 2024 14:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712068383; cv=none; b=e5GU/6o+GZUoABR/DhoyMDv0RODw3dZoVuTheUFdXlntf0miEXymZhG1iDP6q0sxx6UKgKcc1Yv9OIGrvekeTWcZTbZS61e9n9/ubcME572tzjQQiow34eXbng17ILLbJOvDfo/aJNdNpWZOylhjV1t1z1pm7yMuBnT/wScLe7o=
+	t=1712068676; cv=none; b=Dco7tR6C9zRLhGdVZwlBiuA/LVg9bNOze64WfGReR3Ko+PhNjrDE+/vpykfr7Q5PyhmMSc6jTSbRn7zYWaYI8sXeLSFCflpUhL55KcheC8h/pkF/OfvUokwDPZg+j8HnAVkCyyQor2TCYGFEenjBRFQs3p6BbVsbU/h4NL7IJTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712068383; c=relaxed/simple;
-	bh=KWrZusQJQMji6aE2OtrhtDKPN3yVC7+g4kaaFj0WaeA=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=lDtdzxK12SRKIbVGU1PqI/vA387D/lfqKsfQSIfq4S8N1qxpdNWysrae6AOMyfQ92awfMhe3MFqK0xoCFrogQhvetDiRUcauyIqQg2s+apdM1sgfYWdGSLsNvvgshThkAJjZxEXb9X9dUmNz3QsB9Du3eKwdaq9weDpGRp6o17E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ASbBU2eN; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ASbBU2eN"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-341c7c8adf3so3645426f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 02 Apr 2024 07:33:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1712068379; x=1712673179; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=HEtsCpz4MIzWRds8geMwgNxbFpu0vjPrqmUI/UEAmeE=;
-        b=ASbBU2eNpktN1mASt2oIkJxJ+ag6imn6E+y8qQnsr5iljeUmqYaZes82eS0glp9xd1
-         MYAQdtILkTVuW4ylfKsVS9b4Bf/lrpo6FhCbTEFQbVNqlAQN35b5j0cbFQPugqksXNRz
-         a8jr89LAwQTc9nfAL2X3oX6BClfc+uUCShfu4OiubPMpZFLZDtT1f2pDLMT9kOmptfge
-         zsV0aJaRjyhmvQze3wFThHDp4D6QzMeiY0JimY1CntMnBrzo0RC2h8hgTVQsPBwYOS9M
-         c30rwKMjV1DbK7xrImUnnC+U846tN52Pyyp0Y6fHXl38GslAC6R0fHGQhBZ/TXK8exLZ
-         d+xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712068379; x=1712673179;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HEtsCpz4MIzWRds8geMwgNxbFpu0vjPrqmUI/UEAmeE=;
-        b=anSN9Sm5ZN/HeFpnngyjHDzrlp0ANLgFJsthWDQ0vwHrXTIybU5yVIcOkPzCO+HDzs
-         5FvPGbXH67hicc5MZOwBZzLv4TymU5bpAio22DSQaM6vYYPlfkmhkzjsgl+twxVgOMFq
-         2NWoO5bDW2ajLXCi+rsyIK6aW4qTxYPuP0vvr+Xh18QE2JRjAPROtcMCXFNwsQRxaVG6
-         z1k8nMBYt6WRNwXtko4n/AXz+UL7gt/Hf/YlS33PZVi3HgKt/3Gb30mzbC7+mBHFcysx
-         sMkVRjt7PIwQjvp5p1HgykGf7yi5dE5i4d4LMv+YXGdzDqARlJc1k1Huh4s7d0NeLRx6
-         LBoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVN/2EBf70Ebyfs1vBb1m+ZPdR3AlpE50oczH+Sr7Qoib83tYYOH/1rZ0N0h3XK46SpPyVe1GjI7B+Mln+BjmfUDB96GSEFQ9nY
-X-Gm-Message-State: AOJu0Yz2P5F7QEFQZwApDa/OsDgOzUEAWtJRWefXepcYjWtOqwaVPTYM
-	WoD3FbJNmbs/kVwRazaNiry/6JCnDFz34O4XbjaVrgWCF2NMHlSn2uvMgRTegPE=
-X-Google-Smtp-Source: AGHT+IGjNhWiDBYNmq+K/GKR39m/w7jR+0GLSVTnRUJMeSZ9vwCrOhr9OwZtV2iO8DIQ0nlr/sftPA==
-X-Received: by 2002:a5d:69cd:0:b0:33e:cf4e:86ba with SMTP id s13-20020a5d69cd000000b0033ecf4e86bamr6631161wrw.63.1712068379089;
-        Tue, 02 Apr 2024 07:32:59 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:2b3:4f20:7b45:be58])
-        by smtp.gmail.com with ESMTPSA id k4-20020a05600c1c8400b00414807ef8dfsm18315928wms.5.2024.04.02.07.32.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Apr 2024 07:32:58 -0700 (PDT)
-References: <20240329205904.25002-1-ddrokosov@salutedevices.com>
- <20240329205904.25002-3-ddrokosov@salutedevices.com>
- <1j4jckjftk.fsf@starbuckisacylon.baylibre.com>
- <20240402121546.qrrc7r5un75464pb@CAB-WSD-L081021>
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Dmitry Rokosov <ddrokosov@salutedevices.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, neil.armstrong@linaro.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
- martin.blumenstingl@googlemail.com, kernel@salutedevices.com,
- rockosov@gmail.com, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 2/6] clk: meson: a1: pll: support 'syspll'
- general-purpose PLL for CPU clock
-Date: Tue, 02 Apr 2024 16:27:17 +0200
-In-reply-to: <20240402121546.qrrc7r5un75464pb@CAB-WSD-L081021>
-Message-ID: <1jmsqbj0md.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1712068676; c=relaxed/simple;
+	bh=bRBCTLEp98wnVwLznUJRCNoPp1mxWI1F+xHRtLnh7FM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AVD3QumFsDgY7r22793RAdyfe9z1YXloqoobcggI4FSHOrhEUc2XchcXdgxg8VEE7f3uKRHLeeUNqrXaV7s0GMU+lK8fusdqhNfaz3W97mU2AXmn64KN7TC40C/V93gbM+KCQroR54DrJUrRTUM0teH6ZfrAQlZAY0wKqJugHiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
+	by xavier.telenet-ops.be with bizsmtp
+	id 6Edu2C0060SSLxL01EduRh; Tue, 02 Apr 2024 16:37:54 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rrfGQ-00GBit-Q4;
+	Tue, 02 Apr 2024 16:37:54 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rrfGs-009rSU-4G;
+	Tue, 02 Apr 2024 16:37:54 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Thanh Quan <thanh.quan.xn@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a779h0: Add timer clocks
+Date: Tue,  2 Apr 2024 16:37:52 +0200
+Message-Id: <79a66e8ff84378d7f65d5f55cfb01b9b745edd12.1712068639.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
+From: Thanh Quan <thanh.quan.xn@renesas.com>
 
-On Tue 02 Apr 2024 at 15:15, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+Add the module clocks used by Timer (CMT/TMU) blocks on the Renesas
+R-Car V4M (R8A779H0) SoC.
 
-> On Tue, Apr 02, 2024 at 11:00:42AM +0200, Jerome Brunet wrote:
->> 
->> On Fri 29 Mar 2024 at 23:58, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
->> 
->> > The 'syspll' PLL, also known as the system PLL, is a general and
->> > essential PLL responsible for generating the CPU clock frequency.
->> > With its wide-ranging capabilities, it is designed to accommodate
->> > frequencies within the range of 768MHz to 1536MHz.
->> >
->> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
->> > ---
->> >  drivers/clk/meson/a1-pll.c | 78 ++++++++++++++++++++++++++++++++++++++
->> >  drivers/clk/meson/a1-pll.h |  6 +++
->> >  2 files changed, 84 insertions(+)
->> >
->> > diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
->> > index 60b2e53e7e51..02fd2d325cc6 100644
->> > --- a/drivers/clk/meson/a1-pll.c
->> > +++ b/drivers/clk/meson/a1-pll.c
->> > @@ -138,6 +138,81 @@ static struct clk_regmap hifi_pll = {
->> >  	},
->> >  };
->> >  
->> > +static const struct pll_mult_range sys_pll_mult_range = {
->> > +	.min = 32,
->> > +	.max = 64,
->> > +};
->> > +
->> > +/*
->> > + * We assume that the sys_pll_clk has already been set up by the low-level
->> > + * bootloaders as the main CPU PLL source. Therefore, it is not necessary to
->> > + * run the initialization sequence.
->> > + */
->> 
->> I see no reason to make such assumption.
->> This clock is no read-only, it apparently is able to re-lock so assuming
->> anything from the bootloader is just asking from trouble
->> 
->
-> Indeed, I have implemented the following initialization sequence. I have
-> dumped the bootloader setup and included it in the definition of my
-> sys_pll. However, I have encountered an issue with the enable bit. If I
-> leave the enable bit switched on by default, there is a possibility that
-> the bootloader selects a fixed CPU clock while the sys_pll should be
-> switched off. On the other hand, if I keep the enable bit switched off
-> by default, the bootloader might configure the CPU clock to use sys_pll,
-> resulting in the execution halting when the initialization sequence is
-> run. This situation has led me to assume that we should place our trust
-> in the bootloader setup.
->
-> If you believe it is necessary to include the initialization sequence, I
-> can prepare it with the sys_pll enabled by default.
+Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk for v6.10.
 
-I just noted your initial comment is misleading.
+Changes compared to the BSP:
+  - Use TABs instead of spaces.
+---
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-You could submit a patch to apply the init sequence only if the PLL is
-not already enabled. Maybe even condition that to flag in the pll data
-to avoid applying it to the other platforms for now.
-
->
->> > +static struct clk_regmap sys_pll = {
->> > +	.data = &(struct meson_clk_pll_data){
->> > +		.en = {
->> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
->> > +			.shift   = 28,
->> > +			.width   = 1,
->> > +		},
->> > +		.m = {
->> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
->> > +			.shift   = 0,
->> > +			.width   = 8,
->> > +		},
->> > +		.n = {
->> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
->> > +			.shift   = 10,
->> > +			.width   = 5,
->> > +		},
->> > +		.frac = {
->> > +			.reg_off = ANACTRL_SYSPLL_CTRL1,
->> > +			.shift   = 0,
->> > +			.width   = 19,
->> > +		},
->> > +		.l = {
->> > +			.reg_off = ANACTRL_SYSPLL_STS,
->> > +			.shift   = 31,
->> > +			.width   = 1,
->> > +		},
->> > +		.current_en = {
->> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
->> > +			.shift   = 26,
->> > +			.width   = 1,
->> > +		},
->> > +		.l_detect = {
->> > +			.reg_off = ANACTRL_SYSPLL_CTRL2,
->> > +			.shift   = 6,
->> > +			.width   = 1,
->> > +		},
->> > +		.range = &sys_pll_mult_range,
->> > +	},
->> > +	.hw.init = &(struct clk_init_data){
->> > +		.name = "sys_pll",
->> > +		.ops = &meson_clk_pll_ops,
->> > +		.parent_names = (const char *[]){ "syspll_in" },
->> > +		.num_parents = 1,
->> > +		/*
->> > +		 * This clock is used as the main CPU PLL source in low-level
->> > +		 * bootloaders, and it is necessary to mark it as critical.
->> > +		 */
->> > +		.flags = CLK_IS_CRITICAL,
->> 
->> No I don't think so. Downstream consumer maybe critical but that one is
->> not, unless it is read-only.
->> 
->> A CPU pll, like on the g12 family, is unlikely to be read-only since the
->> PLL will need to relock to change rates. During this phase, there will
->> be no reate coming from the PLL so the PLL is not critical and you must
->> be able to "park" your CPU an another clock while poking this one
->> 
->
-> Initially, I tagged it with CLK_IS_CRITICAL because I observed in the
-> kernel start that CCF disables it.
-> However, upon further understanding,
-> I realized that this happened due to other reasons. I believe that if I
-> provide an init sequence where sys_pll is enabled by default, CCF will
-> not disable this clock.
->
->> > +	},
->> > +};
->> > +
->> > +static struct clk_fixed_factor sys_pll_div16 = {
->> > +	.mult = 1,
->> > +	.div = 16,
->> > +	.hw.init = &(struct clk_init_data){
->> > +		.name = "sys_pll_div16",
->> > +		.ops = &clk_fixed_factor_ops,
->> > +		.parent_hws = (const struct clk_hw *[]) {
->> > +			&sys_pll.hw
->> > +		},
->> > +		.num_parents = 1,
->> > +	},
->> > +};
->> > +
->> >  static struct clk_fixed_factor fclk_div2_div = {
->> >  	.mult = 1,
->> >  	.div = 2,
->> > @@ -283,6 +358,8 @@ static struct clk_hw *a1_pll_hw_clks[] = {
->> >  	[CLKID_FCLK_DIV5]	= &fclk_div5.hw,
->> >  	[CLKID_FCLK_DIV7]	= &fclk_div7.hw,
->> >  	[CLKID_HIFI_PLL]	= &hifi_pll.hw,
->> > +	[CLKID_SYS_PLL]		= &sys_pll.hw,
->> > +	[CLKID_SYS_PLL_DIV16]	= &sys_pll_div16.hw,
->> >  };
->> >  
->> >  static struct clk_regmap *const a1_pll_regmaps[] = {
->> > @@ -293,6 +370,7 @@ static struct clk_regmap *const a1_pll_regmaps[] = {
->> >  	&fclk_div5,
->> >  	&fclk_div7,
->> >  	&hifi_pll,
->> > +	&sys_pll,
->> >  };
->> >  
->> >  static struct regmap_config a1_pll_regmap_cfg = {
->> > diff --git a/drivers/clk/meson/a1-pll.h b/drivers/clk/meson/a1-pll.h
->> > index 4be17b2bf383..666d9b2137e9 100644
->> > --- a/drivers/clk/meson/a1-pll.h
->> > +++ b/drivers/clk/meson/a1-pll.h
->> > @@ -18,6 +18,12 @@
->> >  #define ANACTRL_FIXPLL_CTRL0	0x0
->> >  #define ANACTRL_FIXPLL_CTRL1	0x4
->> >  #define ANACTRL_FIXPLL_STS	0x14
->> > +#define ANACTRL_SYSPLL_CTRL0	0x80
->> > +#define ANACTRL_SYSPLL_CTRL1	0x84
->> > +#define ANACTRL_SYSPLL_CTRL2	0x88
->> > +#define ANACTRL_SYSPLL_CTRL3	0x8c
->> > +#define ANACTRL_SYSPLL_CTRL4	0x90
->> > +#define ANACTRL_SYSPLL_STS	0x94
->> >  #define ANACTRL_HIFIPLL_CTRL0	0xc0
->> >  #define ANACTRL_HIFIPLL_CTRL1	0xc4
->> >  #define ANACTRL_HIFIPLL_CTRL2	0xc8
-
-
+diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+index 4bc35bc912547f07..a7d272285db04490 100644
+--- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+@@ -192,7 +192,16 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
+ 	DEF_MOD("sdhi0",	706,	R8A779H0_CLK_SD0),
+ 	DEF_MOD("sydm1",	709,	R8A779H0_CLK_S0D6_PER),
+ 	DEF_MOD("sydm2",	710,	R8A779H0_CLK_S0D6_PER),
++	DEF_MOD("tmu0",		713,	R8A779H0_CLK_SASYNCRT),
++	DEF_MOD("tmu1",		714,	R8A779H0_CLK_SASYNCPERD2),
++	DEF_MOD("tmu2",		715,	R8A779H0_CLK_SASYNCPERD2),
++	DEF_MOD("tmu3",		716,	R8A779H0_CLK_SASYNCPERD2),
++	DEF_MOD("tmu4",		717,	R8A779H0_CLK_SASYNCPERD2),
+ 	DEF_MOD("wdt1:wdt0",	907,	R8A779H0_CLK_R),
++	DEF_MOD("cmt0",		910,	R8A779H0_CLK_R),
++	DEF_MOD("cmt1",		911,	R8A779H0_CLK_R),
++	DEF_MOD("cmt2",		912,	R8A779H0_CLK_R),
++	DEF_MOD("cmt3",		913,	R8A779H0_CLK_R),
+ 	DEF_MOD("pfc0",		915,	R8A779H0_CLK_CP),
+ 	DEF_MOD("pfc1",		916,	R8A779H0_CLK_CP),
+ 	DEF_MOD("pfc2",		917,	R8A779H0_CLK_CP),
 -- 
-Jerome
+2.34.1
+
