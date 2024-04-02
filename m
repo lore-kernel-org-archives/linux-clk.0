@@ -1,205 +1,284 @@
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9181515B962;
-	Tue,  2 Apr 2024 19:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E908A15B996;
+	Tue,  2 Apr 2024 19:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712085963; cv=none; b=j26c0ElQx5n4l4YIVuNbRzt7lxLiojM/oLLp9JwmfHyCuj+DMKNw4m3J/Ngj+oQKQXtAOa8wCIzVHyd6awOTlojGg+CU091VgqQ5YGhgBgcMZEre5ceWgAyM/B70jdoL/JS+/DuRPG6fMRRB5KmazQhUXogEX8YDDCQ0JrwdSq8=
+	t=1712086989; cv=none; b=ITt1XtHx65nha6JxveJbWClLIGOU8eENYQQRms/1D1RoHs3eMZtJ6vFxSW89VevjwhthTW1j/4wq7pfuTdUwQVvcqOohzs32Ja8gYKNDJYZ1Cq37F+99vocz7PoMKZ2tzGQ/MAkfbyxJAkqtxTbm/SlHZKWqlM8Teyhb7bh76n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712085963; c=relaxed/simple;
-	bh=rqIqY8Pohnzmuqk3e+iotC9acyr1TG4rYOT2z0aVar8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fLUNbB5hJh9KqL2IqmLKxxQUrX4UrgOpdXXuiiEvUQglLTGwB2OsKWRjhUH2OBrN8RBrzCwShDLGcevu1xwc5GJyOfrEEu69W6BAUvywZ7B41dItrpTAzuJyRj9SLWLxbX0kK2MMvY5PEhRmOL6eFK60DwKb5tYAirKo10m1i4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNfmZUSL; arc=none smtp.client-ip=209.85.167.174
+	s=arc-20240116; t=1712086989; c=relaxed/simple;
+	bh=3LcCiLUKxttcM1GgoyjUCyAI4QYAu03gt6b0Rb/QW5U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KhqEPP2p6zJ1zXp4FoOpmR/imzIGXr13jHDTFidLnoQPLgQlkCvVb5aE6hWoQfXgB33f2jiItBAzaMCOrV5tkKPIRdN5kLp+nC1dXrZSISnhZepH2jJ3VaDM39UcSxndki+b1i2UmHMTu9cGGeLhMr6Seg+j3ONAZF48lKeOd0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKaGY/8V; arc=none smtp.client-ip=209.85.128.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNfmZUSL"
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3c3d2d0e86dso2642662b6e.2;
-        Tue, 02 Apr 2024 12:26:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKaGY/8V"
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6154a1812ffso4171527b3.1;
+        Tue, 02 Apr 2024 12:43:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712085960; x=1712690760; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pom75eUhi37RZhKWTh9yAvX/1ryA6862dvJ+xgfIpYg=;
-        b=kNfmZUSLVPj5YBv4azog+2ySS7FRJEBCRTE7V4P/dfK1Og74pvNxKEFupzCb77Qeaz
-         +LGZc97ytUseudVV0yntQX9+fZiwTroo0hwe89mlLC2C3WnbFrm5BtsOUcesukCGxoTN
-         5/N90cOXbPPz8FDyb0JbCt3Sc0HuLp9gGhMFGixUfjOyxJL+IEnyamqufEqY2JzaPasu
-         Nzecw8tgfPij54KcXumkqtpIJ5pU9jeF4fGGGmOa9351X5w/bCv75jfGFvpyUjkPwb8c
-         O21jlsonle4cNoUd4i2W0AH9BOyG93+Rs0EfD1uOMCKf/GKpkbydMkbeI2Z4Q9vb9U6Q
-         iJTg==
+        d=gmail.com; s=20230601; t=1712086987; x=1712691787; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HTJVONLBOWfYIXXYyOhTTPw9XCjwbvXp4rskUKdwRDo=;
+        b=HKaGY/8V1Z9Um0+z0/eWG7k8OD/QiLiNoRIQ5z3DvykcnApZwR7ZVfCP/cCXkd4yov
+         5Eoxq1EDjyENhr0kwFAvPi7KYJHPCZqf7cGOeTqiXDDAfsI/sWve7tF3BBrLyKIYIZjV
+         lLvl2ZDu0It5MCISrne3wGJ4H8TyeaXyJQnnbx6ilbAVZrH9Fnr0Ogpc153Y2cFOHrsm
+         HKvFLISt++DE+1OzVpxkIsMlsjWpsLns618y596Q69EquTNu4cF2hCjvsfc4k0KU5C8A
+         +PUB3F9mqaNAwfgPCNGZGxQzHpjR8AH2wwdYm561X7WWrd5JDU2K8NKvIqxn5wY3irwO
+         Muxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712085960; x=1712690760;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pom75eUhi37RZhKWTh9yAvX/1ryA6862dvJ+xgfIpYg=;
-        b=jYpU+8RAa3tfmMo9XwCf4W8UBrPYz1ZmrwoZFU+Cse7a0r0YqR0N2YJNUBRqbYpGqz
-         rxgUWsBOvbeSPTP+lC3iJPBg/tvj5az9k8zR3GsToMYGk+W6ssWx4viMroDCxYdracPf
-         GCu7Gf5vU4kknevQeTQxPITksbVim5pQbLrPQtHish6W+aifF7mUkkxedmC2Js2BfEKr
-         ZLOFN7r+2vS+yCR/KAmz5fjS4QIfUABEMGslAAcYIG+oZ9Us4dTZuL2OLxV5p+PMQyXG
-         G568YhWHoAq6lpDc1Wl+lal/RZHHTW8ySecQyRpioP83Q3BBlOLQRLOAjqcaZ2YiLg23
-         gjjw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7EHjWw/3A0VR9gOUF0uL41dwVPqEpEHoVUz6adO9xYt7D+zCoCMQ2/n8KCHQwM0jjdA/z+ZcxRFW5NuJpaPju9jmjp/gLINCpWdBf68zKdFwjoUmCx8WTQHd1aNPLfAE0UAO13fu/5+Ug3rsgf/QHCYM2HveY7nL1QmZaXKptIztnPY084A==
-X-Gm-Message-State: AOJu0YylzIxyJwFNktRqgCfuP/2At88PBWcIBxbmSVHBy8EIi6E/O0bd
-	gWH177Z1oqM4XplFPjNvI7qH4+w6UdeFPqvmKcXc8+rdE+Fhmk4bNowSziOGi406hQ==
-X-Google-Smtp-Source: AGHT+IHYnfPF54gy8f3Y/NUMbU723oorzfi9/LFy5Vo6sH81HJBz6iySqGML4RJHoZG2VquGkcsCvA==
-X-Received: by 2002:a05:6870:a552:b0:22e:87db:b6ae with SMTP id p18-20020a056870a55200b0022e87dbb6aemr1645488oal.54.1712085960469;
-        Tue, 02 Apr 2024 12:26:00 -0700 (PDT)
-Received: from nukework.lan (c-98-197-58-203.hsd1.tx.comcast.net. [98.197.58.203])
-        by smtp.gmail.com with ESMTPSA id ld22-20020a0568702b1600b0022e8f9fa89bsm75622oab.57.2024.04.02.12.25.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Apr 2024 12:26:00 -0700 (PDT)
-From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: ansuelsmth@gmail.com,
-	robimarko@gmail.com,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
-Date: Tue,  2 Apr 2024 14:25:50 -0500
-Message-Id: <20240402192555.1955204-2-mr.nuke.me@gmail.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240402192555.1955204-1-mr.nuke.me@gmail.com>
-References: <20240402192555.1955204-1-mr.nuke.me@gmail.com>
+        d=1e100.net; s=20230601; t=1712086987; x=1712691787;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HTJVONLBOWfYIXXYyOhTTPw9XCjwbvXp4rskUKdwRDo=;
+        b=I3ApEKu4c1PEv1VGW86rn3zwcsOOW280y1kXkP759OncQtecv2QePgm/DFozejZDI6
+         HzJK5yB9u/FwtU9mKW3krbGvrfrdTORs4yJuWv0KJ8bgT9AGLtdqz1NpS8vIyFq0wOwF
+         TYleHk2nBnBhhGKI6mnfIPc0JQIiCE2tN9Z2cO1xD1lE9Eqzy4usDknFhaMQLB7oCaxv
+         8XzxCMVoCbb8Gm0wnir4ezq7TJ9RVFsLActVRkcY1dEvaklN9eQmZYhbd13nmvsTXBtf
+         iYQOUWLlFRNfvBqeHSQ9IS/JOdMHeB884jZYNiAqM/34zBOuzGW4Dti2pfRCHIu5/6rE
+         HD6A==
+X-Forwarded-Encrypted: i=1; AJvYcCU9O+dv+OUPhgMNvLTqO9mv2gXA2NzI8P+ZL1Wu6yU1jba6BFhyI10Nn16Gz8/wCYC13Yb7cgu9HcSWVZpCrNb4w1grnJHbDkIk+N0moZdXIOBWSPISdAcGesPyBOeXwyNeuM0/14C1C2YDwDPt3XoGlKgE6miuQJ58gK12noSPJ5HI3Q==
+X-Gm-Message-State: AOJu0YxPq+r7JTBLUYFQI+tYcIQOS7UY8/MVydc+fI21ydQzHIZZrVDK
+	+TzNbXs0wwoZb+aYYTPDeek3EEcY3k8GtOPD9/zAayMS4wntQSa1au5S4rHNezeQLPKMBwk2IOq
+	99H8DVGZyfutF5YONbA1P9PJloBg=
+X-Google-Smtp-Source: AGHT+IHYFFXpr3KeU33zxXhX2ZVeehOyLXhFmaJ6JQIOHWpfhAN0d/7P9DC2ivCdw+kd0pPLfV2tNokbt93OKVRLbgY=
+X-Received: by 2002:a25:4604:0:b0:dd0:aa2c:4da5 with SMTP id
+ t4-20020a254604000000b00dd0aa2c4da5mr10797136yba.6.1712086986537; Tue, 02 Apr
+ 2024 12:43:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240131182653.2673554-1-tmaimon77@gmail.com> <20240131182653.2673554-4-tmaimon77@gmail.com>
+ <74e003c6d80611ddd826ac21f48b4b3a.sboyd@kernel.org> <CAP6Zq1g5gwXvYzO5fnHxG-6__gSCpNBY7VeEPyr4Qtijya6EfQ@mail.gmail.com>
+ <8acf846e767884978f3bb98646433551.sboyd@kernel.org> <CAP6Zq1htKQ5v0tH9HGRejnKwJ5ZauUWG_CzYUKegkVL4Ek8UxA@mail.gmail.com>
+ <CAP6Zq1g4ksdLSVTm+PLqa5dSEidvHdpGZb=J9wKEftaH-Mg+bw@mail.gmail.com>
+In-Reply-To: <CAP6Zq1g4ksdLSVTm+PLqa5dSEidvHdpGZb=J9wKEftaH-Mg+bw@mail.gmail.com>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Tue, 2 Apr 2024 22:42:55 +0300
+Message-ID: <CAP6Zq1hk46xpQsVFz3RAF3CHU-PNCBxN+6SRKrdWzffRjRep4g@mail.gmail.com>
+Subject: Re: [PATCH v23 3/3] clk: npcm8xx: add clock controller
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: benjaminfair@google.com, joel@jms.id.au, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, robh+dt@kernel.org, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, openbmc@lists.ozlabs.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The IPQ9574 has four PCIe "pipe" clocks. These clocks are required by
-PCIe PHYs. Port the pipe clocks from the downstream kernel.
+Hi Stephen,
 
-Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
----
- drivers/clk/qcom/gcc-ipq9574.c | 76 ++++++++++++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+Kind remainder, appreciate if you can reply about the comment that
+been sent few weeks ago.
 
-diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-index 0a3f846695b8..c748d2f124f3 100644
---- a/drivers/clk/qcom/gcc-ipq9574.c
-+++ b/drivers/clk/qcom/gcc-ipq9574.c
-@@ -1569,6 +1569,24 @@ static struct clk_regmap_phy_mux pcie0_pipe_clk_src = {
- 	},
- };
- 
-+static struct clk_branch gcc_pcie0_pipe_clk = {
-+	.halt_reg = 0x28044,
-+	.halt_check = BRANCH_HALT_DELAY,
-+	.clkr = {
-+		.enable_reg = 0x28044,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_pcie0_pipe_clk",
-+			.parent_hws = (const struct clk_hw *[]) {
-+				&pcie0_pipe_clk_src.clkr.hw
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_regmap_phy_mux pcie1_pipe_clk_src = {
- 	.reg = 0x29064,
- 	.clkr = {
-@@ -1583,6 +1601,24 @@ static struct clk_regmap_phy_mux pcie1_pipe_clk_src = {
- 	},
- };
- 
-+static struct clk_branch gcc_pcie1_pipe_clk = {
-+	.halt_reg = 0x29044,
-+	.halt_check = BRANCH_HALT_DELAY,
-+	.clkr = {
-+		.enable_reg = 0x29044,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_pcie1_pipe_clk",
-+			.parent_hws = (const struct clk_hw *[]) {
-+				&pcie1_pipe_clk_src.clkr.hw
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_regmap_phy_mux pcie2_pipe_clk_src = {
- 	.reg = 0x2a064,
- 	.clkr = {
-@@ -1597,6 +1633,24 @@ static struct clk_regmap_phy_mux pcie2_pipe_clk_src = {
- 	},
- };
- 
-+static struct clk_branch gcc_pcie2_pipe_clk = {
-+	.halt_reg = 0x2a044,
-+	.halt_check = BRANCH_HALT_DELAY,
-+	.clkr = {
-+		.enable_reg = 0x2a044,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data) {
-+			.name = "gcc_pcie2_pipe_clk",
-+			.parent_hws = (const struct clk_hw *[]) {
-+				&pcie2_pipe_clk_src.clkr.hw
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_regmap_phy_mux pcie3_pipe_clk_src = {
- 	.reg = 0x2b064,
- 	.clkr = {
-@@ -1611,6 +1665,24 @@ static struct clk_regmap_phy_mux pcie3_pipe_clk_src = {
- 	},
- };
- 
-+static struct clk_branch gcc_pcie3_pipe_clk = {
-+	.halt_reg = 0x2b044,
-+	.halt_check = BRANCH_HALT_DELAY,
-+	.clkr = {
-+		.enable_reg = 0x2b044,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data) {
-+			.name = "gcc_pcie3_pipe_clk",
-+			.parent_hws = (const struct clk_hw *[]) {
-+				&pcie3_pipe_clk_src.clkr.hw
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static const struct freq_tbl ftbl_pcie_rchng_clk_src[] = {
- 	F(24000000, P_XO, 1, 0, 0),
- 	F(100000000, P_GPLL0, 8, 0, 0),
-@@ -4141,6 +4213,10 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
- 	[GCC_SNOC_PCIE1_1LANE_S_CLK] = &gcc_snoc_pcie1_1lane_s_clk.clkr,
- 	[GCC_SNOC_PCIE2_2LANE_S_CLK] = &gcc_snoc_pcie2_2lane_s_clk.clkr,
- 	[GCC_SNOC_PCIE3_2LANE_S_CLK] = &gcc_snoc_pcie3_2lane_s_clk.clkr,
-+	[GCC_PCIE0_PIPE_CLK] = &gcc_pcie0_pipe_clk.clkr,
-+	[GCC_PCIE1_PIPE_CLK] = &gcc_pcie1_pipe_clk.clkr,
-+	[GCC_PCIE2_PIPE_CLK] = &gcc_pcie2_pipe_clk.clkr,
-+	[GCC_PCIE3_PIPE_CLK] = &gcc_pcie3_pipe_clk.clkr,
- };
- 
- static const struct qcom_reset_map gcc_ipq9574_resets[] = {
--- 
-2.40.1
+Thanks,
 
+Tomer
+
+On Tue, 5 Mar 2024 at 17:59, Tomer Maimon <tmaimon77@gmail.com> wrote:
+>
+> Hi Stephen,
+>
+> Appreciate it if you could reply to my email afew days ago, It is
+> really important to us to move this driver to upstream.
+>
+> Thanks,
+>
+> Tomer
+>
+> On Thu, 29 Feb 2024 at 23:29, Tomer Maimon <tmaimon77@gmail.com> wrote:
+> >
+> > Hi Stephen,
+> >
+> > Thanks for your reply.
+> >
+> > On Thu, 29 Feb 2024 at 00:48, Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Tomer Maimon (2024-02-25 10:00:35)
+> > > > Hi Stephen,
+> > > >
+> > > > On Thu, 22 Feb 2024 at 07:58, Stephen Boyd <sboyd@kernel.org> wrote:
+> > > > >
+> > > > > Quoting Tomer Maimon (2024-01-31 10:26:53)
+> > > > > > diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..eacb579d30af
+> > > > > > --- /dev/null
+> > > > > > +++ b/drivers/clk/clk-npcm8xx.c
+> > > > > > @@ -0,0 +1,509 @@
+> > > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > > +/*
+> > > > > > + * Nuvoton NPCM8xx Clock Generator
+> > > > > > + * All the clocks are initialized by the bootloader, so this driver allows only
+> > > > > [...]
+> > > > > > +
+> > > > > > +/* external clock definition */
+> > > > > > +#define NPCM8XX_CLK_S_REFCLK   "refclk"
+> > > > > > +
+> > > > > > +/* pll definition */
+> > > > > > +#define NPCM8XX_CLK_S_PLL0     "pll0"
+> > > > > > +#define NPCM8XX_CLK_S_PLL1     "pll1"
+> > > > > > +#define NPCM8XX_CLK_S_PLL2     "pll2"
+> > > > > > +#define NPCM8XX_CLK_S_PLL_GFX  "pll_gfx"
+> > > > > > +
+> > > > > > +/* early divider definition */
+> > > > > > +#define NPCM8XX_CLK_S_PLL2_DIV2                "pll2_div2"
+> > > > > > +#define NPCM8XX_CLK_S_PLL_GFX_DIV2     "pll_gfx_div2"
+> > > > > > +#define NPCM8XX_CLK_S_PLL1_DIV2                "pll1_div2"
+> > > > > > +
+> > > > > > +/* mux definition */
+> > > > > > +#define NPCM8XX_CLK_S_CPU_MUX     "cpu_mux"
+> > > > > > +
+> > > > > > +/* div definition */
+> > > > > > +#define NPCM8XX_CLK_S_TH          "th"
+> > > > > > +#define NPCM8XX_CLK_S_AXI         "axi"
+> > > > >
+> > > > > Please inline all these string #defines to the place they're used.
+> > > > The version V21 you mention using define only when the definition is
+> > > > used more than once
+> > > > https://www.spinics.net/lists/kernel/msg5045826.html
+> > > > Should I remove all the string definitions and add the string to the array?
+> > >
+> > > If it's a clk name for a clk registered in this file it should be
+> > > inlined. Is that the case for everything besides refclk? And even refclk
+> > > could be inlined so that we don't have to jump to the definition of a
+> > > string.
+> > I will add the string in the clock arrays and remove all the string definitions.
+> > >
+> > > > > > +
+> > > > > > +static unsigned long npcm8xx_clk_div_get_parent(struct clk_hw *hw,
+> > > > > > +                                               unsigned long parent_rate)
+> > > > > > +{
+> > > > > > +       struct npcm8xx_clk *div = to_npcm8xx_clk(hw);
+> > > > > > +       unsigned int val;
+> > > > > > +
+> > > > > > +       regmap_read(div->clk_regmap, div->offset, &val);
+> > > > > > +       val = val >> div->shift;
+> > > > > > +       val &= clk_div_mask(div->width);
+> > > > > > +
+> > > > > > +       return divider_recalc_rate(hw, parent_rate, val, NULL, div->flags,
+> > > > > > +                                  div->width);
+> > > > > > +}
+> > > > > > +
+> > > > > > +static const struct clk_ops npcm8xx_clk_div_ops = {
+> > > > > > +       .recalc_rate = npcm8xx_clk_div_get_parent,
+> > > > > > +};
+> > > > > > +
+> > > > > > +static int npcm8xx_clk_probe(struct platform_device *pdev)
+> > > > > > +{
+> > > > > > +       struct device_node *parent_np = of_get_parent(pdev->dev.of_node);
+> > > > >
+> > > > > The parent of this device is not a syscon.
+> > > > Once I have registered the map that handles both reset and the clock
+> > > > in general is syscon, this is why we will modify the DTS so the clock
+> > > > and the reset will be under syscon father node
+> > > >                 sysctrl: system-controller@f0801000 {
+> > > >                         compatible = "syscon", "simple-mfd";
+> > > >                         reg = <0x0 0xf0801000 0x0 0x1000>;
+> > > >
+> > > >                         rstc: reset-controller {
+> > > >                                 compatible = "nuvoton,npcm845-reset";
+> > > >                                 reg = <0x0 0xf0801000 0x0 0xC4>;
+> > > >                                 #reset-cells = <2>;
+> > > >                                 nuvoton,sysgcr = <&gcr>;
+> > > >                         };
+> > > >
+> > > >                         clk: clock-controller {
+> > > >                                 compatible = "nuvoton,npcm845-clk";
+> > > >                                 #clock-cells = <1>;
+> > > >                                 clocks = <&refclk>;
+> > > >                                 clock-names = "refclk";
+> > > >                         };
+> > > >                 };
+> > > > You can see other drivers that using the same method like
+> > > > https://elixir.bootlin.com/linux/v6.8-rc5/source/Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml
+> > >
+> > > You will need a similar file like
+> > > Documentation/devicetree/bindings/soc/socionext/socionext,uniphier-perictrl.yaml
+> > > then to describe the child nodes.
+> > I can do it.
+> > >
+> > > Socionext may not be the best example to follow. I generally try to
+> > > avoid syscon and simply put #reset-cells and #clock-cells in the node
+> > If I remove syscon I can't use syscon_node_to_regmap function, What
+> > should I use If I remove syscon? auxiliary bus? something else?
+> > > for the device. You can use the auxiliary bus to register drivers for
+> > > clk and reset and put them into the resepective driver directories.
+> > I little bit confused, what is an auxiliary bus to register drivers,
+> > can you provide me an example?
+> > > Avoid syscon means random drivers can't reach into the device with a
+> > > regmap handle and read/write registers that they're not supposed to.
+> > Indeed, but the drivers could use the reset and clock memory map only
+> > if the module is also a child node.
+> >
+> > Please let me know what is your preferred way to handle it:
+> > 1. stick with syscon and upstream-defined documentation for the rst clk syscon.
+> > 2. avoid syscon and use an auxiliary bus, appreciate if you could give
+> > me an example of how it should be done.
+> > 3. Avoid sycon and handle it differently.
+> > >
+> > > > >
+> > > > > > +       struct clk_hw_onecell_data *npcm8xx_clk_data;
+> > > > > > +       struct device *dev = &pdev->dev;
+> > > > > > +       struct regmap *clk_regmap;
+> > > > > > +       struct clk_hw *hw;
+> > > > > > +       unsigned int i;
+> > > > > > +
+> > > > > > +       npcm8xx_clk_data = devm_kzalloc(dev, struct_size(npcm8xx_clk_data, hws,
+> > > > > > +                                                        NPCM8XX_NUM_CLOCKS),
+> > > > > > +                                       GFP_KERNEL);
+> > > > > > +       if (!npcm8xx_clk_data)
+> > > > > > +               return -ENOMEM;
+> > > > > > +
+> > > > > > +       clk_regmap = syscon_node_to_regmap(parent_np);
+> > > > > > +       of_node_put(parent_np);
+> > > > >
+> > > > > Is there another binding update that is going to move this node to be a
+> > > > > child of the syscon?
+> > > > >
+> > > > >                 gcr: system-controller@f0800000 {
+> > > > >                         compatible = "nuvoton,npcm845-gcr", "syscon";
+> > > > >                         reg = <0x0 0xf0800000 0x0 0x1000>;
+> > > > >                 };
+> > > > No, sorry but I'm not going to use the GCR node the handle the clock
+> > > > and reset modules, the GCR has different memory space.
+> > > > the clock driver will have the following device tree
+> > >
+> > > What does the reset driver use the CGR node for? The driver looks like
+> > > it's using it to control USB phy resets.
+> > Yes, the USB PHY reset is handled through the GCR registers.
+> > >
+> > > >                sysctrl: system-controller@f0801000 {
+> > > >                         compatible = "syscon", "simple-mfd";
+> > > >                         reg = <0x0 0xf0801000 0x0 0x1000>;
+> > > >
+> > > >                         rstc: reset-controller {
+> > > >                                 compatible = "nuvoton,npcm845-reset";
+> > > >                                 reg = <0x0 0xf0801000 0x0 0xC4>;
+> > >
+> > > This isn't a valid reg property for a child node like this.
+> > O.K.
+> > >
+> > > >                                 #reset-cells = <2>;
+> > > >                                 nuvoton,sysgcr = <&gcr>;
+> > > >                         };
+> > > >
+> > > >                         clk: clock-controller {
+> > > >                                 compatible = "nuvoton,npcm845-clk";
+> > > >                                 #clock-cells = <1>;
+> > > >                                 clocks = <&refclk>;
+> > > >                                 clock-names = "refclk";
+> > > >                         };
+> > > >                 };
+> >
+> > Appreciate your guidance!
+> >
+> > Thanks,
+> >
+> > Tomer
