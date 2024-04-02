@@ -1,146 +1,176 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6DA1E525
-	for <linux-clk@vger.kernel.org>; Tue,  2 Apr 2024 09:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD26B5820E;
+	Tue,  2 Apr 2024 09:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712050064; cv=none; b=QdDf2RlMGq0ADJzPSR7eFcSiGZQ48Kp2H13whNIE1+6g9N2p67XU9cOzGD4l4by0LnVAIl+FH+vN2I8aO/B5TiyugLpYAfMUUfVrxzd/YKUHyqXt/jkc4uuFp3A4cVGdvGi2bGX7RANpNrz8qcJJVqMUt55ZST8bp64H++ZwJSM=
+	t=1712050491; cv=none; b=I4iT99D4U8eOFw8Q1rwzQTNidTgk5NtVPODPcWVfuLbcq4XkcfOqNLvxagvi1T+QSmwRHskThkuvdlhCRZKGjGblNbURpjeg3VbcvmBBnPWgr/XRiedH5mTTx4IdyL1vmyzi84f9R5Npc5JIspKKBpO40YwFlQ1wrynDcyEZ0rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712050064; c=relaxed/simple;
-	bh=kti6zxXrrgfj4jXTep/SPT8yjneSKsg+jTgtDDC2ScA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OOfVpRmJ7/q9NQrBhh6EQVFH14AceHj04Z23JpmFBZw698plhpMqECDggagUZ/pQrKy3nNCsMKAZhhBYbVG6RIXWJBghRBQ8ld2/iHLPQPoiGh/IyQqKiRIQnBWwZUOkBF6Y4hBwVbW1ISZMiRpPOV0h2tFvXIem+mrTOn2qyac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1rraQc-0005lg-8e; Tue, 02 Apr 2024 11:27:38 +0200
-Message-ID: <2ebc951f-8014-4154-b1a6-d14010be8c90@pengutronix.de>
-Date: Tue, 2 Apr 2024 11:27:36 +0200
+	s=arc-20240116; t=1712050491; c=relaxed/simple;
+	bh=4XL2bE/ZBItBnM0McLZwLtl3bXKFRvUBQsDJxc7sOV8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lBGqeX3rF/2sLjIan2ocK+bZaXk9gRAUlNinCOtr1yv4zx4FN8bVg6ZTD4be0g+7d58nFog3kwWtzO6wKaXBAe+7vehKs2g+uXBFtyzOV8ygccRdoHK+IAd2SjYBxwp1YDqDLQROYcKfpi08r2/ru8f8EsxtmIEZCvlY0NCUvpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gpwjqSQo; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gpwjqSQo"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-61518d33293so7321897b3.2;
+        Tue, 02 Apr 2024 02:34:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712050489; x=1712655289; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zd3wwsxTYAdMtHPaY6ukdB/o/fdbIv+daSWf1vfb1pU=;
+        b=gpwjqSQoOnUtL7IiucbZI79qbnL0wrEIp69bB35ZObozwlJZpi+oVZCQ7PGlMIYcTM
+         i9oZaOJrvXx4akO4Nl+DZIRXQ/2rgdsDJLC6LF3Q7TDg/VDw4Es/lWrtX2pqISs8sEo4
+         FqCQhibwfDfoxxa6QrZXou/jIyueazH9D04DMkZw3c+eTexFWgdcTHqvvWhK7aMME+0/
+         7bU5y3+2AZLGDIGmSIrPkdVG0SdiDKNy3UGR4lk6aD4s5ZiOJXpjhZgc9PV/DgRwko7i
+         aeQA8FD7A52EwCGPONnuIEq30SNdGuXeHXYpAVi3eA7Rqorv3pW4Ha/puNakaVLmmg41
+         zjYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712050489; x=1712655289;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zd3wwsxTYAdMtHPaY6ukdB/o/fdbIv+daSWf1vfb1pU=;
+        b=Y0mFCe8o/4TQFZ4UoZEcDZtIJpJv1CAIb1WYNOeLrXTuVcjs2a/SLrKD2xeCOguNvY
+         OD6/r2AAVNFEVH7G0RYcLjlYmt+/FQWEfSlLj87C8oHEKD9aA/lozyQ4pxmuwfPqu65o
+         XPh2or1LEhkwVBcVhFL7NFoj0kJmXPahy7/v4smzeQItuGw5Mqa9PxIaDh6FvqiDJjDF
+         kKHLrKkM/PgB+z+RRn6P0KecdVP0S01PSUPxDO8k3987NfWH32h3zsYagLwdbWXCtZP1
+         tcWQSTHL45Xy/pm5fwq5JH91iK2rlCV8Q2qwhYLbZqjAWeC7CaB1pXBTE6mgezX5aJuP
+         Th4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVOraVv/gCNlNZwF5nYNvRMkR8K2e/4h4tw4YCaHUqd3z861XzG3M2HANP1GBLaaTamf57TCScitjz+aJeyrGdzMIdylKajKIdeaB0fBGtapH5LBfCLpEsVzV/M7SUPoAP/JBVXLw==
+X-Gm-Message-State: AOJu0YxVBTHqVqtykPRc8+Ph4XX++VT2YuqP+9gep2N+6mVL/KUS1KsW
+	0INPvWiGOk4j8gWQ3RhNMBWsKPMZNNf6oN1ZVyAgsMropzPloorvdIhZpzKEPYt7Z7lUVRW8mna
+	mVsJUFYRvcuOKVqPWHhn1X2AEgdo=
+X-Google-Smtp-Source: AGHT+IE3mcw3w/VAtRJReMwDR5zazV1WA2M7j2g292EI7+c58Tu68X6RwZ8jrt1YmWFEZ1LjY9B9qQyGfTb2Q1Nsq2g=
+X-Received: by 2002:a0d:dd93:0:b0:60c:d24d:f962 with SMTP id
+ g141-20020a0ddd93000000b0060cd24df962mr11637593ywe.42.1712050488913; Tue, 02
+ Apr 2024 02:34:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Remove UART2 from RGB30
-Content-Language: en-US
-To: Chris Morgan <macromorgan@hotmail.com>
-Cc: Chris Morgan <macroalpha82@gmail.com>,
- linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
- heiko@sntech.de, conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- robh+dt@kernel.org
-References: <20231018153357.343142-1-macroalpha82@gmail.com>
- <20231018153357.343142-4-macroalpha82@gmail.com>
- <7c7138f8-b0b7-46c3-b7b2-84e01467f368@pengutronix.de>
- <DM4PR05MB9229E56DE3F587BD222E1402A5392@DM4PR05MB9229.namprd05.prod.outlook.com>
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <DM4PR05MB9229E56DE3F587BD222E1402A5392@DM4PR05MB9229.namprd05.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <cover.1711504700.git.zhoubinbin@loongson.cn> <6c4eb239cbde62e7e1a8c647c945e128a0b78b2b.1711504700.git.zhoubinbin@loongson.cn>
+ <CAAhV-H5L=ff8k4a5PA7vaD5W8QRu3zWQa=-99bq4MsjUz3UQJQ@mail.gmail.com>
+In-Reply-To: <CAAhV-H5L=ff8k4a5PA7vaD5W8QRu3zWQa=-99bq4MsjUz3UQJQ@mail.gmail.com>
+From: Binbin Zhou <zhoubb.aaron@gmail.com>
+Date: Tue, 2 Apr 2024 15:34:37 +0600
+Message-ID: <CAMpQs4LDhE0=jWHGf9H+pvm+MVQPgX=UCJvvEb=hexc_tSWA0A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] dt-bindings: clock: add Loongson-2K expand clock index
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Yinbo Zhu <zhuyinbo@loongson.cn>, loongson-kernel@lists.loongnix.cn, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Chris,
+On Tue, Apr 2, 2024 at 2:58=E2=80=AFPM Huacai Chen <chenhuacai@kernel.org> =
+wrote:
+>
+> Hi, Binbin,
+>
+> On Mon, Apr 1, 2024 at 4:24=E2=80=AFPM Binbin Zhou <zhoubinbin@loongson.c=
+n> wrote:
+> >
+> > In the new Loongson-2K family of SoCs, more clock indexes are needed,
+> > such as clock gates.
+> > The patch adds these clock indexes
+> >
+> > Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > ---
+> >  include/dt-bindings/clock/loongson,ls2k-clk.h | 56 ++++++++++++-------
+> >  1 file changed, 37 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/include/dt-bindings/clock/loongson,ls2k-clk.h b/include/dt=
+-bindings/clock/loongson,ls2k-clk.h
+> > index 3bc4dfc193c2..4e6811eca8c6 100644
+> > --- a/include/dt-bindings/clock/loongson,ls2k-clk.h
+> > +++ b/include/dt-bindings/clock/loongson,ls2k-clk.h
+> > @@ -7,24 +7,42 @@
+> >  #ifndef __DT_BINDINGS_CLOCK_LOONGSON2_H
+> >  #define __DT_BINDINGS_CLOCK_LOONGSON2_H
+> >
+> > -#define LOONGSON2_REF_100M                             0
+> > -#define LOONGSON2_NODE_PLL                             1
+> > -#define LOONGSON2_DDR_PLL                              2
+> > -#define LOONGSON2_DC_PLL                               3
+> > -#define LOONGSON2_PIX0_PLL                             4
+> > -#define LOONGSON2_PIX1_PLL                             5
+> > -#define LOONGSON2_NODE_CLK                             6
+> > -#define LOONGSON2_HDA_CLK                              7
+> > -#define LOONGSON2_GPU_CLK                              8
+> > -#define LOONGSON2_DDR_CLK                              9
+> > -#define LOONGSON2_GMAC_CLK                             10
+> > -#define LOONGSON2_DC_CLK                               11
+> > -#define LOONGSON2_APB_CLK                              12
+> > -#define LOONGSON2_USB_CLK                              13
+> > -#define LOONGSON2_SATA_CLK                             14
+> > -#define LOONGSON2_PIX0_CLK                             15
+> > -#define LOONGSON2_PIX1_CLK                             16
+> > -#define LOONGSON2_BOOT_CLK                             17
+> > -#define LOONGSON2_CLK_END                              18
+> > +#define LOONGSON2_REF_100M     0
+> > +#define LOONGSON2_NODE_PLL     1
+> > +#define LOONGSON2_DDR_PLL      2
+> > +#define LOONGSON2_DC_PLL       3
+> > +#define LOONGSON2_PIX0_PLL     4
+> > +#define LOONGSON2_PIX1_PLL     5
+> > +#define LOONGSON2_NODE_CLK     6
+> > +#define LOONGSON2_HDA_CLK      7
+> > +#define LOONGSON2_GPU_CLK      8
+> > +#define LOONGSON2_DDR_CLK      9
+> > +#define LOONGSON2_GMAC_CLK     10
+> > +#define LOONGSON2_DC_CLK       11
+> > +#define LOONGSON2_APB_CLK      12
+> > +#define LOONGSON2_USB_CLK      13
+> > +#define LOONGSON2_SATA_CLK     14
+> > +#define LOONGSON2_PIX0_CLK     15
+> > +#define LOONGSON2_PIX1_CLK     16
+> > +#define LOONGSON2_BOOT_CLK     17
+> > +
+> > +/* Loongson-2K2000 */
+> This line should be removed, because the below definition is not
+> specific to Loongson-2K2000.
 
-On 30.03.24 16:34, Chris Morgan wrote:
-> On Sat, Mar 30, 2024 at 02:13:05PM +0100, Ahmad Fatoum wrote:
->> Hello Chris,
->>
->> On 18.10.23 17:33, Chris Morgan wrote:
->>> From: Chris Morgan <macromorgan@hotmail.com>
->>>
->>> The Powkiddy RGB30 has no onboard UART header, so remove the reference
->>> to it in the device tree. This was left on by mistake in the initial
->>> commit.
->>
->> Do you know if the UART is perhaps available over testpoints?
-> 
-> There is not one as best I can tell on either the RGB30 or RK2023. The
-> Powkiddy X55 does have UART, however. I was able to exploit the fact
-> that the RGB30 is extremely similar to all of the Anbernic devices
-> (such as the RG353 series) for the purposes of low-level development.
-> Once I got a network connection I performed the rest of development
-> over SSH, but prior to that I just developed on a different device.
+Yes, it was my mistake, I forgot to drop it.
+I will fix it in the next version.
 
-Thanks for the info.
-
-AFAICS, it should be possible to get a console by changing the pinmux
-setting on the Game TF-Card:
-
-  SDMMC1_D0/UART6_RX_M0/GPIO2_A3_u
-  SDMMC1_D1/UART6_TX_M0/GPIO2_A4_u
-  SDMMC1_D2/UART7_RX_M0/GPIO2_A5_u
-  SDMMC1_D3/UART7_TX_M0/GPIO2_A6_u
-  SDMMC1_CMD/UART9_RX_M0/GPIO2_A7_u
-  SDMMC1_CLK/UART9_TX_M0/GPIO2_B0_d
-
-I will give that a try.
-
-Cheers,
-Ahmad
-
-> 
-> Thank you,
-> Chris.
-> 
->>
->> If yes, having a DT-overlay upstream enabling it along with documentation could be useful.
->> If not, how do you do low-level debugging on the RBG30 in absence of the serial console?
->>
->> Thanks,
->> Ahmad 
->>
->>>
->>> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
->>> ---
->>>  arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts | 9 +++++++++
->>>  1 file changed, 9 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts b/arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts
->>> index 3ebc21608213..1ead3c5c24b3 100644
->>> --- a/arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts
->>> +++ b/arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dts
->>> @@ -64,6 +64,10 @@ simple-audio-card,cpu {
->>>  
->>>  /delete-node/ &adc_keys;
->>>  
->>> +&chosen {
->>> +	/delete-property/ stdout-path;
->>> +};
->>> +
->>>  &cru {
->>>  	assigned-clocks = <&pmucru CLK_RTC_32K>, <&cru PLL_GPLL>,
->>>  			  <&pmucru PLL_PPLL>, <&cru PLL_VPLL>;
->>> @@ -149,4 +153,9 @@ rk817_charger: charger {
->>>  	};
->>>  };
->>>  
->>> +/* There is no UART header visible on the board for this device. */
->>> +&uart2 {
->>> +	status = "disabled";
->>> +};
->>> +
->>>  /delete-node/ &vibrator;
->>
->> -- 
->> Pengutronix e.K.                           |                             |
->> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
->> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
->> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
->>
-> 
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
+Thanks.
+Binbin
+>
+> Huacai
+>
+> > +#define LOONGSON2_OUT0_GATE    18
+> > +#define LOONGSON2_GMAC_GATE    19
+> > +#define LOONGSON2_RIO_GATE     20
+> > +#define LOONGSON2_DC_GATE      21
+> > +#define LOONGSON2_GPU_GATE     22
+> > +#define LOONGSON2_DDR_GATE     23
+> > +#define LOONGSON2_HDA_GATE     24
+> > +#define LOONGSON2_NODE_GATE    25
+> > +#define LOONGSON2_EMMC_GATE    26
+> > +#define LOONGSON2_PIX0_GATE    27
+> > +#define LOONGSON2_PIX1_GATE    28
+> > +#define LOONGSON2_OUT0_CLK     29
+> > +#define LOONGSON2_RIO_CLK      30
+> > +#define LOONGSON2_EMMC_CLK     31
+> > +#define LOONGSON2_DES_CLK      32
+> > +#define LOONGSON2_I2S_CLK      33
+> > +#define LOONGSON2_MISC_CLK     34
+> >
+> >  #endif
+> > --
+> > 2.43.0
+> >
