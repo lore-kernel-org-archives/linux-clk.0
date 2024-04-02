@@ -1,136 +1,153 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423194C60C;
-	Mon,  1 Apr 2024 17:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EBF4C601;
+	Tue,  2 Apr 2024 08:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711992170; cv=none; b=b01QH7F9vrCgOf4vmBEj7qmvE0mjiXubcD25m3cSo/33ymPaWVRi19/SBw/ZAM6K6iiwDTlGFu4faBdAxuwuxaiOcC3g2FIwiYePXmcfnGU6C0qEUWb+NLxVQBmGx7slc5r3gRXHs79WOfwUcGSJ5CxK//9u0tBQHyHsA6BP7cc=
+	t=1712048300; cv=none; b=lfnY6SFZD7jpQxutyVqq0O0OxJQn1/lbZmiYnKzioeqKWsokHjQA0fbRIwgF5jea9wOLNZ4PE+FGulp6JFWlYrpHGXuL97sZoQITQ9/SJAfnRspi+7tZcFjd8HV7z8Lbxlw2I/B+dPWgEjVegrbQhPw6UNYcBQKXatjEANYbivk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711992170; c=relaxed/simple;
-	bh=zHbbCSOPyTCqPdUXRwDlup/1JNlur6S+ULZXs+kmzok=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dssyXM82KR3LS1wTE2MEwDFOzWLW+fQ682CwkgxXJwdkzKjO5qimzGiZka1YS5N1qlRa7KNlpETNtrYoHrkc0PcvuRQY7SPQPH5n0fSqU9EdlIkMU2npZOTp7JTcMwTE1VxZP+KJ3TDmahReLP+RTglxegMoQeHc5Cmk3okhKWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ePLJZ08v; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+	s=arc-20240116; t=1712048300; c=relaxed/simple;
+	bh=GJGmzl0aL+gzIiSBt4ML2aSlp8l0BachOvAUaE+pSVs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GQfSWF+l+4DtcplcoKyOZlVL2OhQsK4ggspib5gs6NkFpiE8NQqei2uMcQHG4AWsyd4uLdCuGWOsIBw3dUwZNlgI4BrKtk+uUibpm9OXUXjfo4A7isZJyu3ykreGwvHBUseoTuRVaaoFBk5bblCNuKCOBXZ7K0a90NDGj5w36CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kly8A2Cb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ePLJZ08v"
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 4EBEC120003;
-	Mon,  1 Apr 2024 20:22:44 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 4EBEC120003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1711992164;
-	bh=tl1k+GzwBoZHvPC5wGd0gk/FR6ibdQtoq6i6yG3MDtE=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=ePLJZ08v9l/Hp7+tshkLyConpJh3/E7UlPychQ8v4envB4os0v896owqaCmUZBjPw
-	 CASP3Kvn8yjDiOVNug2zR0XVFAP5hfsR2f70JK4yUprzcIq+X0EfxdpSH+mXgwuB5P
-	 9//DgLEl4FR7a0j5vgchoors49NzStQuA6+XtIawT/vGj/MGbgaQehjcYjwt2LM20g
-	 rtq+7EgaEMsCG/LVOtZKVkUAMpAFl8cIcHkxzsdjEWYVb3CApexAknmGL033IXoPJZ
-	 oX41ydw3Fjehxdcd681iiS8shzVEnB4Du+a1Y2CiY1y11Ylv1lpuvDO32cgmzFb4JG
-	 psrARtLC41j3w==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon,  1 Apr 2024 20:22:44 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 1 Apr
- 2024 20:22:43 +0300
-Date: Mon, 1 Apr 2024 20:22:43 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Rob Herring <robh@kernel.org>
-CC: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <kernel@salutedevices.com>,
-	<rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v1 1/6] dt-bindings: clock: meson: a1: pll: introduce new
- syspll bindings
-Message-ID: <20240401172243.zuvj6d6ptkrt6p33@CAB-WSD-L081021>
-References: <20240329205904.25002-1-ddrokosov@salutedevices.com>
- <20240329205904.25002-2-ddrokosov@salutedevices.com>
- <20240401142011.GA537763-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kly8A2Cb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C237C43330;
+	Tue,  2 Apr 2024 08:58:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712048300;
+	bh=GJGmzl0aL+gzIiSBt4ML2aSlp8l0BachOvAUaE+pSVs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kly8A2Cbd2xiawQe95+Q1TL8CHnPoTknmbeJJg1nPbgipm3JjOOXN+Qvbilm0VdZb
+	 nNThpyysjqt1D36FQ/wfzJ7JBGTbmgKkTZ2+2lgwnP49xW0enjnr1dL7w8+R+Ip7QL
+	 RaLn0po1LDIuwKHAMWdGuLbXX8OTDzh1tAKWj9Fgqy8grIl17ODuNE5taV0ZfjjETe
+	 zDSHkYYyWD8VAFTbYMFs0jXS8kHImNAdOxRtHvo5gswaDyt9p5DvBDN6anTgR+c+Tx
+	 1m4TRmBsZNMz6UA7VljAaLATEMEFWkPCgHkYkDP55z+IfEOPD5M/hA8T5ZgAW6T3DR
+	 huK1v+mG45XNQ==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a450bedffdfso537662066b.3;
+        Tue, 02 Apr 2024 01:58:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXo6FTXwEaB7u5WdNyTTBQt1uq03MXkH9dJy/AL2BoqZ1zJIj3rsUMGj2h1Is5aYkebpQCC3KJ2eyrHLsV4/bxyK72re1/AuMma1P8vdAopA9RV3qy84iHg6JGIGo81L3EXvMjzmA==
+X-Gm-Message-State: AOJu0Ywzpq154oArvPxhvhv6RbDCycs2c4UR9kBB8bnOPE/YRgxy8Ypi
+	NdPUj6YyrTG+O1RxyK4a7DA0NkcrrlJ8Fk1U+90oZMmzqhGJAbWdlE0cXvW06bVo4alNRwONt1L
+	6DD4Mg4rEQUlxFhrr5ew0IZm1cUY=
+X-Google-Smtp-Source: AGHT+IEfJymNSCKTkckJk4CVDKDysHoRh7f7lkdWF/dzcc7jIH3lmiAijIS62CiVN1IntvEEPTIrdaOmJbHI8fQT8z4=
+X-Received: by 2002:a17:907:9702:b0:a4e:39f1:6374 with SMTP id
+ jg2-20020a170907970200b00a4e39f16374mr7328586ejc.24.1712048298982; Tue, 02
+ Apr 2024 01:58:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240401142011.GA537763-robh@kernel.org>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 184515 [Apr 01 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 14 0.3.14 5a0c43d8a1c3c0e5b0916cc02a90d4b950c01f96, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;lore.kernel.org:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/04/01 16:37:00
-X-KSMG-LinksScanning: Clean, bases: 2024/04/01 16:36:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/04/01 15:13:00 #24563578
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <cover.1711504700.git.zhoubinbin@loongson.cn> <6c4eb239cbde62e7e1a8c647c945e128a0b78b2b.1711504700.git.zhoubinbin@loongson.cn>
+In-Reply-To: <6c4eb239cbde62e7e1a8c647c945e128a0b78b2b.1711504700.git.zhoubinbin@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 2 Apr 2024 16:58:07 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5L=ff8k4a5PA7vaD5W8QRu3zWQa=-99bq4MsjUz3UQJQ@mail.gmail.com>
+Message-ID: <CAAhV-H5L=ff8k4a5PA7vaD5W8QRu3zWQa=-99bq4MsjUz3UQJQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] dt-bindings: clock: add Loongson-2K expand clock index
+To: Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: Binbin Zhou <zhoubb.aaron@gmail.com>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Yinbo Zhu <zhuyinbo@loongson.cn>, loongson-kernel@lists.loongnix.cn, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Rob,
+Hi, Binbin,
 
-On Mon, Apr 01, 2024 at 09:20:11AM -0500, Rob Herring wrote:
-> On Fri, Mar 29, 2024 at 11:58:41PM +0300, Dmitry Rokosov wrote:
-> > The 'syspll' PLL is a general-purpose PLL designed specifically for the
-> > CPU clock. It is capable of producing output frequencies within the
-> > range of 768MHz to 1536MHz.
-> > 
-> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> > ---
-> >  .../devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml     | 7 +++++--
-> >  include/dt-bindings/clock/amlogic,a1-pll-clkc.h            | 2 ++
-> >  2 files changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> > index a59b188a8bf5..fbba57031278 100644
-> > --- a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> > @@ -26,11 +26,13 @@ properties:
-> >      items:
-> >        - description: input fixpll_in
-> >        - description: input hifipll_in
-> > +      - description: input syspll_in
-> >  
-> >    clock-names:
-> >      items:
-> >        - const: fixpll_in
-> >        - const: hifipll_in
-> > +      - const: syspll_in
-> 
-> A new required entry is an ABI break. Please state why that's ok or make 
-> it optional (minItems: 2).
+On Mon, Apr 1, 2024 at 4:24=E2=80=AFPM Binbin Zhou <zhoubinbin@loongson.cn>=
+ wrote:
+>
+> In the new Loongson-2K family of SoCs, more clock indexes are needed,
+> such as clock gates.
+> The patch adds these clock indexes
+>
+> Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  include/dt-bindings/clock/loongson,ls2k-clk.h | 56 ++++++++++++-------
+>  1 file changed, 37 insertions(+), 19 deletions(-)
+>
+> diff --git a/include/dt-bindings/clock/loongson,ls2k-clk.h b/include/dt-b=
+indings/clock/loongson,ls2k-clk.h
+> index 3bc4dfc193c2..4e6811eca8c6 100644
+> --- a/include/dt-bindings/clock/loongson,ls2k-clk.h
+> +++ b/include/dt-bindings/clock/loongson,ls2k-clk.h
+> @@ -7,24 +7,42 @@
+>  #ifndef __DT_BINDINGS_CLOCK_LOONGSON2_H
+>  #define __DT_BINDINGS_CLOCK_LOONGSON2_H
+>
+> -#define LOONGSON2_REF_100M                             0
+> -#define LOONGSON2_NODE_PLL                             1
+> -#define LOONGSON2_DDR_PLL                              2
+> -#define LOONGSON2_DC_PLL                               3
+> -#define LOONGSON2_PIX0_PLL                             4
+> -#define LOONGSON2_PIX1_PLL                             5
+> -#define LOONGSON2_NODE_CLK                             6
+> -#define LOONGSON2_HDA_CLK                              7
+> -#define LOONGSON2_GPU_CLK                              8
+> -#define LOONGSON2_DDR_CLK                              9
+> -#define LOONGSON2_GMAC_CLK                             10
+> -#define LOONGSON2_DC_CLK                               11
+> -#define LOONGSON2_APB_CLK                              12
+> -#define LOONGSON2_USB_CLK                              13
+> -#define LOONGSON2_SATA_CLK                             14
+> -#define LOONGSON2_PIX0_CLK                             15
+> -#define LOONGSON2_PIX1_CLK                             16
+> -#define LOONGSON2_BOOT_CLK                             17
+> -#define LOONGSON2_CLK_END                              18
+> +#define LOONGSON2_REF_100M     0
+> +#define LOONGSON2_NODE_PLL     1
+> +#define LOONGSON2_DDR_PLL      2
+> +#define LOONGSON2_DC_PLL       3
+> +#define LOONGSON2_PIX0_PLL     4
+> +#define LOONGSON2_PIX1_PLL     5
+> +#define LOONGSON2_NODE_CLK     6
+> +#define LOONGSON2_HDA_CLK      7
+> +#define LOONGSON2_GPU_CLK      8
+> +#define LOONGSON2_DDR_CLK      9
+> +#define LOONGSON2_GMAC_CLK     10
+> +#define LOONGSON2_DC_CLK       11
+> +#define LOONGSON2_APB_CLK      12
+> +#define LOONGSON2_USB_CLK      13
+> +#define LOONGSON2_SATA_CLK     14
+> +#define LOONGSON2_PIX0_CLK     15
+> +#define LOONGSON2_PIX1_CLK     16
+> +#define LOONGSON2_BOOT_CLK     17
+> +
+> +/* Loongson-2K2000 */
+This line should be removed, because the below definition is not
+specific to Loongson-2K2000.
 
-Unfortunatelly, it cannot be optional. I've explained here why:
+Huacai
 
-https://lore.kernel.org/all/20240401171933.bqmjsuanqsjvjosn@CAB-WSD-L081021/
-
-"""
-The clock source sys_pll_div16, being one of the GEN clock parents,
-plays a crucial role and cannot be tagged as "optional". Unfortunately,
-it was not implemented earlier due to the cpu clock ctrl driver's
-pending status on the TODO list.
-"""
-
-Could you please provide guidance on whether there is any alternative
-approach that could potentially make it possible?
-
--- 
-Thank you,
-Dmitry
+> +#define LOONGSON2_OUT0_GATE    18
+> +#define LOONGSON2_GMAC_GATE    19
+> +#define LOONGSON2_RIO_GATE     20
+> +#define LOONGSON2_DC_GATE      21
+> +#define LOONGSON2_GPU_GATE     22
+> +#define LOONGSON2_DDR_GATE     23
+> +#define LOONGSON2_HDA_GATE     24
+> +#define LOONGSON2_NODE_GATE    25
+> +#define LOONGSON2_EMMC_GATE    26
+> +#define LOONGSON2_PIX0_GATE    27
+> +#define LOONGSON2_PIX1_GATE    28
+> +#define LOONGSON2_OUT0_CLK     29
+> +#define LOONGSON2_RIO_CLK      30
+> +#define LOONGSON2_EMMC_CLK     31
+> +#define LOONGSON2_DES_CLK      32
+> +#define LOONGSON2_I2S_CLK      33
+> +#define LOONGSON2_MISC_CLK     34
+>
+>  #endif
+> --
+> 2.43.0
+>
