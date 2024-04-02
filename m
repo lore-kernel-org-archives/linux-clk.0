@@ -1,145 +1,160 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F628662E
-	for <linux-clk@vger.kernel.org>; Tue,  2 Apr 2024 14:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC0C12BF3D;
+	Tue,  2 Apr 2024 15:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712069379; cv=none; b=hO/fEIeY/jny/4XGQVX9QhdpjY02vQro9tk7ZyKC7nGHfeRL1aB+0RvMSH0WGZao9C38IOk1rJGfDXZmPFk6htkQqSOqrNT/GmTEvWYYePKu6OQbbQCiBYBgs1fIa+7jIOmiOThBS9A15mvOpxBXIhw8oi8r/v7D+m9rjYj7IK8=
+	t=1712070035; cv=none; b=Lj22XAsmDOPpFVoWR9GgkWpYorrj4u8MN8lsU43kaTWazSYRlC9btsdauCybJ5Rpc1Atfytx6Y85OKFPTsyrKNkgd4LgdRZC6YIw0x6LJuAtogS29ZfLZ+evUZb4yBqcMzmu6IQxlz7Oin2tvgUuzvc60KZsw4llVXReU/HmkYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712069379; c=relaxed/simple;
-	bh=R6qde+iITv8Ux/EKpL1jJjmQD4xhkEmuDaLF7RETwOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TStQvaQprrb01lEddqRBLO5Z1sBfjkeT+qrX0HaMH63aYtO4MBQlEaRTaa7pILHBzls3IyH+096yPItAqZ+WOgUJJW2DeS/nedRRkwuDztgA7++Xrx064a5okU0zKnaG3QZJSgOh43JmxZ3IZ3/kENnBaW97OonCcv24/43NBNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ifShd6t0; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712070035; c=relaxed/simple;
+	bh=cmom1ErdcUheZ0CJPk2iD8ce4Uaoh5OwhA8EpMDVFnc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KmLNCPPICW6Z7q70ywY+IDHoMjTDpLO5N56LLUwUJ0DZ2INrNekzzWsFznX9rx2rmyjm9RyhFjf0Oc5Vm6SWTjv5XXJueEDqMpZTbjBIwp9LxWia51WQg9ln56b2lW5j1L9vNIMYz0aCf2ebOTUZ4Uzoqw9iOgcZ+KgdejXmJ/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=FO0HCuQ5; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ifShd6t0"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a4e39f5030dso514749166b.0
-        for <linux-clk@vger.kernel.org>; Tue, 02 Apr 2024 07:49:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712069377; x=1712674177; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=qLa+MN3bXJ5HxwNKiIPGEXS1wglnZiuZ2Ea5/Fw6iIM=;
-        b=ifShd6t0t41raE9O8TOLw/bl3gnuNErHtn2VQNJ8lvrgANbupd8YLKj/qr7dRj4kLw
-         N6/STJR+rtB86Xt3BBbD086vMel9IY4Y2vUBwoSV/32NZ8uZExqjwcmCDNkREnC8fvos
-         Lw2H0VSUTij3nL9vPENkzDtH1Hbo1wg3ZIFEknuN2zrFPG7Ilwoakuuwdt/fKhfS69Ju
-         jRm2hX4Jn1lBAO7Fc+3hAG2DFSe+Dzz1vaC07OxsNJMrjga+RJZWB4O6X+Yipqzz1Cwz
-         yn8kmPd4uTgoZSqE2vLW9atyh9iZwsId7Mz/ejQV7yM4GaB7EkOFCtyAGO+6419GcbUs
-         S4nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712069377; x=1712674177;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qLa+MN3bXJ5HxwNKiIPGEXS1wglnZiuZ2Ea5/Fw6iIM=;
-        b=sTSLGVOi0EKWd8/WsDEYTIURHa74qAwCtDADnpkssZ6dZu+gfLii3AX/MxsEcXlPfI
-         EGpHB8rIAesihcbfSC6XnNqE3SuX2KvGU/nl8Cu37an+pwRjQ4bdEJ3GAEA9ByTEHZm0
-         s3YN2jrKVbjcgxhi+1y/upR9VzGrZ/YWVjIlUq7b9JcKXmxJ5vEWGGMqBDw2wvG7suT3
-         cmfP/UPUIx9N54vxl8Sz8cY7rIFu33TLgk1iSFy9jz80C2jZ+Nt93deWqeORoQQJUNda
-         epCkQ7jQV+HUNg5z38SmG0Mw/U6JWsxwRC7800O5TdLRPapDKtUY6Ipk0i/8GKpoKLsV
-         /DEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUerFojb5RoBSWMlAV6r4u26Nm36/lUI3VGlVXyNFVrwn651DYbF+0wRaHtXTQdBXSXINMq25ysI4W1PnNE65xQOo+KqUI8Bz7
-X-Gm-Message-State: AOJu0YyGJMVbJGSyAcbiCSkY066F3o0vjUc8L5NtcIP7HgfINC10UVF2
-	R/q48EmuzU7qR+K64AYHTviUVI1YZxyEKtPgu1UNrH48QYbPjrMgFyp0IdYbjr0=
-X-Google-Smtp-Source: AGHT+IGFYhRDcZm6Ii0rP7m5rmXlrAdHv5FZrzsVIj839wjWmHdgrYaO3ezpyXY/JT7It50aaa5OsA==
-X-Received: by 2002:a17:907:9286:b0:a4e:4e76:5fc7 with SMTP id bw6-20020a170907928600b00a4e4e765fc7mr8881269ejc.65.1712069376618;
-        Tue, 02 Apr 2024 07:49:36 -0700 (PDT)
-Received: from [192.168.92.47] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id q17-20020a1709060e5100b00a4623030893sm6527417eji.126.2024.04.02.07.49.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Apr 2024 07:49:36 -0700 (PDT)
-Message-ID: <0e599137-4a23-40b9-9a22-3c32f795fa1b@linaro.org>
-Date: Tue, 2 Apr 2024 16:49:33 +0200
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="FO0HCuQ5"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 086F4100008;
+	Tue,  2 Apr 2024 18:00:28 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 086F4100008
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1712070028;
+	bh=jBFRAbcdr1AzYHPitiXnnWqvqH1LyjSLBccDvymWK8M=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=FO0HCuQ5B87ozq5xGqK+E/OxZ2gprNssoVQXHSsQntdL8Qqs76BCagZJ/BdESmU9R
+	 Pvha/UmvKLm5sAlxvcL3kU7yd+BEJPFw8/1wIukohJUFHSBEziZJZecS6TdBaFf3AM
+	 PZWc8kjOuYh39ahOBmkZ8dIjDknhH8hfiprTRv7jxfBoC9bpUMhELIu0Cu7TYgkgtA
+	 U6ThHfcnl5mDKydujNUmd43bxpijwSs9ZWJnDx/+TtOyoeddWdYPGG3kXYsAbiP01Y
+	 19pLZ2MpuYiBb0D6RftliEMOvSGQQqqyjDUSBAlDnXow3RjS8Gw0y+y/tK9zkQPUlf
+	 NaBxbpB802neA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue,  2 Apr 2024 18:00:27 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 2 Apr
+ 2024 18:00:27 +0300
+Date: Tue, 2 Apr 2024 18:00:27 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+CC: <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <kernel@salutedevices.com>,
+	<rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v1 2/6] clk: meson: a1: pll: support 'syspll'
+ general-purpose PLL for CPU clock
+Message-ID: <20240402150027.fptfvov74zwed6vb@CAB-WSD-L081021>
+References: <20240329205904.25002-1-ddrokosov@salutedevices.com>
+ <20240329205904.25002-3-ddrokosov@salutedevices.com>
+ <1j4jckjftk.fsf@starbuckisacylon.baylibre.com>
+ <20240402121546.qrrc7r5un75464pb@CAB-WSD-L081021>
+ <1jmsqbj0md.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/6] interconnect: icc-clk: Remove tristate from
- INTERCONNECT_CLK
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- djakov@kernel.org, quic_anusha@quicinc.com, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- kernel test robot <lkp@intel.com>
-References: <20240402103406.3638821-1-quic_varada@quicinc.com>
- <20240402103406.3638821-3-quic_varada@quicinc.com>
- <CAA8EJppyuagb5zkP4LCjjJwConw3mw3iS-+dO7YB01=7-waRTw@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CAA8EJppyuagb5zkP4LCjjJwConw3mw3iS-+dO7YB01=7-waRTw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1jmsqbj0md.fsf@starbuckisacylon.baylibre.com>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 184537 [Apr 02 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 14 0.3.14 5a0c43d8a1c3c0e5b0916cc02a90d4b950c01f96, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/04/02 07:07:00 #24571916
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On 2.04.2024 12:39 PM, Dmitry Baryshkov wrote:
-> On Tue, 2 Apr 2024 at 13:34, Varadarajan Narayanan
-> <quic_varada@quicinc.com> wrote:
->>
->> drivers/clk/qcom/common.c uses devm_icc_clk_register under
->> IS_ENABLED(CONFIG_INTERCONNECT_CLK). However, in kernel bot
->> random config build test, with the following combination
->>
->>         CONFIG_COMMON_CLK_QCOM=y
->>                 and
->>         CONFIG_INTERCONNECT_CLK=m
->>
->> the following error is seen as devm_icc_clk_register is in a
->> module and being referenced from vmlinux.
->>
->>         powerpc64-linux-ld: drivers/clk/qcom/common.o: in function `qcom_cc_really_probe':
->>         >> common.c:(.text+0x980): undefined reference to `devm_icc_clk_register'
->>
->> Hence, ensure INTERCONNECT_CLK is not selected as a module.
+On Tue, Apr 02, 2024 at 04:27:17PM +0200, Jerome Brunet wrote:
 > 
-> NAK. Please use `depends on INTERCONNECT_CLK || !INTERCONNECT_CLK` in
-> your Kconfig dependencies.
+> On Tue 02 Apr 2024 at 15:15, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+> 
+> > On Tue, Apr 02, 2024 at 11:00:42AM +0200, Jerome Brunet wrote:
+> >> 
+> >> On Fri 29 Mar 2024 at 23:58, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+> >> 
+> >> > The 'syspll' PLL, also known as the system PLL, is a general and
+> >> > essential PLL responsible for generating the CPU clock frequency.
+> >> > With its wide-ranging capabilities, it is designed to accommodate
+> >> > frequencies within the range of 768MHz to 1536MHz.
+> >> >
+> >> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> >> > ---
+> >> >  drivers/clk/meson/a1-pll.c | 78 ++++++++++++++++++++++++++++++++++++++
+> >> >  drivers/clk/meson/a1-pll.h |  6 +++
+> >> >  2 files changed, 84 insertions(+)
+> >> >
+> >> > diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+> >> > index 60b2e53e7e51..02fd2d325cc6 100644
+> >> > --- a/drivers/clk/meson/a1-pll.c
+> >> > +++ b/drivers/clk/meson/a1-pll.c
+> >> > @@ -138,6 +138,81 @@ static struct clk_regmap hifi_pll = {
+> >> >  	},
+> >> >  };
+> >> >  
+> >> > +static const struct pll_mult_range sys_pll_mult_range = {
+> >> > +	.min = 32,
+> >> > +	.max = 64,
+> >> > +};
+> >> > +
+> >> > +/*
+> >> > + * We assume that the sys_pll_clk has already been set up by the low-level
+> >> > + * bootloaders as the main CPU PLL source. Therefore, it is not necessary to
+> >> > + * run the initialization sequence.
+> >> > + */
+> >> 
+> >> I see no reason to make such assumption.
+> >> This clock is no read-only, it apparently is able to re-lock so assuming
+> >> anything from the bootloader is just asking from trouble
+> >> 
+> >
+> > Indeed, I have implemented the following initialization sequence. I have
+> > dumped the bootloader setup and included it in the definition of my
+> > sys_pll. However, I have encountered an issue with the enable bit. If I
+> > leave the enable bit switched on by default, there is a possibility that
+> > the bootloader selects a fixed CPU clock while the sys_pll should be
+> > switched off. On the other hand, if I keep the enable bit switched off
+> > by default, the bootloader might configure the CPU clock to use sys_pll,
+> > resulting in the execution halting when the initialization sequence is
+> > run. This situation has led me to assume that we should place our trust
+> > in the bootloader setup.
+> >
+> > If you believe it is necessary to include the initialization sequence, I
+> > can prepare it with the sys_pll enabled by default.
+> 
+> I just noted your initial comment is misleading.
+> 
+> You could submit a patch to apply the init sequence only if the PLL is
+> not already enabled. Maybe even condition that to flag in the pll data
+> to avoid applying it to the other platforms for now.
+> 
 
-Should icc-clk ever be built as a module? It really seems like it should be
-a part of the core framework.. And dependency management would be easier
+Ah, I see. Okay, no problem, I will prepare such patch to common meson
+clk-pll.
 
-Konrad
+[...]
+
+-- 
+Thank you,
+Dmitry
