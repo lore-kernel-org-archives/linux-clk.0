@@ -1,105 +1,246 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E672D78A
-	for <linux-clk@vger.kernel.org>; Tue,  2 Apr 2024 12:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E977F33F2;
+	Tue,  2 Apr 2024 12:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712061109; cv=none; b=RKQtYJK6JMmObX8T2Oau+21VKTUpvh31g9NdXH7IfzmZv+JfFEB0oRenka7/KP4NN23uyhFkIeWvssABMl3FZa0mdhp6CzkgXWg9jnLOO7ddHmPzX2ETobkFhXx9qmTpZ7Xv3Vq59esN6Jw9cS1MHeVMA5A/hbV2KCnaXRz/8jE=
+	t=1712062474; cv=none; b=LMY8LnngPSkZGPIy0BP/7WaOb1IvSO74Uhff+V0LHACpJTUlFdQHMC8OjYASOFChYJ+SG+vc0UzNGLt2gp/JBJMSa/c8NQhVHC881XPgD/8MEmo4r4QMG7p/HglDwHgYBYacllU1NbuqYgap+/EVQTn8tXqFfptsQjoKImr5bko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712061109; c=relaxed/simple;
-	bh=p0a8acw+7ULihTf8lE/ghLH059TUPnJn47JiEnYgccM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YgQS+pGB2zEiNtYHM0BrSo7Gbj3TA+NHn9jHiJnDW/AuVJTSZ/Vlp7D9+QxdMEF9Tt9STQcbvio+jm1SfqbxKVWOlqGLtppDpbu+GlALtm4NVM32mdR9J/ZsyIy56aejG2ZZrXgRc/NODcMvsAme2khes4zHIks7iECbKVHZ9GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AcFkuFOJ; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712062474; c=relaxed/simple;
+	bh=yKL/GD2g+PqqgINfyNMStamCKLF/QziBlhTPzWm6TAg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XJ7DncWTwtUOqjb4ZLw8jbIdV9mKW8e0ZORe9HR/h7RxK86QoTZ2AtjQmTk6dRRACajePFr2+RETwK76AGwW07Z4bF114pHV8/7YvJwlERwAw7HOKDZfEg58v+fmvDwtEPAfNT8VYedGOiy6MD/8llMEZrZ+9YoooQOmah9tMYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ZVbHxnrj; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AcFkuFOJ"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dc74435c428so4878985276.2
-        for <linux-clk@vger.kernel.org>; Tue, 02 Apr 2024 05:31:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712061107; x=1712665907; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p0a8acw+7ULihTf8lE/ghLH059TUPnJn47JiEnYgccM=;
-        b=AcFkuFOJwh6/OSIC2P6CN+t5N8yM49Tio8HVEsm9NC1HNJCNNVgKc2/Dkb3jTefFL6
-         SeBWPt1GUPkHUPEA9RAVg6Y+DQem3a2hYwXwjdeecWrWv1EQEpH1aiq0vqDRzLrTDWLD
-         1qUj9oYWttSSh3vHU7vuM4JujJOGMQU2euPPH0oeogAB0iOKUCfie3ASXqXjXmrOxYfH
-         zU+INEwdROhwLAR4DP9QoG7ndxdwbChFbCZ1efkgoIr88olR6HnpsCdY87zdd2smTu7N
-         95DuzmryhyQFqmoxoACsUTZSFgUpsaITa1qGf6PmP71lC3NJQ3G4i7kG2ZqihM8JjY2+
-         MWPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712061107; x=1712665907;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p0a8acw+7ULihTf8lE/ghLH059TUPnJn47JiEnYgccM=;
-        b=qb41Q9GmVG0XtaKDlURHbcwwKc8xkxlmvBdgLaaR60Tt0aSj8/Y+mvah31fw48yhjd
-         D3rzSfY/oosbgu1UAJ0X2xLo2dENfG1ejm2ws8f6r1OBqCOkl6wRw90A1hZZZgvbbv+Y
-         3H0o4TIFiV8U5wlh78Vpt1uaGnk+ULtgPjvpkj6KwmdH59dMlDawPp1o2rni5OXp03uW
-         m5SZRJxARJiwF0WtjcoaQ53e22BFh4P+cjD4pqLPF4BxRCl2xe/0aSvBTziENyN4Rfjq
-         WHEjXYoyn9+GxvM88wY5Kko5AlzIKRCvfGSTv9R/Zw6lPPaEA4PvX6h5p+fgvuDUdMeE
-         01mg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9EFtRnkICG5RgvJQEb81qIqZZF2Tw96JYk9+0GLWRvd7s8PMKYZcyGA+emLF76YQa1PE2T9765bt/To5C7eNhqBgQB3jw98Xb
-X-Gm-Message-State: AOJu0YzdOPOXpSu4hx8G2qOP0hywUD5tY14D96E6qsR4mT3g1ZFbVS3M
-	4o+xc+i/4gKNeusOAtjg8kislnpC+MiW1ywlL2MphL84MqapBFbH+yPaSHxoPvMNtvRTG92g7uq
-	AGL/ECgnhJpqCLqi9sJM8ZeUursgdf93ZE9YhhQ==
-X-Google-Smtp-Source: AGHT+IE0J84TqRbakQrC6l14h9si7x2di9LmRSJuCIgA2LQ8vJmxYu7A/iE7PWTtStw1Hw8SCsS1GQo4L/akposnPKg=
-X-Received: by 2002:a25:a14a:0:b0:dcb:b3dd:4f95 with SMTP id
- z68-20020a25a14a000000b00dcbb3dd4f95mr10698210ybh.43.1712061107020; Tue, 02
- Apr 2024 05:31:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ZVbHxnrj"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 432CGTi3018073;
+	Tue, 2 Apr 2024 14:54:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding:content-type; s=
+	selector1; bh=r6X6BGtuJHlAwq5hKk1XL9iK7bAsTfplYeEEaPUDmGs=; b=ZV
+	bHxnrjHV4HmmTT8TfdN/j0hAv7jNYSK8Jj50chHT5C9bnly5MXCyTqVhXjI79ns0
+	UbgkBkOADu7Tj1v/ngimokipOJAd/K7x/4Y/xMdGxbzdL8i6/ESwuZFl61PwG0Av
+	8hh7PNB6HF29upqxm2oq2o3C4IiCnSjqmOmOkniryD9iINjmEs1cWtfJLU6nUhX8
+	EPnPXzX/TtkA7qWw/ZvoSsLOjbjFofh0XLBTdDS6zBavcGABdGdq35fcL7nsnilQ
+	HM1o4ux8oC9tCHuMgYAKZitxmlvpdXZTPlTYJS1Ksd2RrucJzDhjBAln175bV7VU
+	fRVCyyyURT5R4EBqWbRg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3x6agguw75-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Apr 2024 14:54:11 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DCE0E40046;
+	Tue,  2 Apr 2024 14:54:06 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2CB012207DB;
+	Tue,  2 Apr 2024 14:53:16 +0200 (CEST)
+Received: from localhost (10.201.21.240) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 2 Apr
+ 2024 14:53:15 +0200
+From: <gabriel.fernandez@foss.st.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [RESEND PATCH v9 1/4] clk: stm32mp13: use platform device APIs
+Date: Tue, 2 Apr 2024 14:53:09 +0200
+Message-ID: <20240402125312.277052-2-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240402125312.277052-1-gabriel.fernandez@foss.st.com>
+References: <20240402125312.277052-1-gabriel.fernandez@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com> <tencent_6D10A9C63E3E0F412EED33477B5CDB98C207@qq.com>
-In-Reply-To: <tencent_6D10A9C63E3E0F412EED33477B5CDB98C207@qq.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 2 Apr 2024 14:31:36 +0200
-Message-ID: <CACRpkdY1wpGM7M5QV5rN0M6JMN_yugQJ7CEtnQjzsheD5AT23A@mail.gmail.com>
-Subject: Re: [PATCH v6 08/11] pinctrl: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
-To: Yangyu Chen <cyy@cyyself.name>
-Cc: linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>, 
-	Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-02_06,2024-04-01_01,2023-05-22_02
 
-On Sat, Mar 23, 2024 at 1:13=E2=80=AFPM Yangyu Chen <cyy@cyyself.name> wrot=
-e:
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-> Since SOC_FOO should be deprecated from patch [1], and cleanup for other
-> SoCs is already on the mailing list [2,3,4], we remove the use of
-> SOC_CANAAN and introduced SOC_CANAAN_K210 for K210-specific drivers,
->
-> Thus, we replace its drivers depends on SOC_CANAAN_K210 and default selec=
-t
-> when it has the symbol SOC_CANAAN_K210.
->
-> [1] https://lore.kernel.org/linux-riscv/20221121221414.109965-1-conor@ker=
-nel.org/
-> [2] https://lore.kernel.org/linux-riscv/20240305-praying-clad-c4fbcaa7ed0=
-a@spud/
-> [3] https://lore.kernel.org/linux-riscv/20240305-fled-undrilled-41dc0c46b=
-b29@spud/
-> [4] https://lore.kernel.org/linux-riscv/20240305-stress-earflap-d7ddb8655=
-a4d@spud/
->
-> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+Convert devm_platform_ioremap_resource() and remove unnecessary
+dependency check with SCMI clock driver.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+---
+ drivers/clk/stm32/clk-stm32-core.c | 11 +++--
+ drivers/clk/stm32/clk-stm32mp13.c  | 72 +++---------------------------
+ 2 files changed, 10 insertions(+), 73 deletions(-)
 
-Is this patch something I can just apply to the pinctrl tree?
+diff --git a/drivers/clk/stm32/clk-stm32-core.c b/drivers/clk/stm32/clk-stm32-core.c
+index 58705fcad334..1721a3ed7386 100644
+--- a/drivers/clk/stm32/clk-stm32-core.c
++++ b/drivers/clk/stm32/clk-stm32-core.c
+@@ -25,7 +25,6 @@ static int stm32_rcc_clock_init(struct device *dev,
+ {
+ 	const struct stm32_rcc_match_data *data = match->data;
+ 	struct clk_hw_onecell_data *clk_data = data->hw_clks;
+-	struct device_node *np = dev_of_node(dev);
+ 	struct clk_hw **hws;
+ 	int n, max_binding;
+ 
+@@ -64,7 +63,7 @@ static int stm32_rcc_clock_init(struct device *dev,
+ 			hws[cfg_clock->id] = hw;
+ 	}
+ 
+-	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
+ }
+ 
+ int stm32_rcc_init(struct device *dev, const struct of_device_id *match_data,
+@@ -638,7 +637,7 @@ struct clk_hw *clk_stm32_mux_register(struct device *dev,
+ 	mux->lock = lock;
+ 	mux->clock_data = data->clock_data;
+ 
+-	err = clk_hw_register(dev, hw);
++	err = devm_clk_hw_register(dev, hw);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+@@ -659,7 +658,7 @@ struct clk_hw *clk_stm32_gate_register(struct device *dev,
+ 	gate->lock = lock;
+ 	gate->clock_data = data->clock_data;
+ 
+-	err = clk_hw_register(dev, hw);
++	err = devm_clk_hw_register(dev, hw);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+@@ -680,7 +679,7 @@ struct clk_hw *clk_stm32_div_register(struct device *dev,
+ 	div->lock = lock;
+ 	div->clock_data = data->clock_data;
+ 
+-	err = clk_hw_register(dev, hw);
++	err = devm_clk_hw_register(dev, hw);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+@@ -701,7 +700,7 @@ struct clk_hw *clk_stm32_composite_register(struct device *dev,
+ 	composite->lock = lock;
+ 	composite->clock_data = data->clock_data;
+ 
+-	err = clk_hw_register(dev, hw);
++	err = devm_clk_hw_register(dev, hw);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+diff --git a/drivers/clk/stm32/clk-stm32mp13.c b/drivers/clk/stm32/clk-stm32mp13.c
+index d4ecb3c34a1b..bf81d7491708 100644
+--- a/drivers/clk/stm32/clk-stm32mp13.c
++++ b/drivers/clk/stm32/clk-stm32mp13.c
+@@ -1536,77 +1536,16 @@ static const struct of_device_id stm32mp13_match_data[] = {
+ };
+ MODULE_DEVICE_TABLE(of, stm32mp13_match_data);
+ 
+-static int stm32mp1_rcc_init(struct device *dev)
+-{
+-	void __iomem *rcc_base;
+-	int ret = -ENOMEM;
+-
+-	rcc_base = of_iomap(dev_of_node(dev), 0);
+-	if (!rcc_base) {
+-		dev_err(dev, "%pOFn: unable to map resource", dev_of_node(dev));
+-		goto out;
+-	}
+-
+-	ret = stm32_rcc_init(dev, stm32mp13_match_data, rcc_base);
+-out:
+-	if (ret) {
+-		if (rcc_base)
+-			iounmap(rcc_base);
+-
+-		of_node_put(dev_of_node(dev));
+-	}
+-
+-	return ret;
+-}
+-
+-static int get_clock_deps(struct device *dev)
+-{
+-	static const char * const clock_deps_name[] = {
+-		"hsi", "hse", "csi", "lsi", "lse",
+-	};
+-	size_t deps_size = sizeof(struct clk *) * ARRAY_SIZE(clock_deps_name);
+-	struct clk **clk_deps;
+-	int i;
+-
+-	clk_deps = devm_kzalloc(dev, deps_size, GFP_KERNEL);
+-	if (!clk_deps)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < ARRAY_SIZE(clock_deps_name); i++) {
+-		struct clk *clk = of_clk_get_by_name(dev_of_node(dev),
+-						     clock_deps_name[i]);
+-
+-		if (IS_ERR(clk)) {
+-			if (PTR_ERR(clk) != -EINVAL && PTR_ERR(clk) != -ENOENT)
+-				return PTR_ERR(clk);
+-		} else {
+-			/* Device gets a reference count on the clock */
+-			clk_deps[i] = devm_clk_get(dev, __clk_get_name(clk));
+-			clk_put(clk);
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+ static int stm32mp1_rcc_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	int ret = get_clock_deps(dev);
++	void __iomem *base;
+ 
+-	if (!ret)
+-		ret = stm32mp1_rcc_init(dev);
+-
+-	return ret;
+-}
+-
+-static void stm32mp1_rcc_clocks_remove(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct device_node *child, *np = dev_of_node(dev);
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (WARN_ON(IS_ERR(base)))
++		return PTR_ERR(base);
+ 
+-	for_each_available_child_of_node(np, child)
+-		of_clk_del_provider(child);
++	return stm32_rcc_init(dev, stm32mp13_match_data, base);
+ }
+ 
+ static struct platform_driver stm32mp13_rcc_clocks_driver = {
+@@ -1615,7 +1554,6 @@ static struct platform_driver stm32mp13_rcc_clocks_driver = {
+ 		.of_match_table = stm32mp13_match_data,
+ 	},
+ 	.probe = stm32mp1_rcc_clocks_probe,
+-	.remove_new = stm32mp1_rcc_clocks_remove,
+ };
+ 
+ static int __init stm32mp13_clocks_init(void)
+-- 
+2.25.1
 
-Yours,
-Linus Walleij
