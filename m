@@ -1,389 +1,131 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBEB7A151;
-	Tue,  2 Apr 2024 12:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5575F7F7E2;
+	Tue,  2 Apr 2024 12:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712062525; cv=none; b=oTuJc8WWbpNUZ/eW9YUaWyuGNDCXrBhMCC1ibQz0jJbyOmJGF9Js47Y4F8mX31aHyEvyzu81cQ0trtlxSjcMeuhuvcZzmZDOqQI/UKyEccj5RpXcPR3Y6VOIcRrOqLmQJ5QUUwh1nOp8C8jalpKH1rMDTxxKd2P1vqawKEh6/ww=
+	t=1712062686; cv=none; b=q8qaCkxoxPzqtRyljZDzOAwXAMiZsZqhni01/rCWp2+PamiZickhj/mqnO7bw2HM/LXq+iiFHH7UFEJ5VK99pc8m0zqZx5ijuUTrTqkG9x4QX5P6DDFduY4Fp/r2x/6g4CrdmQUQpoT9cnZ4kjq7cDMEpfp9uNKSykjx6iKd7Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712062525; c=relaxed/simple;
-	bh=c4s8OsmjUGLvGQpKlUOCJ6Zy+20N2yx++tNv310tsME=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q5CZ3CSuXRV7T7lO0DNGahrXK7YAMS9459b9x6KWEVuvwFXN8tD2gWxEZVFUz3Rv3cQ1p/DRvZkOKze+MNLnjg6UIDzIDd3t4T3wn6js4Ln8B1JW+BIXFTRMF3awunU0IC1vrywODxgRIah4irpo1YGHpOh6S6GRFnKGtj50Aic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=RgHIg8WV; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1712062686; c=relaxed/simple;
+	bh=c20jtcTiYnJN5GOdRZ4xqI6F2kAuoMdLDYhAs+FZuTY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OyD59FGldRMXm/CDbhTEDWbG9j1G7Bo/HQvJDTDYM6HgSfNzeYC1O5FwYDcyBRspYLhaIDHhFyAvicisbj5gFmoO//Taq8nzDMRiFJMl9Vw0a4+Q6nuKOK8S5ojIv3jFvV6E13fXieUCZ+mntZcNfu+hTJqSIqGBW5N5GmkBjSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JWkWYYef; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="RgHIg8WV"
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 432Ai7SI020800;
-	Tue, 2 Apr 2024 14:55:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	selector1; bh=hKislKxnW7bDWoDYssDOxiVgE9aR5W6wE8Gb1TrL33s=; b=Rg
-	HIg8WVHZgcQjBtIqxfg0eYo/Du53bT2f3+af81YQR0paznEh3SfYj2tKg4NlYrZw
-	eZut+YiLMQ6gFRbuJFgAtZcdTBRrulO67PaURqRxlF1rlVYJtb9tsIIL8054CTAG
-	rzzkrJxiFF0T6uEKKK4INZjxcUXavbjoVCRynuVO6ugMvLHIVmmBzDzThEBOsD+N
-	Uuqh5p0jKaUABQlU7zO9Bn4iiVCMbK3QWeLQRu2KTjP/kK98xFqipRrb5as4qbMy
-	a1nVy+idauoZ0jrn8Fe3/cG8M7fFi/HrwL4OU+DNQAhOALEGt8OwBRzWilWDcsSb
-	0vXk20YgsappD32x0TVg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3x6w651qda-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Apr 2024 14:55:10 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4331740044;
-	Tue,  2 Apr 2024 14:55:07 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 99A242207D8;
-	Tue,  2 Apr 2024 14:54:18 +0200 (CEST)
-Received: from localhost (10.201.21.240) by SHFDAG1NODE1.st.com (10.75.129.69)
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JWkWYYef"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1712062684; x=1743598684;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=c20jtcTiYnJN5GOdRZ4xqI6F2kAuoMdLDYhAs+FZuTY=;
+  b=JWkWYYefDc6cPmq7W2xheq8RpBNjrnR/JhZmwT1xe0V3bn9qFl2nh9yh
+   gqYoGTcwBAykFyP6b2AekJjM5pzkwBPLtLHVn510NGTMtaG7yxBtXjkW4
+   Ot+3MWaD9z158ybinU21m9M80kHU3ZBQLihrqAp3UGYJPy4Zr+un+aZxl
+   NQsET9B9dYhgeAAiOeIGbs0lPvRK/KEccs8y7yqDzYf2Caaj9W/wzlRB4
+   31fsJwVIZZvzUltjVTriPUhkwoE3dlgIqWL0Cl+70qKG9D9W/nrYxzpBG
+   MTUkZ0aCy9EquNzndgDElB/EI6gZMD/iW40DyDsTxqhvm8r5pX7XgntjY
+   A==;
+X-CSE-ConnectionGUID: zJdH45BwRNCwIlgxGwnvJQ==
+X-CSE-MsgGUID: mLaRUhSLTyS3tu+hCvVbgA==
+X-IronPort-AV: E=Sophos;i="6.07,175,1708412400"; 
+   d="asc'?scan'208";a="19161140"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Apr 2024 05:58:02 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 2 Apr 2024 05:57:31 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 2 Apr
- 2024 14:54:18 +0200
-From: <gabriel.fernandez@foss.st.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [RESEND PATCH v9 4/4] arm64: dts: st: add rcc support for STM32MP25
-Date: Tue, 2 Apr 2024 14:53:12 +0200
-Message-ID: <20240402125312.277052-5-gabriel.fernandez@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240402125312.277052-1-gabriel.fernandez@foss.st.com>
-References: <20240402125312.277052-1-gabriel.fernandez@foss.st.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Tue, 2 Apr 2024 05:57:28 -0700
+Date: Tue, 2 Apr 2024 13:56:40 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Yangyu Chen <cyy@cyyself.name>, <linux-riscv@lists.infradead.org>, Conor
+ Dooley <conor@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, <linux-gpio@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 08/11] pinctrl: k210: Deprecate SOC_CANAAN and use
+ SOC_CANAAN_K210
+Message-ID: <20240402-automatic-radial-7bc7dc342987@wendy>
+References: <tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com>
+ <tencent_6D10A9C63E3E0F412EED33477B5CDB98C207@qq.com>
+ <CACRpkdY1wpGM7M5QV5rN0M6JMN_yugQJ7CEtnQjzsheD5AT23A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-02_06,2024-04-01_01,2023-05-22_02
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mWQUdRed7U+WvCby"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdY1wpGM7M5QV5rN0M6JMN_yugQJ7CEtnQjzsheD5AT23A@mail.gmail.com>
 
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+--mWQUdRed7U+WvCby
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add RCC support to manage clocks and resets on the STM32MP25.
+On Tue, Apr 02, 2024 at 02:31:36PM +0200, Linus Walleij wrote:
+> On Sat, Mar 23, 2024 at 1:13=E2=80=AFPM Yangyu Chen <cyy@cyyself.name> wr=
+ote:
+>=20
+> > Since SOC_FOO should be deprecated from patch [1], and cleanup for other
+> > SoCs is already on the mailing list [2,3,4], we remove the use of
+> > SOC_CANAAN and introduced SOC_CANAAN_K210 for K210-specific drivers,
+> >
+> > Thus, we replace its drivers depends on SOC_CANAAN_K210 and default sel=
+ect
+> > when it has the symbol SOC_CANAAN_K210.
+> >
+> > [1] https://lore.kernel.org/linux-riscv/20221121221414.109965-1-conor@k=
+ernel.org/
+> > [2] https://lore.kernel.org/linux-riscv/20240305-praying-clad-c4fbcaa7e=
+d0a@spud/
+> > [3] https://lore.kernel.org/linux-riscv/20240305-fled-undrilled-41dc0c4=
+6bb29@spud/
+> > [4] https://lore.kernel.org/linux-riscv/20240305-stress-earflap-d7ddb86=
+55a4d@spud/
+> >
+> > Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+>=20
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>=20
+> Is this patch something I can just apply to the pinctrl tree?
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 144 ++++++++++++++++++-------
- arch/arm64/boot/dts/st/stm32mp255.dtsi |   4 +-
- 2 files changed, 110 insertions(+), 38 deletions(-)
+The new symbol doesn't exist in the pinctrl tree, so the driver will
+cease to be compilable. Yangyu sent a standalone version of these symbol
+changes:
+https://lore.kernel.org/all/tencent_DB11214C8D0D7C48829ADA128E7BB8F13108@qq=
+=2Ecom/
+That whole series needs to go through one tree though, for the same reason.
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index 5dd4f3580a60..15b79d26d1c6 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -3,7 +3,9 @@
-  * Copyright (C) STMicroelectronics 2023 - All Rights Reserved
-  * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
-  */
-+#include <dt-bindings/clock/st,stm32mp25-rcc.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/st,stm32mp25-rcc.h>
- 
- / {
- 	#address-cells = <2>;
-@@ -35,34 +37,16 @@ arm_wdt: watchdog {
- 	};
- 
- 	clocks {
--		ck_flexgen_08: ck-flexgen-08 {
-+		clk_dsi_txbyte: txbyteclk {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
--			clock-frequency = <100000000>;
-+			clock-frequency = <0>;
- 		};
- 
--		ck_flexgen_51: ck-flexgen-51 {
-+		clk_rcbsec: clk-rcbsec {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
--			clock-frequency = <200000000>;
--		};
--
--		ck_icn_ls_mcu: ck-icn-ls-mcu {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <200000000>;
--		};
--
--		ck_icn_p_vdec: ck-icn-p-vdec {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <200000000>;
--		};
--
--		ck_icn_p_venc: ck-icn-p-venc {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <200000000>;
-+			clock-frequency = <64000000>;
- 		};
- 	};
- 
-@@ -134,7 +118,7 @@ usart2: serial@400e0000 {
- 				compatible = "st,stm32h7-uart";
- 				reg = <0x400e0000 0x400>;
- 				interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ck_flexgen_08>;
-+				clocks = <&rcc CK_KER_USART2>;
- 				status = "disabled";
- 			};
- 
-@@ -143,8 +127,9 @@ sdmmc1: mmc@48220000 {
- 				arm,primecell-periphid = <0x00353180>;
- 				reg = <0x48220000 0x400>, <0x44230400 0x8>;
- 				interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ck_flexgen_51>;
-+				clocks = <&rcc CK_KER_SDMMC1 >;
- 				clock-names = "apb_pclk";
-+				resets = <&rcc SDMMC1_R>;
- 				cap-sd-highspeed;
- 				cap-mmc-highspeed;
- 				max-frequency = <120000000>;
-@@ -168,6 +153,93 @@ package_otp@1e8 {
- 			};
- 		};
- 
-+		rcc: clock-controller@44200000 {
-+			compatible = "st,stm32mp25-rcc";
-+			reg = <0x44200000 0x10000>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			clocks = <&scmi_clk CK_SCMI_HSE>,
-+				<&scmi_clk CK_SCMI_HSI>,
-+				<&scmi_clk CK_SCMI_MSI>,
-+				<&scmi_clk CK_SCMI_LSE>,
-+				<&scmi_clk CK_SCMI_LSI>,
-+				<&scmi_clk CK_SCMI_HSE_DIV2>,
-+				<&scmi_clk CK_SCMI_ICN_HS_MCU>,
-+				<&scmi_clk CK_SCMI_ICN_LS_MCU>,
-+				<&scmi_clk CK_SCMI_ICN_SDMMC>,
-+				<&scmi_clk CK_SCMI_ICN_DDR>,
-+				<&scmi_clk CK_SCMI_ICN_DISPLAY>,
-+				<&scmi_clk CK_SCMI_ICN_HSL>,
-+				<&scmi_clk CK_SCMI_ICN_NIC>,
-+				<&scmi_clk CK_SCMI_ICN_VID>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_07>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_08>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_09>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_10>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_11>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_12>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_13>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_14>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_15>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_16>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_17>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_18>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_19>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_20>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_21>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_22>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_23>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_24>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_25>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_26>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_27>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_28>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_29>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_30>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_31>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_32>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_33>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_34>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_35>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_36>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_37>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_38>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_39>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_40>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_41>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_42>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_43>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_44>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_45>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_46>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_47>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_48>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_49>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_50>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_51>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_52>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_53>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_54>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_55>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_56>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_57>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_58>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_59>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_60>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_61>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_62>,
-+				<&scmi_clk CK_SCMI_FLEXGEN_63>,
-+				<&scmi_clk CK_SCMI_ICN_APB1>,
-+				<&scmi_clk CK_SCMI_ICN_APB2>,
-+				<&scmi_clk CK_SCMI_ICN_APB3>,
-+				<&scmi_clk CK_SCMI_ICN_APB4>,
-+				<&scmi_clk CK_SCMI_ICN_APBDBG>,
-+				<&scmi_clk CK_SCMI_TIMG1>,
-+				<&scmi_clk CK_SCMI_TIMG2>,
-+				<&scmi_clk CK_SCMI_PLL3>,
-+				<&clk_dsi_txbyte>;
-+		};
-+
- 		syscfg: syscon@44230000 {
- 			compatible = "st,stm32mp25-syscfg", "syscon";
- 			reg = <0x44230000 0x10000>;
-@@ -186,7 +258,7 @@ gpioa: gpio@44240000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x0 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOA>;
- 				st,bank-name = "GPIOA";
- 				status = "disabled";
- 			};
-@@ -197,7 +269,7 @@ gpiob: gpio@44250000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x10000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOB>;
- 				st,bank-name = "GPIOB";
- 				status = "disabled";
- 			};
-@@ -208,7 +280,7 @@ gpioc: gpio@44260000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x20000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOC>;
- 				st,bank-name = "GPIOC";
- 				status = "disabled";
- 			};
-@@ -219,7 +291,7 @@ gpiod: gpio@44270000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x30000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOD>;
- 				st,bank-name = "GPIOD";
- 				status = "disabled";
- 			};
-@@ -230,7 +302,7 @@ gpioe: gpio@44280000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x40000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOE>;
- 				st,bank-name = "GPIOE";
- 				status = "disabled";
- 			};
-@@ -241,7 +313,7 @@ gpiof: gpio@44290000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x50000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOF>;
- 				st,bank-name = "GPIOF";
- 				status = "disabled";
- 			};
-@@ -252,7 +324,7 @@ gpiog: gpio@442a0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x60000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOG>;
- 				st,bank-name = "GPIOG";
- 				status = "disabled";
- 			};
-@@ -263,7 +335,7 @@ gpioh: gpio@442b0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x70000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOH>;
- 				st,bank-name = "GPIOH";
- 				status = "disabled";
- 			};
-@@ -274,7 +346,7 @@ gpioi: gpio@442c0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x80000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOI>;
- 				st,bank-name = "GPIOI";
- 				status = "disabled";
- 			};
-@@ -285,7 +357,7 @@ gpioj: gpio@442d0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x90000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOJ>;
- 				st,bank-name = "GPIOJ";
- 				status = "disabled";
- 			};
-@@ -296,7 +368,7 @@ gpiok: gpio@442e0000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0xa0000 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOK>;
- 				st,bank-name = "GPIOK";
- 				status = "disabled";
- 			};
-@@ -315,7 +387,7 @@ gpioz: gpio@46200000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0 0x400>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&scmi_clk CK_SCMI_GPIOZ>;
- 				st,bank-name = "GPIOZ";
- 				st,bank-ioport = <11>;
- 				status = "disabled";
-diff --git a/arch/arm64/boot/dts/st/stm32mp255.dtsi b/arch/arm64/boot/dts/st/stm32mp255.dtsi
-index 17f197c5b22b..d5175a1f339c 100644
---- a/arch/arm64/boot/dts/st/stm32mp255.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp255.dtsi
-@@ -12,14 +12,14 @@ vdec: vdec@480d0000 {
- 				compatible = "st,stm32mp25-vdec";
- 				reg = <0x480d0000 0x3c8>;
- 				interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ck_icn_p_vdec>;
-+				clocks = <&rcc CK_BUS_VDEC>;
- 			};
- 
- 			venc: venc@480e0000 {
- 				compatible = "st,stm32mp25-venc";
- 				reg = <0x480e0000 0x800>;
- 				interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ck_icn_ls_mcu>;
-+				clocks = <&rcc CK_BUS_VENC>;
- 			};
- 		};
- 	};
--- 
-2.25.1
+If your ack transfers to that (identical patch) I can take the whole lot
+via the soc tree for v6.10.
 
+--mWQUdRed7U+WvCby
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZgwAiAAKCRB4tDGHoIJi
+0vAXAQCeH+Yhvgq6/ASIgmTJPZ4FUkxGBC6xwyyibvKsGIjFQwD/cR8dZLkzZWnx
+k50eNNnRBJ2KI81TqZySRvwHsgO/bA8=
+=QFi9
+-----END PGP SIGNATURE-----
+
+--mWQUdRed7U+WvCby--
