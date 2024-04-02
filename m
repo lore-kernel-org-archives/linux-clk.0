@@ -1,127 +1,153 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3632458AAF;
-	Tue,  2 Apr 2024 10:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA945FDD2;
+	Tue,  2 Apr 2024 10:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712052013; cv=none; b=qVoZF+BPo+1QEfapeYVQjbJzOIqL3hx8Pq06DBoMCvUASfa3XWfAkYJyl2MVtewTKGYadZUcdScM0fs9mohgX2Oh5O8GBC7yiJsZfZwZCtCZXrellJPoPDcZqgxrwZjj7UJmgZjuyUb7cUBCpg+wmYdStopMaJBWQLsvInCxtA0=
+	t=1712054074; cv=none; b=apAJ19+G+xkoTpUKtJ92PfaCiWqIAY440dujGiQdV75xwPDrtrqnjH5JhAyKVsIcpjstdlRvURiXrAgiAZ229q/Vq4RHHXqpVfySuxPUJ+IUSwtkNw1OeE03lseBMlOPtfhhkrYA4g9NSN0M3/yBCIrhXGMphSvK0h+YmXQfgDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712052013; c=relaxed/simple;
-	bh=b0OIGFVB57rC+vRSHDqJps7mkAfSLfUHZGQ9SaT07mI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fChF7BmW4PcamM6MoII/nA4k8Lt4k8kFJK3gzKT68hn/MYBuTtRWbfHZdZSyythq2FBa17DZ3JbXHbCQtJrOGG0L52yQ4aidls6C2dLczUlKvXR6wHiBfFEjNh4PfYveDEY2j1jeBIxKdPF5poAaRC1z3EaOstTq/4BKNVhgDWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nm9dbyEZ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1712054074; c=relaxed/simple;
+	bh=nvPbIMQta9inNL69UqwPZJB/9wmSdGd+rz0uwsafhOo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z1wqpfB2zyr1so4Saalct+NYGBRwesAoHqPLxGViYc17PuGlAB5BRKMBtHJLx5v5j5sr7CfiAivNAw5oVfceBxaZMOYm7f6qcs5u5luIuDVWonz0z5B3Wy8JOj+PknlvR4L4wck1x/qdWG+C1QEcMeW8v4baKSxlptoC8yXa5Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pPIUvV6Q; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nm9dbyEZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712052012; x=1743588012;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=b0OIGFVB57rC+vRSHDqJps7mkAfSLfUHZGQ9SaT07mI=;
-  b=nm9dbyEZrMWGF8wScXVauCOzgRTiHWn0Mh0X5GT5NcCuzYhg5bftSPE5
-   N4FqD5K0OV/X9OEOPL9CVkF7GA91iK7CwaqvRwfZC0fN8E2mYW6TkLIiV
-   rYUEZfxhz2mHtolEoQt8+p8S0NTyWxh+0bUIvuV7FK6CW7uPltHUS13QM
-   5gkonLDZqukwbFHA0hKQYoa5Vv5LpH+chRBJ+wlw8SbNjKl9Ao7t98Qn2
-   9cPa/kfkDviF435amhbDq5onQZGT80r3Ee2dVwR4w71rv0DS2rz1TZqhY
-   /mWTSOwUMEvmq2E3omucudgJqp9bEWfCgEk2TBcWRXnnZPzXFHsiLfQKX
-   Q==;
-X-CSE-ConnectionGUID: iTcCij00TVOyWnrtfI6Png==
-X-CSE-MsgGUID: Shdkxse8Q9C5PoQGFeDSrw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11031"; a="24705416"
-X-IronPort-AV: E=Sophos;i="6.07,174,1708416000"; 
-   d="scan'208";a="24705416"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2024 03:00:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,174,1708416000"; 
-   d="scan'208";a="18069109"
-Received: from lkp-server02.sh.intel.com (HELO 90ee3aa53dbd) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 02 Apr 2024 03:00:00 -0700
-Received: from kbuild by 90ee3aa53dbd with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rravu-000165-0S;
-	Tue, 02 Apr 2024 09:59:58 +0000
-Date: Tue, 2 Apr 2024 17:59:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ajit Pandey <quic_ajipan@quicinc.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Ajit Pandey <quic_ajipan@quicinc.com>
-Subject: Re: [PATCH 7/7] clk: qcom: Add GPUCC driver support for SM4450
-Message-ID: <202404021747.ie04rWAv-lkp@intel.com>
-References: <20240330182817.3272224-8-quic_ajipan@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pPIUvV6Q"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4327SO7V030590;
+	Tue, 2 Apr 2024 10:34:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=GfC8GfN
+	W4k6MjCi7WKh9ZhxXE8ireQ9ETjfjeKbm/N0=; b=pPIUvV6Qq/TqjVXYSRSTi5Z
+	1cALeTNoxIDaWmyTLNom7X90AtvgMAfChY0C5FT9wGBskSet6UP34n7QRoAGnpDh
+	D3auhilxzv/fLsttYdewe0vtvzGJWe0sTSbJC8rb+YzlB0Aq8Obmw+yFyEvmWkpb
+	h0JKLYD3zoK4/V8G3OZAY620+Vrs6VJhL1Zp+4D+u9czeeZ7nLn36BXkwYNWg72G
+	zBWedaylAEngEqGDgPNzTLSDIs5drC3Q6HyipUd+LxiA45hyEbzo2XeF75kTym88
+	F36691wPXSxAAf19Wy8XA8SIgky5nL/SKvV8rNJ+ES6nD8CeHSiuoRXV88vNJoA=
+	=
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x893ts0nb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Apr 2024 10:34:26 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 432AYPAR012861
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Apr 2024 10:34:25 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 2 Apr 2024 03:34:20 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <djakov@kernel.org>, <quic_varada@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <quic_anusha@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: [PATCH v6 0/6] Add interconnect driver for IPQ9574 SoC
+Date: Tue, 2 Apr 2024 16:04:00 +0530
+Message-ID: <20240402103406.3638821-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240330182817.3272224-8-quic_ajipan@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -zuBf1M0eqNHfPb-pUr_JfO7rtzJqSP5
+X-Proofpoint-ORIG-GUID: -zuBf1M0eqNHfPb-pUr_JfO7rtzJqSP5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-02_04,2024-04-01_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
+ adultscore=0 impostorscore=0 phishscore=0 malwarescore=0 clxscore=1015
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2403210001 definitions=main-2404020076
 
-Hi Ajit,
+MSM platforms manage NoC related clocks and scaling from RPM.
+However, in IPQ SoCs, RPM is not involved in managing NoC
+related clocks and there is no NoC scaling.
 
-kernel test robot noticed the following build warnings:
+However, there is a requirement to enable some NoC interface
+clocks for the accessing the peripherals present in the
+system. Hence add a minimalistic interconnect driver that
+establishes a path from the processor/memory to those peripherals
+and vice versa.
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on robh/for-next linus/master v6.9-rc2 next-20240402]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+---
+v6:	Removed 'Reviewed-by: Krzysztof' from dt-bindings patch
+	Remove clock get from ICC driver as suggested by Stephen Boyd
+	so that the actual peripheral can do the clock get
+	first_id -> icc_first_node_id
+	Remove tristate from INTERCONNECT_CLK
+v5:
+	Split gcc-ipq9574.c and common.c changes into separate patches
+	Introduce devm_icc_clk_register
+	Fix error handling
+v4:
+gcc-ipq9574.c
+	Use clk_hw instead of indices
+common.c
+	Do icc register in qcom_cc_probe() call stream
+common.h
+	Add icc clock info to qcom_cc_desc structure
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ajit-Pandey/clk-qcom-clk-alpha-pll-Fix-CAL_L_VAL-override-for-LUCID-EVO-PLL/20240331-023329
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20240330182817.3272224-8-quic_ajipan%40quicinc.com
-patch subject: [PATCH 7/7] clk: qcom: Add GPUCC driver support for SM4450
-config: powerpc64-randconfig-r132-20240402 (https://download.01.org/0day-ci/archive/20240402/202404021747.ie04rWAv-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 546dc2245ffc4cccd0b05b58b7a5955e355a3b27)
-reproduce: (https://download.01.org/0day-ci/archive/20240402/202404021747.ie04rWAv-lkp@intel.com/reproduce)
+v3:
+qcom,ipq9574.h
+	Move 'first id' define to clock driver
+gcc-ipq9574.c:
+	Use indexed identifiers here to avoid confusion
+	Fix error messages and move code to common.c as it can be
+	shared with future SoCs
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202404021747.ie04rWAv-lkp@intel.com/
+v2:
+qcom,ipq9574.h
+	Fix license identifier
+	Rename macros
+qcom,ipq9574-gcc.yaml
+	Include interconnect-cells
+gcc-ipq9574.c
+	Update commit log
+	Remove IS_ENABLED(CONFIG_INTERCONNECT) and auto select it from Kconfig
+ipq9574.dtsi
+	Moved to separate patch
+	Include interconnect-cells to clock controller node
+drivers/clk/qcom/Kconfig:
+	Auto select CONFIG_INTERCONNECT & CONFIG_INTERCONNECT_CLK
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/clk/qcom/gpucc-sm4450.c:740:10: sparse: sparse: Initializer entry defined twice
-   drivers/clk/qcom/gpucc-sm4450.c:746:10: sparse:   also defined here
+Varadarajan Narayanan (6):
+  dt-bindings: interconnect: Add Qualcomm IPQ9574 support
+  interconnect: icc-clk: Remove tristate from INTERCONNECT_CLK
+  interconnect: icc-clk: Add devm_icc_clk_register
+  clk: qcom: common: Add interconnect clocks support
+  clk: qcom: ipq9574: Use icc-clk for enabling NoC related clocks
+  arm64: dts: qcom: ipq9574: Add icc provider ability to gcc
 
-vim +740 drivers/clk/qcom/gpucc-sm4450.c
-
-   736	
-   737	static const struct qcom_reset_map gpu_cc_sm4450_resets[] = {
-   738		[GPU_CC_CB_BCR] = { 0x93a0 },
-   739		[GPU_CC_CX_BCR] = { 0x9104 },
- > 740		[GPU_CC_GX_BCR] = { 0x9058 },
-   741		[GPU_CC_FAST_HUB_BCR] = { 0x93e4 },
-   742		[GPU_CC_ACD_BCR] = { 0x9358 },
-   743		[GPU_CC_FF_BCR] = { 0x9470 },
-   744		[GPU_CC_GFX3D_AON_BCR] = { 0x9198 },
-   745		[GPU_CC_GMU_BCR] = { 0x9314 },
-   746		[GPU_CC_GX_BCR] = { 0x9058 },
-   747		[GPU_CC_RBCPR_BCR] = { 0x91e0 },
-   748		[GPU_CC_XO_BCR] = { 0x9000 },
-   749		[GPU_CC_GX_ACD_IROOT_BCR] = { 0x958c },
-   750	};
-   751	
+ .../bindings/clock/qcom,ipq9574-gcc.yaml      |  3 ++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  2 +
+ drivers/clk/qcom/Kconfig                      |  2 +
+ drivers/clk/qcom/common.c                     | 38 ++++++++++++++++++-
+ drivers/clk/qcom/common.h                     |  3 ++
+ drivers/clk/qcom/gcc-ipq9574.c                | 30 +++++++++++++++
+ drivers/interconnect/Kconfig                  |  1 -
+ drivers/interconnect/icc-clk.c                | 29 ++++++++++++++
+ .../dt-bindings/interconnect/qcom,ipq9574.h   | 36 ++++++++++++++++++
+ include/linux/interconnect-clk.h              |  4 ++
+ 10 files changed, 146 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/interconnect/qcom,ipq9574.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
