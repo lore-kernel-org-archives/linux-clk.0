@@ -1,110 +1,163 @@
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A601DFD6;
-	Wed,  3 Apr 2024 17:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D84415358A
+	for <linux-clk@vger.kernel.org>; Wed,  3 Apr 2024 18:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712167131; cv=none; b=ZbiR3d4BRYJ+s2Nfh+d9SjBI+qeCn//7eNEYK5Tj9kfeTHmYgdo1SGqF9A/ZOgDJ0KUS0KYR9OuKjQEajssIjDVPlF85RsKD1I5eqH+uJQ9+ruZy4NpkEzF/Tc2+IJZ7Vswu1gAFjGcsVDFZmkStMm+Vh4jdqVI/o4nrAvQpu2Y=
+	t=1712168529; cv=none; b=bV997lAwhKvrWP7+SxUfNVFd8yXD2/uytpvXuCe1h0BXbx1u3rI/XcpbnF7t/PiKn2LJis6Lu5uiR2EKd16feLZR/oZpcA3wWVfYJujhFEiSr9kU1S7w0HBjsskvlndTdGj+zP2mB6e0IPijFiIarhfS/5hiMhYspVXMx56LB+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712167131; c=relaxed/simple;
-	bh=T77JDQnJ0hsdJFUa5ETbkj6RTVt2ZW/eZKnQNpSp5PI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lDZ9Nn8ty/JUcwk7BwUkiL4+XFmyNXaMGZaWVQJ0hS/v8kfVdyDQD0VMQfKqGyBAbOioM+0nbAQLijhFySmNa+Wj0lUdh+ZcHqX5uQbarpQKXA02ECs4VHnelaVqsTx/PRu7V3oQWAlICXZGgx9PZu8JdrKoxMrlguZeimskSV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WizGwgwq; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1712168529; c=relaxed/simple;
+	bh=YLQ5ks3ozTKHgLjWeRoai9T7IQizj8Dx9UVCzQpSmEY=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=Y3AwWwjymlsMWcoUkL2iZzlUQ/FJIxrzqxLKstFqpweeVBA3128eI4iXN1K8+uLGwW1gTGt5q1VeGSZ32+GNHFp/oLj0Pmdq1ZUUg55mGN0FpbvMqIVw/AlnZIlJPDgugihzuwteadpPyvy5wtBGCers3aKSkEDp2Cf04FuhoBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=ZwCD8duL; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WizGwgwq"
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6e9e46f1e03so87054a34.1;
-        Wed, 03 Apr 2024 10:58:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="ZwCD8duL"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6e6b729669bso82249b3a.3
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 11:22:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712167128; x=1712771928; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JrewaSl6Jc56kNZVXV/Ge3JfdB2Ym16uXrC4TB/dGqQ=;
-        b=WizGwgwqrO55Wl/Ys9cvOL3Ogs7Mje0ydhLphr0vTL3i+Q/I0oTTTcrS2TEFfY1KT3
-         1pmb+DLw7TVpUnB4RmXWujuXbb67TsdfCXrJh0+cxfo3bTGaKZ79TSO2F7EEWzy8u+8M
-         VaIlJri987Pj/5uIrRAQZVkYY9VG7rqimKpEFZ4eGmyRiyxATNqv9TZL5jCTLiKr/hT7
-         Dz302aiqOZgWyEC7lbqS/mJh5uNnvCU5qYVC6f5sPNwTDqdYmbza4ZmuwTNvNq+7OZI7
-         nWt2hzk3CUDxWK/jTarx6HpjncOykmvUcyUrx+THT7DIrgNEznkPAQyzSv8VxZzLIDn4
-         1AJQ==
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1712168527; x=1712773327; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LoPxyy6ZZevKYMVQQwthSJ0EL7SyRC2E5s9/TcAwzlA=;
+        b=ZwCD8duLiCKuvl/u7C9SdR5KA7kiEXzgg9lxw5OSzEdw1T/wGKr5yIscD1y5u8+1Jb
+         rEiSIY56Ll0uhQLmfdAoYDC2Lnttb2XuguTUokKOEAkOSgyPOVOeTbfdqd+d1/f0AuVo
+         h8r9YkjwWATqXl4T36os3jswsTUuZ5CfYf4W4jAwrW70gP0R98mB3cW2EL1Lv7GwSJ+u
+         IGStBP4q+9l/L56Zy1gtiAKzSTq4eu/zZP/Mgi9eROxXuNemHFjFOFK6sdKFwtKQP6NY
+         JiCveokbXC5BI6xt1xgStRdF5YPEeiOsqUFpFv+xZ9FBnstn8e8UP3lxmzylyZu/pqXh
+         +gSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712167128; x=1712771928;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JrewaSl6Jc56kNZVXV/Ge3JfdB2Ym16uXrC4TB/dGqQ=;
-        b=Ng+GHkNZDa87zlCUI/Zwabas/TsAcO31ptELN3FuxIVbbQypSEwTqs7eZklUI6jboV
-         GAqN6Wpgx4NG5gKbYHQ5XjW3HYxYonV/D6SWiSBM7DUk8lW3UTBrqxh7aEBOa2AGNwGD
-         1TUtkzItEjQw4pJtWFQIgFyij3rLD+Ys09kwe8d0ScG4+oLehSQ9OVhxaMeRnrHTf1eq
-         jcAYMqJfw+VrXv53Ykam5BQiPDPVk2FFnV/b7+JOfWola2FfSQUIDFNM0xPZcTQsOL7I
-         qyzuOSQjuASZ6oWyUak70alUt4IYez5tWg7KlTGdcjim/ttaCj0ZA6BL6MwP4lVWSV/U
-         TM9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWpkPImx1LwPNbzSq5FumoQ68aBp+vp7kJPCibihNkeL4vAfspj35PQ8u4B9rd8Q5Qmoh7p5ybGyRSl0P+GirhfcyzoqxcC+D93FIj9itay0bCszTR12NAR2U4WHsb9nk4cD5KU3ZXYpap9FZ0xv/cVIo31GueeG/N3eW+uTnHUPL+h/FmHWbSKdGT1hIC6eIcFdVeR0OC4v6kBEKlt5Cu4uF8=
-X-Gm-Message-State: AOJu0YywXzWc5LqnXnKc44RXSLlIjnpgKgvbF5fqb6EvdOFh1JzXIHu3
-	McPwMRSQ7JnXdUsLfcUQco+/C8chvL9JmedPmYPJWKfgO088Y3kI
-X-Google-Smtp-Source: AGHT+IGhLvfnk61jEqJuwTE8ZDrxA4/6Gc4gOsanVBK9ECZUWDl79PSn6cFET38D/6LqOpN6wTy68g==
-X-Received: by 2002:a05:6830:617:b0:6e8:af73:3b41 with SMTP id w23-20020a056830061700b006e8af733b41mr3590661oti.10.1712167128373;
-        Wed, 03 Apr 2024 10:58:48 -0700 (PDT)
-Received: from [192.168.7.169] (c-98-197-58-203.hsd1.tx.comcast.net. [98.197.58.203])
-        by smtp.gmail.com with ESMTPSA id m40-20020a05683032a800b006e6bf2cc882sm2732667ott.26.2024.04.03.10.58.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Apr 2024 10:58:47 -0700 (PDT)
-Message-ID: <54016e9d-b887-8ec4-b896-5ca2355180dd@gmail.com>
-Date: Wed, 3 Apr 2024 12:58:46 -0500
+        d=1e100.net; s=20230601; t=1712168527; x=1712773327;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LoPxyy6ZZevKYMVQQwthSJ0EL7SyRC2E5s9/TcAwzlA=;
+        b=i6IUS9zOvt+pN63FnHk0cQ6m6Cb629Y3KPc5jA3JRcMX7qIOUOsWmENe+qP5zoROWr
+         2C7iQIUbrW87TDkr5Ix5Zap2SB0AAbcQlDPJONkYw8A04NrSTLbblFhXbXQX9z37ltfr
+         c0oSToUQJPrpZ750GJX4MjqvJhf9TRuokqH4E4a1orO19oQGGMWJoNlD2Htd9Z0Fpp86
+         JpQFqujk8y9sLoZ3K0THfPE7KqqwEvnAl159g0faL2n2gDz+RSuB+EcjDfoFZUsq3JRg
+         PtbdI1r99/F7ZxajtB0wnVbXwg6WvKAuQ0a7BuRw6a/59UHA5Ox/uF15ksx0psr7bRUd
+         1uOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVE9zUzmavyNRr+D3nG+skKlOY1U4mu6ckIGxDY09WbC3g8YsfMM231E20q+sD5zJ4CtwtNc8J08M812j4sQ95hmcYrbtC+AIPz
+X-Gm-Message-State: AOJu0YzvISfbAvy1ol77NPUOE10s2LWVdpkyWanMBA6brALsUqBhcKyA
+	mqswgEAJMVWYFR80cGYGGxiPk+eKFrhu37vFwTXlrBc5TkeHyvJxEejYahyb0Sc=
+X-Google-Smtp-Source: AGHT+IE8xKPk+Cg4ycXY4vSQCypFZ4Jw5ScQiKmu4H6BcqJa4Y6mRodZymA7cXolnlaayPoU0XPjww==
+X-Received: by 2002:a05:6a20:734b:b0:1a3:48da:1090 with SMTP id v11-20020a056a20734b00b001a348da1090mr568998pzc.14.1712168527301;
+        Wed, 03 Apr 2024 11:22:07 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d9-20020a17090ad3c900b0029b77fbeb7fsm14038311pjw.16.2024.04.03.11.22.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Apr 2024 11:22:06 -0700 (PDT)
+Date: Wed, 03 Apr 2024 11:22:06 -0700 (PDT)
+X-Google-Original-Date: Wed, 03 Apr 2024 11:21:50 PDT (-0700)
+Subject:     Re: [PATCH v6 00/11] riscv: add initial support for Canaan Kendryte K230
+In-Reply-To: <tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com>
+CC: linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>,
+  dlemoal@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, guoren@kernel.org, mturquette@baylibre.com,
+  sboyd@kernel.org, linus.walleij@linaro.org, p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
+  linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cyy@cyyself.name
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: cyy@cyyself.name
+Message-ID: <mhng-08e43080-8679-43f8-80c5-b73304e4e680@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/7] dt-bindings: clock: Add PCIe pipe related clocks for
- IPQ9574
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: ansuelsmth@gmail.com, robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240402192555.1955204-1-mr.nuke.me@gmail.com>
- <e392a1dd-20bc-447c-82ab-f6256bf2be69@linaro.org>
-From: mr.nuke.me@gmail.com
-In-Reply-To: <e392a1dd-20bc-447c-82ab-f6256bf2be69@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 4/3/24 02:10, Krzysztof Kozlowski wrote:
-> On 02/04/2024 21:25, Alexandru Gagniuc wrote:
->> Add defines for the missing PCIe PIPE clocks.
->>
->> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
->> ---
->>   include/dt-bindings/clock/qcom,ipq9574-gcc.h | 4 ++++
->>   1 file changed, 4 insertions(+)
-> 
-> I did not get half of this patchset. Are you sure you are CC-ing everyone?
+On Sat, 23 Mar 2024 05:09:42 PDT (-0700), cyy@cyyself.name wrote:
+> K230 is an ideal chip for RISC-V Vector 1.0 evaluation now. Add initial
+> support for it to allow more people to participate in building drivers
+> to mainline for it.
+>
+> This kernel has been tested upon factory SDK [1] with
+> k230_evb_only_linux_defconfig and patched mainline opensbi [2] to skip
+> locked pmp and successfully booted to busybox on initrd with this log [3].
+>
+> [1] https://github.com/kendryte/k230_sdk
+> [2] https://github.com/cyyself/opensbi/tree/k230
+> [3] https://gist.github.com/cyyself/b9445f38cc3ba1094924bd41c9086176
+>
+> Changes since v5:
+> - Deprecate SOC_CANAAN and use SOC_CANAAN_K210 for K210 SoCs
+> - Modify existing K210 drivers depends on SOC_CANAAN_K210 symbol
+> - Reword dts commit message
+> - Modify dts to use Full 512MB memory
+> - Rebase to linux mainline master
+>
+> Changes since v4:
+> - Reword commit message on dts that the B-ext version of c908 is 1.0 rather
+>   than 1.0-rc1
+>
+> v4: https://lore.kernel.org/linux-riscv/tencent_587730262984A011834F42D0563BC6B10405@qq.com/
+>
+> Changes since v3:
+> - Refactor Kconfig.soc which uses ARCH_CANAAN for regular Canaan SoCs and
+>   rename SOC_CANAAN to SOC_CANAAN_K210 for K210 in patch [5/7]
+> - Sort dt-binding stings on Cannan SoCs in alphanumerical order
+>
+> v3: https://lore.kernel.org/linux-riscv/tencent_BB2364BBF1812F4E304F7BDDD11E57356605@qq.com/
+>
+> Changes since v2:
+> - Add MIT License to dts file
+> - Sort dt-binding stings in alphanumerical order
+> - Sort filename in dts Makefile in alphanumerical order
+> - Rename canmv-k230.dts to k230-canmv.dts
+>
+> v2: https://lore.kernel.org/linux-riscv/tencent_64A9B4B31C2D70D5633042461AC9F80C0509@qq.com/
+>
+> Changes since v1:
+> - Patch dt-bindings in clint and plic
+> - Use enum in K230 compatible dt bindings
+> - Fix dts to pass `make dtbs_check`
+> - Add more details in commit message
+>
+> v1: https://lore.kernel.org/linux-riscv/tencent_E15F8FE0B6769E6338AE690C7F4844A31706@qq.com/
+>
+> Yangyu Chen (11):
+>   dt-bindings: riscv: Add T-HEAD C908 compatible
+>   dt-bindings: add Canaan K230 boards compatible strings
+>   dt-bindings: timer: Add Canaan K230 CLINT
+>   dt-bindings: interrupt-controller: Add Canaan K230 PLIC
+>   riscv: Kconfig.socs: Split ARCH_CANAAN and SOC_CANAAN_K210
+>   soc: canaan: Deprecate SOC_CANAAN and use SOC_CANAAN_K210 for K210
+>   clk: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
+>   pinctrl: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
+>   reset: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
+>   riscv: dts: add initial canmv-k230 and k230-evb dts
+>   riscv: config: enable ARCH_CANAAN in defconfig
+>
+>  .../sifive,plic-1.0.0.yaml                    |   1 +
+>  .../devicetree/bindings/riscv/canaan.yaml     |   8 +-
+>  .../devicetree/bindings/riscv/cpus.yaml       |   1 +
+>  .../bindings/timer/sifive,clint.yaml          |   1 +
+>  arch/riscv/Kconfig.socs                       |   8 +-
+>  arch/riscv/Makefile                           |   2 +-
+>  arch/riscv/boot/dts/canaan/Makefile           |   2 +
+>  arch/riscv/boot/dts/canaan/k230-canmv.dts     |  24 +++
+>  arch/riscv/boot/dts/canaan/k230-evb.dts       |  24 +++
+>  arch/riscv/boot/dts/canaan/k230.dtsi          | 140 ++++++++++++++++++
+>  arch/riscv/configs/defconfig                  |   1 +
+>  arch/riscv/configs/nommu_k210_defconfig       |   3 +-
+>  .../riscv/configs/nommu_k210_sdcard_defconfig |   3 +-
+>  drivers/clk/Kconfig                           |   4 +-
+>  drivers/pinctrl/Kconfig                       |   4 +-
+>  drivers/reset/Kconfig                         |   4 +-
+>  drivers/soc/Makefile                          |   2 +-
+>  drivers/soc/canaan/Kconfig                    |   4 +-
+>  18 files changed, 220 insertions(+), 16 deletions(-)
+>  create mode 100644 arch/riscv/boot/dts/canaan/k230-canmv.dts
+>  create mode 100644 arch/riscv/boot/dts/canaan/k230-evb.dts
+>  create mode 100644 arch/riscv/boot/dts/canaan/k230.dtsi
+>
+> base-commit: 8e938e39866920ddc266898e6ae1fffc5c8f51aa
 
-The other changes are driver code that implements these DT bindings. I 
-used --cc-cmd of git send-email to find the maintainers. I'll manually 
-CC you to the other patches in V2.
-
-Alex
-
-> For this one:
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
