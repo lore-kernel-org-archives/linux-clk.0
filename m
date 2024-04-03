@@ -1,60 +1,60 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4791044C76
-	for <linux-clk@vger.kernel.org>; Wed,  3 Apr 2024 06:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D4D55E4C
+	for <linux-clk@vger.kernel.org>; Wed,  3 Apr 2024 07:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712126955; cv=none; b=i3KaDxVe/NGj0ACV3zhzvgosGH81wrqsnkNGZ36wp5B7TCtis7d9ttlfeKPTE/xPowg92I1jgCpBItjszuiWdFj4ff/BEiBckjJLNnUdZaouIwSfF5KksV3PbWd+MivMILlX6K8y7IlUkOeqxdCRTEzWI3kkEH0lrUhGeN4nNfE=
+	t=1712128163; cv=none; b=HPqtiuoZf/sre7vVUKiEmXtSQZzu/SmZ6T0OjtkMA6FQjJySJghIiHSFyNzjBDiE8+y0sbTlQMJ2C6byriMvnyeW9nCj4Rb1yTKmdrp8mqqdibrScXObYeequV7AysVFmxaZS49nbQ7ixnEHCT4Vke1ktxsGQjjW/CxNAKbg6Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712126955; c=relaxed/simple;
-	bh=7KJkmLBmixT+4fy9dHtvE4IRdOGEukGf18B8oGICZ5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SDknQcCS+kp9mBKirv02ACl13TvSuBhw3CadVz0e8jEzVBiNUn/YN2bbaAHdXJ+hjdNUH3ESd3V1iY4bF2j3tAqzCFw+Djt45PZG1v+jSUos+tBD5NWvKd8NQlF4Zgly7gvTsTFNJRge095hQ+0NjQRfvvVOhsZRKiJWYdxXUEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZAOvy8hB; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1712128163; c=relaxed/simple;
+	bh=w8lYqOHfeCnx5dohRvnbfVZFUThxcvDdyzU7nBE59jI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oibku0M/Id2Gqpl+zt3K6ryz9nKeMJZ1pql+Ce3K8Wb/vwUIeHOaGYV9+c2CjUY0xcpyOoOQVSfPg/kjM+kd8jHMfLuskk7SU6ItjM6X3tXH/oDXtwR9psWuc0RApSzfzPxoJdjEyfZ1KeEVtnhRQEfWx3kDWBXNMz8B42DDgfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J+mhxvgV; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZAOvy8hB"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a44ad785a44so681731566b.3
-        for <linux-clk@vger.kernel.org>; Tue, 02 Apr 2024 23:49:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J+mhxvgV"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-513d717269fso7152084e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 00:09:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712126951; x=1712731751; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712128159; x=1712732959; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxEweuhL1xZaCLYP0cmyV86Egllpxaa+cUj5NxoHLJs=;
-        b=ZAOvy8hB/Eua6tXpdciwPiV7vsgNfAvkCJwaZvZFMQclW3bFAD+vb/UyZ9SMxKuMC1
-         HWogqVreVVl/bMlx0bgDRljVhZ5iQ8WjtZ/uskXf1rOmWkWLxfWlKi95dSVA3Qs5UIe9
-         6Chhc9soVzOwjhxiggQwRHRNaVpz7PjXr7qHbFRja9TZx02NJyEfNZPi5LM9K/Gqaxl4
-         KpzG9AysAYDLHLYTrV/E1Ize61JgB3Zo8KHEE91eXPHnbQ5YYeKsN138xb+BtxerK6HD
-         znP2TnPOwtAwaCuUruHUSA8NymQynEbVOcU1h7X9MVydZEwTS+o/IwVDuVKvC4wHqnkS
-         2ufA==
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fYpb7gc5mEpIwDyiesaebegaIhLVavoAyYkXkWaJkd8=;
+        b=J+mhxvgV798NfJSu4mpXLuTqMnZYtL8xQlS8peavd899vAeZCoQDurPTP1quA9L5rb
+         B/5KLaRnWhcXj1cO/CySzKE2L99kNuvd5nFhbw1UnYreM+fltEClWLdwLh8IWA/zZwgK
+         6hx08WWBciMJw23bPvDOr4Q5he7sTDzbB8NpANRxlyCfugtix00C271uPjAwOxeQvOgO
+         GQNYZw07dCn54MvnyU1egXXSlrbTFkeuZ/V1VKspxst5QzMbppBrX7fSNOkLqKkG35FM
+         GdVPVEhsXsOBU1XL6UWBWFaZ5jCbezgbFI31ZeSki893OimLURRxzhMR9VueU0FvIzay
+         AMmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712126951; x=1712731751;
+        d=1e100.net; s=20230601; t=1712128159; x=1712732959;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wxEweuhL1xZaCLYP0cmyV86Egllpxaa+cUj5NxoHLJs=;
-        b=I0IsmEy49i8CnBmA0kAr2dP80Uy2Q6Y5DSmFRLbs9x4wyfLEQyTA4oSKrALjB2lZv6
-         99msFYxVrYcan5e+7EXkScj81RhWOMBESQhpQz6Qy/zOy9UrZMG37bqO6RQhA1NDqyR9
-         QPMEitpFiB91JblA/nCXYQgvIkNwHczjd90BUO08fAls5AAl8tutVGNECE6u4yrFGnO3
-         prgdliM8vAIJ/aClLADUBzytVng/srmc4MA701+aam+o/OXhhqcLBbZ8LiYnv2BfCW+2
-         oGoAPmFhsa6feH6PuA4DwIXvzkHktKYPjB+R/ccRFOqF3f6hyJcXwuEUvOAX6pZeBUcd
-         5y+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVsFsNZ+Q8M3WBBBiulvCR0vdSzRlRwfkItq/nl6gqCBr4OG7adfDD/t9090wxdPgAQC8R2jTrLflJZdRUMO4JXtSPjT7bz78VI
-X-Gm-Message-State: AOJu0YyT5U3UtmVtNSWSQ6V2usEcfLwUEuhWXY6tBURu0QtIwMlhV3Sj
-	/6y4bmO3Z9prJ/FKQ+lmi+JRJPua3BoiJgxCRL+iqOjSlBQmzlKL5mQKZBmyYfw=
-X-Google-Smtp-Source: AGHT+IH47jNQrG02lL1P3WtL0Ax7bnLWp94fzWtTFJZdxXsFUSn26BAOi49TBEW4HCPrcM81wAzXVQ==
-X-Received: by 2002:a17:906:a0b:b0:a4e:23b5:3873 with SMTP id w11-20020a1709060a0b00b00a4e23b53873mr9398554ejf.2.1712126951539;
-        Tue, 02 Apr 2024 23:49:11 -0700 (PDT)
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fYpb7gc5mEpIwDyiesaebegaIhLVavoAyYkXkWaJkd8=;
+        b=IuwR8/8yMbUFbeUxCsnTXRU820UCjY2c1qhPJPXi2GWonic1RxxM4tVnZY84fYFAU1
+         9ckcZ9hRxO3ok16SG9D3XZY+vEbvw5ARlkUhbyGoY+FV2ZOi20gBWDjhT4gsMmYnqWYb
+         ioGJU9YnpeV1lLhAKLAPUOZ8VJiDk2FV2q46mjfCuMDFQgr03RlV1PbGws8PV+ly6pt4
+         eyhnz6vppz3Oow+4QskYP+RWV5sR+LLZpQAYGE6HkeW5KjHanvM10H+VG2hI3UBKq18A
+         QP4Jk4fE+DDzGL/2TxBky/roqcbJ+J1xBFo2NmqIbk3L3HSAAoufsdqeFJoqu9atu5u6
+         pB2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVBSWDbI4uCluYCQWAGyhv5ixbwV/OqJmmFx/a64EHQ81IYr+zHRfVri2KaJlCnf6YbnHj9xVnbDUqx7gzkbdyPYdCA/0a9SsYx
+X-Gm-Message-State: AOJu0Yx8cM6PTaBOym22+Ge4tBP7IZAsGw049py8mDWNd5n77b4p5bGj
+	Bj2XuhXxHJ75YSZ0J2juIO7M9CyFEzWC+0wNcU4MKOn0OGTVEs98gOZFk6fZp5I=
+X-Google-Smtp-Source: AGHT+IGGM6CQsdZ/zpAkCWsQwBnDwuHSf+3IyMRVPph3ekNhTZzXuzT/k/YugeG5SWY4hrWXeLQtRw==
+X-Received: by 2002:ac2:58f2:0:b0:513:3d26:7cc6 with SMTP id v18-20020ac258f2000000b005133d267cc6mr8383432lfo.15.1712128158365;
+        Wed, 03 Apr 2024 00:09:18 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id xj9-20020a170906db0900b00a4e3a08e1f1sm5922472ejb.156.2024.04.02.23.49.09
+        by smtp.gmail.com with ESMTPSA id wy11-20020a170906fe0b00b00a4e4a3e69acsm5069973ejb.71.2024.04.03.00.09.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Apr 2024 23:49:10 -0700 (PDT)
-Message-ID: <da93a8ed-4fbb-488f-a1af-e701f7191fbd@linaro.org>
-Date: Wed, 3 Apr 2024 08:49:09 +0200
+        Wed, 03 Apr 2024 00:09:17 -0700 (PDT)
+Message-ID: <1a6fccd3-452c-423f-b73e-cef5f9d01633@linaro.org>
+Date: Wed, 3 Apr 2024 09:09:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,24 +62,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] clk: qcom: clk-alpha-pll: Fix CAL_L_VAL override for
- LUCID EVO PLL
-To: Ajit Pandey <quic_ajipan@quicinc.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Vinod Koul <vkoul@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-References: <20240330182817.3272224-1-quic_ajipan@quicinc.com>
- <20240330182817.3272224-2-quic_ajipan@quicinc.com>
- <d8c0ca00-7e14-454e-8a65-5dcf14ed7796@linaro.org>
- <e2f108d8-0b25-d799-fbe4-ab6256966982@quicinc.com>
+Subject: Re: [PATCH v6 1/6] dt-bindings: interconnect: Add Qualcomm IPQ9574
+ support
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ djakov@kernel.org, dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20240402103406.3638821-1-quic_varada@quicinc.com>
+ <20240402103406.3638821-2-quic_varada@quicinc.com>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -126,50 +119,37 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <e2f108d8-0b25-d799-fbe4-ab6256966982@quicinc.com>
+In-Reply-To: <20240402103406.3638821-2-quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/04/2024 20:35, Ajit Pandey wrote:
-> 
-> 
-> On 3/31/2024 12:49 AM, Krzysztof Kozlowski wrote:
->> On 30/03/2024 19:28, Ajit Pandey wrote:
->>> In LUCID EVO PLL CAL_L_VAL and L_VAL bitfields are part of single
->>> PLL_L_VAL register. Update for L_VAL bitfield values in PLL_L_VAL
->>> register using regmap_write() API in __alpha_pll_trion_set_rate
->>> callback will override LUCID EVO PLL initial configuration related
->>> to PLL_CAL_L_VAL bit fields in PLL_L_VAL register.
->>>
->>> Observed random PLL lock failures during PLL enable due to such
->>> override in PLL calibration value. Use regmap_update_bits() with
->>> L_VAL bitfield mask instead of regmap_write() API to update only
->>> PLL_L_VAL bitfields in __alpha_pll_trion_set_rate callback.
->>>
->>> Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces")
->>>
->>
->> No blank lines between tags.
->>
->> Add Cc-stable tag.
->>
-> Sure, will update in next series
-> 
->> Please do not combine fixes with new features.
->>  > Best regards,
->> Krzysztof
->>
-> 
-> Actually this fix is required for correct scaling for few frequencies in 
-> this patch series, hence combined them together and pushed this fix as 
-> first patch in series so that they get mainlined together and feature 
-> functionality will not get impacted.
+On 02/04/2024 12:34, Varadarajan Narayanan wrote:
+> +#define ICC_NSSNOC_NSSCC	10
+> +#define ICC_NSSNOC_SNOC_0	11
+> +#define ICC_NSSNOC_SNOC_1	12
+> +#define ICC_NSSNOC_PCNOC_1	13
+> +#define ICC_NSSNOC_QOSGEN_REF	14
+> +#define ICC_NSSNOC_TIMEOUT_REF	15
+> +#define ICC_NSSNOC_XO_DCD	16
+> +#define ICC_NSSNOC_ATB		17
+> +#define ICC_MEM_NOC_NSSNOC	18
+> +#define ICC_NSSNOC_MEMNOC	19
+> +#define ICC_NSSNOC_MEM_NOC_1	20
+> +
+> +#define ICC_NSSNOC_PPE		0
+> +#define ICC_NSSNOC_PPE_CFG	1
+> +#define ICC_NSSNOC_NSS_CSR	2
+> +#define ICC_NSSNOC_IMEM_QSB	3
+> +#define ICC_NSSNOC_IMEM_AHB	4
+> +
+> +#define MASTER(x)	((ICC_ ## x) * 2)
+> +#define SLAVE(x)	(MASTER(x) + 1)
 
-OK, that's fine but usual way is that such need is expressed in the
-cover letter, so maintainer will know what to do. What if this patch
-should go to fixes and rest normally to for-next? How do you expect
-maintainer to apply the patch? Entire thread and then manually move the
-commits? Why making it so complicated for the maintainers?
+You already received comment to make your bindings consistent with other
+Qualcomm bindings. Now you repeat the same mistake.
+
+No, that is neither consistent nor greppble.
+
 
 Best regards,
 Krzysztof
