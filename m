@@ -1,269 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077FD14F9C3;
-	Wed,  3 Apr 2024 16:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A601DFD6;
+	Wed,  3 Apr 2024 17:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712161288; cv=none; b=UsnK3pBaNYQhyYYk9/MjBbNjSbdfNTB26i1sSA4OOv80Uc0w5i7lOWqpoteiSM9Fpr9x4ScXhpc2K42NzP+yjk/S7Q1V0rnYmO2Wzbh2cmDsLLMHDqsFvzisRg/Lpbet6uk8vP3NRQ4bvTTr7PzrPcpJ4TBWUzneKR3RagUN6fI=
+	t=1712167131; cv=none; b=ZbiR3d4BRYJ+s2Nfh+d9SjBI+qeCn//7eNEYK5Tj9kfeTHmYgdo1SGqF9A/ZOgDJ0KUS0KYR9OuKjQEajssIjDVPlF85RsKD1I5eqH+uJQ9+ruZy4NpkEzF/Tc2+IJZ7Vswu1gAFjGcsVDFZmkStMm+Vh4jdqVI/o4nrAvQpu2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712161288; c=relaxed/simple;
-	bh=mS7lPB+f/6hy5j1P7T6iVW2jsky8/RPVdA6c6ORlOBc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Of14mckCN7OgM5xt4mSYQ8kktfvPGJRgNJj4I+BMLSyhkL7lUJiP6Q6EmOT1traAjQi6mtEmJFlsZUp9Vx0AD7c6nEHxa4Q7hOREF1tjwd25Afdu4seck/vscyVGx/gtsG+MsO3zxCne3xf93U+SG2Dm4yTtea1WCWWHNP3dO7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNrJgm3w; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712167131; c=relaxed/simple;
+	bh=T77JDQnJ0hsdJFUa5ETbkj6RTVt2ZW/eZKnQNpSp5PI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lDZ9Nn8ty/JUcwk7BwUkiL4+XFmyNXaMGZaWVQJ0hS/v8kfVdyDQD0VMQfKqGyBAbOioM+0nbAQLijhFySmNa+Wj0lUdh+ZcHqX5uQbarpQKXA02ECs4VHnelaVqsTx/PRu7V3oQWAlICXZGgx9PZu8JdrKoxMrlguZeimskSV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WizGwgwq; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNrJgm3w"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51851C433C7;
-	Wed,  3 Apr 2024 16:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712161287;
-	bh=mS7lPB+f/6hy5j1P7T6iVW2jsky8/RPVdA6c6ORlOBc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kNrJgm3w3JzTQzmP3u4dIqyF25sLIcKkCurxl2xcItrLj1YoSdnLBGswkLJDpuZtx
-	 1PKE1G3i3TZTqnpjOppiuVwaaRl9gR32fvYzTXI2heTe4YZnY/Y9UKH+Bqp/XxQxcr
-	 IcFhy3noWbSydIK/vNjsiXb3+P0+aXLi+1sOBIpWiV9m/H4cPf6/vmQQQ9wkYQnUEw
-	 7rLWF5Uw4Bn9N39/4Hjfk0t7VrQYWRODnl3Cw8oUwLqfs3G1S4zVVuOjblh/BKs5aZ
-	 OcVgWHiuhIbCxJj4kpNfZos+QEGfNeBwjOxcevdeIHyR2sfrGPl860LFNC4+upCtgi
-	 xkfZZQEz9nUzQ==
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	nbd@nbd.name,
-	john@phrozen.org,
-	devicetree@vger.kernel.org,
-	dd@embedd.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	upstream@airoha.com,
-	lorenzo.bianconi83@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Subject: [PATCH 4/4] clk: en7523: add EN7581 support
-Date: Wed,  3 Apr 2024 18:20:45 +0200
-Message-ID: <3aaf638b846ecfdbfc1c903206b7d519d56c9130.1712160869.git.lorenzo@kernel.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1712160869.git.lorenzo@kernel.org>
-References: <cover.1712160869.git.lorenzo@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WizGwgwq"
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6e9e46f1e03so87054a34.1;
+        Wed, 03 Apr 2024 10:58:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712167128; x=1712771928; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JrewaSl6Jc56kNZVXV/Ge3JfdB2Ym16uXrC4TB/dGqQ=;
+        b=WizGwgwqrO55Wl/Ys9cvOL3Ogs7Mje0ydhLphr0vTL3i+Q/I0oTTTcrS2TEFfY1KT3
+         1pmb+DLw7TVpUnB4RmXWujuXbb67TsdfCXrJh0+cxfo3bTGaKZ79TSO2F7EEWzy8u+8M
+         VaIlJri987Pj/5uIrRAQZVkYY9VG7rqimKpEFZ4eGmyRiyxATNqv9TZL5jCTLiKr/hT7
+         Dz302aiqOZgWyEC7lbqS/mJh5uNnvCU5qYVC6f5sPNwTDqdYmbza4ZmuwTNvNq+7OZI7
+         nWt2hzk3CUDxWK/jTarx6HpjncOykmvUcyUrx+THT7DIrgNEznkPAQyzSv8VxZzLIDn4
+         1AJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712167128; x=1712771928;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JrewaSl6Jc56kNZVXV/Ge3JfdB2Ym16uXrC4TB/dGqQ=;
+        b=Ng+GHkNZDa87zlCUI/Zwabas/TsAcO31ptELN3FuxIVbbQypSEwTqs7eZklUI6jboV
+         GAqN6Wpgx4NG5gKbYHQ5XjW3HYxYonV/D6SWiSBM7DUk8lW3UTBrqxh7aEBOa2AGNwGD
+         1TUtkzItEjQw4pJtWFQIgFyij3rLD+Ys09kwe8d0ScG4+oLehSQ9OVhxaMeRnrHTf1eq
+         jcAYMqJfw+VrXv53Ykam5BQiPDPVk2FFnV/b7+JOfWola2FfSQUIDFNM0xPZcTQsOL7I
+         qyzuOSQjuASZ6oWyUak70alUt4IYez5tWg7KlTGdcjim/ttaCj0ZA6BL6MwP4lVWSV/U
+         TM9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWpkPImx1LwPNbzSq5FumoQ68aBp+vp7kJPCibihNkeL4vAfspj35PQ8u4B9rd8Q5Qmoh7p5ybGyRSl0P+GirhfcyzoqxcC+D93FIj9itay0bCszTR12NAR2U4WHsb9nk4cD5KU3ZXYpap9FZ0xv/cVIo31GueeG/N3eW+uTnHUPL+h/FmHWbSKdGT1hIC6eIcFdVeR0OC4v6kBEKlt5Cu4uF8=
+X-Gm-Message-State: AOJu0YywXzWc5LqnXnKc44RXSLlIjnpgKgvbF5fqb6EvdOFh1JzXIHu3
+	McPwMRSQ7JnXdUsLfcUQco+/C8chvL9JmedPmYPJWKfgO088Y3kI
+X-Google-Smtp-Source: AGHT+IGhLvfnk61jEqJuwTE8ZDrxA4/6Gc4gOsanVBK9ECZUWDl79PSn6cFET38D/6LqOpN6wTy68g==
+X-Received: by 2002:a05:6830:617:b0:6e8:af73:3b41 with SMTP id w23-20020a056830061700b006e8af733b41mr3590661oti.10.1712167128373;
+        Wed, 03 Apr 2024 10:58:48 -0700 (PDT)
+Received: from [192.168.7.169] (c-98-197-58-203.hsd1.tx.comcast.net. [98.197.58.203])
+        by smtp.gmail.com with ESMTPSA id m40-20020a05683032a800b006e6bf2cc882sm2732667ott.26.2024.04.03.10.58.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Apr 2024 10:58:47 -0700 (PDT)
+Message-ID: <54016e9d-b887-8ec4-b896-5ca2355180dd@gmail.com>
+Date: Wed, 3 Apr 2024 12:58:46 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 1/7] dt-bindings: clock: Add PCIe pipe related clocks for
+ IPQ9574
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: ansuelsmth@gmail.com, robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240402192555.1955204-1-mr.nuke.me@gmail.com>
+ <e392a1dd-20bc-447c-82ab-f6256bf2be69@linaro.org>
+From: mr.nuke.me@gmail.com
+In-Reply-To: <e392a1dd-20bc-447c-82ab-f6256bf2be69@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Introduce EN7581 clock support to clk-en7523 driver.
+On 4/3/24 02:10, Krzysztof Kozlowski wrote:
+> On 02/04/2024 21:25, Alexandru Gagniuc wrote:
+>> Add defines for the missing PCIe PIPE clocks.
+>>
+>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+>> ---
+>>   include/dt-bindings/clock/qcom,ipq9574-gcc.h | 4 ++++
+>>   1 file changed, 4 insertions(+)
+> 
+> I did not get half of this patchset. Are you sure you are CC-ing everyone?
 
-Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
-Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
----
- drivers/clk/clk-en7523.c | 130 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 125 insertions(+), 5 deletions(-)
+The other changes are driver code that implements these DT bindings. I 
+used --cc-cmd of git send-email to find the maintainers. I'll manually 
+CC you to the other patches in V2.
 
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index c7def87b74c6..51a6c0cc7f58 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -4,13 +4,16 @@
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <dt-bindings/clock/en7523-clk.h>
- 
- #define REG_PCI_CONTROL			0x88
- #define   REG_PCI_CONTROL_PERSTOUT	BIT(29)
- #define   REG_PCI_CONTROL_PERSTOUT1	BIT(26)
-+#define   REG_PCI_CONTROL_REFCLK_EN0	BIT(23)
- #define   REG_PCI_CONTROL_REFCLK_EN1	BIT(22)
-+#define   REG_PCI_CONTROL_PERSTOUT2	BIT(16)
- #define REG_GSW_CLK_DIV_SEL		0x1b4
- #define REG_EMI_CLK_DIV_SEL		0x1b8
- #define REG_BUS_CLK_DIV_SEL		0x1bc
-@@ -18,10 +21,25 @@
- #define REG_SPI_CLK_FREQ_SEL		0x1c8
- #define REG_NPU_CLK_DIV_SEL		0x1fc
- #define REG_CRYPTO_CLKSRC		0x200
--#define REG_RESET_CONTROL		0x834
-+#define REG_RESET_CONTROL2		0x830
-+#define   REG_RESET2_CONTROL_PCIE2	BIT(27)
-+#define REG_RESET_CONTROL1		0x834
- #define   REG_RESET_CONTROL_PCIEHB	BIT(29)
- #define   REG_RESET_CONTROL_PCIE1	BIT(27)
- #define   REG_RESET_CONTROL_PCIE2	BIT(26)
-+/* EN7581 */
-+#define REG_PCIE0_MEM			0x00
-+#define REG_PCIE0_MEM_MASK		0x04
-+#define REG_PCIE1_MEM			0x08
-+#define REG_PCIE1_MEM_MASK		0x0c
-+#define REG_PCIE2_MEM			0x10
-+#define REG_PCIE2_MEM_MASK		0x14
-+#define REG_PCIE_RESET_OPEN_DRAIN	0x018c
-+#define REG_PCIE_RESET_OPEN_DRAIN_MASK	GENMASK(2, 0)
-+#define REG_NP_SCU_PCIC			0x88
-+#define REG_NP_SCU_SSTR			0x9c
-+#define REG_PCIE_XSI0_SEL_MASK		GENMASK(14, 13)
-+#define REG_PCIE_XSI1_SEL_MASK		GENMASK(12, 11)
- 
- struct en_clk_desc {
- 	int id;
-@@ -207,14 +225,14 @@ static int en7523_pci_prepare(struct clk_hw *hw)
- 	usleep_range(1000, 2000);
- 
- 	/* Reset to default */
--	val = readl(np_base + REG_RESET_CONTROL);
-+	val = readl(np_base + REG_RESET_CONTROL1);
- 	mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2 |
- 	       REG_RESET_CONTROL_PCIEHB;
--	writel(val & ~mask, np_base + REG_RESET_CONTROL);
-+	writel(val & ~mask, np_base + REG_RESET_CONTROL1);
- 	usleep_range(1000, 2000);
--	writel(val | mask, np_base + REG_RESET_CONTROL);
-+	writel(val | mask, np_base + REG_RESET_CONTROL1);
- 	msleep(100);
--	writel(val & ~mask, np_base + REG_RESET_CONTROL);
-+	writel(val & ~mask, np_base + REG_RESET_CONTROL1);
- 	usleep_range(5000, 10000);
- 
- 	/* Release device */
-@@ -262,6 +280,64 @@ static struct clk_hw *en7523_register_pcie_clk(struct device *dev,
- 	return &cg->hw;
- }
- 
-+static int en7581_pci_is_enabled(struct clk_hw *hw)
-+{
-+	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-+	u32 val, mask;
-+
-+	mask = REG_PCI_CONTROL_REFCLK_EN0 | REG_PCI_CONTROL_REFCLK_EN1;
-+	val = readl(cg->base + REG_PCI_CONTROL);
-+	return (val & mask) == mask;
-+}
-+
-+static int en7581_pci_prepare(struct clk_hw *hw)
-+{
-+	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-+	void __iomem *np_base = cg->base;
-+	u32 val, mask;
-+
-+	mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2 |
-+	       REG_RESET_CONTROL_PCIEHB;
-+	val = readl(np_base + REG_RESET_CONTROL1);
-+	writel(val & ~mask, np_base + REG_RESET_CONTROL1);
-+	val = readl(np_base + REG_RESET_CONTROL2);
-+	writel(val & ~REG_RESET2_CONTROL_PCIE2, np_base + REG_RESET_CONTROL2);
-+	usleep_range(5000, 10000);
-+
-+	mask = REG_PCI_CONTROL_REFCLK_EN0 | REG_PCI_CONTROL_REFCLK_EN1 |
-+	       REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT2 |
-+	       REG_PCI_CONTROL_PERSTOUT;
-+	val = readl(np_base + REG_PCI_CONTROL);
-+	writel(val | mask, np_base + REG_PCI_CONTROL);
-+	msleep(250);
-+
-+	return 0;
-+}
-+
-+static void en7581_pci_unprepare(struct clk_hw *hw)
-+{
-+	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-+	void __iomem *np_base = cg->base;
-+	u32 val, mask;
-+
-+	mask = REG_PCI_CONTROL_REFCLK_EN0 | REG_PCI_CONTROL_REFCLK_EN1 |
-+	       REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT2 |
-+	       REG_PCI_CONTROL_PERSTOUT;
-+	val = readl(np_base + REG_PCI_CONTROL);
-+	writel(val & ~mask, np_base + REG_PCI_CONTROL);
-+	usleep_range(1000, 2000);
-+
-+	mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2 |
-+	       REG_RESET_CONTROL_PCIEHB;
-+	val = readl(np_base + REG_RESET_CONTROL1);
-+	writel(val | mask, np_base + REG_RESET_CONTROL1);
-+	mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2;
-+	writel(val | mask, np_base + REG_RESET_CONTROL1);
-+	val = readl(np_base + REG_RESET_CONTROL2);
-+	writel(val | REG_RESET_CONTROL_PCIE2, np_base + REG_RESET_CONTROL2);
-+	msleep(100);
-+}
-+
- static void en7523_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
- 				   void __iomem *base, void __iomem *np_base)
- {
-@@ -291,6 +367,37 @@ static void en7523_register_clocks(struct device *dev, struct clk_hw_onecell_dat
- 	clk_data->num = EN7523_NUM_CLOCKS;
- }
- 
-+static int en7581_clk_hw_init(struct platform_device *pdev,
-+			      void __iomem *base,
-+			      void __iomem *np_base)
-+{
-+	void __iomem *pb_base;
-+	u32 val;
-+
-+	pb_base = devm_platform_ioremap_resource(pdev, 2);
-+	if (IS_ERR(pb_base))
-+		return PTR_ERR(pb_base);
-+
-+	val = readl(np_base + REG_NP_SCU_SSTR);
-+	val &= ~(REG_PCIE_XSI0_SEL_MASK | REG_PCIE_XSI1_SEL_MASK);
-+	writel(val, np_base + REG_NP_SCU_SSTR);
-+	val = readl(np_base + REG_NP_SCU_PCIC);
-+	writel(val | 3, np_base + REG_NP_SCU_PCIC);
-+
-+	writel(0x20000000, pb_base + REG_PCIE0_MEM);
-+	writel(0xfc000000, pb_base + REG_PCIE0_MEM_MASK);
-+	writel(0x24000000, pb_base + REG_PCIE1_MEM);
-+	writel(0xfc000000, pb_base + REG_PCIE1_MEM_MASK);
-+	writel(0x28000000, pb_base + REG_PCIE2_MEM);
-+	writel(0xfc000000, pb_base + REG_PCIE2_MEM_MASK);
-+
-+	val = readl(base + REG_PCIE_RESET_OPEN_DRAIN);
-+	writel(val | REG_PCIE_RESET_OPEN_DRAIN_MASK,
-+	       base + REG_PCIE_RESET_OPEN_DRAIN);
-+
-+	return 0;
-+}
-+
- static int en7523_clk_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
-@@ -306,6 +413,12 @@ static int en7523_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(np_base))
- 		return PTR_ERR(np_base);
- 
-+	if (of_device_is_compatible(node, "airoha,en7581-scu")) {
-+		r = en7581_clk_hw_init(pdev, base, np_base);
-+		if (r)
-+			return r;
-+	}
-+
- 	clk_data = devm_kzalloc(&pdev->dev,
- 				struct_size(clk_data, hws, EN7523_NUM_CLOCKS),
- 				GFP_KERNEL);
-@@ -329,8 +442,15 @@ static const struct clk_ops en7523_pcie_ops = {
- 	.unprepare = en7523_pci_unprepare,
- };
- 
-+static const struct clk_ops en7581_pcie_ops = {
-+	.is_enabled = en7581_pci_is_enabled,
-+	.prepare = en7581_pci_prepare,
-+	.unprepare = en7581_pci_unprepare,
-+};
-+
- static const struct of_device_id of_match_clk_en7523[] = {
- 	{ .compatible = "airoha,en7523-scu", .data = &en7523_pcie_ops },
-+	{ .compatible = "airoha,en7581-scu", .data = &en7581_pcie_ops },
- 	{ /* sentinel */ }
- };
- 
--- 
-2.44.0
+Alex
 
+> For this one:
+> 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
