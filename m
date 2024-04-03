@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019551494A4;
-	Wed,  3 Apr 2024 14:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1FF14A0AA;
+	Wed,  3 Apr 2024 14:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712153751; cv=none; b=I4kHHHfziLAvObBw50tS0+rq6zAJ0CzirFk5/AgZqDwLaC3q4/U76xuluXADyiVhuLpyWAMVhJaDYSCYDiz7dFoIOfgJMJVBYHbhJBiMybqXNAc9u48vj62ie5fQJsizbWNUAvwyoNv+7Hnfq00OHe/vtVARj5ZKbQUx+4SLddI=
+	t=1712153760; cv=none; b=SJCXuGGL0zpVLUE0yxI5ry16Ermtk7srFYCIkIlN0Lj55M8oA3LpPihTddchepQTXy1UkNgMDMLd9S/l55pzDxtJs1h0YDq8pgVtCv7n+DTcO/d69gHeh4LzwbM0XOTO6lMSPNIHXexOwf36vBbfC8ly3SwJgaaUCI1g9SGFYtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712153751; c=relaxed/simple;
-	bh=fhWJwSS6WUV/rQ1vsqKn3NpS8O4ZJ7RWPCIyi0ILAjg=;
+	s=arc-20240116; t=1712153760; c=relaxed/simple;
+	bh=RD2RCQFy9S41Rnm1Xw+o/M1kdulL9hH5gn+NFv371Fc=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=s7R1aBASuwesollcxBaLp5qXgl68t/YXfpx7zdm4ElVw+dt9KNNe33s0+EDl4kSXJNXmyO0DKuWaB/ZMLZBva2We9+zZzp6aZceATZ7dOuXb7JgN0C1sPTYgw7gL/f0vzIsr9TrdTDzaCrj8aBJCh7t6g9Pqd6HogNzzo98SOHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qVMeXyim; arc=none smtp.client-ip=10.30.226.201
+	 Message-Id:Subject; b=MOT4mlKoKcyZO6fJMrtzq2nn/gMTWzZiPkaDqKdHl81js1XPxTJ3JqLI90W80qKTGOShlz44fb/onUroz6patlA5U+dYj5CBrUHjuYhcBemkHviSY5oFHSES9bbuRtSg/RutoFeUjA2Hk0+n/0Pz5Qwlv9QHO6Z/VGz4repZ9gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McnZu8Pf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVMeXyim"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DB8EC433A6;
-	Wed,  3 Apr 2024 14:15:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McnZu8Pf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F291BC43141;
+	Wed,  3 Apr 2024 14:15:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712153750;
-	bh=fhWJwSS6WUV/rQ1vsqKn3NpS8O4ZJ7RWPCIyi0ILAjg=;
+	s=k20201202; t=1712153760;
+	bh=RD2RCQFy9S41Rnm1Xw+o/M1kdulL9hH5gn+NFv371Fc=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=qVMeXyimG4WyeARwYMaux29uT2VipP+ejvreMeuSgGiscGgrKQEvS5oHXOig66ADg
-	 jhlHyt69Ezu3ZeCqEBieUe+3deKg6DBvCcoPThTcpMqm+c2GHHEFyCr0Ur40UaBn88
-	 l/zzbjq1jO16rDFUJ7O2vhbaVhwa1//BJZ55CV0Ih9ywWGWaU9oKNDlaMxBsPhKEBP
-	 pMxQV75XCMu1Z+4Z5+VAqeximZ9da+yMgzXuoFU9drDuMqlAIBPgVV+wowpJF7oAJv
-	 bEErCovXIf6jU++9VxTrUoTKVbhFmPtD9n7P+PcwXA5s2c3/rLd1680Sses3eywqQx
-	 S4t5Ge6o9HPcQ==
-Date: Wed, 03 Apr 2024 09:15:49 -0500
+	b=McnZu8PfSbAaxRVlZM1E7ZhlMlidwZRAf2+p3NWpBVZiIIOh8llqwARTFX6fMPrqD
+	 7A971dYcnqw0+S4RbiZrfu/K2j5A7h8wxRsQKh0hhH3W/jK9i7LXFRcCa0G/ung+az
+	 M/p5/ylkw1QnoBHD/nFelwbIfOjPsg85GGyIvV7JVQiv7o6/7ssIdVGOD8wGDYyC0l
+	 Vbvc9smSKlTeR90cbbYHhBzE7zX9VEi5AVUP21ciX3jr3QYP8RbUYK5z6F646t1q7y
+	 HH/cT6z04g1C58ghkeAtEXbooVvoB4j5IQA+tTdIyKlmF4bsD91PxiMaoHKdZdPitU
+	 szY1wdWzucbQA==
+Date: Wed, 03 Apr 2024 09:15:59 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -36,180 +36,173 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: Rob Herring <robh@kernel.org>
-To: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc: phone-devel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, Kevin Hilman <khilman@baylibre.com>, 
+ linux-clk@vger.kernel.org, David Airlie <airlied@gmail.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Maxime Ripard <mripard@kernel.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-kernel@vger.kernel.org, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, 
- Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Lubomir Rintel <lkundrak@v3.sk>, Will Deacon <will@kernel.org>, 
- Karel Balej <balejk@matfyz.cz>, linux-clk@vger.kernel.org, 
- Conor Dooley <conor.dooley@microchip.com>, Tony Lindgren <tony@atomide.com>, 
- David Wronek <david@mainlining.org>, 
- Haojian Zhuang <haojian.zhuang@linaro.org>, Tony Luck <tony.luck@intel.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr>
-References: <20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr>
-Message-Id: <171215356225.3499035.10345778780745596314.robh@kernel.org>
-Subject: Re: [PATCH v9 0/9] Initial Marvell PXA1908 support
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ linux-arm-kernel@lists.infradead.org, Nicolas Belin <nbelin@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Conor Dooley <conor+dt@kernel.org>, 
+ Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ "Lukas F. Hartmann" <lukas@mntre.com>
+In-Reply-To: <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-0-99ecdfdc87fc@linaro.org>
+References: <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-0-99ecdfdc87fc@linaro.org>
+Message-Id: <171215356354.3499119.7365764499574493714.robh@kernel.org>
+Subject: Re: [PATCH v12 0/7] drm/meson: add support for MIPI DSI Display
 
 
-On Tue, 02 Apr 2024 22:55:36 +0200, Duje Mihanović wrote:
-> Hello,
+On Wed, 03 Apr 2024 09:46:31 +0200, Neil Armstrong wrote:
+> The Amlogic G12A, G12B & SM1 SoCs embeds a Synopsys DW-MIPI-DSI transceiver (ver 1.21a),
+> with a custom glue managing the IP resets, clock and data input similar to the DW-HDMI
+> glue on the same Amlogic SoCs.
 > 
-> This series adds initial support for the Marvell PXA1908 SoC and
-> "samsung,coreprimevelte", a smartphone using the SoC.
+> This is a follow-up of v5 now the DRM patches are applied, the clk & DT changes
+> remains for a full DSI support on G12A & SM1 platforms.
 > 
-> USB works and the phone can boot a rootfs from an SD card, but there are
-> some warnings in the dmesg:
+> The DW-MIPI-DSI transceiver + D-PHY are clocked by the GP0 PLL, and the ENCL encoder + VIU
+> pixel reader by the VCLK2 clock using the HDMI PLL.
 > 
-> During SMP initialization:
-> [    0.006519] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU1: 0x00000000000000
-> [    0.006542] CPU features: Unsupported CPU feature variation detected.
-> [    0.006589] CPU1: Booted secondary processor 0x0000000001 [0x410fd032]
-> [    0.010710] Detected VIPT I-cache on CPU2
-> [    0.010716] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU2: 0x00000000000000
-> [    0.010758] CPU2: Booted secondary processor 0x0000000002 [0x410fd032]
-> [    0.014849] Detected VIPT I-cache on CPU3
-> [    0.014855] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU3: 0x00000000000000
-> [    0.014895] CPU3: Booted secondary processor 0x0000000003 [0x410fd032]
+> The DW-MIPI-DSI transceiver gets this pixel stream as input clocked with the VCLK2 clock.
 > 
-> SMMU probing fails:
-> [    0.101798] arm-smmu c0010000.iommu: probing hardware configuration...
-> [    0.101809] arm-smmu c0010000.iommu: SMMUv1 with:
-> [    0.101816] arm-smmu c0010000.iommu:         no translation support!
+> An optional "MEAS" clock can be enabled to measure the delay between each vsync feeding the
+> DW-MIPI-DSI transceiver.
 > 
-> A 3.14 based Marvell tree is available on GitHub
-> acorn-marvell/brillo_pxa_kernel, and a Samsung one on GitHub
-> CoderCharmander/g361f-kernel.
+> The clock setup has been redesigned to use CCF, a common PLL (GP0) and the VCLK2 clock
+> path for DSI in preparation of full CCF support and possibly dual display with HDMI.
 > 
-> Andreas Färber attempted to upstream support for this SoC in 2017:
-> https://lore.kernel.org/lkml/20170222022929.10540-1-afaerber@suse.de/
+> The change from v5 is that now we use a "VCLK" driver instead of notifier and rely
+> on CLK_SET_RATE_GATE to ensure the VCLK gate operation are called.
 > 
-> Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+> Changes in v12:
+> - fix parameters alignment in patch 2
+> - update g12a_mipi_dsi_pxclk_div_table comment with jerome's suggestions
+> - fix dtbs overlay build, fix missed v11... thx khadas for reporting it off-list & testing
+> - Link to v11: https://lore.kernel.org/r/20240325-amlogic-v6-4-upstream-dsi-ccf-vim3-v11-0-04f55de44604@linaro.org
+> 
+> Changes in v11:
+> - Rebased on v6.9-rc1
+> - Fixed overlay handling/creation
+> - Link to v10: https://lore.kernel.org/r/20240205-amlogic-v6-4-upstream-dsi-ccf-vim3-v10-0-dc06073d5330@linaro.org
+> 
+> Changes in v10:
+> - Rename regmap_vclk to meson_clk and add _gate for the gate
+> - Move COMMON_CLK_MESON_VCLK to following patch
+> - Remove CLK_SET_RATE_PARENT from g12a_vclk2_sel, keep it only on mipi_dsi_pxclk_sel
+> - Add more info on commit message to specify how clock setup is designed
+> - Remove forgotten CLK_IGNORE_UNUSED on g12a_vclk2_input
+> - Remove useless CLK_SET_RATE_PARENT on g12a_vclk2_div to stop propagatting rate _after_ vclk2_div
+> - Remove invalid CLK_SET_RATE_GATE on g12a_vclk2 since it's not a divider...
+> - Drop already applied patches
+> - move Khadas TS050 changes as an overlay
+> - Link to v9: https://lore.kernel.org/r/20231124-amlogic-v6-4-upstream-dsi-ccf-vim3-v9-0-95256ed139e6@linaro.org
 > 
 > Changes in v9:
-> - Update trailers and rebase on v6.9-rc2, no changes
-> - Link to v8: https://lore.kernel.org/20240110-pxa1908-lkml-v8-0-fea768a59474@skole.hr
+> - Colledte reviewed-bys
+> - Fixed patches 2 & 4, commit messages and bindings format
+> - Link to v8: https://lore.kernel.org/r/20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-0-81e4aeeda193@linaro.org
 > 
 > Changes in v8:
-> - Drop SSPA patch
-> - Drop broken-cd from eMMC node
-> - Specify S-Boot hardcoded initramfs location in device tree
-> - Add ARM PMU node
-> - Correct inverted modem memory base and size
-> - Update trailers
-> - Rebase on next-20240110
-> - Link to v7: https://lore.kernel.org/20231102-pxa1908-lkml-v7-0-cabb1a0cb52b@skole.hr
->   and https://lore.kernel.org/20231102152033.5511-1-duje.mihanovic@skole.hr
+> - Switch vclk clk driver to parm as requested by Jerome
+> - Added bindings fixes to amlogic,meson-axg-mipi-pcie-analog & amlogic,g12a-mipi-dphy-analog
+> - Fixed DT errors in vim3 example and MNT Reform DT
+> - Rebased on next-20231107, successfully tested on VIM3L
+> - Link to v7: https://lore.kernel.org/r/20230803-amlogic-v6-4-upstream-dsi-ccf-vim3-v7-0-762219fc5b28@linaro.org
 > 
 > Changes in v7:
-> - Suppress SND_MMP_SOC_SSPA on ARM64
-> - Update trailers
-> - Rebase on v6.6-rc7
-> - Link to v6: https://lore.kernel.org/r/20231010-pxa1908-lkml-v6-0-b2fe09240cf8@skole.hr
+> - Added review tags
+> - Fixed patch 5 thanks to George
+> - Link to v6: https://lore.kernel.org/r/20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v6-0-fd2ac9845472@linaro.org
 > 
 > Changes in v6:
-> - Address maintainer comments:
->   - Add "marvell,pxa1908-padconf" binding to pinctrl-single driver
-> - Drop GPIO patch as it's been pulled
-> - Update trailers
-> - Rebase on v6.6-rc5
-> - Link to v5: https://lore.kernel.org/r/20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr
+> - dropped applied DRM patches
+> - dropped clk private prefix patches
+> - rebased on top of 20230607-topic-amlogic-upstream-clkid-public-migration-v2-0-38172d17c27a@linaro.org
+> - re-ordered/cleaned ENCL patches to match clkid public migration
+> - Added new "vclk" driver
+> - uses vclk driver instead of notifier
+> - cleaned VCLK2 clk flags
+> - add px_clk gating from DSI driver
+> - Link to v5: https://lore.kernel.org/r/20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org
 > 
 > Changes in v5:
-> - Address maintainer comments:
->   - Move *_NR_CLKS to clock driver from dt binding file
-> - Allocate correct number of clocks for each block instead of blindly
->   allocating 50 for each
-> - Link to v4: https://lore.kernel.org/r/20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr
+> - Aded PRIV all the G12 internal clk IDS to simplify public exposing
+> - Fixed the DSI bindings
+> - Fixed the DSI HSYNC/VSYNC polarity handling
+> - Fixed the DSI clock setup
+> - Fixed the DSI phy timings
+> - Dropped components for DSI, only keeping it for HDMI
+> - Added MNT Reform 2 CM4 DT
+> - Dropped already applied PHY fix
+> - Link to v4: https://lore.kernel.org/r/20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v4-0-2592c29ea263@linaro.org
 > 
-> Changes in v4:
-> - Address maintainer comments:
->   - Relicense clock binding file to BSD-2
-> - Add pinctrl-names to SD card node
-> - Add vgic registers to GIC node
-> - Rebase on v6.5-rc5
-> - Link to v3: https://lore.kernel.org/r/20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr
+> Changes from v3 at [3]:
+> - switched all clk setup via CCF
+> - using single PLL for DSI controller & ENCL encoder
+> - added ENCL clocks to CCF
+> - make the VCLK2 clocks configuration by CCF
+> - fixed probe/bind of DSI controller to work with panels & bridges
+> - added bit_clk to controller to it can setup the BIT clock aswell
+> - added fix for components unbind
+> - added fix for analog phy setup value
+> - added TS050 timings fix
+> - dropped previous clk control patch
 > 
-> Changes in v3:
-> - Address maintainer comments:
->   - Drop GPIO dynamic allocation patch
->   - Move clock register offsets into driver (instead of bindings file)
->   - Add missing Tested-by trailer to u32_fract patch
->   - Move SoC binding to arm/mrvl/mrvl.yaml
-> - Add serial0 alias and stdout-path to board dts to enable UART
->   debugging
-> - Rebase on v6.5-rc4
-> - Link to v2: https://lore.kernel.org/r/20230727162909.6031-1-duje.mihanovic@skole.hr
+> Changes from v2 at [2]:
+> - Fixed patch 3
+> - Added reviews from Jagan
+> - Rebased on v5.19-rc1
 > 
-> Changes in v2:
-> - Remove earlycon patch as it's been merged into tty-next
-> - Address maintainer comments:
->   - Clarify GPIO regressions on older PXA platforms
->   - Add Fixes tag to commit disabling GPIO pinctrl calls for this SoC
->   - Add missing includes to clock driver
->   - Clock driver uses HZ_PER_MHZ, u32_fract and GENMASK
->   - Dual license clock bindings
->   - Change clock IDs to decimal
->   - Fix underscores in dt node names
->   - Move chosen node to top of board dts
->   - Clean up documentation
->   - Reorder commits
->   - Drop pxa,rev-id
-> - Rename muic-i2c to i2c-muic
-> - Reword some commits
-> - Move framebuffer node to chosen
-> - Add aliases for mmc nodes
-> - Rebase on v6.5-rc3
-> - Link to v1: https://lore.kernel.org/r/20230721210042.21535-1-duje.mihanovic@skole.hr
+> Changes from v1 at [1]:
+> - fixed DSI host bindings
+> - add reviewed-by tags for bindings
+> - moved magic values to defines thanks to Martin's searches
+> - added proper prefixes to defines
+> - moved phy_configure to phy_init() dw-mipi-dsi callback
+> - moved phy_on to a new phy_power_on() dw-mipi-dsi callback
+> - correctly return phy_init/configure errors to callback returns
+> 
+> [1] https://lore.kernel.org/r/20200907081825.1654-1-narmstrong@baylibre.com
+> [2] https://lore.kernel.org/r/20220120083357.1541262-1-narmstrong@baylibre.com
+> [3] https://lore.kernel.org/r/20220617072723.1742668-1-narmstrong@baylibre.com
 > 
 > ---
-> Andy Shevchenko (1):
->       clk: mmp: Switch to use struct u32_fract instead of custom one
+> Neil Armstrong (7):
+>       dt-bindings: arm: amlogic: Document the MNT Reform 2 CM4 adapter with a BPI-CM4 Module
+>       clk: meson: add vclk driver
+>       clk: meson: g12a: make VCLK2 and ENCL clock path configurable by CCF
+>       drm/meson: gate px_clk when setting rate
+>       arm64: meson: g12-common: add the MIPI DSI nodes
+>       arm64: meson: khadas-vim3l: add TS050 DSI panel overlay
+>       arm64: dts: amlogic: meson-g12b-bananapi-cm4: add support for MNT Reform2 with CM4 adaper
 > 
-> Duje Mihanović (8):
->       dt-bindings: pinctrl: pinctrl-single: add marvell,pxa1908-padconf compatible
->       pinctrl: single: add marvell,pxa1908-padconf compatible
->       dt-bindings: clock: Add Marvell PXA1908 clock bindings
->       clk: mmp: Add Marvell PXA1908 clock driver
->       dt-bindings: marvell: Document PXA1908 SoC
->       arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
->       arm64: dts: Add DTS for Marvell PXA1908 and samsung,coreprimevelte
->       MAINTAINERS: add myself as Marvell PXA1908 maintainer
-> 
->  .../devicetree/bindings/arm/mrvl/mrvl.yaml         |   5 +
->  .../devicetree/bindings/clock/marvell,pxa1908.yaml |  48 +++
->  .../bindings/pinctrl/pinctrl-single.yaml           |   4 +
->  MAINTAINERS                                        |   9 +
->  arch/arm64/Kconfig.platforms                       |   8 +
->  arch/arm64/boot/dts/marvell/Makefile               |   3 +
->  .../dts/marvell/pxa1908-samsung-coreprimevelte.dts | 336 +++++++++++++++++++++
->  arch/arm64/boot/dts/marvell/pxa1908.dtsi           | 304 +++++++++++++++++++
->  drivers/clk/mmp/Makefile                           |   2 +-
->  drivers/clk/mmp/clk-frac.c                         |  57 ++--
->  drivers/clk/mmp/clk-of-mmp2.c                      |  26 +-
->  drivers/clk/mmp/clk-of-pxa168.c                    |   4 +-
->  drivers/clk/mmp/clk-of-pxa1908.c                   | 328 ++++++++++++++++++++
->  drivers/clk/mmp/clk-of-pxa1928.c                   |   6 +-
->  drivers/clk/mmp/clk-of-pxa910.c                    |   4 +-
->  drivers/clk/mmp/clk.h                              |  10 +-
->  drivers/pinctrl/pinctrl-single.c                   |   1 +
->  include/dt-bindings/clock/marvell,pxa1908.h        |  88 ++++++
->  18 files changed, 1186 insertions(+), 57 deletions(-)
+>  Documentation/devicetree/bindings/arm/amlogic.yaml |   1 +
+>  arch/arm64/boot/dts/amlogic/Makefile               |   5 +
+>  arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi  |  70 ++++
+>  .../meson-g12b-bananapi-cm4-mnt-reform2.dts        | 384 +++++++++++++++++++++
+>  .../boot/dts/amlogic/meson-khadas-vim3-ts050.dtso  | 108 ++++++
+>  drivers/clk/meson/Kconfig                          |   5 +
+>  drivers/clk/meson/Makefile                         |   1 +
+>  drivers/clk/meson/g12a.c                           |  76 ++--
+>  drivers/clk/meson/vclk.c                           | 141 ++++++++
+>  drivers/clk/meson/vclk.h                           |  51 +++
+>  drivers/gpu/drm/meson/meson_dw_mipi_dsi.c          |   7 +
+>  11 files changed, 829 insertions(+), 20 deletions(-)
 > ---
-> base-commit: 39cd87c4eb2b893354f3b850f916353f2658ae6f
-> change-id: 20230803-pxa1908-lkml-6830e8da45c7
+> base-commit: 4cece764965020c22cff7665b18a012006359095
+> change-id: 20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-b8e5217e1f4a
 > 
 > Best regards,
 > --
-> Duje Mihanović <duje.mihanovic@skole.hr>
+> Neil Armstrong <neil.armstrong@linaro.org>
 > 
 > 
 > 
@@ -229,20 +222,18 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y marvell/pxa1908-samsung-coreprimevelte.dtb' for 20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr:
+New warnings running 'make CHECK_DTBS=y amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb' for 20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-0-99ecdfdc87fc@linaro.org:
 
-arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: /: memory: False schema does not allow {'device_type': ['memory'], 'reg': [[0, 0, 0, 0]]}
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: pinmux@1e000: #size-cells: 0 was expected
-	from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-single.yaml#
-arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: pinmux@1e000: pinctrl-single,gpio-range: [[8, 55, 55, 0], [8, 110, 32, 0], [8, 52, 1, 0]] is too long
-	from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-single.yaml#
-arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: pinmux@1e000: 'pinmux-board-1', 'pinmux-board-2', 'pinmux-board-3', 'pinmux-gpio-keys', 'pinmux-i2c-muic', 'pinmux-sdh0-1', 'pinmux-sdh0-2', 'pinmux-sdh0-3', 'pinmux-uart0', 'ranges' do not match any of the regexes: '-pins(-[0-9]+)?$|-pin$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-single.yaml#
-arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: mmc@80000: pinctrl-names: ['default'] is too short
-	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
-arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: mmc@80000: Unevaluated properties are not allowed ('pinctrl-names' was unexpected)
-	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
+arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb: /soc/bus@ff600000/bus@42000/clock-controller@0: failed to match any schema with compatible: ['amlogic,g12a-audio-clkc']
+arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb: /soc/bus@ff600000/bus@42000/audio-controller@744: failed to match any schema with compatible: ['amlogic,g12a-tohdmitx']
+arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb: sys-ctrl@0: '#address-cells', '#size-cells', 'ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml#
+arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb: sound: Unevaluated properties are not allowed ('assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' were unexpected)
+	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-sound-card.yaml#
+arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb: sound: 'anyOf' conditional failed, one must be fixed:
+	'clocks' is a required property
+	'#clock-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
 
 
 
