@@ -1,151 +1,150 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F549149DFD;
-	Wed,  3 Apr 2024 15:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B352E14A4C8;
+	Wed,  3 Apr 2024 15:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712158327; cv=none; b=bndFbxRvGPn8yKpHOawTQIi6xAKQ/7hbauLLBK59qTk/u6m+QbNkRq1/H5Ds0sN3WtCFO7a/feVeocXsOmQIUCLx6xGm/o7pDI9HNsNK25q60Z1SdDDalMA4K3R/dJa8fvOLWdNhqJXx4Zk6JA/e48reIlEbQB67ETMv2S/SGdM=
+	t=1712159281; cv=none; b=PSRe62tpRwRoYIZ+kywnb5W5anQe3vc+FlfLD893G98k9GhYXQhuGZtZJbg0RHAPs0bYiUCN8yv0/CblFcM8383+YTjicZHf0B5i7xJD5LPvuSTuI5UlumhFyGMZqErM86+jmqeUpgbUcRE3Qx8W2Nxg/0/+xoMQMTm6nYZkQAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712158327; c=relaxed/simple;
-	bh=yWSydggSbm1G+VEOEgMaeofH6CeF1v5JS+YuRRk5dZ4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BNsG5XiUz2Rk54hAyOgBk9NHLlnvKIwEAhgAbfLeJMvBdLaBfdS6Qmlpf+7M5taEnXan+1VR6cY7hb+tbkaExO0r8tHnEp1KIocneVFY3d81u0TiNLMIla8cvZwlp/J/4MAlYvMnFStWvpv/tH38JP2O5aRLSNX5x6WsV9658A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev; spf=pass smtp.mailfrom=oltmanns.dev; dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b=Zj3aw+bf; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
+	s=arc-20240116; t=1712159281; c=relaxed/simple;
+	bh=HHPDm+TLj1RKaDaIxeLlYDtf5KUMp/lQSPe/aTjr+IY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GK4qPx4LClDZ1OtMsUdTyLCR9mqUvWzX6agR4++JUwcJSYdiC5uIZdpmL6Mlf1HrCLjPIU9IXH64EvrB2Php8YAVFGOrrgOBsdYrOLwtB9GGkDzzNMyXd537YrE9G+7/f0aFoysXSux9lieFA0jDAQVseWfY4uCNzLI1RiRVAwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z8VILx7Z; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="Zj3aw+bf"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4V8pdX4LwNz9t5n;
-	Wed,  3 Apr 2024 17:32:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-	s=MBO0001; t=1712158320;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n2n+ZKpSrp4swBYXFDHQkoo9IbN9JMu4th1fbKoqZBc=;
-	b=Zj3aw+bfzHPcedx2v+nnf9eMoegQ03ywBf22sAYq1igWjyjxfWspgpEdXP+toRFDfjWILC
-	31YpGl3BaR7xvYNvRNHU+XG6npSj3PWOz1grAoSDd8y/V7hyMjH6hkiZmJCN8Yfv0HlyB8
-	OfyGMlJZ3IIx2SDx8StMvAPWOFwO3/YHN8RMPf38YqlOh90PpyydehqkyAzWHuyxEJaw0A
-	6hU4M7i8WtArjTGGwQlrZ45LqrogdpVKoRMsHLCCtCEn8elKxvrYVGOSLnTuCDRDz1sdHN
-	J41aLXX41KWhJwVppvieT755HFxfVJR6LCB3CwQebhH8TNSqGUU180kEN4PNgA==
-From: Frank Oltmanns <frank@oltmanns.dev>
-To: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
- <sboyd@kernel.org>,  Chen-Yu Tsai <wens@csie.org>,  Jernej Skrabec
- <jernej.skrabec@gmail.com>,  Samuel Holland <samuel@sholland.org>,  Maxime
- Ripard <mripard@kernel.org>
-Cc: Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>,  Purism Kernel Team
- <kernel@puri.sm>,
-  Ondrej Jirman <megi@xff.cz>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  Jessica Zhang <quic_jesszhan@quicinc.com>,  Sam Ravnborg
- <sam@ravnborg.org>,  Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,  Thomas Zimmermann
- <tzimmermann@suse.de>,  David Airlie <airlied@gmail.com>,  Daniel Vetter
- <daniel@ffwll.ch>,  Rob Herring <robh+dt@kernel.org>,  Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>,  Conor Dooley <conor+dt@kernel.org>,
-  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-sunxi@lists.linux.dev,  linux-kernel@vger.kernel.org,
-  dri-devel@lists.freedesktop.org,  devicetree@vger.kernel.org,
-  stable@vger.kernel.org,  Diego Roversi <diegor@tiscali.it>,  Erico Nunes
- <nunes.erico@gmail.com>
-Subject: Re: [PATCH v4 0/5] Pinephone video out fixes (flipping between two
- frames)
-In-Reply-To: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
-	(Frank Oltmanns's message of "Sun, 10 Mar 2024 14:21:10 +0100")
-References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
-Date: Wed, 03 Apr 2024 17:31:47 +0200
-Message-ID: <87frw2a2e4.fsf@oltmanns.dev>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z8VILx7Z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1712159280; x=1743695280;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=HHPDm+TLj1RKaDaIxeLlYDtf5KUMp/lQSPe/aTjr+IY=;
+  b=Z8VILx7ZHGanJgT8YehLXrvuMdIUbKUT2qXRpyMTCEGATGv/M3/rPM+2
+   hIRtOdwejeX+fJGtrJZ1/rMRun3Wkjwd+f3zIwWulgSFlg+UdlqSVRuO1
+   A0JIAtxbVICStED0GmQx6WSharEvLcpaKnazX2/E4lAvtg5M8tnY0KEve
+   n/rdRNRT2vwUsR2kc9oBX4y3oadY+F70BjWsLtkBbkO7k7YzQFJyVOXNd
+   VMLqx/Oz8yp+oq3RapWslAz7OIOYULgaL4r04Z7zR0Ic2w+B93FFd+wJ3
+   bKYtha8f5Ta2+BxkeJ0nwfDlaqWFHaEKW8frk87iMMIrl55lwqx1PhvO1
+   g==;
+X-CSE-ConnectionGUID: 4188y/KYR+qT4NpSWF74iQ==
+X-CSE-MsgGUID: DFuHLn/BQdSl54BSCXlJdQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11033"; a="18558397"
+X-IronPort-AV: E=Sophos;i="6.07,177,1708416000"; 
+   d="scan'208";a="18558397"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2024 08:47:59 -0700
+X-CSE-ConnectionGUID: Ynzp+NMBQ/SrwU4aUtba9g==
+X-CSE-MsgGUID: lnSkcc3aThqAee/09MNTdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,177,1708416000"; 
+   d="scan'208";a="18397635"
+Received: from lkp-server02.sh.intel.com (HELO 90ee3aa53dbd) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 03 Apr 2024 08:47:54 -0700
+Received: from kbuild by 90ee3aa53dbd with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rs2q8-0002Mo-03;
+	Wed, 03 Apr 2024 15:47:52 +0000
+Date: Wed, 3 Apr 2024 23:42:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+	konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, djakov@kernel.org, dmitry.baryshkov@linaro.org,
+	quic_anusha@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v6 2/6] interconnect: icc-clk: Remove tristate from
+ INTERCONNECT_CLK
+Message-ID: <202404032328.7zrla6d9-lkp@intel.com>
+References: <20240402103406.3638821-3-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 4V8pdX4LwNz9t5n
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240402103406.3638821-3-quic_varada@quicinc.com>
 
-Dear clk and sunxi-ng maintainers,
+Hi Varadarajan,
 
-Patches 1-4 have been reviewed and there are no pending issues. If there
-is something else you need me to do to get this applied, please let me
-know.
+kernel test robot noticed the following build errors:
 
-Thanks,
-  Frank
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on robh/for-next linus/master v6.9-rc2 next-20240403]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-On 2024-03-10 at 14:21:10 +0100, Frank Oltmanns <frank@oltmanns.dev> wrote:
-> On some pinephones the video output sometimes freezes (flips between two
-> frames) [1]. It seems to be that the reason for this behaviour is that
-> PLL-MIPI is outside its limits, and the GPU is not running at a fixed
-> rate.
->
-> In this patch series I propose the following changes:
->   1. sunxi-ng: Adhere to the following constraints given in the
->      Allwinner A64 Manual regarding PLL-MIPI:
->       * M/N <= 3
->       * (PLL_VIDEO0)/M >= 24MHz
->       * 500MHz <= clockrate <= 1400MHz
->
->   2. Remove two operating points from the A64 DTS OPPs, so that the GPU
->      runs at a fixed rate of 432 MHz.
->
-> Note, that when pinning the GPU to 432 MHz the issue [1] completely
-> disappears for me. I've searched the BSP and could not find any
-> indication that supports the idea of having the three OPPs. The only
-> frequency I found in the BPSs for A64 is 432 MHz, which has also proven
-> stable for me.
->
-> I very much appreciate your feedback!
->
-> [1] https://gitlab.com/postmarketOS/pmaports/-/issues/805
->
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> ---
-> Changes in v4:
-> - sunxi-ng: common: Address review comments.
-> - Link to v3: https://lore.kernel.org/r/20240304-pinephone-pll-fixes-v3-0-94ab828f269a@oltmanns.dev
->
-> Changes in v3:
-> - dts: Pin GPU to 432 MHz.
-> - nkm and a64: Move minimum and maximum rate handling to the common part
->   of the sunxi-ng driver.
-> - Removed st7703 patch from series.
-> - Link to v2: https://lore.kernel.org/r/20240205-pinephone-pll-fixes-v2-0-96a46a2d8c9b@oltmanns.dev
->
-> Changes in v2:
-> - dts: Increase minimum GPU frequency to 192 MHz.
-> - nkm and a64: Add minimum and maximum rate for PLL-MIPI.
-> - nkm: Use the same approach for skipping invalid rates in
->   ccu_nkm_find_best() as in ccu_nkm_find_best_with_parent_adj().
-> - nkm: Improve names for ratio struct members and hence get rid of
->   describing comments.
-> - nkm and a64: Correct description in the commit messages: M/N <= 3
-> - Remove patches for nm as they were not needed.
-> - st7703: Rework the commit message to cover more background for the
->   change.
-> - Link to v1: https://lore.kernel.org/r/20231218-pinephone-pll-fixes-v1-0-e238b6ed6dc1@oltmanns.dev
->
-> ---
-> Frank Oltmanns (5):
->       clk: sunxi-ng: common: Support minimum and maximum rate
->       clk: sunxi-ng: a64: Set minimum and maximum rate for PLL-MIPI
->       clk: sunxi-ng: nkm: Support constraints on m/n ratio and parent rate
->       clk: sunxi-ng: a64: Add constraints on PLL-MIPI's n/m ratio and parent rate
->       arm64: dts: allwinner: a64: Run GPU at 432 MHz
->
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  8 --------
->  drivers/clk/sunxi-ng/ccu-sun50i-a64.c         | 14 +++++++++-----
->  drivers/clk/sunxi-ng/ccu_common.c             | 19 +++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu_common.h             |  3 +++
->  drivers/clk/sunxi-ng/ccu_nkm.c                | 21 +++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu_nkm.h                |  2 ++
->  6 files changed, 54 insertions(+), 13 deletions(-)
-> ---
-> base-commit: dcb6c8ee6acc6c347caec1e73fb900c0f4ff9806
-> change-id: 20231218-pinephone-pll-fixes-0ccdfde273e4
->
-> Best regards,
+url:    https://github.com/intel-lab-lkp/linux/commits/Varadarajan-Narayanan/dt-bindings-interconnect-Add-Qualcomm-IPQ9574-support/20240402-223729
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20240402103406.3638821-3-quic_varada%40quicinc.com
+patch subject: [PATCH v6 2/6] interconnect: icc-clk: Remove tristate from INTERCONNECT_CLK
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240403/202404032328.7zrla6d9-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240403/202404032328.7zrla6d9-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202404032328.7zrla6d9-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
+   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
+   aarch64-linux-ld: drivers/clk/qcom/clk-cbf-8996.o: in function `qcom_msm8996_cbf_icc_remove':
+>> drivers/clk/qcom/clk-cbf-8996.c:257:(.text+0x10): undefined reference to `icc_clk_unregister'
+   aarch64-linux-ld: drivers/clk/qcom/clk-cbf-8996.o: in function `qcom_msm8996_cbf_icc_register':
+>> drivers/clk/qcom/clk-cbf-8996.c:244:(.text+0x360): undefined reference to `icc_clk_register'
+
+
+vim +257 drivers/clk/qcom/clk-cbf-8996.c
+
+12dc71953e664f Dmitry Baryshkov 2023-05-12  234  
+12dc71953e664f Dmitry Baryshkov 2023-05-12  235  static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev, struct clk_hw *cbf_hw)
+12dc71953e664f Dmitry Baryshkov 2023-05-12  236  {
+12dc71953e664f Dmitry Baryshkov 2023-05-12  237  	struct device *dev = &pdev->dev;
+12dc71953e664f Dmitry Baryshkov 2023-05-12  238  	struct clk *clk = devm_clk_hw_get_clk(dev, cbf_hw, "cbf");
+12dc71953e664f Dmitry Baryshkov 2023-05-12  239  	const struct icc_clk_data data[] = {
+12dc71953e664f Dmitry Baryshkov 2023-05-12  240  		{ .clk = clk, .name = "cbf", },
+12dc71953e664f Dmitry Baryshkov 2023-05-12  241  	};
+12dc71953e664f Dmitry Baryshkov 2023-05-12  242  	struct icc_provider *provider;
+12dc71953e664f Dmitry Baryshkov 2023-05-12  243  
+12dc71953e664f Dmitry Baryshkov 2023-05-12 @244  	provider = icc_clk_register(dev, CBF_MASTER_NODE, ARRAY_SIZE(data), data);
+12dc71953e664f Dmitry Baryshkov 2023-05-12  245  	if (IS_ERR(provider))
+12dc71953e664f Dmitry Baryshkov 2023-05-12  246  		return PTR_ERR(provider);
+12dc71953e664f Dmitry Baryshkov 2023-05-12  247  
+12dc71953e664f Dmitry Baryshkov 2023-05-12  248  	platform_set_drvdata(pdev, provider);
+12dc71953e664f Dmitry Baryshkov 2023-05-12  249  
+12dc71953e664f Dmitry Baryshkov 2023-05-12  250  	return 0;
+12dc71953e664f Dmitry Baryshkov 2023-05-12  251  }
+12dc71953e664f Dmitry Baryshkov 2023-05-12  252  
+abaf59c470a7c9 Uwe Kleine-König 2023-09-11  253  static void qcom_msm8996_cbf_icc_remove(struct platform_device *pdev)
+12dc71953e664f Dmitry Baryshkov 2023-05-12  254  {
+12dc71953e664f Dmitry Baryshkov 2023-05-12  255  	struct icc_provider *provider = platform_get_drvdata(pdev);
+12dc71953e664f Dmitry Baryshkov 2023-05-12  256  
+12dc71953e664f Dmitry Baryshkov 2023-05-12 @257  	icc_clk_unregister(provider);
+12dc71953e664f Dmitry Baryshkov 2023-05-12  258  }
+12dc71953e664f Dmitry Baryshkov 2023-05-12  259  #define qcom_msm8996_cbf_icc_sync_state icc_sync_state
+12dc71953e664f Dmitry Baryshkov 2023-05-12  260  #else
+12dc71953e664f Dmitry Baryshkov 2023-05-12  261  static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev,  struct clk_hw *cbf_hw)
+12dc71953e664f Dmitry Baryshkov 2023-05-12  262  {
+12dc71953e664f Dmitry Baryshkov 2023-05-12  263  	dev_warn(&pdev->dev, "CONFIG_INTERCONNECT is disabled, CBF clock is fixed\n");
+12dc71953e664f Dmitry Baryshkov 2023-05-12  264  
+12dc71953e664f Dmitry Baryshkov 2023-05-12  265  	return 0;
+12dc71953e664f Dmitry Baryshkov 2023-05-12  266  }
+abaf59c470a7c9 Uwe Kleine-König 2023-09-11  267  #define qcom_msm8996_cbf_icc_remove(pdev) { }
+12dc71953e664f Dmitry Baryshkov 2023-05-12  268  #define qcom_msm8996_cbf_icc_sync_state NULL
+12dc71953e664f Dmitry Baryshkov 2023-05-12  269  #endif
+12dc71953e664f Dmitry Baryshkov 2023-05-12  270  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
