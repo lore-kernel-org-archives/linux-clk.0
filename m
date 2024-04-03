@@ -1,257 +1,149 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631FB71733;
-	Wed,  3 Apr 2024 09:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7898813666A
+	for <linux-clk@vger.kernel.org>; Wed,  3 Apr 2024 10:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712136278; cv=none; b=Y6hNBPK2PB6nstY+ghQNh+bOhMvA6tQU2w0w5G8+J01kLEjlmshTZ+xaoeH6JS12QHS7zAc7iD+bSJuuspAty3uRFGYs72iWAnRXmkNVfPeb8sy069XTomP3U7UiFK26aU0XuK4OszN+Avz4mifOXViIQRT4M16lItJ5Pllnlmk=
+	t=1712139671; cv=none; b=G1BlQccNkotwuJ99on7U3DPHazUp+YuLq5G2D9oOncagi/h0jt8wUXr+ROdV91a3jIFzLvM2Gmn+QR/Kf2Vpe3YBPPJCn9HvJdyfuiX9Khg1xeRVw8sGhDCkFOamyJGCLF3I1UOZcB272xd0mrwcykiV1DOeFUu+YpaIIf4XtSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712136278; c=relaxed/simple;
-	bh=pm7dIFQwXucYzqD33rAnVqVYJE21H5+Id7HA8+ZLncw=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=XrUSM6xrYu6O3bUnMqWpZyVX7fpb/DEkt0Ct5vcSJ5lCimM/KpAxSvf9AJzMrmv+dKzXt7VHLXsE6YAdl6n1wX/YbrtVTr4Cqh/QQMR1PUT8IG0QJ22f0JGJTgZ3ZH39RBoFVjzRinL/PY+0djgCNxdoGW9W3rn63+Lj4knLkFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id 0BDBA3782089;
-	Wed,  3 Apr 2024 09:24:31 +0000 (UTC)
-From: "Shreeya Patel" <shreeya.patel@collabora.com>
-In-Reply-To: <20240327225057.672304-1-shreeya.patel@collabora.com>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240327225057.672304-1-shreeya.patel@collabora.com>
-Date: Wed, 03 Apr 2024 10:24:31 +0100
-Cc: heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, shawn.wen@rock-chips.com, kernel@collabora.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm@lists.infradead.org
-To: mchehab@kernel.org, hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl
+	s=arc-20240116; t=1712139671; c=relaxed/simple;
+	bh=j9OWD1Egg+9iI5w7d3WeI7AlB92++uzCxocuqyXnMNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F1ILjgOpbA66PwSsz8XvQEHEUwYERS86YUIeBWiNNR0M2or36/JP2oBPsEizjLK2VgVXQaKKDInRp7u/reL5XbvzNui2F8wY2JBh3bMwRNS5BNq7g2r7EroxWJOIgSjcrKEXxj9KfegCGx66B8OqTDG6QKO8WaF6D6thBh6zdCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GY9YnPLK; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GY9YnPLK"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a472f8c6a55so799018766b.0
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 03:21:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1712139668; x=1712744468; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4lrg9u1DWO3N7iNCPwEbpDmzDHx9LenQFb2AaTvmxYY=;
+        b=GY9YnPLKZXBE+iUca2K7y4lMCLid4LK3ssU/bWG/X5IppxYMAHeSQGNpCUStDGl8II
+         gL0dFi9tyJLVZPPfUc27RrezDkWeXIXiKaySQyJHGXW5LzRQiBCSqPPemmQd4qeGxh3j
+         6G/bBM4mUUowbAGHvPyEBDEiCP7dG9tMcFmUfpMvDOSiFEODSozogYBcG+/+gkiGMEnP
+         qSrgncD1zXdRaZY0A0uniplIviabsc0syHr2bGJv3gRs4BlSrZ1jDmLfcoIA0CfxBsbu
+         5k/LbFLKlmUri56mLUy8F/A2m1zmQKPrPFsET5HzIJD7d4LD0gCMIcz5xrm4sLZ8rleZ
+         liDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712139668; x=1712744468;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4lrg9u1DWO3N7iNCPwEbpDmzDHx9LenQFb2AaTvmxYY=;
+        b=XTq1T+oq4e/GwAyyvP0znBllkQ6glaGBR5/VscGEgLtyfqvFdjAzxdgqKwiWm5yXgN
+         4mNqOu6oqfSvhqcK0Bwa5tKjUOB+1MZxwzkGF6a8p5rpg5z43STF+WWpGmHDbmGlomFv
+         BrJopl+ZfH71xH42Cp6AQeN5ewGP8u3cXhjureF1BE6gkRCBDCJyqlPibFusn6Wm+E6E
+         WFC9C8L2GtIlD4wt928VKGluhgJOtzg8z3u+HGRF/C/p3olxCdEgH0AI+2dTZ4MB3Bpf
+         YkQ7YF/nFtM7s1bzsKknkPEbODh+Qe25rWC0Xz15yf1FQV4xEevV03ZECmsxOtT+2pmW
+         yzLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOzioEvAyEX0sX4TfQKS1C7JLtMdyNFUodbrUuH/Sn78HONTLJWRuEK6lRk+jFjffl2BGFHLamZbsfUQQiHkAEVnFjnA3AXktb
+X-Gm-Message-State: AOJu0Ywrnu6LJ+SxQ3W3no6U3oLiH2Zla3DEXZNnbTQzAItaoe8G/idG
+	CnNTDtj3mq/azMT3jQOk4yvP/GX0PkrBgnHbUzzR8C0YN0nDgM6hlqiPr/yVtOY=
+X-Google-Smtp-Source: AGHT+IEP4Gm/j49EiS5w8Osi5IxulbUu7dmYZSs8UZrCWXoYjgFHKV6WkLihgHu5HCaYyGuLMqf+SQ==
+X-Received: by 2002:a17:907:11cd:b0:a4e:2d1e:6914 with SMTP id va13-20020a17090711cd00b00a4e2d1e6914mr9439566ejb.11.1712139667716;
+        Wed, 03 Apr 2024 03:21:07 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id bj7-20020a17090736c700b00a4e696e613esm3583799ejc.153.2024.04.03.03.21.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Apr 2024 03:21:07 -0700 (PDT)
+Message-ID: <a2f88176-b4e1-4202-843c-a00c5a2b1622@linaro.org>
+Date: Wed, 3 Apr 2024 12:21:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <35e566-660d2080-1-7eb9eb00@16488675>
-Subject: =?utf-8?q?Re=3A?= [PATCH v3 0/6] Add Synopsys DesignWare HDMI RX Controller
-User-Agent: SOGoMail 5.10.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/6] Add Synopsys DesignWare HDMI RX Controller
+To: Shreeya Patel <shreeya.patel@collabora.com>, mchehab@kernel.org,
+ hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl
+Cc: heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, shawn.wen@rock-chips.com, kernel@collabora.com,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm@lists.infradead.org
+References: <20240327225057.672304-1-shreeya.patel@collabora.com>
+ <35e566-660d2080-1-7eb9eb00@16488675>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <35e566-660d2080-1-7eb9eb00@16488675>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thursday, March 28, 2024 04:20 IST, Shreeya Patel <shreeya.patel@col=
-labora.com> wrote:
+On 03/04/2024 11:24, Shreeya Patel wrote:
+> On Thursday, March 28, 2024 04:20 IST, Shreeya Patel <shreeya.patel@collabora.com> wrote:
+> 
+>> This series implements support for the Synopsys DesignWare
+>> HDMI RX Controller, being compliant with standard HDMI 1.4b
+>> and HDMI 2.0.
+>>
+> 
+> Hi Mauro and Hans,
+> 
+> I haven't received any reviews so far. Hence, this is just a gentle reminder to review this patch series.
 
-> This series implements support for the Synopsys DesignWare
-> HDMI RX Controller, being compliant with standard HDMI 1.4b
-> and HDMI 2.0.
->=20
+Why did you put clk changes here? These go via different subsystem. That
+might be one of obstacles for your patchset.
 
-Hi Mauro and Hans,
-
-I haven't received any reviews so far. Hence, this is just a gentle rem=
-inder to review this patch series.
+Also, you sent it just a week ago and you already ping. Please relax,
+and help out by reviewing other patches on the mailing lists in order to
+relieve the burden of maintainers and move your patches higher up the list.
 
 
-Thanks,
-Shreeya Patel
-
-> Features that are currently supported by the HDMI RX driver
-> have been tested on rock5b board using a HDMI to micro-HDMI cable.
-> It is recommended to use a good quality cable as there were
-> multiple issues seen during testing the driver.
->=20
-> Please note the below information :-
-> * While testing the driver on rock5b we noticed that the binary BL31
-> from Rockchip contains some unknown code to get the HDMI-RX PHY
-> access working. With TF-A BL31, the HDMI-RX PHY doesn't work as
-> expected since there are no interrupts seen for rk=5Fhdmirx-hdmi
-> leading to some failures in the driver [0].
-> * We have tested the working of OBS studio with HDMIRX driver and
-> there were no issues seen.
-> * We also tested and verified the support for interlaced video.
->=20
-> [0] https://gitlab.collabora.com/hardware-enablement/rockchip-3588/tr=
-usted-firmware-a/-/issues/1
->=20
-> To test the HDMI RX Controller driver, following example commands can=
- be used :-
->=20
-> root@debian-rockchip-rock5b-rk3588:~# v4l2-ctl --verbose -d /dev/vide=
-o0 \
-> --set-fmt-video=3Dwidth=3D1920,height=3D1080,pixelformat=3D'BGR3' --s=
-tream-mmap=3D4 \
-> --stream-skip=3D3 --stream-count=3D100 --stream-to=3D/home/hdmiin4k.r=
-aw --stream-poll
->=20
-> root@debian-rockchip-rock5b-rk3588:~# ffmpeg -f rawvideo -vcodec rawv=
-ideo \
-> -s 1920x1080 -r 60 -pix=5Ffmt bgr24 -i /home/hdmiin4k.raw output.mkv
->=20
->=20
-> Following is the v4l2-compliance test result :-
->=20
-> root@debian-rockchip-rock5b-rk3588:~# v4l2-compliance -d /dev/video0
-> v4l2-compliance 1.27.0-5174, 64 bits, 64-bit time=5Ft
-> v4l2-compliance SHA: d700deb14368 2024-01-18 12:19:05
->=20
-> Compliance test for snps=5Fhdmirx device /dev/video0:
->=20
-> Driver Info:
->         Driver name      : snps=5Fhdmirx
->         Card type        : snps=5Fhdmirx
->         Bus info         : platform: snps=5Fhdmirx
->         Driver version   : 6.8.0
->         Capabilities     : 0x84201000
->                 Video Capture Multiplanar
->                 Streaming
->                 Extended Pix Format
->                 Device Capabilities
->         Device Caps      : 0x04201000
->                 Video Capture Multiplanar
->                 Streaming
->                 Extended Pix Format
->=20
-> Required ioctls:
->         test VIDIOC=5FQUERYCAP: OK
->         test invalid ioctls: OK
->=20
-> Allow for multiple opens:
->         test second /dev/video0 open: OK
->         test VIDIOC=5FQUERYCAP: OK
->         test VIDIOC=5FG/S=5FPRIORITY: OK
->         test for unlimited opens: OK
->=20
-> Debug ioctls:
->         test VIDIOC=5FDBG=5FG/S=5FREGISTER: OK (Not Supported)
->         test VIDIOC=5FLOG=5FSTATUS: OK
->=20
-> Input ioctls:
->         test VIDIOC=5FG/S=5FTUNER/ENUM=5FFREQ=5FBANDS: OK (Not Suppor=
-ted)
->         test VIDIOC=5FG/S=5FFREQUENCY: OK (Not Supported)
->         test VIDIOC=5FS=5FHW=5FFREQ=5FSEEK: OK (Not Supported)
->         test VIDIOC=5FENUMAUDIO: OK (Not Supported)
->         test VIDIOC=5FG/S/ENUMINPUT: OK
->         test VIDIOC=5FG/S=5FAUDIO: OK (Not Supported)
->         Inputs: 1 Audio Inputs: 0 Tuners: 0
->=20
-> Output ioctls:
->         test VIDIOC=5FG/S=5FMODULATOR: OK (Not Supported)
->         test VIDIOC=5FG/S=5FFREQUENCY: OK (Not Supported)
->         test VIDIOC=5FENUMAUDOUT: OK (Not Supported)
->         test VIDIOC=5FG/S/ENUMOUTPUT: OK (Not Supported)
->         test VIDIOC=5FG/S=5FAUDOUT: OK (Not Supported)
->         Outputs: 0 Audio Outputs: 0 Modulators: 0
->=20
-> Input/Output configuration ioctls:
->         test VIDIOC=5FENUM/G/S/QUERY=5FSTD: OK (Not Supported)
->         test VIDIOC=5FENUM/G/S/QUERY=5FDV=5FTIMINGS: OK
->         test VIDIOC=5FDV=5FTIMINGS=5FCAP: OK
->         test VIDIOC=5FG/S=5FEDID: OK
->=20
-> Control ioctls (Input 0):
->         test VIDIOC=5FQUERY=5FEXT=5FCTRL/QUERYMENU: OK
->         test VIDIOC=5FQUERYCTRL: OK
->         test VIDIOC=5FG/S=5FCTRL: OK
->         test VIDIOC=5FG/S/TRY=5FEXT=5FCTRLS: OK
->         test VIDIOC=5F(UN)SUBSCRIBE=5FEVENT/DQEVENT: OK
->         test VIDIOC=5FG/S=5FJPEGCOMP: OK (Not Supported)
->         Standard Controls: 2 Private Controls: 0
->=20
-> Format ioctls (Input 0):
->         test VIDIOC=5FENUM=5FFMT/FRAMESIZES/FRAMEINTERVALS: OK
->         test VIDIOC=5FG/S=5FPARM: OK
->         test VIDIOC=5FG=5FFBUF: OK (Not Supported)
->         test VIDIOC=5FG=5FFMT: OK
->         test VIDIOC=5FTRY=5FFMT: OK
->         test VIDIOC=5FS=5FFMT: OK
->         test VIDIOC=5FG=5FSLICED=5FVBI=5FCAP: OK (Not Supported)
->         test Cropping: OK (Not Supported)
->         test Composing: OK (Not Supported)
->         test Scaling: OK (Not Supported)
->=20
-> Codec ioctls (Input 0):
->         test VIDIOC=5F(TRY=5F)ENCODER=5FCMD: OK (Not Supported)
->         test VIDIOC=5FG=5FENC=5FINDEX: OK (Not Supported)
->         test VIDIOC=5F(TRY=5F)DECODER=5FCMD: OK (Not Supported)
->=20
-> Buffer ioctls (Input 0):
->         test VIDIOC=5FREQBUFS/CREATE=5FBUFS/QUERYBUF: OK
->         test CREATE=5FBUFS maximum buffers: OK
->         test VIDIOC=5FEXPBUF: OK
->         test Requests: OK (Not Supported)
->=20
-> Total for snps=5Fhdmirx device /dev/video0: 46, Succeeded: 46, Failed=
-: 0, Warnings: 0
->=20
-> Changes in v3 :-
->   - Use v4l2-common helpers in the HDMIRX driver
->   - Rename cma node and phandle names
->   - Elaborate the comment to explain 160MiB calculation
->   - Move &hdmi=5Freceiver=5Fcma to the rock5b dts file
->   - Add information about interlaced video testing in the
->     cover-letter
->=20
-> Changes in v2 :-
->   - Fix checkpatch --strict warnings
->   - Move the dt-binding include file changes in a separate patch
->   - Add a description for the hardware in the dt-bindings file
->   - Rename resets, vo1 grf and HPD properties
->   - Add a proper description for grf and vo1-grf phandles in the
->     bindings
->   - Rename the HDMI RX node name to hdmi-receiver
->   - Include gpio header file in binding example to fix the
->     dt=5Fbinding=5Fcheck failure
->   - Move hdmirx=5Fcma node to the rk3588.dtsi file
->   - Add an entry to MAINTAINERS file for the HDMIRX driver
->=20
-> Shreeya Patel (6):
->   dt-bindings: reset: Define reset id used for HDMI Receiver
->   clk: rockchip: rst-rk3588: Add reset line for HDMI Receiver
->   dt-bindings: media: Document HDMI RX Controller
->   arm64: dts: rockchip: Add device tree support for HDMI RX Controlle=
-r
->   media: platform: synopsys: Add support for hdmi input driver
->   MAINTAINERS: Add entry for Synopsys DesignWare HDMI RX Driver
->=20
->  .../bindings/media/snps,dw-hdmi-rx.yaml       |  132 +
->  MAINTAINERS                                   |    8 +
->  .../boot/dts/rockchip/rk3588-pinctrl.dtsi     |   41 +
->  .../boot/dts/rockchip/rk3588-rock-5b.dts      |   19 +
->  arch/arm64/boot/dts/rockchip/rk3588.dtsi      |   56 +
->  drivers/clk/rockchip/rst-rk3588.c             |    1 +
->  drivers/media/platform/Kconfig                |    1 +
->  drivers/media/platform/Makefile               |    1 +
->  drivers/media/platform/synopsys/Kconfig       |    3 +
->  drivers/media/platform/synopsys/Makefile      |    2 +
->  .../media/platform/synopsys/hdmirx/Kconfig    |   18 +
->  .../media/platform/synopsys/hdmirx/Makefile   |    4 +
->  .../platform/synopsys/hdmirx/snps=5Fhdmirx.c    | 2726 +++++++++++++=
-++++
->  .../platform/synopsys/hdmirx/snps=5Fhdmirx.h    |  394 +++
->  .../synopsys/hdmirx/snps=5Fhdmirx=5Fcec.c         |  289 ++
->  .../synopsys/hdmirx/snps=5Fhdmirx=5Fcec.h         |   46 +
->  .../dt-bindings/reset/rockchip,rk3588-cru.h   |    2 +
->  17 files changed, 3743 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/snps,dw-h=
-dmi-rx.yaml
->  create mode 100644 drivers/media/platform/synopsys/Kconfig
->  create mode 100644 drivers/media/platform/synopsys/Makefile
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps=5Fhdm=
-irx.c
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps=5Fhdm=
-irx.h
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps=5Fhdm=
-irx=5Fcec.c
->  create mode 100644 drivers/media/platform/synopsys/hdmirx/snps=5Fhdm=
-irx=5Fcec.h
->=20
-> --=20
-> 2.39.2
->=20
-> =5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=
-=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F
-> Kernel mailing list -- kernel@mailman.collabora.com
-> To unsubscribe send an email to kernel-leave@mailman.collabora.com
-> This list is managed by https://mailman.collabora.com
+Best regards,
+Krzysztof
 
