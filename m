@@ -1,134 +1,191 @@
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CA56EB44;
-	Wed,  3 Apr 2024 08:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E476D1AF
+	for <linux-clk@vger.kernel.org>; Wed,  3 Apr 2024 08:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712133601; cv=none; b=lzNTKvEY4ybAJKpgkXkxxhZuD6E16UWob1ctj/OKdAcXpP3hi+jq8BiL2qVWycw2/CquBUvgbUm4EOzfQJE3kNd3hAmrhXDsOa4QySGWDhP/8pjNBc0Uh6cmWrevyXludtfEqRJYNexCKz9vAhDMuO6lQpdUp1o5npkt4HYTagI=
+	t=1712134258; cv=none; b=X4WRYw0D70DH8BGiaW7GWkBmVxPZJuDk10Ds9d/XFMt+nGCaaTHgdQPtxXas+ar8aSgYanrXGveD6uhG+47JOVB4TV4AB0Ka8NE8pizgjCAM1gygUR7zHoYR/VRniUV9VfEcmAFE/KAONcbmxuRX7KJVb7sn293KmKNxkRavL6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712133601; c=relaxed/simple;
-	bh=h38IpzYE40rRL6YUDxEuxo1A9c6P3+Tqcuhs5gHFXsQ=;
-	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
-	 Date:Cc:References:To; b=rEkqq6wa5hPJXjTBtNNl9e9xgyvi0qJru3Lpo1b66Q5vEaVVf2htrximA2Ffq1ffuKN2HtRHEgzaMNgeGrRIT6kyOtPBtk77q6ObhijVGgjam4gJtt2jRrbLMITZF8+ngwzyHCsGlPacpjtuJPvpBrJjx+Za6byfnkxSnK9CUxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lwRDd6nv; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+	s=arc-20240116; t=1712134258; c=relaxed/simple;
+	bh=2RW2uwUTGN2VRAemJKBuUzVcishgZh+2KwNodQofim8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gtWCs3G9vma8Khf8zuOZwupCsPE7iLr3QsMHqhS6UHPcXr5LPtk2wd5SMUYK874J/NxLFiox0mwn/ILrcnluUmuovWO7unAF86jOYpDj2C/+xSDXsIEEIiomSEkjb7rCJCcqq49z8T79q5EmVEfBy6yypayVXzmk5dHF8eUZA6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vONes7ty; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lwRDd6nv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1712133587; bh=h38IpzYE40rRL6YUDxEuxo1A9c6P3+Tqcuhs5gHFXsQ=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=lwRDd6nv3nWd7/b76WzvLV+U28YiU+3jUNFbuBQSTXrqW36mM8AgDQTmlc9Aumcai
-	 +8ZZqlzY5dzbDznEjQlnkZK1O/4mU5hy/aAcc07Q4C/W+U82BGOoh+x4wuCOEDPHQP
-	 PI7lcC8UkhTb7f23/lw/EA+SPTH8xMAlaBs6Ol3o=
-Received: from smtpclient.apple ([219.141.235.82])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 99DAF6F4; Wed, 03 Apr 2024 16:38:29 +0800
-X-QQ-mid: xmsmtpt1712133509t4g857ofk
-Message-ID: <tencent_191962F243021BFBF9A40403B4451C757009@qq.com>
-X-QQ-XMAILINFO: NkHKfw09D6j8PluXiaw8tD0iRMGI5K2+7PtPdjlOWGX/KbqOaAMV25IrC6sOlm
-	 SV9Un7yK/HDB8D/RzxR0RosEH4/kkIxOAEiP7tDuHcbztzshwgUhzFqF0WBPDN7c0oFHKGmXI+J+
-	 h4IaLvmROghSyfOxwznQgkukISQq3Kb3gzmwa5dV1abClg0jhFLzwTsjv55pHt76D75Tsng3VYZ9
-	 ur6OLYcC5wSQaciZa8iUbFadAp226G4wxTLcbKplG77h/oTZ386j5YtBtxrS83rcqSIJPj1Tfal9
-	 wNB0BR2/BTEGjv6+2IXIzzvydyR6O486AwhCUhm0qJQ+1myPtvGUU6dYug/n5HYM2S6I2zDpMQVl
-	 Z75NGq4WybdhcLwWZEpb35U5fZnFxmT8VKq803tDWQVyi2y0nbeREixT4d1X80KmUCCb3a+J1AJC
-	 xbg0dxsivz6fiuayYEMXZ2D5r0LfMmjnJzEUfMj2XJGOYRwfv+NhECK7BZmIGTpuXCaxu8so1I3g
-	 JwS/lGIilCSPOY3RfKVl5AsXvxQOy6YIGqMelt+mvlDv6gNvx5QG42nueQP+yJp8Cok+PQkUFFXW
-	 1XHiZpIjXMEkcCgXZ2/FbGFcDyL2k4MZ1rzoQIPXfSjHMS/gZ1U4lvnhuTJIOXlFo5lznVgiS6DE
-	 R/Jbn2VVSjsvvz6IIMzV2n5TDT2f5tiqfFlg27sCjFT5/VFCTI9noZKsjngzYJ18dCnfgj28Xhhm
-	 yB0LPTO4YiNOg39vsmtRxA9cFOuh/5jB1y9nwezuX+ZXpnsEeKyAKATlL/ZCPkF7NshbFVi6FwwI
-	 c9w3rQbzAXsUtDbxXo5idSHc1i0h+2d+frHV1pbj4azceJgL+WFNlu+gsIMECu85gGm0rILKadzT
-	 XCQlzYIpp4wexHkZQq4DuqBAvI4Ul3HPcdRdR/Lsk7K9nN4RZ4d9M7zaiPSjafd8mXHQqHSjApEW
-	 tiU43TGpDIuOcCqJvn4FF4gQrWLeLQomUM/XJiaSJPS+EfgQ4nyA==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vONes7ty"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-513d212f818so6694771e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 01:50:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1712134255; x=1712739055; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=PeE5sjxVNLXwuR9o2Hyb1V4iU/z47Nb42vXDJOdFohw=;
+        b=vONes7tyvm4TbyAAK/C2qmPS1i5VnaHwQzjllaMqmXpyY9wiA1yLLQcmqz2nuUzqlx
+         a+5bsthkXXF83KkVz9VZP0pUHg/EXhy4pqsPVUAP0wb6KLgRimzuSSvDSOqkDazsZbrL
+         GuC320FDgyD3tHS9vG6kQ1KosmIsbjOd3MZ+bEQcKnzQcWqzc+mS6IJedUwWCRt3zTzR
+         QTDEFmn+ZbgMCkF7vRqufOO3L/GUGzW59rdUVCpfctrfDxqFcTAJKLWGyq2ClaX/OUMk
+         0kC6j6+y/zuNfhRu7+gveFBgjgZsA87Q3AfQAKl8olkbIoS5NGyTdNPV9XdZ43e7ibH3
+         PUHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712134255; x=1712739055;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PeE5sjxVNLXwuR9o2Hyb1V4iU/z47Nb42vXDJOdFohw=;
+        b=oCZCyP/mfhSM25llt6daBje7KZqZKEuAm5zR5VmJwiBV1xuoTogSpsc3Wc89sJHK1k
+         rZeg4bHU8SCTKTFtHdcVHq2jpU/JACs+W/Q0yRUBtwjji3O8gsCkxO3RTh89a+u/cr4T
+         MYw53hkA3aKH/rSs9baaJXV9LtwhCR8gu9UHK3cehPrc6V0PLGmce4Qdk3H89qGZBC/e
+         4BoJBBl1D0QBQIVk9HfvF5xw6fs7yAZzaVa6bLlXoYth5uHcFORerVj5W22nN5tZFDe+
+         2cjlt6H5xdGU0SAQOfrEiBS9O4pvqiUH/B0vfeHUPeiMVR+eax2Gza0tdu2aJlXlwqq8
+         o9wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbfGz7EdPmFICjgBe9NFOxa3vO19jdqR/K7U+b0s5vty1ad/9kQzJ7dVT9AUcJ6N0cWZwG4YoebN3SqiUaQtRn8z475C0l6VVO
+X-Gm-Message-State: AOJu0Yw72PIWHuC4umAhe/fsk5LkMFonq2cjlzqWrH6EpRHaEDFl3ROR
+	9yUHyhOTXNWQ8C1ZW6r50wE+8f90dyPTPlhnTeC58e6cN5xHy8Qo4fndmSCdtHI=
+X-Google-Smtp-Source: AGHT+IHjPbgEWvKJ/atBQHARwgmTUJe491slVjnSBYhRA78/vtwNjuIk6oRD3r5Z2sUtkWYl9lY9lQ==
+X-Received: by 2002:a05:6512:10cd:b0:516:a2f9:dd40 with SMTP id k13-20020a05651210cd00b00516a2f9dd40mr8817046lfg.34.1712134254812;
+        Wed, 03 Apr 2024 01:50:54 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id f8-20020a056402150800b0056e0988bccesm372859edw.31.2024.04.03.01.50.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Apr 2024 01:50:54 -0700 (PDT)
+Message-ID: <990d74fa-6d1d-4d64-b6fb-c68f5763c9d3@linaro.org>
+Date: Wed, 3 Apr 2024 10:50:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH v6 08/11] pinctrl: k210: Deprecate SOC_CANAAN and use
- SOC_CANAAN_K210
-From: Yangyu Chen <cyy@cyyself.name>
-In-Reply-To: <CACRpkdY1wpGM7M5QV5rN0M6JMN_yugQJ7CEtnQjzsheD5AT23A@mail.gmail.com>
-Date: Wed, 3 Apr 2024 16:38:19 +0800
-Cc: linux-riscv@lists.infradead.org,
- Conor Dooley <conor@kernel.org>,
- Damien Le Moal <dlemoal@kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] clk: qcom: clk-alpha-pll: Fix CAL_L_VAL override for
+ LUCID EVO PLL
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Guo Ren <guoren@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- linux-gpio@vger.kernel.org,
- linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-X-OQ-MSGID: <1807DEE3-E572-44E3-997D-C7D2EADF4BB1@cyyself.name>
-References: <tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com>
- <tencent_6D10A9C63E3E0F412EED33477B5CDB98C207@qq.com>
- <CACRpkdY1wpGM7M5QV5rN0M6JMN_yugQJ7CEtnQjzsheD5AT23A@mail.gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Vinod Koul <vkoul@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+References: <20240330182817.3272224-1-quic_ajipan@quicinc.com>
+ <20240330182817.3272224-2-quic_ajipan@quicinc.com>
+ <d8c0ca00-7e14-454e-8a65-5dcf14ed7796@linaro.org>
+ <e2f108d8-0b25-d799-fbe4-ab6256966982@quicinc.com>
+ <da93a8ed-4fbb-488f-a1af-e701f7191fbd@linaro.org>
+ <CAA8EJppB7dYvzeA0M6A_cN14FkC6K8WpLVoeE8NvytGcYDq5Pw@mail.gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CAA8EJppB7dYvzeA0M6A_cN14FkC6K8WpLVoeE8NvytGcYDq5Pw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 03/04/2024 10:37, Dmitry Baryshkov wrote:
+> On Wed, 3 Apr 2024 at 09:49, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> On 02/04/2024 20:35, Ajit Pandey wrote:
+>>>
+>>>
+>>> On 3/31/2024 12:49 AM, Krzysztof Kozlowski wrote:
+>>>> On 30/03/2024 19:28, Ajit Pandey wrote:
+>>>>> In LUCID EVO PLL CAL_L_VAL and L_VAL bitfields are part of single
+>>>>> PLL_L_VAL register. Update for L_VAL bitfield values in PLL_L_VAL
+>>>>> register using regmap_write() API in __alpha_pll_trion_set_rate
+>>>>> callback will override LUCID EVO PLL initial configuration related
+>>>>> to PLL_CAL_L_VAL bit fields in PLL_L_VAL register.
+>>>>>
+>>>>> Observed random PLL lock failures during PLL enable due to such
+>>>>> override in PLL calibration value. Use regmap_update_bits() with
+>>>>> L_VAL bitfield mask instead of regmap_write() API to update only
+>>>>> PLL_L_VAL bitfields in __alpha_pll_trion_set_rate callback.
+>>>>>
+>>>>> Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces")
+>>>>>
+>>>>
+>>>> No blank lines between tags.
+>>>>
+>>>> Add Cc-stable tag.
+>>>>
+>>> Sure, will update in next series
+>>>
+>>>> Please do not combine fixes with new features.
+>>>>  > Best regards,
+>>>> Krzysztof
+>>>>
+>>>
+>>> Actually this fix is required for correct scaling for few frequencies in
+>>> this patch series, hence combined them together and pushed this fix as
+>>> first patch in series so that they get mainlined together and feature
+>>> functionality will not get impacted.
+>>
+>> OK, that's fine but usual way is that such need is expressed in the
+>> cover letter, so maintainer will know what to do. What if this patch
+>> should go to fixes and rest normally to for-next? How do you expect
+>> maintainer to apply the patch? Entire thread and then manually move the
+>> commits? Why making it so complicated for the maintainers?
+> 
+> Huh? I think it's pretty normal to have fixes in front of the patch
+> series. Having it in the middle would be troublesome indeed. You are
+> the first person to complain.
 
+No, I am not the first. It differs between subsystems and I do not
+recall all folks, but the one person coming to my mind is Mark Brown who
+expressed it numerous times.
 
-> On Apr 2, 2024, at 20:31, Linus Walleij <linus.walleij@linaro.org> =
-wrote:
->=20
-> On Sat, Mar 23, 2024 at 1:13=E2=80=AFPM Yangyu Chen <cyy@cyyself.name> =
-wrote:
->=20
->> Since SOC_FOO should be deprecated from patch [1], and cleanup for =
-other
->> SoCs is already on the mailing list [2,3,4], we remove the use of
->> SOC_CANAAN and introduced SOC_CANAAN_K210 for K210-specific drivers,
->>=20
->> Thus, we replace its drivers depends on SOC_CANAAN_K210 and default =
-select
->> when it has the symbol SOC_CANAAN_K210.
->>=20
->> [1] =
-https://lore.kernel.org/linux-riscv/20221121221414.109965-1-conor@kernel.o=
-rg/
->> [2] =
-https://lore.kernel.org/linux-riscv/20240305-praying-clad-c4fbcaa7ed0a@spu=
-d/
->> [3] =
-https://lore.kernel.org/linux-riscv/20240305-fled-undrilled-41dc0c46bb29@s=
-pud/
->> [4] =
-https://lore.kernel.org/linux-riscv/20240305-stress-earflap-d7ddb8655a4d@s=
-pud/
->>=20
->> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
->=20
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->=20
-
-Please add Acked-by to this email [1]. I will separate them in the next
-revision.
-
-[1]
-=
-https://lore.kernel.org/linux-riscv/tencent_DB11214C8D0D7C48829ADA128E7BB8=
-F13108@qq.com/
-
-Thanks.
-
-> Is this patch something I can just apply to the pinctrl tree?
->=20
-
-I think not. As Conor said.
-
-> Yours,
-> Linus Walleij
+Best regards,
+Krzysztof
 
