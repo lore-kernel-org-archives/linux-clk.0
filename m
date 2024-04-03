@@ -1,209 +1,250 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02B8134CCA;
-	Wed,  3 Apr 2024 11:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019551494A4;
+	Wed,  3 Apr 2024 14:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712145595; cv=none; b=B4hUiH7wGVpmrz6wFVqBElSfRF/Z9hPHITWda2jGNVmBRKYuoLoRNlfmP37U+dUfcMjiZjz0levD3Dj6vR/HN3lZtHsOa26P/CxUFIdvfK+U9/w/Nl3JvWCurvEMt2VckzV8q0YOLpTCnumfCkaSRB/WTQ51/fqhdYHjZ5r0gIA=
+	t=1712153751; cv=none; b=I4kHHHfziLAvObBw50tS0+rq6zAJ0CzirFk5/AgZqDwLaC3q4/U76xuluXADyiVhuLpyWAMVhJaDYSCYDiz7dFoIOfgJMJVBYHbhJBiMybqXNAc9u48vj62ie5fQJsizbWNUAvwyoNv+7Hnfq00OHe/vtVARj5ZKbQUx+4SLddI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712145595; c=relaxed/simple;
-	bh=ZE610OT3UJTto1qL8N/i3fU6Phc1zRed3SqgmLvRFnc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=klXVBwd84JBFEmMr0vgGhHFiziAxMXSmaoRtFt68TZO12uLquMaTLu9kO51e6+28i5ouKW/OV+Wy/+3g/nhWi9wu/2Nc6V3OZOGx7+0kQHCbHTs7vifJB9Tenh9HEX26J08C9W4tMlxUz/OZ4vjJpW1Rlq//Z13iqgqCSwQuCXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JAY+XuuX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1712153751; c=relaxed/simple;
+	bh=fhWJwSS6WUV/rQ1vsqKn3NpS8O4ZJ7RWPCIyi0ILAjg=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=s7R1aBASuwesollcxBaLp5qXgl68t/YXfpx7zdm4ElVw+dt9KNNe33s0+EDl4kSXJNXmyO0DKuWaB/ZMLZBva2We9+zZzp6aZceATZ7dOuXb7JgN0C1sPTYgw7gL/f0vzIsr9TrdTDzaCrj8aBJCh7t6g9Pqd6HogNzzo98SOHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qVMeXyim; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JAY+XuuX"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 433BISmx003400;
-	Wed, 3 Apr 2024 11:59:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=SWKE56W6+s/zJsnCEIYz1kKJqYjsDE1d+Us6cb+wsqE=; b=JA
-	Y+XuuXSNGgPgXLC4Nvd64H/yq+42JghJgK4t7/YNKoN+fR+M9KWJTOYBp0jPFrXw
-	vnRmXnsxCQnbJClMseE17SpHOVu41VpHUV9M9GSGIkEPr4V4ZoJOVq3U61ZBALCL
-	mz7UnmM1W1atoJFu3UiCVrSELC6OGrBVTK3++yTgqyGrOF+NhXAdyZH30Y4g3war
-	Wwp9sCa6FZbBnexDuExe/QxrmV0dnMwfUyT08bPW8OUC2IseA+k4cB2Pqn8es+I+
-	jqZ4u2I+5zMWFyjOSgp/mz1/ksEbkzUAasE9ukybwHYYe7icIaWJEgtRD337FyOn
-	JMOM7yugePx8IkBjIXQg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x8xnxs0y1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Apr 2024 11:59:48 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 433BxlaX031781
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Apr 2024 11:59:47 GMT
-Received: from [10.218.10.146] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 3 Apr 2024
- 04:59:42 -0700
-Message-ID: <3e5f2b9a-0b15-5ce8-bcda-df2877f507df@quicinc.com>
-Date: Wed, 3 Apr 2024 17:29:39 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVMeXyim"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DB8EC433A6;
+	Wed,  3 Apr 2024 14:15:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712153750;
+	bh=fhWJwSS6WUV/rQ1vsqKn3NpS8O4ZJ7RWPCIyi0ILAjg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=qVMeXyimG4WyeARwYMaux29uT2VipP+ejvreMeuSgGiscGgrKQEvS5oHXOig66ADg
+	 jhlHyt69Ezu3ZeCqEBieUe+3deKg6DBvCcoPThTcpMqm+c2GHHEFyCr0Ur40UaBn88
+	 l/zzbjq1jO16rDFUJ7O2vhbaVhwa1//BJZ55CV0Ih9ywWGWaU9oKNDlaMxBsPhKEBP
+	 pMxQV75XCMu1Z+4Z5+VAqeximZ9da+yMgzXuoFU9drDuMqlAIBPgVV+wowpJF7oAJv
+	 bEErCovXIf6jU++9VxTrUoTKVbhFmPtD9n7P+PcwXA5s2c3/rLd1680Sses3eywqQx
+	 S4t5Ge6o9HPcQ==
+Date: Wed, 03 Apr 2024 09:15:49 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH 7/7] clk: qcom: Add GPUCC driver support for SM4450
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Taniya Das
-	<quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>
-References: <20240330182817.3272224-1-quic_ajipan@quicinc.com>
- <20240330182817.3272224-8-quic_ajipan@quicinc.com>
- <CAA8EJprtCbePun+gpwxg5e6o5NaBnunEJrmDrCV+O8BdHEeuYQ@mail.gmail.com>
- <9106b0eb-e15d-f2fa-d681-4017412c4a76@quicinc.com>
- <CAA8EJprP4Skq0GxyuzoF7Eu9pF+2Vm2wwbu9m6jBohdSKjLR9g@mail.gmail.com>
- <2e70f208-5a8e-3feb-d484-23b78c70d08f@quicinc.com>
- <CAA8EJprPeGMvN49HDEjc+cLSA+cwd=yDKOt2neFnuAmoO44gsw@mail.gmail.com>
-From: Ajit Pandey <quic_ajipan@quicinc.com>
-In-Reply-To: <CAA8EJprPeGMvN49HDEjc+cLSA+cwd=yDKOt2neFnuAmoO44gsw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: nJ1MXoYixSz5QzVJZE49lX1EH633sQxv
-X-Proofpoint-GUID: nJ1MXoYixSz5QzVJZE49lX1EH633sQxv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-03_10,2024-04-03_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- mlxlogscore=999 priorityscore=1501 adultscore=0 phishscore=0 spamscore=0
- suspectscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2403210001 definitions=main-2404030082
+From: Rob Herring <robh@kernel.org>
+To: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Cc: phone-devel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-kernel@vger.kernel.org, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ ~postmarketos/upstreaming@lists.sr.ht, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, 
+ Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Lubomir Rintel <lkundrak@v3.sk>, Will Deacon <will@kernel.org>, 
+ Karel Balej <balejk@matfyz.cz>, linux-clk@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, Tony Lindgren <tony@atomide.com>, 
+ David Wronek <david@mainlining.org>, 
+ Haojian Zhuang <haojian.zhuang@linaro.org>, Tony Luck <tony.luck@intel.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr>
+References: <20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr>
+Message-Id: <171215356225.3499035.10345778780745596314.robh@kernel.org>
+Subject: Re: [PATCH v9 0/9] Initial Marvell PXA1908 support
+
+
+On Tue, 02 Apr 2024 22:55:36 +0200, Duje Mihanović wrote:
+> Hello,
+> 
+> This series adds initial support for the Marvell PXA1908 SoC and
+> "samsung,coreprimevelte", a smartphone using the SoC.
+> 
+> USB works and the phone can boot a rootfs from an SD card, but there are
+> some warnings in the dmesg:
+> 
+> During SMP initialization:
+> [    0.006519] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU1: 0x00000000000000
+> [    0.006542] CPU features: Unsupported CPU feature variation detected.
+> [    0.006589] CPU1: Booted secondary processor 0x0000000001 [0x410fd032]
+> [    0.010710] Detected VIPT I-cache on CPU2
+> [    0.010716] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU2: 0x00000000000000
+> [    0.010758] CPU2: Booted secondary processor 0x0000000002 [0x410fd032]
+> [    0.014849] Detected VIPT I-cache on CPU3
+> [    0.014855] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU3: 0x00000000000000
+> [    0.014895] CPU3: Booted secondary processor 0x0000000003 [0x410fd032]
+> 
+> SMMU probing fails:
+> [    0.101798] arm-smmu c0010000.iommu: probing hardware configuration...
+> [    0.101809] arm-smmu c0010000.iommu: SMMUv1 with:
+> [    0.101816] arm-smmu c0010000.iommu:         no translation support!
+> 
+> A 3.14 based Marvell tree is available on GitHub
+> acorn-marvell/brillo_pxa_kernel, and a Samsung one on GitHub
+> CoderCharmander/g361f-kernel.
+> 
+> Andreas Färber attempted to upstream support for this SoC in 2017:
+> https://lore.kernel.org/lkml/20170222022929.10540-1-afaerber@suse.de/
+> 
+> Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+> 
+> Changes in v9:
+> - Update trailers and rebase on v6.9-rc2, no changes
+> - Link to v8: https://lore.kernel.org/20240110-pxa1908-lkml-v8-0-fea768a59474@skole.hr
+> 
+> Changes in v8:
+> - Drop SSPA patch
+> - Drop broken-cd from eMMC node
+> - Specify S-Boot hardcoded initramfs location in device tree
+> - Add ARM PMU node
+> - Correct inverted modem memory base and size
+> - Update trailers
+> - Rebase on next-20240110
+> - Link to v7: https://lore.kernel.org/20231102-pxa1908-lkml-v7-0-cabb1a0cb52b@skole.hr
+>   and https://lore.kernel.org/20231102152033.5511-1-duje.mihanovic@skole.hr
+> 
+> Changes in v7:
+> - Suppress SND_MMP_SOC_SSPA on ARM64
+> - Update trailers
+> - Rebase on v6.6-rc7
+> - Link to v6: https://lore.kernel.org/r/20231010-pxa1908-lkml-v6-0-b2fe09240cf8@skole.hr
+> 
+> Changes in v6:
+> - Address maintainer comments:
+>   - Add "marvell,pxa1908-padconf" binding to pinctrl-single driver
+> - Drop GPIO patch as it's been pulled
+> - Update trailers
+> - Rebase on v6.6-rc5
+> - Link to v5: https://lore.kernel.org/r/20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr
+> 
+> Changes in v5:
+> - Address maintainer comments:
+>   - Move *_NR_CLKS to clock driver from dt binding file
+> - Allocate correct number of clocks for each block instead of blindly
+>   allocating 50 for each
+> - Link to v4: https://lore.kernel.org/r/20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr
+> 
+> Changes in v4:
+> - Address maintainer comments:
+>   - Relicense clock binding file to BSD-2
+> - Add pinctrl-names to SD card node
+> - Add vgic registers to GIC node
+> - Rebase on v6.5-rc5
+> - Link to v3: https://lore.kernel.org/r/20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr
+> 
+> Changes in v3:
+> - Address maintainer comments:
+>   - Drop GPIO dynamic allocation patch
+>   - Move clock register offsets into driver (instead of bindings file)
+>   - Add missing Tested-by trailer to u32_fract patch
+>   - Move SoC binding to arm/mrvl/mrvl.yaml
+> - Add serial0 alias and stdout-path to board dts to enable UART
+>   debugging
+> - Rebase on v6.5-rc4
+> - Link to v2: https://lore.kernel.org/r/20230727162909.6031-1-duje.mihanovic@skole.hr
+> 
+> Changes in v2:
+> - Remove earlycon patch as it's been merged into tty-next
+> - Address maintainer comments:
+>   - Clarify GPIO regressions on older PXA platforms
+>   - Add Fixes tag to commit disabling GPIO pinctrl calls for this SoC
+>   - Add missing includes to clock driver
+>   - Clock driver uses HZ_PER_MHZ, u32_fract and GENMASK
+>   - Dual license clock bindings
+>   - Change clock IDs to decimal
+>   - Fix underscores in dt node names
+>   - Move chosen node to top of board dts
+>   - Clean up documentation
+>   - Reorder commits
+>   - Drop pxa,rev-id
+> - Rename muic-i2c to i2c-muic
+> - Reword some commits
+> - Move framebuffer node to chosen
+> - Add aliases for mmc nodes
+> - Rebase on v6.5-rc3
+> - Link to v1: https://lore.kernel.org/r/20230721210042.21535-1-duje.mihanovic@skole.hr
+> 
+> ---
+> Andy Shevchenko (1):
+>       clk: mmp: Switch to use struct u32_fract instead of custom one
+> 
+> Duje Mihanović (8):
+>       dt-bindings: pinctrl: pinctrl-single: add marvell,pxa1908-padconf compatible
+>       pinctrl: single: add marvell,pxa1908-padconf compatible
+>       dt-bindings: clock: Add Marvell PXA1908 clock bindings
+>       clk: mmp: Add Marvell PXA1908 clock driver
+>       dt-bindings: marvell: Document PXA1908 SoC
+>       arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
+>       arm64: dts: Add DTS for Marvell PXA1908 and samsung,coreprimevelte
+>       MAINTAINERS: add myself as Marvell PXA1908 maintainer
+> 
+>  .../devicetree/bindings/arm/mrvl/mrvl.yaml         |   5 +
+>  .../devicetree/bindings/clock/marvell,pxa1908.yaml |  48 +++
+>  .../bindings/pinctrl/pinctrl-single.yaml           |   4 +
+>  MAINTAINERS                                        |   9 +
+>  arch/arm64/Kconfig.platforms                       |   8 +
+>  arch/arm64/boot/dts/marvell/Makefile               |   3 +
+>  .../dts/marvell/pxa1908-samsung-coreprimevelte.dts | 336 +++++++++++++++++++++
+>  arch/arm64/boot/dts/marvell/pxa1908.dtsi           | 304 +++++++++++++++++++
+>  drivers/clk/mmp/Makefile                           |   2 +-
+>  drivers/clk/mmp/clk-frac.c                         |  57 ++--
+>  drivers/clk/mmp/clk-of-mmp2.c                      |  26 +-
+>  drivers/clk/mmp/clk-of-pxa168.c                    |   4 +-
+>  drivers/clk/mmp/clk-of-pxa1908.c                   | 328 ++++++++++++++++++++
+>  drivers/clk/mmp/clk-of-pxa1928.c                   |   6 +-
+>  drivers/clk/mmp/clk-of-pxa910.c                    |   4 +-
+>  drivers/clk/mmp/clk.h                              |  10 +-
+>  drivers/pinctrl/pinctrl-single.c                   |   1 +
+>  include/dt-bindings/clock/marvell,pxa1908.h        |  88 ++++++
+>  18 files changed, 1186 insertions(+), 57 deletions(-)
+> ---
+> base-commit: 39cd87c4eb2b893354f3b850f916353f2658ae6f
+> change-id: 20230803-pxa1908-lkml-6830e8da45c7
+> 
+> Best regards,
+> --
+> Duje Mihanović <duje.mihanovic@skole.hr>
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y marvell/pxa1908-samsung-coreprimevelte.dtb' for 20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr:
+
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: /: memory: False schema does not allow {'device_type': ['memory'], 'reg': [[0, 0, 0, 0]]}
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: pinmux@1e000: #size-cells: 0 was expected
+	from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-single.yaml#
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: pinmux@1e000: pinctrl-single,gpio-range: [[8, 55, 55, 0], [8, 110, 32, 0], [8, 52, 1, 0]] is too long
+	from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-single.yaml#
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: pinmux@1e000: 'pinmux-board-1', 'pinmux-board-2', 'pinmux-board-3', 'pinmux-gpio-keys', 'pinmux-i2c-muic', 'pinmux-sdh0-1', 'pinmux-sdh0-2', 'pinmux-sdh0-3', 'pinmux-uart0', 'ranges' do not match any of the regexes: '-pins(-[0-9]+)?$|-pin$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-single.yaml#
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: mmc@80000: pinctrl-names: ['default'] is too short
+	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: mmc@80000: Unevaluated properties are not allowed ('pinctrl-names' was unexpected)
+	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
 
 
 
-On 4/3/2024 4:22 PM, Dmitry Baryshkov wrote:
-> On Wed, 3 Apr 2024 at 13:49, Ajit Pandey <quic_ajipan@quicinc.com> wrote:
->>
->>
->>
->> On 4/3/2024 12:53 AM, Dmitry Baryshkov wrote:
->>> On Tue, 2 Apr 2024 at 21:26, Ajit Pandey <quic_ajipan@quicinc.com> wrote:
->>>>
->>>>
->>>>
->>>> On 3/31/2024 7:09 AM, Dmitry Baryshkov wrote:
->>>>> On Sat, 30 Mar 2024 at 20:30, Ajit Pandey <quic_ajipan@quicinc.com> wrote:
->>>>>>
->>>>>> Add Graphics Clock Controller (GPUCC) support for SM4450 platform.
->>>>>>
->>>>>> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
->>>>>> ---
->>>>>>     drivers/clk/qcom/Kconfig        |   9 +
->>>>>>     drivers/clk/qcom/Makefile       |   1 +
->>>>>>     drivers/clk/qcom/gpucc-sm4450.c | 806 ++++++++++++++++++++++++++++++++
->>>>>>     3 files changed, 816 insertions(+)
->>>>>>     create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
->>>>>>
->>>>>
->>>>> [skipped]
->>>>>
->>>>>> +static int gpu_cc_sm4450_probe(struct platform_device *pdev)
->>>>>> +{
->>>>>> +       struct regmap *regmap;
->>>>>> +
->>>>>> +       regmap = qcom_cc_map(pdev, &gpu_cc_sm4450_desc);
->>>>>> +       if (IS_ERR(regmap))
->>>>>> +               return PTR_ERR(regmap);
->>>>>> +
->>>>>> +       clk_lucid_evo_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
->>>>>> +       clk_lucid_evo_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
->>>>>> +
->>>>>> +       /* Keep some clocks always enabled */
->>>>>> +       qcom_branch_set_clk_en(regmap, 0x93a4); /* GPU_CC_CB_CLK */
->>>>>> +       qcom_branch_set_clk_en(regmap, 0x9004); /* GPU_CC_CXO_AON_CLK */
->>>>>> +       qcom_branch_set_clk_en(regmap, 0x900c); /* GPU_CC_DEMET_CLK */
->>>>>
->>>>> Why? At least other drivers model these three clocks properly.
->>>>>
->>>> These clocks are POR on in SM4450 and required to be kept always enabled
->>>> for GPU functionality hence keep them enabled from probe only.
->>>
->>> Please, check how this is handled on the other platforms, please.
->>> Hint: `git grep GPU_CC_DEMET_CLK`
->>>
->> yeah these clocks are modeled and handled via always enabled clk ops
->> (clk_branch2_aon_ops) in few other platforms like SM8450, SM8650 which
->> also do same functionality and keep them in always enabled POR state,
->> while we kept them enabled from GPUCC probe in SM8550.
->> Since we need such clock to be always enabled irrespective of consumer
->> votes I guess modeling with aon_ops isn't really required and we can
->> simply keep them enabled in probe similar to other always on clocks.
-> 
-> Why are they required to be kept on even if there is no consumer?
->
-We've GPU as consumer for these clocks but it's recommended to keep them
-always enabled for basic GPU functionality as per HW recommendation.
-Hence instead of modeling with _aon_ops we can simply keep them enabled 
-all time from probe to avoid any issues.
->>>>
->>>>>> +
->>>>>> +       return qcom_cc_really_probe(pdev, &gpu_cc_sm4450_desc, regmap);
->>>>>> +}
->>>>>> +
->>>>>> +static struct platform_driver gpu_cc_sm4450_driver = {
->>>>>> +       .probe = gpu_cc_sm4450_probe,
->>>>>> +       .driver = {
->>>>>> +               .name = "gpucc-sm4450",
->>>>>> +               .of_match_table = gpu_cc_sm4450_match_table,
->>>>>> +       },
->>>>>> +};
->>>>>> +
->>>>>> +module_platform_driver(gpu_cc_sm4450_driver);
->>>>>> +
->>>>>> +MODULE_DESCRIPTION("QTI GPUCC SM4450 Driver");
->>>>>> +MODULE_LICENSE("GPL");
->>>>>> --
->>>>>> 2.25.1
->>>>>>
->>>>>>
->>>>>
->>>>>
->>>>
->>>> --
->>>> Thanks, and Regards
->>>> Ajit
->>>
->>>
->>>
->>
->> --
->> Thanks, and Regards
->> Ajit
-> 
-> 
-> 
 
--- 
-Thanks, and Regards
-Ajit
+
