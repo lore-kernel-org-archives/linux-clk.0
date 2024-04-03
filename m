@@ -1,241 +1,190 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1FF14A0AA;
-	Wed,  3 Apr 2024 14:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADB159B67;
+	Wed,  3 Apr 2024 14:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712153760; cv=none; b=SJCXuGGL0zpVLUE0yxI5ry16Ermtk7srFYCIkIlN0Lj55M8oA3LpPihTddchepQTXy1UkNgMDMLd9S/l55pzDxtJs1h0YDq8pgVtCv7n+DTcO/d69gHeh4LzwbM0XOTO6lMSPNIHXexOwf36vBbfC8ly3SwJgaaUCI1g9SGFYtM=
+	t=1712156388; cv=none; b=MyLrdPfDY3vy3aXTUR4GoJSut9ccL1GewtPUAFO3rJcP+58lzDe2D00/lptbM19GCiw6LNaC7VftoB7S6jtvtXn1eE5cwv639adkPhWCo6gRwX9IS3RDBZrxK7CLaHQxmdi2rKYb3swaokLKeXRK+gssJYttwuBGHjWV8R82iCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712153760; c=relaxed/simple;
-	bh=RD2RCQFy9S41Rnm1Xw+o/M1kdulL9hH5gn+NFv371Fc=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=MOT4mlKoKcyZO6fJMrtzq2nn/gMTWzZiPkaDqKdHl81js1XPxTJ3JqLI90W80qKTGOShlz44fb/onUroz6patlA5U+dYj5CBrUHjuYhcBemkHviSY5oFHSES9bbuRtSg/RutoFeUjA2Hk0+n/0Pz5Qwlv9QHO6Z/VGz4repZ9gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McnZu8Pf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712156388; c=relaxed/simple;
+	bh=QIT4Ex7GyF+BHrfMmNs1ExDsS8kFe+3O5Qth8kwlp4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NCNPQ0D9kDiwDKkyr/FDX/l8yhUxym6VPyII/ObfFKNQke5MvAWellkFo2Sp+iO4mOd6IACi+orsCgWdGhv87KEbbB2EL4HjBu8mAb7DWk+R7ruJ2DanCNEIRCmYK4XvjVlU+iJt8NKvQsEIoSvsiDL2uWfqG8BlVwQ15xJUngU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOcAjgyF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McnZu8Pf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F291BC43141;
-	Wed,  3 Apr 2024 14:15:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOcAjgyF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23F00C433C7;
+	Wed,  3 Apr 2024 14:59:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712153760;
-	bh=RD2RCQFy9S41Rnm1Xw+o/M1kdulL9hH5gn+NFv371Fc=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=McnZu8PfSbAaxRVlZM1E7ZhlMlidwZRAf2+p3NWpBVZiIIOh8llqwARTFX6fMPrqD
-	 7A971dYcnqw0+S4RbiZrfu/K2j5A7h8wxRsQKh0hhH3W/jK9i7LXFRcCa0G/ung+az
-	 M/p5/ylkw1QnoBHD/nFelwbIfOjPsg85GGyIvV7JVQiv7o6/7ssIdVGOD8wGDYyC0l
-	 Vbvc9smSKlTeR90cbbYHhBzE7zX9VEi5AVUP21ciX3jr3QYP8RbUYK5z6F646t1q7y
-	 HH/cT6z04g1C58ghkeAtEXbooVvoB4j5IQA+tTdIyKlmF4bsD91PxiMaoHKdZdPitU
-	 szY1wdWzucbQA==
-Date: Wed, 03 Apr 2024 09:15:59 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1712156388;
+	bh=QIT4Ex7GyF+BHrfMmNs1ExDsS8kFe+3O5Qth8kwlp4U=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=EOcAjgyFZUCVR4EnR+SCCB820JDwkI/Cgni50UoLACTXX9v0Nk2F0gBo00ugbCyKp
+	 JYxh1zhQA022f4gKnyZSRQgsECaubonNp1PVIglaPYrc8kpL9dp6hdzj5YYtQELLIC
+	 OTpJeduSFKk3vsHELIFA3qUOQ0iBbf63YHd3FPcB5/HXELINRLvs6ZmMR+icV2qrQb
+	 SFm7xPBzyq1g9ZXjtW5J42ud0jsfGTAokciVCpQn0JLixZP3EFFCE/Ue/26P8YYLDE
+	 P2ano1m7xjxQtrgIwNmoRVSfnLrblarbDyEPFuAg+w3XvdtcD+oZHeYPwlXEV57MJj
+	 h5yT7RKqXWU5g==
+Message-ID: <58c9b754-b9a7-444d-9545-9e6648010630@kernel.org>
+Date: Wed, 3 Apr 2024 16:59:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rob Herring <robh@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, Kevin Hilman <khilman@baylibre.com>, 
- linux-clk@vger.kernel.org, David Airlie <airlied@gmail.com>, 
- Conor Dooley <conor.dooley@microchip.com>, 
- Maxime Ripard <mripard@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- linux-arm-kernel@lists.infradead.org, Nicolas Belin <nbelin@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org, 
- Thomas Zimmermann <tzimmermann@suse.de>, Conor Dooley <conor+dt@kernel.org>, 
- Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- "Lukas F. Hartmann" <lukas@mntre.com>
-In-Reply-To: <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-0-99ecdfdc87fc@linaro.org>
-References: <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-0-99ecdfdc87fc@linaro.org>
-Message-Id: <171215356354.3499119.7365764499574493714.robh@kernel.org>
-Subject: Re: [PATCH v12 0/7] drm/meson: add support for MIPI DSI Display
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/5] dt-bindings: interconnect: Add Qualcomm IPQ9574
+ support
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, djakov@kernel.org,
+ dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20240403104220.1092431-1-quic_varada@quicinc.com>
+ <20240403104220.1092431-2-quic_varada@quicinc.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240403104220.1092431-2-quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Wed, 03 Apr 2024 09:46:31 +0200, Neil Armstrong wrote:
-> The Amlogic G12A, G12B & SM1 SoCs embeds a Synopsys DW-MIPI-DSI transceiver (ver 1.21a),
-> with a custom glue managing the IP resets, clock and data input similar to the DW-HDMI
-> glue on the same Amlogic SoCs.
+On 03/04/2024 12:42, Varadarajan Narayanan wrote:
+> Add interconnect-cells to clock provider so that it can be
+> used as icc provider.
 > 
-> This is a follow-up of v5 now the DRM patches are applied, the clk & DT changes
-> remains for a full DSI support on G12A & SM1 platforms.
+> Add master/slave ids for Qualcomm IPQ9574 Network-On-Chip
+> interfaces. This will be used by the gcc-ipq9574 driver
+> that will for providing interconnect services using the
+> icc-clk framework.
 > 
-> The DW-MIPI-DSI transceiver + D-PHY are clocked by the GP0 PLL, and the ENCL encoder + VIU
-> pixel reader by the VCLK2 clock using the HDMI PLL.
-> 
-> The DW-MIPI-DSI transceiver gets this pixel stream as input clocked with the VCLK2 clock.
-> 
-> An optional "MEAS" clock can be enabled to measure the delay between each vsync feeding the
-> DW-MIPI-DSI transceiver.
-> 
-> The clock setup has been redesigned to use CCF, a common PLL (GP0) and the VCLK2 clock
-> path for DSI in preparation of full CCF support and possibly dual display with HDMI.
-> 
-> The change from v5 is that now we use a "VCLK" driver instead of notifier and rely
-> on CLK_SET_RATE_GATE to ensure the VCLK gate operation are called.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
-> Changes in v12:
-> - fix parameters alignment in patch 2
-> - update g12a_mipi_dsi_pxclk_div_table comment with jerome's suggestions
-> - fix dtbs overlay build, fix missed v11... thx khadas for reporting it off-list & testing
-> - Link to v11: https://lore.kernel.org/r/20240325-amlogic-v6-4-upstream-dsi-ccf-vim3-v11-0-04f55de44604@linaro.org
+> v7:
+> Fix macro names to be consistent with other bindings
+> v6:
+> Removed Reviewed-by: Krzysztof Kozlowski
+> Redefine the bindings such that driver and DT can share them
 > 
-> Changes in v11:
-> - Rebased on v6.9-rc1
-> - Fixed overlay handling/creation
-> - Link to v10: https://lore.kernel.org/r/20240205-amlogic-v6-4-upstream-dsi-ccf-vim3-v10-0-dc06073d5330@linaro.org
+> v3:
+> Squash Documentation/ and include/ changes into same patch
 > 
-> Changes in v10:
-> - Rename regmap_vclk to meson_clk and add _gate for the gate
-> - Move COMMON_CLK_MESON_VCLK to following patch
-> - Remove CLK_SET_RATE_PARENT from g12a_vclk2_sel, keep it only on mipi_dsi_pxclk_sel
-> - Add more info on commit message to specify how clock setup is designed
-> - Remove forgotten CLK_IGNORE_UNUSED on g12a_vclk2_input
-> - Remove useless CLK_SET_RATE_PARENT on g12a_vclk2_div to stop propagatting rate _after_ vclk2_div
-> - Remove invalid CLK_SET_RATE_GATE on g12a_vclk2 since it's not a divider...
-> - Drop already applied patches
-> - move Khadas TS050 changes as an overlay
-> - Link to v9: https://lore.kernel.org/r/20231124-amlogic-v6-4-upstream-dsi-ccf-vim3-v9-0-95256ed139e6@linaro.org
-> 
-> Changes in v9:
-> - Colledte reviewed-bys
-> - Fixed patches 2 & 4, commit messages and bindings format
-> - Link to v8: https://lore.kernel.org/r/20231109-amlogic-v6-4-upstream-dsi-ccf-vim3-v8-0-81e4aeeda193@linaro.org
-> 
-> Changes in v8:
-> - Switch vclk clk driver to parm as requested by Jerome
-> - Added bindings fixes to amlogic,meson-axg-mipi-pcie-analog & amlogic,g12a-mipi-dphy-analog
-> - Fixed DT errors in vim3 example and MNT Reform DT
-> - Rebased on next-20231107, successfully tested on VIM3L
-> - Link to v7: https://lore.kernel.org/r/20230803-amlogic-v6-4-upstream-dsi-ccf-vim3-v7-0-762219fc5b28@linaro.org
-> 
-> Changes in v7:
-> - Added review tags
-> - Fixed patch 5 thanks to George
-> - Link to v6: https://lore.kernel.org/r/20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v6-0-fd2ac9845472@linaro.org
-> 
-> Changes in v6:
-> - dropped applied DRM patches
-> - dropped clk private prefix patches
-> - rebased on top of 20230607-topic-amlogic-upstream-clkid-public-migration-v2-0-38172d17c27a@linaro.org
-> - re-ordered/cleaned ENCL patches to match clkid public migration
-> - Added new "vclk" driver
-> - uses vclk driver instead of notifier
-> - cleaned VCLK2 clk flags
-> - add px_clk gating from DSI driver
-> - Link to v5: https://lore.kernel.org/r/20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org
-> 
-> Changes in v5:
-> - Aded PRIV all the G12 internal clk IDS to simplify public exposing
-> - Fixed the DSI bindings
-> - Fixed the DSI HSYNC/VSYNC polarity handling
-> - Fixed the DSI clock setup
-> - Fixed the DSI phy timings
-> - Dropped components for DSI, only keeping it for HDMI
-> - Added MNT Reform 2 CM4 DT
-> - Dropped already applied PHY fix
-> - Link to v4: https://lore.kernel.org/r/20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v4-0-2592c29ea263@linaro.org
-> 
-> Changes from v3 at [3]:
-> - switched all clk setup via CCF
-> - using single PLL for DSI controller & ENCL encoder
-> - added ENCL clocks to CCF
-> - make the VCLK2 clocks configuration by CCF
-> - fixed probe/bind of DSI controller to work with panels & bridges
-> - added bit_clk to controller to it can setup the BIT clock aswell
-> - added fix for components unbind
-> - added fix for analog phy setup value
-> - added TS050 timings fix
-> - dropped previous clk control patch
-> 
-> Changes from v2 at [2]:
-> - Fixed patch 3
-> - Added reviews from Jagan
-> - Rebased on v5.19-rc1
-> 
-> Changes from v1 at [1]:
-> - fixed DSI host bindings
-> - add reviewed-by tags for bindings
-> - moved magic values to defines thanks to Martin's searches
-> - added proper prefixes to defines
-> - moved phy_configure to phy_init() dw-mipi-dsi callback
-> - moved phy_on to a new phy_power_on() dw-mipi-dsi callback
-> - correctly return phy_init/configure errors to callback returns
-> 
-> [1] https://lore.kernel.org/r/20200907081825.1654-1-narmstrong@baylibre.com
-> [2] https://lore.kernel.org/r/20220120083357.1541262-1-narmstrong@baylibre.com
-> [3] https://lore.kernel.org/r/20220617072723.1742668-1-narmstrong@baylibre.com
+> qcom,ipq9574.h
+> 	Move 'first id' to clock driver
 > 
 > ---
-> Neil Armstrong (7):
->       dt-bindings: arm: amlogic: Document the MNT Reform 2 CM4 adapter with a BPI-CM4 Module
->       clk: meson: add vclk driver
->       clk: meson: g12a: make VCLK2 and ENCL clock path configurable by CCF
->       drm/meson: gate px_clk when setting rate
->       arm64: meson: g12-common: add the MIPI DSI nodes
->       arm64: meson: khadas-vim3l: add TS050 DSI panel overlay
->       arm64: dts: amlogic: meson-g12b-bananapi-cm4: add support for MNT Reform2 with CM4 adaper
+>  .../bindings/clock/qcom,ipq9574-gcc.yaml      |  3 +
+>  .../dt-bindings/interconnect/qcom,ipq9574.h   | 87 +++++++++++++++++++
+>  2 files changed, 90 insertions(+)
+>  create mode 100644 include/dt-bindings/interconnect/qcom,ipq9574.h
 > 
->  Documentation/devicetree/bindings/arm/amlogic.yaml |   1 +
->  arch/arm64/boot/dts/amlogic/Makefile               |   5 +
->  arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi  |  70 ++++
->  .../meson-g12b-bananapi-cm4-mnt-reform2.dts        | 384 +++++++++++++++++++++
->  .../boot/dts/amlogic/meson-khadas-vim3-ts050.dtso  | 108 ++++++
->  drivers/clk/meson/Kconfig                          |   5 +
->  drivers/clk/meson/Makefile                         |   1 +
->  drivers/clk/meson/g12a.c                           |  76 ++--
->  drivers/clk/meson/vclk.c                           | 141 ++++++++
->  drivers/clk/meson/vclk.h                           |  51 +++
->  drivers/gpu/drm/meson/meson_dw_mipi_dsi.c          |   7 +
->  11 files changed, 829 insertions(+), 20 deletions(-)
-> ---
-> base-commit: 4cece764965020c22cff7665b18a012006359095
-> change-id: 20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-b8e5217e1f4a
-> 
-> Best regards,
-> --
-> Neil Armstrong <neil.armstrong@linaro.org>
-> 
-> 
-> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml
+> index 944a0ea79cd6..824781cbdf34 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml
+> @@ -33,6 +33,9 @@ properties:
+>        - description: PCIE30 PHY3 pipe clock source
+>        - description: USB3 PHY pipe clock source
+>  
+> +  '#interconnect-cells':
+> +    const: 1
+> +
+>  required:
+>    - compatible
+>    - clocks
+> diff --git a/include/dt-bindings/interconnect/qcom,ipq9574.h b/include/dt-bindings/interconnect/qcom,ipq9574.h
+> new file mode 100644
+> index 000000000000..0b076b0cf880
+> --- /dev/null
+> +++ b/include/dt-bindings/interconnect/qcom,ipq9574.h
+> @@ -0,0 +1,87 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +#ifndef INTERCONNECT_QCOM_IPQ9574_H
+> +#define INTERCONNECT_QCOM_IPQ9574_H
+> +
+> +#define ICC_ANOC_PCIE0		0
+> +#define ICC_SNOC_PCIE0		1
+> +#define ICC_ANOC_PCIE1		2
+> +#define ICC_SNOC_PCIE1		3
+> +#define ICC_ANOC_PCIE2		4
+> +#define ICC_SNOC_PCIE2		5
+> +#define ICC_ANOC_PCIE3		6
+> +#define ICC_SNOC_PCIE3		7
+> +#define ICC_SNOC_USB		8
+> +#define ICC_ANOC_USB_AXI	9
+> +#define ICC_NSSNOC_NSSCC	10
+> +#define ICC_NSSNOC_SNOC_0	11
+> +#define ICC_NSSNOC_SNOC_1	12
+> +#define ICC_NSSNOC_PCNOC_1	13
+> +#define ICC_NSSNOC_QOSGEN_REF	14
+> +#define ICC_NSSNOC_TIMEOUT_REF	15
+> +#define ICC_NSSNOC_XO_DCD	16
+> +#define ICC_NSSNOC_ATB		17
+> +#define ICC_MEM_NOC_NSSNOC	18
+> +#define ICC_NSSNOC_MEMNOC	19
+> +#define ICC_NSSNOC_MEM_NOC_1	20
+> +
+> +#define ICC_NSSNOC_PPE		0
+> +#define ICC_NSSNOC_PPE_CFG	1
+> +#define ICC_NSSNOC_NSS_CSR	2
+> +#define ICC_NSSNOC_IMEM_QSB	3
+> +#define ICC_NSSNOC_IMEM_AHB	4
+> +
+> +#define MASTER_ANOC_PCIE0		(ICC_ANOC_PCIE0 * 2)
+> +#define SLAVE_ANOC_PCIE0		((ICC_ANOC_PCIE0 * 2) + 1)
 
+Which existing Qualcomm platform has such code?
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+This is the third time I am asking for consistent headers. Open
+existing, recently added headers and look how it is done there. Why?
+Because I am against such calculations and see no reason for them.
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb' for 20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-0-99ecdfdc87fc@linaro.org:
-
-arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb: /soc/bus@ff600000/bus@42000/clock-controller@0: failed to match any schema with compatible: ['amlogic,g12a-audio-clkc']
-arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb: /soc/bus@ff600000/bus@42000/audio-controller@744: failed to match any schema with compatible: ['amlogic,g12a-tohdmitx']
-arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb: sys-ctrl@0: '#address-cells', '#size-cells', 'ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb: sound: Unevaluated properties are not allowed ('assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' were unexpected)
-	from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-sound-card.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb: sound: 'anyOf' conditional failed, one must be fixed:
-	'clocks' is a required property
-	'#clock-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
-
-
-
-
+Best regards,
+Krzysztof
 
