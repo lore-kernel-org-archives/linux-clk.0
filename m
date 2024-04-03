@@ -1,60 +1,60 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7898813666A
-	for <linux-clk@vger.kernel.org>; Wed,  3 Apr 2024 10:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113B0136989
+	for <linux-clk@vger.kernel.org>; Wed,  3 Apr 2024 10:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712139671; cv=none; b=G1BlQccNkotwuJ99on7U3DPHazUp+YuLq5G2D9oOncagi/h0jt8wUXr+ROdV91a3jIFzLvM2Gmn+QR/Kf2Vpe3YBPPJCn9HvJdyfuiX9Khg1xeRVw8sGhDCkFOamyJGCLF3I1UOZcB272xd0mrwcykiV1DOeFUu+YpaIIf4XtSM=
+	t=1712139783; cv=none; b=jN2BtiSL5D4bklM1Fi4SoUfbi/SYOjn+ViZlE6r5jg4nzBkkcTQN5vzKPJq45nf6UVqeWqwnK/BpKyV1cGHjLyNE97VZK/mIENp72qSY5sCZd0FKq9RfLz8ejuhIhdNJPo9gYjm9YI4BL6gR+3vj69JIluj49WHbIa5NxAoWuac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712139671; c=relaxed/simple;
-	bh=j9OWD1Egg+9iI5w7d3WeI7AlB92++uzCxocuqyXnMNk=;
+	s=arc-20240116; t=1712139783; c=relaxed/simple;
+	bh=Rj0Jsh8YxSWt3uMZSfSlxmzf0XSYrPzXk30gRPPxkz8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F1ILjgOpbA66PwSsz8XvQEHEUwYERS86YUIeBWiNNR0M2or36/JP2oBPsEizjLK2VgVXQaKKDInRp7u/reL5XbvzNui2F8wY2JBh3bMwRNS5BNq7g2r7EroxWJOIgSjcrKEXxj9KfegCGx66B8OqTDG6QKO8WaF6D6thBh6zdCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GY9YnPLK; arc=none smtp.client-ip=209.85.218.48
+	 In-Reply-To:Content-Type; b=TklIqTowbLQW/1mpuE5qturstOaWfmns+QYTiEG8vDTIMjIm/m2g1R96UxDGwvgNdzsJVzSQ1Hqa7QVk8cVp83hyTq3hAYefaxfoR+MxIzjxAEKb6c92acI2GbTESpZLull2117MAJBi6QzrhD7dHyMiywyKkJsXjqyDh6FD650=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=exP4EdVA; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GY9YnPLK"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a472f8c6a55so799018766b.0
-        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 03:21:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="exP4EdVA"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-566e869f631so6586341a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 03:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712139668; x=1712744468; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712139780; x=1712744580; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lrg9u1DWO3N7iNCPwEbpDmzDHx9LenQFb2AaTvmxYY=;
-        b=GY9YnPLKZXBE+iUca2K7y4lMCLid4LK3ssU/bWG/X5IppxYMAHeSQGNpCUStDGl8II
-         gL0dFi9tyJLVZPPfUc27RrezDkWeXIXiKaySQyJHGXW5LzRQiBCSqPPemmQd4qeGxh3j
-         6G/bBM4mUUowbAGHvPyEBDEiCP7dG9tMcFmUfpMvDOSiFEODSozogYBcG+/+gkiGMEnP
-         qSrgncD1zXdRaZY0A0uniplIviabsc0syHr2bGJv3gRs4BlSrZ1jDmLfcoIA0CfxBsbu
-         5k/LbFLKlmUri56mLUy8F/A2m1zmQKPrPFsET5HzIJD7d4LD0gCMIcz5xrm4sLZ8rleZ
-         liDw==
+        bh=HsoRFwc62TubYqg849tDBMhvYLUZpOn9BCroZEJYYio=;
+        b=exP4EdVAjdfkiSkfkk8oGrSkM0SEOLzmDHxCDQnCjXMbVqkROETfWIrX8TV8mi8ECP
+         fJETwsv2Oy3UM4y7ny4EPR4IS7V86RJAkSmDm24Qp47vx/xNbcd/AQAgOOFamlgcweVZ
+         WOmgbhPjeUcjTLDy9TUOJXw4KO0KhxRgeE/VgpjppNDvYSwntjI2/VocFWN/Y+Je+5hG
+         XdvcGSsvpYHo9JTjUr/4pA+jUfchjyxy2Ns69L4DUdLQUnrOsapQ9MT/ijAMWgCDFQ0t
+         POC1xLKfv9rxqTqGrmVyaRpzdNVWV13QZ2/5ZGIoAIV6lxy03JxTv+QClyggv4zqVGfx
+         8Ucg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712139668; x=1712744468;
+        d=1e100.net; s=20230601; t=1712139780; x=1712744580;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4lrg9u1DWO3N7iNCPwEbpDmzDHx9LenQFb2AaTvmxYY=;
-        b=XTq1T+oq4e/GwAyyvP0znBllkQ6glaGBR5/VscGEgLtyfqvFdjAzxdgqKwiWm5yXgN
-         4mNqOu6oqfSvhqcK0Bwa5tKjUOB+1MZxwzkGF6a8p5rpg5z43STF+WWpGmHDbmGlomFv
-         BrJopl+ZfH71xH42Cp6AQeN5ewGP8u3cXhjureF1BE6gkRCBDCJyqlPibFusn6Wm+E6E
-         WFC9C8L2GtIlD4wt928VKGluhgJOtzg8z3u+HGRF/C/p3olxCdEgH0AI+2dTZ4MB3Bpf
-         YkQ7YF/nFtM7s1bzsKknkPEbODh+Qe25rWC0Xz15yf1FQV4xEevV03ZECmsxOtT+2pmW
-         yzLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOzioEvAyEX0sX4TfQKS1C7JLtMdyNFUodbrUuH/Sn78HONTLJWRuEK6lRk+jFjffl2BGFHLamZbsfUQQiHkAEVnFjnA3AXktb
-X-Gm-Message-State: AOJu0Ywrnu6LJ+SxQ3W3no6U3oLiH2Zla3DEXZNnbTQzAItaoe8G/idG
-	CnNTDtj3mq/azMT3jQOk4yvP/GX0PkrBgnHbUzzR8C0YN0nDgM6hlqiPr/yVtOY=
-X-Google-Smtp-Source: AGHT+IEP4Gm/j49EiS5w8Osi5IxulbUu7dmYZSs8UZrCWXoYjgFHKV6WkLihgHu5HCaYyGuLMqf+SQ==
-X-Received: by 2002:a17:907:11cd:b0:a4e:2d1e:6914 with SMTP id va13-20020a17090711cd00b00a4e2d1e6914mr9439566ejb.11.1712139667716;
-        Wed, 03 Apr 2024 03:21:07 -0700 (PDT)
+        bh=HsoRFwc62TubYqg849tDBMhvYLUZpOn9BCroZEJYYio=;
+        b=G5lQLYZfRlA2Uj3ElOhZ1x9tDa+0ju0w0GgRZ6h30OT44TwXF/xmFW+ZAiePE+79m7
+         mGzOYKkybUJDRmfHSsaRWfSJM/OymzU42Xa0EYz6XUeSUPkbxXRShas4QI6205CI/nUO
+         YLaGKE9YhCx5fynuh4dNXWEqaLaetglgDtXpNaL4LtgEaxZytIR562AXFUQL/3nvgzQF
+         Wa7hsmiiaYTuEkv5G14LBB0RslJ29vMyUNTkybxNy+nxZ74AHrPzzqH928EvYUwvZmxP
+         7bUo/XUIwR6BCxNVm/9wz3Wienlj5uHVK0klslgM2qxYfceYWL2SMWdiF5yr0OwgrupS
+         w36w==
+X-Forwarded-Encrypted: i=1; AJvYcCWiw41LE+shoye88dYICfWEPTKOPgN3LZiXXktH35ZKKc7L3IUU8a8avs+2ZAmDj5FDuqtui6LH+4p8xIsDCYT0pQzhNKU7c1x7
+X-Gm-Message-State: AOJu0YxcoeLBIFKgzdEc7r70WqLGHWyUpnx2B2PlUg3t/Gh4vIbfDnTr
+	Vc8Q+eAUN0Smzh++3By545uW7w04ago9FJKwZZB1atwF1XO2fX4s6TBgEEEt8e4=
+X-Google-Smtp-Source: AGHT+IEMd2qY7HaeJ+Fxj3CC5iJW78JeSnJFgE3zvGwQSDJJVxBpSADaDpp09/VoAm7rqc/a73kH3g==
+X-Received: by 2002:a05:6402:3506:b0:56b:cecb:a4c8 with SMTP id b6-20020a056402350600b0056bcecba4c8mr14911177edd.39.1712139780444;
+        Wed, 03 Apr 2024 03:23:00 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id bj7-20020a17090736c700b00a4e696e613esm3583799ejc.153.2024.04.03.03.21.06
+        by smtp.gmail.com with ESMTPSA id n17-20020a05640205d100b0056c55252b1csm7476094edx.41.2024.04.03.03.22.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Apr 2024 03:21:07 -0700 (PDT)
-Message-ID: <a2f88176-b4e1-4202-843c-a00c5a2b1622@linaro.org>
-Date: Wed, 3 Apr 2024 12:21:05 +0200
+        Wed, 03 Apr 2024 03:22:59 -0700 (PDT)
+Message-ID: <f51da8d9-95e5-4935-9ad7-49a5ddde9dc3@linaro.org>
+Date: Wed, 3 Apr 2024 12:22:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,18 +62,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] Add Synopsys DesignWare HDMI RX Controller
-To: Shreeya Patel <shreeya.patel@collabora.com>, mchehab@kernel.org,
- hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl
-Cc: heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+Subject: Re: [PATCH v3 4/6] arm64: dts: rockchip: Add device tree support for
+ HDMI RX Controller
+To: Shreeya Patel <shreeya.patel@collabora.com>, heiko@sntech.de,
+ mchehab@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
  conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, shawn.wen@rock-chips.com, kernel@collabora.com,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm@lists.infradead.org
+ p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ dmitry.osipenko@collabora.com, sebastian.reichel@collabora.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm@lists.infradead.org
 References: <20240327225057.672304-1-shreeya.patel@collabora.com>
- <35e566-660d2080-1-7eb9eb00@16488675>
+ <20240327225057.672304-5-shreeya.patel@collabora.com>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -120,29 +123,43 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <35e566-660d2080-1-7eb9eb00@16488675>
+In-Reply-To: <20240327225057.672304-5-shreeya.patel@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/04/2024 11:24, Shreeya Patel wrote:
-> On Thursday, March 28, 2024 04:20 IST, Shreeya Patel <shreeya.patel@collabora.com> wrote:
+On 27/03/2024 23:50, Shreeya Patel wrote:
+> Add device tree support for Synopsys DesignWare HDMI RX
+> Controller.
 > 
->> This series implements support for the Synopsys DesignWare
->> HDMI RX Controller, being compliant with standard HDMI 1.4b
->> and HDMI 2.0.
->>
+> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> ---
+> Changes in v3 :-
+>   - Rename cma node and phandle names
+>   - Elaborate the comment to explain 160MiB calculation
+>   - Move &hdmi_receiver_cma to the rock5b dts file
 > 
-> Hi Mauro and Hans,
+> Changes in v2 :-
+>   - Fix some of the checkpatch errors and warnings
+>   - Rename resets, vo1-grf and HPD
+>   - Move hdmirx_cma node to the rk3588.dtsi file
 > 
-> I haven't received any reviews so far. Hence, this is just a gentle reminder to review this patch series.
+>  .../boot/dts/rockchip/rk3588-pinctrl.dtsi     | 41 ++++++++++++++
+>  .../boot/dts/rockchip/rk3588-rock-5b.dts      | 19 +++++++
+>  arch/arm64/boot/dts/rockchip/rk3588.dtsi      | 56 +++++++++++++++++++
 
-Why did you put clk changes here? These go via different subsystem. That
-might be one of obstacles for your patchset.
+Please do not engage multiple subsystems in one patchset, if not
+necessary. Especially do not mix DTS into media or USB subsystems. And
+do not put DTS in the middle!
 
-Also, you sent it just a week ago and you already ping. Please relax,
-and help out by reviewing other patches on the mailing lists in order to
-relieve the burden of maintainers and move your patches higher up the list.
+This is not a correct way to upstream DTS. DTS is independent of
+drivers, so your drivers cannot be based on this.
 
+Please reach to your experienced colleagues to explain you how
+submission of patches should look like.
 
 Best regards,
 Krzysztof
