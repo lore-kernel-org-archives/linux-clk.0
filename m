@@ -1,110 +1,69 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F44212D76B;
-	Thu,  4 Apr 2024 19:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F30612DD9B;
+	Thu,  4 Apr 2024 21:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712259804; cv=none; b=g1ER/mNZniydwsUsNlos6zNNz1zaNApQGBCaRXDZAYkam2XrDkSBqFr5FzOSNRfO5I9ov+rHcNWHuejpG4uh15CEXj+Y4syVWxGhhgl9GhLczzI6Lz2kUxAOzeVFz6ezvqtK8hZfNKrKRpisFW0JfoM0xLVpwcgTD0Wo/5jZYGs=
+	t=1712265796; cv=none; b=ai37iDIgeydlWLKrDQ4Soup8sNPDKfN6kvBijfRHA4lIq/ikI1dYnwBDtB3I9UiB/D5GEPRObNY07jkV9Iumj65cYCHjm1qnAlph5brzHBkHFIWxOXmiw7FoG5T1HbaXnTtVYrcp8j5yBfKkN0pcFnnqGg9gDQSZ+GuM5yjPjVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712259804; c=relaxed/simple;
-	bh=zUDgi6iudoTJasQRtCJQcwLNiKQJmhurWg2xbJqb//k=;
+	s=arc-20240116; t=1712265796; c=relaxed/simple;
+	bh=3TVcBr0w/hux0AWphLCDJyUovSkE9ClzpHoAsEMWFPk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PUs52ogJC4Ndgop8m0VZPMqjJaMhGBJ1WywD+FBqBG2NkANNCYl9JPt7JA9ea4+5ibuyIEbcbuN1v9+4EbZtNySvY3Vr+Ya2OYCZ+3gVKTqEKZzK7u91jGeQg5BzCkjcSGe0g5SW0HeNK4ehf/Du/UG9Ok9Qj0Ld7jHhOxsk+64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875aaf.versanet.de ([83.135.90.175] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1rsSzU-0005We-Pz; Thu, 04 Apr 2024 21:43:16 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, David Jander <david@protonic.nl>,
- Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH] clk: rockchip: clk-rk3568.c: Add missing USB480M_PHY mux
-Date: Thu, 04 Apr 2024 21:43:15 +0200
-Message-ID: <3612648.44csPzL39Z@phil>
-In-Reply-To:
- <20240404-clk-rockchip-rk3568-add-usb480m-phy-mux-v1-1-e8542afd58b9@pengutronix.de>
-References:
- <20240404-clk-rockchip-rk3568-add-usb480m-phy-mux-v1-1-e8542afd58b9@pengutronix.de>
+	 MIME-Version:Content-Type; b=JstqXy1JO5WibDG8FdKw/M93q4u/3oIseLKibXUdcbndtf+uNJ7QlTidHq/Z8f70vuFH+9rK9GtSTjGnE20727PiKFTYYj0HkPqPPb8bVnf/nJq13uE0Tr3AM6x+UjAl9BMjM/qGzj6KNl8oLuS6+7jio0NnUYG4iXpjbi99B4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VP7wkD0C; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VP7wkD0C"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C45F1C433F1;
+	Thu,  4 Apr 2024 21:23:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712265795;
+	bh=3TVcBr0w/hux0AWphLCDJyUovSkE9ClzpHoAsEMWFPk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VP7wkD0CIk1Xq+wJ9acs/zTbnufV6xQ/JUIRd4/GaQGZ/DRSMzg39LpHvTSX4lfKH
+	 iTHoGScXnOhQ388/uEgFOsDuNG6UL7lQaRZ2f7J/nkuGJX2RBT65mamPcy2WwQO53F
+	 Y5zNfnC/koZeMMfOSyVBtc+7MYH5jQslQCIZgRN+jiVr2p0gUoVLVmF4hfjDz2H455
+	 IiNe8FQ6Q8odocAeoFGKOc/32d9bvf3jdrDnhXgXZ1IL63rKG2mTsl+cLJsIhdGc/A
+	 b+jcGTOxDZPOa+wtiY/JbDsZDeLLx7LKkt7lFV6I8M93pGhGDu+EpiBb85j7iMLmHr
+	 1ofwUUfhVwkVg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Adam Skladowski <a39.skl@gmail.com>
+Cc: phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Andy Gross <agross@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Georgi Djakov <djakov@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 1/1] clk: qcom: smd-rpm: Restore msm8976 num_clk
+Date: Thu,  4 Apr 2024 16:22:46 -0500
+Message-ID: <171226578691.615813.15073915135961701115.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240401171641.8979-1-a39.skl@gmail.com>
+References: <20240401171641.8979-1-a39.skl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Sascha,
 
-Am Donnerstag, 4. April 2024, 09:27:01 CEST schrieb Sascha Hauer:
-> From: David Jander <david@protonic.nl>
+On Mon, 01 Apr 2024 19:16:39 +0200, Adam Skladowski wrote:
+> During rework somehow msm8976 num_clk got removed, restore it.
 > 
-> The USB480M clock can source from a MUX that selects the clock to come
-> from either of the USB-phy internal 480MHz PLLs. These clocks are
-> provided by the USB phy driver.
-> 
-> Signed-off-by: David Jander <david@protonic.nl>
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  drivers/clk/rockchip/clk-rk3568.c      | 4 ++++
->  include/dt-bindings/clock/rk3568-cru.h | 1 +
->  2 files changed, 5 insertions(+)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3568.c b/drivers/clk/rockchip/clk-rk3568.c
-> index 8cb21d10beca2..2d44bcaef046b 100644
-> --- a/drivers/clk/rockchip/clk-rk3568.c
-> +++ b/drivers/clk/rockchip/clk-rk3568.c
-> @@ -215,6 +215,7 @@ static const struct rockchip_cpuclk_reg_data rk3568_cpuclk_data = {
->  
->  PNAME(mux_pll_p)			= { "xin24m" };
->  PNAME(mux_usb480m_p)			= { "xin24m", "usb480m_phy", "clk_rtc_32k" };
-> +PNAME(mux_usb480m_phy_p)		= { "clk_usbphy0_480m", "clk_usbphy1_480m"};
->  PNAME(mux_armclk_p)			= { "apll", "gpll" };
->  PNAME(clk_i2s0_8ch_tx_p)		= { "clk_i2s0_8ch_tx_src", "clk_i2s0_8ch_tx_frac", "i2s0_mclkin", "xin_osc0_half" };
->  PNAME(clk_i2s0_8ch_rx_p)		= { "clk_i2s0_8ch_rx_src", "clk_i2s0_8ch_rx_frac", "i2s0_mclkin", "xin_osc0_half" };
-> @@ -485,6 +486,9 @@ static struct rockchip_clk_branch rk3568_clk_branches[] __initdata = {
->  	MUX(USB480M, "usb480m", mux_usb480m_p, CLK_SET_RATE_PARENT,
->  			RK3568_MODE_CON0, 14, 2, MFLAGS),
->  
-> +	MUX(USB480M_PHY, "usb480m_phy", mux_usb480m_phy_p, CLK_SET_RATE_PARENT,
-> +			RK3568_MISC_CON2, 15, 1, MFLAGS),
-> +
->  	/* PD_CORE */
->  	COMPOSITE(0, "sclk_core_src", apll_gpll_npll_p, CLK_IGNORE_UNUSED,
->  			RK3568_CLKSEL_CON(2), 8, 2, MFLAGS, 0, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
-> diff --git a/include/dt-bindings/clock/rk3568-cru.h b/include/dt-bindings/clock/rk3568-cru.h
-> index d29890865150d..5263085c5b238 100644
-> --- a/include/dt-bindings/clock/rk3568-cru.h
-> +++ b/include/dt-bindings/clock/rk3568-cru.h
-> @@ -78,6 +78,7 @@
->  #define CPLL_333M		9
->  #define ARMCLK			10
->  #define USB480M			11
-> +#define USB480M_PHY		12
->  #define ACLK_CORE_NIU2BUS	18
->  #define CLK_CORE_PVTM		19
->  #define CLK_CORE_PVTM_CORE	20
 > 
 
-Please separate the code change and clock-id addition into separate
-patches. That way dt-maintainers will more easily see that there are
-changes to the dt-binding inside.
+Applied, thanks!
 
-Other than that, the change looks fine :-)
+[1/1] clk: qcom: smd-rpm: Restore msm8976 num_clk
+      commit: 0d4ce2458cd7d1d66a5ee2f3c036592fb663d5bc
 
-
-Thanks
-Heiko
-
-
-
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
