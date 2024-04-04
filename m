@@ -1,55 +1,57 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4008664B
-	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 12:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B1D8592E
+	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 12:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712233573; cv=none; b=hiQEFpj3WPBAENw/q5M4Z1V1nSqB3o3w6WsM2wqil0MaJVIAAMsT8okZ+Y1i/5Bs9A0+O5DDM7QusaAZH02bjF0d/jTp6ParSSBzmkxzUIVUUIAjh2yTbvIFXRzGJQRZDi0ydqwG61xQUsWlS3Ek6MT0vh0lZGrmqMGYJypGKFU=
+	t=1712233582; cv=none; b=ThkxnjCxNB/asOQTop8m7IubuWcqwHrikJDcdXAE42aLvJwmXTjHDYdH76LbseEKR3dBda3imsWR8LsAT6KjJ9CaxhcyZqtLxuczFocL4ZIHf03MkXFgBDhi7CbCZ/SkiuJ6pMk3pGwImQ7m0CY1Z2vkbBSLrzCs5BgcfsxIeME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712233573; c=relaxed/simple;
-	bh=bADRJFGOvu1b0zF/Q4lv3G9rwZq8EwwDyeDlWWXD6Co=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dj3vWkZHZL9r68iMc82nZ8DqArykJzGR2SVxovL54PZ1KmdHWzBmmYzA1yyaVfXB8b4EzflAFGNUsz9/TFXLoMs30wCisnuJ9hblm/IHTYvTfUi8rN90q0cuamCYbeh4qfNHFFQPnAdsxOLeykMmPkq+CscA30UlybarZ04Il3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c7Dl8WGr; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1712233582; c=relaxed/simple;
+	bh=2q8gij64Ov8TqGR2w8c78XW7P+5rgnWSMwbThRQDZHU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tPs/b9RntYPHMT2mzyqKHJ0jY2Mq5WeRxrjd0+UODAkAlEKvgHLbovxG3XAeg4lw5JnhpvG47lcu4c2ANDTDca5Je2lUrMNLFtRDdHvi8bU/mcGREcYfiwcjFx9pdoYzBq7Mq2scsbSpA49g/K29EpjRsOuQ2zAH3u7JyQslyuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rj3iFcEm; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c7Dl8WGr"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4162b8cb3e9so3261095e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 04 Apr 2024 05:26:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rj3iFcEm"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-516c97ddcd1so745235e87.2
+        for <linux-clk@vger.kernel.org>; Thu, 04 Apr 2024 05:26:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712233570; x=1712838370; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJYM6tMjtFChrulSjg0o7kKxgUYy0TmdSYB4AKPdhEk=;
-        b=c7Dl8WGrjLWTItx3QpPn1tbGFQqqf+0BDlci95hQt4INKr4QDj2vAdy261gNi/3ZeC
-         MWTmLH1Ijym07RYr8fKnCgTryJRWtp4Fpz+vHv8xmuMldGQvVby8WysmChWitLVtPNiT
-         z6RPvcEmqtab9HTK0NnBg3GcQjCJ0CTiWaVevlsfyie2PqHBY/KgA8jDzmd8IN33zXsd
-         +kYLc3WeMwceyJRjnvW0euv985FH9G34i3Cyw7YgoebF3DJwkVvucFtBy4gWCZXHo/gl
-         b1m6d+TvR3DENTPLZ6J8PalFntIjOl4uQsOQgddPbORO/YHi7VbFDWdgtk81Hl203YoF
-         QUCA==
+        d=linaro.org; s=google; t=1712233577; x=1712838377; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d249q8OLaMbSIVMmFzjKWfEr9wukeZUtFSKBwYI0cD4=;
+        b=Rj3iFcEmapu965Ht/c98I+poCEk8ez0iCGNzQrDKCKJLJMfshDIC6WO3JyPaGhogLi
+         ctzgdcGa18SRItRnha0dktzITk5C36WDwaysfQnk+pRORCMASbwesUQmAUFEQ5IRzC3g
+         exkCOGqUlNPl3U3Zll68SNOpdU2l+KpLN5V4xBseMvXnzH/gevD291sYUm19ijObX7Ff
+         pf9Qq1ghXkgZl5Rn/6rM7O6gLqWytcD0B+0XoFw3/1fhFDwrkA1ORSBcWmPyrlnPAoCd
+         CyOoOtizxxL3s7mB8eriTmYh1xNVluaUts2CPJxVx+pyBdsjPvCT9kaEeWo8pj1CZNTC
+         z5NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712233570; x=1712838370;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jJYM6tMjtFChrulSjg0o7kKxgUYy0TmdSYB4AKPdhEk=;
-        b=Ktavli4keK7LojQbgyQin0OIOqtpzV1npXMWx+tAlxrchBMLxlFVvd3aHjOx66iFS9
-         lnZmWUMUJ7rBM1UZAf0dl8Zs8Sjk4zNIyFQxbYiMzpv2dJP4Th+TWSnxl/Te41LmZ8RG
-         eTxrN7T+nG5xQvHNIgBA+1u1VkvwxYzp5A3yxICfw3uRmTvtjIwwOX9NuCs87Rc24BFo
-         XT24zE48TIfK8dCWybnH/AEVaW1I1gytFz4biLr4sEEN2079yxOcnMYiHDtuZsTe4PNH
-         iwX/XTyolEDxAV6nRFbbdX3U6BVebO0FY/Ea+ELC52SRR9ny0moP0/bc59LBdRIXiEgg
-         b3Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWphcGpqObJK4GhogxZ74uszSMqwMjyt2WlKItIqsRw512bBwPmvXoo9IbtCLgn8owuqHP/PGBoU1fgzl8kviHAehWjcD2ERo/R
-X-Gm-Message-State: AOJu0Ywwqlj57mOIFE0AidT1mYCnMLzLSTipu9D165kLqaUbjrFWFXnq
-	yEPBg7y85B6y6S0b+JzsZ8q/fCNSFPWVCDf6D26f4euGyU3QnQ6ttfLH2rcD+h0=
-X-Google-Smtp-Source: AGHT+IGhdc0j00kl/SimlNVvg9pgoaeQSTThX/VudHinZM2oZtNar8Jm+FLBUrq74KmHRHDDb/tr/A==
-X-Received: by 2002:a05:600c:54ef:b0:415:533b:1071 with SMTP id jb15-20020a05600c54ef00b00415533b1071mr2316215wmb.19.1712233569988;
-        Thu, 04 Apr 2024 05:26:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1712233577; x=1712838377;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d249q8OLaMbSIVMmFzjKWfEr9wukeZUtFSKBwYI0cD4=;
+        b=ZKQ3fQSeqUh8gwpOKy5RmrGs5HLSepd+JFpp3dUNLw0Xh8cA+pu/1AjfumdFI6BoPR
+         UeRLBq061GPqq2ZTKNEwA2M05jSrCWVD6CCqAFl9nHOmyBcY8d2YfbF4YUM24sJDHsG8
+         rVrj1XMM85EXkrieRdedCwCkksIuH2G1T4grWuipKe8P35gK1PQVX+aemYKCTc3qL2U4
+         lXYAkMVgBrQtQHdxLQmbMtR5LgtMDH98A5J2eohZDoaic/8pl+XPsl3eErdixGYIst/Y
+         z+y7a4O34p9wL9EbjGpFIlV9Eu4cy26Sk9up468H7qRkJ6dP/SMUMfOtttKfTyGmrz80
+         6pOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVr7GTs8tqr1b3uwMDq8J3g/GDdfGw4qOfs5fQP/0ljeCZ3fJP4KEICIufSqlfDYenglhG6lopNgG0Ts+3qfXuOvl0AMq/9dEUE
+X-Gm-Message-State: AOJu0YyxjHomye0lcAsxTp5gAOcH3V7EDvZdoMAPDNzdXiQ0fi6scLrR
+	cvL1TK4Cl2JIr7HBi8G0A639QUcxz/teAX7J4HLsqWZhpcPhc3L1/TrhTsqyxr8=
+X-Google-Smtp-Source: AGHT+IHKUb9uxI3dVCBnRZqZdhwAN2Y0OAl2yQXHesVhm5X+TGFWVXPaqh+/KMFU4TwWx7ODQVorYA==
+X-Received: by 2002:a05:6512:3a91:b0:515:8564:28c8 with SMTP id q17-20020a0565123a9100b00515856428c8mr1952674lfu.67.1712233577227;
+        Thu, 04 Apr 2024 05:26:17 -0700 (PDT)
 Received: from gpeter-l.roam.corp.google.com ([148.252.128.204])
-        by smtp.gmail.com with ESMTPSA id bu14-20020a056000078e00b003434b41c83fsm12106303wrb.81.2024.04.04.05.26.04
+        by smtp.gmail.com with ESMTPSA id bu14-20020a056000078e00b003434b41c83fsm12106303wrb.81.2024.04.04.05.26.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Apr 2024 05:26:08 -0700 (PDT)
+        Thu, 04 Apr 2024 05:26:14 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
@@ -79,10 +81,12 @@ Cc: linux-scsi@vger.kernel.org,
 	saravanak@google.com,
 	willmcvicker@google.com,
 	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 00/17] HSI2, UFS & UFS phy support for Tensor GS101
-Date: Thu,  4 Apr 2024 13:25:42 +0100
-Message-ID: <20240404122559.898930-1-peter.griffin@linaro.org>
+Subject: [PATCH 01/17] dt-bindings: clock: google,gs101-clock:  add HSI2 clock management unit
+Date: Thu,  4 Apr 2024 13:25:43 +0100
+Message-ID: <20240404122559.898930-2-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.44.0.478.gd926399ef9-goog
+In-Reply-To: <20240404122559.898930-1-peter.griffin@linaro.org>
+References: <20240404122559.898930-1-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,107 +95,69 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi folks,
+Add dt schema documentation and clock IDs for the High Speed Interface
+2 (HSI2) clock management unit. This CMU feeds high speed interfaces
+such as PCIe and UFS.
 
-This series adds support for the High Speed Interface (HSI) 2 clock
-management unit, UFS controller and UFS phy calibration/tuning for GS101.
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+ .../bindings/clock/google,gs101-clock.yaml    | 30 +++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
-With this series applied, UFS is now functional! The SKhynix HN8T05BZGKX015
-can be enumerated, partitions mounted etc. This then allows us to move away
-from the initramfs rootfs we have been using for development so far.
-
-The intention is this series will be merged via Krzysztofs Samsung Exynos
-tree(s). This series is rebased on next-20240404.
-
-The series is broadly split into the following parts:
-1) dt-bindings documentation updates
-2) gs101 device tree updates
-3) Prepatory patches for samsung-ufs driver
-4) GS101 ufs-phy support
-5) Prepatory patches for ufs-exynos driver
-6) GS101 ufs-exynos support
-
-Question
-========
-
-Currently the link comes up in Gear 3 due to ufshcd_init_host_params()
-host_params initialisation. If I update that to use UFS_HS_G4 for
-negotiation then the link come up in Gear 4. I propose (in a future patch)
-to use VER register offset 0x8 to determine whether to set G4 capability
-or not (if major version is >= 3).
-
-The bitfield of VER register in gs101 docs is
-
-RSVD [31:16] Reserved
-MJR [15:8] Major version number
-MNR [7:4] Minor version number
-VS [3:0] Version Suffix
-
-Can anyone confirm if other Exynos platforms supported by this driver have
-the same register, and if it conforms to the bitfield described above?
-
-I'm also open to suggestions on how else to detect and set G4 if others
-have a better idea. It looks like MTK and QCOM drivers both use a version
-field, hence the proposal above.
-
-fyi I'm out of office until Monday 12th April, so I will deal with any
-review feedback upon my return :-)
-
-For anyone wishing to try out the upstream kernel on their Pixel 6 device
-you can find the README on how to build / flash the kernel here
-https://git.codelinaro.org/linaro/googlelt/pixelscripts
-
-kind regards,
-
-Peter
-
-Peter Griffin (17):
-  dt-bindings: clock: google,gs101-clock:  add HSI2 clock management
-    unit
-  dt-bindings: soc: google: exynos-sysreg: add dedicated hsi2 sysreg
-    compatible
-  dt-bindings: ufs: exynos-ufs: Add gs101 compatible
-  dt-bindings: phy: samsung,ufs-phy: Add dedicated gs101-ufs-phy
-    compatible
-  arm64: dts: exynos: gs101: enable cmu-hsi2 clock controller
-  arm64: dts: exynos: gs101: Add the hsi2 sysreg node
-  arm64: dts: exynos: gs101: Add ufs, ufs-phy and ufs regulator dt nodes
-  clk: samsung: gs101: add support for cmu_hsi2
-  phy: samsung-ufs: use exynos_get_pmu_regmap_by_phandle() to obtain PMU
-    regmap
-  phy: samsung-ufs: ufs: Add SoC callbacks for calibration and clk data
-    recovery
-  phy: samsung-ufs: ufs: Add support for gs101 UFS phy tuning
-  scsi: ufs: host: ufs-exynos: Add EXYNOS_UFS_OPT_UFSPR_SECURE option
-  scsi: ufs: host: ufs-exynos: add EXYNOS_UFS_OPT_TIMER_TICK_SELECT
-    option
-  scsi: ufs: host: ufs-exynos: allow max frequencies up to 267Mhz
-  scsi: ufs: host: ufs-exynos: add some pa_dbg_ register offsets into
-    drvdata
-  scsi: ufs: host: ufs-exynos: Add support for Tensor gs101 SoC
-  MAINTAINERS: Add phy-gs101-ufs file to Tensor GS101.
-
- .../bindings/clock/google,gs101-clock.yaml    |  30 +-
- .../bindings/phy/samsung,ufs-phy.yaml         |   1 +
- .../soc/samsung/samsung,exynos-sysreg.yaml    |   2 +
- .../bindings/ufs/samsung,exynos-ufs.yaml      |  51 +-
- MAINTAINERS                                   |   1 +
- .../boot/dts/exynos/google/gs101-oriole.dts   |  17 +
- arch/arm64/boot/dts/exynos/google/gs101.dtsi  |  53 ++
- drivers/clk/samsung/clk-gs101.c               | 558 ++++++++++++++++++
- drivers/phy/samsung/Makefile                  |   1 +
- drivers/phy/samsung/phy-exynos7-ufs.c         |   1 +
- drivers/phy/samsung/phy-exynosautov9-ufs.c    |   1 +
- drivers/phy/samsung/phy-fsd-ufs.c             |   1 +
- drivers/phy/samsung/phy-gs101-ufs.c           | 182 ++++++
- drivers/phy/samsung/phy-samsung-ufs.c         |  21 +-
- drivers/phy/samsung/phy-samsung-ufs.h         |   6 +
- drivers/ufs/host/ufs-exynos.c                 | 197 ++++++-
- drivers/ufs/host/ufs-exynos.h                 |  24 +-
- include/dt-bindings/clock/google,gs101.h      |  63 ++
- 18 files changed, 1179 insertions(+), 31 deletions(-)
- create mode 100644 drivers/phy/samsung/phy-gs101-ufs.c
-
+diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+index 1d2bcea41c85..a202fd5d1ead 100644
+--- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+@@ -32,14 +32,15 @@ properties:
+       - google,gs101-cmu-misc
+       - google,gs101-cmu-peric0
+       - google,gs101-cmu-peric1
++      - google,gs101-cmu-hsi2
+ 
+   clocks:
+     minItems: 1
+-    maxItems: 3
++    maxItems: 5
+ 
+   clock-names:
+     minItems: 1
+-    maxItems: 3
++    maxItems: 5
+ 
+   "#clock-cells":
+     const: 1
+@@ -112,6 +113,31 @@ allOf:
+             - const: bus
+             - const: ip
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - google,gs101-cmu-hsi2
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (24.576 MHz)
++            - description: High Speed Interface bus clock (from CMU_TOP)
++            - description: High Speed Interface pcie clock (from CMU_TOP)
++            - description: High Speed Interface ufs clock (from CMU_TOP)
++            - description: High Speed Interface mmc clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: bus
++            - const: pcie
++            - const: ufs_embd
++            - const: mmc_card
++
+ additionalProperties: false
+ 
+ examples:
 -- 
 2.44.0.478.gd926399ef9-goog
 
