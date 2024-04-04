@@ -1,209 +1,123 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBFF74407;
-	Thu,  4 Apr 2024 08:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961B273177;
+	Thu,  4 Apr 2024 08:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712220933; cv=none; b=UZ7GAn7/oRJvhdOMOrkcTMfgL5h2DLRLZdpOzMpqqECKGwopY0LUx+Vcm69LP+MDX7qh2lVDH11hxZNcBE9BtT+HeXDdFurmsOs4Duo4suPzOQLFwNARvjorUyCreTMib5T5dJ7SX/8ycqvO1/xVeB+XJqMQiZZHWLG1Pouw6vE=
+	t=1712221047; cv=none; b=Hrk+arx7wpa60C4WA1qVkisi0sKfj/IjmsS2YwyW9Tk2RVlV7eWGUPC2zW6rLdAvvz5MnyudesdFo96g8Y9aWqTLWllUh6IKdg/kfFKTN71K5OX1ed8G6LiBBn3AjSHCV1+A3PgCTFT+X6GgKxxH5dtranAxahyhKf3IqvQH5Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712220933; c=relaxed/simple;
-	bh=IbH0+gL58TpZYKymHhKNBBLCHtxp95ccm2jwAU9h+Nw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=diyYHm4xqK1sQMY84RAlLPcpHdQNvTRwtmTsqa57uYyzYEhDUjo47No2Q2SyfrckKMODZ6ek/WpFHcjhBCljM3wxwp0F4f6ok0eqTDbVdgWD+ta5hlC7IQYx1q2NokV1alYgZAl+AdDi5HNblS/7eYR2qMDzFel9HGGroRRKOt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xq8Lb2vA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1712221047; c=relaxed/simple;
+	bh=p4+j6w82VtZsXD54otR28kqbdlSqj2lBQn5BULCsTuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMEki8MEAJ+oqFoahCZl66EwxdWIGkzeLuk0CGAJs/06hAlICU/EIZ6vr8LkqqFFF331O3nkFB8i4RZXtr99GgsdkHuL6jdh5yeJGmh26o5H7lnm3MeF5o3U3+un6rEHfJdpfTsD1+S9YNpdKQ7aCYBmEGzN6OfDUKItLkbDJNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrSSdmPM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xq8Lb2vA"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4347dMGH021699;
-	Thu, 4 Apr 2024 08:55:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=dnjXlujvNAYcwAmqpkBNC
-	7FX12TCHJslntuFpg+/2z4=; b=Xq8Lb2vAkkdTATMftSF2W99tmPb8nGdVWh/Ya
-	D0N14IUBUpGwT0iBhWpRZc9XcK6iqJnHdMA47M+cB+LJEbIkjpPrcqjigpA0n3P1
-	2pxkCXhMxivzzdTah6PWnWsoY9+ntxiqiYKuqxD6TwfZ89EGD/gIgqqe9Yjpgnrn
-	YEher379Lr9LdMSYq1anUwK0LmNjNPRtcDEzGfUyg8C4p9HOUQYMXzmX4CT4vBXh
-	Ho17gP6UdovBpPpyoObxWAzrqgyq3rNrE9uevIxk8DXm5vTiSsrjRZ/eEMehrlVS
-	iJyDT91ucp5FnOVvIcxs21ql4hU0N8HMjvdwZ9P52xv0XQKLg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3x9en7106x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Apr 2024 08:55:16 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4348tFAH013401
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 4 Apr 2024 08:55:15 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 4 Apr 2024 01:55:10 -0700
-Date: Thu, 4 Apr 2024 14:25:06 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <djakov@kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v7 1/5] dt-bindings: interconnect: Add Qualcomm IPQ9574
- support
-Message-ID: <Zg5q6mnWtK6hmPBT@hu-varada-blr.qualcomm.com>
-References: <20240403104220.1092431-1-quic_varada@quicinc.com>
- <20240403104220.1092431-2-quic_varada@quicinc.com>
- <58c9b754-b9a7-444d-9545-9e6648010630@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrSSdmPM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 696C3C433C7;
+	Thu,  4 Apr 2024 08:57:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712221046;
+	bh=p4+j6w82VtZsXD54otR28kqbdlSqj2lBQn5BULCsTuI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OrSSdmPMU6cWGOIr9aIskTMnP8lznE37P4IduwDpwKp3RdRq6oxH6mocD8usInBAX
+	 i2A+iyNbl/SPYw5dIBuNlZq/bbGA7xIZiv9wXrh6gQ35UDdVkoiC0/3ZfJTATXOWEA
+	 tTa0HoCmv8io5VFKBeR4xw2WKAh0IAlvoj8lCoFxGvfUkpMM3VSTuFVTwHAuB3ZrU4
+	 hQ5fjsPiYJrsQANelWYTuAOYilDzl1O/RrwmlZ30q+i6kwUkAyIVX/a0oDnTXGEj7L
+	 vouNyKqJNxdmg76aSfA6TdyWaITg8PxUcmixsyBN+ovqOU9OvWsxw8yfeH9sRqpuOD
+	 wsFfMzZRz9HUw==
+Date: Thu, 4 Apr 2024 10:57:23 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	nbd@nbd.name, john@phrozen.org, devicetree@vger.kernel.org,
+	dd@embedd.com, catalin.marinas@arm.com, will@kernel.org,
+	upstream@airoha.com, lorenzo.bianconi83@gmail.com
+Subject: Re: [PATCH 2/4] arm64: dts: airoha: Add EN7581 clock node
+Message-ID: <Zg5rc2GIwpN7f9Z2@lore-desk>
+References: <cover.1712160869.git.lorenzo@kernel.org>
+ <8465b7562bcf53a0adfdd4ae01b3ed94d6d5bc54.1712160869.git.lorenzo@kernel.org>
+ <abff4844-b444-48cc-8dad-18eefa6c386c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oY2uhKuCtxC5QYl0"
 Content-Disposition: inline
-In-Reply-To: <58c9b754-b9a7-444d-9545-9e6648010630@kernel.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: zYBKgQpaYWLdn4xJBS4DYfhhWlPuUjsJ
-X-Proofpoint-ORIG-GUID: zYBKgQpaYWLdn4xJBS4DYfhhWlPuUjsJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-04_05,2024-04-04_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- malwarescore=0 mlxscore=0 bulkscore=0 phishscore=0 spamscore=0
- clxscore=1011 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2404010003 definitions=main-2404040059
+In-Reply-To: <abff4844-b444-48cc-8dad-18eefa6c386c@collabora.com>
 
-On Wed, Apr 03, 2024 at 04:59:40PM +0200, Krzysztof Kozlowski wrote:
-> On 03/04/2024 12:42, Varadarajan Narayanan wrote:
-> > Add interconnect-cells to clock provider so that it can be
-> > used as icc provider.
-> >
-> > Add master/slave ids for Qualcomm IPQ9574 Network-On-Chip
-> > interfaces. This will be used by the gcc-ipq9574 driver
-> > that will for providing interconnect services using the
-> > icc-clk framework.
-> >
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+
+--oY2uhKuCtxC5QYl0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+> Il 03/04/24 18:20, Lorenzo Bianconi ha scritto:
+> > Introduce the Airoha EN7581 clock node in Airoha EN7581 dtsi
+> >=20
+> > Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
+> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 > > ---
-> > v7:
-> > Fix macro names to be consistent with other bindings
-> > v6:
-> > Removed Reviewed-by: Krzysztof Kozlowski
-> > Redefine the bindings such that driver and DT can share them
-> >
-> > v3:
-> > Squash Documentation/ and include/ changes into same patch
-> >
-> > qcom,ipq9574.h
-> > 	Move 'first id' to clock driver
-> >
-> > ---
-> >  .../bindings/clock/qcom,ipq9574-gcc.yaml      |  3 +
-> >  .../dt-bindings/interconnect/qcom,ipq9574.h   | 87 +++++++++++++++++++
-> >  2 files changed, 90 insertions(+)
-> >  create mode 100644 include/dt-bindings/interconnect/qcom,ipq9574.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml
-> > index 944a0ea79cd6..824781cbdf34 100644
-> > --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml
-> > @@ -33,6 +33,9 @@ properties:
-> >        - description: PCIE30 PHY3 pipe clock source
-> >        - description: USB3 PHY pipe clock source
-> >
-> > +  '#interconnect-cells':
-> > +    const: 1
+> >   arch/arm64/boot/dts/airoha/en7581.dtsi | 9 +++++++++
+> >   1 file changed, 9 insertions(+)
+> >=20
+> > diff --git a/arch/arm64/boot/dts/airoha/en7581.dtsi b/arch/arm64/boot/d=
+ts/airoha/en7581.dtsi
+> > index 55eb1762fb11..a1daaaef0de0 100644
+> > --- a/arch/arm64/boot/dts/airoha/en7581.dtsi
+> > +++ b/arch/arm64/boot/dts/airoha/en7581.dtsi
+> > @@ -2,6 +2,7 @@
+> >   #include <dt-bindings/interrupt-controller/irq.h>
+> >   #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +#include <dt-bindings/clock/en7523-clk.h>
+> >   / {
+> >   	interrupt-parent =3D <&gic>;
+> > @@ -150,5 +151,13 @@ uart1: serial@1fbf0000 {
+> >   			interrupts =3D <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
+> >   			clock-frequency =3D <1843200>;
+> >   		};
 > > +
-> >  required:
-> >    - compatible
-> >    - clocks
-> > diff --git a/include/dt-bindings/interconnect/qcom,ipq9574.h b/include/dt-bindings/interconnect/qcom,ipq9574.h
-> > new file mode 100644
-> > index 000000000000..0b076b0cf880
-> > --- /dev/null
-> > +++ b/include/dt-bindings/interconnect/qcom,ipq9574.h
-> > @@ -0,0 +1,87 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> > +#ifndef INTERCONNECT_QCOM_IPQ9574_H
-> > +#define INTERCONNECT_QCOM_IPQ9574_H
-> > +
-> > +#define ICC_ANOC_PCIE0		0
-> > +#define ICC_SNOC_PCIE0		1
-> > +#define ICC_ANOC_PCIE1		2
-> > +#define ICC_SNOC_PCIE1		3
-> > +#define ICC_ANOC_PCIE2		4
-> > +#define ICC_SNOC_PCIE2		5
-> > +#define ICC_ANOC_PCIE3		6
-> > +#define ICC_SNOC_PCIE3		7
-> > +#define ICC_SNOC_USB		8
-> > +#define ICC_ANOC_USB_AXI	9
-> > +#define ICC_NSSNOC_NSSCC	10
-> > +#define ICC_NSSNOC_SNOC_0	11
-> > +#define ICC_NSSNOC_SNOC_1	12
-> > +#define ICC_NSSNOC_PCNOC_1	13
-> > +#define ICC_NSSNOC_QOSGEN_REF	14
-> > +#define ICC_NSSNOC_TIMEOUT_REF	15
-> > +#define ICC_NSSNOC_XO_DCD	16
-> > +#define ICC_NSSNOC_ATB		17
-> > +#define ICC_MEM_NOC_NSSNOC	18
-> > +#define ICC_NSSNOC_MEMNOC	19
-> > +#define ICC_NSSNOC_MEM_NOC_1	20
-> > +
-> > +#define ICC_NSSNOC_PPE		0
-> > +#define ICC_NSSNOC_PPE_CFG	1
-> > +#define ICC_NSSNOC_NSS_CSR	2
-> > +#define ICC_NSSNOC_IMEM_QSB	3
-> > +#define ICC_NSSNOC_IMEM_AHB	4
-> > +
-> > +#define MASTER_ANOC_PCIE0		(ICC_ANOC_PCIE0 * 2)
-> > +#define SLAVE_ANOC_PCIE0		((ICC_ANOC_PCIE0 * 2) + 1)
->
-> Which existing Qualcomm platform has such code?
+> > +		scu: system-controller@1fa20000 {
+>=20
+> Uhm, why is this not a clock-controller but a system-controller?
 
-Existing Qualcomm platforms don't use icc-clk. They use icc-rpm
-or icc-rpmh. clk-cbf-msm8996.c is the only driver that uses icc-clk.
+I used the same approach used for en7523.dtsi. I guess it is done
+that way because the registers come from scu (system control unit)
+regmap, but I guess we can use clock-controller instead.
 
-The icc_clk_register automatically creates master & slave nodes
-for each clk entry provided as input with the node-ids 'n' and
-'n+1'. Since clk-cbf-msm8996.c has only one entry, it could just
-define MASTER_CBF_M4M and SLAVE_CBF_M4M with 0 and 1 and avoid these
-calculations.
+Regards,
+Lorenzo
 
-However, ipq9574 gives an array of clock entries as input to
-icc_clk_register. To tie the order/sequence of these clock
-entries correctly with the node-ids, this calculation is needed.
+>=20
+> Cheers,
+> Angelo
+>=20
+> > +			compatible =3D "airoha,en7581-scu";
+> > +			reg =3D <0x0 0x1fa20000 0x0 0x400>,
+> > +			      <0x0 0x1fb00000 0x0 0x1000>,
+> > +			      <0x0 0x1fbe3400 0x0 0xfc>;
+> > +			#clock-cells =3D <1>;
+> > +		};
+> >   	};
+> >   };
+>=20
+>=20
+>=20
 
-> This is the third time I am asking for consistent headers. Open
-> existing, recently added headers and look how it is done there. Why?
-> Because I am against such calculations and see no reason for them.
+--oY2uhKuCtxC5QYl0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Apologies. Regret that I have to trouble you.
+-----BEGIN PGP SIGNATURE-----
 
-In this ipq9574 case, have to reconcile between the following
-feedbacks.
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZg5rcwAKCRA6cBh0uS2t
+rFDOAQCeK5rxO++40bOf8JtWRi4HTU3UB4MBOHkl4dxTc5ZIfgD+LLWOVZKidKCV
+njrOALciciq4vePFmNgL0YLRMfxxyQs=
+=k1+U
+-----END PGP SIGNATURE-----
 
-1. https://lore.kernel.org/linux-arm-msm/fe40b307-26d0-4b2a-869b-5d093415b9d1@linaro.org/
-   We could probably use indexed identifiers here to avoid confusion:
-   [ICC_BINDING_NAME] = CLK_BINDING_NAME
-
-2. https://lore.kernel.org/linux-arm-msm/95f4e99a60cc97770fc3cee850b62faf.sboyd@kernel.org/
-   Are these supposed to be in a dt-binding header?
-
-3. https://lore.kernel.org/linux-arm-msm/031d0a35-b192-4161-beef-97b89d5d1da6@linaro.org/
-   Do you use them as well in the DTS?
-
-Having the defines (with the calculations) seemed to to comply
-with the above three feedbacks.
-
-Please let me know if this can be handled in a different way that
-would be consistent with other Qualcomm platforms.
-
-Thanks
-Varada
+--oY2uhKuCtxC5QYl0--
