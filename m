@@ -1,60 +1,60 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34E72574F
-	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 06:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3337548F1
+	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 06:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712212610; cv=none; b=lUo6L0afbxYj9HtOhxXCr1oanNM2wSnaKSWN78gJ5ffOVL7aaN1KXDBIaTlkVgFBxUH8tVvbPn9M7GQ+eJ11oBgLLuYy29q49Nu5dhUKnJbwKZG1HXuaQU2jDbXJc62Txhaswc1ZCHgclD7gzuBXanaUTx/LT9avXSt6bySsDWA=
+	t=1712213873; cv=none; b=KV8YuqRvF1XKW/MKooBw2ELIHklwlP3Q/pT2dxmwPndekt/yddflL52iKeD9+tHZo9ep5lkbO68Q/ZMM8MTxFliNY7gjdMrv9dsG6iRMI+1d+sLWLuxAWOdq9MflbAjzsSYs9rSxCrTkd7Jud0UKblsDjRnibj4PtB6iw1rWw4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712212610; c=relaxed/simple;
-	bh=fXnxRFmk8goKBrgIHEkdPt7J1ihXSLbvXazoGJv9RCU=;
+	s=arc-20240116; t=1712213873; c=relaxed/simple;
+	bh=hQkdYh+HUV0aRV5dVMzVQEI5aCSRJjFERFjv3J/5dCU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fyw1pTMIaTXbeM+/sAYPo7EnYpY8SxMxstW8L3GO63Iz//BxbkEEEMVhI7Xgc14CjGhOqCBHbYFJaZFAJg9u98yoOdkUzPLaKk54uHe0KG2Gv6hWNdXpEtZ1JyQN0Oyxw+Da9F10ediRdchrtz33+CwtRYHobziuMNJcW0dt+cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W4Bv9He5; arc=none smtp.client-ip=209.85.167.41
+	 In-Reply-To:Content-Type; b=g3KpRZeY38dpTigmHrXKxycvGkFEBBvE9p01w0Alb0DnDYHhjnHbxNAObpMNlAPtxsws/FEqYQ811z/FRX0GeVYX57NJEbNFTON7Qlpv4P8aAake3N0Fvjx5A4PuMOXFie0DCBcCfz2LncQAz7EyqhWo3zGWj7Gdhgfs4aBxXco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L4hgbFQV; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W4Bv9He5"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-516c1bbe314so942189e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 23:36:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L4hgbFQV"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-56e0c00e7fcso622239a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 23:57:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712212606; x=1712817406; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712213869; x=1712818669; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=2zKAxFOY7Srl3ScO6WnUAH2vVBLJhCxKCIkxZt7ZVco=;
-        b=W4Bv9He5l+i/t/Ts7ZY5SXkRGGDgHd1Qcf3b5Ba+GA1J6oMsaiW3zyQKWkl67PYAv4
-         0k3CZ7Uf0QUaih8aYlr+SjrjVSo9y+YHuW/wzkCs3KyiyH4IkK+ZgJuPraC2sAikxZcH
-         QeHBdqmOWT58TT5AvlG5onImX/sRJ7tTnhGw3BjFGe2HCQHS0JahOo8La4Vs4ZNct5Kk
-         TfBtA1nLECOtnWjsZC49788OQPk/r+4SGrudsK95A+HHWL1glecaClE7pJKGAKqPputf
-         4x7Wj05lpjCiTCzKAhvGbVk8W1DeNEvKnjbWMyUQxpAvn3PCvCBEgNCf73xAm3Wx83Ox
-         3jmg==
+        bh=BgbRn3a3/qSKac3ds9oVsAIXFYLFkXSa0lVEp4UKmlA=;
+        b=L4hgbFQV7ZN3VmWxJwGn6re3Nj0Von0fOli6SbyDrtNFDETIXFPzjUC61hAP6DVxcB
+         TOkKV3qq5ZFfToM4R5MiFBFwB0yF/zUv4/Y8sFYJME/TCZ3s9EJu645iHY4Pg58tqLkg
+         /uXdUV5Zx20SdJn3Nkuv1cvFuw/JvUr+s2RhiFy09/UI7n5CsBiE5sHGVi6vx47gGmMi
+         b9z8cC8viWblWL+oEYfq6d7pmNve7HBQJbyIZoFfMw5ZVDk/LYBbuynQAQeLwkppBhHY
+         /PLgbPbjXbninOD5qvX0KETTQiIj+upWlrB1xSvh7fMQNZw+LIf/Zj8AFUTVnO6Zypzp
+         Lh9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712212606; x=1712817406;
+        d=1e100.net; s=20230601; t=1712213869; x=1712818669;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2zKAxFOY7Srl3ScO6WnUAH2vVBLJhCxKCIkxZt7ZVco=;
-        b=ih9lWu9UYBg0fCikB8LB0A228OugzYXTlw9/Lp8rxo5SwkJRP77P/DBHuVFpks0sDN
-         1oZiW+YqLFR8Gyg025S071er61VpCo/UiIqt4d+yxLUMBfdKsTjfDi/D6pHa2Bg+PeLc
-         c2FbR0xT/ljLFA902+dP9MexAm/7a01HGhkxQNeDkVs+ZZ1VC94hFaYC34pWY65izum7
-         2xpYTDLaskchk8gze9GgpfgQ6Ac8P1+5xz2pKsf6WT+QaG2+zLnBH6S4Rm/6JX7EYu9Z
-         qEBKW6Xpeg+c0D+OKnfhkrtyKxv+gxeQXt7dIkTv+AFy6rq5JTg+nRESZcKKtYDHakem
-         tLoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUV1TAjTEjZLuR6yRJ5h/53Sc2wAorEPIxZ/8bxE1X2McWOoP3+nMe7hDMpm9HDyxqUmagxjfDmQ/pgrPzdEbwgi5Nd9Wd0x9N+
-X-Gm-Message-State: AOJu0Yy4zI/Z22M+tgAM02rNecWwdM7jkSckBfG/Orv/vUBb6baBk7tL
-	spbjprWEHVxhQ/bgQvNM1X6I7zOffGZ9tujb8swvTI0argTlqIilHCPICPeBOP0=
-X-Google-Smtp-Source: AGHT+IGAojjYjuQHbsZ23M5TUMeoOaZmWr8G+SCEhCS4dvxhe6ieyt4tVHaLgJej+gwKtAG8GNIHKg==
-X-Received: by 2002:a05:6512:3b99:b0:516:bea2:5931 with SMTP id g25-20020a0565123b9900b00516bea25931mr1433669lfv.23.1712212606016;
-        Wed, 03 Apr 2024 23:36:46 -0700 (PDT)
+        bh=BgbRn3a3/qSKac3ds9oVsAIXFYLFkXSa0lVEp4UKmlA=;
+        b=gvW5d8MhPno5FjVa5EPqQ6E9TKV1BFooeph+dp22/EgW70M5byR7b6xLa85e9JpwKs
+         moYkPs2Mb48mftsT2RwAkC2z4ftDcAZvZ4ttYKT+sSGb1GbJiOrCU+ot3IMlXnWO3j6d
+         eTouEE6V/3+QUa95oaESVNYtG0iRqBe+Ut02UW2ktmcERSgng89QgbRqH0/NTEm234+L
+         8EVcOYlC/SuJ1w7UMws4Y/xl6LPKHaKxtD+w3YTlI2E+c7MripRn83NDDMsiuj+UtDcx
+         ZM9RcDjpRgzQRneB1Tg14KS9ZXi2XPiK/E0Ogay1JV3kawCbEPiwhZUnu38hRXuTdQhq
+         CuWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVh+uc+ig1DuuMCpvRRitycBZdh4MUqRX0ty8qEQDLQIe+yPo4nMwLOFeFr8aDv//QNd2UgO/RigtU9huGBGqmIDPhSRJiKwAYI
+X-Gm-Message-State: AOJu0Yxqs0kMIkm+77DcgPUBfMIg12isx3HDngAzYbM9IlnWYvUfKFch
+	jxzoEwUVXlQrwf0fIuwa/suNLeRykkeyXY2aTR5Uzb5Qc7MOcQTLXS6o2Amjk5A=
+X-Google-Smtp-Source: AGHT+IFuAfm1k/JXtICehvmeI7vfvHGFbdjlnmqMs+sHttt3SK3e2S+nxnYd4krGOU+NMDziVpCMrg==
+X-Received: by 2002:a17:906:e0cd:b0:a4e:2b75:e1de with SMTP id gl13-20020a170906e0cd00b00a4e2b75e1demr993298ejb.22.1712213869240;
+        Wed, 03 Apr 2024 23:57:49 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id p6-20020a170906a00600b00a46d04b6117sm8668766ejy.64.2024.04.03.23.36.44
+        by smtp.gmail.com with ESMTPSA id n7-20020a170906840700b00a46caa13e67sm8660059ejx.105.2024.04.03.23.57.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Apr 2024 23:36:45 -0700 (PDT)
-Message-ID: <95d194ed-86fe-45df-88f1-ae460eb36eaf@linaro.org>
-Date: Thu, 4 Apr 2024 08:36:43 +0200
+        Wed, 03 Apr 2024 23:57:48 -0700 (PDT)
+Message-ID: <8eb6d39c-63a3-441c-8d74-2023bb82c0e2@linaro.org>
+Date: Thu, 4 Apr 2024 08:57:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,16 +62,50 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] clk: en7523: add EN7581 support
-To: Lorenzo Bianconi <lorenzo@kernel.org>, linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org,
- linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, nbd@nbd.name,
- john@phrozen.org, devicetree@vger.kernel.org, dd@embedd.com,
- catalin.marinas@arm.com, will@kernel.org, upstream@airoha.com,
- lorenzo.bianconi83@gmail.com, angelogioacchino.delregno@collabora.com
-References: <cover.1712160869.git.lorenzo@kernel.org>
- <3aaf638b846ecfdbfc1c903206b7d519d56c9130.1712160869.git.lorenzo@kernel.org>
+Subject: Re: [RESEND v7 26/37] dt-bindings: vendor-prefixes: Add iodata
+To: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
+ Heiko Stuebner <heiko.stuebner@cherry.de>, Shawn Guo <shawnguo@kernel.org>,
+ Sebastian Reichel <sre@kernel.org>, Chris Morgan <macromorgan@hotmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck
+ <linux@roeck-us.net>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ Javier Martinez Canillas <javierm@redhat.com>, Guo Ren <guoren@kernel.org>,
+ Azeem Shaikh <azeemshaikh38@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Manikanta Guntupalli <manikanta.guntupalli@amd.com>,
+ Anup Patel <apatel@ventanamicro.com>, Biju Das <biju.das.jz@bp.renesas.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-fbdev@vger.kernel.org
+References: <cover.1712207606.git.ysato@users.sourceforge.jp>
+ <4649938dc48da6e449ef6f1987c7739ba3a80b42.1712207606.git.ysato@users.sourceforge.jp>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -118,58 +152,36 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <3aaf638b846ecfdbfc1c903206b7d519d56c9130.1712160869.git.lorenzo@kernel.org>
+In-Reply-To: <4649938dc48da6e449ef6f1987c7739ba3a80b42.1712207606.git.ysato@users.sourceforge.jp>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/04/2024 18:20, Lorenzo Bianconi wrote:
-> Introduce EN7581 clock support to clk-en7523 driver.
+On 04/04/2024 07:14, Yoshinori Sato wrote:
+> Add IO DATA DEVICE INC.
+> https://www.iodata.com/
 > 
-> Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
+This is a friendly reminder during the review process.
 
-> +	return 0;
-> +}
-> +
->  static int en7523_clk_probe(struct platform_device *pdev)
->  {
->  	struct device_node *node = pdev->dev.of_node;
-> @@ -306,6 +413,12 @@ static int en7523_clk_probe(struct platform_device *pdev)
->  	if (IS_ERR(np_base))
->  		return PTR_ERR(np_base);
->  
-> +	if (of_device_is_compatible(node, "airoha,en7581-scu")) {
+It looks like you received a tag and forgot to add it.
 
-Having matching and compatible comparisons inside various code is
-discouraged. Does not scale. Use driver/match data to store some sort of
-flags and check for the flag or some other parameter. The best if
-compatible appears once and only once: in of_device_id.
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
-> +		r = en7581_clk_hw_init(pdev, base, np_base);
-> +		if (r)
-> +			return r;
-> +	}
-> +
->  	clk_data = devm_kzalloc(&pdev->dev,
->  				struct_size(clk_data, hws, EN7523_NUM_CLOCKS),
->  				GFP_KERNEL);
-> @@ -329,8 +442,15 @@ static const struct clk_ops en7523_pcie_ops = {
->  	.unprepare = en7523_pci_unprepare,
->  };
->  
-> +static const struct clk_ops en7581_pcie_ops = {
-> +	.is_enabled = en7581_pci_is_enabled,
-> +	.prepare = en7581_pci_prepare,
-> +	.unprepare = en7581_pci_unprepare,
-> +};
-> +
->  static const struct of_device_id of_match_clk_en7523[] = {
->  	{ .compatible = "airoha,en7523-scu", .data = &en7523_pcie_ops },
-> +	{ .compatible = "airoha,en7581-scu", .data = &en7581_pcie_ops },
->  	{ /* sentinel */ }
->  };
->  
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
 
 Best regards,
 Krzysztof
