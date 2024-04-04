@@ -1,154 +1,201 @@
-Received: from sakura.ysato.name (ik1-413-38519.vs.sakura.ne.jp [153.127.30.23])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C1E134409;
-	Thu,  4 Apr 2024 05:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=153.127.30.23
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA6A22611
+	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 05:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712207768; cv=none; b=kJk+92CdMEtPhbZMWB3cBiV3wANyEUWRLKBATrcwCG3TsKAjQn7FKPhO42NOdzJPFRmqfGDp2QE6LGUYEGVM/HOLbWT0TxRwwZvmMpjQOMPU/fa/zRc/1pwcq5B/LzlJvAnL2EBXhpP6SPox2VRpuE9EcIe2BQAk9x880ki5LiE=
+	t=1712208622; cv=none; b=IRgZi1Nd0gtqtEMCzuQwkwiQ96pmgcFqJkX34mNNZvLcHCsKQzd83l4eM/pBL7abKBKBxSeo8nwouIwmXJ1jxv5lQXzrwjUy4eyr2Xrw8WPfVFXY3XBvJH1lKzFB2Sv5RmGB1NH86l0bcrpO71mi8+XSj+dT0WF/pMuil0CWHzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712207768; c=relaxed/simple;
-	bh=HfCnaCGFqb9NsLZ2tSL9t0qOwxfZXHeNec47VwxbtkU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WLoUD9JyhVOBgniC73UrWkDcM5wchpuZAkRlL98JOdoa9FiwDZ6K2Q2GeYv6LKyawlrwl4i7XTVBh17muQcNIlUxODq3NIZ8bC8C0M10Zp8TsXOkk3mnaZRneuGjvAQSAtQlRLjbkOLc5ftZBxGG04zNBMNA8R6XH/KH5yA1P+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp; spf=fail smtp.mailfrom=users.sourceforge.jp; arc=none smtp.client-ip=153.127.30.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=users.sourceforge.jp
-Received: from SIOS1075.ysato.name (al128006.dynamic.ppp.asahi-net.or.jp [111.234.128.6])
-	by sakura.ysato.name (Postfix) with ESMTPSA id 57CE01C1082;
-	Thu,  4 Apr 2024 14:16:03 +0900 (JST)
-From: Yoshinori Sato <ysato@users.sourceforge.jp>
-To: linux-sh@vger.kernel.org
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Lee Jones <lee@kernel.org>,
-	Helge Deller <deller@gmx.de>,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	David Rientjes <rientjes@google.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Baoquan He <bhe@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Guo Ren <guoren@kernel.org>,
-	Azeem Shaikh <azeemshaikh38@gmail.com>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Manikanta Guntupalli <manikanta.guntupalli@amd.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-pci@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-Subject: [RESEND v7 37/37] sh: j2_defconfig: update
-Date: Thu,  4 Apr 2024 14:14:48 +0900
-Message-Id: <76be357a4985b2cb8b404d5dc88357444e62bd09.1712207606.git.ysato@users.sourceforge.jp>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1712207606.git.ysato@users.sourceforge.jp>
-References: <cover.1712207606.git.ysato@users.sourceforge.jp>
+	s=arc-20240116; t=1712208622; c=relaxed/simple;
+	bh=hrT6CSkkEiHpCL2254tYrBO7lscNQ5B7mlo/PBHS4j0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qLYyjJ81qldcjHMBY/TdeXzIQzDRVFPaP7Ymyxj4hLPnVa08wwCkKjM19w81SQD6iD+yQ1fK6Yrp7qBrwt1r56bRpodNy0paoKzBeOqCX8YMvepeu3bRk8zDD3oyryR+LMZkqOMMzRsYtMTLkOawsOzB2GrkQahZ97JcwuBEaLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bSqC/7Wo; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bSqC/7Wo"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dd10ebcd702so716164276.2
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 22:30:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1712208619; x=1712813419; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dyCeaWOBhvl6G+/jJPj4WdMHHOTtXZ5RKep0At0rnzE=;
+        b=bSqC/7WoEKjeLBagHHQRVLrCAnZqnGOYuY3dE1kpze4f+wTIVMtf96YNg6Fkw9kjVt
+         lvw32mLtESFM+qvHkD9TO7Mup9cr3vyq38TlZ7brIrQdrmkz2e3cquAXSZHXHAJvpjxp
+         0E+8SG6mfhwYWUiRvzB26GguW8GRMVEy6ycgCI9DP6nCvO2T35UF/7Uele5Pn7aMhDJ8
+         f3Bud8+uC5IjpV1uns2GOt3U8SiuQ/8917g065Bb+xsQIlRJAsXkEuCAKmVmTZbwT55f
+         r94s4Eu5+AqmTaJmHZFEVuHYqlZODvif85p4U8mlIDBSDxVfgIqYlhdc6MLmcgC08h5M
+         evAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712208619; x=1712813419;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dyCeaWOBhvl6G+/jJPj4WdMHHOTtXZ5RKep0At0rnzE=;
+        b=u7CVHjajdVH7MzaDksJhmDstJN1R6cmlrmh9mUvYP5cTYgiLAoiDshrBhl0jxY0kLf
+         uWgX3OUN/u+JOVkAd/vxen6QTvFjkI9L1KMjKbnZHfd+7BBsRlLV9HRDT7u4QiuWMG2v
+         IP4U1XOkw7ZyiSSZZXby4fTUhPlcOQwPeILSKoHj9VjONVnKuiFajbMwtru/CcXuAHo0
+         tSYRrAunrVv5PktstI1/hFplGSfXAV7bsDEvfGVCUGUhkQaAIWRI0eidHiziMDK4c/XH
+         mNNGTQWPtIGVWUWfz14BFpPUER0WBxWh3pjAsu3XWDISpp+SWdS5rlg5alPqEpib5OgO
+         E7zw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZGEBgqsDqcwpsSki2tJ4/RPK7w7uLOEiDNbFkU1xwodQwY5iqj/GLV664iq36/ImL1edonUaORqWeVr+VEMCd6FQrN6g4iCO9
+X-Gm-Message-State: AOJu0Yw1PZNjwZGFYmtTdkLTns30nqIFXFLudkevFl57xEem0fDJFAkf
+	sxLJRgl2AKZgFbB49wERCobw+6/IDVUI2L6G6yJcT9Xp6mVZvBijX2XF5BUlxKH87k0sxruNk1R
+	IRWafXpYG4Gbe1ZBzMq0ARf0TsWbsENS9jlELrg==
+X-Google-Smtp-Source: AGHT+IGKRxJEtdCBGlcL3OcZ4OT75D2VZtdOqbw13TdwBYkQp+Ruc2ZWNb86Z/W+QS4HrKFAfGGKYy4zaXWCiIsdQH4=
+X-Received: by 2002:a25:5f45:0:b0:ddd:696a:8656 with SMTP id
+ h5-20020a255f45000000b00ddd696a8656mr1475611ybm.41.1712208619210; Wed, 03 Apr
+ 2024 22:30:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240321092529.13362-1-quic_jkona@quicinc.com>
+ <20240321092529.13362-7-quic_jkona@quicinc.com> <CAA8EJppHGS+W-aiXvJ2cE=jCbua8Y0Q+zv_QTs+C9V5+Y1vuZg@mail.gmail.com>
+ <008d574f-9c9e-48c6-b64e-89fb469cbde4@quicinc.com> <b3464321-0c52-4c41-9198-e9e7b16aa419@quicinc.com>
+ <CAA8EJpqDwCVAjDphnC-HdfseMJ-xd8VVxb5+9UcGEcKLcn-heg@mail.gmail.com> <fba2474e-31a6-4fef-acf9-7069933584c8@quicinc.com>
+In-Reply-To: <fba2474e-31a6-4fef-acf9-7069933584c8@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 4 Apr 2024 08:30:07 +0300
+Message-ID: <CAA8EJprfaALkQe-wUrBow6B1A66ro0AoVpfnQJLXgqFmL8isNQ@mail.gmail.com>
+Subject: Re: [PATCH V2 RESEND 6/6] arm64: dts: qcom: sm8650: Add video and
+ camera clock controllers
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-I've changed some symbols related to DeviceTree,
-so let's take care of those changes.
+On Thu, 4 Apr 2024 at 08:13, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+>
+>
+>
+> On 4/3/2024 9:24 PM, Dmitry Baryshkov wrote:
+> > On Wed, 3 Apr 2024 at 10:16, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+> >>
+> >>
+> >>
+> >> On 3/25/2024 11:38 AM, Jagadeesh Kona wrote:
+> >>>
+> >>>
+> >>> On 3/21/2024 6:43 PM, Dmitry Baryshkov wrote:
+> >>>> On Thu, 21 Mar 2024 at 11:27, Jagadeesh Kona <quic_jkona@quicinc.com>
+> >>>> wrote:
+> >>>>>
+> >>>>> Add device nodes for video and camera clock controllers on Qualcomm
+> >>>>> SM8650 platform.
+> >>>>>
+> >>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> >>>>> ---
+> >>>>>    arch/arm64/boot/dts/qcom/sm8650.dtsi | 28 ++++++++++++++++++++++++++++
+> >>>>>    1 file changed, 28 insertions(+)
+> >>>>>
+> >>>>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> >>>>> b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> >>>>> index 32c0a7b9aded..d862aa6be824 100644
+> >>>>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> >>>>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> >>>>> @@ -4,6 +4,8 @@
+> >>>>>     */
+> >>>>>
+> >>>>>    #include <dt-bindings/clock/qcom,rpmh.h>
+> >>>>> +#include <dt-bindings/clock/qcom,sm8450-videocc.h>
+> >>>>> +#include <dt-bindings/clock/qcom,sm8650-camcc.h>
+> >>>>>    #include <dt-bindings/clock/qcom,sm8650-dispcc.h>
+> >>>>>    #include <dt-bindings/clock/qcom,sm8650-gcc.h>
+> >>>>>    #include <dt-bindings/clock/qcom,sm8650-gpucc.h>
+> >>>>> @@ -3110,6 +3112,32 @@ opp-202000000 {
+> >>>>>                           };
+> >>>>>                   };
+> >>>>>
+> >>>>> +               videocc: clock-controller@aaf0000 {
+> >>>>> +                       compatible = "qcom,sm8650-videocc";
+> >>>>> +                       reg = <0 0x0aaf0000 0 0x10000>;
+> >>>>> +                       clocks = <&bi_tcxo_div2>,
+> >>>>> +                                <&gcc GCC_VIDEO_AHB_CLK>;
+> >>>>> +                       power-domains = <&rpmhpd RPMHPD_MMCX>;
+> >>>>> +                       required-opps = <&rpmhpd_opp_low_svs>;
+> >>>>
+> >>>> The required-opps should no longer be necessary.
+> >>>>
+> >>>
+> >>> Sure, will check and remove this if not required.
+> >>
+> >>
+> >> I checked further on this and without required-opps, if there is no vote
+> >> on the power-domain & its peer from any other consumers, when runtime
+> >> get is called on device, it enables the power domain just at the minimum
+> >> non-zero level. But in some cases, the minimum non-zero level of
+> >> power-domain could be just retention and is not sufficient for clock
+> >> controller to operate, hence required-opps property is needed to specify
+> >> the minimum level required on power-domain for this clock controller.
+> >
+> > In which cases? If it ends up with the retention vote, it is a bug
+> > which must be fixed.
+> >
+>
+> The minimum non-zero level(configured from bootloaders) of MMCX is
+> retention on few chipsets but it can vary across the chipsets. Hence to
+> be on safer side from our end, it is good to have required-opps in DT to
+> specify the minimum level required for this clock controller.
 
-Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
----
- arch/sh/configs/j2_defconfig | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+We are discussing sm8650, not some abstract chipset. Does it list
+retention or low_svs as a minimal level for MMCX?
 
-diff --git a/arch/sh/configs/j2_defconfig b/arch/sh/configs/j2_defconfig
-index 2eb81ebe3888..cdc8ed244618 100644
---- a/arch/sh/configs/j2_defconfig
-+++ b/arch/sh/configs/j2_defconfig
-@@ -1,18 +1,15 @@
--CONFIG_SMP=y
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
- CONFIG_CPU_SUBTYPE_J2=y
- CONFIG_MEMORY_START=0x10000000
--CONFIG_MEMORY_SIZE=0x04000000
- CONFIG_CPU_BIG_ENDIAN=y
--CONFIG_SH_DEVICE_TREE=y
--CONFIG_SH_JCORE_SOC=y
-+CONFIG_SH_OF_BOARD=y
- CONFIG_HZ_100=y
-+CONFIG_SMP=y
- CONFIG_CMDLINE_OVERWRITE=y
- CONFIG_CMDLINE="console=ttyUL0 earlycon"
--CONFIG_BINFMT_ELF_FDPIC=y
- CONFIG_BINFMT_FLAT=y
- CONFIG_NET=y
- CONFIG_PACKET=y
-@@ -21,7 +18,6 @@ CONFIG_INET=y
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
- CONFIG_NETDEVICES=y
--CONFIG_SERIAL_EARLYCON=y
- CONFIG_SERIAL_UARTLITE=y
- CONFIG_SERIAL_UARTLITE_CONSOLE=y
- CONFIG_I2C=y
-@@ -30,8 +26,6 @@ CONFIG_SPI_JCORE=y
- CONFIG_WATCHDOG=y
- CONFIG_MMC=y
- CONFIG_MMC_SPI=y
--CONFIG_CLKSRC_JCORE_PIT=y
--CONFIG_JCORE_AIC=y
- CONFIG_EXT4_FS=y
- CONFIG_VFAT_FS=y
- CONFIG_FAT_DEFAULT_IOCHARSET="ascii"
-@@ -40,3 +34,4 @@ CONFIG_NLS_DEFAULT="utf8"
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ASCII=y
- CONFIG_NLS_UTF8=y
-+CONFIG_INIT_STACK_NONE=y
+>
+> Thanks,
+> Jagadeesh
+>
+> >>
+> >> Thanks,
+> >> Jagadeesh
+> >>
+> >>>
+> >>>>> +                       #clock-cells = <1>;
+> >>>>> +                       #reset-cells = <1>;
+> >>>>> +                       #power-domain-cells = <1>;
+> >>>>> +               };
+> >>>>> +
+> >>>>> +               camcc: clock-controller@ade0000 {
+> >>>>> +                       compatible = "qcom,sm8650-camcc";
+> >>>>> +                       reg = <0 0x0ade0000 0 0x20000>;
+> >>>>> +                       clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+> >>>>> +                                <&bi_tcxo_div2>,
+> >>>>> +                                <&bi_tcxo_ao_div2>,
+> >>>>> +                                <&sleep_clk>;
+> >>>>> +                       power-domains = <&rpmhpd RPMHPD_MMCX>;
+> >>>>> +                       required-opps = <&rpmhpd_opp_low_svs>;
+> >>>>> +                       #clock-cells = <1>;
+> >>>>> +                       #reset-cells = <1>;
+> >>>>> +                       #power-domain-cells = <1>;
+> >>>>> +               };
+> >>>>> +
+> >>>>>                   mdss: display-subsystem@ae00000 {
+> >>>>>                           compatible = "qcom,sm8650-mdss";
+> >>>>>                           reg = <0 0x0ae00000 0 0x1000>;
+> >>>>> --
+> >>>>> 2.43.0
+> >>>>>
+> >>>>>
+> >>>>
+> >>>>
+> >
+> >
+> >
+
+
+
 -- 
-2.39.2
-
+With best wishes
+Dmitry
