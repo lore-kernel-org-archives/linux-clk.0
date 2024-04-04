@@ -1,138 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F98E67A15;
-	Thu,  4 Apr 2024 08:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FCA7351C;
+	Thu,  4 Apr 2024 08:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712220198; cv=none; b=g+oI1IZsgMobtw+S5pUGGrc8qoQAkJlwwODMomQQvYs35fscNyl6YeCdp1lXQcSmkvZqD6aJYRhtOxb2GhM4jJAEHlW5rV36XB2CoEfHyXn8QSs6CAMwg20/Lru9amMo67UluzgUZtCNWwEVShrkZ0L+n6dkdfCPAXWRCYvEgZU=
+	t=1712220466; cv=none; b=Iq4zZ+hptKmP+2k2zh+LX/k1PIHk6GCIdTsK2L35kV3/E8fYaifoaUO0sDXABnkkLE9PfvCcu5osmVQj7d7YdWV7VrYqbZasKigTJ9klc7EGwhWiYjlKGqokzEA0oSsMkGkQYVjmzIbpuTEqM0wpbnPUVd0wIPoneVF1IQwNkv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712220198; c=relaxed/simple;
-	bh=K/2kqRefdjaSq6RSFSje8rLRMQvvvg2h/VDyWIAvNtM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVh7BjPQY01ZYiD08D1V4lun966AB1lksWl9yx47yFDx4oXf2aTSTNmCPeCdj/FO7tKVslohM6l1y0evU2AcoPiNRxRQ/NZPbHr1C91M85YAP5V74BRLcwfDMspUhjArObrpqNQ3oU/vxYzp2hFnCXvSin6muDnQ/vHw3Rz2mV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOmr+Kj/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712220466; c=relaxed/simple;
+	bh=Y182C7DHHlXRpsI/4So2LrDCDd3eIgoVdb4rF2XmLkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=noWp9FtN0sN8bkPOEniAoTAlAyTWeKZ744BOl0fTKZTnLvccfAe4Rn3bZ2GEeQXlcFWvsafOMZmivn/TF7eBS11301yEYngk9Hpc7/fgZMh0uBBH4aQTkYH957Th12IP95j5rsr38rMhJhiLyzmyjFmYiwaomrZQQHMs9LclfWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jr6YwK7o; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOmr+Kj/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB383C433C7;
-	Thu,  4 Apr 2024 08:43:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712220198;
-	bh=K/2kqRefdjaSq6RSFSje8rLRMQvvvg2h/VDyWIAvNtM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rOmr+Kj/+Y5R96IOjw3hCuE+g6j0GF90jlc0BdbF1n7+Oc5UAcGbTjAd+g9j0HKAZ
-	 6eqDz/KTWUTTXSHIOhjWqjxfQTs/unIJLfsf7wKWB4bXt9zoPoIADmnJ7mw3vKrCAt
-	 aYveqtVQ6wb9WyB8XKPxlQK6zNzY0arNXNE64k36iGk4Os3ML9LSI/tea5gv9s0jNg
-	 GRk+48LbFfqjfRbxrDmBap/f3dNNWi4qQdN92KmajCTG8SEZP4exj/T+hDsLbnKJZJ
-	 N1FznPbTSKe/EGE0Ssy5cvP4mXNpd/alB3QIYtoxQd9TR4C0/bl+lyX8pQZUU2NucQ
-	 RDECPr6NbnxVg==
-Date: Thu, 4 Apr 2024 10:43:14 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	nbd@nbd.name, john@phrozen.org, devicetree@vger.kernel.org,
-	dd@embedd.com, catalin.marinas@arm.com, will@kernel.org,
-	upstream@airoha.com, lorenzo.bianconi83@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Subject: Re: [PATCH 1/4] dt-bindings: clock: airoha: add EN7581 binding
-Message-ID: <Zg5oIhcW4pFQNTwm@lore-desk>
-References: <cover.1712160869.git.lorenzo@kernel.org>
- <1988a4460ed327bea7841f6a0f3a756dd7cec4bb.1712160869.git.lorenzo@kernel.org>
- <65e7617a-9e7b-4dea-a98c-31502222543a@linaro.org>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jr6YwK7o"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1712220462;
+	bh=Y182C7DHHlXRpsI/4So2LrDCDd3eIgoVdb4rF2XmLkE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jr6YwK7ouSyScTHG0TtbMMSIncvB2zzRBZElT2Q4Lztxu9RFhnMEcXGsaij7uxYqW
+	 Dc0ia0MTv7YgQnh+IOwSPGMHTs4KyGHeOzu2Nn2UtuoqRZMigHFRzfJYS1SrxE5iJV
+	 bwddtl1LBKBed39jiX92MO4gczFYL9TKDZYzvdGK5COrQitjmrgEuwOSFgpFuGRvZN
+	 q92XGbKA2wKFxg2gj0B7H8xyJC8t6G7LjbcVskf6mCp7t1g9AhxNS8HS3mFecKyGic
+	 YyhWJf7ZCXSIJXjYbOVMHPpR6N1UPuv9xzJr6CPgQUPqwcSxj3PTqDYaPYZ4+6DrVY
+	 CrPxKl5M66+uQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D3C393780029;
+	Thu,  4 Apr 2024 08:47:41 +0000 (UTC)
+Message-ID: <abff4844-b444-48cc-8dad-18eefa6c386c@collabora.com>
+Date: Thu, 4 Apr 2024 10:47:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2+PFIIQN5kSAMM2T"
-Content-Disposition: inline
-In-Reply-To: <65e7617a-9e7b-4dea-a98c-31502222543a@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] arm64: dts: airoha: Add EN7581 clock node
+To: Lorenzo Bianconi <lorenzo@kernel.org>, linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org,
+ linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, nbd@nbd.name,
+ john@phrozen.org, devicetree@vger.kernel.org, dd@embedd.com,
+ catalin.marinas@arm.com, will@kernel.org, upstream@airoha.com,
+ lorenzo.bianconi83@gmail.com
+References: <cover.1712160869.git.lorenzo@kernel.org>
+ <8465b7562bcf53a0adfdd4ae01b3ed94d6d5bc54.1712160869.git.lorenzo@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <8465b7562bcf53a0adfdd4ae01b3ed94d6d5bc54.1712160869.git.lorenzo@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Il 03/04/24 18:20, Lorenzo Bianconi ha scritto:
+> Introduce the Airoha EN7581 clock node in Airoha EN7581 dtsi
+> 
+> Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> ---
+>   arch/arm64/boot/dts/airoha/en7581.dtsi | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/airoha/en7581.dtsi b/arch/arm64/boot/dts/airoha/en7581.dtsi
+> index 55eb1762fb11..a1daaaef0de0 100644
+> --- a/arch/arm64/boot/dts/airoha/en7581.dtsi
+> +++ b/arch/arm64/boot/dts/airoha/en7581.dtsi
+> @@ -2,6 +2,7 @@
+>   
+>   #include <dt-bindings/interrupt-controller/irq.h>
+>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/en7523-clk.h>
+>   
+>   / {
+>   	interrupt-parent = <&gic>;
+> @@ -150,5 +151,13 @@ uart1: serial@1fbf0000 {
+>   			interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
+>   			clock-frequency = <1843200>;
+>   		};
+> +
+> +		scu: system-controller@1fa20000 {
+
+Uhm, why is this not a clock-controller but a system-controller?
+
+Cheers,
+Angelo
+
+> +			compatible = "airoha,en7581-scu";
+> +			reg = <0x0 0x1fa20000 0x0 0x400>,
+> +			      <0x0 0x1fb00000 0x0 0x1000>,
+> +			      <0x0 0x1fbe3400 0x0 0xfc>;
+> +			#clock-cells = <1>;
+> +		};
+>   	};
+>   };
 
 
---2+PFIIQN5kSAMM2T
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-> On 03/04/2024 18:20, Lorenzo Bianconi wrote:
-> > Introduce Airoha EN7581 entry in Airoha EN7523 clock binding
-> >=20
-> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> > ---
-> >  .../bindings/clock/airoha,en7523-scu.yaml     | 26 +++++++++++++++++--
-> >  1 file changed, 24 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.=
-yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> > index 79b0752faa91..cf893d4c74cd 100644
-> > --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> > @@ -29,10 +29,13 @@ description: |
-> >  properties:
-> >    compatible:
-> >      items:
-> > -      - const: airoha,en7523-scu
-> > +      - enum:
-> > +          - airoha,en7523-scu
-> > +          - airoha,en7581-scu
-> > =20
-> >    reg:
-> > -    maxItems: 2
-> > +    minItems: 2
-> > +    maxItems: 3
-> > =20
-> >    "#clock-cells":
-> >      description:
-> > @@ -45,6 +48,25 @@ required:
-> >    - reg
-> >    - '#clock-cells'
-> > =20
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          const: airoha,en7523-scu
-> > +    then:
-> > +      properties:
-> > +        reg:
-> > +          maxItems: 2
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          const: airoha,en7581-scu
-> > +    then:
-> > +      properties:
-> > +        reg:
-> > +          maxItems: 3
->=20
-> Original code had here issue - lack of description of the items. You are
-> now growing it. Please instead list the items (items: - description: foo
-> bar .....).
-
-ack, I will fix it.
-
-Regards,
-Lorenzo
-
->=20
-> Best regards,
-> Krzysztof
->=20
-
---2+PFIIQN5kSAMM2T
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZg5oIgAKCRA6cBh0uS2t
-rFCWAP0Z57M4LuN3Jsam2ES7Vvxp09GbLGM2x46HobQSrrze2gD/SHhAeW8vXIrH
-YV9OrMHbfXZjgqO1d3jnTBZkUpqMBw4=
-=DYYB
------END PGP SIGNATURE-----
-
---2+PFIIQN5kSAMM2T--
