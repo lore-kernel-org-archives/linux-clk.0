@@ -1,123 +1,132 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B935B1F6;
-	Thu,  4 Apr 2024 07:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837E045970;
+	Thu,  4 Apr 2024 07:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712216753; cv=none; b=ouZu7hph2kN0yLB9wOU1LNCqG8inih8id23lXkx2L1NQkxhRp0ZpQVY+WVZo5cdiR83FOYn8kOv6OsybtlcSdgnIDx4D8f8rRGIzACmN1SXlXTgNegKMHK/l+vZpwEqG+zuNtvGnJFRiUnHuGXSx8QyzZzk3ZdU+nG6tJMo9czA=
+	t=1712217332; cv=none; b=vEj9wtuthEUVWW+M4t8PT4nK8s178cuwekT9QRdwydOauneYMPkRqQuPmZAMq4GxxJuykwQoS2r+I5t8QUuegf/nwfb4zDafpSPt/lYX1NVydzKk67rJrk0RLdoccGJnxRibMGUWB7tU7lXgCoYs3/w+ZLwLb6granpd6xZOxIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712216753; c=relaxed/simple;
-	bh=vcETtOrVy9bTRvDJ6u7ogSjCKNt7NXEhds5NARQGbPY=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=cAZ4eJJecI/TZQEysaTarMoXp+vAzdB+usGAnFAGiSCfHpORW84txP0OZH4IK/38mhR41MtKD7vI0thnZApjXoY1E/53vjB6blU1TtplkKStEQm5mmO+PWaQi/SfKijUt3aVnGMV1DfUcUxqcpPM1WvHWpxFvfHWP3W3hmUmY5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahmcg0O/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712217332; c=relaxed/simple;
+	bh=NkrysVRINXxNDAy8IfExdhEZeYy7tThHP05gfrWMM50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mqzBEoSy10jmVP0aIPKRyf7LO+b8KjUwOKU0JWxwgHHkPkMyzYM8QePy6AUz7D2systS7zZzErqoJCCnlMDK9ysmiEty61li5b1aDXjGa9CaEtmLNgmyHMrk/fzSlw2eK618EZr6svQ1w+F1gYCHYLvZS77E2SGV4kDWuS8bu+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NT7yD2OU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahmcg0O/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5535EC433F1;
-	Thu,  4 Apr 2024 07:45:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NT7yD2OU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8440BC433C7;
+	Thu,  4 Apr 2024 07:55:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712216752;
-	bh=vcETtOrVy9bTRvDJ6u7ogSjCKNt7NXEhds5NARQGbPY=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=ahmcg0O/wVgUSHDmaLqFtCVQppeFQLHTQcwLUR3ZoemzEiydJLq5n65V+ZZF4U3Z/
-	 iZTZ2dGWs5n/xGsr2C9Ro8bxdpCo0mryC+/NJ293dDVVrTasGOJjky78rF1l0Vh5Cj
-	 ewN+vdhM+Vk7MvaEXrP9a5f9hvvIhXjlvvkp5fjW6hQf8tlH5S2zNXD299vhN6PNvh
-	 Y5zEUTiauyseC4AumRqKYaxCMkjyr8HU9RPqz7Q7M32OkZevScqGC8ldR1pXRVNnPN
-	 lCtMqbIda7OLCc5vYYCtjdUg0R4nqeFderQtkQlFlCIFJl63TPR9JxYni0ko+ATY12
-	 3JVV8cyIjyi9Q==
-Date: Thu, 04 Apr 2024 02:45:51 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1712217332;
+	bh=NkrysVRINXxNDAy8IfExdhEZeYy7tThHP05gfrWMM50=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NT7yD2OUfd0Zx1whJt4h7sW5i46qubWx6f/pyVBMCRAXziAYcs150IWGeMZ2vNvBA
+	 GL2bZpV7W0ON6dcfx8UWmjs/nj8A4ChJpPPRZUf9PLymj1zK7GTiw1ZLBpyLMhFULX
+	 a3icwhAi+vIEaZljtuo4iweqkad510DkfXdGbzEvJygizLblBI+32T4DNbJtUhzEo+
+	 TIXO8Bhiqp1HaqOc4+Uz4KUmtKqH/jSCklzGfmpSsqjAs04Hqsn96A3jp2J1qRK+09
+	 oFoh5OWJ/lTs+/KosvaT2diZ+8okVy1ZKyxHmxk69LlI8+W0tRgVCJl+UI1N1hhlno
+	 1AajqlqVHf78A==
+Date: Thu, 4 Apr 2024 09:55:28 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	nbd@nbd.name, john@phrozen.org, devicetree@vger.kernel.org,
+	dd@embedd.com, catalin.marinas@arm.com, will@kernel.org,
+	upstream@airoha.com, lorenzo.bianconi83@gmail.com,
+	angelogioacchino.delregno@collabora.com
+Subject: Re: [PATCH 4/4] clk: en7523: add EN7581 support
+Message-ID: <Zg5c8Pg0XKJx9TP5@lore-desk>
+References: <cover.1712160869.git.lorenzo@kernel.org>
+ <3aaf638b846ecfdbfc1c903206b7d519d56c9130.1712160869.git.lorenzo@kernel.org>
+ <95d194ed-86fe-45df-88f1-ae460eb36eaf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rob Herring <robh@kernel.org>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- linux-ide@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
- Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
- Sam Ravnborg <sam@ravnborg.org>, Stephen Boyd <sboyd@kernel.org>, 
- linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- Thomas Gleixner <tglx@linutronix.de>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- devicetree@vger.kernel.org, Helge Deller <deller@gmx.de>, 
- dri-devel@lists.freedesktop.org, Jonathan Corbet <corbet@lwn.net>, 
- Biju Das <biju.das.jz@bp.renesas.com>, Guenter Roeck <linux@roeck-us.net>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Damien Le Moal <dlemoal@kernel.org>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
- Anup Patel <apatel@ventanamicro.com>, Maxime Ripard <mripard@kernel.org>, 
- Chris Morgan <macromorgan@hotmail.com>, Jiri Slaby <jirislaby@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
- Thomas Zimmermann <tzimmermann@suse.de>, 
- Javier Martinez Canillas <javierm@redhat.com>, 
- David Rientjes <rientjes@google.com>, 
- Azeem Shaikh <azeemshaikh38@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
- Arnd Bergmann <arnd@arndb.de>, Rich Felker <dalias@libc.org>, 
- linux-fbdev@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Daniel Vetter <daniel@ffwll.ch>, linux-serial@vger.kernel.org, 
- linux-pci@vger.kernel.org, Niklas Cassel <cassel@kernel.org>, 
- Sebastian Reichel <sre@kernel.org>, Max Filippov <jcmvbkbc@gmail.com>, 
- Manikanta Guntupalli <manikanta.guntupalli@amd.com>, 
- Guo Ren <guoren@kernel.org>, Jacky Huang <ychuang3@nuvoton.com>, 
- linux-clk@vger.kernel.org, David Airlie <airlied@gmail.com>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Herve Codina <herve.codina@bootlin.com>, Vlastimil Babka <vbabka@suse.cz>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Shawn Guo <shawnguo@kernel.org>, Heiko Stuebner <heiko.stuebner@cherry.de>, 
- Baoquan He <bhe@redhat.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>
-In-Reply-To: <8d8dec2d75890f3a14632c9606c332fb11d89a95.1712207606.git.ysato@users.sourceforge.jp>
-References: <cover.1712207606.git.ysato@users.sourceforge.jp>
- <8d8dec2d75890f3a14632c9606c332fb11d89a95.1712207606.git.ysato@users.sourceforge.jp>
-Message-Id: <171221675032.1570606.17195739558800384053.robh@kernel.org>
-Subject: Re: [RESEND v7 19/37] dt-bindings: interrupt-controller:
- renesas,sh7751-irl-ext: Add json-schema
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eVV2+alm6WlfouHe"
+Content-Disposition: inline
+In-Reply-To: <95d194ed-86fe-45df-88f1-ae460eb36eaf@linaro.org>
 
 
-On Thu, 04 Apr 2024 14:14:30 +0900, Yoshinori Sato wrote:
-> Renesas SH7751 external interrupt encoder json-schema.
-> 
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
-> ---
->  .../renesas,sh7751-irl-ext.yaml               | 57 +++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,sh7751-irl-ext.yaml
-> 
+--eVV2+alm6WlfouHe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> On 03/04/2024 18:20, Lorenzo Bianconi wrote:
+> > Introduce EN7581 clock support to clk-en7523 driver.
+> >=20
+> > Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
+> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+>=20
+>=20
+> > +	return 0;
+> > +}
+> > +
+> >  static int en7523_clk_probe(struct platform_device *pdev)
+> >  {
+> >  	struct device_node *node =3D pdev->dev.of_node;
+> > @@ -306,6 +413,12 @@ static int en7523_clk_probe(struct platform_device=
+ *pdev)
+> >  	if (IS_ERR(np_base))
+> >  		return PTR_ERR(np_base);
+> > =20
+> > +	if (of_device_is_compatible(node, "airoha,en7581-scu")) {
+>=20
+> Having matching and compatible comparisons inside various code is
+> discouraged. Does not scale. Use driver/match data to store some sort of
+> flags and check for the flag or some other parameter. The best if
+> compatible appears once and only once: in of_device_id.
 
-yamllint warnings/errors:
+ack, I will fix it.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/interrupt-controller/renesas,sh7751-irl-ext.example.dtb: interrupt-controller@a4000000: #interrupt-cells:0:0: 2 was expected
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/renesas,sh7751-irl-ext.yaml#
+Regards,
+Lorenzo
 
-doc reference errors (make refcheckdocs):
+>=20
+> > +		r =3D en7581_clk_hw_init(pdev, base, np_base);
+> > +		if (r)
+> > +			return r;
+> > +	}
+> > +
+> >  	clk_data =3D devm_kzalloc(&pdev->dev,
+> >  				struct_size(clk_data, hws, EN7523_NUM_CLOCKS),
+> >  				GFP_KERNEL);
+> > @@ -329,8 +442,15 @@ static const struct clk_ops en7523_pcie_ops =3D {
+> >  	.unprepare =3D en7523_pci_unprepare,
+> >  };
+> > =20
+> > +static const struct clk_ops en7581_pcie_ops =3D {
+> > +	.is_enabled =3D en7581_pci_is_enabled,
+> > +	.prepare =3D en7581_pci_prepare,
+> > +	.unprepare =3D en7581_pci_unprepare,
+> > +};
+> > +
+> >  static const struct of_device_id of_match_clk_en7523[] =3D {
+> >  	{ .compatible =3D "airoha,en7523-scu", .data =3D &en7523_pcie_ops },
+> > +	{ .compatible =3D "airoha,en7581-scu", .data =3D &en7581_pcie_ops },
+> >  	{ /* sentinel */ }
+> >  };
+> > =20
+>=20
+> Best regards,
+> Krzysztof
+>=20
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/8d8dec2d75890f3a14632c9606c332fb11d89a95.1712207606.git.ysato@users.sourceforge.jp
+--eVV2+alm6WlfouHe
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+-----BEGIN PGP SIGNATURE-----
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZg5c8AAKCRA6cBh0uS2t
+rBtrAQD0iODN7RFILBb+Bh8RsOOMOb+pGNq7xhHmco94eje0WAEArI+HEHPPkx4/
+p0RtLik/EgPWLOJB8drSyuLE30H5Vg4=
+=oYsi
+-----END PGP SIGNATURE-----
 
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--eVV2+alm6WlfouHe--
