@@ -1,132 +1,208 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837E045970;
-	Thu,  4 Apr 2024 07:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1C7433B0;
+	Thu,  4 Apr 2024 08:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712217332; cv=none; b=vEj9wtuthEUVWW+M4t8PT4nK8s178cuwekT9QRdwydOauneYMPkRqQuPmZAMq4GxxJuykwQoS2r+I5t8QUuegf/nwfb4zDafpSPt/lYX1NVydzKk67rJrk0RLdoccGJnxRibMGUWB7tU7lXgCoYs3/w+ZLwLb6granpd6xZOxIg=
+	t=1712218072; cv=none; b=XKXyf33IHzaW7EQT8KB7hNt9wtnM7woQZ4ph8FUljSHqsUcK6+HhJZRtR1WPkdSPe9x4/Y2r4cqRJFL7sAQiaYAhh6+Ll34+L5NxFOilLhALv0Cqeb8V7+GSMrdQmeD1b8pgg5K9Qr0ZAV8ju/sOAN7p8NO7dwGO1LOjxvjUSds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712217332; c=relaxed/simple;
-	bh=NkrysVRINXxNDAy8IfExdhEZeYy7tThHP05gfrWMM50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mqzBEoSy10jmVP0aIPKRyf7LO+b8KjUwOKU0JWxwgHHkPkMyzYM8QePy6AUz7D2systS7zZzErqoJCCnlMDK9ysmiEty61li5b1aDXjGa9CaEtmLNgmyHMrk/fzSlw2eK618EZr6svQ1w+F1gYCHYLvZS77E2SGV4kDWuS8bu+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NT7yD2OU; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NT7yD2OU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8440BC433C7;
-	Thu,  4 Apr 2024 07:55:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712217332;
-	bh=NkrysVRINXxNDAy8IfExdhEZeYy7tThHP05gfrWMM50=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NT7yD2OUfd0Zx1whJt4h7sW5i46qubWx6f/pyVBMCRAXziAYcs150IWGeMZ2vNvBA
-	 GL2bZpV7W0ON6dcfx8UWmjs/nj8A4ChJpPPRZUf9PLymj1zK7GTiw1ZLBpyLMhFULX
-	 a3icwhAi+vIEaZljtuo4iweqkad510DkfXdGbzEvJygizLblBI+32T4DNbJtUhzEo+
-	 TIXO8Bhiqp1HaqOc4+Uz4KUmtKqH/jSCklzGfmpSsqjAs04Hqsn96A3jp2J1qRK+09
-	 oFoh5OWJ/lTs+/KosvaT2diZ+8okVy1ZKyxHmxk69LlI8+W0tRgVCJl+UI1N1hhlno
-	 1AajqlqVHf78A==
-Date: Thu, 4 Apr 2024 09:55:28 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	nbd@nbd.name, john@phrozen.org, devicetree@vger.kernel.org,
-	dd@embedd.com, catalin.marinas@arm.com, will@kernel.org,
-	upstream@airoha.com, lorenzo.bianconi83@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Subject: Re: [PATCH 4/4] clk: en7523: add EN7581 support
-Message-ID: <Zg5c8Pg0XKJx9TP5@lore-desk>
-References: <cover.1712160869.git.lorenzo@kernel.org>
- <3aaf638b846ecfdbfc1c903206b7d519d56c9130.1712160869.git.lorenzo@kernel.org>
- <95d194ed-86fe-45df-88f1-ae460eb36eaf@linaro.org>
+	s=arc-20240116; t=1712218072; c=relaxed/simple;
+	bh=rExwqTNfKLv3TIywfVqg5viYD88ixVjYzp96V6sW5qE=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=gLSgULOX5A1PctiVTRhCbFFfwyL/vFKbONgkGrM8WufBUZxGG9vV9lsuDw+sEyqxQWHt0Csv12eWq5EYLGCdNLCGGCYPem5jb5KyFn7cXVv0uzBx4IOldSRqzpt8PxBA/ZvurC6gLxxZmh/XNk0LfYJgJOLg5SraoPZPeek61TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id 0F869378209A;
+	Thu,  4 Apr 2024 08:07:47 +0000 (UTC)
+From: "Shreeya Patel" <shreeya.patel@collabora.com>
+In-Reply-To: <c790c8ba-a9bd-4820-8084-1294e5e523d9@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240327225057.672304-1-shreeya.patel@collabora.com>
+ <35f774-660d3b80-3-513fcf80@97941910>
+ <86150c89-11d5-4d52-987e-974b1a03018f@linaro.org> <3049149.687JKscXgg@diego> <c790c8ba-a9bd-4820-8084-1294e5e523d9@linaro.org>
+Date: Thu, 04 Apr 2024 09:07:47 +0100
+Cc: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, mchehab@kernel.org, hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, shawn.wen@rock-chips.com, kernel@collabora.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm@lists.infradead.org
+To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eVV2+alm6WlfouHe"
-Content-Disposition: inline
-In-Reply-To: <95d194ed-86fe-45df-88f1-ae460eb36eaf@linaro.org>
-
-
---eVV2+alm6WlfouHe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Message-ID: <36bd27-660e6000-3-6c1c1e00@12777057>
+Subject: =?utf-8?q?Re=3A?= [PATCH v3 0/6] Add Synopsys DesignWare HDMI RX Controller
+User-Agent: SOGoMail 5.10.0
 Content-Transfer-Encoding: quoted-printable
 
-> On 03/04/2024 18:20, Lorenzo Bianconi wrote:
-> > Introduce EN7581 clock support to clk-en7523 driver.
+On Thursday, April 04, 2024 11:45 IST, Krzysztof Kozlowski <krzysztof.k=
+ozlowski@linaro.org> wrote:
+
+> On 04/04/2024 00:48, Heiko St=C3=BCbner wrote:
+> > Am Mittwoch, 3. April 2024, 13:24:05 CEST schrieb Krzysztof Kozlows=
+ki:
+> >> On 03/04/2024 13:20, Shreeya Patel wrote:
+> >>> On Wednesday, April 03, 2024 15:51 IST, Krzysztof Kozlowski <krzy=
+sztof.kozlowski@linaro.org> wrote:
+> >>>
+> >>>> On 03/04/2024 11:24, Shreeya Patel wrote:
+> >>>>> On Thursday, March 28, 2024 04:20 IST, Shreeya Patel <shreeya.p=
+atel@collabora.com> wrote:
+> >>>>>
+> >>>>>> This series implements support for the Synopsys DesignWare
+> >>>>>> HDMI RX Controller, being compliant with standard HDMI 1.4b
+> >>>>>> and HDMI 2.0.
+> >>>>>>
+> >>>>>
+> >>>>> Hi Mauro and Hans,
+> >>>>>
+> >>>>> I haven't received any reviews so far. Hence, this is just a ge=
+ntle reminder to review this patch series.
+> >>>>
+> >>>> Why did you put clk changes here? These go via different subsyst=
+em. That
+> >>>> might be one of obstacles for your patchset.
+> >>>>
+> >>>
+> >>> I added clock changes in this patch series because HDMIRX driver =
+depends on it.
+> >>> I thought it is wrong to send the driver patches which don't even=
+ compile?
+> >>
+> >> Hm, why HDMIRX driver depends on clock? How? This sounds really wr=
+ong.
+> >> Please get it reviewed internally first.
 > >=20
-> > Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
-> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> > For the change in question, the clock controller on the soc also ha=
+ndles
+> > the reset controls (hence its name CRU, clock-and-reset-unit) .
+> >=20
+> > There are at least 660 reset lines in the unit and it seems the hdm=
+i-rx one
+> > was overlooked on the initial submission, hence patches 1+2 add the
+> > reset-line.
+> >=20
+> > Of course, here only the "arm64: dts:" patch depends on the clock
+> > change, is it references the new reset-id.
 >=20
+> Wait, that's expected, but it is not what was written. Claim was HDMI=
+RX
+> driver depends *build time* ("don't even compile").
 >=20
-> > +	return 0;
-> > +}
-> > +
-> >  static int en7523_clk_probe(struct platform_device *pdev)
-> >  {
-> >  	struct device_node *node =3D pdev->dev.of_node;
-> > @@ -306,6 +413,12 @@ static int en7523_clk_probe(struct platform_device=
- *pdev)
-> >  	if (IS_ERR(np_base))
-> >  		return PTR_ERR(np_base);
-> > =20
-> > +	if (of_device_is_compatible(node, "airoha,en7581-scu")) {
->=20
-> Having matching and compatible comparisons inside various code is
-> discouraged. Does not scale. Use driver/match data to store some sort of
-> flags and check for the flag or some other parameter. The best if
-> compatible appears once and only once: in of_device_id.
 
-ack, I will fix it.
+For some context, when I was testing the downstream driver against the
+device tree, I saw some failures because of the missing reset ( which I=
+ am trying
+to add in the first two patches for this series )
 
-Regards,
-Lorenzo
+...
+	hdmirx=5Fdev->rst=5Fbiu =3D devm=5Freset=5Fcontrol=5Fget(hdmirx=5Fdev-=
+>dev, "rst=5Fbiu");
+	if (IS=5FERR(hdmirx=5Fdev->rst=5Fbiu)) {
+		dev=5Ferr(dev, "failed to get rst=5Fbiu control\n");
+		return PTR=5FERR(hdmirx=5Fdev->rst=5Fbiu);
+	}
 
+shreeya@shreeya:~/collabora/rd/rockchip/linux$ make dtbs
+  DTC     arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dtb
+Error: arch/arm64/boot/dts/rockchip/rk3588.dtsi:187.23-24 syntax error
+FATAL ERROR: Unable to parse input tree
+make[3]: *** [scripts/Makefile.lib:419: arch/arm64/boot/dts/rockchip/rk=
+3588-coolpi-cm5-evb.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:481: arch/arm64/boot/dts/rockchip]=
+ Error 2
+make[1]: *** [/home/shreeya/collabora/rd/rockchip/linux/Makefile:1392: =
+dtbs] Error 2
+make: *** [Makefile:240: =5F=5Fsub-make] Error 2
+
+Sorry for referring this as a driver build failure but I am sure you wo=
+uld=20
+also have not been okay with the above issues.
+Ofcourse I can simply remove this dependency from the driver but maybe
+that will affect the functionality and I didn't want to send a buggy pa=
+tch series.
+
+My intention here was just like Heiko said, to keep all the dependent p=
+atches
+together. I didn't know that would be a trouble for Maintainers.
+
+FWIW, HDMIRX patch series was reviewed multiple times and that is why y=
+ou
+see a Reviewed-by tag from a Collabora Engineer. Sometimes the things t=
+hat look
+problematic to one might not look the same to others and that is why I =
+asked you
+to provide some more details about the problem that you were seeing.
+
+https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/=
+merge=5Frequests/21
+https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/=
+merge=5Frequests/17
+
+
+> >=20
+> >=20
+> > Am Mittwoch, 3. April 2024, 12:22:57 CEST schrieb Krzysztof Kozlows=
+ki:
+> >> Please do not engage multiple subsystems in one patchset, if not
+> >> necessary. Especially do not mix DTS into media or USB subsystems.=
+ And
+> >> do not put DTS in the middle!
+> >=20
+> > picking up your reply from patch 4/6, there seem to be different "s=
+chools
+> > of thought" for this. Some maintainers might want to really only se=
+e
+> > patches that are explicitly for their subsystem - I guess networkin=
+g
+> > might be a prime example for that, who will essentially apply whole=
+ series'
+> > if nobody protests in time (including dts patches)
 >=20
-> > +		r =3D en7581_clk_hw_init(pdev, base, np_base);
-> > +		if (r)
-> > +			return r;
-> > +	}
-> > +
-> >  	clk_data =3D devm_kzalloc(&pdev->dev,
-> >  				struct_size(clk_data, hws, EN7523_NUM_CLOCKS),
-> >  				GFP_KERNEL);
-> > @@ -329,8 +442,15 @@ static const struct clk_ops en7523_pcie_ops =3D {
-> >  	.unprepare =3D en7523_pci_unprepare,
-> >  };
-> > =20
-> > +static const struct clk_ops en7581_pcie_ops =3D {
-> > +	.is_enabled =3D en7581_pci_is_enabled,
-> > +	.prepare =3D en7581_pci_prepare,
-> > +	.unprepare =3D en7581_pci_unprepare,
-> > +};
-> > +
-> >  static const struct of_device_id of_match_clk_en7523[] =3D {
-> >  	{ .compatible =3D "airoha,en7523-scu", .data =3D &en7523_pcie_ops },
-> > +	{ .compatible =3D "airoha,en7581-scu", .data =3D &en7581_pcie_ops },
-> >  	{ /* sentinel */ }
-> >  };
-> > =20
+> There is no school saying DTS is allowed to be in the middle.
+>=20
+> Other schools are indeed saying that seeing DTS is good and
+> recommendation is to post it separate and provide a link. That's way =
+you
+> avoid DTS being pulled by Greg, media or networking.
+>=20
+
+This was my mistake and I simply forgot to remove the DTS when I was
+testing the driver for the last time before sending the v3 upstream.
+Adding it in the middle was incorrect, I should have added it as a sepa=
+rate
+patch but honestly this has always been very confusing and the expectat=
+ion
+differs from maintainers to maintainers.
+
+> >=20
+> > On the other hand I also remember seeing requests for "the full pic=
+ture"
+> > and individual maintainers then just picking and applying the patch=
+es
+> > meant for their subsystem.
+> >=20
+> > The series as it stands right now is nice in that it allows (random=
+)
+> > developers to just pick it up, apply it to a tree and test the actu=
+al driver
+> > without needing to hunt for multiple dependant series.
+> >=20
+> >=20
+> > Of course you're right, the "arm64: dts:" patch should be the last =
+in the
+> > series and not be in the middle of it.
+>=20
+
+I will make sure to correct this in my v4.
+
+Thanks,
+Shreeya Patel
 >=20
 > Best regards,
 > Krzysztof
->=20
+>
 
---eVV2+alm6WlfouHe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZg5c8AAKCRA6cBh0uS2t
-rBtrAQD0iODN7RFILBb+Bh8RsOOMOb+pGNq7xhHmco94eje0WAEArI+HEHPPkx4/
-p0RtLik/EgPWLOJB8drSyuLE30H5Vg4=
-=oYsi
------END PGP SIGNATURE-----
-
---eVV2+alm6WlfouHe--
