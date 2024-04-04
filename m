@@ -1,60 +1,60 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F04045942
-	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 06:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEF74776E
+	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 06:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712210906; cv=none; b=uStYKigCMOAInt3uhiyGfRXHJukRpnoyJaON8eiL1ptZXL+2AvDnapU7PcSwSlMTEuhXG6nRL2NAGahWVTrhtos59nfmeecp4Fz8HwK+xLyTBUvAM90k2Mnw3P7VPWj8S1ina7NMqDcMOCYk4tqLpdmPCXhkhtR11cJhSN9aV10=
+	t=1712211356; cv=none; b=J+68pWutzdvb/MOlSn+2uHOm0GZBaS4ZWOkUMNXb0O08TtwtBzAz47RF5JJqRb4oMFfP1c0jX+lDQBBUbd7y2VC3EmKU9bYoYoDxQFQTBObCF30a/24xNfOJFP1yItSw85jDdfd/asKz8xx8uDq7Li66KdL4p1Hr4ohMOlyB7sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712210906; c=relaxed/simple;
-	bh=ck5HlJSGfEIktIG5FSqBkHcuiI35GZ/YtcLCexW15Ng=;
+	s=arc-20240116; t=1712211356; c=relaxed/simple;
+	bh=oEfmaNWz0Z/HE/GpBGwT412D1LQTjGwAgrYN+Del55M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CC1qEQmaxvvdhNdMqCxe+yDQAuUiOswLOmyfFtiGR/d0KqxsJMAO6A2o6IqaULclwxYD9N4OOyvCwV3iRDvqLhF6bklWZiVo9DZckPvXyu9HIivLWZv5YDL0VR3OgcQxnq/c9p8M+VF6IMf9Xa+xrq2s+ggFkAHI1qnfQDUmlX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L9n4cMxJ; arc=none smtp.client-ip=209.85.218.44
+	 In-Reply-To:Content-Type; b=UksUJwB/uGkTbsT6n5B3b9wIht8xgTitNk9ElKQrubs9YLm78PwmoW2IWRy9JH3gc9G0Ggv2GpI0k3peRwYxw8AxjQhMxprqIcXXrLgNeEVNTbYX1fQ6NZD+RsoDBs/onwhwFQP00jdhZm/sjiQTJwaTwmAXB/3nGC/oBxzBlEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YAgLNSig; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L9n4cMxJ"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a472f8c6a55so79167766b.0
-        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 23:08:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YAgLNSig"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-56845954ffeso983020a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 23:15:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712210902; x=1712815702; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712211353; x=1712816153; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=rxTZ85unwyVpbZ07p+2JFJ30WK5iCDVvonlCXKZGiyE=;
-        b=L9n4cMxJQe5qz0Hxe/fWe2WOKF2mfQiqAfdge1PC5bSmf7WEG05O3aqy2NOlA/gNqg
-         4D+BW4mStGYPpGjTQHCvd72SUftzuLTXp3iYu3APlbwBxUNEwNUHIvrmH+NO/QcsnvtI
-         s4Z06FvNY/vuxHiwlgdwsEZmdElONLolx84oP6yCId7rGqtTEBwJO9BV/uLUTrRRoIyy
-         w+LW/oOuMGV8OrnabxDnnBUtKtyO8uaGfaAaqcFazljtdWf51d6YsI5//M+4n8Gab5TI
-         NOExZLGeIBekQAw6wYssWREdwBA0o2/4H6Dc7NzFza2MTywWZ12Uiu3sOiutAf6UR1iR
-         b9RA==
+        bh=bkkryztGvxqua4G6Yd1fhJtXsUUxe+HUuwQ8GN8ouqc=;
+        b=YAgLNSigoKeywtPTAlXlJ99hECTa9+fjbY7QQ4dcm/CY+iwnAyGjgU9zmHOwS8bHMK
+         T29chX/qVYPWdQSD8APel2Xo5Ul/KV/tDKs71AEzS+07cEgPfZd4F8+LOtZUlmZTRyRw
+         uUs2UZr9mdSUIkIK3xTrn1iWeT4Nps1Bm/GWikGip/Irc0KSHXL763DCj0OpxoyaJSla
+         USTGSXt7uG920c3KkujD3GNe7t9g9h7bSq0x+/RjzKGwanm4yl8ZJQ6S5gbL5JDjC9Bc
+         shgE3U2zuL1VibMGWCqvEppZjz15nXnVUQtkb7AUq3zNsv4gnlwz5oQFF5v1mtZXpr20
+         aVwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712210902; x=1712815702;
+        d=1e100.net; s=20230601; t=1712211353; x=1712816153;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rxTZ85unwyVpbZ07p+2JFJ30WK5iCDVvonlCXKZGiyE=;
-        b=UmYRQC2O/n+tCd401CXBfmpOI5FzP4Z3OV5eqD5OBvY3PhZ56kLpgedUJqDEP7zZC4
-         d1IeW3TXvgWidH8H9P463+ca2az8onQYjcJrTXE44Nth5p/BHi0s7Ihswrf/RDZ/5hZ7
-         E71sDp1+Out2o5co5v+aj+G3RdJWigtMnv+jqttjlkLDmkcD086RcViW218Ic5/Jpwrt
-         ASR+mJFdCrXtfKT0Hxto3YqJwZKBSwhBzT1kHdIdlou7O1juQW+l6KYxP3mw1z71Qd5c
-         VhNE3WlB8t9D9sJG9W08Z5bnQAtX7Fgwb7gN7TH7EW5UnKsf2aa6161YaYM2TOcVq49B
-         KMtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIQpy9LWqhqMcmjl5VEG4S71kakYoso9xCk+2F7d247z9LkFBUSpc3SFR73ISDpUtJPgUz4K0Etr+jt+CWSy11EQlZvQvIwpsE
-X-Gm-Message-State: AOJu0YwFP/kx5rQPtzwZyHA74Zx3goJQVU5ZBLyGHqEekfxE9+ynX8Ev
-	tkzqs2SYHi+PcSc3VQ7IC+ZRo2BnDb1dZKGHuAerNiOa+bJbfauMkpS0UCjJ7QI=
-X-Google-Smtp-Source: AGHT+IFI/qIkJNXTS6UHJf3srgzvcentyDoh5xx2aALaAXZXdTsCp8+U/4aUbwmbKXwuQRzaZ/XKDQ==
-X-Received: by 2002:a17:906:6607:b0:a4e:207e:b71 with SMTP id b7-20020a170906660700b00a4e207e0b71mr909877ejp.6.1712210902408;
-        Wed, 03 Apr 2024 23:08:22 -0700 (PDT)
+        bh=bkkryztGvxqua4G6Yd1fhJtXsUUxe+HUuwQ8GN8ouqc=;
+        b=qfZ7c2FAUr/FQxrcAs3ZnJWnMvaKCVL4S6SxzOP6DDVCZOzA+VT51jliwlD7MnRd8g
+         9L+DdAfHD86DiSwLvnmQbOlu8X0hLC5slEQsQ5xRdVL9X/g9gYqG4Su6DzXptezreGws
+         hVOWRC4s2dCRKzThSy/THAVhF/2VaZNsdxvlZScPfK8DLvI2u8zO8Km/4o7fov93NkM8
+         zSCXw9oSzOP8cPfBCfuZlzgKR2AdU2V8lWQY0BBxchFgQVKCnoZR2OtjvjfW13YfKQQB
+         EB9x6Xcqc7RqJeV0gyoHmmh9FJasRdx5USbsnKQnkx8nh6mMeCFeCFQ9pAg4Gob6NHlT
+         356w==
+X-Forwarded-Encrypted: i=1; AJvYcCWEijr35Veir+CHk/98sKJQ2E13Qk4pXYj5EbL6D3cjzoxx5MAMST8XaAujiIjfvB6FhgGoYOkmxWCnXvONgVmnmNY60rKEchl9
+X-Gm-Message-State: AOJu0YxmkM/FvvhzKpVBx3G38CtKE41TgJOM9cShB2ewNFUWP4AFGZIL
+	xl6B/8fVhYWSET8hkEv/wgc1XGCzyEsINhiiVbYDvgq+rbApdZzYKi8L9Z+lTjs=
+X-Google-Smtp-Source: AGHT+IECxEGe1zWvmCgAOpHAIAYRCeDTejPuXOKuqZUxaRFgNCPybdhXgvVdvf3cPcwAdtHZQFMMaA==
+X-Received: by 2002:a50:cd4e:0:b0:56d:f637:451c with SMTP id d14-20020a50cd4e000000b0056df637451cmr805971edj.32.1712211352779;
+        Wed, 03 Apr 2024 23:15:52 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id w17-20020a170906185100b00a4e9359fbe8sm2307025eje.44.2024.04.03.23.08.18
+        by smtp.gmail.com with ESMTPSA id m7-20020aa7c487000000b0056bf2e2c898sm8832781edq.1.2024.04.03.23.15.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Apr 2024 23:08:21 -0700 (PDT)
-Message-ID: <f73c3130-3121-4339-8f7a-8870a841005c@linaro.org>
-Date: Thu, 4 Apr 2024 08:08:17 +0200
+        Wed, 03 Apr 2024 23:15:52 -0700 (PDT)
+Message-ID: <c790c8ba-a9bd-4820-8084-1294e5e523d9@linaro.org>
+Date: Thu, 4 Apr 2024 08:15:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,51 +62,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND v7 04/37] dt-bindings: interrupt-controller: Add header
- for Renesas SH3/4 INTC.
-To: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
-Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
- Heiko Stuebner <heiko.stuebner@cherry.de>, Shawn Guo <shawnguo@kernel.org>,
- Sebastian Reichel <sre@kernel.org>, Chris Morgan <macromorgan@hotmail.com>,
- Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck
- <linux@roeck-us.net>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Javier Martinez Canillas <javierm@redhat.com>, Guo Ren <guoren@kernel.org>,
- Azeem Shaikh <azeemshaikh38@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>,
- Herve Codina <herve.codina@bootlin.com>,
- Manikanta Guntupalli <manikanta.guntupalli@amd.com>,
- Anup Patel <apatel@ventanamicro.com>, Biju Das <biju.das.jz@bp.renesas.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-fbdev@vger.kernel.org
-References: <cover.1712207606.git.ysato@users.sourceforge.jp>
- <d50827196f7e1201bb9a62656fb04223a8989f1d.1712207606.git.ysato@users.sourceforge.jp>
+Subject: Re: [PATCH v3 0/6] Add Synopsys DesignWare HDMI RX Controller
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Shreeya Patel <shreeya.patel@collabora.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl,
+ robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ shawn.wen@rock-chips.com, kernel@collabora.com,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm@lists.infradead.org
+References: <20240327225057.672304-1-shreeya.patel@collabora.com>
+ <35f774-660d3b80-3-513fcf80@97941910>
+ <86150c89-11d5-4d52-987e-974b1a03018f@linaro.org> <3049149.687JKscXgg@diego>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -153,27 +122,82 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <d50827196f7e1201bb9a62656fb04223a8989f1d.1712207606.git.ysato@users.sourceforge.jp>
+In-Reply-To: <3049149.687JKscXgg@diego>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/04/2024 07:14, Yoshinori Sato wrote:
-> Renesas SH7751 Interrupt controller priority register define.
+On 04/04/2024 00:48, Heiko Stübner wrote:
+> Am Mittwoch, 3. April 2024, 13:24:05 CEST schrieb Krzysztof Kozlowski:
+>> On 03/04/2024 13:20, Shreeya Patel wrote:
+>>> On Wednesday, April 03, 2024 15:51 IST, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+>>>
+>>>> On 03/04/2024 11:24, Shreeya Patel wrote:
+>>>>> On Thursday, March 28, 2024 04:20 IST, Shreeya Patel <shreeya.patel@collabora.com> wrote:
+>>>>>
+>>>>>> This series implements support for the Synopsys DesignWare
+>>>>>> HDMI RX Controller, being compliant with standard HDMI 1.4b
+>>>>>> and HDMI 2.0.
+>>>>>>
+>>>>>
+>>>>> Hi Mauro and Hans,
+>>>>>
+>>>>> I haven't received any reviews so far. Hence, this is just a gentle reminder to review this patch series.
+>>>>
+>>>> Why did you put clk changes here? These go via different subsystem. That
+>>>> might be one of obstacles for your patchset.
+>>>>
+>>>
+>>> I added clock changes in this patch series because HDMIRX driver depends on it.
+>>> I thought it is wrong to send the driver patches which don't even compile?
+>>
+>> Hm, why HDMIRX driver depends on clock? How? This sounds really wrong.
+>> Please get it reviewed internally first.
 > 
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> For the change in question, the clock controller on the soc also handles
+> the reset controls (hence its name CRU, clock-and-reset-unit) .
+> 
+> There are at least 660 reset lines in the unit and it seems the hdmi-rx one
+> was overlooked on the initial submission, hence patches 1+2 add the
+> reset-line.
+> 
+> Of course, here only the "arm64: dts:" patch depends on the clock
+> change, is it references the new reset-id.
 
-I got two 37-patchsets...
+Wait, that's expected, but it is not what was written. Claim was HDMIRX
+driver depends *build time* ("don't even compile").
 
-Anyway, this also did not improve. NAK.
+> 
+> 
+> Am Mittwoch, 3. April 2024, 12:22:57 CEST schrieb Krzysztof Kozlowski:
+>> Please do not engage multiple subsystems in one patchset, if not
+>> necessary. Especially do not mix DTS into media or USB subsystems. And
+>> do not put DTS in the middle!
+> 
+> picking up your reply from patch 4/6, there seem to be different "schools
+> of thought" for this. Some maintainers might want to really only see
+> patches that are explicitly for their subsystem - I guess networking
+> might be a prime example for that, who will essentially apply whole series'
+> if nobody protests in time (including dts patches)
 
-This is a friendly reminder during the review process.
+There is no school saying DTS is allowed to be in the middle.
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
+Other schools are indeed saying that seeing DTS is good and
+recommendation is to post it separate and provide a link. That's way you
+avoid DTS being pulled by Greg, media or networking.
 
-Thank you.
+> 
+> On the other hand I also remember seeing requests for "the full picture"
+> and individual maintainers then just picking and applying the patches
+> meant for their subsystem.
+> 
+> The series as it stands right now is nice in that it allows (random)
+> developers to just pick it up, apply it to a tree and test the actual driver
+> without needing to hunt for multiple dependant series.
+> 
+> 
+> Of course you're right, the "arm64: dts:" patch should be the last in the
+> series and not be in the middle of it.
+
 
 Best regards,
 Krzysztof
