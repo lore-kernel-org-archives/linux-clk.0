@@ -1,60 +1,60 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298F04776E
-	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 06:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FA61CF9C
+	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 06:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712211476; cv=none; b=q5qj5XxoOve7zT4rZevZXrUPIPYsi+OgaApksyWb1lzTX6kRMrgaX4Ma5fKPrXNUwPKIHZCXhDDT/HYutqksQFrbAlE/k2VwqhFSfThZGSYBsnKBPQkSmtMuigppM/JFRpXms6tr0yhlbvMqCePY2BmwVG41ELqFIdYfXuwZL7E=
+	t=1712212458; cv=none; b=In3VqAZbLH2PgoETnj6ssdKWlE/SpN4LOVS+o/01S6F+X1vmPPvJsiOFY29wpiljR+XIDpOOvODfg4XXt2vBubf/rz9GsDdcfQk5UOwmH9HZ8BBEr8ptaJvnO/Tj3BZbj1YHllijRBM68FqNlZZV9ufGSUWQEkG7wXOU8Keal4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712211476; c=relaxed/simple;
-	bh=ZJ7R9ncDVXtptVEBCmWeFsuNoZap0993lo95uag14cE=;
+	s=arc-20240116; t=1712212458; c=relaxed/simple;
+	bh=BTYeJOUKtjiPMDXZczAfTqsrxlPjGuCMwC22A9iWoq0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iAOVnIdwZaQMMainKYAmeOvZfVMDlY7sutd3l4fJq1fkRJ3dns18fjstVSBPxzhj3dL52n55mgJ/+Wy7P0vxVSEMOl7Fx1+7SrRSTSCpk7FNTQo6Xz99YLx8YfUdIG/dHrMGO4wRvYcD8BYItYkiw0FyuN3GUzRsI5lJfG9hxJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fWwKBcu8; arc=none smtp.client-ip=209.85.218.45
+	 In-Reply-To:Content-Type; b=UDWX4RaaUzB5l2ESW9mHR8XUEoz1YcLwrehqRIpo4h7WFdqugPT18Azx9veKiucpcgvoDsxGS0QbArHTKxbUtgcpaihyeCpg1yKMfRuL4SuxXCf308BaGWPyOr6EGqU8rBySNEkDGU4qbvZzRI5+JrOyMvQmNsslvjom/C8WRJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B20i/5Qi; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fWwKBcu8"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a4e40fad4fdso74463266b.2
-        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 23:17:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B20i/5Qi"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-516c403cc46so1014789e87.3
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 23:34:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712211473; x=1712816273; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712212455; x=1712817255; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=QstkA/0puettnYJmAHPNH5ZaCqi91hpEvWVtbV4p+ks=;
-        b=fWwKBcu8jDOhCYNszm7P9KA0hpyPg3PQmx1tCqsPNM2ba11gTTXgZfEkU29F1dRw9A
-         QBxAtjzR+KrMhPGoi1q++HvopurLSwy0B/kauv9/U4g8BGD8/PbuV7/IkcOZIq80bzbw
-         AhOydA9nPAq/jUnEnjVAuQ0Sp7UA9ON/RL9POrvfhl9cV55cnc+N5daolovfRrUR9uSy
-         scaIzGdpPKi/P+Ql3i+P2tR8wqlJcSmRy7Cr9ER+q9DNUoxV1oIqslHVC3BzwQc/rFpP
-         ERq//LbPeUdPKMLmN66BtHXOcyTFjyWN5+V1TZe3pQ50Xus6LQbzMfypzRtoWHTy/Sx6
-         fTjQ==
+        bh=pXxPGEJDIb+ns+ZarG/yOP2pf144tdvQi2hFIPyNPiU=;
+        b=B20i/5QiK84oEyNDNlm23BY/jW+PeRM3Y2kiO2PtZ/SMYg1CKYceSg2IUACLxPe9jw
+         5kbQmwcnzMBhvbNDQGO0+KisSUeNLxIlz3YEOCUwq6OVmWGGouxPXpkEBgZkCA7phxYs
+         YiuWSQGHCxCnwYtQttq/Aqy/ookWuqisFPLqrDpFA2kQAkmC3cjUvdj/m9+hyQqyTnqR
+         3RrihJSe8cUzFlefZ6/EoEXGoJasy4WRM1VwCQFvlRes5twpf5GW0wzi7fmdWC3FgJd9
+         wGWFwVpyFuDluyDya+nYeqBfXFbzt6OCyjcaXK2QLI6S55w/j2kVB4u0YRl9+p2gvuri
+         c2vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712211473; x=1712816273;
+        d=1e100.net; s=20230601; t=1712212455; x=1712817255;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QstkA/0puettnYJmAHPNH5ZaCqi91hpEvWVtbV4p+ks=;
-        b=FRlX8EUxwuWhWQzIzBl1hA/VRvbjxktH4qK9FOPGD3RKwhXgfZWsShUfEUbPAgPRId
-         JyhS7k41MpnwLSWMnmMgyyBXpkvCqijsHB/MK+L26WU/j+ZO7nf95Fl6OwAZnQ+Qn3bh
-         SAcFfXBf6mlPw2FwQJ/TmyUZ3sJnslKk3MQ6UPxaQ0QMBPT5abYBzxanm//Om/PQ8y4w
-         h0z4Ga+354NK32PW7S0AUIwv7DVSX0hdSYUQn6pJA81/E2yO983/ZPt5bSlzwZZPfjLJ
-         BVQqx0lOqe1t3nHCkDvjxifTnxmUW9T2R+HF7QvGmoNJ9Q1/tkNoHjVnXoeOnuVg3sCY
-         15nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSaPWydH14biTeldWaIRHBULQjSGaJYLiWmDDlZGfX/fadNo9RU/Rc/KX1EAtqvTYYOsvkUDhkwLNkW2Gi2iqukFYzqqbpsbkL
-X-Gm-Message-State: AOJu0YwgAzfd7oYbIYXk28zzjqmE+7c1FzohLFCkqBg7PZl6exzgpW1o
-	Veq9c16CwDshRjbqRdsejwdNX1nOmo5j0qiPO5wgx2+iIy05wyQlwPyu5VjwFMA=
-X-Google-Smtp-Source: AGHT+IEENym2ijmiU/kB6DhuJTWO7Em2jtRiY2Gc4RM4VO0AhN926Sag75h5SCWL36XOduQzAl1fEg==
-X-Received: by 2002:a17:906:2a52:b0:a46:5e1b:58a3 with SMTP id k18-20020a1709062a5200b00a465e1b58a3mr875670eje.35.1712211473598;
-        Wed, 03 Apr 2024 23:17:53 -0700 (PDT)
+        bh=pXxPGEJDIb+ns+ZarG/yOP2pf144tdvQi2hFIPyNPiU=;
+        b=lj2eT+qXqCIym+CWo8qrbK5zSHTAjhJkCVI54CR9kewrRIm8O6hajtsxSREdu75Hf5
+         Db1owQWoQWEQvuBbCbAMPTPeWtxvjmdVREMhvAIYjBUca12Z3kAXfW3sEU0eL4MOPcmC
+         +XZY6uH67sb3E3hSEWmmh68/LBYd3of2M3liAlv8n2cm6NXtj04IXufWJJoa6+2dr4HI
+         i0x/wPQhaG8KemMZJFTU664rRr5/PiaqgMBkMTFamzZw5HSE0M4ED8cotmL8Vl+sqrtD
+         0PfP3rf896PJJ7Otiub0fC7LA2l3gcbhN+gXV4tzNhN0J7oIm/D0RqYkCvBzGcyQqSFO
+         PyUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcGMBKZv9FOL5wKM2R3lStpezDTe4FSncFT5OyrXJG+ilsulFjHxZv9rR5rx13AzTnDfTUQCPye4dEXZ3jR5NKIvP+rRF+AG4+
+X-Gm-Message-State: AOJu0YzVtAwATuFnSAM8jhETUGNZsLjcERI0k3KOVrMOGUwe4g0Udt6O
+	Gfzj3/IHYPqKWkw4MP3RnveFVrf8IUUsKnl1Otgkh/iFDM16EXdJAGk8ceaUjQ4=
+X-Google-Smtp-Source: AGHT+IHiNNOWUeZEnE9jyGK9yAVW1LivooJ+qXp8Mp8SiKZ/63Lll+dXgqnNHlbOJ0eEEaANa5L/6g==
+X-Received: by 2002:a05:6512:36d2:b0:515:a9d5:aab6 with SMTP id e18-20020a05651236d200b00515a9d5aab6mr1196646lfs.18.1712212454932;
+        Wed, 03 Apr 2024 23:34:14 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id bb1-20020a1709070a0100b00a4e7dfb5abasm3550712ejc.171.2024.04.03.23.17.51
+        by smtp.gmail.com with ESMTPSA id 27-20020a170906311b00b00a4ea1167a52sm1650947ejx.25.2024.04.03.23.34.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Apr 2024 23:17:52 -0700 (PDT)
-Message-ID: <e6e8c1b1-e1e5-4598-83ac-654c242dc6fc@linaro.org>
-Date: Thu, 4 Apr 2024 08:17:51 +0200
+        Wed, 03 Apr 2024 23:34:14 -0700 (PDT)
+Message-ID: <65e7617a-9e7b-4dea-a98c-31502222543a@linaro.org>
+Date: Thu, 4 Apr 2024 08:34:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,22 +62,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] Add Synopsys DesignWare HDMI RX Controller
-To: Deborah Brouwer <deborah.brouwer@collabora.com>
-Cc: Shreeya Patel <shreeya.patel@collabora.com>, mchehab@kernel.org,
- hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl, heiko@sntech.de,
- robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- shawn.wen@rock-chips.com, kernel@collabora.com,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm@lists.infradead.org
-References: <20240327225057.672304-1-shreeya.patel@collabora.com>
- <35e566-660d2080-1-7eb9eb00@16488675>
- <a2f88176-b4e1-4202-843c-a00c5a2b1622@linaro.org>
- <35f774-660d3b80-3-513fcf80@97941910>
- <86150c89-11d5-4d52-987e-974b1a03018f@linaro.org> <Zg3Gh8P97GaBtgAB@mz550>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: airoha: add EN7581 binding
+To: Lorenzo Bianconi <lorenzo@kernel.org>, linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org,
+ linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, nbd@nbd.name,
+ john@phrozen.org, devicetree@vger.kernel.org, dd@embedd.com,
+ catalin.marinas@arm.com, will@kernel.org, upstream@airoha.com,
+ lorenzo.bianconi83@gmail.com, angelogioacchino.delregno@collabora.com
+References: <cover.1712160869.git.lorenzo@kernel.org>
+ <1988a4460ed327bea7841f6a0f3a756dd7cec4bb.1712160869.git.lorenzo@kernel.org>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -124,60 +118,64 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <Zg3Gh8P97GaBtgAB@mz550>
+In-Reply-To: <1988a4460ed327bea7841f6a0f3a756dd7cec4bb.1712160869.git.lorenzo@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/04/2024 23:13, Deborah Brouwer wrote:
-> On Wed, Apr 03, 2024 at 01:24:05PM +0200, Krzysztof Kozlowski wrote:
->> On 03/04/2024 13:20, Shreeya Patel wrote:
->>> On Wednesday, April 03, 2024 15:51 IST, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
->>>
->>>> On 03/04/2024 11:24, Shreeya Patel wrote:
->>>>> On Thursday, March 28, 2024 04:20 IST, Shreeya Patel <shreeya.patel@collabora.com> wrote:
->>>>>
->>>>>> This series implements support for the Synopsys DesignWare
->>>>>> HDMI RX Controller, being compliant with standard HDMI 1.4b
->>>>>> and HDMI 2.0.
->>>>>>
->>>>>
->>>>> Hi Mauro and Hans,
->>>>>
->>>>> I haven't received any reviews so far. Hence, this is just a gentle reminder to review this patch series.
->>>>
->>>> Why did you put clk changes here? These go via different subsystem. That
->>>> might be one of obstacles for your patchset.
->>>>
->>>
->>> I added clock changes in this patch series because HDMIRX driver depends on it.
->>> I thought it is wrong to send the driver patches which don't even compile?
->>
->> Hm, why HDMIRX driver depends on clock? How? This sounds really wrong.
->> Please get it reviewed internally first.
->>
->>>
->>> Since you are a more experienced developer, can you help me understand what would
->>> be the right way to send patches in such scenarios?
->>
->> I am not the substitute for your Collabora engineers and peers. You do
->> not get free work from the community. First, do the work and review
->> internally, to solve all trivial things, like how to submit patches
->> upstream or how to make your driver buildable, and then ask community
->> for the review.
+On 03/04/2024 18:20, Lorenzo Bianconi wrote:
+> Introduce Airoha EN7581 entry in Airoha EN7523 clock binding
 > 
-> I don't think Shreeya was asking for "free" work from the community.
-> Her question wasn't trivial or obvious since reasonable people seem to sometimes
-> disagree about where to send a patch especially if it's needed to make a series compile.
-> I heard the issue was already resolved but had to say something since this accusation
-> seemed so unfair.
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> ---
+>  .../bindings/clock/airoha,en7523-scu.yaml     | 26 +++++++++++++++++--
+>  1 file changed, 24 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> index 79b0752faa91..cf893d4c74cd 100644
+> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> @@ -29,10 +29,13 @@ description: |
+>  properties:
+>    compatible:
+>      items:
+> -      - const: airoha,en7523-scu
+> +      - enum:
+> +          - airoha,en7523-scu
+> +          - airoha,en7581-scu
+>  
+>    reg:
+> -    maxItems: 2
+> +    minItems: 2
+> +    maxItems: 3
+>  
+>    "#clock-cells":
+>      description:
+> @@ -45,6 +48,25 @@ required:
+>    - reg
+>    - '#clock-cells'
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: airoha,en7523-scu
+> +    then:
+> +      properties:
+> +        reg:
+> +          maxItems: 2
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: airoha,en7581-scu
+> +    then:
+> +      properties:
+> +        reg:
+> +          maxItems: 3
 
-If HDMI driver does not build because of clock driver, something is
-really wrong at the basics level. Therefore I am sure my statement was
-fair,. based on Shreeya statement of build failure.
-
-I am sorry, but independence of drivers and independence of DTS is a
-basic thing, so to solve such you can easily get help internally from
-your experienced folks (which you have).
+Original code had here issue - lack of description of the items. You are
+now growing it. Please instead list the items (items: - description: foo
+bar .....).
 
 Best regards,
 Krzysztof
