@@ -1,152 +1,103 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA69823C3
-	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 13:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED27128361;
+	Thu,  4 Apr 2024 13:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712237084; cv=none; b=NPpYQaDUKhvDmLfDGmLGa/5eHrwQ1sbO4OgZGCckR0809E3U7U/x18c+XULbAM5cbn9c4gyAGBrWHlpRdLV/h4c3GDugcIWechNDLSQqVmeLosTfYl3mgrFXoKSOCeFfg0jGVemlvij7ThKdHTclqccXO1p6tU1Nd8P+apwIND0=
+	t=1712238417; cv=none; b=bnytUXYrkLF8TEnKPTVNAULtaewnQ85u/nwo5buacL+b3f5gCr3/RELDfEv7QtVwhEZHXbXRF9kC2qStzOaITs0vUs41/bMBFQ24VIRmwdkmtL4LDlorRcwfJBvwEVwocEfsnDESv5qDe6e1GscQU7vVU47YpYtbrO9QarM4NPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712237084; c=relaxed/simple;
-	bh=nBXwkA4A0krstFpyvfjsEVO0w0Xz+CnGhEwhMIz2nxA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Kge4+HHP/y5eiFoONPrk+XO7l1y5ri/PAlimI6gApAkQbAkay6xhUA8JJqCffb8jfAZPyfzUOTFkSZjp0nNctqSV3Mfwyk+mGado4sEMc01x7BNBy1OJKEzyy8MyYLmEr0EuFXtEk1Y6zKWUUlWN4jWuStn/zkTwhz1NCjoI0cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=STX2NdSO; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712238417; c=relaxed/simple;
+	bh=YTmuV8AU6ijpWFJ9qUSeRqsG7ZkPrskWPB28srSjA4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=dB6E5vWxVy+SQFKQyRh8NdF9CoDH4CnuxN7ICy5dDluRnOmsB1khMHZoknJyNiLk4sGUGvUXFpd6CGQgKM0cl1qqJrpwiBHOT2fxxEQ5Hx3RTLBBwzXtLTHJIkCGNcNtmw08lKUBZEgEPQHHwjlqB7OtGtDY2lFjaOd2wyfbQDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iN6HA0FF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="STX2NdSO"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2d718ee7344so11485781fa.2
-        for <linux-clk@vger.kernel.org>; Thu, 04 Apr 2024 06:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712237080; x=1712841880; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QPezEfD0t1esOw49T38S7/dvcH4ZrRMz2JA7Keo/jF4=;
-        b=STX2NdSOVMuHrqgjp5g0ZlGQ3/lhfA1n/DToyUa6dsG1jme+LaJV+O+ZDeiU1YN0ST
-         UlqSF+RKNCBNLs/P7taD2sF1Wp/peVWN3MnryMvCCae5gPD5XmBLfDZCAWX8xEUX32iX
-         QGQgA+veb2nXHXHAqxi6rA734/xn+TouYaU7uwAo1gF7nOaKboymvviE+YJ4s3GVN1tZ
-         q4XHZM+1HHEMF5MriJOKsiBCHqS+HblnZcB23DlFxUajGItk3Rlu398kxgXNTLeFOWr4
-         livV6E/0xQZO/lwC2K1dfZUZqY3kYTH3iWknanPYamF76AzNzuovVSyTo/+WPSUFwgzi
-         yBSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712237080; x=1712841880;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QPezEfD0t1esOw49T38S7/dvcH4ZrRMz2JA7Keo/jF4=;
-        b=l3BC48rYCPaRalXSF7ygKaO3LHhRiaxPz12EgjU9Ztk95kTBNMTbUOjFMzd8+RQt9x
-         7j1gTwp7IFOfK86TsUFxc/IIq362bv1xd3CYOfKn2V+yxMmykWZvjg9w2DH4x+pL8nfE
-         xa8M9ma8w2PcIJ1EBn6ISl3A950CHVkTPNtvtMY/SoDRZVXnqJUxuuTorDeG4ieVNM2D
-         R6vPTqycDUh0F87UMYXBFFk8L+9RoF5ar22E+0sClQOLajpJR5H9JCTbm43a44LL+30q
-         id1J36vaQcFHcGYoK92qRa1vhEf61NgcjhoWOJzcptzlLAlDOnYQl3PmzRcnM/KWnL05
-         86Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMGm7FZOaHPxi8Xjy9Bep7O1PBKFAmyYaOpQEThxBebhUOyeuR39y62dEEBGrBkurNH38yYPFDfhL/5KnixEESHJrabKf6CV13
-X-Gm-Message-State: AOJu0YxTDOMtPkC08EPcXctxlOQCVsfxzC7QroplROvRuxZYi/YxthqA
-	mVzvUQBPAZNRAvMTVRySisT1GMIUUpX4+QYtt6vLwxKZB6ogQAvHEfdBjRDIias=
-X-Google-Smtp-Source: AGHT+IGxgH9A5s0WiNgOB7bXFCAvV00A/PQ0OT0BzurZEBZ4YAccdY+QiP2+2qjmMUfFLq93x9ZqAg==
-X-Received: by 2002:a2e:7c0a:0:b0:2d8:274a:db16 with SMTP id x10-20020a2e7c0a000000b002d8274adb16mr2125485ljc.17.1712237079816;
-        Thu, 04 Apr 2024 06:24:39 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id v3-20020a5d59c3000000b00341cc9c1871sm20435575wry.0.2024.04.04.06.24.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Apr 2024 06:24:39 -0700 (PDT)
-Message-ID: <61f427ab3793def23d80d94457ff1568cae5ee11.camel@linaro.org>
-Subject: Re: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, mturquette@baylibre.com, 
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-  vkoul@kernel.org, kishon@kernel.org, alim.akhtar@samsung.com,
- avri.altman@wdc.com,  bvanassche@acm.org, s.nawrocki@samsung.com,
- cw00.choi@samsung.com,  jejb@linux.ibm.com, martin.petersen@oracle.com,
- chanho61.park@samsung.com,  ebiggers@kernel.org
-Cc: linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com
-Date: Thu, 04 Apr 2024 14:24:37 +0100
-In-Reply-To: <20240404122559.898930-9-peter.griffin@linaro.org>
-References: <20240404122559.898930-1-peter.griffin@linaro.org>
-	 <20240404122559.898930-9-peter.griffin@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iN6HA0FF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D52C433F1;
+	Thu,  4 Apr 2024 13:46:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712238417;
+	bh=YTmuV8AU6ijpWFJ9qUSeRqsG7ZkPrskWPB28srSjA4g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=iN6HA0FFgz90MtiQnEAgWRdCm8zcts9f45Sxg2VSsHNeMEL//kXdgXBkuFCxtsMOp
+	 X0y2UQ2sBs5OHeOqlgIbYuJM/b/jHyoWp39lX5Edh6zGWMT45nZw7x9YCR/aXpAaYu
+	 eMsZjAU9wsTUkb16TrzpthEStk7WoiiiYvpnAMO7mNgtSPSrLUA6a9ZjOh+cHkPDor
+	 VLvFgnj76quaNpHeaOIJBKszW0wvwkaa64/OKfiXhxW26b6XWQI2o4aIMrPbyzSfP6
+	 XzMA3Be72lk7jigxbkFuwJDK5o6KLLHNbV3pMsrlxi4bNEYo8p6SRThJsQJ1fgG+nd
+	 AqfZgrH4ZWYDw==
+Date: Thu, 4 Apr 2024 08:46:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Shawn Guo <shawnguo@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, David Rientjes <rientjes@google.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Guo Ren <guoren@kernel.org>, Azeem Shaikh <azeemshaikh38@gmail.com>,
+	Max Filippov <jcmvbkbc@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Manikanta Guntupalli <manikanta.guntupalli@amd.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v7 00/37] Device Tree support for SH7751 based board
+Message-ID: <20240404134652.GA1910402@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1712205900.git.ysato@users.sourceforge.jp>
 
-Hi Pete,
+On Thu, Apr 04, 2024 at 01:59:25PM +0900, Yoshinori Sato wrote:
+> This is an updated version of something I wrote about 7 years ago.
+> Minimum support for R2D-plus and LANDISK.
+> I think R2D-1 will work if you add AX88796 to dts.
+> And board-specific functions and SCI's SPI functions are not supported.
 
-Thanks for this!
-
-I haven't reviewed this, but one immediate comment...
-
-On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
-> [...]
-> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs=
-101.c
-> index d065e343a85d..b9f84c7d5c22 100644
-> --- a/drivers/clk/samsung/clk-gs101.c
-> +++ b/drivers/clk/samsung/clk-gs101.c
-> @@ -22,6 +22,7 @@
-> =C2=A0#define CLKS_NR_MISC	(CLK_GOUT_MISC_XIU_D_MISC_ACLK + 1)
-> =C2=A0#define CLKS_NR_PERIC0	(CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK + 1)
-> =C2=A0#define CLKS_NR_PERIC1	(CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK + 1)
-> +#define CLKS_NR_HSI2	(CLK_GOUT_HSI2_XIU_P_HSI2_ACLK + 1)
-
-Can you please keep the #defines alphabetical (hsi before misc).
-
-> =C2=A0
-> =C2=A0/* ---- CMU_TOP ---------------------------------------------------=
----------- */
-> =C2=A0
-> @@ -3409,6 +3410,560 @@ static const struct samsung_cmu_info peric1_cmu_i=
-nfo __initconst =3D {
-> =C2=A0	.clk_name		=3D "bus",
-> =C2=A0};
-> =C2=A0
-> +/* ---- CMU_HSI2 -------------------------------------------------------=
---- */
-
-and this code block should be earlier in the file
-
-> [..]
-=C2=A0
-> =C2=A0static int __init gs101_cmu_probe(struct platform_device *pdev)
-> @@ -3432,6 +3987,9 @@ static const struct of_device_id gs101_cmu_of_match=
-[] =3D {
-> =C2=A0	}, {
-> =C2=A0		.compatible =3D "google,gs101-cmu-peric1",
-> =C2=A0		.data =3D &peric1_cmu_info,
-> +	}, {
-> +		.compatible =3D "google,gs101-cmu-hsi2",
-> +		.data =3D &hsi2_cmu_info,
-> =C2=A0	}, {
-
-and this block should move up
-
-> =C2=A0	},
-> =C2=A0};
-> diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindin=
-gs/clock/google,gs101.h
-> index 3dac3577788a..ac239ce6821b 100644
-> --- a/include/dt-bindings/clock/google,gs101.h
-> +++ b/include/dt-bindings/clock/google,gs101.h
-> @@ -518,4 +518,67 @@
-> =C2=A0#define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK		45
-> =C2=A0#define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK		46
-> =C2=A0
-> +/* CMU_HSI2 */
-
-and all these defines, too.
-
-
-
-Cheers,
-Andre'
-
+My comments/questions from
+https://lore.kernel.org/r/20231120181600.GA205977@bhelgaas
+https://lore.kernel.org/r/20231016172742.GA1215127@bhelgaas
+still apply.
