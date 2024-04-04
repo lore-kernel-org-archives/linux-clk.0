@@ -1,57 +1,57 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87444133991
-	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 12:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310D213443E
+	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 12:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712233639; cv=none; b=l+tOFjUa0thPNW/3kuxzkwt4CgCUjVXrkoW6fnlMeF9FnZuEeiN7NHpdS6jSBq2mxOWaYxKy4b7N5uqPfncjbuxo4kekUHYdzID4TZooOo08xwlQSmwzS94hWuYym4cfK9CrfE/2R2eP+StEXx73KJ8kSNnF7MTabZDNUWGY174=
+	t=1712233645; cv=none; b=C60Ox5/YDicvcW+QmUvYkoCNrvmRy9u8/I0HDkUD2ZGEZuQjC0MrVg1+cd9NmxE0YCIHrNEOQsgP5iXYZnEdjKiq3zheaWF64jV9VoJrOy2OfmZFh1AlOosldcUz4CaEDaqnRfT9PdLwM+jhmPz8fACQb0nh7lfjSLGQ0WK9Obw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712233639; c=relaxed/simple;
-	bh=f4a6X59r6o3Bx9Zi1RDVHWdMkdCFHga1R1Kdv58+SNo=;
+	s=arc-20240116; t=1712233645; c=relaxed/simple;
+	bh=ZHKCf97OijWc2VffmsZBpB7qLb+gSrxVQc/YXEeVJNk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D9GXEHysVsKPnHzPgCNkTWve35/gYrq+bfgAF1K+MKU4EMMCs6uRrVYJJJDHyMtR5hdRjLt0hAgQNjA2DFiKV1I6ZKe890LK+6bLxxhnSuVTbjQUevAS79rcrKDYxuSHyh198o286gbxPQnMJz75ziIieviolx3WDQSCq/bydZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AsE9+6Wq; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=Vnlaz39VYb4YTruq+/nMcHhjjhK3TIV1Eohm5DtEWjryP0YEQUAwnBHIOxu7bynLqdpZgrf+T7DAa5qfnN7g815ecSSZcRXveUKSwLngDN8xq36ngJtxtxd8BXHEnH7DfD9tgn8sgGUfpJCqv7eYxy98gnLr57eYSrybn405LzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hhe3K7Yq; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AsE9+6Wq"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4162c210c33so957165e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 04 Apr 2024 05:27:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hhe3K7Yq"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4162b016168so3160555e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 04 Apr 2024 05:27:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712233636; x=1712838436; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712233641; x=1712838441; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I3JcSOQ9eNIxg70eEgWDHynCCbG7M8BkHlyC7Pm2TPg=;
-        b=AsE9+6WqmdzkoEJEMe+FJGKFh5P+s91SlN5tGJtCCcq2MrLv/aFLyJtSZuiLxoWvLV
-         rl4OIP9+7d/FSHZmI8moXaXGzjkHZSTmIMlvdEBfsmWNkwpa8n6sPjkLYwVcfkqhwUVW
-         TcCPdHcVmAdqQlzbzC2gZgiYRR8Mrxio9Q+RUYwHllz1T8L4pBf3IAIL0dICnZPlxdrd
-         Tc9C3NYlPZv8mONka3+4n0IKbc4wQlDzHJOCLlwq/NHLoQKVHbDKmFsdEqZA4IFqK8b4
-         f9fQ87N7Aaab98opqSYkcWtUtfP511LDH8/0jOvIMYgsrgmgJIH02USDwmHNI3DIaMYw
-         4BAg==
+        bh=iyUUQp6WOxRvluHXSIvI5EfrW3GeehtIyQz6Nkgdpu8=;
+        b=Hhe3K7YqTmMEQoghiyRYr/zoAn+h5++tRlrhAsHCzfFkGdmj5HZCeAkqX5Yr5bIK3x
+         5lE+aUw/9fRGz1WyaASMmqrYLqolatlpj3JV2N/J1XtVRRMR2QAL4p9hslMeT/JFkphV
+         tpMX7f94nQ2zt6YnYPyEvEQDkbigRUgMu1hT7KgzdjeqyWKpUYmja3jV3DoJCAo5Gsgj
+         tGz3yb6WASJRZ2QDuBu3S4jSBd9XZjVNOpSF46jvkrSBWVS87lK5qdGa2mOzdqvj44sg
+         O2oE1XirsTmQ16+K+sSfQLwbmNC+l8KqZonbogP0FL3SF2e3brWjPKG0TI+iqh43ugjB
+         QjVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712233636; x=1712838436;
+        d=1e100.net; s=20230601; t=1712233641; x=1712838441;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I3JcSOQ9eNIxg70eEgWDHynCCbG7M8BkHlyC7Pm2TPg=;
-        b=KUetw7u3MAXo1mEToucLTRcgkV5p8Msg/uFHVizU1YIme1W0FCtwKyIdgCACJfw53r
-         o4gWZMWJdGWLHP3pQiCCFAVepq3LPkkcVHr37qOzU2c7qk0+AwuR0tWKsK4H8l/GqAVl
-         Hs35+ocoL0yhHpNV0TvGfGYSYx0wqR+l4GEmwrQswdsFQxRTRlnG1JEoQ8TppIyiWlCw
-         h+GDkb4w1kJTT/6XAEd78HFo48yW/2NjFTqr+EF16THPurHktunnMHYNnI7O626komza
-         xmMNeaKkpIJ7g2WrYfedMxBOCVPpp2YL+drs4K4DjxizB093aU8zGNzlIYnugZcSA2Z4
-         5Yig==
-X-Forwarded-Encrypted: i=1; AJvYcCXKof0dCflIRCw/BM4Rz3M/qbyZY0sRGlwxNXImAn/0dX1svuxZU3cQ2ksWDMG7PRkwoPdY7R9Wyt9wLXunq5rOl/emEN4bLpLf
-X-Gm-Message-State: AOJu0YzdxjgenzZnxwAiYCUIhw5fovoxy7irLUN6v6bRE8oTK+rMGygr
-	B+GAszXraFBu+5yxhAxQvYVZZBHX93fAOxXPp0Lc2sXa7SUMvfm8nH8gNMQsmjw=
-X-Google-Smtp-Source: AGHT+IGvDcqiJLkbp5Wt7EHODgO9xmJRsJl8Dm7BikRVLAkTFvIbG0ZaoB6MyTPMSzHJY3e/AcsZhA==
-X-Received: by 2002:a05:600c:2342:b0:416:217e:c1b4 with SMTP id 2-20020a05600c234200b00416217ec1b4mr1832453wmq.23.1712233635929;
-        Thu, 04 Apr 2024 05:27:15 -0700 (PDT)
+        bh=iyUUQp6WOxRvluHXSIvI5EfrW3GeehtIyQz6Nkgdpu8=;
+        b=kqEwi2PqVmWmS5R5zI13OequBKhMMsYY9S+YA+UcuPiyqlseDFlDVqc8Wp784GuFUV
+         5Ah7/9Kf4MulbgbxRxeIl/OHhRussNAfA9zJKITWK3r46rBbu0jWxu//LaRlj2WchOrP
+         1Hx227eY6My50wqmp59u6J7c7YtnwVijre4XfN9JHtctua8PSBEddipusrIV0knCELDf
+         irIlpERkICRQhvFwiC9tljOKIpmdMz6Hq/8pC1xk2Xyu+lfECcfHFPPwVrghRv7XzeNV
+         CUXxpA7WDclCBxRlchO98q5N7cRHoXjMydX7zrWjwLnURpEKIsZUGkyZZTqmnyXIdGE5
+         0tXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUS7mIKc1H55BfpuSwG4QcT8EXwqHnU9WD17EZd0kDNIu2YO3/qfQAyG29tOrAB8dKGE2JcCvFQfT5z6+tR6USuCLJjsQcVREGC
+X-Gm-Message-State: AOJu0YxVM1j4NRjTmhKhJHxVDZG4/ulviLaiqu7psFVAJrEwE9L8pNoc
+	T4BHJsbTayKPTrFQQaRaOiXE+zNeDZm7d8X/zd88WrtqBuYTkfKG1wPBT5/D3f8=
+X-Google-Smtp-Source: AGHT+IEMnaWns3sPAMJ91nDBk0kRT98vdLD6EXIhsFu+f4lEueXgTLnJxBfN0OJHTHTi8CWqnrfg8Q==
+X-Received: by 2002:a05:600c:1f84:b0:415:6cd7:9967 with SMTP id je4-20020a05600c1f8400b004156cd79967mr4750373wmb.10.1712233641601;
+        Thu, 04 Apr 2024 05:27:21 -0700 (PDT)
 Received: from gpeter-l.roam.corp.google.com ([148.252.128.204])
-        by smtp.gmail.com with ESMTPSA id bu14-20020a056000078e00b003434b41c83fsm12106303wrb.81.2024.04.04.05.27.09
+        by smtp.gmail.com with ESMTPSA id bu14-20020a056000078e00b003434b41c83fsm12106303wrb.81.2024.04.04.05.27.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Apr 2024 05:27:13 -0700 (PDT)
+        Thu, 04 Apr 2024 05:27:20 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
@@ -81,9 +81,9 @@ Cc: linux-scsi@vger.kernel.org,
 	saravanak@google.com,
 	willmcvicker@google.com,
 	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 11/17] phy: samsung-ufs: ufs: Add support for gs101 UFS phy tuning
-Date: Thu,  4 Apr 2024 13:25:53 +0100
-Message-ID: <20240404122559.898930-12-peter.griffin@linaro.org>
+Subject: [PATCH 12/17] scsi: ufs: host: ufs-exynos: Add EXYNOS_UFS_OPT_UFSPR_SECURE option
+Date: Thu,  4 Apr 2024 13:25:54 +0100
+Message-ID: <20240404122559.898930-13-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.44.0.478.gd926399ef9-goog
 In-Reply-To: <20240404122559.898930-1-peter.griffin@linaro.org>
 References: <20240404122559.898930-1-peter.griffin@linaro.org>
@@ -95,243 +95,42 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the m-phy tuning values for gs101 UFS phy and SoC callbacks
-gs101_phy_wait_for_calibration() and gs101_phy_wait_for_cdr_lock().
+This option is intended to be set on platforms whose ufspr
+registers are only accessible via smc call (such as gs101).
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/phy/samsung/Makefile          |   1 +
- drivers/phy/samsung/phy-gs101-ufs.c   | 182 ++++++++++++++++++++++++++
- drivers/phy/samsung/phy-samsung-ufs.c |   3 +
- drivers/phy/samsung/phy-samsung-ufs.h |   1 +
- 4 files changed, 187 insertions(+)
- create mode 100644 drivers/phy/samsung/phy-gs101-ufs.c
+ drivers/ufs/host/ufs-exynos.c | 4 +++-
+ drivers/ufs/host/ufs-exynos.h | 1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
-index afb34a153e34..fea1f96d0e43 100644
---- a/drivers/phy/samsung/Makefile
-+++ b/drivers/phy/samsung/Makefile
-@@ -3,6 +3,7 @@ obj-$(CONFIG_PHY_EXYNOS_DP_VIDEO)	+= phy-exynos-dp-video.o
- obj-$(CONFIG_PHY_EXYNOS_MIPI_VIDEO)	+= phy-exynos-mipi-video.o
- obj-$(CONFIG_PHY_EXYNOS_PCIE)		+= phy-exynos-pcie.o
- obj-$(CONFIG_PHY_SAMSUNG_UFS)		+= phy-exynos-ufs.o
-+phy-exynos-ufs-y			+= phy-gs101-ufs.o
- phy-exynos-ufs-y			+= phy-samsung-ufs.o
- phy-exynos-ufs-y			+= phy-exynos7-ufs.o
- phy-exynos-ufs-y			+= phy-exynosautov9-ufs.o
-diff --git a/drivers/phy/samsung/phy-gs101-ufs.c b/drivers/phy/samsung/phy-gs101-ufs.c
-new file mode 100644
-index 000000000000..17b798da5b57
---- /dev/null
-+++ b/drivers/phy/samsung/phy-gs101-ufs.c
-@@ -0,0 +1,182 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * UFS PHY driver data for Google Tensor gs101 SoC
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ * Author: Peter Griffin <peter.griffin@linaro.org>
-+ */
+diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+index 734d40f99e31..7b68229f6264 100644
+--- a/drivers/ufs/host/ufs-exynos.c
++++ b/drivers/ufs/host/ufs-exynos.c
+@@ -1186,7 +1186,9 @@ static int exynos_ufs_init(struct ufs_hba *hba)
+ 	if (ret)
+ 		goto out;
+ 	exynos_ufs_specify_phy_time_attr(ufs);
+-	exynos_ufs_config_smu(ufs);
 +
-+#include "phy-samsung-ufs.h"
-+
-+#define TENSOR_GS101_PHY_CTRL		0x3ec8
-+#define TENSOR_GS101_PHY_CTRL_MASK	0x1
-+#define TENSOR_GS101_PHY_CTRL_EN	BIT(0)
-+#define PHY_GS101_LANE_OFFSET		0x200
-+#define TRSV_REG338			0x338
-+#define LN0_MON_RX_CAL_DONE		BIT(3)
-+#define TRSV_REG339			0x339
-+#define LN0_MON_RX_CDR_FLD_CK_MODE_DONE BIT(3)
-+#define TRSV_REG222			0x222
-+#define LN0_OVRD_RX_CDR_EN		BIT(4)
-+#define LN0_RX_CDR_EN			BIT(3)
-+
-+#define PHY_PMA_TRSV_ADDR(reg, lane)	(PHY_APB_ADDR((reg) + \
-+					((lane) * PHY_GS101_LANE_OFFSET)))
-+
-+#define PHY_TRSV_REG_CFG_GS101(o, v, d) \
-+	PHY_TRSV_REG_CFG_OFFSET(o, v, d, PHY_GS101_LANE_OFFSET)
-+
-+/* Calibration for phy initialization */
-+static const struct samsung_ufs_phy_cfg tensor_gs101_pre_init_cfg[] = {
-+	PHY_COMN_REG_CFG(0x43, 0x10,  PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x3C, 0x14,  PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x46, 0x48,  PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x200, 0x00, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x201, 0x06, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x202, 0x06, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x203, 0x0a, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x204, 0x00, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x205, 0x11, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x207, 0x0c, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2E1, 0xc0, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x22D, 0xb8, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x234, 0x60, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x238, 0x13, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x239, 0x48, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x23A, 0x01, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x23B, 0x25, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x23C, 0x2a, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x23D, 0x01, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x23E, 0x13, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x23F, 0x13, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x240, 0x4a, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x243, 0x40, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x244, 0x02, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x25D, 0x00, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x25E, 0x3f, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x25F, 0xff, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x273, 0x33, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x274, 0x50, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x284, 0x02, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x285, 0x02, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2A2, 0x04, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x25D, 0x01, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2FA, 0x01, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x286, 0x03, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x287, 0x03, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x288, 0x03, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x289, 0x03, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2B3, 0x04, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2B6, 0x0b, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2B7, 0x0b, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2B8, 0x0b, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2B9, 0x0b, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2BA, 0x0b, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2BB, 0x06, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2BC, 0x06, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2BD, 0x06, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x29E, 0x06, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2E4, 0x1a, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2ED, 0x25, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x269, 0x1a, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x2F4, 0x2f, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x34B, 0x01, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x34C, 0x23, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x34D, 0x23, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x34E, 0x45, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x34F, 0x00, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x350, 0x31, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x351, 0x00, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x352, 0x02, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x353, 0x00, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x354, 0x01, PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x43, 0x18, PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x43, 0x00, PWR_MODE_ANY),
-+	END_UFS_PHY_CFG,
-+};
-+
-+static const struct samsung_ufs_phy_cfg tensor_gs101_pre_pwr_hs_config[] = {
-+	PHY_TRSV_REG_CFG_GS101(0x369, 0x11, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x246, 0x03, PWR_MODE_ANY),
-+};
-+
-+/* Calibration for HS mode series A/B */
-+static const struct samsung_ufs_phy_cfg tensor_gs101_post_pwr_hs_config[] = {
-+	PHY_COMN_REG_CFG(0x8, 0x60, PWR_MODE_PWM_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x222, 0x08, PWR_MODE_PWM_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x246, 0x01, PWR_MODE_ANY),
-+	END_UFS_PHY_CFG,
-+};
-+
-+static const struct samsung_ufs_phy_cfg *tensor_gs101_ufs_phy_cfgs[CFG_TAG_MAX] = {
-+	[CFG_PRE_INIT]		= tensor_gs101_pre_init_cfg,
-+	[CFG_PRE_PWR_HS]	= tensor_gs101_pre_pwr_hs_config,
-+	[CFG_POST_PWR_HS]	= tensor_gs101_post_pwr_hs_config,
-+};
-+
-+static const char * const tensor_gs101_ufs_phy_clks[] = {
-+	"ref_clk",
-+};
-+
-+static int gs101_phy_wait_for_calibration(struct phy *phy, u8 lane)
-+{
-+	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
-+	const unsigned int timeout_us = 40000;
-+	const unsigned int sleep_us = 40;
-+	u32 val;
-+	u32 off;
-+	int err;
-+
-+	off = PHY_PMA_TRSV_ADDR(TRSV_REG338, lane);
-+
-+	err = readl_poll_timeout(ufs_phy->reg_pma + off,
-+				 val, (val & LN0_MON_RX_CAL_DONE),
-+				 sleep_us, timeout_us);
-+
-+	if (err) {
-+		dev_err(ufs_phy->dev,
-+			"failed to get phy cal done %d\n", err);
-+	}
-+
-+	return err;
-+}
-+
-+#define DELAY_IN_US	40
-+#define RETRY_CNT	100
-+static int gs101_phy_wait_for_cdr_lock(struct phy *phy, u8 lane)
-+{
-+	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
-+	u32 val;
-+	int i;
-+
-+	for (i = 0; i < RETRY_CNT; i++) {
-+		udelay(DELAY_IN_US);
-+		val = readl(ufs_phy->reg_pma +
-+			    PHY_PMA_TRSV_ADDR(TRSV_REG339, lane));
-+
-+		if (val & LN0_MON_RX_CDR_FLD_CK_MODE_DONE)
-+			return 0;
-+
-+		udelay(DELAY_IN_US);
-+		/* Override and enable clock data recovery */
-+		writel(LN0_OVRD_RX_CDR_EN, ufs_phy->reg_pma +
-+		       PHY_PMA_TRSV_ADDR(TRSV_REG222, lane));
-+		writel(LN0_OVRD_RX_CDR_EN | LN0_RX_CDR_EN,
-+		       ufs_phy->reg_pma + PHY_PMA_TRSV_ADDR(TRSV_REG222, lane));
-+	}
-+	dev_err(ufs_phy->dev, "failed to get cdr lock\n");
-+	return -ETIMEDOUT;
-+}
-+
-+const struct samsung_ufs_phy_drvdata tensor_gs101_ufs_phy = {
-+	.cfgs = tensor_gs101_ufs_phy_cfgs,
-+	.isol = {
-+		.offset = TENSOR_GS101_PHY_CTRL,
-+		.mask = TENSOR_GS101_PHY_CTRL_MASK,
-+		.en = TENSOR_GS101_PHY_CTRL_EN,
-+	},
-+	.clk_list = tensor_gs101_ufs_phy_clks,
-+	.num_clks = ARRAY_SIZE(tensor_gs101_ufs_phy_clks),
-+	.wait_for_cal = gs101_phy_wait_for_calibration,
-+	.wait_for_cdr = gs101_phy_wait_for_cdr_lock,
-+};
-diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
-index f57a2f2a415d..813bce47121d 100644
---- a/drivers/phy/samsung/phy-samsung-ufs.c
-+++ b/drivers/phy/samsung/phy-samsung-ufs.c
-@@ -310,6 +310,9 @@ static int samsung_ufs_phy_probe(struct platform_device *pdev)
++	if (!(ufs->opts & EXYNOS_UFS_OPT_UFSPR_SECURE))
++		exynos_ufs_config_smu(ufs);
+ 	return 0;
  
- static const struct of_device_id samsung_ufs_phy_match[] = {
- 	{
-+		.compatible = "google,gs101-ufs-phy",
-+		.data = &tensor_gs101_ufs_phy,
-+	}, {
- 		.compatible = "samsung,exynos7-ufs-phy",
- 		.data = &exynos7_ufs_phy,
- 	}, {
-diff --git a/drivers/phy/samsung/phy-samsung-ufs.h b/drivers/phy/samsung/phy-samsung-ufs.h
-index 7de6b574b94d..9b7deef6e10f 100644
---- a/drivers/phy/samsung/phy-samsung-ufs.h
-+++ b/drivers/phy/samsung/phy-samsung-ufs.h
-@@ -147,5 +147,6 @@ int samsung_ufs_phy_wait_for_lock_acq(struct phy *phy, u8 lane);
- extern const struct samsung_ufs_phy_drvdata exynos7_ufs_phy;
- extern const struct samsung_ufs_phy_drvdata exynosautov9_ufs_phy;
- extern const struct samsung_ufs_phy_drvdata fsd_ufs_phy;
-+extern const struct samsung_ufs_phy_drvdata tensor_gs101_ufs_phy;
+ out:
+diff --git a/drivers/ufs/host/ufs-exynos.h b/drivers/ufs/host/ufs-exynos.h
+index a4bd6646d7f1..0fc21b6bbfcd 100644
+--- a/drivers/ufs/host/ufs-exynos.h
++++ b/drivers/ufs/host/ufs-exynos.h
+@@ -221,6 +221,7 @@ struct exynos_ufs {
+ #define EXYNOS_UFS_OPT_BROKEN_RX_SEL_IDX	BIT(3)
+ #define EXYNOS_UFS_OPT_USE_SW_HIBERN8_TIMER	BIT(4)
+ #define EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR	BIT(5)
++#define EXYNOS_UFS_OPT_UFSPR_SECURE		BIT(6)
+ };
  
- #endif /* _PHY_SAMSUNG_UFS_ */
+ #define for_each_ufs_rx_lane(ufs, i) \
 -- 
 2.44.0.478.gd926399ef9-goog
 
