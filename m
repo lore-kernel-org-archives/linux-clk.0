@@ -1,60 +1,60 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FA61CF9C
-	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 06:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34E72574F
+	for <linux-clk@vger.kernel.org>; Thu,  4 Apr 2024 06:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712212458; cv=none; b=In3VqAZbLH2PgoETnj6ssdKWlE/SpN4LOVS+o/01S6F+X1vmPPvJsiOFY29wpiljR+XIDpOOvODfg4XXt2vBubf/rz9GsDdcfQk5UOwmH9HZ8BBEr8ptaJvnO/Tj3BZbj1YHllijRBM68FqNlZZV9ufGSUWQEkG7wXOU8Keal4Q=
+	t=1712212610; cv=none; b=lUo6L0afbxYj9HtOhxXCr1oanNM2wSnaKSWN78gJ5ffOVL7aaN1KXDBIaTlkVgFBxUH8tVvbPn9M7GQ+eJ11oBgLLuYy29q49Nu5dhUKnJbwKZG1HXuaQU2jDbXJc62Txhaswc1ZCHgclD7gzuBXanaUTx/LT9avXSt6bySsDWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712212458; c=relaxed/simple;
-	bh=BTYeJOUKtjiPMDXZczAfTqsrxlPjGuCMwC22A9iWoq0=;
+	s=arc-20240116; t=1712212610; c=relaxed/simple;
+	bh=fXnxRFmk8goKBrgIHEkdPt7J1ihXSLbvXazoGJv9RCU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UDWX4RaaUzB5l2ESW9mHR8XUEoz1YcLwrehqRIpo4h7WFdqugPT18Azx9veKiucpcgvoDsxGS0QbArHTKxbUtgcpaihyeCpg1yKMfRuL4SuxXCf308BaGWPyOr6EGqU8rBySNEkDGU4qbvZzRI5+JrOyMvQmNsslvjom/C8WRJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B20i/5Qi; arc=none smtp.client-ip=209.85.167.48
+	 In-Reply-To:Content-Type; b=Fyw1pTMIaTXbeM+/sAYPo7EnYpY8SxMxstW8L3GO63Iz//BxbkEEEMVhI7Xgc14CjGhOqCBHbYFJaZFAJg9u98yoOdkUzPLaKk54uHe0KG2Gv6hWNdXpEtZ1JyQN0Oyxw+Da9F10ediRdchrtz33+CwtRYHobziuMNJcW0dt+cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W4Bv9He5; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B20i/5Qi"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-516c403cc46so1014789e87.3
-        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 23:34:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W4Bv9He5"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-516c1bbe314so942189e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 03 Apr 2024 23:36:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712212455; x=1712817255; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712212606; x=1712817406; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=pXxPGEJDIb+ns+ZarG/yOP2pf144tdvQi2hFIPyNPiU=;
-        b=B20i/5QiK84oEyNDNlm23BY/jW+PeRM3Y2kiO2PtZ/SMYg1CKYceSg2IUACLxPe9jw
-         5kbQmwcnzMBhvbNDQGO0+KisSUeNLxIlz3YEOCUwq6OVmWGGouxPXpkEBgZkCA7phxYs
-         YiuWSQGHCxCnwYtQttq/Aqy/ookWuqisFPLqrDpFA2kQAkmC3cjUvdj/m9+hyQqyTnqR
-         3RrihJSe8cUzFlefZ6/EoEXGoJasy4WRM1VwCQFvlRes5twpf5GW0wzi7fmdWC3FgJd9
-         wGWFwVpyFuDluyDya+nYeqBfXFbzt6OCyjcaXK2QLI6S55w/j2kVB4u0YRl9+p2gvuri
-         c2vg==
+        bh=2zKAxFOY7Srl3ScO6WnUAH2vVBLJhCxKCIkxZt7ZVco=;
+        b=W4Bv9He5l+i/t/Ts7ZY5SXkRGGDgHd1Qcf3b5Ba+GA1J6oMsaiW3zyQKWkl67PYAv4
+         0k3CZ7Uf0QUaih8aYlr+SjrjVSo9y+YHuW/wzkCs3KyiyH4IkK+ZgJuPraC2sAikxZcH
+         QeHBdqmOWT58TT5AvlG5onImX/sRJ7tTnhGw3BjFGe2HCQHS0JahOo8La4Vs4ZNct5Kk
+         TfBtA1nLECOtnWjsZC49788OQPk/r+4SGrudsK95A+HHWL1glecaClE7pJKGAKqPputf
+         4x7Wj05lpjCiTCzKAhvGbVk8W1DeNEvKnjbWMyUQxpAvn3PCvCBEgNCf73xAm3Wx83Ox
+         3jmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712212455; x=1712817255;
+        d=1e100.net; s=20230601; t=1712212606; x=1712817406;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pXxPGEJDIb+ns+ZarG/yOP2pf144tdvQi2hFIPyNPiU=;
-        b=lj2eT+qXqCIym+CWo8qrbK5zSHTAjhJkCVI54CR9kewrRIm8O6hajtsxSREdu75Hf5
-         Db1owQWoQWEQvuBbCbAMPTPeWtxvjmdVREMhvAIYjBUca12Z3kAXfW3sEU0eL4MOPcmC
-         +XZY6uH67sb3E3hSEWmmh68/LBYd3of2M3liAlv8n2cm6NXtj04IXufWJJoa6+2dr4HI
-         i0x/wPQhaG8KemMZJFTU664rRr5/PiaqgMBkMTFamzZw5HSE0M4ED8cotmL8Vl+sqrtD
-         0PfP3rf896PJJ7Otiub0fC7LA2l3gcbhN+gXV4tzNhN0J7oIm/D0RqYkCvBzGcyQqSFO
-         PyUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcGMBKZv9FOL5wKM2R3lStpezDTe4FSncFT5OyrXJG+ilsulFjHxZv9rR5rx13AzTnDfTUQCPye4dEXZ3jR5NKIvP+rRF+AG4+
-X-Gm-Message-State: AOJu0YzVtAwATuFnSAM8jhETUGNZsLjcERI0k3KOVrMOGUwe4g0Udt6O
-	Gfzj3/IHYPqKWkw4MP3RnveFVrf8IUUsKnl1Otgkh/iFDM16EXdJAGk8ceaUjQ4=
-X-Google-Smtp-Source: AGHT+IHiNNOWUeZEnE9jyGK9yAVW1LivooJ+qXp8Mp8SiKZ/63Lll+dXgqnNHlbOJ0eEEaANa5L/6g==
-X-Received: by 2002:a05:6512:36d2:b0:515:a9d5:aab6 with SMTP id e18-20020a05651236d200b00515a9d5aab6mr1196646lfs.18.1712212454932;
-        Wed, 03 Apr 2024 23:34:14 -0700 (PDT)
+        bh=2zKAxFOY7Srl3ScO6WnUAH2vVBLJhCxKCIkxZt7ZVco=;
+        b=ih9lWu9UYBg0fCikB8LB0A228OugzYXTlw9/Lp8rxo5SwkJRP77P/DBHuVFpks0sDN
+         1oZiW+YqLFR8Gyg025S071er61VpCo/UiIqt4d+yxLUMBfdKsTjfDi/D6pHa2Bg+PeLc
+         c2FbR0xT/ljLFA902+dP9MexAm/7a01HGhkxQNeDkVs+ZZ1VC94hFaYC34pWY65izum7
+         2xpYTDLaskchk8gze9GgpfgQ6Ac8P1+5xz2pKsf6WT+QaG2+zLnBH6S4Rm/6JX7EYu9Z
+         qEBKW6Xpeg+c0D+OKnfhkrtyKxv+gxeQXt7dIkTv+AFy6rq5JTg+nRESZcKKtYDHakem
+         tLoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUV1TAjTEjZLuR6yRJ5h/53Sc2wAorEPIxZ/8bxE1X2McWOoP3+nMe7hDMpm9HDyxqUmagxjfDmQ/pgrPzdEbwgi5Nd9Wd0x9N+
+X-Gm-Message-State: AOJu0Yy4zI/Z22M+tgAM02rNecWwdM7jkSckBfG/Orv/vUBb6baBk7tL
+	spbjprWEHVxhQ/bgQvNM1X6I7zOffGZ9tujb8swvTI0argTlqIilHCPICPeBOP0=
+X-Google-Smtp-Source: AGHT+IGAojjYjuQHbsZ23M5TUMeoOaZmWr8G+SCEhCS4dvxhe6ieyt4tVHaLgJej+gwKtAG8GNIHKg==
+X-Received: by 2002:a05:6512:3b99:b0:516:bea2:5931 with SMTP id g25-20020a0565123b9900b00516bea25931mr1433669lfv.23.1712212606016;
+        Wed, 03 Apr 2024 23:36:46 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id 27-20020a170906311b00b00a4ea1167a52sm1650947ejx.25.2024.04.03.23.34.13
+        by smtp.gmail.com with ESMTPSA id p6-20020a170906a00600b00a46d04b6117sm8668766ejy.64.2024.04.03.23.36.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Apr 2024 23:34:14 -0700 (PDT)
-Message-ID: <65e7617a-9e7b-4dea-a98c-31502222543a@linaro.org>
-Date: Thu, 4 Apr 2024 08:34:12 +0200
+        Wed, 03 Apr 2024 23:36:45 -0700 (PDT)
+Message-ID: <95d194ed-86fe-45df-88f1-ae460eb36eaf@linaro.org>
+Date: Thu, 4 Apr 2024 08:36:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: clock: airoha: add EN7581 binding
+Subject: Re: [PATCH 4/4] clk: en7523: add EN7581 support
 To: Lorenzo Bianconi <lorenzo@kernel.org>, linux-clk@vger.kernel.org
 Cc: mturquette@baylibre.com, sboyd@kernel.org,
  linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
@@ -71,7 +71,7 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org,
  catalin.marinas@arm.com, will@kernel.org, upstream@airoha.com,
  lorenzo.bianconi83@gmail.com, angelogioacchino.delregno@collabora.com
 References: <cover.1712160869.git.lorenzo@kernel.org>
- <1988a4460ed327bea7841f6a0f3a756dd7cec4bb.1712160869.git.lorenzo@kernel.org>
+ <3aaf638b846ecfdbfc1c903206b7d519d56c9130.1712160869.git.lorenzo@kernel.org>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -118,64 +118,58 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <1988a4460ed327bea7841f6a0f3a756dd7cec4bb.1712160869.git.lorenzo@kernel.org>
+In-Reply-To: <3aaf638b846ecfdbfc1c903206b7d519d56c9130.1712160869.git.lorenzo@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 03/04/2024 18:20, Lorenzo Bianconi wrote:
-> Introduce Airoha EN7581 entry in Airoha EN7523 clock binding
+> Introduce EN7581 clock support to clk-en7523 driver.
 > 
+> Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
 > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> ---
->  .../bindings/clock/airoha,en7523-scu.yaml     | 26 +++++++++++++++++--
->  1 file changed, 24 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> index 79b0752faa91..cf893d4c74cd 100644
-> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> @@ -29,10 +29,13 @@ description: |
->  properties:
->    compatible:
->      items:
-> -      - const: airoha,en7523-scu
-> +      - enum:
-> +          - airoha,en7523-scu
-> +          - airoha,en7581-scu
->  
->    reg:
-> -    maxItems: 2
-> +    minItems: 2
-> +    maxItems: 3
->  
->    "#clock-cells":
->      description:
-> @@ -45,6 +48,25 @@ required:
->    - reg
->    - '#clock-cells'
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: airoha,en7523-scu
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 2
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: airoha,en7581-scu
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 3
 
-Original code had here issue - lack of description of the items. You are
-now growing it. Please instead list the items (items: - description: foo
-bar .....).
+
+> +	return 0;
+> +}
+> +
+>  static int en7523_clk_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *node = pdev->dev.of_node;
+> @@ -306,6 +413,12 @@ static int en7523_clk_probe(struct platform_device *pdev)
+>  	if (IS_ERR(np_base))
+>  		return PTR_ERR(np_base);
+>  
+> +	if (of_device_is_compatible(node, "airoha,en7581-scu")) {
+
+Having matching and compatible comparisons inside various code is
+discouraged. Does not scale. Use driver/match data to store some sort of
+flags and check for the flag or some other parameter. The best if
+compatible appears once and only once: in of_device_id.
+
+> +		r = en7581_clk_hw_init(pdev, base, np_base);
+> +		if (r)
+> +			return r;
+> +	}
+> +
+>  	clk_data = devm_kzalloc(&pdev->dev,
+>  				struct_size(clk_data, hws, EN7523_NUM_CLOCKS),
+>  				GFP_KERNEL);
+> @@ -329,8 +442,15 @@ static const struct clk_ops en7523_pcie_ops = {
+>  	.unprepare = en7523_pci_unprepare,
+>  };
+>  
+> +static const struct clk_ops en7581_pcie_ops = {
+> +	.is_enabled = en7581_pci_is_enabled,
+> +	.prepare = en7581_pci_prepare,
+> +	.unprepare = en7581_pci_unprepare,
+> +};
+> +
+>  static const struct of_device_id of_match_clk_en7523[] = {
+>  	{ .compatible = "airoha,en7523-scu", .data = &en7523_pcie_ops },
+> +	{ .compatible = "airoha,en7581-scu", .data = &en7581_pcie_ops },
+>  	{ /* sentinel */ }
+>  };
+>  
 
 Best regards,
 Krzysztof
