@@ -1,397 +1,115 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC4A15FA79
-	for <linux-clk@vger.kernel.org>; Fri,  5 Apr 2024 08:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9450316DEA5;
+	Fri,  5 Apr 2024 12:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712307526; cv=none; b=RxO0WCwLxs8EGw8wlpb4hgS9fEHAJk0mb6R4GDZTG9OspzW2prOsuaqMP1jYUYzYvl6y6bdcdDbPu5czs5epqKPQK3EH0XUDUc1yNW/2/PejB7X4SihI2KzC1+nTHQf5B807caFuGvyo8+enMZSws+a5D3Qp0Kb2zQ6pawTtkDw=
+	t=1712320332; cv=none; b=oin4xQYxqoesX1p7kEm88v1LcIh7REm/H1Rzpb9u+5UluRhArQVu0C6F+EwJ4U5jRNnSUQA5wFLx+QDL2gItMyysVApvupI2zBKHch2nkVx9Qe3zwHJRr294onE7ngZYvGsvxvzuo7ktMiwi1BHNkjXxsUkwxu4NmzDKUeCOCSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712307526; c=relaxed/simple;
-	bh=UfgJIGbrSqwgwmcf29SClvJEf6OHWtdMTMMDqZN0JYM=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=WQi485P2tcIhdCYQT7AKbcKk3OO4EGZjsGgBurgu+eCu51MvPkeD8Ik+cS3mKt7cLPXWFeAizXH5FZ2erCKV1biKtmEAiRKLqv2vlZ8oLeDVfKHbLNRhBNkicx8to+b29oScYVTHcBaLUbz1k7jeXhvRZoCPdB915FNh+IJSpLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Iy9MNx1w; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Iy9MNx1w"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3416df43cabso1437487f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 05 Apr 2024 01:58:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1712307521; x=1712912321; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=tvTd0Fm8ZquDDVIbm2YOHB7MsYv/hDWQ2T1VR/OyIKU=;
-        b=Iy9MNx1w1186vSoThc9VzOTg/R5G/DUZiWGpDUD4H8KMmWWutPJidpjRZ7UTzWldWf
-         8zre+MDVp4dhG2CjEg8zpPGaC8a9Ba4hKqmwwmuy3m6Xl21VGuQy84QfTThR6EaPbiG5
-         s/o+Gn7KR4ZJOrEttogcYRILZhrNJZFt0mnGXJwRodtDch3FlYQ7c2WlWrkDQc/3e+Sj
-         KB48JVwyBcrjBErrxASY99Tf/qhrTF/HTmr/1aMF9lcqlOQFJ1P+fskXw+Q+XZEzjPuO
-         bIYEPEHlGG5rR+Ky9/36pcuGw7LaiMGOb5JTjK+am1OmNS6y+POPWLb2gCOPm233xd+G
-         z8Bw==
+	s=arc-20240116; t=1712320332; c=relaxed/simple;
+	bh=RB1Wd/l8LoElaNdtvFRK6lkrvSeTO+EqCHYvOY2uo9k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vcd53BblRdWhkH3/OY2IylBbqdArQoDEDQAU89QBqfVv7YYdWsINkBCHusfKJcP3zgsQdZ2CCr85kOcRGLKq4Aw9se/dtPDwa1lwgpJqEJZXS/2eeMzDv2PUpKSeP7dzunik+V5eB0QO5QZVfX5OsvxsbEI7/fJu/cmUEWwciws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dcc71031680so2104444276.2;
+        Fri, 05 Apr 2024 05:32:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712307521; x=1712912321;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tvTd0Fm8ZquDDVIbm2YOHB7MsYv/hDWQ2T1VR/OyIKU=;
-        b=hBQakraxBNl5+heICDt/a1JYA0aaRK8INNH6Grbu1wgYA8j3eI8mTXYkz76u3OMI2/
-         q8LQykBqpujiFHMdUAHvb6l/8sSOP7OoQ6ADXPNOfbemix8NX3IAkMNKL/KAxPL073r9
-         XShViPbQCvvtgwAeyT7VaGGvy48cq0nMxOper/zEisfRt7oS8UuP4GX3elLPUnGAFL7R
-         uDHvIz3WyiVXQZ6Li/RQoz17J9sIHs5ciyfgei4Ddbmssn/Efg24ZAoGanEyy8QN0Z4U
-         9Ap2uNwj5N4mjnOTR4e7A633Vu5lm6HzaVy/t/akyOoNlhMHx8l20XYaLIaeA4wOvEe9
-         dGEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXL/+x663s0OqYsb6VHmZ9lJaicExWfp/5+8DIAglZwYlQI/Rlp7kdkYzcelygQEjSGbzFspa7fUSJqy54ALsUxQOOWk6ScVQg1
-X-Gm-Message-State: AOJu0YyHnG/3BzZaI1DUeRrbhxrQQ4MNElkDjj+3uvNsyim2j4yKZhNr
-	FFx1DW086aSFK3UIBm9UAJMwhcCRd4SsJOEiZ9EqYsKTRAQPr5fZaM/0L6Hituo=
-X-Google-Smtp-Source: AGHT+IFkeZDLwHmb5ksDQvkIX1BxNeAKFtQ2xaawsaOuYE3qt3kcvau+dHTVrKGw3Ss9d7qEh2aORA==
-X-Received: by 2002:adf:a486:0:b0:33e:bfd0:41f9 with SMTP id g6-20020adfa486000000b0033ebfd041f9mr633683wrb.31.1712307520708;
-        Fri, 05 Apr 2024 01:58:40 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:dd7a:d766:e9e8:454c])
-        by smtp.gmail.com with ESMTPSA id g11-20020adfe40b000000b00341cb22a8d4sm1494134wrm.108.2024.04.05.01.58.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Apr 2024 01:58:40 -0700 (PDT)
-References: <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-0-99ecdfdc87fc@linaro.org>
- <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-2-99ecdfdc87fc@linaro.org>
- <1jmsq9pmgd.fsf@starbuckisacylon.baylibre.com>
- <2cf79f07-0ae1-4267-ac08-fe40366d87d4@linaro.org>
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: neil.armstrong@linaro.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Kevin Hilman <khilman@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Jagan Teki <jagan@amarulasolutions.com>, Nicolas Belin
- <nbelin@baylibre.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v12 2/7] clk: meson: add vclk driver
-Date: Fri, 05 Apr 2024 09:00:43 +0200
-In-reply-to: <2cf79f07-0ae1-4267-ac08-fe40366d87d4@linaro.org>
-Message-ID: <1ja5m8p4n4.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20230601; t=1712320328; x=1712925128;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/bPulDFyqKcNHOqZbTas5oGwjflVlb0IvXxADWNRbac=;
+        b=MPlvI2s8USkd0KUwDLyzT+44IipyacqoM3eSrOXEnaE+gq/5eri1jvCAFInTymt60z
+         REU/Xv5JsI4t7qr17Xnw+FIDmUxaLz7gsDwdCATDwL4saADckMYtHthVLdhZjH4WnVkI
+         HNmDc5maAvcDHpP8QIc+gi4SIJ7qQHSvwOpCpAw14M34yvFCdM4lTsL//m/wELHt3DrF
+         xCzxk0tHygg8yKgui6SNjP9VEBw9MCjbiZR9HYwoxG9s1tsg1f3UKX2ja26i2NdU7l6K
+         IF6LPaov4qX7thKBssjGWuISdK8f4InaEyHqbsyt6dnrBeG3EEVVFTShBlccg7+s9F3F
+         AZVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWL5nURRwxemR+6FpvigBrmySRwBvKpTecJEy/+pr7a/EPAndTOjR1HayG/9Cwqlxk1bQHM9EH6lT/rfRGBLnCz1SSwBQ03t9FaEezpmkYkReHuLJhfU93oj3ltN6sRC0VvGpnpDpeqITVL8H3noqnNYVa7xvMWbD8HbQA0geo9wf9XXi30uxCvWsVdrgft6rHgcKw/6kreLrVOWUp0Zj7Ww+cJNduKmoj9PlChpSP6qyq+Yvwt4/i9VTAbDYg1js+vlRnsdYmQaXBe2BEK6VrEXkOIVoX48ghA6ij+LwxKLjzxYsUo9NLl9GydVMZRYi0SIQA0UqQ8fDy/6FdrKGj7Qx59s7lf0Ovu443QwAKZhY05OJRpi2g=
+X-Gm-Message-State: AOJu0YzEmVMQJ17wtrOGRxANtnDxvTZ4n3IIxa58hBJWlw07SqnqyyIe
+	Vhmkx6r/UINMq4po4OpwPVcvZiW/5XlcYCRpEU6lwQK/5/+1wIQOtr6wJq+Az4k=
+X-Google-Smtp-Source: AGHT+IGgevHEpkwMOS5F8pl4dvxc5ZuXVYL1BPsil8rGe3AWrEo/ncgGoEdKh0U9XNWHI/dLAToN5Q==
+X-Received: by 2002:a5b:ac6:0:b0:dc6:d457:ac92 with SMTP id a6-20020a5b0ac6000000b00dc6d457ac92mr984772ybr.31.1712320327715;
+        Fri, 05 Apr 2024 05:32:07 -0700 (PDT)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id h4-20020a25b184000000b00dcf35be9f51sm284055ybj.24.2024.04.05.05.32.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Apr 2024 05:32:07 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6151d2489b4so23214527b3.0;
+        Fri, 05 Apr 2024 05:32:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWCCz7fA2Scgs08FC+THMGTgCJv9gl18fLbu1NXBD3XzOowX1J9JcPetsrnxejSXGejHF+zEgnxKFVCryqhlpXFJLiq8yL9Ok95qeT9dVG16h9hICUfo2sOC80D4xpJv5saikGuc+5vBPGB+DmhdCAI044MiNxsoco8Ipre4i6/Er5NMsFq5TejWgZ2ESX8iTy19C+7OO8WOuJHYlCQwAujhrufjL8tccWpg7TajjzsOoIJty+1t8QPiM4CJwBktcNvAvplAFecd2lTEZ8bE1bpEpqLs9jcitN5ETCzEYTVp5luw4SM0BwiTPXmMp8SZwD8F/oGc02IUWHwYVhgsbMX3G+BhIwkQGWfTox/izi0nC6dt/xETRw=
+X-Received: by 2002:a5b:4ca:0:b0:dcd:19ba:10df with SMTP id
+ u10-20020a5b04ca000000b00dcd19ba10dfmr1040280ybp.56.1712320326217; Fri, 05
+ Apr 2024 05:32:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <cover.1712207606.git.ysato@users.sourceforge.jp> <4ac65d0f311e890c1ca92bf057c70954ec7ac351.1712207606.git.ysato@users.sourceforge.jp>
+In-Reply-To: <4ac65d0f311e890c1ca92bf057c70954ec7ac351.1712207606.git.ysato@users.sourceforge.jp>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 5 Apr 2024 14:31:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXvL0fWGrn+KNDvXcioYnY-=3WmGtcdFkC82L7tL__+wA@mail.gmail.com>
+Message-ID: <CAMuHMdXvL0fWGrn+KNDvXcioYnY-=3WmGtcdFkC82L7tL__+wA@mail.gmail.com>
+Subject: Re: [RESEND v7 09/37] dt-binding: Add compatible SH7750 SoC
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
+	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>, 
+	Heiko Stuebner <heiko.stuebner@cherry.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Chris Morgan <macromorgan@hotmail.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Guo Ren <guoren@kernel.org>, 
+	Azeem Shaikh <azeemshaikh38@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Herve Codina <herve.codina@bootlin.com>, 
+	Manikanta Guntupalli <manikanta.guntupalli@amd.com>, Anup Patel <apatel@ventanamicro.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Apr 4, 2024 at 7:15=E2=80=AFAM Yoshinori Sato
+<ysato@users.sourceforge.jp> wrote:
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 
-On Thu 04 Apr 2024 at 18:59, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> On 04/04/2024 10:13, Jerome Brunet wrote:
->> On Wed 03 Apr 2024 at 09:46, Neil Armstrong <neil.armstrong@linaro.org>
->> wrote:
->> 
->>> The VCLK and VCLK_DIV clocks have supplementary bits.
->>>
->>> The VCLK gate has a "SOFT RESET" bit to toggle after the whole
->>> VCLK sub-tree rate has been set, this is implemented in
->>> the gate enable callback.
->>>
->>> The VCLK_DIV clocks as enable and reset bits used to disable
->>> and reset the divider, associated with CLK_SET_RATE_GATE it ensures
->>> the rate is set while the divider is disabled and in reset mode.
->>>
->>> The VCLK_DIV enable bit isn't implemented as a gate since it's part
->>> of the divider logic and vendor does this exact sequence to ensure
->>> the divider is correctly set.
->> The checkpatch warning is still there. Is it a choice or a mistake ?
->> Documentation says "GPL v2" exists for historic reason which seems to
->> hint "GPL" is preferred, and I suppose this is why checkpatch warns for
->> it.
->
-> Well I didn't see this warning, this is what I fixed:
->
-> $ scripts/checkpatch.pl --strict drivers/clk/meson/vclk.c
-> CHECK: Alignment should match open parenthesis
-> #63: FILE: drivers/clk/meson/vclk.c:63:
-> +static unsigned long meson_vclk_div_recalc_rate(struct clk_hw *hw,
-> +                                                    unsigned long prate)
->
-> CHECK: Alignment should match open parenthesis
-> #73: FILE: drivers/clk/meson/vclk.c:73:
-> +static int meson_vclk_div_determine_rate(struct clk_hw *hw,
-> +                                             struct clk_rate_request *req)
->
-> CHECK: Alignment should match open parenthesis
-> #83: FILE: drivers/clk/meson/vclk.c:83:
-> +static int meson_vclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                                       unsigned long parent_rate)
->
+Gr{oetje,eeting}s,
 
-I would not ask a respin solely for this. It's nice to fix it but I was
-mostly after the warning TBH.
+                        Geert
 
-> <snip>
->
-> It seems that checking a commit triggers an extra check....
->
-> $ scripts/checkpatch.pl --strict -G 1bac9f6aa3c3
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> #58:
-> new file mode 100644
->
-> <snip>
->
-> WARNING: Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db ("module: Cure the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
-> #203: FILE: drivers/clk/meson/vclk.c:141:
-> +MODULE_LICENSE("GPL v2");
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Hum, I'm running checkpatch against the mail itself, not the commit. I
-still get the warning
-
->
-> <snip>
->
-> Neil
->
->> 
->>>
->>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>> ---
->>>   drivers/clk/meson/Kconfig  |   4 ++
->>>   drivers/clk/meson/Makefile |   1 +
->>>   drivers/clk/meson/vclk.c   | 141 +++++++++++++++++++++++++++++++++++++++++++++
->>>   drivers/clk/meson/vclk.h   |  51 ++++++++++++++++
->>>   4 files changed, 197 insertions(+)
->>>
->>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
->>> index 29ffd14d267b..8a9823789fa3 100644
->>> --- a/drivers/clk/meson/Kconfig
->>> +++ b/drivers/clk/meson/Kconfig
->>> @@ -30,6 +30,10 @@ config COMMON_CLK_MESON_VID_PLL_DIV
->>>   	tristate
->>>   	select COMMON_CLK_MESON_REGMAP
->>>   +config COMMON_CLK_MESON_VCLK
->>> +	tristate
->>> +	select COMMON_CLK_MESON_REGMAP
->>> +
->>>   config COMMON_CLK_MESON_CLKC_UTILS
->>>   	tristate
->>>   diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->>> index 9ee4b954c896..9ba43fe7a07a 100644
->>> --- a/drivers/clk/meson/Makefile
->>> +++ b/drivers/clk/meson/Makefile
->>> @@ -12,6 +12,7 @@ obj-$(CONFIG_COMMON_CLK_MESON_PLL) += clk-pll.o
->>>   obj-$(CONFIG_COMMON_CLK_MESON_REGMAP) += clk-regmap.o
->>>   obj-$(CONFIG_COMMON_CLK_MESON_SCLK_DIV) += sclk-div.o
->>>   obj-$(CONFIG_COMMON_CLK_MESON_VID_PLL_DIV) += vid-pll-div.o
->>> +obj-$(CONFIG_COMMON_CLK_MESON_VCLK) += vclk.o
->>>     # Amlogic Clock controllers
->>>   diff --git a/drivers/clk/meson/vclk.c b/drivers/clk/meson/vclk.c
->>> new file mode 100644
->>> index 000000000000..45dc216941ea
->>> --- /dev/null
->>> +++ b/drivers/clk/meson/vclk.c
->>> @@ -0,0 +1,141 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Copyright (c) 2024 Neil Armstrong <neil.armstrong@linaro.org>
->>> + */
->>> +
->>> +#include <linux/module.h>
->>> +#include "vclk.h"
->>> +
->>> +/* The VCLK gate has a supplementary reset bit to pulse after ungating */
->>> +
->>> +static inline struct meson_vclk_gate_data *
->>> +clk_get_meson_vclk_gate_data(struct clk_regmap *clk)
->>> +{
->>> +	return (struct meson_vclk_gate_data *)clk->data;
->>> +}
->>> +
->>> +static int meson_vclk_gate_enable(struct clk_hw *hw)
->>> +{
->>> +	struct clk_regmap *clk = to_clk_regmap(hw);
->>> +	struct meson_vclk_gate_data *vclk = clk_get_meson_vclk_gate_data(clk);
->>> +
->>> +	meson_parm_write(clk->map, &vclk->enable, 1);
->>> +
->>> +	/* Do a reset pulse */
->>> +	meson_parm_write(clk->map, &vclk->reset, 1);
->>> +	meson_parm_write(clk->map, &vclk->reset, 0);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static void meson_vclk_gate_disable(struct clk_hw *hw)
->>> +{
->>> +	struct clk_regmap *clk = to_clk_regmap(hw);
->>> +	struct meson_vclk_gate_data *vclk = clk_get_meson_vclk_gate_data(clk);
->>> +
->>> +	meson_parm_write(clk->map, &vclk->enable, 0);
->>> +}
->>> +
->>> +static int meson_vclk_gate_is_enabled(struct clk_hw *hw)
->>> +{
->>> +	struct clk_regmap *clk = to_clk_regmap(hw);
->>> +	struct meson_vclk_gate_data *vclk = clk_get_meson_vclk_gate_data(clk);
->>> +
->>> +	return meson_parm_read(clk->map, &vclk->enable);
->>> +}
->>> +
->>> +const struct clk_ops meson_vclk_gate_ops = {
->>> +	.enable = meson_vclk_gate_enable,
->>> +	.disable = meson_vclk_gate_disable,
->>> +	.is_enabled = meson_vclk_gate_is_enabled,
->>> +};
->>> +EXPORT_SYMBOL_GPL(meson_vclk_gate_ops);
->>> +
->>> +/* The VCLK Divider has supplementary reset & enable bits */
->>> +
->>> +static inline struct meson_vclk_div_data *
->>> +clk_get_meson_vclk_div_data(struct clk_regmap *clk)
->>> +{
->>> +	return (struct meson_vclk_div_data *)clk->data;
->>> +}
->>> +
->>> +static unsigned long meson_vclk_div_recalc_rate(struct clk_hw *hw,
->>> +						unsigned long prate)
->>> +{
->>> +	struct clk_regmap *clk = to_clk_regmap(hw);
->>> +	struct meson_vclk_div_data *vclk = clk_get_meson_vclk_div_data(clk);
->>> +
->>> +	return divider_recalc_rate(hw, prate, meson_parm_read(clk->map, &vclk->div),
->>> +				   vclk->table, vclk->flags, vclk->div.width);
->>> +}
->>> +
->>> +static int meson_vclk_div_determine_rate(struct clk_hw *hw,
->>> +					 struct clk_rate_request *req)
->>> +{
->>> +	struct clk_regmap *clk = to_clk_regmap(hw);
->>> +	struct meson_vclk_div_data *vclk = clk_get_meson_vclk_div_data(clk);
->>> +
->>> +	return divider_determine_rate(hw, req, vclk->table, vclk->div.width,
->>> +				      vclk->flags);
->>> +}
->>> +
->>> +static int meson_vclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
->>> +				   unsigned long parent_rate)
->>> +{
->>> +	struct clk_regmap *clk = to_clk_regmap(hw);
->>> +	struct meson_vclk_div_data *vclk = clk_get_meson_vclk_div_data(clk);
->>> +	int ret;
->>> +
->>> +	ret = divider_get_val(rate, parent_rate, vclk->table, vclk->div.width,
->>> +			      vclk->flags);
->>> +	if (ret < 0)
->>> +		return ret;
->>> +
->>> +	meson_parm_write(clk->map, &vclk->div, ret);
->>> +
->>> +	return 0;
->>> +};
->>> +
->>> +static int meson_vclk_div_enable(struct clk_hw *hw)
->>> +{
->>> +	struct clk_regmap *clk = to_clk_regmap(hw);
->>> +	struct meson_vclk_div_data *vclk = clk_get_meson_vclk_div_data(clk);
->>> +
->>> +	/* Unreset the divider when ungating */
->>> +	meson_parm_write(clk->map, &vclk->reset, 0);
->>> +	meson_parm_write(clk->map, &vclk->enable, 1);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static void meson_vclk_div_disable(struct clk_hw *hw)
->>> +{
->>> +	struct clk_regmap *clk = to_clk_regmap(hw);
->>> +	struct meson_vclk_div_data *vclk = clk_get_meson_vclk_div_data(clk);
->>> +
->>> +	/* Reset the divider when gating */
->>> +	meson_parm_write(clk->map, &vclk->enable, 0);
->>> +	meson_parm_write(clk->map, &vclk->reset, 1);
->>> +}
->>> +
->>> +static int meson_vclk_div_is_enabled(struct clk_hw *hw)
->>> +{
->>> +	struct clk_regmap *clk = to_clk_regmap(hw);
->>> +	struct meson_vclk_div_data *vclk = clk_get_meson_vclk_div_data(clk);
->>> +
->>> +	return meson_parm_read(clk->map, &vclk->enable);
->>> +}
->>> +
->>> +const struct clk_ops meson_vclk_div_ops = {
->>> +	.recalc_rate = meson_vclk_div_recalc_rate,
->>> +	.determine_rate = meson_vclk_div_determine_rate,
->>> +	.set_rate = meson_vclk_div_set_rate,
->>> +	.enable = meson_vclk_div_enable,
->>> +	.disable = meson_vclk_div_disable,
->>> +	.is_enabled = meson_vclk_div_is_enabled,
->>> +};
->>> +EXPORT_SYMBOL_GPL(meson_vclk_div_ops);
->>> +
->>> +MODULE_DESCRIPTION("Amlogic vclk clock driver");
->>> +MODULE_AUTHOR("Neil Armstrong <neil.armstrong@linaro.org>");
->>> +MODULE_LICENSE("GPL v2");
->>> diff --git a/drivers/clk/meson/vclk.h b/drivers/clk/meson/vclk.h
->>> new file mode 100644
->>> index 000000000000..20b0b181db09
->>> --- /dev/null
->>> +++ b/drivers/clk/meson/vclk.h
->>> @@ -0,0 +1,51 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +/*
->>> + * Copyright (c) 2024 Neil Armstrong <neil.armstrong@linaro.org>
->>> + */
->>> +
->>> +#ifndef __VCLK_H
->>> +#define __VCLK_H
->>> +
->>> +#include "clk-regmap.h"
->>> +#include "parm.h"
->>> +
->>> +/**
->>> + * struct meson_vclk_gate_data - vclk_gate regmap backed specific data
->>> + *
->>> + * @enable:	vclk enable field
->>> + * @reset:	vclk reset field
->>> + * @flags:	hardware-specific flags
->>> + *
->>> + * Flags:
->>> + * Same as clk_gate except CLK_GATE_HIWORD_MASK which is ignored
->>> + */
->>> +struct meson_vclk_gate_data {
->>> +	struct parm enable;
->>> +	struct parm reset;
->>> +	u8 flags;
->>> +};
->>> +
->>> +extern const struct clk_ops meson_vclk_gate_ops;
->>> +
->>> +/**
->>> + * struct meson_vclk_div_data - vclk_div regmap back specific data
->>> + *
->>> + * @div:	divider field
->>> + * @enable:	vclk divider enable field
->>> + * @reset:	vclk divider reset field
->>> + * @table:	array of value/divider pairs, last entry should have div = 0
->>> + *
->>> + * Flags:
->>> + * Same as clk_divider except CLK_DIVIDER_HIWORD_MASK which is ignored
->>> + */
->>> +struct meson_vclk_div_data {
->>> +	struct parm div;
->>> +	struct parm enable;
->>> +	struct parm reset;
->>> +	const struct clk_div_table *table;
->>> +	u8 flags;
->>> +};
->>> +
->>> +extern const struct clk_ops meson_vclk_div_ops;
->>> +
->>> +#endif /* __VCLK_H */
->> 
-
-
--- 
-Jerome
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
