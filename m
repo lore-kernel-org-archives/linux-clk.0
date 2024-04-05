@@ -1,152 +1,214 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D78F71723;
-	Thu,  4 Apr 2024 22:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F67CC138;
+	Fri,  5 Apr 2024 06:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712271203; cv=none; b=CQHoQL6+vktB/WTYdn0XDtDQarNlL4Iwp1gxFX0D7LTA5Qw+zgYPa159skWaEMjlYCBeyExL+V1UXKBonxOWPtLjjHrF7L6gyW2st/YYhQ8HpFsK+wxnXtf/+sKM+kj9MH8pUW/eZiiu3pZ/VLYh5kgN9v/aGLfQS7zxfoivkEo=
+	t=1712296875; cv=none; b=alehaMQdtF5YH+3ymIPAIjGLyMoKFtBiOajM0PCDMeeG9wA4yEVMdbE1A42V+k4ka33i5mc5PtQrI3l7Z26S4jnPFJlTvn1IbIzde8HUEmOjfVpec0IZ4sLiKTZz7MOj7QzzsDhhLmgiX5zvn/EawyyomHS/GxZ8VMZZwaEZq6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712271203; c=relaxed/simple;
-	bh=nHDeIZjgG/ABq+COPbhriixxj1CJ1aiFsFPnz9B5/Ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzXPltvc/38mxa0NM3bUVoz3/WDmJV9bb4Gffd77wvu/IRggzZ5bcSn0Ahz1dyD3UxIdk8C9x/x6KqNR3HfzjMM1eCmSdUtrmOv9wgJLJxxiAmHZ214Jkl4+nW3AGm91VaCm+GxrJ4Jomqbwu0L/Y6jd2OM2OZ6H4HDP1ghhQq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jI6yA9Ei; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1712296875; c=relaxed/simple;
+	bh=FF8ujqDvKIVKW0WdhbhddUyBexJAjeOcU3bpTfy2cGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mfoW8fBBnO8vlFsU1GaS9sEVqFBRQm+zb87Fya1DuRZkJxb874nFj3rtNwoeiA7cjH84qPz22jA50imG7MERBBjRk+Nlvd+HNi73OjYwMbp0jZuvv30JZ8pu4mRZJB7Bqx6C5A+wOppRD3RZ3aAQRLgyozhvSPAC+8wPq06sfPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WltaWoPf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jI6yA9Ei"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712271202; x=1743807202;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nHDeIZjgG/ABq+COPbhriixxj1CJ1aiFsFPnz9B5/Ew=;
-  b=jI6yA9Ein2vQr/xrpwN8Wdagm7yBeJxof7VWn5CEPxe/EsC71g1w9spL
-   Y+VSCINywYjsWn4HO8pgnux8klDq/AJ4LGrR0UIyHE2tduDWPEIrx6IRg
-   Fpe7WN5hDQpt/GaO7Fo0cb2yFBTxU1Tgjq+EeDtn6R1yEEP9CoggIE28E
-   XHyyct9M1XPrvh6lVz6z7eW5Plzsyl0MpUh/X76w5Fj0weCWVjYMHycQt
-   r7J+3KzNtqMPZFwbTN1M8Ux+1+g6Z6Bc1CNRqylefVbjnTnrZnySJjGI/
-   HaY73yb3c9C07Q99wWYCCrNFAcsH+Yd+Nh1d3IDcDISvD8zA4rCAm1a8S
-   w==;
-X-CSE-ConnectionGUID: AxPZNNiXQ+Sm++dRuJQXTQ==
-X-CSE-MsgGUID: DGEll113QRa54DvJegj47A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11034"; a="7747184"
-X-IronPort-AV: E=Sophos;i="6.07,180,1708416000"; 
-   d="scan'208";a="7747184"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2024 15:53:21 -0700
-X-CSE-ConnectionGUID: DMVI8dVNQt+mFpCKldjuFw==
-X-CSE-MsgGUID: qHDgff3ISNujXJMguBDG9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,180,1708416000"; 
-   d="scan'208";a="50191958"
-Received: from lkp-server01.sh.intel.com (HELO e61807b1d151) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 04 Apr 2024 15:53:14 -0700
-Received: from kbuild by e61807b1d151 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rsVxH-0001b6-2d;
-	Thu, 04 Apr 2024 22:53:11 +0000
-Date: Fri, 5 Apr 2024 06:52:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peter Griffin <peter.griffin@linaro.org>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, chanho61.park@samsung.com,
-	ebiggers@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-scsi@vger.kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-	saravanak@google.com, willmcvicker@google.com,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
-Message-ID: <202404050633.EZfOttFD-lkp@intel.com>
-References: <20240404122559.898930-9-peter.griffin@linaro.org>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WltaWoPf"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4352uoMZ029789;
+	Fri, 5 Apr 2024 06:01:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=h+6iGhowO/ibh6f8VBak99kpwtJW3mVkQSpIcSkFvhE=; b=Wl
+	taWoPf3C8GH/m7EB8o7XNYDEyzsRMzQ8yFjw8/nY1+OQWtPgqYtoCmItgnxOP/OD
+	G4bBv7X1D6PS58Bmkae4M/dSw9e1QlsmxHQGcEYRKCak7hZMtyJUcm4QhuLBRk2l
+	0EKc/aEHVIHR6pvTbZVYu2NdF42EzMzxPX4Ya/6vuz66LWfQIdTY9Qp1IefVCUn2
+	pDMEaFFRQ36wGcN0JZYkYqkiTuDJ0zcVpa7iaVyxDNh+1dcfc14I9e9P+W6dcIlA
+	1xGEcNROcDTaMSY84TaltSVTWxnMo3JNF+d9I+mfZWBUUrbXbofTUELLRND+NeBm
+	7DKNGKg4C69L5d5+bfcA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xa1xa90w5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Apr 2024 06:01:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4356180c011177
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 5 Apr 2024 06:01:08 GMT
+Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 4 Apr 2024
+ 23:01:02 -0700
+Message-ID: <03f8d2ee-2467-48aa-9b76-06eb13202b8c@quicinc.com>
+Date: Fri, 5 Apr 2024 11:30:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240404122559.898930-9-peter.griffin@linaro.org>
-
-Hi Peter,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on krzk/for-next]
-[also build test WARNING on robh/for-next clk/clk-next linus/master v6.9-rc2 next-20240404]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/dt-bindings-clock-google-gs101-clock-add-HSI2-clock-management-unit/20240404-205113
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240404122559.898930-9-peter.griffin%40linaro.org
-patch subject: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240405/202404050633.EZfOttFD-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240405/202404050633.EZfOttFD-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202404050633.EZfOttFD-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/clk/samsung/clk-gs101.c:16:
->> drivers/clk/samsung/clk-gs101.c:3640:7: warning: 'mout_hsi2_mmc_card_p' defined but not used [-Wunused-const-variable=]
-    3640 | PNAME(mout_hsi2_mmc_card_p)     = { "fout_shared2_pll", "fout_shared3_pll",
-         |       ^~~~~~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:229:44: note: in definition of macro 'PNAME'
-     229 | #define PNAME(x) static const char * const x[] __initconst
-         |                                            ^
->> drivers/clk/samsung/clk-gs101.c:3633:7: warning: 'mout_hsi2_bus_p' defined but not used [-Wunused-const-variable=]
-    3633 | PNAME(mout_hsi2_bus_p)          = { "dout_cmu_shared0_div4",
-         |       ^~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:229:44: note: in definition of macro 'PNAME'
-     229 | #define PNAME(x) static const char * const x[] __initconst
-         |                                            ^
->> drivers/clk/samsung/clk-gs101.c:3631:7: warning: 'mout_hsi2_pcie_p' defined but not used [-Wunused-const-variable=]
-    3631 | PNAME(mout_hsi2_pcie_p)         = { "oscclk", "dout_cmu_shared2_div2" };
-         |       ^~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:229:44: note: in definition of macro 'PNAME'
-     229 | #define PNAME(x) static const char * const x[] __initconst
-         |                                            ^
->> drivers/clk/samsung/clk-gs101.c:3628:7: warning: 'mout_hsi2_ufs_embd_p' defined but not used [-Wunused-const-variable=]
-    3628 | PNAME(mout_hsi2_ufs_embd_p)     = { "oscclk", "dout_cmu_shared0_div4",
-         |       ^~~~~~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:229:44: note: in definition of macro 'PNAME'
-     229 | #define PNAME(x) static const char * const x[] __initconst
-         |                                            ^
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 RESEND 6/6] arm64: dts: qcom: sm8650: Add video and
+ camera clock controllers
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>
+References: <20240321092529.13362-1-quic_jkona@quicinc.com>
+ <20240321092529.13362-7-quic_jkona@quicinc.com>
+ <CAA8EJppHGS+W-aiXvJ2cE=jCbua8Y0Q+zv_QTs+C9V5+Y1vuZg@mail.gmail.com>
+ <008d574f-9c9e-48c6-b64e-89fb469cbde4@quicinc.com>
+ <b3464321-0c52-4c41-9198-e9e7b16aa419@quicinc.com>
+ <CAA8EJpqDwCVAjDphnC-HdfseMJ-xd8VVxb5+9UcGEcKLcn-heg@mail.gmail.com>
+ <fba2474e-31a6-4fef-acf9-7069933584c8@quicinc.com>
+ <CAA8EJprfaALkQe-wUrBow6B1A66ro0AoVpfnQJLXgqFmL8isNQ@mail.gmail.com>
+ <8a5a3cf8-5b4f-487f-ad91-00499509f8ec@quicinc.com>
+ <CAA8EJpoW8MQQ3OPfOVYRJtgsn1JgKd5Ew7vqgWx3xWE-xJ=R-g@mail.gmail.com>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <CAA8EJpoW8MQQ3OPfOVYRJtgsn1JgKd5Ew7vqgWx3xWE-xJ=R-g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: HmuYKecfWjlKZSgXwRfjOxxcbIuBOWnQ
+X-Proofpoint-ORIG-GUID: HmuYKecfWjlKZSgXwRfjOxxcbIuBOWnQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-05_05,2024-04-04_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ spamscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 mlxlogscore=999
+ mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2404010003
+ definitions=main-2404050042
 
 
-vim +/mout_hsi2_mmc_card_p +3640 drivers/clk/samsung/clk-gs101.c
 
-  3627	
-> 3628	PNAME(mout_hsi2_ufs_embd_p)	= { "oscclk", "dout_cmu_shared0_div4",
-  3629					    "dout_cmu_shared2_div2", "fout_spare_pll" };
-  3630	
-> 3631	PNAME(mout_hsi2_pcie_p)		= { "oscclk", "dout_cmu_shared2_div2" };
-  3632	
-> 3633	PNAME(mout_hsi2_bus_p)		= { "dout_cmu_shared0_div4",
-  3634					    "dout_cmu_shared1_div4",
-  3635					    "dout_cmu_shared2_div2",
-  3636					    "dout_cmu_shared3_div2",
-  3637					    "fout_spare_pll", "oscclk", "oscclk",
-  3638					    "oscclk" };
-  3639	
-> 3640	PNAME(mout_hsi2_mmc_card_p)	= { "fout_shared2_pll", "fout_shared3_pll",
-  3641					    "dout_cmu_shared0_div4", "fout_spare_pll" };
-  3642	
+On 4/4/2024 9:35 PM, Dmitry Baryshkov wrote:
+> On Thu, 4 Apr 2024 at 13:06, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 4/4/2024 11:00 AM, Dmitry Baryshkov wrote:
+>>> On Thu, 4 Apr 2024 at 08:13, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 4/3/2024 9:24 PM, Dmitry Baryshkov wrote:
+>>>>> On Wed, 3 Apr 2024 at 10:16, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 3/25/2024 11:38 AM, Jagadeesh Kona wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 3/21/2024 6:43 PM, Dmitry Baryshkov wrote:
+>>>>>>>> On Thu, 21 Mar 2024 at 11:27, Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>>>>>> wrote:
+>>>>>>>>>
+>>>>>>>>> Add device nodes for video and camera clock controllers on Qualcomm
+>>>>>>>>> SM8650 platform.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>>>>>>> ---
+>>>>>>>>>      arch/arm64/boot/dts/qcom/sm8650.dtsi | 28 ++++++++++++++++++++++++++++
+>>>>>>>>>      1 file changed, 28 insertions(+)
+>>>>>>>>>
+>>>>>>>>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>>>>>>>>> b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>>>>>>>>> index 32c0a7b9aded..d862aa6be824 100644
+>>>>>>>>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>>>>>>>>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>>>>>>>>> @@ -4,6 +4,8 @@
+>>>>>>>>>       */
+>>>>>>>>>
+>>>>>>>>>      #include <dt-bindings/clock/qcom,rpmh.h>
+>>>>>>>>> +#include <dt-bindings/clock/qcom,sm8450-videocc.h>
+>>>>>>>>> +#include <dt-bindings/clock/qcom,sm8650-camcc.h>
+>>>>>>>>>      #include <dt-bindings/clock/qcom,sm8650-dispcc.h>
+>>>>>>>>>      #include <dt-bindings/clock/qcom,sm8650-gcc.h>
+>>>>>>>>>      #include <dt-bindings/clock/qcom,sm8650-gpucc.h>
+>>>>>>>>> @@ -3110,6 +3112,32 @@ opp-202000000 {
+>>>>>>>>>                             };
+>>>>>>>>>                     };
+>>>>>>>>>
+>>>>>>>>> +               videocc: clock-controller@aaf0000 {
+>>>>>>>>> +                       compatible = "qcom,sm8650-videocc";
+>>>>>>>>> +                       reg = <0 0x0aaf0000 0 0x10000>;
+>>>>>>>>> +                       clocks = <&bi_tcxo_div2>,
+>>>>>>>>> +                                <&gcc GCC_VIDEO_AHB_CLK>;
+>>>>>>>>> +                       power-domains = <&rpmhpd RPMHPD_MMCX>;
+>>>>>>>>> +                       required-opps = <&rpmhpd_opp_low_svs>;
+>>>>>>>>
+>>>>>>>> The required-opps should no longer be necessary.
+>>>>>>>>
+>>>>>>>
+>>>>>>> Sure, will check and remove this if not required.
+>>>>>>
+>>>>>>
+>>>>>> I checked further on this and without required-opps, if there is no vote
+>>>>>> on the power-domain & its peer from any other consumers, when runtime
+>>>>>> get is called on device, it enables the power domain just at the minimum
+>>>>>> non-zero level. But in some cases, the minimum non-zero level of
+>>>>>> power-domain could be just retention and is not sufficient for clock
+>>>>>> controller to operate, hence required-opps property is needed to specify
+>>>>>> the minimum level required on power-domain for this clock controller.
+>>>>>
+>>>>> In which cases? If it ends up with the retention vote, it is a bug
+>>>>> which must be fixed.
+>>>>>
+>>>>
+>>>> The minimum non-zero level(configured from bootloaders) of MMCX is
+>>>> retention on few chipsets but it can vary across the chipsets. Hence to
+>>>> be on safer side from our end, it is good to have required-opps in DT to
+>>>> specify the minimum level required for this clock controller.
+>>>
+>>> We are discussing sm8650, not some abstract chipset. Does it list
+>>> retention or low_svs as a minimal level for MMCX?
+>>>
+>>
+>> Actually, the minimum level for MMCX is external to the clock
+>> controllers.
+> 
+> Yes, it comes from cmd-db
+> 
+>>   But the clock controller requires MMCX to be atleast at
+>> lowsvs for it to be functional.
+> 
+> Correct
+> 
+>> Hence we need to keep required-opps to
+>> ensure the same without relying on the actual minimum level for MMCX.
+> 
+> And this is not correct. There is no need for the DT to be redundant.
+> I plan to send patches removing the existing required-opps when they
+> are not required.
+>
+I agree this is not required if cmd-db minimum level is already at 
+lowsvs. But since MMCX running at lowsvs is a mandatory requirement for 
+clock controller to operate, I believe it is good to have required-opps 
+to ensure we meet this requirement in all cases, rather than relying on 
+the cmd-db minimum level which we have no control over.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Jagadeesh
+
