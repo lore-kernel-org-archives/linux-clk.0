@@ -1,102 +1,94 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B98F374CC
-	for <linux-clk@vger.kernel.org>; Fri,  5 Apr 2024 07:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C464636B1C
+	for <linux-clk@vger.kernel.org>; Fri,  5 Apr 2024 07:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712301801; cv=none; b=A1o/bJ3da4F/sy6STPI1nN5bxbhB2olLZEkKXldEWL7OhRtjbVLRTJBQg0srV6TKWZn/HvUvEY1TUxqKjaI8OAD1fCePF+/LVgVXBJB3TbWTRYtRes5FfBTnNo1G9eEhLl6dhFiL8bSIMsUwS67oew7gsLxbcX/6k5yQfYfQXQo=
+	t=1712302342; cv=none; b=izX5HuAw6WAuzjWfNCbjymPcnISn4rQ62H4rKfdC7U5+G9pqhM+mm4dG6LP0PDXdhrWcjKYczJYs7DG4FFpaZJ49PQVI35NWp7wX1W1cVMW/ClxCN2EQU6kgh1Cgl4FbUd91gvPmQHYyX1JA74fTyW95XiXRlDXQ9qdaLATr9G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712301801; c=relaxed/simple;
-	bh=8xdKzFa1VnOYKWHALQhOMQPnqmr+rwGwQXGIzJueTMY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=glxGnusr4Amq4xWBadpXGBtdb9uiyNXuMPuvQfgIcohoXhUKOqLVDwnrWx5vIjyPdKvperVIpcknvfywuO1sPa+FUuusRnRIMEhkzLd0J8i3lBpLh1pQM2fm2ABwaFcSZagS1My/DKBwCpHoo5lKpuaiTRrgxoHzkjMJrouMooM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iYsuHMH2; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712302342; c=relaxed/simple;
+	bh=f5l/MU5ouJNng5Ug8E/3eoVK/5luwE0j0nKQ8APc5RU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nwlVECVEQtog2jNigeLlW4WzUNgYXpfU26Awpygf0+/ATKXsAwOenXc8SKJoIPU37gph/ZySOabAiF/oEDxZ1I8WRe12k7UfAHWd7zQ//3wBJClvVrSX9GnsHQlJoqhsY7VanO3cdiDPrqXF8Cdn0DrEfi2kC7xRYUtGsLHCixQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=IAIbhw5x; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iYsuHMH2"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-343dc588c86so411878f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 05 Apr 2024 00:23:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712301798; x=1712906598; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Swy2Ymmin5bn1S0K0/BIJr14PVb2mCYW4gABHjS10eE=;
-        b=iYsuHMH2wacPBIrhP7vpfKm3ie5aWDC8vy581v44MsGa0iejOZgTjgB8zsV50f928z
-         MDsDT3KZ4vhT6uiYVfUJRvccFJqX85GZB03Dyd8GixTk4c/i4j2Oq/5dXgYFwLTIhofA
-         uzIUTzKmolcS8KukNH1Lpyv8LNLyCJLxMfbEygujQLaXedhZEnkWEaO8AfAlDmCK9sgp
-         2uxq6jjgaraDqg72slWfsVZlTOmMzDuKUgnl/uPLwvajgtwNRFCnWdrVLNOHlcfgwS+y
-         8nzr0TRTw1Li9UO7GnDN/T6hwEFO1DZcKfovNgXM529cnMx1rHrej6E9rSK/qX2ewf5w
-         rF3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712301798; x=1712906598;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Swy2Ymmin5bn1S0K0/BIJr14PVb2mCYW4gABHjS10eE=;
-        b=JEJbIHCvu1vB3zJCZK4T/i5MwWq6jUqbg7IlPGS1kZ7JgpbbePcgCQpyZNcdnlhUmD
-         Yusr/6tS/g+BqG2uxAZcFoSSGKaSXl4ch0zxds9G/A4C8b9T2zXpGpb82T/ZsTbh0JtW
-         h52g+xKWFa0IMbT22Syv+q1A9gOHvVgxv+bKE+dLjUb5hXS0+dKkfoR9SjrBeM9wdC5q
-         LGHWQ8IQzLrw4ehizn2VUbix7/xOvw4I/SLjoxb0JR8fA/pfCSTIQRQFJuEjCptU/qWd
-         /K8fKpvV24NA+RTIdeZu2isDcBUbaIYFa8FU4N222BbNQsbeAMUo/i7XsBUmXs6MHXVM
-         Z8sA==
-X-Forwarded-Encrypted: i=1; AJvYcCV45034h8fsvXS60KxxVk7zqU/q9WAQXT3hKtKiOwdVY85JiGh7RfYxcKPguYqRsf97oQ3CQdiSnUy7XRRL+U5okdQzV7JNX2zj
-X-Gm-Message-State: AOJu0YxgMFioyJOLUrIVNIQ5hWSgU4rlIuF4DeeVp5874NVesHgJ+k31
-	k5XgmNKNiJeX7NaWGXvLn3QDHwcw8ekycybsROsIif+CLQspuJMYilynJi99MYk=
-X-Google-Smtp-Source: AGHT+IGFYhmbZFEXBcvSW4oTAKx1TZq9kP46lHeI8Ljnkc838zmC3DM9SJlHsNvNEbhOX4B03Xxclg==
-X-Received: by 2002:a5d:5918:0:b0:343:6f88:5de with SMTP id v24-20020a5d5918000000b003436f8805demr424276wrd.44.1712301797816;
-        Fri, 05 Apr 2024 00:23:17 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id r24-20020adfb1d8000000b00341b451a31asm1312626wra.36.2024.04.05.00.23.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Apr 2024 00:23:17 -0700 (PDT)
-Message-ID: <132435ffc0eebed9317b346e880c4a69f09d6839.camel@linaro.org>
-Subject: Re: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, mturquette@baylibre.com, 
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-  vkoul@kernel.org, kishon@kernel.org, alim.akhtar@samsung.com,
- avri.altman@wdc.com,  bvanassche@acm.org, s.nawrocki@samsung.com,
- cw00.choi@samsung.com,  jejb@linux.ibm.com, martin.petersen@oracle.com,
- chanho61.park@samsung.com,  ebiggers@kernel.org
-Cc: linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com
-Date: Fri, 05 Apr 2024 08:23:16 +0100
-In-Reply-To: <20240404122559.898930-9-peter.griffin@linaro.org>
-References: <20240404122559.898930-1-peter.griffin@linaro.org>
-	 <20240404122559.898930-9-peter.griffin@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="IAIbhw5x"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=f5l/
+	MU5ouJNng5Ug8E/3eoVK/5luwE0j0nKQ8APc5RU=; b=IAIbhw5xw2Bqent9jMZC
+	Fy++QJ5H2FfXMnraxdZMXmXLrZ3olQb/mkILr9AVEggubDu5W0vxkysqlymyN7xv
+	Z6jiD/DS2Dli1Ro5z+j3ijgNyoFkck9WVHm5JSVzTmDRsgVuCJliX5cijTf8hANZ
+	FnXjQ4wtx3vvrUMIQ6rgzuAn33oUeePVzjYy7u5pWbDvecztd+6NU0ePKM37BCmH
+	r+kGqakoSBwojD0UDrTXw4gMdA2tNW5R7EFxoA8D+qcGVXYhQu/K301CKwKPVqHY
+	i4UxVTr4N67+BeowtTOoCe9hIcIfjerXiA2MlqH/82uh1bgF0A7CIJTTfN9QZFR5
+	uQ==
+Received: (qmail 4022756 invoked from network); 5 Apr 2024 09:32:18 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Apr 2024 09:32:18 +0200
+X-UD-Smtp-Session: l3s3148p1@7muedFQV/oIgAwDPXwEGAANOsN0UmmrN
+Date: Fri, 5 Apr 2024 09:32:18 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Thanh Quan <thanh.quan.xn@renesas.com>
+Subject: Re: [PATCH] clk: renesas: r8a779h0: Add timer clocks
+Message-ID: <zclaggxuvk6b3gnl3zwlp6hkt3yosiw7krvlzak7r2flglsiws@f75zijrkp6qd>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Thanh Quan <thanh.quan.xn@renesas.com>
+References: <79a66e8ff84378d7f65d5f55cfb01b9b745edd12.1712068639.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pqwujaev5kujzf5r"
+Content-Disposition: inline
+In-Reply-To: <79a66e8ff84378d7f65d5f55cfb01b9b745edd12.1712068639.git.geert+renesas@glider.be>
 
-Hi Pete,
 
-On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
-> diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindin=
-gs/clock/google,gs101.h
-> index 3dac3577788a..ac239ce6821b 100644
-> --- a/include/dt-bindings/clock/google,gs101.h
-> +++ b/include/dt-bindings/clock/google,gs101.h
-> @@ -518,4 +518,67 @@
-> =C2=A0#define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK		45
-> =C2=A0#define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK		46
-> =C2=A0
-> +/* CMU_HSI2 */
+--pqwujaev5kujzf5r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You need to add these defines as part of the patch that is updating the
-binding (patch 1 this series).
+On Tue, Apr 02, 2024 at 04:37:52PM +0200, Geert Uytterhoeven wrote:
+> From: Thanh Quan <thanh.quan.xn@renesas.com>
+>=20
+> Add the module clocks used by Timer (CMT/TMU) blocks on the Renesas
+> R-Car V4M (R8A779H0) SoC.
+>=20
+> Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Cheers,
-Andre'
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+
+--pqwujaev5kujzf5r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmYPqQIACgkQFA3kzBSg
+KbZp9w/8CNO4SBG72bM6tVC8y/4Cdsvg+4oqFeFURNA3eWfw95E63p4lmN0LVF8A
+G8eRjlXD+5YGEFWszTTh6dsJ2zEWK9NZTY/QuNIynIf+9BPS7umG0nzquPxzVFLM
+hZfIfKarZRpZs1lK58WEGvd+IVjf5RZ3eUMYfwMO3K61m7LeLU4gmDyETC0oi9md
++E3Y9JPQiPF9EIS2UsjpLyMHH/m6GZTSTDULVHvZqCqYQRLuLuvYZMmaAsiu63m6
+vkq+hCeYxCvbABYTdJfvfadGvOkGu14yYFndFpBNfrfIoD8jS3ch//4XjGr296Dw
+V+h1vzCzhhVJ9BTLSg/V4wTwrxf03q0NArxNfvglxXi/8O7PqjW7p5LaT9VYAcB/
+zYfQwTBaxSl2GR8Szi8NdHhqsDsWaZkJ3sZm9vQlClVY6RmUQw+kTQCann+v8ma8
+5R6LcWQBpU7LZWnFOcSqhQDUhNRlNSA6iEYhh73kXzrIDwZ0gdQKEFDZYOsRkRjG
+wnkiqwUj2bSDuKHbPAPMflQemW1FvitNcB0AEcL5oD8JgPZqB0rqIq+riU94lErH
+FKHZskGvDccOg8J50JKWZPqeUTHnD9J6PSNUGn0+FESvUVuK45fJTsnxqtyC2MTo
+V0b6peyNAJLTBOGbkyAl23UiuSgi5tDqVLNZhbQuh44QrubEomE=
+=B41G
+-----END PGP SIGNATURE-----
+
+--pqwujaev5kujzf5r--
