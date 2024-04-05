@@ -1,117 +1,163 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE248171084;
-	Fri,  5 Apr 2024 15:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49DA171072
+	for <linux-clk@vger.kernel.org>; Fri,  5 Apr 2024 18:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712332353; cv=none; b=tJILLuSavG02VEZ58XPTSus+Qg1QM7bsrpCiyHdkGS9Cucj8OC8sn6i4RnOIgTPqvY0REZuRHhRl62xUKfiVHsg0y2CulpNTnFRUEnRBUp4TQWgRk7t6Szz85pmYAdy/IMJ0wDNTeabSNXrQRr9b3idW2vGdO8MWZE4MMPOKeBA=
+	t=1712341359; cv=none; b=YSE1m7DgvgW0aRH3+mf3SK0gp02hKGQBfYtbj6jufcy+Om3wNH4yPQYI0mEf2yGbH3b6r35z1YPOEIRrPcCkPOEwRYLnESiWMXAU3qvrrVKNLck0xr9zVjVI1FXidLjZjQaLoR4peDVn1NOg8CN8r0oWKpoVWFYaV/qsNCK9MIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712332353; c=relaxed/simple;
-	bh=1TYQ2nOf7m5eWfWsRNd18xHaQuIeo9EkWggomHT0qUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lVNJHrwVF3whS360w/NyQETjavxYRVT2DYBNoY8uWMtltLrzRtp68/XpkBZYve9gZAKAnd0grt+dP2OS62CaMSiEovjfISjmSEpu+OwDPudWgYBmgrTbzRsuee9mwjvqmgM9u0KI86AU73JsPdaZZeBMJ380D1zqGdIh1WE92cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Om3T7B+X; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712341359; c=relaxed/simple;
+	bh=Eb4QivfojF2KBYGQtLTGj79v9spvtkcJ8e5SELGKaM0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tmjPofTAnUH8jvmu0DDC1hGaebuIKvEus4HdWHKJvF6lAgqsKCkDQ9E2cWVCsJwLz6h9PeuqvOUAgfu0EfFECVY9kDWp6Ed2/RHr6SdiMQo8ORXymvGQGoBPpOeTEL1gE80gqad+XbfHTHPvIT6s4pzSUVbZFuVliBp38BGzdU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x516Pu3B; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Om3T7B+X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C456C433F1;
-	Fri,  5 Apr 2024 15:52:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712332352;
-	bh=1TYQ2nOf7m5eWfWsRNd18xHaQuIeo9EkWggomHT0qUI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Om3T7B+XSv2dLDaDtUMT1+Bj89NktWuLG9ZRiHO6pDXJCKOFbWt3CuoJPum7E3X2j
-	 TWI7MtUFfRcF7Mdq4DvRdXsYGbaMY2y8A53XSgX6Wr06fq4MvfRcCohMT/67DUID7J
-	 jn9BmSmUHZ5xj+761vczmdGa3K6e386tRbc4MsOnT11ooeZlA5p18lWpvUUq4Ljj6T
-	 Y5/S5MbstQZLh48LDyA8yYRFhk+Y3YmpoD9RevHhIJuUa7C1CecIPzSAkWhza6DnPK
-	 RlmUbsLkYrUKL8Nxk0yFvPuDgLFb64V2/yFNrQ/Zyj7TvtVGTJYWQJ3iNjxsB06OXr
-	 IxlcVyAXZ0RvQ==
-Date: Fri, 5 Apr 2024 16:52:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Yangyu Chen <cyy@cyyself.name>
-Cc: Icenowy Zheng <uwu@icenowy.me>, linux-riscv@lists.infradead.org,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 10/11] riscv: dts: add initial canmv-k230 and k230-evb
- dts
-Message-ID: <20240405-election-stubble-6b7e3d530d3c@spud>
-References: <tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com>
- <tencent_DF5D7CD182AFDA188E0FB80E314A21038D08@qq.com>
- <c052918c13069cfcf768d03518560c65c990b220.camel@icenowy.me>
- <tencent_1C21558D2A7C7B8251DA4E8E08B82E313C08@qq.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x516Pu3B"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a468226e135so351359566b.0
+        for <linux-clk@vger.kernel.org>; Fri, 05 Apr 2024 11:22:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1712341356; x=1712946156; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=sOgo5RZxyLQAXRylmOVlpLWGQ8hgIzVwKAwYPoIs/oI=;
+        b=x516Pu3B6qplcu3f2CsJ/bJ7Dy7vTAUacSjzuHO900Gp6Rlh+Pkxs9LpTk/ZknFq0t
+         xlPmr8oEjrXU1Bmd1D5XEnAD6DU2N5eFkfVosWIK60JOcYFi8uXsv5ENu01As4zKCFvl
+         0XZ6FE8cW5m6BlpjaCooqgIPICk6ZgxsL7oeIAUjyPPiu7rnd/EKy4dRY0ZidMnecB8C
+         ZnY2g4PZ8whC7SRrUrjeY82Z9Ybxu6dNzEQ3NXxi2itTCExpEnC7k4Yp169PMuO606sr
+         skNA5CYug7KDC7BqtHVQmKlX8v35jg8yhBg1p4EkyVHIxVYZMyZ2H6Qi0SK9Whis2YQr
+         +W8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712341356; x=1712946156;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sOgo5RZxyLQAXRylmOVlpLWGQ8hgIzVwKAwYPoIs/oI=;
+        b=UcOaNRuLM6Xb+nebuUgfuUwFJRUchx9jSj8ZAA0ySe6IgrsfLpXAeKQLXrdiBZFUU6
+         uXG9UgYMA4bAGakFpFa4yM4Pcfa8CCYMDMtvPahJ1C1beutcYkiuInPq/fCrSA/UUWd/
+         TrfE/ZdaEhtk2QbMvgEm5q2hNop1rzX370GPvue1weA8QYIaiRAGImr8Vkkr2y5DIxjx
+         3ahirWUY8BYQAxo5fHmkJKWzx5AxB7tVy900Lby7CMwrs5ZKcl3gsINTwOnQSV/32PM7
+         iGle04rGL7XFbStPezNg/CN19MRpcawsnwR6ByvG7RFIhrzJrgikf/0kSykL2ZfMmJU3
+         KPmg==
+X-Gm-Message-State: AOJu0YwN9Xm+Yv7rATzJ2xKKUDZpldFitof+pY6swsOeBEKNKvgUN6Z/
+	1nTMWCdKxWOCboy5F4m1SudCE4DxkG4Kzi7WreRQrZxdKNbtxAQFkKiQZA+uYm4=
+X-Google-Smtp-Source: AGHT+IFMQw/zKN9uRvgPRGc5zVaArbDABcW2Xzw06jTWHFfwmg2dJuOHt9bRUfiMuGmJkzTHkqqx2g==
+X-Received: by 2002:a17:906:565a:b0:a51:9737:f23d with SMTP id v26-20020a170906565a00b00a519737f23dmr1469625ejr.70.1712341355878;
+        Fri, 05 Apr 2024 11:22:35 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id hv6-20020a17090760c600b00a469d3df3c1sm1105557ejc.96.2024.04.05.11.22.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Apr 2024 11:22:35 -0700 (PDT)
+Message-ID: <7279fe8a-5727-463e-8dd5-08f2238b3499@linaro.org>
+Date: Fri, 5 Apr 2024 20:22:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zGrM3zVsiNMs8DNg"
-Content-Disposition: inline
-In-Reply-To: <tencent_1C21558D2A7C7B8251DA4E8E08B82E313C08@qq.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v9 2/4] dt-bindings: stm32: update DT bingding for
+ stm32mp25
+To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240402125312.277052-1-gabriel.fernandez@foss.st.com>
+ <20240402125312.277052-3-gabriel.fernandez@foss.st.com>
+ <e70dc513-df9f-4b99-b9d9-7ebaf83e8f3e@linaro.org>
+ <285f2f64-58b0-4dd0-9f1a-89306a79d572@foss.st.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <285f2f64-58b0-4dd0-9f1a-89306a79d572@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 05/04/2024 14:54, Gabriel FERNANDEZ wrote:
+> 
+> On 4/5/24 09:12, Krzysztof Kozlowski wrote:
+>> On 02/04/2024 14:53, gabriel.fernandez@foss.st.com wrote:
+>>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>>
+>>> Now RCC driver use '.index' of clk_parent_data struct to define a parent.
+>>> The majority of parents are SCMI clocks, then dt-bindings must be fixed.
+>>>
+>>> Fixes: b5be49db3d47 ("dt-bindings: stm32: add clocks and reset binding for stm32mp25 platform")
+>> And except what Rob said, this does not look as a fix. How ABI break
+>> could be a fix and what is even to fix here? Please describe the
+>> observable bug, how it manifests itself and what is exactly the fix for
+>> that bug.
+> As I replied to Rob, there are no RCC STM32MP25 drivers already upstreamed.
+> 
+> However, in my series, the DT binding was merged even though Stephen 
+> made some
+> 
+> important remarks that needed to be taken into account.
+> 
+> That's why I proposed a fix to update the documentation.
+> 
+> To be sure, how would you like me to proceed?
 
---zGrM3zVsiNMs8DNg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You can send v3 and get exactly the same questions. Your commit msg must
+answer to all such unusual questions. If maintainer asks something that
+you need to explain, it is a hint for you that your commit msg is
+inadequate.
 
-On Mon, Mar 25, 2024 at 11:10:49AM +0800, Yangyu Chen wrote:
-> > On Mar 25, 2024, at 00:23, Icenowy Zheng <uwu@icenowy.me> wrote:
-> > =E5=9C=A8 2024-03-23=E6=98=9F=E6=9C=9F=E5=85=AD=E7=9A=84 20:12 +0800=EF=
-=BC=8CYangyu Chen=E5=86=99=E9=81=93=EF=BC=9A
-> >> - Svpbmt and T-Head MAEE both supported
-> >>=20
-> >> T-Head C908 does support both Svpbmt and T-Head MAEE for page-based
-> >> memory
-> >> attributes and is controlled by BIT(21) on CSR.MXSTATUS. The Svpbmt
-> >> is used
-> >> here for mainline kernel support for K230. If the kernel wants to use
-> >> Svpbmt, the M-Mode software should unset BIT(21) of CSR.MXSTATUS
-> >> before
-> >> entering the S-Mode kernel. Otherwise, the kernel will not boot, as 0
-> >> on
-> >> T-Head MAEE is NonCachable Memory. Once the kernel switches from bare
-> >> metal
-> >> to Sv39, It will lose dirty cache line modifications that haven't
-> >> been
-> >> written back to the memory.
-> >=20
-> > As MXSTATUS has a S-mode read-only mirror known as SXSTATUS, maybe the
-> > kernel should detect SXSTATUS to decide whether to use Svpbmt or
-> > Xtheadpbmt (BTW Svnapot conflicts with Xtheadpbmt too).
-> >=20
->=20
-> Thanks for this hint. I may need to change some code in the T-Head PBMT p=
-robe.
+Best regards,
+Krzysztof
 
-For now, I'd rather we just focused on supporting the standard
-extensions on this SoC in mainline. I've applied the patches re-doing
-the Kconfig options just now, feel free to resend these patches
-whenever.
-
-Thanks,
-Conor.
-
---zGrM3zVsiNMs8DNg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZhAeOgAKCRB4tDGHoIJi
-0s3NAP9jV2FX5X2ERdKTaT8zG4y7prr8i8ld575p2m0u1mmbNQD/SIHdnbGSOOp0
-XurrRRps4Y469JrQ/R9fmQG+RFel5AY=
-=Xusz
------END PGP SIGNATURE-----
-
---zGrM3zVsiNMs8DNg--
