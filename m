@@ -1,119 +1,322 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2F716190F;
-	Fri,  5 Apr 2024 12:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE3A16C865;
+	Fri,  5 Apr 2024 12:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712321140; cv=none; b=cqoK3Vn3cthf4wgyVx+G16OhrKRJx26KsnVl11/vYV1Ah4joCuQM7grOI1QlEi0ILvF4wUFXGehS3/WXs3wq9UaPh7bh++LP24KvqmW+BBP2w3kuYQFnIGK4eK6I9/60xSIl4PZXxGh7JCHj/YPc9qpO9Bu9E1ixg38bv5H3W6Y=
+	t=1712321765; cv=none; b=Gcyhn6HZlCEyAyFkUcV2Zc+DiCuT9nrH0sgbccrBk6lcN0Qc0JuW/NYHrW/V1vsJJ+Rv9lNYvB8pMnzGyrAHGdBUtmdLG6ZSWa9HBAns0Mk6Ytkagwz8ucRxUCQaZeU9rpvwBnZ0cdYLMeH4ZlIvDaQNei1iNXkDgXDlu0SCVik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712321140; c=relaxed/simple;
-	bh=j7niycHsewkLOazgR0DVKBVw1hjefOkEoL7LF7COgjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XBTFQJM+/WNdZn6WUYGKB4n1GmmqTq/SHlomuKdNKZrwfnXklisPQrDksOvTerWigIqlK2x9ydQWPl+wQF2imyGw/R2kZX0yheoLLv8/5TzEm1cz7Km/uFvwJ8ZuehBJzKyIBeePlYpL1780bQuCS+OKYyDnCuk8QZEnQ+e+fDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dcc84ae94c1so2292956276.1;
-        Fri, 05 Apr 2024 05:45:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712321138; x=1712925938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GdcVr7Wy695cSZ73yuRES73pueUgVfr2wxBNFBTwOGo=;
-        b=JTc1SImGjelKkssF4JuXDdnJbuJvNS9xBqs6g4XbeX8YWinAySTcUjmjdryeRlhs8r
-         JeO8LitqfhCBm/V5sGmp9WVnbQzb/akytI0uAGAVaYjCFQ0ONmkaIguyV2j2eiqDmvr8
-         UwVx0Mf6Cy62jE8b6ho5rLNAksGgnTFxLbXbKajvXGd36FwyiEZPE4QUlggY5wr6Jeew
-         KULjzF9nIFWZgtQ6KY+0q7lh6JsvYYawgIyVl1sXdP+IMypVb5ZYIgVc0wkaA07+tsg2
-         H9+EshXj027uA2B/tvqOU8cHp76eqcAU+F1jPy18iqTm2Jo60pwcw9292rUS9kGWRytF
-         suZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ7XFpODefODsLrS9JL6NucrbIrEK9COrrOW178oK1nTcLlo0C3wvdVKeF1HhVEJZ8RMD5XIMfQTPNveLF2P8WiDN3fkRmSN4XufpdIzamHPiHKP5NWuAGUwlx4krT9UjYT8C6LYa9gsu6wIZt0Ueb07jwhIrhoXD1w/vcFrAKlr+WMbzTkOkmyRA4gNJ0D/GcKOSmu0p/Pi4pO+UzRnq2VPDbtgjEUIOpuleLdQhyMwtXIWG3mIM2Uo/WtwpH9O8HeQmG0ktt7SBUotOTY3CkdxS2LRz3zJHSye3mCm5awbFHqLxZ/G40kfgR4lv3Mq3L3jrzArpjGjAfy8o1NS/SgW702UsqPRsDtN7CyaOmmSOd0Vswp6c=
-X-Gm-Message-State: AOJu0Yxbbg5oVaR0YSEttEbAHDP9mTAbqwpdANhTuiX3I4B6GTdZYIQx
-	5MRJox1JVRQz+oyifoyPR4Lchey1IJlK97y85dbFw6zLURFj+yhm3265QuY5Kbw=
-X-Google-Smtp-Source: AGHT+IGYPzylN5KlA3Jwu/5NAPCzU9sq7Lj5p0GGnvOX0mjegvjHrF0knBzTd+bX98KxfScxfvmliQ==
-X-Received: by 2002:a25:a4c9:0:b0:dc7:423c:b8aa with SMTP id g67-20020a25a4c9000000b00dc7423cb8aamr1015353ybi.12.1712321138324;
-        Fri, 05 Apr 2024 05:45:38 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id fs1-20020a0569020c0100b00dc73705ec59sm290041ybb.0.2024.04.05.05.45.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Apr 2024 05:45:38 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dcc84ae94c1so2292937276.1;
-        Fri, 05 Apr 2024 05:45:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUikQZ3ifbkWHIZBuTR6d3G/Bjqjuczg/ffLmGIc5w3jRFw9cXpL2DhlyJW14FuHrrLqHCTWg/TWMlsbZx5/LYgriFAoXA1+kAdXoZMB+bJzPLslOTLSRn4vL5XSie7/VLwP0a5zczlW5KqXYj5H/XFdI7EOT521L9QDF7OD6qMu7fSwyz/IZ6Gwz5PeaZlRLSDFKJzl6s1HgAnIA0mpDXuXJiTxa8kOaMbfuGv3QmOseHmmBz51JExyaL1Aw5QKz5Megg5/b3KCqNaHXmP64HBkSoAhskD4v8bvEOILFzGiQzFdjx9cH4rfPxqfw/UASjsgPz7DL38YLjJ0uFelQROfEIdCml3f2dQyeIJdnrKdqUpD9k/DxI=
-X-Received: by 2002:a25:ad03:0:b0:db9:9537:2c39 with SMTP id
- y3-20020a25ad03000000b00db995372c39mr1198273ybi.2.1712321137914; Fri, 05 Apr
- 2024 05:45:37 -0700 (PDT)
+	s=arc-20240116; t=1712321765; c=relaxed/simple;
+	bh=Jt7XdZcky85qUvtj0r+UUgcnr1CXhmm50Fbe7A6YBL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oMgwwrWuayASyY+wZMxjH6zd2IoW9uE8KMw2uGOUwonJE4scE+oOABz1y2w8NTczyYyeElrY2k0PH2ecjHZYFFWjQfer8JBV7DKJ5nr3OdilvNPIBOadezUvViTGyuQR2n3m+D6Ve2cHmAXkYDXp6eSAwo8A03Wy3NGD1a5eBQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=quVeVfye; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="quVeVfye"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4359k059006253;
+	Fri, 5 Apr 2024 14:55:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=u9U4WwRzJom55b4PN6C3BKumZRjKpy21ICeFTyNM43U=; b=qu
+	VeVfyeceGvHaxQgU5Lb1nnhXiC+JKizmuSxZGN+7Oz3AvM4P+tmgO9pE/PFiKWhi
+	E2iPNoZ5hWNtGJJR6blWxmcjyFkj7tKrKJ54OCmKwxgXvGftf8XdhpJY7VFcdlZI
+	r6+TPhDvcA6kpPSKhFK3jn5zoAjgRMjxqdzJ8ibXlJ1Ht+nWWMhGeyuF8f2PwXoU
+	ZBG+UYqERY5t+JzLsi5SVOJyf+C0K/Pr4ZUWXc293IPBKcRgt+RkPT5WHWdHJRkb
+	4FcSft5mRe5x9qD/lK26dwQ2P/3wmhj1owvpGFRMl8v3NpZLNpaLY4PQp1dw3pb2
+	93JhR8jYvTIQwr66vLGQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3x9empqj14-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Apr 2024 14:55:28 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D581D4002D;
+	Fri,  5 Apr 2024 14:55:23 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 15CA521682F;
+	Fri,  5 Apr 2024 14:54:33 +0200 (CEST)
+Received: from [10.252.8.38] (10.252.8.38) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 5 Apr
+ 2024 14:54:31 +0200
+Message-ID: <2b9bf652-fc8e-4c9a-9761-ce42ad6e8316@foss.st.com>
+Date: Fri, 5 Apr 2024 14:54:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1712207606.git.ysato@users.sourceforge.jp> <f0e220fc338a3dac27f31d7ca871e2ceecad2874.1712207606.git.ysato@users.sourceforge.jp>
-In-Reply-To: <f0e220fc338a3dac27f31d7ca871e2ceecad2874.1712207606.git.ysato@users.sourceforge.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Apr 2024 14:45:26 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUZSFbfihn2udTW9ufK_+7i6y4FWT29bzCPS129Lgdrkw@mail.gmail.com>
-Message-ID: <CAMuHMdUZSFbfihn2udTW9ufK_+7i6y4FWT29bzCPS129Lgdrkw@mail.gmail.com>
-Subject: Re: [RESEND v7 34/37] sh: Add dtbs target support.
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
-	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>, 
-	Heiko Stuebner <heiko.stuebner@cherry.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Chris Morgan <macromorgan@hotmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Guo Ren <guoren@kernel.org>, 
-	Azeem Shaikh <azeemshaikh38@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Herve Codina <herve.codina@bootlin.com>, 
-	Manikanta Guntupalli <manikanta.guntupalli@amd.com>, Anup Patel <apatel@ventanamicro.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v9 2/4] dt-bindings: stm32: update DT bingding for
+ stm32mp25
+To: Rob Herring <robh@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240402125312.277052-1-gabriel.fernandez@foss.st.com>
+ <20240402125312.277052-3-gabriel.fernandez@foss.st.com>
+ <20240404135201.GA2320777-robh@kernel.org>
+Content-Language: en-US
+From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+In-Reply-To: <20240404135201.GA2320777-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-05_10,2024-04-05_01,2023-05-22_02
 
-On Thu, Apr 4, 2024 at 7:16=E2=80=AFAM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 
-My
+On 4/4/24 15:52, Rob Herring wrote:
+> On Tue, Apr 02, 2024 at 02:53:10PM +0200, gabriel.fernandez@foss.st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>
+>> Now RCC driver use '.index' of clk_parent_data struct to define a parent.
+>> The majority of parents are SCMI clocks, then dt-bindings must be fixed.
+> This is an ABI change. Please make that clear and justify why that is
+> okay. Changing a driver is not a valid reason. What about other drivers
+> besides Linux?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+As the SoC STM32MP25X is not yet official and it is not available
 
-on v6 is still valid.
+outside STMicroelectronics, it is not a issue to have ABI change
+and I will upstream the driver in other component (TF-A, U-Boot
+and OP-TEE) when binding and driver will be accepted and merged
+in Linux repository to avoid binding divergence.
 
-Gr{oetje,eeting}s,
+Today no other STM32MP25 RCC drivers are yet upstreamed.
 
-                        Geert
+Best Regards,
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Gabriel
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+>> Fixes: b5be49db3d47 ("dt-bindings: stm32: add clocks and reset binding for stm32mp25 platform")
+>>
+> Should not have a blank line here.
+ok
+>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>> ---
+> Please put version history for a patch within the patch here.
+
+ok
+
+
+>
+>>   .../bindings/clock/st,stm32mp25-rcc.yaml      | 171 ++++++++++++++++--
+>>   1 file changed, 155 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+>> index 7732e79a42b9..57bd4e7157bd 100644
+>> --- a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+>> @@ -38,22 +38,87 @@ properties:
+>>         - description: CK_SCMI_MSI Low Power Internal oscillator (~ 4 MHz or ~ 16 MHz)
+>>         - description: CK_SCMI_LSE Low Speed External oscillator (32 KHz)
+>>         - description: CK_SCMI_LSI Low Speed Internal oscillator (~ 32 KHz)
+>> -
+>> -  clock-names:
+>> -    items:
+>> -      - const: hse
+>> -      - const: hsi
+>> -      - const: msi
+>> -      - const: lse
+>> -      - const: lsi
+>> -
+>> +      - description: CK_SCMI_HSE_DIV2 CK_SCMI_HSE divided by 2 (coud be gated)
+>> +      - description: CK_SCMI_ICN_HS_MCU High Speed interconnect bus clock
+>> +      - description: CK_SCMI_ICN_LS_MCU Low Speed interconnect bus clock
+>> +      - description: CK_SCMI_ICN_SDMMC SDMMC interconnect bus clock
+>> +      - description: CK_SCMI_ICN_DDR DDR interconnect bus clock
+>> +      - description: CK_SCMI_ICN_DISPLAY Display interconnect bus clock
+>> +      - description: CK_SCMI_ICN_HSL HSL interconnect bus clock
+>> +      - description: CK_SCMI_ICN_NIC NIC interconnect bus clock
+>> +      - description: CK_SCMI_ICN_VID Video interconnect bus clock
+>> +      - description: CK_SCMI_FLEXGEN_07 flexgen clock 7
+>> +      - description: CK_SCMI_FLEXGEN_08 flexgen clock 8
+>> +      - description: CK_SCMI_FLEXGEN_09 flexgen clock 9
+>> +      - description: CK_SCMI_FLEXGEN_10 flexgen clock 10
+>> +      - description: CK_SCMI_FLEXGEN_11 flexgen clock 11
+>> +      - description: CK_SCMI_FLEXGEN_12 flexgen clock 12
+>> +      - description: CK_SCMI_FLEXGEN_13 flexgen clock 13
+>> +      - description: CK_SCMI_FLEXGEN_14 flexgen clock 14
+>> +      - description: CK_SCMI_FLEXGEN_15 flexgen clock 15
+>> +      - description: CK_SCMI_FLEXGEN_16 flexgen clock 16
+>> +      - description: CK_SCMI_FLEXGEN_17 flexgen clock 17
+>> +      - description: CK_SCMI_FLEXGEN_18 flexgen clock 18
+>> +      - description: CK_SCMI_FLEXGEN_19 flexgen clock 19
+>> +      - description: CK_SCMI_FLEXGEN_20 flexgen clock 20
+>> +      - description: CK_SCMI_FLEXGEN_21 flexgen clock 21
+>> +      - description: CK_SCMI_FLEXGEN_22 flexgen clock 22
+>> +      - description: CK_SCMI_FLEXGEN_23 flexgen clock 23
+>> +      - description: CK_SCMI_FLEXGEN_24 flexgen clock 24
+>> +      - description: CK_SCMI_FLEXGEN_25 flexgen clock 25
+>> +      - description: CK_SCMI_FLEXGEN_26 flexgen clock 26
+>> +      - description: CK_SCMI_FLEXGEN_27 flexgen clock 27
+>> +      - description: CK_SCMI_FLEXGEN_28 flexgen clock 28
+>> +      - description: CK_SCMI_FLEXGEN_29 flexgen clock 29
+>> +      - description: CK_SCMI_FLEXGEN_30 flexgen clock 30
+>> +      - description: CK_SCMI_FLEXGEN_31 flexgen clock 31
+>> +      - description: CK_SCMI_FLEXGEN_32 flexgen clock 32
+>> +      - description: CK_SCMI_FLEXGEN_33 flexgen clock 33
+>> +      - description: CK_SCMI_FLEXGEN_34 flexgen clock 34
+>> +      - description: CK_SCMI_FLEXGEN_35 flexgen clock 35
+>> +      - description: CK_SCMI_FLEXGEN_36 flexgen clock 36
+>> +      - description: CK_SCMI_FLEXGEN_37 flexgen clock 37
+>> +      - description: CK_SCMI_FLEXGEN_38 flexgen clock 38
+>> +      - description: CK_SCMI_FLEXGEN_39 flexgen clock 39
+>> +      - description: CK_SCMI_FLEXGEN_40 flexgen clock 40
+>> +      - description: CK_SCMI_FLEXGEN_41 flexgen clock 41
+>> +      - description: CK_SCMI_FLEXGEN_42 flexgen clock 42
+>> +      - description: CK_SCMI_FLEXGEN_43 flexgen clock 43
+>> +      - description: CK_SCMI_FLEXGEN_44 flexgen clock 44
+>> +      - description: CK_SCMI_FLEXGEN_45 flexgen clock 45
+>> +      - description: CK_SCMI_FLEXGEN_46 flexgen clock 46
+>> +      - description: CK_SCMI_FLEXGEN_47 flexgen clock 47
+>> +      - description: CK_SCMI_FLEXGEN_48 flexgen clock 48
+>> +      - description: CK_SCMI_FLEXGEN_49 flexgen clock 49
+>> +      - description: CK_SCMI_FLEXGEN_50 flexgen clock 50
+>> +      - description: CK_SCMI_FLEXGEN_51 flexgen clock 51
+>> +      - description: CK_SCMI_FLEXGEN_52 flexgen clock 52
+>> +      - description: CK_SCMI_FLEXGEN_53 flexgen clock 53
+>> +      - description: CK_SCMI_FLEXGEN_54 flexgen clock 54
+>> +      - description: CK_SCMI_FLEXGEN_55 flexgen clock 55
+>> +      - description: CK_SCMI_FLEXGEN_56 flexgen clock 56
+>> +      - description: CK_SCMI_FLEXGEN_57 flexgen clock 57
+>> +      - description: CK_SCMI_FLEXGEN_58 flexgen clock 58
+>> +      - description: CK_SCMI_FLEXGEN_59 flexgen clock 59
+>> +      - description: CK_SCMI_FLEXGEN_60 flexgen clock 60
+>> +      - description: CK_SCMI_FLEXGEN_61 flexgen clock 61
+>> +      - description: CK_SCMI_FLEXGEN_62 flexgen clock 62
+>> +      - description: CK_SCMI_FLEXGEN_63 flexgen clock 63
+>> +      - description: CK_SCMI_ICN_APB1 Peripheral bridge 1
+>> +      - description: CK_SCMI_ICN_APB2 Peripheral bridge 2
+>> +      - description: CK_SCMI_ICN_APB3 Peripheral bridge 3
+>> +      - description: CK_SCMI_ICN_APB4 Peripheral bridge 4
+>> +      - description: CK_SCMI_ICN_APBDBG Peripheral bridge for degub
+>> +      - description: CK_SCMI_TIMG1 Peripheral bridge for timer1
+>> +      - description: CK_SCMI_TIMG2 Peripheral bridge for timer2
+>> +      - description: CK_SCMI_PLL3 PLL3 clock
+>> +      - description: clk_dsi_txbyte DSI byte clock
+> Need a blank line here.
+>
+>>   required:
+>>     - compatible
+>>     - reg
+>>     - '#clock-cells'
+>>     - '#reset-cells'
+>>     - clocks
+>> -  - clock-names
+>>   
+>>   additionalProperties: false
+>>   
+>> @@ -66,11 +131,85 @@ examples:
+>>           reg = <0x44200000 0x10000>;
+>>           #clock-cells = <1>;
+>>           #reset-cells = <1>;
+>> -        clock-names = "hse", "hsi", "msi", "lse", "lsi";
+>> -        clocks = <&scmi_clk CK_SCMI_HSE>,
+>> -                 <&scmi_clk CK_SCMI_HSI>,
+>> -                 <&scmi_clk CK_SCMI_MSI>,
+>> -                 <&scmi_clk CK_SCMI_LSE>,
+>> -                 <&scmi_clk CK_SCMI_LSI>;
+>> +        clocks =  <&scmi_clk CK_SCMI_HSE>,
+>> +                  <&scmi_clk CK_SCMI_HSI>,
+>> +                  <&scmi_clk CK_SCMI_MSI>,
+>> +                  <&scmi_clk CK_SCMI_LSE>,
+>> +                  <&scmi_clk CK_SCMI_LSI>,
+>> +                  <&scmi_clk CK_SCMI_HSE_DIV2>,
+>> +                  <&scmi_clk CK_SCMI_ICN_HS_MCU>,
+>> +                  <&scmi_clk CK_SCMI_ICN_LS_MCU>,
+>> +                  <&scmi_clk CK_SCMI_ICN_SDMMC>,
+>> +                  <&scmi_clk CK_SCMI_ICN_DDR>,
+>> +                  <&scmi_clk CK_SCMI_ICN_DISPLAY>,
+>> +                  <&scmi_clk CK_SCMI_ICN_HSL>,
+>> +                  <&scmi_clk CK_SCMI_ICN_NIC>,
+>> +                  <&scmi_clk CK_SCMI_ICN_VID>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_07>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_08>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_09>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_10>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_11>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_12>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_13>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_14>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_15>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_16>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_17>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_18>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_19>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_20>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_21>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_22>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_23>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_24>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_25>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_26>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_27>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_28>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_29>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_30>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_31>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_32>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_33>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_34>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_35>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_36>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_37>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_38>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_39>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_40>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_41>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_42>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_43>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_44>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_45>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_46>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_47>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_48>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_49>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_50>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_51>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_52>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_53>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_54>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_55>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_56>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_57>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_58>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_59>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_60>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_61>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_62>,
+>> +                  <&scmi_clk CK_SCMI_FLEXGEN_63>,
+>> +                  <&scmi_clk CK_SCMI_ICN_APB1>,
+>> +                  <&scmi_clk CK_SCMI_ICN_APB2>,
+>> +                  <&scmi_clk CK_SCMI_ICN_APB3>,
+>> +                  <&scmi_clk CK_SCMI_ICN_APB4>,
+>> +                  <&scmi_clk CK_SCMI_ICN_APBDBG>,
+>> +                  <&scmi_clk CK_SCMI_TIMG1>,
+>> +                  <&scmi_clk CK_SCMI_TIMG2>,
+>> +                  <&scmi_clk CK_SCMI_PLL3>,
+>> +                  <&clk_dsi_txbyte>;
+>>       };
+>>   ...
+>> -- 
+>> 2.25.1
+>>
