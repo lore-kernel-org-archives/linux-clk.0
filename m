@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296A817BAA;
-	Fri,  5 Apr 2024 21:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0561C36;
+	Fri,  5 Apr 2024 21:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712351637; cv=none; b=Raf96mTHg68gCZSJ3xYQqs06+qSyJWLmXFiBxSTXyAdH8ogqPQ+AF31P8jZOES1aCEPw1FKiyZA09Zbzq4tMGjxNpbULBCZq4Uy8vQSxNpQbHlfYv42BogtVcAgMIXhHyWoxzUc2df5leZvSylQomP4smHO/wRmgIWDsHuihwq4=
+	t=1712352344; cv=none; b=Ij1VQ8GgcGL33HR5N67UOD/4AJEPOEJlUpFJG2sCjuZUo2vgD6/DYimjtuD5ax8mRiJ5RptYIpTbi8E5MpDXrW38RC1/uUcw4DNLQnjPXXaig8NeHjNjO9Y2oPNNfR7oduUyNsQRqAY57E531cvLWy0FVCTfmUNB1d/DrLq3AQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712351637; c=relaxed/simple;
-	bh=Y7Ao24dnCE4fH/ngOC+esesqyBbO+AsAqJ6Ru5APgIs=;
+	s=arc-20240116; t=1712352344; c=relaxed/simple;
+	bh=qtrepOP/++YzudVg2mOAW7Yr5SJM+9y2cmpgD1N/WK8=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ryUH5P/7Tr30mLNP0gWzSjT1KhfnMKNFbkvELDj6q6vMlBr2A5DVqmDku5Mxa0cYr0GQsQiH4ccn6cm7VL4p9aR2pnIrB9IG2w2d60oxdgNtBxyjuDjJd4SMzgm62YSnOvwqPNUaT08dyzGiLVBsmkSjca7XseSHbO8ymHiXpVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1tfiwIB; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=K2l5pwvDbDqN50PYPLokeAKEVV0hn6lajy0hlxMvkw3HI96PrzQywIYCPwohhR1YbfPvUA5K+ru27jQc7Z/rqJQGPiYdzOjO005kv50JfWmg9bAIsGH8woYbLINfcWipXUBP7Gzka6Xf3R43EGI36FLvHMEAvgNZmng1Ob6tJiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjQSSyP9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1tfiwIB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CBD6C43390;
-	Fri,  5 Apr 2024 21:13:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjQSSyP9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E47BC433F1;
+	Fri,  5 Apr 2024 21:25:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712351636;
-	bh=Y7Ao24dnCE4fH/ngOC+esesqyBbO+AsAqJ6Ru5APgIs=;
+	s=k20201202; t=1712352343;
+	bh=qtrepOP/++YzudVg2mOAW7Yr5SJM+9y2cmpgD1N/WK8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=F1tfiwIBqQOax9AN7aCZJXVerB4DPlPbAIreDE17KLBamc5uNy81keSNDZJKyTyN0
-	 5KBe8rHWE8sKu1cP/TVUKByMBsBkf5n7k8IraXcQRAGv1DG5AHX81U26lnOuMghl9V
-	 WrvUTtMo82f1slSpTHW8IofW4qubRwRvGGY0twxxaRSlVxHZm4zZKVLU+DJQrXz419
-	 Mmwqhe/mr+zWxL8MT3pMEvZLGBhhGm2JOqOI2ymCvyd53fBMNQGLG59ssP6Xo3UkdO
-	 yd+PrmRrjCtZxu9apQWdKq4YRLwhjwrtmsFJr76iujhkTdLQB5UdCpvezTJqb7m70g
-	 rWWoefag9Q22w==
-Message-ID: <3128e29f9fdf5ab16c1cb7afe133c5a7.sboyd@kernel.org>
+	b=AjQSSyP9hOpfox3T1hgMDJ7CFV7RxrxK8yREv/JBVV1RehSGh+ziIrXPFGZg1DJS6
+	 8EWK52CGbPA7vlea/Xa5DjpX3MvN95FE/7dLmPXsouPMzgRl/Hq0WR2WTCnoeE34OO
+	 iKlzMv2MpaOnPeUvP+f0FAx8gIKuvonJKe9QZu6O8SFA0aHrn0pRcnDCjjIYS1n54H
+	 EowcI3w5q93MuNcEaROcjFXPfdQa6flqWmxkMJb0f2CHofm9SIVwkBZBYWsI8dnOKu
+	 wc0letDzZJmFwZSouoJrLVc8yd8FyuwiF18eC9FYGPkNepOGz1GAjjU9lvdrIPk3xv
+	 RmZ5zbvUhQ6Xw==
+Message-ID: <9d738246b5043cd2a3c1dc7609805f0f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,30 +35,93 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240403080702.3509288-12-arnd@kernel.org>
-References: <20240403080702.3509288-1-arnd@kernel.org> <20240403080702.3509288-12-arnd@kernel.org>
-Subject: Re: [PATCH 11/34] clk: ti: dpll: fix incorrect #ifdef checks
+In-Reply-To: <ZgaceJT2FMsQVoPa@hu-varada-blr.qualcomm.com>
+References: <20240328075936.223461-1-quic_varada@quicinc.com> <20240328075936.223461-4-quic_varada@quicinc.com> <80131262978e6e4799864cdfd0784fdf.sboyd@kernel.org> <ZgaceJT2FMsQVoPa@hu-varada-blr.qualcomm.com>
+Subject: Re: [PATCH v5 3/5] clk: qcom: common: Add interconnect clocks support
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
-To: Arnd Bergmann <arnd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org
-Date: Fri, 05 Apr 2024 14:13:54 -0700
+Cc: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, djakov@kernel.org, dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, mturquette@baylibre.com, quic_anusha@quicinc.com, robh@kernel.org
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Date: Fri, 05 Apr 2024 14:25:41 -0700
 User-Agent: alot/0.10
 
-Quoting Arnd Bergmann (2024-04-03 01:06:29)
-> From: Arnd Bergmann <arnd@arndb.de>
+Quoting Varadarajan Narayanan (2024-03-29 03:48:24)
+> On Thu, Mar 28, 2024 at 02:54:52PM -0700, Stephen Boyd wrote:
+> > Quoting Varadarajan Narayanan (2024-03-28 00:59:34)
+> > > diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> > > index 75f09e6e057e..9fa271812373 100644
+> > > --- a/drivers/clk/qcom/common.c
+> > > +++ b/drivers/clk/qcom/common.c
+> > > @@ -234,6 +236,41 @@ static struct clk_hw *qcom_cc_clk_hw_get(struct =
+of_phandle_args *clkspec,
+> > >         return cc->rclks[idx] ? &cc->rclks[idx]->hw : NULL;
+> > >  }
+> > >
+> > > +#if IS_ENABLED(CONFIG_INTERCONNECT_CLK)
+> > > +static int qcom_cc_icc_register(struct device *dev,
+> > > +                               const struct qcom_cc_desc *desc)
+> > > +{
+> > > +       struct icc_clk_data *icd;
+> > > +       int i;
+> > > +
+> > > +       if (!desc->icc_hws)
+> > > +               return 0;
+> > > +
+> > > +       icd =3D devm_kcalloc(dev, desc->num_icc_hws, sizeof(*icd), GF=
+P_KERNEL);
+> > > +       if (!icd)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       for (i =3D 0; i < desc->num_icc_hws; i++) {
+> > > +               icd[i].clk =3D devm_clk_hw_get_clk(dev, desc->icc_hws=
+[i], "qcom");
+> >
+> > Make the con_id "icc" instead please, so we know the consumer is
+> > icc_clk.
 >=20
-> Building with W=3D1 shows warnings about unused const variables like this=
- one:
+> Ok.
 >=20
-> drivers/clk/ti/dpll.c:99:29: error: unused variable 'omap3_dpll_core_ck_o=
-ps' [-Werror,-Wunused-const-variable]
-> static const struct clk_ops omap3_dpll_core_ck_ops =3D {};
+> > Even better would be for the icc_clk device itself to be the
+> > one requesting with devm_clk_hw_get_clk() so that we associate the clk
+> > handle with the consumer device. It would also help us make it so that
+> > drivers defer probe until their clk isn't an orphan.
 >=20
-> The problem is that the #ifdef checks for some of the structures in this
-> file have gone out of sync with the code referencing them. Update these
-> to match the current usage.
+> Not sure if I understand the comments correctly.
 >=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+> In one of the previous patches, had
+>         icd[i].clk =3D clks[noc_clks[i]]->hw.clk;
+>=20
+> This was said to be error prone since the clock would not be
+> ref counted. Hence used devm_clk_hw_get_clk before doing
+> icc_clk_register.
+>=20
+> Now, are you suggesting to use the direct clock pointer
+> and do a devm_clk_hw_get_clk from the consumer driver?
+> This will take care of the refcounting. However, we will
+> have to add these clock entries to the consumer DT node.
+> Is this ok?
 
-Applied to clk-next
+Why do they need to be added to the consumer DT node? Why can't the
+icc_clk device driver (icc_clk_driver?) use struct clk_hw instead of
+struct clk in struct icc_clk_data? The answer cannot be that the icc_clk
+driver cannot be changed.
+
+> > > diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+> > > index 9c8f7b798d9f..d8ac26d83f3c 100644
+> > > --- a/drivers/clk/qcom/common.h
+> > > +++ b/drivers/clk/qcom/common.h
+> > > @@ -29,6 +29,9 @@ struct qcom_cc_desc {
+> > >         size_t num_gdscs;
+> > >         struct clk_hw **clk_hws;
+> > >         size_t num_clk_hws;
+> > > +       struct clk_hw **icc_hws;
+> > > +       size_t num_icc_hws;
+> > > +       unsigned int first_id;
+> >
+> > 'first_id' is gross.
+>=20
+> will change it to 'icc_id'.
+
+That's not what I meant :) The whole concept of having to pick some
+random number is bad. At the least, hide that in the icc_clk driver so
+that we don't have to put this in every clk provider that is also an
+interconnect provider.
