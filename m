@@ -1,147 +1,100 @@
-Received: from mail-oo1-f68.google.com (mail-oo1-f68.google.com [209.85.161.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2D416D318;
-	Fri,  5 Apr 2024 14:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2122E17106D;
+	Fri,  5 Apr 2024 15:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712327266; cv=none; b=nCjVEGPGRp8CDWnDa5m21wvI0sv/BAN5Rwlmx4v1TLJkX+u5dJogxHgyxu70EpC1hTYd6GwmDRimzQeI3YgRpXvaZyGMkcSrDxjrbJjjoQAmi0/IxjkeqG/2jV5ToFZt///XgsbyA9vAPW4IavBFfUlMfDqD0+sTcg2CTYBdqwk=
+	t=1712332137; cv=none; b=Mb5torBwP8WpqbXyQ7fyQ63akeUp8+3d1G6Pv0vcSA+A52ygBr79f2F85y/4P0nc3H0+M1012ZMmXFH4FRuTe0cGcUmDr3M3XQhajc/kFhH1cCrKFJA/vR9TNSqu2mY0HBJL8vDC1lzoeoc8TBzovU4vsRpus6iKgOt4qNPzfc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712327266; c=relaxed/simple;
-	bh=txEEOwGjitw5rYbE/djW7+ZIv3gDGXm7WfJRnMoiIpc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lC5PA6t0dEz9Qe9B0/6A+EfvB85FUtV9Aj0vz31vylYOHroDwJXPt1fXkGhkWeVesp7+lBunadSSYmX/qPbTgV8i1ZXfT+HfGgtzp1YyT72hUSQifgUeunKyvCd4vFMiowr5X+zpCfGEo/bCtJOkihULJcmdBtgDh9NSJWYSrAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f68.google.com with SMTP id 006d021491bc7-5a9ec68784cso630986eaf.2;
-        Fri, 05 Apr 2024 07:27:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712327264; x=1712932064;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PocJzIJm9BmbxkIOP3QKpq0ppKs7IoB/uMDxWflb82Q=;
-        b=Ej0LcxuzAzpqLtxsBDs5INfO0bVTvSutmGch2FeGi4aH1gUgVd7Om+65NdgukYI2Jx
-         LvHanbFp9LoqY0NBnoKIhBD/mA14jqQ5kpwLvzrbdta2Os9SrxJ6FvjothH/xJF2jQWY
-         ant4amW0MoUoM2Rb7AAmFnFsKc5M+89ZdMSip5hFeSBfbOWVLMPKLbKHNDo9ZmjZ3pXq
-         oVuQll8urXmCSzDVUejFuXZxn7yyPkW3ts30Gc7DHfEEvtyxFCtQICCzhp5vgDc9Eh2T
-         zL10TFlO8kPvJvR3Gqu7E4hqFNeEv+hqrUERN829yRs/UgA0flL6FirlYTHjzjG/wFCa
-         40nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEsLCt6GAsPxamr3GPvD0Bi6/RE60k+pncQoArtURGpH94Xo4ylaNPZebgnKT0LuLVPrMIgl4gPoORARSB0fAui3+nxNCwPf2dSNyKNdUz4aZtAzrTfnPbtGDbFIelVCUTEkyilTf2/82jHkPyFpJGQzFNuTZOm6tPxValcV4jhBuWjBe5TvTNMyn0axxKvky92otKiPNHnn9xoqeyoj+/KjoYU8xxm2jl8XWCh/KlTlQSGES3TYzwsvvnunKK6YPr70SjOH+ii/eQqBp6qCu1gvR29E7AedQ5Uxu0SPVraeLGprCVbax+F7LQtWOC/D+6C0dYwmropJJbP7wQ4+ifFWen2uUmhlzF+9+oBGrZoiOD/O9Dr2M=
-X-Gm-Message-State: AOJu0YzliBBMMdH5OU0mGt2056PuEb+J8BmrAZEPYPbg+iTwNC+I0req
-	jQHJafjzzarLa6ZZXlZ+25J0YVWqIZh5k4bIHcUyKshYfjrDr6oqhN79LKh+JEDLyg==
-X-Google-Smtp-Source: AGHT+IG33HrZubBpzY8CpjRIQwVD80jMhPy2dSPTMGLUVGxGflRdQJ0BZwQCntKNtwbopvefvVBfOQ==
-X-Received: by 2002:a0d:c845:0:b0:610:ca8b:9a1a with SMTP id k66-20020a0dc845000000b00610ca8b9a1amr1164098ywd.46.1712320862179;
-        Fri, 05 Apr 2024 05:41:02 -0700 (PDT)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id jw1-20020a05690c74c100b006144dd11472sm331431ywb.83.2024.04.05.05.41.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Apr 2024 05:41:02 -0700 (PDT)
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dc74e33fe1bso2067042276.0;
-        Fri, 05 Apr 2024 05:41:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV0xJzsjm2isj8Cc+w+NQb30rBTV98QfS4Uo5wL6Sr0oiul+gz+xIigjwnQ8P6Hv4wksmkydeB6mzO+9oMQPmPq7BnWrD6FVyoUurMotxGzeXkyp8FQ94Z6cKYTwS2g/vzAlrYTtkYV7ThBiZU03NlEbeUw74VWdoAQM4r8WeQHHDWkL1HDyV6D3UHz6WatyOjpv93Mf5OlXEn5I+1xVEr5Sq3BnGNmowDyfTEVpA9n0PM3tzJny1j+CCgVqm5AoYJNDDB/DxAbHmjf5R9cY0Fjbxina0zMeRKHDsCtKlb9GrztaU04qKbWhTFtknnQiqPJGdSdQMnQSwtaV5aa7b5hB9XkL0uohwER8VgW3t7MjkrVEv73TTQ=
-X-Received: by 2002:a05:6902:c06:b0:dcf:56c5:4298 with SMTP id
- fs6-20020a0569020c0600b00dcf56c54298mr1422009ybb.12.1712320861884; Fri, 05
- Apr 2024 05:41:01 -0700 (PDT)
+	s=arc-20240116; t=1712332137; c=relaxed/simple;
+	bh=IgoFna4ozbyY4uim9EA58wTZVLELUeO04TswSLteP6s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DzWxP4GQd9O4OIpgLNN3ZAaDloMrUh/XW3kdsdTL9zW+/gJKiFLqFxqTBD1zEZOJPkmE+9lTRVvVCOT3AVaLnQQyDNCoB1oOwAhKnLrgeK+91ZKMSYRI49UcdZeLHj5cdI2bE4XoH5PV01AcNFmrBDqzsAyqWKpBxQXFxIy+ZHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNCLxQV/; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNCLxQV/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CBC0C433B1;
+	Fri,  5 Apr 2024 15:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712332137;
+	bh=IgoFna4ozbyY4uim9EA58wTZVLELUeO04TswSLteP6s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZNCLxQV/d9Gm8N9ut19bdF6HDO8Xy+cMGp/jd3klpEHI9GaRqDgTpd+BEyR/Ne7+m
+	 jmzc7s4ds+hI4pRDmzI0bnHMXtYvqA1G171h8rzfmeT0U4Taorij1FLbUgitNeitcj
+	 HvOLoIXoz+qZzCjTnM6FpZeRSfnt/+czJccKjMFVFU/OsSGZ8tP4qz3ATyVApCe6em
+	 sRKC0PXoChZKTfUOybhKGkukVeUuMeOUSif3EmyuqCNJBGtMi3xYqV+GO4gNjnmR/z
+	 ua5epYOwdOisi0YLgiqbbvyai5CxnwUubZrMrUinYnVOwmr730HIb6U1tW4zMnSV8G
+	 pgE01LuYwi7DA==
+From: Conor Dooley <conor@kernel.org>
+To: linux-riscv@lists.infradead.org,
+	Yangyu Chen <cyy@cyyself.name>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Conor Dooley <conor@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Guo Ren <guoren@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-gpio@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/5] riscv: Kconfig.socs: Deprecate SOC_CANAAN and use SOC_CANAAN_K210 for K210
+Date: Fri,  5 Apr 2024 16:47:36 +0100
+Message-ID: <20240405-revolt-food-4654ca0ac5b4@spud>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <tencent_2E60E33C1F88A090B6B3A332AE528C6B8806@qq.com>
+References: <tencent_2E60E33C1F88A090B6B3A332AE528C6B8806@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1712207606.git.ysato@users.sourceforge.jp> <1db8627e4ca50b9d2d27e95d245518cac1cd62dc.1712207606.git.ysato@users.sourceforge.jp>
-In-Reply-To: <1db8627e4ca50b9d2d27e95d245518cac1cd62dc.1712207606.git.ysato@users.sourceforge.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Apr 2024 14:40:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWnioh8er_xDvEY8ny9TgEyfb9AR-p2paS7D4OrbKykvg@mail.gmail.com>
-Message-ID: <CAMuHMdWnioh8er_xDvEY8ny9TgEyfb9AR-p2paS7D4OrbKykvg@mail.gmail.com>
-Subject: Re: [RESEND v7 13/37] dt-bindings: clock: sh7750-cpg: Add
- renesas,sh7750-cpg header.
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
-	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>, 
-	Heiko Stuebner <heiko.stuebner@cherry.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Chris Morgan <macromorgan@hotmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Guo Ren <guoren@kernel.org>, 
-	Azeem Shaikh <azeemshaikh38@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Herve Codina <herve.codina@bootlin.com>, 
-	Manikanta Guntupalli <manikanta.guntupalli@amd.com>, Anup Patel <apatel@ventanamicro.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1455; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=MZ6COhcm44GicWVOSRcaxUS9DaBxroGchNqsbFCZFmg=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGkCsuIr+IwaOV9x8rQLzjqXWXXzZomHRVWxd3DoOmmNX rPIwJKOUhYGMQ4GWTFFlsTbfS1S6/+47HDueQszh5UJZAgDF6cATGTrbEaGB2F7Vix9F969e0Fx VOaE7aXFhWHTlr8TvT2zZZrlUX6LIEaGlkl2b/7KfJCc8Fm175dm+YW5rlzyWkxLQ7ZzTFKa1fu eEwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-Hi Sato-san,
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Thanks for the update!
+On Fri, 29 Mar 2024 01:03:22 +0800, Yangyu Chen wrote:
+> Since SOC_FOO should be deprecated from patch [1], and cleanup for other
+> SoCs is already in the mailing list [2,3,4], so we deprecate the use of
+> SOC_CANAAN and use ARCH_CANAAN for SoCs vendored by Canaan instead from now
+> on.
+> 
+> However, the K210 SoC is so special for NoMMU and built for loader.bin, if
+> we share the ARCH_CANAAN symbol directly for K210 and other new SoCs which
+> has MMU and no need for loader, it will confuse some users who may try to
+> boot MMU Kernel on K210, but it will fail. Thus, this patch set renamed the
+> original use of SOC_CANAAN to SOC_CANAAN_K210 for K210 SoC, as Damien
+> suggested from the list [5]. Then, it made some adaptations for soc, clk,
+> pinctrl, and reset drivers.
+> 
+> [...]
 
-On Thu, Apr 4, 2024 at 7:15=E2=80=AFAM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
->
-> SH7750 CPG Clock output define.
+Applied to riscv-dt-for-next, thanks!
 
-(from my comments on v6) Please improve the patch description.
+[1/5] riscv: Kconfig.socs: Split ARCH_CANAAN and SOC_CANAAN_K210
+      https://git.kernel.org/conor/c/ef10bdf9c3e6
+[2/5] soc: canaan: Deprecate SOC_CANAAN and use SOC_CANAAN_K210 for K210
+      https://git.kernel.org/conor/c/915fb0e31c5b
+[3/5] clk: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
+      https://git.kernel.org/conor/c/8e5b7234ded5
+[4/5] pinctrl: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
+      https://git.kernel.org/conor/c/c1556a9b426e
+[5/5] reset: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
+      https://git.kernel.org/conor/c/68f41105ea07
 
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+I added another commit at the end, deleting SOC_CANAAN given all the users
+are gone and it is not user-visible:
+	https://git.kernel.org/conor/c/0eea987088a22d73d81e968de7347cdc7e594f72
 
-> index 000000000000..04c10b0834ee
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,sh7750-cpg.yaml
-
-The actual bindings LGTM.
-
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/sh7750-cpg.h>
-> +    cpg: clock-controller@ffc00000 {
-> +        #clock-cells =3D <1>;
-> +        #power-domain-cells =3D <0>;
-> +        compatible =3D "renesas,sh7751r-cpg";
-> +        clocks =3D <&extal>;
-> +        clock-names =3D "extal";
-> +        reg =3D <0xffc00000 20>, <0xfe0a0000 16>;
-> +        reg-names =3D "FRQCR", "CLKSTP00";
-> +        renesas,mode =3D <0>;
-> +    };
-
-Please read
-https://docs.kernel.org/devicetree/bindings/dts-coding-style.html#order-of-=
-properties-in-device-node
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks,
+Conor.
