@@ -1,205 +1,127 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFF01803D;
-	Fri,  5 Apr 2024 06:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F6225630
+	for <linux-clk@vger.kernel.org>; Fri,  5 Apr 2024 07:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712298495; cv=none; b=hNtK3cxAvwWy10MAmIIGZ0zB3zusT8YoPZoZo7XKCwD9kXEaNny30Iy7JCTDb26AAs3QB0eKzcaN17wGj4/VB29mGeyfkS/Rog9c5RUi3x58RYk3tLjT4YqfJfvjXAg2ZoCLCCj08RmAnlI6g1fT8dfus44WJ4yAysvLBM+Dg5Q=
+	t=1712300690; cv=none; b=p87Na8iipLfZzNE4DVRt2U7IIP+Twc3dMu+deMDjuoOmCvo5oHAohuYhN4HzOVfCxnykpfsnOz78XGS704px4EYngetlNE3SqI2SnrKfHfjKyBWJ0u/cd03iyobwmgTszH9WCCN7ox2cjj1pq7nEcqPLGhN9FbrSg+RkMNKcRQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712298495; c=relaxed/simple;
-	bh=Fr/JWhHYQKZaaaMibAqgclMGXVbn5QmJWGY3JKy1Nuk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uehTsl3FHkG21niA6aVYuwGGvdxAIG8qBG7kFKcogQ1mXxp1uKMt9NXQPbua/ACoajcW50VvUkFV/9KCjx577mTmhiejVDaxZULC38oc9xSnXiJmC4TBV9kEYJ2SDTV7rPITc0VFN89fXbxfkOin+SX/vazgy8ftGOaV8AUdVJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b0eQ6Ojb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1712300690; c=relaxed/simple;
+	bh=JNrIR5alUd3utRpEaAHG1wb4hAjlRLdSxaXh1dOEDIM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YwMTD8c20Kk1jSLFpFYFo3ldOdey8Q5Hq1LCXaue6FIizStmRKm+GI4gzqukiAkbOVzaMBrbbfRLTYCPWfx3uMYty9gssyuYhMJ1Tl8yQEv3e/r/E5R0bth4Uj2n3hEWQ+vbhabDZnsaUAT1W/1UpOJBPApC6l10LIHHaeGJtcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=waSLGKA1; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b0eQ6Ojb"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4354k4wf015129;
-	Fri, 5 Apr 2024 06:27:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=GKQz0B9cR1IxdMzPCrLdK2mRo25+8IENz2R5YewGobc=; b=b0
-	eQ6OjbvQAjVI6Kr4bQHSzIYuWDf3suOZT6iwAMp1KF3VIlFsQXl+rZJ4WG0K28WH
-	75NPq1fWggLheHIoGxZaWkj0bJOosvPulp6sj3Sz8VMVdOadzCUoYrUlhdUcG8Q/
-	8FSEGwGQB1ggZ4F9TIOG5oml+sudbyDnuBAvA5r2rb70CIruTJvqZS21cXf6E99w
-	9nraNyqDGJc4Eg5QIEcoBxefHcKHbkzZmBTVfeDKGNwXZXBoVX4YP+zQUcgGG4K1
-	RkmcPXQtDJbJQ2hwQMb3r/N7nv1ujL5GLo/CPbsTwZbVbRryZQfY70sK2jCaeNVD
-	irhm7zwhtIVV9Ma8E+TA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xa7snrf6y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Apr 2024 06:27:41 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4356ReEW028251
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 5 Apr 2024 06:27:40 GMT
-Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 4 Apr 2024
- 23:27:34 -0700
-Message-ID: <66968793-d0c9-9f31-6616-f67fdadcd6e5@quicinc.com>
-Date: Fri, 5 Apr 2024 11:57:29 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="waSLGKA1"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3436b096690so2197626f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 05 Apr 2024 00:04:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1712300687; x=1712905487; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ck0+pssPiWzof/P+3eKb2RoFHftHMIJF3LhSjby3XvY=;
+        b=waSLGKA1DQ7kOUfKAc/oyo1qhfT3RPKLMcskXjWM/GwrFyrRt7C5+JqrjyHVsnTiVB
+         YK24JOmtNGhBoR+u82p4+ZM6d9pdEhXLG9UKQlWp0aDysRrYItOYR+I54fH4fbI3IXcX
+         1NCViEn1a4IOcAXZL6rFQWx7Mq6XwgJKcNFJqNpb3XCLypbJnGo52AKdchCY92l2hBCN
+         GY8yGTMecFrRuBNzx4qUi6fSVeUB1p2cr+Y/BvJDWL0hN114GouCidv7P+tYg/elNgE9
+         2/ktceM+ADkETytrP9KhkSVvomD/6IfKP7So8GRnmUTQVtLFG0GigLeiljgc8AcLZpk9
+         bCpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712300687; x=1712905487;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ck0+pssPiWzof/P+3eKb2RoFHftHMIJF3LhSjby3XvY=;
+        b=l178rnUCV+qKQqj+qI+iWf0kSFr6xf48DnHFuqq8WZfvG4cqnbaPjqg+4BtWeW/nOQ
+         PZYuQu1i1pZmz+h/Ll+Nty6h9iVu6aUK/bz5IU9cvsVxer2FJSxZU+DGqtZXn92vbeCY
+         tC8EDe9NvdJ/7JWspHCWXQNprrMf4zABPoU/JZ9+Jjx2gTiBPcCtguVx8x5LApLedpxq
+         rZNX+UW+hmwsMJnS4xg2BbYaUDJr4QOC/Q43ggytCjg6nTFMzRaXemO/OTuEz99AXBH5
+         LV4Wvh36XRu28yboB0xJqiEM0usE3yMuMMyvoOMfjZUCmCV6nCNAcrqaVF1yelZfMLTe
+         ivOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWr8cLVxTOtJ2zhHLmMwKGyn6PqSCnMWM0BxIbaSAXg8htaYwZxXlEb7X7JuEfzAwae7T16aiYJ3XVYB4VjNdfOIS1EfS3awxxV
+X-Gm-Message-State: AOJu0YyhnUD1y3DSPueCKmI0gcSRhTVXHNPrQq8XOnbq7dn8Ko5J9vEb
+	lISO+SkiYNf2uyYwP691hMa7F/JqBpbBRSjfjNMvkz7m7/A8SgLZCcbEpLDzbDA=
+X-Google-Smtp-Source: AGHT+IFTmsq/286Yc5zD2qEA6UxgJfpqI99lGS+nfprpglgj+BBT5krGkx7W6lXqCOGwT9UlqIdn8w==
+X-Received: by 2002:adf:ed46:0:b0:343:8097:213d with SMTP id u6-20020adfed46000000b003438097213dmr1322402wro.20.1712300687376;
+        Fri, 05 Apr 2024 00:04:47 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id n6-20020a5d6606000000b0033e745b8bcfsm1247138wru.88.2024.04.05.00.04.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Apr 2024 00:04:46 -0700 (PDT)
+Message-ID: <95bcdc942cba564f78a6f2fe4cde892575838d5c.camel@linaro.org>
+Subject: Re: [PATCH 09/17] phy: samsung-ufs: use
+ exynos_get_pmu_regmap_by_phandle() to obtain PMU regmap
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, mturquette@baylibre.com, 
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+  vkoul@kernel.org, kishon@kernel.org, alim.akhtar@samsung.com,
+ avri.altman@wdc.com,  bvanassche@acm.org, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com,  jejb@linux.ibm.com, martin.petersen@oracle.com,
+ chanho61.park@samsung.com,  ebiggers@kernel.org
+Cc: linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
+	saravanak@google.com, willmcvicker@google.com
+Date: Fri, 05 Apr 2024 08:04:44 +0100
+In-Reply-To: <20240404122559.898930-10-peter.griffin@linaro.org>
+References: <20240404122559.898930-1-peter.griffin@linaro.org>
+	 <20240404122559.898930-10-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3-1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 4/5] clk: qcom: Add camera clock controller driver for
- SM8150
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Michael
- Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240229-camcc-support-sm8150-v1-0-8c28c6c87990@quicinc.com>
- <20240229-camcc-support-sm8150-v1-4-8c28c6c87990@quicinc.com>
- <18567989-fb60-49ae-92e6-94e1bc2fa1c7@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <18567989-fb60-49ae-92e6-94e1bc2fa1c7@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: pNw5X1uem7L0OqITyo0zV53249yYrE1v
-X-Proofpoint-ORIG-GUID: pNw5X1uem7L0OqITyo0zV53249yYrE1v
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-05_05,2024-04-04_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 mlxscore=0 spamscore=0
- suspectscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999
- adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404050045
 
-
-On 3/2/2024 9:43 PM, Bryan O'Donoghue wrote:
-> On 29/02/2024 5:38 a.m., Satya Priya Kakitapalli wrote:
->> Add support for the camera clock controller for camera clients
->> to be able to request for camcc clocks on SM8150 platform.
->>
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
->
->> +static int cam_cc_sm8150_probe(struct platform_device *pdev)
->> +{
->> +    struct regmap *regmap;
->> +    int ret;
->> +
->> +    ret = devm_pm_runtime_enable(&pdev->dev);
->> +    if (ret)
->> +        return ret;
->> +
->> +    ret = pm_runtime_resume_and_get(&pdev->dev);
->> +    if (ret)
->> +        return ret;
->> +
->> +    regmap = qcom_cc_map(pdev, &cam_cc_sm8150_desc);
->> +    if (IS_ERR(regmap)) {
->> +        pm_runtime_put(&pdev->dev);
->> +        return PTR_ERR(regmap);
->> +    }
->> +
->> +    clk_trion_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
->> +    clk_trion_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
->> +    clk_regera_pll_configure(&cam_cc_pll2, regmap, 
->> &cam_cc_pll2_config);
->> +    clk_trion_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
->> +    clk_trion_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
->> +
->> +    /* Keep the critical clock always-on */
->> +    qcom_branch_set_clk_en(regmap, 0xc1e4); /* cam_cc_gdsc_clk */
->
-> Does this clock need to be specified this way ?
->
-> drivers/clk/qcom/camcc-sc8280xp.c::camcc_gdsc_clk specifies the gdsc 
-> clock as a shared op clock.
->
-> Actually it looks to be register compatible, please try defining 
-> titan_top_gdsc as per the example in 8280xp.
->
->> +
->> +    ret = qcom_cc_really_probe(pdev, &cam_cc_sm8150_desc, regmap);
->> +
->> +    pm_runtime_put(&pdev->dev);
->> +
->> +    return ret;
->> +}
->
-> So this is a pattern we keep repeating in the clock probe() functions 
-> which I am writing a series to address. There's no need to continue to 
-> replicate the bug in new code though.
->
-> Only switch on always-on clocks if probe succeeds.
->
->     ret = qcom_cc_really_probe(pdev, &cam_cc_sm8150_desc, regmap);
->     if (ret)
->         goto probe_err;
->
->     qcom_branch_set_clk_en(regmap, 0xc1e4); /* cam_cc_gdsc_clk */
->
->     pm_runtime_put(&pdev->dev);
->
->     return 0;
->
-> probe_err:
->     pm_runtime_put_sync(&pdev->dev);
->
-> Alternatively switch on the always-on clocks before the really_probe() 
-> but then roll back in a probe_err: goto
->
-> probe_err:
->     remap_bits_update(regmap, 0xc1e4, BIT(0), 0);
->     pm_runtime_put_sync(&pdev->dev);
->
-> There may be corner cases where always-on has to happen before 
-> really_probe() I suppose but as a general pattern the above should be 
-> how we go.
->
-
-I have rechecked this and see that this clock is PoR ON (i.e BIT(0) is 
-set upon power ON) and it should be kept always ON as per HW 
-recommendation. So even if the probe fails we shouldn't be clearing it 
-against the hw recommendation. We are setting the bit here again to make 
-sure it is set when the driver probes.
-
-
-> Anyway I suspect the right thing to do is to define a 
-> titan_top_gdsc_clk with shared ops to "park" the GDSC clock to 19.2 
-> MHz instead of turning it off.
->
-> You can get rid of the hard-coded always-on and indeed represent the 
-> clock in /sysfs - which is preferable IMO to just whacking registers 
-> to keep clocks always-on in probe anyway.
->
-> Please try to define the titan_top_gdsc_clk as a shared_ops clock 
-> instead of hard coding to always on.
->
-> If that doesn't work for some reason, then please fix your always-on 
-> logic in probe() to only make the clock fixed on, if really_probe() 
-> succeeds.
->
+On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
+> This allows us to obtain a PMU regmap that is created by the exynos-pmu
+> driver. Platforms such as gs101 require exynos-pmu created regmap to
+> issue SMC calls for PMU register accesses. Existing platforms still get
+> a MMIO regmap as before.
+>=20
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
-> bod
+> =C2=A0drivers/phy/samsung/phy-samsung-ufs.c | 5 +++--
+> =C2=A01 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/=
+phy-samsung-ufs.c
+> index 183c88e3d1ec..c567efafc30f 100644
+> --- a/drivers/phy/samsung/phy-samsung-ufs.c
+> +++ b/drivers/phy/samsung/phy-samsung-ufs.c
+> @@ -18,6 +18,7 @@
+> =C2=A0#include <linux/phy/phy.h>
+> =C2=A0#include <linux/platform_device.h>
+> =C2=A0#include <linux/regmap.h>
+> +#include <linux/soc/samsung/exynos-pmu.h>
+
+You can now drop the include of linux/mfd/syscon.h
+
+Once done, feel free to add
+
+Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+
+> =C2=A0
+> =C2=A0#include "phy-samsung-ufs.h"
+> =C2=A0
+> @@ -255,8 +256,8 @@ static int samsung_ufs_phy_probe(struct platform_devi=
+ce *pdev)
+> =C2=A0		goto out;
+> =C2=A0	}
+> =C2=A0
+> -	phy->reg_pmu =3D syscon_regmap_lookup_by_phandle(
+> -				dev->of_node, "samsung,pmu-syscon");
+> +	phy->reg_pmu =3D exynos_get_pmu_regmap_by_phandle(dev->of_node,
+> +							"samsung,pmu-syscon");
+> =C2=A0	if (IS_ERR(phy->reg_pmu)) {
+> =C2=A0		err =3D PTR_ERR(phy->reg_pmu);
+> =C2=A0		dev_err(dev, "failed syscon remap for pmu\n");
+
