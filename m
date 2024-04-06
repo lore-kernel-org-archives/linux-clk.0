@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09616200DB;
-	Sat,  6 Apr 2024 10:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D0428DDA;
+	Sat,  6 Apr 2024 10:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712400242; cv=none; b=Cw9owxRNdHmOvKEJpipAQD8f4WTkgxWG6obC3qi+bBAZAUc2U/FNeby7Fs/KWwTUsHZqXEZ29IfKtzh9Ne8uBW4WiVdCbfgeaeVCbH5HwwwZM01lGPImGzw0cfaa3EMbymwQpjnJN18JDMOe0m5XNiFRb5f27hs6l3djn3MZ2+w=
+	t=1712400245; cv=none; b=bAZ7N0HjhIGXppzICjHfiWfr5dB87125nsOql9KB2jVrzu7iH87idw0RwHH+1vzzBaQ3M1oFHUQqXgp7NPSBZYDNRT9r8kAojY5DZyCkVlTVUiiSTTw5pg31hp6rBvvCV38s+0JYP6+l7GI86FrP9tPFjc7biohPS9I1piDkpK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712400242; c=relaxed/simple;
-	bh=jE8EUhhV3ismuvxfBhAmiN6ZtxbNvZYl2Z6H1eFdV1Q=;
+	s=arc-20240116; t=1712400245; c=relaxed/simple;
+	bh=ZYGijoPNLE1z7XLdtGrXhilLPEuFFM6tKmNuh6tx5qw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pFZOuDHJy7m/SaM92Sjv2LN9XX/66JwezBLztU3yu1PKfdNvE1TritwWtHSgdRtEuU9shpdOmoDFfYoDPoSd0Z00/0K6eoub0+XnKLV7c/tOHBFfLeHwtMErV3dgT318rDng49W/iR8PVsjNha1TDEhGGMEDDq0Q38vFgz45FCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fm79dVgp; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=lUCJpbC4s+iM3/22lFHIFGb0D4hPemIyL6zfia2X1wUyfg07YoG0E35CHuVriw/oRo1ML9qQ1gJCAqsztHI0qBa3kFXzQlBCpbcIkyHlFB22ouzSy7NDXXmi9zKHXs5a1QrTtCLaIcsn8y9Yojlecx0KduxpZ/LMUiwm6U/ahm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PwsaScgK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fm79dVgp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AAAAC433C7;
-	Sat,  6 Apr 2024 10:44:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PwsaScgK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C4FC433F1;
+	Sat,  6 Apr 2024 10:44:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712400241;
-	bh=jE8EUhhV3ismuvxfBhAmiN6ZtxbNvZYl2Z6H1eFdV1Q=;
+	s=k20201202; t=1712400245;
+	bh=ZYGijoPNLE1z7XLdtGrXhilLPEuFFM6tKmNuh6tx5qw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fm79dVgpuZ6dO9+A4sO5rXn3oeb4KmTTFud83IwFB0t83Sxj5knIp1aZj5wJ5MCwk
-	 g5H7fpLHyjhX4r1HTDCNk1TFK3X3JBZWyUX5mh7TQQnH6V+pNU6XV459Z5g2gvDqOK
-	 5vjzmY18FFj8HSTMTcwcBUVekccQ3cZ6xFNxm+PWN49OJm1Okhp9qroV1+ub7bRYTM
-	 PJcA0OVMf4Nyp5DhCnlXGqm/t6Q1mmo9qW7dFFtKxTfvXTFAnlEVNSMFqNtceFdD5M
-	 IJw1OQhUUbB0Gv7Q4MihIp/DYyxWV/uC/BKTg/2FkhdT2zvo3O4eCjxzt4IuqoE5qg
-	 FQQrst4esH99w==
+	b=PwsaScgKPDmHszrmhMopGHyKIP7oZIqpm4AqW9r9hkrhhNkjLupJeG32w1sriWN19
+	 Qbriq9LormjGnpibTxVAgrUXdJw0QthlJc6bWN7pfoqQOmyRGRFj60VDN0KoEeGLRD
+	 HEU94ejbpSRUH9bwqKXYAR6h+RyhQKTsqmg/9bVHTi4VBT/NWA2v6YfRgiEb9bl5lb
+	 CcrKr629ek1vysrtLt4r5X7xd+W5it1l0D3UqQwd39pETlajdtY2lOn+4hNp5og5aD
+	 pyif97gaI00o+j5mD65qYpvT5FVJkoikiZZcDD0Zh0xKRo4TLdKZ6PmuTp3X54qsW3
+	 mJ74U7ZT9gtyg==
 From: Lorenzo Bianconi <lorenzo@kernel.org>
 To: linux-clk@vger.kernel.org
 Cc: mturquette@baylibre.com,
@@ -43,9 +43,9 @@ Cc: mturquette@baylibre.com,
 	upstream@airoha.com,
 	lorenzo.bianconi83@gmail.com,
 	angelogioacchino.delregno@collabora.com
-Subject: [PATCH v2 1/4] dt-bindings: clock: airoha: add EN7581 binding
-Date: Sat,  6 Apr 2024 12:43:41 +0200
-Message-ID: <99734deb28889e685a764da94418f68b55ee3bdc.1712399981.git.lorenzo@kernel.org>
+Subject: [PATCH v2 2/4] arm64: dts: airoha: Add EN7581 clock node
+Date: Sat,  6 Apr 2024 12:43:42 +0200
+Message-ID: <c256afe41991085969a6f29399b20fe7ffb91ba7.1712399981.git.lorenzo@kernel.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1712399980.git.lorenzo@kernel.org>
 References: <cover.1712399980.git.lorenzo@kernel.org>
@@ -57,64 +57,40 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce Airoha EN7581 entry in Airoha EN7523 clock binding
+Introduce the Airoha EN7581 clock node in Airoha EN7581 dtsi
 
+Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
 Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 ---
- .../bindings/clock/airoha,en7523-scu.yaml     | 31 +++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/airoha/en7581.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-index 79b0752faa91..3f4266637733 100644
---- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-+++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-@@ -29,10 +29,13 @@ description: |
- properties:
-   compatible:
-     items:
--      - const: airoha,en7523-scu
-+      - enum:
-+          - airoha,en7523-scu
-+          - airoha,en7581-scu
+diff --git a/arch/arm64/boot/dts/airoha/en7581.dtsi b/arch/arm64/boot/dts/airoha/en7581.dtsi
+index 55eb1762fb11..5c4bfe3e1e5a 100644
+--- a/arch/arm64/boot/dts/airoha/en7581.dtsi
++++ b/arch/arm64/boot/dts/airoha/en7581.dtsi
+@@ -2,6 +2,7 @@
  
-   reg:
--    maxItems: 2
-+    minItems: 2
-+    maxItems: 3
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/en7523-clk.h>
  
-   "#clock-cells":
-     description:
-@@ -45,6 +48,30 @@ required:
-   - reg
-   - '#clock-cells'
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          const: airoha,en7523-scu
-+    then:
-+      properties:
-+        reg:
-+          items:
-+            - description: scu base address
-+            - description: misc scu base address
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -150,5 +151,13 @@ uart1: serial@1fbf0000 {
+ 			interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-frequency = <1843200>;
+ 		};
 +
-+  - if:
-+      properties:
-+        compatible:
-+          const: airoha,en7581-scu
-+    then:
-+      properties:
-+        reg:
-+          items:
-+            - description: scu base address
-+            - description: misc scu base address
-+            - description: pb scu base address
-+
- additionalProperties: false
- 
- examples:
++		scuclk: clock-controller@1fa20000 {
++			compatible = "airoha,en7581-scu";
++			reg = <0x0 0x1fa20000 0x0 0x400>,
++			      <0x0 0x1fb00000 0x0 0x1000>,
++			      <0x0 0x1fbe3400 0x0 0xfc>;
++			#clock-cells = <1>;
++		};
+ 	};
+ };
 -- 
 2.44.0
 
