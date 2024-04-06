@@ -1,85 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E69D383B2;
-	Sat,  6 Apr 2024 09:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1FD23773;
+	Sat,  6 Apr 2024 10:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712395187; cv=none; b=Atw5937KX/3AVdPogS0bGp4NHYp4q7vBHi0pYS5zYD8s2hb9NOhmLFQI/QAESMtoluyVQO/fv+zrjXM19i8wc2x10ek1IbLQ5iVfPCTPqTea4yGMwa/GQvP3a7VDs+SPUkHhSEgCYdlQpR0EV/MfbCivdj16BqFu1iHHx79THeU=
+	t=1712400238; cv=none; b=HsltIc9oWBZeJQ5QhQ/na9nO/p3HlDac3p4HI5AxitSIMlHJ5tSD8Pc/W62fJJ1URTL86K1iKGZ+Nn5+w6EXr1YSP72lOxVqdCn9LoOcnxxBEGhesApaPX6S+NH6LmyRK56O4ivt8ay8PrhrUdSZ3x8rHeuU2ClRdhLi+iNpwwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712395187; c=relaxed/simple;
-	bh=ZszyxTgj8EnYtTuGNwhBJNSzLvn+uASx2IZx41dSrN0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kaUb+gXDbXhSF8oLm3TZwe83nZRV9NGZKok+LE2SFsy9fDJiGh1JePo0C7DmIxeDZxoW4sY9vR+SMp6M916gAX9tiTV2n0mgxwHozX+/rbj4u+tXpe6tlBt65fSCJ/bJOZbbbDurwJiy11fum/DnnFA1FwtmJg36Vcu6CFCf1DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/S//RIe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712400238; c=relaxed/simple;
+	bh=RCtxoHYlvwhBxQm8LInowYtUBXOvUIdXKufplmg+VvU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HECF+9bFUjsyJaYq5ptRz1AYDtmz61P3p8LQueOLc9s4eg8sma5RCF97D7PvqPK+mYWjfJtr0DjuOOzun7CYs4IWbMzT0ZBdsim4h2dF+boCFupoP1iUjCxIEY8WqUvc+dJxAkq2x4AKKovUDw5+sZ/ltLI0I3PNz0xCl/DNYE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YE8zM4vh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/S//RIe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0387DC433C7;
-	Sat,  6 Apr 2024 09:19:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YE8zM4vh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59FDFC433C7;
+	Sat,  6 Apr 2024 10:43:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712395186;
-	bh=ZszyxTgj8EnYtTuGNwhBJNSzLvn+uASx2IZx41dSrN0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=S/S//RIegxSFn0baXqS24IoG5k/cCwd0QHq6+/TG/px0q/G4vbzjQt3CS1rCI9Sfb
-	 79e71HDf79008J3/hSjstjqxKc6n6UKpooTPTMF9OqoyVP9DLWYcQjzN/Jx4WtP3Jm
-	 vHwmykKoniJ8lTkQFq1wYycXt8kwbXwBSMm54AhkEwAlAu0QOzo5pIts56x1c3W7Wm
-	 7Wqp3n5z4Y1hJU9f9rwQ5vrheMPSRstxdZ5cnr5rjVdKbsLo2j8vL8eOty+6Zcr0fZ
-	 HSnNDyT0K33hMUjL27D6bEwId/2CqR6jghbjIPMxDrUDoO5ocMKswmjMdYaqRI1vVq
-	 JYpnGTyGqRRog==
-From: Vinod Koul <vkoul@kernel.org>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
- krzk+dt@kernel.org, conor+dt@kernel.org, kishon@kernel.org, 
- alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
- s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
- martin.petersen@oracle.com, chanho61.park@samsung.com, ebiggers@kernel.org, 
- Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
- andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com
-In-Reply-To: <20240404122559.898930-1-peter.griffin@linaro.org>
-References: <20240404122559.898930-1-peter.griffin@linaro.org>
-Subject: Re: (subset) [PATCH 00/17] HSI2, UFS & UFS phy support for Tensor
- GS101
-Message-Id: <171239517860.352396.12091328444055090399.b4-ty@kernel.org>
-Date: Sat, 06 Apr 2024 14:49:38 +0530
+	s=k20201202; t=1712400237;
+	bh=RCtxoHYlvwhBxQm8LInowYtUBXOvUIdXKufplmg+VvU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YE8zM4vhHhdpR8Jw2hGGono+iICY5DfFlv5ijcwiYMskvCtQ75ZuLJsm9iZc+hy7P
+	 BSiV+ue0Y75nQ674aaHxnTWL+UCZyYhPwN7p/uBw26ndL7/U5xgOH/EBda/UoZ8jMP
+	 2ia0g4IOPBFZ5wzE4IHkEPX1S3SmXfm3JFdnix/1S/yq4aRS0CtJZG+bFw1JOmJ+OC
+	 eLv5hEyzL04raMnaDjLAtzGElZLqQvUSqV4G7AYI/aOg9jJVnXxz9RslZ1TyhKVD04
+	 +N+vDQ6cfEjM1VZfXj+XsgYqAQkxkpIdTx74Av4Mjf0Bm7oI8V87ZUE6XFALivPdUK
+	 kwfh5EwmagDPw==
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	nbd@nbd.name,
+	john@phrozen.org,
+	devicetree@vger.kernel.org,
+	dd@embedd.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	upstream@airoha.com,
+	lorenzo.bianconi83@gmail.com,
+	angelogioacchino.delregno@collabora.com
+Subject: [PATCH v2 0/4] Introduce clock support for Airoha EN7581 SoC
+Date: Sat,  6 Apr 2024 12:43:40 +0200
+Message-ID: <cover.1712399980.git.lorenzo@kernel.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
+Content-Transfer-Encoding: 8bit
 
+this series is based on the following series:
+https://patchwork.kernel.org/project/linux-arm-kernel/cover/cover.1709975956.git.lorenzo@kernel.org/
 
-On Thu, 04 Apr 2024 13:25:42 +0100, Peter Griffin wrote:
-> This series adds support for the High Speed Interface (HSI) 2 clock
-> management unit, UFS controller and UFS phy calibration/tuning for GS101.
-> 
-> With this series applied, UFS is now functional! The SKhynix HN8T05BZGKX015
-> can be enumerated, partitions mounted etc. This then allows us to move away
-> from the initramfs rootfs we have been using for development so far.
-> 
-> [...]
+Changes since v1:
+- add .enable()/disable() callbacks to pcie ops
+- introduce en_clk_soc_data data structure in order to define multiple clk_ops
+  for each supported SoC
+- rename clock node from system-controller to clock-controller
+- add missing item descriptions in dt-binding
 
-Applied, thanks!
+Lorenzo Bianconi (4):
+  dt-bindings: clock: airoha: add EN7581 binding
+  arm64: dts: airoha: Add EN7581 clock node
+  clk: en7523: Add en_clk_soc_data data structure
+  clk: en7523: Add EN7581 support
 
-[04/17] dt-bindings: phy: samsung,ufs-phy: Add dedicated gs101-ufs-phy compatible
-        commit: 724e4fc053fe217d0ed477517ae68db11feab1f5
-[09/17] phy: samsung-ufs: use exynos_get_pmu_regmap_by_phandle() to obtain PMU regmap
-        commit: f2c6d0fa197a1558f4ef50162bb87e6644af232d
-[10/17] phy: samsung-ufs: ufs: Add SoC callbacks for calibration and clk data recovery
-        commit: a4de58a9096b471f9dc1c2bc6bfaa8aa48110c31
-[11/17] phy: samsung-ufs: ufs: Add support for gs101 UFS phy tuning
-        commit: c1cf725db1065153459f0deb69bd4d497a5fd183
-[17/17] MAINTAINERS: Add phy-gs101-ufs file to Tensor GS101.
-        commit: 0338e1d2f933a4ec7ae96ed1f40c39b899e357d7
+ .../bindings/clock/airoha,en7523-scu.yaml     |  31 ++-
+ arch/arm64/boot/dts/airoha/en7581.dtsi        |   9 +
+ drivers/clk/clk-en7523.c                      | 190 ++++++++++++++++--
+ 3 files changed, 211 insertions(+), 19 deletions(-)
 
-Best regards,
 -- 
-~Vinod
-
+2.44.0
 
