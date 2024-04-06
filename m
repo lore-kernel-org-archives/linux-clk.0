@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D0428DDA;
-	Sat,  6 Apr 2024 10:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DA51BC5C;
+	Sat,  6 Apr 2024 10:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712400245; cv=none; b=bAZ7N0HjhIGXppzICjHfiWfr5dB87125nsOql9KB2jVrzu7iH87idw0RwHH+1vzzBaQ3M1oFHUQqXgp7NPSBZYDNRT9r8kAojY5DZyCkVlTVUiiSTTw5pg31hp6rBvvCV38s+0JYP6+l7GI86FrP9tPFjc7biohPS9I1piDkpK0=
+	t=1712400249; cv=none; b=fxdzaV2ZC2x9/riLBRYLQI74vHtEyFHaa5zVWEy9FvVKKcgBqFW5w37p5u/rXdghRACQUgHwnyiJAK74FMtF+TU+wbreMuUQZsGRciWksxdxwOoAZRlRU+gwlC8cdYYhJFfZLBkj5IogojcZLl4lOE70F1XD3JCIad2+4Lsmyr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712400245; c=relaxed/simple;
-	bh=ZYGijoPNLE1z7XLdtGrXhilLPEuFFM6tKmNuh6tx5qw=;
+	s=arc-20240116; t=1712400249; c=relaxed/simple;
+	bh=GE2IZ9RvgQIMl9MNh/4V8Kp3ZMK8KCv7LOHfHSTlgD0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lUCJpbC4s+iM3/22lFHIFGb0D4hPemIyL6zfia2X1wUyfg07YoG0E35CHuVriw/oRo1ML9qQ1gJCAqsztHI0qBa3kFXzQlBCpbcIkyHlFB22ouzSy7NDXXmi9zKHXs5a1QrTtCLaIcsn8y9Yojlecx0KduxpZ/LMUiwm6U/ahm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PwsaScgK; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=gCQRIOcZx+k//T52l9LIcH32FRQQElvklsOQfIjOVHS+AuYknkvzVrc7VOEn4mJCF+CxCKmBHtIvfN+2QdvC8vT65ZZolyqtMEFdxmEla0MI3JuA0IK2xqWBmlmHqXF3mvmSBtZb/z0d4KVejOU69BnxGnJG0oG/Zo7TBZ1vPz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKIQhppC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PwsaScgK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C4FC433F1;
-	Sat,  6 Apr 2024 10:44:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKIQhppC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAC8CC433F1;
+	Sat,  6 Apr 2024 10:44:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712400245;
-	bh=ZYGijoPNLE1z7XLdtGrXhilLPEuFFM6tKmNuh6tx5qw=;
+	s=k20201202; t=1712400249;
+	bh=GE2IZ9RvgQIMl9MNh/4V8Kp3ZMK8KCv7LOHfHSTlgD0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PwsaScgKPDmHszrmhMopGHyKIP7oZIqpm4AqW9r9hkrhhNkjLupJeG32w1sriWN19
-	 Qbriq9LormjGnpibTxVAgrUXdJw0QthlJc6bWN7pfoqQOmyRGRFj60VDN0KoEeGLRD
-	 HEU94ejbpSRUH9bwqKXYAR6h+RyhQKTsqmg/9bVHTi4VBT/NWA2v6YfRgiEb9bl5lb
-	 CcrKr629ek1vysrtLt4r5X7xd+W5it1l0D3UqQwd39pETlajdtY2lOn+4hNp5og5aD
-	 pyif97gaI00o+j5mD65qYpvT5FVJkoikiZZcDD0Zh0xKRo4TLdKZ6PmuTp3X54qsW3
-	 mJ74U7ZT9gtyg==
+	b=mKIQhppC1WCoCtsmYgRiz1L2JsHJ4UtkBobF9JXFnXez+sRjbv1JNSggnARoLARL0
+	 pb5Qogkq0DMjbyAObq4XlM8pCPaaXnFzhVOaiQPRqPm4Je3VPieR8JPEDRo+ezT0JO
+	 cEwaktnL1YqYE4CFHCObjIymdxC8acsaTtO4ZiN3z63PgYSbmo/nGNo4bELaVzBh4c
+	 8VlJ2Fu+JtO8GY6pEBivF4lYRgnNaKImpIzN4/5BDPGJwiWNWJUpIQf9Dt87EUhRMn
+	 jgrWRHtlbQ+p0Zap5xl1JZNZeeI/FScgTn8wsRkrh/1iDbZ++u5RFerdeLl+64AvqI
+	 15WOlMpa9/2jg==
 From: Lorenzo Bianconi <lorenzo@kernel.org>
 To: linux-clk@vger.kernel.org
 Cc: mturquette@baylibre.com,
@@ -43,9 +43,9 @@ Cc: mturquette@baylibre.com,
 	upstream@airoha.com,
 	lorenzo.bianconi83@gmail.com,
 	angelogioacchino.delregno@collabora.com
-Subject: [PATCH v2 2/4] arm64: dts: airoha: Add EN7581 clock node
-Date: Sat,  6 Apr 2024 12:43:42 +0200
-Message-ID: <c256afe41991085969a6f29399b20fe7ffb91ba7.1712399981.git.lorenzo@kernel.org>
+Subject: [PATCH v2 3/4] clk: en7523: Add en_clk_soc_data data structure
+Date: Sat,  6 Apr 2024 12:43:43 +0200
+Message-ID: <562a0da8d7874a02a324687c152c87a1549924bd.1712399981.git.lorenzo@kernel.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1712399980.git.lorenzo@kernel.org>
 References: <cover.1712399980.git.lorenzo@kernel.org>
@@ -57,40 +57,89 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce the Airoha EN7581 clock node in Airoha EN7581 dtsi
+Introduce en_clk_soc_data data structure in order to define multiple
+clk_ops for each supported SoC. This is a preliminary patch to
+introduce EN7581 clock support.
 
 Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
 Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 ---
- arch/arm64/boot/dts/airoha/en7581.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/clk/clk-en7523.c | 32 ++++++++++++++++++++------------
+ 1 file changed, 20 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/airoha/en7581.dtsi b/arch/arm64/boot/dts/airoha/en7581.dtsi
-index 55eb1762fb11..5c4bfe3e1e5a 100644
---- a/arch/arm64/boot/dts/airoha/en7581.dtsi
-+++ b/arch/arm64/boot/dts/airoha/en7581.dtsi
-@@ -2,6 +2,7 @@
- 
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/en7523-clk.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -150,5 +151,13 @@ uart1: serial@1fbf0000 {
- 			interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <1843200>;
- 		};
-+
-+		scuclk: clock-controller@1fa20000 {
-+			compatible = "airoha,en7581-scu";
-+			reg = <0x0 0x1fa20000 0x0 0x400>,
-+			      <0x0 0x1fb00000 0x0 0x1000>,
-+			      <0x0 0x1fbe3400 0x0 0xfc>;
-+			#clock-cells = <1>;
-+		};
- 	};
+diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+index 7cde328495e2..7eee921ab575 100644
+--- a/drivers/clk/clk-en7523.c
++++ b/drivers/clk/clk-en7523.c
+@@ -47,6 +47,10 @@ struct en_clk_gate {
+ 	struct clk_hw hw;
  };
+ 
++struct en_clk_soc_data {
++	const struct clk_ops pcie_ops;
++};
++
+ static const u32 gsw_base[] = { 400000000, 500000000 };
+ static const u32 emi_base[] = { 333000000, 400000000 };
+ static const u32 bus_base[] = { 500000000, 540000000 };
+@@ -145,11 +149,6 @@ static const struct en_clk_desc en7523_base_clks[] = {
+ 	}
+ };
+ 
+-static const struct of_device_id of_match_clk_en7523[] = {
+-	{ .compatible = "airoha,en7523-scu", },
+-	{ /* sentinel */ }
+-};
+-
+ static unsigned int en7523_get_base_rate(void __iomem *base, unsigned int i)
+ {
+ 	const struct en_clk_desc *desc = &en7523_base_clks[i];
+@@ -247,14 +246,10 @@ static void en7523_pci_unprepare(struct clk_hw *hw)
+ static struct clk_hw *en7523_register_pcie_clk(struct device *dev,
+ 					       void __iomem *np_base)
+ {
+-	static const struct clk_ops pcie_gate_ops = {
+-		.is_enabled = en7523_pci_is_enabled,
+-		.prepare = en7523_pci_prepare,
+-		.unprepare = en7523_pci_unprepare,
+-	};
++	const struct en_clk_soc_data *soc_data = of_device_get_match_data(dev);
+ 	struct clk_init_data init = {
+ 		.name = "pcie",
+-		.ops = &pcie_gate_ops,
++		.ops = &soc_data->pcie_ops,
+ 	};
+ 	struct en_clk_gate *cg;
+ 
+@@ -264,7 +259,7 @@ static struct clk_hw *en7523_register_pcie_clk(struct device *dev,
+ 
+ 	cg->base = np_base;
+ 	cg->hw.init = &init;
+-	en7523_pci_unprepare(&cg->hw);
++	init.ops->unprepare(&cg->hw);
+ 
+ 	if (clk_hw_register(dev, &cg->hw))
+ 		return NULL;
+@@ -333,6 +328,19 @@ static int en7523_clk_probe(struct platform_device *pdev)
+ 	return r;
+ }
+ 
++static const struct en_clk_soc_data en7523_data = {
++	.pcie_ops = {
++		.is_enabled = en7523_pci_is_enabled,
++		.prepare = en7523_pci_prepare,
++		.unprepare = en7523_pci_unprepare,
++	},
++};
++
++static const struct of_device_id of_match_clk_en7523[] = {
++	{ .compatible = "airoha,en7523-scu", .data = &en7523_data },
++	{ /* sentinel */ }
++};
++
+ static struct platform_driver clk_en7523_drv = {
+ 	.probe = en7523_clk_probe,
+ 	.driver = {
 -- 
 2.44.0
 
