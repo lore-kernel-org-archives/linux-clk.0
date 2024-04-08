@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C9437B;
-	Mon,  8 Apr 2024 02:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DCD1C0DC7;
+	Mon,  8 Apr 2024 03:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712544304; cv=none; b=vGGIPI4L2ELs9xWezPcV/GfYMiWU3LkqVieAnpCr75hCiiAk5UC+/w9OqXFuHbtlZDP4rikZd8PXTuJunKRZ76kQELmXFPMrPwnwSDjeM5s0alZbv5EwkAsJp1GvVq1bQ8snGy7dMbXdiKSaHtc6lMApt/C1KVImvXkRzVAVi0E=
+	t=1712547188; cv=none; b=cr56X4myu99BYxg9QFKzJiHGTwFF2nJQ94+Zcu7VGDLdE0ADsZAy4/sf8KTn+oWwfadUQFxNDkQKh6iQcDBhXecEZTU13bPt4RGIo/nICWiQGUASfkNDKfbPZGdXrwli0XrUrf/FKeH7BUCd4tWsRtpxfORTLR0Jvbr8FN5HQKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712544304; c=relaxed/simple;
-	bh=zOcI/UJNgVpdplBO9a8CzD53CIl24xf01xvaj26Ddzs=;
+	s=arc-20240116; t=1712547188; c=relaxed/simple;
+	bh=jWMZ2HZ3Bb+CCiJ4NDxZ3ZAUHWn0EA4pell8ZZY8hm8=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=KOS1U4BvmHG6lsZg/rVNyKzy+TVtZbqEjIliOy8vYi3huPkqTiLHTuinwpm+/svdIqJZqYBDWpkN0RipHDpBqq57Qhm8/UejnPZsHJoK5WpbdIWpnHcXNIDCFBleLOKdCq72796056yBYc/gGpMhrxQXgI1xbRho36lNgOFoDmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ix8iBs74; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=rTh5mc9mC785yCwvWRD00tsHaNVjd47xYPGoYAtM5tKQias8KkJr2IKMuRzLzjUPpCarVgVjJN2Quh+4KicV/3qUnUCSKmRC+ngTZ7IkEstBH6qlDHHwB/dJrlEfL52nO2tpRUfWn2xxLlf01HMZGZUxglJv4/Xbw5aDXenJKgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTg9WpMv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ix8iBs74"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697CFC433C7;
-	Mon,  8 Apr 2024 02:45:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTg9WpMv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0715C433F1;
+	Mon,  8 Apr 2024 03:33:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712544303;
-	bh=zOcI/UJNgVpdplBO9a8CzD53CIl24xf01xvaj26Ddzs=;
+	s=k20201202; t=1712547187;
+	bh=jWMZ2HZ3Bb+CCiJ4NDxZ3ZAUHWn0EA4pell8ZZY8hm8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Ix8iBs74GbMER3N197bHAgFr8QMr2bjO9qYtsebIIs7N4xcJDTMuFX6oRZSbx6oB8
-	 T9hzT0kXSRgAM/Dl4crrID9/Xr3/05wtfH7EzbDY6wsmewdjW367zUgS3N3A4thA/x
-	 S1cLxM9Gu/UYiaWiVSjY1UXzuFFJRb6q/wjSHaU5WmYc4FVvkKHF3vkDC8XkwFeV0r
-	 AqcceuQsuuGIiaz3Xmj2fic3APmlHfsWpZa4UBkzGBqMPFxegJqlMBiVDLI60x/JrE
-	 JS9DOvGw7NvoMLWkcNMvAvF0UVvYgqRGJ3isoN6NxKcHlki6GNwx8EqQFM2ZnM8Kb1
-	 AsHoDkBEMaXgA==
-Message-ID: <a755bf7d32d2482a6318fab614f669f3.sboyd@kernel.org>
+	b=bTg9WpMvBlPylOJbesSgZiYTOFKFVpnM0tyf9aIQxcKY6ZBsLdDFBYBYhl2Ed8us9
+	 wyr9CtqSJ/9ww26TldpUO/sx0XFjXrJlvkru0c4CaMyfkCCadOmOcEoLDT9u9VvnmW
+	 LrvRXBepTVlX+slyF6LUyCDjn6/nRQGaaONAZxdmPROvR4WIcQB2TmE6JrsoVFJHyF
+	 RiL96QOFEPI9GW1F94TZTNFOwPSh1975UPDcOBwATY4JFvzJECqw1xddNnB6Wa+SdS
+	 IkCmwAvWhAZyF3/RVwMlH5puSEW1sNe3Vf7piRAyMwybPOGRFj1lCaEF8Y8N+eEya+
+	 19fVuTAkZJGNQ==
+Message-ID: <b5235bd84101f25815a523c8a37810b7.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,40 +35,61 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2082b46ab08755b1b66e0630a61619acac9d883f.1711714613.git.geert@linux-m68k.org>
-References: <2082b46ab08755b1b66e0630a61619acac9d883f.1711714613.git.geert@linux-m68k.org>
-Subject: Re: [PATCH v3] clk: starfive: jh7100: Use clk_hw for external input clocks
+In-Reply-To: <20240225160616.15001-2-andre.przywara@arm.com>
+References: <20240225160616.15001-1-andre.przywara@arm.com> <20240225160616.15001-2-andre.przywara@arm.com>
+Subject: Re: [RFC PATCH 1/1] clk: sunxi-ng: h6-r: add GPU power domain
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Samuel Holland <samuel.holland@sifive.com>
-To: Albert Ou <aou@eecs.berkeley.edu>, Andy Shevchenko <andy.shevchenko@gmail.com>, Conor Dooley <conor.dooley@microchip.com>, Emil Renner Berthing <kernel@esmil.dk>, Geert Uytterhoeven <geert@linux-m68k.org>, Hal Feng <hal.feng@starfivetech.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>
-Date: Sun, 07 Apr 2024 19:45:01 -0700
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+To: Andre Przywara <andre.przywara@arm.com>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Samuel Holland <samuel@sholland.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Date: Sun, 07 Apr 2024 20:33:05 -0700
 User-Agent: alot/0.10
 
-Quoting Geert Uytterhoeven (2024-03-29 05:16:58)
-> The Starfive JH7100 clock driver does not use the DT "clocks" property
-> to find the external main input clock, but instead relies on the name of
-> the actual clock provider ("osc_sys").  This is fragile, and caused
-> breakage when sanitizing clock node names in DTS.
->=20
-> Fix this by obtaining the external main input clock using
-> devm_clk_get(), and passing the returned clk_hw object to
-> devm_clk_hw_register_fixed_factor_parent_hw().
->=20
-> While name-based look-up of the other external input clocks works as-is,
-> convert them to a similar clk_hw-based scheme to increase uniformity,
-> and to decrease the number of (multiple identical) name-based look-ups.
+Quoting Andre Przywara (2024-02-25 08:06:16)
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-n=
+g/ccu-sun50i-h6-r.c
+> index 02b28cfc5525e..363fb7a71e9f5 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> @@ -217,6 +219,86 @@ static const struct sunxi_ccu_desc sun50i_h616_r_ccu=
+_desc =3D {
+[...]
+> +static int sun50i_h616_register_ppu(struct platform_device *pdev,
+> +                                   void __iomem *base)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct genpd_onecell_data *ppu;
+> +       struct sun50i_h616_ppu_pd *pd;
+> +       int ret;
+> +
+> +       pd =3D devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+> +       if (!pd)
+> +               return -ENOMEM;
+> +
+> +       ppu =3D devm_kzalloc(dev, sizeof(*ppu), GFP_KERNEL);
+> +       if (!ppu)
+> +               return -ENOMEM;
+> +
+> +       ppu->domains =3D devm_kzalloc(dev, sizeof(*ppu->domains), GFP_KER=
+NEL);
+> +       if (!ppu->domains)
+> +               return -ENOMEM;
+> +
+> +       ppu->num_domains =3D 1;
+> +       pd->genpd.name          =3D "GPU";
+> +       pd->genpd.power_off     =3D sun50i_h616_ppu_pd_power_off;
+> +       pd->genpd.power_on      =3D sun50i_h616_ppu_pd_power_on;
+> +       pd->base                =3D base;
+> +
+> +       ret =3D pm_genpd_init(&pd->genpd, NULL, !sun50i_h616_ppu_power_st=
+atus(pd));
+> +       if (ret) {
+> +               dev_warn(dev, "Failed to add GPU power domain: %d\n", ret=
+);
+> +               return ret;
+> +       }
+> +
+> +       ppu->domains[0] =3D &pd->genpd;
+> +       ret =3D of_genpd_add_provider_onecell(dev->of_node, ppu);
 
-Why can't we use index based lookups and clk_parent_data? We don't want
-clk providers to call clk consumer APIs.
-
->=20
-> Fixes: f03606470886 ("riscv: dts: starfive: replace underscores in node n=
-ames")
-> Fixes: 4210be668a09ee20 ("clk: starfive: Add JH7100 clock generator drive=
-r")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
-> After this is applied, the workaround in commit 7921e231f85a349d
-> ("riscv: dts: starfive: jh7100: fix root clock names") can be reverted.
->
+Is this provider removed somewhere when probe fails or the driver is
+removed? It looks like the rest of the driver uses devm during probe.
