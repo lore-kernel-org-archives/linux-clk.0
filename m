@@ -1,216 +1,269 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7D86D1A9
-	for <linux-clk@vger.kernel.org>; Mon,  8 Apr 2024 12:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CBA13F42B
+	for <linux-clk@vger.kernel.org>; Mon,  8 Apr 2024 14:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712580942; cv=none; b=t7ofKFjUcdHrx5TVe39/BOcf9lZZjll/17AIhBxKfmhvkte2cNQTvkEa/2q2PjKkdhnPekHmAy+ww5WqiqQwqt+eutU9ItDi8pmnX6Oe9qXRoPlI55K1UcXIxVd1e+lmvej5coasFATbhbxYfUFkYeGiB5oqmOkPSFa27oBOT6A=
+	t=1712587764; cv=none; b=k35ojO/eSIiEGgtbswM32VQoAnQDIIwK9DbFeEv262PVRLZdhhnTvQWaoHo3+WwwT47o/Xt7FsWKg1Al1zWkfKxdqtdMVtV/oiejsN84sy4Yq8xjFlpg3w3lI/fLA7X42WV3fbTCQTE3XKCoi8ZSdonxyiOq5NxPHx74k9xjj1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712580942; c=relaxed/simple;
-	bh=Z6eY4OmdwiwJCbiw49+rH+D8EMnFBgzPxGoyRKPf5kA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tifDDFdKx/J0n2XWN1oq/wqEaBIHC/0U7R3sIcotzeb1oAF8uHJiskm1LPEJ+oEFpS3DRJ5BmzePbDFxQCn+DzBRRcS4W3Pdhs2q5VdQn6fREw/uqewddbDMUac5kdRs6//mf8R8L7fmDd4Mem4gLmOfQJukoZEmC13qv5hlDNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CvKsbuug; arc=none smtp.client-ip=209.85.219.181
+	s=arc-20240116; t=1712587764; c=relaxed/simple;
+	bh=kqABwm4SeRyyWpDPZiCA1IIfX5kotHTU4sIUNm44rds=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Qql7Kx0bSdzElV+2w/4wZOx6GQ3sltdEIrmyqyfxMMzIr9iDi6frMjrBZ8axbJID4dGreQLrPONDuz1az+5aqs4x5kmWUlXJw9xcFTcMzm6xg21wDVcxCKha00xZOHmzC4r7i5ioHe2YaRiS0lgf/GQjkZpCx8tf/x6FroSHasM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CajWZAZ9; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CvKsbuug"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dc74e33fe1bso3903397276.0
-        for <linux-clk@vger.kernel.org>; Mon, 08 Apr 2024 05:55:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CajWZAZ9"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4162b74f2a1so27852115e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 08 Apr 2024 07:49:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712580940; x=1713185740; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VTyuvoKLXrF4zBNNDfLsJ1Gr6aBm90B+IQjTLLH6CxY=;
-        b=CvKsbuugU/AwUJGBh5GTG9XBrwio6tNFfwAo+cNtelIfifg39ly/PovI31ayXN4iEI
-         0b3Ytbz8Kf3xTI5hAj9Ec4I7la5wsSVSH0sA3YZakmN9KlM3npR2GffOX+/1FjDKF97w
-         zHo6xNrldTSbCWCRYdQjvFDMxoXyfOzp25Sc9lozokszpdscHqeZ49aLB35v6GtZJVE2
-         i07MSnO3xHwim64TCFd8oSdG3mkf9Uvuhd22N7g8nBnyxltJTQzZfKzg8hbWectqn++9
-         LmswlCkJtJNBlMafIjFghYe0MdKwWAEf5qNU1jgQu0fuB5dCoMkowVnJIslG4/YCa4S8
-         Bxww==
+        d=linaro.org; s=google; t=1712587761; x=1713192561; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0EE/MOgIxft1vfD//KGXquYTb4qzSH0XjrabPn5Q8lo=;
+        b=CajWZAZ9A4VNb96o21snoUhAZo9hBeNkQ6dtDuj8xCdU2nKuw4K5hTsPYNmdRXVFH+
+         pEG1aVh5mRCdgZW43o0r3f1RaoqFtSmFxkkPjO/TgxgrR/b65L5aOTEoVOiTMonqFKny
+         tOfc5xfWhkTRo0qVsmC0PFDvcvHwH9czTuKWJJ9d/GS5kzsCzI7xEYl2C4u/mEiir/CD
+         eDSiBH4G7xG8bFt7ebCwKtLKMuZT2NnmwvO0BMt4PkxKgD6bPPv2d0IJDTCtQ9WZBtm3
+         erwF3dtoi5+ttRz4xQ3boax104TkbLM4Vn26KGPw6K2JRCAt2feGjpsy0j4freT0jfDO
+         +YpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712580940; x=1713185740;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VTyuvoKLXrF4zBNNDfLsJ1Gr6aBm90B+IQjTLLH6CxY=;
-        b=HiFlJc4rikEyBcFXJntwNK33qCZlee4+KD25oCxl2t6zdnJXempd6/nt7W8sbKfE5T
-         Xdad7GIqYnHwUrMcTCNUIPNI3ry+ikXurOPsoWSUnSGKv63VZQHuctDOr8JBNDuQxDu+
-         iwd6PnDQE6px/VLY2r4tiFivbQ+tSnw/UxW7ZzgQPBDFo4nbzbi68nrjy/kFT8i02w/U
-         HfTp+l/gmhm4z0M3bpj0PRyXbMDR/2b3qxATu5/OFWJJk2UxUXYsR1C6giHkqTQRKTA/
-         T4J9DkKM5xwxk1PF0XNyaHz6hCLIMeBniGRF7CREu8Fgmijq71J+JDGt59+vHkVS9ZGR
-         vn5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXpG46bgm1Q3nGV6ZukCqgGx7E1qG+wbt+JvVGwHenmMAojyN94CWLZXkmpUbx0K7wRg2skATInwCmyGSI/jJAE97fZJ4s2pWDi
-X-Gm-Message-State: AOJu0YyPV9cfzm8MEBqd3PamVGQtkPjxD2VFV14uEIt0RYVLAKafOzyE
-	nUjyQOXEPGeJgH+7oYW+1vkMBuDkxVRZEphU+jq2gkBqUd31XWOkoEDXPdjfgI5t0SQMz5zXcRi
-	YebEMMn+/nhWpqa6T8CsF7J3GSFwfhpZdt7uu2g==
-X-Google-Smtp-Source: AGHT+IFvXwpI9VHcLbTB0ZP1QIBFQuCv1eOj+aSbS4lA2YwxT+jKCNkyVBhCAqZTbT/YMU4v5nPjK2zQ2gh1fkKRvpw=
-X-Received: by 2002:a25:83c9:0:b0:dc6:c2b2:c039 with SMTP id
- v9-20020a2583c9000000b00dc6c2b2c039mr6207448ybm.41.1712580939881; Mon, 08 Apr
- 2024 05:55:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1712587761; x=1713192561;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0EE/MOgIxft1vfD//KGXquYTb4qzSH0XjrabPn5Q8lo=;
+        b=keQmj95FrPS707XfYEO0DDr1+fNd7bmpwT66Mw1CkKyFamzqMDZ98xYhiilOsJk3df
+         BxSZyGOp/y1VcJ6rQn/iB9sytu1+qYPvjkNrxEc054vxNxqFk52PCmd6xZcoBi5H8Es5
+         S4F/US6yunQsSNKNGoWqit7rqDqUE8QokWvHshL9g6s4LsA37/ZVehUXCDgTRse7ri7d
+         btMzznwvIbKmj29pWBZlKx9qtrN8w+Wk/alkjS7YwdcggflEwPAgfcY9V5dQYSmJ7fYC
+         t5hh4KG9X3z3yHD36PNa+9ljViDsfsvQgB1YuTQgEbXwVairi6BSpsV+UVkXP5bTOYnL
+         MQEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoqxKhRawdI7eIqiKSKN+zKCaK5vhE82ZCL4TnpMM7PnkQCcY+k84+AxF/WIzwcmAyUPsafe4t1gl3ETcSS1MEOpxSNFGS0MeW
+X-Gm-Message-State: AOJu0YxNzyqW1+VxJrxgc9sKNv619SVBAZEfwaYqp68LcYmpjzzKACVc
+	q58z5hIT9ACZHCJmX0wkGeWL2DdOTt19OmNqGQoYNVvrUhclOZKpr9UZQkDpzOo=
+X-Google-Smtp-Source: AGHT+IGG9i5K+adcR32eYKb2R1dhdhIu35XUgoAG2pjKiBFFLAOeBkyufatVzBbZUYaV4XpDPUBWWg==
+X-Received: by 2002:a05:600c:3acb:b0:416:7222:8a78 with SMTP id d11-20020a05600c3acb00b0041672228a78mr2201360wms.37.1712587760913;
+        Mon, 08 Apr 2024 07:49:20 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id dr20-20020a5d5f94000000b0033ea499c645sm9303171wrb.4.2024.04.08.07.49.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Apr 2024 07:49:20 -0700 (PDT)
+Message-ID: <6c2b060b3b32b2da46bafbdc33236c319b6cec62.camel@linaro.org>
+Subject: Re: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, mturquette@baylibre.com, 
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+  vkoul@kernel.org, kishon@kernel.org, alim.akhtar@samsung.com,
+ avri.altman@wdc.com,  bvanassche@acm.org, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com,  jejb@linux.ibm.com, martin.petersen@oracle.com,
+ chanho61.park@samsung.com,  ebiggers@kernel.org
+Cc: linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
+	saravanak@google.com, willmcvicker@google.com
+Date: Mon, 08 Apr 2024 15:49:18 +0100
+In-Reply-To: <20240404122559.898930-9-peter.griffin@linaro.org>
+References: <20240404122559.898930-1-peter.griffin@linaro.org>
+	 <20240404122559.898930-9-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3-1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240225160616.15001-1-andre.przywara@arm.com> <20240225160616.15001-2-andre.przywara@arm.com>
-In-Reply-To: <20240225160616.15001-2-andre.przywara@arm.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 8 Apr 2024 14:55:04 +0200
-Message-ID: <CAPDyKFptmNcbOTEs052yLGLxObWy7975fgpM3Kfg1TjMPVmeyA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] clk: sunxi-ng: h6-r: add GPU power domain
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 25 Feb 2024 at 17:08, Andre Przywara <andre.przywara@arm.com> wrote:
->
-> The Allwinner H616 features register 0x7010254 in the PRCM MMIO frame,
-> where bit 0 needs to be cleared to enable operation of the Mali GPU.
-> With this bit set (the reset default), any access to the Mali registers
-> hangs the bus and thus the whole system. The BSP code clears this bit
-> in U-Boot and their kernel never touches it again.
+Hi Pete,
 
-Is the bit representing a reset or power-rail? If it's a reset, it's
-probably better to model it like that.
+On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
+> CMU_HSI2 is the clock management unit used for the hsi2 block.
+> HSI stands for High Speed Interface and as such it generates
+> clocks for PCIe, UFS and MMC card.
+>=20
+> This patch adds support for the muxes, dividers, and gates in
+> cmu_hsi2.
+>=20
+> CLK_GOUT_HSI2_HSI2_CMU_HSI2_PCLK is marked as CLK_IS_CRITICAL
+> as disabling it leads to an immediate system hang.
+>=20
+> CLK_GOUT_HSI2_SYSREG_HSI2_PCLK is also marked CLK_IS_CRITICAL.
+> A hang is not observed with fine grained clock control, but
+> UFS IP does not function with syscon controlling this clock
+> just around hsi2_sysreg register accesses.
 
->
-> Register a power-domain device to control this bit. Since we claim this
-> MMIO region in the H6 R-CCU driver, add the code here, so that we don't
-> need to artificially split the MMIO range in the DT.
-> Since there seems to be at least one other register with similar behaviour
-> nearby (0x7010260), make the power domain take one cell, even though we
-> only support domain #0 for now.
+Would it make sense to add this clock to the &ufs_0 node in the DTS
+instead? Seems more natural than a clock that's constantly enabled?
 
-Seems like we need some updated DT bindings too to cover this?
+> [...]
+>=20
+> Updated regex for clock name mangling
+> =C2=A0=C2=A0=C2=A0 sed \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^PLL_LOCKTIME_PLL_\([^_]=
+\+\)|fout_\L\1_pll|' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^PLL_CON0_MUX_CLKCMU_\([=
+^_]\+\)_\(.*\)|mout_\L\1_\2|' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^PLL_CON0_PLL_\(.*\)|mou=
+t_pll_\L\1|' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_MUX_MUX_CLK_\(.=
+*\)|mout_\L\1|' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e '/^PLL_CON[1-4]_[^_]\+_/d' =
+\
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e '/^[^_]\+_CMU_[^_]\+_CONTRO=
+LLER_OPTION/d' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e '/^CLKOUT_CON_BLK_[^_]\+_CM=
+U_[^_]\+_CLKOUT0/d' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_IPCLKPORT||' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_RSTNSYNC||' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_G4X2_DWC_PCIE_CTL||' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_G4X1_DWC_PCIE_CTL||' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_PCIE_SUB_CTRL||' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_INST_0||g' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_LN05LPE||' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_TM_WRAPPER||' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_SF||' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_DIV_DIV_CLK_\([=
+^_]\+\)_\(.*\)|dout_\L\1_\2|' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_BUF_CLKBUF_\([^=
+_]\+\)_\(.*\)|gout_\L\1_\2|' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_GAT_CLK_BLK_\([=
+^_]\+\)_UID_\(.*\)|gout_\L\1_\2|' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^gout_[^_]\+_[^_]\+_cmu_=
+\([^_]\+\)_pclk$|gout_\1_\1_pclk|' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_GAT_GOUT_BLK_\(=
+[^_]\+\)_UID_\(.*\)|gout_\L\1_\2|' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_GAT_CLK_\([^_]\=
++\)_\(.*\)|gout_\L\1_clk_\L\1_\2|' \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e '/^\(DMYQCH\|PCH\|QCH\|QUEU=
+E\)_/d'
 
->
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Thank you for the updated regex.
+
 > ---
->  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 84 ++++++++++++++++++++++++++
->  1 file changed, 84 insertions(+)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-> index 02b28cfc5525e..363fb7a71e9f5 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-> @@ -4,9 +4,11 @@
->   */
->
->  #include <linux/clk-provider.h>
-> +#include <linux/io.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
->
->  #include "ccu_common.h"
->  #include "ccu_reset.h"
-> @@ -217,6 +219,86 @@ static const struct sunxi_ccu_desc sun50i_h616_r_ccu_desc = {
->         .num_resets     = ARRAY_SIZE(sun50i_h616_r_ccu_resets),
->  };
->
-> +#define        PD_H616_GPU_REG                 0x254
+> =C2=A0drivers/clk/samsung/clk-gs101.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 558 +++++++++++++++++++++++
+> =C2=A0include/dt-bindings/clock/google,gs101.h |=C2=A0 63 +++
+> =C2=A02 files changed, 621 insertions(+)
+>=20
+> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs=
+101.c
+> index d065e343a85d..b9f84c7d5c22 100644
+> --- a/drivers/clk/samsung/clk-gs101.c
+> +++ b/drivers/clk/samsung/clk-gs101.c
+> @@ -22,6 +22,7 @@
+> =C2=A0#define CLKS_NR_MISC	(CLK_GOUT_MISC_XIU_D_MISC_ACLK + 1)
+> =C2=A0#define CLKS_NR_PERIC0	(CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK + 1)
+> =C2=A0#define CLKS_NR_PERIC1	(CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK + 1)
+> +#define CLKS_NR_HSI2	(CLK_GOUT_HSI2_XIU_P_HSI2_ACLK + 1)
+> =C2=A0
+> =C2=A0/* ---- CMU_TOP ---------------------------------------------------=
+---------- */
+> =C2=A0
+> @@ -3409,6 +3410,560 @@ static const struct samsung_cmu_info peric1_cmu_i=
+nfo __initconst =3D {
+> =C2=A0	.clk_name		=3D "bus",
+> =C2=A0};
+> =C2=A0
+> +/* ---- CMU_HSI2 -------------------------------------------------------=
+--- */
+
+This comment is shorter that all the other similar comments in this file.
+
+> [...]
 > +
-> +struct sun50i_h616_ppu_pd {
-> +       struct generic_pm_domain        genpd;
-> +       void __iomem                    *base;
+> +PNAME(mout_hsi2_bus_user_p)	=3D { "oscclk", "dout_cmu_hsi2_bus" };
+> +PNAME(mout_hsi2_pcie_user_p)	=3D { "oscclk", "dout_cmu_hsi2_pcie" };
+> +PNAME(mout_hsi2_ufs_embd_user_p) =3D { "oscclk", "dout_cmu_hsi2_ufs_embd=
+" };
+> +PNAME(mout_hsi2_mmc_card_user_p) =3D { "oscclk", "dout_cmu_hsi2_mmc_card=
+" };
+
+Can you make these alphabetical, too, please, which would also match their =
+usage
+below:
+
+> +
+> +static const struct samsung_mux_clock hsi2_mux_clks[] __initconst =3D {
+> +	MUX(CLK_MOUT_HSI2_BUS_USER, "mout_hsi2_bus_user", mout_hsi2_bus_user_p,
+> +	=C2=A0=C2=A0=C2=A0 PLL_CON0_MUX_CLKCMU_HSI2_BUS_USER, 4, 1),
+> +	MUX(CLK_MOUT_HSI2_MMC_CARD_USER, "mout_hsi2_mmc_card_user",
+> +	=C2=A0=C2=A0=C2=A0 mout_hsi2_mmc_card_user_p, PLL_CON0_MUX_CLKCMU_HSI2_=
+MMC_CARD_USER,
+> +	=C2=A0=C2=A0=C2=A0 4, 1),
+> +	MUX(CLK_MOUT_HSI2_PCIE_USER, "mout_hsi2_pcie_user",
+> +	=C2=A0=C2=A0=C2=A0 mout_hsi2_pcie_user_p, PLL_CON0_MUX_CLKCMU_HSI2_PCIE=
+_USER,
+> +	=C2=A0=C2=A0=C2=A0 4, 1),
+> +	MUX(CLK_MOUT_HSI2_UFS_EMBD_USER, "mout_hsi2_ufs_embd_user",
+> +	=C2=A0=C2=A0=C2=A0 mout_hsi2_ufs_embd_user_p, PLL_CON0_MUX_CLKCMU_HSI2_=
+UFS_EMBD_USER,
+> +	=C2=A0=C2=A0=C2=A0 4, 1),
 > +};
 > +
-> +#define to_sun50i_h616_ppu_pd(_genpd) \
-> +       container_of(_genpd, struct sun50i_h616_ppu_pd, genpd)
+> +static const struct samsung_gate_clock hsi2_gate_clks[] __initconst =3D =
+{
 > +
-> +static bool sun50i_h616_ppu_power_status(const struct sun50i_h616_ppu_pd *pd)
-> +{
-> +       return !readl(pd->base + PD_H616_GPU_REG);
-> +}
-> +
-> +static int sun50i_h616_ppu_pd_set_power(const struct sun50i_h616_ppu_pd *pd,
-> +                                       bool power_on)
-> +{
-> +       if (power_on)
-> +               writel(0, pd->base + PD_H616_GPU_REG);
-> +       else
-> +               writel(1, pd->base + PD_H616_GPU_REG);
-> +
-> +       return 0;
-> +}
-> +
-> +static int sun50i_h616_ppu_pd_power_on(struct generic_pm_domain *genpd)
-> +{
-> +       const struct sun50i_h616_ppu_pd *pd = to_sun50i_h616_ppu_pd(genpd);
-> +
-> +       return sun50i_h616_ppu_pd_set_power(pd, true);
-> +}
-> +
-> +static int sun50i_h616_ppu_pd_power_off(struct generic_pm_domain *genpd)
-> +{
-> +       const struct sun50i_h616_ppu_pd *pd = to_sun50i_h616_ppu_pd(genpd);
-> +
-> +       return sun50i_h616_ppu_pd_set_power(pd, false);
-> +}
-> +
-> +static int sun50i_h616_register_ppu(struct platform_device *pdev,
-> +                                   void __iomem *base)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct genpd_onecell_data *ppu;
-> +       struct sun50i_h616_ppu_pd *pd;
-> +       int ret;
-> +
-> +       pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-> +       if (!pd)
-> +               return -ENOMEM;
-> +
-> +       ppu = devm_kzalloc(dev, sizeof(*ppu), GFP_KERNEL);
-> +       if (!ppu)
-> +               return -ENOMEM;
-> +
-> +       ppu->domains = devm_kzalloc(dev, sizeof(*ppu->domains), GFP_KERNEL);
-> +       if (!ppu->domains)
-> +               return -ENOMEM;
-> +
-> +       ppu->num_domains = 1;
-> +       pd->genpd.name          = "GPU";
-> +       pd->genpd.power_off     = sun50i_h616_ppu_pd_power_off;
-> +       pd->genpd.power_on      = sun50i_h616_ppu_pd_power_on;
-> +       pd->base                = base;
-> +
-> +       ret = pm_genpd_init(&pd->genpd, NULL, !sun50i_h616_ppu_power_status(pd));
-> +       if (ret) {
-> +               dev_warn(dev, "Failed to add GPU power domain: %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       ppu->domains[0] = &pd->genpd;
-> +       ret = of_genpd_add_provider_onecell(dev->of_node, ppu);
-> +       if (ret)
-> +               dev_warn(dev, "Failed to add provider: %d\n", ret);
-> +
-> +       return 0;
-> +}
-> +
->  static int sun50i_h6_r_ccu_probe(struct platform_device *pdev)
->  {
->         const struct sunxi_ccu_desc *desc;
-> @@ -230,6 +312,8 @@ static int sun50i_h6_r_ccu_probe(struct platform_device *pdev)
->         if (IS_ERR(reg))
->                 return PTR_ERR(reg);
->
-> +       sun50i_h616_register_ppu(pdev, reg);
-> +
->         return devm_sunxi_ccu_probe(&pdev->dev, reg, desc);
->  }
->
 
-In general (for maintenance reasons) it's a good idea to put genpd
-providers under drivers/pmdomain/*. It looks like that should work
-this case too, right?
+Here and below: all these extra empty lines are not needed.
 
-Kind regards
-Uffe
+> +	GATE(CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_PHY_REFCLK_IN,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "gout_hsi2_pcie_gen4_1_pcie_003_phy_refclk_in"=
+,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_hsi2_pcie_user",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_CLK_BLK_HSI2_UID_PCIE_GEN4_1_IPCLK=
+PORT_PCIE_003_PCIE_SUB_CTRL_INST_0_PHY_REFCLK_IN,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
+> +
+> +	GATE(CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_PHY_REFCLK_IN,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "gout_hsi2_pcie_gen4_1_pcie_004_phy_refclk_in"=
+,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_hsi2_pcie_user",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_CLK_BLK_HSI2_UID_PCIE_GEN4_1_IPCLK=
+PORT_PCIE_004_PCIE_SUB_CTRL_INST_0_PHY_REFCLK_IN,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
+> +
+> +	GATE(CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_ACLK,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "gout_hsi2_ssmt_pcie_ia_gen4a_1_aclk",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_hsi2_bus_user",
+
+The two strings fit on the same line.
+
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_CLK_BLK_HSI2_UID_SSMT_PCIE_IA_GEN4=
+A_1_IPCLKPORT_ACLK,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
+> +
+> +	GATE(CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_PCLK,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "gout_hsi2_ssmt_pcie_ia_gen4a_1_pclk",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_hsi2_bus_user",
+
+dito.
+
+> [...]
+> +	/* Disabling this clock makes the system hang. Mark the clock as critic=
+al. */
+> +	GATE(CLK_GOUT_HSI2_HSI2_CMU_HSI2_PCLK,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 "gout_hsi2_hsi2_cmu_hsi2_pclk", "mout_hsi2_bus=
+_user",
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GOUT_BLK_HSI2_UID_HSI2_CMU_HSI2_IP=
+CLKPORT_PCLK,
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, CLK_IS_CRITICAL, 0),
+
+I have a similar clock in USB, which also causes a hang if off, I wonder wh=
+at we
+could do better here.
+
+
+Cheers,
+Andre'
+
