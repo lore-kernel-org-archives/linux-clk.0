@@ -1,139 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35B563CB;
-	Mon,  8 Apr 2024 17:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A314143893;
+	Mon,  8 Apr 2024 17:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712595956; cv=none; b=cjHJylW6yxErerPOCs9N4Z2R4x0N/FcL6+TAJuq57xiBLqpadG5ebO4C7neBA8XKM2v/6pEHMgf97XtRZ+8G3uxs8C/QLfB13mBAFUh4lThqmNDEyEeuL0mi7pYoL1Om+yU7W432QpUw705ivUKXooCOtybtuAy8Gmt6twX2L2o=
+	t=1712596898; cv=none; b=cqTN7ipigq2edQeAE0SdSa7Q7tP6/WR7EA/RBD9U6gn7QmyAlVuuyZLHVzFqiq+xHuAcdY/bOD4GBhcZwUKTq3hk1D0msStjJyp5uKYJFHzs7H41SZknCn3uYSsRbVz292bQk5Vdn0lN3RPExcB+dURe9DjkM5SG03rzOllLyyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712595956; c=relaxed/simple;
-	bh=N9mKisc7kUAlfuj0tQyymnxAGu/44U+CyciFpi92qvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pt6kPTFwfJwHd7x0LVV6ysmXO0/4YFNkk/XxQobnCC/9bbEOisZnLrAsJH6FlpDgiwuFuKgzAxYwjzQlg4kUEjGPynA8Acb1H7kFY+fTwWNKYNWhp1eKyMInPUVT1Ssle/rZVLn7qI0nFA0Lyo3OdNkYxUnceZk2q/KZy4k7w4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQnKFwi/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712596898; c=relaxed/simple;
+	bh=CD+KxDHqdUb5j2VIVvwfKn0QC5O9nZf/3mXOmaOeTAw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eCPpSKOFab6f7f3oqn2Od/eO47i0CxqbrQ40Mq0VDax/8HtgyvJ3NPHFvAqmuAuzF+78ifEbmweFFRnDgVzXgwR0IIPVWBqFAsHH1JEF3C7Yokl6VluTkycB+qUzJXN48xb/V9OfatrCUsJ2hJ5+jjAg0MglRR3ZOLI0mcCp7n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=d2eeQuXj; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQnKFwi/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58149C43394;
-	Mon,  8 Apr 2024 17:05:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712595956;
-	bh=N9mKisc7kUAlfuj0tQyymnxAGu/44U+CyciFpi92qvs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aQnKFwi/w1g3wdmNyQhIpuGFLXcUmr6oVZhG5pX06fCYUXGm42RPdOs3fIkTm9FJB
-	 2oWpOlmpHd61jYuTxH90FtJvYt2ZY6GnJSYtMdrmmabJopcveQ/0QGAG4VSlDOUtiH
-	 LTfRD+HKuLVDiQw13H2BdUbBVReV3ZojEeh4pY9ANGnzQBH9XkXBUcU0Ai1NiAnrmK
-	 S7o2O5Dmj4vZuM9KoflqlL7b2KJ0tnAzevtzQQiAX2qmJr9Lq7gvjeK6/EhbJ3OuR0
-	 87+IkiYe6wLYBwKmriNOgCo8r3he9usNatFiYjMwDmDxzczxwgTS4jlARt4FgKmTPX
-	 28Jy7Df7xi3vg==
-Date: Mon, 8 Apr 2024 18:05:51 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH v2 1/5] clk: meson: axg: move reset controller's code
- to separate module
-Message-ID: <20240408-numerator-escargot-a642507a598e@spud>
-References: <20240328010831.884487-1-jan.dakinevich@salutedevices.com>
- <20240328010831.884487-2-jan.dakinevich@salutedevices.com>
- <1j7chfiz8e.fsf@starbuckisacylon.baylibre.com>
- <e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org>
- <f01cdd910ab35316b8012795f73fd2b34c8e6f8e.camel@pengutronix.de>
- <13617b7a892424d2b024c725505a6f4f.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="d2eeQuXj"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1e403dd3995so6812005ad.2;
+        Mon, 08 Apr 2024 10:21:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1712596897; x=1713201697; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CD+KxDHqdUb5j2VIVvwfKn0QC5O9nZf/3mXOmaOeTAw=;
+        b=d2eeQuXjqbnnas27VijjflZI4zO+CKojp2N84SQYWWhOaEj31IA/lDvrrqqTcGex4M
+         Bc9McgPsh8h0GPW/taOkTIUitViVWZk60OA9rH7UVXWuHSXLJWJti6f3vcdYt3e6jhZS
+         Z+QP2ORysebrq9v9JyV5QlQflSY21Tn3odvT2l3Tyc6qUbLzeAHDvXaqa3AwHpFJx4sS
+         swU9+cH1tZ6v78UQBCvrK0/3PJdbKkuGXSbsoausQW2yGjAtaEsMU1iVfKCIfVTAKrZI
+         AgswTewCp9d2tu0mvtMeZGgkAEq0otq8fakyW/tw0qCALv7bZeqMCQ4OZnPQ0SZbZmDQ
+         WKtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712596897; x=1713201697;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CD+KxDHqdUb5j2VIVvwfKn0QC5O9nZf/3mXOmaOeTAw=;
+        b=uOAUEjf30kEKonguEOcaLMJfLSvRkmcKEgfrTLMdMJ4yVOzDq79dL0hku18PTXzhiP
+         rNB4wDWRe0P7oZh4ARjLWlE8nIZKZ6Cbubde5sGXcXsRbYxG+7ZJuEfAZ2PEC6LraR/X
+         UbfXv9kTavO7MGXGc+XtROiinYQq3WYhrhGasIJIUldyF7a6MiZHFelcb8awoJCPuKbk
+         eGJ4kh/BbTxqoKsaZ0hl2d8ph2Mlm+EpgtNuwL28f5STK8t7IntyrmBVUZaPR1PmRKt6
+         vCAITDaHSDeSHqE4yC+fqlsA+XYM8rAm8LQ8eFiZthTrCzpBt9vgKvnd2U5XpHWWb0R/
+         UcmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaQc21Mm74sKXF2kO76uz20cWWd86qA1Sl6jqx8DDIcIjsCFO91poYwEYMYt5U62U+9HkVBph3HM2YRVtJWapKT/e4jyUqLgXwnMg05/DoV3fCCPd2W1Rn54Rm43AwuvOLiNPIqbQ4
+X-Gm-Message-State: AOJu0Yz+7JIH2a/90Bckiw61wZUIZtvhQeTl+lFKPMowRQNrncAGNINH
+	E4Gp8gas0CS2SNpI3IAIRbLNofURQTpKxm84rEU6Y0WS+/wXc3q/L+u4cJCofD3PnIHLXKOOetG
+	HKkOx0iDFjd+W6LTN1Es71F1myMo=
+X-Google-Smtp-Source: AGHT+IHKVZXmaxUYg2//3d3GkHNXzmwnMizOwlMUFZ14NDcEJmhIn3JkJUCLgsKZlmTC21ybmfXcgXIAwiaCdHNERgA=
+X-Received: by 2002:a17:903:32cb:b0:1e4:fd4:48cf with SMTP id
+ i11-20020a17090332cb00b001e40fd448cfmr3779134plr.41.1712596896729; Mon, 08
+ Apr 2024 10:21:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="NSVO+VttCpAhjGMi"
-Content-Disposition: inline
-In-Reply-To: <13617b7a892424d2b024c725505a6f4f.sboyd@kernel.org>
-
-
---NSVO+VttCpAhjGMi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240408-amlogic-v6-9-upstream-fix-clk-module-license-v1-1-366ddc0f3db9@linaro.org>
+In-Reply-To: <20240408-amlogic-v6-9-upstream-fix-clk-module-license-v1-1-366ddc0f3db9@linaro.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 8 Apr 2024 19:21:24 +0200
+Message-ID: <CAFBinCBQtMHeQ2drNTJhqtknR32M1pjy+V3nQD7XFRiT8u4DGg@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: fix module license to GPL only
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 08, 2024 at 02:52:37AM -0700, Stephen Boyd wrote:
-> Quoting Philipp Zabel (2024-04-08 01:21:47)
-> > On So, 2024-04-07 at 19:39 -0700, Stephen Boyd wrote:
-> > > Quoting Jerome Brunet (2024-04-02 07:52:38)
-> > > >=20
-> > > > On Thu 28 Mar 2024 at 04:08, Jan Dakinevich <jan.dakinevich@saluted=
-evices.com> wrote:
-> > > >=20
-> > > > > This code will by reused by A1 SoC.
-> > > >=20
-> > > > Could expand a bit please ?
-> > > >=20
-> > > > >=20
-> > > > > Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-> > > >=20
-> > > > In general, I like the idea.
-> > > >=20
-> > > > We do have a couple a reset registers lost in middle of clocks and =
-this
-> > > > change makes it possible to re-use the code instead duplicating it.
-> > > >=20
-> > > > The exported function would be used by audio clock controllers, but=
- the
-> > > > module created would be purely about reset.
-> > > >=20
-> > > > One may wonder how it ended up in the clock tree, especially since =
-the
-> > > > kernel as a reset tree too.
-> > > >=20
-> > > > I'm not sure if this should move to the reset framework or if it wo=
-uld
-> > > > be an unnecessary churn. Stephen, Philipp, do you have an opinion on
-> > > > this ?
-> > > >=20
-> > >=20
-> > > I'd prefer it be made into an auxiliary device and the driver put in
-> > > drivers/reset/ so we can keep reset code in the reset directory.
-> >=20
-> > Seconded, the clk-mpfs/reset-mpfs and clk-starfive-jh7110-sys/reset-
-> > starfive-jh7110 drivers are examples of this.
-> >=20
-> > > The auxiliary device creation function can also be in the
-> > > drivers/reset/ directory so that the clk driver calls some function
-> > > to create and register the device.
-> >=20
-> > I'm undecided about this, do you think mpfs_reset_controller_register()
-> > and jh7110_reset_controller_register() should rather live with the
-> > reset aux drivers in drivers/reset/ ?
->=20
-> Yes, and also mpfs_reset_read() and friends. We should pass the base
-> iomem pointer and parent device to mpfs_reset_adev_alloc() instead and
-> then move all that code into drivers/reset with some header file
-> exported function to call. That way the clk driver hands over the data
-> without having to implement half the implementation.
-
-I'll todo list that :)
-
---NSVO+VttCpAhjGMi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZhQj7wAKCRB4tDGHoIJi
-0gFIAQD54FHoGcK4A8nGbf3dqzWlaU2n5wMolumXHO/fSI4UwwEAk8OApAyTnQ1X
-FyTcLhrKypXfSlUop6vr4TG64K+fwgY=
-=6FkH
------END PGP SIGNATURE-----
-
---NSVO+VttCpAhjGMi--
+On Mon, Apr 8, 2024 at 11:18=E2=80=AFAM Neil Armstrong
+<neil.armstrong@linaro.org> wrote:
+>
+> Fix the checkpatch warning:
+> WARNING: Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db ("module: C=
+ure the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
+>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
