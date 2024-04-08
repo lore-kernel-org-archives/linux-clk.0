@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034231869;
-	Mon,  8 Apr 2024 04:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFCE2B9B5;
+	Mon,  8 Apr 2024 06:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712551742; cv=none; b=M4kNVeY+GXCrzLGnX7snKycXRcm/sgYerzlR8BzgWElnl24Q7GX5wixt5cEt6peJlfKT2bGk7hKMGBf1eUeFgYnP1/kEUFVcrUU3Ti6riJVv6xoLlIfLsehcY2DY33acEXDuSmZAoeN+zI5n19QN2aom+Nf8M6ymsXIhFfNkm34=
+	t=1712558928; cv=none; b=e2JXsFshDOwnJ2PYXgD9ng76j3uf8cTCgFLq5MG/G3HqpeYuAnY21npLaT2j1CM6Cgfr4PitmcMX3MusiW7YpLBY5vJhREdxI06UQOSIq+Sp6c/ubEiAZDUYpcklqaxz2BFr9Ugh2EFjbXdgMaXRUpcOk1srAwWgtDnpN81V37k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712551742; c=relaxed/simple;
-	bh=y0uQm0GWht2PsG/ONzt4jj/tppBT8a3wXPqhnjmD6TA=;
+	s=arc-20240116; t=1712558928; c=relaxed/simple;
+	bh=fdlmo9nLEZZM0AajDxaXARTs2D2/fr2yANRzgsov9XQ=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=kuNcfxBmYWvoxdg7C2tySKo+jBBXOMnWm46RaBm3rAY+yzjfBT4veF9HtxaVdXPhINWn/+286uEeCQ0eGt+gWJCgead+ArYMQ205PLdnrR6l/8Mubmzs13GWgjLTuyzSPoBzPcH40hm52WNWabCj5yGYKP9I3o+8o7ZnGy8h3Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDLEQU8b; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=BvLT0SpLt5BDeEwDmXiCVE+mJELSt7LP9CnHR+Qk2rXJ7LniDD3lhf6s6Iwp9Yg0PHtua2okGJZoY5QLEN0kOskGL2JJmon7sIN9P+Wsd2RXYczWwqshWgf/Ykg8uBgfj6AihHpr2QcZdZ8+BhGQatG3RzkgZUjUtaNtOBllt6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PB6WFMUB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDLEQU8b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D48C433C7;
-	Mon,  8 Apr 2024 04:49:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PB6WFMUB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9475BC433F1;
+	Mon,  8 Apr 2024 06:48:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712551741;
-	bh=y0uQm0GWht2PsG/ONzt4jj/tppBT8a3wXPqhnjmD6TA=;
+	s=k20201202; t=1712558927;
+	bh=fdlmo9nLEZZM0AajDxaXARTs2D2/fr2yANRzgsov9XQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=QDLEQU8bkkwb7veH38llOXWkW5TsvpjXoGgd8rBgH0kHOwSMJkorCHfKXArPuAyaE
-	 OMv/0+Am4jpwcJQFHVyL5QYncHJ5D1IG9FIi4AiTwsJgR2+6L2O90R3kiSjszNcN+b
-	 70+O0DL7gEHuhF+2m3zczw4LcLqhL94SOhl2vexmp5Sv+zKkW0qErI17ALnTx37vkv
-	 9lXuXGobwjg2WGN79k5jWqiGQJkZxLmPDytpqcQ9IRiWhhijwguF+QCvRg6ggiA8jw
-	 cb7U28wZrGYlJ2SDyinKknVEwkyqFjUhTjp84PYBH2t53PZmoqf30Bv+1XcKjb73Ya
-	 BdOGwr3tm7HJQ==
-Message-ID: <90ac6d2dce33e8078db7cb5681fb94d7.sboyd@kernel.org>
+	b=PB6WFMUBsWePt6MPDVGzjykATl5kIcolPq/DLxwqs//oBCb1C/Yk/z9Of2FEs0bUq
+	 fZ16EyAYreDRW37w6FaiAvs2FGG/zKeNxkM9ELyV7TGrlAjgYOQhS0tpvW6YAFyvz8
+	 IcLsT5SP1jheavN5f5UTTd16JvwjoedFC105oS5BIhBsmy5m1+9jYm2BUcRUYI5zHw
+	 4v2XQKaZD04yAuzuIxJZArCpAwgwrEjtH4YIxP2SrAuwLAsDLwvOWtcN1FysAPMDhq
+	 +Xe9ooN4viv3dsoHK4nSFO5xV2lrZOsCxpZn1KiW3Vgep887kUpfBcp+GKVmGxpUWh
+	 1GGXb/AIOeKcA==
+Message-ID: <5b88fb4c1e02303bcbc59b92496735c9.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,82 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240325210025.1448717-3-cristian.marussi@arm.com>
-References: <20240325210025.1448717-1-cristian.marussi@arm.com> <20240325210025.1448717-3-cristian.marussi@arm.com>
-Subject: Re: [PATCH v2 2/5] clk: scmi: Add support for state control restricted clocks
+In-Reply-To: <87frw2a2e4.fsf@oltmanns.dev>
+References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev> <87frw2a2e4.fsf@oltmanns.dev>
+Subject: Re: [PATCH v4 0/5] Pinephone video out fixes (flipping between two frames)
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: sudeep.holla@arm.com, james.quinlan@broadcom.com, f.fainelli@gmail.com, vincent.guittot@linaro.org, peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com, quic_nkela@quicinc.com, souvik.chakravarty@arm.com, mturquette@baylibre.com, Cristian Marussi <cristian.marussi@arm.com>
-To: Cristian Marussi <cristian.marussi@arm.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sun, 07 Apr 2024 21:48:59 -0700
+Cc: Guido =?utf-8?q?G=C3=BCnther?= <agx@sigxcpu.org>, Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, stable@vger.kernel.org, Diego Roversi <diegor@tiscali.it>, Erico Nunes <nunes.erico@gmail.com>
+To: Chen-Yu Tsai <wens@csie.org>, Frank Oltmanns <frank@oltmanns.dev>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maxime Ripard <mripard@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Samuel Holland <samuel@sholland.org>
+Date: Sun, 07 Apr 2024 23:48:45 -0700
 User-Agent: alot/0.10
 
-Quoting Cristian Marussi (2024-03-25 14:00:22)
-> Some exposed SCMI Clocks could be marked as non-supporting state changes.
-> Configure a clk_ops descriptor which does not provide the state change
-> callbacks for such clocks when registering with CLK framework.
+Quoting Frank Oltmanns (2024-04-03 08:31:47)
+> Dear clk and sunxi-ng maintainers,
 >=20
-> CC: Michael Turquette <mturquette@baylibre.com>
-> CC: Stephen Boyd <sboyd@kernel.org>
-> CC: linux-clk@vger.kernel.org
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> ---
->  drivers/clk/clk-scmi.c | 22 +++++++++++++++-------
->  1 file changed, 15 insertions(+), 7 deletions(-)
+> Patches 1-4 have been reviewed and there are no pending issues. If there
+> is something else you need me to do to get this applied, please let me
+> know.
 >=20
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index d5d369b052bd..fc9603988d91 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -18,6 +18,7 @@
-> =20
->  enum scmi_clk_feats {
->         SCMI_CLK_ATOMIC_SUPPORTED,
-> +       SCMI_CLK_STATE_CTRL_FORBIDDEN,
 
-Can it be positive, i.e. SCMI_CLK_STATE_CTRL_SUPPORTED?
-
->         SCMI_CLK_MAX_FEATS
->  };
-> =20
-> @@ -230,15 +231,19 @@ scmi_clk_ops_alloc(struct device *dev, unsigned lon=
-g feats_key)
->          * only the prepare/unprepare API, as allowed by the clock framew=
-ork
->          * when atomic calls are not available.
->          */
-> -       if (feats_key & BIT(SCMI_CLK_ATOMIC_SUPPORTED)) {
-> -               ops->enable =3D scmi_clk_atomic_enable;
-> -               ops->disable =3D scmi_clk_atomic_disable;
-> -               ops->is_enabled =3D scmi_clk_atomic_is_enabled;
-> -       } else {
-> -               ops->prepare =3D scmi_clk_enable;
-> -               ops->unprepare =3D scmi_clk_disable;
-> +       if (!(feats_key & BIT(SCMI_CLK_STATE_CTRL_FORBIDDEN))) {
-> +               if (feats_key & BIT(SCMI_CLK_ATOMIC_SUPPORTED)) {
-> +                       ops->enable =3D scmi_clk_atomic_enable;
-> +                       ops->disable =3D scmi_clk_atomic_disable;
-> +               } else {
-> +                       ops->prepare =3D scmi_clk_enable;
-> +                       ops->unprepare =3D scmi_clk_disable;
-> +               }
->         }
-> =20
-> +       if (feats_key & BIT(SCMI_CLK_ATOMIC_SUPPORTED))
-> +               ops->is_enabled =3D scmi_clk_atomic_is_enabled;
-> +
->         /* Rate ops */
->         ops->recalc_rate =3D scmi_clk_recalc_rate;
->         ops->round_rate =3D scmi_clk_round_rate;
-> @@ -288,6 +293,9 @@ scmi_clk_ops_select(struct scmi_clk *sclk, bool atomi=
-c_capable,
->         if (atomic_capable && ci->enable_latency <=3D atomic_threshold)
->                 feats_key |=3D BIT(SCMI_CLK_ATOMIC_SUPPORTED);
-> =20
-> +       if (ci->state_ctrl_forbidden)
-
-Then this is negated.
-
-> +               feats_key |=3D BIT(SCMI_CLK_STATE_CTRL_FORBIDDEN);
-> +
->         /* Lookup previously allocated ops */
->         ops =3D clk_ops_db[feats_key];
+I'm assuming sunxi maintainers will pick up the clk patches and send
+them to clk tree in a PR.
