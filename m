@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FD237B;
-	Mon,  8 Apr 2024 02:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C9437B;
+	Mon,  8 Apr 2024 02:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712543972; cv=none; b=Hfp5kVHUfPzBHXuOQ2p+JVYx+HXdjUaQLEU7G6XozrByWqlJsv5z4mRdVf0SN5B081iW7+4MHuAHse+3kp0rCrYWucUrjLkFSF7Q5louvsAZrfpfGfedH7aadaA8rqLKOp9nm88EL+NijoxdgvcVkByHWlzqaICMZgIojGLMN/4=
+	t=1712544304; cv=none; b=vGGIPI4L2ELs9xWezPcV/GfYMiWU3LkqVieAnpCr75hCiiAk5UC+/w9OqXFuHbtlZDP4rikZd8PXTuJunKRZ76kQELmXFPMrPwnwSDjeM5s0alZbv5EwkAsJp1GvVq1bQ8snGy7dMbXdiKSaHtc6lMApt/C1KVImvXkRzVAVi0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712543972; c=relaxed/simple;
-	bh=WiV1uZ4O5oZWV8uovYZMAUBP4HUdX6mv+zU4qJDlZYg=;
+	s=arc-20240116; t=1712544304; c=relaxed/simple;
+	bh=zOcI/UJNgVpdplBO9a8CzD53CIl24xf01xvaj26Ddzs=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=NcmXUttJFANaatw7Gj5dgoO2ewPkozRdU510edY1WDAMi2q4e0BVlgyE+YUXentbkzkhTwqwui4i/kr7XD/clOFOf+kI45q+6N7j4unGilD6XB5meR9h9ujSEA1WXiJ+wGMtmzPCMbivyZGp0ag+LYiPmUTQ8I5aMMDnXwflZic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqUV259x; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=KOS1U4BvmHG6lsZg/rVNyKzy+TVtZbqEjIliOy8vYi3huPkqTiLHTuinwpm+/svdIqJZqYBDWpkN0RipHDpBqq57Qhm8/UejnPZsHJoK5WpbdIWpnHcXNIDCFBleLOKdCq72796056yBYc/gGpMhrxQXgI1xbRho36lNgOFoDmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ix8iBs74; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqUV259x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A329C433C7;
-	Mon,  8 Apr 2024 02:39:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ix8iBs74"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697CFC433C7;
+	Mon,  8 Apr 2024 02:45:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712543972;
-	bh=WiV1uZ4O5oZWV8uovYZMAUBP4HUdX6mv+zU4qJDlZYg=;
+	s=k20201202; t=1712544303;
+	bh=zOcI/UJNgVpdplBO9a8CzD53CIl24xf01xvaj26Ddzs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=sqUV259xrrRSDDv2FEoC8m5pPA8WfITE82/FYzxSYFNJ22TTpgk+XFvCk2G9GWiGJ
-	 mh3XIJN0rXm+ipKR9nKjUIKStbuIqnONgdlV13Ezyv+vFY0983Tj6b27Eka0BICoy3
-	 ojwB1b+5EJwWbx7uWMcGCcYgaLy/QEK2m3R97xzxhyV8FdKRnTfXPWdxtKSa6eDOEM
-	 y+oHMDOHE5nJv/Wv3y/4hCx+kuGPZ6MlocIlTUN1L+d491n3e+Cg7gemxhBa5wogjy
-	 5SXG649had+fGF/8tSK06CaasyXBD/gBaKEfsrXd0G10/KDxs/vHJ9yyuYk8sgwP1e
-	 vqg0Y/AuLp3aw==
-Message-ID: <e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org>
+	b=Ix8iBs74GbMER3N197bHAgFr8QMr2bjO9qYtsebIIs7N4xcJDTMuFX6oRZSbx6oB8
+	 T9hzT0kXSRgAM/Dl4crrID9/Xr3/05wtfH7EzbDY6wsmewdjW367zUgS3N3A4thA/x
+	 S1cLxM9Gu/UYiaWiVSjY1UXzuFFJRb6q/wjSHaU5WmYc4FVvkKHF3vkDC8XkwFeV0r
+	 AqcceuQsuuGIiaz3Xmj2fic3APmlHfsWpZa4UBkzGBqMPFxegJqlMBiVDLI60x/JrE
+	 JS9DOvGw7NvoMLWkcNMvAvF0UVvYgqRGJ3isoN6NxKcHlki6GNwx8EqQFM2ZnM8Kb1
+	 AsHoDkBEMaXgA==
+Message-ID: <a755bf7d32d2482a6318fab614f669f3.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,45 +35,40 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1j7chfiz8e.fsf@starbuckisacylon.baylibre.com>
-References: <20240328010831.884487-1-jan.dakinevich@salutedevices.com> <20240328010831.884487-2-jan.dakinevich@salutedevices.com> <1j7chfiz8e.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [RFC PATCH v2 1/5] clk: meson: axg: move reset controller's code to separate module
+In-Reply-To: <2082b46ab08755b1b66e0630a61619acac9d883f.1711714613.git.geert@linux-m68k.org>
+References: <2082b46ab08755b1b66e0630a61619acac9d883f.1711714613.git.geert@linux-m68k.org>
+Subject: Re: [PATCH v3] clk: starfive: jh7100: Use clk_hw for external input clocks
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Jerome Brunet <jbrunet@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Date: Sun, 07 Apr 2024 19:39:30 -0700
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Samuel Holland <samuel.holland@sifive.com>
+To: Albert Ou <aou@eecs.berkeley.edu>, Andy Shevchenko <andy.shevchenko@gmail.com>, Conor Dooley <conor.dooley@microchip.com>, Emil Renner Berthing <kernel@esmil.dk>, Geert Uytterhoeven <geert@linux-m68k.org>, Hal Feng <hal.feng@starfivetech.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>
+Date: Sun, 07 Apr 2024 19:45:01 -0700
 User-Agent: alot/0.10
 
-Quoting Jerome Brunet (2024-04-02 07:52:38)
+Quoting Geert Uytterhoeven (2024-03-29 05:16:58)
+> The Starfive JH7100 clock driver does not use the DT "clocks" property
+> to find the external main input clock, but instead relies on the name of
+> the actual clock provider ("osc_sys").  This is fragile, and caused
+> breakage when sanitizing clock node names in DTS.
 >=20
-> On Thu 28 Mar 2024 at 04:08, Jan Dakinevich <jan.dakinevich@salutedevices=
-.com> wrote:
+> Fix this by obtaining the external main input clock using
+> devm_clk_get(), and passing the returned clk_hw object to
+> devm_clk_hw_register_fixed_factor_parent_hw().
 >=20
-> > This code will by reused by A1 SoC.
->=20
-> Could expand a bit please ?
->=20
-> >
-> > Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
->=20
-> In general, I like the idea.
->=20
-> We do have a couple a reset registers lost in middle of clocks and this
-> change makes it possible to re-use the code instead duplicating it.
->=20
-> The exported function would be used by audio clock controllers, but the
-> module created would be purely about reset.
->=20
-> One may wonder how it ended up in the clock tree, especially since the
-> kernel as a reset tree too.
->=20
-> I'm not sure if this should move to the reset framework or if it would
-> be an unnecessary churn. Stephen, Philipp, do you have an opinion on
-> this ?
->=20
+> While name-based look-up of the other external input clocks works as-is,
+> convert them to a similar clk_hw-based scheme to increase uniformity,
+> and to decrease the number of (multiple identical) name-based look-ups.
 
-I'd prefer it be made into an auxiliary device and the driver put in
-drivers/reset/ so we can keep reset code in the reset directory. The
-auxiliary device creation function can also be in the drivers/reset/
-directory so that the clk driver calls some function to create and
-register the device.
+Why can't we use index based lookups and clk_parent_data? We don't want
+clk providers to call clk consumer APIs.
+
+>=20
+> Fixes: f03606470886 ("riscv: dts: starfive: replace underscores in node n=
+ames")
+> Fixes: 4210be668a09ee20 ("clk: starfive: Add JH7100 clock generator drive=
+r")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> ---
+> After this is applied, the workaround in commit 7921e231f85a349d
+> ("riscv: dts: starfive: jh7100: fix root clock names") can be reverted.
+>
