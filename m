@@ -1,81 +1,223 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A314143893;
-	Mon,  8 Apr 2024 17:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFA91448C4;
+	Mon,  8 Apr 2024 18:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712596898; cv=none; b=cqTN7ipigq2edQeAE0SdSa7Q7tP6/WR7EA/RBD9U6gn7QmyAlVuuyZLHVzFqiq+xHuAcdY/bOD4GBhcZwUKTq3hk1D0msStjJyp5uKYJFHzs7H41SZknCn3uYSsRbVz292bQk5Vdn0lN3RPExcB+dURe9DjkM5SG03rzOllLyyk=
+	t=1712600643; cv=none; b=qxd6orPogHn5tkid+QJ2vTkwsLqs8SV8o8lGt86qZC0TWTCCHxov57Me68+JDEXzwIbKsmXqyXoEyVYbgpqbhzD6+uQiR1MYH3hZ7Ab3WRnGC89JYrYV/UjCiCd4GwO1T5OG9k/PJCGg1xXp8HDCixVdJwQlh5vC3HtEydTpXZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712596898; c=relaxed/simple;
-	bh=CD+KxDHqdUb5j2VIVvwfKn0QC5O9nZf/3mXOmaOeTAw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eCPpSKOFab6f7f3oqn2Od/eO47i0CxqbrQ40Mq0VDax/8HtgyvJ3NPHFvAqmuAuzF+78ifEbmweFFRnDgVzXgwR0IIPVWBqFAsHH1JEF3C7Yokl6VluTkycB+qUzJXN48xb/V9OfatrCUsJ2hJ5+jjAg0MglRR3ZOLI0mcCp7n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=d2eeQuXj; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="d2eeQuXj"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1e403dd3995so6812005ad.2;
-        Mon, 08 Apr 2024 10:21:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1712596897; x=1713201697; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CD+KxDHqdUb5j2VIVvwfKn0QC5O9nZf/3mXOmaOeTAw=;
-        b=d2eeQuXjqbnnas27VijjflZI4zO+CKojp2N84SQYWWhOaEj31IA/lDvrrqqTcGex4M
-         Bc9McgPsh8h0GPW/taOkTIUitViVWZk60OA9rH7UVXWuHSXLJWJti6f3vcdYt3e6jhZS
-         Z+QP2ORysebrq9v9JyV5QlQflSY21Tn3odvT2l3Tyc6qUbLzeAHDvXaqa3AwHpFJx4sS
-         swU9+cH1tZ6v78UQBCvrK0/3PJdbKkuGXSbsoausQW2yGjAtaEsMU1iVfKCIfVTAKrZI
-         AgswTewCp9d2tu0mvtMeZGgkAEq0otq8fakyW/tw0qCALv7bZeqMCQ4OZnPQ0SZbZmDQ
-         WKtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712596897; x=1713201697;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CD+KxDHqdUb5j2VIVvwfKn0QC5O9nZf/3mXOmaOeTAw=;
-        b=uOAUEjf30kEKonguEOcaLMJfLSvRkmcKEgfrTLMdMJ4yVOzDq79dL0hku18PTXzhiP
-         rNB4wDWRe0P7oZh4ARjLWlE8nIZKZ6Cbubde5sGXcXsRbYxG+7ZJuEfAZ2PEC6LraR/X
-         UbfXv9kTavO7MGXGc+XtROiinYQq3WYhrhGasIJIUldyF7a6MiZHFelcb8awoJCPuKbk
-         eGJ4kh/BbTxqoKsaZ0hl2d8ph2Mlm+EpgtNuwL28f5STK8t7IntyrmBVUZaPR1PmRKt6
-         vCAITDaHSDeSHqE4yC+fqlsA+XYM8rAm8LQ8eFiZthTrCzpBt9vgKvnd2U5XpHWWb0R/
-         UcmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaQc21Mm74sKXF2kO76uz20cWWd86qA1Sl6jqx8DDIcIjsCFO91poYwEYMYt5U62U+9HkVBph3HM2YRVtJWapKT/e4jyUqLgXwnMg05/DoV3fCCPd2W1Rn54Rm43AwuvOLiNPIqbQ4
-X-Gm-Message-State: AOJu0Yz+7JIH2a/90Bckiw61wZUIZtvhQeTl+lFKPMowRQNrncAGNINH
-	E4Gp8gas0CS2SNpI3IAIRbLNofURQTpKxm84rEU6Y0WS+/wXc3q/L+u4cJCofD3PnIHLXKOOetG
-	HKkOx0iDFjd+W6LTN1Es71F1myMo=
-X-Google-Smtp-Source: AGHT+IHKVZXmaxUYg2//3d3GkHNXzmwnMizOwlMUFZ14NDcEJmhIn3JkJUCLgsKZlmTC21ybmfXcgXIAwiaCdHNERgA=
-X-Received: by 2002:a17:903:32cb:b0:1e4:fd4:48cf with SMTP id
- i11-20020a17090332cb00b001e40fd448cfmr3779134plr.41.1712596896729; Mon, 08
- Apr 2024 10:21:36 -0700 (PDT)
+	s=arc-20240116; t=1712600643; c=relaxed/simple;
+	bh=4SE1XiIqPsJ1L/kqgo8ct8w8uCtcg5bu7UGU+uxZsoo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ac5AzEHz884t47engb5D3k32HR4aCWmjXKFXcHYuPXwU+XhLKomEhgMK+/mu42SBm3AjnurduQnPIA6EEx5zp1NQkGX8X7hl+ylITUp2zYjOhbqwug8KV1ffx6EOpnLYMHXs3+5f64DBk1BNtUrNqYqZQVyqVjrj3gGQkHCxAm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1391CDA7;
+	Mon,  8 Apr 2024 11:24:31 -0700 (PDT)
+Received: from pluto (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A25423F766;
+	Mon,  8 Apr 2024 11:23:58 -0700 (PDT)
+Date: Mon, 8 Apr 2024 19:23:55 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sudeep.holla@arm.com,
+	james.quinlan@broadcom.com, f.fainelli@gmail.com,
+	vincent.guittot@linaro.org, peng.fan@oss.nxp.com,
+	michal.simek@amd.com, quic_sibis@quicinc.com,
+	quic_nkela@quicinc.com, souvik.chakravarty@arm.com,
+	mturquette@baylibre.com
+Subject: Re: [PATCH v2 1/5] clk: scmi: Allocate CLK operations dynamically
+Message-ID: <ZhQ2Ow4vz1F9qBFl@pluto>
+References: <20240325210025.1448717-1-cristian.marussi@arm.com>
+ <20240325210025.1448717-2-cristian.marussi@arm.com>
+ <7027a28723d2597d9f620f4e0e1da97e.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240408-amlogic-v6-9-upstream-fix-clk-module-license-v1-1-366ddc0f3db9@linaro.org>
-In-Reply-To: <20240408-amlogic-v6-9-upstream-fix-clk-module-license-v1-1-366ddc0f3db9@linaro.org>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Mon, 8 Apr 2024 19:21:24 +0200
-Message-ID: <CAFBinCBQtMHeQ2drNTJhqtknR32M1pjy+V3nQD7XFRiT8u4DGg@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: fix module license to GPL only
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7027a28723d2597d9f620f4e0e1da97e.sboyd@kernel.org>
 
-On Mon, Apr 8, 2024 at 11:18=E2=80=AFAM Neil Armstrong
-<neil.armstrong@linaro.org> wrote:
+On Sun, Apr 07, 2024 at 09:38:46PM -0700, Stephen Boyd wrote:
+> Quoting Cristian Marussi (2024-03-25 14:00:21)
+> > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> > index 8cbe24789c24..d5d369b052bd 100644
+> > --- a/drivers/clk/clk-scmi.c
+> > +++ b/drivers/clk/clk-scmi.c
+> > @@ -16,6 +16,14 @@
+> >  #define NOT_ATOMIC     false
+> >  #define ATOMIC         true
+> >  
+
+Hi, 
+
+thanks for the review.
+
+> > +enum scmi_clk_feats {
+> > +       SCMI_CLK_ATOMIC_SUPPORTED,
+> > +       SCMI_CLK_MAX_FEATS
+> > +};
+> > +
+> > +#define SCMI_MAX_CLK_OPS       (1 << SCMI_CLK_MAX_FEATS)
+> > +
+> > +static const struct clk_ops *clk_ops_db[SCMI_MAX_CLK_OPS];
+> 
+> Can it be 'scmi_clk_ops_db' for some name spacing?
+> 
+
+Yes.
+
+> >  static const struct scmi_clk_proto_ops *scmi_proto_clk_ops;
+> >  
+> >  struct scmi_clk {
+> > @@ -230,6 +202,106 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
+> >         return ret;
+> >  }
+> >  
+> > +/**
+> > + * scmi_clk_ops_alloc() - Alloc and configure clock operations
+> > + * @dev: A device reference for devres
+> > + * @feats_key: A bitmap representing the desired clk_ops capabilities.
+> 
+> Drop the period please because it's not consistent with the previous
+> argument descriptor.
 >
-> Fix the checkpatch warning:
-> WARNING: Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db ("module: C=
-ure the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
+
+Ok.
+ 
+> > + *
+> > + * Allocate and configure a proper set of clock operations depending on the
+> > + * specifically required SCMI clock features.
+> > + *
+> > + * Return: A pointer to the allocated and configured clk_ops on Success,
+> 
+> Lowercase 'Success'.
 >
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+
+Ok.
+ 
+> > +
+> > +/**
+> > + * scmi_clk_ops_select() - Select a proper set of clock operations
+> > + * @sclk: A reference to an SCMI clock descriptor
+> > + * @atomic_capable: A flag to indicate if atomic mode is supported by the
+> > + *                 transport
+> > + * @atomic_threshold: Platform atomic threshold value
+> 
+> Is this in nanoseconds, microseconds, or ??? Maybe a better description is
+> "clk_ops are atomic when clk enable_latency is less than X [time unit]" 
+>
+
+It is micro, I will comment better.
+
+> > + *
+> > + * After having built a bitmap descriptor to represent the set of features
+> > + * needed by this SCMI clock, at first use it to lookup into the set of
+> > + * previously allocated clk_ops to check if a suitable combination of clock
+> > + * operations was already created; when no match is found allocate a brand new
+> > + * set of clk_ops satisfying the required combination of features and save it
+> > + * for future references.
+> > + *
+> > + * In this way only one set of clk_ops is ever created for each different
+> > + * combination that is effectively needed.
+> > + *
+> > + * Return: A pointer to the allocated and configured clk_ops on Success, or
+> 
+> Lowercase 'Success'.
+>
+
+Ok.
+ 
+> > + *        NULL otherwise.
+> > + */
+> > +static const struct clk_ops *
+> > +scmi_clk_ops_select(struct scmi_clk *sclk, bool atomic_capable,
+> > +                   unsigned int atomic_threshold)
+> > +{
+> > +       const struct scmi_clock_info *ci = sclk->info;
+> > +       unsigned int feats_key = 0;
+> > +       const struct clk_ops *ops;
+> > +
+> > +       /*
+> > +        * Note that when transport is atomic but SCMI protocol did not
+> > +        * specify (or support) an enable_latency associated with a
+> > +        * clock, we default to use atomic operations mode.
+> > +        */
+> > +       if (atomic_capable && ci->enable_latency <= atomic_threshold)
+> > +               feats_key |= BIT(SCMI_CLK_ATOMIC_SUPPORTED);
+> > +
+> 
+> Can we have a static_assert() here that makes sure 'feats_key' isn't
+> larger than the size of clk_ops_db?
+> 
+> 	static_assert(ARRAY_SIZE(clk_ops_db) >= feats_key);
+> 
+
+Ok.
+
+> > +       /* Lookup previously allocated ops */
+> > +       ops = clk_ops_db[feats_key];
+> > +       if (!ops) {
+> > +               ops = scmi_clk_ops_alloc(sclk->dev, feats_key);
+> > +               if (!ops)
+> > +                       return NULL;
+> 
+> This could be less nested if the first lookup is put in
+> scmi_clk_ops_alloc() and the store below is folded in. Or an early
+> return if found.
+> 
+> 	ops = clk_ops_db[feats_key];
+> 	if (ops)
+> 		return ops;
+> 
+> 	/* Didn't find one */
+> 	ops = scmi_clk_ops_alloc(...)
+> 	if (!ops)
+> 		return NULL;
+> 
+> 	clk_ops_db[feats_key] = ops;
+> 	return ops;
+> 
+
+ok.
+		
+> > +
+> > +               /* Store new ops combinations */
+> > +               clk_ops_db[feats_key] = ops;
+> > +       }
+> > +
+> > +       return ops;
+> > +}
+> > +
+> >  static int scmi_clocks_probe(struct scmi_device *sdev)
+> >  {
+> >         int idx, count, err;
+> > @@ -285,16 +357,10 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+> >                 sclk->ph = ph;
+> >                 sclk->dev = dev;
+> >  
+> > -               /*
+> > -                * Note that when transport is atomic but SCMI protocol did not
+> > -                * specify (or support) an enable_latency associated with a
+> > -                * clock, we default to use atomic operations mode.
+> > -                */
+> > -               if (is_atomic &&
+> > -                   sclk->info->enable_latency <= atomic_threshold)
+> > -                       scmi_ops = &scmi_atomic_clk_ops;
+> > -               else
+> > -                       scmi_ops = &scmi_clk_ops;
+> > +               scmi_ops = scmi_clk_ops_select(sclk, is_atomic,
+> 
+> 'is_atomic' should probably be 'transport_is_atomic' so this reads
+> easier.
+> 
+
+Ok.
+
+Thanks,
+Cristian
