@@ -1,66 +1,107 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4D318026;
-	Mon,  8 Apr 2024 06:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EB347F6A;
+	Mon,  8 Apr 2024 08:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712559003; cv=none; b=kcRpT7nX+AxkqiUbIu/igiBuVcpfBpQe9cWXOf7mzOHj0fU5GgKpmBCl4OXpF64iQNwTbPkG0KNuW8bS7DdhslQnFSZy/yFVaNPRu6J/KZp6+04kpkUFrjjdBOSoeDM2sAxgI3TekU5Nm5vQ74vjpTvOBZ3X+0S5vDchYQ619oY=
+	t=1712563810; cv=none; b=o8YfqP6vLiEGoCdbPtOYZfzvBxXsgjXuA4UbhCv0YuwURl+V/l2ZKT8am9U8SlsGwfAcNMWQzpHqKRLJb7hOXpTzY91JNe7w2TPFDeD+UutmcCTEuISBXmUBlI0Q3C6ZQOG/FlvbAkmCpeHg9wlcoL7Ap1RtrBY/4p5v5bHItQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712559003; c=relaxed/simple;
-	bh=+5HCfq5uK8y7rOB5VKTxwaht8j5UlBg/L7xDpwpFvFU=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=qBkbmNkOWK2ekLxL83WXFZIe30XgqP7snnKUblkjX5omkZtc5f/md3VBcxcnOZ2VtA49MZeKoiG9NOPeX5MD2zwQQa4Ve1UUK046NxhgacWrDzTZrlPGCyKlR/sqpyUNvGD7TobzXjqaamK7M3kBJdmQSQIUrvLJ5HqRarzhq1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QMZZlJQP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712563810; c=relaxed/simple;
+	bh=IIA39zjHLzll86E9aMpUuAcvhrfq1ysOLkBGOaeDoyY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aJd+hrGgCtl07+6mzwF5wgBnKhWQqPG+aFkekju8R2qtglNBiL1By2/hShNNRvHhcV73OMJugqQ+3S1TmK8qtCZ9KFEwMKpxVNbmZpooApl17fXCTdIv25MHitUfBwPq63jQe8p6C+vddui3g852X0I1PzQ6KvWszoTjce7Dedg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/4/QCWF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMZZlJQP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54743C433F1;
-	Mon,  8 Apr 2024 06:50:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/4/QCWF"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BDA2CC43394;
+	Mon,  8 Apr 2024 08:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712559003;
-	bh=+5HCfq5uK8y7rOB5VKTxwaht8j5UlBg/L7xDpwpFvFU=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=QMZZlJQPcbxI6rLSJoLYM7+1EiE4Yc56PsWcKu10aGZRrJ20HZBv0Ut7uW2oGwrNz
-	 01kIAyLirLsfv84XHi55FpSU5LiG0At+KOsSPol/yaqA9jdO1/9CixUGR/nMXomixi
-	 VVTSLGAa436AHH/wWClW1kL7Quh3AASTcSLH/vs7/yCicGSqLtqto/P3zzwHtJkTbo
-	 7IY99e7qFRcBAD0jWjN+uUbGfJUtPGi3KXFYXKEc5vy01D64Z5bHtU2wNgXgMqaqig
-	 OrNDdWgFtS/P1XOzoFPvULIIYr+5zLVYHQ8eBJUxQopuCerLBIo/8pMUeYOt1HX9td
-	 +WxQdG8lGP2NQ==
-Message-ID: <6e2934870cc523f26953a856dc454441.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1712563809;
+	bh=IIA39zjHLzll86E9aMpUuAcvhrfq1ysOLkBGOaeDoyY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=n/4/QCWFfHGh0rrTQ17mrgLgSDnHduSB00YXZtRGEJg4Hr8CfZ5XuDY6GVGQ+5O1A
+	 D1YXZGIATxyHwvICJOTwf5ZeZVQh0jDMspG+sRl61bTpmPJ07tcwWaVXL0aU+xupFY
+	 4OhJNi2MbNkKUozWwkquH/B7F0MYXyKjtgMtYKyWgH9R345Yl3vFTMoWrNniz4ujvl
+	 xAh72fUsIDIXXYYJT5V6PeIBjQOLMd/eG/O/f6MdmNH3hmsqXjblRg5Wdfxe4fNETh
+	 jQVBB2hcyK3Yw4Cx+SiZCuNYE/Yg1x3aRkGqqowMyyp0DSAYsxPomIIyaPcUZOzC11
+	 VA8nDHV3b0n5g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B93CD128A;
+	Mon,  8 Apr 2024 08:10:09 +0000 (UTC)
+From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
+Subject: [PATCH 0/4] DONOTMERGE: ep93xx-clk from ep93xx device tree
+ conversion
+Date: Mon, 08 Apr 2024 11:09:52 +0300
+Message-Id: <20240408-ep93xx-clk-v1-0-1d0f4c324647@maquefel.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <f0383126-99c4-4233-b222-597caacf43b9@collabora.com>
-References: <1da2506a51f970706bf4ec9509dd04e0471065e5.1710367453.git.daniel@makrotopia.org> <f0383126-99c4-4233-b222-597caacf43b9@collabora.com>
-Subject: Re: [PATCH] clk: mediatek: mt7988-infracfg: fix clocks for 2nd PCIe port
-From: Stephen Boyd <sboyd@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Golle <daniel@makrotopia.org>, Frank Wunderlich <frank-w@public-files.de>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Sam Shih <sam.shih@mediatek.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Date: Sun, 07 Apr 2024 23:50:01 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFCmE2YC/x2NywqDQAwAf0VybmB9bttfKT3ENWqobiUpZUH89
+ 649DsMwOxirsMG92EH5KybvmKG8FBBmihOjDJmhclXjGndF3m51ShiWF3atp7Ju/cCdhxz0ZIy
+ 9UgzzmaxkH9ZTbMqjpP/l8TyOH6ea6q51AAAA
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, Nikita Shubin <nikita.shubin@maquefel.me>, 
+ Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1712563809; l=1512;
+ i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
+ bh=IIA39zjHLzll86E9aMpUuAcvhrfq1ysOLkBGOaeDoyY=;
+ b=VrVRfqAJGBH1TITFNnree6/Us9PYdMLtl0Qns75QqpclZGI12eTYgimDEbaQtaCmo5HyyCKqye4S
+ b9UycqxfAzF8HtZKL8jJJAmsAgmFG7MRjTlg8fqfD9DJ0646I32q
+X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
+ pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
+X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
+ with auth_id=65
+X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
+Reply-To: nikita.shubin@maquefel.me
 
-Quoting AngeloGioacchino Del Regno (2024-03-14 02:44:59)
-> Il 13/03/24 23:05, Daniel Golle ha scritto:
-> > Due to what seems to be an undocumented oddity in MediaTek's MT7988
-> > SoC design the CLK_INFRA_PCIE_PERI_26M_CK_P2 clock requires
-> > CLK_INFRA_PCIE_PERI_26M_CK_P3 to be enabled.
-> >=20
-> > This currently leads to PCIe port 2 not working in Linux.
-> >=20
-> > Reflect the apparent relationship in the clk driver to make sure PCIe
-> > port 2 of the MT7988 SoC works.
-> >=20
-> > Fixes: 4b4719437d85f ("clk: mediatek: add drivers for MT7988 SoC")
-> > Suggested-by: Sam Shih <sam.shih@mediatek.com>
-> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
->=20
-> That's funny. Anyway:
->=20
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
+The goal is to recieve ACKs.
 
-Are you picking up mediatek clk patches and fixes this cycle?
+This is a fraction of v9 "ep93xx device tree conversion" series:
+
+https://lore.kernel.org/all/20240326-ep93xx-v9-0-156e2ae5dfc8@maquefel.me/
+
+The clk driver for ep93xx was converted to AUX device, as suggested
+originally by Stephen Boyd.
+
+Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+---
+Nikita Shubin (4):
+      ARM: ep93xx: add regmap aux_dev
+      clk: ep93xx: add DT support for Cirrus EP93xx
+      dt-bindings: soc: Add Cirrus EP93xx
+      soc: Add SoC driver for Cirrus ep93xx
+
+ .../bindings/arm/cirrus/cirrus,ep9301.yaml         |  38 +
+ .../bindings/soc/cirrus/cirrus,ep9301-syscon.yaml  |  94 +++
+ drivers/clk/Kconfig                                |   8 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-ep93xx.c                           | 840 +++++++++++++++++++++
+ drivers/soc/Kconfig                                |   1 +
+ drivers/soc/Makefile                               |   1 +
+ drivers/soc/cirrus/Kconfig                         |  13 +
+ drivers/soc/cirrus/Makefile                        |   2 +
+ drivers/soc/cirrus/soc-ep93xx.c                    | 240 ++++++
+ include/dt-bindings/clock/cirrus,ep9301-syscon.h   |  46 ++
+ include/linux/soc/cirrus/ep93xx.h                  |  26 +
+ 12 files changed, 1310 insertions(+)
+---
+base-commit: fec50db7033ea478773b159e0e2efb135270e3b7
+change-id: 20240408-ep93xx-clk-657a1357de67
+
+Best regards,
+-- 
+Nikita Shubin <nikita.shubin@maquefel.me>
+
+
