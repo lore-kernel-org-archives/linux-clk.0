@@ -1,57 +1,57 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47691586C1
-	for <linux-clk@vger.kernel.org>; Tue,  9 Apr 2024 20:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775B61586C1
+	for <linux-clk@vger.kernel.org>; Tue,  9 Apr 2024 20:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712694926; cv=none; b=jTYy3IVr3t0D8Dz61Rxhyxnm4/3NNlozFadYgo1Aue2a96VyPg748rl0JLCyphXl5m0g3N69sbKh+5+vA8IP4qz/F3CW4OtlUrTYGDLcflduoA9wH7T6TY+6FcStwYCOiVUhNS8+dbjXoMmghG2OdAEIFn8Wbzz5yXoHKAMf4Fw=
+	t=1712694973; cv=none; b=M8WA4hekWB11qwyiz0xr2T3Kx42PY4oefLz1ViPZOpm4RRTkYgR2xR0pNhM1cP8lmUjzp2b5YLShx3PJp9UQqvsZ/3jzdstsuUVWuCeAnG40XRQSMNpHzqQNhz1XyGTNU4u52hKAv/MgSok7B1yJ24/VmzZqJ5OQ8ynp66ZvGlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712694926; c=relaxed/simple;
-	bh=fZIg5v37kdpa59dSYgf0jUUNlNvt5/x5mDHHcsopdy0=;
+	s=arc-20240116; t=1712694973; c=relaxed/simple;
+	bh=y7XsaC4vZbeNJhcdjotiNGAhLdU579W1/VEghSNsORM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WALJNviRErldhLUVVwkGNaJ8TzyW8AWdzIMhoAkZAcAIfykAHj/E9ADBOMatwPIrvacd5Ch5QpirgXiCOPS0QCmx5TfPj6g0qT/a2r2O2evdjZvfjpXGF6UL68DWLu6uFLP+zrkdlvGEwovxwCNBJDletLQfh2Zp3FH+4Nv2BbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1GXL1JG9; arc=none smtp.client-ip=209.85.214.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3QYiVFOj7Jd4H20q6Ds0XbykUsejNp06tT7stZTEDPhescIoAw9rKebhOL+MQjMppPvNuoKZCJT52KTeN3+u4rt4FYdAjOcEDttcMmdYgo7w+crw4ljCVNrkT9+cT3JvtyQ4Xa91OHQmZnre+gTJ/whQzaAXYXReJffv/xAVGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qI053Wwz; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1GXL1JG9"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1e42a6158d5so11895ad.0
-        for <linux-clk@vger.kernel.org>; Tue, 09 Apr 2024 13:35:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qI053Wwz"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1e42a6158d5so12015ad.0
+        for <linux-clk@vger.kernel.org>; Tue, 09 Apr 2024 13:36:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1712694923; x=1713299723; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1712694972; x=1713299772; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sbzjIXGi8MY3xAo287kFRCnEJlxM2VAYg6QbjiGNyVw=;
-        b=1GXL1JG9il10PRtnmWEJLy5yDYGGY6Uxuosvozq1CtR7hCoEgUSFRP25meTsDcfh/T
-         twrazkt22lAR3rGT1pFLOApdSlN074hnGRTabcOA/9DI88SN0IYh7aDCnj6G2H44914G
-         pYgvWaLJ2QbGZN5VVdq1CsOwgVtZKt915peJodlfQ1xU40p5hokE9lkt5p0rf9/BkmBr
-         6EZqP3LDcPpXm6KHTUqgn2qLwuoCAG2jwCSz6qtdlkS9h/AQwnsdQwVyiq7Ub4OkR97J
-         iunFgSm5I3vm4Nb3lVbVpsbIS5sGkspZkYVwH8BRng6udCb3bi9o1USqYpYNvRWZW28o
-         B6Sg==
+        bh=FtKLykK9jwbUT4Fzl0KoJ4iyIWu8adwZgz3p8Ke5vm0=;
+        b=qI053WwzNGaj3zMJnQcpLuqLaYPrLUL9XaDqx9ubebg18Wzd03NLY+oKpndjckf6BJ
+         VLHycKRvjUPrCVwJKDrYrU/JICahuFkhli4y1zJfoRVYReeNjyJMDD6ijKOmZ1LgCkui
+         bEBrg5jjZC8fCjFd/cpiGa9IPVgllzgz90S3kBKNH5IXA+pD8+N3nY0mgEtKTxgXlNg7
+         fJ8B2xasRdVl04Vr0f/brBXGUHAhzKVugaJTZcSSOj+GTzRq7UnyB3OQjKh5F0nkkWaB
+         57dL+eU951uvtf3yFXQLW5SKvK+DX3bg5EtwVJ74Ge0biVPNp1HzmBIBNGOzsL0vqtF4
+         tDxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712694923; x=1713299723;
+        d=1e100.net; s=20230601; t=1712694972; x=1713299772;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sbzjIXGi8MY3xAo287kFRCnEJlxM2VAYg6QbjiGNyVw=;
-        b=f9m9hhw/2NJb6Ddj90GNreU1wmziZOxINrZxRYIwVtWv8DSeAMd6OabZPZNHGLHOqK
-         wJpUsEwSN2j1sLH4wSJ+W8pajMBtyvRbFD1tAQ5DVxd1o03w31aDA289+5Ceykfk+l80
-         g5FnkJOg+OM9QA4qPtE4HPVomL3o4g6msJly4LspkyA+ozVZPQCa7V0cPNMUHBqCFfNo
-         KEzOZgMPo2STx5bQ8A87cNxSQEgEerh9SATvToquXywPcQjwBsysNbtlqP2/KPJpa27b
-         8DRSyc83kw/Y2C5nYLJG+iQujBN38FygwKaE4ft9TWKldML9cYhu9NzcikWaAP+xYEb4
-         WN/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXqlTYMZvCRW+VbBDdxd+rzMaQN7y7+7/6pppDbza6seW13QviS1fJ1OxFV9tQLlYxvvBEkIoLdAjRGLHLNdelW7uZikNSIkmKB
-X-Gm-Message-State: AOJu0Yxk2fEJSIb387TbvkT5p1Ai2+9mt67Hiv6opDD6+5QXO2kgINtH
-	X8QaXb8yFSrv+mp/slm+ULJo6ZNQepSsSn/mb47RPMRNmJgnLiqLWwnWgYUIaQ==
-X-Google-Smtp-Source: AGHT+IFbAgqRaIQQnQohL03A2IR6pwfXasIyq+0yEDQ6FgLyJnqBCuWghjNFqobOCKa2d0RR48njlA==
-X-Received: by 2002:a17:902:9a87:b0:1e4:32ec:7679 with SMTP id w7-20020a1709029a8700b001e432ec7679mr2786plp.19.1712694922933;
-        Tue, 09 Apr 2024 13:35:22 -0700 (PDT)
+        bh=FtKLykK9jwbUT4Fzl0KoJ4iyIWu8adwZgz3p8Ke5vm0=;
+        b=rqzta0CO24CRsKesup38NuIumjVoz+yYxGWpUvKuWz/JBSLzuEshZ26lxS8jjCsEu1
+         dxW4zxwPcKoYYPry8vV2o+0zM39g6TQmtODtqtx78JCwevNCT1uGdek77GM1OeNLHDml
+         UyQW2puxoF/2YGUFKWXr3Qw2JTR/5l6GGsafQ5gL9b6EoTlxWEWTz0YdnhsWnUN9WqMq
+         uJW6x+8lmAKRPj85utBgFXTwfuClyi+juhs39hSqt44yfK4VxtmjDS+CiGSO36FdnkMm
+         vo16eoh4Rap/tRufFm6yyQrUdl93/7FlNXdnM9s/3A2R3dJHX5h1DDd2eWoBdEr/Zz5T
+         Ly1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXWPDvPcoi8MoH6svUpgFAVa5RL36BDI09PzwMILftGgiBTluiBYKR0qeMJ2j5zcEiw4kI5ossq+BWm0X8e1WSsvaeiey7A40lv
+X-Gm-Message-State: AOJu0YyUszxpIKO55wodpGENS264eEAodhrKGJjUJ2mAp48MhEYYW7ub
+	zjBMXDGiuufOgmi3l8ywDqBWD14GqyJ3H7BqTSmbvP1/OyhwdPqeT+WFOpk5Vw==
+X-Google-Smtp-Source: AGHT+IHd30uGplg5xyQFoQxM7LYuLhmgBewG96nQ2RKlakgBuH10CSs80ZE9WAcaT01+APzsir2vJw==
+X-Received: by 2002:a17:902:ce8d:b0:1e3:e08c:5a98 with SMTP id f13-20020a170902ce8d00b001e3e08c5a98mr1193plg.29.1712694971618;
+        Tue, 09 Apr 2024 13:36:11 -0700 (PDT)
 Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
-        by smtp.gmail.com with ESMTPSA id j5-20020a170902da8500b001e424ccf438sm4564732plx.97.2024.04.09.13.35.22
+        by smtp.gmail.com with ESMTPSA id hq8-20020a056a00680800b006eaf186e078sm8748246pfb.132.2024.04.09.13.36.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Apr 2024 13:35:22 -0700 (PDT)
-Date: Tue, 9 Apr 2024 13:35:19 -0700
+        Tue, 09 Apr 2024 13:36:10 -0700 (PDT)
+Date: Tue, 9 Apr 2024 13:36:07 -0700
 From: William McVicker <willmcvicker@google.com>
 To: Peter Griffin <peter.griffin@linaro.org>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
@@ -65,11 +65,11 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org,
 	andre.draszik@linaro.org, saravanak@google.com
-Subject: Re: [PATCH 15/17] scsi: ufs: host: ufs-exynos: add some pa_dbg_
- register offsets into drvdata
-Message-ID: <ZhWmh1NUmj2h02Ua@google.com>
+Subject: Re: [PATCH 16/17] scsi: ufs: host: ufs-exynos: Add support for
+ Tensor gs101 SoC
+Message-ID: <ZhWmt2n-Njkzf6Rk@google.com>
 References: <20240404122559.898930-1-peter.griffin@linaro.org>
- <20240404122559.898930-16-peter.griffin@linaro.org>
+ <20240404122559.898930-17-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,13 +78,24 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240404122559.898930-16-peter.griffin@linaro.org>
+In-Reply-To: <20240404122559.898930-17-peter.griffin@linaro.org>
 
 On 04/04/2024, Peter Griffin wrote:
-> This allows these registers to be at different offsets or not
-> exist at all on some SoCs variants.
+> Add a dedicated compatible and drv_data with associated
+> hooks for gs101 SoC found on Pixel 6.
+> 
+> Note we make use of the previously added EXYNOS_UFS_OPT_UFSPR_SECURE
+> option, to skip initialisation of UFSPR registers as these are only
+> accessible via SMC call.
+> 
+> EXYNOS_UFS_OPT_TIMER_TICK_SELECT option is also set to select tick
+> source. This has been done so as not to effect any existing platforms.
+> 
+> DBG_OPTION_SUITE on gs101 has different address offsets to other SoCs
+> so these register offsets now come from uic_attr struct.
 > 
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
 
 Tested-by: Will McVicker <willmcvicker@google.com>
 
