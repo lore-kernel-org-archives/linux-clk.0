@@ -1,139 +1,218 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CAD81725
-	for <linux-clk@vger.kernel.org>; Tue,  9 Apr 2024 10:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321DE74297
+	for <linux-clk@vger.kernel.org>; Tue,  9 Apr 2024 10:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712658600; cv=none; b=du7D6ZTa2MhJXdomdmVx78ZaKTqdUcVetfAlTVXJxR5w3sizZWwQluEtLGH58Uq5VK3rLTnWXNVhOL8JE8PQ8gBXOlEyHJfRBuvjvjlZQ7pGvQfuyMpyM+V+IghLaiD9u+FhqSD9oTEr3KXCecGg0sXN/DeOslAEyFPFWNyRPmw=
+	t=1712658765; cv=none; b=TTMOVMOn6oucLLZVjgEmeSsEEtyM3rGq3YwfSQYO1aC4iuz5Xl0CBeSe+zovaJPyJOwIyCsAdqAsFVupVMAQD2WmenafIDL4uSTHRhu04LepkZrd0ZuSzQnw86tygaa0LpBQVe+mpSfAKbC9K8x+Ci6oAJ0HGY+U5+eV3r8UJyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712658600; c=relaxed/simple;
-	bh=1pJc8FYsL2hW347cawkDvUVa3vHO/1Plz4SprVr1CaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XVuchte9hNni+ZwPps5OutSggXYc/G5g8GAoI18RY8fQFopbbjKDQO48AgiosFUFuywdcGxyi5BI58WMDHGsj4JhOzuo40XhzvUyxVWdagFd64I8y92ruiVvflfPTIuwm0VfUWGWTOhV9aJkAA0nYr4XeMYNeMP/1IM37NhO8Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gtNGWNRz; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1712658765; c=relaxed/simple;
+	bh=5czf5Adh9rovAzlSJfAJI8FiDCtAO2TmwPWLd9haL8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W4Ym/Sd6NOcdMZar9L1dx7EVbnxVTDURvP5qVkm4M+44QvmzXnKELMx8cZR4vjArVtUET4CHv41C9j7pwyeOpkd/EctaidYGMQqfQVywDputD2soTn6mpVjNq6c6tZqTUEnUTKPcMDUML+++lTCVpwBXZiVPauWwdjJZaNN0vMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GQdOYDkg; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gtNGWNRz"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-343d1003106so3249142f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 09 Apr 2024 03:29:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GQdOYDkg"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-61805d5b1deso20192767b3.0
+        for <linux-clk@vger.kernel.org>; Tue, 09 Apr 2024 03:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712658597; x=1713263397; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=QSaOGp9c1dDH8MD3uHu5DGg+gsqr466YacODisop3PM=;
-        b=gtNGWNRzhQZXxcFd+Pa2u8NxTC2L01Kqz9DwdWHwQqw0AbSLKByYuX6t/5NI4NbPBf
-         qjns82B9hewhKz16mWCkhkNb7Y/aqww7djt+gm0Rv6K6PsPmvKAy9NRzXjHjihi57/w0
-         /fIVM7hWMe6Itd2pc/1xdahi3TZao2h8DbcgPhu9kdknR/XPg06EJ9xCrIgJ9SVvH9+Y
-         WGddwKIbjZaghWHJ1xdWv17OHws6X4WTZBUFejkaLNYil/IuygGSuaWxe3B67M6vG/cd
-         0sqV+bn0oR4v+mXqWNaWD7atdbbcBUZLow/QCaivb1FPBY0SVnu8QS24S2jT6BNN3VJt
-         g5PQ==
+        d=linaro.org; s=google; t=1712658761; x=1713263561; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ywMqPmvjfuSg7K+puQLhP8JMKU69QDDCjZnvVUw25RU=;
+        b=GQdOYDkgrep7F5hLpbDGjIbhlfq1Kh2Ql3iVjtZhxuj7Sxo9Sx+Z6Mg/nQ+kgb/mo+
+         EEBKlO3HzrpgW53IohoK6WPS0abrSTjrHnY4nNcY/5A7+qseFHZmPHy/97f0pb6yDEKm
+         RG/e99UNRWi8YrgKheaE60fxWP/YdQZ/d+qKQFMW9SsA9xw7CWf5sTn+ySonyN6TCMEd
+         6YYqB9Qm1qKK9U18x6CHmovcYcEq/tMf2NzB1vAXclbtCuy5WG6ns6xSugrVqYzI8P+J
+         ZPJeIdF+b4UZipHoNQIcpXawZ+f2tSlft4qKzXhghCFTySolAcAGu6UYVk8YDtXGxcHT
+         JX3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712658597; x=1713263397;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QSaOGp9c1dDH8MD3uHu5DGg+gsqr466YacODisop3PM=;
-        b=JZJJiUqueJgU47sDJ5tboSbbpun2Mo89tc8mQEVFu9YqCBK9mPv4OcZ6fgBnWDg9O/
-         NgDwIpkGfb6ZBzB8n5F6olwlAyDCgn4uspLuqYp0ueaDEnMbG4mjcY/NDas8VoIn/K+M
-         Yo1EKiTyy53cB/z8IlawMjhk0qJ0G7FguZLWUfbKXRcLRKBtp7sqyhE14ve5WCrrSXl5
-         Dk1DPFvbVQv7vcppBnmTEJGfIzF9Bd8eFEPmzvQM6ET4i/t8FlRYU91VfrZdAoJ78brp
-         ZRZqUFuhfHXGvYv5JRODJgg/cVU9YEINWxu7/rQFT6LhIFq3kd+EqVYRf644Nk0/qOiI
-         rH/g==
-X-Gm-Message-State: AOJu0YyPxcDiXi1GJlJ7NHBFo/F94bRD9iUS9gOgLj012owKj1Eux2Z5
-	1XzpVRBBgKpO/DBL5c1k6MRlc2/Kuh4mEVnDiIOMAXw3/xz+djxXCsERoirspcA=
-X-Google-Smtp-Source: AGHT+IF6pICYLqGObByyD6xPdMloA7SGXRa1XZu+UqpcCU9vqr92vyZZRlIqk9ZNqIWcvdafgOaaBg==
-X-Received: by 2002:adf:f4cf:0:b0:343:9230:e079 with SMTP id h15-20020adff4cf000000b003439230e079mr7994478wrp.71.1712658597457;
-        Tue, 09 Apr 2024 03:29:57 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id x15-20020a5d490f000000b003439b45ca08sm11071794wrq.17.2024.04.09.03.29.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Apr 2024 03:29:56 -0700 (PDT)
-Message-ID: <3a2da499-be65-4b42-9e25-3b25daeca53d@linaro.org>
-Date: Tue, 9 Apr 2024 12:29:55 +0200
+        d=1e100.net; s=20230601; t=1712658761; x=1713263561;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ywMqPmvjfuSg7K+puQLhP8JMKU69QDDCjZnvVUw25RU=;
+        b=wf8eSKj6hwvZ9H9MU8Mg0L3Et/682dpzHQgVaQv+M0t7Khl1D0d3bOGTmBgJ155BfV
+         2CBH9woi6LLXYRZj/nlQps/yCjZoFY7xpYKREUeJt6z/7X4rnVcjTDJZLyRGv48bAeHe
+         Y7bZVb5MP2UXPMEAGtxPp6wPdDF/LjCGZwBZiUn+UIt5mgfBBfP4i2FdNfSSzEmFY8ax
+         gHk3xEcIzrIt2JZywwg6D0tjOmPKl19/Pn98O4w8PLa0uwCzPmx9ddE0L9LozDOQETuE
+         cYjXOkhkGOzwjqjfF3iBmxnPh766Ijdj3X0FRhMbMHT3BvY0sMnt0owgeU9Av3XBQl2H
+         wQXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsCShIEhCfqntdYYV3u5Bt16kPiIiz2Kpw6lxtYjwHLetKV3TGOL/7Gdome861ji7FMZxD03SAaCLC2TaTSv4LfiofHhrecb54
+X-Gm-Message-State: AOJu0YxI1nPowPSndRmtduDUKOA7ODcCyEC1AGVJK8+8ihGYDssHE6x9
+	uEnRrVnID+yY0L0txj7mcL2qwbU081rDcIFMlQUW1hPxa1urTFCZCUD63GxTaLGYohLkB+T04HX
+	N/cg9dtXWYMCk1WqrNfWel7ms9Vi7YXqBwOKbAQ==
+X-Google-Smtp-Source: AGHT+IE6ld1LxqfQn0k5e9/PewJ6aOPe+V7Ds69yIjXtT1hudq7zrLPCAyY5v5qOBVfHKUCnvM/mlhNjl+kN+3CdkGA=
+X-Received: by 2002:a25:e20b:0:b0:dcd:6c0:da64 with SMTP id
+ h11-20020a25e20b000000b00dcd06c0da64mr9426728ybe.58.1712658761139; Tue, 09
+ Apr 2024 03:32:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: clock: rockchip: add USB480M_PHY mux
-To: Sascha Hauer <s.hauer@pengutronix.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-References: <20240405-clk-rk3568-usb480m-phy-mux-v1-0-6c89de20a6ff@pengutronix.de>
- <20240405-clk-rk3568-usb480m-phy-mux-v1-1-6c89de20a6ff@pengutronix.de>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240405-clk-rk3568-usb480m-phy-mux-v1-1-6c89de20a6ff@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240325184204.745706-1-sboyd@kernel.org> <20240325184204.745706-5-sboyd@kernel.org>
+ <c1dc0e4c1d4c9ba2b5e9c0fc207db267.sboyd@kernel.org>
+In-Reply-To: <c1dc0e4c1d4c9ba2b5e9c0fc207db267.sboyd@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 9 Apr 2024 12:32:04 +0200
+Message-ID: <CAPDyKFoGxxSzykQ-=o08LD_P_=8m=KRm4SHK_grBFgXNNv4OVw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] clk: Get runtime PM before walking tree during disable_unused
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 05/04/2024 09:38, Sascha Hauer wrote:
-> The USB480M clock can source from a MUX that selects the clock to come
-> from either of the USB-phy internal 480MHz PLLs. These clocks are
-> provided by the USB phy driver. This adds the define for it.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  include/dt-bindings/clock/rk3568-cru.h | 1 +
->  1 file changed, 1 insertion(+)
+On Mon, 8 Apr 2024 at 04:36, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Stephen Boyd (2024-03-25 11:41:58)
+> > Doug reported [1] the following hung task:
+> >
+> >  INFO: task swapper/0:1 blocked for more than 122 seconds.
+> >        Not tainted 5.15.149-21875-gf795ebc40eb8 #1
+> >  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> >  task:swapper/0       state:D stack:    0 pid:    1 ppid:     0 flags:0x00000008
+> >  Call trace:
+> >   __switch_to+0xf4/0x1f4
+> >   __schedule+0x418/0xb80
+> >   schedule+0x5c/0x10c
+> >   rpm_resume+0xe0/0x52c
+> >   rpm_resume+0x178/0x52c
+> >   __pm_runtime_resume+0x58/0x98
+> >   clk_pm_runtime_get+0x30/0xb0
+> >   clk_disable_unused_subtree+0x58/0x208
+> >   clk_disable_unused_subtree+0x38/0x208
+> >   clk_disable_unused_subtree+0x38/0x208
+> >   clk_disable_unused_subtree+0x38/0x208
+> >   clk_disable_unused_subtree+0x38/0x208
+> >   clk_disable_unused+0x4c/0xe4
+> >   do_one_initcall+0xcc/0x2d8
+> >   do_initcall_level+0xa4/0x148
+> >   do_initcalls+0x5c/0x9c
+> >   do_basic_setup+0x24/0x30
+> >   kernel_init_freeable+0xec/0x164
+> >   kernel_init+0x28/0x120
+> >   ret_from_fork+0x10/0x20
+> >  INFO: task kworker/u16:0:9 blocked for more than 122 seconds.
+> >        Not tainted 5.15.149-21875-gf795ebc40eb8 #1
+> >  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> >  task:kworker/u16:0   state:D stack:    0 pid:    9 ppid:     2 flags:0x00000008
+> >  Workqueue: events_unbound deferred_probe_work_func
+> >  Call trace:
+> >   __switch_to+0xf4/0x1f4
+> >   __schedule+0x418/0xb80
+> >   schedule+0x5c/0x10c
+> >   schedule_preempt_disabled+0x2c/0x48
+> >   __mutex_lock+0x238/0x488
+> >   __mutex_lock_slowpath+0x1c/0x28
+> >   mutex_lock+0x50/0x74
+> >   clk_prepare_lock+0x7c/0x9c
+> >   clk_core_prepare_lock+0x20/0x44
+> >   clk_prepare+0x24/0x30
+> >   clk_bulk_prepare+0x40/0xb0
+> >   mdss_runtime_resume+0x54/0x1c8
+> >   pm_generic_runtime_resume+0x30/0x44
+> >   __genpd_runtime_resume+0x68/0x7c
+> >   genpd_runtime_resume+0x108/0x1f4
+> >   __rpm_callback+0x84/0x144
+> >   rpm_callback+0x30/0x88
+> >   rpm_resume+0x1f4/0x52c
+> >   rpm_resume+0x178/0x52c
+> >   __pm_runtime_resume+0x58/0x98
+> >   __device_attach+0xe0/0x170
+> >   device_initial_probe+0x1c/0x28
+> >   bus_probe_device+0x3c/0x9c
+> >   device_add+0x644/0x814
+> >   mipi_dsi_device_register_full+0xe4/0x170
+> >   devm_mipi_dsi_device_register_full+0x28/0x70
+> >   ti_sn_bridge_probe+0x1dc/0x2c0
+> >   auxiliary_bus_probe+0x4c/0x94
+> >   really_probe+0xcc/0x2c8
+> >   __driver_probe_device+0xa8/0x130
+> >   driver_probe_device+0x48/0x110
+> >   __device_attach_driver+0xa4/0xcc
+> >   bus_for_each_drv+0x8c/0xd8
+> >   __device_attach+0xf8/0x170
+> >   device_initial_probe+0x1c/0x28
+> >   bus_probe_device+0x3c/0x9c
+> >   deferred_probe_work_func+0x9c/0xd8
+> >   process_one_work+0x148/0x518
+> >   worker_thread+0x138/0x350
+> >   kthread+0x138/0x1e0
+> >   ret_from_fork+0x10/0x20
+> >
+> > The first thread is walking the clk tree and calling
+> > clk_pm_runtime_get() to power on devices required to read the clk
+> > hardware via struct clk_ops::is_enabled(). This thread holds the clk
+> > prepare_lock, and is trying to runtime PM resume a device, when it finds
+> > that the device is in the process of resuming so the thread schedule()s
+> > away waiting for the device to finish resuming before continuing. The
+> > second thread is runtime PM resuming the same device, but the runtime
+> > resume callback is calling clk_prepare(), trying to grab the
+> > prepare_lock waiting on the first thread.
+> >
+> > This is a classic ABBA deadlock. To properly fix the deadlock, we must
+> > never runtime PM resume or suspend a device with the clk prepare_lock
+> > held. Actually doing that is near impossible today because the global
+> > prepare_lock would have to be dropped in the middle of the tree, the
+> > device runtime PM resumed/suspended, and then the prepare_lock grabbed
+> > again to ensure consistency of the clk tree topology. If anything
+> > changes with the clk tree in the meantime, we've lost and will need to
+> > start the operation all over again.
+> >
+> > Luckily, most of the time we're simply incrementing or decrementing the
+> > runtime PM count on an active device, so we don't have the chance to
+> > schedule away with the prepare_lock held. Let's fix this immediate
+> > problem that can be triggered more easily by simply booting on Qualcomm
+> > sc7180.
+> >
+> > Introduce a list of clk_core structures that have been registered, or
+> > are in the process of being registered, that require runtime PM to
+> > operate. Iterate this list and call clk_pm_runtime_get() on each of them
+> > without holding the prepare_lock during clk_disable_unused(). This way
+> > we can be certain that the runtime PM state of the devices will be
+> > active and resumed so we can't schedule away while walking the clk tree
+> > with the prepare_lock held. Similarly, call clk_pm_runtime_put() without
+> > the prepare_lock held to properly drop the runtime PM reference. We
+> > remove the calls to clk_pm_runtime_{get,put}() in this path because
+> > they're superfluous now that we know the devices are runtime resumed.
+> >
+> > Reported-by: Douglas Anderson <dianders@chromium.org>
+> > Closes: https://lore.kernel.org/all/20220922084322.RFC.2.I375b6b9e0a0a5348962f004beb3dafee6a12dfbb@changeid/ [1]
+> > Closes: https://issuetracker.google.com/328070191
+> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> > Fixes: 9a34b45397e5 ("clk: Add support for runtime PM")
+> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> > ---
+>
+> Applied to clk-fixes
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Apologies for not being able to review this, it got lost in my email
+filters. Looks like you manage to solve the locking order for the clk
+disable unused thing - great!
 
-Best regards,
-Krzysztof
+However I think the main problem we are seeing with these kind of
+locking issues is that we are holding a global lock while calling into
+pm_runtime_get|put*(). Similar problems have also been reported in the
+past. It's been on my todo list for quite some time to have a closer
+look, but I haven't reached it yet.
 
+Without going into too much detail, let me just ask a related
+question. Would it not be possible to call pm_runtime_get/put() within
+the clock framework, without *always* keeping the clock prepare lock
+acquired? I assume a clock can't be unregistered, as long as there is
+reference taken for it, right? Wouldn't that be a sufficient guarantee
+that it's okay to runtime_resume|suspend its corresponding device?
+
+Or maybe I should just send a patch. :-)
+
+Kind regards
+Uffe
