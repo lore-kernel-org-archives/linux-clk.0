@@ -1,120 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E4F13C66C;
-	Tue,  9 Apr 2024 17:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EAB15623E;
+	Tue,  9 Apr 2024 19:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712683928; cv=none; b=dOFkZp1RrBUGZ759O/YrgkShZugMYDHydBwCFziOZqPlB6OArzo3d77rDRKFSp/TNv2mCzjyTHWtu++6oKfp3pVsVgHRQR0hUFcR+8Qsi4vzglrtDx5916ianW2wvZ7KxBxD025OwteMqIzx8MSfqBgyRn4OqotT/RP+eH27Fsg=
+	t=1712689722; cv=none; b=fV1Z9qr0wf1as18hJJ1d6y3p2779EQLkOdeSFgKoQkcSoDZyI5z/ewBrp4sBZz/1ADdILd0ZZFr20KVpPQLEswM53bOFfwuaD4SRwrvPYzwBhY7K+EAcis3HNFCv0PX5ADh7QHZgvUnxh27QmnKPE9en3hEmfrg5h9+hpbTk37A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712683928; c=relaxed/simple;
-	bh=zbXpp6bn5v5mcNZu3t/YEPHaxpHKSpvxYnywNRsqWZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sXm1pHwtdz1zDaedcc5J4nibR+6Dzuy4iZHPkSBf6fQWQBjQTqX1mjykelU74yY0OnJb196ARVxdT/UnhGejNHuKyfB9HMGsTbw2GZeoeeBkwttCxkpTVIRlFp7NZFEsxL7hBe+okipXQ3et8/QfesF7mgjQuUvM3af0Xj88yfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DASQG1HX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712689722; c=relaxed/simple;
+	bh=/LW5UP24d3M9gnDJHKsZY3AjzrEnrgPIA21IZxGWV+o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aMLNv3WVgqa4wVvq7RRdLbZSsUz2DVBNQABxsWeIXjRxZvOh7ooFKlsMnMFOKQcO1D7MTq74W2GDzhaBXnV9fSGQzTKpXByMCgh6xKqel1z1qSLpJJ+BMCKL4KUiuS0+vY1gugSWfamtM41A4Ey02xvIZKuBdGfF9/+NgFEGq1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jzFWE3te; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DASQG1HX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87116C433F1;
-	Tue,  9 Apr 2024 17:32:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712683928;
-	bh=zbXpp6bn5v5mcNZu3t/YEPHaxpHKSpvxYnywNRsqWZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DASQG1HXpYfghCLFflKgrm2W/ERgMoKMROXeIyJI8cqz/LXS9Pf0QW2Uk6OfYSO+j
-	 a+b8s6CXW75opqaN5bC2vCK4J6/zuXckexmD96fYduhxvcDEfwGTVfKTr3O995cwIZ
-	 Ow6//QuPTL1GyepbdGPFBRF59v5Twa0UD1S2qEDeKUBhh0A0zSrrWxSwop4K7eFWKa
-	 xQbaR6TV0ypTjovR/qkVF3IwDy0tTywLQne0DhTX7Hck1YIT8X4/g7Rzan+UcQ50FD
-	 wdK9HVIjppLmJdUVplLUFPIMvjcRDIfggByEMDGkkwW9dWbp3oen9oGmgZdOHFG1Dg
-	 8G50LBIOxEnhQ==
-Date: Tue, 9 Apr 2024 18:32:03 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: Nikita Shubin <nikita.shubin@maquefel.me>,
-	Arnd Bergmann <arnd@arndb.de>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzFWE3te"
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6ea1f98f3b9so901707a34.1;
+        Tue, 09 Apr 2024 12:08:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712689720; x=1713294520; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eQII4bd5vU3iEBUOJRNxIf3Y2tkmIxs3qzEGZCMfEv8=;
+        b=jzFWE3teKpUJ5wl862mddPBr8HyYqumW7+TUQUfqgfnxAk0FERYfRgUpEAWQHmvX/Z
+         b7hpQ/I8JQXrv15s7jgABYJRxwc2Sd+WEt/j2LYf3AJcywE/27N7Ny15ZdMHRN7ZS+TP
+         HWquuz1a71ZoYYr5ZOvUrB0dT64q8mcypTeOEIU/eBE+SSr5o1qU5AmnSgT2r1mSFUqU
+         zXVhtnEPoNCyDamZUWsf4Lt3IsHXmLYPMhlPk+vM3E4gMNaUM+3YOyCkypC3HY2jv/QW
+         3/tqQbea23nROABQX92mWZxcf8B5YZUgupXE6dG/B/NK1eONJB8GMq6jMBqNbA9w8jPp
+         3PZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712689720; x=1713294520;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eQII4bd5vU3iEBUOJRNxIf3Y2tkmIxs3qzEGZCMfEv8=;
+        b=HVbsvJ2B6kp75tPCHe/4wbT3Vep3RgZBjb7w7lrXhpNG9OHEFUIdCGsSoOifbrxhsp
+         H9KQm/y2yiWF4Xpi0G82a/gTjFIfY5lzh1j7ui44AUwWh+vk7aVFzkCqeds07fFwPtdK
+         M+MymysjHrW2q2qk8UrUnncWtlpcmm6DCBnbmui20PeMx6HtCTsjJRi4UZWVU7QtqHTK
+         Pgc3T/tRwjO48TRG5coYiN+nzzLXKwobBqRclElAZhqhPUD2lgvEvSkxrdHFL/0CfeyI
+         5760zsPTse+I85xjT666DrAndRyJlTIBDWTOKGYcu9ug30eeLFqnAQ7HLBDzK1o2FSFX
+         Eo4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXA6GcEZgJRq+8kri3Q7enlv3Vf6XBm30u2g5vibfywuGHzxN77XjBldnz6wUjwjPCIC2SURhHr2MpZM1CZK7/XgQWlhYePz4R+01mz05ATviKKej9mBSktlrXUGmUphuBm9SEkCXo3v/rQYtTU2reDTLw4C2m0jfkuEXgtJEdHNw4mZFjukeAcz77MOFJtxaQ5ssn4/g9Ob4GC6/PsahlsuTo=
+X-Gm-Message-State: AOJu0YzIppBYf8lImc4XE3JA78uNYmgIJu9YAeBAp5DzFbWNOMFA4Fhq
+	mFwo32o+HGILauMCjsbAzQ/pRvjEfMayQzYVvWct72zGJxcP42vI
+X-Google-Smtp-Source: AGHT+IHnHq4Yzw2dp8mXx3ucVbabpjqSL5KTYckari/WPAcfuM42DCdJWg9oNA/1AS81eRtwKhtJBQ==
+X-Received: by 2002:a9d:748f:0:b0:6ea:109f:ea50 with SMTP id t15-20020a9d748f000000b006ea109fea50mr601491otk.15.1712689719902;
+        Tue, 09 Apr 2024 12:08:39 -0700 (PDT)
+Received: from nukework.lan (c-98-197-58-203.hsd1.tx.comcast.net. [98.197.58.203])
+        by smtp.gmail.com with ESMTPSA id f11-20020a9d7b4b000000b006ea1cf91a8dsm674920oto.40.2024.04.09.12.08.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Apr 2024 12:08:39 -0700 (PDT)
+From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 0/4] DONOTMERGE: ep93xx-clk from ep93xx device tree
- conversion
-Message-ID: <20240409-unselect-denatured-6af8a07dbd9a@spud>
-References: <20240408-ep93xx-clk-v1-0-1d0f4c324647@maquefel.me>
- <20240408-friction-mosaic-ba48bc27788d@spud>
- <42f9da044fdc11e2495f6845c061afefa796f7cf.camel@maquefel.me>
- <73fd3f42c2d63467bb1b04888659e829f9e54f52.camel@gmail.com>
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/7] dt-bindings: clock: Add PCIe pipe related clocks for IPQ9574
+Date: Tue,  9 Apr 2024 14:08:27 -0500
+Message-Id: <20240409190833.3485824-2-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240409190833.3485824-1-mr.nuke.me@gmail.com>
+References: <20240409190833.3485824-1-mr.nuke.me@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hfWycvtu4zQBs5eK"
-Content-Disposition: inline
-In-Reply-To: <73fd3f42c2d63467bb1b04888659e829f9e54f52.camel@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Add defines for the missing PCIe PIPE clocks.
 
---hfWycvtu4zQBs5eK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On Tue, Apr 09, 2024 at 05:09:35PM +0200, Alexander Sverdlin wrote:
-> Hi Nikita,
->=20
-> On Tue, 2024-04-09 at 14:48 +0300, Nikita Shubin wrote:
-> > On Mon, 2024-04-08 at 18:03 +0100, Conor Dooley wrote:
-> > > On Mon, Apr 08, 2024 at 11:09:52AM +0300, Nikita Shubin via B4 Relay
-> > > wrote:
-> > > > The goal is to recieve ACKs.
-> > >=20
-> > > I dont see a maintainers entry in -rc1 for the drivers/soc/cirrus
-> > > portion. Who is gonna give you an Ack for that portion? If you
-> > > intended
-> > > maintaining that driver, should you not add a MAINTAINERS entry for
-> > > it?
-> >=20
-> > drivers/soc/cirrus got it's ACK from ep93xx MAINTAINER - Alexander
-> > Sverdlin.
-> >=20
-> > Arnd, Alexander - should we add it now ?
->=20
-> seems that we have couple of things to fix:
->=20
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> #51:=20
-> new file mode 100644
->=20
-> WARNING: please write a help paragraph that fully describes the config sy=
-mbol
-> #60: FILE: drivers/soc/cirrus/Kconfig:5:
-> +config EP93XX_SOC
-> +	bool "Cirrus EP93xx chips SoC"
-> +	select SOC_BUS
-> +	select AUXILIARY_BUS
-> +	default y if !EP93XX_SOC_COMMON
-> +	help
-> +	  Support SoC for Cirrus EP93xx chips.
-> +
->=20
-> total: 0 errors, 2 warnings, 269 lines checked
+diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+index 08fd3a37acaa..52123c5a09fa 100644
+--- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
++++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+@@ -216,4 +216,8 @@
+ #define GCC_CRYPTO_AHB_CLK				207
+ #define GCC_USB0_PIPE_CLK				208
+ #define GCC_USB0_SLEEP_CLK				209
++#define GCC_PCIE0_PIPE_CLK				210
++#define GCC_PCIE1_PIPE_CLK				211
++#define GCC_PCIE2_PIPE_CLK				212
++#define GCC_PCIE3_PIPE_CLK				213
+ #endif
+-- 
+2.40.1
 
-FWIW, I wouldn't be too worried about meeting the minimum line check for
-the Kconfig option that checkpatch requires - but the description here
-is not clear what the driver does.=20
-
---hfWycvtu4zQBs5eK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZhV7kwAKCRB4tDGHoIJi
-0sK2AQC8a1isyFTn6fekLdOTJ4w8j4r0IrldzsHLvayDPHqQRwD+IxgI3A8hZ5Iz
-7lJYuGUc1y73HVsn2n9d/ZbXPDzCGA8=
-=jf+f
------END PGP SIGNATURE-----
-
---hfWycvtu4zQBs5eK--
