@@ -1,57 +1,57 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2256A00B
-	for <linux-clk@vger.kernel.org>; Tue,  9 Apr 2024 20:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE7415821D
+	for <linux-clk@vger.kernel.org>; Tue,  9 Apr 2024 20:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712694718; cv=none; b=oI53yZUOmoWuOarsnKP7CX3URu+lLE/C1Lri5l2h042zVm1WfHIg1de5IvOFmRX02yhXwANbgcCENM9AoKzf9zb/wCpSay9UnJpLrLurd1ZBpWdFUYcKi1R+BCH3jdMzh+sINBrO4zbLjfK6mWrHp4DI0h1noq0ywAkt80ON1Fc=
+	t=1712694745; cv=none; b=dNnr6f3NzvraUHDu7ujY0g8JvIqK8ecl7Hr3rpuJSipezLdg5AhYD0FpuxuzxYlhXpnB/6Sbd0U2R9a3SyXbYrQrBfD6taYeWpUnLiK9t2kkuOjA5UPRCLwkUE1j0qMFNRdo3v62TOVGWLTF0GQpDlzKFhGS+d+3Ayd9KIBdj3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712694718; c=relaxed/simple;
-	bh=Vs7Fl4nk6yyaypIwhuIjZlvpPaXIEdLVSScbuiPTFsk=;
+	s=arc-20240116; t=1712694745; c=relaxed/simple;
+	bh=qmPSipmsApE9MjLQLRwFM2bTm8/5nzv5gy1HnTd1h6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BWVtcABmlXxXUXhihoQu7eQwddE/RGUffpNAG+1kf20XgLNs5T24CMGq7+qJKdV8rKUIiPYmfERyeCIMN+s5bM7wegQHilyZ53p7ZkbzFjTJbzsSlwYBtYUeQGQcmRUGJLUMv8+t1COqR7fqDZrhixpM+EPfHc+PAdawBf4sKLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r7052KZl; arc=none smtp.client-ip=209.85.214.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=C3aGeeVZf+5P7l01JKUh+6+nsIWznRxOSlZ68B1P/agwO1+Itm7c4f8k8usmWT7OK2s+zI1nbOsJkfflZDP7wkClVHVQNXC3fgtyc7V1JJQ4zgX3gNfuTUwkqKgIdGMwRwy77u3lOAixqLK6NFylGXm4J5nvF2lXPBrE9nzpocQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EH+HKn6r; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r7052KZl"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e062f3a47bso7245ad.1
-        for <linux-clk@vger.kernel.org>; Tue, 09 Apr 2024 13:31:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EH+HKn6r"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1e3c89f3d32so14605ad.0
+        for <linux-clk@vger.kernel.org>; Tue, 09 Apr 2024 13:32:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1712694716; x=1713299516; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1712694744; x=1713299544; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SUvgfC3w6ZX2fpsTKLPWf6JUERZbrXuQ25CP7Jh3l6s=;
-        b=r7052KZlHLhodEa4GNiLQVpGGO7OGwKN7AjHoLs0//pFkcW1l75v8IZa8ITwvxD67A
-         ZaYiofexrnpjhgXkGzKRD1qLpk6ZBDT2dghHVr56o9QYNcygv/mxrG2l9umtUq9QPjxR
-         MUPk6Jy1HbgTxj1QMWlo7vVlcdSEJRMyuXA6cSj/XoYXeG5Fo/hQ2XNY49Abht6MpYPe
-         8TlLs13UhVZ90NoKQRp1Zad4QprGveFlO87cS2RyX0/NRHmzjX17b2uUkKEcgBW6tc00
-         YYHn3/oie4Bv0axEKlSdLDuWovODUKECbXN9NXhJzS2oAe83dnS8nrvr5dx50plf4ybz
-         oM0g==
+        bh=12JndML8/JCJgkfhvekK/G81mXPrA5btch0gZl1J20Y=;
+        b=EH+HKn6r6JGCKAUPjHtflpAhr/Y/J1+b5bkeHR8vaPE8DeT3sAV+F3nqtbC7ZjW+dj
+         Hl0vKQmesooPSLeIi6XdEAQrIqaCMy+1WS3Y3QE3w3q0FuAZ5SeEkR+lQlKhf4WVGyVC
+         prTWSGjdmYSUCnQXYGJF+8MVaismm9ZM8SveVFHVmzssl/FvvkQ2fyrDQsjmfiCGvls3
+         8jmCNX6ac0GDRbj2XXY0a0vC+tZ0exI6F+YmsIScTIpL8zxlvcRIJRsZSSZNVG2PQnZY
+         TD5I4RIE3gZyFSY/646zV0qPlyyumH72lsYxnTlkPrBvKgDxdVq/DIMQw+ON6UKDBcQ9
+         PNiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712694716; x=1713299516;
+        d=1e100.net; s=20230601; t=1712694744; x=1713299544;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SUvgfC3w6ZX2fpsTKLPWf6JUERZbrXuQ25CP7Jh3l6s=;
-        b=HeWF4lgA0j4QbCAfnlOX5Rj9XkNQ9ihjJ9UtPtta+dadBkVWu2IclYOK9f6lttB0Fo
-         OH0kbOAYGuEOpaFPuw38nNR/SVHPZAaDwOB8A5gKEzz1sqHLSv8Gc/2Kp7crS3sqfh1r
-         wZ3BugPGWyL9KrDVQNk4GKncLk+1sGB6Kx3sWAzYj+Ve9D3+MDuTclTlWbqnqmx2QnVF
-         yDRcUpQrdvTMOTHNe7JTqPQUWRshWdtXi/ZvltUgaGNIJai9HKF2McUm4PxheBhntIqF
-         t39w9YYWWg2zEBZgyMbbVp4i55lwLDugyiTMHO6lNR1g1DtTyoIzLW2rEWS+zIGsWCh0
-         F/2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWhreiz2Uz6Jd7oOJrRcPyoDgx2D0ybpb1uxLpv5Nv1sI+Q0iPQow8R/vtG95yzQgHSwnWEVSFGnlvKvlev8SXaoha9zW8UF0dn
-X-Gm-Message-State: AOJu0YyIMbJ3lT3GdKJN2kuUdlON8FRmZV3aZNnSZtjmM31SgMtbpAwQ
-	Zn4LJFmP6dVfXTz7fZufxHUtt5gtf8nt07IUlY4V7zpoGbzKGkg219ujxVya3g==
-X-Google-Smtp-Source: AGHT+IH9ezbINF2W8M0K+P7GqpiAb9inpFocjNUgpuAn1raw2RBR1YlfC+PSle2MldBPfMVs9xAsEw==
-X-Received: by 2002:a17:902:f544:b0:1e2:aa6c:3c72 with SMTP id h4-20020a170902f54400b001e2aa6c3c72mr3010plf.3.1712694715690;
-        Tue, 09 Apr 2024 13:31:55 -0700 (PDT)
+        bh=12JndML8/JCJgkfhvekK/G81mXPrA5btch0gZl1J20Y=;
+        b=VV1YNNEOeXU9HR2PcN2uD0mvFmZtkySHNs+ObOBnDYlAkvtP/JOFVmg9CxKmC9lXCl
+         SEOL9jlp9vqZgEUhso6MPkwubqPunNVMP9R1bbCYtZqjrAZxTWHzg2POaH/I8DjGojoL
+         va6707a/9HvF+815pkFKrQCw3MgcfcR9QCe2P2kgDotr8H9xLjWI1BlQACyJtWlz4USx
+         GHzlSzqxUX5TNDqcHx7QHgPOcaMiLVs7NMJQtbn4+bA8L3DlF+tvrc5dZFBIhS2D2WEC
+         OPmSMvhP/GeE8VohbXhoQDCzbMvf49NaJbHDh+eywCeTkQ4qGexk+SdE7gfDLYC+x9tC
+         jsew==
+X-Forwarded-Encrypted: i=1; AJvYcCWDFl3wi1JxjlgZu4jLHAABDlQk7wUiwd7CAbGJgHdejHkAPpGUmWCacN6nYLU1p5bHcFf+imT3hMP9qoOK9cR4mMr+3vJuj0te
+X-Gm-Message-State: AOJu0YwLXfZCJJEojPLpXqFVIHEaig1LqgRJZnARDiMEaxILGdqDFrQC
+	D2vOF4iDiHEdipB+QG4eECMDdhGVb8yoFkQwXCahAVTeRQX5ajfntF9bFOGeWQ==
+X-Google-Smtp-Source: AGHT+IF6oY374Gn1bXDaQ8XjzUkuKAfKS8zqbkpsnbHTg5x0Nbbqftz5Mn2zC4LTwQ42ph5VlmKPrg==
+X-Received: by 2002:a17:903:2451:b0:1e0:294f:17c0 with SMTP id l17-20020a170903245100b001e0294f17c0mr58171pls.4.1712694743398;
+        Tue, 09 Apr 2024 13:32:23 -0700 (PDT)
 Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
-        by smtp.gmail.com with ESMTPSA id fe17-20020a056a002f1100b006eab9ef5d4esm8768874pfb.50.2024.04.09.13.31.54
+        by smtp.gmail.com with ESMTPSA id i18-20020a17090332d200b001e421f98ebdsm4644271plr.280.2024.04.09.13.32.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Apr 2024 13:31:55 -0700 (PDT)
-Date: Tue, 9 Apr 2024 13:31:52 -0700
+        Tue, 09 Apr 2024 13:32:22 -0700 (PDT)
+Date: Tue, 9 Apr 2024 13:32:19 -0700
 From: William McVicker <willmcvicker@google.com>
 To: Peter Griffin <peter.griffin@linaro.org>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
@@ -65,11 +65,11 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org,
 	andre.draszik@linaro.org, saravanak@google.com
-Subject: Re: [PATCH 13/17] scsi: ufs: host: ufs-exynos: add
- EXYNOS_UFS_OPT_TIMER_TICK_SELECT option
-Message-ID: <ZhWluEU4aG3E2NcI@google.com>
+Subject: Re: [PATCH 14/17] scsi: ufs: host: ufs-exynos: allow max frequencies
+ up to 267Mhz
+Message-ID: <ZhWl0_LSOIjdza9C@google.com>
 References: <20240404122559.898930-1-peter.griffin@linaro.org>
- <20240404122559.898930-14-peter.griffin@linaro.org>
+ <20240404122559.898930-15-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,15 +78,11 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240404122559.898930-14-peter.griffin@linaro.org>
+In-Reply-To: <20240404122559.898930-15-peter.griffin@linaro.org>
 
 On 04/04/2024, Peter Griffin wrote:
-> This option is intended to be set for SoCs that have HCI_V2P1_CTRL
-> register and can select their tick source via IA_TICK_SEL bit.
-> 
-> Source clock selection for timer tick
-> 0x0 = Bus clock (aclk)
-> 0x1 = Function clock (mclk)
+> Platforms such as Tensor gs101 the pclk frequency is 267Mhz.
+> Increase PCLK_AVAIL_MAX so we don't fail the frequency check.
 > 
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
