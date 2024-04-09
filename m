@@ -1,127 +1,143 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD91131BB1;
-	Tue,  9 Apr 2024 15:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C20413AD37
+	for <linux-clk@vger.kernel.org>; Tue,  9 Apr 2024 15:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712675378; cv=none; b=uZfRZP6lXLxNV7ACJX5wfvqjzCMTPTsCDMu3zfHhMN4c9fBTrDaOK9tZI3Ipvc6Cm9Pa6X790DweGZAXSv1IGzS4akL1REQmB7F+RCBKfd+iJdKgKFvsMTfgqu9tn0LXBK8uEl06Qs5IME+g1/lNMfrNQKBNuKsW9WuOlUpV2Kw=
+	t=1712678192; cv=none; b=QUpGEI18RHdcF0WWxO9depnrbHICGd9hteor9EE+20Yt0AfUeQzFk3y3aPP8rMP1zlXgCMqL55VdivCwENpfsLvGrcqgOCCN73afe+h3u1DiGqe2WxRA26Rp1f/e1KONHC6UYW1M6boMYu39FbQBmVw7MhP+EYkAsvDATWi7exw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712675378; c=relaxed/simple;
-	bh=bUohk7QMBggJgRuT885dzbT7hJA0V+PO3DKCoFWY5s0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eTLN6yrxl+JCMTSHHlrLzWHKjlfDB3QKo+4IJZV1a6Qf6AOfSilzCdPPsW4et+5hvqV3V/DoKPLuRUuZlLktL8eI992GjvtLgfGWJphozHVD5PwT0R8eWuSG2oLzQETwzkFkzb6vt7M/jmNXLxBS9AwEQwYjPjURyk5TTiMrG4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lD5pDhhS; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1712678192; c=relaxed/simple;
+	bh=0EL7q48SD7Pfo4SF/I+36RQ47z0oPGDnuZvI7MsfOuw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Sk+uJRR3RiAFTBRjr4zMOijaAeCLlNFklSUaaObTZT4VhuIyJ3KOBZaGtakFl64ZXgf8MNVltPMAkudWHjlzU567NWPF7X7WJKRff1nB5IxinKDMDr892S8lrWyPVxC1rlO0IoBW2Yiw1V+4oAtXUPhZYkqxL4qGuPDGTijhiZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=pass smtp.mailfrom=freebox.fr; dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b=g4WKyRLm; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebox.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lD5pDhhS"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-416923f05faso10512035e9.1;
-        Tue, 09 Apr 2024 08:09:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b="g4WKyRLm"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2d4a8bddc21so81724091fa.0
+        for <linux-clk@vger.kernel.org>; Tue, 09 Apr 2024 08:56:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712675375; x=1713280175; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hV8Eh9BHD0D9CZjicZrX01zekb30l/NMwat8BaMKtgA=;
-        b=lD5pDhhS3zywG4KzFCiKSzaWY+lYiDeaGORRV9cnadZi09Ql7rUb0Gh50rifpwBEvV
-         9Fb8AgU75zM9ctYJTAgm0+A91dC0I9PzOz8rL9xw+VDornu+KO0WLJAll2HilwX/435K
-         T/WjLgFWCzGYB38TMabqAARsj1jymoCva0lcY43AvA5yyCbK/fJjFBhQjktH108Sszij
-         cAx5UFNK5Ud8v4+H7wGd1KLtVYw6xCW9lrDHBZ4gyKzkysN/jwV+hSeSPSUELxTAawOg
-         VX1i/Clim+exsa2/Z9yVP+KSAeon8Us7DkyDJjRPtiKo3xb132X8EottsAKSMRXa/e7v
-         r8mA==
+        d=freebox-fr.20230601.gappssmtp.com; s=20230601; t=1712678186; x=1713282986; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L0L8Mm55Y48K0HRs+yI+LOWXO//blhz34iBiLgs48e8=;
+        b=g4WKyRLmOYUZW92kG4mX72Lr6Aqm2slSYsLQcJbwxJJLUOmb6sg9Fvuz4OHPjqPxJP
+         I8+W0HR7yq8C5hacS4/tO3ACvt+YgAG9ZvddV8lwqZW803IfUUzDmMlXaCy4xVD6TQfm
+         DTajlND5Eu6u5g55Ny43Zo8XEQ4/hWOasXgkZCPX0Kq4yNGZBYOUQHT68VVjjUIE9Lwy
+         AtNPQoNDtgWu6OUVWpMEzZzu33eThkWY1WkpN69lSiLWAYANK23X9fYAVS6VnaQnV+us
+         geXytHu7B8Sd1iMBCWJa/Jvxp8UB3ecanDYKeEQUMPC5GlluYDcDwDKmouYgkXlu3g2X
+         dKOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712675375; x=1713280175;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hV8Eh9BHD0D9CZjicZrX01zekb30l/NMwat8BaMKtgA=;
-        b=Xn+2F1JzGEhU2OZQ++nGIiro3J3NpmdnEmFtWcfSP14IAvAjGGKigK0b7lmZKUyEZH
-         QLH71r6ghrLYQrL3rmICqOSP4x5oTLGgkr9RWG4tiN0/F/R4tfFjIedR6P9y3pfmnTjF
-         rSrPEXhUNAzYJ0z3nboSTswBU/IahdQ4nFH0ZoRuFYSnSXt8HkCv52uVvlt1hj2GQuHg
-         TShvFXLKqFePrhiRT9Z02L/5E46ERho7iNm0zDVFtglmKwOsnKDI2OyorlA+BKWQB/9t
-         4CDlCINmhGsgm5wfa5Fv9hVlekkyn9sejUxfqbEmRi7kxSoEX7wC3yn9CCZFU6TzAaue
-         Jbqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFU2qCjXaeo4TLVyGedjiQfzkX7hGG0emRJHVOwX+CLv2lEx3rAT0JfgykSv5mUG8giDCgi0AH2ZtdWehi7g8M6935EeiLkx77Rn21D9CcWam1lg6EV9Co4ZMStkyvUEsAPwLCID2SbBDLQILjnbFa99BEjbJRhbVGT48RyKuKTk0cXw==
-X-Gm-Message-State: AOJu0YxUpQqQHkAG/ZdvWE0OL86tcdwYxLzM3G3qKffd9n1DUzYi3ROw
-	XXN7eSCmKT1mLf88Wcl3Euv1MEGKO3OIjA4I3YMrz40mMOKFDIQt
-X-Google-Smtp-Source: AGHT+IHAepUDHftdQEpWcio4JYkLD84VF76cy3I5PbYSo3n5J26JdZX15C/h0yZQHJwB34IjbU3HYw==
-X-Received: by 2002:a05:600c:3542:b0:416:81b6:7590 with SMTP id i2-20020a05600c354200b0041681b67590mr3631710wmq.11.1712675374762;
-        Tue, 09 Apr 2024 08:09:34 -0700 (PDT)
-Received: from giga-mm-1.home ([2a02:1210:8690:9300:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id ju8-20020a05600c56c800b00416253a0dbdsm20692015wmb.36.2024.04.09.08.09.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Apr 2024 08:09:34 -0700 (PDT)
-Message-ID: <73fd3f42c2d63467bb1b04888659e829f9e54f52.camel@gmail.com>
-Subject: Re: [PATCH 0/4] DONOTMERGE: ep93xx-clk from ep93xx device tree
- conversion
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Nikita Shubin <nikita.shubin@maquefel.me>, Conor Dooley
- <conor@kernel.org>,  Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Tue, 09 Apr 2024 17:09:35 +0200
-In-Reply-To: <42f9da044fdc11e2495f6845c061afefa796f7cf.camel@maquefel.me>
-References: <20240408-ep93xx-clk-v1-0-1d0f4c324647@maquefel.me>
-	 <20240408-friction-mosaic-ba48bc27788d@spud>
-	 <42f9da044fdc11e2495f6845c061afefa796f7cf.camel@maquefel.me>
-Autocrypt: addr=alexander.sverdlin@gmail.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 
+        d=1e100.net; s=20230601; t=1712678186; x=1713282986;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=L0L8Mm55Y48K0HRs+yI+LOWXO//blhz34iBiLgs48e8=;
+        b=LYb2u8nsPmhUHIArn4zklbBtSHnOXaxb3hBWP0NOP0pl3YKgPxhlljySxYSzUKFuMI
+         BK6ww3u7rvmLDHBsXfcYbgRoPrgyfmaGevn9w0Am0KrbjloFgVjk7Y/VmHJcnVyUwa3F
+         jUFx/UkQqBwx0M6Ceu80Vo/9skyZK2moCb4cgnDd/PJM3RcGpazSmW3enkMxtN50l+/0
+         sgLv3yFnd0XdMeh3N9g7B31n4HlweY+AwH0qQUdMsGJrwJnWsrEgmOOsY2TJQMyAyZue
+         I1XU75TTx3JFhOOzaG3maNjOz6bDO8dHezvgiDQGFM4x/9DkQl46y17/jA7w/JX7tNZR
+         KOPg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+lc8Xmg/U4DgpvN2BNKfhbI+BxcZTX+1z3L6D9Xe4hCW9038DuIPcBD877HmI4dzDkMtf9ZH8MI5PUjZSSVIvjVL62I3Odw5b
+X-Gm-Message-State: AOJu0YwL70c95GraixSGhs2DTQYwIoFAzXvgXMdXoTNhLXX3tSaGgzrU
+	FhPdkr1XdMbRHATJam29UXuMgzNq9WyIvgHvLm0NzGpyTyat1TN7Msla56ELA9U=
+X-Google-Smtp-Source: AGHT+IHv8WEAEFEW94VIUaX6ZXRBqEu0iL+Y5GIpF6W6uJOgCCs1uDXUoyf4bInd/WGDkbVNPs4YDw==
+X-Received: by 2002:a2e:9994:0:b0:2d8:a889:172 with SMTP id w20-20020a2e9994000000b002d8a8890172mr157295lji.8.1712678186502;
+        Tue, 09 Apr 2024 08:56:26 -0700 (PDT)
+Received: from [192.168.108.81] (freebox.vlq16.iliad.fr. [213.36.7.13])
+        by smtp.gmail.com with ESMTPSA id z8-20020adfe548000000b0034335e47102sm11735519wrm.113.2024.04.09.08.56.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Apr 2024 08:56:26 -0700 (PDT)
+Message-ID: <c427e89e-7ec6-472e-8ba8-65d5721df62b@freebox.fr>
+Date: Tue, 9 Apr 2024 17:56:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: MSM <linux-arm-msm@vger.kernel.org>, linux-clk
+ <linux-clk@vger.kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bryan O Donoghue <bryan.odonoghue@linaro.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Jeffrey Hugo <quic_jhugo@quicinc.com>,
+ Douglas Anderson <dianders@chromium.org>,
+ Pierre-Hugues Husson <phhusson@freebox.fr>, Arnaud Vrac <avrac@freebox.fr>
+From: Marc Gonzalez <mgonzalez@freebox.fr>
+Subject: [PATCH] clk: qcom: mmcc-msm8998: fix vdec low-power mode
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Nikita,
+Use same code as mmcc-msm8996 with:
+s/venus_gdsc/video_top_gdsc/
+s/venus_core0_gdsc/video_subcore0_gdsc/
 
-On Tue, 2024-04-09 at 14:48 +0300, Nikita Shubin wrote:
-> On Mon, 2024-04-08 at 18:03 +0100, Conor Dooley wrote:
-> > On Mon, Apr 08, 2024 at 11:09:52AM +0300, Nikita Shubin via B4 Relay
-> > wrote:
-> > > The goal is to recieve ACKs.
-> >=20
-> > I dont see a maintainers entry in -rc1 for the drivers/soc/cirrus
-> > portion. Who is gonna give you an Ack for that portion? If you
-> > intended
-> > maintaining that driver, should you not add a MAINTAINERS entry for
-> > it?
->=20
-> drivers/soc/cirrus got it's ACK from ep93xx MAINTAINER - Alexander
-> Sverdlin.
->=20
-> Arnd, Alexander - should we add it now ?
+https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8996.h
+https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8998.h
 
-seems that we have couple of things to fix:
+0x1024 = MMSS_VIDEO GDSCR (undocumented)
+0x1028 = MMSS_VIDEO_CORE_CBCR
+0x1030 = MMSS_VIDEO_AHB_CBCR
+0x1034 = MMSS_VIDEO_AXI_CBCR
+0x1038 = MMSS_VIDEO_MAXI_CBCR
+0x1040 = MMSS_VIDEO_SUBCORE0 GDSCR (undocumented)
+0x1044 = MMSS_VIDEO_SUBCORE1 GDSCR (undocumented)
+0x1048 = MMSS_VIDEO_SUBCORE0_CBCR
+0x104c = MMSS_VIDEO_SUBCORE1_CBCR
 
-WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-#51:=20
-new file mode 100644
+Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
+---
+ drivers/clk/qcom/mmcc-msm8998.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-WARNING: please write a help paragraph that fully describes the config symb=
-ol
-#60: FILE: drivers/soc/cirrus/Kconfig:5:
-+config EP93XX_SOC
-+	bool "Cirrus EP93xx chips SoC"
-+	select SOC_BUS
-+	select AUXILIARY_BUS
-+	default y if !EP93XX_SOC_COMMON
-+	help
-+	  Support SoC for Cirrus EP93xx chips.
-+
-
-total: 0 errors, 2 warnings, 269 lines checked
-
---=20
-Alexander Sverdlin.
-
+diff --git a/drivers/clk/qcom/mmcc-msm8998.c b/drivers/clk/qcom/mmcc-msm8998.c
+index 1180e48c687ac..275fb3b71ede4 100644
+--- a/drivers/clk/qcom/mmcc-msm8998.c
++++ b/drivers/clk/qcom/mmcc-msm8998.c
+@@ -2535,6 +2535,8 @@ static struct clk_branch vmem_ahb_clk = {
+ 
+ static struct gdsc video_top_gdsc = {
+ 	.gdscr = 0x1024,
++	.cxcs = (unsigned int []){ 0x1028, 0x1034, 0x1038 },
++	.cxc_count = 3,
+ 	.pd = {
+ 		.name = "video_top",
+ 	},
+@@ -2543,20 +2545,26 @@ static struct gdsc video_top_gdsc = {
+ 
+ static struct gdsc video_subcore0_gdsc = {
+ 	.gdscr = 0x1040,
++	.cxcs = (unsigned int []){ 0x1048 },
++	.cxc_count = 1,
+ 	.pd = {
+ 		.name = "video_subcore0",
+ 	},
+ 	.parent = &video_top_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = HW_CTRL,
+ };
+ 
+ static struct gdsc video_subcore1_gdsc = {
+ 	.gdscr = 0x1044,
++	.cxcs = (unsigned int []){ 0x104c },
++	.cxc_count = 1,
+ 	.pd = {
+ 		.name = "video_subcore1",
+ 	},
+ 	.parent = &video_top_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = HW_CTRL,
+ };
+ 
+ static struct gdsc mdss_gdsc = {
+-- 
+2.34.1
