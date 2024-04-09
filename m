@@ -1,198 +1,127 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9784E12F38D;
-	Tue,  9 Apr 2024 13:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD91131BB1;
+	Tue,  9 Apr 2024 15:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712671003; cv=none; b=mfZopuTpUQoQ5Bv3rs+q4wcAHhinAMtuWvXYjVB+oR6RMOgSMAxun8T/D+gRYKebROARyHZ+4GeaV+ZJqm7CtT0xuNP6p71pB4IlcuNt38xmgM3dTfGWqNLtfMUQTZMJAvYmFqTEV3xfmNM99NvPkZM9PbGSXMExvKCdJgsaniA=
+	t=1712675378; cv=none; b=uZfRZP6lXLxNV7ACJX5wfvqjzCMTPTsCDMu3zfHhMN4c9fBTrDaOK9tZI3Ipvc6Cm9Pa6X790DweGZAXSv1IGzS4akL1REQmB7F+RCBKfd+iJdKgKFvsMTfgqu9tn0LXBK8uEl06Qs5IME+g1/lNMfrNQKBNuKsW9WuOlUpV2Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712671003; c=relaxed/simple;
-	bh=uiUPa934IC8G79R0cHkfdU2hmpF5TUHtkMcYQceZcSQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rEm/3CfL+b80IhaHFO/qyMJXKKOKIjRlRo/WFieZH0oXnSd+G49Pb2SU4V3K5ZRahGAzYuJ3GOFDptWFQfKsdthdHTMrwiEvRdd5iLKBYuf3JX795F5ZWcWCKOB/A++VLAbQICD0DZ6o4ZX6aj3BdYCvzvbnWBJZNNKF550myOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1712675378; c=relaxed/simple;
+	bh=bUohk7QMBggJgRuT885dzbT7hJA0V+PO3DKCoFWY5s0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eTLN6yrxl+JCMTSHHlrLzWHKjlfDB3QKo+4IJZV1a6Qf6AOfSilzCdPPsW4et+5hvqV3V/DoKPLuRUuZlLktL8eI992GjvtLgfGWJphozHVD5PwT0R8eWuSG2oLzQETwzkFkzb6vt7M/jmNXLxBS9AwEQwYjPjURyk5TTiMrG4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lD5pDhhS; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6181237230dso21065807b3.2;
-        Tue, 09 Apr 2024 06:56:40 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lD5pDhhS"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-416923f05faso10512035e9.1;
+        Tue, 09 Apr 2024 08:09:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712675375; x=1713280175; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hV8Eh9BHD0D9CZjicZrX01zekb30l/NMwat8BaMKtgA=;
+        b=lD5pDhhS3zywG4KzFCiKSzaWY+lYiDeaGORRV9cnadZi09Ql7rUb0Gh50rifpwBEvV
+         9Fb8AgU75zM9ctYJTAgm0+A91dC0I9PzOz8rL9xw+VDornu+KO0WLJAll2HilwX/435K
+         T/WjLgFWCzGYB38TMabqAARsj1jymoCva0lcY43AvA5yyCbK/fJjFBhQjktH108Sszij
+         cAx5UFNK5Ud8v4+H7wGd1KLtVYw6xCW9lrDHBZ4gyKzkysN/jwV+hSeSPSUELxTAawOg
+         VX1i/Clim+exsa2/Z9yVP+KSAeon8Us7DkyDJjRPtiKo3xb132X8EottsAKSMRXa/e7v
+         r8mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712670997; x=1713275797;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2HZbjvWyXpSYd1puM+93tZG9TcNwqCrELS7hscC5PVY=;
-        b=CwEUYTOmSUBXgCsg3mYwTIIgCdg05HTnnQL2fCs5MBT3RKP8AwiaFZ5sNLrfzav40q
-         eVUu9kOeot7bwJ7GNVxqpX4Nth3fcuM9cytM7ea629NX8VjvMSaxDYq0gBF25wOn8CQF
-         0RySLVFl7g2g6seyOS0pem0XG1trr66o88NPt57ak4sCNFf99pRm35eaNr8neSOq+tFB
-         343Hm0CeYSEQHUgtFOKALjYA2fhGfItctrW/iu2YtQmOimO0cGLzLwTuSAxys/zBiSvb
-         n4c7CraPsNJs6VmZCc8gvTF5C44ThtXJ5xKTUXk/7VJS579msALTWdbwOI+NMi6IC/vl
-         gGTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZXPQTK8ugJajyO2tRjyDW021M1AqDliF0ZB3j0np1Lr3RWZhAK04LnlAvOg5RO+b+lVVUYlDenHIg4Y7Y3Ykz1tdlfqHF6EOucPPdB/i2rfMFDPo/DJV5w4EVBpVx48MwIfQy24sHNrvNvwgKkBqRnfyw6+hptnRYh2vSf2KYS9kQOupv0UjB/qGrVB+ajRpR1NsOBxxKY8nYrESyBVO625P+xPSRL2I9sS2tDc71ajErHdruzLysJ1K9tCS23nCgKxcvVA/oOTNlua7eMYzNEuTohBSk6nZz9oyygvFXJf1/RexKDZvwuqGYb92zTYkMEfKGOZVPDdMB6nS2wJiByFTfPXxzZn7GGjrhsY3CVuaMP9xM0TU=
-X-Gm-Message-State: AOJu0Yygj3rR9vfvqVOM/WbydP3tii9a5c8MpHdYL2DhCsR/9YcpjLFu
-	KmWfN36gEdp80ziyDNvxbQJrRvHrPUfhLfpzHmEOUD19cKIKeG4G98vl0S/vlZg=
-X-Google-Smtp-Source: AGHT+IGh+8mu6y5ErUruD07FecBSGrLFypzV2tzoJvfI8kksdhp9gQwcjaZ4TqEXL/3+PJzmy3leAQ==
-X-Received: by 2002:a81:a10f:0:b0:611:191e:1de8 with SMTP id y15-20020a81a10f000000b00611191e1de8mr11665488ywg.18.1712670995713;
-        Tue, 09 Apr 2024 06:56:35 -0700 (PDT)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id dg7-20020a05690c0fc700b006144d568e98sm2171547ywb.28.2024.04.09.06.56.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Apr 2024 06:56:35 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dcbef31a9dbso3624658276.1;
-        Tue, 09 Apr 2024 06:56:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX/48xkhiI5juYIGQ3ENYufchuOd0c2yhFKM/vDJdZH3sEqXZW6oe7juLSOt3fVSQxDCUpXNfCWEfKXphCFwTd2jjphx3LAUnXzf8HlvM4EJh240wzsz9b1JSmjAn7TCcyySnYRcxF8kMkPfrHcR/RSFk0h1gabPD+t/m3NNz361CvjWyyQVeq/VFaDnID303H06hAA/OtE2lGC80aNvYhjnVOZqmxgMwA2ly+URGBoB6eHHLcY3rxoQsj9bed73MoIdoIoAYvD1jIJ5Ec52w2P5V2ExKeyqY6opFTL7lRv2Vdoo3+zpVNysTM3zH1eVLMU9RDDfW5P3j1on91F7d1S+e2xZTnGhKRuplXyO/NsWr6xB9yXGFM=
-X-Received: by 2002:a5b:40c:0:b0:dc6:b779:7887 with SMTP id
- m12-20020a5b040c000000b00dc6b7797887mr8362504ybp.20.1712670994533; Tue, 09
- Apr 2024 06:56:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1712675375; x=1713280175;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hV8Eh9BHD0D9CZjicZrX01zekb30l/NMwat8BaMKtgA=;
+        b=Xn+2F1JzGEhU2OZQ++nGIiro3J3NpmdnEmFtWcfSP14IAvAjGGKigK0b7lmZKUyEZH
+         QLH71r6ghrLYQrL3rmICqOSP4x5oTLGgkr9RWG4tiN0/F/R4tfFjIedR6P9y3pfmnTjF
+         rSrPEXhUNAzYJ0z3nboSTswBU/IahdQ4nFH0ZoRuFYSnSXt8HkCv52uVvlt1hj2GQuHg
+         TShvFXLKqFePrhiRT9Z02L/5E46ERho7iNm0zDVFtglmKwOsnKDI2OyorlA+BKWQB/9t
+         4CDlCINmhGsgm5wfa5Fv9hVlekkyn9sejUxfqbEmRi7kxSoEX7wC3yn9CCZFU6TzAaue
+         Jbqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFU2qCjXaeo4TLVyGedjiQfzkX7hGG0emRJHVOwX+CLv2lEx3rAT0JfgykSv5mUG8giDCgi0AH2ZtdWehi7g8M6935EeiLkx77Rn21D9CcWam1lg6EV9Co4ZMStkyvUEsAPwLCID2SbBDLQILjnbFa99BEjbJRhbVGT48RyKuKTk0cXw==
+X-Gm-Message-State: AOJu0YxUpQqQHkAG/ZdvWE0OL86tcdwYxLzM3G3qKffd9n1DUzYi3ROw
+	XXN7eSCmKT1mLf88Wcl3Euv1MEGKO3OIjA4I3YMrz40mMOKFDIQt
+X-Google-Smtp-Source: AGHT+IHAepUDHftdQEpWcio4JYkLD84VF76cy3I5PbYSo3n5J26JdZX15C/h0yZQHJwB34IjbU3HYw==
+X-Received: by 2002:a05:600c:3542:b0:416:81b6:7590 with SMTP id i2-20020a05600c354200b0041681b67590mr3631710wmq.11.1712675374762;
+        Tue, 09 Apr 2024 08:09:34 -0700 (PDT)
+Received: from giga-mm-1.home ([2a02:1210:8690:9300:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id ju8-20020a05600c56c800b00416253a0dbdsm20692015wmb.36.2024.04.09.08.09.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Apr 2024 08:09:34 -0700 (PDT)
+Message-ID: <73fd3f42c2d63467bb1b04888659e829f9e54f52.camel@gmail.com>
+Subject: Re: [PATCH 0/4] DONOTMERGE: ep93xx-clk from ep93xx device tree
+ conversion
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Nikita Shubin <nikita.shubin@maquefel.me>, Conor Dooley
+ <conor@kernel.org>,  Arnd Bergmann <arnd@arndb.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Date: Tue, 09 Apr 2024 17:09:35 +0200
+In-Reply-To: <42f9da044fdc11e2495f6845c061afefa796f7cf.camel@maquefel.me>
+References: <20240408-ep93xx-clk-v1-0-1d0f4c324647@maquefel.me>
+	 <20240408-friction-mosaic-ba48bc27788d@spud>
+	 <42f9da044fdc11e2495f6845c061afefa796f7cf.camel@maquefel.me>
+Autocrypt: addr=alexander.sverdlin@gmail.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1712207606.git.ysato@users.sourceforge.jp> <4a9b59733c7a8e7d042f3987ca6bf601eea5b30d.1712207606.git.ysato@users.sourceforge.jp>
-In-Reply-To: <4a9b59733c7a8e7d042f3987ca6bf601eea5b30d.1712207606.git.ysato@users.sourceforge.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 9 Apr 2024 15:56:22 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUVEj-TEV5iYjknTKOJ0_MBO8sMzc6-7NSAL-XoxLGn9g@mail.gmail.com>
-Message-ID: <CAMuHMdUVEj-TEV5iYjknTKOJ0_MBO8sMzc6-7NSAL-XoxLGn9g@mail.gmail.com>
-Subject: Re: [RESEND v7 08/37] clocksource: sh_tmu: CLOCKSOURCE support.
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
-	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>, 
-	Heiko Stuebner <heiko.stuebner@cherry.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Chris Morgan <macromorgan@hotmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Guo Ren <guoren@kernel.org>, 
-	Azeem Shaikh <azeemshaikh38@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Herve Codina <herve.codina@bootlin.com>, 
-	Manikanta Guntupalli <manikanta.guntupalli@amd.com>, Anup Patel <apatel@ventanamicro.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Sato-san,
+Hi Nikita,
 
-On Thu, Apr 4, 2024 at 7:15=E2=80=AFAM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> Allows initialization as CLOCKSOURCE.
->
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+On Tue, 2024-04-09 at 14:48 +0300, Nikita Shubin wrote:
+> On Mon, 2024-04-08 at 18:03 +0100, Conor Dooley wrote:
+> > On Mon, Apr 08, 2024 at 11:09:52AM +0300, Nikita Shubin via B4 Relay
+> > wrote:
+> > > The goal is to recieve ACKs.
+> >=20
+> > I dont see a maintainers entry in -rc1 for the drivers/soc/cirrus
+> > portion. Who is gonna give you an Ack for that portion? If you
+> > intended
+> > maintaining that driver, should you not add a MAINTAINERS entry for
+> > it?
+>=20
+> drivers/soc/cirrus got it's ACK from ep93xx MAINTAINER - Alexander
+> Sverdlin.
+>=20
+> Arnd, Alexander - should we add it now ?
 
-Thanks for your patch!
+seems that we have couple of things to fix:
 
-> --- a/drivers/clocksource/sh_tmu.c
-> +++ b/drivers/clocksource/sh_tmu.c
+WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+#51:=20
+new file mode 100644
 
-> @@ -495,7 +514,12 @@ static int sh_tmu_map_memory(struct sh_tmu_device *t=
-mu)
->
->  static int sh_tmu_parse_dt(struct sh_tmu_device *tmu)
->  {
-> -       struct device_node *np =3D tmu->pdev->dev.of_node;
-> +       struct device_node *np;
+WARNING: please write a help paragraph that fully describes the config symb=
+ol
+#60: FILE: drivers/soc/cirrus/Kconfig:5:
++config EP93XX_SOC
++	bool "Cirrus EP93xx chips SoC"
++	select SOC_BUS
++	select AUXILIARY_BUS
++	default y if !EP93XX_SOC_COMMON
++	help
++	  Support SoC for Cirrus EP93xx chips.
++
 
-Technically, np might be used uninitialized.
+total: 0 errors, 2 warnings, 269 lines checked
 
-> +
-> +       if (tmu->pdev)
-> +               np =3D tmu->pdev->dev.of_node;
+--=20
+Alexander Sverdlin.
 
-If you would set up tmu->np in sh_tmu_setup_pdev()...
-
-> +       if (tmu->np)
-> +               np =3D tmu->np;
-
-... you could just assign np =3D tmu->np unconditionally.
-
->
->         tmu->model =3D SH_TMU;
->         tmu->num_channels =3D 3;
-
-> @@ -665,6 +734,7 @@ static void __exit sh_tmu_exit(void)
->         platform_driver_unregister(&sh_tmu_device_driver);
->  }
->
-> +TIMER_OF_DECLARE(sh_tmu, "renesas,tmu", sh_tmu_of_register);
-
-As there are now two entry points, the device is actually probed twice:
-once from TIMER_OF_DECLARE/sh_tmu_of_register(), and a second
-time from platform_driver/sh_tmu_probe().
-
-E.g. on Armadillo-800-EVA with R-Mobile A1 (booting Linux on ARM
-(not SH), and using TMU as the main clock source):
-
-    timer@fff80000 ch0: used for clock events
-    timer@fff80000 ch0: used for periodic clock events
-    timer@fff80000 ch1: used as clock source
-    clocksource: timer@fff80000: mask: 0xffffffff max_cycles:
-0xffffffff, max_idle_ns: 154445288668 ns
-    ...
-    fff80000.timer ch0: used for clock events
-    genirq: Flags mismatch irq 16. 00015a04 (fff80000.timer) vs.
-00015a04 (timer@fff80000)
-    fff80000.timer ch0: failed to request irq 16
-    fff80000.timer ch1: used as clock source
-    clocksource: fff80000.timer: mask: 0xffffffff max_cycles:
-0xffffffff, max_idle_ns: 154445288668 ns
-
-After this, the timer seems to be stuck, and the boot is blocked.
-
-On Marzen with R-Car H1 (booting Linux on ARM (not SH), and using
-arm_global_timer as the main clock source), I also see the double
-timer probe, but no such lock-up.  I expect you to see the double
-timer probe on SH775x, too?
-
-The double probe can be fixed by adding a call to
-of_node_set_flag(np, OF_POPULATED) at the end of sh_tmu_of_register()
-in case of success, cfr. [1].
-
-I haven't found the cause of the stuck timer on R-Mobile A1 yet;
-both the TMU clock and the A4R power domain seem to be activated...
-
->  #ifdef CONFIG_SUPERH
->  sh_early_platform_init("earlytimer", &sh_tmu_device_driver);
->  #endif
-
-[1] "[PATCH] clocksource/drivers/renesas-ostm: Avoid reprobe after
-successful early probe"
-    https://lore.kernel.org/all/bd027379713cbaafa21ffe9e848ebb7f475ca0e7.17=
-10930542.git.geert+renesas@glider.be/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
