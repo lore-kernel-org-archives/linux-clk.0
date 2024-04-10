@@ -1,57 +1,57 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ED115B154
-	for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 12:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8443015B99B
+	for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 12:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712752035; cv=none; b=AY4xIFsKq3gkBazD3GC/3WT1VuUWDkFj7W0Qx03ypAryqYfCHjp4lS3g9D7lBF4m2cPqJi2U7kzn4ZsUBeUd8QD71VRsGy0edl9Bs6eW1lvO5x66H/6HD1tFbf5I+Q7liMmFdeLOxWqUN+TlHhfs/SHvnOfjBQI9XdQPFPfCAxA=
+	t=1712752037; cv=none; b=iGN/NMU6z+Cha9/TFYU6Lr88N5ff97EHphMXITOep1epNnkGrR/j0u3tnzvZEZHLNLLpwZvM7xhddKisA5PqGd9BeQmQEskHQMy9hTr7xJ47iWMhHC3/s/2KZKO2kijuscg4d+MsO5gOpmtAQ453UorxOMQ8pBfDBs9RQ5L55U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712752035; c=relaxed/simple;
-	bh=kt0T6oAjZ1lqWaIaUu8Sr09sefIFHdT0FJpsK8q8nM8=;
+	s=arc-20240116; t=1712752037; c=relaxed/simple;
+	bh=j5NkVwThTYOctnMRuOhsIyhDYIZOpNgQG2UaZ+Y5cEM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d2HTRfksQbpgq/qqhIb+Rvya2EuKkOaJw5dVLbUE0a2/9aKp1t1+S9hI0TMjuYRGBgxGmbNSmqumCnE0/yx17C69wMLsfjvrqMi6oZQ2fnePJZtxkZcLJZYQMuxSOIjqxN3NEVCy7LFuOagpUWYO63iG0lPRMv/2UQSqG3ZcF8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=P0Q3SB/7; arc=none smtp.client-ip=209.85.167.45
+	 MIME-Version; b=IR4Zm6hg1ySoWGG1HprgYG8u3eaPdK5qTlzKTpM5svCOzBqn4tbkFnFO92e+ykMr8NUmURMlmjkyYSPwyUSazyXaFohT19p3/jRUXMLjodMZ7jddJUXKrGgESchTvwTkpzNSYI34BEcqPoKE/9TbE6mXUJWmg2wbyf+zFf1VF8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Z+cKRR5x; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="P0Q3SB/7"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-516cdb21b34so8603155e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 05:27:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Z+cKRR5x"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-416c4767b07so5585135e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 05:27:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1712752031; x=1713356831; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1712752033; x=1713356833; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TIDge7spa3NjlHFsGDVwHhao1cU+1T3vrFbJtXNX3p4=;
-        b=P0Q3SB/74qhrxcW5rxZ2s59AdCM4X1hKKYU7Ebr2pM7wjPrrUh28mifYW468i7n/R+
-         DoWF2+x+9D8sAmEix2SMFbAex+kGgcDoTW+W0Kiu+9WjqwYGgZ83fTDnBrHWDKvvTrAE
-         3mdVA0GOxXrS7BinW4lCR/VAEV7eF1DAPTHnpW8VItdiKVHU70lx1iTyq5JedQDjiBUu
-         Xt7fpmaS8QLI5odFyIy/+qqpo2DqP3Aee4FFPTEh4/niNAjqa7BFHLtwDPXCKDTtRdwJ
-         VUuPebgVK094VSEsHnwCWWXHKDypcv3damhTNl2EkZ29lAMIYVf71pOGVBnpDJFWanfb
-         7AMA==
+        bh=SHndeNmrhAYSgtndICjc+xdLbeIt1RU9dM0BrLcclVg=;
+        b=Z+cKRR5x5FdJmagYDDg8UJuWPTZoyWp6Re3n/JPppetuotCnbmCpMkYo2cDbFn1rwQ
+         6yXhIwVGkE8XtLk6of7oRSj6vWBCmi2ls7dA4Gp7417/28cezJOHUBcs8GDCekVrLFmo
+         B7TlLYBemLTNkpCxLOMYnufYuuGu9m6xdUcjoZxCtVV1Zbh6uzRvwS2JHkfI1tWzm50o
+         auSo8kYjL+RSMWMXlu9SJeBTwY8cPAOx+PTEi462bOC8CVGtZNAyqyORmaNC1S1gNBEI
+         Jz9gHdocSB/X91mTPg8j/jdgLay8PDrWGJnngq+N6gBxNgvsIarJg9p0cLVIosDYMUOS
+         spfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712752031; x=1713356831;
+        d=1e100.net; s=20230601; t=1712752033; x=1713356833;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TIDge7spa3NjlHFsGDVwHhao1cU+1T3vrFbJtXNX3p4=;
-        b=k6lX3SOIdDkPc8hxkotp50Q2hWWW3qfVYUXq7yYAGBWdipvOM4hNKv/ml/x392uWxH
-         0bZB5RSRiK/E+w/UszRYODn5R9Xvdy26CCKCNzpgL4SX8v5iaTlmUystJeoaAPpCaTWn
-         2beOrKL9cpqY6USBR7s2XurKZXzu5av/L7TAbbJN1qitrnPXi/54Gv0LUTkzeRkIhgdS
-         9okPRUGL8sxhA3qM7ukontDNQlF3fMezPTsomL6Y9Y4FTa4P7AGLIPXK4pkAAJrpXUXC
-         az6ixcMKSg+054L86H34zSN4VaxwzoRzUHJiNxkTCy6MiNFVDRCAC4iMogrkUt3HxMAt
-         2TKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVT6SfWIRkbHQvo5YDExvtkAxw8LgCVVM57gkJ7hy2W6shGm+NX9Br6VMdGAiUj8MLy+TZ3VKtXaDY7Q2pX0ldSPWWKuS7jveQV
-X-Gm-Message-State: AOJu0YzttJPR5TnQcF8mC413kg6gTWlvs3aIz4lAnjxebw4egbVsWvE4
-	8c2DhJjudj/JHssjmXgTCmC3+f1A2kwT0XE0lBh7o4FdsEKnFz7zlZLdmp3SsMA=
-X-Google-Smtp-Source: AGHT+IG7C1rxroDAU6W0bovwLXxkh24mVrENeNOi1KyVg7KJzkIr82Il2WrkW+2XbX41JWaolFOEXg==
-X-Received: by 2002:a05:6512:3d01:b0:516:d1bd:7743 with SMTP id d1-20020a0565123d0100b00516d1bd7743mr1970235lfv.64.1712752030947;
-        Wed, 10 Apr 2024 05:27:10 -0700 (PDT)
+        bh=SHndeNmrhAYSgtndICjc+xdLbeIt1RU9dM0BrLcclVg=;
+        b=M6eH3ym7c/2zNHfOut3KLTuJQvESduCwxweyzIVOUgydunz7UgwYiAfGMhaD96Ey9A
+         f/MdWKE72Z9KT9cLi4HlIeYHIkGjaQW8FNgRJOlQpvVlPKzzhetTLwG7FaC5gTsqmBRK
+         nGvuIwhu0UyAFBxGpxyAElYCyMf6ohY3+VM5MnftXnn4MNLw4i0tDKY4xABnrOopxpHc
+         +SHN/67VNjzOyGYgzvUOcEWYUHBr1xL0cbVE+egHrT5xAqwqCD2F1IL8aZi9Or5oz1KJ
+         /6pQQml3qyOQKanTfkqEoiPiUohjXW2y8cOo+t5cWQTtRiJz6Hdri/cH0USRbwtIXS9F
+         DPUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWL/YIPGTIyValM9VbOlmtUoUuZPCDWF6wOUiGCRUck+owKCFIRF1wNuYMQoV/qftKbPINjB0KbhVS9kuQt3ZLfH+0sL+iO3iBA
+X-Gm-Message-State: AOJu0YwLnkjXe4T5W32sFZzRRUuVPURiI59VfPrvLDaH6X6OIN/diE6j
+	PT8hwLe/WEjYFxbtjEmzYvIrDruXe/LSgQ/80WuXesUoxEnJX9EJSwv6/KMVThM=
+X-Google-Smtp-Source: AGHT+IGXOBd33oqYWjMMGoLNAXTxZZ+JRVqjdww4qlZJX6f7d3dbGtXMBqHbp2ACuWM4VWRVrEHzDw==
+X-Received: by 2002:a05:600c:5012:b0:415:540e:760d with SMTP id n18-20020a05600c501200b00415540e760dmr1818730wmr.5.1712752032768;
+        Wed, 10 Apr 2024 05:27:12 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.8])
-        by smtp.gmail.com with ESMTPSA id m2-20020a05600c3b0200b004171f151a5csm1679446wms.16.2024.04.10.05.27.09
+        by smtp.gmail.com with ESMTPSA id m2-20020a05600c3b0200b004171f151a5csm1679446wms.16.2024.04.10.05.27.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Apr 2024 05:27:10 -0700 (PDT)
+        Wed, 10 Apr 2024 05:27:12 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -67,9 +67,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 1/9] dt-bindings: clock: r9a07g043-cpg: Add power domain IDs
-Date: Wed, 10 Apr 2024 15:26:49 +0300
-Message-Id: <20240410122657.2051132-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 2/9] dt-bindings: clock: r9a07g044-cpg: Add power domain IDs
+Date: Wed, 10 Apr 2024 15:26:50 +0300
+Message-Id: <20240410122657.2051132-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com>
@@ -83,10 +83,10 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add power domain IDs for RZ/G2UL (R9A07G043) SoC.
+Add power domain IDs for RZ/G2L (R9A07G044) SoC.
 
-Acked-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
@@ -94,74 +94,78 @@ Changes in v3:
 - collected tags
 
 Changes in v2:
-- added "RZ/G2UL Only" comments to some defines
-- added RZ/Five specific defines
+- collected tag
 
- include/dt-bindings/clock/r9a07g043-cpg.h | 52 +++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+ include/dt-bindings/clock/r9a07g044-cpg.h | 58 +++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff --git a/include/dt-bindings/clock/r9a07g043-cpg.h b/include/dt-bindings/clock/r9a07g043-cpg.h
-index a64139fec815..131993343777 100644
---- a/include/dt-bindings/clock/r9a07g043-cpg.h
-+++ b/include/dt-bindings/clock/r9a07g043-cpg.h
-@@ -200,5 +200,57 @@
- #define R9A07G043_AX45MP_CORE0_RESETN	78	/* RZ/Five Only */
- #define R9A07G043_IAX45_RESETN		79	/* RZ/Five Only */
+diff --git a/include/dt-bindings/clock/r9a07g044-cpg.h b/include/dt-bindings/clock/r9a07g044-cpg.h
+index 0bb17ff1a01a..e209f96f92b7 100644
+--- a/include/dt-bindings/clock/r9a07g044-cpg.h
++++ b/include/dt-bindings/clock/r9a07g044-cpg.h
+@@ -217,4 +217,62 @@
+ #define R9A07G044_ADC_ADRST_N		82
+ #define R9A07G044_TSU_PRESETN		83
  
 +/* Power domain IDs. */
-+#define R9A07G043_PD_ALWAYS_ON		0
-+#define R9A07G043_PD_GIC		1	/* RZ/G2UL Only */
-+#define R9A07G043_PD_IA55		2	/* RZ/G2UL Only */
-+#define R9A07G043_PD_MHU		3	/* RZ/G2UL Only */
-+#define R9A07G043_PD_CORESIGHT		4	/* RZ/G2UL Only */
-+#define R9A07G043_PD_SYC		5	/* RZ/G2UL Only */
-+#define R9A07G043_PD_DMAC		6
-+#define R9A07G043_PD_GTM0		7
-+#define R9A07G043_PD_GTM1		8
-+#define R9A07G043_PD_GTM2		9
-+#define R9A07G043_PD_MTU		10
-+#define R9A07G043_PD_POE3		11
-+#define R9A07G043_PD_WDT0		12
-+#define R9A07G043_PD_SPI		13
-+#define R9A07G043_PD_SDHI0		14
-+#define R9A07G043_PD_SDHI1		15
-+#define R9A07G043_PD_ISU		16	/* RZ/G2UL Only */
-+#define R9A07G043_PD_CRU		17	/* RZ/G2UL Only */
-+#define R9A07G043_PD_LCDC		18	/* RZ/G2UL Only */
-+#define R9A07G043_PD_SSI0		19
-+#define R9A07G043_PD_SSI1		20
-+#define R9A07G043_PD_SSI2		21
-+#define R9A07G043_PD_SSI3		22
-+#define R9A07G043_PD_SRC		23
-+#define R9A07G043_PD_USB0		24
-+#define R9A07G043_PD_USB1		25
-+#define R9A07G043_PD_USB_PHY		26
-+#define R9A07G043_PD_ETHER0		27
-+#define R9A07G043_PD_ETHER1		28
-+#define R9A07G043_PD_I2C0		29
-+#define R9A07G043_PD_I2C1		30
-+#define R9A07G043_PD_I2C2		31
-+#define R9A07G043_PD_I2C3		32
-+#define R9A07G043_PD_SCIF0		33
-+#define R9A07G043_PD_SCIF1		34
-+#define R9A07G043_PD_SCIF2		35
-+#define R9A07G043_PD_SCIF3		36
-+#define R9A07G043_PD_SCIF4		37
-+#define R9A07G043_PD_SCI0		38
-+#define R9A07G043_PD_SCI1		39
-+#define R9A07G043_PD_IRDA		40
-+#define R9A07G043_PD_RSPI0		41
-+#define R9A07G043_PD_RSPI1		42
-+#define R9A07G043_PD_RSPI2		43
-+#define R9A07G043_PD_CANFD		44
-+#define R9A07G043_PD_ADC		45
-+#define R9A07G043_PD_TSU		46
-+#define R9A07G043_PD_PLIC		47	/* RZ/Five Only */
-+#define R9A07G043_PD_IAX45		48	/* RZ/Five Only */
-+#define R9A07G043_PD_NCEPLDM		49	/* RZ/Five Only */
-+#define R9A07G043_PD_NCEPLMT		50	/* RZ/Five Only */
- 
- #endif /* __DT_BINDINGS_CLOCK_R9A07G043_CPG_H__ */
++#define R9A07G044_PD_ALWAYS_ON		0
++#define R9A07G044_PD_GIC		1
++#define R9A07G044_PD_IA55		2
++#define R9A07G044_PD_MHU		3
++#define R9A07G044_PD_CORESIGHT		4
++#define R9A07G044_PD_SYC		5
++#define R9A07G044_PD_DMAC		6
++#define R9A07G044_PD_GTM0		7
++#define R9A07G044_PD_GTM1		8
++#define R9A07G044_PD_GTM2		9
++#define R9A07G044_PD_MTU		10
++#define R9A07G044_PD_POE3		11
++#define R9A07G044_PD_GPT		12
++#define R9A07G044_PD_POEGA		13
++#define R9A07G044_PD_POEGB		14
++#define R9A07G044_PD_POEGC		15
++#define R9A07G044_PD_POEGD		16
++#define R9A07G044_PD_WDT0		17
++#define R9A07G044_PD_WDT1		18
++#define R9A07G044_PD_SPI		19
++#define R9A07G044_PD_SDHI0		20
++#define R9A07G044_PD_SDHI1		21
++#define R9A07G044_PD_3DGE		22
++#define R9A07G044_PD_ISU		23
++#define R9A07G044_PD_VCPL4		24
++#define R9A07G044_PD_CRU		25
++#define R9A07G044_PD_MIPI_DSI		26
++#define R9A07G044_PD_LCDC		27
++#define R9A07G044_PD_SSI0		28
++#define R9A07G044_PD_SSI1		29
++#define R9A07G044_PD_SSI2		30
++#define R9A07G044_PD_SSI3		31
++#define R9A07G044_PD_SRC		32
++#define R9A07G044_PD_USB0		33
++#define R9A07G044_PD_USB1		34
++#define R9A07G044_PD_USB_PHY		35
++#define R9A07G044_PD_ETHER0		36
++#define R9A07G044_PD_ETHER1		37
++#define R9A07G044_PD_I2C0		38
++#define R9A07G044_PD_I2C1		39
++#define R9A07G044_PD_I2C2		40
++#define R9A07G044_PD_I2C3		41
++#define R9A07G044_PD_SCIF0		42
++#define R9A07G044_PD_SCIF1		43
++#define R9A07G044_PD_SCIF2		44
++#define R9A07G044_PD_SCIF3		45
++#define R9A07G044_PD_SCIF4		46
++#define R9A07G044_PD_SCI0		47
++#define R9A07G044_PD_SCI1		48
++#define R9A07G044_PD_IRDA		49
++#define R9A07G044_PD_RSPI0		50
++#define R9A07G044_PD_RSPI1		51
++#define R9A07G044_PD_RSPI2		52
++#define R9A07G044_PD_CANFD		53
++#define R9A07G044_PD_ADC		54
++#define R9A07G044_PD_TSU		55
++
+ #endif /* __DT_BINDINGS_CLOCK_R9A07G044_CPG_H__ */
 -- 
 2.39.2
 
