@@ -1,106 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E41A16F0DF;
-	Wed, 10 Apr 2024 18:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D66C134CC2;
+	Wed, 10 Apr 2024 19:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712775142; cv=none; b=sLhWb8bu+Xr78gnHNTKCsJJnX3WxaL4QfEt0UVeySYPu+9qGdAQDLNKYMNYliAjFgcFxp8N9G6q7/eIc1NCeq+TCj3atLfBS6MGpGU3uJWzN3R3p+nKeE7uj0Aylmcn2YqKF1ExqTD/CVg0hi1tThbqN15InqYCss3geYaG4f3M=
+	t=1712775699; cv=none; b=FfkcsW7zplH0pAwGjwL4gMyt5CJ1ZhryJJAOhBxEvCp572N4duvdt4/cPRtR82LG0Xjq83ZSWfQ3JlFwk4tyuNktNsgd5dN9FADLeg7tdMPdIJwgoi7Kg4JvOfppaDXAjbo4lfTvCEceJCNRSP5C81aLuXJ7W6QB1MFxZAvLk1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712775142; c=relaxed/simple;
-	bh=z5JVLaH+fp0+7NF0boo5IQT2gY7gn3yvbn52zrvcvJ0=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=o90WXOtYo2qlap/p+3CUY6xbgD8+uB+483Sgrdn8VEy+UOV/Yco3t4pnczQK3acsz0wtOxPiPe9U2333UhQIGIJEaP6THoFpD3+LrWAc/SMpt1zNQWVIe9GUy/mAXBoKF1VtPMez0NVgtQo+77w1ZIR7om0cqsAh4jPNGnpV3+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6OuxsVT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712775699; c=relaxed/simple;
+	bh=3Yq8cuuw7WI6+8aRN0KBuQMrYv4dTTJGQ1IaeMbXNFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xg/CXkq1jRfHRJYo5uvQ0tCBGJWw9eBkvX2YjTg6qhaGVbg+5eNtwbeN6WoA4dt5FqGDrDBp2CGj7+6VdaUyibGLskPhQtJ2grTRGyhaPU1Bq7qD5Y5+S4gbMaV6RwElJbYmiOnRJIo/Hoer25Bu9NWc/TnRdpf+JQBvgU7foKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ZaQRep0W; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6OuxsVT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F86AC433F1;
-	Wed, 10 Apr 2024 18:52:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712775141;
-	bh=z5JVLaH+fp0+7NF0boo5IQT2gY7gn3yvbn52zrvcvJ0=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=I6OuxsVT4AkYCNqtMs94w+YdgDTmc7sZi1OxRFxEEY7TdKkHVJLcff0Ns9HQaWzZJ
-	 CJzELzUg6LhW/Zb2WUONLbjORl/K/NFFYoiLPrAM9BlAsKDbk2d0opNG3Oe/mBsz/f
-	 LSIY661NBeHfccgnhAeH1yRgTFxTnGCfX5FWEGYNzFHgzKfk7qsgH8sc5xD/S3x/DU
-	 svDLtE/k8eLctNrc8VUwJn+aoiuNdhTEFhChq/a7rgOmJGEr6sHa+OUHyvvjVUkKaR
-	 mxiam+sNWKUBU7VM5dtuK6YPrlAybjIy+Uubf/kxua+j/QwydgWgS+mGV46n6F7ekT
-	 1tGYgjy5Mebig==
-Date: Wed, 10 Apr 2024 13:52:20 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ZaQRep0W"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1e220e40998so45945905ad.1;
+        Wed, 10 Apr 2024 12:01:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1712775697; x=1713380497; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FQGIuC9fhgYKv0jGpAIt5La8/Y4BHfZvvmnOc5ODMp8=;
+        b=ZaQRep0WcKL3iWkLZNPxYRhx3Z0Bgj3j0GcsaK/e9KFVePRuNsMoHtKHKTOu5wyIQ5
+         vO3GiVsXV+EksVtj+ItjGy5owApinbW12N/9Kj98taHtZxtNdPRDodCBCXPkpD02JpwM
+         j+c7cTMRUXsbnuQSKorSz/Lifu5nEDyy9+QQ3lzo/wSOIFPdtquMQHDTI9XFsdknRaCJ
+         6rMIvk/qhcQLSlZdU4Yg4sOS976gsBo8cDjtCrqiL8QjEyuR/q5Cyj8/KA2XblIv+pJN
+         vFj0MF2mX9gOJSuhiuIpsThxTylMfsIlt3Pc47DT2yagUEbAlFufHCP6XD/gHkrXbb+1
+         MYdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712775697; x=1713380497;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FQGIuC9fhgYKv0jGpAIt5La8/Y4BHfZvvmnOc5ODMp8=;
+        b=LjB9RahNsDEbqwoDqLRFZBV8T6cuc5M57bFapA7lG17xhpABWHSqCs2CJ5C6rHisMg
+         +Xvs3b3dJ+iIezU4B8a2ESqOzyoG081H0bFVCSQO0NGIkg8YKDNSI8qT8jhA+dEAN7Hu
+         ijkr1N/5tOgujYsC5uTMUCIaWxqVNjXYLBy2BmPw2/PNjMClGXTjaj2pR5SdANMvesJh
+         Et3DKfooI6G5DW+K6/6lPaBDm8Hs3dN0YsF1Xo8SC9O+28TfDL9HuBSwqzD5vXY0epUM
+         ewJZRHCOZgh/1RPNbSw2regD0HrFn6BAt4KeeIaT9altpjAqjTA/RyaCtbVy8zfEtamm
+         qBXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbHDcFi9iG40kFCWbRxCQxF6bnWFOIQVdLEoK4i7AAdHWwEkeGR97ujgZUY1ozd169umy3ztYgOm7yWuWkJn89gBQY27zpPOXMjseDTuftHeGigI24cctOXZQbbtT7/kKHAlxl+3nC
+X-Gm-Message-State: AOJu0YxsNPwQpI0B/+ZmGIFihISmg1GzbSmD7plEViBU6fviCpRp9vU9
+	2ZkWj0YKTZ0+0nCuiLNKsIv56uon9tLDuSkZiKwjVxZgMMcRtfdHGXTQw3m746RM+r7Si389RrL
+	sW27UpAC1moI8jNe1xWHwTV1Y4OUDgYDLhD8=
+X-Google-Smtp-Source: AGHT+IEROyQwnsZ2mJRiQBK9B8AlbdE6ckE2JKAZuRGsMr3HiSh0XYkFX2esld+9JLkEVgvtnIu/uwZKqkAMsWTRoa8=
+X-Received: by 2002:a17:903:1cd:b0:1e0:b6d5:bed with SMTP id
+ e13-20020a17090301cd00b001e0b6d50bedmr3490508plh.5.1712775696824; Wed, 10 Apr
+ 2024 12:01:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rob Herring <robh@kernel.org>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Cc: Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- linux-gpio@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
- linux-clk@vger.kernel.org, Gregory CLEMENT <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-In-Reply-To: <20240410-mbly-olb-v1-1-335e496d7be3@bootlin.com>
-References: <20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com>
- <20240410-mbly-olb-v1-1-335e496d7be3@bootlin.com>
-Message-Id: <171277513936.883835.18187305941709008733.robh@kernel.org>
-Subject: Re: [PATCH 01/11] dt-bindings: soc: mobileye: add EyeQ5 OLB system
- controller
+References: <20240410155406.224128-1-krzk@kernel.org>
+In-Reply-To: <20240410155406.224128-1-krzk@kernel.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Wed, 10 Apr 2024 21:01:25 +0200
+Message-ID: <CAFBinCDHp0r7jje9pS4u+2OgiC2LfhHBA1T6OveZhiuKX=jomg@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: s4: fix module autoloading
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On Wed, 10 Apr 2024 19:12:30 +0200, Théo Lebrun wrote:
-> Add documentation to describe the "Other Logic Block" syscon.
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> ---
->  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 125 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 126 insertions(+)
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: clock-controller@d2003040:compatible:0: 'mobileye,eyeq5-clk' was expected
-	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: clock-controller@d2003040:reg: [[64, 56]] is too short
-	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: clock-controller@d2003040: 'reg-names' is a required property
-	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: reset-controller@d2003000:compatible:0: 'mobileye,eyeq5-reset' was expected
-	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: reset-controller@d2003000:reg: [[0, 60]] is too short
-	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: reset-controller@d2003000:#reset-cells:0:0: 2 was expected
-	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: reset-controller@d2003000: 'reg-names' is a required property
-	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
-Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: /example-1/soc/system-controller@d2003000/reset-controller@d2003000: failed to match any schema with compatible: ['mobileye,eyeq6h-acc-reset']
-Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: /example-1/soc/system-controller@d2003000/clock-controller@d2003040: failed to match any schema with compatible: ['mobileye,eyeq6h-acc-clk']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240410-mbly-olb-v1-1-335e496d7be3@bootlin.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+On Wed, Apr 10, 2024 at 5:54=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from of_device_id table.  Clocks are considered core
+> components, so usually they are built-in, however these can be built and
+> used as modules on some generic kernel.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
