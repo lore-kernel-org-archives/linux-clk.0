@@ -1,94 +1,106 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E81E18E0E
-	for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 18:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E41A16F0DF;
+	Wed, 10 Apr 2024 18:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712774807; cv=none; b=gNYsio4REGLa42JSFWbYAlLDGVoJhY17rKC9RxW97ubWc292GPH+kNzu+o0nI6hmgtErOpshTHxvYm5DwsbQv37NeXeFlKUgRRx5YVHjEONlEchhXnZVnpDAxzuVzWABY77iRkCf8qOx/oPk9ON29trLEYgFORgkR1rlD7Bb/Vk=
+	t=1712775142; cv=none; b=sLhWb8bu+Xr78gnHNTKCsJJnX3WxaL4QfEt0UVeySYPu+9qGdAQDLNKYMNYliAjFgcFxp8N9G6q7/eIc1NCeq+TCj3atLfBS6MGpGU3uJWzN3R3p+nKeE7uj0Aylmcn2YqKF1ExqTD/CVg0hi1tThbqN15InqYCss3geYaG4f3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712774807; c=relaxed/simple;
-	bh=yyomj+5gyVAB6ukI767aM4UFJKS30CPHFZBJcWgbwA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pTlyxQhGwpURhi3irocd3Kuy+1RBmKG65hFGn/xtWR0qHB0B8+EOvDy5Eyv52IewTDHr4plOZ58BuhR/CX4BxjHplsSHUMvzynuIw9yrRT/1PKur829RAEQ0pwYHb5kG3o79du9q+upNS3/dhYhTnjPYwM5l6B/FbX7JGF14hkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=by4VcRYc; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712775142; c=relaxed/simple;
+	bh=z5JVLaH+fp0+7NF0boo5IQT2gY7gn3yvbn52zrvcvJ0=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=o90WXOtYo2qlap/p+3CUY6xbgD8+uB+483Sgrdn8VEy+UOV/Yco3t4pnczQK3acsz0wtOxPiPe9U2333UhQIGIJEaP6THoFpD3+LrWAc/SMpt1zNQWVIe9GUy/mAXBoKF1VtPMez0NVgtQo+77w1ZIR7om0cqsAh4jPNGnpV3+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6OuxsVT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="by4VcRYc"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-516c403c2e4so137268e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 11:46:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712774803; x=1713379603; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lbDxWqylVcKb+Nlm2Jh9dcFKq/DXBpmqk7xdN+p8D68=;
-        b=by4VcRYceD64aWLLq/kz1zlhz0FTLBzX9xj5kkYkZM+m/cq7HiW62Pq1RuELbzlaAQ
-         B/Sol8JGl+3fmSUH0t5XW5rLb4ipJYlU0lZf2kJQ9LUX0b7105Evs3E0/V7wyyRQKJrB
-         aKADhqk4ubQ0JajAC9lS/vEIJzDsCkqATevN1fPzbbuAeCWvMby2Ec9HmLNW73KGb2PP
-         W0L67pufhE2V3sFJ9P/rXcv1aHZwg7r6XPfEBmW9qDZ+xabHxZWnkz+v/+BWgQl0bvsN
-         wpSw+NPKBlPbnxcAAa6Zs3kugoJaEAjzCsaTatfb8vJJM43cVLF66b3Amzo9Y/BwkEA1
-         VEFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712774803; x=1713379603;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lbDxWqylVcKb+Nlm2Jh9dcFKq/DXBpmqk7xdN+p8D68=;
-        b=kevx7If0GTKgxd92kAerDaDXv4xeTzGkgdLiXFDG7KD2MKVMFdIAIgHIeWCLteyAr2
-         tkeS1QbhDhQRvvNStdzkpQCpZTm0yXhqLKCDmJeHM9hC5ufnJbcnfMTJrKVbogBy2YdT
-         9KMrHw6oz9dvOO1MGT8GSw7c5fQw0fKw6Tp5bbkLE1bRrOxprc/o4yBFSGab7IE1Nd9/
-         ysvcMO+CN6DVsJph0tOEgdvFUuj/kUD7xE1wOplrgXyuRUGZsewx/SSque6Fz8hm3obP
-         rXUi94DsFy+J0BxtAy+uvxN2w6EUz4F4c+0wqpvw4bMyyQSvBPTJmtC69hmKxh5/dgvw
-         iJwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxD+acq/dwzrGc0zEHZXMKt1mxgnsKiJKHAyvwzN9Pc0KA0XIJsHxLbmcknPs5YKYCdbFEIzEp6uZCI/DwtmiOjWgMpzMpnRdn
-X-Gm-Message-State: AOJu0YwqOj2q2LgWBFOnrkLvaCmNHWxqBiMtjKMHDO/XwuZW55EJyeMe
-	LyZsUDLgE7ScunoWJy80zYkjKnd5RE6OL8GQ4h28Gxc1UJHX7Ob4b3KfRhYxpsw=
-X-Google-Smtp-Source: AGHT+IE4CkAmfxE9uQ52rkXlfmGsE+D/QsAF3GttB2Lu7gBut9KYS4JWZbMjp6GR4ySz7tht/yLckA==
-X-Received: by 2002:ac2:4256:0:b0:515:d3e4:4581 with SMTP id m22-20020ac24256000000b00515d3e44581mr133749lfl.30.1712774803201;
-        Wed, 10 Apr 2024 11:46:43 -0700 (PDT)
-Received: from [172.30.205.26] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id q22-20020a194316000000b00517626d22dcsm334073lfa.29.2024.04.10.11.46.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Apr 2024 11:46:42 -0700 (PDT)
-Message-ID: <ffe6393d-622a-4b1a-ad02-7a79bf6ee74e@linaro.org>
-Date: Wed, 10 Apr 2024 20:46:41 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6OuxsVT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F86AC433F1;
+	Wed, 10 Apr 2024 18:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712775141;
+	bh=z5JVLaH+fp0+7NF0boo5IQT2gY7gn3yvbn52zrvcvJ0=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=I6OuxsVT4AkYCNqtMs94w+YdgDTmc7sZi1OxRFxEEY7TdKkHVJLcff0Ns9HQaWzZJ
+	 CJzELzUg6LhW/Zb2WUONLbjORl/K/NFFYoiLPrAM9BlAsKDbk2d0opNG3Oe/mBsz/f
+	 LSIY661NBeHfccgnhAeH1yRgTFxTnGCfX5FWEGYNzFHgzKfk7qsgH8sc5xD/S3x/DU
+	 svDLtE/k8eLctNrc8VUwJn+aoiuNdhTEFhChq/a7rgOmJGEr6sHa+OUHyvvjVUkKaR
+	 mxiam+sNWKUBU7VM5dtuK6YPrlAybjIy+Uubf/kxua+j/QwydgWgS+mGV46n6F7ekT
+	 1tGYgjy5Mebig==
+Date: Wed, 10 Apr 2024 13:52:20 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] clk: qcom: dispcc: fix DisplayPort link clocks
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@somainline.org>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240408-dispcc-dp-clocks-v1-0-f9e44902c28d@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240408-dispcc-dp-clocks-v1-0-f9e44902c28d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Rob Herring <robh@kernel.org>
+To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Cc: Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ linux-gpio@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+ linux-clk@vger.kernel.org, Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+In-Reply-To: <20240410-mbly-olb-v1-1-335e496d7be3@bootlin.com>
+References: <20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com>
+ <20240410-mbly-olb-v1-1-335e496d7be3@bootlin.com>
+Message-Id: <171277513936.883835.18187305941709008733.robh@kernel.org>
+Subject: Re: [PATCH 01/11] dt-bindings: soc: mobileye: add EyeQ5 OLB system
+ controller
 
 
-
-On 4/8/24 13:47, Dmitry Baryshkov wrote:
-> On several Qualcomm platforms DisplayPort link clocks used incorrect
-> frequency tables. Drop frequency tables and use clk_byte2_ops instead of
-> clk_rcg2_ops.
+On Wed, 10 Apr 2024 19:12:30 +0200, Théo Lebrun wrote:
+> Add documentation to describe the "Other Logic Block" syscon.
 > 
-> Note, this was tested on SM8450 only and then extended to other
-> platforms.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 > ---
+>  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 125 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 126 insertions(+)
+> 
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Konrad
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: clock-controller@d2003040:compatible:0: 'mobileye,eyeq5-clk' was expected
+	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: clock-controller@d2003040:reg: [[64, 56]] is too short
+	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: clock-controller@d2003040: 'reg-names' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: reset-controller@d2003000:compatible:0: 'mobileye,eyeq5-reset' was expected
+	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: reset-controller@d2003000:reg: [[0, 60]] is too short
+	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: reset-controller@d2003000:#reset-cells:0:0: 2 was expected
+	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: system-controller@d2003000: reset-controller@d2003000: 'reg-names' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
+Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: /example-1/soc/system-controller@d2003000/reset-controller@d2003000: failed to match any schema with compatible: ['mobileye,eyeq6h-acc-reset']
+Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.example.dtb: /example-1/soc/system-controller@d2003000/clock-controller@d2003040: failed to match any schema with compatible: ['mobileye,eyeq6h-acc-clk']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240410-mbly-olb-v1-1-335e496d7be3@bootlin.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
