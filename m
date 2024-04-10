@@ -1,93 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C136613D505;
-	Wed, 10 Apr 2024 08:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196C11591F6
+	for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 08:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712736157; cv=none; b=nj/+XoOjnt/sStNX6gfPlRLy8FTwBCskCz30eSIsVqUodK36V209VjYYOJi5V2aZ6Zj9dQtWPi+X3Ja6/aJDWJWci3Id2lZkkUrr0XpNx1CbblCfphl+dhgBfkzTZ3lfCQOr3hTTA9hf372bgjVMkEX/rizVMYq3g1EvhPUutvY=
+	t=1712738679; cv=none; b=Fns/j0JqzZCTlra8xRnt38ZDnMQd78udTcRWo59fFnTUS5f4jm1FOd5E+fd4FzuisBRpB7hlNSIrX29tBrimRdd3qdx0cTNsA+kMf+vOrdyfhPMWAfys2qFCvjdHhOpEvkTvdmXpLPvcerKIJPvtU2qkY93lxl0xfzsISHJY3AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712736157; c=relaxed/simple;
-	bh=KElYbch9PwjyMMyu6DqQ19Q1q06S1GdiKB4kYIvJsOA=;
+	s=arc-20240116; t=1712738679; c=relaxed/simple;
+	bh=wqdmhZDJTD58YPzPxG9v4gcOLesOm1VOYY8puJMyNf4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bBAtC04DaDVwHEUOOiFSRuslrl4QmXJkNwIxlynnpCJTLQoVrWUVTlO89Clpnhd/aF12w6oTjHuxnvrJymhY+Q8tm+0OxOvE8XUv/x2Dczi3ELoLd/y8qIsK+MyeonrFwSjZ3eR5Bs0oaVVpccWwZSXhKQxXPM80iFWgxUzQYEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EDFDC43390;
-	Wed, 10 Apr 2024 08:02:36 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id 324081063262; Wed, 10 Apr 2024 10:02:32 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Michael Ellerman <mpe@ellerman.id.au>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Damien Le Moal <dlemoal@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Corey Minyard <minyard@acm.org>, Peter Huewe <peterhuewe@gmx.de>, 
- Jarkko Sakkinen <jarkko@kernel.org>, Tero Kristo <kristo@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Ian Abbott <abbotti@mev.co.uk>, 
- H Hartley Sweeten <hsweeten@visionengravers.com>, 
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
- Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- John Allen <john.allen@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
- Vinod Koul <vkoul@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, Moritz Fischer <mdf@kernel.org>, 
- Liviu Dudau <liviu.dudau@arm.com>, 
- Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
- Andi Shyti <andi.shyti@kernel.org>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>, 
- Jonathan Cameron <jic23@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Markuss Broks <markuss.broks@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Lee Jones <lee@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
- Iyappan Subramanian <iyappan@os.amperecomputing.com>, 
- Yisen Zhuang <yisen.zhuang@huawei.com>, Stanislaw Gruszka <stf_xl@wp.pl>, 
- Kalle Valo <kvalo@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
- Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Xiang Chen <chenxiang66@hisilicon.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Heiko Stuebner <heiko@sntech.de>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Vaibhav Hiremath <hvaibhav.linux@gmail.com>, Alex Elder <elder@kernel.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Jacky Huang <ychuang3@nuvoton.com>, 
- Helge Deller <deller@gmx.de>, Christoph Hellwig <hch@lst.de>, 
- Robin Murphy <robin.murphy@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Kees Cook <keescook@chromium.org>, 
- Trond Myklebust <trond.myklebust@hammerspace.com>, 
- Anna Schumaker <anna@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Takashi Iwai <tiwai@suse.com>, 
- linuxppc-dev@lists.ozlabs.org, linux-ide@vger.kernel.org, 
- openipmi-developer@lists.sourceforge.net, linux-integrity@vger.kernel.org, 
- linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, 
- dmaengine@vger.kernel.org, linux-efi@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-fpga@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org, 
- linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
- linux-leds@vger.kernel.org, linux-wireless@vger.kernel.org, 
- linux-rtc@vger.kernel.org, linux-scsi@vger.kernel.org, 
- linux-spi@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev, 
- linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-fbdev@vger.kernel.org, iommu@lists.linux.dev, 
- linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com, 
- linux-hardening@vger.kernel.org, linux-nfs@vger.kernel.org, 
- linux-kbuild@vger.kernel.org, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org
-In-Reply-To: <20240403080702.3509288-1-arnd@kernel.org>
-References: <20240403080702.3509288-1-arnd@kernel.org>
-Subject: Re: (subset) [PATCH 00/34] address all -Wunused-const warnings
-Message-Id: <171273615213.1094883.18382201508159771859.b4-ty@collabora.com>
-Date: Wed, 10 Apr 2024 10:02:32 +0200
+	 MIME-Version:Content-Type; b=ODLi1LaeEnGas4t665fcRDjwE5ENOpTn1Sck8dpwbFMCc2H019qPtIam5HlZCSMilJ0NH+YdFRc+chBh0h9b9R6c31+atuSEQzSIJkdqrqqsn5qBBSej2TNHMikH+OG2g3bLigB5Lg5MwBuSdMNJkuGWbvjlXakSpTW3f4sKhVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=3H1nLr/H; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="3H1nLr/H"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-416c4767b07so4191405e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 01:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1712738675; x=1713343475; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OXrCNXWIgPaFh0QtuAJvo+rsWblvd0ADI99YH8byk0o=;
+        b=3H1nLr/HXg3WM+g+ei9oHUpQPwVOeiaYWw1vGM64KgOCPuryIcWG3gYROrGLxfap9b
+         1fCPDBNWtIzKe2Fx9rpkbKaXOnMtHMD+dsXM4gsbRC4sRxlxuM6TFwUWerce+sQxq1/A
+         gE/Vad4dc/E7au8UwERLfvIw5O5gwQL6fmKOVRar3q+iFXPgEJulwoUtwMoUg438LAlR
+         Ls1sjmPn5eqHpCCQGWVkbv3kuTwSneUqlTs1hcAUTSxQ1H2lv3nq4ZmPAdKjSQ3yCw64
+         +zrNaUTFvLs5oRwcoxHv4x8uTd7GRAZlB6wOG9PV+c16S9iDi3JiTEWtkrY1+xTsJepX
+         7sPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712738675; x=1713343475;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OXrCNXWIgPaFh0QtuAJvo+rsWblvd0ADI99YH8byk0o=;
+        b=J55Om2/3AeXXMkEkzonut8yFq1VYExIcTS7vbAbl2otu1HGGfwlNGl7EqWINIGyHsQ
+         u8x/ZUFZSal+lCBRaVOcjirAGFUtgC+SE0IJab8msED3nGmwoVanLNpEnKK84ax2XoPl
+         2B7kKjGn5mCoxD1xv1JjQqBAIQFhklxVhMgq2/DwPXe/Jg0dRMT/hSqm/MW7VnE7dPCO
+         rlcYlE3WCbUukJ/B5hfuJtOOSV49tqBpKprx43C3b9EGHc20WpZjY1cYKxvX5vDs5icC
+         y3GOowAr1PywnHW4plj2aivNPBsq6qCFeQNLFiu1O2ihe3xv19f4i0y8oBHXx7fqmf27
+         rBCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXamooI592UoAU1vnM4glNb23bLxwzaC1+D+kGe52XuirDyRC+ieu3BnjfcGzBh27ZnDxZAIhHMCzPWgGbNSrTPCSphNx9ZRhEy
+X-Gm-Message-State: AOJu0YxRHOrHj6CFv8izGCF3jTWTEo5/aVozqBxfOed72QE9fYfExQLN
+	mLfev+nAfPAyVMzCj7LOEONggsUJrXGcfeAPg9qiH8XdnWEnc7igfu0dwGiUnkmD63hid3SUyAb
+	3hdI=
+X-Google-Smtp-Source: AGHT+IHe2X0O7trL5Pg/N7aJNVS5U+dm4Rs/QIlLSTeBZVXFLzWtij6sQgRwdxIn0sbsxOB8JhZ8Vg==
+X-Received: by 2002:a05:600c:1e0f:b0:415:8651:9bae with SMTP id ay15-20020a05600c1e0f00b0041586519baemr1464364wmb.41.1712738675386;
+        Wed, 10 Apr 2024 01:44:35 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:49de:129e:d25e:c803])
+        by smtp.googlemail.com with ESMTPSA id t1-20020a05600c41c100b00416b5e6d75dsm2066078wmh.1.2024.04.10.01.44.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Apr 2024 01:44:34 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ Nicolas Belin <nbelin@baylibre.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ "Lukas F. Hartmann" <lukas@mntre.com>
+In-Reply-To: <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-0-99ecdfdc87fc@linaro.org>
+References: <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-0-99ecdfdc87fc@linaro.org>
+Subject: Re: (subset) [PATCH v12 0/7] drm/meson: add support for MIPI DSI
+ Display
+Message-Id: <171273867421.2243434.5037326499046523723.b4-ty@baylibre.com>
+Date: Wed, 10 Apr 2024 10:44:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -98,23 +88,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
+Applied to clk-meson (v6.10/drivers), thanks!
 
-On Wed, 03 Apr 2024 10:06:18 +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Compilers traditionally warn for unused 'static' variables, but not
-> if they are constant. The reason here is a custom for C++ programmers
-> to define named constants as 'static const' variables in header files
-> instead of using macros or enums.
-> 
-> [...]
-
-Applied, thanks!
-
-[09/34] power: rt9455: hide unused rt9455_boost_voltage_values
-        commit: 452d8950db3e839aba1bb13bc5378f4bac11fa04
+[2/7] clk: meson: add vclk driver
+      https://github.com/BayLibre/clk-meson/commit/bb5aa08572b5
+[3/7] clk: meson: g12a: make VCLK2 and ENCL clock path configurable by CCF
+      https://github.com/BayLibre/clk-meson/commit/b70cb1a21a54
 
 Best regards,
--- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
+--
+Jerome
 
