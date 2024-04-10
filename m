@@ -1,88 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE2C15B10A;
-	Wed, 10 Apr 2024 16:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A81A26AE8;
+	Wed, 10 Apr 2024 16:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712767111; cv=none; b=q2sguF1cPG65C2gtDPYg+SYdM48B9YCiLnH7kLGPXvtCBQnvQAPhuDofURhrff1L3q2u0bdNLo06Syl8UoebRCp6IYIIGCNxKdfIO4NBQy+6wIFH4XCO75dm1AQcWLDnyHHYXRATPN4bRlJ0Gf0i5PKMarXGgC+E0w2GNgLzaBA=
+	t=1712767235; cv=none; b=UGrrCli/cPbqpZWs0gc13agRQBGvrZe+k9m8uubhMRbp1HUSnmy78LkOJPfEAAO4fC5cxodQPrzxu7LNuhTzt9uCGJDN8GvojNd0mxclQI8aGzPDtSMGQ8RhLY1YF0szNWW5+Gszt5VYl5h/X3jsVP11ntUR8tdV84gmkZxY6/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712767111; c=relaxed/simple;
-	bh=iX3oV/OqzRjgmC93miXiwRYAlMbRuyED7tJL1s5mjUg=;
+	s=arc-20240116; t=1712767235; c=relaxed/simple;
+	bh=u1Ays1TopEnoD9JREpSfKXueGaUE5K8KcfqquzYAtJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iaSGPH3JKU6cP6eHgDYy/inGNXFdslviSFuAlBX2DFRQ7h+by2/nQQ5jbvrX398tA3vnhi8MRIitzV+ms1EVwNWjj1Jz/O6KLsMvRtoB/Fgni5hr06fPE1AUI3zrTIpukk9n6qSy65sd6uGMI+z8smoX3B+TguvxP4dc+YxMqho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1E3obt2; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTgJElJKNOJJqQh9aoQ4y4BWjhxKfdY6QiDTAHnH9p1I06zy+gIr9/0RBkQXd2g6wTnm6EGOxvzAdxs35A3bL0bqJJG19dndHswROMxEleLoDAvvMfychP7KPuqkvgI7Bt95LZt6g7XSJQbEdaLEZCq3uA36tq3Lrf5rMu/xh+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b66/qBbx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1E3obt2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCBACC433F1;
-	Wed, 10 Apr 2024 16:38:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b66/qBbx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E0BC433C7;
+	Wed, 10 Apr 2024 16:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712767111;
-	bh=iX3oV/OqzRjgmC93miXiwRYAlMbRuyED7tJL1s5mjUg=;
+	s=k20201202; t=1712767234;
+	bh=u1Ays1TopEnoD9JREpSfKXueGaUE5K8KcfqquzYAtJg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R1E3obt2kD4S6U3A41s/x8MeAVa76xSg0hM9zZpclfIcJGjDZd7Z+Z0oYq9MJjeZ4
-	 mwBHLzTYLuLg32YIyFi4t8HXlKgVkKjrVp9rxxwggjzoxqfaLdenVywR8GgmFSF/nD
-	 Vbvb/AgS/82DgK2Sxcu9t0GA3TuHZQ2bppmX/BLPI4zdDSn/nywvxiFRXBCLLA3tFb
-	 t1cPPDYPyzH9e3FbeBPvEotYVc9H71bVUbed6R4mKRqmKAPiVjl98z2F4BZeB6v60q
-	 htHY38WGEOQju1dBN7aXVO99lAXTd3Jkj5EdTaOHm4i56ebD+dIvmin4tPSylnAF9J
-	 xPvGnvbDpXI/Q==
-Date: Wed, 10 Apr 2024 11:38:28 -0500
+	b=b66/qBbxu/dr947rCndHmvWVYRa08F8cj79FfO72nwFUdFfAnKaaMj8GqcbqyJv73
+	 rubAPjTQIN8vsU161XsstzGHwbZy2oE6rgcSagCd33cGBv7t7ft67tcYTlkeLPrQ+1
+	 GkClpJXEVQYRdhkllx7TNTDk5b7ITusnBshANlkreJRLX9cFAw+7m0CN0Cj2Xrx9t0
+	 AC2591PmVXuHzepZoBxM+SlXK4UR6tbCsZoSypQxlShMKr8zQsmqvu8NZe49oNXEmy
+	 KZUCARzhbNxBHvzOQQ3YPuSrL6RP0RlsSOoaOPA2twzdOa4V5syJGBnd/DEyTxTc2U
+	 pHwb967VSawTg==
+Date: Wed, 10 Apr 2024 11:40:32 -0500
 From: Rob Herring <robh@kernel.org>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: David Rientjes <rientjes@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, Helge Deller <deller@gmx.de>,
-	linux-pci@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-clk@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Azeem Shaikh <azeemshaikh38@gmail.com>, Lee Jones <lee@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-serial@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Manikanta Guntupalli <manikanta.guntupalli@amd.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Guenter Roeck <linux@roeck-us.net>, linux-ide@vger.kernel.org,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Niklas Cassel <cassel@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Baoquan He <bhe@redhat.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-fbdev@vger.kernel.org, Anup Patel <apatel@ventanamicro.com>,
-	David Airlie <airlied@gmail.com>, linux-sh@vger.kernel.org,
-	Jiri Slaby <jirislaby@kernel.org>, Rich Felker <dalias@libc.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org,
-	Jacky Huang <ychuang3@nuvoton.com>
-Subject: Re: [RESEND v7 28/37] dt-bindings: soc: renesas: sh: Add SH7751
- based target
-Message-ID: <171276710677.411211.12362682268802975581.robh@kernel.org>
-References: <cover.1712207606.git.ysato@users.sourceforge.jp>
- <3c2937039026fdb827709b2584528aca263f2668.1712207606.git.ysato@users.sourceforge.jp>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: avri.altman@wdc.com, linux-phy@lists.infradead.org, vkoul@kernel.org,
+	martin.petersen@oracle.com, alim.akhtar@samsung.com,
+	devicetree@vger.kernel.org, willmcvicker@google.com,
+	linux-scsi@vger.kernel.org, mturquette@baylibre.com,
+	conor+dt@kernel.org, ebiggers@kernel.org, kishon@kernel.org,
+	sboyd@kernel.org, krzk+dt@kernel.org, jejb@linux.ibm.com,
+	linux-arm-kernel@lists.infradead.org, saravanak@google.com,
+	andre.draszik@linaro.org, linux-clk@vger.kernel.org,
+	bvanassche@acm.org, linux-samsung-soc@vger.kernel.org,
+	chanho61.park@samsung.com, s.nawrocki@samsung.com,
+	linux-kernel@vger.kernel.org, cw00.choi@samsung.com,
+	tudor.ambarus@linaro.org
+Subject: Re: [PATCH 02/17] dt-bindings: soc: google: exynos-sysreg: add
+ dedicated hsi2 sysreg compatible
+Message-ID: <171276723023.413753.7709849085293151317.robh@kernel.org>
+References: <20240404122559.898930-1-peter.griffin@linaro.org>
+ <20240404122559.898930-3-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,16 +54,17 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3c2937039026fdb827709b2584528aca263f2668.1712207606.git.ysato@users.sourceforge.jp>
+In-Reply-To: <20240404122559.898930-3-peter.griffin@linaro.org>
 
 
-On Thu, 04 Apr 2024 14:14:39 +0900, Yoshinori Sato wrote:
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+On Thu, 04 Apr 2024 13:25:44 +0100, Peter Griffin wrote:
+> Update dt schema to include the gs101 hsi2 sysreg compatible.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  .../devicetree/bindings/soc/renesas/sh.yaml   | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/renesas/sh.yaml
+>  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml  | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 
