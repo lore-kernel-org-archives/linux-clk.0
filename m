@@ -1,61 +1,61 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117D316F268
-	for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 15:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E4F17276A
+	for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 15:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712764557; cv=none; b=V3dDuzkFOn+pkL/axMaL8uIr4U1LSVTbu4q867i2baCayXkqt4AiBF1/XYOBbz9Bkk5bYQEJDKqzkRsVWLU65YVcQAhLwCb3iAT7WGmpnibKawLpU+kKV3dDGE2qNLxOCh2delQqyx9FbptorRVQZVqSnIpGfONmUfGelNq7efo=
+	t=1712764577; cv=none; b=Jf94GDOLTZWgX7AxTj8pp0wwssl8dSkD0wQfH92kA9PmmNWuokB+xOgfmSLzfpzidbfj+fLqUKIc2NdiISpdQ846AVKq/thM6EdwGzbELLAW3NE2CfScB5AtHEREWS+eK3BSaPA5wTY+rb6aUMqR7v+nsfds/VlPbb9rMKX9HG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712764557; c=relaxed/simple;
-	bh=PG5sFp0A4g6NIomxLWHs95V4FEpSYSwegOg8mPFCvUE=;
+	s=arc-20240116; t=1712764577; c=relaxed/simple;
+	bh=POh8IzPVqd5g9ddH6pfdaCVtLO682z9BexNHdz5ZleU=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=efWznsD5xANmJCfCpkLwAdT2EBSs85JbXdCV3ng8dS2dL/qpe0t1arc2cTTJvqnCNoIQpPZCQgoeCqtnfpA4EteY9Q+tzpYWI7FQH3TaDzLKmV3f6koK23w5k0f+ASdZosC8i++tfz3BnPguoKAGtAJmYt7C8cZCTy8JFhRc8Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i7TC513M; arc=none smtp.client-ip=209.85.128.51
+	 In-Reply-To:Content-Type; b=hG1lplBr6ztOCzdOPjMfxYeBLddHdA2Qfw8vKiV9OWWCvQ2/njmmfVGJLmeZkEeayaHasGGf8BbteMoLg4GZ2OWvmneqTiKwwYd2QsAXHFPXzE5jHTiHle2mJPnQ7CGLm0ppykJJuhG/BhRLxLnecUXykm+pVDpHG8G8nVUopp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tLLPGzNs; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i7TC513M"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-416c4767ae6so6159875e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 08:55:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tLLPGzNs"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-416422e2acbso22844755e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 08:56:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712764554; x=1713369354; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712764573; x=1713369373; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/Y95uWlPjr3MmH9j9cyBlMM8xwJEau1Gnn9pV4tIaP0=;
-        b=i7TC513MqfoKhLv9OmDCVuFuZBXtQYwgyR8lsdxqUwCOE03/zzjDE2g08S9lxF892x
-         GctlRp1YNUIwXhowp1vn/E3Uw1T+OXKQL58X1I19Assp0essj+j9fc4qN5sHTTrcYRfa
-         gJnzpyqZFUzFH/q0E+IWwJf90zTCEeT2tK7IZwO+gb/zI0QX7OvNzfQK+X+d5cLH074h
-         eA/37mKHvFbpOeqfCNdKcxJo8YDCv38noSyi53FQ9+CY/tMaFvafcotnLgqGzfCBW4C4
-         l2LcOkJ7DAl09e5O6jxS9NpRxQE/N69e6I6471bd8KmDYtG2b0GN+9cKqPvgkGqQdVeg
-         +/Fw==
+        bh=HMdmKuUIz4lixjCtcUgme1poJSOdnyEZp5xiFsRRNeM=;
+        b=tLLPGzNsVhSvdOXwRhU7ge6mXA5h6UGJi+xU3TPkC9x+6H/OvSBc9HYcXaccuR0NWx
+         LSz2tYNZmZNmIZAE52UKwzm+SCOB7w6MsMeedlmwNW/0q6wl0ooKIUHZ7ZovTP3XbUq7
+         V1R8VibjB9nWYJcViV5CgJUzmedqrIW9RMCMurIImH/r/u6E9/rKxEtTEw4F7sL3Qbpv
+         +FkPEvGBqs3b245L7Ul4rKP+QFyTsKFpVODrB3g/LqR7/6j4W94hBe+pAzWwxYSO2uZF
+         LNqRjamzEBlKAjJJDZGATYz8NsvkuJA81++Ryh6ajVf6Bp/D7y/lx+dMofkcJkDoGbu3
+         3Rsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712764554; x=1713369354;
+        d=1e100.net; s=20230601; t=1712764573; x=1713369373;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=/Y95uWlPjr3MmH9j9cyBlMM8xwJEau1Gnn9pV4tIaP0=;
-        b=cmIhnGl7GQzvSG+LCmhV9B2PdZFRklrq6rTMB+9ZGTkXeeS5JVkDM/y9Gr/F9sE1pi
-         AuPsyxs9vEW4yLW4Svj3f3wVG2vkSCjbEz8F5r/yOza0m2a3c0Y4U+JDUPngGKgLa1Vf
-         hvuaPwVgMjMwGkTETZdTYssVgUIk5JJeIs53nu12F5yF2CS0ySBjnUQK7g3TV60lI/6+
-         gkOVvSi1CkZEAr2KqDy0gpwMZ6MfJJp61PqHrwACQA5XUrLdSazd0pqyoBYaBxS9G2F2
-         3EhqfjL9f7yQB2hRs7vtFe2L9opgYyxwIjqPwhYv3dVkymEj5Hw9+gRl2fDz4bbjFwIQ
-         TfSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnpuZBfg82zxmpUfMVRXZfNWxXO6xfbCFjthTDZZhGOzZ7oxWPPA/XB/HH+/lFXC0XcPh4tgIWYTARpbLK5LDSiYi+mye99Rxd
-X-Gm-Message-State: AOJu0YyRPaB9pMpOBpIbCVYSKnrgLV5yoXPvffZp7HYMEK6e4hTlsV1r
-	4NCNE9kJYBIqtHQxXUGuXRB7dpcxIFikWB+x79ZkLXFuUgKiBMXUR2CTMhJqqOk=
-X-Google-Smtp-Source: AGHT+IHW6x6HUMvGoC6y0vrk8e/XA0YiesateG2RI9Bg2DRVnfVvm+OFOxbdSrej5+vqjr7YqetnSA==
-X-Received: by 2002:a05:600c:3504:b0:416:bc6d:e8bb with SMTP id h4-20020a05600c350400b00416bc6de8bbmr2231879wmq.0.1712764553849;
-        Wed, 10 Apr 2024 08:55:53 -0700 (PDT)
+        bh=HMdmKuUIz4lixjCtcUgme1poJSOdnyEZp5xiFsRRNeM=;
+        b=NRlDzcM3v0J+rV3hkQcN1jIoBetSd3bKZnNyQkWxJWRQhuTwX33qm3tug1l//TPUO9
+         +5POdMK/nfJ/GVUA4xAvFmWY0siiz3ZhywrWKhvqngkvJuNA8z+J9R7Sxc3r/HazDl3l
+         qFjrzAzaqTLZC8QqyQIAol0x1fdxBYr55+AynEKamZlP3AKpwqHD6m5UqfBlIEnQkldu
+         NE17WoatkZK+D/oriYJXKTdVODIh/TQAiFizQ9upifV8hTEayjgotJ1KMXrUlAJug1eS
+         ITIRIhR0lCGB1A9lR5uICAj5PDp8Vjg8CcYDUY9o5rYH7v6VdtIKoBeMlTK7+pYJNHXw
+         lu1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXHXNt8LUZVTzLzKmI9x6kaXQ+xGQvc3rsROtV/fmqSOiDWCOECkzKevnHjarv0Wlox3XdAAH+pV6DUyTVlcfLe/mHy4mEOLFvV
+X-Gm-Message-State: AOJu0YyESjUBsHahc1Wq9GOuRB60nGGNbagjM7Kt8kuWu5Z8wu/AJehp
+	T8dKmlzwHt1qos1KlDhJsql6DT3nhUiv3D3KmgnWRPLfhh0gXawNp5y0MsdOKhk=
+X-Google-Smtp-Source: AGHT+IH0DicSj7EZdYVwanK8DChE5Kq6JyrG4DLOmsDfa/paE/heJ15/axU+4Ae8PBBUkNTAuGB01w==
+X-Received: by 2002:a05:6000:402c:b0:345:811b:466e with SMTP id cp44-20020a056000402c00b00345811b466emr46608wrb.26.1712764573431;
+        Wed, 10 Apr 2024 08:56:13 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:760d:c2fa:a66b:fed3? ([2a01:e0a:982:cbb0:760d:c2fa:a66b:fed3])
-        by smtp.gmail.com with ESMTPSA id je7-20020a05600c1f8700b00416a43d60e6sm2625547wmb.39.2024.04.10.08.55.53
+        by smtp.gmail.com with ESMTPSA id i6-20020adffc06000000b003455e5d2569sm10468562wrr.0.2024.04.10.08.56.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Apr 2024 08:55:53 -0700 (PDT)
-Message-ID: <0a93713a-efd4-4b9a-b9e0-50631cb69e2d@linaro.org>
-Date: Wed, 10 Apr 2024 17:55:52 +0200
+        Wed, 10 Apr 2024 08:56:13 -0700 (PDT)
+Message-ID: <7c1aa6a9-b964-45e7-bd8c-d9ef5096a04a@linaro.org>
+Date: Wed, 10 Apr 2024 17:56:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,16 +63,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
+From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] clk: qcom: fix module autoloading
+Subject: Re: [PATCH] clk: meson: s4: fix module autoloading
 To: Krzysztof Kozlowski <krzk@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Jerome Brunet <jbrunet@baylibre.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240410155356.224098-1-krzk@kernel.org>
+ <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240410155406.224128-1-krzk@kernel.org>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -99,11 +100,11 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240410155356.224098-1-krzk@kernel.org>
+In-Reply-To: <20240410155406.224128-1-krzk@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/04/2024 17:53, Krzysztof Kozlowski wrote:
+On 10/04/2024 17:54, Krzysztof Kozlowski wrote:
 > Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
 > based on the alias from of_device_id table.  Clocks are considered core
 > components, so usually they are built-in, however these can be built and
@@ -111,33 +112,33 @@ On 10/04/2024 17:53, Krzysztof Kozlowski wrote:
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->   drivers/clk/qcom/gcc-msm8917.c | 1 +
->   drivers/clk/qcom/gcc-msm8953.c | 1 +
+>   drivers/clk/meson/s4-peripherals.c | 1 +
+>   drivers/clk/meson/s4-pll.c         | 1 +
 >   2 files changed, 2 insertions(+)
 > 
-> diff --git a/drivers/clk/qcom/gcc-msm8917.c b/drivers/clk/qcom/gcc-msm8917.c
-> index f2dd132e2fb1..f2b8729e4198 100644
-> --- a/drivers/clk/qcom/gcc-msm8917.c
-> +++ b/drivers/clk/qcom/gcc-msm8917.c
-> @@ -3278,6 +3278,7 @@ static const struct of_device_id gcc_msm8917_match_table[] = {
->   	{ .compatible = "qcom,gcc-qm215", .data = &gcc_qm215_desc },
->   	{},
+> diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+> index 6c35de3d536f..22ff030bd6a8 100644
+> --- a/drivers/clk/meson/s4-peripherals.c
+> +++ b/drivers/clk/meson/s4-peripherals.c
+> @@ -3799,6 +3799,7 @@ static const struct of_device_id clkc_match_table[] = {
+>   	},
+>   	{}
 >   };
-> +MODULE_DEVICE_TABLE(of, gcc_msm8917_match_table);
+> +MODULE_DEVICE_TABLE(of, clkc_match_table);
 >   
->   static struct platform_driver gcc_msm8917_driver = {
->   	.probe = gcc_msm8917_probe,
-> diff --git a/drivers/clk/qcom/gcc-msm8953.c b/drivers/clk/qcom/gcc-msm8953.c
-> index 68359534ff25..7563bff58118 100644
-> --- a/drivers/clk/qcom/gcc-msm8953.c
-> +++ b/drivers/clk/qcom/gcc-msm8953.c
-> @@ -4227,6 +4227,7 @@ static const struct of_device_id gcc_msm8953_match_table[] = {
->   	{ .compatible = "qcom,gcc-msm8953" },
->   	{},
+>   static struct platform_driver s4_driver = {
+>   	.probe		= meson_s4_periphs_probe,
+> diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
+> index 8dfaeccaadc2..8a917b9703bf 100644
+> --- a/drivers/clk/meson/s4-pll.c
+> +++ b/drivers/clk/meson/s4-pll.c
+> @@ -853,6 +853,7 @@ static const struct of_device_id clkc_match_table[] = {
+>   	},
+>   	{}
 >   };
-> +MODULE_DEVICE_TABLE(of, gcc_msm8953_match_table);
+> +MODULE_DEVICE_TABLE(of, clkc_match_table);
 >   
->   static struct platform_driver gcc_msm8953_driver = {
->   	.probe = gcc_msm8953_probe,
+>   static struct platform_driver s4_driver = {
+>   	.probe		= meson_s4_pll_probe,
 
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
