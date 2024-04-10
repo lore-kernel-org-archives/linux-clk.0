@@ -1,189 +1,164 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2133.outbound.protection.partner.outlook.cn [139.219.17.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E751C2E;
-	Wed, 10 Apr 2024 02:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712716059; cv=none; b=YHk3Do2u8KRMexlFqt6qjlKOBi6ozyext75IAtOy4x2suOVTK/QAI1MmkBZMn+CusiQmksu62iNYBOWHgJjnqothySTmYfE2U2hdyRGoCZehgGJOIt/NCJpjSvS9LlfLcllRirOL4nuA9knUP7Hzin80n57ttmAu3W6gGHwXkj0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712716059; c=relaxed/simple;
-	bh=KCZk5Jghp9ioOCljK8ePjGa/GSS059iFLxQINPpp1zg=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Atw2RrmbHK5LxYkpT7snLzJrf4O6umXI12sEJapq0UPkBAzz5RlHPXepiuBvDWUDOisjG25aQhntasI9ddA3OfnOx6ttpo94iqAq/U1VMFzTUdKaICqHeV3XtlqH/N5l5rUAlQKiMz9k9JC0xKyPUUUjNx6EpbwSpUlGKb3Km8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIVXz2yV; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIVXz2yV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7921FC433C7;
-	Wed, 10 Apr 2024 02:27:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712716058;
-	bh=KCZk5Jghp9ioOCljK8ePjGa/GSS059iFLxQINPpp1zg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=cIVXz2yVe7ImcNYM7wBUtIVH3Cy2FfbisfRQ6w1VZOtS98YSFvZBVemDOxX2wRjlh
-	 qp9KtrdBV4GqnI4PQE3m42UGIqt2xiOrQI7AadLeMSEKX8h+SDl6ae7vSnSWaE+7il
-	 1xPhVhzCMwkZbrffA4beBS9yVbxTWNX8sjxYNRd7NzlmRB4Sk96MkOpblZSZmFMRmY
-	 fdY5cy3BCh0lC516EQNQxKmmq8FHiV6gBJ7pyQop6ShhDd+VaZ0qxlDxxEKvpBzJU/
-	 YJQZu0B0Yfg8lKTvD5B55HrdrBE7sLIQkKM5KqpKdGA5M9ucZ0x+yWOXu9pO6qbkzX
-	 5uUSILmGfGBtQ==
-Message-ID: <dde59dd2ef4da81528e31f65844e0b3f.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D59DBA41;
+	Wed, 10 Apr 2024 03:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.133
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712720799; cv=fail; b=UJ3TOwQZjxTELgLiwaqyjOwwf45j2HLz+zF/olqcUwqdXtQjl5yjhMAsqBTnztiUNBhHIO2KG8FWvKuxhY1x2vyP14WvQASV3MjEL/dO5bFg8zdft3+u2mldJW26ouCzSmY/PepbCwYYxmmkLGVDbD/bI73s1Z/bnYdkgVJAOcg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712720799; c=relaxed/simple;
+	bh=OHCssj6P9836bxBkW9i3I+ExmBMlSFBu8UzczJgWy1k=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=cUFHJdqSpC6XxuiUiPeEOTiZjNfRrIm69hCY2Ba/Ncphxv9W+oEf2VFLNxFIUohXFBOA9nSx+qiNz2LupMr4lZYL+y/CEDa8HPqlFXGk54hqJC1oT9t8/aqLngS3skBQvrNoEE3gKSSCR89nRPZ2xebkNt+X+F5Q4wc2gfeRtW0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=I1//TsHPYbRhvzg40MUBvtqzmBZOYIqH2bRw6dEwPnPgafTu1GxeTOwJhRytC5V7alxlXDeZHEGSc06rHoQSVlY5wHMP/c38dqVyIPo+S3iNpy/waY556tt/o/r40rbfHY03VAneO0hsSrebG6bI7l+o7qUScXmM2CYAHMGUki6/cDlFxBr4MPFwuI2Ji3IcJ5AYKjdolRGmSBig3VAVkwZmOgTcGuemZR5AZK7hxc2TOkuL+zPAsilm7LQR9mAWkw4Y0q1AlBnt/l4HHveF9ezJdc3zYm/3YE2VodPT5/HZcpvGlqDin9PaUQuxGdyCMQta1NdWz1kf5DC5aEBXuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/OyzaIpuYkm7hUH6I2Tsyav8LQgUQuoSS7RWMmfsqVw=;
+ b=d4payKHQxR2v6AoFuut3aDgw+ELZhNLi9p/4gqiRPsjjuiv2e13uMeYUYcxPeZ3nNhDr2cMx0tC8M2pAiB+bojWizNt0VHW0VBFFEJwuMMKflojcO39Mur0HhSPvnowc4fVjK3yvo8L5pzoi1V4xb7jrb5QRp0E1nV0H6Auxto+jkq1rfGasFKVsQD+DQRhXUYdMipj1pCx6fMMBAqfmyJTEiDTkmHL27AvF2i90hIwFO29ovNb2G16nk8mL9R3F71aBX5OSMaIYZJCvJEmwAcIKJGE3tA9HEUsZJehO8w1F+zLaq7xc0yHNYaIlSpJP+fVM3vBzQzLH4+lf0HjmrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10) by NTZPR01MB1132.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Wed, 10 Apr
+ 2024 03:31:55 +0000
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ ([fe80::6174:711d:d93:87c9]) by NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ ([fe80::6174:711d:d93:87c9%4]) with mapi id 15.20.7409.053; Wed, 10 Apr 2024
+ 03:31:55 +0000
+From: Xingyu Wu <xingyu.wu@starfivetech.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Conor Dooley <conor@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Emil Renner Berthing <kernel@esmil.dk>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Xingyu Wu <xingyu.wu@starfivetech.com>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v4 0/2] Add notifier for PLL0 clock and set it 1.5GHz on
+Date: Wed, 10 Apr 2024 11:31:46 +0800
+Message-Id: <20240410033148.213991-1-xingyu.wu@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: NT0PR01CA0002.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510::23) To NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240409-shallow-voice-c84ed791bc7d@spud>
-References: <20240328010831.884487-1-jan.dakinevich@salutedevices.com> <20240328010831.884487-2-jan.dakinevich@salutedevices.com> <1j7chfiz8e.fsf@starbuckisacylon.baylibre.com> <e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org> <f01cdd910ab35316b8012795f73fd2b34c8e6f8e.camel@pengutronix.de> <13617b7a892424d2b024c725505a6f4f.sboyd@kernel.org> <20240408-numerator-escargot-a642507a598e@spud> <20240409-shallow-voice-c84ed791bc7d@spud>
-Subject: Re: [RFC PATCH v2 1/5] clk: meson: axg: move reset controller's code to separate module
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Jerome Brunet <jbrunet@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Neil Armstrong <neil.armstrong@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To: Conor Dooley <conor@kernel.org>
-Date: Tue, 09 Apr 2024 19:27:36 -0700
-User-Agent: alot/0.10
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: NTZPR01MB0956:EE_|NTZPR01MB1132:EE_
+X-MS-Office365-Filtering-Correlation-Id: ba8bb759-87f9-45c2-71b5-08dc590ec4f6
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	v1BGuvOV2m3yd99T/nTPZ9raXRx/dhnbiuQP9bQC2SnpBydmzFvvcYFRyF3NckAPF2Ph+GSAWtFyEZPeYlv44WESJ10Zt0QDv4TrE5wUPblbrpd4jYuwBlcJNUt553CCReKt3fqC54Hp0ujGIINKvARyEuXjJZ2yelzso3C0RDGJ4woWNYWE8skW9Rui1YEbKVGLMyJsnb3Huq+7aOl5WGmjGU0cObWDyYJMaZ3JymNnI1kUKVkF54tUhQoOcYalPmNdJ8BqOg7MdDOs4kK9eeAtr3jKxju3GM5p4E1f8OGfunTQWZqQgcqYd8Z12g5aLpMwidSdFNcY0HMtjdBoA9enYk1SfQzhAfiGw9tH67YVK/Dv+h232LNBYQSPwb89uTjr9KHeM//7wC6WqB0zoqmamYBckGsdCNm62R98t40UiFYNyBqxV6MVn+g8MC4qMaf1B+5YWKyrdhwC6DQVa0ixy5sPFXc6JyPpiZjAl6zQqVhn3i2jVgbqKogQi/mT65yMbg+8GW1mTJ/ppJSH/zS++zwSr0MxtWMl/tCuBwgqoVCu5avW524fOYbV42AXekLgSCQcvu2HCrqCq+cs8B599ny5YsdIe7tZLUZyDs6j47reAmes97N/PzOkHFou
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(52116005)(7416005)(41320700004)(366007)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3B5iQuNSYOGb29ylvKxQ9eqztyQrNrv29G4Q3YkG5PuUZwrAE/XlLQjw5+rv?=
+ =?us-ascii?Q?cbw1c5kFuEeQVxrEZvwY4OXIvEkuALMFrFhd1MfRH84yV3AnmPrc/RtX94Ni?=
+ =?us-ascii?Q?J8rxMRAEIep3MDo9k6I5Jh5foeqsYUdTTv38bKQHcs6DoDClVahhLGbFYuoI?=
+ =?us-ascii?Q?CZrU/dfzVC/nV/ujL9Wi/yH6WGFiLFqRzB1LBNp6yPt3XwmzfhwDVMP7I/qh?=
+ =?us-ascii?Q?dSpBs/oe8nx2RCcNGzolfzYtrq9H3RuYHRnSPvMNrLN2QIqnKpyAlCkA9ZPI?=
+ =?us-ascii?Q?zMRwJGAVaspHsjezgG3dNTOcJmsmNZSSRRVrLQPw0JrQff6haEQqPJdhRP46?=
+ =?us-ascii?Q?KIgkJCAB/IGjEHzlYxxDqo7U57wgKpUyx+VC5ODHs9eItn7hKDSIJNykgNGX?=
+ =?us-ascii?Q?iou0CbsfgQpAl//OU1Aake9Nt3meXFtB+UqEt12LAecWcGB4NBnbLMMfNmco?=
+ =?us-ascii?Q?zwVr8LICD/jGuUew2Akw/Pc5HxYU+Q3DAIBqXZUVLGAR3aym7jnY5FMGGDop?=
+ =?us-ascii?Q?tCE+yk/BUrLcu+rreyjXP8UJYdUTQggcoTxKKh9Qzo1+irZ9hZwCef/IxP77?=
+ =?us-ascii?Q?uckm9Y9dXrbdb5V2E4qK39SielyT/XOsmQhJqaR5vVORVpQJ+qkQxhmHd2pJ?=
+ =?us-ascii?Q?iGQ7YHRD3VRkCkyRzvliQhQk4HZak0+XU3r6/HOwE7OfrmZUdN5BbgA7Hdm2?=
+ =?us-ascii?Q?azqPShinIHSCIEBc1QIA/rkNg6uDWej9pYPFV2cUYYkH60RBAtE5NUU/8M6D?=
+ =?us-ascii?Q?ijTBUHPsMoMhhWPKketZF7hw1HfyrKnUHS5LAtEf9VUObA3hSR9v7dVxA5ov?=
+ =?us-ascii?Q?Q0i9MiFUeV+xJSuPac7OZteQRYQHuVT+RqfEX0ab0I4Pl+nVRsBrMmgSm69y?=
+ =?us-ascii?Q?03UWwLuRjij+Rv/IJTqZtnQW9ijEstaE7uciUIYPqjrE1OUfNmtB3pE8NXVM?=
+ =?us-ascii?Q?va3eOBL/hO0/V0ossOch15+iA35dFm9jUnaURA4h3hH79NfC9W0yYMHcm1e9?=
+ =?us-ascii?Q?Nc6+CpM8GyLy6Ch6ApYtGiwJVia296bP95boVvaIXd4O31qioPeAHHeb1Bs+?=
+ =?us-ascii?Q?xtdzOlgQQqoKQUWKJ+7Tnu1A+82k5SIL2wPhY4jQZ26DoK6tgctL0FRJekVc?=
+ =?us-ascii?Q?lQPuJnTkBdIHhrWTV8DgPC6TQlqqLjbqL27De4EAeqPZRZb46MyZvTZgHQsW?=
+ =?us-ascii?Q?xBlVoxiC+RP7BQRJGCR6ThGN7MRJeGBVhJTZqqwVWEgkqJz4M9xrULDLEMmN?=
+ =?us-ascii?Q?mIXACkPywLbQdk1KWPnrTRlloeMaqAc0Dy6We8+JOTamzPF6zLg2o91VyQ+4?=
+ =?us-ascii?Q?fswrGhrLsOLcRF2GZnC33hrbIWsELeMkJNvFiDmeGydANubs4ApQiUfUd5YD?=
+ =?us-ascii?Q?ps9wT5D71x/XjNOzewBjJti2zYaseZY+/80qFsTiYdkYDbvlH3IITJpj5BTz?=
+ =?us-ascii?Q?rF/7LjqIDAt6Pt6GiKWnWgiOPssao06iNxjLUs8TqhyVsrkkXUPw9nJ24im8?=
+ =?us-ascii?Q?y9qw97Dzra0b+J0+PhlvqiRqc6zam/J8vqztPk+OSgS4uSUlOVr5d4csGyrj?=
+ =?us-ascii?Q?4ubXpRU5d6A1NoKNOxlRUVL31C27k4USl8SpbYLRtt8GdfKNYPTiRmkq1H7o?=
+ =?us-ascii?Q?Pg=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba8bb759-87f9-45c2-71b5-08dc590ec4f6
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2024 03:31:54.9810
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: i753RIXX+9pTsfJt81JCT5tsXo+5EyUUzX/T0C73pPLydFZKbsTbDy5s00ULq9sMhea4q+IfmTtKNE5lH7KoQpLww34VaHUF7j/n/P6q3sk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1132
 
-Quoting Conor Dooley (2024-04-09 05:05:37)
-> On Mon, Apr 08, 2024 at 06:05:51PM +0100, Conor Dooley wrote:
->=20
-> > > > Seconded, the clk-mpfs/reset-mpfs and clk-starfive-jh7110-sys/reset-
-> > > > starfive-jh7110 drivers are examples of this.
-> > > >=20
-> > > > > The auxiliary device creation function can also be in the
-> > > > > drivers/reset/ directory so that the clk driver calls some functi=
-on
-> > > > > to create and register the device.
-> > > >=20
-> > > > I'm undecided about this, do you think mpfs_reset_controller_regist=
-er()
-> > > > and jh7110_reset_controller_register() should rather live with the
-> > > > reset aux drivers in drivers/reset/ ?
-> > >=20
-> > > Yes, and also mpfs_reset_read() and friends. We should pass the base
-> > > iomem pointer and parent device to mpfs_reset_adev_alloc() instead and
-> > > then move all that code into drivers/reset with some header file
-> > > exported function to call. That way the clk driver hands over the data
-> > > without having to implement half the implementation.
-> >=20
-> > I'll todo list that :)
->=20
-> Something like the below?
->=20
-> -- >8 --
-> From a12f281d2cb869bcd9a6ffc45d0c6a0d3aa2e9e2 Mon Sep 17 00:00:00 2001
-> From: Conor Dooley <conor.dooley@microchip.com>
-> Date: Tue, 9 Apr 2024 11:54:34 +0100
-> Subject: [PATCH] clock, reset: microchip: move all mpfs reset code to the
->  reset subsystem
->=20
-> <insert something here>
->=20
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+This patch is to add the notifier for PLL0 clock and set the PLL0 rate
+to 1.5GHz to fix the lower rate of CPUfreq on the JH7110 SoC.
 
-Looks pretty good.
+The first patch is to add the notifier for PLL0 clock. Setting the PLL0
+rate need the son clock (cpu_root) to switch its parent clock to OSC
+clock and switch it back after setting PLL0 rate. It need to use the
+cpu_root clock from SYSCRG and register the notifier in the SYSCRG
+driver.
 
->  static const struct of_device_id mpfs_clk_of_match_table[] =3D {
-> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
-> index 7f3fb2d472f4..27cd68b4ee81 100644
-> --- a/drivers/reset/reset-mpfs.c
-> +++ b/drivers/reset/reset-mpfs.c
-> @@ -137,9 +139,67 @@ static int mpfs_reset_probe(struct auxiliary_device =
-*adev,
->         return devm_reset_controller_register(dev, rcdev);
->  }
-> =20
-> +static void mpfs_reset_unregister_adev(void *_adev)
-> +{
-> +       struct auxiliary_device *adev =3D _adev;
-> +
-> +       auxiliary_device_delete(adev);
-> +       auxiliary_device_uninit(adev);
-> +}
-> +
-> +static void mpfs_reset_adev_release(struct device *dev)
-> +{
-> +       struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> +
-> +       kfree(adev);
-> +}
-> +
-> +static struct auxiliary_device *mpfs_reset_adev_alloc(struct device *clk=
-_dev)
-> +{
-> +       struct auxiliary_device *adev;
-> +       int ret;
-> +
-> +       adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
-> +       if (!adev)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       adev->name =3D "reset-mpfs";
-> +       adev->dev.parent =3D clk_dev;
-> +       adev->dev.release =3D mpfs_reset_adev_release;
-> +       adev->id =3D 666u;
-> +
-> +       ret =3D auxiliary_device_init(adev);
-> +       if (ret) {
-> +               kfree(adev);
-> +               return ERR_PTR(ret);
-> +       }
-> +
-> +       return adev;
-> +}
-> +
-> +int mpfs_reset_controller_register(struct device *clk_dev, void __iomem =
-*base)
-> +{
-> +       struct auxiliary_device *adev;
-> +       int ret;
-> +
-> +       mpfs_reset_addr =3D base;
+The second patch is to set cpu_core rate to 500MHz and PLL0 rate to
+1.5GHz to fix the problem about the lower rate of CPUfreq on the
+visionfive board. The cpu_core clock rate is set to 500MHz first to
+ensure that the cpu frequency will not suddenly become high and the cpu
+voltage is not enough to cause a crash when the PLL0 is set to 1.5GHz.
+The cpu voltage and frequency are then adjusted together by CPUfreq.
 
-Instead of a global this can be stashed in adev->dev.platform_data and
-grabbed in the driver probe?
+Changes since v3:
+- Added the notifier for PLL0 clock.
+- Set cpu_core rate in DTS
 
-> +
-> +       adev =3D mpfs_reset_adev_alloc(clk_dev);
-> +       if (IS_ERR(adev))
-> +               return PTR_ERR(adev);
-> +
-> +       ret =3D auxiliary_device_add(adev);
-> +       if (ret) {
-> +               auxiliary_device_uninit(adev);
-> +               return ret;
-> +       }
-> +
-> +       return devm_add_action_or_reset(clk_dev, mpfs_reset_unregister_ad=
-ev, adev);
-> +}
-> +
->  static const struct auxiliary_device_id mpfs_reset_ids[] =3D {
->         {
-> -               .name =3D "clk_mpfs.reset-mpfs",
-> +               .name =3D "reset_mpfs.reset-mpfs",
->         },
->         { }
->  };
-> diff --git a/include/soc/microchip/mpfs.h b/include/soc/microchip/mpfs.h
-> index 09722f83b0ca..0b756bf5e9bd 100644
-> --- a/include/soc/microchip/mpfs.h
-> +++ b/include/soc/microchip/mpfs.h
-> @@ -43,11 +43,11 @@ struct mtd_info *mpfs_sys_controller_get_flash(struct=
- mpfs_sys_controller *mpfs_
->  #endif /* if IS_ENABLED(CONFIG_POLARFIRE_SOC_SYS_CTRL) */
-> =20
->  #if IS_ENABLED(CONFIG_MCHP_CLK_MPFS)
-> -
-> -u32 mpfs_reset_read(struct device *dev);
-> -
-> -void mpfs_reset_write(struct device *dev, u32 val);
-> -
-> +#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
-> +int mpfs_reset_controller_register(struct device *clk_dev, void __iomem =
-*base);
-> +#else
-> +int mpfs_reset_controller_register(struct device *clk_dev, void* __iomem=
- base) { return 0;}
+v3: https://lore.kernel.org/all/20240402090920.11627-1-xingyu.wu@starfivetech.com/
 
-static inline
+Changes since v2:
+- Made the steps into the process into the process of setting PLL0 rate
+
+v2: https://lore.kernel.org/all/20230821152915.208366-1-xingyu.wu@starfivetech.com/
+
+Changes since v1:
+- Added the fixes tag in the commit.
+
+v1: https://lore.kernel.org/all/20230811033631.160912-1-xingyu.wu@starfivetech.com/
+
+Xingyu Wu (2):
+  clk: starfive: jh7110-sys: Add notifier for PLL clock
+  riscv: dts: starfive: visionfive-2: Fix lower rate of CPUfreq by
+    setting PLL0 rate to 1.5GHz
+
+ .../jh7110-starfive-visionfive-2.dtsi         |  6 ++++
+ .../clk/starfive/clk-starfive-jh7110-sys.c    | 31 ++++++++++++++++++-
+ drivers/clk/starfive/clk-starfive-jh71x0.h    |  2 ++
+ 3 files changed, 38 insertions(+), 1 deletion(-)
+
+-- 
+2.25.1
+
