@@ -1,180 +1,180 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10olkn2109.outbound.protection.outlook.com [40.92.40.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1060F2BD06
-	for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2024 21:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712869774; cv=none; b=d+I0sAoQqxqDgKl5uk+GakplauKxqQ8bwA+OCIFutcNzCa33G53RZ2UZM2ATNIQVE0OVAi1cPcu0Chn/VCc3ivVRU7lgNHKdeZYBfwX8rFTBvKyTORR7Q2Ow7mBy6V8YIRavgDbEXuo3SZrD4DKqEZg2j3g4x+wLfaCO86xoUNQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712869774; c=relaxed/simple;
-	bh=qwxXwcTr2zHS5bsYfOOF3ptNAFvHZNdpgxP/ZUTYODg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rhrccLsq/0eaBWJ221uaRrdG+uDgM8i4+5g4mXCnY1TMyggvEYr460iZIjy/ELFTrjJOvwLmON+wtKdkG9cS0R2UOoYy3dCSfP3TVqSnpE81zyaRS0R1z2oC+82vNUpIVSr29vkA65/O3qJ7ERd8CNTX7+Oai/C/OprCi8Wv7ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cfA1DOQG; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDA5524C;
+	Thu, 11 Apr 2024 23:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.40.109
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712877869; cv=fail; b=L9ypBjOlpXpvNBa79p3HlyKTnd87Gztis4r+9cwo1qdemVTpYLJxUKKn6lq9avG/aFeL8e9A7emyHSbyP3+rgavXbsTbyXufs7spWcbHS7gtcC9yDT17OV5Z5HSrlRg71j7+1erktbFaFf4Torag/9pf9sh5KvzA+1lOuie4Oys=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712877869; c=relaxed/simple;
+	bh=2AYawMi/hK/nZPQitzKj7E7kVOaaQFpiCrgqNEXjM6E=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=KdGy2nhXXDQy3wQp6OIXuaYV28FXGZGZqyQCKUFnQE3YfwGQN2mr5SJXOvOiVbhYZC5LF8x5jhVSH+rkmqGwFnGXl4t6Tlw5FJtWwre0nGOLA42ZLdO0hrbUkRcbyOY/iQ38/eKbCeQUXXm3V80sEhcLm1tjBn7Nhm334kO+vac=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=gwW6UqsI; arc=fail smtp.client-ip=40.92.40.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cfA1DOQG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712869773; x=1744405773;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=qwxXwcTr2zHS5bsYfOOF3ptNAFvHZNdpgxP/ZUTYODg=;
-  b=cfA1DOQGpP9Mv1wEmMIZjWS3vTkfiVevpRDsK6BUl/Ts2q8GvsFzaZXN
-   Y2o6c4N4pG8g6TFuswzfitF9l82yDV53+M8lPp301zO1TU8wXLhfmSaov
-   FwrxQT63JpxsURre2eYZiYyDQAkS7HNTyrA88Ha9uD9Lr6DQP9mV3jVJ0
-   pzQivtIUWiDjrhGK5sut/YcN7k4tyDlRd2zRUCQI2gg4A5wvwYR8HCVEJ
-   wKCTA/0bEXa6m6lGvEic/MNE8E2ARSZDQtPXrtQjvTLJDGwo+ML+5dZfL
-   X4IVKNRs1oS2gmCURugOlMczIai1h4mRmaZaVUMRLptJ+ihHKqvms3yMZ
-   A==;
-X-CSE-ConnectionGUID: feVX2YmcQYuC76ssSILIAg==
-X-CSE-MsgGUID: 4EHPdDJfSRuJjkBQ+zmWTA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11041"; a="12160382"
-X-IronPort-AV: E=Sophos;i="6.07,194,1708416000"; 
-   d="scan'208";a="12160382"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2024 14:09:32 -0700
-X-CSE-ConnectionGUID: 1beJnkpnR2+ZDYC+UP97Vg==
-X-CSE-MsgGUID: fr4lI4BfQrmsQTRpExZYfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,194,1708416000"; 
-   d="scan'208";a="21008544"
-Received: from lkp-server01.sh.intel.com (HELO e61807b1d151) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 11 Apr 2024 14:09:30 -0700
-Received: from kbuild by e61807b1d151 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rv1fk-0008z8-0Z;
-	Thu, 11 Apr 2024 21:09:28 +0000
-Date: Fri, 12 Apr 2024 05:08:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: [clk:clk-sophgo 2/4] drivers/clk/sophgo/clk-cv1800.c:82:35: sparse:
- sparse: symbol 'clk_mpll_synthesizer' was not declared. Should it be static?
-Message-ID: <202404120548.y9dZIi0e-lkp@intel.com>
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="gwW6UqsI"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y2SjfsER30rMlbBK+M9SNLZCYJYLZ0n3VpuPnBzZAj8oTsd1vux5+NVS2RvTbtfIGMWnF4NsLWLgj+FMVcaGHYIg3CIixfvfsHMMlUo3ehNkYrP3TIiYJRl1yhZ56jb5SY9xd1YcEH+qWmPAqf1jQNiATEC70vhbMeoerQQNZyzasZj9rxrkwpNrhEKv5U8tkXOSLTUl8Wa7O3Df3SSSKdSQ4MJ3lgEj69ke6mTc5x7tBuFbydU9uF79ROU5tO0mKLmbtz9/KmTuOPFitrFTHvoh+2CeLyhF+jsbUbVV9TaqIw22GB8mPLB9zQAQZzhtgiYaBuweO3MprfCcu8ntFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Rv57fzAH9saHLKUggP8aUacXLLc9M49kD/wyTvIElm8=;
+ b=OnFUAzed+5eqaFOIUkVGVAaKu/TT2kMtrcjZ4vQeYhzJFCRJC6dD+hmv0qzVIEovWRXsJVCNenUi21cwDmezTuouSQuK6soarn8pQhBywUsNWmjCkYfJjJ76E+I8bQEnD+gIfkMd5GqXM8QQEunOHePW8ytexDCSKmttSAPaGoiBei2jn5rsl6e++nk5dKhuZBtydsPRqqHOpNjZjVHCtGTOHBzEIicq7LEHCCQWLwehvLx+I37Yp+cFSLB9ELHHx8zIGPlFqa++ZfXE5xbzk41tsP0b0FbX3GX3/ULQWf+jx5mVqTMnwGfFzRqguEiIeVC+A24Zv+usiAhyfChW7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Rv57fzAH9saHLKUggP8aUacXLLc9M49kD/wyTvIElm8=;
+ b=gwW6UqsIXuNdWoUACuOVykJRDhvqGDy4EjkQBCFQoJro3eNqr25LJcoprDrGprU21IcDIufde8AifTu4BugVzGym/w+fW0oVF6vUBOcNVwUTggEZmC8/DU/vB+kqH4TrsQxKxqldWGaKf0bG5Lb/UCQ7BSfH6NDacVkRZ+OXECW3YSXRVCIszssbwLCjmCxp8RB/LiDLE0lqLiiw8NoFO5naWbTbHN156uld1JhDz7a8R+QFSl7Ko3ITIVR7fQxcVIiyzx4lAeCfRvAOg9a1dP2QC82G9aJOR+uJ1kUgQsGMS+lPt9vtBqE5lLTQVncgE5uBeuG3jYPDHW1lQbJzSg==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by SJ0PR20MB5253.namprd20.prod.outlook.com (2603:10b6:a03:47b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Thu, 11 Apr
+ 2024 23:24:24 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::182f:841b:6e76:b819]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::182f:841b:6e76:b819%2]) with mapi id 15.20.7409.042; Thu, 11 Apr 2024
+ 23:24:24 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: sophgo: Make synthesizer struct static
+Date: Fri, 12 Apr 2024 07:24:38 +0800
+Message-ID:
+ <IA1PR20MB49531E437735A71A163694AEBB052@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.44.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [AEDZjpx2crW5zowcsgcG/x0VwXZo3DeozUOS85e+G5k=]
+X-ClientProxiedBy: TY2PR02CA0032.apcprd02.prod.outlook.com
+ (2603:1096:404:a6::20) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <20240411232439.71651-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SJ0PR20MB5253:EE_
+X-MS-Office365-Filtering-Correlation-Id: c87ef73f-58b5-4c6d-cc19-08dc5a7e8627
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	znCB40dinQwUWZSFXmv2i5lv0OBsPPLnYmcszKex40TyzYnLKlAtgePFROC/hWCxpAi7HvcnbJ+m35tZeQFMowTGaTQmZL0yqQzzVEeKHqSxfGjmqep7XMFafAl+PwLGyq1kicWPJHrGtMJ16HCsHETELaG43jI1N8xbw+OFNi60s3ow27FqD7GNboXPMuK6O5YCGuMfxIrCm5vXbtGgcKzF0VhQMZQmmbjN92UUWXKNDZFIchlK7NUmbFmgDc8OnvTbF1DrGuhduD1Dh1ZYoj+MEu6S+DTjTge5iLSL9tIdKXb//xM7Je0Kr60r840VQrF5mJdcIehewLe7zN95h0uth+/f7/G5srn4LahroxONFK4MTMEN6bNEKjemd1IXIpa47VxrnEjR0FZOT/E50aAEBcFBFc5grfYA+yz7kUKWScrIFRAlmHDNPZGNFbFWSTBKLAH3jeWIPbg3MShkzcgepF2o8E8AvScntR2vOndlbzeI0WB1zo/e7oV2LyPUmL93/ANldXTGPurOQGIM7D57Gs3+25N8UWtgMowz43i5QW82LvJZHBaGUQU3bhOHwPWmXofHK/Rotec7CsGf4ZnP6bMRydP6+du4gCpumNIcYxpqn+wOXhDegpmwIYq2
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?L+mJjZPuh3nT0uZtKAfh1TQVxOPTV66gakzDHmbWvWPsWfDmlle/87Mg13al?=
+ =?us-ascii?Q?XAprGkoeo+PPg79lrXohiYC/pe8NxQgq4tZ8m/+74tvZtdA5Z6gb+k57IHrd?=
+ =?us-ascii?Q?VlU8jNzHW3LBmunFVvgDeQQnNx9hH6f6NIRcM4zLUFQxfa18NDEu5vIrsNXr?=
+ =?us-ascii?Q?/85rZz45kdw3FjTnv5n2WGGMBbP5Q2aHXMWGyaX5wQfrt/96O3/jyi7GcFky?=
+ =?us-ascii?Q?3reIBPVNKU5WUk6WCww7wBRRG4znvrNJ4WQ6dYm9ZMyxkJE4UtxapNsYTFeA?=
+ =?us-ascii?Q?UHJRkyCn91LKp7WzH8QWXCcieCQwUGzb79IOTeoILx2AH+oP73jvf3Hoqg6E?=
+ =?us-ascii?Q?014Zqt/rgIiqPl/WgS7GcTeGVD8cHQsNAlCse84z6taoAvl0I9kFROEQitUe?=
+ =?us-ascii?Q?FQbMDFcoQJj6HvoP4lEh0CU3x4Jt3v0iGx6zLKDf3WasCzI+wU1HMkfWJJ1m?=
+ =?us-ascii?Q?j18Z2U+bh+fO2OevvjYdB/DJld8bkaqMpxlQP+PYDJ6ddefAYVtUs16mM2kZ?=
+ =?us-ascii?Q?WsdM04F2e3xaTE+XJ8c3ve5AI0Sf93oDMIm1D+BZr1Knpqqcixke7vbNyrhF?=
+ =?us-ascii?Q?8Xhaak9Q6H+4PcwRekOlPNzM4o/agikOMo8WnGs3aAjmZRpU99zk5hgviK9U?=
+ =?us-ascii?Q?zUF2ag7POyuNLOw13o2GzHbDLfQ5ydbaIJcOeSVATAUWQ/d7fad/DLv5HTwn?=
+ =?us-ascii?Q?zTzbqMq/5vci7LPy0is+ohk0oyhHSA8wAIcfTDEl3f408c/TLgFMEEfKkx/6?=
+ =?us-ascii?Q?cGEPqTX9VkxSF0QgabV1oBAKAwGh925ecBzU0D1iD5JtfCswac7V3PSvHLWo?=
+ =?us-ascii?Q?OqGrSeNNt3tV+S23jMd1F4l4mWmesArFmJNg8GSR05Xo3HTHhY/mBdODeeYu?=
+ =?us-ascii?Q?7tZcYgH9zV1FBafw6CoEOTwVYRCF6BLUaZfcFjD97RnhdcXR8TUGhrZaImEh?=
+ =?us-ascii?Q?TBkI9GD2yaz0afF88KIGLsVRefxv9PAkNjUZouGjJNjIFy26bvR9Aa1MyfpF?=
+ =?us-ascii?Q?/1eRYLNEFKLnTuXU//CjE8kdZILk8lrMcwVnuziC0+LTPZJHkZNrrnQThq4q?=
+ =?us-ascii?Q?MiCVBa3Wff7XeLveFNUPZ70OO5y2/NcF48wjKNNVUYNCltrqHuIiO4ACBYVO?=
+ =?us-ascii?Q?3A6Q2tGf8qL4eq0YY8AhacAcqg58hIvNJyR7GF5C7I+Cx9/xSm1bzroEFR0x?=
+ =?us-ascii?Q?xnrRFA8lUOPCQ7efqvhe3dpzvjJitEVAytAkuDH4UYMEQlW/nMM82XUNGIIq?=
+ =?us-ascii?Q?CGW55jZppcMrRdFQk/tN?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c87ef73f-58b5-4c6d-cc19-08dc5a7e8627
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2024 23:24:24.5944
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR20MB5253
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-sophgo
-head:   1cce3e61af6a89aa4b01189257fba73e46244b2d
-commit: 80fd61ec46124eb83b29de3647a565f69979e753 [2/4] clk: sophgo: Add clock support for CV1800 SoC
-config: openrisc-randconfig-r111-20240412 (https://download.01.org/0day-ci/archive/20240412/202404120548.y9dZIi0e-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240412/202404120548.y9dZIi0e-lkp@intel.com/reproduce)
+Let all synthesizer structs are static to make the compiler happy.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202404120548.y9dZIi0e-lkp@intel.com/
+Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
+Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+---
+This patch based on the clk/for-next branch.
+---
+ drivers/clk/sophgo/clk-cv1800.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/clk/sophgo/clk-cv1800.c:82:35: sparse: sparse: symbol 'clk_mpll_synthesizer' was not declared. Should it be static?
->> drivers/clk/sophgo/clk-cv1800.c:96:35: sparse: sparse: symbol 'clk_tpll_synthesizer' was not declared. Should it be static?
->> drivers/clk/sophgo/clk-cv1800.c:110:35: sparse: sparse: symbol 'clk_a0pll_synthesizer' was not declared. Should it be static?
->> drivers/clk/sophgo/clk-cv1800.c:124:35: sparse: sparse: symbol 'clk_disppll_synthesizer' was not declared. Should it be static?
->> drivers/clk/sophgo/clk-cv1800.c:138:35: sparse: sparse: symbol 'clk_cam0pll_synthesizer' was not declared. Should it be static?
->> drivers/clk/sophgo/clk-cv1800.c:152:35: sparse: sparse: symbol 'clk_cam1pll_synthesizer' was not declared. Should it be static?
-   drivers/clk/sophgo/clk-cv1800.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/umh.h, include/linux/kmod.h, ...):
-   include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
+diff --git a/drivers/clk/sophgo/clk-cv1800.c b/drivers/clk/sophgo/clk-cv1800.c
+index 956de5b21a80..2da4c24621cf 100644
+--- a/drivers/clk/sophgo/clk-cv1800.c
++++ b/drivers/clk/sophgo/clk-cv1800.c
+@@ -79,7 +79,7 @@ static const struct clk_parent_data clk_bypass_fpll_parents[] = {
+ 	{ .hw = &clk_fpll.common.hw },
+ };
 
-vim +/clk_mpll_synthesizer +82 drivers/clk/sophgo/clk-cv1800.c
+-struct cv1800_clk_pll_synthesizer clk_mpll_synthesizer = {
++static struct cv1800_clk_pll_synthesizer clk_mpll_synthesizer = {
+ 	.en		= CV1800_CLK_BIT(REG_PLL_G6_SSC_SYN_CTRL, 2),
+ 	.clk_half	= CV1800_CLK_BIT(REG_PLL_G6_SSC_SYN_CTRL, 0),
+ 	.ctrl		= REG_MPLL_SSC_SYN_CTRL,
+@@ -93,7 +93,7 @@ static CV1800_FACTIONAL_PLL(clk_mpll, clk_bypass_mipimpll_parents,
+ 			    &clk_mpll_synthesizer,
+ 			    CLK_IS_CRITICAL);
 
-    81	
-  > 82	struct cv1800_clk_pll_synthesizer clk_mpll_synthesizer = {
-    83		.en		= CV1800_CLK_BIT(REG_PLL_G6_SSC_SYN_CTRL, 2),
-    84		.clk_half	= CV1800_CLK_BIT(REG_PLL_G6_SSC_SYN_CTRL, 0),
-    85		.ctrl		= REG_MPLL_SSC_SYN_CTRL,
-    86		.set		= REG_MPLL_SSC_SYN_SET,
-    87	};
-    88	static CV1800_FACTIONAL_PLL(clk_mpll, clk_bypass_mipimpll_parents,
-    89				    REG_MPLL_CSR,
-    90				    REG_PLL_G6_CTRL, 0,
-    91				    REG_PLL_G6_STATUS, 0,
-    92				    pll_limits,
-    93				    &clk_mpll_synthesizer,
-    94				    CLK_IS_CRITICAL);
-    95	
-  > 96	struct cv1800_clk_pll_synthesizer clk_tpll_synthesizer = {
-    97		.en		= CV1800_CLK_BIT(REG_PLL_G6_SSC_SYN_CTRL, 3),
-    98		.clk_half	= CV1800_CLK_BIT(REG_PLL_G6_SSC_SYN_CTRL, 0),
-    99		.ctrl		= REG_TPLL_SSC_SYN_CTRL,
-   100		.set		= REG_TPLL_SSC_SYN_SET,
-   101	};
-   102	static CV1800_FACTIONAL_PLL(clk_tpll, clk_bypass_mipimpll_parents,
-   103				    REG_TPLL_CSR,
-   104				    REG_PLL_G6_CTRL, 4,
-   105				    REG_PLL_G6_STATUS, 1,
-   106				    pll_limits,
-   107				    &clk_tpll_synthesizer,
-   108				    CLK_IS_CRITICAL);
-   109	
- > 110	struct cv1800_clk_pll_synthesizer clk_a0pll_synthesizer = {
-   111		.en		= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 2),
-   112		.clk_half	= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 0),
-   113		.ctrl		= REG_A0PLL_SSC_SYN_CTRL,
-   114		.set		= REG_A0PLL_SSC_SYN_SET,
-   115	};
-   116	static CV1800_FACTIONAL_PLL(clk_a0pll, clk_bypass_mipimpll_parents,
-   117				    REG_A0PLL_CSR,
-   118				    REG_PLL_G2_CTRL, 4,
-   119				    REG_PLL_G2_STATUS, 1,
-   120				    pll_limits,
-   121				    &clk_a0pll_synthesizer,
-   122				    CLK_IS_CRITICAL);
-   123	
- > 124	struct cv1800_clk_pll_synthesizer clk_disppll_synthesizer = {
-   125		.en		= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 3),
-   126		.clk_half	= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 0),
-   127		.ctrl		= REG_DISPPLL_SSC_SYN_CTRL,
-   128		.set		= REG_DISPPLL_SSC_SYN_SET,
-   129	};
-   130	static CV1800_FACTIONAL_PLL(clk_disppll, clk_bypass_mipimpll_parents,
-   131				    REG_DISPPLL_CSR,
-   132				    REG_PLL_G2_CTRL, 8,
-   133				    REG_PLL_G2_STATUS, 2,
-   134				    pll_limits,
-   135				    &clk_disppll_synthesizer,
-   136				    CLK_IS_CRITICAL);
-   137	
- > 138	struct cv1800_clk_pll_synthesizer clk_cam0pll_synthesizer = {
-   139		.en		= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 4),
-   140		.clk_half	= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 0),
-   141		.ctrl		= REG_CAM0PLL_SSC_SYN_CTRL,
-   142		.set		= REG_CAM0PLL_SSC_SYN_SET,
-   143	};
-   144	static CV1800_FACTIONAL_PLL(clk_cam0pll, clk_bypass_mipimpll_parents,
-   145				    REG_CAM0PLL_CSR,
-   146				    REG_PLL_G2_CTRL, 12,
-   147				    REG_PLL_G2_STATUS, 3,
-   148				    pll_limits,
-   149				    &clk_cam0pll_synthesizer,
-   150				    CLK_IGNORE_UNUSED);
-   151	
- > 152	struct cv1800_clk_pll_synthesizer clk_cam1pll_synthesizer = {
-   153		.en		= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 5),
-   154		.clk_half	= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 0),
-   155		.ctrl		= REG_CAM1PLL_SSC_SYN_CTRL,
-   156		.set		= REG_CAM1PLL_SSC_SYN_SET,
-   157	};
-   158	static CV1800_FACTIONAL_PLL(clk_cam1pll, clk_bypass_mipimpll_parents,
-   159				    REG_CAM1PLL_CSR,
-   160				    REG_PLL_G2_CTRL, 16,
-   161				    REG_PLL_G2_STATUS, 4,
-   162				    pll_limits,
-   163				    &clk_cam1pll_synthesizer,
-   164				    CLK_IS_CRITICAL);
-   165	
+-struct cv1800_clk_pll_synthesizer clk_tpll_synthesizer = {
++static struct cv1800_clk_pll_synthesizer clk_tpll_synthesizer = {
+ 	.en		= CV1800_CLK_BIT(REG_PLL_G6_SSC_SYN_CTRL, 3),
+ 	.clk_half	= CV1800_CLK_BIT(REG_PLL_G6_SSC_SYN_CTRL, 0),
+ 	.ctrl		= REG_TPLL_SSC_SYN_CTRL,
+@@ -107,7 +107,7 @@ static CV1800_FACTIONAL_PLL(clk_tpll, clk_bypass_mipimpll_parents,
+ 			    &clk_tpll_synthesizer,
+ 			    CLK_IS_CRITICAL);
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-struct cv1800_clk_pll_synthesizer clk_a0pll_synthesizer = {
++static struct cv1800_clk_pll_synthesizer clk_a0pll_synthesizer = {
+ 	.en		= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 2),
+ 	.clk_half	= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 0),
+ 	.ctrl		= REG_A0PLL_SSC_SYN_CTRL,
+@@ -121,7 +121,7 @@ static CV1800_FACTIONAL_PLL(clk_a0pll, clk_bypass_mipimpll_parents,
+ 			    &clk_a0pll_synthesizer,
+ 			    CLK_IS_CRITICAL);
+
+-struct cv1800_clk_pll_synthesizer clk_disppll_synthesizer = {
++static struct cv1800_clk_pll_synthesizer clk_disppll_synthesizer = {
+ 	.en		= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 3),
+ 	.clk_half	= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 0),
+ 	.ctrl		= REG_DISPPLL_SSC_SYN_CTRL,
+@@ -135,7 +135,7 @@ static CV1800_FACTIONAL_PLL(clk_disppll, clk_bypass_mipimpll_parents,
+ 			    &clk_disppll_synthesizer,
+ 			    CLK_IS_CRITICAL);
+
+-struct cv1800_clk_pll_synthesizer clk_cam0pll_synthesizer = {
++static struct cv1800_clk_pll_synthesizer clk_cam0pll_synthesizer = {
+ 	.en		= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 4),
+ 	.clk_half	= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 0),
+ 	.ctrl		= REG_CAM0PLL_SSC_SYN_CTRL,
+@@ -149,7 +149,7 @@ static CV1800_FACTIONAL_PLL(clk_cam0pll, clk_bypass_mipimpll_parents,
+ 			    &clk_cam0pll_synthesizer,
+ 			    CLK_IGNORE_UNUSED);
+
+-struct cv1800_clk_pll_synthesizer clk_cam1pll_synthesizer = {
++static struct cv1800_clk_pll_synthesizer clk_cam1pll_synthesizer = {
+ 	.en		= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 5),
+ 	.clk_half	= CV1800_CLK_BIT(REG_PLL_G2_SSC_SYN_CTRL, 0),
+ 	.ctrl		= REG_CAM1PLL_SSC_SYN_CTRL,
+--
+2.44.0
+
