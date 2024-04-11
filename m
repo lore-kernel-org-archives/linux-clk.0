@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D1713BAE2;
-	Thu, 11 Apr 2024 04:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64AB62144;
+	Thu, 11 Apr 2024 05:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712811087; cv=none; b=L35U2zFXY8z6j3Zo3GJZ+AiBJUzDFk64ShGcrYc7NGDtAwMjyqJxmz5FWzWNcxq0Hk0ySC7oGCx6o7/FhAba9RTi0RpBz2W5o5KuASjuUSEmKsCDbB81fYE84u0Q/LzT7ENXdXlnIDeMC29najzlvboaiFSOIJr6HN8SA2SwTa0=
+	t=1712811664; cv=none; b=N/65BVq6cPhs/nprtXeICr8Eu5HLVs+5l9UZ3D00sWHCfM2c8j6ZVGVaEf4FyH8f7Qhgbk3YU4PSABhERB0Wq1zo/ZPxF7DkRW7/wyxrqR22JJ39HKkvZCIuuPFUjLs6BO0a8jWddX2BQ6X3BcphTQaLjEdbCk0xTHXD4Aolo/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712811087; c=relaxed/simple;
-	bh=GUxfCzNobyGC5VcWk513iZKVan8O3e+IeiUp4CdtYLk=;
+	s=arc-20240116; t=1712811664; c=relaxed/simple;
+	bh=iXUl7mi0PL2dzPz55D0s/Cdt8vWE4qwt/mrMsbksjMw=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Ox2vVC3OTevgwG2LDMtP/zW0f8vrE/j9GWYDfPoasqZ3Ljt9wgOObBKVCFXUhc4vBxxlNipPuiSzApcacCfRGPs8Xw3dwaUtrKDC+mFIMb3Rpz5QxQqmNjIgtx0idIuJvL/ifNhLDEgsCCCwk6p8ZqI7KnQejfD2IVm204U73Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8VqGLgX; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:To:Date; b=M0swk+sednixdiQGNziCuNkwGYVDnFaGm6OYtSkbuYEWhBS6urKZ7adztOTqH3urMQM+qPP9FvpRQF3aW2aI/UbBDFc3iq2IyphohFZaFlJYb6apV+XmGGe+Q+FCN0IQltmsDIrFKRIOC2H7M+j7DbAh/6jizo52mykPo5yHmpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nEEXo4jl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8VqGLgX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D200CC433F1;
-	Thu, 11 Apr 2024 04:51:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEEXo4jl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50611C433F1;
+	Thu, 11 Apr 2024 05:01:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712811087;
-	bh=GUxfCzNobyGC5VcWk513iZKVan8O3e+IeiUp4CdtYLk=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=b8VqGLgXa2uRDbIsxmNSEsx4zA5+/iDwI6SOLu+w8zQTw9+WewG6kT3Q75D7WGJL/
-	 TH/ZWHffaBZf4TtPtv063/KFMtcvgZG+zRgt4S9EHP/z8mF6xOevdRvqaB0Dvzb5Sx
-	 2TeQAGrZmAsDBwBe1ADEe2PfHgCnzfEN4WtUPnuXuq7ofvL8OUsF1KI6v6P07OnxdH
-	 1XeIa0f/M/DewCvnAEw9IRTlhadSmiTamZ/CAYaWmSDeOODc3WnZLJDNqkERYTUG3q
-	 dU2v27sDWR+WL0pbWeNlq35Mtmvn69p+WMi74N16r86r0FP+NsHHLJpM5RJZVg2PwT
-	 /VjcZIxQSymYA==
-Message-ID: <6709fe217cfbd78543e7dfe7c3acec6e.sboyd@kernel.org>
+	s=k20201202; t=1712811662;
+	bh=iXUl7mi0PL2dzPz55D0s/Cdt8vWE4qwt/mrMsbksjMw=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=nEEXo4jlkYaL/QJDzWQzfik5QFt5pz715Fw/5QhKKYXy3TODEMb2q4s3zab1iaD6A
+	 P/saqOEE7/hVmi5H6RYUt3cBqlgQ+ZLm0DyUGW/WTEF6s16tLnWocN4/ZDOaQEUX/2
+	 BNnxLrm3kbqwjlbYRvM/TfpYS75a8/9DWp6NgttWYyfN5eoApURnFaFZLtaJPbFJ8H
+	 TIKfUYvAef1x4oRAqdItWfyLZf+4sEDHbEcQUCpAukTJQQ/59La9wzD14Ih/5YJNMB
+	 NrNK7bqvpc+qrTpf7w3NLhCvZ8zU9n/6ToYVtURnAZy8WQ8o39pl1m4PP70A+hsRxh
+	 1PsyQJ1aCtSPA==
+Message-ID: <5fc87d10b06f8b5b3024ac6c5674b18b.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,120 +35,52 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAP6Zq1htKQ5v0tH9HGRejnKwJ5ZauUWG_CzYUKegkVL4Ek8UxA@mail.gmail.com>
-References: <20240131182653.2673554-1-tmaimon77@gmail.com> <20240131182653.2673554-4-tmaimon77@gmail.com> <74e003c6d80611ddd826ac21f48b4b3a.sboyd@kernel.org> <CAP6Zq1g5gwXvYzO5fnHxG-6__gSCpNBY7VeEPyr4Qtijya6EfQ@mail.gmail.com> <8acf846e767884978f3bb98646433551.sboyd@kernel.org> <CAP6Zq1htKQ5v0tH9HGRejnKwJ5ZauUWG_CzYUKegkVL4Ek8UxA@mail.gmail.com>
-Subject: Re: [PATCH v23 3/3] clk: npcm8xx: add clock controller
+In-Reply-To: <a70e7219-5fd8-4797-be43-199f8995409b@quicinc.com>
+References: <20231220221724.3822-1-ansuelsmth@gmail.com> <a70e7219-5fd8-4797-be43-199f8995409b@quicinc.com>
+Subject: Re: [PATCH v8 0/3] clk: qcom: clk-rcg2: introduce support for multiple conf for same freq
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: benjaminfair@google.com, joel@jms.id.au, krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, robh+dt@kernel.org, tali.perry1@gmail.com, venture@google.com, yuenn@google.com, openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-To: Tomer Maimon <tmaimon77@gmail.com>
-Date: Wed, 10 Apr 2024 21:51:24 -0700
+To: Bjorn Andersson <andersson@kernel.org>, Christian Marangi <ansuelsmth@gmail.com>, Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 10 Apr 2024 22:01:00 -0700
 User-Agent: alot/0.10
 
-Quoting Tomer Maimon (2024-02-29 13:29:46)
-> Hi Stephen,
+Quoting Kathiravan Thirumoorthy (2024-01-22 09:46:23)
 >=20
-> Thanks for your reply.
 >=20
-> On Thu, 29 Feb 2024 at 00:48, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Tomer Maimon (2024-02-25 10:00:35)
-> > > Hi Stephen,
-> > >
-> > > On Thu, 22 Feb 2024 at 07:58, Stephen Boyd <sboyd@kernel.org> wrote:
-> > > >
-> > > > Quoting Tomer Maimon (2024-01-31 10:26:53)
-> > > > > +
-> > > > > +static unsigned long npcm8xx_clk_div_get_parent(struct clk_hw *h=
-w,
-> > > > > +                                               unsigned long par=
-ent_rate)
-> > > > > +{
-> > > > > +       struct npcm8xx_clk *div =3D to_npcm8xx_clk(hw);
-> > > > > +       unsigned int val;
-> > > > > +
-> > > > > +       regmap_read(div->clk_regmap, div->offset, &val);
-> > > > > +       val =3D val >> div->shift;
-> > > > > +       val &=3D clk_div_mask(div->width);
-> > > > > +
-> > > > > +       return divider_recalc_rate(hw, parent_rate, val, NULL, di=
-v->flags,
-> > > > > +                                  div->width);
-> > > > > +}
-> > > > > +
-> > > > > +static const struct clk_ops npcm8xx_clk_div_ops =3D {
-> > > > > +       .recalc_rate =3D npcm8xx_clk_div_get_parent,
-> > > > > +};
-> > > > > +
-> > > > > +static int npcm8xx_clk_probe(struct platform_device *pdev)
-> > > > > +{
-> > > > > +       struct device_node *parent_np =3D of_get_parent(pdev->dev=
-.of_node);
-> > > >
-> > > > The parent of this device is not a syscon.
-> > > Once I have registered the map that handles both reset and the clock
-> > > in general is syscon, this is why we will modify the DTS so the clock
-> > > and the reset will be under syscon father node
-> > >                 sysctrl: system-controller@f0801000 {
-> > >                         compatible =3D "syscon", "simple-mfd";
-> > >                         reg =3D <0x0 0xf0801000 0x0 0x1000>;
-> > >
-> > >                         rstc: reset-controller {
-> > >                                 compatible =3D "nuvoton,npcm845-reset=
-";
-> > >                                 reg =3D <0x0 0xf0801000 0x0 0xC4>;
-> > >                                 #reset-cells =3D <2>;
-> > >                                 nuvoton,sysgcr =3D <&gcr>;
-> > >                         };
-> > >
-> > >                         clk: clock-controller {
-> > >                                 compatible =3D "nuvoton,npcm845-clk";
-> > >                                 #clock-cells =3D <1>;
-> > >                                 clocks =3D <&refclk>;
-> > >                                 clock-names =3D "refclk";
-> > >                         };
-> > >                 };
-> > > You can see other drivers that using the same method like
-> > > https://elixir.bootlin.com/linux/v6.8-rc5/source/Documentation/device=
-tree/bindings/clock/socionext,uniphier-clock.yaml
-> >
-> > You will need a similar file like
-> > Documentation/devicetree/bindings/soc/socionext/socionext,uniphier-peri=
-ctrl.yaml
-> > then to describe the child nodes.
-> I can do it.
-> >
-> > Socionext may not be the best example to follow. I generally try to
-> > avoid syscon and simply put #reset-cells and #clock-cells in the node
-> If I remove syscon I can't use syscon_node_to_regmap function, What
-> should I use If I remove syscon? auxiliary bus? something else?
-
-You should use auxiliary bus. You can make a regmap in the parent
-driver and pass that to the child auxiliary devices still.
-
-> > for the device. You can use the auxiliary bus to register drivers for
-> > clk and reset and put them into the resepective driver directories.
-> I little bit confused, what is an auxiliary bus to register drivers,
-> can you provide me an example?
-
-$ git grep -l auxiliary_ -- drivers/clk/
-drivers/clk/microchip/clk-mpfs.c
-drivers/clk/starfive/clk-starfive-jh7110-sys.c
-
-You can decide to make either the clk or the reset driver the "main"
-driver that registers the other auxiliary devices. Either way the DT
-binding has a single node instead of one per logical driver in the
-kernel.
-
-> > Avoid syscon means random drivers can't reach into the device with a
-> > regmap handle and read/write registers that they're not supposed to.
-> Indeed, but the drivers could use the reset and clock memory map only
-> if the module is also a child node.
+> On 12/21/2023 3:47 AM, Christian Marangi wrote:
+> > This small series fix a current problem with ipq8074 where the 2 uniphy
+> > port doesn't work in some corner case with some clk configuration. The
+> > port to correctly work require a specific frequency, using the wrong one
+> > results in the port not transmitting data.
+> >=20
+> > With the current code with a requested freq of 125MHz, the frequency is
+> > set to 105MHz. This is caused by the fact that there are 2 different
+> > configuration to set 125MHz and it's always selected the first one that
+> > results in 105MHz.
+> >=20
+> > In the original QSDK code, the frequency configuration selection is
+> > different and the CEIL FLOOR logic is not present. Instead it's used a
+> > BEST approach where the frequency table is checked and then it's checked
+> > if there are duplicate entry.
+> >=20
+> > This proposed implementation is more specific and introduce an entire n=
+ew
+> > set of ops and a specific freq table to support this special configurat=
+ion.
+> >=20
+> > A union is introduced in rcg2 struct to not duplicate the struct.
+> > A new set of ops clk_rcg2_fm_ops are introduced to support this new kind
+> > of frequency table.
+> >=20
 >=20
-> Please let me know what is your preferred way to handle it:
-> 1. stick with syscon and upstream-defined documentation for the rst clk s=
-yscon.
-> 2. avoid syscon and use an auxiliary bus, appreciate if you could give
-> me an example of how it should be done.
-> 3. Avoid sycon and handle it differently.
+>=20
+> Bjorn / Stephen Boyd,
+>=20
+> I would like to know if there are any comments on this series. To enable =
 
-I prefer 2
+> the clocks required for the Ethernet interfaces on the IPQ platforms,=20
+> these patches are needed. If no concerns, can this be picked up for v6.9?
+>=20
+
+I'm fine if Bjorn wants to pick it up.
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
