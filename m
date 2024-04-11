@@ -1,60 +1,60 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0391713E041
-	for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2024 06:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF51013CAA1
+	for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2024 06:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712816088; cv=none; b=K3K748h6nLQA3E60oefiiqYbKi0h5bWBy7WZSSs3SlZxDaSEr+ulr9mcLzo7ZGPkjsGgoo6+StOizBvnDFxS9UiIE71ebdvxTn8e+6uySryUTX3wzRGSby24RUStHbx/exHdwnJbM3/1zL391vytAchgGNcU+Fc89ot6nCVIRDM=
+	t=1712816165; cv=none; b=oWCpd7cUsGxH3XbbHx5FFlbq33B6dJ96a/IIVBg3vYn98pcG1zO93UksWkikVyNoN9YXd9/ki40snQL0NsTXAiPU1h2baChha6fVhLRIPk/TXnPCqvOiJsDpn5O1K8BLc3FOiZRUtW586BF45nRPCHK6sqrzlSfQCSJl9lu8Emk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712816088; c=relaxed/simple;
-	bh=0LZSrLRPogzsfW4/8pt052No9XiEWklPFL31WEUCd8c=;
+	s=arc-20240116; t=1712816165; c=relaxed/simple;
+	bh=CS88KkY/o1zSXzsWzYNP5T+t7FA8tAbkbEbGlqCch9w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uz/TOY02Mt4RYh+HxA/sutrUsvyc3w4KAy+Afan/sKo1x3FFXluaXGpc4JqerzXXkWDPvcMi1sqNLzBQNMbhnbWCBFK2Vev5RC38Ogg76EXhVejpjQgeGCC1TbdcK7sO5ZQFyt+SA8ezKEoJjqPDR/JabpwFKcuORFFFGIHq8sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PurAvv+c; arc=none smtp.client-ip=209.85.221.48
+	 In-Reply-To:Content-Type; b=T0h/MoxYGglphs9fe25peyt7kfdIAHk4NXPyTgISuJUu4EDPhxWblCqAkwP/Ao+OeLMz1RxNwrRbXWf9hWKZS5j6KOvzt5lH/jQwDQZH6FI240pVugILFEob/XPTM9/0Q5zUySFHc9L/hyoXiG1OhiJk/qsvimS3GRkkHngn3/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=shbH+rBD; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PurAvv+c"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-346b96f1483so122535f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 23:14:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="shbH+rBD"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-417d08135b6so3721335e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 23:16:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712816084; x=1713420884; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712816162; x=1713420962; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=nilkLxBgfDXqvdRilOpPnjqsvdV2sXmTESpSzKdW5iw=;
-        b=PurAvv+c8l0ncc/0V9Ghve78HZalKV3vJ3KkiwM3Yv7NU614R+4GP2QnsIE72wvqmW
-         1K2uN4DyvC2cqJDVr5ORWlasPSGtJrnxygNUn6ocxbV2r0Vc3CAagxlYy5lST9WQJBe4
-         E9gxMIrugBB/O8X5m5TWdlYy8LGEuKqd8w1gLHmLu7NnbZwxs3E6qMAZZ52NtNiFbtv8
-         rJY3lhCjPByKtAwgVsieemMcuqXh/A8nfnGMOLF1mM+f6i3B4c56J/GP8c4+D++r1DCH
-         frwheVap96TJnAkUh/iWQJzNmizR7/qtRD0DppGkBYyZdf4Eeze30CTPI9Jgx2nfkLH0
-         fBQQ==
+        bh=vqvF1Iz6aBOSnf9ysN3Cl7MVobAUUWig+q/OaJGV+mQ=;
+        b=shbH+rBDiROX5kqDMdrKQaL8UNh909hAcpaf3EWwtB3rogdBYmiqdPDPvLoaQjRr5O
+         Ct0jQSu54sbBJ1F3KkGRH56aqxv19QpgLpmVQ2okorvNRrgcAVYic6lq5rSMpDHqKO3f
+         OgIx3oZjhQBhHHYwFBZgHZwX+dG0Mg9jf33Vbg6Uf1VcjZ6BjDtFKiLSNiET3PbhCPDK
+         T9Apl3iQSzrJgSD+cwxOesYWSbO8ZttgbE66E9tOcPaiLisT57eBYI6hAkbQPkKyDnFN
+         d/GpmHJ17DYGUzDVbQ1TgxayASVECBDb0ZuMmjM/CaM6Ei4JkJMk4RFirZRnHesL6SKQ
+         AE8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712816084; x=1713420884;
+        d=1e100.net; s=20230601; t=1712816162; x=1713420962;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nilkLxBgfDXqvdRilOpPnjqsvdV2sXmTESpSzKdW5iw=;
-        b=npVbkqh4tGqHDo9TX/7vR3V/347aPlpy/1os7ImCL4+ansYbHZcBQ0Kob2xIxz6ltv
-         lZjGd61zocdK+YMpfwBfDYYiIBnmfqDzFOCfimU9mRd5SWl3pt8ZvREMGFSyuJfOehWW
-         KVlgutCIGSxwb1cnLnXXq1FJhPMH23VNf0Zc5fQzltUyQlqyTLa3Ly15vAf5Lg/s5rwr
-         d2p8xF/nHEGSyJuIgwKMtryyVd7vV2F3Hxao/HEYTFbMZ4fbg8a63Jp0W8t7seL7WaYJ
-         DYVzT+lgEqHDXAThtl/l8mTsyOV+Ar4ASPnIXR1ssoPALi99zOfj8+wFVz24V+43ZAlV
-         2WSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIS3t3hlLKa3oPJYXszqgh+tDrlvAqL1vygr6iAyKXyMkiPtzzrwJH8LwJmcURFSFi4rM1PnMAnO5icftA3HBo7FW0d7pQxdM4
-X-Gm-Message-State: AOJu0YzDXuDcxN3RQnd6MoDsW4LbV8MSvgacK2Y+Az3BeLQw5PbFThM7
-	9L72JUK8eVZFOZQJgKXUhFbagCokkCBrBd8DdCD/zUIZUTZ8LnkUeS9wJovSyXY=
-X-Google-Smtp-Source: AGHT+IEFvxG1x5KIC+cwgKNU6cxZTA9djTgXTAdFrVWV33uRarxA88ssIE7xWTwLS+TzjqFy0E1PuQ==
-X-Received: by 2002:a05:6000:1d1:b0:346:a69e:5afc with SMTP id t17-20020a05600001d100b00346a69e5afcmr1351305wrx.4.1712816084284;
-        Wed, 10 Apr 2024 23:14:44 -0700 (PDT)
+        bh=vqvF1Iz6aBOSnf9ysN3Cl7MVobAUUWig+q/OaJGV+mQ=;
+        b=oF/lNZ3pzsOhc+VlZjE9RgoqyoTujONDoU8ZznSEHYIbbqCwOntENfLUbZKyeaof1Y
+         /0SU6r7GVJ/1k24yvrJ1lxfekyZwW0XjEfkYM9GLKRaAfmgY0tn/j2OJCWvEWybtWVbH
+         M7ceoeCdmDWC/lHcO4iOrZq+vLKELJW7LoR2p8DxbizisPtj+GkUW23K7gpUEh5HYVlW
+         eRIgrbXAGfomYnmdW0mQyNgCExRrmP+WXdVPopmpM9Hrz6RfU4m5MhL6gqJr7Z/7vPNP
+         qGee54S0gzTFF6YbL0QsGD48YkMU1ENQuM458eFm1KLIJcqyb6HIU5QfYPrTYqpu44AM
+         tdtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVblVZ8PHffU3hxBPIYgozxA6TOpCDbqhg3+Tf96LxSovQP8sw4T2CK4/sgyR0txbZS0IFkm22zzNBjA2aArBI0Uhk8h95MvZgG
+X-Gm-Message-State: AOJu0YwDbzLBPFzpMXQ8ZjcLFFED2hE+zLLM3PQYErkNBtMePsdyg0A4
+	qt9YhdAN83CQ6y0GwKVKelFz0YWcOnKAensG/k0TEIojhR96rkigjTAEjvLg1d0=
+X-Google-Smtp-Source: AGHT+IHHP6xLvGXqaX8EeHeppHO+BQ3SypAvOETut0ZopKDH6ade8VDHZbvuK1KScExAVkQF5qKxew==
+X-Received: by 2002:a05:600c:11ce:b0:414:8aa7:f3b7 with SMTP id b14-20020a05600c11ce00b004148aa7f3b7mr3846814wmi.19.1712816162106;
+        Wed, 10 Apr 2024 23:16:02 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id m4-20020adffe44000000b00343e760c637sm959933wrs.84.2024.04.10.23.14.42
+        by smtp.gmail.com with ESMTPSA id bi19-20020a05600c3d9300b00417d73deb11sm989892wmb.32.2024.04.10.23.16.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Apr 2024 23:14:43 -0700 (PDT)
-Message-ID: <975a8554-a299-4394-be15-c910cf9688ae@linaro.org>
-Date: Thu, 11 Apr 2024 08:14:42 +0200
+        Wed, 10 Apr 2024 23:16:01 -0700 (PDT)
+Message-ID: <faa0769f-bd5e-4c6b-9f61-1a369830ad28@linaro.org>
+Date: Thu, 11 Apr 2024 08:15:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,8 +62,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/11] dt-bindings: reset: mobileye,eyeq5-reset: add
- EyeQ6L and EyeQ6H
+Subject: Re: [PATCH 08/11] MIPS: mobileye: eyeq5: add OLB syscon node
 To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
  Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -79,7 +78,7 @@ Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>
 References: <20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com>
- <20240410-mbly-olb-v1-3-335e496d7be3@bootlin.com>
+ <20240410-mbly-olb-v1-8-335e496d7be3@bootlin.com>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -126,60 +125,39 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240410-mbly-olb-v1-3-335e496d7be3@bootlin.com>
+In-Reply-To: <20240410-mbly-olb-v1-8-335e496d7be3@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 On 10/04/2024 19:12, Théo Lebrun wrote:
-> Add bindings for EyeQ6L and EyeQ6H reset controllers.
-> 
-> Some controllers host a single domain, meaning a single cell is enough.
-> We do not enforce reg-names for such nodes.
+> The OLB ("Other Logic Block") is a syscon region hosting clock, reset
+> and pin controllers. It contains registers such as I2C speed mode that
+> need to be accessible by other nodes.
 > 
 > Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 > ---
->  .../bindings/reset/mobileye,eyeq5-reset.yaml       | 88 ++++++++++++++++++----
->  MAINTAINERS                                        |  1 +
->  2 files changed, 74 insertions(+), 15 deletions(-)
+>  arch/mips/boot/dts/mobileye/eyeq5.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml b/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml
-> index 062b4518347b..799bcf15bed9 100644
-> --- a/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml
-> +++ b/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml
-> @@ -4,11 +4,13 @@
->  $id: http://devicetree.org/schemas/reset/mobileye,eyeq5-reset.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
+> index 6cc5980e2fa1..e82d2a57f6da 100644
+> --- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
+> +++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
+> @@ -100,6 +100,14 @@ uart2: serial@a00000 {
+>  			clock-names = "uartclk", "apb_pclk";
+>  		};
 >  
-> -title: Mobileye EyeQ5 reset controller
-> +title: Mobileye EyeQ reset controller
->  
->  description:
-> -  The EyeQ5 reset driver handles three reset domains. Its registers live in a
-> -  shared region called OLB.
-> +  EyeQ reset controller handles one or more reset domains. They live in shared
-> +  regions called OLB. EyeQ5 and EyeQ6L host one OLB each, each with one reset
-> +  instance. EyeQ6H hosts 7 OLB regions; three of those (west, east,
-> +  accelerator) host reset controllers. West and east are duplicates.
->  
->  maintainers:
->    - Grégory Clement <gregory.clement@bootlin.com>
-> @@ -17,27 +19,83 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    const: mobileye,eyeq5-reset
-> +    enum:
-> +      - mobileye,eyeq5-reset
-> +      - mobileye,eyeq6l-reset
-> +      - mobileye,eyeq6h-we-reset
-> +      - mobileye,eyeq6h-acc-reset
->  
-> -  reg:
-> -    maxItems: 3
-> +  reg: true
+> +		olb: system-controller@e00000 {
+> +			compatible = "mobileye,eyeq5-olb", "syscon", "simple-mfd";
+> +			reg = <0 0xe00000 0x0 0x400>;
+> +			ranges = <0x0 0x0 0xe00000 0x400>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
 
-Same mistakes. Please open existing bindings with multiple variants,
-e.g. some Qualcomm, and take a look how it is done there.
+Do not add incomplete node. ranges, address/size-cells are incorrect in
+this context and you will have warnings.
+
+Add complete node, so these properties make sense.
 
 Best regards,
 Krzysztof
