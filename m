@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8A713E8B9;
-	Thu, 11 Apr 2024 07:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C085513C824;
+	Thu, 11 Apr 2024 07:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712821546; cv=none; b=D/dMnEBHrh2da4zBznv5r/lj1iHNVrXKnmlp0+vf/PF1VbzVlZQ3SXMcqoFmBZ2nBaiys1WDlHzAZb3XXoVuIxef48OmHDTkMBI/NQHHcYbpkcd0/Zf7hjfhBuCyKjH+Utfx38H+plzaTUXEHTs1f90U45ZMWfy39uDAqZOZbUo=
+	t=1712821767; cv=none; b=OZb/vchSvyBsXKm3SYYwpkm5CMt68CQDzw15XT5KIWJcfoAr3Br5KzIqhx3EJW4CV2h/qCaRHWL7XNFK0guGmVcHnv+Zk4nxV1ICjVvEjiRO4/dheEWE31bwfNTiurxl0FUaW+4Y6bvVoU9ape/ELIRxf4gJWg0BGAOkNyTvsDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712821546; c=relaxed/simple;
-	bh=bIJYJVzqanaZpwzfS5AEQO7u84UA48mefo7TJ6Lffno=;
+	s=arc-20240116; t=1712821767; c=relaxed/simple;
+	bh=GQQD6YHCcBkicBSPTMO2OoklUsO8Qz/uM9luYCPMi30=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=SrIveMa1ElwBrtLOSSIgaDH9eAdK59dwMvVK2EQ1U3bwgtrBGN9DyJWTfoKmy96AMXqwQM0+tBRVllp+1R9WOsoap0f2gAgSMXfnBG4t30StZqx73TPfEw8JkKc3oskOCmcru/SEExTBF9S4uUN5OZOg+q88oV025K9teR79GgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tG/lFgCu; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Ayc4slkldwOoTkCycVEmMG3321YOCp6XAf7yODcPBCBNiRBisGNAqj1o0aAiaMfe7EH80esqwkUKJYzljZ//4IvqTNUqA4WtDHKfhaqmgNptiDr0LBQUj7RpDTnWD2zhtt+UzFbumFgwnV9fMm8cAlTsW7sc9cyYI0Qdabb2GyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=crdVATW2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tG/lFgCu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03B73C433F1;
-	Thu, 11 Apr 2024 07:45:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="crdVATW2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30FA2C433F1;
+	Thu, 11 Apr 2024 07:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712821546;
-	bh=bIJYJVzqanaZpwzfS5AEQO7u84UA48mefo7TJ6Lffno=;
+	s=k20201202; t=1712821767;
+	bh=GQQD6YHCcBkicBSPTMO2OoklUsO8Qz/uM9luYCPMi30=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=tG/lFgCur7g9BOwGLDPzXN5cSqy9ewWid7Mh0o4YCsdccnNmtKYDatti9HQ6V2FeY
-	 KNSoDo/Wqe3RsMPhSIouPSrXHQ5+1/AqjC0QW2sDlU3z5RW3e6y6zhmZobwDcYlSJS
-	 kw+Kekd3JK5Kz0IIgwkI4CtMbYlWs9zbtaoI1aR9hXpJFCSzoR10y3WQNwFFhpe6x2
-	 b30i3G6oDWPxmbv9D7Pae6AUQqso6INKBRJC2Vh5GqSnAHxB88Cf8uJkAOEU9Wmkhg
-	 ZmBzpLnDCIpumupVEiZ7KmI1owJ/pQlPUekASduGLkIAZlVYeHnR8KkzHKfDZBjTZ4
-	 1sbajJFOa/UFA==
-Message-ID: <deb23094f40df7df9e7330e95af4e64d.sboyd@kernel.org>
+	b=crdVATW2FLVb3crXNiLBHqFn6ynsHqIcCfM5bLTeAs5VDh9JY3eMei8amlkl5tVKg
+	 KES6kIL4Nwmjyjybv5PKIyspbnq+7a96u7fm66OoqzqrsQkyuTQN0O1W5nRgiVzQSw
+	 UmWvDHagKpqtXszJ/ezQrDVD7m2jOogiY3vsGAzDZLnaF2pQcq7sxhOhQK/G4bHWWu
+	 Kui7KQaf1dY6ThAosg5QR005yovEguC3NhlZO/Ed6HpmFQUcAH0c2zku7BC2f8OdCf
+	 ccCr0G79iv3SXv3wtIlpUHus7wwW7R/VN3JmNhf8cVGRwivsYVjnbSLJuwle6WToGZ
+	 OPUboYjEB4J/Q==
+Message-ID: <44131080f148a472ed5dee901a66ffa7.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,117 +35,38 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240110133128.286657-7-jeeheng.sia@starfivetech.com>
-References: <20240110133128.286657-1-jeeheng.sia@starfivetech.com> <20240110133128.286657-7-jeeheng.sia@starfivetech.com>
-Subject: Re: [RFC v3 06/16] clk: starfive: Add JH8100 System clock generator driver
+In-Reply-To: <20240110133128.286657-9-jeeheng.sia@starfivetech.com>
+References: <20240110133128.286657-1-jeeheng.sia@starfivetech.com> <20240110133128.286657-9-jeeheng.sia@starfivetech.com>
+Subject: Re: [RFC v3 08/16] clk: starfive: Add JH8100 North-West clock generator driver
 From: Stephen Boyd <sboyd@kernel.org>
 Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, jeeheng.sia@starfivetech.com, leyfoon.tan@starfivetech.com
 To: Sia Jee Heng <jeeheng.sia@starfivetech.com>, aou@eecs.berkeley.edu, conor@kernel.org, emil.renner.berthing@canonical.com, hal.feng@starfivetech.com, kernel@esmil.dk, krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, p.zabel@pengutronix.de, palmer@dabbelt.com, paul.walmsley@sifive.com, robh+dt@kernel.org, xingyu.wu@starfivetech.com
-Date: Thu, 11 Apr 2024 00:45:43 -0700
+Date: Thu, 11 Apr 2024 00:49:25 -0700
 User-Agent: alot/0.10
 
-Quoting Sia Jee Heng (2024-01-10 05:31:18)
-> diff --git a/drivers/clk/starfive/clk-starfive-jh8100-sys.c b/drivers/clk=
-/starfive/clk-starfive-jh8100-sys.c
+Quoting Sia Jee Heng (2024-01-10 05:31:20)
+> diff --git a/drivers/clk/starfive/clk-starfive-jh8100-nw.c b/drivers/clk/=
+starfive/clk-starfive-jh8100-nw.c
 > new file mode 100644
-> index 000000000000..6d7e750dce82
+> index 000000000000..018f5af6c777
 > --- /dev/null
-> +++ b/drivers/clk/starfive/clk-starfive-jh8100-sys.c
-> @@ -0,0 +1,415 @@
+> +++ b/drivers/clk/starfive/clk-starfive-jh8100-nw.c
+> @@ -0,0 +1,237 @@
 > +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * StarFive JH8100 System Clock Driver
+> + * StarFive JH8100 North-West Clock Driver
 > + *
 > + * Copyright (C) 2023 StarFive Technology Co., Ltd.
-> + *
-> + * Author: Jee Heng Sia <jeeheng.sia@starfivetech.com>
-> + *
-> + */
-> +
-> +#include <linux/clk.h>
-
-Drop this unused include.
-
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-
-Is this include used in this file?
-
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +#include <soc/starfive/reset-starfive-common.h>
-> +
-> +#include <dt-bindings/clock/starfive,jh8100-crg.h>
-> +
-> +#include "clk-starfive-jh8100.h"
-> +
-> +#define JH8100_SYSCLK_NUM_CLKS                 (JH8100_SYSCLK_NNE_ICG_EN=
- + 1)
-> +
 [...]
 > +
-> +static void jh8100_reset_adev_release(struct device *dev)
-> +{
-> +       struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> +       struct starfive_reset_adev *rdev =3D to_starfive_reset_adev(adev);
-> +
-> +       kfree(rdev);
-> +}
-> +
-> +int jh8100_reset_controller_register(struct starfive_clk_priv *priv,
-
-Just pass 'dev' and 'base' instead.
-
-> +                                    const char *adev_name,
-> +                                    u32 adev_id)
-> +{
-> +       struct starfive_reset_adev *rdev;
-> +       struct auxiliary_device *adev;
-> +       int ret;
-> +
-> +       rdev =3D kzalloc(sizeof(*rdev), GFP_KERNEL);
-> +       if (!rdev)
-> +               return -ENOMEM;
-> +
-> +       rdev->base =3D priv->base;
-> +
-> +       adev =3D &rdev->adev;
-> +       adev->name =3D adev_name;
-> +       adev->dev.parent =3D priv->dev;
-> +       adev->dev.release =3D jh8100_reset_adev_release;
-> +       adev->id =3D adev_id;
-> +
-> +       ret =3D auxiliary_device_init(adev);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D auxiliary_device_add(adev);
-> +       if (ret) {
-> +               auxiliary_device_uninit(adev);
-> +               return ret;
-> +       }
-> +
-> +       return devm_add_action_or_reset(priv->dev,
-> +                                       jh8100_reset_unregister_adev, ade=
-v);
-> +}
-> +EXPORT_SYMBOL_GPL(jh8100_reset_controller_register);
-
-Move this to drivers/reset/ please.
-
-> +
-> +static int __init jh8100_syscrg_probe(struct platform_device *pdev)
+> +static int jh8100_nwcrg_probe(struct platform_device *pdev)
 > +{
 > +       struct starfive_clk_priv *priv;
 > +       unsigned int idx;
 > +       int ret;
 > +
 > +       priv =3D devm_kzalloc(&pdev->dev,
-> +                           struct_size(priv, reg, JH8100_SYSCLK_NUM_CLKS=
-),
+> +                           struct_size(priv, reg, JH8100_NWCLK_NUM_CLKS),
 > +                           GFP_KERNEL);
 > +       if (!priv)
 > +               return -ENOMEM;
@@ -155,50 +76,36 @@ Move this to drivers/reset/ please.
 > +       priv->base =3D devm_platform_ioremap_resource(pdev, 0);
 > +       if (IS_ERR(priv->base))
 > +               return PTR_ERR(priv->base);
-[...]
 > +
-> +       ret =3D devm_of_clk_add_hw_provider(&pdev->dev, jh8100_sysclk_get=
-, priv);
-> +       if (ret)
-> +               return ret;
+> +       for (idx =3D 0; idx < JH8100_NWCLK_NUM_CLKS; idx++) {
+> +               u32 max =3D jh8100_nwcrg_clk_data[idx].max;
+> +               struct clk_parent_data parents[4] =3D {};
+> +               struct clk_init_data init =3D {
+> +                       .name =3D jh8100_nwcrg_clk_data[idx].name,
+> +                       .ops =3D starfive_clk_ops(max),
+> +                       .parent_data =3D parents,
+> +                       .num_parents =3D
+> +                               ((max & STARFIVE_CLK_MUX_MASK) >> STARFIV=
+E_CLK_MUX_SHIFT) + 1,
+> +                       .flags =3D jh8100_nwcrg_clk_data[idx].flags,
+> +               };
+> +               struct starfive_clk *clk =3D &priv->reg[idx];
+> +               unsigned int i;
 > +
-> +       return jh8100_reset_controller_register(priv, "rst-sys", 0);
-> +}
+> +               for (i =3D 0; i < init.num_parents; i++) {
+> +                       unsigned int pidx =3D jh8100_nwcrg_clk_data[idx].=
+parents[i];
 > +
-> +static const struct of_device_id jh8100_syscrg_match[] =3D {
-> +       { .compatible =3D "starfive,jh8100-syscrg" },
-> +       { /* sentinel */ }
-> +};
-> +
-> +static struct platform_driver jh8100_syscrg_driver =3D {
-> +       .driver =3D {
-> +               .name =3D "clk-starfive-jh8100-sys",
-> +               .of_match_table =3D jh8100_syscrg_match,
-> +               .suppress_bind_attrs =3D true,
-> +       },
-> +};
-> +builtin_platform_driver_probe(jh8100_syscrg_driver, jh8100_syscrg_probe);
-> diff --git a/drivers/clk/starfive/clk-starfive-jh8100.h b/drivers/clk/sta=
-rfive/clk-starfive-jh8100.h
-> new file mode 100644
-> index 000000000000..9b69a56fe5fc
-> --- /dev/null
-> +++ b/drivers/clk/starfive/clk-starfive-jh8100.h
-> @@ -0,0 +1,11 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __CLK_STARFIVE_JH8100_H
-> +#define __CLK_STARFIVE_JH8100_H
-> +
-> +#include "clk-starfive-common.h"
+> +                       if (pidx < JH8100_NWCLK_NUM_CLKS)
+> +                               parents[i].hw =3D &priv->reg[pidx].hw;
+> +                       else if (pidx =3D=3D JH8100_NWCLK_OSC)
+> +                               parents[i].fw_name =3D "osc";
 
-Drop this include.
+Please generate this one time with structures and use an index instead
+of string names. This is faster in multiple ways, and the parent data is
+copied anyway.
 
-> +
-> +int jh8100_reset_controller_register(struct starfive_clk_priv *priv,
-
-Forward declare starfive_clk_priv instead.
-
-> +                                    const char *adev_name,
-> +                                    u32 adev_id);
-
-Why is this header here at all?
+> +                       else if (pidx =3D=3D JH8100_NWCLK_APB_BUS)
+> +                               parents[i].fw_name =3D "apb_bus";
+> +                       else if (pidx =3D=3D JH8100_NWCLK_APB_BUS_PER4)
+> +                               parents[i].fw_name =3D "apb_bus_per4";
