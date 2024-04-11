@@ -1,98 +1,56 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C7C143C77;
-	Thu, 11 Apr 2024 09:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144B613D258;
+	Thu, 11 Apr 2024 09:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712827183; cv=none; b=QFIenWgid5p5lTB9+styEmi3+nL3L66oh93O4UTbMzL/KzuMFrZDTqz2tXtMd+UFo3NIV9Y/wSLVZB5GCTRCAhOs5DYzR47Yng6bgyYOgS86O3v5YoAjD22QZSvORYKtn4Ka6CmBUMkv4X/6NT/fuiTX0FCWHdH8rWdkeAuArpU=
+	t=1712827306; cv=none; b=ufzKbIH5CPiEC4geN2EgoAqQcgJRj6wmogvw5J3oDevgSuPwckN6YcgwK6iHqyuDqVQ06sXHo2nCQnaVu60hXhaQq4nuKR9i0PKlPI2zAliEUDXXlaFVnWxRlcV9Ip5Kxgd/oxSlRaXr+yrNQCTwCBmeC2ky9thI4PnY3/usniE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712827183; c=relaxed/simple;
-	bh=7YIPbLNqcKNJR0M74cGCjmsO4y8qKvenM6vaUuW0EUo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=svRIJntm/0yeVdLSctx33Em4YFhO8gq5pZEfkftfquhevK3cumxN+hPFyKGz5xmgSa7gYIBT/WkVqEJXYTjxeb9c9RKw87xZz63jYo0Ld06mU5IbGamNCNCUErGqjKvkBZGW3ZXSjpP/jiVsup6KLBIuADGnlJZY2PeMQ6Mkqkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=URwAt6z3; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1712827306; c=relaxed/simple;
+	bh=gYO1mF5/U4kkBcBtg406va8gcS8Zo2X98br7HyIJpQM=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=dlZTOaoqbxk4SbPkuvNjwZ6nVuQ/lMz6CmSEgflrzUO/Xi2WSvZ1X+JxF2Svh+0HXidY1q92BUc9Nqm4qcIaOF218EIjR3I8NALg9vT+fnZr16ITiyvWSz9Bwt3phH8qLd9KslkcUqXaj7hVXBAwjD6kLWJsQEvIOreUhAtbnAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2uEOJk9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="URwAt6z3"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 833E54000E;
-	Thu, 11 Apr 2024 09:19:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1712827173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IbTHzKHKeglXiJiU4uLpJ6nerHMO6Rg9h+b3qg4QPbo=;
-	b=URwAt6z35/hrriUSTvLg+KFe1NEQgQ6qkGAv5W7gPQfEDD9kZqVIJTH7NxAHzz8lt3nFTe
-	aI5x8yFCOXlD91hFPPPb8QZzGfq+C1kSKBWur583kk54jyDrjobWVt52GP4gtrLgLRLxg0
-	gymGYojmf40kwq7A2pc/0uGwxLuTGuxEa3JiYvZvy+RAnxszopEFHpLzU5BWWZA7tTQ+ye
-	1cRps1M0C1bZ70rN/E14V/onA74ZxuZ4ztEsJ2rdDULbsWC5zK6kTx3LSXjamP9Gw8gcOq
-	5KAiowpb/iTZESiw77Fgp0+/D8HTnIVotYKBDQfTlhWLBqhVA8Iy3yWQyS5DzA==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2uEOJk9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87C9BC433F1;
+	Thu, 11 Apr 2024 09:21:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712827305;
+	bh=gYO1mF5/U4kkBcBtg406va8gcS8Zo2X98br7HyIJpQM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=i2uEOJk9xxSn8TelZjbW3knSDIm6inhNY294w+pHywO850L2y6ZVwZlKtR0150QHj
+	 s9JeS6hm2ViaVkFYHDLrsQMAfUKy9rP8XqzpLINvjjPVdwA+CgqbSHu2CfQyObL/Xe
+	 O8zb7cMNr9v9T801jYGbo053QtKrOTK12HsrQoUCkJ82QCey0IerkMsA0V5TDBUn31
+	 kjqPWwmJcqBRiyLVhcwu5PtNwgdrgds2Jlms4mbg4T6y+7XPfKH0pDvv9FtXvvl7CG
+	 g6HgeVt+CTIgkl6jt6sPMImjxSVk8kb8rRcz6/kZoFbW2SK0Ug455w/w7L6tGLR8KZ
+	 Je2a3sYFFU3Kg==
+Message-ID: <ec649aacc50aef2ce1fe9ec87ef033c1.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 11 Apr 2024 11:19:32 +0200
-Message-Id: <D0H6K479VPHU.2WARS2K8B2SFL@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH 01/11] dt-bindings: soc: mobileye: add EyeQ5 OLB system
- controller
-Cc: "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>, "Philipp Zabel"
- <p.zabel@pengutronix.de>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, <linux-gpio@vger.kernel.org>, "Michael
- Turquette" <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>, "Gregory
- CLEMENT" <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Stephen Boyd" <sboyd@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, <linux-mips@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, "Linus
- Walleij" <linus.walleij@linaro.org>
-To: "Rob Herring" <robh@kernel.org>
-X-Mailer: aerc 0.15.2
-References: <20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com>
- <20240410-mbly-olb-v1-1-335e496d7be3@bootlin.com>
- <171277513936.883835.18187305941709008733.robh@kernel.org>
-In-Reply-To: <171277513936.883835.18187305941709008733.robh@kernel.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
+In-Reply-To: <20240408-ep93xx-clk-v1-3-1d0f4c324647@maquefel.me>
+References: <20240408-ep93xx-clk-v1-0-1d0f4c324647@maquefel.me> <20240408-ep93xx-clk-v1-3-1d0f4c324647@maquefel.me>
+Subject: Re: [PATCH 3/4] dt-bindings: soc: Add Cirrus EP93xx
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, Nikita Shubin <nikita.shubin@maquefel.me>, Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>, Rob Herring <robh@kernel.org>, nikita.shubin@maquefel.me
+Date: Thu, 11 Apr 2024 02:21:43 -0700
+User-Agent: alot/0.10
 
-Hello,
+Quoting Nikita Shubin via B4 Relay (2024-04-08 01:09:55)
+> From: Nikita Shubin <nikita.shubin@maquefel.me>
+>=20
+> Add device tree bindings for the Cirrus Logic EP93xx SoC.
+>=20
+> Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-On Wed Apr 10, 2024 at 8:52 PM CEST, Rob Herring wrote:
-> On Wed, 10 Apr 2024 19:12:30 +0200, Th=C3=A9o Lebrun wrote:
-> > Add documentation to describe the "Other Logic Block" syscon.
-> >=20
-> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> > ---
-> >  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 125 +++++++++++++=
-++++++++
-> >  MAINTAINERS                                        |   1 +
-> >  2 files changed, 126 insertions(+)
->
-> My bot found errors running 'make dt_binding_check' on your patch:
->
-> yamllint warnings/errors:
-
-[...]
-
-I made the mistake of putting an EyeQ6H example inside
-Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
-
-I will remove it to get this error fixed. Else there would be
-dependencies on clk and reset patches from this series:
-
-   dt-bindings: clock: mobileye,eyeq5-clk: add EyeQ6L and EyeQ6H
-   dt-bindings: reset: mobileye,eyeq5-reset: add EyeQ6L and EyeQ6H
-
-Regards,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
