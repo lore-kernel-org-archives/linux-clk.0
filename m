@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C5C13DDDB;
-	Thu, 11 Apr 2024 07:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB7913DDDE;
+	Thu, 11 Apr 2024 07:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712819240; cv=none; b=Cdg+WDYAsoaofwCgxEfiNGXaNF0DT3NvgYTDXOnYlf1KHuNUVvmsZBMkevrtgmp+KDff5KHvVec6eoVnfYKQoki0dYlSh3su/nhyD1gJNU4Nb0B4N4uR5gWimEQvQHnf9l9hRNx5SxVUPsWjQkwLY0zUEBpTysNkx6gTUakXmVk=
+	t=1712819249; cv=none; b=SABATtvVbwJWwYQokzhYJNywx8rgYFFotTEjzeJekx2HOqm4XwZVDt4BzhnF3oEPRiNpQAqxUnJARa7T6DgTZBwz0L4yR95e3H3GGWSlWEv1sln7xfoYITR4urXjsxguGPQ07X4N8kv+5pMKYh9D762KBl7copEFTZhAHU3KNkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712819240; c=relaxed/simple;
-	bh=ZWKo/BX8/wnIgRSCduC2T39SHdhV8zk/gZ6Kmh/NggA=;
+	s=arc-20240116; t=1712819249; c=relaxed/simple;
+	bh=g9w7QPP23scPB5Y2VIp+lDrwFcVCGp13oTZr88kKO30=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=eNlEiw3wu8KN8Da/LjQyEBtm/NDKuDLHkdcwF6hihjbCzbDWGxkNyJ52h7M0md2e+3H2DKGj2wfJXO0IwXXsLiLMm34qI1Yn+Dh/s6VpXWWkQy2N1vR8olAoyvzy8gUlE0715atyinUW5u2pT5HNsep0/sqwkJLLyAj5vuq4yj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzJYR4hU; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=XuYmzAhPUipOfrZXF9hYXjj5QDY7fmGF7FwB29sQ8XmLa4hfmCk/rJHvMsL7/K+wFNxN5nF1OYJZsNZNBIdLGvX7udJC91Z9YdWbL7ebI6SlHJBTd47KfSIlfjOhP/+Tf9w4zkFDszkYF8uzh6AnczOrAIU4WLqP5Bbq+akFO8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXPcKkIO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzJYR4hU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE093C433C7;
-	Thu, 11 Apr 2024 07:07:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXPcKkIO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25E23C433C7;
+	Thu, 11 Apr 2024 07:07:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712819239;
-	bh=ZWKo/BX8/wnIgRSCduC2T39SHdhV8zk/gZ6Kmh/NggA=;
+	s=k20201202; t=1712819249;
+	bh=g9w7QPP23scPB5Y2VIp+lDrwFcVCGp13oTZr88kKO30=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jzJYR4hUhmT6Kl4If/IktSrI4kI39dvhnqJVPZi8XL3OJQ6B7z/bCr6fzqW179Qus
-	 0CvwEsjxORzC7U2Fm3KZ0BSdg9XS1o76AbbHGT2/QQNm/aOGqj0szRN6QghWpMxShD
-	 ImqMahK7eRn3PA5zSXDiZ/KtFFb1c5odGVD7iK8ArEk0RGqXsL2q1Wcy8s3DKFUY23
-	 AZQmuyi4JpBNKQEDR5v5uhrCUFCkQMk4M5ACA1KTL4IqVgYzedtwcMbHPVrHM50z5D
-	 Z6XMB3hbvu45PyYviTKnoGg07mxjgnFCmHCpUnk7G5G3zDYzz2LdTWJlWstfhSUYRg
-	 AXjPsu72VkqCw==
-Message-ID: <2fe3cd148e400a93754e4d97fb3275ae.sboyd@kernel.org>
+	b=NXPcKkIOtfXWcJ2IdcaLFnmjz5+C7cwo0GBSrQqToUPoBU+SCyXSyYPu5oI5VAVpP
+	 OfGkOS9bJ03eW80WtH8vazmoJ7DPEXgMidYXJd4PXUunyE/FEoHWjeuRzO7tJsPTsa
+	 rtVe2rRJ4SxJl9nA6CqvRl0rLENEfo/cZv0L6S0ZXE8PCYcol8GpcCCtVB+zocROyV
+	 EFAx03FK6qPPBaG/ioMn+odph9nD0ZL2MpFzLTGZ8oTq6yl8yElqZ2vNLCyvtXJcpO
+	 mjs9FrFJQ7l3V/oGZpFv+5fl2PdXB1bz2z4Wf0mwlrHEk8K93E/jVQ8z/euh9ECkyF
+	 HMEPmQwJE70zA==
+Message-ID: <8861e9e249e5568116094112c567b141.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,26 +35,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <IA1PR20MB495368F185E018767CC6714ABB262@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB4953512A4DCAF293D7B1CBC2BB262@IA1PR20MB4953.namprd20.prod.outlook.com> <IA1PR20MB495368F185E018767CC6714ABB262@IA1PR20MB4953.namprd20.prod.outlook.com>
-Subject: Re: [PATCH v9 1/6] dt-bindings: clock: sophgo: Add clock controller of SG2000 series SoC
+In-Reply-To: <IA1PR20MB49534F37F802CAF117364D66BB262@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <IA1PR20MB4953512A4DCAF293D7B1CBC2BB262@IA1PR20MB4953.namprd20.prod.outlook.com> <IA1PR20MB49534F37F802CAF117364D66BB262@IA1PR20MB4953.namprd20.prod.outlook.com>
+Subject: Re: [PATCH v9 2/6] clk: sophgo: Add clock support for CV1800 SoC
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Liu Gui <kenneth.liu@sophgo.com>, Jingbao Qiu <qiujingbao.dlmu@gmail.com>, dlan@gentoo.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jisheng Zhang <jszhang@kernel.org>, Liu Gui <kenneth.liu@sophgo.com>, Jingbao Qiu <qiujingbao.dlmu@gmail.com>, dlan@gentoo.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
 To: Albert Ou <aou@eecs.berkeley.edu>, Chao Wei <chao.wei@sophgo.com>, Chen Wang <unicorn_wang@outlook.com>, Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh+dt@kernel.org>
-Date: Thu, 11 Apr 2024 00:07:17 -0700
+Date: Thu, 11 Apr 2024 00:07:26 -0700
 User-Agent: alot/0.10
 
-Quoting Inochi Amaoto (2024-03-09 01:02:51)
-> SG2000 series SoC has the same clock as CV1810 series, but the clock
-> related to A53 is functional in SG2000 series. So a new compatible
-> string is needed for the new SoC.
+Quoting Inochi Amaoto (2024-03-09 01:02:52)
+> Add clock definition and driver code for CV1800 SoC.
 >=20
-> Add definition for the clock controller of the SG2000 series SoC.
->=20
-> Link: https://github.com/sophgo/sophgo-doc/releases/tag/sg2000-datasheet-=
-v1.0-alpha
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+> Link: https://github.com/milkv-duo/duo-files/blob/6f4e9b8ecb459e017cca1a8=
+df248a19ca70837a3/duo/datasheet/CV180X-Clock-v1.xlsx
+> Link: https://github.com/milkv-duo/duo-files/blob/6f4e9b8ecb459e017cca1a8=
+df248a19ca70837a3/duo/datasheet/CV1800B-CV1801B-Preliminary-Datasheet-full-=
+en.pdf
 > ---
 
 Applied to clk-next
