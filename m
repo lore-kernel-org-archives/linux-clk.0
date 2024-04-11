@@ -1,98 +1,124 @@
-Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDFE13FD94;
-	Thu, 11 Apr 2024 10:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.165.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D9914600E;
+	Thu, 11 Apr 2024 10:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712830996; cv=none; b=rAC6aAeBw3P8DbzClt7OoyTHyYEBUwtVikKlGXKtj2LiqLXa3x+QQusnlo929XOrf9rgoGHVMWlXOd6AqiNgXGD4mPqXGz5qwPvOhaaXrE98wphjRA9sCJcGQs/nI/0qh8t2LT+4EsLy/HzQeOt82A5IQm3mrHkVXQ/RNrsUNEM=
+	t=1712831456; cv=none; b=OzS74lzhynEwYX2fFhOLfiBPZnYAf7hChAv9BgH8IW4C9jGkTsmUgoSVMFUyR+Mq6ziIXuIoVYloaQ426KINh118OhSd0ogMFr7ClBq8IoxOxYgBDzwa2QWksk7KIcELedFwaKnRb3Ra/T4i8CvJJClFGqghn4+5DbUsnkpk+yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712830996; c=relaxed/simple;
-	bh=o3uBh7P8788b0SPX+S0so494+ke+vXw80SwMiOnWzOw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UMwz/PbHtDilDG7nPF6R15OhmqJ7XQz03ubHWY0QY4LGbXmRpXN8Ew+HWAnALjMp4G/uG4xb5WXpN3VstzGmcZFoizOFnyBU8ng+YIF5ArKZjVaxg7aoEkgdVYwlP/1W7J1kG6gSXsK7c+xxJfNXB/FOkRZmKNEb62ReIkjeNfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr; spf=pass smtp.mailfrom=skole.hr; arc=none smtp.client-ip=161.53.165.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skole.hr
-Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-	by mx.skole.hr (mx.skole.hr) with ESMTP id 60B5B8673B;
-	Thu, 11 Apr 2024 12:15:37 +0200 (CEST)
-Message-ID: <de4c56a8-488d-4cdb-9d6c-e9d6e63b22b9@skole.hr>
-Date: Thu, 11 Apr 2024 12:15:34 +0200
+	s=arc-20240116; t=1712831456; c=relaxed/simple;
+	bh=wRis+jvLiwfcvURS3pt9dGRgB6cIii2qwGUUMZpjF6g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZiafAL3cVqGJHw2JOtIUSfapg0DeUqh1ORoA3++8TBTuU8A1Kfkm2v3kIGdaEkEibz2l/4poY7Iu5xS9yACRucF/0FcK0MuzkOAbYhsh9l2PYTyKVeaTe5BfbRUNYLcdsWr4uqj0gKmJUIgUE8BnF3Xc8/xceIgrzFqN9+owsJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qnR0lz6c; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qnR0lz6c"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1712831454; x=1744367454;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wRis+jvLiwfcvURS3pt9dGRgB6cIii2qwGUUMZpjF6g=;
+  b=qnR0lz6cQJ0dslC09SxcEDakX3mqJKiW5FwYmT2jjz6D0jYEDUMRjrfS
+   n6SNolNt/C33IWIhEV96zynEUI6+7S+GFPAL+10wwydTzkewiSH9mxCuN
+   8KlPS291FgLnVdFWpPu6NlX7CagiVXzS/K/RF+21ODo/onap/LiCanEkQ
+   ZW2hEgb2cV4QdDa4gc7KCvd/e5J+q1o2kzaLif3DMVF0Z5TyaNIwMeMh8
+   2eprMGyBnk1AcdbLDBslZRlB88br9BzXAVPhRm+66NFh2c7jxRd/l6gin
+   WA4RZ1hz23pIF4qOLxRUobsFqTfpfpgS0o+YC5QhqYOBMWSTduzvmxkRG
+   g==;
+X-CSE-ConnectionGUID: 0of7XxqXRZujtHuEzDEvOw==
+X-CSE-MsgGUID: 5pyW+N2xTlub9U791V2XWA==
+X-IronPort-AV: E=Sophos;i="6.07,193,1708412400"; 
+   d="asc'?scan'208";a="251346984"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Apr 2024 03:30:53 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 11 Apr 2024 03:30:44 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Thu, 11 Apr 2024 03:30:41 -0700
+Date: Thu, 11 Apr 2024 11:29:51 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: Sia Jee Heng <jeeheng.sia@starfivetech.com>, <aou@eecs.berkeley.edu>,
+	<conor@kernel.org>, <emil.renner.berthing@canonical.com>,
+	<hal.feng@starfivetech.com>, <kernel@esmil.dk>,
+	<krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+	<p.zabel@pengutronix.de>, <palmer@dabbelt.com>, <paul.walmsley@sifive.com>,
+	<robh+dt@kernel.org>, <xingyu.wu@starfivetech.com>,
+	<linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<leyfoon.tan@starfivetech.com>
+Subject: Re: [RFC v3 00/16] Basic clock and reset support for StarFive JH8100
+ RISC-V SoC
+Message-ID: <20240411-euphemism-ended-706f23d4a5ca@wendy>
+References: <20240110133128.286657-1-jeeheng.sia@starfivetech.com>
+ <a83130157adf70f6f58f4d2e6b9d25db.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 5/9] clk: mmp: Add Marvell PXA1908 clock driver
-To: Stephen Boyd <sboyd@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- Haojian Zhuang <haojian.zhuang@linaro.org>, Kees Cook
- <keescook@chromium.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>, Lubomir Rintel <lkundrak@v3.sk>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Tony Lindgren <tony@atomide.com>, Tony Luck <tony.luck@intel.com>,
- Will Deacon <will@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr>
- <20240402-pxa1908-lkml-v9-5-25a003e83c6f@skole.hr>
- <3838e4684f98e1ce3818bfb6983844bc.sboyd@kernel.org>
-Content-Language: en-CA
-From: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-In-Reply-To: <3838e4684f98e1ce3818bfb6983844bc.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="lisQmnqROX183EFJ"
+Content-Disposition: inline
+In-Reply-To: <a83130157adf70f6f58f4d2e6b9d25db.sboyd@kernel.org>
 
-On 4/11/2024 10:00 AM, Stephen Boyd wrote:
-> Quoting Duje Mihanović (2024-04-02 13:55:41)
->> diff --git a/drivers/clk/mmp/clk-of-pxa1908.c b/drivers/clk/mmp/clk-of-pxa1908.c
->> new file mode 100644
->> index 000000000000..6f1f6e25a718
->> --- /dev/null
->> +++ b/drivers/clk/mmp/clk-of-pxa1908.c
->> @@ -0,0 +1,328 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
-> [...]
->> +static void __init pxa1908_apbc_clk_init(struct device_node *np)
->> +{
->> +       struct pxa1908_clk_unit *pxa_unit;
->> +
->> +       pxa_unit = kzalloc(sizeof(*pxa_unit), GFP_KERNEL);
->> +       if (!pxa_unit)
->> +               return;
->> +
->> +       pxa_unit->apbc_base = of_iomap(np, 0);
->> +       if (!pxa_unit->apbc_base) {
->> +               pr_err("failed to map apbc registers\n");
->> +               kfree(pxa_unit);
->> +               return;
->> +       }
->> +
->> +       mmp_clk_init(np, &pxa_unit->unit, APBC_NR_CLKS);
->> +
->> +       pxa1908_apb_periph_clk_init(pxa_unit);
->> +}
->> +CLK_OF_DECLARE(pxa1908_apbc, "marvell,pxa1908-apbc", pxa1908_apbc_clk_init);
-> 
-> Is there a reason this file can't be a platform driver?
+--lisQmnqROX183EFJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Not that I know of, I did it like this only because the other in-tree 
-MMP clk drivers do so. I guess the initialization should look like any 
-of the qcom GCC drivers then?
+On Thu, Apr 11, 2024 at 12:40:09AM -0700, Stephen Boyd wrote:
+> Quoting Sia Jee Heng (2024-01-10 05:31:12)
+> > This patch series enabled basic clock & reset support for StarFive
+> > JH8100 SoC.
+> >=20
+> > This patch series depends on the Initial device tree support for
+> > StarFive JH8100 SoC patch series which can be found at [1].
+> >=20
+> > As it is recommended to refrain from merging fundamental patches like
+> > Device Tree, Clock & Reset, and PINCTRL tested on FPGA/Emulator, into t=
+he
+> > RISC-V Mainline, this patch series has been renamed to "RFC" patches. Y=
+et,
+> > thanks to the reviewers who have reviewed the patches at [2]. The chang=
+es
+> > are captured below.
+>=20
+> I don't think that's what should be happening. Instead, clk patches
+> should be sent to clk maintainers, reset patches to reset maintainers,
+> pinctrl patches to pinctrl maintainers, etc. The DTS can be sent later
+> when it's no longer an FPGA/Emulator? Right now I'm ignoring this series
+> because it's tagged as an RFC.
 
-While at it, do you think the other MMP clk drivers could use a conversion?
-
-Regards,
--- 
-Duje
+Since this comes back to something I said, what I didn't want to happen
+was a bunch of pinctrl/clock/reset dt-binding headers that getting merged
+(and therefore exported to other projects) and then have those change
+later on when the chip was taped out. I don't really care if the drivers
+themselves get merged. If the JH8100 is being taped out soon (or already
+has been internally) and there's unlikely to be any changes, there's not
+really a reason to block the binding headers any more.
 
 
+--lisQmnqROX183EFJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZhe7ngAKCRB4tDGHoIJi
+0oN8AQDJCMKWJWymNQyrXdSAIbIQWmLkJXGtohqPQ27J6cA5rQD9FaZ3m59i+b/i
+qcLnFDJe8daHP7ulI/YtwBRLJ+WBHAs=
+=Bkv+
+-----END PGP SIGNATURE-----
+
+--lisQmnqROX183EFJ--
