@@ -1,60 +1,60 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C62113CA96
-	for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2024 06:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0391713E041
+	for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2024 06:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712816048; cv=none; b=Fu1RHkNB3Zy5haOc4qYJdcMALbc2023akHETV1qRhpdx6am58PMTiuxGNQJKroDTiCPxV939Jafi9RuTk6bkKMC68ubR1EopOpQng8mr4uwTuynCwZCa+0B8lda+SUbszgQ+IDej+U5lZqjzyl3y19e1BbGpnyQWGuKqSg9v7D8=
+	t=1712816088; cv=none; b=K3K748h6nLQA3E60oefiiqYbKi0h5bWBy7WZSSs3SlZxDaSEr+ulr9mcLzo7ZGPkjsGgoo6+StOizBvnDFxS9UiIE71ebdvxTn8e+6uySryUTX3wzRGSby24RUStHbx/exHdwnJbM3/1zL391vytAchgGNcU+Fc89ot6nCVIRDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712816048; c=relaxed/simple;
-	bh=cg047QglKLND8WA1DSf/fOhS/2zKEK+Kbb+tpn9gCxc=;
+	s=arc-20240116; t=1712816088; c=relaxed/simple;
+	bh=0LZSrLRPogzsfW4/8pt052No9XiEWklPFL31WEUCd8c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s2i4MTiX6OO6CiHplMEHR0KD4PAqPYh8v51VC4aMXPAVdbqma4gW+ckbO5eqxJQUVzPUy+ch37hgWDHWuutHnINCqGwVjVhoKA0MaKE48LK48mekEpdMJ50qA/7AMO5X1c1Z59afBLypsycs/46p4pG6vkE3/cJzD1Ef5AMs5nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A0Pos9MI; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:Content-Type; b=uz/TOY02Mt4RYh+HxA/sutrUsvyc3w4KAy+Afan/sKo1x3FFXluaXGpc4JqerzXXkWDPvcMi1sqNLzBQNMbhnbWCBFK2Vev5RC38Ogg76EXhVejpjQgeGCC1TbdcK7sO5ZQFyt+SA8ezKEoJjqPDR/JabpwFKcuORFFFGIHq8sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PurAvv+c; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A0Pos9MI"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-417c339d261so7076925e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 23:14:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PurAvv+c"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-346b96f1483so122535f8f.1
+        for <linux-clk@vger.kernel.org>; Wed, 10 Apr 2024 23:14:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712816044; x=1713420844; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712816084; x=1713420884; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8YephaNtqju2Q3YgN7N48UKz+wONymX+nCCIjUn+u9A=;
-        b=A0Pos9MIr91vNKlnjx/pU9Zm4Al9PIrdh1+B9VTOB9oFJPA3k2NJzOIjQtuRIUxz+A
-         cISEemRL76jbJg1AycjMeoOYiSYIffrM6SzRHc2lWls6UrezBXNHPMDV2c2Iyx9kTG+u
-         iLMphXnNGLnU4MSCRb0lfbOHcLg98p+HNoSOMJfl6tlRpvBr4nAi61WBAAbtty/uGTFy
-         wM0sfV95dNdui+RoZ9XO8ALy/BuVUPZAGvwv67v3MgZgH2VX2cW5u5Q1QYCuDcSBgeJu
-         HsqwE18ytSC66266gz0kn1d2iiUAGvmkFQZHlbLKfKR/acuAan1wCn9C54kTjYCE7FKv
-         kWDw==
+        bh=nilkLxBgfDXqvdRilOpPnjqsvdV2sXmTESpSzKdW5iw=;
+        b=PurAvv+c8l0ncc/0V9Ghve78HZalKV3vJ3KkiwM3Yv7NU614R+4GP2QnsIE72wvqmW
+         1K2uN4DyvC2cqJDVr5ORWlasPSGtJrnxygNUn6ocxbV2r0Vc3CAagxlYy5lST9WQJBe4
+         E9gxMIrugBB/O8X5m5TWdlYy8LGEuKqd8w1gLHmLu7NnbZwxs3E6qMAZZ52NtNiFbtv8
+         rJY3lhCjPByKtAwgVsieemMcuqXh/A8nfnGMOLF1mM+f6i3B4c56J/GP8c4+D++r1DCH
+         frwheVap96TJnAkUh/iWQJzNmizR7/qtRD0DppGkBYyZdf4Eeze30CTPI9Jgx2nfkLH0
+         fBQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712816044; x=1713420844;
+        d=1e100.net; s=20230601; t=1712816084; x=1713420884;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8YephaNtqju2Q3YgN7N48UKz+wONymX+nCCIjUn+u9A=;
-        b=poOLxra8qLQkSPbp+qZcO/8riHWfKh6nbm89TOLN5r+Gd4YB1i982O0lQiZygMaCmW
-         GH9iB0cAhfcj5sS+venTcZ4XvdcXwoCYHqOeT5jiujBTVl+zZSnFA4IFlCcauThXDoNm
-         JpG3xzP8T6alvvU8zhkPrl9AgTHJ4GpFwNHkWAKPNhwU4WzrBtnWVniCFByfcGwWc8pC
-         Y+2lF2MbFE/zhNwbSOa7w8IfVDvz1NWbG5W1OrtbKWMZ/Diror88aoas28s5WePi8i25
-         eoAFxn3ZXtYoNrVZFNe2D0kx6vreJakZeps5JxQwolsT8jQBCnZBtYqzneEoSElMSMpz
-         sFuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWST1/3sNgDa53LrdMR0gj+EO1+yWxFh4eA8jiyk3j75sl7H5mezvU6MJTczQsgi+pRntDwGaipGeAsP0Tmnwz/3zddpkulvbCW
-X-Gm-Message-State: AOJu0YylNfYBl8lVQSY62Gvodth8sjRSbjRz7Y7MnF9cCC0+VZ6WQYwr
-	mJasgm+nhwINNGREo1OaOB2enI8yVY4oaTuNYk6rPKwpryxBWyimQYSE1zOwebc=
-X-Google-Smtp-Source: AGHT+IED0MsavpCWwAeAU5BHcAkfxmQ6MUFNO+xQA0Uom2+QPmpsoAH3YVU22D8ZYwJk7t4oso+mvQ==
-X-Received: by 2002:a05:600c:4f08:b0:415:6728:a584 with SMTP id l8-20020a05600c4f0800b004156728a584mr3293175wmq.25.1712816043821;
-        Wed, 10 Apr 2024 23:14:03 -0700 (PDT)
+        bh=nilkLxBgfDXqvdRilOpPnjqsvdV2sXmTESpSzKdW5iw=;
+        b=npVbkqh4tGqHDo9TX/7vR3V/347aPlpy/1os7ImCL4+ansYbHZcBQ0Kob2xIxz6ltv
+         lZjGd61zocdK+YMpfwBfDYYiIBnmfqDzFOCfimU9mRd5SWl3pt8ZvREMGFSyuJfOehWW
+         KVlgutCIGSxwb1cnLnXXq1FJhPMH23VNf0Zc5fQzltUyQlqyTLa3Ly15vAf5Lg/s5rwr
+         d2p8xF/nHEGSyJuIgwKMtryyVd7vV2F3Hxao/HEYTFbMZ4fbg8a63Jp0W8t7seL7WaYJ
+         DYVzT+lgEqHDXAThtl/l8mTsyOV+Ar4ASPnIXR1ssoPALi99zOfj8+wFVz24V+43ZAlV
+         2WSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIS3t3hlLKa3oPJYXszqgh+tDrlvAqL1vygr6iAyKXyMkiPtzzrwJH8LwJmcURFSFi4rM1PnMAnO5icftA3HBo7FW0d7pQxdM4
+X-Gm-Message-State: AOJu0YzDXuDcxN3RQnd6MoDsW4LbV8MSvgacK2Y+Az3BeLQw5PbFThM7
+	9L72JUK8eVZFOZQJgKXUhFbagCokkCBrBd8DdCD/zUIZUTZ8LnkUeS9wJovSyXY=
+X-Google-Smtp-Source: AGHT+IEFvxG1x5KIC+cwgKNU6cxZTA9djTgXTAdFrVWV33uRarxA88ssIE7xWTwLS+TzjqFy0E1PuQ==
+X-Received: by 2002:a05:6000:1d1:b0:346:a69e:5afc with SMTP id t17-20020a05600001d100b00346a69e5afcmr1351305wrx.4.1712816084284;
+        Wed, 10 Apr 2024 23:14:44 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id ay7-20020a05600c1e0700b00417d4f60692sm1178808wmb.44.2024.04.10.23.14.02
+        by smtp.gmail.com with ESMTPSA id m4-20020adffe44000000b00343e760c637sm959933wrs.84.2024.04.10.23.14.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Apr 2024 23:14:03 -0700 (PDT)
-Message-ID: <29ece6c8-ddf4-4dcd-b5b4-1cad8bc858d3@linaro.org>
-Date: Thu, 11 Apr 2024 08:14:01 +0200
+        Wed, 10 Apr 2024 23:14:43 -0700 (PDT)
+Message-ID: <975a8554-a299-4394-be15-c910cf9688ae@linaro.org>
+Date: Thu, 11 Apr 2024 08:14:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,8 +62,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] dt-bindings: clock: mobileye,eyeq5-clk: add EyeQ6L
- and EyeQ6H
+Subject: Re: [PATCH 03/11] dt-bindings: reset: mobileye,eyeq5-reset: add
+ EyeQ6L and EyeQ6H
 To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
  Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -79,7 +79,7 @@ Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>
 References: <20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com>
- <20240410-mbly-olb-v1-2-335e496d7be3@bootlin.com>
+ <20240410-mbly-olb-v1-3-335e496d7be3@bootlin.com>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -126,185 +126,60 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240410-mbly-olb-v1-2-335e496d7be3@bootlin.com>
+In-Reply-To: <20240410-mbly-olb-v1-3-335e496d7be3@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 On 10/04/2024 19:12, Théo Lebrun wrote:
-> Add bindings describing EyeQ6L and EyeQ6H clock controllers.
-> Add constants to index clocks.
+> Add bindings for EyeQ6L and EyeQ6H reset controllers.
 > 
-> Bindings are conditional for two reasons:
->  - Some compatibles expose a single clock; they do not take clock cells.
->  - All compatibles take a PLLs resource, not all take others (aimed at
->    divider clocks). Those that only take a resource for PLLs do not
->    require named resources.
+> Some controllers host a single domain, meaning a single cell is enough.
+> We do not enforce reg-names for such nodes.
 > 
 > Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 > ---
->  .../bindings/clock/mobileye,eyeq5-clk.yaml         | 103 ++++++++++++++++++---
->  MAINTAINERS                                        |   2 +
->  include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  21 +++++
->  3 files changed, 113 insertions(+), 13 deletions(-)
+>  .../bindings/reset/mobileye,eyeq5-reset.yaml       | 88 ++++++++++++++++++----
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 74 insertions(+), 15 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml b/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml
-> index 2d4f2cde1e58..a1651fcce258 100644
-> --- a/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml
-> +++ b/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml
-> @@ -4,12 +4,13 @@
->  $id: http://devicetree.org/schemas/clock/mobileye,eyeq5-clk.yaml#
+> diff --git a/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml b/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml
+> index 062b4518347b..799bcf15bed9 100644
+> --- a/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml
+> +++ b/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml
+> @@ -4,11 +4,13 @@
+>  $id: http://devicetree.org/schemas/reset/mobileye,eyeq5-reset.yaml#
 >  $schema: http://devicetree.org/meta-schemas/core.yaml#
 >  
-> -title: Mobileye EyeQ5 clock controller
-> +title: Mobileye EyeQ clock controller
+> -title: Mobileye EyeQ5 reset controller
+> +title: Mobileye EyeQ reset controller
 >  
 >  description:
-> -  The EyeQ5 clock controller handles 10 read-only PLLs derived from the main
-> -  crystal clock. It also exposes one divider clock, a child of one of the PLLs.
-> -  Its registers live in a shared region called OLB.
-> +  EyeQ clock controllers expose read-only PLLs derived from main crystal clock.
-> +  Some also expose divider clocks, children of specific PLLs. Its registers
-> +  live in a shared region called OLB. EyeQ5 and EyeQ6L have a single OLB
-> +  instance while EyeQ6H have seven, leading to seven clock controllers.
+> -  The EyeQ5 reset driver handles three reset domains. Its registers live in a
+> -  shared region called OLB.
+> +  EyeQ reset controller handles one or more reset domains. They live in shared
+> +  regions called OLB. EyeQ5 and EyeQ6L host one OLB each, each with one reset
+> +  instance. EyeQ6H hosts 7 OLB regions; three of those (west, east,
+> +  accelerator) host reset controllers. West and east are duplicates.
 >  
 >  maintainers:
 >    - Grégory Clement <gregory.clement@bootlin.com>
-> @@ -18,18 +19,23 @@ maintainers:
+> @@ -17,27 +19,83 @@ maintainers:
 >  
 >  properties:
 >    compatible:
-> -    const: mobileye,eyeq5-clk
+> -    const: mobileye,eyeq5-reset
 > +    enum:
-> +      - mobileye,eyeq5-clk
-> +      - mobileye,eyeq6l-clk
-> +      - mobileye,eyeq6h-central-clk
-> +      - mobileye,eyeq6h-west-clk
-> +      - mobileye,eyeq6h-east-clk
-> +      - mobileye,eyeq6h-south-clk
-> +      - mobileye,eyeq6h-ddr0-clk
-> +      - mobileye,eyeq6h-ddr1-clk
-> +      - mobileye,eyeq6h-acc-clk
+> +      - mobileye,eyeq5-reset
+> +      - mobileye,eyeq6l-reset
+> +      - mobileye,eyeq6h-we-reset
+> +      - mobileye,eyeq6h-acc-reset
 >  
 > -  reg:
-> -    maxItems: 2
+> -    maxItems: 3
 > +  reg: true
 
-No, you must leave widest constraints here.
-
->  
-> -  reg-names:
-> -    items:
-> -      - const: plls
-> -      - const: ospi
-> +  reg-names: true
-
-No, you must leave widest constraints here.
-
-
->  
->    "#clock-cells":
-> -    const: 1
-> +    enum: [0, 1]
-
-Looks like you squash here quite different devices...
-
->  
->    clocks:
->      maxItems: 1
-> @@ -43,9 +49,80 @@ properties:
->  required:
->    - compatible
->    - reg
-> -  - reg-names
->    - "#clock-cells"
->    - clocks
->    - clock-names
->  
-> +allOf:
-> +  # "mobileye,eyeq5-clk" provides:
-> +  #  - PLLs and,
-> +  #  - One divider clock related to ospi.
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: mobileye,eyeq5-clk
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +          maxItems: 2
-> +        reg-names:
-> +          minItems: 2
-> +          maxItems: 2
-
-So any name is now valid? Like "yellow-pony"?
-
-> +          items:
-> +            enum: [ plls, ospi ]
-> +      required:
-> +        - reg-names
-> +
-> +  # "mobileye,eyeq6h-south-clk" provides:
-> +  #  - PLLs and,
-> +  #  - Four divider clocks related to emmc, ospi and tsu.
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: mobileye,eyeq6h-south-clk
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 4
-> +          maxItems: 4
-> +        reg-names:
-> +          minItems: 4
-> +          maxItems: 4
-> +          items:
-> +            enum: [ plls, emmc, ospi, tsu ]
-> +      required:
-> +        - reg-names
-> +
-> +  # Other compatibles only provide PLLs. Do not ask for named resources.
-> +  - if:
-> +      not:
-> +        required:
-> +          - reg-names
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 1
-> +          maxItems: 1
-
-No, just restrict properly reg per variant.
-
-
-> +        reg-names: false
-
-That's redundant. Drop entire if.
-
-
-> +
-> +  # Some compatibles provide a single clock; they do not take a clock cell.
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - mobileye,eyeq6h-central-clk
-> +            - mobileye,eyeq6h-west-clk
-> +            - mobileye,eyeq6h-east-clk
-> +            - mobileye,eyeq6h-ddr0-clk
-> +            - mobileye,eyeq6h-ddr1-clk
-> +    then:
-> +      properties:
-> +        "#clock-cells":
-> +          const: 0
-
-Wait, so you define device-per-clock? That's a terrible idea. We also
-discussed it many times and it was rejected many times.
-
-You have one device, not 5.
-
-
+Same mistakes. Please open existing bindings with multiple variants,
+e.g. some Qualcomm, and take a look how it is done there.
 
 Best regards,
 Krzysztof
