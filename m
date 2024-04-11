@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3898C13E8AD;
-	Thu, 11 Apr 2024 08:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EF52EAE5;
+	Thu, 11 Apr 2024 08:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712822416; cv=none; b=SaES5X7RfGM412Vg7q7Mq2M4CUEu2Oeapn5lHRoEB0GFvRoF6RyA0KN32esKNv1p9nq2pzLZKSBNXOBwLs9Mt5JBwc/Pz03nHfSgtP/FPrAd3La2nHNOjqsDs4nGhxLwcCOYXlh+tdHxD0eQDQwpXkpV3/P55ocn9ReJRd53yEM=
+	t=1712822677; cv=none; b=V0siZiN6OajGNqKEKiE/uaxF4rkAIguZKQ26KwAy/t+MUYECXy7HQ31ydMvNLzHxGIiSBADb88rhzIVSNqqpkynm31LEYQFjujKFxNCgBnDVvAeaB5U6NO32SBm0aIJy7puOCWgzHbCEyiszOZ9vmXdKUb/wNq8BM46/LQfis+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712822416; c=relaxed/simple;
-	bh=waEt8fKtfTAHPrtNAXCwzW9ODp2LwQ41zoYR/MtoFg0=;
+	s=arc-20240116; t=1712822677; c=relaxed/simple;
+	bh=oAciY08waSan8m81ZhA42W5OhUQqkoxgPW8U0HHUpKA=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ZrWTAASFhYgRoFCgRKQPG7u1/b0RVDPxTvDUaP8rL4pLTnkIRyrZpm0bDp9Ibc6FmY69QmbnR4IiSziqIXw3p2IhFplEuRBC3FgQYuwzXE/o0CagHgj5rksdl7PP0NCtpvfAc/6InMmBIODYINwhxHcrwvq9zq9/qwavN+00Q58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bElwz7Tm; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=dZr1MWCZWPbsFaGr6dUxlpok8rQD14eQ2Ihes499UmikGjrxCgb/CY8NloaDvAiDWpJ+YFfh06T6p0b0BpYhmed83xydrcFROTblXWK58Vx5W14E68TbUt43z+NqaHmrHBq2Z3uWDXq0vhOrysf+v4djkSlUvaFDaBNpPHSwZ8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FXhNhdVO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bElwz7Tm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97C3FC433C7;
-	Thu, 11 Apr 2024 08:00:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXhNhdVO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90FCAC433F1;
+	Thu, 11 Apr 2024 08:04:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712822415;
-	bh=waEt8fKtfTAHPrtNAXCwzW9ODp2LwQ41zoYR/MtoFg0=;
+	s=k20201202; t=1712822677;
+	bh=oAciY08waSan8m81ZhA42W5OhUQqkoxgPW8U0HHUpKA=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=bElwz7TmiuY0Qzn2A4CYKyVm6jRxsPz9fLs3tgdB5vbkfrFqq/CvpYY+HiqvhvcWw
-	 lqtS7Dsd7UV0xkKAnYzrbfp+De5XTarO7RjpWMJXiZzzs4K0klARaTsx7eta1gBAOb
-	 WeCh5Pt0hpJbL/YwkNUT3ZG70LkqMnsyzFK/z4XK2FQNILTpQQf/RqjV6GAN9nEK39
-	 zViN+RjWkiJ4qdKDYzT6kEAcwCIq30WgrhGNr1z4TmyfaFL8gSPdSaQl5igSG2cN/W
-	 HXq6s6AOx3f1Qfg7vP62R6amtAeVDLyJjLMqgR4JhYR9sf+JJwQJT98faBihwRB+MK
-	 ntBtZB0ML9u5w==
-Message-ID: <3838e4684f98e1ce3818bfb6983844bc.sboyd@kernel.org>
+	b=FXhNhdVOgqCiNGHhB322+hu6QdtEiSvAhCVO77S5qvvs1ZTUGubrG4+gGlXObxwYa
+	 4OD8hfCquF+v0PxfD3dUPFZpSTuD3/dGMNOXQMoald2jt+3wfejR9AzTY8R7vh/+24
+	 YH9+qaf1j9IPqc4YDuHOpKpKjC9uPa9F4hdjTjDAlFwg4dI62/PFjihsJyLGOxeOOV
+	 ZLg/mhgxwWM3JXGLqVjydtIgoPLlhErF7xRpHdWA+uLrhqaZ6kWzR/cSgT7oWW9fZE
+	 lnijFVAgB9Z0BzUYUKYZnsRPTAmUVllE82CghGtT2vG8ukUMs0e3HyRHSxZqtDsk8W
+	 PU0HbbLlDVB9w==
+Message-ID: <c2ff233524cefb21f8f82e9a3117936e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,45 +35,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240402-pxa1908-lkml-v9-5-25a003e83c6f@skole.hr>
-References: <20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr> <20240402-pxa1908-lkml-v9-5-25a003e83c6f@skole.hr>
-Subject: Re: [PATCH v9 5/9] clk: mmp: Add Marvell PXA1908 clock driver
+In-Reply-To: <20240318110842.41956-2-biju.das.jz@bp.renesas.com>
+References: <20240318110842.41956-1-biju.das.jz@bp.renesas.com> <20240318110842.41956-2-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v3 1/3] clk: Update API documentation related to clock disable
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To: Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Duje =?utf-8?q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, Guilherme G. Piccoli <gpiccoli@igalia.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Kees Cook <keescook@chromium.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Lubomir Rintel <lkundrak@v3.sk>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, Tony Lindgren <tony@atomide.com>, Tony Luck <tony.luck@intel.com>, Will Deacon <will@kernel.org>
-Date: Thu, 11 Apr 2024 01:00:13 -0700
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org
+To: Biju Das <biju.das.jz@bp.renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michael Turquette <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Date: Thu, 11 Apr 2024 01:04:35 -0700
 User-Agent: alot/0.10
 
-Quoting Duje Mihanovi=C4=87 (2024-04-02 13:55:41)
-> diff --git a/drivers/clk/mmp/clk-of-pxa1908.c b/drivers/clk/mmp/clk-of-px=
-a1908.c
-> new file mode 100644
-> index 000000000000..6f1f6e25a718
-> --- /dev/null
-> +++ b/drivers/clk/mmp/clk-of-pxa1908.c
-> @@ -0,0 +1,328 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-[...]
-> +static void __init pxa1908_apbc_clk_init(struct device_node *np)
-> +{
-> +       struct pxa1908_clk_unit *pxa_unit;
-> +
-> +       pxa_unit =3D kzalloc(sizeof(*pxa_unit), GFP_KERNEL);
-> +       if (!pxa_unit)
-> +               return;
-> +
-> +       pxa_unit->apbc_base =3D of_iomap(np, 0);
-> +       if (!pxa_unit->apbc_base) {
-> +               pr_err("failed to map apbc registers\n");
-> +               kfree(pxa_unit);
-> +               return;
-> +       }
-> +
-> +       mmp_clk_init(np, &pxa_unit->unit, APBC_NR_CLKS);
-> +
-> +       pxa1908_apb_periph_clk_init(pxa_unit);
-> +}
-> +CLK_OF_DECLARE(pxa1908_apbc, "marvell,pxa1908-apbc", pxa1908_apbc_clk_in=
-it);
+Quoting Biju Das (2024-03-18 04:08:40)
+>=20
+> The API's related to clk disable operation does not explicitly
+> states the synchoronous or asynchrous behaviour as it is driver
+> dependent. So make this part clear in API documentation.
+>=20
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
 
-Is there a reason this file can't be a platform driver?
+I'd like Russell's ack on this.
