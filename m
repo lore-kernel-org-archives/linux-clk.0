@@ -1,60 +1,60 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A26EEB5
-	for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2024 15:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC15DDC4
+	for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2024 15:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712847766; cv=none; b=flmt79MSwVjyEwDuNN5PPI3IzsbFJWDH2nNQPsa7sfw/OTbBbLPsd/Y9Wn5ubSl+22iVHTYdR12TIzAcWwpJHr/PlBC8RPwiHUAMvD8nMSdBAKXpFukmvrL8J/loUlUvycC0bxGJzfo0ozwdNVjPdS5LXsywYY4acYe9tQfXXJc=
+	t=1712847927; cv=none; b=j+ANbn77Z6qflsqAraZnIzS+Sn83VbwDkQmvnZZxdQBpt/+f0JoJucvTS9odAT8SnVrVSmG8cVJT8gcjkPYAByHWcTPennPwNeDI04ir7UTQfDcwTD0KwPHu+SlMd5RspB2gb83AQyNmrYUUfsl4Mpy78kVwAehfQLHWgTlpNrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712847766; c=relaxed/simple;
-	bh=NphbnHJFtQ5GRPLYu0u8kTxQqcMxBP2fPxvXnPieduA=;
+	s=arc-20240116; t=1712847927; c=relaxed/simple;
+	bh=QevyOVKvuSdzQHrZ1in1R1OWAnKYiLrTvJ3OUPJlArA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uJNbk9xwky4982RP91LG4Tkh0j7x1D3fB9HoHoUepKU4cIMQkMvxFV2V6YgNP0vRjsub6j/O7z1ASUOVrz5q9GBfIGcuIUS6HDb8RP6B9TD9YfVgAqLexwXukgYTQI8z1M822/EBlkRc+grQ5GjD1O4RWswL9UCVbU6ug8rul/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JovcYbm0; arc=none smtp.client-ip=209.85.208.54
+	 In-Reply-To:Content-Type; b=LmvvIWvNfT4JOIlnWj/zzhRxTfrmWKSEHskQswPGngaxrFECg1ZTxUIm7/bXVkbz3rSH3lpBSOKHW1Gd9rnuWYbEQ+IZTUUtfbnzp92R3EoO1Dwk8aWOFrLAAMH5anQvr4VRxbu82DZS8OR5zv4Urzgp+6EeenJh1UCSWWe6A1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WKSzJnIr; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JovcYbm0"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-56e1bbdb362so9788343a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2024 08:02:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WKSzJnIr"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-516d47ce662so10931756e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 11 Apr 2024 08:05:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712847762; x=1713452562; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712847924; x=1713452724; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+P23aEc6D4AK3QieQ0wss35fFJtf/ttLJisvoFqgu+g=;
-        b=JovcYbm07B1eaf75IkhvWy/dVFqYJmoFSnOlxBR4tvauKYbd9x0wdMD9JlrtdNs1G6
-         iVjRXdiRW96RF822Ed+YEOFBS8Gqy0sZpIgTvX3DU4JiDUVFfrGkflZ3JqQAttOvNvVw
-         K4LmHFuR79ptIUw6dbhURm4aRf7ryPUyYb7ATmUEWKokW653n2xxQnEkrHNL00cmn0kp
-         RxBp4ckifqjUCKE02f0Fax6sQBlafIxHaj1N/zBMkjE4b14J/6/KYLUwrb2JTotHnGeA
-         9CfGULDYCfVvyx9IRQUvBGuPiwKxvh0qRNswJZhx/PS6lrC8WtrI7du8aXxYxbwRFGCX
-         88IQ==
+        bh=Tm6ZTNxTOPVKjmmIupco1zixq2O8DRitaHGxcnNlY8Q=;
+        b=WKSzJnIr7O6BqvCkTBUww4NdHvPgCN0PZ4fejkM2T7GbfDPR1APiqKjfuIFmPnfyBj
+         /l33gCEQJIzzNeKisDmySwCtIpb04LZGqvyVEjndita5LFVGuVJEOI7Srp5KH/acSsSL
+         zDP9ZQJ1UN+sbHTwVAIKYGXFZ/arT9qEKKZaLs7vRxrhACqKZjM7ECIgcOad08gqByu5
+         I3n/KoTZzbFHTrhljtiOmZB0sSAMPKvjIgx7XYKlDR1zZj2a02JwkyJ52phd6eMErr4A
+         gT9taZecIMvLEur62wM7PgFs3korn7VpRDGxkdvr9bWDl8cyvub/G37pVjNKcQJ9CEAt
+         g8Ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712847762; x=1713452562;
+        d=1e100.net; s=20230601; t=1712847924; x=1713452724;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+P23aEc6D4AK3QieQ0wss35fFJtf/ttLJisvoFqgu+g=;
-        b=Gr1sqex0lppw6dLEuSlAITt+/EdV+yTX/Loe3tRE2H4oMo3wW1qvEKHCKAoUZMrjZU
-         UKKsxgE0RaF4CFKKX8vniKbDIrkJ3BNBXHr1/dVFw5tWfjiWYs1q17sH0wFzY+X9A+LJ
-         oG2SExMTVT6O2ecoprot+x1T+6TTryDpfXS9UpkACR4ALn+CXShKdb/bzFIsemaEaho/
-         solv3d3aGxREkZRX7zCMbo1AHFeUNNFjGuhrIZ8P0EctJEKzuhbpM/2yTRWtOHLF7M+Y
-         79OpmO251Hiq3xEIX7eiRXyiHpWXQHRAN5fAj8y4Ugx0C+t21S3RQFM6njlPHyaEQv/N
-         lBlw==
-X-Forwarded-Encrypted: i=1; AJvYcCX23dnMdqnySitTjLWa6HCy5vD1QX92ci8aQc5sWMTlWoLIN29M90yzzbxKS4P4sv0LpLWQXfJTNHMmDQQ9I8SVog+F9Qi3CCzI
-X-Gm-Message-State: AOJu0YziR9xw4T+FM2J8Fik4g2aj+SiO0Mx2dLSFF2z45uU71ihGUjy/
-	3nAjIdpKYb+hG2wSDrWJPFOLPEpFqokpAeviQhnW/fA/rBxa0qxCrC12iEHkV+w=
-X-Google-Smtp-Source: AGHT+IGpo6GeSO3qvzPad2RXF4wEMof+Qy/1jy29kQFwn4tlvG5SFE0oakht0ocIv1pl2Hh6oQQIKQ==
-X-Received: by 2002:a50:d605:0:b0:56d:fc9f:cca0 with SMTP id x5-20020a50d605000000b0056dfc9fcca0mr18004edi.41.1712847762590;
-        Thu, 11 Apr 2024 08:02:42 -0700 (PDT)
+        bh=Tm6ZTNxTOPVKjmmIupco1zixq2O8DRitaHGxcnNlY8Q=;
+        b=cG0VZrQoHLWab4E6ud3ic1lrmd5jLrSgCpkbRE7busWLFNCBWy7JBGss+ztLt3xqwU
+         9Mm2478aeksRoMSWdzXe1TES+9nW4qUiMpXW6PyZOBUApT7Wd/kA7RO7M74RLvwoPUXn
+         5lnzV8dybAtcpF7xE41stHh5onumBq+JfHMAw+3giEd5AtqqmiMfB2B2P1dFszp73zOT
+         WiJOOdzrdSASWLNDRsr19j9+9uvq97uH/9E1PD0AUfhAzEtP89FuqXiGPeE8FOlufdgw
+         TyjMtt8es0dxFCy1J7x25ciDo8aXsPBN0to3on50a56aWL84VD2EZc0LgYDwRXY9NhvE
+         zdQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/izfPpiAd2JNvuDh/Ul/fHzxpC+GN5SyweljwqiXXqpCeHVOy6jpuZxZeacuMA3qHWyHI1CfTJC/zXV6sfUSr190w4M8cuUSe
+X-Gm-Message-State: AOJu0YyxLDdW4Yf9paI306UQdtW1ZSQY/HHOfrgVkvjHa0jUDhI0L9V5
+	YTwLUptFBRLi/moWNsbmlOb4uiB+uw0ocnpQXon0gpzJaMDYAY2HL+gscA0kGCE=
+X-Google-Smtp-Source: AGHT+IGzDBSQxEdpLg1BfGvNVw+/WhMauDtncjFcsF+rSyVriGUgF4Zznz0ZOynEqwfvz/ZjRzgY1A==
+X-Received: by 2002:a05:6512:539:b0:516:cec0:1fb8 with SMTP id o25-20020a056512053900b00516cec01fb8mr5134101lfc.65.1712847924096;
+        Thu, 11 Apr 2024 08:05:24 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id ds2-20020a0564021cc200b0056febfc5395sm497978edb.58.2024.04.11.08.02.41
+        by smtp.gmail.com with ESMTPSA id lo17-20020a170906fa1100b00a466af74ef2sm830566ejb.2.2024.04.11.08.05.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Apr 2024 08:02:42 -0700 (PDT)
-Message-ID: <8c5ba2cc-b3c1-44df-99f2-a9146e8685f7@linaro.org>
-Date: Thu, 11 Apr 2024 17:02:40 +0200
+        Thu, 11 Apr 2024 08:05:23 -0700 (PDT)
+Message-ID: <a6f91997-bbaf-48fd-9b8d-2bb671cd026b@linaro.org>
+Date: Thu, 11 Apr 2024 17:05:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,8 +62,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] dt-bindings: clock: mobileye,eyeq5-clk: add EyeQ6L
- and EyeQ6H
+Subject: Re: [PATCH 03/11] dt-bindings: reset: mobileye,eyeq5-reset: add
+ EyeQ6L and EyeQ6H
 To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
  Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -79,9 +79,9 @@ Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>
 References: <20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com>
- <20240410-mbly-olb-v1-2-335e496d7be3@bootlin.com>
- <29ece6c8-ddf4-4dcd-b5b4-1cad8bc858d3@linaro.org>
- <D0HCAV6APTSD.WKGPESJ29D8A@bootlin.com>
+ <20240410-mbly-olb-v1-3-335e496d7be3@bootlin.com>
+ <975a8554-a299-4394-be15-c910cf9688ae@linaro.org>
+ <D0HCMDMWTO61.1F860N5I5SKS3@bootlin.com>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -128,86 +128,122 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <D0HCAV6APTSD.WKGPESJ29D8A@bootlin.com>
+In-Reply-To: <D0HCMDMWTO61.1F860N5I5SKS3@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 11/04/2024 15:49, Théo Lebrun wrote:
->>> +    then:
->>> +      properties:
->>> +        reg:
->>> +          minItems: 2
->>> +          maxItems: 2
->>> +        reg-names:
->>> +          minItems: 2
->>> +          maxItems: 2
+On 11/04/2024 16:04, Théo Lebrun wrote:
+> Hello,
+> 
+> On Thu Apr 11, 2024 at 8:14 AM CEST, Krzysztof Kozlowski wrote:
+>> On 10/04/2024 19:12, Théo Lebrun wrote:
+>>> Add bindings for EyeQ6L and EyeQ6H reset controllers.
+>>>
+>>> Some controllers host a single domain, meaning a single cell is enough.
+>>> We do not enforce reg-names for such nodes.
+>>>
+>>> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+>>> ---
+>>>  .../bindings/reset/mobileye,eyeq5-reset.yaml       | 88 ++++++++++++++++++----
+>>>  MAINTAINERS                                        |  1 +
+>>>  2 files changed, 74 insertions(+), 15 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml b/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml
+>>> index 062b4518347b..799bcf15bed9 100644
+>>> --- a/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml
+>>> +++ b/Documentation/devicetree/bindings/reset/mobileye,eyeq5-reset.yaml
+>>> @@ -4,11 +4,13 @@
+>>>  $id: http://devicetree.org/schemas/reset/mobileye,eyeq5-reset.yaml#
+>>>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>  
+>>> -title: Mobileye EyeQ5 reset controller
+>>> +title: Mobileye EyeQ reset controller
+>>>  
+>>>  description:
+>>> -  The EyeQ5 reset driver handles three reset domains. Its registers live in a
+>>> -  shared region called OLB.
+>>> +  EyeQ reset controller handles one or more reset domains. They live in shared
+>>> +  regions called OLB. EyeQ5 and EyeQ6L host one OLB each, each with one reset
+>>> +  instance. EyeQ6H hosts 7 OLB regions; three of those (west, east,
+>>> +  accelerator) host reset controllers. West and east are duplicates.
+>>>  
+>>>  maintainers:
+>>>    - Grégory Clement <gregory.clement@bootlin.com>
+>>> @@ -17,27 +19,83 @@ maintainers:
+>>>  
+>>>  properties:
+>>>    compatible:
+>>> -    const: mobileye,eyeq5-reset
+>>> +    enum:
+>>> +      - mobileye,eyeq5-reset
+>>> +      - mobileye,eyeq6l-reset
+>>> +      - mobileye,eyeq6h-we-reset
+>>> +      - mobileye,eyeq6h-acc-reset
+>>>  
+>>> -  reg:
+>>> -    maxItems: 3
+>>> +  reg: true
 >>
->> So any name is now valid? Like "yellow-pony"?
+>> Same mistakes. Please open existing bindings with multiple variants,
+>> e.g. some Qualcomm, and take a look how it is done there.
 > 
-> I do not understand what implies this. Below "items: enum: [...]"
-> ensures only two allowed values. dtbs_check agrees:
+> Thanks for the pointer to good example, that is useful! So if we take
+> one random binding matching
+> Documentation/devicetree/bindings/clock/qcom,*.yaml and that contains
+> the "reg-names" string, we see:
 > 
-> ⟩ git diff
-> diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
->            b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> index 8d4f65ec912d..5031eb8b4270 100644
-> --- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> +++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> @@ -126,7 +126,7 @@ reset: reset-controller@e00000 {
->                         clocks: clock-controller@e0002c {
->                                 compatible = "mobileye,eyeq5-clk";
->                                 reg = <0x02c 0x50>, <0x11c 0x04>;
-> -                               reg-names = "plls", "ospi";
-> +                               reg-names = "plls", "yellow-pony";
->                                 #clock-cells = <1>;
->                                 clocks = <&xtal>;
->                                 clock-names = "ref";
+>   reg:
+>     items:
+>       - description: LPASS qdsp6ss register
+>       - description: LPASS top-cc register
 > 
-> ⟩ make dtbs_check DT_SCHEMA_FILES=mobileye DT_CHECKER_FLAGS=-m
->   UPD     include/config/kernel.release
->   DTC_CHK arch/mips/boot/dts/mobileye/eyeq5-epm5.dtb
-> arch/mips/boot/dts/mobileye/eyeq5-epm5.dtb: system-controller@e00000:
->   clock-controller@e0002c:reg-names:1:
->   'yellow-pony' is not one of ['plls', 'ospi']
->   from schema $id:
->     http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
-
-Ah, so you defined the items but made them an random order? No, please
-keep same syntax which is what we always recommend anyway:
-
-https://elixir.bootlin.com/linux/v6.8/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L132
-
-...
-
->>> +
->>> +  # Some compatibles provide a single clock; they do not take a clock cell.
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          enum:
->>> +            - mobileye,eyeq6h-central-clk
->>> +            - mobileye,eyeq6h-west-clk
->>> +            - mobileye,eyeq6h-east-clk
->>> +            - mobileye,eyeq6h-ddr0-clk
->>> +            - mobileye,eyeq6h-ddr1-clk
->>> +    then:
->>> +      properties:
->>> +        "#clock-cells":
->>> +          const: 0
->>
->> Wait, so you define device-per-clock? That's a terrible idea. We also
->> discussed it many times and it was rejected many times.
->>
->> You have one device, not 5.
+>   reg-names:
+>     items:
+>       - const: qdsp6ss
+>       - const: top_cc
 > 
-> Each region must be a syscon to make its various registers accessible to
-> drivers that'll need it. Following that, I have a hard time seeing what
-> would be the DT structure of 7 OLB system-controllers but a single
-> clock node?
+> I don't understand one thing; this doesn't tell you:
+> 
+>    You can provide 2 MMIO blocks, which must be qdsp6ss and top_cc.
 
-I assumed all these are in one syscon. Lack of DTS (example is quite
-limited, which is expected) does not help. Please link full DTS so we
-can see what you want to achieve.
+No, it tells you exactly this, with difference: s/can/must/
+
+> 
+> But it tells you:
+> 
+>    Block zero must be qdsp6ss.
+>    Block one must be top_cc.
+> 
+> If we do that I do not get the point of reg-names; we put more
+> information in our devicetree that is in any case imposed.
+
+Same old argument. Order is not flexible. Order is fixed.
+
+Why do you need names? I don't need, it's purely your optional choice.
+Maybe you find it more readable, up to you.
+
+
+> 
+> This is why I went with a different approach looking like:
+> 
+>   reg:
+>     minItems: 2
+>     maxItems: 2
+>   reg-names:
+>     minItems: 2
+>     maxItems: 2
+>     items:
+>       enum: [ d0, d1 ]
+
+No, order is fixed.
+
+> 
+> I know this is not perfect, but at least you don't enforce an order for
+> no reason. If "items: const..." approach should be taken, then I'll
+> remove reg-names which bring no benefit.
+
+You can remove it, you can keep it, whatever makes code more readable,
+but order is fixed.
 
 Best regards,
 Krzysztof
