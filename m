@@ -1,93 +1,120 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BD82BB09;
-	Thu, 11 Apr 2024 04:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8263C17;
+	Thu, 11 Apr 2024 04:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712809075; cv=none; b=lu1gKfdlHRewBJi8UxLxpT43BDQuonk0Fr35hltseZqF1TNvvWX0J85F3cGAWxEhziROV7xqZL9zN8A+vWF5C+hfuSLBkzWfpPcAUvnBVH4eRJxQQV/khVFVou++QZ0hrBHyb9COTpLgK4bW52SF5+gAL0TnDDGj+lrQoQ/DKs4=
+	t=1712809896; cv=none; b=QzxBDwXbyFxdj0i9nR3DqBnaldpE8BBH13KicgQMU8x/fvvg6I9HU2moYdjbJJ6r7KTDwnmQTJROUCbDrUcM2FK5GoENNnk/Om+pOtmAYpzM8OqQ3c17qqmjvd9jNWJmrvi4nSxtuIpZqWfXk2dwQgkl2A90MVpFCWJNZQI0b3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712809075; c=relaxed/simple;
-	bh=LQWAuoCn1kPcx9Am/NeCrTjJ5/EuA4eOzZJNn5sTNoo=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=vCV8RNKRFnodjc0yzXs180051ISvy/CgCPDUbKRFOTpIQXvI7QerutwRiCbtKZ/Ypx3c+AIpNrlQZha/Pge7G/h472A+kecc1JyYlVZXVgLaM6dvQpVHcBlD9qJatEUfhpQUH0qtknFsgHL6hskdxMCsTakezYJseyVqvZL25os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jku8B7I+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712809896; c=relaxed/simple;
+	bh=vrTyJSsz66VhcSci1RRtIF3jsVvFSQOsHe+hs0NSE9s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vEilN4ALaYC3+eUv1VKkda8yPB2M1nsqkA4zQ2PuSGp5U/WZHcZNPggIPVdu5MR2+ME9tRh5XDhd3Y9ifQLwuQPuILgIHwL/b/ydGztdTWXQbmAOASIdUFCBGv4MDFQWeAQmB7AQvSRpZO6wSjm3CbMSrcyaX2izT/6mCkknCjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uHMFCn8q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jku8B7I+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EBC2C433F1;
-	Thu, 11 Apr 2024 04:17:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHMFCn8q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE5BC433B1;
+	Thu, 11 Apr 2024 04:31:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712809075;
-	bh=LQWAuoCn1kPcx9Am/NeCrTjJ5/EuA4eOzZJNn5sTNoo=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Jku8B7I+9+3tnBQAf2WhJg2Ed1NYpFtEmT+qE3US5JblrZOe8lm0Skz9pEMMOI59G
-	 PtXFGbvMygs6lIJwso1QEbCJIZFdxX6WTNhy1ue+iSpoJzMNmirEW8C3CRFyN+N2Tf
-	 csgmu/JsWKxn2qd55EhDPEeIiDIDxq2/80KDJTUy7lFpaoFUHcCj0kQt+b+hzCREsf
-	 j6PC282NPnyl7Kflrw6+XItaHpaoZ1NdbOqp9Sz8IbuBKDGuWeCV6Gd5PtuRsYY4Fy
-	 Vi/shDWklwA+92j9WOP72tMmlKqSY2ANuUxjS1ygt8KnnGBTKfPbV976YXpMPmJDkl
-	 yEH6eyv4MV4LA==
-Message-ID: <a48f6017bacb4aacb0a318554229cb65.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1712809896;
+	bh=vrTyJSsz66VhcSci1RRtIF3jsVvFSQOsHe+hs0NSE9s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uHMFCn8qPHjNAa0TdZJhUUMsr2B7NCGbIh1WKFYUvvBV6hv/AAOqUiiYeFuEIdLT3
+	 Lwqq14DMOxLWNR1nH6CZTQNXD6385U+ZUdN7lAi/wZsiEGFH37KcU86wjhDu5rVl76
+	 gvKlM+L4Qh2tIqjJsUhSnM8vmBy3ShMjeC5VPzqIPQDmuDjgKFzGXNlYybPI7GhO9N
+	 MidqLzXwPFxGqGAhMCNirM5+cYlnRYaTUrKZUdT4y8woXqTQa8LkKN+6dGNNGrSusE
+	 QM58RXBiJysogbUx4pPCn/LX5WjAFJMYqjwf4B6OwbHHkYpgc/y2ta7RWLkpS9zMzR
+	 5ELXpWXTpO0bA==
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a52176b2cb6so101204566b.2;
+        Wed, 10 Apr 2024 21:31:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUraFtjFPpvmxYhUz2QoT9Cn503MSDBr07A6VFwiPXhY2ZNJDrOILxsS0Xls9k40W7E41W9snQYuXGzDc62sfUg/R0EptItqswvhv+RTuH9E2eLVXAR75M0DtlwnwgXX9Dn5bTchA==
+X-Gm-Message-State: AOJu0YztZCW9lU2mcDx8xZh+kI/JV9WibWYxaLjsSxwT865W1c+7oQoM
+	xjc1nbJA/oxaWRIYU1BaqBEl4b8dLmeWkh1EIebM7D+EJS1qVNdRQA5qDONa+r00Ll6JUe1Afs0
+	nTcRyJEzV5zpG1EIFRqWhJEq8Jmc=
+X-Google-Smtp-Source: AGHT+IGL+/3vzAYK4K0QiuFLsO1aXZQYmTioRDYy4LKcuDF0qFutdNCevBoKbn4z3I0uejXah3+/f+nNYqIVBin3FsE=
+X-Received: by 2002:a17:906:c346:b0:a51:bc68:d61e with SMTP id
+ ci6-20020a170906c34600b00a51bc68d61emr2614686ejb.30.1712809894523; Wed, 10
+ Apr 2024 21:31:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <cover.1712731524.git.zhoubinbin@loongson.cn>
+In-Reply-To: <cover.1712731524.git.zhoubinbin@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 11 Apr 2024 12:31:20 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5QJVrTjDEyNFRw5p5x0f7ONYWYyL_4D91aHXSMrNd9nw@mail.gmail.com>
+Message-ID: <CAAhV-H5QJVrTjDEyNFRw5p5x0f7ONYWYyL_4D91aHXSMrNd9nw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Add Loongson-2k0500 and Loongson-2k2000 clock support
+To: Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: Binbin Zhou <zhoubb.aaron@gmail.com>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Yinbo Zhu <zhuyinbo@loongson.cn>, loongson-kernel@lists.loongnix.cn, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <PH7PR12MB728433875E7B7DD673E8785D8A342@PH7PR12MB7284.namprd12.prod.outlook.com>
-References: <20240103072017.1646007-1-naman.trivedimanojbhai@amd.com> <55fd522918aa41f386e01432248933da.sboyd@kernel.org> <PH7PR12MB7284F36E51750D47102410448A202@PH7PR12MB7284.namprd12.prod.outlook.com> <PH7PR12MB728433875E7B7DD673E8785D8A342@PH7PR12MB7284.namprd12.prod.outlook.com>
-Subject: RE: [PATCH] drivers: clk: zynqmp: remove clock name dependency
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>, linux-arm-kernel@lists.infradead.org <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
-To: "Simek, Michal" <michal.simek@amd.com>, "Trivedi Manojbhai, Naman" <Naman.TrivediManojbhai@amd.com>, robh@kernel.org
-Date: Wed, 10 Apr 2024 21:17:52 -0700
-User-Agent: alot/0.10
 
-Quoting Trivedi Manojbhai, Naman (2024-03-26 22:47:28)
-> >>Quoting Naman Trivedi Manojbhai (2024-01-02 23:20:17)
-> >>> Currently, from zynqmp_get_parent_list() function the clock driver
-> >>> references the clock by name instead of its reference from device tre=
-e.
-> >>> This causes problem when the clock name in the device tree is changed.
-> >>>
-> >>> Remove hard dependency of clock name and update the logic to use
-> >>> clock reference from device tree instead of clock name.
-> >>
-> >>Please use struct clk_parent_data instead.
-> >Thanks for review. As per my understanding, you suggest to replace the
-> >proposed logic, and use "struct clk_parent_data" to get the clock name f=
-rom
-> >device tree.
+For the whole series,
 
-No, do not get the clock name of a parent in the driver. Use struct
-clk_parent_data to tell the clk framework what the parent is.
+Acked-by: Huacai Chen <chenhuacai@loongson.cn>
 
-> >
-> >I have gone through other drivers which use the "struct clk_parent_data"
-> >structure, they have hard coded clock names in the driver. In zynqmp, the
-> >driver receives clock name from firmware.
-
-Don't use a string name. The devicetree index must be stable, so simply
-use the index that the binding has as the index in struct
-clk_parent_data.
-
-	struct clk_parent_data parent_map[] =3D {
-		{ .index =3D MY_DT_PARENT_1 }, /* parent index 0 */
-		{ .index =3D MT_DT_PARENT_2 }, /* parent index 1 */
-	};
-
-> >
-> >Also, the "zynqmp_get_parent_list" function is called before clocks are
-> >registered. So at this point, we don't have the hw structure which has
-> >clk_parent_data.
-
-I guess that's a problem with how the code is written?=20
-
-> >
-> >So, I did not get how to use the struct clk_parent_data in this case. Ca=
-n you
-> >please provide an example which I can look at as a reference?
-> >
-
-There are many references. A new qcom one is drivers/clk/qcom/gcc-x1e80100.c
+On Thu, Apr 11, 2024 at 10:58=E2=80=AFAM Binbin Zhou <zhoubinbin@loongson.c=
+n> wrote:
+>
+> Hi all:
+>
+> As we know, the Loongson-2K family of SoCs (ls2k0500/ls2k1000/ls2k2000)
+> have a similar clock structure, and I support them to be configured with
+> different parameters (e.g., register offsets, etc.).
+>
+> To make it easier to add support for different SoCs, I refactored the
+> original driver to make the whole driver as understandable as possible.
+>
+> Briefly, I have divided all clocks into three categories according to
+> their properties and their parent clocks: Independent PLLs, clocks based
+> on frequency scales, and clock dividers.
+>
+> Thanks.
+>
+> ----
+> V3:
+> - Remove the dts-related patches and update dts at once after all relevan=
+t
+>   drivers are complete.
+> patch(1/6):
+>  - Drop unsuitable comments.
+>
+> Link to V2:
+> https://lore.kernel.org/all/cover.1711504700.git.zhoubinbin@loongson.cn/
+>
+> V2:
+> patch(1/8):
+>  - Drop LOONGSON2_CLK_END, for it is not a binding.
+> patch(1/8)(3/8)(5/8):
+>  - Add Acked-by tag from Conor, Thanks.
+>
+> Link to V1:
+> https://lore.kernel.org/all/cover.1710926402.git.zhoubinbin@loongson.cn/
+>
+> Binbin Zhou (6):
+>   dt-bindings: clock: Add Loongson-2K expand clock index
+>   clk: clk-loongson2: Refactor driver for adding new platforms
+>   dt-bindings: clock: loongson2: Add Loongson-2K0500 compatible
+>   clk: clk-loongson2: Add Loongson-2K0500 clock support
+>   dt-bindings: clock: loongson2: Add Loongson-2K2000 compatible
+>   clk: clk-loongson2: Add Loongson-2K2000 clock support
+>
+>  .../bindings/clock/loongson,ls2k-clk.yaml     |   4 +-
+>  drivers/clk/clk-loongson2.c                   | 549 ++++++++++--------
+>  include/dt-bindings/clock/loongson,ls2k-clk.h |  54 +-
+>  3 files changed, 329 insertions(+), 278 deletions(-)
+>
+> --
+> 2.43.0
+>
