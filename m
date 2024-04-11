@@ -1,85 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060092032C;
-	Thu, 11 Apr 2024 08:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C7C143C77;
+	Thu, 11 Apr 2024 09:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712823168; cv=none; b=cwsqW8YK+Lw7Ewx2C9J4WpsjXX6usZoJEO59oSzOysK0PiXOkr6kRaO+LL3esWTmmaBL08/ede/IlR9zZBqd+OxDDYC743enkOlwTDxxNsJzTIAldq65c/IYUJypiwjeE/8A7GRTeYledh1cTKtTZ1kjVu541gE+A/XQsR+6AEA=
+	t=1712827183; cv=none; b=QFIenWgid5p5lTB9+styEmi3+nL3L66oh93O4UTbMzL/KzuMFrZDTqz2tXtMd+UFo3NIV9Y/wSLVZB5GCTRCAhOs5DYzR47Yng6bgyYOgS86O3v5YoAjD22QZSvORYKtn4Ka6CmBUMkv4X/6NT/fuiTX0FCWHdH8rWdkeAuArpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712823168; c=relaxed/simple;
-	bh=2KXJC0mnz+Y85p+OkgNifLbFv8nJbqJOIlKkx/u62WQ=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=tQ1TeVt+Zx87l3Jnx240h4o8MqUvI6hhii9zOiQSmxs7VV+/KduE3q/LtH5J+5Jq/n4Bu8SZc29W84Tmtmyhn4qlAtkSKo4x2ro9v+kC4KCG3opLBQl0vmS9dN5sTudeIzxzgVQYv/BKp3WevfDKQmoQc7Klr1mbAtYGNKbuCjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snxnioA1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712827183; c=relaxed/simple;
+	bh=7YIPbLNqcKNJR0M74cGCjmsO4y8qKvenM6vaUuW0EUo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=svRIJntm/0yeVdLSctx33Em4YFhO8gq5pZEfkftfquhevK3cumxN+hPFyKGz5xmgSa7gYIBT/WkVqEJXYTjxeb9c9RKw87xZz63jYo0Ld06mU5IbGamNCNCUErGqjKvkBZGW3ZXSjpP/jiVsup6KLBIuADGnlJZY2PeMQ6Mkqkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=URwAt6z3; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snxnioA1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A8C5C433F1;
-	Thu, 11 Apr 2024 08:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712823167;
-	bh=2KXJC0mnz+Y85p+OkgNifLbFv8nJbqJOIlKkx/u62WQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=snxnioA1gprBQqKzbQBKiT08vbhxVQg3LNb3M2LPqNRjpT+BgKzhzbeEwv8supACh
-	 2JtQEwcQJjt6isZ46KdFxwaVePcwGy7YwnXsCzz2FjczB8zT3yd56TxvYXw/pc4CPp
-	 0WL1/HLIxre7XJHrfYz9ezYlCGmsNz/TL8aCn+9fShmFfJu9YLXB9W5ty+HQ11PMUv
-	 raXsvuorcWyk2ldLFKnmXPqiI8OCZvrBdNNg0EZ1IwFDpOjaOk9Bu5FkAc+XYf2nsu
-	 pwU7WnTOkkYFrh1w1beXTKDYxdkBmyTpsUsUD7zu0+2LF8aN07OsX5PE1v0aEWFSza
-	 L3bpDvA46yT5Q==
-Message-ID: <52ac3a1e06c384a839cbce96add50575.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="URwAt6z3"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 833E54000E;
+	Thu, 11 Apr 2024 09:19:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1712827173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IbTHzKHKeglXiJiU4uLpJ6nerHMO6Rg9h+b3qg4QPbo=;
+	b=URwAt6z35/hrriUSTvLg+KFe1NEQgQ6qkGAv5W7gPQfEDD9kZqVIJTH7NxAHzz8lt3nFTe
+	aI5x8yFCOXlD91hFPPPb8QZzGfq+C1kSKBWur583kk54jyDrjobWVt52GP4gtrLgLRLxg0
+	gymGYojmf40kwq7A2pc/0uGwxLuTGuxEa3JiYvZvy+RAnxszopEFHpLzU5BWWZA7tTQ+ye
+	1cRps1M0C1bZ70rN/E14V/onA74ZxuZ4ztEsJ2rdDULbsWC5zK6kTx3LSXjamP9Gw8gcOq
+	5KAiowpb/iTZESiw77Fgp0+/D8HTnIVotYKBDQfTlhWLBqhVA8Iy3yWQyS5DzA==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240318225546.GS13682@pendragon.ideasonboard.com>
-References: <20240318110842.41956-1-biju.das.jz@bp.renesas.com> <20240318110842.41956-3-biju.das.jz@bp.renesas.com> <20240318225546.GS13682@pendragon.ideasonboard.com>
-Subject: Re: [PATCH v3 2/3] clk: Add clk_poll_disable_unprepare()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org
-To: Biju Das <biju.das.jz@bp.renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Thu, 11 Apr 2024 01:12:45 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 11 Apr 2024 11:19:32 +0200
+Message-Id: <D0H6K479VPHU.2WARS2K8B2SFL@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH 01/11] dt-bindings: soc: mobileye: add EyeQ5 OLB system
+ controller
+Cc: "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, <linux-gpio@vger.kernel.org>, "Michael
+ Turquette" <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>, "Gregory
+ CLEMENT" <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Stephen Boyd" <sboyd@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, <linux-mips@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, "Linus
+ Walleij" <linus.walleij@linaro.org>
+To: "Rob Herring" <robh@kernel.org>
+X-Mailer: aerc 0.15.2
+References: <20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com>
+ <20240410-mbly-olb-v1-1-335e496d7be3@bootlin.com>
+ <171277513936.883835.18187305941709008733.robh@kernel.org>
+In-Reply-To: <171277513936.883835.18187305941709008733.robh@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Quoting Laurent Pinchart (2024-03-18 15:55:46)
-> On Mon, Mar 18, 2024 at 11:08:41AM +0000, Biju Das wrote:
-> > +     int ret;
-> > +
-> > +     clk_disable(clk);
-> > +     ret =3D clk_poll_disabled(clk, sleep_us, timeout_us);
-> > +     clk_unprepare(clk);
->=20
-> What happens in the clk_disable_unprepare() case, if the clk_unprepare()
-> function is called on a clock that hasn't been synchronously disabled ?
-> This is ill-defined, a clock provider driver that implements .disable()
-> asynchronously would see its .unprepare() operation called with
-> different clock states. That behaviour is error-prone, especially given
-> that it could be difficult to test clock provider drivers to ensure that
-> handle both cases correctly.
->=20
-> One option could be to turn the .unprepare() operation into a
-> synchronization point, requiring drivers that implement .disable()
-> asynchronously to implement synchronization in .unprepare(). That way
-> you wouldn't need a new API function for clock consumers. The downside
-> is that consumers that call clk_disable_unprepare() will never benefit
-> from the .disable() operation being asynchronous, which may defeat the
-> whole point of this exercise.
->=20
-> I'm starting to wonder if the simplest option in your case wouldn't be
-> to make your clock provider synchronous for the vclk...
+Hello,
 
-Yes. This all looks unnecessary if the device using the clk always
-requires the clk to actually be shut down when it is disabled. Just do
-that for this vclk and move on. It _is_ tightly coupling this specific
-clk to the specific consumer, but that's simplest and most expedient to
-implement, i.e. it's practical.
+On Wed Apr 10, 2024 at 8:52 PM CEST, Rob Herring wrote:
+> On Wed, 10 Apr 2024 19:12:30 +0200, Th=C3=A9o Lebrun wrote:
+> > Add documentation to describe the "Other Logic Block" syscon.
+> >=20
+> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> > ---
+> >  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 125 +++++++++++++=
+++++++++
+> >  MAINTAINERS                                        |   1 +
+> >  2 files changed, 126 insertions(+)
+>
+> My bot found errors running 'make dt_binding_check' on your patch:
+>
+> yamllint warnings/errors:
 
-We would only ever need this API if we had a clk consumer which
-absolutely required the clk to stop clocking upon returning from
-clk_unprepare(), and that clk could be any random clk. It sounds like in
-this case that isn't true. We know which clk must be off when
-clk_unprepare() returns, so just implement the wait in the
-clk_ops::unprepare() callback?
+[...]
+
+I made the mistake of putting an EyeQ6H example inside
+Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
+
+I will remove it to get this error fixed. Else there would be
+dependencies on clk and reset patches from this series:
+
+   dt-bindings: clock: mobileye,eyeq5-clk: add EyeQ6L and EyeQ6H
+   dt-bindings: reset: mobileye,eyeq5-reset: add EyeQ6L and EyeQ6H
+
+Regards,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
