@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC97613CA9C;
-	Thu, 11 Apr 2024 06:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56834F5FE;
+	Thu, 11 Apr 2024 06:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712817764; cv=none; b=CAvnsRI9sCIxcXeIS7LPjcL+w5V2zXekm1JdM+ErCYRFpag1z4ET7YxCygypMhp/IJGWWEfYOv0OSevIN2SJne2u2mjku5nVEgQdPGXFYBCW+nwawhqhPo5QKsSGgWuwx3tDV5k76ZbfmWU38ZiX6OdKftHzMFOb0t7Q589jNKc=
+	t=1712818213; cv=none; b=Gos4wyeZ0INdrryqiW2N+DyRNKMp7oVwAuCMwaR5T+03YJCl3TlWd1DVItfNcfiaQTbpHHePKCIjdhlArwft1S6HG8dJroggQcurkWrhIvc9GmG9y1Gu6Cr4YQLItOhveSM+DvTJvIppt2BLb2mNuJVj4R4XPGSOfCW3bJbDH1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712817764; c=relaxed/simple;
-	bh=oY5a4Ot17m0sMgy4zMzuvkfZSw4jNJxJmnt6iW20b3Y=;
+	s=arc-20240116; t=1712818213; c=relaxed/simple;
+	bh=p5X7+YSGykaoroLDc3Utq5/1Ao3D7BavVji7tMzRmo0=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=G+Ta4rMkHbC0nZE8YjDTlUXs/JkMWk+JloiyJ8sbKy6jBu/94SoL/jCqQHpObArtnKyT0MmyYRu5VU1EzkVZsR/w60IzB2rE18Fu31ftoOuI/8fcEjJR/Gj6rSghD++JCxXAI4LZhODFNY6GfFuZOZOkbN3qdNlKJYfr0DK2RmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSQQvraj; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=VkzilHFKO8lZS45hoiziMdND1wJDWwS866JPmT0GqbSSYporR/RCDXGIJPD2Rn2SQUx8xOwTEGxB+YP4PdEnngmLQlijcbpJb4BgiqSM4iM4eYu2zsYEJQj+vgpUJrHxNKu1/I88qsPeakhs0xKv8JfGncdOhXyUNNvIzbhX9RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blqZo9iW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSQQvraj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0053C433C7;
-	Thu, 11 Apr 2024 06:42:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blqZo9iW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B29EC433F1;
+	Thu, 11 Apr 2024 06:50:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712817763;
-	bh=oY5a4Ot17m0sMgy4zMzuvkfZSw4jNJxJmnt6iW20b3Y=;
+	s=k20201202; t=1712818213;
+	bh=p5X7+YSGykaoroLDc3Utq5/1Ao3D7BavVji7tMzRmo0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=XSQQvraj84k7Lzc+gp3QcKgEXUMRxUhpWcMPwOPxZeXodWv/OqsQ7vDrN27GBxGPQ
-	 JNeHMygM57BQoSpSGZaV5WzkXsWfkO/a2d6pTTEzypAsv9rgVtvZ5ubBaZh7g4gdAg
-	 rOf56enkN/Dv3ygcQksmk5XdQno4jPY5lSOao6QY1Lev8mIdZ2BZPjo/y7FzNDYfCL
-	 UKNWLTYGNSkqnZTMiYEOsvCDbRGBCZ1LWyx4P+xVMrrs1B0YFDP9/qmFH5IZlB3RGv
-	 +DPn/hmrcs3uW9SxE+Tlp5GHbDuoTVEUyPviSr9A6TbDZ3Z4ZDxjN9CcDESVn9gHgM
-	 9PYOiCVRrKN+w==
-Message-ID: <44e544735066391b2ad1682badae4462.sboyd@kernel.org>
+	b=blqZo9iWReUjpET1lHp0b9kHsBlA8hKUyBSlYe4VSjHLRs87yVZBZl4BIcTx/n8vc
+	 NGgW0e8wO6RX6qHiFl1PWHUs3T0VzX1AsnGMswu4k/yY9KlPcQVC/RxQwdFmZ9ns2m
+	 CwX0IRp/dp9d0H98HXYf/ikYhPdIbLFQ2cJlpEo11HdF/nPgj8GfPfsQ0bLPns71q7
+	 PFIQy+zumfYPizcQFxP4nw/P1wMUOCYSvbafxCfNSlpMzo41DQaUDZFMV2IMRW/h5/
+	 kLRSdnqWGM7+PLG7WdZcSMsFkOSzTFR9RT9VCT6n+9wpq5xEa9E+ot0BRoNQoBGqK/
+	 svWXR0kCSrz0w==
+Message-ID: <7e12d6b1c0066b85e39e9af359f6f573.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,26 +35,18 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240123025613.3976-1-zhifeng.tang@unisoc.com>
-References: <20240123025613.3976-1-zhifeng.tang@unisoc.com>
-Subject: Re: [PATCH V4 0/3] Add reset controller driver for ums512
+In-Reply-To: <20240225065234.413687-1-mmyangfl@gmail.com>
+References: <20240225065234.413687-1-mmyangfl@gmail.com>
+Subject: Re: [PATCH v7 00/13] clk: hisilicon: Migrate devm APIs
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Zhifeng Tang <zhifeng.tang23@gmail.com>, Wenming Wu <wenming.wu@unisoc.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Orson Zhai <orsonzhai@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Zhifeng Tang <zhifeng.tang@unisoc.com>
-Date: Wed, 10 Apr 2024 23:42:41 -0700
+Cc: Yang Xiwen <forbidden405@outlook.com>, David Yang <mmyangfl@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org
+To: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org
+Date: Wed, 10 Apr 2024 23:50:10 -0700
 User-Agent: alot/0.10
 
-Quoting Zhifeng Tang (2024-01-22 18:56:10)
-> From: "zhifeng.tang" <zhifeng.tang@unisoc.com>
+Quoting David Yang (2024-02-24 22:52:15)
+> Migrate devm APIs for HiSilicon clock drivers and remove redundant codes.
 >=20
-> In most of Sprd SOCs,The clock controller register block also
-> contains reset bits for some of these peripherals,so reset
-> controller and clock provider are combined together as a block,
-> and put it under the driver/clk/.
->=20
-> Changes in v4:
->   - Add description why reset controller put it under the driver/clk/
+> This series is a partial improvement of [1]
 
-Please use an auxiliary device and put the code almost entirely under
-drivers/reset/. You can still have the data tables in the clk driver if
-you want, but I don't see why an auxiliary device can't be used.
+This doesn't compile on v6.9-rc1. Please rebase and resend.
