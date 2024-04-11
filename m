@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C085513C824;
-	Thu, 11 Apr 2024 07:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385EF13E04F;
+	Thu, 11 Apr 2024 07:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712821767; cv=none; b=OZb/vchSvyBsXKm3SYYwpkm5CMt68CQDzw15XT5KIWJcfoAr3Br5KzIqhx3EJW4CV2h/qCaRHWL7XNFK0guGmVcHnv+Zk4nxV1ICjVvEjiRO4/dheEWE31bwfNTiurxl0FUaW+4Y6bvVoU9ape/ELIRxf4gJWg0BGAOkNyTvsDA=
+	t=1712821984; cv=none; b=qkWtokyUjmkC6zvcCOFIihKs3pmCr4bgyPrkYfGH6KmaqKjr+fH1zbdJ2iiTdvoxJU8vojF2DzsJOJh0vW8EC//PdNf4ZEp84zYT5vhHEKi06WlBdj68kuEovQB3PSvrP7VZS5b9r4hiefG2/Ulaz9IkfjdRh9PkR2laSYqhAdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712821767; c=relaxed/simple;
-	bh=GQQD6YHCcBkicBSPTMO2OoklUsO8Qz/uM9luYCPMi30=;
+	s=arc-20240116; t=1712821984; c=relaxed/simple;
+	bh=3ImRIqYkB4b7VDBaog19HQRqWdwgMXfhcOiygPLA9zw=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Ayc4slkldwOoTkCycVEmMG3321YOCp6XAf7yODcPBCBNiRBisGNAqj1o0aAiaMfe7EH80esqwkUKJYzljZ//4IvqTNUqA4WtDHKfhaqmgNptiDr0LBQUj7RpDTnWD2zhtt+UzFbumFgwnV9fMm8cAlTsW7sc9cyYI0Qdabb2GyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=crdVATW2; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=en/Nc2T+KnpJHg76xIIRC69MMYHzNx7UaYJ0x8hJeZtvkRQe5KnZQV3EwK08mQzMc/oW3dpv2wo/RJnxkcBr3JP1Meoye1HvQ3EBEl/8eoT/5DJ5LmbHHBakNyoLDxHE+P+igKH+6mjC8klOM1mXNfPuCDIKBNIZCQ4JZDS1ZHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bdjzMzsr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="crdVATW2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30FA2C433F1;
-	Thu, 11 Apr 2024 07:49:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdjzMzsr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97C9CC433F1;
+	Thu, 11 Apr 2024 07:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712821767;
-	bh=GQQD6YHCcBkicBSPTMO2OoklUsO8Qz/uM9luYCPMi30=;
+	s=k20201202; t=1712821983;
+	bh=3ImRIqYkB4b7VDBaog19HQRqWdwgMXfhcOiygPLA9zw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=crdVATW2FLVb3crXNiLBHqFn6ynsHqIcCfM5bLTeAs5VDh9JY3eMei8amlkl5tVKg
-	 KES6kIL4Nwmjyjybv5PKIyspbnq+7a96u7fm66OoqzqrsQkyuTQN0O1W5nRgiVzQSw
-	 UmWvDHagKpqtXszJ/ezQrDVD7m2jOogiY3vsGAzDZLnaF2pQcq7sxhOhQK/G4bHWWu
-	 Kui7KQaf1dY6ThAosg5QR005yovEguC3NhlZO/Ed6HpmFQUcAH0c2zku7BC2f8OdCf
-	 ccCr0G79iv3SXv3wtIlpUHus7wwW7R/VN3JmNhf8cVGRwivsYVjnbSLJuwle6WToGZ
-	 OPUboYjEB4J/Q==
-Message-ID: <44131080f148a472ed5dee901a66ffa7.sboyd@kernel.org>
+	b=bdjzMzsrJ82+Dk+l0GgaVH/AI2FEi5SYevVWiyQDRlnQgmufeMJj4Qz33E8FamsFR
+	 N8bD2AKRdykvkWzP/B81JnS0KaMSd8vU/0obrCU7cLQfRk2duWGJ/TzH04sRekILUx
+	 G/bWFHbVhFxYcsY9M1hv/NjUK3lEZQ10/cq3gxXIcsYKDnpzqgtEUAMFdnVxosRotS
+	 Awk5OWroHTZyqk2F/oQJcszrXbMF8pKViuQ2WPX7uJVUyRFsG+FK3NG5CPVcOdZtku
+	 9ArTWn/vv91+wSSGBrq/DeS4BUUCMcvY+YkywvzWaH2mz2Vc7HtmaXUAMnAas3mxik
+	 DZ7/OEemH8u8A==
+Message-ID: <fa5fe57faeda3323174e4caddc1ac2a6.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,77 +35,40 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240110133128.286657-9-jeeheng.sia@starfivetech.com>
-References: <20240110133128.286657-1-jeeheng.sia@starfivetech.com> <20240110133128.286657-9-jeeheng.sia@starfivetech.com>
-Subject: Re: [RFC v3 08/16] clk: starfive: Add JH8100 North-West clock generator driver
+In-Reply-To: <SEZPR06MB6959E563B692827A3E5152DD96052@SEZPR06MB6959.apcprd06.prod.outlook.com>
+References: <20240225-pll-v1-0-fad6511479c6@outlook.com> <20240225-pll-v1-1-fad6511479c6@outlook.com> <d8dc639c2c6d188d2ce3728573d9a53d.sboyd@kernel.org> <SEZPR06MB6959E563B692827A3E5152DD96052@SEZPR06MB6959.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH RFC 1/2] clk: hisilicon: rename hi3519 PLL registration function
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, jeeheng.sia@starfivetech.com, leyfoon.tan@starfivetech.com
-To: Sia Jee Heng <jeeheng.sia@starfivetech.com>, aou@eecs.berkeley.edu, conor@kernel.org, emil.renner.berthing@canonical.com, hal.feng@starfivetech.com, kernel@esmil.dk, krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, p.zabel@pengutronix.de, palmer@dabbelt.com, paul.walmsley@sifive.com, robh+dt@kernel.org, xingyu.wu@starfivetech.com
-Date: Thu, 11 Apr 2024 00:49:25 -0700
+Cc: David Yang <mmyangfl@gmail.com>, Igor Opaniuk <igor.opaniuk@foundries.io>, Jorge Ramirez-Ortiz Gmail <jorge.ramirez.ortiz@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Yang Xiwen <forbidden405@outlook.com>, Yang Xiwen via B4 Relay <devnull+forbidden405.outlook.com@kernel.org>
+Date: Thu, 11 Apr 2024 00:53:01 -0700
 User-Agent: alot/0.10
 
-Quoting Sia Jee Heng (2024-01-10 05:31:20)
-> diff --git a/drivers/clk/starfive/clk-starfive-jh8100-nw.c b/drivers/clk/=
-starfive/clk-starfive-jh8100-nw.c
-> new file mode 100644
-> index 000000000000..018f5af6c777
-> --- /dev/null
-> +++ b/drivers/clk/starfive/clk-starfive-jh8100-nw.c
-> @@ -0,0 +1,237 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * StarFive JH8100 North-West Clock Driver
-> + *
-> + * Copyright (C) 2023 StarFive Technology Co., Ltd.
-[...]
-> +
-> +static int jh8100_nwcrg_probe(struct platform_device *pdev)
-> +{
-> +       struct starfive_clk_priv *priv;
-> +       unsigned int idx;
-> +       int ret;
-> +
-> +       priv =3D devm_kzalloc(&pdev->dev,
-> +                           struct_size(priv, reg, JH8100_NWCLK_NUM_CLKS),
-> +                           GFP_KERNEL);
-> +       if (!priv)
-> +               return -ENOMEM;
-> +
-> +       spin_lock_init(&priv->rmw_lock);
-> +       priv->dev =3D &pdev->dev;
-> +       priv->base =3D devm_platform_ioremap_resource(pdev, 0);
-> +       if (IS_ERR(priv->base))
-> +               return PTR_ERR(priv->base);
-> +
-> +       for (idx =3D 0; idx < JH8100_NWCLK_NUM_CLKS; idx++) {
-> +               u32 max =3D jh8100_nwcrg_clk_data[idx].max;
-> +               struct clk_parent_data parents[4] =3D {};
-> +               struct clk_init_data init =3D {
-> +                       .name =3D jh8100_nwcrg_clk_data[idx].name,
-> +                       .ops =3D starfive_clk_ops(max),
-> +                       .parent_data =3D parents,
-> +                       .num_parents =3D
-> +                               ((max & STARFIVE_CLK_MUX_MASK) >> STARFIV=
-E_CLK_MUX_SHIFT) + 1,
-> +                       .flags =3D jh8100_nwcrg_clk_data[idx].flags,
-> +               };
-> +               struct starfive_clk *clk =3D &priv->reg[idx];
-> +               unsigned int i;
-> +
-> +               for (i =3D 0; i < init.num_parents; i++) {
-> +                       unsigned int pidx =3D jh8100_nwcrg_clk_data[idx].=
-parents[i];
-> +
-> +                       if (pidx < JH8100_NWCLK_NUM_CLKS)
-> +                               parents[i].hw =3D &priv->reg[pidx].hw;
-> +                       else if (pidx =3D=3D JH8100_NWCLK_OSC)
-> +                               parents[i].fw_name =3D "osc";
+Quoting Yang Xiwen (2024-04-11 00:44:33)
+> On 4/11/2024 2:52 PM, Stephen Boyd wrote:
+> > Quoting Yang Xiwen via B4 Relay (2024-02-24 08:56:09)
+> >> diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilic=
+on/clk-hi3559a.c
+> >> index ff4ca0edce06..77fa4203a428 100644
+> >> --- a/drivers/clk/hisilicon/clk-hi3559a.c
+> >> +++ b/drivers/clk/hisilicon/clk-hi3559a.c
+> >> @@ -452,7 +452,7 @@ static const struct clk_ops hisi_clk_pll_ops =3D {
+> >>          .recalc_rate =3D clk_pll_recalc_rate,
+> >>   };
+> >>  =20
+> >> -static void hisi_clk_register_pll(struct hi3559av100_pll_clock *clks,
+> >> +static void _hisi_clk_register_pll(struct hi3559av100_pll_clock *clks,
+> > Prefix it with hi3559a then to be SoC specific please. But this is also
+> > static so I'm not sure why this patch is needed at all.
+>=20
+>=20
+> it includes the header that marks this function non-static. Also the=20
+> prototype is incompatible.
 
-Please generate this one time with structures and use an index instead
-of string names. This is faster in multiple ways, and the parent data is
-copied anyway.
+What is 'it'?
 
-> +                       else if (pidx =3D=3D JH8100_NWCLK_APB_BUS)
-> +                               parents[i].fw_name =3D "apb_bus";
-> +                       else if (pidx =3D=3D JH8100_NWCLK_APB_BUS_PER4)
-> +                               parents[i].fw_name =3D "apb_bus_per4";
+ $ git grep hisi_clk_register_pll
+ drivers/clk/hisilicon/clk-hi3559a.c:static void hisi_clk_register_pll(stru=
+ct hi3559av100_pll_clock *clks,
+ drivers/clk/hisilicon/clk-hi3559a.c:    hisi_clk_register_pll(hi3559av100_=
+pll_clks,
