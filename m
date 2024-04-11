@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C7D13DDDE;
-	Thu, 11 Apr 2024 07:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A938963D;
+	Thu, 11 Apr 2024 07:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712819271; cv=none; b=Jk0W+gx6xNAk3VDvHWsju+M0JyA9fZXauim8N4vciNhV+4LAfNg7MMKT+/OLlGOQZTQttVhd3Ls4F40lra91KZKs6vupb/7OsKUlqpFqS3WVBJy+LnND7q2Dm7GHA6ogzkobSUDFZA7PU+1hRysnfjWEoMymgggvbEBpwG2H4YU=
+	t=1712819723; cv=none; b=k0+wuQh3xAHOWAIwpcltWeUvIF9qYjO3Wohql16/UV8E4H3+fd+I+ManSnyyWycPgZ+A+2RSefy5K+0yOII92bQXPTTsDwUaLXqcr0oMQaxwbnWKg6bkV1lS6oMrdq8b2pXEM1PIqR8Nene0Scx5rvdDMidIewJRMMXX5o2tY44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712819271; c=relaxed/simple;
-	bh=Eg7nKhlQ45pThDmInT2Pa1BtHQZJf9V/GW2+v72Y/Mo=;
+	s=arc-20240116; t=1712819723; c=relaxed/simple;
+	bh=322ODHpdo41MdbG+o0rwogPFPp8094HEwxEDulubhH8=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=mywQ99+hoZKZ26kAlqBS9IN98nb0SuojIO/n5DUvOBHtrjhucXFBqRCKuVlpf1/0dLIFAoETunGeAr6/tMYBhVHEl/HqLWq8n/Kx7hCadXTXHvfEQXXmOmkYgn0OManFKoab9BnSu/xsGAlXH2mXbckdQp7nC11ZL9zSTgYh4eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hx0elqZ2; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=FUJW/e3IYqHAjUfxb8HafK1qP7VCo8+GD15l+4GKBNvAcc1nS1h0HAumXP5gpk9C24b6mckUjJ1C7S708P3wfTkPRilhcbhP2cvZ6JQMoiyDYfGay+W/a6uGFmAcb+I6dBEcC3Uhr1rhZYcsKypKDKUwtkI/GZlCXpxU8PKoM1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3XzKZJ2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hx0elqZ2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 456FDC433C7;
-	Thu, 11 Apr 2024 07:07:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3XzKZJ2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 214FCC433C7;
+	Thu, 11 Apr 2024 07:15:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712819271;
-	bh=Eg7nKhlQ45pThDmInT2Pa1BtHQZJf9V/GW2+v72Y/Mo=;
+	s=k20201202; t=1712819723;
+	bh=322ODHpdo41MdbG+o0rwogPFPp8094HEwxEDulubhH8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Hx0elqZ25lfBI3qu9ExJoALiB8EBOQTiRMso2dzTuIlFts6YWT8fYoAWmp6VylQ0V
-	 mspLu0J/kFkSXNjh4edmv7H+aMZfX3OWLKc5WApPfwJ8NP+gPy8XrcP//ZGd2L2f1K
-	 XLXOorBu3DRMQVpe+whzSj2KbFz62zOOL2yao4AXWT5YG2eXbajiEsyl049k/llyN9
-	 vPjUatvjFqJk916L0u1XksBfmlWaZhwXTuIIum5YZHgrIzMHQ71voeUs6qjLCiG4xo
-	 6FMfcN07UKC+gbJG97xmJH3wF889JNj7C12FogkwY3ODqjlDaZc6/m2TWoiq3okpwi
-	 5G3rZrXsT34QQ==
-Message-ID: <fb7ffc03721f54b3217725ec2f276f66.sboyd@kernel.org>
+	b=G3XzKZJ2YWk6dCHgiw28ZM4uAf9YhgHyFukvTnHvtwwCzjSZryqCjZa3Mh3YPqTm+
+	 AMGf7oQTLrk2RNmj2uZY8Ti5gBCrCLOmtlCT0cugFV66F1KzmTgvIUpRTfiLd6ftMq
+	 H6OWwdRF86bD725youkdkdgwAi2gyGwOZQ83MrOKSyTMg/A0ZcKJaCwTO6AffcB9dO
+	 lERBq9xsfotL8RBLjjRuAC2aj8x1ssAmUt4OANnvSE1Vn0TaczvGBH+ho39C97mRkn
+	 VwWB0q1r9YxbkDvq8pOTSP2bGMpk237KhYnuStIwqGysTPgGWnjD899ajZkFB587KF
+	 WVhtzisEd8eeQ==
+Message-ID: <276bd3d76b57cf2916ba968e99499096.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,21 +35,37 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <IA1PR20MB49537156E71B64483F15C0F2BB262@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB4953512A4DCAF293D7B1CBC2BB262@IA1PR20MB4953.namprd20.prod.outlook.com> <IA1PR20MB49537156E71B64483F15C0F2BB262@IA1PR20MB4953.namprd20.prod.outlook.com>
-Subject: Re: [PATCH v9 4/6] clk: sophgo: Add clock support for SG2000 SoC
+In-Reply-To: <20240411070503.38093-11-mmyangfl@gmail.com>
+References: <20240411070503.38093-2-mmyangfl@gmail.com> <20240411070503.38093-11-mmyangfl@gmail.com>
+Subject: Re: [PATCH v8 09/13] clk: hisilicon: hi3620: Convert into platform driver module
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Liu Gui <kenneth.liu@sophgo.com>, Jingbao Qiu <qiujingbao.dlmu@gmail.com>, dlan@gentoo.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-To: Albert Ou <aou@eecs.berkeley.edu>, Chao Wei <chao.wei@sophgo.com>, Chen Wang <unicorn_wang@outlook.com>, Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh+dt@kernel.org>
-Date: Thu, 11 Apr 2024 00:07:49 -0700
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, David Yang <mmyangfl@gmail.com>
+To: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org
+Date: Thu, 11 Apr 2024 00:15:21 -0700
 User-Agent: alot/0.10
 
-Quoting Inochi Amaoto (2024-03-09 01:02:54)
-> Add init code for SG2000 SoC.
+Quoting David Yang (2024-04-11 00:04:54)
+> Use common helper functions and register clks with a single of_device_id
+> data.
 >=20
-> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
-> Link: https://github.com/sophgo/sophgo-doc/releases/tag/sg2000-datasheet-=
-v1.0-alpha
+> Signed-off-by: David Yang <mmyangfl@gmail.com>
 > ---
+>  drivers/clk/hisilicon/clk-hi3620.c | 191 +++++++++++++++--------------
+>  1 file changed, 96 insertions(+), 95 deletions(-)
+>=20
+> diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/c=
+lk-hi3620.c
+> index 5d0226530fdb..8832cdd6bd57 100644
+> --- a/drivers/clk/hisilicon/clk-hi3620.c
+> +++ b/drivers/clk/hisilicon/clk-hi3620.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/io.h>
+> +#include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/slab.h>
 
-Applied to clk-next
+You need to include linux/platform_device.h if you're making it into a
+platform driver.
