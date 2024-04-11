@@ -1,171 +1,745 @@
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFC96FD9;
-	Thu, 11 Apr 2024 03:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC49A23BF;
+	Thu, 11 Apr 2024 03:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712804862; cv=none; b=tiNDByeP+tswKuy10CyjpvxknhiYTVKNIKTmMP7XcAC5PCDrz+QXZLCieOyE5gflHcciPx8FL7pBaGC7y2aPG2joEIHed0R69+22EM6DKIKLy3X8x8PnPD5sA6dnB683lmNfWPhrSNtR/NrwApyq9vrOot6HR6hNPc3tJOrR1Ho=
+	t=1712805771; cv=none; b=ue2S+QKUAtZytM52amLa3MArE3+raRlEoUrWCRVbauzrN5bF1gP2ZLnGCC9m7OKPFi+26lAPTzwGzolwLIElAvWVQjN/MiI+9MM0KPl4zdFqH2a0AnK8hkkR5cqN9Zpl/HECZ9y6apn0G3sdbmfA2f6b5SELDe0cnE1zLKO1dYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712804862; c=relaxed/simple;
-	bh=eggrNPew7WL6+8TUTDGE22qpFFAVAMGKIys1efccoD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r2OmoKpHQVyxJrAr1cad8BjoXlQBt6RjqA47fFndKG+FIXCa2VJSWH0pYfSSjf9taEZ3EvU7wNdpx8LlTPZf3WY8vavPiJ8eZXjWZ8fyI7l1ycPqC+rvjx8gDNGRESohcHc5m1DQt6jIq0FDGvngXMbvG2oEZrW4H3CnphQmKwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=focpLRK8; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1712805771; c=relaxed/simple;
+	bh=GMqiV+SXR1oC4uYNR6Q6pAnMKIg8CJPNq9ETMqOEbDw=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Lp8KLAvZNgJJ2pkU8ZoJ9xGfmmV4dzutlK3TZcBEiCjlx8baCKlh1byxHNdOweQp3eO3BC9l8B9gB/wzuiC6+KBZXPNO6ZwJ8stQz6SI948/8aHfnUPsREHLXK3xc5I3YqdvI7mhXeCSzWLOBCf7MEOs9xbJ6C/E6T+4TH9GjIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=meqGWsy9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="focpLRK8"
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-434a76386feso28648291cf.1;
-        Wed, 10 Apr 2024 20:07:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712804859; x=1713409659; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eggrNPew7WL6+8TUTDGE22qpFFAVAMGKIys1efccoD0=;
-        b=focpLRK8Ok6fGnpHONLDbbzqckW/1POHiDVxpjW+rF5jUbnbFbEo89NS6aySZnMcbl
-         YRRbFuu294B/D6OmlD6FveM7R6ehVWjcThUP2KiIHQxj3BXvTdGXcnpkZawrNtXOjnNF
-         fsRBv9WCMMdqS/ODJBH7sbVHyXaC5WuXcTN0HqxuhU9jTYytcAlU0l2HrZPm0DJrqYpG
-         UdgHi8KwxgUSiMo9rltiyOtkQdD475MNtBy3KfeEH7oQ0msBmNP4koWXyFTi5grX3vz5
-         OiQULaLNH8U2EqS1TkvulMKB49EZEwL22IQMZatPNUWqF5KvnNVzkeIgY00g1Kbsj4j/
-         acjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712804859; x=1713409659;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eggrNPew7WL6+8TUTDGE22qpFFAVAMGKIys1efccoD0=;
-        b=vvbpc1v6IIxwSjUUeEeMMi35WKMvJoQfxaDs/htDi7h86UqzPlkpKXaPBUx5xVvAs5
-         bOFS4kHQf6r8Obz+4VbYpV5jTIW074OYCRskQhzEiZ0R5/xwkCFjj+HV0xlImi3OpcLk
-         /Fb5xfBSRE1XzzHd0qWxu3LC2oTubhYBdvZhNUvWcgcDi/ojq6cJbdksEzk45xYgBAi5
-         xfuLoq1Fk2MR8ttZRaRGWOJrwaWBW5rgtD4E5FITPQ4lKWRKGDipaIuSC82NgsMdw2dp
-         rEn4kip4d3fLCOMULEPCmqEitjIiu+h7cfErYLX0RKsucVGVrZKa8Ktqc9oyiFzrOv6I
-         bjig==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Yoc9Gu0UxdLngx4LAqwIygM1WjaNBSH9Pph2RCOWZDEhhBts9oLOKfnveiYihiLord7kWgSV15FprnZbTgn3hVfrYX0FjUSU42A+bhgNUyl823NlOzd/a2z0chxznJC/dUABu33d
-X-Gm-Message-State: AOJu0Yxc4Trb0H+8JgVcIIII4hJFuCKAag5R+Z8235Z+bGOkJBcravIV
-	HO51Oh0+bD7Qy0RITjKO9KJo67scORB4qvVOs/BnqHXqzNVwfsvV
-X-Google-Smtp-Source: AGHT+IGWwIq8HaWfVhN9Y2PyoqZ2BZE2sKVkTeOP2o/oQySvdK+nxNfWcQlP5bDfKrsYNRKK2/LkAg==
-X-Received: by 2002:ac8:588f:0:b0:434:5008:3bd3 with SMTP id t15-20020ac8588f000000b0043450083bd3mr4808251qta.23.1712804859101;
-        Wed, 10 Apr 2024 20:07:39 -0700 (PDT)
-Received: from [192.168.1.201] (pool-108-48-157-169.washdc.fios.verizon.net. [108.48.157.169])
-        by smtp.gmail.com with ESMTPSA id d24-20020ac85358000000b004364d940d3dsm338470qto.96.2024.04.10.20.07.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Apr 2024 20:07:38 -0700 (PDT)
-Message-ID: <6665b819-bfae-00fa-64f7-5a7bbd586d4e@gmail.com>
-Date: Wed, 10 Apr 2024 23:07:37 -0400
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="meqGWsy9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E89C433C7;
+	Thu, 11 Apr 2024 03:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712805770;
+	bh=GMqiV+SXR1oC4uYNR6Q6pAnMKIg8CJPNq9ETMqOEbDw=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=meqGWsy9HQcwrvwIj1fOfW13gn2/gr2JsKolDhvvWHwLHx40xou6ndP0uoMOZLp1m
+	 g4XM+UdYNm8yjcazo2l3rkJQzZi3LsFkEYTZ6i0FQSH+z4XNuNzGnvO4zo+f4nb/pw
+	 USyDFlq7iCFfmCV0OGsNq5j3OGmAhXhcTr25O6M2uRf/B5sZjqunXFAe6Ojaae+fbL
+	 2rWXEw/tjbVg59+wEY2EKwH5e7HcFvfo54yaEpDWDT1Vf6bKn6LnCP28lvOb0x3TW2
+	 mbMOVWrtLlQDcED48Lgm4x89z/7moOcM8Y3DJ1+JvawV4Lpn4L9+F8tmkyP4C98a11
+	 EcwU92KQhvLlg==
+Message-ID: <daa732cb31d947c308513b535930c729.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v3] clk: set initial best mux parent to current parent
- with CLK_MUX_ROUND_CLOSEST
-Content-Language: en-US
-To: Yang Xiwen <forbidden405@outlook.com>, Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lukasz Majewski <lukma@denx.de>,
- u-boot@lists.denx.de
-References: <20240307-mux-v3-1-0885fc1ab2c9@outlook.com>
- <20240307-hot-hummingbird-of-atheism-87503c@houat>
- <SEZPR06MB6959882F5DA673456A3AA85D96202@SEZPR06MB6959.apcprd06.prod.outlook.com>
- <20240311-speedy-bat-of-art-4facfc@houat>
- <SEZPR06MB69597C834C90FE1FBA1F1D83962B2@SEZPR06MB6959.apcprd06.prod.outlook.com>
-From: Sean Anderson <seanga2@gmail.com>
-In-Reply-To: <SEZPR06MB69597C834C90FE1FBA1F1D83962B2@SEZPR06MB6959.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240410-mbly-olb-v1-5-335e496d7be3@bootlin.com>
+References: <20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com> <20240410-mbly-olb-v1-5-335e496d7be3@bootlin.com>
+Subject: Re: [PATCH 05/11] clk: eyeq: add driver
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+Date: Wed, 10 Apr 2024 20:22:48 -0700
+User-Agent: alot/0.10
 
-T24gMy8xMi8yNCAwNDo1MiwgWWFuZyBYaXdlbiB3cm90ZToNCj4gT24gMy8xMS8yMDI0IDU6
-MzQgUE0sIE1heGltZSBSaXBhcmQgd3JvdGU6DQo+PiBPbiBUaHUsIE1hciAwNywgMjAyNCBh
-dCAwNzoxODowNVBNICswODAwLCBZYW5nIFhpd2VuIHdyb3RlOg0KPj4+IE9uIDMvNy8yMDI0
-IDQ6NDggUE0sIE1heGltZSBSaXBhcmQgd3JvdGU6DQo+Pj4+IEhpLA0KPj4+Pg0KPj4+PiBP
-biBUaHUsIE1hciAwNywgMjAyNCBhdCAxMDowMzo1MEFNICswODAwLCBZYW5nIFhpd2VuIHZp
-YSBCNCBSZWxheSB3cm90ZToNCj4+Pj4+IEZyb206IFlhbmcgWGl3ZW4gPGZvcmJpZGRlbjQw
-NUBvdXRsb29rLmNvbT4NCj4+Pj4+DQo+Pj4+PiBPcmlnaW5hbGx5LCB0aGUgaW5pdGlhbCBj
-bG9jayByYXRlIGlzIGhhcmRjb2RlZCB0byAwLCB0aGlzIGNhbiBsZWFkIHRvDQo+Pj4+PiBz
-b21lIHByb2JsZW0gd2hlbiBzZXR0aW5nIGEgdmVyeSBzbWFsbCByYXRlIHdpdGggQ0xLX01V
-WF9ST1VORF9DTE9TRVNULg0KPj4+Pj4NCj4+Pj4+IEZvciBleGFtcGxlLCBpZiB0aGUgbG93
-ZXN0IHBvc3NpYmxlIHJhdGUgcHJvdmlkZWQgYnkgdGhlIG11eCBpcyAxMDAwSHosDQo+Pj4+
-PiBzZXR0aW5nIGEgcmF0ZSBiZWxvdyA1MDBIeiB3aWxsIGZhaWwsIGJlY2F1c2Ugbm8gY2xv
-Y2sgY2FuIHByb3ZpZGUgYQ0KPj4+Pj4gYmV0dGVyIHJhdGUgdGhhbiB0aGUgbm9uLWV4aXN0
-YW50IDBIei4gQnV0IGl0IHNob3VsZCBzdWNjZWVkIHdpdGggMTAwMEh6DQo+Pj4+PiBiZWlu
-ZyBzZXQuDQo+Pj4+Pg0KPj4+Pj4gU2V0dGluZyB0aGUgaW5pdGlhbCBiZXN0IHBhcmVudCB0
-byBjdXJyZW50IHBhcmVudCBjb3VsZCBzb2x2ZSB0aGlzIGJ1Zy4NCj4+Pj4+DQo+Pj4+PiBT
-aWduZWQtb2ZmLWJ5OiBZYW5nIFhpd2VuIDxmb3JiaWRkZW40MDVAb3V0bG9vay5jb20+DQo+
-Pj4+IEkgZG9uJ3QgdGhpbmsgaXQgd291bGQgYmUgdGhlIHdheSB0byBnby4gVGhlIGJpZ2dl
-c3QgaXNzdWUgdG8gbWUgaXMgdGhhdA0KPj4+PiBpdCdzIGluY29uc2lzdGVudCwgYW5kIG9u
-bHkgY2hhbmdpbmcgdGhlIGJlaGF2aW91ciBmb3IgYSBnaXZlbiBmbGFnDQo+Pj4+IGRvZXNu
-J3Qgc29sdmUgdGhhdC4NCj4+Pg0KPj4+IEkgdGhpbmsgdGhlIGN1cnJlbnQgYmVoYXZpb3Ig
-aXMgb2RkIGJ1dCBjb25mb3JtcyB0byB0aGUgZG9jdW1lbnQgaWYNCj4+PiBDTEtfTVVYX1JP
-VU5EX0NMT1NFU1QgaXMgbm90IHNwZWNpZmllZC4NCj4+IGNsa19tdXhfZGV0ZXJtaW5lX3Jh
-dGVfZmxhZ3MgaXNuJ3QgZG9jdW1lbnRlZCwgYW5kIHRoZSBkZXRlcm1pbmVfcmF0ZQ0KPj4g
-Y2xrX29wcyBkb2N1bWVudGF0aW9uIGRvZXNuJ3QgbWVudGlvbiBpdCBjYW4gcmV0dXJuIGFu
-IGVycm9yLg0KPj4NCj4+PiBJZiBpIHVuZGVyc3RhbmQgY29ycmVjdGx5LCB0aGUgZGVmYXVs
-dCBiZWhhdmlvciBvZiBtdXggY2xvY2tzIGlzIHRvDQo+Pj4gc2VsZWN0IHRoZSBjbG9zZXN0
-IHJhdGUgbG93ZXIgdGhhbiByZXF1ZXN0ZWQgcmF0ZSwgYW5kDQo+Pj4gQ0xLX01VWF9ST1VO
-RF9DTE9TRVNUIHJlbW92ZXMgdGhlICJsb3dlciB0aGFuIiBsaW1pdGF0aW9uLCB3aGljaCBp
-cw0KPj4+IHdoYXQgdGhpcyB2ZXJzaW9uIHRyaWVzIHRvIGFjY29tcGxpc2guDQo+PiBUaGUg
-c2l0dWF0aW9uIGlzIG5vdCBhcyBjbGVhci1jdXQgYXMgeW91IG1ha2UgaXQgdG8gYmUsIHVu
-Zm9ydHVuYXRlbHkuDQo+PiBUaGUgZGV0ZXJtaW5lX3JhdGUgY2xrX29wcyBpbXBsZW1lbnRh
-dGlvbiBzdGF0ZXM6DQo+Pg0KPj4gwqDCoCBHaXZlbiBhIHRhcmdldCByYXRlIGFzIGlucHV0
-LCByZXR1cm5zIHRoZSBjbG9zZXN0IHJhdGUgYWN0dWFsbHkNCj4+IMKgwqAgc3VwcG9ydGVk
-IGJ5IHRoZSBjbG9jaywgYW5kIG9wdGlvbmFsbHkgdGhlIHBhcmVudCBjbG9jayB0aGF0IHNo
-b3VsZCBiZQ0KPj4gwqDCoCB1c2VkIHRvIHByb3ZpZGUgdGhlIGNsb2NrIHJhdGUuDQo+Pg0K
-Pj4gU28gQ0xLX01VWF9ST1VORF9DTE9TRVNUIHNob3VsZG4ndCBleGlzdCwgYmVjYXVzZSB0
-aGF0J3Mgd2hhdA0KPj4gZGV0ZXJtaW5lX3JhdGUgZXhwZWN0cyBzbyBpdCBzaG91bGQgYWx3
-YXlzIGJlIHRoZXJlLg0KPj4NCj4+IE5vdywgdGhlICJhY3R1YWxseSBzdXBwb3J0ZWQgYnkg
-dGhlIGNsb2NrIiBjYW4gYmUgaW50ZXJwcmV0ZWQgaW4NCj4+IG11bHRpcGxlIHdheXMsIGFu
-ZCBtb3N0IGltcG9ydGFudGx5LCBkb2Vzbid0IHN0YXRlIHdoYXQgdGhlIGJlaGF2aW91ciBp
-cw0KPj4gaWYgd2UgY2FuJ3QgZmluZCBhIHJhdGUgYWN0dWFsbHkgc3VwcG9ydGVkIGJ5IHRo
-ZSBjbG9jay4NCj4+DQo+PiBCdXQgbm93LCB0aGlzIHNpdHVhdGlvbiBoYXMgYmVlbiBhbWJp
-Z3VvdXMgZm9yIGEgd2hpbGUgYW5kIHRodXMgZHJpdmVycw0KPj4ga2luZCBvZiByZWxpZWQg
-b24gdGhhdCBhbWJpZ3VpdHkuDQo+Pg0KPj4gU28gdGhlIHdheSB0byBmaXggaXQgdXAgaXM6
-DQo+Pg0KPj4gwqDCoCAtIEFzc2VzcyB3aGF0IGRyaXZlcnMgYXJlIHJlbHlpbmcgb24NCj4+
-IMKgwqAgLSBEb2N1bWVudCB0aGUgY3VycmVudCBiZWhhdmlvdXIgaW4gY2xrX29wcyBkZXRl
-cm1pbmVfcmF0ZQ0KPiANCj4gDQo+ICBGcm9tIG15IGludmVzdGlnYXRpb24sIGl0J3MgdG90
-YWxseSBhIG1lc3MsIGVzcGVjaWFsbHkgZm9yIHBsYXRmb3JtIGNsayBkcml2ZXJzIChQTEwp
-LiBTb21lIGRyaXZlcnMgYWx3YXlzIHJvdW5kIGRvd24sIHRoZSBvdGhlcnMgcm91bmQgdG8g
-bmVhcmVzdCwgd2l0aCBvciB3aXRob3V0IGEgc3BlY2lmaWMgZmxhZyB0byBzd2l0Y2ggYmV0
-d2VlbiB0aGVtLCBkZXBlbmQgb24gdGhlIGRpdmlzaW9uIGZ1bmN0aW9ucyB0aGV5IGNob29z
-ZS4gRml4aW5nIGFsbCBvZiB0aGVtIHNlZW1zIG5lZWRzIHF1aXRlIGEgbG90IG9mIHRpbWUg
-YW5kIHdvdWxkIHByb2JhYmx5IGludHJvZHVjZSBzb21lIHJlZ3Jlc3Npb25zLg0KPiANCj4g
-V2UnZCBwcm9iYWJseSBvbmx5IGhhdmUgdG8gc2F5IGJvdGggcm91bmRpbmcgdG8gbmVhcmVz
-dCBhbmQgcm91bmRpbmcgZG93biBhcmUgYWNjZXB0YWJsZSwgdGhvdWdoIGVpdGhlciBvbmUg
-aXMgcHJlZmVycmVkLg0KDQoNCj4+IMKgwqAgLSBNYWtlIGNsa19tdXhfZGV0ZXJtaW5lX3Jh
-dGVfZmxhZ3MgY29uc2lzdGVudCB3aXRoIHRoYXQNCj4gDQo+IA0KPiBJIHRoaW5rIHdlIG11
-c3Qga2VlcCBleGlzdGluZyBmbGFncyBhbmQgZG9jdW1lbnQgdGhlIGN1cnJlbnQgYmVoYXZp
-b3IgY29ycmVjdGx5IGJlY2F1c2Ugb2YgdGhlIG1hc3NpdmUgZXhpc3RpbmcgdXNlcnMgb2Yg
-Y2xrX211eC4NCj4gDQo+IA0KPiBUaGF0J3Mgd2h5IGknbSBnb2luZyB0byBvbmx5IGZpeCBD
-TEtfTVVYX1JPVU5EX0NMT1NFU1QgdXNlcnMuIEhvcGVmdWxseSBpdCB3b24ndCBjYXVzZSB0
-b28gbWFueSByZWdyZXNzaW9ucy4NCj4gDQo+IA0KPj4gwqDCoCAtIFJ1biB0aGF0IHRocm91
-Z2gga2VybmVsY2kgdG8gbWFrZSBzdXJlIHdlIGRvbid0IGhhdmUgYW55IHJlZ3Jlc3Npb24N
-Cj4gDQo+IA0KPiBXZSBkb24ndC4gSSBydW4gJ3Rvb2xzL3Rlc3Rpbmcva3VuaXQva3VuaXQu
-cHkgcnVuIC0ta3VuaXRjb25maWcgZHJpdmVycy9jbGsvLmt1bml0Y29uZmlnJyBlYWNoIHRp
-bWUgYmVmb3JlIGkgc2VuZCBwYXRjaGVzLg0KPiANCj4gDQo+IE92ZXIgYWxsLCBpdCBzZWVt
-cyBxdWl0ZSBhIGxvdCBvZiB3b3JrIGhlcmUuDQo+IA0KPiANCj4+DQo+PiBNYXhpbWUNCj4g
-DQo+IA0KPiBUaGUgc2l0dWF0aW9uIGhlcmUgYmVjb21lcyBldmVuIG1vcmUgY29tcGxleCB3
-aGVuIGl0IGNvbWVzIHRvIFUtQm9vdCBjbGsgZnJhbWV3b3JrLiBUaGV5IGNob3NlIHNsaWdo
-dGx5IGRpZmZlcmVudCBwcm90b3R5cGVzIGFuZCBzdGF0ZWQgY2xrX3NldF9yYXRlKCkgY2Fu
-IGZhaWwgd2l0aCAtdmUuIA0KDQpNYXliZSB5b3UgbWVhbiBjbGtfZ2V0X3JhdGU/IFNldHRp
-bmcgYSByYXRlIGNhbiBhbHdheXMgZmFpbCBkdWUgdG8gdGhlDQpuYXR1cmUgb2YgY2xvY2tz
-Li4uDQoNClBlcnNvbmFsbHksIEkgYW0gbm90IHRlcnJpYmx5IGF0dGFjaGVkIHRvIHRoZSBB
-UEkgKGFzIG5vdCBtYW55IGNhbGxlcnMNCmhhbmRsZSBlcnJvcnMgY29ycmVjdGx5KSwgYnV0
-IEkgaGF2ZSBub3QgaGFkIHRoZSB0aW1lIHJlY2VudGx5IHRvIGRvIGFueQ0KY2xlYW51cC4N
-Cg0KSXQncyBhIGdyZWF0IGJ1cmRlbiBmb3IgY2xrIGRyaXZlciBhdXRob3JzIGFuZCBtYWlu
-dGFpbmVycyB3aGVuIHRoZXkgdHJ5IHRvIHBvcnQgdGhlaXIgZHJpdmVycyB0byBVLUJvb3Qu
-IExldCdzIENjIFUtQm9vdCBjbGsgbWFpbnRhaW5lcnMgYXMgd2VsbCwgYW5kIHNlZSBob3cg
-d2UgY2FuIHJlc29sdmUgdGhlIG1lc3MgaGVyZS4NCj4gDQoNClJlZ2FyZGluZyByb3VuZGlu
-ZyBtb2RlLCBJTU8gaXQgaXMgYmV0dGVyIHRvIGxldCBkcml2ZXIgYXV0aG9ycyBwaWNrDQp3
-aGF0ZXZlciBpcyBjb252ZW5pZW50LiBSb3VuZCBjbG9zZXN0IGlzIGJlc3QsIGJ1dCB0aGVy
-ZSBtYXkgYmUgY29kZSBzaXplDQpzYXZpbmdzIGZvciByb3VuZCBsb3dlc3Qgb3Igc29tZSBv
-dGhlciBzY2hlbWUuIFsxXSBoYXMgdGhlIGN1cnJlbnQNCnJlY29tbWVuZGF0aW9uLCB3aGlj
-aCBpcyB0byBwdW50IGFuZCBsZXQgdGhlIGNhbGxlciB1c2Ugcm91bmRfcmF0ZSBpZg0KdGhl
-eSBhY3R1YWxseSBjYXJlLg0KDQotLVNlYW4NCg0KWzFdIGh0dHBzOi8vc291cmNlLmRlbngu
-ZGUvdS1ib290L2N1c3RvZGlhbnMvdS1ib290LWNsay8tL2Jsb2IvYThkYzQ5NjVmMDlkMjhh
-NTljMTU2NDM3NjczZGRiNjY4NjBjODQ3ZS9pbmNsdWRlL2Nsay11Y2xhc3MuaCNMMTQzDQo=
+Quoting Th=C3=A9o Lebrun (2024-04-10 10:12:34)
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 50af5fc7f570..1eb6e70977a3 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -218,6 +218,17 @@ config COMMON_CLK_EN7523
+>           This driver provides the fixed clocks and gates present on Airo=
+ha
+>           ARM silicon.
+> =20
+> +config COMMON_CLK_EYEQ
+> +       bool "Clock driver for the Mobileye EyeQ platform"
+> +       depends on OF || COMPILE_TEST
 
+The OF build dependency looks useless as we have the MACH_ dependency
+below.
+
+> +       depends on MACH_EYEQ5 || MACH_EYEQ6H || COMPILE_TEST
+> +       default MACH_EYEQ5 || MACH_EYEQ6H
+> +       help
+> +         This driver provides clocks found on Mobileye EyeQ5, EyeQ6L and=
+ Eye6H
+> +         SoCs. Controllers live in shared register regions called OLB. D=
+river
+> +         provides read-only PLLs, derived from the main crystal clock (w=
+hich
+> +         must be constant). It also exposes some divider clocks.
+> +
+>  config COMMON_CLK_FSL_FLEXSPI
+>         tristate "Clock driver for FlexSPI on Layerscape SoCs"
+>         depends on ARCH_LAYERSCAPE || COMPILE_TEST
+> diff --git a/drivers/clk/clk-eyeq.c b/drivers/clk/clk-eyeq.c
+> new file mode 100644
+> index 000000000000..bb2535010ae6
+> --- /dev/null
+> +++ b/drivers/clk/clk-eyeq.c
+> @@ -0,0 +1,644 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * PLL clock driver for the Mobileye EyeQ5, EyeQ6L and EyeQ6H platforms.
+> + *
+> + * This controller handles read-only PLLs, all derived from the same main
+> + * crystal clock. It also exposes divider clocks, those are children to =
+PLLs.
+> + * Parent clock is expected to be constant. This driver's registers live=
+ in
+> + * a shared region called OLB. Some PLLs are initialised early by of_clk=
+_init().
+
+Is OLB a different DT node? It sounds like maybe this is trying to jam a
+driver into DT when the OLB node should be a #clock-cells node.
+
+> + *
+> + * We use eqc_ as prefix, as-in "EyeQ Clock", but way shorter.
+> + *
+> + * Copyright (C) 2024 Mobileye Vision Technologies Ltd.
+> + */
+> +
+> +#define pr_fmt(fmt) "clk-eyeq: " fmt
+> +
+> +#include <linux/array_size.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/errno.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/list.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/overflow.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/printk.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/types.h>
+> +
+> +#include <dt-bindings/clock/mobileye,eyeq5-clk.h>
+> +
+> +#define EQC_MAX_DIV_COUNT              4
+> +
+> +/* In frac mode, it enables fractional noise canceling DAC. Else, no fun=
+ction. */
+> +#define PCSR0_DAC_EN                   BIT(0)
+> +/* Fractional or integer mode */
+> +#define PCSR0_DSM_EN                   BIT(1)
+> +#define PCSR0_PLL_EN                   BIT(2)
+> +/* All clocks output held at 0 */
+> +#define PCSR0_FOUTPOSTDIV_EN           BIT(3)
+> +#define PCSR0_POST_DIV1                        GENMASK(6, 4)
+> +#define PCSR0_POST_DIV2                        GENMASK(9, 7)
+> +#define PCSR0_REF_DIV                  GENMASK(15, 10)
+> +#define PCSR0_INTIN                    GENMASK(27, 16)
+> +#define PCSR0_BYPASS                   BIT(28)
+> +/* Bits 30..29 are reserved */
+> +#define PCSR0_PLL_LOCKED               BIT(31)
+> +
+> +#define PCSR1_RESET                    BIT(0)
+> +#define PCSR1_SSGC_DIV                 GENMASK(4, 1)
+> +/* Spread amplitude (% =3D 0.1 * SPREAD[4:0]) */
+> +#define PCSR1_SPREAD                   GENMASK(9, 5)
+> +#define PCSR1_DIS_SSCG                 BIT(10)
+> +/* Down-spread or center-spread */
+> +#define PCSR1_DOWN_SPREAD              BIT(11)
+> +#define PCSR1_FRAC_IN                  GENMASK(31, 12)
+> +
+> +/*
+> + * Driver might register clock provider from eqc_init() if PLLs are requ=
+ired
+> + * early (before platform bus is ready). Store struct eqc_priv inside li=
+nked
+> + * list to pass clock provider from eqc_init() to eqc_probe() and regist=
+er
+> + * remaining clocks from platform device probe.
+> + *
+> + * Clock provider is NOT created by eqc_init() if no early clock is requ=
+ired.
+> + * Store as linked list because EyeQ6H has multiple clock controller ins=
+tances.
+> + * Matching is done based on devicetree node pointer.
+> + */
+> +static DEFINE_SPINLOCK(eqc_list_slock);
+> +static LIST_HEAD(eqc_list);
+> +
+> +struct eqc_pll {
+> +       unsigned int    index;
+> +       const char      *name;
+> +       u32             reg64;
+> +};
+> +
+> +/*
+> + * Divider clock. Divider is 2*(v+1), with v the register value.
+> + * Min divider is 2, max is 2*(2^width).
+> + */
+> +struct eqc_div {
+> +       unsigned int    index;
+> +       const char      *name;
+> +       unsigned int    parent;
+> +       const char      *resource_name;
+> +       u8              shift;
+> +       u8              width;
+> +};
+> +
+> +struct eqc_match_data {
+> +       unsigned int            early_pll_count;
+> +       const struct eqc_pll    *early_plls;
+> +
+> +       unsigned int            pll_count;
+> +       const struct eqc_pll    *plls;
+> +
+> +       unsigned int            div_count;
+> +       const struct eqc_div    *divs;
+> +};
+> +
+> +struct eqc_priv {
+> +       struct clk_hw_onecell_data      *cells;
+> +       const struct eqc_match_data     *data;
+> +       void __iomem                    *base_plls;
+> +       struct device_node              *np;
+> +       struct list_head                list;
+> +};
+> +
+> +static int eqc_pll_parse_registers(u32 r0, u32 r1, unsigned long *mult,
+> +                                  unsigned long *div, unsigned long *acc)
+> +{
+> +       if (r0 & PCSR0_BYPASS) {
+> +               *mult =3D 1;
+> +               *div =3D 1;
+> +               *acc =3D 0;
+> +               return 0;
+> +       }
+> +
+> +       if (!(r0 & PCSR0_PLL_LOCKED))
+> +               return -EINVAL;
+> +
+> +       *mult =3D FIELD_GET(PCSR0_INTIN, r0);
+> +       *div =3D FIELD_GET(PCSR0_REF_DIV, r0);
+> +       if (r0 & PCSR0_FOUTPOSTDIV_EN)
+> +               *div *=3D FIELD_GET(PCSR0_POST_DIV1, r0) * FIELD_GET(PCSR=
+0_POST_DIV2, r0);
+> +
+> +       /* Fractional mode, in 2^20 (0x100000) parts. */
+> +       if (r0 & PCSR0_DSM_EN) {
+> +               *div *=3D 0x100000;
+> +               *mult =3D *mult * 0x100000 + FIELD_GET(PCSR1_FRAC_IN, r1);
+> +       }
+> +
+> +       if (!*mult || !*div)
+> +               return -EINVAL;
+> +
+> +       /* Spread spectrum. */
+> +       if (!(r1 & (PCSR1_RESET | PCSR1_DIS_SSCG))) {
+> +               /*
+> +                * Spread is 1/1000 parts of frequency, accuracy is half =
+of
+> +                * that. To get accuracy, convert to ppb (parts per billi=
+on).
+> +                */
+> +               u32 spread =3D FIELD_GET(PCSR1_SPREAD, r1);
+> +
+> +               *acc =3D spread * 500000;
+> +               if (r1 & PCSR1_DOWN_SPREAD) {
+> +                       /*
+> +                        * Downspreading: the central frequency is half a
+> +                        * spread lower.
+> +                        */
+> +                       *mult *=3D 2000 - spread;
+> +                       *div *=3D 2000;
+> +               }
+> +       } else {
+> +               *acc =3D 0;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static unsigned int eqc_compute_clock_count(const struct eqc_match_data =
+*data)
+> +{
+> +       unsigned int i, nb_clks =3D 0;
+> +
+> +       for (i =3D 0; i < data->early_pll_count; i++)
+> +               if (data->early_plls[i].index >=3D nb_clks)
+> +                       nb_clks =3D data->early_plls[i].index + 1;
+> +       for (i =3D 0; i < data->pll_count; i++)
+> +               if (data->plls[i].index >=3D nb_clks)
+> +                       nb_clks =3D data->plls[i].index + 1;
+> +       for (i =3D 0; i < data->div_count; i++)
+> +               if (data->divs[i].index >=3D nb_clks)
+> +                       nb_clks =3D data->divs[i].index + 1;
+> +
+> +       /* We expect the biggest clock index to be 1 below the clock coun=
+t. */
+> +       WARN_ON(nb_clks !=3D data->early_pll_count + data->pll_count + da=
+ta->div_count);
+> +
+> +       return nb_clks;
+> +}
+> +
+> +static int eqc_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       void __iomem *div_resources[EQC_MAX_DIV_COUNT];
+> +       struct device_node *np =3D dev->of_node;
+> +       const struct eqc_match_data *data;
+> +       struct eqc_priv *priv =3D NULL;
+> +       struct clk_hw *hw;
+> +       unsigned int i;
+> +
+> +       data =3D device_get_match_data(dev);
+> +       if (!data)
+> +               return -ENODEV;
+> +
+> +       if (data->early_pll_count) {
+> +               /* Device got inited early. Retrieve clock provider from =
+list. */
+> +               struct eqc_priv *entry;
+> +
+> +               spin_lock(&eqc_list_slock);
+> +               list_for_each_entry(entry, &eqc_list, list) {
+> +                       if (entry->np =3D=3D np) {
+> +                               priv =3D entry;
+> +                               break;
+> +                       }
+> +               }
+> +               spin_unlock(&eqc_list_slock);
+> +
+> +               if (!priv)
+> +                       return -ENODEV;
+
+This can be a sub-function.
+
+> +       } else {
+> +               /* Device did NOT get init early. Do it now. */
+> +               unsigned int nb_clks;
+> +
+> +               priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +               if (!priv)
+> +                       return -ENOMEM;
+> +
+> +               priv->np =3D np;
+> +               priv->data =3D data;
+> +
+> +               nb_clks =3D eqc_compute_clock_count(data);
+> +               priv->cells =3D devm_kzalloc(dev, struct_size(priv->cells=
+, hws, nb_clks),
+> +                                          GFP_KERNEL);
+> +               if (!priv->cells)
+> +                       return -ENOMEM;
+> +
+> +               priv->cells->num =3D nb_clks;
+> +
+> +               /*
+> +                * We expect named resources if divider clocks are presen=
+t.
+> +                * Else, we only expect one resource.
+> +                */
+> +               if (data->div_count)
+> +                       priv->base_plls =3D devm_platform_ioremap_resourc=
+e_byname(pdev, "plls");
+> +               else
+> +                       priv->base_plls =3D devm_platform_ioremap_resourc=
+e(pdev, 0);
+> +               if (IS_ERR(priv->base_plls))
+> +                       return PTR_ERR(priv->base_plls);
+> +       }
+> +
+> +       for (i =3D 0; i < data->pll_count; i++) {
+> +               const struct eqc_pll *pll =3D &data->plls[i];
+> +               unsigned long mult, div, acc;
+> +               u32 r0, r1;
+> +               u64 val;
+> +               int ret;
+
+All variables should be declared at the start of the function. Once it
+becomes "too heavy" you can split it up into smaller functions, that
+again have all variables declared at the start of the function.
+
+> +
+> +               val =3D readq(priv->base_plls + pll->reg64);
+> +               r0 =3D val;
+> +               r1 =3D val >> 32;
+> +
+> +               ret =3D eqc_pll_parse_registers(r0, r1, &mult, &div, &acc=
+);
+> +               if (ret) {
+> +                       dev_warn(dev, "failed parsing state of %s\n", pll=
+->name);
+> +                       priv->cells->hws[pll->index] =3D ERR_PTR(ret);
+> +                       continue;
+> +               }
+> +
+> +               hw =3D clk_hw_register_fixed_factor_with_accuracy_fwname(=
+dev,
+> +                               dev->of_node, pll->name, "ref", 0, mult, =
+div, acc);
+> +               priv->cells->hws[pll->index] =3D hw;
+> +               if (IS_ERR(hw))
+> +                       dev_warn(dev, "failed registering %s: %pe\n", pll=
+->name, hw);
+> +       }
+> +
+> +       BUG_ON(ARRAY_SIZE(div_resources) < data->div_count);
+
+Can this be a static assert instead on the arrays these are based on?
+Put some static_assert() near the match data macros.
+
+> +
+> +       for (i =3D 0; i < data->div_count; i++) {
+> +               const struct eqc_div *div =3D &data->divs[i];
+> +               void __iomem *base =3D NULL;
+> +               struct clk_hw *parent;
+> +               unsigned int j;
+> +
+> +               /*
+> +                * Multiple divider clocks can request the same resource.=
+ Store
+> +                * resource pointers during probe(). For each divider clo=
+ck,
+> +                * check if previous clocks referenced the same resource =
+name.
+> +                *
+> +                * See EQ6HC_SOUTH_DIV_OSPI_REF and EQ6HC_SOUTH_DIV_OSPI_=
+SYS.
+> +                */
+> +               for (j =3D 0; j < i; j++) {
+> +                       if (strcmp(data->divs[j].resource_name, div->reso=
+urce_name) =3D=3D 0) {
+> +                               base =3D div_resources[j];
+> +                               break;
+> +                       }
+> +               }
+> +
+> +               /* Resource is first encountered. */
+> +               if (!base) {
+> +                       base =3D devm_platform_ioremap_resource_byname(pd=
+ev, div->resource_name);
+> +                       if (IS_ERR(base)) {
+> +                               dev_warn(dev, "failed to iomap resource f=
+or %s\n", div->name);
+> +                               priv->cells->hws[div->index] =3D base;
+> +                               continue;
+> +                       }
+> +               }
+
+I don't get this code at all. The driver should simply map the
+resources because it knows that there's an io resource. I'll look at the
+binding which is probably wrong and causing the driver to be written
+this way.
+
+> +
+> +               div_resources[i] =3D base;
+> +
+> +               parent =3D priv->cells->hws[div->parent];
+> +               hw =3D clk_hw_register_divider_table_parent_hw(dev, div->=
+name,
+> +                               parent, 0, base, div->shift, div->width,
+> +                               CLK_DIVIDER_EVEN_INTEGERS, NULL, NULL);
+> +               priv->cells->hws[div->index] =3D hw;
+> +               if (IS_ERR(hw))
+> +                       dev_warn(dev, "failed registering %s: %pe\n",
+> +                                div->name, hw);
+> +       }
+> +
+> +       /* Clock provider has not been registered by eqc_init(). Do it no=
+w. */
+> +       if (data->early_pll_count =3D=3D 0) {
+> +               /* When providing a single clock, require no cell. */
+> +               if (priv->cells->num =3D=3D 1)
+> +                       return devm_of_clk_add_hw_provider(dev, of_clk_hw=
+_simple_get,
+> +                                                          priv->cells->h=
+ws);
+> +               else
+> +                       return devm_of_clk_add_hw_provider(dev, of_clk_hw=
+_onecell_get,
+> +                                                          priv->cells);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +/* Required early for GIC timer (pll-cpu) and UARTs (pll-per). */
+> +static const struct eqc_pll eqc_eyeq5_early_plls[] =3D {
+> +       { .index =3D EQ5C_PLL_CPU, .name =3D "pll-cpu",  .reg64 =3D 0x00,=
+ },
+> +       { .index =3D EQ5C_PLL_PER, .name =3D "pll-per",  .reg64 =3D 0x30,=
+ },
+> +};
+> +
+> +static const struct eqc_pll eqc_eyeq5_plls[] =3D {
+> +       { .index =3D EQ5C_PLL_VMP,  .name =3D "pll-vmp",  .reg64 =3D 0x08=
+, },
+> +       { .index =3D EQ5C_PLL_PMA,  .name =3D "pll-pma",  .reg64 =3D 0x10=
+, },
+> +       { .index =3D EQ5C_PLL_VDI,  .name =3D "pll-vdi",  .reg64 =3D 0x18=
+, },
+> +       { .index =3D EQ5C_PLL_DDR0, .name =3D "pll-ddr0", .reg64 =3D 0x20=
+, },
+> +       { .index =3D EQ5C_PLL_PCI,  .name =3D "pll-pci",  .reg64 =3D 0x28=
+, },
+> +       { .index =3D EQ5C_PLL_PMAC, .name =3D "pll-pmac", .reg64 =3D 0x38=
+, },
+> +       { .index =3D EQ5C_PLL_MPC,  .name =3D "pll-mpc",  .reg64 =3D 0x40=
+, },
+> +       { .index =3D EQ5C_PLL_DDR1, .name =3D "pll-ddr1", .reg64 =3D 0x48=
+, },
+> +};
+> +
+> +static const struct eqc_div eqc_eyeq5_divs[] =3D {
+> +       {
+> +               .index =3D EQ5C_DIV_OSPI,
+> +               .name =3D "div-ospi",
+> +               .parent =3D EQ5C_PLL_PER,
+> +               .resource_name =3D "ospi",
+> +               .shift =3D 0,
+> +               .width =3D 4,
+> +       },
+> +};
+> +
+> +static const struct eqc_match_data eqc_eyeq5_match_data =3D {
+> +       .early_pll_count        =3D ARRAY_SIZE(eqc_eyeq5_early_plls),
+> +       .early_plls             =3D eqc_eyeq5_early_plls,
+> +
+> +       .pll_count      =3D ARRAY_SIZE(eqc_eyeq5_plls),
+> +       .plls           =3D eqc_eyeq5_plls,
+> +
+> +       .div_count      =3D ARRAY_SIZE(eqc_eyeq5_divs),
+> +       .divs           =3D eqc_eyeq5_divs,
+> +};
+> +
+> +static const struct eqc_pll eqc_eyeq6l_plls[] =3D {
+> +       { .index =3D EQ6LC_PLL_DDR, .name =3D "pll-ddr", .reg64 =3D 0x2C =
+},
+> +       { .index =3D EQ6LC_PLL_CPU, .name =3D "pll-cpu", .reg64 =3D 0x34 =
+}, /* also acc */
+> +       { .index =3D EQ6LC_PLL_PER, .name =3D "pll-per", .reg64 =3D 0x3C =
+},
+> +       { .index =3D EQ6LC_PLL_VDI, .name =3D "pll-vdi", .reg64 =3D 0x44 =
+},
+> +};
+> +
+> +static const struct eqc_match_data eqc_eyeq6l_match_data =3D {
+> +       .pll_count      =3D ARRAY_SIZE(eqc_eyeq6l_plls),
+> +       .plls           =3D eqc_eyeq6l_plls,
+> +};
+> +
+> +/* Required early for GIC timer. */
+> +static const struct eqc_pll eqc_eyeq6h_central_early_plls[] =3D {
+> +       { .index =3D 0, .name =3D "pll-cpu", .reg64 =3D 0x00 },
+> +};
+> +
+> +static const struct eqc_match_data eqc_eyeq6h_central_match_data =3D {
+> +       .early_pll_count        =3D ARRAY_SIZE(eqc_eyeq6h_central_early_p=
+lls),
+> +       .early_plls             =3D eqc_eyeq6h_central_early_plls,
+> +};
+> +
+> +/* Required early for UART. */
+> +static const struct eqc_pll eqc_eyeq6h_west_early_plls[] =3D {
+> +       { .index =3D 0, .name =3D "pll-west", .reg64 =3D 0x00 },
+> +};
+> +
+> +static const struct eqc_match_data eqc_eyeq6h_west_match_data =3D {
+> +       .early_pll_count        =3D ARRAY_SIZE(eqc_eyeq6h_west_early_plls=
+),
+> +       .early_plls             =3D eqc_eyeq6h_west_early_plls,
+> +};
+> +
+> +static const struct eqc_pll eqc_eyeq6h_east_plls[] =3D {
+> +       { .index =3D 0, .name =3D "pll-east", .reg64 =3D 0x00 },
+> +};
+> +
+> +static const struct eqc_match_data eqc_eyeq6h_east_match_data =3D {
+> +       .pll_count      =3D ARRAY_SIZE(eqc_eyeq6h_east_plls),
+> +       .plls           =3D eqc_eyeq6h_east_plls,
+> +};
+> +
+> +static const struct eqc_pll eqc_eyeq6h_south_plls[] =3D {
+> +       { .index =3D EQ6HC_SOUTH_PLL_VDI,  .name =3D "pll-vdi",  .reg64 =
+=3D 0x00 },
+> +       { .index =3D EQ6HC_SOUTH_PLL_PCIE, .name =3D "pll-pcie", .reg64 =
+=3D 0x08 },
+> +       { .index =3D EQ6HC_SOUTH_PLL_PER,  .name =3D "pll-per",  .reg64 =
+=3D 0x10 },
+> +       { .index =3D EQ6HC_SOUTH_PLL_ISP,  .name =3D "pll-isp",  .reg64 =
+=3D 0x18 },
+> +};
+> +
+> +static const struct eqc_div eqc_eyeq6h_south_divs[] =3D {
+> +       {
+> +               .index =3D EQ6HC_SOUTH_DIV_EMMC,
+> +               .name =3D "div-emmc",
+> +               .parent =3D EQ6HC_SOUTH_PLL_PER,
+> +               .resource_name =3D "emmc",
+> +               .shift =3D 4,
+> +               .width =3D 4,
+> +       },
+> +       {
+> +               .index =3D EQ6HC_SOUTH_DIV_OSPI_REF,
+> +               .name =3D "div-ospi-ref",
+> +               .parent =3D EQ6HC_SOUTH_PLL_PER,
+> +               .resource_name =3D "ospi",
+> +               .shift =3D 4,
+> +               .width =3D 4,
+> +       },
+> +       {
+> +               .index =3D EQ6HC_SOUTH_DIV_OSPI_SYS,
+> +               .name =3D "div-ospi-sys",
+> +               .parent =3D EQ6HC_SOUTH_PLL_PER,
+> +               .resource_name =3D "ospi",
+> +               .shift =3D 8,
+> +               .width =3D 1,
+> +       },
+> +       {
+> +               .index =3D EQ6HC_SOUTH_DIV_TSU,
+> +               .name =3D "div-tsu",
+> +               .parent =3D EQ6HC_SOUTH_PLL_PCIE,
+> +               .resource_name =3D "tsu",
+> +               .shift =3D 4,
+> +               .width =3D 8,
+> +       },
+> +};
+> +
+> +static const struct eqc_match_data eqc_eyeq6h_south_match_data =3D {
+> +       .pll_count      =3D ARRAY_SIZE(eqc_eyeq6h_south_plls),
+> +       .plls           =3D eqc_eyeq6h_south_plls,
+> +
+> +       .div_count      =3D ARRAY_SIZE(eqc_eyeq6h_south_divs),
+> +       .divs           =3D eqc_eyeq6h_south_divs,
+> +};
+> +
+> +static const struct eqc_pll eqc_eyeq6h_ddr0_plls[] =3D {
+> +       { .index =3D 0, .name =3D "pll-ddr0", .reg64 =3D 0x00 },
+> +};
+> +
+> +static const struct eqc_match_data eqc_eyeq6h_ddr0_match_data =3D {
+> +       .pll_count      =3D ARRAY_SIZE(eqc_eyeq6h_ddr0_plls),
+> +       .plls           =3D eqc_eyeq6h_ddr0_plls,
+> +};
+> +
+> +static const struct eqc_pll eqc_eyeq6h_ddr1_plls[] =3D {
+> +       { .index =3D 0, .name =3D "pll-ddr1", .reg64 =3D 0x00 },
+> +};
+> +
+> +static const struct eqc_match_data eqc_eyeq6h_ddr1_match_data =3D {
+> +       .pll_count      =3D ARRAY_SIZE(eqc_eyeq6h_ddr1_plls),
+> +       .plls           =3D eqc_eyeq6h_ddr1_plls,
+> +};
+> +
+> +static const struct eqc_pll eqc_eyeq6h_acc_plls[] =3D {
+> +       { .index =3D EQ6HC_ACC_PLL_XNN, .name =3D "pll-xnn", .reg64 =3D 0=
+x00 },
+> +       { .index =3D EQ6HC_ACC_PLL_VMP, .name =3D "pll-vmp", .reg64 =3D 0=
+x10 },
+> +       { .index =3D EQ6HC_ACC_PLL_PMA, .name =3D "pll-pma", .reg64 =3D 0=
+x1C },
+> +       { .index =3D EQ6HC_ACC_PLL_MPC, .name =3D "pll-mpc", .reg64 =3D 0=
+x28 },
+> +       { .index =3D EQ6HC_ACC_PLL_NOC, .name =3D "pll-noc", .reg64 =3D 0=
+x30 },
+> +};
+> +
+> +static const struct eqc_match_data eqc_eyeq6h_acc_match_data =3D {
+> +       .pll_count      =3D ARRAY_SIZE(eqc_eyeq6h_acc_plls),
+> +       .plls           =3D eqc_eyeq6h_acc_plls,
+> +};
+> +
+> +static const struct of_device_id eqc_match_table[] =3D {
+> +       { .compatible =3D "mobileye,eyeq5-clk", .data =3D &eqc_eyeq5_matc=
+h_data },
+> +       { .compatible =3D "mobileye,eyeq6l-clk", .data =3D &eqc_eyeq6l_ma=
+tch_data },
+> +       { .compatible =3D "mobileye,eyeq6h-central-clk", .data =3D &eqc_e=
+yeq6h_central_match_data },
+> +       { .compatible =3D "mobileye,eyeq6h-west-clk", .data =3D &eqc_eyeq=
+6h_west_match_data },
+> +       { .compatible =3D "mobileye,eyeq6h-east-clk", .data =3D &eqc_eyeq=
+6h_east_match_data },
+> +       { .compatible =3D "mobileye,eyeq6h-south-clk", .data =3D &eqc_eye=
+q6h_south_match_data },
+> +       { .compatible =3D "mobileye,eyeq6h-ddr0-clk", .data =3D &eqc_eyeq=
+6h_ddr0_match_data },
+> +       { .compatible =3D "mobileye,eyeq6h-ddr1-clk", .data =3D &eqc_eyeq=
+6h_ddr1_match_data },
+> +       { .compatible =3D "mobileye,eyeq6h-acc-clk", .data =3D &eqc_eyeq6=
+h_acc_match_data },
+> +       {}
+> +};
+> +MODULE_DEVICE_TABLE(of, eqc_match_table);
+> +
+> +static struct platform_driver eqc_driver =3D {
+> +       .probe =3D eqc_probe,
+> +       .driver =3D {
+> +               .name =3D "clk-eyeq",
+> +               .of_match_table =3D eqc_match_table,
+> +       },
+> +};
+> +builtin_platform_driver(eqc_driver);
+> +
+> +static void __init eqc_init(struct device_node *np)
+> +{
+> +       const struct eqc_match_data *data;
+> +       unsigned int nb_clks =3D 0;
+> +       struct eqc_priv *priv;
+> +       unsigned int i;
+> +       int ret;
+> +
+> +       data =3D of_match_node(eqc_match_table, np)->data;
+> +
+> +       /* No reason to early init this clock provider. Do it at probe. */
+> +       if (data->early_pll_count =3D=3D 0)
+
+You can have a different match table for this function then.
+
+> +               return;
+> +
+> +       priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
+> +       if (!priv) {
+> +               ret =3D -ENOMEM;
+> +               goto err;
+> +       }
+> +
+> +       priv->np =3D np;
+> +       priv->data =3D data;
+> +
+> +       nb_clks =3D eqc_compute_clock_count(data);
+> +       priv->cells =3D kzalloc(struct_size(priv->cells, hws, nb_clks), G=
+FP_KERNEL);
+> +       if (!priv->cells) {
+> +               ret =3D -ENOMEM;
+> +               goto err;
+> +       }
+> +
+> +       priv->cells->num =3D nb_clks;
+> +
+> +       /*
+> +        * Mark non-early clocks as deferred; they'll be registered at pl=
+atform
+> +        * device probe.
+> +        */
+> +       for (i =3D 0; i < data->pll_count; i++)
+> +               priv->cells->hws[data->plls[i].index] =3D ERR_PTR(-EPROBE=
+_DEFER);
+> +       for (i =3D 0; i < data->div_count; i++)
+> +               priv->cells->hws[data->divs[i].index] =3D ERR_PTR(-EPROBE=
+_DEFER);
+> +
+> +       /*
+> +        * We expect named resources if divider clocks are present.
+> +        * Else, we only expect one resource.
+> +        */
+
+Please avoid named resources. They give the false sense of hope that the
+binding can re-order the reg property when that can't be done. Instead,
+just index and know which index to use in the driver.
