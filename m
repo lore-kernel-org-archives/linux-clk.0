@@ -1,206 +1,116 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDC413C9BB;
-	Wed, 10 Apr 2024 19:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21AA5D8EE;
+	Thu, 11 Apr 2024 02:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712777710; cv=none; b=nBovENzPcje8WiG8iOOoiqDGp8cBV8xEI2UNdOaaOcrXOFcr7E5b21w4/M/Q5KcNMMt3TbWohkDAqcjayDo11B/utoaTQfNu2Zb87RlLw3RvL7KVzt/DaPxFpEDx3OC0vgw3MvZQdc8notaP9QT2/MAsiLxQyjxCpzWzJkr8SDk=
+	t=1712804311; cv=none; b=reve+hD9od0q19Z9rx/iNHqAm+d06bLr7pGC/zlREiy9KEJLPw9QRBz2sY6awSzc4APHnx7p8U58r6d58f6UjdxY8cVjgAvk05vhTWeuHHYs5sTE+2/PvRVlfjhiPz+NhBaX8ukS0Ut5ioPjlUchZGgnaC1bSSgN4inbGz648yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712777710; c=relaxed/simple;
-	bh=Jkn/gV1xbHYiTYA5CIVelngkfPvxfpYwuhPRA6maPXA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fGmo88tS7F0LKapDXBddhL3OhCU8B9B05E/OkAJBRtCgTqk+/wuMODE6wSlS71lp7m7+nXHFPKEDjQASfwkE/bdZioWZzLItOEDFrqPcDEimtwpvctxX7wNDx0FKvCY2Tcs9YYAjEiCpmr/6q0Cy63iOmr8Ufqf545DNjZZsK8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=C22AkKI5; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="C22AkKI5"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1e2b1cd446fso52366785ad.3;
-        Wed, 10 Apr 2024 12:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1712777708; x=1713382508; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g656SpCYaMp6vFyqsY3OV3wXp/aZxKZhrmXE0IxorBU=;
-        b=C22AkKI5iYb9NW5kFD0hd8rK8gF75P+rFzflkP1WkgKDq6oruNNbs6yaGNrAlqAfgk
-         dxr0gzPgZ6CTv9XnpOLsph0WoqWQrgG4yRulem0bjWxpISwnXgUCDAx6dwrvy/gSJUXk
-         tihB9N186nnSNCPvmVKmaP70h3jdOA7VDjlc/SVMIkeHFOPAuhC4PcmjbwB7/QPl9bq5
-         bKLDPmo3lN1J7Xyl2alOXEgUoXLnr1CCLM1n5fZJa1+ZchqWS7dCZEBJNGBCNmIsSuUV
-         YrxFzippfN2EogYlQJsWdKJ232VJdNoSFNWP8uWvz5YaGvCDsRyvspIQrfiBLJ/uz9pa
-         dlyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712777708; x=1713382508;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g656SpCYaMp6vFyqsY3OV3wXp/aZxKZhrmXE0IxorBU=;
-        b=GKEAMyh/B2i/64/L+gsoQJLk4ZGVjNXLpTGI6JMKx5qyFDwZsYIglF8ZmNPQV8iOib
-         rV17blB0jbc/YS7EQDsW0nczF0BXlYmtmC1+koA1DfgbsSpDbUhcl5c7wfLmpJgooGhy
-         Ixiz36zczrdn0IAER9JDI0VXhNpaHcoq1nvZT6KJFLJrV2UHikUHPrvXpgxS1Q6L5IJQ
-         4yHuC8rg3Aa0I3ZXqMZU2rSKXgDO95CL9UbAXIovYE2URM0kE3TFOE7Nr0p5Jx9z6t04
-         UFQj2GTgxzP05cUdgiaPaRtEkLn2aidK8hpOqGm7BK6p18Z8GHNpGtdFqqF+hriG8rq0
-         Vxug==
-X-Forwarded-Encrypted: i=1; AJvYcCXj9suDe9vt9RjdGIehbHBEPLA0ugMU9TsgZf929S85K+cSGLmPSSa78wtShG0D2CzEYYoRqfsLX9s0M6IakzieGArxuaa2eDed/dgDBnD3fqQI+RAAdjqm9HW4UaFVkikBEJZ+vZWssp9NhLt/tc/CJT9/9XT1/CtCG28kS6wgJ6Qv3Q==
-X-Gm-Message-State: AOJu0Yy0nDUL92hcgxpP84nROxpES+aN/88XBciYp4N/N82oUmN9blCU
-	UFud7HIWBCmdIJ39n7JbQiq8/v/JNs3LhIDCJkkXnV4GcgdS7Tqw7tzPmoU/BacaaQJv9/hd+9B
-	TTR+AIssBEwmw6NjIrw0GURBuVRE=
-X-Google-Smtp-Source: AGHT+IFG4wZy5xKqrBbd0+jyKIYfyDkXeatsz1RW1t4MoepWhKG5fO6dMM+S5nhn7lThAmtFHKQqa2845byFu2CtKgU=
-X-Received: by 2002:a17:902:ce06:b0:1e3:cd26:cf16 with SMTP id
- k6-20020a170902ce0600b001e3cd26cf16mr5200823plg.51.1712777707736; Wed, 10 Apr
- 2024 12:35:07 -0700 (PDT)
+	s=arc-20240116; t=1712804311; c=relaxed/simple;
+	bh=H+6KligDtfbXeCMGh0nniJKBGuen+8IuMp1hIkTuS6c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BlNKB93XPep+KQqPnYJhxSq9VoYv1ySbNtl4sg38dUHQcqZ1I2bVLwrLIkv61HE5BE9SHUQ4KHMC/Q2jBK9R/IBl7JNG1dYDDwV0utrC3jHIW0C6zkq++vm9ELxZ+NL7tdbdaC4zXpg/e2PrwGZRT+4b5z12731th/o3S/1M9IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [112.20.109.80])
+	by gateway (Coremail) with SMTP id _____8CxF+jRURdmxpwlAA--.621S3;
+	Thu, 11 Apr 2024 10:58:25 +0800 (CST)
+Received: from localhost.localdomain (unknown [112.20.109.80])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxLBPLURdmz8l3AA--.34105S2;
+	Thu, 11 Apr 2024 10:58:20 +0800 (CST)
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+To: Binbin Zhou <zhoubb.aaron@gmail.com>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	loongson-kernel@lists.loongnix.cn,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Xuerui Wang <kernel@xen0n.name>,
+	loongarch@lists.linux.dev,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Subject: [PATCH v3 0/6] Add Loongson-2k0500 and Loongson-2k2000 clock support
+Date: Thu, 11 Apr 2024 10:58:05 +0800
+Message-ID: <cover.1712731524.git.zhoubinbin@loongson.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-0-99ecdfdc87fc@linaro.org>
- <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-4-99ecdfdc87fc@linaro.org>
-In-Reply-To: <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-4-99ecdfdc87fc@linaro.org>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Wed, 10 Apr 2024 21:34:56 +0200
-Message-ID: <CAFBinCChEc+GH+tdmByWDM=Gs_BUpDh=6S=ch3QbGUt501_Ejw@mail.gmail.com>
-Subject: Re: [PATCH v12 4/7] drm/meson: gate px_clk when setting rate
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Nicolas Belin <nbelin@baylibre.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org
-Content-Type: multipart/mixed; boundary="000000000000d9789e0615c322c7"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8CxLBPLURdmz8l3AA--.34105S2
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Wry7Aw1UAFy7Xr1rWFWxGrX_yoW8Ww15pa
+	nxuay3Gr1DKF18Zrs0qrW0yrn5u3yrJasrJw45t34UurWDC3WDta1Ska1YvrZrZryayF9F
+	vF95Kr4UCFWUCrXCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r12
+	6r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
+	vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUUUU=
 
---000000000000d9789e0615c322c7
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi all:
 
-Hi Neil,
+As we know, the Loongson-2K family of SoCs (ls2k0500/ls2k1000/ls2k2000)
+have a similar clock structure, and I support them to be configured with
+different parameters (e.g., register offsets, etc.).
 
-On Wed, Apr 3, 2024 at 9:46=E2=80=AFAM Neil Armstrong <neil.armstrong@linar=
-o.org> wrote:
->
-> Disable the px_clk when setting the rate to recover a fully
-> configured and correctly reset VCLK clock tree after the rate
-> is set.
->
-> Fixes: 77d9e1e6b846 ("drm/meson: add support for MIPI-DSI transceiver")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/gpu/drm/meson/meson_dw_mipi_dsi.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/gpu/drm/meson/meson_dw_mipi_dsi.c b/drivers/gpu/drm/=
-meson/meson_dw_mipi_dsi.c
-> index a6bc1bdb3d0d..a10cff3ca1fe 100644
-> --- a/drivers/gpu/drm/meson/meson_dw_mipi_dsi.c
-> +++ b/drivers/gpu/drm/meson/meson_dw_mipi_dsi.c
-> @@ -95,6 +95,7 @@ static int dw_mipi_dsi_phy_init(void *priv_data)
->                 return ret;
->         }
->
-> +       clk_disable_unprepare(mipi_dsi->px_clk);
-nit-pick: clk_disable(mipi_dsi->px_clk); should be enough here as my
-understanding is that we only need to {un,}prepare a clock once.
+To make it easier to add support for different SoCs, I refactored the
+original driver to make the whole driver as understandable as possible.
 
->         ret =3D clk_set_rate(mipi_dsi->px_clk, mipi_dsi->mode->clock * 10=
-00);
->
->         if (ret) {
-> @@ -103,6 +104,12 @@ static int dw_mipi_dsi_phy_init(void *priv_data)
->                 return ret;
->         }
->
-> +       ret =3D clk_prepare_enable(mipi_dsi->px_clk);
-> +       if (ret) {
-> +               dev_err(mipi_dsi->dev, "Failed to enable DSI Pixel clock =
-(ret %d)\n", ret);
-> +               return ret;
-If we ever hit this error case then there will be a lot of additional
-errors in the kernel log:
-- initially the clock is prepared and enabled in
-meson_dw_mipi_dsi_probe() by calling devm_clk_get_enabled()
-- we then disable the clock above (generally disabling a clock is
-expected to always succeed)
-- if the clock can NOT be re-enabled here we just log the error
-- in case a user tries to rmmod the driver (to modprobe it again) to
-try and recover from an error the automatic disabling of the pix_clk
-(based on devm_clk_get_enabled() where it was enabled initially) there
-will be a splat because the clock is already disabled (and enabled
-count is zero, so it cannot be disabled any further)
+Briefly, I have divided all clocks into three categories according to
+their properties and their parent clocks: Independent PLLs, clocks based
+on frequency scales, and clock dividers.
 
-For the 32-bit SoC video clocks I keep track of them being enabled or
-disabled, see [0], [1] and [2].
-In my case this is important because we can run into cases where the
-PLL doesn't lock (I am not sure how likely this is for your case).
+Thanks.
 
-It *seems* like we need to do something similar as
-dw_mipi_dsi_phy_init() can be called when changing the display
-resolution (or whenever drm_bridge_funcs.atomic_pre_enable) is called.
-To illustrate what I have in mind I attached a diff (it's based on
-this patch) - it's compile tested only as I have no DSI hardware.
-In case dw_mipi_dsi_phy_init() is called only once per device
-lifecycle things may get easier.
+----
+V3:
+- Remove the dts-related patches and update dts at once after all relevant
+  drivers are complete.
+patch(1/6):
+ - Drop unsuitable comments.
 
-PS: I'm so happy that we don't need any clock notifiers for this!
-So: good work with the clock driver bits.
+Link to V2:
+https://lore.kernel.org/all/cover.1711504700.git.zhoubinbin@loongson.cn/
 
+V2:
+patch(1/8):
+ - Drop LOONGSON2_CLK_END, for it is not a binding.
+patch(1/8)(3/8)(5/8):
+ - Add Acked-by tag from Conor, Thanks.
 
-Let me know what you think,
-Martin
+Link to V1:
+https://lore.kernel.org/all/cover.1710926402.git.zhoubinbin@loongson.cn/
 
+Binbin Zhou (6):
+  dt-bindings: clock: Add Loongson-2K expand clock index
+  clk: clk-loongson2: Refactor driver for adding new platforms
+  dt-bindings: clock: loongson2: Add Loongson-2K0500 compatible
+  clk: clk-loongson2: Add Loongson-2K0500 clock support
+  dt-bindings: clock: loongson2: Add Loongson-2K2000 compatible
+  clk: clk-loongson2: Add Loongson-2K2000 clock support
 
-[0] https://github.com/xdarklight/linux/blob/meson-mx-integration-6.9-20240=
-323/drivers/gpu/drm/meson/meson_vclk.c#L1177-L1179
-[1] https://github.com/xdarklight/linux/blob/meson-mx-integration-6.9-20240=
-323/drivers/gpu/drm/meson/meson_vclk.c#L1077
-[2] https://github.com/xdarklight/linux/blob/meson-mx-integration-6.9-20240=
-323/drivers/gpu/drm/meson/meson_vclk.c#L1053
+ .../bindings/clock/loongson,ls2k-clk.yaml     |   4 +-
+ drivers/clk/clk-loongson2.c                   | 549 ++++++++++--------
+ include/dt-bindings/clock/loongson,ls2k-clk.h |  54 +-
+ 3 files changed, 329 insertions(+), 278 deletions(-)
 
---000000000000d9789e0615c322c7
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="meson_dw_mipi_dsi-clk-disable-enable.diff"
-Content-Disposition: attachment; 
-	filename="meson_dw_mipi_dsi-clk-disable-enable.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_luu7g3we0>
-X-Attachment-Id: f_luu7g3we0
+-- 
+2.43.0
 
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZXNvbi9tZXNvbl9kd19taXBpX2RzaS5jIGIv
-ZHJpdmVycy9ncHUvZHJtL21lc29uL21lc29uX2R3X21pcGlfZHNpLmMKaW5kZXggYTZiYzFiZGIz
-ZDBkLi45MjY2MThkMGU2MjIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9tZXNvbi9tZXNv
-bl9kd19taXBpX2RzaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZXNvbi9tZXNvbl9kd19taXBp
-X2RzaS5jCkBAIC00Niw2ICs0Niw3IEBAIHN0cnVjdCBtZXNvbl9kd19taXBpX2RzaSB7CiAJc3Ry
-dWN0IGNsayAqYml0X2NsazsKIAlzdHJ1Y3QgY2xrICpweF9jbGs7CiAJc3RydWN0IHJlc2V0X2Nv
-bnRyb2wgKnRvcF9yc3Q7CisJYm9vbCBweF9jbGtfZW5hYmxlZDsKIH07CiAKICNkZWZpbmUgZW5j
-b2Rlcl90b19tZXNvbl9kd19taXBpX2RzaSh4KSBcCkBAIC04Nyw2ICs4OCwxMSBAQCBzdGF0aWMg
-aW50IGR3X21pcGlfZHNpX3BoeV9pbml0KHZvaWQgKnByaXZfZGF0YSkKIAkJcmV0dXJuIHJldDsK
-IAl9CiAKKwlpZiAobWlwaV9kc2ktPnB4X2Nsa19lbmFibGVkKSB7CisJCWNsa19kaXNhYmxlKG1p
-cGlfZHNpLT5weF9jbGspOworCQltaXBpX2RzaS0+cHhfY2xrX2VuYWJsZWQgPSBmYWxzZTsKKwl9
-CisKIAkvKiBNYWtlIHN1cmUgdGhlIHJhdGUgb2YgdGhlIGJpdCBjbG9jayBpcyBub3QgbW9kaWZp
-ZWQgYnkgc29tZW9uZSBlbHNlICovCiAJcmV0ID0gY2xrX3JhdGVfZXhjbHVzaXZlX2dldChtaXBp
-X2RzaS0+Yml0X2Nsayk7CiAJaWYgKHJldCkgewpAQCAtMTAzLDYgKzEwOSwxNCBAQCBzdGF0aWMg
-aW50IGR3X21pcGlfZHNpX3BoeV9pbml0KHZvaWQgKnByaXZfZGF0YSkKIAkJcmV0dXJuIHJldDsK
-IAl9CiAKKwlyZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUobWlwaV9kc2ktPnB4X2Nsayk7CisJaWYg
-KHJldCkgeworCQlkZXZfZXJyKG1pcGlfZHNpLT5kZXYsICJGYWlsZWQgdG8gZW5hYmxlIERTSSBQ
-aXhlbCBjbG9jayAocmV0ICVkKVxuIiwgcmV0KTsKKwkJcmV0dXJuIHJldDsKKwl9CisKKwltaXBp
-X2RzaS0+cHhfY2xrX2VuYWJsZWQgPSB0cnVlOworCiAJc3dpdGNoIChtaXBpX2RzaS0+ZHNpX2Rl
-dmljZS0+Zm9ybWF0KSB7CiAJY2FzZSBNSVBJX0RTSV9GTVRfUkdCODg4OgogCQlkcGlfZGF0YV9m
-b3JtYXQgPSBEUElfQ09MT1JfMjRCSVQ7CkBAIC0yODcsNyArMzAxLDcgQEAgc3RhdGljIGludCBt
-ZXNvbl9kd19taXBpX2RzaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCQly
-ZXR1cm4gZGV2X2Vycl9wcm9iZShkZXYsIHJldCwgIlVuYWJsZSB0byBnZXQgZW5hYmxlZCBiaXRf
-Y2xrXG4iKTsKIAl9CiAKLQltaXBpX2RzaS0+cHhfY2xrID0gZGV2bV9jbGtfZ2V0X2VuYWJsZWQo
-ZGV2LCAicHgiKTsKKwltaXBpX2RzaS0+cHhfY2xrID0gZGV2bV9jbGtfZ2V0X3ByZXBhcmVkKGRl
-diwgInB4Iik7CiAJaWYgKElTX0VSUihtaXBpX2RzaS0+cHhfY2xrKSkKIAkJcmV0dXJuIGRldl9l
-cnJfcHJvYmUoZGV2LCBQVFJfRVJSKG1pcGlfZHNpLT5weF9jbGspLAogCQkJCSAgICAgIlVuYWJs
-ZSB0byBnZXQgZW5hYmxlZCBweF9jbGtcbiIpOwpAQCAtMzI3LDYgKzM0MSw5IEBAIHN0YXRpYyB2
-b2lkIG1lc29uX2R3X21pcGlfZHNpX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
-KQogewogCXN0cnVjdCBtZXNvbl9kd19taXBpX2RzaSAqbWlwaV9kc2kgPSBwbGF0Zm9ybV9nZXRf
-ZHJ2ZGF0YShwZGV2KTsKIAorCWlmIChtaXBpX2RzaS0+cHhfY2xrX2VuYWJsZWQpCisJCWNsa19k
-aXNhYmxlKG1pcGlfZHNpLT5weF9jbGspOworCiAJZHdfbWlwaV9kc2lfcmVtb3ZlKG1pcGlfZHNp
-LT5kbWQpOwogfQogCg==
---000000000000d9789e0615c322c7--
