@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516881C2B3;
-	Fri, 12 Apr 2024 05:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C715C82;
+	Fri, 12 Apr 2024 06:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712901587; cv=none; b=ko3BmuLKJji8HUTWuXIsuMovD3yiPgFN8Aj8hvNCcJASPw5JwQbaF5vVWRMa+C8nYnIV90soTEEYSdTWaWBnRH2QLb31AjKHEi7xE/5n35hDzetiHHcOtGazKutFBLB98F4XVboaYEf2erFX5u1VGJOGivpOIM0VqB1Z229McRU=
+	t=1712902906; cv=none; b=jc2hNKzjkQMGZ+fpOtLqDl/q/FCmXsRDXTeHVq1V/QcKZMdWy4n1gPlO8qCp0KpAx3PkBr7dCN4VPyVmZ4GYCldG3OSx4uRxrgfYG6RIZojFy6dA9evJVNk957z/xr8FUP8mQNtOGvwAtsZUQcreB12NCUz5LeRJR3UvfwfyYWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712901587; c=relaxed/simple;
-	bh=RZmcayPnF618npxKtoNHMaaHGNdqbV0wNnATB0Wu0MU=;
+	s=arc-20240116; t=1712902906; c=relaxed/simple;
+	bh=3HkpJojy/K1PBxL+4mbZbpwq+U3GGqzPtMY8c/dVemc=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=XyosUTWOQsAzkySwvSvEpGKGNGPMIbzyznKYO7ENzqKT3jCCq5td3K7QGswTla7tWRztDjYY7H5V7IGoxCj43B9hNRgj/unIH8scl8TA2FlzM1t4pTi+qu8AKwZhZVwhJzKbjjC3Y/zS4FiKoY63Oqnb1K5nS+3vM5dh4W5B4dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPjz9UuK; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Qkrqzog37WndLOcpaVkEuLatJZ6Z34MBOF8IGhrUD1N3eayNO/edZzkvZ3Zsle1rbbJTS44FaUYEtuxuCyaJEyQ7LTMu3loOrKeyBeK/2YnlbNLXEWlHG5s/76ouAUSoHZLL/KXZum2foTBNoZgVs9H6p3kB+7PkAmnfpPruFVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t2oH6sEo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPjz9UuK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC179C2BBFC;
-	Fri, 12 Apr 2024 05:59:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t2oH6sEo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7044C2BBFC;
+	Fri, 12 Apr 2024 06:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712901586;
-	bh=RZmcayPnF618npxKtoNHMaaHGNdqbV0wNnATB0Wu0MU=;
+	s=k20201202; t=1712902905;
+	bh=3HkpJojy/K1PBxL+4mbZbpwq+U3GGqzPtMY8c/dVemc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=oPjz9UuKtqk/uY9Gv5dBuLPKPFNRKQUSRsULivPUW+5PDuxb3wnzYmJ3/p7iy6+Yw
-	 K5Lo7Hq57qC+FUaiWEWO2XIkh3gWqq25AQqeD5SVD8GHlI+gAWVgnqGPIj9hKN9PZD
-	 7Qk8QXrfiquu/odgLCR4Y+kSCdEPK6+iJNe0rUXYb0r7MdxjFIDYf3rHswmqiAmc12
-	 CAgv+4OdIUJHkQZLhgg9zzwhPHTB92qmPVg382/9o3h1WuD3B6v5rL8ctNjYhXjexq
-	 XEQSPVPDc55S7yd776X/BQKonT1cKErtLLNeWFcsiv31AC/O7cLRMw4R4u7zJd2P/v
-	 J3xfVW2tGiBjQ==
-Message-ID: <7480aa086d187f1ae70f10e4479cbf53.sboyd@kernel.org>
+	b=t2oH6sEoxUvKpABTuzdEvcxBIg+pIRL+XCecL1b+p6Y2BkQb2XQTp3KVqf/NHZU+5
+	 ssV4p1dEpC0JU0+Y1goSDJXUfFjupXzk2w9GbCDgha0iUNp0MMji0G8yrIc/jkHVoN
+	 UHL8q9trcQwm175POiBhTFLYOXTZqnC9HdjqMpBKL62teCJY8qOq3kt6DRJXlr2zTI
+	 qAdhVY63NG2FYFYaxCFseLdAmKB+yAHjcXMfMl10wez9egmnFpEVPzwIGER2eEr7Db
+	 gofbTjSQAmu1CUMPQBS7Cw1o5sxRBhplUqUqL0/RNZtFBvewmJK2D5JnWIrDgsuBQh
+	 PIrGtV9wk1chg==
+Message-ID: <c6db329bdd8f760878cbbc84d099a4e5.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,42 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240412051041.90376-2-mmyangfl@gmail.com>
-References: <20240412051041.90376-2-mmyangfl@gmail.com>
-Subject: Re: [PATCH v9 00/13] clk: hisilicon: Migrate devm APIs
+In-Reply-To: <20240411092453.243633-2-gabriel.fernandez@foss.st.com>
+References: <20240411092453.243633-1-gabriel.fernandez@foss.st.com> <20240411092453.243633-2-gabriel.fernandez@foss.st.com>
+Subject: Re: [PATCH v11 1/4] clk: stm32mp13: use platform device APIs
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, David Yang <mmyangfl@gmail.com>
-To: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org
-Date: Thu, 11 Apr 2024 22:59:44 -0700
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>, Conor Dooley <conor+dt@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>
+Date: Thu, 11 Apr 2024 23:21:43 -0700
 User-Agent: alot/0.10
 
-Quoting David Yang (2024-04-11 22:10:29)
-> Migrate devm APIs for HiSilicon clock drivers and remove redundant codes.
+Quoting gabriel.fernandez@foss.st.com (2024-04-11 02:24:50)
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 >=20
-> This series is a partial improvement of [1]
+> Convert devm_platform_ioremap_resource() and remove unnecessary
+> dependency check with SCMI clock driver.
 >=20
-> v2: fix test robot error
-> v3:
->   * size_t for all these num types
->   * hisi_clk_unregister() change into separate patch
->   * keep relevant header inclusions
->   * split driver files changes into separate patches
->   * explain hisi_clk_register_fn() checkpatch warnings
->   * not fixed: MODULE_LICENSE("GPL v2"), as stated in SPDX-License-Identi=
-fier
->   * not fixed: "hisilicon,hip04-clock" un-documented, as none of dts file=
-s in
->     arch/ use it, better to ask hisi people why they pushed this driver
-> v4:
->   * typo: hisi_clocks_get_nr() should check clks->nr first
->   * unexport hisi_clk_unregister_fn() as no one use them outside
-> v5: catch up with remove_new refactoring
-> v6: fix compilation error and expand macros
-> v7: rebase and use mod_devicetable.h instead
-> v8: rebase again
-> v9: add linux/platform_device.h include in patch 09 according to reviews
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> ---
 
-Still doesn't work. Please compile every file before sending again.
-Hint:
-
-	make path/to/file.o
+Applied to clk-next
