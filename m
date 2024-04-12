@@ -1,100 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00378179A7;
-	Fri, 12 Apr 2024 03:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6527E17731;
+	Fri, 12 Apr 2024 05:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712890987; cv=none; b=cyIF1lSz4Rn5GBH/4UOyPKDhydL2ElxPO7BvcYZ06koyFEC402u6Oe4Lint2SWBDMoqxpupH864O4O5WMxac3AE/KNRvRR2FiPeVIrpA5JIUIWqxY99RbQdtt7O+abnFjmGAvgpLHQm0Gpr6cC1bgOth8McxgrXP5CKamLkdl6o=
+	t=1712898692; cv=none; b=INe/q++JHo9xs/uWCyBGzP0Eq7b5YXrCk+vSCpdgOwqQtHsf1rKm3SXIbrTHkoiIORXzLkhpnvPUvECwsZlo9pi61+2sGlPpa5KeEhHMeAJfgaR43wNPGy+mKoFucLNYVXKa41ouK2DsqCrEuZVVdrXBAbgJA5MPsBpV5C+Pq+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712890987; c=relaxed/simple;
-	bh=dL2vbLyBJ7fQbcvTp51l49lPhbA/iYRHmD1oK3utQ8k=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=u8hIKgYwyDo2T3woANU7EVebc1zkzF/23Bbo3kHqYiGQAL5uHfKg1mWbfz3XcJqXkKm+2dJnyBZEb2g6rVkx4g7hUY+vo+27HG8xCohbrBTaJC1n+HqJcruwePOiDtW+9QdSwmzrlvAR3OSsaigdc9Y21sazz2h7tzxNf7Zn2xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZ0kQvhQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712898692; c=relaxed/simple;
+	bh=hd/nqxw9+93zH7FcyAKlNOOEyQTldfVZ2x3gcMcMfus=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nm1fuTHH18jxESyRrwTxD/mpGp0g+XdveUuIAedfNWcflFr2GSsrOioFSjutDQNsxshbcOccsMLkQ2DDFHoTPons1eKTNrkGSTyhe23P0/cPhobZi0jkGjz1gT6xx2MO2Z5Cp2Domfbxn+V0U4N5gSG4a6K+zQBYxsH4Ai4VKN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gt3RE1ra; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZ0kQvhQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54EEBC072AA;
-	Fri, 12 Apr 2024 03:03:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712890986;
-	bh=dL2vbLyBJ7fQbcvTp51l49lPhbA/iYRHmD1oK3utQ8k=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=IZ0kQvhQHE45vOxLKM9Qe1+1O2wckWfB7W2uk/KDf6B5evQgBBrQ8/wuutr3pm1fz
-	 vwRDvGXSB6wAft8hI8c6K1mXqHQetBXyzoMIvw3a4XbBu058/dyBWmBkkjKWHvibds
-	 zLm7dMYveplj67gHHolFcxTvypWINm3M+BkFDicpGyrgA7bUX8qQM2BCmFynycup1f
-	 mGYgDjn+90vaqrH3ERNDyyfn8VPGn6e6y7wSaqS+R7A6Dn15x98lIVedR6fA/fPQ+B
-	 x+AfxlLKrlvcan27uEYLW8Fyr6cUwB9SnI1GghSJZpS1V7kFscOaMRCqpASD/0K5nH
-	 to2ESXtN/8AAQ==
-Message-ID: <15b31289dfafa2516e524aadcb02a6af.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gt3RE1ra"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1e2b137d666so4537255ad.2;
+        Thu, 11 Apr 2024 22:11:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712898690; x=1713503490; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AXKOR4fLTMOu2WnZaGce97zyt5vgv5h2VasZVNQaszc=;
+        b=gt3RE1raT3QmcCw5QvcHteka2eWT/woJyP/0wNnIMIm+jESByav7GK7hI9hp3zo6nr
+         u1e/kjV0yIRRIN69TIgjnBnsTNv3XYZilEvq/71CylltR0C22GHiYRW0EHEOW6VVjoo5
+         Sr0LUzbw1cwJej/p52xT4Gl7ZL6F/Ss+iwU8spGh086OqelbRd9NvknBqcsBamSjwm9i
+         ZkviX2WdxxeGAZcJeJRVXh960tvd/LGqK/MfZIhIyiO+wyPV8qaXJ8xh2Rc7TOhjttbT
+         CBYhIaXwgVCcXC7afPUy3Jrd5oWl06ULnAskBUyrvRAu0NYO7vQGgusQ+c9xJGWC0DyS
+         zoOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712898690; x=1713503490;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AXKOR4fLTMOu2WnZaGce97zyt5vgv5h2VasZVNQaszc=;
+        b=t9ipes5r6Fah9eecRYQ6hPGFUi/gsUv8xI2V0/ZlZoqKQS3pQtJbBv7c2GIxaRXKG5
+         ZD1AzZvL2xt430VDwVUMMsvr0b/6ISPD0tvGi+O2bvO169/ow+VH5JcuZEkZxMV0/eXC
+         IHJUr3z5s2IJRsQeuQyngoBKMYeiLxisof0AYx3fusD9yLK8jamY86wNZfhlMycO0ew5
+         RZZrpw+QiGNSVYIFWbNlqAOPXY28nvnNFFEUudYjdnP29QipdNRn0qe4m0YfK8ggxbTl
+         NTOcGNhkOowmI2YaZ2eU3DgG70HWZ5+Fr0MTwEQtD5MsYhimaYNBcSV8+2BcwbjNilIh
+         uW8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXBVTGR4Mb0JlKEJnYPUBXta4GVUM5DR5IArn7ipTlGzSw10+fHn1hIBZY2FDlWYZhFHWlWOutm/jdiL0kN5nxq9YCusRpYNYqfAdbR
+X-Gm-Message-State: AOJu0Yy7bZiCjLt84DQePwVaxg8SaRlCHt7e91+QspFJEsSijTiIIaBW
+	nwftiYagzwVisDHRCCtVg1SuOHvwF3zGjDBu9+cq3/YnKOR5+wUhdIA8WmZ9
+X-Google-Smtp-Source: AGHT+IEvlaffhKlC9NRXZtkYcwkt7RbXc02T0P4rh9CjTB5N9y6JzePWsOC0st75qtC5YnLjaNwNQw==
+X-Received: by 2002:a17:90b:fc5:b0:2a5:3637:1968 with SMTP id gd5-20020a17090b0fc500b002a536371968mr1708755pjb.9.1712898689975;
+        Thu, 11 Apr 2024 22:11:29 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.213.200])
+        by smtp.gmail.com with ESMTPSA id fh16-20020a17090b035000b002a53b9cf356sm3734902pjb.0.2024.04.11.22.11.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Apr 2024 22:11:29 -0700 (PDT)
+From: David Yang <mmyangfl@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	David Yang <mmyangfl@gmail.com>
+Subject: [PATCH v9 00/13] clk: hisilicon: Migrate devm APIs
+Date: Fri, 12 Apr 2024 13:10:29 +0800
+Message-ID: <20240412051041.90376-2-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <SEZPR06MB69596A0104AA2385391049EA96052@SEZPR06MB6959.apcprd06.prod.outlook.com>
-References: <20240225-pll-v1-0-fad6511479c6@outlook.com> <20240225-pll-v1-1-fad6511479c6@outlook.com> <d8dc639c2c6d188d2ce3728573d9a53d.sboyd@kernel.org> <SEZPR06MB6959E563B692827A3E5152DD96052@SEZPR06MB6959.apcprd06.prod.outlook.com> <fa5fe57faeda3323174e4caddc1ac2a6.sboyd@kernel.org> <SEZPR06MB69596A0104AA2385391049EA96052@SEZPR06MB6959.apcprd06.prod.outlook.com>
-Subject: Re: [PATCH RFC 1/2] clk: hisilicon: rename hi3519 PLL registration function
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: David Yang <mmyangfl@gmail.com>, Igor Opaniuk <igor.opaniuk@foundries.io>, Jorge Ramirez-Ortiz Gmail <jorge.ramirez.ortiz@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Yang Xiwen <forbidden405@outlook.com>, Yang Xiwen via B4 Relay <devnull+forbidden405.outlook.com@kernel.org>
-Date: Thu, 11 Apr 2024 20:03:04 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting Yang Xiwen (2024-04-11 03:31:58)
-> On 4/11/2024 3:53 PM, Stephen Boyd wrote:
-> > Quoting Yang Xiwen (2024-04-11 00:44:33)
-> >> On 4/11/2024 2:52 PM, Stephen Boyd wrote:
-> >>> Quoting Yang Xiwen via B4 Relay (2024-02-24 08:56:09)
-> >>>> diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisil=
-icon/clk-hi3559a.c
-> >>>> index ff4ca0edce06..77fa4203a428 100644
-> >>>> --- a/drivers/clk/hisilicon/clk-hi3559a.c
-> >>>> +++ b/drivers/clk/hisilicon/clk-hi3559a.c
-> >>>> @@ -452,7 +452,7 @@ static const struct clk_ops hisi_clk_pll_ops =3D=
- {
-> >>>>           .recalc_rate =3D clk_pll_recalc_rate,
-> >>>>    };
-> >>>>   =20
-> >>>> -static void hisi_clk_register_pll(struct hi3559av100_pll_clock *clk=
-s,
-> >>>> +static void _hisi_clk_register_pll(struct hi3559av100_pll_clock *cl=
-ks,
-> >>> Prefix it with hi3559a then to be SoC specific please. But this is al=
-so
-> >>> static so I'm not sure why this patch is needed at all.
-> >>
-> >> it includes the header that marks this function non-static. Also the
-> >> prototype is incompatible.
-> > What is 'it'?
->=20
->=20
-> The line 18 `#include "clk.h"`, and please see patch 2.
->=20
->=20
-> Patch 2 added 2 functions to "clk.h", one of them reused the=20
-> `hisi_clk_register_pll` name with a different prototype.
->=20
->=20
-> >
-> >   $ git grep hisi_clk_register_pll
-> >   drivers/clk/hisilicon/clk-hi3559a.c:static void hisi_clk_register_pll=
-(struct hi3559av100_pll_clock *clks,
-> >   drivers/clk/hisilicon/clk-hi3559a.c:    hisi_clk_register_pll(hi3559a=
-v100_pll_clks,
->=20
->=20
-> a snippet copied from patch 2:
->=20
->=20
-> +int hisi_clk_register_pll(struct device *dev, const struct hisi_pll_cloc=
-k *clks,
-> +                         int nums, struct hisi_clock_data *data);
->=20
->=20
+Migrate devm APIs for HiSilicon clock drivers and remove redundant codes.
 
-Ok, got it. Prefix the existing hisi_clk_register_pll() as
-hi3559a_clk_register_pll().
+This series is a partial improvement of [1]
+
+v2: fix test robot error
+v3:
+  * size_t for all these num types
+  * hisi_clk_unregister() change into separate patch
+  * keep relevant header inclusions
+  * split driver files changes into separate patches
+  * explain hisi_clk_register_fn() checkpatch warnings
+  * not fixed: MODULE_LICENSE("GPL v2"), as stated in SPDX-License-Identifier
+  * not fixed: "hisilicon,hip04-clock" un-documented, as none of dts files in
+    arch/ use it, better to ask hisi people why they pushed this driver
+v4:
+  * typo: hisi_clocks_get_nr() should check clks->nr first
+  * unexport hisi_clk_unregister_fn() as no one use them outside
+v5: catch up with remove_new refactoring
+v6: fix compilation error and expand macros
+v7: rebase and use mod_devicetable.h instead
+v8: rebase again
+v9: add linux/platform_device.h include in patch 09 according to reviews
+
+Links:
+[1]: https://lore.kernel.org/r/20230322164201.2454771-1-mmyangfl@gmail.com
+v1: https://lore.kernel.org/r/20230326052757.297551-1-mmyangfl@gmail.com
+v2: https://lore.kernel.org/r/20230329075104.165176-1-mmyangfl@gmail.com
+v3: https://lore.kernel.org/r/20230410110733.192151-1-mmyangfl@gmail.com
+v4: https://lore.kernel.org/r/20230411174329.424763-1-mmyangfl@gmail.com
+v5: https://lore.kernel.org/r/20230723162245.35033-1-mmyangfl@gmail.com
+v6: https://lore.kernel.org/r/20230731121821.22242-1-mmyangfl@gmail.com
+v7: https://lore.kernel.org/r/20240225065234.413687-1-mmyangfl@gmail.com
+v8: https://lore.kernel.org/r/20240411070503.38093-2-mmyangfl@gmail.com
+
+David Yang (13):
+  clk: hisilicon: Add helper functions for platform driver
+  clk: hisilicon: hi3516cv300: Use helper functions
+  clk: hisilicon: hi3798cv200: Use helper functions
+  clk: hisilicon: Remove hisi_crg_funcs
+  clk: hisilicon: hi3519: Use helper functions
+  clk: hisilicon: hi3559a: Use helper functions
+  clk: hisilicon: hi3660: Convert into module
+  clk: hisilicon: hi3670: Convert into module
+  clk: hisilicon: hi3620: Convert into platform driver module
+  clk: hisilicon: hi6220: Convert into platform driver module
+  clk: hisilicon: hip04: Convert into platform driver module
+  clk: hisilicon: hix5hd2: Convert into platform driver module
+  clk: hisilicon: Migrate devm APIs
+
+ drivers/clk/hisilicon/clk-hi3519.c        | 127 +-----
+ drivers/clk/hisilicon/clk-hi3559a.c       | 251 +++---------
+ drivers/clk/hisilicon/clk-hi3620.c        | 215 +++++-----
+ drivers/clk/hisilicon/clk-hi3660.c        | 194 +++------
+ drivers/clk/hisilicon/clk-hi3670.c        | 250 ++++--------
+ drivers/clk/hisilicon/clk-hi6220-stub.c   |   9 +-
+ drivers/clk/hisilicon/clk-hi6220.c        | 228 ++++++-----
+ drivers/clk/hisilicon/clk-hip04.c         |  38 +-
+ drivers/clk/hisilicon/clk-hisi-phase.c    |  13 +-
+ drivers/clk/hisilicon/clk-hix5hd2.c       |  98 +++--
+ drivers/clk/hisilicon/clk.c               | 457 +++++++++++-----------
+ drivers/clk/hisilicon/clk.h               | 141 ++++---
+ drivers/clk/hisilicon/clkdivider-hi6220.c |  24 +-
+ drivers/clk/hisilicon/clkgate-separated.c |  26 +-
+ drivers/clk/hisilicon/crg-hi3516cv300.c   | 171 +-------
+ drivers/clk/hisilicon/crg-hi3798cv200.c   | 200 ++--------
+ drivers/clk/hisilicon/crg.h               |  11 +-
+ drivers/clk/hisilicon/reset.c             |  42 ++
+ 18 files changed, 945 insertions(+), 1550 deletions(-)
+
+
+base-commit: 586b5dfb51b962c1b6c06495715e4c4f76a7fc5a
+-- 
+2.43.0
+
