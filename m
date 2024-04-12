@@ -1,98 +1,80 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8D486255;
-	Fri, 12 Apr 2024 15:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F21A18B09;
+	Fri, 12 Apr 2024 18:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712936475; cv=none; b=N3W/7bq+bB9qF8G00alE3WBsCDGgmaB91De0DsSI2tXhXSuw7U19Pdr1PS8NhatWTqlPnCeLWeze6z/z046ns6yMama9nB0F8Qe5kQBoKPZxeQF832o41tEAtWggJHKysV/UR+0VG7Jw7/hZEw/unZwCb5ovtyTkkvRJVEXn1cI=
+	t=1712946914; cv=none; b=beeCDv0Tum0hWc6+cjanTPHVNxBO24feOwOfMF4MLjkd495wuP8CpgpfZYouWfM29dzYhYGhFCGqnjKJ1H1P3b0NySaWHH+C9HZjX6uCX4/vTdfi5p3B/Y93JBuUfHEeMjOnj1k4bLQEWODPq2KsiOo5ogW0AMy5qQ0QVdA+QeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712936475; c=relaxed/simple;
-	bh=N0XVHGo4SMlPD6EQfbU20bRIk//KUBXgZx3W2pzz8ug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BUsBtJl2NcQ3RC8agFzQ+raOubCtztokyPO2Bhcq3ZkJ/Nju29NbKnCA+eoebETaJqH2quiq3BUte40glKZLlZPgnec0XM+3A4RYCTeNb86ewEOTEyZskdPYlMu/5a9vt3uA8EloCXo3xhXJj8pzwBc0gh8wZhd8cbgF/WbHX98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=gmwk+vjZ; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1712946914; c=relaxed/simple;
+	bh=c7l1MXD6dpbxN4XtNjV/DW5Fsb48MJvPk6BEdWqTfuY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jXl2Ll/nmbMEOrSKqxzzBcYZ/d5yQzRwiGLitAfMdCP7PlSUciNMbBt5VWPXzpTFVB7Rj+wA3eg3FE/T7r+EOG8QAG0tgarTA0z+e2HiAXrtmc01lwstqmf1ggpa1sfS9bRpr+pR1MNBl0/I50QSzGPCq/ecKcWRofUe8ka8Kpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Rx0XvPtV; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="gmwk+vjZ"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=6my0iodQaeFR5ckhDBIIj+CUGiu9F+ZcP+5OqFc8jX0=; b=gmwk+vjZ4UTeJx4MQrTiD9foif
-	hsM2+ZrWPMJQnhlDL6zls3cxABiYR3kBmNoRQQmR8aTRushwCUBvv35XeQ96U5ryF2eA8FFBDK168
-	Lpa0bZ3dSGSBgiwPAt5Roa9pBGKryjf/z0Ws9Xs6OpB72Lk4MnUdWPZTBWJ3zToUP+YGCw78orNJw
-	y/aqMh4BEPXyTzJGM2JNRzmgfjz9JvyLjidopV87f6IK9vrDwzkCVhZCNb4kOtdtkL4ZqOOOO+l7U
-	v1E16mhROz6wiQBwtlbK9ZAkmndsTkNF5paSLFl9x7gSEqlIO1MjO1av70iD9uDAesZECM4GS3NzR
-	XLOoK07A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58796)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1rvJ1W-0002fC-0Z;
-	Fri, 12 Apr 2024 16:41:06 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1rvJ1W-0007wG-4C; Fri, 12 Apr 2024 16:41:06 +0100
-Date: Fri, 12 Apr 2024 16:41:06 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] clk: Add clk_poll_disable_unprepare()
-Message-ID: <ZhlWErZjizEc5bm5@shell.armlinux.org.uk>
-References: <20240318110842.41956-1-biju.das.jz@bp.renesas.com>
- <20240318110842.41956-3-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Rx0XvPtV"
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 08D2087C75;
+	Fri, 12 Apr 2024 20:35:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1712946910;
+	bh=67Jf9ullWfZC2rEqSESZjk0MezYd/cTr0DLtM3VDZVk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Rx0XvPtVOjA5G4T2GXhO7yzWc6etrue/bKb+h7gjJfNMsBF5TnfCZg+rmcgdw2lQf
+	 o+Zg2YVdrZqP8bdrnsnEAPA7enh6zdL8oWoevGH6HFzAsAw6Xo9CQX/bKyJmiMDC8l
+	 LTqFp8XAG4TYE/GKGbzSwmzHgNg+csgLN4KwyAmBj7g2qfHpCljZpU4pjvLdBUGmoO
+	 Z23HjT7UYMBKB7/4qx8UYgKwDkey5Npg2pi79YuvCRx3rb3jRFwAuFYXqbocwedLd8
+	 K7aLRUjzhH2iYmeFRo8fDFi0frgyn79SA6jaFAcE/Cp3y5RejjpvgY/nDBZXYmrW5b
+	 73Y8RQd1XBCGg==
+Message-ID: <d55fce26-a96e-4653-a463-a277e232ed48@denx.de>
+Date: Fri, 12 Apr 2024 20:35:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240318110842.41956-3-biju.das.jz@bp.renesas.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] clk: rs9: fix wrong default value for clock
+ amplitude
+To: Stephen Boyd <sboyd@kernel.org>,
+ Catalin Popescu <catalin.popescu@leica-geosystems.com>,
+ mturquette@baylibre.com, Biju Das <biju.das.jz@bp.renesas.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bsp-development.geo@leica-geosystems.com, m.felsch@pengutronix.de
+References: <20240306180435.1033052-1-catalin.popescu@leica-geosystems.com>
+ <a5595ba92a3d65a222398824b09d7d37.sboyd@kernel.org>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <a5595ba92a3d65a222398824b09d7d37.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Mon, Mar 18, 2024 at 11:08:41AM +0000, Biju Das wrote:
-> The clk_disable_unprepare() doesn't guarantee that a clock is gated after
-> the execution as it is driver dependent. The Renesas and most of the other
-> platforms don't wait until clock is stopped because of performance reason.
+On 4/9/24 10:19 AM, Stephen Boyd wrote:
+> Quoting Catalin Popescu (2024-03-06 10:04:35)
+>> According to 9FGV0241 & 9FGV0441 datasheets
 
-I'm not sure it's "because of performance reason". It's probably more
-that it's not important for functionality.
+9FGV0841 too.
 
-> But these platforms wait while turning on the clock.
-> 
-> The normal case for shutting down the clock is unbind/close/suspend or
-> error paths in the driver. Not waiting for the shutting down the clock
-> will improve the suspend time.
-> 
-> But on RZ/G2L Camera Data Receiving Unit (CRU) IP, initially the vclk is
-> on. Before enabling link reception, we need to wait for vclk to be off
-> and after enabling reception, we need to turn the vlck on. Special cases
+>, the default value
+>> for the clock amplitude is 0.8V, while the driver was assuming
+>> 0.7V.
 
-"vclk" not "vlck".
+Can you also document the SCC spread spectrum change in the commit message ?
 
-> like this requires a sync API for clock gating.
+>> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
 
-I suppose this is fine for clocks that only have a single user, but
-this is highly undefined for clocks that could be shared between
-several different users, since it becomes racy whether another user
-of the clock has enabled or disabled this clock.
+This also needs
+Fixes: 892e0ddea1aa ("clk: rs9: Add Renesas 9-series PCIe clock 
+generator driver")
 
-I think this new API needs to spell it that it is not for clocks
-that are shared.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks ! Sorry for the delayed reply.
