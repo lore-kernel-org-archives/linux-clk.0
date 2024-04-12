@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C51C1BC37;
-	Fri, 12 Apr 2024 05:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516881C2B3;
+	Fri, 12 Apr 2024 05:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712901308; cv=none; b=KkojGIli2psDGR2yXJQ7L8Fb3kIKaG6VdOnKZSlDDCSn5rTMpLG9dLzJH67HyT8QTyuZLn5MYNU+VKueQev4grJOJjyH40X7AYthLIl6/SqpS/swwKZzt5ygcl2nf+YeZiyjBVYJ7zf03mf0AMMAyOdZXug+INt/QNmr+Dsl+JE=
+	t=1712901587; cv=none; b=ko3BmuLKJji8HUTWuXIsuMovD3yiPgFN8Aj8hvNCcJASPw5JwQbaF5vVWRMa+C8nYnIV90soTEEYSdTWaWBnRH2QLb31AjKHEi7xE/5n35hDzetiHHcOtGazKutFBLB98F4XVboaYEf2erFX5u1VGJOGivpOIM0VqB1Z229McRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712901308; c=relaxed/simple;
-	bh=JQfz7/d2ng00GhHS3NyTYEkGb3OA5UK1hgQL93R0kkQ=;
+	s=arc-20240116; t=1712901587; c=relaxed/simple;
+	bh=RZmcayPnF618npxKtoNHMaaHGNdqbV0wNnATB0Wu0MU=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=I2pI2Lt5wu0El0Yusf8ypiZrPhcx3oUbA6r0wsBRXf6FKrMYTeYjztkYBQXjkihGEeMC9l5bpjYd1qurU6uh183mRb7nsLRBth9EiMdJcYlCet9McUxpRiJCxCRWZ6OuGeVChakvMFZNCKIYKOfAZnElyuBNpBcwN1+qgKaKYOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o6LU2fnb; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=XyosUTWOQsAzkySwvSvEpGKGNGPMIbzyznKYO7ENzqKT3jCCq5td3K7QGswTla7tWRztDjYY7H5V7IGoxCj43B9hNRgj/unIH8scl8TA2FlzM1t4pTi+qu8AKwZhZVwhJzKbjjC3Y/zS4FiKoY63Oqnb1K5nS+3vM5dh4W5B4dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPjz9UuK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6LU2fnb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B58A5C2BBFC;
-	Fri, 12 Apr 2024 05:55:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPjz9UuK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC179C2BBFC;
+	Fri, 12 Apr 2024 05:59:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712901307;
-	bh=JQfz7/d2ng00GhHS3NyTYEkGb3OA5UK1hgQL93R0kkQ=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=o6LU2fnb99yOU2DGXXl4CaIGRYOU8kJ0Qnx4M0pnseswKGLRDhngbAk+QiLBy5BHz
-	 WjRPTkYjPrDcOrbjyDcHPBfgCyTjmRyEzW85mz+28WR3Vn4h+Rbb7kzqDObhHLX0Iy
-	 dY200DAjrfmrcbQI4g7YBYpAzk8bEeul9Jj62MzoHHw0i8FR0IRzkiDAXXjMHiz5L7
-	 Mq9Zp4nE3y6sc6yQsG8YvIxbaPAHHfNgF7vGdRXi2w73qay4y3gb6y4V7yp6JuFBxo
-	 7BY613fW8v+8IGw9S63yYpfTsnv9X8YYAtOXnr8Gd/3dasgSr2ZX6GAKjGQgbbmyMs
-	 wzBinFu+Bm6/Q==
-Message-ID: <58956ebc474b993e6da1d6689ecb9324.sboyd@kernel.org>
+	s=k20201202; t=1712901586;
+	bh=RZmcayPnF618npxKtoNHMaaHGNdqbV0wNnATB0Wu0MU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=oPjz9UuKtqk/uY9Gv5dBuLPKPFNRKQUSRsULivPUW+5PDuxb3wnzYmJ3/p7iy6+Yw
+	 K5Lo7Hq57qC+FUaiWEWO2XIkh3gWqq25AQqeD5SVD8GHlI+gAWVgnqGPIj9hKN9PZD
+	 7Qk8QXrfiquu/odgLCR4Y+kSCdEPK6+iJNe0rUXYb0r7MdxjFIDYf3rHswmqiAmc12
+	 CAgv+4OdIUJHkQZLhgg9zzwhPHTB92qmPVg382/9o3h1WuD3B6v5rL8ctNjYhXjexq
+	 XEQSPVPDc55S7yd776X/BQKonT1cKErtLLNeWFcsiv31AC/O7cLRMw4R4u7zJd2P/v
+	 J3xfVW2tGiBjQ==
+Message-ID: <7480aa086d187f1ae70f10e4479cbf53.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,46 +35,42 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <MA0P287MB2822BC109267BD20922FB581FE052@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-References: <cover.1711692169.git.unicorn_wang@outlook.com> <816122e9f22ddd9927e81e627be7f4683ba5c9e8.1711692169.git.unicorn_wang@outlook.com> <433e01f22ce5472aeb28cf0182d951bd.sboyd@kernel.org> <MA0P287MB2822BC109267BD20922FB581FE052@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Subject: Re: [PATCH v13 4/5] clk: sophgo: Add SG2042 clock driver
+In-Reply-To: <20240412051041.90376-2-mmyangfl@gmail.com>
+References: <20240412051041.90376-2-mmyangfl@gmail.com>
+Subject: Re: [PATCH v9 00/13] clk: hisilicon: Migrate devm APIs
 From: Stephen Boyd <sboyd@kernel.org>
-To: Chen Wang <unicorn_wang@outlook.com>, Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu, chao.wei@sophgo.com, conor@kernel.org, devicetree@vger.kernel.org, guoren@kernel.org, haijiao.liu@sophgo.com, inochiama@outlook.com, jszhang@kernel.org, krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com, robh+dt@kernel.org, samuel.holland@sifive.com, xiaoguang.xing@sophgo.com
-Date: Thu, 11 Apr 2024 22:55:05 -0700
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, David Yang <mmyangfl@gmail.com>
+To: David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org
+Date: Thu, 11 Apr 2024 22:59:44 -0700
 User-Agent: alot/0.10
 
-Quoting Chen Wang (2024-04-11 05:58:05)
+Quoting David Yang (2024-04-11 22:10:29)
+> Migrate devm APIs for HiSilicon clock drivers and remove redundant codes.
 >=20
-> On 2024/4/11 12:11, Stephen Boyd wrote:
-> > Quoting Chen Wang (2024-03-28 23:21:40)
-> >> +static const u32 sg2042_mux_table[] =3D {1, 0};
-> >> +
-> >> +static const char *const clk_mux_ddr01_p[] =3D {
-> >> +                       "clk_div_ddr01_0", "clk_div_ddr01_1"};
-> >> +static const char *const clk_mux_ddr23_p[] =3D {
-> >> +                       "clk_div_ddr23_0", "clk_div_ddr23_1"};
-> >> +static const char *const clk_mux_rp_cpu_normal_p[] =3D {
-> >> +                       "clk_div_rp_cpu_normal_0", "clk_div_rp_cpu_nor=
-mal_1"};
-> >> +static const char *const clk_mux_axi_ddr_p[] =3D {
-> >> +                       "clk_div_axi_ddr_0", "clk_div_axi_ddr_1"};
-> >> +
-> >> +static struct sg2042_mux_clock sg2042_mux_clks[] =3D {
-> >> +       SG2042_MUX(MUX_CLK_DDR01, "clk_mux_ddr01", clk_mux_ddr01_p,
-> > Please use struct clk_parent_data or struct clk_hw directly instead of
-> > string names.
+> This series is a partial improvement of [1]
 >=20
-> Hi, Stephen,
->=20
-> I understand that for clk_init_data, parent_names/parent_data/parent_hws =
+> v2: fix test robot error
+> v3:
+>   * size_t for all these num types
+>   * hisi_clk_unregister() change into separate patch
+>   * keep relevant header inclusions
+>   * split driver files changes into separate patches
+>   * explain hisi_clk_register_fn() checkpatch warnings
+>   * not fixed: MODULE_LICENSE("GPL v2"), as stated in SPDX-License-Identi=
+fier
+>   * not fixed: "hisilicon,hip04-clock" un-documented, as none of dts file=
+s in
+>     arch/ use it, better to ask hisi people why they pushed this driver
+> v4:
+>   * typo: hisi_clocks_get_nr() should check clks->nr first
+>   * unexport hisi_clk_unregister_fn() as no one use them outside
+> v5: catch up with remove_new refactoring
+> v6: fix compilation error and expand macros
+> v7: rebase and use mod_devicetable.h instead
+> v8: rebase again
+> v9: add linux/platform_device.h include in patch 09 according to reviews
 
-> are all acceptable. Why do you only suggest me to use=20
-> parent_data/parent_hws here? Can you please explain?
+Still doesn't work. Please compile every file before sending again.
+Hint:
 
-Using parent_names requires a global string search for that clk. Using
-clk_parent_data or parent_hws reduces that search significantly,
-speeding things up. Not using any strings furthermore speeds it up, i.e.
-using an index when the clk is external to the device and a clk_hw
-pointer when the clk is internal to the device. We speed things up by
-removing string comparisons, of which there are many. Any new code
-should be using direct pointers or an index, no strings.
+	make path/to/file.o
