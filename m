@@ -1,150 +1,227 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09065102F
-	for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 09:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837B453E14
+	for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 10:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712914587; cv=none; b=n/35ntVdJulvcgRasPxqjhUhUqLYnX1VtAPNUmBtD7Zp4tPIl4uUzg5F+LrOIy6rZJV0zWGmTK7yGof7P6fbHO6ds0lJePVmFjlOVS93L/YF+arxapN17AKVT/KfKXMLRv2w4CbB7y9Qz/ubkCg2y+byIDY+5mSD+puIqGeRaFc=
+	t=1712916306; cv=none; b=T9ZrkGARKhm7VlLQmh6XmQS9VR25GumPUF9Iyt4oEWyHQ+q/TkQf1XO8dlpvX0/TRUsl6th22iYMyVfuyFQqt54XSk67zKUtlUSY3wdzUsrYIaBvDfqSSHF84dOSoumHM7prpZvufL67TLx67CDLijsNukXZ8OmtpMSKNVkEPfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712914587; c=relaxed/simple;
-	bh=ECG66815UF5U5UZ532M011H3Hgu9sb1nS+RlWPOzlVI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=ASD3f9BdGtvlrM8UQRYvG/9VHaSOR8ENnz7RVuYkwwjS1TxJFazXz7zem52vHMtxLA/Y58PBz/XdlKvq003mWlNbYRnTvum5vEagMZUDQrSZFBL5YVIDz2teC8tQWwlT3wC8/wC2L8j8Vr9m+oVtaVmelvDibxCHKpsucRDvLhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nwVeG1Lb; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1712916306; c=relaxed/simple;
+	bh=m7SZnyJBVQZSm3/ZMgPP8KmAohN82QOdxqDUo61ETQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F6+inFhryAlOPT9G9Jji212CxRslMblEc7ESeppgOb2eZWIB/78DOQdopc8Is5kS5L7slpVwp95oEzYrmsc/iQnxia8JQJK8+GL1asA7DMvoS23p6BuO5NsGRcTTnBWesZjoPyqExYY6HkKJ0y3r6OKbclmTZWQ8LYBZY6ccRSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Z7HYXTPb; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nwVeG1Lb"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240412093622epoutp0315a521c52451c09cba73b76169b3fadf~FfrzQaUIF3072730727epoutp03S
-	for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 09:36:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240412093622epoutp0315a521c52451c09cba73b76169b3fadf~FfrzQaUIF3072730727epoutp03S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1712914582;
-	bh=18OZ4wgAdnYQqHPQ+QR1sMRA2rNC7ROaX7uQYViKJU4=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=nwVeG1Lbkm8L09VoWgzd/8konc0f8a/Z7G7DuXLrz35HRtr3SSMZ/ytNm+WKxIe4a
-	 J82srKZMG8QJN+KPuDWAh56/Q4145Ce5+MnPIuuxWtLnTwYkz9IJrGCjGMuVqEoNfq
-	 TjqdWY4mClLi3jeBRsbPGDG93rLiIoYCwzKiPF4Q=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240412093622epcas5p385256fbd7d1a71ac8596442246fd206d~Ffry0_EfB1567515675epcas5p38;
-	Fri, 12 Apr 2024 09:36:22 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C1.9B.09665.69009166; Fri, 12 Apr 2024 18:36:22 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240412090801epcas5p1beb5c87f7582cf4f53c245a642468763~FfTCzoULs2335923359epcas5p1O;
-	Fri, 12 Apr 2024 09:08:01 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240412090801epsmtrp1648b0aa57349dc8c8ecdfcd74ae84238~FfTCyqBJq0149901499epsmtrp1B;
-	Fri, 12 Apr 2024 09:08:01 +0000 (GMT)
-X-AuditID: b6c32a4b-829fa700000025c1-6a-661900963857
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3B.70.08390.1F9F8166; Fri, 12 Apr 2024 18:08:01 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.109.224.44]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240412090759epsmtip230e5033ab5bdd5f1ba3ac3202ccf54c7~FfTBKbzXQ1740317403epsmtip2g;
-	Fri, 12 Apr 2024 09:07:59 +0000 (GMT)
-From: Onkarnarth <onkarnath.1@samsung.com>
-To: paulburton@kernel.org, mturquette@baylibre.com, sboyd@kernel.org
-Cc: linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, r.thapliyal@samsung.com,
-	maninder1.s@samsung.com, Onkarnath <onkarnath.1@samsung.com>
-Subject: [PATCH v2 1/1] clk: imgtec: use %pe for better readability of
- errors while printing
-Date: Fri, 12 Apr 2024 14:37:49 +0530
-Message-Id: <20240412090749.15392-1-onkarnath.1@samsung.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Z7HYXTPb"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a521fd786beso87225566b.3
+        for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 03:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1712916302; x=1713521102; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NmvVpGqH/YnUJn3EKn9NCfL9fG7zsGqsH7iqYTHHqXM=;
+        b=Z7HYXTPbEgHcFEGia5f3Cjw4XQFfFdF11UzWrXfj5n/Cr013pUpChNuVE3Gfi2LXBZ
+         z4MTf+vkcVMv/ixTP04YBHG9LKgTqvq6OqAHs+IuL0l5uDdN4EDadc0x36a8d9OcB/g6
+         K43uquGDN8TlGSmwvb2pk8Ltv4YCTTHny3ZbtWRIPJu5GUX3Fk65V8abkN/385fonp3N
+         FSH17u0IAOZ7rRTg4R6O+hivA7sErjQHtQht5ccslYOAaSCe6RFyxjPrjdgthWUTaF+Y
+         qdw10Cy83XX+CPOc9JdLjLH5FLYZl0F8bI+KSxnAKLRbBban0ytnVIXTOWCwV2wLZY+i
+         tzuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712916302; x=1713521102;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NmvVpGqH/YnUJn3EKn9NCfL9fG7zsGqsH7iqYTHHqXM=;
+        b=wK5upQpUzNcqjlZiKr5pXfvXhCNZGtM3T2S8lW/X8Ezdznn1k1QPgQMNs0TrfFBfX+
+         i0dluYKf+zfoqW/C6/JSx8pej0++fjxxSaXDeh0B1/l8HtLMc82bRs7nWykkHYeMNjdb
+         zluLq3JuYYG3ujRmfZwuRXevOyQCs/kD7XD+PUgfR3lP0aO8OC9oCCmE/CsvsNlL+im8
+         iQZZLmPJDtxc1dFZt/m8nCkKqvJ/6/KAdYY8NooM2X5kRhHfO4UyyYfy5RudzfxZrCE/
+         tcXdQ5S2yqb/8cb6fVNVWXGDAuyPtv64aY/lcdc9mAZzgSL7d8LC9r66BvsD3F+Vw3gd
+         XKXA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8pisKs1b7upjD1ZaDRqlNbDJCmnNUvo+g6H39WJo1HKjLpAfRiAJMVv0Po03AkWJpCuj5tLI57BXNbT7xFwZBf3Wkf10Y6Awl
+X-Gm-Message-State: AOJu0Yxa8xVs9wsGmQaip54op+vIDDbpg0MWrEPKQkc2NW6tJcgKJr4r
+	7AHqqauoRtt/Yuwz5tvEZXXDM4PUnWW7hXg/4/pAx+HwAOIyTyC6IBdTAvHiMKo=
+X-Google-Smtp-Source: AGHT+IHQMQDAmt/KUMiRX2jfsv9Ugd19LQKa3XJw1aZ7aEKYJ1UBxTCpp3X0iWhacATHBs5n4+le0A==
+X-Received: by 2002:a17:906:36d6:b0:a51:d7f3:324b with SMTP id b22-20020a17090636d600b00a51d7f3324bmr1290933ejc.66.1712916301420;
+        Fri, 12 Apr 2024 03:05:01 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.8])
+        by smtp.gmail.com with ESMTPSA id g22-20020a1709063b1600b00a4e533085aesm1637200ejf.129.2024.04.12.03.04.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Apr 2024 03:05:00 -0700 (PDT)
+Message-ID: <2a07d159-fdd4-48d4-b351-01f5e2579c3a@tuxon.dev>
+Date: Fri, 12 Apr 2024 13:04:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/9] clk: renesas: rzg2l: Add support for power domains
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Linux PM list <linux-pm@vger.kernel.org>, Guenter Roeck
+ <linux@roeck-us.net>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>
+References: <20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUesJe0396MsH9PSUMEq=sWx3BYc=QrAFzR2EVcLhm03Q@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdUesJe0396MsH9PSUMEq=sWx3BYc=QrAFzR2EVcLhm03Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42LZdlhTXXcag2SawYF5XBYfe+6xWlzeNYfN
-	onPTVkaLw/PbWCwunnK1WNHzgdWi49tcFouN97It/l3byOLA6fH+Riu7x6ZVnWwefVtWMXp8
-	3iQXwBLFZZOSmpNZllqkb5fAlXFgwjKWgkvcFR9PNrI3MJ7l7GLk4JAQMJE4Pzuki5GLQ0hg
-	N6PEsY8djBDOJ0aJGzP6mCGcb4wSp/fvYoTpWL23touREyi+l1HiUGshRM0XRok5D88ygyTY
-	BLQkZtw5wARiiwi4SPSu2wU2lVlgE6PE0pk/wIqEBeIkVj+dzghiswioSnSs2MUGYvMK2Eic
-	O34arEZCQF5i5qXv7BBxQYmTM5+wgNjMQPHmrbPBrpMQuMYucebpFyaIBheJx3+vQdnCEq+O
-	b2GHsKUkXva3Qdn5Ei2zZzFDfFMjcfWpKkTYXuLJxYWsIGFmAU2J9bv0IcKyElNPrWOCWMsn
-	0fv7CdR0Xokd82BsVYlfU6ayQNjSEvd/z2WDsD0k3q2+zQgJrFiJl5fXs01glJ+F5JtZSL6Z
-	hbB5ASPzKkbJ1ILi3PTUYtMC47zUcr3ixNzi0rx0veT83E2M4NSi5b2D8dGDD3qHGJk4GA8x
-	SnAwK4nwSmuJpgnxpiRWVqUW5ccXleakFh9ilOZgURLnfd06N0VIID2xJDU7NbUgtQgmy8TB
-	KdXAdO7LXmYRXp/Tionitoem/jvZ89780b62g1w++ypVVn2Wrbly/YzGzSc/vfZ8syz7+qW+
-	cds2/zfi7e5i9/VqjbbbXUj+8/K3/PqY2KNzX8ufW/frY8Lts5xSWc/VJJofhHqJ+X96a1Bu
-	tN9GLbbvZbQsb3pLAevCy2k3dz+4Zzs5kDfk7xuLwwej9jbXO78rezWP+fTV1Jj4oCT/5fcC
-	/wQ13Djuf8dK2O7siUth0yVYm76qW8XqzF2ntX7Bks7Yx9w7/br+CD8KZl290f9CfZqYzo69
-	kVrFr3T0PUMEjXcuvyUpdar/y+1e7f0N18r1fjrtniix+8qP95O1Ps++eZb7/XvWaedOFE4/
-	dYAvJVSJpTgj0VCLuag4EQA6AiKTnAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrELMWRmVeSWpSXmKPExsWy7bCSvO7HnxJpBt+PCVl87LnHanF51xw2
-	i85NWxktDs9vY7G4eMrVYkXPB1aLjm9zWSw23su2+HdtI4sDp8f7G63sHptWdbJ59G1Zxejx
-	eZNcAEsUl01Kak5mWWqRvl0CV8aBCctYCi5xV3w82cjewHiWs4uRg0NCwERi9d7aLkYuDiGB
-	3YwSa6/tZ+li5ASKS0t8ujyHHcIWllj57zk7RNEnRomGzauZQBJsAloSM+4cALNFBDwkdh15
-	wwxSxCywg1HicvMVsG5hgRiJmTMvghWxCKhKdKzYxQZi8wrYSJw7fpoZYoO8xMxL39kh4oIS
-	J2c+AbuCGSjevHU28wRGvllIUrOQpBYwMq1ilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/d
-	xAgOVi2tHYx7Vn3QO8TIxMF4iFGCg1lJhFdaSzRNiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+3
-	170pQgLpiSWp2ampBalFMFkmDk6pBqboZ1teqics3SR4+FpRwiEnE1mfz7putksP/unYaHzP
-	s9x3Ss3z+Zm8a1bczStde7stcolUwrpipqXXWDf3/jhn2BbYlrJqc+p2Of6QNKvdzyrU7+7J
-	WLcsfVGaa9JTjmPW3d3cPCsUX+S0TmUomnq7o3xmWeWNzu293YI6tyy+2n+LYpQ0i41+nCbD
-	urH6XW34meM2X/+KBs/Q3/RDhmfhB/OM9J2+fifV5/X+zchoSuau55g+hz17kukexdvL9Fr4
-	DJbdMnna8KTCy+OmZUGfybu7B6Z0fD1hlypqd3bPwf7EHxLzLCPslKQubv95oVlw5tbOQxd/
-	1PvMTxeJWbjB87Ct5xHF+X7LOnZc2a/EUpyRaKjFXFScCAC1KF73xQIAAA==
-X-CMS-MailID: 20240412090801epcas5p1beb5c87f7582cf4f53c245a642468763
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20240412090801epcas5p1beb5c87f7582cf4f53c245a642468763
-References: <CGME20240412090801epcas5p1beb5c87f7582cf4f53c245a642468763@epcas5p1.samsung.com>
 
-From: Onkarnath <onkarnath.1@samsung.com>
+Hi, Geert,
 
-instead of printing errros as a number(%ld), it's better to print in string
-format for better readability of logs.
+On 11.04.2024 18:30, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> CC pmdomain, watchdog
+> 
+> On Wed, Apr 10, 2024 at 2:27 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> Series adds support for power domains on rzg2l driver.
+>>
+>> RZ/G2L kind of devices support a functionality called MSTOP (module
+>> stop/standby). According to hardware manual the module could be switch
+>> to standby after its clocks are disabled. The reverse order of operation
+>> should be done when enabling a module (get the module out of standby,
+>> enable its clocks etc).
+>>
+>> In [1] the MSTOP settings were implemented by adding code in driver
+>> to attach the MSTOP state to the IP clocks. But it has been proposed
+>> to implement it as power domain. The result is this series.
+>>
+>> Along with MSTOP functionality there is also module power down
+>> functionality (which is currently available only on RZ/G3S). This has
+>> been also implemented through power domains.
+>>
+>> The DT bindings were updated with power domain IDs (plain integers
+>> that matches the DT with driver data structures). The current DT
+>> bindings were updated with module IDs for the modules listed in tables
+>> with name "Registers for Module Standby Mode" (see HW manual) exception
+>> being RZ/G3S where, due to the power down functionality, the DDR,
+>> TZCDDR, OTFDE_DDR were also added, to avoid system being blocked due
+>> to the following lines of code from patch 6/9.
+>>
+>> +       /* Prepare for power down the BUSes in power down mode. */
+>> +       if (info->pm_domain_pwrdn_mstop)
+>> +               writel(CPG_PWRDN_MSTOP_ENABLE, priv->base + CPG_PWRDN_MSTOP);
+>>
+>> Domain IDs were added to all SoC specific bindings.
+>>
+>> Thank you,
+>> Claudiu Beznea
+>>
+>> Changes in v3:
+>> - collected tags
+>> - dinamically detect if a SCIF is serial console and populate
+>>   pd->suspend_check
+>> - dropped patch 09/10 from v2
+> 
+> Thanks for the update!
+> 
+> I have provided my R-b for all patches, and the usual path for these
+> patches would be for me to queue patches 1-8 in renesas-clk for v6.10,
+> and to queue 9 in renesas-devel.
+> 
+> However:
+>   1. I had missed before the pmdomain people weren't CCed before,
+>      they still might have some comments,
 
-Signed-off-by: Onkarnath <onkarnath.1@samsung.com>
----
-v1 -> v2 : Removed unnecessary SOB tag.
+My bad here, I missed it too.
 
- drivers/clk/imgtec/clk-boston.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+>   2. Patch 9 has a hard dependency on the rest of the series, so
+>      it has to wait one more cycle,
 
-diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-index b00cbd045af5..db96f8bea630 100644
---- a/drivers/clk/imgtec/clk-boston.c
-+++ b/drivers/clk/imgtec/clk-boston.c
-@@ -67,21 +67,21 @@ static void __init clk_boston_setup(struct device_node *np)
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
- 	if (IS_ERR(hw)) {
--		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
-+		pr_err("failed to register input clock: %pe\n", hw);
- 		goto fail_input;
- 	}
- 	onecell->hws[BOSTON_CLK_INPUT] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
- 	if (IS_ERR(hw)) {
--		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
-+		pr_err("failed to register sys clock: %pe\n", hw);
- 		goto fail_sys;
- 	}
- 	onecell->hws[BOSTON_CLK_SYS] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
- 	if (IS_ERR(hw)) {
--		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
-+		pr_err("failed to register cpu clock: %pe\n", hw);
- 		goto fail_cpu;
- 	}
- 	onecell->hws[BOSTON_CLK_CPU] = hw;
--- 
-2.25.1
+I think 5/9 should also wait to avoid binding validation failures.
 
+>   3. Adding the watchdog domain has a dependency on [1].
+
+Adding the code for it in patch 7/9 w/o passing it as reference to watchdog
+node (as in patch 9/9) is harmless. The previous behavior will be in place.
+
+At the moment the watchdog domain initialization code is not in patch 7/9
+and the patch 9/9 has reference to watchdog domain to pass the DT binding
+validation. The probe will fail though, as I wasn't sure what should be
+better to drop: device probe or reset functionality. I mentioned it in
+patch for suggestions.
+
+> 
+> 2 and 2 may be resolved using an immutable branch.
+
+2 and 3?
+
+Immutable branch should be good, AFAICT. If that would be the strategy I
+can send an update to also add the initialization data for watchdog domain
+in 7/9. Or I can send an update afterwards. Please let me know how would
+you prefer.
+
+Thank you,
+Claudiu Beznea
+
+> Are my assumptions correct?
+> 
+> Thanks!
+> 
+> [1] "[PATCH RESEND v8 09/10] watchdog: rzg2l_wdt: Power on the PM
+>     domain in rzg2l_wdt_restart()"
+>     https://lore.kernel.org/all/20240410134044.2138310-10-claudiu.beznea.uj@bp.renesas.com
+> 
+>> Changes in v2:
+>> - addressed review comments
+>> - dropped:
+>>     - dt-bindings: clock: r9a09g011-cpg: Add always-on power domain IDs
+>>     - clk: renesas: r9a07g043: Add initial support for power domains
+>>     - clk: renesas: r9a07g044: Add initial support for power domains
+>>     - clk: renesas: r9a09g011: Add initial support for power domains
+>>     - clk: renesas: r9a09g011: Add initial support for power domains
+>>     - arm64: dts: renesas: r9a07g043: Update #power-domain-cells = <1>
+>>     - arm64: dts: renesas: r9a07g044: Update #power-domain-cells = <1>
+>>     - arm64: dts: renesas: r9a07g054: Update #power-domain-cells = <1>
+>>     - arm64: dts: renesas: r9a09g011: Update #power-domain-cells = <1>
+>>   as suggested in the review process
+>> - dropped "arm64: dts: renesas: rzg3s-smarc-som: Guard the ethernet IRQ
+>>   GPIOs with proper flags" patch as it was integrated
+>> - added suspend to RAM support
+>> - collected tag
+>>
+>> [1] https://lore.kernel.org/all/20231120070024.4079344-4-claudiu.beznea.uj@bp.renesas.com/
+>>
+>>
+>> Claudiu Beznea (9):
+>>   dt-bindings: clock: r9a07g043-cpg: Add power domain IDs
+>>   dt-bindings: clock: r9a07g044-cpg: Add power domain IDs
+>>   dt-bindings: clock: r9a07g054-cpg: Add power domain IDs
+>>   dt-bindings: clock: r9a08g045-cpg: Add power domain IDs
+>>   dt-bindings: clock: renesas,rzg2l-cpg: Update #power-domain-cells =
+>>     <1> for RZ/G3S
+>>   clk: renesas: rzg2l: Extend power domain support
+>>   clk: renesas: r9a08g045: Add support for power domains
+>>   clk: renesas: rzg2l-cpg: Add suspend/resume support for power domains
+>>   arm64: dts: renesas: r9a08g045: Update #power-domain-cells = <1>
+>>
+>>  .../bindings/clock/renesas,rzg2l-cpg.yaml     |  18 +-
+>>  arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  20 +-
+>>  drivers/clk/renesas/r9a08g045-cpg.c           |  61 ++++
+>>  drivers/clk/renesas/rzg2l-cpg.c               | 269 +++++++++++++++++-
+>>  drivers/clk/renesas/rzg2l-cpg.h               |  77 +++++
+>>  include/dt-bindings/clock/r9a07g043-cpg.h     |  52 ++++
+>>  include/dt-bindings/clock/r9a07g044-cpg.h     |  58 ++++
+>>  include/dt-bindings/clock/r9a07g054-cpg.h     |  58 ++++
+>>  include/dt-bindings/clock/r9a08g045-cpg.h     |  70 +++++
+>>  9 files changed, 659 insertions(+), 24 deletions(-)
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
