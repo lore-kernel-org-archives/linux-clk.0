@@ -1,227 +1,358 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2092.outbound.protection.outlook.com [40.92.102.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837B453E14
-	for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 10:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712916306; cv=none; b=T9ZrkGARKhm7VlLQmh6XmQS9VR25GumPUF9Iyt4oEWyHQ+q/TkQf1XO8dlpvX0/TRUsl6th22iYMyVfuyFQqt54XSk67zKUtlUSY3wdzUsrYIaBvDfqSSHF84dOSoumHM7prpZvufL67TLx67CDLijsNukXZ8OmtpMSKNVkEPfk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712916306; c=relaxed/simple;
-	bh=m7SZnyJBVQZSm3/ZMgPP8KmAohN82QOdxqDUo61ETQY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F6+inFhryAlOPT9G9Jji212CxRslMblEc7ESeppgOb2eZWIB/78DOQdopc8Is5kS5L7slpVwp95oEzYrmsc/iQnxia8JQJK8+GL1asA7DMvoS23p6BuO5NsGRcTTnBWesZjoPyqExYY6HkKJ0y3r6OKbclmTZWQ8LYBZY6ccRSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Z7HYXTPb; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9D553384;
+	Fri, 12 Apr 2024 10:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712917407; cv=fail; b=gVG1uQtwHBA97L6bYFSxfD+KoG4pUI9YdkJO2sEYCuZnxf8AhwQSgwTICtpPT/V16Ypo3qt6sGJNi5FBmYJEzgHpNhs7AKoAXK4Y0sglj0Fd/QR0V8nOCgFe+0UOLO7ED0gghHLEeqWPaJ3z4QDYyPHdlG/3jxXyraxCjBdsjrE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712917407; c=relaxed/simple;
+	bh=SPwY/+bk/JO0ZFn7MGz96nM07sN9xIXy1IzFqOLzFAc=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ts8zC6hSVnWkqNC2HN9urJxrjVKglGy/9MObsBBJyT380dprZu3U0FqkdGI3xH7VbazKnt1TRgdZW+vEWoqHm+yzXhtTGgKqh6T/3Dq4SdrWdDqb6rKlsEQpTh+QJqSCSaZln6c0nOSuIWL8gmFIT+VcPY67/USyySPsWPQEev4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=DX28EUpl; arc=fail smtp.client-ip=40.92.102.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Z7HYXTPb"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a521fd786beso87225566b.3
-        for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 03:05:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1712916302; x=1713521102; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NmvVpGqH/YnUJn3EKn9NCfL9fG7zsGqsH7iqYTHHqXM=;
-        b=Z7HYXTPbEgHcFEGia5f3Cjw4XQFfFdF11UzWrXfj5n/Cr013pUpChNuVE3Gfi2LXBZ
-         z4MTf+vkcVMv/ixTP04YBHG9LKgTqvq6OqAHs+IuL0l5uDdN4EDadc0x36a8d9OcB/g6
-         K43uquGDN8TlGSmwvb2pk8Ltv4YCTTHny3ZbtWRIPJu5GUX3Fk65V8abkN/385fonp3N
-         FSH17u0IAOZ7rRTg4R6O+hivA7sErjQHtQht5ccslYOAaSCe6RFyxjPrjdgthWUTaF+Y
-         qdw10Cy83XX+CPOc9JdLjLH5FLYZl0F8bI+KSxnAKLRbBban0ytnVIXTOWCwV2wLZY+i
-         tzuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712916302; x=1713521102;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NmvVpGqH/YnUJn3EKn9NCfL9fG7zsGqsH7iqYTHHqXM=;
-        b=wK5upQpUzNcqjlZiKr5pXfvXhCNZGtM3T2S8lW/X8Ezdznn1k1QPgQMNs0TrfFBfX+
-         i0dluYKf+zfoqW/C6/JSx8pej0++fjxxSaXDeh0B1/l8HtLMc82bRs7nWykkHYeMNjdb
-         zluLq3JuYYG3ujRmfZwuRXevOyQCs/kD7XD+PUgfR3lP0aO8OC9oCCmE/CsvsNlL+im8
-         iQZZLmPJDtxc1dFZt/m8nCkKqvJ/6/KAdYY8NooM2X5kRhHfO4UyyYfy5RudzfxZrCE/
-         tcXdQ5S2yqb/8cb6fVNVWXGDAuyPtv64aY/lcdc9mAZzgSL7d8LC9r66BvsD3F+Vw3gd
-         XKXA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8pisKs1b7upjD1ZaDRqlNbDJCmnNUvo+g6H39WJo1HKjLpAfRiAJMVv0Po03AkWJpCuj5tLI57BXNbT7xFwZBf3Wkf10Y6Awl
-X-Gm-Message-State: AOJu0Yxa8xVs9wsGmQaip54op+vIDDbpg0MWrEPKQkc2NW6tJcgKJr4r
-	7AHqqauoRtt/Yuwz5tvEZXXDM4PUnWW7hXg/4/pAx+HwAOIyTyC6IBdTAvHiMKo=
-X-Google-Smtp-Source: AGHT+IHQMQDAmt/KUMiRX2jfsv9Ugd19LQKa3XJw1aZ7aEKYJ1UBxTCpp3X0iWhacATHBs5n4+le0A==
-X-Received: by 2002:a17:906:36d6:b0:a51:d7f3:324b with SMTP id b22-20020a17090636d600b00a51d7f3324bmr1290933ejc.66.1712916301420;
-        Fri, 12 Apr 2024 03:05:01 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.8])
-        by smtp.gmail.com with ESMTPSA id g22-20020a1709063b1600b00a4e533085aesm1637200ejf.129.2024.04.12.03.04.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Apr 2024 03:05:00 -0700 (PDT)
-Message-ID: <2a07d159-fdd4-48d4-b351-01f5e2579c3a@tuxon.dev>
-Date: Fri, 12 Apr 2024 13:04:58 +0300
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="DX28EUpl"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oBok5bBibzXVjq4hf/Xa3+jA93JvxmOEEGCjzYyigX4e/QZJ2rhA/tAGRT9aT3OlqLnicuiCv0YGrDlivgar6noYaYEzE+qNw9kkBUl0qDiN//+EpBEByIJxEi6GjY51ANJb5f8QJ7oAO2S5gJVvZqX9pYNC25fcMu4MjFzA6NCd6GquL1wfcpi3VRjhrtFsgz4ArhFnsKvoGYgcO9pkXeP7heWnNGegYsdYKhgrWuTU0AU9Drrv5L+C/dA+iIB0uhjKMLqReaJXjhnuMJLNNro7AR3A19gfOwwcDadJFghlVBsh10hOuzkzpvlGIrrKJF6BGaNqEMAHMIEELLfqcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xfblepfYTbRGVzZYMUwHrLjsmfB/aOh4FoCyB0F6H2c=;
+ b=RLc2QPKV7SEU5m0Chk2tKUAp7suvg/pBN+r1VCw+jJN1hF2fVPYhGRJWwopFBKeaaNskWguMUu1YBlmNIuVIZ+oDIRz+IvcMbtmq+OPpJx8xoPfmJJR+FOgMnqxQoX7Ka+CdkBEsqaFbRDUo03DudYvvL1Fo1AwyOxYKXs5AEynYZkiwvqrjlI/jPV2zcEoZtIYn9GHIKISA5PROpQmsQA+CC4vinRKefgjWI6rDlEkbTNPTj3/UG6v2DbAKQBDITQRJGs88pw2njObnxNs+lqHMG5IysljanMSyvYmMGAvWgIwfOdKLVagyiohmxCPizlGA6QNnoBORPzT9rAQ1yw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xfblepfYTbRGVzZYMUwHrLjsmfB/aOh4FoCyB0F6H2c=;
+ b=DX28EUpliAQB/5lEbbdE5hRyrq5ft5fUc5VmMcjsFNN0DuzLjc3+jr8r4sfG4lYhJizK24N2bboUwcrixMKdWkLn2A1+CUkxfnVpZ5hiKWkMPk4iNcQFIjJjW84KjLsY4t2pqaqG3WjZTh/wAG/lxYvOePSWz0eI7b/1ljbnf98EbZLC/JihqQqluzp+XY3e1gLMrT3lRjTxWZ+ZhLoAn3ObllSPC5ZsXT1Ro+MnJTp8CfvXo9P+MAffOstywrDXMbST5JJdOzj8PIOc28jvm9rJ2g5NlnlhL/M4fq5bvVsi96NgWd6T1GpfgGRKaVqCC71WT78sToqKQ1s78O2RWg==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN0P287MB1078.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:141::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.47; Fri, 12 Apr
+ 2024 10:23:13 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::664:2ecc:c36:1f2c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::664:2ecc:c36:1f2c%3]) with mapi id 15.20.7409.046; Fri, 12 Apr 2024
+ 10:23:13 +0000
+Message-ID:
+ <MA0P287MB28223E4F14E6D08E1139CA63FE042@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Fri, 12 Apr 2024 18:23:08 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 4/5] clk: sophgo: Add SG2042 clock driver
+To: Stephen Boyd <sboyd@kernel.org>, Chen Wang <unicornxw@gmail.com>,
+ aou@eecs.berkeley.edu, chao.wei@sophgo.com, conor@kernel.org,
+ devicetree@vger.kernel.org, guoren@kernel.org, haijiao.liu@sophgo.com,
+ inochiama@outlook.com, jszhang@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ richardcochran@gmail.com, robh+dt@kernel.org, samuel.holland@sifive.com,
+ xiaoguang.xing@sophgo.com
+References: <cover.1711692169.git.unicorn_wang@outlook.com>
+ <816122e9f22ddd9927e81e627be7f4683ba5c9e8.1711692169.git.unicorn_wang@outlook.com>
+ <433e01f22ce5472aeb28cf0182d951bd.sboyd@kernel.org>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <433e01f22ce5472aeb28cf0182d951bd.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TMN: [qdbs4tZprd1ql3E+xUca5by/1V4X87i3]
+X-ClientProxiedBy: SI2PR02CA0004.apcprd02.prod.outlook.com
+ (2603:1096:4:194::14) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <adb50bdb-a30d-4c67-849e-d85ab6be65fa@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/9] clk: renesas: rzg2l: Add support for power domains
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Linux PM list <linux-pm@vger.kernel.org>, Guenter Roeck
- <linux@roeck-us.net>, Wim Van Sebroeck <wim@linux-watchdog.org>,
- Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>
-References: <20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdUesJe0396MsH9PSUMEq=sWx3BYc=QrAFzR2EVcLhm03Q@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdUesJe0396MsH9PSUMEq=sWx3BYc=QrAFzR2EVcLhm03Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN0P287MB1078:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9a6f9d4-5a5b-4a28-314c-08dc5ada8f2f
+X-MS-Exchange-SLBlob-MailProps:
+	iS5pQZgsAQDmFN0yKEpvbPDpAvl+/SbOWXduVvlLbBWjF5sNSML0mcvsbdmL77ixpe34E2HOGTgYzKcemFerXjZae30mGFbQL3QAhukIiezaDHMx8I7z9zt9oE7WdT37qEXC8cqbKLYxczY9krdSd5dyAGTQ5/aryOuAEg6zfG0JEKKdcyDtPh78XvkQkG1hT4IBAUJlt3S3B/HV4cWGo7Jrba5ZTCuTWPjh0QcpefDS9A18Vt5iHL+mzEuGBridwsCvIyMc+xlsqKQtQ647JBgJesLZgdADwXVAq7zkyOzCty+W8YChdRY8TAvF+e6/LAs5Ec2wPhC/AUEVKW4Mf+lXysBd1gw4WKIUtyZ/zXbn6U4ioUbS1vYgEfr2dcnebD2NOv37p0vmFVpdZ0tlat/hzLXzLPR/I6jMEf73lkmxn5/OnEu93pSkmR5uwHf434CiZrYbe/Zj8QGFIyfZ7242/EzVpdQainFK/HZXXVoqo0GIwnb80bsGNqQTPFCj3xqU17gq7tT/+7kvzNaBHtWY1NGLW6rAeevdIsb2tPRWDIQ1Ov8iwbNKnZHAeCwtIPx55QKkKLNpfw8TR2EI0aPR7cBUxsLKxwAQEyTp0Mf/suDH5Go0ZalcQku8iyctiIKtNqW8EB5F79fgLObASrmcBBFZy02m2NO1vDiIednXg5x8o+p1sdZrvpor2GGRAxJ1g7iXYnCbWSPrKhzrhhcQdITnHCEPqrd/Dan4P8Bs2KqzCgGh5icLjGa3SovlJE8kR9s8UxXU6CnWdwMPNWdmdUDTNuRWl4S9LTmsNXyJ+Iwb34l5rkVMZP/bL+fh
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	LlYZuGBFzWn+vb+E3HDupUHAlESQljTXEuw9w3dDqVgGsfDqvgojylv7QtBrg2WEHUw/JMN5qfIZNpQRuoY2qI17hu1w4mXFCEIwKODbSDgWHEgv2sSbxJ1J5Gpu7UnhzU33h40RrTVstacwCgm6M1ptsn6nJZk2uButya6qehdPw40+eHszPgdu4SNibdkNnUBkcEntW1dcDScmt7DF2gkjQ9AczZzbeKM+QQvHd9fjp5vxPP5wKxfX999xhnC6P5S/pm2tsmBKF2BY9jLlRKKXCgrMhUnCnwTYWDzpeC3YxIr7rDuId1S1xSaf9YADX2CVBqbDX9KcONRX1AcXjc1rlHtppEUpas+OYNvUuCGHvpNdb5y0nB2if5RzVA2dcLIrkYY/HukkcBbRcTfJZ+ta7vSqAtMxfoN8KT8Fk3csCPSC3nv4OdDsccjUO4sAwTxubIi/8fZ90Qnn7KiD1qwxm7rvdKiEeIEyK0qg5hhNGpdq88tRn46oMc+6kBTr9E5rIxJzr7xMxyomgzNI+2P91rneg5r8N4VLswzyjfpKGU/hwEeeMu5BAfTv3Ux+eNYZ7AHLsQkioHoILXBNaPyIdacyGIxX2N7jsuKTZ7+D93j9G9xP0+wd8bHMbD/RSe2UTocoJa+LTxZ2EOYjhHowB26EKl6YFf3N0JArUWOJvZhelLFUBW3CCrYmIRbd9Ll3cFb4p/7zUbHkoodEAw==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a1VvRnlnOHI2OTVPWW5xa3ZselFUUVNzVDJNNWhrRmJqcldaOXVpYjI2emI0?=
+ =?utf-8?B?OW5oNXR0amxRdG00SWZXeldRZEl0V2gya3F2Q2JaWk4vcGFSODdMMzRiVWJ4?=
+ =?utf-8?B?ZFZVYWF1LzJEMHhzYXUvNGptWERPK29adExxVDdlNmFUZlV5WTkwVS9Rd2lM?=
+ =?utf-8?B?ZWJDV1dncnI0TlNJNTd3NmsyaFZmRlRsVlVMekJlTytweURoM0pZQ1JBalEz?=
+ =?utf-8?B?bG01NVRDNnZYUkNudXFMbHlsS2NCVllyNnpDV2piUG9Jc0dtdDJqTnl3NmZz?=
+ =?utf-8?B?OWx5N1VBNVMxMXJwZ08rWWViSVd4eCtqWjJVRVpyV2dXZmE2SmdkbUd0SHhM?=
+ =?utf-8?B?cTRwS3M5a2Z0SjVsTVpGNm1Zc3JxTFN1c3VUOHVlWk1aVEoyV0pSSkRmdEdR?=
+ =?utf-8?B?aTVudExlNWZEUEZtOVNNM1daR3R5MjB4bjc2d2Q1OWszazVMZXZ5WXpnUnpF?=
+ =?utf-8?B?Z25KTy9LWGxoOFZaclVyNWZucENuMjR3TTg1Tmhyb0IrZzB1NDR5amxKL2R3?=
+ =?utf-8?B?L1RBZW9jYnpnbE13SXJNR1ZEb3lMQ0RUbVBMbHhENmRmK0IvZXZrYmx2VWJO?=
+ =?utf-8?B?K1c4dUFoQnN3YmlDZHNEWnN2eC9MNVpOSGdiZmZzbVlHT1pTWHNwYXNKMzJn?=
+ =?utf-8?B?Z2N0OUR2N0VYbFo2dmlnNVE5a2tzd20zc1dlaFNiaGhRUzBsZmRFSE5IQ1U0?=
+ =?utf-8?B?aEdaT3RUaDlSdDEzZWpCc3VreWl0Y1RUcmtuT2duZjBRc2RheElkZ0FRU1Yv?=
+ =?utf-8?B?ODNMaFFFL200VUJadVNVK1FYWkZRbGJnaENNS2x6a05XazhxSjdxQTVMdEhl?=
+ =?utf-8?B?Z1o2U1dTM1pHRkxaSUYvMVYvTUc2V0ZuaTdNeGxlZ1NWV0lGajJjTVJkZ0x6?=
+ =?utf-8?B?THNqcDB2NDBvbVZSVTZiNk5RTFVWMWhxdTV4RzdnZEJEeVNVOWVRWXg5QXE1?=
+ =?utf-8?B?aS9vUGEwMS9uUFd3VUJXWFZQaGxhVGRLaXIzM1dMQUFBVGtwUzltdndSeWla?=
+ =?utf-8?B?YTZuSkdYSUZOM2FCTWRJSzhoVUE3MGRoY21jcjd2UHhLWGFidVM5ZnEvZnJr?=
+ =?utf-8?B?Mjl2cXEycUJpbWFvZUtpY29ibmpBbjRiTVpBaXBCMk5rLzVuOENXVWZPVTdB?=
+ =?utf-8?B?dVR5elRaaEkvSGRHdlkxMUVvR0QycERBT3JGQUY4dEovRzFlNjBOaW5xNDZu?=
+ =?utf-8?B?S3lralpGUkFUVzRFRDdCdnhpUzBmUElCT1h5Y0cwZ2F4UlhkYzNaQkJQZEZS?=
+ =?utf-8?B?VlZVZ3ZlWGNhTXZvSHFiMlJWZ3oxVDNSZUsrQSs3NzZiZUdMY25GSHRJcmZB?=
+ =?utf-8?B?Wlp5TktySlZqYVJIUGhvT254eEszbGI0K3lFSlppZ0hHRmVHTnphdWpobmxC?=
+ =?utf-8?B?NE9lOThxL21pNW1TM3hwZ0FRaUdMQlR3dnlvQ2VwY2ZkY0lYWWFNcExsN1lJ?=
+ =?utf-8?B?cWk0eVhRU0s3bmxDODJETkZ3R2wzbVlrVkVCV2NGZjJmaGtLZlBoalQxeHlt?=
+ =?utf-8?B?VkVXNGw5UVdnLy9mdWxDbi9YczBYYVprTTRJTjBnT2JVRUZuUHI3ZFAwTzdJ?=
+ =?utf-8?B?eGRwdXU1RHZyby84dkhSQ0lzdTR1akVzSW9DT0FNUVpTakdSZUZkdUFkaVNF?=
+ =?utf-8?B?YXAyRitaSHZETVpNcm8xdXhqQlYvNFRldm85WG00WUhTK25pUmRUem9NSFZF?=
+ =?utf-8?Q?pNe0V/yFsPw8w3x57ScU?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9a6f9d4-5a5b-4a28-314c-08dc5ada8f2f
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2024 10:23:13.3259
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1078
 
-Hi, Geert,
+My feedback embedded.
 
-On 11.04.2024 18:30, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> CC pmdomain, watchdog
-> 
-> On Wed, Apr 10, 2024 at 2:27 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> Series adds support for power domains on rzg2l driver.
+On 2024/4/11 12:11, Stephen Boyd wrote:
+> Quoting Chen Wang (2024-03-28 23:21:40)
+>> From: Chen Wang <unicorn_wang@outlook.com>
 >>
->> RZ/G2L kind of devices support a functionality called MSTOP (module
->> stop/standby). According to hardware manual the module could be switch
->> to standby after its clocks are disabled. The reverse order of operation
->> should be done when enabling a module (get the module out of standby,
->> enable its clocks etc).
+>> Add a driver for the SOPHGO SG2042 clocks.
 >>
->> In [1] the MSTOP settings were implemented by adding code in driver
->> to attach the MSTOP state to the IP clocks. But it has been proposed
->> to implement it as power domain. The result is this series.
->>
->> Along with MSTOP functionality there is also module power down
->> functionality (which is currently available only on RZ/G3S). This has
->> been also implemented through power domains.
->>
->> The DT bindings were updated with power domain IDs (plain integers
->> that matches the DT with driver data structures). The current DT
->> bindings were updated with module IDs for the modules listed in tables
->> with name "Registers for Module Standby Mode" (see HW manual) exception
->> being RZ/G3S where, due to the power down functionality, the DDR,
->> TZCDDR, OTFDE_DDR were also added, to avoid system being blocked due
->> to the following lines of code from patch 6/9.
->>
->> +       /* Prepare for power down the BUSes in power down mode. */
->> +       if (info->pm_domain_pwrdn_mstop)
->> +               writel(CPG_PWRDN_MSTOP_ENABLE, priv->base + CPG_PWRDN_MSTOP);
->>
->> Domain IDs were added to all SoC specific bindings.
->>
->> Thank you,
->> Claudiu Beznea
->>
->> Changes in v3:
->> - collected tags
->> - dinamically detect if a SCIF is serial console and populate
->>   pd->suspend_check
->> - dropped patch 09/10 from v2
-> 
-> Thanks for the update!
-> 
-> I have provided my R-b for all patches, and the usual path for these
-> patches would be for me to queue patches 1-8 in renesas-clk for v6.10,
-> and to queue 9 in renesas-devel.
-> 
-> However:
->   1. I had missed before the pmdomain people weren't CCed before,
->      they still might have some comments,
+>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>> ---
+>>   drivers/clk/Kconfig                    |    1 +
+>>   drivers/clk/Makefile                   |    1 +
+>>   drivers/clk/sophgo/Kconfig             |    7 +
+>>   drivers/clk/sophgo/Makefile            |    2 +
+>>   drivers/clk/sophgo/clk-sophgo-sg2042.c | 1410 ++++++++++++++++++++++++
+>>   drivers/clk/sophgo/clk-sophgo-sg2042.h |  216 ++++
+> Inline the contents of this file into the driver C file.
+ok, now only one c source is needed.
+>> diff --git a/drivers/clk/sophgo/clk-sophgo-sg2042.c b/drivers/clk/sophgo/clk-sophgo-sg2042.c
+>> new file mode 100644
+>> index 000000000000..7b468e7299ae
+>> --- /dev/null
+>> +++ b/drivers/clk/sophgo/clk-sophgo-sg2042.c
+>> @@ -0,0 +1,1410 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Sophgo SG2042 Clock Generator Driver
+>> + *
+>> + * Copyright (C) 2024 Sophgo Technology Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/iopoll.h>
+>> +#include <linux/platform_device.h>
+> Need include for BIT macro, io.h for readl/writel, do_div() header,
+> ARRAY_SIZE, etc. please check.
 
-My bad here, I missed it too.
+ok, will check and add them, but I did not see warnings/errors when I 
+build with W=1
 
->   2. Patch 9 has a hard dependency on the rest of the series, so
->      it has to wait one more cycle,
+[...]
 
-I think 5/9 should also wait to avoid binding validation failures.
+>> +static inline int sg2042_pll_enable(struct sg2042_pll_clock *pll, bool en)
+>> +{
+>> +       unsigned int value = 0;
+> Don't need to initialize value? Also, type should be u32.
 
->   3. Adding the watchdog domain has a dependency on [1].
+Sure, no initializatation is required here, and u32 should be better, I 
+see some other places have the same problem, will fix them too.
 
-Adding the code for it in patch 7/9 w/o passing it as reference to watchdog
-node (as in patch 9/9) is harmless. The previous behavior will be in place.
+[...]
+>> +static unsigned long sg2042_pll_recalc_rate(unsigned int reg_value,
+>> +                                           unsigned long parent_rate)
+>> +{
+>> +       struct sg2042_pll_ctrl ctrl_table;
+>> +       u64 rate, numerator, denominator;
+>> +
+>> +       sg2042_pll_ctrl_decode(reg_value, &ctrl_table);
+>> +
+>> +       numerator = parent_rate * ctrl_table.fbdiv;
+>> +       denominator = ctrl_table.refdiv * ctrl_table.postdiv1 * ctrl_table.postdiv2;
+>> +       do_div(numerator, denominator);
+>> +       rate = numerator;
+>> +
+>> +       return rate;
+> return numerator
 
-At the moment the watchdog domain initialization code is not in patch 7/9
-and the patch 9/9 has reference to watchdog domain to pass the DT binding
-validation. The probe will fail though, as I wasn't sure what should be
-better to drop: device probe or reset functionality. I mentioned it in
-patch for suggestions.
+yes, my stupid, will fix it, thanks.
 
-> 
-> 2 and 2 may be resolved using an immutable branch.
+[...]
 
-2 and 3?
+>> +
+>> +       static int postdiv1_2[][3] = {
+> const
 
-Immutable branch should be good, AFAICT. If that would be the strategy I
-can send an update to also add the initialization data for watchdog domain
-in 7/9. Or I can send an update afterwards. Please let me know how would
-you prefer.
+Good catch, will fix.
 
-Thank you,
-Claudiu Beznea
+[...]
+>> +static unsigned long sg2042_clk_divider_recalc_rate(struct clk_hw *hw,
+>> +                                                   unsigned long parent_rate)
+>> +{
+>> +       struct sg2042_divider_clock *divider = to_sg2042_clk_divider(hw);
+>> +       unsigned int val;
+>> +       unsigned long ret_rate;
+>> +
+>> +       if (!(readl(divider->reg) & BIT(3))) {
+> What is bit 3? Please make a define.
 
-> Are my assumptions correct?
-> 
-> Thanks!
-> 
-> [1] "[PATCH RESEND v8 09/10] watchdog: rzg2l_wdt: Power on the PM
->     domain in rzg2l_wdt_restart()"
->     https://lore.kernel.org/all/20240410134044.2138310-10-claudiu.beznea.uj@bp.renesas.com
-> 
->> Changes in v2:
->> - addressed review comments
->> - dropped:
->>     - dt-bindings: clock: r9a09g011-cpg: Add always-on power domain IDs
->>     - clk: renesas: r9a07g043: Add initial support for power domains
->>     - clk: renesas: r9a07g044: Add initial support for power domains
->>     - clk: renesas: r9a09g011: Add initial support for power domains
->>     - clk: renesas: r9a09g011: Add initial support for power domains
->>     - arm64: dts: renesas: r9a07g043: Update #power-domain-cells = <1>
->>     - arm64: dts: renesas: r9a07g044: Update #power-domain-cells = <1>
->>     - arm64: dts: renesas: r9a07g054: Update #power-domain-cells = <1>
->>     - arm64: dts: renesas: r9a09g011: Update #power-domain-cells = <1>
->>   as suggested in the review process
->> - dropped "arm64: dts: renesas: rzg3s-smarc-som: Guard the ethernet IRQ
->>   GPIOs with proper flags" patch as it was integrated
->> - added suspend to RAM support
->> - collected tag
->>
->> [1] https://lore.kernel.org/all/20231120070024.4079344-4-claudiu.beznea.uj@bp.renesas.com/
->>
->>
->> Claudiu Beznea (9):
->>   dt-bindings: clock: r9a07g043-cpg: Add power domain IDs
->>   dt-bindings: clock: r9a07g044-cpg: Add power domain IDs
->>   dt-bindings: clock: r9a07g054-cpg: Add power domain IDs
->>   dt-bindings: clock: r9a08g045-cpg: Add power domain IDs
->>   dt-bindings: clock: renesas,rzg2l-cpg: Update #power-domain-cells =
->>     <1> for RZ/G3S
->>   clk: renesas: rzg2l: Extend power domain support
->>   clk: renesas: r9a08g045: Add support for power domains
->>   clk: renesas: rzg2l-cpg: Add suspend/resume support for power domains
->>   arm64: dts: renesas: r9a08g045: Update #power-domain-cells = <1>
->>
->>  .../bindings/clock/renesas,rzg2l-cpg.yaml     |  18 +-
->>  arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  20 +-
->>  drivers/clk/renesas/r9a08g045-cpg.c           |  61 ++++
->>  drivers/clk/renesas/rzg2l-cpg.c               | 269 +++++++++++++++++-
->>  drivers/clk/renesas/rzg2l-cpg.h               |  77 +++++
->>  include/dt-bindings/clock/r9a07g043-cpg.h     |  52 ++++
->>  include/dt-bindings/clock/r9a07g044-cpg.h     |  58 ++++
->>  include/dt-bindings/clock/r9a07g054-cpg.h     |  58 ++++
->>  include/dt-bindings/clock/r9a08g045-cpg.h     |  70 +++++
->>  9 files changed, 659 insertions(+), 24 deletions(-)
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+ok, will fix it and I see some other places have the similar problem, 
+will fix also.
+
+[...]
+
+>> +       }
+>> +       val |= value << divider->shift;
+>> +       val |= 1 << 3;
+> Make a define for bit 3 and bit 0 please.
+
+Same as the issue upon, will fix it. thanks.
+
+[...]
+
+>> +
+>> +static const char *const clk_mux_ddr01_p[] = {
+>> +                       "clk_div_ddr01_0", "clk_div_ddr01_1"};
+>> +static const char *const clk_mux_ddr23_p[] = {
+>> +                       "clk_div_ddr23_0", "clk_div_ddr23_1"};
+>> +static const char *const clk_mux_rp_cpu_normal_p[] = {
+>> +                       "clk_div_rp_cpu_normal_0", "clk_div_rp_cpu_normal_1"};
+>> +static const char *const clk_mux_axi_ddr_p[] = {
+>> +                       "clk_div_axi_ddr_0", "clk_div_axi_ddr_1"};
+>> +
+>> +static struct sg2042_mux_clock sg2042_mux_clks[] = {
+>> +       SG2042_MUX(MUX_CLK_DDR01, "clk_mux_ddr01", clk_mux_ddr01_p,
+> Please use struct clk_parent_data or struct clk_hw directly instead of
+> string names.
+
+Learned and will use clk_parent_data, thanks.
+
+[......]
+
+>> +               hw = &pll->hw;
+>> +               ret = clk_hw_register(NULL, hw);
+> Use devm_clk_hw_register() and pass a device.
+
+yes, will use devm_xxx.
+
+[......]
+>> +
+>> +               hw = clk_hw_register_mux_table(NULL,
+> Pass a device and use devm.
+
+Yes, will use devm_xxx.
+
+[......]
+
+>> +
+>> +       clk_data->iobase = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
+> Why can't we use devm_platform_ioremap_resource()?
+
+yes, will change todevm_platform_ioremap_resource
+
+[......]
+
+>> +
+>> +       num_clks = ARRAY_SIZE(sg2042_pll_clks);
+>> +       if (num_clks == 0) {
+>> +               ret = -EINVAL;
+>> +               goto error_out;
+>> +       }
+> This is dead code, please remove.
+
+Thanks, you are right, I will remove it together with some other dead 
+code similiar.
+
+>> +
+>> +/*
+>> + * Divider clock
+>> + * @hw:                        clk_hw for initialization
+>> + * @id:                        used to map clk_onecell_data
+>> + * @reg:               used for readl/writel.
+>> + *                     **NOTE**: DIV registers are ALL in CLOCK!
+>> + * @lock:              spinlock to protect register access, modification of
+>> + *                     frequency can only be served one at the time
+>> + * @offset_ctrl:       offset of divider control registers
+>> + * @shift:             shift of "Clock Divider Factor" in divider control register
+>> + * @width:             width of "Clock Divider Factor" in divider control register
+>> + * @div_flags:         private flags for this clock, not for framework-specific
+>> + * @initval:           In the divider control register, we can configure whether
+>> + *                     to use the value of "Clock Divider Factor" or just use
+>> + *                     the initial value pre-configured by IC. BIT[3] controls
+>> + *                     this and by default (value is 0), means initial value
+>> + *                     is used.
+>> + *                     **NOTE** that we cannot read the initial value (default
+>> + *                     value when poweron) and default value of "Clock Divider
+>> + *                     Factor" is zero, which I think is a hardware design flaw
+>> + *                     and should be sync-ed with the initial value. So in
+>> + *                     software we have to add a configuration item (initval)
+>> + *                     to manually configure this value and use it when BIT[3]
+>> + *                     is zero.
+> Do you use the init clk_op for this?
+
+I think this does not apply to init ops, because I want to configure 
+some parameters here, rather than communicate with the physical clocks 
+and do any special initialization work. As I explained in the comments, 
+due to hardware design issues, when the clock use the IC default 
+initval, we cannot read the current initval from the register, so we can 
+only use the initval we configure in code as current factor value.
+
+[......]
+
+>> +
+>> +/*
+>> + * Gate clock
+>> + * @hw:                        clk_hw for initialization
+>> + * @id:                        used to map clk_onecell_data
+>> + * @offset_enable:     offset of gate enable registers
+>> + * @bit_idx:           which bit in the register controls gating of this clock
+>> + */
+>> +struct sg2042_gate_clock {
+>> +       struct clk_hw hw;
+>> +
+>> +       unsigned int id;
+>> +
+>> +       unsigned long offset_enable;
+> Usually we use a u32 or a shorter size so that the member width is
+> unchanged on different CPU architecture.
+
+OK, I find some else similar problem and will fix them altogether.
+
+[......]
+
+>> + * Mux clock
+> Please use kernel doc. See https://docs.kernel.org/doc-guide/kernel-doc.html
+
+Sure，I will learn and try this.
+
+>> + * @hw:                        clk_hw for initialization
+>> + * @id:                        used to map clk_onecell_data
+>> + * @offset_select:     offset of mux selection registers
+>> + *                     **NOTE**: MUX registers are ALL in CLOCK!
+>> + * @shift:             shift of "Clock Select" in mux selection register
+> Is "Clock select" actually @offset_select?
+
+No, the "offset_select" is the offset of register, while "Clock Select" 
+is the bit shift for each mux. For SG2042, every mux has two parents and 
+so just one bit is enough for it to select the parent, and one register 
+contains multiple bits, one for each mux.
+
+[......]
+
