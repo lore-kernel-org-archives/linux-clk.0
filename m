@@ -1,198 +1,180 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC1A3EA83
-	for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 13:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1DD55C3E;
+	Fri, 12 Apr 2024 14:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712927014; cv=none; b=rgwNtwDTh54ELjcCJGCjhYGBDCapUOu/FdoImjSybWwi9zbHFPS3q6DnbAgcfgGujgiTGfctiYHUG9l+e1kmCYPcIHZqCapzux7SuOGAsFCpBctG/E7RJI460TAD72Bn31CzCRGnJDrw9c0Ta7seBW0Io0595ycFDEYoUmTAfmM=
+	t=1712933364; cv=none; b=APfWQNAArcxTHTDfvsFNCSRQePcxVPoF7Gt5TloxkJ1xtL9LzaK2oKvi5//pdZgc2hR9XhNk+lxRwjVAHpNanOB4LpeaEbheVtMxr/igIg9AZB6oS08cdHLcLOyhFZJdwKYgTuTYP8t3pv1F5Ge0+Dx+Al/SXMe5kti7sriWGtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712927014; c=relaxed/simple;
-	bh=fLML18J7yDvY0kAxAiabw/PSTupFBpzee1x9+m9hqUo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ak9B358OWbKCDmWlkTnwBUY6Ks82ysEbDCXDywtEx57QjV0H3R0cipxTdL+XOnF582fL11kd8lB/iEXvvd7S6visZ+zGxaTzDYOHstTVIjkNt8aoMFpP43zIxh24eCuV1/+7CiypZDuddEohaNJLmSDiNOtPdB+ncUPcEwPzXjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PIOoV7FF; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712933364; c=relaxed/simple;
+	bh=VfyCjp9SYi22ZtLoSGO8b6l41+8emN2vMNAINPYpelM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qKjIDB6UkYsxms5REsAZSKpZKNy5gXLhOmjdbOxAdu9ZZZudtTzSpGFosZqGmlsLFcTF4e/ZSkHSzW5yT90BMHv6XNjXGLUwxJySSj1w67TcP9/uG/l6EG4jpOxBK9EkfqwGZjx7kyJULTIy6uaR723kN4eH49cwitRmjy7PmHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lV9Mid44; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PIOoV7FF"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2d82713f473so13570841fa.3
-        for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 06:03:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712927007; x=1713531807; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nm8LSvH+A0aysY1LVMvbC5kt2UeJVTw7St9EkLFip3k=;
-        b=PIOoV7FFVOm8A4CWOuxzb3QNZR8cJOuyjSqNu51RhhMd8U4G+uaOWmImwfaGdiBOio
-         w+2QZCyenB6qUYgYtmsLvomJKH1T2N+Tq4RGLD01nDx7K8YionwRnua1B6FDeM/Di9Zb
-         rqIYv9tXLHoVqLnOL5Cxn5mwDNSAlvpJTzm2aEPICKNUcR/mWITBjzWsI2CUwD5NzRwt
-         JOJj520HZUN4IomzljoSKpFfhZeEt0CNzH2K0SlUMJKH3QV2lkTBylPRyXBsLA9Hgp4I
-         w7C9sC4tB4WVQKJg2I2qLZa2GyyDuHBtCYyLMj7wqAZzYzGpUhVei+9rzfDqSspUmzzT
-         j0mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712927007; x=1713531807;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Nm8LSvH+A0aysY1LVMvbC5kt2UeJVTw7St9EkLFip3k=;
-        b=M4o5TY+4DAVjwPEHkfZNuUzhBKPCX6NFCaFOkbujnM/6V9Dh12xadahG0HY94x1loq
-         PQb+0Aq9I00PesrOPRND4BmMtPJ0XMetMBlFz7BkUoPRK8ChkrqQ7GnYkoax9jE+SGq+
-         yIHjbdOZQpFNnboKc9RvKTkvlr+D/ngi4fh/n8nrS48LSgXoD00z4M3fXi1t7aN8ME6R
-         Ekuox7t2/gcD8mBI3Ciz7xFmpAPPY+PaOvnhbDXZrHDg1jNgUqhAxLIpMmYr9fzNVisa
-         a4fBiCCpfpgyz6Wu65+2KsamUfvpkNJZuDJt/8CeL3Ngf6P9imrcgynMPQ1I6hQk1OwV
-         o+qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyaBs875N6HqmGMDbsYmR3jDGuxkGsC6t/Rt6ePkPakeWUAOHlddyTDI6cHSp7B3rgUcRGq1MdaKSBdEx9uIQ7WyNJPamqmWke
-X-Gm-Message-State: AOJu0YwBY5kkgVdSHjVjrsvIDGBDJsBwN3XA07sV6uBY0IxqcwYtvVof
-	fm564rcV+hW/tLlKdV18QK3Knxputkvg6X7t7griy4XsxmA/Ejjc5/qdEppUBL0=
-X-Google-Smtp-Source: AGHT+IHK4CQtsJnkc980vV5S8swNBkt4lBLxARVMCpXsWDOLaK3XIHiJ4ubaGIkNoNRiom/1KZvtjQ==
-X-Received: by 2002:a2e:a545:0:b0:2d8:58b6:c10d with SMTP id e5-20020a2ea545000000b002d858b6c10dmr2214877ljn.18.1712927006961;
-        Fri, 12 Apr 2024 06:03:26 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:986c:54c:12ce:a121? ([2a01:e0a:982:cbb0:986c:54c:12ce:a121])
-        by smtp.gmail.com with ESMTPSA id n9-20020a05651c000900b002d2697570fcsm502800lja.93.2024.04.12.06.03.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Apr 2024 06:03:26 -0700 (PDT)
-Message-ID: <00b0e513-bb8a-4db7-aa8e-57632add4752@linaro.org>
-Date: Fri, 12 Apr 2024 15:03:22 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lV9Mid44"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 43C73TGZ014138;
+	Fri, 12 Apr 2024 14:49:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=YuOigx7oeB4RyJSzO7hm2LaTFu+Zor8U1lcP+8PaPBs=; b=lV
+	9Mid44BEPc8Fyjs+ze2kmQ4qAklRMnrGBpf3qJfqIvngBY0BT3tsSWR1m/2ZXYuG
+	dZPdB+go0WojcsJJ7tdcP2Lr+LTFW16jzg9aIkjPq/aSdaWOaHkWojq6+E9ImObg
+	1QZG7YoxiFFDexVwhuDYbUliGEIeLDuTfqRxigLv+LbBA9EweBIqbzf9CK4MF0w5
+	2KUGpZcXjGGdJ2f3VBMKyGihm7ZZ+bkuNwCt2IzhdSDIOUshV1QQuJwzxKdFIScg
+	NB8wvcRTNWpkyHLai8ubsmgKlvCgtELgWx2gMlS+K93OR2CuFZN870KLqPj9029f
+	pQl3P5A2Bh6ti6EeMQSw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xf06pgvp0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Apr 2024 14:49:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43CEnFhB000390
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Apr 2024 14:49:15 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 12 Apr
+ 2024 07:49:14 -0700
+Message-ID: <2c82d551-91f6-8165-dc75-d6e81b9b8504@quicinc.com>
+Date: Fri, 12 Apr 2024 08:49:13 -0600
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v12 4/7] drm/meson: gate px_clk when setting rate
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Jagan Teki <jagan@amarulasolutions.com>, Nicolas Belin
- <nbelin@baylibre.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- dri-devel@lists.freedesktop.org
-References: <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-0-99ecdfdc87fc@linaro.org>
- <20240403-amlogic-v6-4-upstream-dsi-ccf-vim3-v12-4-99ecdfdc87fc@linaro.org>
- <CAFBinCChEc+GH+tdmByWDM=Gs_BUpDh=6S=ch3QbGUt501_Ejw@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAFBinCChEc+GH+tdmByWDM=Gs_BUpDh=6S=ch3QbGUt501_Ejw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH v2] clk: qcom: mmcc-msm8998: fix venus clock issue
+Content-Language: en-US
+To: Marc Gonzalez <mgonzalez@freebox.fr>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Michael
+ Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: MSM <linux-arm-msm@vger.kernel.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bryan O Donoghue <bryan.odonoghue@linaro.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Pierre-Hugues Husson <phhusson@freebox.fr>,
+        Arnaud Vrac <avrac@freebox.fr>
+References: <c325691e-1cbe-4589-87fc-b67a41e93294@freebox.fr>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <c325691e-1cbe-4589-87fc-b67a41e93294@freebox.fr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fPGY-k3eUc0mn3KakD1CAetIdzifN4k0
+X-Proofpoint-GUID: fPGY-k3eUc0mn3KakD1CAetIdzifN4k0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-12_11,2024-04-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ bulkscore=0 phishscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ malwarescore=0 clxscore=1011 spamscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2404010003
+ definitions=main-2404120107
 
-On 10/04/2024 21:34, Martin Blumenstingl wrote:
-> Hi Neil,
+On 4/10/2024 5:13 AM, Marc Gonzalez wrote:
+> Video decoder (venus) was broken on msm8998.
 > 
-> On Wed, Apr 3, 2024 at 9:46 AM Neil Armstrong <neil.armstrong@linaro.org> wrote:
->>
->> Disable the px_clk when setting the rate to recover a fully
->> configured and correctly reset VCLK clock tree after the rate
->> is set.
->>
->> Fixes: 77d9e1e6b846 ("drm/meson: add support for MIPI-DSI transceiver")
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   drivers/gpu/drm/meson/meson_dw_mipi_dsi.c | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/meson/meson_dw_mipi_dsi.c b/drivers/gpu/drm/meson/meson_dw_mipi_dsi.c
->> index a6bc1bdb3d0d..a10cff3ca1fe 100644
->> --- a/drivers/gpu/drm/meson/meson_dw_mipi_dsi.c
->> +++ b/drivers/gpu/drm/meson/meson_dw_mipi_dsi.c
->> @@ -95,6 +95,7 @@ static int dw_mipi_dsi_phy_init(void *priv_data)
->>                  return ret;
->>          }
->>
->> +       clk_disable_unprepare(mipi_dsi->px_clk);
-> nit-pick: clk_disable(mipi_dsi->px_clk); should be enough here as my
-> understanding is that we only need to {un,}prepare a clock once.
+> PH found crude work-around:
+> Drop venus_sys_set_power_control() call.
 > 
->>          ret = clk_set_rate(mipi_dsi->px_clk, mipi_dsi->mode->clock * 1000);
->>
->>          if (ret) {
->> @@ -103,6 +104,12 @@ static int dw_mipi_dsi_phy_init(void *priv_data)
->>                  return ret;
->>          }
->>
->> +       ret = clk_prepare_enable(mipi_dsi->px_clk);
->> +       if (ret) {
->> +               dev_err(mipi_dsi->dev, "Failed to enable DSI Pixel clock (ret %d)\n", ret);
->> +               return ret;
-> If we ever hit this error case then there will be a lot of additional
-> errors in the kernel log:
-> - initially the clock is prepared and enabled in
-> meson_dw_mipi_dsi_probe() by calling devm_clk_get_enabled()
-> - we then disable the clock above (generally disabling a clock is
-> expected to always succeed)
-> - if the clock can NOT be re-enabled here we just log the error
-> - in case a user tries to rmmod the driver (to modprobe it again) to
-> try and recover from an error the automatic disabling of the pix_clk
-> (based on devm_clk_get_enabled() where it was enabled initially) there
-> will be a splat because the clock is already disabled (and enabled
-> count is zero, so it cannot be disabled any further)
+> Bryan suggested proper fix:
+> Set required register offsets in venus GDSC structs.
+> Set HW_CTRL flag.
 > 
-> For the 32-bit SoC video clocks I keep track of them being enabled or
-> disabled, see [0], [1] and [2].
-> In my case this is important because we can run into cases where the
-> PLL doesn't lock (I am not sure how likely this is for your case).
+> GDSC = Globally Distributed Switch Controller
 > 
-> It *seems* like we need to do something similar as
-> dw_mipi_dsi_phy_init() can be called when changing the display
-> resolution (or whenever drm_bridge_funcs.atomic_pre_enable) is called.
-> To illustrate what I have in mind I attached a diff (it's based on
-> this patch) - it's compile tested only as I have no DSI hardware.
-> In case dw_mipi_dsi_phy_init() is called only once per device
-> lifecycle things may get easier.
+> Use same code as mmcc-msm8996 with:
+> s/venus_gdsc/video_top_gdsc/
+> s/venus_core0_gdsc/video_subcore0_gdsc/
+> s/venus_core1_gdsc/video_subcore1_gdsc/
+> 
+> https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8996.h
+> https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8998.h
+> 
+> 0x1024 = MMSS_VIDEO GDSCR (undocumented)
+> 0x1028 = MMSS_VIDEO_CORE_CBCR
+> 0x1030 = MMSS_VIDEO_AHB_CBCR
+> 0x1034 = MMSS_VIDEO_AXI_CBCR
+> 0x1038 = MMSS_VIDEO_MAXI_CBCR
+> 0x1040 = MMSS_VIDEO_SUBCORE0 GDSCR (undocumented)
+> 0x1044 = MMSS_VIDEO_SUBCORE1 GDSCR (undocumented)
+> 0x1048 = MMSS_VIDEO_SUBCORE0_CBCR
+> 0x104c = MMSS_VIDEO_SUBCORE1_CBCR
 
-Indeed your scheme looks good, I'll try it since indeed we only need
-to prepare it once in the lifetime of the driver.
+Reviewed the documentation, this is all correct.
 
 > 
-> PS: I'm so happy that we don't need any clock notifiers for this!
-> So: good work with the clock driver bits.
+> Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
+> ---
+>   drivers/clk/qcom/mmcc-msm8998.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/mmcc-msm8998.c b/drivers/clk/qcom/mmcc-msm8998.c
+> index 1180e48c687ac..275fb3b71ede4 100644
+> --- a/drivers/clk/qcom/mmcc-msm8998.c
+> +++ b/drivers/clk/qcom/mmcc-msm8998.c
+> @@ -2535,6 +2535,8 @@ static struct clk_branch vmem_ahb_clk = {
+>   
+>   static struct gdsc video_top_gdsc = {
+>   	.gdscr = 0x1024,
+> +	.cxcs = (unsigned int []){ 0x1028, 0x1034, 0x1038 },
 
-Thx !
+Checked that these (and the ones below) have the proper bits in the 
+documentation to support this.  Sadly, the documentation does not 
+mention using them, so I can't really tell if this is required or not.
 
-> 
-> 
-> Let me know what you think,
-> Martin
-> 
-> 
-> [0] https://github.com/xdarklight/linux/blob/meson-mx-integration-6.9-20240323/drivers/gpu/drm/meson/meson_vclk.c#L1177-L1179
-> [1] https://github.com/xdarklight/linux/blob/meson-mx-integration-6.9-20240323/drivers/gpu/drm/meson/meson_vclk.c#L1077
-> [2] https://github.com/xdarklight/linux/blob/meson-mx-integration-6.9-20240323/drivers/gpu/drm/meson/meson_vclk.c#L1053
+> +	.cxc_count = 3,
+>   	.pd = {
+>   		.name = "video_top",
+>   	},
+> @@ -2543,20 +2545,26 @@ static struct gdsc video_top_gdsc = {
+>   
+>   static struct gdsc video_subcore0_gdsc = {
+>   	.gdscr = 0x1040,
+> +	.cxcs = (unsigned int []){ 0x1048 },
+> +	.cxc_count = 1,
+>   	.pd = {
+>   		.name = "video_subcore0",
+>   	},
+>   	.parent = &video_top_gdsc.pd,
+>   	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = HW_CTRL,
+>   };
+>   
+>   static struct gdsc video_subcore1_gdsc = {
+>   	.gdscr = 0x1044,
+> +	.cxcs = (unsigned int []){ 0x104c },
+> +	.cxc_count = 1,
+>   	.pd = {
+>   		.name = "video_subcore1",
+>   	},
+>   	.parent = &video_top_gdsc.pd,
+>   	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = HW_CTRL,
+>   };
+>   
+>   static struct gdsc mdss_gdsc = {
 
+Overall, seems ok to me, but I did see Bjorn asking for some commit text 
+edits which I agree with.
