@@ -1,222 +1,150 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72054D58E;
-	Fri, 12 Apr 2024 09:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09065102F
+	for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 09:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712914390; cv=none; b=M2kdLoCnaPzHJvk4XankF00w/IGOpXX8MC/52yL2Nq9ASvbBCZCZl4UIH4xlVBtjJQXMmExCmt0rhGzNYKY9M6yculwdy2TiGXYTALgUs3W7TE9r3gjVH6CJoGBIGZ6mxzpOoPf8e2w/D3EkfI54RhxD4BbXRPRz/8RHvg1FlNg=
+	t=1712914587; cv=none; b=n/35ntVdJulvcgRasPxqjhUhUqLYnX1VtAPNUmBtD7Zp4tPIl4uUzg5F+LrOIy6rZJV0zWGmTK7yGof7P6fbHO6ds0lJePVmFjlOVS93L/YF+arxapN17AKVT/KfKXMLRv2w4CbB7y9Qz/ubkCg2y+byIDY+5mSD+puIqGeRaFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712914390; c=relaxed/simple;
-	bh=447vID+BjsGAEuT5pXDvttIGggtbTmZ35xwoUndklWQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=flTm/A7QD2t7MCFxNvhHRIJWMvTaVbMo4NnUNZRFfOhcAoAC2Bgu+8GwskaQrDHdAddr0IfB1mnLfo5OVD60wLt0Fzr/k6MkalUyJLpJDFbD+GrwF9Uhc1MG1aXanBBhMRRhGusSNFpY4XdvsENuXuj6WV3+e6mzMVbQPYZ6LjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bzQmWAx3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1712914587; c=relaxed/simple;
+	bh=ECG66815UF5U5UZ532M011H3Hgu9sb1nS+RlWPOzlVI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=ASD3f9BdGtvlrM8UQRYvG/9VHaSOR8ENnz7RVuYkwwjS1TxJFazXz7zem52vHMtxLA/Y58PBz/XdlKvq003mWlNbYRnTvum5vEagMZUDQrSZFBL5YVIDz2teC8tQWwlT3wC8/wC2L8j8Vr9m+oVtaVmelvDibxCHKpsucRDvLhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nwVeG1Lb; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bzQmWAx3"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 43C7l4aa025212;
-	Fri, 12 Apr 2024 09:32:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=sZ8qCrQrYqQLoJHciB//k
-	j+RjjDUdkNCd9ioYLTNi20=; b=bzQmWAx36Vt/7Vm3VjvnZuk/q91iMvKosXd67
-	yK9SnhpKF+GSYOe7HVV2ju6lv9mAZH1ClT5kF09hOtUHLZU9rmtSzEtt15SCxneu
-	NRPebQQwL2i9iFNvq8WdxGw0s/504QxDd/DGckKzQ94pzxJSQVr9wZ6cwqzKi1gh
-	Q5+GhorMEO4vaaHVKmeNM3W+h537tpv/DF7sl2Dq0Ob6LyG0zX/5JIgtoHHDsDdd
-	wUixavYnrRpVXquDWk5jvohC4wLAP9A1JFsXm6Yi8glWPqO/wopklL3I3smHkDcl
-	vkN3O0uu3J/48m8sx3gQsce8rge+LXWCvDhFzVJUj0EIUNVrQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xf0uw06mb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Apr 2024 09:32:57 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43C9WuS9025598
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Apr 2024 09:32:56 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 12 Apr 2024 02:32:51 -0700
-Date: Fri, 12 Apr 2024 15:02:47 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <djakov@kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v7 1/5] dt-bindings: interconnect: Add Qualcomm IPQ9574
- support
-Message-ID: <Zhj/v+AfzHlUCwRg@hu-varada-blr.qualcomm.com>
-References: <58c9b754-b9a7-444d-9545-9e6648010630@kernel.org>
- <Zg5q6mnWtK6hmPBT@hu-varada-blr.qualcomm.com>
- <ZhTxFVDH0xTSkw7r@hu-varada-blr.qualcomm.com>
- <1ec401be-11cb-416a-9eae-d72ea8acf06f@kernel.org>
- <ZhUghsa5Do5m7wrX@hu-varada-blr.qualcomm.com>
- <a0173a13-5f20-4e24-8417-afce5fdbda0e@kernel.org>
- <ZhZjuCkJrtPbwtS/@hu-varada-blr.qualcomm.com>
- <70d0afa7-4990-4180-8dfa-cdf267e4c7a2@kernel.org>
- <f1b0d280-6986-4055-a611-2caceb15867d@linaro.org>
- <82e5503c-0710-4b17-af79-8dece4794ec8@kernel.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nwVeG1Lb"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240412093622epoutp0315a521c52451c09cba73b76169b3fadf~FfrzQaUIF3072730727epoutp03S
+	for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 09:36:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240412093622epoutp0315a521c52451c09cba73b76169b3fadf~FfrzQaUIF3072730727epoutp03S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1712914582;
+	bh=18OZ4wgAdnYQqHPQ+QR1sMRA2rNC7ROaX7uQYViKJU4=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=nwVeG1Lbkm8L09VoWgzd/8konc0f8a/Z7G7DuXLrz35HRtr3SSMZ/ytNm+WKxIe4a
+	 J82srKZMG8QJN+KPuDWAh56/Q4145Ce5+MnPIuuxWtLnTwYkz9IJrGCjGMuVqEoNfq
+	 TjqdWY4mClLi3jeBRsbPGDG93rLiIoYCwzKiPF4Q=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240412093622epcas5p385256fbd7d1a71ac8596442246fd206d~Ffry0_EfB1567515675epcas5p38;
+	Fri, 12 Apr 2024 09:36:22 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C1.9B.09665.69009166; Fri, 12 Apr 2024 18:36:22 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240412090801epcas5p1beb5c87f7582cf4f53c245a642468763~FfTCzoULs2335923359epcas5p1O;
+	Fri, 12 Apr 2024 09:08:01 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240412090801epsmtrp1648b0aa57349dc8c8ecdfcd74ae84238~FfTCyqBJq0149901499epsmtrp1B;
+	Fri, 12 Apr 2024 09:08:01 +0000 (GMT)
+X-AuditID: b6c32a4b-829fa700000025c1-6a-661900963857
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	3B.70.08390.1F9F8166; Fri, 12 Apr 2024 18:08:01 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.109.224.44]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240412090759epsmtip230e5033ab5bdd5f1ba3ac3202ccf54c7~FfTBKbzXQ1740317403epsmtip2g;
+	Fri, 12 Apr 2024 09:07:59 +0000 (GMT)
+From: Onkarnarth <onkarnath.1@samsung.com>
+To: paulburton@kernel.org, mturquette@baylibre.com, sboyd@kernel.org
+Cc: linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, r.thapliyal@samsung.com,
+	maninder1.s@samsung.com, Onkarnath <onkarnath.1@samsung.com>
+Subject: [PATCH v2 1/1] clk: imgtec: use %pe for better readability of
+ errors while printing
+Date: Fri, 12 Apr 2024 14:37:49 +0530
+Message-Id: <20240412090749.15392-1-onkarnath.1@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <82e5503c-0710-4b17-af79-8dece4794ec8@kernel.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: EOkL0jt8Cn-SKNNZmytxTZuFP3PqlHd3
-X-Proofpoint-ORIG-GUID: EOkL0jt8Cn-SKNNZmytxTZuFP3PqlHd3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-12_06,2024-04-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- mlxlogscore=999 bulkscore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
- clxscore=1015 impostorscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404120068
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42LZdlhTXXcag2SawYF5XBYfe+6xWlzeNYfN
+	onPTVkaLw/PbWCwunnK1WNHzgdWi49tcFouN97It/l3byOLA6fH+Riu7x6ZVnWwefVtWMXp8
+	3iQXwBLFZZOSmpNZllqkb5fAlXFgwjKWgkvcFR9PNrI3MJ7l7GLk4JAQMJE4Pzuki5GLQ0hg
+	N6PEsY8djBDOJ0aJGzP6mCGcb4wSp/fvYoTpWL23touREyi+l1HiUGshRM0XRok5D88ygyTY
+	BLQkZtw5wARiiwi4SPSu2wU2lVlgE6PE0pk/wIqEBeIkVj+dzghiswioSnSs2MUGYvMK2Eic
+	O34arEZCQF5i5qXv7BBxQYmTM5+wgNjMQPHmrbPBrpMQuMYucebpFyaIBheJx3+vQdnCEq+O
+	b2GHsKUkXva3Qdn5Ei2zZzFDfFMjcfWpKkTYXuLJxYWsIGFmAU2J9bv0IcKyElNPrWOCWMsn
+	0fv7CdR0Xokd82BsVYlfU6ayQNjSEvd/z2WDsD0k3q2+zQgJrFiJl5fXs01glJ+F5JtZSL6Z
+	hbB5ASPzKkbJ1ILi3PTUYtMC47zUcr3ixNzi0rx0veT83E2M4NSi5b2D8dGDD3qHGJk4GA8x
+	SnAwK4nwSmuJpgnxpiRWVqUW5ccXleakFh9ilOZgURLnfd06N0VIID2xJDU7NbUgtQgmy8TB
+	KdXAdO7LXmYRXp/Tionitoem/jvZ89780b62g1w++ypVVn2Wrbly/YzGzSc/vfZ8syz7+qW+
+	cds2/zfi7e5i9/VqjbbbXUj+8/K3/PqY2KNzX8ufW/frY8Lts5xSWc/VJJofhHqJ+X96a1Bu
+	tN9GLbbvZbQsb3pLAevCy2k3dz+4Zzs5kDfk7xuLwwej9jbXO78rezWP+fTV1Jj4oCT/5fcC
+	/wQ13Djuf8dK2O7siUth0yVYm76qW8XqzF2ntX7Bks7Yx9w7/br+CD8KZl290f9CfZqYzo69
+	kVrFr3T0PUMEjXcuvyUpdar/y+1e7f0N18r1fjrtniix+8qP95O1Ps++eZb7/XvWaedOFE4/
+	dYAvJVSJpTgj0VCLuag4EQA6AiKTnAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrELMWRmVeSWpSXmKPExsWy7bCSvO7HnxJpBt+PCVl87LnHanF51xw2
+	i85NWxktDs9vY7G4eMrVYkXPB1aLjm9zWSw23su2+HdtI4sDp8f7G63sHptWdbJ59G1Zxejx
+	eZNcAEsUl01Kak5mWWqRvl0CV8aBCctYCi5xV3w82cjewHiWs4uRg0NCwERi9d7aLkYuDiGB
+	3YwSa6/tZ+li5ASKS0t8ujyHHcIWllj57zk7RNEnRomGzauZQBJsAloSM+4cALNFBDwkdh15
+	wwxSxCywg1HicvMVsG5hgRiJmTMvghWxCKhKdKzYxQZi8wrYSJw7fpoZYoO8xMxL39kh4oIS
+	J2c+AbuCGSjevHU28wRGvllIUrOQpBYwMq1ilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/d
+	xAgOVi2tHYx7Vn3QO8TIxMF4iFGCg1lJhFdaSzRNiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+3
+	170pQgLpiSWp2ampBalFMFkmDk6pBqboZ1teqics3SR4+FpRwiEnE1mfz7putksP/unYaHzP
+	s9x3Ss3z+Zm8a1bczStde7stcolUwrpipqXXWDf3/jhn2BbYlrJqc+p2Of6QNKvdzyrU7+7J
+	WLcsfVGaa9JTjmPW3d3cPCsUX+S0TmUomnq7o3xmWeWNzu293YI6tyy+2n+LYpQ0i41+nCbD
+	urH6XW34meM2X/+KBs/Q3/RDhmfhB/OM9J2+fifV5/X+zchoSuau55g+hz17kukexdvL9Fr4
+	DJbdMnna8KTCy+OmZUGfybu7B6Z0fD1hlypqd3bPwf7EHxLzLCPslKQubv95oVlw5tbOQxd/
+	1PvMTxeJWbjB87Ct5xHF+X7LOnZc2a/EUpyRaKjFXFScCAC1KF73xQIAAA==
+X-CMS-MailID: 20240412090801epcas5p1beb5c87f7582cf4f53c245a642468763
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20240412090801epcas5p1beb5c87f7582cf4f53c245a642468763
+References: <CGME20240412090801epcas5p1beb5c87f7582cf4f53c245a642468763@epcas5p1.samsung.com>
 
-On Wed, Apr 10, 2024 at 02:01:00PM +0200, Krzysztof Kozlowski wrote:
-> On 10/04/2024 13:48, Konrad Dybcio wrote:
-> >
-> >
-> > On 4/10/24 13:15, Krzysztof Kozlowski wrote:
-> >> On 10/04/2024 12:02, Varadarajan Narayanan wrote:
-> >>>> Okay, so what happens if icc-clk way of generating them changes a bit?
-> >>>> It can change, why not, driver implementation is not an ABI.
-> >>>>
-> >>>>>
-> >>>>> 	2. These auto-generated id-numbers have to be correctly
-> >>>>> 	   tied to the DT nodes. Else, the relevant clocks may
-> >>>>> 	   not get enabled.
-> >>>>
-> >>>> Sorry, I don't get, how auto generated ID number is tied to DT node.
-> >>>> What DT node?
-> >>>
-> >>> I meant the following usage for the 'interconnects' entry of the
-> >>> consumer peripheral's node.
-> >>>
-> >>> 	interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
-> >>> 			      ^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^
-> >>> 			<&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
-> >>> 			      ^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^
-> >>>
-> >>>>> Since ICC-CLK creates two ids per clock entry (one MASTER_xxx and
-> >>>>> one SLAVE_xxx), using those MASTER/SLAVE_xxx macros as indices in
-> >>>>> the below array would create holes.
-> >>>>>
-> >>>>> 	static int icc_ipq9574_hws[] = {
-> >>>>> 		[MASTER_ANOC_PCIE0] = GCC_ANOC_PCIE0_1LANE_M_CLK,
-> >>>>> 		[MASTER_SNOC_PCIE0] = GCC_SNOC_PCIE0_1LANE_S_CLK,
-> >>>>> 		[MASTER_ANOC_PCIE1] = GCC_ANOC_PCIE1_1LANE_M_CLK,
-> >>>>> 		[MASTER_SNOC_PCIE1] = GCC_SNOC_PCIE1_1LANE_S_CLK,
-> >>>>> 		. . .
-> >>>>> 	};
-> >>>>>
-> >>>>> Other Qualcomm drivers don't have this issue and they can
-> >>>>> directly use the MASTER/SLAVE_xxx macros.
-> >>>>
-> >>>> I understand, thanks, yet your last patch keeps adding fake IDs, means
-> >>>> IDs which are not part of ABI.
-> >>>>
-> >>>>>
-> >>>>> As the MASTER_xxx macros cannot be used, have to define a new set
-> >>>>> of macros that can be used for indices in the above array. This
-> >>>>> is the reason for the ICC_BINDING_NAME macros.
-> >>>>
-> >>>> Then maybe fix the driver, instead of adding something which is not an
-> >>>> ABI to bindings and completely skipping the actual ABI.
-> >>>
-> >>> Will remove the ICC_xxx defines from the header. And in the
-> >>> driver will change the declaration as follows. Will that be
-> >>> acceptable?
-> >>>
-> >>> 	static int icc_ipq9574_hws[] = {
-> >>> 		[MASTER_ANOC_PCIE0 / 2] = GCC_ANOC_PCIE0_1LANE_M_CLK,
-> >>
-> >> What is the binding in such case? What exactly do you bind between
-> >> driver and DTS?
-> >
-> > I think what Krzysztof is trying to say here is "the icc-clk API is tragic"
-> > and the best solution would be to make it such that the interconnect indices
-> > are set explicitly, instead of (master, slave), (master, slave) etc.
-> >
-> > Does that sound good, Krzysztof?
->
-> Yes, I think earlier I expressed that icc-clk might needs fixes.
+From: Onkarnath <onkarnath.1@samsung.com>
 
-Ok
+instead of printing errros as a number(%ld), it's better to print in string
+format for better readability of logs.
 
-> The indices you define in the binding must be used by DTS and by the driver.
+Signed-off-by: Onkarnath <onkarnath.1@samsung.com>
+---
+v1 -> v2 : Removed unnecessary SOB tag.
 
-There are 3 drivers in play here.
-	1. The icc-clk driver
-	2. The gcc (i.e. the interconnect driver)
-	3. The consumer peripheral's driver
+ drivers/clk/imgtec/clk-boston.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-By 'driver' I assume, you mean the icc-clk driver.
+diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+index b00cbd045af5..db96f8bea630 100644
+--- a/drivers/clk/imgtec/clk-boston.c
++++ b/drivers/clk/imgtec/clk-boston.c
+@@ -67,21 +67,21 @@ static void __init clk_boston_setup(struct device_node *np)
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+ 	if (IS_ERR(hw)) {
+-		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
++		pr_err("failed to register input clock: %pe\n", hw);
+ 		goto fail_input;
+ 	}
+ 	onecell->hws[BOSTON_CLK_INPUT] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
+ 	if (IS_ERR(hw)) {
+-		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
++		pr_err("failed to register sys clock: %pe\n", hw);
+ 		goto fail_sys;
+ 	}
+ 	onecell->hws[BOSTON_CLK_SYS] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
+ 	if (IS_ERR(hw)) {
+-		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
++		pr_err("failed to register cpu clock: %pe\n", hw);
+ 		goto fail_cpu;
+ 	}
+ 	onecell->hws[BOSTON_CLK_CPU] = hw;
+-- 
+2.25.1
 
-> Directly, otherwise it is error-prone and not really an ABI...
-
-To address this, will modify the icc-clk driver as follows.
-
-	==========================================
-	diff --git a/include/linux/interconnect-clk.h b/include/linux/interconnect-clk.h
-	index 5c611a8b0892..9bcee3e9c56c 100644
-	--- a/include/linux/interconnect-clk.h
-	+++ b/include/linux/interconnect-clk.h
-	@@ -11,6 +11,8 @@ struct device;
-	 struct icc_clk_data {
-		struct clk *clk;
-		const char *name;
-	+	unsigned int master_id;
-	+	unsigned int slave_id;
-	 };
-
-
-	diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-clk.c
-	index bce946592c98..f788db15cd76 100644
-	--- a/drivers/interconnect/icc-clk.c
-	+++ b/drivers/interconnect/icc-clk.c
-	@@ -108,7 +108,7 @@ struct icc_provider *icc_clk_register(struct device *dev,
-		for (i = 0, j = 0; i < num_clocks; i++) {
-			qp->clocks[i].clk = data[i].clk;
-
-	-		node = icc_node_create(first_id + j);
-	+		node = icc_node_create(first_id + data[i].master_id);
-			if (IS_ERR(node)) {
-				ret = PTR_ERR(node);
-				goto err;
-	@@ -118,10 +118,10 @@ struct icc_provider *icc_clk_register(struct device *dev,
-			node->data = &qp->clocks[i];
-			icc_node_add(node, provider);
-			/* link to the next node, slave */
-	-		icc_link_create(node, first_id + j + 1);
-	+		icc_link_create(node, first_id + data[i].slave_id);
-			onecell->nodes[j++] = node;
-
-	-		node = icc_node_create(first_id + j);
-	+		node = icc_node_create(first_id + data[i].slave_id);
-			if (IS_ERR(node)) {
-				ret = PTR_ERR(node);
-				goto err;
-	==========================================
-
-And update the inputs going from gcc-ipq9574.c accordingly
-to use the MASTER_xxx and SLAVE_xxx defines. Will this be ok?
-
-Konrad & Krzysztof kindly let me know.
-
-Thanks
-Varada
