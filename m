@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB12A2581;
-	Fri, 12 Apr 2024 02:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC22518E1C;
+	Fri, 12 Apr 2024 03:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712890632; cv=none; b=mm5QEvdAxlJq2Gq/vHSSYFsCaAlDdvlWoZoVUt316rVgEwQ1IIZvjfUUfwExHLvaD/nlbSFg5pGWNWaNg7Y2IOTrzeh3i3JNT/Mkc6KRqGL82IFTeaERRh+ay+AxMJjvzsMoXaGfV7SR7WZHtXt9mg9KqmEhnmrTfNv2TeZJn4c=
+	t=1712890836; cv=none; b=GPKEfXkhgV+3nPbV795gghOTrdma2dHhWvJ7SzsVdjeWJoDmB9foKQFun+vPjU5kQoxCOheV2kIsLVUPk+tHsMysjkHCrSL9+Hvg8gkT8glCLYzQWolRTrvGaXbXApR1+OfZqzyaDBFXIXj/lj+oQ+BrTjmMeg5NvsqbT2hqeIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712890632; c=relaxed/simple;
-	bh=p+4XkXpOxunuKnnWO83NDMUzum9+mHSSGqv0fFD9r7s=;
+	s=arc-20240116; t=1712890836; c=relaxed/simple;
+	bh=otq3wISb2ZRkd93ltkPOvNmjY7y7cS7tl665m79FoKY=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=L6JyFkn2NKnr/r1c1ydjG3XVmK4h0FWLV1miMn/3gXcXuBF0R2N3+scHv2ObOAu+HOlYug/HOV9iOrPvEiX4+RGMnjWrVD5F1Atnd3O+qPj2Y0JDmjt9Em8EqImeVTB7MlCutjNGDtT/WHEwETI6SCXibHkeAoj9kLQXp+xNGgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QBXPtoxV; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=n++bb+tuU/sshxKz3KsxszfI2Z5tIyDEXqxbDojyiYZpic8S9926V66aaQU50hLolC7DMIcqBY5YBKA+gah4beUyYaEStciYXAHfjOuS90ys+NnQLvJvLi2W61VVWusdwjMrARzqfu4H+sUPo4fr048oyqRDHTTP0TJRd+jsZ8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BNRDc/hD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBXPtoxV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD58C072AA;
-	Fri, 12 Apr 2024 02:57:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BNRDc/hD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10286C072AA;
+	Fri, 12 Apr 2024 03:00:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712890631;
-	bh=p+4XkXpOxunuKnnWO83NDMUzum9+mHSSGqv0fFD9r7s=;
+	s=k20201202; t=1712890836;
+	bh=otq3wISb2ZRkd93ltkPOvNmjY7y7cS7tl665m79FoKY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=QBXPtoxV+vVyS1Qy7tf9k5jCPndXuhDBFvVab65uRIOAwl3+UUsVjhrMNQUyMB0U9
-	 XWrzecCBpSJSY9I7tZfg98E82DlruZ0nEfe9Ebj6o4hw7cfP8Pe9Q+pT9QLqmUv2MF
-	 Ua41VD2K+WiMR8pTxP61JOap3vM/LcNhERXRRRY+DpxhhBBzpTP9Aeobv0aIDhzjkt
-	 LXu0X0iGFgWDydnmQJB9nuxUQoIkHlJp/C8J7tRJjPzd2atq3+WOyGRtIVQ9deYEYD
-	 OKm6mRknWQLxRiZIP/r2Xv7wFQJOp3b+7oypEKXtTwIzx+piu5r8KAcEpn9MWFdc+x
-	 TQEXkVRPsIM2A==
-Message-ID: <58b23157c088cb4774d579cc8700de85.sboyd@kernel.org>
+	b=BNRDc/hDZ3wcHawmkCwPuhGf+6T/StT1d6HS+sFlNc6VXru/JhG/ZTBMd/me86ZD1
+	 4QcW+CCC/rpeIe85+4Nz1hMZoCyLQep+T+p2hdHG8E+WSGyjMNC3Fo7295pyumzuIQ
+	 DzAcw6WPGtgnOPE264Jq5KlL0DC3ORdBaCVtFQPZudNUnrUha/UHLnm00UeCxqyerG
+	 LlPiUIdqOTr8na9IxeTUSbWaK9BBnPsOJhCbBqFZ0Ikq0UQpd7Q+ah17+Y0ZU8XbaP
+	 mhoKgCfUDB1V4NJFwOE5TleaUJ5Sm4kee4cr6UJB2zpJuiyWNsR4XfYVQ7pxi6usLP
+	 F5yRansdJMVmQ==
+Message-ID: <17e03db98ea960c58b1c012ee04bcbf6.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,30 +35,51 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <de4c56a8-488d-4cdb-9d6c-e9d6e63b22b9@skole.hr>
-References: <20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr> <20240402-pxa1908-lkml-v9-5-25a003e83c6f@skole.hr> <3838e4684f98e1ce3818bfb6983844bc.sboyd@kernel.org> <de4c56a8-488d-4cdb-9d6c-e9d6e63b22b9@skole.hr>
-Subject: Re: [PATCH v9 5/9] clk: mmp: Add Marvell PXA1908 clock driver
+In-Reply-To: <20240411-euphemism-ended-706f23d4a5ca@wendy>
+References: <20240110133128.286657-1-jeeheng.sia@starfivetech.com> <a83130157adf70f6f58f4d2e6b9d25db.sboyd@kernel.org> <20240411-euphemism-ended-706f23d4a5ca@wendy>
+Subject: Re: [RFC v3 00/16] Basic clock and reset support for StarFive JH8100 RISC-V SoC
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To: Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Duje =?utf-8?q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, Guilherme G. Piccoli <gpiccoli@igalia.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Kees Cook <keescook@chromium.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Lubomir Rintel <lkundrak@v3.sk>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, Tony Lindgren <tony@atomide.com>, Tony Luck <tony.luck@intel.com>, Will Deacon <will@kernel.org>
-Date: Thu, 11 Apr 2024 19:57:09 -0700
+Cc: Sia Jee Heng <jeeheng.sia@starfivetech.com>, aou@eecs.berkeley.edu, conor@kernel.org, emil.renner.berthing@canonical.com, hal.feng@starfivetech.com, kernel@esmil.dk, krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, p.zabel@pengutronix.de, palmer@dabbelt.com, paul.walmsley@sifive.com, robh+dt@kernel.org, xingyu.wu@starfivetech.com, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, leyfoon.tan@starfivetech.com
+To: Conor Dooley <conor.dooley@microchip.com>
+Date: Thu, 11 Apr 2024 20:00:33 -0700
 User-Agent: alot/0.10
 
-Quoting Duje Mihanovi=C4=87 (2024-04-11 03:15:34)
-> On 4/11/2024 10:00 AM, Stephen Boyd wrote:
+Quoting Conor Dooley (2024-04-11 03:29:51)
+> On Thu, Apr 11, 2024 at 12:40:09AM -0700, Stephen Boyd wrote:
+> > Quoting Sia Jee Heng (2024-01-10 05:31:12)
+> > > This patch series enabled basic clock & reset support for StarFive
+> > > JH8100 SoC.
+> > >=20
+> > > This patch series depends on the Initial device tree support for
+> > > StarFive JH8100 SoC patch series which can be found at [1].
+> > >=20
+> > > As it is recommended to refrain from merging fundamental patches like
+> > > Device Tree, Clock & Reset, and PINCTRL tested on FPGA/Emulator, into=
+ the
+> > > RISC-V Mainline, this patch series has been renamed to "RFC" patches.=
+ Yet,
+> > > thanks to the reviewers who have reviewed the patches at [2]. The cha=
+nges
+> > > are captured below.
 > >=20
-> > Is there a reason this file can't be a platform driver?
+> > I don't think that's what should be happening. Instead, clk patches
+> > should be sent to clk maintainers, reset patches to reset maintainers,
+> > pinctrl patches to pinctrl maintainers, etc. The DTS can be sent later
+> > when it's no longer an FPGA/Emulator? Right now I'm ignoring this series
+> > because it's tagged as an RFC.
 >=20
-> Not that I know of, I did it like this only because the other in-tree=20
-> MMP clk drivers do so. I guess the initialization should look like any=20
-> of the qcom GCC drivers then?
+> Since this comes back to something I said, what I didn't want to happen
+> was a bunch of pinctrl/clock/reset dt-binding headers that getting merged
+> (and therefore exported to other projects) and then have those change
+> later on when the chip was taped out.
 
-Yes.
+Ah ok.
 
+> I don't really care if the drivers
+> themselves get merged. If the JH8100 is being taped out soon (or already
+> has been internally) and there's unlikely to be any changes, there's not
+> really a reason to block the binding headers any more.
 >=20
-> While at it, do you think the other MMP clk drivers could use a conversio=
-n?
->=20
 
-Sure, go for it. I'm a little wary if the conversion cannot be tested
-though. It doesn't hurt that other drivers haven't been converted.
+The binding headers are sometimes required for the drivers, so the
+driver can't be merged then.
