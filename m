@@ -1,80 +1,109 @@
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F21A18B09;
-	Fri, 12 Apr 2024 18:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0DD1494A1
+	for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 20:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712946914; cv=none; b=beeCDv0Tum0hWc6+cjanTPHVNxBO24feOwOfMF4MLjkd495wuP8CpgpfZYouWfM29dzYhYGhFCGqnjKJ1H1P3b0NySaWHH+C9HZjX6uCX4/vTdfi5p3B/Y93JBuUfHEeMjOnj1k4bLQEWODPq2KsiOo5ogW0AMy5qQ0QVdA+QeU=
+	t=1712954983; cv=none; b=kNitw2CGRHzyJtjYYEeU/Yb72RmXUFzCldp0CXt3slQ/z3saZ7zzETKjzE9IFWqYo1Q1wxdwe1Y7Z9vqZATLCouwGLrZqvF3huN8HcqnND0W5M2UGC1/ids4RKWCzwDH0LHtymBJ6QvjkLdIKrRk8yGsdWhvTnief2DPOpRPLAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712946914; c=relaxed/simple;
-	bh=c7l1MXD6dpbxN4XtNjV/DW5Fsb48MJvPk6BEdWqTfuY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jXl2Ll/nmbMEOrSKqxzzBcYZ/d5yQzRwiGLitAfMdCP7PlSUciNMbBt5VWPXzpTFVB7Rj+wA3eg3FE/T7r+EOG8QAG0tgarTA0z+e2HiAXrtmc01lwstqmf1ggpa1sfS9bRpr+pR1MNBl0/I50QSzGPCq/ecKcWRofUe8ka8Kpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Rx0XvPtV; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Rx0XvPtV"
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 08D2087C75;
-	Fri, 12 Apr 2024 20:35:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1712946910;
-	bh=67Jf9ullWfZC2rEqSESZjk0MezYd/cTr0DLtM3VDZVk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Rx0XvPtVOjA5G4T2GXhO7yzWc6etrue/bKb+h7gjJfNMsBF5TnfCZg+rmcgdw2lQf
-	 o+Zg2YVdrZqP8bdrnsnEAPA7enh6zdL8oWoevGH6HFzAsAw6Xo9CQX/bKyJmiMDC8l
-	 LTqFp8XAG4TYE/GKGbzSwmzHgNg+csgLN4KwyAmBj7g2qfHpCljZpU4pjvLdBUGmoO
-	 Z23HjT7UYMBKB7/4qx8UYgKwDkey5Npg2pi79YuvCRx3rb3jRFwAuFYXqbocwedLd8
-	 K7aLRUjzhH2iYmeFRo8fDFi0frgyn79SA6jaFAcE/Cp3y5RejjpvgY/nDBZXYmrW5b
-	 73Y8RQd1XBCGg==
-Message-ID: <d55fce26-a96e-4653-a463-a277e232ed48@denx.de>
-Date: Fri, 12 Apr 2024 20:35:09 +0200
+	s=arc-20240116; t=1712954983; c=relaxed/simple;
+	bh=qHPCMth1Dk6Js73rTbBzK82G3+seRbaXOvlWBerU8Jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AwRZv24IgYS6GE9tmMTUvOmbiEOiipefxlLwqsniWvOMCBZrKfH8RId5l1vVthagWMiAzVhmSpn8Svogu4q67VjPXPoZ2NzYmoqEroEjbr9C13XOX3m1ukQ5SbkOe1a399QvtHsxuWWV5zfbb9IRbdaC9ehH6v0IeJxd3PSosdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rvNq4-0002W0-2n; Fri, 12 Apr 2024 22:49:36 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rvNq3-00BwMt-C7; Fri, 12 Apr 2024 22:49:35 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rvNq3-000NRt-0w;
+	Fri, 12 Apr 2024 22:49:35 +0200
+Date: Fri, 12 Apr 2024 22:49:35 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Russell King <rmk+kernel@armlinux.org.uk>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] clk: Provide !COMMON_CLK dummy for
+ devm_clk_rate_exclusive_get()
+Message-ID: <xfaf22rf6gnrxpinkciybsyk4dx2bfqgozv6udwymegtcgd26i@jq5be7fm5lhi>
+References: <202403270305.ydvX9xq1-lkp@intel.com>
+ <20240327073310.520950-2-u.kleine-koenig@pengutronix.de>
+ <d95554f623f023a2f5499fa2f6f76567.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] clk: rs9: fix wrong default value for clock
- amplitude
-To: Stephen Boyd <sboyd@kernel.org>,
- Catalin Popescu <catalin.popescu@leica-geosystems.com>,
- mturquette@baylibre.com, Biju Das <biju.das.jz@bp.renesas.com>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- bsp-development.geo@leica-geosystems.com, m.felsch@pengutronix.de
-References: <20240306180435.1033052-1-catalin.popescu@leica-geosystems.com>
- <a5595ba92a3d65a222398824b09d7d37.sboyd@kernel.org>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <a5595ba92a3d65a222398824b09d7d37.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tcm26yzrf676zf3u"
+Content-Disposition: inline
+In-Reply-To: <d95554f623f023a2f5499fa2f6f76567.sboyd@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On 4/9/24 10:19 AM, Stephen Boyd wrote:
-> Quoting Catalin Popescu (2024-03-06 10:04:35)
->> According to 9FGV0241 & 9FGV0441 datasheets
 
-9FGV0841 too.
+--tcm26yzrf676zf3u
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->, the default value
->> for the clock amplitude is 0.8V, while the driver was assuming
->> 0.7V.
+Hello Stephen,
 
-Can you also document the SCC spread spectrum change in the commit message ?
+On Thu, Mar 28, 2024 at 03:35:57PM -0700, Stephen Boyd wrote:
+> Quoting Uwe Kleine-K=F6nig (2024-03-27 00:33:10)
+> > To be able to compile drivers using devm_clk_rate_exclusive_get() also
+> > on platforms without the common clk framework, add a dummy
+> > implementation that does the same as clk_rate_exclusive_get() in that
+> > case (i.e. nothing).
+> >=20
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202403270305.ydvX9xq1-lkp=
+@intel.com/
+> > Fixes: b0cde62e4c54 ("clk: Add a devm variant of clk_rate_exclusive_get=
+()")
+> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> > ---
+>=20
+> Applied to clk-fixes
 
->> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+I assume that means it will be sent to Linus before 6.9? That would be
+great because I want to make use of this function in some drivers and
+the build bots nag about my for-next branch that in some configurations
+this function is missing.
 
-This also needs
-Fixes: 892e0ddea1aa ("clk: rs9: Add Renesas 9-series PCIe clock 
-generator driver")
+Thanks
+Uwe
 
-Thanks ! Sorry for the delayed reply.
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--tcm26yzrf676zf3u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmYZnl4ACgkQj4D7WH0S
+/k4bhAf/dU3dIH1rQHO52ZY4eCb6/UQ6pdDM8CzZxB2oGa60PXugNfbK5LqTCNEB
+q5FVGKRHe+lbUG2Dk4belrX3ZNMXweqywtHu0bXbPZZjPjCvrYmCdRJKuHLSQgRV
+5gHxyFQshzOr49JHsWieLVj7le4bAHBbgF9r/a2gcWUsS4xOAaNNCzgPb8fR7nzX
+pcbXThX4rhn9kP65ZokC2sEJyobMFNCrTewaOXP6UNaSUt/M/qTnsgDhxMa7ywPi
+4deahcIXXS5ZKj2ICyz08cNryUnJVA+bhYNvzi7zP51TvNynLcwYfdkF+n5T5Gin
+aUgbiu3Sm38THO0Eiw5M+GgIUfYj0A==
+=/h7x
+-----END PGP SIGNATURE-----
+
+--tcm26yzrf676zf3u--
