@@ -1,109 +1,160 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2069.outbound.protection.outlook.com [40.92.42.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0DD1494A1
-	for <linux-clk@vger.kernel.org>; Fri, 12 Apr 2024 20:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712954983; cv=none; b=kNitw2CGRHzyJtjYYEeU/Yb72RmXUFzCldp0CXt3slQ/z3saZ7zzETKjzE9IFWqYo1Q1wxdwe1Y7Z9vqZATLCouwGLrZqvF3huN8HcqnND0W5M2UGC1/ids4RKWCzwDH0LHtymBJ6QvjkLdIKrRk8yGsdWhvTnief2DPOpRPLAQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712954983; c=relaxed/simple;
-	bh=qHPCMth1Dk6Js73rTbBzK82G3+seRbaXOvlWBerU8Jc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AwRZv24IgYS6GE9tmMTUvOmbiEOiipefxlLwqsniWvOMCBZrKfH8RId5l1vVthagWMiAzVhmSpn8Svogu4q67VjPXPoZ2NzYmoqEroEjbr9C13XOX3m1ukQ5SbkOe1a399QvtHsxuWWV5zfbb9IRbdaC9ehH6v0IeJxd3PSosdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rvNq4-0002W0-2n; Fri, 12 Apr 2024 22:49:36 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rvNq3-00BwMt-C7; Fri, 12 Apr 2024 22:49:35 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rvNq3-000NRt-0w;
-	Fri, 12 Apr 2024 22:49:35 +0200
-Date: Fri, 12 Apr 2024 22:49:35 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Russell King <rmk+kernel@armlinux.org.uk>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] clk: Provide !COMMON_CLK dummy for
- devm_clk_rate_exclusive_get()
-Message-ID: <xfaf22rf6gnrxpinkciybsyk4dx2bfqgozv6udwymegtcgd26i@jq5be7fm5lhi>
-References: <202403270305.ydvX9xq1-lkp@intel.com>
- <20240327073310.520950-2-u.kleine-koenig@pengutronix.de>
- <d95554f623f023a2f5499fa2f6f76567.sboyd@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD89A2F37;
+	Sat, 13 Apr 2024 00:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712969603; cv=fail; b=H8ccWSPzY+g9Ib+/J5YmWibPlYcUuksr7cTz8lcXBoBG1dQpbFk+nVtgyyQLOKOP6S74n9hOI5zLIJctWXZzgntLQvhx1tfMH5xXXXtnpcHiBCohemPP5pvBYIoK1YCEPgLcuYWv4btTKxx3Zhj9JxD8jc77Y6mT0kU8+LrBeXk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712969603; c=relaxed/simple;
+	bh=1KiTboskeQQnHKXL4/Rrf8iEz99jEOgN550S8XePDN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bNZeshO0TWAu4CuLnLOZ3I1xtr6YOg19LVUFZIAK3K6bt29OrT+fSOkD8rVAI7+N1vaZWOTRsS3n2BmMlp+j2GlKAW4U/N8Ko0xexlw/3ISIpRs3rdSlsKuVV1UJaO4AneleYIDEU+TCqqLCpwdGBFRYfhhSkZnEn3P4bc/ajSg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=GmaFj0Ov; arc=fail smtp.client-ip=40.92.42.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="GmaFj0Ov"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KCYYFkaxbx8Qi7lvWJ4X968FAj/s3j1PVLKRH3torST/A3GDBBj61Aa0FZSOwgpwyBDENNbnkSg8PhPyIpoDs0UxOkhOLjRhoSd3llNYAflXbaV1NXyTmdkAJ2TSHvrnr0FroCB4HFIl9NdwjYrlpSTpjlf56EMdNzqgrMHCL78C+NMFJGVJ9+6Hvynzm8lU1YMOQUiP/xcNUw3h1OSMUXSaWax5LMXEb/Th3Xgq+WCLkHuVXY2gVlXYv6RevcCs8Xkdtmv9VxIwFnBLwrXTV0Z83b5rB4MPgHGXzETGzXY8SqyqnHLFMRHyO/4A7Xnpq05qev+BSL2+8cmAOLIW9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=k+QIa4z+QixFOXxymWv++tDBcIByVapjSO8dHHx7Uek=;
+ b=Zk8W1pxfYBscX7+XCDsrDQD0MO56xNyWLDco/3u9Moog8nUH5cLJJJnH4rCiFf7qsNUZG6itJmmuv1FkicABg/hrV2EXD7R+hV39fPN0NUN8ep+xC/bidvSj18JjKPTZInO/VnwIB6JjCM+JEBDqLVTnvw/Soo7Y6d98CI9LyOkMV0p1nzzOE6x4wyU0PykLnyXBfOfaCNQwubPO9UjywZ0pxtM43CZ2E1oA3AMD1YZX7H3jetdiAScF+N0qtSWWrApAyJonUrSlnXw/fZSXjH5M3UwwvQBZVNRFg4PwbMyZrZKd0MaX2ca8nh5aIyuCac4c0boVpELLSpaFgrTW1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k+QIa4z+QixFOXxymWv++tDBcIByVapjSO8dHHx7Uek=;
+ b=GmaFj0OvX72MYVjckoN95nwWzEKK8tKIv6RDx3Q4iaT+Riqbddp6cKhNenYOiPM5HLEz3vl8ZWaePjSnVGqYCbYFrRp9tyZewB+XWFiijerwtHafrDZbSymUwLNDtmfVgYyzCfNf9f/mzn3Y7LRT1urGBy7EZFacUZXcp14D9u4qP1km7D85ZPp651QC3SEaTb1ujHAwbSX+pNkVRyvtZc4cu+nR02659TlXDpfpb469Rco+RlyigjlJgMyatW3GTjd8VDQbCKYKHwonBaN4pPa8LJ8z1ajLwKR35MOZW0GjOPUipC9GuXPYq1OGJ9kjhRy5QJll7VAekSTUTrifbA==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by SJ2PR20MB6159.namprd20.prod.outlook.com (2603:10b6:a03:504::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Sat, 13 Apr
+ 2024 00:53:19 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::182f:841b:6e76:b819]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::182f:841b:6e76:b819%2]) with mapi id 15.20.7409.042; Sat, 13 Apr 2024
+ 00:53:19 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] clk: sophgo: Use div64 for fpll rate calculation
+Date: Sat, 13 Apr 2024 08:53:33 +0800
+Message-ID:
+ <IA1PR20MB4953CB4FCCDE82AB25F6880EBB0B2@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.44.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [oo3N9baJdD8PNfwAo2QnXXdhJXed/pA/10Bs76E1tZA=]
+X-ClientProxiedBy: TYCPR01CA0157.jpnprd01.prod.outlook.com
+ (2603:1096:400:2b1::10) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <20240413005334.372444-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tcm26yzrf676zf3u"
-Content-Disposition: inline
-In-Reply-To: <d95554f623f023a2f5499fa2f6f76567.sboyd@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SJ2PR20MB6159:EE_
+X-MS-Office365-Filtering-Correlation-Id: fc8c2648-43b6-4743-5e31-08dc5b541c51
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	E4FLxoyDAwHTAxLTXdCBHxmE8ItMfwqMgIcjjawm9p+O/DYzeaQMOc4MsBNczU81IBTUYDX+4x3K6QUF5HoYrbblPjSjVWm8Qig046bFWL0ObYnXaBGSiWYl3LdMA0PTNYqgK3I6p1Sm4MUakWin0s1LnBcaoSqwD/hR/YvLXS2EWWFb/aEf+vtVWgJ4z2FRYhJQTp1UN56bzCkxgmYbo5AxputjHqyzXbbekHo2k2fnVFHbwY3QxNZOvgPFSUodvQODNh+uVZMsAGGGVppNh4rWiESDrws5Jd3EilVap8tCFtkqtS7GLrLBG2XWnIjnZgxuWMG/SYZIUj2awZ4TLryMjd/rsu4uyd3Y6ETZxofiNZ9NoahE+nRubDUIgm5u0jWNSegKX6lWW/Jh2101qXj87XWryy4lcxjfPNHlqJRNwLX0+spqTLB6uSmx9H0fucBDUEFaCnxJ/VUFpuHjGCLar53UipefXbbRjfD7SSnNLGdTDNfO/nrCvY7xhp5heMPvBznoU2aNYAuSRayM8UJagZaNA17EjPwJPV++UYhrt3vIdFq0wmG5E5jzGUc6OPD0zhHYnqtRIA3BO9vvmOUtFHxG/ev08P3u+Kg7HgNzmNju+dtA9gUsQ2G8IT4op+T/Oa3TlS4jgOCNWPpe/tYk5nWsUDU5SNY5ks+1S5zbh2UBqY5LV6rSd2fjuLkNP5Kv9vCfETKfyE/Zm19PwQ63w0+2Zqecl0ayD6sFslNQZX6sxIgXori8iCW/jNuX
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?qheEYyZutnUBz96xA4eKDCXd6Cl92E2zRCfIK8Btof0OE6mjWr3wfiHA3sNF?=
+ =?us-ascii?Q?8+FgX2qM7sztnxVzNNSXSrtqHyqOvn7hpUsXRbfJ25Shhi7e3JMqqlRK6Xkj?=
+ =?us-ascii?Q?ceTD8/055BBz3bTcZM3u9d5HHb3IeYD9jxgRym7TQ45xhvxtl0VltaUMURIz?=
+ =?us-ascii?Q?gH0S6z4zSoURJwPtHx5IlYA8PZBYGAo9ddznhkpfC1xmHfcgtWbtIJelKfrj?=
+ =?us-ascii?Q?Myp03DX9AQG6Od2HFPCb3AgwYWDwOpihcbHxCi/jT/Buh6sYP65JBo+QT2Sr?=
+ =?us-ascii?Q?ifVQQLIb7iPycYr5jDKv4MYOhJaIbY2vTCIxBj66o7i2qV2dTBdg8VKl+Qgu?=
+ =?us-ascii?Q?buHlZwa3568e0PUBfvKwOMykT9mv8Bwx9Ch0mbW4Ui3JEchvZbEy9TcUYl2m?=
+ =?us-ascii?Q?6DYLC6ZowOBtvcO86I20EjBETqUJKouLr5BOkIft05ChFVk/gZa7l6rQtCkx?=
+ =?us-ascii?Q?xYU31y2otp/mFCjx2WGcLQ8dHFdwGbDbh2DxlcmlDp82BKwiohVx8FQTwOuU?=
+ =?us-ascii?Q?hCQrhDwEdnyRcIkaE8O1SKAX0tYc+kCBD1ecZlXQh49lWD5zEJ+mUxGhI4W0?=
+ =?us-ascii?Q?P3w98ymr6vAfhRGyaxXeolsNWxXsp5As4vMJhSesMEMiIaYCnB3hC1exk+Wh?=
+ =?us-ascii?Q?sP772VwFj6pxZ3XDaHySVX2U7SHpBN9fPVAjrBGzGoQHt+0YKZNUpTiyH5PU?=
+ =?us-ascii?Q?0vp6ScuCQ25qylLbNSswljyXc9dahO5Haf65ey5YvPRG/9TxIb4avTRyvHcy?=
+ =?us-ascii?Q?tyy/bGpsORomXPvmz3YdDx2D6g8RUWqlU/f2XVxGbOadZc8ZZujRZ4gJ2q9l?=
+ =?us-ascii?Q?miOPitnGonhlHPBJ1hhVgRKl0ovlb8AdNSYSJG118zGEYWEvP+sWzqTJL3fr?=
+ =?us-ascii?Q?MQDPpXb7aJOdbpdNyyJv41NYfcKz4JcbKnqH/Zhng3dTYqsBLEOrx6ON2rwd?=
+ =?us-ascii?Q?aa9OhWmEyVGH8l9Je5gU3MWPyBTRrQ+kDiav6dCTFF57cLIDPR//hmS4MfE4?=
+ =?us-ascii?Q?mHLTUeGMCNrPLNClPdRnJ0S7H+9A3Pcg13dB/GvaziH6Jb07mNVur+RajAaL?=
+ =?us-ascii?Q?f1Cacb4uVP1qD/GhvNd9tsC+VWkP2qeW8Gf0tJrZavO0d3E6EdNL1h613atd?=
+ =?us-ascii?Q?WGC5Vt7jet0CIpSX7EIqX/P+eBxzNvRt373PGvVOcL8sv+84vGlyRitc37ED?=
+ =?us-ascii?Q?5ACDfwnQe0ViUXRCnlQV87SCndQrDjb9Vvf+nolW4FjTfKwfwa03Xj/FLfBT?=
+ =?us-ascii?Q?yaO/PxYi946/IDmhOifu?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc8c2648-43b6-4743-5e31-08dc5b541c51
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2024 00:53:19.8144
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR20MB6159
 
+The CV1800 SoC needs to use 64-bit division for fpll rate
+calculation, which will cause problem on 32-bit system.
+Use div64 series function to avoid this problem.
 
---tcm26yzrf676zf3u
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
+Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202404122344.d5pb2N1I-lkp@intel.com/
+---
+ drivers/clk/sophgo/clk-cv18xx-pll.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Hello Stephen,
+diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
+index c546dad1791c..65aba3b95cf7 100644
+--- a/drivers/clk/sophgo/clk-cv18xx-pll.c
++++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
+@@ -6,6 +6,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
+ #include <linux/limits.h>
++#include <linux/math64.h>
+ #include <linux/spinlock.h>
 
-On Thu, Mar 28, 2024 at 03:35:57PM -0700, Stephen Boyd wrote:
-> Quoting Uwe Kleine-K=F6nig (2024-03-27 00:33:10)
-> > To be able to compile drivers using devm_clk_rate_exclusive_get() also
-> > on platforms without the common clk framework, add a dummy
-> > implementation that does the same as clk_rate_exclusive_get() in that
-> > case (i.e. nothing).
-> >=20
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202403270305.ydvX9xq1-lkp=
-@intel.com/
-> > Fixes: b0cde62e4c54 ("clk: Add a devm variant of clk_rate_exclusive_get=
-()")
-> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> > ---
->=20
-> Applied to clk-fixes
+ #include "clk-cv18xx-pll.h"
+@@ -202,18 +203,18 @@ static unsigned long fpll_calc_rate(unsigned long parent_rate,
+ {
+ 	u64 dividend = parent_rate * div_sel;
+ 	u64 factor = ssc_syn_set * pre_div_sel * post_div_sel;
++	u64 remainder;
+ 	unsigned long rate;
 
-I assume that means it will be sent to Linus before 6.9? That would be
-great because I want to make use of this function in some drivers and
-the build bots nag about my for-next branch that in some configurations
-this function is missing.
+ 	dividend <<= PLL_SYN_FACTOR_DOT_POS - 1;
+-	rate = dividend / factor;
+-	dividend %= factor;
++	rate = div64_u64_rem(dividend, factor, &remainder);
 
-Thanks
-Uwe
+ 	if (is_full_parent) {
+-		dividend <<= 1;
++		remainder <<= 1;
+ 		rate <<= 1;
+ 	}
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+-	rate += DIV64_U64_ROUND_CLOSEST(dividend, factor);
++	rate += DIV64_U64_ROUND_CLOSEST(remainder, factor);
 
---tcm26yzrf676zf3u
-Content-Type: application/pgp-signature; name="signature.asc"
+ 	return rate;
+ }
+--
+2.44.0
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmYZnl4ACgkQj4D7WH0S
-/k4bhAf/dU3dIH1rQHO52ZY4eCb6/UQ6pdDM8CzZxB2oGa60PXugNfbK5LqTCNEB
-q5FVGKRHe+lbUG2Dk4belrX3ZNMXweqywtHu0bXbPZZjPjCvrYmCdRJKuHLSQgRV
-5gHxyFQshzOr49JHsWieLVj7le4bAHBbgF9r/a2gcWUsS4xOAaNNCzgPb8fR7nzX
-pcbXThX4rhn9kP65ZokC2sEJyobMFNCrTewaOXP6UNaSUt/M/qTnsgDhxMa7ywPi
-4deahcIXXS5ZKj2ICyz08cNryUnJVA+bhYNvzi7zP51TvNynLcwYfdkF+n5T5Gin
-aUgbiu3Sm38THO0Eiw5M+GgIUfYj0A==
-=/h7x
------END PGP SIGNATURE-----
-
---tcm26yzrf676zf3u--
