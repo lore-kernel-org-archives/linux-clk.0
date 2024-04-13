@@ -1,47 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29F732C85;
-	Sat, 13 Apr 2024 13:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20F81AAC4;
+	Sat, 13 Apr 2024 14:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713016488; cv=none; b=TgYxkHT7TMsj+1PVK2PcU5i82E6j+lqSdKGt2P0pi+DObYDTZY4lutEmvi2pjbj6KhE2yb9ErKYzTyHcKdzYXcg8/lllrPDuzQsOjPKDbdSBjKsB2kc5mOgdGoCmMiN5rOglKQP5zHZPmsqZaTcHMuy7D6QQGKkuhtkn7ntYcms=
+	t=1713017058; cv=none; b=UrfXhqbEUFjUJ2R2fsVZQ/gjR3G+abPvk2nBTf8a67qqzFTl4Vqx+M3MnBcxYKIovQXyE588fH82ogrr1LxEQdvGZIqgg8ViajZm6kuhxxMSgV1i/v4er3bw947Uhb8qQHiLPgyAhvALOrLz5/2HXCJDDiHTc4imI/lH20Til1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713016488; c=relaxed/simple;
-	bh=lIKOY/N7NdxyrWTbLzUc+FdHr7lWJIAJfXrhcEYWq2U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gk1sJfXl75f4DDO+rVrFZMihvXBC/CkECY+S6QK2y7Tu6jeduzRPtTGfgYzmECfRTxH5FK+n8B0iHBFEp0L7tYVsC9S6e0inRGHn+i2fXnaslLWqDcaoiI6rLmf7I8kdzdEcRB+Eqn/k+wlb1xK4dgVkGM8+qzKqz8W4I7mHbKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=d0Csj6yW; arc=none smtp.client-ip=80.12.242.22
+	s=arc-20240116; t=1713017058; c=relaxed/simple;
+	bh=5hJR7Ru+XomF3n9mKOm3xJbma6kZ/IDKC9EDikaVd44=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LClhMqAxkpBCp0Rw26AXM2HpQc90hWdOzo/MRlwKTZU35Iw0StdhaW2hkumLebCPHwsyhSf0Om7zp6VTDQMyzpxjpyHN3SnaHuMsmRICU5g5KZHve5Vl5+fmKGCEKBgcySiJ02Dedg9VUNoo6W57r/KnXUU+loS5TIxViK/bGk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Px4/kXuk; arc=none smtp.client-ip=80.12.242.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="d0Csj6yW"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Px4/kXuk"
 Received: from fedora.home ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id vdq1rRHRmiEBqvdq1rAZqK; Sat, 13 Apr 2024 15:54:38 +0200
+	id vdzDrkNrdPlGBvdzDrdQ2P; Sat, 13 Apr 2024 16:04:08 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1713016478;
-	bh=ZS4vUeFYwEkQ9aWyFlLyMV25A71DyDHcYUN9aidfiBg=;
+	s=t20230301; t=1713017048;
+	bh=3oXb08cbb/bJvN3axG/lDrCM0AQ1pV4xL9cabkqd+XY=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=d0Csj6yW8sntfA95ecykUziTGCULujUK3VycGs2HmPX34Ks9kEPnczfdBzbl//i94
-	 kgks39YLgxvcCQjIX8pJzmYM/qS4TlLSKvXiTL/98cnVVlj5YEme3Y9YMUx1AVIBRQ
-	 JPjGadkvi7rF/aFku9s+aSrzqzRCG6uWrNDEpXie5IOhVhK4IXg/RWT5P0pH2LPyFk
-	 qnkbTZiYwknfdN1EuU+enu6yN9S0nY5eJMpqCQL7D+WLbrWO5+NBFUDQBHBlmsyT3V
-	 bBTv97BWbQzGaiA3Iq0Lq1MirdguN5zjdfIFMqtTtaPAsnvKaz68BaURYoZVZN+dg5
-	 YrDrayre+XGiQ==
+	b=Px4/kXukbIVdawoPCnGeFXq5hFouWEazH/Vd0PDBOLsLIGmjy0ZTgwNyGJ29vNcA/
+	 Rm6qttTSqG7UrcPAgeYfg/rKzlqBlh4/bup6XJN8ZvnhP/zVhMwaToC3ZeqIZ+L5oF
+	 BovCUBT3Vnk/DyQ+VIcM/QDJbwTLH1p6PR/oSVoj3bvt6M4jPO/WwOH85p6UyFkJT1
+	 GTatqb8PuBBNgyrCckZ5rJGtDFBeYtAA/bi5Z6DrtkaAs3hN+m2y0Rm3Xk5YRCB6iq
+	 gGZ+i34W4xymcT/GQDUWWxRSbg4DfCbrqn7/adTBUNzHTtO+4mtFSFWOJwUjBKkvqx
+	 XbyaLAO4XPxlg==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 13 Apr 2024 15:54:38 +0200
+X-ME-Date: Sat, 13 Apr 2024 16:04:08 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Michael Turquette <mturquette@baylibre.com>,
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: highbank: Remove an unused field in struct hb_clk
-Date: Sat, 13 Apr 2024 15:54:35 +0200
-Message-ID: <90b19f2af3077075d4254e01d5ae919c423d067e.1713016457.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] clk: qcom: rpm: Remove an unused field in struct rpm_cc
+Date: Sat, 13 Apr 2024 16:04:04 +0200
+Message-ID: <9f92330c717e6f2dab27b1307565ffb108c304a7.1713017032.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -51,7 +53,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In "struct hb_clk", the 'parent_name' field is unused.
+In "struct rpm_cc", the 'rpm' field is unused.
 
 Remove it.
 
@@ -64,21 +66,21 @@ Compile tested only.
 Apparently, it has never been used. It is not a left-over from a
 refactoring.
 ---
- drivers/clk/clk-highbank.c | 1 -
+ drivers/clk/qcom/clk-rpm.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
-index 2a0cea2946f9..6e68a41a70a1 100644
---- a/drivers/clk/clk-highbank.c
-+++ b/drivers/clk/clk-highbank.c
-@@ -37,7 +37,6 @@
- struct hb_clk {
-         struct clk_hw	hw;
- 	void __iomem	*reg;
--	char *parent_name;
+diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+index 745026ef4d9c..9da034f8f2ff 100644
+--- a/drivers/clk/qcom/clk-rpm.c
++++ b/drivers/clk/qcom/clk-rpm.c
+@@ -98,7 +98,6 @@ struct clk_rpm {
  };
- #define to_hb_clk(p) container_of(p, struct hb_clk, hw)
  
+ struct rpm_cc {
+-	struct qcom_rpm *rpm;
+ 	struct clk_rpm **clks;
+ 	size_t num_clks;
+ 	u32 xo_buffer_value;
 -- 
 2.44.0
 
