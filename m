@@ -1,175 +1,145 @@
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2094.outbound.protection.outlook.com [40.92.103.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F319E17C6B;
-	Sat, 13 Apr 2024 03:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712977331; cv=fail; b=AS732bIbinp2RBzTAme5ULAVXKKgT/LokWqPCWN3ZNZGp78kFvn0+n725cKmJICIcjo1j/iigvASlkiFS8XI8deW6jafE2fGpafnMW/C79FElm1x4XZUQwsed+G+LzrBZ5G9wq9V0a0SxvCrk4SyZNZ91thA93h3nHUzF4z7Rj8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712977331; c=relaxed/simple;
-	bh=eI3/cGQVs7cD0+cEk8GrEaUn/OHxY86iYBSv9/mljlg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XNGzaFyqoAjae76WxYD4ZcvANh1bPXYANAC4YSPUxT9MAKDQXWtI6OSD/yC5lioqxtfxCMVMYkOpesHb7Tgs6a+RnFrYGKjaNq9762xmtbzTm7DektIUkv4hGmfcsY78yqNz2c/XspDUjfIu4OXU4Y2WK1oHny9UmCpzmg8QBZA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=fXyK82n3; arc=fail smtp.client-ip=40.92.103.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7789C8C15
+	for <linux-clk@vger.kernel.org>; Sat, 13 Apr 2024 08:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712998049; cv=none; b=ZjEbNHaBoPfePjeac8BlLUeJnu5mSdjzt+8rEO1YwSjlxMa1en6Odp9w0zp4BBYx81s0rYVtzaAORULPSRa7agwHBYYgn+ns7npHU8raFEygZKclYP2Z3uQjdQ/tmMOa0gZoRG0gb7g8tFPnM2Dan9HtW12bR2CC+qyk9W3FHA8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712998049; c=relaxed/simple;
+	bh=guMeNbCqf8Bf7dLBBZ03qR5b/wAPVhCuSkwUDiHkreo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nu7DPOblfo09AywbrZViaK114thQok+slyt7qWJKyfhjUDr1Ezp0ZRfiFXHwB/AelBrSIV4fcIVzIYvur/5N1mtJ5A5egOhhgc6aWGHFfmrdEDbP2RSM18nzPYzIHq9eYDAFaGDu7V8FLxidWfnmmDZjZpER7o7FJqmWeiCTp5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OMRLCK57; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="fXyK82n3"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ll9Smud7Oj+XdhPg7HJNxwvll6DEjzkhH1On9IuGNwYDaTEDiKMh4EvrySAGX6vupOV927W0jxImAFlA/mLwTl4Hrsd/xNo+vlHJJ8PAnHiwh2dyD22sNPlP5sQteCZ4cE+YolYStP94Z5GEVI++LDuVCY2Al7dnDdwnjjw+7Y1nd0RufYweFelS/MjrwVHpgndNKdeaETwrwa7u1ijmpmrB0Q+d2OBqcZsTHBEGackYCRcIXGM/OjHhj7OFUl4xq7MqK5RZEOlqy1WkZW9/FCK2ZVhnFBkQf48xjaXKZZ4Rof6nxxP86b5fBK768dkIbcv5Ue2LPXozaCgcD4Mg3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zMXcLgEhEt/s6IyuoMWXRDR4rg/L1N7i7CS14TddycY=;
- b=XNcgvANuzSk9sZz/x3fFEWAN844vWMiOgA4+ZIw6cTa9HZgZMhxBeIol4NlBkhm8Oep9tw9kXGKfPBzxtjoUzMpt1/3SlDu4eUWfwS4ue0VMMgJeCsq2DzKlplmFw46NvHadQxcUZSCevp4+olLRPLzyztQOCYODMbkvN68wb4kUNk4pRc9AaanZhuIdx5bvB1lKGj1MA99O9YHz1qVHAXachLOYIy59Y5AWbjY7ApPw5Zb4x5WtMstaFCgXqBPwWKh6jAGJLZXvbt//g1x3kU50+q6bocJCh7lM5X6b/YuhqFtg4LHr1tcNK8HbADq//L32uNdylZOYPoo+TLXcFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zMXcLgEhEt/s6IyuoMWXRDR4rg/L1N7i7CS14TddycY=;
- b=fXyK82n3/BQOKFObGBxIhL0gesI8JH9Ahv1PxQmyPhQKuZRBLkMw6Z1wdbWoow+t8kE9XG4Bob/ab1tNCZrAUbgVJ/AkgKIt74PmuG+9ex6T5dnIEX+0NmQBLFnUZT8YQIZou7AuAKWboa3fe9mlzuECenkfOdbOWfnYUVqEfGYvBIHO35X2eDbRbs2TQCZ3ebWCmwhhYM4TtbBqM3aFHWnq8JsdQpHm30YucDLXW9m/E7YC1mQHz2m5CFKGwsfuU3LTKR8wjY/KJE6mXK53EyoGT8U6FyU8++Y8zPQuGKjkqDw9pc5DAwPrX5CAeP+KUVrUJRpli/tI0aXj7LJESw==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN2P287MB0125.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:dd::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.55; Sat, 13 Apr
- 2024 03:02:04 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::664:2ecc:c36:1f2c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::664:2ecc:c36:1f2c%3]) with mapi id 15.20.7409.046; Sat, 13 Apr 2024
- 03:02:04 +0000
-Message-ID:
- <MA0P287MB2822856646A116E713BCE716FE0B2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Sat, 13 Apr 2024 11:01:58 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: sophgo: Use div64 for fpll rate calculation
-To: Inochi Amaoto <inochiama@outlook.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel test robot <lkp@intel.com>
-References: <IA1PR20MB4953CB4FCCDE82AB25F6880EBB0B2@IA1PR20MB4953.namprd20.prod.outlook.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <IA1PR20MB4953CB4FCCDE82AB25F6880EBB0B2@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [2oKf9PP2sQW6ZR2T+9uvxRwUsdp2z0Qu]
-X-ClientProxiedBy: TYCPR01CA0175.jpnprd01.prod.outlook.com
- (2603:1096:400:2b2::15) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <ccd1cb70-a779-4065-9a3b-1ca62febde14@outlook.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OMRLCK57"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-56e69888a36so2124080a12.3
+        for <linux-clk@vger.kernel.org>; Sat, 13 Apr 2024 01:47:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1712998047; x=1713602847; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=rII/pQt/MW1EBrzDYRD3z/sRc7Tary/0+K7B68syeNY=;
+        b=OMRLCK57a41t37uwapCRplFClEO+pxTlffutfB2VDznar1RD/9ezkEEQrHVl/CEEVt
+         0hTWs5eP2n1h6rbi85IxNf0zHPjUJmd6RZoKCzV847E6LXSJvzzTY/BSNNBfuqq4DOxA
+         BvaVbNfgTJnDDIU1nwfx65reuB9V1DWp9Yxyp3T9o1FH3CaRWKamjPrhXUKBNU005DUt
+         JgX6LsEw3XUclEjk0fP5jQYTyQtfE7FBBC0a54Qo31HMHtctDOWKLCnFWtlx57cbP2xH
+         9WTHbX/W6bAo5EjsUhlGIT6QRgN0OTE808nx0r4Mndcqn8s1WXBzfCkECSb55ri6ElR+
+         xclA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712998047; x=1713602847;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rII/pQt/MW1EBrzDYRD3z/sRc7Tary/0+K7B68syeNY=;
+        b=l98soPT4GHsneZaMmtyPYjXEouY98R5gomR18UeC4AJetD9OTfT1Rg8OpEUWXXIPfh
+         OsP8j7SWB3gD2nT/IGXjci3BUO8ogj+3Iv1sT6ZnSK+jcOh7d8f7E/jUCROHRaMmUh8Y
+         nOyue0zGL3g2rrOnl3+e9OHGaBUNFutkxrVHeDVdwgOOE92Xg5/knFDLfr9CJpNVoGy5
+         L6BqjUxZroFjklnKse9t1KzK6Qef9UJIyu2WQ2dBXRWg5d4aBsoMIAk0rtFSytS5V+zF
+         eGAnzYx3k/H4lUzu+BIsYQb4jgMquo339hihSQEBA3HJWUsbyduGsragpvScxwXXst/R
+         ovpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHyxJukeic6zrWp+sPOXJcVB5Gc8LFTJ/TQrXtUuGRGgBvgTdQzQfLQxmitkafZ+mTgu7FdTajANof9Antr/2yXK7FldhlaIba
+X-Gm-Message-State: AOJu0YyWZdtQSCKnorS7uptkb8CplunRkeuzwHLRhP3dm6A215EI1U1U
+	bgyOUlQseHH2KBk+ZN36zvjWKQp3iDqeDi8ZuXz4kMkJ0rTPICi4xh5RLMhE02U=
+X-Google-Smtp-Source: AGHT+IGHF+5m3Vbg3WQcgDLVBuRhXBmb/Mh6KEGMPJznnhUA3UPiXlgXiDdzEwh6Fj5RkgHrzFtlTw==
+X-Received: by 2002:a17:907:9448:b0:a52:5296:cd94 with SMTP id dl8-20020a170907944800b00a525296cd94mr270923ejc.60.1712998046792;
+        Sat, 13 Apr 2024 01:47:26 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id go36-20020a1709070da400b00a51fea47897sm2722435ejc.214.2024.04.13.01.47.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 Apr 2024 01:47:26 -0700 (PDT)
+Message-ID: <ab700927-d7b6-44c6-bbe0-8c52e4a0f907@linaro.org>
+Date: Sat, 13 Apr 2024 10:47:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN2P287MB0125:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0dd1d5ac-1754-46be-0ce7-08dc5b6618d4
-X-MS-Exchange-SLBlob-MailProps:
-	P1EfU6pZOd+ZDkBo6jAcVAy+QTb9tiEWMm5bHjFmdrD8ZE+bzWlkFd3fNKlyHL+0FkewdtPGeTtVWAfA9aAC2SuDwy4RufXjGnUYhwHHaD54Vbya6MDqsNtQEQJexe1yxLuAJ/pE9MzO42m9WstGHuwTkrTaObWmfcq6jT6scY2gF9XRBWIlLONqfcNyNYiMH1DpQrIrn0buBTrewpdLGbpUuqv6K//C/pgzBDN4d7sQoAZaxzbTthutOTvxBunnQCdPhPnSRkKcUEIGInbSgTTYMrCcHL0ixkDGath9K4RZDYx130xTpKA0qbe6WkZ8qGrUxx0alLxP1u29lJQnNV1lJPqzkIwAF2BNR3lGiI1SIppjOwT9V/yoZpN/38PNLFUttZdEO0yXKjLFWQ6O6flAF3Cf48+O64dNGbJCLNePywOzJAx5w3Efx1sH2RCUsdey01EEpka0hlVaPPsx0kuMGI1B0SgQ/BxYikxs5Ys+7YMcK8aAfTxLhvFCCVBbwrWhiCIcDYLuIxpGtpyTjpZcYOw1bYmG1KctlGz29cTSfC48SrcAbUZub5v6rGhmq4XitcId96mJHbCVyCRBfCze7jTiQdGx5U3tEOOlVv9+a2LElMyF9D11uExEYwidhIEWqdZX8g+MBAOs1/JeYJ/Z2R64dlCtmdEk6hqJB7BpWMaOebXdW0NkyaJmDoS+1JYY2sCihfeo1y/MxVKlw/sxfUlyqtLeBJyVUcVh/9e7ibiyVF5DEwt+fyexUGg+1zuw+JgPMLWbliLmXr/1JS1UW8od49SO1418GfKInuON5sM8BfgCSg==
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	o59+HQCaBkyQKUORIK5lT64x0dbGsLoAHa4xSz0/dDJkyWdWVTzV+hTC557gHMCZB2D7zaZkiMeFQBl1SenP50Qt6wMb4e5q1sO4ujvrqYKyhZRhMiRVVDBi+endf5Rha1E3rGHSbmaxSGF7fwrTXRp2qClIdgXhCtMtlb3dzBAUyQ1ngYy+FXcmV1EFJ4Z5H/CbxpEhDM62LYFL38Wcb/4Z0nOtrThpm6zeDxNHc8p/BclzIxILjLndEs+F+agLHSDsC3uGq3p9iB+AB5GQPsdPZJn54nUafBnR9VjeZTmR60+oOGKE4wdhOso7Bl+NotLMnyvSoHlhJq+H21YHMNPzUhAGDQLWoFgzRGhEFNYnDtPKdTvJ0jlPaHz5d+Tw0P8SS1ZFZZC7b206FII3kaU+xFy1WzE7xKoMZM6oih77MTRdL8u+uri4z561J33hMKuNbTpIzfcxcMwRKv/323Kjbq20gS8MGs2KuR7Cj3mgjJlbEqnhOXQinq+BoD59WSvxCOT8w07jqXxMAoCdC0BpoK56202Adms7xESsHjAAxswTjRidluAZzcDG0Jv/sgfAMYwo+1I49R8aHOLDZ5gwN2OFniMV/sqbVx3QAgxr28qcKv7brSQdzgMP/NPVrGKvlB0zSQ45RfjrOTnbIMPYWfhAr8TR26MhG8v5bYH8Bx7Wf0A7uJgPRcLlmrCC7+eASOaAhZREsufgLsDTKA==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a2JZOEI3emx6d01TbmdjNUZMV0tHWUFvUG5QUUVaTjlGcTl5SVQxTmhoaHVD?=
- =?utf-8?B?YXp2b3RQTFRhL0htaGdoWlF6c0thc2wyOGV4WFl3OWlmT1I3Z0NKK2trRGM4?=
- =?utf-8?B?d3NOZW10b2ppZ0c1Vkk4djM1dUV1ZFM5akNHSUJscnFsWVJaOGN5TFRna0JI?=
- =?utf-8?B?c20xN2NNWGtVNXhSQTM5ZURQbm5nOVlrN081cFplOEdSMFlvMjBHQ2NNQnd1?=
- =?utf-8?B?d3JBTEx1L1FSM0JJZkgzQjRaVkNpM0Rhd09xRlFieGZFR2JvYlFkSGhKeGov?=
- =?utf-8?B?cWp1OXYvdEVEaUNrYnVDWjA3dURSVlIzUGxXSUZUL2IxTkF3dGhKd0xLajR5?=
- =?utf-8?B?MTEwUmp0K0ZBVitGODdmR29VbFRVQXZWNTRRdW9zTkNreVdORGNzYTl5UGFC?=
- =?utf-8?B?WGZkb0l5QjRUL1BoUURab00rS3k1MmRVcGEzRitXYkgvT0tMZjJJOE5IR3Ew?=
- =?utf-8?B?b1l0MEJ5ejJSanZQbGRncnZrUjNCRDM0WkhSMFFZcnFFdWVGSVNBc0dqUWZh?=
- =?utf-8?B?ejdhRlBPOU9xREhLUTRSek54UTJtY0RFaW9aOG5uYTZ1aEdmU2RZZE5KVjQ2?=
- =?utf-8?B?L0VGVEFzaTFvcjVvOXQ2STFMd2tqaW4wTTEvR1ZBWDZQK0FLYkFDRWtZQVY1?=
- =?utf-8?B?N3FTUGQ4YlpzcXVESVZ5SGova0hXL3FmcDdMRGtIS2dXdUZ5Y2VDYmQzRUFQ?=
- =?utf-8?B?dEc5K2U3aCtGNzVTbjZCaUJDZ2wzV2hyeXFyNWExM092dEhmL05TR2R1K21C?=
- =?utf-8?B?cjBnWXNGZll2bnBwOS9paWQ0d1FISGVlWHNCb2R3cVRzRHdqY0xYTVFJVzMx?=
- =?utf-8?B?OGl4QnY1M3ArNUJEd3hZL2VUU1IrNEhTRm1VV0dhYzNZb3NSQm5kK3NtNG1z?=
- =?utf-8?B?Zm1wNGFzMktqaGlRa09EdVBXMEd0bnp5VU8zUzRQb2xCTHl6a2pDeExsaSsw?=
- =?utf-8?B?RXVsdzBKN016cDc1WjRzcW50NTh6dFJXWTN5N3l6U2w5Y1EzcEkxeFZaZ01R?=
- =?utf-8?B?NlN6ZGw5M2RwbE9TdUMyU2tXZFF1WkplWTdJV2xsNXBSSWJUNXkzYTkyMGdz?=
- =?utf-8?B?NFdyaUc3ME8vOHdJSFYzL09oMnc4WHE1ajZOL3VQY3ZuTmV5QTFlYXNvTnNI?=
- =?utf-8?B?N0toOTBOSmlRTkVRWDVXREdxV25SSllvbUY4WGhvTzYvY1pqcE1ocFVkcG9p?=
- =?utf-8?B?cEF0K3lYaHBKWm5GUFQrNXVwTkNuTUpxYkh1MHE2MzZySDZEYy9uVGI0dmM3?=
- =?utf-8?B?OTFQL1B6VHF0NkdjVmlMWnN1RkxUWWVXRnA2UENXRys2Mmw5Y3hvQk13cHNh?=
- =?utf-8?B?MWtJUkdWTXVQQVdLbGtIc1ZMOFJaMFVlakp5UFo1NVVpU1ZZam05VGU2UmEx?=
- =?utf-8?B?ZlRlbHJRc3Z2bUVzZEpTOWE5cXRETmR3U2lpakZwVmVUNGFxaEhiei9xOWQv?=
- =?utf-8?B?ek56cWc1T244WWJ2LzM4bGJQVDFsZjYyTlZ4dG9iVUlNR3FJVmpiQm1kUXNP?=
- =?utf-8?B?VCtKZzIzeVBDWUQxcE14MFhVSEJVREI2ZWtqRklucXM3MEZFelIvQi9BQlBr?=
- =?utf-8?B?WlZZeHdoNVMrNVd6NEltVkFRNXA4QmhMVkNwODdOQ0k0OWp4SHVhNGRUYXRL?=
- =?utf-8?B?bjJBSHpzcVBQTjFpbklxZk9wWTB1L3RSL2owOC8yNzkwMVpNa3U4ejU4M2h1?=
- =?utf-8?Q?lm9U/yHfwC8D6uQY52W3?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dd1d5ac-1754-46be-0ce7-08dc5b6618d4
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2024 03:02:04.3748
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0125
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] clk: samsung: introduce nMUX to reparent MUX
+ clocks
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org
+Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com,
+ s.nawrocki@samsung.com, cw00.choi@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, semen.protsenko@linaro.org, linux-clk@vger.kernel.org,
+ jaewon02.kim@samsung.com
+References: <20240328123440.1387823-1-tudor.ambarus@linaro.org>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240328123440.1387823-1-tudor.ambarus@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Just a minor suggestion to add soc name in email title to differ against 
-other sophgo products. This can be handled in later patch if any.
+On 28/03/2024 13:34, Tudor Ambarus wrote:
+> v3:
+> - update first patch:
+>   - remove __nMUX() as it duplicated __MUX() with an exception on flags.
+>   - update commit message
+>   - update comment and say that nMUX() shall be used where MUX reparenting
+>     on clock rate chage is allowed
+> - collect R-b, A-b tags
+> 
 
-Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
+Sorry for late response, somehow this end up deep in inbox. You
+reference some non existing commits, so I think you do not work on
+mainline trees.
 
-On 2024/4/13 8:53, Inochi Amaoto wrote:
-> The CV1800 SoC needs to use 64-bit division for fpll rate
-> calculation, which will cause problem on 32-bit system.
-> Use div64 series function to avoid this problem.
->
-> Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
-> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202404122344.d5pb2N1I-lkp@intel.com/
-> ---
->   drivers/clk/sophgo/clk-cv18xx-pll.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
-> index c546dad1791c..65aba3b95cf7 100644
-> --- a/drivers/clk/sophgo/clk-cv18xx-pll.c
-> +++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
-> @@ -6,6 +6,7 @@
->   #include <linux/clk-provider.h>
->   #include <linux/io.h>
->   #include <linux/limits.h>
-> +#include <linux/math64.h>
->   #include <linux/spinlock.h>
->
->   #include "clk-cv18xx-pll.h"
-> @@ -202,18 +203,18 @@ static unsigned long fpll_calc_rate(unsigned long parent_rate,
->   {
->   	u64 dividend = parent_rate * div_sel;
->   	u64 factor = ssc_syn_set * pre_div_sel * post_div_sel;
-> +	u64 remainder;
->   	unsigned long rate;
->
->   	dividend <<= PLL_SYN_FACTOR_DOT_POS - 1;
-> -	rate = dividend / factor;
-> -	dividend %= factor;
-> +	rate = div64_u64_rem(dividend, factor, &remainder);
->
->   	if (is_full_parent) {
-> -		dividend <<= 1;
-> +		remainder <<= 1;
->   		rate <<= 1;
->   	}
->
-> -	rate += DIV64_U64_ROUND_CLOSEST(dividend, factor);
-> +	rate += DIV64_U64_ROUND_CLOSEST(remainder, factor);
->
->   	return rate;
->   }
-> --
-> 2.44.0
->
+Also Fixes must come before other patches, so probably first patch
+should be squashed with second. Otherwise second patch is not a complete
+fix.
+
+Best regards,
+Krzysztof
+
