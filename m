@@ -1,59 +1,61 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553F01E87F
-	for <linux-clk@vger.kernel.org>; Sun, 14 Apr 2024 12:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1869242049
+	for <linux-clk@vger.kernel.org>; Sun, 14 Apr 2024 13:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713098404; cv=none; b=AynZkbzxxeM01SjXh30wzyE43l7eeMBfainS2CXxYzIQGIBjpeCjP5l5j5fVU+FudGCBD6DCQ1sXhuHObDRb9BQtOr5vty32vt5zXQO7fhFzUMCZ8d3CiSB6YBg9UdJk0JADTqIvTqC4qTgCmBGFe5Rqbpq5PryvbSOxkHi1XQc=
+	t=1713101688; cv=none; b=OZzdIWlwrlSaTv/ZYkyvhQ2uw0Q+92MI3ed5m7PuQIgpZ6BfB5W6reqI5mxjp0XESXpa0q8FO3iTWgzZUiDtf6ZdsLxdFf35b9clsgJ8W5NWCk+P1wo8JZFwLDEt4doVs3URp8pSe+MPID3Lp1xUAlJIeGdDDjwQIiuPDz9hIzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713098404; c=relaxed/simple;
-	bh=BPchb6SuF3YffLRf+8/iXRceh/nK/f1NxS1WB7VSjUQ=;
+	s=arc-20240116; t=1713101688; c=relaxed/simple;
+	bh=BFwpUNbDE8oHK5OuttChp0ixMoA0D43yEsMBZL1TZ6A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uh6pH9/5g1YulzrwKFDzck3PIyV2yi7aLZWDWcxiysxGuTMHPyKrL8+O/MyC6r3wIcR0epPZmcB+aO9cCIhznUfbBnLs0WJJgCxHkWKnsKCLUR9XmkihG8d2nzhd3DdWL6kpfMBpTJofldpY2Tx4krSVqZQbN/1w6xnTUiXJ+MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kbKnskrI; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:Content-Type; b=Vcrak9/ZxWOSNfyqrKvolKW856Uc50ohsJhPQDbt28UZNcdta8WLqZVg34moSvM28ckZyKxWMo5ZFaU+Yogm/IddIDUDN0ZAB+cn/l4q9RxEOIZq84oVcQ0Cl+LfnwrF+dA8pH2eCARzQwsbW4LCBhURIwefeeMW3lVPYne+Z0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EdrBSSQF; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kbKnskrI"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41804f10e36so12038845e9.3
-        for <linux-clk@vger.kernel.org>; Sun, 14 Apr 2024 05:40:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EdrBSSQF"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a51a80b190bso149254266b.3
+        for <linux-clk@vger.kernel.org>; Sun, 14 Apr 2024 06:34:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713098401; x=1713703201; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6caUmj4J65h/YjIX6IywsH74tzjrKOAOHEmC2FZcC/o=;
-        b=kbKnskrIfFSbWafD1c8jnSIXPlRFMr6brtEmO2LQ8WZAtfP8DzIFWMFkptyTpD9556
-         24zLebmBGdamcz6vaJTEgFaqpV94yfb+23GqtrMDdwpy+tR31Ydunwz57uVaFiP+86ew
-         Kxb+7DWP2sW1slwuF0NXq162INu5R0axivxuLvUoVqm/hsg56YaUypc3REyWt2NX7h+9
-         pY7VOx7M9/88aB5oGbqLn5TRpJ65C/cTDAsA1g2tMLGHe0mov7Ah8J2RUTd7x15sQgT0
-         zc+8avD9wwCpD5yDm017fzPGd69b7h7R75iXqRtGt3q7IoNjwLowEt4QaUaQ3oXVKkH5
-         harA==
+        d=linaro.org; s=google; t=1713101685; x=1713706485; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=p9WRp/DXwTfjM7jCbPUfLIfu1BhKAQ/wCVJgQUHS27U=;
+        b=EdrBSSQFrl18h7H15E400s7Jx1HQh4zIS6yb8JfJXRAWJRQNx7RV9fUcOLxyj4J91D
+         FD3zuUo0khp5xkUAxi4LDyLhHCcgoZig03BWaemkDYHEZrtyoJURXGP2z6iJKGz02xYW
+         LuGINCrsPGsM0F0xKQ8IhMDYbDwzxdHGGOG0L5NyAm8xjVvkGu84P2wb2TAnEPARHyWg
+         QVPoDIpGBebsyHuA7UiWAB+q0WQyoxxPmENaudy4bHWckZ1+x1VqMydppBNCmohxVKuR
+         ywwzzioJ58QJaOusRmfKIwsDJinLCzZD/YHQbejotpLBfBqLDKVn0D0HoNGN8YDU4WA6
+         mnGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713098401; x=1713703201;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6caUmj4J65h/YjIX6IywsH74tzjrKOAOHEmC2FZcC/o=;
-        b=KvPpiaefAZOaGdzjntWc6S9I1eKPX0MKGiawzHyT1nkLLZQLmiPwKBPlVKcsbS+y2U
-         dy7O7UEunwMM82qjCAL0rBHKTDJbSyhegVxBAyw1pk237imB/5fkRPh5jXfguJObfuMT
-         p73YixtHoAQj438oCtz7OH9W58EPI2/fqD4z4eGwWrtt5kX3Dof8nhLub0dlh53VbwLL
-         rRKhW8a69el2Kw+6RiS3paI3aLvew7oR6vCk1UHj4e5v6SUxM+nc4H/w4zcYyo7Id8Qu
-         +BVhjiDC6vB5V3ACkXy26wzH7XBdC4fd6ZaUYM6d3oXCspl+xoi34MHdPUqEqpe4KRBP
-         3e4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUti1ch9I3JPAChe6WOGAuZrNB1msKe6yBnRax6mb/fXxW9mhX4xjT4fFKt4rEBWH3BAxqNcSr+SLXTblMfPwtOOHu8ozIQT6he
-X-Gm-Message-State: AOJu0YwNT9/pybPQkTNw9ep7O8rbU3k5S1/nw9VR4wcV03DZW94QG7QL
-	gf3N0INMrpRelpa1XeMhNk2KO3gXnqR/hwXPJCknmFzBdgZ2STCSE5xPIzNGmZw=
-X-Google-Smtp-Source: AGHT+IEzKotbasPvGOvaLyaGMQ52XR+G02Abegkqynt4r4bUFHkn5OitwWrQeeo81+f0h4YeQuBFqA==
-X-Received: by 2002:a05:600c:1992:b0:418:273a:7688 with SMTP id t18-20020a05600c199200b00418273a7688mr2224806wmq.32.1713098401592;
-        Sun, 14 Apr 2024 05:40:01 -0700 (PDT)
-Received: from [192.168.0.102] ([176.61.106.68])
-        by smtp.gmail.com with ESMTPSA id q12-20020a05600c46cc00b00417bab31bd2sm12159302wmo.26.2024.04.14.05.40.00
+        d=1e100.net; s=20230601; t=1713101685; x=1713706485;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p9WRp/DXwTfjM7jCbPUfLIfu1BhKAQ/wCVJgQUHS27U=;
+        b=LRevDDI8sGqx1H0hkwUCPqOHZga6RvjuyQj5A++4mH1UKRPMR1RNd93EBwGR3SomtZ
+         6J+OznPuYOfgYQNVUdpiD7Gii2sAwqVDdS2e1ZlpYwYlYxJ4vfyCmXbuZWslSz2+nx2/
+         cdz0EhZAM5ep8lt7goYqBaYqGNwDzK6UC7cN/fccFrjdB8dk7Sy6qUUFpnVCsm3e5WQu
+         FcTGJrmMgtP8MagifKF+9e0d6xLXZk5/dcY7RbGbYglF0WGMDTgDKgWtom8HoZgNXzkr
+         UBLbx+eN1fc2NI6xAuv8noqf3GobsIrFHbTwx24S9/A3MiDNSX7xOuOLx9NuEmiRBxUy
+         GQ2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWfGNfoJprckRUTjaKAFl4MtnfDJoODQPS+AWm9a5Q53NokZjtALrxSVmKjDUjXneYrnPDpicWKc6ZUhB1sRp0puKb1fQla89QW
+X-Gm-Message-State: AOJu0YxM7h/Ulm1tu6MEWL7mZ/T/vTTM6Y+bsv49Cms4YbqkpcoVwKwb
+	XHCQDhBtv7x9SOOT0MGpQ2MgVmLUTu+puQFHGz3o6WrQUID6GTe1N2hbV1ZbMTgx7POFIAC92Ox
+	f
+X-Google-Smtp-Source: AGHT+IGJ1MQFIQeX8NdATiEbi+puC1QKsoQXOyV3VT7/QE62EmBSeo7VJtdKT3Gze8ggEIwsxL2C+g==
+X-Received: by 2002:a50:8d1e:0:b0:56e:2e4d:884e with SMTP id s30-20020a508d1e000000b0056e2e4d884emr6906275eds.0.1713101685360;
+        Sun, 14 Apr 2024 06:34:45 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id ew14-20020a056402538e00b0056fe8f3eec6sm3491110edb.62.2024.04.14.06.34.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Apr 2024 05:40:00 -0700 (PDT)
-Message-ID: <5c78ad52-524b-4ad7-b149-0e7252abc2ee@linaro.org>
-Date: Sun, 14 Apr 2024 13:39:59 +0100
+        Sun, 14 Apr 2024 06:34:44 -0700 (PDT)
+Message-ID: <17922367-b742-4474-9426-e8a0b27423db@linaro.org>
+Date: Sun, 14 Apr 2024 15:34:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,66 +63,74 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 RESEND 5/5] venus: pm_helpers: Use
- dev_pm_genpd_set_hwmode to switch GDSC mode on V6
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki"
- <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>,
- Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Gross <agross@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pm@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20240413152013.22307-1-quic_jkona@quicinc.com>
- <20240413152013.22307-6-quic_jkona@quicinc.com>
+Subject: Re: [PATCH v2 0/4] DONOTMERGE: ep93xx-clk from ep93xx device tree
+ conversion
+To: nikita.shubin@maquefel.me, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Linus Walleij <linus.walleij@linaro.org>
+References: <20240408-ep93xx-clk-v2-0-9c5629dec2dd@maquefel.me>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240413152013.22307-6-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240408-ep93xx-clk-v2-0-9c5629dec2dd@maquefel.me>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/04/2024 16:20, Jagadeesh Kona wrote:
-> The Venus driver requires vcodec GDSC to be ON in SW mode for clock
-> operations and move it back to HW mode to gain power benefits. Earlier,
-> as there is no interface to switch the GDSC mode from GenPD framework,
-> the GDSC is moved to HW control mode as part of GDSC enable callback and
-> venus driver is writing to its POWER_CONTROL register to keep the GDSC ON
-> from SW whereever required. But the POWER_CONTROL register addresses
-> are not constant and can vary across the variants.
+On 14/04/2024 12:03, Nikita Shubin via B4 Relay wrote:
+> The goal is to recieve ACKs.
 > 
-> Also as per the HW recommendation, the GDSC mode switching needs to be
-> controlled from respective GDSC register and this is a uniform approach
-> across all the targets. Hence use dev_pm_genpd_set_hwmode() API which
-> controls GDSC mode switching using its respective GDSC register.
-> 
-> In venus V6 variants, the vcodec gdsc gets enabled in SW mode by default
-> with new HW_CTRL_TRIGGER flag and there is no need to switch it to SW
-> mode again after enable, hence add check to avoid switching gdsc to SW mode
-> again after gdsc enable. Similarly add check to avoid switching GDSC to HW
-> mode before disabling the GDSC, so GDSC gets enabled in SW mode in the next
-> enable.
-> 
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
 
-When I tested this out on sm8250 a few months ago it was broken.
+Why? Entire point of previous discussion was that you split your patch
+so it can be merged. Not "not merged".
 
-I don't quite see in your commit logs, how the breakage was addressed.
-
-Can you provide some details ?
-
----
-bod
+Best regards,
+Krzysztof
 
