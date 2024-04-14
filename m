@@ -1,89 +1,129 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D0A2C190;
-	Sun, 14 Apr 2024 09:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C9018AF4;
+	Sun, 14 Apr 2024 10:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713088456; cv=none; b=ZiBemFwOU9iLqX8wD/lu1obW7t4D8bjhheF4YwwQuU+TmSxTEiJ+J9N8JjCvgFxIitgsjAiARIwkLJTfHptYXeUnS4zwTUIJDy7HbjTMcMa2aq0awMxq50L+/w2nRFbaFoKy7kxkvhaSAtrgv3ofycHJskXAQ7NBEQHDdf40dDI=
+	t=1713089051; cv=none; b=npeEHEhJmFR5rPCOQngNVXX5t3hig0wUzqmtmEVDOOiU13rLYerXZoRBzucfgLAbN1uDpYI8Y8RVqsuNH0nDLIRcd4+KOqJ8a1MfD5aFkMkihcn16d58VMVL3OYUE+QfkxCNJTSZGcMChk6xlWGiSscmqHDcdair6Q7Ga+EkuAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713088456; c=relaxed/simple;
-	bh=wgynEANorF351RVzuOsloaArd9XmEDXEW45pR6cxVTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nen1TMa1rq3CDmQD33Pcq0egG/b/8aGSAhrd0vNg8IJh2+vzcbfwEGnnDdpd62XGG2CeX/4KiwLufAoDpv2gAAKf6UIwT3Xq2PPs05Ut4kSCrbmjsJflmYbrg0ArrQIJwW2glKIuhbNVRftQNZ0wCCUMDLv8Tru4i48IQ223nko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b9z42lRY; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1713089051; c=relaxed/simple;
+	bh=84SLxTZp/DWUX/lhao6dmVikTW+EASr4F/Wo+VvHJ2Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qgP6EH3Yn+dRK4IIdKC2MZLUqJj8DSy2KuDliFqqiS/G/ylfHWpr8ApOYDyPEwUm8eE32MaguQuMoT+WGyt7diFsPKZq8RlaBCF2kKI8SZqM6LcZQKWPbroJbQvZV0DStIf95EYqif82mFfu8a48j79mHJ0Hvlyu0DY1Qce8vxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2Npsp7Y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b9z42lRY"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-343f62d8124so1895251f8f.2;
-        Sun, 14 Apr 2024 02:54:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713088453; x=1713693253; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=966TSiAvoCvjdkEs42Fq1pDpYys8o1+8WOVsY0jF/Mk=;
-        b=b9z42lRYJI11z68kfu63kuClOVnyEzAceTdy2NhWZ794mqaqZ39dE6ouXtWFaOUXET
-         r/6VSVq+Su3qxxmWIAQEnDP3cCHeuRfpxVtw0JXK9ROfMrx5Tb0cyV5aDwTHw0xUF+0t
-         MsWFtmRaEGOBCZlYy7/de8d9wD47ynRqcV6H02X65i+oc0nx1k17WIPmZuGe+Gtcfv8N
-         TdiziiRMDqfo5VJtZ0RsjXNxuBmAnJYoRgR6Qn1XsDkj+HafQQZ0oXjee4MhakNlBOC+
-         DLij+9OD3Mdt7LyZuYAaFj1zyCqzzGCWz6P7+IU36McUSN8yzc9qOYTL3vKzqnc3o3jm
-         i5ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713088453; x=1713693253;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=966TSiAvoCvjdkEs42Fq1pDpYys8o1+8WOVsY0jF/Mk=;
-        b=AUy9N3a1bP7Zjq/SMWE3NtzRSKmIvKOgbMNs8jaj21f1lFjTpmyZTEpxh5bBa/aFsC
-         xNEJ3mJkhBN8OlM9+jotLguY6MFKy+bfijwm0rgsjBV15uWXO1PLcacwY5BPCroJkvp+
-         eSwODUC0E4Cyf4gfybbrqSavRGUS9ZxjVmGoaAVKG4JOXAHVyJQhNz94pbThQ/xvHc4r
-         FstSUSJuXcp55aSN4naOynutr4uPqSCRZk0m0jtqsGqE0JcJyNzwZfomTR/QU0fcg1uO
-         FQIbzBTuZO1hr0/oBuw0Z4bCsUOuIzAqE1XHGt8cO6EMFBP+kYf9nOmrNext5FauxkZ2
-         rgKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWr52bOD28AX4DkrMCm1MUFEiygPnUYfeKzkN7pr3byrcG4XSnAJg1en6OD3mNMYb2ZLMD+Gg0kDBdCpdpXEx3gVMEWeAUgHZiGv9AI6PoQs26Ap/r8mcAygNNpAA6iUgxqGcGbrgaS
-X-Gm-Message-State: AOJu0Yy9UxgT+1HJkf3S4+YrjAGGMMKn1xpc5NotzGzPfajcSlvnJa6K
-	H5htaSz3w9sOiTmS7PP1WGJQftEpz9AVgdTFtvX0GyEKOHvMBJX2
-X-Google-Smtp-Source: AGHT+IF2QILXTcSU2QsKiUfeu3z+cURRk+Q2HhcPstTor91J1lND/K2er1pKaB2wW3r4LHfskQ1xxg==
-X-Received: by 2002:a05:6000:109:b0:341:e10a:4858 with SMTP id o9-20020a056000010900b00341e10a4858mr3723437wrx.56.1713088453477;
-        Sun, 14 Apr 2024 02:54:13 -0700 (PDT)
-Received: from jernej-laptop.localnet (APN-123-252-50-gprs.simobil.net. [46.123.252.50])
-        by smtp.gmail.com with ESMTPSA id h5-20020a5d4305000000b0033e91509224sm8690824wrq.22.2024.04.14.02.54.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Apr 2024 02:54:13 -0700 (PDT)
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] clk: sunxi-ng: fix module autoloading
-Date: Sun, 14 Apr 2024 11:54:11 +0200
-Message-ID: <2929619.e9J7NaK4W3@jernej-laptop>
-In-Reply-To: <20240410155420.224157-1-krzk@kernel.org>
-References: <20240410155420.224157-1-krzk@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2Npsp7Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8F070C072AA;
+	Sun, 14 Apr 2024 10:04:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713089050;
+	bh=84SLxTZp/DWUX/lhao6dmVikTW+EASr4F/Wo+VvHJ2Q=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=o2Npsp7Y/2kFx6aWgxDP3pyAmSaJlirscJnkHNSwFto1h3wewpxzUxLZFOh4vsg7o
+	 /OVOzCy6dndN0a9+9XCD796uTwrsaZoWiJxyTQpdgeiEFCc1tANwFbMLPLBVZ44X12
+	 Q7UB5kwfdyY9WfHy1IpHYthPIH15v8vl1Ux7k7+XIVhh03xVhyGsrFBA734dt4JShs
+	 4ofI649ZGqw8aM5YHrrTaj3gy+auhEYovYxG/S8+gAvck6qFvTPI7W7M7Ilhxfpiyu
+	 9RIK+fBOVv4Wgh7lANfeEPg90P0xQ/0lPkL6QwLYYt91JDmAJHeA5ku2CQWQlONCHN
+	 srxuAt5jEhKhg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77223C4345F;
+	Sun, 14 Apr 2024 10:04:10 +0000 (UTC)
+From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
+Subject: [PATCH v2 0/4] DONOTMERGE: ep93xx-clk from ep93xx device tree
+ conversion
+Date: Sun, 14 Apr 2024 13:03:47 +0300
+Message-Id: <20240408-ep93xx-clk-v2-0-9c5629dec2dd@maquefel.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAOqG2YC/22Nyw6CMBREf4Xctde0pVB15X8YFqVcpJGXLTY1h
+ H+3sHZ5ZnJmVvDkLHm4ZSs4CtbbaUwgThmYTo9PQtskBsGEZJJdkOZrHiOa/oVloTTPC9VQqSA
+ JtfaEtdOj6XZl0H4htxezo9bG4+VRJe6sXyb3PU4D39O/+4EjQ96wVppcyFKq+6DfH2qpPw8E1
+ bZtPwK4zrS/AAAA
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, Nikita Shubin <nikita.shubin@maquefel.me>, 
+ Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1713089049; l=2238;
+ i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
+ bh=84SLxTZp/DWUX/lhao6dmVikTW+EASr4F/Wo+VvHJ2Q=;
+ b=z9XAN1DXXWE3QxCyuTkNMTNSk5hrGWnglICBc7KGTF+lnAe7G6ti2xpimedDy1Wf6oac/GtTG3kg
+ fiFfdHpjAaVBVJ7+W+hyMLvKrp8qGPxNIM3ksHHchbay3miQxYWO
+X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
+ pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
+X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
+ with auth_id=65
+X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
+Reply-To: nikita.shubin@maquefel.me
 
-Dne sreda, 10. april 2024 ob 17:54:20 CEST je Krzysztof Kozlowski napisal(a):
-> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-> based on the alias from of_device_id table.  Clocks are considered core
-> components, so usually they are built-in, however these can be built and
-> used as modules on some generic kernel.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+The goal is to recieve ACKs.
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+This is a fraction of v9 "ep93xx device tree conversion" series:
+
+https://lore.kernel.org/all/20240326-ep93xx-v9-0-156e2ae5dfc8@maquefel.me/
+
+The clk driver for ep93xx was converted to AUX device, as suggested
+originally by Stephen Boyd.
+
+Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+---
+Changes in v2:
+- soc: Add SoC driver for Cirrus ep93xx:
+  - added __init for ep93xx_adev_alloc(), ep93xx_controller_register()
+  - added static, __initconst for pinctrl_names[]
+  - clk revision for SPI is now resolved here through differently named
+    clk device
+  - more verbose Kconfig description
+
+  NOTE: "of" includes are required unfortunately.
+
+- clk: ep93xx: add DT support for Cirrus EP93xx:
+  - dropped includes
+  - dropped ep93xx_soc_table[]
+  - add different named clk and dropped involved includes
+  - moved pll's and fclk, hclk, pclk init to separate function
+  - fixed ep93xx_clk_ids[] explicit lines
+ 
+  NOTE: clk_hw_register_div() is clk-ep9xx internal function which uses
+  devm.
+
+---
+Nikita Shubin (4):
+      ARM: ep93xx: add regmap aux_dev
+      clk: ep93xx: add DT support for Cirrus EP93xx
+      dt-bindings: soc: Add Cirrus EP93xx
+      soc: Add SoC driver for Cirrus ep93xx
+
+ .../bindings/arm/cirrus/cirrus,ep9301.yaml         |  38 +
+ .../bindings/soc/cirrus/cirrus,ep9301-syscon.yaml  |  94 +++
+ drivers/clk/Kconfig                                |   8 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-ep93xx.c                           | 834 +++++++++++++++++++++
+ drivers/soc/Kconfig                                |   1 +
+ drivers/soc/Makefile                               |   1 +
+ drivers/soc/cirrus/Kconfig                         |  17 +
+ drivers/soc/cirrus/Makefile                        |   2 +
+ drivers/soc/cirrus/soc-ep93xx.c                    | 252 +++++++
+ include/dt-bindings/clock/cirrus,ep9301-syscon.h   |  46 ++
+ include/linux/soc/cirrus/ep93xx.h                  |  26 +
+ 12 files changed, 1320 insertions(+)
+---
+base-commit: fec50db7033ea478773b159e0e2efb135270e3b7
+change-id: 20240408-ep93xx-clk-657a1357de67
 
 Best regards,
-Jernej
+-- 
+Nikita Shubin <nikita.shubin@maquefel.me>
 
 
