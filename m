@@ -1,209 +1,93 @@
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBCC2C1B4;
-	Mon, 15 Apr 2024 07:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2542C1EB30;
+	Mon, 15 Apr 2024 07:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713165840; cv=none; b=otN3rEojVpr7TadT5PUHhOxoZdJoXovY4fqB0etUQk4WqpZvCQYTpPpNffK//IwDLWU+Qb7LgJfcZlQ5iHv402ohp83i4Ko5/7P0BPDd+a3FlrrF+HBP79ao/rRyM09KjcI+zOj1Bkh8NZBXQZmnTB5SYB7Qy/Snk5SHOeBcwoY=
+	t=1713166130; cv=none; b=KPNw0cctQUUyXYt4yV1wdNm6ENHzfnNciOBGOkvmasgjXgv3IbaZtaXoE831c0HrdGkGw4vxf9r9fMsdZ342MA5zVKpZGTrOZXtqIczEqlgsXQqJDVzqKTwymZyRkPPrIFkCEpf/tSHlx01vfC4Tsmtn4kwAZKimvOgZN5jLoew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713165840; c=relaxed/simple;
-	bh=Kct7Pjk1WKf/K8JXQ51OPs2q82g4Vs270HKxVBz7YVU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RWiHO0TaN5nHp8P0SYRD4nfB1YDgdq8S8HZLwKWafIJniKrZFpDlNbaud5rzTvIv0nRC9K44yjAFSbDTL91X0V7xNjnNAdzcedvNEGcotCYQxTzWGdqT1tDslCiMyxK+lo1dVhq6arEC415TbU+p88xFFRZqwVF8mdARx/SQ8BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z37LUiSv; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1713166130; c=relaxed/simple;
+	bh=m8QpBMJtoPr8JIXclCPZe9LRJ8LRUBvkWOWld3K74dk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=arDOeXxkO68Htkbu+MJxV+naqtrec94wlg+ZQu3Fi9cSUxke9MxXZtRHzwTAo0MdAY9/cR5JOUs9tCFBJMP6SaCO6sJmZcBOVQBfhn6sB3qzUTjrkBQk6N7n+NamOxI/EvOTxqx7NbcQlHNWgsAPD6S2NjChnjQ8XeroNy1t1UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z37LUiSv"
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6ea2ac4607aso1498227a34.3;
-        Mon, 15 Apr 2024 00:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713165838; x=1713770638; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YPRTTnRNGB6MC8MgLxeQqBqXiKf58UGvbzByUZNl4Io=;
-        b=Z37LUiSvrC4/v+Nxx7oQ8h67uALywtz0aWgsP5xsLLskmlaAxRyZOnFnKy+2BvmMDi
-         dDLdpQ6ZeG6IHGroej7/kXv80MFZecr12xCpsfgns+VrHDUM30/lnb6smjzsu60qKIEP
-         hMt3Qu+QTsaucGN8KAKbXjaD8bbEaYjDUpoieMuMi9/yBhTWf8QRc6nBq/giVJWwUace
-         Sxxu0O5TcrpgOoO3oi8l4c96F4LR7CORjaGRikFkhsfLUSdQ1RrVI08ydg+s5+oODO9F
-         oEcwgO/YSPT9mPuCaZfpoPP5znplqEvmqZ3MUuAGJNJVx4USpamzvMezPG9MYmI5VoL5
-         BEDA==
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-617ddc988f5so34473337b3.2;
+        Mon, 15 Apr 2024 00:28:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713165838; x=1713770638;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1713166126; x=1713770926;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YPRTTnRNGB6MC8MgLxeQqBqXiKf58UGvbzByUZNl4Io=;
-        b=ecJaIjf7Vskx4sli/8WYlNJM3xRp3fzIKYYLRzxhdYHchAobfZqraWvPFqcjXEn5S0
-         Dr29izA60dVLdxLW3sILZgS48Gxx81aPaSm0D7dHuNvGiQBVfCl6ejmFQDIsGTUQjCq7
-         uDqWcL0OzLg2pMOz7phrpX8gBgiqiYwDvRkjNg2YAjb0NpC6h9AVMpE5GXNjjdYf8pww
-         yy2bWDg2sDh5ao6JJDlBWYMxqdE0S7QpF4rhPmS9IRI/pa//xPmJjtJBiGoQcLZYLgBi
-         zEKt9nTcFnuij8SUPzmHz2FokmG6nd6e4wAQMWmUbgUGx5s7MrrGXOaQob65nU5oosH9
-         7ecw==
-X-Forwarded-Encrypted: i=1; AJvYcCUN9BHCK+wrZM+avLh2razsOm4S1pukUdU8jBobV90fhLi/T7+Tr0pIm1men3y5Tacx0s9gd6C9CYUB87pS02k4oriNlMuNXq6mHrSR6DDMnU4JzsO0TOAZjdslRnN3coiUizhsWCqGKqQdm/Fb3pAtWOMmQa28B2AJh3J/SYtGA3EOwQ==
-X-Gm-Message-State: AOJu0Yxz1xBdPmYkWvnkYU8s3rBWuXCQijYrQd0IHWuzFbWWHLd2lH0n
-	pTBXBdZysRtnrXQIOEkX9B2cUogn1wZEqfu6KmLLA/KJeBxcN6z7
-X-Google-Smtp-Source: AGHT+IGpiBBC2cEu8GRBC8tpHfBybNg/WOBaHwzCJMcCDFu3ggw2rTC6WE2uAyi3jpLUgBGTX0hePw==
-X-Received: by 2002:a05:6808:2a7c:b0:3c7:a9b:74c2 with SMTP id fu28-20020a0568082a7c00b003c70a9b74c2mr2995368oib.5.1713165837810;
-        Mon, 15 Apr 2024 00:23:57 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id ku4-20020a056808708400b003c718601b81sm105519oib.8.2024.04.15.00.23.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Apr 2024 00:23:55 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: aou@eecs.berkeley.edu,
-	chao.wei@sophgo.com,
-	conor@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	mturquette@baylibre.com,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	richardcochran@gmail.com,
-	robh+dt@kernel.org,
-	sboyd@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	guoren@kernel.org,
-	jszhang@kernel.org,
-	inochiama@outlook.com,
-	samuel.holland@sifive.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v14 5/5] riscv: dts: add clock generator for Sophgo SG2042 SoC
-Date: Mon, 15 Apr 2024 15:23:49 +0800
-Message-Id: <ffb589094e3a111dfbf1c8961e9d3f328d2b9fde.1713164546.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1713164546.git.unicorn_wang@outlook.com>
-References: <cover.1713164546.git.unicorn_wang@outlook.com>
+        bh=y6a/Ap2X2HwsKOi3kZt9jVTB+y5dhwn09RXTJ8jidvw=;
+        b=esi7LgUIte2foyZSSColAasj4DYIPCq67QHC2RuAP5UP+oO8faaj6MdnKHsB0aVrt1
+         93BfAKigyNTEQO4uObOEObSByYJbkQ//ITolBLhcUT52K3IrwacubcV/3+0zTt8bu9s5
+         vJHh09Wi/Ypn+BVHmXPWmm58H0SGoq8fQmJyR5xYj5un3+zu075T64kAcUA9AYT3eCTe
+         HaWAlqxOgmDB3MBzjQwvxU5luXtab0aWrkj1XSzlOuBCbAAuYwg5limAa+FaO2MOYb+3
+         TbKJxtNODIWZoBJGt8+RTsytAWlKyuMfRXumYAEjgIt+LhuHRiOF6Iy78aHJEO9jY6/c
+         IFGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWz+XM7KNsy/yH/LZslJuhYekeQaf9Kq3YkxLTRmZ1MpsRSSDmF16kN7IzAFGmtZ+DwNn8DqOv/G06h8UT8I8yYzVd03p5HNdhZvuhYY+GYAg5NLj+nKSpOsaqr2iDagrICBvaqC+ya8LiazYvJQfnyX/7L8qnmkIeXUWdi1FBR3/imJYWin9rdW+zrPSS61ZcQY8IBg/L6KTWXaYCbqHMjQbwhz1M9
+X-Gm-Message-State: AOJu0YxFB7p/Ta7/teS1bqxey1WdFAb11FWI/FzljN+MvkyTYf8qh8pn
+	rRP5YeusffmxY0++SJGYlbf5iRyC+qGV0V05JvtW7hh3mSACBgdYALn5z6Mw
+X-Google-Smtp-Source: AGHT+IGfJgTvorSc20twKQN4ueqtChty8uwQlKOzKC67V1KKcTiNE4OPEyD5Y13Ss2ZqstVj8i7Hpg==
+X-Received: by 2002:a81:bc4d:0:b0:618:79f5:8d32 with SMTP id b13-20020a81bc4d000000b0061879f58d32mr8177376ywl.48.1713166126549;
+        Mon, 15 Apr 2024 00:28:46 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id fq9-20020a05690c350900b0061813dec952sm1977513ywb.1.2024.04.15.00.28.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Apr 2024 00:28:46 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dccb1421bdeso2607288276.1;
+        Mon, 15 Apr 2024 00:28:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVHDqxoVwEm8XzlQVshcc25oq4uN8w8MarDov9o9VEsZ5H2e/v+nbXUN1wlt3E+XS4HvuTz64FqHzYF7qsMMVNssHCHzsuUHU67E2y8ksPMW5Mc42GKYyPKnXOR7mNoigLK8veJbv+H7HHE/LwMg5WoOCvY/LIKtXOOyNBipEnWyjZrht6ZuLAPE4F55nxID1uw9JSN3jVDA/zTTCIAtE6o+M0Xs+Ck
+X-Received: by 2002:a25:bcca:0:b0:de0:ea71:9ec9 with SMTP id
+ l10-20020a25bcca000000b00de0ea719ec9mr8481223ybm.1.1713166126061; Mon, 15 Apr
+ 2024 00:28:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com> <CAPDyKFr405qt58wrqNdSn8bQPRqPKJ1omUZHS_VpQrX5zxUJug@mail.gmail.com>
+In-Reply-To: <CAPDyKFr405qt58wrqNdSn8bQPRqPKJ1omUZHS_VpQrX5zxUJug@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 15 Apr 2024 09:28:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXRwcYMt7p+xT3svo1RmJ2Tvbamrx4++iYQ-mffKb6ZQQ@mail.gmail.com>
+Message-ID: <CAMuHMdXRwcYMt7p+xT3svo1RmJ2Tvbamrx4++iYQ-mffKb6ZQQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] clk: renesas: rzg2l: Add support for power domains
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be, 
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chen Wang <unicorn_wang@outlook.com>
+Hi Ulf,
 
-Add clock generator node to device tree for SG2042, and enable clock for
-uart.
+On Fri, Apr 12, 2024 at 1:31=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
+> That said, maybe we should start separating and moving the
+> power-domain parts out from the clk directory into the pmdomain
+> directory instead, that should improve these situations!?
 
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-Reviewed-by: Guo Ren <guoren@kernel.org>
----
- .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  | 12 +++++
- arch/riscv/boot/dts/sophgo/sg2042.dtsi        | 49 ++++++++++++++++++-
- 2 files changed, 60 insertions(+), 1 deletion(-)
+The clk and pmdomain functions are tied rather closely together on
+Renesas SoCs, that's why the clock drivers are also pmdomain providers.
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-index 49b4b9c2c101..80cb017974d8 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-+++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-@@ -14,6 +14,18 @@ chosen {
- 	};
- };
- 
-+&cgi_main {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll0 {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll1 {
-+	clock-frequency = <25000000>;
-+};
-+
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index 81fda312f988..8aab027cf730 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -4,8 +4,10 @@
-  */
- 
- /dts-v1/;
-+#include <dt-bindings/clock/sophgo,sg2042-clkgen.h>
-+#include <dt-bindings/clock/sophgo,sg2042-pll.h>
-+#include <dt-bindings/clock/sophgo,sg2042-rpgate.h>
- #include <dt-bindings/interrupt-controller/irq.h>
--
- #include <dt-bindings/reset/sophgo,sg2042-reset.h>
- 
- #include "sg2042-cpus.dtsi"
-@@ -20,12 +22,54 @@ aliases {
- 		serial0 = &uart0;
- 	};
- 
-+	cgi_main: oscillator0 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_main";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll0: oscillator1 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll0";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll1: oscillator2 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll1";
-+		#clock-cells = <0>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		ranges;
- 
-+		pllclk: clock-controller@70300100c0 {
-+			compatible = "sophgo,sg2042-pll";
-+			reg = <0x70 0x300100c0 0x0 0x40>;
-+			clocks = <&cgi_main>, <&cgi_dpll0>, <&cgi_dpll1>;
-+			#clock-cells = <1>;
-+		};
-+
-+		rpgate: clock-controller@7030010368 {
-+			compatible = "sophgo,sg2042-rpgate";
-+			reg = <0x70 0x30010368 0x0 0x98>;
-+			clocks = <&clkgen GATE_CLK_RP_CPU_NORMAL>;
-+			#clock-cells = <1>;
-+		};
-+
-+		clkgen: clock-controller@7030012000 {
-+			compatible = "sophgo,sg2042-clkgen";
-+			reg = <0x70 0x30012000 0x0 0x1000>;
-+			clocks = <&pllclk MPLL_CLK>,
-+				 <&pllclk FPLL_CLK>,
-+				 <&pllclk DPLL0_CLK>,
-+				 <&pllclk DPLL1_CLK>;
-+			#clock-cells = <1>;
-+		};
-+
- 		clint_mswi: interrupt-controller@7094000000 {
- 			compatible = "sophgo,sg2042-aclint-mswi", "thead,c900-aclint-mswi";
- 			reg = <0x00000070 0x94000000 0x00000000 0x00004000>;
-@@ -341,6 +385,9 @@ uart0: serial@7040000000 {
- 			interrupt-parent = <&intc>;
- 			interrupts = <112 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <500000000>;
-+			clocks = <&clkgen GATE_CLK_UART_500M>,
-+				 <&clkgen GATE_CLK_APB_UART>;
-+			clock-names = "baudclk", "apb_pclk";
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			resets = <&rstgen RST_UART0>;
--- 
-2.25.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
