@@ -1,131 +1,91 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B268156255
-	for <linux-clk@vger.kernel.org>; Mon, 15 Apr 2024 19:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED63156652
+	for <linux-clk@vger.kernel.org>; Mon, 15 Apr 2024 20:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713211023; cv=none; b=pOWMmiMNBkFno3JyIVE+pYHK1EeEw5LszIsnVhAaBdlhOoF9vH0djYPpMAI7vfn9GP/xCgPIRo1ko7NDn0hggy7wcl9crjTGlh2yAEiLUAnXjfUNRuDF6cUWwZamEctznzybgMB7tO5fkHrGNiXidaG7tPo1CEx5pf/RurtvW5c=
+	t=1713211471; cv=none; b=R8tiA7/eaglGADp+hZfbx3LtPiWu8JyadqGl0+/GGIUvQsexBba7DWaZDIuX/LLFKCnNh/S5qu2K1Mp+XjNdJzxpoPdnkoRxGxA1PjZPmuQxuEZ64ASxC/hSmOXnWd6sv6OfC7bB611LZSZzu+cBfkfvIeDW1CVR9Q78K4hjcDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713211023; c=relaxed/simple;
-	bh=2slfWTMln8rIj3aslEiPXhhOYTM+m36meXVTS0sJjrU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N8aDadpJrRkIu0WXQnGX9byyJeIttiiZInRV+Kh7OGjeoXZfBpZYQUfBLVDkHbq/QjcSE+8ln9s42Wj21Ak4cusqP+iEsQURi5PwjcJWOjrBZYjsqlzA2nFeUWFFczKuDOsrzruqtuU8IC7YoDdFGkpgxbVhT3+EhmQgGbBqvPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P3kq/na2; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1713211471; c=relaxed/simple;
+	bh=HKevHeXkZGuoEWykBFrnnyLmHY+4admTUN+lZ7NyEtc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CqKmTvoxtcCuuR2VSpfjcE+9Ngn4a9Ro3ts8mu+5InKgXiGunw319AUVi3lyOP7yRFVEWGHMy82xl3BZTVh3dkODNqHzht3CNMIOK2nCCRHoZCnTDiVhuDRHykNoI64NPGlde0cHXAXDeSiomfTAiEGvNWDmXLhl3oG8ZKJ1f9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a2+kMCpI; arc=none smtp.client-ip=209.85.219.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P3kq/na2"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-516d487659bso4385373e87.2
-        for <linux-clk@vger.kernel.org>; Mon, 15 Apr 2024 12:57:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a2+kMCpI"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dcc71031680so3522956276.2
+        for <linux-clk@vger.kernel.org>; Mon, 15 Apr 2024 13:04:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713211019; x=1713815819; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sVcUvUxKvP42tR9nsbF1BFtRbXcEbqx0UXm62N5Ey4I=;
-        b=P3kq/na2RmWuceNXXngAtJYpWwTPWjH0g0JoLzhtumVo5CtuGlBEjuI01GhioHfHPw
-         Y81lVwu26zyttr/RZY1zd5IWOYyaQH12Umf6gCeIHlQNSbg/0TvNMebLb46svYRK0JGm
-         f05kBZdmWNJicuRMZAPuw26lZxHJ+1U7dJ83RYnHkud0RYdt7n1gluu7gtien8Me8EZq
-         mRMJ8IhzOUmhQwsX+qdCGjEX0cxUTGsEJJqRlTZGEnH3fztLx395Rj9cPPwtyxr3voRn
-         Zn6LmiOx/x/w3Q+uyVWfwWi1LzOk9fCAIn3Pdlnygb5AMm2L63byKp8K14umZbf6lqlL
-         U52w==
+        d=linaro.org; s=google; t=1713211467; x=1713816267; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x+n4yDNeHcrTCJc7XCA965ghIKCFi6oK1ygO6iYz34Q=;
+        b=a2+kMCpIIVUrD/mzkxfLOFdfjNSVCTHrvIByBROGwHnn8ZyCZCe4K/QxjDGPx9A3yx
+         mHX/UG2DygM/BznGHKBgqdN0M4wrOf830WA6PajdZa7lNamXACjNSpz6TdaYbOz3h6lR
+         RJ4/qpr70Jsi5boycQTlvJKEM/LmHY8Ry18EGIa6JWizEunDhBTuyaIvdUE9lArlXOhX
+         itvNy8l76aSpUqQaEKOTBZtAGOtxqP6/eNSq0rYoij6oayP/+gjP6yFgAcDEpv77QR9l
+         vQI4IswKAzFbwZ4Vh8QWlBVreTDMxOq9zWEUBekG56C1cnWEuWkOJPleqLWsyuDpCFzP
+         d9tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713211019; x=1713815819;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sVcUvUxKvP42tR9nsbF1BFtRbXcEbqx0UXm62N5Ey4I=;
-        b=FXdYQPUZouMnCE9JXklxWwcyySwzeQ80dcJCeohgqJY9g91OWayXkIbVifsj1IuVUP
-         3XQD3bBDcYYXf/tU4Dlj3BkV20YNMTgVLFEsyOH+P2mzJSZf5rgvjiFeCog+V/NzpfG+
-         rjyLbbHUbOAdYQmF8HRTLPkOoDqPv6o7QBUt+mEs57WDmDu3q7ZhRQwcZPFe7B8BM+qu
-         UbLiv6pzUJDacsc8dUqLrjq9SZ4oj66794evnKoon1Tbv3Ylv/AarXw4EsFZP/9+UH2U
-         IuNVebZPmG5+rxA+hzux27LcToDRx1PevkkP0cUWhGPw4oU2+AHOR+EHQ3hH3maen7R7
-         k0bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/uM4CQUKT1ys2ZKeBOdqiCQe2xEZQn1bXOtHGc3WGMyYYnU6cm3txDUA69TqGkdtceseqmggAt2Z+9b0YegeX0ykgnuDyW2VA
-X-Gm-Message-State: AOJu0YwEQUy7xxgz5P90sTWOSCUwNh2KtPkyXkYvJQnL7LBBZONq98fX
-	vUyA0RjRRDayALokcODUnxCNkqspe1JowoncnLNDSwS5pEZPisxW3y4C6sDaYqQ=
-X-Google-Smtp-Source: AGHT+IHEkDeQYsQxzyG8UfgTqSRW9hLhKp6aVkMeAFdcHs+cwe9mtvL+V+Yp3pjeboAJrpGZ0UXkcg==
-X-Received: by 2002:a19:8c0a:0:b0:516:9fdc:2621 with SMTP id o10-20020a198c0a000000b005169fdc2621mr7074100lfd.0.1713211018626;
-        Mon, 15 Apr 2024 12:56:58 -0700 (PDT)
-Received: from [172.30.205.18] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id w12-20020a05651204cc00b00516d6925de5sm1346470lfq.92.2024.04.15.12.56.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Apr 2024 12:56:58 -0700 (PDT)
-Message-ID: <22628ff2-6128-4ac9-89e3-d978f57be378@linaro.org>
-Date: Mon, 15 Apr 2024 21:56:55 +0200
+        d=1e100.net; s=20230601; t=1713211467; x=1713816267;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x+n4yDNeHcrTCJc7XCA965ghIKCFi6oK1ygO6iYz34Q=;
+        b=Pi3kZvHql48U8t31DKhnW5Zti5g/aklIgFahUvHKAvh3E76hkfx2MaxLexn8an0DNy
+         /JWBeFX+F1X6ZGl10r6z/Zwp2PP1tobtdhQlPG1XjUmCimRfTGM4KIzyMQM6wF+7MPyb
+         7HGmfMY+4Bd+y433VAIN3YD+nMUcol5jvUeNAEt0LFFa0snSabahlVTAyNyZeB5v33oH
+         1QG5ZoEsWhiRtrGGko5x5EcE2Cdb6CIzqCIg3AkgL9VsnjRQIYA0DOtJd6raRYqpm+1X
+         n3KZrMTCedK5Pk8W85jzd1vLNd5WzGUuFneT/XJHWXuW9AFuo5N6qq9E1rfLBR04oFu7
+         itRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFffgsascjx+9vTJt9xUdSWiXl0+KIg42zy007ZYCpVdlLlvFzx2IaYagesvio6FcQXvymmsnCwyh7EfjaSxQ+3omsg+WyUT5X
+X-Gm-Message-State: AOJu0Yw5kXrPhECU62s6zzgas/93kHNIwXWq3ancX7epDxonI7nVcphg
+	HqGNc2r1xSPdsrXA2vgIhnKFsoBr3pj28F3tkXSff62TGOY9y8WwRhXohXHNJRQw/MNwNz3H/A3
+	Kl5dNtGyISlI9NCd9bwKwfiWhptbHnGxW/uk2OA==
+X-Google-Smtp-Source: AGHT+IFgChYQoIbtXVFNn5dpONcRCuNNKjt9lSve7LdO+2SQ5EoJ4jqt3753eEsEcQ7mld6BIqWcJDJtBnxGz7Zk5/k=
+X-Received: by 2002:a25:2e0d:0:b0:dc6:dd80:430e with SMTP id
+ u13-20020a252e0d000000b00dc6dd80430emr9293179ybu.27.1713211467602; Mon, 15
+ Apr 2024 13:04:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: qcom: mmcc-msm8998: fix venus clock issue
-To: Marc Gonzalez <mgonzalez@freebox.fr>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: MSM <linux-arm-msm@vger.kernel.org>, linux-clk
- <linux-clk@vger.kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bryan O Donoghue <bryan.odonoghue@linaro.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Jeffrey Hugo <quic_jhugo@quicinc.com>,
- Douglas Anderson <dianders@chromium.org>,
- Pierre-Hugues Husson <phhusson@freebox.fr>, Arnaud Vrac <avrac@freebox.fr>
-References: <c325691e-1cbe-4589-87fc-b67a41e93294@freebox.fr>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <c325691e-1cbe-4589-87fc-b67a41e93294@freebox.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240415182052.374494-1-mr.nuke.me@gmail.com> <20240415182052.374494-3-mr.nuke.me@gmail.com>
+In-Reply-To: <20240415182052.374494-3-mr.nuke.me@gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 15 Apr 2024 23:04:16 +0300
+Message-ID: <CAA8EJpq-UOd4dcuLyEvJNW4zckSGq1LSdq4eDMWPHX_98U8F=A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/7] clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-On 4/10/24 13:13, Marc Gonzalez wrote:
-> Video decoder (venus) was broken on msm8998.
-> 
-> PH found crude work-around:
-> Drop venus_sys_set_power_control() call.
-> 
-> Bryan suggested proper fix:
-> Set required register offsets in venus GDSC structs.
-> Set HW_CTRL flag.
-> 
-> GDSC = Globally Distributed Switch Controller
-> 
-> Use same code as mmcc-msm8996 with:
-> s/venus_gdsc/video_top_gdsc/
-> s/venus_core0_gdsc/video_subcore0_gdsc/
-> s/venus_core1_gdsc/video_subcore1_gdsc/
-> 
-> https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8996.h
-> https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8998.h
-> 
-> 0x1024 = MMSS_VIDEO GDSCR (undocumented)
-> 0x1028 = MMSS_VIDEO_CORE_CBCR
-> 0x1030 = MMSS_VIDEO_AHB_CBCR
-> 0x1034 = MMSS_VIDEO_AXI_CBCR
-> 0x1038 = MMSS_VIDEO_MAXI_CBCR
-> 0x1040 = MMSS_VIDEO_SUBCORE0 GDSCR (undocumented)
-> 0x1044 = MMSS_VIDEO_SUBCORE1 GDSCR (undocumented)
-> 0x1048 = MMSS_VIDEO_SUBCORE0_CBCR
-> 0x104c = MMSS_VIDEO_SUBCORE1_CBCR
-> 
-> Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
+On Mon, 15 Apr 2024 at 21:21, Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
+>
+> The IPQ9574 has four PCIe "pipe" clocks. These clocks are required by
+> PCIe PHYs. Port the pipe clocks from the downstream 5.4 kernel.
+>
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 > ---
+>  drivers/clk/qcom/gcc-ipq9574.c | 76 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 76 insertions(+)
 
-[...]
 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
->   static struct gdsc video_top_gdsc = {
->   	.gdscr = 0x1024,
-> +	.cxcs = (unsigned int []){ 0x1028, 0x1034, 0x1038 },
-> +	.cxc_count = 3,
-
-Marc, have you verified all three are necessary for stuff to work?
-
-I'd expect 0x1028/venus core to be absolutely necessary fwiw
-
-Konrad
+-- 
+With best wishes
+Dmitry
