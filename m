@@ -1,80 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94A81E4B0;
-	Mon, 15 Apr 2024 13:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E641373163;
+	Mon, 15 Apr 2024 13:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713188737; cv=none; b=Tnn0G/0csk3xo5be4PsBkXxbj3pYGYuhD8M+0zWMOSmYLWv5H5PswuaGXVXHef4cXHZ62v8lhv43Z5xF18akWQeoX7VYZBiNoFgJ6jfJk4c8IbHrNejoSu3ZRx7rbkU8HlNBJQVok9SzMsae9vgpF03RAQQ+rpqhtZAuDqSsqVU=
+	t=1713189578; cv=none; b=tnesEQAXRP1/cEGTxpPc7gOHaYm+k3rkZsujjk4Xtt3PtzPcMKvIKBWa6uc5B8PVed6PmiXbDis1Bu6mQGRl/D9DYwTvLsjCc7Kudj4PXJGAvU/fzcWV+/AjTXDHlGWuy5ajqPS8kKwDpiiNfwPlPj+FuEOrouqncHTF911ace4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713188737; c=relaxed/simple;
-	bh=WYM10ESJW8h7DBMF+Db5WIGDUBmBDs04mXycZHqmaEA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iMA3/aIagZxiloTSx91vWNkO5VDZ7NcEQssBBZDC1u/wYf6WJtF7Ok8OvbapGBfyv67e/t+sA75P6snaLPWtshaygGaVXxT/9fJxCsPxJv42pyDfLmX1UiozqFCDlGt7ZD2yFMFOCuyr6WrMTqeR9mjL9ZdDT4Qjw9Z3k5uvhLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaWGXug7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713189578; c=relaxed/simple;
+	bh=9vZ/az2uga1smaAnN/seIO0ar+qO2aTQ6YgT7f9CcOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TerGmwJpc6VWWwlvb8sxiRkOpNbYNmovA84E41SBrhqr9+S4ErsinWAGeMsI8ckkgUeXc6WRlZhODZWRLZqBOToVh9foorfdhaikNtthMFMyX4wWvVF2g7GzT2v0Iw5r/BgKvBHRIOwwy0hc4drUCKRpPiRI2S09IZj/xUdLRkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=KMolAgPr; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaWGXug7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1AA2C113CC;
-	Mon, 15 Apr 2024 13:45:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713188737;
-	bh=WYM10ESJW8h7DBMF+Db5WIGDUBmBDs04mXycZHqmaEA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WaWGXug7lg1qOdoEdpwCH8xdeoWLj0G7xLfF7yJgwLjJ2/AOfTJXFcy7li2lMCZyq
-	 sEV1wjEXO3qwZ5p/1VfVP7Mlqwa+O5g6cLQT6sjd2Ocrp1GJjNfO+ZgaXJ+uuqY0N8
-	 CsI5N2ZhF20r05koJJSBuySXoIYtWcXGV8+sj8sDuZpUyRVGKNYu9FVGjv2aGYnf3a
-	 1o7+oZP5qX6by9fq70kOy+b8V2gVIjs0+MNrrUcmDugklatp3LTibq2GqrpyjBwIB7
-	 i/kcJgO5/1lV7Q5w0pgAcctQkM/v5LR8kO/Gb/rd+zcxkpKAg2eL+xp4zGL7BO6aya
-	 tiOBY2mNqmLWA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: sophgo: avoid open-coded 64-bit division
-Date: Mon, 15 Apr 2024 15:45:20 +0200
-Message-Id: <20240415134532.3467817-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="KMolAgPr"
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 408DA88193;
+	Mon, 15 Apr 2024 15:59:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1713189575;
+	bh=RZbptOuQs2swmZA+KPuVax4YoS8La7KM0DF+wW2keM4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KMolAgPrDFouc2CIcpEt1ElhDEmxKDEsrIfW79bXyyMWoEiRFccBOSlTne9clSzjA
+	 QQMqFmPv1LCoq2KYsZVPCNUUymRg+mlz78k1KjxxNGUp4egq4Hiuqt5LQadfsUaTZi
+	 6fkhIfyzZ2of4SVshOE//c8qtc5zQ+RasKN8PdpFbKCdkxzrlGUPtJ5pcLhEc1Bq3R
+	 zMy/JFS/VD6LEdhq9AP2wNZ/CGZZ98VyKizAbvIlfMba3avbmy17wqflLhP+0aCHak
+	 GTCe2sbLkJl0mHNqO4YlRDnsMRHWmD5gH0FqkZvXbqm4NaxUyWpE4jshQ1nZR/6LHr
+	 lXdQfRDEviF+g==
+Message-ID: <97a6261b-7d26-4e29-88b3-1ac5084a6fc7@denx.de>
+Date: Mon, 15 Apr 2024 15:24:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: rs9: fix wrong default value for clock amplitude
+To: Catalin Popescu <catalin.popescu@leica-geosystems.com>, sboyd@kernel.org,
+ mturquette@baylibre.com, biju.das.jz@bp.renesas.com,
+ marek.vasut+renesas@mailbox.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bsp-development.geo@leica-geosystems.com, m.felsch@pengutronix.de
+References: <20240415124219.604339-1-catalin.popescu@leica-geosystems.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240415124219.604339-1-catalin.popescu@leica-geosystems.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 4/15/24 2:42 PM, Catalin Popescu wrote:
+> According to 9FGV0241, 9FGV0441 & 9FGV0841 datasheets, the default
+> value for the clock amplitude is 0.8V, while the driver assumes 0.7V.
+> 
+> Additionally, define constants for default values for both clock
+> amplitude and spread spectrum and use them.
+> 
+> Fixes: 892e0ddea1aa ("clk: rs9: Add Renesas 9-series PCIe clock generator driver")
+> 
+> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
 
-On 32-bit architectures, the 64-bit division leads to a link failure:
+Use git send-email -v2 next time.
 
-arm-linux-gnueabi-ld: drivers/clk/sophgo/clk-cv18xx-pll.o: in function `fpll_calc_rate':
-clk-cv18xx-pll.c:(.text.fpll_calc_rate+0x26): undefined reference to `__aeabi_uldivmod'
-
-This one is not called in a fast path, and there is already another div_u64()
-variant used in the same function, so convert it to div64_u64_rem().
-
-Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/sophgo/clk-cv18xx-pll.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
-index c546dad1791c..29e24098bf5f 100644
---- a/drivers/clk/sophgo/clk-cv18xx-pll.c
-+++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
-@@ -205,8 +205,7 @@ static unsigned long fpll_calc_rate(unsigned long parent_rate,
- 	unsigned long rate;
- 
- 	dividend <<= PLL_SYN_FACTOR_DOT_POS - 1;
--	rate = dividend / factor;
--	dividend %= factor;
-+	rate = div64_u64_rem(dividend, factor, &dividend);
- 
- 	if (is_full_parent) {
- 		dividend <<= 1;
--- 
-2.39.2
-
+Reviewed-by: Marek Vasut <marex@denx.de>
