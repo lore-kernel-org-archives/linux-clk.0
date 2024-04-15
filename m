@@ -1,214 +1,131 @@
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E9B13C68A;
-	Mon, 15 Apr 2024 18:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B268156255
+	for <linux-clk@vger.kernel.org>; Mon, 15 Apr 2024 19:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713205288; cv=none; b=pG+knBSqWIJxJPCfjKCbxlw65OCcKpzpw+6GT/GIzj7ET226ZzzLOfsU++OoozTOdVaxn1WojLdZDCPMlGRXGFUJ5wpt1R/2TcnQMDLJSXKIjfykLWgiQeZyJu/LWR9dB/A8tgSMS5t6D7PSce0rQt0n73tHyf8S62I8nsR+mIc=
+	t=1713211023; cv=none; b=pOWMmiMNBkFno3JyIVE+pYHK1EeEw5LszIsnVhAaBdlhOoF9vH0djYPpMAI7vfn9GP/xCgPIRo1ko7NDn0hggy7wcl9crjTGlh2yAEiLUAnXjfUNRuDF6cUWwZamEctznzybgMB7tO5fkHrGNiXidaG7tPo1CEx5pf/RurtvW5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713205288; c=relaxed/simple;
-	bh=AQI/LvmjE4IEpy1RdNz2zpAKf1LZ2lytZtsviYqCPIQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LBsH+ECrGKCn9TMeuH+B6UXWnrB0cPDend9qgPzfAMJ2yvChvU3j8gXRG9Kqi45XDfLJOLUYiIS+9ALLDvz7VkowtPKqAe8EAJYKAbUPhTuJrAjmIuCE8tDm3a1aG4izpOL3JKguw+FOOw4IpYZwu3Ew8OgpGQB+g62hrbHtzVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DasJJ/Su; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1713211023; c=relaxed/simple;
+	bh=2slfWTMln8rIj3aslEiPXhhOYTM+m36meXVTS0sJjrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N8aDadpJrRkIu0WXQnGX9byyJeIttiiZInRV+Kh7OGjeoXZfBpZYQUfBLVDkHbq/QjcSE+8ln9s42Wj21Ak4cusqP+iEsQURi5PwjcJWOjrBZYjsqlzA2nFeUWFFczKuDOsrzruqtuU8IC7YoDdFGkpgxbVhT3+EhmQgGbBqvPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P3kq/na2; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DasJJ/Su"
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ac61cf3fffso2284216eaf.3;
-        Mon, 15 Apr 2024 11:21:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P3kq/na2"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-516d487659bso4385373e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 15 Apr 2024 12:57:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713205286; x=1713810086; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FzgGDQmklEWFrISIR4IcwxoAKiKCzk4r1Ppmvkj7XiQ=;
-        b=DasJJ/SuEyk5U8eyV8CwJGBs+NiZSfuC6fyIHE+BiD3SIliH8KjNbLDA1z9e5WrEtQ
-         iIFw/IEdJsK7F3Erl8VBEaWjVSnCqrP5+YVU9VihFGczyUYPWHWt1ddVZjj6XDwuC389
-         rjYc/xk0HSFY1s0ALNft4HE42KPV4moZF7GjJEoo3QTm2C2npM78spyaY4dVjGyKFp24
-         BPYg4eYi5drWcsMgaJpBRU5SQKvZ/3mqiRen5Ljq15Qi1Ixv6d0vAOdEq8aWabobd/Go
-         QQOq1nmX+9CER7byveGH9YVW6V7zJAovCc/BR6tbNbIxh2rzRip3Q9FCAXcnv9MaoR+e
-         rJBw==
+        d=linaro.org; s=google; t=1713211019; x=1713815819; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sVcUvUxKvP42tR9nsbF1BFtRbXcEbqx0UXm62N5Ey4I=;
+        b=P3kq/na2RmWuceNXXngAtJYpWwTPWjH0g0JoLzhtumVo5CtuGlBEjuI01GhioHfHPw
+         Y81lVwu26zyttr/RZY1zd5IWOYyaQH12Umf6gCeIHlQNSbg/0TvNMebLb46svYRK0JGm
+         f05kBZdmWNJicuRMZAPuw26lZxHJ+1U7dJ83RYnHkud0RYdt7n1gluu7gtien8Me8EZq
+         mRMJ8IhzOUmhQwsX+qdCGjEX0cxUTGsEJJqRlTZGEnH3fztLx395Rj9cPPwtyxr3voRn
+         Zn6LmiOx/x/w3Q+uyVWfwWi1LzOk9fCAIn3Pdlnygb5AMm2L63byKp8K14umZbf6lqlL
+         U52w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713205286; x=1713810086;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FzgGDQmklEWFrISIR4IcwxoAKiKCzk4r1Ppmvkj7XiQ=;
-        b=ATuwCKp/oUWegcQzwl3roIh4iDuj9Ghr1lNkOkoMrt91VMl6piIzZyyBjBWGAbVn+R
-         Hz7nVyUYm4Wr0LkBvb/XcDTqaob7k+WlK1GUOumed2CQozTV5y+nQ8FyNi3ivToKYe3h
-         6qteAasedrvg8ovcMDQrI33eFXYiTCg2GMO273ek0+yfuX7MgkvgUJtqlhTSXtSXbZ/c
-         wvmHR5CkLHjqoMQfl1lB9tifx8K+jWSPdL9HJGmdchlvQbgssUK8O5jTDv9+YOAqvTIX
-         Vfjfqq18HHMbVQnnndajChnT84rbvG+F5SZSy84508XYx0nkJQqXPHrWEP0Qm3OCQoIB
-         j8YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4YiqlDfFAk2k8a9JVdJD6OaQ3MiNWJ5/U6pwfGfGuPxJz1vWTMmuEIv/YWJyTx7u8Tqan006a4B5vk5nkv0ACHWdbARpXzZ5yl1/YyBKfAPURhXhGloQj9bu45wnUwpR8gfis5DHEsjwWdYx+Fz+lpZNPv784JWvajZPD0BE6Idb4B+F270AMRw6RUV72UHn9mKxO84r4Vx8PRQAZrbswKb9ZIcPoqfBgV17vmbhnWotzR3DHaNI9SgtBzjM=
-X-Gm-Message-State: AOJu0YxwcGumhWy151CsnXPwcRP7jjNAmaz40kT2Z1zgHA+55Y7AkVLc
-	5Gr8crHTUVFNqBBXIeWDxlkK00cH70fWY/1hyY0dJDMtqCjxg8Iv
-X-Google-Smtp-Source: AGHT+IFzBspjAQ4rLg81eFZJL29bkc3W+mz4hD/gAWcReSsmqzSYHyKiD0HMSDTzbp14adcuHiezMg==
-X-Received: by 2002:a4a:1ac3:0:b0:5ac:9ff2:8ca4 with SMTP id 186-20020a4a1ac3000000b005ac9ff28ca4mr4669479oof.6.1713205285937;
-        Mon, 15 Apr 2024 11:21:25 -0700 (PDT)
-Received: from nukework.lan (c-98-197-58-203.hsd1.tx.comcast.net. [98.197.58.203])
-        by smtp.gmail.com with ESMTPSA id x4-20020a056820104400b005a4dc7abc01sm2177494oot.11.2024.04.15.11.21.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Apr 2024 11:21:25 -0700 (PDT)
-From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Subject: [PATCH v3 7/7] arm64: dts: qcom: ipq9574: add PCIe2 nodes
-Date: Mon, 15 Apr 2024 13:20:52 -0500
-Message-Id: <20240415182052.374494-8-mr.nuke.me@gmail.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240415182052.374494-1-mr.nuke.me@gmail.com>
-References: <20240415182052.374494-1-mr.nuke.me@gmail.com>
+        d=1e100.net; s=20230601; t=1713211019; x=1713815819;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sVcUvUxKvP42tR9nsbF1BFtRbXcEbqx0UXm62N5Ey4I=;
+        b=FXdYQPUZouMnCE9JXklxWwcyySwzeQ80dcJCeohgqJY9g91OWayXkIbVifsj1IuVUP
+         3XQD3bBDcYYXf/tU4Dlj3BkV20YNMTgVLFEsyOH+P2mzJSZf5rgvjiFeCog+V/NzpfG+
+         rjyLbbHUbOAdYQmF8HRTLPkOoDqPv6o7QBUt+mEs57WDmDu3q7ZhRQwcZPFe7B8BM+qu
+         UbLiv6pzUJDacsc8dUqLrjq9SZ4oj66794evnKoon1Tbv3Ylv/AarXw4EsFZP/9+UH2U
+         IuNVebZPmG5+rxA+hzux27LcToDRx1PevkkP0cUWhGPw4oU2+AHOR+EHQ3hH3maen7R7
+         k0bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/uM4CQUKT1ys2ZKeBOdqiCQe2xEZQn1bXOtHGc3WGMyYYnU6cm3txDUA69TqGkdtceseqmggAt2Z+9b0YegeX0ykgnuDyW2VA
+X-Gm-Message-State: AOJu0YwEQUy7xxgz5P90sTWOSCUwNh2KtPkyXkYvJQnL7LBBZONq98fX
+	vUyA0RjRRDayALokcODUnxCNkqspe1JowoncnLNDSwS5pEZPisxW3y4C6sDaYqQ=
+X-Google-Smtp-Source: AGHT+IHEkDeQYsQxzyG8UfgTqSRW9hLhKp6aVkMeAFdcHs+cwe9mtvL+V+Yp3pjeboAJrpGZ0UXkcg==
+X-Received: by 2002:a19:8c0a:0:b0:516:9fdc:2621 with SMTP id o10-20020a198c0a000000b005169fdc2621mr7074100lfd.0.1713211018626;
+        Mon, 15 Apr 2024 12:56:58 -0700 (PDT)
+Received: from [172.30.205.18] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id w12-20020a05651204cc00b00516d6925de5sm1346470lfq.92.2024.04.15.12.56.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Apr 2024 12:56:58 -0700 (PDT)
+Message-ID: <22628ff2-6128-4ac9-89e3-d978f57be378@linaro.org>
+Date: Mon, 15 Apr 2024 21:56:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clk: qcom: mmcc-msm8998: fix venus clock issue
+To: Marc Gonzalez <mgonzalez@freebox.fr>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: MSM <linux-arm-msm@vger.kernel.org>, linux-clk
+ <linux-clk@vger.kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bryan O Donoghue <bryan.odonoghue@linaro.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Jeffrey Hugo <quic_jhugo@quicinc.com>,
+ Douglas Anderson <dianders@chromium.org>,
+ Pierre-Hugues Husson <phhusson@freebox.fr>, Arnaud Vrac <avrac@freebox.fr>
+References: <c325691e-1cbe-4589-87fc-b67a41e93294@freebox.fr>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <c325691e-1cbe-4589-87fc-b67a41e93294@freebox.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On ipq9574, there are 4 PCIe controllers. Describe the pcie2 node, and
-its PHY in devicetree.
 
-Only pcie2 is described, because only hardware using that controller
-was available for testing.
 
-Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
----
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 93 ++++++++++++++++++++++++++-
- 1 file changed, 92 insertions(+), 1 deletion(-)
+On 4/10/24 13:13, Marc Gonzalez wrote:
+> Video decoder (venus) was broken on msm8998.
+> 
+> PH found crude work-around:
+> Drop venus_sys_set_power_control() call.
+> 
+> Bryan suggested proper fix:
+> Set required register offsets in venus GDSC structs.
+> Set HW_CTRL flag.
+> 
+> GDSC = Globally Distributed Switch Controller
+> 
+> Use same code as mmcc-msm8996 with:
+> s/venus_gdsc/video_top_gdsc/
+> s/venus_core0_gdsc/video_subcore0_gdsc/
+> s/venus_core1_gdsc/video_subcore1_gdsc/
+> 
+> https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8996.h
+> https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8998.h
+> 
+> 0x1024 = MMSS_VIDEO GDSCR (undocumented)
+> 0x1028 = MMSS_VIDEO_CORE_CBCR
+> 0x1030 = MMSS_VIDEO_AHB_CBCR
+> 0x1034 = MMSS_VIDEO_AXI_CBCR
+> 0x1038 = MMSS_VIDEO_MAXI_CBCR
+> 0x1040 = MMSS_VIDEO_SUBCORE0 GDSCR (undocumented)
+> 0x1044 = MMSS_VIDEO_SUBCORE1 GDSCR (undocumented)
+> 0x1048 = MMSS_VIDEO_SUBCORE0_CBCR
+> 0x104c = MMSS_VIDEO_SUBCORE1_CBCR
+> 
+> Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
+> ---
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 7f2e5cbf3bbb..f075e2715300 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -300,7 +300,7 @@ gcc: clock-controller@1800000 {
- 				 <0>,
- 				 <0>,
- 				 <0>,
--				 <0>,
-+				 <&pcie2_phy>,
- 				 <0>,
- 				 <0>;
- 			#clock-cells = <1>;
-@@ -745,6 +745,97 @@ frame@b128000 {
- 				status = "disabled";
- 			};
- 		};
-+
-+		pcie2_phy: phy@8c000 {
-+			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
-+			reg = <0x0008c000 0x14f4>;
-+
-+			clocks = <&gcc GCC_PCIE2_AUX_CLK>,
-+				 <&gcc GCC_PCIE2_AHB_CLK>,
-+				 <&gcc GCC_PCIE2_PIPE_CLK>,
-+				 <&gcc GCC_ANOC_PCIE2_2LANE_M_CLK>,
-+				 <&gcc GCC_SNOC_PCIE2_2LANE_S_CLK>;
-+			clock-names = "aux",
-+				      "cfg_ahb",
-+				      "pipe",
-+				      "anoc",
-+				      "snoc";
-+
-+			clock-output-names = "pcie_phy2_pipe_clk";
-+			#clock-cells = <0>;
-+			#phy-cells = <0>;
-+
-+			resets = <&gcc GCC_PCIE2_PHY_BCR>,
-+				 <&gcc GCC_PCIE2PHY_PHY_BCR>;
-+			reset-names = "phy",
-+				      "common";
-+			status = "disabled";
-+		};
-+
-+		pcie2: pcie@20000000 {
-+			compatible = "qcom,pcie-ipq9574";
-+			reg = <0x20000000 0xf1d>,
-+			      <0x20000f20 0xa8>,
-+			      <0x20001000 0x1000>,
-+			      <0x00088000 0x4000>,
-+			      <0x20100000 0x1000>;
-+			reg-names = "dbi", "elbi", "atu", "parf", "config";
-+
-+			ranges = <0x81000000 0x0 0x20200000 0x20200000 0x0 0x00100000>,	/* I/O */
-+				 <0x82000000 0x0 0x20300000 0x20300000 0x0 0x07d00000>;	/* MEM */
-+
-+			device_type = "pci";
-+			linux,pci-domain = <3>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <2>;
-+			max-link-speed = <3>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			phys = <&pcie2_phy>;
-+			phy-names = "pciephy";
-+
-+			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 0 164
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc 0 0 165
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc 0 0 186
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc 0 0 187
-+					 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+
-+			clocks = <&gcc GCC_PCIE2_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE2_AXI_S_CLK>,
-+				 <&gcc GCC_PCIE2_AXI_S_BRIDGE_CLK>,
-+				 <&gcc GCC_PCIE2_RCHNG_CLK>;
-+			clock-names = "axi_m",
-+				      "axi_s",
-+				      "axi_bridge",
-+				      "rchng";
-+
-+			resets = <&gcc GCC_PCIE2_PIPE_ARES>,
-+				 <&gcc GCC_PCIE2_AUX_ARES>,
-+				 <&gcc GCC_PCIE2_CORE_STICKY_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_M_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_S_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_S_STICKY_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_M_STICKY_ARES>,
-+				 <&gcc GCC_PCIE2_AHB_ARES>;
-+			reset-names = "pipe",
-+				      "aux",
-+				      "sticky",
-+				      "axi_m",
-+				      "axi_s",
-+				      "axi_s_sticky",
-+				      "axi_m_sticky",
-+				      "ahb";
-+			status = "disabled";
-+		};
- 	};
- 
- 	thermal-zones {
--- 
-2.40.1
+[...]
 
+
+>   static struct gdsc video_top_gdsc = {
+>   	.gdscr = 0x1024,
+> +	.cxcs = (unsigned int []){ 0x1028, 0x1034, 0x1038 },
+> +	.cxc_count = 3,
+
+Marc, have you verified all three are necessary for stuff to work?
+
+I'd expect 0x1028/venus core to be absolutely necessary fwiw
+
+Konrad
