@@ -1,126 +1,230 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2088.outbound.protection.outlook.com [40.92.23.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1080141C64;
-	Mon, 15 Apr 2024 22:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713220222; cv=fail; b=nTOuyvjh+tl3W0NpdRmoNX767qCeTc9YbeeS8kUnxzCwfi00nVQi0oQSyUOgct/cHanvGss7gbBbad94LpLtWN2eC+CaMW4Hay0wlIznxm1PeGEl0Tj+IJr5dxSSSkT+ToZn5gdUmPgYvjImjOcmmOsYiYSorReLtk2L+pKhHXc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713220222; c=relaxed/simple;
-	bh=TJEfDwkdmxuvosjNFpFaUy05O6/IiPaf4zisI+eps0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ofcPG4xTy7AtezU2iGJBCZq21CHvOBc76EvPUCmfASYbhruKj85I1Vz1k4SkeCuC7UcrSng5S8xr1W7nDmV8J3i8XGjWBAtkYV/Md/V8HSGf64K5rciFlhBCxWk/OAQ8Fk47mcrct9sSPgS1fpaKgpL8X9x9sen3qJPik4zcGzo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=CwPHJQh7; arc=fail smtp.client-ip=40.92.23.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="CwPHJQh7"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FUGMaIYolP2I234g1AgE2lA7dCsyNdC/L5f3kkcL4B0AH8s3mCJxz/9PTkR6coNXtUSqYtlPddJqvNY/7bSHLHlbOm6mLZ1aqUDZVk2wby+L2U/cnRCFh5s6srf5wQRIjOaK3aRG7bU1NFD8h0bAPRVE6eyIoH2HnnDrKQvNT9eYQtQlR8Pa8DnJGpdkzI4jUc2mtIXDmioMr+chob7GwRtYa32pjzeFnQw6A3Q8nYhHlzc+Skt7l2IDJd377hWAEUlAAOBeXykSVBCA6r13JfdddYI6Aq45SWfNLPlWhwFzuGnF14/U+rarTa4NK/tWlgorrzxCfKE+7d3W7kwstw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fpZ/26nglu0d4YPzsSq6Z8z4C5vSHlyVaMSZ/GuKj0k=;
- b=QL2OtL67pRy/Tat8Mn7N5G9NLM2YvW7cg+6MAGAA5Cm7j+g6op8tQFR5I3qu28AYfW0kb5eaMq85jnqBt+R4K5RVe/7NUAoGu+Lrd5gGM+9tyVlHcbZrA4+WNDufqlgU3Xj9jsbC3XeSdlohznXa5uQnjFPiw+DUWA6RlCANNxPBoMA+dsPLT0ckSWamvtr1ZR/acDBqkShSZJAH1s0SoJbUlUnv3HYo2VoK3MaANcHG1dzLnmIFnTX7y/O3I0vEAVln4D4p29ec6EZvwRNR8lCTp4g9wPUs0IOKhCrRYaDj6fSYCLA9qikakmQOT4bGHKF5RGoICXcR0uEiqlZ0jg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fpZ/26nglu0d4YPzsSq6Z8z4C5vSHlyVaMSZ/GuKj0k=;
- b=CwPHJQh7KawOu3JvuiHV1xJ14TZDbrI8bGBr41ikGDjBgWlyDjgIy+NChag9CTuBBajhh5vAKOGoPLInEpaN8CxVO4UQVLf3Z6pDcOXyGAh1KuqzVbN1IjleFR7M20WuYuvvel7yjw6t2Q6gW+1AnT3zTFk9KeTPm/L+H7shMfSNgyalQ6e0zXxtMLd62jzGI9cNv0oRv5N6ou9jlCeY5OVNGRXfxj+dFf0WMc8LRcCsiBTp3Uma4zgdJ+Vo9baJ3S5YlmqIzucx1Xe3RRo9P01SEBQLQKIGGaqxrpQiafFcVC6OsGFYhl38gMKsmd8K7QZVFJCpoGUYbSsdfiu9XQ==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by SJ2PR20MB7156.namprd20.prod.outlook.com (2603:10b6:a03:575::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.50; Mon, 15 Apr
- 2024 22:30:19 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::182f:841b:6e76:b819]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::182f:841b:6e76:b819%2]) with mapi id 15.20.7452.049; Mon, 15 Apr 2024
- 22:30:19 +0000
-Date: Tue, 16 Apr 2024 06:30:42 +0800
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Arnd Bergmann <arnd@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sophgo: avoid open-coded 64-bit division
-Message-ID:
- <IA1PR20MB49532CE01992005D3DA0FD17BB092@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <20240415134532.3467817-1-arnd@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240415134532.3467817-1-arnd@kernel.org>
-X-TMN: [JG1qWL3XE+S6RqK4R2MIUnAvUkOxjll2ixaqCFSUFp4=]
-X-ClientProxiedBy: PS2PR02CA0090.apcprd02.prod.outlook.com
- (2603:1096:300:5c::30) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <jnfq4evoodyakatzt6ozjqxfvafulrgv7jczyv65fezqvnbmx5@u4fuhm4a2abj>
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8B0157A7D;
+	Mon, 15 Apr 2024 23:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713222054; cv=none; b=IOp0pw37cnQQ9tV2reHNCEunLYOJBeNRO4D0bO3BoHF+nbQ8ZSY8/jLyLFf2dv27vXsYvQdShilTksHR8K4l0Gjn45uwrh4MdpRMijb6orrABdksdl94tNG6FWERVgO7b3QAW40V9B1/sTqu9qfUOPmH/bS7K3msZmZ0S/huSfM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713222054; c=relaxed/simple;
+	bh=SaDLEK/GJzA5gn1n+hQFjSwklsdC8xkcNf7+K1rWP/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uw5Opo78ARExbSLyjzSYePueXErYZ1YZ9HVhmvtNO95GhKz2U5YP2g7ObKlcIWudY6QqV+Qu5oc6LmWpBlD2j+94vXZrvI/7s9P0DUSe0KLzKUviz0GSqu/YF+R6aGuSL+/x5dMUt2DkcrG42K0KMMZPmZ0bPXcOhFHB8QABZSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 884652F4;
+	Mon, 15 Apr 2024 16:01:19 -0700 (PDT)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5ED923F792;
+	Mon, 15 Apr 2024 16:00:49 -0700 (PDT)
+Date: Tue, 16 Apr 2024 00:00:41 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [RFC PATCH 1/1] clk: sunxi-ng: h6-r: add GPU power domain
+Message-ID: <20240416000041.47a4ecb5@minigeek.lan>
+In-Reply-To: <CAPDyKFptmNcbOTEs052yLGLxObWy7975fgpM3Kfg1TjMPVmeyA@mail.gmail.com>
+References: <20240225160616.15001-1-andre.przywara@arm.com>
+ <20240225160616.15001-2-andre.przywara@arm.com>
+ <CAPDyKFptmNcbOTEs052yLGLxObWy7975fgpM3Kfg1TjMPVmeyA@mail.gmail.com>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SJ2PR20MB7156:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4960e48-404f-472f-f618-08dc5d9ba13e
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	5olC0qsESMKhihHtM8uuERvBg1P4fz5K3exihcsmNlEXBKTUyCkswCs/d5iF5Fs4JGJ24TclEDnXAoXq2McCW6Ii3T8IhAiU5WER0MSFhV8jbZg2x4xzY2ENTg3bb5QFAaNZf/VVpZffS80TMBTExB5IGatT/Z9l7zZsIikZOM0nnC1GGBeVccoUj6O9DVDNA4zqAkMk2D9Ygkk36Z5LXpovEEeDe5mPnmWF2t478fUtEDaYNGpTQqOCYLbgvtbIPhWOVrQ9H5q15U8DWxts/r2pfjm3wdJJQiiEl/+WVuCyZSi6ODmkVRlyK1XjqCjlojYnI9IDvQYAf8ukezK/2wzV4gBAIFc5bnJ+XYKR/wx1ZC4wkVjUWs3KrQO2A1ljol1N2sFOIqVOxDIps730o0v93MNwz91wWZr4Wu2gMxWZKbMTsD4SV5dnozZqWIGvQ87sLArmDxVMLygSn0w77Or3WkY2/jAp0UouBQ/Kx2FUZBbudi+gln5C3Xon1IwKBxe7hHJHVrML9wBEdHzP35xMN/rOMp9Ixj8l31oUX2u4vQWHBUWn/qen/o9bkbTlRW6Y8bolEnqVPxhiT8sx5VX/1T5stGn4WpDxHGwRSFxDdEq8+G2sKPErZVDvgRovqITpuIKqP2vmGjNxmZGrr08yUO17qIxCD0pWkmn4UWz1ptizIxOkfi7hPM+369Oz12cM0kOlXSJvtzk71Hl3aiZJ9IBmH1cvng2+AlALxzo9ZeMd2/IenmrYbmdJQSI8
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?PrdPKUuUwrnTHQ2e20omrFwi4M0s0K0hEcnDXMwhvCKjsmy3jKJRiCuGTLyD?=
- =?us-ascii?Q?21xymc+yVy8pcPkzm0M6AaqYP8SL0guSqIjTnjg76mnOY4mActzk0QissDMg?=
- =?us-ascii?Q?4N4TDfWst3qW1rropauYAThNAQ65LzvDAUcxd8FCty854Dt9XbbuB282+UkZ?=
- =?us-ascii?Q?BBH66znEFHfzQfRqc2jShs84mSt7ivQvf2yV+oQPUf7pmGf0Xc6Rtg59ftRb?=
- =?us-ascii?Q?mM4HGO6nHmDqcbhro0NPqfkdnYRsMFCYU/J97fFIG8DaMm2TGiW80srkg5DC?=
- =?us-ascii?Q?QhySkU1NTL9a293fHNR9lhjhnLQlImkbLT95yE0b74xU62eVzEK/LF0OIObY?=
- =?us-ascii?Q?rnDZiZbegbLnto0GmWLvgPyh1qlJ6DKXkRV3AJeRykIw0iUSMEFufXdGjAms?=
- =?us-ascii?Q?CtD7pPgll8M1iI8VQxd/kkcKvC3uBZi6RdbZDq51O7gitk+visJW2I4tSUff?=
- =?us-ascii?Q?oygB+buvK0S4vXcudrhGvWzp2Gj5/rpMzI9pzyhvF/gXzD9wmdrii8DhNyKW?=
- =?us-ascii?Q?a0fosSrLW1VLoI2/pzwoCTUcxnk1Xg3PGsqJmxvw6uYYqiC5R4X6xw0yLEBE?=
- =?us-ascii?Q?XENGnQllT9csC/t2npaYWFVra7s3DAUHbclKgjgNZ6Q+iujJhEHICaWT5g+I?=
- =?us-ascii?Q?io8/Mxfgtk76vDI/tM3ns7Vz5lrTWU8tTWjcxkNeVZGoDonCKEEhSgs4jQk7?=
- =?us-ascii?Q?tRpcSle7RbB1fHLeq8i0G7vrXaRzzH8pBtGJHlQzDFcCvPibUcuPn7wHYST/?=
- =?us-ascii?Q?zgDqn2pDUlUjJFkUWjPYIWPfmXy1Puaj3fy9LdMVhACa96ImNMv6SHux6jq7?=
- =?us-ascii?Q?vIoaLRAieRNXCz83xa1GGccctxbd8OcSq+SoLOEpeVk7EX8/MNIqcqzBqOEQ?=
- =?us-ascii?Q?PI8FKedeDU/lorlHA88MlaHp6wYMF0W+cWgZMD3xkdSgh2kPMujB4Tw9IyGP?=
- =?us-ascii?Q?eZB/qGBgnQayVMsfh5baZ4O0xAZvv9tw9wJpLSoU1z5k68D045u5MbCaloQG?=
- =?us-ascii?Q?b2m7t0Em/qTB2NDRywSH8LuSaKlewDPwtHTIty7VgLZuePYT5jxGb/O/Z+zn?=
- =?us-ascii?Q?YnOCVQpO158Xdz9XljIZk9pQ8zqlRao/eqJyb1inNMLO7zxEbMr34YKdlKlE?=
- =?us-ascii?Q?OhVzZx8YGwjQNuwXEiWyBhcavCU4ZuyMV+r9iWK2P0NDhRY2CRTgBuo0L+v9?=
- =?us-ascii?Q?7o2ksJrK57OMoY2wMUKdKamZJr4FVfevNmSuRfbL9yh6c+y6lWft7A31poGR?=
- =?us-ascii?Q?pO9X7reJAdOkCHQOxQrd?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4960e48-404f-472f-f618-08dc5d9ba13e
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2024 22:30:18.9346
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR20MB7156
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 15, 2024 at 03:45:20PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> On 32-bit architectures, the 64-bit division leads to a link failure:
-> 
-> arm-linux-gnueabi-ld: drivers/clk/sophgo/clk-cv18xx-pll.o: in function `fpll_calc_rate':
-> clk-cv18xx-pll.c:(.text.fpll_calc_rate+0x26): undefined reference to `__aeabi_uldivmod'
-> 
-> This one is not called in a fast path, and there is already another div_u64()
-> variant used in the same function, so convert it to div64_u64_rem().
-> 
-> Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Mon, 8 Apr 2024 14:55:04 +0200
+Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-There is already a fix patch:
-https://lore.kernel.org/all/IA1PR20MB4953CB4FCCDE82AB25F6880EBB0B2@IA1PR20MB4953.namprd20.prod.outlook.com/
+Hi Ulf,
+
+many thanks for having a look!
+
+> On Sun, 25 Feb 2024 at 17:08, Andre Przywara <andre.przywara@arm.com> wrote:
+> >
+> > The Allwinner H616 features register 0x7010254 in the PRCM MMIO frame,
+> > where bit 0 needs to be cleared to enable operation of the Mali GPU.
+> > With this bit set (the reset default), any access to the Mali registers
+> > hangs the bus and thus the whole system. The BSP code clears this bit
+> > in U-Boot and their kernel never touches it again.  
+> 
+> Is the bit representing a reset or power-rail? If it's a reset, it's
+> probably better to model it like that.
+
+So there is no real documentation about this bit (or the whole "PRCM"
+device), but we are pretty sure it's a power rail and not a reset. There
+are other similar rails in neighbouring registers, and some BSP code
+hints at those being power gates. Samuel once condensed this to:
+https://github.com/crust-firmware/crust/blob/master/platform/h6/include/platform/prcm.h
+
+> > Register a power-domain device to control this bit. Since we claim this
+> > MMIO region in the H6 R-CCU driver, add the code here, so that we don't
+> > need to artificially split the MMIO range in the DT.
+> > Since there seems to be at least one other register with similar behaviour
+> > nearby (0x7010260), make the power domain take one cell, even though we
+> > only support domain #0 for now.  
+> 
+> Seems like we need some updated DT bindings too to cover this?
+
+That's right (and I mentioned this in the cover letter), but I omitted
+this from this first RFC post. I will include binding patches in the v1
+post.
+
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 84 ++++++++++++++++++++++++++
+> >  1 file changed, 84 insertions(+)
+> >
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> > index 02b28cfc5525e..363fb7a71e9f5 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> > @@ -4,9 +4,11 @@
+> >   */
+> >
+> >  #include <linux/clk-provider.h>
+> > +#include <linux/io.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/pm_domain.h>
+> >
+> >  #include "ccu_common.h"
+> >  #include "ccu_reset.h"
+> > @@ -217,6 +219,86 @@ static const struct sunxi_ccu_desc sun50i_h616_r_ccu_desc = {
+> >         .num_resets     = ARRAY_SIZE(sun50i_h616_r_ccu_resets),
+> >  };
+> >
+> > +#define        PD_H616_GPU_REG                 0x254
+> > +
+> > +struct sun50i_h616_ppu_pd {
+> > +       struct generic_pm_domain        genpd;
+> > +       void __iomem                    *base;
+> > +};
+> > +
+> > +#define to_sun50i_h616_ppu_pd(_genpd) \
+> > +       container_of(_genpd, struct sun50i_h616_ppu_pd, genpd)
+> > +
+> > +static bool sun50i_h616_ppu_power_status(const struct sun50i_h616_ppu_pd *pd)
+> > +{
+> > +       return !readl(pd->base + PD_H616_GPU_REG);
+> > +}
+> > +
+> > +static int sun50i_h616_ppu_pd_set_power(const struct sun50i_h616_ppu_pd *pd,
+> > +                                       bool power_on)
+> > +{
+> > +       if (power_on)
+> > +               writel(0, pd->base + PD_H616_GPU_REG);
+> > +       else
+> > +               writel(1, pd->base + PD_H616_GPU_REG);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int sun50i_h616_ppu_pd_power_on(struct generic_pm_domain *genpd)
+> > +{
+> > +       const struct sun50i_h616_ppu_pd *pd = to_sun50i_h616_ppu_pd(genpd);
+> > +
+> > +       return sun50i_h616_ppu_pd_set_power(pd, true);
+> > +}
+> > +
+> > +static int sun50i_h616_ppu_pd_power_off(struct generic_pm_domain *genpd)
+> > +{
+> > +       const struct sun50i_h616_ppu_pd *pd = to_sun50i_h616_ppu_pd(genpd);
+> > +
+> > +       return sun50i_h616_ppu_pd_set_power(pd, false);
+> > +}
+> > +
+> > +static int sun50i_h616_register_ppu(struct platform_device *pdev,
+> > +                                   void __iomem *base)
+> > +{
+> > +       struct device *dev = &pdev->dev;
+> > +       struct genpd_onecell_data *ppu;
+> > +       struct sun50i_h616_ppu_pd *pd;
+> > +       int ret;
+> > +
+> > +       pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+> > +       if (!pd)
+> > +               return -ENOMEM;
+> > +
+> > +       ppu = devm_kzalloc(dev, sizeof(*ppu), GFP_KERNEL);
+> > +       if (!ppu)
+> > +               return -ENOMEM;
+> > +
+> > +       ppu->domains = devm_kzalloc(dev, sizeof(*ppu->domains), GFP_KERNEL);
+> > +       if (!ppu->domains)
+> > +               return -ENOMEM;
+> > +
+> > +       ppu->num_domains = 1;
+> > +       pd->genpd.name          = "GPU";
+> > +       pd->genpd.power_off     = sun50i_h616_ppu_pd_power_off;
+> > +       pd->genpd.power_on      = sun50i_h616_ppu_pd_power_on;
+> > +       pd->base                = base;
+> > +
+> > +       ret = pm_genpd_init(&pd->genpd, NULL, !sun50i_h616_ppu_power_status(pd));
+> > +       if (ret) {
+> > +               dev_warn(dev, "Failed to add GPU power domain: %d\n", ret);
+> > +               return ret;
+> > +       }
+> > +
+> > +       ppu->domains[0] = &pd->genpd;
+> > +       ret = of_genpd_add_provider_onecell(dev->of_node, ppu);
+> > +       if (ret)
+> > +               dev_warn(dev, "Failed to add provider: %d\n", ret);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> >  static int sun50i_h6_r_ccu_probe(struct platform_device *pdev)
+> >  {
+> >         const struct sunxi_ccu_desc *desc;
+> > @@ -230,6 +312,8 @@ static int sun50i_h6_r_ccu_probe(struct platform_device *pdev)
+> >         if (IS_ERR(reg))
+> >                 return PTR_ERR(reg);
+> >
+> > +       sun50i_h616_register_ppu(pdev, reg);
+> > +
+> >         return devm_sunxi_ccu_probe(&pdev->dev, reg, desc);
+> >  }
+> >  
+> 
+> In general (for maintenance reasons) it's a good idea to put genpd
+> providers under drivers/pmdomain/*. It looks like that should work
+> this case too, right?
+
+Well, this question was the main reason to mark this as an RFC.
+This patch here lives in the R-CCU driver, since this device is using
+the same MMIO frame. The manual calls this device "PRCM" (Power Reset
+Clock Management), so this covers more than just those essential
+clocks, but those were all we needed and knew about until now.
+
+For simplicity (since this is indeed just a single bit to flip), I
+put the code into this existing R-CCU driver. This avoids splitting up
+the MMIO frame (at some potentially arbitrary point), and avoids the
+churn for an extra driver and DT node.
+
+Now just last week we found another separate component in this PRCM: an
+NMI interrupt controller[1], for which we already have a separate
+binding (and driver) in the tree, so we split this MMIO range
+up anyway.
+So that means at this point we might as well make this a separate
+driver, tied to a separate DT compatible string. I originally made a
+version of this driver as a separate file in drivers/pmdomain, so will
+just dig this out and post it.
+
+Unless people disagree, then please let me know.
+
+Thanks for the comments!
+
+Cheers,
+Andre
