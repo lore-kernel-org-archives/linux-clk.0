@@ -1,89 +1,126 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2088.outbound.protection.outlook.com [40.92.23.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB50156F41;
-	Mon, 15 Apr 2024 21:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713216634; cv=none; b=Zg6yEyvfKDy3hWy3Qb2eUnKOFhweD29uiWdgNsuOVy6DsCm+qNcfD73H6pYJrwZI3PLnkkCOcwE7iN1Cupb23reELa2eTTsYA/uQo9IeKDfBe+OaOnW5BXSMRyNa6NC5hyuZNU7Qg9LMMx09bJ1SBhBdwthik24jbXZOBl4IO00=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713216634; c=relaxed/simple;
-	bh=JtZ7+KtyDK1OPu+K6I7cSseOL3/7Hx/l6JUARwK22w8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=axkiZ1gTlycrKWwcvN6+j1JahfZdwzepbZbpJVQiq14FJOctwjpqGTMdgNBg1zsISJVoElu8ruFNO9exEJgbyHnXGihfauhFc38JhmUKNyBUGdB0su5X79jMNO5MgCM55ahA6JW+JUMpB4FVDxbNf8dQiE0TDBWGBTz20b/fgeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ax1KleYq; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1080141C64;
+	Mon, 15 Apr 2024 22:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713220222; cv=fail; b=nTOuyvjh+tl3W0NpdRmoNX767qCeTc9YbeeS8kUnxzCwfi00nVQi0oQSyUOgct/cHanvGss7gbBbad94LpLtWN2eC+CaMW4Hay0wlIznxm1PeGEl0Tj+IJr5dxSSSkT+ToZn5gdUmPgYvjImjOcmmOsYiYSorReLtk2L+pKhHXc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713220222; c=relaxed/simple;
+	bh=TJEfDwkdmxuvosjNFpFaUy05O6/IiPaf4zisI+eps0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ofcPG4xTy7AtezU2iGJBCZq21CHvOBc76EvPUCmfASYbhruKj85I1Vz1k4SkeCuC7UcrSng5S8xr1W7nDmV8J3i8XGjWBAtkYV/Md/V8HSGf64K5rciFlhBCxWk/OAQ8Fk47mcrct9sSPgS1fpaKgpL8X9x9sen3qJPik4zcGzo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=CwPHJQh7; arc=fail smtp.client-ip=40.92.23.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ax1KleYq"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4187a98705cso5914435e9.2;
-        Mon, 15 Apr 2024 14:30:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713216631; x=1713821431; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/3UenIt43MR55osoDYYHxgKVrMxBgUF9iSo5nPwqTj4=;
-        b=ax1KleYqc6IEbBerqLbK/9nIBpR9ieuFFOMCgDL2mC3yrZKyuHIjIxS2PjjFZo5WX6
-         y+FqiO6lnqVAlQHCej3Ov99L6DSC9HhJkwKHCgDadDeGmomfAiGj4ZuoqLF2/KsR6+zB
-         hYN52ypJRa1h2HftP+LD45L8tkg/wqA/C/QalP23gQ9tZiBlp7eJ5GEuV7tsc5WYX7VX
-         D9kp+OzJKTIamoyWu2HzQR3GLseih4fnAd5nz7sWFvFM/3wcZuJPUz6n/kH4CC3XlxA5
-         lOaQuAhm9i/wdgIP115gtsgUva2jG3OCKNWWJJrC5aEqHjzKHxz4IWs2YDRbu4zNQIAP
-         QAEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713216631; x=1713821431;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/3UenIt43MR55osoDYYHxgKVrMxBgUF9iSo5nPwqTj4=;
-        b=T+9ARL3b/KE5jUq/sf6oFLwlCsuA1lt0KlnLdVq4lY8U+5ieH4LzPk5/MHRp4zwnIr
-         1GQzJIvymMnEI8bShbhrUcnbIB44/IRrsyGzJLthSfwbT7EvuCvJSt4uBNuK/KWBgchc
-         SactsUYDgE7DGIzhkyR7vXmOAVPkWsKiUhH2zZHqh3THOklNV6uRgHPqKP55TqDjnRhL
-         AYR3AaUZIP75jjUwh+7G1v0AF+QXyIUugwyRG7zaC5+y9xUMiNHNWxWPzKz79X2mucUD
-         CVGgMtu/yuN+i/M2niN0Ji/XwWWaDaRUQGig7Fpr/O/J7no0zV5GetL2YT+pdtsW+puq
-         63qg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7ZRt/WdIIHHFGbQB6wby2TFbIFE92Wn/ZtQn2Tb/6K8rq8ukMxnGLEOOrDs4uttnApwSlBnyLEN2puKIiH+ppeUkUHv5ksYGJyJf74GlJO46HdQ74NdfGzGk2uGnxFRbyJBXr9JnT
-X-Gm-Message-State: AOJu0YyNSO+BIB3iip6xd4DXCQmQupXb0yH97Xxjs34ifrs5PJNmIiYl
-	BmVNzQ2YifXF5EZJ/+F4S6JMu0KgnlIPNiGJEzzUwzShLRXyzYng
-X-Google-Smtp-Source: AGHT+IEwUBu5rbeR+NG06wmX6iS00FXzbXScxtwmPHMX9rL9YKp0y7tJFVOwnT5Cr/tvT+wNXf43WA==
-X-Received: by 2002:a05:600c:3b25:b0:416:2a95:6e8b with SMTP id m37-20020a05600c3b2500b004162a956e8bmr8060461wms.26.1713216630661;
-        Mon, 15 Apr 2024 14:30:30 -0700 (PDT)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id c10-20020adfc04a000000b003467a420243sm13145756wrf.12.2024.04.15.14.30.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Apr 2024 14:30:30 -0700 (PDT)
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] clk: sunxi-ng: fix module autoloading
-Date: Mon, 15 Apr 2024 23:30:29 +0200
-Message-ID: <5929348.MhkbZ0Pkbq@jernej-laptop>
-In-Reply-To: <20240410155420.224157-1-krzk@kernel.org>
-References: <20240410155420.224157-1-krzk@kernel.org>
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="CwPHJQh7"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FUGMaIYolP2I234g1AgE2lA7dCsyNdC/L5f3kkcL4B0AH8s3mCJxz/9PTkR6coNXtUSqYtlPddJqvNY/7bSHLHlbOm6mLZ1aqUDZVk2wby+L2U/cnRCFh5s6srf5wQRIjOaK3aRG7bU1NFD8h0bAPRVE6eyIoH2HnnDrKQvNT9eYQtQlR8Pa8DnJGpdkzI4jUc2mtIXDmioMr+chob7GwRtYa32pjzeFnQw6A3Q8nYhHlzc+Skt7l2IDJd377hWAEUlAAOBeXykSVBCA6r13JfdddYI6Aq45SWfNLPlWhwFzuGnF14/U+rarTa4NK/tWlgorrzxCfKE+7d3W7kwstw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fpZ/26nglu0d4YPzsSq6Z8z4C5vSHlyVaMSZ/GuKj0k=;
+ b=QL2OtL67pRy/Tat8Mn7N5G9NLM2YvW7cg+6MAGAA5Cm7j+g6op8tQFR5I3qu28AYfW0kb5eaMq85jnqBt+R4K5RVe/7NUAoGu+Lrd5gGM+9tyVlHcbZrA4+WNDufqlgU3Xj9jsbC3XeSdlohznXa5uQnjFPiw+DUWA6RlCANNxPBoMA+dsPLT0ckSWamvtr1ZR/acDBqkShSZJAH1s0SoJbUlUnv3HYo2VoK3MaANcHG1dzLnmIFnTX7y/O3I0vEAVln4D4p29ec6EZvwRNR8lCTp4g9wPUs0IOKhCrRYaDj6fSYCLA9qikakmQOT4bGHKF5RGoICXcR0uEiqlZ0jg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fpZ/26nglu0d4YPzsSq6Z8z4C5vSHlyVaMSZ/GuKj0k=;
+ b=CwPHJQh7KawOu3JvuiHV1xJ14TZDbrI8bGBr41ikGDjBgWlyDjgIy+NChag9CTuBBajhh5vAKOGoPLInEpaN8CxVO4UQVLf3Z6pDcOXyGAh1KuqzVbN1IjleFR7M20WuYuvvel7yjw6t2Q6gW+1AnT3zTFk9KeTPm/L+H7shMfSNgyalQ6e0zXxtMLd62jzGI9cNv0oRv5N6ou9jlCeY5OVNGRXfxj+dFf0WMc8LRcCsiBTp3Uma4zgdJ+Vo9baJ3S5YlmqIzucx1Xe3RRo9P01SEBQLQKIGGaqxrpQiafFcVC6OsGFYhl38gMKsmd8K7QZVFJCpoGUYbSsdfiu9XQ==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by SJ2PR20MB7156.namprd20.prod.outlook.com (2603:10b6:a03:575::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.50; Mon, 15 Apr
+ 2024 22:30:19 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::182f:841b:6e76:b819]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::182f:841b:6e76:b819%2]) with mapi id 15.20.7452.049; Mon, 15 Apr 2024
+ 22:30:19 +0000
+Date: Tue, 16 Apr 2024 06:30:42 +0800
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Arnd Bergmann <arnd@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sophgo: avoid open-coded 64-bit division
+Message-ID:
+ <IA1PR20MB49532CE01992005D3DA0FD17BB092@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <20240415134532.3467817-1-arnd@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240415134532.3467817-1-arnd@kernel.org>
+X-TMN: [JG1qWL3XE+S6RqK4R2MIUnAvUkOxjll2ixaqCFSUFp4=]
+X-ClientProxiedBy: PS2PR02CA0090.apcprd02.prod.outlook.com
+ (2603:1096:300:5c::30) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <jnfq4evoodyakatzt6ozjqxfvafulrgv7jczyv65fezqvnbmx5@u4fuhm4a2abj>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|SJ2PR20MB7156:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4960e48-404f-472f-f618-08dc5d9ba13e
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	5olC0qsESMKhihHtM8uuERvBg1P4fz5K3exihcsmNlEXBKTUyCkswCs/d5iF5Fs4JGJ24TclEDnXAoXq2McCW6Ii3T8IhAiU5WER0MSFhV8jbZg2x4xzY2ENTg3bb5QFAaNZf/VVpZffS80TMBTExB5IGatT/Z9l7zZsIikZOM0nnC1GGBeVccoUj6O9DVDNA4zqAkMk2D9Ygkk36Z5LXpovEEeDe5mPnmWF2t478fUtEDaYNGpTQqOCYLbgvtbIPhWOVrQ9H5q15U8DWxts/r2pfjm3wdJJQiiEl/+WVuCyZSi6ODmkVRlyK1XjqCjlojYnI9IDvQYAf8ukezK/2wzV4gBAIFc5bnJ+XYKR/wx1ZC4wkVjUWs3KrQO2A1ljol1N2sFOIqVOxDIps730o0v93MNwz91wWZr4Wu2gMxWZKbMTsD4SV5dnozZqWIGvQ87sLArmDxVMLygSn0w77Or3WkY2/jAp0UouBQ/Kx2FUZBbudi+gln5C3Xon1IwKBxe7hHJHVrML9wBEdHzP35xMN/rOMp9Ixj8l31oUX2u4vQWHBUWn/qen/o9bkbTlRW6Y8bolEnqVPxhiT8sx5VX/1T5stGn4WpDxHGwRSFxDdEq8+G2sKPErZVDvgRovqITpuIKqP2vmGjNxmZGrr08yUO17qIxCD0pWkmn4UWz1ptizIxOkfi7hPM+369Oz12cM0kOlXSJvtzk71Hl3aiZJ9IBmH1cvng2+AlALxzo9ZeMd2/IenmrYbmdJQSI8
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PrdPKUuUwrnTHQ2e20omrFwi4M0s0K0hEcnDXMwhvCKjsmy3jKJRiCuGTLyD?=
+ =?us-ascii?Q?21xymc+yVy8pcPkzm0M6AaqYP8SL0guSqIjTnjg76mnOY4mActzk0QissDMg?=
+ =?us-ascii?Q?4N4TDfWst3qW1rropauYAThNAQ65LzvDAUcxd8FCty854Dt9XbbuB282+UkZ?=
+ =?us-ascii?Q?BBH66znEFHfzQfRqc2jShs84mSt7ivQvf2yV+oQPUf7pmGf0Xc6Rtg59ftRb?=
+ =?us-ascii?Q?mM4HGO6nHmDqcbhro0NPqfkdnYRsMFCYU/J97fFIG8DaMm2TGiW80srkg5DC?=
+ =?us-ascii?Q?QhySkU1NTL9a293fHNR9lhjhnLQlImkbLT95yE0b74xU62eVzEK/LF0OIObY?=
+ =?us-ascii?Q?rnDZiZbegbLnto0GmWLvgPyh1qlJ6DKXkRV3AJeRykIw0iUSMEFufXdGjAms?=
+ =?us-ascii?Q?CtD7pPgll8M1iI8VQxd/kkcKvC3uBZi6RdbZDq51O7gitk+visJW2I4tSUff?=
+ =?us-ascii?Q?oygB+buvK0S4vXcudrhGvWzp2Gj5/rpMzI9pzyhvF/gXzD9wmdrii8DhNyKW?=
+ =?us-ascii?Q?a0fosSrLW1VLoI2/pzwoCTUcxnk1Xg3PGsqJmxvw6uYYqiC5R4X6xw0yLEBE?=
+ =?us-ascii?Q?XENGnQllT9csC/t2npaYWFVra7s3DAUHbclKgjgNZ6Q+iujJhEHICaWT5g+I?=
+ =?us-ascii?Q?io8/Mxfgtk76vDI/tM3ns7Vz5lrTWU8tTWjcxkNeVZGoDonCKEEhSgs4jQk7?=
+ =?us-ascii?Q?tRpcSle7RbB1fHLeq8i0G7vrXaRzzH8pBtGJHlQzDFcCvPibUcuPn7wHYST/?=
+ =?us-ascii?Q?zgDqn2pDUlUjJFkUWjPYIWPfmXy1Puaj3fy9LdMVhACa96ImNMv6SHux6jq7?=
+ =?us-ascii?Q?vIoaLRAieRNXCz83xa1GGccctxbd8OcSq+SoLOEpeVk7EX8/MNIqcqzBqOEQ?=
+ =?us-ascii?Q?PI8FKedeDU/lorlHA88MlaHp6wYMF0W+cWgZMD3xkdSgh2kPMujB4Tw9IyGP?=
+ =?us-ascii?Q?eZB/qGBgnQayVMsfh5baZ4O0xAZvv9tw9wJpLSoU1z5k68D045u5MbCaloQG?=
+ =?us-ascii?Q?b2m7t0Em/qTB2NDRywSH8LuSaKlewDPwtHTIty7VgLZuePYT5jxGb/O/Z+zn?=
+ =?us-ascii?Q?YnOCVQpO158Xdz9XljIZk9pQ8zqlRao/eqJyb1inNMLO7zxEbMr34YKdlKlE?=
+ =?us-ascii?Q?OhVzZx8YGwjQNuwXEiWyBhcavCU4ZuyMV+r9iWK2P0NDhRY2CRTgBuo0L+v9?=
+ =?us-ascii?Q?7o2ksJrK57OMoY2wMUKdKamZJr4FVfevNmSuRfbL9yh6c+y6lWft7A31poGR?=
+ =?us-ascii?Q?pO9X7reJAdOkCHQOxQrd?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4960e48-404f-472f-f618-08dc5d9ba13e
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2024 22:30:18.9346
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR20MB7156
 
-Dne sreda, 10. april 2024 ob 17:54:20 GMT +2 je Krzysztof Kozlowski napisal(a):
-> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-> based on the alias from of_device_id table.  Clocks are considered core
-> components, so usually they are built-in, however these can be built and
-> used as modules on some generic kernel.
+On Mon, Apr 15, 2024 at 03:45:20PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> On 32-bit architectures, the 64-bit division leads to a link failure:
+> 
+> arm-linux-gnueabi-ld: drivers/clk/sophgo/clk-cv18xx-pll.o: in function `fpll_calc_rate':
+> clk-cv18xx-pll.c:(.text.fpll_calc_rate+0x26): undefined reference to `__aeabi_uldivmod'
+> 
+> This one is not called in a fast path, and there is already another div_u64()
+> variant used in the same function, so convert it to div64_u64_rem().
+> 
+> Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Applied, thanks!
-
-Best regards,
-Jernej
-
-
+There is already a fix patch:
+https://lore.kernel.org/all/IA1PR20MB4953CB4FCCDE82AB25F6880EBB0B2@IA1PR20MB4953.namprd20.prod.outlook.com/
