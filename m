@@ -1,93 +1,170 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2542C1EB30;
-	Mon, 15 Apr 2024 07:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F3320335;
+	Mon, 15 Apr 2024 07:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713166130; cv=none; b=KPNw0cctQUUyXYt4yV1wdNm6ENHzfnNciOBGOkvmasgjXgv3IbaZtaXoE831c0HrdGkGw4vxf9r9fMsdZ342MA5zVKpZGTrOZXtqIczEqlgsXQqJDVzqKTwymZyRkPPrIFkCEpf/tSHlx01vfC4Tsmtn4kwAZKimvOgZN5jLoew=
+	t=1713167080; cv=none; b=V9R1VGsZHl8ftE4ARna3yUR+vPqX+dPU5yJI3pgL4yj2+IDfQMYImwjKsGjC0gmZ5pCXEj2Zie8kUEp96gCYBLyAuvXHhA6JKIrav4vOaTAYfUtxhcYzvXv8HtNhBJg+MxIFSkk2xKAuWKIVYKlcd/6irvRrBbjOYLQz26Iedco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713166130; c=relaxed/simple;
-	bh=m8QpBMJtoPr8JIXclCPZe9LRJ8LRUBvkWOWld3K74dk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=arDOeXxkO68Htkbu+MJxV+naqtrec94wlg+ZQu3Fi9cSUxke9MxXZtRHzwTAo0MdAY9/cR5JOUs9tCFBJMP6SaCO6sJmZcBOVQBfhn6sB3qzUTjrkBQk6N7n+NamOxI/EvOTxqx7NbcQlHNWgsAPD6S2NjChnjQ8XeroNy1t1UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-617ddc988f5so34473337b3.2;
-        Mon, 15 Apr 2024 00:28:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713166126; x=1713770926;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y6a/Ap2X2HwsKOi3kZt9jVTB+y5dhwn09RXTJ8jidvw=;
-        b=esi7LgUIte2foyZSSColAasj4DYIPCq67QHC2RuAP5UP+oO8faaj6MdnKHsB0aVrt1
-         93BfAKigyNTEQO4uObOEObSByYJbkQ//ITolBLhcUT52K3IrwacubcV/3+0zTt8bu9s5
-         vJHh09Wi/Ypn+BVHmXPWmm58H0SGoq8fQmJyR5xYj5un3+zu075T64kAcUA9AYT3eCTe
-         HaWAlqxOgmDB3MBzjQwvxU5luXtab0aWrkj1XSzlOuBCbAAuYwg5limAa+FaO2MOYb+3
-         TbKJxtNODIWZoBJGt8+RTsytAWlKyuMfRXumYAEjgIt+LhuHRiOF6Iy78aHJEO9jY6/c
-         IFGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWz+XM7KNsy/yH/LZslJuhYekeQaf9Kq3YkxLTRmZ1MpsRSSDmF16kN7IzAFGmtZ+DwNn8DqOv/G06h8UT8I8yYzVd03p5HNdhZvuhYY+GYAg5NLj+nKSpOsaqr2iDagrICBvaqC+ya8LiazYvJQfnyX/7L8qnmkIeXUWdi1FBR3/imJYWin9rdW+zrPSS61ZcQY8IBg/L6KTWXaYCbqHMjQbwhz1M9
-X-Gm-Message-State: AOJu0YxFB7p/Ta7/teS1bqxey1WdFAb11FWI/FzljN+MvkyTYf8qh8pn
-	rRP5YeusffmxY0++SJGYlbf5iRyC+qGV0V05JvtW7hh3mSACBgdYALn5z6Mw
-X-Google-Smtp-Source: AGHT+IGfJgTvorSc20twKQN4ueqtChty8uwQlKOzKC67V1KKcTiNE4OPEyD5Y13Ss2ZqstVj8i7Hpg==
-X-Received: by 2002:a81:bc4d:0:b0:618:79f5:8d32 with SMTP id b13-20020a81bc4d000000b0061879f58d32mr8177376ywl.48.1713166126549;
-        Mon, 15 Apr 2024 00:28:46 -0700 (PDT)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
-        by smtp.gmail.com with ESMTPSA id fq9-20020a05690c350900b0061813dec952sm1977513ywb.1.2024.04.15.00.28.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Apr 2024 00:28:46 -0700 (PDT)
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dccb1421bdeso2607288276.1;
-        Mon, 15 Apr 2024 00:28:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVHDqxoVwEm8XzlQVshcc25oq4uN8w8MarDov9o9VEsZ5H2e/v+nbXUN1wlt3E+XS4HvuTz64FqHzYF7qsMMVNssHCHzsuUHU67E2y8ksPMW5Mc42GKYyPKnXOR7mNoigLK8veJbv+H7HHE/LwMg5WoOCvY/LIKtXOOyNBipEnWyjZrht6ZuLAPE4F55nxID1uw9JSN3jVDA/zTTCIAtE6o+M0Xs+Ck
-X-Received: by 2002:a25:bcca:0:b0:de0:ea71:9ec9 with SMTP id
- l10-20020a25bcca000000b00de0ea719ec9mr8481223ybm.1.1713166126061; Mon, 15 Apr
- 2024 00:28:46 -0700 (PDT)
+	s=arc-20240116; t=1713167080; c=relaxed/simple;
+	bh=rd7uyf9US0bWcIRDFwfOfCTgUqPC8XCQTic44zRqyak=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hYvUq4krKWH2e8K8s0vTgbZBz/gN5f88cLe/6a1hz2DckvGtxK/cIcBbZ+7X+N0wzsckuR2bRyXI90+Lut3Hd8bG1WMkgrRWBLx+hg9pzGNsBFkP31N2nv9IK4FtIzhhR89ygkAJxrfrZgWev62iiiAlwAihqcnfHZO3CRIXkH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Nvk/rXZK; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Nvk/rXZK"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1EFB9C000A;
+	Mon, 15 Apr 2024 07:44:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1713167075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QiMNpOSoKUjR1Wtr6GuPAYb1hdJwJ3VRxcscaIKAfYI=;
+	b=Nvk/rXZKJbOHwRNhheJEh6OEqevzX5EWhGMEBpjQwRuAGofgY90i5t6ve7M8rCOgybM9AI
+	LvhqNrQbmL32AwGzGiPjynna5C4jrUUslDb1QI2DPsTtgPNzmfXol/ytndeH8zSxhMKeG3
+	tf027rlA9YlmDZWO0ORc/Y/ewPz3C5F0uMYGrMHAC6jG58tezdRBgGA8fVMRPQdZ9zkWGz
+	WQFC3gdATNbxSJuFIRETajuWjeQq5Hj6JOEYzmvhhuxtPqRUIMUZx4LNENGZ0WIKiS0Cq1
+	G2BCU+OjutjghLev5pLgozyyDu420qMyizc7fMUeom7UBnM1hvvqRpUwQUGqSw==
+Message-ID: <16df0d66-991a-4d9c-9321-b139555a5e64@bootlin.com>
+Date: Mon, 15 Apr 2024 09:44:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com> <CAPDyKFr405qt58wrqNdSn8bQPRqPKJ1omUZHS_VpQrX5zxUJug@mail.gmail.com>
-In-Reply-To: <CAPDyKFr405qt58wrqNdSn8bQPRqPKJ1omUZHS_VpQrX5zxUJug@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 15 Apr 2024 09:28:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXRwcYMt7p+xT3svo1RmJ2Tvbamrx4++iYQ-mffKb6ZQQ@mail.gmail.com>
-Message-ID: <CAMuHMdXRwcYMt7p+xT3svo1RmJ2Tvbamrx4++iYQ-mffKb6ZQQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] clk: renesas: rzg2l: Add support for power domains
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be, 
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: michael.opdenacker@bootlin.com, Jisheng Zhang <jszhang@kernel.org>,
+ Liu Gui <kenneth.liu@sophgo.com>, Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
+ dlan@gentoo.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: (subset) [PATCH v9 0/6] riscv: sophgo: add clock support for
+ Sophgo CV1800/SG2000 SoCs
+To: Inochi Amaoto <inochiama@outlook.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
+ Chen Wang <unicorn_wang@outlook.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+References: <IA1PR20MB4953512A4DCAF293D7B1CBC2BB262@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953E5E78F930EE25A86EE1CBB052@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <2696c0e0-0f15-44d1-ba40-dcab4be802d2@bootlin.com>
+ <IA1PR20MB49536A93C7A684EAE844E316BB0A2@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953A5ACD22C8CB791C76BABBB0A2@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <a86c6e6d-812b-4777-981b-c747ca601372@bootlin.com>
+ <IA1PR20MB495304E9A53F0893C821DD78BB0A2@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Language: en-US
+From: Michael Opdenacker <michael.opdenacker@bootlin.com>
+Organization: Bootlin
+In-Reply-To: <IA1PR20MB495304E9A53F0893C821DD78BB0A2@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: michael.opdenacker@bootlin.com
 
-Hi Ulf,
+Hi Inochi
 
-On Fri, Apr 12, 2024 at 1:31=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
-> That said, maybe we should start separating and moving the
-> power-domain parts out from the clk directory into the pmdomain
-> directory instead, that should improve these situations!?
+On 4/14/24 at 11:41, Inochi Amaoto wrote:
+>> Gotcha for the CONFIG_CLK_SOPHGO_CV1800 setting. However, I'm confused. Why
+>> is this setting available in linux-next, but neither in
+>> git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git ("master" and
+>> "for-next") nor in github.com/sophgo/linux.git ("master" and "for-next") ?
+> At now, we only maintain the dts related change, but not the driver
+> code. The driver code is usually applied by the subsystem maintainer.
+> This is why you only see the clk changes in the linux-next.
+>
+>> What's the tree used to push to linux-next?
+>>
+> As you see, the driver code applied to the clk/for-next. That is the
+> tree used to push.
 
-The clk and pmdomain functions are tied rather closely together on
-Renesas SoCs, that's why the clock drivers are also pmdomain providers.
+It makes perfect sense, thanks!
 
-Gr{oetje,eeting}s,
+So, I tried to boot my Milk-V Duo S board with the latest linux-next 
+kernel (with CONFIG_CLK_SOPHGO_CV1800=y). Here's what I'm getting:
 
-                        Geert
+[    1.933301] mmc0: SDHCI controller on 4310000.mmc [4310000.mmc] using ADMA 64-bit
+[    1.947274] Legacy PMU implementation is available
+[    1.954001] clk: Disabling unused clocks
+[    1.959283] PM: genpd: Disabling unused power domains
+[    1.964840] ALSA device list:
+[    1.968165]   No soundcards found.
+[    1.975652] dw-apb-uart 4140000.serial: forbid DMA for kernel console
+[    2.133075] mmc0: Internal clock never stabilised.
+[    2.138256] mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+[    2.145082] mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000000
+[    2.151906] mmc0: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+[    2.158725] mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+[    2.165543] mmc0: sdhci: Present:   0x00000000 | Host ctl: 0x00000000
+[    2.172362] mmc0: sdhci: Power:     0x00000000 | Blk gap:  0x00000000
+[    2.179220] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x00000000
+[    2.186056] mmc0: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
+[    2.192878] mmc0: sdhci: Int enab:  0x00000000 | Sig enab: 0x00000000
+[    2.199699] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+[    2.206520] mmc0: sdhci: Caps:      0x00000000 | Caps_1:   0x00000000
+[    2.213342] mmc0: sdhci: Cmd:       0x00000000 | Max curr: 0x00000000
+[    2.220162] mmc0: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
+[    2.226983] mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+[    2.233798] mmc0: sdhci: Host ctl2: 0x00000000
+[    2.238558] mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x0000000000000000
+[    2.246189] mmc0: sdhci: ============================================
+[    2.256290] /dev/root: Can't open blockdev
+[    2.261025] VFS: Cannot open root device "/dev/mmcblk0p2" or unknown-block(0,0): error -6
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Here's my device tree (compiled with the sophgo for-next) branch:
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+/dts-v1/;
+
+#include "cv1812h.dtsi"
+
+/ {
+         model = "Milk-V Duo S";
+         compatible = "milkv,duos", "sophgo,cv1812h";
+
+         aliases {
+                 serial0 = &uart0;
+         };
+
+         chosen {
+                 stdout-path = "serial0:115200n8";
+         };
+
+         memory@80000000 {
+                 device_type = "memory";
+                 reg = <0x80000000 0x20000000>;
+         };
+};
+
+&osc {
+         clock-frequency = <25000000>;
+};
+
+&sdhci0 {
+         status = "okay";
+         bus-width = <4>;
+         no-mmc;
+         no-sdio;
+         disable-wp;
+};
+
+&uart0 {
+         status = "okay";
+};
+
+
+What's frustrating is that I got the mmc working a few days back :-)
+Hoping this helps...
+Cheers
+Michael.
+
+-- 
+Michael Opdenacker, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
