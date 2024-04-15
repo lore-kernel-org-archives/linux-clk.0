@@ -1,153 +1,171 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2052.outbound.protection.outlook.com [40.107.22.52])
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2067.outbound.protection.outlook.com [40.107.20.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0C45CDD9;
-	Mon, 15 Apr 2024 12:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3916FE3D;
+	Mon, 15 Apr 2024 12:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713184800; cv=fail; b=S91KzI2CgAylxpTyjeTNLOJnSk0aYKA9KJwZQ/SwzXz381NfTjCgKN56ULpTe/U0WCjNGSu5RUH211/CQTFzWuJzimyjxFP30KJlJbNHbvmif2kiPc8RvpkzLHKeu9t9Fcy9oE9osA4t78nBzuOr8CFsL/NssrmUoogYGAw6SGA=
+	t=1713184947; cv=fail; b=tO4X0kE3/lMEF5Ogf/5frOChjtKMrwPQkatq2OGywTTnNDr9K34WzwOdnAxtk7noXe359OTwA1wgR0aXfrPIvW6vSGNrgm0B0lzjyPL/om8zyewrehck09U9qnjGzjTga1MWmr3iVwQuaX1+/AQIJVlNs4Zwjd/R+mzT2bocMNs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713184800; c=relaxed/simple;
-	bh=g3+ME7iqLTOc6n87xMZVPtOOipOBYTvVWmkEwwXcTIA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=n30xOXaHkzkiGN1QDfpseTeOr+t206jf7f9U1UeiUhWzvuYRu0CYsP8QGNeMpZV16aD2Lb0Tque8zAiiB9FJUNCSi0QKdUx/8QDc+qPqgKMbfCnGDY9PSL1eFgK0+YrfIrI4aXdfedr+4nywmP2TUDmuBWnwJQAfceO0KPo0fDQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=fb6CibH+; arc=fail smtp.client-ip=40.107.22.52
+	s=arc-20240116; t=1713184947; c=relaxed/simple;
+	bh=5HbvCcdOoi7dkFQrO3IwVvB+jnCiwfdjDKzf9jlte8Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IMH2t+My4zj6neu7fOjfSI3yau6kMZPWItFKRxhHgtOWkmdXj7Th4wPHB1d3jTxHPX0iVGyiIjSqNRsIO7dkw63tAvDWm1BnsbuJEO9ttSLcbW5+f45wCYjyXDoQD/n/3UqdI48Za51Y6W03YK+30J7ZXed7vZkVZyhyZANq/GE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=qPRl8Z6V; arc=fail smtp.client-ip=40.107.20.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="fb6CibH+"
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="qPRl8Z6V"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=km8uJFedgkbEtPcmegw7eZvUCkDs206ejkwGbKU0Na25dLbg2CbM5ctjvz44FlnQeGfXU0mf044qlIl70znhz3x3U4pSYmY+vV67sJP9RyF4Dez9RGCo6VOKuZJA5pnkDEzVb+7HZaW5WF3B16LwNPCMfZYYf+6ZMVatKN3XoKETGLe7U5Wu/4Mz3qE8zwq+c7GnsbR79He0agGJJlNdDbgAr3ke/0QKqjjrbdX8Wo2mXoyu9+8Dwr3HGFPEUJcJj0tBw6RmygHcJ972QCNrhAEw40wUYSQpeWXXiXrJH1aYkdwsJvuLPGuEI3H03Mf4xIyzgqPh0y3q8WpoJ7VLgA==
+ b=oY2S7ZATfVZJ5ZWuaD2QrhllucXyatFGogKxvXJdJx/RABr5ysoPkSUceWUMIEtGlCsvk0yzrHOKhFu4RXYDpG+Sw905Q+jyPxD1B6lTModB3KgMqFrJ8Be5Q8sjkU5nPx2zO0eRd9+EcMYUcJZXgklOB6fPy60bQbkx1G6tXsVfTlJ5YWMOpFfoZP0sDevuMt0USYJEunbOvpYq5QYVwdr2kIIkQEF8Iio9ghYY1rRcBCWENNmxnF0ZmxsP3LbnHP9PpZN6sN/oZiVjoxZ3EA5IwAHk0LngDKeBY4wq0z7pU/3qlE8SPcG22VIds8RMkzAsxrV1QLX4HTCBnbF13w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g3+ME7iqLTOc6n87xMZVPtOOipOBYTvVWmkEwwXcTIA=;
- b=LeVoSHrLl17vlilKN2mctmy2evaKmHEmexfUG0FDUEd/tUH+xwWlxGOyJl2r7H6HTO+ZeIFOWetMM7C/LOQ2HxhC4TTHvEN8z4uO+l1B+kH5hq9YinRWAzzfXqZ9zt8uZFz4NlgYrL2E/RyHczIEcsPxa/62n2w1XWnLsyxG+70U05Yjumy+7Rwz8hZm2xgsgWHzq3g6/WtlVNFaUuZAOnG8XKqeRuoambWQiyJxP18y3+z5jr/0LZhM1SAfsfvjUkOcsME04cCyaQDll767HARYn3qqdRrtq/6qjlOfZDIfBY9ZSCehZPI2Chv/RR1rHrVMkcXPp1C79wz+mRqNxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=leica-geosystems.com; dmarc=pass action=none
- header.from=leica-geosystems.com; dkim=pass header.d=leica-geosystems.com;
- arc=none
+ bh=1Rcz8Tzq1zwsiZ9BrrQ87txjFMqQCuGDh8bq15P4plg=;
+ b=KcJpnpavnUycy/VnFyXYTNBSK+VWnZGG7EEBeGQN0iKno2u3smvPHwC21suKgRty8mhgj972N63BEJ9glv0H6re+fPglymIJs6MPRXRnHiLXqu40PzwZwZPVqF26/Dcjuhm3vouvvuNaJzN2JfmFXxvVSoWk8Ucd+GATG2R51yAjobYPFq2lGPaTTaG0N5nORH5OA1Z+RZ176ru5B3trX2bdIRlpg1RsTQ8bLaHm1FJlhsdwK99MjOnf9DBudtj+U3dE2iEKR9r1u8NZC9GvpYSUjghdmfavMRoCOJJb4mXsI6Qxheo1fBqKPPXi2Krr6cUEh6XaYt2OXqk6e6JfKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=leica-geosystems.com; dmarc=pass (p=reject sp=reject pct=100)
+ action=none header.from=leica-geosystems.com; dkim=none (message not signed);
+ arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g3+ME7iqLTOc6n87xMZVPtOOipOBYTvVWmkEwwXcTIA=;
- b=fb6CibH+IuJWyOwydLKF7CQbZkU9o3PZJ+ez5UuSiC9s85mJOzcek55tRJbInETlE9811zBDAZtcT8j+d0Qkz4jo2ccF3WyUTzMOXGFmxbEkSVZ8JlMIUJNGvozW2+8P3iZzWFj/HGIitdn3HA+4UUQO55KkSRCAFrZoo2sIZEg=
-Received: from VE1PR06MB6911.eurprd06.prod.outlook.com (2603:10a6:800:1a4::13)
- by DB9PR06MB8536.eurprd06.prod.outlook.com (2603:10a6:10:36b::19) with
+ bh=1Rcz8Tzq1zwsiZ9BrrQ87txjFMqQCuGDh8bq15P4plg=;
+ b=qPRl8Z6VcIijoAAPRIUuZElgtT2dNqjnLsIAN+07fI7cq49KHRNsSK9l5WDZNrS3lhlHOqnZXHX4xENOm7vqAM/JRlcMV8DTFVcOI5loq7XRkHyFzXvtGu6a5IloaTQf9E2Hy6fLMv94/izwtf08iLtiBlVXcWB+d+c+32VEi9I=
+Received: from DB7PR03CA0080.eurprd03.prod.outlook.com (2603:10a6:10:72::21)
+ by VI1PR06MB9021.eurprd06.prod.outlook.com (2603:10a6:800:1e0::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.26; Mon, 15 Apr
- 2024 12:39:54 +0000
-Received: from VE1PR06MB6911.eurprd06.prod.outlook.com
- ([fe80::9256:56bc:4cd2:d41]) by VE1PR06MB6911.eurprd06.prod.outlook.com
- ([fe80::9256:56bc:4cd2:d41%2]) with mapi id 15.20.7472.027; Mon, 15 Apr 2024
- 12:39:54 +0000
-From: POPESCU Catalin <catalin.popescu@leica-geosystems.com>
-To: Marek Vasut <marex@denx.de>, Stephen Boyd <sboyd@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>,
-	"m.felsch@pengutronix.de" <m.felsch@pengutronix.de>
-Subject: Re: [PATCH next] clk: rs9: fix wrong default value for clock
- amplitude
-Thread-Topic: [PATCH next] clk: rs9: fix wrong default value for clock
- amplitude
-Thread-Index: AQHab/DCG/iHt9Eo40epYh1g6iaq+rFfzXkAgAVi8ICABFO8gA==
-Date: Mon, 15 Apr 2024 12:39:54 +0000
-Message-ID: <af1116d6-e615-410e-a2e1-344c3ae6c029@leica-geosystems.com>
-References: <20240306180435.1033052-1-catalin.popescu@leica-geosystems.com>
- <a5595ba92a3d65a222398824b09d7d37.sboyd@kernel.org>
- <d55fce26-a96e-4653-a463-a277e232ed48@denx.de>
-In-Reply-To: <d55fce26-a96e-4653-a463-a277e232ed48@denx.de>
-Accept-Language: en-CH, en-US
-Content-Language: aa
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=leica-geosystems.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: VE1PR06MB6911:EE_|DB9PR06MB8536:EE_
-x-ms-office365-filtering-correlation-id: b7fae419-35b5-4be8-6219-08dc5d4926b1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- A0Ia7ofst0GJusgmBTc1f6Z5mM8b87n/RdT8xyRmrWuhK5RjPY1b/LyWUYBS8bsVkByq05Fn1U0OVLOzYd3iCWLmrH0gO+Ojo5SvqrDjmKEOlVaUUOYh8DAI9h4DiatPRrpP3a9Fa1VTilmy76MSwrdoCY2EPCed60NKcGSId+APNa/ZTyp6XN4CJyhAB4V25qcSO9xI4Di1IMv9N247Uyvk+f3setefIW6C14I0MSEqo0OlV42xRGiFAaVlbTOc8hqjFDy8espvj4BmQiUGk/7FjwzX1uAr18WL1Y4cHDCRfDd2DSXkPnZqsU55L+Z/gZnLhqi24uSfA1/a3BxsIoVzWsXyf8gAr54y08HtqjL089iBhgvLoROjWnS6ToOLsdfGQQ5R+Ji0rhklszJKfOhZhUGy98d35KYftQ+vdb9D8bsugh3e2ccntwk+0tplqS1qXtHn2aDlc3DFdlZN4mRGJm+dc3L3yCfBROsSahZSvF4q/JrgHdgrNYIieRtP/UZwPgsRQg7dY1/kAmtYfowS0jnlmIDWG5m2YGBkEUM70c/0MY3zoZpm7hKWSH05sqFNsc2JJjMbXh4VLp0ncT+1mkM22Uxm9zGYYgC9w1EQceBimIXvETy6AGGMNkhMAnFeuNqPQW1DuWPDVEKy3ifCjlTX2TQsJs2gkV3P07DhVMUTB8LUMrX+gdwL12LukqTWuKAbghSBzcRNUUp61I5sPjNyV1BBsiiLLEP4XZo=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR06MB6911.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?SHpxaEVtczFqcWRvcW9ZM3JxUVYyQ1N1MXQycDZ4aTk3bDROdmFiN2V5UmI2?=
- =?utf-8?B?YmJoQ1dVM1drdHZudXFIRS85aG05L25GNmUxZWdxOEdtWGZHSzVhdGdDdzBG?=
- =?utf-8?B?WkNjTmV1TUhsUjNESHllVUYvaWtiVnZTTWJWQWNOSUd6aEQyaG0yZTJLWHlq?=
- =?utf-8?B?RDIvUUNicnBCZW1INjdBalVCcE9MeWY0d1UzUVRBSis2UVVGY1g2QUxVMStL?=
- =?utf-8?B?TE9wdnVZTUxzcE9tME40MzV3b2QyZWs4aU1ESGQvNURVRlhaUWRKWnhKVkdT?=
- =?utf-8?B?UTdqZ1JUeVkrQnhqTVVtM2RoOVJoZ1pXVUVkYzgzV05BMzFlbWtINmF6dFlP?=
- =?utf-8?B?Tmw1VUtkTXkwUXA3NjN3VGl1SHoxaU14UWdna3JkQnQ4WVNqM1Z6T3hxQmtv?=
- =?utf-8?B?V1loUWZSUVB5TVdOeDdRa1lrVVAyVFhvQnAzaXJhNGlSa3pxVXdlZk8wenk0?=
- =?utf-8?B?RUhhd1J6ZFdEMHNYNWtSSXArbHFlcXFBVVRGSkQrYVI4a1p1LzNLZExySWla?=
- =?utf-8?B?WTM0MmFXR2VqUUEyVm1Nc3NOU3h4bDl2YVlESXBiSTVKYlIyNWk0VHRpZSts?=
- =?utf-8?B?TytWdU9GbDlCamZFckk0dzhzUmVTeU9mNFMyTHpNRVdLTFVjcndvYldDM29V?=
- =?utf-8?B?ZW95cjJOWGtlWDNURXVJNE9DR1Q1UU13Mzh4WVNSUmNFTFJWcE4wT0x6Ulp6?=
- =?utf-8?B?aWk4QytjdjZIeThJT2wzdDhybktTSjJ5UzdXd3MvT2s3N0lGck9mYk5QcVpW?=
- =?utf-8?B?WkgrbWI3ampTZjBiMG1OWFNQSDUvcUhCY21ucVJ6WGp4TkNsMG1DWlVIUC85?=
- =?utf-8?B?RUQzNUpJdXJvd2hsampKRncrdnhBR1ZBVnVaNlZ2b3F0Yk5kdmdkQ0g5aEw4?=
- =?utf-8?B?MXpIWW5IcThkeERJNXV2RkZLRmlqdW1ES1VTU0RDeEkyWFJqSUs0citmZVJn?=
- =?utf-8?B?bzhEWlVhL1lobjZEQ3lHbVlmb3haUEpPVUlZVWJPbVRqVmg0Wit1cks0TjN2?=
- =?utf-8?B?MEIvM3JUek5GL3czekFMZElYcmZ0Z2o1YUd2WmU1bUs2eDNIQUhFZ0diQXlG?=
- =?utf-8?B?N3dOSWdZRE8wVy9kc3g4RGlvczB4N3RTY3Q0NFgzdjVhdnJ4SjA2Vkk0OSs5?=
- =?utf-8?B?ODRFcDdjWTJDdmR0VHlSOTZiY2VlVUovSDBEQldkRDIxMEJ1MmFacVc1ajMw?=
- =?utf-8?B?STlBcXRJRGlaKzZnMWlSbE5tM2ZvTExYdFBJeUZ6K0NLbENpTWxwQzErK3Fl?=
- =?utf-8?B?anJaYnk0bW45Smt6blZDNm1iUC9tamNUM1B0dTA3TzhCQ1VZK3hneGhYK0Uw?=
- =?utf-8?B?YXRLSys3OUFSdVV1aXdqYkQrVkVubHZLL1lWUnRWb0h0azRaVmEwWSszcnZ5?=
- =?utf-8?B?RXBLOUZsNXc1aDRjRkJIQXRVSG9vSkVVVVIydHZxRCsyMXZOZzRqaVZtd1d6?=
- =?utf-8?B?WU5IYU1UV3N1NmkvZWZkUXlyMXFmTDZMVWdva0s0ZmUyamtUYzM1aVNlREUr?=
- =?utf-8?B?eXNBbzV6TVYyRXB1amZEZjk5VE1GeHdTQ093SlorWmNwS09DYVZUUk1nZzhh?=
- =?utf-8?B?ek0vcWxxWS83SmJ4MkFRN1VMTUIzblZrbk5IQ1NxMVVRTEMzbXZHOWNWT2Zw?=
- =?utf-8?B?MkN4cW9rYTFRR2NiR052MGw4Qkt1UTk1NXdvdGF2Ny9OZ3N0Qm9aREt5amIw?=
- =?utf-8?B?bzJObVI5S2J0bmhheWZWaFN5aHhDeWhTRC9ES0NIczBhTHlPWWxmUUNMZW9T?=
- =?utf-8?B?M2g3N29TMHYwc2djdEk5N0JZeUxsR3d6Q1VOTnB1TlVhaWJmcmFOMVNvYUQw?=
- =?utf-8?B?MFVvV0lUVmdUV2lwbTBIaUhIQU5wS2M1MVppQTVFT1NXNUFGbzY1TXRvaVdY?=
- =?utf-8?B?eHNkZ2pIam1adm1JdUh0aUxSRnljNGsrWTB4L0RhR0o2MS9TYWpxQVJEQkZU?=
- =?utf-8?B?NWRKcURnck9zQkYwbXFHcXJtb3ZWVkthSmt6Z2pzTFcrTGVaYmwwY21IQitQ?=
- =?utf-8?B?RDJ5QWorNkV6WGE5eE1XdUgwU1lXeUJNUkUrbHlKNzUySTA2WTdtZmM1aVRv?=
- =?utf-8?B?WGt0bUpTSWIya0pUVk0xUEk0ZjBxaS94dGlYS0xXYjZ1RDBGZTkvWm1jSkZH?=
- =?utf-8?B?amt2VjNRNUZrQmRjMGY3dCtYOUFDUGZhSUF6RGp1NjR4UDZiZHIyU3pDaEFV?=
- =?utf-8?B?ZVE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7ED1DE2D162CF14B9DE4C5651845A7F7@eurprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7430.46; Mon, 15 Apr
+ 2024 12:42:22 +0000
+Received: from DB5PEPF00014B8F.eurprd02.prod.outlook.com
+ (2603:10a6:10:72:cafe::20) by DB7PR03CA0080.outlook.office365.com
+ (2603:10a6:10:72::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.33 via Frontend
+ Transport; Mon, 15 Apr 2024 12:42:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
+ smtp.mailfrom=leica-geosystems.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=leica-geosystems.com;
+Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com
+ designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
+ client-ip=193.8.40.94; helo=hexagon.com; pr=C
+Received: from hexagon.com (193.8.40.94) by
+ DB5PEPF00014B8F.mail.protection.outlook.com (10.167.8.203) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7452.22 via Frontend Transport; Mon, 15 Apr 2024 12:42:22 +0000
+Received: from aherlnxbspsrv01.lgs-net.com ([10.60.34.116]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
+	 Mon, 15 Apr 2024 14:42:21 +0200
+From: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+To: marex@denx.de,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	biju.das.jz@bp.renesas.com,
+	marek.vasut+renesas@mailbox.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bsp-development.geo@leica-geosystems.com,
+	m.felsch@pengutronix.de,
+	Catalin Popescu <catalin.popescu@leica-geosystems.com>
+Subject: [PATCH] clk: rs9: fix wrong default value for clock amplitude
+Date: Mon, 15 Apr 2024 14:42:19 +0200
+Message-Id: <20240415124219.604339-1-catalin.popescu@leica-geosystems.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 15 Apr 2024 12:42:21.0758 (UTC) FILETIME=[5C1FDDE0:01DA8F32]
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B8F:EE_|VI1PR06MB9021:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 79486b27-f8a3-4f06-cd08-08dc5d497ede
+X-SET-LOWER-SCL-SCANNER: YES
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	gmks7pHQfMvY2bnCR1L2zs8dith+3zN66b5kruqS/e0Te5bgT+Bp3NnUpmY2aXs9RWaBpfaLE0PLfOPH2gsweFjs1pdpC9k7OeExsUofrqrmHKtPQaf7D88UYdoQ0icY4VhrV6yv1g1mrWVMx/SrxqIAKSqX7V4D+kIchh4TRChtwm8mulTkg1lRmdffDntVOo3/uwiRMlLdGMrQZKbIstMAKTBriTbPlmS0WTk+L8/Ku5cZQKlfNm3lN8k4SwTIQbwQkmOcz43O3Ir3tEgacRD2NFwBYyKDLwVve6hnprxIJCwn7IQb4gGNhA5zlFhS0uroAAPk6QD9rBE/dqwyY3P7WtqtwFlw2r7ijdEhpjetZ8who2LNK0pO975/jNEOjx3o99Hf+85pP4Ntrisrk2DjhIWf1tF6Yw0MF7kgjx+SQ7KtHCcUYTI1T8Ey8jT6aXopB+hpGJ/yKNjM8nsKVUjoPHkVk81YaxDgNr7gvWhjhibnpvIyW5tJocN511SPsKFEFh3VAY9rcHvB6/O7cXRpQCwRKdn7JOoo7N9ljTAVWXtb6JC04R2TTXSjNstKDeeESh8r5r5VS4ULEgRsH5X91ajfO1wqsO3e/4NOE0NzpWdr3H+9UaTFpvGuhGtbRVU8RL9nMjH6riEqnJsYUot4ncinTKSuVu34dWKOy4xgAA/aDppiNOpgUn/pDXC4tOiV2bQKI6Ngeg3j+tpTm7aZYoFazqQctnbdTDXWk7qaq0rzqy2YwYWJWV++GdZ7
+X-Forefront-Antispam-Report:
+	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230031)(376005)(36860700004)(82310400014)(1800799015);DIR:OUT;SFP:1101;
 X-OriginatorOrg: leica-geosystems.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: VE1PR06MB6911.eurprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7fae419-35b5-4be8-6219-08dc5d4926b1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2024 12:39:54.2575
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2024 12:42:22.0888
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DUf4jW/jqZxLpAhusI+wZ/vqxJ1bcpEMvDgyCHqBg4wGPZwv42O0PBiBFqeUizx3JGZzdrD5UzRToyLYAQJXkCs1pSceJ0I5O9DLkz8vX/wDpNk9Atx/JTUMl1gW/C7J
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR06MB8536
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79486b27-f8a3-4f06-cd08-08dc5d497ede
+X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B8F.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR06MB9021
 
-T24gMTIvMDQvMjAyNCAyMDozNSwgTWFyZWsgVmFzdXQgd3JvdGU6DQo+IFRoaXMgZW1haWwgaXMg
-bm90IGZyb20gSGV4YWdvbuKAmXMgT2ZmaWNlIDM2NSBpbnN0YW5jZS4gUGxlYXNlIGJlIA0KPiBj
-YXJlZnVsIHdoaWxlIGNsaWNraW5nIGxpbmtzLCBvcGVuaW5nIGF0dGFjaG1lbnRzLCBvciByZXBs
-eWluZyB0byB0aGlzIA0KPiBlbWFpbC4NCj4NCj4NCj4gT24gNC85LzI0IDEwOjE5IEFNLCBTdGVw
-aGVuIEJveWQgd3JvdGU6DQo+PiBRdW90aW5nIENhdGFsaW4gUG9wZXNjdSAoMjAyNC0wMy0wNiAx
-MDowNDozNSkNCj4+PiBBY2NvcmRpbmcgdG8gOUZHVjAyNDEgJiA5RkdWMDQ0MSBkYXRhc2hlZXRz
-DQo+DQo+IDlGR1YwODQxIHRvby4NCj4NCj4+ICwgdGhlIGRlZmF1bHQgdmFsdWUNCj4+PiBmb3Ig
-dGhlIGNsb2NrIGFtcGxpdHVkZSBpcyAwLjhWLCB3aGlsZSB0aGUgZHJpdmVyIHdhcyBhc3N1bWlu
-Zw0KPj4+IDAuN1YuDQo+DQo+IENhbiB5b3UgYWxzbyBkb2N1bWVudCB0aGUgU0NDIHNwcmVhZCBz
-cGVjdHJ1bSBjaGFuZ2UgaW4gdGhlIGNvbW1pdCANCj4gbWVzc2FnZSA/DQo+DQo+Pj4gU2lnbmVk
-LW9mZi1ieTogQ2F0YWxpbiBQb3Blc2N1IDxjYXRhbGluLnBvcGVzY3VAbGVpY2EtZ2Vvc3lzdGVt
-cy5jb20+DQo+DQo+IFRoaXMgYWxzbyBuZWVkcw0KPiBGaXhlczogODkyZTBkZGVhMWFhICgiY2xr
-OiByczk6IEFkZCBSZW5lc2FzIDktc2VyaWVzIFBDSWUgY2xvY2sNCj4gZ2VuZXJhdG9yIGRyaXZl
-ciIpDQo+DQo+IFRoYW5rcyAhIFNvcnJ5IGZvciB0aGUgZGVsYXllZCByZXBseS4NCk5vIHByb2Js
-ZW0sIHRoYW5rcyBmb3IgdGhlIHJldmlldy4NCg0KDQo=
+According to 9FGV0241, 9FGV0441 & 9FGV0841 datasheets, the default
+value for the clock amplitude is 0.8V, while the driver assumes 0.7V.
+
+Additionally, define constants for default values for both clock
+amplitude and spread spectrum and use them.
+
+Fixes: 892e0ddea1aa ("clk: rs9: Add Renesas 9-series PCIe clock generator driver")
+
+Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+---
+Changes in v2:
+ - update commit message with "9FGV0841", document change about spread
+   spectrum and add Fixes tag.
+---
+ drivers/clk/clk-renesas-pcie.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index 53e21ac302e6..4c3a5e4eb77a 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -25,10 +25,12 @@
+ #define RS9_REG_SS_AMP_0V7			0x1
+ #define RS9_REG_SS_AMP_0V8			0x2
+ #define RS9_REG_SS_AMP_0V9			0x3
++#define RS9_REG_SS_AMP_DEFAULT			RS9_REG_SS_AMP_0V8
+ #define RS9_REG_SS_AMP_MASK			0x3
+ #define RS9_REG_SS_SSC_100			0
+ #define RS9_REG_SS_SSC_M025			(1 << 3)
+ #define RS9_REG_SS_SSC_M050			(3 << 3)
++#define RS9_REG_SS_SSC_DEFAULT			RS9_REG_SS_SSC_100
+ #define RS9_REG_SS_SSC_MASK			(3 << 3)
+ #define RS9_REG_SS_SSC_LOCK			BIT(5)
+ #define RS9_REG_SR				0x2
+@@ -205,8 +207,8 @@ static int rs9_get_common_config(struct rs9_driver_data *rs9)
+ 	int ret;
+ 
+ 	/* Set defaults */
+-	rs9->pll_amplitude = RS9_REG_SS_AMP_0V7;
+-	rs9->pll_ssc = RS9_REG_SS_SSC_100;
++	rs9->pll_amplitude = RS9_REG_SS_AMP_DEFAULT;
++	rs9->pll_ssc = RS9_REG_SS_SSC_DEFAULT;
+ 
+ 	/* Output clock amplitude */
+ 	ret = of_property_read_u32(np, "renesas,out-amplitude-microvolt",
+@@ -247,13 +249,13 @@ static void rs9_update_config(struct rs9_driver_data *rs9)
+ 	int i;
+ 
+ 	/* If amplitude is non-default, update it. */
+-	if (rs9->pll_amplitude != RS9_REG_SS_AMP_0V7) {
++	if (rs9->pll_amplitude != RS9_REG_SS_AMP_DEFAULT) {
+ 		regmap_update_bits(rs9->regmap, RS9_REG_SS, RS9_REG_SS_AMP_MASK,
+ 				   rs9->pll_amplitude);
+ 	}
+ 
+ 	/* If SSC is non-default, update it. */
+-	if (rs9->pll_ssc != RS9_REG_SS_SSC_100) {
++	if (rs9->pll_ssc != RS9_REG_SS_SSC_DEFAULT) {
+ 		regmap_update_bits(rs9->regmap, RS9_REG_SS, RS9_REG_SS_SSC_MASK,
+ 				   rs9->pll_ssc);
+ 	}
+
+base-commit: 6bd343537461b57f3efe5dfc5fc193a232dfef1e
+prerequisite-patch-id: 0000000000000000000000000000000000000000
+-- 
+2.34.1
+
