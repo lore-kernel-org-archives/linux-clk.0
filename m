@@ -1,97 +1,174 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93ED128814
-	for <linux-clk@vger.kernel.org>; Tue, 16 Apr 2024 11:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1851292CE
+	for <linux-clk@vger.kernel.org>; Tue, 16 Apr 2024 11:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713266121; cv=none; b=Sd1Clg4o6tlzBoA41J7BiL1v375YxVUHcTe5eEegd9DYksT1ibRnl1v5NgkoAJqS8M1c5bnHzBSVNv7J79Y+vdc7RzBz33xpUJY7ET4eaVNq/cr7nvEBARqNidhm/oogU8hjW2TV0Ba5AZ6h1hR9O4o+xXO6hMnb8Gr1afbHSeY=
+	t=1713267060; cv=none; b=DOMbnKE1pN1W0CwPTOSmSRMWwpxxtn9G4+HoKG4wczMYAkDaCMAR7CrkBCIqz8oR8uDKL6ehsdjEAlZWnGSCFe74IFeF/qvzV65v7QOfg/y3n/vgheEqXdgc5hbNtTSdyzpZ6ktgIF46dOiWnCVoPL9E48t6c67dJrHfI27pIY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713266121; c=relaxed/simple;
-	bh=XiI2sQm+xgSfhKnKvaKF+M2Gq/LxaifLpyx+4yhJKWw=;
+	s=arc-20240116; t=1713267060; c=relaxed/simple;
+	bh=BhYQpL5bGevV2GbZmVaHlpnX2k1YiBVKJ9EsE9n0Jyk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kL3eNGKeSGgkqfoctDKFgciSyPwae1pawfsBqWFDHGWoiisPNLhGOS0Hsm6WX6lX6wj3HVVTGUTHLFEmX15HY97GQl9EyphDA9oW1IfRifoE8zA83XFVIboA7BWq+PlS4jgX9qu96biw3EQN0HsYf7l1InxCSXR2V7raIstsZT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oDdcfcIP; arc=none smtp.client-ip=209.85.219.173
+	 To:Cc:Content-Type; b=Zpfl0DjpfGHHCOu/DLvRPiz+RZPAOvDqMBWFAsv7nrC1VdeIrLS2CpYpaKdN9dL3w4eGC0GfNyEfcYJumIOAFtafb1LYUranCY2gWrPg8P/9i0KWv15GbkukagzZLZQH8Wx1EETPgGjUNP6GZm+H4API91/OEwuqIXwqEwsar2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oypMd3+p; arc=none smtp.client-ip=209.85.161.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oDdcfcIP"
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcd9e34430cso4687009276.1
-        for <linux-clk@vger.kernel.org>; Tue, 16 Apr 2024 04:15:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oypMd3+p"
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5ac90ad396dso1512950eaf.3
+        for <linux-clk@vger.kernel.org>; Tue, 16 Apr 2024 04:30:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713266119; x=1713870919; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XiI2sQm+xgSfhKnKvaKF+M2Gq/LxaifLpyx+4yhJKWw=;
-        b=oDdcfcIPoC4WBs+whqfYyBlY0x5ZZ/qXGFvcFbjYvcs3HBloRNyQoQe3dofYBp2I82
-         4b4w4WwrsMrUWc4Edabw9Y46DlA8vImh3mOEK4JgT86Mj6DA6b7Y6eDQzh7xeE2F0KlW
-         mACutQ4VbkC4MvC9oC74yya/+0hBcYpeYWXEZdyMuiDXOecHeKIApqVKp7mLUADbppjs
-         IWWw3H1Z+UtVnNKAQuCRYlZWKHcBySGUOPh5HGpj/7ZsUk1cc0zRoupG87C3z6ai1kAW
-         hC81RNN76lxsS9OEJL2YA0q99l/MwWMbuvmLTUsYy7byETK19nGA1KHzka39KtEN1/kn
-         GHLA==
+        d=linaro.org; s=google; t=1713267057; x=1713871857; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C99IZrp/03ZNQcNBczYUdY5va9+oRjMXPShyuShNODA=;
+        b=oypMd3+pV0Vtey9rUb5SwLMcQpTtQgbSt7kM0kyc7JzklKiRsNcIBeo0zGIoAzypEQ
+         3Kt/iCiWKQe4XaR2xMxwibJZTA+Z5YjUQhx2OP67Jo7IQ0U7EVH+7IOAhirM7oR5loWb
+         zElg4BW7qS3m30r98jwzyo0Er2aN9eekWTqfiOuWoiaMFJeoPvw+nYii4Q2dLVnjemZ5
+         zSrZ/YlH+FqJ9A0goXuQSETW2swhR+7YUgrTPL9wgZqhSxLO4f7gwTT5vTvSo0tdBrE+
+         hdeatjuLwImvFVZWyf8+js7BBILYofLE1+0z+wH/8XHZtSceE/CvxX1J/BRXDSNyxIfT
+         uqKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713266119; x=1713870919;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XiI2sQm+xgSfhKnKvaKF+M2Gq/LxaifLpyx+4yhJKWw=;
-        b=sF9V+aVVYOpfTBxezDCgbkrPNdV5WwOMSdMgIOS7DQh3ruVOWR7ki4Oz2pahMQmjaD
-         ijyJIp9BjhoHIj8ke56a6VTjtXiCDPFD5Jr8RRgH70Lt2doNQ8ievzLc0tuiRiGfUk2d
-         hsBDzZ/29g8fdAbAFDoNskD4E8Vw44dPStl5VFzn6t4hf4NaVd7LFYYTB6wHBh2hLc/l
-         BRM02moD6YddsNTR4xfBduHS2RFsGMslARnZSGyJ74ibGPiWbBEz58Ts6+GbU7ZyAbJy
-         gfSio4qxR9knBMemcGCxsJW6fVPnIC3Kzzir0wUxNYrOhOLczDv6if3sHid2UrByxfjF
-         ONiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAu0311BqPBe2zPBUszAo4px0Fv8UgYluqUhVSK3c+BTaYp2Hhx2QX5J8MBovFTxMSrsX+0LtVrI+yP5BDeGO85ZccFf2r5AEN
-X-Gm-Message-State: AOJu0YxdOsd+uXYUtFNVN4LysBISt/yzYI+AK6Usz+Lt/pNvlxgsYDj3
-	rmKpES3kt3c0LowtbQJbIDxCswtz85pQZH2yliFaIO7q58uIQ5PPNBO88f1HLhnv8CEDPdSS+cx
-	3FuMe37Kvwc0o4W4QyOyNQzR1wHHbD11sPyfeow==
-X-Google-Smtp-Source: AGHT+IFZcV9W2tonTOuCnPPIlMQCywVg80sidWJREy/u9my2wBE3zF9bOxxG9UUMKBTpN9Mc+9RLCpcd7enrpeP10T4=
-X-Received: by 2002:a25:ac05:0:b0:de3:ec93:d20a with SMTP id
- w5-20020a25ac05000000b00de3ec93d20amr3808409ybi.37.1713266118876; Tue, 16 Apr
- 2024 04:15:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713267057; x=1713871857;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C99IZrp/03ZNQcNBczYUdY5va9+oRjMXPShyuShNODA=;
+        b=tLK6Z0M2KlFHoDY5gnYceRNGEgsCwHBQUMvbi1/ALBf+zYkQWe1oRpOp77yvsV2sSG
+         dd+UHie+OGmy/Dmyt7E/qWURyCzo7Mnc2we7MwcD9sixz7nIlICLxD9i/oGOJWKs5qG4
+         dafG+Ml8nzmkyNcG1JMJtVf+2twOaSC+3wMETgNG565vbswthaBj3qE1mgqidqd2tntK
+         3TdwgGmWm1KhffQpn2rtTM51zTdU59xjkxsYo0lqwUjdhwum3BU7IS61SZqXyY3Buk/0
+         XRjINRXRSkhxC6WeQY/Tp6D+I+nkIP+IZOE6Jxr1S7FozXPeu+8WpBEVmJbqFp8Bf/eA
+         LOQw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4G7F1v650eQxS/3URSHnKqLKE6Hn2Tsn8/aVLhRaz2qzwmHbiPjcm5rEPaO3NrQ5kpoVI2wWgJ8b7wzmpoc4m4uqLPeGkW3Jc
+X-Gm-Message-State: AOJu0Yy9X6zobZwXLtNUM5IufFMAqjUHxJS+S6q3mNX8/X9QVOBcWzju
+	dcEJ7l23dCZObQLg2kXqrDwJWMiay5VTb7t0mM2g4aCmSn4RQcFL8m9EEReHHmTQfwFlHOczGZM
+	2dKAj6U7fS/J7xP61vxUJ7Mh/kwMiGHCZa1hyjg==
+X-Google-Smtp-Source: AGHT+IHHl5CehcMHiAGofB/MGumUwf+S69MfIMUrqcYu9S1e+tFfuYa+Ox55juYnjaCvhTxe0MHk6mCUuL3AOdxNCzc=
+X-Received: by 2002:a05:6820:250b:b0:5ac:5c78:390e with SMTP id
+ cr11-20020a056820250b00b005ac5c78390emr10859247oob.2.1713267056734; Tue, 16
+ Apr 2024 04:30:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240410122657.2051132-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFr405qt58wrqNdSn8bQPRqPKJ1omUZHS_VpQrX5zxUJug@mail.gmail.com> <CAMuHMdXRwcYMt7p+xT3svo1RmJ2Tvbamrx4++iYQ-mffKb6ZQQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXRwcYMt7p+xT3svo1RmJ2Tvbamrx4++iYQ-mffKb6ZQQ@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 16 Apr 2024 13:14:43 +0200
-Message-ID: <CAPDyKFoMiseXbSEK4ANOeWSuVhREibm0v0zg46Q3kJHX8jYpgQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] clk: renesas: rzg2l: Add support for power domains
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be, 
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240404122559.898930-1-peter.griffin@linaro.org>
+ <20240404122559.898930-4-peter.griffin@linaro.org> <a82e9859-b74e-44e8-a256-317b8c3fe6b7@kernel.org>
+In-Reply-To: <a82e9859-b74e-44e8-a256-317b8c3fe6b7@kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 16 Apr 2024 12:30:45 +0100
+Message-ID: <CADrjBPouYqYJo8m4_=oCXEi+2208+Gt_Gn13Y3-9V587HOzc8A@mail.gmail.com>
+Subject: Re: [PATCH 03/17] dt-bindings: ufs: exynos-ufs: Add gs101 compatible
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
+	martin.petersen@oracle.com, chanho61.park@samsung.com, ebiggers@kernel.org, 
+	linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, 15 Apr 2024 at 09:28, Geert Uytterhoeven <geert@linux-m68k.org> wro=
-te:
->
-> Hi Ulf,
->
-> On Fri, Apr 12, 2024 at 1:31=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> > That said, maybe we should start separating and moving the
-> > power-domain parts out from the clk directory into the pmdomain
-> > directory instead, that should improve these situations!?
->
-> The clk and pmdomain functions are tied rather closely together on
-> Renesas SoCs, that's why the clock drivers are also pmdomain providers.
->
+Hi Krzysztof,
 
-I understand, it's your call to make!
+Thanks for the review.
 
-Anyway, I just wanted to help with reviews and to make sure genpd
-providers get implemented in a nice and proper way.
+On Fri, 5 Apr 2024 at 08:49, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 04/04/2024 14:25, Peter Griffin wrote:
+> > Add dedicated google,gs101-ufs compatible for Google Tensor gs101
+> > SoC.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  .../bindings/ufs/samsung,exynos-ufs.yaml      | 51 +++++++++++++++----
+> >  1 file changed, 42 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> > index b2b509b3944d..898da6c0e94f 100644
+> > --- a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> > +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> > @@ -12,12 +12,10 @@ maintainers:
+> >  description: |
+> >    Each Samsung UFS host controller instance should have its own node.
+> >
+> > -allOf:
+> > -  - $ref: ufs-common.yaml
+> > -
+> >  properties:
+> >    compatible:
+> >      enum:
+> > +      - google,gs101-ufs
+> >        - samsung,exynos7-ufs
+> >        - samsung,exynosautov9-ufs
+> >        - samsung,exynosautov9-ufs-vh
+> > @@ -38,14 +36,12 @@ properties:
+> >        - const: ufsp
+> >
+> >    clocks:
+> > -    items:
+> > -      - description: ufs link core clock
+> > -      - description: unipro main clock
+> > +    minItems: 2
+> > +    maxItems: 5
+>
+> Keep here minItems and:
+>
+> +            - description: ufs link core clock
+> +            - description: unipro main clock
+> +            - description: fmp clock
+> +            - description: ufs aclk clock
+> +            - description: ufs pclk clock
+>
+> >
+> >    clock-names:
+> > -    items:
+> > -      - const: core_clk
+> > -      - const: sclk_unipro_main
+> > +    minItems: 2
+> > +    maxItems: 5
+>
+> Similarly here
+>
+> >
+> >    phys:
+> >      maxItems: 1
+> > @@ -72,6 +68,43 @@ required:
+> >    - clocks
+> >    - clock-names
+> >
+> > +allOf:
+> > +  - $ref: ufs-common.yaml
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: google,gs101-ufs
+> > +
+> > +    then:
+> > +      properties:
+> > +        clocks:
+>
+> Enough is:
+> minItems: 5
+>
+> > +          items:
+>
+> and drop the items since they are defined in top-level.
+>
+> Your original code is correct, but with my approach we keep the list
+> synced between variants, at least part of the list. If another variant
+> appears, then maybe it will go back to your approach, but maybe we can
+> still have the same clocks and their order.
 
-Kind regards
-Uffe
+Will update like you suggest in v2.
+
+Thanks,
+
+Peter
