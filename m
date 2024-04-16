@@ -1,230 +1,332 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8B0157A7D;
-	Mon, 15 Apr 2024 23:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B025585929;
+	Tue, 16 Apr 2024 09:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713222054; cv=none; b=IOp0pw37cnQQ9tV2reHNCEunLYOJBeNRO4D0bO3BoHF+nbQ8ZSY8/jLyLFf2dv27vXsYvQdShilTksHR8K4l0Gjn45uwrh4MdpRMijb6orrABdksdl94tNG6FWERVgO7b3QAW40V9B1/sTqu9qfUOPmH/bS7K3msZmZ0S/huSfM=
+	t=1713261314; cv=none; b=Ij20/Os2HLBSjAdUdGnsPen/R4YILgQuxbhDbx7BHpljhyqPVrTkG0Nxo5/L2Mra1wyOc3XTeTbZ9+8fwAn5FID7dDb+qU7Jp/QC6+DhwQ+/k83kdBDA/M/n8lc6Xvsbf90okjnLNpZcvqQKBVA5FE5Gb0PYyfiRiSJzeP2KPk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713222054; c=relaxed/simple;
-	bh=SaDLEK/GJzA5gn1n+hQFjSwklsdC8xkcNf7+K1rWP/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uw5Opo78ARExbSLyjzSYePueXErYZ1YZ9HVhmvtNO95GhKz2U5YP2g7ObKlcIWudY6QqV+Qu5oc6LmWpBlD2j+94vXZrvI/7s9P0DUSe0KLzKUviz0GSqu/YF+R6aGuSL+/x5dMUt2DkcrG42K0KMMZPmZ0bPXcOhFHB8QABZSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 884652F4;
-	Mon, 15 Apr 2024 16:01:19 -0700 (PDT)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5ED923F792;
-	Mon, 15 Apr 2024 16:00:49 -0700 (PDT)
-Date: Tue, 16 Apr 2024 00:00:41 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [RFC PATCH 1/1] clk: sunxi-ng: h6-r: add GPU power domain
-Message-ID: <20240416000041.47a4ecb5@minigeek.lan>
-In-Reply-To: <CAPDyKFptmNcbOTEs052yLGLxObWy7975fgpM3Kfg1TjMPVmeyA@mail.gmail.com>
-References: <20240225160616.15001-1-andre.przywara@arm.com>
- <20240225160616.15001-2-andre.przywara@arm.com>
- <CAPDyKFptmNcbOTEs052yLGLxObWy7975fgpM3Kfg1TjMPVmeyA@mail.gmail.com>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	s=arc-20240116; t=1713261314; c=relaxed/simple;
+	bh=NDVVz2tNW8u2IWNrr+miCbFi17mYCzGc+pwSHtSoFQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UqAJIh/6zKEiXVAvxG/3oR/hVjGGBbsIaqEFV6lNTgIlxIIpAGeH+yrPKMoZ31oQ4Bx2B9gBFJ7gcoctjmmWy3LwL1tAw0t61hQuzZF+3W0pDDZUOX/7kGPrqpvZtlGnKP707cQSNxsYFi/ifWJSY/mXtlYtq9lM7PosL6DNRuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=EF2vSz/h; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="EF2vSz/h"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1713261301; x=1713866101; i=j.neuschaefer@gmx.net;
+	bh=8VCPRF0Vi4vNnqUQWVncBOVnCYeatzGZKVzuabhLX+s=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=EF2vSz/hH2dfmb22obzz/aifo+GrF6I9VZadrZtCJqQDB4p8FWRV36dq2aTp4Dsb
+	 eVBDPQ8Jb8VguliZdqtgeC9I4v9sfefz6kuOfgQ5MKsszJxVqXW2L6EHr/7/7Zgrt
+	 PCo7RySPIMzg4lZNpsPndMCtCOyC3BgjA1t2l/k7a/RokiUsHj6q4UeFUOeYKBRG3
+	 8M26XuL0UqfAi4iFvRhZFVYZiLgcgP+iILkoBQOdDnbhQMyG2Uyn1/9YQmZ4gYIQ2
+	 PHSVWe+Rg92dH28OUCRAD9iF2JhseI2Ww/KeRm8bOLgzRoh5+QJSjKsq+Z9PMwT7U
+	 MM0uOi2lwAXlz3vWKw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([5.226.147.226]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MrhUK-1sZMJd1W56-00ne89; Tue, 16
+ Apr 2024 11:55:01 +0200
+Date: Tue, 16 Apr 2024 11:54:59 +0200
+From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	openbmc@lists.ozlabs.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 3/4] clk: wpcm450: Add Nuvoton WPCM450 clock/reset
+ controller driver
+Message-ID: <Zh5K8_FuUtPq7Pqj@probook>
+References: <20240401-wpcm-clk-v11-0-379472961244@gmx.net>
+ <20240401-wpcm-clk-v11-3-379472961244@gmx.net>
+ <9be144291cda6d9714252c9cd83649c2.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WXvGHi2mgeFMSsi1"
+Content-Disposition: inline
+In-Reply-To: <9be144291cda6d9714252c9cd83649c2.sboyd@kernel.org>
+X-Provags-ID: V03:K1:8gvjSYTbOrJ8fToEjyuFJf3piXDlv7j1XoNQPn/z0zjfW3S9ii/
+ AbXWqO5laHqjLXgSi2ovXuHD8lcJpKZacUrHKJ0EwXhbyPIVxSLD0CkTxBGVCs5SQGEl4Dv
+ pAlNH3+UU55RVFOouCg10LcqK9o2lgET3zDa4E3XXPSeyKR8dXZNRoycy8hmgl87N5bKZW4
+ Sa9+Bp6LoLq6Mj4t9vPGQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UhqP2+Ik+Xo=;kbab+yCYAiyFtXldN06Ow8ypsUN
+ 4o0jeI2HJYKOcan0gge7tswtUJbeQYWuosKkrI0P253EuSTIHjVXW1/6SRu47SmPIvV3FiVth
+ tpXCQdJC+y7Jakv36eQwkN5wnQQLIEstQGzWqRWtV+IGkvxOmD+YrBV0sjh7ipiRUg+e164NM
+ PSs+NT1H2VBSUyam4v9V2oN4GII3kGkZ2z9+sXEth8FmuZ1F8CDB4Z/mc3A0xad+LrmIfI6Fc
+ cIqrDtUDA8FhFOMBtnjGY+DBoZrTaOLR4uGQEW+ST5g3nMdQAZS71L2chW5P1TsA5acDUA5GF
+ PzcwLa2X/pIC+3XsstMiE2iDPlMSZz5Z/y/aN74/Xjpsr0yfq1j8gL+1xYR2XqcI/1mkY2icG
+ bK5LI0uGTPo9MfL+DioQYXTpuEwuxxKAqQSrsHn4QlBmfqVoAWs5D1YCoAtDSgs//dANB/jl/
+ RdxyFvoKDoan0nxI3/kddECMBjRC59YfJO5aGqBuqcoM+j1llIRbo4nZEYbXDGJoooz1JYX0h
+ Nr5aEI+DNd99DYvIk4fFa3pqVmv4NDOrE0suRaCKkKgyQlFROyeKOCMSjC6whB9LqT0LZR+Ey
+ gswGo0sMu/d5bi2YI8aOfYxRY5qf0GWn5BMusWowdZnh6uxoqovz+zAKfMh3tihyLLi2CSNJP
+ MeaLjeitfv2Uwt+6cTsw+sPLL8sLbhm3ROaafwUW0P11I16ZJ5tHFEXWYVNVI0Prbck4Cmz8w
+ d+m+JvdO0lHoTaYqlGPOzi0tCtHvzt5iptnrWRj+ZCzqULykOFMqmaDlg6FeTVy5j3ujChHhQ
+ 9NRx5t4iorFDXB3PJU34wxwOnTqCjSfrADywnsTClUr8Q=
 
-On Mon, 8 Apr 2024 14:55:04 +0200
-Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-Hi Ulf,
+--WXvGHi2mgeFMSsi1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-many thanks for having a look!
+Hi,
 
-> On Sun, 25 Feb 2024 at 17:08, Andre Przywara <andre.przywara@arm.com> wrote:
-> >
-> > The Allwinner H616 features register 0x7010254 in the PRCM MMIO frame,
-> > where bit 0 needs to be cleared to enable operation of the Mali GPU.
-> > With this bit set (the reset default), any access to the Mali registers
-> > hangs the bus and thus the whole system. The BSP code clears this bit
-> > in U-Boot and their kernel never touches it again.  
-> 
-> Is the bit representing a reset or power-rail? If it's a reset, it's
-> probably better to model it like that.
-
-So there is no real documentation about this bit (or the whole "PRCM"
-device), but we are pretty sure it's a power rail and not a reset. There
-are other similar rails in neighbouring registers, and some BSP code
-hints at those being power gates. Samuel once condensed this to:
-https://github.com/crust-firmware/crust/blob/master/platform/h6/include/platform/prcm.h
-
-> > Register a power-domain device to control this bit. Since we claim this
-> > MMIO region in the H6 R-CCU driver, add the code here, so that we don't
-> > need to artificially split the MMIO range in the DT.
-> > Since there seems to be at least one other register with similar behaviour
-> > nearby (0x7010260), make the power domain take one cell, even though we
-> > only support domain #0 for now.  
-> 
-> Seems like we need some updated DT bindings too to cover this?
-
-That's right (and I mentioned this in the cover letter), but I omitted
-this from this first RFC post. I will include binding patches in the v1
-post.
-
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+On Fri, Apr 12, 2024 at 12:25:05AM -0700, Stephen Boyd wrote:
+> Quoting Jonathan Neusch=C3=A4fer (2024-04-01 07:06:32)
+> > This driver implements the following features w.r.t. the clock and reset
+> > controller in the WPCM450 SoC:
+> >=20
+> > - It calculates the rates for all clocks managed by the clock controller
+> > - It leaves the clock tree mostly unchanged, except that it enables/
+> >   disables clock gates based on usage.
+> > - It exposes the reset lines managed by the controller using the
+> >   Generic Reset Controller subsystem
+> >=20
+> > NOTE: If the driver and the corresponding devicetree node are present,
+> >       the driver will disable "unused" clocks. This is problem until
+> >       the clock relations are properly declared in the devicetree (in a
+> >       later patch). Until then, the clk_ignore_unused kernel parameter
+> >       can be used as a workaround.
+> >=20
+> > Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> > Reviewed-by: Joel Stanley <joel@jms.id.au>
 > > ---
-> >  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 84 ++++++++++++++++++++++++++
-> >  1 file changed, 84 insertions(+)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-> > index 02b28cfc5525e..363fb7a71e9f5 100644
-> > --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-> > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-> > @@ -4,9 +4,11 @@
-> >   */
-> >
-> >  #include <linux/clk-provider.h>
-> > +#include <linux/io.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> >  #include <linux/platform_device.h>
-> > +#include <linux/pm_domain.h>
-> >
-> >  #include "ccu_common.h"
-> >  #include "ccu_reset.h"
-> > @@ -217,6 +219,86 @@ static const struct sunxi_ccu_desc sun50i_h616_r_ccu_desc = {
-> >         .num_resets     = ARRAY_SIZE(sun50i_h616_r_ccu_resets),
-> >  };
-> >
-> > +#define        PD_H616_GPU_REG                 0x254
+> >=20
+> > I have considered converting this driver to a platform driver instead of
+> > using CLK_OF_DECLARE, because platform drivers are generally the way
+> > forward. However, the timer-npcm7xx driver used on the same platform
+> > requires is initialized with TIMER_OF_DECLARE and thus requires the
+> > clocks to be available earlier than a platform driver can provide them.
+>=20
+> In that case you can use CLK_OF_DECLARE_DRIVER(), register the clks
+> needed for the timer driver to probe, and then put the rest of the clk
+> registration in a normal platform driver.
+
+I'll give it a try. I'm not sure how to make it work correctly without
+calling (devm_)of_clk_add_hw_provider twice, though (once for the early
+clock, timer0; once for the rest).
+
+Another (probably simpler) approach seems be to declare a fixed-clock or
+fixed-factor-clock in the DT, and use that in the timer:
+
+	refclk_div2: clock-div2 {
+		compatible =3D "fixed-factor-clock";
+		clocks =3D <&refclk>;
+		#clock-cells =3D <0>;
+		clock-mult =3D <1>;
+		clock-div =3D <2>;
+	};
+
+	timer0: timer@b8001000 {
+		compatible =3D "nuvoton,wpcm450-timer";
+		interrupts =3D <12 IRQ_TYPE_LEVEL_HIGH>;
+		reg =3D <0xb8001000 0x1c>;
+		clocks =3D <&refclk_div2>;
+	};
+
+=2E.. and additionally to mark the timer clocks as critical in
+clk-wpcm450.c, so they don't get disabled for being "unused".
+
+
+> > diff --git a/drivers/clk/nuvoton/clk-wpcm450.c b/drivers/clk/nuvoton/cl=
+k-wpcm450.c
+> > new file mode 100644
+> > index 00000000000000..9100c4b8a56483
+> > --- /dev/null
+> > +++ b/drivers/clk/nuvoton/clk-wpcm450.c
+> > @@ -0,0 +1,372 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Nuvoton WPCM450 clock and reset controller driver.
+> > + *
+> > + * Copyright (C) 2022 Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> > + */
 > > +
-> > +struct sun50i_h616_ppu_pd {
-> > +       struct generic_pm_domain        genpd;
-> > +       void __iomem                    *base;
+> > +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>=20
+> Isn't KBUILD_MODNAME an option already for dynamic debug?
+
+Indeed, it's the +m option.
+
+My motivation for setting pr_fmt in the first place should become
+obsolete with the move towards a platform driver anyway, because then I
+can use dev_err() etc. I'll remove the #define.
+
+>=20
+> > +
+> > +#include <linux/bitfield.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/io.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/reset-controller.h>
+> > +#include <linux/reset/reset-simple.h>
+> > +#include <linux/slab.h>
+> > +
+> [...]
+> > +
+> > +static const struct clk_parent_data default_parents[] =3D {
+> > +       { .name =3D "pll0" },
+> > +       { .name =3D "pll1" },
+> > +       { .name =3D "ref" },
 > > +};
 > > +
-> > +#define to_sun50i_h616_ppu_pd(_genpd) \
-> > +       container_of(_genpd, struct sun50i_h616_ppu_pd, genpd)
+> > +static const struct clk_parent_data huart_parents[] =3D {
+> > +       { .fw_name =3D "ref" },
+> > +       { .name =3D "refdiv2" },
+>=20
+> Please remove all .name elements and use indexes or direct pointers.
+
+Will do.
+
+What I'm not yet sure about, is which of these is better:
+
+ 1. Having two kinds of indexes, 1. for internal use in the driver,
+    identifying all clocks, 2. public as part of the devicetree binding
+    ABI (defined in include/dt-bindings/clock/nuvoton,wpcm450-clk.h)
+ 2. Unifying the two and giving every clock a public index
+ 3. Using the same number space, but only providing public definitions
+    (in the binding) for clocks that can be used outside the clock
+    controller.
+
+Option 3 sounds fairly reasonable.
+
+> > +static const struct wpcm450_clken_data clken_data[] =3D {
+> > +       { "fiu", { .name =3D "ahb3" }, WPCM450_CLK_FIU, 0 },
+>=20
+> This actually is  { .index =3D 0, .name =3D "ahb3" } and that is a bad
+> combination. struct clk_parent_data should only have .name as a fallback
+> when there's an old binding out there that doesn't have the 'clocks'
+> property for the clk provider node. There shouldn't be any .name
+> property because this is new code and a new binding.
+
+I'll try switching to .index or .hw instead for the references to
+internal clocks.
+
+
+[...]
+> > +/*
+> > + * NOTE: Error handling is very rudimentary here. If the clock driver =
+initial-
+> > + * ization fails, the system is probably in bigger trouble than what i=
+s caused
+>=20
+> Don't break words across lines with hyphens.
+
+Good point.
+
+(Due to the switch to a platform driver, this comment will probably
+become obsolete anyway.)
+
+> > + * by a few leaked resources.
+> > + */
 > > +
-> > +static bool sun50i_h616_ppu_power_status(const struct sun50i_h616_ppu_pd *pd)
+> > +static void __init wpcm450_clk_init(struct device_node *np)
 > > +{
-> > +       return !readl(pd->base + PD_H616_GPU_REG);
-> > +}
+> > +       struct clk_hw_onecell_data *clk_data;
+> > +       static struct clk_hw **hws;
+> > +       static struct clk_hw *hw;
+> > +       void __iomem *clk_base;
+> > +       int i, ret;
+> > +       struct reset_simple_data *reset;
 > > +
-> > +static int sun50i_h616_ppu_pd_set_power(const struct sun50i_h616_ppu_pd *pd,
-> > +                                       bool power_on)
-> > +{
-> > +       if (power_on)
-> > +               writel(0, pd->base + PD_H616_GPU_REG);
-> > +       else
-> > +               writel(1, pd->base + PD_H616_GPU_REG);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int sun50i_h616_ppu_pd_power_on(struct generic_pm_domain *genpd)
-> > +{
-> > +       const struct sun50i_h616_ppu_pd *pd = to_sun50i_h616_ppu_pd(genpd);
-> > +
-> > +       return sun50i_h616_ppu_pd_set_power(pd, true);
-> > +}
-> > +
-> > +static int sun50i_h616_ppu_pd_power_off(struct generic_pm_domain *genpd)
-> > +{
-> > +       const struct sun50i_h616_ppu_pd *pd = to_sun50i_h616_ppu_pd(genpd);
-> > +
-> > +       return sun50i_h616_ppu_pd_set_power(pd, false);
-> > +}
-> > +
-> > +static int sun50i_h616_register_ppu(struct platform_device *pdev,
-> > +                                   void __iomem *base)
-> > +{
-> > +       struct device *dev = &pdev->dev;
-> > +       struct genpd_onecell_data *ppu;
-> > +       struct sun50i_h616_ppu_pd *pd;
-> > +       int ret;
-> > +
-> > +       pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-> > +       if (!pd)
-> > +               return -ENOMEM;
-> > +
-> > +       ppu = devm_kzalloc(dev, sizeof(*ppu), GFP_KERNEL);
-> > +       if (!ppu)
-> > +               return -ENOMEM;
-> > +
-> > +       ppu->domains = devm_kzalloc(dev, sizeof(*ppu->domains), GFP_KERNEL);
-> > +       if (!ppu->domains)
-> > +               return -ENOMEM;
-> > +
-> > +       ppu->num_domains = 1;
-> > +       pd->genpd.name          = "GPU";
-> > +       pd->genpd.power_off     = sun50i_h616_ppu_pd_power_off;
-> > +       pd->genpd.power_on      = sun50i_h616_ppu_pd_power_on;
-> > +       pd->base                = base;
-> > +
-> > +       ret = pm_genpd_init(&pd->genpd, NULL, !sun50i_h616_ppu_power_status(pd));
-> > +       if (ret) {
-> > +               dev_warn(dev, "Failed to add GPU power domain: %d\n", ret);
-> > +               return ret;
+> > +       clk_base =3D of_iomap(np, 0);
+> > +       if (!clk_base) {
+> > +               pr_err("%pOFP: failed to map registers\n", np);
+> > +               of_node_put(np);
+> > +               return;
 > > +       }
+> > +       of_node_put(np);
+>=20
+> The 'np' is used later when registering PLLs. You can only put the node
+> after it's no longer used. Also, you never got the node with
+> of_node_get(), so putting it here actually causes an underflow on the
+> refcount. Just remove all the get/puts instead.
+
+That simplifies it, thanks for the hint!
+
 > > +
-> > +       ppu->domains[0] = &pd->genpd;
-> > +       ret = of_genpd_add_provider_onecell(dev->of_node, ppu);
+> > +       clk_data =3D kzalloc(struct_size(clk_data, hws, WPCM450_NUM_CLK=
+S), GFP_KERNEL);
+> > +       if (!clk_data)
+> > +               return;
+> > +
+> > +       clk_data->num =3D WPCM450_NUM_CLKS;
+> [...]
+> > +       /* Reset controller */
+> > +       reset =3D kzalloc(sizeof(*reset), GFP_KERNEL);
+> > +       if (!reset)
+> > +               return;
+> > +       reset->rcdev.owner =3D THIS_MODULE;
+> > +       reset->rcdev.nr_resets =3D WPCM450_NUM_RESETS;
+> > +       reset->rcdev.ops =3D &reset_simple_ops;
+> > +       reset->rcdev.of_node =3D np;
+> > +       reset->membase =3D clk_base + REG_IPSRST;
+> > +       ret =3D reset_controller_register(&reset->rcdev);
 > > +       if (ret)
-> > +               dev_warn(dev, "Failed to add provider: %d\n", ret);
+> > +               pr_err("Failed to register reset controller: %pe\n", ER=
+R_PTR(ret));
+>=20
+> It would be nicer to register this device as an auxiliary device with a
+> single API call and then have all the resets exist in that file
+> instead of this file. The driver would be put in drivers/reset/ as well.
+
+Not sure I'd move ten lines to a whole new file, but moving them to a
+separate function definitely makes sense, I'll do that.
+
+>=20
 > > +
-> > +       return 0;
-> > +}
-> > +
-> >  static int sun50i_h6_r_ccu_probe(struct platform_device *pdev)
-> >  {
-> >         const struct sunxi_ccu_desc *desc;
-> > @@ -230,6 +312,8 @@ static int sun50i_h6_r_ccu_probe(struct platform_device *pdev)
-> >         if (IS_ERR(reg))
-> >                 return PTR_ERR(reg);
-> >
-> > +       sun50i_h616_register_ppu(pdev, reg);
-> > +
-> >         return devm_sunxi_ccu_probe(&pdev->dev, reg, desc);
-> >  }
-> >  
-> 
-> In general (for maintenance reasons) it's a good idea to put genpd
-> providers under drivers/pmdomain/*. It looks like that should work
-> this case too, right?
+> > +       of_node_put(np);
+>=20
+> Drop this of_node_put()
 
-Well, this question was the main reason to mark this as an RFC.
-This patch here lives in the R-CCU driver, since this device is using
-the same MMIO frame. The manual calls this device "PRCM" (Power Reset
-Clock Management), so this covers more than just those essential
-clocks, but those were all we needed and knew about until now.
+Ok.
 
-For simplicity (since this is indeed just a single bit to flip), I
-put the code into this existing R-CCU driver. This avoids splitting up
-the MMIO frame (at some potentially arbitrary point), and avoids the
-churn for an extra driver and DT node.
 
-Now just last week we found another separate component in this PRCM: an
-NMI interrupt controller[1], for which we already have a separate
-binding (and driver) in the tree, so we split this MMIO range
-up anyway.
-So that means at this point we might as well make this a separate
-driver, tied to a separate DT compatible string. I originally made a
-version of this driver as a separate file in drivers/pmdomain, so will
-just dig this out and post it.
+Thanks for your detailed review!
 
-Unless people disagree, then please let me know.
+I'll send the next revision after testing my changes on the relevant
+hardware (which I currently don't have with me).
 
-Thanks for the comments!
+-jn
 
-Cheers,
-Andre
+--WXvGHi2mgeFMSsi1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmYeSscACgkQCDBEmo7z
+X9v2Tw/+OlPtGnFxff1/A/65NMHgzu86TjFdCRf3hxLcDRlAcW/QKbbFIzrLimmf
+1Fqx7I1qjUNBbQ67QDDgRPm1lebJRE9zVjWJIjXFC6LC1juGXPTts/GSHNJYcUpR
+ueDuLC4+qql/oQbLr5L3yye1uljuFc/LTA80iUl6figpSkRLxVdyfMBqdVuDMQSH
+7B0hWc/fwsU5/OLQR01vYtPzFrWCBQ9/gM8dHITdemGD8bJEvEzDxi6LJb4+yijd
+kdnIDhQmVhLU9OCWaUO6SoXiyN3pAFbydCSi3z2sY21/8Ic+HiPttsMeqycThlKV
+fHPFr4Ra4pFDbRuQwgSbVejseZukrnfVAAew6VgLCJLSUr+sw2Ub3iA2v87vnID6
+Ur3FG0W+QB2W8O8NJ82NXJO3UTRLVejuTrcmaemyBPXK3qkWIWYLkDBhcd5++QAw
+e/d0KkKHhxKgqe7f1oEcZv3el2f8daslpew+9SARp6OMXf61YqI7FihXjpsWXTNv
+u7TyPBrfFlBw9mOMxr3WbNGzPJJc2wBokiAvGJWmbaQvdT2SNFadQM2fczS8oIdG
+S0LTPzd5Vg0Gy288r1jUQiN8sedUeY2Ya+hipCYxzA1ftF0+VjoaQUv+BzH3P1F5
+UtBnZEcs7UiRxStFPJdyHqmIZVQ5NTfoDvwDAXgH5riSqKlLRRk=
+=6Ug7
+-----END PGP SIGNATURE-----
+
+--WXvGHi2mgeFMSsi1--
