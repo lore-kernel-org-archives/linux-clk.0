@@ -1,54 +1,55 @@
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1582129A71
-	for <linux-clk@vger.kernel.org>; Tue, 16 Apr 2024 11:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D8B129A67
+	for <linux-clk@vger.kernel.org>; Tue, 16 Apr 2024 11:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713267933; cv=none; b=QQCktGmx87ppI5HHVdGWCTetD8GwbNHfqK/TOwqU9psKuilVhV29X1OqH0qZYjMK3+5YAVxbG91KjHqzq3++P8txX0WD1fOvHISmc7zwqx1m0NGWD1bdY4Tv1Ey1b1rusJ3ZT23iW2h4wBsq+/RYN3/oE1Dl0+6PRqnK2b0bMtU=
+	t=1713268623; cv=none; b=YFvwBfwCL/r6zPY/jPUclgDsi9iFx+eOrb7YAr+7x0zfe9XJa1GI9b6m/fTzEss5uHX09J0Oxsda2qHCmcYsTBV1xsuFmMX5oKaBcWVB3GvC/YS9PnIFRX/GoMkuYqibEdYX62rI5E9mwqi5KWNoIyrXcSGkxc6nwidZBZcl5lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713267933; c=relaxed/simple;
-	bh=dDlCzkzdCcNFshIRjsJjUBzP1X/mdztmU1oPjV+q8lw=;
+	s=arc-20240116; t=1713268623; c=relaxed/simple;
+	bh=vIl3v//FVA36XrKiforyh9hY0/yXzSMuW90U1Lzldf4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZL6QzC+V56pWRY2Ry+G4i0lF9eO8B7xgb/9w9GtxDCcokwGej4bfLwFZGqrkefKi3eQ0RPZg6P2bjpk1kRKoOSO/02o1vkM5tJm5LsDgAdCP2cWvp5+zCpdkCk4ayzAyFFC9SC6yCG2aUjZJMoPO7QjhPvYxY4Wr46J/dyvzt/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=byrwXn2o; arc=none smtp.client-ip=209.85.161.48
+	 To:Cc:Content-Type; b=WmERFg5ulpAS7pRjyl7wTNU2Y/lNrlBcHPGWU/ELN8LVes+pgMYVyyx5SAUJKpD1ChPLoHMNxHqRYoGtabNSMawSzr43Gm2CxDU8Vhklk6a/J1+iDJWbUahWCkLeob5fjZg0gRAWmDZtw1vujX/WOO6y42m2j2kNSRsh0+M2v+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gz9WmO7k; arc=none smtp.client-ip=209.85.161.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="byrwXn2o"
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5aa241232faso3879021eaf.0
-        for <linux-clk@vger.kernel.org>; Tue, 16 Apr 2024 04:45:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gz9WmO7k"
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5aa3af24775so3090355eaf.0
+        for <linux-clk@vger.kernel.org>; Tue, 16 Apr 2024 04:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713267931; x=1713872731; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aNdL72WRHKwu0pt/55XuOUw+WlB5anBc9z5sZqU2AYA=;
-        b=byrwXn2oXs74FHgM2rHpYTv4oeFBIOevnHUUQqk0ayo23lOIwgo6cu/G3doJxDBsfG
-         expba0IkmquRo8nhwJji2vFHQTTBmQyzfyz/dvwz3bbPDXMS9PzCihbey6q/7vhgnLvK
-         /3RFl+oc6cE75QNSJ1PF7dvzYfsSqulDEHFgDpBNVthmWZm1ma/QNrLsEPhkbtgABhpP
-         0c6eINkHQc1UJDreXMQPlJ21yElaGuzg7cJ41hX2jCErnAf/7UrhhjHscaKFDY+uh8ve
-         GLkodtlJzvrIrKqHrXbIKBKYXw35WaJcVcAzaAMoaGmw37f6Mfn4t7ZGP4JZihVU3hGO
-         WB6g==
+        d=linaro.org; s=google; t=1713268621; x=1713873421; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ophtYrF9IpPwZurMvgYV2hp9I3BGj1tkL8j63ZRtc2I=;
+        b=Gz9WmO7kCZ43n/DskXOZM1KQL8yfYN3ny1ID/TYpE8+fiw1oaCHSJI/u5jUtGTaN+A
+         pUSztS3Drg7bwQNxtko2pPWvuAVEAmXKxYzhRARYk/fREmuQIME7yL7naXqeVys1nNWB
+         q6VjmT0FJ9wIvALp6VuMNEHSFzxAAU429Phe0bL/JGEdR340goIbcRSSwpOAfAL8Atd9
+         2pYqrl1ingtY5Y+PD1WAuQ678pn4DB2IuY5UnnLz4QrLZ2xptPfXG9zJiiGtV2FtR+Jg
+         5SWimmHng2PY69aEiEGUHGoDTm7SqeF1UerHiAXTtpAsayo4ZIhXfCQfWk0NEsIPJsAj
+         GZ+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713267931; x=1713872731;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aNdL72WRHKwu0pt/55XuOUw+WlB5anBc9z5sZqU2AYA=;
-        b=e+CyifyjykykriRsbR1b88v7d6qIEy0J4su8QzouFok6Jap0kEgzA0uM4tKqcla3VG
-         iL/N5xbCc9MxTEPCPqFnSXbVCTyCl1aiXAN7NOUAaOr3PYr0ArRfLvmSn3rMO86BLReZ
-         xK2sX6lO1hNBTV+xa+254DGCHE7Mf6R4GuNfLASF1JGXMHIICEobItzjKDPRVFZsA33A
-         qnKCqanmuyASIJZYKFzwxNDIMjw//cwVUA9u5TzTNVzpE+qXMSkz8jim34hu3k5dMFrQ
-         KHvMsYwhw2BxsicAPWLJ6Smk09OzODe3+lDSk+26tnpUvmDoGq2refi0iVYVWy+BduHV
-         GRuw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7I9uOAVUn8nd+nqvQET6IpRU7LIvMsBCHO7/J6wW4mtDnl4Zax7xHJonlmdfzuMf2916IV9s6UYwP/Yd6pJ0RZM9Bc74vmPWm
-X-Gm-Message-State: AOJu0YxzzLw8DVz4Jcy4ctiDpf/mxZdsA4vXK/hGzm4u5MV97VG+Upxw
-	i4Zh3B0c6Dgb0aSTVjRxY5YpTE+9y0b9odJ8rrgNu5HrkFomiEAhHWkJKmF4NUIBDxxMzJDtlq/
-	zKPHF5B+n5GHxQYG4bTMG/Fck+ARljXBkbjEXWg==
-X-Google-Smtp-Source: AGHT+IHxJp/JnOY3GdAw5XogqzJkAdg7j5verXH36RVlSMIf75LFqNIKEqK/67ccEbRIuuWgR4HOxuNMXRZG6yHWE5I=
-X-Received: by 2002:a4a:8c0e:0:b0:5ac:9f22:2686 with SMTP id
- u14-20020a4a8c0e000000b005ac9f222686mr5969583ooj.5.1713267931027; Tue, 16 Apr
- 2024 04:45:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713268621; x=1713873421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ophtYrF9IpPwZurMvgYV2hp9I3BGj1tkL8j63ZRtc2I=;
+        b=B+15z8oHmQtePLZEbH95BSzJ2oWWAM29tN+2KZMYrJqn/eYrrBA3IoSQkTECdmrRUy
+         NI0Luij/gZ25f4zomI9hXdTz42kRXlSKp4Mn2A4J2uT9FhuatHTCY3bDuC9GKMPqzrmX
+         N07MvRjN0UDSdg1++8WWIJyTWmopKVGjWFGLUoepP5swQEJO4PQ0fRGk12mz+Zpohdy8
+         zP6jhXQDiTAO4CVq3OKlyeLLs+6qZpxZ1ym1fmfcv+bT9ioB5WuSi7/AX+vgxubH/Gtb
+         99InFYeVhc7s8+bSSTEr8cq48nW2kYJTJPKKDyh7XeNOE87EC5dEeu2cNDImnWWGpsJB
+         fAUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmdkkL/scroTwG5mYvZy+Jl84QXPWH6PfqhpbgKofSX96QEr86bwocpDGa1d7M82S7020gOgCbwiSXRqzZpHg/TLFykInQhTRD
+X-Gm-Message-State: AOJu0YyFtix/bCRxCgngST03PSh87UIO3Tky9mzOMpEoEZbnBg03ySo4
+	EbOZctwQnDKiVlbYHFglXJo+vG3Z3bn/nh0ID/uLn0+2WnndAd62XSyck3GItQ3O7/vc88GvUdp
+	B/GM38vKZVADdKMf0rrGoeY6JG6GmpMIuGsxicA==
+X-Google-Smtp-Source: AGHT+IGdAJXHt7mAsVZuzt9JgE7vdWoLagtGQT3T15A+kBPHpQZl6zuXKVT8ycszrHB5VvpVeZdYSex6pwkAq/Bp7sg=
+X-Received: by 2002:a4a:aecb:0:b0:5ac:9efc:3b02 with SMTP id
+ v11-20020a4aaecb000000b005ac9efc3b02mr5501112oon.8.1713268621486; Tue, 16 Apr
+ 2024 04:57:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,14 +57,13 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240404122559.898930-1-peter.griffin@linaro.org>
- <20240404122559.898930-5-peter.griffin@linaro.org> <ce8275b0-efa8-47fe-a4a8-471fac9afa10@kernel.org>
-In-Reply-To: <ce8275b0-efa8-47fe-a4a8-471fac9afa10@kernel.org>
+ <20240404122559.898930-6-peter.griffin@linaro.org> <391a874522a4141b4bc7f0314a9e50d27142123a.camel@linaro.org>
+In-Reply-To: <391a874522a4141b4bc7f0314a9e50d27142123a.camel@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 16 Apr 2024 12:45:18 +0100
-Message-ID: <CADrjBPp2Y0tgXr+8DcgKOND2dLjUsNu-J7ob8tz=SeB4VeZ04w@mail.gmail.com>
-Subject: Re: [PATCH 04/17] dt-bindings: phy: samsung,ufs-phy: Add dedicated
- gs101-ufs-phy compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Tue, 16 Apr 2024 12:56:50 +0100
+Message-ID: <CADrjBPqwLt6gzwMpkZvxp5sC-owdDYUN91F0-nV2NvEzek_v9g@mail.gmail.com>
+Subject: Re: [PATCH 05/17] arm64: dts: exynos: gs101: enable cmu-hsi2 clock controller
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
 	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
 	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
@@ -73,31 +73,71 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com
+	saravanak@google.com, willmcvicker@google.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+Hi Andr=C3=A9,
 
-On Fri, 5 Apr 2024 at 08:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Thanks for the review.
+
+On Fri, 5 Apr 2024 at 08:38, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
 >
-> On 04/04/2024 14:25, Peter Griffin wrote:
-> > Update dt schema to include the gs101 ufs phy compatible.
+> On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
+> > Enable the cmu_hsi2 clock management unit. It feeds some of
+> > the high speed interfaces such as PCIe and UFS.
 > >
 > > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > > ---
-> >  Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
+> >  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/=
+boot/dts/exynos/google/gs101.dtsi
+> > index eddb6b326fde..38ac4fb1397e 100644
+> > --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> > +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> > @@ -1253,6 +1253,18 @@ pinctrl_hsi1: pinctrl@11840000 {
+> >                       interrupts =3D <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH 0=
+>;
+> >               };
+> >
+> > +             cmu_hsi2: clock-controller@14400000 {
+> > +                     compatible =3D "google,gs101-cmu-hsi2";
+> > +                     reg =3D <0x14400000 0x4000>;
+> > +                     #clock-cells =3D <1>;
+> > +                     clocks =3D <&ext_24_5m>,
+> > +                              <&cmu_top CLK_DOUT_CMU_HSI2_BUS>,
+> > +                              <&cmu_top CLK_DOUT_CMU_HSI2_PCIE>,
+> > +                              <&cmu_top CLK_DOUT_CMU_HSI2_UFS_EMBD>,
+> > +                              <&cmu_top CLK_DOUT_CMU_HSI2_MMC_CARD>;
+> > +                     clock-names =3D "oscclk", "bus", "pcie", "ufs_emb=
+d", "mmc_card";
+> > +             };
 >
-> This should go via phy tree. DTS should not depend on other subsystems.
->
-> If, after resending as separate series, phy does not take patches for
-> longer time, feel free to ping me, but first let's try to go via phy/UFS.
->
->
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> This doesn't build because you didn't add the clock ids in the binding pa=
+tch.
 
-Thanks for the review. fyi Vinod has now queued this and the other ufs
-phy patches :)
+These clock IDs are for cmu_top, not cmu_hsi2. They were added as part
+of the initial gs101/Oriole upstream support series in the following
+commit
+
+commit 0a910f1606384a5886a045e36b1fc80a7fa6706b
+Author: Peter Griffin <peter.griffin@linaro.org>
+Date:   Sat Dec 9 23:30:48 2023 +0000
+
+    dt-bindings: clock: Add Google gs101 clock management unit bindings
+
+    Provide dt-schema documentation for Google gs101 SoC clock controller.
+    Currently this adds support for cmu_top, cmu_misc and cmu_apm.
+
+    Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+    Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+    Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+    Link: https://lore.kernel.org/r/20231209233106.147416-3-peter.griffin@l=
+inaro.org
+    Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 regards,
 
