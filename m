@@ -1,346 +1,142 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E57013BAFA
-	for <linux-clk@vger.kernel.org>; Tue, 16 Apr 2024 15:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C53134425;
+	Tue, 16 Apr 2024 18:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713282833; cv=none; b=pos9yZC+fmzURzYjfC0Wg+k0D0s66QvJAIc4uiTeXzfPGJXpbMqVAZXRxn/t+NM36V1z3VwWxaOtmXKiW/kztQauLQitwioFcZuTm3TZ+yjs4T3419AHZa8A1Wbl1tkwUYX4gP9kCLnPvkb7uz8vGrXosksfaikU3rmNQuRH0Js=
+	t=1713291667; cv=none; b=JnNaXO5v3HCaCXKMk0xDK5H9zm8zWhUMv5rr0BUW4X3XBsJGXDpROuVP6NyBIqPe3wHu6WM8dzC0uexxyUs/+/GUTMw1Slccg47W9672YGkoZX8VfSEfhW3DgngrIJCo8YSS9IsY0BuP2kKrSRQLeHcOxSb7WEOv0lDTfJTLRlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713282833; c=relaxed/simple;
-	bh=M4i1c6AYDA2tEdZrTCUtzyXixpIxmwigGiG2fPItjfs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SO3py+awVO+WkSRYJ3UhuNC0E8vDuEtlapEZJ85BJIx87V70pVWkS8ao6OovysQAfVz5SzCE4d/O/uLjTolqL7j1pWeGtM6qMZMBL6z0eO3cLMJj0O0jMAWfOn2sFHAcYfma2sPuLRbH/ESnzInL7KgRRk1EqqJ3bgDDcliDFPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=o60sRPAD; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1713291667; c=relaxed/simple;
+	bh=hODAtBoW28GRpf6eK1tEK/y5Fg0Q2GNj9a9v3pFmpPE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Asdm0wIVCjnRIZsDsTFrjBsbtHq7u/g8i43Lu5v+desQW4crL+QRFl6t1G0x+8vvovIf7jvu5GXF4BO78YAgnrQHcAJgZxqa0hXTvW461fm80xtT/72bE8af/99IgHBo3vkVt6ND4ipVjsk9fuh1OqhskdIoeruFAVuG4MAVGdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lQ0L3SgI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="o60sRPAD"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a5200202c1bso603229266b.0
-        for <linux-clk@vger.kernel.org>; Tue, 16 Apr 2024 08:53:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1713282828; x=1713887628; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kk43UIDm9M9R8V3T1CIiMiMRKcLoO2R/eVKjmVeC/UE=;
-        b=o60sRPADiDQNwfVEzWFCKUehB4Z4zCK25cvSv3edf9d7Uf0L7ekATOpZVo0jHC0dUq
-         EB5jWgXc+AhyeGQxX/sTwWAOJ0u4tUaburQ1YQX6bH8oNB8JiRRoHCYIGa3vbVtuE7X/
-         9zohXVIo96xcyStmsDDZ5+uJPorQuuZSpVTHas7iwDsiBW6H0gtzlWMn49OcLLce4J2e
-         xXtdpgjleLDCCP8Rd7WCdxZrDEBkAqAiePRe+DbQroJ2WbWhkWXh/sKSQ57sBVmnsQ6Q
-         cvk1ZSAfWp1dgXFRM2rvvaLItJo2GjLqtPazyylDeacCxWDd1KSBbOgCHo3cZAW6K/JQ
-         2+Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713282828; x=1713887628;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kk43UIDm9M9R8V3T1CIiMiMRKcLoO2R/eVKjmVeC/UE=;
-        b=IMSFhEG+XwajFYv8zBIC+aajjMMAARjbF+VLG1kgdOrxHC3ma0joPXUEqYINZLjfcp
-         dw9PgqOBP/0bXOoqV3MShBG0tKIMOZ5Utp/+1mwR5AwXuIWwIfHBdYvmUmqllkMMjqqI
-         lQDznv+zH7U6BRPzIt77XKmIhV7wwfmDTSFYnKzLOX5t8nS740rG4rsCo/Kpy6MJUFcS
-         5s4KmKMx20+IoxkYUQlVM3ZXMl4MuYNGO5/VDW7LmpS7urq1j2NDQeux8KdE1N/cejGv
-         kYK1RtEBKGyw/e73Ao6QraJW966qlAmCepwk9GlOzSwjkbiaWxLw8I8mFWT5F2a/9BoD
-         SkSw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Fo/bTEDwDC4hu2AN7NErDaOjbvZttf95Iy3+lljkzZYt3YnMC82xo2XOTpL5NXmicZZ8wGJNtB+3UcwblpD7WqVNd90at7+y
-X-Gm-Message-State: AOJu0YwU7QuIolChI6Xqeas9g2Z7nrZQ5icXZzPHjuQX3RcOAm6eoYKz
-	r27k/FF9f462LJSpY6llyKmXMI/po8+B1n+KM/heOkWFgSdlU3jH9UUlHRZr/0g=
-X-Google-Smtp-Source: AGHT+IFO9RIMh6kvWocz6pLKLsYWpWuuznyn5mp7qBiekbbqjWT0jnC8LdvlQLxbJKuw5b6fDOrdsg==
-X-Received: by 2002:a17:907:1b29:b0:a52:617d:d77f with SMTP id mp41-20020a1709071b2900b00a52617dd77fmr6077497ejc.56.1713282828539;
-        Tue, 16 Apr 2024 08:53:48 -0700 (PDT)
-Received: from [127.0.1.1] ([93.5.22.158])
-        by smtp.googlemail.com with ESMTPSA id d12-20020a170906174c00b00a52567ca1b6sm4156691eje.94.2024.04.16.08.53.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Apr 2024 08:53:48 -0700 (PDT)
-From: Alexandre Mergnat <amergnat@baylibre.com>
-Date: Tue, 16 Apr 2024 17:53:19 +0200
-Subject: [PATCH v2 18/18] arm64: dts: mediatek: add display support for
- mt8365-evk
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lQ0L3SgI"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 43GHoal3032568;
+	Tue, 16 Apr 2024 18:21:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=JM6GINH
+	US8Wl6DtWq1flatD5230ncoCZTko17XSCQR4=; b=lQ0L3SgI/Dpemq8Yp+odilZ
+	N/MHGvsUWKWewcJQBR1kU5sJ5bLvNWnM5ljDEU9nu/1BWghqwz7krSwLLnOJ4lap
+	EJsaBXS9DaWZ3YvsNzVWxGj/v79eziU8QMDmE67E/Ks7vExAjRvOnqZqmSDEVj/E
+	QBbMRc9q2nSzVnLNbR78hpuplkcY498LlMSaoa/Ah/rHh6A6ioJHOBSI/jwfJQKg
+	Jhjxa5ZH6Z1cVLj+IFzSPFGCNTsNz87A8f6HjZ/2f6Jt1d5iOqDKNlrc1CRs+gCb
+	Uo57vH83qxnOESqnJG0KquRYunoJYXU3QUUAcafSnnrP2KtPh76cT0GSLax/UIg=
+	=
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xhx32054r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Apr 2024 18:21:02 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43GIL1wS032561
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Apr 2024 18:21:01 GMT
+Received: from hu-ajipan-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 16 Apr 2024 11:20:55 -0700
+From: Ajit Pandey <quic_ajipan@quicinc.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+Subject: [PATCH V2 0/8] clk: qcom: Add support for DISPCC, CAMCC and GPUCC on SM4450
+Date: Tue, 16 Apr 2024 23:49:57 +0530
+Message-ID: <20240416182005.75422-1-quic_ajipan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231023-display-support-v2-18-33ce8864b227@baylibre.com>
-References: <20231023-display-support-v2-0-33ce8864b227@baylibre.com>
-In-Reply-To: <20231023-display-support-v2-0-33ce8864b227@baylibre.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Jitao Shi <jitao.shi@mediatek.com>, CK Hu <ck.hu@mediatek.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, 
- linux-clk@vger.kernel.org, Alexandre Mergnat <amergnat@baylibre.com>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6020; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=M4i1c6AYDA2tEdZrTCUtzyXixpIxmwigGiG2fPItjfs=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBmHp7qUFBca7E08f1ngHlmp33iL1Pv9Lit7GgjOUw5
- xOYM3ZKJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZh6e6gAKCRArRkmdfjHURaHuD/
- oCDVBZHaWA9Ah4glfGxpEvI/qAqr19rDwqndy7g+YFxItm1BLLAQsDWf3PWwXWINhgk1qp8AKEfHag
- H+AgyR6sJ+RSScJKKnJpxbAnFBw+VTYtw9YxMX6UcBQXdAIuyPREY7V/IxD3NgiMT6YQ60IClUChxT
- g+mZFSBsW83vT6Os/DHuIPf7G4qrYf5kfjjqM1P4PAU0YTT3vxIYB4xZQP8Cp2l1MhcFd7eZ9XZ9Nf
- INmIdRUKKzna7mDY12ofaylFrWAJg5oiNKou9p+gAHHNFtXJ88IILb/zhm+QwKa2E7DchvaenxuLME
- iAfx6sPPAy/YM/AoFIGL8APqIDo/0aFnx010D6scRIxnTKaH04WJXRcJXb744L2Hgti8Jjr9WtrPwS
- dnEy3ADN6SsQDNKHZblKrG+ptfXXklXcYlGeXFJLm5958HRxXXtH9HX+4tHPMOZW3KZ1baxi4UW12Z
- r2ZNaFEFEXXfMoWK8srpDlMujcNCcEGCUWpUoiQ8iOk+mbbl8b0XZkDLsO3dfmDAzYDFHnFFeGdCoK
- BE2whclWEqaxtuwJcuUoduLTywfv+CIlhjgIjLnexvgj2aRnIZYWutHGxZVLArR2HiwGUWXWI3vVnz
- oViDNci7PccfDEQKUvr+wE988NJEI+SgKvgrbd1s+zW9Tz/4onA2Wzl07Smg==
-X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
- fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QGfNgU7Spqn1RG8d5DTYBml_E4YlaDtM
+X-Proofpoint-ORIG-GUID: QGfNgU7Spqn1RG8d5DTYBml_E4YlaDtM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-16_16,2024-04-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ impostorscore=0 suspectscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2404010003
+ definitions=main-2404160115
 
-MIPI DSI:
-- Add "vsys_lcm_reg" regulator support and setup the "mt6357_vsim1_reg",
-to power the pannel plugged to the DSI connector.
-- Setup the Display Parallel Interface.
-  - Add the startek kd070fhfid015 pannel support.
+This patch series add dt-bindings, driver and device tree support for DISPCC,
+CAMCC and GPUCC on QCOM SM4450 platform and also includes a fix related to
+LUCID EVO PLL config issue in clk-alpha-pll driver which is required for correct
+scaling of few supported frequencies in graphics clock controllers on SM4450.
 
-HDMI:
-- Add HDMI connector support.
-- Add the "ite,it66121" HDMI bridge support, driven by I2C1.
-- Setup the Display Parallel Interface.
+Changes in V2:
+- [PATCH 1/8]: Updated commit text adding stable kernel signoff for Fixes patch
+- [PATCH 2/8]: Updated commit msg and added Reviewed-by: Krzysztof Kozlowski tag
+- [PATCH 4/8]: Updated commit text as per review comments in v1
+- [PATCH 5/8]: Added Reviewed-by: Dmitry Baryshkov tags received in v1
+- [PATCH 7/8]: Fixed duplicate reset entries warnings
+- [PATCH 8/8]: New patch for adding dispcc, camcc and gpucc device-tree nodes
+- Link to V1: https://lore.kernel.org/all/20240330182817.3272224-1-quic_ajipan@quicinc.com/
+ 
 
-Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
----
- arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 182 ++++++++++++++++++++++++++++
- 1 file changed, 182 insertions(+)
+Ajit Pandey (8):
+  clk: qcom: clk-alpha-pll: Fix CAL_L_VAL override for LUCID EVO PLL
+  dt-bindings: clock: qcom: add bindings for dispcc on SM4450
+  clk: qcom: Add DISPCC driver support for SM4450
+  dt-bindings: clock: qcom: add bindings for camcc on SM4450
+  clk: qcom: Add CAMCC driver support for SM4450
+  dt-bindings: clock: qcom: add bindings for gpucc on SM4450
+  clk: qcom: Add GPUCC driver support for SM4450
+  arm64: dts: qcom: sm4450: add camera, display and gpu clock controller
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-index 50cbaefa1a99..4afdcbefc481 100644
---- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-@@ -26,6 +26,18 @@ chosen {
- 		stdout-path = "serial0:921600n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		label = "hdmi";
-+		type = "d";
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_connector_out>;
-+			};
-+		};
-+	};
-+
- 	firmware {
- 		optee {
- 			compatible = "linaro,optee-tz";
-@@ -86,6 +98,56 @@ optee_reserved: optee@43200000 {
- 			reg = <0 0x43200000 0 0x00c00000>;
- 		};
- 	};
-+
-+	vsys_lcm_reg: regulator-vsys-lcm {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpio = <&pio 129 GPIO_ACTIVE_HIGH>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-name = "vsys_lcm";
-+	};
-+};
-+
-+&dpi0 {
-+	pinctrl-0 = <&dpi_default_pins>;
-+	pinctrl-1 = <&dpi_idle_pins>;
-+	pinctrl-names = "default", "sleep";
-+	status = "okay";
-+
-+	port {
-+		dpi_out: endpoint {
-+			remote-endpoint = <&it66121_in>;
-+		};
-+	};
-+};
-+
-+&dsi0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "startek,kd070fhfid015";
-+		status = "okay";
-+		reg = <0>;
-+		enable-gpios = <&pio 67 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&pio 20 GPIO_ACTIVE_HIGH>;
-+		iovcc-supply = <&mt6357_vsim1_reg>;
-+		power-supply = <&vsys_lcm_reg>;
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&dsi_out>;
-+			};
-+		};
-+	};
-+
-+	port {
-+		dsi_out: endpoint {
-+			remote-endpoint = <&panel_in>;
-+		};
-+	};
- };
- 
- &cpu0 {
-@@ -138,6 +200,50 @@ &i2c0 {
- 	status = "okay";
- };
- 
-+&i2c1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	clock-div = <2>;
-+	clock-frequency = <100000>;
-+	pinctrl-0 = <&i2c1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	it66121hdmitx: it66121hdmitx@4c {
-+		#sound-dai-cells = <0>;
-+		compatible = "ite,it66121";
-+		interrupt-parent = <&pio>;
-+		interrupts = <68 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-0 = <&ite_pins>;
-+		pinctrl-names = "default";
-+		reg = <0x4c>;
-+		reset-gpios = <&pio 69 GPIO_ACTIVE_LOW>;
-+		vcn18-supply = <&mt6357_vsim2_reg>;
-+		vcn33-supply = <&mt6357_vibr_reg>;
-+		vrf12-supply = <&mt6357_vrf12_reg>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				it66121_in: endpoint {
-+					bus-width = <12>;
-+					remote-endpoint = <&dpi_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				hdmi_connector_out: endpoint {
-+					remote-endpoint = <&hdmi_connector_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &mmc0 {
- 	assigned-clock-parents = <&topckgen CLK_TOP_MSDCPLL>;
- 	assigned-clocks = <&topckgen CLK_TOP_MSDC50_0_SEL>;
-@@ -180,7 +286,55 @@ &mt6357_pmic {
- 	#interrupt-cells = <2>;
- };
- 
-+&mt6357_vsim1_reg {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+};
-+
- &pio {
-+	dpi_default_pins: dpi-default-pins {
-+		pins {
-+			pinmux = <MT8365_PIN_0_GPIO0__FUNC_DPI_D0>,
-+				 <MT8365_PIN_1_GPIO1__FUNC_DPI_D1>,
-+				 <MT8365_PIN_2_GPIO2__FUNC_DPI_D2>,
-+				 <MT8365_PIN_3_GPIO3__FUNC_DPI_D3>,
-+				 <MT8365_PIN_4_GPIO4__FUNC_DPI_D4>,
-+				 <MT8365_PIN_5_GPIO5__FUNC_DPI_D5>,
-+				 <MT8365_PIN_6_GPIO6__FUNC_DPI_D6>,
-+				 <MT8365_PIN_7_GPIO7__FUNC_DPI_D7>,
-+				 <MT8365_PIN_8_GPIO8__FUNC_DPI_D8>,
-+				 <MT8365_PIN_9_GPIO9__FUNC_DPI_D9>,
-+				 <MT8365_PIN_10_GPIO10__FUNC_DPI_D10>,
-+				 <MT8365_PIN_11_GPIO11__FUNC_DPI_D11>,
-+				 <MT8365_PIN_12_GPIO12__FUNC_DPI_DE>,
-+				 <MT8365_PIN_13_GPIO13__FUNC_DPI_VSYNC>,
-+				 <MT8365_PIN_14_GPIO14__FUNC_DPI_CK>,
-+				 <MT8365_PIN_15_GPIO15__FUNC_DPI_HSYNC>;
-+			drive-strength = <MTK_DRIVE_4mA>;
-+		};
-+	};
-+
-+	dpi_idle_pins: dpi-idle-pins {
-+		pins {
-+			pinmux = <MT8365_PIN_0_GPIO0__FUNC_GPIO0>,
-+				 <MT8365_PIN_1_GPIO1__FUNC_GPIO1>,
-+				 <MT8365_PIN_2_GPIO2__FUNC_GPIO2>,
-+				 <MT8365_PIN_3_GPIO3__FUNC_GPIO3>,
-+				 <MT8365_PIN_4_GPIO4__FUNC_GPIO4>,
-+				 <MT8365_PIN_5_GPIO5__FUNC_GPIO5>,
-+				 <MT8365_PIN_6_GPIO6__FUNC_GPIO6>,
-+				 <MT8365_PIN_7_GPIO7__FUNC_GPIO7>,
-+				 <MT8365_PIN_8_GPIO8__FUNC_GPIO8>,
-+				 <MT8365_PIN_9_GPIO9__FUNC_GPIO9>,
-+				 <MT8365_PIN_10_GPIO10__FUNC_GPIO10>,
-+				 <MT8365_PIN_11_GPIO11__FUNC_GPIO11>,
-+				 <MT8365_PIN_12_GPIO12__FUNC_GPIO12>,
-+				 <MT8365_PIN_13_GPIO13__FUNC_GPIO13>,
-+				 <MT8365_PIN_14_GPIO14__FUNC_GPIO14>,
-+				 <MT8365_PIN_15_GPIO15__FUNC_GPIO15>;
-+		};
-+	};
-+
- 	ethernet_pins: ethernet-pins {
- 		phy_reset_pins {
- 			pinmux = <MT8365_PIN_133_TDM_TX_DATA1__FUNC_GPIO133>;
-@@ -222,6 +376,34 @@ pins {
- 		};
- 	};
- 
-+	i2c1_pins: i2c1-pins {
-+		pins {
-+			pinmux = <MT8365_PIN_59_SDA1__FUNC_SDA1_0>,
-+				 <MT8365_PIN_60_SCL1__FUNC_SCL1_0>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	ite_pins: ite-pins {
-+
-+		irq_ite_pins {
-+			pinmux = <MT8365_PIN_68_CMDAT0__FUNC_GPIO68>;
-+			input-enable;
-+			bias-pull-up;
-+		};
-+
-+		pwr_pins {
-+			pinmux = <MT8365_PIN_70_CMDAT2__FUNC_GPIO70>,
-+				 <MT8365_PIN_71_CMDAT3__FUNC_GPIO71>;
-+			output-high;
-+		};
-+
-+		rst_ite_pins {
-+			pinmux = <MT8365_PIN_69_CMDAT1__FUNC_GPIO69>;
-+			output-high;
-+		};
-+	};
-+
- 	mmc0_default_pins: mmc0-default-pins {
- 		clk-pins {
- 			pinmux = <MT8365_PIN_99_MSDC0_CLK__FUNC_MSDC0_CLK>;
+ .../bindings/clock/qcom,sm4450-camcc.yaml     |   63 +
+ .../bindings/clock/qcom,sm4450-dispcc.yaml    |   71 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml     |    2 +
+ arch/arm64/boot/dts/qcom/sm4450.dtsi          |   35 +
+ drivers/clk/qcom/Kconfig                      |   27 +
+ drivers/clk/qcom/Makefile                     |    3 +
+ drivers/clk/qcom/camcc-sm4450.c               | 1688 +++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm4450.c              |  781 ++++++++
+ drivers/clk/qcom/gpucc-sm4450.c               |  805 ++++++++
+ include/dt-bindings/clock/qcom,sm4450-camcc.h |  106 ++
+ .../dt-bindings/clock/qcom,sm4450-dispcc.h    |   51 +
+ include/dt-bindings/clock/qcom,sm4450-gpucc.h |   62 +
+ 13 files changed, 3695 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-camcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-dispcc.yaml
+ create mode 100644 drivers/clk/qcom/camcc-sm4450.c
+ create mode 100644 drivers/clk/qcom/dispcc-sm4450.c
+ create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-camcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-dispcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-gpucc.h
 
 -- 
 2.25.1
