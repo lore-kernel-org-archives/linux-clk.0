@@ -1,252 +1,79 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378F2171062
-	for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 18:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C850C101C8;
+	Wed, 17 Apr 2024 18:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713378185; cv=none; b=GWLjwIuDiws0zgB0+NRDYohHsTbN0NhRZgaxpw4x7tqcqXWo+daQ5tOeLT+cake/RnbNaZXsw7skWUfxVjGo15cD0109dTWMmpJRVGnF+U9z7g6r4ooGtIrt1mJLAM1SjKi/a/jkYCJza68frKTvQtv5bKnKZFENmJR5nqkEYG8=
+	t=1713379389; cv=none; b=Nu2MdL7X+Akcc9JVCqF1vkZlZGMG/bdB3Tjqn5f8xJuqEElmlZc9wG67YEHxsnw/KxqhAmkZyRm89ghekN0C4ICY12ly1EIaZttNh/m/wJeVfBm2oTb+0i+K1M+b+oXTfSY7+1L1cofogeFK/zAF1AXh+6h4pWTenr/L+GCAUNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713378185; c=relaxed/simple;
-	bh=GSFpQZTxw+luFY2DAenAWU3T/0O8noUL2peBuPCgorE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PHXIwWbyWV8ilMiFfgQbQDaB+HGPAVG87DAs3gzjPntV1yx4TsJcWgIGMRI6l3fzHRhIYCHwx2WdIwzWy0yTZhg/33usuxzmruR++LynhhAKcx7eDrFaknHSbM9of5dKoSLAlpsMcQnIfvBmmkVykGpXQ+hshmEV+KcX5dwhroc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oXYKgqBj; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713379389; c=relaxed/simple;
+	bh=U0liresN6pKXHe9eKATPDUeQXUBQNGAGywFu8BJYKr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Leedb5csZpcQEvuqb9LYRyYh8R0C+yVtmNbt7+cvjVwjiw9RPAqw5a518Xjm3P3ICMtVmK6f+C23SK4kVTPuL8SaGZN7LVt8FgL0Hfm98KSWpBo1Xg4muf6OuFXOhWEyRPwFSI5UFDdrkS14jzP2GBZ+P6aHG7gSMXeZyHGvtyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdeHnHu5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oXYKgqBj"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2a53b331400so63641a91.1
-        for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 11:23:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713378183; x=1713982983; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fmIi4x8/b8NXa0HjoEg+8UR6LXGCQpB6Ce6yJm8+fjQ=;
-        b=oXYKgqBj+Xg8i7EuE+egxh8DfUpqrTJ9J4iIQ7jcrnm9K7hz1HP9D9ljld4lt0MjHG
-         WnGTULpQuKaUpWl4V9aufimzs0MvTEU6UVwxzscfQ056FcTYzyaThklwTn7vpGsIqGA5
-         81/xIVOr/IUl8fDlIhLYJ43gqIO+dL2+uY2W7ZRK2J+GrS+q60fNUQ+KWKZ9ewjSh/RS
-         +k2pEiT4+HdYRu6ZShN9hJEtVAfUEplKo4AS/pIr3yoMUxhk++y9zB6lzGoiOfi2QHIb
-         ysxJ2oeCeLuYIHG+SdX/BvBHeO1iIjro1M7aLGcb5iNMK1rGYYgTIdGj5tcZgZxQtPHq
-         1NvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713378183; x=1713982983;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fmIi4x8/b8NXa0HjoEg+8UR6LXGCQpB6Ce6yJm8+fjQ=;
-        b=MbEnu6g20JnSQw43fNCUboLLg2/DsaVF7bx7uk+eqzodq59D4yKx9j4C4DxJsQR4Ex
-         RUGONhknK0AGg4fH88OJvfjRhxZWP3RmgVuZiJ4rNVQXh5NSb7HwfQ2z4KVttPPA51Qg
-         3Ogs345uwuaW6tAdz1tEQI0YCkvliTxs8cxbj7Z7uOzAM4oyM1SI2YAwo87zbxWtd0vD
-         DHdzVHXtB9t1ARL+LwfGUO3CCIxTgmBhq1+N3NRX2WlQkThQaQi22GCrA60KqvnfHZ4T
-         rSF8OtMyXAHel5CxmxZJesvlYcs2v0M3dAq7DcJ0IyN8ywmiaZKkhEvvbhsKNdanyoYN
-         UwDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpDQZn722V+R8ijIV0uTK72f6oP4vSfq4W8bc1CHc0G4x/ulSv0vPqsAgwI828V/TJfD5beBQv4k3U+TPOQome3nlZVMSIRoPF
-X-Gm-Message-State: AOJu0YyYm1xUkpBeNPAOb+wBAI4ZT2ru81a4c/uU0ZwfAlOOwtecW1YV
-	AVhp9TnVFHevdLaVgXz+1e5cvDmX5MXud7PpJF2kR4JMeQZi9XkYHmJZV+vlNoc8S9b/1veEDZ8
-	Nqz12HWFo5KavW2/N8AhcXxwoWawS3seFPBb1Tg==
-X-Google-Smtp-Source: AGHT+IHBBJDz4Q/S3LVn4jpMpXk3OhnglB4/wAvzcxFXxkiBE6PstlHzJfD6mh8JVmunU1BfJ9mzL3gZxp6im+rnQwg=
-X-Received: by 2002:a17:90a:430f:b0:2a4:f53d:e6bc with SMTP id
- q15-20020a17090a430f00b002a4f53de6bcmr211574pjg.15.1713378183432; Wed, 17 Apr
- 2024 11:23:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdeHnHu5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18D83C072AA;
+	Wed, 17 Apr 2024 18:43:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713379388;
+	bh=U0liresN6pKXHe9eKATPDUeQXUBQNGAGywFu8BJYKr0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hdeHnHu5sNTo+q5ZUU2sw0JiYLeNIDlaZrgw4qZYb8vIUm1o9T8K2MWN8G2BY6UIy
+	 Xzeu+15mlMk2tqBRHBvt8SippFORLXhC/TEBo2W5DI28mBu0URNoJwtJrZYG5H/Jbq
+	 1vMA7uoIn1ePHDBDad8sk+ULPXT+rdi0kPXNxDXdIn3pECBvg1h8nR++Ss62z7Rh0E
+	 n2HYoH4ddR0Ib4DvPiY6thyvWW4jFBL4vCKRR2nqzh/HyMcd2t7HWcR9keFNmNTWwC
+	 sOfguIQC3WIHjAm8o6izrxZCKBupP9jTgzsIvSIa7EvfZu3Fotkl8Rg+vuXwXZEuZi
+	 Q0GrC71bMgRgA==
+Date: Wed, 17 Apr 2024 13:43:05 -0500
+From: Rob Herring <robh@kernel.org>
+To: Alexandre Mergnat <amergnat@baylibre.com>
+Cc: David Airlie <airlied@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, CK Hu <ck.hu@mediatek.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-pwm@vger.kernel.org,
+	Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	dri-devel@lists.freedesktop.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	devicetree@vger.kernel.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Jitao Shi <jitao.shi@mediatek.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-clk@vger.kernel.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 01/18] dt-bindings: display: mediatek: aal: add
+ compatible for MT8365 SoC
+Message-ID: <171337923835.3070962.10313309897836151730.robh@kernel.org>
+References: <20231023-display-support-v2-0-33ce8864b227@baylibre.com>
+ <20231023-display-support-v2-1-33ce8864b227@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240417105605.836705-1-quic_varada@quicinc.com>
- <20240417105605.836705-6-quic_varada@quicinc.com> <CAA8EJpq75LhY3BD4JEqAOVAt1SxTvSOsdJTTb2bZD9rj15FmGA@mail.gmail.com>
- <Zh/6BXYuKrVjq7MG@hu-varada-blr.qualcomm.com>
-In-Reply-To: <Zh/6BXYuKrVjq7MG@hu-varada-blr.qualcomm.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 17 Apr 2024 21:22:50 +0300
-Message-ID: <CAA8EJpoutY0t92qQFtJYmN-2+3bzDdHu+rL84R9pu4Zz-cVoVQ@mail.gmail.com>
-Subject: Re: [PATCH v8 5/7] clk: qcom: common: Add interconnect clocks support
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	konrad.dybcio@linaro.org, djakov@kernel.org, quic_anusha@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-On Wed, 17 Apr 2024 at 19:34, Varadarajan Narayanan
-<quic_varada@quicinc.com> wrote:
->
-> On Wed, Apr 17, 2024 at 02:29:03PM +0300, Dmitry Baryshkov wrote:
-> > On Wed, 17 Apr 2024 at 13:57, Varadarajan Narayanan
-> > <quic_varada@quicinc.com> wrote:
-> > >
-> > > Unlike MSM platforms that manage NoC related clocks and scaling
-> > > from RPM, IPQ SoCs dont involve RPM in managing NoC related
-> > > clocks and there is no NoC scaling.
-> > >
-> > > However, there is a requirement to enable some NoC interface
-> > > clocks for accessing the peripheral controllers present on
-> > > these NoCs. Though exposing these as normal clocks would work,
-> > > having a minimalistic interconnect driver to handle these clocks
-> > > would make it consistent with other Qualcomm platforms resulting
-> > > in common code paths. This is similar to msm8996-cbf's usage of
-> > > icc-clk framework.
-> > >
-> > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > ---
-> > > v8: Explicitly set master and slave ids
-> > > v7: Restore clk_get
-> > > v6: first_id -> icc_first_node_id
-> > >     Remove clock get so that the peripheral that uses the clock
-> > >     can do the clock get
-> > > v5: Split changes in common.c to separate patch
-> > >     Fix error handling
-> > >     Use devm_icc_clk_register instead of icc_clk_register
-> > > v4: Use clk_hw instead of indices
-> > >     Do icc register in qcom_cc_probe() call stream
-> > >     Add icc clock info to qcom_cc_desc structure
-> > > v3: Use indexed identifiers here to avoid confusion
-> > >     Fix error messages and move to common.c
-> > > v2: Move DTS to separate patch
-> > >     Update commit log
-> > >     Auto select CONFIG_INTERCONNECT & CONFIG_INTERCONNECT_CLK to fix build error
-> > > ---
-> > >  drivers/clk/qcom/common.c | 35 ++++++++++++++++++++++++++++++++++-
-> > >  drivers/clk/qcom/common.h | 16 ++++++++++++++++
-> > >  2 files changed, 50 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> > > index 75f09e6e057e..a6410b1828ca 100644
-> > > --- a/drivers/clk/qcom/common.c
-> > > +++ b/drivers/clk/qcom/common.c
-> > > @@ -8,6 +8,7 @@
-> > >  #include <linux/regmap.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/clk-provider.h>
-> > > +#include <linux/interconnect-clk.h>
-> > >  #include <linux/reset-controller.h>
-> > >  #include <linux/of.h>
-> > >
-> > > @@ -234,6 +235,38 @@ static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
-> > >         return cc->rclks[idx] ? &cc->rclks[idx]->hw : NULL;
-> > >  }
-> > >
-> > > +static int qcom_cc_icc_register(struct device *dev,
-> > > +                               const struct qcom_cc_desc *desc)
-> > > +{
-> > > +       struct icc_clk_data *icd;
-> > > +       struct clk_hw *hws;
-> > > +       int i;
-> > > +
-> > > +       if (!IS_ENABLED(CONFIG_INTERCONNECT_CLK))
-> > > +               return 0;
-> > > +
-> > > +       if (!desc->icc_hws)
-> > > +               return 0;
-> > > +
-> > > +       icd = devm_kcalloc(dev, desc->num_icc_hws, sizeof(*icd), GFP_KERNEL);
-> > > +       if (!icd)
-> > > +               return -ENOMEM;
-> > > +
-> > > +       for (i = 0; i < desc->num_icc_hws; i++) {
-> > > +               icd[i].master_id = desc->icc_hws[i].master_id;
-> > > +               icd[i].slave_id = desc->icc_hws[i].slave_id;
-> > > +               hws = &desc->clks[desc->icc_hws[i].clk_id]->hw;
-> >
-> > I think I keep on repeating this again and again. Instead of passing
-> > indices please pass clk_hw pointers.
->
-> I'm sorry. Based on the following feedback for v7 from you I changed it to
-> use indices instead of clk_hw pointers. Am I missing something?
->
-> https://lore.kernel.org/linux-arm-msm/CAA8EJpohAe-aW1QqVkE9NBRU0DpZR7UiwdUKk6rS_YFAhenZZA@mail.gmail.com/
-> <quote>
->         > +       struct clk_hw **icc_hws;
->
->         Still we are passing hws here. We already have all the hws in a
->         different array. Can we just pass the indices?
-> </quote>
->
-> Please confirm.
-
-Ok, it's fine then.
-
->
-> > > +               icd[i].clk = devm_clk_hw_get_clk(dev, hws, "icc");
-> > > +               if (!icd[i].clk)
-> > > +                       return dev_err_probe(dev, -ENOENT,
-> > > +                                            "(%d) clock entry is null\n", i);
-> > > +               icd[i].name = clk_hw_get_name(hws);
-> > > +       }
-> > > +
-> > > +       return devm_icc_clk_register(dev, desc->icc_first_node_id,
-> > > +                                                    desc->num_icc_hws, icd);
-> > > +}
-> > > +
-> > >  int qcom_cc_really_probe(struct platform_device *pdev,
-> > >                          const struct qcom_cc_desc *desc, struct regmap *regmap)
-> > >  {
-> > > @@ -303,7 +336,7 @@ int qcom_cc_really_probe(struct platform_device *pdev,
-> > >         if (ret)
-> > >                 return ret;
-> > >
-> > > -       return 0;
-> > > +       return qcom_cc_icc_register(dev, desc);
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
-> > >
-> > > diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-> > > index 9c8f7b798d9f..f6b25df1ca17 100644
-> > > --- a/drivers/clk/qcom/common.h
-> > > +++ b/drivers/clk/qcom/common.h
-> > > @@ -19,6 +19,19 @@ struct clk_hw;
-> > >  #define PLL_VOTE_FSM_ENA       BIT(20)
-> > >  #define PLL_VOTE_FSM_RESET     BIT(21)
-> > >
-> > > +struct qcom_icc_hws_data {
-> > > +       int master_id;
-> > > +       int slave_id;
-> > > +       int clk_id;
-> > > +};
-> > > +
-> > > +#define HWS_DATA(_b, _c)               \
-> > > +{                                      \
-> > > +       .master_id = MASTER_##_b,       \
-> > > +       .slave_id = SLAVE_##_b,         \
-> > > +       .clk_id = _c,                   \
-> > > +}
-> >
-> > This shouldn't be a part of this commit. It is not used in it.
->
-> Ok.
->
-> Thanks
-> Varada
->
-> > > +
-> > >  struct qcom_cc_desc {
-> > >         const struct regmap_config *config;
-> > >         struct clk_regmap **clks;
-> > > @@ -29,6 +42,9 @@ struct qcom_cc_desc {
-> > >         size_t num_gdscs;
-> > >         struct clk_hw **clk_hws;
-> > >         size_t num_clk_hws;
-> > > +       struct qcom_icc_hws_data *icc_hws;
-> > > +       size_t num_icc_hws;
-> > > +       unsigned int icc_first_node_id;
-> > >  };
-> > >
-> > >  /**
-> > > --
-> > > 2.34.1
-> > >
-> >
-> >
-> > --
-> > With best wishes
-> > Dmitry
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231023-display-support-v2-1-33ce8864b227@baylibre.com>
 
 
+On Tue, 16 Apr 2024 17:53:02 +0200, Alexandre Mergnat wrote:
+> Document the display Adaptive Ambient Light on MT8365, which is compatible
+> with that of the MT8183.
+> 
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/display/mediatek/mediatek,aal.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
--- 
-With best wishes
-Dmitry
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
