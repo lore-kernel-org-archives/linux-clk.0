@@ -1,194 +1,133 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859FA6BFA9
-	for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 07:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CF66E61E;
+	Wed, 17 Apr 2024 07:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713339262; cv=none; b=sySScraCfE+/YdYZ1WMON5h1stGSMEsNCF0iT5yL+CTWEV5fmHbFQNqGR8g8IUNtxuX4sFv7C/MT/g5Hz2vFOizb15PuhKA2B2e6Nwv3ZH4e6+upQfCTSWOmZLNWtSKnsHf1GNRD/+a/3NNscsu6HNvBvyfDveA1IE7jT+URRuI=
+	t=1713340409; cv=none; b=BUobtl+jIqB3N4ghcKXPNw6fSS6Czb5+JptP7PeBp+tJbw/ikHKOLDtgfQVoJZagfNQVXPK6pbOVWfMGoyPKeyMRa9FldtW9ddPK8DFeGv4vb9sQHxRD6kQfGJxliWyI+z/A3Eu8lP48NsFZouHKgty8ss8OeOlYcrkYvkj7w4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713339262; c=relaxed/simple;
-	bh=fgddyO9hlvexv3nlt/MmFf5mf73RtUyfjBgF9PLA0kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NXfBvu7mGbYuGMX3Xsf9TJvr0ezoh9UXtv7DfHmhh0ZF3sps+FhG0p6Xe8jdMjGVm5DI/cIEr+hdNbn9jcs2uXbdmjWSUClAME4uN6K8OVkdiCUaCCbvS6jDJX1B/MwzNJwmu79lgx512Z+8BOV9o8xZ5VCeO7OG0bJXqtexFiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JA/R5b9D; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713340409; c=relaxed/simple;
+	bh=Mb2a7596Lmd6anWCFMHZ+kYccUmgTpwKjnEeL5+XNOQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=jms4mf8n9GScZ96m5WBP0KBrpi8qsUXb6O2FvxJc6WcofANs0cNm7Ckqzwx+N0v9qaTkBcPe3+P/+Ab6aqI4ljid6kdNe6b8o4ZO/kdv9EEcDI0yDIgp7lLJ989/TUoH4kfPJd/rEltEBn8M+ZzUTASvpC0n0N9Zzw9+sT+iZJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=in2TKG1Q; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JA/R5b9D"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2aa67da7a1dso1755044a91.3
-        for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 00:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713339260; x=1713944060; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0K72Tz2ZkclPVJuZv0gvxvgq7QFl2/X172+ji7HZ4mc=;
-        b=JA/R5b9DKPHtNh7eCmyBdgs/Cd1Z5NmKNPCI8QBvuLiXAMm+bIhnxqEN/X76248HE+
-         FpsgCz+eQNHIV48SxxcsKRdaMlxrW5dyAuv9o2j0Swa7R+D+WXhzqa8ccM+jSy9MQLUI
-         JtEcDtzLCx9xbwdBZMAmn/N9g2ynSj/SMo22CoF2l7cfzYBwvTpNwJS5HOaj1Pgy2W6P
-         p9pJj1quHVlFxo0d5/OJwMfLc5JVNPEreVZsHp5tjcbvTm5/0sMohBMY9KVtXiPTZ/CV
-         Zj5FS1BgGyK/f3TE/3gpOKbPrRGQOXpyDiYBiqfUIBVx1tEhb1jQ9qwNTY3QmiGfk9/W
-         gVJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713339260; x=1713944060;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0K72Tz2ZkclPVJuZv0gvxvgq7QFl2/X172+ji7HZ4mc=;
-        b=ZbZx9H4AC37Ih2IO2VwznuePyRGadfbDVu6lUTFqWzOVZN0/uxJTM1hN5pHgNHFiuJ
-         8h2K82dg4FoEfsKgopDJMsItAhQmZQtrgxFUpn2wzVW1Rss0E6HMFPZ4EqLwgsOcJ/ua
-         RS1Xq8Djb9w6+nvBBdzIjGkz9HT6Q23FNnB4pyPIPZT3tuczrTJJXu43Q6XVYjHDIqWJ
-         h7W38Y2niJ5hQ+jt367WTFeoGpNNrs/loOAoyBA/nnddUGS5b1XhqSq9d0WsVX21t3ok
-         zbd1ZmoyabBFH7oMqtOoVGNJDRBitTm58s84ziQPRwZvzMrKGYFgPCZKLj3w+Wrl5mPu
-         dCwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVb0NvuT/ISHIO3Z9ZDJ/WN2aou7ZHrHZBK3zX0e2RuoDSJtkPz+zCL760TGpsBdFnxMksCkdXPmW18nO0Ni/VcqHFgGKnLm83M
-X-Gm-Message-State: AOJu0Yzk+wqiDnkHJ11Ty5Bp0CB5IPk3LG0nU9Ck1U9zMwU1TnbfVkyj
-	5woI2uP3uemlT6XaR2cV12SP83WMHXWXMCDanjR6vrJ3ArYDtiRi2q47S3lg0g==
-X-Google-Smtp-Source: AGHT+IGIAgoL/zhZk3pa0SMj5BgxpoFiLpBLAx6xC/5k4oCxlIq9Bo6Xf+jtd58QVgNCbJOeHuSBkQ==
-X-Received: by 2002:a17:90b:3c3:b0:2a6:db3:1aa5 with SMTP id go3-20020a17090b03c300b002a60db31aa5mr15282164pjb.18.1713339259756;
-        Wed, 17 Apr 2024 00:34:19 -0700 (PDT)
-Received: from thinkpad ([120.60.54.9])
-        by smtp.gmail.com with ESMTPSA id e3-20020a17090a728300b002a2b28de64esm742387pjg.14.2024.04.17.00.34.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Apr 2024 00:34:19 -0700 (PDT)
-Date: Wed, 17 Apr 2024 13:04:12 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] arm64: dts: qcom: ipq9574: add PCIe2 nodes
-Message-ID: <20240417073412.GD3894@thinkpad>
-References: <20240415182052.374494-1-mr.nuke.me@gmail.com>
- <20240415182052.374494-8-mr.nuke.me@gmail.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="in2TKG1Q"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2BA64E0004;
+	Wed, 17 Apr 2024 07:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1713340405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1/f2fgDpr3YH/Sb3o75KFxeysANmwnrDztJzWkxW1KI=;
+	b=in2TKG1QGupbNAYcOgKkb0N+dVS1KjzghCUGoMBe/aO0EnXrHvmHWh7B4fgRNMDorqxFxk
+	Vuehzy3mwP2JIu5l0/DQ/WKBZfYpRZOx0XlqZ3B8KbIhltcld9wUuIsulVWvTVWiN24eY1
+	mfPUHr8xDB9sSUC6vVHNZLQzFMpXdjiz6Ujf6rhHILx2mJDDlA+9NsLIjSID/W+j12L43J
+	EmmVr+jH3vl643xlJo/0mKxo0gSrnePqWBG00NOY447pgnnknE0J7w+W8r1pwapgNpvK6S
+	IU1JqiqWAMdbTSh6T9vkRiJYUb2FweW+P7Vs/Kqvy6f1vMJsYJH8GfgFhhdIcg==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240415182052.374494-8-mr.nuke.me@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 17 Apr 2024 09:53:23 +0200
+Message-Id: <D0M8HFHFPO6M.KXQCAE8TZNIH@bootlin.com>
+Subject: Re: [PATCH 08/11] MIPS: mobileye: eyeq5: add OLB syscon node
+Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
+ <sboyd@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>, "Linus
+ Walleij" <linus.walleij@linaro.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.15.2
+References: <20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com>
+ <20240410-mbly-olb-v1-8-335e496d7be3@bootlin.com>
+ <faa0769f-bd5e-4c6b-9f61-1a369830ad28@linaro.org>
+ <D0HD94HI3W7W.3KLAW6WFIN6ZE@bootlin.com>
+ <6e3b02d9-9a1e-4fc0-9459-9c9c0d37aa92@linaro.org>
+In-Reply-To: <6e3b02d9-9a1e-4fc0-9459-9c9c0d37aa92@linaro.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Mon, Apr 15, 2024 at 01:20:52PM -0500, Alexandru Gagniuc wrote:
-> On ipq9574, there are 4 PCIe controllers. Describe the pcie2 node, and
-> its PHY in devicetree.
-> 
-> Only pcie2 is described, because only hardware using that controller
-> was available for testing.
-> 
+Hello,
 
-You should describe all the instances in DT. Since the unused ones will be
-'disabled', it won't affect anyone.
+On Thu Apr 11, 2024 at 5:07 PM CEST, Krzysztof Kozlowski wrote:
+> On 11/04/2024 16:34, Th=C3=A9o Lebrun wrote:
+> > Hello,
+> >=20
+> > On Thu Apr 11, 2024 at 8:15 AM CEST, Krzysztof Kozlowski wrote:
+> >> On 10/04/2024 19:12, Th=C3=A9o Lebrun wrote:
+> >>> The OLB ("Other Logic Block") is a syscon region hosting clock, reset
+> >>> and pin controllers. It contains registers such as I2C speed mode tha=
+t
+> >>> need to be accessible by other nodes.
+> >>>
+> >>> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> >>> ---
+> >>>  arch/mips/boot/dts/mobileye/eyeq5.dtsi | 8 ++++++++
+> >>>  1 file changed, 8 insertions(+)
+> >>>
+> >>> diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/=
+dts/mobileye/eyeq5.dtsi
+> >>> index 6cc5980e2fa1..e82d2a57f6da 100644
+> >>> --- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
+> >>> +++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
+> >>> @@ -100,6 +100,14 @@ uart2: serial@a00000 {
+> >>>  			clock-names =3D "uartclk", "apb_pclk";
+> >>>  		};
+> >>> =20
+> >>> +		olb: system-controller@e00000 {
+> >>> +			compatible =3D "mobileye,eyeq5-olb", "syscon", "simple-mfd";
+> >>> +			reg =3D <0 0xe00000 0x0 0x400>;
+> >>> +			ranges =3D <0x0 0x0 0xe00000 0x400>;
+> >>> +			#address-cells =3D <1>;
+> >>> +			#size-cells =3D <1>;
+> >>
+> >> Do not add incomplete node. ranges, address/size-cells are incorrect i=
+n
+> >> this context and you will have warnings.
+> >>
+> >> Add complete node, so these properties make sense.
+> >=20
+> > I'll squash all four commits into one. For reference, commits are:
+> >=20
+> >  - MIPS: mobileye: eyeq5: add OLB syscon node
+> >  - MIPS: mobileye: eyeq5: use OLB clocks controller node
+> >  - MIPS: mobileye: eyeq5: add OLB reset controller node
+> >  - MIPS: mobileye: eyeq5: add pinctrl node & pinmux function nodes
+> >=20
+> > This means two things: (1) it won't be partially applicable and (2) it
+>
+> Why?
+>
+> > will make one big commit adding pins and editing clocks.
+>
+> It never was partially applicable. Causing warnings does not make things
+> partially applicable. If node is too big, although I personally do not
+> agree, it's quite moderate size chunk, then sure, split pinctrl groups
+> or pinctrl node to additional patch.
 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> ---
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 93 ++++++++++++++++++++++++++-
->  1 file changed, 92 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> index 7f2e5cbf3bbb..f075e2715300 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> @@ -300,7 +300,7 @@ gcc: clock-controller@1800000 {
->  				 <0>,
->  				 <0>,
->  				 <0>,
-> -				 <0>,
-> +				 <&pcie2_phy>,
->  				 <0>,
->  				 <0>;
->  			#clock-cells = <1>;
-> @@ -745,6 +745,97 @@ frame@b128000 {
->  				status = "disabled";
->  			};
->  		};
-> +
-> +		pcie2_phy: phy@8c000 {
-> +			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
-> +			reg = <0x0008c000 0x14f4>;
-> +
-> +			clocks = <&gcc GCC_PCIE2_AUX_CLK>,
-> +				 <&gcc GCC_PCIE2_AHB_CLK>,
-> +				 <&gcc GCC_PCIE2_PIPE_CLK>,
-> +				 <&gcc GCC_ANOC_PCIE2_2LANE_M_CLK>,
-> +				 <&gcc GCC_SNOC_PCIE2_2LANE_S_CLK>;
-> +			clock-names = "aux",
-> +				      "cfg_ahb",
-> +				      "pipe",
-> +				      "anoc",
-> +				      "snoc";
-> +
-> +			clock-output-names = "pcie_phy2_pipe_clk";
-> +			#clock-cells = <0>;
-> +			#phy-cells = <0>;
-> +
-> +			resets = <&gcc GCC_PCIE2_PHY_BCR>,
-> +				 <&gcc GCC_PCIE2PHY_PHY_BCR>;
-> +			reset-names = "phy",
-> +				      "common";
-> +			status = "disabled";
-> +		};
-> +
-> +		pcie2: pcie@20000000 {
-> +			compatible = "qcom,pcie-ipq9574";
-> +			reg = <0x20000000 0xf1d>,
-> +			      <0x20000f20 0xa8>,
-> +			      <0x20001000 0x1000>,
-> +			      <0x00088000 0x4000>,
-> +			      <0x20100000 0x1000>;
-> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
-> +
-> +			ranges = <0x81000000 0x0 0x20200000 0x20200000 0x0 0x00100000>,	/* I/O */
+Thanks for feedback; it'll become a single patch as it is fine with you.
 
-Please use below range:
+Regards,
 
-<0x01000000 0x0 0x00000000 0x20200000 0x0 0x00100000>
-<0x02000000 0x0 0x20300000 0x20300000 0x0 0x07d00000>
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-> +				 <0x82000000 0x0 0x20300000 0x20300000 0x0 0x07d00000>;	/* MEM */
-> +
-> +			device_type = "pci";
-> +			linux,pci-domain = <3>;
-> +			bus-range = <0x00 0xff>;
-> +			num-lanes = <2>;
-> +			max-link-speed = <3>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			phys = <&pcie2_phy>;
-> +			phy-names = "pciephy";
-> +
-> +			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "msi";
-> +
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc 0 0 164
-> +					 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-> +					<0 0 0 2 &intc 0 0 165
-> +					 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-> +					<0 0 0 3 &intc 0 0 186
-> +					 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-> +					<0 0 0 4 &intc 0 0 187
-> +					 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-
-Use a single line for each INTX entry even if it exceeds 80 column width.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
