@@ -1,81 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7429B18C1F;
-	Wed, 17 Apr 2024 18:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1330E14287;
+	Wed, 17 Apr 2024 18:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713379735; cv=none; b=XhCyp0SjpzfOIT3cWQVtkZV2sw6WlA5BKeCGGFGP7poQHuE32cvD4oGhVIoE7YoP1D31KSj6IboTQTFC4ftnysKAoIGXBTV5UsdJutRVsSN5CA/BmhWKfmjBgSs3qGMyTv9yuoQorolLkjLEHbRalYl6rMSgO4lLgm7LRpMegC4=
+	t=1713379834; cv=none; b=pCpOVZT5Vbwn0B4UM3GovxpLnc5z5lWY/2ZevL0/ZF5jc53FfX6rBJLFhY2hXtdKCYMQQl074cONPlBpic+kgbWQjucklf8y/k5TzqrkmVvDLUZqrpbvVcitT2/nzH+xIMyKuvCJ7yiceO3mbLRuw+YcLZ3aDCR1vlKHZHT6uXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713379735; c=relaxed/simple;
-	bh=G8GIybraBwjNANFsfBZMgV1ID9PPWhVL2d7h1yYhQ/Q=;
+	s=arc-20240116; t=1713379834; c=relaxed/simple;
+	bh=hqK4irrz7Bv5r/zDzSMYUGCUqRdTaAZbUy0HF/Hv68U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6LlujhGsyaXDZNCzlR8t8CSwldNhIbR+DBspaGS4sRZfAbILAqkp+08AA9eakQ0H9KwPYEExt0GVeXezqRkS5N0lu2CgXUJ1Z5Muwb4xlNvHEY0xpWJ+zkevam91KeK5ocjAhwS4cN3e006+Tax0R7JlAbYjQ9u9MlVzqB1HTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enOe844T; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFpgzqfLWbjIGVTTdV0g0K69BbOtrhWzThyspU1fUura712DJ3IGzBoDxmInRalKUzu6sWSh9qcWioVWzexv7jjlk6W+Lp9B+ICovhuLAgugmJbDOG2dBE2jbG6tCrCgeHBKW1pmmlqpFrduEJDtyKmTb26eB1UtJdcsj5GER9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7HypdlL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enOe844T"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5CD8C072AA;
-	Wed, 17 Apr 2024 18:48:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7HypdlL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5EACC072AA;
+	Wed, 17 Apr 2024 18:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713379735;
-	bh=G8GIybraBwjNANFsfBZMgV1ID9PPWhVL2d7h1yYhQ/Q=;
+	s=k20201202; t=1713379833;
+	bh=hqK4irrz7Bv5r/zDzSMYUGCUqRdTaAZbUy0HF/Hv68U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=enOe844TybHefFLgLKohLJ8NrDDYN5akkxh9ac6bh3LAlfCl8o1A3zf/P7CQZ4iCl
-	 Y+uAka/Zvkj6J2S1BCZbYE5BRnC8RkGuLGYaTc/ZtRfRTlOZbzTLFp0k3V02AQ7kTN
-	 UgEZa7ineprrYbfbd877ByxyqDCMvyIoYw1R5cHeCufvSrD0Q6qcyvrYcMsBGJRFvC
-	 n6Fsxj7qxGP3HL30LM8GbtXLKg1fh+e+RcXGdWGeNaTi6BfsLtf3fEUcNQfktXLTI6
-	 8eKrrVscwbZRB3FER5avz6QhsW4Dg2dAXCn6TlApSVOydaG6xCpAXaJ2Pmo2lystO5
-	 G7w5sAHxlww6Q==
-Date: Wed, 17 Apr 2024 13:48:52 -0500
+	b=H7HypdlLNs02Gklyv3kz6NzC3xlYXuv8BKAHRIg4m7C/t82KpEjNywUG6klCPTVD6
+	 GL8HHK78g0rwem+rCY5opdCFpueZHTu+mX2z+zM2Q0T08SjUbBosxOgYKNgRn/Smqs
+	 nVsEFxn0vXmqX/Uha117hdgVhwZz5v8Cii9mWx4hfqa62H1OpVX/1UR4PgyLrG3qTY
+	 XC/llwBzKxIJMLcqU/TqdWTV1FrQOq/zKcJ+To7AQEBgL0bDUN6DOWWAciryKu1Fcq
+	 WJW5nsFliIoDo529lYka9fRO9i0i3Ag8W7U7/tQPZZiUkuzHfrI8BMwZ0FG+OWv8k0
+	 DuHLM7YTibzsA==
+Date: Wed, 17 Apr 2024 13:50:31 -0500
 From: Rob Herring <robh@kernel.org>
-To: Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Will Deacon <will@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	CK Hu <ck.hu@mediatek.com>, linux-arm-kernel@lists.infradead.org,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
+To: Ajit Pandey <quic_ajipan@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-pwm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	Jitao Shi <jitao.shi@mediatek.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 12/18] dt-bindings: pwm: mediatek,pwm-disp: add
- compatible for mt8365 SoC
-Message-ID: <171337963668.3079720.13585358179949689962.robh@kernel.org>
-References: <20231023-display-support-v2-0-33ce8864b227@baylibre.com>
- <20231023-display-support-v2-12-33ce8864b227@baylibre.com>
+	linux-kernel@vger.kernel.org,
+	Imran Shaik <quic_imrashai@quicinc.com>
+Subject: Re: [PATCH V2 4/8] dt-bindings: clock: qcom: add bindings for camcc
+ on SM4450
+Message-ID: <171337981738.3083095.5538266376603051623.robh@kernel.org>
+References: <20240416182005.75422-1-quic_ajipan@quicinc.com>
+ <20240416182005.75422-5-quic_ajipan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231023-display-support-v2-12-33ce8864b227@baylibre.com>
+In-Reply-To: <20240416182005.75422-5-quic_ajipan@quicinc.com>
 
 
-On Tue, 16 Apr 2024 17:53:13 +0200, Alexandre Mergnat wrote:
-> Add a compatible string for MediaTek Genio 350 MT8365's display PWM
-> block: this is the same as MT8183.
+On Tue, 16 Apr 2024 23:50:01 +0530, Ajit Pandey wrote:
+> Add device tree bindings for the camera clock controller on
+> Qualcomm SM4450 platform.
 > 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
 > ---
->  Documentation/devicetree/bindings/pwm/mediatek,pwm-disp.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/clock/qcom,sm4450-camcc.yaml     |  63 +++++++++++
+>  include/dt-bindings/clock/qcom,sm4450-camcc.h | 106 ++++++++++++++++++
+>  2 files changed, 169 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-camcc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,sm4450-camcc.h
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
