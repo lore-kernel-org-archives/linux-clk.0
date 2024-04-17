@@ -1,133 +1,110 @@
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CF66E61E;
-	Wed, 17 Apr 2024 07:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59ED73528
+	for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 07:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713340409; cv=none; b=BUobtl+jIqB3N4ghcKXPNw6fSS6Czb5+JptP7PeBp+tJbw/ikHKOLDtgfQVoJZagfNQVXPK6pbOVWfMGoyPKeyMRa9FldtW9ddPK8DFeGv4vb9sQHxRD6kQfGJxliWyI+z/A3Eu8lP48NsFZouHKgty8ss8OeOlYcrkYvkj7w4Y=
+	t=1713340740; cv=none; b=RwUDLIMM46PXEAVVP1IaITH26hMBssC36uUi3vNAUHrTkfIeW3Y88djGKy86WBJNhSqO+WMCWMYethooLVsYvs2y1tv0DfjZIMw5bZvAsQLbbqYELeesJmnK60yEyIS5qnz1DT6jzOsQIQ8w9vrw0wIpE4a/rhZvO1CgSae3ZMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713340409; c=relaxed/simple;
-	bh=Mb2a7596Lmd6anWCFMHZ+kYccUmgTpwKjnEeL5+XNOQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=jms4mf8n9GScZ96m5WBP0KBrpi8qsUXb6O2FvxJc6WcofANs0cNm7Ckqzwx+N0v9qaTkBcPe3+P/+Ab6aqI4ljid6kdNe6b8o4ZO/kdv9EEcDI0yDIgp7lLJ989/TUoH4kfPJd/rEltEBn8M+ZzUTASvpC0n0N9Zzw9+sT+iZJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=in2TKG1Q; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="in2TKG1Q"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2BA64E0004;
-	Wed, 17 Apr 2024 07:53:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1713340405;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1/f2fgDpr3YH/Sb3o75KFxeysANmwnrDztJzWkxW1KI=;
-	b=in2TKG1QGupbNAYcOgKkb0N+dVS1KjzghCUGoMBe/aO0EnXrHvmHWh7B4fgRNMDorqxFxk
-	Vuehzy3mwP2JIu5l0/DQ/WKBZfYpRZOx0XlqZ3B8KbIhltcld9wUuIsulVWvTVWiN24eY1
-	mfPUHr8xDB9sSUC6vVHNZLQzFMpXdjiz6Ujf6rhHILx2mJDDlA+9NsLIjSID/W+j12L43J
-	EmmVr+jH3vl643xlJo/0mKxo0gSrnePqWBG00NOY447pgnnknE0J7w+W8r1pwapgNpvK6S
-	IU1JqiqWAMdbTSh6T9vkRiJYUb2FweW+P7Vs/Kqvy6f1vMJsYJH8GfgFhhdIcg==
+	s=arc-20240116; t=1713340740; c=relaxed/simple;
+	bh=BO46pDitPo9UhofMMhsVMtjn6zQdsVT57wd1UvRoqQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KvbhOi9feZ6bKPeIhX9jzw+pNe5m8HdnRqjjF+jFlqcsxwMF5dPzKppPb7TvjJ1M9etqp438kDsU/gF2hmJT/ZqAIxG9IMvaVJyhWQkWpps4X2sZdhYotOfOYPo5Suzp12eIxrlX0L6jjbdypsLmtC8CmEYM+kVg5e/5LETPlnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rx0BW-0006cy-IA; Wed, 17 Apr 2024 09:58:26 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rx0BU-00Ckm6-DJ; Wed, 17 Apr 2024 09:58:24 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rx0BU-002e2n-0y;
+	Wed, 17 Apr 2024 09:58:24 +0200
+Date: Wed, 17 Apr 2024 09:58:24 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Alexandre Mergnat <amergnat@baylibre.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jitao Shi <jitao.shi@mediatek.com>, CK Hu <ck.hu@mediatek.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Fabien Parent <fparent@baylibre.com>
+Subject: Re: [PATCH v2 00/18] Add display support for the MT8365-EVK board
+Message-ID: <afetelidcystq4avtmfcvf6h4l5zdthwozwbhjica6jjybkiln@oxx2fqk65psx>
+References: <20231023-display-support-v2-0-33ce8864b227@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nkhfub2sueyozzkj"
+Content-Disposition: inline
+In-Reply-To: <20231023-display-support-v2-0-33ce8864b227@baylibre.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+
+
+--nkhfub2sueyozzkj
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 17 Apr 2024 09:53:23 +0200
-Message-Id: <D0M8HFHFPO6M.KXQCAE8TZNIH@bootlin.com>
-Subject: Re: [PATCH 08/11] MIPS: mobileye: eyeq5: add OLB syscon node
-Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>, "Linus
- Walleij" <linus.walleij@linaro.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.15.2
-References: <20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com>
- <20240410-mbly-olb-v1-8-335e496d7be3@bootlin.com>
- <faa0769f-bd5e-4c6b-9f61-1a369830ad28@linaro.org>
- <D0HD94HI3W7W.3KLAW6WFIN6ZE@bootlin.com>
- <6e3b02d9-9a1e-4fc0-9459-9c9c0d37aa92@linaro.org>
-In-Reply-To: <6e3b02d9-9a1e-4fc0-9459-9c9c0d37aa92@linaro.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
 
 Hello,
 
-On Thu Apr 11, 2024 at 5:07 PM CEST, Krzysztof Kozlowski wrote:
-> On 11/04/2024 16:34, Th=C3=A9o Lebrun wrote:
-> > Hello,
-> >=20
-> > On Thu Apr 11, 2024 at 8:15 AM CEST, Krzysztof Kozlowski wrote:
-> >> On 10/04/2024 19:12, Th=C3=A9o Lebrun wrote:
-> >>> The OLB ("Other Logic Block") is a syscon region hosting clock, reset
-> >>> and pin controllers. It contains registers such as I2C speed mode tha=
-t
-> >>> need to be accessible by other nodes.
-> >>>
-> >>> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> >>> ---
-> >>>  arch/mips/boot/dts/mobileye/eyeq5.dtsi | 8 ++++++++
-> >>>  1 file changed, 8 insertions(+)
-> >>>
-> >>> diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/=
-dts/mobileye/eyeq5.dtsi
-> >>> index 6cc5980e2fa1..e82d2a57f6da 100644
-> >>> --- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> >>> +++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-> >>> @@ -100,6 +100,14 @@ uart2: serial@a00000 {
-> >>>  			clock-names =3D "uartclk", "apb_pclk";
-> >>>  		};
-> >>> =20
-> >>> +		olb: system-controller@e00000 {
-> >>> +			compatible =3D "mobileye,eyeq5-olb", "syscon", "simple-mfd";
-> >>> +			reg =3D <0 0xe00000 0x0 0x400>;
-> >>> +			ranges =3D <0x0 0x0 0xe00000 0x400>;
-> >>> +			#address-cells =3D <1>;
-> >>> +			#size-cells =3D <1>;
-> >>
-> >> Do not add incomplete node. ranges, address/size-cells are incorrect i=
-n
-> >> this context and you will have warnings.
-> >>
-> >> Add complete node, so these properties make sense.
-> >=20
-> > I'll squash all four commits into one. For reference, commits are:
-> >=20
-> >  - MIPS: mobileye: eyeq5: add OLB syscon node
-> >  - MIPS: mobileye: eyeq5: use OLB clocks controller node
-> >  - MIPS: mobileye: eyeq5: add OLB reset controller node
-> >  - MIPS: mobileye: eyeq5: add pinctrl node & pinmux function nodes
-> >=20
-> > This means two things: (1) it won't be partially applicable and (2) it
->
-> Why?
->
-> > will make one big commit adding pins and editing clocks.
->
-> It never was partially applicable. Causing warnings does not make things
-> partially applicable. If node is too big, although I personally do not
-> agree, it's quite moderate size chunk, then sure, split pinctrl groups
-> or pinctrl node to additional patch.
+On Tue, Apr 16, 2024 at 05:53:01PM +0200, Alexandre Mergnat wrote:
+> Alexandre Mergnat (16):
+>       [...]
+>       dt-bindings: pwm: mediatek,pwm-disp: add power-domains property
+>       dt-bindings: pwm: mediatek,pwm-disp: add compatible for mt8365 SoC
+> [...]
+> base-commit: 890c94ce8a456aa4d7ead5f5fd2603b98dfe7b7e
+> change-id: 20231023-display-support-c6418b30e419
 
-Thanks for feedback; it'll become a single patch as it is fine with you.
+I cannot find 890c94ce8a456aa4d7ead5f5fd2603b98dfe7b7e, neither in next
+nor in stable nor in drm-misc nor in Linus' repository.
 
-Regards,
+For sure it's not based on next, because otherwise you'd have noticed
+that the power-domains property is already documented there. (Currently
+as fb7c3d8ba039df877886fd457538d8b24ca9c84b.)
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best regards
+Uwe
 
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--nkhfub2sueyozzkj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmYfgR8ACgkQj4D7WH0S
+/k7mIQf+PbzquhwUkWhMaS47IM1H6SK1o8TJsEIaR6wb6Yy4bRV+XUEXe+POTalM
+BhknR+V0xm/DcBuQivWKRYfDF/jZUJ/DZ60ila73u0xZRbJhLQLY27RNP/URC3uj
+OdBwmD7H6JXYaFs1Rb0oYIyl8lpNtoIJIBDqh/tO7sXYWZtXTr6SXQeEPdhuPn3U
+mhZhnfOgESFdC6P41I2AP/MJ/lxTo+k8l0rZ7iD1TiimDtziKX/uH/bPNr/NVS7D
+qcL/ItrLaC0O7HA8uuUjxTIpbkPRPKFQKYrCYo0FzOYwv78RwW3qu4bVofMmbx1u
+JAVxhSAOAKBafJzgDfONyOIB6du9XA==
+=C88w
+-----END PGP SIGNATURE-----
+
+--nkhfub2sueyozzkj--
