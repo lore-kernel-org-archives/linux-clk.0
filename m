@@ -1,59 +1,59 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF677D41C
-	for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 08:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02777C6C1
+	for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 08:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713341219; cv=none; b=UerJsmKFEFWnVE89j0Yf215AQAkrcHc40avCT2VfeCYkt8HJqheq82ZizC1FftLNLHby2xfHeNKELMLbgMLi6oeTfQB9rwf9RToENYhMciYI4c9x6j1K9x52AsNUakfyg8qZU7ZH1CFNQi5l+A80691Q0JpdE+uFJL9YOQGqCwc=
+	t=1713341542; cv=none; b=VI/dXPxo3Sy6cF4Ti68Ms1uA+X7+XqDeMTL34oOxxDiCoCSbrSkGniTgB7MIsYOZFzr+hW2Jhj4B7yP38CNFZkESGAp9ikYT4YRcqIFV65Sx0zOrVus12qYQ4uAoxGNPY1m13TIV6/0rtctBb8Qa8wlxG5me05kJU1g39PVIegg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713341219; c=relaxed/simple;
-	bh=m4cgksIDbGLFKOwBZjchQTOmi+eWGpVLDvkruMW0wGg=;
+	s=arc-20240116; t=1713341542; c=relaxed/simple;
+	bh=QNQAulVJ4issHP/Ip4Ssd5g6A3f/UOyXaYlTGyCTlKw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jhtkPyKYlT+b2Rbuq/VxXfOvdZ0IpuVpqnVljrqLuMXSWXSqPKaBJQELiNmlip96ek1IBZbcOWvEjhvGlDM6TlyAATzNeXqkDTG6sl4JZUhK84XeYaNjAnVTEMb4gtHx/gnbePmv/vGLnW3awrkjeYWCTWXasMTgmn6u6Jy19Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mCTbDA02; arc=none smtp.client-ip=209.85.208.47
+	 In-Reply-To:Content-Type; b=ITXmSJSO8Jfqn4M7Ub4PxyJLioEDaJJ+o8426PT0imuyRe825r0MiRzHXRnQ3Mjiv8rSkCPCPQgsdWvB3phc/0+k5Etw5wSKntLVKqV7TSH5ELKxtrM47/L8Wj51A7Y2znf/T09o0UcgOShrjbbYBiPnxT7agVQnKGEKjhwy0+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zBqb4uVw; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mCTbDA02"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57030fa7381so2931165a12.2
-        for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 01:06:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zBqb4uVw"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-518b9527c60so4282682e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 01:12:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1713341215; x=1713946015; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1713341539; x=1713946339; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BuvMTKrS538OQBDa2jdh/t6qnPEHbqMc8PN+mILzuvs=;
-        b=mCTbDA021uI/MpaphPimUOaSUMI10XU7fzUrzzLzWW3EAiQ46UAr2WtON7Wq7tuq5i
-         BmtBrqwm50lUt0uHoy7C/UkOeEe70nMkia7H7tXWQTkJW/KqVIi6U2meDGJqzVAeXJux
-         QIIGJBmAn9WvgeQj1WBWzxsPD29S2mNWZYGbqGxkz5GiNut7Vfrs5QcKlZ9VTrfnIJbW
-         coplHmF2SwOY3LUJRwYdJo/1rPoIbvvLyN59ABi/JY10mbQu8fYZlumDObRtna1g+LXV
-         /Nno5lHWxvnZho1OyHsqY8McErp35fmvKUbHSJewxENZDov5Cf1IPIuRTdZIT2jlUw6E
-         htAw==
+        bh=TzkbbRIO2QimJ8RWbkwCZ+K7gIC0TeXOrUoZh+Yj+po=;
+        b=zBqb4uVwnW4hN/7AlwAL+QWGSmWijKm5+cqeKX+QoJGErtLFP/QiZFppxslFERhizU
+         Wt0AIO9BEsYbXgPxPqeLd7KuITJ7VaQwUbBpns8iK8YiCJOnbZ8PMK8yupY1Z1y9X3gc
+         VHQuR/8Pe3ccZ9bLOxWn/4qvZVPekOBBxvBx2TK/TisbsPwGzf3KVX+kQG9zrbXdkNCh
+         5wHK/iDbD8BCPL99CrOmVTnby8GpFWxGZANjA+kaobUgdFsUlW1U+iN+mvbdoMskP51/
+         Ad0hCgdADwqy4825uoj0k63yMWoP/kqbur3hfAY3rNpoDw9eGZVio8Cs8a7YVQgb6D6G
+         hnuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713341215; x=1713946015;
+        d=1e100.net; s=20230601; t=1713341539; x=1713946339;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BuvMTKrS538OQBDa2jdh/t6qnPEHbqMc8PN+mILzuvs=;
-        b=bFSxecFlZTuna92cvO2hv4OJ5zDDT23/ucvOTGHIowCbjquur5HANczVni9w5dG8F6
-         a6kLVReapuuQOo16gml3YKVHKEH/Y3YRQ2mUXCkDhCBSz9TPwhA+5nsnGKs8CqnF+6FC
-         Cll6QWGbIZF+hgSm5inTiY/EiJhUi/Rk0Tf+wPgCUaM80K+B92KYuX5PzZBlqnjXvEiJ
-         y+9t07yWXtApYtyjq7st7xegnRc/z3pbbPw3IIx5GA5KUVKXCjDg8eS/GDX1NAPd2DYH
-         HNxlU/EXVVdlg1HJiVHBcNXt6nimEWHD7ezumky+4bJ/Z3/N7qfgzfPIcwp/qBMhNE0b
-         +e1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUd7NZeyzK+BqtuA/HcaTiuZ0HoESF3Zs9AqXBudpy24o12Db8S1dfgWTwnwJikwjowQCgbCkDLmcCgmdlJTmXtGaMl2LlB9vW7
-X-Gm-Message-State: AOJu0YxyfBb2nI0tpoiPHQrAdxvwEEr4QmbvfF2EudlfAGOlLc24tq0s
-	sR1qDzOXcqcswFx4bLme6mXhkCMADGdYmrPA7gbnkddKoEdbqkX34EClghEppvs=
-X-Google-Smtp-Source: AGHT+IF9QNj2+LEOTDvCsMmUjHTc38pjE+FDvplPR3KiswRdx9pL2ELeUrxLu0thmtQsPq4SfA0PEQ==
-X-Received: by 2002:a17:906:a016:b0:a52:4d96:85e with SMTP id p22-20020a170906a01600b00a524d96085emr6795036ejy.53.1713341214788;
-        Wed, 17 Apr 2024 01:06:54 -0700 (PDT)
+        bh=TzkbbRIO2QimJ8RWbkwCZ+K7gIC0TeXOrUoZh+Yj+po=;
+        b=PuGYHFEx8FukRcRvcjVl/B+qEkbv6Lq465Vem8dxvdS6t1z7xmLB9qtoKy4cZjdm6W
+         eUHqsjQs7HXbtVM5Mbi7epFqSexWcNEPNAB8JC31yl0ARERu9aO2fwWI5eL/SdWgmJ76
+         4lANHRgNJuzEA2vMpetgzzoDt5JzZBJv43eQJs5bOOrvnCSy7E/Nl2Mc66gCqNQ7yWU2
+         658emGbYVva3Ii/2EaBnZxxfS2OcC9r0559IGRJ5tUFiy6xdlK/ub1u8RSt4RC/rN4Tg
+         v1b0pDz5VTmW1pnq5IfqLmTu65277+WWBw2CbGQKdoI7dxOb92OeKfgd6xnyiRr5WV4v
+         W/7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVVzadPyyV1y1JRaXlt7X5OSAyJ6GVMb4NZOr6CFtxsxHvaauQBHF2b57ptK/rfS6buCUP1qFjUOgp6u2xc2a8z6xKyF72diCwT
+X-Gm-Message-State: AOJu0YwWQSTZ3Gn8708U0odfN13tXfpw4Q7fLjn0qhKL6ZGT7EFgcxDj
+	bWx5Pmus1s+cPvHJtytLR7pvrwAJ8ylxRd27IUrH3Tsxh+Vl+NY5CaQe9ZS/HyA=
+X-Google-Smtp-Source: AGHT+IH4Ux+OgM8GODN1EjrwY/h8hAJyaOMv9iN+0tmp9IOucYOjlUfi/JOumwmy4S2/VC/nm5QgBQ==
+X-Received: by 2002:a05:6512:1106:b0:518:9183:864f with SMTP id l6-20020a056512110600b005189183864fmr15160417lfg.34.1713341538799;
+        Wed, 17 Apr 2024 01:12:18 -0700 (PDT)
 Received: from [192.168.1.172] ([93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id cx10-20020a170906c80a00b00a51b5282837sm7852622ejb.15.2024.04.17.01.06.52
+        by smtp.gmail.com with ESMTPSA id u10-20020aa7db8a000000b005700ef75274sm4950049edt.33.2024.04.17.01.12.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Apr 2024 01:06:54 -0700 (PDT)
-Message-ID: <cd5dcc90-bd34-40d5-af79-4943883411ad@baylibre.com>
-Date: Wed, 17 Apr 2024 10:06:51 +0200
+        Wed, 17 Apr 2024 01:12:18 -0700 (PDT)
+Message-ID: <5c2a1b27-5602-461f-abe2-1b65f8245d8f@baylibre.com>
+Date: Wed, 17 Apr 2024 10:12:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,8 +61,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/18] dt-bindings: pwm: mediatek,pwm-disp: add
- power-domains property
+Subject: Re: [PATCH v2 00/18] Add display support for the MT8365-EVK board
 To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
  Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
@@ -80,39 +79,40 @@ Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
  Will Deacon <will@kernel.org>, dri-devel@lists.freedesktop.org,
  linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org
+ linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org,
+ Fabien Parent <fparent@baylibre.com>
 References: <20231023-display-support-v2-0-33ce8864b227@baylibre.com>
- <20231023-display-support-v2-11-33ce8864b227@baylibre.com>
- <22yeoik77sdhmg43odjftzjn2douq74zhxwy6qx3hsrvr53r5e@7w3f3zbgxult>
+ <afetelidcystq4avtmfcvf6h4l5zdthwozwbhjica6jjybkiln@oxx2fqk65psx>
 Content-Language: en-US
 From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <22yeoik77sdhmg43odjftzjn2douq74zhxwy6qx3hsrvr53r5e@7w3f3zbgxult>
+In-Reply-To: <afetelidcystq4avtmfcvf6h4l5zdthwozwbhjica6jjybkiln@oxx2fqk65psx>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-On 17/04/2024 10:01, Uwe Kleine-König wrote:
+On 17/04/2024 09:58, Uwe Kleine-König wrote:
 > Hello,
 > 
-> On Tue, Apr 16, 2024 at 05:53:12PM +0200, Alexandre Mergnat wrote:
->> According to the Mediatek MT8365 datasheet, the display PWM block has
->> a power domain.
->>
->> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> On Tue, Apr 16, 2024 at 05:53:01PM +0200, Alexandre Mergnat wrote:
+>> Alexandre Mergnat (16):
+>>        [...]
+>>        dt-bindings: pwm: mediatek,pwm-disp: add power-domains property
+>>        dt-bindings: pwm: mediatek,pwm-disp: add compatible for mt8365 SoC
+>> [...]
+>> base-commit: 890c94ce8a456aa4d7ead5f5fd2603b98dfe7b7e
+>> change-id: 20231023-display-support-c6418b30e419
 > 
-> I already pointed that out in reply to the cover letter, so just to make
-> it more easily to spot for people considering to apply this patch:
+> I cannot find 890c94ce8a456aa4d7ead5f5fd2603b98dfe7b7e, neither in next
+> nor in stable nor in drm-misc nor in Linus' repository.
 > 
-> This is already fixed in next.
+> For sure it's not based on next, because otherwise you'd have noticed
+> that the power-domains property is already documented there. (Currently
+> as fb7c3d8ba039df877886fd457538d8b24ca9c84b.)
+
+You're right, this V2 is based on v6.9-rc3
+
 > 
-
-Hello,
-Sorry I've misunderstood the previous message.
-I will remove this patch for the next revision and notify it in the cover letter.
-
-Thanks
-
 > Best regards
 > Uwe
 > 
