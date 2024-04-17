@@ -1,226 +1,122 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2047.outbound.protection.outlook.com [40.92.22.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D636A339;
-	Wed, 17 Apr 2024 10:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713351518; cv=none; b=XkVlRAnKONR7gOdRA1aaTZ8THf6kiYvUq6d6gh5jz3jMNvKkwnEc0On+JJnwcp5PRY7xMrcXaRRQkwetbq5ktI6WDZ76OhftS5Mv1jlm+E2AF2RibClt50LyQl0aN2GoZ7fgGOa+Z+0bx3pbamZFaOPPpZSm8RFIi/9UOFILRAE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713351518; c=relaxed/simple;
-	bh=SNVazwiMQ5C8eyrrteSEPc4mZUs9cG4xmzqvfMFTSpE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jsIEgbLt+HQ1gpTVTy+M1gLgsA/iPnI2MEIrwyKFNlgiiLfX3+P8W4ZwI4bbLV0pjgg5gzsex+bLrCAyXYjpOGu0sexPI2vWFo7aOG5FZb4ewANmNdNvxKzMqooTmoeUaBREcgLX+cjj7Dw8Ga7A4evV6KIWwsmufbjvYSNwDRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fWfIklpk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA82136674;
+	Wed, 17 Apr 2024 11:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713352117; cv=fail; b=nKHYKfNVBu6vNXf0Aory6jBO6HqlTCCPjstSDjRK3BGxUJMsBNyu+DBRI4SVvGyhW578r2VrELHuz5VSKvppIyf6Mpw0qoVX5rLqZX+JHd84ocomvgPBCuuelxnAt+GkhwRhTvGPwPVNewaGMztCWs4wkFdP6q3/w0TBPuwEl44=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713352117; c=relaxed/simple;
+	bh=YEUWibLhDbGGPkLk3Z/YxGeHz3iBwlaMSS7wWJQzDZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GqbBNYkrxOIUrcdwvVqDVEI5YCPKCE6CAe3TOrPnOCY1oWuEBCG48F/6oFxQcqvfHyEhjFTXw1C8WXHWWyG5sKdXhH5sm6dx4a7BPmUh8KzI9dt5Txb6Bl3nWjHZcnXNbxIMjvQdofuxFodwrEOG+wo4kpnWlFrssJhEbyrmr34=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=d9C245uu; arc=fail smtp.client-ip=40.92.22.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fWfIklpk"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 43H4uIWR006244;
-	Wed, 17 Apr 2024 10:58:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=0FA6D6EwooxpxC4s55Atr
-	J31my9cp0N6vLFBY6dE2mw=; b=fWfIklpkhWMkrw8FwPEfr3Aq7LQ1FRWiJdBEC
-	IHA4NDM6EGxzicEB9UPu4N0/rwqqq/VfCSnnPeXOlUWW1LY0qVmLaykNqZwhmXOX
-	UDwcSQ44BryjRwnrikRumhwFl61mpgKKVU1+81m9pGE0VBTuJepTyZcqD9Xzj3cO
-	/cfHon/ZQblXQMocTSqmcHM5gzyax5wgeSl2C3XRJaN1sUajaO9l+S3qb/zRsoB9
-	uzQQlcIOEFZ3ZhH0qgW5iKng1HXppkZaRTFZ16nqZUOQSbsoSOfIe3oAqyGQc0ie
-	PLXu6yMawGq2wjplDVekQYTL5BjQQilv2ntkr7lqBva+5MWXQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xj7tr0rfr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Apr 2024 10:58:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43HAwVQS019648
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Apr 2024 10:58:31 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 17 Apr 2024 03:58:26 -0700
-Date: Wed, 17 Apr 2024 16:28:22 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <djakov@kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v7 1/5] dt-bindings: interconnect: Add Qualcomm IPQ9574
- support
-Message-ID: <Zh+rThVyLZr0wovp@hu-varada-blr.qualcomm.com>
-References: <Zg5q6mnWtK6hmPBT@hu-varada-blr.qualcomm.com>
- <ZhTxFVDH0xTSkw7r@hu-varada-blr.qualcomm.com>
- <1ec401be-11cb-416a-9eae-d72ea8acf06f@kernel.org>
- <ZhUghsa5Do5m7wrX@hu-varada-blr.qualcomm.com>
- <a0173a13-5f20-4e24-8417-afce5fdbda0e@kernel.org>
- <ZhZjuCkJrtPbwtS/@hu-varada-blr.qualcomm.com>
- <70d0afa7-4990-4180-8dfa-cdf267e4c7a2@kernel.org>
- <f1b0d280-6986-4055-a611-2caceb15867d@linaro.org>
- <82e5503c-0710-4b17-af79-8dece4794ec8@kernel.org>
- <Zhj/v+AfzHlUCwRg@hu-varada-blr.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="d9C245uu"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZSz7/x+ku8bBKuWlyQCfBwZergmWabZc+hQWIl2NixtB1/7Lr580nAQgeaBlPToiPs+5NVfS8eDgZTP4LIkkJL9Def1wlwmgLVlPNQet7+b94jtKnh69/KEdeWLEQLa6XV1PxpaCrOPt0sOG/ajisXUqpXcJbgWa4heQIcu0WxSRm3SH719ELeNRE/sFcSOizmfheQsnKHFn8aKnwWiqihVoIrN7O6UvuTRoAZ9+6dUOc6jgAuD9I8Co9kk3ehP2nAKmvCq8BpVfmGDPLwxyPwrNzCJNl1fHs7tzC3adcJLi4xqpOXtHIfqs0LGvK2PCCRnlk4pT1WFRVAI7Ftdgog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d5FU2Qia2+5UmOKZzKKmJmNRk+Yy/B8tP2pCjEfZaK4=;
+ b=B4ts8EoRCIHR8IQeM++Q7a7mDveGBImZwKcvc/pAwuXAjwrdl48IH/vKKvvGsoLNKqNDFldJavmCi8VO0565IloPIEO/fS8GKL2Mw2wNNamaZUI/5BgypFa10Tq8Wpg6jAox9pRxUqVbaWUXS3DS3QIOdl6kiRzgi2C4xE5dG5o9CBv1qcp1+JHsB2z9aF8/nRuiXUlbWUtXYqypqc/1A5QBjULECzrvMdBwVYfTPzrIpLF5E1ydMiEymq6qkKXAL8YNLewn86KmCR35URH5RRQqP+MF3WkydNfPWEVVJdqetzYHg9VJHQA+90ihBC5SrbLWAHd4vWVA1l8/Bns15g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d5FU2Qia2+5UmOKZzKKmJmNRk+Yy/B8tP2pCjEfZaK4=;
+ b=d9C245uuniGzzidfnDgeXxSkI5ez9a1wV3LvS41g7qjFSYtRi5ymMlGLJK4zA1MrLzXWeTbjTea5ktaxOKnTKrc7+AhKYFV6obWecG0dzHgipgzkc8ZvBAyZoxfErQDxHSfztMo4dmXm0etEzX5S90aLR1tDgwEVTl/XdHPsgjMLI0z6Xrt6Fvs6OoeFKFhAWXD+AGZ/EA7lNjADWlSC2ZpQCfV/SOmw4N2q83KwEeE8oMP+zal1SHm1Ixt0ssCYQBNzvY6Jv2c/rumDGPa5PAWuKFVwr6pFW9kDDeNt0dKDN/02xZKOxcgHqp+W7Ds6xK8UT/+R8fDdPUP1wFAU5A==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by PH8PR20MB5266.namprd20.prod.outlook.com (2603:10b6:510:1c9::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.43; Wed, 17 Apr
+ 2024 11:08:32 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::182f:841b:6e76:b819]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::182f:841b:6e76:b819%2]) with mapi id 15.20.7452.049; Wed, 17 Apr 2024
+ 11:08:32 +0000
+Date: Wed, 17 Apr 2024 19:08:56 +0800
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@outlook.com>, Arnd Bergmann <arnd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] clk: sophgo: Use div64 for fpll rate calculation
+Message-ID:
+ <IA1PR20MB4953B3CD2B78DFC0A23F79B3BB0F2@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <IA1PR20MB4953CB4FCCDE82AB25F6880EBB0B2@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA1PR20MB4953CB4FCCDE82AB25F6880EBB0B2@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-TMN: [v021Wlj8v8PVn3hDQVr2AQ5S71U17y4Oz+pR1jwM27A=]
+X-ClientProxiedBy: TY2PR02CA0002.apcprd02.prod.outlook.com
+ (2603:1096:404:56::14) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <knjxnyffbrcx3jskersxjlm75mmrwcfth2ydgivxtda2b6tjpy@jescr35qmkjt>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Zhj/v+AfzHlUCwRg@hu-varada-blr.qualcomm.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Z1drpk5lpOkUn-HsXe6z5rTxwDPrASnp
-X-Proofpoint-GUID: Z1drpk5lpOkUn-HsXe6z5rTxwDPrASnp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-17_08,2024-04-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- adultscore=0 suspectscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404170075
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|PH8PR20MB5266:EE_
+X-MS-Office365-Filtering-Correlation-Id: 640e1c20-0575-4a67-f0a0-08dc5eceb825
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	TCiou9I79nEsCVM9nEbqupYW/liNdRLODapRX6PD55TINWtZLNGBthGUZW6gTqH8sHt1NXLgFn6OHFVXEo3uSW8SUP7KE8LVBKfL2BG5siImADA2rIkR63BZyjitIAKA6JvvbMY3pbuZ8EWnD/x2HW4sbvNemMcMqUieWXu+QXQsbX7dalhsmjpVnDaKu93tjJbqbIp/40VJUqQ9lxF+yAwWZ6oGA9mntnIkka5P5Npx9CFxNnl/D8TRDCqMIa4hvwR+1AhPiyHj6c/aK5FOllTa4d+GMfdbiYXSLIM63bg+/yp9W07ip+6/EqxWSzpoRqRnhdiyl33gMaRwlVEupObxBsek8b1l/pgVSduWH/+vWdqsIhbqui6/gfrt1T1lp7ZB+ZHQ02lfhHUlr9CNN1Wwpa1bP0rVYftOITaQu+9EHL0UIZ2KaX/FZlcYz0KpPZaeln8T/EGx5JYj1Zv4c0ZP2kzQcupBLwDkgxOc9J3UjU7RuZxAdi2NBw7FHNOogYLtEcinzWiMv+lIKyFZOd5lPe6n6YiJuypjzOxJryqOH48ryxfBT39cw2tPSmaIaT6bVmFzuSQccbchGZBi9zBRB24SdqBFZY7hFJQsWPorwkeodgwSZV3WWXmfFFhbY55/vSIjV4TNZcG7zs1r0hQnq9hr+FHKadChVTyVIbumWyOV+Kf9j4X+eIHENB5Gaq6WBVBy+IlUcL8LIDXmxQzBoIG6fq0jTDgN3LJtu10Oj8MknoiB+JmJ0p1LtEYV
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CqnHoDRwM0SdtfY8JYNv1cH6+Pz1PyRBRXKBkA0dvSuUH0to0WkUOQaDyZNT?=
+ =?us-ascii?Q?GXeyjuEzYYB8A9X+ksjEIUGz/XffBGs3j+/J2rrBeUzOHyuNXY8BO654QJ2J?=
+ =?us-ascii?Q?YO2U/lYKsr++b4nw0B39UqToCDw3jRXevWk/NGK2Eu3tpezycf2YbLEqqaqz?=
+ =?us-ascii?Q?B5feN+iHALXw2VEwNTVrBdEJRquUCOPHW/ECZ9uhaoPgnji+KpeyaZXi7Dgb?=
+ =?us-ascii?Q?G6lIHsnCEuWJ1LxvvdhPOTUGgpFsUQDykhwa6pUeFP7ED5YIIJ5QpkkGDFbx?=
+ =?us-ascii?Q?P/a5jVBZiZRA6ZcqxQu+YV+v3pjfmxy5ul6mynbwjhP60EG1I89H8EoVH5EM?=
+ =?us-ascii?Q?e9ZJr+kO8x4WAxHFt/VsLo0CQELxl6rZdwDrfVDUo0xXnXJ413hi1EIy3k70?=
+ =?us-ascii?Q?MHk/Dq3Ah8jU2LKznQaYF+221GWpnPI0r+PZykM+xCYNJ+yTPebKzWp7+RYT?=
+ =?us-ascii?Q?IaWSbMX+t8qlztzBstrhcUFKEbpmssPIuC7yndN2BthXeZCUYSZGfBN6P1UM?=
+ =?us-ascii?Q?Z34h53+cTEqycHhDCVx8UfxqOM9Nc3vie6wrLyN2avrDKjbnCAgRuPxmnrb3?=
+ =?us-ascii?Q?JIBQbLJCYNECsGouWIucQFl1zeS+hoih7dkcAHyZf0A7r/04goYB8lbuBpg8?=
+ =?us-ascii?Q?KNw4Agicq0VzXgyozU3Fg87S9qGVXQKROICcc5crURPzAG68OdBr6t1AKi/z?=
+ =?us-ascii?Q?E2zfeAq4wlFYIeB+7LGq7LwdwwiFi9SW2F6fgaLBQiC/EWb+YM3FKA5XSbsL?=
+ =?us-ascii?Q?LFTJlAVZigB71FE4WuZjw5MMzfmm4gYCsWixWR4S03cxv2TifCwJotFTKV6G?=
+ =?us-ascii?Q?INiBWwvgMmyDt4wpM4cmR+Z3QQzXXC1R7ogVPi9CvI5zQ7livRdTE3QgmU/K?=
+ =?us-ascii?Q?H4DaK73UkXfePa6aKiQjRv0jDGjT2VetSvQ9Oy2QzFCbPcbhLJeS3AZLUULX?=
+ =?us-ascii?Q?tA5NlrJ3j78cYP30jzA7laNKdWLmyt58W0oWInBU0LLiQrcHZtHA8ZtG3gRI?=
+ =?us-ascii?Q?+ymfKvQDw/XcaExd8k0S7+m9Hbwa3l8uo1BbRG/Nooo/gVT1WRmNM+lN64dE?=
+ =?us-ascii?Q?WAzI1tS1HkZ+1FLOFPcy9AbF2+gd06h5q8HSWVfRjmooMJltPkl/DfZ+QTTX?=
+ =?us-ascii?Q?ncakmSibRH+rpvKZDRfX+xfZz6B6+Aip7ZH+TMFwciEyKP1JcgDHR+q3b1UW?=
+ =?us-ascii?Q?U+B6h2L9vCUbGxEZmrPnviNbLWuoIyL2pmXsI5dmT7hHkiR/Ja009ylSfNMO?=
+ =?us-ascii?Q?FtTSaeHkBS+bpZdCPCK0?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 640e1c20-0575-4a67-f0a0-08dc5eceb825
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2024 11:08:32.7512
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR20MB5266
 
-On Fri, Apr 12, 2024 at 03:02:47PM +0530, Varadarajan Narayanan wrote:
-> On Wed, Apr 10, 2024 at 02:01:00PM +0200, Krzysztof Kozlowski wrote:
-> > On 10/04/2024 13:48, Konrad Dybcio wrote:
-> > >
-> > >
-> > > On 4/10/24 13:15, Krzysztof Kozlowski wrote:
-> > >> On 10/04/2024 12:02, Varadarajan Narayanan wrote:
-> > >>>> Okay, so what happens if icc-clk way of generating them changes a bit?
-> > >>>> It can change, why not, driver implementation is not an ABI.
-> > >>>>
-> > >>>>>
-> > >>>>> 	2. These auto-generated id-numbers have to be correctly
-> > >>>>> 	   tied to the DT nodes. Else, the relevant clocks may
-> > >>>>> 	   not get enabled.
-> > >>>>
-> > >>>> Sorry, I don't get, how auto generated ID number is tied to DT node.
-> > >>>> What DT node?
-> > >>>
-> > >>> I meant the following usage for the 'interconnects' entry of the
-> > >>> consumer peripheral's node.
-> > >>>
-> > >>> 	interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
-> > >>> 			      ^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^
-> > >>> 			<&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
-> > >>> 			      ^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^
-> > >>>
-> > >>>>> Since ICC-CLK creates two ids per clock entry (one MASTER_xxx and
-> > >>>>> one SLAVE_xxx), using those MASTER/SLAVE_xxx macros as indices in
-> > >>>>> the below array would create holes.
-> > >>>>>
-> > >>>>> 	static int icc_ipq9574_hws[] = {
-> > >>>>> 		[MASTER_ANOC_PCIE0] = GCC_ANOC_PCIE0_1LANE_M_CLK,
-> > >>>>> 		[MASTER_SNOC_PCIE0] = GCC_SNOC_PCIE0_1LANE_S_CLK,
-> > >>>>> 		[MASTER_ANOC_PCIE1] = GCC_ANOC_PCIE1_1LANE_M_CLK,
-> > >>>>> 		[MASTER_SNOC_PCIE1] = GCC_SNOC_PCIE1_1LANE_S_CLK,
-> > >>>>> 		. . .
-> > >>>>> 	};
-> > >>>>>
-> > >>>>> Other Qualcomm drivers don't have this issue and they can
-> > >>>>> directly use the MASTER/SLAVE_xxx macros.
-> > >>>>
-> > >>>> I understand, thanks, yet your last patch keeps adding fake IDs, means
-> > >>>> IDs which are not part of ABI.
-> > >>>>
-> > >>>>>
-> > >>>>> As the MASTER_xxx macros cannot be used, have to define a new set
-> > >>>>> of macros that can be used for indices in the above array. This
-> > >>>>> is the reason for the ICC_BINDING_NAME macros.
-> > >>>>
-> > >>>> Then maybe fix the driver, instead of adding something which is not an
-> > >>>> ABI to bindings and completely skipping the actual ABI.
-> > >>>
-> > >>> Will remove the ICC_xxx defines from the header. And in the
-> > >>> driver will change the declaration as follows. Will that be
-> > >>> acceptable?
-> > >>>
-> > >>> 	static int icc_ipq9574_hws[] = {
-> > >>> 		[MASTER_ANOC_PCIE0 / 2] = GCC_ANOC_PCIE0_1LANE_M_CLK,
-> > >>
-> > >> What is the binding in such case? What exactly do you bind between
-> > >> driver and DTS?
-> > >
-> > > I think what Krzysztof is trying to say here is "the icc-clk API is tragic"
-> > > and the best solution would be to make it such that the interconnect indices
-> > > are set explicitly, instead of (master, slave), (master, slave) etc.
-> > >
-> > > Does that sound good, Krzysztof?
-> >
-> > Yes, I think earlier I expressed that icc-clk might needs fixes.
->
-> Ok
->
-> > The indices you define in the binding must be used by DTS and by the driver.
->
-> There are 3 drivers in play here.
-> 	1. The icc-clk driver
-> 	2. The gcc (i.e. the interconnect driver)
-> 	3. The consumer peripheral's driver
->
-> By 'driver' I assume, you mean the icc-clk driver.
->
-> > Directly, otherwise it is error-prone and not really an ABI...
->
-> To address this, will modify the icc-clk driver as follows.
->
-> 	==========================================
-> 	diff --git a/include/linux/interconnect-clk.h b/include/linux/interconnect-clk.h
-> 	index 5c611a8b0892..9bcee3e9c56c 100644
-> 	--- a/include/linux/interconnect-clk.h
-> 	+++ b/include/linux/interconnect-clk.h
-> 	@@ -11,6 +11,8 @@ struct device;
-> 	 struct icc_clk_data {
-> 		struct clk *clk;
-> 		const char *name;
-> 	+	unsigned int master_id;
-> 	+	unsigned int slave_id;
-> 	 };
->
->
-> 	diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-clk.c
-> 	index bce946592c98..f788db15cd76 100644
-> 	--- a/drivers/interconnect/icc-clk.c
-> 	+++ b/drivers/interconnect/icc-clk.c
-> 	@@ -108,7 +108,7 @@ struct icc_provider *icc_clk_register(struct device *dev,
-> 		for (i = 0, j = 0; i < num_clocks; i++) {
-> 			qp->clocks[i].clk = data[i].clk;
->
-> 	-		node = icc_node_create(first_id + j);
-> 	+		node = icc_node_create(first_id + data[i].master_id);
-> 			if (IS_ERR(node)) {
-> 				ret = PTR_ERR(node);
-> 				goto err;
-> 	@@ -118,10 +118,10 @@ struct icc_provider *icc_clk_register(struct device *dev,
-> 			node->data = &qp->clocks[i];
-> 			icc_node_add(node, provider);
-> 			/* link to the next node, slave */
-> 	-		icc_link_create(node, first_id + j + 1);
-> 	+		icc_link_create(node, first_id + data[i].slave_id);
-> 			onecell->nodes[j++] = node;
->
-> 	-		node = icc_node_create(first_id + j);
-> 	+		node = icc_node_create(first_id + data[i].slave_id);
-> 			if (IS_ERR(node)) {
-> 				ret = PTR_ERR(node);
-> 				goto err;
-> 	==========================================
->
-> And update the inputs going from gcc-ipq9574.c accordingly
-> to use the MASTER_xxx and SLAVE_xxx defines. Will this be ok?
->
-> Konrad & Krzysztof kindly let me know.
+On Sat, Apr 13, 2024 at 08:53:33AM GMT, Inochi Amaoto wrote:
+> The CV1800 SoC needs to use 64-bit division for fpll rate
+> calculation, which will cause problem on 32-bit system.
+> Use div64 series function to avoid this problem.
+> 
+> Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
+> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202404122344.d5pb2N1I-lkp@intel.com/
 
-Have addressed these and other comments and posted v8.
-Please review.
-
-Thanks
-Varada
+Close this patch as favor the patch from Arnd, which is simpler.
+https://lore.kernel.org/all/20240415134532.3467817-1-arnd@kernel.org/
