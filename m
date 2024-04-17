@@ -1,60 +1,60 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC2D25624
-	for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 19:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3CB208D1
+	for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 19:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713382041; cv=none; b=ALWuY2R0O8vZWMbZYFgaUVmysZsHaj2zC29VmJxbCyxTkr+l7C8LzZEDrYZrYQ1mPsuPfC5wk+y2GAFqfQmDVUoTVqU/M7YI+JK2TOZtj3lzdhmBk/SYuGltirDzJ/hKswwd0/c9selq+4PYF+pu2+7DRvLSsm2ZeoW7c4/HX6A=
+	t=1713382136; cv=none; b=isVlFnic0rRam37xKz3Z9/oSBrQk/S584AVgQIVKhYVB53wQaJsAYWwi7o+uuue5S2npOxjP8dd9JPb3BnWms7BRbpxwzaXfVh2t4Uks/fXYRu71+NBVOzFIfCXqS7F+es9nLw6pWYo/ZISzPE+ZXQL6/2yLyg8R9ULxzp8lACM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713382041; c=relaxed/simple;
-	bh=aqOfVeBPswxhVCc3J6CwUOIh4JXUwQUGg780kjI9G7s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mx4VIs0SrOeDpgSchWLRTa7EBqNwg6LiX4NSy26DYAleMXjvIZ7dhsnkwluZJZ6GNaRfiKjUvRDiEUYErPfbWKlvwKnY0eSoJKgjplXDz0IiAZaybhwZf7kPuzLe6FZf11bVyOKbGoLGLNvnK7TJ/+ZPa1wy3oR0FEpcr7FK760=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dWDBrcS4; arc=none smtp.client-ip=209.85.216.53
+	s=arc-20240116; t=1713382136; c=relaxed/simple;
+	bh=u+ypJul5t1ZsFux42v592nmGN7yOrtNWq9yuGWutdKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WXf7s33Q/BPG+jPRds3LELWiS3e5t1L6kEbuqDz9eb93iQ/1PWgiwiCmzDrZMJRClgu8FnTZJI7aOBKnbxX1yY13poEwSFwKOGKY+pOzldrYaoSjDELcCaBz32LS9UfchXEvG5BxITF8RShjegNuV9l53fBY4ZAjzkPgj4ef84M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g2XjKwvc; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dWDBrcS4"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2a6fa7773d3so117500a91.3
-        for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 12:27:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g2XjKwvc"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1e36b7e7dd2so995415ad.1
+        for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 12:28:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713382040; x=1713986840; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=SnaJGOhddJK2BKaTGnWEWd0CrbXPn1eAGhst2WKABfc=;
-        b=dWDBrcS4qOigE2N2KfTGfjhtfEuAY5oYoclREJqRBG5XEaxCZBm07rlzzPJReMiF/U
-         bTmiY2cMiNefBT+Qw6Bvh5vdcgiwI5D6HpS4cl0gxw1oQJ1eDzdj3SSS/NZY0vs3m8lW
-         7VZ2Q/0Jjgn3sf/ZW+WPJfilDPfnW3pytg1O5NqanWmqOnSwgiZDMWt7yxKDmk/5Ezjt
-         XSBLHuUIAaI7bFsCiwrIIsb4kEyvM1IR9Es/sSqBErLga/INOuC4dS4PEaVT0iYNx5Fd
-         kJjQxffgiZgXfxhFNIUqQ5VlaMGww1dFDecXMI5y+mj2WOvuDVZsGiH5gIc2QPfPPLZG
-         0D0g==
+        d=linaro.org; s=google; t=1713382134; x=1713986934; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=atHmG0RTbrO7RilcygxVR8R0IEZ8xSoohmbp5X1rpss=;
+        b=g2XjKwvcu8RNJLtV0zSgdRjUumdVT7/m8c+HmDdc7FvmNqUIxfjU/fbiOp0zEXp33O
+         bSBdbl8n+5rqPz28YDOZgW0OBOboREq/Xn6e6QGIt8/pKAviLbwECH+orEIyQbaSZ3nP
+         MYRU+FMIOUtp4CrXfNAMA39DxCOULvxz/QcGTzdwKtaAdwVZb5PjdObuMiESzFGuaZXY
+         Vg58qcjwqMbqhWoh/XRzQsF7t6YS/SBzP/ClOkHffvajYRt2fAn+71LjYBpryvJPmvT6
+         lc2t1UgEXVx7HcblWhfiZmrOZNiPQIuarW6NT8FHWPnu6Wk/UrQVIj7yKhMeq7QkHSOr
+         Ks+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713382040; x=1713986840;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SnaJGOhddJK2BKaTGnWEWd0CrbXPn1eAGhst2WKABfc=;
-        b=vw808f5aL6MEMmb5qZWDR+m8f1wXocwV6lG78BPDNDmoFLM+ZxNpfHSXX+YRf92qQB
-         ujEgti4LXqnv/kgG/iVvRbMf1YUGBSIdVnJiSpcVK5o7i8qUM6PSt+6nd5s3OxtEX3ck
-         bkZlb1NxBRoUgx/UJV10o7EtHr0oUdt6bwdMVxTPhLvC0P86M8M/Hi5VP0/dlmFGzf+d
-         R5h46eQ1pmXjin4VYc06YNMp/0eN50xKwDpy6zRT3ZRUID6znCRzQcScPIKwU72csJja
-         YkS6wbAkAI7T/d8W0z0as+sPsrAw/EjCZQ4WgCsASRs8Yxu4G7EAqpY+uFFX19JH0UoT
-         U7Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlVgR/bUsFhrUqkvOd/s2HfzxmK8EqpN2EX6pk7JB6DA/te8LWSXm1l7KUT0tIt+dbfWJSnkoyqstv6cVpKFOafsAE4oronRQ9
-X-Gm-Message-State: AOJu0YwQkRZ8kWj28IBQeQFuPQpgltLgrjjIro9VghY+wUgqugVhILGd
-	uyae42iZzXDqB9uO2xzs8nr/za6f2+u8muGUQMaEXJ4SJmqaZmCDijiHTjd7C0M=
-X-Google-Smtp-Source: AGHT+IF8fF8MgUQZSDQuDJz+9pWnQOWBMT932iqd8T/RMY+MsdGt56ZWnoPGo8LC/LxCTjZAXjHjpA==
-X-Received: by 2002:a17:90a:3d4a:b0:2a5:fff9:686e with SMTP id o10-20020a17090a3d4a00b002a5fff9686emr368756pjf.16.1713382039768;
-        Wed, 17 Apr 2024 12:27:19 -0700 (PDT)
-Received: from [10.36.51.174] ([24.75.208.145])
-        by smtp.gmail.com with ESMTPSA id y10-20020a17090ad70a00b002a63e966fd7sm10622pju.47.2024.04.17.12.27.19
+        d=1e100.net; s=20230601; t=1713382134; x=1713986934;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=atHmG0RTbrO7RilcygxVR8R0IEZ8xSoohmbp5X1rpss=;
+        b=RUbDfjtRg9luGRV3EM1wuVy8a4cLhJUcHS/9jxPbob9I7Y+hjhxIsO67q1r4xTkcMx
+         SNZXWRQ5jmq5yfLgdKiVXWmDwcGH9p6NyIbZ/9GGIU3cjimptxK7efhj6dSmbRABjhUC
+         kO/hbo7bGAPnLw1fOTzXGwcDjcHu1GZ1jZScKjHzxu/kKEW6DHXjAASuOpRZFBrT65X5
+         RgKgNF3qL13lNdd3uqiqH214IEiq/4KHN20gJaNjxFSKXeqLc4Rj5EzgnlronPUHvvgh
+         xGsaTFX7QT4NRZVy0ivW/3mnaNt0dHHR5RpDs35/R4sygwFreLoM8M9B7BT8GI6GjCCS
+         emAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgpN25H4+PSGzj+eqjxNQ3Vc2YvIl227ubrKi76NFE6ibxl0q8uRADeLaZa644h8fwfMKBluCViITn1LUp3WzKLZFWobZRS0Gy
+X-Gm-Message-State: AOJu0YxbSiWlit84+BDlJtBzeUiaBo+24tsVzDe7eqOPtWN70AoE4YCC
+	0uhu80+tWY9DERUaGvvn+oweBf6bfUQjerb4MiX05ikYalLnQXjVILyOro+8jk8=
+X-Google-Smtp-Source: AGHT+IGas0Aow79NyII+V7At9CQXXv1YPq8LH9OssyiAT5SoExCStEz76KW+Bl7eY+//MC3mcKBeEw==
+X-Received: by 2002:a17:902:fc8d:b0:1e4:425f:5795 with SMTP id mf13-20020a170902fc8d00b001e4425f5795mr544413plb.58.1713382133737;
+        Wed, 17 Apr 2024 12:28:53 -0700 (PDT)
+Received: from [10.36.51.174] ([24.75.208.147])
+        by smtp.gmail.com with ESMTPSA id im22-20020a170902bb1600b001dcfaf4db22sm12213295plb.2.2024.04.17.12.28.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Apr 2024 12:27:19 -0700 (PDT)
-Message-ID: <884579f5-8dec-43ba-9919-a9914ea85c3f@linaro.org>
-Date: Wed, 17 Apr 2024 21:27:18 +0200
+        Wed, 17 Apr 2024 12:28:53 -0700 (PDT)
+Message-ID: <67c5dfdc-4184-419a-90b1-278b73d6c24c@linaro.org>
+Date: Wed, 17 Apr 2024 21:28:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,7 +64,6 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH V2 6/8] dt-bindings: clock: qcom: add bindings for gpucc
  on SM4450
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Ajit Pandey <quic_ajipan@quicinc.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -79,8 +78,8 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 References: <20240416182005.75422-1-quic_ajipan@quicinc.com>
  <20240416182005.75422-7-quic_ajipan@quicinc.com>
- <951b34d6-f465-42f7-b39d-eedd649f3c5b@linaro.org>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -125,27 +124,27 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <951b34d6-f465-42f7-b39d-eedd649f3c5b@linaro.org>
+In-Reply-To: <20240416182005.75422-7-quic_ajipan@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/04/2024 21:26, Krzysztof Kozlowski wrote:
-> On 16/04/2024 20:20, Ajit Pandey wrote:
->> Add device tree bindings for the graphics clock controller on
->> Qualcomm SM4450 platform.
->>
->> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
->> ---
->>  .../bindings/clock/qcom,sm8450-gpucc.yaml     |  2 +
->>  include/dt-bindings/clock/qcom,sm4450-gpucc.h | 62 +++++++++++++++++++
+On 16/04/2024 20:20, Ajit Pandey wrote:
+> Add device tree bindings for the graphics clock controller on
+> Qualcomm SM4450 platform.
 > 
-> I wrote you even instruction what to do with the tag and it was still
-> ignored. Do you read the replies?
-> 
-> I give up on this, good luck.
+> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
 
-Uh, my bad, apologies. I un-reviewed it, so your action was correct. I
-am sorry.
+
+Previous subject was correct, but this one got issue:
+
+A nit, subject: drop second/last, redundant "bindings for". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
+With above fixed:
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
