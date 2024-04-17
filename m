@@ -1,139 +1,163 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212F352F7C
-	for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 06:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFD86A029
+	for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 07:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713333933; cv=none; b=YZ/KoPK+ERg2vMDAc/VGlhG0TGvmOdSC7LuKFY0V/FT5uxTr5Qw7ltms5Dx4FVtX0Yt/Kp9AtB/OSDdtJg7EvYjUK5krgKT5em5Jucq6o7mSaPDUbGYyAcD/OfbATXaR9c6+Gi8pZKvDX4KT4TK7+TNP9soCq7vSRJfw10XlYks=
+	t=1713337593; cv=none; b=BOu5zZn1ynD7Uyt+X9n4juwzSVo/D9X3xvudAwUEdWHL27g7Jsd5ZeRtukThe8EASqv4n1yW6eYCFrfq7ze3U/OtUDSYfAILNDyc1y9NK2y34WG651ulYzsmstNlzxspR4ypGFdN0DjtMnegn4czK8ybwbOA7QE3i2G9yb74t/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713333933; c=relaxed/simple;
-	bh=UC1sIFq1cP6r9vbQzk3FdwM8StBdT3LSYUFiXCYAAz8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rUTqjUq9vTnQRczReQvkiQOCBVNP+/fjivQW08ANaaPS//dRLN/Nf7wodHcYM+o5gcSIc8RGO62v0g23SEA/4dxmp03d8KAo35tRkY11BXK0NvllTkhaZ45Gf+ML+zKUtusIhGo4TJIXGY94pdyis8cZEpBScmhtJvyvJxjJHoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KXmNwQd2; arc=none smtp.client-ip=209.85.219.172
+	s=arc-20240116; t=1713337593; c=relaxed/simple;
+	bh=TOB6vp87U9Lnnn2dsE4owyfBnMI3t4WxK3sGEUGR9XI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkjCp84EnqpkjD7UpAgUEk9QlAonZJRE4SCVRwqcdmGdbpQzCYpKRqhQjl6FxrZzAo7XK8Lij7Om4TDSJ4BS6C/bKKgJbu299FWWfQ9SJE5ZQ/nq0iJKQhGEoXSs9YWiEpm1eqwf6tQEEOau1BiM3s2ySk8W4Ie/sQDGsilEIks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RUgCveJ6; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KXmNwQd2"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dd045349d42so4908715276.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Apr 2024 23:05:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RUgCveJ6"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6eced6fd98aso4732592b3a.0
+        for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 00:06:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713333930; x=1713938730; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1J/3E5E/mDz2QdtRZ5VOE2JUZN+fe6PP/1m29WJY37Y=;
-        b=KXmNwQd22J4B9EdcFY0dB7E9HjmHlMjn21b3pcegO5r9tO1wTkb5Vj9LwgVj3gEs+t
-         8cikhrY82407GGFyt6nNF0CqGv86cHRja8CvRMGRZ6LTtchTzAmdMSfmhhkPDsh62hHI
-         eGK56xUleRv1GmFUiq1ZfzYVsEZYm7sx9n5O6htlxXEvvnSmEZIvPbM6ONFH2X9+e+25
-         P5rTL0A25g7EB6BC3B8yDCQj4WKoAiuPyL1PakkTi7/RZWMxpVIYxtdI4ucTq67/CZUs
-         RHaen943paLbhBvqn2p2kKYsWL6dNJbI7qB6QafJGYjj+odvIqxD6L9IgDcjEJrRthjo
-         nhgA==
+        d=linaro.org; s=google; t=1713337590; x=1713942390; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Id9wk8bOD3jpvQHQWy0txCOh7lELBvXiW74KprcLKWE=;
+        b=RUgCveJ6QvF6PTGt7ORkajy1ZJT0hzUkS+VzTq0m7bBQK76HZD6gOQfWlXzMxBhbbY
+         6x15t1OU4V+r5YPUekLHJ64SYD7wEfqxTaBzGk2tNM1GUn7K9bccuat+UlGjxUFuo4Op
+         V4BySagYccoRpTJM9+hwiOpYzwb/iR/Cfds4JQe8RB9Dol9V8UHbrCEkGRCyNS8Jbkz8
+         kHHkcV9LP3cuEzXtc7YN+/oSRq9X96dQtLr9oWF7Nbm61cXZDo2hLmZBZwGjFOONYuo0
+         /Vhvd39mDdN6pZhYZ7/L/XkqqzYgChHFUNVwlFGav0SZCUDAKCAarm8BKlUWp/J8nx4a
+         UzwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713333930; x=1713938730;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1J/3E5E/mDz2QdtRZ5VOE2JUZN+fe6PP/1m29WJY37Y=;
-        b=theqXlkQKIjQlGNyVBj1woK1nRDLmqRRvfX/Q19zvzXDCxLtjGzY5MMSBAetwK0UFa
-         d8xc+VH+0z6tSMsmCy/IPtt3T1jANLDyhJi8Gy2kI4DrybUT/wT2n3wKDuSpDFMMj2nF
-         BqnJU/h4LQhLc6i/fAetApGFxIEBbY8X8EFl6FgOA2qNE3CW4AIsiB5DnyY/IiAyL+fE
-         V1EleZVFTwNfEWY5qC3zAvC/Nibv4wuZvc98+a63xjBMiIvIY60Ce2YnPtqw5a0e0WUZ
-         0BbMM8gIcdTXOu0q4vKZ26/qcvwF56fURW7lnktH7Oy/49QfbT4l97EC7P3hqp62mu+v
-         owiw==
-X-Forwarded-Encrypted: i=1; AJvYcCXL3mfWSiyOuqwxXKL8c031ExynWQPIyizGN1313Iw3FgCy4xm/Kr+NwKXXmtZQVIvj2MrcXk/I7ZgVG6hStc5POh/JCLzWFci3
-X-Gm-Message-State: AOJu0Yx1Hat062HTf8jD+i0s/KxFWFJaZ/asXRIV5xLN5sK7yHUiGng5
-	9DwS6aI3YALkABWA1FFf3KyjhjAt++OcAEINfSmVWQbLkasGQvwFfNnMTVnvCFWOSN4QcoXJL1G
-	PbclzFK+OK0CFfYjRHhNDqKNyO4One1WDmwgK+Q==
-X-Google-Smtp-Source: AGHT+IG+zoMzQqQ/q6dE6vRDF4nodM3ANPMJAehmBQIdP7EryRcFqpoupwSxnU0cMOL78CpmhaUMLsaVKv/Pqf0CWmM=
-X-Received: by 2002:a25:b9cb:0:b0:dcc:9e88:b15 with SMTP id
- y11-20020a25b9cb000000b00dcc9e880b15mr14409265ybj.41.1713333930018; Tue, 16
- Apr 2024 23:05:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713337590; x=1713942390;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Id9wk8bOD3jpvQHQWy0txCOh7lELBvXiW74KprcLKWE=;
+        b=UYmMHQA/SQ1GRs0wEC5B6FjsPEP61MLDF6fEHdqGKtSRMAIoWp0IV1W6CPiuB6UBdu
+         nAP9r2HP0HhgLf4UKQ90dTKN6QGkjJGRevHn3q0u0sDh5NfHWr5+9R5GFAJCVFjhUSqb
+         jqKUmYNGesZhMYLfirZsE4ZjqtnPe8RrqC3sj1QHhs6HKxTngMDGOYMeRS7rRod9l7Uq
+         FG7xx6iEGuJErrdKR7NkuiSY8S0aqdCiYynVT9gTBOxWzX/TxrvWFU/O1OUgAtigZMc2
+         FuE9oOdu5fGOIiqVAJXQu3AqcF1DZz6sJMvsebC1NMGdniK0jJxSwrefDvq1fNBfMHL3
+         q5hA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGAYajv+HjQyK3kizF5BCfucdSIsymRODYkOQrra/YS8tl57LRTmBT3ABUeoiME5yxWEZJExiNCCoqAiTQHWWihPaS/nbSeRAT
+X-Gm-Message-State: AOJu0YxMT4uvNMW/rLToJR1rnXOo4e2pKZxZ3meiUAgDI4aK3FxRkgw7
+	QmvhehbWsMmWa1z3AVR6CEYJwF6IEEwrrk594dYbfCBe/t0uNELFDwuOMQ55Cw==
+X-Google-Smtp-Source: AGHT+IH83KUdU6BtzRYL1t2NbRvI4qrrCGxtRd9cEdm+JtEHXxziFKFvGoFUMzWi78eYTsfdqTGaMA==
+X-Received: by 2002:a05:6a21:3a85:b0:1aa:755f:1746 with SMTP id zv5-20020a056a213a8500b001aa755f1746mr911915pzb.22.1713337589983;
+        Wed, 17 Apr 2024 00:06:29 -0700 (PDT)
+Received: from thinkpad ([120.60.54.9])
+        by smtp.gmail.com with ESMTPSA id a21-20020aa78655000000b006e6c16179dbsm10134759pfo.24.2024.04.17.00.06.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Apr 2024 00:06:29 -0700 (PDT)
+Date: Wed, 17 Apr 2024 12:36:16 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mr.nuke.me@gmail.com
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 4/7] PCI: qcom: Add support for IPQ9574
+Message-ID: <20240417070616.GB3894@thinkpad>
+References: <20240415182052.374494-1-mr.nuke.me@gmail.com>
+ <20240415182052.374494-5-mr.nuke.me@gmail.com>
+ <CAA8EJpqKWJBqDUacE0xTLzxny32ZTStiRgXsd2LBD=Hou_CRBw@mail.gmail.com>
+ <3cfc26e6-5587-d4a2-f217-1a30169ad1a0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240416182005.75422-1-quic_ajipan@quicinc.com> <20240416182005.75422-8-quic_ajipan@quicinc.com>
-In-Reply-To: <20240416182005.75422-8-quic_ajipan@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 17 Apr 2024 09:05:19 +0300
-Message-ID: <CAA8EJpqwrKcgm7c57=LpxS7+CfrN2UxNg8k_46auBrdZG7vQnA@mail.gmail.com>
-Subject: Re: [PATCH V2 7/8] clk: qcom: Add GPUCC driver support for SM4450
-To: Ajit Pandey <quic_ajipan@quicinc.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3cfc26e6-5587-d4a2-f217-1a30169ad1a0@gmail.com>
 
-On Tue, 16 Apr 2024 at 21:23, Ajit Pandey <quic_ajipan@quicinc.com> wrote:
->
-> Add Graphics Clock Controller (GPUCC) support for SM4450 platform.
->
-> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
-> ---
->  drivers/clk/qcom/Kconfig        |   9 +
->  drivers/clk/qcom/Makefile       |   1 +
->  drivers/clk/qcom/gpucc-sm4450.c | 805 ++++++++++++++++++++++++++++++++
->  3 files changed, 815 insertions(+)
->  create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
+On Mon, Apr 15, 2024 at 03:07:02PM -0500, mr.nuke.me@gmail.com wrote:
+> 
+> 
+> On 4/15/24 15:04, Dmitry Baryshkov wrote:
+> > On Mon, 15 Apr 2024 at 21:22, Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
+> > > 
+> > > Add support for the PCIe on IPQ9574. The main difference from ipq6018
+> > > is that the "iface" clock is not necessarry. Add a special case in
+> > > qcom_pcie_get_resources_2_9_0() to handle this.
+> > > 
+> > > Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> > > ---
+> > >   drivers/pci/controller/dwc/pcie-qcom.c | 13 +++++++++----
+> > >   1 file changed, 9 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > index 14772edcf0d3..10560d6d6336 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > @@ -1101,15 +1101,19 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
+> > >          struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+> > >          struct dw_pcie *pci = pcie->pci;
+> > >          struct device *dev = pci->dev;
+> > > -       int ret;
+> > > +       int ret, num_clks = ARRAY_SIZE(res->clks) - 1;
+> > > 
+> > > -       res->clks[0].id = "iface";
+> > > +       res->clks[0].id = "rchng";
+> > >          res->clks[1].id = "axi_m";
+> > >          res->clks[2].id = "axi_s";
+> > >          res->clks[3].id = "axi_bridge";
+> > > -       res->clks[4].id = "rchng";
+> > > 
+> > > -       ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+> > > +       if (!of_device_is_compatible(dev->of_node, "qcom,pcie-ipq9574")) {
+> > > +               res->clks[4].id = "iface";
+> > > +               num_clks++;
+> > > +       }
+> > > +
+> > > +       ret = devm_clk_bulk_get(dev, num_clks, res->clks);
+> > 
+> > Just use devm_clk_bulk_get_optional() here.
+> 
+> Thank you! I wasn't sure if this was the correct solution here. I will get
+> this updated in v4.
+> 
 
-[skipped]
+Please rebase on top of [1] and mention the dependency in cover letter.
 
-> +
-> +static int gpu_cc_sm4450_probe(struct platform_device *pdev)
-> +{
-> +       struct regmap *regmap;
-> +
-> +       regmap = qcom_cc_map(pdev, &gpu_cc_sm4450_desc);
-> +       if (IS_ERR(regmap))
-> +               return PTR_ERR(regmap);
-> +
-> +       clk_lucid_evo_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
-> +       clk_lucid_evo_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
-> +
-> +       /* Keep some clocks always enabled */
-> +       qcom_branch_set_clk_en(regmap, 0x93a4); /* GPU_CC_CB_CLK */
-> +       qcom_branch_set_clk_en(regmap, 0x9004); /* GPU_CC_CXO_AON_CLK */
-> +       qcom_branch_set_clk_en(regmap, 0x900c); /* GPU_CC_DEMET_CLK */
+- Mani
 
-My main concern here is the AON clocks. If we don't model
-gpu_cc_demet_clk as a leaf clock, then gpu_cc_demet_div_clk_src
-becomes a clock without children and can be disabled by Linux.
-Likewise not modelling gpu_cc_cxo_aon_clk removes one of the voters on
-gpu_cc_xo_clk_src, which can now be turned off by Linux.
-Our usual recommendation is to model such clocks properly and to use
-CLK_IS_CRITICAL or CLK_IGNORE_UNUSED to mark then as aon.
+[1] https://lore.kernel.org/linux-pci/20240417-pci-qcom-clk-bulk-v1-1-52ca19b3d6b2@linaro.org/
 
-> +
-> +       return qcom_cc_really_probe(pdev, &gpu_cc_sm4450_desc, regmap);
-> +}
-> +
-> +static struct platform_driver gpu_cc_sm4450_driver = {
-> +       .probe = gpu_cc_sm4450_probe,
-> +       .driver = {
-> +               .name = "gpucc-sm4450",
-> +               .of_match_table = gpu_cc_sm4450_match_table,
-> +       },
-> +};
-> +
-> +module_platform_driver(gpu_cc_sm4450_driver);
-> +
-> +MODULE_DESCRIPTION("QTI GPUCC SM4450 Driver");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.25.1
->
->
-
+> Alex
+> 
+> > >          if (ret < 0)
+> > >                  return ret;
+> > > 
+> > > @@ -1664,6 +1668,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+> > >          { .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
+> > >          { .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
+> > >          { .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
+> > > +       { .compatible = "qcom,pcie-ipq9574", .data = &cfg_2_9_0 },
+> > >          { .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
+> > >          { .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
+> > >          { .compatible = "qcom,pcie-sa8540p", .data = &cfg_sc8280xp },
+> > > --
+> > > 2.40.1
+> > > 
+> > > 
+> > 
+> > 
 
 -- 
-With best wishes
-Dmitry
+மணிவண்ணன் சதாசிவம்
