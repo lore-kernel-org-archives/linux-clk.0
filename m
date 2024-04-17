@@ -1,122 +1,103 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D12136E32
-	for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 09:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0A31327E0;
+	Wed, 17 Apr 2024 10:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713347534; cv=none; b=WYMg632X2OTS3wT+DMVPuFOrJLju62H/vlN0AusQh3qyZuaEZNH67+iGBLG9lk0Yp7pmE4VcDc340LnxgNKvgjcHUjkfDFdLEJBaYHBv7sPUBVSa5zRCfOFu3vstzs4mR2Sr9kdSmfcknnFiZO2pHuJ94bP4W1zOXI6AUaB3hZA=
+	t=1713348878; cv=none; b=LAh/GK1tuqn3Og2zREMEw6FWEkJ9/q/rHPXzVZFmZu3DvnFrEp1k+XXQhC7Jg8TzfMsOx8W1Hmd2xxW94izK3V4xZtJMLP8VENWwhhWM62MZrVQOvewBvEIWazkMNodf4x0QMPaZvsHsZ2C/sgmAVvxqYlvCrw7+0GqolkeDb7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713347534; c=relaxed/simple;
-	bh=3X6WwNfAVR7FMkoaL54r/zUW5zJ1gH7cm4+/P1mg7j0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pwnn5iwvrRwjJpzDtaGJlHBquXpJBTlFta1VORI8zJxqyTNdOAVn1/1GrOp+QzjLRHWSOzhyLi0KVn4uzFgqnHi5sTr2iak2wK7XzHDripitdIPkYOiH3wP4wqV5DFPChKhb4ycNJDCHeeATHvOYuKKbBbNw5EWlA2fxdvMIkAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fGY39utO; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713348878; c=relaxed/simple;
+	bh=nP6Y2cH6R/RSVNj91LUL6ipM/UHgj+V1OQwPKKnkgjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NwPeQLHJizVBJMD2pnQdWPFl44BskeOZa1HLQdmBQnbelIw4p3w+uKalems+60ObYi/2l+KvO/5ZVmPVElnIRnnCnYuNeHSblrFQ2Thcbz3ln0dq1sNrAwYaZifsT10Xku5mflIfQj8QGBbJr6khHwK8ZU4slpadZGv4XTYJJJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SstsGJ1d; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fGY39utO"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5714bb39c29so12955a12.0
-        for <linux-clk@vger.kernel.org>; Wed, 17 Apr 2024 02:52:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713347531; x=1713952331; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5f5XU8CL1kg+VvVC0mF3oI+N9DcL6GD1pDu7yNmuO1Q=;
-        b=fGY39utO6irKOll8izO+7MR1eqH1lbzYw2D+KRkJoY2GDZ1weRqAekMVOf0hw/bdXd
-         PzHupGVCXJkwYGv1UpqG+56mMCXm+Cg0FLX/BHOP49/+P3UzNBlDJArd9RQlCRVczfRg
-         zCXihgKHtNnRETbVT0LpeF5+pZ3WBuxNjhOJpZ5iJScAzOlWCSTIyRbF/G9Gt/uAqyBj
-         Kyl8j2RUwiDAuiDPftEVv0g1ZDNlEJz4qEGCIubiZvQIYMIgw5aJwM0I4wwoTGjkO4Ny
-         EbuHnLpmot0+NwjF7D5KxOtWFzrV3Xa3Nhar4+MWhPJDnEr3g0vYEMDIGFWf6hBHTUxc
-         9XAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713347531; x=1713952331;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5f5XU8CL1kg+VvVC0mF3oI+N9DcL6GD1pDu7yNmuO1Q=;
-        b=kFjE8xizuhvLo397X6n19UivOy0JaIzlWz0DexUZIS5zREI4vagcWQopKgDlfs3sHx
-         lKzSxUY+W0dtSFA+OSsMjrku3kDB+mV0wFkrW8bt7FGsEzobIf4F0gD73pW+BEo4MLnP
-         CYJUMQTUS2B6coQNlqEWNYDPDTiuPI5NNM/oW1XNMTWpVHWBBFqUiqic5SkpLlsDmFwG
-         chw+fwBCfOgV+seNgS9kM4mer0kcxCut+/E8uSgdgxcxhDH37m80kPTFWoJowrYfK7ML
-         bZFXKBavPRD3TCP3M/MlIQxqWdp0QXpF38ckMDD4XjXAXhnlNlu2Pa2WT7WL+smfrzqg
-         2ubg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlZrhHwKCqC/VQNT4OiA33NrArF1zAREks6f8x7XGxXosB0Z7lte7eXeb4/UelPJAGrWJBemWS01M34wOJ8TuDY04phFl+pErC
-X-Gm-Message-State: AOJu0Yz2f2fsBqJZBOIwPIsrRYoue6xOWi7TGXFcKHX2FMWP8KOZTbEy
-	7wc3oLGOmpvoNND3xqXbILYClLodBBwp9kaxg8Fj83iCBMIdVVSNAPcOi/dK8G0=
-X-Google-Smtp-Source: AGHT+IEYPrQEauvIgRMeVjGwsmiUGzuIZo8hcH8ym7d63O1kdjEGb0XdYaDBVBXRGhRdHQrpHYNOWg==
-X-Received: by 2002:a17:907:7d91:b0:a54:1c55:7123 with SMTP id oz17-20020a1709077d9100b00a541c557123mr5905226ejc.73.1713347531118;
-        Wed, 17 Apr 2024 02:52:11 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id t6-20020a1709067c0600b00a5229c51077sm7414958ejo.9.2024.04.17.02.52.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Apr 2024 02:52:10 -0700 (PDT)
-Date: Wed, 17 Apr 2024 12:52:07 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
-	kishon@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
-	bvanassche@acm.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	jejb@linux.ibm.com, martin.petersen@oracle.com,
-	chanho61.park@samsung.com, ebiggers@kernel.org,
-	linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org, saravanak@google.com,
-	willmcvicker@google.com
-Subject: Re: [PATCH 10/17] phy: samsung-ufs: ufs: Add SoC callbacks for
- calibration and clk data recovery
-Message-ID: <75b1b063-e8d4-417d-99a8-4320d72297cf@moroto.mountain>
-References: <20240404122559.898930-1-peter.griffin@linaro.org>
- <20240404122559.898930-11-peter.griffin@linaro.org>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SstsGJ1d"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1713348875;
+	bh=nP6Y2cH6R/RSVNj91LUL6ipM/UHgj+V1OQwPKKnkgjQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SstsGJ1d7dF0sTiCq19GAQDn9PeB6bYpjCOvzfpX6z4o9hc+KpF0FbQsPvO371n/C
+	 GnsKq719DLEgjgoXZ3DGGJ1t4/BZdaJC2+Nul+USg1vFiARr9mKkfOdgbS0TXFQJPd
+	 yMeow0v4fKoHqlKgNSTCpBKVdtACyjIc94RpPjpuz98RryoTV/fs61uhsWWKPp0ObR
+	 jx1QJ/3wXJmNpHHHlQlmOBTtUl0HbVAl75rb9i+HKeFSTyuexydG76wDgiFvUj91wx
+	 iEgJfGjVhJ30+X3lwEtXi3BX9UC5cVBWYtStI1XeOJEqgXQ6zEoon8dqvxS+GgzJ1s
+	 GtCKvWnb+nWsA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E30BD378020A;
+	Wed, 17 Apr 2024 10:14:33 +0000 (UTC)
+Message-ID: <105c9ee8-2b9e-4117-b4d8-472982ef59d1@collabora.com>
+Date: Wed, 17 Apr 2024 12:14:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240404122559.898930-11-peter.griffin@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/18] dt-bindings: display: mediatek: dpi: add
+ compatible for MT8365
+To: Alexandre Mergnat <amergnat@baylibre.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Jitao Shi <jitao.shi@mediatek.com>,
+ CK Hu <ck.hu@mediatek.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20231023-display-support-v2-0-33ce8864b227@baylibre.com>
+ <20231023-display-support-v2-7-33ce8864b227@baylibre.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20231023-display-support-v2-7-33ce8864b227@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 04, 2024 at 01:25:52PM +0100, Peter Griffin wrote:
-> diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
-> index c567efafc30f..f57a2f2a415d 100644
-> --- a/drivers/phy/samsung/phy-samsung-ufs.c
-> +++ b/drivers/phy/samsung/phy-samsung-ufs.c
-> @@ -46,7 +46,7 @@ static void samsung_ufs_phy_config(struct samsung_ufs_phy *phy,
->  	}
->  }
->  
-> -static int samsung_ufs_phy_wait_for_lock_acq(struct phy *phy)
-> +int samsung_ufs_phy_wait_for_lock_acq(struct phy *phy, u8 lane)
->  {
->  	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
->  	const unsigned int timeout_us = 100000;
-> @@ -98,8 +98,15 @@ static int samsung_ufs_phy_calibrate(struct phy *phy)
->  		}
->  	}
->  
-> -	if (ufs_phy->ufs_phy_state == CFG_POST_PWR_HS)
-> -		err = samsung_ufs_phy_wait_for_lock_acq(phy);
-> +	for_each_phy_lane(ufs_phy, i) {
-> +		if (ufs_phy->ufs_phy_state == CFG_PRE_INIT &&
-> +		    ufs_phy->drvdata->wait_for_cal)
-> +			err = ufs_phy->drvdata->wait_for_cal(phy, i);
-> +
-> +		if (ufs_phy->ufs_phy_state == CFG_POST_PWR_HS &&
-> +		    ufs_phy->drvdata->wait_for_cdr)
-> +			err = ufs_phy->drvdata->wait_for_cdr(phy, i);
+Il 16/04/24 17:53, Alexandre Mergnat ha scritto:
+> Add dt-binding documentation of dpi for MediaTek MT8365 SoC.
+> 
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> ---
+>   Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> index e126486e8eac..ebb61bc4eab7 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> @@ -27,6 +27,7 @@ properties:
+>             - mediatek,mt8188-dp-intf
+>             - mediatek,mt8192-dpi
+>             - mediatek,mt8195-dp-intf
+> +          - mediatek,mt8365-dpi
+>         - items:
+>             - enum:
+>                 - mediatek,mt6795-dpi
+> 
 
-The "err" value is only preserved from the last iteration in this loop.
+MT8365 and MT8192 are identical. I'll make it easy for you:
 
-regards,
-dan carpenter
+       - items:
+           - enum:
+               - mediatek,mt8365-dpi
+           - const: mediatek,mt8192-dpi
 
-> +	}
->  
->  	/**
->  	 * In Samsung ufshci, PHY need to be calibrated at different
-
+Cheers,
+Angelo
