@@ -1,140 +1,229 @@
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2098.outbound.protection.outlook.com [40.92.22.98])
+Received: from outbound9.mail.transip.nl (outbound9.mail.transip.nl [136.144.136.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E615B13C80E;
-	Wed, 17 Apr 2024 11:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713352343; cv=fail; b=cDik5uYHaX1D4DzrE7Pw9kCmmZmyBZ1tv67u265xvd5XVZBGqkKa6jWxWEjpZN/5pv1d9C8xx05RbHmv79x9KlBxlGpQu2xVUtg6PkfuSMectBroTcVsfaQHeCOptgVsEOzxpcivEGEHPEWwHW+szTIir3KtMjewJdg3Igj4s1A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713352343; c=relaxed/simple;
-	bh=pfta4osw1X1IgEP629tYYOhPC+QnqXjbmgjGVV9aW8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ux59p1Tf/WpgH4mycXIGz7+yiu+pmdzRfCoC4svyFQUo5eBW4zAUsh+ikmPIYAqPV/66U5lmJ8gfxWaHhzGhoeqQ+0hU1f8lQPP7DmfsuVobFZDOld983/G96qqhYUMzLY9bU7Y2BYaX37RY80Hc2suo+ST90QzVtq38U8p/FZs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=tZ6r5h47; arc=fail smtp.client-ip=40.92.22.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6C813C8FD;
+	Wed, 17 Apr 2024 11:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.136.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713352774; cv=none; b=ZSbS2L+WIwTW4A5r7HEZpEH0xEOjpNtZv+XmFkUcBBKDDxxBndkgE2cmMLgEv3qsWaZiST0xIBpbsOpngwe/U0vLOyunWEu7jIJ0CNxTO1psQxaQR89yiSN/lvkL3W/VbWGt6F5RjtIigXT98Ux/B0XdPRIJWonqn+d0rkk5kFs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713352774; c=relaxed/simple;
+	bh=yTNIUVB4TH7/duE82fAx3t+Vra1GNIHORCwHrwOBX4E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fs5CLrrp59i+oRMSu3klHpDbnZYsSgaT1iUSWdTdJCfiW0ij1C79FrhITj4A+JUoKtb8UXAH1AbXCHLOqOflNY4gSTOxY/0b0KnOcAo7ukVKWhgjokkQu4zFWyqyWws1POZ4gvnsAhoGsHtF8nLJEwobBMhDljxTdFjubraLEUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=fA+EkObP; arc=none smtp.client-ip=136.144.136.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=herrie.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="tZ6r5h47"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fhM65pNmtZYoj/uKIgFuPvhYML/TIT7hubs82WKxKNdT7890z9pd7n2k+eG8kkA+21zsJYqon3MfJnMfBhaenH+8jZvo2ayy8bz2ihgddmedfmwIED3f5WrvKeNGejldbqNHa3Irj7lidPrrreNk7zC072UP7DYEnpacpaTSxmWIlUYBkqvFgUTWg9tem0nkSEi7L/19p7SyA6vEozpJ/jQIPEd9JKPCsy3mM5mHmhu1O1ud/UAvf6j7hvwuguKDT5BrxBFS83ty/LT1I8oma2my4aEX8ReOMVZ4zvyFWlSjNjggv4rm/3e3JRKSMRr/0H96ZUxFPviWYjxBy6yT8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GGU83zTtgGjBeJ6YbnyK+0PaFi3OE2n+ZYPsRVMOfbg=;
- b=kqGHJ2jGxnAHSZHdq3jR2G+zTMiVdGIdiDE41uZdA3AU1TnNlLaw6XxGED34LTdlcO252BEkWkodSw8tY4KivwHjnSxcrmvU9LJagJcBAFahmDqF4qrW7+lswaePGJjjlw1CH92gu4EPfvEJBf/kciRFBC1vxvzWIxtTdgTVgX8n6558v8WwUOYO0p8pbWiXPhETAOa9V+Nf+gL+UgdemRAcRqOaiWgG7P5LSc/VddZQh0W4gbSOVGLdPRm3faJP789uVJ9mE/XicXSiPLbAVVpU+mMZPou1WnKr+EbRRNyaDrcNbPkY5SCazvytYl5vPHVM2hOcZ0v5ZEp9rl5YGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GGU83zTtgGjBeJ6YbnyK+0PaFi3OE2n+ZYPsRVMOfbg=;
- b=tZ6r5h47LP7wCn4RxtNYjQEE0amvqvbN9BZ1HTa22MchQuyDE2MRVrtcj6+PDqlnRu/1U9et+SbPnYbjMV0SMIQJ4qSyvJ3493tAxTFY6pc7r1Vc6IBaaonyIkDo+VHUr7h5UQ92s+Mfue9C1R4Sm2cMqsB1xRT8vwiP6KDWvYdgQzbGK1aM49wIxZTToK2/gfhZadjiK859vO7xqQLmJxfRManq72R+Ry1vhwe4GchF1HNALsYZ4mHS9UPJ4OVAuY8u2ZwH/igrihzW/E673uDM4vYnChY3g3KuczeTq9VsE1dZRfPi+1iAoHnMbDjlpkx9T4LF0BMHTw/iD/R+wQ==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by PH8PR20MB5266.namprd20.prod.outlook.com (2603:10b6:510:1c9::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.43; Wed, 17 Apr
- 2024 11:12:19 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::182f:841b:6e76:b819]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::182f:841b:6e76:b819%2]) with mapi id 15.20.7452.049; Wed, 17 Apr 2024
- 11:12:19 +0000
-Date: Wed, 17 Apr 2024 19:12:42 +0800
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Arnd Bergmann <arnd@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sophgo: avoid open-coded 64-bit division
-Message-ID:
- <IA1PR20MB4953FA5F47CDD0BFF0E64557BB0F2@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <20240415134532.3467817-1-arnd@kernel.org>
- <IA1PR20MB49532CE01992005D3DA0FD17BB092@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <IA1PR20MB49532CE01992005D3DA0FD17BB092@IA1PR20MB4953.namprd20.prod.outlook.com>
-X-TMN: [yXKWCcZ1EAqkot+Jss7Fce59DXgq3SWYNHI3Ri8wT4w=]
-X-ClientProxiedBy: PS2PR04CA0017.apcprd04.prod.outlook.com
- (2603:1096:300:55::29) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <zwbkhbsrxkecinkc5pp27dvpbvdz24xbnnoltnpxcdfy4wbh2x@u5jepeapq3bl>
+	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="fA+EkObP"
+Received: from submission7.mail.transip.nl (unknown [10.103.8.158])
+	by outbound9.mail.transip.nl (Postfix) with ESMTP id 4VKJMf3CJvzTPNc4;
+	Wed, 17 Apr 2024 13:19:26 +0200 (CEST)
+Received: from [127.0.1.1] (110-31-146-85.ftth.glasoperator.nl [85.146.31.110])
+	by submission7.mail.transip.nl (Postfix) with ESMTPA id 4VKJMd3h2kz1Q6K0;
+	Wed, 17 Apr 2024 13:19:25 +0200 (CEST)
+From: Herman van Hazendonk <github.com@herrie.org>
+Date: Wed, 17 Apr 2024 13:19:23 +0200
+Subject: [PATCH] dt-bindings: clock: Add qcom MSM8660 MMCC defines
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|PH8PR20MB5266:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6be3b4d-25b8-4bec-86e8-08dc5ecf3f40
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	bpFl4aHMndQIZaUcAYQ2w85MUMbvS1n/u+noRpIF/AeHDaVb6UOOZQj8pt4OCYQTDlckViabhxLXh7lPpjIoQLRtjzCkkJiNgGIppiUJZj3txXNTBuuzTDyu+e7aKzUTidw7AiCFGa632kYJYyChf/85OHaNc8KRZmk0W08VYRDXrsq3YaVNKdF5yhRJWksJmfbEAM0CYOcR/ZX4UHUjgpE2skA1IfRjcQUpgHqMPzQXHEi4kJmlcsagwbPa5DJz1CqKa3a3W+TPCPHlDcHMWjrG0eqe+AKxX2em6E9DKNlCbjoLoxeAoZg+cXSpR0WEnI8MtWA6/vSRzidTEfOd6u4NwVJI+TFLOQzKiCnqm5Ap0/RDJNY5TuKQkdOfFqeFneaQEERCY1uzaY2/gP1bmPNKkvdXAmBqpbBshrxLHO1WZ/UjRKLylpAOkX7DzmlDX79EsLsa08W173bo2p4xBew47FeeuA38rHzt+R7bypB/tKF5gpcbRnswA4K84bPB7yQM7dRZnm7pomMsr77pgeaZjX6xif8KUGFE/U//juXXWYrngt4fuIzhBaFdkFHjMg1gDnaHjZ77mt8FW9PYAYLr7aMcUO/Pe8RXjb6Mgi5UxqydRGYoJP2nvPeQS39AaIsJk4RnlK1KCCX0nyMgMi+96xlTnbYm0NDNcZNT463Hc5WK0yrt0S9F7jQFCFXJrMvtFrW+n8av/63iH61kPsvtsTT5POyNYKBsiQIzjmKwiK9RGVWNeUU8QZdBPKa/
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?y8abW5JFN5K8BsUZDbpyHZs33YFf23FpLH7eqHjYGcmt+7VmWR6sTxQOaWM8?=
- =?us-ascii?Q?2Ui35jbwxqPAoYmDHKkEQM0csNC+di6nwCEuGg7AgX2+sEKW4YL4wFL6nbss?=
- =?us-ascii?Q?IlDDqBEQZNSsb9ixaGDP1kzGuyN+V8V/4iKtReftX/VweLRG06GzrkbwnMh2?=
- =?us-ascii?Q?dHTSYuC3OwPm4HFLpk9y8+v0fjo1p/Ojuv8MsvhZnEY0h6jlNk39dtqzzd9t?=
- =?us-ascii?Q?FaeMaLfd4Kii1MTrjyuU9l0I6JuGRGvoMV7JM8ezB1Eke+RKHJ/1pqvAiGFO?=
- =?us-ascii?Q?4EeS8H1xydSkSQ92YgD2ktm1JmXapzP6X96x7lItUI0qqZEHwGff86/1Pel4?=
- =?us-ascii?Q?I9I9RRIBs7Krqdk3gnwt7Mm8qCioiJJJ3NLXBawTmHcvqSgrxhQjFHYG+WBM?=
- =?us-ascii?Q?h+dLi8h4MBCEAQqxVIE5+z/zm2fRKcwKlMXHRJfdLCDXEX4Egig55y/kyc7B?=
- =?us-ascii?Q?G3ZC8H+oYeGQYKffXUaQbGdtOIj6JXT2+C+fMD4cwcbw8+YC+oNQn7IlKwMB?=
- =?us-ascii?Q?Sn7RdSGtDrjQZ1puyGHNfSyRmrWaSFNj/ZZrOkgj+Yv3VCz/mVAM5X+es8EV?=
- =?us-ascii?Q?1QIobwibia/QTl5GuiS4nDHJzq04qmJ3RtfvQ3GUtbTNHLBI3yZl4Uo0rT9t?=
- =?us-ascii?Q?Wjwg6xbb48y1yhisWx/geGakosMdVmLS1EqGwcLh+C3Qq/3UhBZrNSdRUFT4?=
- =?us-ascii?Q?w5HU7Q01B3d7g0Qc/Ta3Os5BPqzTTbFhFK5zxOmpAcysHqXtpasXljKR9moQ?=
- =?us-ascii?Q?a+Fhl89R/m8SewtXaBKhEz1WdprUFuiykyvK3s10tKHtdVYXvm/kN4AeJTzz?=
- =?us-ascii?Q?MbnqdqknzwGbBCF8Fu/PnqUglv9Xwripc7h/VpMson/3hUEJDV0+B2bsumME?=
- =?us-ascii?Q?EZqddYLt+Cx2fwU49BDyd56YnqIHQ6ALzcoawhbbv0jjR82z+UKFHOLEMW92?=
- =?us-ascii?Q?ekN/4N+KHEbjUljrmvKlpBfyN3d7Qotb4QxTVaL3fIOW9/uvvxcSeWgb0eKP?=
- =?us-ascii?Q?j1aMOVF8yDx9aviv5DzbYDKfctEmiDIREZ7lKt0uO1k21iAfKtVouhv1lxmH?=
- =?us-ascii?Q?Y3L+sA0dk8OAwtQMUz8wn+XDjwj8ZKUJRCSvc+RlGvc0zTlb0BV8Szb/4TEC?=
- =?us-ascii?Q?glqzJraCVotm6aJBXsgAvzlfI1SY2Nda4JkGi20vr+WgMcg7/30LYRQQnwS5?=
- =?us-ascii?Q?2jteM+ZNSyq0l2GBTCNSvXd/UBN/ZKZ3TvXdMEbexJK6B7NvQ4SgrzeRE56u?=
- =?us-ascii?Q?xElKlGJVYpRg1QukiK17?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6be3b4d-25b8-4bec-86e8-08dc5ecf3f40
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2024 11:12:19.3810
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR20MB5266
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240417-msm8660-mmcc-v1-1-efc9e455268c@herrie.org>
+X-B4-Tracking: v=1; b=H4sIADqwH2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDE0Nz3dziXAszMwPd3NzkZF1Tw2TDFEMgPyU5SQmopaAoNS2zAmxcdGx
+ tLQBvBt+iXgAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Herman van Hazendonk <github.com@herrie.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1713352765; l=4482;
+ i=github.com@herrie.org; s=20240417; h=from:subject:message-id;
+ bh=HF/J5A6L7bIeZSe/Xg1eXt7FFE66voPUQgLSljZ6GuI=;
+ b=553DRHijzy8+1mjYTnwmiP91YFXUbh6exxnV8bomdpW9oxtWwR+iwMfRntnPSLwwWcmZfHK2I
+ kLtfh8KCneFA08+DfjFUiXrGgu//1jaajGbL1soCZXIksynoNxvdXfD
+X-Developer-Key: i=github.com@herrie.org; a=ed25519;
+ pk=YYxdq8fb5O9vhkW3n2dCH044FPZZO5718v/du7fRhFw=
+X-Scanned-By: ClueGetter at submission7.mail.transip.nl
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=transip-a; d=herrie.org; t=1713352765; h=from:subject:to:cc:date:
+ mime-version:content-type;
+ bh=k5MCBAt95sqb7Q/nGRpmG6zmr6zKDTh/dFbuXAAMDQA=;
+ b=fA+EkObPnXvgConbVJSRUiYMkyT58b96UxcXbxBCPRlMfHLCt9U1uEW9lUAI4vRLurE2Zw
+ rx6KRRtsrUJKjf5dIGL/saBfY0zdmrVssf8e0ZYqKIgu+Cmh3CIKwt37mWAJovnZJGBsCo
+ FQszS87vb9CZVpb5IUUpHG+JnwTic5K4F2H/iQmzLbgi2rkuf1RcUF8qNyDdWI/hQOxsmj
+ e6AUtL/FGvi6RU1vJK/fhiTBZ4FCQSnkksgJHEj+JqiC1GAFJyfNnrB+3d5KUVPuH8/lUe
+ AYsIipoY8+hJodX3LhNyZhXLM69vLEjDq7MJ7O+XgmJGwMMtDOEt0KmjKKHLAg==
+X-Report-Abuse-To: abuse@transip.nl
 
-On Tue, Apr 16, 2024 at 06:30:42AM GMT, Inochi Amaoto wrote:
-> On Mon, Apr 15, 2024 at 03:45:20PM +0200, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > On 32-bit architectures, the 64-bit division leads to a link failure:
-> > 
-> > arm-linux-gnueabi-ld: drivers/clk/sophgo/clk-cv18xx-pll.o: in function `fpll_calc_rate':
-> > clk-cv18xx-pll.c:(.text.fpll_calc_rate+0x26): undefined reference to `__aeabi_uldivmod'
-> > 
-> > This one is not called in a fast path, and there is already another div_u64()
-> > variant used in the same function, so convert it to div64_u64_rem().
-> > 
-> > Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> There is already a fix patch:
-> https://lore.kernel.org/all/IA1PR20MB4953CB4FCCDE82AB25F6880EBB0B2@IA1PR20MB4953.namprd20.prod.outlook.com/
+From: Linus Walleij <linus.walleij@linaro.org>
 
-Hi Arnd,
+The compatible binding for the MSM8660 MMCC already exist
+but the enumerator defines are missing. Add them.
 
-I have looked your patch again and think your patch is better
-than mine. So I decided to drop my patch and favor yours.
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Herman van Hazendonk <github.com@herrie.org>
+---
+ include/dt-bindings/clock/qcom,mmcc-msm8660.h | 75 +++++++++++++++++++++++++++
+ include/dt-bindings/reset/qcom,mmcc-msm8660.h | 53 +++++++++++++++++++
+ 2 files changed, 128 insertions(+)
 
-LGTM. And there are some necessary tags.
+diff --git a/include/dt-bindings/clock/qcom,mmcc-msm8660.h b/include/dt-bindings/clock/qcom,mmcc-msm8660.h
+new file mode 100644
+index 000000000000..2c7a6a3ae328
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,mmcc-msm8660.h
+@@ -0,0 +1,75 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_MSM_MMCC_8660_H
++#define _DT_BINDINGS_CLK_MSM_MMCC_8660_H
++
++#define GMEM_AXI_CLK		0
++#define IJPEG_AXI_CLK		1
++#define IMEM_AXI_CLK		2
++#define JPEGD_AXI_CLK		3
++#define MDP_AXI_CLK		4
++#define VCODEC_AXI_CLK		5
++#define VFE_AXI_CLK		6
++#define ROT_AXI_CLK		7
++#define VPE_AXI_CLK		8
++#define SMI_2X_AXI_CLK		9
++#define AMP_AHB_CLK		10
++#define CSI0_AHB_CLK		11
++#define CSI1_AHB_CLK		12
++#define DSI_M_AHB_CLK		13
++#define DSI_S_AHB_CLK		14
++#define GFX2D0_AHB_CLK		15
++#define GFX2D1_AHB_CLK		16
++#define GFX3D_AHB_CLK		17
++#define HDMI_M_AHB_CLK		18
++#define HDMI_S_AHB_CLK		19
++#define IJPEG_AHB_CLK		20
++#define IMEM_AHB_CLK		21
++#define JPEGD_AHB_CLK		22
++#define MDP_AHB_CLK		23
++#define ROT_AHB_CLK		24
++#define SMMU_AHB_CLK		25
++#define TV_ENC_AHB_CLK		26
++#define VCODEC_AHB_CLK		27
++#define VFE_AHB_CLK		28
++#define VPE_AHB_CLK		29
++#define GFX3D_SRC		30
++#define GFX3D_CLK		31
++#define MDP_SRC			32
++#define MDP_CLK			33
++#define MDP_VSYNC_SRC		34
++#define MDP_VSYNC_CLK		35
++#define MDP_PIXEL_SRC		36
++#define MDP_PIXEL_CLK		37
++#define MDP_LCDC_CLK		38
++#define ROT_SRC			39
++#define ROT_CLK			40
++#define CAM_SRC			41
++#define CAM_CLK			42
++#define CSI_SRC			43
++#define CSI0_CLK		44
++#define CSI1_CLK		45
++#define DSI_BYTE_SRC		46
++#define DSI_BYTE_CLK		47
++#define DSI_ESC_CLK		48
++#define TV_SRC			49
++#define TV_ENC_CLK		50
++#define TV_DAC_CLK		51
++#define MDP_TV_CLK		52
++#define HDMI_TV_CLK		53
++#define HDMI_APP_CLK		54
++#define VCODEC_SRC		55
++#define VCODEC_CLK		56
++#define VPE_SRC			57
++#define VPE_CLK			58
++#define VFE_SRC			59
++#define VFE_CLK			60
++#define CSI0_VFE_CLK		61
++#define CSI1_VFE_CLK		62
++#define PLL2			63
++#define PLL3			64
++
++#endif
+diff --git a/include/dt-bindings/reset/qcom,mmcc-msm8660.h b/include/dt-bindings/reset/qcom,mmcc-msm8660.h
+new file mode 100644
+index 000000000000..c12156b3b8ac
+--- /dev/null
++++ b/include/dt-bindings/reset/qcom,mmcc-msm8660.h
+@@ -0,0 +1,53 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_RESET_MSM_MMCC_8660_H
++#define _DT_BINDINGS_RESET_MSM_MMCC_8660_H
++
++#define IJPEG_AXI_RESET		0
++#define IMEM_AXI_RESET		1
++#define MDP_AXI_RESET		2
++#define VCODEC_AXI_RESET	3
++#define VFE_AXI_RESET		4
++#define ROT_AXI_RESET		5
++#define VPE_AXI_RESET		6
++#define AMP_AHB_RESET		7
++#define CSI0_AHB_RESET		8
++#define CSI1_AHB_RESET		9
++#define DSI_M_AHB_RESET		10
++#define DSI_S_AHB_RESET		11
++#define GFX2D0_AHB_RESET	12
++#define GFX2D1_AHB_RESET	13
++#define GFX3D_AHB_RESET		14
++#define HDMI_M_AHB_RESET	15
++#define HDMI_S_AHB_RESET	16
++#define IJPEG_AHB_RESET		17
++#define IMEM_AHB_RESET		18
++#define JPEGD_AHB_RESET		19
++#define MDP_AHB_RESET		20
++#define ROT_AHB_RESET		21
++#define TV_ENC_AHB_RESET	22
++#define VCODEC_AHB_RESET	23
++#define VFE_AHB_RESET		24
++#define VPE_AHB_RESET		25
++#define MDP_RESET		26
++#define MDP_VSYNC_RESET		27
++#define MDP_PIXEL_RESET		28
++#define ROT_RESET		29
++#define GFX3D_RESET		30
++#define CSI0_RESET		31
++#define CSI1_RESET		32
++#define DSI_BYTE_RESET		33
++#define TV_ENC_RESET		34
++#define MDP_TV_RESET		35
++#define HDMI_TV_RESET		36
++#define HDMI_APP_RESET		37
++#define VCODEC_RESET		38
++#define VPE_RESET		39
++#define VFE_RESET		40
++#define CSI0_VFE_RESET		41
++#define CSI1_VFE_RESET		42
++
++#endif
 
-Reviewed-by: Inochi Amaoto <inochiama@outlook.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202404122344.d5pb2N1I-lkp@intel.com/
-Closes: https://lore.kernel.org/oe-kbuild-all/202404140310.QEjZKtTN-lkp@intel.com/
+---
+base-commit: 96fca68c4fbf77a8185eb10f7557e23352732ea2
+change-id: 20240417-msm8660-mmcc-51c1d1866dcb
+
+Best regards,
+-- 
+Herman van Hazendonk <github.com@herrie.org>
+
