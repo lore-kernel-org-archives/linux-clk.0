@@ -1,60 +1,61 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C32516F84E
-	for <linux-clk@vger.kernel.org>; Thu, 18 Apr 2024 14:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE4516F8F7
+	for <linux-clk@vger.kernel.org>; Thu, 18 Apr 2024 14:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713449856; cv=none; b=nU96dUcqndZZSw7yiY4DnFqBYttSRJYlbdVeklcQlwJyu+NNJqClr1Nt3slYiqQoHIN96bVZo0yxnqPAobdpyxcyRo7KCAV+jgPNcWfKYzJMKr43ouaLaIeN55RgOK0yb7QF7WEQQLNqpY4B52aHf0yOREE9KSGgiaH/D8q4JaI=
+	t=1713449857; cv=none; b=FrcO9bk6eQ8Oebw6ucMuY1p/UiuURwiSJvEMoaeweCW0hY5WIeMUvrKGC0LCrKHpks16cvQAIqai4kfOsTE8q58bU2mPrjvdUVL7vKrSZyl0RdcPkRAv0c+lF1nXLIbhEuAl6spFOXBaqQVrHtDDGKR5Xp3v356wqycX0FINk0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713449856; c=relaxed/simple;
-	bh=ojxXgu752EUVlJd1wDMQRlXHtGQrZ5ZPRG8jJVphupw=;
+	s=arc-20240116; t=1713449857; c=relaxed/simple;
+	bh=woF6NgCy9sWp4jU9xhCym7WDVQPI/tzmO1lBDEzOVXQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=L4CavPkiQ5FIrct2MZvMe9xKAUjIodY5nTRAzYdYIAFrpriI2cPgCBm/rAG7JRDhBfQnorw7NRP7ssfSJzDGtmqBxTAws65nQtthkZ2RZ+u1hpvf0KefmRDaeMJNjS9me3BijEpip5jRoAF0AgEqpjTM3I4ZdCbfUD5l+p03a8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZIc618Qj; arc=none smtp.client-ip=209.85.221.54
+	 In-Reply-To:To:Cc; b=DHr7FZyS+7Piucg7AdkR/5MYtClD+vP2Qtsfzbi/Ofv0CTbVYI5TRSfwQhuu2qb/YgzHJsj7h8j+bmXbDzEAe0lmd696A0yFnbbvAVLTGQxCFjJbf51NZFw+ZjvCRYBjf3yBzTT13rbykWWrivjBzhpP7qyKXmygzpLn1BQCRtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lqZPH6Zt; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZIc618Qj"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-343b92e54f5so703833f8f.0
-        for <linux-clk@vger.kernel.org>; Thu, 18 Apr 2024 07:17:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lqZPH6Zt"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-418c0d83e61so9983335e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 18 Apr 2024 07:17:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1713449853; x=1714054653; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1713449854; x=1714054654; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nGhN4tMDnWFook0es8LuAXt5ZA9TrdmyBXYcCQvtS3Y=;
-        b=ZIc618Qj+9s8OXwOtCbBZc4p1YQUCHZUvL76gAJftzWkQMJ6zJpmYs1cZrmH698A23
-         elqaCeH3GOORcygyYzW9wSkf7F3nSP/vAtcPVM/t4yY6ZmI9tFostCiXDyABPUcv+p+X
-         rZT8AzUNsFRf3Hlb0zguJhLH9MhoYhmM/XffnRbPJTXPy+hhSB+0w84OTU0UwawlkAOF
-         ko1wGN8nLMOHZExD4wL6r5DClc/S4fhrju9SeCd2pikBvKg17f8kQk5gh0aCW8eyqsCz
-         0c5SK4tKR/rT2/5D0WLgSPpIO3z52s8xq/Zck8AItluIc2M7qNnBGo/YPtiMnUOac5JT
-         PEtw==
+        bh=6ngpZb20B2h9Qc9IbX5I/ZiczUNGoVVnils8jWsBLdA=;
+        b=lqZPH6Zt0V7UtpZI96qZ9P+1Ts1ZcrSUa6t06K4Bo6TPDdGfQHnE1Z182f47P2riSm
+         MjnDhs7nkuycOailAu64J1dHiQOhvqKWZS9UAXyCHQ4cmOC+RctW1ek51LMtnbNWNqYS
+         rg7IxKXDBAUWcGr5N33PHV1P9MuPumurbuy8OQOts33dXzF0Do2pVonnDVIJe57eb2F7
+         DvTZ+6tjQGviUlY+9AeiNMkpbwx76Ne6Rj/svkJzKs8T6Y/yzS9hrSlbZytAJZ6Xd/1M
+         DBVPoE/HoFjGUuMc3BLHPT2OouWaaUIN8l5h6zeB5vs5xvT7IuDUwavWG9YwvsblaFol
+         0h9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713449853; x=1714054653;
+        d=1e100.net; s=20230601; t=1713449854; x=1714054654;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nGhN4tMDnWFook0es8LuAXt5ZA9TrdmyBXYcCQvtS3Y=;
-        b=njqz3PY7mv7yaFywcOLxtJhtyobcIYQUQHSX8tBYBkQxLTpjreps3kkJAItRnlZmub
-         sTUB2QpUUPKV4PC7IZu2ysOB1EUn6P9PkKj6PRckkWlubR1ZRbmybxjlfSwPALuj8+zY
-         janzL8KkzSFenG4OOwpmChffKzOsyXtElWQvDd6hCNWFiCbVew7yP6gAfsyxB3DCObsw
-         sQuuaM/x02BDebhcKvPdHLi7K6LPlCVThmlUqYQsr8f8cRQQ2CjfSa9FkO9cnT7r0azz
-         dBPJJovS5RqTUC7EyaoPwgDFBbcth0EZeirCYPwtLgBEJZeojtbhGbTKl5UAi1BaXGtR
-         ybGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTbUJh9CJ4wA5aOm+GJwi/jkVTEmKLhVa6xc7dPMYyt77kcZjCELlaS5/tvi1ttVHaP3Mb25aIJeAjIf1MUIVrIDrJ/LR2Y9vf
-X-Gm-Message-State: AOJu0Ywi76N4CW6Q3znnVjQdU8q/rk+4OZZVMYaPQNnfke3E+3S3HY/f
-	PKb2h7yIQeXYUZiQclKOfHjmLvpvYGetfc1mZ80V+7HTwDAz0fgjU6ndEYS//JU=
-X-Google-Smtp-Source: AGHT+IF6b8Hyds+Df+n8d6GSZC2InYLslqfLyS56mvk1H/o/i0jSb1a/hK0ROLJ6MHV5vWZ7T6O6RA==
-X-Received: by 2002:a05:6000:bc7:b0:343:d06e:51cc with SMTP id dm7-20020a0560000bc700b00343d06e51ccmr1672638wrb.66.1713449852974;
-        Thu, 18 Apr 2024 07:17:32 -0700 (PDT)
+        bh=6ngpZb20B2h9Qc9IbX5I/ZiczUNGoVVnils8jWsBLdA=;
+        b=bfir7f/g6M0+3pXK3yQckRygTuGwzV6cTj29Z+4dhA7NeZJUdY3oIsNZNRlWnBlnN/
+         VoR4GgLfykH4r9ryRQ0VK9db42m24B5gGDCWZKUSz0aSuxBNfGu+d8r9gDxOfr7OTGFV
+         NslkMhzl1Vgi2fqR9MCgdnUD1NzwHCqZcFmqbQT7NyUrpdMtagMx5TTdJw9k4fsfVbmv
+         u0uZbAdo+xkrO+ZmLTJxNVLErzLO54XC7qx8Arju8UMW3aK6OzC5Wp36xepHSDY3MzdU
+         yyrl3lL9ZFEpTDe1G6WjgRTPOvP/vdnjxZV9S4QnaKa1lZWRd1jHMFKS+vcdct3CoZ6i
+         hwzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVu7A//45qDjK/UBnrn/sPhktMsDer+sjuPmhZLfnB4S3U+ztptsI280E6jzwA4QUoK06g44+5JV8FWbWMxgPFYs9u5iA0M9j2V
+X-Gm-Message-State: AOJu0YzKQGya6lZa8R+CPsw0rgTJC8VbQ2Q04Y3Ui8VGt8K2sr5wSV1z
+	ZwB4YjUbMM1WwLXIc3RARNzHDgKGu5d2Q8IDN+FIyBVk4mQGE8DkwjdC/7SBMo4=
+X-Google-Smtp-Source: AGHT+IGNk7+q98Dt50c94htj2Yax4/KnYeuA1Mwztlc7Yw/kKE9BWFSk6X7OkJkTV8uxkSAExv++dg==
+X-Received: by 2002:a05:600c:5254:b0:418:fb6f:5f3d with SMTP id fc20-20020a05600c525400b00418fb6f5f3dmr290856wmb.17.1713449854525;
+        Thu, 18 Apr 2024 07:17:34 -0700 (PDT)
 Received: from [127.0.1.1] ([93.5.22.158])
-        by smtp.googlemail.com with ESMTPSA id i9-20020a05600c354900b004180c6a26b4sm6267510wmq.1.2024.04.18.07.17.31
+        by smtp.googlemail.com with ESMTPSA id i9-20020a05600c354900b004180c6a26b4sm6267510wmq.1.2024.04.18.07.17.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Apr 2024 07:17:32 -0700 (PDT)
-From: amergnat@baylibre.com
-Date: Thu, 18 Apr 2024 16:17:02 +0200
-Subject: [PATCH v3 14/17] drm/mediatek: add MT8365 SoC support
+        Thu, 18 Apr 2024 07:17:34 -0700 (PDT)
+From: Alexandre Mergnat <amergnat@baylibre.com>
+Date: Thu, 18 Apr 2024 16:17:03 +0200
+Subject: [PATCH v3 15/17] arm64: defconfig: enable display connector
+ support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,7 +64,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231023-display-support-v3-14-53388f3ed34b@baylibre.com>
+Message-Id: <20231023-display-support-v3-15-53388f3ed34b@baylibre.com>
 References: <20231023-display-support-v3-0-53388f3ed34b@baylibre.com>
 In-Reply-To: <20231023-display-support-v3-0-53388f3ed34b@baylibre.com>
 To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
@@ -87,102 +88,41 @@ Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, 
  linux-clk@vger.kernel.org, Alexandre Mergnat <amergnat@baylibre.com>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2801; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=r/rf6DH3u4/RIc/AgVSnOwA+TJLknIEXoBhT9allVNg=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBmIStjypxHC1AF4L3x0vY6H1KMKdkKlh+jAMEpcQ+v
- Z2my7l6JAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZiErYwAKCRArRkmdfjHURauoEA
- CNdHASvLccHSGQBaHJPhaHKidU6MEYpyOyYukACG9Xl+CwO9iEmJaksqelQGe6Ma4DNNKYtKkfq5rP
- EiITw18CFONG9zkfEjO66VywxOu6sqVlLDDINpjOFSwPYfLuMLARTlcuDucts21j5aJTNLkAMGMUpd
- dy0gI53b6IryirzeYxRt4oMF1hscMI3ndCJoVWOr0Z9vlsyAmwPJHpsUSrlfCyABkhy3qAntmg7U7I
- Wo70cMcWQdW29iapeE1i2aQ9TGlhXnQnwTl0o8C6T/TrnvRCvNYEymzCwTVk4S6uIcIqklr+Yd9mBF
- bHAG0f+VCz8hWMjchFasbVlJQUfvHQlEwAVYCHl0Ons5U/hd4knfKY8ygtCzGoIwHKcMR6NcUu4sEA
- EO53KI+/V4rdp21R+IouIAS/+0h/3vP3CSw9Hsf4XbUJfbC7wdEJDgfQ8JINXJCDyTJx97yaED/Ekm
- RbY6i6UPy6XJVtO1YfLK+SfoVuGnVAvLXUCn7EeefvcX1M0Z/FSs1peMpBnOv3pTlnv7dmR03KrA77
- N7Q+bq8PRbbKgIb+SUzq6kIsFDDqSvzrqQ88Jc/O2/LNaLTIjqFYRup6Z2hY2+tITUHXmet/yppM9G
- ZnVOp4B8GPlaYGX7no69f5+YFPt/zLsiDH9ry0t20It8KZJz0RbfWffcMJjQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=693; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=woF6NgCy9sWp4jU9xhCym7WDVQPI/tzmO1lBDEzOVXQ=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBmIStjXZeg5Jh2Is/gAHWoRmg5aIyMiEXbGdEHozO1
+ 0cFGgByJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZiErYwAKCRArRkmdfjHUReAhD/
+ 9Yax8im2q4PngGvAwi5mmyFvPkrrQweqeFZGttybB7sZdfiirXSiQhiPajWkHJ5qYP3CaLIdpsBbwO
+ Rly04rqoR9UjnSnssubHEZRNV8FDtUpWG2kx2KI8YtrPQXLedyoviZ5yXRMhrIo4YQKztKVAM1anaN
+ +4z/FdycM/OVy+qFYOtxIBm5OZVvmTBFcaobZ7N/b8dnOVarjKVjWcJMqc5DvBg82J9pfb7i5a32+j
+ qkq7SMbQJPWRhsJJ1p+PmDZc34BROzx6SdrqIaQTJnDjE3jg9ejPrn72qGRpeCHd5u+WRMmbRlWe34
+ QjAIUX44315fL/fLIduyc01lfQV48zhoOFVjpUGN219Rl/nbxQdtQizyG9s3C52+sBnHtBtCKGtM5p
+ KeRTXx1RnMx3zK5gkElzJRvnWP3BpiS7jkdcymFux9TZriFYx9saLHrclsMJIMoAgdDwNvi+2YDgbv
+ ZFd1zRXXRB3wFltaeIYmv61ET5XbsgRNVlB3erg09SjegSD5W4C+dUv8X7DTr/JNQYk5xB8c0r5kLA
+ S1ZmTU+T7QLg2br8fX3i9CU7FZDBm4vI+C/FubNpkg75I5aXe2dOy+RetsN0udQ96a/LBJPDmKFksS
+ ZnLWgsJyU/bn4dG+J0ziy4jI04KodR1dokrbqRImv1aZvrEx8euPdeTU6aiQ==
 X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
  fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 
-From: Fabien Parent <fparent@baylibre.com>
+Enable this feature for the i350-evk HDMI connector support.
 
-Add DRM support for MT8365 SoC.
-
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index 74832c213092..427b601309c4 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -230,6 +230,22 @@ static const unsigned int mt8195_mtk_ddp_ext[] = {
- 	DDP_COMPONENT_DP_INTF1,
- };
- 
-+static const unsigned int mt8365_mtk_ddp_main[] = {
-+	DDP_COMPONENT_OVL0,
-+	DDP_COMPONENT_RDMA0,
-+	DDP_COMPONENT_COLOR0,
-+	DDP_COMPONENT_CCORR,
-+	DDP_COMPONENT_AAL0,
-+	DDP_COMPONENT_GAMMA,
-+	DDP_COMPONENT_DITHER0,
-+	DDP_COMPONENT_DSI0,
-+};
-+
-+static const unsigned int mt8365_mtk_ddp_ext[] = {
-+	DDP_COMPONENT_RDMA1,
-+	DDP_COMPONENT_DPI0,
-+};
-+
- static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
- 	.main_path = mt2701_mtk_ddp_main,
- 	.main_len = ARRAY_SIZE(mt2701_mtk_ddp_main),
-@@ -317,6 +333,14 @@ static const struct mtk_mmsys_driver_data mt8195_vdosys1_driver_data = {
- 	.mmsys_dev_num = 2,
- };
- 
-+static const struct mtk_mmsys_driver_data mt8365_mmsys_driver_data = {
-+	.main_path = mt8365_mtk_ddp_main,
-+	.main_len = ARRAY_SIZE(mt8365_mtk_ddp_main),
-+	.ext_path = mt8365_mtk_ddp_ext,
-+	.ext_len = ARRAY_SIZE(mt8365_mtk_ddp_ext),
-+	.mmsys_dev_num = 1,
-+};
-+
- static const struct of_device_id mtk_drm_of_ids[] = {
- 	{ .compatible = "mediatek,mt2701-mmsys",
- 	  .data = &mt2701_mmsys_driver_data},
-@@ -344,6 +368,8 @@ static const struct of_device_id mtk_drm_of_ids[] = {
- 	  .data = &mt8195_vdosys0_driver_data},
- 	{ .compatible = "mediatek,mt8195-vdosys1",
- 	  .data = &mt8195_vdosys1_driver_data},
-+	{ .compatible = "mediatek,mt8365-mmsys",
-+	  .data = &mt8365_mmsys_driver_data},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, mtk_drm_of_ids);
-@@ -729,6 +755,8 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
- 	  .data = (void *)MTK_DISP_MUTEX },
- 	{ .compatible = "mediatek,mt8195-disp-mutex",
- 	  .data = (void *)MTK_DISP_MUTEX },
-+	{ .compatible = "mediatek,mt8365-disp-mutex",
-+	  .data = (void *)MTK_DISP_MUTEX },
- 	{ .compatible = "mediatek,mt8173-disp-od",
- 	  .data = (void *)MTK_DISP_OD },
- 	{ .compatible = "mediatek,mt2701-disp-ovl",
-@@ -793,6 +821,8 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
- 	  .data = (void *)MTK_DSI },
- 	{ .compatible = "mediatek,mt8188-dsi",
- 	  .data = (void *)MTK_DSI },
-+	{ .compatible = "mediatek,mt8365-dpi",
-+	  .data = (void *)MTK_DPI },
- 	{ }
- };
- 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index fce98a150014..1df337882835 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -872,6 +872,7 @@ CONFIG_DRM_PANEL_STARTEK_KD070FHFID015=m
+ CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA=m
+ CONFIG_DRM_PANEL_VISIONOX_VTDR6130=m
+ CONFIG_DRM_FSL_LDB=m
++CONFIG_DRM_DISPLAY_CONNECTOR=m
+ CONFIG_DRM_LONTIUM_LT8912B=m
+ CONFIG_DRM_LONTIUM_LT9611=m
+ CONFIG_DRM_LONTIUM_LT9611UXC=m
 
 -- 
 2.25.1
