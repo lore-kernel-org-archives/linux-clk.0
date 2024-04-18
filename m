@@ -1,48 +1,60 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B5F127B57;
-	Thu, 18 Apr 2024 11:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABEE15E20B
+	for <linux-clk@vger.kernel.org>; Thu, 18 Apr 2024 11:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713439046; cv=none; b=IvncbntXhpPH9X9IK+YMixpbyWJZpom+iw0g/k7dHfM573Fx1ouuKTzaBgmWIiXCL75ZFmQHStk4R2kKiKTm4u6ax3l5DQF5WO3xzXfCynlNeL9S33WnPUnfbLQRd6HAzHptGT0aWECLIcEtXIBhGFt7QUJjyDOCZoII1ugpZKU=
+	t=1713440005; cv=none; b=gGqUJa5qlsLei2A9sIc9PjeqK0fRdKhheayRfSNBz4DNlfHNnyRVMj4pTnDU8r6LiXBKng1HNWctcs71vjqSCB9JD5ZLBgU75FoYXZb8TYWj8WRBGf0OgeDwX125EsXKNM4vQMRS9QBs1K5uSjLvRHrH+Kn4cpR4G71bNxGargI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713439046; c=relaxed/simple;
-	bh=JlnMP29BA9ckO7o/JfUh/HWvtUqb2lGygKn6TfxaAaQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=C2kDSGIiTTnGE5Nwk+4f77TjzfSqo6500SfHRLPGR+l9Qk/fiII79X84wC0sDiWDchsmkSRG76dd+E0xZE8B5HGq6sJ6URvQLTaPxPvk0jSCIuS2Gl5LWJyZMKS1gJSOsu+fSg5EmeALbbQPaAe7EMceKXzd528az09bBzykwF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D9EgvZPf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1713440005; c=relaxed/simple;
+	bh=/rHfCjIVYXQVsvXGB8IxXfG+StoG4NwDe0rmylo5Qjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VP3Fvl07bDC4zaeqMsPvlI5VUwxNRqJa146sBF3jKudXIQBM2cw3SRaDt3TMMdRmxQElKnGR0rK7FhYnEWB0YuLD2K7Nrn9IdnqVucy8axCNAGAp7QAueLiK+gWkxg2m/wFpYTc8SIr1R8D6vyisLTicOwq3drUEh4jVS9PeYqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oSs2A/pj; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D9EgvZPf"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 43I1QpJn019526;
-	Thu, 18 Apr 2024 11:17:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=9m6uuRLNE/WkTR41JGciqY2IZosPbNatEn7yCqgC8Mc=; b=D9
-	EgvZPf9D6LBghPbjKrYenfb60/43H17SiTMy3viksLulLAQrCgS1PF4QTHCIZ8rJ
-	6nQuV93lc7IIPf20HsIXL5zl/TNBm0LQHLW/kEV6PIIgvLU8aa9ikeiXXcm+KEG4
-	cxW8VGnaNT6fIoqBHwwPSnlli9uzUcXRZkgr/UJj2/i1tyddIE6mpxKOEy+1hrIj
-	J7y7V1sel1gk7IRPH1YItZHjr6NDo5dU/i4DEsDybqBkATdZtJHAmGn2mRK0auj2
-	PRjUd7JuatAXFSzeDAUXW7+cjL+mRBu9vZihbXaOoLEVTUuWIjVQelYR38KeD0bb
-	f4VajdrnblQ+tjizL5AA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xjr92hk8x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Apr 2024 11:17:21 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43IBHKVd012485
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Apr 2024 11:17:20 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 18 Apr
- 2024 04:17:14 -0700
-Message-ID: <f8aa5b5e-b7c4-4ef4-ac45-de04c84b3fa4@quicinc.com>
-Date: Thu, 18 Apr 2024 16:47:01 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oSs2A/pj"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-56e136cbcecso1071011a12.3
+        for <linux-clk@vger.kernel.org>; Thu, 18 Apr 2024 04:33:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713440002; x=1714044802; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=b9lgOdCdIOmICWwhRzdOoCn2EAweW38pbbCbx3C0dQk=;
+        b=oSs2A/pjkYgDkyeDPExMdwe0B1bAdjO+o5gb5wZ/3JTWCDp/CJJNW+LKWtQaNXlzGg
+         IzCBih18iifxmMAigngQJnAmSmS8J7wjR2/0IF3BvunGkvQTuMWJtZ6HOS+qq+Y+39y2
+         4FHkj3wiM2UJWUP9J1wHSmtoJZw9c36WV+7HlQmaYANz6cPdQRCKbBmJC/8ELEGy1SMB
+         EC3gF6e0J6ZtDnnLysjdU0UstqDbirjNpuqtsgBca4BazdjRYEdfGIEO6TIXiTJ4xACC
+         cFrGWiH5uK/V213GNMj9xbp2Qq9Py8FM2xd3UQoYPGhxWKD0DqecAgO8HrZXv5rkbd+u
+         diXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713440002; x=1714044802;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b9lgOdCdIOmICWwhRzdOoCn2EAweW38pbbCbx3C0dQk=;
+        b=cveNhHdPx9Xcru8aPPTfWxitGVd6FV38KFsh+NrRO8pbZ1C0efHXqYvzz/olMBMg19
+         3gDxtZtQOljhbBxcNyqiS6M2xrdOfwZMNkrZnKQTVhlPLijzvdTReXHfcsldIiHtsF79
+         OPeQIBSHtsAFrqw6ZzdJzY505sXOlweefsyFDn5CecQW8jmYuRDBS8XEIRWHFlzSjVDt
+         812a3bp4ZI65nK1Dz7tRbwB00mlfzEQDlSU7T9qwu9IhIW39ScJDtqLI2zu5AjuBFpEi
+         SALyzeOki+vtd00FLFZDcW0cj0ceQ1NmwvwRwadX/oo0bYUe9Qd3UTNpHXS+nliFA8pW
+         f8qw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5HLb0XodGtjdF4Nl5M6JfJDhI9fu/0baBfUaM+xWc3tFZbYu4Bb3mSGwH42p3oU6InOgnaofFR8HtwHilmIP4MkAwfbjQI+Dg
+X-Gm-Message-State: AOJu0Yw6pySeAoATLEdlFtqGwlNDSNc008DMcNKIRir8FrvCHr9GZhZ9
+	/3B5UE/wbtxKIKVe4JE3d/NY0cpK/tVC/Z8TTJIPq3r4Rm2ezUm0cli9H/lHqDw=
+X-Google-Smtp-Source: AGHT+IHKiVh6Nj87GB2UGWDfWcSeS1Qxmuucy3GshEAHNragzY3My+7Qk0/Is0MtMJzE3QOxcEZd4Q==
+X-Received: by 2002:a50:cd04:0:b0:56d:f7ce:e879 with SMTP id z4-20020a50cd04000000b0056df7cee879mr1750351edi.37.1713440002011;
+        Thu, 18 Apr 2024 04:33:22 -0700 (PDT)
+Received: from [192.168.45.55] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
+        by smtp.gmail.com with ESMTPSA id eh11-20020a0564020f8b00b00571be394478sm501245edb.69.2024.04.18.04.33.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Apr 2024 04:33:21 -0700 (PDT)
+Message-ID: <e5c60b6f-3cab-4265-87fc-7eeab03795ec@linaro.org>
+Date: Thu, 18 Apr 2024 13:33:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,187 +62,73 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 RESEND 6/6] arm64: dts: qcom: sm8650: Add video and
- camera clock controllers
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>
-References: <20240321092529.13362-1-quic_jkona@quicinc.com>
- <20240321092529.13362-7-quic_jkona@quicinc.com>
- <CAA8EJppHGS+W-aiXvJ2cE=jCbua8Y0Q+zv_QTs+C9V5+Y1vuZg@mail.gmail.com>
- <008d574f-9c9e-48c6-b64e-89fb469cbde4@quicinc.com>
- <b3464321-0c52-4c41-9198-e9e7b16aa419@quicinc.com>
- <CAA8EJpqDwCVAjDphnC-HdfseMJ-xd8VVxb5+9UcGEcKLcn-heg@mail.gmail.com>
- <fba2474e-31a6-4fef-acf9-7069933584c8@quicinc.com>
- <CAA8EJprfaALkQe-wUrBow6B1A66ro0AoVpfnQJLXgqFmL8isNQ@mail.gmail.com>
- <8a5a3cf8-5b4f-487f-ad91-00499509f8ec@quicinc.com>
- <CAA8EJpoW8MQQ3OPfOVYRJtgsn1JgKd5Ew7vqgWx3xWE-xJ=R-g@mail.gmail.com>
- <03f8d2ee-2467-48aa-9b76-06eb13202b8c@quicinc.com>
- <CAA8EJpqL_bkyoUKkY_nr7PvbvC-1dVKr9kNQKsAU-2PPO9717g@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: dispcc-x1e80100: Drop the reconfiguring of
+ PLL0 on probe
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240418-x1e80100-dispcc-drop-pll0-reconfigure-v1-1-453e4e70e940@linaro.org>
 Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <CAA8EJpqL_bkyoUKkY_nr7PvbvC-1dVKr9kNQKsAU-2PPO9717g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240418-x1e80100-dispcc-drop-pll0-reconfigure-v1-1-453e4e70e940@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7eZP1_B5DiwfOIFvaRmCvnGQJtAce5FB
-X-Proofpoint-ORIG-GUID: 7eZP1_B5DiwfOIFvaRmCvnGQJtAce5FB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-18_09,2024-04-17_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 suspectscore=0 bulkscore=0
- phishscore=0 impostorscore=0 spamscore=0 clxscore=1011 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404180080
 
+On 18.04.2024 12:51 PM, Abel Vesa wrote:
+> Currently, PLL0 is configured by the bootloader is the parent of the
+> mdp_clk_src. Reconfiguring it on probe leaves the PLL0 in "stand-by"
+> state (unlocked), which will trigger RCG child clocks to not update
+> their config,
 
+Sounds like this is the problem that should be fixed instead.
 
-On 4/5/2024 1:14 PM, Dmitry Baryshkov wrote:
-> On Fri, 5 Apr 2024 at 09:01, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->>
->>
->>
->> On 4/4/2024 9:35 PM, Dmitry Baryshkov wrote:
->>> On Thu, 4 Apr 2024 at 13:06, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->>>>
->>>>
->>>>
->>>> On 4/4/2024 11:00 AM, Dmitry Baryshkov wrote:
->>>>> On Thu, 4 Apr 2024 at 08:13, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 4/3/2024 9:24 PM, Dmitry Baryshkov wrote:
->>>>>>> On Wed, 3 Apr 2024 at 10:16, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On 3/25/2024 11:38 AM, Jagadeesh Kona wrote:
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> On 3/21/2024 6:43 PM, Dmitry Baryshkov wrote:
->>>>>>>>>> On Thu, 21 Mar 2024 at 11:27, Jagadeesh Kona <quic_jkona@quicinc.com>
->>>>>>>>>> wrote:
->>>>>>>>>>>
->>>>>>>>>>> Add device nodes for video and camera clock controllers on Qualcomm
->>>>>>>>>>> SM8650 platform.
->>>>>>>>>>>
->>>>>>>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>>>>>>>>> ---
->>>>>>>>>>>       arch/arm64/boot/dts/qcom/sm8650.dtsi | 28 ++++++++++++++++++++++++++++
->>>>>>>>>>>       1 file changed, 28 insertions(+)
->>>>>>>>>>>
->>>>>>>>>>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>>>>>>>>>> b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>>>>>>>>>> index 32c0a7b9aded..d862aa6be824 100644
->>>>>>>>>>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>>>>>>>>>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>>>>>>>>>> @@ -4,6 +4,8 @@
->>>>>>>>>>>        */
->>>>>>>>>>>
->>>>>>>>>>>       #include <dt-bindings/clock/qcom,rpmh.h>
->>>>>>>>>>> +#include <dt-bindings/clock/qcom,sm8450-videocc.h>
->>>>>>>>>>> +#include <dt-bindings/clock/qcom,sm8650-camcc.h>
->>>>>>>>>>>       #include <dt-bindings/clock/qcom,sm8650-dispcc.h>
->>>>>>>>>>>       #include <dt-bindings/clock/qcom,sm8650-gcc.h>
->>>>>>>>>>>       #include <dt-bindings/clock/qcom,sm8650-gpucc.h>
->>>>>>>>>>> @@ -3110,6 +3112,32 @@ opp-202000000 {
->>>>>>>>>>>                              };
->>>>>>>>>>>                      };
->>>>>>>>>>>
->>>>>>>>>>> +               videocc: clock-controller@aaf0000 {
->>>>>>>>>>> +                       compatible = "qcom,sm8650-videocc";
->>>>>>>>>>> +                       reg = <0 0x0aaf0000 0 0x10000>;
->>>>>>>>>>> +                       clocks = <&bi_tcxo_div2>,
->>>>>>>>>>> +                                <&gcc GCC_VIDEO_AHB_CLK>;
->>>>>>>>>>> +                       power-domains = <&rpmhpd RPMHPD_MMCX>;
->>>>>>>>>>> +                       required-opps = <&rpmhpd_opp_low_svs>;
->>>>>>>>>>
->>>>>>>>>> The required-opps should no longer be necessary.
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> Sure, will check and remove this if not required.
->>>>>>>>
->>>>>>>>
->>>>>>>> I checked further on this and without required-opps, if there is no vote
->>>>>>>> on the power-domain & its peer from any other consumers, when runtime
->>>>>>>> get is called on device, it enables the power domain just at the minimum
->>>>>>>> non-zero level. But in some cases, the minimum non-zero level of
->>>>>>>> power-domain could be just retention and is not sufficient for clock
->>>>>>>> controller to operate, hence required-opps property is needed to specify
->>>>>>>> the minimum level required on power-domain for this clock controller.
->>>>>>>
->>>>>>> In which cases? If it ends up with the retention vote, it is a bug
->>>>>>> which must be fixed.
->>>>>>>
->>>>>>
->>>>>> The minimum non-zero level(configured from bootloaders) of MMCX is
->>>>>> retention on few chipsets but it can vary across the chipsets. Hence to
->>>>>> be on safer side from our end, it is good to have required-opps in DT to
->>>>>> specify the minimum level required for this clock controller.
->>>>>
->>>>> We are discussing sm8650, not some abstract chipset. Does it list
->>>>> retention or low_svs as a minimal level for MMCX?
->>>>>
->>>>
->>>> Actually, the minimum level for MMCX is external to the clock
->>>> controllers.
->>>
->>> Yes, it comes from cmd-db
->>>
->>>>    But the clock controller requires MMCX to be atleast at
->>>> lowsvs for it to be functional.
->>>
->>> Correct
->>>
->>>> Hence we need to keep required-opps to
->>>> ensure the same without relying on the actual minimum level for MMCX.
->>>
->>> And this is not correct. There is no need for the DT to be redundant.
->>> I plan to send patches removing the existing required-opps when they
->>> are not required.
->>>
-
-In my opinion, it is better not to remove the required-opps for the 
-existing targets atleast since it may lead to some random clock issues 
-if cmd-db minimum level is lower than the HW recommended voltage level 
-clock controller requires.
-
->> I agree this is not required if cmd-db minimum level is already at
->> lowsvs. But since MMCX running at lowsvs is a mandatory requirement for
->> clock controller to operate, I believe it is good to have required-opps
->> to ensure we meet this requirement in all cases, rather than relying on
->> the cmd-db minimum level which we have no control over.
+ which then breaks eDP on all x1e80100 boards. So rely
+> on the bootloader for now. Drop the config values as well. Also add
+> a comment to explain why the PLL0 is not configured alongside PLL1.
 > 
-> IIf we follow this logic, we should throw cmd-db away and hardcode all
-> those values in the RPMh drivers.
-> 
-> We have cmd-db. If it is correct, there is no need to duplicate it. If
-> it is incorrect, it is a bug that should be fixed or worked around.
-> 
+> Fixes: ee3f0739035f ("clk: qcom: Add dispcc clock driver for x1e80100")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
 
-Sure will check and remove required-opps property for SM8650.
+This works, because you have (at least) partially configured hardware, but
+we shouldn't assume this to be the case.
 
-Thanks,
-Jagadeesh
-
+Konrad
