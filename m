@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0F5174EC0;
-	Thu, 18 Apr 2024 17:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6ADA16191A;
+	Thu, 18 Apr 2024 17:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713461486; cv=none; b=LVQWipSvGMGSeqM8g5yenyT+TZMSHs4TK8zICPSBA9/lzwVdSj+N11RdUanA38DtqzYuxNaE643LY2j6NyM88A/t040zV9hGl0Gk3vO9WTsRZUOo2PZpEK9/1ivUO6KSM4MUWUCdwv+ZMS7xapHMvubriguPxkuLB2SZDaKpxzk=
+	t=1713461950; cv=none; b=GD2DDp2flaEmTXZeTB+AzKPMeAGkMHMFS6DprLacrFKTTHFxpDTogIoS5NEdVkdFxKO5/qElKv9ZLABYYNu/9itLBdnaN61z6RspxpbbCqpcANpc4Zq9zl18/2Vzw/mvk7jsAAbWXPOV00cw/qIGHTPL8jC0bZh8+xBbGsLiV5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713461486; c=relaxed/simple;
-	bh=mFPrCvLrxIQNqZjqRYLBKfQaqDsb+b6XIi+X1/IuX4U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kahSpW+RwymD4Sw2jZiBF6c1x0A4i44B/YUUwtPyUKyvSiBHqnZvjypx63w4v2/q3cn5uQu906BzfNWA4Tj/wc801DzcwnajAPZNdsoI4jkUXKF6cQE886a8PKqWpIXXCIO7VnZhwXw98I7O6SM+NP2/1uZCqvvBvaWZ/K+DAJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYbkzIfb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713461950; c=relaxed/simple;
+	bh=FAHI99o3/qIUZzGqglZBZTI/az3nq3RPVxtdG60ysmk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DvaKkOa+mHM5ZHk5BY3rfOcUI8s8S81tlZbmChERQtmq22QGOF9SgcW7ISygoovaASvGdfXSc+Fftxj3c42olEMj3hZfLR12Z4UZdYO+LyP3dOplxGd3uZnRG4ny2FzOnZXrd9cxIqXKBQ8rZdJXjlDzCWK8z24BYZeV3h2zJsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ee6ScVtO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYbkzIfb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1C45C113CC;
-	Thu, 18 Apr 2024 17:31:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ee6ScVtO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23825C32782;
+	Thu, 18 Apr 2024 17:39:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713461485;
-	bh=mFPrCvLrxIQNqZjqRYLBKfQaqDsb+b6XIi+X1/IuX4U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qYbkzIfbWVr3khBjHDqenfNvOnPfCGCwBBWvd+w5VQuHy0miIF/vJnPxf0FZAm53E
-	 FZMGUtDr4SNCyq6y8hpmKr/sEZOrfimXsaEgCRbjmll5zwC98a/9OUiOPqu3vz+1iu
-	 vgFTK0j64M6x4VlQgE4zHMZVk0h88jDuyXLenRIDgo0HFHBLQyCZA4zxpnFnYhsiAO
-	 oEQfvxcpw0Z4VEyaaGoHL0fPglvinh6cdVyxJryetbpYxS3mGm8LkSIl9SPlx1yLhP
-	 GyZ0lS5LX7EabElZMv+8a+DjUYG9c1X0DAXLBwzckfQGttyZMOR6zrQ186ofUwxoTu
-	 u6Jz03pC6PKTw==
-Message-ID: <702adf23-868b-4e0f-8565-9ca35850bb00@kernel.org>
-Date: Thu, 18 Apr 2024 19:31:20 +0200
+	s=k20201202; t=1713461950;
+	bh=FAHI99o3/qIUZzGqglZBZTI/az3nq3RPVxtdG60ysmk=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=ee6ScVtOC9dHPT6B1cHR9LbGZF5n66Z6tE4FHnzLSX8AnCtVVWdyBFpTglVQ6H7FT
+	 JUT97832b8pjDqQapHY1a3Q1FYULM9/AS5AyrrH40M3rNb7FPUi44KAEpAJsYGYto+
+	 kn556JiqoaiPWjiSZRqaXWxTx4ImfVjpTUmDNnZxtMMYmu6V8a9TH8/4iqd3k/Z1cZ
+	 RfLRJOlIh8bSowCU3WZa7EyKl3LmRGHkjaJK8JQiJb8nyNZiGtHoAT4eLvQ4UsPfyF
+	 divk1fPA+/ItNt5MepwAWsZRQQ9ozMy/zH0+o1+jRwYT15y8cBNba9nNZGvXM2dwlL
+	 fCldAwaCLQkkA==
+Message-ID: <2f94f990-77d2-43ec-9773-4ee0e9c0870a@kernel.org>
+Date: Thu, 18 Apr 2024 19:39:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,24 +35,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/17] arm64: dts: exynos: gs101: Add ufs, ufs-phy and ufs
- regulator dt nodes
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
- kishon@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
- bvanassche@acm.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
- jejb@linux.ibm.com, martin.petersen@oracle.com, chanho61.park@samsung.com,
- ebiggers@kernel.org, linux-scsi@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com,
- willmcvicker@google.com
-References: <20240404122559.898930-1-peter.griffin@linaro.org>
- <20240404122559.898930-8-peter.griffin@linaro.org>
- <4ed72378-672e-46d6-9f29-fa118f598739@kernel.org>
- <CADrjBPpaR86R6FMwMqos7ojVfDpGxS=ygW50UBCy1DTsoXHJgQ@mail.gmail.com>
+Subject: Re: [PATCH v9 2/6] dt-bindings: interconnect: Add Qualcomm IPQ9574
+ support
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@linaro.org,
+ djakov@kernel.org, dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20240418092305.2337429-1-quic_varada@quicinc.com>
+ <20240418092305.2337429-3-quic_varada@quicinc.com>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,30 +91,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CADrjBPpaR86R6FMwMqos7ojVfDpGxS=ygW50UBCy1DTsoXHJgQ@mail.gmail.com>
+In-Reply-To: <20240418092305.2337429-3-quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/04/2024 15:20, Peter Griffin wrote:
+On 18/04/2024 11:23, Varadarajan Narayanan wrote:
+> Add interconnect-cells to clock provider so that it can be
+> used as icc provider.
 > 
-> s_ldo8_reg: LDO8S {
->     regulator-name = "S2MPG11_LDO8";
->     regulator-min-microvolt = <1127800>;
->     regulator-max-microvolt = <1278600>;
->     regulator-always-on;
->     regulator-initial-mode = <SEC_OPMODE_SUSPEND>;
->     channel-mux-selection = <0x28>;
->     schematic-name = "L8S_UFS_VCCQ";
->     subsys-name = "UFS";
->  };
+> Add master/slave ids for Qualcomm IPQ9574 Network-On-Chip
+> interfaces. This will be used by the gcc-ipq9574 driver
+> that will for providing interconnect services using the
+> icc-clk framework.
 > 
-> So I think you're correct this is a stub pending full pmic support. I
-> propose in v2 to add a comment similar to what we have in
-> exynos850-e850-96.dts today above the regulator-fixed node like /*
-> TODO: Remove this once PMIC is implemented  */?
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v8:
+> Remove ICC_xxx macros
+> Fix macro defines to be consistent with other bindings
+> v7:
+> Fix macro names to be consistent with other bindings
+> v6:
+> Removed Reviewed-by: Krzysztof Kozlowski
+> Redefine the bindings such that driver and DT can share them
 > 
+> v3:
+> Squash Documentation/ and include/ changes into same patch
 
-Sounds good.
+
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
