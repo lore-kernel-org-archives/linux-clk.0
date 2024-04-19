@@ -1,118 +1,125 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A263B64F
-	for <linux-clk@vger.kernel.org>; Fri, 19 Apr 2024 20:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A2610961;
+	Fri, 19 Apr 2024 21:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713556837; cv=none; b=mw9YfMkli/+RaYkRWoLpjvUCV9pt2L7J5o5N3PsatSpulsArkoXgnhz5goaTMrVvTu3D77G/q3z2exvM2aXB0KKGTXA9pnVv1nUV0NwS6I5XGroPe1Teknp9KzYBzp5Z8u1lSHAlSWjhpvhAbmz69BOS+HgAfb68HTbOCU/1KdY=
+	t=1713560991; cv=none; b=hqIajs5jvZw593ZMvpdH9+wnHMVbRem59qh4LVMIL3YnX2E+4lS3YtypCL6rfRygxaIEmCRKNnXAELkAha7ZYLgRhwmvbi261ZGHsidWONspraatMZGFevbk6gLQ1+b+eZo3BEuMPYOB2wAK/LnYr9XCgVHldh3ljhnhJTdKJJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713556837; c=relaxed/simple;
-	bh=WARJLbLS+b0RckjFb5ncqqF0QnnCov/ywo2QpuhC1wk=;
+	s=arc-20240116; t=1713560991; c=relaxed/simple;
+	bh=GCzclxZJWdtU2QJtBJyOMVjTATOp6d+Ec7EbDgAUeng=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gzQ1u8a4atGDZaAKzT+ksHx9vCmy2tWSQq8ZLNfWdzBNuW2G7CYWd3AQUhu3/bXulwZRxnqlYWe8mqQdw7nKsqfUfRFL3GXaaeVIBhkKBOQu9+KDKIqJSJEinHIeKBCP8RsRoPITNzNJB1E4NIXpQf8yyARECN1oxxXg8VLdh9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rxuPE-0006xs-Nr; Fri, 19 Apr 2024 22:00:20 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rxuPD-00DCw7-N9; Fri, 19 Apr 2024 22:00:19 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rxuPD-004N20-21;
-	Fri, 19 Apr 2024 22:00:19 +0200
-Date: Fri, 19 Apr 2024 22:00:19 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Russell King <rmk+kernel@armlinux.org.uk>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, kernel test robot <lkp@intel.com>, 
-	kernel@pengutronix.de
-Subject: Re: [PATCH] clk: Provide !COMMON_CLK dummy for
- devm_clk_rate_exclusive_get()
-Message-ID: <y7i7vwl7h2xop2ifh72vj5brtq7vd7tf72tst7k7r74plguhgn@cqs5fzplfk5i>
-References: <202403270305.ydvX9xq1-lkp@intel.com>
- <20240327073310.520950-2-u.kleine-koenig@pengutronix.de>
- <d95554f623f023a2f5499fa2f6f76567.sboyd@kernel.org>
- <xfaf22rf6gnrxpinkciybsyk4dx2bfqgozv6udwymegtcgd26i@jq5be7fm5lhi>
+	 Content-Type:Content-Disposition:In-Reply-To; b=afW0qt+B9KhBHlJM9k+3UaUSmBwISUGT0Hy7hz13No6zWfk47w8kY/KvXR7ebVtC7z1Fhyr8Fot1oIomKNhKyKDxHfYAs3iTMRYkqdznwEw4luhPWeR4pFGxuv3Sze/ID2ymABw8q9Z6lvwZaRrG71DFRLCq3dIwgRG768aES7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnxsxPzy; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnxsxPzy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06124C072AA;
+	Fri, 19 Apr 2024 21:09:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713560991;
+	bh=GCzclxZJWdtU2QJtBJyOMVjTATOp6d+Ec7EbDgAUeng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JnxsxPzyZ3dJPAKcq4cF9uOQE/sl9utZo26jG/Tit6BcMQr/AoTwWES+NDFgkZ0ig
+	 bMOAXacUhQTihh1hMipxDINNet9tJ8CyN1DgJUP+XUpDg4tx2iIRWcxyDz/g/Go3NX
+	 6AT0JLKPySKUVymiIRPe/lo3vBGoxUhzDkTMifzQg6C1aXQaLbfYolqqHxyMc0pLcv
+	 1PH/9JldpM1li2/p5BzW04N769oWuCTHxq9da/3YzoB7EnhW+dQPMX1eEbz/C7wsPW
+	 j3OKmLtmOq0pVUzuLLi6muprtTBxHwjNYT03uUNMLUVi/juEf/Fal9aGggmVolwg47
+	 r/7sq/pLYhD8w==
+Date: Fri, 19 Apr 2024 16:09:49 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Jiucheng Xu <jiucheng.xu@amlogic.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH v3 4/6] dt-bindings: clock: meson: document A1 SoC
+ audio clock controller driver
+Message-ID: <20240419210949.GA3979121-robh@kernel.org>
+References: <20240419125812.983409-1-jan.dakinevich@salutedevices.com>
+ <20240419125812.983409-5-jan.dakinevich@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="teeq72q7xrfgagpx"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xfaf22rf6gnrxpinkciybsyk4dx2bfqgozv6udwymegtcgd26i@jq5be7fm5lhi>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <20240419125812.983409-5-jan.dakinevich@salutedevices.com>
 
+On Fri, Apr 19, 2024 at 03:58:10PM +0300, Jan Dakinevich wrote:
+> Add device tree bindings for A1 SoC audio clock and reset controllers.
+> 
+> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> ---
+> 
+> This controller has 6 mandatory and up to 20 optional clocks. To describe
+> this, I use 'additionalItems'. It produces correct processed-schema.json:
+> 
+>   "clock-names": {
+>       "maxItems": 26,
+>       "items": [
+>           {
+>               "const": "pclk"
+>           },
+>           {
+>               "const": "dds_in"
+>           },
+>           {
+>               "const": "fclk_div2"
+>           },
+>           {
+>               "const": "fclk_div3"
+>           },
+>           {
+>               "const": "hifi_pll"
+>           },
+>           {
+>               "const": "xtal"
+>           }
+>       ],
+>       "additionalItems": {
+>           "oneOf": [
+>               {
+>                   "pattern": "^slv_sclk[0-9]$"
+>               },
+>               {
+>                   "pattern": "^slv_lrclk[0-9]$"
+>               }
+>           ]
+>       },
+>       "type": "array",
+>       "minItems": 6
+>   },
+> 
+> and it behaves as expected. However, the checking is followed by
+> complaints like this:
+> 
+>   Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml: properties:clock-names:additionalItems: {'oneOf': [{'pattern': '^slv_sclk[0-9]$'}, {'pattern': '^slv_lrclk[0-9]$'}]} is not of type 'boolean'
+> 
+> And indeed, 'additionalItems' has boolean type in meta-schema. So, how to
+> do it right?
 
---teeq72q7xrfgagpx
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The meta-schemas are written both to prevent nonsense that json-schema 
+allows by default (e.g additionalitems (wrong case)) and constraints to 
+follow the patterns we expect. I'm happy to loosen the latter case if 
+there's really a need. 
 
-Hello Stephen,
+Generally, most bindings shouldn't be using 'additionalItems' at all as 
+all entries should be defined, but there's a few exceptions. Here, the 
+only reasoning I see is 26 entries is a lot to write out, but that 
+wouldn't really justify it. As Krzysztof pointed out, you either have 
+the clocks in the h/w or you don't, so saying they are variable is 
+suspect.
 
-On Fri, Apr 12, 2024 at 10:49:35PM +0200, Uwe Kleine-K=F6nig wrote:
-> On Thu, Mar 28, 2024 at 03:35:57PM -0700, Stephen Boyd wrote:
-> > Quoting Uwe Kleine-K=F6nig (2024-03-27 00:33:10)
-> > > To be able to compile drivers using devm_clk_rate_exclusive_get() also
-> > > on platforms without the common clk framework, add a dummy
-> > > implementation that does the same as clk_rate_exclusive_get() in that
-> > > case (i.e. nothing).
-> > >=20
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes: https://lore.kernel.org/oe-kbuild-all/202403270305.ydvX9xq1-l=
-kp@intel.com/
-> > > Fixes: b0cde62e4c54 ("clk: Add a devm variant of clk_rate_exclusive_g=
-et()")
-> > > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> > > ---
-> >=20
-> > Applied to clk-fixes
->=20
-> I assume that means it will be sent to Linus before 6.9? That would be
-> great because I want to make use of this function in some drivers and
-> the build bots nag about my for-next branch that in some configurations
-> this function is missing.
-
-Gentle ping. I'd like to get the patches I intend to send to Linus for
-v6.10-rc1 into shape. To have these unmodified in my for-next branch for
-some time it would be great to know your plans for the clk-fixes branch.=20
-Alternatively: Can I expect the commit not to be changed any more and
-pull it into my pwm tree?
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---teeq72q7xrfgagpx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmYizVIACgkQj4D7WH0S
-/k6SMwgAqHTm3+DCvXNfaGEaCzF14/5MgijejoWEJ/t2RGjvSkfA6etr71sI/ACJ
-Kv8TQ3zgf2DVrE/dyyqCoKU9OrJjADD6TV4S9rQ7gtJ1WJ8kYOEoRSlhzuVcDZQ/
-p96q1wUJQuNNnzyzFdCIlcoNAB3JM5KZDZvZFs39FrAOeYJyrqUIheT6OXQzKWJZ
-SODUmTfCWU7UkSHkTxNltRCJSG+LNXT0/KAJBA6PRHHjl/yIs1akB+IGbh/1aXgm
-wh8W5KbBjwwgkxm3+D2YVScpi+trFTuTvbwhUDVXYat/E9eqOkXaz1Qxf87KaC+Z
-B/F8TWsho0WjrDzcgnhNiFav/c2jaw==
-=Qor4
------END PGP SIGNATURE-----
-
---teeq72q7xrfgagpx--
+Rob
