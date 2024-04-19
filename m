@@ -1,125 +1,66 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A2610961;
-	Fri, 19 Apr 2024 21:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0E13EA8C;
+	Fri, 19 Apr 2024 21:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713560991; cv=none; b=hqIajs5jvZw593ZMvpdH9+wnHMVbRem59qh4LVMIL3YnX2E+4lS3YtypCL6rfRygxaIEmCRKNnXAELkAha7ZYLgRhwmvbi261ZGHsidWONspraatMZGFevbk6gLQ1+b+eZo3BEuMPYOB2wAK/LnYr9XCgVHldh3ljhnhJTdKJJg=
+	t=1713561868; cv=none; b=F8dvuyvlsOAig2OM/N8sF7dKFAVcr1GEMUH3kCsA2toHoaSuaaWK5UHt44ItQHRo75mCvb2STe4Mzz0PhmwjUmt279FweUX3y8LBf5gZzekaxugjw1GYCEoZzkw0AQEfU1bFVbNh4OKFEDg4uR7bx5joq64Ppac8JwhshthsekQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713560991; c=relaxed/simple;
-	bh=GCzclxZJWdtU2QJtBJyOMVjTATOp6d+Ec7EbDgAUeng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afW0qt+B9KhBHlJM9k+3UaUSmBwISUGT0Hy7hz13No6zWfk47w8kY/KvXR7ebVtC7z1Fhyr8Fot1oIomKNhKyKDxHfYAs3iTMRYkqdznwEw4luhPWeR4pFGxuv3Sze/ID2ymABw8q9Z6lvwZaRrG71DFRLCq3dIwgRG768aES7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnxsxPzy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713561868; c=relaxed/simple;
+	bh=K5J/kePaaSx45e0RkhVp672o/wQZ5DHyDrYdfoqQS4I=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Bg+lWK1QBoV/hIZs3Nz6iwONaQPAiV4NmryrqUUMByI8ODSMBqiQCM12l8z8hLJXPQojasJSOFtsOLohzb3+iGQaE7c9h9yMXszH0NdpRzjzAG96FLzq5X2Q2mQvvtv61ScjfA/lb9xkvpZwMAcvKbIoM/Kt9tDT7kXQYH75fiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmhIgF8Y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnxsxPzy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06124C072AA;
-	Fri, 19 Apr 2024 21:09:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmhIgF8Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC5CCC072AA;
+	Fri, 19 Apr 2024 21:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713560991;
-	bh=GCzclxZJWdtU2QJtBJyOMVjTATOp6d+Ec7EbDgAUeng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JnxsxPzyZ3dJPAKcq4cF9uOQE/sl9utZo26jG/Tit6BcMQr/AoTwWES+NDFgkZ0ig
-	 bMOAXacUhQTihh1hMipxDINNet9tJ8CyN1DgJUP+XUpDg4tx2iIRWcxyDz/g/Go3NX
-	 6AT0JLKPySKUVymiIRPe/lo3vBGoxUhzDkTMifzQg6C1aXQaLbfYolqqHxyMc0pLcv
-	 1PH/9JldpM1li2/p5BzW04N769oWuCTHxq9da/3YzoB7EnhW+dQPMX1eEbz/C7wsPW
-	 j3OKmLtmOq0pVUzuLLi6muprtTBxHwjNYT03uUNMLUVi/juEf/Fal9aGggmVolwg47
-	 r/7sq/pLYhD8w==
-Date: Fri, 19 Apr 2024 16:09:49 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jiucheng Xu <jiucheng.xu@amlogic.com>,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH v3 4/6] dt-bindings: clock: meson: document A1 SoC
- audio clock controller driver
-Message-ID: <20240419210949.GA3979121-robh@kernel.org>
-References: <20240419125812.983409-1-jan.dakinevich@salutedevices.com>
- <20240419125812.983409-5-jan.dakinevich@salutedevices.com>
+	s=k20201202; t=1713561867;
+	bh=K5J/kePaaSx45e0RkhVp672o/wQZ5DHyDrYdfoqQS4I=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=cmhIgF8Y/5JHXKsZJlv/yzHWee2zN8ZMfJT3+ZX0N/Lc5Uw6j14TmTfU2jGEor4IQ
+	 yDCwZx2mELL687tjU3QYrqRk1H7K2N1Xv8h3zLbiz0pRoI/hAsdP2/Pw6Rtd94w+TR
+	 sgapRQEAFtBHZOlb3TR2YGVSiop9dIJUg3/T4EpJVKFQ2rWVtTLW6Gmh8Oxxwi1z4F
+	 TWAkLfaUArUpcgnSmwrcx0laVmccfS/9khzW+5AmeEXhZitAyJtz2FmhEMLkUxgLC9
+	 GtjOqKjuXSR5KVhFEpgsRhP0DTW8qUB2WicI7sd2I2WUTuALmQzZlWtdD/jDzQYIPI
+	 J0g8tYptFmjxg==
+Message-ID: <68bbc2cf86668678731c742f63c96840.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240419125812.983409-5-jan.dakinevich@salutedevices.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1712915721.git.geert+renesas@glider.be>
+References: <cover.1712915721.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.10
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Fri, 19 Apr 2024 14:24:25 -0700
+User-Agent: alot/0.10
 
-On Fri, Apr 19, 2024 at 03:58:10PM +0300, Jan Dakinevich wrote:
-> Add device tree bindings for A1 SoC audio clock and reset controllers.
-> 
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-> ---
-> 
-> This controller has 6 mandatory and up to 20 optional clocks. To describe
-> this, I use 'additionalItems'. It produces correct processed-schema.json:
-> 
->   "clock-names": {
->       "maxItems": 26,
->       "items": [
->           {
->               "const": "pclk"
->           },
->           {
->               "const": "dds_in"
->           },
->           {
->               "const": "fclk_div2"
->           },
->           {
->               "const": "fclk_div3"
->           },
->           {
->               "const": "hifi_pll"
->           },
->           {
->               "const": "xtal"
->           }
->       ],
->       "additionalItems": {
->           "oneOf": [
->               {
->                   "pattern": "^slv_sclk[0-9]$"
->               },
->               {
->                   "pattern": "^slv_lrclk[0-9]$"
->               }
->           ]
->       },
->       "type": "array",
->       "minItems": 6
->   },
-> 
-> and it behaves as expected. However, the checking is followed by
-> complaints like this:
-> 
->   Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml: properties:clock-names:additionalItems: {'oneOf': [{'pattern': '^slv_sclk[0-9]$'}, {'pattern': '^slv_lrclk[0-9]$'}]} is not of type 'boolean'
-> 
-> And indeed, 'additionalItems' has boolean type in meta-schema. So, how to
-> do it right?
+Quoting Geert Uytterhoeven (2024-04-12 03:01:54)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit 4cece764965020c22cff7665b18a0120063590=
+95:
+>=20
+>   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.10-tag1
+>=20
+> for you to fetch changes up to c0516eb4cf04ac61b6fe1f86cc15b2f5f024ee78:
+>=20
+>   clk: renesas: r8a779h0: Add timer clocks (2024-04-08 11:12:32 +0200)
+>=20
+> ----------------------------------------------------------------
 
-The meta-schemas are written both to prevent nonsense that json-schema 
-allows by default (e.g additionalitems (wrong case)) and constraints to 
-follow the patterns we expect. I'm happy to loosen the latter case if 
-there's really a need. 
-
-Generally, most bindings shouldn't be using 'additionalItems' at all as 
-all entries should be defined, but there's a few exceptions. Here, the 
-only reasoning I see is 26 entries is a lot to write out, but that 
-wouldn't really justify it. As Krzysztof pointed out, you either have 
-the clocks in the h/w or you don't, so saying they are variable is 
-suspect.
-
-Rob
+Thanks. Pulled into clk-next
