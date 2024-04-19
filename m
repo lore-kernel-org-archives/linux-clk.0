@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0E13EA8C;
-	Fri, 19 Apr 2024 21:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F772BAF3;
+	Fri, 19 Apr 2024 21:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713561868; cv=none; b=F8dvuyvlsOAig2OM/N8sF7dKFAVcr1GEMUH3kCsA2toHoaSuaaWK5UHt44ItQHRo75mCvb2STe4Mzz0PhmwjUmt279FweUX3y8LBf5gZzekaxugjw1GYCEoZzkw0AQEfU1bFVbNh4OKFEDg4uR7bx5joq64Ppac8JwhshthsekQ=
+	t=1713562710; cv=none; b=fVsia2LROtYDXo5u1dZRkLIZ3s/xlr1QfltB17jz6v5HXoViRxl0lPahunJReBDo73kIHZPyMAKhZXNsBDGWju+hNyLkzU6kjpivblrNLrXxr+qRZiXq1ffM2cdaeET8qeQ9ff7MKkmXdH6HvR9Ra5kYwSag0rXaqXqs2knzjG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713561868; c=relaxed/simple;
-	bh=K5J/kePaaSx45e0RkhVp672o/wQZ5DHyDrYdfoqQS4I=;
+	s=arc-20240116; t=1713562710; c=relaxed/simple;
+	bh=mvlAGfAA1dpSHwoNQqk6yoKk8MhHUYLf1wO+6CpQT9A=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Bg+lWK1QBoV/hIZs3Nz6iwONaQPAiV4NmryrqUUMByI8ODSMBqiQCM12l8z8hLJXPQojasJSOFtsOLohzb3+iGQaE7c9h9yMXszH0NdpRzjzAG96FLzq5X2Q2mQvvtv61ScjfA/lb9xkvpZwMAcvKbIoM/Kt9tDT7kXQYH75fiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmhIgF8Y; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=kJASqVDp0UzgripF7aSIvlVRtdDLdNJrk1zVCLfTO9fTrKOm30xxboGAaPi2kk7Cc1KPIcli767RQ49C7GJqte/BdyGN+0MbnVXri2Xi2IjVJjkRa1Ij/YZ92dkEoHDkOD9AWYlhcoQQDj4lp2LSvlimUd2PQ28Pw+h+qKe3GW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q/lY6Xyo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmhIgF8Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC5CCC072AA;
-	Fri, 19 Apr 2024 21:24:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q/lY6Xyo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2695C072AA;
+	Fri, 19 Apr 2024 21:38:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713561867;
-	bh=K5J/kePaaSx45e0RkhVp672o/wQZ5DHyDrYdfoqQS4I=;
+	s=k20201202; t=1713562709;
+	bh=mvlAGfAA1dpSHwoNQqk6yoKk8MhHUYLf1wO+6CpQT9A=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=cmhIgF8Y/5JHXKsZJlv/yzHWee2zN8ZMfJT3+ZX0N/Lc5Uw6j14TmTfU2jGEor4IQ
-	 yDCwZx2mELL687tjU3QYrqRk1H7K2N1Xv8h3zLbiz0pRoI/hAsdP2/Pw6Rtd94w+TR
-	 sgapRQEAFtBHZOlb3TR2YGVSiop9dIJUg3/T4EpJVKFQ2rWVtTLW6Gmh8Oxxwi1z4F
-	 TWAkLfaUArUpcgnSmwrcx0laVmccfS/9khzW+5AmeEXhZitAyJtz2FmhEMLkUxgLC9
-	 GtjOqKjuXSR5KVhFEpgsRhP0DTW8qUB2WicI7sd2I2WUTuALmQzZlWtdD/jDzQYIPI
-	 J0g8tYptFmjxg==
-Message-ID: <68bbc2cf86668678731c742f63c96840.sboyd@kernel.org>
+	b=q/lY6XyofpQ4pgXSBr2EJkqjmE+Zz+WYXO8otUTSZJNlL7h+AcJLQVDs+6k0GE4MY
+	 SOHA6dvW7L0BJdq/N6azYIRyLWCzYCEk2Iu0KWqbu79AEzoEUBCop2dtfZqPT4B0Ob
+	 ix6bUSrJ7C7vB364cm08bljAzYOLea1Fp3kvX/6A0xhlO4X7sDacsD/DeFf8eflM+a
+	 Zus2ebq8E0G5IQKvBv3hAC4u6w/EHxYxllqvt3RCCO4gcS4HY1WIc4hMC8UHv+iJa5
+	 4SJBC7ZgcCOI5I+riRFUZ/e+iGLa081AbxEWSQFqvzlOUqJFAyBvfHdLVsrU2SYO0o
+	 eKHynq6bOrjZQ==
+Message-ID: <ba929890d6c6fbdb78f3aa8d9b761184.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,32 +35,31 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1712915721.git.geert+renesas@glider.be>
-References: <cover.1712915721.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.10
+In-Reply-To: <20240415134532.3467817-1-arnd@kernel.org>
+References: <20240415134532.3467817-1-arnd@kernel.org>
+Subject: Re: [PATCH] clk: sophgo: avoid open-coded 64-bit division
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Fri, 19 Apr 2024 14:24:25 -0700
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, Michael Turquette <mturquette@baylibre.com>
+Date: Fri, 19 Apr 2024 14:38:27 -0700
 User-Agent: alot/0.10
 
-Quoting Geert Uytterhoeven (2024-04-12 03:01:54)
->         Hi Mike, Stephen,
+Quoting Arnd Bergmann (2024-04-15 06:45:20)
+> From: Arnd Bergmann <arnd@arndb.de>
 >=20
-> The following changes since commit 4cece764965020c22cff7665b18a0120063590=
-95:
+> On 32-bit architectures, the 64-bit division leads to a link failure:
 >=20
->   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+> arm-linux-gnueabi-ld: drivers/clk/sophgo/clk-cv18xx-pll.o: in function `f=
+pll_calc_rate':
+> clk-cv18xx-pll.c:(.text.fpll_calc_rate+0x26): undefined reference to `__a=
+eabi_uldivmod'
 >=20
-> are available in the Git repository at:
+> This one is not called in a fast path, and there is already another div_u=
+64()
+> variant used in the same function, so convert it to div64_u64_rem().
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.10-tag1
->=20
-> for you to fetch changes up to c0516eb4cf04ac61b6fe1f86cc15b2f5f024ee78:
->=20
->   clk: renesas: r8a779h0: Add timer clocks (2024-04-08 11:12:32 +0200)
->=20
-> ----------------------------------------------------------------
+> Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
