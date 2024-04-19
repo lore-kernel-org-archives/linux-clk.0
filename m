@@ -1,158 +1,133 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37D473518
-	for <linux-clk@vger.kernel.org>; Fri, 19 Apr 2024 09:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F4C7BB12
+	for <linux-clk@vger.kernel.org>; Fri, 19 Apr 2024 10:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713518578; cv=none; b=JpAoXNv0WIPDKGa6+Iup/jYpH4+G6ldnP7q360aTBH8kaz6rLkVouiKeJnMpZky2cJZiVT2y3bIGxFoHG5H0AtuWynXA2knzGhbZi704k8b1Zm5UQWY3t4eDcM0TEYOwtK+vPA+D3Z+cBW1dQU+Zbz7sozCK4DwG2XnNAagMV90=
+	t=1713521365; cv=none; b=Ezyf7+dFCfwHa+qkzXF9UZ1bY7mdeFJwKkUNws2DgQiFyxNZz5fvskkXD0Jn8bi3wWBcwllHf1mKHlNyMJ7ldjJXiogvSVUQ2xWZ98sMnTemvyhk9Ah8reobcJm0g4KgmfGdp2HH/jwyos9Ir4JzLSjcaj5+GL+9L6TlepEvdo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713518578; c=relaxed/simple;
-	bh=NcKAO7tP/x4sIAxUUHYXR+L4ly5ODcgul0HtEzI6yDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R86dYJgWqHHPtAkg7na6lNL1zJcHOsncyhl6aD7szR3XkjX17rwFwzxyUmXWtQSlAB2gcuCSD9gEFZq2LWnXckP6Aljf7KeYxlXjfbTOFDeGfh8tv4Z9T8ALHWCFZ4m4BqcrMTZtd4xrPT9yVEc7M+PAe41DZCSCad99Yb+IC7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Dn6Yg5We; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1713521365; c=relaxed/simple;
+	bh=oo0dGqbZTiSgdkttMffHRviYzeWZlgJGSQoIGvcpLp0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ovDitPUMQkABhr5Lm4+x86AFAdiqUJiDqh8OY5ZRT0dRYtJlRiVRet3ThZ9sqqNtjhdBUCVWCTW0QJmx3+2xmFOs24HWbqklp1KxC2jvR+P7rCqiq+3ECTPWjXlNyNT+PJCkXzvwLmRRBCyzfMTE6bigKmTb+/ld8FRvFwKg8AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iUQoBSRM; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Dn6Yg5We"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4190a1bd2deso2497635e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 19 Apr 2024 02:22:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iUQoBSRM"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-418e4cd1fecso10955795e9.1
+        for <linux-clk@vger.kernel.org>; Fri, 19 Apr 2024 03:09:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1713518574; x=1714123374; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y576gXoPcjc3Y2FVL6fqBu3Gc7Q1+NXvtH+iYdNf3yU=;
-        b=Dn6Yg5WeRyohMHQrnYNQylmvY2rP9Q/jJSLAWy2V/CYgQnS7egZ6pUimHcVTyV1nnU
-         VEOrjF3JgoX3FCzvpjGF+kIb6lEpo4S5N0SULLkxDw3XgwcIaYQQl3uEK9pL1f/QKjWG
-         6Rj5ZO23Cfsq4cyoCuafdyGJ2cCT/tJzgMko2+vu1UB/vV7OSs/uhKDBFhJ9BX2Woy0K
-         82UYHxSRvaulHZDlnD+kcVaHdf2nesT2EDM0iGcwvsS3qUYXqtelKJmw9nKYi3s1ckOo
-         +HS55Y6RE+eCJsy4NTFAMrn7mW3yXK5YKuscWt4jo74mcoUcR1m7VNoYZtgUAN6tPs57
-         Hy1A==
+        d=linaro.org; s=google; t=1713521362; x=1714126162; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3XsfVisx7vvQLrO4aI9sNPKlohq0De0eJkgncDmesfI=;
+        b=iUQoBSRMZPSwLn20QrEWlBF0LdRueDoCf89kp54WHuUPa5Ei4YHgEnDHC3jW02546c
+         MuCIWT7aMZNKNVCbjXo5krBRwRDaY8JtsgGTUuZw9W1Kq9U3Qqe3fvEVQumyASopZaiT
+         xkz8od+EAlEvIritcX1QEYSgEgFNRtPHOaCd/6Q3IIXKLYPqSwZUmaL5Cy30cT7F9ihy
+         Nsmc9oa1psXm5021evrSUqzgsGgDBC2SPf0NTNFeNt0rWuNzivCbQtis9fai27KXWbvl
+         +GwPsxVJW9SqEGhJY2UxR5hUm3sqrOwo7DxU96B1uZ4SHD9cmb4VebfzsgWotHyTuWOp
+         fS+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713518574; x=1714123374;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y576gXoPcjc3Y2FVL6fqBu3Gc7Q1+NXvtH+iYdNf3yU=;
-        b=GCX1O/Ep3JqeMrhLXoScK8e/iAKdpvMyB6L7uIfk6vUeDFfmB4U0exUehkhKixREm0
-         0wpqF94sZX9Ul7pMqYU4RJ2LgbrPNbRb3di5AVutQ+on2HDY49eShuILKUSr0soZDQvq
-         NxsPvfsuBNdIolvMz74Dc2Wxuntk6ENEqXsfcLDWS9vDRMnDDb0YO6qsaDI8jZesYuQf
-         zlHyNEHKSmAXAaBLUgeY7q2ZfOvcTvR5B1BlOD7zeM8cJSSEiyc3egXDkRxdf71s+G8p
-         COEtHSgNUWSDw/AREEBG7CdSl8SE/1gaNJgRMyktdNlWTGHOAFFFwEOPOURDtL2+t6kK
-         0rqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGNRJTD1rGro7NdugqSdWWdauMHmK3CeEjp4MWI3zaqjYjYVLbAtWjBvn/0tuhhVPVLALXB0jObqmwukZBXPhGY+FcwxzSwgsx
-X-Gm-Message-State: AOJu0YzgH9oc4MQ0pvpFJUS7uRtTKQvn9riMDX0VhdTr5e44XKIQQWGd
-	UVkxdoc5Af7jbPt2QIhfFmu5XyyklRkoyNlRcW+AhK9ypj5+cu9cgFZ909zqwrM=
-X-Google-Smtp-Source: AGHT+IGEMMwvqsWa1wBPlb1YxcuxGJHgk4ZlrLlGwj3TJU4+1nuQXEqo0CbuUtJgEODgebOizRMxsg==
-X-Received: by 2002:a05:600c:1d0f:b0:418:f6b7:a383 with SMTP id l15-20020a05600c1d0f00b00418f6b7a383mr990122wms.2.1713518574007;
-        Fri, 19 Apr 2024 02:22:54 -0700 (PDT)
-Received: from [192.168.1.172] ([93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id b10-20020a05600c4e0a00b00418f30874b4sm4015450wmq.17.2024.04.19.02.22.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Apr 2024 02:22:53 -0700 (PDT)
-Message-ID: <57705980-e776-4178-878d-15c2007f7ef3@baylibre.com>
-Date: Fri, 19 Apr 2024 11:22:52 +0200
+        d=1e100.net; s=20230601; t=1713521362; x=1714126162;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3XsfVisx7vvQLrO4aI9sNPKlohq0De0eJkgncDmesfI=;
+        b=XJrp2sXKFXE+BvEo/fUcGdi3mIeS2Mc6jLpyJdhjiUe+IXOwnk48oTJmMA5GmxdaYm
+         wWLVI8KUgT/y5odUFSJurHiSeHsn8mkZixbtV/IDw7DiyQyYNknaIWm150xG4XKtS2iq
+         VzIUQ+1PqojvwJUtVxYzxUaEsVOY/EQ4fh5OrgkEX0/BRhpVeqSqj1iyqU9ZLTc6RPmj
+         rQuygrPiIOURfWi9FRPm4xr7eVsyrurwQNiv7NPCD9e5/Dyo0Rjr6u7/EFa7wzDNP7xb
+         3jeC1Xpwab91Yfr4XOeKpH0pjxCrGCdOCx4fMpZ1Ru0MNldP1Qmyt8I78coxSs8NPBXz
+         h+MA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqvH98BbH9hyU29IToR6/4xNPAR0q+dM6khHzCUPsc1AZCjp4ZGMLnU6xmXQZ1uyPGmVNC4md1CDeBKOZF3K+JtmDlVc62cA2R
+X-Gm-Message-State: AOJu0YxNtw5pENSzUQi6Ye3R/vRGmwP3vs/teLBwAcATzXmKuUa+2qus
+	zKnbdhXD+R/HJZbYEptCsJsMyYHzb2H3urQvroScf5+pJ0JJiUrjRJTB4gXVSr8=
+X-Google-Smtp-Source: AGHT+IF5r2AfR9N1McmRxV5AGkdHrqHz9qxcGz7y9EMh39vMYowFt2/VkhtWhbgWeXKir0ptJdzDsg==
+X-Received: by 2002:a05:600c:3b11:b0:418:17e9:c23f with SMTP id m17-20020a05600c3b1100b0041817e9c23fmr935432wms.31.1713521361584;
+        Fri, 19 Apr 2024 03:09:21 -0700 (PDT)
+Received: from ta2.c.googlers.com.com (158.100.79.34.bc.googleusercontent.com. [34.79.100.158])
+        by smtp.gmail.com with ESMTPSA id p13-20020adfe60d000000b00349b73143e7sm4061773wrm.75.2024.04.19.03.09.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Apr 2024 03:09:20 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: peter.griffin@linaro.org,
+	krzysztof.kozlowski@linaro.org
+Cc: s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	alim.akhtar@samsung.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	semen.protsenko@linaro.org,
+	andre.draszik@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	willmcvicker@google.com,
+	kernel-team@android.com,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v4 0/2] clk: samsung: introduce nMUX to reparent MUX clocks
+Date: Fri, 19 Apr 2024 10:09:13 +0000
+Message-ID: <20240419100915.2168573-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.44.0.769.g3c40516874-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 14/17] drm/mediatek: add MT8365 SoC support
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Jitao Shi <jitao.shi@mediatek.com>,
- CK Hu <ck.hu@mediatek.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Fabien Parent <fparent@baylibre.com>,
- Markus Schneider-Pargmann <msp@baylibre.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20231023-display-support-v3-0-53388f3ed34b@baylibre.com>
- <20231023-display-support-v3-14-53388f3ed34b@baylibre.com>
- <9ef43fff-ee2a-4b2c-a595-30f5bf7588c2@collabora.com>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <9ef43fff-ee2a-4b2c-a595-30f5bf7588c2@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+v4:
+- squash nMUX patch with the PERIC0 patch so that it becomes a single
+  entity fixing the introduction of the PERIC0 clocks. PERIC1 fix comes
+  after, as the PERIC1 clocks were introduced after PERIC0.
+- fix the fixes tag of the PERIC1 patch.
+
+v3:
+- update first patch:
+  - remove __nMUX() as it duplicated __MUX() with an exception on flags.
+  - update commit message
+  - update comment and say that nMUX() shall be used where MUX reparenting
+    on clock rate chage is allowed
+- collect R-b, A-b tags
+
+v2:
+- reword commit messages
+- drop exynos850 patch on Sam's request
+
+v1: https://lore.kernel.org/linux-samsung-soc/20240229122021.1901785-1-tudor.ambarus@linaro.org/
 
 
-On 19/04/2024 10:01, AngeloGioacchino Del Regno wrote:
-> Il 18/04/24 16:17, amergnat@baylibre.com ha scritto:
->> From: Fabien Parent <fparent@baylibre.com>
->>
->> Add DRM support for MT8365 SoC.
->>
->> Signed-off-by: Fabien Parent <fparent@baylibre.com>
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-> 
-> There are two things that I want to point out. Please check below.
-> 
-> The series that I've sent for adding OF Graphs [1] support to MediaTek DRM is
-> not going to be picked in time for v6.10, but I think neither your MT8365 support
-> series is, and that's why I'm telling you this.
-> 
-> If your work was based off my series, you would not need to add the MT8365 ddp
-> MAIN and EXT paths to mtk_drm_drv: you'd just add it to the bindings and then
-> you would declare the paths in devicetree.
+All samsung MUX clocks that are defined with MUX() set the
+CLK_SET_RATE_NO_REPARENT flag in __MUX(), which prevents MUXes to be
+reparented during clk_set_rate().
+    
+Introduce nMUX() for MUX clocks that can be reparented. nMUX is used
+in GS101 to reparent the USI MUX to OSCCLK on low SPI clock rates.
 
-Ok then I will rebase my v4 on top of your serie
+Each instance of the USI IP in GS101 has its own MUX_USI clock, thus
+the reparenting of a MUX_USI clock corresponds to a single instance
+of the USI IP. We allow the reparenting of the MUX_USIx clocks to
+OSCCLK. The datasheet mentions OSCCLK just in the low-power mode
+context, but the downstream driver reparents too the MUX_USI clocks
+to OSCCLK. Follow the downstream driver and do the same.
 
-> 
-> 
-> [1]: https://lore.kernel.org/r/20240409120211.321153-1-angelogioacchino.delregno@collabora.com
-> 
-> There's also one more comment....
-> 
->> ---
->>   drivers/gpu/drm/mediatek/mtk_drm_drv.c | 30 ++++++++++++++++++++++++++++++
->>   1 file changed, 30 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
->> index 74832c213092..427b601309c4 100644
->> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
->> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> 
-> ..snip..
-> 
->> @@ -793,6 +821,8 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
->>         .data = (void *)MTK_DSI },
->>       { .compatible = "mediatek,mt8188-dsi",
->>         .data = (void *)MTK_DSI },
->> +    { .compatible = "mediatek,mt8365-dpi",
-> 
-> You removed the mt8365 specific compatible from the DPI driver - why did you keep
-> it here?! that's not needed! :-)
+Tested with USI6 and USI13 SPI.
 
-Sorry for that, I forgot to remove it in this driver too. Thanks to catched it.
+Find discussion on MUX reparenting to OSCCLK at:
+https://lore.kernel.org/linux-samsung-soc/d508dfc1-bc28-4470-92aa-cf71915966f4@linaro.org/
 
-> 
-> Cheers,
-> Angelo
-> 
->> +      .data = (void *)MTK_DPI },
->>       { }
->>   };
->>
-> 
+Tudor Ambarus (2):
+  clk: samsung: gs101: propagate PERIC0 USI SPI clock rate
+  clk: samsung: gs101: propagate PERIC1 USI SPI clock rate
+
+ drivers/clk/samsung/clk-gs101.c | 225 +++++++++++++++++---------------
+ drivers/clk/samsung/clk.h       |  11 +-
+ 2 files changed, 129 insertions(+), 107 deletions(-)
 
 -- 
-Regards,
-Alexandre
+2.44.0.769.g3c40516874-goog
+
