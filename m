@@ -1,173 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AC4132800;
-	Fri, 19 Apr 2024 16:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADAEF9D9;
+	Fri, 19 Apr 2024 19:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713545044; cv=none; b=m635e4WeqGohqAC9VdCX1P9Cn5Vp4dhm2YkBi7fEUWTvDpGVWaTYywqfomcgHs5x/4up/u8fCXqf5RGQv033lkbh8HWrLnxV6wKDiLJNMmMzK3kN1CZsPmuTjF7Lc2mErrVicmfpRNnGWs+lv6/PmoI2vgIKslnTRwl3RQ/d3iU=
+	t=1713555880; cv=none; b=bDHa08iCdSBV+5sV1uYA3ytGNqhCRT2+gjWV6WqK4AbIZKjDtoUf8dlSUZYv4aiagp07fw9NRAZuatPlX7XLseWto7wz/yaVURzRP66l1I2E5RwRbcUfrvSMak0eKlvT3ClkRE1GkOykYOovcACO6YlAhogKod+iL4BubMGIr8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713545044; c=relaxed/simple;
-	bh=EAIyrDoQ4YoT2Dsm6kgF6uHOznfOFQEAv/ygoBq63sY=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=YJCyi25D9dSkK/wbA3SzKQPe2pMjssmT9QisOZbCBa0Lu2sIk4pHQxWkUb2fpcuO06um+8eqAex+ENaIn4mQdk8mLzBgeu9zIItCfepUuGv79omc8gZ7VjL8Nc5gant9Dt1ysCse8C0Yd/ac09HcnFP6HkSdOHHDSSpXd0VnnjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJjpC5Ib; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713555880; c=relaxed/simple;
+	bh=i6tzshrxouG4GHxMCjPCZ87XlDWmHs+s+JkYc1k6C5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e2grB+2yRu8wrSe1q9jvVHVhZuXnu/0aWT7Oq3IdMvL2D86M+on7jJ6T11PsPj9jy4SztaCgt2j3dUttFH1bAMc5pU60pEEFopv1UIEg2Yx6Mx/UVWzCR2RUPS3k/1Kn4/xbJZOikpgX+g6YwFCTGzjc4w6jgxPmU6mEY4df7sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNp84dBc; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJjpC5Ib"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38AF6C2BD10;
-	Fri, 19 Apr 2024 16:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713545044;
-	bh=EAIyrDoQ4YoT2Dsm6kgF6uHOznfOFQEAv/ygoBq63sY=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=mJjpC5Ib9GO8rtPw5czyeIrWEymHj3ywrDQCaKdY08xgybtRacyrEO3mHJhWmDZcX
-	 gHiTxYV38C7MgvfRbfH3ybmSlQhs4BP7cnNZ+uXOHIBJ7qV/7KuddJ6WQ0/S4ju5uD
-	 xWg9Sffpe9J2MGoo116QSXCe10GYl28F4sWUZaEChUh6Kn/O+E41Hq4t8rPK83GFV0
-	 etV0POHFPLJ86Ixq+4Z1Fo2t8KaE8mubswrTB2q5w6dPpqY0+bfSjOGdHwRHjHrJrv
-	 adfzhvpjDYZrtVf8uGQib/qbR0jk9y3w0+XzWoa9p4graIsv9h1VOF04h3AbEH1ngO
-	 kdjyZ4KBoEGIA==
-Date: Fri, 19 Apr 2024 11:44:03 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNp84dBc"
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-234cbd333f5so1834193fac.0;
+        Fri, 19 Apr 2024 12:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713555878; x=1714160678; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P1BGAYuhr6Jr83/QJyI90NsvCbuHw5i7BYScCO/Al8w=;
+        b=lNp84dBcDBEr/EjjhROvauRjF71umYQluS9htGInZG9izurctc5NzdZycay4cc/j7Y
+         NDGBMq80kPp1TbnDMl6WGhyfmy5iPE7hGZ8BqmyJ/gKSq5kAU0qtaqPjBLedW177v1bq
+         YBafYmHVdTWUQnnzGTIV+hfkN3Bx0LhVwg6cpdtFd5I5MAcCRyH2xJ24v77JJKgF6BSQ
+         fa2A3XqSNetx5nHqgULfZHCuLWa+jt/LYK7+pYNG5t301Q4RSLvCUBumjlV1wGkV8Ief
+         MGoKaNXSP97k+xsKEKdzu7pbbzEPFVLafhjTaleOGo4pugDFr72aZioiYH8XBHkGC9yC
+         gJkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713555878; x=1714160678;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P1BGAYuhr6Jr83/QJyI90NsvCbuHw5i7BYScCO/Al8w=;
+        b=LKwmfFhxexRXrgvleBhaQq+4sbl0JmIOXKePGP+vw0u/Z9WZez1nVMxT1wZ1cuZZM/
+         cQMTDc9v6PTALIrAe5hT8VMFu0aS/KKP2aP/8kUak9em1+fbkjz+GSqfANmgml0oiVG9
+         7zIABO4e6li/AfjrIWaf9v7RddXiiMDlE3YDwMDtvS1PuEyBA8tNYyNEyuXqqMSf45Kd
+         dTtbFsZHUesye37Gvcyv+1q2AUUsiqIND4itez1mjZyVnCNpdKNpOYrY90ldywqG1yY7
+         WTZa4WGZL/ouTnmoSeGVvfo4enwdf3Dttrr3AyXd48Xky2TvIuMDa3BSIyP5f2+jRpYy
+         9XwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfySUW8U3+/hufKOrUMSXUj/RFQCvGOAUZGf8QZrNVhu0XD9curRjVpxyBjb+U13xCz3XuwjP4lxWYNu5VpVzuxq0ri9Lsl+1CG/JfWXDPqeXj07EdV9lWM7SwN55d9kSCHniRsXlR0WlJJi+07UrWFouij075yuJTFtZfvmdMDsuwhLP1CutJw9CErDsTqMEUgQ9QYobuwJLBt5oW/BB49hwie6VGFa98ks21pDBtZsZX5uo83C02QdVr17Q=
+X-Gm-Message-State: AOJu0YwgsaN9ovjsoE9Xl/HaYFR7NVanOfY//+sa+lTwqF7uCBnRbv+F
+	vET1M787+2P+ZTpH98r+CfZkRw9xI0qFUsKHyQD7+lvIwU71jcag
+X-Google-Smtp-Source: AGHT+IHseVtPGmY+lrtZnP4ORatX7mqfP+JxbR+E+KFQHqu5qkdPApEXoEstZaCDMmG0pP6LwJb0sA==
+X-Received: by 2002:a05:6870:3119:b0:235:45b9:dfca with SMTP id v25-20020a056870311900b0023545b9dfcamr1177207oaa.18.1713555878592;
+        Fri, 19 Apr 2024 12:44:38 -0700 (PDT)
+Received: from [192.168.7.169] (c-98-197-58-203.hsd1.tx.comcast.net. [98.197.58.203])
+        by smtp.gmail.com with ESMTPSA id pq4-20020a0568709c8400b002349fc4cdedsm940798oab.49.2024.04.19.12.44.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Apr 2024 12:44:37 -0700 (PDT)
+Message-ID: <102f209c-3367-86ac-c583-73103d5510a9@gmail.com>
+Date: Fri, 19 Apr 2024 14:44:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rob Herring <robh@kernel.org>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: linux-kernel@vger.kernel.org, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, Conor Dooley <conor+dt@kernel.org>, 
- devicetree@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Michael Turquette <mturquette@baylibre.com>, 
- Jiucheng Xu <jiucheng.xu@amlogic.com>, linux-clk@vger.kernel.org, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-In-Reply-To: <20240419125812.983409-5-jan.dakinevich@salutedevices.com>
-References: <20240419125812.983409-1-jan.dakinevich@salutedevices.com>
- <20240419125812.983409-5-jan.dakinevich@salutedevices.com>
-Message-Id: <171354504249.3529859.17389375879772293692.robh@kernel.org>
-Subject: Re: [RFC PATCH v3 4/6] dt-bindings: clock: meson: document A1 SoC
- audio clock controller driver
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 4/7] PCI: qcom: Add support for IPQ9574
+Content-Language: en-US
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20240415182052.374494-1-mr.nuke.me@gmail.com>
+ <20240415182052.374494-5-mr.nuke.me@gmail.com>
+ <CAA8EJpqKWJBqDUacE0xTLzxny32ZTStiRgXsd2LBD=Hou_CRBw@mail.gmail.com>
+ <3cfc26e6-5587-d4a2-f217-1a30169ad1a0@gmail.com>
+ <20240417070616.GB3894@thinkpad>
+From: mr.nuke.me@gmail.com
+In-Reply-To: <20240417070616.GB3894@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi Mani.
 
-On Fri, 19 Apr 2024 15:58:10 +0300, Jan Dakinevich wrote:
-> Add device tree bindings for A1 SoC audio clock and reset controllers.
+On 4/17/24 02:06, Manivannan Sadhasivam wrote:
+> On Mon, Apr 15, 2024 at 03:07:02PM -0500, mr.nuke.me@gmail.com wrote:
+>>
+>>
+>> On 4/15/24 15:04, Dmitry Baryshkov wrote:
+>>> On Mon, 15 Apr 2024 at 21:22, Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
+>>>>
+>>>> Add support for the PCIe on IPQ9574. The main difference from ipq6018
+>>>> is that the "iface" clock is not necessarry. Add a special case in
+>>>> qcom_pcie_get_resources_2_9_0() to handle this.
+>>>>
+>>>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+>>>> ---
+>>>>    drivers/pci/controller/dwc/pcie-qcom.c | 13 +++++++++----
+>>>>    1 file changed, 9 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>>>> index 14772edcf0d3..10560d6d6336 100644
+>>>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>>>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>>>> @@ -1101,15 +1101,19 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
+>>>>           struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+>>>>           struct dw_pcie *pci = pcie->pci;
+>>>>           struct device *dev = pci->dev;
+>>>> -       int ret;
+>>>> +       int ret, num_clks = ARRAY_SIZE(res->clks) - 1;
+>>>>
+>>>> -       res->clks[0].id = "iface";
+>>>> +       res->clks[0].id = "rchng";
+>>>>           res->clks[1].id = "axi_m";
+>>>>           res->clks[2].id = "axi_s";
+>>>>           res->clks[3].id = "axi_bridge";
+>>>> -       res->clks[4].id = "rchng";
+>>>>
+>>>> -       ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+>>>> +       if (!of_device_is_compatible(dev->of_node, "qcom,pcie-ipq9574")) {
+>>>> +               res->clks[4].id = "iface";
+>>>> +               num_clks++;
+>>>> +       }
+>>>> +
+>>>> +       ret = devm_clk_bulk_get(dev, num_clks, res->clks);
+>>>
+>>> Just use devm_clk_bulk_get_optional() here.
+>>
+>> Thank you! I wasn't sure if this was the correct solution here. I will get
+>> this updated in v4.
+>>
 > 
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-> ---
-> 
-> This controller has 6 mandatory and up to 20 optional clocks. To describe
-> this, I use 'additionalItems'. It produces correct processed-schema.json:
-> 
->   "clock-names": {
->       "maxItems": 26,
->       "items": [
->           {
->               "const": "pclk"
->           },
->           {
->               "const": "dds_in"
->           },
->           {
->               "const": "fclk_div2"
->           },
->           {
->               "const": "fclk_div3"
->           },
->           {
->               "const": "hifi_pll"
->           },
->           {
->               "const": "xtal"
->           }
->       ],
->       "additionalItems": {
->           "oneOf": [
->               {
->                   "pattern": "^slv_sclk[0-9]$"
->               },
->               {
->                   "pattern": "^slv_lrclk[0-9]$"
->               }
->           ]
->       },
->       "type": "array",
->       "minItems": 6
->   },
-> 
-> and it behaves as expected. However, the checking is followed by
-> complaints like this:
-> 
->   Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml: properties:clock-names:additionalItems: {'oneOf': [{'pattern': '^slv_sclk[0-9]$'}, {'pattern': '^slv_lrclk[0-9]$'}]} is not of type 'boolean'
-> 
-> And indeed, 'additionalItems' has boolean type in meta-schema. So, how to
-> do it right?
-> ---
->  .../bindings/clock/amlogic,a1-audio-clkc.yaml | 124 ++++++++++++++++++
->  .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 122 +++++++++++++++++
->  .../reset/amlogic,meson-a1-audio-reset.h      |  29 ++++
->  3 files changed, 275 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml
->  create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
->  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-audio-reset.h
-> 
+> Please rebase on top of [1] and mention the dependency in cover letter.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I am very hesitant to depend on another patch series. Is it okay if I 
+include your patch in v4 of this series?
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml: properties:clock-names:additionalItems: {'oneOf': [{'pattern': '^slv_sclk[0-9]$'}, {'pattern': '^slv_lrclk[0-9]$'}]} is not of type 'boolean'
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml: properties:clocks:additionalItems: {'oneOf': [{'description': 'slv_sclk[0-9] - slave bit clocks provided by external components'}, {'description': 'slv_lrclk[0-9]- slave sample clocks provided by external components'}]} is not of type 'boolean'
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml: properties:clock-names:additionalItems: {'oneOf': [{'pattern': '^slv_sclk[0-9]$'}, {'pattern': '^slv_lrclk[0-9]$'}]} is not of type 'boolean'
-	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml: properties:clocks: 'oneOf' conditional failed, one must be fixed:
-	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.yaml: properties:clocks: 'anyOf' conditional failed, one must be fixed:
-		'items' is not one of ['maxItems', 'description', 'deprecated']
-			hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-		'additionalItems' is not one of ['maxItems', 'description', 'deprecated']
-			hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-		'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-		'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-		'additionalItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-		{'oneOf': [{'description': 'slv_sclk[0-9] - slave bit clocks provided by external components'}, {'description': 'slv_lrclk[0-9]- slave sample clocks provided by external components'}]} is not of type 'boolean'
-			hint: Arrays must be described with a combination of minItems/maxItems/items
-		True was expected
-			hint: Arrays must be described with a combination of minItems/maxItems/items
-		1 was expected
-			hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-		hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-		from schema $id: http://devicetree.org/meta-schemas/clocks.yaml#
-	'maxItems' is not one of ['type', 'description', 'dependencies', 'dependentRequired', 'dependentSchemas', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'not', 'allOf', 'anyOf', 'oneOf', '$ref']
-	'items' is not one of ['type', 'description', 'dependencies', 'dependentRequired', 'dependentSchemas', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'not', 'allOf', 'anyOf', 'oneOf', '$ref']
-	'additionalItems' is not one of ['type', 'description', 'dependencies', 'dependentRequired', 'dependentSchemas', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'not', 'allOf', 'anyOf', 'oneOf', '$ref']
-	'type' is a required property
-		hint: DT nodes ("object" type in schemas) can only use a subset of json-schema keywords
-	from schema $id: http://devicetree.org/meta-schemas/clocks.yaml#
-Documentation/devicetree/bindings/clock/amlogic,a1-audio-clkc.example.dtb: /example-0/audio/clock-controller@fe054800: failed to match any schema with compatible: ['amlogic,a1-audio2-clkc']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240419125812.983409-5-jan.dakinevich@salutedevices.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Alex
