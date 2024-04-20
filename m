@@ -1,75 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B68CEAE5;
-	Sat, 20 Apr 2024 10:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA6F20309;
+	Sat, 20 Apr 2024 13:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.165.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713607849; cv=none; b=YNeLDafNzPwekhx66cJj4FFCO+SKRVSu0lqpYhaPiV5sFOXFD+CmBk4NmfKvEQFgbz/I8f/DgVwvzp1KSGt0p9aO8rdbbD+lgKaC1p5QcKJ6w8lYOgdSnGthAC7NX84ytHoJ/PUBuFsesB55BklfbG2viSt+ZqyQv6Lg/5IBxZs=
+	t=1713619985; cv=none; b=dO1cd16IyLApROrVU6vOAaWA3FRk1dDMY/fhrnUlferAWtK+YUpb4266BJyV7N0uw/IOr2VTiXjpDMrQKT3ZkAeDAzy1E4DE1gCBUr+p+fCv/uXczxJjNHOLQaLMQhbI72hcU/7R7eo9P275Sdyt9hETPcfz5aSRrObKO+t8rGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713607849; c=relaxed/simple;
-	bh=uk0pVEWCGbr3TBbjkduaSqh9FacH2xhZgqD7X6xJQUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IaHXmCIHmjaDsTnUbEQ6c4uDquMzfKCoTPqdCAB+4vV8VYGRD/IedLpicO6AHyZp3CHq4W6qUwwAOldv6QSKoTne7OVVVISC+g3j1ZOO6jC4VFJxn85WMzq/H0+B8i6+++Xys5k8tSs5Y0mawHEEszkGQJjJLtsYlrUrzEvATVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AT3+ivAw; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AT3+ivAw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 720D6C072AA;
-	Sat, 20 Apr 2024 10:10:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713607848;
-	bh=uk0pVEWCGbr3TBbjkduaSqh9FacH2xhZgqD7X6xJQUQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AT3+ivAwM9+Gvs9pmXWfbISAc5nlQtPxhT5HzkTQm090zDk0692NY2InqWSh0HGLq
-	 Yrd6r3ct9lkGhZM3s6hdIJqVEH2/ahZ10Wyz7YDXTpTnB90RpxtcPo23EYbXosZA7u
-	 son/yySLzsagddbwelMaqyZKOSlxa9Xz8dd7dd22GmmArY5f3ounV4VaXYLL5yfBNx
-	 WEEO3D+6qmGBcm4tNZ1Hc1MB8be0PIaRR8pYVRvs60jzyOj2QRYUwcTK4rtfFuilDT
-	 PSI5CZzqguFtLBmJU+kFjhMXkyWXnwgrl+M+ib6tJkx/TvL8J4v7pwpu+e8HNLWukX
-	 7NOh1Ip88Ysfw==
-Date: Sat, 20 Apr 2024 11:10:32 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Chris Morgan <macroalpha82@gmail.com>, sboyd@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-iio@vger.kernel.org, Chris Morgan <macromorgan@hotmail.com>,
- wens@csie.org, mturquette@baylibre.com, samuel@sholland.org,
- linux-sunxi@lists.linux.dev, jernej.skrabec@gmail.com, krzk+dt@kernel.org,
- p.zabel@pengutronix.de
-Subject: Re: [PATCH 2/3] dt-bindings: iio: adc: Add GPADC for Allwinner H616
-Message-ID: <20240420111032.5d9d94c9@jic23-huawei>
-In-Reply-To: <171345342441.1843687.15293376169534019509.robh@kernel.org>
-References: <20240417170423.20640-1-macroalpha82@gmail.com>
-	<20240417170423.20640-3-macroalpha82@gmail.com>
-	<171345342441.1843687.15293376169534019509.robh@kernel.org>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1713619985; c=relaxed/simple;
+	bh=PEcDp8I3M8Yr7iDTgjFDbNrl9L5ce/gSH/kcCCvROGw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EVjoi7r9RMkxDtx+JDPnGNfYMogiu4kqKXFt70Vst6m0knba6VLeSUfZaHOVvpuwMnIjr/pGI36LBn/AEUmxUFO+uMARNICCv1xQtQGMFhGSwAem8W66hGXfaZyk+bk+y7FOLfTCmcGQRrEgGUrvUGG0zmtWSuHPvAp7FJQ2fr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr; spf=pass smtp.mailfrom=skole.hr; arc=none smtp.client-ip=161.53.165.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skole.hr
+Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+	by mx.skole.hr (mx.skole.hr) with ESMTP id CAECE8333C;
+	Sat, 20 Apr 2024 15:32:59 +0200 (CEST)
+Message-ID: <eb221864-0044-4ea5-bbee-7545d10cb130@skole.hr>
+Date: Sat, 20 Apr 2024 15:32:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 5/9] clk: mmp: Add Marvell PXA1908 clock driver
+To: Stephen Boyd <sboyd@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ Haojian Zhuang <haojian.zhuang@linaro.org>, Kees Cook
+ <keescook@chromium.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Lubomir Rintel <lkundrak@v3.sk>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring
+ <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Tony Lindgren <tony@atomide.com>, Tony Luck <tony.luck@intel.com>,
+ Will Deacon <will@kernel.org>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr>
+ <de4c56a8-488d-4cdb-9d6c-e9d6e63b22b9@skole.hr>
+ <58b23157c088cb4774d579cc8700de85.sboyd@kernel.org>
+ <3287993.aeNJFYEL58@radijator>
+ <d7ff7dd609cd1b9a50e5ffa882d05b90.sboyd@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+In-Reply-To: <d7ff7dd609cd1b9a50e5ffa882d05b90.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 18 Apr 2024 10:17:33 -0500
-Rob Herring <robh@kernel.org> wrote:
-
-> On Wed, 17 Apr 2024 12:04:22 -0500, Chris Morgan wrote:
-> > From: Chris Morgan <macromorgan@hotmail.com>
-> > 
-> > Add support for the GPADC for the Allwinner H616. It is identical to
-> > the existing ADC for the D1/T113s/R329/T507 SoCs.
-> > 
-> > Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
-> > ---
-> >  .../bindings/iio/adc/allwinner,sun20i-d1-gpadc.yaml      | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> >   
+On 4/20/24 00:24, Stephen Boyd wrote:
+> Quoting Duje Mihanović (2024-04-19 07:31:14)
+>> On Friday, April 12, 2024 4:57:09 AM GMT+2 Stephen Boyd wrote:
+>>> Quoting Duje Mihanović (2024-04-11 03:15:34)
+>>>
+>>>> On 4/11/2024 10:00 AM, Stephen Boyd wrote:
+>>>>> Is there a reason this file can't be a platform driver?
+>>>>
+>>>> Not that I know of, I did it like this only because the other in-tree
+>>>> MMP clk drivers do so. I guess the initialization should look like any
+>>>> of the qcom GCC drivers then?
+>>>
+>>> Yes.
+>>
+>> With the entire clock driver code in one file this is quite messy as I also
+>> needed to add module_init and module_exit functions to (un)register each
+>> platform driver, presumably because the module_platform_driver macro doesn't
+>> work with multiple platform drivers in one module. If I split up the driver
+>> code for each clock controller block into its own file (such as clk-of-
+>> pxa1908-apbc.c) as I believe is the best option, should the commits be split
+>> up accordingly as well?
 > 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> 
-> 
+> Sure. Why is 'of' in the name? Maybe that is unnecessary?
 
-Applied this patch to the IIO tree.
+That seems to be a historical leftover from when Marvell was just adding 
+DT support to the ARM32 MMP SoCs which Rob followed along with in the 
+PXA1928 clk driver and so have I. Should I drop it then as Marvell has 
+in the PXA1908 vendor kernel?
 
-Jonathan
+Regards,
+--
+Duje
+
