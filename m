@@ -1,108 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0692205E1D;
-	Sat, 20 Apr 2024 01:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF14A2CA4;
+	Sat, 20 Apr 2024 01:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713577734; cv=none; b=Ovo3bc0GwzEHYPQ0KZP6UnIM+eVZMSrRy4NWiBf4e+xMbk/Jfd7NKhB1BSk1jpqiIrhX0a9f896NmL4oiLwOoQEErIq/tng5hCvcg0nUrZxJTOOct/lj3ROPUf/FKNC5xgVBwwOqCzKhiPYTqqFZkFhtmLkDPNvxWZp6G90hL/I=
+	t=1713578035; cv=none; b=bDUQNetjTjBdYE8tQggdM32b29M/Fw8lqCDrV6Zhp6WGZxHImSZuq4h+4mNonN7YpThfz9AWwKJkjzjzbzGG02zwXowPGL2uLg6IU0mzJTATNjxTzmenciCJdgC+GvrmvQOr25hXGwuxPmZ1C+lMtp60t+IfiQHux86NdeQJhSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713577734; c=relaxed/simple;
-	bh=ik3G7vkeW0E61S/ZaBaByGKXdcNuQmCv9GExNSXbmIQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Up6vZmMQpfKvixF/Oz3tE6x1SVThriDeeoJTYnAOnMTy+tEWQ0eCE1uBlEoL6QySmG6vN9U/FOjjvzfcWCtad3vVzvw97kontq6XwILKWfttbOJQ3RQ5KuKRbleLSRBaVMFvr13XQdRBF8Q5syV+5AFkftBxSIxLrpKwTu3mglA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+ILx3mQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713578035; c=relaxed/simple;
+	bh=H0U+uv4/liInL2qHfZyN5D6gZvXyBkXxbB3CdMD+QWQ=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=HEkSHRYdlGPPD/LdeJx5TYzgNAmGstYBSCYQm9R8rrbcYnJwN8PxT/p3QEsE6Kshr2kNTzlNEib94oOfsdiRnjYiZ7nUpCIHXTJOYFkrTfZwio8n6F4br7vvElvMMvgx8LIcyCiAhM9LRd8v/4tfHn+483O5LPokJt7hdvSL3VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSWaSrWE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+ILx3mQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C816C072AA;
-	Sat, 20 Apr 2024 01:48:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSWaSrWE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1849BC072AA;
+	Sat, 20 Apr 2024 01:53:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713577734;
-	bh=ik3G7vkeW0E61S/ZaBaByGKXdcNuQmCv9GExNSXbmIQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=B+ILx3mQlB782/3YDGn06XYKMpGenMoykt99N8xguDS6SbbTJuU4pAW/0urZRslcZ
-	 TYW2d0f2hIEUFd8EeMEJyNXrMgGRJHp/joxmtb7WxXvwdGAis6RgyvISx9DU4d6GIA
-	 E3qDV7gs6BRwoDpFRMwfmniMK0xHUgQNOiOP52jFpursXLC80czIFpwWnpVIm65mye
-	 NYA5MnAjAhwQ+8vEw+aTEEmgZ6lPsYDdP97f2Gtfeff1TC4ItnxUEdKJbylUld2I4K
-	 OhtVfXjKYsWIdTpYc3sNpT52lmGLyng0NiUNueJv1BCXPg4Kg0RiEP07bvgkkOglxe
-	 lizHdeUqfhKaQ==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v6.9-rc4
-Date: Fri, 19 Apr 2024 18:48:52 -0700
-Message-ID: <20240420014853.87829-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.44.0.769.g3c40516874-goog
+	s=k20201202; t=1713578035;
+	bh=H0U+uv4/liInL2qHfZyN5D6gZvXyBkXxbB3CdMD+QWQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=BSWaSrWED8YZ5BJ94DbOdp3O+QP/RcjxY+1SHo09SPwpyLWeImGQ5AuD0UaPeo4J9
+	 3OmOqXalwx00c1YgvjAm+xATatXkZdzAo2YlDPib69qM3mswDnS+qYg32gBh/X3lUs
+	 NYo6CkLLUW8im8oIQwROY8sqjMoXHWzn1SoXdE3dCEjb4Ac4P5tPdnnm/lJviSVoM+
+	 u+X3uD7taONV2JYCblkEBSfsTsPcjfR0znFJtwy3rUNv+DPkLBSwgICiAb1pEhi0uh
+	 B/D+id7DKnby3m7uEm8TiCOzUcenSbbQ11c5Llk4gLck0AR8sQcffT8jjyKIDJO1CR
+	 dJUP28Nq7KZdw==
+Message-ID: <8a305f2938f64ab084b3e92c6d066c1f.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231023-display-support-v3-12-53388f3ed34b@baylibre.com>
+References: <20231023-display-support-v3-0-53388f3ed34b@baylibre.com> <20231023-display-support-v3-12-53388f3ed34b@baylibre.com>
+Subject: Re: [PATCH v3 12/17] clk: mediatek: mt8365-mm: fix DPI0 parent
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org, Alexandre Mergnat <amergnat@baylibre.com>
+To: Alexandre Mergnat <amergnat@baylibre.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, CK Hu <ck.hu@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, Fabien Parent <fparent@baylibre.com>, Jitao Shi <jitao.shi@mediatek.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Markus Schneider-Pargmann <msp@baylibre.com>, Matthias Brugger <matthias.bgg@gmail.com>, Maxime Ripard <mripard@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Will Deacon <will@kernel.org>
+Date: Fri, 19 Apr 2024 18:53:52 -0700
+User-Agent: alot/0.10
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+Quoting Alexandre Mergnat (2024-04-18 07:17:00)
+> To have a working display through DPI, a workaround has been
+> implemented downstream to add "mm_dpi0_dpi0" and "dpi0_sel" to
+> the DPI node. Shortly, that add an extra clock.
+>=20
+> It seems consistent to have the "dpi0_sel" as parent.
+> Additionnaly, "vpll_dpix" isn't used/managed.
+>=20
+> Then, set the "mm_dpi0_dpi0" parent clock to "dpi0_sel".
+>=20
+> The new clock tree is:
+>=20
+> clk26m
+>   lvdspll
+>     lvdspll_X (2, 4, 8, 16)
+>       dpi0_sel
+>         mm_dpi0_dpi0
+>=20
+> Fixes: d46adccb7966 ("clk: mediatek: add driver for MT8365 SoC")
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> ---
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to d3e8a91a848a5941e3c31ecebd6b2612b37e01a6:
-
-  clk: mediatek: mt7988-infracfg: fix clocks for 2nd PCIe port (2024-04-10 20:50:26 -0700)
-
-----------------------------------------------------------------
-A couple clk driver fixes, a build fix, and a deadlock fix.
-
- - Mediatek mt7988 has broken PCIe because the wrong parent is used
-
- - Mediatek clk drivers may deadlock when registering their clks because
-   the clk provider device is repeatedly runtime PM resumed and
-   suspended during probe and clk registration. Resuming the clk
-   provider device deadlocks with an ABBA deadlock due to genpd_lock and
-   the clk prepare_lock. The fix is to keep the device runtime resumed
-   while registering clks.
-
- - Another runtime PM related deadlock, this time with disabling unused
-   clks during late init. We get an ABBA deadlock where a device is
-   runtime PM resuming (or suspending) while the disabling of unused
-   clks is happening in parallel. That runtime PM action calls into the
-   clk framework and tries to grab the clk prepare_lock while the
-   disabling of unused clks holds the prepare_lock and is waiting for
-   that runtime PM action to complete. The fix is to runtime resume all
-   the clk provider devices before grabbing the clk prepare_lock during
-   disable unused.
-
- - A build fix to provide an empty devm_clk_rate_exclusive_get()
-   function when CONFIG_COMMON_CLK=n
-
-----------------------------------------------------------------
-Daniel Golle (1):
-      clk: mediatek: mt7988-infracfg: fix clocks for 2nd PCIe port
-
-Pin-yen Lin (1):
-      clk: mediatek: Do a runtime PM get on controllers during probe
-
-Stephen Boyd (6):
-      clk: Remove prepare_lock hold assertion in __clk_release()
-      clk: Don't hold prepare_lock when calling kref_put()
-      clk: Initialize struct clk_core kref earlier
-      clk: Get runtime PM before walking tree during disable_unused
-      clk: Get runtime PM before walking tree for clk_summary
-      Merge branch 'clk-rpm' into clk-fixes
-
-Uwe Kleine-König (1):
-      clk: Provide !COMMON_CLK dummy for devm_clk_rate_exclusive_get()
-
- drivers/clk/clk.c                          | 173 ++++++++++++++++++++++-------
- drivers/clk/mediatek/clk-mt7988-infracfg.c |   2 +-
- drivers/clk/mediatek/clk-mtk.c             |  15 +++
- include/linux/clk.h                        |   5 +
- 4 files changed, 156 insertions(+), 39 deletions(-)
-
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Applied to clk-next
