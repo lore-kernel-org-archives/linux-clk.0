@@ -1,69 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97E0339BC;
-	Sat, 20 Apr 2024 17:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70B72032C;
+	Sat, 20 Apr 2024 18:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713635516; cv=none; b=Snvov18X6HqQ8qQ5i/Lwo1m1/veBmTb4m15hr0S1Z6/OiOZgg559nPeWl4Ec/RiZfiBohfJgffKF+5KxQ9wgdC7qDPPlJsrqx8Kd3GGiNowK4fvCcTHlFSly44RA7VgL3ioOBDn3Wwq1SyNtTSo6ogTno8XVq6lAGoYboEu/qiY=
+	t=1713636311; cv=none; b=FoVY79iQ+UeOOn98DMibRJYG7Wa637d/0AWPDC7h3PjDcg0abFgPx6qn5vsEmqDXcq/ojFFhXbAL1qEOa39hFc0FWcdAZAJZNa5ZyKFetlY5gC6y42QfK4UtGeIjNU50peRrU6YWRVVNoNkKNmBrjQrO3WU2qxN11Cp4k5Ox3Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713635516; c=relaxed/simple;
-	bh=nCgy5S4vrfbB3JPv5gne295UUu4TDmAin7gXYzx0nrA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OOIyg8QaIj7RI2QhZyAznPbUXH+I8DidKSNm9GIpXDBLnrCADpQ7C1tHUOS1KTP8oOlKbiKhbCtauTNtVtwOn6lwATE534ThUsQxMNEotcjCCagQo6mVwI0OcM5lRGHg+Q+HoEzuvU/zeejCQExfcA/xBOWPl2RXoTKXSLXgS5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7M4mx/0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713636311; c=relaxed/simple;
+	bh=TuXNUH5RDD848QvCR30xBttt0uVqKcfNZhdQm68GaxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RpAamCwnATss6LGBidsyvDT8CT9EYgjr42krmFCf9ZDdDtFirXx/79TGm3IIDI8ceiJpnJ9/IcoHz5FWL7ZW295mXwBxzXNniormKnx0hfol0NTI2aaLW7G/Y69T/osN3Jkg8YOh8V49zedBiCPsLvTng7pWMQWLEHVTg/plLz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ewurhUIj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7M4mx/0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82613C072AA;
-	Sat, 20 Apr 2024 17:51:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ewurhUIj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83393C072AA;
+	Sat, 20 Apr 2024 18:05:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713635516;
-	bh=nCgy5S4vrfbB3JPv5gne295UUu4TDmAin7gXYzx0nrA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V7M4mx/00cmsG5sRqdGyWEu5crzF0VZFKEjmKlsIcWvvUN0ZkSPFGZ4zzrHR3owvD
-	 FnygrYnyEKcF3AfP4ZedRlABOOWJYBCbtlt9463jnbMTO/nfd7MbUShx5gjbZHPGld
-	 MyWVhbUo7cUxC2qkHFkqWENzUPywFYpBy2yR3jVnHMKdh7l0S65R5wEHCkV4vNI8g3
-	 PG9UE6s6ZgbtnZpu7LTMEGwZO3rMP6VPTpoSmu+ysudVzAP2QwK7qSmM+z25Wdej80
-	 TiAYbOWQfU0tOciSCtmOwJBD+LMGlIb7uy/cICD4ou81NSPYvw9pLAuHBmZUABokqu
-	 W3rE35K/NRtCw==
+	s=k20201202; t=1713636310;
+	bh=TuXNUH5RDD848QvCR30xBttt0uVqKcfNZhdQm68GaxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ewurhUIj08jWGxmOx1xk5un6TOl0HZyo1j+ZYq/ro26Ch/IIXBEMLO0DhMT5cOgZn
+	 Ta+XDnDiCfR0HlVATMtRvZP1JHulBYF412gm5eNmbew5eF6N2QGKMyjivyMVEs3Qcz
+	 Ht8j95lqwffs7FtSa3fSndlZhJYWXugPjcApjrH9guFYPLTFB9oquBYi1lmYXx/2Ov
+	 TqQSwQBZ/oZwE4421bBgZ2Ris1Cgluppr+3PdoAcAyB7OTBkoNdX1H1c37xCysWvjm
+	 A2nzSPsWfXpLMPyFD/kjwMcPCZRQRAq8O9eowK9fbPkS9hqWe5RMiiRyLuvaMLOjht
+	 m5Nyu3WIRFbkg==
+Date: Sat, 20 Apr 2024 13:05:07 -0500
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Skip reconfiguring the running Lucid Evo
-Date: Sat, 20 Apr 2024 12:51:53 -0500
-Message-ID: <171363551101.1138274.11659255153276607537.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240418-clk-qcom-lucid-evo-skip-configuring-enabled-v1-1-caede5f1c7a3@linaro.org>
-References: <20240418-clk-qcom-lucid-evo-skip-configuring-enabled-v1-1-caede5f1c7a3@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@somainline.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] clk: qcom: dispcc: fix DisplayPort link clocks
+Message-ID: <jwjrnxboz2cdkkrufxhpvxhueqdvswil3ffn47wo4gwmt3r3tz@jm6cduxcd6my>
+References: <20240408-dispcc-dp-clocks-v1-0-f9e44902c28d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240408-dispcc-dp-clocks-v1-0-f9e44902c28d@linaro.org>
 
-
-On Thu, 18 Apr 2024 16:41:32 +0300, Abel Vesa wrote:
-> The PLL0 is configured by the bootlader and is the parent of the
-> mdp_clk_src. The Trion implementation of the configure function is
-> already skipping this step if the PLL is enabled, so lets extend the
-> same behavior to Lucid Evo variant.
+On Mon, Apr 08, 2024 at 02:47:03PM +0300, Dmitry Baryshkov wrote:
+> On several Qualcomm platforms DisplayPort link clocks used incorrect
+> frequency tables. Drop frequency tables and use clk_byte2_ops instead of
+> clk_rcg2_ops.
 > 
+> Note, this was tested on SM8450 only and then extended to other
+> platforms.
 > 
 
-Applied, thanks!
+As Stephen points out, it seems from the commit messages that this just
+cleans up the code because it's wrong. But both Luca and Neil points out
+that it resolves a visible issue/error.
 
-[1/1] clk: qcom: clk-alpha-pll: Skip reconfiguring the running Lucid Evo
-      commit: 810e6d2fac01ab1e189f3002a364f19bd5d0f444
+Can we please have this (the actual problem being resolved) captured in
+the commit messages?
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Regards,
+Bjorn
+
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+> Dmitry Baryshkov (4):
+>       clk: qcom: dispcc-sm8450: fix DisplayPort clocks
+>       clk: qcom: dispcc-sm6350: fix DisplayPort clocks
+>       clk: qcom: dispcc-sm8550: fix DisplayPort clocks
+>       clk: qcom: dispcc-sm8650: fix DisplayPort clocks
+> 
+>  drivers/clk/qcom/dispcc-sm6350.c | 11 +----------
+>  drivers/clk/qcom/dispcc-sm8450.c | 20 ++++----------------
+>  drivers/clk/qcom/dispcc-sm8550.c | 20 ++++----------------
+>  drivers/clk/qcom/dispcc-sm8650.c | 20 ++++----------------
+>  4 files changed, 13 insertions(+), 58 deletions(-)
+> ---
+> base-commit: 8568bb2ccc278f344e6ac44af6ed010a90aa88dc
+> change-id: 20240408-dispcc-dp-clocks-5ee5d5926346
+> 
+> Best regards,
+> -- 
+> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
