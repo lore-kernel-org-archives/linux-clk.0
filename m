@@ -1,24 +1,46 @@
-Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA6F20309;
-	Sat, 20 Apr 2024 13:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.165.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B27E219E2;
+	Sat, 20 Apr 2024 14:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713619985; cv=none; b=dO1cd16IyLApROrVU6vOAaWA3FRk1dDMY/fhrnUlferAWtK+YUpb4266BJyV7N0uw/IOr2VTiXjpDMrQKT3ZkAeDAzy1E4DE1gCBUr+p+fCv/uXczxJjNHOLQaLMQhbI72hcU/7R7eo9P275Sdyt9hETPcfz5aSRrObKO+t8rGI=
+	t=1713624661; cv=none; b=pY0o9G8gGupJ0evs5t73Zw5zH1oQshCTnkbBlgpEvfVWZvAGfOD91PjLkxEYCqgIa0n6JRc/zh/8RYBe9KaSmiWnlaWeuhW1wXvOGCNsjGGR1GZmMNgXtrlE5d3M9oUC4yLx8JOiSElbr8eR1kvw/9oDRh2UROkyV0ObOyrTTvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713619985; c=relaxed/simple;
-	bh=PEcDp8I3M8Yr7iDTgjFDbNrl9L5ce/gSH/kcCCvROGw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EVjoi7r9RMkxDtx+JDPnGNfYMogiu4kqKXFt70Vst6m0knba6VLeSUfZaHOVvpuwMnIjr/pGI36LBn/AEUmxUFO+uMARNICCv1xQtQGMFhGSwAem8W66hGXfaZyk+bk+y7FOLfTCmcGQRrEgGUrvUGG0zmtWSuHPvAp7FJQ2fr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr; spf=pass smtp.mailfrom=skole.hr; arc=none smtp.client-ip=161.53.165.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skole.hr
-Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-	by mx.skole.hr (mx.skole.hr) with ESMTP id CAECE8333C;
-	Sat, 20 Apr 2024 15:32:59 +0200 (CEST)
-Message-ID: <eb221864-0044-4ea5-bbee-7545d10cb130@skole.hr>
-Date: Sat, 20 Apr 2024 15:32:56 +0200
+	s=arc-20240116; t=1713624661; c=relaxed/simple;
+	bh=ewARMez9ua9uXBzJbqe3D5p/+mVpWPohE3Zp2fD1c2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=C18LXdXhsvp/CruLJO+hSxXS6pxwoRmsQUeTvC5b0sBHqb/2c8BuvfgbdPtDc2mASllMvHvweHU2wxhxj4M2uAEpKiXOJMK6mQMrh/aqvykH1axQxf6FCCfkEbqCDzVMd7I5Mo44TxhCJRZ3ucch3vDWA01iu3YeBJzAAGHGXUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=CXsuT0tq; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="CXsuT0tq"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id AF974100002;
+	Sat, 20 Apr 2024 17:50:46 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru AF974100002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1713624646;
+	bh=ZXGJIRVvBTmEkVVYJcaTIl3MxgwitUGOGyPLvfPsyoI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=CXsuT0tq+0eaRAGbaL9hFblKmqWVuBNGw52g0xeB+tDZ8VTsVLDZfLCn1/32Mxkt8
+	 GXGoJazrm9IdGBrHc+tV5SGprSLPn/hiZYNCtpV5/vhY5jjZytBuXLC7W3gAv2Mih0
+	 1B1JhdmLrKggN05pnCAHLDAzeQl/i0jqjIe1UFd1ySkglc+7oHcM+0m56wRRgxdgOe
+	 X94PRCZC6L5hy7ciLx/Ygibh/GFwUCbZAV5RJb0njjgpqFE4F2fyzPKUlulO/Bp/oI
+	 pAO+y9FHv25r3bGtsOhF1Wj2a2mH5k8ErXmQ9a8JMwJ8xtH3GvRZDAJmvV6+dIzyDw
+	 BfpLxViMmKpLg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Sat, 20 Apr 2024 17:50:46 +0300 (MSK)
+Received: from [10.8.0.14] (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Sat, 20 Apr
+ 2024 17:50:43 +0300
+Message-ID: <0194ddb8-6e93-4a77-9fdd-93fc79a4e03e@salutedevices.com>
+Date: Sat, 20 Apr 2024 17:48:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -26,64 +48,174 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 5/9] clk: mmp: Add Marvell PXA1908 clock driver
-To: Stephen Boyd <sboyd@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- Haojian Zhuang <haojian.zhuang@linaro.org>, Kees Cook
- <keescook@chromium.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>, Lubomir Rintel <lkundrak@v3.sk>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Tony Lindgren <tony@atomide.com>, Tony Luck <tony.luck@intel.com>,
- Will Deacon <will@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr>
- <de4c56a8-488d-4cdb-9d6c-e9d6e63b22b9@skole.hr>
- <58b23157c088cb4774d579cc8700de85.sboyd@kernel.org>
- <3287993.aeNJFYEL58@radijator>
- <d7ff7dd609cd1b9a50e5ffa882d05b90.sboyd@kernel.org>
+Subject: Re: [RFC PATCH v3 4/6] dt-bindings: clock: meson: document A1 SoC
+ audio clock controller driver
 Content-Language: en-US
-From: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-In-Reply-To: <d7ff7dd609cd1b9a50e5ffa882d05b90.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Krzysztof Kozlowski <krzk@kernel.org>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Jiucheng Xu <jiucheng.xu@amlogic.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20240419125812.983409-1-jan.dakinevich@salutedevices.com>
+ <20240419125812.983409-5-jan.dakinevich@salutedevices.com>
+ <07b1ca57-49a0-4151-99bf-caac053eaa01@kernel.org>
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+In-Reply-To: <07b1ca57-49a0-4151-99bf-caac053eaa01@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 184817 [Apr 19 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 18 0.3.18 b9d6ada76958f07c6a68617a7ac8df800bc4166c, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1;100.64.160.123:7.1.2, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/04/20 10:48:00 #24889969
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On 4/20/24 00:24, Stephen Boyd wrote:
-> Quoting Duje Mihanović (2024-04-19 07:31:14)
->> On Friday, April 12, 2024 4:57:09 AM GMT+2 Stephen Boyd wrote:
->>> Quoting Duje Mihanović (2024-04-11 03:15:34)
->>>
->>>> On 4/11/2024 10:00 AM, Stephen Boyd wrote:
->>>>> Is there a reason this file can't be a platform driver?
->>>>
->>>> Not that I know of, I did it like this only because the other in-tree
->>>> MMP clk drivers do so. I guess the initialization should look like any
->>>> of the qcom GCC drivers then?
->>>
->>> Yes.
+
+
+On 4/19/24 17:06, Krzysztof Kozlowski wrote:
+> On 19/04/2024 14:58, Jan Dakinevich wrote:
+>> Add device tree bindings for A1 SoC audio clock and reset controllers.
 >>
->> With the entire clock driver code in one file this is quite messy as I also
->> needed to add module_init and module_exit functions to (un)register each
->> platform driver, presumably because the module_platform_driver macro doesn't
->> work with multiple platform drivers in one module. If I split up the driver
->> code for each clock controller block into its own file (such as clk-of-
->> pxa1908-apbc.c) as I believe is the best option, should the commits be split
->> up accordingly as well?
+>> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 > 
-> Sure. Why is 'of' in the name? Maybe that is unnecessary?
+> This is still RFC, so not ready.
+> 
+> Limited, incomplete review follows. Full review will be provided when
+> the work is ready.
+> 
+> Drop "driver" references, e.g. from subject. Bindings are about hardware.
+> 
+> 
+> ....
+> 
+>> +
+>> +  clocks:
+>> +    maxItems: 26
+>> +    items:
+>> +      - description: input main peripheral bus clock
+>> +      - description: input dds_in
+>> +      - description: input fixed pll div2
+>> +      - description: input fixed pll div3
+>> +      - description: input hifi_pll
+>> +      - description: input oscillator (usually at 24MHz)
+>> +    additionalItems:
+>> +      oneOf:
+>> +        - description: slv_sclk[0-9] - slave bit clocks provided by external components
+>> +        - description: slv_lrclk[0-9]- slave sample clocks provided by external components
+> 
+> What does it mean the clocks are optional? Pins could be not routed?
 
-That seems to be a historical leftover from when Marvell was just adding 
-DT support to the ARM32 MMP SoCs which Rob followed along with in the 
-PXA1928 clk driver and so have I. Should I drop it then as Marvell has 
-in the PXA1908 vendor kernel?
+Yes exactly. Pins could be routed in any combination or could be not
+routed at all. It is determined by schematics and that how external
+codecs are configured.
 
-Regards,
---
-Duje
+> It's really rare case that clocks within the SoC are optional, so every
+> such case is questionable.
+> 
+> 
+>> +
+>> +  clock-names:
+>> +    maxItems: 26
+>> +    items:
+>> +      - const: pclk
+>> +      - const: dds_in
+>> +      - const: fclk_div2
+>> +      - const: fclk_div3
+>> +      - const: hifi_pll
+>> +      - const: xtal
+>> +    additionalItems:
+>> +      oneOf:
+>> +        - pattern: "^slv_sclk[0-9]$"
+>> +        - pattern: "^slv_lrclk[0-9]$"
+>> +
+>> +required:
+>> +  - compatible
+>> +  - '#clock-cells'
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: amlogic,a1-audio-clkc
+>> +    then:
+>> +      required:
+>> +        - '#reset-cells'
+>> +    else:
+>> +      properties:
+>> +        '#reset-cells': false
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
+>> +    #include <dt-bindings/clock/amlogic,a1-peripherals-clkc.h>
+>> +    #include <dt-bindings/clock/amlogic,a1-audio-clkc.h>
+>> +    audio {
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
+>> +
+>> +        clkc_audio: clock-controller@fe050000 {
+>> +                compatible = "amlogic,a1-audio-clkc";
+>> +                reg = <0x0 0xfe050000 0x0 0xb0>;
+>> +                #clock-cells = <1>;
+>> +                #reset-cells = <1>;
+>> +                clocks = <&clkc_audio_vad AUD_CLKID_VAD_AUDIOTOP>,
+>> +                         <&clkc_periphs CLKID_DDS_IN>,
+>> +                         <&clkc_pll CLKID_FCLK_DIV2>,
+>> +                         <&clkc_pll CLKID_FCLK_DIV3>,
+>> +                         <&clkc_pll CLKID_HIFI_PLL>,
+>> +                         <&xtal>;
+>> +                clock-names = "pclk",
+>> +                              "dds_in",
+>> +                              "fclk_div2",
+>> +                              "fclk_div3",
+>> +                              "hifi_pll",
+>> +                              "xtal";
+> 
+> Make it complete - list all clocks.
+> 
 
+You mean, all optional clocks should be mentioned here. Right?
+
+>> +        };
+>> +
+>> +        clkc_audio_vad: clock-controller@fe054800 {
+> 
+> Just keep one example. It's basically almost the same.
+> 
+
+The worth of this duplication is to show how a clock from second
+controller (<&clkc_audio_vad AUD_CLKID_VAD_AUDIOTOP>) is used by first
+one. May be it would be better to keep it... What do you think?
+
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+
+-- 
+Best regards
+Jan Dakinevich
