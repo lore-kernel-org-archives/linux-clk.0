@@ -1,63 +1,56 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186731CF83;
-	Sat, 20 Apr 2024 18:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BCA3232;
+	Sun, 21 Apr 2024 09:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713637963; cv=none; b=KWf1lJ0LXmdFZLgf/hvdljjCxhua9/zh99ye4oQ8esuhFW+Pq+v0WmXN1DoWYCfkEl4nXx4Qf/LiFC12BrKjr4CTGwQNiA9sjknTfv0MGduyYgSVNcotWjR3fFSaMspN1AMbmjj8Xokw6jQ2kMjHOyux++yU2jhGT4pVetogTWY=
+	t=1713691915; cv=none; b=OIOHvsetvmtsYceWDs1nfes16WDFMvN3AgXTlOM6MEBXsAtrCOgKBzsqsuN+CdHUy7P4wUV4dYctzxx3h/XbwsC3V50Fpcq9l5I+1gwl+ODY3Q8W86s8QaaNu2g7BSJrmTBPBM7HyXM6hT+DLurJFSJh4SKknFDAnPE917h7OU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713637963; c=relaxed/simple;
-	bh=F2CKTvNRlGZV0FEwEWnNN4K+ZYLmDjE9KwRcvbzGrKY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=fW8yqouyqyPx8YpBKRtjC63NFEb+ZNQDjXHV+sv+PHGEsTAjODYSST2nVFLW0PwjWPDk3XTesJmPNpBoCrzRDRnR6sOStoudEcxHWQDNtO+AhGXrbslYfUwqL1N7qPrsfNhiEY4h2tx+zDPRGUL0P2iqYPQ972PlheDLZ/XYfHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXud0biZ; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXud0biZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E5F52C113CE;
-	Sat, 20 Apr 2024 18:32:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713637963;
-	bh=F2CKTvNRlGZV0FEwEWnNN4K+ZYLmDjE9KwRcvbzGrKY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=WXud0biZU1EX2pFbSkuns+viWaQjDAvJNIPP9rcaBTVE073/Lflt/2R/4BnJcVQ5J
-	 fm6MgvnI9RuBLMsyITx2rZsD4ONNf6TzGyd8vhP713kjrrxyBbQFRY2JXwxFBsyAKq
-	 cDV+qZgVIYntA55S1Kyo7iLj2UAB9SnIegXYrPSs0kQ0hwApc42xDYZih9mlof0vcp
-	 yxuaRDnuDVa346a/VYOeIBUG2SMHrraxZul03JiYA85lhJdHQo9KObxXfnElXE1y46
-	 vHxY/cbogI4As3rNlYUC2mY3pvLjLMbLCs4jtdB4nLzKsUPKqF8kAXg9J8cdZjLlxu
-	 pEdMp3TG3to5g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DD1F2C433E9;
-	Sat, 20 Apr 2024 18:32:42 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v6.9-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240420014853.87829-1-sboyd@kernel.org>
-References: <20240420014853.87829-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240420014853.87829-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: d3e8a91a848a5941e3c31ecebd6b2612b37e01a6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 560d4e773850533794c02d388921077fb1407920
-Message-Id: <171363796289.22086.9542743780784571092.pr-tracker-bot@kernel.org>
-Date: Sat, 20 Apr 2024 18:32:42 +0000
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1713691915; c=relaxed/simple;
+	bh=KKW2RTp1B3WeXO3e6hwdWWI5bnAKqUwrrDyXZbIeMvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HvXWxD0W/lW2akvk998i5ORFNpIyfmUBPAT68ZjDPEkspVOGNSYfsh0CHaOalrTnpbDsDcSaBNro4KxqJVhdo9UiIjmy5ehWAs/uXPTmYEnpAPbwUQfUSigt3VrO1lobzSYCH6/X8btLJ65QpACF6bJJr+dDgw37cgdSaBjO2NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23FA9339;
+	Sun, 21 Apr 2024 02:32:20 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C8FBA3F792;
+	Sun, 21 Apr 2024 02:31:48 -0700 (PDT)
+Date: Sun, 21 Apr 2024 10:31:41 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Stephen Boyd <sboyd@kernel.org>, sudeep.holla@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
+	quic_nkela@quicinc.com, souvik.chakravarty@arm.com,
+	mturquette@baylibre.com
+Subject: Re: [PATCH v3 0/5] Rework SCMI Clock driver clk_ops setup procedure
+Message-ID: <ZiTc_Rbh81eFUTw1@pluto>
+References: <20240415163649.895268-1-cristian.marussi@arm.com>
+ <6b8e12767fdfaf1ba819896fbd610733.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b8e12767fdfaf1ba819896fbd610733.sboyd@kernel.org>
 
-The pull request you sent on Fri, 19 Apr 2024 18:48:52 -0700:
+On Fri, Apr 19, 2024 at 07:08:54PM -0700, Stephen Boyd wrote:
+> Quoting Cristian Marussi (2024-04-15 09:36:44)
+> > Hi,
+> > 
+> > a small series to review how the SCMI Clock driver chooses and sets up the
+> > CLK operations to associate to a clock when registering with CLK framework.
+> 
+> Did you want me to merge this through clk tree?
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Up to @Sudeep really...
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/560d4e773850533794c02d388921077fb1407920
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks for the reviewing this series.
+Cristian
