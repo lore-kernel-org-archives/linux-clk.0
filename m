@@ -1,33 +1,46 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5048AB64E;
-	Sun, 21 Apr 2024 14:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F8D18637;
+	Sun, 21 Apr 2024 15:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713708141; cv=none; b=qYPY9u5LFM97GH9x9rH+DkQ73BMmPvLWnnvcsPK9kN4JHjGazCAOe7aG1BKb5/Iot185eShvJUPseX9hWzTv54dvM8aH+fIdudPMGyKOwVYNQFo0QLJJfF+k0MLIZq2Uaqkt+YNIS7dS0dfcjA+YvJylhQE103Ke6wIkdNBA1Ls=
+	t=1713713872; cv=none; b=TCeDRDHA/wJs9evNoJBykbr4zN0yIjM+0wUHb0Y8kUOXT2XRPvAI6vaaKXSvdNbhrHThpcT5/MmzgC7pIok646PXDTfDOZ4l9USzmoR7oVjBIDj5u2VEumIpa3H4FLsZlypolxR80e9BvErZQFbNyx25YUCfkLtAVp3cx1xy7aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713708141; c=relaxed/simple;
-	bh=GmsHQ9LW88vNFuert6h+ygNzeGSaa2DSqYQPLvwPKpM=;
+	s=arc-20240116; t=1713713872; c=relaxed/simple;
+	bh=Noi3jv3WhT97IlFTg5yPcmRTYZ03tHGamChGjSBgpy0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hd6wEGbp/eFZgb9C/kgV8Rs5MOpEBaBLosH5K0efWwunNHWBZpk1jv+SYo901HV68C5WEqH0tqk5JVoi4KKCwWtR+MkwTMCxq9bbDP6CbUrRHJFKr4uwqI8KU4BzRFKdxc9QFfwNcteonKFcu2IuBK2qSDxGblkKsEKjzT4/3ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yhj4s7AH; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Aw0WvOFQKR2tB8wrM0aksTE2tSV5BS5jtSpqY0tXDQG1qRZzFbMpUGxOZPkRV6PdiYdfe8wi/haHGb5ePhXtX3HmWz/XXSvaYh/kdXhJMvYvJo2bjpKf4e+ILVj0iXJv1pRABbRjURBXdGcHymFV1uh73wcmO9p5w1dRphXxUc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=jjmKcyAA; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yhj4s7AH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8946EC113CE;
-	Sun, 21 Apr 2024 14:02:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713708140;
-	bh=GmsHQ9LW88vNFuert6h+ygNzeGSaa2DSqYQPLvwPKpM=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Yhj4s7AH5XmJQYwEBhQdzdx2NOo1GOiuItLMSlCpB29D36P0XvwHo5UBQ78XUVbEa
-	 iklf4SuS5lT+W2zIP/p/AlNn8abJLVBmijFWYvtPZtbxz5cFqDgmBFDInVlQjyDJ9r
-	 gMqwTmAS205T4PziF9S/McLj7yRqO365Pu57fFGuOYFwlXImScErT6ctW7JMZaQiV1
-	 m/YpEz9lMn/o05dKs5QbqLCpGYFMGhFnikgZVDuwdKByioqzhzLX1ol36JR5rTFeVe
-	 8kTzBOXDKFhLnld09+wP+Uwk97FT3tyhW+tzYubMcx3eTiPBUUfSh/ErYGftvYvMyd
-	 ioZw3PAYVWLGA==
-Message-ID: <7746a6a8-110f-4920-9f15-8fb592e829ff@kernel.org>
-Date: Sun, 21 Apr 2024 16:02:13 +0200
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="jjmKcyAA"
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id CA84F120005;
+	Sun, 21 Apr 2024 18:37:38 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru CA84F120005
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1713713858;
+	bh=hogG5LV3BYlzBZpuc6YRB+xya+znZiqbrBBz/0q4CZk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=jjmKcyAAMkHb88S6n3mQTDSBb3v0dA3c9JdNCBzllHfsVjlMM6Ir0svf0YlQWeNJ8
+	 IYhVDYPyzlOoOV1idB+t0mIOyjsDDe7lWg+8gTld3L9/8VuePjWnSrdbxObtVIW954
+	 5FIWG7lEfDNXzWp9/zzPIyIG0inxzxugaGntNvOdnX+UHO8tikUrHBfeSNWv/l2m/2
+	 nynf1JK1nw4hbdM1S10TQ374Tn/94UnRiqJGWlyRxJ/g8ixKAJ2YfzmHD//KoBzEyP
+	 Gc2/FQLPWWLjaB66exJoRiIKklp/4Q4yMcwTlBesDhRobtILnIcc7C3ff/klIIEuBl
+	 /129qqGUTTp2g==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Sun, 21 Apr 2024 18:37:38 +0300 (MSK)
+Received: from [10.8.0.14] (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Sun, 21 Apr
+ 2024 18:37:35 +0300
+Message-ID: <ca1b1263-1574-4fbe-913e-f68f6c59608e@salutedevices.com>
+Date: Sun, 21 Apr 2024 18:35:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,101 +50,87 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC PATCH v3 4/6] dt-bindings: clock: meson: document A1 SoC
  audio clock controller driver
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Jiucheng Xu
- <jiucheng.xu@amlogic.com>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Jiucheng Xu <jiucheng.xu@amlogic.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
 References: <20240419125812.983409-1-jan.dakinevich@salutedevices.com>
  <20240419125812.983409-5-jan.dakinevich@salutedevices.com>
  <07b1ca57-49a0-4151-99bf-caac053eaa01@kernel.org>
  <0194ddb8-6e93-4a77-9fdd-93fc79a4e03e@salutedevices.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <0194ddb8-6e93-4a77-9fdd-93fc79a4e03e@salutedevices.com>
-Content-Type: text/plain; charset=UTF-8
+ <7746a6a8-110f-4920-9f15-8fb592e829ff@kernel.org>
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+In-Reply-To: <7746a6a8-110f-4920-9f15-8fb592e829ff@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 184821 [Apr 21 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 18 0.3.18 b9d6ada76958f07c6a68617a7ac8df800bc4166c, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;127.0.0.199:7.1.2;sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/04/21 07:35:00 #24905600
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On 20/04/2024 16:48, Jan Dakinevich wrote:
->>> +                clock-names = "pclk",
->>> +                              "dds_in",
->>> +                              "fclk_div2",
->>> +                              "fclk_div3",
->>> +                              "hifi_pll",
->>> +                              "xtal";
+
+
+On 4/21/24 17:02, Krzysztof Kozlowski wrote:
+> On 20/04/2024 16:48, Jan Dakinevich wrote:
+>>>> +                clock-names = "pclk",
+>>>> +                              "dds_in",
+>>>> +                              "fclk_div2",
+>>>> +                              "fclk_div3",
+>>>> +                              "hifi_pll",
+>>>> +                              "xtal";
+>>>
+>>> Make it complete - list all clocks.
+>>>
 >>
->> Make it complete - list all clocks.
->>
+>> You mean, all optional clocks should be mentioned here. Right?
 > 
-> You mean, all optional clocks should be mentioned here. Right?
-
-Yes.
-
-> 
->>> +        };
->>> +
->>> +        clkc_audio_vad: clock-controller@fe054800 {
+> Yes.
+> >>
+>>>> +        };
+>>>> +
+>>>> +        clkc_audio_vad: clock-controller@fe054800 {
+>>>
+>>> Just keep one example. It's basically almost the same.
+>>>
 >>
->> Just keep one example. It's basically almost the same.
->>
+>> The worth of this duplication is to show how a clock from second
+>> controller (<&clkc_audio_vad AUD_CLKID_VAD_AUDIOTOP>) is used by first
+>> one. May be it would be better to keep it... What do you think?
 > 
-> The worth of this duplication is to show how a clock from second
-> controller (<&clkc_audio_vad AUD_CLKID_VAD_AUDIOTOP>) is used by first
-> one. May be it would be better to keep it... What do you think?
+> I don't understand what is worth here. Using clocks is kind of obvious?
+> What's special?
+> 
 
-I don't understand what is worth here. Using clocks is kind of obvious?
-What's special?
+The special is that the clock "pclk" for "clkc_audio" must be
+<&clkc_audio_vad AUD_CLKID_VAD_AUDIOTOP>. This thing is not obvious. I
+can keep only "clkc_audio" node here, but reference to "clkc_audio_vad"
+will be undefined in example. Is it okay?
 
-Best regards,
-Krzysztof
+> Best regards,
+> Krzysztof
+> 
 
+-- 
+Best regards
+Jan Dakinevich
