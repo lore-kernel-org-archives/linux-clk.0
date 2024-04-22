@@ -1,103 +1,168 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1229016E875
-	for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 23:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E6E2942F;
+	Mon, 22 Apr 2024 23:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713827123; cv=none; b=IgVb+HQTZWlecLo/ZTntGDi7Am10oApmrHGNKfeMMlFeZKAeAcnSDE4D56FLMfNZsx2fWp5sVCW1qUDXelfnFCQ5sBOCh678kwIdTdLnF/gKZuinKcmMnhmD1+WV+KGL/Iv5AIFTTCEvqYJB0KO0Zxr2aIua5XKtn7M/pTyEDnw=
+	t=1713828247; cv=none; b=NMHf8CJfgTCfa/UuC5GieYg4u5uR5wVfiPLjYOMCkST/xy/FhdQiRawTgzdSMn3M22A7r/zW/naYx9Etzm9OuaetkMy4ZzItJA/nVu2sbpyC+zoPU/qT/f07ZX3is3H+V5oFgTvP8qQVWGkxqiMDNiI+WVqbqUglM9h4fXPwxzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713827123; c=relaxed/simple;
-	bh=wx/8T/vKCcaJWYUAQMxU2rZuG7A7Df188Vg4okM/Q7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gHhxEITO4SLakLSuVjnDbcovQGUsTkk/uZ520ij69Mk/A4RR4pCyfX24Laz5q1OIOhnnWScHyWFRxF0G6ZknozCLoGuROwjIZBEV23BZD9eLEwF+ncrSrCM3XTOvOU7n34OEWTo9f9zAaOAeRwMTL8ZbB7j3hZI/r0qv/0NEJyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uDONaG6u; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713828247; c=relaxed/simple;
+	bh=v3XW2cYQ79gqDMbF1UVESANI0NiQDi505TJ8KLujo5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mulC7ptUOK1PmkPxdYk00nUKMamoFbWqdYfOUsu1UNATzmsZyYqVtN4n0BYY/rh4nSU31E4oSxq5Shzg9MyDXP3fvhRslmJ7rtQcbc1oCpZwUSBcYTzJaco7Z/9tZ7Vr93PEBu0zRtpT8RpvRvPZLY1jVsQtd3TzTtbek9282w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8yAgiDA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uDONaG6u"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51aa6a8e49aso5298217e87.3
-        for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 16:05:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713827120; x=1714431920; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7XaZIqxZMCjb4/3jfqVEEePAUTYmBS+nTMWBfjL7PcQ=;
-        b=uDONaG6uEXy/lKQlehtz1xTBhu3zt2fbPg9VN/VT+LIqPurkHRn3LtoIYyGiI5VNPr
-         Kr6OEM6Rup+IO3OoO/DxEMQdj+kYjZJmxhwT46opPCB6Q27+oChb8oaLh/kN7z5Ghntw
-         fJTDNzpbCbEIGy6cIU26nqGCw23u6+HciDd2vHfkwrlYGEi2IBFA0HuCmZxBbZnxEa+z
-         cj91mTWJKBIC9qgr+cO64peIUK0SHvhNCVhh7fHL4mB6sl9VBlzKvZZVuFXfiBjcXkZf
-         zChW6fnhCnzzGiBFE2JULBAIwIDfdhppvGBChooh5BNo0ny7aqjYT7AEe08dkR4qvekP
-         /20A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713827120; x=1714431920;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7XaZIqxZMCjb4/3jfqVEEePAUTYmBS+nTMWBfjL7PcQ=;
-        b=k3l794QRt6SeQplUTaLg9N1l0eJLFeXhjzufxbee4whKATK/pRmv9mk6CyAqvW4xZd
-         W1fQNWhbIUZ+AX0ML19AG0n/hDtEfpAXdcs8m3jLf2ahibnqQiZxkfgqBZbiVlAnsLEG
-         0z78AXseXQlEQS+2V7cCQkgljfu4Z4NyOZdHqrVVMlQ5k+lKwIXWVnJtV7EkQXjixLYN
-         O9Fae0OHfB5tj63Z3bdq9FdHZS/9zx7/p93AwbC8TxgPwZsqT7qxNe92AZhYYumEwGqh
-         5WybDSybvD6TRrhMyXLZst8ZTR1nLBak7z0vVPnVodL3baoJ7C614Rx55Eow2egmcz48
-         6yFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhTYyiwqFF0XnhXQg/HI9Sg+J7z2y8/u0plFxlH+cdGYrN9PZisvHeMzdZ6OiHoDnT4IbhENrFGSrz9gCd7GUMoEeYlZlo/2sW
-X-Gm-Message-State: AOJu0Yy6J0OC0aNpcWurhiCmcMh7tUCMgMseM3k8GAjgLCHiQUZVMXGE
-	5+W0Qr1FEanCtZLPQBVmUiwHID/y8sytGomdrKhwJ9ME9rrDw3r2o3KxrnHrYQM=
-X-Google-Smtp-Source: AGHT+IHdrli7VEWYIBOZ+ewTnJcjKj0VMtA4SYUWpUwpDZrhHaQy3ZiGxTgvc9rCxsRPU7FTuDkhvQ==
-X-Received: by 2002:a05:6512:200d:b0:519:6c2d:9bd7 with SMTP id a13-20020a056512200d00b005196c2d9bd7mr6183534lfb.20.1713827120237;
-        Mon, 22 Apr 2024 16:05:20 -0700 (PDT)
-Received: from [172.30.204.103] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id fb11-20020a056512124b00b0051ab2cfece3sm1574247lfb.121.2024.04.22.16.05.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Apr 2024 16:05:19 -0700 (PDT)
-Message-ID: <5e2682bc-88cf-4aca-9e7d-205f4cfca989@linaro.org>
-Date: Tue, 23 Apr 2024 01:05:16 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8yAgiDA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6B6DC113CC;
+	Mon, 22 Apr 2024 23:24:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713828246;
+	bh=v3XW2cYQ79gqDMbF1UVESANI0NiQDi505TJ8KLujo5k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=s8yAgiDABYJJ5Q6dUW0bQqyeiS8he+8GKi6+qSH2CUjwIshTMK2Pmweg6oyFqcvce
+	 fVdaffWRShYGJ8PlgFk6UIM0a/ie3FY+avPhCyXknhkizTBzYmS5oRAhifjXIU9Bj+
+	 3yXDzzPDC6LWdVFOYJZu0hFT3i++tZF7ZxJxtV5FUSOUPdgWpTFmtU/Tqol6EZF+K2
+	 ZtqURe1IlXFEDkPbwts/B7hBcH09GXRFg3IDbs4sG+Rjns3fMnvf0BUERcRsl4FcCv
+	 /FxhJEqvCwwDxYbI3yzO2R7Ln2N9AlRiVGL5xMah5oMP2YeUmzixTqQjeLRTfZy1nT
+	 X6Kgf1sBnttMA==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	patches@lists.linux.dev,
+	kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Daniel Latypov <dlatypov@google.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH v4 00/10] clk: Add kunit tests for fixed rate and parent data
+Date: Mon, 22 Apr 2024 16:23:53 -0700
+Message-ID: <20240422232404.213174-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.44.0.769.g3c40516874-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/6] clk: qcom: common: Add interconnect clocks support
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, djakov@kernel.org,
- dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240418092305.2337429-1-quic_varada@quicinc.com>
- <20240418092305.2337429-5-quic_varada@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240418092305.2337429-5-quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+This patch series adds unit tests for the clk fixed rate basic type and
+the clk registration functions that use struct clk_parent_data. To get
+there, we add support for loading device tree overlays onto the live DTB
+along with probing platform drivers to bind to device nodes in the
+overlays. With this series, we're able to exercise some of the code in
+the common clk framework that uses devicetree lookups to find parents
+and the fixed rate clk code that scans device tree directly and creates
+clks. Please review.
+
+I Cced everyone to all the patches so they get the full context. I'm
+hoping I can take the whole pile through the clk tree as they all build
+upon each other. Or the DT part can be merged through the DT tree to
+reduce the dependencies.
+
+Changes from v3 (https://lore.kernel.org/r/20230327222159.3509818-1-sboyd@kernel.org):
+ * No longer depend on Frank's series[1] because it was merged upstream[2]
+ * Use kunit_add_action_or_reset() to shorten code
+ * Skip tests properly when CONFIG_OF_OVERLAY isn't set
+
+Changes from v2 (https://lore.kernel.org/r/20230315183729.2376178-1-sboyd@kernel.org):
+ * Overlays don't depend on __symbols__ node
+ * Depend on Frank's always create root node if CONFIG_OF series[1]
+ * Added kernel-doc to KUnit API doc
+ * Fixed some kernel-doc on functions
+ * More test cases for fixed rate clk
+
+Changes from v1 (https://lore.kernel.org/r/20230302013822.1808711-1-sboyd@kernel.org):
+ * Don't depend on UML, use unittest data approach to attach nodes
+ * Introduce overlay loading API for KUnit
+ * Move platform_device KUnit code to drivers/base/test
+ * Use #define macros for constants shared between unit tests and
+   overlays
+ * Settle on "test" as a vendor prefix
+ * Make KUnit wrappers have "_kunit" postfix
+
+[1] https://lore.kernel.org/r/20230317053415.2254616-1-frowand.list@gmail.com
+[2] https://lore.kernel.org/r/20240308195737.GA1174908-robh@kernel.org
+
+Stephen Boyd (10):
+  of: Add test managed wrappers for of_overlay_apply()/of_node_put()
+  dt-bindings: vendor-prefixes: Add "test" vendor for KUnit and friends
+  dt-bindings: test: Add KUnit empty node binding
+  of: Add a KUnit test for overlays and test managed APIs
+  platform: Add test managed platform_device/driver APIs
+  dt-bindings: kunit: Add fixed rate clk consumer test
+  clk: Add test managed clk provider/consumer APIs
+  clk: Add KUnit tests for clk fixed rate basic type
+  dt-bindings: clk: Add KUnit clk_parent_data test
+  clk: Add KUnit tests for clks registered with struct clk_parent_data
+
+ Documentation/dev-tools/kunit/api/clk.rst     |  10 +
+ Documentation/dev-tools/kunit/api/index.rst   |  21 +
+ Documentation/dev-tools/kunit/api/of.rst      |  13 +
+ .../dev-tools/kunit/api/platformdevice.rst    |  10 +
+ .../bindings/clock/test,clk-parent-data.yaml  |  47 ++
+ .../bindings/test/test,clk-fixed-rate.yaml    |  35 ++
+ .../devicetree/bindings/test/test,empty.yaml  |  30 ++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ drivers/base/test/Makefile                    |   3 +
+ drivers/base/test/platform_kunit-test.c       | 140 ++++++
+ drivers/base/test/platform_kunit.c            | 174 +++++++
+ drivers/clk/.kunitconfig                      |   2 +
+ drivers/clk/Kconfig                           |   9 +
+ drivers/clk/Makefile                          |   9 +-
+ drivers/clk/clk-fixed-rate_test.c             | 377 +++++++++++++++
+ drivers/clk/clk-fixed-rate_test.h             |   8 +
+ drivers/clk/clk_kunit.c                       | 198 ++++++++
+ drivers/clk/clk_parent_data_test.h            |  10 +
+ drivers/clk/clk_test.c                        | 451 +++++++++++++++++-
+ drivers/clk/kunit_clk_fixed_rate_test.dtso    |  19 +
+ drivers/clk/kunit_clk_parent_data_test.dtso   |  28 ++
+ drivers/of/.kunitconfig                       |   1 +
+ drivers/of/Kconfig                            |  10 +
+ drivers/of/Makefile                           |   2 +
+ drivers/of/kunit_overlay_test.dtso            |   9 +
+ drivers/of/of_kunit.c                         |  99 ++++
+ drivers/of/overlay_test.c                     | 115 +++++
+ include/kunit/clk.h                           |  28 ++
+ include/kunit/of.h                            |  94 ++++
+ include/kunit/platform_device.h               |  15 +
+ 30 files changed, 1967 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/dev-tools/kunit/api/clk.rst
+ create mode 100644 Documentation/dev-tools/kunit/api/of.rst
+ create mode 100644 Documentation/dev-tools/kunit/api/platformdevice.rst
+ create mode 100644 Documentation/devicetree/bindings/clock/test,clk-parent-data.yaml
+ create mode 100644 Documentation/devicetree/bindings/test/test,clk-fixed-rate.yaml
+ create mode 100644 Documentation/devicetree/bindings/test/test,empty.yaml
+ create mode 100644 drivers/base/test/platform_kunit-test.c
+ create mode 100644 drivers/base/test/platform_kunit.c
+ create mode 100644 drivers/clk/clk-fixed-rate_test.c
+ create mode 100644 drivers/clk/clk-fixed-rate_test.h
+ create mode 100644 drivers/clk/clk_kunit.c
+ create mode 100644 drivers/clk/clk_parent_data_test.h
+ create mode 100644 drivers/clk/kunit_clk_fixed_rate_test.dtso
+ create mode 100644 drivers/clk/kunit_clk_parent_data_test.dtso
+ create mode 100644 drivers/of/kunit_overlay_test.dtso
+ create mode 100644 drivers/of/of_kunit.c
+ create mode 100644 drivers/of/overlay_test.c
+ create mode 100644 include/kunit/clk.h
+ create mode 100644 include/kunit/of.h
+ create mode 100644 include/kunit/platform_device.h
 
 
+base-commit: 4cece764965020c22cff7665b18a012006359095
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
 
-On 4/18/24 11:23, Varadarajan Narayanan wrote:
-> Unlike MSM platforms that manage NoC related clocks and scaling
-> from RPM, IPQ SoCs dont involve RPM in managing NoC related
-> clocks and there is no NoC scaling.
-> 
-> However, there is a requirement to enable some NoC interface
-> clocks for accessing the peripheral controllers present on
-> these NoCs. Though exposing these as normal clocks would work,
-> having a minimalistic interconnect driver to handle these clocks
-> would make it consistent with other Qualcomm platforms resulting
-> in common code paths. This is similar to msm8996-cbf's usage of
-> icc-clk framework.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-
-One more thing that we don't seem to have squared out is how to handle
-.sync_state. We can just jerryrig icc_sync_state in here, but I'm not
-sure how that goes with some floating ideas of clk_sync_state that have
-been tried in the past
-
-Konrad
