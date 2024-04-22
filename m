@@ -1,73 +1,161 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3715531A60;
-	Mon, 22 Apr 2024 14:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E93E1E49F
+	for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 14:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713796489; cv=none; b=Hsge9dbJrm7ND+NtPFNZRX8piPjAQKEqcLyg0FuMi97Cf7zlxQU2Dl1PYwXsxtlgXF3tiD7kx/RCLexe4U2HQDpC8zheziV/TEgnlrBssd5oASBmGTvqbsELcaMl/wQpYNYWlHZ2lmedBltjX6Xzg48X0gIRWJI2if0tdDJeCEM=
+	t=1713797769; cv=none; b=j0TYoTrEVxOTMbMib2n7iesiShPKSuzbB0sm5BBOX2Nk+6nQ/iu4QoskjGKuzeNsOI4hZpac9VKHy5/ftp36/9/RhOzFyKhNEgNxP0sZ9taUshuINK6CYdpgVya49lcp/yfx4BwvLcje7mBkrQ7/37oErwL3bGv9lNbSvwqFHFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713796489; c=relaxed/simple;
-	bh=nXW/dGp76KSMhEsdyPgcY4LRy3/wNfDXNDI/mbg/66g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+is9i1CFSNmPY5ASTgorcEQmZYlRuxaeRhR4P/ECH8S7C0jGEfxVXtsDrYP5Kbc91m6lz0vhZ8QqKKorIvPf7/FldD1nU85e6MRvhoBAfIFI/+SCGLji0uz20ZiI4CJpf+e1VOmhlGQNuhBt4oicZyXIn4GNr+p6Wpty7uFXhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dT1qTkyw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713797769; c=relaxed/simple;
+	bh=imsekkblo55XmgjAaWRpZaTVc+ZBiFNXzC9IucNVpbg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MV1Mze1Dh+61BnIsppXI8hYXo3BjvdlbIvEDgAnFWEq9wPwUTlYLU/ScW6H6ycRcR5B0nXCDxCdeNzYoCUTvEtvIdZl9/jPxHeNnajJRgqCX8irRhRvVO4klScOjTZFafm3+jMD55oiOiJOlAszt6yRGYL9ZY2AuN00qvZ44KCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U4HjiUXU; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dT1qTkyw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72648C113CC;
-	Mon, 22 Apr 2024 14:34:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713796488;
-	bh=nXW/dGp76KSMhEsdyPgcY4LRy3/wNfDXNDI/mbg/66g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dT1qTkywsybV/NomyonjwXaYy4MOx0PozQcd7dGysPmLVUq790DAbcNKrJWqK7GyK
-	 ELjSzvEuELkuFdrOsnYjYOlK7pFpdxsnG2rTT5rCGucVQ/8ElTCCtCL97KbgtKuNw6
-	 jc3lh26lYgzDjpbE1RysS5D2Zh4QGlZwMRs2qJ9vnDs0LePC++9AKw0p7SmoHdqZuU
-	 rPkFQVzQIoNO3FKWlu6LDNslZNjW8GS1olJYMmZorENrtiG+ic9AFy3VYYLt+o4hHM
-	 HN/pgmxebJVh+wRGqhtI5+ym8yfWzG8JSZri5HL8Gm+pfhK67U213owbZ1D1Pi/Bap
-	 1Xhj8DSKhjXEg==
-Date: Mon, 22 Apr 2024 09:34:46 -0500
-From: Rob Herring <robh@kernel.org>
-To: gabriel.fernandez@foss.st.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 1/4] dt-bindings: clocks: stm32mp25: add
- access-controllers description
-Message-ID: <171379647410.1220216.12174956651152279801.robh@kernel.org>
-References: <20240419152723.570159-1-gabriel.fernandez@foss.st.com>
- <20240419152723.570159-2-gabriel.fernandez@foss.st.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U4HjiUXU"
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-23489b56559so2493102fac.1
+        for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 07:56:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713797765; x=1714402565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NTOg8DkAW/3dkpxikcsk436y8h1eZe1SfUF5lmW3ku0=;
+        b=U4HjiUXUk7RxfDBJM02w61BKjrevJJkbVQ4n308mTss7ZrXCgsfziCIwLKxShfByoo
+         hWFUPwgoHrnn3+txvd+/dIRdrUyblWZBxXoIwQ7UOUEt5AXEp3fu6NW1YR9Euv3EQx5h
+         I1rveApyv3uw4B8KPrC6Jknj+jJkMsDnxzmLngWhjRpXz52q9hKfhn6LfI2E+KADBrKI
+         r+uDdkRm9scQAFyNYr+06lPE2DWOuUWWkQvldJVTr7zvmAQ4ictOwHFJ3K+eaL8sVheP
+         2p/ckccpkJIi/sQewygszj8wg3710ivlA+IL92IGQ0r+8UQMLXtriqxQHG6s6r8iYUjm
+         58zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713797765; x=1714402565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NTOg8DkAW/3dkpxikcsk436y8h1eZe1SfUF5lmW3ku0=;
+        b=PjyjPhFcR5ZfMMU+TLHv8Y3rk/w1sf9wDAdRvqrsSVmkSTS8HA34+CLefEDBqQ4gtI
+         4Mbv3s4DKJTT5pvsNcVLeaGrFKeOKrTn/7PApdYgFmGoYitDzqDSlV4pWZUdN8nTVDr7
+         CHoLKH77X1c7q6ba9AMQP/z5ipkpy+CyHW5rSIOgARqmi1POeAbHxOcJpPVNqRm4+gEa
+         Auj8rC/qPtE5GeVIYzUQ5JIDPATcJOPljGAZ500mPNxwy7DOmr0+v6CWHCwAEIakm5Bs
+         uJdARpCq6DaRrOxYxtvbUvlibEhCDEcLck7dNVfo0VMD6mNUZevWADLXs+OtE16qsGl/
+         B7EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXN6qJXFGk4FAGXKM2wWUIV3XMT5OwHM4bnyEIq6f97WSMeqUHBJVffgWYiXC5ofrkgESffhXuWvrvz+PY7z5l7yVM00x4Lb7Gh
+X-Gm-Message-State: AOJu0Yz+wa/7i3kiZXzjedC0T71vz5DNa1/OMXj9MFvctWNBLlGGNimd
+	78qXUaZZ0kHgJOyIuw4usMtdde/lkQC+YxMV78ipqMFBRIE44MwQJtCBBkeh0IVLh0cPQAN4P1s
+	+uS1PTtuFirCeW9khHylZh8ekEhC6BRoBeysXKQ==
+X-Google-Smtp-Source: AGHT+IHTzGHT1v9LeibIhpXISDP5Up0NDJE//bpDlntvJJiW0sMwcyQm0rL5VdwsrhLb5OjnZBVN3sPtCblaMnzwbwM=
+X-Received: by 2002:a05:6870:1318:b0:21f:aba0:772d with SMTP id
+ 24-20020a056870131800b0021faba0772dmr10853360oab.39.1713797765495; Mon, 22
+ Apr 2024 07:56:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240419152723.570159-2-gabriel.fernandez@foss.st.com>
+References: <20240404122559.898930-1-peter.griffin@linaro.org>
+ <20240404122559.898930-9-peter.griffin@linaro.org> <61f427ab3793def23d80d94457ff1568cae5ee11.camel@linaro.org>
+In-Reply-To: <61f427ab3793def23d80d94457ff1568cae5ee11.camel@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 22 Apr 2024 15:55:54 +0100
+Message-ID: <CADrjBPqAyWzuw9TmdE1XRQ2BkYojR8r7nnH7JcRWc9_xOpUgHg@mail.gmail.com>
+Subject: Re: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
+	martin.petersen@oracle.com, chanho61.park@samsung.com, ebiggers@kernel.org, 
+	linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
+	saravanak@google.com, willmcvicker@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Andr=C3=A9,
 
-On Fri, 19 Apr 2024 17:27:20 +0200, gabriel.fernandez@foss.st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> 
-> access-controllers is an optional property that allows to refer to
-> domain access controller.
-> The RCC driver will be able to check if we are allowed to register
-> clocks for a peripheral.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> ---
->  Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+On Thu, 4 Apr 2024 at 14:24, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
+>
+> Hi Pete,
+>
+> Thanks for this!
+>
+> I haven't reviewed this, but one immediate comment...
+>
+> On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
+> > [...]
+> > diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-=
+gs101.c
+> > index d065e343a85d..b9f84c7d5c22 100644
+> > --- a/drivers/clk/samsung/clk-gs101.c
+> > +++ b/drivers/clk/samsung/clk-gs101.c
+> > @@ -22,6 +22,7 @@
+> >  #define CLKS_NR_MISC (CLK_GOUT_MISC_XIU_D_MISC_ACLK + 1)
+> >  #define CLKS_NR_PERIC0       (CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK + 1)
+> >  #define CLKS_NR_PERIC1       (CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK + 1)
+> > +#define CLKS_NR_HSI2 (CLK_GOUT_HSI2_XIU_P_HSI2_ACLK + 1)
+>
+> Can you please keep the #defines alphabetical (hsi before misc).
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Will fix
 
+>
+> >
+> >  /* ---- CMU_TOP ------------------------------------------------------=
+------- */
+> >
+> > @@ -3409,6 +3410,560 @@ static const struct samsung_cmu_info peric1_cmu=
+_info __initconst =3D {
+> >       .clk_name               =3D "bus",
+> >  };
+> >
+> > +/* ---- CMU_HSI2 -----------------------------------------------------=
+----- */
+>
+> and this code block should be earlier in the file
+
+Will fix
+>
+> > [..]
+>
+> >  static int __init gs101_cmu_probe(struct platform_device *pdev)
+> > @@ -3432,6 +3987,9 @@ static const struct of_device_id gs101_cmu_of_mat=
+ch[] =3D {
+> >       }, {
+> >               .compatible =3D "google,gs101-cmu-peric1",
+> >               .data =3D &peric1_cmu_info,
+> > +     }, {
+> > +             .compatible =3D "google,gs101-cmu-hsi2",
+> > +             .data =3D &hsi2_cmu_info,
+> >       }, {
+>
+> and this block should move up
+
+Will fix
+>
+> >       },
+> >  };
+> > diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bind=
+ings/clock/google,gs101.h
+> > index 3dac3577788a..ac239ce6821b 100644
+> > --- a/include/dt-bindings/clock/google,gs101.h
+> > +++ b/include/dt-bindings/clock/google,gs101.h
+> > @@ -518,4 +518,67 @@
+> >  #define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK              45
+> >  #define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK           46
+> >
+> > +/* CMU_HSI2 */
+>
+> and all these defines, too.
+
+Will fix.
+
+regards,
+
+Peter
