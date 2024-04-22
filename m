@@ -1,153 +1,107 @@
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83874B5A6
-	for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 07:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876AC5103E
+	for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 07:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713769926; cv=none; b=VQOowd0kyLnkCyzDMU2XJWr1zqdlfjx8tH/g/hFXL+Ae9ZGbBBlcpwX/AEt4VhODE9FqRwpY4TXXL/Jiw8acjoumRoYuOgRf+TohoMC7tz6otk0Q4N43s32BJzNPA7Bme6As1W/wskOlhSeyus/geY8hr8mb8KU97pNZMZpydwo=
+	t=1713770427; cv=none; b=Fv58ygSpkVGIOR0PLbphbayg/uRUe8ILJkndfpmBwV6oikkYoAabgBESteDzDKIjzwDfv1kq7E9ofwF9pF43YoxyxecdBtDIxTR8KJ4nheYlH6ek0L+6FGErffSvGqlfOFGlfA2XaE50KxIvVEKpnUuQZa/HqXW6nsVyvIHrzQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713769926; c=relaxed/simple;
-	bh=uPH6Y67fwbijcJ63Bx9ZgEyKOxdB9i7MlDXsKbFIr70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZc61VA9YcCeVsMriHzEGcgq5Um/oOIBfQjUklfziiPRmiPqXj0LkA72r+wCvchZHa8wiQd/QubRBZnYWbJnC4p73u/EIMDugBJZCODkj+zQB7VfqFWyB9R84rxfnfLHNMwtnihwGNUBE8AgYJRwEYnY7K6f37nHTiYFzxTRmSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iGojFyue; arc=none smtp.client-ip=209.85.160.52
+	s=arc-20240116; t=1713770427; c=relaxed/simple;
+	bh=ATftZ9Ym7rSAUoJHd1ARgykQ/AWlPFdo0bDfzdin4dQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rSzfAoyToe40BuX/09HmjWEpjbXfvxo0XOnrax2Jg/o/LKI7L0IEdsJYzh6Hvk1EKiv7AC1RM3b2L9wv8Iz1ESdzRZPIbm3bXMhMhFebl+SXS2Qq3SJtqpnafcpXVO+77M1tJBYo/T88yeT4sz7RJhn0HUDJQRmy1pBPNz/1V9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MPf1+btW; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iGojFyue"
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-23335730db1so2042609fac.2
-        for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 00:12:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MPf1+btW"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-516d6c1e238so5130547e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 00:20:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713769924; x=1714374724; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4Cg+LkkJAMIn0twUnN3DDfZ/IhwvjeNrn5o075GoKwo=;
-        b=iGojFyueUeaKUwnFwkF3iz+55T6H2EJ1Zq3N967psrLO+xUoi3J769DSbN+8siT2eM
-         qr18WcnOnqmdUUfx4yvh8hW6fLjKmoyO/RiosIkQsdGTDa2Di1rtah+Yjwzq7zUDdeVF
-         fN/49XzJzr3co0eLp+l52s3Y+0I4rq8ckqNSFOn7M8M2+Ad/ImWnOUowGoLzLeRdrhV9
-         siu+HDe+lpEonH+j0chy8zhREYqHZbHLSMBBoCvW6RZeQGg2zpdJX0YjXlUkxTQVUdAI
-         U/OjTtXyk12zR7j50H2NnKWw/nK8mdH7b5dVyy4A1b7iM2YTMCaBgKzDZFEb5/nG6dA1
-         kuWA==
+        d=linaro.org; s=google; t=1713770424; x=1714375224; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=32Lq/HZzWg4ZCGDLhtubfrCq19J1a57yr3c9tUQ33v8=;
+        b=MPf1+btW/Bof0PFz962IeC1GNjlllsUtqaP3KkiwUC9wNAXXI+IuGaatf743KqeHS7
+         9VO3QSTSab7mADC52mDkXiXPyfJlz3vhrTOGDoCkJnMia1f0SM+xmrFoXoDe6vKfbYpG
+         dk7kyLC/mr3lbxTh47q5aqlUrRHxOrt8ZHYWeZqu3q//4tdnD/zxcZGv4DKOmoz4xzzF
+         LZ/XbPhcxmBh14CqhzioMmdzkmFAuqjcqAC+LFSuMgHAjOMZpkuokmb98dMOoUWnzRfj
+         AZVAenAoVqDuqGgbROzTP3kXYk5/zlyQ8+4FKHi8OFi4YtzS6Y79oRRivs3XIGH68Emy
+         4yvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713769924; x=1714374724;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Cg+LkkJAMIn0twUnN3DDfZ/IhwvjeNrn5o075GoKwo=;
-        b=Y/DVsTd7bmocrTpUVsSLvQ35+Mkmm15j4EzI6lHvI9ZkpdbjmBuTxwxAN/vFTydd6+
-         v0HVb+WMPrtG4oEEUpKPvRWttQC3oJV0BZzDD2i9+lcOACHOLbyoWRqk9Ykt1nPXkV+E
-         ou+BLSe9kSpypKvP/UZhLxkf51EFPnOoHimZKJ1DUApyWHF5jdRryOXP2JkJI2gT8cv8
-         aR00962abivKTpGigVjqozOUH38AFBXs4WhYFyoScD8F3ZT+d4kq2R1u+Ehp2DLAdniv
-         Pod9qFRa+oDJ1D09yemGUsGdUeNkE8wZMVjr7NGuoVNSwPWXnfpAQBT4y3brsR/5MsNC
-         W8YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkgUqTJM3i8T2Dg/JDNqXUizUeOf6Z/XZ1UzbN1H0sSgROKo3NubHTERbjy/eLhagSDkOL+Ms3R4Y2b1mB1pJrELTj1p1BY1Gs
-X-Gm-Message-State: AOJu0YwR1Xm1jXZfW0YPPjHI0kPbNV7rV8+LvAPcf6Uo7HwUoZRMxeu4
-	wLhi4ejApqaIZsQoIb5t6Z+JJvAD6H1VXyWs+AleQtB+seA7luDB3YTU1lU2eA==
-X-Google-Smtp-Source: AGHT+IGsAnvtXsNNVTtGLGsnDwgTZNcM5E8iRPZJhaMeCx1yHucYJ64i8pt6jXG7TTPYe25ap1BMcw==
-X-Received: by 2002:a05:6870:82a6:b0:22a:4c05:2efd with SMTP id q38-20020a05687082a600b0022a4c052efdmr11720065oae.10.1713769923903;
-        Mon, 22 Apr 2024 00:12:03 -0700 (PDT)
-Received: from thinkpad ([120.60.70.118])
-        by smtp.gmail.com with ESMTPSA id fe8-20020a056a002f0800b006ed00ea504asm7189292pfb.159.2024.04.22.00.11.58
+        d=1e100.net; s=20230601; t=1713770424; x=1714375224;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=32Lq/HZzWg4ZCGDLhtubfrCq19J1a57yr3c9tUQ33v8=;
+        b=uHJg6gDqqqZIImp6UMhTshwo5lMAj+uV52+YWbxfV/uzVDXDBlLG64/X5A0uciz6mA
+         G2bqsxu4AIw8sIvNttAfvPVRsedIRyf7Jtr4S85UfbbERP+nFf3KLfBWjhVp5Gezbkab
+         17wyIv8y5/jbrvdTJWhqOJgHk5o09tgcvADGjM+ShINhh3g/EUfYqsSj8ZPj3xNX3GuP
+         YbV1Ezqj10O6xvrgjnYiDR0prPlxrZ8u58huf1qZpa6N4m9mRo85DHXVeF9POtsEiM1e
+         mlXKp8cIxDmtZ+RrtWDoOK0F98oiXktbbNHxsFzkCliSX+pH39FKXFrWTZOvG9BTUgxZ
+         l23A==
+X-Forwarded-Encrypted: i=1; AJvYcCWFSC5moyeJvbtA4yOAjZ94FXcHIT7MpqLKBkPcBzkrzRagCJkj7F4tD7mNlocsOKVMEC6eSFKB475HrCvdUzhDiM7GUIGDduXl
+X-Gm-Message-State: AOJu0YxaW1xr5WFwu7WmAqfTxlZCzvldQVWlpgK9K993xvAQ5c5PVi5H
+	ahSFxY051Gn/K+X5KkcoNvl2MUvnG3ygQmOPZr/KHZvVE9aymDqxJh0bcmZSMbg=
+X-Google-Smtp-Source: AGHT+IE0GxCmo2sauSNNM1yFpkUOibF0cGEOXefwlVpQiyWuzx9DvXPhQthTU9pfqLtasIWX7K48yA==
+X-Received: by 2002:a05:6512:b10:b0:51b:2909:4cc4 with SMTP id w16-20020a0565120b1000b0051b29094cc4mr2054973lfu.46.1713770423518;
+        Mon, 22 Apr 2024 00:20:23 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id s3-20020a056402164300b00562d908daf4sm5205872edx.84.2024.04.22.00.20.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Apr 2024 00:12:03 -0700 (PDT)
-Date: Mon, 22 Apr 2024 12:41:56 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mr.nuke.me@gmail.com
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] PCI: qcom: Add support for IPQ9574
-Message-ID: <20240422071156.GB9522@thinkpad>
-References: <20240415182052.374494-1-mr.nuke.me@gmail.com>
- <20240415182052.374494-5-mr.nuke.me@gmail.com>
- <CAA8EJpqKWJBqDUacE0xTLzxny32ZTStiRgXsd2LBD=Hou_CRBw@mail.gmail.com>
- <3cfc26e6-5587-d4a2-f217-1a30169ad1a0@gmail.com>
- <20240417070616.GB3894@thinkpad>
- <102f209c-3367-86ac-c583-73103d5510a9@gmail.com>
+        Mon, 22 Apr 2024 00:20:22 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: peter.griffin@linaro.org, Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+ mturquette@baylibre.com, sboyd@kernel.org, semen.protsenko@linaro.org, 
+ andre.draszik@linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, willmcvicker@google.com, 
+ kernel-team@android.com
+In-Reply-To: <20240419100915.2168573-1-tudor.ambarus@linaro.org>
+References: <20240419100915.2168573-1-tudor.ambarus@linaro.org>
+Subject: Re: [PATCH v4 0/2] clk: samsung: introduce nMUX to reparent MUX
+ clocks
+Message-Id: <171377042206.10231.3797208490823201633.b4-ty@linaro.org>
+Date: Mon, 22 Apr 2024 09:20:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <102f209c-3367-86ac-c583-73103d5510a9@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Fri, Apr 19, 2024 at 02:44:36PM -0500, mr.nuke.me@gmail.com wrote:
-> Hi Mani.
+
+On Fri, 19 Apr 2024 10:09:13 +0000, Tudor Ambarus wrote:
+> v4:
+> - squash nMUX patch with the PERIC0 patch so that it becomes a single
+>   entity fixing the introduction of the PERIC0 clocks. PERIC1 fix comes
+>   after, as the PERIC1 clocks were introduced after PERIC0.
+> - fix the fixes tag of the PERIC1 patch.
 > 
-> On 4/17/24 02:06, Manivannan Sadhasivam wrote:
-> > On Mon, Apr 15, 2024 at 03:07:02PM -0500, mr.nuke.me@gmail.com wrote:
-> > > 
-> > > 
-> > > On 4/15/24 15:04, Dmitry Baryshkov wrote:
-> > > > On Mon, 15 Apr 2024 at 21:22, Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
-> > > > > 
-> > > > > Add support for the PCIe on IPQ9574. The main difference from ipq6018
-> > > > > is that the "iface" clock is not necessarry. Add a special case in
-> > > > > qcom_pcie_get_resources_2_9_0() to handle this.
-> > > > > 
-> > > > > Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> > > > > ---
-> > > > >    drivers/pci/controller/dwc/pcie-qcom.c | 13 +++++++++----
-> > > > >    1 file changed, 9 insertions(+), 4 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > > index 14772edcf0d3..10560d6d6336 100644
-> > > > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > > @@ -1101,15 +1101,19 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
-> > > > >           struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
-> > > > >           struct dw_pcie *pci = pcie->pci;
-> > > > >           struct device *dev = pci->dev;
-> > > > > -       int ret;
-> > > > > +       int ret, num_clks = ARRAY_SIZE(res->clks) - 1;
-> > > > > 
-> > > > > -       res->clks[0].id = "iface";
-> > > > > +       res->clks[0].id = "rchng";
-> > > > >           res->clks[1].id = "axi_m";
-> > > > >           res->clks[2].id = "axi_s";
-> > > > >           res->clks[3].id = "axi_bridge";
-> > > > > -       res->clks[4].id = "rchng";
-> > > > > 
-> > > > > -       ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
-> > > > > +       if (!of_device_is_compatible(dev->of_node, "qcom,pcie-ipq9574")) {
-> > > > > +               res->clks[4].id = "iface";
-> > > > > +               num_clks++;
-> > > > > +       }
-> > > > > +
-> > > > > +       ret = devm_clk_bulk_get(dev, num_clks, res->clks);
-> > > > 
-> > > > Just use devm_clk_bulk_get_optional() here.
-> > > 
-> > > Thank you! I wasn't sure if this was the correct solution here. I will get
-> > > this updated in v4.
-> > > 
-> > 
-> > Please rebase on top of [1] and mention the dependency in cover letter.
+> v3:
+> - update first patch:
+>   - remove __nMUX() as it duplicated __MUX() with an exception on flags.
+>   - update commit message
+>   - update comment and say that nMUX() shall be used where MUX reparenting
+>     on clock rate chage is allowed
+> - collect R-b, A-b tags
 > 
-> I am very hesitant to depend on another patch series. Is it okay if I
-> include your patch in v4 of this series?
-> 
+> [...]
 
-Feel free to.
+Applied, thanks!
 
-- Mani
+[1/2] clk: samsung: gs101: propagate PERIC0 USI SPI clock rate
+      https://git.kernel.org/krzk/linux/c/7b54d9113cd4923432c0b2441c5e2663873b4e5b
+[2/2] clk: samsung: gs101: propagate PERIC1 USI SPI clock rate
+      https://git.kernel.org/krzk/linux/c/7cf0324ba0bc61a8c360d23d284e06d2994b1fef
 
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
