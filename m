@@ -1,93 +1,172 @@
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF132149E0F;
-	Mon, 22 Apr 2024 10:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5B2145FFE
+	for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 10:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713781902; cv=none; b=PS5yVIPcK8uVf7wAa/TTFZ7jv8ZMH+01TpllDqBgm93AZgoAu1g70j8ubqL73imsJH/bE3Vvyju7kWYT5bTZH+JOZBFUKjcja97TEb3D64VfTlPfRn39iXSSg8tazT+UWlxV7MGz/3nAYPcZnIzPzmVgfKWpmMgpNpE+T/UsHEg=
+	t=1713783243; cv=none; b=F2537FX9/4IIGT9eazK+0Kod2cNYV8zaPSFfzXx3FuO9E0Cz9bJW8pn7WDhSqOmJvl/kHZetYovOTuvJWD4ZLOVeCyL9w36L048de8QkV1H9utjNSyFcILYRq6/bUlXPgUrPCyxPexN1a3h1Oz9nHcBexqEbnNyivw4hAFAPza0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713781902; c=relaxed/simple;
-	bh=+j2bNi8k/alLWVzZXt5+/z70HAC4NEQb/EVIcPMzr/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eYR+tPhf5AFNL/kd4FsSI2iwxG4jbr9or/qMklIq6TbpnvlrCvsssn3c3TSkx09nmYma8jYvMv6kbFoL6uX+VgJL+gPNnbz5T6gjGdbb4mlGkPgXopepVcL7dov1nNMEjxG42iW+4gLDgyn4SzMqqW+kcjLott2hd6rFeLDZUSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=d4Aq3BUT; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	s=arc-20240116; t=1713783243; c=relaxed/simple;
+	bh=qE5Vwmtp9Qv3JNLaDibUL1/hbZOmTstWoD1DhaLuYLI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LgpSekeyOxP8Ex2Vvgp+xMaUBErf2rbKeGDfWUjqzklMUFvgDgDzBFpXpYQFlZxTRCLT74kk13/+b9MKQvOWp4UvEm5Nkuet5AoWKSxPd/M0ba4y2sDuril9zEl45gJj/j3piAXkcuv0NGj2y4KWXXTVACY3VUKtcB4Cp2uIjLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=m5YXdNGM; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="d4Aq3BUT"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=s/c3dJrF+9TupMEh+95zrLT8ysApMrEChVLOaNR1tJE=;
-	t=1713781900; x=1714213900; b=d4Aq3BUTX8hDvY1K/1zvbRMEcd+wHaGzKq+7eDBwh345V/o
-	sSd+nHHu7M469tR5oS4ejLE12f6eu5DYDMkPuLryGb92TkzbM17xIto61JbO58QHqINlAYWALAIN5
-	hhWKYeSodu0eLHwfze0DPZ5/KpL5jrGO3ae3eCnXWk8NNPTPTAoOEAAwr08Lk7SldykiYW4Jz8Pc/
-	PrbZNLpPMiNxZ3+MZdYE7NHmeA1skurkKzKbIajMRcFg1R1YDtaIVYmp04JbunfBoSWyL1Tk6TqfK
-	Zu6iBpc6lbYd+/P7bIRxogFTgMiDUYS1gsLDOZwFmGprd/AdNRw9xowv1uQfKqlw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1ryqxW-0003dJ-62; Mon, 22 Apr 2024 12:31:38 +0200
-Message-ID: <59372e42-2eab-4efd-b7d8-d0ef6f8c2300@leemhuis.info>
-Date: Mon, 22 Apr 2024 12:31:37 +0200
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="m5YXdNGM"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-418c2bf2f55so28319505e9.2
+        for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 03:54:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1713783239; x=1714388039; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kyXgtdlSsX9JbCqrqT1KpAPo69/BzSus4iMQG/5X7PE=;
+        b=m5YXdNGM8jOgkhQiDFF/wFnN3bFfOxHqz+15kBreooLUytilfyoAzjd79KONgFkzux
+         dHW9EybhBm1v14ECaydUF2WareSnWNbRZZn3nST/ZLDJwv7SSAQqd2kw0ueCXU0O3ctZ
+         7n4Ev6kJkh5IG3oLpF73AJaLQHehZBGZId8Yzfg7HxAtxOVOhrVC8VDBp1qkQqcTmgyd
+         PAi4p2TqmREgM2UwFbT0uXu0ikcw9TYI0ttmpnuPeZuM12/cSB8Clfyq/OX73X3phhRe
+         a/BlKZ8UbZoPo8/CGFm6pzqWd+XkjM0tAGakeKWEBVoCJ1PCsurp0PPJAZ4mc/6JglZT
+         hSBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713783239; x=1714388039;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kyXgtdlSsX9JbCqrqT1KpAPo69/BzSus4iMQG/5X7PE=;
+        b=c9i72cLvxDMxjzckU6yhrYisS079NooxBCe4VY0sa5+dfA46wie/AeY6knXIBbiN3T
+         YhktDERE/1FI9Ou/0jGt3O0l7vKc2XWgq+3eRLDSRvTdbEAxks2pMGhJieJl2X6kqi6j
+         pNqm6IeX2gPDZSX+0XvVO1VARLXLqqwtgFLrBVwEXYCX3zVd8Z3tYDfuUwm8IEVH2fDz
+         P+onUlrrc8Knk1E9KDWfAMograA4e9B5yLOwLrRwpO/vDc2sG7Rkk5AjhqOkXKJl5lOP
+         60bOxJhrFoo9BdBc8zgEFoXqSbgLsn1gOKS8myCuKcyp35Y0PE2wMFn9XgDugjUb+ZzE
+         yWoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNUmb8/9s25F0D/EIo1kdsZSbg0v4FMaSA6dwXI8kDiSeRjJj2AEFJ4URORgxMug/Acpcksjw09Dsa2W3lT6+H6ExzcVxHZDea
+X-Gm-Message-State: AOJu0YyO71LgNOE6I7PVskGNVmCj0U0NWoMW7GzE1Jamwo6/9XoX19GU
+	rDczmFeuuNGYmXTvzm3R5tYy+w0n/DjkrrlPnSpCNsTSQmE2YSK8JhDHDuVEzHs=
+X-Google-Smtp-Source: AGHT+IE2HFhfOY3a7coK7WBeBu9s0c6ROdImq1nPtwwG99XgO1IXvZsqHnwGsmXXQujjgOBA5sQxiQ==
+X-Received: by 2002:a5d:56ce:0:b0:349:8ba8:e26d with SMTP id m14-20020a5d56ce000000b003498ba8e26dmr6552380wrw.13.1713783239258;
+        Mon, 22 Apr 2024 03:53:59 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.53])
+        by smtp.gmail.com with ESMTPSA id v13-20020a05600c444d00b0041a3f700ccesm4321037wmn.40.2024.04.22.03.53.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Apr 2024 03:53:58 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com,
+	ulf.hansson@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v4 0/8] clk: renesas: rzg2l: Add support for power domains
+Date: Mon, 22 Apr 2024 13:53:47 +0300
+Message-Id: <20240422105355.1622177-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: [PATCH] clk: qcom: gdsc: treat optional supplies as optional
-To: Bjorn Andersson <andersson@kernel.org>,
- Johan Hovold <johan+linaro@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <20240325085835.26158-1-johan+linaro@kernel.org>
- <171226578689.615813.4474720130637817355.b4-ty@kernel.org>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <171226578689.615813.4474720130637817355.b4-ty@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1713781900;2106b9ec;
-X-HE-SMSGID: 1ryqxW-0003dJ-62
+Content-Transfer-Encoding: 8bit
 
-On 04.04.24 23:22, Bjorn Andersson wrote:
-> 
-> On Mon, 25 Mar 2024 09:58:35 +0100, Johan Hovold wrote:
->> Since commit deebc79b28d6 ("clk: qcom: gpucc-sc8280xp: Add external
->> supply for GX gdsc") the GDSC supply must be treated as optional to
->> avoid warnings like:
->>
->> 	gpu_cc-sc8280xp 3d90000.clock-controller: supply vdd-gfx not found, using dummy regulator
->>
->> on SC8280XP.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] clk: qcom: gdsc: treat optional supplies as optional
->       commit: 6677196fb1932e60b88ad0794a7ae532df178654
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Bjorn, quick question: this regression fix after more than two and a
-half weeks is not yet mainlined. Is there a reason? Or am I missing
-something here?
+Hi,
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+Series adds support for power domains on rzg2l driver.
 
-#regzbot poke
+RZ/G2L kind of devices support a functionality called MSTOP (module
+stop/standby). According to hardware manual the module could be switch
+to standby after its clocks are disabled. The reverse order of operation
+should be done when enabling a module (get the module out of standby,
+enable its clocks etc).
+
+In [1] the MSTOP settings were implemented by adding code in driver
+to attach the MSTOP state to the IP clocks. But it has been proposed
+to implement it as power domain. The result is this series.
+
+The DT bindings were updated with power domain IDs (plain integers
+that matches the DT with driver data structures). The current DT
+bindings were updated with module IDs for the modules listed in tables
+with name "Registers for Module Standby Mode" (see HW manual) exception
+being RZ/G3S where, due to the power down functionality, the DDR,
+TZCDDR, OTFDE_DDR were also added.
+
+Domain IDs were added to all SoC specific bindings.
+
+Thank you,
+Claudiu Beznea 
+
+Changes in v4:
+- dropped the pwrdn functionality until it is better understanded
+- dropped patch "clk: renesas: rzg2l-cpg: Add suspend/resume
+  support for power domains" from v3; this will be replaced
+  by propertly calling device_set_wakup_path() in serial console
+  driver
+- instantiated the watchdog domain in r8a08g045 clock driver; this
+  allow applying r9a08g045 clock patch w/o affecting watchdog and later,
+  after all good with watchdog patches series at [2], only patch
+  "arm64: dts: renesas: r9a08g045: Update #power-domain-cells = <1>"
+  will need to be applied
+
+Changes in v3:
+- collected tags
+- dinamically detect if a SCIF is serial console and populate
+  pd->suspend_check
+- dropped patch 09/10 from v2
+
+Changes in v2:
+- addressed review comments
+- dropped:
+    - dt-bindings: clock: r9a09g011-cpg: Add always-on power domain IDs
+    - clk: renesas: r9a07g043: Add initial support for power domains
+    - clk: renesas: r9a07g044: Add initial support for power domains
+    - clk: renesas: r9a09g011: Add initial support for power domains
+    - clk: renesas: r9a09g011: Add initial support for power domains
+    - arm64: dts: renesas: r9a07g043: Update #power-domain-cells = <1>
+    - arm64: dts: renesas: r9a07g044: Update #power-domain-cells = <1>
+    - arm64: dts: renesas: r9a07g054: Update #power-domain-cells = <1>
+    - arm64: dts: renesas: r9a09g011: Update #power-domain-cells = <1>
+  as suggested in the review process
+- dropped "arm64: dts: renesas: rzg3s-smarc-som: Guard the ethernet IRQ
+  GPIOs with proper flags" patch as it was integrated
+- added suspend to RAM support
+- collected tag
+
+[1] https://lore.kernel.org/all/20231120070024.4079344-4-claudiu.beznea.uj@bp.renesas.com/
+[2] https://lore.kernel.org/all/20240410134044.2138310-1-claudiu.beznea.uj@bp.renesas.com/
+
+Claudiu Beznea (8):
+  dt-bindings: clock: r9a07g043-cpg: Add power domain IDs
+  dt-bindings: clock: r9a07g044-cpg: Add power domain IDs
+  dt-bindings: clock: r9a07g054-cpg: Add power domain IDs
+  dt-bindings: clock: r9a08g045-cpg: Add power domain IDs
+  dt-bindings: clock: renesas,rzg2l-cpg: Update #power-domain-cells =
+    <1> for RZ/G3S
+  clk: renesas: rzg2l: Extend power domain support
+  clk: renesas: r9a08g045: Add support for power domains
+  arm64: dts: renesas: r9a08g045: Update #power-domain-cells = <1>
+
+ .../bindings/clock/renesas,rzg2l-cpg.yaml     |  18 +-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  20 +-
+ drivers/clk/renesas/r9a08g045-cpg.c           |  41 ++++
+ drivers/clk/renesas/rzg2l-cpg.c               | 199 ++++++++++++++++--
+ drivers/clk/renesas/rzg2l-cpg.h               |  67 ++++++
+ include/dt-bindings/clock/r9a07g043-cpg.h     |  52 +++++
+ include/dt-bindings/clock/r9a07g044-cpg.h     |  58 +++++
+ include/dt-bindings/clock/r9a07g054-cpg.h     |  58 +++++
+ include/dt-bindings/clock/r9a08g045-cpg.h     |  70 ++++++
+ 9 files changed, 558 insertions(+), 25 deletions(-)
+
+-- 
+2.39.2
+
