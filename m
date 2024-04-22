@@ -1,105 +1,93 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCFF13D623
-	for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 10:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF132149E0F;
+	Mon, 22 Apr 2024 10:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713781528; cv=none; b=Ka0PzX/Q290xUQ1agwHvjRh2DMbEPdoMEdeka6ap9yATztAZA/1D2kF9cZjy2B/6MNoW6LvM/39Xxh4W5NEAW7N2FzQytJJXWUtUl0eFwSCQ3GHehoVMimmhblmQxTN2Awk/yD9gYr8FbKgpF5FEmFdSYsaLx42eXXCbl0ILi+o=
+	t=1713781902; cv=none; b=PS5yVIPcK8uVf7wAa/TTFZ7jv8ZMH+01TpllDqBgm93AZgoAu1g70j8ubqL73imsJH/bE3Vvyju7kWYT5bTZH+JOZBFUKjcja97TEb3D64VfTlPfRn39iXSSg8tazT+UWlxV7MGz/3nAYPcZnIzPzmVgfKWpmMgpNpE+T/UsHEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713781528; c=relaxed/simple;
-	bh=jJqY3EzcXGU+nKakTn7MTvOCbow73aPwa+neDvl0lh8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XsWkWl5FO9n98JuvRxT2BY3sch9LhT/S3EtB1pITqjdT7DtsdH0J1rwUURbsOkgNzwxTmcrwHmqoiWHFSTige5ybqog6XKPjphDvL9q9qHAwUFZRx7NRJUnZHHP/A9/WoZ8ZJMNhYxMXLmnVo0ZW+i6BMQJMx99pwQjzh0gZ7mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b5yt1zYl; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713781902; c=relaxed/simple;
+	bh=+j2bNi8k/alLWVzZXt5+/z70HAC4NEQb/EVIcPMzr/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eYR+tPhf5AFNL/kd4FsSI2iwxG4jbr9or/qMklIq6TbpnvlrCvsssn3c3TSkx09nmYma8jYvMv6kbFoL6uX+VgJL+gPNnbz5T6gjGdbb4mlGkPgXopepVcL7dov1nNMEjxG42iW+4gLDgyn4SzMqqW+kcjLott2hd6rFeLDZUSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=d4Aq3BUT; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b5yt1zYl"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a52223e004dso392211166b.2
-        for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 03:25:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713781525; x=1714386325; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kjOFtSdcuWQZYN13n2HXTmueHu30sawDV2mP2f/7YqE=;
-        b=b5yt1zYlTK/gPb6cEjOq/3J0TN0egOXVIQjvE4tWCelmB0HI7P4bBEc39GySaFNB+i
-         WtB4lnLZS/2xTztLeLRwWhA/niqSMy3AlOf3MktCrxTSrZ7HKLtSwjSs5N4uP1U3Weaw
-         H5JBVPKtzHgQ6KVyQw5ObO/ZD5CswaJ7Yi812kmjzgMMzBpy0VBMDw8kpzZ3EEhrHgHE
-         3vCuLUs0Y/7H/lH7RHO2RzuDmrxauDlliNE4VRmbYI/cEEQ52csVyhxv1s94iY0NYEh4
-         dXU3oeoC5gfykcQZ0DibYURmyiPxeIm4X6Woy31emwt9sn8koLdLgR4PGXhh0JzJ0pRB
-         XQJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713781525; x=1714386325;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kjOFtSdcuWQZYN13n2HXTmueHu30sawDV2mP2f/7YqE=;
-        b=ZPu7BNKjx96zo+YgadpQDDD8zyWBPTjM8932OEdRUOZEhlJMJt70Elp5bIYtgyS0er
-         FQ6r7LEXkNzBZphJwiuPJNtZE4H4N9DNyQP4NuUrswgIjkVucsQJrqQfrsN3EBuxXZeV
-         i3n7ZzB5/2CgnS/xFF19OU1ndBGe8sNbvqtPijv09mZ0jVPj2+FKTVYFrxSJ3oJ29is+
-         6gItYdlCAGc22qsCI38IsSRTknjif76JiXgzJ18DiNEQAQZ0oFj+0gz8A4xR7lZtZoIU
-         oLcqF2DqX9mOWqVeZAhWACu5ZW5LNaNwEuDW0yd06w4iLUTqH6CRSG/HN9AFahWP9iIe
-         yy+g==
-X-Gm-Message-State: AOJu0YzbV1s7FiypPwslKBPa4rkc21X3mG3xD2qLKApX/jGR60CF5QQN
-	G4+l95cu+Rz/uVQiZqIcL6nzHZY8iiLcf1hM0WBmQ9xkvrj+1X3HlfxBFWcS+ok=
-X-Google-Smtp-Source: AGHT+IGJbFE/xk27S/lBooXeZazvrQf8V1BxKpteLDJyf6SzZbXaMCLpiQbsqNz9JHTqiEI/1HgXqA==
-X-Received: by 2002:a17:906:3ad0:b0:a52:57a6:2f45 with SMTP id z16-20020a1709063ad000b00a5257a62f45mr7820235ejd.21.1713781524763;
-        Mon, 22 Apr 2024 03:25:24 -0700 (PDT)
-Received: from [127.0.1.1] ([62.231.100.236])
-        by smtp.gmail.com with ESMTPSA id k18-20020a1709063fd200b00a524b33fd9asm5553172ejj.68.2024.04.22.03.25.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Apr 2024 03:25:24 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>, 
- "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240401-imx95-blk-ctl-v6-0-84d4eca1e759@nxp.com>
-References: <20240401-imx95-blk-ctl-v6-0-84d4eca1e759@nxp.com>
-Subject: Re: [PATCH v6 0/4] Add support i.MX95 BLK CTL module clock
- features
-Message-Id: <171378152318.2944518.13528932834119248200.b4-ty@linaro.org>
-Date: Mon, 22 Apr 2024 13:25:23 +0300
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="d4Aq3BUT"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=s/c3dJrF+9TupMEh+95zrLT8ysApMrEChVLOaNR1tJE=;
+	t=1713781900; x=1714213900; b=d4Aq3BUTX8hDvY1K/1zvbRMEcd+wHaGzKq+7eDBwh345V/o
+	sSd+nHHu7M469tR5oS4ejLE12f6eu5DYDMkPuLryGb92TkzbM17xIto61JbO58QHqINlAYWALAIN5
+	hhWKYeSodu0eLHwfze0DPZ5/KpL5jrGO3ae3eCnXWk8NNPTPTAoOEAAwr08Lk7SldykiYW4Jz8Pc/
+	PrbZNLpPMiNxZ3+MZdYE7NHmeA1skurkKzKbIajMRcFg1R1YDtaIVYmp04JbunfBoSWyL1Tk6TqfK
+	Zu6iBpc6lbYd+/P7bIRxogFTgMiDUYS1gsLDOZwFmGprd/AdNRw9xowv1uQfKqlw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1ryqxW-0003dJ-62; Mon, 22 Apr 2024 12:31:38 +0200
+Message-ID: <59372e42-2eab-4efd-b7d8-d0ef6f8c2300@leemhuis.info>
+Date: Mon, 22 Apr 2024 12:31:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [PATCH] clk: qcom: gdsc: treat optional supplies as optional
+To: Bjorn Andersson <andersson@kernel.org>,
+ Johan Hovold <johan+linaro@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240325085835.26158-1-johan+linaro@kernel.org>
+ <171226578689.615813.4474720130637817355.b4-ty@kernel.org>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <171226578689.615813.4474720130637817355.b4-ty@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1713781900;2106b9ec;
+X-HE-SMSGID: 1ryqxW-0003dJ-62
 
-
-On Mon, 01 Apr 2024 21:28:14 +0800, Peng Fan (OSS) wrote:
-> i.MX95's several MIXes has BLK CTL module which could be used for
-> clk settings, QoS settings, Misc settings for a MIX. This patchset
-> is to add the clk feature support, including dt-bindings
+On 04.04.24 23:22, Bjorn Andersson wrote:
 > 
+> On Mon, 25 Mar 2024 09:58:35 +0100, Johan Hovold wrote:
+>> Since commit deebc79b28d6 ("clk: qcom: gpucc-sc8280xp: Add external
+>> supply for GX gdsc") the GDSC supply must be treated as optional to
+>> avoid warnings like:
+>>
+>> 	gpu_cc-sc8280xp 3d90000.clock-controller: supply vdd-gfx not found, using dummy regulator
+>>
+>> on SC8280XP.
+>>
+>> [...]
 > 
+> Applied, thanks!
+> 
+> [1/1] clk: qcom: gdsc: treat optional supplies as optional
+>       commit: 6677196fb1932e60b88ad0794a7ae532df178654
 
-Applied, thanks!
+Bjorn, quick question: this regression fix after more than two and a
+half weeks is not yet mainlined. Is there a reason? Or am I missing
+something here?
 
-[1/4] dt-bindings: clock: add i.MX95 clock header
-      commit: 977b07f769970aec97b907cfc93fb681ecffc9fe
-[2/4] dt-bindings: clock: support i.MX95 BLK CTL module
-      commit: b773f5ad2bfd2d00bd2c5ea7022bc5b86d23a1b7
-[3/4] dt-bindings: clock: support i.MX95 Display Master CSR module
-      commit: c6e87b066756ec4b3f5f9061b508f3bd724ec652
-[4/4] clk: imx: add i.MX95 BLK CTL clk driver
-      commit: 5224b189462ff70df328f173b71acfd925092c3c
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
-
+#regzbot poke
