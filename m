@@ -1,212 +1,120 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F2F145FF1;
-	Mon, 22 Apr 2024 11:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4078A14EC67
+	for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 12:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713783644; cv=none; b=nvNbo7EVnW3lHhjCcpVAuPUOjT39kTsV5iTm+xnv3nHTIYPi1rnA+fsqIUQGL4t44Fwoof/kWD6RacB7FpP51g9ax70QjvhR80CfBky94kgkklcYEZ/pXBjg3B6NyqmzGvAg06kLtPiBcJavAnaIP7aXZaZebEoKiRtWNVEB8iE=
+	t=1713789582; cv=none; b=utUFM48CzhuwwoALbr0ehJ9LLukXbLY13Xz8SSbsEsICiVzECI5ZqS4lRxHkz72qlrykOqmQ39BWrxS4eeTkJUY+0Au1/B8J0pvFB8mrAtN/iFNaSv0ia53oa5a+ckhpMP/ija73kPq3lrSZTzmR7RTjIGBtwfC9eCqM+eB91Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713783644; c=relaxed/simple;
-	bh=ZZ8QMbqRyZqN/oUEY8U6N/CLMdV0E5Cb9XS5lvcKh20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=msNh8Q0TG+3D7/maXUlt8sF3KU+3oNIKI5rNTRuZCcGSD0v8seMWu1doDOvPjcGF/N3sVNqnkayMp3KCYbi3oke1ZE25jNDKx0gkfQjYLkDYU+I/cG5vgQeXQslNzsRbWtFV/4bWkopGFWgtDoTGcmJJvDCmupPWiQP+7PNmMis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n0pOiHkI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1713789582; c=relaxed/simple;
+	bh=iyTsIMR6AeJPVBmq77RzZGnEgc860sS11RT6shdDDRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UCrj8xjselfjv9a00Dv9veeORpBzEBsnvtiKJxKGEauXqHoVRtA+RLaWBhOEK2OOjEB3JYK8nCH/hCHGIflU6Z9sRKjl/FxeBq/3K+ZmElrmA5T7Zt+2LoS4JNe6ddK6vLhvsgtML8mARJQG0JUZ6crjlMGzgc/6LTqa3+vHRt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GJzqxMnA; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n0pOiHkI"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43M82cWF004075;
-	Mon, 22 Apr 2024 11:00:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=oTZmNqFjasu6mkWngjJYwcaE1l2w78Wmxb36VACwtRQ=; b=n0
-	pOiHkIH5bpvFZnwBAP51bGMd4RnyNAcyfZba87wQes4554eQgdKPN4O3jjkXbqEK
-	RljCKTeiLdzA7BdFR0Q4E18HzO5cFGMY9ihiJu8ZQn8vYic0tgh1oRa8aHo7FhGP
-	jud9CHhpYHcbnpRZgbntLtQaXa/QKQ7DCzrMMXvuLpw7sEmBGkhum1pBFlMn4ZK2
-	YWayDf2iCjceZGrC8bsQsRI0EVlOfjqhsepVn6Q2MZ3CaHYH1TjX7/bVr2Jc3mED
-	W0s+5/Zngbg54XWN+0ycw4S7g0QyaFMQXXzti425QiAkUPEkD/XYDHrD7Y2aJ98o
-	9cWhTTxR4eIEyYMF+wsA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xnm1bgex5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Apr 2024 11:00:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43MB0ZaI015083
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Apr 2024 11:00:35 GMT
-Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Apr
- 2024 04:00:29 -0700
-Message-ID: <73c5ffca-9275-437c-a49e-ef3251c8d313@quicinc.com>
-Date: Mon, 22 Apr 2024 16:30:26 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GJzqxMnA"
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-234db9dde9bso1467580fac.1
+        for <linux-clk@vger.kernel.org>; Mon, 22 Apr 2024 05:39:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713789580; x=1714394380; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=S4ySNq3QesUCzbAIR2RY0fipn3yuib781ddLRiaF6bc=;
+        b=GJzqxMnAZlXFvpw/W7OFie1lW1lGs+B0rbRo4x7hIvcbGkrjUln9INDuLK9g+IphIX
+         aDaGsgDTGZz8E3msvjjzd9yYcp099GvrB/UGkBdmNOtH7gKA2ZPil83GTGt565zZZM2g
+         gOdHABj3iBLS2Zi1E4ke2ksQnniHGN7OpVehFs4ENiDNGsCQyhJG98hpaWt7zLe1cT/R
+         8E/TB78cAXPp5kS/2DjzOxhcJSfXIvwTLvDJ4wHaonghCQYUDNlQdR3pS2jANq2moE4z
+         0NM04olMYW4649SS9KYm7iKnSAyZCXe3IwIH9ma6AwZadKy30icRDpGmaarKoPIy5DIr
+         JilQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713789580; x=1714394380;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S4ySNq3QesUCzbAIR2RY0fipn3yuib781ddLRiaF6bc=;
+        b=qMyhqyUnoT/227XBqkfSU+FHesE/FvglGmwMmZaTUXVuF/l/YsVvlhH8IuWV7CfrCH
+         hZyiaMRFRFBLlDZZyObHiYtH08FOzRV3xzE3glK/MLwBuIffNc0c6EWmxxSieWLYhLDg
+         DbMzj7c/yTnCw3d997P0qzp6cucqkI9Q7V8jlgfhmo1IguEWMODKkhN80548Ee1uuuv+
+         V8wdabUl/lzxjpPVyG0EXn+4sRwEJ4G9c0QT5/oEMggCF41J/hXvXq0nLtkr7JvtJi31
+         iK1Shhbi0/RNsac1Z8DJOyoh1+xqucDMfu/X+hLJYXYTyMaL6FAwFdmjT+ecbEV/PabL
+         Tz/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVpCQyyloKeFzJIqmEAy2/vwOSM32tMHGr7WIxFnrd5f7XuyIQIDvPSLUNCCj2076pas0uflpa5eT/XHKKl9ta0BY1N397VZlz1
+X-Gm-Message-State: AOJu0Yz6tjNl280hSP/t3AsOzM2TvJiY0/DGunlafFYS17NzDGnmkDcV
+	8NmZ/QL/c/1WHm2rsaBlmYcCPqOMDEmn0KdVv8LlpEPLR2q6RFRq0ce45qbh/hsP9NK2Ko6Q5lg
+	6pbokDjY8EjutPFD2boD2hXIOHxS/LI0FMadwVA==
+X-Google-Smtp-Source: AGHT+IFRVyCeWFThbOBOiFgmqUhy26Z9HP2Lw9XMRIZylBypB7g6tOUorMkXN+WcL7sQuHVha6TScv+q+Y0CqpP+4uw=
+X-Received: by 2002:a05:6870:c1cf:b0:21f:d2a2:7ff4 with SMTP id
+ i15-20020a056870c1cf00b0021fd2a27ff4mr14344315oad.17.1713789580152; Mon, 22
+ Apr 2024 05:39:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 RESEND 1/6] dt-bindings: clock: qcom: Add SM8650 video
- clock controller
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
-References: <20240321092529.13362-1-quic_jkona@quicinc.com>
- <20240321092529.13362-2-quic_jkona@quicinc.com>
- <CAA8EJppsMchthssctEgUf9q45j84cSLQ78Ur+vaA0Z7GEQi8+g@mail.gmail.com>
- <725471b1-46a9-43b0-bede-33f01c953d51@quicinc.com>
- <c3ea22ed-5750-438f-89d5-e56f908ba835@linaro.org>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <c3ea22ed-5750-438f-89d5-e56f908ba835@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OMj_lSeiBz4lQRj4pSeQCMMgsc6dOx33
-X-Proofpoint-ORIG-GUID: OMj_lSeiBz4lQRj4pSeQCMMgsc6dOx33
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-22_09,2024-04-19_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
- mlxscore=0 phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0
- clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404220049
+References: <20240404122559.898930-1-peter.griffin@linaro.org>
+ <20240404122559.898930-11-peter.griffin@linaro.org> <75b1b063-e8d4-417d-99a8-4320d72297cf@moroto.mountain>
+In-Reply-To: <75b1b063-e8d4-417d-99a8-4320d72297cf@moroto.mountain>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 22 Apr 2024 13:39:28 +0100
+Message-ID: <CADrjBPputDQWpQZgPiuUDLTWZA83KJEMp-X8ZtXAwt6ivTOG9g@mail.gmail.com>
+Subject: Re: [PATCH 10/17] phy: samsung-ufs: ufs: Add SoC callbacks for
+ calibration and clk data recovery
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
+	martin.petersen@oracle.com, chanho61.park@samsung.com, ebiggers@kernel.org, 
+	linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Dan,
 
+Thanks for the review.
 
-On 4/19/2024 2:31 AM, Vladimir Zapolskiy wrote:
-> Hello Jagadeesh,
-> 
-> On 3/25/24 08:07, Jagadeesh Kona wrote:
->>
->>
->> On 3/21/2024 6:42 PM, Dmitry Baryshkov wrote:
->>> On Thu, 21 Mar 2024 at 11:26, Jagadeesh Kona <quic_jkona@quicinc.com> 
->>> wrote:
->>>>
->>>> Extend device tree bindings of SM8450 videocc to add support
->>>> for SM8650 videocc. While it at, fix the incorrect header
->>>> include in sm8450 videocc yaml documentation.
->>>>
->>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>> ---
->>>>    .../devicetree/bindings/clock/qcom,sm8450-videocc.yaml    | 4 +++-
->>>>    include/dt-bindings/clock/qcom,sm8450-videocc.h           | 8 
->>>> +++++++-
->>>>    2 files changed, 10 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git 
->>>> a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml 
->>>> b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>> index bad8f019a8d3..79f55620eb70 100644
->>>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>> @@ -8,18 +8,20 @@ title: Qualcomm Video Clock & Reset Controller on 
->>>> SM8450
->>>>
->>>>    maintainers:
->>>>      - Taniya Das <quic_tdas@quicinc.com>
->>>> +  - Jagadeesh Kona <quic_jkona@quicinc.com>
->>>>
->>>>    description: |
->>>>      Qualcomm video clock control module provides the clocks, resets 
->>>> and power
->>>>      domains on SM8450.
->>>>
->>>> -  See also:: include/dt-bindings/clock/qcom,videocc-sm8450.h
->>>> +  See also:: include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>
->>> This almost pleads to go to a separate patch. Fixes generally should
->>> be separated from the rest of the changes.
->>>
->>
->> Thanks Dmitry for your review.
->>
->> Sure, will separate this into a separate patch in next series.
->>
->>>>
->>>>    properties:
->>>>      compatible:
->>>>        enum:
->>>>          - qcom,sm8450-videocc
->>>>          - qcom,sm8550-videocc
->>>> +      - qcom,sm8650-videocc
->>>>
->>>>      reg:
->>>>        maxItems: 1
->>>> diff --git a/include/dt-bindings/clock/qcom,sm8450-videocc.h 
->>>> b/include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>> index 9d795adfe4eb..ecfebe52e4bb 100644
->>>> --- a/include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>> +++ b/include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>> @@ -1,6 +1,6 @@
->>>>    /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->>>>    /*
->>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights 
->>>> reserved.
->>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All 
->>>> rights reserved.
->>>>     */
->>>>
->>>>    #ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8450_H
->>>> @@ -19,6 +19,11 @@
->>>>    #define 
->>>> VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC                                9
->>>>    #define VIDEO_CC_PLL0                                          10
->>>>    #define VIDEO_CC_PLL1                                          11
->>>> +#define 
->>>> VIDEO_CC_MVS0_SHIFT_CLK                                        12
->>>> +#define VIDEO_CC_MVS0C_SHIFT_CLK                               13
->>>> +#define 
->>>> VIDEO_CC_MVS1_SHIFT_CLK                                        14
->>>> +#define VIDEO_CC_MVS1C_SHIFT_CLK                               15
->>>> +#define VIDEO_CC_XO_CLK_SRC                                    16
->>>
->>> Are these values applicable to sm8450?
->>>
->>
->> No, the shift clocks above are part of SM8650 only. To reuse the
->> existing SM8550 videocc driver for SM8650 and to register these shift
->> clocks for SM8650, I added them here.
->>
-> 
-> In such case I'd strongly suggest to add a new qcom,sm8650-videocc.h file,
-> and do #include qcom,sm8450-videocc.h in it, thus the new header will be
-> really a short one.
-> 
-> This will add pristine clarity.
-> 
+On Wed, 17 Apr 2024 at 10:52, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> On Thu, Apr 04, 2024 at 01:25:52PM +0100, Peter Griffin wrote:
+> > diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
+> > index c567efafc30f..f57a2f2a415d 100644
+> > --- a/drivers/phy/samsung/phy-samsung-ufs.c
+> > +++ b/drivers/phy/samsung/phy-samsung-ufs.c
+> > @@ -46,7 +46,7 @@ static void samsung_ufs_phy_config(struct samsung_ufs_phy *phy,
+> >       }
+> >  }
+> >
+> > -static int samsung_ufs_phy_wait_for_lock_acq(struct phy *phy)
+> > +int samsung_ufs_phy_wait_for_lock_acq(struct phy *phy, u8 lane)
+> >  {
+> >       struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
+> >       const unsigned int timeout_us = 100000;
+> > @@ -98,8 +98,15 @@ static int samsung_ufs_phy_calibrate(struct phy *phy)
+> >               }
+> >       }
+> >
+> > -     if (ufs_phy->ufs_phy_state == CFG_POST_PWR_HS)
+> > -             err = samsung_ufs_phy_wait_for_lock_acq(phy);
+> > +     for_each_phy_lane(ufs_phy, i) {
+> > +             if (ufs_phy->ufs_phy_state == CFG_PRE_INIT &&
+> > +                 ufs_phy->drvdata->wait_for_cal)
+> > +                     err = ufs_phy->drvdata->wait_for_cal(phy, i);
+> > +
+> > +             if (ufs_phy->ufs_phy_state == CFG_POST_PWR_HS &&
+> > +                 ufs_phy->drvdata->wait_for_cdr)
+> > +                     err = ufs_phy->drvdata->wait_for_cdr(phy, i);
+>
+> The "err" value is only preserved from the last iteration in this loop.
 
-Thanks Vladimir for your suggestion. I believe adding a comment for 
-these set of clocks should be sufficient to indicate these clocks are 
-applicable only for SM8650, I can add the required comment and post the 
-next series. Please let me know if this works?
+I'll send a follow up patch for this as it's already applied.
 
 Thanks,
-Jagadeesh
+
+Peter
