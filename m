@@ -1,192 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56D1802;
-	Tue, 23 Apr 2024 00:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52EA208A0;
+	Tue, 23 Apr 2024 05:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713833259; cv=none; b=av2/fr4LqitAezw9DGqYK9W6qp6jo0zFfI5yRIYBHZP3cTP/DmY206FI4v8ijCIvfBpd/1SudIJT0hOCT0BALzeVEgj3wMtq+tOA5Qohvv95fdOLiNOw0YXrDlLbm0Of7kP/IMhWhsPJsf2mOZlHcnRkaKcROMjD+2A0GIv7Epw=
+	t=1713850363; cv=none; b=suar9OJ4/2HCxCbDfHPmlaj63/tyCizrNfieqojeJ2bNAWrv9qFHAOYkQPeSFtG91M6h22itvbIWrrG+BuddMLAJNlPCAnLujWIl09HowNYniqTyiUMSOc1zBgXv/vr5Fswatj646RZiKUOylJ9m8/ahQ2No0cc+zQJbZIShv1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713833259; c=relaxed/simple;
-	bh=LPMHQme1V8vDzMirJlOpLb0vftLJDLrVwcaPBuEO5Fo=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=jEegyCr7MmzbXKQjXNMFpFDTPdUFrnxBeINC17acnofXbEcJb43QQHqQCvI/luygp7DNQHOQAhEtmrrq6UvZL/mXCgpXai26oJXcCEXEbBQ94KdGKWGyXOOySrFk7lSRzLyjVUpXecQjfkeE/80ihCRI4KnbUKT2JZvfMTCxLgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZ3SiHyu; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZ3SiHyu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675CBC113CC;
-	Tue, 23 Apr 2024 00:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713833258;
-	bh=LPMHQme1V8vDzMirJlOpLb0vftLJDLrVwcaPBuEO5Fo=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=SZ3SiHyuarYWB1F6tUkkzJzyu22t8hnVHWFlNGoRPoXlF7pH8kOwJUhYRe4QUK/8+
-	 JsVMSN0pt92WDOrwRouIEgBC9KwME4SGtqhrz3urJK3N0yH+pQdAeRAS2Jdajax+fv
-	 ezTpMm4VrCIa6YsUJnLeTUga7IcLYyWcviRWnb2VI17XAq46Kwm9W1olCg+vpLMe+k
-	 1WU/H0WoJ7QhZdXeFQt3NVyQ+LrE3aSdDJ4TI1fWoreR6UoiVw5PCMKZJnyV6AOcNn
-	 RvvxLGSH9+jyEU2G3HwSyJEFpRcVwJRb3i2Ebn7eZhQj/xS7col3kvATKlx7w/RcEw
-	 z93aSoFkhQYeg==
-Message-ID: <eca85d9094538b8713b556979e811b39.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1713850363; c=relaxed/simple;
+	bh=+azLDfk/XeFroGKgVqni53cR/vzETd6dF45ytF23To8=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=VC7l6wwB0lN9wi9+bOrkGxDXXtsQWfvwS8xZGqFwYJJ5n2CXNgmMcgiExFleBOxY6OqcbrOfc1chQ3KP4/OVOeT9+nTZXeORJMaoVJuE9Ex3bs6cFfidQAel1JDoesQkWzKis3Qks1BHktx274eUdMSWBKS/l8x6+8AvsnM8cSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D33FA20081E;
+	Tue, 23 Apr 2024 07:26:57 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7B9532005F3;
+	Tue, 23 Apr 2024 07:26:57 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 21EEC180222C;
+	Tue, 23 Apr 2024 13:26:55 +0800 (+08)
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: abelvesa@kernel.org,
+	peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	shengjiu.wang@gmail.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx: imx8mp: Use modern pm_ops
+Date: Tue, 23 Apr 2024 13:08:37 +0800
+Message-Id: <1713848917-13380-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <06f26e2f49a8423cb0122a08fb2d868484e2e0a4.1713164546.git.unicorn_wang@outlook.com>
-References: <cover.1713164546.git.unicorn_wang@outlook.com> <06f26e2f49a8423cb0122a08fb2d868484e2e0a4.1713164546.git.unicorn_wang@outlook.com>
-Subject: Re: [PATCH v14 4/5] clk: sophgo: Add SG2042 clock driver
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen Wang <unicorn_wang@outlook.com>
-To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu, chao.wei@sophgo.com, conor@kernel.org, devicetree@vger.kernel.org, guoren@kernel.org, haijiao.liu@sophgo.com, inochiama@outlook.com, jszhang@kernel.org, krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com, robh+dt@kernel.org, samuel.holland@sifive.com, xiaoguang.xing@sophgo.com
-Date: Mon, 22 Apr 2024 17:47:36 -0700
-User-Agent: alot/0.10
 
-Quoting Chen Wang (2024-04-15 00:23:27)
-> diff --git a/drivers/clk/sophgo/clk-sophgo-sg2042.c b/drivers/clk/sophgo/=
-clk-sophgo-sg2042.c
-> new file mode 100644
-> index 000000000000..0bcfaab52f51
-> --- /dev/null
-> +++ b/drivers/clk/sophgo/clk-sophgo-sg2042.c
-> @@ -0,0 +1,1645 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Sophgo SG2042 Clock Generator Driver
-> + *
-> + * Copyright (C) 2024 Sophgo Technology Inc. All rights reserved.
-> + */
-> +
-> +#include <asm/div64.h>
+Without CONFIG_PM, the driver warns about unused functions
 
-asm goes after linux includes...
+../drivers/clk/imx/clk-imx8mp-audiomix.c:363:12: warning: 'clk_imx8mp_audiomix_runtime_resume' defined but not used [-Wunused-function]
+  363 | static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/clk/imx/clk-imx8mp-audiomix.c:356:12: warning: 'clk_imx8mp_audiomix_runtime_suspend' defined but not used [-Wunused-function]
+  356 | static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-> +#include <linux/array_size.h>
-> +#include <linux/bits.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/platform_device.h>
+Change the old SET_RUNTIME_PM_OPS()/SET_NOIRQ_SYSTEM_SLEEP_PM_OPS()
+helpers to their modern replacements that avoid the warning.
 
-here.
+Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power saving")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mp-audiomix.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-> +
-> +/*
-> + * The clock of SG2042 is composed of three parts.
-> + * The registers of these three parts of the clock are scattered in three
-> + * different memory address spaces:
-> + * - pll clocks
-> + * - gate clocks for RP subsystem
-> + * - div/mux, and gate clocks working for other subsystem than RP subsys=
-tem
-> + */
-> +#include <dt-bindings/clock/sophgo,sg2042-pll.h>
-> +#include <dt-bindings/clock/sophgo,sg2042-rpgate.h>
-> +#include <dt-bindings/clock/sophgo,sg2042-clkgen.h>
-> +
-> +/* Registers defined in SYS_CTRL */
-> +#define R_PLL_BEGIN            0xC0
-[...]
-> +
-> +#define SG2042_PLL(_id, _name, _parent_name, _r_stat, _r_enable, _r_ctrl=
-, _shift) \
-> +       {                                                               \
-> +               .hw.init =3D CLK_HW_INIT(                                =
- \
-> +                               _name,                                  \
-> +                               _parent_name,                           \
+diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
+index 574a032309c1..e4231e9c8f05 100644
+--- a/drivers/clk/imx/clk-imx8mp-audiomix.c
++++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+@@ -368,10 +368,10 @@ static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops clk_imx8mp_audiomix_pm_ops = {
+-	SET_RUNTIME_PM_OPS(clk_imx8mp_audiomix_runtime_suspend,
+-			   clk_imx8mp_audiomix_runtime_resume, NULL)
+-	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+-				      pm_runtime_force_resume)
++	RUNTIME_PM_OPS(clk_imx8mp_audiomix_runtime_suspend,
++		       clk_imx8mp_audiomix_runtime_resume, NULL)
++	NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				  pm_runtime_force_resume)
+ };
+ 
+ static const struct of_device_id clk_imx8mp_audiomix_of_match[] = {
+@@ -386,7 +386,7 @@ static struct platform_driver clk_imx8mp_audiomix_driver = {
+ 	.driver = {
+ 		.name = "imx8mp-audio-blk-ctrl",
+ 		.of_match_table = clk_imx8mp_audiomix_of_match,
+-		.pm = &clk_imx8mp_audiomix_pm_ops,
++		.pm = pm_ptr(&clk_imx8mp_audiomix_pm_ops),
+ 	},
+ };
+ 
+-- 
+2.34.1
 
-This still uses a string. Please convert all parents described by
-strings to use clk_parent_data or clk_hw directly.
-
-> +                               &sg2042_clk_pll_ops,                    \
-> +                               CLK_GET_RATE_NOCACHE | CLK_GET_ACCURACY_N=
-OCACHE),\
-> +               .id =3D _id,                                             =
- \
-> +               .offset_ctrl =3D _r_ctrl,                                =
- \
-> +               .offset_status =3D _r_stat,                              =
- \
-> +               .offset_enable =3D _r_enable,                            =
- \
-> +               .shift_status_lock =3D 8 + (_shift),                     =
- \
-> +               .shift_status_updating =3D _shift,                       =
- \
-[...]
-> + * "clk_div_ddr01_1" is the name of Clock divider 1 control of DDR01, and
-> + * "clk_gate_ddr01_div1" is the gate clock in front of the "clk_div_ddr0=
-1_1",
-> + * they are both controlled by register CLKDIVREG28;
-> + * While for register value of mux selection, use Clock Select for DDR01=
-=E2=80=99s clock
-> + * as example, see CLKSELREG0, bit[2].
-> + * 1: Select in_dpll0_clk as clock source, correspondng to the parent in=
-put
-> + *    source from "clk_div_ddr01_0".
-> + * 0: Select in_fpll_clk as clock source, corresponding to the parent in=
-put
-> + *    source from "clk_div_ddr01_1".
-> + * So we need a table to define the array of register values correspondi=
-ng to
-> + * the parent index and tell CCF about this when registering mux clock.
-> + */
-> +static const u32 sg2042_mux_table[] =3D {1, 0};
-> +
-> +static const struct clk_parent_data clk_mux_ddr01_p[] =3D {
-> +       { .hw =3D &sg2042_div_clks[0].hw },
-> +       { .hw =3D &sg2042_div_clks[1].hw },
-
-Just use struct clk_init_data::parent_hws for this if you only have a
-clk_hw pointer for every element of the parent array.
-
-> +};
-> +
-> +static const struct clk_parent_data clk_mux_ddr23_p[] =3D {
-> +       { .hw =3D &sg2042_div_clks[2].hw },
-> +       { .hw =3D &sg2042_div_clks[3].hw },
-> +};
-> +
-[...]
-> +
-> +static int sg2042_pll_probe(struct platform_device *pdev)
-> +{
-> +       struct sg2042_clk_data *clk_data =3D NULL;
-> +       int i, ret =3D 0;
-> +       int num_clks =3D 0;
-> +
-> +       num_clks =3D ARRAY_SIZE(sg2042_pll_clks);
-> +
-> +       ret =3D sg2042_init_clkdata(pdev, num_clks, &clk_data);
-> +       if (ret < 0)
-> +               goto error_out;
-> +
-> +       ret =3D sg2042_clk_register_plls(&pdev->dev, clk_data, sg2042_pll=
-_clks,
-> +                                      num_clks);
-> +       if (ret)
-> +               goto cleanup;
-> +
-> +       return devm_of_clk_add_hw_provider(&pdev->dev,
-> +                                          of_clk_hw_onecell_get,
-> +                                          &clk_data->onecell_data);
-> +
-> +cleanup:
-> +       for (i =3D 0; i < num_clks; i++) {
-> +               if (clk_data->onecell_data.hws[i])
-> +                       clk_hw_unregister(clk_data->onecell_data.hws[i]);
-
-This should be unnecessary if devm is used throughout.
-
-> +       }
-> +
-> +error_out:
-> +       pr_err("%s failed error number %d\n", __func__, ret);
-> +       return ret;
-
-Just do this part in the one place the goto is. These two comments apply
-to all probes.
