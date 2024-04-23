@@ -1,124 +1,119 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55552210F8
-	for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 07:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347E912F374;
+	Tue, 23 Apr 2024 11:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713856369; cv=none; b=hKskxxTIU185h7Zmq9sjyENh71uJj9El0A7EyGfhU7I6WgrYdWPknbhu0SRuzsHnop5YTShqNf+5Lz/U/B6+oMfGibNdpVa+kIb6fazKNulcfC57vxaVwvG1vlWOlv9AXk2w6u8XhDleziH7rL+LGwYz/ZkjcXQpCmCr59q9Qg4=
+	t=1713872414; cv=none; b=IozpgWj/8K5nimfpr1ZI+naLUwxXD7JLybxFaAa/wMCODQPj0UGSHE0GBSgJ9P+HznmR1rnY/hET9AgEmlfBN4I9YcJUZfD7IMpl86raqZcc4tgSxe0UxEVAcuC5+57H+lcttRNopzLtkpKhIDCEdvmbMTnciOMtY7dSt+Wo9Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713856369; c=relaxed/simple;
-	bh=fQ4UVE6+6CmvmhJdhJsIrzZ7SFLcAeX7/JjxwWX44Ss=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qGIfFE3e+fDaYFov01m5q0XW13ZVH49Z4NZVuSUGyPvjzYkz/DdAc8FpuaAfx0zI0sUpCK+/k2Nwnv4elIsFrVCp9YYEI2EV0WQsyd+l2iRl43pn2QrULbfy5RLCINSBUsV+58Yae1CytaW3h5fXYElKyb8t7HiBupQMhoQRkds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rzAKU-0005Pe-6R; Tue, 23 Apr 2024 09:12:38 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rzAKT-00DpqQ-DL; Tue, 23 Apr 2024 09:12:37 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rzAKT-006lQZ-11;
-	Tue, 23 Apr 2024 09:12:37 +0200
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Abel Vesa <abelvesa@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] clk: imx: imx8mp: Convert to platform remove callback returning void
-Date: Tue, 23 Apr 2024 09:12:31 +0200
-Message-ID: <20240423071232.463201-2-u.kleine-koenig@pengutronix.de>
+	s=arc-20240116; t=1713872414; c=relaxed/simple;
+	bh=oL1JNah1Kmu5gW2l169tM144+RGae3wb0JqRXo6K5U4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Wrzf49vkK/vQQKBWYarRk42nHLGkot4eaqS8rOjv+xyB1Xa8qnT5Qc9JX2qU48rvPGybSOyqRIJA4XRZfkgUgnmjKMZEfeSDvUNxUvMXI4ABbMpvXHD9ggxse+W4cMZdpGXxDHV0IIV6ieSpAAFc+MQ9slVFUG05rPCmaA7GVT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyDxlkUX; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyDxlkUX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05811C2BD11;
+	Tue, 23 Apr 2024 11:40:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713872413;
+	bh=oL1JNah1Kmu5gW2l169tM144+RGae3wb0JqRXo6K5U4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fyDxlkUXn8+mh8WgOo94gjXIejnYZqt8jBfKSJ29ecywyWnDAD6k0UpcOQ913YRWj
+	 /YBZFlfbPBSHTgW4oYLi3fEeKrGepEmdUBtkmk8S6VTVbewo+X/eRhYIRrgbw6Z2Sz
+	 VH2nUHGIwP4jZETeKW6K7OeLEAJXSyV7In0YZg2noS0Wv2wKxDl6MV9kfq6AxTUt13
+	 +cOcNCRWKBcPMBtC5UscueuAGetUetgneejKW8zBH5Q2/ZDXIWn2lInputHCHCuwjI
+	 fOZed1uI/nvZGrdla+ek6hCQhcbPy3rG82UGBewDuhzgfYoJQ7xAhi3l8J7DqwDYiL
+	 GMfA1Bbv4Q2Mw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Sasha Levin <sashal@kernel.org>,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.8 08/18] clk: Don't hold prepare_lock when calling kref_put()
+Date: Tue, 23 Apr 2024 07:01:04 -0400
+Message-ID: <20240423110118.1652940-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240423110118.1652940-1-sashal@kernel.org>
+References: <20240423110118.1652940-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2328; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=fQ4UVE6+6CmvmhJdhJsIrzZ7SFLcAeX7/JjxwWX44Ss=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmJ19gD+ey60Q7Nhcuckms6sc7hia2d0PrcgA61 25wyYCFd1mJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZidfYAAKCRCPgPtYfRL+ Tl6MB/9ewqqK8k3EJgNUQucdqRiJOeHsgqj+9R7jJdnfre4guZynzegjaBNiTZj1Eh3QTHqwUUq pCj1flKOlPO3XVFmphFRj9FD6svjQhLqGo5nX6/rYpUVd5j8xEnxbDYsNWqZoZcsItcKeWmrUfQ 55s6tGS7MHvqdcxRYoCs8paCvQ+Wxjq5Kf7OftuG0rTzGw7USCUjDxBOUectqjVP9HEX9HbjoM+ bmXbtYxMJPOVIiaWyOp53Thly1bbx1JKt3C8bJUeLfkSlVdOplKB+L2ZtQkoIUAoWrMCrahmN0h jys0PlKAAhqr2tXeO6U/54VCI3EgyqOijcJTRQXJQSBU54U+
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.8.7
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is ignored (apart
-from emitting a warning) and this typically results in resource leaks.
+From: Stephen Boyd <sboyd@kernel.org>
 
-To improve here there is a quest to make the remove callback return
-void. In the first step of this quest all drivers are converted to
-.remove_new(), which already returns void. Eventually after all drivers
-are converted, .remove_new() will be renamed to .remove().
+[ Upstream commit 6f63af7511e7058f3fa4ad5b8102210741c9f947 ]
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+We don't need to hold the prepare_lock when dropping a ref on a struct
+clk_core. The release function is only freeing memory and any code with
+a pointer reference has already unlinked anything pointing to the
+clk_core. This reduces the holding area of the prepare_lock a bit.
 
-Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power saving")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Note that we also don't call free_clk() with the prepare_lock held.
+There isn't any reason to do that.
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lore.kernel.org/r/20240325184204.745706-3-sboyd@kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-Hello,
+ drivers/clk/clk.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-after the merge window leading to v6.10-rc1 (assuming Linus has >= 10 fingers
-this cycle :-) I want to switch the prototype of struct
-platform_driver::remove to return void. So please either merge this
-patch together with 1496dd413b2e, or accept me sending this patch
-together with the patch changing the function's prototype for inclusion
-to Greg's driver-core tree.
-
-Thanks
-Uwe
-
- drivers/clk/imx/clk-imx8mp-audiomix.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-index 574a032309c1..be9df93b6adb 100644
---- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-+++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -346,11 +346,9 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
- 	return ret;
- }
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 20c4b28fed061..badb6fdf83a2a 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4453,7 +4453,8 @@ void clk_unregister(struct clk *clk)
+ 	if (ops == &clk_nodrv_ops) {
+ 		pr_err("%s: unregistered clock: %s\n", __func__,
+ 		       clk->core->name);
+-		goto unlock;
++		clk_prepare_unlock();
++		return;
+ 	}
+ 	/*
+ 	 * Assign empty clock ops for consumers that might still hold
+@@ -4487,11 +4488,10 @@ void clk_unregister(struct clk *clk)
+ 	if (clk->core->protect_count)
+ 		pr_warn("%s: unregistering protected clock: %s\n",
+ 					__func__, clk->core->name);
++	clk_prepare_unlock();
  
--static int clk_imx8mp_audiomix_remove(struct platform_device *pdev)
-+static void clk_imx8mp_audiomix_remove(struct platform_device *pdev)
- {
- 	pm_runtime_disable(&pdev->dev);
+ 	kref_put(&clk->core->ref, __clk_release);
+ 	free_clk(clk);
+-unlock:
+-	clk_prepare_unlock();
+ }
+ EXPORT_SYMBOL_GPL(clk_unregister);
+ 
+@@ -4650,13 +4650,11 @@ void __clk_put(struct clk *clk)
+ 	if (clk->min_rate > 0 || clk->max_rate < ULONG_MAX)
+ 		clk_set_rate_range_nolock(clk, 0, ULONG_MAX);
+ 
+-	owner = clk->core->owner;
+-	kref_put(&clk->core->ref, __clk_release);
 -
--	return 0;
+ 	clk_prepare_unlock();
+ 
++	owner = clk->core->owner;
++	kref_put(&clk->core->ref, __clk_release);
+ 	module_put(owner);
+-
+ 	free_clk(clk);
  }
  
- static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
-@@ -382,7 +380,7 @@ MODULE_DEVICE_TABLE(of, clk_imx8mp_audiomix_of_match);
- 
- static struct platform_driver clk_imx8mp_audiomix_driver = {
- 	.probe	= clk_imx8mp_audiomix_probe,
--	.remove = clk_imx8mp_audiomix_remove,
-+	.remove_new = clk_imx8mp_audiomix_remove,
- 	.driver = {
- 		.name = "imx8mp-audio-blk-ctrl",
- 		.of_match_table = clk_imx8mp_audiomix_of_match,
 -- 
 2.43.0
 
