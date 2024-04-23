@@ -1,116 +1,109 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2F2134CC8
-	for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 13:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BB413BACA
+	for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 14:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713878214; cv=none; b=dpjSQ7Qzk/6d+srwzUyjcNIEynbpTVGbCHZjSxCwclzQ2YTPDF3V1pj97k2Tl7JUpIAhfiDZP6MPqUZLc/A6q34c/C2vS2d3peBXMQqGYeLC32qs8s9Z9OvYtknf0zxVFBAE1ce0CYb4npkxfalbSXs6Rp6MloAgkkZBHBRekJ8=
+	t=1713882671; cv=none; b=VUfoFGcIhvHJuCi84F7pm9A0rRB1QVF5DKUW81hsMv6zuRrvGrCtI+mXmka+/AMDt/9+aSbp6Yoy20Hnk+dZganS3LzS4KMQv5OhWaN15enZcJxzIpfBsMrQSxARYlYWHQlCr/EOwFLYaf5v4tvBLafAlyD8xqhBgfUNYqedL7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713878214; c=relaxed/simple;
-	bh=XAVttJrkxUXMxx1BF5xnYl48bRp078HmOGhTRY1qx4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h40Yq6eZYkMbU0Vtetip2Wcy/RpNvXMcuDCBittGAahIxtFARSlO+tvCojbINfzNeOCCI0QghRQjrWkCuCPQJxR8xJMwcfSztS7PPG/dwKMGgj46kKObw7bKUeuEXLSj/LnodTee0YRGubpOE0NzCI+/KAp6+zKMxUQcNi1QDsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YQV6prug; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1713882671; c=relaxed/simple;
+	bh=+YH2zKNvfrQqZ4esdPy7vnvlXDgMvu54ag6LcGuFPeM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DEPaiGRNB+t8qtMbmF5haeJuDJ5nBIx0fx3VvkPqGC4lCm7peJKMzivtIEKzO3+JCB5c9r9P1eRiAnbmMiE7R7V8cyM2CBh7zHCPzCHS9cbNl+jfCp1PkyN7Rnc1rA6hPtW87nt+RB5qVbapyrq29HWcrrWmIrqYy0Xs1kcEhTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YnGPfWC+; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YQV6prug"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-518931f8d23so6042488e87.3
-        for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 06:16:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YnGPfWC+"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-572250b7704so531860a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 07:31:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713878209; x=1714483009; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jMWtbHjpN+6vPPgUXI9KbcFajZT36z9cmb9PNAZ6H5w=;
-        b=YQV6prugWwakNyX0P2kLyUni5HmS8JEMfGr/ZEgED84l9dHG6SE0iw9BaYoN5gvMPy
-         AVLBD4yJPSZDiJCuASkv4e1lFUfobBNTssmo3xk9v4x1MXs5i9pM7xOfm745pBYpSRVo
-         DS0HORS43FFUMnpEpTeOmdgiiWCCZseah/DLs8qrQxCscvHr5wl/xNfe4hX0GgopdsE7
-         LFSSDEjY0oYl3NiVL5ANcUYmdnphoKVmSNGxr2hhZfq8CY5TQQZ1kiJwIoQ+D/hMAA/y
-         LsDCdAqoTQ0S2UGTOA/umyacnOvE27w5k5pJH3bhQ4191/J8wmrlfMO7uN8KSq290WnI
-         SE9Q==
+        d=linaro.org; s=google; t=1713882667; x=1714487467; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XN7XhWrqCld2WJI0opNRnIm5kxokt1XlrZPOr6Jx6ao=;
+        b=YnGPfWC+2NdbGvd4mVAJkhLCmOljC/PanI2UqKNrEGphf6/XHH3u9OtJlD6zPb0Dbd
+         B5Y9R1Sacn/HjpsvjXyGQGp6T55Piei4zm/d9Elnpfdn51kRsbSM8h8cmIN6yE9jSD65
+         6JeTgAhUhWf+LXMhGnsNzTZkl2O1/Qxr4+M7lhvJJ3HinU/bPPPa7XfssMRkLB8MCRy7
+         jsq9DgeIu4vAIGKnG9FXJZGc45ddk1jFUakrKWDbCJ7Dh/5UheXSYaGEHpe0hGtG0bXD
+         ld2r35Sg+rZkRHESWVlOTr3e/qFWtjZ8NVbmWQxjyiomdzwswA9eTYkffFXe3F5V4n4+
+         1K6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713878209; x=1714483009;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jMWtbHjpN+6vPPgUXI9KbcFajZT36z9cmb9PNAZ6H5w=;
-        b=xKogsymlv0KlJfHj4SZftkMA+p/tmcp1rcYwa88fxtwqCS0UrchuduqpRDbV/UxzwN
-         BFwhDHVmIiQ0nQBo91GugJxqK7+CDhwg1E5PP4gQ/4X3Qpbz0EyP/3sirl9LZSx4Vxqk
-         xT/MwwtZ6XTiEr7Zk4TJh//jzmkApAhhAsW0b4JspAwn+rdJakIQkcVcLuRpor83LVc/
-         xLj1J3BZ+CnuvvTIyGjCMZgd/qImvLyEij9N6oPYtrzYwUzAbv6QeKwqpX4loqHpAxJm
-         ChikGbuzpQGBegZsJnZxHLFEAD1r8OPbrGds/+x0drxTh6L/esh6oLx4kkbvb/EEl0ln
-         F0Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2SxXTPZqIr+si1J5Gb0lfINX3u8C1EEGWkwYQcyvbBEvj8rAwwCBLdc4uxe9sFvWAT+uOC0DQMOgqgUiGiDEiFlRQAsNF8YmA
-X-Gm-Message-State: AOJu0Yxyon5NqhPAHvQcDJ+k7+FEVOA3D6+KpF0Bu6RJwQcjFrBfeAXo
-	hV1vCwjOcZNN0xTZWEnt1U6AGr9/jN8XpmvWg7AX9s7yBpvq7MK2x57XscTUIjA=
-X-Google-Smtp-Source: AGHT+IEr5p9XYFifKIHg1KYFMVgeDTuQ3LuiP76t57uicBpeoVWKn13GAiIhoZI4BzZM82b/tsOF/w==
-X-Received: by 2002:a05:6512:4809:b0:518:d4c3:4682 with SMTP id eo9-20020a056512480900b00518d4c34682mr7939643lfb.24.1713878209307;
-        Tue, 23 Apr 2024 06:16:49 -0700 (PDT)
-Received: from [172.30.205.0] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id k2-20020a05651239c200b0051ba2fb069dsm177648lfu.37.2024.04.23.06.16.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Apr 2024 06:16:48 -0700 (PDT)
-Message-ID: <f75bdc44-e57d-4404-b976-0bd9e6a0c5ab@linaro.org>
-Date: Tue, 23 Apr 2024 15:16:47 +0200
+        d=1e100.net; s=20230601; t=1713882667; x=1714487467;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XN7XhWrqCld2WJI0opNRnIm5kxokt1XlrZPOr6Jx6ao=;
+        b=JFdISlwV8pCOgZx4SmkkS7igxmBq9zUGYLSmZaURR+lRiHO+5BV3ZrFaen9FTsdiC7
+         jx1AQZtr7lCLOa5112EI/bz/Td6VJ18OzT19JM2gXmzuo0BeX/09sAKQbjCUfqixjsGR
+         wo2eVhKudERBAv6T4ILbAttXbqemhC7BS2/n91cWtPgdu+5SnFA+KpG1rSm8AsBfBDiZ
+         0xOQMxqte5gL+MENYf5w+pdQgN3WyWxkze7HmEBoT20zRKU+EEd7yeVkIXbY2WSavgnX
+         zDiAnUeJC/AeZ1C+ts4d2hJ5+z4FQ3melZPjWaddH1S8jheEzHkB9CRpf4aO8uEiFeBC
+         3sIw==
+X-Forwarded-Encrypted: i=1; AJvYcCX47nJHCZGUmxDhzqR+DF78LwSk73iX2gt+OERWkg1ICrS1xO0ZegxDMHXnSCs0hTmwR1shb95HHHSz+j3m+E9mOLB0DjfjU0Oe
+X-Gm-Message-State: AOJu0YzH0CmeAZ+IelUQ+5Fy1vdtqnZ3qJTe/p31G1jJj3wBJ56CTjJc
+	18Bwa4ICxQXjDnHxzNLNb7/wScoe33whLd7206dp6vpAzqF8znG9121RJcyAkc0=
+X-Google-Smtp-Source: AGHT+IFkVnrNX1IDHUGi9HUaySI3oc05M9oUsQt/QaI7SlEvCuUbmasv5YX0v5fmV1NffjKybeOPCQ==
+X-Received: by 2002:a50:9ec1:0:b0:571:b9ac:ff2e with SMTP id a59-20020a509ec1000000b00571b9acff2emr8291625edf.26.1713882667324;
+        Tue, 23 Apr 2024 07:31:07 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id fg7-20020a056402548700b005704957a968sm6708099edb.13.2024.04.23.07.31.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Apr 2024 07:31:07 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/3] HSI0 support for Google Tensor gs101
+Date: Tue, 23 Apr 2024 15:31:02 +0100
+Message-Id: <20240423-hsi0-gs101-v1-0-2c3ddb50c720@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/8] arm64: dts: qcom: qcs6490-rb3gen2: Update the
- LPASS audio node
-To: Taniya Das <quic_tdas@quicinc.com>, Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240318053555.20405-1-quic_tdas@quicinc.com>
- <20240318053555.20405-9-quic_tdas@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240318053555.20405-9-quic_tdas@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACbGJ2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDEyNj3YziTAPd9GJDA0PdxERzcwtjM8OktMREJaCGgqLUtMwKsGHRsbW
+ 1APtqc6pcAAAA
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.12.4
 
+This patch series enable thes HSI0 (high speed interface 0) for gs101. It
+feeds the USB block and is a prerequisite to get USB working.
 
+The parts added here have been verified to work OK without the
+clk_ignore_unused kernel command line option.
 
-On 3/18/24 06:35, Taniya Das wrote:
-> Update the lpassaudio node to support the new compatible.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 7 ++++++-
->   1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> index 97824c769ba3..dc7edea7f7c8 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> @@ -1,6 +1,6 @@
->   // SPDX-License-Identifier: BSD-3-Clause
->   /*
-> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->    */
-> 
->   /dts-v1/;
-> @@ -430,6 +430,11 @@
->   			   <GCC_WPSS_RSCP_CLK>;
->   };
-> 
-> +&lpass_audiocc {
-> +	compatible = "qcom,qcm6490-lpassaudiocc";
-> +	/delete-property/ power-domains;
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+André Draszik (3):
+      dt-bindings: clock: google,gs101-clock: add HSI0 clock management unit
+      arm64: dts: exynos: gs101: enable cmu-hsi0 clock controller
+      clk: samsung: clk-gs101: add cmu_hsi0
 
-I've already commented on this the last time somebody tried to shoehorn
-this "solution" in..
+ .../bindings/clock/google,gs101-clock.yaml         |  29 +-
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  14 +
+ drivers/clk/samsung/clk-gs101.c                    | 468 +++++++++++++++++++++
+ include/dt-bindings/clock/google,gs101.h           |  54 +++
+ 4 files changed, 563 insertions(+), 2 deletions(-)
+---
+base-commit: a59668a9397e7245b26e9be85d23f242ff757ae8
+change-id: 20240423-hsi0-gs101-aa778361bfaa
 
-Konrad
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
-https://lore.kernel.org/linux-arm-msm/20230616103534.4031331-1-quic_mohs@quicinc.com/
