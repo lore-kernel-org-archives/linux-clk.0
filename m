@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78AB184;
-	Tue, 23 Apr 2024 00:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56D1802;
+	Tue, 23 Apr 2024 00:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713832720; cv=none; b=j4b8hipABbIK61kxk9DuthcyujGIdGAb5Zj7Mgjhyo7eMFsgeJD6CEMtnTUHKnVonA58+2U7kHwL8vQD9zR8BQFJcx398/xov/gfvE8JiNzVQwIX172YkwdbNT+6OpCptkzD0l6ix04O4PTYlan4I4BBXI0rStn/6+Z+Eitkyls=
+	t=1713833259; cv=none; b=av2/fr4LqitAezw9DGqYK9W6qp6jo0zFfI5yRIYBHZP3cTP/DmY206FI4v8ijCIvfBpd/1SudIJT0hOCT0BALzeVEgj3wMtq+tOA5Qohvv95fdOLiNOw0YXrDlLbm0Of7kP/IMhWhsPJsf2mOZlHcnRkaKcROMjD+2A0GIv7Epw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713832720; c=relaxed/simple;
-	bh=Mu7unsryILuvM3Nf4rtyuH+NnGl/Ag6KmANbCK5/2A4=;
+	s=arc-20240116; t=1713833259; c=relaxed/simple;
+	bh=LPMHQme1V8vDzMirJlOpLb0vftLJDLrVwcaPBuEO5Fo=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=NimtZvSp4BY0FkYUHFLmKYB0TNNz3VTqyhyXUOy9rbNA13fHQpWy+m4LxeHEYpw6mVu4knaeUqrr/nl9RSQhE2I6mf4YXMC8y1fY26hgucNcXqURRzR8X/G8yklnBohLR9xA+ceq91BMDqxIjwimIvD3RWbiFJl8vbLHTuD3bEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JTll7Hu7; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=jEegyCr7MmzbXKQjXNMFpFDTPdUFrnxBeINC17acnofXbEcJb43QQHqQCvI/luygp7DNQHOQAhEtmrrq6UvZL/mXCgpXai26oJXcCEXEbBQ94KdGKWGyXOOySrFk7lSRzLyjVUpXecQjfkeE/80ihCRI4KnbUKT2JZvfMTCxLgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZ3SiHyu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JTll7Hu7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26AC3C113CC;
-	Tue, 23 Apr 2024 00:38:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZ3SiHyu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675CBC113CC;
+	Tue, 23 Apr 2024 00:47:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713832720;
-	bh=Mu7unsryILuvM3Nf4rtyuH+NnGl/Ag6KmANbCK5/2A4=;
+	s=k20201202; t=1713833258;
+	bh=LPMHQme1V8vDzMirJlOpLb0vftLJDLrVwcaPBuEO5Fo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=JTll7Hu7wF1BKHSgU8lKwIEL8hfr25t3ek+6NP5oW5+ShsrBaqQxD7sfBZFQdPk+x
-	 L+2+LOIS3x3RAUoeIcsVM5+JZmlF5DkB8ezeM2plNruKpD3fqnng/RomOYEvnH7LBD
-	 0KmaMANR6rnRRIaD0S1XEYQOMGImnsWtw2hvxUa2ZiDcFdS2a7/IE3RN8rURKVcUpq
-	 OwSlcgK+tPnnj/3PiZH1FpL8GZy4kiZKEdT+KXRh1QeTkyzpfb0+oS7TKyGBHX6Eri
-	 PQY26zMwJRRA9RUcx12XelpDstx/304B41rFNc1pBSigH/+mYctSdN1ASRmUw8oMYk
-	 yfacwyHNuCAQQ==
-Message-ID: <2473d3ddeea21640b20735d660e48f98.sboyd@kernel.org>
+	b=SZ3SiHyuarYWB1F6tUkkzJzyu22t8hnVHWFlNGoRPoXlF7pH8kOwJUhYRe4QUK/8+
+	 JsVMSN0pt92WDOrwRouIEgBC9KwME4SGtqhrz3urJK3N0yH+pQdAeRAS2Jdajax+fv
+	 ezTpMm4VrCIa6YsUJnLeTUga7IcLYyWcviRWnb2VI17XAq46Kwm9W1olCg+vpLMe+k
+	 1WU/H0WoJ7QhZdXeFQt3NVyQ+LrE3aSdDJ4TI1fWoreR6UoiVw5PCMKZJnyV6AOcNn
+	 RvvxLGSH9+jyEU2G3HwSyJEFpRcVwJRb3i2Ebn7eZhQj/xS7col3kvATKlx7w/RcEw
+	 z93aSoFkhQYeg==
+Message-ID: <eca85d9094538b8713b556979e811b39.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,51 +35,158 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <eb221864-0044-4ea5-bbee-7545d10cb130@skole.hr>
-References: <20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr> <de4c56a8-488d-4cdb-9d6c-e9d6e63b22b9@skole.hr> <58b23157c088cb4774d579cc8700de85.sboyd@kernel.org> <3287993.aeNJFYEL58@radijator> <d7ff7dd609cd1b9a50e5ffa882d05b90.sboyd@kernel.org> <eb221864-0044-4ea5-bbee-7545d10cb130@skole.hr>
-Subject: Re: [PATCH v9 5/9] clk: mmp: Add Marvell PXA1908 clock driver
+In-Reply-To: <06f26e2f49a8423cb0122a08fb2d868484e2e0a4.1713164546.git.unicorn_wang@outlook.com>
+References: <cover.1713164546.git.unicorn_wang@outlook.com> <06f26e2f49a8423cb0122a08fb2d868484e2e0a4.1713164546.git.unicorn_wang@outlook.com>
+Subject: Re: [PATCH v14 4/5] clk: sophgo: Add SG2042 clock driver
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To: Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Duje =?utf-8?q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, Guilherme G. Piccoli <gpiccoli@igalia.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Kees Cook <keescook@chromium.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Lubomir Rintel <lkundrak@v3.sk>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, Tony Lindgren <tony@atomide.com>, Tony Luck <tony.luck@intel.com>, Will Deacon <will@kernel.org>
-Date: Mon, 22 Apr 2024 17:38:38 -0700
+Cc: Chen Wang <unicorn_wang@outlook.com>
+To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu, chao.wei@sophgo.com, conor@kernel.org, devicetree@vger.kernel.org, guoren@kernel.org, haijiao.liu@sophgo.com, inochiama@outlook.com, jszhang@kernel.org, krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com, richardcochran@gmail.com, robh+dt@kernel.org, samuel.holland@sifive.com, xiaoguang.xing@sophgo.com
+Date: Mon, 22 Apr 2024 17:47:36 -0700
 User-Agent: alot/0.10
 
-Quoting Duje Mihanovi=C4=87 (2024-04-20 06:32:56)
-> On 4/20/24 00:24, Stephen Boyd wrote:
-> > Quoting Duje Mihanovi=C4=87 (2024-04-19 07:31:14)
-> >> On Friday, April 12, 2024 4:57:09=E2=80=AFAM GMT+2 Stephen Boyd wrote:
-> >>> Quoting Duje Mihanovi=C4=87 (2024-04-11 03:15:34)
-> >>>
-> >>>> On 4/11/2024 10:00 AM, Stephen Boyd wrote:
-> >>>>> Is there a reason this file can't be a platform driver?
-> >>>>
-> >>>> Not that I know of, I did it like this only because the other in-tree
-> >>>> MMP clk drivers do so. I guess the initialization should look like a=
-ny
-> >>>> of the qcom GCC drivers then?
-> >>>
-> >>> Yes.
-> >>
-> >> With the entire clock driver code in one file this is quite messy as I=
- also
-> >> needed to add module_init and module_exit functions to (un)register ea=
-ch
-> >> platform driver, presumably because the module_platform_driver macro d=
-oesn't
-> >> work with multiple platform drivers in one module. If I split up the d=
-river
-> >> code for each clock controller block into its own file (such as clk-of-
-> >> pxa1908-apbc.c) as I believe is the best option, should the commits be=
- split
-> >> up accordingly as well?
-> >=20
-> > Sure. Why is 'of' in the name? Maybe that is unnecessary?
->=20
-> That seems to be a historical leftover from when Marvell was just adding =
+Quoting Chen Wang (2024-04-15 00:23:27)
+> diff --git a/drivers/clk/sophgo/clk-sophgo-sg2042.c b/drivers/clk/sophgo/=
+clk-sophgo-sg2042.c
+> new file mode 100644
+> index 000000000000..0bcfaab52f51
+> --- /dev/null
+> +++ b/drivers/clk/sophgo/clk-sophgo-sg2042.c
+> @@ -0,0 +1,1645 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Sophgo SG2042 Clock Generator Driver
+> + *
+> + * Copyright (C) 2024 Sophgo Technology Inc. All rights reserved.
+> + */
+> +
+> +#include <asm/div64.h>
 
-> DT support to the ARM32 MMP SoCs which Rob followed along with in the=20
-> PXA1928 clk driver and so have I. Should I drop it then as Marvell has=20
-> in the PXA1908 vendor kernel?
->=20
+asm goes after linux includes...
 
-Sounds good to me.
+> +#include <linux/array_size.h>
+> +#include <linux/bits.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/platform_device.h>
+
+here.
+
+> +
+> +/*
+> + * The clock of SG2042 is composed of three parts.
+> + * The registers of these three parts of the clock are scattered in three
+> + * different memory address spaces:
+> + * - pll clocks
+> + * - gate clocks for RP subsystem
+> + * - div/mux, and gate clocks working for other subsystem than RP subsys=
+tem
+> + */
+> +#include <dt-bindings/clock/sophgo,sg2042-pll.h>
+> +#include <dt-bindings/clock/sophgo,sg2042-rpgate.h>
+> +#include <dt-bindings/clock/sophgo,sg2042-clkgen.h>
+> +
+> +/* Registers defined in SYS_CTRL */
+> +#define R_PLL_BEGIN            0xC0
+[...]
+> +
+> +#define SG2042_PLL(_id, _name, _parent_name, _r_stat, _r_enable, _r_ctrl=
+, _shift) \
+> +       {                                                               \
+> +               .hw.init =3D CLK_HW_INIT(                                =
+ \
+> +                               _name,                                  \
+> +                               _parent_name,                           \
+
+This still uses a string. Please convert all parents described by
+strings to use clk_parent_data or clk_hw directly.
+
+> +                               &sg2042_clk_pll_ops,                    \
+> +                               CLK_GET_RATE_NOCACHE | CLK_GET_ACCURACY_N=
+OCACHE),\
+> +               .id =3D _id,                                             =
+ \
+> +               .offset_ctrl =3D _r_ctrl,                                =
+ \
+> +               .offset_status =3D _r_stat,                              =
+ \
+> +               .offset_enable =3D _r_enable,                            =
+ \
+> +               .shift_status_lock =3D 8 + (_shift),                     =
+ \
+> +               .shift_status_updating =3D _shift,                       =
+ \
+[...]
+> + * "clk_div_ddr01_1" is the name of Clock divider 1 control of DDR01, and
+> + * "clk_gate_ddr01_div1" is the gate clock in front of the "clk_div_ddr0=
+1_1",
+> + * they are both controlled by register CLKDIVREG28;
+> + * While for register value of mux selection, use Clock Select for DDR01=
+=E2=80=99s clock
+> + * as example, see CLKSELREG0, bit[2].
+> + * 1: Select in_dpll0_clk as clock source, correspondng to the parent in=
+put
+> + *    source from "clk_div_ddr01_0".
+> + * 0: Select in_fpll_clk as clock source, corresponding to the parent in=
+put
+> + *    source from "clk_div_ddr01_1".
+> + * So we need a table to define the array of register values correspondi=
+ng to
+> + * the parent index and tell CCF about this when registering mux clock.
+> + */
+> +static const u32 sg2042_mux_table[] =3D {1, 0};
+> +
+> +static const struct clk_parent_data clk_mux_ddr01_p[] =3D {
+> +       { .hw =3D &sg2042_div_clks[0].hw },
+> +       { .hw =3D &sg2042_div_clks[1].hw },
+
+Just use struct clk_init_data::parent_hws for this if you only have a
+clk_hw pointer for every element of the parent array.
+
+> +};
+> +
+> +static const struct clk_parent_data clk_mux_ddr23_p[] =3D {
+> +       { .hw =3D &sg2042_div_clks[2].hw },
+> +       { .hw =3D &sg2042_div_clks[3].hw },
+> +};
+> +
+[...]
+> +
+> +static int sg2042_pll_probe(struct platform_device *pdev)
+> +{
+> +       struct sg2042_clk_data *clk_data =3D NULL;
+> +       int i, ret =3D 0;
+> +       int num_clks =3D 0;
+> +
+> +       num_clks =3D ARRAY_SIZE(sg2042_pll_clks);
+> +
+> +       ret =3D sg2042_init_clkdata(pdev, num_clks, &clk_data);
+> +       if (ret < 0)
+> +               goto error_out;
+> +
+> +       ret =3D sg2042_clk_register_plls(&pdev->dev, clk_data, sg2042_pll=
+_clks,
+> +                                      num_clks);
+> +       if (ret)
+> +               goto cleanup;
+> +
+> +       return devm_of_clk_add_hw_provider(&pdev->dev,
+> +                                          of_clk_hw_onecell_get,
+> +                                          &clk_data->onecell_data);
+> +
+> +cleanup:
+> +       for (i =3D 0; i < num_clks; i++) {
+> +               if (clk_data->onecell_data.hws[i])
+> +                       clk_hw_unregister(clk_data->onecell_data.hws[i]);
+
+This should be unnecessary if devm is used throughout.
+
+> +       }
+> +
+> +error_out:
+> +       pr_err("%s failed error number %d\n", __func__, ret);
+> +       return ret;
+
+Just do this part in the one place the goto is. These two comments apply
+to all probes.
