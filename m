@@ -1,59 +1,59 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C62985636
-	for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 12:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24E084A20
+	for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 12:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713875721; cv=none; b=L77BUIJNUHUm2tq8KCGPlCXkm3b01Iq9YfkdfyPLreUeYthC9DmxsHEhQ+hwTaYcTXr7ECJoqJ3WTFOS5vFULM3vxWj/XzwKVwZVOjRi5MTwIqsvZlDqXKvAHw8a0sZqx8ypHMHSm/DSNWL9+ab9d9VxWJbugGDo6AIAf9IvySQ=
+	t=1713877128; cv=none; b=hrmSzqD4XaHDhVKQOyLDrx3LpnyGpNg+B7yFC7wypqYzqu7T4kwJ9c/1DkJDgKB6y9gCOhSywK8fuVAJttw1qNLYk/WvT4zAUrGdLp4Skq2RpcUDmu3vw7eYxaQHidqTknl1lfQyAfMKyUk/lU6t0zwwiDrU1xn9Uu+PSmMy1Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713875721; c=relaxed/simple;
-	bh=+npk7CU5D1IrWY2XUTyMctxvg7b3VXIhqcFDFMQo+e8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YfW9r9XmMZ/uGT0DU4Cq8XJnjL8GItA0OdfEbU9k61yJgUtBezabKYGidrCkcwegCw1uZIqFOj09j2QQCqHFFFySlKRkqT4NEXMUEF9CVVPw3hvmnwz1ylazbQv3YWMI/q5w4JDPOTPa/HU0/dnXOkaXD7hXoiRahB0kCzzbrvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SK2picvp; arc=none smtp.client-ip=209.85.208.181
+	s=arc-20240116; t=1713877128; c=relaxed/simple;
+	bh=C38jNkPQIY9PbuFlXsBJRUbs0C33ZReaOCMWgYaSpZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=k58jjb83nIVbES6/Uo1n3Osej+LYW+tB52eOICmTimDajIW0ICbhsRc816hyoArZtmvqfV1DHbxpHBKvs+kmB5e9DLCEaXxo5vCic4yz6F5ne3HTZN9KfygiAMlU08HlEVkTgreqx1sbdKeZKUnDgsbJir0qwFET74fzNW3GMUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=STZkVB2x; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SK2picvp"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2d8a24f8a3cso70352571fa.1
-        for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 05:35:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="STZkVB2x"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-51acc258075so4693590e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 05:58:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713875717; x=1714480517; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1713877124; x=1714481924; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ph4gnrNXsU4/y4bAQnJy1r34G9v8Qh27X1SKuQMEaTw=;
-        b=SK2picvpes6D9vOWit72ewWIIUxsxX4jaUcrp/zimEWXQVPYNGjwLrhvtEPmf0urVl
-         YmRolHRpLQo/CPGoAA0Xww1h15iOR8CUET4kyVZkeEidK2ZP2+EDggHbc2LGCFlD8pzT
-         r6YERu3hy+esQZxkQQA4H68CDTVWi7Wy2rU0RBYHOc/CTrPjpJC7Vhy/zvO1CvC4Za3D
-         ah39nzB4PWGNlTzaPr5DoOQcQ9h9PMqPkGXaORoo0TVHtqATlWjAVp4xsEwdkKGD6INB
-         EtKRuoci5Add5gCayWYXzzJ6FJ77yeirJl2stv4hcrTwdhwhh6IBtWsL8PhGSz999M+Q
-         aMpQ==
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=dfWMwHQIpw4zS3iFGNbv1FwxyBMpqPbqqndAtgdwOvo=;
+        b=STZkVB2xoG0zGbe9KBS4l7UH0vv9pJ3uqHQVktFP/nzt+wghIG27zyNGC56W9J9hmI
+         43DRQKtRQuosG2bct4YVMylVhh9nwYUWGUHEjKysZqPw/UHR0Uv92W6WkJ0VXYuc6Smt
+         BWaYwKmgUQqEtvxBpoVKqlqkHVk+h6/R8Wcg5q3JKvCZrO7Dt2NG9E9C1VGhlsxgHqtW
+         eM8gSV9mnZX/Wo+t5Y5LkTyZh04tvNZkxqBRol+vp/On7hTRtDhbhRnZ9Adk0t5xzTLP
+         eZCtyJhWnyfGsrra6IeeNbX8ocQs3AxL5W99M3RJo9TCZvLiWJFcoiJoH2DrkgU89iNR
+         HNNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713875717; x=1714480517;
+        d=1e100.net; s=20230601; t=1713877124; x=1714481924;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ph4gnrNXsU4/y4bAQnJy1r34G9v8Qh27X1SKuQMEaTw=;
-        b=YLGrN4XBK2x7ICPG2cdoCDNxVnqUymNX9C84vEPptfMxnjg8Z5WhYDNVbJOn8jzYLk
-         e4iuVNYArg96SG09d0tB/u1h0ezxCjFMYthOP1ZfETGSJ/4QUtBQPw8zwWNDVRLGTp4Z
-         q1seOUUaV5s7PfHHYonAIyZFUpmYOs2hWALAPRfq0txcCtvVJ4Boz52AXVEKPCJ5QIFi
-         dgIEqebNQ9S0ak24glxA62CzZt1hd+jGveJKZpQ7cNyxui9SqfogVYImBEwyC3W9fjnn
-         N+1GFHnBr9amg0tY6jDPh+UYX6cnF1QBxZ9+jKvAT229adMhL53PMAHAD+VAvve6koPS
-         11og==
-X-Forwarded-Encrypted: i=1; AJvYcCXCZ7x+4Bz7sKko9SVlv01HAGJhOot45GfS8dk3GScXbH75wt3Tab4oWYJ+1I/DR6qOxpZTNRO0/hlz0nU5BRSxLN6VLKBoxit9
-X-Gm-Message-State: AOJu0YytMC5xV+So2TJEiWf93C0e40JCs8/0r9helhHXkn97dzh4+lqe
-	TzC3OVearY5O/NUGyZDTzUsKAm2D2nTredhhcvTLSrnMSj08uIDBTc3a/hgm4DU=
-X-Google-Smtp-Source: AGHT+IGpYlyiOfOUNdMRXGfWPTLzW+ofzpyxAXXOrOSh/XHRY4qI3aB6iBHB5IbjxUmQ1zoiQS/Kiw==
-X-Received: by 2002:a2e:b712:0:b0:2d8:7fa5:5034 with SMTP id j18-20020a2eb712000000b002d87fa55034mr7987293ljo.43.1713875716528;
-        Tue, 23 Apr 2024 05:35:16 -0700 (PDT)
+        bh=dfWMwHQIpw4zS3iFGNbv1FwxyBMpqPbqqndAtgdwOvo=;
+        b=VIFFcZf6oyYScM2MVd1DoxhNf9td9cAuppZxfS3y7vKa57ygmfSASGtiaZQJfI+P37
+         /iM6wP9aKgtcatRnsmtj4qjg8ePZXMFGfUtUqUXoLvyfDtVHSR3k5gBvzLQk9rUeR5w1
+         NdGuhH7FJmRP+EDK9LCASK/1N7tdmlvzMxnebuIpVmfxgZVbRaL17FVURx9memCzaLFt
+         q7EwDxEAN+pchyUFCrjWidjhEX5gwUonf0KergYhhMDZdFfd+IP6zCXVqfmaFuZu0ZrF
+         9KiKLNXFo1TyacEGg+XZdr2MJ/Ia1DdDCDHvWsKVkuZDFPN7UjUYNAwnNllnuWGI/+m/
+         LHjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqqtHz+ThknTKxt6U8faw3SQoarCune4mStZ52MojbN7Z3ebbMmlLrC8b2HCL+N9GNtFcElmT/TiJBBIlBtR7XUVFpEVIUwxYW
+X-Gm-Message-State: AOJu0YxY98Itgxd/egGwcXcE6PNiXKpPmLZUjrOxz7cx5WvmKjQjTNov
+	W+PhB3AvNmXc4z41/8GHX2t/HgNDrUKriRlzQepc88Tj/Rekk1uzTLpxOIyKwt0=
+X-Google-Smtp-Source: AGHT+IHFPonFyfwcyDEJAcAqUSp9XGi8YlceLjdGzBOHf719wJg692YC5McvPpN7AvR2TgPu+w13Xw==
+X-Received: by 2002:a05:6512:3712:b0:516:c8e5:964e with SMTP id z18-20020a056512371200b00516c8e5964emr6801237lfr.21.1713877123745;
+        Tue, 23 Apr 2024 05:58:43 -0700 (PDT)
 Received: from [172.30.205.0] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id g18-20020a2eb5d2000000b002d9fc892cc3sm1718213ljn.13.2024.04.23.05.35.15
+        by smtp.gmail.com with ESMTPSA id c12-20020ac2414c000000b0051ae53e9afbsm1148796lfi.92.2024.04.23.05.58.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Apr 2024 05:35:16 -0700 (PDT)
-Message-ID: <c1d07eff-4832-47d9-8598-aa6709b465ff@linaro.org>
-Date: Tue, 23 Apr 2024 14:35:14 +0200
+        Tue, 23 Apr 2024 05:58:43 -0700 (PDT)
+Message-ID: <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
+Date: Tue, 23 Apr 2024 14:58:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,87 +61,51 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] clk: qcom: lpassaudiocc-sc7280: Add support to skip
- PLL configuration
-To: Taniya Das <quic_tdas@quicinc.com>, Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240208062836.19767-1-quic_tdas@quicinc.com>
- <20240208062836.19767-3-quic_tdas@quicinc.com>
+Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
+ ability to gcc
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, djakov@kernel.org,
+ dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20240418092305.2337429-1-quic_varada@quicinc.com>
+ <20240418092305.2337429-7-quic_varada@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240208062836.19767-3-quic_tdas@quicinc.com>
+In-Reply-To: <20240418092305.2337429-7-quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 2/8/24 07:28, Taniya Das wrote:
-> The PLL configuration needs to be skipped when remoteproc brings the
-> LPASS out of reset.
+On 4/18/24 11:23, Varadarajan Narayanan wrote:
+> IPQ SoCs dont involve RPM in managing NoC related clocks and
+> there is no NoC scaling. Linux itself handles these clocks.
+> However, these should not be exposed as just clocks and align
+> with other Qualcomm SoCs that handle these clocks from a
+> interconnect provider.
 > 
-> Also update the lpassaudio_cc_reset regmap name and max register to handle
-> the regmap conflict warning between lpassaudio_cc_reset and lpassaudio_cc.
+> Hence include icc provider capability to the gcc node so that
+> peripherals can use the interconnect facility to enable these
+> clocks.
 > 
-> Fixes: a9dd26639d05 ("clk: qcom: lpass: Add support for LPASS clock controller for SC7280")
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
->   drivers/clk/qcom/lpassaudiocc-sc7280.c | 14 ++++++++++----
->   1 file changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> index c43d0b1af7f7..2619a8ced9d5 100644
-> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> @@ -1,6 +1,7 @@
->   // SPDX-License-Identifier: GPL-2.0-only
->   /*
->    * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->    */
-> 
->   #include <linux/clk-provider.h>
-> @@ -766,11 +767,13 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
->   		goto exit;
->   	}
-> 
-> -	clk_zonda_pll_configure(&lpass_audio_cc_pll, regmap, &lpass_audio_cc_pll_config);
-> +	if (!of_property_read_bool(pdev->dev.of_node, "qcom,adsp-skip-pll")) {
 
-Big no-no.
+If this is all you do to enable interconnect (which is not the case,
+as this patch only satisfies the bindings checker, the meaningful
+change happens in the previous patch) and nothing explodes, this is
+an apparent sign of your driver doing nothing.
 
-> +		clk_zonda_pll_configure(&lpass_audio_cc_pll, regmap, &lpass_audio_cc_pll_config);
-> 
-> -	/* PLL settings */
-> -	regmap_write(regmap, 0x4, 0x3b);
-> -	regmap_write(regmap, 0x8, 0xff05);
-> +		/* PLL settings */
-> +		regmap_write(regmap, 0x4, 0x3b);
-> +		regmap_write(regmap, 0x8, 0xff05);
+The expected reaction to "enabling interconnect" without defining the
+required paths for your hardware would be a crash-on-sync_state, as all
+unused (from Linux's POV) resources ought to be shut down.
 
-Model these properly and use the abstracted clock (re)configuration functions.
-Add the unreachable clocks to `protected-clocks = <>` and make sure that the
-aforementioned configure calls check if the PLL was really registered.
-
-> +	}
-> 
->   	ret = qcom_cc_really_probe(pdev, &lpass_audio_cc_sc7280_desc, regmap);
->   	if (ret) {
-> @@ -778,6 +781,9 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
->   		goto exit;
->   	}
-> 
-> +	lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc_reset";
-
-Ugh.. are these really not contiguous, or were the register ranges misrepresented from
-the start?
-
-> +	lpass_audio_cc_sc7280_regmap_config.max_register = 0xc8;
-
-Provide the real size of the block in .max_register instead, unconditionally
+Because you lack sync_state, the interconnects silently retain the state
+that they were left in (which is not deterministic), and that's precisely
+what we want to avoid.
 
 Konrad
