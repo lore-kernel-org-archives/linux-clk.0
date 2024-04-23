@@ -1,189 +1,124 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EB0224F0;
-	Tue, 23 Apr 2024 06:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55552210F8
+	for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 07:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713852711; cv=none; b=X4/hh3h8M7SPPuHL8gL8YDkT0HCUR9WeFrmNMunDPIV1GenXpKtziaCwSRrvfjkeel7FvyAvsyTO+wVtPMQNTR4AHOB3WgYmF/9WviVNoZPwfVr7Fz2MnxS4VsOfpintvqen5iVtzTgd6CuamSlO0ZIezD8BEUxiO8uMp+uhuck=
+	t=1713856369; cv=none; b=hKskxxTIU185h7Zmq9sjyENh71uJj9El0A7EyGfhU7I6WgrYdWPknbhu0SRuzsHnop5YTShqNf+5Lz/U/B6+oMfGibNdpVa+kIb6fazKNulcfC57vxaVwvG1vlWOlv9AXk2w6u8XhDleziH7rL+LGwYz/ZkjcXQpCmCr59q9Qg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713852711; c=relaxed/simple;
-	bh=V7YpzEldJuTIV+Gf8sRePNx21jL0GM8qS7CvTMlG9Io=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Je2hIx/vdypa9adFYSqdQ9ZyobgEKE609S0PdhxGvUHx4ZU17kAZc/9ynr/U3SRgR4ivJMPs4TrNxfZ2TMBcmtWBwTW24w/zthnZBqUKNqxIVWS4NashmHLuYvyckS7U4ECupRfuItyuqRULYl4Jqkw9ohT9MIJIdVmLNKLBPG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TaTSjEEk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TaTSjEEk"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43N4ScPH016909;
-	Tue, 23 Apr 2024 06:11:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=tx5yxKtp0kmfVS31LxuwTSnEJXTe36IJzRgldANyxok=; b=Ta
-	TSjEEkFxtUhCgqElvUis+oxGqi3MmrkL88jeixE+57Jed+07gPIK+74wRwMcQB9N
-	VIIKjBW67ZFqp0D/0oHF04rEUSln9j4LBoPczZO4/TKnABqfEiAvh1TBfkH2VdVj
-	6DnE5hkR8qPv0Mg8zG8zi3+ziFjjvJt/yJzoXVezo1xcrrvuQolYAKmJk2s3rh7P
-	IK3OC1UTxuElG/gD1cmM7mwH46l3t/bkOrcBVhPB8x30OMPZ8USWzz19jlVvjuLR
-	Zp+BWEiWLvu5DiLpsx8HthCxltZRhlBI2lyDVRl5HpOOnuP1UlcffxND3Tow7Q6G
-	xZaTVtMBtwTBnOxrUpcw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xnr0mj24b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Apr 2024 06:11:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43N6BSmP001076
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Apr 2024 06:11:28 GMT
-Received: from [10.201.2.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Apr
- 2024 23:11:22 -0700
-Message-ID: <b9081a61-c159-4659-a5e1-5586bb65dfce@quicinc.com>
-Date: Tue, 23 Apr 2024 11:41:19 +0530
+	s=arc-20240116; t=1713856369; c=relaxed/simple;
+	bh=fQ4UVE6+6CmvmhJdhJsIrzZ7SFLcAeX7/JjxwWX44Ss=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qGIfFE3e+fDaYFov01m5q0XW13ZVH49Z4NZVuSUGyPvjzYkz/DdAc8FpuaAfx0zI0sUpCK+/k2Nwnv4elIsFrVCp9YYEI2EV0WQsyd+l2iRl43pn2QrULbfy5RLCINSBUsV+58Yae1CytaW3h5fXYElKyb8t7HiBupQMhoQRkds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rzAKU-0005Pe-6R; Tue, 23 Apr 2024 09:12:38 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rzAKT-00DpqQ-DL; Tue, 23 Apr 2024 09:12:37 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rzAKT-006lQZ-11;
+	Tue, 23 Apr 2024 09:12:37 +0200
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Abel Vesa <abelvesa@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] clk: imx: imx8mp: Convert to platform remove callback returning void
+Date: Tue, 23 Apr 2024 09:12:31 +0200
+Message-ID: <20240423071232.463201-2-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] ipq9574: Enable PCI-Express support
-To: <mr.nuke.me@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad
- Dybcio <konrad.dybcio@linaro.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring
-	<robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul
-	<vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-clk@vger.kernel.org>
-References: <20240415182052.374494-1-mr.nuke.me@gmail.com>
- <4a83afeb-8e82-4f95-b44e-74d39d55f448@quicinc.com>
- <c498f5b9-df07-0802-800c-67c18dcf3e67@gmail.com>
-Content-Language: en-US
-From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-In-Reply-To: <c498f5b9-df07-0802-800c-67c18dcf3e67@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2328; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=fQ4UVE6+6CmvmhJdhJsIrzZ7SFLcAeX7/JjxwWX44Ss=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmJ19gD+ey60Q7Nhcuckms6sc7hia2d0PrcgA61 25wyYCFd1mJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZidfYAAKCRCPgPtYfRL+ Tl6MB/9ewqqK8k3EJgNUQucdqRiJOeHsgqj+9R7jJdnfre4guZynzegjaBNiTZj1Eh3QTHqwUUq pCj1flKOlPO3XVFmphFRj9FD6svjQhLqGo5nX6/rYpUVd5j8xEnxbDYsNWqZoZcsItcKeWmrUfQ 55s6tGS7MHvqdcxRYoCs8paCvQ+Wxjq5Kf7OftuG0rTzGw7USCUjDxBOUectqjVP9HEX9HbjoM+ bmXbtYxMJPOVIiaWyOp53Thly1bbx1JKt3C8bJUeLfkSlVdOplKB+L2ZtQkoIUAoWrMCrahmN0h jys0PlKAAhqr2tXeO6U/54VCI3EgyqOijcJTRQXJQSBU54U+
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QuHGmmjbEFMUabia_uEJdttfqNqw857e
-X-Proofpoint-ORIG-GUID: QuHGmmjbEFMUabia_uEJdttfqNqw857e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-23_04,2024-04-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 bulkscore=0 mlxscore=0 spamscore=0 priorityscore=1501
- phishscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
- adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404230017
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
 
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
 
-On 4/20/2024 1:17 AM, mr.nuke.me@gmail.com wrote:
-> Hi Kathiravan,
-> 
-> On 4/19/24 09:28, Kathiravan Thirumoorthy wrote:
->>
->>
->> On 4/15/2024 11:50 PM, Alexandru Gagniuc wrote:
->>> There are four PCIe ports on IPQ9574, pcie0 thru pcie3. This series
->>> addresses pcie2, which is a gen3x2 port. The board I have only uses
->>> pcie2, and that's the only one enabled in this series.
->>>
->>> I believe this makes sense as a monolithic series, as the individual
->>> pieces are not that useful by themselves.
->>>
->>> In v2, I've had some issues regarding the dt schema checks. For
->>> transparency, I used the following test invocations to test v3:
->>>
->>>        make dt_binding_check 
->>> DT_SCHEMA_FILES=qcom,pcie.yaml:qcom,ipq8074-qmp-pcie-phy.yaml
->>>        make dtbs_check 
->>> DT_SCHEMA_FILES=qcom,pcie.yaml:qcom,ipq8074-qmp-pcie-phy.yaml
->>>
->>>
->>
->> Alexandru,
->>
->> Thanks for your contributions to the Qualcomm IPQ chipsets.
->>
->> I would like to inform you that we have also submitted the patches to 
->> enable the PCIe support on IPQ9574[1][2] and waiting for the ICC 
->> support[3] to land to enable the NOC clocks.
->>
->> [1] 
->> https://lore.kernel.org/linux-arm-msm/20230519090219.15925-1-quic_devipriy@quicinc.com/
->> [2] 
->> https://lore.kernel.org/linux-arm-msm/20230519085723.15601-1-quic_devipriy@quicinc.com/
->> [3] 
->> https://lore.kernel.org/linux-arm-msm/20240418092305.2337429-1-quic_varada@quicinc.com/
->>
->> Please take a look at these patches as well.
-> 
-> I think I've seen [1] before -- I thought the series was abandoned. 
-> Since we have the dt-schema and applicability on mainline resolved here, 
-> do you want to use this series as the base for any new PCIe work?
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
+Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power saving")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+Hello,
 
-Sure Alex. I believe some of the code review comments are already 
-addressed in the series which I pointed out. If you could have picked 
-those and re-posted the next version, it could have been better.
+after the merge window leading to v6.10-rc1 (assuming Linus has >= 10 fingers
+this cycle :-) I want to switch the prototype of struct
+platform_driver::remove to return void. So please either merge this
+patch together with 1496dd413b2e, or accept me sending this patch
+together with the patch changing the function's prototype for inclusion
+to Greg's driver-core tree.
 
+Thanks
+Uwe
 
-> 
-> Alex
-> 
->> Thanks,
->> Kathiravan T.
->>
->>
->>> Changes since v2:
->>>   - reworked resets in qcom,pcie.yaml to resolve dt schema errors
->>>   - constrained "reg" in qcom,pcie.yaml
->>>   - reworked min/max intems in qcom,ipq8074-qmp-pcie-phy.yaml
->>>   - dropped msi-parent for pcie node, as it is handled by "msi" IRQ
->>>
->>> Changes since v1:
->>>   - updated new tables in phy-qcom-qmp-pcie.c to use lowercase hex 
->>> numbers
->>>   - reorganized qcom,ipq8074-qmp-pcie-phy.yaml to use a single list 
->>> of clocks
->>>   - reorganized qcom,pcie.yaml to include clocks+resets per compatible
->>>   - Renamed "pcie2_qmp_phy" label to "pcie2_phy"
->>>   - moved "ranges" property of pcie@20000000 higher up
->>>
->>> Alexandru Gagniuc (7):
->>>    dt-bindings: clock: Add PCIe pipe related clocks for IPQ9574
->>>    clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
->>>    dt-bindings: PCI: qcom: Add IPQ9574 PCIe controller
->>>    PCI: qcom: Add support for IPQ9574
->>>    dt-bindings: phy: qcom,ipq8074-qmp-pcie: add ipq9574 gen3x2 PHY
->>>    phy: qcom-qmp-pcie: add support for ipq9574 gen3x2 PHY
->>>    arm64: dts: qcom: ipq9574: add PCIe2 nodes
->>>
->>>   .../devicetree/bindings/pci/qcom,pcie.yaml    |  35 +++++
->>>   .../phy/qcom,ipq8074-qmp-pcie-phy.yaml        |  36 ++++-
->>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  93 +++++++++++-
->>>   drivers/clk/qcom/gcc-ipq9574.c                |  76 ++++++++++
->>>   drivers/pci/controller/dwc/pcie-qcom.c        |  13 +-
->>>   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 136 +++++++++++++++++-
->>>   .../phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5.h   |  14 ++
->>>   include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   4 +
->>>   8 files changed, 400 insertions(+), 7 deletions(-)
->>>
+ drivers/clk/imx/clk-imx8mp-audiomix.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
+index 574a032309c1..be9df93b6adb 100644
+--- a/drivers/clk/imx/clk-imx8mp-audiomix.c
++++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+@@ -346,11 +346,9 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int clk_imx8mp_audiomix_remove(struct platform_device *pdev)
++static void clk_imx8mp_audiomix_remove(struct platform_device *pdev)
+ {
+ 	pm_runtime_disable(&pdev->dev);
+-
+-	return 0;
+ }
+ 
+ static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
+@@ -382,7 +380,7 @@ MODULE_DEVICE_TABLE(of, clk_imx8mp_audiomix_of_match);
+ 
+ static struct platform_driver clk_imx8mp_audiomix_driver = {
+ 	.probe	= clk_imx8mp_audiomix_probe,
+-	.remove = clk_imx8mp_audiomix_remove,
++	.remove_new = clk_imx8mp_audiomix_remove,
+ 	.driver = {
+ 		.name = "imx8mp-audio-blk-ctrl",
+ 		.of_match_table = clk_imx8mp_audiomix_of_match,
+-- 
+2.43.0
+
