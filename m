@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505C014431C;
-	Tue, 23 Apr 2024 11:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C55E147C75;
+	Tue, 23 Apr 2024 11:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713872483; cv=none; b=Cv9rXHgUm/argm+0eiqkpF+P6eqTp/agIOU8tmHeNqKd7JjIRH3DDtOl2SZ5MT9/z+0wl4xosKyEi2p4I7UieXkvz7pAxTKFXSgD/znsC2d6YLmsyKz7OlcUigAwFUhGSGYqUESzL08gIc5RwMLqJQHN8Mz5sO7Z3XHQpsA4ht4=
+	t=1713872499; cv=none; b=eUMUrqQNHH7OpkunM4vIa339a1r4XtKuyXbiBexm+1PsEjGHkUFnqacAnsRQvQVN5/vFIyLUGha4ujjPKfCVmyWu4p2CST8v9FLnzaaNSpfuOAcO/jJcPJWanqunp9HNT3248FfnbFy5JoYqd7jy4eWpj7V8HkfBooQ9grMhJTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713872483; c=relaxed/simple;
-	bh=xO1L8ozLXNkLGNcQZU7QghmdPKLrycyXyH72uitmLwA=;
+	s=arc-20240116; t=1713872499; c=relaxed/simple;
+	bh=It5ieeiGLQBbVO/VocXMayUZ4M94B8Ebxj9EVLkv/+s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tYcN85C55ZzmjxdYJQ3tAkR7xssf1/mCCT0blPYSnR5/f6+HkTH5QnrcPewkXTH4qW/D9FzFdASrI3XcJ0/qJfGTBEGEtMwGoXdOqZOm/ZjYh4i1boAeryQX+0F8GPNsjANHkAUGuAzJVoKbUEk+KBlqvajOql41YrbpjT6bBxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ydu2Cdv2; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=EZZ6gBF5e1o7UaoccxnmhRoH6CY+8wtPvYHyFYGLjfeGwho/gZyElzpggaIaeBKqHSOFfKZhPrBbdP1F1Bkxni4OJSIFeb+qAj9RMZg+bOBvmD6xeH+U9Ob/5beVjsqZ8fv6COCfTj5RRebihM9iiVc6DL6oMtUgOia+wxu41jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1xCf7CR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ydu2Cdv2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64055C3277B;
-	Tue, 23 Apr 2024 11:41:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1xCf7CR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FF44C32782;
+	Tue, 23 Apr 2024 11:41:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713872483;
-	bh=xO1L8ozLXNkLGNcQZU7QghmdPKLrycyXyH72uitmLwA=;
+	s=k20201202; t=1713872499;
+	bh=It5ieeiGLQBbVO/VocXMayUZ4M94B8Ebxj9EVLkv/+s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ydu2Cdv2Ww3g5/udzj4aBy2cCBmdmyQ2XB5BhiCOR3le+HzxwxhIm/HEZ5vMmt6lK
-	 UCmyP+kSPHOntT1TLz0TUY4i4stPcAggYF/AzoANZBXAPKQOd7wyiOQM9j06oyAo++
-	 APIQIlL9j8TB8IKGW2BfjPh+Re8ZLmqlQEbAhgaUBbqUBj/DTZVrNuE7Z8nRYix64P
-	 30qG6wm+xe76L6/Kt9oygWEUc3NhVpKDPRzhIKq4jWYM0frvEfWlvB4N/qqSEI7yUv
-	 EvTUuJV1F5ByskYftLIZFrKAiKaHnDks4YT+IlgW83dTYUVvtEi922ZANq9Ty29xvo
-	 RaDKLXEIm+wYg==
+	b=A1xCf7CRI7iuIR96Ji+/Hx0dCxZzKDDkAz2AtM9aSz1ZAjBlNAQqajfqmrIjHM3ms
+	 AsqNH4tV+URpN6q+hpl2Z4jux3zrxBoWSbGKBYmSZWrFCU+IuUMKOdcjJKBAitx2o2
+	 OIfwlta8SZSDjwLDF2CodK5vmnfXnjlgjyjAd5f/+hl9yUBYlUaxeOnt1WGThPQLTf
+	 NbYjxZCg2B9LOt9Vj3OwhhU1i+N8JHG/LcUYMG4DSPjlNfTUtpVD7WKuHxNjcEFzuE
+	 Nr2g+2bsuAqgOb80DF7bSZrt5r7w9kcKbQZiGiPvzZLrgAbQbUDBg3oqggNhMKAKcE
+	 FrjfAAgON81qg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -34,12 +34,12 @@ Cc: Stephen Boyd <sboyd@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	mturquette@baylibre.com,
 	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 6/9] clk: Don't hold prepare_lock when calling kref_put()
-Date: Tue, 23 Apr 2024 07:02:28 -0400
-Message-ID: <20240423110233.1659071-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 6/9] clk: Don't hold prepare_lock when calling kref_put()
+Date: Tue, 23 Apr 2024 07:02:44 -0400
+Message-ID: <20240423110249.1659263-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240423110233.1659071-1-sashal@kernel.org>
-References: <20240423110233.1659071-1-sashal@kernel.org>
+In-Reply-To: <20240423110249.1659263-1-sashal@kernel.org>
+References: <20240423110249.1659263-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,7 +48,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.156
+X-stable-base: Linux 5.10.215
 Content-Transfer-Encoding: 8bit
 
 From: Stephen Boyd <sboyd@kernel.org>
@@ -72,10 +72,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 84397af4fb336..7a3b992ca3e40 100644
+index aa2f1f8aa2994..c64beabca7cde 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -4137,7 +4137,8 @@ void clk_unregister(struct clk *clk)
+@@ -4096,7 +4096,8 @@ void clk_unregister(struct clk *clk)
  	if (ops == &clk_nodrv_ops) {
  		pr_err("%s: unregistered clock: %s\n", __func__,
  		       clk->core->name);
@@ -85,7 +85,7 @@ index 84397af4fb336..7a3b992ca3e40 100644
  	}
  	/*
  	 * Assign empty clock ops for consumers that might still hold
-@@ -4171,11 +4172,10 @@ void clk_unregister(struct clk *clk)
+@@ -4130,11 +4131,10 @@ void clk_unregister(struct clk *clk)
  	if (clk->core->protect_count)
  		pr_warn("%s: unregistering protected clock: %s\n",
  					__func__, clk->core->name);
@@ -98,7 +98,7 @@ index 84397af4fb336..7a3b992ca3e40 100644
  }
  EXPORT_SYMBOL_GPL(clk_unregister);
  
-@@ -4381,13 +4381,11 @@ void __clk_put(struct clk *clk)
+@@ -4297,13 +4297,11 @@ void __clk_put(struct clk *clk)
  	    clk->max_rate < clk->core->req_rate)
  		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
  
