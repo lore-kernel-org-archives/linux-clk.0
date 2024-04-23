@@ -1,119 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C569149C75;
-	Tue, 23 Apr 2024 11:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C62985636
+	for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 12:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713872515; cv=none; b=GTKwE4YCJespbsLWngJb1j17eHRUxxj/QcKwaLh2pwIUjr0YyU7lxIyPm2rH7R7RWmd1AsJ6ROKd9Dv8FE9EcbATYusV8IOKlbtG9C9h+1dNo7oOs7NN7ITQm3IonAGMwvX6ENK2ynmzmPYUoTQkdX3BX1cYF7IUBHSd8RDCtBk=
+	t=1713875721; cv=none; b=L77BUIJNUHUm2tq8KCGPlCXkm3b01Iq9YfkdfyPLreUeYthC9DmxsHEhQ+hwTaYcTXr7ECJoqJ3WTFOS5vFULM3vxWj/XzwKVwZVOjRi5MTwIqsvZlDqXKvAHw8a0sZqx8ypHMHSm/DSNWL9+ab9d9VxWJbugGDo6AIAf9IvySQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713872515; c=relaxed/simple;
-	bh=hqt5mulurkipjNnc6TnmGfkZvKfoM15X91s6Krwm1Vs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ld0haAHH1StFyAE0Ju+HaATk68GBKnkaxgqpngxLOE+SDi/KI5cWWM8Dh0zuB2DzWQU5Yeh+AkGeXHIwgSRfmQaPitPXafsirsk5p19H03iVBaLTsSqazobncKdjU8KieGzSriBdkVUjsH5QDy59JL//xMqbq+6BzKNbzaDgPaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IgbbcvYk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713875721; c=relaxed/simple;
+	bh=+npk7CU5D1IrWY2XUTyMctxvg7b3VXIhqcFDFMQo+e8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YfW9r9XmMZ/uGT0DU4Cq8XJnjL8GItA0OdfEbU9k61yJgUtBezabKYGidrCkcwegCw1uZIqFOj09j2QQCqHFFFySlKRkqT4NEXMUEF9CVVPw3hvmnwz1ylazbQv3YWMI/q5w4JDPOTPa/HU0/dnXOkaXD7hXoiRahB0kCzzbrvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SK2picvp; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IgbbcvYk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4197C32783;
-	Tue, 23 Apr 2024 11:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713872514;
-	bh=hqt5mulurkipjNnc6TnmGfkZvKfoM15X91s6Krwm1Vs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IgbbcvYkDFXqSN/T9WdbuVy5k9Vfn9f/kEz3VS3jNZLb5KVQPSCYHwTWnFmlu+Jli
-	 mybeTpgZStq4Z9xGSitW9Dv68cq7skYs3e/TiF2P9YZYNYqk+8Rr6YRCviQHrvUw1W
-	 vgJaliM10GXjWAvTl6mBAGPC4rzN9ZYxoEJkp81eOE2pRYg0/JGhisX0pMFnmIML6g
-	 eoXo9zaNGDrUR6jTpNgCBgFiRAz5E6HyOiTKHTzHVAjsN4ZHR9uDIEyaIiFPg1vBXF
-	 iDEdvnJRk67YCsy7nJK0vzTMav5BJ5SMsUtQFk94yZxfGD4tnXdmRP62Krm+mnqFca
-	 ENxgZESpnh0Ew==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Sasha Levin <sashal@kernel.org>,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 6/8] clk: Don't hold prepare_lock when calling kref_put()
-Date: Tue, 23 Apr 2024 07:03:01 -0400
-Message-ID: <20240423110304.1659456-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240423110304.1659456-1-sashal@kernel.org>
-References: <20240423110304.1659456-1-sashal@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SK2picvp"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2d8a24f8a3cso70352571fa.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 05:35:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713875717; x=1714480517; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ph4gnrNXsU4/y4bAQnJy1r34G9v8Qh27X1SKuQMEaTw=;
+        b=SK2picvpes6D9vOWit72ewWIIUxsxX4jaUcrp/zimEWXQVPYNGjwLrhvtEPmf0urVl
+         YmRolHRpLQo/CPGoAA0Xww1h15iOR8CUET4kyVZkeEidK2ZP2+EDggHbc2LGCFlD8pzT
+         r6YERu3hy+esQZxkQQA4H68CDTVWi7Wy2rU0RBYHOc/CTrPjpJC7Vhy/zvO1CvC4Za3D
+         ah39nzB4PWGNlTzaPr5DoOQcQ9h9PMqPkGXaORoo0TVHtqATlWjAVp4xsEwdkKGD6INB
+         EtKRuoci5Add5gCayWYXzzJ6FJ77yeirJl2stv4hcrTwdhwhh6IBtWsL8PhGSz999M+Q
+         aMpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713875717; x=1714480517;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ph4gnrNXsU4/y4bAQnJy1r34G9v8Qh27X1SKuQMEaTw=;
+        b=YLGrN4XBK2x7ICPG2cdoCDNxVnqUymNX9C84vEPptfMxnjg8Z5WhYDNVbJOn8jzYLk
+         e4iuVNYArg96SG09d0tB/u1h0ezxCjFMYthOP1ZfETGSJ/4QUtBQPw8zwWNDVRLGTp4Z
+         q1seOUUaV5s7PfHHYonAIyZFUpmYOs2hWALAPRfq0txcCtvVJ4Boz52AXVEKPCJ5QIFi
+         dgIEqebNQ9S0ak24glxA62CzZt1hd+jGveJKZpQ7cNyxui9SqfogVYImBEwyC3W9fjnn
+         N+1GFHnBr9amg0tY6jDPh+UYX6cnF1QBxZ9+jKvAT229adMhL53PMAHAD+VAvve6koPS
+         11og==
+X-Forwarded-Encrypted: i=1; AJvYcCXCZ7x+4Bz7sKko9SVlv01HAGJhOot45GfS8dk3GScXbH75wt3Tab4oWYJ+1I/DR6qOxpZTNRO0/hlz0nU5BRSxLN6VLKBoxit9
+X-Gm-Message-State: AOJu0YytMC5xV+So2TJEiWf93C0e40JCs8/0r9helhHXkn97dzh4+lqe
+	TzC3OVearY5O/NUGyZDTzUsKAm2D2nTredhhcvTLSrnMSj08uIDBTc3a/hgm4DU=
+X-Google-Smtp-Source: AGHT+IGpYlyiOfOUNdMRXGfWPTLzW+ofzpyxAXXOrOSh/XHRY4qI3aB6iBHB5IbjxUmQ1zoiQS/Kiw==
+X-Received: by 2002:a2e:b712:0:b0:2d8:7fa5:5034 with SMTP id j18-20020a2eb712000000b002d87fa55034mr7987293ljo.43.1713875716528;
+        Tue, 23 Apr 2024 05:35:16 -0700 (PDT)
+Received: from [172.30.205.0] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id g18-20020a2eb5d2000000b002d9fc892cc3sm1718213ljn.13.2024.04.23.05.35.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Apr 2024 05:35:16 -0700 (PDT)
+Message-ID: <c1d07eff-4832-47d9-8598-aa6709b465ff@linaro.org>
+Date: Tue, 23 Apr 2024 14:35:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.274
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] clk: qcom: lpassaudiocc-sc7280: Add support to skip
+ PLL configuration
+To: Taniya Das <quic_tdas@quicinc.com>, Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240208062836.19767-1-quic_tdas@quicinc.com>
+ <20240208062836.19767-3-quic_tdas@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240208062836.19767-3-quic_tdas@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit 6f63af7511e7058f3fa4ad5b8102210741c9f947 ]
 
-We don't need to hold the prepare_lock when dropping a ref on a struct
-clk_core. The release function is only freeing memory and any code with
-a pointer reference has already unlinked anything pointing to the
-clk_core. This reduces the holding area of the prepare_lock a bit.
+On 2/8/24 07:28, Taniya Das wrote:
+> The PLL configuration needs to be skipped when remoteproc brings the
+> LPASS out of reset.
+> 
+> Also update the lpassaudio_cc_reset regmap name and max register to handle
+> the regmap conflict warning between lpassaudio_cc_reset and lpassaudio_cc.
+> 
+> Fixes: a9dd26639d05 ("clk: qcom: lpass: Add support for LPASS clock controller for SC7280")
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>   drivers/clk/qcom/lpassaudiocc-sc7280.c | 14 ++++++++++----
+>   1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+> index c43d0b1af7f7..2619a8ced9d5 100644
+> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+> @@ -1,6 +1,7 @@
+>   // SPDX-License-Identifier: GPL-2.0-only
+>   /*
+>    * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>    */
+> 
+>   #include <linux/clk-provider.h>
+> @@ -766,11 +767,13 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>   		goto exit;
+>   	}
+> 
+> -	clk_zonda_pll_configure(&lpass_audio_cc_pll, regmap, &lpass_audio_cc_pll_config);
+> +	if (!of_property_read_bool(pdev->dev.of_node, "qcom,adsp-skip-pll")) {
 
-Note that we also don't call free_clk() with the prepare_lock held.
-There isn't any reason to do that.
+Big no-no.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lore.kernel.org/r/20240325184204.745706-3-sboyd@kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/clk.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+> +		clk_zonda_pll_configure(&lpass_audio_cc_pll, regmap, &lpass_audio_cc_pll_config);
+> 
+> -	/* PLL settings */
+> -	regmap_write(regmap, 0x4, 0x3b);
+> -	regmap_write(regmap, 0x8, 0xff05);
+> +		/* PLL settings */
+> +		regmap_write(regmap, 0x4, 0x3b);
+> +		regmap_write(regmap, 0x8, 0xff05);
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 67051ca60920a..9dddf5f555ab5 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3971,7 +3971,8 @@ void clk_unregister(struct clk *clk)
- 	if (clk->core->ops == &clk_nodrv_ops) {
- 		pr_err("%s: unregistered clock: %s\n", __func__,
- 		       clk->core->name);
--		goto unlock;
-+		clk_prepare_unlock();
-+		return;
- 	}
- 	/*
- 	 * Assign empty clock ops for consumers that might still hold
-@@ -4002,11 +4003,10 @@ void clk_unregister(struct clk *clk)
- 	if (clk->core->protect_count)
- 		pr_warn("%s: unregistering protected clock: %s\n",
- 					__func__, clk->core->name);
-+	clk_prepare_unlock();
- 
- 	kref_put(&clk->core->ref, __clk_release);
- 	free_clk(clk);
--unlock:
--	clk_prepare_unlock();
- }
- EXPORT_SYMBOL_GPL(clk_unregister);
- 
-@@ -4168,13 +4168,11 @@ void __clk_put(struct clk *clk)
- 	    clk->max_rate < clk->core->req_rate)
- 		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
- 
--	owner = clk->core->owner;
--	kref_put(&clk->core->ref, __clk_release);
--
- 	clk_prepare_unlock();
- 
-+	owner = clk->core->owner;
-+	kref_put(&clk->core->ref, __clk_release);
- 	module_put(owner);
--
- 	free_clk(clk);
- }
- 
--- 
-2.43.0
+Model these properly and use the abstracted clock (re)configuration functions.
+Add the unreachable clocks to `protected-clocks = <>` and make sure that the
+aforementioned configure calls check if the PLL was really registered.
 
+> +	}
+> 
+>   	ret = qcom_cc_really_probe(pdev, &lpass_audio_cc_sc7280_desc, regmap);
+>   	if (ret) {
+> @@ -778,6 +781,9 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>   		goto exit;
+>   	}
+> 
+> +	lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc_reset";
+
+Ugh.. are these really not contiguous, or were the register ranges misrepresented from
+the start?
+
+> +	lpass_audio_cc_sc7280_regmap_config.max_register = 0xc8;
+
+Provide the real size of the block in .max_register instead, unconditionally
+
+Konrad
