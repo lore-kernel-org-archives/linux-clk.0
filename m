@@ -1,88 +1,276 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F8419BBA;
-	Tue, 23 Apr 2024 15:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED76213DDCC
+	for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 17:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713884852; cv=none; b=aPHKOXAyU7YqbeSz8xD0f6Mqi7uGY1DRY9GGYWJ7TvpbsK/F/PitkrZ4eFNqRY4lEUKFPSTFP/BZ4wM/01bTuS90maQD1mc9kw39nIVqGzZhbv06b5v739VOJ5ZjG+jX4T99LnwmgAggs0bhWs6YOhlmu6rEWp/a+PAcfmTmsf0=
+	t=1713894366; cv=none; b=T/MrF3cLzpyadQkxXoM7q/734KKlB22qtUHsQHgmUWDVZmKiYpNUW+XmTBRUBGQI0dd+w1fpuh/Ppb2OTNhdvQTjxKDURS6aGflIXhcgUx2bTP+aPhFho4Obc6c7lYPoPCnDhpMzCEA4uvWckBat2CMkWLAWKKOGQbQAMAi6JXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713884852; c=relaxed/simple;
-	bh=AKBMobjYQ6x2TD8CDoee3DGcDXyOQQFoITtQ9pcukvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3JPs/I4dVDuIk1SXkIWbB+D+bEd+sBDylWj+taQY1OBcB54jzv0ohAHY7CF5K6i1Xp+K3Lzxd79+cO+qxLf4/J9O9cAqeyrHl12ElTw0cpgskJHYgyUEA6uxGlf6+qQPqjsCFaT/nMWZIwhDoWAyLildsgVNPqyJCBrZafeNYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQBQOBcU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713894366; c=relaxed/simple;
+	bh=jnAd/2sSEJ0WMtjOyYGX1bWKZAuyDHWJ/L9RphxwCAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ty5JCMZA6aBhdM/KQGxaRmUU1T9RZL7jDeFQpulEPTLJWBPW2v0NjqCiEceiraDXNgTkihx7UNRqoXWejKFinl19JDoWb2aQEMYrkvM2OIId/1hwtuxv6JDat82OqJ7l3OmGslnYGUnWb9Ouv8oMm3KGGMN+NYbBPA0gl8XGR38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q5fQyOLn; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQBQOBcU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B495EC116B1;
-	Tue, 23 Apr 2024 15:07:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713884850;
-	bh=AKBMobjYQ6x2TD8CDoee3DGcDXyOQQFoITtQ9pcukvM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kQBQOBcUB6DxFRkYRr4oNjwNyRODpE0Md48n7Zb5oTuNNRbDZF1TEs9RIkhLA6W1l
-	 DSgBijpsweTdM2j/Dfr+WbeASNgDWuKI+e02uweWMyuuokfPMtmRWSNCJvydqf2WB7
-	 eOIS0r7XygtdDHoNheYn+zXRtQLN+k9acEerv0Zu8DoXhV+BZbMJS7RrOcCblXz+ED
-	 N5KIIWqVP65av1QQnC2YMgPNcHG5Un82QZ7hF1amdgrDpC7Djd95mFyTridA8TUi0X
-	 2sXEs3ag78ZSlhgUTRma6tbt7t/BuuBmUa3OBQiOisRU1iGBpa8Cvzux/5OwEmX2nR
-	 TFnYqAXwI1BfQ==
-Date: Tue, 23 Apr 2024 10:07:28 -0500
-From: Rob Herring <robh@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org,
-	Rae Moar <rmoar@google.com>, patches@lists.linux.dev,
-	kunit-dev@googlegroups.com,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, David Gow <davidgow@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-clk@vger.kernel.org, Daniel Latypov <dlatypov@google.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	linux-kselftest@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Ripard <maxime@cerno.tech>,
-	Saravana Kannan <saravanak@google.com>
-Subject: Re: [PATCH v4 04/10] of: Add a KUnit test for overlays and test
- managed APIs
-Message-ID: <171388483531.238610.10285255210612947227.robh@kernel.org>
-References: <20240422232404.213174-1-sboyd@kernel.org>
- <20240422232404.213174-5-sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q5fQyOLn"
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5af2d0a53f5so46790eaf.0
+        for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 10:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713894363; x=1714499163; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o3mo6Mk3SX0kmzv/thEaB5W9SO6Cld9rTNEVyk3LNv4=;
+        b=q5fQyOLnyClGY2zV+51CCMidc5Ja2V25hkdC2ccWaMDTk450rOyzBHvFrrPCT5ASp0
+         bQrIzDRziKJYDhO/7KC6GZLKXJdBDTODasPF89JRY3saYOAXNkTyektOj/eWznqiuGeb
+         RDS7N8vRvkCkQvKOvNE1tXH0mkSP7Qmj3zeIllvYSHe9dSGk4gLY37tOKDWXJUcf1V6x
+         y7f56cKVLkr/rvi3xg4DslYDSRgfxlAOBKfLTy54ZWFKpMbh3kcq0MWUCyDb3FWVLaXo
+         cnTt+6SG7pItUFcR2cNIzslSUABRRzs6SZtxbOmNEVISLUuv6dLbbn//ribnPRFr112T
+         yKHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713894363; x=1714499163;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o3mo6Mk3SX0kmzv/thEaB5W9SO6Cld9rTNEVyk3LNv4=;
+        b=tFY6cpoD2X7em1ZoC/4sQRUe5VxlftSb20xa/UAp+gz6ghdazmOC7DFr3PcgU/MAhY
+         Moh2dVezXuCbMCwq0zHCA+e07tzVLB5sUAgBPWVkTc6CzJDYEGP23i2bThSDl/nVXLxX
+         775GXjT3leM7w7nXI+9O79ycv7ezSwDS4lY+D3pn6ngoWrQ5eAmCCaA9k3FTl69ymRgm
+         KatbQotvfEsfxaY3vL1GTmotPhHJEyrB0OUU5qPTO7/GGa9GFZqqf4DvwK0koe69KPuI
+         v8X2fIWZorrfqmJZ/1vARXRSfSp/BNTwKtKPgKDqx9Pkw5/zROQDyzPe3DcQVwtVtNJ5
+         6lfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKUQljpfBUmL7jIRbTnj7aZF5dK2/BwJT1qzJ+tiK1hBczwCzIRMRgW4jMuJRSNW9llDs9DoI8gfcgWE+8/bQ8L+fG6qMWKNHG
+X-Gm-Message-State: AOJu0Ywp7UgBR4uZyWk685fCZlOb52SyPYV66lhSYE+EpvhiPPJTR866
+	W+KXxMK7AK/qq4pjApAbakcEmJ/Tm79BT12BlY9ZpXEntZ2rAWMa9cwt2GHmtNa6eDCosjg4H5S
+	1a3VRa61cC5tq5fvNUXN9XFcHsiuTIxHR8KElfA==
+X-Google-Smtp-Source: AGHT+IFjQt3mfbwBR44wWtiV52Fvs+JYmX+pN7lhEf2mhrvRbg8R0D5V2WdJQGT9SPtHiTXEX5fgYqJFaSu9KML7oR8=
+X-Received: by 2002:a4a:8554:0:b0:5aa:22f5:a908 with SMTP id
+ l20-20020a4a8554000000b005aa22f5a908mr1685739ooh.1.1713894362907; Tue, 23 Apr
+ 2024 10:46:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240422232404.213174-5-sboyd@kernel.org>
+References: <20240404122559.898930-1-peter.griffin@linaro.org>
+ <20240404122559.898930-9-peter.griffin@linaro.org> <6c2b060b3b32b2da46bafbdc33236c319b6cec62.camel@linaro.org>
+In-Reply-To: <6c2b060b3b32b2da46bafbdc33236c319b6cec62.camel@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 23 Apr 2024 18:45:50 +0100
+Message-ID: <CADrjBPrNqJ6FNKZTgVxST1en-hRdyZFmJe42uwerSnDSmgifbg@mail.gmail.com>
+Subject: Re: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
+	martin.petersen@oracle.com, chanho61.park@samsung.com, ebiggers@kernel.org, 
+	linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
+	saravanak@google.com, willmcvicker@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Andr=C3=A9,
+
+On Mon, 8 Apr 2024 at 15:49, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
+>
+> Hi Pete,
+>
+> On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
+> > CMU_HSI2 is the clock management unit used for the hsi2 block.
+> > HSI stands for High Speed Interface and as such it generates
+> > clocks for PCIe, UFS and MMC card.
+> >
+> > This patch adds support for the muxes, dividers, and gates in
+> > cmu_hsi2.
+> >
+> > CLK_GOUT_HSI2_HSI2_CMU_HSI2_PCLK is marked as CLK_IS_CRITICAL
+> > as disabling it leads to an immediate system hang.
+> >
+> > CLK_GOUT_HSI2_SYSREG_HSI2_PCLK is also marked CLK_IS_CRITICAL.
+> > A hang is not observed with fine grained clock control, but
+> > UFS IP does not function with syscon controlling this clock
+> > just around hsi2_sysreg register accesses.
+>
+> Would it make sense to add this clock to the &ufs_0 node in the DTS
+> instead? Seems more natural than a clock that's constantly enabled?
+
+Will add this to ufs node in v2.
+
+>
+> > [...]
+> >
+> > Updated regex for clock name mangling
+> >     sed \
+> >         -e 's|^PLL_LOCKTIME_PLL_\([^_]\+\)|fout_\L\1_pll|' \
+> >         \
+> >         -e 's|^PLL_CON0_MUX_CLKCMU_\([^_]\+\)_\(.*\)|mout_\L\1_\2|' \
+> >         -e 's|^PLL_CON0_PLL_\(.*\)|mout_pll_\L\1|' \
+> >         -e 's|^CLK_CON_MUX_MUX_CLK_\(.*\)|mout_\L\1|' \
+> >         -e '/^PLL_CON[1-4]_[^_]\+_/d' \
+> >         -e '/^[^_]\+_CMU_[^_]\+_CONTROLLER_OPTION/d' \
+> >         -e '/^CLKOUT_CON_BLK_[^_]\+_CMU_[^_]\+_CLKOUT0/d' \
+> >         \
+> >         -e 's|_IPCLKPORT||' \
+> >         -e 's|_RSTNSYNC||' \
+> >         -e 's|_G4X2_DWC_PCIE_CTL||' \
+> >         -e 's|_G4X1_DWC_PCIE_CTL||' \
+> >         -e 's|_PCIE_SUB_CTRL||' \
+> >         -e 's|_INST_0||g' \
+> >         -e 's|_LN05LPE||' \
+> >         -e 's|_TM_WRAPPER||' \
+> >         -e 's|_SF||' \
+> >         \
+> >         -e 's|^CLK_CON_DIV_DIV_CLK_\([^_]\+\)_\(.*\)|dout_\L\1_\2|' \
+> >         \
+> >         -e 's|^CLK_CON_BUF_CLKBUF_\([^_]\+\)_\(.*\)|gout_\L\1_\2|' \
+> >         -e 's|^CLK_CON_GAT_CLK_BLK_\([^_]\+\)_UID_\(.*\)|gout_\L\1_\2|'=
+ \
+> >         -e 's|^gout_[^_]\+_[^_]\+_cmu_\([^_]\+\)_pclk$|gout_\1_\1_pclk|=
+' \
+> >         -e 's|^CLK_CON_GAT_GOUT_BLK_\([^_]\+\)_UID_\(.*\)|gout_\L\1_\2|=
+' \
+> >         -e 's|^CLK_CON_GAT_CLK_\([^_]\+\)_\(.*\)|gout_\L\1_clk_\L\1_\2|=
+' \
+> >         \
+> >         -e '/^\(DMYQCH\|PCH\|QCH\|QUEUE\)_/d'
+>
+> Thank you for the updated regex.
+>
+> > ---
+> >  drivers/clk/samsung/clk-gs101.c          | 558 +++++++++++++++++++++++
+> >  include/dt-bindings/clock/google,gs101.h |  63 +++
+> >  2 files changed, 621 insertions(+)
+> >
+> > diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-=
+gs101.c
+> > index d065e343a85d..b9f84c7d5c22 100644
+> > --- a/drivers/clk/samsung/clk-gs101.c
+> > +++ b/drivers/clk/samsung/clk-gs101.c
+> > @@ -22,6 +22,7 @@
+> >  #define CLKS_NR_MISC (CLK_GOUT_MISC_XIU_D_MISC_ACLK + 1)
+> >  #define CLKS_NR_PERIC0       (CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK + 1)
+> >  #define CLKS_NR_PERIC1       (CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK + 1)
+> > +#define CLKS_NR_HSI2 (CLK_GOUT_HSI2_XIU_P_HSI2_ACLK + 1)
+> >
+> >  /* ---- CMU_TOP ------------------------------------------------------=
+------- */
+> >
+> > @@ -3409,6 +3410,560 @@ static const struct samsung_cmu_info peric1_cmu=
+_info __initconst =3D {
+> >       .clk_name               =3D "bus",
+> >  };
+> >
+> > +/* ---- CMU_HSI2 -----------------------------------------------------=
+----- */
+>
+> This comment is shorter that all the other similar comments in this file.
+
+Will fix
+>
+> > [...]
+> > +
+> > +PNAME(mout_hsi2_bus_user_p)  =3D { "oscclk", "dout_cmu_hsi2_bus" };
+> > +PNAME(mout_hsi2_pcie_user_p) =3D { "oscclk", "dout_cmu_hsi2_pcie" };
+> > +PNAME(mout_hsi2_ufs_embd_user_p) =3D { "oscclk", "dout_cmu_hsi2_ufs_em=
+bd" };
+> > +PNAME(mout_hsi2_mmc_card_user_p) =3D { "oscclk", "dout_cmu_hsi2_mmc_ca=
+rd" };
+>
+> Can you make these alphabetical, too, please, which would also match thei=
+r usage
+> below:
+
+Will fix
+>
+> > +
+> > +static const struct samsung_mux_clock hsi2_mux_clks[] __initconst =3D =
+{
+> > +     MUX(CLK_MOUT_HSI2_BUS_USER, "mout_hsi2_bus_user", mout_hsi2_bus_u=
+ser_p,
+> > +         PLL_CON0_MUX_CLKCMU_HSI2_BUS_USER, 4, 1),
+> > +     MUX(CLK_MOUT_HSI2_MMC_CARD_USER, "mout_hsi2_mmc_card_user",
+> > +         mout_hsi2_mmc_card_user_p, PLL_CON0_MUX_CLKCMU_HSI2_MMC_CARD_=
+USER,
+> > +         4, 1),
+> > +     MUX(CLK_MOUT_HSI2_PCIE_USER, "mout_hsi2_pcie_user",
+> > +         mout_hsi2_pcie_user_p, PLL_CON0_MUX_CLKCMU_HSI2_PCIE_USER,
+> > +         4, 1),
+> > +     MUX(CLK_MOUT_HSI2_UFS_EMBD_USER, "mout_hsi2_ufs_embd_user",
+> > +         mout_hsi2_ufs_embd_user_p, PLL_CON0_MUX_CLKCMU_HSI2_UFS_EMBD_=
+USER,
+> > +         4, 1),
+> > +};
+> > +
+> > +static const struct samsung_gate_clock hsi2_gate_clks[] __initconst =
+=3D {
+> > +
+>
+> Here and below: all these extra empty lines are not needed.
+
+Will fix
+>
+> > +     GATE(CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_PHY_REFCLK_IN,
+> > +          "gout_hsi2_pcie_gen4_1_pcie_003_phy_refclk_in",
+> > +          "mout_hsi2_pcie_user",
+> > +          CLK_CON_GAT_CLK_BLK_HSI2_UID_PCIE_GEN4_1_IPCLKPORT_PCIE_003_=
+PCIE_SUB_CTRL_INST_0_PHY_REFCLK_IN,
+> > +          21, 0, 0),
+> > +
+> > +     GATE(CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_PHY_REFCLK_IN,
+> > +          "gout_hsi2_pcie_gen4_1_pcie_004_phy_refclk_in",
+> > +          "mout_hsi2_pcie_user",
+> > +          CLK_CON_GAT_CLK_BLK_HSI2_UID_PCIE_GEN4_1_IPCLKPORT_PCIE_004_=
+PCIE_SUB_CTRL_INST_0_PHY_REFCLK_IN,
+> > +          21, 0, 0),
+> > +
+> > +     GATE(CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_ACLK,
+> > +          "gout_hsi2_ssmt_pcie_ia_gen4a_1_aclk",
+> > +          "mout_hsi2_bus_user",
+>
+> The two strings fit on the same line.
+
+Will fix
+>
+> > +          CLK_CON_GAT_CLK_BLK_HSI2_UID_SSMT_PCIE_IA_GEN4A_1_IPCLKPORT_=
+ACLK,
+> > +          21, 0, 0),
+> > +
+> > +     GATE(CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_PCLK,
+> > +          "gout_hsi2_ssmt_pcie_ia_gen4a_1_pclk",
+> > +          "mout_hsi2_bus_user",
+>
+> dito.
+
+Will fix
+
+regards,
+
+Peter
 
 
-On Mon, 22 Apr 2024 16:23:57 -0700, Stephen Boyd wrote:
-> Test the KUnit test managed overlay APIs. Confirm that platform devices
-> are created and destroyed properly. This provides us confidence that the
-> test managed APIs work correctly and can be relied upon to provide tests
-> with fake platform devices and device nodes via overlays compiled into
-> the kernel image.
-> 
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Saravana Kannan <saravanak@google.com>
-> Cc: Daniel Latypov <dlatypov@google.com>
-> Cc: Brendan Higgins <brendan.higgins@linux.dev>
-> Cc: David Gow <davidgow@google.com>
-> Cc: Rae Moar <rmoar@google.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/of/.kunitconfig            |   1 +
->  drivers/of/Kconfig                 |  10 +++
->  drivers/of/Makefile                |   1 +
->  drivers/of/kunit_overlay_test.dtso |   9 +++
->  drivers/of/overlay_test.c          | 115 +++++++++++++++++++++++++++++
->  5 files changed, 136 insertions(+)
->  create mode 100644 drivers/of/kunit_overlay_test.dtso
->  create mode 100644 drivers/of/overlay_test.c
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+>
+> > [...]
+> > +     /* Disabling this clock makes the system hang. Mark the clock as =
+critical. */
+> > +     GATE(CLK_GOUT_HSI2_HSI2_CMU_HSI2_PCLK,
+> > +          "gout_hsi2_hsi2_cmu_hsi2_pclk", "mout_hsi2_bus_user",
+> > +          CLK_CON_GAT_GOUT_BLK_HSI2_UID_HSI2_CMU_HSI2_IPCLKPORT_PCLK,
+> > +          21, CLK_IS_CRITICAL, 0),
+>
+> I have a similar clock in USB, which also causes a hang if off, I wonder =
+what we
+> could do better here.
+>
+>
+> Cheers,
+> Andre'
+>
