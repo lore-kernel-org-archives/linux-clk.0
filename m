@@ -1,60 +1,60 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBB88C05
-	for <linux-clk@vger.kernel.org>; Wed, 24 Apr 2024 01:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98731D2FA
+	for <linux-clk@vger.kernel.org>; Wed, 24 Apr 2024 01:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713922776; cv=none; b=Sa5QPPFjptRn0cvzPySG+Ljz6ZYSmwqHF+o+6jnb5TPszQC4WrhNXu1O1liQe356A69iqUibZpApHXKkOwxTqjMVQbAFrEyzN4PmG89GZFEOjdWcJPyuALes/23iJmqdFNB9tKQvU5+mo3F46Ueoc6G9+WswxiladikjHS0Q5zM=
+	t=1713922777; cv=none; b=t3bgAkZXXPoDUwsHnA0/0Z/GeU5sXHWHUZ18uKRF4ORRY33iy2C8dFzFq+rRGhHUpmojl5GUt17NyY291hLHIliwMjWq92t8MvRxdqEerxaCLQJ+eWcIMV7PyhMpcLun7s70HADAepdxaS4Ime6srsbl/6iJrNlSXPdGVMyS0hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713922776; c=relaxed/simple;
-	bh=mmpz/wbHDRDW8GXi4f/Kh4tJEWD2H5kJEpj0vD29QCA=;
+	s=arc-20240116; t=1713922777; c=relaxed/simple;
+	bh=zB/5/SiVEaWqGONs3bHHf5u8om8piOX61Ct2vWQ8uzE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U6UE2b0KtLCtTJoMsvoEt7FYGzz85uu5uzKdSXERUUDPDPrh42XSjIoyVNVZ3KuTh291lu/E0dS+9cQqFSCO7RVzSs6wOF/+ek0G8KpUPL1IbHZRZW1pNuV9txETtI4TwIrHlrJX5l4ZUjLYQF7biH/dl9als8atqvMxK8JU6bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bc8BRe6j; arc=none smtp.client-ip=209.85.167.43
+	 In-Reply-To:To:Cc; b=enkamRhj8Mj+dxfK2yeIqXR3lMjD73XKkn7MrnOK0Qf/IC/NezWK9PLqNNilgH7PBrhHT/PQbVUQkLHla9nYIK8OLPBgpMUOejbJa19yzKQK7t6q8WpmR2N5wvyDXwi9NHyPj7uFLQb64kMZ7ZLDxGcvRlS3yxc9h+RJN+00Qf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zv0kPoV9; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bc8BRe6j"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-51b526f0fc4so3467636e87.1
-        for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 18:39:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zv0kPoV9"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-518a56cdc03so7750374e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 18:39:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713922772; x=1714527572; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1713922774; x=1714527574; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=O0gU/NWfwRkEOZNKhr+BK9ugofjdDYkGwMawolvk4RI=;
-        b=bc8BRe6jbsEGGn2p4nNfmpW8SzfgREPf32qM0jBrjNkZGfA/p0L3cvPZ6ya7bqPXOd
-         e1fftUbLdyYWIztjU6uBkupiP6NWpzTyoZEdqdcT0RFx/tj4eijWJqeqK1/Zkh9Y/wGc
-         USj+2MEg/TUVYeDW46ySGB2ymTAC23HmLhdVb2XMy0O5E0gUUha8ERFbINZ1iOAQ2+sG
-         7sOESKAH3eekmui5uDfEA3/Qbt+CGAcW72pRcAh1xAVILqJ3Iqco6UP/rLAwY3W1hp32
-         UTRtB6dwqXeXCYCQNrAPf+Amqm7yPILSGaPClGvAj+qOH/h+QTYgEAvNyhfNm00wffxU
-         5x3w==
+        bh=+0SAcbh24fRWzetmmLWxyCX4LLEoLPaKUr5EKpApP2Y=;
+        b=zv0kPoV9fCfsVnt7Fw8/DEy+RVskbQdhU5oOWAX3f2cyI+QSa8BCC+uJ/vnK/KC6/u
+         1OYKmtJOBCVtcsGblcqlWiKzFxRDpGBhJqc9B3VAuL9yh1W7LkaZQUFz1mM6MqJCr3aO
+         DL0Kgk4WSEyKH6YcZEf4BQ4jaF0u2MgOk0QVcILoHQxfPbZtoqFN7/1V1z3MsyJzDsjR
+         bPbZpuH0n8BrnMjsv1qdbfMYL+ZMwr74I+CWbS+/ozNOmKTbtYgWs6yLrClOtf6pygXr
+         3mQJ6sk+0GVMfACJNjEBCymHof1JhXE0F7sTaQ8r5d8tvT2wcUgY6ARVYptEJFbKt4ME
+         zhGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713922772; x=1714527572;
+        d=1e100.net; s=20230601; t=1713922774; x=1714527574;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O0gU/NWfwRkEOZNKhr+BK9ugofjdDYkGwMawolvk4RI=;
-        b=onG5KyWC0Y5l81EvIb3/C0+qGTHBrWDG448GOeARIezb7YhiAoVDYOApGLi5gnVOtz
-         Dmbnz7LQmUFOh6wB6OWuFWXFu849iw0iAOP4kJnlbFp9IVllijbsoB1C5KugU2fVvnrC
-         nUNnVDZVGnWoJMcIV3mgAZPBzqxghRQW88MaOs9gaIe6U5RuBh0RFgnm75aDzYIrcOmu
-         Iyosm7xmZ17Jmm7x6PKa/uGgE/obo3CknsX78Kb696iKe6LJJ0g9tbk9/f1vCMOddYdT
-         QJh8kmxpBj77tqtgX9K7x4pac1HJFvFG+56dh1mG/6LYbu5VuGeouxINHHTTErptK4wt
-         eNJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXU3NPGAf2wfGsnzgafv4JlaEoICIop5pDG7DlpTwJPdEPnK6q/u7uUQ2R1AIcR5nHHcDDm7Ym5zsloMuWqkkKsGvRZ4Br0OSTi
-X-Gm-Message-State: AOJu0YwcOK8Jtd2M+nRx0mBPxzI0EybfHAsgUC5jSAaYHzWtll+7XXnH
-	8yeNAXvtbMqhmF2OHl/qsA7z6mWJsIEnmYJIopsgHCAx2rAoGLGus7Lpq3h/biw=
-X-Google-Smtp-Source: AGHT+IHssxT9a4TQxoRvOW9saq3mUk+fPKrGmejqpchwQcWickC/qj7UsGh6hmnVqlJw5urFCcgvLA==
-X-Received: by 2002:ac2:593c:0:b0:51b:bdb1:e658 with SMTP id v28-20020ac2593c000000b0051bbdb1e658mr622916lfi.55.1713922772109;
-        Tue, 23 Apr 2024 18:39:32 -0700 (PDT)
+        bh=+0SAcbh24fRWzetmmLWxyCX4LLEoLPaKUr5EKpApP2Y=;
+        b=exb1Lo6jupPkLGZ5jh5PPuMA2BLHlVzw5ZFRuLh2yrF3P2fQZOVEXsSxf61R/+qEkr
+         qNzytcMy4+9w0y9O0csBu6xKwIEFXFInkVs74Nsjlnpq9uAA5fgL63TYRM73BlexJYle
+         ubvBWJPETlEHaHTc4GH3e15pkKMqBJXGKRFktf2t7yZRlFvNV58ivU+NkgjHgavRGZRx
+         T4gZEozqi6KgQvnbzLp9/0gBokyLDejwTf5SHfk6/dBH1CjuLH9B6SYXyA7hS93yF9Kr
+         kfd63OSuI4vI21TZ5/nAbq95QIegJZHJKBWzGLOLIa/ytVvO54iwrFcomzM5amh3YPSh
+         zM/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUO5NszRlcLe6T99YakfRvYzbfjoikddb8K2rLWR83qTEWmZ+KYnAX2BH1Ybi1vt8nheKG4otUvNyroO1CcTtanaA3UtsCh9jAg
+X-Gm-Message-State: AOJu0YzjjptXLIhRZhkNBu3FPMQYEQPQ5+nfIV5EhIWXTVSey9nEPXa6
+	PAgEgKegKr2d95WRD9dlGVJCtgBXboBN6NvMqy7nofIbzhHzR6FZ9wJkJVYq1zE=
+X-Google-Smtp-Source: AGHT+IGdbQI0R2wOMogLqkeQ21E23IGK/kQjS17BkmhhtGkLD8SfxJi7UWEru7YPXiHAhcrrAeBCJA==
+X-Received: by 2002:a19:6a14:0:b0:513:b062:98c4 with SMTP id u20-20020a196a14000000b00513b06298c4mr556942lfu.11.1713922773840;
+        Tue, 23 Apr 2024 18:39:33 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id g12-20020a19ac0c000000b0051bb40c7ee7sm308220lfc.185.2024.04.23.18.39.31
+        by smtp.gmail.com with ESMTPSA id g12-20020a19ac0c000000b0051bb40c7ee7sm308220lfc.185.2024.04.23.18.39.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Apr 2024 18:39:31 -0700 (PDT)
+        Tue, 23 Apr 2024 18:39:33 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 24 Apr 2024 04:39:30 +0300
-Subject: [PATCH v2 2/4] clk: qcom: dispcc-sm6350: fix DisplayPort clocks
+Date: Wed, 24 Apr 2024 04:39:32 +0300
+Subject: [PATCH v2 4/4] clk: qcom: dispcc-sm8650: fix DisplayPort clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240424-dispcc-dp-clocks-v2-2-b44038f3fa96@linaro.org>
+Message-Id: <20240424-dispcc-dp-clocks-v2-4-b44038f3fa96@linaro.org>
 References: <20240424-dispcc-dp-clocks-v2-0-b44038f3fa96@linaro.org>
 In-Reply-To: <20240424-dispcc-dp-clocks-v2-0-b44038f3fa96@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -73,66 +73,111 @@ To: Bjorn Andersson <andersson@kernel.org>,
  Konrad Dybcio <konrad.dybcio@linaro.org>, 
  Neil Armstrong <neil.armstrong@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+ linux-kernel@vger.kernel.org
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1973;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3525;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=mmpz/wbHDRDW8GXi4f/Kh4tJEWD2H5kJEpj0vD29QCA=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmKGLRxO41CkbrfP/anarHJu9uaguFaqMi0IZTA
- PU2km/d/seJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZihi0QAKCRCLPIo+Aiko
- 1aVdB/96X0iiZjshy2kzTustfxyKgqGNazxxs9Q/tAO5uZOnN/lXtDx+GoVk4LCnLmzrB42z9DE
- prWUP6PlrjinsLM7xgBd0iVjYPD7p+olHm+n3pXcfY3TYryrDl0s2cLTqKFdRGYT3ACXp1kNUU/
- 8QvcmdJGiIGm15pYUnxdw+thJWztkbNz66QnL5EWmFQUEfA9av5PUE0W+hN8j8RUfqP/rSD5bUE
- iV4fWhYHbRKMaFiLf83FX5IVSGoHcA9b6sdxndsK3tr7dekdUGcoAyj7Zmr7ap/lAtUciZEuAhU
- NK/sHPL1Srqgm6jnyCYHEMH6chokj+O0Ue8+17KP53xP6wsj
+ bh=zB/5/SiVEaWqGONs3bHHf5u8om8piOX61Ct2vWQ8uzE=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ5pG0iVJnYX9C7JjFph8MF1o3mPiraS88YJd9gsVG52qk
+ K62GMdORmMWBkYuBlkxRRafgpapMZuSwz7smFoPM4iVCWQKAxenAEwkZCX7/1otyTk3mlaF3JzJ
+ fGxyx7VjP9XqLifanj69kOGU/7vWwvrOPwm+RsU2DN2aM19X8pms3Lj8rMKCs+92+OiHKO0wqej
+ 6PtvuqJOQptDGd10HV+ctuNmvKT7xg8ayzPKrefdl20JLGDzF4n4VyhicT//M82nZ1/U/uZXZu8
+ 2vRtmt95+z+w/DtBsJOq9VctZ6P30hPE3jQbzkrvzo1D2HP0dbV7dMVxNJXJz24dZtc0fvvnm1G
+ /l77azOikVMbvlfobG95dnTx4LBq336rFfZzwy9yfAuwVZtU39GZt3c6keFOTt9/QXe7ZWfWxb7
+ 6Z6btNKXeXXl3c5LLnnGc9daiYqtju+u+9Hx8YNRc1kqAA==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On SM6350 DisplayPort link clocks use frequency tables inherited from
+On SM8650 DisplayPort link clocks use frequency tables inherited from
 the vendor kernel, it is not applicable in the upstream kernel. Drop
 frequency tables and use clk_byte2_ops for those clocks.
 
 This fixes frequency selection in the OPP core (which otherwise attempts
 to use invalid 810 KHz as DP link rate), also fixing the following
 message:
-msm-dp-display ae90000.displayport-controller: _opp_config_clk_single: failed to set clock rate: -22
+msm-dp-display af54000.displayport-controller: _opp_config_clk_single: failed to set clock rate: -22
 
-Fixes: 837519775f1d ("clk: qcom: Add display clock controller driver for SM6350")
+Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Tested-by: Luca Weiss <luca.weiss@fairphone.com>
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/dispcc-sm6350.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/clk/qcom/dispcc-sm8650.c | 20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/qcom/dispcc-sm6350.c b/drivers/clk/qcom/dispcc-sm6350.c
-index 839435362010..e4b7464c4d0e 100644
---- a/drivers/clk/qcom/dispcc-sm6350.c
-+++ b/drivers/clk/qcom/dispcc-sm6350.c
-@@ -221,26 +221,17 @@ static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src = {
+diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
+index 9539db0d9114..3eb64bcad487 100644
+--- a/drivers/clk/qcom/dispcc-sm8650.c
++++ b/drivers/clk/qcom/dispcc-sm8650.c
+@@ -343,26 +343,17 @@ static struct clk_rcg2 disp_cc_mdss_dptx0_aux_clk_src = {
  	},
  };
  
--static const struct freq_tbl ftbl_disp_cc_mdss_dp_link_clk_src[] = {
--	F(162000, P_DP_PHY_PLL_LINK_CLK, 1, 0, 0),
--	F(270000, P_DP_PHY_PLL_LINK_CLK, 1, 0, 0),
--	F(540000, P_DP_PHY_PLL_LINK_CLK, 1, 0, 0),
--	F(810000, P_DP_PHY_PLL_LINK_CLK, 1, 0, 0),
+-static const struct freq_tbl ftbl_disp_cc_mdss_dptx0_link_clk_src[] = {
+-	F(162000, P_DP0_PHY_PLL_LINK_CLK, 1, 0, 0),
+-	F(270000, P_DP0_PHY_PLL_LINK_CLK, 1, 0, 0),
+-	F(540000, P_DP0_PHY_PLL_LINK_CLK, 1, 0, 0),
+-	F(810000, P_DP0_PHY_PLL_LINK_CLK, 1, 0, 0),
 -	{ }
 -};
 -
- static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src = {
- 	.cmd_rcgr = 0x10f8,
+ static struct clk_rcg2 disp_cc_mdss_dptx0_link_clk_src = {
+ 	.cmd_rcgr = 0x8170,
  	.mnd_width = 0,
  	.hid_width = 5,
- 	.parent_map = disp_cc_parent_map_0,
--	.freq_tbl = ftbl_disp_cc_mdss_dp_link_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "disp_cc_mdss_dp_link_clk_src",
- 		.parent_data = disp_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+ 	.parent_map = disp_cc_parent_map_7,
+-	.freq_tbl = ftbl_disp_cc_mdss_dptx0_link_clk_src,
+ 	.clkr.hw.init = &(const struct clk_init_data) {
+ 		.name = "disp_cc_mdss_dptx0_link_clk_src",
+ 		.parent_data = disp_cc_parent_data_7,
+ 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_7),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_byte2_ops,
+ 	},
+ };
+ 
+@@ -416,13 +407,12 @@ static struct clk_rcg2 disp_cc_mdss_dptx1_link_clk_src = {
+ 	.mnd_width = 0,
+ 	.hid_width = 5,
+ 	.parent_map = disp_cc_parent_map_3,
+-	.freq_tbl = ftbl_disp_cc_mdss_dptx0_link_clk_src,
+ 	.clkr.hw.init = &(const struct clk_init_data) {
+ 		.name = "disp_cc_mdss_dptx1_link_clk_src",
+ 		.parent_data = disp_cc_parent_data_3,
+ 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_3),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_byte2_ops,
+ 	},
+ };
+ 
+@@ -476,13 +466,12 @@ static struct clk_rcg2 disp_cc_mdss_dptx2_link_clk_src = {
+ 	.mnd_width = 0,
+ 	.hid_width = 5,
+ 	.parent_map = disp_cc_parent_map_3,
+-	.freq_tbl = ftbl_disp_cc_mdss_dptx0_link_clk_src,
+ 	.clkr.hw.init = &(const struct clk_init_data) {
+ 		.name = "disp_cc_mdss_dptx2_link_clk_src",
+ 		.parent_data = disp_cc_parent_data_3,
+ 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_3),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_byte2_ops,
+ 	},
+ };
+ 
+@@ -536,13 +525,12 @@ static struct clk_rcg2 disp_cc_mdss_dptx3_link_clk_src = {
+ 	.mnd_width = 0,
+ 	.hid_width = 5,
+ 	.parent_map = disp_cc_parent_map_3,
+-	.freq_tbl = ftbl_disp_cc_mdss_dptx0_link_clk_src,
+ 	.clkr.hw.init = &(const struct clk_init_data) {
+ 		.name = "disp_cc_mdss_dptx3_link_clk_src",
+ 		.parent_data = disp_cc_parent_data_3,
+ 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_3),
+ 		.flags = CLK_SET_RATE_PARENT,
 -		.ops = &clk_rcg2_ops,
 +		.ops = &clk_byte2_ops,
  	},
