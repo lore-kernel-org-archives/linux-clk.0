@@ -1,128 +1,86 @@
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08451E511;
-	Wed, 24 Apr 2024 14:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C8915EFB0;
+	Wed, 24 Apr 2024 14:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713969244; cv=none; b=nwV2BG6UigyXdovXjpBrksAWydF5Rca6/Klxr1asQ+tCAsWi00N5iFt1ZXsUkTpZ+l2C2OWuc+BehuUeWOSmwR452sMLPZkWvUr6g3ht5HvrodqD8uWypz7DTu/eVmRNNdp2PF4e0Y42NU0ivr3SVm6UGhgsYVfRsQL/+EeGcaQ=
+	t=1713970679; cv=none; b=Q7DWvT+4RpRuDnLK7ENk5TM5tC87+rbJgalBriZmp+U8XisstLcclM3botiiLUJ6hEhY9xnVKBlrD9ovbmsrG3bNIKOneQbC6SqugHrzWR5UjgaVkwVuo66/ApwAqlNI93vaioYXYoDopVsMSP+7ZxjTi+8U8NKNNLCPh7WXtAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713969244; c=relaxed/simple;
-	bh=VqOGJjRg28bc7eBQoexT89Jdg/lKWSrrtVGPjKj+334=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rgHIr0OJ3hDF3d8A0NBtgp7tEUTNYLozjTJ5sShtm54iLUU5C0Oapc86RgBzRG3wZz9abo38uRJ1j/Vc0H9gVuw/P4YwBdC65rxTNk0ftpc0XFrI3P6xFjPNqiJ4z2p6VhixBsowezdEDjpeY3W5G7r/6o+LV14X2essWhAkgSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-de55e876597so1682748276.1;
-        Wed, 24 Apr 2024 07:34:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713969240; x=1714574040;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HSe7bhwwM2b2w33Jw4XNWuzshIif1+7J1tm/9bS2R8A=;
-        b=eVehSVkavLx1DlrnpXOgzLwO5zrCTLX+Csza9XIW40xYPPqInPIH6xJhgza4JeITH9
-         m9VOtLfVn3m4pKVBdHLs7Fe9J4G2RFjkgpNCRyaEkofXBFtq/MjDqqs1N28+h0B6AVJk
-         MUi9v2lRaRDGnkmpHaoXEWKOxk9mz28QCZOBKw6YM89DtTXc9lIk1+TIelqNRcJJ/10L
-         eYQuMzH1IXHycYFUGlTv2KVrkqkqHU3G5/kjgVOJuZiZ2TVCJe2tn+uXSB/10qsRsxdz
-         FSYVgc8NnVkDsAGqxp4jCWae6FdM3xCktU09UuIQ69WPKk4d3AtO07S9GlqdDwXtg6ZI
-         5EAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSSogjsyP5FPpTxLOZPi4T+eCCUzmCBJZIbwtK8X9kNKV2wRGzGm+yumfmYW8h3gb56m5/4DnU3MFY0VSPc1tSa/k4G1q1my6VX56fwckzKmQN+0Pi5GU/tucJF1vbzF01mNhjMHYkjBvC3QVZGjRETA2v1E2FOlZdiGo1cVeCkKXJ7nOuzIBFoeMn1H30FUrCBcXub6H1Z035z9548pRSYw6BagTJ9dn46tz397e0z0AQuWkVzFduhXNEnQ/SqLw=
-X-Gm-Message-State: AOJu0Yx5j3piqto8wwrJE2fPbNOIKrEAP7FpC+JuwnzXTM7xbkoT5w04
-	CwhwJXabOfrIWy93a22JCGMv2U+zf+tUoSW3KsDbx+3XTzDSEcWIBw+XBoytVzk=
-X-Google-Smtp-Source: AGHT+IEObBbN5M++ErhYwaDrkgrr0IpwEqoFf02RUCQvvbFUU/DBvvZ+TLfcj71hUZyJ9zFgRlIkHg==
-X-Received: by 2002:a25:68c5:0:b0:de5:4a6d:96f9 with SMTP id d188-20020a2568c5000000b00de54a6d96f9mr2906664ybc.51.1713969240076;
-        Wed, 24 Apr 2024 07:34:00 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id u15-20020a25840f000000b00de553cb23d7sm914886ybk.56.2024.04.24.07.33.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Apr 2024 07:33:59 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dc236729a2bso6578423276.0;
-        Wed, 24 Apr 2024 07:33:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWEB1+6dFOXn+/CBMmFfly8h/txC59WuMhZoR7LmmfogXpajrg3VcnTSrUZjt7aukFBY2lXnNYSpy/c3vrZYTCHuqFPAP2tqF6Z2mZlvJnB41XTJLjY294S48ZBmNkWwi9U06LEFKoZ316B7ZB5kh0Ft3uWwO+KWJMnDQEmkWfySOKo2WYy01VaxtNQjBteigr+y7OEolDVNT9hiK8/Uxc9w88AHJocZMfKgFoXpTuB5d0K8zoTXHdfj9ZEyKEX3Ks=
-X-Received: by 2002:a25:b31b:0:b0:dcc:fea7:7f7b with SMTP id
- l27-20020a25b31b000000b00dccfea77f7bmr2825103ybj.11.1713969238504; Wed, 24
- Apr 2024 07:33:58 -0700 (PDT)
+	s=arc-20240116; t=1713970679; c=relaxed/simple;
+	bh=Tkm/ZL2BucURiAvXPcBT2Jhd9yaHdg76lUCFgS1SDpg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yt0tyTWIxjvvHkuJ+6+ifGi9NZwe/xtlOoGNY5P66SSkGz/V/DkS3XQcRaCoYfJDtxSTaGp6wAnkGRCV2g2Z09skYTHrlQ5SkxqTCV/FIAjFZTOHZlgZTH9pUYp/Gd6oAJ1G2QzHokkWEtoVM+kTYFdb6mI85a4yQouW7PUzVNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gqigxi7m; arc=none smtp.client-ip=80.12.242.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gqigxi7m"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id zdvHrVBipBgCpzdvHrXTtd; Wed, 24 Apr 2024 16:48:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1713970118;
+	bh=GysVhjc3jwVBUnjotsdi6hoQgzGItSC3vfYl+wJfA7Y=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=gqigxi7matvvstvzj9pbU7drkXFb1U8gb11FLCkw8HOVd0G1h45y+Dq2DXQJamyrF
+	 ieSSch/8E80FXzwJZ/yhnfIAMrvre/kyh4gU3ycrJ43YAprtaXsQ77hWeIfgTk97zb
+	 jbBp3JaWVEZaMxmya7lfKxokGCuVV7YsykFGM91vGiQYg/oPvegJSX/M01DrZFc3CG
+	 wHgJ+mWFVg8w9Hv1+2YtX/BLwgi8c5/wEKTjg6yqpgjS/oP5jeKo0c4JaDYYgmKa30
+	 Zh1p+m5pBoDpf7uayHkroOPxygV0p+pAgkF7LOsdhXrJlVkvcU7TgsHKFVmD3hxtJe
+	 3g0pvLpCWWG1g==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 24 Apr 2024 16:48:38 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH] clk: rockchip: Remove some unused fields in struct rockchip_mmc_clock
+Date: Wed, 24 Apr 2024 16:48:29 +0200
+Message-ID: <410bc0f86c7b9f1c80f8a4e9a2a028a9a6ee1ec0.1713970085.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240422105355.1622177-1-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240422105355.1622177-1-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 24 Apr 2024 16:33:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXHhsdOgTiDdqMwAMvb-m_VBqOcTRPURx_upc2AtmBTfA@mail.gmail.com>
-Message-ID: <CAMuHMdXHhsdOgTiDdqMwAMvb-m_VBqOcTRPURx_upc2AtmBTfA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] clk: renesas: rzg2l: Add support for power domains
-To: ulf.hansson@linaro.org
-Cc: Claudiu <claudiu.beznea@tuxon.dev>, mturquette@baylibre.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Ulf,
+In "struct rockchip_mmc_clock", the 'id' field is unused.
+Remove it.
 
-On Mon, Apr 22, 2024 at 12:54=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Series adds support for power domains on rzg2l driver.
->
-> RZ/G2L kind of devices support a functionality called MSTOP (module
-> stop/standby). According to hardware manual the module could be switch
-> to standby after its clocks are disabled. The reverse order of operation
-> should be done when enabling a module (get the module out of standby,
-> enable its clocks etc).
->
-> In [1] the MSTOP settings were implemented by adding code in driver
-> to attach the MSTOP state to the IP clocks. But it has been proposed
-> to implement it as power domain. The result is this series.
->
-> The DT bindings were updated with power domain IDs (plain integers
-> that matches the DT with driver data structures). The current DT
-> bindings were updated with module IDs for the modules listed in tables
-> with name "Registers for Module Standby Mode" (see HW manual) exception
-> being RZ/G3S where, due to the power down functionality, the DDR,
-> TZCDDR, OTFDE_DDR were also added.
->
-> Domain IDs were added to all SoC specific bindings.
->
-> Thank you,
-> Claudiu Beznea
->
-> Changes in v4:
-> - dropped the pwrdn functionality until it is better understanded
-> - dropped patch "clk: renesas: rzg2l-cpg: Add suspend/resume
->   support for power domains" from v3; this will be replaced
->   by propertly calling device_set_wakup_path() in serial console
->   driver
-> - instantiated the watchdog domain in r8a08g045 clock driver; this
->   allow applying r9a08g045 clock patch w/o affecting watchdog and later,
->   after all good with watchdog patches series at [2], only patch
->   "arm64: dts: renesas: r9a08g045: Update #power-domain-cells =3D <1>"
->   will need to be applied
+Found with cppcheck, unusedStructMember.
 
-Are you happy with this series?  I would like to queue patches 1-7 in
-renesas-clk for v6.10 (i.e. this week).
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
-Thank you!
+Apparently, it has never been used. It is not a left-over from a
+refactoring.
+---
+ drivers/clk/rockchip/clk-mmc-phase.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index 975454a3dd72..91012078681b 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -14,7 +14,6 @@
+ struct rockchip_mmc_clock {
+ 	struct clk_hw	hw;
+ 	void __iomem	*reg;
+-	int		id;
+ 	int		shift;
+ 	int		cached_phase;
+ 	struct notifier_block clk_rate_change_nb;
+-- 
+2.44.0
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
