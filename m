@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2359815CD6E;
-	Wed, 24 Apr 2024 18:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D8819479;
+	Wed, 24 Apr 2024 18:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713982284; cv=none; b=VfBuvPAVdv4ju1Ni57jS7+qeY1KCbF+yBi2GudsQlrMFUcSZHjBDAzcynEB7usO66VIkb3xAyro20qJpTwcsUceIGrZDgAnD1PwIzMvLCqk47+EhSej9sfIuD9APR/PBHJ7zmbk4WtWtDq89SY7f2pbzMomAqQc5Y34FXdi11jk=
+	t=1713983614; cv=none; b=AwOZw6LUz5mAdhOFKbf7kH93AvQ8NpXlB+BKgjhUiyYdD5jPJOl9w6q+vNQXvBNjy055B2ysKurPddOMo/6jLavJDiEUs0JiMtuu1f6FpvReNkHBrEprMZpe95H3fH4v4FJRDUUu0zCZh20wkr59yQMA2pKNPeh9koN/2JY56qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713982284; c=relaxed/simple;
-	bh=7ItkOO8ka84a13QOYC/aAIFtqzRRzJtyWXnNHVtkfXs=;
+	s=arc-20240116; t=1713983614; c=relaxed/simple;
+	bh=Dw8j7UKEfEeuS79L8GjGzjL5AGQkzmeP8Nd1vojpPGc=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=uTsUL3CUGMDxhrs5Tz2UyRjsJ+cjQiEkO3b7zSYACJUDH7n8IrE33GJVW9pD8kQwIE3+iEczv8xXw0Pusdyz2dmq4Fx3J7NsAIwMxmGwYF8qjMfkzXuabMW3AUbuzYTaCEFTRj2jOVRnUPuOmr3wIn0C5sON/68FL9OyAqjCw0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9/cA3vg; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=j08wk76NYHjDhHZicF/jPNj3SHL0D8GcXQmUefiNbNZFBri0Hoi4oV32ziXLWYsyI7hwecCTsIPfwTnY2HVG6X7V4GLdS+6m6Fy2k4U726A+/Nc9r/esarrUFvVArHfb69+3pwatmeOXpa/m0sfAonzm4DuC4aRydkBwmZa/eTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aG/yl7TG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9/cA3vg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9C6EC113CD;
-	Wed, 24 Apr 2024 18:11:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aG/yl7TG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC06C113CD;
+	Wed, 24 Apr 2024 18:33:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713982283;
-	bh=7ItkOO8ka84a13QOYC/aAIFtqzRRzJtyWXnNHVtkfXs=;
+	s=k20201202; t=1713983614;
+	bh=Dw8j7UKEfEeuS79L8GjGzjL5AGQkzmeP8Nd1vojpPGc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=k9/cA3vgWEuYDIlY9xYTJDAcqk4oed74YCEJbNg6AYjrBBi0bPg1rwO7LF11gJ2po
-	 kDUMN1//9aKMK217sOAG0VamcjNYaNNMW5W/ZVGCJDX7HjeaxPaHLZ4TtYZttkBF7e
-	 l3aodjBreSbnFH01sWt608pHXaX8+W6QGTiG4ndnQhnCpu4zoBEEJVJsuHeWS9yvNy
-	 ILSDfQWmpN7GDDvQtUvh0qKXAzwadxoGNkBFhE6+HUM1+5XotZ7RMLT/b/Qte4q3yg
-	 ChagwXxCFOmGxp9Gx0p8gU+y26SnIyFME+hoH9Vcm/CvVBk2dYsQsh59UZxSWv5zkX
-	 7R/oie8nU6Nkw==
-Message-ID: <128dc42a50bfe166993205108a5b23cd.sboyd@kernel.org>
+	b=aG/yl7TGtQI9wbVbRfELyMxQuph9Oqp+keaN4+hAGVfCnFPiIHcszwjrgMCLEoxQL
+	 wgsZGU+M+PgUpWolCFxOo0sXAIOo/DH5CSaVlpmZ3WoPkUsGmHvgd5JgxqLNAQzqnD
+	 DkuUMCJIxh4fAOQC0X9faEleSmBp+Lii9IHjBEPsXWFV7WIHwEMv+qMHMP2oJ4IM71
+	 drTejasbH+oAN4OoriNtwxI7GNW0nbHQHnpmYMN52aVCsLdobi9Fuvqpg5+Cklp8tY
+	 L6jeFlTCptxOy7frDi/w17CdezBgV3FeUil6RCKzSLZ2oN/CgwguH4Y+f14UPzqHvM
+	 poQGczQkOZ2Ng==
+Message-ID: <722f31da34e5e1cfef05fb966f6c8c96.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,118 +35,39 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240422232404.213174-6-sboyd@kernel.org>
-References: <20240422232404.213174-1-sboyd@kernel.org> <20240422232404.213174-6-sboyd@kernel.org>
-Subject: Re: [PATCH v4 05/10] platform: Add test managed platform_device/driver APIs
+In-Reply-To: <20240424-strangle-sharpener-34755c5e6e3e@spud>
+References: <20240424-strangle-sharpener-34755c5e6e3e@spud>
+Subject: Re: [PATCH v2] clock, reset: microchip: move all mpfs reset code to the reset subsystem
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Date: Wed, 24 Apr 2024 11:11:21 -0700
+Cc: conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>, Daire McNamara <daire.mcnamara@microchip.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org
+Date: Wed, 24 Apr 2024 11:33:32 -0700
 User-Agent: alot/0.10
 
-Quoting Stephen Boyd (2024-04-22 16:23:58)
-> diff --git a/drivers/base/test/platform_kunit.c b/drivers/base/test/platf=
-orm_kunit.c
-> new file mode 100644
-> index 000000000000..54af6db2a6d8
-> --- /dev/null
-> +++ b/drivers/base/test/platform_kunit.c
-> @@ -0,0 +1,174 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Test managed platform driver
-> + */
-> +
-[...]
-> +
-> +/**
-> + * platform_driver_register_kunit() - Register a KUnit test managed plat=
-form driver
-> + * @test: test context
-> + * @drv: platform driver to register
-> + *
-> + * Register a test managed platform driver. This allows callers to embed=
- the
-> + * @drv in a container structure and use container_of() in the probe fun=
-ction
-> + * to pass information to KUnit tests. It can be assumed that the driver=
- has
-> + * probed when this function returns.
-> + *
-> + * Example
-> + *
-> + * .. code-block:: c
-> + *
-> + *     struct kunit_test_context {
-> + *             struct platform_driver pdrv;
-> + *             const char *data;
-> + *     };
-> + *
-> + *     static inline struct kunit_test_context *
-> + *     to_test_context(struct platform_device *pdev)
-> + *     {
-> + *             return container_of(to_platform_driver(pdev->dev.driver),
-> + *                                 struct kunit_test_context,
-> + *                                 pdrv);
-> + *     }
-> + *
-> + *     static int kunit_platform_driver_probe(struct platform_device *pd=
-ev)
-> + *     {
-> + *             struct kunit_test_context *ctx;
-> + *
-> + *             ctx =3D to_test_context(pdev);
-> + *             ctx->data =3D "test data";
-> + *
-> + *             return 0;
-> + *     }
-> + *
-> + *     static void kunit_platform_driver_test(struct kunit *test)
-> + *     {
-> + *             struct kunit_test_context *ctx;
-> + *
-> + *             ctx =3D kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-> + *             KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
-> + *
-> + *             ctx->pdrv.probe =3D kunit_platform_driver_probe;
-> + *             ctx->pdrv.driver.name =3D "kunit-platform";
-> + *             ctx->pdrv.driver.owner =3D THIS_MODULE;
-> + *
-> + *             KUNIT_EXPECT_EQ(test, 0, platform_driver_register_kunit(t=
-est, &ctx->pdrv));
-> + *             KUNIT_EXPECT_STREQ(test, ctx->data, "test data");
-> + *     }
-> + *
-> + * Return: 0 on success, negative errno on failure.
-> + */
-> +int platform_driver_register_kunit(struct kunit *test,
-> +                                  struct platform_driver *drv)
-> +{
-> +       int ret;
-> +
-> +       ret =3D platform_driver_register(drv);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /*
-> +        * Wait for the driver to probe (or at least flush out of the def=
-erred
-> +        * workqueue)
-> +        */
-> +       wait_for_device_probe();
+Quoting Conor Dooley (2024-04-24 01:42:08)
+> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+> index 7f3fb2d472f4..710f9c1676f9 100644
+> --- a/drivers/reset/reset-mpfs.c
+> +++ b/drivers/reset/reset-mpfs.c
+> @@ -121,11 +135,15 @@ static int mpfs_reset_probe(struct auxiliary_device=
+ *adev,
+>  {
+>         struct device *dev =3D &adev->dev;
+>         struct reset_controller_dev *rcdev;
+> +       struct mpfs_reset *rst;
+> =20
+> -       rcdev =3D devm_kzalloc(dev, sizeof(*rcdev), GFP_KERNEL);
+> -       if (!rcdev)
+> +       rst =3D devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
+> +       if (!rst)
+>                 return -ENOMEM;
+> =20
+> +       rst->base =3D (void __iomem *)adev->dev.platform_data;
 
-Should this be removed? I was thinking that this isn't a pure wrapper
-around platform_driver_register() because it has this wait call.  Maybe
-it's better to have some other kunit API that can wait for a specific
-device to probe and timeout if it doesn't happen in that amount of time.
-That API would use the bus notifiers and look for
-BUS_NOTIFY_BOUND_DRIVER. Or maybe that function could setup a completion
-that the test can wait on.
+Can use dev_get_platdata() here?
 
-> +
-> +       return kunit_add_action_or_reset(test,
-> +                                        (kunit_action_t *)&platform_driv=
-er_unregister,
-> +                                        drv);
-> +}
-> +EXPORT_SYMBOL_GPL(platform_driver_register_kunit);
+	rst->base =3D (void __iomem *)dev_get_platdata(dev);
+
+That's sad that a cast is necessary. Does it need __force as well? An
+alternative would be to make a container struct for auxiliary_device and
+put the pointer there.
