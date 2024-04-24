@@ -1,174 +1,124 @@
-Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C827639
-	for <linux-clk@vger.kernel.org>; Wed, 24 Apr 2024 00:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C609879E3
+	for <linux-clk@vger.kernel.org>; Wed, 24 Apr 2024 01:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713917792; cv=none; b=OKQZfi3Va6AQ3JkwDmWsFrcsayyb1TZaqJTm7LPhRTRpOuX6hIoFohXC4Z+aRU4gQXVa3NRxS/KeOBzqe59i4zqCqB9dvEiSTQ5c8f/QXxy5jff1S49x5b8qmeKdY73YYRPs3uaioZ9Zz4XAdsO1cHDdNpXcP8oF9ActgMNONNg=
+	t=1713922774; cv=none; b=QOchLcWs85VLR/nPp0EJX3nmtwIJph9zvOsPgGXyXOu7L+S6H6LtzVABgxS5/iWjrvKIl2PoRydSAeX6ZIARXOUzapsz6R/9tqGBBACjX83V4vjPUsk6dGjeoOgHVyg/Ux0/xzV0KKDaEsZE8lzZ7I/zcTtCu+CoTr9D6k9wUoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713917792; c=relaxed/simple;
-	bh=vH8TUXVp14Y1tF11bj35c1Q3PKT0zOfhWqOZP+37v2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A8eSeucHjZppd2rldCV7EC+yrx506xkRVK7IorJySw0WTXfBkJd2N5QbvrrcgvhkB0LEOAybCLT4nuZhp4Mor+SnOSfA9f4rXvXvODomopYLjl27VZQUqoGcILd7E4oLFLjfaPNZDwvv4dBA02xhhlqFVjaDq9SQalehtnVmv5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ELrKbZA5; arc=none smtp.client-ip=209.85.221.65
+	s=arc-20240116; t=1713922774; c=relaxed/simple;
+	bh=5q4NhWGDdtCddnYBrTLpMflmM72w85gXkEVwAtxbGEs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RzBPTi4JslfuQBOvmygIzVCsmKSMUTjd+wTAqV58WljkL+qifBZgLejLVE6aqngMbhdAjNZJHDcG/kbhuW8CoToo8xGxZxwx0EB5Tnj35ywu+RNaXPl1omRLgASyu+5hG5NrvPb0sTc36EN2by2V1UWbkAJBwkvadGpWzAyHmxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VmLqbMMY; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ELrKbZA5"
-Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-343e46ec237so5277069f8f.2
-        for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 17:16:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VmLqbMMY"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51abd9fcbf6so8941940e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 Apr 2024 18:39:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713917789; x=1714522589; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K0pUZMSUM0wS5UBOCyyIVV0VM1ykC5stPfsCzESY0oc=;
-        b=ELrKbZA5p7kvdH/0Pdqq7oZePBTdl7tySj0pi2cJt1AiQjeCaM6pmX6dF7B4Lom3NP
-         RaqTV/iqLgRzCHL3Th0pwd0pmDp3xJjS5Vd+ep0nLcTyFPLmIEUDjPbMpP+QMaOpyoXZ
-         oQ/NH2D0N7X0n6G/eIbY0vFVlZTEJUrqpracwU3I0QxhqxAZyvDS1IM1zev9Hb9HCGir
-         Q4xAGaXJ3URmXp1FchG6+9MvdsW5GnnwziXdt8UPBGD9rT2uMfAkIotl6mGcNPsYgjv1
-         UOZAk/GMk6FxtummuXsNU4zSLzWBs78dfGwVhTdbVlmYDgZu03milbMO71KQCTfFEaOa
-         9sew==
+        d=linaro.org; s=google; t=1713922771; x=1714527571; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+KwrOu+mn4qUHUoF/ypvY6dT95fqwOQv7ZBOs9tgmqQ=;
+        b=VmLqbMMYZ0YOc4hNa53NFBaDQqRABSpeR+oaA3Q/3zZFWK3VJdu05MyQ9mOEto31Cp
+         3J8fSHxNOjgL22iVkqkDI95MKIdTtGjTdlZGGcs0ULub77O9XgV4j3EVecdDELKFEz2O
+         4UkDa0imy7hRGMswG9vTaLGbEHDDArCax5dED8A/hMczy/OQzh5a6FlRasGabMqwx4ZI
+         in7CbjpWmgpcjtnl7YHqKWKOnIBUiicpWELeA/ZSq6IK3qbBs0bD70nYjAq774n8q1gX
+         mrMhAxRoUlogXDcV/5LKf/YxS/0A9LdA99HIcGKjXvI8JkUOfQPkNUIjlA5caIJp2q8a
+         Tp6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713917789; x=1714522589;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K0pUZMSUM0wS5UBOCyyIVV0VM1ykC5stPfsCzESY0oc=;
-        b=CEppWMvsH2pkrPuyaekUJyw0V1YQFWcLmcCmAV5wcw18yZ+Xqnq6v22sWiZxJbRpis
-         y7iYHkaakat8fcodI7VeXP+b0HuZ9fksJ+gZLd/DO5d1cpOYqrexYpadNgDzJrq3rx8i
-         ac2vt8ynl/LQx5c7FE5MCQgzn/2GdX9mDPDSZOVYf24C/cxF8LodqDVAmMpFt2bGWGCp
-         lnE/pLkC1OQDDM2zAcjJiGxu5s6VzwXlIjD4ZKdQCiiaRZIJCDA0h6vRMrfVh5Ab9no3
-         cZFDm1v1HJ29AaIGGyYkauqV6fhr4+e+kP6tWOdQtastf3my6tDAeorw5ZCumBuGeI16
-         EZDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6wPWHy8AmqJbVptY+xFz9iN+hygt9fDwE2mgD3qblvkLH2Aa0VasDAbIinhydz2m+COJNFNIgwdylEvPetXwvqG18lX0DnYh3
-X-Gm-Message-State: AOJu0YzcaJ9L8jKaWuLd5+T9qC0x574UxJV9i/EUcwhi0XSSf7bSp6mm
-	E4g5Dwde+Y93fqE8SY77NRY6rXIa1bVEeDVzZ7pDcxbEM9mY71veWX+NknDTBqk=
-X-Google-Smtp-Source: AGHT+IEBbsQv7MvHH+05WRyjPm/vcH5Gi/IkbhrXGGTHpSm/YU5rg7c2JJdbV16cVdR9Q8PVRh8I8A==
-X-Received: by 2002:a5d:504e:0:b0:33e:363b:a7dd with SMTP id h14-20020a5d504e000000b0033e363ba7ddmr469809wrt.20.1713917787851;
-        Tue, 23 Apr 2024 17:16:27 -0700 (PDT)
-Received: from [192.168.0.102] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a3-20020adffb83000000b0034b32e5e9ccsm5235364wrr.64.2024.04.23.17.16.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Apr 2024 17:16:27 -0700 (PDT)
-Message-ID: <a522f25f-bb38-4ae1-8f13-8e56934e5ef5@linaro.org>
-Date: Wed, 24 Apr 2024 01:16:26 +0100
+        d=1e100.net; s=20230601; t=1713922771; x=1714527571;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+KwrOu+mn4qUHUoF/ypvY6dT95fqwOQv7ZBOs9tgmqQ=;
+        b=iQx7YpAWLhBarF2x4zCGNRukz5ttQLntsbWUePjTy8cWV0mc1AYIYnuSEHX2RLflIj
+         fglDJNM2uiXnF+KhUY8dGQ/fVckEvXxdwVmyaUDUOrljskg+RfX066oTT3DjYftUPIPZ
+         A+VTBTx2QRxd3ye0UN6AIWW9nLA59NaB5blZpmgLUAqNr19W0OQ9vjn8SZbclPv25Biv
+         k0FjNT62DsxKQ1QnkGsNA5Au4pOGt2HpkWADihzj41Dv6oUElSySk56O70dmnuUoyFFJ
+         Fq67a08y9G+Hcr6k8dwBpYLim0pAZiFZjG86ZhVG1WHdPIxjd0LqGjk4H2QG4m9dnDIu
+         dhiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTUpUznucqk4eBLZZBeKu04e/h72qCJiWzo7otkIjJa6MCmnd732CKA/QuztR8qSoxFA+zh0l45K33ujy/QND7TgNzexS8d1Tb
+X-Gm-Message-State: AOJu0YxuDkvGp9IWP+/2ydLW5XQbb7vI0R5z039+e9CswK8bGqnCqsQH
+	2EeOfWKpD/F0WchVBTfVZhoVtVReGte9x13xvxacO5lO1NcPFQNAuF7tstFStOyDfRZnbqZNJUm
+	+
+X-Google-Smtp-Source: AGHT+IF8zBOyGz3Noyn42UlTQ5loU9u6fXXbczhZaHr4EsPsGAEx7UMM64nPsYzL54r+KCNElZRF0A==
+X-Received: by 2002:a19:c50f:0:b0:516:cdfa:1802 with SMTP id w15-20020a19c50f000000b00516cdfa1802mr902338lfe.63.1713922770880;
+        Tue, 23 Apr 2024 18:39:30 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id g12-20020a19ac0c000000b0051bb40c7ee7sm308220lfc.185.2024.04.23.18.39.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Apr 2024 18:39:30 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/4] clk: qcom: dispcc: fix DisplayPort link clocks
+Date: Wed, 24 Apr 2024 04:39:28 +0300
+Message-Id: <20240424-dispcc-dp-clocks-v2-0-b44038f3fa96@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 RESEND 5/5] venus: pm_helpers: Use
- dev_pm_genpd_set_hwmode to switch GDSC mode on V6
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki"
- <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>,
- Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Gross <agross@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pm@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20240413152013.22307-1-quic_jkona@quicinc.com>
- <20240413152013.22307-6-quic_jkona@quicinc.com>
- <5c78ad52-524b-4ad7-b149-0e7252abc2ee@linaro.org>
- <b96ef82c-4033-43e0-9c1e-347ffb500751@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <b96ef82c-4033-43e0-9c1e-347ffb500751@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANBiKGYC/32NQQqDMBBFryKz7pSYJmK68h7FhSSjDpUkJEVaJ
+ Hdv6gG6fA/++wdkSkwZ7s0BiXbOHHwFeWnArpNfCNlVBimkEkr06DhHa9FFtFuwz4yaSDttZHd
+ THdRZTDTz+0w+xsor51dIn/Nhb3/2T2xvUeBsSCkjpJW9Gzb2UwrXkBYYSylfR56dcrEAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@somainline.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1260;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=5q4NhWGDdtCddnYBrTLpMflmM72w85gXkEVwAtxbGEs=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmKGLRyzBa99J33q+8Z6DCW+4lilQocSB7nffpn
+ FCboN4blTWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZihi0QAKCRCLPIo+Aiko
+ 1YnoCACLmzG1j9xY2nu07YENygnT/QelXsxKYBwzQUwelXzhbuMP2MZiC1ngX4WZbJgHySAQicm
+ hsao0mB5I71GJKpNXVXD9yB39ne5p7s9XGik9WqEQQ23iU83gAfRg4NlCxkdJn6EVdWamg2+neo
+ H+cXbtjz9H88YVS1XhoQuSjBEdGJpeAHbsCgxB5zeTxwfXqpyU8oIP9bBuky3dfH2Itd3WNKYRA
+ lb+z1bnNkzEWgnP/oRmBEkLLWUCzU+k/wdZzjHgUpCXXy0qxkMpmhJ4tDYTR0diqz62XLkKX9dx
+ bjOqeHEs7Pt4ACOwWUGRalPkx964xsiJpz8RwyOIRV8afpOq
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On 14/04/2024 15:52, Jagadeesh Kona wrote:
-> 
-> 
-> On 4/14/2024 6:09 PM, Bryan O'Donoghue wrote:
->> On 13/04/2024 16:20, Jagadeesh Kona wrote:
->>> The Venus driver requires vcodec GDSC to be ON in SW mode for clock
->>> operations and move it back to HW mode to gain power benefits. Earlier,
->>> as there is no interface to switch the GDSC mode from GenPD framework,
->>> the GDSC is moved to HW control mode as part of GDSC enable callback and
->>> venus driver is writing to its POWER_CONTROL register to keep the 
->>> GDSC ON
->>> from SW whereever required. But the POWER_CONTROL register addresses
->>> are not constant and can vary across the variants.
->>>
->>> Also as per the HW recommendation, the GDSC mode switching needs to be
->>> controlled from respective GDSC register and this is a uniform approach
->>> across all the targets. Hence use dev_pm_genpd_set_hwmode() API which
->>> controls GDSC mode switching using its respective GDSC register.
->>>
->>> In venus V6 variants, the vcodec gdsc gets enabled in SW mode by default
->>> with new HW_CTRL_TRIGGER flag and there is no need to switch it to SW
->>> mode again after enable, hence add check to avoid switching gdsc to 
->>> SW mode
->>> again after gdsc enable. Similarly add check to avoid switching GDSC 
->>> to HW
->>> mode before disabling the GDSC, so GDSC gets enabled in SW mode in 
->>> the next
->>> enable.
->>>
->>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->>> ---
->>
->> When I tested this out on sm8250 a few months ago it was broken.
->>
->> I don't quite see in your commit logs, how the breakage was addressed.
->>
->> Can you provide some details ?
->>
-> 
-> Thanks Bryan for your review!
-> 
-> In earlier series, venus driver is switching the vcodec GDSC to HW 
-> control mode before disabling the GDSC by invoking 
-> vcodec_control_v4(..., false) in poweroff_coreid(). Due to this, the 
-> subsequent GDSC enable from venus driver is failing while polling for 
-> GDSC power ON status, since GDSC is under HW control mode and HW can 
-> keep the GDSC in disabled state.
-> 
-> Now a check is added in poweroff_coreid() to avoid switching the GDSC to 
-> HW control mode before disabling the GDSC for Venus V6 variants that use 
-> this new API. Hence during the next GDSC enable, GDSC will be in SW mode 
-> and GDSC will powerup properly.
+On several Qualcomm platforms DisplayPort link clocks used incorrect
+frequency tables. Drop frequency tables and use clk_byte2_ops instead of
+clk_rcg2_ops.
 
-Right so the intention is to have HW GDSC control during playback only - 
-and then revert to SW control when no stream is active, right ?
+Note, this was tested on SM8450 only and then extended to other
+platforms.
 
-I tried your series on today's -next.
-
-Here is -next without your changes
-
-https://drive.google.com/file/d/1PFuLOlEp582rBQUvuwc9PNZUBxn1ioYf/view?usp=sharing
-
-and here is -next with your changes
-
-https://drive.google.com/file/d/1PHR4rZnWUH9Wp2B-itT5yCUXIMOMZrwM/view?usp=sharing
-
-The first time I tried that test the stopping/stuttering was worse.
-
-So yes the original crash was fixed but, this looks like a performance 
-regression to me.
-
-Here's the tree I tested with.
-
-https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/linux-next-24-05-23-review?ref_type=heads
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Expanded commit messages to mention exact issue being fixed and the
+  triggering message (Stephen Boyd, Bjorn)
+- Link to v1: https://lore.kernel.org/r/20240408-dispcc-dp-clocks-v1-0-f9e44902c28d@linaro.org
 
 ---
-bod
+Dmitry Baryshkov (4):
+      clk: qcom: dispcc-sm8450: fix DisplayPort clocks
+      clk: qcom: dispcc-sm6350: fix DisplayPort clocks
+      clk: qcom: dispcc-sm8550: fix DisplayPort clocks
+      clk: qcom: dispcc-sm8650: fix DisplayPort clocks
+
+ drivers/clk/qcom/dispcc-sm6350.c | 11 +----------
+ drivers/clk/qcom/dispcc-sm8450.c | 20 ++++----------------
+ drivers/clk/qcom/dispcc-sm8550.c | 20 ++++----------------
+ drivers/clk/qcom/dispcc-sm8650.c | 20 ++++----------------
+ 4 files changed, 13 insertions(+), 58 deletions(-)
+---
+base-commit: a59668a9397e7245b26e9be85d23f242ff757ae8
+change-id: 20240408-dispcc-dp-clocks-5ee5d5926346
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
