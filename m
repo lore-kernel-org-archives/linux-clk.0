@@ -1,50 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6F513AA3C;
-	Wed, 24 Apr 2024 19:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B973013B5A4;
+	Wed, 24 Apr 2024 20:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713988401; cv=none; b=QiAoFxonruzAzcbNeQA2P7UzZdv5ondbKLuIvBqbE6aqx+Mm/hGUTadFEY434x90HoHky9NWmf4zkj3XnUN1Eyl6IyG3db+qtac5x+duVOfI9EqB3y/F+bl7ARgKJSYm1C4v5X86SczzOTzqdQwIDUDPmBLS3aQtqQhQdzCqofk=
+	t=1713988870; cv=none; b=rtLBLM2AN1bffNiZ7mFBreydMPAaFdf30AecMI6TxizOHlMOZyIoABiZgMwQAXN+LzPWYwbKK/nDOrMZ8GHFu2tmvTwov8WutUOEUFvJZXyh6sjM9OziP/QwWtpxLh7MyAEqID7HjmlDBxJ44BT2xxWfoJ3s7L8jpj+HA1iYbGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713988401; c=relaxed/simple;
-	bh=HZkky1K43bSZGSblXrPp3EAM8NlSsdMp1ndHmpJJXwQ=;
+	s=arc-20240116; t=1713988870; c=relaxed/simple;
+	bh=pZJnhrqBEUNU8L74CRDodYNAWKN1FAjVYMm8hIp5g1U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F9sre4X63L8JWcpCzYErGtvkide1MuY7ZO0gxpgJW5AIE37SdYatd9t7WNx6meKxNoGogjTMYoM4hIsV0dvmMLcK27AtpTfj0bTFlDszFldAwLb8SWtgFTbbYuSsZhkDWDy8CQ2+vKZ1Rwhc1lgu0y37BbjgTk4/0hYp7bo8nLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTTcczTr; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=n5N3jBbTBAUmi4894kxkueZ0IWJR+ZJ7z3EXrPiRXWg+GxNb4XslSOxfQxFFyl+5R062ZQ/g1IFPjY4RHRd90Xm5pdoiJBG5M5sACTyDfXlt7zeLfSZb69e+2ZCUFdBZ6eKo6F1oZUoICTLfAfogUFsnlHxVvPYMJDAy9ng+2mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q9U15ByI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTTcczTr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1C2DC113CD;
-	Wed, 24 Apr 2024 19:53:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q9U15ByI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23667C2BD10;
+	Wed, 24 Apr 2024 20:01:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713988401;
-	bh=HZkky1K43bSZGSblXrPp3EAM8NlSsdMp1ndHmpJJXwQ=;
+	s=k20201202; t=1713988870;
+	bh=pZJnhrqBEUNU8L74CRDodYNAWKN1FAjVYMm8hIp5g1U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NTTcczTrGnFaxAa1kcfspxMTN3/ePhg12mnST33XA49fFlgQuXuSnkLe26jrPzCQC
-	 J1oxZAICxWCxa0bAApRRhf6JBaQ298OaMehmKj74FeKFuCnfBNpYeswE9haIIg+jmz
-	 Q/QZUKJAI7MbPzLLi+8YOH+Xfv/R053F0CiIy/BzGEVmHB91IganAP727lrF/IA+R6
-	 bm6D3XwKX35MsHWKr/tUh/MtpWNiq3t9KVNMlP07PO0lnGKkPp7XTeEu+B8yu+Hzin
-	 AiV94wDgJFifjC7MInUtd5m20iQLLKrdS+4QKpuas+p82FqLW4tgeDwJsB8Tm5FSZ3
-	 3Ak4vINNx/EJw==
-Date: Wed, 24 Apr 2024 14:53:18 -0500
+	b=Q9U15ByIAFQBGd9skRQXTyRyW8pnoJsycZmxyPQe7bt/nQeOsflcdAiEPhRpZDlXd
+	 NtAydSRRHY8MVh7kbicsB+D3eDn0yNiHvRhOdw187BP3/xgCZ3p5ZjCUHHyxjWkPGk
+	 zoFr2Yk1jPynaSWrG7jBXSsfwnce/TggQhRrGbyPKXhQlTSGieK2Liyi+dWaRLFTKr
+	 RAWT63JHPJ0340sl5u5sGkcXHaoy7QKRMZIpWm2oGp2erKM3q15g2bkazjDMSbpp+W
+	 DTBH6DsPDHLXpEs57VIKXzX/EVdk6mYn09uvrZlbW0Os3QTzRdhfTC4PX4ciybMn19
+	 ENt4PklHwh9cg==
+Date: Wed, 24 Apr 2024 15:01:07 -0500
 From: Rob Herring <robh@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, James.Bottomley@hansenpartnership.com,
-	ebiggers@kernel.org, linux-scsi@vger.kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-	saravanak@google.com, willmcvicker@google.com
-Subject: Re: [PATCH v2 03/14] dt-bindings: ufs: exynos-ufs: Add gs101
- compatible
-Message-ID: <20240424195318.GA367166-robh@kernel.org>
-References: <20240423205006.1785138-1-peter.griffin@linaro.org>
- <20240423205006.1785138-4-peter.griffin@linaro.org>
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Chuan Liu <chuan.liu@amlogic.com>
+Subject: Re: [PATCH v7 5/5] clk: meson: c3: add c3 clock peripherals
+ controller driver
+Message-ID: <20240424200107.GA372179-robh@kernel.org>
+References: <20240424050928.1997820-1-xianwei.zhao@amlogic.com>
+ <20240424050928.1997820-6-xianwei.zhao@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,94 +53,84 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240423205006.1785138-4-peter.griffin@linaro.org>
+In-Reply-To: <20240424050928.1997820-6-xianwei.zhao@amlogic.com>
 
-On Tue, Apr 23, 2024 at 09:49:55PM +0100, Peter Griffin wrote:
-> Add dedicated google,gs101-ufs compatible for Google Tensor gs101
-> SoC.
+On Wed, Apr 24, 2024 at 01:09:28PM +0800, Xianwei Zhao wrote:
+> Add the C3 peripherals clock controller driver in the C3 SoC family.
 > 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Co-developed-by: Chuan Liu <chuan.liu@amlogic.com>
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->  .../bindings/ufs/samsung,exynos-ufs.yaml      | 38 +++++++++++++++++--
->  1 file changed, 35 insertions(+), 3 deletions(-)
+>  drivers/clk/meson/Kconfig          |   15 +
+>  drivers/clk/meson/Makefile         |    1 +
+>  drivers/clk/meson/c3-peripherals.c | 2366 ++++++++++++++++++++++++++++
+>  3 files changed, 2382 insertions(+)
+>  create mode 100644 drivers/clk/meson/c3-peripherals.c
 > 
-> diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> index b2b509b3944d..1179527d29d1 100644
-> --- a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> @@ -12,12 +12,10 @@ maintainers:
->  description: |
->    Each Samsung UFS host controller instance should have its own node.
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index 9f975a980581..0b85d584910e 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -142,6 +142,21 @@ config COMMON_CLK_C3_PLL
+>  	  AKA C3. Say Y if you want the board to work, because PLLs are the parent
+>  	  of most peripherals.
 >  
-> -allOf:
-> -  - $ref: ufs-common.yaml
-> -
->  properties:
->    compatible:
->      enum:
-> +      - google,gs101-ufs
->        - samsung,exynos7-ufs
->        - samsung,exynosautov9-ufs
->        - samsung,exynosautov9-ufs-vh
-> @@ -38,14 +36,24 @@ properties:
->        - const: ufsp
->  
->    clocks:
-> +    minItems: 2
->      items:
->        - description: ufs link core clock
->        - description: unipro main clock
-> +      - description: fmp clock
-> +      - description: ufs aclk clock
-> +      - description: ufs pclk clock
-> +      - description: sysreg clock
->  
->    clock-names:
-> +    minItems: 2
->      items:
->        - const: core_clk
->        - const: sclk_unipro_main
-> +      - const: fmp
-> +      - const: ufs_aclk
-> +      - const: ufs_pclk
+> +config COMMON_CLK_C3_PERIPHERALS
+> +	tristate "Amlogic C3 peripherals clock controller"
+> +	depends on ARM64
+> +	depends on ARM_SCMI_PROTOCOL
 
-'ufs_' is redundant.
+I may have missed it, but I don't see the dependency on SCMI in this 
+driver.
 
-> +      - const: sysreg
->  
->    phys:
->      maxItems: 1
-> @@ -72,6 +80,30 @@ required:
->    - clocks
->    - clock-names
->  
-> +allOf:
-> +  - $ref: ufs-common.yaml
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: google,gs101-ufs
+> +	depends on COMMON_CLK_SCMI
+> +	depends on COMMON_CLK_C3_PLL
+> +	default y
+> +	select COMMON_CLK_MESON_REGMAP
+> +	select COMMON_CLK_MESON_DUALDIV
+> +	select COMMON_CLK_MESON_CLKC_UTILS
+> +	help
+> +	  Support for the Peripherals clock controller on Amlogic C302X and
+> +	  C308L devices, AKA C3. Say Y if you want the peripherals clock to
+> +	  work.
 > +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 6
+>  config COMMON_CLK_G12A
+>  	tristate "G12 and SM1 SoC clock controllers support"
+>  	depends on ARM64
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index 4420af628b31..20ad9482c892 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -20,6 +20,7 @@ obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
+>  obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
+>  obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) += a1-peripherals.o
+>  obj-$(CONFIG_COMMON_CLK_C3_PLL) += c3-pll.o
+> +obj-$(CONFIG_COMMON_CLK_C3_PERIPHERALS) += c3-peripherals.o
+>  obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o meson8-ddr.o
+> diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+> new file mode 100644
+> index 000000000000..0f834ced0ee9
+> --- /dev/null
+> +++ b/drivers/clk/meson/c3-peripherals.c
+> @@ -0,0 +1,2366 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Amlogic C3 Peripherals Clock Controller Driver
+> + *
+> + * Copyright (c) 2023 Amlogic, inc.
+> + * Author: Chuan Liu <chuan.liu@amlogic.com>
+> + */
 > +
-> +        clock-names:
-> +          minItems: 6
-> +
-> +    else:
-> +      properties:
-> +        clocks:
-> +          maxItems: 2
-> +
-> +        clock-names:
-> +          maxItems: 2
-> +
->  unevaluatedProperties: false
->  
->  examples:
-> -- 
-> 2.44.0.769.g3c40516874-goog
-> 
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_device.h>
+
+I don't think you need this header.
+
+> +#include <linux/platform_device.h>
+> +#include "clk-regmap.h"
+> +#include "clk-dualdiv.h"
+> +#include "meson-clkc-utils.h"
+> +#include <dt-bindings/clock/amlogic,c3-peripherals-clkc.h>
