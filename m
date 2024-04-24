@@ -1,122 +1,152 @@
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA1A15EFA8;
-	Wed, 24 Apr 2024 16:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2359815CD6E;
+	Wed, 24 Apr 2024 18:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713977262; cv=none; b=tUqePdLAeysdUDHzMOqZlNDKTraAW73cASwzpFjp4cSrcNYY5w1RrUFTYFGBcSl2WdTbiq8iBsXpq53zsH1BaL4Db+IH93OuvrvXeov1ksidPm/dNh10lp6FTmNn4Qxj+ANYJHm44NjMh54xxXJzHq3YG2MYur313aGNmg9mXjo=
+	t=1713982284; cv=none; b=VfBuvPAVdv4ju1Ni57jS7+qeY1KCbF+yBi2GudsQlrMFUcSZHjBDAzcynEB7usO66VIkb3xAyro20qJpTwcsUceIGrZDgAnD1PwIzMvLCqk47+EhSej9sfIuD9APR/PBHJ7zmbk4WtWtDq89SY7f2pbzMomAqQc5Y34FXdi11jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713977262; c=relaxed/simple;
-	bh=W2hSu3Tw2jrGRs62685kwdip1Rqx3/KD21TSZKvKPWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ulrGWX02g1JuvjN3yKDlrxq4xlFiYSm9UyhiQYqm5ZxTpZBM4f7N8Uaks0fE1t/ZB+W6sPFhsAbuNmFMYPnrVUP7bi9GNTPHqfl9ZdQdhWWvSzrqXb0vDKXKe/LYvkAdWiHSTAnC1ktK02qLboeJGsX7rmaiBFfGcRL+J8Uo0Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=rgIlnbQP; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+	s=arc-20240116; t=1713982284; c=relaxed/simple;
+	bh=7ItkOO8ka84a13QOYC/aAIFtqzRRzJtyWXnNHVtkfXs=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=uTsUL3CUGMDxhrs5Tz2UyRjsJ+cjQiEkO3b7zSYACJUDH7n8IrE33GJVW9pD8kQwIE3+iEczv8xXw0Pusdyz2dmq4Fx3J7NsAIwMxmGwYF8qjMfkzXuabMW3AUbuzYTaCEFTRj2jOVRnUPuOmr3wIn0C5sON/68FL9OyAqjCw0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9/cA3vg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="rgIlnbQP"
-Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
-	by mail11.truemail.it (Postfix) with ESMTPA id 6A9651F91A;
-	Wed, 24 Apr 2024 18:47:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1713977250;
-	bh=CEyIxy0Pu5MvS9161KdT+XnMhANEJ56b0Hj+87k4Oac=; h=From:To:Subject;
-	b=rgIlnbQPeqqHdzuyHXQ3WE4jCmOjVnzJgOftURdCJxnddar+i3SfncEERDq1GxQ75
-	 GqNrEsEPtIVh5gxeb/V6jhIq9t/ohR17vmJ2vU04BcYWrWY1YnJcgNEL0t/JivefPS
-	 v5tNAE9STFF5xy5GFMD2DebOHrAaOC9rxt4PRGA/CSljkdn2UJPeUZwswIvUbpAU4z
-	 MxTKeuijoCKnOE3AS6+zZ0FClOOHcKy6CpNcKknHrPKTtzmWDUY9+nVX1hAuATgWcB
-	 zeglH+Dul3AzPj7ykrjkw7idf5QCeOIy5f+ocEjd8FqsGmQCdjYSODOSbnKgocBSY/
-	 Tig4Kupqo2Cfg==
-Date: Wed, 24 Apr 2024 18:47:25 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-	shengjiu.wang@gmail.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] clk: imx: imx8mp: Add pm_runtime support for power
- saving
-Message-ID: <20240424164725.GA18760@francesco-nb>
-References: <1711026842-7268-1-git-send-email-shengjiu.wang@nxp.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9/cA3vg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9C6EC113CD;
+	Wed, 24 Apr 2024 18:11:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713982283;
+	bh=7ItkOO8ka84a13QOYC/aAIFtqzRRzJtyWXnNHVtkfXs=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=k9/cA3vgWEuYDIlY9xYTJDAcqk4oed74YCEJbNg6AYjrBBi0bPg1rwO7LF11gJ2po
+	 kDUMN1//9aKMK217sOAG0VamcjNYaNNMW5W/ZVGCJDX7HjeaxPaHLZ4TtYZttkBF7e
+	 l3aodjBreSbnFH01sWt608pHXaX8+W6QGTiG4ndnQhnCpu4zoBEEJVJsuHeWS9yvNy
+	 ILSDfQWmpN7GDDvQtUvh0qKXAzwadxoGNkBFhE6+HUM1+5XotZ7RMLT/b/Qte4q3yg
+	 ChagwXxCFOmGxp9Gx0p8gU+y26SnIyFME+hoH9Vcm/CvVBk2dYsQsh59UZxSWv5zkX
+	 7R/oie8nU6Nkw==
+Message-ID: <128dc42a50bfe166993205108a5b23cd.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1711026842-7268-1-git-send-email-shengjiu.wang@nxp.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240422232404.213174-6-sboyd@kernel.org>
+References: <20240422232404.213174-1-sboyd@kernel.org> <20240422232404.213174-6-sboyd@kernel.org>
+Subject: Re: [PATCH v4 05/10] platform: Add test managed platform_device/driver APIs
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Date: Wed, 24 Apr 2024 11:11:21 -0700
+User-Agent: alot/0.10
 
-On Thu, Mar 21, 2024 at 09:14:02PM +0800, Shengjiu Wang wrote:
-> Add pm_runtime support for power saving. In pm runtime suspend
-> state the registers will be reseted, so add registers save
-> in pm runtime suspend and restore them in pm runtime resume.
-> 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Quoting Stephen Boyd (2024-04-22 16:23:58)
+> diff --git a/drivers/base/test/platform_kunit.c b/drivers/base/test/platf=
+orm_kunit.c
+> new file mode 100644
+> index 000000000000..54af6db2a6d8
+> --- /dev/null
+> +++ b/drivers/base/test/platform_kunit.c
+> @@ -0,0 +1,174 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Test managed platform driver
+> + */
+> +
+[...]
+> +
+> +/**
+> + * platform_driver_register_kunit() - Register a KUnit test managed plat=
+form driver
+> + * @test: test context
+> + * @drv: platform driver to register
+> + *
+> + * Register a test managed platform driver. This allows callers to embed=
+ the
+> + * @drv in a container structure and use container_of() in the probe fun=
+ction
+> + * to pass information to KUnit tests. It can be assumed that the driver=
+ has
+> + * probed when this function returns.
+> + *
+> + * Example
+> + *
+> + * .. code-block:: c
+> + *
+> + *     struct kunit_test_context {
+> + *             struct platform_driver pdrv;
+> + *             const char *data;
+> + *     };
+> + *
+> + *     static inline struct kunit_test_context *
+> + *     to_test_context(struct platform_device *pdev)
+> + *     {
+> + *             return container_of(to_platform_driver(pdev->dev.driver),
+> + *                                 struct kunit_test_context,
+> + *                                 pdrv);
+> + *     }
+> + *
+> + *     static int kunit_platform_driver_probe(struct platform_device *pd=
+ev)
+> + *     {
+> + *             struct kunit_test_context *ctx;
+> + *
+> + *             ctx =3D to_test_context(pdev);
+> + *             ctx->data =3D "test data";
+> + *
+> + *             return 0;
+> + *     }
+> + *
+> + *     static void kunit_platform_driver_test(struct kunit *test)
+> + *     {
+> + *             struct kunit_test_context *ctx;
+> + *
+> + *             ctx =3D kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
+> + *             KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
+> + *
+> + *             ctx->pdrv.probe =3D kunit_platform_driver_probe;
+> + *             ctx->pdrv.driver.name =3D "kunit-platform";
+> + *             ctx->pdrv.driver.owner =3D THIS_MODULE;
+> + *
+> + *             KUNIT_EXPECT_EQ(test, 0, platform_driver_register_kunit(t=
+est, &ctx->pdrv));
+> + *             KUNIT_EXPECT_STREQ(test, ctx->data, "test data");
+> + *     }
+> + *
+> + * Return: 0 on success, negative errno on failure.
+> + */
+> +int platform_driver_register_kunit(struct kunit *test,
+> +                                  struct platform_driver *drv)
+> +{
+> +       int ret;
+> +
+> +       ret =3D platform_driver_register(drv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /*
+> +        * Wait for the driver to probe (or at least flush out of the def=
+erred
+> +        * workqueue)
+> +        */
+> +       wait_for_device_probe();
 
-Is this introducing a regression?
+Should this be removed? I was thinking that this isn't a pure wrapper
+around platform_driver_register() because it has this wait call.  Maybe
+it's better to have some other kunit API that can wait for a specific
+device to probe and timeout if it doesn't happen in that amount of time.
+That API would use the bus notifiers and look for
+BUS_NOTIFY_BOUND_DRIVER. Or maybe that function could setup a completion
+that the test can wait on.
 
-  800 13:50:19.713052  <6>[   16.531134] clk: Disabling unused clocks
-  801 13:50:19.727524  <2>[   16.535413] SError Interrupt on CPU2, code 0x00000000bf000002 -- SError
-  802 13:50:19.731400  <4>[   16.535421] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 6.9.0-rc5-next-20240424 #1
-  803 13:50:19.742514  <4>[   16.535428] Hardware name: Toradex Verdin iMX8M Plus on Dahlia Board (DT)
-  804 13:50:19.747157  <4>[   16.535431] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-  805 13:50:19.758468  <4>[   16.535442] pc : clk_imx8mp_audiomix_runtime_resume+0x24/0x48
-  806 13:50:19.759372  <4>[   16.535456] lr : pm_generic_runtime_resume+0x2c/0x44
-  807 13:50:19.759587  <4>[   16.535465] sp : ffff800082b8bb90
-  808 13:50:19.774512  <4>[   16.535468] x29: ffff800082b8bb90 x28: 0000000000000000 x27: 0000000000000000
-  809 13:50:19.775367  <4>[   16.535482] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-  810 13:50:19.790567  <4>[   16.535495] x23: ffff0000c0f7a4e0 x22: ffff0000c26922f8 x21: 0000000000000000
-  811 13:50:19.791308  <4>[   16.535508] x20: ffff0000c2692000 x19: ffff0000c0e30c10 x18: 0000000000000000
-  812 13:50:19.794834  <4>[   16.535521] x17: 000000007e4712cb x16: ffff80008296f800 x15: 0000000000000030
-  813 13:50:19.807341  <4>[   16.535532] x14: ffff0000c00b8080 x13: 00000000000003f9 x12: 0000000000000000
-  814 13:50:19.810740  <4>[   16.535545] x11: 0000000000000000 x10: 0000000000000aa0 x9 : ffff800082b8bb20
-  815 13:50:19.822528  <4>[   16.535559] x8 : ffff0000c00b8b00 x7 : 0000000000000000 x6 : ffff0000c00b8000
-  816 13:50:19.827173  <4>[   16.535570] x5 : ffff8000836b0000 x4 : ffff0000c2f3a488 x3 : ffff8000813660d0
-  817 13:50:19.838446  <4>[   16.535583] x2 : 0000000000000004 x1 : 0000000000000001 x0 : 00000000ff777777
-  818 13:50:19.839321  <0>[   16.535597] Kernel panic - not syncing: Asynchronous SError Interrupt
-  819 13:50:19.839983  Matched prompt #9: Kernel panic - not syncing
-  820 13:50:19.840155  Setting prompt string to ['end Kernel panic[^\\r]*\\r', '/ #', 'Login timed out', 'Login incorrect']
-  821 13:50:19.854524  <4>[   16.535601] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 6.9.0-rc5-next-20240424 #1
-  822 13:50:19.855261  <4>[   16.535609] Hardware name: Toradex Verdin iMX8M Plus on Dahlia Board (DT)
-  823 13:50:19.858660  <4>[   16.535613] Call trace:
-  824 13:50:19.870455  <4>[   16.535616]  dump_backtrace+0x94/0xec
-  825 13:50:19.870763  <4>[   16.535626]  show_stack+0x18/0x24
-  826 13:50:19.871258  <4>[   16.535635]  dump_stack_lvl+0x38/0x90
-  827 13:50:19.874714  <4>[   16.535647]  dump_stack+0x18/0x24
-  828 13:50:19.874964  <4>[   16.535656]  panic+0x388/0x3c8
-  829 13:50:19.886551  <4>[   16.535667]  nmi_panic+0x48/0x94
-  830 13:50:19.888318  <4>[   16.535679]  arm64_serror_panic+0x6c/0x78
-  831 13:50:19.888531  <4>[   16.535688]  do_serror+0x3c/0x78
-  832 13:50:19.892592  <4>[   16.535693]  el1h_64_error_handler+0x30/0x48
-  833 13:50:19.902540  <4>[   16.535703]  el1h_64_error+0x64/0x68
-  834 13:50:19.903437  <4>[   16.535709]  clk_imx8mp_audiomix_runtime_resume+0x24/0x48
-  835 13:50:19.907712  <4>[   16.535719]  __genpd_runtime_resume+0x30/0xa8
-  836 13:50:19.918505  <4>[   16.535729]  genpd_runtime_resume+0xb4/0x29c
-  837 13:50:19.918770  <4>[   16.535741]  __rpm_callback+0x48/0x198
-  838 13:50:19.919372  <4>[   16.535749]  rpm_callback+0x68/0x74
-  839 13:50:19.922715  <4>[   16.535754]  rpm_resume+0x3cc/0x680
-  840 13:50:19.934495  <4>[   16.535762]  __pm_runtime_resume+0x4c/0x90
-  841 13:50:19.934784  <4>[   16.535769]  clk_pm_runtime_get_all+0x58/0x164
-  842 13:50:19.935344  <4>[   16.535780]  clk_disable_unused+0x2c/0x178
-  843 13:50:19.938873  <4>[   16.535793]  do_one_initcall+0x6c/0x1b0
-  844 13:50:19.950539  <4>[   16.535799]  kernel_init_freeable+0x1c8/0x290
-  845 13:50:19.951360  <4>[   16.535812]  kernel_init+0x20/0x1dc
-  846 13:50:19.951585  <4>[   16.535821]  ret_from_fork+0x10/0x20
-  847 13:50:19.954803  <2>[   16.535831] SMP: stopping secondary CPUs
-  848 13:50:19.966688  <0>[   16.535838] Kernel Offset: disabled
-  849 13:50:19.967221  <0>[   16.535841] CPU features: 0x0,00000040,00100000,4200421b
-  850 13:50:19.967360  <0>[   16.535845] Memory Limit: none
-  851 13:50:19.985117  <0>[   16.788060] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
-
-from
-
-https://storage.kernelci.org/next/master/next-20240424/arm64/defconfig/gcc-10/lab-broonie/baseline-imx8mp-verdin-nonwifi-dahlia.html
-https://lore.kernel.org/all/66293535.170a0220.21fe.a2e7@mx.google.com/
-
-Francesco
-
+> +
+> +       return kunit_add_action_or_reset(test,
+> +                                        (kunit_action_t *)&platform_driv=
+er_unregister,
+> +                                        drv);
+> +}
+> +EXPORT_SYMBOL_GPL(platform_driver_register_kunit);
