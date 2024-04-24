@@ -1,111 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C470F1EB30;
-	Wed, 24 Apr 2024 20:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FC415665C;
+	Wed, 24 Apr 2024 20:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713989948; cv=none; b=lwhxseaODYWzZ0HXOTlU1KZp0e34Uan/pqvpa8nGE3Q/Ov1ywll0aZiux1bAz2LfjcR7r/3RFlDkwmyYDqbvivlCKZF4uqXl2er0wqxu/o/IzqAQkSB2Me3Ufq0y2HOtlWWqwSGXqo22WWSa6TbOJYgOTnwMHSddiXzNwsiHVBI=
+	t=1713990756; cv=none; b=YL113ddPN+s0emQ1Jk1Sr/YwhldBfv5PzmWy2oV/0TX8tnrjoH4YmgKvakSebVsylBZCdsdf72jhy8dOxyS6GXEA4s0pS/iDLWUviCMvp+DB33G39YMZnjAbV0ZgU1LfB8PgRh0YUwBL/w9mXUlkRjTODc4WyjhxbbzBpzY1/K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713989948; c=relaxed/simple;
-	bh=63hZPOmkSg+IK89rduMeX1CZgesVdUrWtwIPoEX0wx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T2KLbRX3tRTEBzFSYukzKs0V8X1O77DPyL+LeM6haEv5gf1RYJpArUV7pOwTnjPzy2qvN6d0k32TjNoVm384wDgaf0H+4rVrMVpg90EPkTSsPJax0OBvjRtvWUU5oka9LQRf+LoPysP23Li9ebOadTPiNAT1TQpqM3BnZy7JvVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FdW7u1jz; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdW7u1jz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3CDFC113CD;
-	Wed, 24 Apr 2024 20:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713989948;
-	bh=63hZPOmkSg+IK89rduMeX1CZgesVdUrWtwIPoEX0wx8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FdW7u1jzxAWuLqFr++Z5rwBUKGJKPRkGswnMGsR/iCqFctDOhNzWCIc/6iJw0CCBS
-	 n/+rOibvY434+ZwL5uW15xDCcyFNfsmIBog8CnRpPnVPILZVhgxNehzvN6bBFu0aur
-	 a3vJGoJhdyE42nR7hYu2kwKfMUIKdvMKprt5Cwm3mmIobl9kiDYzI1we4eY677dv4G
-	 pZ4aes1aAviH4dpvMkL03Zwryw8/xQy52vOvJASrQBH4akfZrG5DrJRZCDinG+efHp
-	 j7W5tt9JHJJEM7czNa0I3PK2cSQa48OBFPNnehePSbI6wDoOWc6pKVlp7oR+UzquKD
-	 CcV3JBDWDME4Q==
-Date: Wed, 24 Apr 2024 21:19:04 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clock, reset: microchip: move all mpfs reset code to
- the reset subsystem
-Message-ID: <20240424-glazing-handsaw-4c303fef4f7e@spud>
-References: <20240424-strangle-sharpener-34755c5e6e3e@spud>
- <722f31da34e5e1cfef05fb966f6c8c96.sboyd@kernel.org>
+	s=arc-20240116; t=1713990756; c=relaxed/simple;
+	bh=SMmWu0O4kiOeIE8+kMaBKKvSrZyE8uK+V6ffxp7Bn5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k+7AgTPokbpQjO3yj5JuCLidXIXHrXXUVHNktb9YPmJNNeUQEaYyCkl44n5cn/rmJBjZBtBnlViSE8AgSEW2AsH2KVo/oy1r5uOnj87DbP9Y0Ei7BxWQKkQGY8NKuSkI/N5V3PeO4hF5cXUgZmHGnPJFCT6Rs8PngheIOs7FXhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4D3D3240002;
+	Wed, 24 Apr 2024 20:32:29 +0000 (UTC)
+Message-ID: <41835766-b7d7-4f81-aca7-4a8136ba9971@ghiti.fr>
+Date: Wed, 24 Apr 2024 22:32:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rh9OexgCGdhps0bi"
-Content-Disposition: inline
-In-Reply-To: <722f31da34e5e1cfef05fb966f6c8c96.sboyd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Add notifier for PLL0 clock and set it 1.5GHz on
+Content-Language: en-US
+To: Xingyu Wu <xingyu.wu@starfivetech.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Emil Renner Berthing <kernel@esmil.dk>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Hal Feng <hal.feng@starfivetech.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org
+References: <20240410033148.213991-1-xingyu.wu@starfivetech.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240410033148.213991-1-xingyu.wu@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
+
+Hi Xingyu,
+
+On 10/04/2024 05:31, Xingyu Wu wrote:
+> This patch is to add the notifier for PLL0 clock and set the PLL0 rate
+> to 1.5GHz to fix the lower rate of CPUfreq on the JH7110 SoC.
+>
+> The first patch is to add the notifier for PLL0 clock. Setting the PLL0
+> rate need the son clock (cpu_root) to switch its parent clock to OSC
+> clock and switch it back after setting PLL0 rate. It need to use the
+> cpu_root clock from SYSCRG and register the notifier in the SYSCRG
+> driver.
+>
+> The second patch is to set cpu_core rate to 500MHz and PLL0 rate to
+> 1.5GHz to fix the problem about the lower rate of CPUfreq on the
+> visionfive board. The cpu_core clock rate is set to 500MHz first to
+> ensure that the cpu frequency will not suddenly become high and the cpu
+> voltage is not enough to cause a crash when the PLL0 is set to 1.5GHz.
+> The cpu voltage and frequency are then adjusted together by CPUfreq.
+>
+> Changes since v3:
+> - Added the notifier for PLL0 clock.
+> - Set cpu_core rate in DTS
+>
+> v3: https://lore.kernel.org/all/20240402090920.11627-1-xingyu.wu@starfivetech.com/
+>
+> Changes since v2:
+> - Made the steps into the process into the process of setting PLL0 rate
+>
+> v2: https://lore.kernel.org/all/20230821152915.208366-1-xingyu.wu@starfivetech.com/
+>
+> Changes since v1:
+> - Added the fixes tag in the commit.
+>
+> v1: https://lore.kernel.org/all/20230811033631.160912-1-xingyu.wu@starfivetech.com/
+>
+> Xingyu Wu (2):
+>    clk: starfive: jh7110-sys: Add notifier for PLL clock
+>    riscv: dts: starfive: visionfive-2: Fix lower rate of CPUfreq by
+>      setting PLL0 rate to 1.5GHz
+>
+>   .../jh7110-starfive-visionfive-2.dtsi         |  6 ++++
+>   .../clk/starfive/clk-starfive-jh7110-sys.c    | 31 ++++++++++++++++++-
+>   drivers/clk/starfive/clk-starfive-jh71x0.h    |  2 ++
+>   3 files changed, 38 insertions(+), 1 deletion(-)
 
 
---rh9OexgCGdhps0bi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I only took a quick look so I'm not sure: does patch 2 depend on patch 
+1? In that case, I think the Fixes tag should be applied to both patches.
 
-On Wed, Apr 24, 2024 at 11:33:32AM -0700, Stephen Boyd wrote:
-> Quoting Conor Dooley (2024-04-24 01:42:08)
-> > diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
-> > index 7f3fb2d472f4..710f9c1676f9 100644
-> > --- a/drivers/reset/reset-mpfs.c
-> > +++ b/drivers/reset/reset-mpfs.c
-> > @@ -121,11 +135,15 @@ static int mpfs_reset_probe(struct auxiliary_devi=
-ce *adev,
-> >  {
-> >         struct device *dev =3D &adev->dev;
-> >         struct reset_controller_dev *rcdev;
-> > +       struct mpfs_reset *rst;
-> > =20
-> > -       rcdev =3D devm_kzalloc(dev, sizeof(*rcdev), GFP_KERNEL);
-> > -       if (!rcdev)
-> > +       rst =3D devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
-> > +       if (!rst)
-> >                 return -ENOMEM;
-> > =20
-> > +       rst->base =3D (void __iomem *)adev->dev.platform_data;
->=20
-> Can use dev_get_platdata() here?
->=20
-> 	rst->base =3D (void __iomem *)dev_get_platdata(dev);
->=20
-> That's sad that a cast is necessary. Does it need __force as well? An
-> alternative would be to make a container struct for auxiliary_device and
-> put the pointer there.
+And as this is a fix, will you respin a new version soon for 6.9?
 
+Thanks,
 
-Ye, I dunno if it was sparse that yelled at me, but either it or the
-compiler didn't approve. I don't really like the casting in and out, but
-the alternative I don't find elegant either, so I picked the one I deemed
-simpler. I'm happy to go with whichever you prefer.
+Alex
 
-And re: __force, AFAIU that's only required while discarding the
-__iomem, so the cast into the platform_data has one:
-	adev->dev.platform_data =3D (__force void *)base;
-
-
---rh9OexgCGdhps0bi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZilpOAAKCRB4tDGHoIJi
-0vP+AP9lEnMw5y7fvCuYaADjE2y57zzff3jp+ioyFjTJxoliCgEAyxCg4Pv3Ek/D
-Z4HW5TKPA2SEiWITrZbN9BnGFAfHOwg=
-=uuLw
------END PGP SIGNATURE-----
-
---rh9OexgCGdhps0bi--
