@@ -1,247 +1,122 @@
-Received: from mx08-0063e101.pphosted.com (mx08-0063e101.pphosted.com [185.183.31.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A63216C850;
-	Wed, 24 Apr 2024 16:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.31.155
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713975292; cv=fail; b=YKmQMm2eEXongsG7NFTTM2TN5LsN/BDGygc4afHLLPJQvaBjbDWWCbtceth17t9mT6RihLcqOOGVyH0w1Ahsju6VC1WNFklpboBrjTK24sNDwGjVcvPPloz0auF2rS8UB5Jgf90h2Et3vzw6HcmHPrV1Z6etCFBNwcau/Fj38Mc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713975292; c=relaxed/simple;
-	bh=um7X7I6R3W5e2ZvJwu7oaTwv9hYRvb6SwE06hoQoAxo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=g290xuqdIbFnrYJwmNknRAd3D++YKrxaofC/JJuxhue/pmZL5ju3W5tVchw6+cIjWuWGgF5IsiBSd5GC3rUqyMlis/DsBltFPDYdzqFhSwqh1yHG/1GNkb0kLTmROs2Im5Urjfz/1Ss9V3cuzmg+uV549kk0kKNd4dwUz6q9WV0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blaize.com; spf=pass smtp.mailfrom=blaize.com; dkim=pass (1024-bit key) header.d=BLAIZE.COM header.i=@BLAIZE.COM header.b=bsmSfAPz; arc=fail smtp.client-ip=185.183.31.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blaize.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blaize.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA1A15EFA8;
+	Wed, 24 Apr 2024 16:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713977262; cv=none; b=tUqePdLAeysdUDHzMOqZlNDKTraAW73cASwzpFjp4cSrcNYY5w1RrUFTYFGBcSl2WdTbiq8iBsXpq53zsH1BaL4Db+IH93OuvrvXeov1ksidPm/dNh10lp6FTmNn4Qxj+ANYJHm44NjMh54xxXJzHq3YG2MYur313aGNmg9mXjo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713977262; c=relaxed/simple;
+	bh=W2hSu3Tw2jrGRs62685kwdip1Rqx3/KD21TSZKvKPWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ulrGWX02g1JuvjN3yKDlrxq4xlFiYSm9UyhiQYqm5ZxTpZBM4f7N8Uaks0fE1t/ZB+W6sPFhsAbuNmFMYPnrVUP7bi9GNTPHqfl9ZdQdhWWvSzrqXb0vDKXKe/LYvkAdWiHSTAnC1ktK02qLboeJGsX7rmaiBFfGcRL+J8Uo0Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=rgIlnbQP; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=BLAIZE.COM header.i=@BLAIZE.COM header.b="bsmSfAPz"
-Received: from pps.filterd (m0247494.ppops.net [127.0.0.1])
-	by mx08-0063e101.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43OGEZMH006177;
-	Wed, 24 Apr 2024 17:14:35 +0100
-Received: from pnzpr01cu001.outbound.protection.outlook.com (mail-centralindiaazlp17011004.outbound.protection.outlook.com [40.93.132.4])
-	by mx08-0063e101.pphosted.com (PPS) with ESMTPS id 3xnxsfrsv8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Apr 2024 17:14:34 +0100 (BST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hxHXMC4VFDRFn9S4Vi22nJWd2qPwr9rf6UsukvB/2N4EKSvE9XVzyBdxJy+evis/abrhL2WVIKRT8KGWzWNLw6Fybz+GYHfRfKLjZoP815W2qHvw6k2RUy28MEqzUqwbv6HeVI8ZK+nHqZghoceHRHyIVlemiY5xyjKorHHe5wb0agjKIMpArWJ3852+Serez876TGWYgOgKDNqP7ItjJqo5dAnm1CFzz5puNPDfsEuKX0mbp85WY1tzdW74q8GE22TfbmOBYlyyaZYfleD5Zy+1gXptORzd6eCGtUlX4AtxfdkBTXVNVCi4h4Loz6i2+Iani11WEA1YEW/lcX4jzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LPqTofm5Vd+xibj/g8rjnY5N0e/30coOqin106+tGoQ=;
- b=ehX1dk8RWUPt9/lHfwaYtMhVcfQXhmJDOe66nLGHXSny/nOSt2wA+m4PAN41ICm20SAZrCNCMd8FC5xHmOB2Kn1Mo5LyEtzFsIRnYMoh4L/sJmNJM9wyh18lozBZ7kJun8efsgUiiZsC3Lgm7QbQMc3svflEjq27AG1p72X0CX8991Z8EQbLF+8N9P15E2StIR9cZJrUyM8nnrTo7laKMflJH62lhlDH2uaQrhMbbd8xT0ThCL+sv9S09mKtQhTUYNvdvAGtq62PUFBFFj+BUIIPdlqOO0FjE04EhgljHSGtpohft40p16z/ftwgABDLRCqhZhQY7D+SVhuFpMf0tA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=blaize.com; dmarc=pass action=none header.from=blaize.com;
- dkim=pass header.d=blaize.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=BLAIZE.COM;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LPqTofm5Vd+xibj/g8rjnY5N0e/30coOqin106+tGoQ=;
- b=bsmSfAPzZ+IxdX2K2wcG/GvRsSYBkeuv2hCqmxn/KJwuYniEVU4XV5J35oT+jje4PZA0ZNyFhDonADRKND4S2dZ5BIuvkev9ZadgDapZtCdf3lPbWoNrCiBow94fEzi+eLK6nexGeiOhv6qgRXzKp2Ntei1V6Wq+1W+dPvsgxgY=
-Received: from MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:12a::5)
- by PN0PR01MB7749.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:b5::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Wed, 24 Apr
- 2024 16:14:29 +0000
-Received: from MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::309a:12cf:74a4:5655]) by MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::309a:12cf:74a4:5655%3]) with mapi id 15.20.7472.044; Wed, 24 Apr 2024
- 16:14:28 +0000
-Message-ID: <c11194fb-0449-4b36-adf1-c15d7a66344d@blaize.com>
-Date: Wed, 24 Apr 2024 17:14:18 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] dt-bindings: clock: Add binding constants for
- BLZP1600
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: James Cowgill <james.cowgill@blaize.com>,
-        Matt Redfearn <matthew.redfearn@blaize.com>,
-        Neil Jones <neil.jones@blaize.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <20240424133241.19210-1-nikolaos.pasaloukos@blaize.com>
- <fd4072dc-7cd3-4d13-a15b-d63c675a5994@linaro.org>
-Content-Language: en-GB
-From: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
-In-Reply-To: <fd4072dc-7cd3-4d13-a15b-d63c675a5994@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO0P265CA0003.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:355::12) To MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:12a::5)
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="rgIlnbQP"
+Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id 6A9651F91A;
+	Wed, 24 Apr 2024 18:47:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1713977250;
+	bh=CEyIxy0Pu5MvS9161KdT+XnMhANEJ56b0Hj+87k4Oac=; h=From:To:Subject;
+	b=rgIlnbQPeqqHdzuyHXQ3WE4jCmOjVnzJgOftURdCJxnddar+i3SfncEERDq1GxQ75
+	 GqNrEsEPtIVh5gxeb/V6jhIq9t/ohR17vmJ2vU04BcYWrWY1YnJcgNEL0t/JivefPS
+	 v5tNAE9STFF5xy5GFMD2DebOHrAaOC9rxt4PRGA/CSljkdn2UJPeUZwswIvUbpAU4z
+	 MxTKeuijoCKnOE3AS6+zZ0FClOOHcKy6CpNcKknHrPKTtzmWDUY9+nVX1hAuATgWcB
+	 zeglH+Dul3AzPj7ykrjkw7idf5QCeOIy5f+ocEjd8FqsGmQCdjYSODOSbnKgocBSY/
+	 Tig4Kupqo2Cfg==
+Date: Wed, 24 Apr 2024 18:47:25 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+	shengjiu.wang@gmail.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] clk: imx: imx8mp: Add pm_runtime support for power
+ saving
+Message-ID: <20240424164725.GA18760@francesco-nb>
+References: <1711026842-7268-1-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0PR01MB10184:EE_|PN0PR01MB7749:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46b3cc8a-7d37-4d91-4d57-08dc64799dbc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?UjhsaVVXRmZzOFV6Q2VBbGh0K0poM2JLU21XTzVicjNEZjU2WTQraW1sNjdw?=
- =?utf-8?B?YWlWNm1aYXhqbnd2Q1NwU1RiZ1c5eTVKZFFjY0VaUEhxYzNzWU5oNEpPQUFt?=
- =?utf-8?B?T3pZaW9Ba2VCai83ZlZ3RTV6aXlBK1AwaW9OQWxCRWFYeTNvVVZsWWkvQkpX?=
- =?utf-8?B?Wk91T0hiSEk4ZkNrc0c2NFVEekd0WEpmUDRNR29iSW1UY2VVaytnTnVDSHAx?=
- =?utf-8?B?dVdkVHZ0U2lRRGtwQVRuSENINmVkdUVJNnZCajdzSG94SUlHYUhiWXJrZlVn?=
- =?utf-8?B?ZmxGNmxYL2dRbWZqN2pYaWMzT3R4ejdkZnVod3FnZHkweFBLQVZQclcvdFNQ?=
- =?utf-8?B?TTRpa2RFUGp4QzN0TnlSMU9sZkdERTVxeHlvcmFlc3pYK3VJc2kyNnNYUEJx?=
- =?utf-8?B?anUvalZqVGoxa2pVTUZVK1Y0b3Q0OEhVUThDN1RhckthNDhuaTlwc3hjWTha?=
- =?utf-8?B?eW93UGJBaTV1S2JWc1V1ZjhEbFpXUmh0Mm1tSkpYbjZWdmJoV0R4SlAvd3dZ?=
- =?utf-8?B?RjI4L253c2ZFcE00OFlHYTFOYnlNU0tWS3NxTXJEQm5OY1pqZW9NOHdCWGNJ?=
- =?utf-8?B?QUhkL0dRaGF4ZFBRM1dQZFhtRER2WjNTZXVlSUhkOFhoWUw3cUQ4NGc2Qi85?=
- =?utf-8?B?c0lGZ2ZVYTFVYkQ4L3U0YkR2RDgrRnFuS010TytDZ3E0c3l2UUVWdFNWUGU5?=
- =?utf-8?B?blpBM2xFcC91ekJWTFJiOUhZRTh0Tkh4ZUFnT1dGYlZ2RTcwODd1RDJkYmgv?=
- =?utf-8?B?dGFja1RtZ1JHcXBlRkthNG0rL2pGUDhKT2xVUm1waEkwL05va1EwZUlFa2VS?=
- =?utf-8?B?UVJncXUxTFArNlR6dGVMcDBuN0VhMUhtdTZPWnZsUTRkVFhTRUtnLzZFcHZs?=
- =?utf-8?B?eFVaL2dyWTdjV3lxNVdpMUxLM0xnaWt1anl0MnczamR2bkpVeU5jTEwySWpr?=
- =?utf-8?B?eVBRWWUxUGtUYkdTUWpTSnVXb2loTjFHNDdRMzI2eHlTZDd2aGNwdG1Iejlm?=
- =?utf-8?B?V1NMdTQrZ0NDdVdrY2RDMlB6dENLWW85Zlpyc3Z4eHVyemN3WUYwRXZDOHBm?=
- =?utf-8?B?dXFySEhYUjNtVjdvUEdBamtiNHpkaE5uWFUxT2lIWmpCd1pNNG9nSHNOcWFq?=
- =?utf-8?B?Y29DUElvSnJNcS9DSnZ5cU54VERnWFlzb3pZeHhudE91VlprNlovbU9pMHl0?=
- =?utf-8?B?T0FDR0tZZUxobkgwWkMrSHFmVFpSeXRWeFc0M280YVhxQzBKdVBETm5lYjVF?=
- =?utf-8?B?aHI3ZnRrOEcwWndVcWZNU0RqaGZTU203U1lHMjdPZjg5N1BzSDNzWTkwdXhS?=
- =?utf-8?B?QUIyRzFSbVBxODl1ZWdmY0dIOEJ4bWVBQmp1c011c2tSaStuaG9kMnlMQi9W?=
- =?utf-8?B?SGhZV0NYQWpXUGh2N3RlZW5GdlNpQVFoUUloZlRQekVSaVFYdjVVMkZDL05J?=
- =?utf-8?B?ZUJXRXJWRmlLRm0yb3Z0eFppOFZuZ3JkeFI3SEh0cGp6cUQ1SnZ3c1dnSFcx?=
- =?utf-8?B?Q09WejM5RHpFUFVwU1ZTV1hvd2ltV2lxS0RZY1JyQ3M0YmhpTTFES0JLbi9H?=
- =?utf-8?B?UTFoMXFUY1FzS2VUKzRRUEkvRnU3ejlhZFRxS3JPV0ptRko4UzBCUVE4RUZW?=
- =?utf-8?B?MEU4QmRaT3J4U0NMbjZ1eUJBUGJPVTFnNXpYekw5RzZacTZPWUlTOGFTR2Zo?=
- =?utf-8?B?Njd4dUR2MlJjdHFVVUN2T2k3SnZ5bFBWL2tieGpGelNVbzlZd09KemdBPT0=?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?ZUJYM2s2UnZaNVhrMVprbzgrUWRHRHkzRW9ieEJ5ZDJzWmU2SnNjTzlucVd6?=
- =?utf-8?B?N0pzMll4cWxhSmlFenFXSW55dnluelcvVDk0WHJVQkpWRk5zbzQwRGRsS1Fk?=
- =?utf-8?B?YVd4NTBSbVpFcWFiUnBEWGY0empCZXBiZHZKcWl1aGZPQTA3Nk1UdUN0T1hO?=
- =?utf-8?B?WGNXOGN0YWR2WllVYWcrN3ZHbm9wZExYM3Y0aGwrejBMeld5bnlTNmMwUW9H?=
- =?utf-8?B?ZnhZNmVpcXFUWFVXM1pKL0swY3VFTWtrSC9mU1FGY05UWXRDajNIN240Wk5R?=
- =?utf-8?B?QW0vSk5HdHd4MmQ4NDBiZzJvWmxlK2grdkVsekIzVXBTYUoxVUZnbzgxQXlZ?=
- =?utf-8?B?ZHgwUDk0ZXdxRzRnM3JoSVVkaTVDaTZpU3ZITUU2bi8vL3RMblZxSVRBTFBM?=
- =?utf-8?B?cUNjQmU2dHlXd1puUXpqaGlQdVEzNW9ueWdqZFh4cTA4YVluK0UzUW9TenE1?=
- =?utf-8?B?enVnRDQ2QlBlbS9ITEZUUEZQQTBqbGdEODZVTHRoZER4WEx4ckVCd2ZFNjE3?=
- =?utf-8?B?eDdLenVwZlhHOFRqVTM1Z0ljVDZQSGNaeTZobm1RTGYvSjIyanZUTTlYend0?=
- =?utf-8?B?V1paVzhQTDJRZUlxTTB5aTFITmZHbEx0L2k4WW1RVHU1TkFNQ2xqaGtEOHpY?=
- =?utf-8?B?ekh5QjdUc1NxaXR5N1V5NHdjRHpLTndCbU8yWTR4Qi9NZlplY3k4Ky9Qd1cw?=
- =?utf-8?B?TjkreDJXS2Z0TlZZOTlGSW9mMzJsMzBOc2QyYkhobGRHS0FrM0pZTkpTOEFy?=
- =?utf-8?B?WmVlem42VUhYVXlJelJINTdvbDJYN1ladk1CQW9EYmNYcThLeFIwbEt1S0Fz?=
- =?utf-8?B?d3prOEVHck5mRG12WlA3TmczelZWRmE3QWNzbW5oMVdyZXRGMTdCSVlEMXRq?=
- =?utf-8?B?S1o2c0R5MnhoU3IydHk3R2dNbUZaY2tHQzg5NU1HLzA5dDFNQUR0WUN3WUNl?=
- =?utf-8?B?anVFUmk0ZWdJTi9zN1B0ZkFpUnNYSVhxTEtFWWJCeE9VMmFaRVg5cHIwSU9Z?=
- =?utf-8?B?M1V3a2tUR1hTSVoxMVdTMG5qUlo1UTlxdmZiT0M1aE1mQlRSUjg1eUo1bkdW?=
- =?utf-8?B?UHlhckFkUFVWVllGVzZERlBwM1JPQ2FoSVFLay9MTkpLV3JpbmRLN3pNa2g2?=
- =?utf-8?B?RlhOOE12bHNRRVdTSTNCTlhJRVVDWXBTOTAvL3JDYUNSTC9MV28rc3p4L2o5?=
- =?utf-8?B?ZmIyVUh5R29tb1Y3bkxBWFIxS3NKUHhrM0I3NDZ2YUgwakh1cTM3V0FYV0tV?=
- =?utf-8?B?ZStkSmt0RFlwK3JkM2I2TFNRWWYxeGZLWFVWR3ZTZEpEcTZsdnNUbytLNVI3?=
- =?utf-8?B?OFVmOHdRZ2lmMWdDaytVUWNvd0UvTXA3NTZCZC96R0RNNU03cExZYk1rVjh4?=
- =?utf-8?B?MmVWcUM1eDBNYm9uWnYrdWVjTjlBYjRWZUJwc05OWFNkQ1NHNExudE5xZ3lp?=
- =?utf-8?B?T3NwelZScUZndEtoVWJCSHVUbVRRUE8zNXJCZm5CaGtLQ0VKUytjOWV3T1hz?=
- =?utf-8?B?ODJIV2MxRllUa0VCVHJUQWp6RzYxNUtTSTFyRkhkTVR6eVMwakE4dkdXZU05?=
- =?utf-8?B?ejZ6TnhnK3JVaGdHeGJqWXVWZzhWL0lMMEtEOUR5c2xIeE1JY0hKZW9HdXhy?=
- =?utf-8?B?U1lXODVybG54YU9jVmsvY0dQam5rUm5KV3JpN2NmRFJ3dXBtNXpMRFVRa3Zj?=
- =?utf-8?B?c1RuN2VzZjFlVGNZeXN2aUViYVBHRnZvZ0poWTZIakVlSWc1S3VXdGFNc1JN?=
- =?utf-8?B?MlJ4dXM4Z3JPWlNJbGRxTk5zc1BOQ2tMdXNWQ2RiNzl6d2E3OE0zMDJWSGgx?=
- =?utf-8?B?N2JDUkRSOGsyNXhiZy8vTzFHWndER1oyOU9YTUFnaVd4RGxheDRtWTRiSytC?=
- =?utf-8?B?azRhYm5wRGREbjVxRUROTjVGakp6OG4yWERFUjBsVGd5ekFtQTMvRGlPblh2?=
- =?utf-8?B?VGZnZEtMZFZXNThCdHZIYWdmdE91QmpzNlpWTE50Q0p2RTRXMG50QWpzc1FY?=
- =?utf-8?B?TnZqSEFUdkZCV2hMSGszNllvbG1VWHVlMWc2R3dIejdIcnZpZFdMSEVqcnZr?=
- =?utf-8?B?bkFoK0dRWHpwYXJNaTNoWUhoRUJtVm82VTB4YUtYbm8yQ2JJZ0pYYW9jMGc5?=
- =?utf-8?B?bEVzT1JLZXpZandnbmN1RnNPUTh1akFIV3J6Q1pDVEZseldjYUpjWjdhUDRD?=
- =?utf-8?B?MnlIcFZFY2c1NmxvUzFSSlowdG50OCtqdmFKVW5xaVMrOWd2aFYxdEdQVmNz?=
- =?utf-8?Q?APdWyqmgEjXyaWNGspttO7fJkZSiLm2bvSVJkfpWpg=3D?=
-X-OriginatorOrg: blaize.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46b3cc8a-7d37-4d91-4d57-08dc64799dbc
-X-MS-Exchange-CrossTenant-AuthSource: MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2024 16:14:28.3377
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 9d1c3c89-8615-4064-88a7-bb1a8537c779
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 70EKtsorjoB73ABbQVKkOQis74K0LLRupBomM4trruYmcIRgTr3atM8yFGrH4cFN7jsy7Xsegjtnjta9vtibFQ6C3j/Po54m1JkyFnC0e3c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB7749
-X-Proofpoint-GUID: 2dVSPvehlK-UbKppdgQv9AeWVk7oZ0Mi
-X-Proofpoint-ORIG-GUID: 2dVSPvehlK-UbKppdgQv9AeWVk7oZ0Mi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-24_13,2024-04-24_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
- spamscore=0 bulkscore=0 mlxlogscore=982 malwarescore=0 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2404010002 definitions=main-2404240066
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1711026842-7268-1-git-send-email-shengjiu.wang@nxp.com>
 
-On 24/04/2024 15:13, Krzysztof Kozlowski wrote:
-> On 24/04/2024 15:32, Niko Pasaloukos wrote:
->> Add SCMI clock numbers according to the Blaize BLZP1600
->> SoC hardware specifications.
->>
->> Reviewed-by: James Cowgill <james.cowgill@blaize.com>
->> Reviewed-by: Matt Redfearn <matt.redfearn@blaize.com>
->> Reviewed-by: Neil Jones <neil.jones@blaize.com>
->> Signed-off-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
-> This goes to the patch introducing binding doc.
+On Thu, Mar 21, 2024 at 09:14:02PM +0800, Shengjiu Wang wrote:
+> Add pm_runtime support for power saving. In pm runtime suspend
+> state the registers will be reseted, so add registers save
+> in pm runtime suspend and restore them in pm runtime resume.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-Apologies for the broken threading.
+Is this introducing a regression?
 
->
->> ---
->>  .../dt-bindings/clock/blaize,blzp1600-clk.h   | 77 +++++++++++++++++++
->>  1 file changed, 77 insertions(+)
->>  create mode 100644 include/dt-bindings/clock/blaize,blzp1600-clk.h
->>
->> diff --git a/include/dt-bindings/clock/blaize,blzp1600-clk.h b/include/dt-bindings/clock/blaize,blzp1600-clk.h
->> new file mode 100644
->> index 000000000000..f1d59849a6e5
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/blaize,blzp1600-clk.h
->> @@ -0,0 +1,77 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
->> +/*
->> + * Copyright (C) 2023, Blaize, Inc.
->> + */
->> +
->> +#ifndef DT_BINDING_CLK_BLZP1600_H
->> +#define DT_BINDING_CLK_BLZP1600_H
->> +
->> +/* ARM SCMI clocks */
->> +
->> +/* BLZP1600 clock-gate numbers as defined in the hardware architecture */
->> +
->> +#define BLZP1600_CPU_CLK 0
->> +/* clock-gates 1-6 invalid */
-> No, they cannot be invalid. IDs start from 0 and are incremented by one.
-> If you have holes, it is not a binding.
->
-> Drop the header or use it properly, so as virtual IDs.
->
-> Best regards,
-> Krzysztof
->
-My intention was to avoid using magic numbers on the DeviceTree. That's why I added them here.
-Also, we have some custom drivers which we plan to upload and their schemas need those files.
-The alternative would be to use magic numbers for our clocks and resets.
+  800 13:50:19.713052  <6>[   16.531134] clk: Disabling unused clocks
+  801 13:50:19.727524  <2>[   16.535413] SError Interrupt on CPU2, code 0x00000000bf000002 -- SError
+  802 13:50:19.731400  <4>[   16.535421] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 6.9.0-rc5-next-20240424 #1
+  803 13:50:19.742514  <4>[   16.535428] Hardware name: Toradex Verdin iMX8M Plus on Dahlia Board (DT)
+  804 13:50:19.747157  <4>[   16.535431] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+  805 13:50:19.758468  <4>[   16.535442] pc : clk_imx8mp_audiomix_runtime_resume+0x24/0x48
+  806 13:50:19.759372  <4>[   16.535456] lr : pm_generic_runtime_resume+0x2c/0x44
+  807 13:50:19.759587  <4>[   16.535465] sp : ffff800082b8bb90
+  808 13:50:19.774512  <4>[   16.535468] x29: ffff800082b8bb90 x28: 0000000000000000 x27: 0000000000000000
+  809 13:50:19.775367  <4>[   16.535482] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+  810 13:50:19.790567  <4>[   16.535495] x23: ffff0000c0f7a4e0 x22: ffff0000c26922f8 x21: 0000000000000000
+  811 13:50:19.791308  <4>[   16.535508] x20: ffff0000c2692000 x19: ffff0000c0e30c10 x18: 0000000000000000
+  812 13:50:19.794834  <4>[   16.535521] x17: 000000007e4712cb x16: ffff80008296f800 x15: 0000000000000030
+  813 13:50:19.807341  <4>[   16.535532] x14: ffff0000c00b8080 x13: 00000000000003f9 x12: 0000000000000000
+  814 13:50:19.810740  <4>[   16.535545] x11: 0000000000000000 x10: 0000000000000aa0 x9 : ffff800082b8bb20
+  815 13:50:19.822528  <4>[   16.535559] x8 : ffff0000c00b8b00 x7 : 0000000000000000 x6 : ffff0000c00b8000
+  816 13:50:19.827173  <4>[   16.535570] x5 : ffff8000836b0000 x4 : ffff0000c2f3a488 x3 : ffff8000813660d0
+  817 13:50:19.838446  <4>[   16.535583] x2 : 0000000000000004 x1 : 0000000000000001 x0 : 00000000ff777777
+  818 13:50:19.839321  <0>[   16.535597] Kernel panic - not syncing: Asynchronous SError Interrupt
+  819 13:50:19.839983  Matched prompt #9: Kernel panic - not syncing
+  820 13:50:19.840155  Setting prompt string to ['end Kernel panic[^\\r]*\\r', '/ #', 'Login timed out', 'Login incorrect']
+  821 13:50:19.854524  <4>[   16.535601] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 6.9.0-rc5-next-20240424 #1
+  822 13:50:19.855261  <4>[   16.535609] Hardware name: Toradex Verdin iMX8M Plus on Dahlia Board (DT)
+  823 13:50:19.858660  <4>[   16.535613] Call trace:
+  824 13:50:19.870455  <4>[   16.535616]  dump_backtrace+0x94/0xec
+  825 13:50:19.870763  <4>[   16.535626]  show_stack+0x18/0x24
+  826 13:50:19.871258  <4>[   16.535635]  dump_stack_lvl+0x38/0x90
+  827 13:50:19.874714  <4>[   16.535647]  dump_stack+0x18/0x24
+  828 13:50:19.874964  <4>[   16.535656]  panic+0x388/0x3c8
+  829 13:50:19.886551  <4>[   16.535667]  nmi_panic+0x48/0x94
+  830 13:50:19.888318  <4>[   16.535679]  arm64_serror_panic+0x6c/0x78
+  831 13:50:19.888531  <4>[   16.535688]  do_serror+0x3c/0x78
+  832 13:50:19.892592  <4>[   16.535693]  el1h_64_error_handler+0x30/0x48
+  833 13:50:19.902540  <4>[   16.535703]  el1h_64_error+0x64/0x68
+  834 13:50:19.903437  <4>[   16.535709]  clk_imx8mp_audiomix_runtime_resume+0x24/0x48
+  835 13:50:19.907712  <4>[   16.535719]  __genpd_runtime_resume+0x30/0xa8
+  836 13:50:19.918505  <4>[   16.535729]  genpd_runtime_resume+0xb4/0x29c
+  837 13:50:19.918770  <4>[   16.535741]  __rpm_callback+0x48/0x198
+  838 13:50:19.919372  <4>[   16.535749]  rpm_callback+0x68/0x74
+  839 13:50:19.922715  <4>[   16.535754]  rpm_resume+0x3cc/0x680
+  840 13:50:19.934495  <4>[   16.535762]  __pm_runtime_resume+0x4c/0x90
+  841 13:50:19.934784  <4>[   16.535769]  clk_pm_runtime_get_all+0x58/0x164
+  842 13:50:19.935344  <4>[   16.535780]  clk_disable_unused+0x2c/0x178
+  843 13:50:19.938873  <4>[   16.535793]  do_one_initcall+0x6c/0x1b0
+  844 13:50:19.950539  <4>[   16.535799]  kernel_init_freeable+0x1c8/0x290
+  845 13:50:19.951360  <4>[   16.535812]  kernel_init+0x20/0x1dc
+  846 13:50:19.951585  <4>[   16.535821]  ret_from_fork+0x10/0x20
+  847 13:50:19.954803  <2>[   16.535831] SMP: stopping secondary CPUs
+  848 13:50:19.966688  <0>[   16.535838] Kernel Offset: disabled
+  849 13:50:19.967221  <0>[   16.535841] CPU features: 0x0,00000040,00100000,4200421b
+  850 13:50:19.967360  <0>[   16.535845] Memory Limit: none
+  851 13:50:19.985117  <0>[   16.788060] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
 
-In the commit message and on the header file I have mentioned that these are numbers matching
-the hardware specification (1 to 1) of the chip not just enums.
-Some IDs are invalid because of a hardware gap, some others are invalid because the SCMI
-service will return an error that the number is invalid.
+from
 
-Is there another way to prevent the magic numbers in the schemas and device-tree.
+https://storage.kernelci.org/next/master/next-20240424/arm64/defconfig/gcc-10/lab-broonie/baseline-imx8mp-verdin-nonwifi-dahlia.html
+https://lore.kernel.org/all/66293535.170a0220.21fe.a2e7@mx.google.com/
 
-Thank you very much for your fast and detailed review.
-
-Best regards,
-Niko
+Francesco
 
