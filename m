@@ -1,203 +1,91 @@
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDA4156980;
-	Wed, 24 Apr 2024 20:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1020215698B;
+	Wed, 24 Apr 2024 21:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713991002; cv=none; b=qOTtIa28uCPHO47i6oL+4fqaIR2JhMIVh0At4KQzTc5NIL3A8yNb9WhqyH+xeQCGPYyknTdFeYgS4LL7DAgUOpzlO/JgOOUaBawSItwc6gQuR3gcv2p8RiqfbaqNpOlLqJ3VR8YK+B9+5oEyhVzBFcuSj8C/wSuIxJDWVR6BZEw=
+	t=1713992987; cv=none; b=gEPHiF91JUe+vR5phP3eCvxLF7t4HyPe0o+/DyvE6q0hgKSEZTVobbhRrW1RrEzGTw1423xWvcMwXc10M+e0Q2WDLL3Um59xcYzfoI1QZzdLEptpe5uU+9U1dCgyYNE/K9DVtTtbQUEnV0ZsuNRUIabBnbjSb9sj6DSR0Wk+qFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713991002; c=relaxed/simple;
-	bh=iE/aOTkm5GFgW6rUQa/cTtUxCp9GrClD0okLp90ayCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BY9tG9UCdwUB2K/YBUZP6Lr7KZu4Bvjj0dESQ5fgsjeuR+JbTa/+d8CBgATEcqWwLRY7/3WBKi/9w3du1Azmpguw8qp//QioIcWZu+Eeo6OXgOzLqfm+mQYVz6RteOL4IneKWrKe99EK5wuuXTErhPkg2D9uGT4eI/LNuncSoI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EB5B8240004;
-	Wed, 24 Apr 2024 20:36:36 +0000 (UTC)
-Message-ID: <44f0a98e-c804-4c81-96c9-70c9203b8fc9@ghiti.fr>
-Date: Wed, 24 Apr 2024 22:36:36 +0200
+	s=arc-20240116; t=1713992987; c=relaxed/simple;
+	bh=7D4fUL5psJBJkbBj2WQ9TWfJZkuflavBhvgCZyPDfYM=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=RGtmuj5f/11Ncs4rVYUlQvRURHkG41be3YCQQYdiYynDGmUE3uJr1C1nuQz4gyI0Ley/2FPRsHx1/WpO8Zn7nCyQxTME+jgwWBGBXvCPDKK0lofCkHsG+No/iYZe7E4Eo0jFKeFL8yis2ps5RehspCUWTFEiw9aZ3LBWvRJQrgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Un/WangW; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Un/WangW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8759AC113CD;
+	Wed, 24 Apr 2024 21:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713992986;
+	bh=7D4fUL5psJBJkbBj2WQ9TWfJZkuflavBhvgCZyPDfYM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=Un/WangW4AqJvJVc9j+Woei1x5ZF7h6C4RRF1HE/47sduzAIddua6R9tWpcTkUhdN
+	 QCi2FMMbNZTRpM2rkUUr270oAotl/sXOI1pzu4M/QmNTKQ97wGkd759pXqSidCR9xS
+	 cP42IQUElaX2lHspIGcSREFb1ip1rb0L80UKBv4vwXltLbORLdor8+PKKCFJhFeE7w
+	 vnOVJUiISBUpxI4wL4AK+8zwEcNNHrFoIqBNbzQfHMnY63FIrT0k3gDkFBntwjOe71
+	 pWHI54a8uLEsZfrkVyknxo2z4FJsBmPDo7zfZZ3c5Hls80O4bYMqoE0e4UK0JmJTOV
+	 ogvm10FnwVhiw==
+Message-ID: <46c9baab4b3a834c27949b99668a9c30.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] clk: starfive: jh7100: Use clk_hw for external input
- clocks
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
- <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Conor Dooley <conor.dooley@microchip.com>,
- Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, Samuel Holland <samuel.holland@sifive.com>
-References: <2082b46ab08755b1b66e0630a61619acac9d883f.1711714613.git.geert@linux-m68k.org>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <2082b46ab08755b1b66e0630a61619acac9d883f.1711714613.git.geert@linux-m68k.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240424-glazing-handsaw-4c303fef4f7e@spud>
+References: <20240424-strangle-sharpener-34755c5e6e3e@spud> <722f31da34e5e1cfef05fb966f6c8c96.sboyd@kernel.org> <20240424-glazing-handsaw-4c303fef4f7e@spud>
+Subject: Re: [PATCH v2] clock, reset: microchip: move all mpfs reset code to the reset subsystem
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-riscv@lists.infradead.org, Conor Dooley <conor.dooley@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>, Daire McNamara <daire.mcnamara@microchip.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Conor Dooley <conor@kernel.org>
+Date: Wed, 24 Apr 2024 14:09:44 -0700
+User-Agent: alot/0.10
 
-Hi Geert,
+Quoting Conor Dooley (2024-04-24 13:19:04)
+> On Wed, Apr 24, 2024 at 11:33:32AM -0700, Stephen Boyd wrote:
+> > Quoting Conor Dooley (2024-04-24 01:42:08)
+> > > diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+> > > index 7f3fb2d472f4..710f9c1676f9 100644
+> > > --- a/drivers/reset/reset-mpfs.c
+> > > +++ b/drivers/reset/reset-mpfs.c
+> > > @@ -121,11 +135,15 @@ static int mpfs_reset_probe(struct auxiliary_de=
+vice *adev,
+> > >  {
+> > >         struct device *dev =3D &adev->dev;
+> > >         struct reset_controller_dev *rcdev;
+> > > +       struct mpfs_reset *rst;
+> > > =20
+> > > -       rcdev =3D devm_kzalloc(dev, sizeof(*rcdev), GFP_KERNEL);
+> > > -       if (!rcdev)
+> > > +       rst =3D devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
+> > > +       if (!rst)
+> > >                 return -ENOMEM;
+> > > =20
+> > > +       rst->base =3D (void __iomem *)adev->dev.platform_data;
+> >=20
+> > Can use dev_get_platdata() here?
+> >=20
+> >       rst->base =3D (void __iomem *)dev_get_platdata(dev);
+> >=20
+> > That's sad that a cast is necessary. Does it need __force as well? An
+> > alternative would be to make a container struct for auxiliary_device and
+> > put the pointer there.
+>=20
+>=20
+> Ye, I dunno if it was sparse that yelled at me, but either it or the
+> compiler didn't approve. I don't really like the casting in and out, but
+> the alternative I don't find elegant either, so I picked the one I deemed
+> simpler. I'm happy to go with whichever you prefer.
 
-On 29/03/2024 13:16, Geert Uytterhoeven wrote:
-> The Starfive JH7100 clock driver does not use the DT "clocks" property
-> to find the external main input clock, but instead relies on the name of
-> the actual clock provider ("osc_sys").  This is fragile, and caused
-> breakage when sanitizing clock node names in DTS.
->
-> Fix this by obtaining the external main input clock using
-> devm_clk_get(), and passing the returned clk_hw object to
-> devm_clk_hw_register_fixed_factor_parent_hw().
->
-> While name-based look-up of the other external input clocks works as-is,
-> convert them to a similar clk_hw-based scheme to increase uniformity,
-> and to decrease the number of (multiple identical) name-based look-ups.
->
-> Fixes: f03606470886 ("riscv: dts: starfive: replace underscores in node names")
-> Fixes: 4210be668a09ee20 ("clk: starfive: Add JH7100 clock generator driver")
+I don't really care. Am I supposed to pick this patch up?
 
+>=20
+> And re: __force, AFAIU that's only required while discarding the
+> __iomem, so the cast into the platform_data has one:
+>         adev->dev.platform_data =3D (__force void *)base;
+>=20
 
-This sha1 is too long.
-
-
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
-> After this is applied, the workaround in commit 7921e231f85a349d
-> ("riscv: dts: starfive: jh7100: fix root clock names") can be reverted.
->
-> v3:
->    - Add Reviewed-by,
->    - Make jh7100_ext_clk[] const/__initconst,
->    - Add "(multiple identical)".
->
-> v2:
->    - Use devm_clk_hw_register_fixed_factor_parent_hw(),
->    - Drop no longer needed local osc_sys name.
-> ---
->   drivers/clk/starfive/clk-starfive-jh7100.c | 48 ++++++++++++++--------
->   drivers/clk/starfive/clk-starfive-jh71x0.h |  1 +
->   2 files changed, 32 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7100.c b/drivers/clk/starfive/clk-starfive-jh7100.c
-> index 0342db24c27e10df..bdff207aa1f766e6 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh7100.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh7100.c
-> @@ -7,6 +7,7 @@
->    * Copyright (C) 2021 Emil Renner Berthing <kernel@esmil.dk>
->    */
->   
-> +#include <linux/clk.h>
->   #include <linux/clk-provider.h>
->   #include <linux/device.h>
->   #include <linux/init.h>
-> @@ -18,10 +19,18 @@
->   #include "clk-starfive-jh71x0.h"
->   
->   /* external clocks */
-> -#define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + 0)
-> -#define JH7100_CLK_OSC_AUD		(JH7100_CLK_END + 1)
-> -#define JH7100_CLK_GMAC_RMII_REF	(JH7100_CLK_END + 2)
-> -#define JH7100_CLK_GMAC_GR_MII_RX	(JH7100_CLK_END + 3)
-> +enum {
-> +	EXT_CLK_OSC_SYS,
-> +	EXT_CLK_OSC_AUD,
-> +	EXT_CLK_GMAC_RMII_REF,
-> +	EXT_CLK_GMAC_GR_MII_RX,
-> +	EXT_NUM_CLKS
-> +};
-> +
-> +#define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + EXT_CLK_OSC_SYS)
-> +#define JH7100_CLK_OSC_AUD		(JH7100_CLK_END + EXT_CLK_OSC_AUD)
-> +#define JH7100_CLK_GMAC_RMII_REF	(JH7100_CLK_END + EXT_CLK_GMAC_RMII_REF)
-> +#define JH7100_CLK_GMAC_GR_MII_RX	(JH7100_CLK_END + EXT_CLK_GMAC_GR_MII_RX)
->   
->   static const struct jh71x0_clk_data jh7100_clk_data[] __initconst = {
->   	JH71X0__MUX(JH7100_CLK_CPUNDBUS_ROOT, "cpundbus_root", 0, 4,
-> @@ -284,8 +293,11 @@ static struct clk_hw *jh7100_clk_get(struct of_phandle_args *clkspec, void *data
->   
->   static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
->   {
-> +	static const char * const jh7100_ext_clk[EXT_NUM_CLKS] __initconst =
-> +		{ "osc_sys", "osc_aud", "gmac_rmii_ref", "gmac_gr_mii_rxclk" };
->   	struct jh71x0_clk_priv *priv;
->   	unsigned int idx;
-> +	struct clk *clk;
->   	int ret;
->   
->   	priv = devm_kzalloc(&pdev->dev, struct_size(priv, reg, JH7100_CLK_PLL0_OUT), GFP_KERNEL);
-> @@ -298,13 +310,21 @@ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
->   	if (IS_ERR(priv->base))
->   		return PTR_ERR(priv->base);
->   
-> -	priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
-> -							 "osc_sys", 0, 40, 1);
-> +	for (idx = 0; idx < EXT_NUM_CLKS; idx++) {
-> +		clk = devm_clk_get(&pdev->dev, jh7100_ext_clk[idx]);
-> +		if (IS_ERR(clk))
-> +			return PTR_ERR(clk);
-> +
-> +		priv->ext[idx] = __clk_get_hw(clk);
-> +	}
-> +
-> +	priv->pll[0] = devm_clk_hw_register_fixed_factor_parent_hw(priv->dev,
-> +			"pll0_out", priv->ext[EXT_CLK_OSC_SYS], 0, 40, 1);
->   	if (IS_ERR(priv->pll[0]))
->   		return PTR_ERR(priv->pll[0]);
->   
-> -	priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
-> -							 "osc_sys", 0, 64, 1);
-> +	priv->pll[1] = devm_clk_hw_register_fixed_factor_parent_hw(priv->dev,
-> +			"pll1_out", priv->ext[EXT_CLK_OSC_SYS], 0, 64, 1);
->   	if (IS_ERR(priv->pll[1]))
->   		return PTR_ERR(priv->pll[1]);
->   
-> @@ -331,16 +351,10 @@ static int __init clk_starfive_jh7100_probe(struct platform_device *pdev)
->   
->   			if (pidx < JH7100_CLK_PLL0_OUT)
->   				parents[i].hw = &priv->reg[pidx].hw;
-> -			else if (pidx < JH7100_CLK_END)
-> +			else if (pidx < JH7100_CLK_OSC_SYS)
->   				parents[i].hw = priv->pll[pidx - JH7100_CLK_PLL0_OUT];
-> -			else if (pidx == JH7100_CLK_OSC_SYS)
-> -				parents[i].fw_name = "osc_sys";
-> -			else if (pidx == JH7100_CLK_OSC_AUD)
-> -				parents[i].fw_name = "osc_aud";
-> -			else if (pidx == JH7100_CLK_GMAC_RMII_REF)
-> -				parents[i].fw_name = "gmac_rmii_ref";
-> -			else if (pidx == JH7100_CLK_GMAC_GR_MII_RX)
-> -				parents[i].fw_name = "gmac_gr_mii_rxclk";
-> +			else if (pidx <= JH7100_CLK_GMAC_GR_MII_RX)
-> +				parents[i].hw = priv->ext[pidx - JH7100_CLK_OSC_SYS];
->   		}
->   
->   		clk->hw.init = &init;
-> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
-> index 23e052fc15495c41..4f46939179cd7418 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh71x0.h
-> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
-> @@ -115,6 +115,7 @@ struct jh71x0_clk_priv {
->   	struct device *dev;
->   	void __iomem *base;
->   	struct clk_hw *pll[3];
-> +	struct clk_hw *ext[4];
->   	struct jh71x0_clk reg[];
->   };
->   
-
-
-This sounds like a good fix for 6.9, will you respin a new version soon 
-taking into account Stephen comment?
-
-Thanks,
-
-Alex
-
+Ah, ok. Thanks for the remind.
