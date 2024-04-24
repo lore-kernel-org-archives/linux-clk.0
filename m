@@ -1,119 +1,114 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9632C84F;
-	Wed, 24 Apr 2024 18:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEB45C614;
+	Wed, 24 Apr 2024 19:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713984158; cv=none; b=o2H6xrSOAiMP/0vfD1YbuHfZnkReoJUkxBGxuZomzTFNb4rFz8JG62jgBqaUS0163YFdlHNRFpx3hqBE5qXkuPdDZ1haLZCflZZ7ZfuTTAsTxLikUmqXJJsEKEmadlvTqm4xzsTVxQTYr+qZ8sEx05TQ9Wt3GWEyXqtRXkGhvyA=
+	t=1713987532; cv=none; b=oarMoAgwV23NgGvtvqgfOEfJO5LGrnBxKNVespPeVHfKqEBRHRAvONNlzm5khpnugxPnurG4eNL+pzmPv38kzlmSwxfbmbNkm20cCs9r2hP/CxRI0b6sFuMqQ67pMoE4DP0yy+E5797X6kFS9ts1xgOEbyMxTKAWazcUhanDw94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713984158; c=relaxed/simple;
-	bh=CP8WfTDyvgYNfa6AxhA6VjlMigbLNYOvffOz1XRpFWw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YXn+apzEPccx/UWS2H+IMKjEfukV4kNfINJn1gXzMbJIp3SnoS1wBQVC2E/ervNbqGkYOuyug1ldL39ekUpNAdT9A6JqklvI2HQ49bzacZSdn8VglxhXuxpAsT6S6UyFTwkASBz/nzzBcef0wVQqyRNGy20MKPvfX6r3b/0dKAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEgXKmyM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713987532; c=relaxed/simple;
+	bh=l0ilri84SmnD9pNOTOslUkyhEiFOgPWIkUlWnz4KH2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UEKQ2vooWw4BHcrmOgrJtUW05GWLJ1GM6u7NDL+fqk8YOS81hiBoPLJ2kVPYW4ClMS38ylrVdRekZ0h3Pdxm7QSlTDXWg6F5n7oFzi6cJZDmwjzHuIjqdiRnF76Brea7F0WAE3BiFduOB5RGUwVcu+ko2QD8GTztFQSrw54XOQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/sXKpHW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEgXKmyM"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9CEDFC4AF0A;
-	Wed, 24 Apr 2024 18:42:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/sXKpHW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 835D0C113CD;
+	Wed, 24 Apr 2024 19:38:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713984157;
-	bh=CP8WfTDyvgYNfa6AxhA6VjlMigbLNYOvffOz1XRpFWw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=vEgXKmyMlfjzGjfZToH0m5KMt4CE3/1hWUDo/8wdSxv/gHJpCkYuWL82iQEx5g3EW
-	 rtZLPgGUnWWGVu7jRx7X87rJDemytYjWHNAuZIDTg1TJ3intp+YgdYes12lQ8luDfB
-	 AI9fqc807HDcN+jFnRmCwVl9oMuYQGApq581ZXEmsCZ0fPBBjoAgEB3xETOW4R2vG5
-	 PNcepVs32s7tkB55bB62BcOgsCf+xkkj2OKOu09sCbJB8CkylT4CEgJDsUREz0tusu
-	 mqOpu3sqGjvRGorbOzrNxZBAtmYnkThfKu5SV7Uyh1kvWa7HWabFdeVahy1IMy0PKZ
-	 48ufA4lp1g3ow==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D430C4345F;
-	Wed, 24 Apr 2024 18:42:37 +0000 (UTC)
-From: =?utf-8?q?Duje_Mihanovi=C4=87_via_B4_Relay?= <devnull+duje.mihanovic.skole.hr@kernel.org>
-Date: Wed, 24 Apr 2024 20:42:39 +0200
-Subject: [PATCH v10 12/12] MAINTAINERS: add myself as Marvell PXA1908
- maintainer
+	s=k20201202; t=1713987531;
+	bh=l0ilri84SmnD9pNOTOslUkyhEiFOgPWIkUlWnz4KH2A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h/sXKpHWJlhlrcZk/Go6u/OG56s7UwL9BOt8s4r+0/LHTG6O46Bg8fAH5R1z4XkO5
+	 vIYWXRuuRcWeIA9MHiei9FN9QdrjgrP9DOI0W6GssiEnLgkNWOWYG8wjPooaXgTSob
+	 wgRzyJ9rTWKpSYX5AP3NTfsPqctXDgQVUaZME0RNxrj0oi8Mo+w6YFe+RuFSztioNK
+	 mMPvSohYCtwx7+7kuTA7t5cYQBRGQz+fqumYQh/hqjcH/Dd6CByLZJ2OMWrQX3eTJO
+	 xgbQehwHmby0fcpaupCAosIyM+F4Hmmu0hwGgPV/vPF74P1Aya8CquZzfqgmIFCRTs
+	 jbgW3ZJE85OVA==
+Date: Wed, 24 Apr 2024 14:38:49 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
+	Will McVicker <willmcvicker@google.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: google,gs101-clock: add HSI0
+ clock management unit
+Message-ID: <171398751251.350681.17049753493384943747.robh@kernel.org>
+References: <20240423-hsi0-gs101-v1-0-2c3ddb50c720@linaro.org>
+ <20240423-hsi0-gs101-v1-1-2c3ddb50c720@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240424-pxa1908-lkml-v10-12-36cdfb5841f9@skole.hr>
-References: <20240424-pxa1908-lkml-v10-0-36cdfb5841f9@skole.hr>
-In-Reply-To: <20240424-pxa1908-lkml-v10-0-36cdfb5841f9@skole.hr>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, 
- Haojian Zhuang <haojian.zhuang@linaro.org>, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
- Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Kees Cook <keescook@chromium.org>, 
- Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, Rob Herring <robh@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=906;
- i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=IAO2s2H9eu3z+8543Qj+Twu7btrO5EN1Y9FniKrdIpI=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBmKVKVE2n5S7pMEvJ2dz5c5NHiJUcq66HbNB47N
- dzaKjRup7+JAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZilSlQAKCRCaEZ6wQi2W
- 4WZCD/0e6BPwFLQgizdDY83IxSn9oXdBBmvVOC8UrCDlq+RZqV20ZPSC/Fwa2WvlgS3KujswLP4
- Ic9DKe9rZkIIUzr+QzaL3Z94bgSVXDxfs2W/rHMRlD2v/EH/A5k6ciR5cou9lcRkl68SYwevmVj
- qzaxs5gh5OG27pKWbunNHSHMhmDWhbawbWz5KFEfkcYe4FcsaYqigw3JPpiKVFGGNfKJ5w0x/xb
- pyDhPqrE96Irc77j37PGHeNJhmHX6dPgnEP7w997pE0d3kwNwlfW7IC2huzz+WHiZBq1p5lZcpA
- bwqEbB65dA7F6PhfErDC8Ohp3jWgvDDEU2z2OVEBL7fX3MLC0W1s0QrVm8xhEPKDwrh3GnrJPBO
- q79TUoZZTAD1oryVw/CBdRbl1ee1nGRxNWdByJekEBSWDYkGXk7qeqorzBQYFEP/uHEbn0Ck5EW
- HlPjUn4MOdn184Ngh4Y/hYwkXH11GQo7jgysCLviH0RVOi/SZwxh9Hlzv2uxMZ7j82JCxtDAdN3
- ph7B+fWWz9WM6+jC40qrOWsPSPj75Z8Z9tIuykacvdZasIdGRN9M9WDrqyZCcR9Qz3pp8ME2faJ
- jCU3+2ERgJOpCD0Nmp4IzLZqa7cLY4i6KACiJ5e0dg36zY+Ley0m9nxNBUS3g+HhOwgHi+5Vb24
- r9I3U9sMvziOoyA==
-X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
- fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
-X-Endpoint-Received: by B4 Relay for duje.mihanovic@skole.hr/default with
- auth_id=112
-X-Original-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Reply-To: duje.mihanovic@skole.hr
+In-Reply-To: <20240423-hsi0-gs101-v1-1-2c3ddb50c720@linaro.org>
 
-From: Duje MihanoviÄ‡ <duje.mihanovic@skole.hr>
 
-Add myself as the maintainer for Marvell PXA1908 SoC support.
+On Tue, 23 Apr 2024 15:31:03 +0100, André Draszik wrote:
+> Add dt-schema documentation and clock IDs for the high speed interface
+> 0 HSI0 clock management unit. This is used (amongst others) for USB.
+> 
+> While the usual (sed) script has been used to derive the linux clock
+> IDs from the data sheet, one manual tweak was applied to fix a typo
+> which we don't want to carry:
+>     HSI0_USPDPDBG_USER -> HSI0_USBDPDBG_USER (note USB vs USP).
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> 
+> ---
+> Note for future reference: To ensure consistent naming throughout this
+> driver, the IDs have been derived from the data sheet using the
+> following, with the expectation for all future additions to this file
+> to use the same:
+>     sed \
+>         -e 's|^PLL_LOCKTIME_PLL_\([^_]\+\)|CLK_FOUT_\1_PLL|' \
+>         \
+>         -e 's|^PLL_CON0_MUX_CLKCMU_\([^_]\+\)_|CLK_MOUT_\1_|' \
+>         -e 's|^PLL_CON0_PLL_\(.*\)|CLK_MOUT_PLL_\1|' \
+>         -e 's|^CLK_CON_MUX_MUX_CLK_\(.*\)|CLK_MOUT_\1|' \
+>         -e '/^PLL_CON[1-4]_[^_]\+_/d' \
+>         -e '/^[^_]\+_CMU_[^_]\+_CONTROLLER_OPTION/d' \
+>         -e '/^CLKOUT_CON_BLK_[^_]\+_CMU_[^_]\+_CLKOUT0/d' \
+>         \
+>         -e 's|_IPCLKPORT||' \
+>         -e 's|_RSTNSYNC||' \
+>         -e 's|_G4X2_DWC_PCIE_CTL||' \
+>         -e 's|_G4X1_DWC_PCIE_CTL||' \
+>         -e 's|_PCIE_SUB_CTRL||' \
+>         -e 's|_INST_0||g' \
+>         -e 's|_LN05LPE||' \
+>         -e 's|_TM_WRAPPER||' \
+>         -e 's|_SF||' \
+>         \
+>         -e 's|^CLK_CON_DIV_DIV_CLK_\([^_]\+\)_|CLK_DOUT_\1_|' \
+>         \
+>         -e 's|^CLK_CON_BUF_CLKBUF_\([^_]\+\)_|CLK_GOUT_\1_|' \
+>         -e 's|^CLK_CON_GAT_CLK_BLK_\([^_]\+\)_UID_|CLK_GOUT_\1_|' \
+>         -e 's|^CLK_GOUT_[^_]\+_[^_]\+_CMU_\([^_]\+\)_PCLK$|CLK_GOUT_\1_PCLK|' \
+>         -e 's|^CLK_CON_GAT_GOUT_BLK_\([^_]\+\)_UID_|CLK_GOUT_\1_|' \
+>         -e 's|^CLK_CON_GAT_CLK_\([^_]\+\)_\(.*\)|CLK_GOUT_\1_CLK_\1_\2|' \
+>         \
+>         -e '/^\(DMYQCH\|PCH\|QCH\|QUEUE\)_/d'
+> ---
+>  .../bindings/clock/google,gs101-clock.yaml         | 29 +++++++++++-
+>  include/dt-bindings/clock/google,gs101.h           | 54 ++++++++++++++++++++++
+>  2 files changed, 81 insertions(+), 2 deletions(-)
+> 
 
-Signed-off-by: Duje MihanoviÄ‡ <duje.mihanovic@skole.hr>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ebf03f5f0619..5d48ac9801df 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2370,6 +2370,15 @@ F:	drivers/irqchip/irq-mvebu-*
- F:	drivers/pinctrl/mvebu/
- F:	drivers/rtc/rtc-armada38x.c
- 
-+ARM/Marvell PXA1908 SOC support
-+M:	Duje MihanoviÄ‡ <duje.mihanovic@skole.hr>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+T:	git https://gitlab.com/LegoLivesMatter/linux
-+F:	arch/arm64/boot/dts/marvell/pxa1908*
-+F:	drivers/clk/mmp/clk-pxa1908*.c
-+F:	include/dt-bindings/clock/marvell,pxa1908.h
-+
- ARM/Mediatek RTC DRIVER
- M:	Eddie Huang <eddie.huang@mediatek.com>
- M:	Sean Wang <sean.wang@mediatek.com>
-
--- 
-2.44.0
-
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
