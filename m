@@ -1,90 +1,394 @@
-Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB93115667D;
-	Wed, 24 Apr 2024 05:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48532158A17;
+	Wed, 24 Apr 2024 08:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713936329; cv=none; b=nWaQX4mmyNUdrGvT/XbO9kKBrEGim7abehxPJGPTsXa7pNxrtBgNTx3Gkf6phzpI403TzV/tRt+IU2LyakAbbFXm8KpIabD/+bPupASWfcZwUYCH+kn89URaKpAWkFZE9O5l3EJ1nlIhvsvXhhYTJj0DxrLN8eb3ejRZEKDEHek=
+	t=1713948167; cv=none; b=p3+O81rrBVV4Vd1dMI28Z7SCsoiCzU2exbxdJON+9hmoLRgZHtA4KJfx+S09KSNJMQC4+Iqg9HTM66fVvohEgcddNtYa2/3KB6HNViYchAU7Y5+JOzfQzD3vsSCMCIVKQtE+vhXWcXsMIGDeMBXjMHEbfwaAHxeT0MZY8Xx0V4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713936329; c=relaxed/simple;
-	bh=05nmHjt4r97hG8IWDOtrSLrwZeYBw5n/UUbKN//D6YA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WJvcvz3acHjZnmR+FE9nYvsXQxasiTvfR+ELcjxjtOGIXaHlJyt1fXAqZEH9tg2ggUxmwg3XSwhncvB6wW/0ER6dkeyZkopYwIqXz0C7Crv4rkIh46X9HGtgaxE49lstc5XE+gMXqd0PTOFY7Kp/82lyhkPkPOvvAHzRd0yMv70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-Received: from droid01-cd.amlogic.com (10.98.11.200) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.6; Wed, 24 Apr 2024
- 13:10:18 +0800
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-To: <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
-	<jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>, Xianwei Zhao <xianwei.zhao@amlogic.com>,
-	Chuan Liu <chuan.liu@amlogic.com>
-Subject: [PATCH v7 2/5] dt-bindings: clock: add Amlogic C3 SCMI clock controller support
-Date: Wed, 24 Apr 2024 13:09:25 +0800
-Message-ID: <20240424050928.1997820-3-xianwei.zhao@amlogic.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20240424050928.1997820-1-xianwei.zhao@amlogic.com>
-References: <20240424050928.1997820-1-xianwei.zhao@amlogic.com>
+	s=arc-20240116; t=1713948167; c=relaxed/simple;
+	bh=4GYxImsQgTOVlF8S/P2KweveRxPdNTsavuwjeBXjlmg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cn/NTZLpI4+Nsxv5YJGkbLJPmGAf3m7+FnU/TcPOEGaL0qHsxGQpJ53JugRKqF5jeiQJ6deFhahBrR80/VdTK1gZ+rml+yEtlMvuAa/7A3Ki4iR4sfQh2vpGsezFN9yMtHgyV/OjinySYpE9JOOpsRandKaew5OiBWAygNytRwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpiZnCd3; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpiZnCd3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3A14C32783;
+	Wed, 24 Apr 2024 08:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713948166;
+	bh=4GYxImsQgTOVlF8S/P2KweveRxPdNTsavuwjeBXjlmg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rpiZnCd3ITKvtkxCe0slk6Qn2xpDI4jYokvPyxNlY3RB1PNXiT2JL8GEW1+mF1tCR
+	 xEjhxkToQydBRR6/U87FXzivKuiST837IPins8XJhRC2CR9WSE9kLiCNVuLsxgh1uT
+	 ccAvhnqESDLIHMH5totcQE1JlsQjPrMFA7Ozya4pCHnjs1eYfVzXi63Efxn2y6tD/j
+	 AD6NmevTpgYY1g5hN4XcOXsB92juSaq/LUGPklnWCXuof9xEWds4Op+c5wRrnidLGx
+	 j4kQ7iOt4qY8oVZHiNfc9i/3d5ihGlk9/rGnIIb5qEkAcpI9tjGuCr9h2VX6OEAGbn
+	 NHyb35g1dBqxQ==
+From: Conor Dooley <conor@kernel.org>
+To: linux-riscv@lists.infradead.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clock, reset: microchip: move all mpfs reset code to the reset subsystem
+Date: Wed, 24 Apr 2024 09:42:08 +0100
+Message-ID: <20240424-strangle-sharpener-34755c5e6e3e@spud>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9895; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=Gl1coozPn1QLyeBR+SCw1RA+OgCrFKm9kyPzahrpikM=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGkaRx/crPuzW8Xq1QPnOqbCF3WSL2LCVl3IbRNjDJ+10 YfN83B/RykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACaiPp+RYaPed0XtoJRT+rJd IlxrdrdNUuZxcJkcqb4+sGK70HQhZYb/sXIZJXyvHhkePjZv71+Bkytcm1Zu65Z+rcHg7iukeXU uDwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add the SCMI clock controller dt-bindings for Amlogic C3 SoC family
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Co-developed-by: Chuan Liu <chuan.liu@amlogic.com>
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Stephen and Philipp, while reviewing patches, said that all of the aux
+device creation and the register read/write code could be moved to the
+reset subsystem, leaving the clock driver with no implementations of
+reset_* functions at all. Move them.
+
+Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- .../dt-bindings/clock/amlogic,c3-scmi-clkc.h  | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 include/dt-bindings/clock/amlogic,c3-scmi-clkc.h
 
-diff --git a/include/dt-bindings/clock/amlogic,c3-scmi-clkc.h b/include/dt-bindings/clock/amlogic,c3-scmi-clkc.h
-new file mode 100644
-index 000000000000..663c9b349275
---- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,c3-scmi-clkc.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-+/*
-+ * Copyright (c) 2023 Amlogic, Inc. All rights reserved.
-+ * Author: Chuan Liu <chuan.liu@amlogic.com>
-+ */
+v2: fixup a build warning and some minor checkpatch complaints
+
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: Philipp Zabel <p.zabel@pengutronix.de>
+CC: linux-riscv@lists.infradead.org
+CC: linux-clk@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ drivers/clk/microchip/clk-mpfs.c | 92 +------------------------------
+ drivers/reset/reset-mpfs.c       | 95 +++++++++++++++++++++++++++++---
+ include/soc/microchip/mpfs.h     | 10 ++--
+ 3 files changed, 93 insertions(+), 104 deletions(-)
+
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
+index 22eab91a6712..28ec0da88cb3 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -4,12 +4,10 @@
+  *
+  * Copyright (C) 2020-2022 Microchip Technology Inc. All rights reserved.
+  */
+-#include <linux/auxiliary_bus.h>
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/slab.h>
+ #include <dt-bindings/clock/microchip,mpfs-clock.h>
+ #include <soc/microchip/mpfs.h>
+ 
+@@ -361,93 +359,6 @@ static int mpfs_clk_register_periphs(struct device *dev, struct mpfs_periph_hw_c
+ 	return 0;
+ }
+ 
+-/*
+- * Peripheral clock resets
+- */
+-
+-#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
+-
+-u32 mpfs_reset_read(struct device *dev)
+-{
+-	struct mpfs_clock_data *clock_data = dev_get_drvdata(dev->parent);
+-
+-	return readl_relaxed(clock_data->base + REG_SUBBLK_RESET_CR);
+-}
+-EXPORT_SYMBOL_NS_GPL(mpfs_reset_read, MCHP_CLK_MPFS);
+-
+-void mpfs_reset_write(struct device *dev, u32 val)
+-{
+-	struct mpfs_clock_data *clock_data = dev_get_drvdata(dev->parent);
+-
+-	writel_relaxed(val, clock_data->base + REG_SUBBLK_RESET_CR);
+-}
+-EXPORT_SYMBOL_NS_GPL(mpfs_reset_write, MCHP_CLK_MPFS);
+-
+-static void mpfs_reset_unregister_adev(void *_adev)
+-{
+-	struct auxiliary_device *adev = _adev;
+-
+-	auxiliary_device_delete(adev);
+-	auxiliary_device_uninit(adev);
+-}
+-
+-static void mpfs_reset_adev_release(struct device *dev)
+-{
+-	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+-
+-	kfree(adev);
+-}
+-
+-static struct auxiliary_device *mpfs_reset_adev_alloc(struct mpfs_clock_data *clk_data)
+-{
+-	struct auxiliary_device *adev;
+-	int ret;
+-
+-	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+-	if (!adev)
+-		return ERR_PTR(-ENOMEM);
+-
+-	adev->name = "reset-mpfs";
+-	adev->dev.parent = clk_data->dev;
+-	adev->dev.release = mpfs_reset_adev_release;
+-	adev->id = 666u;
+-
+-	ret = auxiliary_device_init(adev);
+-	if (ret) {
+-		kfree(adev);
+-		return ERR_PTR(ret);
+-	}
+-
+-	return adev;
+-}
+-
+-static int mpfs_reset_controller_register(struct mpfs_clock_data *clk_data)
+-{
+-	struct auxiliary_device *adev;
+-	int ret;
+-
+-	adev = mpfs_reset_adev_alloc(clk_data);
+-	if (IS_ERR(adev))
+-		return PTR_ERR(adev);
+-
+-	ret = auxiliary_device_add(adev);
+-	if (ret) {
+-		auxiliary_device_uninit(adev);
+-		return ret;
+-	}
+-
+-	return devm_add_action_or_reset(clk_data->dev, mpfs_reset_unregister_adev, adev);
+-}
+-
+-#else /* !CONFIG_RESET_CONTROLLER */
+-
+-static int mpfs_reset_controller_register(struct mpfs_clock_data *clk_data)
+-{
+-	return 0;
+-}
+-
+-#endif /* !CONFIG_RESET_CONTROLLER */
+-
+ static int mpfs_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -499,7 +410,7 @@ static int mpfs_clk_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return mpfs_reset_controller_register(clk_data);
++	return mpfs_reset_controller_register(dev, clk_data->base + REG_SUBBLK_RESET_CR);
+ }
+ 
+ static const struct of_device_id mpfs_clk_of_match_table[] = {
+@@ -532,3 +443,4 @@ MODULE_DESCRIPTION("Microchip PolarFire SoC Clock Driver");
+ MODULE_AUTHOR("Padmarao Begari <padmarao.begari@microchip.com>");
+ MODULE_AUTHOR("Daire McNamara <daire.mcnamara@microchip.com>");
+ MODULE_AUTHOR("Conor Dooley <conor.dooley@microchip.com>");
++MODULE_IMPORT_NS(MCHP_CLK_MPFS);
+diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+index 7f3fb2d472f4..710f9c1676f9 100644
+--- a/drivers/reset/reset-mpfs.c
++++ b/drivers/reset/reset-mpfs.c
+@@ -8,9 +8,11 @@
+  */
+ #include <linux/auxiliary_bus.h>
+ #include <linux/delay.h>
++#include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/slab.h>
+ #include <linux/reset-controller.h>
+ #include <dt-bindings/clock/microchip,mpfs-clock.h>
+ #include <soc/microchip/mpfs.h>
+@@ -28,20 +30,30 @@
+ /* block concurrent access to the soft reset register */
+ static DEFINE_SPINLOCK(mpfs_reset_lock);
+ 
++struct mpfs_reset {
++	void __iomem *base;
++	struct reset_controller_dev rcdev;
++};
 +
-+#ifndef __AMLOGIC_C3_SCMI_CLKC_H
-+#define __AMLOGIC_C3_SCMI_CLKC_H
++static inline struct mpfs_reset *to_mpfs_reset(struct reset_controller_dev *rcdev)
++{
++	return container_of(rcdev, struct mpfs_reset, rcdev);
++}
 +
-+#define CLKID_DDR_PLL_OSC			0
-+#define CLKID_DDR_PHY				1
-+#define CLKID_TOP_PLL_OSC			2
-+#define CLKID_USB_PLL_OSC			3
-+#define CLKID_MIPIISP_VOUT			4
-+#define CLKID_MCLK_PLL_OSC			5
-+#define CLKID_USB_CTRL				6
-+#define CLKID_ETH_PLL_OSC			7
-+#define CLKID_OSC				8
-+#define CLKID_SYS_CLK				9
-+#define CLKID_AXI_CLK				10
-+#define CLKID_CPU_CLK				11
-+#define CLKID_FIXED_PLL_OSC			12
-+#define CLKID_GP1_PLL_OSC			13
-+#define CLKID_SYS_PLL_DIV16			14
-+#define CLKID_CPU_CLK_DIV16			15
+ /*
+  * Peripheral clock resets
+  */
+-
+ static int mpfs_assert(struct reset_controller_dev *rcdev, unsigned long id)
+ {
++	struct mpfs_reset *rst = to_mpfs_reset(rcdev);
+ 	unsigned long flags;
+ 	u32 reg;
+ 
+ 	spin_lock_irqsave(&mpfs_reset_lock, flags);
+ 
+-	reg = mpfs_reset_read(rcdev->dev);
++	reg = readl(rst->base);
+ 	reg |= BIT(id);
+-	mpfs_reset_write(rcdev->dev, reg);
++	writel(reg, rst->base);
+ 
+ 	spin_unlock_irqrestore(&mpfs_reset_lock, flags);
+ 
+@@ -50,14 +62,15 @@ static int mpfs_assert(struct reset_controller_dev *rcdev, unsigned long id)
+ 
+ static int mpfs_deassert(struct reset_controller_dev *rcdev, unsigned long id)
+ {
++	struct mpfs_reset *rst = to_mpfs_reset(rcdev);
+ 	unsigned long flags;
+ 	u32 reg;
+ 
+ 	spin_lock_irqsave(&mpfs_reset_lock, flags);
+ 
+-	reg = mpfs_reset_read(rcdev->dev);
++	reg = readl(rst->base);
+ 	reg &= ~BIT(id);
+-	mpfs_reset_write(rcdev->dev, reg);
++	writel(reg, rst->base);
+ 
+ 	spin_unlock_irqrestore(&mpfs_reset_lock, flags);
+ 
+@@ -66,7 +79,8 @@ static int mpfs_deassert(struct reset_controller_dev *rcdev, unsigned long id)
+ 
+ static int mpfs_status(struct reset_controller_dev *rcdev, unsigned long id)
+ {
+-	u32 reg = mpfs_reset_read(rcdev->dev);
++	struct mpfs_reset *rst = to_mpfs_reset(rcdev);
++	u32 reg = readl(rst->base);
+ 
+ 	/*
+ 	 * It is safe to return here as MPFS_NUM_RESETS makes sure the sign bit
+@@ -121,11 +135,15 @@ static int mpfs_reset_probe(struct auxiliary_device *adev,
+ {
+ 	struct device *dev = &adev->dev;
+ 	struct reset_controller_dev *rcdev;
++	struct mpfs_reset *rst;
+ 
+-	rcdev = devm_kzalloc(dev, sizeof(*rcdev), GFP_KERNEL);
+-	if (!rcdev)
++	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
++	if (!rst)
+ 		return -ENOMEM;
+ 
++	rst->base = (void __iomem *)adev->dev.platform_data;
 +
-+#endif /* __AMLOGIC_C3_SCMI_CLKC_H */
++	rcdev = &rst->rcdev;
+ 	rcdev->dev = dev;
+ 	rcdev->dev->parent = dev->parent;
+ 	rcdev->ops = &mpfs_reset_ops;
+@@ -137,9 +155,68 @@ static int mpfs_reset_probe(struct auxiliary_device *adev,
+ 	return devm_reset_controller_register(dev, rcdev);
+ }
+ 
++static void mpfs_reset_unregister_adev(void *_adev)
++{
++	struct auxiliary_device *adev = _adev;
++
++	auxiliary_device_delete(adev);
++	auxiliary_device_uninit(adev);
++}
++
++static void mpfs_reset_adev_release(struct device *dev)
++{
++	struct auxiliary_device *adev = to_auxiliary_dev(dev);
++
++	kfree(adev);
++}
++
++static struct auxiliary_device *mpfs_reset_adev_alloc(struct device *clk_dev)
++{
++	struct auxiliary_device *adev;
++	int ret;
++
++	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
++	if (!adev)
++		return ERR_PTR(-ENOMEM);
++
++	adev->name = "reset-mpfs";
++	adev->dev.parent = clk_dev;
++	adev->dev.release = mpfs_reset_adev_release;
++	adev->id = 666u;
++
++	ret = auxiliary_device_init(adev);
++	if (ret) {
++		kfree(adev);
++		return ERR_PTR(ret);
++	}
++
++	return adev;
++}
++
++int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base)
++{
++	struct auxiliary_device *adev;
++	int ret;
++
++	adev = mpfs_reset_adev_alloc(clk_dev);
++	if (IS_ERR(adev))
++		return PTR_ERR(adev);
++
++	ret = auxiliary_device_add(adev);
++	if (ret) {
++		auxiliary_device_uninit(adev);
++		return ret;
++	}
++
++	adev->dev.platform_data = (__force void *)base;
++
++	return devm_add_action_or_reset(clk_dev, mpfs_reset_unregister_adev, adev);
++}
++EXPORT_SYMBOL_NS_GPL(mpfs_reset_controller_register, MCHP_CLK_MPFS);
++
+ static const struct auxiliary_device_id mpfs_reset_ids[] = {
+ 	{
+-		.name = "clk_mpfs.reset-mpfs",
++		.name = "reset_mpfs.reset-mpfs",
+ 	},
+ 	{ }
+ };
+diff --git a/include/soc/microchip/mpfs.h b/include/soc/microchip/mpfs.h
+index 09722f83b0ca..d7e612b5e22e 100644
+--- a/include/soc/microchip/mpfs.h
++++ b/include/soc/microchip/mpfs.h
+@@ -43,11 +43,11 @@ struct mtd_info *mpfs_sys_controller_get_flash(struct mpfs_sys_controller *mpfs_
+ #endif /* if IS_ENABLED(CONFIG_POLARFIRE_SOC_SYS_CTRL) */
+ 
+ #if IS_ENABLED(CONFIG_MCHP_CLK_MPFS)
+-
+-u32 mpfs_reset_read(struct device *dev);
+-
+-void mpfs_reset_write(struct device *dev, u32 val);
+-
++#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
++int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base);
++#else
++static inline int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base) { return 0; }
++#endif /* if IS_ENABLED(CONFIG_RESET_CONTROLLER) */
+ #endif /* if IS_ENABLED(CONFIG_MCHP_CLK_MPFS) */
+ 
+ #endif /* __SOC_MPFS_H__ */
 -- 
-2.39.2
+2.43.0
 
