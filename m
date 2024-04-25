@@ -1,106 +1,178 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0704D3D388;
-	Thu, 25 Apr 2024 07:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC156E605
+	for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 07:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714030622; cv=none; b=V3yFOixVtDxnoAc3LSevb/VRBDV5i9NLCJz/E2Pmpz30BVrBboOLkV/ztjY+CwRshuWKlN3X40MWjfWARfW/ISQRaMYuL2GgYU3afJbC55sTRxF50J6mHu1B2GfeJHllq0BCJMx38uo1FlEkhtVt7PF2ejEDYt5HyzfbCnholmY=
+	t=1714031809; cv=none; b=QW6v5haqXceQEvt/euzcrR9lKfyDY6PN8InRhr9I47+ogxVVXL9n5opfKf4Ve1fiPXt64PxzjrkkRGfjJaKUfCybSBK2diFli/O7b24NwochZ1ynIlxachw3EI1WIxoTF2cb7yGgL901qPS3VaU/UXeg8NnCdaLr1RsXmEoNu+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714030622; c=relaxed/simple;
-	bh=AzVF3YThY59VDeTlYIRWSwq+3dTtAAfUMzvX48Hc4Tk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=arhT/4pFWvpUKZ+HiGlFF/S3hgV+qJxnBmYVy9O6e2z4kqDMUWXY+1dMpTdMz5SfvrhE/+66gtS1vkMqvoafImch2TUlBb67JLInf+1hBoYuK92Okr6E19cXvcNBGnMK7mVLkMPq9tyedjnJjK5j6RzfQ6utsDdxDi8wYEbfzxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=tJkKK90P; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1714031809; c=relaxed/simple;
+	bh=/MNBKYgbdHVSHrVyIvxdF7TW8KFDv/F/yK6c8Z+8KD0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=WrqgQWLiRbcLyrns66DGmDaoKDC1bndqahHUI7qtir24SNjEbpbM6vXMD15Snrqp4I3+Ftd7h72zQB+Usk281Z7hz0lFHaLPesYWPbPKQ6oGYyrK9h2vtuq1nZQy48sqqa3NoPeF/ZdbFV6Xg6NbjxlVRAhsNpJcDmBRJX0lyX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VXHhnsNI; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="tJkKK90P"
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43P7VAer021460;
-	Thu, 25 Apr 2024 09:36:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=zcKEXefoMz98bSSERpP3RE1+JT4NimZBmrhz03/9OP4=; b=tJ
-	kKK90Pn2fAScqFQfw1fcuyiL7t9gZEOt/gOvZzzOwPgP5BRriBkPIYHIBt0kDMRK
-	QWAlcIIcKoecNYkjz5f28o6M/8bdcyYFhxJJlfF5BirAOGVP+X7ilHRvX5yd7yDq
-	6+l2vQINEpWp0blJ1rukMUNDp5urdY+2BqQ8TbNnhH/GhBBjd9f+X2O/+y7Lfx50
-	l2pVAi6+45JQAwIAW31oDNe3MV4ia8G39qWr3MP+UMgGZwJ921T3PCYS9fx2h8RP
-	EityAxmed9W1TDkwEnvRPXTiZAFcg46Zteqy2m/X8IVbew2pQeKhmErb0RChRyiw
-	YiCaG/gd9o5dYATFqLnA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3xm51wckfg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Apr 2024 09:36:35 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3A77640044;
-	Thu, 25 Apr 2024 09:36:29 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A3AEB2128C1;
-	Thu, 25 Apr 2024 09:36:04 +0200 (CEST)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 25 Apr
- 2024 09:36:03 +0200
-Message-ID: <d2721aad-b17d-4b40-908c-238d02c52a0f@foss.st.com>
-Date: Thu, 25 Apr 2024 09:36:03 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VXHhnsNI"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240425075635euoutp02a5d8f30a0514678a143e8d02c3b9d709~JdtYlUuJD2484124841euoutp02O
+	for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 07:56:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240425075635euoutp02a5d8f30a0514678a143e8d02c3b9d709~JdtYlUuJD2484124841euoutp02O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1714031795;
+	bh=IORyVXtHeFQ58OwStWCgque/3B73pN4jAG+/asraCic=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=VXHhnsNIskciNAzi2LxzuAEFUBcEzYOXVW7HdJFcKJH03ig+sttj5Zu7Ou4FdEnli
+	 s+7GlRuyVT8nQGSxwimXfAD3/AaMBnMMd6R4lVVOTfd/ADMeHiYp4At7CZds9NF5Hn
+	 yMv4BQzXo2HapuamMWPZ8c7+DqpiIyEyFV7fVb6s=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240425075634eucas1p1cf6fbf73c5518a3f1de1743a3342fd20~JdtYOU5bR0357703577eucas1p1J;
+	Thu, 25 Apr 2024 07:56:34 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 1F.D2.09875.2BC0A266; Thu, 25
+	Apr 2024 08:56:34 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240425075634eucas1p17bef12cf8ccafb6971f352d955e14fae~JdtXlLDFQ0144801448eucas1p1n;
+	Thu, 25 Apr 2024 07:56:34 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240425075634eusmtrp2a248061711fa1d2dd88a62442725cbf3~JdtXjEcD51885518855eusmtrp2O;
+	Thu, 25 Apr 2024 07:56:34 +0000 (GMT)
+X-AuditID: cbfec7f4-131ff70000002693-23-662a0cb2b8ea
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 15.4D.08810.2BC0A266; Thu, 25
+	Apr 2024 08:56:34 +0100 (BST)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240425075633eusmtip20b8d3830509fd671be1a07384d5363db~JdtWysBbI0079400794eusmtip2C;
+	Thu, 25 Apr 2024 07:56:33 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
+	Herring <robh@kernel.org>, David Lechner <david@lechnology.com>, Bjorn
+	Andersson <andersson@kernel.org>, Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+Subject: [PATCH] clk: samsung: Revert "clk: Use device_get_match_data()"
+Date: Thu, 25 Apr 2024 09:56:28 +0200
+Message-Id: <20240425075628.838497-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 4/4] arm64: dts: st: add rcc support for STM32MP25
-To: <gabriel.fernandez@foss.st.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240411092453.243633-1-gabriel.fernandez@foss.st.com>
- <20240411092453.243633-5-gabriel.fernandez@foss.st.com>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20240411092453.243633-5-gabriel.fernandez@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-25_06,2024-04-25_01,2023-05-22_02
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJKsWRmVeSWpSXmKPExsWy7djP87qbeLTSDE5fNbZ4MG8bm8W2DhuL
+	61+es1osahCzmHj+J5vF+fMb2C02Pb7GavGx5x6rxYzz+5gs1h65y25x8ZSrxf89O9gtDr9p
+	Z7X4d20jiwOfx/sbrewem1Z1snl86j/J6nHn2h42j81L6j36tqxi9Pi8SS6APYrLJiU1J7Ms
+	tUjfLoEro2f3BbaCP4IVr45dY21g7OHvYuTkkBAwkXj2fiJLFyMXh5DACkaJkzdaoZwvjBI/
+	dr5hhHA+M0rc+riRrYuRA6xlwkIRkG4hgeWMErP3ecA1bDk4nxEkwSZgKNH1tosNxBYRyJC4
+	eXc/O0gRs8BxZomTu28ygQwSFvCQ+LEuEaSGRUBV4tPs+2C9vAJ2EhN+n2OHOE9eYv/Bs8wQ
+	cUGJkzOfsIDYzEDx5q2zmUFmSgg84JDouLSBDaLBReLf+fesELawxKvjW6AGyUj83zmfCaKh
+	nVFiwe/7UM4ERomG57cYIaqsJe6c+wX2JrOApsT6XfoQYUeJRx1f2CG+55O48VYQ4gg+iUnb
+	pjNDhHklOtqEIKrVJGYdXwe39uCFS1AlHhI7VtlBwi1W4taSq+wTGBVmIflsFpLPZiGcsICR
+	eRWjeGppcW56arFRXmq5XnFibnFpXrpecn7uJkZg6jr97/iXHYzLX33UO8TIxMF4iFGCg1lJ
+	hPfmR400Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4ryqKfKpQgLpiSWp2ampBalFMFkmDk6pBiZr
+	R8dUy4c7H6j+COyauPL2xqYT7M0dptwsT52Csm+mHHq2VTNxySfHJ1eZi9bObpTq2rWom/fz
+	582SMqbXtvJdVkr8tojtYaCeSKaG/q8Zz1Vv1M95rFa+tNV1Vdoer9gDEhNP8G69t/JvVcFn
+	/c16H7kdqyS/lSqK5PVHHs0zzdswe8KBb1IBvFPPz+YUWl/L9fj7ewHxOXNlzioUbjPz8OF7
+	t1RV4uCkxYrmoSzLfh8SXpLya23A6l3XM2ayeM20eNK/6cTPCVXMF04tvsQ87dx9g/MeXKXz
+	JJx/9NgHMggevR2Rcf/1dZXdzRUlBp849UxO59mZyxzRFL3MpdY/hZO59rPgobSMvxVC5cuU
+	WIozEg21mIuKEwF0tiLmzAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsVy+t/xe7qbeLTSDC595bB4MG8bm8W2DhuL
+	61+es1osahCzmHj+J5vF+fMb2C02Pb7GavGx5x6rxYzz+5gs1h65y25x8ZSrxf89O9gtDr9p
+	Z7X4d20jiwOfx/sbrewem1Z1snl86j/J6nHn2h42j81L6j36tqxi9Pi8SS6APUrPpii/tCRV
+	ISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEvo2f3BbaCP4IVr45d
+	Y21g7OHvYuTgkBAwkZiwUKSLkYtDSGApo8T5pg9sXYycQHEZiZPTGlghbGGJP9e62CCKPjFK
+	PF3fwg6SYBMwlOh62wXWICKQJTFvwh0mkCJmgfPMEjcatjOCbBAW8JD4sS4RpIZFQFXi0+z7
+	jCA2r4CdxITf59ghFshL7D94lhkiLihxcuYTFhCbGSjevHU28wRGvllIUrOQpBYwMq1iFEkt
+	Lc5Nzy021CtOzC0uzUvXS87P3cQIjJptx35u3sE479VHvUOMTByMhxglOJiVRHhvftRIE+JN
+	SaysSi3Kjy8qzUktPsRoCnTfRGYp0eR8YNzmlcQbmhmYGpqYWRqYWpoZK4nzehZ0JAoJpCeW
+	pGanphakFsH0MXFwSjUwHdaQc+9c0Xl11pRGpiT98xMUvv7g47g/cbHcQuN1kgFa5RdM6v8c
+	2xUrM0Ul8iq3zrH76e9fM2pu1N6v4HKn6YI/R+7L5jUOskv17i1W+ar6LX1p0GqJTFF7xoXz
+	jqZOXsV0rNVw3nHbsgaGQy95DMvX3arw6d4psy5RdMMW7uuP2vea85bpOKeVzv6x+P2NJSIy
+	yiGyFmEMzULsKfdCZqofUJ9kq7a33ud7G/ekazFHnrzdFLi244Ft4eKvhre2Hdi9JPmu/oZr
+	ixSqXkYGepj9OP5Mftft/kcyrDsEJbY2ix7T2l9umaDRXBOl2POgnGX5PV7nwjeK+8KW/Wmy
+	0y6Pe2CUcOqFystdE8K2KbEUZyQaajEXFScCAPGXurYjAwAA
+X-CMS-MailID: 20240425075634eucas1p17bef12cf8ccafb6971f352d955e14fae
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240425075634eucas1p17bef12cf8ccafb6971f352d955e14fae
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240425075634eucas1p17bef12cf8ccafb6971f352d955e14fae
+References: <CGME20240425075634eucas1p17bef12cf8ccafb6971f352d955e14fae@eucas1p1.samsung.com>
 
-Hi Gabriel
+device_get_match_data() function should not be used on the device other
+than the one matched to the given driver, because it always returns the
+match_data of the matched driver. In case of exynos-clkout driver, the
+original code matches the OF IDs on the PARENT device, so replacing it
+with of_device_get_match_data() broke the driver.
 
-On 4/11/24 11:24, gabriel.fernandez@foss.st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> 
-> Add RCC support to manage clocks and resets on the STM32MP25.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> ---
->   arch/arm64/boot/dts/st/stm32mp251.dtsi | 144 ++++++++++++++++++-------
->   arch/arm64/boot/dts/st/stm32mp255.dtsi |   4 +-
->   2 files changed, 110 insertions(+), 38 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> index 5dd4f3580a60..15b79d26d1c6 100644
-> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+This has been already pointed once in commit 2bc5febd05ab ("clk: samsung:
+Revert "clk: samsung: exynos-clkout: Use of_device_get_match_data()"").
+To avoid further confusion, add a comment about this special case, which
+requires direct of_match_device() call to pass custom IDs array.
 
-Patch applied on stm32-next.
+This partially reverts commit 409c39ec92a35e3708f5b5798c78eae78512cd71.
 
-thanks!!
-Alex
+Fixes: 409c39ec92a3 ("clk: Use device_get_match_data()")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos-clkout.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index 3484e6cc80ad..503c6f5b20d5 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -13,9 +13,9 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
+-#include <linux/property.h>
+ 
+ #define EXYNOS_CLKOUT_NR_CLKS		1
+ #define EXYNOS_CLKOUT_PARENTS		32
+@@ -84,17 +84,24 @@ MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
+ static int exynos_clkout_match_parent_dev(struct device *dev, u32 *mux_mask)
+ {
+ 	const struct exynos_clkout_variant *variant;
++	const struct of_device_id *match;
+ 
+ 	if (!dev->parent) {
+ 		dev_err(dev, "not instantiated from MFD\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	variant = device_get_match_data(dev->parent);
+-	if (!variant) {
++	/*
++	 * 'exynos_clkout_ids' arrays is not the ids array matched by
++	 * the dev->parent driver, so of_device_get_match_data() or
++	 * device_get_match_data() cannot be used here.
++	 */
++	match = of_match_device(exynos_clkout_ids, dev->parent);
++	if (!match) {
+ 		dev_err(dev, "cannot match parent device\n");
+ 		return -EINVAL;
+ 	}
++	variant = match->data;
+ 
+ 	*mux_mask = variant->mux_mask;
+ 
+-- 
+2.34.1
 
