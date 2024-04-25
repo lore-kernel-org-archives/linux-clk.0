@@ -1,85 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5C5757F5;
-	Wed, 24 Apr 2024 21:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526E73BBE9
+	for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 05:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713993410; cv=none; b=FrtdQNQt8stg+PJ7rfASpkQHdY5UsWkN6HPb9+RVzOFJ79p59JY34rikZJ3lVBYQGJMcZ7yMLgVcIXcq3+1AEi+OLclL/Pv1D7IKu7GedYcBWG7Dlqw9A79tbgXxts06RbG44j9oxT5ehY64jIfMwPsdchDErgI7W0ss8Wo8s4E=
+	t=1714022152; cv=none; b=jyz5GoKLdqZF12THIOmIXa9bfbMUWCqPAJ4xrRtGJIV86RkFGhm7OFLBOOWIjU/YaEbR5iX6zEYQbcux916z/6tjBGirNxIoPpPLvt5QcdSTx3Ix7EQN9n6x8PHcqt6y3mYZAqUqyxjpbI7RcfMlqDmBTeHZqbsi0uWEFfiGCxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713993410; c=relaxed/simple;
-	bh=csLxox6RscW+c6LkKg2RdajfWhoK7Y54fzPaNFEKYxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c7SnYnATTzVRQsU6NRoOXHSPa0/VZ/dewVqEeZgVVxqfoRa6gVsw3PTmnYmuIBaMc50DasJ0w9droxfy4JueYriWRFXQXt5ssbR+sl03N0FGPS04q3jtNj59pDj5USN9+3CBWMdGaLp617ibgRNoTcQ0f5EK+syQs3nWY2ExhyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emCY6B6Y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714022152; c=relaxed/simple;
+	bh=h5XgYL+kTu62b7hNDSxzPP6u9jz8fudtRkl5iQVY9nY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JNlMVikK6gvBkLOAHVvwU5wlpaWBRU1lvS4RJfmQwY8vyTNLJcYpDOVNSbJ7ShDbclvWzXO5Q2aVMe+5Dsggz7jtJN7Sw67dF+NW78FtN8cqWWx+kGAYP1CYai21ZtZ7X+AX3zigPEPct44j4yfFG2ic0OW5iJjxTDlCjM3DycQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jQ/CnkKo; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emCY6B6Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 326ADC113CD;
-	Wed, 24 Apr 2024 21:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713993409;
-	bh=csLxox6RscW+c6LkKg2RdajfWhoK7Y54fzPaNFEKYxE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=emCY6B6Y0owF0am56b0wjisC3Bj4AZHrs5iWTwj/S4iAEW5IS1i839JPmcRfdexfm
-	 BFLTmCnjrzm66z27S2eCcl0mNXS6pMyWZyE1FBXJp3IXoZJhAgvs4s3+DTk/2zQBit
-	 mRF13e8E5jKiYoICAyWRZnHkc6oY3L08YjCNerdqOn1gGAoc4JuR2XFQwMwfxWnOWi
-	 gctRfTui+DmFdxbpfBo/jsk6vpyA6HrrdvsdoGjEsc5XuX9WjcHlsS21NP4lIxnT6K
-	 O9h10pIcjK6Zi9dxccvhfbFH8uKZ0SslmbsIiP3c9EV83lxLZYNST5s49qINzddVya
-	 47wSoiETgdG6A==
-Date: Wed, 24 Apr 2024 22:16:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clock, reset: microchip: move all mpfs reset code to
- the reset subsystem
-Message-ID: <20240424-gander-alibi-87f6e1896381@spud>
-References: <20240424-strangle-sharpener-34755c5e6e3e@spud>
- <722f31da34e5e1cfef05fb966f6c8c96.sboyd@kernel.org>
- <20240424-glazing-handsaw-4c303fef4f7e@spud>
- <46c9baab4b3a834c27949b99668a9c30.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="jQ/CnkKo"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-346359c8785so471990f8f.0
+        for <linux-clk@vger.kernel.org>; Wed, 24 Apr 2024 22:15:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1714022148; x=1714626948; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rPwnOdBG2SaRdsMEeoWl+ELs4tjgPnIwN6XzuY1l5ZU=;
+        b=jQ/CnkKogU/6223BHUnfsE6y5Dj1QduTXK1092wE230r0y0xleJtHEXby7pNfyc4gz
+         9a8HAVTxVIkO+OBeJ9x/QEnaaH2kU2LSsp8N702gj0wR8Tz0eG6onE2kFWduVBVnyYav
+         l4ip829tduprmDyIwqGBaCUgqix1bgAVzA2JJmXvPQTMXbHVsoRhWOw5NChPVYAm+5yB
+         gyauJsObV/LKPV5romDwDN+shDCJb8lQpHFhjgGtKepix0D1W+xFiRaP4/1VqPQO0oSn
+         rD9DQXUMC5HitYG8PZAd4KTjR+VFlmvepnC0laXoHa9v7eQsy1KPqKSeivUa8wPGC46p
+         Z3AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714022148; x=1714626948;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rPwnOdBG2SaRdsMEeoWl+ELs4tjgPnIwN6XzuY1l5ZU=;
+        b=O02zGFdxVRK7Ce8jBXC0Zg/zyfRSbtHiswaCTkUASizaHQXVAywvidBlHoTEH8pNNi
+         cZml9QS/8SGPNGOqJn1AsFBc9bvigd/munlra9N5hO/SJ4Gh5XbrgGa940zAn2MVaDsr
+         cheyn6nAJarqBUHqfulktUXLDqa/Kj67DUiI2eX8yEtYEJSrHGC4lbsRKFvzIjCNPIwE
+         6ZhswerZYXVwDGIuSCCqeDiIfQK65n+hHOOkwYtSNED+GbyB0lP7v2gLo4Ps8uNGVBRD
+         PgCojbsJIo3JqOEF4gjMFMblzTImrxYFOxUSQVfZCklpCp1oiSVYmTgpApJAHkguVFHu
+         KhNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIlh3S/MXHjib/tWzRxkBBUZ9+v30RuD/ycJ5cXwofXbpIbqKiQ4HtCQRtRmdlj/Ab/K/pN2L6uJba600+P7CXfkBsiE0/4Ia3
+X-Gm-Message-State: AOJu0YzgwxJqXmQEtENQUaRhlNYV8X4txcoNt0iuj+jkL6ebqZKhQfiW
+	ODxTVhpNF3HnVLxhCe6O02qhDIgVYUJKJ8UmIksfvurce3VKNf+I3GL9gFhWly8=
+X-Google-Smtp-Source: AGHT+IEeV6TDjrdXaQGoM3HJdzhpudTgWaxacCa4OufB47081/eSEaxVevEOehF0nvVymHPv9aCEUQ==
+X-Received: by 2002:adf:f8c4:0:b0:34a:9afe:76f with SMTP id f4-20020adff8c4000000b0034a9afe076fmr2890742wrq.30.1714022148470;
+        Wed, 24 Apr 2024 22:15:48 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.53])
+        by smtp.gmail.com with ESMTPSA id o3-20020a05600c4fc300b00418f7605249sm23885375wmq.24.2024.04.24.22.15.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Apr 2024 22:15:48 -0700 (PDT)
+Message-ID: <067774d2-ad37-46ff-b90b-7a240473dd67@tuxon.dev>
+Date: Thu, 25 Apr 2024 08:15:45 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rbfJg0xHpBdUC0yM"
-Content-Disposition: inline
-In-Reply-To: <46c9baab4b3a834c27949b99668a9c30.sboyd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clock, reset: microchip: move all mpfs reset code to
+ the reset subsystem
+Content-Language: en-US
+To: Conor Dooley <conor@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-riscv@lists.infradead.org, Conor Dooley
+ <conor.dooley@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Daire McNamara <daire.mcnamara@microchip.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240424-strangle-sharpener-34755c5e6e3e@spud>
+ <722f31da34e5e1cfef05fb966f6c8c96.sboyd@kernel.org>
+ <20240424-glazing-handsaw-4c303fef4f7e@spud>
+ <46c9baab4b3a834c27949b99668a9c30.sboyd@kernel.org>
+ <20240424-gander-alibi-87f6e1896381@spud>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240424-gander-alibi-87f6e1896381@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---rbfJg0xHpBdUC0yM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Apr 24, 2024 at 02:09:44PM -0700, Stephen Boyd wrote:
+On 25.04.2024 00:16, Conor Dooley wrote:
+> On Wed, Apr 24, 2024 at 02:09:44PM -0700, Stephen Boyd wrote:
+> 
+>> Am I supposed to pick this patch up?
+> 
+> Eh, you'll probably save Claudiu a single patch PR if you do, there's
+> nothing in the clk-microchip queue at the moment & I wasn't going to ask
+> him to pick it up until you or Philipp were happy with it, given you two
+> were the ones that suggested the change.
+> I say go for it, 
 
-> Am I supposed to pick this patch up?
+Sounds good for me.
 
-Eh, you'll probably save Claudiu a single patch PR if you do, there's
-nothing in the clk-microchip queue at the moment & I wasn't going to ask
-him to pick it up until you or Philipp were happy with it, given you two
-were the ones that suggested the change.
-I say go for it, unless you want me to respin for dev_get_platdata().
+Thank you,
+Claudiu Beznea
 
-Thanks,
-Conor.
-
---rbfJg0xHpBdUC0yM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZil2vQAKCRB4tDGHoIJi
-0sAjAP0ao7UwNnwNRRlpKl3kZOBuF3y6vTA9c7kh1pzq6jU/lQEAnbYOT43YE2pW
-eS+ibtJvV8+Qxx5zQpXBg2TQSx/BngA=
-=Oa8E
------END PGP SIGNATURE-----
-
---rbfJg0xHpBdUC0yM--
+> unless you want me to respin for dev_get_platdata().
+> 
+> Thanks,
+> Conor.
