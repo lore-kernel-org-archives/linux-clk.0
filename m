@@ -1,131 +1,170 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE96F6BFA3;
-	Thu, 25 Apr 2024 08:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812731E4A6
+	for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 08:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714032272; cv=none; b=M2d3KJW+08RTQ4rlnHSIeWtLz2qUKNHAOQ1vCEp1DfL7lZm7TB8oJypK0FRHgGGX1ka2vrjQXhF7epwesq18UAO6EvbpK3GTpL85vCBz635RsP7B9eg6NeXIFzI+AvSwWgue/HVd4Xc8PCRKSmlWgdMwesqu3rWMeDNuqTIPL/c=
+	t=1714033943; cv=none; b=GRo3EuokAXgFjpiADsyyjvpaUI5jfLKf2tEnUwPHFHXujvo3EOgNdnxDVUbqHdAMI5zM3TCqe6HSNvpC41p1gIivrDXaWIBDfHYy2lDk09XfxfZv1z8in8XVQPcqoQrW8hzXNOmD0tL1lMPdDF5eisiyoaMc5tmOeTzAHNLBQlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714032272; c=relaxed/simple;
-	bh=OiSuUIeg53SAKqFkgvl8SjcCCUVNfa7mJ+FXyP6HtJA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L9sbeCcyOpAPIaxcL3NhqNMePdbf1yBBRNDmAJsPtBl2BUJPuXu6turfzFaeykGtJyeFzAMQO7vJoSCphLEuqBJN+vUnAFI8kSnp36GqtKx4zF3ASRX2fWOB8xemI6HtVwj5ZKQuMt8WclULs2p2hsw1mSxiYHSZqJU9HQ6GqgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOuWHi9F; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOuWHi9F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77CA4C113CC;
-	Thu, 25 Apr 2024 08:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714032272;
-	bh=OiSuUIeg53SAKqFkgvl8SjcCCUVNfa7mJ+FXyP6HtJA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WOuWHi9FEyrxLuLAdFreAtxK6IBFXEE2VZWctL0mjph0ulUTQfKcZxuInbz4/QmzT
-	 jwBxQwAKd+zpGFIagAvCu08v9+Mwckk5rp5NQL7wgZipaGRsvl9XTYkHEw6qoXJ4Qf
-	 eHzRg7JARWtAm1lnV9OHdapgSPI4Rdl4kNay1ET+tYh2xDCimHlQx0Qw4LvaISDvog
-	 Cps34PEyIiYc7hSAYue6R+EcLSesKgi0rPitUf3RM7L+REnO48eovEtJiNEgz1ieVD
-	 AIdkU0TgKrpFT8/Ybxa5Gs0QhgQc33YfO8USx2zI+onq7JM1XieEVN575jQD25AdoA
-	 o+8bvJAHoRJJQ==
-Message-ID: <88a930cf-c1bf-4cda-be1b-6a0462258ed4@kernel.org>
-Date: Thu, 25 Apr 2024 10:04:25 +0200
+	s=arc-20240116; t=1714033943; c=relaxed/simple;
+	bh=9zDiuV2xL0Aq10ewDaI0F73qzwXbNYOhjJNI2Th0OG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUgs+F8RRmPR5zD/hoDobZBy2vxgiZxREipgVVMn/p+Bu9Etdx/xeSmLdCeMCv0GPSBJc0wktuDh0vVjYRRvSwFFgShg58f4kOiyAVsKEhv2MN0bpTqu8WTpT5UHvI+lRqKuTpJ8pIpnRFIlVrMQUzWtkLPsjonaANN1jnY9VIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1rzuWd-00049P-RN; Thu, 25 Apr 2024 10:32:15 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1rzuWc-00EEJR-Nb; Thu, 25 Apr 2024 10:32:14 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1rzuWc-00DEQd-21;
+	Thu, 25 Apr 2024 10:32:14 +0200
+Date: Thu, 25 Apr 2024 10:32:14 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>, peng.fan@nxp.com,
+	s.hauer@pengutronix.de, sboyd@kernel.org, festevam@gmail.com,
+	mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-imx@nxp.com, kernel@pengutronix.de,
+	shawnguo@kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, abelvesa@kernel.org
+Subject: Re: [PATCH v4] clk: imx: imx8mp: Add pm_runtime support for power
+ saving
+Message-ID: <20240425083214.g6xplxql4g32zxud@pengutronix.de>
+References: <1711026842-7268-1-git-send-email-shengjiu.wang@nxp.com>
+ <20240424164725.GA18760@francesco-nb>
+ <CAA+D8AMxcAOdeSUhLnFdX2tjXSiWKg8-oxfZ8oT06-qQPnNKqA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: Revert "clk: Use device_get_match_data()"
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- David Lechner <david@lechnology.com>, Bjorn Andersson
- <andersson@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <CGME20240425075634eucas1p17bef12cf8ccafb6971f352d955e14fae@eucas1p1.samsung.com>
- <20240425075628.838497-1-m.szyprowski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240425075628.838497-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA+D8AMxcAOdeSUhLnFdX2tjXSiWKg8-oxfZ8oT06-qQPnNKqA@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On 25/04/2024 09:56, Marek Szyprowski wrote:
-> device_get_match_data() function should not be used on the device other
-> than the one matched to the given driver, because it always returns the
-> match_data of the matched driver. In case of exynos-clkout driver, the
-> original code matches the OF IDs on the PARENT device, so replacing it
-> with of_device_get_match_data() broke the driver.
+On 24-04-25, Shengjiu Wang wrote:
+> On Thu, Apr 25, 2024 at 12:47 AM Francesco Dolcini <francesco@dolcini.it> wrote:
+> >
+> > On Thu, Mar 21, 2024 at 09:14:02PM +0800, Shengjiu Wang wrote:
+> > > Add pm_runtime support for power saving. In pm runtime suspend
+> > > state the registers will be reseted, so add registers save
+> > > in pm runtime suspend and restore them in pm runtime resume.
+> > >
+> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> >
+> > Is this introducing a regression?
+> >
+> >   800 13:50:19.713052  <6>[   16.531134] clk: Disabling unused clocks
+> >   801 13:50:19.727524  <2>[   16.535413] SError Interrupt on CPU2, code 0x00000000bf000002 -- SError
+> >   802 13:50:19.731400  <4>[   16.535421] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 6.9.0-rc5-next-20240424 #1
+> >   803 13:50:19.742514  <4>[   16.535428] Hardware name: Toradex Verdin iMX8M Plus on Dahlia Board (DT)
+> >   804 13:50:19.747157  <4>[   16.535431] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> >   805 13:50:19.758468  <4>[   16.535442] pc : clk_imx8mp_audiomix_runtime_resume+0x24/0x48
+> >   806 13:50:19.759372  <4>[   16.535456] lr : pm_generic_runtime_resume+0x2c/0x44
+> >   807 13:50:19.759587  <4>[   16.535465] sp : ffff800082b8bb90
+> >   808 13:50:19.774512  <4>[   16.535468] x29: ffff800082b8bb90 x28: 0000000000000000 x27: 0000000000000000
+> >   809 13:50:19.775367  <4>[   16.535482] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+> >   810 13:50:19.790567  <4>[   16.535495] x23: ffff0000c0f7a4e0 x22: ffff0000c26922f8 x21: 0000000000000000
+> >   811 13:50:19.791308  <4>[   16.535508] x20: ffff0000c2692000 x19: ffff0000c0e30c10 x18: 0000000000000000
+> >   812 13:50:19.794834  <4>[   16.535521] x17: 000000007e4712cb x16: ffff80008296f800 x15: 0000000000000030
+> >   813 13:50:19.807341  <4>[   16.535532] x14: ffff0000c00b8080 x13: 00000000000003f9 x12: 0000000000000000
+> >   814 13:50:19.810740  <4>[   16.535545] x11: 0000000000000000 x10: 0000000000000aa0 x9 : ffff800082b8bb20
+> >   815 13:50:19.822528  <4>[   16.535559] x8 : ffff0000c00b8b00 x7 : 0000000000000000 x6 : ffff0000c00b8000
+> >   816 13:50:19.827173  <4>[   16.535570] x5 : ffff8000836b0000 x4 : ffff0000c2f3a488 x3 : ffff8000813660d0
+> >   817 13:50:19.838446  <4>[   16.535583] x2 : 0000000000000004 x1 : 0000000000000001 x0 : 00000000ff777777
+> >   818 13:50:19.839321  <0>[   16.535597] Kernel panic - not syncing: Asynchronous SError Interrupt
+> >   819 13:50:19.839983  Matched prompt #9: Kernel panic - not syncing
+> >   820 13:50:19.840155  Setting prompt string to ['end Kernel panic[^\\r]*\\r', '/ #', 'Login timed out', 'Login incorrect']
+> >   821 13:50:19.854524  <4>[   16.535601] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 6.9.0-rc5-next-20240424 #1
+> >   822 13:50:19.855261  <4>[   16.535609] Hardware name: Toradex Verdin iMX8M Plus on Dahlia Board (DT)
+> >   823 13:50:19.858660  <4>[   16.535613] Call trace:
+> >   824 13:50:19.870455  <4>[   16.535616]  dump_backtrace+0x94/0xec
+> >   825 13:50:19.870763  <4>[   16.535626]  show_stack+0x18/0x24
+> >   826 13:50:19.871258  <4>[   16.535635]  dump_stack_lvl+0x38/0x90
+> >   827 13:50:19.874714  <4>[   16.535647]  dump_stack+0x18/0x24
+> >   828 13:50:19.874964  <4>[   16.535656]  panic+0x388/0x3c8
+> >   829 13:50:19.886551  <4>[   16.535667]  nmi_panic+0x48/0x94
+> >   830 13:50:19.888318  <4>[   16.535679]  arm64_serror_panic+0x6c/0x78
+> >   831 13:50:19.888531  <4>[   16.535688]  do_serror+0x3c/0x78
+> >   832 13:50:19.892592  <4>[   16.535693]  el1h_64_error_handler+0x30/0x48
+> >   833 13:50:19.902540  <4>[   16.535703]  el1h_64_error+0x64/0x68
+> >   834 13:50:19.903437  <4>[   16.535709]  clk_imx8mp_audiomix_runtime_resume+0x24/0x48
+> >   835 13:50:19.907712  <4>[   16.535719]  __genpd_runtime_resume+0x30/0xa8
+> >   836 13:50:19.918505  <4>[   16.535729]  genpd_runtime_resume+0xb4/0x29c
+> >   837 13:50:19.918770  <4>[   16.535741]  __rpm_callback+0x48/0x198
+> >   838 13:50:19.919372  <4>[   16.535749]  rpm_callback+0x68/0x74
+> >   839 13:50:19.922715  <4>[   16.535754]  rpm_resume+0x3cc/0x680
+> >   840 13:50:19.934495  <4>[   16.535762]  __pm_runtime_resume+0x4c/0x90
+> >   841 13:50:19.934784  <4>[   16.535769]  clk_pm_runtime_get_all+0x58/0x164
+> >   842 13:50:19.935344  <4>[   16.535780]  clk_disable_unused+0x2c/0x178
+> >   843 13:50:19.938873  <4>[   16.535793]  do_one_initcall+0x6c/0x1b0
+> >   844 13:50:19.950539  <4>[   16.535799]  kernel_init_freeable+0x1c8/0x290
+> >   845 13:50:19.951360  <4>[   16.535812]  kernel_init+0x20/0x1dc
+> >   846 13:50:19.951585  <4>[   16.535821]  ret_from_fork+0x10/0x20
+> >   847 13:50:19.954803  <2>[   16.535831] SMP: stopping secondary CPUs
+> >   848 13:50:19.966688  <0>[   16.535838] Kernel Offset: disabled
+> >   849 13:50:19.967221  <0>[   16.535841] CPU features: 0x0,00000040,00100000,4200421b
+> >   850 13:50:19.967360  <0>[   16.535845] Memory Limit: none
+> >   851 13:50:19.985117  <0>[   16.788060] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
+> >
+> > from
+> >
+> > https://storage.kernelci.org/next/master/next-20240424/arm64/defconfig/gcc-10/lab-broonie/baseline-imx8mp-verdin-nonwifi-dahlia.html
+> > https://lore.kernel.org/all/66293535.170a0220.21fe.a2e7@mx.google.com/
+> >
 > 
-> This has been already pointed once in commit 2bc5febd05ab ("clk: samsung:
-> Revert "clk: samsung: exynos-clkout: Use of_device_get_match_data()"").
-> To avoid further confusion, add a comment about this special case, which
-> requires direct of_match_device() call to pass custom IDs array.
+> Sorry that I didn't use a clean community kernel for the test.
+
+:/ I have asked you if you have tested this feature since I was aware of
+bugs regarding PM.
+
+> On my local side I added delay in drivers/pmdomain/imx/gpcv2.c
+> so there was no such issue.
 > 
-> This partially reverts commit 409c39ec92a35e3708f5b5798c78eae78512cd71.
+> But according to drivers/pmdomain/imx/gpcv2.c, seems that I need
+> to add delay in this driver, like this:
 
-D'oh! Again!
+"Seems" shouldn't be really a "The root cause for this is".
 
-But to be honest, I think there misleading code is that exynos-clkout
-(so the child) has:
-.of_match_table = exynos_clkout_ids,
+Regards,
+  Marco
 
-So one really can believe that this driver matches to exynos_clkout_ids,
-which are the same as exynos-pmu (parent).
-
-I think we should drop the of_match_table and rely on driver name
-matching (MFD cell) or platform_device_id.
-
-This patch is correct, so above solution could be added as 2 patch.
-
-Thanks for noticing it.
-
-Best regards,
-Krzysztof
-
+>  static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
+>  {
+> +       /*
+> +        * According to the drivers/pmdomain/imx/gpcv2.c
+> +        * need to wait for reset to propagate
+> +        */
+> +       udelay(5);
+> +
+> 
+> I will submit a patch for it.
+> 
+> Thanks for reporting it
+> 
+> Best regards
+> Shengjiu Wang
+> 
+> 
+> 
+> > Francesco
+> >
+> 
+> 
