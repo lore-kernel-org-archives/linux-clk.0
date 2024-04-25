@@ -1,149 +1,135 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DE581AA3
-	for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 09:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDC986626;
+	Thu, 25 Apr 2024 10:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714036487; cv=none; b=S4KPNzIMuTZt57onexWBAudzK0ZQR2dmCuh6RDsopF3qA6nJ7dnWFhVZjcscuObFyPL8u4Ifn9RUlx78OrRXgZFsJOxckJVe0hA+BZLN+fMWMiwSkn1DFxCdq/H86Uct3jGzze3q9SAf3GGVT0r1xyYwmkqQmm+aioEvGQ+8630=
+	t=1714040831; cv=none; b=AAVaWxaMToBcsC/KRsDpQOlcIZ0jNmu162AfP5pFXI4yhMnUywUKK/g2DSmpHCdXrIzc+JX+PB5kc7C1hAWy0Q2quTotxqf/ZtWzauBBBUm4qQBDR/i9LYJILLDlos3O0EyNGZuf/C2GcCkNU1Y1R8S4HcP+2x3TsBDwloXY830=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714036487; c=relaxed/simple;
-	bh=w8DmHjhmixBD1MpqJQErAi/dPYdicM+U4z9paPA/yKY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=h8TMrEx4YF3BA4HneM1zDsjdU9eDpXerXsUMsAS6KAzyluDri2JaUNA81AWzZszul9TEN/8x5RkNmJdfajA5mvWwQQEEMMuHha1kxn0DgWejzPVYAtqzlVFjzEa8k4zec4+NxYJlXYlXrtpCdGyewrCW1Strjg/sYBE/ZyL8ySo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=t6lQ1RBJ; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1714040831; c=relaxed/simple;
+	bh=DOXjsB1uURtz+pGbI/qx6BRXH9Ea1pQq5qQ1TGu1/bc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G50k8JzHKUNMx9Lq7gChSPCFBOFiRXi2bJv71jDHfyXIFuhc28yrHtKgWAPmqsf1v4fA1wGL52zup9rwe/s0LA5taAL7MQMoM5t4fUfFYO5q5LP3Ctse4vm+x6M+rq//8Eg94hVf30U0Njb5CkuTQavI1IFRqTSojnkPXQniIhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AwNrnfcH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="t6lQ1RBJ"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240425091438euoutp0229396fda897ed19fcc61b362e5afb574~Jexigq48S1406914069euoutp02U
-	for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 09:14:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240425091438euoutp0229396fda897ed19fcc61b362e5afb574~Jexigq48S1406914069euoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1714036478;
-	bh=dSWT3UoAS4/Wua/vPCBjIpcZyy6kk8OB5F6XDkzxgSs=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=t6lQ1RBJwKRbtBhYmc0j91u7IRrwYYXVpl1ygA5LMImBZVOjVv2ozIWKawqRu/3LP
-	 PxVVrPDa8YGBZISbryHTvMfszeR5J4Ksp+1E1twblUjRgdNu/ryNqIwizW4JXMabrv
-	 xy2H1ssi2IxGPqVKu/ShxU4ojIHal3bzVhcg6uXY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240425091435eucas1p122dd19cfa3f70aae62e49b90a0edc750~JexfNkPJ82719127191eucas1p15;
-	Thu, 25 Apr 2024 09:14:35 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id AC.65.09875.BFE1A266; Thu, 25
-	Apr 2024 10:14:35 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7~Jexe1sYPD1615316153eucas1p1k;
-	Thu, 25 Apr 2024 09:14:34 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240425091434eusmtrp279db1e4891851ee4e5bea0cc6e9748f1~Jexe0ytJP3026630266eusmtrp2Q;
-	Thu, 25 Apr 2024 09:14:34 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-83-662a1efb097d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 23.7C.08810.AFE1A266; Thu, 25
-	Apr 2024 10:14:34 +0100 (BST)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240425091434eusmtip2607a76f557028c26b41ceeb94f5a7b06~JexeFkxdx1286512865eusmtip2J;
-	Thu, 25 Apr 2024 09:14:34 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
-	Herring <robh@kernel.org>, David Lechner <david@lechnology.com>, Bjorn
-	Andersson <andersson@kernel.org>, Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-Subject: [PATCH] clk: samsung: exynos-clkout: Remove misleading
- of_match_table/MODULE_DEVICE_TABLE
-Date: Thu, 25 Apr 2024 11:14:29 +0200
-Message-Id: <20240425091429.948467-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AwNrnfcH"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43P9wrxW032030;
+	Thu, 25 Apr 2024 10:26:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=qcppdkim1; bh=UdCeznE+3ZycNdbFwpeSn
+	zDyv01X2mNOQtmOavOKyLg=; b=AwNrnfcHa03A8wj9bPcR9fDfR/8jWiNY6KPhd
+	KZyijbAeQpMvqePEG84pU0cTTn1lGcB6J7OHJKUVvqr/qUwjoHQ/y7myzWYm9M2L
+	zfPnl0aj+pAjUwDq4AhKJ8Eo97y+GRG96T/kknLNosh4/qfnXNctUARhrfmqUWCC
+	nplKv+ZvUh7H9Y6VCCmgeqgYbrosaGpaVDQpw2kmebmBGfGvc/Ihg+45wS5OQdBx
+	IgAV88PQbcEaVLDouQMpBcEcP4ymo9NcitH8/oBpJBPmig3bJ/wQuf8FpikCn+di
+	iBmutOOHo2CqpkvrXSW2fIDfQtHuU1r9H8DgR0emj+4rvMAYA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xqn0wg5pk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Apr 2024 10:26:59 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43PAQws1004198
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Apr 2024 10:26:58 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 25 Apr 2024 03:26:53 -0700
+Date: Thu, 25 Apr 2024 15:56:49 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <djakov@kernel.org>, <dmitry.baryshkov@linaro.org>,
+        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
+ ability to gcc
+Message-ID: <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com>
+References: <20240418092305.2337429-1-quic_varada@quicinc.com>
+ <20240418092305.2337429-7-quic_varada@quicinc.com>
+ <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFKsWRmVeSWpSXmKPExsWy7djPc7q/5bTSDOZuFbB4MG8bm8W2DhuL
-	61+es1osahCzmHj+J5vF+fMb2C02Pb7GavGx5x6rxYzz+5gs1h65y25x8ZSrxf89O9gtDr9p
-	Z7X4d20jiwOfx/sbrewem1Z1snl86j/J6nHn2h42j81L6j36tqxi9Pi8SS6APYrLJiU1J7Ms
-	tUjfLoEr4/SdI6wFzzkrjp86zNjAuIiji5GDQ0LARKL1fFgXIxeHkMAKRolHh7cyQjhfGCVm
-	Hepgg3A+M0q8f7KZFabjQKsuRHw5o8Sns3+BOjghOi6ftQax2QQMJbredrGB2CICGRI37+5n
-	B2lgFjjOLHFy900mkISwQIrE1t57YDaLgKrE9y2bwBp4BewkbnybBDZUQkBeYv/Bs8wQcUGJ
-	kzOfsIDYzEDx5q2zmUGGSgjc4ZDov76DBaLBReLR/s3MELawxKvjW9ghbBmJ/zvnM0E0tDNK
-	LPh9H8qZwCjR8PwW1DpriTvnfrGB/MksoCmxfpc+RNhR4vV2kDdB3ueTuPFWEOIIPolJ26Yz
-	Q4R5JTrahCCq1SRmHV8Ht/bghUtQ53hIvF93mRkSWLES3Y1P2CYwKsxC8tosJK/NQrhhASPz
-	Kkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMDkdfrf8S87GJe/+qh3iJGJg/EQowQHs5II
-	782PGmlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeVVT5FOFBNITS1KzU1MLUotgskwcnFINTJOE
-	+NYEsfxYde1gwolLX9PkkpSOKj5fv+lvXk9asr3xDX39jf8OHb6qMeNsoMnP03258hMTHXzv
-	ld59yZOk/0dtl8I7/dgz10/OvdGmteTZvoyI2B8aX/qe3722e9WFJzIb7QManAXitjYazN4X
-	1HzpdMILfpH+eSsPuMw//+jKwvqWMjvppFUrfyZ+7zBZxjhjl57ZBykBs4ebLsq1vxFb0fVj
-	Gj/j0be1GYu2lhectP/bJqwipGW5o7IiYerfo+seX+mzcFgcp8hrqeCxzkhh9it/w9lVFfub
-	skWLq1RX7tSfe0PKb+OXe/JGxjucr7yK7loh8EN/87+vZfN/fShjZJC8Wpm2fU1MrME9xmtK
-	LMUZiYZazEXFiQDr7lL/zQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsVy+t/xe7q/5LTSDGZfMLV4MG8bm8W2DhuL
-	61+es1osahCzmHj+J5vF+fMb2C02Pb7GavGx5x6rxYzz+5gs1h65y25x8ZSrxf89O9gtDr9p
-	Z7X4d20jiwOfx/sbrewem1Z1snl86j/J6nHn2h42j81L6j36tqxi9Pi8SS6APUrPpii/tCRV
-	ISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEv4/SdI6wFzzkrjp86
-	zNjAuIiji5GDQ0LAROJAq24XIxeHkMBSRok/K18xdzFyAsVlJE5Oa2CFsIUl/lzrYgOxhQQ+
-	MUoc6HICsdkEDCW63kLERQSyJOZNuMMEMohZ4DyzxI2G7YwgCWGBJImvK76ygNgsAqoS37ds
-	AmvgFbCTuPFtEiPEAnmJ/QfPMkPEBSVOznwCVs8MFG/eOpt5AiPfLCSpWUhSCxiZVjGKpJYW
-	56bnFhvqFSfmFpfmpesl5+duYgRGzbZjPzfvYJz36qPeIUYmDsZDjBIczEoivDc/aqQJ8aYk
-	VlalFuXHF5XmpBYfYjQFum8is5Rocj4wbvNK4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tS
-	s1NTC1KLYPqYODilGpgYW+K0lBYpq1ukvrrD8rJieaqSKbPcg6l8s3c2rd7UNrk9aTnHiUR7
-	a+E/jJsZv4bY/jM76WTT3RSjLjxlE+vUpDBeSeU66/U1U3kfik4/F2QsVvFm8jvPzaHr+3ax
-	mmW9DBJVPqf25n64ohifoHdE/OLqTXU3zN0YYySV1qlfD1sQt+50GHPwnC1MoZXyswt/ZtzY
-	OikzO+dWuNCL60EXKrfsKEg6zCujvcArQnpzUOLmY2mHJt2fd6XB/fIf/4usV/9F303uiVsf
-	3KO41PrvRtV9D7YufOP9dsniB36FlhneW+fcVou2DfK+r/XxTSDn/GmSt3xqOQXCFm54uqtJ
-	YEK7oLZH/razjGLT5ZRYijMSDbWYi4oTAVKuuH8jAwAA
-X-CMS-MailID: 20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7
-References: <CGME20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7@eucas1p1.samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: CXhqYs3n6ZegyJD28IbldiROFAHASmth
+X-Proofpoint-GUID: CXhqYs3n6ZegyJD28IbldiROFAHASmth
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-04-25_10,2024-04-25_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ impostorscore=0 malwarescore=0 phishscore=0 suspectscore=0 mlxscore=0
+ mlxlogscore=999 lowpriorityscore=0 bulkscore=0 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2404250075
 
-Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
-module driver") this driver is instantiated as MFD-cell (matched by
-platform device name) not as a real platform device created by OF code.
-Remove then of_match_table and related MODULE_DEVICE_TABLE to avoid
-further confusion.
+On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
+>
+>
+> On 4/18/24 11:23, Varadarajan Narayanan wrote:
+> > IPQ SoCs dont involve RPM in managing NoC related clocks and
+> > there is no NoC scaling. Linux itself handles these clocks.
+> > However, these should not be exposed as just clocks and align
+> > with other Qualcomm SoCs that handle these clocks from a
+> > interconnect provider.
+> >
+> > Hence include icc provider capability to the gcc node so that
+> > peripherals can use the interconnect facility to enable these
+> > clocks.
+> >
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+>
+> If this is all you do to enable interconnect (which is not the case,
+> as this patch only satisfies the bindings checker, the meaningful
+> change happens in the previous patch) and nothing explodes, this is
+> an apparent sign of your driver doing nothing.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos-clkout.c | 2 --
- 1 file changed, 2 deletions(-)
+It appears to do nothing because, we are just enabling the clock
+provider to also act as interconnect provider. Only when the
+consumers are enabled with interconnect usage, this will create
+paths and turn on the relevant NOC clocks.
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 503c6f5b20d5..0c7f4e2aa366 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -75,7 +75,6 @@ static const struct of_device_id exynos_clkout_ids[] = {
- 		.data = &exynos_clkout_exynos5,
- 	}, { }
- };
--MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
- 
- /*
-  * Device will be instantiated as child of PMU device without its own
-@@ -237,7 +236,6 @@ static SIMPLE_DEV_PM_OPS(exynos_clkout_pm_ops, exynos_clkout_suspend,
- static struct platform_driver exynos_clkout_driver = {
- 	.driver = {
- 		.name = "exynos-clkout",
--		.of_match_table = exynos_clkout_ids,
- 		.pm = &exynos_clkout_pm_ops,
- 	},
- 	.probe = exynos_clkout_probe,
--- 
-2.34.1
+This interconnect will be used by the PCIe and NSS blocks. When
+those patches were posted earlier, they were put on hold until
+interconnect driver is available.
 
+Once this patch gets in, PCIe for example will make use of icc.
+Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
+
+The 'pcieX' nodes will include the following entries.
+
+	interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
+			<&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
+	interconnect-names = "pcie-mem", "cpu-pcie";
+
+> The expected reaction to "enabling interconnect" without defining the
+> required paths for your hardware would be a crash-on-sync_state, as all
+> unused (from Linux's POV) resources ought to be shut down.
+>
+> Because you lack sync_state, the interconnects silently retain the state
+> that they were left in (which is not deterministic), and that's precisely
+> what we want to avoid.
+
+I tried to set 'sync_state' to icc_sync_state to be invoked and
+didn't see any crash.
+
+Thanks
+Varada
