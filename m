@@ -1,140 +1,94 @@
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4611C14D2B7
-	for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 16:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BAF131746;
+	Thu, 25 Apr 2024 16:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714063767; cv=none; b=nf6fmVhnrxImv1oXuWLSYVem/knf9PIA8LHbRGpuEsX3YETOslkJtMREsE6KKurv4sbG4OLmfIqCE1TSys5ATYCdsO6ld+nBEbfFGz+sXIaXt8SoH/sYaKpiWDw+pHquEZZLt/nDXdFeJYe6C37/VpQHXu/VarQnqH3CSTdNgN0=
+	t=1714064183; cv=none; b=GzO74ixVL0S2W3TV+4jgYePW0tHouhjzkpeCmldzTvpvG3qsuCIIjdoRaC/fOn0e8SXuw9OrX7SMLla154dfL/zHLmf2lopT1EoJekgnV/93PsKYTCA3j5n2HTMUyzRfSkd4uJaTXPqMPUx5DH9PxQ2eZ3cQlBPiyQvdzRLDtHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714063767; c=relaxed/simple;
-	bh=MKvfwVZ3VjEw+spXFJ1a2UjO6QfAGuRev73DVWZbaUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cm7/ERULX9y7zBLxS0e1EPWXw3YvfWsh3hwfPZ0d/e7U7zqCtWBeodsBRNrveK/VROrlu0vFs+ee4qPjZD2g2XJGDwy/RBsV+/Aw+XoBCyxBH3TRf2MvtTb7EY6Up49mESOHGmuuBvX/x3sxLdZUMLSLtT5bemfMJ6DiIF6I+9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vwaP65CK; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1714064183; c=relaxed/simple;
+	bh=pqXBKkfg16S/wSwcWzhP5AcwQgNcYGD8sQW2Qy6S2gE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nEYsWs3NPgqwgUTXIPIsjDWrcNJCQpIWcADeGb5PI5dHsxAaysX2kBNtEc773y5G/VtPhPhS/fUOV/mrEO1bynu9m7ZT4DNGMJP4Y4izkZPh1owo50YWow4nvBaTv5V8Bvs3+ILVoQnc9vkF5fA3EqEde4HfcnHYRXUXZPZJars=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SL9MpaGf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vwaP65CK"
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3c70a55988dso717006b6e.0
-        for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 09:49:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714063765; x=1714668565; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ukGEv4eef9O4oU5FT2ArMRccMeqiVjOsIZWttkttWM=;
-        b=vwaP65CKWUR3Hgjrge/MD9U3FiR0QCLRSgkkd6qnbHpKwaqwezALAMIrPNLr4PO6Th
-         2UuTdThPNxET3UfZsx3QG0bleJjXqL45JtT0a4C8LsomG1e/UGuU6tTEbIjxWXlmO4fc
-         eKq40JXudTgJNVjUX8AY24dKyzSIQEw1I0Gevxx+oCAojID+5Gwi2hriLKsbX1mt1881
-         x75IB2RaRGMiNbyjK4p8FLdgZB+Sr4Uco0EafENGEjJahSFGQjL8KdgBTCno5uCfmm8z
-         lTteC30TYtJggxSSy6Iep4KPkoQKjdR62UhCogPpFW6zZA5MgHlIPX+oyK1lQG8y6hE/
-         Q2vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714063765; x=1714668565;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5ukGEv4eef9O4oU5FT2ArMRccMeqiVjOsIZWttkttWM=;
-        b=cedfEqXEjGNp/7msu4wKUffQK+GEIK+dpbdwhfXs1Y7gnG+yLfqOxSVgNNiVZwqiCl
-         jO+eliLZdsOyIszX00O/lAyrlP/COCHNiraB2DTJ6Zofjk4JPjv7IXcbJG8u3SMLk1dZ
-         f00jPLFGKg+u6qnh1+Sl2xh62bgDTg8z1ebbK0NP55xSj57tkZ5ipHHJ3pwoF/gOLC4h
-         9meYPUMrIinH2HYnYRV9aNyIc4vDKXRLbIpuk6bFypjgkBGQCsRc7qcVElGHPqkkENyj
-         RD/hSCD2QTERWVegdnnHfqFC4HvhTAuSLJuiXnyxbMHo0r5cwn38a5JjnotTG6Vx1jUv
-         igBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbNTOvc7SjKJJk9HkC//CdfDX77Ap5a9ZIxmFJtXHDgSvVMoCm78Ko6zlT0AzMCeAWBsZadrk2dwNAXy+YI4QOABHfzVRfF0M2
-X-Gm-Message-State: AOJu0YwBL9uTesi1y6yUpAwygOSNSUM3Sjz53qTLasqnShfXsDf3Lna1
-	LgFJcdGu1OpiXn9jnDfMwUIUYqtVE44bo5I5saKTJ85C6VE4H55dahIxhdQ/S6sQNvEYD+b6MDs
-	BlqF+ufqIzNuWhQATt7AHoUwv5EJ9o7VNs8MQVg==
-X-Google-Smtp-Source: AGHT+IHZ1YGe8mBmpi+s6MNal/Tnn6pc3qt4P8KtR6rNBxE+ojMFISn6UD+3xJRSRmAITd10pNraylhnueFfb1V3Mzo=
-X-Received: by 2002:a05:6870:4201:b0:22e:e26e:73ad with SMTP id
- u1-20020a056870420100b0022ee26e73admr6867939oac.58.1714063765265; Thu, 25 Apr
- 2024 09:49:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SL9MpaGf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B274FC113CC;
+	Thu, 25 Apr 2024 16:56:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714064182;
+	bh=pqXBKkfg16S/wSwcWzhP5AcwQgNcYGD8sQW2Qy6S2gE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=SL9MpaGfbXcWzu9Uv1a79Wr92gN6jiJcV684kZW+4XurbeG/EN2FP72lQUjdCdNRR
+	 sJ80EkmgXtGdWWm6RRusMZ1L3p6ucWGWxUpCIzFDO2/V3AU+DjYVxlrPT0NFlkLe2H
+	 RjdfljbIKaAyAOdawrwGS5i537euKB+WcAZMPwFrdt+Vv+SML2T+YIucXUqohqhnO5
+	 Z91H4akeaY3xAs7cpwOV4/Kdl+GoC0LwfIVN/7dsl6Bm/ZqVdfEPJzNAs0WD0Fe/Ov
+	 cI+PVSp9rm+za59x5V//1nybtJTsNHD7s6+4cy5m1jHJc13gMA6RtdATW/GCV5dj/a
+	 cwgn/EO04N8jg==
+From: Nathan Chancellor <nathan@kernel.org>
+Subject: [PATCH 0/2] clk: bcm: Move a couple of __counted_by
+ initializations
+Date: Thu, 25 Apr 2024 09:55:50 -0700
+Message-Id: <20240425-cbl-bcm-assign-counted-by-val-before-access-v1-0-e2db3b82d5ef@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240423205006.1785138-1-peter.griffin@linaro.org>
- <20240423205006.1785138-4-peter.griffin@linaro.org> <20240424195318.GA367166-robh@kernel.org>
-In-Reply-To: <20240424195318.GA367166-robh@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 25 Apr 2024 17:49:11 +0100
-Message-ID: <CADrjBPpQE2bMkVUHQHmBBZfRO8Hjb86xPvLQgSvn4BN0guY9xQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/14] dt-bindings: ufs: exynos-ufs: Add gs101 compatible
-To: Rob Herring <robh@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
-	martin.petersen@oracle.com, James.Bottomley@hansenpartnership.com, 
-	ebiggers@kernel.org, linux-scsi@vger.kernel.org, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
-	willmcvicker@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABaLKmYC/x2NQQqDMBAAvyJ77kKMoWC/UnpINhtdaJOSraKIf
+ zf0OAzMHKBchRUe3QGVV1EpuUF/64BmnydGiY3BGuuMsw4pvDHQB72qTBmpLPnHEcOOq2+GU6m
+ MnohVkVI/xvtgkg0OWvFbOcn2vz1f53kBHlj2WH0AAAA=
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Kees Cook <keescook@chromium.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-hardening@vger.kernel.org, patches@lists.linux.dev, 
+ llvm@lists.linux.dev, stable@vger.kernel.org, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1140; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=pqXBKkfg16S/wSwcWzhP5AcwQgNcYGD8sQW2Qy6S2gE=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDGla3abLrAoyVDOP535XeDTxamfGtwvcnaemf4tpfvwwY
+ ELsZ46nHaUsDGJcDLJiiizVj1WPGxrOOct449QkmDmsTCBDGLg4BWAinzIZ/udP3uh/yvPh92e8
+ c/zCBb6f0b7G9iD6ouLqSyWvNj85d1Wa4a9ccah26p59wQyHkv667c78Hdv+8do+3Uemtcu/HbX
+ YbcAHAA==
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-Hi Rob,
+Hi all,
 
-Thanks for the review.
+This series addresses two UBSAN warnings I see on my Raspberry Pi 4 with
+recent releases of clang that support __counted_by by moving the
+initializations of the element count member before any accesses of the
+flexible array member.
 
-On Wed, 24 Apr 2024 at 20:53, Rob Herring <robh@kernel.org> wrote:
->
-> On Tue, Apr 23, 2024 at 09:49:55PM +0100, Peter Griffin wrote:
-> > Add dedicated google,gs101-ufs compatible for Google Tensor gs101
-> > SoC.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  .../bindings/ufs/samsung,exynos-ufs.yaml      | 38 +++++++++++++++++--
-> >  1 file changed, 35 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> > index b2b509b3944d..1179527d29d1 100644
-> > --- a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> > +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> > @@ -12,12 +12,10 @@ maintainers:
-> >  description: |
-> >    Each Samsung UFS host controller instance should have its own node.
-> >
-> > -allOf:
-> > -  - $ref: ufs-common.yaml
-> > -
-> >  properties:
-> >    compatible:
-> >      enum:
-> > +      - google,gs101-ufs
-> >        - samsung,exynos7-ufs
-> >        - samsung,exynosautov9-ufs
-> >        - samsung,exynosautov9-ufs-vh
-> > @@ -38,14 +36,24 @@ properties:
-> >        - const: ufsp
-> >
-> >    clocks:
-> > +    minItems: 2
-> >      items:
-> >        - description: ufs link core clock
-> >        - description: unipro main clock
-> > +      - description: fmp clock
-> > +      - description: ufs aclk clock
-> > +      - description: ufs pclk clock
-> > +      - description: sysreg clock
-> >
-> >    clock-names:
-> > +    minItems: 2
-> >      items:
-> >        - const: core_clk
-> >        - const: sclk_unipro_main
-> > +      - const: fmp
-> > +      - const: ufs_aclk
-> > +      - const: ufs_pclk
->
-> 'ufs_' is redundant.
+I marked these for stable because more distributions are enabling the
+bounds sanitizer [1][2], so the warnings will show up when the kernel is
+built with a compiler that supports __counted_by, so it seems worth
+fixing this for future users.
 
-Will fix.
+[1]: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1914685
+[2]: https://src.fedoraproject.org/rpms/kernel/c/79a2207963b8fea452acfc5dea13ed54bd36c7e1
 
-Thanks,
+---
+Nathan Chancellor (2):
+      clk: bcm: dvp: Assign ->num before accessing ->hws
+      clk: bcm: rpi: Assign ->num before accessing ->hws
 
-Peter.
+ drivers/clk/bcm/clk-bcm2711-dvp.c | 3 ++-
+ drivers/clk/bcm/clk-raspberrypi.c | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+---
+base-commit: ed30a4a51bb196781c8058073ea720133a65596f
+change-id: 20240424-cbl-bcm-assign-counted-by-val-before-access-cf19d630f2b4
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
+
