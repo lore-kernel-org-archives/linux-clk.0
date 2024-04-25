@@ -1,97 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097772D60A;
-	Thu, 25 Apr 2024 16:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09EA12C7FB
+	for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 16:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714062105; cv=none; b=mqfQLSfrmwt9j5YrsolTHu+eMuOA5RNrWDRmGJ0Z4MvNoPzaMFjYIflUymxDoh7RwAJ0k9zblTKuFYsUAyAKB/D/fM5a1hCAwzuvNKiLaDofWoqXoDDcRDKTFJqxt0IDroaPz1QODC2Y+ZWd19SGRznxIqz8d68vyflDr9UhVVo=
+	t=1714062933; cv=none; b=qi7VDr9MzSndwKD8QMd2GUTRDdABDKLkMhUCev2pB053pcmCDMt89P6/f72FOca35BIOrIYbpm88pl2gh/PKfxEVJqlPtTlaKEwLy179MqF56IS4wZrq/0Em8NWFaVs1adRosD8xf+TSvMUrAf0/71oWe0R4xJVEE7xWLiUeT8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714062105; c=relaxed/simple;
-	bh=eNhCNG+DMjObqRB26BLTw1alILboFKx0y4neqkl4G7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JTotyydE2E7rJxT0WbAvzD/1SArmHd+nAcpGPvmgDJwovYI6kgj3ZSn17hiP1rze71y9rp3aqVNaD910FpcEoIAsrpMpJl8SFbgEtKtwcVTPFY0wylHtsxptukhiboYCG6Z1QJIiaQ26Z8KJXGACGKjjsgkia28TxBEIyG8HhcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJ/V4Z0o; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714062933; c=relaxed/simple;
+	bh=j9WGUFY71ps6OSCWciRhDzFj4uK9mlFz0tqR2rg0Q4o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r05qQoBTa4Y+j5O2s+NJlldLHyKGtS40RlWMRKKcQx9q4mmxZobkHxM0HJhCKnW4zrRmPpiBmvYQj8O5TmmDn8sjBhcnN3Byw30HhX/ODSOl22IcZHVrT+JWPHV26paBvOWzGjGjWiJGuM8aMDNoSJ2OaDMIqtmnT4wSvruw8gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U6T6Pr+P; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJ/V4Z0o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95E2EC113CC;
-	Thu, 25 Apr 2024 16:21:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714062104;
-	bh=eNhCNG+DMjObqRB26BLTw1alILboFKx0y4neqkl4G7I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bJ/V4Z0oJcOCLOhyzy2NXI/RceqrUY6tt2K2VV7Zgy7FV5+JWpUYhmKf37AbpM+k5
-	 2vpcYQnyq3o7NAESejvUHBILXaOsFwKvWw6X04D6LlSTSrvt5T4MKGwIulKV7YlweH
-	 FZb5jWhu/kGptXh/81RjwCYVk7qveQJS/AYyX+8Vy8vt7iaar9D7yhtrxFhlktqYDx
-	 jFuLYPZe03K//HVxKa4ApoONIoRXpC1fD/Mo/dBWjO1AfR70eVjzQne6Z2NI+347Gv
-	 ucRp0qm+P2nbnLnHr7dC0AvVCNvpuEngzTdb2lpUiutfAUf1BTqyRrITC5S3jf/3C1
-	 okwYxisXQY+Sw==
-Message-ID: <024c4c07-18df-4cab-97e5-30969d189aa8@kernel.org>
-Date: Thu, 25 Apr 2024 19:21:38 +0300
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U6T6Pr+P"
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5af702072a9so184796eaf.1
+        for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 09:35:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714062931; x=1714667731; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8D10nkcOa5R+uHy2/Q7XxV4zDHaJ6w0gsH2wqoomVXQ=;
+        b=U6T6Pr+PFC5DKgi3aIKsKkSrPsanqBFS5/OHvEcc9EkNwJuboB4yPzS9B1cYFY2my5
+         Ven3lsSYywpkatU72jcZ6HXqGPmPDFums3SmmZz9WHDBBfcyFduxF8kJXrXP0VAAsuae
+         aulHTdAbGkZZe/HwAxOQfrNxkP4szowDdlzUUI1EkBumawc4TRa+BMGGDvofPZNOgmy5
+         noJDkddsbc5cBqFkzbmMo5js/77K6f7l6404Kzr2RwZ1mKgefcwUSPesl3gJMyYDOh2B
+         AcKn0Uw8jwoCo2v8n1poJ8Kd9XkisE29wrq0ylFPIeUplX9uYLh/R06Cl9QgDcxttnb1
+         37XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714062931; x=1714667731;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8D10nkcOa5R+uHy2/Q7XxV4zDHaJ6w0gsH2wqoomVXQ=;
+        b=Sr2DeXy1h/D8uzdDmCcmWsRzhMIF/RJivUxQTM9QQ3cfgOsdgYm0gYraIYKlyCyTbU
+         tQ3ooBSMEGr2vxKT0KCB+XhdKXdpFG+JSjX6jjJTQckSrlbRSF/iARxWnDemAOUgnYr8
+         i+OFD8fWkUbUSISfHIjdgdFtQovcusuzn7v1xAKRjhRAhHhqmn4md78xVV7H0bve0iMm
+         ckLJHGvw3gmVCEDYZq+EtCLuNRyNPrMmUlDkpjesZm2luLhG6dTYVZVZ9xglCMuG7ZJC
+         eJeGJASSQ9fvW+dB+AlpSHjozRFMXcP5/QitGpMEt0bJzXDnHH+jkvkeMfIbvI0e5utv
+         4vqA==
+X-Forwarded-Encrypted: i=1; AJvYcCV48fT2r2LXWQ8UggQfVFeKq/3Zx7KkrtXgCPjbsSm2ASrwIQPHhGvAoD/i5lTlTZxZBCSllVBR5VZ6+gbEBwDRMXkL7gC08SYR
+X-Gm-Message-State: AOJu0Yw0Xg9FeI6e6VwXmVmgRKJ3452DVzO1pb03A6bYYJLWQ3dthdcW
+	MZnmNMM+uF2Yb0YBZ+FPdqBh/TnBsTmQGCVv4iIZzc2ZqHKLJTuIPh3epjg4g8wZ9hwrBM+1Uuc
+	qS19zzHUOj+Fevky3KA5MRlhs16km2idTT+WCyg==
+X-Google-Smtp-Source: AGHT+IHjcgDl2gtVr/nZRGKGuh2NquqDXaKs02m0Ke3hafEhPZVueDe1BLxI7k0uWnYn7WyPx11zD8Zk9f2sSWyLcbo=
+X-Received: by 2002:a4a:d46:0:b0:5ac:9e7d:576e with SMTP id
+ 67-20020a4a0d46000000b005ac9e7d576emr185709oob.1.1714062931017; Thu, 25 Apr
+ 2024 09:35:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/6] interconnect: icc-clk: Allow user to specify
- master/slave ids
-Content-Language: en-US
-To: Varadarajan Narayanan <quic_varada@quicinc.com>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240418092305.2337429-1-quic_varada@quicinc.com>
- <20240418092305.2337429-2-quic_varada@quicinc.com>
- <da8fc783-6b2b-495d-ab15-be297b0fa435@linaro.org>
- <ZiowMuNlBsxYQesc@hu-varada-blr.qualcomm.com>
-From: Georgi Djakov <djakov@kernel.org>
-In-Reply-To: <ZiowMuNlBsxYQesc@hu-varada-blr.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240423205006.1785138-1-peter.griffin@linaro.org>
+ <20240423205006.1785138-7-peter.griffin@linaro.org> <52403f522a4f7513c5ee5dae48856988f7141825.camel@linaro.org>
+In-Reply-To: <52403f522a4f7513c5ee5dae48856988f7141825.camel@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 25 Apr 2024 17:35:19 +0100
+Message-ID: <CADrjBPrpsTFns8o+H=SvqdgmKFrkuGEJ2QphL7BpRfy9kifxJQ@mail.gmail.com>
+Subject: Re: [PATCH v2 06/14] arm64: dts: exynos: gs101: Add ufs, ufs-phy and
+ ufs regulator dt nodes
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
+	martin.petersen@oracle.com, James.Bottomley@hansenpartnership.com, 
+	ebiggers@kernel.org, linux-scsi@vger.kernel.org, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	tudor.ambarus@linaro.org, saravanak@google.com, willmcvicker@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25.04.24 13:28, Varadarajan Narayanan wrote:
-> On Tue, Apr 23, 2024 at 01:00:48AM +0200, Konrad Dybcio wrote:
->>
->>
->> On 4/18/24 11:23, Varadarajan Narayanan wrote:
->>> Presently, icc-clk driver autogenerates the master and slave ids.
->>> However, devices with multiple nodes on the interconnect could
->>> have other constraints and may not match with the auto generated
->>> node ids. Hence, allow the driver to provide the preferred master
->>> and slave ids.
->>>
->>> Also, update clk-cbf-8996 accordingly.
->>>
->>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->>> ---
->>> v9: squash cbf-msm8996 change into this
->>> v8: Per review feedback, set master/slave ids explicitly. Dont autogenerate
->>>       https://lore.kernel.org/linux-arm-msm/f1b0d280-6986-4055-a611-2caceb15867d@linaro.org/
->>> ---
->>>    drivers/clk/qcom/clk-cbf-8996.c  | 7 ++++++-
->>>    drivers/interconnect/icc-clk.c   | 6 +++---
->>>    include/linux/interconnect-clk.h | 2 ++
->>
->> How is this going to be merged? :/
->>
->> icc-next? clk-next?
-> 
+Hi Andr=C3=A9,
 
-Merging all patches via Bjorn's clk-qcom tree seems to be the best option, if he agrees of course.
+On Thu, 25 Apr 2024 at 13:02, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
+>
+> On Tue, 2024-04-23 at 21:49 +0100, Peter Griffin wrote:
+> > Enable the ufs controller, ufs phy and ufs regulator in device tree.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  .../boot/dts/exynos/google/gs101-oriole.dts   | 18 ++++++++++
+> >  arch/arm64/boot/dts/exynos/google/gs101.dtsi  | 36 +++++++++++++++++++
+> >  2 files changed, 54 insertions(+)
+> >
+>
+> [...]
+>
+> > +
+> > +             ufs_0: ufs@14700000 {
+> > +                     compatible =3D "google,gs101-ufs";
+> > +                     reg =3D <0x14700000 0x200>,
+> > +                           <0x14701100 0x200>,
+> > +                           <0x14780000 0xa000>,
+> > +                           <0x14600000 0x100>;
+> > +                     reg-names =3D "hci", "vs_hci", "unipro", "ufsp";
+> > +                     interrupts =3D <GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH 0=
+>;
+> > +                     clocks =3D <&cmu_hsi2 CLK_GOUT_HSI2_UFS_EMBD_I_AC=
+LK>,
+> > +                              <&cmu_hsi2 CLK_GOUT_HSI2_UFS_EMBD_I_CLK_=
+UNIPRO>,
+> > +                              <&cmu_hsi2 CLK_GOUT_HSI2_UFS_EMBD_I_FMP_=
+CLK>,
+> > +                              <&cmu_hsi2 CLK_GOUT_HSI2_QE_UFS_EMBD_HSI=
+2_ACLK>,
+> > +                              <&cmu_hsi2 CLK_GOUT_HSI2_QE_UFS_EMBD_HSI=
+2_PCLK>,
+> > +                              <&cmu_hsi2 CLK_GOUT_HSI2_SYSREG_HSI2_PCL=
+K>;
+> > +                     clock-names =3D "core_clk", "sclk_unipro_main", "=
+fmp",
+> > +                                   "ufs_aclk", "ufs_pclk", "sysreg";
+> > +                     freq-table-hz =3D <0 0>, <0 0>, <0 0>, <0 0>, <0 =
+0>, <0 0>;
+> > +                     pinctrl-names =3D "default";
+> > +                     pinctrl-0 =3D <&ufs_rst_n &ufs_refclk_out>;
+>
+> The preferred order is pinctrl-0 before pinctrl-names (similar to clock-n=
+ames and reg-names).
 
-Thanks,
-Georgi
+Will fix
+>
+> Other than that,
+>
+> Acked-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
-> Bjorn,
-> 
-> Can you help answer this.
-> 
-> Thanks
-> Varada
+thanks,
 
+Peter
