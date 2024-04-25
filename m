@@ -1,33 +1,59 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96581CFA9;
-	Thu, 25 Apr 2024 10:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F872137E
+	for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 11:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714042057; cv=none; b=foVWXwpcNiV/MRd/CsG4nZS2xk+ukhboEIaWCEt1L9SyL/+QcJYunNYFE1Ccq2BxVRdKRDXTYc7fWOZ8b6zfpCCrlPIzRLGQqWUj7uM+Ci/mYSceI9d38HMeV/2X0Gjjq8K0zhHt0Kh2iMm2IuNwdXk4NQ1riBOFNxw+Oy6bpMU=
+	t=1714044341; cv=none; b=VeQAXkUH6C0osNp1cSKinHsT22hkACVK70lg6S2HuXSTxonxlJj+R50+WCZWD63ZknFG26q03q6/GJaTXCjE4NBnq9MzuKMbrymzVHLo10K7erSlvDEdbyKQrM/OSz0Mbl9OPsuvtOz0XjpTLMpuHCnINLNYnVobbJSBz7pkDKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714042057; c=relaxed/simple;
-	bh=l2oN0apwOiempgVQoJgZseQpsSAT0VXcChaYnxGf5No=;
+	s=arc-20240116; t=1714044341; c=relaxed/simple;
+	bh=fwNLe0kMBbLWPVEoSUuvx176ZW4tkF/rQ4RzbXjxXRs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EdT8w1ZR3bwJ1uYnwnWnvYbWRWnqVsIufb0Tgn+DgWR8I2A6OGb7OwfqUeMgQCnGlcDgyxwqWlr/C+l1EdepmoKQ4IH0rYyHtKfhfXcfnsYBir1SvxGyGqGsmEsvE+u8TX/nYeDsaIr9vQE1aXNgU5AvBSqW2/Ug/+rPuoSbI5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grUwHalg; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=dWP3LAoJ4C0VqUKPU1jwSyWx7P+ygu6FYNTnUbXoMOePFL1SSB7Wh2yzyRg6ly1Emw4Fz8kYvKt/ADTa/RzlztqMJMlG7bHQMEWhGrgN1x/2b4ruIGIj7bqtTQlsOlstudIA4E45Nn+j9XS6R4AvSnPNSW3B8FeSsMycxGViF5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=pass smtp.mailfrom=freebox.fr; dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b=QhtKOBzl; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebox.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grUwHalg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8685C2BBFC;
-	Thu, 25 Apr 2024 10:47:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714042056;
-	bh=l2oN0apwOiempgVQoJgZseQpsSAT0VXcChaYnxGf5No=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=grUwHalgTFeirub4RVOOgYoOFWiFJT7ZuWldcDOCNt/9OhA6Q9AISETZbg+78W3Nh
-	 bqUz4vpDhUmJqN/rkNOAwc/4WmkDGQoD7Y9Bq1pqbGmrG3jqU+9N61epUzUSbslHoi
-	 p4hln/h3yFHopxYsWvz0s2rpQ8py14u5d0aRXAzv+6FAxbmWVhqiobYAz/dy6pFlyB
-	 smPcuITe3RCuIcxgRvzgv5N0Bj+JArZb2GhOgEYRS92kG+IEENBPEQ08jX/6FVWF+p
-	 wJmWkVvBvrfrUaR0v34xA5/agrcXEPWTmiiulr+m1pI32Gt30TsmSHHBZ2mAXsvtBa
-	 UyZVMyl2bdg5A==
-Message-ID: <97b173c3-052f-498c-b0f9-58e60e9f29cf@kernel.org>
-Date: Thu, 25 Apr 2024 12:47:27 +0200
+	dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b="QhtKOBzl"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-34a7e47d164so652684f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 04:25:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=freebox-fr.20230601.gappssmtp.com; s=20230601; t=1714044336; x=1714649136; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LyppFXNax+/kEzh5AnWfKH+3bLs7/N1pqFNlZERxN4k=;
+        b=QhtKOBzlSsmQ1AP7rUg7Rmyf+KAie0Kj4nXdptPfYtXLIPM38q2CUrIyK7AZAzHh5k
+         d1Ybe2geJd0Wuv/wbfo7kcL/jnpKhdCLvvcZ1DLubmpbMZuMIDd9P/tjgHkWCoL1Ck58
+         ULcpMX4pakZN9XE9udQ7l+WoAxv5/pqwT6zzvSu7YPanLStU535V7vkLfvAQPPEomvPz
+         WFm/4bPbie36FjdKwWb02KM9FP4DfnY80Ha/6lNO6srnK2QW72FRvUwC8vWE/+/Ud4Do
+         T1yEaLJNeTkdJJnbLswUSD7SryrTLmsr6vFEEenvYS80IJQ7aQe/I6uiLicIkD6l36PV
+         HmGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714044336; x=1714649136;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LyppFXNax+/kEzh5AnWfKH+3bLs7/N1pqFNlZERxN4k=;
+        b=MZfs+dhfZu9SqTVG/D8H/DXbi/o2cK/Iiw7+aEWlHv8+/Gin4nsvRs4q7XHNpqVbRg
+         LUphZHsocP7orbOVPB2u9wv5rHdSsEWghZexLf5FM2ZgZjF33u5+hPfriT1RI0pPU1ua
+         YrE1DX8h/CggIuXhwSxrCPZP9+erfcFSkhS2nmD8knZ5tsdZwqhYsygjKuvkc1jkJLpK
+         juLIjYOMamp8LM/KkGe4YD+RQdQ769IsfEE4zrDSdDWxlYKjH7P6lvWqIZrKGcDJYhBK
+         +9JucejbQ4P3g4VSQfaPthw1djz7FyrTuy/Ex1lOMXZjGMON5OA063dq92FcNPfkOmMI
+         wsrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpvDpUwgRFaVjKZ+uhR+noIu8VLW63TodP/a4Mhc2QYn12FS4ElLfpTHGgtrll/+yHCaADnMAhUetvk2AkNKYtL1Z94SO5NaLd
+X-Gm-Message-State: AOJu0YwwyUJRrp2WI6avPVPQdQ06GZvOyyd1zIsJcY09sjElXTEeWES+
+	2yJr69cyngT+bSWpH56KT9DgV9lJpcBKVZu83M3uwq+Po4hGB1Dd2mfLfa4quZM=
+X-Google-Smtp-Source: AGHT+IFFR+7svg+5NdeiakUxLZ03suBxKz7h1mQ4mQSnUeMnn4a0n7ob4+CjYL2JbkCZTANYKUMGEA==
+X-Received: by 2002:a5d:60c8:0:b0:347:d352:d5c2 with SMTP id x8-20020a5d60c8000000b00347d352d5c2mr4159132wrt.13.1714044336135;
+        Thu, 25 Apr 2024 04:25:36 -0700 (PDT)
+Received: from [192.168.108.81] (freebox.vlq16.iliad.fr. [213.36.7.13])
+        by smtp.gmail.com with ESMTPSA id t11-20020a05600001cb00b0034a21842accsm18995477wrx.86.2024.04.25.04.25.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Apr 2024 04:25:35 -0700 (PDT)
+Message-ID: <2394efa5-713a-421d-84cf-f6c1b2ad26ac@freebox.fr>
+Date: Thu, 25 Apr 2024 13:25:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,155 +61,80 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/14] HSI2, UFS & UFS phy support for Tensor GS101
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
- kishon@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
- bvanassche@acm.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
- jejb@linux.ibm.com, martin.petersen@oracle.com,
- James.Bottomley@hansenpartnership.com, ebiggers@kernel.org,
- linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org,
- andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com
-References: <20240423205006.1785138-1-peter.griffin@linaro.org>
- <1c6f5984-7f9f-47e3-98c3-3c3671512675@kernel.org>
- <CADrjBPq_0nUYRABKpskRF_dhHu+4K=duPVZX==0pr+cjSL_caQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] clk: qcom: mmcc-msm8998: fix venus clock issue
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: MSM <linux-arm-msm@vger.kernel.org>, linux-clk
+ <linux-clk@vger.kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bryan O Donoghue <bryan.odonoghue@linaro.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Jeffrey Hugo <quic_jhugo@quicinc.com>,
+ Douglas Anderson <dianders@chromium.org>,
+ Pierre-Hugues Husson <phhusson@freebox.fr>, Arnaud Vrac <avrac@freebox.fr>
+References: <c325691e-1cbe-4589-87fc-b67a41e93294@freebox.fr>
+ <22628ff2-6128-4ac9-89e3-d978f57be378@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CADrjBPq_0nUYRABKpskRF_dhHu+4K=duPVZX==0pr+cjSL_caQ@mail.gmail.com>
+From: Marc Gonzalez <mgonzalez@freebox.fr>
+In-Reply-To: <22628ff2-6128-4ac9-89e3-d978f57be378@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/04/2024 12:31, Peter Griffin wrote:
-> Hi Krzysztof,
-> 
-> On Thu, 25 Apr 2024 at 08:08, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On 15/04/2024 21:56, Konrad Dybcio wrote:
+
+> On 4/10/24 13:13, Marc Gonzalez wrote:
+>
+>> Video decoder (venus) was broken on msm8998.
 >>
->> On 23/04/2024 22:49, Peter Griffin wrote:
->>> Hi James, Martin, Alim, Bart, Krzysztof, Vinod, all
->>>
->>> Firstly, many thanks to everyone who reviewed and tested v1.
->>>
->>> This series adds support for the High Speed Interface (HSI) 2 clock
->>> management unit, UFS controller and UFS phy calibration/tuning for GS101
->>> found in Pixel 6.
->>>
->>> With this series applied, UFS is now functional on gs101. The SKhynix
->>> HN8T05BZGKX015 can be enumerated, partitions mounted etc. This allows us to
->>> move away from the initramfs rootfs we have been using for development so far.
->>>
->>> Merge Strategy
->>> 1) UFS driver/bindings via UFS/SCSI tree (James / Martin / Alim)
->>> 2) GS101 DTS/DTSI should go via Krzysztofs Exynos SoC tree
->>> 3) Clock driver/bindings via Clock tree (Krzysztof / Stephen)
->>> 4) PHY driver/bindings via PHY tree (Vinod)
->>>
->>> The v2 series has been rebased on next-20240422, as such all the phy parts
->>> which were already queued by Vinod have been dropped. Two new phy patches
->>> are added to address review feedback received after the patches were queued.
->>>
->>> The series is broadly split into the following parts:
->>> 1) dt-bindings documentation updates
->>> 2) gs101/oriole dts & dtsi updates
->>> 3) Prepatory patches for ufs-exynos driver
->>> 4) GS101 ufs-exynos support
->>> 5) gs101 phy fixes
->>>
+>> PH found crude work-around:
+>> Drop venus_sys_set_power_control() call.
 >>
->> I asked to split, otherwise please explain why PHY and UFS depends on
->> DTS and clk.
+>> Bryan suggested proper fix:
+>> Set required register offsets in venus GDSC structs.
+>> Set HW_CTRL flag.
+>>
+>> GDSC = Globally Distributed Switch Controller
+>>
+>> Use same code as mmcc-msm8996 with:
+>> s/venus_gdsc/video_top_gdsc/
+>> s/venus_core0_gdsc/video_subcore0_gdsc/
+>> s/venus_core1_gdsc/video_subcore1_gdsc/
+>>
+>> https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8996.h
+>> https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8998.h
+>>
+>> 0x1024 = MMSS_VIDEO GDSCR (undocumented)
+>> 0x1028 = MMSS_VIDEO_CORE_CBCR
+>> 0x1030 = MMSS_VIDEO_AHB_CBCR
+>> 0x1034 = MMSS_VIDEO_AXI_CBCR
+>> 0x1038 = MMSS_VIDEO_MAXI_CBCR
+>> 0x1040 = MMSS_VIDEO_SUBCORE0 GDSCR (undocumented)
+>> 0x1044 = MMSS_VIDEO_SUBCORE1 GDSCR (undocumented)
+>> 0x1048 = MMSS_VIDEO_SUBCORE0_CBCR
+>> 0x104c = MMSS_VIDEO_SUBCORE1_CBCR
+>>
+>> Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
+>> ---
 > 
-> Seems I misunderstood your feedback. I thought you just want me to
-> make clear who was merging what from the series via which tree. But
-> you want separate series?
+> [...]
 > 
-> 1) ufs host dt bindings & driver
-> 2) minor phy fixes series (most patches got applied already for phy)
 > 
-> What do you want for cmu_hsi2 clocks and dts/dtsi? The device tree
-> depends on the clock bindings to compile
+>>   static struct gdsc video_top_gdsc = {
+>>   	.gdscr = 0x1024,
+>> +	.cxcs = (unsigned int []){ 0x1028, 0x1034, 0x1038 },
+>> +	.cxc_count = 3,
+> 
+> Marc, have you verified all three are necessary for stuff to work?
+> 
+> I'd expect 0x1028/venus core to be absolutely necessary fwiw
 
-This is not specific to Samsung Soc, Qualcomm soc or any other arm-soc.
-Independent patches for different subsystems should not be put together
-in one patchset. You create false impression of dependencies, grow CC
-list, cause issues when applying (I cannot just apply entire set with
-one command, but need to run multiple commands (!!!), plus certain
-subsystems will reject your patchset because they take everything or
-nothing) and possible bisection issues (because patches which should be
-tested independently, are put together so testing does not uncover
-undocumented dependencies).
+Considering the absence of public documentation, these register offsets
+mostly boil down to cargo-cult programming.
 
-Almost never combine independent patches which are targeted to entirely
-different subsystems. There are exceptions, but regular feature work is
-not one of them.
+Thus, using different code on 8996 and 8998 risks provoking the wrath
+of the embedded gods. Better, safer to cast the same incantations.
 
-Subsystem is everything in top level of drivers/ and drivers/soc/ (or
-kind of arch/arm64/boot/dts/, but that tricky because
-Tesla/Google/Exynos are one subsystem). Or whatever is there in
-MAINTAINERS file.
-
-I don't know, we keep repeating this over multiple times, so it could be
-added to some docs, but people do not read docs...
-
-1. Drivers and driver bindings go to subsystems.
-2. DTS and board compatibles go to soc.
-a. Any dependency on driver is a near-NAK.
-b. Any dependency on headers must be clearly expressed, because headers
-cannot be back-merged from subsystem tree to DTS tree.
-c. Any usage or usage of bindings from other sets must be clearly
-expressed (linked).
-3. drivers/soc go to soc.
-
-Things from list above targeting the same maintainer tree, can be
-combined in one series, with dependencies expressed in patch changelogs
-or cover letter.
-
-Best regards,
-Krzysztof
+Regards
 
