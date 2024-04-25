@@ -1,216 +1,270 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD03F149C58
-	for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 13:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BFB14A0A0;
+	Thu, 25 Apr 2024 14:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714051963; cv=none; b=YsIXk6uwfGSa+4MueVPLIdfEeSLoeXbbG2PHAF2DvLUlniefPN3+C4yTnO73f06V5SoF3cauI19oVrJwt0BJ0f3fZ2uVtp6sUkqmbMoko4AxlhxxUQ+G9xaCHWMTYWgtVeHKKjWFMb5679lTGVAoxBzgo2PRa2mXis/sPRkNzI4=
+	t=1714056683; cv=none; b=bwdtpjNxonCAnigTOdQSaFo3+Rzf8fai6tip6VICKEZiPYplysNDeoFeopFWs7OpF5qzL9eh7Ria6uwzu+H2RcY4ywA3+sPfzHi9C/Rw8M43ukvZw1c4SEOpnTCJ6JWQQskpLhVsrS7fWMqFdfK7SBSPYbp7dgVGCy/h+1Qz0U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714051963; c=relaxed/simple;
-	bh=MMomP/8dwSAVkZZmBgm8ZvgmVuByPf1jQVvMWguKpjg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U12eLvi7e+80/4N2ZeFu1AfdnYnxmy46shCBG0WZAFuIXjDTdzGX1rjE/ee4eYHShOlOfCLitghcEoZwr1rC4epBWWoNNAHaAhdghjtZ1kF/X9vVfxmoZvj3QMyT+IJ+V7fA+8cBepRCUtM/BagrUySQGeQQKWDnMTEr70RNf30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YBj3zpHJ; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1714056683; c=relaxed/simple;
+	bh=o8Pwp1MZGLbsmzWgTZQD2ayx4dF5M3ZVcoIncXTsEvk=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=hTZTFhooG0Q6HZPTRURfbKB/SKZ6xct9DIgxUCV+zZMhZ4K1AZ33SBzgMOToXdmqiEFEA5BhukX19nwjekAHgWuhAxgUQqVEd3X6FTpbK1zKtb3iCHeYk6VU0RSOTgw2qB5BjfnM5Ua47p1s2Sn4ZZrdsThl2E8NJgqytKIXP9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mctKP4oF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YBj3zpHJ"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5191b61cad3so241354e87.2
-        for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 06:32:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714051960; x=1714656760; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HSmqypjIS92fFBtdrRSjnycqWl4CLQIjWTtXUnhGY5g=;
-        b=YBj3zpHJ6GNgV1MLHMMHWN+2uvNQIJkaFSj24Kj39cgVtRji5fbNj9+zyPj0vgEUWa
-         Orza/9xtzFi1Hjc37js7P75xQYEXrUTP11ejGLLvZgMoZDbHd4x9LN7Yh3GBZjNhdaaf
-         D/j9+ED4sQK9lS7u6fevupv2znzLhyZfB+YjQ7oKroFp4ywxydbzqIT9z5Wt7A3wJvjX
-         qTUiqFXon6wKmMVevmQakRRH8J3NiRJ2hMZU9bma9jeJkXDGF3jmM30n4QOK6DrtQPQG
-         jeTVD8Q9ELitj+PcS7Hb0P8KYQWveoE9sVleS0iSzgfDGz/dUQ4uzgjo7FsEz1XrSlaa
-         eJ6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714051960; x=1714656760;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HSmqypjIS92fFBtdrRSjnycqWl4CLQIjWTtXUnhGY5g=;
-        b=EQchh2Gg1wqPqM1JzFod7N9eRMnodhfsdyPFUNyLzgvj0Dnw1xA3KStPJ9Pa2QrAP8
-         hxFpJs5HVsK9AZfo1byY8abvDMfp9Kc99SyuIPGRKDsiN8+MxMU0w7wXcrkPDObOGfE9
-         QBHF2vYsXZOuAzAU52W/41TgNWODPK+1jgmOh4TIVYyB06v47Igmv7zeDWR+owLHWUAO
-         JPJAB61rDiLoHpr+zoqvDhZ9iLZxHeJYbdbylue9NcgGXDGYKQwvc1JDcNva5LYmHSgb
-         ID+KTa17yb3jxXMb0d7Qr6jDGXdZOPPKQk4k1UPjqqrQqAz9BmSkBMn4L8kkvj7cxiR1
-         X/Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVQw71jSzPrOVJhW9TFc1wjxv1nSxLq6/tvH+Mz0RmBcIY5OOi0tDnCbvDgIeY5fyJe84W3M3CxzMRVNwasKNNzWqQfMSQYwuU
-X-Gm-Message-State: AOJu0YycihfBN+bAcH+tIseKKRqS2vEVogdSzRpXlHQTB1mD2MwYOsd8
-	DySS42lKFuiAk33K2Ut0uPUstsbSoIHTyxo+D+DwGKX5zgxij+ok1w1wm3RDzlSqrjrkH1Mf7hW
-	I4xY=
-X-Google-Smtp-Source: AGHT+IESWXmXNjDEZEiQeuKXC4gKNDBYg3AhPm/2TqyqsQYsczc5eWsRrAiQSvYsv18t5BVv2SxY6Q==
-X-Received: by 2002:a2e:9855:0:b0:2de:1218:af30 with SMTP id e21-20020a2e9855000000b002de1218af30mr3711383ljj.1.1714051960077;
-        Thu, 25 Apr 2024 06:32:40 -0700 (PDT)
-Received: from [192.168.1.102] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id x22-20020a2e7c16000000b002d9e3a525bfsm2362152ljc.41.2024.04.25.06.32.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Apr 2024 06:32:39 -0700 (PDT)
-Message-ID: <d160289a-d0c7-498e-88b2-89861ab9fa50@linaro.org>
-Date: Thu, 25 Apr 2024 16:32:20 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mctKP4oF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82B66C113CC;
+	Thu, 25 Apr 2024 14:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714056682;
+	bh=o8Pwp1MZGLbsmzWgTZQD2ayx4dF5M3ZVcoIncXTsEvk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=mctKP4oFCAgStrgwKriN2CadcZcMD3lKZVHIQp2VbFiYUUuPl7AKRDoeeCQK06xIy
+	 +sucQB6AkeQRQUYT24oHkB6VZpgPEPVmz3GVb8qLiOtkOaVaJMFMj9X4GJDnwtwXKn
+	 WKX81BsMia3nl5QssVLSDmm1FpcG9XmxE4b7p1obdENy1QKly+hYxhEc1Zd1Zyvyly
+	 dyh0vEJmhahVcNhYySeAIKeyJHfADQMyHDd+24h3ztSDprb9vja6c0qzQV+0uLe96M
+	 I/pz4JnBlkyriA2CHw3eQV7Ecj1pMbOYq3u0MkSrlfqKbeRHGjsC8stQxneXEfaHmJ
+	 GSln53+WHO6lQ==
+Date: Thu, 25 Apr 2024 09:51:21 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 RESEND 1/6] dt-bindings: clock: qcom: Add SM8650 video
- clock controller
-Content-Language: en-US
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240321092529.13362-1-quic_jkona@quicinc.com>
- <20240321092529.13362-2-quic_jkona@quicinc.com>
- <CAA8EJppsMchthssctEgUf9q45j84cSLQ78Ur+vaA0Z7GEQi8+g@mail.gmail.com>
- <725471b1-46a9-43b0-bede-33f01c953d51@quicinc.com>
- <c3ea22ed-5750-438f-89d5-e56f908ba835@linaro.org>
- <73c5ffca-9275-437c-a49e-ef3251c8d313@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <73c5ffca-9275-437c-a49e-ef3251c8d313@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Rob Herring <robh@kernel.org>
+To: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Cc: Will Deacon <will@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Haojian Zhuang <haojian.zhuang@linaro.org>, Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-kernel@vger.kernel.org, 
+ Rob Herring <robh+dt@kernel.org>, Kees Cook <keescook@chromium.org>, 
+ linux-gpio@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+ Conor Dooley <conor.dooley@microchip.com>, devicetree@vger.kernel.org, 
+ Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org, 
+ Lubomir Rintel <lkundrak@v3.sk>, linux-clk@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ phone-devel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Karel Balej <balejk@matfyz.cz>, 
+ David Wronek <david@mainlining.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>
+In-Reply-To: <20240424-pxa1908-lkml-v10-0-36cdfb5841f9@skole.hr>
+References: <20240424-pxa1908-lkml-v10-0-36cdfb5841f9@skole.hr>
+Message-Id: <171405653276.2527711.56458295308032188.robh@kernel.org>
+Subject: Re: [PATCH v10 00/12] Initial Marvell PXA1908 support
 
-Hi Jagadeesh,
 
-On 4/22/24 14:00, Jagadeesh Kona wrote:
+On Wed, 24 Apr 2024 20:42:27 +0200, Duje Mihanović wrote:
+> Hello,
 > 
-> On 4/19/2024 2:31 AM, Vladimir Zapolskiy wrote:
->> Hello Jagadeesh,
->>
->> On 3/25/24 08:07, Jagadeesh Kona wrote:
->>>
->>>
->>> On 3/21/2024 6:42 PM, Dmitry Baryshkov wrote:
->>>> On Thu, 21 Mar 2024 at 11:26, Jagadeesh Kona <quic_jkona@quicinc.com>
->>>> wrote:
->>>>>
->>>>> Extend device tree bindings of SM8450 videocc to add support
->>>>> for SM8650 videocc. While it at, fix the incorrect header
->>>>> include in sm8450 videocc yaml documentation.
->>>>>
->>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>> ---
->>>>>     .../devicetree/bindings/clock/qcom,sm8450-videocc.yaml    | 4 +++-
->>>>>     include/dt-bindings/clock/qcom,sm8450-videocc.h           | 8
->>>>> +++++++-
->>>>>     2 files changed, 10 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git
->>>>> a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>>> b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>>> index bad8f019a8d3..79f55620eb70 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>>> @@ -8,18 +8,20 @@ title: Qualcomm Video Clock & Reset Controller on
->>>>> SM8450
->>>>>
->>>>>     maintainers:
->>>>>       - Taniya Das <quic_tdas@quicinc.com>
->>>>> +  - Jagadeesh Kona <quic_jkona@quicinc.com>
->>>>>
->>>>>     description: |
->>>>>       Qualcomm video clock control module provides the clocks, resets
->>>>> and power
->>>>>       domains on SM8450.
->>>>>
->>>>> -  See also:: include/dt-bindings/clock/qcom,videocc-sm8450.h
->>>>> +  See also:: include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>>
->>>> This almost pleads to go to a separate patch. Fixes generally should
->>>> be separated from the rest of the changes.
->>>>
->>>
->>> Thanks Dmitry for your review.
->>>
->>> Sure, will separate this into a separate patch in next series.
->>>
->>>>>
->>>>>     properties:
->>>>>       compatible:
->>>>>         enum:
->>>>>           - qcom,sm8450-videocc
->>>>>           - qcom,sm8550-videocc
->>>>> +      - qcom,sm8650-videocc
->>>>>
->>>>>       reg:
->>>>>         maxItems: 1
->>>>> diff --git a/include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>>> b/include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>>> index 9d795adfe4eb..ecfebe52e4bb 100644
->>>>> --- a/include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>>> +++ b/include/dt-bindings/clock/qcom,sm8450-videocc.h
->>>>> @@ -1,6 +1,6 @@
->>>>>     /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->>>>>     /*
->>>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights
->>>>> reserved.
->>>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All
->>>>> rights reserved.
->>>>>      */
->>>>>
->>>>>     #ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8450_H
->>>>> @@ -19,6 +19,11 @@
->>>>>     #define
->>>>> VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC                                9
->>>>>     #define VIDEO_CC_PLL0                                          10
->>>>>     #define VIDEO_CC_PLL1                                          11
->>>>> +#define
->>>>> VIDEO_CC_MVS0_SHIFT_CLK                                        12
->>>>> +#define VIDEO_CC_MVS0C_SHIFT_CLK                               13
->>>>> +#define
->>>>> VIDEO_CC_MVS1_SHIFT_CLK                                        14
->>>>> +#define VIDEO_CC_MVS1C_SHIFT_CLK                               15
->>>>> +#define VIDEO_CC_XO_CLK_SRC                                    16
->>>>
->>>> Are these values applicable to sm8450?
->>>>
->>>
->>> No, the shift clocks above are part of SM8650 only. To reuse the
->>> existing SM8550 videocc driver for SM8650 and to register these shift
->>> clocks for SM8650, I added them here.
->>>
->>
->> In such case I'd strongly suggest to add a new qcom,sm8650-videocc.h file,
->> and do #include qcom,sm8450-videocc.h in it, thus the new header will be
->> really a short one.
->>
->> This will add pristine clarity.
->>
+> This series adds initial support for the Marvell PXA1908 SoC and
+> "samsung,coreprimevelte", a smartphone using the SoC.
 > 
-> Thanks Vladimir for your suggestion. I believe adding a comment for
-> these set of clocks should be sufficient to indicate these clocks are
-> applicable only for SM8650, I can add the required comment and post the
-> next series. Please let me know if this works?
+> USB works and the phone can boot a rootfs from an SD card, but there are
+> some warnings in the dmesg:
+> 
+> During SMP initialization:
+> [    0.006519] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU1: 0x00000000000000
+> [    0.006542] CPU features: Unsupported CPU feature variation detected.
+> [    0.006589] CPU1: Booted secondary processor 0x0000000001 [0x410fd032]
+> [    0.010710] Detected VIPT I-cache on CPU2
+> [    0.010716] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU2: 0x00000000000000
+> [    0.010758] CPU2: Booted secondary processor 0x0000000002 [0x410fd032]
+> [    0.014849] Detected VIPT I-cache on CPU3
+> [    0.014855] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU3: 0x00000000000000
+> [    0.014895] CPU3: Booted secondary processor 0x0000000003 [0x410fd032]
+> 
+> SMMU probing fails:
+> [    0.101798] arm-smmu c0010000.iommu: probing hardware configuration...
+> [    0.101809] arm-smmu c0010000.iommu: SMMUv1 with:
+> [    0.101816] arm-smmu c0010000.iommu:         no translation support!
+> 
+> A 3.14 based Marvell tree is available on GitHub
+> acorn-marvell/brillo_pxa_kernel, and a Samsung one on GitHub
+> CoderCharmander/g361f-kernel.
+> 
+> Andreas Färber attempted to upstream support for this SoC in 2017:
+> https://lore.kernel.org/lkml/20170222022929.10540-1-afaerber@suse.de/
+> 
+> Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+> 
+> Changes in v10:
+> - Update trailers
+> - Rebase on v6.9-rc5
+> - Clock driver changes:
+>   - Add a couple of forgotten clocks in APBC
+>     - The clocks are thermal_clk, ipc_clk, ssp0_clk, ssp2_clk and swjtag
+>     - The IDs and register offsets were already present, but I forgot to
+>       actually register them
+>   - Split each controller block into own file
+>   - Drop unneeded -of in clock driver filenames
+>   - Simplify struct pxa1908_clk_unit
+>   - Convert to platform driver
+>   - Add module metadata
+> - DTS changes:
+>   - Properly name pinctrl nodes
+>   - Drop pinctrl #size-cells, #address-cells, ranges and #gpio-size-cells
+>   - Fix pinctrl input-schmitt configuration
+> - Link to v9: https://lore.kernel.org/20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr
+> 
+> Changes in v9:
+> - Update trailers and rebase on v6.9-rc2, no changes
+> - Link to v8: https://lore.kernel.org/20240110-pxa1908-lkml-v8-0-fea768a59474@skole.hr
+> 
+> Changes in v8:
+> - Drop SSPA patch
+> - Drop broken-cd from eMMC node
+> - Specify S-Boot hardcoded initramfs location in device tree
+> - Add ARM PMU node
+> - Correct inverted modem memory base and size
+> - Update trailers
+> - Rebase on next-20240110
+> - Link to v7: https://lore.kernel.org/20231102-pxa1908-lkml-v7-0-cabb1a0cb52b@skole.hr
+>   and https://lore.kernel.org/20231102152033.5511-1-duje.mihanovic@skole.hr
+> 
+> Changes in v7:
+> - Suppress SND_MMP_SOC_SSPA on ARM64
+> - Update trailers
+> - Rebase on v6.6-rc7
+> - Link to v6: https://lore.kernel.org/r/20231010-pxa1908-lkml-v6-0-b2fe09240cf8@skole.hr
+> 
+> Changes in v6:
+> - Address maintainer comments:
+>   - Add "marvell,pxa1908-padconf" binding to pinctrl-single driver
+> - Drop GPIO patch as it's been pulled
+> - Update trailers
+> - Rebase on v6.6-rc5
+> - Link to v5: https://lore.kernel.org/r/20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr
+> 
+> Changes in v5:
+> - Address maintainer comments:
+>   - Move *_NR_CLKS to clock driver from dt binding file
+> - Allocate correct number of clocks for each block instead of blindly
+>   allocating 50 for each
+> - Link to v4: https://lore.kernel.org/r/20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr
+> 
+> Changes in v4:
+> - Address maintainer comments:
+>   - Relicense clock binding file to BSD-2
+> - Add pinctrl-names to SD card node
+> - Add vgic registers to GIC node
+> - Rebase on v6.5-rc5
+> - Link to v3: https://lore.kernel.org/r/20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr
+> 
+> Changes in v3:
+> - Address maintainer comments:
+>   - Drop GPIO dynamic allocation patch
+>   - Move clock register offsets into driver (instead of bindings file)
+>   - Add missing Tested-by trailer to u32_fract patch
+>   - Move SoC binding to arm/mrvl/mrvl.yaml
+> - Add serial0 alias and stdout-path to board dts to enable UART
+>   debugging
+> - Rebase on v6.5-rc4
+> - Link to v2: https://lore.kernel.org/r/20230727162909.6031-1-duje.mihanovic@skole.hr
+> 
+> Changes in v2:
+> - Remove earlycon patch as it's been merged into tty-next
+> - Address maintainer comments:
+>   - Clarify GPIO regressions on older PXA platforms
+>   - Add Fixes tag to commit disabling GPIO pinctrl calls for this SoC
+>   - Add missing includes to clock driver
+>   - Clock driver uses HZ_PER_MHZ, u32_fract and GENMASK
+>   - Dual license clock bindings
+>   - Change clock IDs to decimal
+>   - Fix underscores in dt node names
+>   - Move chosen node to top of board dts
+>   - Clean up documentation
+>   - Reorder commits
+>   - Drop pxa,rev-id
+> - Rename muic-i2c to i2c-muic
+> - Reword some commits
+> - Move framebuffer node to chosen
+> - Add aliases for mmc nodes
+> - Rebase on v6.5-rc3
+> - Link to v1: https://lore.kernel.org/r/20230721210042.21535-1-duje.mihanovic@skole.hr
+> 
+> ---
+> Andy Shevchenko (1):
+>       clk: mmp: Switch to use struct u32_fract instead of custom one
+> 
+> Duje Mihanović (11):
+>       dt-bindings: pinctrl: pinctrl-single: add marvell,pxa1908-padconf compatible
+>       pinctrl: single: add marvell,pxa1908-padconf compatible
+>       dt-bindings: clock: Add Marvell PXA1908 clock bindings
+>       clk: mmp: Add Marvell PXA1908 APBC driver
+>       clk: mmp: Add Marvell PXA1908 APBCP driver
+>       clk: mmp: Add Marvell PXA1908 APMU driver
+>       clk: mmp: Add Marvell PXA1908 MPMU driver
+>       dt-bindings: marvell: Document PXA1908 SoC
+>       arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
+>       arm64: dts: Add DTS for Marvell PXA1908 and samsung,coreprimevelte
+>       MAINTAINERS: add myself as Marvell PXA1908 maintainer
+> 
+>  .../devicetree/bindings/arm/mrvl/mrvl.yaml         |   5 +
+>  .../devicetree/bindings/clock/marvell,pxa1908.yaml |  48 +++
+>  .../bindings/pinctrl/pinctrl-single.yaml           |   4 +
+>  MAINTAINERS                                        |   9 +
+>  arch/arm64/Kconfig.platforms                       |   8 +
+>  arch/arm64/boot/dts/marvell/Makefile               |   3 +
+>  .../dts/marvell/pxa1908-samsung-coreprimevelte.dts | 328 +++++++++++++++++++++
+>  arch/arm64/boot/dts/marvell/pxa1908.dtsi           | 300 +++++++++++++++++++
+>  drivers/clk/mmp/Makefile                           |   2 +-
+>  drivers/clk/mmp/clk-frac.c                         |  57 ++--
+>  drivers/clk/mmp/clk-of-mmp2.c                      |  26 +-
+>  drivers/clk/mmp/clk-of-pxa168.c                    |   4 +-
+>  drivers/clk/mmp/clk-of-pxa1928.c                   |   6 +-
+>  drivers/clk/mmp/clk-of-pxa910.c                    |   4 +-
+>  drivers/clk/mmp/clk-pxa1908-apbc.c                 | 131 ++++++++
+>  drivers/clk/mmp/clk-pxa1908-apbcp.c                |  84 ++++++
+>  drivers/clk/mmp/clk-pxa1908-apmu.c                 | 123 ++++++++
+>  drivers/clk/mmp/clk-pxa1908-mpmu.c                 | 112 +++++++
+>  drivers/clk/mmp/clk.h                              |  10 +-
+>  drivers/pinctrl/pinctrl-single.c                   |   1 +
+>  include/dt-bindings/clock/marvell,pxa1908.h        |  88 ++++++
+>  21 files changed, 1296 insertions(+), 57 deletions(-)
+> ---
+> base-commit: ed30a4a51bb196781c8058073ea720133a65596f
+> change-id: 20230803-pxa1908-lkml-6830e8da45c7
+> 
+> Best regards,
+> --
+> Duje Mihanović <duje.mihanovic@skole.hr>
+> 
+> 
 
-Well, I didn't get any new information to abandon my suggestion, what is
-wrong with it or why is it less preferable?
 
-Even if you add a comment in the header file, it means that for SM8450
-platforms you'll begin to define inapplicable/unrelated macro for the
-platform, which opens a small risk of the misusage, and which can be
-easily avoided. I believe that the clarity is better for maintenance.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
---
-Best wishes,
-Vladimir
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y marvell/pxa1908-samsung-coreprimevelte.dtb' for 20240424-pxa1908-lkml-v10-0-36cdfb5841f9@skole.hr:
+
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: /: memory: False schema does not allow {'device_type': ['memory'], 'reg': [[0, 0, 0, 0]]}
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: pinmux@1e000: pinctrl-single,gpio-range: [[8, 55, 55, 0], [8, 110, 32, 0], [8, 52, 1, 0]] is too long
+	from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-single.yaml#
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: mmc@80000: pinctrl-names: ['default'] is too short
+	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
+arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: mmc@80000: Unevaluated properties are not allowed ('pinctrl-names' was unexpected)
+	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
+
+
+
+
+
