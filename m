@@ -1,175 +1,171 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BFB13C90F;
-	Fri, 26 Apr 2024 09:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB7313D53C
+	for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 09:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714123234; cv=none; b=SSBKXWP22zCQQmkiKsCY9mIYD5jyOrIZM3RZx+2fvavpUo8EK61ZVWxe2RwuQnYb3WMk9dmS/N/PwlyiL+NAUKDW+HOvv6u5sbVrDWcpeR2tDyG2sXZvo2Lqk8UUsRcIOSkC/ug0OWGanoxbpN6RVkcn1+ldhiTsNwgYfxGBJJU=
+	t=1714123296; cv=none; b=pNbAHT/kKO8dzUOtx1Qsb+lbBEXFJABHhwuXTfkILZUI1S0LE3rFpZOwR0QDHNw6ID4PfDjqu7tr/87VlxhI0pgefZ1q1zHeyJ7d6auVcEvgdkWRQ678/A/KtF9FcZHNffpKOxBkiIepDprg48p8iI6dn77g25cYYt+Wew085Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714123234; c=relaxed/simple;
-	bh=xBUpP3VAjhJdXrYIjPZD0CAQ4mXC99ueDEdcVvn0xbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YrKe4UIejjFyVfWqUAzzwO57LvdthVhT1vokVOVHr4fGjiiPkyPyM0ClPx/Vf77x4nVx2Ot++okCL/YWSA4SqmbfpRYgbUQM+/OKrjbf9mhiTL5CaaK7+A6AMrvGj+9PAkuB95sYVLOJAH+b3LheM8HJntYIoim96VTb70GEgy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NtUEw5A+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1714123296; c=relaxed/simple;
+	bh=J46hu9WwxuHHqG3jg2udhzUNYemwQPRMqtfF0/62PyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=BMzXEyDZc54osZCGIpNfXT7U8kTtpGoDUUH5tisKG7utiGDzFKSvao1GuFtX+9IRBwoJBSnAxBBa87AVTvVv11hOQqwuQSzmKfiI+9lLVfKtvOO7bo2eYSXjazB/o+L4JkLgp4mmIMwihHj1w3/vBbqahEzdpXh7spGtpbbMOgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OSmp/78F; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NtUEw5A+"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43Q41YLU012981;
-	Fri, 26 Apr 2024 09:20:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=BUIIFoA4N2ESIijEp2JWqnWgumg1YcDccO7inyej7yI=; b=Nt
-	UEw5A+H8vL4iSQmfnMTb8OIaAEu9zI1irjgkP9JL4s5QPos/EMOutuHwvoBn0uRx
-	ZpR4MsWd/7ksqCHDctVXN/KUFWeO3JLKDxgW2o7gBSpy0ZngQWbCVTGdGRs8n08y
-	SD/atlbO/HLr/HaJUkJRWvb6XMUcnm8Auf4+0zJgblHtTaZue42rbquYLaEPH+gd
-	rhawsOCZiCiW1MAI1t5tdu0Ap2n41fbrfNuYX6bEPbkx6ptiNQ6RNQSTFaEYKm/q
-	ucUzvhf05Jl6IRfgdGr32Jq81Fb6jYPvVzwz8b7WB/qzRW6VT4NYG4bJoaTqo0pO
-	HUarX30L6YOVDZL/BWow==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xr3591ctd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Apr 2024 09:20:25 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43Q9KMaN025356
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Apr 2024 09:20:22 GMT
-Received: from [10.218.10.146] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Apr
- 2024 02:20:16 -0700
-Message-ID: <ca017ebf-c099-b436-f062-1341f765a08c@quicinc.com>
-Date: Fri, 26 Apr 2024 14:50:12 +0530
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OSmp/78F"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240426092131euoutp017d7969e7ba63eb8f16cd7faf881b097f~Jyg07t76v0718207182euoutp01Q
+	for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 09:21:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240426092131euoutp017d7969e7ba63eb8f16cd7faf881b097f~Jyg07t76v0718207182euoutp01Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1714123291;
+	bh=x+cvxNVH4eVdi6OhVC/jgqpXd3jzhVuCkryfhPDJH5I=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=OSmp/78FFVNT0s5xaQl9k1v6TfoYxt1Tkdupgpg8Vof6K1kEVuRETMAMejcc16KNv
+	 peOHENyPdNLoj2mante5jWJgg1A6BjJVujgbc2JHXfK7qtYxPGpFnNuh/NfFoLMsW0
+	 yihveCTcT75KQ96O10hm9cdGkJ+tSiQeLrpwhIes=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240426092130eucas1p2c60365c869ae2a0323b224d9aa8c6677~Jyg0fei8f3047830478eucas1p2o;
+	Fri, 26 Apr 2024 09:21:30 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id D9.28.09624.A127B266; Fri, 26
+	Apr 2024 10:21:30 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240426092130eucas1p1cdb1063d963b5e9b262547c0689bf55f~Jyg0IJCWr1229112291eucas1p1N;
+	Fri, 26 Apr 2024 09:21:30 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240426092130eusmtrp224ea90100e16f7a14c650e73f91faa74~Jyg0HCLrM0240702407eusmtrp2k;
+	Fri, 26 Apr 2024 09:21:30 +0000 (GMT)
+X-AuditID: cbfec7f2-bfbff70000002598-b6-662b721a799d
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id C7.A9.09010.A127B266; Fri, 26
+	Apr 2024 10:21:30 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240426092129eusmtip225058950a745bd8129af36a94ab9978a~JygzNU40Y0252802528eusmtip2a;
+	Fri, 26 Apr 2024 09:21:29 +0000 (GMT)
+Message-ID: <ad2cf931-0b51-4439-9963-bdb8a8b63b2b@samsung.com>
+Date: Fri, 26 Apr 2024 11:21:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH V2 7/8] clk: qcom: Add GPUCC driver support for SM4450
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        "Satya Priya Kakitapalli"
-	<quic_skakitap@quicinc.com>
-References: <20240416182005.75422-1-quic_ajipan@quicinc.com>
- <20240416182005.75422-8-quic_ajipan@quicinc.com>
- <CAA8EJpqwrKcgm7c57=LpxS7+CfrN2UxNg8k_46auBrdZG7vQnA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: samsung: exynos-clkout: Remove misleading
+ of_match_table/MODULE_DEVICE_TABLE
+To: Krzysztof Kozlowski <krzk@kernel.org>, William McVicker
+	<willmcvicker@google.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, David
+	Lechner <david@lechnology.com>, Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Content-Language: en-US
-From: Ajit Pandey <quic_ajipan@quicinc.com>
-In-Reply-To: <CAA8EJpqwrKcgm7c57=LpxS7+CfrN2UxNg8k_46auBrdZG7vQnA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <b271df59-fb7d-4637-8ac0-1e53be2f0ee4@kernel.org>
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3uiw9dIqgbCoJcFFm8PKZL3HkWEE3PTx
-X-Proofpoint-ORIG-GUID: 3uiw9dIqgbCoJcFFm8PKZL3HkWEE3PTx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-26_09,2024-04-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 mlxscore=0 suspectscore=0 phishscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404260060
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7djPc7pSRdppBo+uG1k8mLeNzWJbh43F
+	9S/PWS0WNYhZTDz/k83i/PkN7BabHl9jtfjYc4/VYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2
+	slis+vSf0YHP4/2NVnaPBZtKPTat6mTz+NR/ktXjzrU9bB6bl9R79G1ZxejxeZNcAEcUl01K
+	ak5mWWqRvl0CV8arP3PYCjYIVmzoecbUwLidr4uRk0NCwETi9ZZ5bF2MXBxCAisYJXpv3mKB
+	cL4wSmxZ+4sVwvnMKNH/9wA7TMvxO19ZQWwhgeWMEp+u+0EUfWSU+Py1iREkwStgJ/H45AYm
+	EJtFQFVi3vVGFoi4oMTJmU/AbFEBeYn7t2YADeXgEBbIkDj2qgAkLCIQLrFrxmGwxcwC15kl
+	Ps6ewAaSYBYQl7j1ZD7YTDYBQ4mut11gcU6gXb8aljND1MhLbH87hxmkWUJgMadE/9FZjBBX
+	u0jMX78e6gNhiVfHt0DZMhL/d4IMBWloZ5RY8Ps+lDOBUaLh+S2obmuJO+d+sYGcyiygKbF+
+	lz5E2FHi9fa/jCBhCQE+iRtvBSGO4JOYtG06M0SYV6KjTQiiWk1i1vF1cGsPXrjEPIFRaRZS
+	sMxC8uYsJO/MQti7gJFlFaN4amlxbnpqsWFearlecWJucWleul5yfu4mRmB6O/3v+KcdjHNf
+	fdQ7xMjEwXiIUYKDWUmE9+ZHjTQh3pTEyqrUovz4otKc1OJDjNIcLErivKop8qlCAumJJanZ
+	qakFqUUwWSYOTqkGJgXt7/ILZl/kj31UJnr8mK2/Muvea9t2Pq3WVnulHM+UYKH3a7erYmJb
+	YcehUgeHF9fruiKfrVt6ceqJvYdeOxS4p7/W2SevGh00nefRjHrJkKSYO7emv7Y/Led+6rPZ
+	VDfZNYeDnnIvU485+vzNP7Yb1bWemp9mzWN4OkXuX/PJOI33E7dslZNply7vus7e8NE3VOVL
+	VUyVtvf/zq1S+9kDJWYKrTnpNmFFtfXxqvsH3Uu4s//6Gl+6EeZVNa9soVWa4l0d+xzp3U4G
+	9t5u/zIaQ6ZbtBwWPyh2hiO87MqpFPGZey+k32SM000NXR3RV3ZRqm4V04czWp4zfhdPPH1N
+	WdP5hJhEUHVupUijEktxRqKhFnNRcSIAmQ7Met4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsVy+t/xe7pSRdppBgvvSFk8mLeNzWJbh43F
+	9S/PWS0WNYhZTDz/k83i/PkN7BabHl9jtfjYc4/VYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2
+	slis+vSf0YHP4/2NVnaPBZtKPTat6mTz+NR/ktXjzrU9bB6bl9R79G1ZxejxeZNcAEeUnk1R
+	fmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsarP3PYCjYI
+	VmzoecbUwLidr4uRk0NCwETi+J2vrF2MXBxCAksZJWYtnccGkZCRODmtgRXCFpb4c62LDaLo
+	PaPEoa8P2EESvAJ2Eo9PbmACsVkEVCXmXW9kgYgLSpyc+QTMFhWQl7h/awZQPQeHsECGxLFX
+	BSBhEYFwiVVH/zODzGQWuMkssfXIHUaIBbOZJM5eX8IMUsUsIC5x68l8sAVsAoYSXW+7wK7j
+	BFr8q2E5VI2ZRNfWLkYIW15i+9s5zBMYhWYhuWMWklGzkLTMQtKygJFlFaNIamlxbnpusZFe
+	cWJucWleul5yfu4mRmBEbzv2c8sOxpWvPuodYmTiYDzEKMHBrCTCe/OjRpoQb0piZVVqUX58
+	UWlOavEhRlNgYExklhJNzgemlLySeEMzA1NDEzNLA1NLM2MlcV7Pgo5EIYH0xJLU7NTUgtQi
+	mD4mDk6pBibdUIZUB435Zckvg1WbtLnKrqWE2Tcp/OG4tNZx14evMpJzBKOY2qsb1N7emrLd
+	Wdr47N5Tj9/1zLZgMJpyNzl6yZXE1ClWFhOa3Z/86LAyrQ58oyy8fs9+wY7UCRozTkxlF5Wv
+	nnNx62Wn1C95TG/jGqWOnpXWFGRhCuJ7+/XCrGP7DyRd6J1Wv7kyv2SP1vabp2I3iv++ZdN+
+	0WVL4kTH6KzVzQX/fDM23mA0ifg6mcXh6p/DVQemFh6/f6zq7mItftvwsx6i36az+izcypaZ
+	X1VgMv/jmpMB57WX7lm63G1pzN+g/AT/xUUbop2Xuk6ZFpa3mn3JKd8V1jfW3E3mU/7oVzwh
+	reP/rd4Z90yUWIozEg21mIuKEwGJAOOGcQMAAA==
+X-CMS-MailID: 20240426092130eucas1p1cdb1063d963b5e9b262547c0689bf55f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7
+References: <CGME20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7@eucas1p1.samsung.com>
+	<20240425091429.948467-1-m.szyprowski@samsung.com>
+	<Zir0Rhm7jZoF8r04@google.com>
+	<d62aeaa2-8d3e-409e-acea-23b9e6ff0b76@samsung.com>
+	<b271df59-fb7d-4637-8ac0-1e53be2f0ee4@kernel.org>
 
+On 26.04.2024 11:02, Krzysztof Kozlowski wrote:
+> On 26/04/2024 07:24, Marek Szyprowski wrote:
+>> On 26.04.2024 02:24, William McVicker wrote:
+>>> On 04/25/2024, Marek Szyprowski wrote:
+>>>> Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
+>>>> module driver") this driver is instantiated as MFD-cell (matched by
+>>>> platform device name) not as a real platform device created by OF code.
+>>>> Remove then of_match_table and related MODULE_DEVICE_TABLE to avoid
+>>>> further confusion.
+>>>>
+>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>> ---
+>>>>    drivers/clk/samsung/clk-exynos-clkout.c | 2 --
+>>>>    1 file changed, 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+>>>> index 503c6f5b20d5..0c7f4e2aa366 100644
+>>>> --- a/drivers/clk/samsung/clk-exynos-clkout.c
+>>>> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
+>>>> @@ -75,7 +75,6 @@ static const struct of_device_id exynos_clkout_ids[] = {
+>>>>    		.data = &exynos_clkout_exynos5,
+>>>>    	}, { }
+>>>>    };
+>>>> -MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
+>>> I understand these are duplicates of the exynos-pmu driver, but was wondering
+>>> if this will impact the exynos-clkout module from getting auto-loaded? Without
+>>> the MODULE_DEVICE_TABLE() defined, the aliases won't be created that trigger
+>>> udev to load this module and the mfd driver is obviously not going to load it.
+>> This driver loaded and matched only against the platform device name
+> Matched yes, but "loaded"? As in module loaded? Are you sure? There is
+> no MODULE_ALIAS, no platform_id_table with MODULE_DEVICE_TABLE, so with
+> this patch all aliases are gone.
+>
+> The old aliases indeed could have been used to load the clkout, even if
+> not used for matching.
 
+Right, the proper solution is to add:
 
-On 4/17/2024 11:35 AM, Dmitry Baryshkov wrote:
-> On Tue, 16 Apr 2024 at 21:23, Ajit Pandey <quic_ajipan@quicinc.com> wrote:
->>
->> Add Graphics Clock Controller (GPUCC) support for SM4450 platform.
->>
->> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
->> ---
->>   drivers/clk/qcom/Kconfig        |   9 +
->>   drivers/clk/qcom/Makefile       |   1 +
->>   drivers/clk/qcom/gpucc-sm4450.c | 805 ++++++++++++++++++++++++++++++++
->>   3 files changed, 815 insertions(+)
->>   create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
-> 
-> [skipped]
-> 
->> +
->> +static int gpu_cc_sm4450_probe(struct platform_device *pdev)
->> +{
->> +       struct regmap *regmap;
->> +
->> +       regmap = qcom_cc_map(pdev, &gpu_cc_sm4450_desc);
->> +       if (IS_ERR(regmap))
->> +               return PTR_ERR(regmap);
->> +
->> +       clk_lucid_evo_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
->> +       clk_lucid_evo_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
->> +
->> +       /* Keep some clocks always enabled */
->> +       qcom_branch_set_clk_en(regmap, 0x93a4); /* GPU_CC_CB_CLK */
->> +       qcom_branch_set_clk_en(regmap, 0x9004); /* GPU_CC_CXO_AON_CLK */
->> +       qcom_branch_set_clk_en(regmap, 0x900c); /* GPU_CC_DEMET_CLK */
-> 
-> My main concern here is the AON clocks. If we don't model
-> gpu_cc_demet_clk as a leaf clock, then gpu_cc_demet_div_clk_src
-> becomes a clock without children and can be disabled by Linux.
-> Likewise not modelling gpu_cc_cxo_aon_clk removes one of the voters on
-> gpu_cc_xo_clk_src, which can now be turned off by Linux.
-> Our usual recommendation is to model such clocks properly and to use
-> CLK_IS_CRITICAL or CLK_IGNORE_UNUSED to mark then as aon.
-> 
-Thanks for review, actually if leaf (branch) clock is ON, hardware will 
-take care of enabling and keeping the parent ON. So parent clocks won't 
-get turned OFF in HW as long as branch clock is enabled.
+MODULE_ALIAS("platform:exynos-clkout");
 
-For clocks which are fixed rate (19.2MHz) and recommended to be kept ON 
-forever from HW design, modelling and exposing clock structure in kernel 
-will be a redundant code in kernel memory, hence as per earlier 
-suggestion in previous thread such clocks are recommended to be kept 
-enabled from probe.
->> +
->> +       return qcom_cc_really_probe(pdev, &gpu_cc_sm4450_desc, regmap);
->> +}
->> +
->> +static struct platform_driver gpu_cc_sm4450_driver = {
->> +       .probe = gpu_cc_sm4450_probe,
->> +       .driver = {
->> +               .name = "gpucc-sm4450",
->> +               .of_match_table = gpu_cc_sm4450_match_table,
->> +       },
->> +};
->> +
->> +module_platform_driver(gpu_cc_sm4450_driver);
->> +
->> +MODULE_DESCRIPTION("QTI GPUCC SM4450 Driver");
->> +MODULE_LICENSE("GPL");
->> --
->> 2.25.1
->>
->>
-> 
-> 
+I was convinced that the module_platform_driver() macro adds simple 
+module alias based on the driver name, but it looks that's not true. 
+Thanks for pointing this out. I will send v2 with the above alias then.
 
+Best regards
 -- 
-Thanks, and Regards
-Ajit
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
