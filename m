@@ -1,158 +1,121 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA5113A25D
-	for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 05:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68C8762EF
+	for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 08:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714109080; cv=none; b=BaObG0LFdbzy4UJsjBx6FF3Ag9zGg1AhN9JQxKsdfbkIFNjOAfIbi/1r7pFgAG1ulqEup2jW96iqJZseWl0OsP7gr1nUyYUDOd4KeDFuIsf11xIyWTzXqAePQSvCqVeb8JPHL+sMODzt89DFgWbkvy7hwJo3ZdaXiPFT/M8oAqg=
+	t=1714119016; cv=none; b=gxYm8g4jQOT2eN07R/tz4hRmL9ImoDlD34/NUPpxlHnpd1YTBqOMK79KXxpzuv/a2hu2G3FL4QeJIzROBjg+fh4Pu9uVpLWFOc06J3Ea0GcVTxnwK1u2CNkv8r/TsCF4w2752nZAg5wEXqyFJffhFAnj/rNuheWr5wNaOp+2tz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714109080; c=relaxed/simple;
-	bh=6A17X04Jb+QaIAMoSdhSdFqaDCqxAC+7M2emgOEx7Bk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=arTGJxebvQ5jWSGutq3I9R4+EwTHtQQWCuRqv5r07WGIjGyy+XExTZO01qYI9gPNdTpCnTRdTZZfA6uT4auz3MoPnmf/Jpg+fmAB5OSZQzm8lq/4WGDPre6Kt7QoddnvlykaJQYMA+pSoPaX+2mVcfSeRB5JWRjUV9KzNxGvd20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uWalPMO5; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uWalPMO5"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240426052435euoutp0236a9be6ecd3335d206c7e6ef2de558fd~JvR9eSKB80050800508euoutp02F
-	for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 05:24:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240426052435euoutp0236a9be6ecd3335d206c7e6ef2de558fd~JvR9eSKB80050800508euoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1714109075;
-	bh=QrL37T0pPHe1/07gRvyuxFVAN+0IcPGsyDxhu/3XniY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=uWalPMO5kecJxPmN51JklqVuBXKTYIoIxvjh/ZfsEXaL1WJxWkhYD6De35UDTvzUo
-	 0d5a65RMLnmvk/rDFh5160QoIyZ1uuk4GZ5//sglGhQeJu8JMsEohVmYT4hhM3IxuC
-	 T0BEEESppAoW3I9tMFRKxC0PqgnMhIjK+CngoePo=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240426052435eucas1p1c08a3a9adfda82560d3bf08a52b90168~JvR9BmdUX2903329033eucas1p1g;
-	Fri, 26 Apr 2024 05:24:35 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 05.BE.09620.39A3B266; Fri, 26
-	Apr 2024 06:24:35 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240426052434eucas1p26773540bb503f3347de52c6e3f42dd4f~JvR8mhzpl1508115081eucas1p2j;
-	Fri, 26 Apr 2024 05:24:34 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240426052434eusmtrp2262d95b4dd98a8d1a0f01e27e1d55fc2~JvR8l4qmK3053130531eusmtrp2u;
-	Fri, 26 Apr 2024 05:24:34 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-af-662b3a93cfdd
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 22.D7.08810.29A3B266; Fri, 26
-	Apr 2024 06:24:34 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240426052433eusmtip2e26f41711b89e5aac9682106ab9f698c~JvR7rQQEU2453224532eusmtip2-;
-	Fri, 26 Apr 2024 05:24:33 +0000 (GMT)
-Message-ID: <d62aeaa2-8d3e-409e-acea-23b9e6ff0b76@samsung.com>
-Date: Fri, 26 Apr 2024 07:24:33 +0200
+	s=arc-20240116; t=1714119016; c=relaxed/simple;
+	bh=CMviMs+7gm4UYtU6FN68VHTincwAtKHeJMkk5LmCKSg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iHLFaEobLAML3MZRA+zV28TfaZPVLBzmDcLVQi3Yj2YNNjIJI2xBThTKuanSr3IKhDjMtiMKBYNiEfYdjvckxoYuM+Q+3C2h7x+SzRC3NqSWlWG4t2GD9UTjHvuh23/GfZQe1rF6pkwjvLfcmWeKfTKaUCfVO0OLS0rvJsLihXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:a8cf:a8c7:966f:f6c0])
+	by andre.telenet-ops.be with bizsmtp
+	id FkAB2C00Q4stinQ01kAB2U; Fri, 26 Apr 2024 10:10:11 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1s0Ge9-00ACZg-Gp;
+	Fri, 26 Apr 2024 10:10:11 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1s0Gep-00CeZX-Fd;
+	Fri, 26 Apr 2024 10:10:11 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.10 (take two)
+Date: Fri, 26 Apr 2024 10:10:10 +0200
+Message-Id: <cover.1714118682.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: exynos-clkout: Remove misleading
- of_match_table/MODULE_DEVICE_TABLE
-To: William McVicker <willmcvicker@google.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
-	Herring <robh@kernel.org>, David Lechner <david@lechnology.com>, Bjorn
-	Andersson <andersson@kernel.org>, Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <Zir0Rhm7jZoF8r04@google.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJKsWRmVeSWpSXmKPExsWy7djP87qTrbTTDO7PZbF4MG8bm8W2DhuL
-	61+es1osahCzmHj+J5vF+fMb2C02Pb7GavGx5x6rxYzz+5gsLp5ytfi/Zwe7xeE37awW/65t
-	ZLFY9ek/owOfx/sbreweCzaVemxa1cnm8an/JKvHnWt72Dw2L6n36NuyitHj8ya5AI4oLpuU
-	1JzMstQifbsEroyuzd+ZC7bxVvxcNYe1gXEedxcjB4eEgInEvrNOXYxcHEICKxgluvd+YIVw
-	vjBKtPbfZ4RwPjNKnFyxjK2LkROs4/bhZ0wQieWMEi/uHYdq+cgo8W7rXkaQKl4BO4l//0+z
-	gtgsAqoS/b1r2SDighInZz5hAbFFBeQl7t+awQ5yh7BAhsSxVwUgpoiAnsSf1gqQkcwCDSwS
-	96fNZQIpZxYQl7j1ZD6YzSZgKNH1tgtsJKeAlsT3+dNZIWrkJba/ncMMcehyTok3f7QhbBeJ
-	ew3fWSBsYYlXx7ewQ9gyEv93zgd7RkKgnVFiwe/7UM4ERomG57cYIaqsJe6c+8UGch2zgKbE
-	+l36EGFHidfb/zJCwpFP4sZbQYgb+CQmbZvODBHmlehoE4KoVpOYdXwd3NqDFy4xT2BUmoUU
-	KLOQfDkLyTezEPYuYGRZxSieWlqcm55abJyXWq5XnJhbXJqXrpecn7uJEZjaTv87/nUH44pX
-	H/UOMTJxMB5ilOBgVhLhvflRI02INyWxsiq1KD++qDQntfgQozQHi5I4r2qKfKqQQHpiSWp2
-	ampBahFMlomDU6qBKW5bTe7VScZTLp16OF1UoHeN7/7ACdLL9D//fPFgaemExNTH6ds2BD2M
-	OtMwbeeCWdPYrjexHD10gPXXPPPjhne6tjYyOgp3/TqaHOp+8con0zU5e9mzdmQ+sV9b9Lvp
-	i9hhOaVNp+deO/BPPIVvuXDTzMlpnU93zNTqcA7ZHm7w7fH/kGj90tXN7yf6c98XWxui7X14
-	XvHrw39tUtIfvWJIltWZoprANaHg53XfDln+t1sWe0QLa8RP/WYdNtulbY5l+DyTs6JfJm7a
-	YyomcPOwwDebykfevFL323+2PVOw+37O/Peyo00Me5YEx/03049+8N3f717KKn7bqMfnNs1/
-	2vd/ooNYW0zH0YVbnMKVWIozEg21mIuKEwHX+Qhw3AMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsVy+t/xe7qTrLTTDNouKVk8mLeNzWJbh43F
-	9S/PWS0WNYhZTDz/k83i/PkN7BabHl9jtfjYc4/VYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2
-	slis+vSf0YHP4/2NVnaPBZtKPTat6mTz+NR/ktXjzrU9bB6bl9R79G1ZxejxeZNcAEeUnk1R
-	fmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXkbX5u/MBdt4
-	K36umsPawDiPu4uRk0NCwETi9uFnTF2MXBxCAksZJbaf/c8MkZCRODmtgRXCFpb4c62LDcQW
-	EnjPKPHxpiWIzStgJ/Hv/2mwGhYBVYn+3rVsEHFBiZMzn7CA2KIC8hL3b81g72Lk4BAWyJA4
-	9qoAxBQR0JP401oBspZZoIFF4ubRNYwQN2xilJjS9p8RpJdZQFzi1pP5TCA2m4ChRNdbiBs4
-	BbQkvs+fzgpRYybRtbULql5eYvvbOcwTGIVmITljFpJRs5C0zELSsoCRZRWjSGppcW56brGh
-	XnFibnFpXrpecn7uJkZgNG879nPzDsZ5rz7qHWJk4mA8xCjBwawkwnvzo0aaEG9KYmVValF+
-	fFFpTmrxIUZTYFhMZJYSTc4HppO8knhDMwNTQxMzSwNTSzNjJXFez4KORCGB9MSS1OzU1ILU
-	Ipg+Jg5OqQYmNf4bZ9+YXtZVOZd6q4C56dWbg/qGlXrTXY5zXY5lU3H7/y5yVefnW9cSOS3e
-	3nl1+M8R2zlfl+g5NbY86pZ9l+sxzTjlzb/kIMHPmTfXtv4JE4v+3he+QNPjhSdLqNJZtoiG
-	zLeemzqOTT7D8GlP29W/M3yyXpofb/lVXS0xjV+Gn2d72qojKw9VTPlWPl3T7JnK9Z1X71b+
-	LMuTVXlXvsz0mdpy6dV7HU7G6i23WM8jEzv9hnXinFn8UZ++HmvQWJbRaqBwvfD6y2NVHqXM
-	K/c/Kvuy1buxbE5K4crUw9wssdHf/33Zcv5G5YutQhP2RgYzr3jRcIzD3zCie93qcpdtZ1ff
-	2Lpi5qGyi747rimxFGckGmoxFxUnAgBWgcsYbwMAAA==
-X-CMS-MailID: 20240426052434eucas1p26773540bb503f3347de52c6e3f42dd4f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7
-References: <CGME20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7@eucas1p1.samsung.com>
-	<20240425091429.948467-1-m.szyprowski@samsung.com>
-	<Zir0Rhm7jZoF8r04@google.com>
+Content-Transfer-Encoding: 8bit
 
-On 26.04.2024 02:24, William McVicker wrote:
-> On 04/25/2024, Marek Szyprowski wrote:
->> Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
->> module driver") this driver is instantiated as MFD-cell (matched by
->> platform device name) not as a real platform device created by OF code.
->> Remove then of_match_table and related MODULE_DEVICE_TABLE to avoid
->> further confusion.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/clk/samsung/clk-exynos-clkout.c | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
->> index 503c6f5b20d5..0c7f4e2aa366 100644
->> --- a/drivers/clk/samsung/clk-exynos-clkout.c
->> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
->> @@ -75,7 +75,6 @@ static const struct of_device_id exynos_clkout_ids[] = {
->>   		.data = &exynos_clkout_exynos5,
->>   	}, { }
->>   };
->> -MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
-> I understand these are duplicates of the exynos-pmu driver, but was wondering
-> if this will impact the exynos-clkout module from getting auto-loaded? Without
-> the MODULE_DEVICE_TABLE() defined, the aliases won't be created that trigger
-> udev to load this module and the mfd driver is obviously not going to load it.
+	Hi Mike, Stephen,
 
-This driver loaded and matched only against the platform device name 
-("exynos-clkout") since the mentioned commit 9484f2cb8332. These OF IDs 
-defined as MODULE_DEVICE_TABLE and of_match_table are leftovers from the 
-old (pre-9484f2cb8332) instantiating method.and should be removed by 
-that commit too.
+The following changes since commit c0516eb4cf04ac61b6fe1f86cc15b2f5f024ee78:
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+  clk: renesas: r8a779h0: Add timer clocks (2024-04-08 11:12:32 +0200)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.10-tag2
+
+for you to fetch changes up to 5add5ebc4e35a703a49976abfd82e708d9aea4ad:
+
+  clk: renesas: r9a08g045: Add support for power domains (2024-04-25 20:12:17 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v6.10 (take two)
+
+  - Miscellaneous fixes and improvements.
+  - Add SPI (MSIOF) and external interrupt (INTC-EX) clocks on R-Car
+    V4M,
+  - Add interrupt controller (PLIC) clock and reset on RZ/Five,
+  - Prepare power domain support for RZ/G2L family members, and add
+    actual support on RZ/G3S SoC.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Christophe JAILLET (1):
+      clk: renesas: r8a7740: Remove unused div4_clk.flags field
+
+Claudiu Beznea (7):
+      dt-bindings: clock: r9a07g043-cpg: Add power domain IDs
+      dt-bindings: clock: r9a07g044-cpg: Add power domain IDs
+      dt-bindings: clock: r9a07g054-cpg: Add power domain IDs
+      dt-bindings: clock: r9a08g045-cpg: Add power domain IDs
+      dt-bindings: clock: renesas,rzg2l-cpg: Update #power-domain-cells = <1> for RZ/G3S
+      clk: renesas: rzg2l: Extend power domain support
+      clk: renesas: r9a08g045: Add support for power domains
+
+Cong Dang (2):
+      clk: renesas: r8a779h0: Add MSIOF clocks
+      clk: renesas: r8a779h0: Add INTC-EX clock
+
+Geert Uytterhoeven (2):
+      clk: renesas: r8a779a0: Fix CANFD parent clock
+      clk: renesas: shmobile: Remove unused CLK_ENABLE_ON_INIT
+
+Lad Prabhakar (1):
+      clk: renesas: r9a07g043: Add clock and reset entry for PLIC
+
+ .../bindings/clock/renesas,rzg2l-cpg.yaml          |  18 +-
+ drivers/clk/renesas/clk-r8a73a4.c                  |   2 -
+ drivers/clk/renesas/clk-r8a7740.c                  |  27 ++-
+ drivers/clk/renesas/clk-sh73a0.c                   |   2 -
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c            |   2 +-
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c            |   7 +
+ drivers/clk/renesas/r9a07g043-cpg.c                |   9 +
+ drivers/clk/renesas/r9a08g045-cpg.c                |  41 +++++
+ drivers/clk/renesas/rzg2l-cpg.c                    | 199 +++++++++++++++++++--
+ drivers/clk/renesas/rzg2l-cpg.h                    |  67 +++++++
+ include/dt-bindings/clock/r9a07g043-cpg.h          |  52 ++++++
+ include/dt-bindings/clock/r9a07g044-cpg.h          |  58 ++++++
+ include/dt-bindings/clock/r9a07g054-cpg.h          |  58 ++++++
+ include/dt-bindings/clock/r9a08g045-cpg.h          |  70 ++++++++
+ 14 files changed, 577 insertions(+), 35 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
