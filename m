@@ -1,147 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EFC13C90F;
-	Fri, 26 Apr 2024 09:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BFB13C90F;
+	Fri, 26 Apr 2024 09:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714122132; cv=none; b=f2Lk+HWJF6vWp0Juk7GvTn4JSBCB1ImAIENK7SkVaZeksOT0ttDMc7Rae45DhY9Mh4nMOb4HBjwxfFLEDztmU2dFd4q0pVio89nmz7No+XGmAXwm4qPmAtTLFtlH+JzyDsiZdqRV263MNQtHcneRufdhC1J42isnkD3o6ZLuT0E=
+	t=1714123234; cv=none; b=SSBKXWP22zCQQmkiKsCY9mIYD5jyOrIZM3RZx+2fvavpUo8EK61ZVWxe2RwuQnYb3WMk9dmS/N/PwlyiL+NAUKDW+HOvv6u5sbVrDWcpeR2tDyG2sXZvo2Lqk8UUsRcIOSkC/ug0OWGanoxbpN6RVkcn1+ldhiTsNwgYfxGBJJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714122132; c=relaxed/simple;
-	bh=jnQNC7YsYknHxVgl4mi2foO58zBNmHwtJ7PaDqgmmow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SIZIezydRPddWL/K6+ux2AnzTVCwfHaaM2+RExIBA2Gjr1gpURIXfzYtpSX9uYXLO9JDjP/tZ/DkXp8+7zJzAZPhTu4PWY/6RLkHRzTmmwJR3MYYkQnhK3R4S1W1WuUsHW7x8OLCUrbITxjp+MzPPU8VI1ymBf8wPQzdBilPc+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OnIWQVfK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714123234; c=relaxed/simple;
+	bh=xBUpP3VAjhJdXrYIjPZD0CAQ4mXC99ueDEdcVvn0xbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YrKe4UIejjFyVfWqUAzzwO57LvdthVhT1vokVOVHr4fGjiiPkyPyM0ClPx/Vf77x4nVx2Ot++okCL/YWSA4SqmbfpRYgbUQM+/OKrjbf9mhiTL5CaaK7+A6AMrvGj+9PAkuB95sYVLOJAH+b3LheM8HJntYIoim96VTb70GEgy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NtUEw5A+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OnIWQVfK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB7AC2BD10;
-	Fri, 26 Apr 2024 09:02:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714122131;
-	bh=jnQNC7YsYknHxVgl4mi2foO58zBNmHwtJ7PaDqgmmow=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OnIWQVfK20aSH5blZkr5+ZqsNctgb43NWt1lJBFRWV9QVWNkTTt+wx30ZUEbuZwC9
-	 vvndQbKVj8vVl1OQ8kGX5+NGS1jBQmwm5cQQXHCi3PpZ9Fq6lfL0RCbzg22VPSsSDb
-	 UAGa8jk4Xk4tHlE3Iwl1w5W7OG6BVc77/FNP2yobkVwihHpXOvyW3qinzrTduZ67DH
-	 60UJeZNDa8rHX1yP/DkJNnfD8mFyjXuOusj4q/N1Y5owvPRSFV80gIskwVXu99ZC41
-	 qsxyYT1GLt/NAujNB3HBLFlWFJcYBwl8QWkx1SnjzPTs2Ng1Q+uyzEGlgv+Ig5uF9y
-	 moUQcIg7TBmtw==
-Message-ID: <b271df59-fb7d-4637-8ac0-1e53be2f0ee4@kernel.org>
-Date: Fri, 26 Apr 2024 11:02:04 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NtUEw5A+"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43Q41YLU012981;
+	Fri, 26 Apr 2024 09:20:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=BUIIFoA4N2ESIijEp2JWqnWgumg1YcDccO7inyej7yI=; b=Nt
+	UEw5A+H8vL4iSQmfnMTb8OIaAEu9zI1irjgkP9JL4s5QPos/EMOutuHwvoBn0uRx
+	ZpR4MsWd/7ksqCHDctVXN/KUFWeO3JLKDxgW2o7gBSpy0ZngQWbCVTGdGRs8n08y
+	SD/atlbO/HLr/HaJUkJRWvb6XMUcnm8Auf4+0zJgblHtTaZue42rbquYLaEPH+gd
+	rhawsOCZiCiW1MAI1t5tdu0Ap2n41fbrfNuYX6bEPbkx6ptiNQ6RNQSTFaEYKm/q
+	ucUzvhf05Jl6IRfgdGr32Jq81Fb6jYPvVzwz8b7WB/qzRW6VT4NYG4bJoaTqo0pO
+	HUarX30L6YOVDZL/BWow==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xr3591ctd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Apr 2024 09:20:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43Q9KMaN025356
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Apr 2024 09:20:22 GMT
+Received: from [10.218.10.146] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Apr
+ 2024 02:20:16 -0700
+Message-ID: <ca017ebf-c099-b436-f062-1341f765a08c@quicinc.com>
+Date: Fri, 26 Apr 2024 14:50:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: exynos-clkout: Remove misleading
- of_match_table/MODULE_DEVICE_TABLE
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- William McVicker <willmcvicker@google.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- David Lechner <david@lechnology.com>, Bjorn Andersson
- <andersson@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <CGME20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7@eucas1p1.samsung.com>
- <20240425091429.948467-1-m.szyprowski@samsung.com>
- <Zir0Rhm7jZoF8r04@google.com>
- <d62aeaa2-8d3e-409e-acea-23b9e6ff0b76@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH V2 7/8] clk: qcom: Add GPUCC driver support for SM4450
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        "Satya Priya Kakitapalli"
+	<quic_skakitap@quicinc.com>
+References: <20240416182005.75422-1-quic_ajipan@quicinc.com>
+ <20240416182005.75422-8-quic_ajipan@quicinc.com>
+ <CAA8EJpqwrKcgm7c57=LpxS7+CfrN2UxNg8k_46auBrdZG7vQnA@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <d62aeaa2-8d3e-409e-acea-23b9e6ff0b76@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+From: Ajit Pandey <quic_ajipan@quicinc.com>
+In-Reply-To: <CAA8EJpqwrKcgm7c57=LpxS7+CfrN2UxNg8k_46auBrdZG7vQnA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3uiw9dIqgbCoJcFFm8PKZL3HkWEE3PTx
+X-Proofpoint-ORIG-GUID: 3uiw9dIqgbCoJcFFm8PKZL3HkWEE3PTx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-04-26_09,2024-04-26_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 mlxscore=0 suspectscore=0 phishscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2404260060
 
-On 26/04/2024 07:24, Marek Szyprowski wrote:
-> On 26.04.2024 02:24, William McVicker wrote:
->> On 04/25/2024, Marek Szyprowski wrote:
->>> Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
->>> module driver") this driver is instantiated as MFD-cell (matched by
->>> platform device name) not as a real platform device created by OF code.
->>> Remove then of_match_table and related MODULE_DEVICE_TABLE to avoid
->>> further confusion.
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> ---
->>>   drivers/clk/samsung/clk-exynos-clkout.c | 2 --
->>>   1 file changed, 2 deletions(-)
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
->>> index 503c6f5b20d5..0c7f4e2aa366 100644
->>> --- a/drivers/clk/samsung/clk-exynos-clkout.c
->>> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
->>> @@ -75,7 +75,6 @@ static const struct of_device_id exynos_clkout_ids[] = {
->>>   		.data = &exynos_clkout_exynos5,
->>>   	}, { }
->>>   };
->>> -MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
->> I understand these are duplicates of the exynos-pmu driver, but was wondering
->> if this will impact the exynos-clkout module from getting auto-loaded? Without
->> the MODULE_DEVICE_TABLE() defined, the aliases won't be created that trigger
->> udev to load this module and the mfd driver is obviously not going to load it.
+
+
+On 4/17/2024 11:35 AM, Dmitry Baryshkov wrote:
+> On Tue, 16 Apr 2024 at 21:23, Ajit Pandey <quic_ajipan@quicinc.com> wrote:
+>>
+>> Add Graphics Clock Controller (GPUCC) support for SM4450 platform.
+>>
+>> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/Kconfig        |   9 +
+>>   drivers/clk/qcom/Makefile       |   1 +
+>>   drivers/clk/qcom/gpucc-sm4450.c | 805 ++++++++++++++++++++++++++++++++
+>>   3 files changed, 815 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
 > 
-> This driver loaded and matched only against the platform device name 
+> [skipped]
+> 
+>> +
+>> +static int gpu_cc_sm4450_probe(struct platform_device *pdev)
+>> +{
+>> +       struct regmap *regmap;
+>> +
+>> +       regmap = qcom_cc_map(pdev, &gpu_cc_sm4450_desc);
+>> +       if (IS_ERR(regmap))
+>> +               return PTR_ERR(regmap);
+>> +
+>> +       clk_lucid_evo_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
+>> +       clk_lucid_evo_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
+>> +
+>> +       /* Keep some clocks always enabled */
+>> +       qcom_branch_set_clk_en(regmap, 0x93a4); /* GPU_CC_CB_CLK */
+>> +       qcom_branch_set_clk_en(regmap, 0x9004); /* GPU_CC_CXO_AON_CLK */
+>> +       qcom_branch_set_clk_en(regmap, 0x900c); /* GPU_CC_DEMET_CLK */
+> 
+> My main concern here is the AON clocks. If we don't model
+> gpu_cc_demet_clk as a leaf clock, then gpu_cc_demet_div_clk_src
+> becomes a clock without children and can be disabled by Linux.
+> Likewise not modelling gpu_cc_cxo_aon_clk removes one of the voters on
+> gpu_cc_xo_clk_src, which can now be turned off by Linux.
+> Our usual recommendation is to model such clocks properly and to use
+> CLK_IS_CRITICAL or CLK_IGNORE_UNUSED to mark then as aon.
+> 
+Thanks for review, actually if leaf (branch) clock is ON, hardware will 
+take care of enabling and keeping the parent ON. So parent clocks won't 
+get turned OFF in HW as long as branch clock is enabled.
 
-Matched yes, but "loaded"? As in module loaded? Are you sure? There is
-no MODULE_ALIAS, no platform_id_table with MODULE_DEVICE_TABLE, so with
-this patch all aliases are gone.
+For clocks which are fixed rate (19.2MHz) and recommended to be kept ON 
+forever from HW design, modelling and exposing clock structure in kernel 
+will be a redundant code in kernel memory, hence as per earlier 
+suggestion in previous thread such clocks are recommended to be kept 
+enabled from probe.
+>> +
+>> +       return qcom_cc_really_probe(pdev, &gpu_cc_sm4450_desc, regmap);
+>> +}
+>> +
+>> +static struct platform_driver gpu_cc_sm4450_driver = {
+>> +       .probe = gpu_cc_sm4450_probe,
+>> +       .driver = {
+>> +               .name = "gpucc-sm4450",
+>> +               .of_match_table = gpu_cc_sm4450_match_table,
+>> +       },
+>> +};
+>> +
+>> +module_platform_driver(gpu_cc_sm4450_driver);
+>> +
+>> +MODULE_DESCRIPTION("QTI GPUCC SM4450 Driver");
+>> +MODULE_LICENSE("GPL");
+>> --
+>> 2.25.1
+>>
+>>
+> 
+> 
 
-The old aliases indeed could have been used to load the clkout, even if
-not used for matching.
-
-> ("exynos-clkout") since the mentioned commit 9484f2cb8332. These OF IDs 
-> defined as MODULE_DEVICE_TABLE and of_match_table are leftovers from the 
-> old (pre-9484f2cb8332) instantiating method.and should be removed by 
-> that commit too.
-
-Best regards,
-Krzysztof
-
+-- 
+Thanks, and Regards
+Ajit
