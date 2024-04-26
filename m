@@ -1,332 +1,235 @@
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2061.outbound.protection.outlook.com [40.107.6.61])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E260A7E573;
-	Fri, 26 Apr 2024 14:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714140727; cv=fail; b=j1trF2JzKkBxKTJEU1seR+9pF3tnyIBskaSiwEwPtMAYy4pEKf9zXhFVEDAuG5JGcZvFXnSk8mRpbj3F1NIoHw191kIH8RNrjYKs4mQD0xMayrW2T5WX76wyhjoBhxoEo+JHEN5N0tDh2q54Gyk/zk4JAvv09MEmP9YybXvmoMI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714140727; c=relaxed/simple;
-	bh=j7sH/nhSZf14+Hvtikex1wBTBz5ldcpQimtjgB90c80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=A9JrltmR6z3ZC2nqmTzkLS734Hw5U3SvHh7AgBGeWE+KHcn8GpTV/9rHEmn9q2yyLQPR1tSIWk4J2QLfUKnm09Txfd+L+Tb9Eq4EogcMFDWJKu+RUc9STO1+sJSqJa0iGMGrQJqSPFIMURaPJEXhHo2BVcG9uQSFoZUwvT2Ygrs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=fazB7Bj2; arc=fail smtp.client-ip=40.107.6.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B700814884C;
+	Fri, 26 Apr 2024 14:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714141637; cv=none; b=ScKtHM3QuutDxfo+JrGByBYRtPh9U9+GHBRureHarDRFwhy/ZpBp/2knP7UiiKcAtNxqnOWm4Ep9X69VX3YBGKr67s9fUru0EmOnulghLuQkYIX5X4xXxrsLwB4tGlQuJRfVkB69kwNdhY9BcK3s0O68CVbEciJg1HjMTiX31xg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714141637; c=relaxed/simple;
+	bh=kBeI3sp3mXMadZ7jRTDexEqrXzzu7Lpzk7zR5WSE3ts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=D+DkJTYsnSxX2PmDv+oYaEq3yLfrzRi1YFLUXK3ZC5c8y9bu7e4vDYqgy2BLTXohCvjf1MvVE27VkMeTvFbTqT97KdiDCNWNRU+s5bFQxhfd4YT7DGYgJ1xxuowfml6MNyuz7jhTo2RC3lFSppDnVqMACVWVAmamWfEkST6qBlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OWiQs0Y+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="fazB7Bj2"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eeE46/pneU3CRMZ4RAI4b0JFTM2dKKUMAaZRvIRwpKQRGQYyM1iHhoIaGmOIzqWCA+Lr61aJBabWO5xF8tBL6PMQAKGRmibagOiBXk++Zp9U5auyx8TbSxcnyY+MHIQUp3TMg4dSPHVv8Mxi30TJbYRs7se2la2JDCkOO1jbd/ck/poCtU1c0AOl+JpqHBn9T133HWx4aCM4aMYmc1iXaVgjhwSK8GOb4VKYtaWDFeCMUNKuIMulLyXcJLEPyzFCYPr/mpNO+/AJ/QvQr7E8DdRVPdIA2/o6/q0n+aNQNcgIhicjo78aMtViKL/CYH6SDCTQhEZoDr8GSjujVZYuLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zHQ0zetNjjfkdi/YsxJZFtd9f+ukRPdE5oXf3SxQ9T8=;
- b=d4UKII/AMSEq7ActnR3UtPuxTB0V+URnviv53YiCN1r8Ugy9gH4XOS9xyGmtOiJRJ4dcXwSuZRqJCubXPJ9frcIsis3HSg88Ch7Tai362FLSffhJnoRU4GDBfr4dM/uZ/G8yOSDPyqUJI9Sm5JnNpvP+XQTLHO29WwXMEIUms0OSu2ln0F8gyZaQLddObdPThIv1zJoJpE59Nj05PkpIRRQSgBEpc7pHKp5zYLAmlLGbGuk9MdJjPGSaRTe/py4aFUOwxviSEBrirYFsh7H8eyolBDPLcT04fnjTxwEL7ypsZKrwfjdvNNwWMnjuXV8xERri5+0W8ZLxdBXavwpaZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zHQ0zetNjjfkdi/YsxJZFtd9f+ukRPdE5oXf3SxQ9T8=;
- b=fazB7Bj2rXUakJ54vldlAJ0hywpaq+jqmJ115QIBp3BWuPhOctkDVaORIKpgD3FKSRwpHuB8Bb85ZeQD+7mTO/EqV6trWUvyU2wU/jvp2CuEjZQ83lTfoMlO1FQXKasJodieeNZzWiDDYKBNjEpf3tt9oJnJMTfAnbqL28sJkz0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAXPR04MB9021.eurprd04.prod.outlook.com (2603:10a6:102:217::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7519.22; Fri, 26 Apr
- 2024 14:12:00 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::1e67:dfc9:d0c1:fe58]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::1e67:dfc9:d0c1:fe58%7]) with mapi id 15.20.7472.044; Fri, 26 Apr 2024
- 14:12:00 +0000
-Date: Fri, 26 Apr 2024 10:11:50 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
-	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, imx@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: imx8mp: Add delay after power up
-Message-ID: <Ziu2JjDVO/+gCESM@lizhi-Precision-Tower-5810>
-References: <1714040364-17127-1-git-send-email-shengjiu.wang@nxp.com>
- <ZirB5sWBsOXucVsY@lizhi-Precision-Tower-5810>
- <CAA+D8AO4Hzg3ydc1CkidZ0T18bJ3M3d79WPSxAcWZ2xdT4=rMA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA+D8AO4Hzg3ydc1CkidZ0T18bJ3M3d79WPSxAcWZ2xdT4=rMA@mail.gmail.com>
-X-ClientProxiedBy: BY3PR04CA0005.namprd04.prod.outlook.com
- (2603:10b6:a03:217::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OWiQs0Y+"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43QApoFI012994;
+	Fri, 26 Apr 2024 14:27:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=Fb2vf9mu0Wt2OchcXVnA335lXG9jz+XpRSg+ZnSNp1Y=; b=OW
+	iQs0Y+/m3ZBYdHkp62LZTzuFLNmTc2zzziuUvarrcEVf593pNXO1IvhqUtmGiwEI
+	Hch7KadMk1bqnT798NSLB02UX2lwF4WoyVa1RRYV53AIaTUQUMOV1luF++sCcpP1
+	zfg3ah/Vld1fGzpUikHovS0uCEp1nHeWsN+eeeg336Ze91yEuVZVhnAgSuM1AqKR
+	46qrQhOWMbaxpFmO1GBGlastq9utYBZq+ZkFcu4GzG+JbQ+KYjo9Qkn+EpsToxdU
+	SHOoXFK83ZkuwLV0PAzVGACF2aXDpe3/kEwFJmUJulqX7jI10s3yxVs1PKMOFcvx
+	Ag/qHyTyiQ1TX4njnnsg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xr35922pt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Apr 2024 14:27:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43QER9Ap014540
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Apr 2024 14:27:09 GMT
+Received: from [10.216.28.217] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Apr
+ 2024 07:27:03 -0700
+Message-ID: <dfcaa665-512a-4c7c-8f5d-2ba819797ddb@quicinc.com>
+Date: Fri, 26 Apr 2024 19:56:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB9021:EE_
-X-MS-Office365-Filtering-Correlation-Id: a91a36e7-f22b-42f1-74e5-08dc65fad6dd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|52116005|366007|1800799015|7416005|376005|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Vng3aHlvMVV3czlrZ2NHc2tMcms2RlpXUTZqRjE4ZExHZFJTOU1pYjFMeXRh?=
- =?utf-8?B?QXNqcElKNGtzRnZQWlBXNWRGTkNxb2p1NFNMNzVZSVBqVEMveDhXVnY4cFVH?=
- =?utf-8?B?QVhUZVAwZXFqdmZ0OE1HSWc3UUZ2Q1hyU29HcDRzNmRTRWllTktabzBmTTg2?=
- =?utf-8?B?S3dZRzVrZENCOFFkRFNZSno4dTJvWVN0MTBKeTU1S3lURURjS0huNkRXQnpa?=
- =?utf-8?B?RFhnYkg0WGtuMGh6L1pFRWx6TVlrQnZVWnJEWkpBdmtuYXdnMTMrNEtlbUtv?=
- =?utf-8?B?SER6cHJIUHdVZXNCOUhHRnFKL2FwMUtQWCs3c1orTk1zclQ0UWNRTHpJcnVZ?=
- =?utf-8?B?UXdvUXlHRUt4amsxR1ZCNCtxVzhXWHVZdjIwR2RIeTNIcnpWd2hRQ0g3dmZK?=
- =?utf-8?B?K2k5RmgwU1JjdytGdUdMMFN4dmVGRlBkNVdVN0hsNXJUaThYUXg3bWxzdmFo?=
- =?utf-8?B?SjFmNnFNcFRBK0Z4Y3B1c3YzV0RYdXJvQXc0WVEzS2ZIWE9ybjY4Z2hxWTdN?=
- =?utf-8?B?RHNIbHdXWU5WWnk2MFZiOUd1aVVDbnZ6d211d3ZGc3RDcUIyMlVyVFhQbWpS?=
- =?utf-8?B?RXd4NjlMSFRzeHZTdjBwaUtqaG1yd21QaDlKT2w5eHlOY1pSeGJoWS9TcE9P?=
- =?utf-8?B?SXIzTUU4R01yTEM2R2JESHFkTVZkZ1N0dVNIL2djTWNXOG15dGN6K1BxZDdu?=
- =?utf-8?B?RGtZQWoyVHJxTldKUDd1dEhLVmw0SUdRWEQyM1N6OGRySzZXZ3Y2V1M0b2Zo?=
- =?utf-8?B?enp1TVJ0UFFqSGlza0VyQkdVSlRFeVAyUVFoT3lGZkVxYmg1Y0wxYkthdzFt?=
- =?utf-8?B?Z0o5bWJSaFdIQld4QmZGUk1yYk1BM2JkMlJoUmExOXk2MURzZG9FU0VJaEhv?=
- =?utf-8?B?dGtQOCtjWTRPbk5FcFkyNG1KV250YVNTd3U3MWlndmRWQ25CUi80RzhwOFFr?=
- =?utf-8?B?dnIrbDBUaDIrMkY2Sm5mNnVWN2g4a0J3dnFMUEl2RVh0VVRKUG4wckhrRnl2?=
- =?utf-8?B?bmpZOEVzek9DQ0Fjd0dZSlNFVkd0WWxlb21DZGhTOFlCOU05OVZaN1cwRlA4?=
- =?utf-8?B?MGVpQXFaVXU2MkVoMXBnMVZFdytEQTFwQU5IYVAxQld1WFQ1VGhHZ0NIWWRq?=
- =?utf-8?B?ZjRhS1MwK2RYY2g0WDM2NHoxbWhaNjR0aVpSQnUzM1hGTEc5cHdEQ3A3U2lE?=
- =?utf-8?B?aDk5ZUFTd05uWnROZ04xSm9MK0RCZEE5WGxDbUhxSmRxRTQwQ2R6Zzg5bUFR?=
- =?utf-8?B?TTRSN0VFTFVHYnpJQlZJZ00wMDlBNnVBdk5ZMnp6NVBEaCsrQTZUM0pOZFd6?=
- =?utf-8?B?Z0F0My8vcjhWVEFTd3Z0N2hqSzhJSmZaZjBsY0tFeWo4QU8wTlNwT0ZaWThw?=
- =?utf-8?B?VmNUSHgxcXIrRmlCSVdwcmhzd1B2aEtES1FsZlFyY2FUS1pmZS9yb0xybGlK?=
- =?utf-8?B?UkZ2RFB6NzBjeE9jVEd5MjBHeHE2dzBreGx2c0o4Zkh5N08yUjhQdzFSOWpV?=
- =?utf-8?B?WWtMYkNQRndqM3gyQVhTK1pOWWJnd3djMHViT080WDU4MGZwWUQyOWFjSkt2?=
- =?utf-8?B?S29KbkpLeVVYWWI3Wm5QcVRHQVozVEdzWDh4SG1GN1hPWGJxK3B3U244UWVP?=
- =?utf-8?B?Y0k4cTZkdTBzU2ZyMythemxicmVhMlBQLzVpMkxzQjF2amtRLytSVmxVWlNx?=
- =?utf-8?B?dUJ4cGVzRFNzSzB4dWl4TGZPOXlZVVljK1cwWVhvY1Y2eC9ZakFISjh3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(366007)(1800799015)(7416005)(376005)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b0dEbnBMVTIwYnpBczNMWWtYakRiNVZmR0FDUm0zcVBkMTFzdzVuQXFMN3NJ?=
- =?utf-8?B?SEZuTWMwNlNVQ2NEQTQxbEwyZVowN2Z3QXlsWXhJTXgrVzUycjgyT2dsVDI4?=
- =?utf-8?B?UXVoNHdzWDNxK3dHMmFDeS8rSGlvU3R1U0FIMGxJMGh1RFQ2RzFleldSY0tx?=
- =?utf-8?B?L1V0cXV3LzZoQ1ZKbWF0dTNoNmpHOWVNbDBRSTZTSStkbzZGYURVQnZJb1lR?=
- =?utf-8?B?MlpoeDVlUjBXTUZRZWMwQXpNYkkxdDQ3dGtKZElaTHdtNlFNUitjaTRqa05I?=
- =?utf-8?B?U3JwTGhBekJCYThHRlRDRzN5dUJxUGo5bWkzSS9ROExSTXczNkx2dUgxRFNT?=
- =?utf-8?B?YzlGNDhORExiekxjVzZYOXFVRXhHc0FhdGtuUGJYNGlNN1AyVE1STzVvSldJ?=
- =?utf-8?B?THFjWmVVaGc1eEJJTllqU0dUN3FzZHJuS28xTEJOZXgzYk44K0JJbVhpbVp6?=
- =?utf-8?B?V09XUWJzVDUxTUY1bmg4OXRUNmJUeUdaK1k2QjRKN2hJdXpoNkdCbFp0dUd0?=
- =?utf-8?B?NGNFdmRtKzNEMVMwOG1TZmppOWpNS1NGcFRoVG10QlBIMjB2STM1UlJkQjU1?=
- =?utf-8?B?aVJCUDRDcDYrWGY0aTk4YXJSMjllR3o2b1hzWG1JK2YvcHlSTHZ2S3VnRUxW?=
- =?utf-8?B?L0FoRDIxMUtTbzlRWXZ1TEJBMlVtWlRBWFFZdm9VbW1yMVR2Z3ZGeU40cW51?=
- =?utf-8?B?aXhBdE5UNUtHUDFXdTBwNCtMWFV2UmxzSUp6MmU1MDQxaS96QTcvaXJtWWFC?=
- =?utf-8?B?WEFVNDNaZ0NLNzZrWjk4WFhMQXpFenlQMkU5aWdwYkQ3aUZpVVNpUlo5MkZn?=
- =?utf-8?B?ZG15QUVpNXRBd0pBM1BJOFZFNTRrQ0Z5dmNoU0JsOFpiSHNsdElhekcvRFVn?=
- =?utf-8?B?NU5FWHN0SnNsMW9XbldwZG1COTczaGU2MGhYeWVSUnBPRlZEdHkrQUF6WVJ4?=
- =?utf-8?B?ZS9iZEw2Z0dIMlExTGQzUkJuSHdpWGVQZzVUMWFGUE1EcmRSck5pd0VLRHcw?=
- =?utf-8?B?aVhZeGxwMFZEYThySzRKNElLRUJveVA5bVJwTVB5ZUdHd0t2aUVOZkN2c2tI?=
- =?utf-8?B?aGwraC9lM2JJZEF6UEJ1c1NSeHF0M2JlZ1B6NHdtWFFrV1dsOE50VGpWTHBw?=
- =?utf-8?B?cDEwMGhBS0hBT05mVVFrNkFWdS81RXU0QVYwVi9xclpMUmx5YVVScTFmSWtX?=
- =?utf-8?B?TlcrTFFac2hDQnRsVU9NemtVRzhtbTJIT1ZQdVExRUpuRjJadXFIRzlyR1pr?=
- =?utf-8?B?a2JaNlIvT2FVMGRhNEExeUpSeDYxbGwzNENheEZFMWtlMXFXTEtjNHlSa2hv?=
- =?utf-8?B?MHo5MjVCUkp6RVJsYUNnV0xaeUtvT0VoUWYwdys5Y1dnaHozOEhLY2ZXU2Vx?=
- =?utf-8?B?QmFaQnVtVTdpRDg1bURDLzBPZGV3Mjd2K3ZSVXdURjArVkJGdUYxMmthSE5L?=
- =?utf-8?B?ZUNDcGtLM2drTFJNNElIVHdveGFMYWsvTXpBdExhdWJXc0UvckNIMkNtdkVK?=
- =?utf-8?B?ZDdRZGZYemRyNnNIbjdRaTIxUEZXSTZoOG15UDZiRFdrL2xVOGY5aXQrR2xY?=
- =?utf-8?B?bVVhWDVRNldCVHBrSGFqdzVEemZXTHVja1ovclc2NTdPWUZ3WUJ0QU85aWE3?=
- =?utf-8?B?aTR1RnRKb0IxMjBaVklQNkVabk4vN05jd0pYempLaGdqdWZzalBPQVhFdkZ6?=
- =?utf-8?B?aTdKT0praldtZmdjRmtmWmkwdlZFbkljc1BpcWdEcHhwSS96cmpmc1ptdjN0?=
- =?utf-8?B?dEhNTFZWaDFvbmZTTXdjK2wxajhFR04zWWFRWWdUS0xDQVYxdnVSZFZTWU8z?=
- =?utf-8?B?dTN2ZlR5YzBDdm1kL1F0bHZVN0NneU54eHFHb1FKK1NOaG9BOEJwbHBYeUIv?=
- =?utf-8?B?YkkwWWhrcWNYWElMNFVwUHlkV05haW5QanV0cUZaOEZId25pSDlqY05tUEo1?=
- =?utf-8?B?RzFMck5jUkpjazEraktBWkN1SGRTRVJJQi9pVkFjTnF3NWgzUFJhOGhJMUtU?=
- =?utf-8?B?TG1QZnR0NmJmcjNLWm1MV2hKRS9Ma01tLzAzLzN6WG5OZHpveFJLeVZ6MGYz?=
- =?utf-8?B?bkMrZ2VOT0lIMHdrLzE4a1hDeUZKRC9LZDdnNTRRbkowWHRZczE1WjlzQ1pD?=
- =?utf-8?Q?KgP4=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a91a36e7-f22b-42f1-74e5-08dc65fad6dd
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2024 14:12:00.2135
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nPSb0ShPUaK6K/bV5cU6jYX8eP3QyqWyhidWVLtyh2S89G6hFpJoT+qGO5J0UOpTkdXtAWTLdMNp0EGJRiRRTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9021
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 RESEND 1/6] dt-bindings: clock: qcom: Add SM8650 video
+ clock controller
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        "Satya
+ Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+References: <20240321092529.13362-1-quic_jkona@quicinc.com>
+ <20240321092529.13362-2-quic_jkona@quicinc.com>
+ <CAA8EJppsMchthssctEgUf9q45j84cSLQ78Ur+vaA0Z7GEQi8+g@mail.gmail.com>
+ <725471b1-46a9-43b0-bede-33f01c953d51@quicinc.com>
+ <c3ea22ed-5750-438f-89d5-e56f908ba835@linaro.org>
+ <73c5ffca-9275-437c-a49e-ef3251c8d313@quicinc.com>
+ <d160289a-d0c7-498e-88b2-89861ab9fa50@linaro.org>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <d160289a-d0c7-498e-88b2-89861ab9fa50@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: p8vmHFzwkM4WbaO-Qnc-QZK4YkA2fYTx
+X-Proofpoint-ORIG-GUID: p8vmHFzwkM4WbaO-Qnc-QZK4YkA2fYTx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-04-26_12,2024-04-26_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 mlxscore=0 suspectscore=0 phishscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2404260096
 
-On Fri, Apr 26, 2024 at 05:40:52PM +0800, Shengjiu Wang wrote:
-> On Fri, Apr 26, 2024 at 4:49 AM Frank Li <Frank.li@nxp.com> wrote:
-> >
-> > On Thu, Apr 25, 2024 at 06:19:24PM +0800, Shengjiu Wang wrote:
-> > > According to comments in drivers/pmdomain/imx/gpcv2.c:
-> > >
-> > >       /* request the ADB400 to power up */
-> > >       if (domain->bits.hskreq) {
-> > >               regmap_update_bits(domain->regmap, domain->regs->hsk,
-> > >                                  domain->bits.hskreq, domain->bits.hskreq);
-> > >
-> > >               /*
-> > >                * ret = regmap_read_poll_timeout(domain->regmap, domain->regs->hsk, reg_val,
-> > >                *                                (reg_val & domain->bits.hskack), 0,
-> > >                *                                USEC_PER_MSEC);
-> > >                * Technically we need the commented code to wait handshake. But that needs
-> > >                * the BLK-CTL module BUS clk-en bit being set.
-> > >                *
-> > >                * There is a separate BLK-CTL module and we will have such a driver for it,
-> > >                * that driver will set the BUS clk-en bit and handshake will be triggered
-> > >                * automatically there. Just add a delay and suppose the handshake finish
-> > >                * after that.
-> > >                */
-> > >       }
-> > >
-> > > The BLK-CTL module needs to add delay to wait for a handshake request finished
-> > > before accessing registers, which is just after the enabling of power domain.
-> > >
-> > > Otherwise there is error:
-> > >
-> > > [    2.180834] SError Interrupt on CPU1, code 0x00000000bf000002 -- SError
-> > > [    2.180849] CPU: 1 PID: 48 Comm: kworker/u16:2 Not tainted 6.9.0-rc5-next-20240424-00003-g21cec88845c6 #171
-> > > [    2.180856] Hardware name: NXP i.MX8MPlus EVK board (DT)
-> > > [    2.180861] Workqueue: events_unbound deferred_probe_work_func
-> > > [    2.180878] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > > [    2.180885] pc : clk_imx8mp_audiomix_runtime_resume+0x34/0x44
-> > > [    2.180900] lr : pm_generic_runtime_resume+0x2c/0x44
-> > > [    2.180910] sp : ffff800083423a20
-> > > [    2.180913] x29: ffff800083423a20 x28: 0000000000000000 x27: 0000000000000000
-> > > [    2.180922] x26: ffff0000c0e4e410 x25: 0000000000000000 x24: 0000000000000000
-> > > [    2.180935] x23: 0000000000000000 x22: ffff0000c02afd20 x21: 0000000000000000
-> > > [    2.180945] x20: ffff0000c162a000 x19: ffff0000c0e52810 x18: ffffffffffffffff
-> > > [    2.180959] x17: 0000000000000000 x16: 0000000000000100 x15: ffff8000834239f0
-> > > [    2.180970] x14: ffff0000c03d0a1c x13: ffff0000c0a03440 x12: 00000000000003c7
-> > > [    2.180982] x11: 0000000000000000 x10: ffff8000825010ba x9 : 0000000000000008
-> > > [    2.180993] x8 : 0000000000000008 x7 : 0000000000000000 x6 : 0000000000000000
-> > > [    2.181005] x5 : ffff8000838b0000 x4 : ffff0000c0e66088 x3 : ffff8000813852c0
-> > > [    2.181018] x2 : 0000000000000000 x1 : 0000000000000004 x0 : ffff8000838b0300
-> > > [    2.181035] Kernel panic - not syncing: Asynchronous SError Interrupt
-> > > [    2.181038] CPU: 1 PID: 48 Comm: kworker/u16:2 Not tainted 6.9.0-rc5-next-20240424-00003-g21cec88845c6 #171
-> > > [    2.181047] Hardware name: NXP i.MX8MPlus EVK board (DT)
-> > > [    2.181050] Workqueue: events_unbound deferred_probe_work_func
-> > > [    2.181064] Call trace:
-> > > [    2.181066]  dump_backtrace+0x90/0xe8
-> > > [    2.181080]  show_stack+0x18/0x24
-> > > [    2.181091]  dump_stack_lvl+0x34/0x8c
-> > > [    2.181104]  dump_stack+0x18/0x24
-> > > [    2.181117]  panic+0x39c/0x3d0
-> > > [    2.181129]  nmi_panic+0x48/0x94
-> > > [    2.181142]  arm64_serror_panic+0x6c/0x78
-> > > [    2.181149]  do_serror+0x3c/0x70
-> > > [    2.181157]  el1h_64_error_handler+0x30/0x48
-> > > [    2.181164]  el1h_64_error+0x64/0x68
-> > > [    2.181171]  clk_imx8mp_audiomix_runtime_resume+0x34/0x44
-> > > [    2.181183]  __genpd_runtime_resume+0x30/0x80
-> > > [    2.181195]  genpd_runtime_resume+0x110/0x244
-> > > [    2.181205]  __rpm_callback+0x48/0x1d8
-> > > [    2.181213]  rpm_callback+0x68/0x74
-> > > [    2.181224]  rpm_resume+0x468/0x6c0
-> > > [    2.181234]  __pm_runtime_resume+0x50/0x94
-> > > [    2.181243]  pm_runtime_get_suppliers+0x60/0x8c
-> > > [    2.181258]  __driver_probe_device+0x48/0x12c
-> > > [    2.181268]  driver_probe_device+0xd8/0x15c
-> > > [    2.181278]  __device_attach_driver+0xb8/0x134
-> > > [    2.181290]  bus_for_each_drv+0x84/0xe0
-> > > [    2.181302]  __device_attach+0x9c/0x188
-> > > [    2.181312]  device_initial_probe+0x14/0x20
-> > > [    2.181323]  bus_probe_device+0xac/0xb0
-> > > [    2.181334]  deferred_probe_work_func+0x88/0xc0
-> > > [    2.181344]  process_one_work+0x150/0x290
-> > > [    2.181357]  worker_thread+0x2f8/0x408
-> > > [    2.181370]  kthread+0x110/0x114
-> > > [    2.181381]  ret_from_fork+0x10/0x20
-> > > [    2.181391] SMP: stopping secondary CPUs
-> > > [    2.181400] Kernel Offset: disabled
-> > > [    2.181403] CPU features: 0x0,00000040,00100000,4200421b
-> > > [    2.181407] Memory Limit: none
-> > > [    2.463040] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
-> > >
-> > > Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power saving")
-> > > Reported-by: Francesco Dolcini <francesco@dolcini.it>
-> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > ---
-> > >  drivers/clk/imx/clk-imx8mp-audiomix.c | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > index e4231e9c8f05..cb44c460548e 100644
-> > > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > @@ -6,6 +6,7 @@
-> > >   */
-> > >
-> > >  #include <linux/clk-provider.h>
-> > > +#include <linux/delay.h>
-> > >  #include <linux/device.h>
-> > >  #include <linux/io.h>
-> > >  #include <linux/mod_devicetable.h>
-> > > @@ -362,6 +363,12 @@ static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
-> > >
-> > >  static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
-> > >  {
-> > > +     /*
-> > > +      * According to the drivers/pmdomain/imx/gpcv2.c
-> > > +      * need to wait for handshake request to propagate
-> > > +      */
-> > > +     udelay(5);
-> > > +
-> >
-> > https://lore.kernel.org/imx/20230727152503.2199550-1-shenwei.wang@nxp.com/T/#m2dc5111e9628235f031c0bad2a137222b0205a61
-> >
-> > supposed clk_imx8mp_audiomix_save_restore() is that write save data into
-> > some registers.
-> >
-> > See above link for detail, it may not delay 5us before write to register.
-> > You need
-> >         readl();
-> >         udelay(5);
-> >         writel();
+
+
+On 4/25/2024 7:02 PM, Vladimir Zapolskiy wrote:
+> Hi Jagadeesh,
 > 
-> Here we need to wait for the handshake to be ready,  we have nothing
-> to be read.
-
-It should power_on by writel() at somewhere, maybe gpcv2.c. 
-1. writel() //power on
-
-2. udelay(5) // in your code,
-
-3. writel() // in your driver to init  audiomix controller. 
-
-1,2,3 just distribute at difference file, but basic work flow should be
-the same.
-
-If here nothing to read, you put udelay at power_on code, maybe gpcv2.
-
-Other driver may meet similar problem, you met this problem just this
-driver running close to gpc's v2 by driver probe order or compiler linker
-driver order.
-
+> On 4/22/24 14:00, Jagadeesh Kona wrote:
+>>
+>> On 4/19/2024 2:31 AM, Vladimir Zapolskiy wrote:
+>>> Hello Jagadeesh,
+>>>
+>>> On 3/25/24 08:07, Jagadeesh Kona wrote:
+>>>>
+>>>>
+>>>> On 3/21/2024 6:42 PM, Dmitry Baryshkov wrote:
+>>>>> On Thu, 21 Mar 2024 at 11:26, Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>>> wrote:
+>>>>>>
+>>>>>> Extend device tree bindings of SM8450 videocc to add support
+>>>>>> for SM8650 videocc. While it at, fix the incorrect header
+>>>>>> include in sm8450 videocc yaml documentation.
+>>>>>>
+>>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>>>> ---
+>>>>>>     .../devicetree/bindings/clock/qcom,sm8450-videocc.yaml    | 4 
+>>>>>> +++-
+>>>>>>     include/dt-bindings/clock/qcom,sm8450-videocc.h           | 8
+>>>>>> +++++++-
+>>>>>>     2 files changed, 10 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git
+>>>>>> a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+>>>>>> b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+>>>>>> index bad8f019a8d3..79f55620eb70 100644
+>>>>>> --- 
+>>>>>> a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+>>>>>> +++ 
+>>>>>> b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+>>>>>> @@ -8,18 +8,20 @@ title: Qualcomm Video Clock & Reset Controller on
+>>>>>> SM8450
+>>>>>>
+>>>>>>     maintainers:
+>>>>>>       - Taniya Das <quic_tdas@quicinc.com>
+>>>>>> +  - Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>>>>
+>>>>>>     description: |
+>>>>>>       Qualcomm video clock control module provides the clocks, resets
+>>>>>> and power
+>>>>>>       domains on SM8450.
+>>>>>>
+>>>>>> -  See also:: include/dt-bindings/clock/qcom,videocc-sm8450.h
+>>>>>> +  See also:: include/dt-bindings/clock/qcom,sm8450-videocc.h
+>>>>>
+>>>>> This almost pleads to go to a separate patch. Fixes generally should
+>>>>> be separated from the rest of the changes.
+>>>>>
+>>>>
+>>>> Thanks Dmitry for your review.
+>>>>
+>>>> Sure, will separate this into a separate patch in next series.
+>>>>
+>>>>>>
+>>>>>>     properties:
+>>>>>>       compatible:
+>>>>>>         enum:
+>>>>>>           - qcom,sm8450-videocc
+>>>>>>           - qcom,sm8550-videocc
+>>>>>> +      - qcom,sm8650-videocc
+>>>>>>
+>>>>>>       reg:
+>>>>>>         maxItems: 1
+>>>>>> diff --git a/include/dt-bindings/clock/qcom,sm8450-videocc.h
+>>>>>> b/include/dt-bindings/clock/qcom,sm8450-videocc.h
+>>>>>> index 9d795adfe4eb..ecfebe52e4bb 100644
+>>>>>> --- a/include/dt-bindings/clock/qcom,sm8450-videocc.h
+>>>>>> +++ b/include/dt-bindings/clock/qcom,sm8450-videocc.h
+>>>>>> @@ -1,6 +1,6 @@
+>>>>>>     /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>>>>>>     /*
+>>>>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights
+>>>>>> reserved.
+>>>>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All
+>>>>>> rights reserved.
+>>>>>>      */
+>>>>>>
+>>>>>>     #ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8450_H
+>>>>>> @@ -19,6 +19,11 @@
+>>>>>>     #define
+>>>>>> VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC                                9
+>>>>>>     #define VIDEO_CC_PLL0                                          10
+>>>>>>     #define VIDEO_CC_PLL1                                          11
+>>>>>> +#define
+>>>>>> VIDEO_CC_MVS0_SHIFT_CLK                                        12
+>>>>>> +#define VIDEO_CC_MVS0C_SHIFT_CLK                               13
+>>>>>> +#define
+>>>>>> VIDEO_CC_MVS1_SHIFT_CLK                                        14
+>>>>>> +#define VIDEO_CC_MVS1C_SHIFT_CLK                               15
+>>>>>> +#define VIDEO_CC_XO_CLK_SRC                                    16
+>>>>>
+>>>>> Are these values applicable to sm8450?
+>>>>>
+>>>>
+>>>> No, the shift clocks above are part of SM8650 only. To reuse the
+>>>> existing SM8550 videocc driver for SM8650 and to register these shift
+>>>> clocks for SM8650, I added them here.
+>>>>
+>>>
+>>> In such case I'd strongly suggest to add a new qcom,sm8650-videocc.h 
+>>> file,
+>>> and do #include qcom,sm8450-videocc.h in it, thus the new header will be
+>>> really a short one.
+>>>
+>>> This will add pristine clarity.
+>>>
+>>
+>> Thanks Vladimir for your suggestion. I believe adding a comment for
+>> these set of clocks should be sufficient to indicate these clocks are
+>> applicable only for SM8650, I can add the required comment and post the
+>> next series. Please let me know if this works?
 > 
-> but I don't really understand why the code is commented.
+> Well, I didn't get any new information to abandon my suggestion, what is
+> wrong with it or why is it less preferable?
 > 
->                /*
->                 * ret = regmap_read_poll_timeout(domain->regmap,
-> domain->regs->hsk, reg_val,
->                 *                                (reg_val &
-> domain->bits.hskack), 0,
->                 *                                USEC_PER_MSEC);
+> Even if you add a comment in the header file, it means that for SM8450
+> platforms you'll begin to define inapplicable/unrelated macro for the
+> platform, which opens a small risk of the misusage, and which can be
+> easily avoided. I believe that the clarity is better for maintenance.
 > 
-> If we uncomment the code,  it can also fix the issue.
 
-dose git blame give some clue or ask original driver owner? 
+Yes, I agree. Will check and move these new clocks to a separate header 
+file in next series. Thanks!
 
-> 
-> best regards
-> Shengjiu Wang
-> 
-> >
-> > >       clk_imx8mp_audiomix_save_restore(dev, false);
-> > >
-> > >       return 0;
-> > > --
-> > > 2.34.1
-> > >
+Thanks,
+Jagadeesh
