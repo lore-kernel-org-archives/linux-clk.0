@@ -1,339 +1,158 @@
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2033.outbound.protection.outlook.com [40.92.102.33])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD2478B4E;
-	Fri, 26 Apr 2024 03:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714102856; cv=fail; b=dhCGNnKAvf+8z2AkeZKcnbqKUL+ZhcqGeQQdYa8j/7USrJeBN23fIMFhPxStZuymQRLVlc2ha1SGDECbortgdi7qUvbhu3WkdOBTZRdx9lf+MiqJs8NfLZh9z6V/W9VxNxOqrNPkttg4pbOqaeLpruOqtFUr5Ua9jqvKe32WFVA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714102856; c=relaxed/simple;
-	bh=XxQeFUOVuQYTxls9WrpPmBhE1EtvMAd+DyqXs/7zas4=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=j2Pno88dYm/dpu/4nfDM9ocIwyGcZg2mTm6TjMtqbiWUjbnesAYmdbXJBRtMzUGZ6hW7oYViOSb/U4cAblgCUaeqMAAqZu1EV1eJgFwE0HNpLuFaEXMqfMFpp5OD/5kUJ1gkn4G0lPwI77p9eOojlCraYaE3lAuwaG+6GgKfPzs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=djSuYH4h; arc=fail smtp.client-ip=40.92.102.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA5113A25D
+	for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 05:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714109080; cv=none; b=BaObG0LFdbzy4UJsjBx6FF3Ag9zGg1AhN9JQxKsdfbkIFNjOAfIbi/1r7pFgAG1ulqEup2jW96iqJZseWl0OsP7gr1nUyYUDOd4KeDFuIsf11xIyWTzXqAePQSvCqVeb8JPHL+sMODzt89DFgWbkvy7hwJo3ZdaXiPFT/M8oAqg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714109080; c=relaxed/simple;
+	bh=6A17X04Jb+QaIAMoSdhSdFqaDCqxAC+7M2emgOEx7Bk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=arTGJxebvQ5jWSGutq3I9R4+EwTHtQQWCuRqv5r07WGIjGyy+XExTZO01qYI9gPNdTpCnTRdTZZfA6uT4auz3MoPnmf/Jpg+fmAB5OSZQzm8lq/4WGDPre6Kt7QoddnvlykaJQYMA+pSoPaX+2mVcfSeRB5JWRjUV9KzNxGvd20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uWalPMO5; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="djSuYH4h"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Zm8EX+osk6sNVufK5BTa0izhKDA1nq4sAGoACc58gmfCTHAb0YKoy5NhwSThQe79rfMPpS7T+AzqPeG1rkYVeOmglpOoCZT3WurkFqWd4DVwCJ9itsGIg78AWuW2o/e6lQ7bjJacsabugfhq5B2KV1OA+6YPVDerslQqJUXgBp3PAK8wiMosXPh/PRjtFj8QVEjkZNGbzyknqwbR3wVwnJnQc++B99dflooDmBxqfUORVsd1zw3kB9oTVvGvVMYTwN00hl8WEh45leAUysGN8jTS4gcDgkHP/YLPX6Crc1mw4rwpZ4l1qiXpIAjQyVWQdaRE0yH8UDGvCYQ/iFIttQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jCBDpNh8NMTS19y1EMp879tzSnvNOXaMFqmDcXI5/5Y=;
- b=AnqLskIoowwSc9bmRFkEStDUGT3w89YLy1bN02GGzhkaB+z6hcX8f9LxzBkwpwmYkxsihn3TNzm7IrjhRU8sM+yGgHUCpKCnfMw82ihFrzczhKVrXoUUZVqMH/Ee4qMrUFTrf+WrU2tWBWbl9wdFtbwHBrXKsNmGhzB9AuGMUk3HDK8tZXf1WeSKlPYq2sB1pBULkaxHAglPbaG0mj5qBkqsofRHY0xVJsOcrG7oaxI/wEnU/BDJQE+1ho1D9AlypIAZU5qBWhEd8Z176nDBf1/c+pW28qulOYLMZQ9+tmd/JsaJ9t4I1PeNOZ64Of8y6GjklbAj6pUfLl03RdKZyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jCBDpNh8NMTS19y1EMp879tzSnvNOXaMFqmDcXI5/5Y=;
- b=djSuYH4htqH6sO1y/15oHY5L8WEUuBV0ChZ785Xtir/qtC2z5/jKzId+9jgaTQCYWu2tzSiBPAvRNsJKXcsVwaw6gxyTgBq+SL0nm9nITRXzA3jjel8e+opknF2FV55MB9NwgYe5F6KS1zUu9HXmgTjg2ipyogERBVuChIzr6YDM1wh+iIpAc5e1Edz9V4E3ITK42ASvQdAhm7QjRxcWUB3y9xk/46z+r8gR/3Z99fUrXYLAIaT6yNyLHEipzL5/sYHJqMopuK9RSRrJlacmU8q3u/DK03ZYsYkH3B4o5f3hEF4Oj3oc49+1UF7Y8jo4M5RR5zkVgVyrt7FPo3feZQ==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by MA0P287MB1575.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:107::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Fri, 26 Apr
- 2024 03:40:46 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::664:2ecc:c36:1f2c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::664:2ecc:c36:1f2c%3]) with mapi id 15.20.7519.021; Fri, 26 Apr 2024
- 03:40:46 +0000
-Message-ID:
- <MA0P287MB28225D0F3AF2B0E691C66F66FE162@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Fri, 26 Apr 2024 11:40:41 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 0/5] riscv: sophgo: add clock support for sg2042
-To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
- chao.wei@sophgo.com, conor@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
- richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, guoren@kernel.org,
- jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
-References: <cover.1714101547.git.unicorn_wang@outlook.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <cover.1714101547.git.unicorn_wang@outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [NA1UBG4LjZZJG/laId1+ujHsZtJaztHW]
-X-ClientProxiedBy: SI2PR06CA0018.apcprd06.prod.outlook.com
- (2603:1096:4:186::8) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <077e5916-f53e-415c-a8b3-ee8f88569687@outlook.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uWalPMO5"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240426052435euoutp0236a9be6ecd3335d206c7e6ef2de558fd~JvR9eSKB80050800508euoutp02F
+	for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 05:24:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240426052435euoutp0236a9be6ecd3335d206c7e6ef2de558fd~JvR9eSKB80050800508euoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1714109075;
+	bh=QrL37T0pPHe1/07gRvyuxFVAN+0IcPGsyDxhu/3XniY=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=uWalPMO5kecJxPmN51JklqVuBXKTYIoIxvjh/ZfsEXaL1WJxWkhYD6De35UDTvzUo
+	 0d5a65RMLnmvk/rDFh5160QoIyZ1uuk4GZ5//sglGhQeJu8JMsEohVmYT4hhM3IxuC
+	 T0BEEESppAoW3I9tMFRKxC0PqgnMhIjK+CngoePo=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240426052435eucas1p1c08a3a9adfda82560d3bf08a52b90168~JvR9BmdUX2903329033eucas1p1g;
+	Fri, 26 Apr 2024 05:24:35 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 05.BE.09620.39A3B266; Fri, 26
+	Apr 2024 06:24:35 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240426052434eucas1p26773540bb503f3347de52c6e3f42dd4f~JvR8mhzpl1508115081eucas1p2j;
+	Fri, 26 Apr 2024 05:24:34 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240426052434eusmtrp2262d95b4dd98a8d1a0f01e27e1d55fc2~JvR8l4qmK3053130531eusmtrp2u;
+	Fri, 26 Apr 2024 05:24:34 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-af-662b3a93cfdd
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 22.D7.08810.29A3B266; Fri, 26
+	Apr 2024 06:24:34 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240426052433eusmtip2e26f41711b89e5aac9682106ab9f698c~JvR7rQQEU2453224532eusmtip2-;
+	Fri, 26 Apr 2024 05:24:33 +0000 (GMT)
+Message-ID: <d62aeaa2-8d3e-409e-acea-23b9e6ff0b76@samsung.com>
+Date: Fri, 26 Apr 2024 07:24:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|MA0P287MB1575:EE_
-X-MS-Office365-Filtering-Correlation-Id: e252ada7-e033-4e73-33ef-08dc65a2a7f5
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	ZA5ASY+p5ZDjsHoXlVbzcQY82mKGPzY68qrqjcwV6tGsw+4S0IcnUlg09ZQdBE2aPuTz5qRTc/XtxQbu57kkgT92a+ONIu+J33w/Y9q3lOR8nYJU/Vc3o9MsTKLmXYO+VL3N0VvDLU+jjOovkf1zpeeaDmUX/dU3d/M2T9LGis+dOBIfBTgpy89t9SsfhsE0HxMK5xrTyX7OWOK2pFs5jjLi6vm+OOeKH7D3TO46g2RG8ffuP0vZcriiI6VGLZbSKr0j1gAP10056G/8YFVz+NXn3OMic2e4jn5Up+p2AmN4KpDKhuzC/a+itJTOSjRRb6nsjZP8L1ia4sU1RJhZ37x5+WSCuQtxGvO2IlSUqBbgnML+wZMCECKTGj5yaZIIRMi4jTIJkqlCm+U8V1K7TDGXJ+bUl97ffFZu3eWe/QLOcRo92oqpG3G/LT2jk0BAT1zsV/mve0IIchZ4TWfKeG5Hxl3rwCKc/7RMOpR/zoWojTTmJtiDhnJBFFNfeaPe03HHPoyrw/M2w8S8vHUf+HtSzwkuOpc2Jka8mCX5OfynkgNq+uYVX2ZwdSXdsKDLa1yFUAGdd4mzXIvxbQITSurbeyfIYs2gmX+ioDpwJoB5Jsyoto28IAj3NNCrIgOM9mgBv5E3cAC8zYzPW85uqJmtoG9ex0MGUbv80ucXYm3FOtSObfgaSj3yqwG5TRDSrbMBmeRYEN4gT1+/kVKZENsv192hoLqaqkm2pgR/8/U=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YllZOG43VTlWeTcvL0o1SXBzUTVESjdwOVlHRXk0UmRwUC94ZS9xWnArQWFw?=
- =?utf-8?B?bXlqdTUyclArY2orazJNdkNoampWUmp3Qzg4SVV3N3ZvMDRiTlBPQ3Vyd2tJ?=
- =?utf-8?B?ZExSbGRVemtLR2d0a0U0U1k4enVWRVdGczRwdk5naHp4S0pTYUlidTVlSWhv?=
- =?utf-8?B?d2RMVWVYSVpSeDVZdnlaei9iVUExaURiQnBhVW96UnU3akdqZXorbHFKSEc2?=
- =?utf-8?B?SDZBZXRweHZOK0VsVzVvVmpoQWtxeHJoWTFoY0M4NnlhdGFrek5qU2c2MXFI?=
- =?utf-8?B?YjVpMlhHcUc3V0tCU1lGSXBwZnJoL2x5UElFamxwUGtRQXZ3K3hpenc5ZVVT?=
- =?utf-8?B?d0FqaHZjRzAzbU5uTzNPTS9xUUYxbGxYRVhBOU1nTTZUdm1zcEpEWUd3VGUz?=
- =?utf-8?B?U2Z5VjhKcmpYdWN0aEVUTU9Pa3QzdnZ1Mk5QaHhCSXlLQjJidFNuRHZDbHdy?=
- =?utf-8?B?ZnFlTHVCWDhzRTFNY2QzUGtpL294MnBWMkhXWGJnRHZoNnJQcnZzdGhaTmx5?=
- =?utf-8?B?UzhyN282eS92eXl5SW9VMy8xbUpkMmhJdXE5c2l3Qnd0N091THhwY3ZyeUtF?=
- =?utf-8?B?bTBDTitoVDhaaUxkNG0xVmhaY1c2dysxeHgzenpoaFRURWgwZHZkWjRIcFNh?=
- =?utf-8?B?U2x2SmZxZ2g4dzlsVVdqVzNDYzZwNmJ5anpkR2ora1JXdXlTc0g5amFkWkVV?=
- =?utf-8?B?YnNVSDJucEx0dzZxTVdYRmhzU3ZiN0FwbmxFaG1KSmlpWVYvNW5WUDBZR2FX?=
- =?utf-8?B?aXBvaDlYVytvdW9xYlRkN0tCT0R5L0RiekFhVGlaUnFGaXVMY1hEcTBsWUtq?=
- =?utf-8?B?bmt2N2tSMTVEOUpqSHVweHdBTUFoaHRPY21vQ2pQanJQUE9Fclh5SmZaYk02?=
- =?utf-8?B?Q29PN2dBNnZBcnAwSWw4M3h1RlNlQnpSSGhOSlFjN2NjVUE4OVJjVVBHN1I4?=
- =?utf-8?B?dTBvTmZPdHRFSW8vdWJGckxGQTFJUkJhZ0E4cDkwZkptL0FIMFFLVDBvb3ZZ?=
- =?utf-8?B?REtDY0lwd0hVQ1QxSEhMY1M3NUxkakRaSWtzcnBHWXRFYUFUMVlCTEpzN3BB?=
- =?utf-8?B?dEdPaFlZTi90WmdiYVdXS0Z4Ym9MOFJxZ1ZEZmFTei9QSDEwK2xNdzg4bnRo?=
- =?utf-8?B?cSs1dnZIMDhIVFg1bVZKaEIyK3RMOHlsVXpaNnhkL1FveWJNK0t1UG1LMi9m?=
- =?utf-8?B?S2pSWktKYkxZSXlmYms0T01KblJVTXdmRjFWMzdYalhNTnUxa3JEOFNBYnIv?=
- =?utf-8?B?Y2FmVTJZWDI3d2Rta0krck9xYUdmVk96aGpnRGoyaHJxejdad3BhbGhSQ0kz?=
- =?utf-8?B?SDR1d0kvTFd0bjA4d0JDc2REV25mZ09xZnVlSHZQRlpjM0NMbllHVXRTQ0lt?=
- =?utf-8?B?TDFDeWRPbll6Sm85NlhPK3Y5ODFNdExRWlVxOUFDaFN5Mk1SRXhFdERmRUhI?=
- =?utf-8?B?c2xGMXFCQ0Fwc2tjRWxhV1IxS05RWml1R2VHUExhdlFOa0dsOUE1YWJGZUdB?=
- =?utf-8?B?aU9sOFNnSHQ3Z0c0L3A4a3JZK1RpSnB5NlpDVVVRUWNNNjB5bG1QOVIvaC9T?=
- =?utf-8?B?Ry85aGZrNWVkdm5xSWdISG5XbmRsK3JhTjVyRHlDcEpzZm53dVFJZERtL0lJ?=
- =?utf-8?B?emF2RHI1dis3NmpGVWF0WDh6ZXhSTnNiNWZ3WWRVcmw0WTkvbGNOU0NhVENz?=
- =?utf-8?Q?uKtYyiRA7Oa+1w//h5zi?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e252ada7-e033-4e73-33ef-08dc65a2a7f5
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2024 03:40:45.8972
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1575
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: samsung: exynos-clkout: Remove misleading
+ of_match_table/MODULE_DEVICE_TABLE
+To: William McVicker <willmcvicker@google.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
+	Herring <robh@kernel.org>, David Lechner <david@lechnology.com>, Bjorn
+	Andersson <andersson@kernel.org>, Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <Zir0Rhm7jZoF8r04@google.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJKsWRmVeSWpSXmKPExsWy7djP87qTrbTTDO7PZbF4MG8bm8W2DhuL
+	61+es1osahCzmHj+J5vF+fMb2C02Pb7GavGx5x6rxYzz+5gsLp5ytfi/Zwe7xeE37awW/65t
+	ZLFY9ek/owOfx/sbreweCzaVemxa1cnm8an/JKvHnWt72Dw2L6n36NuyitHj8ya5AI4oLpuU
+	1JzMstQifbsEroyuzd+ZC7bxVvxcNYe1gXEedxcjB4eEgInEvrNOXYxcHEICKxgluvd+YIVw
+	vjBKtPbfZ4RwPjNKnFyxjK2LkROs4/bhZ0wQieWMEi/uHYdq+cgo8W7rXkaQKl4BO4l//0+z
+	gtgsAqoS/b1r2SDighInZz5hAbFFBeQl7t+awQ5yh7BAhsSxVwUgpoiAnsSf1gqQkcwCDSwS
+	96fNZQIpZxYQl7j1ZD6YzSZgKNH1tgtsJKeAlsT3+dNZIWrkJba/ncMMcehyTok3f7QhbBeJ
+	ew3fWSBsYYlXx7ewQ9gyEv93zgd7RkKgnVFiwe/7UM4ERomG57cYIaqsJe6c+8UGch2zgKbE
+	+l36EGFHidfb/zJCwpFP4sZbQYgb+CQmbZvODBHmlehoE4KoVpOYdXwd3NqDFy4xT2BUmoUU
+	KLOQfDkLyTezEPYuYGRZxSieWlqcm55abJyXWq5XnJhbXJqXrpecn7uJEZjaTv87/nUH44pX
+	H/UOMTJxMB5ilOBgVhLhvflRI02INyWxsiq1KD++qDQntfgQozQHi5I4r2qKfKqQQHpiSWp2
+	ampBahFMlomDU6qBKW5bTe7VScZTLp16OF1UoHeN7/7ACdLL9D//fPFgaemExNTH6ds2BD2M
+	OtMwbeeCWdPYrjexHD10gPXXPPPjhne6tjYyOgp3/TqaHOp+8con0zU5e9mzdmQ+sV9b9Lvp
+	i9hhOaVNp+deO/BPPIVvuXDTzMlpnU93zNTqcA7ZHm7w7fH/kGj90tXN7yf6c98XWxui7X14
+	XvHrw39tUtIfvWJIltWZoprANaHg53XfDln+t1sWe0QLa8RP/WYdNtulbY5l+DyTs6JfJm7a
+	YyomcPOwwDebykfevFL323+2PVOw+37O/Peyo00Me5YEx/03049+8N3f717KKn7bqMfnNs1/
+	2vd/ooNYW0zH0YVbnMKVWIozEg21mIuKEwHX+Qhw3AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsVy+t/xe7qTrLTTDNouKVk8mLeNzWJbh43F
+	9S/PWS0WNYhZTDz/k83i/PkN7BabHl9jtfjYc4/VYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2
+	slis+vSf0YHP4/2NVnaPBZtKPTat6mTz+NR/ktXjzrU9bB6bl9R79G1ZxejxeZNcAEeUnk1R
+	fmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXkbX5u/MBdt4
+	K36umsPawDiPu4uRk0NCwETi9uFnTF2MXBxCAksZJbaf/c8MkZCRODmtgRXCFpb4c62LDcQW
+	EnjPKPHxpiWIzStgJ/Hv/2mwGhYBVYn+3rVsEHFBiZMzn7CA2KIC8hL3b81g72Lk4BAWyJA4
+	9qoAxBQR0JP401oBspZZoIFF4ubRNYwQN2xilJjS9p8RpJdZQFzi1pP5TCA2m4ChRNdbiBs4
+	BbQkvs+fzgpRYybRtbULql5eYvvbOcwTGIVmITljFpJRs5C0zELSsoCRZRWjSGppcW56brGh
+	XnFibnFpXrpecn7uJkZgNG879nPzDsZ5rz7qHWJk4mA8xCjBwawkwnvzo0aaEG9KYmVValF+
+	fFFpTmrxIUZTYFhMZJYSTc4HppO8knhDMwNTQxMzSwNTSzNjJXFez4KORCGB9MSS1OzU1ILU
+	Ipg+Jg5OqQYmNf4bZ9+YXtZVOZd6q4C56dWbg/qGlXrTXY5zXY5lU3H7/y5yVefnW9cSOS3e
+	3nl1+M8R2zlfl+g5NbY86pZ9l+sxzTjlzb/kIMHPmTfXtv4JE4v+3he+QNPjhSdLqNJZtoiG
+	zLeemzqOTT7D8GlP29W/M3yyXpofb/lVXS0xjV+Gn2d72qojKw9VTPlWPl3T7JnK9Z1X71b+
+	LMuTVXlXvsz0mdpy6dV7HU7G6i23WM8jEzv9hnXinFn8UZ++HmvQWJbRaqBwvfD6y2NVHqXM
+	K/c/Kvuy1buxbE5K4crUw9wssdHf/33Zcv5G5YutQhP2RgYzr3jRcIzD3zCie93qcpdtZ1ff
+	2Lpi5qGyi747rimxFGckGmoxFxUnAgBWgcsYbwMAAA==
+X-CMS-MailID: 20240426052434eucas1p26773540bb503f3347de52c6e3f42dd4f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7
+References: <CGME20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7@eucas1p1.samsung.com>
+	<20240425091429.948467-1-m.szyprowski@samsung.com>
+	<Zir0Rhm7jZoF8r04@google.com>
 
-Hi,  Rob Herring & Guo Ren,
+On 26.04.2024 02:24, William McVicker wrote:
+> On 04/25/2024, Marek Szyprowski wrote:
+>> Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
+>> module driver") this driver is instantiated as MFD-cell (matched by
+>> platform device name) not as a real platform device created by OF code.
+>> Remove then of_match_table and related MODULE_DEVICE_TABLE to avoid
+>> further confusion.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   drivers/clk/samsung/clk-exynos-clkout.c | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+>> index 503c6f5b20d5..0c7f4e2aa366 100644
+>> --- a/drivers/clk/samsung/clk-exynos-clkout.c
+>> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
+>> @@ -75,7 +75,6 @@ static const struct of_device_id exynos_clkout_ids[] = {
+>>   		.data = &exynos_clkout_exynos5,
+>>   	}, { }
+>>   };
+>> -MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
+> I understand these are duplicates of the exynos-pmu driver, but was wondering
+> if this will impact the exynos-clkout module from getting auto-loaded? Without
+> the MODULE_DEVICE_TABLE() defined, the aliases won't be created that trigger
+> udev to load this module and the mfd driver is obviously not going to load it.
 
-For this version, I updated bindings. Due to the change is minor(just 
-add one clock-names property), so I reserve your "Reviewed-by:". Any 
-question please feel free let me know.
+This driver loaded and matched only against the platform device name 
+("exynos-clkout") since the mentioned commit 9484f2cb8332. These OF IDs 
+defined as MODULE_DEVICE_TABLE and of_match_table are leftovers from the 
+old (pre-9484f2cb8332) instantiating method.and should be removed by 
+that commit too.
 
-Thanks,
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Chen
-
-On 2024/4/26 11:32, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
->
-> This series adds clock controller support for sophgo sg2042.
->
-> Thanks,
-> Chen
->
-> ---
->
-> Changes in v15:
->
->    The patch series is based on v6.9-rc5.
->
->    Improved the dirvier code as per 3rd review comments from Stephen Boyd.
->    - Converted all parents described by strings to use clk_parent_data or
->      clk_hw directly.
->    - Just use struct clk_init_data::parent_hws when only have a clk_hw.
->    - Removed extra cleanup when use devm.
->    - Some misc code improvements.
->
-> Changes in v14:
->
->    The patch series is based on v6.9-rc1. You can simply review or test the
->    patches at the link [15].
->
->    Improved the dirvier code as per 2nd review comments from Stephen Boyd.
->    - Inline the header file into source file.
->    - Use devm_xxx functions for pll/div/gate registeration.
->    - Use clk_parent_data for mux clocks initialization.
->    - Use u32 for registers readl/writel.
->    - Use devm_platform_ioremap_resource instead of devm_of_iomap.
->    - Cleanup some dead code and add definitions for some magic numbers.
->    - Add include files missed.
->    - Use kernel-doc to improve comments for some structure and functions.
->    - Other misc code cleanup work as per input from reviewers.
->
-> Changes in v13:
->
->    The patch series is based on v6.9-rc1. You can simply review or test the
->    patches at the link [14].
->
->    Just added a minor fix for clk driver which was missed in v12.
->
-> Changes in v12:
->
->    The patch series is based on v6.9-rc1. You can simply review or test the
->    patches at the link [13].
->
->    Improved the dirvier code as per review comments from Stephen Boyd.
->    - Remove default y for CLK_SOPHGO_SG2042.
->    - Optimize sg2042_pll_get_postdiv_1_2, move postdiv1_2 to the function.
->      scope and add more explaniation.
->    - Optimize sg2042_get_pll_ctl_setting.
->    - Switch to platform driver.
->    - Use clk_hw for initialization of struct clks.
->    - Don't use ignore_unused when using critical.
->    - Other code cleanup as per input form the reviewers.
->
-> Changes in v11:
->
->    The patch series is based on v6.8-rc5. You can simply review or test the
->    patches at the link [12].
->
->    Quick fixed some dt_binding_check errors reported by Rob.
->
-> Changes in v10:
->
->    The patch series is based on v6.8-rc4. You can simply review or test the
->    patches at the link [11].
->
->    Add input clocks for rpgate & clkgen.
->
-> Changes in v9:
->    The patch series is based on v6.8-rc2. You can simply review or test the
->    patches at the link [10].
->
->    From this version, drop the system-controller node due to there is no actual
->    device corresponding to it in IC design. SYS_CTRL is just a registers segment
->    defined on TRM for misc functions. Now three clock-controllers are defined for
->    SG2042, the control registers of the three clock-controllers are scattered in
->    different memory address spaces:
->    - the first one is for pll clocks;
->    - the second one is for gate clocks for RP subsystem;
->    - the third one is for div/mux, and gate clocks working for other subsystem
->      than RP subsystem.
->
-> Changes in v8:
->    The patch series is based on v6.7. You can simply review or test the
->    patches at the link [9].
->    
->    In this version, the main change is to split one clock provider into two.
->    Strictly follow the hardware instructions, in the memoymap, the control
->    registers of some clocks are defined in the SYS_CTRL segment, and the
->    control registers of other clocks are defined in the CLOCK segment.
->    Therefore, the new design defines two clock controllers, one as a child
->    node of the system control and the other as an independent clock controller
->    node.
->
->    This modification involves a major modification to the binding files, so
->    the reviewed-by tags has been deleted.
->
-> Changes in v7:
->    The patch series is based on v6.7. You can simply review or test the
->    patches at the link [8].
->    - fixed initval issue.
->    - fixed pll clk crash issue.
->    - fixed warning reported by <lkp@intel.com>
->    - code optimization as per review comments.
->    - code cleanup and style improvements as per review comments and checkpatch
->      with "--strict"
->
-> Changes in v6:
->    The patch series is based on v6.7-rc1. You can simply review or test the
->    patches at the link [7].
->    - fixed some warnings/errors reported by kernel test robot <lkp@intel.com>.
->
-> Changes in v5:
->    The patch series is based on v6.7-rc1. You can simply review or test the
->    patches at the link [6].
->    - dt-bindings: improved yaml, such as:
->      - add vendor prefix for system-ctrl property for clock generator.
->      - Add explanation for system-ctrl property.
->    - move sophgo,sg2042-clkgen.yaml to directly under clock folder.
->    - fixed bugs for driver Makefile/Kconfig
->    - continue cleaning-up debug print for driver code.
->
-> Changes in v4:
->    The patch series is based on v6.7-rc1. You can simply review or test the
->    patches at the link [5].
->    - dt-bindings: fixed a dt_binding_check error.
->
-> Changes in v3:
->    The patch series is based on v6.7-rc1. You can simply review or test the
->    patches at the link [3].
->    - DTS: don't use syscon but define sg2042 specific system control node. More
->      background info can read [4].
->    - Updating minor issues in dt-bindings as per input from reviews.
->
-> Changes in v2:
->    The patch series is based on v6.7-rc1. You can simply review or test the
->    patches at the link [2].
->    - Squashed the patch adding clock definitions with the patch adding the
->      binding for the clock controller.
->    - Updating dt-binding for syscon, remove oneOf for property compatible;
->      define clock controller as child of syscon.
->    - DTS changes: merge sg2042-clock.dtsi into sg2042.dtsi; move clock-frequency
->      property of osc to board devicethree due to the oscillator is outside the
->      SoC.
->    - Fixed some bugs in driver code during testing, including removing warnings
->      for rv32_defconfig.
->    - Updated MAINTAINERS info.
->
-> Changes in v1:
->    The patch series is based on v6.7-rc1. You can simply review or test the
->    patches at the link [1].
->
-> Link: https://lore.kernel.org/linux-riscv/cover.1699879741.git.unicorn_wang@outlook.com/ [1]
-> Link: https://lore.kernel.org/linux-riscv/cover.1701044106.git.unicorn_wang@outlook.com/ [2]
-> Link: https://lore.kernel.org/linux-riscv/cover.1701691923.git.unicorn_wang@outlook.com/ [3]
-> Link: https://lore.kernel.org/linux-riscv/MA0P287MB03329AE180378E1A2E034374FE82A@MA0P287MB0332.INDP287.PROD.OUTLOOK.COM/ [4]
-> Link: https://lore.kernel.org/linux-riscv/cover.1701734442.git.unicorn_wang@outlook.com/ [5]
-> Link: https://lore.kernel.org/linux-riscv/cover.1701938395.git.unicorn_wang@outlook.com/ [6]
-> Link: https://lore.kernel.org/linux-riscv/cover.1701997033.git.unicorn_wang@outlook.com/ [7]
-> Link: https://lore.kernel.org/linux-riscv/cover.1704694903.git.unicorn_wang@outlook.com/ [8]
-> Link: https://lore.kernel.org/linux-riscv/cover.1705388518.git.unicorn_wang@outlook.com/ [9]
-> Link: https://lore.kernel.org/linux-riscv/cover.1706854074.git.unicorn_wang@outlook.com/ [10]
-> Link: https://lore.kernel.org/linux-riscv/cover.1708223519.git.unicorn_wang@outlook.com/ [11]
-> Link: https://lore.kernel.org/linux-riscv/cover.1708397315.git.unicorn_wang@outlook.com/ [12]
-> Link: https://lore.kernel.org/linux-riscv/cover.1711527932.git.unicorn_wang@outlook.com/ [13]
-> Link: https://lore.kernel.org/linux-riscv/cover.1711692169.git.unicorn_wang@outlook.com/ [14]
-> Link: https://lore.kernel.org/linux-riscv/cover.1713164546.git.unicorn_wang@outlook.com/ [15]
->
-> ---
->
-> Chen Wang (5):
->    dt-bindings: clock: sophgo: add pll clocks for SG2042
->    dt-bindings: clock: sophgo: add RP gate clocks for SG2042
->    dt-bindings: clock: sophgo: add clkgen for SG2042
->    clk: sophgo: Add SG2042 clock driver
->    riscv: dts: add clock generator for Sophgo SG2042 SoC
->
->   .../bindings/clock/sophgo,sg2042-clkgen.yaml  |   61 +
->   .../bindings/clock/sophgo,sg2042-pll.yaml     |   53 +
->   .../bindings/clock/sophgo,sg2042-rpgate.yaml  |   49 +
->   .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |   12 +
->   arch/riscv/boot/dts/sophgo/sg2042.dtsi        |   55 +-
->   drivers/clk/Kconfig                           |    1 +
->   drivers/clk/Makefile                          |    1 +
->   drivers/clk/sophgo/Kconfig                    |    8 +
->   drivers/clk/sophgo/Makefile                   |    2 +
->   drivers/clk/sophgo/clk-sophgo-sg2042.c        | 1870 +++++++++++++++++
->   .../dt-bindings/clock/sophgo,sg2042-clkgen.h  |  111 +
->   include/dt-bindings/clock/sophgo,sg2042-pll.h |   14 +
->   .../dt-bindings/clock/sophgo,sg2042-rpgate.h  |   58 +
->   13 files changed, 2294 insertions(+), 1 deletion(-)
->   create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
->   create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-pll.yaml
->   create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2042-rpgate.yaml
->   create mode 100644 drivers/clk/sophgo/Kconfig
->   create mode 100644 drivers/clk/sophgo/Makefile
->   create mode 100644 drivers/clk/sophgo/clk-sophgo-sg2042.c
->   create mode 100644 include/dt-bindings/clock/sophgo,sg2042-clkgen.h
->   create mode 100644 include/dt-bindings/clock/sophgo,sg2042-pll.h
->   create mode 100644 include/dt-bindings/clock/sophgo,sg2042-rpgate.h
->
->
-> base-commit: ed30a4a51bb196781c8058073ea720133a65596f
