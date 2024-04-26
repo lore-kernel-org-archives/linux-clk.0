@@ -1,100 +1,111 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA552125AC
-	for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 22:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB17364
+	for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 00:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714084301; cv=none; b=IwN28c942gAzu2YsjjIIYofMvkw0J2uh5uWsV4Bop7G0iSQ56R0EBz4nfpY/6Cz9mXnQFakmCRuq9PkDhFZjrvFQiD8y8aQzH5WGsWCAiAuv1ivrP7VhAj9YE3UcpJfjjQCRKcvgFXYJJndkeIG1yGLqF9xQRdesiO2AKYaYCBA=
+	t=1714091084; cv=none; b=SiQ4HTeExK9iC5b4KopCeLjwe2AeMEwZM1EUzkbqkK/0n9Mf03qW9cYqxJLuIGu9FCXs1caXT5Sk9el8Mq/Oi4tL4rdmieBsZAejjULdQKprm7VPEBkpqMrSeJsVqHYShN24WnTKHeTuwNEyV08vGoqb4W/fczybBJGE1sFeRiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714084301; c=relaxed/simple;
-	bh=gksQjALYYBV7m5YVoxumNd3IEta5GfPli9GAbRgn46s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AOvCUc7zNtJwhev5dA5kX/eLDwcoes0+h/epEh8YVP37iSKhSMHZH0BGXX4HYg9MoXBrYnzKmCTVf/TWuuriNNgSlGIojZkCUBsx22ZDkSO/89w28z3C8kwWmcdA3e1he/qnhk3bkQx0lTqo9y4S0vECpJTI0jlwPzydDxnYWP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mvf1CTPa; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1714091084; c=relaxed/simple;
+	bh=lY/b2HHcwmwaOByC2cmw51VLYSiM/ObhqTjVQMb2IlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BT88/2206pH0cMxJimzejAuSn4yYGLblHkncSnivqxn5fLL4lx3eTzybUGu5SkPnlMP3Ep6wxyW4rONze9l5zExE37zg0PepmI5LFiLvAMIvRMEvYVoPtEJ4J3SRLwMScXtDKOVFpD9SZQRva9l5YdcKPIW70RTuU0aEH1GGKHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AWERlEj8; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mvf1CTPa"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-34c09040154so920112f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 15:31:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AWERlEj8"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1e44f82ff9cso31975ad.1
+        for <linux-clk@vger.kernel.org>; Thu, 25 Apr 2024 17:24:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714084298; x=1714689098; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iQymZcJrX7eM2hkF98kCr3YSKPUK5K901cXvsq0BsxE=;
-        b=Mvf1CTPamT2TsWc5tOif02xLAcuSJR2zWA/lu5Fs6P3sExnb6WL9VLX6p7ocdX6jOd
-         E2dsTWwIOInI3jKq9KuRNY4XPyncnX856hmJyfSkPZnrBrzunBvPoHf0B7OHLbyPcMlV
-         UhHbC+RV5b3SkMTXPEdHT7Adiq8IUVStyZ0kNlU/sk5emfOrX28JaKmQUNOo6772d+kT
-         YCqH5b7s4pVNtUPrluDr/HgHEAnuT5UuBC95AOeTolhAoa+MHClt/VFzY6iMQi7LEYgn
-         3rVBAWE2mIPzMI2X/KPNlMQKS1er30PtWoBkfNGnbtbQjLzXkm2C4v9S11aMtURDR78l
-         nOJg==
+        d=google.com; s=20230601; t=1714091082; x=1714695882; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CQr+lHvvnzrTNNx8KXFJ/y9NdZERop2kacnW6a/rm3E=;
+        b=AWERlEj84iFPt8w4UIvwsBGRs27wWZrNqTdgC7oRJi/gmsZEECi+eqFGgLtjA+U7Vx
+         jFuZXTqOV6+WB2gOqoh1LmiSa+3Qyprv7ihCTCO9czrUNOUD06FRDgthxFNAOIrhTJSN
+         a8mIGSVRQnk5MBqC4e/H/mlE+rmuC1xStGpmJurnB/GnNjpL52My8i7A9uqqaqB1u50R
+         TsqOd1AKekxDVSAifioQ5X/uUm9Bzw9ego4tDHU1hZuf7TtiPrL9aPt/caaVi4SJNwTO
+         yng7vQrF2tMhQ8O4GpKeCvDDJbwYC+Nw3cWq48RJ8YdJSLA8nRF9fxUsPo+Z6c1kr4TE
+         0R/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714084298; x=1714689098;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iQymZcJrX7eM2hkF98kCr3YSKPUK5K901cXvsq0BsxE=;
-        b=UBnw29vipBiYsg4LUf5YxJjqgfxKmMAMSz6fFoGYEHl/Pz5Fv6Doc3dDRUJLPrL/bC
-         7rc5pym4xel2pT6MVEPEtF9bIy2+w4kuDUrHDmTrm01sz6PzewduVgzx32EpzLdTGSss
-         Wkhg87CUS/dquAxVC3VYmh0HDVAumm3I9+HB99SBA2K46t8Ln7i9XIrQyFPFlXarPHxm
-         2ftI7YxUVWosq2+yxDqWPE/amMMU5dvEbU4BSs/3gFq3ctEBaa6ZZA5ti/4Oh7vk0rBv
-         NeBUMCfoj12c1wvhm+F56NFwXLdeipZTOttZ4JUWMP+xkwG8Wo5PIVBDZUW9m4197Jyw
-         pJxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPgut6sdnL4Bbkjv+Pf54EZ22nV8CBkSLfeThrqFvGuJ00iffQR5RGBfjZ7uVs+IHdXT2ZgJszCyex95a4Mg98AGo/dB0AbYdK
-X-Gm-Message-State: AOJu0YwXN9khRLlR4Chk7SWbAi0wc9ShohFObNeOYbRqmDFrWd6dXX6H
-	ydlYObVE2RbV6CRX/MuQSMGDWaLkbSyY01aJyNIEiTd63ezsp59wXPSMb+vmY+U=
-X-Google-Smtp-Source: AGHT+IHkzZ2SICsUYMinEqYHpIjtdhmu4Brlj8n2BvJPkf4bejlYroHN08Te5mq9YQm641G0dBzS/A==
-X-Received: by 2002:a5d:5348:0:b0:33e:cf4d:c581 with SMTP id t8-20020a5d5348000000b0033ecf4dc581mr533294wrv.41.1714084298056;
-        Thu, 25 Apr 2024 15:31:38 -0700 (PDT)
-Received: from [192.168.0.102] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id t11-20020a05600001cb00b0034a21842accsm20211737wrx.86.2024.04.25.15.31.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Apr 2024 15:31:37 -0700 (PDT)
-Message-ID: <6f8d7ea1-a3cd-46c4-ac7b-e220b7ee74aa@linaro.org>
-Date: Thu, 25 Apr 2024 23:31:36 +0100
+        d=1e100.net; s=20230601; t=1714091082; x=1714695882;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CQr+lHvvnzrTNNx8KXFJ/y9NdZERop2kacnW6a/rm3E=;
+        b=PVYnBefroGN3N0/9HKeUnSVDDNWAkDn70ew/AtnjN5Mi+F4oZCuS71fuUOzONXfoCR
+         ZM1KbrZq59F3q6DIQj0/leFJazajj5JvMupOdJcDdlRqhTTbi+y0n4tlo8Y4JN0io2ld
+         EG42pizDAF3lTZCk8HtY3uqgVOa+mJ4jOuCs0YO5M7Jc13vBRPpsUhywNZ0vhHkfaqBY
+         JZH/ED7dxcZ6gFEaaAKY1Pe3K/eYjd9jvXa1iMLMorsnVxM/GYCELoVTAAlI2pJenYMS
+         QMg4sDtH3f3lbmPajnVWVfocTyKn/ipoBTaeuLCB7/KeXq7jLimsh6tFhU2ULAPWQlaU
+         QbLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAGrCTAAc7rNJvTEI5LOVpyd8Q6TzWsfHpB3dFzLaWWVbEQq7bsq5vVJ6snUE75AzGgOcg7ctnu0ZvLI3McJfuUUnpkizbzrSj
+X-Gm-Message-State: AOJu0YydQb3SWTljS3VO0z8NQS2uSzKCFWuoTj4dlKOd7UKUzzMVn3FE
+	qNDEzVcetfeNEja3sAPCmz1oFwsG8CndGGUWequlDg+QLsWGGlKOosLyGJAsMA==
+X-Google-Smtp-Source: AGHT+IFrtSVQuUHEqbyIxrPMQm0ST0dLdNyyUfw9rs5kWDOGM5kIhSyCJMIfcB23BZ3XZc3LJcBGTA==
+X-Received: by 2002:a17:903:2450:b0:1e4:4b5f:7bfa with SMTP id l16-20020a170903245000b001e44b5f7bfamr111268pls.22.1714091082070;
+        Thu, 25 Apr 2024 17:24:42 -0700 (PDT)
+Received: from google.com (100.22.168.34.bc.googleusercontent.com. [34.168.22.100])
+        by smtp.gmail.com with ESMTPSA id gs9-20020a056a004d8900b006e694719fa0sm14227010pfb.147.2024.04.25.17.24.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Apr 2024 17:24:41 -0700 (PDT)
+Date: Thu, 25 Apr 2024 17:24:38 -0700
+From: William McVicker <willmcvicker@google.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	David Lechner <david@lechnology.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH] clk: samsung: exynos-clkout: Remove misleading
+ of_match_table/MODULE_DEVICE_TABLE
+Message-ID: <Zir0Rhm7jZoF8r04@google.com>
+References: <CGME20240425091434eucas1p11ec105de15d448c0fb14812705e4eac7@eucas1p1.samsung.com>
+ <20240425091429.948467-1-m.szyprowski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: qcom: mmcc-msm8998: fix venus clock issue
-To: Marc Gonzalez <mgonzalez@freebox.fr>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: MSM <linux-arm-msm@vger.kernel.org>, linux-clk
- <linux-clk@vger.kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Jeffrey Hugo <quic_jhugo@quicinc.com>,
- Douglas Anderson <dianders@chromium.org>,
- Pierre-Hugues Husson <phhusson@freebox.fr>, Arnaud Vrac <avrac@freebox.fr>
-References: <c325691e-1cbe-4589-87fc-b67a41e93294@freebox.fr>
- <22628ff2-6128-4ac9-89e3-d978f57be378@linaro.org>
- <2394efa5-713a-421d-84cf-f6c1b2ad26ac@freebox.fr>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <2394efa5-713a-421d-84cf-f6c1b2ad26ac@freebox.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240425091429.948467-1-m.szyprowski@samsung.com>
 
-On 25/04/2024 12:25, Marc Gonzalez wrote:
->> I'd expect 0x1028/venus core to be absolutely necessary fwiw
-> Considering the absence of public documentation, these register offsets
-> mostly boil down to cargo-cult programming.
+On 04/25/2024, Marek Szyprowski wrote:
+> Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
+> module driver") this driver is instantiated as MFD-cell (matched by
+> platform device name) not as a real platform device created by OF code.
+> Remove then of_match_table and related MODULE_DEVICE_TABLE to avoid
+> further confusion.
 > 
-> Thus, using different code on 8996 and 8998 risks provoking the wrath
-> of the embedded gods. Better, safer to cast the same incantations.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos-clkout.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+> index 503c6f5b20d5..0c7f4e2aa366 100644
+> --- a/drivers/clk/samsung/clk-exynos-clkout.c
+> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
+> @@ -75,7 +75,6 @@ static const struct of_device_id exynos_clkout_ids[] = {
+>  		.data = &exynos_clkout_exynos5,
+>  	}, { }
+>  };
+> -MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
 
-If you are concerned this isn't right, motivated and able to do so, you 
-could always build a kernel module for the downstream 8998 kernel - read 
-back the new addresses and verify the bits that have been set.
+I understand these are duplicates of the exynos-pmu driver, but was wondering
+if this will impact the exynos-clkout module from getting auto-loaded? Without
+the MODULE_DEVICE_TABLE() defined, the aliases won't be created that trigger
+udev to load this module and the mfd driver is obviously not going to load it.
 
-My guess is that something in the boot chain prior to Linux has set the 
-bits in the GDSC - lk for 8998, it'd pretty much have to be the case.
-
----
-bod
+Thanks,
+Will
