@@ -1,101 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168352B9AF;
-	Fri, 26 Apr 2024 16:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B823413AF2;
+	Fri, 26 Apr 2024 21:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714149759; cv=none; b=Dz2gJz1pBZrGeDeXoL4bjKtSRp9uPymOxKapTSVzH8uAAYIAAzg8LtspQVawSgAxkgJcgl/KVzvM8UDPClRdTV1TwQcCyvKzn3UyHZtHuMKKQfPQfWuvauX3Ez+yvM5Uk/yR05Q21B22MAJEznOoO7yBdyrEWKXffQ8L6AJ9Mik=
+	t=1714165258; cv=none; b=AkzUi609pxLzAPJrqdEjpfJzRLCN5DV6DtZvTthJm9744R4HUd2Hky37Pe7e48kMWUFs/a1GrIb/IXQFKXcgFRq6MA6FOtGK2mz+oBSINoyoqbfc7awp7PlyK1Isn8HXL5ETprPPEk9JLF5MFRusIP+osdfdlfOAmZGddpLMghY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714149759; c=relaxed/simple;
-	bh=LoLb3vVGFbyk3Pd1kL09L2W0LiatbYP/cUPGdkJy8+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Qvmkrp4sgm/nAnBVe4SbIk8lBa3kGC9Awt9xdOnUd3lzpwtgTDOIk0wGDJ85zLU9K6S3rrX086CWHfuO66+pwdQTuoSGn6t1OfvXEO0boYwazssmBN/EM5BcI/Aj48LNOmqorL/kp6/h0BUL/NFJtZxOB8QEFrYilZZgLnbymjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1rVP2Eh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714165258; c=relaxed/simple;
+	bh=mwSxNS9IpFYm9lsRcWPCEkhA6/1tVhB4aTwJA4yZrlw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mRkTw39FkBCosnaOSJRNmQFAqz9k+bCw2T/eaovQXpjHXDg/c+ujPD3dpLpeGoIkx6CCdj9n17eEfYV3byJzyf1QtnX7wO4M6nxOxdkE8RNcZUUdC6lZyu7pQEHrFXQNN6eZ6FyZHR3CCxOUfrQ+xGAXc3z0NBNaosP+qt+9ttw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RsfSLYYG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1rVP2Eh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E67C113CD;
-	Fri, 26 Apr 2024 16:42:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714149758;
-	bh=LoLb3vVGFbyk3Pd1kL09L2W0LiatbYP/cUPGdkJy8+o=;
-	h=Date:From:To:Cc:Subject:From;
-	b=m1rVP2EhBPt7UFyw2Q8aw/0Yk3GdU7IFN+/ZdCVfbbHrY/E4xtZGyXuoJj4yPm2Fl
-	 UWFKdC4tFJWmGCFh7DT8sgnmi4SVXJkLdUE6oea0NsCQJ+WgyyBYxUjRzhErX52/Aa
-	 tkjS1nrb+z/eUtZSFGKmo4SPL/J5f4PA8Z6XXGiX4Tk5iR5EcxpnEHNooTnWLji1zd
-	 nLj8L/TWxMH7y6mjCmkPg6JUSt6AVWae+l8izh2P851MWF4pD/0+tisRmLiBYD3pnr
-	 P5ul7HNRfraKGIXmEGPUMOmONIFbNPYV38U42Mhewb9B/JubPMNBKtz8280Yg/Q0tr
-	 dI11BBMmoUS4w==
-Date: Fri, 26 Apr 2024 18:42:35 +0200
-From: Jernej Skrabec <jernej@kernel.org>
-To: mturquette@baylibre.com, sboyd@kernel.org
-Cc: wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
-	linux-sunxi@lists.linux.dev
-Subject: [GIT PULL] Allwinner clock changes for 6.10
-Message-ID: <20240426164235.GA100991@jernej-laptop>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RsfSLYYG"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43QKML9B021126;
+	Fri, 26 Apr 2024 21:00:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=r3QWDsY0sowI3c7HT1MO1IE1glGpHpow1jTLtMYno5M=; b=Rs
+	fSLYYGDP5YHGopAc2+99PuyG16N/BeRZR4CJlkRGwvn+oeFbWmjL2LfS65jCiAM7
+	2zodOonsmUxlG/cPLTQEtKJPrR4BWfIfDUcM+eubbvoL7c6mNG52TFq1jm3ZFR4v
+	ndNROizvJHp+Yj2rT2JKGDWJVq/V65168AfpFfRjjw6Bo9eCOJxeJSmy5sXJ4p2v
+	ZA18wUUuOyai88TOQgni6IGfVtiqcYqnwt8u2kPp7h2I07vQUUIuz9DjiZk2zhpO
+	iZ8vRXaEOZtskUVMtAZ6lerX+lvgZHMq6IsXNEMf154pd1/djCh4Ey8x8D4973Fn
+	+zFds0zkRltnr+qTt+7Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xranmh950-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Apr 2024 21:00:48 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43QL0lgq029595
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Apr 2024 21:00:47 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 26 Apr
+ 2024 14:00:46 -0700
+Message-ID: <7e77dd40-40e0-1a65-cf80-5e9ba6f584cd@quicinc.com>
+Date: Fri, 26 Apr 2024 15:00:45 -0600
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH v3] clk: qcom: mmcc-msm8998: fix venus clock issue
+Content-Language: en-US
+To: Marc Gonzalez <mgonzalez@freebox.fr>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Bryan O Donoghue <bryan.odonoghue@linaro.org>
+CC: MSM <linux-arm-msm@vger.kernel.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Pierre-Hugues Husson <phhusson@freebox.fr>,
+        Arnaud Vrac <avrac@freebox.fr>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <ff4e2e34-a677-4c39-8c29-83655c5512ae@freebox.fr>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <ff4e2e34-a677-4c39-8c29-83655c5512ae@freebox.fr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7am_C2BM20Yvd82Ah_QRc5A9RFutyvY9
+X-Proofpoint-ORIG-GUID: 7am_C2BM20Yvd82Ah_QRc5A9RFutyvY9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-04-26_18,2024-04-26_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 phishscore=0 clxscore=1011
+ malwarescore=0 adultscore=0 impostorscore=0 spamscore=0 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2404260147
 
-Hi!
+On 4/25/2024 9:07 AM, Marc Gonzalez wrote:
+> Right now, msm8998 video decoder (venus) is non-functional:
+> 
+> $ time mpv --hwdec=v4l2m2m-copy --vd-lavc-software-fallback=no --vo=null --no-audio --untimed --length=30 --quiet demo-480.webm
+>   (+) Video --vid=1 (*) (vp9 854x480 29.970fps)
+>       Audio --aid=1 --alang=eng (*) (opus 2ch 48000Hz)
+> [ffmpeg/video] vp9_v4l2m2m: output VIDIOC_REQBUFS failed: Connection timed out
+> [ffmpeg/video] vp9_v4l2m2m: no v4l2 output context's buffers
+> [ffmpeg/video] vp9_v4l2m2m: can't configure decoder
+> Could not open codec.
+> Software decoding fallback is disabled.
+> Exiting... (Quit)
+> 
+> Bryan O'Donoghue suggested the proper fix:
+> - Set required register offsets in venus GDSC structs.
+> - Set HW_CTRL flag.
+> 
+> $ time mpv --hwdec=v4l2m2m-copy --vd-lavc-software-fallback=no --vo=null --no-audio --untimed --length=30 --quiet demo-480.webm
+>   (+) Video --vid=1 (*) (vp9 854x480 29.970fps)
+>       Audio --aid=1 --alang=eng (*) (opus 2ch 48000Hz)
+> [ffmpeg/video] vp9_v4l2m2m: VIDIOC_G_FMT ioctl
+> [ffmpeg/video] vp9_v4l2m2m: VIDIOC_G_FMT ioctl
+> ...
+> Using hardware decoding (v4l2m2m-copy).
+> VO: [null] 854x480 nv12
+> Exiting... (End of file)
+> real	0m3.315s
+> user	0m1.277s
+> sys	0m0.453s
+> 
+> NOTES:
+> 
+> GDSC = Globally Distributed Switch Controller
+> 
+> Use same code as mmcc-msm8996 with:
+> s/venus_gdsc/video_top_gdsc/
+> s/venus_core0_gdsc/video_subcore0_gdsc/
+> s/venus_core1_gdsc/video_subcore1_gdsc/
+> 
+> https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8996.h
+> https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/kernel.lnx.4.4.r38-rel/include/dt-bindings/clock/msm-clocks-hwio-8998.h
+> 
+> 0x1024 = MMSS_VIDEO GDSCR (undocumented)
+> 0x1028 = MMSS_VIDEO_CORE_CBCR
+> 0x1030 = MMSS_VIDEO_AHB_CBCR
+> 0x1034 = MMSS_VIDEO_AXI_CBCR
+> 0x1038 = MMSS_VIDEO_MAXI_CBCR
+> 0x1040 = MMSS_VIDEO_SUBCORE0 GDSCR (undocumented)
+> 0x1044 = MMSS_VIDEO_SUBCORE1 GDSCR (undocumented)
+> 0x1048 = MMSS_VIDEO_SUBCORE0_CBCR
+> 0x104c = MMSS_VIDEO_SUBCORE1_CBCR
+> 
+> Fixes: d14b15b5931c2b ("clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver")
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
 
-Please pull following clock changes for 6.10.
 
-Best regards,
-Jernej
-
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
-
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-6.10-1
-
-for you to fetch changes up to c60f68047e1996bc1b2fb386d3b383aab8900c1b:
-
-  clk: sunxi-ng: fix module autoloading (2024-04-15 23:29:50 +0200)
-
-----------------------------------------------------------------
-- Add additional constraints to A64 PLL MIPI clock
-- fix autoloading sunxi-ng clocks when build as a module
-
-----------------------------------------------------------------
-Frank Oltmanns (2):
-      clk: sunxi-ng: nkm: Support constraints on m/n ratio and parent rate
-      clk: sunxi-ng: a64: Add constraints on PLL-MIPI's n/m ratio and parent rate
-
-Krzysztof Kozlowski (1):
-      clk: sunxi-ng: fix module autoloading
-
- drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c   |  1 +
- drivers/clk/sunxi-ng/ccu-sun20i-d1.c     |  1 +
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c     |  1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c |  1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a100.c   |  1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c    | 13 ++++++++-----
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   |  1 +
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c     |  1 +
- drivers/clk/sunxi-ng/ccu-sun50i-h616.c   |  1 +
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c     |  1 +
- drivers/clk/sunxi-ng/ccu-sun6i-rtc.c     |  1 +
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c     |  1 +
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c     |  1 +
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c    |  1 +
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c     |  1 +
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c      |  1 +
- drivers/clk/sunxi-ng/ccu-sun8i-r.c       |  1 +
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c     |  1 +
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     |  1 +
- drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c  |  1 +
- drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c |  1 +
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c     |  1 +
- drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c |  1 +
- drivers/clk/sunxi-ng/ccu_nkm.c           | 21 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_nkm.h           |  2 ++
- 25 files changed, 53 insertions(+), 5 deletions(-)
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
