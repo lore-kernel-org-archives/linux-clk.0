@@ -1,105 +1,105 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward500c.mail.yandex.net (forward500c.mail.yandex.net [178.154.239.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A8D143C67
-	for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 10:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CF5339A0;
+	Fri, 26 Apr 2024 11:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714129010; cv=none; b=jwsNFSCnT1QQMBp4jnDpdVcz6ZCGM2PIiGvH77nHOi4DEAe7XTgqu74wqpbiwjbYCJbyNr3f7PJKiuoI/M2fET8haXoB60k6eqLBC+1i/SG8xd6MYzEVkKunib/yqqAZMqzG2PA02EpFfnvDOKkMKm+NfThw4kovx+79QPaQHus=
+	t=1714131706; cv=none; b=a3eMt0kg8Ld0f2sv94uWcx2gQCsdYswMkHNtZDJtE1fqpHx39d5YnBAudfvZD/bkCOo030F+2niALsVlOzRX1mdSZBGm8NuoUuxubhNeHucD5NMGuO2DW9Hvx2ZXnK1VzW059ubvIVu2y5zYZ+aj4GzDkv8efH/3CBXy+T3NLEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714129010; c=relaxed/simple;
-	bh=udxVw+++iagTZz2k70xeWORhBBMM1NSdmmV1VIlzjVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cqKDthOQ1NJfvLBxko+JnM/hy6LEUExZ5xj0KkcWDNOncR9h7JxwbZo81spVb4Q2ygr7XCAdYTDb5XKJ4HC/YDBb7gqfr2/oPha/ETRgZV3PpWrEheDyAEfbncH2rzBnxXtw/1tgyrSEkhY9JOg8nkhrU7w/7IKke1A03JyjQ54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v6r/LC9f; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1714131706; c=relaxed/simple;
+	bh=zuhkMVswz3nX9ahbwxLQHhCv51dyDPVtxNyyq5Mwy7o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oA8unY184kUjQPI3HmDIIwXO56obCP0+enX9jm62g1AY0YYBtyGN3w7hsC6PZQJe8n733E2TFOTs8P8pPbU6p8bJ6qZ/NJ3nElkM8lWn89riCdWdSciZlLCiHezSG0bfMvMzZOg4Ws0ry5VBvCxZFch48Jp2hDaY8raamUMdVmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=nKQZh/XK; arc=none smtp.client-ip=178.154.239.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v6r/LC9f"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41b869326daso3635385e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 03:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714129007; x=1714733807; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aoFcIxQR0t8oCPEZALjo58lCFFW8rW/ix4KBRT7bHB4=;
-        b=v6r/LC9fsLJejint+tmI8ixVtC9J04TR25xcGgsSboGkocJh2fvRXvqzWVBr83x/va
-         tSmAL+QrEOMOYYAUwzpVPDpgYgnKPDa72yElAlzfpRAHphTySHpuhDErwhrOZ4IvFb6A
-         DsQQ9WC+ur1kk9Kx8xoOeIGPjUSzqrB/GjtxgRC+OrtUslX6ak8wHIbCMtpJFIoWrhN+
-         oJyYmzyVWafENaLgz3ED56eJTSlWMwa+Ok2yVv9a1qVq5v+gz8R8Mrp6MObi222jLNpx
-         tWUPwaZbeZT4xB6vPFuH2RkOuDgSnqampKlnar5FNwz4nTRLHg8YNfK21u5zCQoAWNfT
-         F8sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714129007; x=1714733807;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aoFcIxQR0t8oCPEZALjo58lCFFW8rW/ix4KBRT7bHB4=;
-        b=THAwrdHkXeXBUzg8r3NmVtuVXPsBLoLPK3eVuGqvAyH9npzbGdSWvFtmMS0WVRj4u5
-         Dlh8kj6okAWEk5PI4vxVGL9bPBIXEdOHnqC55053YX4hS15TcZPcXux3mYQdnzdvJUXD
-         4x3E3ZAoSnRAoGarZDO/9QJ7Zzi2rr1MAx1JsWdclQGZ2i9FFUaue4SjRy2vBP6yUfJE
-         y5cFW8S147p9V4lZaImuaDMLkBGKC06n5BIBaWHuiclybLPpkgYKjjlQjPW5DDc0MfL5
-         0pHO/SZHD5OQlRpU9LlB1TD0R6bblS0bSVCJMQc8lvI9KHo9iWlu+xCLnOITTVhfqp4i
-         1wwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPkX5Gf0T2UIX0LPVySf7R5QAaM/C+/6HC1XqTIK5N0GBB8mcqXX7OtjkkTUVfTW/IKNwNuYtJe8NRPTPAItqY6GBVVa4Xjvnm
-X-Gm-Message-State: AOJu0Yy0kg56GOC1rWOerzlp9sI1+yLLjE1Rj4cX043bMy+hP9buLTSC
-	apXpDt8jnxDHHBOc+HGG1akt24pYXstXvXytgXFrli6WJbg2gJ7IKqACZt1pYE0=
-X-Google-Smtp-Source: AGHT+IFH1L79332kHOc1PS5JXFd6A4jTTtznIl2/7hWiWbCz0rliE+qlQeT9xmpERZC+fKb3uldVYw==
-X-Received: by 2002:a05:600c:470a:b0:41b:8b3b:7a3e with SMTP id v10-20020a05600c470a00b0041b8b3b7a3emr1669796wmo.22.1714129007204;
-        Fri, 26 Apr 2024 03:56:47 -0700 (PDT)
-Received: from [192.168.2.107] ([79.115.63.100])
-        by smtp.gmail.com with ESMTPSA id hg16-20020a05600c539000b0041aa8ad46d6sm13030298wmb.16.2024.04.26.03.56.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Apr 2024 03:56:46 -0700 (PDT)
-Message-ID: <e36591a1-8e6c-4fb1-a2c7-d8b161d5fbe9@linaro.org>
-Date: Fri, 26 Apr 2024 11:56:44 +0100
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="nKQZh/XK"
+Received: from mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net [IPv6:2a02:6b8:c11:49a3:0:640:a0c5:0])
+	by forward500c.mail.yandex.net (Yandex) with ESMTPS id F27FA613FE;
+	Fri, 26 Apr 2024 14:41:36 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id ZfL6gG5Pna60-JEqgUJH4;
+	Fri, 26 Apr 2024 14:41:36 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1714131696; bh=zuhkMVswz3nX9ahbwxLQHhCv51dyDPVtxNyyq5Mwy7o=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=nKQZh/XKsBbqRu2leMCnXvz3d+vPP3eFsIK9dNvvmTdRZSZCVb/JU06wJ6jRtXMVk
+	 KiCYQpls8NcEma39p8zlOHcxHPtAT2wH7TAZnlL6MhvZH6N2knIApBvKgpIvakozGl
+	 it2jLW2kjmAASp4El05dG35QTQaxhcq+BFYIT+zE=
+Authentication-Results: mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <65ded0d9629fa0922d58fe230cbfb9ec0c8673f5.camel@maquefel.me>
+Subject: Re: [PATCH v2 0/4] DONOTMERGE: ep93xx-clk from ep93xx device tree
+ conversion
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Linus Walleij
+ <linus.walleij@linaro.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Date: Fri, 26 Apr 2024 14:41:35 +0300
+In-Reply-To: <20240408-ep93xx-clk-v2-0-9c5629dec2dd@maquefel.me>
+References: <20240408-ep93xx-clk-v2-0-9c5629dec2dd@maquefel.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] arm64: dts: exynos: gs101: enable cmu-hsi2 clock
- controller
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240426-hsi0-gs101-v2-0-2157da8b63e3@linaro.org>
- <20240426-hsi0-gs101-v2-3-2157da8b63e3@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240426-hsi0-gs101-v2-3-2157da8b63e3@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
+SGkgU3RlcGhlbiwKCkNvdWxkIHlvdSBwbGVhc2UgbG9vayBpbnRvIHYyIHNlcmllcyA/CgpPbiBT
+dW4sIDIwMjQtMDQtMTQgYXQgMTM6MDMgKzAzMDAsIE5pa2l0YSBTaHViaW4gdmlhIEI0IFJlbGF5
+IHdyb3RlOgo+IFRoZSBnb2FsIGlzIHRvIHJlY2lldmUgQUNLcy4KPiAKPiBUaGlzIGlzIGEgZnJh
+Y3Rpb24gb2YgdjkgImVwOTN4eCBkZXZpY2UgdHJlZSBjb252ZXJzaW9uIiBzZXJpZXM6Cj4gCj4g
+aHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjQwMzI2LWVwOTN4eC12OS0wLTE1NmUyYWU1
+ZGZjOEBtYXF1ZWZlbC5tZS8KPiAKPiBUaGUgY2xrIGRyaXZlciBmb3IgZXA5M3h4IHdhcyBjb252
+ZXJ0ZWQgdG8gQVVYIGRldmljZSwgYXMgc3VnZ2VzdGVkCj4gb3JpZ2luYWxseSBieSBTdGVwaGVu
+IEJveWQuCj4gCj4gU2lnbmVkLW9mZi1ieTogTmlraXRhIFNodWJpbiA8bmlraXRhLnNodWJpbkBt
+YXF1ZWZlbC5tZT4KPiAtLS0KPiBDaGFuZ2VzIGluIHYyOgo+IC0gc29jOiBBZGQgU29DIGRyaXZl
+ciBmb3IgQ2lycnVzIGVwOTN4eDoKPiDCoCAtIGFkZGVkIF9faW5pdCBmb3IgZXA5M3h4X2FkZXZf
+YWxsb2MoKSwKPiBlcDkzeHhfY29udHJvbGxlcl9yZWdpc3RlcigpCj4gwqAgLSBhZGRlZCBzdGF0
+aWMsIF9faW5pdGNvbnN0IGZvciBwaW5jdHJsX25hbWVzW10KPiDCoCAtIGNsayByZXZpc2lvbiBm
+b3IgU1BJIGlzIG5vdyByZXNvbHZlZCBoZXJlIHRocm91Z2ggZGlmZmVyZW50bHkKPiBuYW1lZAo+
+IMKgwqDCoCBjbGsgZGV2aWNlCj4gwqAgLSBtb3JlIHZlcmJvc2UgS2NvbmZpZyBkZXNjcmlwdGlv
+bgo+IAo+IMKgIE5PVEU6ICJvZiIgaW5jbHVkZXMgYXJlIHJlcXVpcmVkIHVuZm9ydHVuYXRlbHku
+Cj4gCj4gLSBjbGs6IGVwOTN4eDogYWRkIERUIHN1cHBvcnQgZm9yIENpcnJ1cyBFUDkzeHg6Cj4g
+wqAgLSBkcm9wcGVkIGluY2x1ZGVzCj4gwqAgLSBkcm9wcGVkIGVwOTN4eF9zb2NfdGFibGVbXQo+
+IMKgIC0gYWRkIGRpZmZlcmVudCBuYW1lZCBjbGsgYW5kIGRyb3BwZWQgaW52b2x2ZWQgaW5jbHVk
+ZXMKPiDCoCAtIG1vdmVkIHBsbCdzIGFuZCBmY2xrLCBoY2xrLCBwY2xrIGluaXQgdG8gc2VwYXJh
+dGUgZnVuY3Rpb24KPiDCoCAtIGZpeGVkIGVwOTN4eF9jbGtfaWRzW10gZXhwbGljaXQgbGluZXMK
+PiDCoAo+IMKgIE5PVEU6IGNsa19od19yZWdpc3Rlcl9kaXYoKSBpcyBjbGstZXA5eHggaW50ZXJu
+YWwgZnVuY3Rpb24gd2hpY2gKPiB1c2VzCj4gwqAgZGV2bS4KPiAKPiAtLS0KPiBOaWtpdGEgU2h1
+YmluICg0KToKPiDCoMKgwqDCoMKgIEFSTTogZXA5M3h4OiBhZGQgcmVnbWFwIGF1eF9kZXYKPiDC
+oMKgwqDCoMKgIGNsazogZXA5M3h4OiBhZGQgRFQgc3VwcG9ydCBmb3IgQ2lycnVzIEVQOTN4eAo+
+IMKgwqDCoMKgwqAgZHQtYmluZGluZ3M6IHNvYzogQWRkIENpcnJ1cyBFUDkzeHgKPiDCoMKgwqDC
+oMKgIHNvYzogQWRkIFNvQyBkcml2ZXIgZm9yIENpcnJ1cyBlcDkzeHgKPiAKPiDCoC4uLi9iaW5k
+aW5ncy9hcm0vY2lycnVzL2NpcnJ1cyxlcDkzMDEueWFtbMKgwqDCoMKgwqDCoMKgwqAgfMKgIDM4
+ICsKPiDCoC4uLi9iaW5kaW5ncy9zb2MvY2lycnVzL2NpcnJ1cyxlcDkzMDEtc3lzY29uLnlhbWzC
+oCB8wqAgOTQgKysrCj4gwqBkcml2ZXJzL2Nsay9LY29uZmlnwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgOCArCj4gwqBk
+cml2ZXJzL2Nsay9NYWtlZmlsZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAxICsKPiDCoGRyaXZlcnMvY2xrL2Nsay1lcDkz
+eHguY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+fCA4MzQKPiArKysrKysrKysrKysrKysrKysrKysKPiDCoGRyaXZlcnMvc29jL0tjb25maWfCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCB8wqDCoCAxICsKPiDCoGRyaXZlcnMvc29jL01ha2VmaWxlwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDEgKwo+IMKgZHJp
+dmVycy9zb2MvY2lycnVzL0tjb25maWfCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgfMKgIDE3ICsKPiDCoGRyaXZlcnMvc29jL2NpcnJ1cy9NYWtlZmlsZcKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgMiArCj4g
+wqBkcml2ZXJzL3NvYy9jaXJydXMvc29jLWVwOTN4eC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgfCAyNTIgKysrKysrKwo+IMKgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9j
+ay9jaXJydXMsZXA5MzAxLXN5c2Nvbi5owqDCoCB8wqAgNDYgKysKPiDCoGluY2x1ZGUvbGludXgv
+c29jL2NpcnJ1cy9lcDkzeHguaMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKg
+IDI2ICsKPiDCoDEyIGZpbGVzIGNoYW5nZWQsIDEzMjAgaW5zZXJ0aW9ucygrKQo+IC0tLQo+IGJh
+c2UtY29tbWl0OiBmZWM1MGRiNzAzM2VhNDc4NzczYjE1OWUwZTJlZmIxMzUyNzBlM2I3Cj4gY2hh
+bmdlLWlkOiAyMDI0MDQwOC1lcDkzeHgtY2xrLTY1N2ExMzU3ZGU2Nwo+IAo+IEJlc3QgcmVnYXJk
+cywKCg==
 
-
-On 4/26/24 11:03, André Draszik wrote:
-> From: Peter Griffin <peter.griffin@linaro.org>
-> 
-> Enable the cmu_hsi2 clock management unit. It feeds some of
-> the high speed interfaces such as PCIe and UFS.
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> Reviewed-by: André Draszik <andre.draszik@linaro.org>
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
-handling the patch already implies that you reviewed the patch. I'd drop
-your R-b tag, but maybe just a matter of preference.
-
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
