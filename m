@@ -1,60 +1,61 @@
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659124411
-	for <linux-clk@vger.kernel.org>; Sat, 27 Apr 2024 00:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443F579EF
+	for <linux-clk@vger.kernel.org>; Sat, 27 Apr 2024 00:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714176658; cv=none; b=V3HwqDDw24u4VS8tRb2vcMXd3w+Cy08yAZ+7EJyzmC8S3RV2+yy+rlGfssM4dFiG5EJfIMZVjCT808ocVxs0sjlcw+1KdwpSsiLfWpTiA+z2RaPNJrxNzcWLN3qOWIwzwTHgHxtMUaDz0kgy60jugOaKXKUa/CgqRQhl2G8Ai28=
+	t=1714176660; cv=none; b=Z77NtPyHs7G+VeR37JAe74oXBDKWA9YHwk6PL+Y5yO09oyeYhvMGnhYdTdbgx7Z0b34l4PrQhPK1MSxc/VIt1hu3vELxCdijPbt5MUXelcbYssGvDC6fQ82TtaVVrTmWfcyuZKtcxRHq5Ir6UGDfeWKBmgiYg7siismpLCp9myw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714176658; c=relaxed/simple;
-	bh=1J4s5WkWi0yLsfAU04plHcZTJmipLje1WXfb8fgGcxc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=e/Iz91lFDzaaMDneNHgDAe3nK/kbruzLGbvKwA8zZ45OgreDji76aJwHraBS+uKZTI1drPj/6bjmqil+aLSvDHAQRoEl+pGfUBg6sbQrf44MYeI26vHmXHSqhTRjTQ5Tkusv7lZTl5O5vfb+4UdXsb/tZqYZmhue1WAyrwotBmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Cy8eTFD/; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1714176660; c=relaxed/simple;
+	bh=WiDmXN+gE+Oj1XaVtmKA94ORr86HXlbvJPY4osUU3RM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qO4ytKM0irSuXkF23ZKW22b50D75RP5YD3NvpkwxpuTWi1UxnCELErmE6TIVHG8Znq6yexhzHhud2TLZJeDwivqC1Id0EOe5orhbCN0BibpfblyOWN0ajvtkA4CP5bIS8EqKIrTKj8FC1rVTYq9jYWyQQEB+Xd1skBsYXyZzuZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=P+O2NaEv; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Cy8eTFD/"
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f0b9f943cbso2440077b3a.0
-        for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 17:10:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="P+O2NaEv"
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f103b541aeso2406335b3a.3
+        for <linux-clk@vger.kernel.org>; Fri, 26 Apr 2024 17:10:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1714176656; x=1714781456; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0X+wom0kXrBkkWPdMk9ez0NtFShVE5HcObxG7YQSUEM=;
-        b=Cy8eTFD/FEoAkS25A5xZLRFggXIjlGWkaYvwFPIs1Net4uSzDwvrNHxai53MuNxAil
-         h7CJueS3uvs20mNK9nUZZC7ZJU2zqvUA83II2h14nZNRfIxYfOJF7C3s6XnY1nVobbr1
-         dgE92UCjwACYt+Zqj/UvTYrNGKJihqNkQEXZnCMDlQ+P35LPE/2euXMZkqPiKO62jErZ
-         9D+vTcUPMVaYBnJhINp5Cn/6rOYMRjzQ/hltDeKl09B3EjcPU1wNG2QsojLgV6pfiJF+
-         RohBdtbXeaFH6LA7yh+SxwCIj3PjY8tQWIDA/mK58lbjau0159mAYxp/aCM0CgvMbFCM
-         D8vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714176656; x=1714781456;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=tenstorrent.com; s=google; t=1714176658; x=1714781458; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0X+wom0kXrBkkWPdMk9ez0NtFShVE5HcObxG7YQSUEM=;
-        b=qqidyoxVr4S4lN/rpRWaGSRtMD1vgpxQouoxil9i82tslt+5yIFr1mwIs/LYVaVTb2
-         bekIFsBjDrzymP+P9+DICA2AlgtF902N5DTbsCvBVqHdUPlZBf3HGZTT0/zVI5I1smIQ
-         uJD7dhbGB/JXQJCdvva3rAsroQxd2xcrBYmpsjJS8UXIfo62CBlSVAxgiXcw0IRWty1W
-         wyHXTvh/wMDjUnEuGrVMnm5YJS6mDBP/ubf3zN9YFCa8fXCwrnZkcLbb1tbZSAodLDMj
-         Z++NmvStcd0+UMqTuKVkCUzpS+IGK2bDqm8djBM0hEp36xdmFCC7t5vRsXKkfphBNXpO
-         7hNA==
-X-Forwarded-Encrypted: i=1; AJvYcCX51f/a6tDaF6+nbxr6wz6RZpF5Qr+zrvN9wsla+ojn3FmykRNzUklZokWub1mcGGCKwlXNX56Mxa+P+zwyS1I2ENSiH/H7P+wd
-X-Gm-Message-State: AOJu0Yy5iNLmVPIWV0HBRtq7p128XcQ8jlUpaf8whwaYwKbRYhSkLpyB
-	u9Gnbeomh5H/+9/KvxAbGwAhjqkP/uEVkgxIQv0EK1HbQGii/Su+aW5OdPafFBA=
-X-Google-Smtp-Source: AGHT+IEjEz8x5csAstQe+EBoqyrLMV5so95s3NngLWP1s+99Pa2FDBg9Mqljlc51ovwGOiHviBdhsg==
-X-Received: by 2002:a05:6a20:d80a:b0:1ad:22bd:d6d8 with SMTP id iv10-20020a056a20d80a00b001ad22bdd6d8mr6019864pzb.4.1714176655738;
-        Fri, 26 Apr 2024 17:10:55 -0700 (PDT)
+        bh=F5ki95UEfr2z0VC3x180o/+jUI7myGNjHePyoD0A2y8=;
+        b=P+O2NaEvucAdautkgsxIo6Jo5RBzeU4JcwmPAuYK1x5NrqZSbeoFzTxSKEn4/DkVws
+         EJ95cwKtO/dMlSkZvpeQLhb71Wne+r5MA7fcTQ/4QnClEBxYfKkE6wRA7JHtFwu7nqlX
+         qgLJoRY4emxSwOe2J8M3WuaKD1+RT7XLE+7TGupMUUqVbmBOHtBvpPKn5AZCQ5eC9QIS
+         85TKCygJX76qtxw689rMZn+q2O3yQPmBJ7ZI/uvChqlxz2gPy5V1jt4aAnIarBaxKuOp
+         568vvZ1TlWmSdtpxH/twA//afvRlg6kg0N69cRCXMOMZjFU/RDmatlH++G5EL9ce46E3
+         71fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714176658; x=1714781458;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F5ki95UEfr2z0VC3x180o/+jUI7myGNjHePyoD0A2y8=;
+        b=kUTIx17hD7pswfKnpAUE3wbQYczeTeCPIm5wJjA1C/Q0i1bA+vbNrefKfa6JT6Tmpi
+         a/8bZglyCayQJz8y/h01oapdLDZ+IGZPKMmHZFrm81Z1GREI2mS3X+1mkprKLww4C6cU
+         N0PF1bG1a5njjKy4KSTneJuRWoLrkatv477SitQ1fuueqm8oj3amFHjBwrNSd/FALdXY
+         HUwgZh2A2z62Co0bXHpKepuc5oinT/nMgDh4RkU8Kkh9bpVZrgDmlegcqg5n6y4ZxtJy
+         jsZlwzURPVsDigO+rElrdrBy6H4EJC7u7jzi7UqWef+FPMwripIdnHnrgPZQqV3W9JWK
+         0+xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVom814JQAjK+GxSF0VNk3tkpHT5hQfcTd6n8QzvM7+xp9UoD7e0d7TdS8Q/taPn9tA1Mol4iMonfXWac6M0w/LfOSkAZeU865R
+X-Gm-Message-State: AOJu0YwzPH67g1uOI3mXUvtn8cmfaLBQE+rzlU62/V+3wmEXqUwGyjxf
+	TlsPCknN6XuTPOE+VP5a/tVi3p0p/Yxbrdfmmp2yyVvZIN0j3HKcTp804F9jg+w=
+X-Google-Smtp-Source: AGHT+IFAgfIAI3/KuUTKpVzyvA9o5IQ/hm2YlS9fAPFKU/vAHWC7oo96mJ9J807N5OowZHBwaZ13Dw==
+X-Received: by 2002:a05:6a20:918e:b0:1ac:6762:e62e with SMTP id v14-20020a056a20918e00b001ac6762e62emr5665000pzd.30.1714176658577;
+        Fri, 26 Apr 2024 17:10:58 -0700 (PDT)
 Received: from [127.0.1.1] ([2601:1c2:1802:170:3569:7ce4:94b8:1691])
-        by smtp.gmail.com with ESMTPSA id w1-20020a6556c1000000b005f3d54c0a57sm6061883pgs.49.2024.04.26.17.10.54
+        by smtp.gmail.com with ESMTPSA id w1-20020a6556c1000000b005f3d54c0a57sm6061883pgs.49.2024.04.26.17.10.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Apr 2024 17:10:55 -0700 (PDT)
+        Fri, 26 Apr 2024 17:10:58 -0700 (PDT)
 From: Drew Fustini <dfustini@tenstorrent.com>
-Subject: [PATCH RFC v2 0/4] clk: thead: Add support for TH1520 AP_SUBSYS
- clock controller
-Date: Fri, 26 Apr 2024 17:10:33 -0700
-Message-Id: <20240426-th1520-clk-v2-v2-0-96b829e6fcee@tenstorrent.com>
+Date: Fri, 26 Apr 2024 17:10:36 -0700
+Subject: [PATCH RFC v2 3/4] riscv: dts: thead: Add TH1520 AP_SUBSYS clock
+ controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,9 +64,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHlCLGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
- vPSU3UzU4B8JSMDIxMDEyMz3ZIMQ1MjA93knGzdMiNdQ2OTpLRky6SUlCRDJaCegqLUtMwKsHn
- RSkFuzkqxtbUA48+/pmQAAAA=
+Message-Id: <20240426-th1520-clk-v2-v2-3-96b829e6fcee@tenstorrent.com>
+References: <20240426-th1520-clk-v2-v2-0-96b829e6fcee@tenstorrent.com>
+In-Reply-To: <20240426-th1520-clk-v2-v2-0-96b829e6fcee@tenstorrent.com>
 To: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
  Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>, 
  Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
@@ -79,80 +80,50 @@ To: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
 Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1714176654; l=3100;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1714176654; l=1160;
  i=dfustini@tenstorrent.com; s=20230430; h=from:subject:message-id;
- bh=1J4s5WkWi0yLsfAU04plHcZTJmipLje1WXfb8fgGcxc=;
- b=16J/aGmQTihk3ouk4xY9w2E0cZ7vJ10E2613HxJBuwgVbWNSdlKeA297VRG2X2bxYYqhOPTFB
- RTLq0s2TI/CAKc6fCIJa2p7mV/aGGNK+RMCY6OK3Lv3pbwdj8KTczZC
+ bh=WiDmXN+gE+Oj1XaVtmKA94ORr86HXlbvJPY4osUU3RM=;
+ b=z+fbT5Gr7t67Rr88wnhdlVKhPZX1zS0AMbe6NxbQ9g3D2bhGOs+5SSpgPoUawGn7P+ESJzWYz
+ lpFXBf7p6AYCVdX2h0+d+CLQ+0v9Pzv0a2iF2lJ15sroJqydTVVDZ+6
 X-Developer-Key: i=dfustini@tenstorrent.com; a=ed25519;
  pk=p3GKE9XFmjhwAayAHG4U108yag7V8xQVd4zJLdW0g7g=
 
-This series adds support for the AP sub-system clock controller in the
-T-Head TH1520 [1]. Yangtao Li originally submitted this series in May
-2023 [2]. Jisheng made additional improvements and then passed on the
-work in progress to me.
+Add node for the AP_SUBSYS clock controller on the T-Head TH1520 SoC.
 
-Changes I made from the original series:
- - corrected the npu_clk enable bit
- - deduplicated CLK_NPU and CLK_NPU_AXI number in header
- - fixed c910_i0_clk reg typo
- - fixed checkpatch and dt_binding_check warnings 
- - rebased on v6.9-rc5
- - revised commit descriptions
-
-Changes since my RFC v1 [4]:
- - squash the header file patch into the DT schema patch
- - describe the changes I made to original series in the cover letter
-   instead of the individual patches
- - fix my typo in my email address
-
-TODO:
-I am again marking this as an RFC because there is feedback from v1 that
-I have not yet addressed. I am posting what I currently have as other
-patch series like the TH1520 I2C driver [4] could use the clk driver.
-
-Emil commented that the input predivider is not handled correctly in
-ccu_mdiv_recalc_rate(). The PLL multiplies the input frequency and
-outputs "Foutvco". This is followed by a post divider to produce
-"Foutpostdiv". However, some clocks derive directly from the "Foutvco"
-Emil suggested this should really be modeled as two different clocks.
-
-Emil aslo suggested that the rest of the clocks in this driver seem to
-be generic gate and mux implementations that should probably be replaced
-with devm_clk_hw_register_gate*() and devm_clk_hw_register_mux*().
-
-I'll look to address the above issues in the next revision.
-
-Thank you,
-Drew
-
-[1] https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
-[2] https://lore.kernel.org/linux-riscv/20230515054402.27633-1-frank.li@vivo.com/
-[3] https://lore.kernel.org/lkml/20240110-clk-th1520-v1-0-8b0682567984@tenstorrent.com/
-[4] https://lore.kernel.org/linux-riscv/20240425082138.374445-1-thomas.bonnefille@bootlin.com/
-
+Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
 ---
-Drew Fustini (4):
-      dt-bindings: clock: Document T-Head TH1520 AP_SUBSYS controller
-      clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks
-      riscv: dts: thead: Add TH1520 AP_SUBSYS clock controller
-      riscv: dts: thead: Add clock to TH1520 mmc controllers
+ arch/riscv/boot/dts/thead/th1520.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
- .../bindings/clock/thead,th1520-clk-ap.yaml        |   65 ++
- MAINTAINERS                                        |    3 +
- arch/riscv/boot/dts/thead/th1520.dtsi              |   15 +-
- drivers/clk/Kconfig                                |    1 +
- drivers/clk/Makefile                               |    1 +
- drivers/clk/thead/Kconfig                          |   12 +
- drivers/clk/thead/Makefile                         |    2 +
- drivers/clk/thead/clk-th1520-ap.c                  | 1018 ++++++++++++++++++++
- include/dt-bindings/clock/thead,th1520-clk-ap.h    |   96 ++
- 9 files changed, 1210 insertions(+), 3 deletions(-)
----
-base-commit: 14396a29c3cfbd42b4ea5cd0a528264831524062
-change-id: 20240426-th1520-clk-v2-134bfc9bddb1
+diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+index 8b915e206f3a..6285cdf91bd6 100644
+--- a/arch/riscv/boot/dts/thead/th1520.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/clock/thead,th1520-clk-ap.h>
+ 
+ / {
+ 	compatible = "thead,th1520";
+@@ -161,6 +162,14 @@ soc {
+ 		dma-noncoherent;
+ 		ranges;
+ 
++		clk: clock-controller@ffef010000 {
++			compatible = "thead,th1520-clk-ap";
++			reg = <0xff 0xef010000 0x0 0x1000>;
++			clocks = <&osc>;
++			clock-names = "osc";
++			#clock-cells = <1>;
++		};
++
+ 		plic: interrupt-controller@ffd8000000 {
+ 			compatible = "thead,th1520-plic", "thead,c900-plic";
+ 			reg = <0xff 0xd8000000 0x0 0x01000000>;
 
-Best regards,
 -- 
-Drew Fustini <dfustini@tenstorrent.com>
+2.34.1
 
