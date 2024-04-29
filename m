@@ -1,149 +1,261 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC8DDDD8;
-	Mon, 29 Apr 2024 05:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C2811C94;
+	Mon, 29 Apr 2024 06:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714367459; cv=none; b=UgLaxVEL3Q0YVnLGsKbkPlLdbph1hevKC5tc7QUHwJ/bFkvzdbwzGqlYlhfDujNKxTrPApIinRuEJxOQ7ViWQBWir8DbAaASVAKWLKiHIHlcNfRpG5+aB9NlZBsF91EmdwQHy5Id1r0HIOX253F/QPXOM9OP8HWkw3tmrgL7WVQ=
+	t=1714371654; cv=none; b=CszHVfszxjMOvHz8WtXJwMrZdj6Fky31FkfCWDzlqukhAx4cUyd6yDcXN9m7LdfLpQO4KlrMQgGYyJdVjx8mm4R1hc3BrvUfCia7ygP95AjP1pkrtNF7MBlZxiXAo5TX6CpLrsTGGIpJZG20AnKZ99+/W1bmiK8sfPDc90lPAVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714367459; c=relaxed/simple;
-	bh=pnrIbRSyb6jGRMXUkMiNUC0kmmHi+yco7kA11jFJBdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CjmovpWKl6YKUsWAknu3d8Vo70XJBlUYRJ2R0iU9bBVFWNkgvQLYo0g943tc8xLRxRKuCAeTLjulE4ROzEornUfKbV0bC8Jd9e0Ji7TfKu9uvk88dFy4nTNS75sV1x3NAKnoRis1zLggg194otLU/lBYN6mKCru8NW5ZM7H2m9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T8khpBYX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714371654; c=relaxed/simple;
+	bh=VLmgLXg3lTx43zyCfWGZBtq+OeWH6qurd2HZ1uHF6o8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mDJSuykf2shWIwIO6i4jvI4NqmHw7s1d4b6j+MlKvd/OPMXWhhDdq6kPhwQW8Yy0dBphMEDR9t8CYo6woosLRFFCKlp8wKHi9465Mg27HQ2kV/EqX9y5BrFYQuCgbSMlC7/rmPTChGPZnH0Xw2DNo1GKX38w60/m61vDKOrXFHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Np+klgc2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T8khpBYX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CDD3C113CD;
-	Mon, 29 Apr 2024 05:10:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714367458;
-	bh=pnrIbRSyb6jGRMXUkMiNUC0kmmHi+yco7kA11jFJBdI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T8khpBYX5WlEOp8FM3hrD3cALzjsweauCjy/wmz3UC2bjTBroE5lrPsqPbmjQuG+m
-	 VmXn9jyi0EfM/OVeME4R7jnXZyrbV/wQbTPUA1AyCe7utf8Jvjo0b/GQJXd2VVeRko
-	 QljtFgXjqyG8sDh8fAPekBuWfBn+betB3lML6G6WeWDKj+xVaHcBM0A/SUolo4RiTa
-	 LqucHdt4JBqRlgtyumMt2IlySh6vO06MKjmeXUewtmPVdNwu5whbsX/lBJpnB3tSsw
-	 0uJDIzp2V2jG7Znt/HXbMu2iZxb5cTYrO8wNjiHH/VmdIYjWGAsx1FqhkXrywcjnwi
-	 b80G2U9FeMuzg==
-Message-ID: <302e582e-d433-44df-ab7a-65de5bccd419@kernel.org>
-Date: Mon, 29 Apr 2024 07:10:50 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Np+klgc2"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43T4pTwT020186;
+	Mon, 29 Apr 2024 06:20:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=qcppdkim1; bh=ACiZszjXaFTGYybnh+vSo
+	0PNRyNJHSwRV6HPMbdN/8A=; b=Np+klgc2quZizyZqcvJ/z/14tEJb4qjhEy6d7
+	2z/bAJ+6vnSgIblZdlXn4ppW17owcqSwKJPQVJuYbBeddhbRMoZWc3GPIX0T6WaM
+	e752xsL95EuTdoeVnwB0yanp3Xrp0KGLI+s+5T+V/6kLRPRF4xLOTY2+hR3vm+yj
+	jPYIyy+ZVlp/WhLYX7yErcVewMOyyyoRrtqeSuTJSNc4QeYe7cqHojdJXrvXvbpJ
+	zqUzddti7/JUI0UJ6VtQ7VPbhORrx4SxsN63T2tXXQaMNdVUr7lW2kQIseD+Fdw6
+	WC4f6z92aagROMPvCCn0iaVeHUYThxEEAS+earzLnSmyyl7TQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xrravjxtm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Apr 2024 06:20:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43T6KOxD017362
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Apr 2024 06:20:24 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 28 Apr 2024 23:20:17 -0700
+Date: Mon, 29 Apr 2024 11:50:13 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Alex G. <mr.nuke.me@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I
+	<kishon@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v3 6/7] phy: qcom-qmp-pcie: add support for ipq9574
+ gen3x2 PHY
+Message-ID: <Zi88Hdx6UgBo/gti@hu-varada-blr.qualcomm.com>
+References: <20240415182052.374494-1-mr.nuke.me@gmail.com>
+ <20240415182052.374494-7-mr.nuke.me@gmail.com>
+ <CAA8EJpqY1aDZMaeqBULEOD26UeGYbLd8RsA16jZw7zXJ7_oGPQ@mail.gmail.com>
+ <6726fa2b-f5fe-10fb-6aab-f76d61f0b3cd@gmail.com>
+ <4a7b1e1d-ac68-4857-8925-f90c9e123fd1@gmail.com>
+ <CAA8EJppGW=qyk2P6Z_S=dp0njsCjqZaXjw8qU4MY1HOZR-N=4A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 1/4] dt-bindings: clock: Document T-Head TH1520
- AP_SUBSYS controller
-To: Drew Fustini <dfustini@tenstorrent.com>,
- Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
- Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>,
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240426-th1520-clk-v2-v2-0-96b829e6fcee@tenstorrent.com>
- <20240426-th1520-clk-v2-v2-1-96b829e6fcee@tenstorrent.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240426-th1520-clk-v2-v2-1-96b829e6fcee@tenstorrent.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAA8EJppGW=qyk2P6Z_S=dp0njsCjqZaXjw8qU4MY1HOZR-N=4A@mail.gmail.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ubTXDsCE8tRZ8LDYsC8D6R6s_iQNkitZ
+X-Proofpoint-ORIG-GUID: ubTXDsCE8tRZ8LDYsC8D6R6s_iQNkitZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-04-29_03,2024-04-26_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ lowpriorityscore=0 phishscore=0 mlxscore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2404010003
+ definitions=main-2404290041
 
-On 27/04/2024 02:10, Drew Fustini wrote:
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/thead,th1520-clk-ap.h>
-> +    soc {
-> +
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +
-> +      clk: clock-controller@ffef010000 {
+On Wed, Apr 17, 2024 at 12:50:49AM +0300, Dmitry Baryshkov wrote:
+> On Wed, 17 Apr 2024 at 00:25, Alex G. <mr.nuke.me@gmail.com> wrote:
+> >
+> > Hi Dmitry,
+> >
+> > On 4/15/24 16:25, mr.nuke.me@gmail.com wrote:
+> > >
+> > >
+> > > On 4/15/24 15:10, Dmitry Baryshkov wrote:
+> > >> On Mon, 15 Apr 2024 at 21:23, Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> > >> wrote:
+> > >>>
+> > >>> Add support for the gen3x2 PCIe PHY on IPQ9574, ported form downstream
+> > >>> 5.4 kernel. Only the serdes and pcs_misc tables are new, the others
+> > >>> being reused from IPQ8074 and IPQ6018 PHYs.
+> > >>>
+> > >>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> > >>> ---
+> > >>>   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 136 +++++++++++++++++-
+> > >>>   .../phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5.h   |  14 ++
+> > >>>   2 files changed, 149 insertions(+), 1 deletion(-)
+> > >>>
+> > >>
+> > >> [skipped]
+> > >>
+> > >>> @@ -2448,7 +2542,7 @@ static inline void qphy_clrbits(void __iomem
+> > >>> *base, u32 offset, u32 val)
+> > >>>
+> > >>>   /* list of clocks required by phy */
+> > >>>   static const char * const qmp_pciephy_clk_l[] = {
+> > >>> -       "aux", "cfg_ahb", "ref", "refgen", "rchng", "phy_aux",
+> > >>> +       "aux", "cfg_ahb", "ref", "refgen", "rchng", "phy_aux",
+> > >>> "anoc", "snoc"
+> > >>
+> > >> Are the NoC clocks really necessary to drive the PHY? I think they are
+> > >> usually connected to the controllers, not the PHYs.
+> > >
+> > > The system will hang if these clocks are not enabled. They are also
+> > > attached to the PHY in the QCA 5.4 downstream kernel.
+>
+> Interesting.
+> I see that Varadarajan is converting these clocks into interconnects.
+> Maybe it's better to wait for those patches to land and use
+> interconnects instead. I think it would better suit the
+> infrastructure.
+>
+> Varadarajan, could you please comment, are these interconnects
+> connected to the PHY too or just to the PCIe controller?
 
-This is a friendly reminder during the review process.
+Sorry for the late response. Missed this e-mail.
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
+These 2 clks are related to AXI port clk on Aggnoc/SNOC, not
+directly connected to PCIE wrapper, but it should be enabled to
+generate pcie traffic.
 
-Thank you.
+Thanks
+Varada
 
-> +        compatible = "thead,th1520-clk-ap";
-> +        reg = <0xff 0xef010000 0x0 0x1000>;
-> +        clocks = <&osc>;
-> +        clock-names = "osc";
-> +        #clock-cells = <1>;
-> +      };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ebf03f5f0619..51d550cb1329 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19023,7 +19023,9 @@ M:	Guo Ren <guoren@kernel.org>
->  M:	Fu Wei <wefu@redhat.com>
->  L:	linux-riscv@lists.infradead.org
->  S:	Maintained
-> +F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
->  F:	arch/riscv/boot/dts/thead/
-> +F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
->  
-
-
-Best regards,
-Krzysztof
-
+> > They are named "anoc_lane", and "snoc_lane" in the downstream kernel.
+> > Would you like me to use these names instead?
+>
+> I'm fine either way.
+>
+> > e>>>   };
+> > >>>
+> > >>>   /* list of regulators */
+> > >>> @@ -2499,6 +2593,16 @@ static const struct qmp_pcie_offsets
+> > >>> qmp_pcie_offsets_v4x1 = {
+> > >>>          .rx             = 0x0400,
+> > >>>   };
+> > >>>
+> > >>> +static const struct qmp_pcie_offsets qmp_pcie_offsets_ipq9574 = {
+> > >>> +       .serdes         = 0,
+> > >>> +       .pcs            = 0x1000,
+> > >>> +       .pcs_misc       = 0x1400,
+> > >>> +       .tx             = 0x0200,
+> > >>> +       .rx             = 0x0400,
+> > >>> +       .tx2            = 0x0600,
+> > >>> +       .rx2            = 0x0800,
+> > >>> +};
+> > >>> +
+> > >>>   static const struct qmp_pcie_offsets qmp_pcie_offsets_v4x2 = {
+> > >>>          .serdes         = 0,
+> > >>>          .pcs            = 0x0a00,
+> > >>> @@ -2728,6 +2832,33 @@ static const struct qmp_phy_cfg
+> > >>> sm8250_qmp_gen3x1_pciephy_cfg = {
+> > >>>          .phy_status             = PHYSTATUS,
+> > >>>   };
+> > >>>
+> > >>> +static const struct qmp_phy_cfg ipq9574_pciephy_gen3x2_cfg = {
+> > >>> +       .lanes                  = 2,
+> > >>> +
+> > >>> +       .offsets                = &qmp_pcie_offsets_ipq9574,
+> > >>> +
+> > >>> +       .tbls = {
+> > >>> +               .serdes         = ipq9574_gen3x2_pcie_serdes_tbl,
+> > >>> +               .serdes_num     =
+> > >>> ARRAY_SIZE(ipq9574_gen3x2_pcie_serdes_tbl),
+> > >>> +               .tx             = ipq8074_pcie_gen3_tx_tbl,
+> > >>> +               .tx_num         = ARRAY_SIZE(ipq8074_pcie_gen3_tx_tbl),
+> > >>> +               .rx             = ipq6018_pcie_rx_tbl,
+> > >>> +               .rx_num         = ARRAY_SIZE(ipq6018_pcie_rx_tbl),
+> > >>> +               .pcs            = ipq6018_pcie_pcs_tbl,
+> > >>> +               .pcs_num        = ARRAY_SIZE(ipq6018_pcie_pcs_tbl),
+> > >>> +               .pcs_misc       = ipq9574_gen3x2_pcie_pcs_misc_tbl,
+> > >>> +               .pcs_misc_num   =
+> > >>> ARRAY_SIZE(ipq9574_gen3x2_pcie_pcs_misc_tbl),
+> > >>> +       },
+> > >>> +       .reset_list             = ipq8074_pciephy_reset_l,
+> > >>> +       .num_resets             = ARRAY_SIZE(ipq8074_pciephy_reset_l),
+> > >>> +       .vreg_list              = NULL,
+> > >>> +       .num_vregs              = 0,
+> > >>> +       .regs                   = pciephy_v4_regs_layout,
+> > >>
+> > >> So, is it v4 or v5?
+> > >
+> > > Please give me a day or so to go over my notes and give you a more
+> > > coherent explanation of why this versioning was chosen. I am only
+> > > working from the QCA 5.4 downstream sources. I don't have any
+> > > documentation for the silicon
+> >
+> > The downstream QCA kernel uses the same table for ipq6018, ipq8074-gen3,
+> > and ipq9574. It is named "ipq_pciephy_gen3_regs_layout". Thus, it made
+> > sense to use the same upstream table for ipq9574, "pciephy_v4_regs_layout".
+> >
+> > As far as the register tables go, the pcs/pcs_misc are squashed into the
+> > same table in the downstream 5.4 kernel. I was able to separate the two
+> > tables because the pcs_misc registers were defined with an offset of
+> > 0x400. For example:
+> >
+> > /* QMP V2 PHY for PCIE gen3 2 Lane ports - PCS Misc registers */
+> > #define PCS_PCIE_X2_POWER_STATE_CONFIG2                    0x40c
+> > #define PCS_PCIE_X2_POWER_STATE_CONFIG4                    0x414
+> > #define PCS_PCIE_X2_ENDPOINT_REFCLK_DRIVE                  0x420
+> > #define PCS_PCIE_X2_L1P1_WAKEUP_DLY_TIME_AUXCLK_L          0x444
+> > #define PCS_PCIE_X2_L1P1_WAKEUP_DLY_TIME_AUXCLK_H          0x448
+> > #define PCS_PCIE_X2_L1P2_WAKEUP_DLY_TIME_AUXCLK_L          0x44c
+> > #define PCS_PCIE_X2_L1P2_WAKEUP_DLY_TIME_AUXCLK_H          0x450
+> > ...
+> >
+> > Here, QPHY_V4_PCS_PCIE_POWER_STATE_CONFIG2 = 0xc would be correct,
+> > assuming a pcs_misc offset of 0x400. However, starting with
+> > ENDPOINT_REFCLK_DRIVE, the register would be
+> > QPHY_V4_PCS_PCIE_ENDPOINT_REFCLK_DRIVE = 0x1c. Our offsets are off-by 0x4.
+> >
+> > The existing V5 offsets, on the other hand, were all correct. For this
+> > reason, I considered that V5 is the most likely place to add the missing
+> > PCS misc definitions.
+>
+> Ok, sounds sane. Please use _v5 for the regs layout.
+>
+> >
+> > Is this explanation sufficiently convincing? Where does the v4/v5 scheme
+> > in upstream kernel originate?
+>
+> Sometimes it's vendor kernels, sometimes it's a feedback from devs
+> that have access to actual specs.
+>
+>
+> --
+> With best wishes
+> Dmitry
