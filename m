@@ -1,59 +1,33 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF3E3D546
-	for <linux-clk@vger.kernel.org>; Mon, 29 Apr 2024 11:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F924BA2E;
+	Mon, 29 Apr 2024 11:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714388925; cv=none; b=phXppCVLL9nztmJrcAe+kTW/UTVtocSp7swkSDmIFFncZSfqGnGrquklK0aHZKk+R3CQps/LjqdhJyspEOALQTHSiNPKimT3JQkmKiAxbDumoTS+8TvanxyBR3W/Dk62qtQdlEi49KKjFleXAz4Z2gs44p1LIHkzluCRN+ky0RM=
+	t=1714388989; cv=none; b=MAxChGFZdMhWVA0tXyVUn3+Ybk/OgPhEXpDWGznRt29JxFtTf24Lxhc0EpAjucKNM41jlUYmbsE6tfNy4k/BKAvPpxKaRreBFceowLe9KSBiiydhLUiDw05ixSmpCEWoL2GuXyobwoD7a1JMcDYnT77PaWWCxo6lAM7TevRnikw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714388925; c=relaxed/simple;
-	bh=9c7oxmiXTpo5sdlDiSIF1N+bBYPppb/Glq+E27VXlkw=;
+	s=arc-20240116; t=1714388989; c=relaxed/simple;
+	bh=n4VlKWuglTL9gac4bOpz80Mk+hjg6Jo4dPHuMPumD3E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Ng/mGcfY5s7QG2J5vCuk1gmKERfnC6vSoFuYNjvqzzIEhVi8b7ihq7+1j+2qt4X5MrpAnTpOVoZi2MpPVwGeXPFvS377dP5guNYfHyxprWujGa7IH7w6HR19aKMBl6GhN3jR8yw8hYP9pQTGiEZnmZK9Yia0Ewnon1NtmQxo0Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZQPbM460; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=JwkXkCqiHeW4P85ggRZEzrU4m7zEYQqyDUZSEs4jYfVFY+9R8x01QpLqvSJarHnqFURRyiVjBe6xWi0IKW+yAwE0E+hzMxHfHykAyGFHc+koCHFX+8DNyy4O68rmPjvVNuATwJV33ORs5V/fm15Jjy8+dcWPd5ZEOXeDehIY1Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j36D8Guj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZQPbM460"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2dd7e56009cso56082211fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 29 Apr 2024 04:08:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714388922; x=1714993722; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=H5nlE/gKXKtZyCtKakKoynFLO/s21hRFIz45EgqLtos=;
-        b=ZQPbM460kozq1CpFc+Plb987ashUoCYhb8CLXrqLu52eVeb7LHngaOLgXGWnR4KoSm
-         flfUTU80UqUOpk9d/N6VRaUSnthl0GCyODewjnd/Ia5GKX+wVbBbxz6U1f9zsZvUf25e
-         ErxJvc/sqSR2HB1zuUWnkkYWJbWpg3bw8vqQulIXxcgIu+Yu2Mn2bGs4XYDdsw4N4Hpm
-         HAgWDHT4tbaeNrVu0Y5WD7IEztlpA0b+ea1Qhwx3rm6w0f/2Np+FFOUkIUPqhnqCfn5f
-         BcSKtz5rAyuSdTg7U0fJkBjQrYEoYO/rtJ7vvgceRKgavFrDWQs6Hltos9d+tXmg/EhE
-         XBVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714388922; x=1714993722;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H5nlE/gKXKtZyCtKakKoynFLO/s21hRFIz45EgqLtos=;
-        b=R46w2/WaPdpdI7Sn7OnJf8ogWgxUdCe5Wkud2VVNKhfjPSIfRh9SIJNL+ud9i2hP3z
-         sVJJIiNLxkALQEfZFW7BA4TGE3r2GAO+pTvSTd6YO2msR0vvks5olJTJC+6/9LZnjcZh
-         EmnsppFrS10r9J4K+K1MzyEgO8hrUWPtBjDqAiNQs0O9bRjj55jaMSm4WXjTMsTqsPU5
-         4XxDHkHIDmv5iggnf9geN/n6G9KHE/Q468zqbKMujC+ANGF/Nt6qP/m20sX2u+7fCzH6
-         7JFsv4BFSbZkr1LAn0PsreQazSU5l+IhystxBU6AvjDqh5zcxCchZTKcvjsDkckZCUV3
-         CbKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZYgQe0G/Vizi7xouWI7WGdinyWwdAHrY8bM3Rfk640Q87W/ifzF6v7VBnTLHNG6f8tsTzI4wPz826svqdAt6tRl6VDNL9PfN0
-X-Gm-Message-State: AOJu0Yxz+1fo3sNem3yxqVeiyNBV/gzNJQBblc3Sas1g4fCRpHt3j70e
-	qpiafio+Nw5k00izsmhjIdPfhw7aYOYkpAamHRtyIfFRT44AzJkL0AjC5CN+iwY=
-X-Google-Smtp-Source: AGHT+IEuF9MTMbDDvvruAjzlean3gb0uB7Mg8YLjCNZkBk4ndSHhKaHF5XHYI+hxCwcB4isDtTQ6/Q==
-X-Received: by 2002:a2e:3513:0:b0:2de:d00f:e656 with SMTP id z19-20020a2e3513000000b002ded00fe656mr6854910ljz.37.1714388922282;
-        Mon, 29 Apr 2024 04:08:42 -0700 (PDT)
-Received: from [192.168.0.102] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a16-20020adffb90000000b0034af18ef68csm21326343wrr.5.2024.04.29.04.08.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Apr 2024 04:08:41 -0700 (PDT)
-Message-ID: <cfd60a71-b0c1-49d5-82ce-0c52764cea14@linaro.org>
-Date: Mon, 29 Apr 2024 12:08:40 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j36D8Guj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3526CC113CD;
+	Mon, 29 Apr 2024 11:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714388989;
+	bh=n4VlKWuglTL9gac4bOpz80Mk+hjg6Jo4dPHuMPumD3E=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=j36D8GujfbADIPE30rNyIbo/zD+9Vxq5AsF3IQW/3tHZ/1Lj4OaYM8SRyREF1+LrD
+	 WZW08P95QOjlPsz/wNQcy0gavlooz2G91mGBYisJUaSuIHNqFA4iYGtx9Y5Jn1BJ0V
+	 KAUcBabp265WikNSAiM6VkRJ5M6mst8f6R3kII7dKINhCPAgkwq5+LzeTdid4XHJlY
+	 34lfHwjHcZ1cczrEIhPCMJcr/TaTkveYrumjTL6Iidj7sC6r4LUAaW4ulwtTU9xIVx
+	 cLF5m2yAoCD1gZjRxJdqqz6u43htWtUqV4GGezP43rBdt5B91CUUcVALQp69sqdfky
+	 kxKUknV8mSIQA==
+Message-ID: <4dadb3e5-e2e9-4a42-8020-51104ddca0e1@kernel.org>
+Date: Mon, 29 Apr 2024 14:09:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,73 +37,99 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v10 1/6] interconnect: icc-clk: Allow user to specify
  master/slave ids
+Content-Language: en-US
 To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
  mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@linaro.org,
- djakov@kernel.org, dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
+ dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-pm@vger.kernel.org
 References: <20240429091314.761900-1-quic_varada@quicinc.com>
  <20240429091314.761900-2-quic_varada@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+From: Georgi Djakov <djakov@kernel.org>
 In-Reply-To: <20240429091314.761900-2-quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 29/04/2024 10:13, Varadarajan Narayanan wrote:
+On 29.04.24 12:13, Varadarajan Narayanan wrote:
+> Presently, icc-clk driver autogenerates the master and slave ids.
+> However, devices with multiple nodes on the interconnect could
+> have other constraints and may not match with the auto generated
+> node ids. Hence, allow the driver to provide the preferred master
+> and slave ids.
+> 
+> Also, update clk-cbf-8996 accordingly.
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+
+Acked-by: Georgi Djakov <djakov@kernel.org>
+
+> ---
+> v9: squash cbf-msm8996 change into this
+> v8: Per review feedback, set master/slave ids explicitly. Dont autogenerate
+>      https://lore.kernel.org/linux-arm-msm/f1b0d280-6986-4055-a611-2caceb15867d@linaro.org/
+> ---
+>   drivers/clk/qcom/clk-cbf-8996.c  | 7 ++++++-
+>   drivers/interconnect/icc-clk.c   | 6 +++---
+>   include/linux/interconnect-clk.h | 2 ++
+>   3 files changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8996.c
+> index fe24b4abeab4..a077d4403967 100644
+> --- a/drivers/clk/qcom/clk-cbf-8996.c
+> +++ b/drivers/clk/qcom/clk-cbf-8996.c
+> @@ -237,7 +237,12 @@ static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev, struct cl
+>   	struct device *dev = &pdev->dev;
+>   	struct clk *clk = devm_clk_hw_get_clk(dev, cbf_hw, "cbf");
+>   	const struct icc_clk_data data[] = {
+> -		{ .clk = clk, .name = "cbf", },
+> +		{
+> +			.clk = clk,
+> +			.name = "cbf",
+> +			.master_id = MASTER_CBF_M4M,
+> +			.slave_id = SLAVE_CBF_M4M,
+> +		},
+>   	};
+>   	struct icc_provider *provider;
+>   
+> diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-clk.c
+> index d787f2ea36d9..2be193fd7d8f 100644
+> --- a/drivers/interconnect/icc-clk.c
+> +++ b/drivers/interconnect/icc-clk.c
+> @@ -108,7 +108,7 @@ struct icc_provider *icc_clk_register(struct device *dev,
 >   	for (i = 0, j = 0; i < num_clocks; i++) {
 >   		qp->clocks[i].clk = data[i].clk;
 >   
 > -		node = icc_node_create(first_id + j);
 > +		node = icc_node_create(first_id + data[i].master_id);
+>   		if (IS_ERR(node)) {
+>   			ret = PTR_ERR(node);
+>   			goto err;
+> @@ -118,10 +118,10 @@ struct icc_provider *icc_clk_register(struct device *dev,
+>   		node->data = &qp->clocks[i];
+>   		icc_node_add(node, provider);
+>   		/* link to the next node, slave */
+> -		icc_link_create(node, first_id + j + 1);
+> +		icc_link_create(node, first_id + data[i].slave_id);
+>   		onecell->nodes[j++] = node;
+>   
+> -		node = icc_node_create(first_id + j);
+> +		node = icc_node_create(first_id + data[i].slave_id);
+>   		if (IS_ERR(node)) {
+>   			ret = PTR_ERR(node);
+>   			goto err;
+> diff --git a/include/linux/interconnect-clk.h b/include/linux/interconnect-clk.h
+> index 0cd80112bea5..170898faaacb 100644
+> --- a/include/linux/interconnect-clk.h
+> +++ b/include/linux/interconnect-clk.h
+> @@ -11,6 +11,8 @@ struct device;
+>   struct icc_clk_data {
+>   	struct clk *clk;
+>   	const char *name;
+> +	unsigned int master_id;
+> +	unsigned int slave_id;
+>   };
+>   
+>   struct icc_provider *icc_clk_register(struct device *dev,
 
-You have a few conditionals in the way down the end of the existing 
-for() loop but then you hit this
-
-         onecell->nodes[j++] = node;
-     }
-
-which means that this
-
-     node = icc_node_create(first_id + data[i].master_id);
-
-is not analogous to this
-
-     node = icc_node_create(first_id + j);
-
-So for any loop of this for() where j was incremented previously you 
-would not _not_ have the same node ids after your change.
-
-In other words dropping the j index will result in different node numbering.
-
-Is that
-
-a) intended
-b) correct
-
-Your commit log says "allow the drive rto provide the preferred master 
-ids and slave ids" which it does but it _also_ changes the autogenerated 
-ids.
-
-So could you either a) fix that or b) justify it, in your commit log.
-
-Also I think the 8996 specific change should be in its own patch.
-
-TBH I'm not sure the autogen change is on-purpose or warranted and for 
-certain the commit log is not elucidating on which is the intended case.
-
-I think you should rewrite this patch in two ways
-
-1. Fix the autogen case or
-1. Justify the change for the autogen case.
-2. Separate drivers/clk/qcom/clk-cbf-8996.c into its own patch that
-    applies directly after changing the core
-
-Perhaps you've already gone through this debate with other reviewers but 
-then you haven't captured that in your cover letter or commit log so at 
-a minimum, please do that.
-
----
-bod
