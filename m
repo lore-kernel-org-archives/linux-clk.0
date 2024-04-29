@@ -1,59 +1,59 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4102C69C
-	for <linux-clk@vger.kernel.org>; Mon, 29 Apr 2024 13:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A337EF1C
+	for <linux-clk@vger.kernel.org>; Mon, 29 Apr 2024 14:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714398331; cv=none; b=lPsMAUruRYGg/9SkIdV7B7pSpezi8IlbW59XeydQM9V9J9Y9N4Bqdy4osp5x9hRtvdwVw51j5hnSDuehRoZ6vuGVijoh76iP9uY2QQ9Au8mzUyXC8WKO81+lxl0z27ppuNTT9WaLuHmfOozICDMsV1Phd7C9nuBQBllOctG+aLI=
+	t=1714401554; cv=none; b=MsB4htG5WBVWraQpQYD5820NSC7iTnMMh7ggDUa5NKw/k8nt806I4T9XRqHiWidXTBPjqAiEiT/u9D/fUlHgUI54CLxixjXJfosBl9XujcFm1Tf/M16pwm7L0JGiafa2Njnv5eeueQ/zNjvyriMxu5pfOSsWNElXz/A3ojGz5us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714398331; c=relaxed/simple;
-	bh=vtbvaC21ZvS54m3NkJLVn/TRbwfNyAghSlO0A4SPHOQ=;
+	s=arc-20240116; t=1714401554; c=relaxed/simple;
+	bh=znCjHwEg7xtePPdSc9xOaXcPiCNKinHDglBLDvVPZ0k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fSZSjO8RwpocDByT19FB9qHDbZdNBYqa48G4aq39IwuSkSMZjNoF3KPeiV84INIu3W76DGk+c1j7ghROIc0l9RLTA92NPl5uDmu1y0JdYOnkXC4TE6KainUa3yV+krWw3ZL7PAUe5L3+/xYbzbN9FhEFGCCX5g7uW5bchTvcpkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=pass smtp.mailfrom=freebox.fr; dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b=WGyXNhiB; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebox.fr
+	 In-Reply-To:Content-Type; b=A6DAwQTxIiJEprSHZHYmmK7LcRpy6PRrdEfBPcwtfojWf6JILwP8RdfQkvFQ7G+BGz/fXvQ6FzeoMHZ8IUdgCF45ATUJcTLzrcI3qKpkae504TpsBZf4KPS0qNq3/8sun5faqkhbCzXGNBUe4Gji5jU/2EJ0qqkJYBhr8HEcqaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QYWCKb9c; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b="WGyXNhiB"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-418e4cd2196so36097695e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 29 Apr 2024 06:45:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QYWCKb9c"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e9so22803155e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 29 Apr 2024 07:39:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=freebox-fr.20230601.gappssmtp.com; s=20230601; t=1714398327; x=1715003127; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1714401551; x=1715006351; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hgm0JV0g+EuEQXNEVE6w0LpnECwwFk89ooo6qDS/rJY=;
-        b=WGyXNhiBeHGBdK9HzCC4F7ea+bUwk+d4xxn7iAc1Vhn2aOY8LIb7b1FOU5JQEwuauO
-         IzVQoozFq30qMwnHzFTYPjRFhiDLdChZZP6qRUcOW4a+zRNpe1mSCXXXevxPuqLv13re
-         pFd51c8WLDs0pRHq/9nCMUjRUiagt5XwYVIojs0eBVsLjFvbo5eupbQm1ENXoZe9flDN
-         Uprlwf7YwlV2w3RdW8cHBOdguuyBnGR3/bX0OKXNCrtggoTt77voTQ+blp81nT937zZ4
-         iQMnyBgT/Li8iM9Eq7CkfkTSsR62pboFUgyigMzEX12VlRSYltomUpOAlFcFChcoPswg
-         SK1A==
+        bh=KWmFDPlfuGY+XBEUdkO8nlMKky4FXK4cahdVf7Dpo/E=;
+        b=QYWCKb9cJtDCTo7VrtP0m9TiZBFO7lVjcMrwy+4TxdjYdDqKNFbXoYgfAx4onRTuen
+         4MtJ9e8nxYZMktrt8jR87loHc/OinUmZ8V2ulTY+ar2bXD649iQeHTNR0SOs+8vZPLYu
+         8dzJc1VOhiVfi5mtubb5+Z5VCg5Amlr8bG9fgszEUe2xABK9p5yYxUHWWJxsmPS+IoWu
+         IjrBrJEO//yCxB46sM5VlH98vmCoz8weSY25Zq9+0hZEH62O6r5KSMMltqvSPUNdPsru
+         DulVo3b01F2Zj8+QyJEseTz6xaqpxOJfwnr/Zs4BGUETwBVroWeNtAXq1maQDZ8veiUB
+         PCWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714398327; x=1715003127;
+        d=1e100.net; s=20230601; t=1714401551; x=1715006351;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hgm0JV0g+EuEQXNEVE6w0LpnECwwFk89ooo6qDS/rJY=;
-        b=j1/05o1muqQZQSvv8I3B9wwFRNK50FkFrPlEcf3DV3SQeso0YCMtg8u1wJaPMYuEo+
-         5VjPt9ukNeVWjNWQY4XySjk0OwxkhGP82UBul350LVfS0uz6HKQQCTSTvXidgKCo8D8B
-         JoM1X1QF36uzeayPjshJ7bFmuhuuu7VZKobcyt0yyURQxHmYDeutvSpHwyOfPrUqh2mm
-         B1WgIr6E+dWZNMbDVsgpQMQY2vwt/hO1O6LDSuBi8NlYNX0vrgW7UgmeHAcBdEa1jIcq
-         JFKNME3ArY3Hj5/SL1SKBGun0N1WWcggIqaNvF/idxoEe9LlRJmX2dd70c3rkH0LcMNQ
-         kiCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhkl45v5yT0On2b4Lpx6rp8ZCgGpchiKJ6cpv3WXSKlqr/Smsc95J++6GC4ut9uU2r3WN4bzgW5+qFO761LmkhErc5FADbGhjF
-X-Gm-Message-State: AOJu0Ywf+YPFX1I9bjNCjKqxnhaBDr197AFATzaP1Ovh4+RkvPahjm3/
-	5L7/pykr8de00dYKsX5TbAXKDkSrql9Ln08k9Hmr7Z76/rTDD5liL/QNXXgE4Ow=
-X-Google-Smtp-Source: AGHT+IEMSMpMhXhXBd/VE2xFEJexSsaVVCJ6hk6nFG/c3P6znyBIkSqSyaaK2XgJ87h6K8r5FKbaDw==
-X-Received: by 2002:a05:600c:1c10:b0:41c:7be:851 with SMTP id j16-20020a05600c1c1000b0041c07be0851mr3897406wms.9.1714398327279;
-        Mon, 29 Apr 2024 06:45:27 -0700 (PDT)
-Received: from [192.168.108.81] (freebox.vlq16.iliad.fr. [213.36.7.13])
-        by smtp.gmail.com with ESMTPSA id m15-20020a05600c460f00b0041a964b55ddsm9101471wmo.1.2024.04.29.06.45.26
+        bh=KWmFDPlfuGY+XBEUdkO8nlMKky4FXK4cahdVf7Dpo/E=;
+        b=aQGPwjm5RM/icn9+B/4ruoQ4l+Oil1Y9dUxCgLp42aiJzNT8cL07GOFLvRb6DbwfcP
+         dx1pwRvtwUbXi0Ol1/jq8/mIHunHMNdUDCeNe6Hg10j6EMPPzeZNZOvtIaX+X7PAZukI
+         TpkDD8UQBy4fuA1EnKh1p5dZ0jkZeI/6TxhdYY+oNIJNR0CKe7qzgPVXE84MBu1KPcbk
+         SOFzN1bhLUDEMyf8RKqnskIUiHFDwPU6+65lEqDwsBfUU+TblTEhE0iU4JdJ3PpFZk8X
+         IA/ota9x3G+VmGxo1+RZvm1BMRsikTkyR0V0T8sOt7JUzn4pabXKOK6XNpKtqLb2CAwA
+         iApw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJBNnD/eRynyY3LleQVnhdq2lGdtikVeLxqZzELVUM/Dv0pmDcQaO9cZWQAhHTaif1sfKHiWMMJHbWne0OnIEk0Dfzb7ELFCM/
+X-Gm-Message-State: AOJu0YxRqi6MeyopTJGKSqjyvfOoQc9lK+WU3+dtTKB9lyeAqhFqwQis
+	uiy47CbZy9bkF7hbHarwZOp5eUp8rMYGENbsk+CHwBCVqzFoskwFCAayqr8gA/M=
+X-Google-Smtp-Source: AGHT+IHXUH0DoRtDDpwFz6lq/buHnD3S41XTDI3UG/MFnsul9ZWoDRmfPwVBf8zur/DHKQlpOHcVpw==
+X-Received: by 2002:a05:600c:1f87:b0:41b:f99c:f677 with SMTP id je7-20020a05600c1f8700b0041bf99cf677mr13256wmb.6.1714401550863;
+        Mon, 29 Apr 2024 07:39:10 -0700 (PDT)
+Received: from [192.168.0.102] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id k41-20020a05600c1ca900b00417e8be070csm41985611wms.9.2024.04.29.07.39.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Apr 2024 06:45:27 -0700 (PDT)
-Message-ID: <c595791a-bf36-481d-a2f5-aa99ec28a4b7@freebox.fr>
-Date: Mon, 29 Apr 2024 15:45:26 +0200
+        Mon, 29 Apr 2024 07:39:08 -0700 (PDT)
+Message-ID: <1bbd5175-31a3-4c4c-b2b6-6ee7c65bb17f@linaro.org>
+Date: Mon, 29 Apr 2024 15:39:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,9 +62,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3] clk: qcom: mmcc-msm8998: fix venus clock issue
-To: Bjorn Andersson <andersson@kernel.org>,
- Jeffrey Hugo <quic_jhugo@quicinc.com>,
- Bryan O Donoghue <bryan.odonoghue@linaro.org>
+To: Marc Gonzalez <mgonzalez@freebox.fr>,
+ Bjorn Andersson <andersson@kernel.org>, Jeffrey Hugo
+ <quic_jhugo@quicinc.com>, Bryan O Donoghue <bryan.odonoghue@linaro.org>
 Cc: MSM <linux-arm-msm@vger.kernel.org>, linux-clk
  <linux-clk@vger.kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
  Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -74,76 +74,87 @@ Cc: MSM <linux-arm-msm@vger.kernel.org>, linux-clk
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 References: <ff4e2e34-a677-4c39-8c29-83655c5512ae@freebox.fr>
  <171424646121.1448451.7219465997551736348.b4-ty@kernel.org>
+ <c595791a-bf36-481d-a2f5-aa99ec28a4b7@freebox.fr>
 Content-Language: en-US
-From: Marc Gonzalez <mgonzalez@freebox.fr>
-In-Reply-To: <171424646121.1448451.7219465997551736348.b4-ty@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <c595791a-bf36-481d-a2f5-aa99ec28a4b7@freebox.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 27/04/2024 21:34, Bjorn Andersson wrote:
-
-> On Thu, 25 Apr 2024 17:07:07 +0200, Marc Gonzalez wrote:
+On 29/04/2024 14:45, Marc Gonzalez wrote:
+> On 27/04/2024 21:34, Bjorn Andersson wrote:
 > 
->> Right now, msm8998 video decoder (venus) is non-functional:
+>> On Thu, 25 Apr 2024 17:07:07 +0200, Marc Gonzalez wrote:
 >>
->> $ time mpv --hwdec=v4l2m2m-copy --vd-lavc-software-fallback=no --vo=null --no-audio --untimed --length=30 --quiet demo-480.webm
->>  (+) Video --vid=1 (*) (vp9 854x480 29.970fps)
->>      Audio --aid=1 --alang=eng (*) (opus 2ch 48000Hz)
->> [ffmpeg/video] vp9_v4l2m2m: output VIDIOC_REQBUFS failed: Connection timed out
->> [ffmpeg/video] vp9_v4l2m2m: no v4l2 output context's buffers
->> [ffmpeg/video] vp9_v4l2m2m: can't configure decoder
->> Could not open codec.
->> Software decoding fallback is disabled.
->> Exiting... (Quit)
+>>> Right now, msm8998 video decoder (venus) is non-functional:
+>>>
+>>> $ time mpv --hwdec=v4l2m2m-copy --vd-lavc-software-fallback=no --vo=null --no-audio --untimed --length=30 --quiet demo-480.webm
+>>>   (+) Video --vid=1 (*) (vp9 854x480 29.970fps)
+>>>       Audio --aid=1 --alang=eng (*) (opus 2ch 48000Hz)
+>>> [ffmpeg/video] vp9_v4l2m2m: output VIDIOC_REQBUFS failed: Connection timed out
+>>> [ffmpeg/video] vp9_v4l2m2m: no v4l2 output context's buffers
+>>> [ffmpeg/video] vp9_v4l2m2m: can't configure decoder
+>>> Could not open codec.
+>>> Software decoding fallback is disabled.
+>>> Exiting... (Quit)
+>>>
+>>> [...]
 >>
->> [...]
+>> Applied, thanks!
+>>
+>> [1/1] clk: qcom: mmcc-msm8998: fix venus clock issue
+>>        commit: e20ae5ae9f0c843aded4f06f3d1cab7384789e92
 > 
-> Applied, thanks!
+> Yes!
 > 
-> [1/1] clk: qcom: mmcc-msm8998: fix venus clock issue
->       commit: e20ae5ae9f0c843aded4f06f3d1cab7384789e92
+> Going on a tangent.
+> 
+> During my tests, I saw an unrelated error in the boot log:
+> 
+> [   10.404521] clk: Disabling unused clocks
+> [   10.412141] ------------[ cut here ]------------
+> [   10.415538] vmem_ahb_clk status stuck at 'on'
+> [   10.415570] WARNING: CPU: 0 PID: 1 at drivers/clk/qcom/clk-branch.c:87 clk_branch_toggle+0x160/0x178
+> [   10.424420] Modules linked in:
+> [   10.433586] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.9.0-rc1-00027-g483ea571c987 #70
+> [   10.436478] Hardware name: Freebox Delta (DT)
+> [   10.444356] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [   10.448884] pc : clk_branch_toggle+0x160/0x178
+> [   10.455642] lr : clk_branch_toggle+0x160/0x178
+> [   10.460154] sp : ffff80008005bc40
+> [   10.464574] x29: ffff80008005bc40 x28: 0000000000000000 x27: ffff800082df9070
+> [   10.467982] x26: ffff800082d100b0 x25: ffff800082c57cb0 x24: ffff800082b23958
+> [   10.475100] x23: 0000000000000000 x22: 0000000000000000 x21: ffff8000833b6208
+> [   10.482218] x20: ffff80008072bbec x19: 0000000000000000 x18: ffffffffff00d218
+> [   10.489337] x17: ffff800083476aa8 x16: ffff800083476a38 x15: 0000000000000030
+> [   10.496454] x14: 0000000000000000 x13: ffff0000f5348000 x12: 000000000000086d
+> [   10.503572] x11: 00000000000002cf x10: ffff0000f7f4c368 x9 : ffff0000f5348000
+> [   10.510692] x8 : 00000000fff7ffff x7 : ffff0000f7f48000 x6 : 00000000000002cf
+> [   10.517809] x5 : 00000000005ffff4 x4 : 40000000fff802cf x3 : 0000000000000000
+> [   10.524926] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000080118000
+> [   10.532046] Call trace:
+> [   10.539137]  clk_branch_toggle+0x160/0x178
+> [   10.541402]  clk_branch2_disable+0x1c/0x28
+> [   10.545569]  clk_disable_unused_subtree+0xfc/0x138
+> [   10.549652]  clk_disable_unused_subtree+0x2c/0x138
+> [   10.554427]  clk_disable_unused_subtree+0x2c/0x138
+> [   10.559201]  clk_disable_unused_subtree+0x2c/0x138
+> [   10.563975]  clk_disable_unused_subtree+0x2c/0x138
+> [   10.568749]  clk_disable_unused_subtree+0x2c/0x138
+> [   10.573525]  clk_disable_unused_subtree+0x2c/0x138
+> [   10.578298]  clk_disable_unused+0x50/0x138
+> [   10.583070]  do_one_initcall+0x6c/0x1b0
+> [   10.587147]  kernel_init_freeable+0x1d4/0x2cc
+> [   10.590883]  kernel_init+0x20/0x1d8
+> [   10.595391]  ret_from_fork+0x10/0x20
+> [   10.598693] ---[ end trace 0000000000000000 ]---
 
-Yes!
+Taking sm8250 as an example the vidoecc ahb clk is a candidate to be 
+always-on.
 
-Going on a tangent.
+drivers/clk/qcom/videocc-sm8250.c
+         qcom_branch_set_clk_en(regmap, 0xe58); /* VIDEO_CC_AHB_CLK */
 
-During my tests, I saw an unrelated error in the boot log:
-
-[   10.404521] clk: Disabling unused clocks
-[   10.412141] ------------[ cut here ]------------
-[   10.415538] vmem_ahb_clk status stuck at 'on'
-[   10.415570] WARNING: CPU: 0 PID: 1 at drivers/clk/qcom/clk-branch.c:87 clk_branch_toggle+0x160/0x178
-[   10.424420] Modules linked in:
-[   10.433586] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.9.0-rc1-00027-g483ea571c987 #70
-[   10.436478] Hardware name: Freebox Delta (DT)
-[   10.444356] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   10.448884] pc : clk_branch_toggle+0x160/0x178
-[   10.455642] lr : clk_branch_toggle+0x160/0x178
-[   10.460154] sp : ffff80008005bc40
-[   10.464574] x29: ffff80008005bc40 x28: 0000000000000000 x27: ffff800082df9070
-[   10.467982] x26: ffff800082d100b0 x25: ffff800082c57cb0 x24: ffff800082b23958
-[   10.475100] x23: 0000000000000000 x22: 0000000000000000 x21: ffff8000833b6208
-[   10.482218] x20: ffff80008072bbec x19: 0000000000000000 x18: ffffffffff00d218
-[   10.489337] x17: ffff800083476aa8 x16: ffff800083476a38 x15: 0000000000000030
-[   10.496454] x14: 0000000000000000 x13: ffff0000f5348000 x12: 000000000000086d
-[   10.503572] x11: 00000000000002cf x10: ffff0000f7f4c368 x9 : ffff0000f5348000
-[   10.510692] x8 : 00000000fff7ffff x7 : ffff0000f7f48000 x6 : 00000000000002cf
-[   10.517809] x5 : 00000000005ffff4 x4 : 40000000fff802cf x3 : 0000000000000000
-[   10.524926] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000080118000
-[   10.532046] Call trace:
-[   10.539137]  clk_branch_toggle+0x160/0x178
-[   10.541402]  clk_branch2_disable+0x1c/0x28
-[   10.545569]  clk_disable_unused_subtree+0xfc/0x138
-[   10.549652]  clk_disable_unused_subtree+0x2c/0x138
-[   10.554427]  clk_disable_unused_subtree+0x2c/0x138
-[   10.559201]  clk_disable_unused_subtree+0x2c/0x138
-[   10.563975]  clk_disable_unused_subtree+0x2c/0x138
-[   10.568749]  clk_disable_unused_subtree+0x2c/0x138
-[   10.573525]  clk_disable_unused_subtree+0x2c/0x138
-[   10.578298]  clk_disable_unused+0x50/0x138
-[   10.583070]  do_one_initcall+0x6c/0x1b0
-[   10.587147]  kernel_init_freeable+0x1d4/0x2cc
-[   10.590883]  kernel_init+0x20/0x1d8
-[   10.595391]  ret_from_fork+0x10/0x20
-[   10.598693] ---[ end trace 0000000000000000 ]---
+---
+bod
 
