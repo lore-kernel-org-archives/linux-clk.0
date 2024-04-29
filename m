@@ -1,112 +1,149 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B5A70CAA
-	for <linux-clk@vger.kernel.org>; Sun, 28 Apr 2024 16:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC8DDDD8;
+	Mon, 29 Apr 2024 05:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714320714; cv=none; b=MmX5wjw+LY2veh0JPplzEu4+c+YDAi2JQHXoFe0GOjpaZjMAoRAWzpaMyXGH014fon2PjmHUPgf5ZVXIhJrwhjj6gTrpmDDeN+7Luv7PjjAmX1bcs6psJn12dQMYeanOxp6X0M3ie2ouE02GKO2Y1Z/AhG6tbzXN1XEq7fp/N58=
+	t=1714367459; cv=none; b=UgLaxVEL3Q0YVnLGsKbkPlLdbph1hevKC5tc7QUHwJ/bFkvzdbwzGqlYlhfDujNKxTrPApIinRuEJxOQ7ViWQBWir8DbAaASVAKWLKiHIHlcNfRpG5+aB9NlZBsF91EmdwQHy5Id1r0HIOX253F/QPXOM9OP8HWkw3tmrgL7WVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714320714; c=relaxed/simple;
-	bh=lwQO4festyPbAo4fEUDXtFX2fG35lsp/AYPDZzFtBwY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D6n3rj2RruQ5xucpKKRqPLqlHiC+Mi6f6w+NNo9q0NHEvhhmfBE1B3YaQpmKGnJspkkb+bDi+UqyxujHeAx1+pHpR8NSiuiAGD1Vd7YVwT3pxuGdcHzQiNLY0uMLhJxP7YpALZcOQTByZFEt/4W+T5jo3GN01l0vWNdHxr2mGPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MknSblpJ; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1714367459; c=relaxed/simple;
+	bh=pnrIbRSyb6jGRMXUkMiNUC0kmmHi+yco7kA11jFJBdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CjmovpWKl6YKUsWAknu3d8Vo70XJBlUYRJ2R0iU9bBVFWNkgvQLYo0g943tc8xLRxRKuCAeTLjulE4ROzEornUfKbV0bC8Jd9e0Ji7TfKu9uvk88dFy4nTNS75sV1x3NAKnoRis1zLggg194otLU/lBYN6mKCru8NW5ZM7H2m9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T8khpBYX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MknSblpJ"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-34782453ffdso3544399f8f.1
-        for <linux-clk@vger.kernel.org>; Sun, 28 Apr 2024 09:11:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714320711; x=1714925511; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=04cSsPNBtTMr6mKvSQUe5a7pLiO96Req29h2TQ6tsGw=;
-        b=MknSblpJLeBoEiHzzfwJrN9gKjFBRU9V5xp9HQdQekUKZSqAJNMQL1f8hUt3uOF3Gl
-         TNKH8s1fYSbY9ECMhlY77RW1VD0rLCCP3GeRi1pKtl/hTlOgx/mo5++iYNraoqbRGwwY
-         klfKEu/Q5MmgyQS5CftKjioedgssR7OGLRXxP1DKDY9g7DFtRWv0XsQf8nTdKPfWe4Ua
-         0botY+LHwyag4B7wz0h+T4lOwD0Eg/n1IF9HsGZDrmWuwGSt2ZlvxQKsCXlcIxuk2TLd
-         xcE1ZjBZW1FSL8pyu5EGGY8NWFq6s5gKzipVdusbdeLjOT7aw7E1tUyJKadqK3Eg6stu
-         iUTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714320711; x=1714925511;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=04cSsPNBtTMr6mKvSQUe5a7pLiO96Req29h2TQ6tsGw=;
-        b=IQV6qcn+G490dK30UYOKhzbzg+hnBhT9wzDVYltvMSG0UluXYXC2S+Zej8JiWz506K
-         gt/IZDndRdbZxMCLu8SwqhAPS2+NJH4MP54SoaHwLo4sNdtUCHsHg6oWZZLbDpEr5a+D
-         L9NCv/xlTg0nBDZ6wv9MR3paTZvg6QB9mtJOFQoUbnSw7q/q1PMej9Na7MO6BcVw8ayY
-         EQb1M5NjX+Z+UPNubwGrAQICGyFXlEsRG6PhmFC/2OS2j4r1UNlVTImJgFMtE3iOBYlS
-         64gXy3fyceWJ/0qT8fVsJMwO2xGuVAQCZQOavaooNGPelUe2Yjv5IOoeTq8WCoTzdFDh
-         T5sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIxI04f0Nacii2yudYwlkKbj1kEujth+ncGEj+6/WMZYCh8myK9HVOes6xDDYTCxNWWdOm9qMjBk6vZon4h0PTsCnRZFTtbYaB
-X-Gm-Message-State: AOJu0Ywc+iRGO2PpJ/UHd1duN70Ndgy8I1DMzjmHe+sotXEb4/f/5BCy
-	KCO8dReh1rg0G1n0SFU+Cjiah/2W+f0I4by+rqxxXVKiluZGzl52o7LfBI0mIRU=
-X-Google-Smtp-Source: AGHT+IFMUxU5Z3h0JtviqQ6YbIFzG1v4A97kqONBvP3SlthSR3Cm/ZZmQKSvWDI8YPlTZPb7gvEiuw==
-X-Received: by 2002:a5d:6208:0:b0:346:bb51:c203 with SMTP id y8-20020a5d6208000000b00346bb51c203mr6059990wru.12.1714320711038;
-        Sun, 28 Apr 2024 09:11:51 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id fi29-20020a170906da1d00b00a58f1eff266sm1325570ejb.189.2024.04.28.09.11.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Apr 2024 09:11:50 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 4/5] clk: samsung: gs101: add support for cmu_hsi0
-Date: Sun, 28 Apr 2024 18:11:43 +0200
-Message-ID: <171432067235.26421.5148957892529383246.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240426-hsi0-gs101-v2-4-2157da8b63e3@linaro.org>
-References: <20240426-hsi0-gs101-v2-0-2157da8b63e3@linaro.org> <20240426-hsi0-gs101-v2-4-2157da8b63e3@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T8khpBYX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CDD3C113CD;
+	Mon, 29 Apr 2024 05:10:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714367458;
+	bh=pnrIbRSyb6jGRMXUkMiNUC0kmmHi+yco7kA11jFJBdI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=T8khpBYX5WlEOp8FM3hrD3cALzjsweauCjy/wmz3UC2bjTBroE5lrPsqPbmjQuG+m
+	 VmXn9jyi0EfM/OVeME4R7jnXZyrbV/wQbTPUA1AyCe7utf8Jvjo0b/GQJXd2VVeRko
+	 QljtFgXjqyG8sDh8fAPekBuWfBn+betB3lML6G6WeWDKj+xVaHcBM0A/SUolo4RiTa
+	 LqucHdt4JBqRlgtyumMt2IlySh6vO06MKjmeXUewtmPVdNwu5whbsX/lBJpnB3tSsw
+	 0uJDIzp2V2jG7Znt/HXbMu2iZxb5cTYrO8wNjiHH/VmdIYjWGAsx1FqhkXrywcjnwi
+	 b80G2U9FeMuzg==
+Message-ID: <302e582e-d433-44df-ab7a-65de5bccd419@kernel.org>
+Date: Mon, 29 Apr 2024 07:10:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 1/4] dt-bindings: clock: Document T-Head TH1520
+ AP_SUBSYS controller
+To: Drew Fustini <dfustini@tenstorrent.com>,
+ Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+ Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>,
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240426-th1520-clk-v2-v2-0-96b829e6fcee@tenstorrent.com>
+ <20240426-th1520-clk-v2-v2-1-96b829e6fcee@tenstorrent.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240426-th1520-clk-v2-v2-1-96b829e6fcee@tenstorrent.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 27/04/2024 02:10, Drew Fustini wrote:
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/thead,th1520-clk-ap.h>
+> +    soc {
+> +
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      clk: clock-controller@ffef010000 {
 
-On Fri, 26 Apr 2024 11:03:07 +0100, André Draszik wrote:
-> CMU_HSI0 is the clock management unit for one of the high speed
-> interfaces, which is used (amongst others) for USB
-> 
-> Some notes about the clocks marked as CLK_IGNORE_UNUSED:
-> * CLK_GOUT_HSI0_PCLK
->   CLK_GOUT_HSI0_LHM_AXI_P_HSI0_I_CLK
->   CLK_GOUT_HSI0_XIU_P_HSI0_ACLK need to be kept running as
->   otherwise the system becomes unresponsive and it doesn't complete
->   booting.
-> 
-> [...]
+This is a friendly reminder during the review process.
 
-Applied, thanks!
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
 
-[4/5] clk: samsung: gs101: add support for cmu_hsi0
-      https://git.kernel.org/krzk/linux/c/04ddcbec5651cd4da80d3b83e9c6d54c50dea456
+Thank you.
+
+> +        compatible = "thead,th1520-clk-ap";
+> +        reg = <0xff 0xef010000 0x0 0x1000>;
+> +        clocks = <&osc>;
+> +        clock-names = "osc";
+> +        #clock-cells = <1>;
+> +      };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ebf03f5f0619..51d550cb1329 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19023,7 +19023,9 @@ M:	Guo Ren <guoren@kernel.org>
+>  M:	Fu Wei <wefu@redhat.com>
+>  L:	linux-riscv@lists.infradead.org
+>  S:	Maintained
+> +F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+>  F:	arch/riscv/boot/dts/thead/
+> +F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
+>  
+
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Krzysztof
+
