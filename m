@@ -1,61 +1,34 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92D1548FC;
-	Tue, 30 Apr 2024 06:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA39C1B5B1;
+	Tue, 30 Apr 2024 06:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714459392; cv=none; b=Lu8SqYdvaVW1et780Jstt1VkRIg2/EYgS7+dKtllQovhpoID+BYm4LXszRkhjEWzK4u/Bw/8etxAOkHIv7QKutiI/InlU1LPAIlxBs8KPENchlTL6c4+5sIAj8EP/1tluwFtcNxx8VmCRuHgdvcaw78A+686pBS2HOv5TWFeY+Y=
+	t=1714459493; cv=none; b=TaRWrno1f341Luj4NFlIZgg3ahocqYrSHjwD6UJq0ze0X6LyA4UybCOuM4kLlrhNMOX+nQR29qK+7e/qJUNj95Speq4BL4ZnygIG+eXU4FVCC0bHNmINmI6LqKZarHYFfO9Ce5R/kMH5RbCcBwtbvrmj4E7KxloSZSCxTzjA2LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714459392; c=relaxed/simple;
-	bh=T6AypkH3WpV7sX0/al8Y8+9eYsNDm9sgfT2ZqgdoI8k=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LhFECc9usB4chSVQIRI3c8DTqSSQXarYGl+7JekIQwxEEchR47U6OVQnfcu+N6gXx/gigekRxpKFIFa8JRLb2OsYhZLZhaxxgFirdGW4h5Db3jpQvpUFgLTcGfhDKYuBqSpRYBUTg9/DGK3Ruz8Tk+yr7P70T5vs8Mni9bWxymY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bw5fozyq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bw5fozyq"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43U3Hsuu015072;
-	Tue, 30 Apr 2024 06:43:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	qcppdkim1; bh=XQz0y87xjJzpSve+PFnGb8Dxx4cy4BCAlvoWDerKyCU=; b=bw
-	5fozyqV7T0+Ihg8Fx+8PsGHvs7TNuezvT8t5UyLgLFJZ+PD6W6iqJplaLLjEEduk
-	GETcjmQFm0YTMjnCETuND1mZUGXIhydZg4/R5eKHx+lcYzZHtaOE02nain2Dh503
-	dmonTbZ/6ZIeNeWau7MTLpei5hlJEV44MN3IOa63piXVwyde3mqDGjEVG61JU9BU
-	wG4GSsbRLYBorGfIDTV+D66cLazoDZ0YQiCIN6qxXeX/SwpJQF85HBzzCk9ZoYM1
-	97DON8MJBoKjtgjN0/ld3mtRx0VOV+1I/jZ4Q+SntzgGYi2dOqc64B6CgeRb+GLf
-	TrsC8MavzJRAawaAVmUw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xtqkr8qt6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Apr 2024 06:43:07 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43U6h5BN020109
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Apr 2024 06:43:05 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 29 Apr 2024 23:43:00 -0700
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konrad.dybcio@linaro.org>, <djakov@kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <quic_varada@quicinc.com>,
-        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <bryan.odonoghue@linaro.org>
-Subject: [PATCH v11 6/6] arm64: dts: qcom: ipq9574: Add icc provider ability to gcc
-Date: Tue, 30 Apr 2024 12:12:14 +0530
-Message-ID: <20240430064214.2030013-7-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240430064214.2030013-1-quic_varada@quicinc.com>
-References: <20240430064214.2030013-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1714459493; c=relaxed/simple;
+	bh=ae5/FhP4CQ3ogrXn9s4yJzxRoHGL+UR9oCWBBHoFpFc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aH4IEOv8/xLuyh2YHkWm+iz1vyWv/83LUD0gBRe3Vxfbqm6B50nBk5/aK7WHpL5uWswLT7FwawB1qtqVvqqIeVGGmWTTUnF+6URDjQentYHOLDzdegf15JSG//Xy0L6oe5Qyiz/qq43ykDcbf8PRb7uTu1/yfq5JYZpbt2YfmdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+Received: from droid01-cd.amlogic.com (10.98.11.200) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.6; Tue, 30 Apr 2024
+ 14:44:42 +0800
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+To: <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
+	<jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>, Xianwei Zhao <xianwei.zhao@amlogic.com>
+Subject: [PATCH v8 0/5] Add C3 SoC PLLs and Peripheral clock
+Date: Tue, 30 Apr 2024 14:44:33 +0800
+Message-ID: <20240430064438.2094701-1-xianwei.zhao@amlogic.com>
+X-Mailer: git-send-email 2.37.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,57 +37,85 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hUTFBXm4d2cMlguQjPHsSW-aLL-sLWz_
-X-Proofpoint-ORIG-GUID: hUTFBXm4d2cMlguQjPHsSW-aLL-sLWz_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-30_02,2024-04-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 mlxlogscore=999 malwarescore=0
- phishscore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404300047
 
-IPQ SoCs dont involve RPM in managing NoC related clocks and
-there is no NoC scaling. Linux itself handles these clocks.
-However, these should not be exposed as just clocks and align
-with other Qualcomm SoCs that handle these clocks from a
-interconnect provider.
+Changes since V7 [1]:
+ - Remove included head file not used.
+ - Link to v7: https://lore.kernel.org/all/20240424050928.1997820-1-xianwei.zhao@amlogic.com
 
-Hence include icc provider capability to the gcc node so that
-peripherals can use the interconnect facility to enable these
-clocks.
+Changes since V6 [12]:
+ - Add pad src for rtc clock.
+ - Add SCMI clock controller support, move some clock node in SCMI,such as GP1 PLL DDR USB etc.
+ - Fix some spelling mistake.
+ - Use lower case for bindings and update some input clocks desc.
+ - Update some clock comments.
+ - Delete prefix "AML_" for macro definition.
+ - Addd some clock annotation and some clock flag CRITICAL.
+ - Add maximum for regmap_config.
+ - Delete some unused register definition and unused clock inputs. 
+ - Drop patch subject redundant "bindings". Suggested by Krzysztof.
+ - Not reference header file "clk.h" and replace comment. Suggested by Jerome.
+ - Modify description about board in Kconfig file help item. Suggested by Jerome.
+ - Link to v6: https://lore.kernel.org/all/20231106085554.3237511-1-xianwei.zhao@amlogic.com
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Changes since V5 [3]:
+ - Fix some typo and modify formart for MARCO. Suggested by Jerome.
+ - Add pad clock for peripheral input clock in bindings.
+ - Add some description for explaining why ddr_dpll_pt_clk and cts_msr_clk are out of tree.
+Changes since V4 [10]:
+ - Change some fw_name of clocks. Suggested by Jerome.
+ - Delete minItem of clocks.
+ - Add CLk_GET_RATE_NOCACHE flags for gp1_pll
+ - Fix some format. and fix width as 8 for mclk_pll_dco.
+ - exchange gate and divder for fclk_50m clock.
+ - add CLK_SET_RATE_PARENT for axi_a_divder & axi_b_divder.
+ - add CLK_IS_CRITICAL for axi_clk
+ - Optimized macro define for pwm clk.
+ - add cts_oscin_clk mux between 24M and 32k
+ - add some missing gate clock, such as ddr_pll.
+Changes since V3 [7]:
+ - Modify Kconfig desc and PLL yaml clk desc.
+ - Fix some format.Suggested by Yixun and Jerome.
+ - Add flag CLK_GET_RATE_NOCACHE for sys_clk.
+ - Optimized macro define for pwm clk.
+ - Use flag CLK_IS_CRITICAL for axi_clk.
+ - Add some description for some clocks.
+ - Use FCLK_50M instead of FCLK_DIV40.
+Changes since V2 [4]:
+ - Modify some format, include clk name & inline, and so on.
+ - Define marco for pwm clock.
+ - Add GP1_PLL clock.
+ - Modify yaml use raw instead of macro.
+Changes since V1 [2]:
+ - Fix errors when check binding by using "make dt_binding_check".
+ - Delete macro definition.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 7f2e5cbf3bbb..5b3e69379b1f 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -8,6 +8,7 @@
- 
- #include <dt-bindings/clock/qcom,apss-ipq.h>
- #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
-+#include <dt-bindings/interconnect/qcom,ipq9574.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
- #include <dt-bindings/thermal/thermal.h>
-@@ -306,6 +307,7 @@ gcc: clock-controller@1800000 {
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
-+			#interconnect-cells = <1>;
- 		};
- 
- 		tcsr_mutex: hwlock@1905000 {
+Xianwei Zhao (5):
+  dt-bindings: clock: add Amlogic C3 PLL clock controller
+  dt-bindings: clock: add Amlogic C3 SCMI clock controller support
+  dt-bindings: clock: add Amlogic C3 peripherals clock controller
+  clk: meson: c3: add support for the C3 SoC PLL clock
+  clk: meson: c3: add c3 clock peripherals controller driver
+
+ .../clock/amlogic,c3-peripherals-clkc.yaml    |  120 +
+ .../bindings/clock/amlogic,c3-pll-clkc.yaml   |   59 +
+ drivers/clk/meson/Kconfig                     |   29 +
+ drivers/clk/meson/Makefile                    |    2 +
+ drivers/clk/meson/c3-peripherals.c            | 2365 +++++++++++++++++
+ drivers/clk/meson/c3-pll.c                    |  746 ++++++
+ .../clock/amlogic,c3-peripherals-clkc.h       |  212 ++
+ .../dt-bindings/clock/amlogic,c3-pll-clkc.h   |   40 +
+ .../dt-bindings/clock/amlogic,c3-scmi-clkc.h  |   27 +
+ 9 files changed, 3600 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-peripherals-clkc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+ create mode 100644 drivers/clk/meson/c3-peripherals.c
+ create mode 100644 drivers/clk/meson/c3-pll.c
+ create mode 100644 include/dt-bindings/clock/amlogic,c3-peripherals-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,c3-scmi-clkc.h
+
+
+base-commit: ba535bce57e71463a86f8b33a0ea88c26e3a6418
 -- 
-2.34.1
+2.39.2
 
