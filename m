@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACE4161;
-	Tue, 30 Apr 2024 00:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F65161;
+	Tue, 30 Apr 2024 00:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714435292; cv=none; b=SGm+tVNPOZpKfJDUo+HtrgieXcsH1Dw9FP7RKyMJ94S7luV96cxZ4qYffBdukwGOgB03yRPaJCQG2Y7g2kuv1PHVdtFpa1p2JUm6phbJyktngVhXVi+sG8D2mdfIcSyMsdorED63BlW+6XQkJnV85rvGHRJdGU4eqX2l+/fQskM=
+	t=1714435480; cv=none; b=ChJZAvbkOpymTlqBxHAQQ7yk97os2GAEngTVhdmUft3zFWc7DLU7m7/kXMCDGnWWxPNEMCBljDYm7p+GCGyB1cQKHpBfQW1wS8E3XYW2ASAMuFo+NXhRG3Hn3ylCUe49Rf8PIGw1vF29UVpsfZ6V3duBnwbg2t69bnxNK7iRFXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714435292; c=relaxed/simple;
-	bh=mABA1dMkoIIht9hFbMDBlrTfOSsY1WCDFh7sBQzEwws=;
+	s=arc-20240116; t=1714435480; c=relaxed/simple;
+	bh=GjF585A07WLRSmFByqx2QGzcXnlbaXpuxWaDW/GAdTk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=J0zz7a9TTO4x9fh1D1X90U+xfg/2R2IpXJp9TEK4+ONyj2la9h0Nu5hJtrv0QP1qUxudcjbawjvxj27Iji4E/RYUJt57h2E0o+lUhS3A1tB95BqcxSr5Jz9CJu57ZwIdPdcQtThjudTBSUYsYRRxNj22JyRT0Ra0JMPEd/QXYm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IIgc8eip; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=RsGNq4owXDIQT5CAsK6UsPMib19w36mpUCiMtHJMIbzQPvb72rHYLBZumgNPsbupH1ebDCv3E17XNe3yYpq+HnkWAfmcrTw0zQ+Td76MFevb2cCzl9DF3CHUy5wHMqC0R5HLdBpB2ZzPk8dsoe4OYS7nuMp3PHRuVXqM2fg6tbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECnO2WuG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IIgc8eip"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75727C113CD;
-	Tue, 30 Apr 2024 00:01:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECnO2WuG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CBB5C113CD;
+	Tue, 30 Apr 2024 00:04:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714435291;
-	bh=mABA1dMkoIIht9hFbMDBlrTfOSsY1WCDFh7sBQzEwws=;
+	s=k20201202; t=1714435480;
+	bh=GjF585A07WLRSmFByqx2QGzcXnlbaXpuxWaDW/GAdTk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=IIgc8eiphfRyJWKLzFwTomfkXLldTGuXw6f+h05osbkn5tYmt4lCmY24ve7Y2B5Pz
-	 Hvg6ObpoYbZ7XGATurgzWAN30XmvvGiWdULLbgIO/yudM95XKKvtenJ+qHiUhIjWGv
-	 zLv12eyMT71Za0QqeHqX0VVxyRqLtxpQ3xChDgJRS4uNXicZkLmXf02GyyEhamghAe
-	 dBYYRM8MmuCLk7p9gqj4QwTPXM4GoGiGDQMgik72NbeDZFanuRFg5F0UZ13avCuZIO
-	 K2zGWMPyLxPRr87Y/uhylqOIcqTskN4wY7FlYJBuXNM4xdS2e5MneDIOuL5XRp4efk
-	 CIeXFsTEsUxnw==
-Message-ID: <782f77f8197aae7657089fe88398993f.sboyd@kernel.org>
+	b=ECnO2WuGKFYNALJk4sMtwyo0AqDmnYReBr4XRCtpP+iJJVutqsk+7cR3IiaYPi4i5
+	 f0BFqtfTR2MgBmSxBhsuCnI1u4IIam2OrSP81cO9Aey7bGKmwnYzINimmH+k2EAZ/A
+	 MKndRoZv/zxZhgPMnlkialUVwKTjUJSYfnuvC9Kd1MytqlYUVilqPoQL0rvcvLkYgl
+	 oo41ZcfPBZ21G0YplGjlXtJlQVbjlxXRTwlA8kFuigG2dsebutbkj2w7JQMVDWuZL/
+	 8vQ5XBk62p/4VMCsF4fqv0GWDiWu2giTbRKJvarwGbv81ncJ9A1jwzxgQtLP/xr69t
+	 JXdqugmLV5ovQ==
+Message-ID: <38cfd1c4b7297515539bd2c91b3bf541.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,33 +35,39 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1714118682.git.geert+renesas@glider.be>
-References: <cover.1714118682.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.10 (take two)
+In-Reply-To: <20240425-cbl-bcm-assign-counted-by-val-before-access-v1-1-e2db3b82d5ef@kernel.org>
+References: <20240425-cbl-bcm-assign-counted-by-val-before-access-v1-0-e2db3b82d5ef@kernel.org> <20240425-cbl-bcm-assign-counted-by-val-before-access-v1-1-e2db3b82d5ef@kernel.org>
+Subject: Re: [PATCH 1/2] clk: bcm: dvp: Assign ->num before accessing ->hws
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Mon, 29 Apr 2024 17:01:29 -0700
+Cc: Kees Cook <keescook@chromium.org>, Gustavo A. R. Silva <gustavoars@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org, patches@lists.linux.dev, llvm@lists.linux.dev, stable@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+To: Florian Fainelli <florian.fainelli@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, Nathan Chancellor <nathan@kernel.org>
+Date: Mon, 29 Apr 2024 17:04:37 -0700
 User-Agent: alot/0.10
 
-Quoting Geert Uytterhoeven (2024-04-26 01:10:10)
->         Hi Mike, Stephen,
+Quoting Nathan Chancellor (2024-04-25 09:55:51)
+> Commit f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with
+> __counted_by") annotated the hws member of 'struct clk_hw_onecell_data'
+> with __counted_by, which informs the bounds sanitizer about the number
+> of elements in hws, so that it can warn when hws is accessed out of
+> bounds. As noted in that change, the __counted_by member must be
+> initialized with the number of elements before the first array access
+> happens, otherwise there will be a warning from each access prior to the
+> initialization because the number of elements is zero. This occurs in
+> clk_dvp_probe() due to ->num being assigned after ->hws has been
+> accessed:
 >=20
-> The following changes since commit c0516eb4cf04ac61b6fe1f86cc15b2f5f024ee=
-78:
+>   UBSAN: array-index-out-of-bounds in drivers/clk/bcm/clk-bcm2711-dvp.c:5=
+9:2
+>   index 0 is out of range for type 'struct clk_hw *[] __counted_by(num)' =
+(aka 'struct clk_hw *[]')
 >=20
->   clk: renesas: r8a779h0: Add timer clocks (2024-04-08 11:12:32 +0200)
+> Move the ->num initialization to before the first access of ->hws, which
+> clears up the warning.
 >=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.10-tag2
->=20
-> for you to fetch changes up to 5add5ebc4e35a703a49976abfd82e708d9aea4ad:
->=20
->   clk: renesas: r9a08g045: Add support for power domains (2024-04-25 20:1=
-2:17 +0200)
->=20
-> ----------------------------------------------------------------
+> Cc: stable@vger.kernel.org
+> Fixes: f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with __cou=
+nted_by")
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
