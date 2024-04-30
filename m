@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1441BED7D;
-	Tue, 30 Apr 2024 21:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C2D50287;
+	Tue, 30 Apr 2024 21:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714512415; cv=none; b=hilFu+jQHggagAV77/pgl+vPU35c81BdtcMmd9QC6EQUdj4YcYNESpGK/myM5cPGZ7ThjfKgpr+iGrpVetByToIHYf4iJqV4qKdi+vHxoodb/4cbvGN/CXg1MrJBHn39SQAzxRZ0Y1OgHyPaDqJE/6YReW4qErLas7FhaUFTvEc=
+	t=1714512729; cv=none; b=IAway03HYEIelUf9cUZEJjJpZj4xMU2zBD6FFoqYAT0pCzTEYp+IhzYitAZaKpvhIXGJjv4gcds9AmLT3XWO/wz+1vvrQ5xXEnY05GibnAyqliC4P2O/DsypM+dNG7dUwMHtPHl+XhJFEAq8ml/AuGK8+slKau2eyE4pftUpIlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714512415; c=relaxed/simple;
-	bh=GftF5dObvo3DzQZhK73nALUS/OoRTVHwkjrSlkRcFbo=;
+	s=arc-20240116; t=1714512729; c=relaxed/simple;
+	bh=0XERCxExItXvCPVmz8dhoEKm4od93+XH9ZJUKA96nVo=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=cv+16YLt0mg/vrk6mPDIUSa6/QWIo0LR9qYBngPd5Wv9JM0bymKV8edfXIO6V7cAOy4cl1+CMWEGdKABGbdfaZFQHs1sgVaVT6mWGs3Sm23JBG+nQQ98AIkNUuZi8ibEIZtyU0Mmo1qIjYzb1T7iJ9ObOVtVcw25sk2j11AhkYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvOmal7l; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Gl1iIab6fwdi8cuL2MuTq+s/UOJlfw9eRoaneJrICLEsr1WjojkCLRSh6Sr9fp6PdG9IY+u4P36jDD5lxV3VwdIQYVFJHssSFHZNJZbY3lo1Sj8vM+jPU9TGkAPityaDr9TnQwm4UHbFYh3Z1DO/bYyk03DUj0TL42RcWLsccqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6jz1MBb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvOmal7l"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40CB6C2BBFC;
-	Tue, 30 Apr 2024 21:26:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6jz1MBb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5C3AC2BBFC;
+	Tue, 30 Apr 2024 21:32:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714512415;
-	bh=GftF5dObvo3DzQZhK73nALUS/OoRTVHwkjrSlkRcFbo=;
+	s=k20201202; t=1714512729;
+	bh=0XERCxExItXvCPVmz8dhoEKm4od93+XH9ZJUKA96nVo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=fvOmal7lzsUj+2CqlwMvZ4sxr0DkAnclbUMAl9ZB4KkCGN4mpb4quKap3elDYGBFX
-	 DwU+EYqit3s+kT+5liiPJkNwIjgMeLjrNzybqib341eXKzupLwXuHAJ4okVtK5QVQW
-	 jLLzyvHvXMjXPfRAwMN203crGbLAoQ3FNtzVRCArk+BaNKa0ws/JK3jTaNmDKwVMTr
-	 BdyNOxZC/z8Zf8f0ScZnrImhu8jbfEV365wI1AF1TtitJJ8P/qZwk8ueyqSAgiSlr8
-	 Bg/9JSjm/+MTTolErbY0BbgVLwQvoYoB7QOKz/FudeDnz3ypJEHAC7z2H9qCCBpWYN
-	 cg/T9p1mjIiXg==
-Message-ID: <6ba2967c6c9d24e3f1c9b76496176010.sboyd@kernel.org>
+	b=a6jz1MBbBTG6dEOQBfUsybX5JwqSqqyFhDkzQBjD8f8tNWPu/slUJBXK+Gp/9TBrN
+	 KWoXkNEHxbnFBfsqrww5JC8m6Gc/IibVzICdzpAwq/3x1Lm3Pad8TYxT66/vqjP2eW
+	 ErgUlnk4ifCetqKSqFjHdnNF6TrfRGUV1jlvsoJLIfo9Hak6sRekWAktleNjXt962f
+	 Jx06e3h+aMmGFo53Vc0RkR8rg41c+r13Gh3nmo4/UD1bEC8EFXluqvPncvF4SY0hMr
+	 nHxiqufOOLfk2sBDSFfSmqrSaIsiDsh18e6Em/5S7ClgJOqXcFuOkQUElwDVHog/0Y
+	 ybWFNi85j15NQ==
+Message-ID: <9f4323025c9d25313ecf26327848fc62.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,55 +35,34 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org>
-References: <20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org> <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org> <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org>
-Subject: Re: [PATCH] clk: qcom: gcc-sm8450: set OPS_PARENT_ENABLE on gcc_sdcc2_apps_clk_src
+In-Reply-To: <128dc42a50bfe166993205108a5b23cd.sboyd@kernel.org>
+References: <20240422232404.213174-1-sboyd@kernel.org> <20240422232404.213174-6-sboyd@kernel.org> <128dc42a50bfe166993205108a5b23cd.sboyd@kernel.org>
+Subject: Re: [PATCH v4 05/10] platform: Add test managed platform_device/driver APIs
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Vinod Koul <vkoul@kernel.org>
-Date: Tue, 30 Apr 2024 14:26:53 -0700
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Date: Tue, 30 Apr 2024 14:32:06 -0700
 User-Agent: alot/0.10
 
-Quoting Konrad Dybcio (2024-04-30 03:46:52)
-> On 30.04.2024 2:21 AM, Stephen Boyd wrote:
-> > Quoting Konrad Dybcio (2024-04-27 05:01:07)
-> >> Similar to how it works on other SoCs, the top frequency of the SDHCI2
-> >> core clock is generated by a separate PLL (peculiar design choice) that
-> >> is not guaranteed to be enabled (why does the clock framework not hand=
-le
-> >> this by default?).
-> >>
-> >> Add the CLK_OPS_PARENT_ENABLE flag to make sure we're not muxing the
-> >> RCG input to a dormant source.
-> >=20
-> > The RCG2 hardware hasn't required the parent to be enabled for clk
-> > operations besides for the glitch-free source switch. What scenario is
-> > happening here that's requiring this flag? Is the RCG forcibly enabled
-> > perhaps because the bootloader has left the root enable bit set
-> > (CMD_ROOT_EN)? Or are we changing the parent while the clk framework
-> > thinks the clk is off when it is actually on?
-> >=20
-> > TL;DR: This is papering over a bigger bug.
+Quoting Stephen Boyd (2024-04-24 11:11:21)
+> Quoting Stephen Boyd (2024-04-22 16:23:58)
+> > diff --git a/drivers/base/test/platform_kunit.c b/drivers/base/test/pla=
+tform_kunit.c
+[...]
+> > +
+> > +       /*
+> > +        * Wait for the driver to probe (or at least flush out of the d=
+eferred
+> > +        * workqueue)
+> > +        */
+> > +       wait_for_device_probe();
 >=20
-> Definitely.
->=20
->=20
-> Take a look at:
->=20
-> static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] =3D {
->         F(400000, P_BI_TCXO, 12, 1, 4),
->         F(25000000, P_GCC_GPLL0_OUT_EVEN, 12, 0, 0),
->         F(50000000, P_GCC_GPLL0_OUT_EVEN, 6, 0, 0),
->         F(100000000, P_GCC_GPLL0_OUT_EVEN, 3, 0, 0),
->         F(202000000, P_GCC_GPLL9_OUT_MAIN, 4, 0, 0),
->         { }
-> };
->=20
-> XO and GPLL0 are more or less always on, but GPLL9 is described to only
-> be used for this specific clock for this specific frequency (perhaps it
-> feeds something else on the soc but that's besides the point).
->=20
-> Then, the parent input is changed during set_rate, but GPLL9 seems to
-> never be enabled:
+> Should this be removed? I was thinking that this isn't a pure wrapper
+> around platform_driver_register() because it has this wait call.  Maybe
+> it's better to have some other kunit API that can wait for a specific
+> device to probe and timeout if it doesn't happen in that amount of time.
+> That API would use the bus notifiers and look for
+> BUS_NOTIFY_BOUND_DRIVER. Or maybe that function could setup a completion
+> that the test can wait on.
 
-Is the sdcc2 RCG enabled during the set_rate?
+I have an implementation that does this that I'll send.
