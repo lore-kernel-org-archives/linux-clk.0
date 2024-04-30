@@ -1,150 +1,147 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70030172BBF;
-	Tue, 30 Apr 2024 14:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B83714373E;
+	Tue, 30 Apr 2024 14:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714486592; cv=none; b=Pmx9adVH8aulzjjPCxBSvRMz8B1nQ5i47+RXVGa67dz2s8koJcBWXVn+S8JuzF1zF4+1QF8mgaAV1dXI+mBUrCWu5P/4QPimtGCwvI80MMey+6c1DFjJASPoiQ2VvR1MeBpFNWZNPFzGhIONB4OTChg8MdMHbtUYbJNCk5INpZk=
+	t=1714487426; cv=none; b=EZrDeHGNU0ug2ElsitU6VHC7dBNBj+vVBp1lvXj1V90dFSyhk/blFH7OMCO9qddqxhFVg8zTSN0O+2VKfEO/c/nHDOqHLWb2aJNZVn0yY7/96FC4A+7PQi8H9VZ6PuCKQeq7/F5DJJ9x6WeCQa++rnGv1MeHbfIm47o/HIzINS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714486592; c=relaxed/simple;
-	bh=VnGje2vsuNNX86eGecKjoz4Ax6Vr3kuQDPJzyTb3N4E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Npfk3x1e2J4ds/2y1UbFeWxxGhEw1jQoPzNOpDTxRy7BAZQEaObQGf8x4p/SsuNp61NrZ2iBAEmsEiJsOVP9J/NsLshU/UQgrCN6h5LjVzfmI4aasHyGKkL5O7xjPGIjF4VZ6x01y6FRZC4g+nQQHkHFriexOpNf88tERopiq50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eM33BEt2; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1714487426; c=relaxed/simple;
+	bh=Sk3EMIVGnDX+IXhJwDnotDadG2kubVXVlJSnVukq+r0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dQsQ25k4+sLXhrGCZQIazMAafIhlgBdsADWOJFuQgcIcuQ/TwnZaPNW+IFedjJ0tIcvGZ505rItoaux0hWtFRo20vbc8pN+913NSVQgvNFlhB4/n+hSxneLbdo5UPB101IuXbKq7/WQ+/7O+a7sJ2NR627JAhjoCCRlddubA9iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KBZjaFKF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eM33BEt2"
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 43UECFHR010344;
-	Tue, 30 Apr 2024 14:16:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : content-transfer-encoding
- : mime-version; s=pp1; bh=aYJ3Kt9c1VzZVEbwIY2J3w38JrUTcaE16SfYcftkq5k=;
- b=eM33BEt2s1CrqyJ8/PJsfz8A5enMTgibxiszTdTzQts6IxnOZqknRg1NPl0YuiEDzjQb
- EdKvgSQ9LwfWZF94EHYEDJRjkKepuXKpfJ5B64k3plmxZpFCVdGi7ekIdnVqr+SwDCqN
- QoMTZQg5Z6Cnj0Kj5PLxXsz6eGyLFv/+wh02SkqVvSpRCTw+pqK6DZzDL0NVODIQMdKV
- xOZi34UqOTiu1JiAl+Xs07zAbQ97sYAh5J5QwZC804JaFk/Ah1cbGhoS0sYPmQ435Cp0
- xx411gqN7oyeuCBRm9lc5bp57s1TOXRaNmp3Xahj3WjuLbeXIVmFv+7yMHfj00stm225 QQ== 
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xu221r0x5-1
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KBZjaFKF"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43UD9gaF014746;
+	Tue, 30 Apr 2024 14:30:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=eiScpcg
+	hYJXZwIUI+wNiwCUPnWtB95AeIvA6e+mjE0Y=; b=KBZjaFKFI80ZSrJj6xeD0mK
+	NmjihOOstg/yI6N7XvncoSnLvalYy9xpUPNrzlfbOxU687cZFwf5CKhlr/oIXY1e
+	OuX6TN7OX1QSrmbE0n8XTich/K0EDTA2axsrXAf9pWzz16AUcj1ZrjYNmhdNyqM2
+	bvnUIvX76xdiYxo2hAWxxU0oi4EKvjKSl37uKWtfcD7+co/itYCRBrRcUz5GwCDi
+	DklZ8pIktjD5OdrbhES7jMgN+0pFvr9CQBfZanPRQnFyYJHMarGC3+PRkef7bHTn
+	2hGcXMOCYQqycD7gbQlosi+2bWWxaTthxCyDcMOFyQZOiiv+cmyVNx6Rb8dM6kA=
+	=
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xu199063n-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Apr 2024 14:16:15 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 43UE0G77022177;
-	Tue, 30 Apr 2024 14:16:14 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xsd6mn90s-1
+	Tue, 30 Apr 2024 14:30:18 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43UEUH33021137
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Apr 2024 14:16:14 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 43UEGAT536241686
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Apr 2024 14:16:12 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4F67B20073;
-	Tue, 30 Apr 2024 14:16:10 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E6BF92004D;
-	Tue, 30 Apr 2024 14:16:09 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 30 Apr 2024 14:16:09 +0000 (GMT)
-From: Heiko Carstens <hca@linux.ibm.com>
-To: linux-s390@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
-        Linux Regressions <regressions@lists.linux.dev>, imx@lists.linux.dev,
-        Abel Vesa <abelvesa@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>, peng.fan@nxp.com
-Subject: [PATCH] clk: imx: imx8mp: Add missing CONFIG_PM ifdefs
-Date: Tue, 30 Apr 2024 16:16:09 +0200
-Message-Id: <20240430141609.2244416-1-hca@linux.ibm.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <CA+G9fYuP7S+a89Ep5g5_Ad69EMwRkJ8nM+MMTzbEcP+6H2oMXQ@mail.gmail.com>
-References: <CA+G9fYuP7S+a89Ep5g5_Ad69EMwRkJ8nM+MMTzbEcP+6H2oMXQ@mail.gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pJou94LF_Dl22Dca5rhnWdRvx8EVHD0a
-X-Proofpoint-ORIG-GUID: pJou94LF_Dl22Dca5rhnWdRvx8EVHD0a
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	Tue, 30 Apr 2024 14:30:17 GMT
+Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 30 Apr 2024 07:30:11 -0700
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>
+CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Satya
+ Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>
+Subject: [PATCH V3 0/8] Add support for videocc and camcc on SM8650
+Date: Tue, 30 Apr 2024 19:57:49 +0530
+Message-ID: <20240430142757.16872-1-quic_jkona@quicinc.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: sQ-8O9UDvntGhcYPZEjeo3pDapc9qItW
+X-Proofpoint-GUID: sQ-8O9UDvntGhcYPZEjeo3pDapc9qItW
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
  definitions=2024-04-30_08,2024-04-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
- lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 suspectscore=0
- impostorscore=0 clxscore=1011 bulkscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2404300101
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ lowpriorityscore=0 mlxscore=0 adultscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 impostorscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2404300102
 
-Add missing CONFIG_PM ifdefs to fix this allmodconfig compile error:
+Add support for video and camera clock controllers on Qualcomm SM8650
+platform.
 
-drivers/clk/imx/clk-imx8mp-audiomix.c:356:12: error:
-'clk_imx8mp_audiomix_runtime_suspend' defined but not used
-[-Werror=unused-function]
-  356 | static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
+Changes in V3:
+[PATCH 1/8]: Split incorrect header file name in SM8450 videocc bindings
+             into a separate patch and added fixes tag
+[PATCH 2/8]: Added new header file for SM8650 videocc to define the extra clocks
+             and resets on top of SM8450 videocc bindings, Dropped Krzysztof
+             R-By tag due to these changes
+[PATCH 3/8]: Updated SM8550 videocc driver to use new SM8650 videocc header file,
+             added Dmitry and Konrad R-By tags
+[PATCH 4/8]: Updated offset variable name to sleep_clk_offset in probe and added
+             Dmitry R-By tag
+[PATCH 5/8]: This patch is newly added to fix the incorrect order for SC8280XP
+             camcc header file in bindings
+[PATCH 6/8]: Fixed the incorrect alphabetical order for SM8650 camcc compatible
+             and header files, added Krzysztof R-By tag and Vladimir Acked-By tags
+[PATCH 7/8]: No changes, added R-By tags received till V2 series
+[PATCH 8/8]: Dropped required-opps property in videocc and camcc nodes and
+             updated DT file to use new SM8650 videocc header file, added Vladimir R-By tag
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Closes: https://lore.kernel.org/r/CA+G9fYuP7S+a89Ep5g5_Ad69EMwRkJ8nM+MMTzbEcP+6H2oMXQ@mail.gmail.com
-Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power saving")
-Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
----
- drivers/clk/imx/clk-imx8mp-audiomix.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Previous series:
+V2 RESEND: https://lore.kernel.org/all/20240321092529.13362-1-quic_jkona@quicinc.com/
+V2: https://lore.kernel.org/all/20240220135121.22578-1-quic_jkona@quicinc.com/
+V1: https://lore.kernel.org/linux-kernel/20240206113145.31096-1-quic_jkona@quicinc.com/T/
 
-diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-index 574a032309c1..6549e55e94c9 100644
---- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-+++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -217,6 +217,8 @@ struct clk_imx8mp_audiomix_priv {
- 	struct clk_hw_onecell_data clk_data;
- };
- 
-+#ifdef CONFIG_PM
-+
- static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool save)
- {
- 	struct clk_imx8mp_audiomix_priv *priv = dev_get_drvdata(dev);
-@@ -232,6 +234,8 @@ static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool save)
- 	}
- }
- 
-+#endif /* CONFIG_PM */
-+
- static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
- {
- 	struct clk_imx8mp_audiomix_priv *priv;
-@@ -353,6 +357,8 @@ static int clk_imx8mp_audiomix_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM
-+
- static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
- {
- 	clk_imx8mp_audiomix_save_restore(dev, true);
-@@ -367,6 +373,8 @@ static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
-+#endif /* CONFIG_PM */
-+
- static const struct dev_pm_ops clk_imx8mp_audiomix_pm_ops = {
- 	SET_RUNTIME_PM_OPS(clk_imx8mp_audiomix_runtime_suspend,
- 			   clk_imx8mp_audiomix_runtime_resume, NULL)
+Jagadeesh Kona (8):
+  dt-bindings: clock: qcom: Fix SM8450 videocc incorrect header file
+    name
+  dt-bindings: clock: qcom: Add SM8650 video clock controller
+  clk: qcom: videocc-sm8550: Add support for videocc XO clk ares
+  clk: qcom: videocc-sm8550: Add SM8650 video clock controller
+  dt-bindings: clock: qcom: Fix the incorrect order of SC8280XP camcc
+    header
+  dt-bindings: clock: qcom: Add SM8650 camera clock controller
+  clk: qcom: camcc-sm8650: Add SM8650 camera clock controller driver
+  arm64: dts: qcom: sm8650: Add video and camera clock controllers
+
+ .../bindings/clock/qcom,sm8450-camcc.yaml     |    5 +-
+ .../bindings/clock/qcom,sm8450-videocc.yaml   |    6 +-
+ arch/arm64/boot/dts/qcom/sm8650.dtsi          |   26 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/camcc-sm8650.c               | 3591 +++++++++++++++++
+ drivers/clk/qcom/videocc-sm8550.c             |  156 +-
+ include/dt-bindings/clock/qcom,sm8650-camcc.h |  195 +
+ .../dt-bindings/clock/qcom,sm8650-videocc.h   |   23 +
+ 9 files changed, 4004 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/clk/qcom/camcc-sm8650.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8650-camcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm8650-videocc.h
+
 -- 
-2.40.1
+2.43.0
 
