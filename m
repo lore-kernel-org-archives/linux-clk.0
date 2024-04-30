@@ -1,203 +1,123 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8471012B176;
-	Tue, 30 Apr 2024 11:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75442171651;
+	Tue, 30 Apr 2024 12:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714474889; cv=none; b=sAPb9p5hIQ7vShLAzQwh2vAYJ0+RAJknr6OgAfyrVZtvJAdTKWYrVCx/XpniQnryFE4Fk3OG0B9KrT4cM2EGJHveCmx7ayP1JbDUxzhEKzv3nM33PbLQCgzeluDf2a9M8VZzB0YGHiBswf23dg25qUCYk3OiJLvh69jIiqftxA0=
+	t=1714480440; cv=none; b=tC8K2p0O3hvhodiwFQAZxm6w/wzANY/w7yuiVrP0Zm2+D5TJHlEP5uvsSTogOdo7gzBryZDmD6gkgdbZVjuJ5yP4byZiUA5/BHcBUh5mgezb/yuhCDGF9qaTAF+OgPWjDOMGUitV0jqEgIvIQPMYjnnBF+gK3Mi8slnR+xmcAYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714474889; c=relaxed/simple;
-	bh=b7L3j9BEHAkxTo0bCpfLzXEMvT1DErHSzv9yS4zjp54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sfCQtU0JtpVRSQX2ZLWUKBLm+ktKiTbFviIJch28ImofYn4jTCRGf/GV5Bf1j5G8RpfTvUc/rL7ULjwYm/LQJwGMi/fS1UfGGqFI4I/TCuGslhEQSjH4R4tvnkcsuh1tAR/2n1mcS0sS0AuRZUZkX4w8Q4ghmnflXeZQbqSvi9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g9jzemwm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1714480440; c=relaxed/simple;
+	bh=Xke9Wt5xdH4CMo48znE40GyJi3Rdh/q4/CRf0XVY7v4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L8xMoM/ZAPlmXrGxCTN9aFOw2uWZBPWaIzdEFhIpdEB7hOQwMz84mbqCYfi/nSmnfgy5U8Hw5xyXy+Z2w3wBqy9K7iYHMGv3ty4thUcLptimkME8e2GR/y4pvcn3fvslDQaA8MoOYUKgG4UlePTqKBJRazKAojABcvAR/6uKn9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXp2AlzZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g9jzemwm"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43U2voaN020937;
-	Tue, 30 Apr 2024 11:01:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=X7Rc8KFfx4MULlBzEIo2WCl6G9Jhr+x3S4V3+nxxJ0I=; b=g9
-	jzemwmF0MBxixChOcktgYpOoYgjEeXXBEAJCeFb7VX/AyAkUJCOEKHrQNap430hE
-	BIqZqNiI95eR5xXg6gPATc4euYIE54DwPLu5Q0LgVYtqiXGl9ITLA0WqLzbo0YYZ
-	vThcNilzhoaZKxHUXd1iE/bN0cZSDRjmQL/QpsPPdnAK7wcgk18no/FnN+wrz1me
-	6arn5jGiDqAQ5FU9g1GWDwR8gPsWSXVkEUSa7jeWSaljxFkgyXVioXsIF59Iz+L5
-	h5KjncCa7nCYNjQht4TDgYREkUPf+7XXHJGoGndzEEKg+lMbcxzNtWes2JLEi25U
-	dgNc9VW7s81hjj+Kap5g==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xtb6058bb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Apr 2024 11:01:16 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43UB1FJt008836
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Apr 2024 11:01:15 GMT
-Received: from [10.218.10.146] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 30 Apr
- 2024 04:01:10 -0700
-Message-ID: <2679710d-46a9-8544-afff-8a406fdde918@quicinc.com>
-Date: Tue, 30 Apr 2024 16:31:06 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXp2AlzZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED54C4AF1C;
+	Tue, 30 Apr 2024 12:33:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714480440;
+	bh=Xke9Wt5xdH4CMo48znE40GyJi3Rdh/q4/CRf0XVY7v4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fXp2AlzZAmzzyRzcNk0Qc2QGH8wJUeRefSipXDQHEOQCn89f+zTCnsGV871blvQap
+	 GSgoGPeSp91NLV3TXaD9ZIakz9gJ9jbQixk/3+s5WZZLSiX4nhmxYkgb70r4wwV+rE
+	 UEdrMr3uO3N7MNGJnTGJicCTaxhSTqqoZgjv1C1v2q7IR4JNJGvvi7l6peGlkqPX2j
+	 9z6V8tSrejQSVE9E2VUjFL66YaG26YMKSJ/sk6ePXpOfHjyamgxmmNpd8b/5M+Zild
+	 HzU4k6t8N+SDGwG4XpW4gW94Nb9VMsQrHDS3VM5ZutMIRKDskULVy3vuTUZcK+iJzL
+	 GIWV7nkWfI4rw==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e0a34b2899so22369561fa.3;
+        Tue, 30 Apr 2024 05:33:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV5NFFVOowoDVxXyI2qzBhFG/4Ia1irLqyNtjvMf/J39zk4P1Ys//lhOZtW0faXhHGllDH2ACAyE0S9EcImRjf+/ejjkC3nGuDgkmhe+/gBJIaaQEYExKcMDgZBU+lEaJYEHxy8JfDG1PIY66dG4CgVJxhmz/YiQplLxU4FoFEeOpuf0Q==
+X-Gm-Message-State: AOJu0YxqXomz1iiTfXeq8P95f9uX5Oxd3CcsyQj2zIIl+abKsavOjG3N
+	8qBgkI//9d8N/2fyo3RJt0kNLOoI37bTYIL/QusXUZZxHYzZTEvJfesLsz65U4IbuMg22w47QFR
+	AS727O+I+yK5lir2qASJ3sofHSg==
+X-Google-Smtp-Source: AGHT+IG3oNca8uS9A87U2+LG/S+8nKcOL/HqwB8fsDHjItlda7aJZYKjnTbfdgzZLkUwElJN2Dt7XyAgvk7V59QJVmY=
+X-Received: by 2002:a2e:8196:0:b0:2df:4bad:cb7a with SMTP id
+ e22-20020a2e8196000000b002df4badcb7amr9145433ljg.0.1714480438215; Tue, 30 Apr
+ 2024 05:33:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH V2 7/8] clk: qcom: Add GPUCC driver support for SM4450
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        "Satya Priya Kakitapalli"
-	<quic_skakitap@quicinc.com>
-References: <20240416182005.75422-1-quic_ajipan@quicinc.com>
- <20240416182005.75422-8-quic_ajipan@quicinc.com>
- <CAA8EJpqwrKcgm7c57=LpxS7+CfrN2UxNg8k_46auBrdZG7vQnA@mail.gmail.com>
- <ca017ebf-c099-b436-f062-1341f765a08c@quicinc.com>
- <CAA8EJporZFsjagW5CU5AwtqDsEXTtGJmRmLRedyBTZa7249p6w@mail.gmail.com>
-From: Ajit Pandey <quic_ajipan@quicinc.com>
-In-Reply-To: <CAA8EJporZFsjagW5CU5AwtqDsEXTtGJmRmLRedyBTZa7249p6w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: zUIEbfvjTV0biSb-FapWKHtNTfURCUKw
-X-Proofpoint-ORIG-GUID: zUIEbfvjTV0biSb-FapWKHtNTfURCUKw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-30_04,2024-04-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 bulkscore=0 suspectscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 mlxlogscore=999 spamscore=0 phishscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404300079
+References: <20240425183810.3079069-1-robh@kernel.org> <9e1195f05f4eced0a158c49616deba6a.sboyd@kernel.org>
+In-Reply-To: <9e1195f05f4eced0a158c49616deba6a.sboyd@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 30 Apr 2024 07:33:45 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJUMPMv8YuRgaWL+1it07vrn-U0nLckMkPPVF-QzJOcew@mail.gmail.com>
+Message-ID: <CAL_JsqJUMPMv8YuRgaWL+1it07vrn-U0nLckMkPPVF-QzJOcew@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: fixed: Define a preferred node name
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 29, 2024 at 7:11=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+>
+> Quoting Rob Herring (Arm) (2024-04-25 11:38:09)
+> > diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b=
+/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> > index b0a4fb8256e2..d287bd092054 100644
+> > --- a/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> > @@ -11,6 +11,13 @@ maintainers:
+> >    - Stephen Boyd <sboyd@kernel.org>
+> >
+> >  properties:
+> > +  $nodename:
+> > +    anyOf:
+> > +      - description: Preferred name is 'clock-<freq>'
+>
+> Is the preferred value of <freq> the clock-frequency property? Should
+> say that explicitly somehow so that it's clear.
+
+Yes, will add.
+
+> > +        pattern: "^clock-([0-9]+|[a-z0-9-]+)$"
+> > +      - description: Any name allowed
+> > +        deprecated: true
+> > +
+> >    compatible:
+> >      const: fixed-clock
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/fixed-factor-clock=
+.yaml b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+> > index 8f71ab300470..962a1fe85416 100644
+> > --- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+> > @@ -11,6 +11,14 @@ maintainers:
+> >    - Stephen Boyd <sboyd@kernel.org>
+> >
+> >  properties:
+> > +  $nodename:
+> > +    anyOf:
+> > +      - description:
+> > +          Preferred name is 'clock-<freq>' if the input frequency is f=
+ixed
+>
+> Similar question here. Is <freq> supposed to be the output clock frequenc=
+y?
+
+Yes.
+
+>
+> > +        pattern: "^clock-([0-9]+|[0-9a-z-]+)$"
+> > +      - description: Any name allowed
+> > +        deprecated: true
+>
+> I hope that deprecating this doesn't cause folks to try to clean things
+> up and then break code that's depending on the node name to be the name
+> of the clk. We don't want that string name to be important but it is
+> sometimes.
+
+Right. Leaving things as-is is the intent. We won't be enabling any
+"no deprecated" mode by default when it is added.
 
 
-
-On 4/26/2024 3:05 PM, Dmitry Baryshkov wrote:
-> On Fri, 26 Apr 2024 at 12:20, Ajit Pandey <quic_ajipan@quicinc.com> wrote:
->>
->>
->>
->> On 4/17/2024 11:35 AM, Dmitry Baryshkov wrote:
->>> On Tue, 16 Apr 2024 at 21:23, Ajit Pandey <quic_ajipan@quicinc.com> wrote:
->>>>
->>>> Add Graphics Clock Controller (GPUCC) support for SM4450 platform.
->>>>
->>>> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
->>>> ---
->>>>    drivers/clk/qcom/Kconfig        |   9 +
->>>>    drivers/clk/qcom/Makefile       |   1 +
->>>>    drivers/clk/qcom/gpucc-sm4450.c | 805 ++++++++++++++++++++++++++++++++
->>>>    3 files changed, 815 insertions(+)
->>>>    create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
->>>
->>> [skipped]
->>>
->>>> +
->>>> +static int gpu_cc_sm4450_probe(struct platform_device *pdev)
->>>> +{
->>>> +       struct regmap *regmap;
->>>> +
->>>> +       regmap = qcom_cc_map(pdev, &gpu_cc_sm4450_desc);
->>>> +       if (IS_ERR(regmap))
->>>> +               return PTR_ERR(regmap);
->>>> +
->>>> +       clk_lucid_evo_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
->>>> +       clk_lucid_evo_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
->>>> +
->>>> +       /* Keep some clocks always enabled */
->>>> +       qcom_branch_set_clk_en(regmap, 0x93a4); /* GPU_CC_CB_CLK */
->>>> +       qcom_branch_set_clk_en(regmap, 0x9004); /* GPU_CC_CXO_AON_CLK */
->>>> +       qcom_branch_set_clk_en(regmap, 0x900c); /* GPU_CC_DEMET_CLK */
->>>
->>> My main concern here is the AON clocks. If we don't model
->>> gpu_cc_demet_clk as a leaf clock, then gpu_cc_demet_div_clk_src
->>> becomes a clock without children and can be disabled by Linux.
->>> Likewise not modelling gpu_cc_cxo_aon_clk removes one of the voters on
->>> gpu_cc_xo_clk_src, which can now be turned off by Linux.
->>> Our usual recommendation is to model such clocks properly and to use
->>> CLK_IS_CRITICAL or CLK_IGNORE_UNUSED to mark then as aon.
->>>
->> Thanks for review, actually if leaf (branch) clock is ON, hardware will
->> take care of enabling and keeping the parent ON. So parent clocks won't
->> get turned OFF in HW as long as branch clock is enabled.
->>
->> For clocks which are fixed rate (19.2MHz) and recommended to be kept ON
->> forever from HW design, modelling and exposing clock structure in kernel
->> will be a redundant code in kernel memory, hence as per earlier
->> suggestion in previous thread such clocks are recommended to be kept
->> enabled from probe.
-> 
-> Recommended by whom?
-> 
-> Kernel developers clearly recommend describing all the clocks so that
-> CCF has knowledge about all the clocks in the system.
-
-Actually it's been recommended earlier by Stephen during initial 
-discussion on moving such critical clocks to probe to avoid redundant 
-codes in kernel memory. From then we're following similar approach in 
-other mainlined CC's drivers for fixed rate clocks which needs to kept 
-enabled always - eg: DISP_CC_XO_CLK (keeping bits enabled in probe) in 
-SM8450, SM8650 etc.
-
-> 
->>>> +
->>>> +       return qcom_cc_really_probe(pdev, &gpu_cc_sm4450_desc, regmap);
->>>> +}
->>>> +
->>>> +static struct platform_driver gpu_cc_sm4450_driver = {
->>>> +       .probe = gpu_cc_sm4450_probe,
->>>> +       .driver = {
->>>> +               .name = "gpucc-sm4450",
->>>> +               .of_match_table = gpu_cc_sm4450_match_table,
->>>> +       },
->>>> +};
->>>> +
->>>> +module_platform_driver(gpu_cc_sm4450_driver);
->>>> +
->>>> +MODULE_DESCRIPTION("QTI GPUCC SM4450 Driver");
->>>> +MODULE_LICENSE("GPL");
->>>> --
->>>> 2.25.1
->>>>
->>>>
->>>
->>>
->>
->> --
->> Thanks, and Regards
->> Ajit
-> 
-> 
-> 
-
--- 
-Thanks, and Regards
-Ajit
+Rob
