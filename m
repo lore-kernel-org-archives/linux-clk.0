@@ -1,153 +1,150 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1083E181323
-	for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 18:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EE8199E9B
+	for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 20:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714502825; cv=none; b=UeCFAWHkKm6gAQw73vjaFu+AkN/OzqEoYsTs57gEXobqydhKoBaJ9qldktF6pkRU9ItodWFnqTGrZKILl/8VGJahpbPI2tqKQHCWRr98bZCexewVR3MPfuvQ2GVzKj10nuHODNrHe1hnnaE09ia5UE1L9W/FNLedreYysja1dQ8=
+	t=1714507324; cv=none; b=fHFutQhwkkfl8hMlbrmKRCGNoRKUBmZ+F7jbN66hquf3BZjc/+N4G2M6i6nFaYNGFn0bstyHvDK34I+/eFHJsz3HVsu5pBjIa/d+WduQkcu5UQMvqjGzaBlSKWN//jmmoyvnaDkwPHW1q7au0UjDrVzi9/xZNFjqYpDMdE9Oab8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714502825; c=relaxed/simple;
-	bh=oFbvGomouOb8wzM7GcwTJ0k1uS7OddQR4amzfZvK6FE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VuaN3qDhuYHWPhYoUYXlTf6fxWhMzuOAKd+siHJUrN3Cf+glivlfiZwQT32/RUD9BODLSYJ4tMIEUVPy5S6TBXTlAkThvQpPdWf7FjhvTeF+MXA6xhAbNxaswCfz/Kkpsv5Y4vZgQsjGHQ7LtapsPiLOPjfRx0D4YABNmm60/sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z/Gy4o4A; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1714507324; c=relaxed/simple;
+	bh=FN4XZtRK0P9gi48Gwo7LIStjuliRry5RBF8jsmm8jZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ghjN0r9C81DNGXQ/mAsCo7ELhQakyFfyipw8dzam2TzUVEp4edLgVXi91yYxHc7B0TVl8hKVc208x7t5MK17cuTtxIppCMM5RRqhHN9IzgDLNRnoj3vbvU4Wo/+N+wz2TXWQCalRns8OczvecVstgJkeIkShxkgTjnJz9vqJE5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=knhSYUpA; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z/Gy4o4A"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51abf1a9332so8322813e87.3
-        for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 11:47:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="knhSYUpA"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51dc5c0ffdbso3092611e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 13:02:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714502822; x=1715107622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZGUPpr9ka2yo3ECRl+7yFv4d0kGzQn5S5/kDIVOZE0U=;
-        b=Z/Gy4o4ALnVTB50fcnzVJRekAWA8JElRd1LZWx7MZNlwBW/ol/ZIZXqq8qR/lC3ap/
-         j6wEc/wg8XFLD5CpPpo6zFCEoe16+jBDFkFnnI41eOQZXSYtWdtEAuboWfsHxgVmvWwa
-         UNWri2oHx9t9l1yThFgiaNMSRHmn5RScj3Ws06YY7EPc8c+t16Z9Y09nsu5Y8wkSGm6C
-         grSweDJtdnt+ZwXh7aLdT29clKYBd+Ozy7Sw8M1mEqZ9y3CYWleRpZTGKEDqE7zc9tRL
-         sM80VAkswi4BGVecbaYfQPUtACFiziUl8TvBneo6+4NiqY7wgiIwURiiwLf6wAmAdPvi
-         ICvQ==
+        d=linaro.org; s=google; t=1714507320; x=1715112120; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=kVY1R1hSDj9BybRi8F7BevcWL48GJ1yftHwTF1g1Te0=;
+        b=knhSYUpAAckd9dqMS3wKtLx75xhiqM2Hebdo2W1obKaveMictqMAA7TilQFAx30IIO
+         a8beY7bQHys9RzTTO5Gxm3zpHWP1UIZFw7IMXds/6soL94Pb6DU9QqFf7p+wqwRD3ryF
+         3qLtc7VnlXRGOvsUzSGoB+35QfQjdz8y8RgG1ISqvsZFDrkiqLoIe4kQPd5+nu9fge67
+         0ECl5pI8mdsLraB5i0QvWAJrjgrZZmd2uWVCO9WeiZ3fQXWjzvK1Wdp9j2LkOEdii+DF
+         HpIEfWjA5b7vLT55Bi86MXsKq+aYiSbKhz5aJxYCuqU+y++kPe5oGKSv9KV6G79U9msy
+         CLwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714502822; x=1715107622;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZGUPpr9ka2yo3ECRl+7yFv4d0kGzQn5S5/kDIVOZE0U=;
-        b=Cs0BvVk3UQYA5TWODP0Ku1XmTcZHl06AaTokCt6PL3sRWK5osnq3FRkEoe9P8+ZnjC
-         7dMnss9oAF7vUMZdN82sZvOyLr1e6/ZNAEuun79/u6P5/rHS0Fb4hoFzByLP+PlcRuFv
-         4Vjh9Onx2GcuW+xfcKR5qP90G/fy6BWZyNarJs4VwU1XPVNcmAL6EGQ7imp9A4kV4hv5
-         ZL/+hKYOZFyaueFaoQCis8mzC2M+ZXUsSsfE+Ub5wNOgWMp+w1mD53M1KaxlnUH4nLA2
-         4M/PW2EcDc6C+BqegVh7/KeqU6lXepHikyP1o6qSp6OxuZh7d+Ytf3eH+FNnP3+IgOUv
-         +1Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtftBK451TrJbHC5BMzWBlfwQ9h7Cjd5Q+KaxAn936XJtsY+kRDkoHAAiuwHe21xx1pzUvAwA8VZ+UQtVoVfZS/obw97TcJ1JM
-X-Gm-Message-State: AOJu0YxWjgIWvMK7gz+154bNP6H481WlH8ckvPvp64StR+Vw4bBiIlhd
-	OANnsZf4I7SQVJAyaUrYhXqm9ae18pa0ZOw/AY2AczYx42SkDCqmhGdrSwx0jeo=
-X-Google-Smtp-Source: AGHT+IG4e1N5kGq9RemNty3JjtAiFeV19cBEznK7pJz0Dw3AMf8mPmfPXykgRg20OdNXsoggOTEmfg==
-X-Received: by 2002:a05:6512:3b8f:b0:51c:22fb:182f with SMTP id g15-20020a0565123b8f00b0051c22fb182fmr266000lfv.13.1714502821885;
-        Tue, 30 Apr 2024 11:47:01 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id wg7-20020a17090705c700b00a55b17418ebsm11331493ejb.89.2024.04.30.11.47.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 11:47:01 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [GIT PULL fixes PATCH] clk: samsung: Revert "clk: Use device_get_match_data()"
-Date: Tue, 30 Apr 2024 20:46:56 +0200
-Message-ID: <20240430184656.357805-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1714507320; x=1715112120;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kVY1R1hSDj9BybRi8F7BevcWL48GJ1yftHwTF1g1Te0=;
+        b=loy0ZMjM7by1q2m4K9k95K45ubFQuPb0+obuAb94LRai5Kmxr7QOyRTpZzJBGs9fxE
+         4MM9ynmYczdJNH4Ctpf4eR6NDXf+LhaMr1NDfvum3jOuCRmkOStBkBByvhimQvc9uTX1
+         xLKNA1Ti122UUz0sKcU9cbls98Y3fwzZWqDIOPw+UEnbito1hWfRMfOyNYPkDUdKV+MP
+         hSvUDkbi55xtIcwolJPBQK+RuWcQGHrkd2biGSUvWPiBxZ6snOt2PHmnDcxaktiqBMMx
+         6sJ4p68vUapkIemtxqILcW+DdhMiHAtWZTH/rS/WheUFVjCqfu4eDAAywnpLwfdq2M67
+         u1VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfpzKYOXwY1gs7z9evboZvZCiabdgtzgrXugZP+VVbkDbjJbIguIKS6gAGitQOy8YX7BbeCqkHFQOcfK2g+RKpwmlvo6rNtj3P
+X-Gm-Message-State: AOJu0Ywohn1Nm5xjixXMprJXYU94RKLCTIj1sxIXAzjX6mezHT0PF9CR
+	/rMyROpue/+iJvF430p5g6xS4pvY9E6G3oMhKAGuH8LfTTqjqKQAaFo3qrGD3Lk=
+X-Google-Smtp-Source: AGHT+IFPkr89m6eEs/CQkai3hgCL6srE2z30lROhrlCeAec8GfnC5xMtf5satxWc2lPGSwEL1Lquxw==
+X-Received: by 2002:ac2:54b3:0:b0:51d:15ef:dc10 with SMTP id w19-20020ac254b3000000b0051d15efdc10mr278416lfk.41.1714507320280;
+        Tue, 30 Apr 2024 13:02:00 -0700 (PDT)
+Received: from [192.168.114.15] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
+        by smtp.gmail.com with ESMTPSA id h20-20020a170906591400b00a51d3785c7bsm15409877ejq.196.2024.04.30.13.01.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Apr 2024 13:01:59 -0700 (PDT)
+Message-ID: <d36c1163-a3f0-4034-a430-91986e5bbce8@linaro.org>
+Date: Tue, 30 Apr 2024 22:01:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 RESEND 5/5] venus: pm_helpers: Use
+ dev_pm_genpd_set_hwmode to switch GDSC mode on V6
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>,
+ Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Andy Gross <agross@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-pm@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20240413152013.22307-1-quic_jkona@quicinc.com>
+ <20240413152013.22307-6-quic_jkona@quicinc.com>
+ <5c78ad52-524b-4ad7-b149-0e7252abc2ee@linaro.org>
+ <b96ef82c-4033-43e0-9c1e-347ffb500751@quicinc.com>
+ <a522f25f-bb38-4ae1-8f13-8e56934e5ef5@linaro.org>
+ <dbd1b86c-7b5f-4b92-ab1f-fecfe1486cfc@quicinc.com>
+ <621dbaaa-6b86-45b5-988e-a6d9c39b13d7@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <621dbaaa-6b86-45b5-988e-a6d9c39b13d7@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+On 24.04.2024 11:50 AM, Bryan O'Donoghue wrote:
+> On 24/04/2024 10:45, Jagadeesh Kona wrote:
+>>
+>> Thanks Bryan for testing this series. Can you please confirm if this issue is observed in every run or only seen during the first run? Also please let me know on which platform this issue is observed?
+>>
+>> Thanks,
+>> Jagadeesh
+> 
+> rb5/sm8250
+> 
+> My observation was on a previous _boot_ the stuttering was worse. There is in the video capture three times that I count where the video halts briefly, I guess we need to vote or set an OPP so the firmware knows not to power-collapse quite so aggressively.
 
-device_get_match_data() function should not be used on the device other
-than the one matched to the given driver, because it always returns the
-match_data of the matched driver. In case of exynos-clkout driver, the
-original code matches the OF IDs on the PARENT device, so replacing it
-with of_device_get_match_data() broke the driver.
+We seem to be having some qualcomm-wide variance on perf/pwr usage on some
+odd boots.. Any chance you could try like 5 times and see if it was a fluke?
 
-This has been already pointed once in commit 2bc5febd05ab ("clk: samsung:
-Revert "clk: samsung: exynos-clkout: Use of_device_get_match_data()"").
-To avoid further confusion, add a comment about this special case, which
-requires direct of_match_device() call to pass custom IDs array.
-
-This partially reverts commit 409c39ec92a35e3708f5b5798c78eae78512cd71.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 409c39ec92a3 ("clk: Use device_get_match_data()")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Link: https://lore.kernel.org/r/20240425075628.838497-1-m.szyprowski@samsung.com
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
-
-Hi Stephen,
-
-Please take this patch into current fixes v6.9.
-
-Best regards,
-Krzysztof
-
-
- drivers/clk/samsung/clk-exynos-clkout.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 3484e6cc80ad..503c6f5b20d5 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -13,9 +13,9 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm.h>
--#include <linux/property.h>
- 
- #define EXYNOS_CLKOUT_NR_CLKS		1
- #define EXYNOS_CLKOUT_PARENTS		32
-@@ -84,17 +84,24 @@ MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
- static int exynos_clkout_match_parent_dev(struct device *dev, u32 *mux_mask)
- {
- 	const struct exynos_clkout_variant *variant;
-+	const struct of_device_id *match;
- 
- 	if (!dev->parent) {
- 		dev_err(dev, "not instantiated from MFD\n");
- 		return -EINVAL;
- 	}
- 
--	variant = device_get_match_data(dev->parent);
--	if (!variant) {
-+	/*
-+	 * 'exynos_clkout_ids' arrays is not the ids array matched by
-+	 * the dev->parent driver, so of_device_get_match_data() or
-+	 * device_get_match_data() cannot be used here.
-+	 */
-+	match = of_match_device(exynos_clkout_ids, dev->parent);
-+	if (!match) {
- 		dev_err(dev, "cannot match parent device\n");
- 		return -EINVAL;
- 	}
-+	variant = match->data;
- 
- 	*mux_mask = variant->mux_mask;
- 
--- 
-2.43.0
-
+Konrad
