@@ -1,123 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75442171651;
-	Tue, 30 Apr 2024 12:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70030172BBF;
+	Tue, 30 Apr 2024 14:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714480440; cv=none; b=tC8K2p0O3hvhodiwFQAZxm6w/wzANY/w7yuiVrP0Zm2+D5TJHlEP5uvsSTogOdo7gzBryZDmD6gkgdbZVjuJ5yP4byZiUA5/BHcBUh5mgezb/yuhCDGF9qaTAF+OgPWjDOMGUitV0jqEgIvIQPMYjnnBF+gK3Mi8slnR+xmcAYU=
+	t=1714486592; cv=none; b=Pmx9adVH8aulzjjPCxBSvRMz8B1nQ5i47+RXVGa67dz2s8koJcBWXVn+S8JuzF1zF4+1QF8mgaAV1dXI+mBUrCWu5P/4QPimtGCwvI80MMey+6c1DFjJASPoiQ2VvR1MeBpFNWZNPFzGhIONB4OTChg8MdMHbtUYbJNCk5INpZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714480440; c=relaxed/simple;
-	bh=Xke9Wt5xdH4CMo48znE40GyJi3Rdh/q4/CRf0XVY7v4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L8xMoM/ZAPlmXrGxCTN9aFOw2uWZBPWaIzdEFhIpdEB7hOQwMz84mbqCYfi/nSmnfgy5U8Hw5xyXy+Z2w3wBqy9K7iYHMGv3ty4thUcLptimkME8e2GR/y4pvcn3fvslDQaA8MoOYUKgG4UlePTqKBJRazKAojABcvAR/6uKn9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXp2AlzZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714486592; c=relaxed/simple;
+	bh=VnGje2vsuNNX86eGecKjoz4Ax6Vr3kuQDPJzyTb3N4E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Npfk3x1e2J4ds/2y1UbFeWxxGhEw1jQoPzNOpDTxRy7BAZQEaObQGf8x4p/SsuNp61NrZ2iBAEmsEiJsOVP9J/NsLshU/UQgrCN6h5LjVzfmI4aasHyGKkL5O7xjPGIjF4VZ6x01y6FRZC4g+nQQHkHFriexOpNf88tERopiq50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eM33BEt2; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXp2AlzZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED54C4AF1C;
-	Tue, 30 Apr 2024 12:33:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714480440;
-	bh=Xke9Wt5xdH4CMo48znE40GyJi3Rdh/q4/CRf0XVY7v4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fXp2AlzZAmzzyRzcNk0Qc2QGH8wJUeRefSipXDQHEOQCn89f+zTCnsGV871blvQap
-	 GSgoGPeSp91NLV3TXaD9ZIakz9gJ9jbQixk/3+s5WZZLSiX4nhmxYkgb70r4wwV+rE
-	 UEdrMr3uO3N7MNGJnTGJicCTaxhSTqqoZgjv1C1v2q7IR4JNJGvvi7l6peGlkqPX2j
-	 9z6V8tSrejQSVE9E2VUjFL66YaG26YMKSJ/sk6ePXpOfHjyamgxmmNpd8b/5M+Zild
-	 HzU4k6t8N+SDGwG4XpW4gW94Nb9VMsQrHDS3VM5ZutMIRKDskULVy3vuTUZcK+iJzL
-	 GIWV7nkWfI4rw==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e0a34b2899so22369561fa.3;
-        Tue, 30 Apr 2024 05:33:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV5NFFVOowoDVxXyI2qzBhFG/4Ia1irLqyNtjvMf/J39zk4P1Ys//lhOZtW0faXhHGllDH2ACAyE0S9EcImRjf+/ejjkC3nGuDgkmhe+/gBJIaaQEYExKcMDgZBU+lEaJYEHxy8JfDG1PIY66dG4CgVJxhmz/YiQplLxU4FoFEeOpuf0Q==
-X-Gm-Message-State: AOJu0YxqXomz1iiTfXeq8P95f9uX5Oxd3CcsyQj2zIIl+abKsavOjG3N
-	8qBgkI//9d8N/2fyo3RJt0kNLOoI37bTYIL/QusXUZZxHYzZTEvJfesLsz65U4IbuMg22w47QFR
-	AS727O+I+yK5lir2qASJ3sofHSg==
-X-Google-Smtp-Source: AGHT+IG3oNca8uS9A87U2+LG/S+8nKcOL/HqwB8fsDHjItlda7aJZYKjnTbfdgzZLkUwElJN2Dt7XyAgvk7V59QJVmY=
-X-Received: by 2002:a2e:8196:0:b0:2df:4bad:cb7a with SMTP id
- e22-20020a2e8196000000b002df4badcb7amr9145433ljg.0.1714480438215; Tue, 30 Apr
- 2024 05:33:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eM33BEt2"
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 43UECFHR010344;
+	Tue, 30 Apr 2024 14:16:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : content-transfer-encoding
+ : mime-version; s=pp1; bh=aYJ3Kt9c1VzZVEbwIY2J3w38JrUTcaE16SfYcftkq5k=;
+ b=eM33BEt2s1CrqyJ8/PJsfz8A5enMTgibxiszTdTzQts6IxnOZqknRg1NPl0YuiEDzjQb
+ EdKvgSQ9LwfWZF94EHYEDJRjkKepuXKpfJ5B64k3plmxZpFCVdGi7ekIdnVqr+SwDCqN
+ QoMTZQg5Z6Cnj0Kj5PLxXsz6eGyLFv/+wh02SkqVvSpRCTw+pqK6DZzDL0NVODIQMdKV
+ xOZi34UqOTiu1JiAl+Xs07zAbQ97sYAh5J5QwZC804JaFk/Ah1cbGhoS0sYPmQ435Cp0
+ xx411gqN7oyeuCBRm9lc5bp57s1TOXRaNmp3Xahj3WjuLbeXIVmFv+7yMHfj00stm225 QQ== 
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xu221r0x5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Apr 2024 14:16:15 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 43UE0G77022177;
+	Tue, 30 Apr 2024 14:16:14 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xsd6mn90s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Apr 2024 14:16:14 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 43UEGAT536241686
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Apr 2024 14:16:12 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4F67B20073;
+	Tue, 30 Apr 2024 14:16:10 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E6BF92004D;
+	Tue, 30 Apr 2024 14:16:09 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 30 Apr 2024 14:16:09 +0000 (GMT)
+From: Heiko Carstens <hca@linux.ibm.com>
+To: linux-s390@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
+        Linux Regressions <regressions@lists.linux.dev>, imx@lists.linux.dev,
+        Abel Vesa <abelvesa@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Anders Roxell <anders.roxell@linaro.org>, peng.fan@nxp.com
+Subject: [PATCH] clk: imx: imx8mp: Add missing CONFIG_PM ifdefs
+Date: Tue, 30 Apr 2024 16:16:09 +0200
+Message-Id: <20240430141609.2244416-1-hca@linux.ibm.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <CA+G9fYuP7S+a89Ep5g5_Ad69EMwRkJ8nM+MMTzbEcP+6H2oMXQ@mail.gmail.com>
+References: <CA+G9fYuP7S+a89Ep5g5_Ad69EMwRkJ8nM+MMTzbEcP+6H2oMXQ@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: pJou94LF_Dl22Dca5rhnWdRvx8EVHD0a
+X-Proofpoint-ORIG-GUID: pJou94LF_Dl22Dca5rhnWdRvx8EVHD0a
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240425183810.3079069-1-robh@kernel.org> <9e1195f05f4eced0a158c49616deba6a.sboyd@kernel.org>
-In-Reply-To: <9e1195f05f4eced0a158c49616deba6a.sboyd@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 30 Apr 2024 07:33:45 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJUMPMv8YuRgaWL+1it07vrn-U0nLckMkPPVF-QzJOcew@mail.gmail.com>
-Message-ID: <CAL_JsqJUMPMv8YuRgaWL+1it07vrn-U0nLckMkPPVF-QzJOcew@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: fixed: Define a preferred node name
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-04-30_08,2024-04-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
+ lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 clxscore=1011 bulkscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2404300101
 
-On Mon, Apr 29, 2024 at 7:11=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wro=
-te:
->
-> Quoting Rob Herring (Arm) (2024-04-25 11:38:09)
-> > diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b=
-/Documentation/devicetree/bindings/clock/fixed-clock.yaml
-> > index b0a4fb8256e2..d287bd092054 100644
-> > --- a/Documentation/devicetree/bindings/clock/fixed-clock.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
-> > @@ -11,6 +11,13 @@ maintainers:
-> >    - Stephen Boyd <sboyd@kernel.org>
-> >
-> >  properties:
-> > +  $nodename:
-> > +    anyOf:
-> > +      - description: Preferred name is 'clock-<freq>'
->
-> Is the preferred value of <freq> the clock-frequency property? Should
-> say that explicitly somehow so that it's clear.
+Add missing CONFIG_PM ifdefs to fix this allmodconfig compile error:
 
-Yes, will add.
+drivers/clk/imx/clk-imx8mp-audiomix.c:356:12: error:
+'clk_imx8mp_audiomix_runtime_suspend' defined but not used
+[-Werror=unused-function]
+  356 | static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
 
-> > +        pattern: "^clock-([0-9]+|[a-z0-9-]+)$"
-> > +      - description: Any name allowed
-> > +        deprecated: true
-> > +
-> >    compatible:
-> >      const: fixed-clock
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/fixed-factor-clock=
-.yaml b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
-> > index 8f71ab300470..962a1fe85416 100644
-> > --- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
-> > @@ -11,6 +11,14 @@ maintainers:
-> >    - Stephen Boyd <sboyd@kernel.org>
-> >
-> >  properties:
-> > +  $nodename:
-> > +    anyOf:
-> > +      - description:
-> > +          Preferred name is 'clock-<freq>' if the input frequency is f=
-ixed
->
-> Similar question here. Is <freq> supposed to be the output clock frequenc=
-y?
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Closes: https://lore.kernel.org/r/CA+G9fYuP7S+a89Ep5g5_Ad69EMwRkJ8nM+MMTzbEcP+6H2oMXQ@mail.gmail.com
+Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power saving")
+Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+---
+ drivers/clk/imx/clk-imx8mp-audiomix.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Yes.
+diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
+index 574a032309c1..6549e55e94c9 100644
+--- a/drivers/clk/imx/clk-imx8mp-audiomix.c
++++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+@@ -217,6 +217,8 @@ struct clk_imx8mp_audiomix_priv {
+ 	struct clk_hw_onecell_data clk_data;
+ };
+ 
++#ifdef CONFIG_PM
++
+ static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool save)
+ {
+ 	struct clk_imx8mp_audiomix_priv *priv = dev_get_drvdata(dev);
+@@ -232,6 +234,8 @@ static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool save)
+ 	}
+ }
+ 
++#endif /* CONFIG_PM */
++
+ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
+ {
+ 	struct clk_imx8mp_audiomix_priv *priv;
+@@ -353,6 +357,8 @@ static int clk_imx8mp_audiomix_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM
++
+ static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
+ {
+ 	clk_imx8mp_audiomix_save_restore(dev, true);
+@@ -367,6 +373,8 @@ static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
+ 	return 0;
+ }
+ 
++#endif /* CONFIG_PM */
++
+ static const struct dev_pm_ops clk_imx8mp_audiomix_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(clk_imx8mp_audiomix_runtime_suspend,
+ 			   clk_imx8mp_audiomix_runtime_resume, NULL)
+-- 
+2.40.1
 
->
-> > +        pattern: "^clock-([0-9]+|[0-9a-z-]+)$"
-> > +      - description: Any name allowed
-> > +        deprecated: true
->
-> I hope that deprecating this doesn't cause folks to try to clean things
-> up and then break code that's depending on the node name to be the name
-> of the clk. We don't want that string name to be important but it is
-> sometimes.
-
-Right. Leaving things as-is is the intent. We won't be enabling any
-"no deprecated" mode by default when it is added.
-
-
-Rob
