@@ -1,60 +1,61 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB24F1292C8
-	for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 10:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1615712C48B
+	for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 10:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714471539; cv=none; b=ol/dtu3AQznXloC8VymgbpdvLpbNzf7VgCYH8aNbDly3/8cXZ6+OmId3bp9ejxKwFboNi1sAuFNjYvTmIV8bhOjKQXVZoHsZNLSEcRQhiI3yJgcN5KUEDaOSC2kBJQ07/tF9g3hSfEbHHuZ4CnguObkCr81pEQHR7xkknPoNf9Y=
+	t=1714474017; cv=none; b=nBlgIZ6bahBDgARlgOPRtiuawwd2gntXu0ta7JtEQWI/hkAriBHAc/r9EmhY6EaHh5fB9bfZB9QbMmPwgfvxzhcK9Le+N9hkXgO5EJ3xeP9mDqSzPxouWl2iAsrqf2OBszFGQzJN47eyZuhuQ6UU7tzdrgWecLS/RZ8c1mCXEwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714471539; c=relaxed/simple;
-	bh=yjnf9AHRZqMRj34Tm4uXwc28cPM6Ap6BSJeHaNIbUF0=;
+	s=arc-20240116; t=1714474017; c=relaxed/simple;
+	bh=B8tH4tHOKg8ilZvr+0aytqIZjWrAXy+IX+xPonUHaYs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jsjr/GcNsRxp6Cv03X+hRUwYzFNtJNn/+q/ZtQMjKJfNdkm7z5P4LESTNKI9fFGiiHRJDXFvERaPMimP+KkzhsZydkM6u8Oa21kWU0icTaMbx9GJNvo70INlxqamepj/GhansbZ9ytDT9bGWrA0TvyAjbS0EjewndkmGwPJnAGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a/vVu+Cs; arc=none smtp.client-ip=209.85.167.48
+	 In-Reply-To:Content-Type; b=HrjWa/mqEAdYGqU7EbCXDtemmXARCnemi3vx+2H1Qz20ksffSHAdwpo6yqwAuKjTh3W/QOgyhm2I0I2SZOYgKqcVj2BigKHs3YMGS7ejWbPQgtoB5AvX8Ef6Jnea3+mPLwqlccKMUG8X995S4o5wHz0r0E5ow1j/liqPfxuPfKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qvSHSzNl; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a/vVu+Cs"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51e75e7a276so198766e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 03:05:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qvSHSzNl"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57232e47a81so9000224a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 03:46:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714471536; x=1715076336; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1714474014; x=1715078814; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0c2r4ftfYh1i1ily+9Iyry9v4Wnv2g5Jvj7DDy6gfK4=;
-        b=a/vVu+Cs50feEULZioEi+k+nDxq02qErhxZqTgON5eMER9w942bejdaUHXsCveG8ie
-         O5bVgldlx+lOIQNZQxcUhTWbkVNpxcMdmKZC095ssw2WRwqWV8X0DaNVudL1dUUwqdp3
-         r2EAsjKIQJrM2ZXQRUH41e9sffrtlzG9H4XpFQdmFpFWj9f9wrbVbe6HZNAU9bfPC6pJ
-         6Rz++k2oPsfT7RU6WQznZnuMyBMAv0ZJN2h43gQV7XoITu+8QYY3cHf2LgCssKrnpcSy
-         9y7TBFvFvkih5MOSAuhQfZ591VnpQSR1QcDnN1HYy6Et0SgiCth7ZlYZzOihkQB/OFYy
-         J7eA==
+        bh=IZYTIT0ZxYvFVL0Ba4inDvmHjA+bwSS4lh+A5ZZwfbg=;
+        b=qvSHSzNl8NVoagC+OlLY58nXDxoa//hSBKYC2aGwzwkHjJvvCaZTAtSvrZ9bOpQMlp
+         XrCVq1zcA+cui64ugUY4uO7uEbtqOGUmJzX/IZu+njUwD5y3vEItGkYfIhQ9TzQfpZ7z
+         EDN20mdh/lMsPAecfUSXuXFMTdzkmt28+UVogExGKaxdYiOPmpudqi/fjnczZokOEDSR
+         DQ1pjgkNVT2DOGqYZeTuw0PmFweTJz75oThYMgrWeULTodvTzjfDGCqT7Cr41f2+crOR
+         fafo0ytqlXRSiNT+v52bcRWdBx3zbd0M9kBFNXMNmRd3krOWlj+IDOIKCp/lHuJ+oSFY
+         a/AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714471536; x=1715076336;
+        d=1e100.net; s=20230601; t=1714474014; x=1715078814;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0c2r4ftfYh1i1ily+9Iyry9v4Wnv2g5Jvj7DDy6gfK4=;
-        b=Gq6RXhsYQzEBDo5DcOpW7vcVAy/GQq6gAfkpPi0qagD9m20pRViXNjP45q9wHU6NMR
-         raqJ83YA0ROYX/q8P8YvCEy/9FMTFOQWpK8mfulh0glYQvtpCE4KZS6CtNmyRODcROk7
-         448rYu4aFgQWOkyh7PIIss38s66z3yR9dNJb8L2oXIUzFyhKCyFT5gpxLfNXSTnCblgi
-         cjoU0nf4sGVpT89S9862ErCtpQXeIa7PxLBs2vXVtd+NQ1b43rYqBwy1rv2P6EVmbME8
-         JQFPiOy/Gi0ZvlwJtHdOABnGcNPA3zKuUA1fnDspkuuOiWcv53Ho3QKHmuGxQxYvwcBI
-         kYUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEHX/1Y1OTuyDctKVfPmtqnxLI+iC4ndjfl0dwK+8SfD1WhAEvJbd2ab91r32lyaWBn+diGcL8Gkaz7aXVGDg7z/rtq69ZK5d0
-X-Gm-Message-State: AOJu0Yy8UZWLo8yBaQoW79jILLlioWDm+1Y8WeU4CBKsP871Qh/O026A
-	NAFBRrvN756/8STf8x6UFIASvAj+UOgWYVPk9EmzBb+vgKp1aSJ14KajBsTG7iU=
-X-Google-Smtp-Source: AGHT+IGwoRnxtInvigRnSf3xrL3fTWc2gzyovUQB8J5oNTSn7LjfiqRATlNm+qPBQg6sV5IYrs/Wlg==
-X-Received: by 2002:ac2:5586:0:b0:51c:cfae:afd0 with SMTP id v6-20020ac25586000000b0051ccfaeafd0mr7262972lfg.21.1714471535866;
-        Tue, 30 Apr 2024 03:05:35 -0700 (PDT)
+        bh=IZYTIT0ZxYvFVL0Ba4inDvmHjA+bwSS4lh+A5ZZwfbg=;
+        b=Yf2nmASemwATueEX1gDyBCvnI2W7a1q64W7XN/J0dynl2FZH5JAGlLzbV2vhavuh42
+         +NcJ6DIBGgSphzIIE35ICARYXH7Z1rFVgxSfCSQgNeLQ7I/6zOH6kd1ybGFFzOipgNWz
+         bIpSDAUcCOsp6HXxALczw0O80G3+lZJ/3C6Y88wVEMzdrNTlGXjzD9542clo37+3blo1
+         ksTILl/VKZROjW3N0ptv/cAo7obEWQKa2pa14lBWvkVMr4bplVOW6yrWgRnELoWqCBtw
+         NNNVHYi9TL+X6FSCJrB7SD0Avbh0hR48l01fIwK6tCN29UuDkUiW7ZecYJMwihdHLaB0
+         hdOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMLQNbjVGq6tLnH7KTV46MMy39Nzho37GD6GLNxIjTNziE+XV2iQq2mygrN9olTas9EzIrvE1LktB0flyzq1EpAwdqO+8J5a/n
+X-Gm-Message-State: AOJu0Yzn+t7ondQTPFXpozpoQVpDSYmKIVq7ouQiP6z8f9NbEeM06nOI
+	T/10rug++CdgKWSmEv4FPT/0g22/JccKeZnU06pQCDmquw0pSWfbBPPLg9VtNY++SgLRmhKwsBX
+	r19E=
+X-Google-Smtp-Source: AGHT+IGHREn1JaANpEdDeLUVzNKKpT7XKa7oQeDihO/eWTk3yelFKyiSXlfuL8ed/Gcdg+lvCMbQaA==
+X-Received: by 2002:a50:cccc:0:b0:570:5e98:64b7 with SMTP id b12-20020a50cccc000000b005705e9864b7mr2284381edj.17.1714474014354;
+        Tue, 30 Apr 2024 03:46:54 -0700 (PDT)
 Received: from [192.168.114.15] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id bv19-20020a170906b1d300b00a58eabf6082sm3724816ejb.199.2024.04.30.03.05.30
+        by smtp.gmail.com with ESMTPSA id fe12-20020a056402390c00b0057297f5935dsm465618edb.57.2024.04.30.03.46.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Apr 2024 03:05:35 -0700 (PDT)
-Message-ID: <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
-Date: Tue, 30 Apr 2024 12:05:29 +0200
+        Tue, 30 Apr 2024 03:46:54 -0700 (PDT)
+Message-ID: <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org>
+Date: Tue, 30 Apr 2024 12:46:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,19 +63,15 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
- ability to gcc
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, djakov@kernel.org,
- dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
+Subject: Re: [PATCH] clk: qcom: gcc-sm8450: set OPS_PARENT_ENABLE on
+ gcc_sdcc2_apps_clk_src
+To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Vinod Koul <vkoul@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240418092305.2337429-1-quic_varada@quicinc.com>
- <20240418092305.2337429-7-quic_varada@quicinc.com>
- <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
- <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com>
+ linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org>
+ <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -112,72 +109,65 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com>
+In-Reply-To: <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
-> On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
+On 30.04.2024 2:21 AM, Stephen Boyd wrote:
+> Quoting Konrad Dybcio (2024-04-27 05:01:07)
+>> Similar to how it works on other SoCs, the top frequency of the SDHCI2
+>> core clock is generated by a separate PLL (peculiar design choice) that
+>> is not guaranteed to be enabled (why does the clock framework not handle
+>> this by default?).
 >>
->>
->> On 4/18/24 11:23, Varadarajan Narayanan wrote:
->>> IPQ SoCs dont involve RPM in managing NoC related clocks and
->>> there is no NoC scaling. Linux itself handles these clocks.
->>> However, these should not be exposed as just clocks and align
->>> with other Qualcomm SoCs that handle these clocks from a
->>> interconnect provider.
->>>
->>> Hence include icc provider capability to the gcc node so that
->>> peripherals can use the interconnect facility to enable these
->>> clocks.
->>>
->>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->>> ---
->>
->> If this is all you do to enable interconnect (which is not the case,
->> as this patch only satisfies the bindings checker, the meaningful
->> change happens in the previous patch) and nothing explodes, this is
->> an apparent sign of your driver doing nothing.
+>> Add the CLK_OPS_PARENT_ENABLE flag to make sure we're not muxing the
+>> RCG input to a dormant source.
 > 
-> It appears to do nothing because, we are just enabling the clock
-> provider to also act as interconnect provider. Only when the
-> consumers are enabled with interconnect usage, this will create
-> paths and turn on the relevant NOC clocks.
+> The RCG2 hardware hasn't required the parent to be enabled for clk
+> operations besides for the glitch-free source switch. What scenario is
+> happening here that's requiring this flag? Is the RCG forcibly enabled
+> perhaps because the bootloader has left the root enable bit set
+> (CMD_ROOT_EN)? Or are we changing the parent while the clk framework
+> thinks the clk is off when it is actually on?
+> 
+> TL;DR: This is papering over a bigger bug.
 
-No, with sync_state it actually does "something" (sets the interconnect
-path bandwidths to zero). And *this* patch does nothing functionally,
-it only makes the dt checker happy.
+Definitely.
 
-> 
-> This interconnect will be used by the PCIe and NSS blocks. When
-> those patches were posted earlier, they were put on hold until
-> interconnect driver is available.
-> 
-> Once this patch gets in, PCIe for example will make use of icc.
-> Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
-> 
-> The 'pcieX' nodes will include the following entries.
-> 
-> 	interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
-> 			<&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
-> 	interconnect-names = "pcie-mem", "cpu-pcie";
 
-Okay. What about USB that's already enabled? And BIMC/MEMNOC?
+Take a look at:
 
-> 
->> The expected reaction to "enabling interconnect" without defining the
->> required paths for your hardware would be a crash-on-sync_state, as all
->> unused (from Linux's POV) resources ought to be shut down.
->>
->> Because you lack sync_state, the interconnects silently retain the state
->> that they were left in (which is not deterministic), and that's precisely
->> what we want to avoid.
-> 
-> I tried to set 'sync_state' to icc_sync_state to be invoked and
-> didn't see any crash.
+static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
+	F(400000, P_BI_TCXO, 12, 1, 4),
+	F(25000000, P_GCC_GPLL0_OUT_EVEN, 12, 0, 0),
+	F(50000000, P_GCC_GPLL0_OUT_EVEN, 6, 0, 0),
+	F(100000000, P_GCC_GPLL0_OUT_EVEN, 3, 0, 0),
+	F(202000000, P_GCC_GPLL9_OUT_MAIN, 4, 0, 0),
+	{ }
+};
 
-Have you confirmed that the registers are actually written to, and with
-correct values?
+XO and GPLL0 are more or less always on, but GPLL9 is described to only
+be used for this specific clock for this specific frequency (perhaps it
+feeds something else on the soc but that's besides the point).
+
+Then, the parent input is changed during set_rate, but GPLL9 seems to
+never be enabled:
+
+
+@@ -3272,6 +3274,8 @@ static int gcc_sm8450_probe(struct platform_device *pdev)
+        if (IS_ERR(regmap))
+                return PTR_ERR(regmap);
+ 
++       pr_err("GPLL9 is %s at boot\n", trion_pll_is_enabled(&gcc_gpll9, regmap) ? "enabled" : "disabled");
++
+        ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+                                       ARRAY_SIZE(gcc_dfs_clocks));
+        if (ret)
+
+
+(+ cruft to make this callable) results in a:
+
+[    1.637318] GPLL9 is disabled at boot
+
 
 Konrad
