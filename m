@@ -1,48 +1,50 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DBE14AAD;
-	Wed,  1 May 2024 08:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87E81E4A1;
+	Wed,  1 May 2024 08:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714552369; cv=none; b=f/HKqBDdQDOgXsQ7BdWWLf+5J6dazE1WQ5unXG9/phOqZwdDd10ha+7HUvilO13qb1Zr/3Vr9DUXRb+EEyxMgc14Gek4Aq9a9MplRyiP3OMdYKtR/s/spb8MG6F775oZCBhhZxd6WAyR3JiPOxJ0Dlisd1nm5k0XINTnOSiJdbg=
+	t=1714552370; cv=none; b=uF/mSPiXVj/6zvJW7NUVU2taWT1v53SSJrQweLiFP2eKKsnoCdngiA3fqRthtq7sfsH3znW4OyRTKojXMVbo/sfVV79I38YVaKLzx3RbMTAYJikOo7WPxDPm1EzJc1QOHZeSmezXDd0BSO7YoqT5isFzePd7Q/Oz5omVKDDocHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714552369; c=relaxed/simple;
-	bh=RuXNAG1lXnKCvaqPxD3w7ZeY0eoB0xdldgqEftwwyIA=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=tJtgWeZhaUPbwc+1nXL0LOWOZW509CCLfj+aZX0m4DonxWlt8WSJQWXwLKqBTmsDxrOKct4ST59XGRm5/YNmp9X9DHWqvXF1nZm7fMJUWmO+IIDRheNpA0qHWGxBq0jv4y2uN0SS846rs7U1Fw9aKqzhUDKKwMyGwD301o9N5pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bIbPdIrn; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1714552370; c=relaxed/simple;
+	bh=BekQdQptTQpvGpRyGlUbj2l5mkL6Bnv5K9rBAJ8HL1U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=lfQGjNKPSoOWZh3JuiOPOaby62sSUk2YHqd4vCJO7VEUSet4mYUtaEmzNXaYr/bdL70ewRdP0/dnFKDo6xJTuXEKrUL4irJgDZm0SZB7StfMysTP229uKfKdP3Gi9p8vaWJt+XpdD1xP/u/CmyIbKX654kvFnIGGEfPy5ryVGJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Mwl0Fo47; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bIbPdIrn"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4415cttO012053;
-	Wed, 1 May 2024 08:32:29 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Mwl0Fo47"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4417feQL004388;
+	Wed, 1 May 2024 08:32:39 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:subject:date:message-id:mime-version:content-type
-	:content-transfer-encoding:to:cc; s=qcppdkim1; bh=cZcnwkyu4CHae9
-	2lh6KDDACsglcNCH9BQvm5KKokaEM=; b=bIbPdIrnu9kAIL94mLFz7beWWkqmVH
-	8jOn1EYvDuuRBNtvdD0ALDJceqUCIsES8OgNNz8hLaRmqix6AaOsBB+dpUWxWem9
-	xKIlpE3Anz6Ji9qz4oWaHX38qnaGmlW/kJwpE/osus2lFoFcR5f0lnH6BtGVoPWM
-	h8gs0IA9685Tr/EbRn0HMVLjDb0PZFoj6yf+SCTUMYDhbmOPPidrBcu/Mww/kRDv
-	roGnlLHNTzzNNWYi2IsfC+LpdYjOv4ggy6boziHCfete10CrfeEavlte+S+5nvkh
-	10qm3UpjTe4wUiN5+8lk+rC6iBTShq6ktLUppKLczxoBMO4spv4PehtA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xu71j92w7-1
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:references:in-reply-to:to
+	:cc; s=qcppdkim1; bh=5aovpYcRm3B2nPdzz98yDMi5tfJer7t+Yw3vCW5iLVU
+	=; b=Mwl0Fo4767jT0wfP0GlVsZTWROYnF5V+cbPW/N84vkR7GK2DMt51T79zvc/
+	tSiPNf0fmKRQ5YdOxFnf47R9FNDKLyvPkXC6eCUv7oFcE0bHTkIdps4KXmy8Cbx1
+	0bmXbeDv9ToZPlnIJtaZ/bJ2+/DBa+kRCs8goZhbgVGw8/C08poMHANXFRl23T9f
+	gYt5Yb899MREy3GbPvP4sG2W2XHKTVpac6yF0eI8RVp25T59LWu/AhaIRAQVlZbQ
+	l1LnjvMATU6nqle14ENUt8z+v1pCo2oG9u6cUL/Z4DqFm+aNrBaZd3Z+ID2N8veI
+	XjcWFkqIf5mM1f/3aRcJvtQ83/A==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xudkkrg7q-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 01 May 2024 08:32:29 +0000 (GMT)
+	Wed, 01 May 2024 08:32:38 +0000 (GMT)
 Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4418WSGL008791
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4418WbWq005888
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 1 May 2024 08:32:28 GMT
+	Wed, 1 May 2024 08:32:37 GMT
 Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
  nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 1 May 2024 01:32:23 -0700
+ 15.2.1544.9; Wed, 1 May 2024 01:32:33 -0700
 From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Subject: [PATCH v3 0/2] Add DT support for video clock controller on SM8150
-Date: Wed, 1 May 2024 14:02:17 +0530
-Message-ID: <20240501-videocc-sm8150-dt-node-v3-0-2c4bd9ef48bd@quicinc.com>
+Date: Wed, 1 May 2024 14:02:19 +0530
+Subject: [PATCH v3 2/2] arm64: dts: qcom: sm8150: Add video clock
+ controller node
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,10 +53,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABL+MWYC/3XNQQ6CMBCF4auQrq1ppwjVlfcwLmA6yCygSrHRE
- O5uISbGBcv/JfPNJAINTEGcskkMFDmw71OYXSawrfobSXapBSjIlVFWRnbkEWXorD4o6UbZe0e
- yaHRh6vwITYkiHd8Havi1wpdr6pbD6If3+ifqZf2S2myRUUslK7KEBi0AwvnxZOQe9+g7saARf
- lCu9CYECTK1LdFB5dyx+Ifmef4ANBUAogcBAAA=
+Message-ID: <20240501-videocc-sm8150-dt-node-v3-2-2c4bd9ef48bd@quicinc.com>
+References: <20240501-videocc-sm8150-dt-node-v3-0-2c4bd9ef48bd@quicinc.com>
+In-Reply-To: <20240501-videocc-sm8150-dt-node-v3-0-2c4bd9ef48bd@quicinc.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio
 	<konrad.dybcio@linaro.org>,
@@ -82,45 +83,71 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OroXDFL1kL9S_q2kNk2a2Sf4E2WmxpzI
-X-Proofpoint-ORIG-GUID: OroXDFL1kL9S_q2kNk2a2Sf4E2WmxpzI
+X-Proofpoint-ORIG-GUID: AJqPRkw9mEaCrmfIZTI2fHNEVg-Mkv0z
+X-Proofpoint-GUID: AJqPRkw9mEaCrmfIZTI2fHNEVg-Mkv0z
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
  definitions=2024-05-01_08,2024-04-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=708 bulkscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- clxscore=1015 malwarescore=0 classifier=spam adjust=0 reason=mlx
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ impostorscore=0 bulkscore=0 phishscore=0 mlxlogscore=938
+ priorityscore=1501 clxscore=1015 mlxscore=0 suspectscore=0
+ lowpriorityscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.19.0-2404010003 definitions=main-2405010059
+
+Add device node for video clock controller on Qualcomm
+SM8150 platform.
 
 Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 ---
-Changes in v3:
-- Adding the required-opps property back, which was removed in v2.
-- This is needed because the lowest power state for MMCX on sm8150 platform
-  is retention, but we want to enable the power domain in low_svs not retention.
-- Link to v2: https://lore.kernel.org/r/20240401-videocc-sm8150-dt-node-v2-0-3b87cd2add96@quicinc.com
+ arch/arm64/boot/dts/qcom/sa8155p.dtsi |  4 ++++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi  | 14 ++++++++++++++
+ 2 files changed, 18 insertions(+)
 
-Changes in v2:
-- As per Dmitry's comments, there is no need to update to index based
-  lookup for already existing drivers, hence keeping clock-names property.
-- Updated the videocc bindings to add AHB clock for the sm8150 platform.
-- Link to v1: https://lore.kernel.org/r/20240313-videocc-sm8150-dt-node-v1-0-ae8ec3c822c2@quicinc.com
+diff --git a/arch/arm64/boot/dts/qcom/sa8155p.dtsi b/arch/arm64/boot/dts/qcom/sa8155p.dtsi
+index ffb7ab695213..9e70effc72e1 100644
+--- a/arch/arm64/boot/dts/qcom/sa8155p.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8155p.dtsi
+@@ -38,3 +38,7 @@ &rpmhpd {
+ 	 */
+ 	compatible = "qcom,sa8155p-rpmhpd";
+ };
++
++&videocc {
++	power-domains = <&rpmhpd SA8155P_CX>;
++};
+diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+index a35c0852b5a1..55c9046f4fb9 100644
+--- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+@@ -14,6 +14,7 @@
+ #include <dt-bindings/clock/qcom,dispcc-sm8150.h>
+ #include <dt-bindings/clock/qcom,gcc-sm8150.h>
+ #include <dt-bindings/clock/qcom,gpucc-sm8150.h>
++#include <dt-bindings/clock/qcom,videocc-sm8150.h>
+ #include <dt-bindings/interconnect/qcom,osm-l3.h>
+ #include <dt-bindings/interconnect/qcom,sm8150.h>
+ #include <dt-bindings/thermal/thermal.h>
+@@ -3715,6 +3716,19 @@ usb_2_dwc3: usb@a800000 {
+ 			};
+ 		};
+ 
++		videocc: clock-controller@ab00000 {
++			compatible = "qcom,sm8150-videocc";
++			reg = <0 0x0ab00000 0 0x10000>;
++			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "iface", "bi_tcxo";
++			power-domains = <&rpmhpd SM8150_MMCX>;
++			required-opps = <&rpmhpd_opp_low_svs>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
++		};
++
+ 		camnoc_virt: interconnect@ac00000 {
+ 			compatible = "qcom,sm8150-camnoc-virt";
+ 			reg = <0 0x0ac00000 0 0x1000>;
 
----
-Satya Priya Kakitapalli (2):
-      dt-bindings: clock: qcom: Add AHB clock for SM8150
-      arm64: dts: qcom: sm8150: Add video clock controller node
-
- .../devicetree/bindings/clock/qcom,videocc.yaml         | 17 ++++++++++++++++-
- arch/arm64/boot/dts/qcom/sa8155p.dtsi                   |  4 ++++
- arch/arm64/boot/dts/qcom/sm8150.dtsi                    | 14 ++++++++++++++
- 3 files changed, 34 insertions(+), 1 deletion(-)
----
-base-commit: 8ffc8b1bbd505e27e2c8439d326b6059c906c9dd
-change-id: 20240308-videocc-sm8150-dt-node-6f163b492f7c
-
-Best regards,
 -- 
-Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+2.25.1
 
