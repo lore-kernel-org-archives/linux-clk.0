@@ -1,178 +1,118 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C5C1BED8D
-	for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 21:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEC337E
+	for <linux-clk@vger.kernel.org>; Wed,  1 May 2024 00:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714514391; cv=none; b=HjIMwTzA+/GVz1gPJqyhNIXDMNhzz8BvqKN+p5D58pMt1fzODdKXOuifV2VpnhogF4+bDEhjadw6HNtKFvpiyU/hOLp53uySDxd8Da5X4jokjYzhIuWjpcAJbo72tSMWIIr+z/3KDDBOK15cH4PFePLh5SQkcGMtZlCBwBvb6pM=
+	t=1714522641; cv=none; b=ZvYIE9eyyGdm3quQXkM9jo1xI3YxkTUMuC0eOymyMM87+3hKWHy76SoqxV1VmK+Bibt9S5BFXFUySklBKkPP79G6ypIX1M1UQkkovyIWAvUYJeyHpWgyWUiFtfumhqnWsD65UnVLMDhQO0AD4LpwXZ4xXkNN8CW3vRSF5aQrUbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714514391; c=relaxed/simple;
-	bh=WjMKI4UZslQKccmIJplzRTJDSbleSPr2wCt6aMSDOzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kZguYqQeSgeDgHfAAiI7Yl8wS2BNXIg7hCjoQejO5dlqymPK+1JWQalVjzR8FFvHqk4tAIcNxFde0OhcWnmywh++NIQ/DwDq8YU+Cr2GedO7rDE1TnIlZr/tJmhezyWJRpfjmLugNw0b+obTvi4+p2udjv9GXzopjZiCYRAyY18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AmnQ+JW9; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1714522641; c=relaxed/simple;
+	bh=1ywHP957dN7QN6N91q0/xp7S+y5cWqGySegerlSjGbo=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UZwB2BzV374kbQUgnBbDKuxunIIRhXbndUXXsyrarQg5MEQAtYoHi4XFcv0byTMlL6mw+HSZT2xRkhCQ/N9497IQhHrXi1nDRvTtuq2GkNcDwKZQQpbJf4v9AHOu9Rli6I2BsCVG4inkTEiLFm13W1BL4ACmDUbpV9HOwL4IPQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=e1mFR0ja; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AmnQ+JW9"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-de596c078c2so6181166276.0
-        for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 14:59:50 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e1mFR0ja"
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-69b5de48126so17898346d6.3
+        for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 17:17:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714514389; x=1715119189; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aitWmRcAVpn7HzPwQhTVKeFU7re+mCUC33ppmlezlfs=;
-        b=AmnQ+JW9Y+6at3/PERebiBD14XIGrSas2RWW/gb6Q7I31NlM7RM6z7evFSZR03Tj5g
-         hbVKbbIk9OR8N4fHbxPpP4zdqUaGGViAJ12N1tnScolB21twraj7bdzRZY3CGGwIFWLs
-         ZW4ferFC5t656guOxx3ZwZoHhJf828/677rDtIhwtqrTXivlGfxPO1oQ8lxtNedgRAO3
-         1/+p4pBm7+rzMX+kXP3rgnRDROxzNq8MJDwTRyLtmiJHSCRgT8Qp9/yfOh3MtrxubET1
-         Ck/C+IGh2ZfXsiAv8BuvVoNSiuqw9h2ZSlYMizymqcsTIbgT5/741R1rYoZwnIP9v+/u
-         nxng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714514389; x=1715119189;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=chromium.org; s=google; t=1714522638; x=1715127438; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aitWmRcAVpn7HzPwQhTVKeFU7re+mCUC33ppmlezlfs=;
-        b=d21pVYQvpabxxduYfaXMYfYvBYR17+tJwNExSsUM2jQRpYE7FKBVCyG7vN4l7tEUEl
-         NAinEnQobC61mQnH9tk06XlQ8sDigqH8DK6lEvt3P0hnSEeA9B+OfT53Lxa0BFfJfefm
-         SPeecg3bwR90SE0vg3iEOBJUIj2hJ3yVp1QqUy2yadylEd/KlpTy4++olJddOfVPnGyK
-         AsuaDlD654m94Gbwngf9WHqmS3ilrhvF9pir/5/TviH6PDiVLY8/z5bDdGGLlUtYf5rD
-         8dqzL7ahu/3Bepnp4AWXShwhxNbUFZ1t1HxR2pzzf4s4jF3oXaOJrHefaQfUOJRPqqrW
-         VcdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+AZ29riIA8vLdwgMzT85BEqUifD0Coklh98K0UK88QraqwJOPUXD5gnUAHBuNNF4sVkCX2i9Fv9j2MnAHcrCswc5YykcK55mp
-X-Gm-Message-State: AOJu0YynV74lOvhf6lxBzV+vWURtvrjsc6TtJ2oKsg00hx9cCN59ga8k
-	OPyGZocQLezZeM1uK9I2zASyFeMwOCSUBtIOHPnWB6hCXiRPGvzCmB0bo9lYqSieBse+96hnhpu
-	lTg262VjqKhBdDud85vNUzHiBQ1Z1fmHINtv4qA==
-X-Google-Smtp-Source: AGHT+IE1KB8yrzrfhVxOHpSzlO3DAENKkQ1zAhecye+ph9WJKSb9t/G7xbAvzC7x1FXX+/8cofgIR2G0w2AQZg8an/o=
-X-Received: by 2002:a25:907:0:b0:dcc:9e88:b15 with SMTP id 7-20020a250907000000b00dcc9e880b15mr878986ybj.41.1714514389105;
- Tue, 30 Apr 2024 14:59:49 -0700 (PDT)
+        bh=1ywHP957dN7QN6N91q0/xp7S+y5cWqGySegerlSjGbo=;
+        b=e1mFR0jabgWyWSAAUL/bOSqHjDXedFTVZkyjI5G14PwDfAHUkLiQYu8mygH22XkAkd
+         NaEGUFZyOnK2jOTEjv6bVM8qCWYF6qKG9kRKf3fSGUiukhVKezMmrJuPjc02mRMwoZqK
+         4HBcSa+NtowSV9UqTdGcO9mRihWNk3Pjclh08=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714522638; x=1715127438;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1ywHP957dN7QN6N91q0/xp7S+y5cWqGySegerlSjGbo=;
+        b=BMkCMBRr+PwhWa51wEhqWQIPUw9lyVGf3XDdaUE+vota3YHGGXjFSkDmu2sZl6dftV
+         RH44zPBTigbJwvLWghKKtoUWuY0M5kD8Mg47pUdxfayuHAGsxNFEGNgEAN6U7hXVEmtT
+         YtheBlMVW2zTmS4HG4xHY3KDV2vrEnTGt0vecDeur5apzgm1s45YGYzeXYU9zr31APvV
+         oQjQaaVVI/RUVdRszNfSsbibIL71OJwbiLXOiuQLKhJgvedG0mAYXUp7vt4XW3aINOrz
+         sIWLq+RtCVUDy4kd3CrFbA9NK8nLnflcwPObofHC4glR9EmnKwKXPsg67CV2psPtv+LI
+         g4SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUiCSowxGLF51BAkweNxn25mZtWQS3hd0ax+/doeyGwKNLW71P8Z+WR9T/BrCeTa6RstwBqPVlGMKQ/dZOKxyqJstWm7FJ76IxY
+X-Gm-Message-State: AOJu0YxRMrx0JfA2SIagSsNtu78g77HDmklBU5vYdhkO1sThSl1/nhth
+	fnXYOMzcRY25evl27LfS/8Dq2vuI1Ndf2dy4rnt365Askgy8ylpbMlmLIUpPbg9Ojyoic1DycRQ
+	f4hTZC24bvI3UXelHy2hHHvz++XoH4d/Yl6P0
+X-Google-Smtp-Source: AGHT+IFHbVqJvW5Quh1nKokc7DOIECNmTOz55NPM4sjfdsU1vArTv7tsX5xChcnAkiqJBSUd0f3wLcvCxkKHa97Wo0U=
+X-Received: by 2002:a05:6214:62c:b0:6a0:cd28:ffaa with SMTP id
+ a12-20020a056214062c00b006a0cd28ffaamr900368qvx.25.1714522638644; Tue, 30 Apr
+ 2024 17:17:18 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 30 Apr 2024 17:17:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415182052.374494-1-mr.nuke.me@gmail.com> <20240415182052.374494-7-mr.nuke.me@gmail.com>
- <CAA8EJpqY1aDZMaeqBULEOD26UeGYbLd8RsA16jZw7zXJ7_oGPQ@mail.gmail.com>
- <6726fa2b-f5fe-10fb-6aab-f76d61f0b3cd@gmail.com> <4a7b1e1d-ac68-4857-8925-f90c9e123fd1@gmail.com>
- <CAA8EJppGW=qyk2P6Z_S=dp0njsCjqZaXjw8qU4MY1HOZR-N=4A@mail.gmail.com>
- <Zi88Hdx6UgBo/gti@hu-varada-blr.qualcomm.com> <CAA8EJpq+Bbws8yH5Xq7rHyA+-=DaCcfEcgUa5RUt2+LWQW0kKg@mail.gmail.com>
- <ZjCQM24T2XIJ6GAR@hu-varada-blr.qualcomm.com> <9d9c569b-2e9c-4fd3-9a1a-50f198bd0884@gmail.com>
-In-Reply-To: <9d9c569b-2e9c-4fd3-9a1a-50f198bd0884@gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 1 May 2024 00:59:37 +0300
-Message-ID: <CAA8EJpocetzWV-xoVzeD7HxkE9s4+iGq7Q-sZz8Ue89YuptdYw@mail.gmail.com>
-Subject: Re: [PATCH v3 6/7] phy: qcom-qmp-pcie: add support for ipq9574 gen3x2 PHY
-To: mr.nuke.me@gmail.com
-Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-clk@vger.kernel.org
+In-Reply-To: <CAD=FV=VLwa0AFsrXXxKGG+hcyW+h7u7-tyg3uoDB8M_XdPti_Q@mail.gmail.com>
+References: <20240327202740.3075378-1-swboyd@chromium.org> <CAD=FV=VLwa0AFsrXXxKGG+hcyW+h7u7-tyg3uoDB8M_XdPti_Q@mail.gmail.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Tue, 30 Apr 2024 17:17:17 -0700
+Message-ID: <CAE-0n51osUcpqqh6o9OhURLbRKjcWbRZT-5oHLi_mwfJsUngEw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Fix a black screen on sc7180 Trogdor devices
+To: Doug Anderson <dianders@chromium.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Laura Nao <laura.nao@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 1 May 2024 at 00:51, <mr.nuke.me@gmail.com> wrote:
+Quoting Doug Anderson (2024-03-28 09:39:54)
 >
-> On 4/30/24 1:31 AM, Varadarajan Narayanan wrote:
-> > On Mon, Apr 29, 2024 at 01:55:32PM +0300, Dmitry Baryshkov wrote:
-> >> On Mon, 29 Apr 2024 at 09:20, Varadarajan Narayanan
-> >> <quic_varada@quicinc.com> wrote:
-> >>>
-> >>> On Wed, Apr 17, 2024 at 12:50:49AM +0300, Dmitry Baryshkov wrote:
-> >>>> On Wed, 17 Apr 2024 at 00:25, Alex G. <mr.nuke.me@gmail.com> wrote:
-> >>>>>
-> >>>>> Hi Dmitry,
-> >>>>>
-> >>>>> On 4/15/24 16:25, mr.nuke.me@gmail.com wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>> On 4/15/24 15:10, Dmitry Baryshkov wrote:
-> >>>>>>> On Mon, 15 Apr 2024 at 21:23, Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> >>>>>>> wrote:
-> >>>>>>>>
-> >>>>>>>> Add support for the gen3x2 PCIe PHY on IPQ9574, ported form downstream
-> >>>>>>>> 5.4 kernel. Only the serdes and pcs_misc tables are new, the others
-> >>>>>>>> being reused from IPQ8074 and IPQ6018 PHYs.
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> >>>>>>>> ---
-> >>>>>>>>    drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 136 +++++++++++++++++-
-> >>>>>>>>    .../phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5.h   |  14 ++
-> >>>>>>>>    2 files changed, 149 insertions(+), 1 deletion(-)
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> [skipped]
-> >>>>>>>
-> >>>>>>>> @@ -2448,7 +2542,7 @@ static inline void qphy_clrbits(void __iomem
-> >>>>>>>> *base, u32 offset, u32 val)
-> >>>>>>>>
-> >>>>>>>>    /* list of clocks required by phy */
-> >>>>>>>>    static const char * const qmp_pciephy_clk_l[] = {
-> >>>>>>>> -       "aux", "cfg_ahb", "ref", "refgen", "rchng", "phy_aux",
-> >>>>>>>> +       "aux", "cfg_ahb", "ref", "refgen", "rchng", "phy_aux",
-> >>>>>>>> "anoc", "snoc"
-> >>>>>>>
-> >>>>>>> Are the NoC clocks really necessary to drive the PHY? I think they are
-> >>>>>>> usually connected to the controllers, not the PHYs.
-> >>>>>>
-> >>>>>> The system will hang if these clocks are not enabled. They are also
-> >>>>>> attached to the PHY in the QCA 5.4 downstream kernel.
-> >>>>
-> >>>> Interesting.
-> >>>> I see that Varadarajan is converting these clocks into interconnects.
-> >>>> Maybe it's better to wait for those patches to land and use
-> >>>> interconnects instead. I think it would better suit the
-> >>>> infrastructure.
-> >>>>
-> >>>> Varadarajan, could you please comment, are these interconnects
-> >>>> connected to the PHY too or just to the PCIe controller?
-> >>>
-> >>> Sorry for the late response. Missed this e-mail.
-> >>>
-> >>> These 2 clks are related to AXI port clk on Aggnoc/SNOC, not
-> >>> directly connected to PCIE wrapper, but it should be enabled to
-> >>> generate pcie traffic.
-> >>
-> >> So, are they required for the PHY or are they required for the PCIe
-> >> controller only?
-> >
-> > These 2 clks are required for PCIe controller only.
-> > PCIE controller need these clks to send/receive axi pkts.
+> I spent a bunch of time discussing this offline with Stephen and I'll
+> try to summarize. Hopefully this isn't too much nonsense...
 >
-> Very interesting information, thank you!
->
-> Dmitry, In light of this information do you want me to move these clocks
-> out of the PHY and into the PCIe controller?
+> 1. We'll likely land the patches downstream in ChromeOS for now while
+> we're figuring things out since we're seeing actual breakages. Whether
+> to land upstream is a question. The first patch is a bit of a hack but
+> unlikely to cause any real problems. The second patch seems correct
+> but it also feels like it's going to cause stuck clocks for a pile of
+> other SoCs because we're not adding hacks similar to the sc7180 hack
+> for all the other SoCs. I guess we could hope we get lucky or play
+> whack-a-mole? ...or we try to find a more generic solution... Dunno
+> what others think.
 
-That's what I was thinking about.
+I think we should hope to get lucky or play whack-a-mole and merge
+something like this series. If we have to we can similarly turn off RCGs
+or branches during driver probe that are using shared parents like we
+have on sc7180.
 
->
-> Alex
->
-> > Thanks
-> > Varada
-> >
-> >>>>> They are named "anoc_lane", and "snoc_lane" in the downstream kernel.
-> >>>>> Would you like me to use these names instead?
-> >>>>
-> >>>> I'm fine either way.
-> >>>>
-> >>
-> >>
-> >>
-> >> --
-> >> With best wishes
-> >> Dmitry
+Put simply, the shared RCG implementation is broken because it reports
+the wrong parent for clk_ops::get_parent() and doesn't clear the force
+enable bit. With the current code we're switching the parent to XO when
+the clk is enabled the first time. That's an obvious bug that we should
+fix regardless of implementing proper clk handoff. We haven't
+implemented handoff in over a decade. Blocking this bug fix on
+implementing handoff isn't practical. Furthermore, we're relying on clk
+consumers to clear that force enable bit by enabling the clk once. That
+doesn't make any sense, although we could use that force enable bit to
+consider the RCG as enabled for clk_disable_unused.
 
+An alternative approach to this series would be to force all shared RCGs
+to be parented to XO at clk registration time, and continue to clear
+that RCG force enable bit. That's sort of what Dmitry was going for
+earlier. Doing this would break anything that's relying on the clks
+staying enabled at some frequency through boot, but that isn't supported
+anyway because clk handoff isn't implemented. It avoids the problem that
+the first patch is for too because XO doesn't turn off causing a clk to
+get stuck on. I can certainly craft this patch up if folks think that's
+better.
 
-
--- 
-With best wishes
-Dmitry
+To ease the transition we can make a new clk_ops for the RCG as well so
+that each SoC has to opt-in to use this behavior. Then we can be certain
+that other platforms aren't affected without being tested first. I'd
+prefer to not do that though because I fear we'll be leaving drivers in
+the broken state for some time.
