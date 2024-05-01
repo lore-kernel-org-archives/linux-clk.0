@@ -1,94 +1,141 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89237C082
-	for <linux-clk@vger.kernel.org>; Wed,  1 May 2024 11:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283E282893
+	for <linux-clk@vger.kernel.org>; Wed,  1 May 2024 12:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714564519; cv=none; b=QZExTyN35nLmMmREDOfBqAGlzJdheTyT8NON0tfpFkmUX8M0iXGvZz4jD01gc2mMV++7G+nRe5bQwCgq7/THMOuQdboNThflQWtVyNvFItxcDIYHKwVRE37ELsnVIq68zQoIweOxIOAlI+PSOwwjp1Rvqd28Ac9kh6OIq/h2P5g=
+	t=1714565223; cv=none; b=CnHWk1zCyEP0V4rV31w8iXPJhqTxz460K1QT2jZIOeJKBU+jm1FunzXmv3nOhotDX3xcEVpzCsIP2W7Na1ypCA2g2b0+K/xyqqoEKPrrL1cQJG0qnypv336zWQ5ZqVX58FmLJiXG9rMYhVOqKOgIKB9yLDP0ByuWnWVp296yqGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714564519; c=relaxed/simple;
-	bh=ChYfHk6ify+07TDm5jzBUraRqbH7mCQfzV+oNs2HYwk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eb4rCOsx9nRbuQ89oyr8rd1b1yqZ6ldHmRVY8rXf8kNSHT0k74WH8nE9hL2o+BLGidc9WdmATBSX22LRlF4H4aFiheSK1RV4JpxN7sNvaG+eSnoWShEhj0vdE0iTKFrSZXz2DcawUgSQmBkCv+V8pKOHJwR8tFLRLHlEnq6atjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NopT6h/1; arc=none smtp.client-ip=209.85.218.53
+	s=arc-20240116; t=1714565223; c=relaxed/simple;
+	bh=u1dlaFlPJ+AaQyl9OQnnDFMsqcgVZH5TuPxFAlJ8bUE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UDByjUk3tptBQRIj+TElCLAAiHDKfehBRwJqEba9aE6/flNOyPSPUkgGbe6hwR6rnHjbdMhqenqhTlsAB2KSfESXQAr2D58iX56VwKaljEQD4zflRT6t8xrP4aY20hU/g0Nlz9oyGufntwExXzTfCvGWHORZdgIXWGDMVXWncR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a02aGNCL; arc=none smtp.client-ip=209.85.219.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NopT6h/1"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a55bf737cecso793364466b.0
-        for <linux-clk@vger.kernel.org>; Wed, 01 May 2024 04:55:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a02aGNCL"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-de61424f478so1890983276.0
+        for <linux-clk@vger.kernel.org>; Wed, 01 May 2024 05:07:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714564516; x=1715169316; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r7RQDoC29FuPtm118cUmiAZ7JuokdBHdX7p7hgBcheQ=;
-        b=NopT6h/1OIORon7kn/pvHfJI06iXugnBibSQDfMueL8Rx0iIcXDQATxMDTreWUT9A4
-         wWnRFOoJcGZXWI1wsENoz1Wf1B6qWY72Bm1hkWU4dczsXEIj19AF74TIUbJzy5jHprDH
-         tcJBCA7Fr+YoLy+K6/IoUBv/q+uJWg0kuOoo/y9gyPrZWcsNTQeG2Fspiz2/Ikn9kRt+
-         MlUdLmZZML+TueLoRcztfyBCUEaStL+dstB102uTDeKsN0kSB5PIdzyF3JxlPRfaNFSE
-         wmwctadEScOHn1sV0PbtPhEGB9ugpDHYT/m2BPZyQYIHGe3VaLt2DrFJ9KkV29evykWB
-         Srig==
+        d=linaro.org; s=google; t=1714565220; x=1715170020; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mCvDUdkZWf1z1LfPrcItKDo/SV8BQ5Ruhas6l/TQZks=;
+        b=a02aGNCLZBPsPZaT8aAzUDLNUmd7BcIv9zedqYB6qHEXSympFfIetGQESk+uZVXfx0
+         OSWboePE0B96ENxY+3mgT2uAYbeibeve48w7OFuISq+fvzvWPTmQYY9omctr/um0VRFf
+         cKrL2xwLPkx/xWUur/lh9lHjVos5s1DpoK1JnMpFbszxDiNk9VM11WubMHpSX07fN9nr
+         sm98t7X1xNEyO2t1Z1dJNgTXRpmmXA33KcCxiNktAIM1zhExV8V7N6yXKAiVw5Yfzg/e
+         6JDHzbVY2x3j7/IRNuw/riCCt/P/Q5sBtHtv/KIXUcnkkL9V/mzNMUgtQjJdvpE4LqbF
+         x3Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714564516; x=1715169316;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r7RQDoC29FuPtm118cUmiAZ7JuokdBHdX7p7hgBcheQ=;
-        b=mV3P84lV7dzH/nTsE798sR7OkDlWAT9uNgxMRPNNjkyz54BiN0W/DeeEfJceq2l3Oc
-         HAp3kK2EkszRhfA0Zn9QajSiHlcErB07TNERGDQCuvS+45n4HevB3QzbX/nGEMKiByJk
-         QhslKOsfgJqrdtUer4E9LRJL4tdYAh60QlbKNM3ntifyb5mo9VULd+0dgaT0mdvW5lyE
-         Gc7qRRWa7u59x6/dVYfwMvc/Hcp+F6YiGxrLZmtN6z8D92emABp8FnKMH0ZQfKa5k8MC
-         UvALcRoygf2aIGxd2Htl4ArLWBg00tvoSFMEGW4YgXdqjclseqEF2J6N/ZfGV2RfoTUN
-         HavA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFPUHAl5M8Wn2KNNwXqGWf9FZLROsGroOP7IpY2q16GEOqYOHJGRRP10+udz3zKeAiji/IF300upuavYfCh/kp/oPnM+4QAmjg
-X-Gm-Message-State: AOJu0YzNMGRRa6jVlXzK1wcNEfkaF/d+b45a7JWPlNuCJVDjfno8sPxQ
-	y2QVNZ1cNksl51jWpdxQHzIT2tpmlSSUwDFnosovUsPDzCDycWgEtLfTGfoQdDU=
-X-Google-Smtp-Source: AGHT+IHlMLKY3jKZ2nU2LgHTYLCpY/A8uvXf+lbt008EwOuXxiPeBvOWntVRTIbpHf4u2k1V6tf/Aw==
-X-Received: by 2002:a17:906:471a:b0:a58:8d65:65cf with SMTP id y26-20020a170906471a00b00a588d6565cfmr1587742ejq.19.1714564515992;
-        Wed, 01 May 2024 04:55:15 -0700 (PDT)
-Received: from [127.0.1.1] ([62.231.100.236])
-        by smtp.gmail.com with ESMTPSA id js9-20020a17090797c900b00a5884e0ad1asm9508243ejc.33.2024.05.01.04.55.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 May 2024 04:55:15 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: abelvesa@kernel.org, Fabio Estevam <festevam@gmail.com>
-Cc: imx@lists.linux.dev, shengjiu.wang@nxp.com, linux-clk@vger.kernel.org, 
- naresh.kamboju@linaro.org, Fabio Estevam <festevam@denx.de>
-In-Reply-To: <20240429214502.1363592-1-festevam@gmail.com>
-References: <20240429214502.1363592-1-festevam@gmail.com>
-Subject: Re: [PATCH] clk: imx: imx8mp: Switch to RUNTIME_PM_OPS()
-Message-Id: <171456451503.604561.10850984027278876629.b4-ty@linaro.org>
-Date: Wed, 01 May 2024 14:55:15 +0300
+        d=1e100.net; s=20230601; t=1714565220; x=1715170020;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mCvDUdkZWf1z1LfPrcItKDo/SV8BQ5Ruhas6l/TQZks=;
+        b=IyRpl8SYy7bANElCWkJKVLVAL2jqZVZYtr+RGwoS5kXtg2Pgo8XLLEx5m3tVF/QxB2
+         jBFOWwKs/z23+8b2M+rJ4s1V2Ba7BT3kF6YCTCqDn4zFqaNhLXBII/W6SXagg8Yjq+ON
+         n/99mKtRXnjES45n7v4l0w1kaoL61Jv6CLExn9ciaID9mk51jgms+dHWqA4iSn/Yq2rb
+         Y6Z4HJeVXNCrPjZY5rp0eE79wErLc2VW/A7E79aUb7KD5r3wTlW8QEqsRmFMUQlcullq
+         7WJoOigRMjfB34WxvjMtQRj6+QUfrtc/nyH/iT5pBZINFmicJTv/Ip8jKqDHpCwyrsJY
+         Yq5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVFdsmDIO8XnFwXm7u6PwgbOLgaNnak0MqjiuXt5+GEtfMA8RpzlRr5W9OQqgVgbO+2wDldBiDIUCpFgBKvzK1+XYxL0CGY2m3i
+X-Gm-Message-State: AOJu0Yz137zd8G2KOjj9T5zD7MFUu8Uct6JsyByDue4eQfoeGRc+j0LM
+	7e9EAVI82TmZVtjtwayCID2MPAHT+cZJ5baAIC2fGn63o7knXHaAz0p5m8AJ4IG6RyjvIldZxgS
+	5F07uyZLPHeDOFjkrF6HA0g70pfF12Y3s3zA9dQ==
+X-Google-Smtp-Source: AGHT+IFHeR4+6oPbMDpIgLANFPthRRl3FtDwtWeTDKENSgiYemQbaXFo5PkJ4rVesjVGx/goWAJdI8/djjHv/AbyLf4=
+X-Received: by 2002:a25:ac07:0:b0:dcd:3663:b5e5 with SMTP id
+ w7-20020a25ac07000000b00dcd3663b5e5mr1751231ybi.25.1714565220205; Wed, 01 May
+ 2024 05:07:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+References: <20240501-videocc-sm8150-dt-node-v3-0-2c4bd9ef48bd@quicinc.com> <20240501-videocc-sm8150-dt-node-v3-1-2c4bd9ef48bd@quicinc.com>
+In-Reply-To: <20240501-videocc-sm8150-dt-node-v3-1-2c4bd9ef48bd@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 1 May 2024 15:06:48 +0300
+Message-ID: <CAA8EJpotvs3AOYO3ct=_JabBdYDops4Yfdutga9KBAbVPoZ5yw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: qcom: Add AHB clock for SM8150
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+On Wed, 1 May 2024 at 11:32, Satya Priya Kakitapalli
+<quic_skakitap@quicinc.com> wrote:
+>
+> SM8150 videocc needs AHB clock, so update the bindings for sm8150
+> to add the AHB clock.
+>
+> Fixes: 35d26e9292e2 ("dt-bindings: clock: Add YAML schemas for the QCOM VIDEOCC clock bindings")
+
+The tag is incorrect. The mentioned commit didn't add sm8150 bindings,
+so it didn't have a bug.
+
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,videocc.yaml         | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> index 6999e36ace1b..68bac801adb0 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> @@ -75,7 +75,6 @@ allOf:
+>            enum:
+>              - qcom,sc7180-videocc
+>              - qcom,sdm845-videocc
+> -            - qcom,sm8150-videocc
+>      then:
+>        properties:
+>          clocks:
+> @@ -101,6 +100,22 @@ allOf:
+>              - const: bi_tcxo
+>              - const: bi_tcxo_ao
+>
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,sm8150-videocc
+
+Could you please extend the sm8250 case instead of defining a new one?
+Also could you please check if there is a clock (like ahb_clk_src)
+that uses bi_tcxo_ao instead of bi_tcxo? If so, we have to add this
+clock to the bindings even if the driver doesn't use/model it at this
+point.
+
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: AHB
+> +            - description: Board XO source
+> +        clock-names:
+> +          items:
+> +            - const: iface
+> +            - const: bi_tcxo
+> +
+>    - if:
+>        properties:
+>          compatible:
+>
+> --
+> 2.25.1
+>
 
 
-On Mon, 29 Apr 2024 18:45:02 -0300, Fabio Estevam wrote:
-> Replace SET_RUNTIME_PM_OPS() with its modern alternative RUNTIME_PM_OPS().
-> 
-> The combined usage of pm_ptr() and RUNTIME_PM_OPS() allows the
-> compiler to evaluate if the suspend/resume() functions are used at
-> buid time or are simply dead code.
-> 
-> This fixes the following s390 allmodconfig build errors:
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] clk: imx: imx8mp: Switch to RUNTIME_PM_OPS()
-      commit: 57939f392371fc93c203b781807c951018c29606
-
-Best regards,
 -- 
-Abel Vesa <abel.vesa@linaro.org>
-
+With best wishes
+Dmitry
