@@ -1,141 +1,121 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283E282893
-	for <linux-clk@vger.kernel.org>; Wed,  1 May 2024 12:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D6E1F176
+	for <linux-clk@vger.kernel.org>; Wed,  1 May 2024 14:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714565223; cv=none; b=CnHWk1zCyEP0V4rV31w8iXPJhqTxz460K1QT2jZIOeJKBU+jm1FunzXmv3nOhotDX3xcEVpzCsIP2W7Na1ypCA2g2b0+K/xyqqoEKPrrL1cQJG0qnypv336zWQ5ZqVX58FmLJiXG9rMYhVOqKOgIKB9yLDP0ByuWnWVp296yqGo=
+	t=1714574707; cv=none; b=dYeHj5B/ZWQ8dDlH/XMJNv+hXfHhZ3xCeobmwdWsX7ye9JkjPNcC7YGzp7fgCNHoFfitcc1bSRw+kFcthLancn2qAf8L9FBBtpUTmoqnkWB9rNs2ZCEvgCfm/SnZi2nB6rTeYaUAUJj36SFeFXz69L9yViPUImPTx/22we8avfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714565223; c=relaxed/simple;
-	bh=u1dlaFlPJ+AaQyl9OQnnDFMsqcgVZH5TuPxFAlJ8bUE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UDByjUk3tptBQRIj+TElCLAAiHDKfehBRwJqEba9aE6/flNOyPSPUkgGbe6hwR6rnHjbdMhqenqhTlsAB2KSfESXQAr2D58iX56VwKaljEQD4zflRT6t8xrP4aY20hU/g0Nlz9oyGufntwExXzTfCvGWHORZdgIXWGDMVXWncR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a02aGNCL; arc=none smtp.client-ip=209.85.219.175
+	s=arc-20240116; t=1714574707; c=relaxed/simple;
+	bh=OVCEA+sMHIn5t+AmYPlgxoh+k+aWKCTPEhOiftVsSw4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hyitFG5Pq/3J5xliq15LCr13mU5/meb4MKmN+AiB9MKirwJFyCxscjXrVeUAuy1oH5O0D3oYhzR3Q3/4PlBmtAtHGzMZUuOicSSq/JbyfQIJ7CBx62UBBYngfaSvo17kATe/jTNksTyHMStecGwlbZox7cdDOjF/QuUwvug2Ko8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kgZWwbJG; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a02aGNCL"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-de61424f478so1890983276.0
-        for <linux-clk@vger.kernel.org>; Wed, 01 May 2024 05:07:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kgZWwbJG"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-56e1f3462caso8888203a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 01 May 2024 07:45:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714565220; x=1715170020; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mCvDUdkZWf1z1LfPrcItKDo/SV8BQ5Ruhas6l/TQZks=;
-        b=a02aGNCLZBPsPZaT8aAzUDLNUmd7BcIv9zedqYB6qHEXSympFfIetGQESk+uZVXfx0
-         OSWboePE0B96ENxY+3mgT2uAYbeibeve48w7OFuISq+fvzvWPTmQYY9omctr/um0VRFf
-         cKrL2xwLPkx/xWUur/lh9lHjVos5s1DpoK1JnMpFbszxDiNk9VM11WubMHpSX07fN9nr
-         sm98t7X1xNEyO2t1Z1dJNgTXRpmmXA33KcCxiNktAIM1zhExV8V7N6yXKAiVw5Yfzg/e
-         6JDHzbVY2x3j7/IRNuw/riCCt/P/Q5sBtHtv/KIXUcnkkL9V/mzNMUgtQjJdvpE4LqbF
-         x3Rg==
+        d=linaro.org; s=google; t=1714574703; x=1715179503; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=19fONahm4CwkvcFuKCjkaG9ywwBvaJs3VMjRkYN1PAE=;
+        b=kgZWwbJGmyhgPBISUGTPFpfiDJYMIzjRKujJ6vhK6fR8gAZ3F1M43V1HvqYor66iUH
+         bYvl007S20AvuYBj2qtS8hmf68adwXFZZrxZ/jP6hF0fYT8kwLZBoXi+ZaTkAaHSTy/+
+         coBoTG2ew4powGY+ThlABkgHHGTiMOC7Jrj2gYviR4iubf6o/qrSjcpPpn0jnQfbmYdN
+         y3YHuQcTWh8G54LMBXK9G62/4RVQmHtPjMMf0h6TKpngfx3kgbFEh2vK3fQN9/evYlEc
+         Om0NLe9EaHU2WvONVn+7Klba8I2pfIUBNS5I9WvXIH7dSPShJtu6x9kUBVno5YL/d3t+
+         jG0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714565220; x=1715170020;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1714574703; x=1715179503;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mCvDUdkZWf1z1LfPrcItKDo/SV8BQ5Ruhas6l/TQZks=;
-        b=IyRpl8SYy7bANElCWkJKVLVAL2jqZVZYtr+RGwoS5kXtg2Pgo8XLLEx5m3tVF/QxB2
-         jBFOWwKs/z23+8b2M+rJ4s1V2Ba7BT3kF6YCTCqDn4zFqaNhLXBII/W6SXagg8Yjq+ON
-         n/99mKtRXnjES45n7v4l0w1kaoL61Jv6CLExn9ciaID9mk51jgms+dHWqA4iSn/Yq2rb
-         Y6Z4HJeVXNCrPjZY5rp0eE79wErLc2VW/A7E79aUb7KD5r3wTlW8QEqsRmFMUQlcullq
-         7WJoOigRMjfB34WxvjMtQRj6+QUfrtc/nyH/iT5pBZINFmicJTv/Ip8jKqDHpCwyrsJY
-         Yq5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVFdsmDIO8XnFwXm7u6PwgbOLgaNnak0MqjiuXt5+GEtfMA8RpzlRr5W9OQqgVgbO+2wDldBiDIUCpFgBKvzK1+XYxL0CGY2m3i
-X-Gm-Message-State: AOJu0Yz137zd8G2KOjj9T5zD7MFUu8Uct6JsyByDue4eQfoeGRc+j0LM
-	7e9EAVI82TmZVtjtwayCID2MPAHT+cZJ5baAIC2fGn63o7knXHaAz0p5m8AJ4IG6RyjvIldZxgS
-	5F07uyZLPHeDOFjkrF6HA0g70pfF12Y3s3zA9dQ==
-X-Google-Smtp-Source: AGHT+IFHeR4+6oPbMDpIgLANFPthRRl3FtDwtWeTDKENSgiYemQbaXFo5PkJ4rVesjVGx/goWAJdI8/djjHv/AbyLf4=
-X-Received: by 2002:a25:ac07:0:b0:dcd:3663:b5e5 with SMTP id
- w7-20020a25ac07000000b00dcd3663b5e5mr1751231ybi.25.1714565220205; Wed, 01 May
- 2024 05:07:00 -0700 (PDT)
+        bh=19fONahm4CwkvcFuKCjkaG9ywwBvaJs3VMjRkYN1PAE=;
+        b=ilMY/ItA5R7QBzc+bUuFz5fYq2I1zkRSbxwBirzPhdaKOktoj11VIy05cfcV5sRsFa
+         dNGO5QiLsFxUr4q6quvvNmgoFkXxsmOA2vrNM35vDyjKkOvR3ihXKTMN8d7SF6LdcI9h
+         97rmNOlMDG7NAlUYvLJPJo79BhHPZTcwITLX3/7qpYyXLXPI4iascyq+xNZAA8qIU9hN
+         pDaqjvJEffLk9qo+US9ohpvlQdk9SHUN5WbqCp2R+pTRJFmJnnfVrAkbpx7lo5GWUdYg
+         wQyHInDTG6zob6DdjGaUfFKYaup14A/ffYvRDGpI/uzxCpjCxb0nUkz6FK4vcoByF9J5
+         QbOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWp0ZnzLcLfhUf5Ao/8CldnbvA7AEQjtjvgGQXtVEGUZLsbP63F9SbF2bFt8JrFy78RwF9nUn7tnovdVSKXRT3GTKEmEiONRHi8
+X-Gm-Message-State: AOJu0Yyr0dq3Vf1NfLJj53JD4urzIKljPrdps9C8UTFfZml2dR7Q33M4
+	+brNkc3NyDarorWuyzjQ391siy0lmqNlNR39Z5Jh+rDMo5uEY/s7Cxi9gFFbRJg=
+X-Google-Smtp-Source: AGHT+IFWw4+HYpsJ1jIgKWLbzvy0AN2twDF2ubXy00OLPY7mv44CBJ1BKi+rmI9iBBALYYUDnnI0BA==
+X-Received: by 2002:a17:906:a0d4:b0:a51:fec0:23ec with SMTP id bh20-20020a170906a0d400b00a51fec023ecmr1764739ejb.25.1714574702588;
+        Wed, 01 May 2024 07:45:02 -0700 (PDT)
+Received: from hackbox.lan ([62.231.100.236])
+        by smtp.gmail.com with ESMTPSA id e7-20020a170906c00700b00a51bf97e63esm16343266ejz.190.2024.05.01.07.45.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 May 2024 07:45:02 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: imx@lists.linux.dev,
+	NXP Linux Team <linux-imx@nxp.com>,
+	linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.10
+Date: Wed,  1 May 2024 17:44:45 +0300
+Message-Id: <20240501144445.892045-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501-videocc-sm8150-dt-node-v3-0-2c4bd9ef48bd@quicinc.com> <20240501-videocc-sm8150-dt-node-v3-1-2c4bd9ef48bd@quicinc.com>
-In-Reply-To: <20240501-videocc-sm8150-dt-node-v3-1-2c4bd9ef48bd@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 1 May 2024 15:06:48 +0300
-Message-ID: <CAA8EJpotvs3AOYO3ct=_JabBdYDops4Yfdutga9KBAbVPoZ5yw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: qcom: Add AHB clock for SM8150
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 1 May 2024 at 11:32, Satya Priya Kakitapalli
-<quic_skakitap@quicinc.com> wrote:
->
-> SM8150 videocc needs AHB clock, so update the bindings for sm8150
-> to add the AHB clock.
->
-> Fixes: 35d26e9292e2 ("dt-bindings: clock: Add YAML schemas for the QCOM VIDEOCC clock bindings")
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-The tag is incorrect. The mentioned commit didn't add sm8150 bindings,
-so it didn't have a bug.
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->  .../devicetree/bindings/clock/qcom,videocc.yaml         | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-> index 6999e36ace1b..68bac801adb0 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-> @@ -75,7 +75,6 @@ allOf:
->            enum:
->              - qcom,sc7180-videocc
->              - qcom,sdm845-videocc
-> -            - qcom,sm8150-videocc
->      then:
->        properties:
->          clocks:
-> @@ -101,6 +100,22 @@ allOf:
->              - const: bi_tcxo
->              - const: bi_tcxo_ao
->
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,sm8150-videocc
+are available in the Git repository at:
 
-Could you please extend the sm8250 case instead of defining a new one?
-Also could you please check if there is a clock (like ahb_clk_src)
-that uses bi_tcxo_ao instead of bi_tcxo? If so, we have to add this
-clock to the bindings even if the driver doesn't use/model it at this
-point.
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.10
 
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: AHB
-> +            - description: Board XO source
-> +        clock-names:
-> +          items:
-> +            - const: iface
-> +            - const: bi_tcxo
-> +
->    - if:
->        properties:
->          compatible:
->
-> --
-> 2.25.1
->
+for you to fetch changes up to f5072cffb35c122ec85d91ef327fa8814f04297b:
 
+  clk: imx: imx8mp: Convert to platform remove callback returning void (2024-05-01 14:40:49 +0300)
 
--- 
-With best wishes
-Dmitry
+----------------------------------------------------------------
+i.MX clocks changes for 6.10
+
+- Add PM runtime support to i.MX8MP Audiomix
+- Add i.MX95 BLK CTL clock driver
+- Add DT schema for i.MX95 Display Master Block Control
+- Convert to platform remove callback returning void for i.MX8MP
+  Audiomix
+
+----------------------------------------------------------------
+Fabio Estevam (1):
+      clk: imx: imx8mp: Switch to RUNTIME_PM_OPS()
+
+Peng Fan (4):
+      dt-bindings: clock: add i.MX95 clock header
+      dt-bindings: clock: support i.MX95 BLK CTL module
+      dt-bindings: clock: support i.MX95 Display Master CSR module
+      clk: imx: add i.MX95 BLK CTL clk driver
+
+Shengjiu Wang (1):
+      clk: imx: imx8mp: Add pm_runtime support for power saving
+
+Uwe Kleine-König (1):
+      clk: imx: imx8mp: Convert to platform remove callback returning void
+
+ .../bindings/clock/nxp,imx95-blk-ctl.yaml          |  56 +++
+ .../clock/nxp,imx95-display-master-csr.yaml        |  64 +++
+ drivers/clk/imx/Kconfig                            |   7 +
+ drivers/clk/imx/Makefile                           |   1 +
+ drivers/clk/imx/clk-imx8mp-audiomix.c              | 155 +++++++-
+ drivers/clk/imx/clk-imx95-blk-ctl.c                | 438 +++++++++++++++++++++
+ include/dt-bindings/clock/nxp,imx95-clock.h        |  28 ++
+ 7 files changed, 728 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/nxp,imx95-display-master-csr.yaml
+ create mode 100644 drivers/clk/imx/clk-imx95-blk-ctl.c
+ create mode 100644 include/dt-bindings/clock/nxp,imx95-clock.h
