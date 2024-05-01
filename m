@@ -1,119 +1,146 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26DA12FF80
-	for <linux-clk@vger.kernel.org>; Wed,  1 May 2024 16:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521C8DDC9;
+	Wed,  1 May 2024 16:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714580320; cv=none; b=tpAsxRb1CpocgXucYSt/Mecl8Cy24BypWuNeb3Fmj8SdTImpY7WgrZw88VpRMTjLP6zB9C5q9XMSjwFvcLD23bo4rQHxmuz1UAguKGFJdNL67ucK4ltGXCsyhmXbIimDt9xmyTGBA1+RZ3pCiFlt3fvHR+kK74KK84ExE1/K2p0=
+	t=1714581837; cv=none; b=tRst9nypEsM9t3qDtE6xUIJxbI0NWkTl9pd/ZxbRpUfLeNULBtvtIbt0y0a24fy8T5ttUs2gwvtFn0EYzXctIL51FI+l8O+bRVIwH0Rfi+sG6wu98KMK0lKQljZAwkI3pkA4BAhWHuo6Ageh1wVkaiE12qi8Am/MN/NU00EvBFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714580320; c=relaxed/simple;
-	bh=RrsRAJmWysXYR4n1Z7QuovA3tEKIJY2HwJxpKg4/cqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I9rQq3DcqQIFB2sicN4se55EnyQ2dYqkp9a5q5Ew335v20QhedDLq0TZfj9vctOPiHvUIfG+z7NqlujmSCA4CFm2KPgMCt3wFlkCTomVdgN4WFbFwqcJjcQr5o3affncW3ik60ufF7+lQGCJspsG9pcs3b6E8TYGiqXIm4EqIUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FVe1JJuu; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1714581837; c=relaxed/simple;
+	bh=QWcAOLTO8HSRNQR7l2tPRwkVIRhPLH+s6spyTlBFlVA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=p7qlWiM5LdDHjwSSvgGxzrZ0L0rkOvBFeddm5+GHEfbFyZSXDdxvLbOYMLhlmZS3nVYCoijhN0mVuJI0ML4iioYuD0V99BFM3s6pD8Mc2vhVMZ7/smZHSxvTKODnAmnODjVqh6G2TQ1mKBv/pQCmBJQYZ/0lou9BOjtwugGbMXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QXRFrzgS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FVe1JJuu"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6a04bae512aso35384366d6.2
-        for <linux-clk@vger.kernel.org>; Wed, 01 May 2024 09:18:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1714580314; x=1715185114; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RrsRAJmWysXYR4n1Z7QuovA3tEKIJY2HwJxpKg4/cqM=;
-        b=FVe1JJuuwmeJUs0Vbjx+S2qWt8uj0yXY/nTokp3DIy0kOqT2dgy+Kk4ID3SQ1A3jth
-         Qoj6zSpLeFDLCiIWhZkf6Xkz2raTesIi6rpD6DuDQznHSKVnyq1+KJpFPP5Vp+x8FsVT
-         UE8xk+zmprXSvGHkjCh3knKhZWits+3k3FlVI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714580314; x=1715185114;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RrsRAJmWysXYR4n1Z7QuovA3tEKIJY2HwJxpKg4/cqM=;
-        b=S5hFMXx4PkhUNZOwG0TK1qUoGqmi0liDYG3JTOKiKGQcEorqGqL09eyXld6gDRWfQQ
-         aQRtc8qhWT1SXTxi3mTIQZ1Rzr1TybFikj2JagKghm29rqz23q9TB4ENJzGIvtP47pFi
-         XcFI0CTLj/exDE8O2ri2voiUUpnuVCJ1NhgXPd2Bvp8sglMnimTFxpNtyx9rPdSNZULj
-         XK868iL2LPtrYUsvuOu6d9oRe94sCaJaHmm3cxh3+FArFdzWidleL4Jr+G6oo7VlNdzm
-         SoQT212pJPFO6akcWP8gN8bMtFmMsZB/hPYcym1B0R0D/MKlxUE90zCjUzjfJvKAsUJ6
-         FC7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWWTFT48rKkvvoXcEydjBU34RzkaLKd7waiYT4g/VEkzDA3fncX6VThcQGxWZBJ6dWM8V1fFNsBtVOn7VQKWS/bG+0JODwrrVxR
-X-Gm-Message-State: AOJu0Yx8InA74ATPWe01RNtHuI+Dr2GXycC5N10VooeM/dolDJ4UoIrA
-	wzJ7B87Au7AMljJbk8UtpZqxqLyF59JEwBdjeNN7Tl5ODcxpUiRkPksuzauZcmJf3Hgw8+CQGjI
-	=
-X-Google-Smtp-Source: AGHT+IFOdMygGrQO37lmBHrk+r22CD5WcpUedmF/0F7YGuuuaMPRxVM03+EAcXt6cVYUF69/wpv0cA==
-X-Received: by 2002:ad4:5fc7:0:b0:6a0:95a5:cf01 with SMTP id jq7-20020ad45fc7000000b006a095a5cf01mr3618121qvb.19.1714580314441;
-        Wed, 01 May 2024 09:18:34 -0700 (PDT)
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com. [209.85.160.182])
-        by smtp.gmail.com with ESMTPSA id w9-20020a0cfc49000000b006a0eb265a6asm1099422qvp.65.2024.05.01.09.18.33
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 May 2024 09:18:34 -0700 (PDT)
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-439b1c72676so82711cf.1
-        for <linux-clk@vger.kernel.org>; Wed, 01 May 2024 09:18:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfwZLGmSwqfC3zwVNUu6+FGyRtfF41vx2AjzfLvfE/7wupjUn9CPr5z583i1TBXo9QiiPgAfvF9QfQC2eReIMPogb40pF1J1ut
-X-Received: by 2002:ac8:5d8f:0:b0:43a:c84f:5689 with SMTP id
- d15-20020ac85d8f000000b0043ac84f5689mr236131qtx.1.1714580312414; Wed, 01 May
- 2024 09:18:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QXRFrzgS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F64C072AA;
+	Wed,  1 May 2024 16:43:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714581837;
+	bh=QWcAOLTO8HSRNQR7l2tPRwkVIRhPLH+s6spyTlBFlVA=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=QXRFrzgSeRD7793XdFLDK/nIA6hZnOkmMcSnEVzFrhE0kdCOkMEjukGK7LbugYMEE
+	 OQwsbvAcOL5EZxkkO79sGYUko7wA3iS2BGkTxDg+dtqBr/ywp0rHNpcspCzzOE/nMJ
+	 g30O3nsIsdXX/vOPv1O9aP/+bWwk5IBiGebVWcaKdXQubKMRyi0Kap1Ue3fqkH24sW
+	 DpELp/LEH3+Tn1pVFYB0I3ak0+u4eBk5sSPL+qxo+dw8z3wfk6nkp0yYeuLxH555m0
+	 prCTYTd1qQJSWdugkGhW/EabhZ55A1qh/9ealOXZ8+/YOMBT1w2SVZpfaLui8nJMGJ
+	 Qgibg52MlDJtg==
+Message-ID: <621b4545-454f-46d1-8ccb-2d1dc522e8eb@kernel.org>
+Date: Wed, 1 May 2024 18:43:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240327202740.3075378-1-swboyd@chromium.org> <CAD=FV=VLwa0AFsrXXxKGG+hcyW+h7u7-tyg3uoDB8M_XdPti_Q@mail.gmail.com>
- <CAE-0n51osUcpqqh6o9OhURLbRKjcWbRZT-5oHLi_mwfJsUngEw@mail.gmail.com>
-In-Reply-To: <CAE-0n51osUcpqqh6o9OhURLbRKjcWbRZT-5oHLi_mwfJsUngEw@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 1 May 2024 09:18:20 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=USC_WO_cqYbuHBoScbV=TLtxKSfXmtOBruLSpzSTy4mg@mail.gmail.com>
-Message-ID: <CAD=FV=USC_WO_cqYbuHBoScbV=TLtxKSfXmtOBruLSpzSTy4mg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Fix a black screen on sc7180 Trogdor devices
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Laura Nao <laura.nao@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 RESEND 5/8] PCI: qcom: Add support for IPQ9574
+To: mr.nuke.me@gmail.com, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
+ <20240501042847.1545145-6-mr.nuke.me@gmail.com>
+ <a973f67b-de7f-4e21-b6b4-3b85d056456d@kernel.org>
+ <f7176c82-3702-4667-b68b-a8b7e3ad8690@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <f7176c82-3702-4667-b68b-a8b7e3ad8690@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 01/05/2024 17:43, mr.nuke.me@gmail.com wrote:
+> On 5/1/24 5:21 AM, Krzysztof Kozlowski wrote:
+>> On 01/05/2024 06:28, Alexandru Gagniuc wrote:
+>>> IPQ9574 has four PCIe controllers: two single-lane Gen3, and two
+>>> dual-lane Gen3. The controllers are identical from a software
+>>> perspective, with the differences appearing in the PHYs.
+>>>
+>>> Add a compatible for the PCIe on IPQ9574.
+>>
+>> This is a friendly reminder during the review process.
+>>
+>> It looks like you received a tag and forgot to add it.
+>>
+>> If you do not know the process, here is a short explanation:
+>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+>> versions, under or above your Signed-off-by tag. Tag is "received", when
+>> provided in a message replied to you on the mailing list. Tools like b4
+>> can help here. However, there's no need to repost patches *only* to add
+>> the tags. The upstream maintainer will do that for tags received on the
+>> version they apply.
+>>
+>> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+>>
+>> If a tag was not added on purpose, please state why and what changed.
+> 
+> I had an Acked-by tag from Rob for what is now patch 6/8 -- previously 
+> 5/7. Due to last-minute info from QUIC Inc, Dmitry and I decided to move 
+> the "snoc" and "anoc" clocks out of the PHY and to the PCIe controller.
+> 
+> This change resulted in a 6/8 patch that is substantially different from 
+> what Rob acked. I felt it was inappropriate to keep the tag.
 
-On Tue, Apr 30, 2024 at 5:17=E2=80=AFPM Stephen Boyd <swboyd@chromium.org> =
-wrote:
->
-> Quoting Doug Anderson (2024-03-28 09:39:54)
-> >
-> > I spent a bunch of time discussing this offline with Stephen and I'll
-> > try to summarize. Hopefully this isn't too much nonsense...
-> >
-> > 1. We'll likely land the patches downstream in ChromeOS for now while
-> > we're figuring things out since we're seeing actual breakages. Whether
-> > to land upstream is a question. The first patch is a bit of a hack but
-> > unlikely to cause any real problems. The second patch seems correct
-> > but it also feels like it's going to cause stuck clocks for a pile of
-> > other SoCs because we're not adding hacks similar to the sc7180 hack
-> > for all the other SoCs. I guess we could hope we get lucky or play
-> > whack-a-mole? ...or we try to find a more generic solution... Dunno
-> > what others think.
->
-> I think we should hope to get lucky or play whack-a-mole and merge
-> something like this series. If we have to we can similarly turn off RCGs
-> or branches during driver probe that are using shared parents like we
-> have on sc7180.
+So please read my message again:
+"If a tag was not added on purpose, please state why and what changed."
 
-This is OK w/ me, but of course I'm super biased since the only
-Qualcomm platform I'm involved in is sc7180 Chromebooks and that's
-handled by your series. If it helps, I suppose you could add:
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
-IMO it would be good to get Bjorn or Dmitry to buy in and maybe post a
-PSA and/or request for testing to a few IRC channels where folks hang
-out (#linux-msm, #freedreno and #aarch64-laptops, maybe?)
+Your changelog for that patch should say that.
 
 
--Doug
+Best regards,
+Krzysztof
+
