@@ -1,300 +1,97 @@
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0602A4E1DD;
-	Wed,  1 May 2024 04:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A5A29CF7;
+	Wed,  1 May 2024 06:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714537752; cv=none; b=C3qOmHu0RD5nvu5bVZIcqFIdyLGKNsjLVktaJIT2uFDfOobd5td2FHvhTBfwd8lLVE9oISSy1Eii0jaQsgracp+h0CxrlvA6jYnA5mrigsKUOJpE0vjZdH2jOAtkwmyawiIR5i33SMn5N9Rcq7Fi1u79zOOYP1YvdTZoQDjuRH4=
+	t=1714545811; cv=none; b=nO0BfA0vXiKZJ5JdTY7DuLEQCAOsHVxLOnzULGmW3IXVgQqkYVCil2kyXzlv/WgxqyLRHgmOPuKxdiMqxR3HijdHzC88pDP6iVCmEFQ2TGdkAvcIIQkRKgRIAwRnfUVQi4RkETac2mQVzREWqEja+tdaL4By9MylzwuaF74PPJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714537752; c=relaxed/simple;
-	bh=SGFo0nYVaGclh6uWy9vzUTrAnYsZxkd5dvKmm42KMDw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XFcZLMayxemrU/MuRqt8lwUtzXaUGtJdJQTcc0VsqkixwPUhij09e6XAob57gqeKNjXrVHJ7860Zhqu2yRJTUuodCzja9EjHX2R6+5Z5wnhJQucp/J2sQiCLVH8ES5vlE323g4J6rQTguuWN9GIoY27ciBKoe/0j+P1Dsy0S3Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PcOxE6aV; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1714545811; c=relaxed/simple;
+	bh=nyLX7tZ+dutpM4iXlRXNeVz8vFpRGVO28XgstJYVyiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UwSi5SVPVj5nT/uOhAJR3bMH+kejwYgvqvxT8WwnILjzUSS8cnI9iUJlR5mDzW4/Syqm+T1w1cnnhV+zL5J2DEQUqcA2lCnboJTFPgEm0PhShGD4gf6OtOcBm7QKqk1Qj92cPxGML1kjzjPezRxotRzmq+J/4biJc0+04LYGYus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7z4YgZX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PcOxE6aV"
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6ee2fda66easo1542799a34.3;
-        Tue, 30 Apr 2024 21:29:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714537750; x=1715142550; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lS+64DkLIQ8nbNaGoMXOJ1Gbc+Q4ngs9pfz0WhHIiSc=;
-        b=PcOxE6aVyVoVzI7eWwpBaJtFGmrTA8ejLu3boRu9fMrAUVG7UrDZC8GHrOrcMYa/ZA
-         VB3J9XD8sfaZi2yDztuuRPpdsRF5RPxPwWIMn2MDUSB794EwhK+9z2DKwCJwlZdeZatR
-         M4CaTQrfaMJPV4A2RksOmiNH4eMyYhGvkzDzQ1UWYOHcq9qrsbob8cqTr0XMGE9F6r/5
-         U8qPyOt4XYOOjJxMMZbN6JNQ5atCZwecn+IvpcspE/B1yCT/x3KiPYyzPpf6VR3Z5G51
-         pVoPA+RFBAMSkKjLOlEGs4iL9wVNdL2dQ3GPa84jrFn1gS+PlmZYtCS+NHf4xl8cg92S
-         P2Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714537750; x=1715142550;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lS+64DkLIQ8nbNaGoMXOJ1Gbc+Q4ngs9pfz0WhHIiSc=;
-        b=A7RN/XJOmIj9rvYCNFcU3mAY6I6CkJ4z71Es0DOjrcke1K1r60i+5DAmX/GI/iJYN4
-         oWBwXUiI9F8U1QNDIa1FDbfTKaXn3gXvPdjsKHdJBvHl68q63yVdftlPiRErsSaQFb55
-         5qd8M5pVGa7O4DU/CDB1ihbAoNmhwSc/3CvL8np7nTGIfuUQv7G1yl1Jotmmu/U+hUMy
-         aLVsNZb8+wzdh+t7E0c1wZNPKXOh8gSr9J3I5Zm8VqGIwP+/XZv8ViNAvnZitdBOOS1R
-         vkUx0snQ1EX3xPTeb4UzDSqaezdC7MqBeSkgC9QFVSU6UoP8Ta3eEFvgnPNGjyE7jlic
-         bJDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkpJHBzJy5KWecAXCJHdym1MuB0fYLz0fzcQZa2H7WpHG0WtkSC8s9RFwFSajK/x8Jro7ELXgrSLrzp7jXeI2yLk4djzozJESfGz0cXPf7wnhpZvW8CF/VKpnvOBuf1dcJ5clvA6fMX/CYAabUqecgYdGrwva+1e/yK7shSHpB6sz12wcbdoirI5Mi1oD4So6oBqoA8v+I69Hp60Et/SbjMLf5j4zHcBjAJ7gKbpaXCBfvomaRYJnkR0SG60g=
-X-Gm-Message-State: AOJu0YxKDPJf7aNL4hiqyy0alz3yseBYbCJIS4MQ/wZ1hpDF4S/eSftv
-	/mLm6su/ASve38F8f2ikiGCGXYne9Qu1lYFEK0czhUFECuKXQTen
-X-Google-Smtp-Source: AGHT+IGIrAKyP/bGpH/Jtpq/owhHBsB2H5z0Uq8LIuVBmhtjxaoJpsLgICttbWudaLL6KNIRsTBjMw==
-X-Received: by 2002:a05:6830:100f:b0:6ee:575b:8dd5 with SMTP id a15-20020a056830100f00b006ee575b8dd5mr1499213otp.20.1714537750061;
-        Tue, 30 Apr 2024 21:29:10 -0700 (PDT)
-Received: from nukework.lan (c-98-197-58-203.hsd1.tx.comcast.net. [98.197.58.203])
-        by smtp.gmail.com with ESMTPSA id do26-20020a0568300e1a00b006ed6dc9fd54sm2719058otb.25.2024.04.30.21.29.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 21:29:09 -0700 (PDT)
-From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7z4YgZX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C8FC113CC;
+	Wed,  1 May 2024 06:43:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714545810;
+	bh=nyLX7tZ+dutpM4iXlRXNeVz8vFpRGVO28XgstJYVyiM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p7z4YgZXRockdwpyxA9k39KUwsEjcgdvup1Habv5ifx4dSZ2mmsqBg7j7f22F9IYI
+	 Znrl1XuURJVH7Ywv5pn0KS94JbxwWOZPDf2iBEV3XTulAL9vKLCPRhLoDXRTkqKMIN
+	 P5d+PWgMJU7ZjoqNzFyVEPOU8e6A5OXYizGbTQm5ma4wFmv52q9KndCzl2xzpxnG8e
+	 3j14+GkZRR4FrYugO2hxhY1ewSr+ewHfvxtiVqfkv/yJp9DVDNF6gdKu0F+zRqaPD4
+	 sGZbdU0nO3jXhEd0e1RlQAfwp5KHED3Z6ui4dXugbkqY1ruo7cBtaU2pHQBKbLIFmX
+	 FWTSSKnbDKayw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1s23gi-000000008RA-2jX5;
+	Wed, 01 May 2024 08:43:32 +0200
+Date: Wed, 1 May 2024 08:43:32 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Subject: [PATCH v4 RESEND 8/8] arm64: dts: qcom: ipq9574: add PCIe2 and PCIe3 nodes
-Date: Tue, 30 Apr 2024 23:28:47 -0500
-Message-Id: <20240501042847.1545145-9-mr.nuke.me@gmail.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
-References: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>
+Subject: Re: [PATCH V3 5/8] dt-bindings: clock: qcom: Fix the incorrect order
+ of SC8280XP camcc header
+Message-ID: <ZjHklEN4zV5QG5Zv@hovoldconsulting.com>
+References: <20240430142757.16872-1-quic_jkona@quicinc.com>
+ <20240430142757.16872-6-quic_jkona@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240430142757.16872-6-quic_jkona@quicinc.com>
 
-On ipq9574, there are 4 PCIe controllers. Describe the pcie2 and pcie3
-nodes, and their PHYs in devicetree.
+On Tue, Apr 30, 2024 at 07:57:54PM +0530, Jagadeesh Kona wrote:
+> Fix the incorrect order of SC8280XP camcc header file in SM8450 camcc
+> bindings.
 
-The pcie0 and pcie1 controllers use a gen3x1 PHY, which is not
-currently supported. Hence, only pcie2 and pcie3 are described. Only
-pcie2 was tested because my devboard only has conenctions to pcie2.
-
-Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
----
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 178 +++++++++++++++++++++++++-
- 1 file changed, 176 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 7f2e5cbf3bbb..c391886cf9ab 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -300,8 +300,8 @@ gcc: clock-controller@1800000 {
- 				 <0>,
- 				 <0>,
- 				 <0>,
--				 <0>,
--				 <0>,
-+				 <&pcie2_phy>,
-+				 <&pcie3_phy>,
- 				 <0>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
-@@ -745,6 +745,180 @@ frame@b128000 {
- 				status = "disabled";
- 			};
- 		};
-+
-+		pcie2_phy: phy@8c000 {
-+			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
-+			reg = <0x0008c000 0x14f4>;
-+
-+			clocks = <&gcc GCC_PCIE2_AUX_CLK>,
-+				 <&gcc GCC_PCIE2_AHB_CLK>,
-+				 <&gcc GCC_PCIE2_PIPE_CLK>;
-+			clock-names = "aux",
-+				      "cfg_ahb",
-+				      "pipe";
-+
-+			clock-output-names = "pcie_phy2_pipe_clk";
-+			#clock-cells = <0>;
-+			#phy-cells = <0>;
-+
-+			resets = <&gcc GCC_PCIE2_PHY_BCR>,
-+				 <&gcc GCC_PCIE2PHY_PHY_BCR>;
-+			reset-names = "phy",
-+				      "common";
-+			status = "disabled";
-+		};
-+
-+		pcie3_phy: phy@f4000 {
-+			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
-+			reg = <0x000f4000 0x14f4>;
-+
-+			clocks = <&gcc GCC_PCIE3_AUX_CLK>,
-+				 <&gcc GCC_PCIE3_AHB_CLK>,
-+				 <&gcc GCC_PCIE3_PIPE_CLK>;
-+			clock-names = "aux",
-+				      "cfg_ahb",
-+				      "pipe";
-+
-+			clock-output-names = "pcie_phy3_pipe_clk";
-+			#clock-cells = <0>;
-+			#phy-cells = <0>;
-+
-+			resets = <&gcc GCC_PCIE3_PHY_BCR>,
-+				 <&gcc GCC_PCIE3PHY_PHY_BCR>;
-+			reset-names = "phy",
-+				      "common";
-+			status = "disabled";
-+		};
-+
-+		/* TODO: Populate pcie0/pcie1 when gen3x1 phy support is added. */
-+
-+		pcie2: pcie@20000000 {
-+			compatible = "qcom,pcie-ipq9574";
-+			reg = <0x20000000 0xf1d>,
-+			      <0x20000f20 0xa8>,
-+			      <0x20001000 0x1000>,
-+			      <0x00088000 0x4000>,
-+			      <0x20100000 0x1000>;
-+			reg-names = "dbi", "elbi", "atu", "parf", "config";
-+
-+			ranges = <0x81000000 0x0 0x20200000 0x20200000 0x0 0x00100000>,
-+				 <0x82000000 0x0 0x20300000 0x20300000 0x0 0x07d00000>;
-+
-+			device_type = "pci";
-+			linux,pci-domain = <3>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <2>;
-+			max-link-speed = <3>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			phys = <&pcie2_phy>;
-+			phy-names = "pciephy";
-+
-+			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 0 164 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 2 &intc 0 0 165 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 3 &intc 0 0 186 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 4 &intc 0 0 187 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_PCIE2_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE2_AXI_S_CLK>,
-+				 <&gcc GCC_PCIE2_AXI_S_BRIDGE_CLK>,
-+				 <&gcc GCC_ANOC_PCIE2_2LANE_M_CLK>,
-+				 <&gcc GCC_SNOC_PCIE2_2LANE_S_CLK>,
-+				 <&gcc GCC_PCIE2_RCHNG_CLK>;
-+			clock-names = "axi_m",
-+				      "axi_s",
-+				      "axi_bridge",
-+				      "rchng";
-+
-+			resets = <&gcc GCC_PCIE2_PIPE_ARES>,
-+				 <&gcc GCC_PCIE2_AUX_ARES>,
-+				 <&gcc GCC_PCIE2_CORE_STICKY_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_M_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_S_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_S_STICKY_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_M_STICKY_ARES>,
-+				 <&gcc GCC_PCIE2_AHB_ARES>;
-+			reset-names = "pipe",
-+				      "aux",
-+				      "sticky",
-+				      "axi_m",
-+				      "axi_s",
-+				      "axi_s_sticky",
-+				      "axi_m_sticky",
-+				      "ahb";
-+			status = "disabled";
-+		};
-+
-+		pcie3: pcie@18000000 {
-+			compatible = "qcom,pcie-ipq9574";
-+			reg = <0x18000000 0xf1d>,
-+			      <0x18000f20 0xa8>,
-+			      <0x18001000 0x1000>,
-+			      <0x000f0000 0x4000>,
-+			      <0x18100000 0x1000>;
-+			reg-names = "dbi", "elbi", "atu", "parf", "config";
-+
-+			ranges = <0x81000000 0x0 0x18200000 0x18200000 0x0 0x00100000>,
-+				 <0x82000000 0x0 0x18300000 0x18300000 0x0 0x07d00000>;
-+
-+			device_type = "pci";
-+			linux,pci-domain = <4>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <2>;
-+			max-link-speed = <3>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			phys = <&pcie3_phy>;
-+			phy-names = "pciephy";
-+
-+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 0 189 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 2 &intc 0 0 190 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 3 &intc 0 0 192 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 4 &intc 0 0 192 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_PCIE3_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE3_AXI_S_CLK>,
-+				 <&gcc GCC_PCIE3_AXI_S_BRIDGE_CLK>,
-+				 <&gcc GCC_ANOC_PCIE3_2LANE_M_CLK>,
-+				 <&gcc GCC_SNOC_PCIE3_2LANE_S_CLK>,
-+				 <&gcc GCC_PCIE3_RCHNG_CLK>;
-+			clock-names = "axi_m",
-+				      "axi_s",
-+				      "axi_bridge",
-+				      "anoc",
-+				      "snoc",
-+				      "rchng";
-+
-+			resets = <&gcc GCC_PCIE3_PIPE_ARES>,
-+				 <&gcc GCC_PCIE3_AUX_ARES>,
-+				 <&gcc GCC_PCIE3_CORE_STICKY_ARES>,
-+				 <&gcc GCC_PCIE3_AXI_M_ARES>,
-+				 <&gcc GCC_PCIE3_AXI_S_ARES>,
-+				 <&gcc GCC_PCIE3_AXI_S_STICKY_ARES>,
-+				 <&gcc GCC_PCIE3_AXI_M_STICKY_ARES>,
-+				 <&gcc GCC_PCIE3_AHB_ARES>;
-+			reset-names = "pipe",
-+				      "aux",
-+				      "sticky",
-+				      "axi_m",
-+				      "axi_s",
-+				      "axi_s_sticky",
-+				      "axi_m_sticky",
-+				      "ahb";
-+			status = "disabled";
-+		};
- 	};
+Try to avoid using the word "fix" in the commit summary (Subject) and
+commit message for things like this which are essentially cleanups to
+avoid making it sound like a bug fix (which automated tooling may then
+select for backporting).
  
- 	thermal-zones {
--- 
-2.40.1
+> Fixes: 206cd759fbd2 ("dt-bindings: clock: Add SC8280XP CAMCC")
 
+Also drop the Fixes tag as this is not a bug fix.
+
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> index fa0e5b6b02b8..bf23e25d71f5 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> @@ -14,9 +14,9 @@ description: |
+>    domains on SM8450.
+>  
+>    See also::
+> +    include/dt-bindings/clock/qcom,sc8280xp-camcc.h
+>      include/dt-bindings/clock/qcom,sm8450-camcc.h
+>      include/dt-bindings/clock/qcom,sm8550-camcc.h
+> -    include/dt-bindings/clock/qcom,sc8280xp-camcc.h
+>      include/dt-bindings/clock/qcom,x1e80100-camcc.h
+
+Johan
