@@ -1,144 +1,301 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6752132C85
-	for <linux-clk@vger.kernel.org>; Wed,  1 May 2024 18:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185C31527B2;
+	Wed,  1 May 2024 20:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714587089; cv=none; b=ilrVKUxUjMOAWa0fVEbRXNGNnAyxpd9Hi8Zn0OpTIPXgsDB5f5Aqi1fDdMIalYBhJv8rOyqcwkxTX0EeZyLFhUsfnmk3auvi0WCyFIWptS/VYFe+0caxtm0UALw42LaC5J+cbCUL8xbS5seOv1bfGVDNRzxVSa6X4gLwXAxFmN8=
+	t=1714595576; cv=none; b=kDhddhhsU5j4ZfspYTFYeh8FT9ZhrlBeSjvNNMRUYIvMoaxJHGClc1GaewcTnkrHsN8jTx3k9vrOGgQHX6CnXLlJvfB9ssJPmcLRtkA/2/bTGUWfGXqLun8FlNu/RQ20ez/ah0qPncBzlCiDzjHzvt2wqjy1ROYQbng2u4z0X6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714587089; c=relaxed/simple;
-	bh=nFKXvXLadFn2sb+yZv1KYPN17au5eDoEgdinwHBjegs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H1j5a4D4tYAi9rje3cauKFVBDspUDAdmYGakPS6DEj4yqQScLsw8/9+jk2PcCHBpMj41bku0LYtjZTe9vJvSsMtVelPE8iwT6DEeP6PAApbydzuueBJiB76BDBbO5exJtcdy8SJloNopxxzHHz8FKUcStHvQcrV23OK0F6DQ5WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rFma4A9e; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1714595576; c=relaxed/simple;
+	bh=kHPex7wRsRdxgybsWrTwxdR3oVX9EtULevfdnKktyQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AU7q/ml7RPhiw92YCQPRyshKVJcvDpytPH4Icu5YBWL36RZTBNPoJ64UY0ivEZEL+uVNrqxKD/xOmlH8cG595QPVnONQ1ABmwZU5b9U+TqIvcgseGOFAV8lx49TbU/FN50lGmh4pZpDiZVobLrjXO/8B35LMov4iJworMerZ6lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SypZ/tLc; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rFma4A9e"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-de59daab3f3so6591099276.3
-        for <linux-clk@vger.kernel.org>; Wed, 01 May 2024 11:11:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SypZ/tLc"
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-23d39e4c0d9so739124fac.0;
+        Wed, 01 May 2024 13:32:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714587087; x=1715191887; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nFKXvXLadFn2sb+yZv1KYPN17au5eDoEgdinwHBjegs=;
-        b=rFma4A9efte33EURdRIpaparIC1NRvk+pVkelqXW2FhJIWYQEIn7h7jTR09O88Og05
-         jPY2Qg8EIuezqOBS2eNR5g3u3hOCJ1yP8Y369zcKTwehQqZvItSh5zWBIsh1nTKUdSOk
-         wsCjXJ9j2UV2OtXDnZEEWWxGV4BuKMCCtOwqmy2kOJMLTjdTOSj9LFDMmydBh+U/KI/M
-         XwPJL5rmMP+JuX3MiIj0944wh2xCdcgjHg4ej2Rir7m9zUIrXfYrxpUwFHGKi67V5NlZ
-         BIinxa6PGReOK16M46V4c5XFyii0+50wpdut74IJUzflRXGBgX9LTdUU6skj3Z1wu7OD
-         VkOg==
+        d=gmail.com; s=20230601; t=1714595574; x=1715200374; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PK6bUYnjKXA3139CuZnFqKdohXzB6bNghOA877px0F0=;
+        b=SypZ/tLckei+0YnnXpuPrsPK31yfviKmoKPUfD8t0Ok/yW2Oryf1+YavXkYD/6LiCV
+         hDXkXHAbyncZSLR6IUih1rowfi3/xtMfClpoVSnnx8bCeb/GEhk+hMweFRc19z4oOIaT
+         Sif867X5o6aMxkI2Xo2y6L17RtpaJUKHTX0XCaNnmbmT6O2Nqmg4+zdq5Z+u+MXlCevE
+         gjPkhNLRb8WKm1J3kezu8NarzHThsSlDMKJibxlGvuzh46zNEA0SWTJaYI/qgJlM0KR6
+         BXhG5fNoHIw9OsBnGqFiEpPavvI6ToUBU9Af+cejUk5txMWvzxMVBiZP7Em+LX97L/3Z
+         +aVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714587087; x=1715191887;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nFKXvXLadFn2sb+yZv1KYPN17au5eDoEgdinwHBjegs=;
-        b=rPPVKE8TYle+XynOnFXGSOZ2j5SqTtmyrsP1jiM95JZQowET7DZERTEsscwb51Xi8+
-         bUq04ZpwmybS5NAGMwMW1pRgmQz6eZ3IfqIUl4uf4/DdFBBZuxgs77n1PJfZWc32t3fq
-         pZ5Zb67D4wUUYLaOWNPXA4u4j66DP2qKY7+Xt2FUStpDQyQ30RQ7UJ333eNIv7AnNjMr
-         IALPW9GkHsrOF8SzqH8ohv74FGAvcC4LCgzEGOz/jgYa4wO9iIJCohbE+KDZuxXbp9Cm
-         nIFJa0XqAKBrm1pM+FVBe803dxqjBWw6P/6JZixSa5bheyqSIhWuIe1bRLckUx3rjZ7j
-         O4Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJsPHkq4RUMkLBDLKujjQPZ4AQ/7q2MfYYVIQE4YS6nzs6RmeAqdd6p2rfBrvTNXurStoORhv6LBgQdyvBspBSnntMa2/O814K
-X-Gm-Message-State: AOJu0YxdovxQwnOxNPI36tbIVo3qSDlha5piIszDYEnaXh97x4rz0PHY
-	wxEjWKES+M27+vfohf28fXur7Jhbh5c2ocH0tNjMsbg9T1iRuoeG8p11yHlpxzujfbZNgUpbQie
-	3DJwi8q4/ndT8op1b6M8EsHcrFenEaQPYYDFTWA==
-X-Google-Smtp-Source: AGHT+IHYNIdvTb4iBMDLqUY1RqQeF19T75NgRtsKlfmqPhm1TYOhVCTd8FMhMWbpI1r7ar+/niUA1T2KEBeRinx6paM=
-X-Received: by 2002:a25:bcc5:0:b0:de6:1245:c3d5 with SMTP id
- l5-20020a25bcc5000000b00de61245c3d5mr3406926ybm.60.1714587085478; Wed, 01 May
- 2024 11:11:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1714595574; x=1715200374;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PK6bUYnjKXA3139CuZnFqKdohXzB6bNghOA877px0F0=;
+        b=UFUkxFoSGSoI2pHQ1iToxTV7CqqERdEraojwMjBK8AgXDiJq4T7axSYcyJRCd65IOr
+         Aj7AlKW4hkpotKyQsV7uSquSV+p1ApIm/yxUOi32vte4KcdKQfDQCdggTzwv7Gj6VmkT
+         NkPhyU7yYzzbj4XFmhFWDA4yNfuoiFYPi+VeYsMVwbaDb3IvGjXL7hj5jxaHO54GVt/P
+         82f7t7kjxDL/1gWEUnIB2l7x+jxi8mIFTueZHV4vejGr+vpgSnvV/4lJmw02Cczwzz4B
+         ONecFu0DcitQ6VYjuLGeybInRwHisqCk16WWinnsprIvdyoLV9c0DrXF6fMGl2TfLzlQ
+         U5ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWdKzNWpMvX0NvFJUu/SCt3mBxr9UnCEb2b33aB5ETn/b0prNJKhqnzLzHs81DaKWPwt1UDD4aSfNqhqnKGImALiCx2/3/amz7jM7EYYHlfWGyZPTOwLf6XITEhp+zsk1YU0c8RxJTqHLxdMGu1dA1QbiG2HGgZIZ0xXqq9QW8+h2kWiAN46m0qeiD3TLmD7m4grUTDzV+ZdsnR4eRKphFsWhT922PK/0e6q1qoUNHIx7iFB9r28QSKjpaBnSw=
+X-Gm-Message-State: AOJu0YyXM1T/vNmdtL7XLcyJKBqlCWm1CDrC34t/GKqPXi4HmG3CWK/1
+	Kf7nOkVI4HtChAs2o27znqHEZSfYFx4p7n2mNn94tbMOSqMZRw3/
+X-Google-Smtp-Source: AGHT+IEEi213Oim+pFQt5WqNLTilQ8NosxMtUvlAkKIuNAoYd59Y3HupxqwZGjbBQ04m8SUtsX/Msw==
+X-Received: by 2002:a05:6870:be97:b0:22f:bdb:633c with SMTP id nx23-20020a056870be9700b0022f0bdb633cmr125208oab.16.1714595574119;
+        Wed, 01 May 2024 13:32:54 -0700 (PDT)
+Received: from [192.168.7.110] (c-98-197-58-203.hsd1.tx.comcast.net. [98.197.58.203])
+        by smtp.gmail.com with ESMTPSA id rb11-20020a056871618b00b0023b5791f396sm2889919oab.15.2024.05.01.13.32.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 May 2024 13:32:53 -0700 (PDT)
+Message-ID: <7da9d481-1e44-4f0e-9210-fcbd95bd654f@gmail.com>
+Date: Wed, 1 May 2024 15:32:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240327202740.3075378-1-swboyd@chromium.org> <CAD=FV=VLwa0AFsrXXxKGG+hcyW+h7u7-tyg3uoDB8M_XdPti_Q@mail.gmail.com>
- <CAE-0n51osUcpqqh6o9OhURLbRKjcWbRZT-5oHLi_mwfJsUngEw@mail.gmail.com>
-In-Reply-To: <CAE-0n51osUcpqqh6o9OhURLbRKjcWbRZT-5oHLi_mwfJsUngEw@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 1 May 2024 21:11:14 +0300
-Message-ID: <CAA8EJpqVGHqufKo1kV52RzQCNL5D92mmnCzUwKZn4o+5=wF9pQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Fix a black screen on sc7180 Trogdor devices
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Doug Anderson <dianders@chromium.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, 
-	Laura Nao <laura.nao@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 RESEND 8/8] arm64: dts: qcom: ipq9574: add PCIe2 and
+ PCIe3 nodes
+To: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
+ <20240501042847.1545145-9-mr.nuke.me@gmail.com>
+Content-Language: en-US
+From: "Alex G." <mr.nuke.me@gmail.com>
+In-Reply-To: <20240501042847.1545145-9-mr.nuke.me@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 1 May 2024 at 03:17, Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Quoting Doug Anderson (2024-03-28 09:39:54)
-> >
-> > I spent a bunch of time discussing this offline with Stephen and I'll
-> > try to summarize. Hopefully this isn't too much nonsense...
-> >
-> > 1. We'll likely land the patches downstream in ChromeOS for now while
-> > we're figuring things out since we're seeing actual breakages. Whether
-> > to land upstream is a question. The first patch is a bit of a hack but
-> > unlikely to cause any real problems. The second patch seems correct
-> > but it also feels like it's going to cause stuck clocks for a pile of
-> > other SoCs because we're not adding hacks similar to the sc7180 hack
-> > for all the other SoCs. I guess we could hope we get lucky or play
-> > whack-a-mole? ...or we try to find a more generic solution... Dunno
-> > what others think.
->
-> I think we should hope to get lucky or play whack-a-mole and merge
-> something like this series. If we have to we can similarly turn off RCGs
-> or branches during driver probe that are using shared parents like we
-> have on sc7180.
->
-> Put simply, the shared RCG implementation is broken because it reports
-> the wrong parent for clk_ops::get_parent() and doesn't clear the force
-> enable bit. With the current code we're switching the parent to XO when
-> the clk is enabled the first time. That's an obvious bug that we should
-> fix regardless of implementing proper clk handoff. We haven't
-> implemented handoff in over a decade. Blocking this bug fix on
-> implementing handoff isn't practical.
 
-Yes, that needs to be fixed. My approach was to drop the XO parent and
-consider the clock to be off if it is fed by the XO.
 
-> Furthermore, we're relying on clk
-> consumers to clear that force enable bit by enabling the clk once. That
-> doesn't make any sense, although we could use that force enable bit to
-> consider the RCG as enabled for clk_disable_unused.
+On 4/30/24 23:28, Alexandru Gagniuc wrote:
+> On ipq9574, there are 4 PCIe controllers. Describe the pcie2 and pcie3
+> nodes, and their PHYs in devicetree.
+> 
+> The pcie0 and pcie1 controllers use a gen3x1 PHY, which is not
+> currently supported. Hence, only pcie2 and pcie3 are described. Only
+> pcie2 was tested because my devboard only has conenctions to pcie2.
+> 
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> ---
+>   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 178 +++++++++++++++++++++++++-
+>   1 file changed, 176 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> index 7f2e5cbf3bbb..c391886cf9ab 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> @@ -300,8 +300,8 @@ gcc: clock-controller@1800000 {
+>   				 <0>,
+>   				 <0>,
+>   				 <0>,
+> -				 <0>,
+> -				 <0>,
+> +				 <&pcie2_phy>,
+> +				 <&pcie3_phy>,
+>   				 <0>;
+>   			#clock-cells = <1>;
+>   			#reset-cells = <1>;
+> @@ -745,6 +745,180 @@ frame@b128000 {
+>   				status = "disabled";
+>   			};
+>   		};
+> +
+> +		pcie2_phy: phy@8c000 {
+> +			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+> +			reg = <0x0008c000 0x14f4>;
+> +
+> +			clocks = <&gcc GCC_PCIE2_AUX_CLK>,
+> +				 <&gcc GCC_PCIE2_AHB_CLK>,
+> +				 <&gcc GCC_PCIE2_PIPE_CLK>;
+> +			clock-names = "aux",
+> +				      "cfg_ahb",
+> +				      "pipe";
+> +
+> +			clock-output-names = "pcie_phy2_pipe_clk";
+> +			#clock-cells = <0>;
+> +			#phy-cells = <0>;
+> +
+> +			resets = <&gcc GCC_PCIE2_PHY_BCR>,
+> +				 <&gcc GCC_PCIE2PHY_PHY_BCR>;
+> +			reset-names = "phy",
+> +				      "common";
+> +			status = "disabled";
+> +		};
+> +
+> +		pcie3_phy: phy@f4000 {
+> +			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+> +			reg = <0x000f4000 0x14f4>;
+> +
+> +			clocks = <&gcc GCC_PCIE3_AUX_CLK>,
+> +				 <&gcc GCC_PCIE3_AHB_CLK>,
+> +				 <&gcc GCC_PCIE3_PIPE_CLK>;
+> +			clock-names = "aux",
+> +				      "cfg_ahb",
+> +				      "pipe";
+> +
+> +			clock-output-names = "pcie_phy3_pipe_clk";
+> +			#clock-cells = <0>;
+> +			#phy-cells = <0>;
+> +
+> +			resets = <&gcc GCC_PCIE3_PHY_BCR>,
+> +				 <&gcc GCC_PCIE3PHY_PHY_BCR>;
+> +			reset-names = "phy",
+> +				      "common";
+> +			status = "disabled";
+> +		};
+> +
+> +		/* TODO: Populate pcie0/pcie1 when gen3x1 phy support is added. */
+> +
+> +		pcie2: pcie@20000000 {
+> +			compatible = "qcom,pcie-ipq9574";
+> +			reg = <0x20000000 0xf1d>,
+> +			      <0x20000f20 0xa8>,
+> +			      <0x20001000 0x1000>,
+> +			      <0x00088000 0x4000>,
+> +			      <0x20100000 0x1000>;
+> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
+> +
+> +			ranges = <0x81000000 0x0 0x20200000 0x20200000 0x0 0x00100000>,
+> +				 <0x82000000 0x0 0x20300000 0x20300000 0x0 0x07d00000>;
+> +
+> +			device_type = "pci";
+> +			linux,pci-domain = <3>;
+> +			bus-range = <0x00 0xff>;
+> +			num-lanes = <2>;
+> +			max-link-speed = <3>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			phys = <&pcie2_phy>;
+> +			phy-names = "pciephy";
+> +
+> +			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "msi";
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 0 164 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 2 &intc 0 0 165 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc 0 0 186 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc 0 0 187 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			clocks = <&gcc GCC_PCIE2_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE2_AXI_S_CLK>,
+> +				 <&gcc GCC_PCIE2_AXI_S_BRIDGE_CLK>,
+> +				 <&gcc GCC_ANOC_PCIE2_2LANE_M_CLK>,
+> +				 <&gcc GCC_SNOC_PCIE2_2LANE_S_CLK>,
+> +				 <&gcc GCC_PCIE2_RCHNG_CLK>;
+> +			clock-names = "axi_m",
+> +				      "axi_s",
+> +				      "axi_bridge",
+> +				      "rchng";
 
-That patch seems fine to me. Will it work if we take the force-enable
-bit into account when considering the clock to be on or off?
+There is a mistake here with the clock-names :( . Will fix it in v5.
 
->
-> An alternative approach to this series would be to force all shared RCGs
-> to be parented to XO at clk registration time, and continue to clear
-> that RCG force enable bit. That's sort of what Dmitry was going for
-> earlier. Doing this would break anything that's relying on the clks
-> staying enabled at some frequency through boot, but that isn't supported
-> anyway because clk handoff isn't implemented. It avoids the problem that
-> the first patch is for too because XO doesn't turn off causing a clk to
-> get stuck on. I can certainly craft this patch up if folks think that's
-> better.
-
-I think this approach makes sense too (and might be preferable to
-boot-time hacks).
-On most of the platforms we are already resetting the MDSS as soon as
-the mdss (root device) is being probed. Then the display is going to
-be broken until DPU collects all the coonectors and outpus and finally
-creates the DRM device.
-
-But I think we should fix the get_parent() too irrespectively of this.
-
-> To ease the transition we can make a new clk_ops for the RCG as well so
-> that each SoC has to opt-in to use this behavior. Then we can be certain
-> that other platforms aren't affected without being tested first. I'd
-> prefer to not do that though because I fear we'll be leaving drivers in
-> the broken state for some time.
-
-SGTM
-
---
-With best wishes
-Dmitry
+> +
+> +			resets = <&gcc GCC_PCIE2_PIPE_ARES>,
+> +				 <&gcc GCC_PCIE2_AUX_ARES>,
+> +				 <&gcc GCC_PCIE2_CORE_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE2_AXI_M_ARES>,
+> +				 <&gcc GCC_PCIE2_AXI_S_ARES>,
+> +				 <&gcc GCC_PCIE2_AXI_S_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE2_AXI_M_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE2_AHB_ARES>;
+> +			reset-names = "pipe",
+> +				      "aux",
+> +				      "sticky",
+> +				      "axi_m",
+> +				      "axi_s",
+> +				      "axi_s_sticky",
+> +				      "axi_m_sticky",
+> +				      "ahb";
+> +			status = "disabled";
+> +		};
+> +
+> +		pcie3: pcie@18000000 {
+> +			compatible = "qcom,pcie-ipq9574";
+> +			reg = <0x18000000 0xf1d>,
+> +			      <0x18000f20 0xa8>,
+> +			      <0x18001000 0x1000>,
+> +			      <0x000f0000 0x4000>,
+> +			      <0x18100000 0x1000>;
+> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
+> +
+> +			ranges = <0x81000000 0x0 0x18200000 0x18200000 0x0 0x00100000>,
+> +				 <0x82000000 0x0 0x18300000 0x18300000 0x0 0x07d00000>;
+> +
+> +			device_type = "pci";
+> +			linux,pci-domain = <4>;
+> +			bus-range = <0x00 0xff>;
+> +			num-lanes = <2>;
+> +			max-link-speed = <3>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			phys = <&pcie3_phy>;
+> +			phy-names = "pciephy";
+> +
+> +			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "msi";
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 0 189 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 2 &intc 0 0 190 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc 0 0 192 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc 0 0 192 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			clocks = <&gcc GCC_PCIE3_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE3_AXI_S_CLK>,
+> +				 <&gcc GCC_PCIE3_AXI_S_BRIDGE_CLK>,
+> +				 <&gcc GCC_ANOC_PCIE3_2LANE_M_CLK>,
+> +				 <&gcc GCC_SNOC_PCIE3_2LANE_S_CLK>,
+> +				 <&gcc GCC_PCIE3_RCHNG_CLK>;
+> +			clock-names = "axi_m",
+> +				      "axi_s",
+> +				      "axi_bridge",
+> +				      "anoc",
+> +				      "snoc",
+> +				      "rchng";
+> +
+> +			resets = <&gcc GCC_PCIE3_PIPE_ARES>,
+> +				 <&gcc GCC_PCIE3_AUX_ARES>,
+> +				 <&gcc GCC_PCIE3_CORE_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE3_AXI_M_ARES>,
+> +				 <&gcc GCC_PCIE3_AXI_S_ARES>,
+> +				 <&gcc GCC_PCIE3_AXI_S_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE3_AXI_M_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE3_AHB_ARES>;
+> +			reset-names = "pipe",
+> +				      "aux",
+> +				      "sticky",
+> +				      "axi_m",
+> +				      "axi_s",
+> +				      "axi_s_sticky",
+> +				      "axi_m_sticky",
+> +				      "ahb";
+> +			status = "disabled";
+> +		};
+>   	};
+>   
+>   	thermal-zones {
