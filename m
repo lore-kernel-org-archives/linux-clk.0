@@ -1,118 +1,107 @@
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEC337E
-	for <linux-clk@vger.kernel.org>; Wed,  1 May 2024 00:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC8F29405;
+	Wed,  1 May 2024 04:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714522641; cv=none; b=ZvYIE9eyyGdm3quQXkM9jo1xI3YxkTUMuC0eOymyMM87+3hKWHy76SoqxV1VmK+Bibt9S5BFXFUySklBKkPP79G6ypIX1M1UQkkovyIWAvUYJeyHpWgyWUiFtfumhqnWsD65UnVLMDhQO0AD4LpwXZ4xXkNN8CW3vRSF5aQrUbg=
+	t=1714536486; cv=none; b=Fc69fDF2ber33a2aoSDDQv6oIouvyeFsEFcxapE3A0+PPF4d/5lNTGmvqqE2+YPbNASSw5S6OBbjd8yzMyyVhSz257ZtbNUHvExYEzJldyMaEk95FIBi9OUCzY7pjB6lxdE6hEGUlBKmoAYwN4i/4VE2pC7Jfe6CvEwOwI9MPAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714522641; c=relaxed/simple;
-	bh=1ywHP957dN7QN6N91q0/xp7S+y5cWqGySegerlSjGbo=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UZwB2BzV374kbQUgnBbDKuxunIIRhXbndUXXsyrarQg5MEQAtYoHi4XFcv0byTMlL6mw+HSZT2xRkhCQ/N9497IQhHrXi1nDRvTtuq2GkNcDwKZQQpbJf4v9AHOu9Rli6I2BsCVG4inkTEiLFm13W1BL4ACmDUbpV9HOwL4IPQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=e1mFR0ja; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1714536486; c=relaxed/simple;
+	bh=/LW5UP24d3M9gnDJHKsZY3AjzrEnrgPIA21IZxGWV+o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hg85xoN8iUbfK/ZAvhqDzawEq3FNpfo3tP1Vf8ZTovQHsEjH1RfL86G9tpxOLfZEq5VhnNIV4vAuqoVkxBuu1TiIT21jKyq/I1uLaP+DfaZGJkGe3khTu0jomldc6YnP1A+W6/k3+ZvqERMPsOruGtFU+n4TquvDXLGzhiW1WMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ocd66zqi; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e1mFR0ja"
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-69b5de48126so17898346d6.3
-        for <linux-clk@vger.kernel.org>; Tue, 30 Apr 2024 17:17:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ocd66zqi"
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3c7513a991cso4345129b6e.1;
+        Tue, 30 Apr 2024 21:08:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1714522638; x=1715127438; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1ywHP957dN7QN6N91q0/xp7S+y5cWqGySegerlSjGbo=;
-        b=e1mFR0jabgWyWSAAUL/bOSqHjDXedFTVZkyjI5G14PwDfAHUkLiQYu8mygH22XkAkd
-         NaEGUFZyOnK2jOTEjv6bVM8qCWYF6qKG9kRKf3fSGUiukhVKezMmrJuPjc02mRMwoZqK
-         4HBcSa+NtowSV9UqTdGcO9mRihWNk3Pjclh08=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714522638; x=1715127438;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1714536484; x=1715141284; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1ywHP957dN7QN6N91q0/xp7S+y5cWqGySegerlSjGbo=;
-        b=BMkCMBRr+PwhWa51wEhqWQIPUw9lyVGf3XDdaUE+vota3YHGGXjFSkDmu2sZl6dftV
-         RH44zPBTigbJwvLWghKKtoUWuY0M5kD8Mg47pUdxfayuHAGsxNFEGNgEAN6U7hXVEmtT
-         YtheBlMVW2zTmS4HG4xHY3KDV2vrEnTGt0vecDeur5apzgm1s45YGYzeXYU9zr31APvV
-         oQjQaaVVI/RUVdRszNfSsbibIL71OJwbiLXOiuQLKhJgvedG0mAYXUp7vt4XW3aINOrz
-         sIWLq+RtCVUDy4kd3CrFbA9NK8nLnflcwPObofHC4glR9EmnKwKXPsg67CV2psPtv+LI
-         g4SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiCSowxGLF51BAkweNxn25mZtWQS3hd0ax+/doeyGwKNLW71P8Z+WR9T/BrCeTa6RstwBqPVlGMKQ/dZOKxyqJstWm7FJ76IxY
-X-Gm-Message-State: AOJu0YxRMrx0JfA2SIagSsNtu78g77HDmklBU5vYdhkO1sThSl1/nhth
-	fnXYOMzcRY25evl27LfS/8Dq2vuI1Ndf2dy4rnt365Askgy8ylpbMlmLIUpPbg9Ojyoic1DycRQ
-	f4hTZC24bvI3UXelHy2hHHvz++XoH4d/Yl6P0
-X-Google-Smtp-Source: AGHT+IFHbVqJvW5Quh1nKokc7DOIECNmTOz55NPM4sjfdsU1vArTv7tsX5xChcnAkiqJBSUd0f3wLcvCxkKHa97Wo0U=
-X-Received: by 2002:a05:6214:62c:b0:6a0:cd28:ffaa with SMTP id
- a12-20020a056214062c00b006a0cd28ffaamr900368qvx.25.1714522638644; Tue, 30 Apr
- 2024 17:17:18 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 30 Apr 2024 17:17:17 -0700
+        bh=eQII4bd5vU3iEBUOJRNxIf3Y2tkmIxs3qzEGZCMfEv8=;
+        b=Ocd66zqifgVp9HxefgdAMCefTDJd9e2cCw8L27JdontZ8JktuR5FfT0u3wsuw+PP8J
+         N9bnhh4HMxEf+Epep8aQ4tQhKsE2yHvVtuU3jY3OOFhn5YHTHDhpa2GXxeywVgiTdtZA
+         xRFF/JXxZZ40/wpRobARQssej4QT6UIT2OdGFROfdnAE0PBhJu67LRt2pRKMAbVcpt42
+         u3o+LyCkogNknSjjMXpvFiCezF+hi0iiUeBrD9NJwNKU+mNHEqUKV8q09fjPHg1nR4FJ
+         3JY5+KySHMchLtQPtZmFQzAA+rT2C2mOz5CGn1hlF1v+MAFyp6or6zxp01VxNl21bbUo
+         rubw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714536484; x=1715141284;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eQII4bd5vU3iEBUOJRNxIf3Y2tkmIxs3qzEGZCMfEv8=;
+        b=gCsVJ3Pfq2sWfG9qcPejQFpBsM46lQvsKmutOt3/pWKwGDn+WR9NiYvUo/j41k76Fm
+         ugue+GcuP5t4OFXWgBaAWKEywrPEA+rfzpi32KcXjqsnXyiNGaqbEnPcPOo+SRoV0RJR
+         MVSKMAxi5YMABFUStSTx5bvNb9Qzir82NUI3dzN59cz7pMcZrAM0rMw1kl31JOCXIlag
+         bwMuaWdfJFKTDnc58wpdlicDZUGJ7yIxseDAjfFsH39sLmDHcBqrmFMF3rN9kwZc8BI9
+         HkE97ef5dTRpkjT2hHiV2uclLVH80P7rYpCDh07Ii/PKWMUqMTgXTs0RSqR/SBXYIUXK
+         kMMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqSxe2e3eYKO58oz79LyPdIlr8oRQqr9X7A0cZ4C73J7Tdn+PX7AB9IFrCirywPMe162S3fbXfAc7ecaz8veFDEauYapA1KazKuQnCGKWIE3iw/uLPsPij8MNieV5iF/QYVJGmwjdJyxcv2NQlaUHOud4MNiItC+RrRuQjhwd9syMMViE=
+X-Gm-Message-State: AOJu0Yyeuvj8UuKce++CjVFebV9OoOithA/+5EORgAyM2xldtImmZ7Dj
+	teGRS7Ulz3H3A4LCHpVhmjIipJf1BwJi3W/iprNpM8YHbiFKCx3mJffonEi+7kk=
+X-Google-Smtp-Source: AGHT+IHhxTl5k/+evzZ/7myhhtGs4Q+NGdUipnNMPy+mJqCCxGveYPCkAbK/AwpAGhGYlE5UDRtZ1Q==
+X-Received: by 2002:a05:6808:15a2:b0:3c7:3af6:1cb5 with SMTP id t34-20020a05680815a200b003c73af61cb5mr1916976oiw.46.1714536483873;
+        Tue, 30 Apr 2024 21:08:03 -0700 (PDT)
+Received: from nukework.lan (c-98-197-58-203.hsd1.tx.comcast.net. [98.197.58.203])
+        by smtp.gmail.com with ESMTPSA id w2-20020a056808018200b003c8643f0e5csm1067872oic.16.2024.04.30.21.08.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Apr 2024 21:08:03 -0700 (PDT)
+From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	quic_kathirav@quicinc.com,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v4 1/8] dt-bindings: clock: Add PCIe pipe related clocks for IPQ9574
+Date: Tue, 30 Apr 2024 23:07:43 -0500
+Message-Id: <20240501040800.1542805-2-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240501040800.1542805-1-mr.nuke.me@gmail.com>
+References: <20240501040800.1542805-1-mr.nuke.me@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=VLwa0AFsrXXxKGG+hcyW+h7u7-tyg3uoDB8M_XdPti_Q@mail.gmail.com>
-References: <20240327202740.3075378-1-swboyd@chromium.org> <CAD=FV=VLwa0AFsrXXxKGG+hcyW+h7u7-tyg3uoDB8M_XdPti_Q@mail.gmail.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Tue, 30 Apr 2024 17:17:17 -0700
-Message-ID: <CAE-0n51osUcpqqh6o9OhURLbRKjcWbRZT-5oHLi_mwfJsUngEw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Fix a black screen on sc7180 Trogdor devices
-To: Doug Anderson <dianders@chromium.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Laura Nao <laura.nao@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Quoting Doug Anderson (2024-03-28 09:39:54)
->
-> I spent a bunch of time discussing this offline with Stephen and I'll
-> try to summarize. Hopefully this isn't too much nonsense...
->
-> 1. We'll likely land the patches downstream in ChromeOS for now while
-> we're figuring things out since we're seeing actual breakages. Whether
-> to land upstream is a question. The first patch is a bit of a hack but
-> unlikely to cause any real problems. The second patch seems correct
-> but it also feels like it's going to cause stuck clocks for a pile of
-> other SoCs because we're not adding hacks similar to the sc7180 hack
-> for all the other SoCs. I guess we could hope we get lucky or play
-> whack-a-mole? ...or we try to find a more generic solution... Dunno
-> what others think.
+Add defines for the missing PCIe PIPE clocks.
 
-I think we should hope to get lucky or play whack-a-mole and merge
-something like this series. If we have to we can similarly turn off RCGs
-or branches during driver probe that are using shared parents like we
-have on sc7180.
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Put simply, the shared RCG implementation is broken because it reports
-the wrong parent for clk_ops::get_parent() and doesn't clear the force
-enable bit. With the current code we're switching the parent to XO when
-the clk is enabled the first time. That's an obvious bug that we should
-fix regardless of implementing proper clk handoff. We haven't
-implemented handoff in over a decade. Blocking this bug fix on
-implementing handoff isn't practical. Furthermore, we're relying on clk
-consumers to clear that force enable bit by enabling the clk once. That
-doesn't make any sense, although we could use that force enable bit to
-consider the RCG as enabled for clk_disable_unused.
+diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+index 08fd3a37acaa..52123c5a09fa 100644
+--- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
++++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+@@ -216,4 +216,8 @@
+ #define GCC_CRYPTO_AHB_CLK				207
+ #define GCC_USB0_PIPE_CLK				208
+ #define GCC_USB0_SLEEP_CLK				209
++#define GCC_PCIE0_PIPE_CLK				210
++#define GCC_PCIE1_PIPE_CLK				211
++#define GCC_PCIE2_PIPE_CLK				212
++#define GCC_PCIE3_PIPE_CLK				213
+ #endif
+-- 
+2.40.1
 
-An alternative approach to this series would be to force all shared RCGs
-to be parented to XO at clk registration time, and continue to clear
-that RCG force enable bit. That's sort of what Dmitry was going for
-earlier. Doing this would break anything that's relying on the clks
-staying enabled at some frequency through boot, but that isn't supported
-anyway because clk handoff isn't implemented. It avoids the problem that
-the first patch is for too because XO doesn't turn off causing a clk to
-get stuck on. I can certainly craft this patch up if folks think that's
-better.
-
-To ease the transition we can make a new clk_ops for the RCG as well so
-that each SoC has to opt-in to use this behavior. Then we can be certain
-that other platforms aren't affected without being tested first. I'd
-prefer to not do that though because I fear we'll be leaving drivers in
-the broken state for some time.
