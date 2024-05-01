@@ -1,33 +1,59 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4FA33CD1;
-	Wed,  1 May 2024 10:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBD853E35
+	for <linux-clk@vger.kernel.org>; Wed,  1 May 2024 10:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714558971; cv=none; b=UxzcaQPvdAfNjl6y0IWXlCNWLKmJoLQu6vqO6LUAr0+lMoS5ez5HBx7B/NOZWx8dg7PTMAhGHNSmaRPsVw4Ribblf/w5+PSkgGVuqg7yOWTAroR+81c3lOZ0gS4EcHWTRjdsPDz1+JlJL+izE692riIfArAP7HdtJxX4nsYiwkM=
+	t=1714560094; cv=none; b=Gb75BazyxVTRxYxmX+MgMR9hkmMs4Ff9dkTQulV98y/Xf5uV2t4KpR3wRLhh1nTPXcsMe4LGJumvK0GWBdvhsDoDYf4K8Q1COUHjeUik/RRv4+b05FecYf8P2s3v/rfcS2CCHhW68LqAgvyLrzXGaXybJD42IDqlE0B9Q7vn4ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714558971; c=relaxed/simple;
-	bh=h7rfDC4P2mHHyUWnZGsoBw6xnXprPlYP35xFxAJ8hkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CBNl/qZg6f/qTWElpK9OY77vTyi/qJZX4oWybAK2XiFjA7Hg/jpq1FfR6pStklgnIgOR+GOjZ/SJfRhWh+NolyNcVGeRfxLqQirHwByNTV6PdHFtHX3AgTAGp8Z7LnovHgTmvh2Cttgt/y2GzZAAJEzJhNtHoXK4oWLQJjuPmdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ty3MpEbR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714560094; c=relaxed/simple;
+	bh=/ZQIG/3uaLNNMu+Jaq1pWiCGUFBqLdO9PicLaF6MvLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ysmfr/YM5CzBIvbIiWxR/C+NA+LuUVbWU2lmqaV0YDJQLo8W9vku5HdZ8IoMPwfXPY3FLqGVnd5bWfG4lZduJvHjfxd0SWpVDioOX2ECNqFQmYI3Q2SJTdXcca/FxPd+51yzHQzKSre46RlkQ33mNq57jvxvUIDrusWTeDCHa9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wYXcL8zx; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ty3MpEbR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 831DCC113CC;
-	Wed,  1 May 2024 10:22:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714558971;
-	bh=h7rfDC4P2mHHyUWnZGsoBw6xnXprPlYP35xFxAJ8hkk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Ty3MpEbRpWE1yo8InyD1sxP+/W8K8RAOB9q9qKzGbDRfWxbtubKaecHB2vfahIbcZ
-	 EV30//Gu0KmugjzGGHA/B0IIEVDhnuKX80rs+p2klPpv5RZAo1gqJBz/NpQfjy3L6I
-	 vnUWGSaWST5GPW6Soo3CNvq1iFSN5TJB0iUCLbiha6c26aeopYRMpljnGPlGrJGt/S
-	 SsO5DdNpyi8oSIVs2XJ4HiyXnBqfKhJR6RF4qVeD8HnOsjHqLVuEDG/ESe4TJYVGGh
-	 rZYBfAmNEjRN7mjAPtNp2/wY/bbVZSQ3A7rNZmViYMmoVAvWfDNx3aNc2J1x/LbhLY
-	 kb48+bAtwPyqw==
-Message-ID: <ea1c925f-1696-4491-a792-1b9165447dad@kernel.org>
-Date: Wed, 1 May 2024 12:22:42 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wYXcL8zx"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e9so37935645e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 01 May 2024 03:41:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714560091; x=1715164891; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tnAXwpnJCfyBMxb2ERCfc2sWQTd2dlZbEzR3Sps3cGc=;
+        b=wYXcL8zx8FZQPqbO9RvL1JXAfm4RWFrs5VIluI3eq4BM1lHNiYM20BOy8QoQvkz21B
+         ZZ67Vz0Ll0sk3yMP5psrVEKU0bcf4Yg+KvZJ9ZxfW4sPgpnrzd/yxXEWSs0t001VTfkP
+         Ctdbp90ogzAv96hGo62lEX/XYr8sBIGR2lUZnwWw0TvX3pn+Q/u4srDbng6iyWQ1NNX0
+         mBUy3B+l2ASUa/oH3+Bfk2HOq+LFlNJKW41o/2P9bwvkXx/Oj7yfmvP3AKbmyDVWcNpp
+         KQo1IKSBNUKsTP7EtjFkzjW3qXM1QtoWzBZT+SSZTex3FSO3+6PsbxgAenXISlPtFStY
+         bSkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714560091; x=1715164891;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tnAXwpnJCfyBMxb2ERCfc2sWQTd2dlZbEzR3Sps3cGc=;
+        b=jp3ggs5w+ExhJST0hLAJ1vYp/+oNS7Kn6DeW2WVjIozS2mukYyEmWDdSqwJ/LgrmMU
+         2v9c6N3bfFRGN4FecmmUtAWJgW4fxBXkEbTymx++usQzkslaEH3nLNhH8vPAf7zrhHJc
+         +m1FYmw0uV7zZ753vo2eO3e0gNLgPTJsfTmFlrosgmPVZnrUZBrqCcnTMpv1BHjHzV3w
+         YQIeKvSKPFoNoEtVeWAj6D9dCfJ7dQKAxPqEnOJDHiWQxUq8+s+pPKKYBzwci4BM7RP2
+         z2vFZuQQUiFLmyVXvvbeKN7ae2Hx1maNU6NhXPiQ6G+tXBL0OgY9o7JxFOON0imh04fk
+         jsEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7gp0MpT0vTSbVWjrpixNZ+VgxOjdADH2r27XTCYiicR7FDKwR9sDUHQSikem/+Q9c+6PRshJj9vrGQkjbU8hnn+aAeCf+zL1q
+X-Gm-Message-State: AOJu0Yz83XJrpLy4jw4DWfHqdbiDbGXATGpf43kRi0a4I5EudCQTzAXq
+	/eh8yfLjb9dQ/2iyLEzrxY2Lpx+y8qf77jCem2oUo4tvh0IyHJDCYQUjCKjPmbo=
+X-Google-Smtp-Source: AGHT+IHji7usLVWIknIEKSCSQW1rplXvuNFa5Fj/xKexpEet4LiizDosHcaq8CZihdGZp2qmPdKChw==
+X-Received: by 2002:a05:600c:1384:b0:416:6af1:27af with SMTP id u4-20020a05600c138400b004166af127afmr1596783wmf.35.1714560090610;
+        Wed, 01 May 2024 03:41:30 -0700 (PDT)
+Received: from [192.168.0.102] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a5-20020a05600c224500b0041aa79f27a0sm1775807wmm.38.2024.05.01.03.41.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 May 2024 03:41:30 -0700 (PDT)
+Message-ID: <c55b7cdf-5ff2-42fb-8611-d9492f37d4b1@linaro.org>
+Date: Wed, 1 May 2024 11:41:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,100 +61,102 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 RESEND 0/8] ipq9574: Enable PCI-Express support
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+Subject: Re: [PATCH V3 2/8] dt-bindings: clock: qcom: Add SM8650 video clock
+ controller
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
  Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio
+ <konrad.dybcio@linaro.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>
+References: <20240430142757.16872-1-quic_jkona@quicinc.com>
+ <20240430142757.16872-3-quic_jkona@quicinc.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240430142757.16872-3-quic_jkona@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 01/05/2024 06:28, Alexandru Gagniuc wrote:
-> There are four PCIe ports on IPQ9574, pcie0 thru pcie3. This series
-> addresses pcie2, which is a gen3x2 port. The board I have only uses
-> pcie2, and that's the only one enabled in this series. pcie3 is added
-> as a special request, but is untested.
+On 30/04/2024 15:27, Jagadeesh Kona wrote:
+> SM8650 video clock controller has most clocks same as SM8450,
+> but it also has few additional clocks and resets. Add device tree
+> bindings for the video clock controller on Qualcomm SM8650 platform
+> by defining these additional clocks and resets on top of SM8450.
 > 
-> I believe this makes sense as a monolithic series, as the individual
-> pieces are not that useful by themselves.
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> ---
+>   .../bindings/clock/qcom,sm8450-videocc.yaml   |  6 ++++-
+>   .../dt-bindings/clock/qcom,sm8650-videocc.h   | 23 +++++++++++++++++++
+>   2 files changed, 28 insertions(+), 1 deletion(-)
+>   create mode 100644 include/dt-bindings/clock/qcom,sm8650-videocc.h
 > 
-> In v2, I've had some issues regarding the dt schema checks. For
-> transparency, I used the following test invocations to test:
-> 
->       make dt_binding_check     DT_SCHEMA_FILES=qcom,pcie.yaml:qcom,ipq8074-qmp-pcie-phy.yaml
->       make dtbs_check           DT_SCHEMA_FILES=qcom,pcie.yaml:qcom,ipq8074-qmp-pcie-phy.yaml
-> 
-> Changes since v3:
->  - "const"ify .hw.init fields for the PCIE pipe clocks
->  - Used pciephy_v5_regs_layout instead of v4 in phy-qcom-qmp-pcie.c
->  - Included Manivannan's patch for qcom-pcie.c clocks
->  - Dropped redundant comments in "ranges" and "interrupt-map" of pcie2.
->  - Added pcie3 and pcie3_phy dts nodes
->  - Moved snoc and anoc clocks to PCIe controller from PHY
-> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> index 78a1bb5be878..922e95c61778 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> @@ -8,18 +8,22 @@ title: Qualcomm Video Clock & Reset Controller on SM8450
+>   
+>   maintainers:
+>     - Taniya Das <quic_tdas@quicinc.com>
+> +  - Jagadeesh Kona <quic_jkona@quicinc.com>
+>   
+>   description: |
+>     Qualcomm video clock control module provides the clocks, resets and power
+>     domains on SM8450.
+>   
+> -  See also:: include/dt-bindings/clock/qcom,sm8450-videocc.h
+> +  See also::
+> +    include/dt-bindings/clock/qcom,sm8450-videocc.h
+> +    include/dt-bindings/clock/qcom,sm8650-videocc.h
+>   
+>   properties:
+>     compatible:
+>       enum:
+>         - qcom,sm8450-videocc
+>         - qcom,sm8550-videocc
+> +      - qcom,sm8650-videocc
+>   
+>     reg:
+>       maxItems: 1
+> diff --git a/include/dt-bindings/clock/qcom,sm8650-videocc.h b/include/dt-bindings/clock/qcom,sm8650-videocc.h
+> new file mode 100644
+> index 000000000000..4e3c2d87280f
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,sm8650-videocc.h
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8650_H
+> +#define _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8650_H
+> +
+> +#include "qcom,sm8450-videocc.h"
+> +
+> +/* SM8650 introduces below new clocks and resets compared to SM8450 */
+> +
+> +/* VIDEO_CC clocks */
+> +#define VIDEO_CC_MVS0_SHIFT_CLK					12
+> +#define VIDEO_CC_MVS0C_SHIFT_CLK				13
+> +#define VIDEO_CC_MVS1_SHIFT_CLK					14
+> +#define VIDEO_CC_MVS1C_SHIFT_CLK				15
+> +#define VIDEO_CC_XO_CLK_SRC					16
+> +
+> +/* VIDEO_CC resets */
+> +#define VIDEO_CC_XO_CLK_ARES					7
+> +
+> +#endif
 
-Three postings within short time... Allow people to actually review your
-code. Please wait 24h before posting new version. Include entire
-feedback and all tags. Explain why you ignore/skip some tags.
+Extensibility +1
 
-Best regards,
-Krzysztof
-
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
