@@ -1,202 +1,109 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A1369944;
-	Thu,  2 May 2024 10:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EEA5C8EF;
+	Thu,  2 May 2024 11:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714646425; cv=none; b=glanpQ4Wq+TxZMPqgO0VLBfNchh7ZTcpfgS2bCiDsQZdtlGSSy5zAtRiBWS9alYegqMDP2F9G/STw2zlkSHvIVjt5DGEGxNYlZYpckFQMtQPQwzhWTfhzt5d5rGLh5OqIXj4kasAGm3sjyT3Z0ERXiblbG/ORKbBCxCVfXZ1Fi4=
+	t=1714648138; cv=none; b=jbNO8K37ujfVNmfVN4t/1REkVUNY/CYCpkUmbsos40BpsHo/Ck6JQ/JCm9i4hj1wRchobej8iALprxUbTOPYVKYVR471x/BNmoh4OHbvcV3IOL0I38WaCdbZwHUjz4ogTo5SfGDauMTS0vPe7NFsJAIj9G0Sm+jWPKW1TidmfIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714646425; c=relaxed/simple;
-	bh=O7XVQdyMHMxbunVATdf/LX5GcM2hGQPm9TlJn5WdkTA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qaN4k+lZr3fEaA4o6QRrH+2RjNFEy+My3GbHIaLvHEQATSrnC0J3Qht3b3et52gooaf7j35MweQA0hTiRBZq2I80UYKq8RpBFclC8fyVtC5NVcppz7L2hUvk9579d8jZzPXvx5RCrnsLUSfxj0/h5Qz6jUmQTVTgdWd14rgshE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=ZF4mUG5D; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+	s=arc-20240116; t=1714648138; c=relaxed/simple;
+	bh=yHhEEO1k8GZkLOIk0m9sDTJz8Cg1evDntc5JF3aC37g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H9yc02JwI/u/TeEKN++NK2ngXp746Wwl4ZesIK1NKTMuQLl02gSBm5VEWiWP07zg9wQnCRDcvnFfRs9Xf0/2vypgEpr9K6yKnoidu2L16yZpzGmPQl4jZCfW2TnZGGLsJn256eY+pBQFRN9OgC2g+XD8O8L7Av6du6X6VaqH+WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pguM2JIl; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="ZF4mUG5D"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1714646409; x=1715251209; i=j.neuschaefer@gmx.net;
-	bh=k/2wUJqCS/1bOuRYIc422cgLx2nAzXVqfJrn7v4mg+Y=;
-	h=X-UI-Sender-Class:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:To:Cc:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ZF4mUG5DqFM+LQHs9i4WnhvAbKSJ9PUbP42b6h271JYxQV1ycWv5J8f8yXJ6kZ+9
-	 YFyKG8tX6dgZ+Qb73dTHjZli5KO3Rj7sCdrn2vbv81qFHrWVmpKmV9GwYxsgHpqn3
-	 llhKu2dcZdVtvRQaPd5D8OjR3s9eygWYtIfNnuLS6jetEXSjwbNtOjWzMP+rkBcVw
-	 tMfFJTexSsPEHvKr5m748lOQdC7cyZgSDeyprTJHE2fIlUrsaelTWPBkFbftblorB
-	 qJ0mVccIGCkkYoMrs+UP4ILOIol6CLBlidFxkfAAwmV9AcOy8JBw3aLqDRpq14g6i
-	 2FoaIzL6qY0qAJFs7Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([89.1.59.78]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M4s4r-1s2khz3hd1-000Cw0; Thu, 02
- May 2024 12:40:08 +0200
-From: =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH v12 0/6] Nuvoton WPCM450 clock and reset driver
-Date: Thu, 02 May 2024 12:39:59 +0200
-Message-Id: <20240502-wpcm-clk-v12-0-1d065d58df07@gmx.net>
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pguM2JIl"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=RixZO4UNd5X+9/Eb+rJgRIgpftzrZx704xGqdwLo84c=; b=pguM2JIlPY0Lc+2Pu/lym4sSK3
+	TWl5G680QXe50eULZWlN4Q1SYb/H/CHXp+OQiaYmXz66j4fyKYuc5x95eoOJvIi9BUw4R4il6T2h9
+	kvb4lpNtvUX8lWYwSPjAsjk67d5ilLYgRRlsuyl0svGig0+JXblFpVkw4cjkk54FRq2VO2oWeTJmV
+	b6twrDWplwXdeDBEKrp8iDtMY8QnW6Eg/7PYh8kz3V1TpEnNwupYR7vaVgt+W6MaOQcVtwk9n+DbN
+	9TJJF6tp1GvFeeK98mOiUs4nUwmy6paKBOLl0o8+6khTUn4BRFuHNi4bdS9jn2E/ZCK0rRvTTvOae
+	iOfH5XSw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58980)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s2UIr-0007CJ-13;
+	Thu, 02 May 2024 12:08:41 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s2UIo-0003bE-5n; Thu, 02 May 2024 12:08:38 +0100
+Date: Thu, 2 May 2024 12:08:38 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Duanqiang Wen <duanqiangwen@net-swift.com>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
+ entries
+Message-ID: <ZjN0NkYifXY0OsZt@shell.armlinux.org.uk>
+References: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
+ <e15b8a1165a5437ab1fa868ccd0b629c.sboyd@kernel.org>
+ <560549ed7db5da2f2727dc053a5d196d.sboyd@kernel.org>
+ <ZjNIiDeXIjXhJlT4@shell.armlinux.org.uk>
+ <ZjNNT+KBNpQL+U3b@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-B4-Tracking: v=1; b=H4sIAH9tM2YC/0WMwQ7CIBAFf6XZsxhYUIKn/ofpoSK0Gy1toKk1D
- f8u1oPHmfcyGyQXySW4VBtEt1CiMRQQeKjA9m3oHKN7EYAcFZeSs9dkB2afD4aIrdT+ZKy/Qbl
- P0Xla99a1KdxTmsf43tOLEF/9qygu/pWyMM6kNkqjOQtUqu6G9RjcDE3O+QMbB2QqoQAAAA==
-To: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1714646407; l=4460;
- i=j.neuschaefer@gmx.net; s=20240329; h=from:subject:message-id;
- bh=LHlwXz0xY3IxreqHfZl/rfZVPyckYCVZucb0Ic/3Jx4=;
- b=F54kmxg0OgdLxDQ6n8T8nlUtGboDka/0NnhB9hGwtdXdLifx7EuW5EaGIfPMQ0DP6Ek0fRHB7
- w2cZbenVOwbDDnW8T1iJCrqsJLsp7GwKN0VAAK3u904HZbv3elyiXGY
-X-Developer-Key: i=j.neuschaefer@gmx.net; a=ed25519;
- pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Provags-ID: V03:K1:5F32MW6LwlGRQ2sFNPeMQd2ujwcE7rwYB86X7T5DYtUUJaabFx6
- kmwN05r9Y+bQbCdgGB3JfNIgYXQYyFco8mV1t5TM++QyO446bux72hfOhBgJ6+A9FEjBOyz
- tLmf9mvkfdChj6eNgCg9F7cQX7PthRNVPO30nE8+MrSzdPCss5RMat7V7MErOKjiVaePsMW
- wi5PeUwF8HSLXL8ercUZQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1TBB1C6c6xs=;Ibiv6q8LQCiq4B4fzLlZf1ufCI9
- twrI09m3Wevff5LCixbUPv92Pid4anhOtzQDShhBCIYCAZn5iZFq/vy+qoU2popZJEJrjyti5
- E+o5oTugKy1KP0yJqNhfitUi/xptTdw4wlM+SOWCxeU/hRfv8i4vVS94KrCh68yvbMwx2LmSv
- y/2NivJjNLuP4EpJ+QUhAwsSTm0ymkSgXlzGELBTFWQBc2P1gfeHAuvtsKAiYML/oL7HwMvGo
- weTcgfTf6tUZCJLrxcHXItd72dAfkQe8GjR2IUhqAmxHFttqKtz7Kmu/qr/FJCp0LkHHv1TtF
- 2K+KAhNSlIkgpVnd4Vohqkf+CFNV+InFTNEoNuBWXeDoDCdHkEPHQMRRuT0jG5oi+lwq0sJv/
- BM9M/7zgbanb9WokOIN9xaDREx00T7A+2gqbAAdiEDzxQXW6eZgV81AnmRIW4plkjmOkfO8CN
- 5UvGv09B4KLXTYVKrVLnnz/c+jTHPpSt//SN5tFlrcfVBp8hIH9TBxOdURMDpQnHs84MHu891
- JAQ0d1Nb40wOHyvM9vpdI6VdNRY7YE3dD4C3BsV3gOz6dj/8sq8MElwdknHWYpjw3N5tKGJR0
- JOANSq43wpt9TvBoy16fTH7YdCtqroRjZjK721w5XyqzeB+boUyyGygSR1f8hPjhd1H/lJmzn
- Filffp8OtcW3mMXjUCBNAXvdbrfcubBv7sn8JAQb8hdsHyQP8nnRMLD7lZnC0BYIRA/O2vR79
- qcRgCJA8GC9eut790Jlyz/bgqr8sr7UX9Ca14MraIqIi/vCpyHkierxbR1E+eNzCoqd0Tcu8o
- PlDH8PdmbzWlDhgmA9N1Q0l/3x1GTcY34FfbcrJGk62cU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjNNT+KBNpQL+U3b@shell.armlinux.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-This series adds support for the clock and reset controller in the Nuvoton
-WPCM450 SoC. This means that the clock rates for peripherals will be
-calculated automatically based on the clock tree as it was preconfigured
-by the bootloader.  The 24 MHz dummy clock, that is currently in the
-devicetree, is no longer needed.  Somewhat unfortunately, this also
-means that there is a breaking change once the devicetree starts relying
-on the clock driver, but I find it acceptable in this case, because
-WPCM450 is still at a somewhat early stage.
+On Thu, May 02, 2024 at 09:22:39AM +0100, Russell King (Oracle) wrote:
+> On Thu, May 02, 2024 at 09:02:16AM +0100, Russell King (Oracle) wrote:
+> > On Wed, May 01, 2024 at 06:02:54PM -0700, Stephen Boyd wrote:
+> > > Quoting Stephen Boyd (2024-05-01 17:59:16)
+> > > > Quoting Russell King (Oracle) (2024-03-15 04:47:55)
+> > > > > Report an error when an attempt to register a clkdev entry results in a
+> > > > > truncated string so the problem can be easily spotted.
+> > > > > 
+> > > > > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
+> > > > > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> > > > > ---
+> > > > 
+> > > > Applied to clk-next
+> > > > 
+> > > 
+> > > And backed out because I get a compilation failure
+> > > 
+> > > drivers/clk/clkdev.c: In function 'vclkdev_alloc':
+> > > drivers/clk/clkdev.c:182:17: error: function 'vclkdev_alloc' might be a candidate for 'gnu_printf' format attribute [-Werror=suggest-attribute=format]
+> > >   182 |                 res = vsnprintf(cla->dev_id, sizeof(cla->dev_id), dev_fmt, ap);
+> > >       |                 ^~~
+> > > cc1: all warnings being treated as errors
+> > > make[5]: *** [scripts/Makefile.build:244: drivers/clk/clkdev.o] Error 1
+> > > make[4]: *** [scripts/Makefile.build:485: drivers/clk] Error 2
+> > 
+> > It builds fine for me. I don't get this _error_, and it's really no
+> > different from what it originally was - instead of using vcsnprintf()
+> > we're now using vsnprintf(). That should make no difference what so
+> > ever.
+> 
+> ... and I've just checked, and it builds entirely cleanly for me.
+> 
+> I'll merge it.
 
-v12:
-- Convert to platform driver, but use fixed-factor-clock for timer
-  (a necessary workaround because npcm7xx-timer needs its clock earlier
-  than a platform driver can provide it)
-- Various driver improvements suggested or inspired by Stephen Boyd
-- New patches:
-  - clk: Introduce devm_clk_hw_register_divider_table_parent_data()
-  - clk: provider: Address documentation pitfall in struct clk_parent_data
+It should be in tonight's linux-next tree.
 
-v11:
-- Link: https://lore.kernel.org/r/20240401-wpcm-clk-v11-0-379472961244@gmx=
-.net
-- Improved description in "ARM: dts: wpcm450: Remove clock-output-names
-  from reference clock node"
-- some minor format differences due to switching to B4
+I also note... the kernel build bot never flagged the above, not even
+a warning for it, and it would've built the patch as it was Cc'd to
+linux-kernel. So my conclusion is the error you are seeing is somehow
+specific to your environment. Maybe you're building with an additional
+set of warning flags and -Werror?
 
-v10:
-- A small tweak (using selected instead of extending an already-long
-  default line) in Kconfig, for better robustness
-
-v9:
-- Various improvements to the driver
-- No longer use global clock names (and the clock-output-names property)
-  to refer to the reference clock, but instead rely on a phandle reference
-
-v8:
-- https://lore.kernel.org/lkml/20230428190226.1304326-1-j.neuschaefer@gmx.=
-net/
-- Use %pe throughout the driver
-
-v7:
-- Simplified the error handling, by largely removing resource
-  deallocation, which:
-  - was already incomplete
-  - would only happen in a case when the system is in pretty bad state
-    because the clock driver didn't initialize correctly (in other
-    words, the clock driver isn't optional enough that complex error
-    handling really pays off)
-
-v6:
-- Dropped all patches except the clock binding and the clock driver, becau=
-se
-  they have mostly been merged
-- Minor correction to how RESET_SIMPLE is selected
-
-v5:
-- Dropped patch 2 (watchdog: npcm: Enable clock if provided), which
-  was since merged upstream
-- Added patch 2 (clocksource: timer-npcm7xx: Enable timer 1 clock before u=
-se) again,
-  because I wasn't able to find it in linux-next
-- Switched the driver to using struct clk_parent_data
-- Rebased on 6.1-rc3
-
-v4:
-- Leave WDT clock running during after restart handler
-- Fix reset controller initialization
-- Dropped patch 2/7 (clocksource: timer-npcm7xx: Enable timer 1 clock befo=
-re use),
-  as it was applied by Daniel Lezcano
-
-v3:
-- https://lore.kernel.org/lkml/20220508194333.2170161-1-j.neuschaefer@gmx.=
-net/
-- Changed "refclk" string to "ref"
-- Fixed some dead code in the driver
-- Added clk_prepare_enable call to the watchdog restart handler
-- Added a few review tags
-
-v2:
-- https://lore.kernel.org/lkml/20220429172030.398011-1-j.neuschaefer@gmx.n=
-et/
-- various small improvements
-
-v1:
-- https://lore.kernel.org/lkml/20220422183012.444674-1-j.neuschaefer@gmx.n=
-et/
-
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
-=2D--
-Jonathan Neusch=C3=A4fer (6):
-      dt-bindings: clock: Add Nuvoton WPCM450 clock/reset controller
-      clk: Introduce devm_clk_hw_register_divider_table_parent_data()
-      clk: provider: Address documentation pitfall in struct clk_parent_da=
-ta
-      clk: wpcm450: Add Nuvoton WPCM450 clock/reset controller driver
-      ARM: dts: wpcm450: Remove clock-output-names from reference clock no=
-de
-      ARM: dts: wpcm450: Switch clocks to clock controller
-
- .../bindings/clock/nuvoton,wpcm450-clk.yaml        |  65 +++
- arch/arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi     |  33 +-
- drivers/clk/Makefile                               |   2 +-
- drivers/clk/nuvoton/Kconfig                        |  10 +-
- drivers/clk/nuvoton/Makefile                       |   1 +
- drivers/clk/nuvoton/clk-wpcm450.c                  | 455 ++++++++++++++++=
-+++++
- include/dt-bindings/clock/nuvoton,wpcm450-clk.h    |  67 +++
- include/linux/clk-provider.h                       |  26 +-
- 8 files changed, 643 insertions(+), 16 deletions(-)
-=2D--
-base-commit: 4cece764965020c22cff7665b18a012006359095
-change-id: 20240330-wpcm-clk-222a37f59cfb
-
-Best regards,
-=2D-
-Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
