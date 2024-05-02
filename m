@@ -1,177 +1,168 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9915153373;
-	Thu,  2 May 2024 09:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753C342AAB;
+	Thu,  2 May 2024 10:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714642278; cv=none; b=OiQmRTrIaS6lrtrebV+8DC+caxvbhwildh6flScYkujCGriq84TD5LsGKuVEeGL1kyRKnex30kzkdWhJBb6mlwjgbhB/hk1H+Fsxr4xD/TfvlsVmhirtPZntA6UVAqMrHDXpWUbH7cjyJufhz4X/omS0X6p/YHX0mO9DcDPb/8c=
+	t=1714644342; cv=none; b=rPFOLb0XajGps5k4URLqWC6HysjhppVwK0R6EWa3fs+2t0YMs8ofi6yEQ1TWDqZVlmoIY53+C/fNnLZGkuVHiB3uzK+b3I0cpL1e3ei5b+ObCwSGTKd9sADj3PUnmTOXA+iFyA7BKvVAbRWXK/rWkMYTyvfK19om8LUlb33NyII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714642278; c=relaxed/simple;
-	bh=S9nKncTosJNtyw2fp8qJOuPt58/MGn3btQW/Tmk2CNI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=omzBpLBBHYjRgxd6xJR7Ex6GUHcnSqQUaKJs94O/W+22l1lyurzTEe8N4NXj4NaQWBUpjsGGoPbo6sPGs3PLr+kLTUZ9k1xtOsEOklZypGQmzmZ5dKkh80/zC5W1L4T0xwwunoslm11g00h2WghgQ14OETrLzCjdg6tQmbo07Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YIOO6VEH; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1714644342; c=relaxed/simple;
+	bh=CSMF8TVTmfpyLAZ8iFxB/1Lk5CprpPEhzH86+AomcuQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Gnbi+L9U29w9I2xy4As3wwRBbMH3hGoRRdyToVuhx7sMk1mXb6fuqpvDAuJsSt3NbAgfw4dEOYaSRXC3glGmLLUm2pWz+k85HscjPmhzinpzhwKkET79WMSnKGgD5vQlQRVzLcQXCtfOwaJwjh74/D9Uhwbt5ISndiI/ucnxp/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AE8R0PEy; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YIOO6VEH"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4429Jhjo016657;
-	Thu, 2 May 2024 09:31:07 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AE8R0PEy"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4426kp2E012287;
+	Thu, 2 May 2024 10:05:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=v5c/xzuoMbwgLTcT01z9I
-	raUvhuoSBUQKktz1b968Xw=; b=YIOO6VEH6ekLYPiopTBdm3D7pDqfUWzV0MvSM
-	hVEnz1X+Qin/RrMNRK8CHdWZEx8s0++v1Y1hQ0NE6XhQZAeekqIet5YzH3TXFNOZ
-	OVYOABl3qMJaPWgIELxdWC8AsLXzkm/XLttAwOd70zR/brw9jVIJkpyCkq/lDxl7
-	gPDPgN5vv7KQ0od3sC24ZaG0ID1NppOhEOxVwAwZmSl215w4BV0gq50teK13vOGz
-	9ShQIK7rl1tclqkvuRMPcKdChO6rwrkSMRjw91fEPciU2ayTBN76FDtZB0WGBZh4
-	NuMTEz5xZPQtGkRqhuLWBA3E/xM8nCCrwS2EZWz0b5M79EgYQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xv6q0r6c3-1
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=TJq2/i5Zj8Gb1ky2H4os8IPFUg6ME1ot9K9spfIJlm4=; b=AE
+	8R0PEyAL7hWQhtx5WwtS8e1xKc+Ekg5QrNJw724SqKlqUMEzr3/H3GLwWpA9OY0F
+	cnNUx/OfcRLnNAC0E0WVZcGhPscCPiLvYkp48KiZFRQ0bP/nU7iUqgPijgYAmj+9
+	jJeIzY5oBLQbrHXNxbvYLloXmQgztyxQzwIFu6GrOF8QpxU3sY1Vi433GxpdXTmv
+	Erq55rJ3NtkzL/jW551diuVS8B6rXPGQhSS/OTcNnAZ+sZ88JPS2oE5/4us9BES+
+	UT279cDpne5xeUJB//3zpsn2EjLuMzT9tJjyWEjaiQo/XijPV7PHYAXpsEb0f2b9
+	/Dk493PV7rGYrlTpcKyA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xv41mgjgn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 May 2024 09:31:06 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4429V3vm024061
+	Thu, 02 May 2024 10:05:35 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 442A5YpV020501
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 2 May 2024 09:31:03 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 2 May 2024 02:30:58 -0700
-Date: Thu, 2 May 2024 15:00:54 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <djakov@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
- ability to gcc
-Message-ID: <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com>
-References: <20240418092305.2337429-1-quic_varada@quicinc.com>
- <20240418092305.2337429-7-quic_varada@quicinc.com>
- <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
- <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com>
- <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
+	Thu, 2 May 2024 10:05:34 GMT
+Received: from [10.216.26.108] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 2 May 2024
+ 03:05:29 -0700
+Message-ID: <46e4000b-e588-d1b7-153e-047ed565565a@quicinc.com>
+Date: Thu, 2 May 2024 15:35:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: qcom: Add AHB clock for SM8150
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh
+ Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20240501-videocc-sm8150-dt-node-v3-0-2c4bd9ef48bd@quicinc.com>
+ <20240501-videocc-sm8150-dt-node-v3-1-2c4bd9ef48bd@quicinc.com>
+ <CAA8EJpotvs3AOYO3ct=_JabBdYDops4Yfdutga9KBAbVPoZ5yw@mail.gmail.com>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <CAA8EJpotvs3AOYO3ct=_JabBdYDops4Yfdutga9KBAbVPoZ5yw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: f32cUZJHVPOeDkNbmNDX5tkaGpQ2T_YX
-X-Proofpoint-GUID: f32cUZJHVPOeDkNbmNDX5tkaGpQ2T_YX
+X-Proofpoint-GUID: M8lt5M0Jugx5xPU3ML55SjwMf0gpsb3D
+X-Proofpoint-ORIG-GUID: M8lt5M0Jugx5xPU3ML55SjwMf0gpsb3D
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
  definitions=2024-05-01_16,2024-05-02_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 priorityscore=1501 spamscore=0
- mlxlogscore=999 malwarescore=0 phishscore=0 adultscore=0 clxscore=1015
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2405020058
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015
+ priorityscore=1501 mlxscore=0 bulkscore=0 phishscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2405020062
 
-On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
-> On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
-> > On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
-> >>
-> >>
-> >> On 4/18/24 11:23, Varadarajan Narayanan wrote:
-> >>> IPQ SoCs dont involve RPM in managing NoC related clocks and
-> >>> there is no NoC scaling. Linux itself handles these clocks.
-> >>> However, these should not be exposed as just clocks and align
-> >>> with other Qualcomm SoCs that handle these clocks from a
-> >>> interconnect provider.
-> >>>
-> >>> Hence include icc provider capability to the gcc node so that
-> >>> peripherals can use the interconnect facility to enable these
-> >>> clocks.
-> >>>
-> >>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> >>> ---
-> >>
-> >> If this is all you do to enable interconnect (which is not the case,
-> >> as this patch only satisfies the bindings checker, the meaningful
-> >> change happens in the previous patch) and nothing explodes, this is
-> >> an apparent sign of your driver doing nothing.
-> >
-> > It appears to do nothing because, we are just enabling the clock
-> > provider to also act as interconnect provider. Only when the
-> > consumers are enabled with interconnect usage, this will create
-> > paths and turn on the relevant NOC clocks.
+
+On 5/1/2024 5:36 PM, Dmitry Baryshkov wrote:
+> On Wed, 1 May 2024 at 11:32, Satya Priya Kakitapalli
+> <quic_skakitap@quicinc.com> wrote:
+>> SM8150 videocc needs AHB clock, so update the bindings for sm8150
+>> to add the AHB clock.
+>>
+>> Fixes: 35d26e9292e2 ("dt-bindings: clock: Add YAML schemas for the QCOM VIDEOCC clock bindings")
+> The tag is incorrect. The mentioned commit didn't add sm8150 bindings,
+> so it didn't have a bug.
+
+
+Thanks, will correct the tag.
+
+
+>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,videocc.yaml         | 17 ++++++++++++++++-
+>>   1 file changed, 16 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+>> index 6999e36ace1b..68bac801adb0 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+>> @@ -75,7 +75,6 @@ allOf:
+>>             enum:
+>>               - qcom,sc7180-videocc
+>>               - qcom,sdm845-videocc
+>> -            - qcom,sm8150-videocc
+>>       then:
+>>         properties:
+>>           clocks:
+>> @@ -101,6 +100,22 @@ allOf:
+>>               - const: bi_tcxo
+>>               - const: bi_tcxo_ao
+>>
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          enum:
+>> +            - qcom,sm8150-videocc
+> Could you please extend the sm8250 case instead of defining a new one?
+> Also could you please check if there is a clock (like ahb_clk_src)
+> that uses bi_tcxo_ao instead of bi_tcxo? If so, we have to add this
+> clock to the bindings even if the driver doesn't use/model it at this
+> point.
+
+
+There are no clocks using the bi_tcxo_ao on sm8150. Hence added separate 
+case for sm8150 instead of re-using sm8250.
+
+
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: AHB
+>> +            - description: Board XO source
+>> +        clock-names:
+>> +          items:
+>> +            - const: iface
+>> +            - const: bi_tcxo
+>> +
+>>     - if:
+>>         properties:
+>>           compatible:
+>>
+>> --
+>> 2.25.1
+>>
 >
-> No, with sync_state it actually does "something" (sets the interconnect
-> path bandwidths to zero). And *this* patch does nothing functionally,
-> it only makes the dt checker happy.
-
-I understand.
-
-> > This interconnect will be used by the PCIe and NSS blocks. When
-> > those patches were posted earlier, they were put on hold until
-> > interconnect driver is available.
-> >
-> > Once this patch gets in, PCIe for example will make use of icc.
-> > Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
-> >
-> > The 'pcieX' nodes will include the following entries.
-> >
-> > 	interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
-> > 			<&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
-> > 	interconnect-names = "pcie-mem", "cpu-pcie";
->
-> Okay. What about USB that's already enabled? And BIMC/MEMNOC?
-
-For USB, the GCC_ANOC_USB_AXI_CLK is enabled as part of the iface
-clock. Hence, interconnect is not specified there.
-
-MEMNOC to System NOC interfaces seem to be enabled automatically.
-Software doesn't have to turn on or program specific clocks.
-
-> >> The expected reaction to "enabling interconnect" without defining the
-> >> required paths for your hardware would be a crash-on-sync_state, as all
-> >> unused (from Linux's POV) resources ought to be shut down.
-> >>
-> >> Because you lack sync_state, the interconnects silently retain the state
-> >> that they were left in (which is not deterministic), and that's precisely
-> >> what we want to avoid.
-> >
-> > I tried to set 'sync_state' to icc_sync_state to be invoked and
-> > didn't see any crash.
->
-> Have you confirmed that the registers are actually written to, and with
-> correct values?
-
-I tried the following combinations:-
-
-1. Top of tree linux-next + This patch set
-
-	* icc_sync_state called
-	* No crash or hang observed
-	* From /sys/kernel/debug/clk/clk_summary can see the
-	  relevant clocks are set to the expected rates (compared
-	  with downstream kernel)
-
-2. Top of tree linux-next + This patch set + PCIe enablement
-
-	* icc_sync_state NOT called
-	* No crash or hang observed
-	* From /sys/kernel/debug/clk/clk_summary can see the
-	  relevant clocks are set to the expected rates (compared
-	  with downstream kernel)
-
-Does this answer your question? Please let me know if you were
-looking for some other information.
-
-Thanks
-Varada
