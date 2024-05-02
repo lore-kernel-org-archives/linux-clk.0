@@ -1,146 +1,117 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAA35C8EF;
-	Thu,  2 May 2024 11:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F31215B14D
+	for <linux-clk@vger.kernel.org>; Thu,  2 May 2024 15:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714648201; cv=none; b=Z01tia1G9cRf6z/nbGTngn7XYRJdrY+egSFbqgnjG5+p1KocBI/Eg38t55y+sQVfGzP1k7nbcEf/CEZiJjtbOcezXIE0D4V1VZbF+nduciI5dIAs+vfQdMdAYXZQAXcdGHQHCwSJGfuNge5ylg2SagmwjfriWo49rzcZTwwzeSU=
+	t=1714665190; cv=none; b=rClhOfgNLKYGUmaYWveoi5l1EaBAsQqGpF3LijpU9fS7+0wHpvm+5RprqUWAPOEdnmbttCF1zEvGJcG/jZo4hddmINMhTidGlls7efs3OFPe8kalS4jr4f9TNqXbf4pqh58dp245g/uXbqT+XfA/ICTwVPdP+6A682M3hOWqSxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714648201; c=relaxed/simple;
-	bh=unJP1NwysKlSIETESGSQdBq48jBlZec/OubfEgTf09A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IxGCf7xgIMc6raiZNah6Wp6LyFDBxBfrnKbzTH36F/2AhBMVXlLliYWSEjZKGognU43Yp6p/NKW0088ym4JaBfd9cPt5ClDSorrY76drKC1q88pct0n07CzfaXZxmBHnDQOZ97LcPuGDgtG58cqqyzAQ2ic9qI6yo1brYZBooO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QMFTKOww; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1714665190; c=relaxed/simple;
+	bh=hgLqQsUmbnlqSKDOOFDfYvGL7hLvkqrTWQ08Fg0yZ2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jKruF6UDvA9WqZULOyVhQaO9tudVR75Vfh4RW6dG3Hd9ommOU2NQQQ0dbin3SUg5nsbCNSVOLKLJ8+qDnpTQONeFDaKSpRI1k+EsPmz+3bD/c6KYspYrDeHwZt0Q913y9njmASJ5B1dGbz4RTvMEITHy/c2Puu6UXr9BHrng1gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=XXRv0S7M; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QMFTKOww"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4425pI1M018346;
-	Thu, 2 May 2024 11:09:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=1R54idS8kX6ibLVp50hFilNZrY8MA6+STSvHKvSkkOg=; b=QM
-	FTKOwwFTrW6nxJgwmXoqO6a3jwh5629anl0FLNBeyoWyUXCChyvh66PZwI8RbYgQ
-	iJz6CqoZKN2Y0pW6ij4XbApNrqrLvnUMn8Ti74/rgS7aqeSaYEqmtqaXwtZluCKQ
-	jfxTzEaKis4pZU4E0YxopiqghejtKAXH2fbeFLFWXZQibL7niNJgwLGXh7vXhs62
-	Qa7O9RnNAckQene4AoKd1m2RiycKKMtjF4ZFwdrNCdnnUIJBpTzO2s02Tgir/Fb2
-	xoBelNy3HPzfcT0rLeH1r0GBu/i1C2a2aj6YIuXjdEs5vppILuFYVrH+7i/E+zxr
-	YNvypvhUmf0R/wj2K3jg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xu71jbr56-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 May 2024 11:09:55 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 442B9sPQ013474
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 2 May 2024 11:09:54 GMT
-Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 2 May 2024
- 04:09:48 -0700
-Message-ID: <b21f2d88-3429-41cd-b8df-4353845c1320@quicinc.com>
-Date: Thu, 2 May 2024 16:39:34 +0530
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="XXRv0S7M"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1ec4dd8525cso24257165ad.3
+        for <linux-clk@vger.kernel.org>; Thu, 02 May 2024 08:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1714665187; x=1715269987; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xrO+BzTfAqGrVSW6gaAM1uVW/UhYnHc2qIbuASzSIck=;
+        b=XXRv0S7MFTlv3u2OhC968Zki0V1ZqmbE8lL18EQVLpE2J+GRo6VUd2rFmDAVLUoDI7
+         RH1LkBOnS3AwTa1FBTCt2W4v6Pvav2gueoZrvWdPN5tTPku5V+YP28JkYAQmG/LH7IOz
+         nlfLZW2YHtALHKxTpuqZOkLRh/U6PQciMJI+anpzID3lWjxcgM4q9dju31eQtTZgwilv
+         1Ywn+yLzK62CRFJ/WRED2NqBctu0HiNd1zpgRCnINVReE+JsJzMYDN6dxYBEHgEUicAV
+         ea12Hlh8u9pGF7cCQetFrW4iE2kLy6q0i/m6Jox6t0JPnjIHtbHI8cnheNLB2zBIiIGt
+         FmJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714665187; x=1715269987;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xrO+BzTfAqGrVSW6gaAM1uVW/UhYnHc2qIbuASzSIck=;
+        b=l0r8lcbvgVat/F3XSxhPOA7JRVi8kJGgT6pneR7iXbi8+ELNNKLg9/XUjDuO5NMCBS
+         DQCRaNcz8+eXXtSTYlKwMzaAkqEEI/evUbTpQ42X5JHoipMXLjiZoPA2w5/xVUL0qsmT
+         PszEkg5Kb3fSeMnQJZz15Kn1DHGsnCQXqPpVoRz3KzCavwX+ps+jANml9QcZdxpa6Zeg
+         7Qc8B82JcXOiI/5T9HBKd78z0h/mhz0GJW/uVONdn6ibHocjPgJjkbm81lEVOc9lfhRp
+         Y/gLnfIrg29e8PzKVGohkR/DytOcMXfzxlEdf1M9rdPXEe3CwWdlWVlNPhk5O32osP/C
+         xPXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWorCyo1ZhVEA+YIkh7Q8obFgJGxxpx/HNgQBxCA+/sws5EaopkGVdG9WcbaHw4uv8xngzGWzifYcKfNA3px08fjj1BruvWBkmJ
+X-Gm-Message-State: AOJu0YyWUxY9iAyuoPS3F+srCA/UuRMlyGDzvqSezBlFEfWTHi9F27/G
+	2RuFQF+h4fDMBfsUCKm5HDmWLQwp14c4eyMe53Ikdv4yzElqpxNv1z07KpF9f18=
+X-Google-Smtp-Source: AGHT+IGrW1OPSdicmml9TYEIm0yY7aapvxFGT0j7ToPXTRa7G6YIhicWH6kAZGYVaA97W1Sg6HV2lw==
+X-Received: by 2002:a17:902:bb8b:b0:1e4:5b89:dbfa with SMTP id m11-20020a170902bb8b00b001e45b89dbfamr28506pls.41.1714665187388;
+        Thu, 02 May 2024 08:53:07 -0700 (PDT)
+Received: from x1 ([2601:1c2:1802:170:e8cc:54a1:83d7:2ef1])
+        by smtp.gmail.com with ESMTPSA id m3-20020a170902c44300b001ec2e620b1fsm1447508plm.273.2024.05.02.08.53.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 May 2024 08:53:07 -0700 (PDT)
+Date: Thu, 2 May 2024 08:53:05 -0700
+From: Drew Fustini <dfustini@tenstorrent.com>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH RFC v2 4/4] riscv: dts: thead: Add clock to TH1520 mmc
+ controllers
+Message-ID: <ZjO24XikkqNAnbti@x1>
+References: <20240426-th1520-clk-v2-v2-0-96b829e6fcee@tenstorrent.com>
+ <20240426-th1520-clk-v2-v2-4-96b829e6fcee@tenstorrent.com>
+ <1444dac5-c725-4bf7-8843-469a62c3abf1@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 5/8] dt-bindings: clock: qcom: Fix the incorrect order
- of SC8280XP camcc header
-To: Johan Hovold <johan@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>
-References: <20240430142757.16872-1-quic_jkona@quicinc.com>
- <20240430142757.16872-6-quic_jkona@quicinc.com>
- <ZjHklEN4zV5QG5Zv@hovoldconsulting.com>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <ZjHklEN4zV5QG5Zv@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bZ-kJ4VXR6TYYluN2ZLfL6vMolDF_x39
-X-Proofpoint-ORIG-GUID: bZ-kJ4VXR6TYYluN2ZLfL6vMolDF_x39
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-02_01,2024-05-02_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 bulkscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- clxscore=1011 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2404010003 definitions=main-2405020070
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1444dac5-c725-4bf7-8843-469a62c3abf1@bootlin.com>
 
-
-
-On 5/1/2024 12:13 PM, Johan Hovold wrote:
-> On Tue, Apr 30, 2024 at 07:57:54PM +0530, Jagadeesh Kona wrote:
->> Fix the incorrect order of SC8280XP camcc header file in SM8450 camcc
->> bindings.
+On Thu, May 02, 2024 at 09:47:43AM +0200, Thomas Bonnefille wrote:
 > 
-> Try to avoid using the word "fix" in the commit summary (Subject) and
-> commit message for things like this which are essentially cleanups to
-> avoid making it sound like a bug fix (which automated tooling may then
-> select for backporting).
->   
-
-Thanks Johan for your review!
-
-Yes, will remove the word "fix" in commit subject and message.
-
->> Fixes: 206cd759fbd2 ("dt-bindings: clock: Add SC8280XP CAMCC")
 > 
-> Also drop the Fixes tag as this is not a bug fix.
+> On 4/27/24 2:10 AM, Drew Fustini wrote:
+> > Change the clock property in the T-Head TH1520 mmc controller nodes to a
+> > real clock provided by the AP_SUBSYS clock driver.
+> > 
+> > Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
 > 
-
-Sure, will drop Fixes tag in next series.
-
-Thanks,
-Jagadeesh
-
->> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->> ---
->>   Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->> index fa0e5b6b02b8..bf23e25d71f5 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->> @@ -14,9 +14,9 @@ description: |
->>     domains on SM8450.
->>   
->>     See also::
->> +    include/dt-bindings/clock/qcom,sc8280xp-camcc.h
->>       include/dt-bindings/clock/qcom,sm8450-camcc.h
->>       include/dt-bindings/clock/qcom,sm8550-camcc.h
->> -    include/dt-bindings/clock/qcom,sc8280xp-camcc.h
->>       include/dt-bindings/clock/qcom,x1e80100-camcc.h
+> I experienced that, when the I2C clocks were correctly configured, the UART
+> stopped working, likely due to their dependence on FOUTPOSTDIV.
+> Setting up the UART correctly, for instance:
 > 
-> Johan
+>                 uartx: serial@xxxxxxxxxx {
+> 			...
+>                         clocks = <&clk CLK_UART_SCLK>, <&clk
+> CLK_UARTX_PCLK>;
+>                         clock-names = "baudclk", "apb_pclk";
+>                         ...
+> 			status = "disabled";
+>                 };
+> resolved the issue.
+> As this would be mandatory in the future, I suggest that you configure all
+> the nodes currently set to a fixed clock, not just the MMC controller.
+
+Thank you for testing and discovering this issue.
+
+Could you post your device tree so I can be sure I'm testing the same as
+what you have?
+
+Drew
