@@ -1,104 +1,93 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639063FB94;
-	Thu,  2 May 2024 07:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEFC200A0;
+	Thu,  2 May 2024 08:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714636070; cv=none; b=TxLVt46p50UCMDxNBk/mge9NkZq0iwCfzjBlqYvZ6yM1HG4U7eMAWaLykibpoNMZiryuSxsni+56QzxJ7DqD+HiE0iBzTRX2rmZtjleVmM3vNDEiKEdQ3dHUDXUfB8OuQhVCp3Gcg743p5i8vZ5oCKf3/etEfQIEkxANFadLdQg=
+	t=1714636964; cv=none; b=Gsu9eARGyzknGAvxaVvfADiNIXlTICi/2LiUNIFS/XW7oYO+xsQn23/wbDusM2HpB9a09Dqi+mhmpGbXq9Y7n84i/xVwSS817dA2PdwUbSZt2KCu+lD3JuLnSzR5QxgYl9rszZOAdZYqiivcTwt2vAvo3Lw5QktM+CBaaXCQiQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714636070; c=relaxed/simple;
-	bh=4fidK45K76RPQVzq6DR8JC/iRRxUfnDxLhJ5XYetRIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RORajjV3OLs1mRbCERRFkiof7Iyn2V0c12L9zJrrN7p8Df/+T+XipGwmko+z0LQNXItWW1EJkhkUtVOWapuCDvgMyexBlIoxU/3NcYr/5t/aJNM3Me8IgG0m+sC7S1BjZ+lUzh/vFH21S/A0aB6NT0sX5rIwEIExf1tgRRfPD+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aJW/qp8H; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1714636964; c=relaxed/simple;
+	bh=oPGuPkHhcwOYBGws1FaAuOhDDi3Cpr/qlxKh7ABFSA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TmLfcEBo4ox8vDTga9Q/tXZiJkl8isOcKmo4lpQt34RF8jKnlZcll/ORX9mjVn+JC5idok5fQpJMVLS1CoA+wstwpWC8qsJSXPUlETPTN2JDMlUZt1Ks159EM6fqWLRlYwNLyAUuyhBHFWLo1kB9HRfjU9Bmyz85bjTAnNkJFL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=sm/T+0ui; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aJW/qp8H"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 842B1FF808;
-	Thu,  2 May 2024 07:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1714636066;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x8SwW+ELJF0Fre9JQp39dmXVDBVpvYrr5lnpvWL62nM=;
-	b=aJW/qp8HM5GIcA9zma+Wm/wS7z8pqOauqHzMTapIbt69hXq7W9aTboL+TUAXfFLk6jS1yS
-	iRYmFvhicQFh6JLO7Q8himwCobUqRtb8f4XcX13AH9qKj89VT8kx96QLSe27cX/VHEGHdo
-	RCS6P2NdXJV088Ay2x0sbC2BYTwsofbZ5G4erAVAQTQ+2nQjfg27fn1WF+cj0MrdRB9ooS
-	KB43b7EFfrqGmUAZr1L055xgMJELD9QgTWEm8Ecw3TWZOfCCHrtS/JTQ1Wpng/EWFGdjZJ
-	+YQFO+mbqEo2CZ+N7KvTzD/QEQwQaMvW60PjA2pUgrVTCfp8lNjDj7/0R2Efcw==
-Message-ID: <9ad3ab76-812f-413e-826d-97545c403138@bootlin.com>
-Date: Thu, 2 May 2024 09:47:46 +0200
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="sm/T+0ui"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=p9H/wqBVi9vRVe7vBxSwiksXVPFSNUIhqmT3FrZLtFE=; b=sm/T+0uijlhMJTl12wtc8GNUj6
+	rvPAruOZTis2rW1LpVm4pcbvdCDk8GbfFPXh7pgP6GBYJOXPYA+PbID7eqsdjNfCbk1f69yX7bRKU
+	WYyA8ohWtXF5Kyp+yyg1wrDMAyEE3GMa58en77DaSWGq2wG9/xBkqKgiHdTWmXR8f4rE+Up8a/zOL
+	wKbOVpT6gUfDsN5opzV0pQMpy5uPl1LeFlRXkQvSlz3V6mwk4Z+VweqUveZ//z/Ri9ASOlGPCXn8k
+	6VSjuoD3z9/1HPwxxCg1tHBJM8OcwKb+G35SbnWJlCnMIGHT1zhm3kLo2c94FtZWn9YyrOoOJPmxE
+	Ob0cUsoA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46528)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s2ROW-0006zn-0n;
+	Thu, 02 May 2024 09:02:20 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s2ROS-0003UY-MH; Thu, 02 May 2024 09:02:16 +0100
+Date: Thu, 2 May 2024 09:02:16 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Duanqiang Wen <duanqiangwen@net-swift.com>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
+ entries
+Message-ID: <ZjNIiDeXIjXhJlT4@shell.armlinux.org.uk>
+References: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
+ <e15b8a1165a5437ab1fa868ccd0b629c.sboyd@kernel.org>
+ <560549ed7db5da2f2727dc053a5d196d.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/4] clk: thead: Add support for T-Head TH1520
- AP_SUBSYS clocks
-To: Drew Fustini <dfustini@tenstorrent.com>,
- Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
- Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20240426-th1520-clk-v2-v2-0-96b829e6fcee@tenstorrent.com>
- <20240426-th1520-clk-v2-v2-2-96b829e6fcee@tenstorrent.com>
-Content-Language: en-US
-From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-In-Reply-To: <20240426-th1520-clk-v2-v2-2-96b829e6fcee@tenstorrent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.bonnefille@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <560549ed7db5da2f2727dc053a5d196d.sboyd@kernel.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-
-
-On 4/27/24 2:10 AM, Drew Fustini wrote:
-> Add support for the AP sub-system clock controller in the T-Head TH1520.
-> This include CPU, DPU, GMAC and TEE PLLs.
+On Wed, May 01, 2024 at 06:02:54PM -0700, Stephen Boyd wrote:
+> Quoting Stephen Boyd (2024-05-01 17:59:16)
+> > Quoting Russell King (Oracle) (2024-03-15 04:47:55)
+> > > Report an error when an attempt to register a clkdev entry results in a
+> > > truncated string so the problem can be easily spotted.
+> > > 
+> > > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
+> > > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> > > ---
+> > 
+> > Applied to clk-next
+> > 
 > 
-> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
-> Co-developed-by: Yangtao Li <frank.li@vivo.com>
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> Co-developed-by: Jisheng Zhang <jszhang@kernel.org>
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> And backed out because I get a compilation failure
+> 
+> drivers/clk/clkdev.c: In function 'vclkdev_alloc':
+> drivers/clk/clkdev.c:182:17: error: function 'vclkdev_alloc' might be a candidate for 'gnu_printf' format attribute [-Werror=suggest-attribute=format]
+>   182 |                 res = vsnprintf(cla->dev_id, sizeof(cla->dev_id), dev_fmt, ap);
+>       |                 ^~~
+> cc1: all warnings being treated as errors
+> make[5]: *** [scripts/Makefile.build:244: drivers/clk/clkdev.o] Error 1
+> make[4]: *** [scripts/Makefile.build:485: drivers/clk] Error 2
 
-> ...
+It builds fine for me. I don't get this _error_, and it's really no
+different from what it originally was - instead of using vcsnprintf()
+we're now using vsnprintf(). That should make no difference what so
+ever.
 
-> +void ccu_disable_helper(struct ccu_common *common, u32 gate)
-> +{
-> +	if (!gate)
-> +		return;
-> +
-> +	regmap_update_bits(common->map, common->reg,
-> +			   gate, ~gate);
-> +}
-> +
-> +int ccu_enable_helper(struct ccu_common *common, u32 gate)
-> +{
-> +	if (!gate)
-> +		return 0;
-> +
-> +	return regmap_update_bits(common->map, common->reg,
-> +				  gate, gate);
-> +}
-> +
-
-Both of those functions are only used in this file, you should probably 
-make them static because otherwise, the compilation process will prompt 
-a "missing prototype" warning.
-
-Thomas
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
