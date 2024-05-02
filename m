@@ -1,42 +1,42 @@
 Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862176341B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861AF62A02;
 	Thu,  2 May 2024 10:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714646421; cv=none; b=lohvp/M1IJBMFDlyMKMArGEiuE2LcBcnJ9LsZ6z4vkkEgRUJiVyCoMA2ZLq6nix8qU44929FCW7oCnZORM1vZtAacGCscueyBD/adjtGlNA4TPZzoik07tlIZY7mzOWe2riD37pow6HlrxmISbhFoaCKvmJ3/5IPb3WF8973Qsg=
+	t=1714646422; cv=none; b=U3BoXs4TNBA7Hk1jRRBs0vf3Dmsv9pmxAqLBMnllG4jqR4iRPoGuwbsfMIFWHFcu1YgG9omR93zcYozpSMsSNYrJhTCEt9R/1ql1fP4U+QeJYDWO3ZPwfm4dpMsc26kjmJd7VClikfgHIcLbWOe4fHjFJBVrpoCewBXPnFu2Ajk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714646421; c=relaxed/simple;
-	bh=bdyAkeRgqSrFufI3kQJoEmI1WCv8IK5atLvcmX85qw4=;
+	s=arc-20240116; t=1714646422; c=relaxed/simple;
+	bh=JGRuPp5f7tdBTXkrWe9oHs1o3E3gbeMCdlehVi8h2jw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gAydHUq9Wh+NboEQRD/nG0YjC+E5F+NKP6VZXGLL55fixPavNep/JaItFpVQ7VDJv+Cjnws2gzcU0OI4XMRdLOnEPe3PH8CrRk4h/kJHUyWFkBYuTnLXmldHg+3KU6AfVC14CE3ly25+5nS9GW3V5ZGzAMuiROtR3Abh0q5o2+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=UikdJYio; arc=none smtp.client-ip=212.227.15.18
+	 In-Reply-To:To:Cc; b=PKsGLSuuOE0RgInirH3U0TXeNYbJYclBv11LT0o5xv0dXkW7oTpsKF6rqdNnMc81B99cp219Ea+6CXsGPeUfg5yRzAQ0NOosrfP1dSojU9f0HLWo6oT1urQqmb5ChjJHctVE3D3cacEBa2xI6wg5CmV5vivqT7sa7lMTWvEojRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=XBLWkNmf; arc=none smtp.client-ip=212.227.15.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="UikdJYio"
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="XBLWkNmf"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1714646412; x=1715251212; i=j.neuschaefer@gmx.net;
-	bh=z1H4srJHNcb5BIAMp3q2n7Fh/jbh0k/UyMAjnW8Y9nc=;
+	s=s31663417; t=1714646410; x=1715251210; i=j.neuschaefer@gmx.net;
+	bh=n2e88QE5epBSVSFicZ+xqo5ic/O/WtKAyeT8qBcSr5U=;
 	h=X-UI-Sender-Class:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=UikdJYioSQF8uPPg53dS8rTEKkmNuE1LibEAWBDnpFb0IMJEZn020rprsjCQ4OAe
-	 xGuX96nDaIrPBAzxo4fS/4+WUITs7sYRVHqO85mJeczjJsgOzYDf8LlIly/22jh6b
-	 iNaADUyUS47rYvpp0kSoEaRky3cftgCfcdHQatLK6PxWJs2gGJLQe1ShhgMaASQVQ
-	 CTUjV+vnlibAt9AmpDkYF3hF7Y8UgivasVjwV8Ta5M281Ofm+rb2rPdmBoDPnpmZ6
-	 5jOLhvTofMxsAhzZ3iZTq+qbFF78k4XCr9WfX7Xbsb3FMwU1RkrxwZWN+ORlCY7qM
-	 5FZT9mJ0oG7Do4nnHg==
+	b=XBLWkNmfCJ1LedKg3QzKOShdZwoK6kFYjyQw/5JCleg+m/Gjyccbsf6m5QDis+k3
+	 O+4SPBRi7Iug7uD6urGq49hnCnmmdCs31cgjhoWPS25aA7/v4GEaF3BRN7k0DWtn+
+	 uqyR3c5esbjjICJewjr7m+RH8akfkXXKRUeTk0ZxJv42irC2RsoDzTCjVtnTWvchF
+	 Kizs2Dd1Z0zUs+MgcHu52zY3WfHFmhcp0C7AJWsBPGNybVObj+Ca/cL6VZU1R55qZ
+	 p/1RemQ6Jd+U4Z/1H0+OysAXQCC0IS+XW6g9I2KvGDFRD03IZek87QaqmAxVGguZ8
+	 YaICM0tgtth2wcK7vg==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from probook ([89.1.59.78]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MqJqD-1sNm870YD5-00ncTL; Thu, 02
- May 2024 12:40:12 +0200
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MIwzA-1sLedM12Lq-00LJxi; Thu, 02
+ May 2024 12:40:10 +0200
 From: =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Date: Thu, 02 May 2024 12:40:04 +0200
-Subject: [PATCH v12 5/6] ARM: dts: wpcm450: Remove clock-output-names from
- reference clock node
+Date: Thu, 02 May 2024 12:40:01 +0200
+Subject: [PATCH v12 2/6] clk: Introduce
+ devm_clk_hw_register_divider_table_parent_data()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <20240502-wpcm-clk-v12-5-1d065d58df07@gmx.net>
+Message-Id: <20240502-wpcm-clk-v12-2-1d065d58df07@gmx.net>
 References: <20240502-wpcm-clk-v12-0-1d065d58df07@gmx.net>
 In-Reply-To: <20240502-wpcm-clk-v12-0-1d065d58df07@gmx.net>
 To: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
@@ -57,78 +57,76 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
  Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1714646407; l=1382;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1714646407; l=1760;
  i=j.neuschaefer@gmx.net; s=20240329; h=from:subject:message-id;
- bh=gdIaqrhURYiTo/eMHHjfcL4TfUOiwQNCqwm1DTjUKA4=;
- b=OP6jhR/C4oActZcDuSaLndojZtPMU9nA9yO2ZP246uduoCxMjJs+i/3eD11t3zb4gc0vzZn7N
- Y0jx39i0l5aAIuFbcqwB4uD2ouhSsYpLd/Zac913joFMyEYhStCl5ix
+ bh=VjLniaHS+bKcYFjCZNozqsTADYqMusOVNK5lpprhRBg=;
+ b=sX4JaPRF9uqkZaXe/H1tOsITjWEPOfX/cwh/WwBgOmdfDzoHO0R2RxVm1FhomjMVU8eItiw57
+ TLL9wD7ORzjBP1MKzRgE1q4qCvMKspuYEz8Rmmb1TruJORjL9UNGrzD
 X-Developer-Key: i=j.neuschaefer@gmx.net; a=ed25519;
  pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Provags-ID: V03:K1:omJQWa2Zw/JDFvnJS03bMn41/4c06GZlk1ALxo7nu80AxMaIIxU
- E7mQs5VQjbnR7yJBxJNDTcBC3VMmXgzexq5Ora5rS9qHLkyVsRolJxLHYBcjjZ+Vu7EzECI
- 7KSus8nHHJJppPwSanQF/SstH08zXy8FE2u90TBdkOND6SwxaPwhTY/nkUUTTGYQKDGdiJr
- PgHXNDJLwEJDcW3AjPC7Q==
+X-Provags-ID: V03:K1:+DtwGYQjt2x8GVjHjT0VdQrQ5fiyA2Cpx2yeh9o2vTCRIYKNWoU
+ OJ62sDPJ3xaCTsmcqVyLNjeHcft6kh70vSEzkYGZMED6eI9Mz4FHzqDLzhWVJAk0JTbDv6w
+ jp5yVlw/MiWWmdhY7Af9U5GnOegLYn4JEBN5X71PXHNytZs7tHQ8COnZvnpUOptn5EP4ty8
+ rxFlstpwa0tybgy5hjOzw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:lznP2l3Hivk=;93JLoiaSYioywxUVJEbcH+Pg5Mm
- oT8Ff2Z1eiKx5hKpTr5so5sSBVkv7tNhku1GqOd/mjVGRvGdFvLz77B4uiRTODGyWCYbNVQeu
- hqs9ArUZofqWQqPlYlJjTi6KQqAFJt1rg1B01Q7jCHCJTVORYMRK8YljxE+zobt/4hRvYuQNK
- XAhaLoOQrUWdgUPtx4TsK9F7UfNYA8Pj64b5Axf27VNmwIun6K/Pzzvj/KzHSgJYevvC1sHle
- Ola8/l55l1WDFMAPZJKhQXm21wSF5StT1fnn15VmCaSrlhE95jc+aDVsD5tMrnqxST3AKlzE8
- tM4MURbv2xdE1WIDu85P5aiyK4apatTgcNzd9iLZMQ+wJmv3joTsL38Oyr0hAxyIa2CkyQRes
- 7KgatOLCc0AgsQ6SHXL5dxgIpTmiKu3T8fPXQZPWf064le93MbJgHNn9fnYGomWQhueopLQGs
- cSOiFATSCSt3ZGyInuSRZdvWSdEXGv98C6WFuF5h59mKNGqmhn8sXBMXuJNmXHkbvP12ex3/r
- pjb5ig5PRpNPfKQ8u8q7XI9GR+XCE8KcnCWlSdLfHQKG1kdx0sIR7i/ShT9d5WnGQf1+TCKV+
- BVqTmJRgTc1sLqZ1UImyR/HsBRMYME2UPQnDlGIwQW5EIDxduiWydhurmV3dC/1vnzpcQBgnn
- n+6gNX8YPacdV+lAIF2dXo/T+6n8AySITA+SEVuFxCryId4aRx+xsx4HUBm8gz/zqGnpT4I6T
- zQ6Q4D+k6KApbSoxUgI0J1hA2WT/oUAS4S9pvfgRcH0nWRp6M1JUSKNAG0Ag6Q70nLlJcuHSO
- QAGOFCRW+dOvEe27Le1dh4WTZuvVn3bTZFPvpV2PsmVbk=
+UI-OutboundReport: notjunk:1;M01:P0:czppJQZDsyY=;SpRHVuFG/OdBmW0gPVgXKhqSBVm
+ YV0f5C289zEt29eERNBiaRHOsFpIj9KKOACl5VF2fZ/rYfd+JdS/xbZdkED2eGeIElq9xIi4J
+ /sLh5tNaYBPvdSVYxzoOxVjQKu8gPeLpxxwS6fJS5HtIsXkTTibRrwRlWi2ObhoQNPZkX4kcZ
+ 8/VznYrGJixio/PJTyLxHB3ziFnhEFpQPUSQwPf1hyh+DJptEGzcn9kq2yGhD+0lvJ9MFwLNA
+ TrKORAVJb22FzCR0ySckD01/63k5WW9zYCbzqNMOQHmssGuAWvRiBI/vdN+C5FR6c66v9YzGq
+ Ll3Vj0yT/f9v9JioU3zGRZZ/oCetZbi2hiXVPaY2bZVTgWYK0horYBwpH2ekbVb1w17cT6Z5r
+ Jf+tGIHqphyhvnmr4nA/2/4U10PqkfLZQPzCPV+IgXmib3D4maloXooUTd1Lflsdsy8h07qlr
+ 56fYoI8PKWea1Z38iucmfzaRCPhU7wv2Qk+Mb9Wk4c8N0SfA+zoZhes++qNAdrNmEa2iXDu1f
+ Th5QMhX5XwDzxkW9g6s6FwEqvjy7VoGEtXf+WmnuyZQ9UW50aZ/B64WpQACoT5BBRQfKNdoOm
+ AB7d040y4Cwn8+mu4Ron1IuU59qhQNltazJwJAIJWxP/dQkgX+mUzvQueQiIXmX9zthktzy4I
+ wsF4XUVJPGmU+SXsQxsMRYJlfiT0sxP2G4Jc4XuLzszN28pejtWYjcC/gfi8Q5QWrw4qo21oS
+ VIhpKFQomIbcjuECA/afO5g0SE6PX/i4I02TNJ4CsisT6+7F9/m9X46mxrAHABgQwUIeI/faD
+ SXpzTkZnmBpAR4yUtTI4YvOSSIpuT7se3CDE4LL0JuJro=
 
-A previous version of the as-yet unmerged clk-wpcm450 driver[1] used the
-output name, but in the current iteration it doesn't rely on it anymore.
-Thus it can be removed from the devicetree.
+Introduce the devm pendant to clk_hw_register_divider_table_parent_data.
 
-Preserve the "reference" naming aspect in the node name instead.
-
-[1]: Added in "clk: wpcm450: Add Nuvoton WPCM450 clock/reset controller dr=
-iver"
-
-Fixes: 362e8be2ec04a6 ("ARM: dts: wpcm450: Add clock controller node")
 Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
 =2D--
+ include/linux/clk-provider.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-v12:
-- rename node to clock-ref, because it isn't necessarily 48MHz, just by
-  board design recommendation
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 4a537260f6557d..5d537d0776a11f 100644
+=2D-- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -932,6 +932,28 @@ struct clk *clk_register_divider_table(struct device =
+*dev, const char *name,
+ 				       (width), (clk_divider_flags), (table), \
+ 				       (lock))
 
-v11:
-- Specify since when clock-output-names is unnecessary
++/**
++ * devm_clk_hw_register_divider_table_parent_data - register a table base=
+d divider clock
++ * with the clock framework (devres variant)
++ * @dev: device registering this clock
++ * @name: name of this clock
++ * @parent_data: parent clk data
++ * @flags: framework-specific flags
++ * @reg: register address to adjust divider
++ * @shift: number of bits to shift the bitfield
++ * @width: width of the bitfield
++ * @clk_divider_flags: divider-specific flags for this clock
++ * @table: array of divider/value pairs ending with a div set to 0
++ * @lock: shared register lock for this clock
++ */
++#define devm_clk_hw_register_divider_table_parent_data(dev, name, parent_=
+data, flags,   \
++						       reg, shift, width,               \
++						       clk_divider_flags, table, lock)  \
++	__devm_clk_hw_register_divider((dev), NULL, (name), NULL,               =
+        \
++				       NULL, (parent_data), (flags), (reg), (shift),    \
++				       (width), (clk_divider_flags), (table),           \
++				       (lock))
++
+ void clk_unregister_divider(struct clk *clk);
+ void clk_hw_unregister_divider(struct clk_hw *hw);
 
-v10:
-- no changes
-
-v9:
-- New patch
-=2D--
- arch/arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi b/arch/arm/boo=
-t/dts/nuvoton/nuvoton-wpcm450.dtsi
-index 6e1f0f164cb4f5..ff153858801ccf 100644
-=2D-- a/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi
-+++ b/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi
-@@ -37,10 +37,9 @@ clk24m: clock-24mhz {
- 		#clock-cells =3D <0>;
- 	};
-
--	refclk: clock-48mhz {
-+	refclk: clock-ref {
- 		/* 48 MHz reference oscillator */
- 		compatible =3D "fixed-clock";
--		clock-output-names =3D "ref";
- 		clock-frequency =3D <48000000>;
- 		#clock-cells =3D <0>;
- 	};
 
 =2D-
 2.43.0
