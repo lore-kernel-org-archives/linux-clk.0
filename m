@@ -1,109 +1,146 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EEA5C8EF;
-	Thu,  2 May 2024 11:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAA35C8EF;
+	Thu,  2 May 2024 11:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714648138; cv=none; b=jbNO8K37ujfVNmfVN4t/1REkVUNY/CYCpkUmbsos40BpsHo/Ck6JQ/JCm9i4hj1wRchobej8iALprxUbTOPYVKYVR471x/BNmoh4OHbvcV3IOL0I38WaCdbZwHUjz4ogTo5SfGDauMTS0vPe7NFsJAIj9G0Sm+jWPKW1TidmfIE=
+	t=1714648201; cv=none; b=Z01tia1G9cRf6z/nbGTngn7XYRJdrY+egSFbqgnjG5+p1KocBI/Eg38t55y+sQVfGzP1k7nbcEf/CEZiJjtbOcezXIE0D4V1VZbF+nduciI5dIAs+vfQdMdAYXZQAXcdGHQHCwSJGfuNge5ylg2SagmwjfriWo49rzcZTwwzeSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714648138; c=relaxed/simple;
-	bh=yHhEEO1k8GZkLOIk0m9sDTJz8Cg1evDntc5JF3aC37g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H9yc02JwI/u/TeEKN++NK2ngXp746Wwl4ZesIK1NKTMuQLl02gSBm5VEWiWP07zg9wQnCRDcvnFfRs9Xf0/2vypgEpr9K6yKnoidu2L16yZpzGmPQl4jZCfW2TnZGGLsJn256eY+pBQFRN9OgC2g+XD8O8L7Av6du6X6VaqH+WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pguM2JIl; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1714648201; c=relaxed/simple;
+	bh=unJP1NwysKlSIETESGSQdBq48jBlZec/OubfEgTf09A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IxGCf7xgIMc6raiZNah6Wp6LyFDBxBfrnKbzTH36F/2AhBMVXlLliYWSEjZKGognU43Yp6p/NKW0088ym4JaBfd9cPt5ClDSorrY76drKC1q88pct0n07CzfaXZxmBHnDQOZ97LcPuGDgtG58cqqyzAQ2ic9qI6yo1brYZBooO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QMFTKOww; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pguM2JIl"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=RixZO4UNd5X+9/Eb+rJgRIgpftzrZx704xGqdwLo84c=; b=pguM2JIlPY0Lc+2Pu/lym4sSK3
-	TWl5G680QXe50eULZWlN4Q1SYb/H/CHXp+OQiaYmXz66j4fyKYuc5x95eoOJvIi9BUw4R4il6T2h9
-	kvb4lpNtvUX8lWYwSPjAsjk67d5ilLYgRRlsuyl0svGig0+JXblFpVkw4cjkk54FRq2VO2oWeTJmV
-	b6twrDWplwXdeDBEKrp8iDtMY8QnW6Eg/7PYh8kz3V1TpEnNwupYR7vaVgt+W6MaOQcVtwk9n+DbN
-	9TJJF6tp1GvFeeK98mOiUs4nUwmy6paKBOLl0o8+6khTUn4BRFuHNi4bdS9jn2E/ZCK0rRvTTvOae
-	iOfH5XSw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58980)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s2UIr-0007CJ-13;
-	Thu, 02 May 2024 12:08:41 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s2UIo-0003bE-5n; Thu, 02 May 2024 12:08:38 +0100
-Date: Thu, 2 May 2024 12:08:38 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Duanqiang Wen <duanqiangwen@net-swift.com>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
- entries
-Message-ID: <ZjN0NkYifXY0OsZt@shell.armlinux.org.uk>
-References: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
- <e15b8a1165a5437ab1fa868ccd0b629c.sboyd@kernel.org>
- <560549ed7db5da2f2727dc053a5d196d.sboyd@kernel.org>
- <ZjNIiDeXIjXhJlT4@shell.armlinux.org.uk>
- <ZjNNT+KBNpQL+U3b@shell.armlinux.org.uk>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QMFTKOww"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4425pI1M018346;
+	Thu, 2 May 2024 11:09:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=1R54idS8kX6ibLVp50hFilNZrY8MA6+STSvHKvSkkOg=; b=QM
+	FTKOwwFTrW6nxJgwmXoqO6a3jwh5629anl0FLNBeyoWyUXCChyvh66PZwI8RbYgQ
+	iJz6CqoZKN2Y0pW6ij4XbApNrqrLvnUMn8Ti74/rgS7aqeSaYEqmtqaXwtZluCKQ
+	jfxTzEaKis4pZU4E0YxopiqghejtKAXH2fbeFLFWXZQibL7niNJgwLGXh7vXhs62
+	Qa7O9RnNAckQene4AoKd1m2RiycKKMtjF4ZFwdrNCdnnUIJBpTzO2s02Tgir/Fb2
+	xoBelNy3HPzfcT0rLeH1r0GBu/i1C2a2aj6YIuXjdEs5vppILuFYVrH+7i/E+zxr
+	YNvypvhUmf0R/wj2K3jg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xu71jbr56-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 May 2024 11:09:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 442B9sPQ013474
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 2 May 2024 11:09:54 GMT
+Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 2 May 2024
+ 04:09:48 -0700
+Message-ID: <b21f2d88-3429-41cd-b8df-4353845c1320@quicinc.com>
+Date: Thu, 2 May 2024 16:39:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjNNT+KBNpQL+U3b@shell.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 5/8] dt-bindings: clock: qcom: Fix the incorrect order
+ of SC8280XP camcc header
+To: Johan Hovold <johan@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya
+ Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>
+References: <20240430142757.16872-1-quic_jkona@quicinc.com>
+ <20240430142757.16872-6-quic_jkona@quicinc.com>
+ <ZjHklEN4zV5QG5Zv@hovoldconsulting.com>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <ZjHklEN4zV5QG5Zv@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bZ-kJ4VXR6TYYluN2ZLfL6vMolDF_x39
+X-Proofpoint-ORIG-GUID: bZ-kJ4VXR6TYYluN2ZLfL6vMolDF_x39
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-02_01,2024-05-02_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 bulkscore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
+ clxscore=1011 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2404010003 definitions=main-2405020070
 
-On Thu, May 02, 2024 at 09:22:39AM +0100, Russell King (Oracle) wrote:
-> On Thu, May 02, 2024 at 09:02:16AM +0100, Russell King (Oracle) wrote:
-> > On Wed, May 01, 2024 at 06:02:54PM -0700, Stephen Boyd wrote:
-> > > Quoting Stephen Boyd (2024-05-01 17:59:16)
-> > > > Quoting Russell King (Oracle) (2024-03-15 04:47:55)
-> > > > > Report an error when an attempt to register a clkdev entry results in a
-> > > > > truncated string so the problem can be easily spotted.
-> > > > > 
-> > > > > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
-> > > > > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> > > > > ---
-> > > > 
-> > > > Applied to clk-next
-> > > > 
-> > > 
-> > > And backed out because I get a compilation failure
-> > > 
-> > > drivers/clk/clkdev.c: In function 'vclkdev_alloc':
-> > > drivers/clk/clkdev.c:182:17: error: function 'vclkdev_alloc' might be a candidate for 'gnu_printf' format attribute [-Werror=suggest-attribute=format]
-> > >   182 |                 res = vsnprintf(cla->dev_id, sizeof(cla->dev_id), dev_fmt, ap);
-> > >       |                 ^~~
-> > > cc1: all warnings being treated as errors
-> > > make[5]: *** [scripts/Makefile.build:244: drivers/clk/clkdev.o] Error 1
-> > > make[4]: *** [scripts/Makefile.build:485: drivers/clk] Error 2
-> > 
-> > It builds fine for me. I don't get this _error_, and it's really no
-> > different from what it originally was - instead of using vcsnprintf()
-> > we're now using vsnprintf(). That should make no difference what so
-> > ever.
+
+
+On 5/1/2024 12:13 PM, Johan Hovold wrote:
+> On Tue, Apr 30, 2024 at 07:57:54PM +0530, Jagadeesh Kona wrote:
+>> Fix the incorrect order of SC8280XP camcc header file in SM8450 camcc
+>> bindings.
 > 
-> ... and I've just checked, and it builds entirely cleanly for me.
+> Try to avoid using the word "fix" in the commit summary (Subject) and
+> commit message for things like this which are essentially cleanups to
+> avoid making it sound like a bug fix (which automated tooling may then
+> select for backporting).
+>   
+
+Thanks Johan for your review!
+
+Yes, will remove the word "fix" in commit subject and message.
+
+>> Fixes: 206cd759fbd2 ("dt-bindings: clock: Add SC8280XP CAMCC")
 > 
-> I'll merge it.
+> Also drop the Fixes tag as this is not a bug fix.
+> 
 
-It should be in tonight's linux-next tree.
+Sure, will drop Fixes tag in next series.
 
-I also note... the kernel build bot never flagged the above, not even
-a warning for it, and it would've built the patch as it was Cc'd to
-linux-kernel. So my conclusion is the error you are seeing is somehow
-specific to your environment. Maybe you're building with an additional
-set of warning flags and -Werror?
+Thanks,
+Jagadeesh
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> ---
+>>   Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+>> index fa0e5b6b02b8..bf23e25d71f5 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+>> @@ -14,9 +14,9 @@ description: |
+>>     domains on SM8450.
+>>   
+>>     See also::
+>> +    include/dt-bindings/clock/qcom,sc8280xp-camcc.h
+>>       include/dt-bindings/clock/qcom,sm8450-camcc.h
+>>       include/dt-bindings/clock/qcom,sm8550-camcc.h
+>> -    include/dt-bindings/clock/qcom,sc8280xp-camcc.h
+>>       include/dt-bindings/clock/qcom,x1e80100-camcc.h
+> 
+> Johan
