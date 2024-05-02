@@ -1,127 +1,136 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70807171AA;
-	Thu,  2 May 2024 03:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5879A1CAB3
+	for <linux-clk@vger.kernel.org>; Thu,  2 May 2024 05:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714621389; cv=none; b=nX/ycGQP8560fJuDS7bjhflOq2fQ1oHJrleqWNszmLEV3XITX/H+iySUFGQPQxkYSl0taoDCcOL/adBxnr1SE+NHFU+pjvMwNYvXJQGTQ9B2DeKNsz4MDEB3tNPk5MfG1fCkhXuFgLorK5kIUQd4gt62FAl/JodR16LP6R7sLOE=
+	t=1714629179; cv=none; b=p2/T1hvWMxd0tWqTe/PvyNVKDncs/MfmF0XXAHpzY26GcevOKitOwxjLaY72i2nc8xw30uyUA8VAVgjcS3N59rGNC78n5kRMKsyfmxpCq+qj1f7jcp9o7pIPoifppCaJxLJZtbdil1MrgPa/VcERHQpRQ+wraaA6LSsoKiob/WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714621389; c=relaxed/simple;
-	bh=tmsjShpqsEq0HAAjahxF2xhs/w2jg75Ng8GplS2wmuM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bgBGLndnch9r6a3fX+khphnuOXWhI8MTKtdh5ePeUJGUFqMxIED3JI4AhA8ozAIpEjfaSF4uQnoOnhPGwFtB3jMNOj7jC0PQ94OaHrjxwZoLlr2M3C3cUbchVnqn5y2e5Or/r97TcC1SWUmE0TX81/x+86EmGKovo6KmmwfXLZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AWCWmjPk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	s=arc-20240116; t=1714629179; c=relaxed/simple;
+	bh=Vr8lTCzO1VAJ0OenIH3p+WXBrU2/jSnRyY4dIxgUK0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U8zAKZcs2lshqy9S5cmMgjdXiTQGoTzGZUi50/QyUQ84dYsstBZI6EpgXwEfwrygzQWUrplvDQ0A5/ri8LrlR9s/4YWVRy42g3KATf8LNc9d2wKqfbtllv2r3jmpOlMbRNnRKQ4joHalqZeJeVaL+dGWeAH0BxAa+/JBvP56rjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cIFwGmd5; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AWCWmjPk"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4423cqWZ024441;
-	Thu, 2 May 2024 03:43:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=qcppdkim1; bh=gxdEopZ/Ro0CDr4L5WL6
-	Rzvof/Wduh9C1em6P9/T0vs=; b=AWCWmjPkN7mZOiBLNxh9xZkzEXxlr7/360O7
-	9/yb4HMhHlUk34p2tWHTvwTIXjcgjwHwMsF0W7qIJyugEMoBQoNT3ijQxxgWEwp3
-	VDNO7bBPESngmYUeI3S9H4rU9J2h5VAw9UnV7VUMQPbX18nR5EBK/G4Xz1WasLDL
-	Mj0FMAmrHd8em6GRwRJc1+Vo5HK1atyIyyhiXGbIY7/Yw1Rb/rUQAH7nHo9nS/5c
-	Wud0jcWMu7Jzroe1bkEafJcQNMKbcZOJxeF1v95r8dr5XAha0spxr1U8cbt7NHDO
-	6zHr6gKeYGA2ojNB666aJGUOXOhCcQT3rFXYpTgJul3WLC4aBw==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xud76adtw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 May 2024 03:43:02 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 4423gxGx005872;
-	Thu, 2 May 2024 03:42:59 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 3xv1t60e4e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 May 2024 03:42:59 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4423gxDU005867;
-	Thu, 2 May 2024 03:42:59 GMT
-Received: from hu-devc-blr-u22-a.qualcomm.com (hu-mdalam-blr.qualcomm.com [10.131.36.157])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4423gxA8005862
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 May 2024 03:42:59 +0000
-Received: by hu-devc-blr-u22-a.qualcomm.com (Postfix, from userid 466583)
-	id 47C234127E; Thu,  2 May 2024 09:12:58 +0530 (+0530)
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_srichara@quicinc.com, quic_varada@quicinc.com
-Cc: quic_mdalam@quicinc.com
-Subject: [PATCH] clk: qcom: gcc-ipq9574: Add BRANCH_HALT_VOTED flag
-Date: Thu,  2 May 2024 09:12:47 +0530
-Message-Id: <20240502034247.2621996-1-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cIFwGmd5"
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-7f16ff3aa61so866443241.1
+        for <linux-clk@vger.kernel.org>; Wed, 01 May 2024 22:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714629177; x=1715233977; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2v5ycL9gtgqXkrtE6QN/SY19fUHl9GdEfrTwqyHjjjo=;
+        b=cIFwGmd5Nz6A+tHCIuA79glc3PuGwY1vLkFpFGp+9fRM0ih+4CVHC+Qkm5O0OeQOZT
+         pRapRaJSR/vEFgAJd9j48cEZ+6s1wsiDpx2ByikfssSvHfP/XkOLACCmLZUhsDpht5dQ
+         TlE/gBL6AED0vKvRCMyO2IZJ8xLVrQW6xTGxFlRRYGwd96dWXF2bvsOUSAYPxascgYQB
+         ecycxz6FWn9ySoEBx7HvWUH7YCt1Tulm9BYfnFlFeSSWYxppjptIsLag9+OOEpoaeXh4
+         pySUerkAlZAxu9P1duVGzUx47sjZcbixfFSEimvssu3MZbXtrKY1IytBowLBkF4Z6rlJ
+         Wq+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714629177; x=1715233977;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2v5ycL9gtgqXkrtE6QN/SY19fUHl9GdEfrTwqyHjjjo=;
+        b=NitWO3t39BfdSTTMtrWl1KeSeMMSNFu46N/n2LQzLUMv4zpn6P9lK6+LIzEWeNeZnF
+         ewZC4FAlal02QpwgAAIEkIgH4dFylVidx71XJ3sQ7j+5ABupxUEiKF44eZJtP1q2M/Bv
+         /pDRECWh8nAgxKV0wAAf0KGlJ2RNCAbWx2IuNIfh/iDsFWhWjqO2vfQN2Ci4lHrSiskZ
+         Er5lpo7FSnxgvpGVwfe7nGnq8B4asKTfB5sNVv/IoHnYUFYfN/n56snGBj2FJ6Rbrwcx
+         d1myeNE4bh0qE+28zEh20NWkbyT9X9+Or0f9AgBKKq70P4AXBMqee8d4GGqdK2ugysiP
+         WUWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUx1h9ASkiL37uRRalAOIqH+EEVsNKcvD5TZRJj4ZF9IPg3D7ZTPSTsKFbh9BRNg3Cp3sGAxs4WTKk7U8NArWNSAO9Z+wxLIGso
+X-Gm-Message-State: AOJu0YxRRuicCgyM4zP8Srvjng/XXrdnZ97s2SRMGlVsLnp0hQJo2Pfk
+	4hjZu8+hcY04W3hlTmrVf7MwcHLFgPEVWjxvJRG5BoHJoOqJwWYNVpjUmKd7tqI+4uoDssbE2DW
+	V44IajTH4LdTRsslq/lmneD9iZzpfoT7XRpfyEw==
+X-Google-Smtp-Source: AGHT+IE4z0Ze4gzkMIfqiFc+oCUd9KfOkp4NqCn+dDWcOn1IKyPUjkFfjMy1SuxTyT2yHEuBcn9tW//JhlQvugz5uRA=
+X-Received: by 2002:a05:6122:3109:b0:4da:9a90:a6f2 with SMTP id
+ cg9-20020a056122310900b004da9a90a6f2mr5459247vkb.10.1714629177112; Wed, 01
+ May 2024 22:52:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: zATVBlhobrCKXkkuarJ1tPcnhUf3XnL6
-X-Proofpoint-GUID: zATVBlhobrCKXkkuarJ1tPcnhUf3XnL6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-01_16,2024-04-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- malwarescore=0 phishscore=0 spamscore=0 priorityscore=1501 impostorscore=0
- clxscore=1011 bulkscore=0 mlxscore=0 lowpriorityscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2404010003
- definitions=main-2405020015
+References: <20240429214502.1363592-1-festevam@gmail.com>
+In-Reply-To: <20240429214502.1363592-1-festevam@gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 2 May 2024 11:22:45 +0530
+Message-ID: <CA+G9fYvAbjZ26RBXmkMGUgO-sXSNFtsVZ8_2Y=JmuFknfL4ZxA@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: imx8mp: Switch to RUNTIME_PM_OPS()
+To: Fabio Estevam <festevam@gmail.com>
+Cc: abelvesa@kernel.org, imx@lists.linux.dev, shengjiu.wang@nxp.com, 
+	linux-clk@vger.kernel.org, Fabio Estevam <festevam@denx.de>
+Content-Type: text/plain; charset="UTF-8"
 
-Add BRANCH_HALT_VOTED flag to inform clock framework
-don't check for CLK_OFF bit.
+On Tue, 30 Apr 2024 at 03:15, Fabio Estevam <festevam@gmail.com> wrote:
+>
+> From: Fabio Estevam <festevam@denx.de>
+>
+> Replace SET_RUNTIME_PM_OPS() with its modern alternative RUNTIME_PM_OPS().
+>
+> The combined usage of pm_ptr() and RUNTIME_PM_OPS() allows the
+> compiler to evaluate if the suspend/resume() functions are used at
+> buid time or are simply dead code.
+>
+> This fixes the following s390 allmodconfig build errors:
+>
+> drivers/clk/imx/clk-imx8mp-audiomix.c:363:12: error:
+> 'clk_imx8mp_audiomix_runtime_resume' defined but not used
+> [-Werror=unused-function]
+>   363 | static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
+>       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/clk/imx/clk-imx8mp-audiomix.c:356:12: error:
+> 'clk_imx8mp_audiomix_runtime_suspend' defined but not used
+> [-Werror=unused-function]
+>   356 | static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
+>       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: all warnings being treated as errors
+>
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Closes: https://lore.kernel.org/linux-clk/CA+G9fYuP7S+a89Ep5g5_Ad69EMwRkJ8nM+MMTzbEcP+6H2oMXQ@mail.gmail.com/T/#u
+> Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power saving")
+> Signed-off-by: Fabio Estevam <festevam@denx.de>
 
-CRYPTO_AHB_CLK_ENA and CRYPTO_AXI_CLK_ENA enable bit is
-present in other VOTE registers also, like TZ.
-If anyone else also enabled this clock, even if we turn
-off in GCC_APCS_CLOCK_BRANCH_ENA_VOTE | 0x180B004, it won't
-turn off.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
----
- drivers/clk/qcom/gcc-ipq9574.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Thanks for the fix patch.
 
-diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-index 0a3f846695b8..f8b9a1e93bef 100644
---- a/drivers/clk/qcom/gcc-ipq9574.c
-+++ b/drivers/clk/qcom/gcc-ipq9574.c
-@@ -2140,9 +2140,10 @@ static struct clk_rcg2 pcnoc_bfdcd_clk_src = {
- 
- static struct clk_branch gcc_crypto_axi_clk = {
- 	.halt_reg = 0x16010,
-+	.halt_check = BRANCH_HALT_VOTED,
- 	.clkr = {
--		.enable_reg = 0x16010,
--		.enable_mask = BIT(0),
-+		.enable_reg = 0xb004,
-+		.enable_mask = BIT(15),
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_crypto_axi_clk",
- 			.parent_hws = (const struct clk_hw *[]) {
-@@ -2156,9 +2157,10 @@ static struct clk_branch gcc_crypto_axi_clk = {
- 
- static struct clk_branch gcc_crypto_ahb_clk = {
- 	.halt_reg = 0x16014,
-+	.halt_check = BRANCH_HALT_VOTED,
- 	.clkr = {
--		.enable_reg = 0x16014,
--		.enable_mask = BIT(0),
-+		.enable_reg = 0xb004,
-+		.enable_mask = BIT(16),
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_crypto_ahb_clk",
- 			.parent_hws = (const struct clk_hw *[]) {
--- 
-2.34.1
+> ---
+>  drivers/clk/imx/clk-imx8mp-audiomix.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> index 574a032309c1..6a9b48b20cd6 100644
+> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> @@ -368,8 +368,8 @@ static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
+>  }
+>
+>  static const struct dev_pm_ops clk_imx8mp_audiomix_pm_ops = {
+> -       SET_RUNTIME_PM_OPS(clk_imx8mp_audiomix_runtime_suspend,
+> -                          clk_imx8mp_audiomix_runtime_resume, NULL)
+> +       RUNTIME_PM_OPS(clk_imx8mp_audiomix_runtime_suspend,
+> +                      clk_imx8mp_audiomix_runtime_resume, NULL)
+>         SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+>                                       pm_runtime_force_resume)
+>  };
+> @@ -386,7 +386,7 @@ static struct platform_driver clk_imx8mp_audiomix_driver = {
+>         .driver = {
+>                 .name = "imx8mp-audio-blk-ctrl",
+>                 .of_match_table = clk_imx8mp_audiomix_of_match,
+> -               .pm = &clk_imx8mp_audiomix_pm_ops,
+> +               .pm = pm_ptr(&clk_imx8mp_audiomix_pm_ops),
+>         },
+>  };
+>
+> --
+> 2.34.1
 
+
+--
+Linaro LKFT
+https://lkft.linaro.org
