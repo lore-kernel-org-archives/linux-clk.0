@@ -1,60 +1,60 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF64B1552FE
-	for <linux-clk@vger.kernel.org>; Fri,  3 May 2024 15:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBEB4AEE5
+	for <linux-clk@vger.kernel.org>; Fri,  3 May 2024 16:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714751881; cv=none; b=TRTpNa4Bm9HmPq+6It2PveyZZEVnsXM0lTX7ZtxsIflKjgrp5t+Spu9R33bt3K7zz/V3nHe7YNwQ45ui9pgjxcZ6lc8eic1Nx15jQFjJA98pGFYoL3ARAweHYn/uljHC8wZhW1JpUmZWNf9nKw56xv0kivYix6Djp8QRFPam7NM=
+	t=1714752322; cv=none; b=YT9JLRITOyhELRUWgnXKFFIgNMB8U7gS/szQe9W2wi8lL7H7ogJ87lueWw91QO3CRGev+h3WMsrgErFB3Gvs9yv5fmYU5YbeBvZHF1bsLwvdvPTEpjyEaAdG8VbR275f4fe8e97gZvCSoxSroYfgaAmTfKdK91Cg++pSnpcIm88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714751881; c=relaxed/simple;
-	bh=nCZJTipYzIH1Btq+xp2GGibxmVUDu6V4NtWVHVclwHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=osAFO84ptkri2bvgnmzzulHheiS8OE2z7H8xRyepqeXbtpPTZNC/mCPFBu19N8vqgtlCUjJejEryREuoMdb3249CACtQHcZPXXSz/gkkBQ1ORpQ5bPibADpastWR0MWXiY8RnbODGgcdoI/DPnPd9rDbsf8KewyeiLP5K5yBjtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ygIttDJo; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1714752322; c=relaxed/simple;
+	bh=3wFRUkRUjz1omlOVSbpuUBuHXpaaRaKV8kxfe/9Pw0Y=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YrFbMP6j3ZnNBgXc8IXKVyWHeJNqWKAaEJ+kXs6NfHY0TJdbiMN1vVG6feoFekuPJwwe7Ny3bIaKPIKD/eMiv4YNQQsfKLHBUaluxdaLm60jzdIb3QfAXQ6eoLE7ra9zzDCgagBA9d60SUqBpvezybnkEZ02WT2Bqae2Ghtu0dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QDTjATPd; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ygIttDJo"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-34db6a29a1eso2479586f8f.1
-        for <linux-clk@vger.kernel.org>; Fri, 03 May 2024 08:57:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QDTjATPd"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e0b2ddc5d1so64534161fa.3
+        for <linux-clk@vger.kernel.org>; Fri, 03 May 2024 09:05:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714751878; x=1715356678; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1714752319; x=1715357119; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
+         :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=nCZJTipYzIH1Btq+xp2GGibxmVUDu6V4NtWVHVclwHY=;
-        b=ygIttDJoJ7NRp4dEF3IHMcfX3/H7nvIUu6xcJvnmzXFSjSCjvSvqfJ0F0JIF/h4mJa
-         fAMPB1UkagUSKrbG2qEDJZiIMJ9VUFm4w/cqkulWVhZlfs4WK8vR46ug/95n4DyJn6u+
-         qvN/ckk1PrdaMaVoFZGMcb9SqVhKkjQ4ryvyjgaebSeU3wanSnRldOVgNss/GhweteK6
-         2zVf9TlsKSCYRw316M6T0wG2DLx5K0SLRdrZLHe08JBGRvE4CnjUckERYQFORAwAV6xL
-         eyfbgG2Z2Z6hMTJ89ZmBMsqQ4BsH+Y8bRwti0QiABt+TUYyJPCJ3+KIJ0K6AhorIAMoi
-         7WQQ==
+        bh=pI3kz89fWVHdo2YRBeHbPpve2YagNXI7R+KDETZ+WU0=;
+        b=QDTjATPdtx9v1JKBtVPN1D6W5McMeV9jR49BSTRYsiXUOPaC7ov+eJ/l3tVAsTsDgs
+         kk3n8GEN9/7DnRX+VXTWq7WdJm6b5KrK3/5Z4UHXbPWzrEAjqlJ9eJdD40FPJZ0wPAn8
+         TqWyJHpEMgj0RMky2h1EV1y39VM+RpzhOTUJfM8litHbmMxD4LeSjEjR/RoufHAF42va
+         bue5iLkreU1uF2sIQ5DUX0odscYOX9E4OI6297Zi8BIXOCIuioKD67i3WWEzofUSJCMX
+         vQCCxYY8amQApgtXGJpV7+hKR1l9FhDjfSZN04F6lvO0gh6EbQJjEg7rVDkMNt4iDwsE
+         gGQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714751878; x=1715356678;
+        d=1e100.net; s=20230601; t=1714752319; x=1715357119;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
+         :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nCZJTipYzIH1Btq+xp2GGibxmVUDu6V4NtWVHVclwHY=;
-        b=Y1KLRKqF5zujsfvvAY7QwRaTLtbOmkNKfKBXcA5BmaqRx3KOghjUpwQXkF9ln/+Jsx
-         sNehZWep9/mmEaAaxe3lsiRsTl9ySquvkg+ILPcbhbsAYru/nwBWp/7YuqxCcT/IFwOZ
-         ih8hwQJ/bC+8MhvhfTy/4PnIfX5KardiL5yVw9fCE2jUA3ukvKMowS2rrUs3eiW7XJjk
-         a+P0gZVglOLNAgipZ8E3LRCp90z2KVXrVSg9dd1rN5gu8RgDzdFatsHheSQgSxJz3RNG
-         WJbW9C1TOv1OYOE3gDWRMQ6VWjS+lQ13RCI5KyQq3SuGyJ2kIgIyh1rMbbuwPbxLA3Dh
-         fp9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWfKXHprPePukZjx0vm0NPJecnvL+fmhG0vw7HOYFAZv6OFI+lGdtNjb1mG16W3AonRr/nxmZfrb0KXAe6JuuqmCoPO+SSMqvZy
-X-Gm-Message-State: AOJu0Yyw/SgoEjiOacF0/7rCd13HZA4p1pXOya6w92Bg5lxHaMXaNjrv
-	R40jeptWwLJ7c5iJGUYgWEeF9fb9J1+/iI7s6pJGsyjlRkl0nMptOlIVR3035sc=
-X-Google-Smtp-Source: AGHT+IEHB5RE3PnQiIPnXdR1oUmmNdGlbGZmWBhmIijLp1VthV3Zpc1dgeUN7EMbCxfgDlDSNp4tcg==
-X-Received: by 2002:adf:9798:0:b0:341:d8a9:5b7d with SMTP id s24-20020adf9798000000b00341d8a95b7dmr2113542wrb.28.1714751878277;
-        Fri, 03 May 2024 08:57:58 -0700 (PDT)
+        bh=pI3kz89fWVHdo2YRBeHbPpve2YagNXI7R+KDETZ+WU0=;
+        b=uTTaV8PihO12DPDhfUZGUeo+H95w+n+hif6xjppcF1y2nVs+jOOa7KQyd1l271Fyt9
+         tIwSmaq1pu7Ar2Ab7TnixFA0hN2pCtaUigiiJTic6mToUzUZYrheHFAMh05g2X9pNV45
+         +tDN+VB8Xh+J0Mvtsn9Kw8iKUsp9og84WMz0fqjX/85nZsFsNcWNb576wxf+1uctKaYg
+         GCkcnrT4VWSq8/4X+HeDeMt7hu3q+qzob7WQX3u23ZwmpfK3KyyiSWMyn3mOZO0S7UZI
+         b/Z7AUbRM33KixQMiccDnjK/e+E8NQTLhAyMnBXYdw+7HqMq36zD4r5bbND9OCdL4c8V
+         PfVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ/htWDNvopTSxDr0H26RpFxZlJQEHkUGQvHffAs95+UYyYKGYs2jLKiv2VIxbLayNTHk9IezSWn+XZjPTvgU0S46HLRg9PE29
+X-Gm-Message-State: AOJu0YyzgfMhsHld52x5fqvn3VAKQTZ+5qmmvx4sZxCn6M56mByBB+S8
+	lOl6KPF2c6YH6GkVhBE+m/cyPoJ4m4Kom3yJMY30TdNhRP+OK+QaHitUj47LuMw=
+X-Google-Smtp-Source: AGHT+IGMuClGgxOf4NU45iXsc7aEDak8j/FRo9Y1ShE3foPvO6nSSlPTV5cbk0Bwn5yFvjbMBqjQUg==
+X-Received: by 2002:a2e:bba2:0:b0:2e1:f199:3853 with SMTP id y34-20020a2ebba2000000b002e1f1993853mr1743575lje.47.1714752319488;
+        Fri, 03 May 2024 09:05:19 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id d3-20020a5d6443000000b0034da4e80885sm4037653wrw.59.2024.05.03.08.57.56
+        by smtp.gmail.com with ESMTPSA id ay35-20020a05600c1e2300b00419f419236fsm6089474wmb.41.2024.05.03.09.05.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 May 2024 08:57:57 -0700 (PDT)
-Message-ID: <ee278102-f4b8-4ca0-879e-f83cd54efbd0@linaro.org>
-Date: Fri, 3 May 2024 17:57:55 +0200
+        Fri, 03 May 2024 09:05:18 -0700 (PDT)
+Message-ID: <13ed1865-d702-47b6-b186-d5f060103280@linaro.org>
+Date: Fri, 3 May 2024 18:05:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,6 +64,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 01/11] dt-bindings: clock: mobileye,eyeq5-clk: drop
  bindings
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
  Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -83,7 +84,7 @@ Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>
 References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
  <20240503-mbly-olb-v2-1-95ce5a1e18fe@bootlin.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ <ee278102-f4b8-4ca0-879e-f83cd54efbd0@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -129,19 +130,25 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240503-mbly-olb-v2-1-95ce5a1e18fe@bootlin.com>
+In-Reply-To: <ee278102-f4b8-4ca0-879e-f83cd54efbd0@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 03/05/2024 16:20, Théo Lebrun wrote:
-> Switch from sub-nodes in system-controller for each functionality to a
-> single node representing the entire OLB instance. dt-bindings is
-> unnecessary and soc/mobileye/mobileye,eyeq5-olb.yaml will inherit all
-> properties.
+On 03/05/2024 17:57, Krzysztof Kozlowski wrote:
+> On 03/05/2024 16:20, Théo Lebrun wrote:
+>> Switch from sub-nodes in system-controller for each functionality to a
+>> single node representing the entire OLB instance. dt-bindings is
+>> unnecessary and soc/mobileye/mobileye,eyeq5-olb.yaml will inherit all
+>> properties.
+> 
+> Why changing this? You just added these bindings not so long time ago...
+> This is very confusing to push bindings and then immediately ask to
+> remove them.
 
-Why changing this? You just added these bindings not so long time ago...
-This is very confusing to push bindings and then immediately ask to
-remove them.
+One more point - anyway this should be revert with clear explanation WHY
+you are reverting bindings.
+
+Same for second patch.
 
 Best regards,
 Krzysztof
