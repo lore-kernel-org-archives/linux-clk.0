@@ -1,185 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F478153BCE;
-	Fri,  3 May 2024 13:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34E0153817
+	for <linux-clk@vger.kernel.org>; Fri,  3 May 2024 14:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714744370; cv=none; b=JDFyPx7/Smk2+8r/sqZGaO5ZQ8UjJI/1KICg622dBr6F/Yfrqow8v4lJj/J+oBu0HCv1VXGxyM9YqN+DwkdrAfbSr5m5Y4ygFltwr84ns9yzs+L1o9YarGrUmcBtW7llnCr8n+2GCOsgVXNy0rFygYpd7S9KAE0+NKn4YVv8Tfo=
+	t=1714744937; cv=none; b=anwogbtqmt+6tVfZX5xMNPa2qi+gjaALfBs0rlo3WsnKJpTzMjjlenXAsfMSTJo6cg9M8j2wFfYoey3fBnHoUCqJDgBQADX5X119J8PIgmygoxiw+brl6a98uMxj+bWOfsUj9R5MwLnCae/ml025LOjM66qxWApfuKthZhECzqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714744370; c=relaxed/simple;
-	bh=/ikARJU0dNJFx1ZbYtIVaOCPwhf9eJ3Xsa4ZMvOGqcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cDk2++TUadwonJ38qmkLFR0bFOMvFPQm1eD/Y4zqJnOTtaYSgWlq4tq9aakJX/P5rpkOXm5ZSkXfwksoxC6Tj11TGiWLsvh9UCyzZ5AnHRYn5tmZ8PCrOIOMebY8/W92gauEAP8Qqf9LYKnFi2nLl8hj318ugKa0vqbVjyiMCmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNAGdOLX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714744937; c=relaxed/simple;
+	bh=jRaxwTVoZEj22rMd4MgntiOHCOzMr5YJDhMw6qy40c4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kTQ8J9+KYf4qd074Sfl4WfseP9iCCvj05Gd8xLYRACKBAVqqDeYJfnLpgklOh3Ir1+mi7KQe1zVEczsb9w0SpojR09x0W4eDTtorBt46Vl1q5GjryyldUhPNYA9vAiHpIMRCCm9EA5njtF8nLhcrcq13p5qM5NnFYb+wLALh6Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HEOz5VL7; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNAGdOLX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F46DC116B1;
-	Fri,  3 May 2024 13:52:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714744369;
-	bh=/ikARJU0dNJFx1ZbYtIVaOCPwhf9eJ3Xsa4ZMvOGqcw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mNAGdOLX5oyQ5YP0lG4U7x79x6bCeNSRq6WOS/kCDdWBqe0g555viimFTlV6qnEkS
-	 SrGffaB11PJ1xeB9DaLFEd/k9J+aB30ujqWYePQwl8fUaU5Ve+BlI9f9kpiL8bacWn
-	 St2f3ZRk4PccwEzZw1fzI2QYq5SCgZptNo9S/AhAfO5/OpKQfUkmFULupIIt8sgXSy
-	 AeiPfiromWKfpyJsmdoP8TqvTqho96uKbDWDuOh8ELWFKi6gOer9UorEfC73jXfc65
-	 xYenV/YDqOHceMrt8LVom4UH4vAeX/6lACYhPcglA9tEiYPTgkiF79+cARMk/NvSpO
-	 lMdMmkThkPavQ==
-Message-ID: <c015b3a5-2213-4ebd-b960-d97ed1fe7062@kernel.org>
-Date: Fri, 3 May 2024 16:51:04 +0300
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HEOz5VL7"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2d8a24f8a3cso112993321fa.1
+        for <linux-clk@vger.kernel.org>; Fri, 03 May 2024 07:02:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1714744933; x=1715349733; darn=vger.kernel.org;
+        h=mime-version:message-id:date:subject:cc:to:from:user-agent:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oqRCNlsdsLpb0Sbcbb6gN7OMlpokYzOYOtEiEYuehRo=;
+        b=HEOz5VL7ia0DERkinaWHnhuzPeggOSQ04JpyEDN4+bcrj0gZ16CU+bF9cRUxDJgrSZ
+         dWZLo9Gz+EDGKLouJYfaLUomuqoCHaVubpnQUjrO5VuIAKAifpvn30wPHddbjiuFJyZr
+         SSZwsMHtJKLbROFKTa4UXA4L6XXYp7D/+qkbIsr5v2392bNgOyvdP6vZvenKDIEvEH22
+         pfIglyyHpj8U+TneIuAJ6sUPV7V/zF0RokeX1fxopG3alvctaXDL5qY7/AhZvt86D9ka
+         NCe3r3lc2M2itUsq7eYBw79Qq4rhPBHzHcSRV52d2xTXWgWM6uwhYcdb7bmZtUabsIky
+         G+5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714744933; x=1715349733;
+        h=mime-version:message-id:date:subject:cc:to:from:user-agent
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oqRCNlsdsLpb0Sbcbb6gN7OMlpokYzOYOtEiEYuehRo=;
+        b=vCR27fdEq8yqwcwt2w/byCK58QfYVbFsbxNnPagRJN94XapKgjEch4oeEeRLzkHnfS
+         FQxVsHjGL9pB0PIw5QxJdx1Bp3GDl4hSr7bJ4uqQbj3D89jazUqVDlyAHIv2LA6a7+U1
+         t3w9kyqKEV9moWMO7Tyv/pz+dPqI/3idr4flCrLvnT6bNrhBhKTvPulLUke3GcnQFswf
+         N0qFo0hq9N7GHqhaB4cFKBTpzqXU+vuFoEYxkfWoTFrv+O1rscPEqOMq8aMbPkb9iecL
+         y57l1NcRaQsGLN7RR22ZG+Urg31tvWfBHWEwyVIkE99TJRC0+ihOdjiXjx5AK3QKqo+F
+         FbUQ==
+X-Gm-Message-State: AOJu0YyQqWpGKAQlhaPkXYptf51FoFQm/dzih0ic+WKqWfCWzs+WtwyG
+	FmJQASoOcIfn9nAaf4l9c/Ri5qsROkGVBMROg8iYsiaCe7ZhUqH3HxAYFbzpckQ+cSyEZ21+9DP
+	p
+X-Google-Smtp-Source: AGHT+IG0VqrwvYqiGaLjQVVumDwJ8cqlqDhTmCNKVgjkIapt0H5riqjgYhUI/y0j59rcn6dCS71omg==
+X-Received: by 2002:a2e:8ed0:0:b0:2e1:c97b:6f1f with SMTP id e16-20020a2e8ed0000000b002e1c97b6f1fmr1527088ljl.51.1714744932904;
+        Fri, 03 May 2024 07:02:12 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:1b85:e590:355b:9957])
+        by smtp.gmail.com with ESMTPSA id b17-20020a05600c4e1100b0041be3383a2fsm9499252wmq.19.2024.05.03.07.02.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 May 2024 07:02:12 -0700 (PDT)
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>
+Subject: [GIT PULL] clk: meson: amlogic updates for v6.10
+Date: Fri, 03 May 2024 15:57:49 +0200
+Message-ID: <1j8r0r3sf0.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
- ability to gcc
-Content-Language: en-US
-To: Varadarajan Narayanan <quic_varada@quicinc.com>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240418092305.2337429-1-quic_varada@quicinc.com>
- <20240418092305.2337429-7-quic_varada@quicinc.com>
- <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
- <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com>
- <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
- <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com>
-From: Georgi Djakov <djakov@kernel.org>
-In-Reply-To: <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hi Varada,
 
-Thank you for your work on this!
+Hi Stephen,
 
-On 2.05.24 12:30, Varadarajan Narayanan wrote:
-> On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
->> On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
->>> On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
->>>>
->>>>
->>>> On 4/18/24 11:23, Varadarajan Narayanan wrote:
->>>>> IPQ SoCs dont involve RPM in managing NoC related clocks and
->>>>> there is no NoC scaling. Linux itself handles these clocks.
->>>>> However, these should not be exposed as just clocks and align
->>>>> with other Qualcomm SoCs that handle these clocks from a
->>>>> interconnect provider.
->>>>>
->>>>> Hence include icc provider capability to the gcc node so that
->>>>> peripherals can use the interconnect facility to enable these
->>>>> clocks.
->>>>>
->>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->>>>> ---
->>>>
->>>> If this is all you do to enable interconnect (which is not the case,
->>>> as this patch only satisfies the bindings checker, the meaningful
->>>> change happens in the previous patch) and nothing explodes, this is
->>>> an apparent sign of your driver doing nothing.
->>>
->>> It appears to do nothing because, we are just enabling the clock
->>> provider to also act as interconnect provider. Only when the
->>> consumers are enabled with interconnect usage, this will create
->>> paths and turn on the relevant NOC clocks.
->>
->> No, with sync_state it actually does "something" (sets the interconnect
->> path bandwidths to zero). And *this* patch does nothing functionally,
->> it only makes the dt checker happy.
-> 
-> I understand.
-> 
->>> This interconnect will be used by the PCIe and NSS blocks. When
->>> those patches were posted earlier, they were put on hold until
->>> interconnect driver is available.
->>>
->>> Once this patch gets in, PCIe for example will make use of icc.
->>> Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
->>>
->>> The 'pcieX' nodes will include the following entries.
->>>
->>> 	interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
->>> 			<&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
->>> 	interconnect-names = "pcie-mem", "cpu-pcie";
->>
->> Okay. What about USB that's already enabled? And BIMC/MEMNOC?
-> 
-> For USB, the GCC_ANOC_USB_AXI_CLK is enabled as part of the iface
-> clock. Hence, interconnect is not specified there.
-> 
-> MEMNOC to System NOC interfaces seem to be enabled automatically.
-> Software doesn't have to turn on or program specific clocks.
-> 
->>>> The expected reaction to "enabling interconnect" without defining the
->>>> required paths for your hardware would be a crash-on-sync_state, as all
->>>> unused (from Linux's POV) resources ought to be shut down.
->>>>
->>>> Because you lack sync_state, the interconnects silently retain the state
->>>> that they were left in (which is not deterministic), and that's precisely
->>>> what we want to avoid.
->>>
->>> I tried to set 'sync_state' to icc_sync_state to be invoked and
->>> didn't see any crash.
->>
->> Have you confirmed that the registers are actually written to, and with
->> correct values?
-> 
-> I tried the following combinations:-
-> 
-> 1. Top of tree linux-next + This patch set
-> 
-> 	* icc_sync_state called
-> 	* No crash or hang observed
-> 	* From /sys/kernel/debug/clk/clk_summary can see the
-> 	  relevant clocks are set to the expected rates (compared
-> 	  with downstream kernel)
-> 
-> 2. Top of tree linux-next + This patch set + PCIe enablement
-> 
-> 	* icc_sync_state NOT called
+Here is the Amlogic clock update for v6.10.
+There is one new driver for the DSI display pipeline and the rest is
+just house keeping.
 
-If sync_state() is not being called, that usually means that there
-are interconnect consumers that haven't probed successfully (PCIe?)
-or their dependencies. That can be checked in /sys/class/devlink/.../status
-But i am not sure how this works for PCI devices however.
+Please pull.
+Cheers
 
-You can also manually force a call to sync_state by writing "1" to
-the interconnect provider's /sys/devices/.../state_synced
+Jerome.
 
-Anyway, the question is if PCIe and NSS work without this driver?
-If they work, is this because the clocks are turned on by default
-or by the boot loader?
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-Then if an interconnect path (clock) gets disabled either when we
-reach a sync_state (with no bandwidth requests) or we explicitly
-call icc_set_bw() with 0 bandwidth values, i would expect that
-these PCIe and NSS devices would not function anymore (it might
-save some power etc) and if this is unexpected we should see a
-a crash or hang...
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-Can you confirm this?
+are available in the Git repository at:
 
-Thanks,
-Georgi
+  https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.10-1
 
-> 	* No crash or hang observed
-> 	* From /sys/kernel/debug/clk/clk_summary can see the
-> 	  relevant clocks are set to the expected rates (compared
-> 	  with downstream kernel)
-> 
-> Does this answer your question? Please let me know if you were
-> looking for some other information.
-> 
-> Thanks
-> Varada
-> 
+for you to fetch changes up to 11981485e27c7e5a630ee844a2eae1f1835ba807:
+
+  clk: meson: s4: fix module autoloading (2024-05-03 14:27:32 +0200)
+
+----------------------------------------------------------------
+Amlogic clock updates for v6.10:
+
+* s4/a1: add regmap maximum register for proper debugfs dump
+* s4: add MODULE_DEVICE_TABLE() on pll and periph controllers
+* pll driver: print clock name on lock error to help debug
+* vclk: finish dsi clock path support
+* license: fix occurence "GPL v2" as reported by checkpatch
+
+----------------------------------------------------------------
+Dmitry Rokosov (5):
+      clk: meson: a1: peripherals: determine maximum register in regmap config
+      clk: meson: a1: pll: determine maximum register in regmap config
+      clk: meson: s4: peripherals: determine maximum register in regmap config
+      clk: meson: s4: pll: determine maximum register in regmap config
+      clk: meson: pll: print out pll name when unable to lock it
+
+Krzysztof Kozlowski (1):
+      clk: meson: s4: fix module autoloading
+
+Neil Armstrong (3):
+      clk: meson: add vclk driver
+      clk: meson: g12a: make VCLK2 and ENCL clock path configurable by CCF
+      clk: meson: fix module license to GPL only
+
+ drivers/clk/meson/Kconfig          |   5 ++
+ drivers/clk/meson/Makefile         |   1 +
+ drivers/clk/meson/a1-peripherals.c |   1 +
+ drivers/clk/meson/a1-pll.c         |   1 +
+ drivers/clk/meson/axg-aoclk.c      |   2 +-
+ drivers/clk/meson/axg-audio.c      |   2 +-
+ drivers/clk/meson/axg.c            |   2 +-
+ drivers/clk/meson/clk-cpu-dyndiv.c |   2 +-
+ drivers/clk/meson/clk-dualdiv.c    |   2 +-
+ drivers/clk/meson/clk-mpll.c       |   2 +-
+ drivers/clk/meson/clk-phase.c      |   2 +-
+ drivers/clk/meson/clk-pll.c        |   6 +-
+ drivers/clk/meson/clk-regmap.c     |   2 +-
+ drivers/clk/meson/g12a-aoclk.c     |   2 +-
+ drivers/clk/meson/g12a.c           |  78 ++++++++++++++------
+ drivers/clk/meson/gxbb-aoclk.c     |   2 +-
+ drivers/clk/meson/gxbb.c           |   2 +-
+ drivers/clk/meson/meson-aoclk.c    |   2 +-
+ drivers/clk/meson/meson-eeclk.c    |   2 +-
+ drivers/clk/meson/s4-peripherals.c |   2 +
+ drivers/clk/meson/s4-pll.c         |   2 +
+ drivers/clk/meson/sclk-div.c       |   2 +-
+ drivers/clk/meson/vclk.c           | 141 +++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/vclk.h           |  51 ++++++++++++++
+ drivers/clk/meson/vid-pll-div.c    |   2 +-
+ 25 files changed, 279 insertions(+), 39 deletions(-)
+ create mode 100644 drivers/clk/meson/vclk.c
+ create mode 100644 drivers/clk/meson/vclk.h
 
