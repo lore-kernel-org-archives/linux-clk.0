@@ -1,129 +1,188 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F3F14E2CB;
-	Fri,  3 May 2024 09:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4766414F9F9
+	for <linux-clk@vger.kernel.org>; Fri,  3 May 2024 12:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714727511; cv=none; b=ulGswManYzK43yFjuMT1gS4Hf6pPAV4pHqSCYzXBy45Tm++0AvZ+GQ9uHL/W7rJUrarHde7OUy7A3ZtuxWaX8rC285cDmYGiNyXDjzpFsdssnF2NloNPO+cywIewkJ5RDeD4r0MyYRjjy+5a975UidQWEOUsQUUnClxgdyUamW0=
+	t=1714738796; cv=none; b=nJYS2Q1vp65oM+TVufSEh3NBsUBks/rfNSXilwgFwqm6Hrj5grpLB5Ti+0YsNPhd3Y1x9U/TCjknRc9aGt5T1nYsOC/aMU13EQg98azx6U03djaFgVVlVXVKQ0T162mVY/mPZcUNa6xVDn2MY2QDb4kDCL18LbtWc5f+2CHpxmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714727511; c=relaxed/simple;
-	bh=efRS0J2Mfz3BfrMBUM6bOn7BAON849782woB55PVO+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IX2e7rVNVquTN6EeuF7hLpCThRbj1yV5haPlXKJor3SUPnp1Fdt0QsT6lEBSeXcjw0btVxnrVRe+daXfksJksMTLQcDzRzDnyVEgQsPOjxUnp1Hb0ZZa7p6TQ9/3NhuYwdiibjGJEJraEAs3Bs8QFj29bxocp2upUX+eh9QfFvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cHooHtXt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1714738796; c=relaxed/simple;
+	bh=Z1lP1owSq0mQTKCYuyWX/DwsK15+IKeOuYOib67zKMY=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=FqoI9OMKinDqXGjlR8MnLl4/MKqzIxTxbyrGhoFTQn71fPCopnCEfPSG3XgMEEh/4z1H62gKZHo+iA5z+iehNXw+tgPW04sOyPUVO07ZL62JR0nrOO4Gd9hmfa2i0RnRlAQV88AhEkd/OwIxOqIT4Gw88sGmMH8G8pP1VJOzoCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IE/IXpmG; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cHooHtXt"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4436rYn8030152;
-	Fri, 3 May 2024 09:11:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=5TYtEABa+Npo1ej5cnl3qJo/mPfhw85IRdYbSazcmzQ=; b=cH
-	ooHtXthFEgtPrCn4gC0VJyzZx8GmFqzLH7Djgdx+DWz9se3Kg1Htq9tJ2Wd2BuAL
-	cN6yX0QwzIDc4ewt2nALkr7LZFfcqjOiEh/FrpwC0tICYyK1hcywzGWBYWA+VmqP
-	s2xsGFGw2pq296BOAk6V9azvbZcLC+Z/X6E0JtmakSl4btHqeIsGnWwPYJ+F+XDG
-	BHefW5j97VLUePTf9p7xWwGuezKu9CfGA1l5y62CSe35rwsukBgeEpvAKm/zh2BM
-	3TDcwUs2fOMZs2tfF1hXagpE4qwX+kyH8/2tJvL63mSIiElX9FHZ5ezYPGMiTsQ2
-	5mD7tAyjtkO500WaWxyQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xvmxyrsfr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 03 May 2024 09:11:44 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4439BhF5010268
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 3 May 2024 09:11:43 GMT
-Received: from [10.216.42.60] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 3 May 2024
- 02:11:39 -0700
-Message-ID: <883248ce-23a7-1f41-aeab-67dc0828566b@quicinc.com>
-Date: Fri, 3 May 2024 14:41:17 +0530
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IE/IXpmG"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-51f3a49ff7dso1899313e87.2
+        for <linux-clk@vger.kernel.org>; Fri, 03 May 2024 05:19:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1714738792; x=1715343592; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=2eqCGUNVwZTag5I7AILZ3zgJXV85rMS4OnjGvjuWay0=;
+        b=IE/IXpmGd8DG29svELVWqkpU3C2VcZnE8u9g2qOVxUib1A0V/lZ+tzaF1e/rXWgehF
+         2ugN5fsKr38lNdRxulwDnLUfAxZFA6/sk24nDtsaqsoZGBzjLLTZc7zWFY2H9zJSp13I
+         wonrSpG8gX9T7xXuokkZywKxc3vgluatkW7KywEQvrutgiOHBhxP0fl1cIb9ImhEKxTf
+         MvLzUpKBrWdUvHSeANKQTpnZPmZyTDiK/tECt40Qpns83cEkp7Po1teaqx0rq7Bj+wLW
+         DwIGGtm9wkYrXoWpwDyNoXN9CBiw8W0dphg2WTT8cDrkcAdhNs4Kf1PJTCWjS/HEfOhr
+         wUtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714738792; x=1715343592;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2eqCGUNVwZTag5I7AILZ3zgJXV85rMS4OnjGvjuWay0=;
+        b=ad8HnkRJ/W96KIl3RCv3veLC0K38pXCXORR6+TG0ExR27ZkyM8HsyrdB9ZmJmwbVyt
+         yRLeGj9O1EKn2AQ4sEobnGBgJkaxHivMw5vdE8qYkznJqsW/q4+QLUy2aQRPTDnStHhN
+         EFahp/CigN0NTxAcXi3TMwnsoAyNCvtZqkz4VlH0fLn8bwPONAgsYcK1x+5ipvRSsqlR
+         1bwYoZ0s7IA+x9SlgjBxHjIwlQSy4YTIgLp06Z6tegN1JuhZWIbz2CCyZdivVSL+CFeY
+         HXgYnJ7H9W85K7/dsMdhmiv8pyU/eSdKokcUIlNaWSrh6+HrS5ulW+egPaKQgdm15fcR
+         68vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXeiCYl1VLfhZeGFHiGNOWKH9+2kblc9vQgNOytvSpqFBT8DFB5JUF2I658+0XbDhKE3WgMSSy6aWOp72RFIYKjd8rFXtx8ETlE
+X-Gm-Message-State: AOJu0YxgBVXWP4dK6sAdHfdVqehDCNfblsAasTh4wlBv5oxyryK3grZb
+	WsV+SpOGqwRMBb2lC2kI26J5ryI2xpkO+arineNlOj6SkD18ELwBx6iEPppQNog=
+X-Google-Smtp-Source: AGHT+IHCsUvbERAVRCqb5stqTzQ2F0+83tkFBnxwOqCKN+ECOXNxNs4F4W5oi11tZ2FknKUU/uEH9Q==
+X-Received: by 2002:ac2:47e4:0:b0:51a:c207:12b with SMTP id b4-20020ac247e4000000b0051ac207012bmr1640318lfp.37.1714738792161;
+        Fri, 03 May 2024 05:19:52 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:1b85:e590:355b:9957])
+        by smtp.gmail.com with ESMTPSA id ay2-20020a05600c1e0200b00418948a5eb0sm9229978wmb.32.2024.05.03.05.19.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 May 2024 05:19:51 -0700 (PDT)
+References: <20240424050928.1997820-1-xianwei.zhao@amlogic.com>
+ <20240424050928.1997820-6-xianwei.zhao@amlogic.com>
+ <20240424200107.GA372179-robh@kernel.org>
+ <9a9ab302-5da5-47bb-85f1-d2295fa9f8c9@amlogic.com>
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Rob Herring <robh@kernel.org>, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Neil
+ Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
+ <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Kevin Hilman <khilman@baylibre.com>, Chuan Liu <chuan.liu@amlogic.com>
+Subject: Re: [PATCH v7 5/5] clk: meson: c3: add c3 clock peripherals
+ controller driver
+Date: Fri, 03 May 2024 14:16:17 +0200
+In-reply-to: <9a9ab302-5da5-47bb-85f1-d2295fa9f8c9@amlogic.com>
+Message-ID: <1jle4r3x5l.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH] clk: qcom: gcc-ipq9574: Add BRANCH_HALT_VOTED flag
-Content-Language: en-US
-To: Stephen Boyd <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mturquette@baylibre.com>, <quic_srichara@quicinc.com>,
-        <quic_varada@quicinc.com>
-References: <20240502034247.2621996-1-quic_mdalam@quicinc.com>
- <2e05b0e246431d9dcf28c7135fff8231.sboyd@kernel.org>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <2e05b0e246431d9dcf28c7135fff8231.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xn3tNLO9LbxzwdmLuyROzMFXE30ijDug
-X-Proofpoint-ORIG-GUID: xn3tNLO9LbxzwdmLuyROzMFXE30ijDug
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-03_05,2024-05-03_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 spamscore=0 mlxscore=0 priorityscore=1501 adultscore=0
- mlxlogscore=999 bulkscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2405030066
+Content-Type: text/plain
 
 
+On Thu 25 Apr 2024 at 14:28, Xianwei Zhao <xianwei.zhao@amlogic.com> wrote:
 
-On 5/3/2024 3:38 AM, Stephen Boyd wrote:
-> Quoting Md Sadre Alam (2024-05-01 20:42:47)
->> Add BRANCH_HALT_VOTED flag to inform clock framework
->> don't check for CLK_OFF bit.
->>
->> CRYPTO_AHB_CLK_ENA and CRYPTO_AXI_CLK_ENA enable bit is
->> present in other VOTE registers also, like TZ.
->> If anyone else also enabled this clock, even if we turn
->> off in GCC_APCS_CLOCK_BRANCH_ENA_VOTE | 0x180B004, it won't
->> turn off.
-> 
-> Are you seeing problems where we need to send this patch to stable?
-Yes
-> 
->>
->> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->> ---
-> 
-> Any fixes tag?
-Will add in next patch
-> 
->>   drivers/clk/qcom/gcc-ipq9574.c | 10 ++++++----
->>   1 file changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
->> index 0a3f846695b8..f8b9a1e93bef 100644
->> --- a/drivers/clk/qcom/gcc-ipq9574.c
->> +++ b/drivers/clk/qcom/gcc-ipq9574.c
->> @@ -2140,9 +2140,10 @@ static struct clk_rcg2 pcnoc_bfdcd_clk_src = {
->>   
->>   static struct clk_branch gcc_crypto_axi_clk = {
->>          .halt_reg = 0x16010,
->> +       .halt_check = BRANCH_HALT_VOTED,
->>          .clkr = {
->> -               .enable_reg = 0x16010,
->> -               .enable_mask = BIT(0),
->> +               .enable_reg = 0xb004,
-> 
-> You could be more explicit in the commit text that you're changing the
-> register offset to the voting register.
-will update the commit message in next patch.
-> 
->> +               .enable_mask = BIT(15),
+> Hi Rob,
+>    Thanks for your review.
+>
+> On 2024/4/25 04:01, Rob Herring wrote:
+>> [ EXTERNAL EMAIL ]
+>> On Wed, Apr 24, 2024 at 01:09:28PM +0800, Xianwei Zhao wrote:
+>>> Add the C3 peripherals clock controller driver in the C3 SoC family.
+>>>
+>>> Co-developed-by: Chuan Liu <chuan.liu@amlogic.com>
+>>> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+>>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>> ---
+>>>   drivers/clk/meson/Kconfig          |   15 +
+>>>   drivers/clk/meson/Makefile         |    1 +
+>>>   drivers/clk/meson/c3-peripherals.c | 2366 ++++++++++++++++++++++++++++
+>>>   3 files changed, 2382 insertions(+)
+>>>   create mode 100644 drivers/clk/meson/c3-peripherals.c
+>>>
+>>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+>>> index 9f975a980581..0b85d584910e 100644
+>>> --- a/drivers/clk/meson/Kconfig
+>>> +++ b/drivers/clk/meson/Kconfig
+>>> @@ -142,6 +142,21 @@ config COMMON_CLK_C3_PLL
+>>>          AKA C3. Say Y if you want the board to work, because PLLs are the parent
+>>>          of most peripherals.
+>>>
+>>> +config COMMON_CLK_C3_PERIPHERALS
+>>> +     tristate "Amlogic C3 peripherals clock controller"
+>>> +     depends on ARM64
+>>> +     depends on ARM_SCMI_PROTOCOL
+>> I may have missed it, but I don't see the dependency on SCMI in this
+>> driver.
+>> 
+>
+> Some clock sources for peripherals controller from SCMI module.
+> In previous version, Jerome suggest us the clock  that relevant registers
+> can only be accessed securely is implemented through SCMI.
+>
 
-Thanks for reviewing.
-Regards,
-Alam.
+There is no dependency but you are guranteed to have have problem if
+SCMI is missing because it provides several inputs to this controller.
+
+IMO, this controller should 'imply ARM_SCMI_PROTOCOL'
+
+You have already posted a v8 without it.
+I expect a fix up change on top of v8 if there is no other comment on
+this v8 version. Part of v9 otherwise.
+
+>>> +     depends on COMMON_CLK_SCMI
+>>> +     depends on COMMON_CLK_C3_PLL
+>>> +     default y
+>>> +     select COMMON_CLK_MESON_REGMAP
+>>> +     select COMMON_CLK_MESON_DUALDIV
+>>> +     select COMMON_CLK_MESON_CLKC_UTILS
+>>> +     help
+>>> +       Support for the Peripherals clock controller on Amlogic C302X and
+>>> +       C308L devices, AKA C3. Say Y if you want the peripherals clock to
+>>> +       work.
+>>> +
+>>>   config COMMON_CLK_G12A
+>>>        tristate "G12 and SM1 SoC clock controllers support"
+>>>        depends on ARM64
+>>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+>>> index 4420af628b31..20ad9482c892 100644
+>>> --- a/drivers/clk/meson/Makefile
+>>> +++ b/drivers/clk/meson/Makefile
+>>> @@ -20,6 +20,7 @@ obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
+>>>   obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
+>>>   obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) += a1-peripherals.o
+>>>   obj-$(CONFIG_COMMON_CLK_C3_PLL) += c3-pll.o
+>>> +obj-$(CONFIG_COMMON_CLK_C3_PERIPHERALS) += c3-peripherals.o
+>>>   obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
+>>>   obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
+>>>   obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o meson8-ddr.o
+>>> diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+>>> new file mode 100644
+>>> index 000000000000..0f834ced0ee9
+>>> --- /dev/null
+>>> +++ b/drivers/clk/meson/c3-peripherals.c
+>>> @@ -0,0 +1,2366 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +/*
+>>> + * Amlogic C3 Peripherals Clock Controller Driver
+>>> + *
+>>> + * Copyright (c) 2023 Amlogic, inc.
+>>> + * Author: Chuan Liu <chuan.liu@amlogic.com>
+>>> + */
+>>> +
+>>> +#include <linux/clk-provider.h>
+>>> +#include <linux/of_device.h>
+>> I don't think you need this header.
+>> 
+>
+> Yes, I will fix it with c3-pll.c.
+>
+>>> +#include <linux/platform_device.h>
+>>> +#include "clk-regmap.h"
+>>> +#include "clk-dualdiv.h"
+>>> +#include "meson-clkc-utils.h"
+>>> +#include <dt-bindings/clock/amlogic,c3-peripherals-clkc.h>
+
+
+-- 
+Jerome
