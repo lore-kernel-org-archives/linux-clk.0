@@ -1,168 +1,221 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B63154BEE
-	for <linux-clk@vger.kernel.org>; Fri,  3 May 2024 14:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52952153BF3;
+	Fri,  3 May 2024 14:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714745841; cv=none; b=FV/TLOrd/MFO4MKmIGRpoiVi/KPFDtzAkiRtrrZyyHY0PjXm16yhFbRuf7EQXaj+efb3/YwPU+w9JPklaQpa3DFN1+GNEhwvWVb6Xqgfs+uLLasKWHl8jmLoyMiylBDu5olHsxnsauaN9AgISmaDYv628PJSiekPpjcAXHn+ulQ=
+	t=1714746079; cv=none; b=sI160RSMmZrH6DV4N4pbcSR6sNHD6jV1g3MVjhaJnH5dsOW8Zx0aF0N5shdZJU3zsp9zB0bMC+HxS9YJpnWTOoCB2IA6B/Z7lZBA/JTXuf7Gl6BjM2Y+oukC1n2IPF5w54/lM5R2KQo1+mzBGZ3CvzVqIUml/8hXUVXmrenM/Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714745841; c=relaxed/simple;
-	bh=HLNnngZtVS6/xr3NuvGsRGtSiLzoXBl1xah47pEzPZI=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=GaqJAtagPQxxrjSbVi1U59zjoio31DXCSRbVPzhutG+BiQKymb1eh5f3wDAx10W18rLceJWc3al2mhZkxpobNkq0QVMHPLZWU6giGWsQqplW5H6kTUIIqP47WFjwAsnzX6PNRNzweiRIgTPJq9If8i1lh88GacRek5jTRqAuM4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MTnG/V4G; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1714746079; c=relaxed/simple;
+	bh=RlPqLAnreRucam7vP7wW4xXszOq8/j39ateAy9eIb5s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bH6nJ5Jl7PcDnBdvJnIxVFThUOFhVI6rCWRmXrm5uPy8VcV/Q6VVMXNb0+M5RL2wlRKt40pab90ehIWN7M9irHVbZWge1sEOLE+z0h+3e9bmZBxTra40k9wSqSWplSCysDP4Kl4w58pJKvo0dnJwCWhI941RH7/Kvkj3mCINTHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Nl9ST+k1; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MTnG/V4G"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41c7ac71996so36473775e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 03 May 2024 07:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1714745838; x=1715350638; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=mi/mhU22fI9RIiTkHOJlpI4wXPcoOgAYplYoLc68pRk=;
-        b=MTnG/V4GfEwxnz6XzmWaSRJFCh9rgeuoYuNfuF+3FNf4EM9eNrLbUt3E+pz/uW7fzr
-         WuBktsanSuC+04gOm4ES/4Wk/7paT+BwVqyb8Q8R0neestq6jt2KFEf/PTgSaQ0YEsrj
-         PHelwMoPaEfj0F8SauB6KyuTWGJcEbStaI7iWEfnxXZSwF31sDC1UgcyRqq7QlbwBJjD
-         qPEMEtOXZVaKnaJELQSaC96XRE8cGDyr93bHF6G7M+4HCz4roDnrcbWihoet0jSrvg78
-         hbKFUZZC/1qX6gaSBiAzixROJzjnVTVkK5i4JAFuCoj049kY9J/jtrn6TiiS/nt/2mdC
-         PpNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714745838; x=1715350638;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mi/mhU22fI9RIiTkHOJlpI4wXPcoOgAYplYoLc68pRk=;
-        b=VXl3UwTwLz/lNr6H94XQr+oTFSJwage6rcJ3pGlxA00D5LcBHyyGDlkbSsdat6Eb1I
-         JvyTpN78jffb+/HYaG6W7SORGI9cHyZNT+ht376qwjcE2FeiEr2279v67ddcjJH5uh/a
-         NIm8I82j9NzBFo+h5RNi0hKHybzSHNe8fceEs+7s9ei8oQ9TXQcQqSDlrKqBDhXM0Tro
-         H90uZzGP1GuneGdHvnm6/xTKAFbgcSTA3IUG46qdHiQJLGTzO9QP5YLCtaY9HFxsz2UQ
-         aZsGiD7mLzRDvbh3zbJNnuQMcJbC+Z1uXMZIaMmBu3NZVRSRBzLXMFvvzDUfEidyWf6G
-         aPQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVp0CWllOKYnFOp73n0lhCUGGb+6JR4hPCrkLqehEXvl2nI3wPW3k4uFuUC35WfB8RLkQwPgE4L463PiElaZOKFU+mX5CsFyfcr
-X-Gm-Message-State: AOJu0Yy3DxXenjfbUXcx167KQfB9LynYCkCSY+GcVa8A9kWkEFYeikus
-	0LM0JkygLf18cceytZMx1TOlFp15zQfAiROgk//oWbqBZoLGaqEvStKKgJYtGT0=
-X-Google-Smtp-Source: AGHT+IGl8A3CNGIOXabjv5H9Oz2zuPwg61o4PRCCpsIbyOo0AUsxBa9pb1Pfsk4BzFD31YbUj0yF7g==
-X-Received: by 2002:a05:600c:4706:b0:41a:b56c:2929 with SMTP id v6-20020a05600c470600b0041ab56c2929mr2348971wmo.34.1714745837574;
-        Fri, 03 May 2024 07:17:17 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:1b85:e590:355b:9957])
-        by smtp.gmail.com with ESMTPSA id r12-20020a05600c458c00b0041bfa2171efsm5781969wmo.40.2024.05.03.07.17.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 May 2024 07:17:17 -0700 (PDT)
-References: <20240430064438.2094701-1-xianwei.zhao@amlogic.com>
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Neil Armstrong
- <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen  Boyd <sboyd@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH v8 0/5] Add C3 SoC PLLs and Peripheral clock
-Date: Fri, 03 May 2024 16:12:34 +0200
-In-reply-to: <20240430064438.2094701-1-xianwei.zhao@amlogic.com>
-Message-ID: <1jv83v2d5f.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Nl9ST+k1"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3AED6E0005;
+	Fri,  3 May 2024 14:21:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1714746069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PTqZ54gj8ig1Fedp9Waojut71etolv05n2qYK+FFydU=;
+	b=Nl9ST+k1xWyBaGbqqkpWbBra4iDps9JT33bXsHJP3ig/58P0koDDbDG9GF9zgGmrIKv9rX
+	YCSuvvlGwEc07hcY8gk+IHELyo+MppOToCYM85b4j0ZWo4LhukVsDwUCrpv3Fb7KH01SSu
+	zYCmcrGZhl5zjVfbT56EBtCIgAcLvR05DSBXAATqAu1eiHXe4PPMBOZCv52YoDFuM+B4Dd
+	2WI4bYNmNzK5B39Y9rIexSg/HzyrNzx6qs1xeYBQqhlIBEQGZoNc6i3fAcpNLMlsWNfGgg
+	ZfHiMl5DV1y0sR0NCVQ7qnAdKpqGBY/n3Is5aZ9mMoJH/sQFFL87HGUn6U0iug==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v2 00/11] Add Mobileye EyeQ system controller support (clk,
+ reset, pinctrl)
+Date: Fri, 03 May 2024 16:20:45 +0200
+Message-Id: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAL3yNGYC/0XMSwqDMBSF4a3IHTcl5lFtR91HcWCSm3pBTUkkV
+ MS9N5VCh//h8G2QMBImuFUbRMyUKMwlxKkCO/TzExm50iC4UFzxlk1mXFkYDWt032qvrXcoodx
+ fET29D+rRlR4oLSGuh5zr7/pDav5Hcs04k1Kjul5cY1DeTQjLSPPZhgm6fd8/Vog/16IAAAA=
+To: Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.13.0
+X-GND-Sasl: theo.lebrun@bootlin.com
 
+Hello,
 
-On Tue 30 Apr 2024 at 14:44, Xianwei Zhao <xianwei.zhao@amlogic.com> wrote:
+This builds on previous EyeQ5 system-controller revisions[0], supporting
+EyeQ5, EyeQ6L and EyeQ6H. We expose a few OLB system-controller
+features here:
+ - Clocks: some read-only PLLs derived from main crystal and some
+   divider clocks based on PLLs.
+ - Resets.
+ - Pin controller, only on EyeQ5 (rest will use generic pinctrl-single).
 
-> Changes since V7 [1]:
->  - Remove included head file not used.
->  - Link to v7: https://lore.kernel.org/all/20240424050928.1997820-1-xianwei.zhao@amlogic.com
->
+EyeQ6H is special in that it has seven instances of this
+system-controller. Those are spread around and cannot be seen as a
+single device, hence are exposed as seven DT nodes and seven
+compatibles.
 
-Overall this v8 looks good. Please address the remaining comments.
+This revision differs from previous in that it exposes all devices as a
+single DT node. Driver-wise, a MFD registers multiple cells for each
+device. Each driver is still in isolation from one another, each in
+their respective subsystem.
 
-There is no need to rush sending a v9. Please allow some time for other
-to review this. I will not apply a v9 until the -rc1 is out anyway.
+This has been requested during previous reviews and took time to
+implement; I'd be happy to get some feedback on this aspect.
 
-> Changes since V6 [12]:
->  - Add pad src for rtc clock.
->  - Add SCMI clock controller support, move some clock node in SCMI,such as GP1 PLL DDR USB etc.
->  - Fix some spelling mistake.
->  - Use lower case for bindings and update some input clocks desc.
->  - Update some clock comments.
->  - Delete prefix "AML_" for macro definition.
->  - Addd some clock annotation and some clock flag CRITICAL.
->  - Add maximum for regmap_config.
->  - Delete some unused register definition and unused clock inputs. 
->  - Drop patch subject redundant "bindings". Suggested by Krzysztof.
->  - Not reference header file "clk.h" and replace comment. Suggested by Jerome.
->  - Modify description about board in Kconfig file help item. Suggested by Jerome.
->  - Link to v6: https://lore.kernel.org/all/20231106085554.3237511-1-xianwei.zhao@amlogic.com
->
-> Changes since V5 [3]:
->  - Fix some typo and modify formart for MARCO. Suggested by Jerome.
->  - Add pad clock for peripheral input clock in bindings.
->  - Add some description for explaining why ddr_dpll_pt_clk and cts_msr_clk are out of tree.
-> Changes since V4 [10]:
->  - Change some fw_name of clocks. Suggested by Jerome.
->  - Delete minItem of clocks.
->  - Add CLk_GET_RATE_NOCACHE flags for gp1_pll
->  - Fix some format. and fix width as 8 for mclk_pll_dco.
->  - exchange gate and divder for fclk_50m clock.
->  - add CLK_SET_RATE_PARENT for axi_a_divder & axi_b_divder.
->  - add CLK_IS_CRITICAL for axi_clk
->  - Optimized macro define for pwm clk.
->  - add cts_oscin_clk mux between 24M and 32k
->  - add some missing gate clock, such as ddr_pll.
-> Changes since V3 [7]:
->  - Modify Kconfig desc and PLL yaml clk desc.
->  - Fix some format.Suggested by Yixun and Jerome.
->  - Add flag CLK_GET_RATE_NOCACHE for sys_clk.
->  - Optimized macro define for pwm clk.
->  - Use flag CLK_IS_CRITICAL for axi_clk.
->  - Add some description for some clocks.
->  - Use FCLK_50M instead of FCLK_DIV40.
-> Changes since V2 [4]:
->  - Modify some format, include clk name & inline, and so on.
->  - Define marco for pwm clock.
->  - Add GP1_PLL clock.
->  - Modify yaml use raw instead of macro.
-> Changes since V1 [2]:
->  - Fix errors when check binding by using "make dt_binding_check".
->  - Delete macro definition.
->
-> Xianwei Zhao (5):
->   dt-bindings: clock: add Amlogic C3 PLL clock controller
->   dt-bindings: clock: add Amlogic C3 SCMI clock controller support
->   dt-bindings: clock: add Amlogic C3 peripherals clock controller
->   clk: meson: c3: add support for the C3 SoC PLL clock
->   clk: meson: c3: add c3 clock peripherals controller driver
->
->  .../clock/amlogic,c3-peripherals-clkc.yaml    |  120 +
->  .../bindings/clock/amlogic,c3-pll-clkc.yaml   |   59 +
->  drivers/clk/meson/Kconfig                     |   29 +
->  drivers/clk/meson/Makefile                    |    2 +
->  drivers/clk/meson/c3-peripherals.c            | 2365 +++++++++++++++++
->  drivers/clk/meson/c3-pll.c                    |  746 ++++++
->  .../clock/amlogic,c3-peripherals-clkc.h       |  212 ++
->  .../dt-bindings/clock/amlogic,c3-pll-clkc.h   |   40 +
->  .../dt-bindings/clock/amlogic,c3-scmi-clkc.h  |   27 +
->  9 files changed, 3600 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-peripherals-clkc.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
->  create mode 100644 drivers/clk/meson/c3-peripherals.c
->  create mode 100644 drivers/clk/meson/c3-pll.c
->  create mode 100644 include/dt-bindings/clock/amlogic,c3-peripherals-clkc.h
->  create mode 100644 include/dt-bindings/clock/amlogic,c3-pll-clkc.h
->  create mode 100644 include/dt-bindings/clock/amlogic,c3-scmi-clkc.h
->
->
-> base-commit: ba535bce57e71463a86f8b33a0ea88c26e3a6418
+Patches are targeting MIPS, clk, reset, pinctrl and MFD:
 
+MIPS:
+ - dt-bindings: clock: mobileye,eyeq5-clk: drop bindings
+ - dt-bindings: clock: mobileye,eyeq5-reset: drop bindings
+ - dt-bindings: soc: mobileye: add EyeQ OLB system controller
+ - MIPS: mobileye: eyeq5: add OLB system-controller node
 
+   Start by dropping already accepted dt-bindings that don't match
+   current approach of single node for entire OLB (and no subnodes).
+   Then add single dt-bindings that cover clk/reset/pinctrl features.
+
+   Squash devicetree commits together into one.
+   Adapted to having a single devicetree node without subnodes.
+
+MFD:
+ - driver core: platform: Introduce platform_device_add_with_name()
+ - mfd: Add cell device name
+ - mfd: olb: Add support for Mobileye OLB system-controller
+
+   There are seven instances of OLB on EyeQ6H. That means many clk/reset
+   instances. Without naming devices properly it becomes a mess because
+   integer IDs are not explicit. Add feature to name MFD sub-devices.
+
+   Then add OLB MFD platform driver; a really simple driver. Most its
+   content is iomem resources and MFD cells.
+
+clk:
+ - clk: divider: Introduce CLK_DIVIDER_EVEN_INTEGERS flag
+ - clk: eyeq: add driver
+
+reset:
+ - reset: eyeq: add platform driver
+
+pinctrl:
+ - pinctrl: eyeq5: add platform driver
+
+Have a nice day,
+Théo
+
+[0]: https://lore.kernel.org/lkml/20240301-mbly-clk-v9-0-cbf06eb88708@bootlin.com/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v2:
+- dt-bindings:
+  - Drop mobileye,eyeq5-clk and mobileye,eyeq5-reset bindings.
+  - Update OLB bindings to handle clk/reset/pinctrl from OLB node.
+- MFD:
+  - Add core driver and MFD patches to allow setting sub-devices names
+    from MFD cell.
+  - Add MFD OLB driver.
+- clk:
+  - Change type of eqc_pll->reg64 from u32 to unsigned int.
+  - Use resource indexes rather than names for iomem resources.
+  - Put early PLLs into a separate match data table. Also, have store
+    number of late clocks in early match data to properly alloc cells.
+  - Pre-acquire all divclk resources first, then register them.
+    This simplifies code.
+  - Extract PLLs and divclks init to two separate functions.
+  - Avoid variable declarations in loop bodies.
+  - Do not register match data table to platform driver. It gets probed
+    as MFD sub-device matching on driver name. Match data table is
+    matched against parent OF node compatible.
+  - Fix ugly memory corruption bug when clk count == 1.
+- reset:
+  - EQR_EYEQ5_SARCR and EQR_EYEQ6H_SARCR did not use offset 0x0: do
+    minus four to all their offsets and reduce resource sizes.
+  - Remove resource names. Reset i uses iomem resource index i.
+  - Simplify xlate: have two implementations for of_reset_n_cells==1 and
+    of_reset_n_cells==2. Both call the same helper internal function.
+  - Do not register match data table to platform driver. It gets probed
+    as MFD sub-device matching on driver name. Match data table is
+    matched against parent OF node compatible.
+- pinctrl:
+  - Remove match data table to platform driver. It gets probed as MFD
+    sub-device matching on driver name. Driver has single compatible.
+  - Drop "Reviewed-by: Linus Walleij" as driver changed approach.
+- MIPS DTS:
+  - Squash all commits together into a single one.
+  - Adapt to new approach: OLB is now a single OF node.
+- Link to v1: https://lore.kernel.org/r/20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com
+
+---
+Théo Lebrun (11):
+      dt-bindings: clock: mobileye,eyeq5-clk: drop bindings
+      dt-bindings: clock: mobileye,eyeq5-reset: drop bindings
+      dt-bindings: soc: mobileye: add EyeQ OLB system controller
+      driver core: platform: Introduce platform_device_add_with_name()
+      mfd: Add cell device name
+      mfd: olb: Add support for Mobileye OLB system-controller
+      clk: divider: Introduce CLK_DIVIDER_EVEN_INTEGERS flag
+      clk: eyeq: add driver
+      reset: eyeq: add platform driver
+      pinctrl: eyeq5: add platform driver
+      MIPS: mobileye: eyeq5: add OLB system-controller node
+
+ .../bindings/clock/mobileye,eyeq5-clk.yaml         |  51 --
+ .../bindings/reset/mobileye,eyeq5-reset.yaml       |  43 --
+ .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 375 +++++++++++
+ MAINTAINERS                                        |   5 +
+ .../{eyeq5-fixed-clocks.dtsi => eyeq5-clocks.dtsi} |  54 +-
+ arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi        | 125 ++++
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  22 +-
+ drivers/base/platform.c                            |  17 +-
+ drivers/clk/Kconfig                                |  11 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-divider.c                          |  12 +-
+ drivers/clk/clk-eyeq.c                             | 690 +++++++++++++++++++++
+ drivers/mfd/Kconfig                                |  10 +
+ drivers/mfd/Makefile                               |   2 +
+ drivers/mfd/mfd-core.c                             |   2 +-
+ drivers/mfd/mobileye-olb.c                         | 180 ++++++
+ drivers/pinctrl/Kconfig                            |  14 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-eyeq5.c                    | 573 +++++++++++++++++
+ drivers/reset/Kconfig                              |  13 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-eyeq.c                         | 541 ++++++++++++++++
+ include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  21 +
+ include/linux/clk-provider.h                       |  11 +-
+ include/linux/mfd/core.h                           |  19 +-
+ include/linux/platform_device.h                    |  12 +-
+ 26 files changed, 2651 insertions(+), 155 deletions(-)
+---
+base-commit: d5a00175dce1740a3e9d519933ba76f9ce5cbd24
+change-id: 20240408-mbly-olb-75a85f5cfde3
+
+Best regards,
 -- 
-Jerome
+Théo Lebrun <theo.lebrun@bootlin.com>
+
