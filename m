@@ -1,102 +1,129 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCDA14A4D1
-	for <linux-clk@vger.kernel.org>; Fri,  3 May 2024 08:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F3F14E2CB;
+	Fri,  3 May 2024 09:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714725354; cv=none; b=h95GAXG7qgThU+RDkcmEt9+X5p8voqrABh+bdBftHW4mW6Rx0wUiJDFtDFkQH06vHtbp7CSZ5TuZGVVseon4Zku/bdsRGNEPWN1mB0nX8FEA7ayN9apWRr5jLU/tpJR/Ntcb7GClLqEAU2ZEEiemWfj23leNgIpCzkQUfydvGKs=
+	t=1714727511; cv=none; b=ulGswManYzK43yFjuMT1gS4Hf6pPAV4pHqSCYzXBy45Tm++0AvZ+GQ9uHL/W7rJUrarHde7OUy7A3ZtuxWaX8rC285cDmYGiNyXDjzpFsdssnF2NloNPO+cywIewkJ5RDeD4r0MyYRjjy+5a975UidQWEOUsQUUnClxgdyUamW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714725354; c=relaxed/simple;
-	bh=9O/jNqh6RwmgdZzcMSapBkNN6fAwW++OTzSrfYouXXo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DN2utgurLp1t1msE5Sx7/Xw+vE0pg5d8Iel1YHo53BX7Z7tC8yNvVWNko5pLgJCmp0U+VdK0pVuEhWtGOsyojqLjBs4mhTpoOoGK5wYf9JpkCbKFUVw+jHqf2tP4HuTGgAl1nCerWklwzqWs7P3ekMFymCedjg1XvLvfl3ayz0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZVoPWxH8; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1714727511; c=relaxed/simple;
+	bh=efRS0J2Mfz3BfrMBUM6bOn7BAON849782woB55PVO+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=IX2e7rVNVquTN6EeuF7hLpCThRbj1yV5haPlXKJor3SUPnp1Fdt0QsT6lEBSeXcjw0btVxnrVRe+daXfksJksMTLQcDzRzDnyVEgQsPOjxUnp1Hb0ZZa7p6TQ9/3NhuYwdiibjGJEJraEAs3Bs8QFj29bxocp2upUX+eh9QfFvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cHooHtXt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZVoPWxH8"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-34d8d11a523so2021837f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 03 May 2024 01:35:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714725351; x=1715330151; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iTVoaXYQmknTRotS0tITeOIG625SY8vKLkmu8tNzGoo=;
-        b=ZVoPWxH8hwls600Sg2o+HgrsHUQsCEgd4gWZhggJfru1zKMWNxw1KDBQwfNivnyrFA
-         jacFR8YavHYMUSPMJlR2tDXZ3Lz5RWILgVTv533yhQuiBorHOG0LUZMWLN/wo3D/eYt6
-         ZxUceEI93CbA8IDuSnfEA2SxlY24PyF50F3jmir/JVh4ZpoCp/NLXjNzsWAdXZJWpzcS
-         qXy9ZcyVZzFzV4usUPlk2vw3aAh3Ld5EAp0X4YgXC266lCftFFf5gUCTBSLTKsEa0AYm
-         /K+0lCyll7WEzSiOsZc90OZSR5NCB03y592w8QkRiS0qOfoQ/hiP9DbA66F/fx2tyj6i
-         e3cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714725351; x=1715330151;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iTVoaXYQmknTRotS0tITeOIG625SY8vKLkmu8tNzGoo=;
-        b=dMMaHNA81FKmmXzkRF0tsbgScj8UxByjJzOqJStYTef7+wA7aVb0sfcTQ3ntgCFxDK
-         Lic/38MXyaPzgg9wpXPOSyWu1hUcdi1mvPwE28bdqUETYExnlVj+2JZmIvyvzPv9oezk
-         IqMlQPK2aSe9eX4BMu/52t1K7A+smSIBmNAB3SOBSHZuY3lcWQO7jIK2NApMN5Hi+glb
-         116i2vFnkwIsZJ25IJqITgsqcvqiE5hmEI9QlEDKnEBg2Sc13KGLMeGSLj7kWtb5xnG6
-         b1fIFOD4v4tFovfJU+ySwpn8o05AWH9hZ46cTdtZNAn+PvP3D16yEwtGCBuu8uVbMxIU
-         XZeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkuY+ab26e+qZNMBA0HLDxifouoaiXt5lIeZFpeFwgyBr8OqhVuRmytjrWR5lOBp3ciAmnzCzzIuK/QRI9dp/+xqkR3JImDGpc
-X-Gm-Message-State: AOJu0YybguRAumAKaIlX618USpR9x6I6Y4UE1IxLs4IjxGGeaN344puo
-	OoODqi1rPROHx3UZ4GfiCJsEYbw710NjUqliALcDTZxU3OeAvfXO6YHvK1rj6RI=
-X-Google-Smtp-Source: AGHT+IEaH132tk7uwiYiRvUBCXYBTDRxXpWqfkCiUIhl2McL0yL4H6XUTvSvhKnOsvbYovTodugoeg==
-X-Received: by 2002:a5d:526d:0:b0:34d:2447:9f8f with SMTP id l13-20020a5d526d000000b0034d24479f8fmr1381314wrc.5.1714725350966;
-        Fri, 03 May 2024 01:35:50 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id dh11-20020a0560000a8b00b00349c54d6cefsm3171986wrb.54.2024.05.03.01.35.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 May 2024 01:35:50 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com
-In-Reply-To: <20240430-gs101-apm-clocks-v1-1-b2e2335e84f5@linaro.org>
-References: <20240430-gs101-apm-clocks-v1-1-b2e2335e84f5@linaro.org>
-Subject: Re: [PATCH] clk: samsung: gs101: mark some apm UASC and XIU clocks
- critical
-Message-Id: <171472534930.18059.10164022477086463014.b4-ty@linaro.org>
-Date: Fri, 03 May 2024 10:35:49 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cHooHtXt"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4436rYn8030152;
+	Fri, 3 May 2024 09:11:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=5TYtEABa+Npo1ej5cnl3qJo/mPfhw85IRdYbSazcmzQ=; b=cH
+	ooHtXthFEgtPrCn4gC0VJyzZx8GmFqzLH7Djgdx+DWz9se3Kg1Htq9tJ2Wd2BuAL
+	cN6yX0QwzIDc4ewt2nALkr7LZFfcqjOiEh/FrpwC0tICYyK1hcywzGWBYWA+VmqP
+	s2xsGFGw2pq296BOAk6V9azvbZcLC+Z/X6E0JtmakSl4btHqeIsGnWwPYJ+F+XDG
+	BHefW5j97VLUePTf9p7xWwGuezKu9CfGA1l5y62CSe35rwsukBgeEpvAKm/zh2BM
+	3TDcwUs2fOMZs2tfF1hXagpE4qwX+kyH8/2tJvL63mSIiElX9FHZ5ezYPGMiTsQ2
+	5mD7tAyjtkO500WaWxyQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xvmxyrsfr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 03 May 2024 09:11:44 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4439BhF5010268
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 3 May 2024 09:11:43 GMT
+Received: from [10.216.42.60] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 3 May 2024
+ 02:11:39 -0700
+Message-ID: <883248ce-23a7-1f41-aeab-67dc0828566b@quicinc.com>
+Date: Fri, 3 May 2024 14:41:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH] clk: qcom: gcc-ipq9574: Add BRANCH_HALT_VOTED flag
+Content-Language: en-US
+To: Stephen Boyd <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mturquette@baylibre.com>, <quic_srichara@quicinc.com>,
+        <quic_varada@quicinc.com>
+References: <20240502034247.2621996-1-quic_mdalam@quicinc.com>
+ <2e05b0e246431d9dcf28c7135fff8231.sboyd@kernel.org>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <2e05b0e246431d9dcf28c7135fff8231.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xn3tNLO9LbxzwdmLuyROzMFXE30ijDug
+X-Proofpoint-ORIG-GUID: xn3tNLO9LbxzwdmLuyROzMFXE30ijDug
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-03_05,2024-05-03_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 spamscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ mlxlogscore=999 bulkscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2405030066
 
 
-On Tue, 30 Apr 2024 10:54:59 +0100, André Draszik wrote:
-> The system hangs when any of these clocks are turned off.
+
+On 5/3/2024 3:38 AM, Stephen Boyd wrote:
+> Quoting Md Sadre Alam (2024-05-01 20:42:47)
+>> Add BRANCH_HALT_VOTED flag to inform clock framework
+>> don't check for CLK_OFF bit.
+>>
+>> CRYPTO_AHB_CLK_ENA and CRYPTO_AXI_CLK_ENA enable bit is
+>> present in other VOTE registers also, like TZ.
+>> If anyone else also enabled this clock, even if we turn
+>> off in GCC_APCS_CLOCK_BRANCH_ENA_VOTE | 0x180B004, it won't
+>> turn off.
 > 
-> With the introduction of pinctrl clock support [1], the approach taken
-> in this clock driver for the APM clocks to rely solely on the
-> clk_ignore_unused kernel command line option does not work anymore and
-> the system hangs during boot.
+> Are you seeing problems where we need to send this patch to stable?
+Yes
 > 
-> [...]
+>>
+>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>> ---
+> 
+> Any fixes tag?
+Will add in next patch
+> 
+>>   drivers/clk/qcom/gcc-ipq9574.c | 10 ++++++----
+>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+>> index 0a3f846695b8..f8b9a1e93bef 100644
+>> --- a/drivers/clk/qcom/gcc-ipq9574.c
+>> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+>> @@ -2140,9 +2140,10 @@ static struct clk_rcg2 pcnoc_bfdcd_clk_src = {
+>>   
+>>   static struct clk_branch gcc_crypto_axi_clk = {
+>>          .halt_reg = 0x16010,
+>> +       .halt_check = BRANCH_HALT_VOTED,
+>>          .clkr = {
+>> -               .enable_reg = 0x16010,
+>> -               .enable_mask = BIT(0),
+>> +               .enable_reg = 0xb004,
+> 
+> You could be more explicit in the commit text that you're changing the
+> register offset to the voting register.
+will update the commit message in next patch.
+> 
+>> +               .enable_mask = BIT(15),
 
-Applied, thanks!
-
-[1/1] clk: samsung: gs101: mark some apm UASC and XIU clocks critical
-      https://git.kernel.org/krzk/linux/c/6b32d7474e9b833dc7fadc1b4d4f08af9bd87fde
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Thanks for reviewing.
+Regards,
+Alam.
