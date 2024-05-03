@@ -1,86 +1,185 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED14153BEE
-	for <linux-clk@vger.kernel.org>; Fri,  3 May 2024 13:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F478153BCE;
+	Fri,  3 May 2024 13:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714742558; cv=none; b=P8LdEWMXd5K9C9L6PTBRfiRcVFSNhSGFLTd8HxJYol6gpREFGhj5BykxQ2SJM37NRUTFwc+VI2m9DjTIqKNS61JugDnNr1OaQzD2QjlTm3RaH3N5mJK6YqvB1ogZTJOby4thXo8+Ol/sAryXAuZTPqt4v/ifXsv/oacmlk4UTfw=
+	t=1714744370; cv=none; b=JDFyPx7/Smk2+8r/sqZGaO5ZQ8UjJI/1KICg622dBr6F/Yfrqow8v4lJj/J+oBu0HCv1VXGxyM9YqN+DwkdrAfbSr5m5Y4ygFltwr84ns9yzs+L1o9YarGrUmcBtW7llnCr8n+2GCOsgVXNy0rFygYpd7S9KAE0+NKn4YVv8Tfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714742558; c=relaxed/simple;
-	bh=E+SpOVvHGi3ykjwFD60zMDyQU3xXnUCfecCHq2pmGR0=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=A6RYZ2yRgg3jV5hZBLXI5l2rhg6rQLbr1tD8HgFw9gPtP0/XCb2YXCTMNbN5/5RMHzRW9sZqDO+PmtVazXNYkXcUC5g2FQ0L5A6VSehwiuQUklJDwLzmXDKUrDR/bv2t22g8+r9A2FYsBhkOBjds4XQFAbrilthGPrdPP1opuOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=H3uby9WS; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1714744370; c=relaxed/simple;
+	bh=/ikARJU0dNJFx1ZbYtIVaOCPwhf9eJ3Xsa4ZMvOGqcw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cDk2++TUadwonJ38qmkLFR0bFOMvFPQm1eD/Y4zqJnOTtaYSgWlq4tq9aakJX/P5rpkOXm5ZSkXfwksoxC6Tj11TGiWLsvh9UCyzZ5AnHRYn5tmZ8PCrOIOMebY8/W92gauEAP8Qqf9LYKnFi2nLl8hj318ugKa0vqbVjyiMCmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNAGdOLX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="H3uby9WS"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-41a1d88723bso65065205e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 03 May 2024 06:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1714742554; x=1715347354; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kit1TBFVgyt1sxkCYLtPtBHsm3h3unJNtgT/eeVBYto=;
-        b=H3uby9WSHlqYlQsoj89ksCUdZ+ObButx0Sdz5iNADIH1ssb+HHRxyD6JK4itoqGrAd
-         iGBlJ4rRQNB8BmCAC1/CiNxRfVc7A2Ae7isOgPJmi3poR4f4tu0reVcOWAiLJkMiZzXP
-         KLo8XMatacuH3XEbOTpE9FRCPccJwJlPmQTgQGOOrU2r1PjtozpDf2henbS2QBRJiCRs
-         knGXpjmIlsc68t3twNRPciWlCeyvmmxVIfGOjDMDrdtiTzBs5O20tgRfJ10CohHrWBx3
-         mH+ptt4vz/aGQTd19R8W9rNWE/ah79wCIx4pIelU43f2zGw9J1RDIBayo9x5aBID3tK/
-         jSVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714742554; x=1715347354;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kit1TBFVgyt1sxkCYLtPtBHsm3h3unJNtgT/eeVBYto=;
-        b=Ns69hHr4sGLOa86Eb0izUPEhWdiMOxUPXV2pOGhHQl/YjYEhXS3eqzA1d3YYN7uOPl
-         9In0SkHuX9ok8a4r67oV6gA2AjIjVGwFkAY/DjuJi3ksQJg0F2T1nImodyVXEZMO593p
-         0/bEq5LvJXedc5XfLYSCM7vjmZYYRxZmEzdXdHDMA+DMtnA+PEWxHldxUN/sURDx+7Qv
-         TqSyU/JeZhyckI5YZcKYosMRPGJ0tBQAjlIA2LssgyaQf9e6w9wbQxpzMtsVPyvHnbw6
-         6EatP/eiZPHExRBOs6ChVh/Jt0lg5XTNz5a/M8oy2utnizZTvCY++PuqFFdLfOTJnHdH
-         TJ4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX08dCh/bWt/3sFLXFQbbX+6J6RIWXGVsgzX38xvGxaGQVaB3yLVNzEIKf0/iV11b56MH6UKvAFWLlyvChiwuMPBucIii3jzvpK
-X-Gm-Message-State: AOJu0YwnL+hJLMys2AFrYbGwM/0LIQ/RywizWCtEKRhk0pdKvQgC0UvH
-	6t+kvFiDHLQ7sCTM3eAHVKzfWtZTZf3xxsZRM5Npfk49i3dR78Na4dw6IB0MrzM=
-X-Google-Smtp-Source: AGHT+IFMN7kbGVdBfJ7UT+4XcxNE33ol941/vCrMnxSahE6k9NpvMQZvsFEr8R/ZH3PzSShRqGZkew==
-X-Received: by 2002:a05:600c:4e8a:b0:419:f088:249c with SMTP id f10-20020a05600c4e8a00b00419f088249cmr2174709wmq.12.1714742553772;
-        Fri, 03 May 2024 06:22:33 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:1b85:e590:355b:9957])
-        by smtp.googlemail.com with ESMTPSA id g21-20020adfa495000000b003437a76565asm3803713wrb.25.2024.05.03.06.22.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 May 2024 06:22:33 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20240410155406.224128-1-krzk@kernel.org>
-References: <20240410155406.224128-1-krzk@kernel.org>
-Subject: Re: [PATCH] clk: meson: s4: fix module autoloading
-Message-Id: <171474255291.1335139.15327121235218632635.b4-ty@baylibre.com>
-Date: Fri, 03 May 2024 15:22:32 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNAGdOLX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F46DC116B1;
+	Fri,  3 May 2024 13:52:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714744369;
+	bh=/ikARJU0dNJFx1ZbYtIVaOCPwhf9eJ3Xsa4ZMvOGqcw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mNAGdOLX5oyQ5YP0lG4U7x79x6bCeNSRq6WOS/kCDdWBqe0g555viimFTlV6qnEkS
+	 SrGffaB11PJ1xeB9DaLFEd/k9J+aB30ujqWYePQwl8fUaU5Ve+BlI9f9kpiL8bacWn
+	 St2f3ZRk4PccwEzZw1fzI2QYq5SCgZptNo9S/AhAfO5/OpKQfUkmFULupIIt8sgXSy
+	 AeiPfiromWKfpyJsmdoP8TqvTqho96uKbDWDuOh8ELWFKi6gOer9UorEfC73jXfc65
+	 xYenV/YDqOHceMrt8LVom4UH4vAeX/6lACYhPcglA9tEiYPTgkiF79+cARMk/NvSpO
+	 lMdMmkThkPavQ==
+Message-ID: <c015b3a5-2213-4ebd-b960-d97ed1fe7062@kernel.org>
+Date: Fri, 3 May 2024 16:51:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
+ ability to gcc
+Content-Language: en-US
+To: Varadarajan Narayanan <quic_varada@quicinc.com>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20240418092305.2337429-1-quic_varada@quicinc.com>
+ <20240418092305.2337429-7-quic_varada@quicinc.com>
+ <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
+ <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com>
+ <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
+ <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com>
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-Applied to clk-meson (v6.10/drivers), thanks!
+Hi Varada,
 
-[1/1] clk: meson: s4: fix module autoloading
-      https://github.com/BayLibre/clk-meson/commit/11981485e27c
+Thank you for your work on this!
 
-Best regards,
---
-Jerome
+On 2.05.24 12:30, Varadarajan Narayanan wrote:
+> On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
+>> On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
+>>> On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
+>>>>
+>>>>
+>>>> On 4/18/24 11:23, Varadarajan Narayanan wrote:
+>>>>> IPQ SoCs dont involve RPM in managing NoC related clocks and
+>>>>> there is no NoC scaling. Linux itself handles these clocks.
+>>>>> However, these should not be exposed as just clocks and align
+>>>>> with other Qualcomm SoCs that handle these clocks from a
+>>>>> interconnect provider.
+>>>>>
+>>>>> Hence include icc provider capability to the gcc node so that
+>>>>> peripherals can use the interconnect facility to enable these
+>>>>> clocks.
+>>>>>
+>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+>>>>> ---
+>>>>
+>>>> If this is all you do to enable interconnect (which is not the case,
+>>>> as this patch only satisfies the bindings checker, the meaningful
+>>>> change happens in the previous patch) and nothing explodes, this is
+>>>> an apparent sign of your driver doing nothing.
+>>>
+>>> It appears to do nothing because, we are just enabling the clock
+>>> provider to also act as interconnect provider. Only when the
+>>> consumers are enabled with interconnect usage, this will create
+>>> paths and turn on the relevant NOC clocks.
+>>
+>> No, with sync_state it actually does "something" (sets the interconnect
+>> path bandwidths to zero). And *this* patch does nothing functionally,
+>> it only makes the dt checker happy.
+> 
+> I understand.
+> 
+>>> This interconnect will be used by the PCIe and NSS blocks. When
+>>> those patches were posted earlier, they were put on hold until
+>>> interconnect driver is available.
+>>>
+>>> Once this patch gets in, PCIe for example will make use of icc.
+>>> Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
+>>>
+>>> The 'pcieX' nodes will include the following entries.
+>>>
+>>> 	interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
+>>> 			<&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
+>>> 	interconnect-names = "pcie-mem", "cpu-pcie";
+>>
+>> Okay. What about USB that's already enabled? And BIMC/MEMNOC?
+> 
+> For USB, the GCC_ANOC_USB_AXI_CLK is enabled as part of the iface
+> clock. Hence, interconnect is not specified there.
+> 
+> MEMNOC to System NOC interfaces seem to be enabled automatically.
+> Software doesn't have to turn on or program specific clocks.
+> 
+>>>> The expected reaction to "enabling interconnect" without defining the
+>>>> required paths for your hardware would be a crash-on-sync_state, as all
+>>>> unused (from Linux's POV) resources ought to be shut down.
+>>>>
+>>>> Because you lack sync_state, the interconnects silently retain the state
+>>>> that they were left in (which is not deterministic), and that's precisely
+>>>> what we want to avoid.
+>>>
+>>> I tried to set 'sync_state' to icc_sync_state to be invoked and
+>>> didn't see any crash.
+>>
+>> Have you confirmed that the registers are actually written to, and with
+>> correct values?
+> 
+> I tried the following combinations:-
+> 
+> 1. Top of tree linux-next + This patch set
+> 
+> 	* icc_sync_state called
+> 	* No crash or hang observed
+> 	* From /sys/kernel/debug/clk/clk_summary can see the
+> 	  relevant clocks are set to the expected rates (compared
+> 	  with downstream kernel)
+> 
+> 2. Top of tree linux-next + This patch set + PCIe enablement
+> 
+> 	* icc_sync_state NOT called
+
+If sync_state() is not being called, that usually means that there
+are interconnect consumers that haven't probed successfully (PCIe?)
+or their dependencies. That can be checked in /sys/class/devlink/.../status
+But i am not sure how this works for PCI devices however.
+
+You can also manually force a call to sync_state by writing "1" to
+the interconnect provider's /sys/devices/.../state_synced
+
+Anyway, the question is if PCIe and NSS work without this driver?
+If they work, is this because the clocks are turned on by default
+or by the boot loader?
+
+Then if an interconnect path (clock) gets disabled either when we
+reach a sync_state (with no bandwidth requests) or we explicitly
+call icc_set_bw() with 0 bandwidth values, i would expect that
+these PCIe and NSS devices would not function anymore (it might
+save some power etc) and if this is unexpected we should see a
+a crash or hang...
+
+Can you confirm this?
+
+Thanks,
+Georgi
+
+> 	* No crash or hang observed
+> 	* From /sys/kernel/debug/clk/clk_summary can see the
+> 	  relevant clocks are set to the expected rates (compared
+> 	  with downstream kernel)
+> 
+> Does this answer your question? Please let me know if you were
+> looking for some other information.
+> 
+> Thanks
+> Varada
+> 
 
