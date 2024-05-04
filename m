@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B070EA34
-	for <linux-clk@vger.kernel.org>; Sat,  4 May 2024 00:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA2E15B3;
+	Sat,  4 May 2024 00:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714784173; cv=none; b=Op4iNsBIceN4kw32JCcLBHiYBem+Ldivt85SjW6jhvg+7ymIYunzrdfKBXy44SKnPj9iNdYoZksXdiJoBss7IFISzFR/0SbCOXvPen2y9zn5oqOg19Q2et6q0BtA/2aaahpEGWs1zWz43aUKrg7wRI8bVTp4FIt8aZMxjbksJKg=
+	t=1714784252; cv=none; b=MqqPitK0zynwaB+GNjFqxg93WLiZ2bVpUlEQmJrfNgveKW1ia7omyz4FN06pLjx/YIp4Wnwle1BK9QOV3N0I+0x/m1KAYvHqsSakGhr9Eg36NKHdJAHMj6TZmqhByWxyW/BVFZ1oB6MTYcFS1riqB4TLawB71BFr45mU4oaovew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714784173; c=relaxed/simple;
-	bh=9WSMtu0V/6YHuVP9mM3uysB5dF4FFFLrwl/Ds/7uIj0=;
+	s=arc-20240116; t=1714784252; c=relaxed/simple;
+	bh=0Xc7VQAdC/90/3pFKSHHnBQUDZDgCqcfRhm70VyBDVg=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=owVBb+5Z7lrO4TQEW624Xo96R7Zfrcl3tx/u6jzfElwfz7x9P3nQWinALBkPNhdIrd5L/dwjWvQp6ReNK9AV9Y4zqpduSNG6qvkK+h7h1Wjp81De1FKSqkj8HqJDTMDYzHMWUAW90SilgdlFBFj9KhM5nrZPhJ2auXO9r4Py9Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYLYAOnC; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=ToXCNkJmMrTussXBtHxn6UOtrhpUsZqhhqq22AxvBfmaYCGkYOEUZgChsJ1yKQ5ZruC2h0hSeHz3H/25qOBnpwRN6GkBch+MhzyAWd7V3ljJaSS0KIRRAtWOy9FyL+wJL46//5/9ku4O6M3EBoE7j7bfonM19+fb21psbdFfM/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5c1ZJRU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYLYAOnC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB30C116B1;
-	Sat,  4 May 2024 00:56:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5c1ZJRU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3512C116B1;
+	Sat,  4 May 2024 00:57:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714784173;
-	bh=9WSMtu0V/6YHuVP9mM3uysB5dF4FFFLrwl/Ds/7uIj0=;
+	s=k20201202; t=1714784252;
+	bh=0Xc7VQAdC/90/3pFKSHHnBQUDZDgCqcfRhm70VyBDVg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GYLYAOnCRhsfZZSMF/ek0ZLoGJoaGviOpyF+EcgltQSUE7QA7j4sozRbS246uor6u
-	 cuj5GQOUb2ERWynUdwXePtxSnwxcRz+x5MMzxEXg765TZTjtvyfGz7UfudgQGTHPG4
-	 8UPp9uX2O5WNPSQSFh3Uawp5/p2rL/D0Ro3bmOiAIle6608AAt6Ifv1QcgBcFBXIhN
-	 0ufiNBLDalXXamYh4AZIAxerjrGGE7psX6IP7scNgVlBboRiKrcie9w03pOkWW5yCk
-	 vAm8bU6dXGy89tZVGoA0/TBEHWEYdiACO3+EdspjPEhvnKRQGRZnV4L4zBEhoUm+mc
-	 3AKc7g1t8jRrg==
-Message-ID: <f8250e7b2566b564e9e763ce71ef4a94.sboyd@kernel.org>
+	b=P5c1ZJRU9neVPQpXiWmKdU2HY7l1V50Sb+rKDP2IexcFtJYjAhwA+M+HOYFNoMyFW
+	 8XVFdVBPo0aZA0zr1PjVESW5An8cTdo4EVXzHMzN4q9U+eHr2h7ghsiT80G3qoSIHp
+	 YbOzMP907EMAkhQKsbQljiul9ZX1BxhgDwzlI5MkdRiv9KJYlbeuSI5ZwEFfcoYPZD
+	 yE1SocXUcvOjiCw5h3nxkIJyNDZDKezq+yM/BHh1cXXRZ08k5uzl0tLp9/ZMKP6F50
+	 gv3Ce0YXUAkLGKSST1aNDehLdtUwnuoAaAvZXXFN9CoymCpeVCTPS3jcgPx7hSuM/p
+	 hQ8LzwXYA7zEg==
+Message-ID: <2b0495d3b3cfcd6dd6e7c70e68da38ef.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,41 +35,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1j8r0r3sf0.fsf@starbuckisacylon.baylibre.com>
-References: <1j8r0r3sf0.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [GIT PULL] clk: meson: amlogic updates for v6.10
+In-Reply-To: <20240430180415.657067-1-robh@kernel.org>
+References: <20240430180415.657067-1-robh@kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: clock: fixed: Define a preferred node name
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>, linux-amlogic@lists.infradead.org <linux-amlogic@lists.infradead.org>, Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Date: Fri, 03 May 2024 17:56:10 -0700
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring (Arm) <robh@kernel.org>
+Date: Fri, 03 May 2024 17:57:29 -0700
 User-Agent: alot/0.10
 
-Quoting Jerome Brunet (2024-05-03 06:57:49)
+Quoting Rob Herring (Arm) (2024-04-30 11:04:14)
+> Define "clock-<freq>" as the preferred node name for fixed-clock and
+> fixed-factor-clock where <freq> is the output frequency of the clock.
+> There isn't much of an existing pattern for names of these nodes. The
+> most frequent patterns are a prefix or suffix of "clk", but there's a
+> bunch that don't follow any sort of pattern. We could use
+> "clock-controller-.*", but these nodes aren't really a controller in any
+> way. So let's at least align with part of that and use 'clock-'.
 >=20
-> Hi Stephen,
+> For now this only serves as documentation as the schema still allows
+> anything to avoid lots of additional warnings for something low priority
+> to fix. Once a "no deprecated" mode is added to the tools, warnings can
+> be enabled selectively.
 >=20
-> Here is the Amlogic clock update for v6.10.
-> There is one new driver for the DSI display pipeline and the rest is
-> just house keeping.
->=20
-> Please pull.
-> Cheers
->=20
-> Jerome.
->=20
-> The following changes since commit 4cece764965020c22cff7665b18a0120063590=
-95:
->=20
->   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.10-1
->=20
-> for you to fetch changes up to 11981485e27c7e5a630ee844a2eae1f1835ba807:
->=20
->   clk: meson: s4: fix module autoloading (2024-05-03 14:27:32 +0200)
->=20
-> ----------------------------------------------------------------
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
