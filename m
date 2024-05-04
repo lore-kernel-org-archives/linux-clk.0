@@ -1,68 +1,107 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C5F80B;
-	Sat,  4 May 2024 02:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A3E28E6;
+	Sat,  4 May 2024 03:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714790078; cv=none; b=XkoLt+SZDvYtF/SiOQTeGs7kgsur6zDvqsYXufy8PjLiMogHT5AVzSNMfQ3GXBhcnoLZcCMu4eLY4nCn9aUy1TJR0zsO8EyOfs4wiLtfJMSYJOBg3GFQ1fG1sIO2k8KKMYfYStjuNUU589uc4WCb+wb5dEEnO1WEovKWrauit6k=
+	t=1714791969; cv=none; b=VaQsTkxUm4BBenrnDvjRXcTg3x+g+CFTo/Acn9KPDQjKvDXEiK4GTwZUgdcOLNQVCtRfa4kI7a+rceU0ZEgQZsEoqkAnO1shbnY+2ZkXiyNHXdgW+6O0Ko1Vc8hiZs5nUtDtuvaC86IjwkUR2cSNPKDDLChRw946AdkfXm2BvA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714790078; c=relaxed/simple;
-	bh=yVXtEN60WPDs64dv0Sh0OrP9dwoVq7s070uOhEnMXTI=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=EBWN5d5Gjq7FJu7VCtGjmskKj5SHSPJAHo2JMkzfSVgQkMCwX6hzAikQG2qP1nK/s6ITafa6CoFXYCnSXm192sL3/7PIxSq4WoiJj5ZP+y4NeUtfA5PGtcKHp9OM6E+HtbqInmfuqAriSETTb+7Wd78wv0/P2gY8jOFJIoelv1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CSuvkY0S; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714791969; c=relaxed/simple;
+	bh=sIT0gCZXBEMj2w6zNJdI1vCzL451cEGf2/e3SNp2kyw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bJdrDOIs1XhQrea1WL9D0/sv0k76FuHyhOWR1rak7pq2Lq6w+EDrkezRiqSeTViynQOBrBpf9I5GxOIPU4mKAztFkkG35giKs/l6b6mbYWlH8v+9eOGkFxFoDXCbzSA40m6h8oaCLE0+lXDSn48sByFHDT6EYm6nolVOQKZ6Fh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWMRA4wg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CSuvkY0S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 729ECC116B1;
-	Sat,  4 May 2024 02:34:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWMRA4wg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B159CC116B1;
+	Sat,  4 May 2024 03:06:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714790077;
-	bh=yVXtEN60WPDs64dv0Sh0OrP9dwoVq7s070uOhEnMXTI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=CSuvkY0STqC1kOsfeQtFTBRAqnzH39UXnwMdiVfjFg8MPe6tAXdsHGdLC2aw9L9Yr
-	 Lbi7jZ7BC+ZdIHdpTCM0butQqpvIVTJbtokAAXtOgUEnazbsMf/bJ481YB+eK0kc+u
-	 Q+PN9K2u2word9wovED4Vu8bfqYigtkn3r5j9TGxjCQKMqsyVZgX69jgwOmdctC0/F
-	 qn61F6ElPnVIyIGMzdFtVMOjPjZLHsByndJl4apRR791VCDfgovWNycWnWhEPM2tyl
-	 gCu+RtFaqmV23gPo3N5PPEBTt7s+7cWoGGRZ7iAl1/Sk0Rs3O9YTHwZ+aTh0jfpo5h
-	 z6IsnyR27zhdA==
-Message-ID: <8dcdb1422cd144128c1dc6fff1c273d3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1714791968;
+	bh=sIT0gCZXBEMj2w6zNJdI1vCzL451cEGf2/e3SNp2kyw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EWMRA4wgV+09g3zSME+gFhl3bxKlZUPmkol+luei/stTaV7LeL8C7J74EZk8hvJuA
+	 oGEnfLdW66eMiY1eHadfkdVa42bI/lfGFd/KSHsXdwNxBQ3DfG1fa13uTFBINDYgHM
+	 91C4VmmE3kRWsEeWIa1uZNb1Y09c2JTQzKrn0VPXVFEp7zen2oiehbf7KwE1qDkFMG
+	 rROu7ybULPP3++MeOUONCZChUhyzeMhO4YAMBiORBs89JenE7Kb3VfuZwuxJJ2htdp
+	 +3uxXRnPxz1VpKU9x4ky+DxZRmBxok5S3gamrA9miGP4rOQl3b5eILxmyIIndSXFpk
+	 IscOiLyu+KrCA==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v6.9-rc6
+Date: Fri,  3 May 2024 20:06:06 -0700
+Message-ID: <20240504030607.999295-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
-References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
-Subject: Re: [PATCH v2 00/11] Add Mobileye EyeQ system controller support (clk, reset, pinctrl)
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
-To: Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rafael J. Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
-Date: Fri, 03 May 2024 19:34:35 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting Th=C3=A9o Lebrun (2024-05-03 07:20:45)
-> Hello,
->=20
-> This builds on previous EyeQ5 system-controller revisions[0], supporting
-> EyeQ5, EyeQ6L and EyeQ6H. We expose a few OLB system-controller
-> features here:
->  - Clocks: some read-only PLLs derived from main crystal and some
->    divider clocks based on PLLs.
->  - Resets.
->  - Pin controller, only on EyeQ5 (rest will use generic pinctrl-single).
->=20
-> EyeQ6H is special in that it has seven instances of this
-> system-controller. Those are spread around and cannot be seen as a
-> single device, hence are exposed as seven DT nodes and seven
-> compatibles.
->=20
-> This revision differs from previous in that it exposes all devices as a
-> single DT node. Driver-wise, a MFD registers multiple cells for each
-> device. Each driver is still in isolation from one another, each in
-> their respective subsystem.
+The following changes since commit d3e8a91a848a5941e3c31ecebd6b2612b37e01a6:
 
-Why can't you use auxiliary device and driver APIs?
+  clk: mediatek: mt7988-infracfg: fix clocks for 2nd PCIe port (2024-04-10 20:50:26 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to aacb99de1099346244d488bdf7df489a44278574:
+
+  clk: samsung: Revert "clk: Use device_get_match_data()" (2024-04-30 14:24:27 -0700)
+
+----------------------------------------------------------------
+A handful of clk driver fixes:
+
+ - Avoid a deadlock in the Qualcomm clk driver by making the regulator
+   which supplies the GDSC optional.
+
+ - Restore RPM clks on Qualcomm msm8976 by setting num_clks.
+
+ - Fix Allwinner H6 CPU rate changing logic to avoid system crashes by
+   temporarily reparenting the CPU clk to something that isn't being
+   changed.
+
+ - Set a MIPI PLL min/max rate on Allwinner A64 to fix blank screens on
+   some devices.
+
+ - Revert back to of_match_device() in the Samsung clkout driver to get
+   the match data based on the parent device's compatible string.
+
+----------------------------------------------------------------
+Adam Skladowski (1):
+      clk: qcom: smd-rpm: Restore msm8976 num_clk
+
+Frank Oltmanns (2):
+      clk: sunxi-ng: common: Support minimum and maximum rate
+      clk: sunxi-ng: a64: Set minimum and maximum rate for PLL-MIPI
+
+Jernej Skrabec (1):
+      clk: sunxi-ng: h6: Reparent CPUX during PLL CPUX rate change
+
+Johan Hovold (1):
+      clk: qcom: gdsc: treat optional supplies as optional
+
+Marek Szyprowski (1):
+      clk: samsung: Revert "clk: Use device_get_match_data()"
+
+Stephen Boyd (2):
+      Merge tag 'qcom-clk-fixes-for-6.9' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into clk-fixes
+      Merge tag 'sunxi-clk-fixes-for-6.9-1' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into clk-fixes
+
+ drivers/clk/qcom/clk-smd-rpm.c          |  1 +
+ drivers/clk/qcom/gdsc.c                 | 11 ++++++++---
+ drivers/clk/samsung/clk-exynos-clkout.c | 13 ++++++++++---
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c   |  2 ++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c    | 19 +++++++++++++++++--
+ drivers/clk/sunxi-ng/ccu_common.c       | 19 +++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_common.h       |  3 +++
+ 7 files changed, 60 insertions(+), 8 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
