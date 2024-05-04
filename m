@@ -1,147 +1,180 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2078.outbound.protection.outlook.com [40.107.249.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B361D543
-	for <linux-clk@vger.kernel.org>; Sat,  4 May 2024 12:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714826781; cv=none; b=E0o6nf/N7e+Rd3WSVIVE04UHVilrJz7HsVsBjLJPSingEfwVSDEOWDm48HpJBaVZBNWZjcKtW+R1a6gFgH1KMipmwMCyFYyLX8ItBDalPHGUAXNpSZ5vG+3Mnu5waI/tLDNR7iPUJOb8OCegbiy5K4t7NDKuUWKr0IbCHWa5aJU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714826781; c=relaxed/simple;
-	bh=gpmmrnU7n/M1SY2zLCrGThpVoWo83jzWS4f6KOlN3Tw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bp9n8O2/wrq8AqPKrDkO8bKWZ7IaEc2E9JjvHXfQMkjdaYcQ+Pco1RruR2Ulu6Q3MpkRxkVbCYfoija30Y7yur132rq6a2bYaHa0Z5dsqfnlITLKKJ3k1wOAVekNhD+DpDvFxldY7DuVXN2ngrO6hps0wmYjpbE0/9moHCSwrq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sjjIW+TY; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FCE374C4;
+	Sat,  4 May 2024 13:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714828401; cv=fail; b=r6IUmxjxzoINAGW/+VMoNDcoLkrZHrS+TsJcZMadl010b3TlB0bGMhoH1aDoeEJD0CaPL7oCT4VtDF99AKz2a+u0uXYA/OKZ9ChyyH82OG9Dx6t3lVMAesk7RZ/Knn2rslKFlpMPa3yoYXETx2lNa+gqtXEsVEuNiZaOCBv9HT0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714828401; c=relaxed/simple;
+	bh=A6gILYSn/FhWpoGyL0W1HAez7rHwq3dZjIjLkEcwNlM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EqD0ScFiB4p6qMGATkoe6VLzT+GALmN+sHqlJE8+t8iHdAfZskKSLMHi2l9p+ePvCCZhewFqxrp2WxC9DUMsfXIGGo8jaAX/Pi3J9ud/k3AdLSFWCB/Bz9jhMd9BdMrj3rt9PNuekS64xlNaenN2H23/4Z1O9HNGkA6zb1/CoVw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=E9FzYngl; arc=fail smtp.client-ip=40.107.249.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sjjIW+TY"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-34da84cb755so439919f8f.2
-        for <linux-clk@vger.kernel.org>; Sat, 04 May 2024 05:46:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714826778; x=1715431578; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3YTRloN9mydGPa3HnKZdKNzv3PmpmiSZpDCMGoktfk=;
-        b=sjjIW+TYd+hXeFrrwGD1ZXn9tu3YLLi6ZN8kBsJMsg6uVpWQ7W+Kd5zDbVMA0wrzG5
-         CPRVI+AyMLEHEtjQ7A5ujheymCBW4Y47bzk48/gqotTQhiAQlRsOQx3pQ6TCcZdvBEGj
-         bNcE8p0E3cX456e9xtYasN+Ml4LRmAxjbY8MLfnsBzGQJS071CT85XKCfhZ3hYqd3PFP
-         0ksUj874owNKqC7zBQBlAfGDyuSPEOopE7wS7xRMZh4b1+UOCANtNBkUiuXfo4vC/Y9A
-         Ah5hNrllmXyvQSIPTYMsh3uE9ZP/PoxTjvUwWQe2IQf5sFH4YZKbMTGM4skmqsw4HSiS
-         497w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714826778; x=1715431578;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u3YTRloN9mydGPa3HnKZdKNzv3PmpmiSZpDCMGoktfk=;
-        b=YtU+AQwJ5he1+q6XHWjJjtDVfT8TN/mE93vQ6PcgBpi0Y3GgKOWLlWLyZhgZYbE01T
-         J1LDdhJWN/JnwDvRyoKesyI+NDj0VdBFfopMOsVym5Sby5TiwnUzY8fRl7N+vRHK2U12
-         6OsGNbOiFAnv1or9qNjjnc6C+IbAQzbzq26VzSvG+9ZIzG4oXmaw9+sMEZU7GD/B0ANY
-         pIIZ2se1xOZmf2oujsOgZ5y3/1cGvgNbXVyhUuPkOAf9MkSxkrI6H1xp1UlWdagwciVR
-         PHL9nZm+RLsS0Vlw3kE3v1l2JZhfPunfTfKnkcRJq1esnjKH8CjVDim8mmchCUIivYhK
-         CRKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbkn4x4OgxqUg2Kg7HfGXYZIncPMxkC3IOGNHFXNsLMPR5x0eUHCZfGiP33g/Py8x3F/TK/QH75SHuuEAnJUy+5oHtcd9cypgo
-X-Gm-Message-State: AOJu0Yw/YOJh4H3EgXo0+Jyw8QSyVvPbZQfrfzB7xn+Ma79hPNnS9DOu
-	SoMiSeccS368Y2ddnGRY2BLpCsnzBNQM7Z5IjFjLQgGWGXVuwzqi/VHHDwT3+wk=
-X-Google-Smtp-Source: AGHT+IGFNcpQkZW+GM7S2h1UGz3w8T1kBsNwZsH5F8vIl2F/tchwlM1Anz86Ai+EjMSQXH5NbwjqFA==
-X-Received: by 2002:adf:fa52:0:b0:343:dd56:b941 with SMTP id y18-20020adffa52000000b00343dd56b941mr3760628wrr.52.1714826778293;
-        Sat, 04 May 2024 05:46:18 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id z18-20020adff752000000b0034e19861891sm6154362wrp.33.2024.05.04.05.46.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 May 2024 05:46:17 -0700 (PDT)
-Message-ID: <0742a837-bacb-4c95-8c94-cd04b7af129d@linaro.org>
-Date: Sat, 4 May 2024 14:46:16 +0200
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="E9FzYngl"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BnJwhhsiw44I0WOZn2bZkdCXtRBrZvIKQhD/dd9kNyJSlefeE8zUlFrqBaUxix3nomsz21rLZ9YHq93Z0KNfvb0hmHwA503zma+PZCrxFQqBVpELZdkkbfxF4bNMmFQysRQsai7R0e807No+k8bYAZwv7d14A8KFTg99qweJm5R8h1FML8I6LWfwbvZ3zmYSqhQ1rAfVuM6PdpVZ8xDmf6rysUVrtyxodvfF7RmDO0tBOui/sIN5i50NJffJBh+9UzNpWL7wFYugZ7+SjZmws4aTAwcZtwpDeov6lHmeDdI77Uxrh3HYK2WIQCHCgi9TtwPK7WJ9mfuF2o61FDyvWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A6gILYSn/FhWpoGyL0W1HAez7rHwq3dZjIjLkEcwNlM=;
+ b=XMUp2uvrXJIiuoKIplyBINYCqu0gJAxOxxkfHL8KM6DiC1pEZuYvLrRYlRF3DTMJIywmFrjDkmLMSqOepKLioWy4mWtT70V3DYW4ngdFaB99vnX4fcdNr+h/7vRMEnx5nN37XnPMzpoB4eIVdsMS2hSoPDNgOV9Iw5YNvxusEpxVaM+BLwL1c1Y0xj95vf5I7xhZKHCfhvka3LPbMUum8GouCb+KqZGwBx2QGa2h3cbV32O9bteErULQuUXfzdRhhL5jCr/dMVbarCHgzYDL1Kf4Oic1Es2VUiswzho7TuZ8Z+9FkTEukAv8isUjbfi12UenOEUKV9th8IbaJD/zJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A6gILYSn/FhWpoGyL0W1HAez7rHwq3dZjIjLkEcwNlM=;
+ b=E9FzYnglDv3TsucK1XTqRuqnBduQQcaisFq251nNsvbY1Pg7bWnlADEFuKadB/SG3cc5Pd73fC6bF1Ehf0+A9lbGl8mwI5tZtfCE6A5zIHQZn4iEHISaWluJnHDBudNZpVqMn0MexZjf42kOpTSrTHupYFOwJy9fr45Cdt4QoQA=
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by PAXPR04MB8174.eurprd04.prod.outlook.com (2603:10a6:102:1c4::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.39; Sat, 4 May
+ 2024 13:13:17 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d30b:44e7:e78e:662d]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d30b:44e7:e78e:662d%4]) with mapi id 15.20.7544.036; Sat, 4 May 2024
+ 13:13:17 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Francesco Dolcini <francesco@dolcini.it>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Abel Vesa <abelvesa@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	Jacky Bai <ping.bai@nxp.com>, Ye Li <ye.li@nxp.com>, Aisheng Dong
+	<aisheng.dong@nxp.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Abel Vesa <abel.vesa@linaro.org>, Florin
+ Pavelescu <florin.pavelescu@nxp.com>, Viorel Suman <viorel.suman@nxp.com>
+Subject: RE: [PATCH 07/18] clk: imx: pll14xx: potential integer overflow
+ eliminated by casting to u64
+Thread-Topic: [PATCH 07/18] clk: imx: pll14xx: potential integer overflow
+ eliminated by casting to u64
+Thread-Index: AQHanbvU3iJph3bBxUSOuV1ImO0GJbGG+UgAgAAUv1A=
+Date: Sat, 4 May 2024 13:13:17 +0000
+Message-ID:
+ <DU0PR04MB941771866E735F5EC83DD46E881E2@DU0PR04MB9417.eurprd04.prod.outlook.com>
+References: <20240504-imx-clk-v1-0-f7915489d58d@nxp.com>
+ <20240504-imx-clk-v1-7-f7915489d58d@nxp.com>
+ <20240504115828.GA3666@francesco-nb>
+In-Reply-To: <20240504115828.GA3666@francesco-nb>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|PAXPR04MB8174:EE_
+x-ms-office365-filtering-correlation-id: 31e05e8f-6870-458c-5da1-08dc6c3bf64e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230031|376005|7416005|1800799015|366007|38070700009;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?RPROSMBcIJcorT+IYt3a1CcPJtcTLVhtJTuOk6BlOX1aMczgl7A1+bz65KCC?=
+ =?us-ascii?Q?whRceFk0QfYhVwt+mQRAQE8hTs4MxBYt8Jx3JJCfKXa/tKoP4NbC7dkrvmZV?=
+ =?us-ascii?Q?ZteFLomgFoT5OkjoQBaZR9xf/AAw2kl8GTCPuXWJTDhMLVMtTH1OaLgsXOsn?=
+ =?us-ascii?Q?Hzkl5WT7BebxvG+q3e/pcRxTtQ0HeksxpW/Mb382X9DAQ5IYF8OZD//GKS1L?=
+ =?us-ascii?Q?4DhU7kS16Gk47z72XLNn873UNpCdza7eMuDNEnCIv8hWT3M5c2rvU9dUkSFV?=
+ =?us-ascii?Q?HVtDxbmrManbgGS0bSY+wOkvBU2nP6p2pOdvflzp8OmYe6Iq8ML+sf2ULmvb?=
+ =?us-ascii?Q?1KXzOQHcQ8rOoHPqBP99eAGF6iQAJHdDlq1kXXOEQgMvHqRXSX6fH/go5USc?=
+ =?us-ascii?Q?HaMLMZqAsXzal1e5svuhYgwmAnnWW0zJOZEZSxr1Vw5LkqMowe+D5DYxMa+P?=
+ =?us-ascii?Q?g1DOF6dzBwsuuJSAJBFoZn0aWE61CxYWgc6iNp1azMJaoPeEac+OIXSvo39T?=
+ =?us-ascii?Q?xU2y3v4YruLXRlAmMbZlMQ68P3DtuvHzkYrdPql52O26m4jepGGrZeDgAe/F?=
+ =?us-ascii?Q?3iFJNjK8Sb3l15806Bdy1V0OvrCTPyYrC/C9PsPQsluP5ovva1LeV25cHsSw?=
+ =?us-ascii?Q?PyZLOVaTTQe2SLrJIL6Rpgz3N33piCRh31bbSyL+Nnlu9Q1/NlN61A38bNLK?=
+ =?us-ascii?Q?9mUXqmBDykge0GJynPwrugdE8C7x3sG+E8QoTjFZmIuLr+D9dzI8eflPVHXo?=
+ =?us-ascii?Q?Hr72hLx4hI/nASdX8Ujob4P9x8f3bd+mUsLIw0rgv7Rwe1pGlxcQhmLbcrC7?=
+ =?us-ascii?Q?gzBm+OWvWzGPR7se6y2DKTFyfPPiXK/93zsBobos0PcjvEVHk3XsvDxE5gG9?=
+ =?us-ascii?Q?dRcCRuL5pzjSGIOy/DlJzDsN7kKzcNBTVC1yFcsBVc0jMgm8FITSlMM+/j14?=
+ =?us-ascii?Q?y1OfbOfKAbytWl1IGuU/gwf6W/DIKFTh36tR9SCBU1nd5os3hToT/J5Zz7jH?=
+ =?us-ascii?Q?+eUbbvSnWHV595kSJ9sMMflGw2MqPN2gnkeuCQiTA49SAPnCEqgtsJ0XskGE?=
+ =?us-ascii?Q?12PNWnqRJvYa5VWYyItWrl1NG2b1vsN5QsTvPXKbYkDHW6cfeT3zuq72ldar?=
+ =?us-ascii?Q?uBXU0cLonsmK2FtS2lf+cIaekHGhm7efm9+Yraxo+bJHZN9UwDh4NdWvwlKD?=
+ =?us-ascii?Q?2aoa4YiXI9kHizxTAiqdXKmZHxaWPgUbRn/KQ08QkZVK72+gwaZOaq70xtiJ?=
+ =?us-ascii?Q?ZmBlbApTu6FFbv2r+76WiSaugkOMrclskXxqX62oCcl5bXWbL5vqptzz0Pra?=
+ =?us-ascii?Q?Xgq2C+ulYIPMfsoYCwQJcJVT8CsepqCEAk9YKVx7YItCMA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?gI1d2cWOjU3BzXl8sSdSEtMu4aWOD9CvvndrKx2Wb++DhhDVI8U4tbkBMmYw?=
+ =?us-ascii?Q?mExhx7AKSnRg5VpMhwL/+C+2p2Y9C1IPGFGRfD0tGW3ugprD/XwSnrPluSF5?=
+ =?us-ascii?Q?rsCDKu8I6xZbFoCRdpS03w0A5T8p1+OdeCSam5F5d/tsU/z+RZfPOYdgnIuT?=
+ =?us-ascii?Q?kYReGzHGzqG815PXY1QUg3dnzxkNp6BYfP69qHeJWJmt0bG0xovq8rE23ce6?=
+ =?us-ascii?Q?iL3nGkVExXd0G2HK4mfpHsMsb1iB6sga/RQqhWeZCbV0wqEXZpwxI7fdoPja?=
+ =?us-ascii?Q?j+I7mAKQBy0vy7Up+2fTHXzwssFSLxrzms5JZpJLMLrn5+tRhhqx3gpgfLfg?=
+ =?us-ascii?Q?sggckgkbrJJzFAgxVtb/rdEFj6Du54iUXKdcxAAA0mNqDxEmzNT2D/5fXVr+?=
+ =?us-ascii?Q?D0mxRjeRqtfjy3mvPyWo+SFbnkjkPV3SDv7rjkN3Di8yW5YH5Vfx0IhQKNbS?=
+ =?us-ascii?Q?IFaIQNuwC9/USuhxBHu7ZPniuNOpUs4AlDsollZJZvnRHeN+bsnE+fMqiEft?=
+ =?us-ascii?Q?AervDAm4Dz0zA0LYAdvzGaqiGPZejM3hVsR7bNZB559HxgJJD2GuSPpQHT+r?=
+ =?us-ascii?Q?hp99yZt0GAsmSK70rAOp3L+pXYFje5SxWXiMDXWupMlXb6l6n1qd12wS9NfV?=
+ =?us-ascii?Q?KYg1bYeTBruHcvoAfFeWI1Vj9ftQNmeYmzRVV4WJxnVuIyRjzWD6QyTlB3ZV?=
+ =?us-ascii?Q?gNdWiwOMYq66PyUsgCQ1gJ+qEjktovZ2xjiQIDbKmNAcuddwfoBuhbxQBUWO?=
+ =?us-ascii?Q?FuEVrhlo0YWkuCcoPnb09mKtJf0vIhvjWGMIV/G3aIO+ePO2yY5nFj5hA/4h?=
+ =?us-ascii?Q?btzDBfHON3kIjM00wgQZcU34Sod7C33Z9u5Rv2VLfi1oXaCfCERCeUR1yMEz?=
+ =?us-ascii?Q?qbcUG+i1Yivy5nitu9ylB8XISbodNc7clzZD54jMANSGezI5stik/ETppYRf?=
+ =?us-ascii?Q?BzxQ6iygJ5arOlPAR2NNNxr303cdLYFHY9gVqs11XpEHKusUbkYtwCWb2Y1j?=
+ =?us-ascii?Q?Juq2aLoqBwA8PfuwlQLacIJaVi76UvUMs1uFeuy2pCQ61jqdJbAeszV+M9IS?=
+ =?us-ascii?Q?k/zkYCnwQzd+9NTf3pc3Lr0ATJcTqq1Mrz6kqWRSvCmg7lgf1dPsM0eGSXq1?=
+ =?us-ascii?Q?jHHMUMBi4FulI7NKEqKoTdaQ9jISoVBoRdVaHL5yZmJGVJK7GFgMX6ROgoq8?=
+ =?us-ascii?Q?zJCjN4QN/V+Sa8ggHVVNlUeAxEMvKMaj+E1p/QFD1VhO7A9vnf0aLu8567+U?=
+ =?us-ascii?Q?6+CecB+6ZiHMAqxTeUkO3yOpL4NdMj1AYrS2oAyZTepPcQbKlEv+FIcqFEIi?=
+ =?us-ascii?Q?YDG+Me35kPAfnm1QghJse+4HSME5s3dKlUSYWL9mtY9QBjYg2zHtSDZY/lwL?=
+ =?us-ascii?Q?lR7MqRzjHkvpZ2Q+xRkgBW9lT7ncE9HVZuDNe5jBby+V3R409rnCVv60yONP?=
+ =?us-ascii?Q?X5cu/Oabui6y7kOh9LT3rEcfPmhg49xpA/6fQYDbKHJjC+gdkCFHwiSWmHYW?=
+ =?us-ascii?Q?beN/bCysHvTwTEqMICFZ85V0uShmEUBKyZRykD4aoU3IrO0WmYjGlg6kx+m2?=
+ =?us-ascii?Q?nN90N+bLusNfZwCBbFM=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/8] dt-bindings: clock: qcom: Add SM8650 video clock
- controller
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio
- <konrad.dybcio@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>
-References: <20240430142757.16872-1-quic_jkona@quicinc.com>
- <20240430142757.16872-3-quic_jkona@quicinc.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240430142757.16872-3-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31e05e8f-6870-458c-5da1-08dc6c3bf64e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 May 2024 13:13:17.0590
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TjNP/Iok4kIX33GGQUpJx2JUDkUXqW/sJQjCezipgZ5g318Cyq4aW6fxjtB9WILhtt5DjtFk7akjCgOmGx+5Uw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8174
 
-On 30/04/2024 16:27, Jagadeesh Kona wrote:
-> SM8650 video clock controller has most clocks same as SM8450,
-> but it also has few additional clocks and resets. Add device tree
-> bindings for the video clock controller on Qualcomm SM8650 platform
-> by defining these additional clocks and resets on top of SM8450.
-> 
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> ---
+> Subject: Re: [PATCH 07/18] clk: imx: pll14xx: potential integer overflow
+> eliminated by casting to u64
+>=20
+> Hello Peng,
+>=20
+> On Sat, May 04, 2024 at 08:49:00AM +0800, Peng Fan (OSS) wrote:
+> > From: Florin Pavelescu <florin.pavelescu@nxp.com>
+> >
+> > Cast to u64, so that multiplications and additions will be done in
+> > 64-bit arithmetic (and the results will also be 64-bit) and the
+> > possibility of integer overflow is eliminated.
+> >
+> > Fix Unintentional integer overflow reported by Coverity
+>=20
+> Fixes tag if this is a fix?
+>=20
+> It would be interesting in general if this can be trigger in real life an=
+d with
+> which side effects or if we are just silencing the tool
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This is just to silencing the tool, maybe this patch is no needed.
 
-Best regards,
-Krzysztof
+Thanks,
+Peng.
 
