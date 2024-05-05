@@ -1,99 +1,63 @@
-Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CECD5FDA5;
-	Sun,  5 May 2024 16:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCBC5FDA5;
+	Sun,  5 May 2024 17:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714927973; cv=none; b=dJn3e5+X97ClGhbTW2/3zZ2g0CKtXPXtSvjWSEaqzUCxK4w40J+7G+7tGPeMAnmTV9E2/itp7CFdKuuMZwVnVX6HqQbH4qo/5/eL6Hy+bVgmpWwgY+wOvk+SpfIIJKRgni/C5uw4a6nPXMRoDZZa0yHPaTQAQQJ6IlHMhPoR4fw=
+	t=1714929177; cv=none; b=F3ngkMJh7mYn6QnxnuOCwnDEiKop9mlJI6j6ZwT1DwJVZHzvbXI2+zG2hT8awqsLB8POTWcJ7sGUPU6EQzyFPvOCWuL5z6cXdZLdfDB+MEgPfq6qYMrwbNK5VuScgtR/LR4zBX52kPn1T8LpdS0/3WJH3MmDhFyWT7UTOkIivs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714927973; c=relaxed/simple;
-	bh=QgQcNi0VoUZ9/gVnBoTyFVE0KPU3pf74Zt+RD3W/KVA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lJh3QtUN3vXkQyWCPDc9O0Ho2RGjgoVFmSNAWb6wtrgzpN1hFgF6egXMkdyvhLvq5G3jiotk6BebzvthSjcvq3zqUFI9A+DHeCWcTJy/tbaerFSX8woiGJM51m87y3Q/OOECIoCcmH61qYfvdgOfclqRYDNIrD8KM+U7FXOmAq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=t3cwjSYg; arc=none smtp.client-ip=134.0.28.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+	s=arc-20240116; t=1714929177; c=relaxed/simple;
+	bh=TLrWxOuOKBiUJEi/ZXLikWqlOdz33+N6Z/idgzgYvOI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VOy5HXijKzk5gb+8hKBRy+cso706LIeVgltdMD2KEazER4Fm1kFPotZy34XZFWwjaDV1H2I2aBi+F/kJ8H60z2cGni46GaljqU+wyqHNPd2bJp2WIHZa8emjXh014AjV99+3Wfxd9bgx3FURgz8SdJivF9dm47FJiNW3N0gWNZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jy/qkBh/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="t3cwjSYg"
-Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout4.routing.net (Postfix) with ESMTP id D22291001BB;
-	Sun,  5 May 2024 16:45:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1714927560;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zu3t1qGKiCHdEeShUHBMRSBx5w0/UYs7wrInBMlDHyw=;
-	b=t3cwjSYgbuK+d9TwB9w1UPmClSlr65BlMdK3z0HgTDwICHF8su+pk0o+C76fKi9lSjiGa3
-	b9AaN8KwNaYViltpoWnBWVwrptCNgV4ZlDUd4yuY19FYyOKYzDuyI/nkDgdaHfz7SIzeO/
-	wTqcZmqMBWrE1hNH6sn92/Bsc7/5Mgc=
-Received: from frank-G5.. (fttx-pool-217.61.153.24.bambit.de [217.61.153.24])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id ECA573604D6;
-	Sun,  5 May 2024 16:45:58 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	Eric Woudstra <ericwouds@gmail.com>,
-	Tianling Shen <cnsztl@immortalwrt.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [RFC v1 1/5] dt-bindings: leds: add led trigger netdev
-Date: Sun,  5 May 2024 18:45:45 +0200
-Message-Id: <20240505164549.65644-2-linux@fw-web.de>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240505164549.65644-1-linux@fw-web.de>
-References: <20240505164549.65644-1-linux@fw-web.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jy/qkBh/"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C971EC113CC;
+	Sun,  5 May 2024 17:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714929176;
+	bh=TLrWxOuOKBiUJEi/ZXLikWqlOdz33+N6Z/idgzgYvOI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=jy/qkBh/fu97T+DpZvAqnzUYJIws5tgRAQp7Jeu7uqwM1c/8MwmVUthid1MTOMKFj
+	 oKF2cVe5VZQHlTqhIljihBEPxOnkpmCYg1fMa4KvMA1bA89gNyhbw9J/nM0BP23Ukx
+	 Yn/ci0p8Znn76159o47+AEfLzgsn2pRa7UxtNOtcKilWjgKxaVZVta5F9q/fJkWleU
+	 CPkMXlGifzOrcQGbzgblkONjDwKAAJaENXkaCbkTevLKLCgI34Ury5A0HrhFWLGHu7
+	 FOdlJtFBUD3PpdOTDiEemPe0zWJAggJi6mH2yfyMqZhkjnhmCBihpRu93b5KfnZWGz
+	 BqAVzxMuRjGNg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C0EFBC4339F;
+	Sun,  5 May 2024 17:12:56 +0000 (UTC)
+Subject: Re: [GIT PULL] clk fixes for v6.9-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240504030607.999295-1-sboyd@kernel.org>
+References: <20240504030607.999295-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240504030607.999295-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: aacb99de1099346244d488bdf7df489a44278574
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 61ccc8c3e59a8bf0b0ae046bbd72bd23846b5fa2
+Message-Id: <171492917678.31500.16948879549560305604.pr-tracker-bot@kernel.org>
+Date: Sun, 05 May 2024 17:12:56 +0000
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: 52850480-9ab4-47cd-8ce0-2b51c8b97ef7
 
-From: Frank Wunderlich <frank-w@public-files.de>
+The pull request you sent on Fri,  3 May 2024 20:06:06 -0700:
 
-Add led trigger implemented with config-symbol LEDS_TRIGGER_NETDEV to
-binding.
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- Documentation/devicetree/bindings/leds/common.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/61ccc8c3e59a8bf0b0ae046bbd72bd23846b5fa2
 
-diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
-index 8a3c2398b10c..bf9a101e4d42 100644
---- a/Documentation/devicetree/bindings/leds/common.yaml
-+++ b/Documentation/devicetree/bindings/leds/common.yaml
-@@ -113,6 +113,8 @@ properties:
-             # LED indicates NAND memory activity (deprecated),
-             # in new implementations use "mtd"
-           - nand-disk
-+            # LED indicates network activity
-+          - netdev
-             # No trigger assigned to the LED. This is the default mode
-             # if trigger is absent
-           - none
+Thank you!
+
 -- 
-2.34.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
