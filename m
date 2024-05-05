@@ -1,63 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCBC5FDA5;
-	Sun,  5 May 2024 17:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6662322611
+	for <linux-clk@vger.kernel.org>; Sun,  5 May 2024 20:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714929177; cv=none; b=F3ngkMJh7mYn6QnxnuOCwnDEiKop9mlJI6j6ZwT1DwJVZHzvbXI2+zG2hT8awqsLB8POTWcJ7sGUPU6EQzyFPvOCWuL5z6cXdZLdfDB+MEgPfq6qYMrwbNK5VuScgtR/LR4zBX52kPn1T8LpdS0/3WJH3MmDhFyWT7UTOkIivs8=
+	t=1714939546; cv=none; b=rMa3BHbEqlkLBYwM4Z/hv8j974R3MoBDHDDs6+WSStEUGkN+gb+nAY2fHh0fXBiIR0A6+ohb0U9aBR5HuzUh7fn48X7KGzayeECQHHedEoJdp3wow1DrToSDVEr9R0saJWZu/apff0RCgqKAvq59/+va3x/b5thCVayDu4pvrDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714929177; c=relaxed/simple;
-	bh=TLrWxOuOKBiUJEi/ZXLikWqlOdz33+N6Z/idgzgYvOI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VOy5HXijKzk5gb+8hKBRy+cso706LIeVgltdMD2KEazER4Fm1kFPotZy34XZFWwjaDV1H2I2aBi+F/kJ8H60z2cGni46GaljqU+wyqHNPd2bJp2WIHZa8emjXh014AjV99+3Wfxd9bgx3FURgz8SdJivF9dm47FJiNW3N0gWNZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jy/qkBh/; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jy/qkBh/"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C971EC113CC;
-	Sun,  5 May 2024 17:12:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714929176;
-	bh=TLrWxOuOKBiUJEi/ZXLikWqlOdz33+N6Z/idgzgYvOI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=jy/qkBh/fu97T+DpZvAqnzUYJIws5tgRAQp7Jeu7uqwM1c/8MwmVUthid1MTOMKFj
-	 oKF2cVe5VZQHlTqhIljihBEPxOnkpmCYg1fMa4KvMA1bA89gNyhbw9J/nM0BP23Ukx
-	 Yn/ci0p8Znn76159o47+AEfLzgsn2pRa7UxtNOtcKilWjgKxaVZVta5F9q/fJkWleU
-	 CPkMXlGifzOrcQGbzgblkONjDwKAAJaENXkaCbkTevLKLCgI34Ury5A0HrhFWLGHu7
-	 FOdlJtFBUD3PpdOTDiEemPe0zWJAggJi6mH2yfyMqZhkjnhmCBihpRu93b5KfnZWGz
-	 BqAVzxMuRjGNg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C0EFBC4339F;
-	Sun,  5 May 2024 17:12:56 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v6.9-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240504030607.999295-1-sboyd@kernel.org>
-References: <20240504030607.999295-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240504030607.999295-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: aacb99de1099346244d488bdf7df489a44278574
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 61ccc8c3e59a8bf0b0ae046bbd72bd23846b5fa2
-Message-Id: <171492917678.31500.16948879549560305604.pr-tracker-bot@kernel.org>
-Date: Sun, 05 May 2024 17:12:56 +0000
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1714939546; c=relaxed/simple;
+	bh=GJ5JcMW/liDzfCwbgDdnSL2SSSzmEMily64/xO3PlNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t1hwob/wiRiu+3HFUXj9mLLYBCw8CErrDB7SxvmkYkLXp4yXeX/UWRvwplykyN2AIxOtgOf4GxuGer0WlRDhXwrzSYmGj5bQiHjdNKk/Af+KEmMeg/iknLk9mXkMIcGLMYOS0tZzMAms9V88Y/KIAngAq2dSoMo+qF0r8H0pt2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b5d.versanet.de ([83.135.91.93] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1s3i79-0007rv-5O; Sun, 05 May 2024 22:05:39 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock changes for 6.10 #1
+Date: Sun, 05 May 2024 22:05:38 +0200
+Message-ID: <7502061.LvFx2qVVIh@phil>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-The pull request you sent on Fri,  3 May 2024 20:06:06 -0700:
+Hi Mike, Stephen,
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+please find below a pull-request with some Rockchip clock changes for 6.10
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/61ccc8c3e59a8bf0b0ae046bbd72bd23846b5fa2
+Nothing really stands out, it's just some small changes.
 
-Thank you!
+Please pull.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks
+Heiko
+
+
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v6.10-rockchip-clk1
+
+for you to fetch changes up to f513991b69885025995dcb4ca75d2ee7261e1273:
+
+  clk: rockchip: rk3568: Add PLL rate for 724 MHz (2024-05-04 12:38:13 +0200)
+
+----------------------------------------------------------------
+A new PLL rate and missing mux on rk3568, a missing reset line on rk3588
+and removal of an unused field.
+
+----------------------------------------------------------------
+Christophe JAILLET (1):
+      clk: rockchip: Remove an unused field in struct rockchip_mmc_clock
+
+David Jander (1):
+      clk: rockchip: rk3568: Add missing USB480M_PHY mux
+
+Heiko Stuebner (1):
+      Merge branch 'v6.10-shared/clkids' into v6.10-clk/next
+
+Lucas Stach (1):
+      clk: rockchip: rk3568: Add PLL rate for 724 MHz
+
+Sascha Hauer (1):
+      dt-bindings: clock: rockchip: add USB480M_PHY mux
+
+Shreeya Patel (2):
+      dt-bindings: reset: Define reset id used for HDMI Receiver
+      clk: rockchip: rk3588: Add reset line for HDMI Receiver
+
+ drivers/clk/rockchip/clk-mmc-phase.c            | 1 -
+ drivers/clk/rockchip/clk-rk3568.c               | 5 +++++
+ drivers/clk/rockchip/rst-rk3588.c               | 1 +
+ include/dt-bindings/clock/rk3568-cru.h          | 1 +
+ include/dt-bindings/reset/rockchip,rk3588-cru.h | 2 ++
+ 5 files changed, 9 insertions(+), 1 deletion(-)
+
+
+
