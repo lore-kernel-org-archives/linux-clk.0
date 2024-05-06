@@ -1,139 +1,100 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9433BBE8;
-	Mon,  6 May 2024 06:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1443747F45;
+	Mon,  6 May 2024 06:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714977484; cv=none; b=cFwA+RO71izu064e6xMCzvvSf1F1Lou8syCu2H/tr0YrdzCBi8uw1ObZR0HNhh1XTVVTIin4Jgn5mQOv12YPAZz1ZwxeU6tkprcchQjDO5OFl8S1X8r8o4KahycArQxs6Le/GlBKaVQ0DR23skChYOXBZj1p7QvtIkXEJOCuAQw=
+	t=1714978231; cv=none; b=ICon/6Bsihj4WhUQVpHk2/UhcwPCUiWUVOnBvWVr0sfdsGqsvZSaMRLs/ysxkDyxvcQhOwY8cPKhLhcJXXVxEtVzUQe36+6k4FrucgQ3nFqVNN7GKkXbf7BJIJUjgXkP2nJJNK3MCZ20GOj6gPK2nLDDETBOGplAovB5SZWaLdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714977484; c=relaxed/simple;
-	bh=WkuDHUy0Rpe3/0hm/IOKIERWznsN9LEpDgFyIbLyzGo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AVztglPM9ymnmll5MZG+B1Eu0gua/LiSSa7TmLRRLjHgMnnR4sYlv0Mb1Tjq5qFAwtWJuwYgVghNH1eGEhh648XnzCmR19efkneyLCSI/wS7XAQvuWpGxndxyiMbtpyo77W8rmNjP8Hy00FXnVoAxKu809xwEPHs8r8nmhr4c5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hbWw03pc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	s=arc-20240116; t=1714978231; c=relaxed/simple;
+	bh=t9sV+2F9GsZsxXoVrTVg45KxuJajB4PCBQUzDfGhbxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K6tyKgVFH90wUOanNVVxqUhPnqirbL1Zq1D0saW7fTYmjPbdOvA0TLnZmtqnx6scecgkUXlV5W1OXYyjPMu0FDSNxUudljog1kMrQ00uSBQcShcolfpLUHTwwGkPfNj+B06fSQu4q4PhUpPSZtQ4MprLeCcnbaFr6Ngb9ern8Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V5CxOhN+; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hbWw03pc"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4463xesb020582;
-	Mon, 6 May 2024 06:37:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=qcppdkim1; bh=Qkzc1RV3d+RExsQmBI/r
-	3vkO3Al2pizB5aSZEMiGVnc=; b=hbWw03pcMQ/nrdRVRVB86n0Zj8wDA8E6wiDj
-	oXb7dGFtzY0awJGx9WQqPv9gIh2zO9NXBIg814gHL2CvY6vDW/y8LgICsF9QCjoP
-	S2Guo6fecqCyRfLwoGdKhK4VISebM/2CxrCnm4ibfKwlp/E78KjbGN2QnCdsCJ6U
-	lejw/9U1SZcgNC0cva1JBDkMkg6hTTBhOpCPyNmeYR5fo4jp04c3uQA3epfXyVn2
-	8jYdPyx32FxKToOMU7biuF82hDj8tukBe5MNEi17FjAz+NC9ydUMT5jsdiTTVd1X
-	h+TnM42QPUSAUV1L3ZVaCLk+UvPK1x7RqnBvkZdoj6dq4ZoaXA==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwd3yatvj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 May 2024 06:37:58 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 4466bt0P016397;
-	Mon, 6 May 2024 06:37:55 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 3xwe3kdrqv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 May 2024 06:37:55 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4466bte3016392;
-	Mon, 6 May 2024 06:37:55 GMT
-Received: from hu-devc-blr-u22-a.qualcomm.com (hu-mdalam-blr.qualcomm.com [10.131.36.157])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4466bt6O016390
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 May 2024 06:37:55 +0000
-Received: by hu-devc-blr-u22-a.qualcomm.com (Postfix, from userid 466583)
-	id 4F4B9414B0; Mon,  6 May 2024 12:07:54 +0530 (+0530)
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        quic_anusha@quicinc.com, bhupesh.sharma@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: quic_mdalam@quicinc.com, quic_srichara@quicinc.com,
-        quic_varada@quicinc.com, stable@vger.kernel.org
-Subject: [PATCH v2] clk: qcom: gcc-ipq9574: Add BRANCH_HALT_VOTED flag
-Date: Mon,  6 May 2024 12:07:51 +0530
-Message-Id: <20240506063751.346759-1-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V5CxOhN+"
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-36c7ee71ebaso8071755ab.2;
+        Sun, 05 May 2024 23:50:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714978229; x=1715583029; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uwossjwusBAm1BptSw0GFVmeFGQRWSG7xTl1Y98TkIE=;
+        b=V5CxOhN+pQVQ6U9zKw5ceoHby5ciwIvIFQYRWUB8kr4kzACFCKV1MhcUYl3psxSizG
+         xxfYDqidhQV2R5nh35PpEcAK38POWz6C5q8hBgcDWifNhVhBKoyyt4joWb6FLBOdrbI7
+         kPsa67ysUY5VM6ugUv+DOPQB6MXLkRbnFDmJwDiWDDvK3YfGUpG1aeEwOcVxEl3/8208
+         jFDKyvSg8cWh5NTdRepktHDnS3iU4npq5cyavyKKwbIpIVSUAf1dCahzwLojYONSQg8R
+         6AEr3MMi3X23Wu+GP2Yh2ieJbk4VSjvwk/LgbUlwrpmO+clW+S0OjyzET07Xu2AcIV7G
+         b15Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714978229; x=1715583029;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uwossjwusBAm1BptSw0GFVmeFGQRWSG7xTl1Y98TkIE=;
+        b=Jk/vOJZuSRISR/wz7sOKfNNMuQH0RrdhSfA8F3xalKiM/hJ3Npk82f3EtNZRxeFPeU
+         4QL21eZ2oQI+mrUa5nzDdjedcyilh2JQVYDWJkLuxr2YpYJTTmz3N6ZzH5kdlDxEvE0F
+         85uKAKrpwuFz+aQSCYuYCj61KNHkLGdNCipUed2AfP/7fCIjnjKuiVk3qjsaegSw/mlQ
+         kQ6JV3agxPIwUN60CPw6sHYv7rBLS50SRPYl5wSopAZ7bsbXk26iIO8TnchyMZ0jsMM6
+         4vE3NSdRDEtB/36o17H4KXvl2+hyaSUH2moy++GWn3fAYPZFtj0vrBmpwhJiG+5n1nru
+         XfTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUF0+V37RRQwe7yv65TYhnK9H0alLQkCo15hpydUGg1teg+AXnjSezMrhHq5Q4rN9kDoiNdBzrOkWuVx2T+fWwtjVfh1000ODUQqUMHHXp5s92uNlw0ibgWFVBV+ySME8VI7SeViXnGyUKLjoMjkAFOfG5sdeF6M9tslYnMGm/li2GV6A==
+X-Gm-Message-State: AOJu0YzwwJbKSed/0lZK7pHE0zeARqHdaZB+d/QcoNBXi9WWQIiDbyor
+	U3b3WzUh9HgODlvge8nuVBPfu5iwhDta9s9sWqjWNFD332pssjaDWDAEochbC49aAVRUNQSuhL5
+	xAyXN7SstwKfnQmxRG0UlTWIGGLM=
+X-Google-Smtp-Source: AGHT+IEm4rLVnE5ZzKrznJT4pumjG0pJt4f5HUbndOlm0YGQ7AvoJGI7vs/cwAljai1Nk7rIaImNgMmAPXsXJkecUw4=
+X-Received: by 2002:a05:6e02:1a09:b0:36c:51f9:716a with SMTP id
+ s9-20020a056e021a0900b0036c51f9716amr12210835ild.13.1714978229138; Sun, 05
+ May 2024 23:50:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ErExOIK9WA1sqUCg2KsRqpd2IgRHsKFu
-X-Proofpoint-GUID: ErExOIK9WA1sqUCg2KsRqpd2IgRHsKFu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-06_03,2024-05-03_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- malwarescore=0 phishscore=0 mlxlogscore=999 adultscore=0 clxscore=1011
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2405060041
+References: <1714967359-27905-1-git-send-email-shengjiu.wang@nxp.com>
+ <1714967359-27905-2-git-send-email-shengjiu.wang@nxp.com> <05365b5a-0398-4382-9646-a1586468ed10@kernel.org>
+In-Reply-To: <05365b5a-0398-4382-9646-a1586468ed10@kernel.org>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Mon, 6 May 2024 14:50:18 +0800
+Message-ID: <CAA+D8AM09392xgh=iKxrgwYfJ=3YHmGpbE7yfH3MXnrMNNsm4Q@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: imx8mp: Add #reset-cells property
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	marex@denx.de, imx@lists.linux.dev, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add BRANCH_HALT_VOTED flag to inform clock framework
-don't check for CLK_OFF bit.
+On Mon, May 6, 2024 at 2:24=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 06/05/2024 05:49, Shengjiu Wang wrote:
+> > Make audiomix block control a reset provider for
+> > Enhanced Audio Return Channel (eARC).
+>
+> Why? Commit msg should explain that. Why suddenly this became reset
+> coontroller? Does it represent hardware?
+>
 
-CRYPTO_AHB_CLK_ENA and CRYPTO_AXI_CLK_ENA enable bit is
-present in other VOTE registers also, like TZ.
-If anyone else also enabled this clock, even if we turn
-off in GCC_APCS_CLOCK_BRANCH_ENA_VOTE | 0x180B004, it won't
-turn off.
-Also changes the CRYPTO_AHB_CLK_ENA & CRYPTO_AXI_CLK_ENA
-offset to 0xb004 from 0x16014.
+Yes.  The Audio BLK_CTRL contains clock distribution and gating controls,
+as well as reset handling to several of the AUDIOMIX peripherals.
 
-Cc: stable@vger.kernel.org
-Fixes: f6b2bd9cb29a ("clk: qcom: gcc-ipq9574: Enable crypto clocks")
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
----
-Change in [v2]
+The register at offset 0x200 controls the EARC PHY and Controller's reset.
 
-* Added Fixes tag and stable kernel tag
+Best regards
+Shengjiu Wang
 
-* updated commit message about offset change
-
- drivers/clk/qcom/gcc-ipq9574.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-index 0a3f846695b8..f8b9a1e93bef 100644
---- a/drivers/clk/qcom/gcc-ipq9574.c
-+++ b/drivers/clk/qcom/gcc-ipq9574.c
-@@ -2140,9 +2140,10 @@ static struct clk_rcg2 pcnoc_bfdcd_clk_src = {
- 
- static struct clk_branch gcc_crypto_axi_clk = {
- 	.halt_reg = 0x16010,
-+	.halt_check = BRANCH_HALT_VOTED,
- 	.clkr = {
--		.enable_reg = 0x16010,
--		.enable_mask = BIT(0),
-+		.enable_reg = 0xb004,
-+		.enable_mask = BIT(15),
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_crypto_axi_clk",
- 			.parent_hws = (const struct clk_hw *[]) {
-@@ -2156,9 +2157,10 @@ static struct clk_branch gcc_crypto_axi_clk = {
- 
- static struct clk_branch gcc_crypto_ahb_clk = {
- 	.halt_reg = 0x16014,
-+	.halt_check = BRANCH_HALT_VOTED,
- 	.clkr = {
--		.enable_reg = 0x16014,
--		.enable_mask = BIT(0),
-+		.enable_reg = 0xb004,
-+		.enable_mask = BIT(16),
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_crypto_ahb_clk",
- 			.parent_hws = (const struct clk_hw *[]) {
--- 
-2.34.1
-
+>
+>
+> Best regards,
+> Krzysztof
+>
