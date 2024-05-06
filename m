@@ -1,60 +1,60 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B935140E47
-	for <linux-clk@vger.kernel.org>; Mon,  6 May 2024 08:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E915137747
+	for <linux-clk@vger.kernel.org>; Mon,  6 May 2024 08:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714983496; cv=none; b=P1IMxOhYgz4941jRxzzdYDfdR1CUmQE9PpsrZoovGgI0od/IPQT0L56mM0uUt4ZRWkEWoH/hZ291f5jm/yWksfbgAdqCIKVG+nnDNd79Kr9DV5gZXws0ZmMM83a1TjeZOCVp7ODfo1jIA69HAI3Rmfg7A40XIGtRijPy1zeSHXE=
+	t=1714983527; cv=none; b=CBW6gfRpqH4/I0hVpzoeOyfxyrVKLDkvry9r6Hd5i52emwXxpbAumqscHZwq1PDczZbSqzvwcmYxpvwNQdcH2zpkmOHMCwNhpgDXeyGqsLxMqNp2s7JTI2a/pwfj3ZfYCNOknlbNeOGI8lBNXHtRysS1Eb+ud6BVbHSYhLMZN2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714983496; c=relaxed/simple;
-	bh=K+Kec6yS5aP5XH7YyurQRmSLgs2JoQh8VCuEJHwt7v8=;
+	s=arc-20240116; t=1714983527; c=relaxed/simple;
+	bh=kzfYfX4dTePltpXsVTcDHuYgC7qgsQPKl6wVl5oUu5I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bmUlhdRJo2H69yagSFp0JiojVH3qu4U/fJIrAlpYFc4QljEJhjVOws3oisVWXERPTx2vGoHiBnZeTkVSf00Xskw341bIIlUzTVUYsL9hnDY6KlcxnrYKMcybExkCvEwGHRuMib/Ki6tdaYs0DAZ6aNz0JRXrIamW6difmO+rxTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RB6Qpb4E; arc=none smtp.client-ip=209.85.218.47
+	 In-Reply-To:Content-Type; b=HB44fwk4ttYEMScFSxFtrK5i3b/27Qnl5NiZjmjkEIG1E/2Ak0lQiwzfDC1wRMTqUb0EPloLxdaUxsmuOKNxh2EnpjbnZHcXwd+UGtLtu4HNmi314ay3wBJppHtFnpACCp3nSiN0a34NZ/xm/QeA9GdqSj7j6FumFnTa04kbMec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wygiJNn2; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RB6Qpb4E"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59a934ad50so321631866b.1
-        for <linux-clk@vger.kernel.org>; Mon, 06 May 2024 01:18:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wygiJNn2"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59a934ad50so321756366b.1
+        for <linux-clk@vger.kernel.org>; Mon, 06 May 2024 01:18:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714983493; x=1715588293; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1714983524; x=1715588324; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=kyCSU7ZejXSusFRIt11zlWxVxJqQYg4pbqRIurqwXTA=;
-        b=RB6Qpb4EZYg+SI13rjWytQHOxi0XiAh8p0gPs5k8yzxtC1hRQpQJ7bn22joqgzCFUE
-         X/1+YCw1b3qBL+hw6r/GoLyLzRi8f2svaUG06ZLYtoj9jJjtyJCgKxkTjB1CuabBkOUI
-         9TDRTZk0XGF5PLokToqJByIIF5lIPJBuztORX6wxUJni3m2bjbYVm2Urxh9bQfUY+0J1
-         A0afH+ixl9yiX6yJE8SzWeJZi6rmI1LiC7MjT1iGGW6ZpoDkPBMvN/F+Yv4SYeV1j1jG
-         pFkT+AG9axq6BzG/QtueB7e+LrS0ot5YMBB68uwWI0Fi8GQPttPZAfO0bX5iNsqp4aCl
-         v+tQ==
+        bh=yF2PY372A06TG1ZrARmVPbaU8+5CywxP38mhOMI8D+U=;
+        b=wygiJNn2isKxTuV/rXrPvzkukJvE3Q31lS7jJFfAeGcz7ThIX16CghOmn8+Zly3I6D
+         psyw2mzAFs20paBNsw/VsW82KAph/ryeb+zteO6RNXIkimAr0dkAxOeU7qUqB4j6+oEC
+         eFcanxZoXyJVrTfvathOt46NEh/k/UXj6Yap6hHw4K1ER0Ma5u/K/oG94CF+qGqM8ILP
+         iAUURMPDrdnUDfYNAm2wGbkW3aiGJZdA2a0xcdCj68jckWe4GiB8XghGyAb63oOUVEto
+         35vldV9WbUB5dkeHx54ob3ClGYVoOwP/TMqTO6OKsU1/a/tS/bmVj+sQ0EZpeuRGtrv5
+         3uUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714983493; x=1715588293;
+        d=1e100.net; s=20230601; t=1714983524; x=1715588324;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kyCSU7ZejXSusFRIt11zlWxVxJqQYg4pbqRIurqwXTA=;
-        b=W++OrQiA7yLBNrtTceVfdpmrH5p8vuQ9YqfIYjZaLVH6OPb7XF4UQ5uAq4huNr2/3K
-         JMTCyUfeHlUHS1R+P5rWZOF3tTxO+QjZ48CXalRelmsrBh0E23bxiAXBZ0GnwNZtNC7E
-         4D7eigifNfsnBiwhWJDQg1xhJxNFUC3Dzu6Q4XmC7qifjk59/GtJSgImbfwUP/XsYNii
-         EqGaGXB2xS0F4/oUENUXQMtfFDMeMxtLJenTJOGxgTKBfwTl+uYbsO3bmSnsV/L0uORY
-         xeiYqQfsMf71ENgWZXN6chSbTfaDTWBg0wWspW5HCOZT45Y5BtAVhofo0BmOITZW/sIn
-         j3dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgWLM5OFuQoQ6HCM4Ao6pPnGVvWIPZWE+EdDva6Zk/zw6lW/RB0HWEwwQ0Byk8HW+7Xz+36WNMAFnmOa+mKi9rgk2F8emAUBx1
-X-Gm-Message-State: AOJu0Yz2Gq7+oNlpZlEpzNXXb6+bq9XMhOueuB4bP9GjATxB8UqgkIFK
-	NIDklzjQpVy69YgnHP9JqKUMw/AIkf0STSH912lsuC0/OolH7y7Vs+MYPQMn/h4=
-X-Google-Smtp-Source: AGHT+IGZE9M9suIC6Fm7AZpwYuowYLCkk0lDnHD88smv+8cHP+bSZpP9hULxklnYnT75Tl8jHWBztg==
-X-Received: by 2002:a17:907:7f03:b0:a59:c52b:9938 with SMTP id qf3-20020a1709077f0300b00a59c52b9938mr2347063ejc.55.1714983493379;
-        Mon, 06 May 2024 01:18:13 -0700 (PDT)
+        bh=yF2PY372A06TG1ZrARmVPbaU8+5CywxP38mhOMI8D+U=;
+        b=w/fOl8tv5qEWRZUw4qvGFBTxHvZ1J2+nam46e/bz4GDbFqeuSt2XFW+L0IJapOeVIa
+         GJbjTCDoJ34xG9f+7fY5pqbvB2kMGWDbhRpbT9y5vXoyCLvHBccsPou7Lb22SUq/0FSK
+         tBBGeaFTPevAU3MKO9FCNw+JeVjO8ESsdoFEtL/eF/GFkJRc7BoZGb0qaDOzJZ2Jgx8E
+         xrqzuTS8CQTSztW4Nohe3uIUlG/oWik9s2mj68NX4XhhknrTg0e5hpNQBa6XHg9AbcuV
+         JT39c2gTuN/RpU/eBR+qbEgM4qO6ttVDPbXeNfOvuB8ifn8a/MlWY7e3f3xmTZwkCUjg
+         b3DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWPYHsF016ryBREWWKEeOk5IoRPn+S6CtnnnWc8E9mZKXfjNcRhMKL3nw9z0q8AVP0TNRsQjnzgqfubRjREyAHom+2oLkjC438
+X-Gm-Message-State: AOJu0YyukORc/M1CFux5zrRDt2qsfdXGEm/Wahbj7cB84Ycq4p9eFxpG
+	LiLzFA+WPqhn3VNU8tbmVg9fssgynrjNxr7jdstiOSCJKruyFUhItsCPbBZvg6A=
+X-Google-Smtp-Source: AGHT+IGkXHLj7TZIljpsAuYgZI4b/vPFjApDJ1jdpylvcEBdmY6+JzDb2ahXllr2WdjayC/CG56vPA==
+X-Received: by 2002:a17:907:809:b0:a59:db0f:6bd5 with SMTP id wv9-20020a170907080900b00a59db0f6bd5mr793266ejb.9.1714983524678;
+        Mon, 06 May 2024 01:18:44 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id le5-20020a170906ae0500b00a59d5f879d2sm520398ejb.32.2024.05.06.01.18.11
+        by smtp.gmail.com with ESMTPSA id og14-20020a1709071dce00b00a59bfcac17dsm1823671ejc.39.2024.05.06.01.18.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 01:18:12 -0700 (PDT)
-Message-ID: <8e9fd4c9-f537-4413-b8c8-988b001b64c0@linaro.org>
-Date: Mon, 6 May 2024 10:18:09 +0200
+        Mon, 06 May 2024 01:18:44 -0700 (PDT)
+Message-ID: <9f8237c4-f603-459a-9d34-9cda556874b8@linaro.org>
+Date: Mon, 6 May 2024 10:18:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,7 +62,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v1 1/5] dt-bindings: leds: add led trigger netdev
+Subject: Re: [RFC v1 2/5] dt-bindings: clock: mediatek: add address-cells and
+ size-cells to ethsys
 To: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
  Conor Dooley <conor+dt@kernel.org>,
@@ -79,7 +80,7 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
  netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-mediatek@lists.infradead.org
 References: <20240505164549.65644-1-linux@fw-web.de>
- <20240505164549.65644-2-linux@fw-web.de>
+ <20240505164549.65644-3-linux@fw-web.de>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -126,35 +127,18 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240505164549.65644-2-linux@fw-web.de>
+In-Reply-To: <20240505164549.65644-3-linux@fw-web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/05/2024 18:45, Frank Wunderlich wrote:
 > From: Frank Wunderlich <frank-w@public-files.de>
 > 
-> Add led trigger implemented with config-symbol LEDS_TRIGGER_NETDEV to
-> binding.
-> 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
->  Documentation/devicetree/bindings/leds/common.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
-> index 8a3c2398b10c..bf9a101e4d42 100644
-> --- a/Documentation/devicetree/bindings/leds/common.yaml
-> +++ b/Documentation/devicetree/bindings/leds/common.yaml
-> @@ -113,6 +113,8 @@ properties:
->              # LED indicates NAND memory activity (deprecated),
->              # in new implementations use "mtd"
->            - nand-disk
-> +            # LED indicates network activity
-> +          - netdev
+> Add missing properties already used in mt7986a.dtsi.
 
-"dev" is redundant (there is no flash-dev or usb-host-dev). Two network
-interfaces are already provided, so your commit msg must provide
-rationale why this is not enough and why this is useful/needed.
+Missing for what? Or why? Provide context, IOW, explain why they are
+missing.
+
 
 Best regards,
 Krzysztof
