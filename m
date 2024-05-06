@@ -1,60 +1,60 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D77B140E47
-	for <linux-clk@vger.kernel.org>; Mon,  6 May 2024 08:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08771411C5
+	for <linux-clk@vger.kernel.org>; Mon,  6 May 2024 08:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714983564; cv=none; b=prFPfoTdepry0aFNNF496liKwba2bNyf8guTu5wiSkKf5ZyhIR+pr+2OYLqhwGNkh1v3Nlbw30sKi7T9uLgHsCA2DHErnwRJx1E9iU8OCaKSEagJqKmukPA5f7dwyBIH6VSx4gWCIdL15zB6b4npGUuYYnuCwazTuAmE3DlZt0Y=
+	t=1714983654; cv=none; b=cVGjmTjtzcepWTdpvcE+SFNHKUsv2CXOWrug5yHCTWgMarBHeeltVPGPUBZkmd0MEMbiqZiTqC1V/nFjl8uhNsUha/iMmldMEiS8QyXtww03XH3zObLU3QPyYy2JtLLoO+mgDN2UWPgBYY0P/1BCAYx2sMGzPcO7VyKQez6VdYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714983564; c=relaxed/simple;
-	bh=0jrwe/t/MqeveoqLdiYo0/z7lUaJ7ZbzO9CTLuuEJ6M=;
+	s=arc-20240116; t=1714983654; c=relaxed/simple;
+	bh=9EKRr+bCzljf7Yxu99Qd5AgSXBwE9HkWUkKp3/LiLiY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b0AcMTAbFndk+IJJCKp8y4ndQRcNvhuoAbbHT2P2ovrzYewtNeejKopiDBDjzkDznvAlidPxaTEeBSnN0GqII9zynhxHIWNXv+GvU5GhuxumBj5/QF/49PBWIH0BASKfo5OoBdV1esIvvrO8nPdSC/cy1NKN6FJOuebt08/THY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=odKEUzrN; arc=none smtp.client-ip=209.85.218.52
+	 In-Reply-To:Content-Type; b=DZLnT3v1x90mtuwuDa5ARk3N0cHCtsg6A3UR1dpyJl6hLPaHj6QK5fEgfBx+HVq8Jw6Xm936f3H12OBzcvCU+NaNfgjpvSx5GAZ6dOSkj6JidtPnSPqXakokKQh+1vkdxXfNlPVZiJZR0jCyPn583nrDqr5f14bbGitof54NpBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yvRj152D; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="odKEUzrN"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a599eedc8eeso327831566b.1
-        for <linux-clk@vger.kernel.org>; Mon, 06 May 2024 01:19:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yvRj152D"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a599af16934so364315566b.1
+        for <linux-clk@vger.kernel.org>; Mon, 06 May 2024 01:20:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714983561; x=1715588361; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=HdixhyCdkxbsOaEUZRzsyGScImkACO1gmM3YlrUoxD4=;
-        b=odKEUzrNjMbyx5gmpP1ADEoUTrWpzD+8SOuk/T1tWMBoJ/aCmPbxV0k1EXQhq+oHLl
-         A/oYt/xdXjG68o5RTtqvwZF18cNiwu+LUYZk4bANwCoPHjIHnZsjFsHMKK5UbM/6kqPT
-         T6MDUdFSj/l1+h17GQY9MYWcgfq51fFsgmNMjs7ERlBKEy6YSDJSANvWvi9ROwcQp0Vl
-         1/ve/L9M4O8/2+fvimuKioeyQSGLB+x3Cgc9fXC74/j9fyc/KgXiOoGwiieMa+uWIHpL
-         csZBUyCtRAOa5mrXVGhMWx7pmxKvxudKbg1oSkaHVLLAy/kPuxYXrCSLrf57XMahhL8u
-         Nnhg==
+        d=linaro.org; s=google; t=1714983651; x=1715588451; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=tmDdcKP/w1lSqdUXDZt0r8WrvJuiZTD+uLc8uT6i3VI=;
+        b=yvRj152DeBH+R9XN02V25psTptw72+gtKX0fDyRzcC9/i53O9pMpTexhYOVYep0yRX
+         cGPvZkvURY9wincTPw0760yRxxKQoaum8WsFnGmWQEF4kr8+3yqA9NI9INcLNjQ8VYJ4
+         DAwm+PrY59O2d/SJQev9MWQyxDoPd7w2wgqPVcyIglRY70cGptZTuXpgGK1LHd6PU4dN
+         wphi7LyRTaVzs52TK9aGjq0e0B+fht6rwllm/5gbxl2Ane0D6BM9lnCx2FtAdOEkMA/U
+         pGJolilD/KgeF6TYJvsDp9wRelez8pLR7JmwL3JOoK7m7bMXRb2BHRnTpynt+qfwLkQg
+         TNPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714983561; x=1715588361;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HdixhyCdkxbsOaEUZRzsyGScImkACO1gmM3YlrUoxD4=;
-        b=xH8OF+xzqo7ile+GM2rTClfLyyUWPcNOwOvN2VMesyj7ow6YzppoSgyucT/2csQY0p
-         KWB5i2a2Tqltye/FLMKtaSV1+tn4K7qg/GCEcE4eluslzDZ/elwqEpXeDFihtm13A9Lc
-         V1dbt2b5dixdP/y4+EBPT+b6PjuQnd/6kx60yWeXyBfOINTljKirakF7UN8teaVaVeH/
-         AzPcislmj04fh7RqNh33/ZXI9lfyn+wNL9FZoV9Y6BK92ZfJeijz2Qj+DbYKnKc/j7If
-         UPy7c8T+Njq+s1znGf9Rym1ePCxp3MpjBs/F+FqY06+iwLagkqNQIkTKIQllP8kzBdtK
-         QzKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbcLzZ89+91G7quafg1Jl6pdGUouxon+HZdBINlzabGRAVunkdCnyuBJmAeMnkzar3xmCuJ8Bx5QxeiU5hiR/scWI5me9hAHUU
-X-Gm-Message-State: AOJu0YxSxZoHJBHqL0EP+nEllq+ew0cZg51+/Mzg/sMmHRCXYFvR95hN
-	lmxvhQKqzdoj5C20mwsb0EtLeXtmFlHhnvNxI9zzz7b4Ysy2+yy6y8XPHiufioE=
-X-Google-Smtp-Source: AGHT+IEdyfq5VODqBUDlk0X50mcux+MjqiewKSI1JYPmG5jMazQSiQY5m4WaEqX1A4C5cVyImuf0BQ==
-X-Received: by 2002:a17:906:fb94:b0:a59:a9c5:e73b with SMTP id lr20-20020a170906fb9400b00a59a9c5e73bmr3973961ejb.46.1714983561108;
-        Mon, 06 May 2024 01:19:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1714983651; x=1715588451;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tmDdcKP/w1lSqdUXDZt0r8WrvJuiZTD+uLc8uT6i3VI=;
+        b=H2btxQsecLvvuKsE+UPYVgeeAnk2qTq9V1HtZ9KLAqiiz2zCYxsLW2RAEqycZzP+O8
+         Ay/03RSIM6R7t2jklWHUi4Q5D7jKMACU/Azr0t+bq1zgenF5GgrKLy4la02NUv3WI0o2
+         juYGRvRAJHGAaB7yNjmid8hlwR+VGuh3esEOwtyxkp8Lx67tNVgLtHcPljf6duFiwZ8G
+         J2Ad20fQpsLu96NVYXhQMQvMvAsnDE/L8nrUOnu1nVeLvtLtiiWEhpE8e0SVXPElHrAt
+         lSfbUuzT2V+XDrTw9BgObJCXz3Qcw8noKhubzpKYSC3XBiyuDL2zNfwjN8egAE1cf4/s
+         llbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbmaLXIcm6ftpF6B9HiBVF0msZdAuOr/gV5Qec8mpVY1u9+d1wYsQDdqk52TyX0JhepuaH4AoiuedTuLUIZk7yfNGg00nbh7SX
+X-Gm-Message-State: AOJu0Yw1eRQKzKwsgoSAJ/tn1+VGzsxDszg5bdUg4q36xGuFoAXkT6ej
+	nfzVXwvNZKFOFgEhdsZ1XcUjGAihAwkZvKXQVIYWISoTayNQWPNRkDV4yvgXloQ=
+X-Google-Smtp-Source: AGHT+IGZugCF55E3mU1WDQzk+ixOdDGn2ORJUjR1HtaCqaeFlXIxs5cPG2OOwXDTs5Xwl9OR1Wvf2A==
+X-Received: by 2002:a17:906:1d51:b0:a59:c220:16a5 with SMTP id o17-20020a1709061d5100b00a59c22016a5mr2666066ejh.9.1714983651254;
+        Mon, 06 May 2024 01:20:51 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id n7-20020a170906688700b00a59af83e403sm2357104ejr.220.2024.05.06.01.19.19
+        by smtp.gmail.com with ESMTPSA id wr8-20020a170907700800b00a59be52ff98sm1884910ejb.191.2024.05.06.01.20.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 01:19:20 -0700 (PDT)
-Message-ID: <e8042ecc-e0d0-43df-8a59-707870862dc2@linaro.org>
-Date: Mon, 6 May 2024 10:19:18 +0200
+        Mon, 06 May 2024 01:20:50 -0700 (PDT)
+Message-ID: <174a8bfe-7a9e-4816-9bde-de48f04b07f6@linaro.org>
+Date: Mon, 6 May 2024 10:20:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,7 +62,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v1 3/5] dt-bindings: net: mediatek,net: add reset-cells
+Subject: Re: [RFC v1 5/5] arm64: dts: mediatek: Add mt7986 based Bananapi R3
+ Mini
 To: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
  Conor Dooley <conor+dt@kernel.org>,
@@ -77,11 +78,11 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-leds@vger.kernel.org,
  netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
+ linux-mediatek@lists.infradead.org, Tianling Shen <cnsztl@gmail.com>
 References: <20240505164549.65644-1-linux@fw-web.de>
- <20240505164549.65644-4-linux@fw-web.de>
-Content-Language: en-US
+ <20240505164549.65644-6-linux@fw-web.de>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -126,20 +127,113 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240505164549.65644-4-linux@fw-web.de>
+In-Reply-To: <20240505164549.65644-6-linux@fw-web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/05/2024 18:45, Frank Wunderlich wrote:
 > From: Frank Wunderlich <frank-w@public-files.de>
 > 
-> Add missing binding for property used in mt7986a.dtsi.
+> Add device Tree for Bananapi R3 Mini SBC.
 > 
+> Co-developed-by: Eric Woudstra <ericwouds@gmail.com>
+> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
+> Co-developed-by: Tianling Shen <cnsztl@gmail.com>
+> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+>  arch/arm64/boot/dts/mediatek/Makefile         |   1 +
+>  .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 486 ++++++++++++++++++
+>  2 files changed, 487 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+> index 37b4ca3a87c9..1763b001ab06 100644
+> --- a/arch/arm64/boot/dts/mediatek/Makefile
+> +++ b/arch/arm64/boot/dts/mediatek/Makefile
+> @@ -11,6 +11,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-bananapi-bpi-r64.dtb
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7981b-xiaomi-ax3000t.dtb
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-acelink-ew-7886cax.dtb
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3.dtb
+> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-mini.dtb
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc.dtbo
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nand.dtbo
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nor.dtbo
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+> new file mode 100644
+> index 000000000000..c764b4dc4752
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+> @@ -0,0 +1,486 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (C) 2021 MediaTek Inc.
+> + * Authors: Frank Wunderlich <frank-w@public-files.de>
+> + *          Eric Woudstra <ericwouds@gmail.com>
+> + *          Tianling Shen <cnsztl@immortalwrt.org>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/pinctrl/mt65xx.h>
+> +
+> +#include "mt7986a.dtsi"
+> +
+> +/ {
+> +	model = "Bananapi BPI-R3 Mini";
+> +	chassis-type = "embedded";
+> +	compatible = "bananapi,bpi-r3mini", "mediatek,mt7986a";
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +		ethernet0 = &gmac0;
+> +		ethernet1 = &gmac1;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	dcin: regulator-12vd {
 
-Again, no, it is not missing, if the device is not reset controller.
+Please use name for all fixed regulators which matches current format
+recommendation: 'regulator-[0-9]+v[0-9]+'
 
-Provide explanation why this is suitable in the binding. IOW, why DTS is
-right, but binding is wrong.
+https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git/commit/?id=b6d4b3500d57370f5b3abf0701c9166b384db976
+
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "12vd";
+> +		regulator-min-microvolt = <12000000>;
+> +		regulator-max-microvolt = <12000000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +	};
+> +
+> +	fan: pwm-fan {
+> +		compatible = "pwm-fan";
+> +		#cooling-cells = <2>;
+> +		/* cooling level (0, 1, 2) - pwm inverted */
+> +		cooling-levels = <255 96 0>;
+> +		pwms = <&pwm 0 10000>;
+> +		status = "okay";
+
+Why? Where is it disabled?
+
+> +	};
+> +
+> +	reg_1p8v: regulator-1p8v {
+
+Please use name for all fixed regulators which matches current format
+recommendation: 'regulator-[0-9]+v[0-9]+'
+
+https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git/commit/?id=b6d4b3500d57370f5b3abf0701c9166b384db976
+
+In other places as well.
+
+
 
 Best regards,
 Krzysztof
