@@ -1,106 +1,87 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1417016E894
-	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 16:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164E6B642;
+	Tue,  7 May 2024 16:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715100172; cv=none; b=qgdUszUEEFeVvceLYn0+dXz5aqNiBeU1cbNzVA82MvtUOgExFeSj6j+IL8BX0NzZrxNlLyjJLY0dAvFyu6t+agtgsz7jine6UFm6ruGzX7R34CoSQ+YE97R310Jgj0BMCEnl5nd/Nq+1oyDuLvLP5QW9rK7Ca+Fn3aPj0rvj+/A=
+	t=1715100717; cv=none; b=opZQPmcWYNeWJjek3/SbgudLPJgU4z4atkEWyRLHWuSiB7tkI1JRP2ztzx47E+nb/EUyItWt9MidnUNbdt0Dg0KAYWCzwRYpEJCDFYCqkI6daPw0fegSTORCmZyXsgIIwmt0zcvI+ZNoCJRvPIxJZTM+0dZlmHOYF7U1jWW/8iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715100172; c=relaxed/simple;
-	bh=wcF/docFjr+wD8+ZhWWu9ng6Q2+gklOMYNBpSAuz2g0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RlIZLZnVyoLO+9MV+snMarlrd1Ek9M6SIC1VMAwDsLUbqDAFPpnFhg0ri+iJZA9AF7w4RNoN7H4At7lQo0qRLsAssMPfM2UZPTT0w9MIyiTLvHGJxHovsE304csDlylOkCtw2yIJcbBB8+UKB17d2h03MDC0AMm85G5KLUTzUmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JzHD20mv; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1715100717; c=relaxed/simple;
+	bh=/Bkd2IwTGaLgZju05dzWdon64EKKSvHjfKDMLbB1/9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtlox+z1oTMXExOH1sFe6rkTsS/55khRyMebjZv3RXK1D5+1d5EOZcpde9M/jV0Tnb8/7stqTGb8KAXjhOXi9FFX7SxiCpOOpdbcS/A85ClQBcAdA3eKCfg6SkCC2qGZoq0fWbTwKTrLVleHu1g4412i+Byd4ZMcNiGp0Y59Nqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVT4gjEb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JzHD20mv"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41ebcf01013so15228905e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 07 May 2024 09:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715100166; x=1715704966; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eDuw6XMtyXZKzrVG8KLN93/CpRj1Z6EUoNzW3VbxI34=;
-        b=JzHD20mvT+5jIsQESGbkfGhTezCrBEXu35oxNz6+HE+SMl59j4DdZyjxvl38X0XO3Z
-         YFZeR28U8NhogiIeH753Wcf/+oCd+BVaVgMzZ6fp/j5SJE1QwCs5G7zxWYyfCpAwdHk3
-         HLuHqEj1Z92YNGjGLRvjoI+8FA9/Zsu2laXjPMBMHfJRK01uECJjVKPd5aX+sV56SQHr
-         MImTq4iACwt8TG7jNhh40KW0ppHwTs45hEUIsxC6U+M3FiaAjQk9ggltvCtBYHcDErgA
-         I9dxuD4XlrukFwVFx0n7ffanyI93fGmNK65W9IBto2OEGjrz/da9b+rApXhN++ew7PU6
-         YQTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715100166; x=1715704966;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eDuw6XMtyXZKzrVG8KLN93/CpRj1Z6EUoNzW3VbxI34=;
-        b=sHhYNlgt7MZF8Z1Ybl9i/MxhFtL0V5IcuXiSWgMbqkrOtawWcSZQTLAkz68N92fXzK
-         QFTB8e8YR7D6hl7P5gRYZ0UcxTVSYjJnOu9LkbBKl3GLinGxWzH/0h1u3JYUcGp0eYfo
-         71b5wOnjS3D/I8AMM1Y5q6sW1BYoPYzqEkpRz7EgeHydbORx88oYSnpkd0/osoEiTWK8
-         e9qKdrOtR2hqtCYttYOd6lXU/irICxbHBtLrF4H1t5Dop2p9ZAOf0caFv/vSdF7lBpIz
-         CRp3/Nun/BEC7Hn+J3U5ApGCJHrPBXX99FHjoQZOnFbIRg/kJppBRZ3w6ejfUjL1o1W7
-         LUoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZaXvjMChWGJgCGIU34gqsBKO4kUYX8aPaeucUy43WoN165J+6V1HFGawhsIbisgpFdYUR6zaO9KudgKH0uVWy+zdO8myTk8Bz
-X-Gm-Message-State: AOJu0YxCYb1pD9cy0FJpGEl7d8VbuEfeX5x+1MjHNGLUzlb3ZNSVqodf
-	w+63RC2ZR4+j0wNY9c2wnLenr4Daiy7qsI86bx4Sj1WsGl9lz2tVxMnajJM1ynY=
-X-Google-Smtp-Source: AGHT+IGz5ROh6hpvDY8BxgOFSwQqKYtWyJh/WIFaY8FC/3aEG7SaPSARBMjJ9g4keP9TpUCNAHeWGg==
-X-Received: by 2002:a05:600c:314c:b0:41c:2334:fffd with SMTP id 5b1f17b1804b1-41f71cc19bcmr3656375e9.9.1715100166177;
-        Tue, 07 May 2024 09:42:46 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id f20-20020a05600c4e9400b0041b5500e438sm20245506wmq.23.2024.05.07.09.42.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 09:42:45 -0700 (PDT)
-Message-ID: <e4ad92b88556f0de05b6b7ae03da1e581d688ce5.camel@linaro.org>
-Subject: Re: [PATCH] clkdev: fix potential NULL pointer dereference
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Russell King <linux@armlinux.org.uk>, Michael Turquette
-	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Date: Tue, 07 May 2024 17:42:45 +0100
-In-Reply-To: <20240507064434.3213933-1-m.szyprowski@samsung.com>
-References: 
-	<CGME20240507064445eucas1p1bfc17da4f824ef46567774634482f12f@eucas1p1.samsung.com>
-	 <20240507064434.3213933-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVT4gjEb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7700C4AF63;
+	Tue,  7 May 2024 16:51:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715100716;
+	bh=/Bkd2IwTGaLgZju05dzWdon64EKKSvHjfKDMLbB1/9o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jVT4gjEb4Ki4lwgfVfMSSKV0FIB3ScF4nul0QK+99jzj5PVrZ3AtEeNPhY4pFU5Fz
+	 uoHE+fuhAU8AyEq0THAcQX62DyEiiih3bCSIgsxvRFyfmIQfPoJwjvCFN7nzin0gjr
+	 IIe3enl8vX1GyZb3/34PtMv2iV9FF1VIijBprcDnVIrdUbZAR7dfzOqvjbd+H1vvyP
+	 filpHMehhCOwzz65GnbEu7rM7EM7nq73GBrl2dEJ5ova65j3SaeVx/b8PUhDDV2EH9
+	 mtPcdnsVdHUnkTo4iGbgL+UokMvKKBFfM5EQTHkdBOKvjc0vaJLSE+xxMEq1yLLlTs
+	 Mzi9nuysRBvBQ==
+Date: Tue, 7 May 2024 17:51:50 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alex Bee <knaerzche@gmail.com>
+Cc: Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/7] dt-bindings: clock: rk3128: Add PCLK_MIPIPHY
+Message-ID: <20240507-cardiac-obsessed-89f3b0894bec@spud>
+References: <20240506194343.282119-1-knaerzche@gmail.com>
+ <20240506194343.282119-3-knaerzche@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="MJDZAnqOutdsOh4Y"
+Content-Disposition: inline
+In-Reply-To: <20240506194343.282119-3-knaerzche@gmail.com>
 
-Hi Marek,
 
-On Tue, 2024-05-07 at 08:44 +0200, Marek Szyprowski wrote:
-> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-> index ddacab7863d0..d2801ae70e34 100644
-> --- a/drivers/clk/clkdev.c
-> +++ b/drivers/clk/clkdev.c
-> @@ -194,10 +194,12 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id=
-, const char *dev_fmt,
-> =C2=A0	return &cla->cl;
-> =C2=A0
-> =C2=A0fail:
-> -	fmt.fmt =3D dev_fmt;
-> -	fmt.va =3D &ap_copy;
-> -	pr_err("%pV:%s: %s ID is greater than %zu\n",
-> -	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &fmt, con_id, failure, max_size);
-> +	if (dev_fmt) {
-> +		fmt.fmt =3D dev_fmt;
-> +		fmt.va =3D &ap_copy;
-> +		pr_err("%pV:%s: %s ID is greater than %zu\n",
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &fmt, con_id, failure, max_size);
-> +	}
+--MJDZAnqOutdsOh4Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It might be nice to still print the rest of the error, so it's easier to se=
-e which
-clock is causing trouble.
+On Mon, May 06, 2024 at 09:43:37PM +0200, Alex Bee wrote:
+> The DPHY's APB clock is required to be exposed in order to be able to
+> enable it and access the phy's registers.
+>=20
+> Signed-off-by: Alex Bee <knaerzche@gmail.com>
 
-Cheers,
-Andre'
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
+--MJDZAnqOutdsOh4Y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZjpcJgAKCRB4tDGHoIJi
+0s4UAQDtrMr/zcll7XLRlmogcgoAfSJQZq1AEQQeJxIADgIQwwEA+aBSIaagtafp
++CaYRxpIvw/qSd+oMTrkzEpnz5opSg8=
+=o2x0
+-----END PGP SIGNATURE-----
+
+--MJDZAnqOutdsOh4Y--
